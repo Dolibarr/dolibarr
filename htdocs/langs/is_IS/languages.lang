@@ -39,3 +39,20 @@ Language_es_AR=Spænska (Austria)
 Language_is_IS=Íslenska
 Language_is_IS=Íslenska
 Language_sv_SV=Sænska
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+Language_ar_SA=Arabíska
+Language_da_DK=Danska
+Language_de_AT=Þýska (Austurríki)
+Language_el_GR=Gríska
+Language_en_NZ=Enska (Nýja Sjáland)
+Language_es_HN=Spænska (Hondúras)
+Language_es_MX=Spænska (Mexíkó)
+Language_es_PR=Spænska (Puerto Rico)
+Language_fa_IR=Persneska
+Language_hu_HU=Ungverska
+Language_ru_UA=Rússneska (Úkraína)
+Language_sv_SE=Sænska
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:28:08).

@@ -1,0 +1,94 @@
+/*
+ * Language code: ja_JP
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 16:41:06
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
+// Reference language: en_US -> ja_JP
+CHARSET=UTF-8
+Commercial=コマーシャル
+CommercialArea=商業地域
+CommercialCard=コマーシャルカード
+CustomerArea=お客様のエリア
+Customer=顧客
+Customers=お客さま
+Prospect=見通し
+Prospects=見込み
+DeleteAction=イベント/タスクを削除します。
+NewAction=新しいイベント/タスク
+AddAction=イベント/タスクを追加する
+AddAnAction=イベント/タスクを追加する
+AddActionRendezVous=ランデヴーイベントを追加
+Rendez-Vous=ランデブー
+ConfirmDeleteAction=このイベント/タスクを削除してもよろしいですか？
+CardAction=イベントカード
+PercentDone=完了したパーセンテージ
+ActionOnCompany=会社に関するタスク
+ActionOnContact=連絡先に関するタスク
+TaskRDV=ミーティング
+TaskRDVWith=%sとの会談
+ShowTask=タスクを表示する
+ShowAction=イベントを表示
+ActionsReport=イベントレポート
+SalesRepresentative=営業担当者
+SalesRepresentatives=営業担当者
+SalesRepresentativeFollowUp=営業担当者（フォローアップ）
+SalesRepresentativeSignature=営業担当者（署名）
+CommercialInterlocutor=商業対談
+ErrorWrongCode=間違ったコード
+NoSalesRepresentativeAffected=特に営業担当者の影響を受けません
+ShowCustomer=顧客を表示する
+ShowProspect=見通しを示す
+ListOfProspects=見込み客リスト
+ListOfCustomers=顧客リスト
+LastDoneTasks=最後%sは、タスクを完了
+LastRecordedTasks=最後に記録されたタスク
+LastActionsToDo=最古のアクションが完了していない最後の%s
+DoneAndToDoActionsFor=完了すると%sのイベントを実行するには
+DoneAndToDoActions=完了し、イベントを実行するには
+DoneActions=完了イベント
+DoneActionsFor=%sの完成イベント
+ToDoActions=不完全なイベント
+ToDoActionsFor=%s不完全なイベント
+SendPropalRef=商業提案%sを送る
+SendOrderRef=オーダーの%sを送る
+StatusNotApplicable=適用されない
+StatusActionToDo=実行する
+StatusActionDone=完了する
+MyActionsAsked=私が記録したイベント
+MyActionsToDo=私がしなければならないイベント
+MyActionsDone=イベントは私に影響を受けた
+StatusActionInProcess=プロセスの
+TasksHistoryForThisContact=この連絡先のイベント
+LastProspectDoNotContact=連絡しないでください
+LastProspectNeverContacted=連絡しないでください
+LastProspectToContact=連絡する
+LastProspectContactInProcess=プロセスの連絡先
+LastProspectContactDone=行わ連絡
+DateActionPlanned=日付イベントがために計画
+DateActionDone=日付イベントが行われ
+ActionAskedBy=によって報告されたイベント
+ActionAffectedTo=イベントに影響を受けた
+ActionDoneBy=することにより、イベントを行って
+ActionUserAsk=によって報告された
+ErrorStatusCantBeZeroIfStarted=フィールド&quot; <b>日付が行わ</b> ' <b>が</b>入力されている場合は、アクションが（または終了）が開始されているので、フィールド<b>のステータスが</b> &quot; 0％％にすることはできません。
+ActionAC_TEL=電話
+ActionAC_FAX=FAXを送信
+ActionAC_PROP=メールで提案を送る
+ActionAC_EMAIL=電子メールを送信
+ActionAC_RDV=ミーティング
+ActionAC_FAC=メールでの顧客の請求書を送る
+ActionAC_REL=メール（リマインダー）が顧客の請求書を送付
+ActionAC_CLO=閉じる
+ActionAC_EMAILING=大量メールを送信
+ActionAC_COM=メールで顧客の注文を送る
+ActionAC_SHIP=メールでの発送を送る
+ActionAC_SUP_ORD=メールでのサプライヤーの順序を送る
+ActionAC_SUP_INV=メールでのサプライヤの請求書を送る
+ActionAC_OTH=その他
+StatusProsp=見通しの状態
+DraftPropals=ドラフト商業の提案
+SearchPropal=商業的提案を検索
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:45:29).

@@ -119,3 +119,9 @@ RelatedContracts=Relaterede kontrakter
 // Reference language: en_US -> da_DK
 Error_CONTRACT_ADDON_NotDefined=Konstant CONTRACT_ADDON ikke defineret
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 11:05:26).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
+// Reference language: en_US -> da_DK
+NoExpiredServices=Ingen udløbne aktive tjenester
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:59:34).

@@ -208,3 +208,14 @@ MigrationFinished=Migration färdiga
 LastStepDesc=<strong>Sista steget:</strong> Definiera här login och lösenord som du planerar att använda för att ansluta till programmet. Tappa inte detta eftersom det är det konto för att administrera alla andra.
 MigrationActioncommElement=Uppdatera uppgifter om åtgärder
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 10:33:48).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+ConfFileReload=Ladda all information från konfigurationsfilen.
+WarningPHPVersionTooLow=PHP version för gammal. Version %s eller flera förväntas. Denna version bör göra det möjligt installera, men stöds inte.
+DatabasePrefix=Databas prefix tabellen
+KeepDefaultValuesProxmox=Du använder Dolibarr inställningsguiden från en Proxmox virtuell apparat, så som föreslås här är redan optimerade. Ändra dem bara om du vet vad du gör.
+ActivateModule=Aktivera modul %s
+MigrationPaymentMode=Datamigrering betalning mode
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:18).

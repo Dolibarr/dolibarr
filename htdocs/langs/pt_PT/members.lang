@@ -170,3 +170,47 @@ DocForAllMembersCards=Gerar cartões de visita para todos os membros (Formato de
 DocForOneMemberCards=Gerar cartões de visita para um determinado membro (Formato de saída realmente configuração: <b>%s)</b>
 DocForLabels=Gerar folhas de endereço (Formato de saída realmente configuração: <b>%s)</b>
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:29).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+MembersWithSubscriptionToReceive=Membros com assinatura para receber
+NewSubscriptionDesc=Este formulário permite-lhe gravar sua inscrição como um novo membro da fundação. Se você deseja renovar a sua assinatura (se já for membro), entre em contato com Conselho da Fundação vez por %s e-mail.
+BlankSubscriptionFormDesc=Dolibarr pode fornecer uma URL pública para permitir que os visitantes externos para pedir para se inscrever na fundação. Se um módulo de pagamento on-line está ativado, uma forma de pagamento também será fornecida automaticamente.
+EnablePublicSubscriptionForm=Habilite o formulário de inscrição auto-público
+ImportDataset_member_1=Membros
+LastSubscriptionsModified=%s Última modificação assinaturas
+GlobalConfigUsedIfNotDefined=Texto definido na configuração Foundation módulo será usada se não se define aqui
+MayBeOverwrited=Este texto pode ser overwrited pelo valor definido para o tipo de membro
+SubscriptionPayment=Pagamento Assinatura
+LastSubscriptionDate=Última data de subscrição
+LastSubscriptionAmount=Montante de subscrição Última
+MembersStatisticsByCountries=Membros estatísticas por país
+MembersStatisticsByState=Membros estatísticas por estado / província
+MembersStatisticsByTowne=Membros estatísticas por cidade
+NbOfMembers=Número de membros
+NoValidatedMemberYet=Nenhum membro validados encontrado
+MembersByCountryDesc=Esta tela mostrará estatísticas sobre membros dos países. Gráfico depende, contudo, o serviço Google gráfico on-line e está disponível apenas se uma ligação à Internet é está funcionando.
+MembersByStateDesc=Esta tela mostrar-lhe as estatísticas sobre os membros por estado / província / Canton.
+MembersByTownDesc=Esta tela mostrará estatísticas sobre membros por cidade.
+MembersStatisticsDesc=Escolha as estatísticas que você deseja ler ...
+MenuMembersStats=Estatística
+LastMemberDate=Data de último membro
+Nature=Natureza
+Public=As informações são públicas
+Exports=Exportações
+NewMemberbyWeb=Novo membro acrescentou. Aguardando aprovação
+NewMemberForm=Forma novo membro
+SubscriptionsStatistics=Estatísticas sobre assinaturas
+NbOfSubscriptions=Número de assinaturas
+AmountOfSubscriptions=Quantidade de assinaturas
+TurnoverOrBudget=Volume de negócios (para uma empresa) ou do Orçamento (para uma fundação)
+DefaultAmount=Quantidade padrão de assinatura
+CanEditAmount=Visitante pode escolher / editar montante da sua subscrição
+MEMBER_NEWFORM_PAYONLINE=Ir na página de pagamento online integrado
+Associations=Fundações
+Collectivités=Organizações
+Particuliers=Pessoal
+Entreprises=Empresas
+DOLIBARRFOUNDATION_PAYMENT_FORM=Para fazer o seu pagamento de inscrição através de transferência bancária, consulte a página <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Para pagar com cartão de crédito ou Paypal, clique no botão na parte inferior desta página. <br>
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:47:57).

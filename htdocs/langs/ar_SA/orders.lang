@@ -152,3 +152,18 @@ PDFQuevedoDescription=نموذج النظام الكامل مع الطاقة ا�
 // Reference language: en_US -> ar_AR
 DispatchSupplierOrder=%s استقبال النظام مورد
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:33:59).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+SuppliersOrdersToProcess=المورد أوامر لمعالجة
+StatusOrderSentShort=في عملية
+ShippingExist=شحنة موجود
+UnvalidateOrder=Unvalidate النظام
+ConfirmUnvalidateOrder=هل أنت متأكد أنك تريد استعادة <b>%s</b> أجل وضع مشروع؟
+OrderByMail=بريد
+OrderByFax=الفاكس
+OrderByEMail=بريد إلكتروني
+OrderByWWW=على الانترنت
+OrderByPhone=هاتف
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:55:47).

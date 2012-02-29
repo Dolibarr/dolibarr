@@ -94,3 +94,18 @@ DocModelAzurDescription=A heill tillögu líkan (logo. ..)
 DocModelJauneDescription=Jaune tillögu líkan
 DocModelRoigDescription=A heill tillögu líkan með spænsku skatt RE og IRPF
 // STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+ProposalCard=Tillaga kort
+ConfirmReOpenProp=Ertu viss um að þú viljir opna aftur auglýsing <b>%s</b> tillögur?
+AvailabilityPeriod=Framboð töf
+SetAvailability=Setja framboð töf
+AfterOrder=eftir því skyni
+AvailabilityTypeAV_NOW=Strax
+AvailabilityTypeAV_1W=1 viku
+AvailabilityTypeAV_2W=2 vikur
+AvailabilityTypeAV_3W=3 vikur
+AvailabilityTypeAV_1M=1 mánuður
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:28:44).

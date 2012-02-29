@@ -620,3 +620,63 @@ Resources=Ressourcer
 Source=Kilde
 Prefix=Præfiks
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:21:47).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
+// Reference language: en_US -> da_DK
+FormatDateShortJQuery=dd/mm/yy
+AddLink=Tilføj link
+Of=af
+SearchOf=Søg
+AmountByMonth=Beløb efter måned
+DatePayment=Dato for betaling
+TeraBytes=Terabyte
+Tb=Tb
+LT1ES=RE
+LT2ES=IRPF
+OtherStatistics=Andre statistik
+ActionNotApplicable=Ikke relevant
+ActionsOnMember=Events Om dette medlem
+JanuaryMin=Jan
+FebruaryMin=Februar
+MarchMin=Mar
+AprilMin=April
+MayMin=Maj
+JuneMin=Juni
+JulyMin=Juli
+AugustMin=August
+SeptemberMin=September
+OctoberMin=Oktober
+NovemberMin=November
+DecemberMin=December
+CoreErrorTitle=Systemfejl
+CoreErrorMessage=Beklager, der opstod en fejl. Kontroller logs, eller kontakt din systemadministrator.
+Before=Før
+After=Efter
+IPAddress=IP-adressen
+Frequency=Frekvens
+IM=Instant messaging
+NewAttribute=Ny attribut
+AttributeCode=Attribut koden
+OptionalFieldsSetup=Ekstra attributter opsætning
+URLPhoto=Url af foto / logo
+SetLinkToThirdParty=Link til en anden tredjepart
+CreateDraft=Opret udkast
+ClickToEdit=Klik for at redigere
+ObjectDeleted=Objekt %s slettet
+ByCountry=Efter land
+ByTown=Ved byen
+ByDate=Efter dato
+ByMonthYear=Efter måned / år
+ByYear=Ved år
+ByMonth=efter måned
+ByDay=Ved dag
+BySalesRepresentative=Ved salgsrepræsentant
+MondayMin=Mo
+TuesdayMin=Tu
+WednesdayMin=Vi
+ThursdayMin=Th
+FridayMin=Fr
+SaturdayMin=Sa
+SundayMin=Su
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:01:49).

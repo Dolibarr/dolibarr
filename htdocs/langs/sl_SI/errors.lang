@@ -84,3 +84,36 @@ ErrorSelectAtLeastOne = Napaka. Izberite vsaj en vnos.
 ErrorProductWithRefNotExist = Proizvod z referenco '<i>%s</i>' ne obstaja
 ErrorDeleteNotPossibleLineIsConsolidated = Brisanje ni možno, ker je zapis vezan na posredovano bančno transakcijo
 ErrorNoActivatedBarcode = Noben tip črtne kode ni aktiviran
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+ErrorFailToCopyFile=Ni kopirati Datoteka <b>'%s</b> &quot;nadomesti z&quot; <b>%s</b> &quot;.
+ErrorBadDateFormat=Vrednost '%s &quot;je napačen zapis datuma
+ErrorSizeTooLongForIntType=Velikost predolgo int tip (%s številke največ)
+ErrorSizeTooLongForVarcharType=Velikost predolgo za tip za nize (%s znakov največ)
+ErrorFieldRefNotIn=Napačna vrednost za <b>%s</b> številka polja (Vrednost <b>'%s</b> &quot;ni <b>%s</b> obstoječe ref)
+ErrorProdIdAlreadyExist=%s je dodeljen v drugo tretjo
+ErrorFailedToSendPassword=Ni bilo mogoče poslati gesla
+ErrorFailedToLoadRSSFile=Ne Knjiga. Poskusite dodati stalno MAIN_SIMPLEXMLLOAD_DEBUG sporočila o napakah, če ne zagotavlja dovolj informacij.
+ErrorPasswordDiffers=Gesla razlikujejo, jih vnesite znova.
+ErrorForbidden=Dostop zavrnjen. <br> Poskusite dostopati do strani, območje ali funkcije, ne da bi v potrjeni seji ali da ni dovoljeno na vaš uporabnika.
+ErrorForbidden2=Dovoljenje za to prijavo se lahko opredeli skrbnik Dolibarr iz menija %s-&gt; %s.
+ErrorForbidden3=Zdi se, da je Dolibarr ne uporablja prek overjeno sejo. Oglejte si namestitveno dokumentacijo Dolibarr vedeti, kako upravljati authentications (htaccess, mod_auth ali drugo ...).
+ErrorNoImagickReadimage=Razred Imagick ni mogoče najti v tem PHP. Št Predogled je lahko na voljo. Skrbniki lahko onemogočite to kartico od Setup meniju - Display.
+ErrorRecordAlreadyExists=Zapis že obstaja
+ErrorCantReadFile=Ni mogoče prebrati Datoteka '%s želiš
+ErrorCantReadDir=Ni mogoče prebrati imenik '%s &quot;
+ErrorFailedToFindEntity=Ni mogoče prebrati okolje &quot;%s&quot;
+ErrorBadLoginPassword=Slaba vrednost za prijavo ali geslo
+ErrorLoginDisabled=Vaš račun je bil onemogočen
+ErrorFailedToRunExternalCommand=Ni delujejo zunanji ukaz. Preverite, da je na voljo in loven vaš PHP strežnik. Če je omogočena PHP <b>Safe Mode,</b> preverite, ali je ukaz znotraj imenika opredeljeno <b>safe_mode_exec_dir</b> parametrov.
+ErrorFailedToChangePassword=Ni, da spremenite geslo
+ErrorLoginDoesNotExists=Uporabnik s prijavo <b>%s</b> ni bilo mogoče najti.
+ErrorLoginHasNoEmail=Ta uporabnik nima e-poštni naslov. Obdelati prekinjena.
+ErrorBadValueForCode=Slaba vrednost za varnostno kodo. Poskusite znova z novo vrednost ...
+ErrorBothFieldCantBeNegative=Polja %s in %s ne more biti tako negativna
+ErrorWebServerUserHasNotPermission=Uporabniški račun <b>%s</b> uporablja za izvedbo spletni strežnik nima dovoljenja za to
+WarningInstallDirExists=Opozorilo, namestitev imenik <b>(htdocs / install)</b> še vedno obstaja. To je resna varnostna luknja. Moral bi ga odstrani v najkrajšem možnem času.
+WarningUntilDirRemoved=Vsi varnostni opozorila (vidna le uporabniki admin) ostane aktiven, dokler je prisotna ranljivost (ali stalno MAIN_REMOVE_INSTALL_WARNING se doda v Setup-&gt; druge nastavitve).
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:30:37).

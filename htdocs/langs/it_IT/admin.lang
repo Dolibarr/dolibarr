@@ -1319,3 +1319,39 @@ BankOrderES=Spagnolo
 BankOrderESDesc=Spagnolo ordine di visualizzazione
 SuppliersInvoiceModel=Modello completo di fattura fornitore (logo. ..)
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:00).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+// Reference language: en_US -> it_IT
+WebUserGroup=Web server di utente / gruppo
+NoLockBeforeInsert=Nessun comando di blocco intorno INSERT
+MAIN_MAIL_ERRORS_TO=Mittente e-mail utilizzato per inviare messaggi d'errore ritorna
+ThisForceAlsoTheme=Usando questo menu manager userà anche il suo tema tutto ciò che è la scelta dell'utente. Anche questo menu manager specializzato per smartphone non funziona su tutti i smartphone. Utilizzare un altro gestore di menu se si verificano problemi sul vostro.
+NoSmsEngine=Nessun manager mittente SMS disponibili. SMS gestore del mittente non sono installati con la distribuzione di default (perché dipende da un fornitore esterno), ma si possono trovare alcuni su http://www.dolistore.com
+PDF=PDF
+PDFDesc=È possibile impostare ogni opzioni globali relative alla generazione di file PDF
+PDFAddressForging=Regole per forgiare caselle di indirizzi
+HideAnyVATInformationOnPDF=Nascondi tutte le informazioni relative all'imposta sul valore aggiunto generato in formato PDF
+UrlGenerationParameters=Parametri di garantire gli URL
+SecurityTokenIsUnique=Utilizzare un unico parametro securekey per ogni URL
+EnterRefToBuildUrl=Inserisci di riferimento per %s oggetti
+GetSecuredUrl=Prendi URL calcolato
+Module105Name=Mailman e Sip
+Module105Desc=Interfaccia Mailman o Spip per il modulo member
+Permission50001=L'uso Punto di vendita
+DictionnaryAvailability=Consegna ritardo
+DictionnarySource=Origine delle proposte e ordini
+SecurityEventsPurged=Eventi di sicurezza eliminati
+ExtraFieldHasWrongValue=Attribuibile %s ha un valore errato.
+SendingMailSetup=Setup di spedizioni via e-mail
+SendmailOptionNotComplete=Attenzione, su alcuni sistemi Linux, per inviare email dal vostro email, configurazione di esecuzione sendmail deve conatins opzione-ba (mail.force_extra_parameters parametro nel file php.ini). Se alcuni destinatari non ricevono messaggi di posta elettronica, provare a modificare questo parametro con PHP mail.force_extra_parameters =-BA).
+SendmailOptionMayHurtBuggedMTA=Funzione per inviare mail usando il metodo &quot;PHP diretta per corrispondenza&quot; genererà un messaggio di posta che potrebbe non essere correttamente interpretati da alcuni server di posta che ricevono. Il risultato è che alcuni messaggi non possano essere lette da persone ospitate dalle piattaforme thoose sotto controllo. E 'caso di alcuni fornitori di servizi Internet (Es: Orange in Francia). Questo non è un problema in Dolibarr né in PHP, ma sul server di ricezione posta. È tuttavia possibile aggiungere MAIN_FIX_FOR_BUGGED_MTA opzione 1 nella configurazione - altro di modificare Dolibarr per evitare questo. Tuttavia, potrebbero verificarsi problemi con altri server che rispettare rigorosamente lo standard SMTP. L'altra soluzione (raccomandato) è di utilizzare il metodo &quot;SMTP presa library&quot; che non ha svantaggi.
+CompanyIdProfChecker=Professionale Id unico
+MustBeUnique=Deve essere unico?
+Miscellanous=Miscellaneo
+ServiceSetup=Servizi di installazione modulo
+ProductServiceSetup=Prodotti e servizi di installazione dei moduli
+ViewProductDescInThirdpartyLanguageAbility=Visualizzazione delle descrizioni dei prodotti in lingua terse parti
+AccountancyCode=Contabilità Codice
+MailmanSpipSetup=Mailman e configurazione del modulo Spip
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:33:28).

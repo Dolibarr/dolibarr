@@ -51,3 +51,9 @@ CSSUrlForPaymentForm=Ödeme formu için CSS stil sayfasını url
 MessageOK=Valide ödeme dönüş sayfasında Mesajı
 MessageKO=Iptal ödeme dönüş sayfasında Mesajı
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 13:58:39).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
+// Reference language: en_US -> tr_TR
+ToOfferALinkForOnlinePayment=%s ödeme için URL
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:35:58).

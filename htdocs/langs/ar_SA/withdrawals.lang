@@ -85,3 +85,28 @@ NotifyEmision=انسحاب الانبعاثات
 NotifyCredit=انسحاب الائتمان
 NumeroNationalEmetter=رقم المرسل وطنية
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:18:07).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+NbOfInvoiceToWithdrawWithInfo=ملحوظة من فاتورة مع سحب طلب للعملاء وبعد تحديد معلومات الحساب المصرفي
+StatusTrans=أحال
+PleaseSelectCustomerBankBANToWithdraw=حدد معلومات عن حساب مصرفي العملاء لسحب
+WithBankUsingRIB=عن الحسابات المصرفية باستخدام RIB
+WithBankUsingBANBIC=عن الحسابات المصرفية باستخدام IBAN / BIC / SWIFT
+BankToReceiveWithdraw=حساب مصرفي لتلقي تنسحب
+CreditDate=الائتمان على
+WithdrawalFileNotCapable=غير قادر على توليد سحب ملف استلام لبلدك
+ShowWithdraw=وتظهر سحب
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=ومع ذلك، إذا فاتورة واحدة على الأقل دفع انسحاب لا تتم معالجتها حتى الآن، فإنه لن يكون كما سيولي للسماح لإدارة الانسحاب قبل.
+DoStandingOrdersBeforePayments=هذه علامات تسمح لك لطلب لاستصدار أمر دائم. مرة واحدة وسيتم الانتهاء من ذلك، يمكنك كتابة دفع لإغلاق الفاتورة.
+InfoCreditSubject=دفع %s النظام الدائمة من قبل البنك
+InfoCreditMessage=تم دفع %s النظام وقوفه الى جانب البنك <br> بيانات الدفع: %s
+InfoTransSubject=انتقال %s ترتيب دائمة للبنك
+InfoTransMessage=وقد transmited في %s أجل الوقوف على البنك من قبل %s %s. <br><br>
+InfoTransData=المبلغ: %s <br> Metode: %s <br> تاريخ: %s
+InfoFoot=هذه رسالة تلقائية ترسل من قبل Dolibarr
+InfoRejectSubject=ورفض النظام واقفا
+InfoRejectMessage=مرحبا، <br><br> تم رفض الطلب من standig %s فاتورة تتعلق %s شركة، مع مبلغ %s من قبل البنك. <br><br> - <br> ٪ $
+ModeWarning=لم يتم تعيين خيار الوضع الحقيقي، ونحن بعد توقف هذه المحاكاة
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:56:00).

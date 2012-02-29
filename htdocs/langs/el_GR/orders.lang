@@ -148,3 +148,11 @@ OrderByEMail=EMail
 OrderByWWW=Online
 OrderByPhone=Τηλέφωνο
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:41:22).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+ShippingExist=Μια αποστολή, υπάρχει
+UnvalidateOrder=Για Unvalidate
+ConfirmUnvalidateOrder=Είστε βέβαιοι ότι θέλετε να επαναφέρετε <b>%s</b> για το καθεστώς του σχεδίου;
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:17).

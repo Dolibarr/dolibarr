@@ -19,3 +19,15 @@ PAYPAL_IPN_MAIL_ADDRESS=E-mail fyrir augnablik tilkynningu um greiðslu (IPN)
 PredefinedMailContentSendOrderWithPaypalLink=Þú vilja finna hér til __ORDERREF__ \ n \ nYou geta smellt á öruggum tengilinn hér að neðan til að greiða í gegnum PayPal \ n \ n%s \ n \ nSincerely \ n \ n
 PredefinedMailContentSendInvoiceWithPaypalLink=Þú vilja finna hér á vörureikningi __FACREF__ \ n \ nYou geta smellt á öruggum tengilinn hér að neðan til að greiða í gegnum PayPal \ n \ n%s \ n \ nSincerely \ n \ n
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 10:49:20).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+PaypalDesc=Þessi eining bjóða síður að leyfa greiðslu á <a href="http://www.paypal.com" target="_blank">PayPal</a> við viðskiptavini. Þetta er hægt að nota fyrir a frjáls greiðslu eða greiðslu á tilteknu Dolibarr hlut (Reikningar, til þess, ...)
+PaypalOrCBDoPayment=Borga með kreditkorti eða Paypal
+PaypalDoPayment=Borga með Paypal
+PaypalCBDoPayment=Borga með kreditkorti
+PAYPAL_API_SANDBOX=Ham próf / sandkassi
+PAYPAL_API_USER=API notandanafn
+YouAreCurrentlyInSandboxMode=Þú ert nú í &quot;sandkassi&quot; háttur
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:35).

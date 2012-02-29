@@ -96,3 +96,9 @@ TypeContact_contrat_external_SALESREPSIGN = Ondertekening contract contactpersoo
 // Reference language: en_US -> nl_NL
 Error_CONTRACT_ADDON_NotDefined=Constant CONTRACT_ADDON niet gedefinieerd
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 01:40:44).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
+// Reference language: en_US -> nl_NL
+NoExpiredServices=Geen verlopen actieve diensten
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:11:58).

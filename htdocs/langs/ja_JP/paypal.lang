@@ -19,3 +19,15 @@ PAYPAL_ADD_PAYMENT_URL=郵送で文書を送信するときにPayPalの支払い
 PAYPAL_IPN_MAIL_ADDRESS=支払いの即時通知の電子メールアドレス（IPN）
 PredefinedMailContentSendOrderWithPaypalLink=あなたがここに\ nを\ n削除するとPayPal経由で支払い\ nを\ n%s \ nを\ nSincerely \ nの\ nのようにするには、以下のセキュリティで保護されたリンクをクリックできる__ORDERREF__順序を見つける
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 10:51:12).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
+// Reference language: en_US -> ja_JP
+PaypalSetup=ペイパルモジュールのセットアップ
+PaypalDesc=このモジュールの提供は、ページ上で支払いを可能にする<a href="http://www.paypal.com" target="_blank">PayPalの</a>顧客がいます。これは無料の支払いのために、または特定のDolibarrオブジェクトの支払いのために使用することができる（請求書、注文、...）
+PaypalOrCBDoPayment=クレジットカードまたはPayPalでの支払い
+PaypalDoPayment=PayPalでの支払い
+PaypalCBDoPayment=クレジットカードで支払う
+PredefinedMailContentSendInvoiceWithPaypalLink=あなたはここで見つかります送り状_ FACREF__ \n\nあなたが誠意をこめて\n\nペイパル\n\n %s \n\nを介して支払いを行うには、以下のセキュリティで保護されたリンクをクリックすることができます
+YouAreCurrentlyInSandboxMode=あなたは &quot;サンドボックス&quot;モードで現在
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:42:57).

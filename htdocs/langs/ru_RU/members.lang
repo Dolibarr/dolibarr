@@ -225,3 +225,9 @@ Particuliers=Личный
 Entreprises=Компании
 DOLIBARRFOUNDATION_PAYMENT_FORM=Чтобы сделать вашу подписку оплаты с помощью банковского перевода, см. стр. <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Для оплаты с помощью кредитной карты или Paypal, нажмите на кнопку в нижней части этой страницы. <br>
 // STOP - Lines generated via autotranslator.php tool (2011-08-27 16:59:59).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
+// Reference language: en_US -> ru_RU
+LastSubscriptionsModified=Последнее изменение %s подписки
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:50).

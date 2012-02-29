@@ -78,3 +78,14 @@ DocumentModelMerou=Merou A5 model
 DateDeliveryPlanned=Høvlet leveringsdato
 DateReceived=Dato levering modtaget
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:57).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
+// Reference language: en_US -> da_DK
+SendShippingByEMail=Send forsendelse via e-mail
+SendShippingRef=Send forsendelse %s
+ActionsOnShipping=Arrangementer på forsendelse
+LinkToTrackYourPackage=Link til at spore din pakke
+ShipmentCreationIsDoneFromOrder=For øjeblikket er skabelsen af ​​en ny forsendelse udført af ordrekortet.
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstant EXPEDITION_ADDON_NUMBER ikke defineret
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:02:11).

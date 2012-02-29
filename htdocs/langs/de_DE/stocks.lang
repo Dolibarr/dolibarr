@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-10 00:11:12
  */
@@ -79,3 +79,18 @@ DeleteAWarehouse=Warenlager löschen
 ConfirmDeleteWarehouse=Möchten Sie das Warenlager <b>%s</b> wirklich löschen?
 PersonalStock=Persönlicher Warenbestand %s
 ThisWarehouseIsPersonalStock=Dieses Lager bezeichnet den persönlichen Bestand von %s %s 
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+PMPValueShort=WAP
+AverageUnitPricePMPShort=Gewichteter Durchschnitt der Eingangs-Preis
+AverageUnitPricePMP=Gewichteter Durchschnitt der Eingangs-Preis
+SellPriceMin=Der Verkauf Einzelpreis
+EstimatedStockValueSellShort=Wert zu verkaufen
+EstimatedStockValueSell=Wert zu verkaufen
+EstimatedStockValueShort=Vormaterial Wert
+EstimatedStockValue=Vormaterial Wert
+SelectWarehouseForStockDecrease=Wählen Sie für Lager an Lager Rückgang nutzen
+SelectWarehouseForStockIncrease=Wählen Sie für Lager an Lager Anstieg nutzen
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:50).

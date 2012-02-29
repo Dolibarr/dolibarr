@@ -128,3 +128,13 @@ SourceRequired=Tiedon arvo on pakollinen
 SourceExample=Esimerkki mahdollisesta tietojen arvo
 CSVFormatDesc=<b>Pilkuin erotellut</b> tiedostomuodossa (. Csv). <br> Tämä on tekstitiedosto muodossa, jossa kentät on erotettu separaattori [%s]. Jos erotin on sisäpuolella kentän sisältöä, kenttä on pyöristetty pyöreä merkki [%s]. Escape paeta pyöreä merkki on [%s].
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:28:17).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+FileWasImported=Tiedoston tuotiin numerolla <b>%s.</b>
+DataComeFromIdFoundFromCodeId=Tämä koodi tulee kentän numero <b>%s</b> ja lähdetiedoston käytetään löytää id vanhemman esineen käyttö (siis koodi lähdetiedosto on olemassa osaksi dictionnary <b>%s).</b> Huomaa, että jos tiedät tunnus, voit käyttää sen lähdetiedoston sijasta koodia. Tuo pitäisi toimia molemmissa tapauksissa.
+DataCodeIDSourceIsInsertedInto=Id vanhemman linjan löydy koodia, lisätään osaksi seuraavilla aloilla:
+ExampleAnyRefFoundIntoElement=Jos ref löytynyt elementin <b>%s</b>
+ExampleAnyCodeOrIdFoundIntoDictionnary=Kaikki koodia (tai id) löytyi tulee dictionnary <b>%s</b>
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:11:12).

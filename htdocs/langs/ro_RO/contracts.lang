@@ -117,3 +117,9 @@ RelatedContracts=contracte conexe
 // Reference language: en_US -> ro_RO
 Error_CONTRACT_ADDON_NotDefined=CONTRACT_ADDON constanta nu a fost definit
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 11:16:44).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+NoExpiredServices=Nu expirate servicii active
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:24).

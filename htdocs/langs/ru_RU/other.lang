@@ -372,3 +372,23 @@ Notify_CONTRACT_VALIDATE=Договор проверку
 Notify_FICHEINTER_VALIDATE=Вмешательство проверку
 Notify_SHIPPING_VALIDATE=Доставка проверку
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 04:36:32).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
+// Reference language: en_US -> ru_RU
+Notify_ORDER_SENTBYMAIL=Покупатель делает заказ по почте
+Notify_COMPANY_CREATE=Третья партия, созданная
+Notify_PROPAL_SENTBYMAIL=Коммерческое предложение по почте
+Notify_ORDER_SENTBYMAIL=Envío pedido ПОР электронной почте
+Notify_BILL_PAYED=Клиенту счет оплачен
+Notify_SHIPPING_SENTBYMAIL=Доставка по почте
+Notify_MEMBER_VALIDATE=Член проверки
+Notify_MEMBER_SUBSCRIPTION=Член подписки
+Notify_MEMBER_RESILIATE=Член resiliated
+Notify_MEMBER_DELETE=Член удален
+PredefinedMailContentSendInvoice=Здесь вы найдете счет __ FACREF__ \n\n уважением \n\n
+PredefinedMailContentSendInvoiceReminder=Мы бы хотели предупредить Вас, что счет-фактура FACREF__ __, кажется, не оплачиваются. Так что это счета-фактуры в приложении опять же, как напоминание. \n\n уважением \n\n
+PredefinedMailContentSendProposal=Здесь вы найдете коммерческие propoal __ PROPREF__ \n\n уважением \n\n
+PredefinedMailContentSendOrder=Вы найдете здесь порядок __ ORDERREF__ \n\n уважением \n\n
+ShipmentValidatedInDolibarr=Отгрузка %s подтверждены в Dolibarr
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:06).

@@ -109,3 +109,18 @@ TypeContact_propal_internal_SALESREPFOLL=Przedstawiciela w ślad za wniosek
 TypeContact_propal_external_BILLING=kontakt faktury klienta
 TypeContact_propal_external_CUSTOMER=kontakt klienta w ślad za wniosek
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:25).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+ProposalCard=Karta Wniosek
+ConfirmReOpenProp=Czy na pewno chcesz otworzyć z powrotem handlowe <b>%s</b> propozycję?
+AvailabilityPeriod=Opóźnienie dostępność
+SetAvailability=Ustaw opóźnienie dostępność
+AfterOrder=od zamówienia
+AvailabilityTypeAV_NOW=Natychmiastowy
+AvailabilityTypeAV_1W=1 tydzień
+AvailabilityTypeAV_2W=2 tygodnie
+AvailabilityTypeAV_3W=3 tygodnie
+AvailabilityTypeAV_1M=1 miesiąc
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:21:02).

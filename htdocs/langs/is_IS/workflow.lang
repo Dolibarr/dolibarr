@@ -1,0 +1,18 @@
+/*
+ * Language code: is_IS
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 16:26:19
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+CHARSET=UTF-8
+WorkflowSetup=Vinnuflæði mát skipulag
+WorkflowDesc=Þessi eining er desinged að breyta hegðun sjálfvirkar aðgerðir í forritinu. Við vanræksla, workflow er opnað (sem þú gerir hlutina til þess að þú vilt). Þú getur virkt sjálfvirkar aðgerðir sem þú ert áhugavert inn
+ThereIsNoWorkflowToModify=Það er ekki workflow hægt að breyta fyrir einingu sem þú hefur valið.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Búa til viðskiptavina röð sjálfkrafa eftir verslunar Tillagan er undirrituð
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Búa til viðskiptavina reikning sjálfkrafa eftir verslunar Tillagan er undirrituð
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Búa til viðskiptavina reikning sjálfkrafa eftir að samningur er staðfest
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Búa til viðskiptavina reikning sjálfkrafa eftir að viðskiptavinur þess er lokað
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:27:07).

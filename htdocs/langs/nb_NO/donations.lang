@@ -30,3 +30,10 @@ DonationsModels=Dokumentmal for donasjonskvitteringer
 Donations=Donasjoner
 ValidPromess=Valider lover
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:49:37).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+LastModifiedDonations=Siste %s endret donasjoner
+SearchADonation=Søk etter donasjon
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:09:03).

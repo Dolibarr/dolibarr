@@ -36,3 +36,13 @@ Change=Περίσσεια λάβει
 CalTip=Κάντε κλικ για να δείτε το ημερολόγιο
 CashDeskSetupStock=Ρωτάτε για να μειώσετε απόθεμα στο τιμολόγιο δημιουργία αποθήκης αλλά για αυτό είναι δεν ορίζεται <br> Αλλαγή απόθεμα εγκατάστασης μονάδας, ή επιλέξτε μια αποθήκη
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:36:58).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+CashdeskShowServices=Πώληση υπηρεσιών
+BankToPay=Πιστωτικός λογαριασμός
+ShowCompany=Εμφάνιση εταιρείας
+ShowStock=Εμφάνιση αποθήκη
+DeleteArticle=Κάντε κλικ για να καταργήσετε αυτό το άρθρο
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:08:15).

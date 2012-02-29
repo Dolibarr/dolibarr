@@ -103,3 +103,13 @@ DocumentModelBaleine=一个完整的项目报告模型（logo. ..）
 // Reference language: en_US -> zh_CN
 LinkedToAnotherCompany=链接到其他第三方
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:20).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+TimesSpent=所花费的时间
+TaskIsNotAffectedToYou=任务不分配给你
+ErrorTimeSpentIsEmpty=所花费的时间是空的
+ThisWillAlsoRemoveTasks=这一行动也将删除所有项目任务<b>（%s</b>任务的时刻），花全部的时间都投入。
+IfNeedToUseOhterObjectKeepEmpty=如果某些对象（发票，订单，...），属于其他第三方，必须与该项目以创建，保持这个空项目多的第三方。
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:40:20).

@@ -44,3 +44,21 @@ Language_is_IS=الآيسلندي
 // Reference language: en_US -> ar_AR
 Language_sv_SV=السويدية
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:15).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+Language_ar_SA=العربية
+Language_da_DK=دانماركي
+Language_de_AT=الألمانية (النمسا)
+Language_el_GR=يوناني
+Language_en_NZ=الإنجليزية (نيوزيلندا)
+Language_es_HN=الأسبانية (هندوراس)
+Language_es_MX=الإسبانية (المكسيك)
+Language_es_PR=الأسبانية (بورتو ريكو)
+Language_fa_IR=اللغة الفارسية
+Language_hu_HU=المجري
+Language_ja_JP=اليابانية
+Language_ru_UA=الروسية (أوكرانيا)
+Language_sv_SE=السويدية
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:57:24).

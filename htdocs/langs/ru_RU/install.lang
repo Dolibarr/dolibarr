@@ -481,3 +481,11 @@ MigrationFinished=Миграция готового
 LastStepDesc=<strong>Последний шаг:</strong> Определить здесь Логин и пароль, которые вы планируете использовать для подключения к программному обеспечению. Как не потерять эту, как это внимание, чтобы управлять всеми другими.
 MigrationActioncommElement=Обновление данных о действиях
 // STOP - Lines generated via autotranslator.php tool (2011-08-27 16:59:19).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
+// Reference language: en_US -> ru_RU
+DatabasePrefix=Таблица базы данных префиксов
+ActivateModule=Активировать модуль %s
+MigrationPaymentMode=Миграция данных для оплаты режим
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:12).

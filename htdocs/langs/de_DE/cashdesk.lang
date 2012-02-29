@@ -1,0 +1,48 @@
+/*
+ * Language code: de_DE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 16:03:27
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+CHARSET=UTF-8
+CashDeskMenu=Verkaufsstelle
+CashDesk=Verkaufsstelle
+CashDesks=Point of Sales
+CashDeskBank=Bankkonto
+CashDeskBankCash=Bankverbindung (cash)
+CashDeskBankCB=Bankkonto (Karte)
+CashDeskBankCheque=Bankkonto (Scheck)
+CashDeskWarehouse=Lagerhaus
+CashdeskShowServices=Verkauf von Dienstleistungen
+CashDeskProducts=Produkte
+CashDeskStock=Lager
+CashDeskOn=auf
+CashDeskThirdParty=Dritter
+ShoppingCart=Einkaufswagen
+NewSell=Neu Verkaufen
+BackOffice=Back-Office
+AddThisArticle=Fügen Sie diesen Artikel
+RestartSelling=Gehen Sie zurück auf verkaufen
+SellFinished=Verkaufen fertig
+PrintTicket=Print Ticket
+NoResults=Keine Ergebnisse
+NoProductFound=Kein Artikel gefunden
+ProductFound=Produkt gefunden
+ProductsFound=Produkte gefunden
+NoArticle=Kein Artikel
+Identification=Identifikation
+Article=Artikel
+Difference=Unterschied
+TotalTicket=Insgesamt Ticket
+NoVAT=Keine Mehrwertsteuer für diesen Verkauf
+Change=Überschüssiges erhalten
+CalTip=Klicken Sie auf den Kalender
+CashDeskSetupStock=Du fragst, eine Bestandsaufnahme auf der Rechnung die Schöpfung, sondern für diese Lager zu verringern ist, wurde nicht definiert <br> Ändern Lager Modul Setup, oder wählen Sie eine Lagerhalle
+BankToPay=Kundenkonto
+ShowCompany=Zeige Unternehmen
+ShowStock=Zeige Lager
+DeleteArticle=Klicken Sie, um diesen Artikel zu entfernen
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:05:40).

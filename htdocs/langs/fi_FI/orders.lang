@@ -157,3 +157,18 @@ PDFQuevedoDescription=Täydellinen, jotta malli Espanjan RE ja IRPF
 // Reference language: en_US -> fi_FI
 DispatchSupplierOrder=Vastaanottaminen toimittaja järjestys %s
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:02).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+SuppliersOrdersToProcess=Toimittajan tilauksia käsitellä
+StatusOrderSentShort=Meneillään
+ShippingExist=Lähetys olemassa
+UnvalidateOrder=Unvalidate järjestys
+ConfirmUnvalidateOrder=Oletko varma että haluat palauttaa järjestyksen <b>%s</b> Luonnos-tilaan?
+OrderByMail=Posti
+OrderByFax=Faksin
+OrderByEMail=Sähköposti
+OrderByWWW=Online
+OrderByPhone=Puhelin
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:45).

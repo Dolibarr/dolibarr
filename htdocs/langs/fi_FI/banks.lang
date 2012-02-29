@@ -168,3 +168,10 @@ WithdrawalPayment=Irtisanominen maksu
 ShowCheckReceipt=Näytä tarkistaa Talletus kuitti
 Graph=Grafiikka
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 06:42:55).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+FutureTransaction=Tapahtuma on futur. Ei tapa lepyttää.
+SelectChequeTransactionAndGenerate=Valitse / suodattaa tarkastuksiin sisällyttää osaksi tarkastus talletuksen vastaanottamisesta ja klikkaa &quot;Luo&quot;.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:33).

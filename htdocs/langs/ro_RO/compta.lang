@@ -159,3 +159,26 @@ AddRemind=Expedierea Suma disponibilă
 RemainToDivide=Ramaneti la expediere:
 WarningDepositsNotIncluded=Depozitele facturile nu sunt incluse in aceasta versiune cu acest modul de contabilitate.
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 06:19:18).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+RemainingAmountPayment=Suma rămasă de plată:
+AmountToBeCharged=Suma totală pentru plata:
+LT2SummaryES=Balanţa IRPF
+LT2PaidES=IRPF plătit
+LT2CustomerES=IRPF de vânzări
+LT2SupplierES=IRPF achiziţii
+newLT2PaymentES=Nou IRPF plată
+LT2PaymentES=IRPF de plata
+LT2PaymentsES=IRPF Plăţi
+DepositsAreNotIncluded=- Facturile de depozit sunt nici nu sunt incluse
+DepositsAreIncluded=- Facturile de depozit sunt incluse
+LT2ReportByCustomersInInputOutputModeES=Raport de terţă parte IRPF
+RulesVATInServices=- Pentru servicii, raportul include reglementări de TVA efectiv primite sau emise pe baza de data plăţii. <br> - Pentru activele materiale, aceasta include TVA facturile pe baza de data facturii.
+RulesVATInProducts=- Pentru activele materiale, aceasta include TVA facturile pe baza de data facturii.
+RulesVATDueServices=- Pentru servicii, raportul include facturi TVA-ului datorat, plătite sau nu, în funcţie de data facturii.
+RulesVATDueProducts=- Pentru activele materiale, aceasta include facturi cu TVA, pe baza data facturii.
+ProposalStats=Statistici privind propunerile
+OrderStats=Statistici privind ordinele de
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:23:25).

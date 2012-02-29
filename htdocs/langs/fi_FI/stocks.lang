@@ -97,3 +97,13 @@ ConfirmDeleteWarehouse=Oletko varma että haluat poistaa varastoon <b>%s?</b>
 PersonalStock=Henkilökohtainen varastossa %s
 ThisWarehouseIsPersonalStock=Tämä varasto edustaa henkilökohtainen kanta %s %s
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:30).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+SellPriceMin=Myynnin Yksikköhinta
+EstimatedStockValueSellShort=Arvo myydä
+EstimatedStockValueSell=Arvo Myy
+SelectWarehouseForStockDecrease=Valitse varasto käyttää varastossa laskua
+SelectWarehouseForStockIncrease=Valitse varasto käyttää varastossa lisätä
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:46).

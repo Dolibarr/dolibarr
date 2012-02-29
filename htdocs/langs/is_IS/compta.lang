@@ -145,3 +145,27 @@ AddRemind=Senda boði fjárhæð
 RemainToDivide=Verið að senda:
 WarningDepositsNotIncluded=Innlán reikningar eru ekki með í þessari útgáfu með þessari endurskoðun áfanga.
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 05:58:52).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+LT2SummaryES=IRPF Efnahagsreikningur
+LT2PaidES=IRPF Greiddur
+LT2CustomerES=IRPF sölu
+LT2SupplierES=IRPF kaup
+newLT2PaymentES=Nýtt IRPF greiðslu
+LT2PaymentES=IRPF Greiðsla
+LT2PaymentsES=IRPF Greiðslur
+DepositsAreNotIncluded=- Innlánsstofnanir reikningar eru né með
+DepositsAreIncluded=- Innlánsstofnanir reikningar eru
+LT2ReportByCustomersInInputOutputModeES=Skýrsla um þriðja aðila IRPF
+RulesVATInServices=- Fyrir þjónustu, skýrsla inniheldur VSK reglur í raun fengið eða gefið út á grundvelli dagsetningu greiðslu. <br> - Fyrir eignir efni, nær það VSK reikninga á grundvelli dagsetningu reiknings.
+RulesVATInProducts=- Fyrir eignir efni, nær það VSK reikninga á grundvelli dagsetningu reiknings.
+RulesVATDueServices=- Fyrir þjónustu í skýrslunni eru VSK reikninga vegna, greitt eða ekki, byggt á dagsetningu reiknings.
+RulesVATDueProducts=- Fyrir eignir efni, nær það VSK reikninga, byggt á dagsetningu reiknings.
+OrderStats=Tölur um pantanir
+InvoiceStats=Tölur um reikninga
+SellsJournal=Sala Journal
+PurchasesJournal=Kaup Journal
+DescSellsJournal=Sala Journal
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:29).

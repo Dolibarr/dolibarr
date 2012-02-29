@@ -1274,3 +1274,31 @@ TestGeoIPResult = Test pretvorbe IP -> država
 ProjectsNumberingModules = Modul za številčenje projektov
 ProjectsSetup = Nastavitve modula za projekte
 ProjectsModelModule = Vzorec dokumenta poročila o projektih
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+WebUserGroup=Spletni strežnik uporabnik / skupina
+NoLockBeforeInsert=Ni zaklepanja ukazi okoli INSERT
+PDF=PDF
+PDFDesc=Nastavite lahko vsak globalne možnosti, povezanih z PDF generacije
+PDFAddressForging=Pravila oblikovati naslov polja
+HideAnyVATInformationOnPDF=Skrij vse informacije v zvezi z DDV za nastali PDF
+UrlGenerationParameters=Parametri za zagotovitev URL
+SecurityTokenIsUnique=Uporabite edinstven parameter securekey za vsako URL
+EnterRefToBuildUrl=Vnesite sklic za predmet %s
+GetSecuredUrl=Get izračuna URL
+Module105Name=Mailman in Sip
+Module105Desc=Mailman ali Spip vmesnik za modul člana
+SecurityEventsPurged=Varnostni dogodki očistimo
+ExtraFieldHasWrongValue=Pripišejo %s ima napačno vrednost.
+SendmailOptionMayHurtBuggedMTA=Funkcija za pošiljanje pošte z uporabo metode &quot;PHP mail DIRECT&quot; bo ustvarila poštno sporočilo, ki ga ni mogoče pravilno razčleniti z nekaterimi, ki so prejemali poštnih strežnikov. Posledica tega je, da so nekatere pošte ne berejo ljudje, ki jih gosti thoose bugged platforme. To je veljalo za nekaj internetnih ponudnikov (npr.: Orange v Franciji). To ni problem v Dolibarr niti v PHP, ampak na prejemanje poštni strežnik. Lahko pa dodate možnost MAIN_FIX_FOR_BUGGED_MTA 1. v setup - drugo spremeniti Dolibarr, da bi se temu izognili. Vendar pa lahko pride do težav z drugimi strežniki, ki spoštujejo strogo standardni SMTP. Druga rešitev (priporočile) je uporaba metode &quot;SMTP socket knjižnice&quot;, ki nima slabosti.
+CompanyIdProfChecker=Strokovno Id edinstven
+MustBeUnique=Mora biti edinstven?
+Miscellanous=Razno
+ServiceSetup=Storitve modul nastavitev
+ProductServiceSetup=Izdelki in storitve moduli za nastavitev
+ViewProductDescInThirdpartyLanguageAbility=Vizualizacija Poimenovanja izdelkov v thirdparty jeziku
+AccountancyCode=Računovodstvo zakonik
+MailmanSpipSetup=Mailman in namestitveni modul Spip
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:31:09).

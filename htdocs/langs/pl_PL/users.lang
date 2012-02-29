@@ -143,3 +143,12 @@ YourQuotaOfUsersIsReached=Limitu aktywnych użytkowników został osiągnięty!
 NbOfUsers=Nb użytkowników
 DontDowngradeSuperAdmin=Tylko superadmin niższej wersji superadmin
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:48:29).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+AdministratorDesc=Administratora podmiot
+UserWillBeInternalUser=Utworzony użytkownik będzie wewnętrzny użytkownik (ponieważ nie związane z konkretnym trzeciej)
+UserWillBeExternalUser=Utworzony użytkownik będzie zewnętrzny użytkownik (ponieważ związana z konkretnym trzeciej)
+UserLogoff=%s użytkownika wylogować
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:18:50).

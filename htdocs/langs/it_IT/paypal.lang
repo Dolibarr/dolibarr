@@ -30,3 +30,9 @@ PredefinedMailContentSendInvoiceWithPaypalLink=Troverete qui la fattura __FACREF
 // Reference language: en_US -> it_IT
 PAYPAL_IPN_MAIL_ADDRESS=Indirizzo e-mail per la notifica immediata del pagamento (IPN)
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 10:49:26).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+// Reference language: en_US -> it_IT
+YouAreCurrentlyInSandboxMode=Attualmente sei nella modalità &quot;sandbox&quot;
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:42).

@@ -123,3 +123,13 @@ SourceRequired=بيانات قيمة إلزامية
 SourceExample=مثال على قيمة البيانات ممكن
 CSVFormatDesc=<b>فاصلة فصل</b> ملف <b>القيمة</b> تنسيق (csv.). <br> هذا هو شكل ملف نصي ، حيث يتم فصل الحقول بواسطة فاصل [%s]. إذا تم العثور على فاصل داخل محتوى الحقل ، يتم تقريب الجولة الميدانية التي قام بها حرف] %s [. الهروب حرف وحرف الهروب جولة هو [%s].
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:17:48).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+FileWasImported=تم استيراد ملف مع <b>%s</b> عدد.
+DataComeFromIdFoundFromCodeId=وسيتم استخدام رمز الذي يأتي من حقل <b>%s</b> عدد من ملف المصدر الى العثور على معرف الكائن الأصل لاستخدام (وهكذا رمز من الملف المصدر يجب أن يوجد في <b>%s</b> dictionnary). لاحظ أنه إذا كنت تعرف هوية، يمكنك أيضا استخدامه في ملف مصدر بدلا من رمز. وينبغي العمل على الواردات في كلتا الحالتين.
+DataCodeIDSourceIsInsertedInto=معرف خط الأم وجدت من رمز، سيتم إدراجها في الحقل التالي:
+ExampleAnyRefFoundIntoElement=أي المرجع تم العثور عليها ل <b>%s</b> العنصر
+ExampleAnyCodeOrIdFoundIntoDictionnary=أي رمز (أو الهوية) وجدت في <b>%s</b> dictionnary
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:56:21).

@@ -183,3 +183,47 @@ DocForAllMembersCards=Generowanie wizytówek dla wszystkich członków (Format w
 DocForOneMemberCards=Generowanie wizytówki dla danego użytkownika (Format wyjściowy rzeczywiście setup: <b>%s)</b>
 DocForLabels=Generowanie arkuszy adres (Format wyjściowy rzeczywiście setup: <b>%s)</b>
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:25).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+MembersWithSubscriptionToReceive=Użytkownicy z subskrypcji otrzymują
+NewSubscriptionDesc=Ta forma pozwala na nagrywanie abonament jako nowy członek fundacji. Jeśli chcesz odnowić subskrypcję (jeśli jest już członkiem), prosimy o kontakt z Rady Fundacji zamiast e-mailem %s.
+BlankSubscriptionFormDesc=Dolibarr może zapewnić publiczny adres URL, aby osoby z zewnątrz, aby zapytać zapisać się do fundacji. Jeśli moduł płatności on-line jest włączona, forma płatności zostanie również automatycznie dostarczane.
+EnablePublicSubscriptionForm=Umożliwić społeczeństwu auto subskrypcji formularz
+ImportDataset_member_1=Użytkownicy
+LastSubscriptionsModified=Ostatnie %s zmodyfikowano zapisy
+GlobalConfigUsedIfNotDefined=Tekst określony w konfiguracji modułu Fundacji zostaną wykorzystane, jeśli nie zdefiniowano tutaj
+MayBeOverwrited=Ten tekst może być overwrited według wartości zdefiniowanej dla członka typu
+SubscriptionPayment=Płatność Subskrypcja
+LastSubscriptionDate=Ostatnia data abonament
+LastSubscriptionAmount=Ostatnio kwota subskrypcji
+MembersStatisticsByCountries=Użytkownicy statystyki według kraju
+MembersStatisticsByState=Użytkownicy statystyki na State / Province
+MembersStatisticsByTowne=Użytkownicy statystyki na miasto
+NbOfMembers=Liczba członków
+NoValidatedMemberYet=Żadna potwierdzona znaleziono użytkowników
+MembersByCountryDesc=Ten ekran pokaże statystyki członków przez poszczególne kraje. Graficzny zależy jednak na Google usługi online grafów i jest dostępna tylko wtedy, gdy połączenie internetowe działa.
+MembersByStateDesc=Ten ekran pokazać Wam statystyki członkom przez stan / prowincje / Kanton.
+MembersByTownDesc=Ten ekran pokaże statystyki członkom przez miasto.
+MembersStatisticsDesc=Wybierz statystyki chcesz czytać ...
+MenuMembersStats=Statystyka
+LastMemberDate=Ostatnia data członkiem
+Nature=Natura
+Public=Informacje są publiczne
+Exports=Eksport
+NewMemberbyWeb=Nowy członek dodaje. Oczekuje na zatwierdzenie
+NewMemberForm=Nowa forma członkiem
+SubscriptionsStatistics=Statystyki dotyczące subskrypcji
+NbOfSubscriptions=Liczba abonamentów
+AmountOfSubscriptions=Kwota abonamentu
+TurnoverOrBudget=Obrót (dla firmy) lub Budżet (na fundamencie)
+DefaultAmount=Domyślną kwotę abonamentu
+CanEditAmount=Użytkownik może wybrać / edytować kwotę swojej subskrypcji
+MEMBER_NEWFORM_PAYONLINE=Przejdź na zintegrowanej stronie płatności online
+Associations=Fundament
+Collectivités=Organizacje
+Particuliers=Osobisty
+Entreprises=Firmy
+DOLIBARRFOUNDATION_PAYMENT_FORM=Aby dokonać płatności abonamentu za pomocą przelewu bankowego, patrz strona <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe~~dobj</a> . <br> Aby zapłacić za pomocą karty kredytowej lub PayPal, kliknij przycisk na dole tej strony. <br>
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:20:34).

@@ -1315,3 +1315,20 @@ SecurityTokenIsUnique=Gebruik een unieke securekey parameter voor elke URL
 EnterRefToBuildUrl=Geef referentie voor object %s
 GetSecuredUrl=Get berekend URL
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 02:31:08).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
+// Reference language: en_US -> nl_NL
+WebUserGroup=Webserver gebruiker / groep
+NoLockBeforeInsert=Geen lock-opdrachten rond INSERT
+Module105Name=Mailman en Sip
+Module105Desc=Mailman of Spip-interface voor leden-module
+Permission50001=Gebruik Verkooppunten
+SecurityEventsPurged=Beveiliging gebeurtenissen verwijderd
+ExtraFieldHasWrongValue=Toe te schrijven %s heeft een verkeerde waarde.
+SendmailOptionMayHurtBuggedMTA=Feature om e-mails met behulp van methode &quot;PHP mail direct&quot; te sturen zal een e-mailbericht dat niet goed zou kunnen worden ontleed door sommige het ontvangen van e-mailservers. Resultaat is dat sommige mails niet kunnen worden gelezen door mensen gehost door thoose afgeluisterd platforms. Het is het geval voor sommige Internet providers (Ex: Orange in Frankrijk). Dit is geen probleem in Dolibarr noch in PHP, maar op het ontvangen van e-mailserver. U kunt de optie MAIN_FIX_FOR_BUGGED_MTA echter toe te voegen aan 1 in setup - andere om Dolibarr wijzigen om dit te voorkomen. Echter, kunnen er problemen met andere servers dat opzicht strikt de SMTP-standaard. De andere oplossing (aanbevolen) is het gebruik van de methode &quot;SMTP-socket bibliotheek&quot; dat er geen nadelen heeft.
+ServiceSetup=Services module setup
+ProductServiceSetup=Producten en Diensten modules setup
+ViewProductDescInThirdpartyLanguageAbility=Visualisatie van producten die beschrijvingen in de thirdparty taal
+MailmanSpipSetup=Mailman en Spip module Setup
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:12:32).

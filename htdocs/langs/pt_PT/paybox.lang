@@ -38,3 +38,18 @@ ToOfferALinkForOnlinePaymentOnMemberSubscription=URL para oferecer uma interface
 // Reference language: en_US -> pt_PT
 MessageKO=Mensagem na página de pagamento cancelado retorno
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:21:44).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+ToOfferALinkForOnlinePayment=URL para o pagamento %s
+YourPaymentHasBeenRecorded=Esta página confirma que o pagamento tenha sido gravada. Obrigado.
+YourPaymentHasNotBeenRecorded=Você o pagamento não tenha sido gravada e transação foi cancelada. Obrigado.
+AccountParameter=Conta parâmetros
+UsageParameter=Parâmetros de uso
+InformationToFindParameters=Ajuda para encontrar informações de sua conta %s
+PAYBOX_CGI_URL_V2=Url de Paybox módulo CGI para pagamento
+VendorName=Nome do fornecedor
+CSSUrlForPaymentForm=CSS url folha de estilo para forma de pagamento
+MessageOK=Mensagem na página validado o pagamento de retorno
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:07).

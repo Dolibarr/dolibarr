@@ -57,3 +57,10 @@ StatusInterInvoiced=Zapowiadane
 RelatedInterventions=Podobne interwencje
 ShowIntervention=Pokaż interwencji
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 05:26:57).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+ActionsOnFicheInter=Działania w zakresie interwencji
+ClassifyBilled=Klasyfikowanie &quot;Zapowiadane&quot;
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:18:35).

@@ -35,3 +35,11 @@ AddSupplierOrder=Δημιουργία παραγγελίας προμηθευτ�
 AddSupplierInvoice=Δημιουργία τιμολογίου προμηθευτή
 ListOfSupplierProductForSupplier=Λίστα προϊόντων και τιμών του προμηθευτή <b>%s</b>
 NoneOrBatchFileNeverRan=None or batch <b>%s</b> not ran recently
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+BuyingPriceMin=Ελάχιστη τιμή αγοράς
+BuyingPriceMinShort=Ελάχιστη τιμή για τις αγορές
+Availability=Διαθεσιμότητα
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:37).

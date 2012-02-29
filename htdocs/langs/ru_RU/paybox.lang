@@ -52,3 +52,9 @@ CSSUrlForPaymentForm=CSS-стилей URL для оплаты форме
 MessageOK=Сообщение на странице проверки возвращение оплаты
 MessageKO=Сообщение на странице отменен возврат оплаты
 // STOP - Lines generated via autotranslator.php tool (2011-08-27 17:00:26).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
+// Reference language: en_US -> ru_RU
+ToOfferALinkForOnlinePayment=URL-адрес для оплаты %s
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:13).

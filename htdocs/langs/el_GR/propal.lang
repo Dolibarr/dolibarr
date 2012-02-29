@@ -84,3 +84,22 @@ AvailabilityTypeAV_2W=2 εβδομάδες
 AvailabilityTypeAV_3W=3 εβδομάδες
 AvailabilityTypeAV_1M=1 μήνα
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:39:12).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+CopyPropalFrom=Δημιουργία εμπορική πρόταση με την αντιγραφή υφιστάμενη πρόταση
+CreateEmptyPropal=Δημιουργία κενών εμπορικών vierge προτάσεις ή από την λίστα των προϊόντων / υπηρεσιών
+DefaultProposalDurationValidity=Προεπιλογή εμπορική διάρκεια ισχύος πρόταση (σε ημέρες)
+UseCustomerContactAsPropalRecipientIfExist=Χρησιμοποιήστε διεύθυνση επικοινωνίας του πελάτη, εάν αυτή ορίζεται αντί του τρίτου μέρους διεύθυνση ως διεύθυνση παραλήπτη πρόταση
+ClonePropal=Κλώνος εμπορική πρόταση
+ConfirmClonePropal=Είστε βέβαιοι ότι θέλετε να κλωνοποιήσουν τα εμπορικά <b>%s</b> πρόταση;
+ConfirmReOpenProp=Είστε βέβαιοι ότι θέλετε να ανοίξετε ξανά τις εμπορικές <b>%s</b> πρόταση;
+ProposalsAndProposalsLines=Εμπορικές προτάσεις και γραμμές
+ProposalLine=Πρόταση γραμμή
+TypeContact_propal_internal_SALESREPFOLL=Εκπρόσωπος παρακολουθώντας πρόταση
+TypeContact_propal_external_BILLING=Πελάτης επαφή τιμολόγιο
+TypeContact_propal_external_CUSTOMER=Πελάτης επαφή την παρακολούθηση πρόταση
+DocModelAzurDescription=Ένα πλήρες μοντέλο πρόταση (logo. ..)
+DocModelJauneDescription=Jaune μοντέλο πρόταση
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:08:28).

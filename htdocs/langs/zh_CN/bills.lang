@@ -397,3 +397,24 @@ PlutonNumRefModelDesc1=返回一个可定制的发票号码，按确定的面具
 // Reference language: en_US -> zh_CN
 InvoiceReplacement=更换发票
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:53).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+BillsCustomer=客户的发票
+BillsSuppliersUnpaidForCompany=%s未付供应商的发票
+BillsLate=逾期付款
+DisabledBecauseNotErasable=禁用，因为不能被擦除
+ConfirmUnvalidateBill=你确定你要更改发票<b>%s</b>草案的地位吗？
+UnvalidateBill=Unvalidate发票
+NumberOfBillsByMonth=铌，按月发票
+AmountOfBillsByMonthHT=通过一个月的发票金额（税后）
+AddRelativeDiscount=建立相对折扣
+EditRelativelDiscount=编辑relatvie折扣
+EditGlobalDiscounts=编辑绝对折扣
+AddCreditNote=创建信用票据
+InvoiceNotChecked=选择无发票
+ShowUnpaidAll=显示所有未付发票
+ClosePaidInvoicesAutomatically=分类“支付最高”的所有entierely支付最高标准或更换发票。
+AllCompletelyPayedInvoiceWillBeClosed=所有发票仍然没有支付将被自动关闭状态“支付最高”。
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:38:07).

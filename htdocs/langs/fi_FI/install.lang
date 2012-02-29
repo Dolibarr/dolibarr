@@ -233,3 +233,11 @@ MigrationFinished=Muuttoliike valmis
 LastStepDesc=<strong>Viimeinen askel:</strong> Määritä tässä käyttäjätunnuksen ja salasanan aiot käyttää yhteyden ohjelmisto. Älä löysä tämä on tilin hallinnoida kaikkia muita.
 MigrationActioncommElement=Päivitä tiedot toimista
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 09:42:43).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+DatabasePrefix=Tietokanta etuliite pöytä
+ActivateModule=Aktivoi moduuli %s
+MigrationPaymentMode=Tiedot muuttoliike maksua tilassa
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:36).

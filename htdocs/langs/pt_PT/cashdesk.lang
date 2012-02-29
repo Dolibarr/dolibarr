@@ -1,0 +1,48 @@
+/*
+ * Language code: pt_PT
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 15:45:52
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+CHARSET=UTF-8
+CashDeskMenu=Ponto de venda
+CashDesk=Ponto de venda
+CashDesks=Ponto de vendas
+CashDeskBank=Conta bancária
+CashDeskBankCash=Conta bancária (dinheiro)
+CashDeskBankCB=Conta bancária (cartão)
+CashDeskBankCheque=Conta bancária (cheque)
+CashDeskWarehouse=Armazém
+CashdeskShowServices=Venda de serviços
+CashDeskProducts=Produtos
+CashDeskStock=Estoque
+CashDeskOn=em
+CashDeskThirdParty=Terceiro
+ShoppingCart=Carrinho de compras
+NewSell=Sell ​​Nova
+BackOffice=Back office
+AddThisArticle=Adicionar este artigo
+RestartSelling=Volte em vender
+SellFinished=Vender terminou
+PrintTicket=Bilhete de impressão
+NoResults=Nenhum resultado
+NoProductFound=Nenhum artigo encontrado
+ProductFound=produto encontrado
+ProductsFound=produtos encontrados
+NoArticle=No article
+Identification=Identificação
+Article=Artigo
+Difference=Diferença
+TotalTicket=Total do bilhete
+NoVAT=Sem IVA para esta venda
+Change=Excesso recebeu
+CalTip=Clique para ver o calendário
+CashDeskSetupStock=Você pede para diminuir ações na criação de factura, mas armazém para isso é não foi definida <br> Alterar a configuração do módulo de estoque, ou escolher um armazém
+BankToPay=Conta corrente
+ShowCompany=Mostrar empresa
+ShowStock=Mostrar armazém
+DeleteArticle=Clique para remover este artigo
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:48:09).

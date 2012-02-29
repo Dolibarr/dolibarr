@@ -98,3 +98,13 @@ TypeContact_project_task_internal_CONTRIBUTOR=Framlög
 TypeContact_project_task_external_CONTRIBUTOR=Framlög
 DocumentModelBaleine=skýrslu lýkur verkefninu er líkan (logo. ..)
 // STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+TimesSpent=Tími
+TaskIsNotAffectedToYou=Verkefni úthlutað ekki við þig
+ErrorTimeSpentIsEmpty=Tími er tómur
+ThisWillAlsoRemoveTasks=Þessi aðgerð mun einnig eyða öllum verkefnum verkefnisins <b>(%s</b> verkefni í augnablikinu) og allt inntak tíma varið.
+IfNeedToUseOhterObjectKeepEmpty=Ef sumir hlutir (nótum röð ...), sem tilheyra öðrum þriðja aðila, verður að vera í tengslum við verkefnið til að búa til, halda þessu tóm til að hafa verkefni verði fjölnota þriðja aðila.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:29:00).

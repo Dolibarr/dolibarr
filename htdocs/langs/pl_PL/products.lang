@@ -190,3 +190,15 @@ NewRefForClone=Ref. nowych produktów / usług
 CustomerPrices=Klientów cenami
 SuppliersPrices=Dostawcy cen
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:23).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+ParentProductsNumber=Ilość produktu nadrzędnego
+ProductParentList=Lista produktów / usług z tego produktu jako składnika
+ImportDataset_produit_1=Produkty
+ImportDataset_service_1=Usługi
+CustomCode=Kodeks Celny
+CountryOrigin=Kraj pochodzenia
+HiddenIntoCombo=Ukryty na listach wyboru
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:19:00).

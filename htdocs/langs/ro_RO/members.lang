@@ -186,3 +186,47 @@ DocForAllMembersCards=carti de vizita Generaţi pentru toţi membrii (Format pen
 DocForOneMemberCards=Generaţi cărţi de vizită pentru un anumit membru (Format pentru producţia de fapt setup: <b>%s)</b>
 DocForLabels=Generaţi adresa foi (Format pentru producţia de fapt setup: <b>%s)</b>
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:32).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+MembersWithSubscriptionToReceive=Membrii cu abonament pentru a primi
+NewSubscriptionDesc=Acest formular vă permite să înregistraţi abonament ca un membru nou al Fundaţiei. Dacă doriţi să reînnoiţi abonamentul dumneavoastră (dacă este deja un membru), vă rugăm să contactaţi Fundaţia bord în locul de %s de e-mail.
+BlankSubscriptionFormDesc=Dolibarr poate oferi un URL publicului pentru a permite vizitatorilor externe pentru a cere să se aboneze la fundaţie. Dacă un modul de plata online este activat, un formular de plată va fi, de asemenea, furnizate în mod automat.
+EnablePublicSubscriptionForm=Permite publicului Auto-abonament formă
+ImportDataset_member_1=Membrii
+LastSubscriptionsModified=%s Ultima modificare abonamente
+GlobalConfigUsedIfNotDefined=Textul este definit în modulul de configurare, Fundaţia va fi utilizat în cazul în care nu este definit aici
+MayBeOverwrited=Acest text poate fi overwrited de valoare definite pentru tipul de membru
+SubscriptionPayment=Abonament de plată
+LastSubscriptionDate=Ultima data de abonament
+LastSubscriptionAmount=Ultima sumă abonament
+MembersStatisticsByCountries=Membri statisticilor în funcţie de ţară
+MembersStatisticsByState=Statistici Membri de stat / provincie
+MembersStatisticsByTowne=Statistici Membri de oraş
+NbOfMembers=Număr de membri
+NoValidatedMemberYet=Nici membrii validate găsit
+MembersByCountryDesc=Acest ecran vă arată statisticile cu privire la membrii de ţări. Graphic depinde de toate acestea, cu privire la serviciul on-line Google grafic şi este disponibil numai în cazul în care o conexiune la internet este este de lucru.
+MembersByStateDesc=Acest ecran vă arată statisticile cu privire la membrii de către stat / provincie / Canton.
+MembersByTownDesc=Acest ecran vă arată statisticile cu privire la membrii de oraş.
+MembersStatisticsDesc=Alege statisticile pe care doriţi să citiţi ...
+MenuMembersStats=Statistică
+LastMemberDate=Ultima data membru
+Nature=Natură
+Public=Informaţii sunt publice
+Exports=Exporturile
+NewMemberbyWeb=Membru nou adăugat. În aşteptarea aprobării
+NewMemberForm=Membru nou formular
+SubscriptionsStatistics=Statistici privind abonamentele
+NbOfSubscriptions=Numărul de abonamente
+AmountOfSubscriptions=Suma de abonamente
+TurnoverOrBudget=Cifra de afaceri (pentru o companie), sau de la bugetul (pentru o fundaţie)
+DefaultAmount=Valoarea standard de abonament
+CanEditAmount=Vizitator poate alege / modifica valoarea din subscrierea sa
+MEMBER_NEWFORM_PAYONLINE=Sari de pe pagina de plata online integrat
+Associations=Fundaţii
+Collectivités=Organizaţii
+Particuliers=Personal
+Entreprises=Companii
+DOLIBARRFOUNDATION_PAYMENT_FORM=Pentru a face plata abonamentului folosind un transfer bancar, a se vedea pagina <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Pentru a plăti cu un card de credit sau Paypal, faceţi clic pe butonul de la partea de jos a acestei pagini. <br>
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:26:10).

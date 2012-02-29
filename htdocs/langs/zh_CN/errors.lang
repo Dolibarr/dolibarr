@@ -98,3 +98,30 @@ ErrorLoginHasNoEmail=这位用户没有电子邮件地址。进程中止。
 ErrorBadValueForCode=代码有错误的值类型。再次尝试以新的价值...
 WarningInstallDirExists=警告，安装目录<b>（htdocs中/安装</b> ）依然存在。这是一个严重的安全漏洞。您应该删除它尽快。
 WarningUntilDirRemoved=所有安全警告（可见由管理员用户只）将保持活跃，只要是存在的脆弱性（或常数MAIN_REMOVE_INSTALL_WARNING是在安装程序->其他设置添加）。
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+ErrorFailToCopyFile=无法复制文件<b>'%s'</b>成<b>'%s'。</b>
+ErrorFailToRenameFile=无法重新命名为<b>“%s'</b>文件<b>'%s'。</b>
+ErrorBadValueForParameter=错误值“参数不正确”%s %s'“
+ErrorBadImageFormat=图像文件有不支持的格式
+ErrorBadDateFormat=值“%s”有错误的日期格式
+ErrorSizeTooLongForIntType=尺寸int类型的长（%s最大位数）
+ErrorSizeTooLongForVarcharType=尺寸长字符串类型（%s字符最大）
+ErrorContactEMail=一个技术性错误发生。请联系管理员，以下连接提供错误代码<b>%s</b>在您的邮件，甚至更好，加入了这个页面的屏幕拷贝的电子邮件<b>%s。</b>
+ErrorFieldValueNotIn=场数<b>%s</b>错误值（值<b>'%s'</b>是不是一个值到领域表<b>%s %s）</b>
+ErrorFieldRefNotIn=错场数<b>%s</b>值（值<b>'%s'</b>是不是一个的<b>%s</b>现有文献）
+ErrorModuleSetupNotComplete=模块设置，看起来是uncomplete的。进入设置 - 模块来完成。
+ErrorBadMask=在面具的错误
+ErrorBadMaskFailedToLocatePosOfSequence=没有序列号错误，面具
+ErrorBadMaskBadRazMonth=错误，坏的复位值
+ErrorSelectAtLeastOne=错误。选择至少一个条目。
+ErrorProductWithRefNotExist=参考<i>“%s”</i>产品不存在
+ErrorDeleteNotPossibleLineIsConsolidated=删除没有可能的，因为记录是调解到的银行transation，
+ErrorProdIdAlreadyExist=%s被分配到另一个第三
+ErrorFailedToLoadRSSFile=未能得到RSS提要。尝试添加恒定MAIN_SIMPLEXMLLOAD_DEBUG，如果错误消息不提供足够的信息。
+ErrorBothFieldCantBeNegative=领域的%s及%s可以不消极
+ErrorWebServerUserHasNotPermission=<b>%s</b>用来执行Web服务器用户帐户没有该权限
+ErrorNoActivatedBarcode=没有激活的条码类型
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:38:00).

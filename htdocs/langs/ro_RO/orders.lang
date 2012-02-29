@@ -158,3 +158,18 @@ PDFQuevedoDescription=Un model complet cu scopul de spaniolă RE şi IRPF
 // Reference language: en_US -> ro_RO
 DispatchSupplierOrder=Primirea comenzii furnizorul %s
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:24).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+SuppliersOrdersToProcess=Furnizorului de ordine pentru a prelucra
+StatusOrderSentShort=În procesul de
+ShippingExist=Un transport există
+UnvalidateOrder=Unvalidate pentru
+ConfirmUnvalidateOrder=Sunteţi sigur că doriţi să restauraţi <b>%s</b> de ordine la statutul de proiect?
+OrderByMail=Poştă
+OrderByFax=Fax
+OrderByEMail=EMail
+OrderByWWW=Online
+OrderByPhone=Telefon
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:30).

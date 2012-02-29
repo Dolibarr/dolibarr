@@ -53,3 +53,11 @@ NoneOrBatchFileNeverRan=Nessuno o batch file <b>%s</b> non eseguito di recente
 // Reference language: en_US
 ReferenceSupplierIsAlreadyAssociatedWithAProduct=Il fornitore di riferimento è già associato a un riferimento: %s
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:33:08).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+// Reference language: en_US -> it_IT
+BuyingPriceMin=Prezzo minimo di acquisto
+BuyingPriceMinShort=Min prezzo d'acquisto
+Availability=Disponibilità
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:55).

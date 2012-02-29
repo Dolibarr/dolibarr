@@ -1,0 +1,62 @@
+/*
+ * Language code: de_DE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 16:03:27
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+CHARSET=UTF-8
+Sms=Sms
+SmsSetup=SMS-Setup
+SmsDesc=Diese Seite ermöglicht es Ihnen, globals Optionen auf SMS-Funktionen definieren
+SmsCard=SMS-Karte
+AllSms=Alle SMS campains
+SmsTargets=Ziele
+SmsRecipients=Ziele
+SmsRecipient=Ziel
+SmsTitle=Beschreibung
+SmsFrom=Absender
+SmsTo=Ziel
+SmsTopic=Thema des SMS
+SmsText=Nachricht
+SmsMessage=SMS-Nachricht
+ShowSms=Zeige Sms
+ListOfSms=Liste SMS campains
+NewSms=Neuer SMS-Kampagne
+EditSms=Bearbeiten Sms
+ResetSms=Neuen sendenden
+DeleteSms=SMS löschen Kampagne
+DeleteASms=Entfernen Sie eine Sms Kampagne
+PreviewSms=Previuw Sms
+PrepareSms=Bereiten Sie Sms
+CreateSms=SMS erstellen
+SmsResult=Ergebnis der SMS-Versand
+TestSms=Test-SMS
+ValidSms=Bestätigen Sms
+ApproveSms=Genehmigen Sms
+SmsStatusDraft=Entwurf
+SmsStatusValidated=Validierte
+SmsStatusApproved=Genehmigt
+SmsStatusSent=Sent
+SmsStatusSentPartialy=Gesendet teilweise
+SmsStatusSentCompletely=Gesendet vollständig
+SmsStatusError=Fehler
+SmsStatusNotSent=Nicht gesendet
+SmsSuccessfulySent=Sms richtig geschickt werden (von %s zu %s)
+ErrorSmsRecipientIsEmpty=Anzahl der Target ist leer
+WarningNoSmsAdded=Keine neuen Rufnummer an, um Target-Liste hinzufügen
+ConfirmValidSms=Können Sie bestätigen, Validierung dieser Kampagne?
+ConfirmResetMailing=Achtung, wenn Sie eine Sms von reinit Kampagne <b>%s</b> machen, wird es Ihnen ermöglichen, einen Massenversand von es ein zweites Mal machen. Ist es wirklich, was du tun WAN?
+ConfirmDeleteMailing=Bestätigen Sie das Entfernen der Kampagne?
+NbOfRecipients=Anzahl der Ziele
+NbOfUniqueSms=Nb dof einzigartig Telefonnummern
+NbOfSms=Nbre von phon Zahlen
+ThisIsATestMessage=Dies ist eine Testnachricht
+SendSms=Senden Sie eine SMS
+SmsInfoCharRemain=Nb der verbleibenden Zeichen
+SmsInfoNumero=(Dh internationale Format: 33899701761)
+DelayBeforeSending=Verzögerung vor dem Senden (Minuten)
+SmsNoPossibleRecipientFound=Kein Ziel zur Verfügung. Überprüfen Sie Setup von Ihrem SMS-Anbieter.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:04:30).

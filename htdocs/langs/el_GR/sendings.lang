@@ -69,3 +69,9 @@ DocumentModelSirocco=Απλό μοντέλο έγγραφο για αποδει�
 DocumentModelTyphon=Πληρέστερη πρότυπο έγγραφο για αποδεικτικά παράδοσης (logo. ..)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Σταθερή EXPEDITION_ADDON_NUMBER δεν ορίζεται
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:39:51).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+ShipmentCreationIsDoneFromOrder=Προς το παρόν, η δημιουργία ενός νέου αποστολή γίνεται από την κάρτα τάξη.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:08:36).

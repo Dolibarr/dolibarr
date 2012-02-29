@@ -240,3 +240,11 @@ MigrationFinished=Migrazione finito
 LastStepDesc=<strong>Ultimo passo:</strong> definire qui login e password si prevede di utilizzare per la connessione al software. Non fanno perdere questa in quanto è il conto per permettere di amministrare tutti gli altri.
 MigrationActioncommElement=Aggiornare i dati sulle azioni
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:45).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+// Reference language: en_US -> it_IT
+DatabasePrefix=Prefisso delle tabelle del database
+ActivateModule=Attiva %s modulo
+MigrationPaymentMode=Migrazione dei dati per la modalità di pagamento
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:42).

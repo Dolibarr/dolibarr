@@ -241,3 +241,19 @@ StartUpload=Avviare il caricamento
 CancelUpload=Cancella il caricamento
 FileIsTooBig=File è troppo grande
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 03:52:35).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+// Reference language: en_US -> it_IT
+Notify_BILL_SUPPLIER_PAYED=Fattura del fornitore pagato
+Notify_BILL_SUPPLIER_SENTBYMAIL=Fornitore fattura inviata per posta
+Notify_CONTRACT_VALIDATE=Contratto convalidato
+Notify_FICHEINTER_VALIDATE=Intervento convalidato
+Notify_SHIPPING_VALIDATE=Spedizione convalidato
+Notify_SHIPPING_SENTBYMAIL=Spese di spedizione inviate per posta
+PredefinedMailContentSendInvoice=Troverete qui il __ fattura FACREF__ \n\n Sinceramente \n\n
+PredefinedMailContentSendInvoiceReminder=Vorremmo mettere in guardia che il FACREF__ __ fattura sembra non essere pagato. Quindi questa è la fattura in allegato di nuovo, come un promemoria. \n\n Sinceramente \n\n
+PredefinedMailContentSendProposal=Troverete qui il __ commerciale propoal PROPREF__ \n\n Sinceramente \n\n
+PredefinedMailContentSendOrder=Troverete qui l'ordine __ ORDERREF__ \n\n Sinceramente \n\n
+ShipmentValidatedInDolibarr=%s spedizione convalidato in Dolibarr
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:35).

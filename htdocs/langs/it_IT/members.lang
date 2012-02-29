@@ -213,3 +213,21 @@ SubscriptionsStatistics=Le statistiche sugli abbonamenti
 NbOfSubscriptions=Numero di abbonamenti
 AmountOfSubscriptions=Importo pari alle sottoscrizioni
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:53:00).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+// Reference language: en_US -> it_IT
+NewSubscriptionDesc=Questo modulo consente di registrare l'abbonamento come nuovo membro della fondazione. Se si desidera rinnovare l'abbonamento (se già iscritto), si prega di contattare il consiglio di fondazione invece da %s e-mail.
+BlankSubscriptionFormDesc=Dolibarr in grado di fornire un URL pubblico per permettere ai visitatori esterni per chiedere di iscriversi alla fondazione. Se un modulo di pagamento online è attivata, una forma di pagamento saranno fornite automaticamente.
+EnablePublicSubscriptionForm=Consentire al pubblico auto-Modulo di sottoscrizione
+LastSubscriptionsModified=%s Ultima modifica abbonamenti
+TurnoverOrBudget=Fatturato (per un'azienda) o Budget (per una fondazione)
+DefaultAmount=Quantità predefinita di sottoscrizione
+CanEditAmount=I visitatori possono scegliere / modificare le quantità della propria quota
+MEMBER_NEWFORM_PAYONLINE=Saltate sulla integrato pagina di pagamento on-line
+Associations=Fondazioni
+Collectivités=Organizzazioni
+Particuliers=Personale
+Entreprises=Aziende
+DOLIBARRFOUNDATION_PAYMENT_FORM=Per effettuare il pagamento iscrizione tramite bonifico bancario, vedere a pagina <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Per pagare con una carta di credito o Paypal, fare clic sul pulsante in fondo a questa pagina. <br>
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:33:33).

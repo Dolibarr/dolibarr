@@ -122,3 +122,12 @@ SourceExample=Olası veri değeri örneği
 FileWasImported=Dosya numarası <b>%s</b> ile ithal edilmiştir.
 CSVFormatDesc=<b>Virgülle Ayrılmış</b> (csv) <b>Değer</b> dosya biçimi. <br> Bu alanlar ayırıcı ile ayrılmış bir metin dosyası biçiminde [%s]. Ayırıcı bir alan içerik içinde bulunursa, alan yuvarlak karakteri ile yuvarlanır [%s]. Yuvarlak karakteri kaçmak için karakter Kaçış [%s].
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 13:40:48).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
+// Reference language: en_US -> tr_TR
+DataComeFromIdFoundFromCodeId=Kaynak dosyanın alan numarası <b>%s</b> gelir Kodu (Yani kaynak dosyadan kod dictionnary <b>%s</b> içine mutlaka olmalıdır) kullanmak için üst nesnenin kimliği bulmak için kullanılacaktır. Id biliyorsanız, ayrıca kodu yerine kaynak dosyası içine kullanabileceğinizi unutmayın. İthalat her iki durumda da çalışması gerekir.
+DataCodeIDSourceIsInsertedInto=Kodundan bulundu ebeveyn hattı kimliği, aşağıdaki alana eklenecektir:
+ExampleAnyRefFoundIntoElement=Herhangi bir ref elemanı <b>%s</b> bulundu
+ExampleAnyCodeOrIdFoundIntoDictionnary=Herhangi bir kodu (veya id) dictionnary <b>%s</b> içine bulundu
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:36:14).

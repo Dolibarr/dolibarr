@@ -375,3 +375,17 @@ InActivity=Açık
 ActivityCeased=Kapalı
 ActivityStateFilter=Faaliyet durumu
 // STOP - Lines generated via autotranslator.php tool (2011-10-09 14:02:46).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
+// Reference language: en_US -> tr_TR
+CountryId=Ülke id
+#ProfId1BR=CNAE
+#ProfId2BR=CNPJ
+#ProfId3BR=CPF
+#ProfId4BR=INSS
+#ProfId5BR=IE
+#ProfId6BR=Sohbet
+EditContact=İletişim / adresini düzenleyin
+ImportDataset_company_2=Rehber (thirdparties veya değil) ve özellikleri
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:36:55).

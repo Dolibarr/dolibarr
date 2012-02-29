@@ -213,3 +213,14 @@ MigrationFinished=迁移完成
 LastStepDesc=<strong>最后一步</strong> ：此处定义的登录名和密码，您打算使用连接到软件。不松，因为它是帐户管理所有其他。
 MigrationActioncommElement=在行动上的更新数据
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 10:35:24).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+ConfFileReload=重新载入配置文件的所有信息。
+WarningPHPVersionTooLow=PHP版本太旧。预计或以上版本%s。这个版本应该允许安装，但不支持。
+DatabasePrefix=数据库前缀表
+KeepDefaultValuesProxmox=您使用Proxmox的虚拟设备的Dolibarr安装向导，因此，这里提出的价值已经优化。改变他们，只有当你知道你做什么。
+ActivateModule=激活模块%s
+MigrationPaymentMode=付款方式的数据迁移
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:27).

@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-11 19:09:12
  */
@@ -125,3 +125,10 @@ UserLogoff=Benutzer %s logout
 NbOfUsers=Nb von Benutzern
 DontDowngradeSuperAdmin=Nur ein Superadmin kann ein Downgrade superadmin
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:32:05).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+AdministratorDesc=Administrator-Einheit
+UserWillBeInternalUser=Erstellt Nutzer wird ein interner Benutzer sein (weil nicht an einen bestimmten Dritten verlinkt)
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:45).

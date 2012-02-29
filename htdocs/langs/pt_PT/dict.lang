@@ -299,3 +299,11 @@ DemandReasonTypeSRC_CAMP_MAIL=Campanha de mala direta
 DemandReasonTypeSRC_CAMP_EMAIL=E-mail da campanha
 DemandReasonTypeSRC_CAMP_PHO=Campanha de telefone
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 08:51:26).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+DemandReasonTypeSRC_CAMP_FAX=Campanha Fax
+DemandReasonTypeSRC_COMM=Contato comercial
+DemandReasonTypeSRC_SHOP=Loja contato
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:00).

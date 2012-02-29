@@ -135,3 +135,14 @@ YourRole=Dvs. de roluri
 YourQuotaOfUsersIsReached=Cota dvs. de utilizatori activi este atins!
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:36:54).
 
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+AdministratorDesc=Administrator de entitate
+UserWillBeInternalUser=De utilizator creat va fi un utilizator intern (pentru că nu este legată de o parte terţă)
+UserWillBeExternalUser=De utilizator creat va fi un utilizator extern (deoarece legat de un terţ special)
+UserLogoff=%s utilizator logout
+NbOfUsers=NB de utilizatori
+DontDowngradeSuperAdmin=Numai un superadmin poate declasa un superadmin
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:27).

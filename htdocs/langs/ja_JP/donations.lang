@@ -1,0 +1,36 @@
+/*
+ * Language code: ja_JP
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 16:41:06
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
+// Reference language: en_US -> ja_JP
+CHARSET=UTF-8
+Donation=寄付
+Donations=寄付
+Donor=ドナー
+Donors=ドナー
+AddDonation=寄付を追加します。
+NewDonation=新しい寄付
+DonationPromise=ギフト約束
+PromisesNotValid=検証されていない約束
+PromisesValid=検証の約束
+DonationsPaid=支払った寄付金
+DonationsReceived=寄付金は、受信した
+PublicDonation=義援金
+DonationsNumber=寄付番号
+DonationsArea=寄付のエリア
+DonationStatusPromiseNotValidated=ドラフトの約束
+DonationStatusPromiseValidated=検証約束
+DonationStatusPaid=寄付は、受信した
+DonationStatusPromiseNotValidatedShort=ドラフト
+DonationStatusPromiseValidatedShort=検証
+DonationStatusPaidShort=受信された
+ValidPromess=約束を検証する
+BuildDonationReceipt=領収書を構築する
+DonationsModels=寄付金の領収書のドキュメントモデル
+LastModifiedDonations=最後%sは寄付を変更
+SearchADonation=寄付を検索
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:00:20).

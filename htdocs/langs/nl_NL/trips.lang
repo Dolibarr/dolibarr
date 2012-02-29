@@ -25,3 +25,9 @@ ListTripsAndExpenses = Lijst van de reis- en onkosten
 // Reference language: en_US -> nl_NL
 SearchATripAndExpense=Zoek een reis en kosten
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 01:41:40).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
+// Reference language: en_US -> nl_NL
+ExpensesArea=Trips en uitgaven gebied
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:12:02).

@@ -171,3 +171,15 @@ NewRefForClone=Ref. av ny produkt / tjänst
 CustomerPrices=Kunder priser
 SuppliersPrices=Leverantörer priser
 // STOP - Lines generated via autotranslator.php tool (2010-08-27 08:49:55).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+ParentProductsNumber=Antal förälder produkt
+ProductParentList=Förteckning över produkter och tjänster med denna produkt som en komponent
+ImportDataset_produit_1=Produkter
+ImportDataset_service_1=Tjänster
+CustomCode=Tullkodex
+CountryOrigin=Ursprungsland
+HiddenIntoCombo=Dold i vissa utvalda listor
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:32).

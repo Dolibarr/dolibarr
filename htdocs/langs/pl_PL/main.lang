@@ -616,3 +616,63 @@ Resources=Zasoby
 Source=Źródło
 Prefix=Przedrostek
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:55:02).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+FormatDateShortJQuery=dd/mm/yy
+AddLink=Dodaj link
+Of=z
+SearchOf=Szukaj
+AmountByMonth=Kwota, o miesiąc
+DatePayment=Data płatności
+TeraBytes=Terabajtów
+Tb=Tb
+LT1ES=RE
+LT2ES=IRPF
+OtherStatistics=Inne statystyki
+ActionNotApplicable=Nie dotyczy
+ActionsOnMember=Wydarzenia O tego użytkownika
+JanuaryMin=Jan
+FebruaryMin=Luty
+MarchMin=Mar
+AprilMin=Kwietnia
+MayMin=Maj
+JuneMin=Czerwca
+JulyMin=Lipca
+AugustMin=Sierpnia
+SeptemberMin=Września
+OctoberMin=Października
+NovemberMin=Listopada
+DecemberMin=Grudzień
+CoreErrorTitle=Błąd systemu
+CoreErrorMessage=Przepraszamy, wystąpił błąd. Sprawdź dzienniki lub skontaktuj się z administratorem systemu.
+Before=Przed
+After=Po
+IPAddress=Adres IP
+Frequency=Częstotliwość
+IM=Komunikatory
+NewAttribute=Nowy atrybut
+AttributeCode=Kod atrybut
+OptionalFieldsSetup=Dodatkowa konfiguracja atrybutów
+URLPhoto=Url zdjęciem / logo
+SetLinkToThirdParty=Link do innych stron trzecich
+CreateDraft=Utwórz projekt
+ClickToEdit=Kliknij, aby edytować
+ObjectDeleted=%s obiekt usunięty
+ByCountry=Według kraju
+ByTown=Przez miasto
+ByDate=Według daty
+ByMonthYear=Przez miesiąc / rok
+ByYear=Przez rok
+ByMonth=przez miesiąc
+ByDay=Na dzień
+BySalesRepresentative=Przez przedstawiciela handlowego
+MondayMin=Mo
+TuesdayMin=Tu
+WednesdayMin=My
+ThursdayMin=Th
+FridayMin=O.
+SaturdayMin=Sa
+SundayMin=Ni
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:20:57).

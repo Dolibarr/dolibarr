@@ -45,3 +45,11 @@ NoneOrBatchFileNeverRan=Nenhum lote <b>ou %s</b> não executou recentemente
 // Reference language: en_US -> pt_PT
 ReferenceSupplierIsAlreadyAssociatedWithAProduct=Este fornecedor de referência já está associado com uma referência: %s
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:33).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+BuyingPriceMin=Preço de compra mínimo
+BuyingPriceMinShort=Preço de compra Min
+Availability=Disponibilidade
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:38).

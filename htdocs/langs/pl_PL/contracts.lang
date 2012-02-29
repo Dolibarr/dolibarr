@@ -114,3 +114,10 @@ ExpiredSince=Data ważności
 // Reference language: en_US -> pl_PL
 RelatedContracts=Związane z nimi umowy
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:49).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+NoExpiredServices=Nie minął aktywne usługi
+Error_CONTRACT_ADDON_NotDefined=Stała CONTRACT_ADDON nie zdefiniowano
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:18:47).

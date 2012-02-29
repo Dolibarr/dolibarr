@@ -101,3 +101,29 @@ ErrorBadValueForCode=Valor incorrecto para o código. volte a 	tentar com um Nov
 ErrorFileIsInfectedWith=Este Ficheiro está infectado por %s
 WarningInstallDirExists=Atenção: a pasta install (%s) ainda existe. uma vez concluida a Instalação a sua presença não é necessário, e representa um falho serio de segurança. Debería eliminarla lo antes possivel.
 WarningUntilDirRemoved=Esta alerta seguirá activa mientras a pasta exista (alerta visivel para Os Utilizadores admin somente).
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+ErrorFailToCopyFile=Falha ao copiar <b>&quot;%s&quot;</b> arquivo para <b>&quot;%s&quot;.</b>
+ErrorFailToRenameFile=Falha ao renomear <b>&quot;%s&quot;</b> arquivo para <b>&quot;%s&quot;.</b>
+ErrorBadValueForParameter=&quot;%s&quot; valor incorreto para parâmetro incorreto dos %s dos
+ErrorBadImageFormat=Arquivo de imagem não tem um formato suportado
+ErrorBadDateFormat=&quot;%s&quot; Valor tem formato de data errado
+ErrorSizeTooLongForIntType=Tamanho demasiado longo para o tipo int (%s máximo dígitos)
+ErrorSizeTooLongForVarcharType=Tamanho demasiado longo para o tipo string (%s máximo chars)
+ErrorContactEMail=Um erro técnico ocorreu. Por favor, contate o administrador para seguir <b>%s</b> e-mail en fornecer os <b>%s</b> código de erro na sua mensagem, ou melhor ainda pela adição de uma cópia de tela da página.
+ErrorFieldValueNotIn=Valor errado para <b>%s</b> campo de número <b>(&quot;%s&quot;</b> de valor não é um valor disponível em <b>%s %s</b> campo de tabela)
+ErrorFieldRefNotIn=Valor errado para <b>%s</b> número de campo <b>(&quot;%s&quot;</b> valor não é um ref <b>%s</b> existente)
+ErrorModuleSetupNotComplete=Instalação do módulo parece ser incompleto. Vá em Setup - Módulos para ser concluído.
+ErrorBadMask=Erro na máscara
+ErrorBadMaskFailedToLocatePosOfSequence=Máscara de erro, sem número de seqüência
+ErrorBadMaskBadRazMonth=Erro, o valor de reset ruim
+ErrorSelectAtLeastOne=Erro. Selecione pelo menos uma entrada.
+ErrorProductWithRefNotExist=Produto com <i>&quot;%s&quot;</i> de referência não existem
+ErrorDeleteNotPossibleLineIsConsolidated=Excluir registro não é possível porque está ligada a um banco transation que é conciliada
+ErrorProdIdAlreadyExist=%s é atribuído a um terço
+ErrorFailedToLoadRSSFile=Falha ao obter feed RSS. Tente adicionar MAIN_SIMPLEXMLLOAD_DEBUG constante se as mensagens de erro não fornecer informações suficientes.
+ErrorBothFieldCantBeNegative=Campos %s %s e não pode ser tanto negativo
+ErrorWebServerUserHasNotPermission=Conta de usuário utilizada para executar <b>%s</b> servidor web não tem permissão para que
+ErrorNoActivatedBarcode=Nenhum tipo de código de barras ativado
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:29).

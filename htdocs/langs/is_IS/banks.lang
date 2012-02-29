@@ -155,3 +155,9 @@ Graph=Grafík
 FutureTransaction=Færsla í futur. Engin leið til leitar sátta.
 SelectChequeTransactionAndGenerate=Select / sía ávísanir til fela í innborgun stöðva móttöku og smelltu á &quot;Create.&quot;
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 06:58:50).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+RIBControlError=Heiðarleiki athuga gildi ekki. Þetta þýðir fyrir þennan reikning númer eru ekki lokið eða rangt (athugaðu landið, tölur og IBAN).
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:30).

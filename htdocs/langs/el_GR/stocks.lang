@@ -88,3 +88,10 @@ ConfirmDeleteWarehouse=Είστε σίγουροι ότι θέλετε να δι
 PersonalStock=Προσωπικά %s απόθεμα
 ThisWarehouseIsPersonalStock=Αυτή η αποθήκη αποτελεί προσωπική απόθεμα %s %s
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:40:45).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+SelectWarehouseForStockDecrease=Επιλέξτε αποθήκη που θα χρησιμοποιηθεί για μείωση αποθεμάτων
+SelectWarehouseForStockIncrease=Επιλέξτε αποθήκη που θα χρησιμοποιηθεί για αύξηση των αποθεμάτων
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:18).

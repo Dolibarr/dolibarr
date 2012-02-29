@@ -76,3 +76,12 @@ DeleteAWarehouse=Raktár törlése
 ConfirmDeleteWarehouse=Biztos törölni akarja a(z) <b>%s</b> raktárat?
 PersonalStock=Személyes készlet %s
 ThisWarehouseIsPersonalStock=Ez a raktár %s %s személyes készletet képvisel
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
+// Reference language: en_US -> hu_HU
+SellPriceMin=Értékesítés Egységár
+EstimatedStockValueSellShort=Érték eladni
+EstimatedStockValueSell=Érték Eladás
+SelectWarehouseForStockDecrease=Válassza ki a raktár használni állomány csökkenése
+SelectWarehouseForStockIncrease=Válassza ki a raktár használni állomány növekedése
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:15:18).

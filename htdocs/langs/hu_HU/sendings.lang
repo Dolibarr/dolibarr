@@ -59,3 +59,14 @@ SendingMethodCOLSUI=Futár szolgálat
 # ModelDocument
 DocumentModelSirocco=Egyszerű dokumentum modell bizonylatokhoz
 DocumentModelTyphon=Teljesebb dokumentum modell bizonylatokhoz (logo...)
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
+// Reference language: en_US -> hu_HU
+SendShippingByEMail=Küldés e-mailben szállítás
+SendShippingRef=Küldje szállítás %s
+ActionsOnShipping=Események a szállítás
+LinkToTrackYourPackage=Link követni a csomagot
+ShipmentCreationIsDoneFromOrder=Ebben a pillanatban, létrejön egy új szállítmány kerül sor a sorrendben kártyát.
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Állandó EXPEDITION_ADDON_NUMBER nincs definiálva
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:25:34).

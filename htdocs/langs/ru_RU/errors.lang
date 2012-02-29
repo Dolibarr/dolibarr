@@ -120,3 +120,14 @@ ErrorBadValueForCode=Плохо значения типов кода. Попро
 ErrorFileIsInfectedWith=Этот файл заражен %s
 WarningInstallDirExists=Внимание, установить каталог ( %s) по-прежнему существует. Это серьезная дыра в безопасности. Вы должны удалить его как можно скорее.
 WarningUntilDirRemoved=Это предупреждение остается активным до тех пор, пока эта директория присутствует (отображается только для администратора пользователей).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
+// Reference language: en_US -> ru_RU
+ErrorFailToCopyFile=Не удалось скопировать файл <b>&quot;%s</b> 'в' <b>%s.</b>
+ErrorSizeTooLongForIntType=Размер слишком долго для целого типа (%s цифр максимум)
+ErrorSizeTooLongForVarcharType=Размер слишком долго для струнного типа (%s символов максимум)
+ErrorFieldRefNotIn=Неверное значение для <b>%s</b> номер поля <b>(«%s&quot;</b> значение не является <b>%s</b> существующих ссылка)
+ErrorBothFieldCantBeNegative=Поля %s и %s не может быть и отрицательным
+ErrorWebServerUserHasNotPermission=Учетная запись пользователя <b>%s</b> используется для выполнения веб-сервер не имеет разрешения для этого
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:18).

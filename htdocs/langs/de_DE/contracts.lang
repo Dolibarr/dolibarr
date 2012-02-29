@@ -1,5 +1,5 @@
 ﻿/*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-12 17:09:12
  */
@@ -102,3 +102,9 @@ RelatedContracts=Verknüpfte Verträge
 // Reference language: en_US -> de_DE
 Error_CONTRACT_ADDON_NotDefined=Constant CONTRACT_ADDON nicht definiert
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 11:05:39).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+NoExpiredServices=Keine abgelaufen aktiven Dienste
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:42).

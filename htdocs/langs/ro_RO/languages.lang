@@ -45,3 +45,20 @@ Language_is_IS=Islandez
 // Reference language: en_US -> ro_RO
 Language_sv_SV=Suedez
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:24).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+Language_ar_SA=Limba arabă
+Language_da_DK=Danez
+Language_de_AT=Germană (Austria)
+Language_el_GR=Grec
+Language_en_NZ=Engleză (Noua Zeelandă)
+Language_es_HN=Spaniolă (Honduras)
+Language_es_MX=Spaniolă (Mexic)
+Language_es_PR=Spaniolă (Puerto Rico)
+Language_fa_IR=Persană
+Language_hu_HU=Limba maghiară
+Language_ru_UA=Rusă (Ucraina)
+Language_sv_SE=Suedez
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:26:00).

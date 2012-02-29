@@ -42,3 +42,25 @@ CannotRemoveDirectoryContainsFiles=それはいくつかのファイルが含ま
 ECMFileManager=ファイルマネージャ
 ECMSelectASection=左側のツリー上のディレクトリを選択...
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 09:32:31).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
+// Reference language: en_US -> ja_JP
+DocsThirdParties=文書サードパーティ
+DocsContracts=文書契約
+DocsProposals=文書の提案
+DocsOrders=ドキュメントオーダー
+DocsInvoices=書類の請求
+ECMNbOfDocs=ディレクトリ内のドキュメントのNb
+ECMNewDocument=新しいドキュメント
+ECMCreationDate=作成日
+ECMNbOfFilesInDir=ディレクトリ内のファイル数
+ECMNbOfSubDir=サブディレクトリの数
+ECMNbOfFilesInSubDir=サブディレクトリ内のIlesのNunber
+ECMCreationUser=クリエイター
+ECMDocsByThirdParties=第三者にリンクされたドキュメント
+ECMDocsByProposals=提案にリンクされたドキュメント
+ECMDocsByOrders=顧客の注文にリンクされたドキュメント
+ECMDocsByContracts=契約にリンクされたドキュメント
+ECMDocsByInvoices=お客様の請求書にリンクされたドキュメント
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:42:28).

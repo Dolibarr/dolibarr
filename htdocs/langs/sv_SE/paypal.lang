@@ -20,3 +20,14 @@ PAYPAL_API_SIGNATURE=API signatur
 PredefinedMailContentSendOrderWithPaypalLink=Du hittar här ordern __ORDERREF__ \ n \ nDu kan klicka på den säkra länken nedan för att göra din betalning via PayPal \ n \ n%s \ n \ nSincerely \ n \ n
 PredefinedMailContentSendInvoiceWithPaypalLink=Här hittar du fakturan __FACREF__ \ n \ nDu kan klicka på den säkra länken nedan för att göra din betalning via PayPal \ n \ n%s \ n \ nSincerely \ n \ n
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 11:01:48).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Erbjuder betalning &quot;integrerad&quot; (Kreditkort + Paypal) eller &quot;Paypal&quot; endast
+PAYPAL_CSS_URL=Optionnal Url av CSS-formatmall om betalning sidan
+ThisIsTransactionId=Detta är id transaktion: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Lägg till URL Paypal betalning när du skickar ett dokument per post
+PAYPAL_IPN_MAIL_ADDRESS=E-postadress att omedelbart anmälan av betalning (IPN)
+YouAreCurrentlyInSandboxMode=Du är för närvarande i &quot;sandlåda&quot;-läget
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:19).

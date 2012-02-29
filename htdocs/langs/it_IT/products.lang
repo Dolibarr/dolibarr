@@ -199,3 +199,10 @@ CustomCode=Codice personalizzato
 CountryOrigin=Paese di origine
 HiddenIntoCombo=Nascosti in elenchi di selezione
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:26).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+// Reference language: en_US -> it_IT
+ParentProductsNumber=Numero di prodotto genitore
+ProductParentList=Elenco dei prodotti / servizi con questo prodotto come componente
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:47).

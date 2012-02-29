@@ -193,3 +193,47 @@ DocForAllMembersCards=Generer visitkort for alle medlemmer (Format for output fa
 DocForOneMemberCards=Generer visitkort for et bestemt medlem (Format for output faktisk setup: <b>%s)</b>
 DocForLabels=Generer adresse ark (Format for output faktisk setup: <b>%s)</b>
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:48).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
+// Reference language: en_US -> da_DK
+MembersWithSubscriptionToReceive=Medlemmer med abonnement for at modtage
+NewSubscriptionDesc=Denne form giver dig mulighed for at registrere dit abonnement som nyt medlem af fundamentet. Hvis du ønsker at forny dit abonnement (hvis der allerede er medlem), bedes du kontakte fundament bord i stedet via e-mail %s.
+BlankSubscriptionFormDesc=Dolibarr kan give dig en offentlig webadresse for at give eksterne besøgende til at anmode om abonnere på fundamentet. Hvis en online betaling modulet er aktiveret, vil en betaling form også udleveres automatisk.
+EnablePublicSubscriptionForm=Aktiver offentlige auto-tegningsblanket
+ImportDataset_member_1=Medlemmer
+LastSubscriptionsModified=Sidste %s ændret abonnementer
+GlobalConfigUsedIfNotDefined=Tekst defineret i instituttets modul opsætning vil blive brugt, hvis der ikke er defineret her
+MayBeOverwrited=Denne tekst kan overwrited ved værdien defineret for medlems-type
+SubscriptionPayment=Abonnement betaling
+LastSubscriptionDate=Sidste abonnement dato
+LastSubscriptionAmount=Sidste tegningsbeløbet
+MembersStatisticsByCountries=Medlemmer statistik efter land
+MembersStatisticsByState=Medlemmer statistikker stat / provins
+MembersStatisticsByTowne=Medlemmer statistikker byen
+NbOfMembers=Antal medlemmer
+NoValidatedMemberYet=Ingen validerede medlemmer fundet
+MembersByCountryDesc=Denne skærm viser dig statistikker over medlemmer af lande. Grafisk afhænger dog på Google online-graf service og er kun tilgængelig, hvis en internetforbindelse virker.
+MembersByStateDesc=Denne skærm viser dig statistikker om medlemmer fra staten / provinser / Canton.
+MembersByTownDesc=Denne skærm viser dig statistikker over medlemmer af byen.
+MembersStatisticsDesc=Vælg statistikker, du ønsker at læse ...
+MenuMembersStats=Statistik
+LastMemberDate=Sidste medlem dato
+Nature=Natur
+Public=Information er offentlige
+Exports=Eksport
+NewMemberbyWeb=Nyt medlem tilføjet. Afventer godkendelse
+NewMemberForm=Nyt medlem formular
+SubscriptionsStatistics=Statistikker om abonnementer
+NbOfSubscriptions=Antallet af abonnementer
+AmountOfSubscriptions=Mængden af ​​abonnementer
+TurnoverOrBudget=Omsætning (for et selskab) eller Budget (en fond)
+DefaultAmount=Standard mængden af ​​abonnement
+CanEditAmount=Besøgende kan vælge / redigere størrelsen af ​​sit indskud
+MEMBER_NEWFORM_PAYONLINE=Hop på integreret online betaling side
+Associations=Fonde
+Collectivités=Organisationer
+Particuliers=Personlig
+Entreprises=Virksomheder
+DOLIBARRFOUNDATION_PAYMENT_FORM=For at gøre dit abonnement betaling med en bankoverførsel, se side <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> At betale med kreditkort eller Paypal, klik på knappen nederst på denne side. <br>
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:01:24).

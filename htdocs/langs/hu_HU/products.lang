@@ -153,3 +153,27 @@ CloneContentProduct=A termék/szolgáltatás minden fő információjának a kl�
 ClonePricesProduct=Fő információk és árak klónozása
 ProductIsUsed=Ez a termék használatban van
 NewRefForClone=Új termék/szolgáltatás ref#.
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
+// Reference language: en_US -> hu_HU
+ProductAccountancyBuyCode=Számviteli kód (vásárolni)
+ProductAccountancySellCode=Számviteli kód (eladás)
+Sell=Értékesítés
+Buy=Vásárlások
+OnBuy=A vásárlás
+ProductStatusOnBuy=A vásárlás
+ProductStatusNotOnBuy=Nem vásárolható
+ProductStatusOnBuyShort=A vásárlás
+ProductStatusNotOnBuyShort=Nem vásárolható
+ParentProductsNumber=Számos szülő termék
+ProductParentList=Jegyzéke termékek / szolgáltatások ezzel a termékkel, mint egy komponens
+ImportDataset_produit_1=Termékek
+ImportDataset_service_1=Szolgáltatások
+ListProductServiceByPopularity=Jegyzéke termékek / szolgáltatások népszerűség szerint
+ListServiceByPopularity=Szolgáltatások listája népszerűség szerint
+CustomerPrices=Fogyasztói árának
+SuppliersPrices=Beszállítók árak
+CustomCode=Vámkódex
+CountryOrigin=Származási ország
+HiddenIntoCombo=Rejtett a select lista
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:15:26).

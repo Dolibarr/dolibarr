@@ -128,3 +128,12 @@ SentTo=Wysłane do <b>%s</b>
 LimitSendingEmailing=On line wysyłanie wysyłanie wiadomości pocztowych są ograniczone ze względów bezpieczeństwa i timeout do odbiorców <b>%s</b> wysyłając sesji.
 ListOfNotificationsDone=Lista wszystkich powiadomień e-mail wysłany
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:52).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+MailingStatusRead=Czytać
+MailingModuleDescContactsByCompanyCategory=Kontakt trzecich (przez osoby trzecie kategoria)
+MailingModuleDescMembersCategories=Członkowie Fundacji (o kategorie)
+MailingModuleDescContactsByFunction=Kontakt trzecich (według pozycji / funkcji)
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:18:48).

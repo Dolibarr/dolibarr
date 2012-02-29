@@ -32,3 +32,9 @@ VendorName = Ime prodajalca
 CSSUrlForPaymentForm = url CSS vzorca obrazca plačila
 MessageOK = Sporočilo na strani za potrditev plačila
 MessageKO = Sporočilo na strani za preklic plačila
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+ToOfferALinkForOnlinePayment=URL za %s plačila
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:30:26).

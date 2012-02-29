@@ -99,3 +99,14 @@ ToDoActionsFor=acţiuni incomplete pentru %s
 ActionAC_SUP_ORD=Trimite comanda prin e-mail cu furnizorul
 ActionAC_SUP_INV=Trimite factura prin e-mail cu furnizorul
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:38:43).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+StatusNotApplicable=Nu se aplică
+ActionAC_SHIP=Trimite prin e-mail de transport maritim
+ActionAC_OTH=Alte
+StatusProsp=Prospect statutul
+DraftPropals=Proiectul de propuneri comerciale
+SearchPropal=Căutaţi o propunere comercială
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:34).

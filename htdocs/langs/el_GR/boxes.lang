@@ -71,3 +71,12 @@ BoxTitleLastModifiedContacts=Τελευταία %s τροποποίηση επα
 ClickToAdd=Πατήστε εδώ για προσθήκη.
 NoRecordedContacts=Δεν καταγράφονται επαφές
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:36:52).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+BoxOldestExpiredServices=Παλαιότερο ενεργό λήξει υπηρεσίες
+BoxLastExpiredServices=Τελευταία %s παλαιότερα επαφές με την ενεργό λήξει υπηρεσίες
+BoxTitleLastModifiedDonations=Τελευταία τροποποίηση %s δωρεές
+BoxTitleLastModifiedExpenses=Τελευταία τροποποίηση %s έξοδα
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:19).

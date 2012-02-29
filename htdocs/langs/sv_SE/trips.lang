@@ -32,3 +32,10 @@ TF_LUNCH=Lunch
 TF_TRIP=Trip
 ListTripsAndExpenses=Förteckning över resor och kostnader
 // STOP - Lines generated via autotranslator.php tool (2010-08-28 13:11:17).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+ExpensesArea=Resor och kostnader område
+SearchATripAndExpense=Sök en resa och kostnader
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:38).

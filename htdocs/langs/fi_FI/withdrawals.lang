@@ -85,3 +85,28 @@ NotifyEmision=Irtisanominen päästöjen
 NotifyCredit=Irtisanominen Credit
 NumeroNationalEmetter=Kansallinen lähetin määrä
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:28:38).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+NbOfInvoiceToWithdrawWithInfo=Nb laskun kanssa peruuttaa pyynnön asiakkaille, joilla määritellään tilitietoja
+StatusTrans=Toimitettu
+PleaseSelectCustomerBankBANToWithdraw=Valitse tiedot asiakkaan pankkitilille peruuttaa
+WithBankUsingRIB=Jos pankkitilit käyttäen RIB
+WithBankUsingBANBIC=Jos pankkitilit käyttäen IBAN / BIC / SWIFT
+BankToReceiveWithdraw=Pankkitili saada vetäytyy
+CreditDate=Luottoa
+WithdrawalFileNotCapable=Ei voitu luoda peruuttamiseen kuitti tiedosto maasi
+ShowWithdraw=Näytä Nosta
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Kuitenkin, jos lasku on ainakin yksi poistamista määrä ei kuitenkaan ole vielä käsitelty, sitä ei voida määrittää koska maksoivat sallimaan hallita poistettaviksi.
+DoStandingOrdersBeforePayments=Tällä välilehtien avulla voit pyytää ja kestotilauksena. Kun se on valmis, voit kirjoittaa maksun sulkea laskun.
+InfoCreditSubject=Maksaminen kestotilaus %s pankin
+InfoCreditMessage=Kestotilaus %s on maksanut pankille <br> Tiedot maksu: %s
+InfoTransSubject=Toimittaminen kestotilaus %s pankkiin
+InfoTransMessage=Kestotilaus %s on transmited sen pankkiin %s %s. <br><br>
+InfoTransData=Määrä: %s <br> Metode: %s <br> Date: %s
+InfoFoot=Tämä on automaattinen viesti lähetetään Dolibarr
+InfoRejectSubject=Pysyvä järjestyksessä kieltäytyi
+InfoRejectMessage=Hei, <br><br> standig järjestys laskun %s liittyviä yrityksen %s, joiden määrä %s on evätty pankin. <br><br> - <br> % $
+ModeWarning=Vaihtoehto todellista tilaa ei ole asetettu, pysähdymme jälkeen simulointi
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:56).

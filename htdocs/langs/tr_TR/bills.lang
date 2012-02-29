@@ -429,3 +429,10 @@ AddRelativeDiscount=Göreceli indirim
 TypeContact_facture_fourn_external_SHIPPING=Tedarikçi nakliye temas
 TypeContact_facture_fourn_external_SERVICE=Tedarikçi servisini çağırın.
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 13:40:16).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
+// Reference language: en_US -> tr_TR
+ConfirmUnvalidateBill=Eğer taslak durumuna fatura <b>%s</b> değiştirmek istediğinizden emin misiniz?
+UnvalidateBill=Fatura Unvalidate
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:36:12).

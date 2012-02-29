@@ -314,3 +314,12 @@ DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Tietoa kampanjasta
 DemandReasonTypeSRC_CAMP_EMAIL=Sähköpostitse kampanja
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 07:44:51).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+DemandReasonTypeSRC_CAMP_PHO=Puhelin kampanja
+DemandReasonTypeSRC_CAMP_FAX=Fax kampanja
+DemandReasonTypeSRC_COMM=Kaupalliset yhteystiedot
+DemandReasonTypeSRC_SHOP=Kauppa Yhteystiedot
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:35).

@@ -140,3 +140,13 @@ YourQuotaOfUsersIsReached=Tilakiintiösi aktiivisia käyttäjiä on saavutettu!
 // Reference language: en_US -> fi_FI
 DontDowngradeSuperAdmin=Vain superadmin voi downgrade superadmin
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:33:26).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+AdministratorDesc=Järjestelmänvalvojan kokonaisuus
+UserWillBeInternalUser=Luotu käyttäjä on sisäinen käyttäjä (koska ei liity erityistä kolmannelle osapuolelle)
+UserWillBeExternalUser=Luotu käyttäjä tulee ulkopuolinen käyttäjä (koska liittyy erityistä kolmannelle osapuolelle)
+UserLogoff=Käyttäjä %s logout
+NbOfUsers=Nb käyttäjien
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:42).

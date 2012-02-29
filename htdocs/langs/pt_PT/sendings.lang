@@ -65,3 +65,14 @@ DocumentModelMerou=Mérou modelo A5
 DateDeliveryPlanned=aplainada data de entrega
 DateReceived=Data da entrega recebida
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:28).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+SendShippingByEMail=Enviar envio por e-mail
+SendShippingRef=Enviar %s embarque
+ActionsOnShipping=Eventos em embarque
+LinkToTrackYourPackage=Link para acompanhar o seu pacote
+ShipmentCreationIsDoneFromOrder=Para o momento, a criação de uma nova remessa é feita a partir do cartão ordem.
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER constante não definida
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:48:53).

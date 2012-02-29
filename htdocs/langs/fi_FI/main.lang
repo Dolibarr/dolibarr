@@ -612,3 +612,63 @@ Resources=Resurssit
 Source=Lähde
 Prefix=Etuliite
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:28:32).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+FormatDateShortJQuery=dd/mm/yy
+AddLink=Lisää linkki
+Of=ja
+SearchOf=Etsi
+AmountByMonth=Määrä kuukausittain
+DatePayment=Maksupäivä
+TeraBytes=Teratavua
+Tb=Tb
+LT1ES=RE
+LT2ES=IRPF
+OtherStatistics=Muut tilastot
+ActionNotApplicable=Ei sovelleta
+ActionsOnMember=Tapahtumia tästä jäseneksi
+JanuaryMin=Tammikuu
+FebruaryMin=Helmikuu
+MarchMin=Mar
+AprilMin=Huhtikuu
+MayMin=Toukokuu
+JuneMin=Kesäkuu
+JulyMin=Heinäkuu
+AugustMin=Elokuu
+SeptemberMin=Syyskuu
+OctoberMin=Lokakuu
+NovemberMin=Marraskuu
+DecemberMin=Joulukuu
+CoreErrorTitle=System error
+CoreErrorMessage=Anteeksi, virhe. Tarkista lokit tai ota yhteyttä järjestelmänvalvojaan.
+Before=Ennen
+After=Jälkeen
+IPAddress=IP-osoite
+Frequency=Taajuus
+IM=Pikaviestit
+NewAttribute=Uusi ominaisuus
+AttributeCode=Ominaisuuden code
+OptionalFieldsSetup=Extra ominaisuuksia setup
+URLPhoto=Url on kuva / logo
+SetLinkToThirdParty=Linkki toiselle kolmannelle osapuolelle
+CreateDraft=Luo luonnos
+ClickToEdit=Klikkaa Muokkaa
+ObjectDeleted=Object %s poistettu
+ByCountry=Maittain
+ByTown=By kaupunki
+ByDate=Päivämäärän mukaan
+ByMonthYear=Kun kuukausi / vuosi
+ByYear=By vuosi
+ByMonth=kuukausittain
+ByDay=Päivällä
+BySalesRepresentative=By myyntiedustaja
+MondayMin=Mo
+TuesdayMin=Tu
+WednesdayMin=Me
+ThursdayMin=Th
+FridayMin=Fr
+SaturdayMin=Sa
+SundayMin=Su
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:12:45).

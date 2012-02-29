@@ -48,3 +48,10 @@ ActionsOnFicheInter=Åtgärder för ingripande
 ClassifyBilled=Klassificera &quot;Fakturerade&quot;
 StatusInterInvoiced=Fakturerade
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 05:32:50).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+RelatedInterventions=Insatserna
+ShowIntervention=Visar ingripande
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:08).

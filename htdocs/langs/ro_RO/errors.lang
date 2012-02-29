@@ -111,3 +111,30 @@ ErrorBadValueForCode=Bad valoare tipuri de cod. Încercaţi din nou cu o nouă v
 ErrorFileIsInfectedWith=Acest fişier este infectat cu %s
 WarningInstallDirExists=Atenţie, directorul de instalare ( %s) încă mai există. Aceasta este o gaura grave de securitate. Ar trebui eliminate cât mai curând posibil.
 WarningUntilDirRemoved=Acest avertisment va rămâne activ, atât timp cât acest director este prezent (afişat numai la admin utilizatori).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+ErrorFailToCopyFile=Nu a reuşit să copiaţi fişierul <b>&quot;%s&quot;</b> în <b>&quot;%s&quot;.</b>
+ErrorFailToRenameFile=Nu a reuşit să redenumiţi fişierul <b>&quot;%s&quot;</b> în <b>&quot;%s&quot;.</b>
+ErrorBadValueForParameter=Valoarea greşită &quot;%s&quot; incorecte &quot;pentru parametrul de %s
+ErrorBadImageFormat=Fişier de imagine nu are un format acceptat
+ErrorBadDateFormat=&quot;%s&quot; Valoarea are formatul de dată greşit
+ErrorSizeTooLongForIntType=Prea mult timp pentru tipul int (%s cifre maxim) Dimensiune
+ErrorSizeTooLongForVarcharType=Prea mult timp pentru tipul de coarde (%s de caractere maxim) Dimensiune
+ErrorContactEMail=O eroare de tehnică avut loc. Vă rugăm, contactaţi administratorul de a urma <b>%s</b> de e-mail ro oferi <b>%s</b> cod de eroare în mesajul Dvs., sau chiar mai bine prin adăugarea o copie ecran a acestei pagini.
+ErrorFieldValueNotIn=Valoare greşită pentru <b>%s</b> numărul de câmp <b>(&quot;%s&quot;</b> valoare nu este o valoare disponibile în <b>%s</b> teren de <b>%s</b> de masă)
+ErrorFieldRefNotIn=Valoare greşită pentru <b>%s</b> numărul de câmp <b>(&quot;%s&quot;</b> valoarea nu este o ref <b>%s</b> existente)
+ErrorModuleSetupNotComplete=Configurarea modulului pare a fi uncomplete. Du-te la Setup - Module pentru a finaliza.
+ErrorBadMask=Eroare pe masca
+ErrorBadMaskFailedToLocatePosOfSequence=Eroare, fără a masca numărul de ordine
+ErrorBadMaskBadRazMonth=Eroare, Bad resetare valoarea
+ErrorSelectAtLeastOne=Eroare. Selectaţi cel puţin o intrare.
+ErrorProductWithRefNotExist=Produs cu <i>&quot;%s&quot;</i> de referinţă, nu există
+ErrorDeleteNotPossibleLineIsConsolidated=Ştergeţi nu este posibil, deoarece înregistrarea este legat de o bancă, care este transation conciliate
+ErrorProdIdAlreadyExist=%s se atribuie o altă treime
+ErrorFailedToLoadRSSFile=Nu pentru a obţine RSS feed. Încercaţi să adăugaţi MAIN_SIMPLEXMLLOAD_DEBUG constantă în cazul în care mesajele de eroare nu furnizează suficiente informaţii.
+ErrorBothFieldCantBeNegative=%s Domenii şi %s nu poate fi atât negativ
+ErrorWebServerUserHasNotPermission=Contul de utilizator <b>%s</b> folosite pentru a executa serverul de web nu are permisiunea, pentru că
+ErrorNoActivatedBarcode=Nici un tip de coduri de bare activat
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:49).

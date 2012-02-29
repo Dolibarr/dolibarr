@@ -56,3 +56,33 @@ MenuToDoActions=Wszystkich działań niekompletne
 InterventionValidatedInDolibarr=%s interwencji zatwierdzone
 InterventionValidatedInDolibarr=%s Intervenção validado
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:42:53).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+LocalAgenda=Calendário local
+MyEvents=Meus eventos
+OtherEvents=Outros eventos
+EventOnFullDay=Evento no dia completo
+ViewDay=Modo de exibição Dia
+ViewWeek=Vista da semana
+AgendaExtSitesDesc=Esta página permite a declarar as fontes externas de calendários para ver seus eventos em agenda Dolibarr.
+InvoiceBackToDraftInDolibarr=%s fatura voltar ao status de projecto
+OrderApprovedInDolibarr=%s Ordem aprovado
+OrderBackToDraftInDolibarr=%s Ordem voltar ao status de projecto
+OrderCanceledInDolibarr=%s pedido cancelado
+ProposalSentByEMail=Comerciais %s proposta enviada por e-mail
+OrderSentByEMail=Cliente %s ordem enviada por email
+InvoiceSentByEMail=Cliente %s fatura enviada por e-mail
+SupplierOrderSentByEMail=Fornecedor %s ordem enviada por email
+SupplierInvoiceSentByEMail=Fornecedor %s fatura enviada por e-mail
+ShippingSentByEMail=%s Fretes enviado por email
+InterventionSentByEMail=%s intervenção enviados por e-mail
+ExportCal=Exportação calendário
+ExtSites=Importar calendários externos
+ExtSitesEnableThisTool=Mostrar calendários externos na agenda
+ExtSitesNbOfAgenda=Número de calendários
+AgendaExtNb=Calendário nb %s
+ExtSiteUrlAgenda=URL para acessar. Ical arquivo
+ExtSiteNoLabel=Sem Descrição
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:48:38).

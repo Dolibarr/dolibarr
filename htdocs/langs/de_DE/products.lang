@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-11 18:09:12
  */
@@ -171,3 +171,15 @@ ProductStatusOnBuy=Verfügbar
 ProductStatusNotOnBuy=Veraltet
 ProductStatusOnBuyShort=Verfügbar
 ProductStatusNotOnBuyShort=Veraltet
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+ParentProductsNumber=Anzahl der übergeordnete Produkt
+ProductParentList=Liste der Produkte / Dienstleistungen mit diesem Produkt als ein Bestandteil
+ImportDataset_produit_1=Produkte
+ImportDataset_service_1=Dienstleistungen
+CustomCode=Customs Code
+CountryOrigin=Origin Land
+HiddenIntoCombo=Versteckt in Auswahllisten
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:56).

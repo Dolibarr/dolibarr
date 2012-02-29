@@ -73,3 +73,33 @@ MenuToDoActions=Wszystkich działań niekompletne
 InterventionValidatedInDolibarr=%s interwencji zatwierdzone
 InterventionValidatedInDolibarr=%s Intervenção validado
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:42:54).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+LocalAgenda=Locale calendar
+MyEvents=Evenimente
+OtherEvents=Alte evenimente
+EventOnFullDay=Eveniment pe zi
+ViewDay=Ziua vedere
+ViewWeek=Săptămâna vedere
+AgendaExtSitesDesc=Această pagină vă permite să declare sursele externe de calendare pentru a vedea evenimentele în ordinea de zi Dolibarr.
+InvoiceBackToDraftInDolibarr=%s factura a reveni la statutul de proiect
+OrderApprovedInDolibarr=%s Comanda aprobat
+OrderBackToDraftInDolibarr=%s Ordine reveni la statutul de proiect
+OrderCanceledInDolibarr=%s Comanda anulat
+ProposalSentByEMail=%s comerciale propunerea trimisă prin e-mail
+OrderSentByEMail=%s comanda clientului trimise prin e-mail
+InvoiceSentByEMail=%s factura clientului trimise prin e-mail
+SupplierOrderSentByEMail=%s comandă cu furnizorul trimise prin e-mail
+SupplierInvoiceSentByEMail=%s factura furnizorului trimise prin e-mail
+ShippingSentByEMail=%s de expediere trimise prin e-mail
+InterventionSentByEMail=%s de intervenţie trimise prin e-mail
+ExportCal=Export calendar
+ExtSites=Import calendare externe
+ExtSitesEnableThisTool=Arată calendare externe, în ordinea de zi
+ExtSitesNbOfAgenda=Numărul de calendare
+AgendaExtNb=Calendar NB %s
+ExtSiteUrlAgenda=URL-ul pentru a accesa. ICal fişier
+ExtSiteNoLabel=Nu Descriere
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:26:41).

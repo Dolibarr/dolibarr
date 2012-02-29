@@ -1,0 +1,18 @@
+/*
+ * Language code: sv_SE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 17:32:03
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+CHARSET=UTF-8
+WorkflowSetup=Arbetsflöde modul konfiguration
+WorkflowDesc=Denna modul är designade för att ändra beteendet hos automatiska åtgärder i programmet. Som standard är arbetsflödet öppnas (du gör något för att du vill). Du kan aktiveras automatiska åtgärder som du är intressanta i.
+ThereIsNoWorkflowToModify=Det finns ingen arbetsflöde du kan ändra för modul du har aktiverat.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Skapa en kundorder automatiskt efter en kommersiell förslag undertecknas
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Skapa en kundfaktura automatiskt efter en kommersiell förslag undertecknas
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Skapa en kundfaktura automatiskt efter ett avtal validerad
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Skapa en kundfaktura automatiskt efter en kundorder är stängd
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:51).

@@ -392,3 +392,25 @@ TitanNumRefModelDesc3=Define breytunnar SOCIETE_FISCAL_MONTH_START með mánaða
 TitanNumRefModelDesc4=Í þessu dæmi skulum við hafa á 1 September 2006 um reikning sem heitir FA0700001
 PlutonNumRefModelDesc1=Fara aftur á sérhannaðar reikningsnúmer samkvæmt skilgreiningu lagsins.
 // STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+BillsCustomer=Viðskiptavinar Reikningar
+BillsSuppliersUnpaidForCompany=Reikninga ógreidda birgis til %s
+BillsLate=Vanskil
+DisabledBecauseNotErasable=Óvirkt því ekki hægt að þurrkast út
+ConfirmUnvalidateBill=Ertu viss um að þú viljir breyta vörureikningi <b>%s</b> að drög stöðu?
+UnvalidateBill=Unvalidate reikning
+NumberOfBillsByMonth=Nb reikninga eftir mánuði
+AmountOfBillsByMonthHT=Upphæð á reikningi eftir mánuði (eftir skatta)
+AddDiscount=Búa afslátt
+AddRelativeDiscount=Búa til ættingja afslátt
+EditRelativelDiscount=Breyta relatvie afslátt
+EditGlobalDiscounts=Breyta hreinum afslætti
+AddCreditNote=Búa inneignarnótuna
+InvoiceNotChecked=Engin reikningur valinn
+ShowUnpaidAll=Sýna alla ógreiddra reikninga
+ClosePaidInvoicesAutomatically=Flokka &quot;borgað&quot; allt staðall eða skipti reikningar entierely borgað.
+AllCompletelyPayedInvoiceWillBeClosed=Allt Reikningar með ekki áfram að borga verður sjálfkrafa lokað til stöðu &quot;borgað&quot;.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:27:05).

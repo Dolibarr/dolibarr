@@ -29,3 +29,11 @@ Deliverer=发货人：
 Sender=寄件人
 Recipient=接受者
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+DeleteDeliveryReceipt=删除送达回执
+DeleteDeliveryReceiptConfirm=你确定要删除送达回执<b>%s</b>吗？
+DeliveryNotValidated=交付未验证
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:39:18).

@@ -189,3 +189,15 @@ ProductStatusNotOnBuy=Învechit
 ProductStatusOnBuyShort=Disponibil
 ProductStatusNotOnBuyShort=Învechit
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:28).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+ParentProductsNumber=Numărul de produs mamă
+ProductParentList=Lista de produse / servicii cu acest produs, ca o componentă
+ImportDataset_produit_1=Produse
+ImportDataset_service_1=Servicii
+CustomCode=Codul vamal
+CountryOrigin=Ţara de origine
+HiddenIntoCombo=Ascuns în liste selectaţi
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:36).

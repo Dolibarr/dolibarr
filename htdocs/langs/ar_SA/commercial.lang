@@ -103,3 +103,14 @@ ToDoActionsFor=لعدم اكتمال الإجراءات ق ٪
 ActionAC_SUP_ORD=أرسل النظام المورد عن طريق البريد
 ActionAC_SUP_INV=إرسال فاتورة المورد عن طريق البريد
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:17:37).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+StatusNotApplicable=لا ينطبق
+ActionAC_SHIP=إرسال الشحن عن طريق البريد
+ActionAC_OTH=آخر
+StatusProsp=احتمال وضع
+DraftPropals=صياغة مقترحات تجارية
+SearchPropal=بحث اقتراح التجاري
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:55:52).

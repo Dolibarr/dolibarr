@@ -45,3 +45,15 @@ YourPaymentHasNotBeenRecorded=Et maksua ei ole kirjattu, ja kauppa on peruutettu
 AccountParameter=Tilin parametrit
 UsageParameter=Käyttöparametrien
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:12:54).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+ToOfferALinkForOnlinePayment=URL %s maksua
+InformationToFindParameters=Auta löytää %s tilitiedot
+PAYBOX_CGI_URL_V2=Url on Paybox CGI moduuli maksaa
+VendorName=Nimi myyjä
+CSSUrlForPaymentForm=CSS-tyylisivu url maksun muodossa
+MessageOK=Viesti on validoitu maksun tuotto sivu
+MessageKO=Viesti on peruutettu maksun tuotto sivu
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:41).

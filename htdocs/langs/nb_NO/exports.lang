@@ -117,3 +117,13 @@ SourceRequired=Dataverdi er obligatorisk
 SourceExample=Eksempel på mulige dataverdi
 CSVFormatDesc=<b>Kommadelte Verdi</b> filformatet (. CSV). <br> Dette er en tekstfil format der feltene er atskilt med skilletegn [%s]. Hvis separatoren blir funnet inne i et felt innhold, er felt omgitt av runde tegn [%s]. Escape karakter å unnslippe runde tegn er [%s].
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 02:20:08).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+FileWasImported=Filen ble importert med nummer <b>%s.</b>
+DataComeFromIdFoundFromCodeId=Kode som kommer fra feltnummer <b>%s</b> av kildefilen vil bli brukt til å finne id overordnede objektet til å bruke (Så koden fra kildefilen må finnes i dictionnary <b>%s).</b> Merk at hvis du vet id, kan du også bruke den til kildefilen istedenfor kode. Import bør arbeide i begge tilfeller.
+DataCodeIDSourceIsInsertedInto=Id av foreldrene linje funnet fra kode, vil bli satt inn i følgende felt:
+ExampleAnyRefFoundIntoElement=Enhver ref funnet for element <b>%s</b>
+ExampleAnyCodeOrIdFoundIntoDictionnary=Enhver kode (eller id) funnet i dictionnary <b>%s</b>
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:07:32).

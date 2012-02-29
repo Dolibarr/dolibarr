@@ -90,3 +90,18 @@ BoxTitleLastModifiedSuppliers=%s آخر تعديل الموردين
 BoxTitleLastModifiedCustomers=%s آخر تعديل الزبائن
 BoxTitleLastModifiedProspects=%s آخر تعديل آفاق
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:33).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+BoxLastContacts=مشاركة اتصالات / عناوين
+BoxLastMembers=مشاركة الأعضاء
+BoxTitleLastModifiedMembers=آخر تعديل لأعضاء %s
+BoxTitleLastModifiedContacts=%s آخر تعديل الأسماء / عناوين
+BoxOldestExpiredServices=أقدم نشط خدمات منتهية الصلاحية
+BoxLastExpiredServices=%s مشاركة أقدم اتصالات مع خدمات منتهية الصلاحية نشط
+BoxTitleLastModifiedDonations=%s آخر تعديل التبرعات
+BoxTitleLastModifiedExpenses=%s آخر تعديل النفقات
+ClickToAdd=انقر هنا لإضافة.
+NoRecordedContacts=أي اتصالات مسجل
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:55:51).

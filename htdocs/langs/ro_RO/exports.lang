@@ -129,3 +129,13 @@ SourceExample=Exemplu de valoare posibilă de date
 CSVFormatDesc=<b>Comma Separated Value</b> formatul de fişier (). Csv. <br> Acesta este un format de fişier text în care câmpurile sunt separate prin separatorul [%s]. În cazul în care se găseşte în interiorul separatorului cu un conţinut de domeniu, domeniu este rotunjit cu caracter rotunde [%s]. caracter Escape pentru a scăpa de caractere rundă este [%s].
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:38:56).
 
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+FileWasImported=Dosarul a fost importat cu <b>%s</b> număr.
+DataComeFromIdFoundFromCodeId=Cod care vine de la <b>%s</b> numărul de câmp de fişier sursă vor fi utilizate pentru a găsi ID-ul obiectului părinte de a utiliza (Deci, codul din fişierul sursă trebuie să există în <b>%s</b> dictionnary). Reţineţi că, dacă ştiţi ID-ul, puteţi utiliza, de asemenea, că în fişierul sursă în loc de cod. De import ar trebui să lucreze în ambele cazuri.
+DataCodeIDSourceIsInsertedInto=ID-ul de linie de la mamă găsit codul, va fi introdus în câmpul următorul text:
+ExampleAnyRefFoundIntoElement=Orice Ref gasit pentru <b>%s</b> element
+ExampleAnyCodeOrIdFoundIntoDictionnary=Orice cod (sau id), a constatat în <b>%s</b> dictionnary
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:59).

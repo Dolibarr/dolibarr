@@ -112,3 +112,9 @@ RelatedContracts=العقود ذات الصلة
 // Reference language: en_US -> ar_SA
 Error_CONTRACT_ADDON_NotDefined=لم يتم تعريف ثابت CONTRACT_ADDON
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 11:05:19).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+NoExpiredServices=أي نوع من الخدمات انتهت نشط
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:55:40).

@@ -631,3 +631,24 @@ ShortThursday = Č
 ShortFriday = P
 ShortSaturday = S
 ShortSunday = N
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+SearchOf=Iskanje
+LT1ES=RE
+LT2ES=IRPF
+ActionsOnMember=Dogodki okoli tega člana
+SetLinkToThirdParty=Povezava na drugo tretjo osebo
+CreateDraft=Ustvarite osnutek
+ClickToEdit=Kliknite za urejanje
+ObjectDeleted=Predmet %s črta
+ByCountry=Po državah
+ByTown=Z mesta
+ByDate=Po datumu
+ByMonthYear=S mesec / leto
+ByYear=Po letih
+ByMonth=po mesecih
+ByDay=Po dnevih
+BySalesRepresentative=Z prodajni predstavnik
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:31:20).

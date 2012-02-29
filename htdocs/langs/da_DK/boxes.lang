@@ -93,3 +93,18 @@ BoxTitleLastModifiedSuppliers=Sidst %s ændret leverandører
 BoxTitleLastModifiedCustomers=Sidst %s ændret kunder
 BoxTitleLastModifiedProspects=Sidst %s ændret udsigterne
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:34).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
+// Reference language: en_US -> da_DK
+BoxLastContacts=Sidste kontakter / adresser
+BoxLastMembers=Nyeste medlemmer
+BoxTitleLastModifiedMembers=Sidste %s modificerede medlemmer
+BoxTitleLastModifiedContacts=Sidste %s ændret kontakter / adresser
+BoxOldestExpiredServices=Ældste aktive udløbne tjenester
+BoxLastExpiredServices=Sidste %s ældste kontakter med aktive udløbne tjenester
+BoxTitleLastModifiedDonations=Sidste %s ændret donationer
+BoxTitleLastModifiedExpenses=Sidste %s ændret udgifter
+ClickToAdd=Klik her for at tilføje.
+NoRecordedContacts=Ingen registrerede kontakter
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:59:43).

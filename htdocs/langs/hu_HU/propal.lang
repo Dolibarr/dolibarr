@@ -1,0 +1,105 @@
+/*
+ * Language code: hu_HU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 16:13:31
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
+// Reference language: en_US -> hu_HU
+CHARSET=UTF-8
+Proposals=Üzleti ajánlatok
+Proposal=Üzleti ajánlat
+ProposalShort=Javaslat
+ProposalsDraft=Készítsen üzleti ajánlatot
+ProposalDraft=Tervezet kereskedelmi javaslat
+ProposalsOpened=Megnyitotta a kereskedelmi javaslatok
+Prop=Üzleti ajánlatok
+CommercialProposal=Üzleti ajánlat
+CommercialProposals=Üzleti ajánlatok
+ProposalCard=Javaslat kártya
+ProposalContact=Javaslat Kapcsolat
+NewProp=Új kereskedelmi javaslat
+NewProposal=Új kereskedelmi javaslat
+NewPropal=Új javaslat
+Prospect=Kilátás
+ProspectList=Prospect lista
+DeleteProp=Üzleti ajánlat törlése
+ValidateProp=Érvényesítése kereskedelmi javaslat
+AddProp=Add javaslat
+ConfirmDeleteProp=Biztosan törölni kívánja ezt a kereskedelmi javaslat?
+ConfirmValidateProp=Biztosan meg akarja érvényesíteni a kereskedelmi javaslat?
+LastPropals=Utolsó %s javaslatok
+LastClosedProposals=Utolsó lezárt pályázatok %s
+LastModifiedProposals=Utolsó %s módosított javaslatokat
+AllPropals=Minden javaslat
+LastProposals=Utolsó javaslatok
+SearchAProposal=Keressen egy javaslatot
+ProposalsStatistics=Üzleti ajánlat statisztikái
+NumberOfProposalsByMonth=Havi száma
+AmountOfProposalsByMonthHT=Összeg havonta (adózott)
+NbOfProposals=Száma a kereskedelmi javaslatok
+ShowPropal=Mutasd javaslat
+PropalsDraft=Piszkozatok
+PropalsOpened=Megnyitotta
+PropalsNotBilled=Zárt nem számlázzák
+PropalStatusDraft=Tervezet (igények érvényesítése)
+PropalStatusValidated=Jóváhagyott (javaslat nyitott)
+PropalStatusOpened=Jóváhagyott (javaslat nyitott)
+PropalStatusClosed=Zárva
+PropalStatusSigned=Aláírt (szükséges számlázási)
+PropalStatusNotSigned=Nem írta alá (zárt)
+PropalStatusBilled=Kiszámlázott
+PropalStatusDraftShort=Tervezet
+PropalStatusValidatedShort=Hitelesítette
+PropalStatusOpenedShort=Megnyitotta
+PropalStatusClosedShort=Zárva
+PropalStatusSignedShort=Aláírt
+PropalStatusNotSignedShort=Nem írták alá
+PropalStatusBilledShort=Kiszámlázott
+PropalsToClose=Kereskedelmi javaslatokat, hogy lezárja
+PropalsToBill=Aláírták a kereskedelmi javaslatok törvényjavaslatot
+ListOfProposals=Üzleti ajánlatok listája
+ActionsOnPropal=Események javaslatára
+NoOpenedPropals=Nem nyitott a kereskedelmi javaslatok
+NoOtherOpenedPropals=Nincs más nyitott üzleti ajánlatot
+RefProposal=Üzleti ajánlat ref
+SendPropalByMail=Küldés e-mailben kereskedelmi javaslat
+FileNotUploaded=A feltöltött fájl nem
+FileUploaded=A fájl sikeresen feltöltött
+AssociatedDocuments=Dokumentumok kapcsolódó javaslatot:
+ErrorCantOpenDir=Nem lehet megnyitni a könyvtárat
+DatePropal=Születési javaslat
+DateEndPropal=Érvényesség vége dátuma
+DateEndPropalShort=Dátum végén
+ValidityDuration=Érvényesség időtartama
+CloseAs=Zárja le a status
+ClassifyBilled=Osztályozza számlázott
+BuildBill=Build számla
+ErrorPropalNotFound=Propal %s nem található
+Estimate=Becslés:
+EstimateShort=Becsüljük
+OtherPropals=Egyéb javaslatok
+CopyPropalFrom=Hozzon létre a kereskedelmi javaslat másolásával meglévő javaslat
+CreateEmptyPropal=Hozzon létre üres üzleti ajánlatot vierge vagy listából termékek / szolgáltatások
+DefaultProposalDurationValidity=Alapértelmezett érvényesség időtartamát kereskedelmi javaslat (napokban)
+UseCustomerContactAsPropalRecipientIfExist=Használja ügyfélkapcsolati címet, ha meghatározott harmadik személy helyett a javaslat címét címzett címét
+ClonePropal=Klón kereskedelmi javaslat
+ConfirmClonePropal=Biztos vagy benne, hogy klónozza a kereskedelmi <b>%s</b> javaslat?
+ConfirmReOpenProp=Biztosan meg szeretne nyitni vissza a kereskedelmi <b>%s</b> javaslat?
+ProposalsAndProposalsLines=Üzleti ajánlat és vonalak
+ProposalLine=Javaslat vonal
+AvailabilityPeriod=Elérhetőség késleltetés
+SetAvailability=Állítsa be a rendelkezésre álló késedelem
+AfterOrder=rendezés után
+AvailabilityTypeAV_NOW=Azonnali
+AvailabilityTypeAV_1W=1 hét
+AvailabilityTypeAV_2W=2 hét
+AvailabilityTypeAV_3W=3 hét
+AvailabilityTypeAV_1M=1 hónap
+TypeContact_propal_internal_SALESREPFOLL=Képviselő-up a következő javaslatot
+TypeContact_propal_external_BILLING=Ügyfél számla Kapcsolat
+TypeContact_propal_external_CUSTOMER=Ügyfélkapcsolati nyomon követése javaslat
+DocModelAzurDescription=A javaslat teljes modell (logo. ..)
+DocModelJauneDescription=Jaune javaslat modell
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:24:18).

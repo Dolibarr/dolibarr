@@ -96,3 +96,18 @@ TypeContact_propal_internal_SALESREPFOLL=Representante proposta seguimento
 TypeContact_propal_external_BILLING=contacto na factura do Cliente
 TypeContact_propal_external_CUSTOMER=Atendimento ao cliente seguinte proposta-up
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:27).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+ProposalCard=Cartão de Proposta
+ConfirmReOpenProp=Tem certeza que deseja abrir para trás as <b>%s</b> proposta comercial?
+AvailabilityPeriod=Disponibilidade atraso
+SetAvailability=Definir atraso disponibilidade
+AfterOrder=após a ordem
+AvailabilityTypeAV_NOW=Imediato
+AvailabilityTypeAV_1W=1 semana
+AvailabilityTypeAV_2W=2 semanas
+AvailabilityTypeAV_3W=3 semanas
+AvailabilityTypeAV_1M=1 mês
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:48:32).
