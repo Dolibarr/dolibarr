@@ -38,7 +38,6 @@ $action		= GETPOST('action','alpha');
 $cancel		= GETPOST('cancel','alpha');
 $origin		= GETPOST('origin','alpha');
 $catorigin	= GETPOST('catorigin','int');
-$nbcats 	= (GETPOST('choix') ? GETPOST('choix') : 1); // TODO not use ?
 $type 		= GETPOST('type','alpha');
 $urlfrom	= GETPOST('urlfrom','alpha');
 
