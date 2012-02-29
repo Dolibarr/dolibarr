@@ -249,18 +249,20 @@ function GETPOST($paramname,$check='',$method=0)
 	elseif ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
 	elseif ($method==2) $out = isset($_POST[$paramname])?$_POST[$paramname]:'';
 	elseif ($method==3) $out = isset($_POST[$paramname])?$_POST[$paramname]:(isset($_GET[$paramname])?$_GET[$paramname]:'');
+    else return 'BadParameter';
 
 	if (! empty($check))
 	{
+	    $out=trim($out);
 		// Check if numeric
-		if ($check == 'int' && ! preg_match('/^[-\.,0-9]+$/i',trim($out))) $out='';
+		if ($check == 'int' && ! preg_match('/^[-\.,0-9]+$/i',$out)) $out='';
 		// Check if alpha
-		//if ($check == 'alpha' && ! preg_match('/^[ =:@#\/\\\(\)\-\._a-z0-9]+$/i',trim($out))) $out='';
-		// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
-		if ($check == 'alpha')
+		elseif ($check == 'alpha')
 		{
-			if (preg_match('/"/',trim($out))) $out='';
-			else if (preg_match('/(\.\.\/)+/',trim($out))) $out='';
+	    	// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
+    		// '../' is dangerous because it allows dir transversals
+		    if (preg_match('/"/',$out)) $out='';
+			else if (preg_match('/\.\.\//',$out)) $out='';
 		}
 	}
 
