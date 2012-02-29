@@ -140,6 +140,10 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         $tmp=getBrowserInfo();
         $this->assertEquals('chrome',$tmp['browsername']);
         $this->assertEquals('19.0.1042.0',$tmp['browserversion']);
+        $_SERVER['HTTP_USER_AGENT']='chrome (Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11)';
+        $tmp=getBrowserInfo();
+        $this->assertEquals('chrome',$tmp['browsername']);
+        $this->assertEquals('17.0.963.56',$tmp['browserversion']);
         $_SERVER['HTTP_USER_AGENT']='Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; de-at) AppleWebKit/533.21.1 (KHTML, like Gecko) Version/5.0.5 Safari/533.21.1';
         $tmp=getBrowserInfo();
         $this->assertEquals('safari',$tmp['browsername']);
