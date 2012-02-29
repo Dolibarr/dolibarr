@@ -143,3 +143,7 @@ BackToAccount=Volver a la cuenta
 ShowAllAccounts=Mostrar para todas las cuentas
 FutureTransaction=Transacción futura. No es posible conciliar.
 SelectChequeTransactionAndGenerate=Seleccione/filtre los cheques a incluir en la remesa y haga clic en "Crear".
+InputReceiptNumber=Indique el extracto bancario relacionado con la conciliación. Utilice un valor numérico ordenable (por ejemplo, AAAAMM)
+EventualyAddCategory=Eventualmente, indique una categoría en la que clasificar los registros
+ToConciliate=¿A conciliar?
+ThenCheckLinesAndConciliate=A continuación, compruebe las líneas presentes en el extracto bancario y haga clic
