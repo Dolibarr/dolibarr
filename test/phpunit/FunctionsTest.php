@@ -118,6 +118,35 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
 
 
     /**
+    * testDolHtmlCleanLastBr
+    *
+    * @return void
+    */
+    public function testGetBrowserVersion()
+    {
+        $_SERVER['HTTP_USER_AGENT']='Mozilla/4.0 (compatible; MSIE 5.0; Windows 98; DigExt; KITV4 Wanadoo; KITV5 Wanadoo)';    // MSIE 5.0
+        $tmp=getBrowserInfo();
+        $this->assertEquals('ie',$tmp['browsername']);
+        $this->assertEquals('5.0',$tmp['browserversion']);
+        $_SERVER['HTTP_USER_AGENT']='Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.5a) Gecko/20030728 Mozilla Firefox/0.9.1';    // Firefox 0.9.1
+        $tmp=getBrowserInfo();
+        $this->assertEquals('firefox',$tmp['browsername']);
+        $this->assertEquals('0.9.1',$tmp['browserversion']);
+        $_SERVER['HTTP_USER_AGENT']='Mozilla/3.0 (Windows 98; U) Opera 6.03  [en]';
+        $tmp=getBrowserInfo();
+        $this->assertEquals('opera',$tmp['browsername']);
+        $this->assertEquals('6.03',$tmp['browserversion']);
+        $_SERVER['HTTP_USER_AGENT']='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21';
+        $tmp=getBrowserInfo();
+        $this->assertEquals('chrome',$tmp['browsername']);
+        $this->assertEquals('19.0.1042.0',$tmp['browserversion']);
+        $_SERVER['HTTP_USER_AGENT']='Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; de-at) AppleWebKit/533.21.1 (KHTML, like Gecko) Version/5.0.5 Safari/533.21.1';
+        $tmp=getBrowserInfo();
+        $this->assertEquals('safari',$tmp['browsername']);
+        $this->assertEquals('533.21.1',$tmp['browserversion']);
+    }
+
+    /**
      * testDolHtmlCleanLastBr
      *
      * @return boolean

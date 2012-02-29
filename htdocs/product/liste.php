@@ -213,7 +213,6 @@ else
     		$fieldlist = $object->field_list;
     		$datas = $object->list_datas;
     		$picto='title.png';
-    		if (empty($conf->browser->firefox)) $picto='title.gif';
     		$title_picto = img_picto('',$picto);
     		$title_text = $title;
 

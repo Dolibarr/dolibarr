@@ -69,18 +69,12 @@ if ($action == 'specimen')
 	$propal = new Propal($db);
 	$propal->initAsSpecimen();
 
-	// Check if there is external models to do asked by plugins
-	if (is_array($conf->models_modules) && ! empty($conf->models_modules)) {
-		$conf->file->dol_document_root = array_merge($conf->file->dol_document_root,$conf->models_modules);
-	}
-	
-	// Search template file
+	// Search template files
 	$file=''; $classname=''; $filefound=0;
-	foreach ($conf->file->dol_document_root as $dirroot)
+	$dirmodels=array_merge(array('/'),$conf->models_modules);
+	foreach($dirmodels as $reldir)
 	{
-		// Charge le modele
-		$dir = $dirroot."/core/modules/propale/doc/";
-		$file = $dir."pdf_".$modele.".modules.php";
+	    $file=dol_buildpath($reldir."core/modules/propale/doc/pdf_".$modele.".modules.php",0);
 		if (file_exists($file))
 		{
 			$filefound=1;
@@ -88,7 +82,7 @@ if ($action == 'specimen')
 			break;
 		}
 	}
-	
+
 	if ($filefound)
 	{
 		require_once($file);

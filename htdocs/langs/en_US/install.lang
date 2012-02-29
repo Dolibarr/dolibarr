@@ -32,6 +32,7 @@ ErrorConnectedButDatabaseNotFound=Connection to server successfull but database 
 ErrorDatabaseAlreadyExists=Database '%s' already exists.
 IfDatabaseNotExistsGoBackAndUncheckCreate=If database does not exists, go back and check option "Create database".
 IfDatabaseExistsGoBackAndCheckCreate=If database already exists, go back and uncheck "Create database" option.
+WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
 PHPVersion=PHP Version
 YouCanContinue=You can continue...
 PleaseBePatient=Please be patient...
