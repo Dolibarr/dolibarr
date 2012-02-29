@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -179,23 +179,31 @@ function facture_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
         $modele=$tmp[0];
         $srctemplatepath=$tmp[1];
     }
-
-	// Search template file
-	$file=''; $classname=''; $filefound=0;
-	foreach(array('doc','pdf') as $prefix)
-	{
-        $file = $prefix."_".$modele.".modules.php";
-
-        // On verifie l'emplacement du modele
-        $file = dol_buildpath($dir.'doc/'.$file);
-
-        if (file_exists($file))
-	    {
-	        $filefound=1;
-	        $classname=$prefix.'_'.$modele;
-	        break;
-	    }
-	}
+    
+    // Check if there is external models to do asked by plugins
+    if (is_array($conf->models_modules) && ! empty($conf->models_modules)) {
+    	$conf->file->dol_document_root = array_merge($conf->file->dol_document_root,$conf->models_modules);
+    }
+    
+    foreach ($conf->file->dol_document_root as $dirroot)
+    {
+    	// Search template file
+    	$file=''; $classname=''; $filefound=0;
+    	foreach(array('doc','pdf') as $prefix)
+    	{
+    		$file = $prefix."_".$modele.".modules.php";
+    	
+    		// On verifie l'emplacement du modele
+    		$file = $dirroot.$dir.'doc/'.$file;
+    		if (file_exists($file))
+    		{
+    			$filefound=1;
+    			$classname=$prefix.'_'.$modele;
+    			break;
+    		}
+    	}
+    	if ($filefound) break;
+    }
 
 	// Charge le modele
 	if ($filefound)

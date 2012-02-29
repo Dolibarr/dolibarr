@@ -69,17 +69,32 @@ if ($action == 'specimen')
 	$propal = new Propal($db);
 	$propal->initAsSpecimen();
 
-	// Charge le modele
-	$dir = "/core/modules/propale/doc/";
-	$file = "pdf_".$modele.".modules.php";
-	$file = dol_buildpath($dir.$file);
-	if (file_exists($file))
+	// Check if there is external models to do asked by plugins
+	if (is_array($conf->models_modules) && ! empty($conf->models_modules)) {
+		$conf->file->dol_document_root = array_merge($conf->file->dol_document_root,$conf->models_modules);
+	}
+	
+	// Search template file
+	$file=''; $classname=''; $filefound=0;
+	foreach ($conf->file->dol_document_root as $dirroot)
 	{
-		$classname = "pdf_".$modele;
+		// Charge le modele
+		$dir = $dirroot."/core/modules/propale/doc/";
+		$file = $dir."pdf_".$modele.".modules.php";
+		if (file_exists($file))
+		{
+			$filefound=1;
+			$classname = "pdf_".$modele;
+			break;
+		}
+	}
+	
+	if ($filefound)
+	{
 		require_once($file);
-
+		
 		$module = new $classname($db);
-
+		
 		if ($module->write_file($propal,$langs) > 0)
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=propal&file=SPECIMEN.pdf");

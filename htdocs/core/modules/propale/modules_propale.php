@@ -182,23 +182,31 @@ function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
         $modele=$tmp[0];
         $srctemplatepath=$tmp[1];
     }
-
-	// Search template file
-	$file=''; $classname=''; $filefound=0;
-	foreach(array('doc','pdf') as $prefix)
-	{
-        $file = $prefix."_".$modele.".modules.php";
-
-        // On verifie l'emplacement du modele
-        $file = dol_buildpath($dir.'doc/'.$file);
-
-        if (file_exists($file))
-	    {
-	        $filefound=1;
-	        $classname=$prefix.'_'.$modele;
-	        break;
-	    }
-	}
+    
+    // Check if there is external models to do asked by plugins
+    if (is_array($conf->models_modules) && ! empty($conf->models_modules)) {
+    	$conf->file->dol_document_root = array_merge($conf->file->dol_document_root,$conf->models_modules);
+    }
+    
+    // Search template file
+    $file=''; $classname=''; $filefound=0;
+    foreach ($conf->file->dol_document_root as $dirroot)
+    {
+    	foreach(array('doc','pdf') as $prefix)
+    	{
+    		$file = $prefix."_".$modele.".modules.php";
+    	
+    		// On verifie l'emplacement du modele
+    		$file = $dirroot.$dir.'doc/'.$file;
+    		if (file_exists($file))
+    		{
+    			$filefound=1;
+    			$classname=$prefix.'_'.$modele;
+    			break;
+    		}
+    	}
+    	if ($filefound) break;
+    }
 
 	// Charge le modele
 	if ($filefound)
