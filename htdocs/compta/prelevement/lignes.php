@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,9 +38,9 @@ $langs->load("categories");
 // Get supervariables
 $prev_id = GETPOST('id','int');
 $socid = GETPOST('socid','int');
-$page = GETPOST("page");
-$sortorder = ((GETPOST("sortorder")=="")) ? "DESC" : GETPOST("sortorder");
-$sortfield = ((GETPOST("sortfield")=="")) ? "pl.fk_soc" : GETPOST("sortfield");
+$page = GETPOST('page','int');
+$sortorder = ((GETPOST('sortorder','alpha')=="")) ? "DESC" : GETPOST('sortorder','alpha');
+$sortfield = ((GETPOST('sortfield','alpha')=="")) ? "pl.fk_soc" : GETPOST('sortfield','alpha');
 
 
 
