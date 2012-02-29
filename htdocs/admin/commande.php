@@ -70,32 +70,48 @@ if ($action == 'specimen')
 
 	$commande = new Commande($db);
 	$commande->initAsSpecimen();
-
-	// Charge le modele
-	$dir = "/core/modules/commande/doc/";
-	$file = "pdf_".$modele.".modules.php";
-	$file = dol_buildpath($dir.$file);
-	if (file_exists($file))
+	
+	// Check if there is external models to do asked by plugins
+	if (is_array($conf->models_modules) && ! empty($conf->models_modules)) {
+		$conf->file->dol_document_root = array_merge($conf->file->dol_document_root,$conf->models_modules);
+	}
+	
+	// Search template file
+	$file=''; $classname=''; $filefound=0;
+	foreach ($conf->file->dol_document_root as $dirroot)
 	{
-		$classname = "pdf_".$modele;
+		// Charge le modele
+		$dir = $dirroot."/core/modules/commande/doc/";
+		$file = $dir."pdf_".$modele.".modules.php";
+		if (file_exists($file))
+		{
+			$filefound=1;
+			$classname = "pdf_".$modele;
+			break;
+			require_once($file);
+		}
+	}
+	
+	if ($filefound)
+	{
 		require_once($file);
-
-		$obj = new $classname($db);
-
-		if ($obj->write_file($commande,$langs) > 0)
+	
+		$module = new $classname($db);
+	
+		if ($module->write_file($commande,$langs) > 0)
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande&file=SPECIMEN.pdf");
 			return;
 		}
 		else
 		{
-			$mesg='<div class="error">'.$obj->error.'</div>';
-			dol_syslog($obj->error, LOG_ERR);
+			$mesg='<font class="error">'.$module->error.'</font>';
+			dol_syslog($module->error, LOG_ERR);
 		}
 	}
 	else
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
+		$mesg='<font class="error">'.$langs->trans("ErrorModuleNotFound").'</font>';
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
