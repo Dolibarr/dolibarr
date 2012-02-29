@@ -45,8 +45,9 @@ $langs->load('propal');
 $langs->load('deliveries');
 $langs->load('stocks');
 
-$id=empty($_GET['id']) ? 0 : intVal($_GET['id']);
-$action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
+$id=GETPOST('id','int');
+$ref= GETPOST('ref','alpha');
+$action=GETPOST('action','alpha');
 
 // Security check
 $socid=0;
@@ -59,35 +60,35 @@ $result=restrictedArea($user,'commande',$id);
  */
 
 // Categorisation dans projet
-if ($_POST['action'] == 'classin')
+if ($action == 'classin')
 {
 	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);
-	$commande->setProject($_POST['projectid']);
+	$commande->fetch($id);
+	$commande->setProject(GETPOST('projectid','int'));
 }
 
-if ($_POST["action"] == 'confirm_cloture' && $_POST["confirm"] == 'yes')
+if ($action == 'confirm_cloture' && GETPOST('confirm','alpha') == 'yes')
 {
 	$commande = new Commande($db);
-	$commande->fetch($_GET["id"]);
+	$commande->fetch($id);
 	$result = $commande->cloture($user);
 }
 
 // Positionne ref commande client
-if ($_POST['action'] == 'setrefcustomer' && $user->rights->commande->creer)
+if ($action == 'setrefcustomer' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);
-	$commande->set_ref_client($user, $_POST['ref_customer']);
+	$commande->fetch($id);
+	$commande->set_ref_client($user,GETPOST('ref_customer','alpha'));
 }
 
-if ($_POST['action'] == 'setdatedelivery' && $user->rights->commande->creer)
+if ($action == 'setdatedelivery' && $user->rights->commande->creer)
 {
 	//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
-	$datelivraison=dol_mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
+	$datelivraison=dol_mktime(0, 0, 0, GETPOST('liv_month','int'), GETPOST('liv_day','int'),GETPOST('liv_year','int'));
 
 	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);
+	$commande->fetch($id);
 	$result=$commande->set_date_livraison($user,$datelivraison);
 	if ($result < 0)
 	{
@@ -95,26 +96,26 @@ if ($_POST['action'] == 'setdatedelivery' && $user->rights->commande->creer)
 	}
 }
 
-if ($_POST['action'] == 'setdeliveryaddress' && $user->rights->commande->creer)
+if ($action == 'setdeliveryaddress' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);
-	$commande->set_adresse_livraison($user,$_POST['delivery_address_id']);
+	$commande->fetch($id);
+	$commande->set_adresse_livraison($user,GETPOST('delivery_address_id','int'));
 }
 
-if ($_POST['action'] == 'setmode' && $user->rights->commande->creer)
+if ($action == 'setmode' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);
-	$result=$commande->mode_reglement($_POST['mode_reglement_id']);
+	$commande->fetch($id);
+	$result=$commande->mode_reglement(GETPOST('mode_reglement_id','int'));
 	if ($result < 0) dol_print_error($db,$commande->error);
 }
 
-if ($_POST['action'] == 'setconditions' && $user->rights->commande->creer)
+if ($action == 'setconditions' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
-	$commande->fetch($_GET['id']);
-	$result=$commande->cond_reglement($_POST['cond_reglement_id']);
+	$commande->fetch($id);
+	$result=$commande->cond_reglement(GETPOST('mode_reglement_id','int'));
 	if ($result < 0) dol_print_error($db,$commande->error);
 }
 
@@ -131,12 +132,11 @@ $formproduct = new FormProduct($db);
 
 llxHeader('',$langs->trans('OrderCard'),'');
 
-$id = GETPOST('id');
-$ref= GETPOST('ref');
+
 if ($id > 0 || ! empty($ref))
 {
 	$commande = new Commande($db);
-	if ( $commande->fetch($_GET['id'],$_GET['ref']) > 0)
+	if ( $commande->fetch($id,$ref) > 0)
 	{
 		$commande->loadExpeditions(1);
 
@@ -154,9 +154,9 @@ if ($id > 0 || ! empty($ref))
 		/*
 		 * Confirmation de la validation
 		 */
-		if ($_GET["action"] == 'cloture')
+		if ($action == 'cloture')
 		{
-			$ret=$form->form_confirm($_SERVER['PHP_SELF']."?id=".$_GET["id"],$langs->trans("CloseOrder"),$langs->trans("ConfirmCloseOrder"),"confirm_cloture");
+			$ret=$form->form_confirm($_SERVER['PHP_SELF']."?id=".$id,$langs->trans("CloseOrder"),$langs->trans("ConfirmCloseOrder"),"confirm_cloture");
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -178,10 +178,10 @@ if ($id > 0 || ! empty($ref))
 		print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
 		print $langs->trans('RefCustomer').'</td><td align="left">';
 		print '</td>';
-		if ($_GET['action'] != 'RefCustomerOrder' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=RefCustomerOrder&amp;id='.$commande->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+		if ($action != 'RefCustomerOrder' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=RefCustomerOrder&amp;id='.$commande->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
-		if ($user->rights->commande->creer && $_GET['action'] == 'RefCustomerOrder')
+		if ($user->rights->commande->creer && $action == 'RefCustomerOrder')
 		{
 			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -252,10 +252,10 @@ if ($id > 0 || ! empty($ref))
 		print $langs->trans('DateDeliveryPlanned');
 		print '</td>';
 
-		if ($_GET['action'] != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
+		if ($action != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
-		if ($_GET['action'] == 'editdate_livraison')
+		if ($action == 'editdate_livraison')
 		{
 			print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -282,17 +282,17 @@ if ($id > 0 || ! empty($ref))
 			print $langs->trans('DeliveryAddress');
 			print '</td>';
 
-			if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socid.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
+			if ($action != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socid.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 
-			if ($_GET['action'] == 'editdelivery_adress')
+			if ($action == 'editdelivery_adress')
 			{
-				$formother->form_address($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,$_GET['socid'],'delivery_address_id','commande',$commande->id);
+				$formother->form_address($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,GETPOST('socid','int'),'delivery_address_id','commande',$commande->id);
 			}
 			else
 			{
-				$formother->form_address($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,$_GET['socid'],'none','commande',$commande->id);
+				$formother->form_address($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,GETPOST('socid','int'),'none','commande',$commande->id);
 			}
 			print '</td></tr>';
 		}
@@ -303,10 +303,10 @@ if ($id > 0 || ! empty($ref))
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
 
-		if ($_GET['action'] != 'editconditions' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+		if ($action != 'editconditions' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
-		if ($_GET['action'] == 'editconditions')
+		if ($action == 'editconditions')
 		{
 			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->cond_reglement_id,'cond_reglement_id');
 		}
@@ -321,10 +321,10 @@ if ($id > 0 || ! empty($ref))
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentMode');
 		print '</td>';
-		if ($_GET['action'] != 'editmode' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+		if ($actionº != 'editmode' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
-		if ($_GET['action'] == 'editmode')
+		if ($action == 'editmode')
 		{
 			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->mode_reglement_id,'mode_reglement_id');
 		}
@@ -342,10 +342,10 @@ if ($id > 0 || ! empty($ref))
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('Project');
 			print '</td>';
-			if ($_GET['action'] != 'classify') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+			if ($action != 'classify') print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
-			if ($_GET['action'] == 'classify')
+			if ($action == 'classify')
 			{
 				$form->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->fk_project, 'projectid');
 			}
@@ -606,7 +606,7 @@ if ($id > 0 || ! empty($ref))
 			{
 				if ($user->rights->expedition->creer)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/fiche.php?action=create&amp;origin=commande&amp;object_id='.$_GET["id"].'">'.$langs->trans("NewSending").'</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/fiche.php?action=create&amp;origin=commande&amp;object_id='.$id.'">'.$langs->trans("NewSending").'</a>';
 					if ($reste_a_livrer_total <= 0)
 					{
 						print ' '.img_warning($langs->trans("WarningNoQtyLeftToSend"));
