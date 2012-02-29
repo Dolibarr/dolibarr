@@ -152,8 +152,8 @@ class Conf
 						// If this is constant for a sms engine
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_SMS$/i',$key,$reg))
 						{
-							$module=strtolower($reg[1]);
-							$this->sms_engine_modules[$module]=$module;    // Add this module in list of modules that provide SMS
+							$modulename=strtolower($reg[1]);
+							$this->sms_engine_modules[$modulename]=$modulename;    // Add this module in list of modules that provide SMS
 						}
 						// If this is constant for all generic part activated by a module
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_([A-Z]+)$/i',$key,$reg))
@@ -164,17 +164,18 @@ class Conf
 							if (! is_array($this->$varname)) { $this->$varname = array(); }
 							$arrValue = @unserialize($value);
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
-							else if ($partname == 'models' && $value == 1) $value = dol_buildpath('/'.$modulename);
+							else if ($partname == 'barcode') $value = '/'.$modulename.'/core/modules/'.$partname.'/';
+							else if ($partname == 'models')  $value = $modulename.'/';
 							else $value = ($value == 1 ? '/'.$modulename.'/core/'.$partname.'/' : $value);
 							$this->$varname = array_merge($this->$varname, array($modulename => $value));
 						}
                         // If this is a module constant (must be at end)
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)$/i',$key,$reg))
 						{
-							$module=strtolower($reg[1]);
-							$this->$module=(object) array();
-							$this->$module->enabled=true;
-							$this->modules[]=$module;              // Add this module in list of enabled modules
+							$modulename=strtolower($reg[1]);
+							$this->$modulename=(object) array();
+							$this->$modulename->enabled=true;
+							$this->modules[]=$modulename;              // Add this module in list of enabled modules
 						}
 					}
 				}
