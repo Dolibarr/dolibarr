@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-11 17:09:12
  */
@@ -93,3 +93,18 @@ TypeContact_propal_internal_SALESREPFOLL=Angebotsnachverfolgung durch Vertreter
 TypeContact_propal_external_BILLING=Kontakt für Kundenrechnungen
 TypeContact_propal_external_CUSTOMER=Angebots-Nachverfolgung durch Partnerkontakt
 DocModelRoigDescription=Eine Angebotsvorlage mit spanischem...
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+ProposalCard=Vorschlag Karte
+ConfirmReOpenProp=Sind Sie sicher, das Sie öffnen möchten wieder die kommerziellen Vorschlag <b>%s?</b>
+AvailabilityPeriod=Verfügbarkeit Verzögerung
+SetAvailability=Stellen Sie die Verfügbarkeit Verzögerung
+AfterOrder=nach Bestellung
+AvailabilityTypeAV_NOW=Unmittelbar
+AvailabilityTypeAV_1W=1 Woche
+AvailabilityTypeAV_2W=2 Wochen
+AvailabilityTypeAV_3W=3 Wochen
+AvailabilityTypeAV_1M=1 Monat
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:05:59).

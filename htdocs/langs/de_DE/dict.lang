@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-11 16:10:12
  */
@@ -303,3 +303,11 @@ DemandReasonTypeSRC_CAMP_FAX=Fax Kampagne
 DemandReasonTypeSRC_COMM=Kaufmännischer Ansprechpartner
 DemandReasonTypeSRC_SHOP=Shop Kontakt
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 07:42:29).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+CountryCH=Schweiz
+CountryIE=Irland
+CurrencyUAH=Hryvnia
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:39).

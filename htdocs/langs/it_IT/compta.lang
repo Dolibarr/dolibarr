@@ -159,3 +159,24 @@ AmountToBeCharged=Importo totale da pagare:
 ProposalStats=Statistiche sulle proposte
 OrderStats=Le statistiche sugli ordini
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 05:59:30).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+// Reference language: en_US -> it_IT
+LT2SummaryES=IRPF Balance
+LT2PaidES=IRPF pagamento
+LT2CustomerES=IRPF vendite
+LT2SupplierES=IRPF acquisti
+newLT2PaymentES=New IRPF pagamento
+LT2PaymentES=IRPF pagamento
+LT2PaymentsES=IRPF pagamenti
+DepositsAreNotIncluded=- Fatture di deposito sono né incluse
+DepositsAreIncluded=- Fatture di deposito sono inclusi
+LT2ReportByCustomersInInputOutputModeES=Relazione di terze parti IRPF
+RulesVATInServices=- Per i servizi, il rapporto include le norme IVA effettivamente ricevuti o rilasciati sulla base della data di pagamento. <br> - Per i beni materiali, comprende le fatture IVA sulla base della data della fattura.
+RulesVATInProducts=- Per i beni materiali, comprende le fatture IVA sulla base della data della fattura.
+RulesVATDueServices=- Per i servizi, il rapporto include fatture IVA dovuta, retribuiti o meno, in base alla data fattura.
+RulesVATDueProducts=- Per i beni materiali, comprende le fatture IVA, in base alla data fattura.
+InvoiceStats=Statistiche sulle bollette
+WarningDepositsNotIncluded=Depositi fatture non sono inclusi in questa versione con questo modulo contabile.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:39).

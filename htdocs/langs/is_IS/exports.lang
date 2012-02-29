@@ -126,3 +126,13 @@ FieldNeedSource=Þetta finnst í gagnagrunni þarf að senda gögn frá frumskr�
 // Reference language: en_US
 CSVFormatDesc=<b>Comma Seperated Gildi</b> skráarsnið (. Csv). <br> Þetta er textaskrá snið þar sem reitir eru aðskilin með skiltákn [%s]. Ef skiltákn finnst inni í reitinn innihald er á sviði rúnnuð með umferð karakter [%s]. Flýja staf til að flýja umferð eðli er [%s].
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:30:04).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+FileWasImported=Skrá var flutt með <b>%s</b> tala.
+DataComeFromIdFoundFromCodeId=Kóða sem kemur af akri tala <b>%s</b> á skrá uppspretta verður notað til að finna auðkenni hlut foreldra til að nota (Svo kóðinn frá frumskrár verður til í dictionnary <b>%s).</b> Athugaðu að ef þú veist persónuskilríki, þú getur líka notað það í skrá uppspretta stað kóða. Innflutningur ætti að vinna í báðum tilvikum.
+DataCodeIDSourceIsInsertedInto=Einkennisnúmer línu foreldri finnst af kóða, verður sett inn eftirfarandi sviði:
+ExampleAnyRefFoundIntoElement=Allar tilv fann fyrir <b>%s</b> þátturinn
+ExampleAnyCodeOrIdFoundIntoDictionnary=Allir númer (eða id) fannst í dictionnary <b>%s</b>
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:27:09).

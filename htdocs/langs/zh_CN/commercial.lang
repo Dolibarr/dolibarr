@@ -86,3 +86,14 @@ ActionAC_COM=通过邮件发送客户订单
 ActionAC_SUP_ORD=邮寄供应商的订单
 ActionAC_SUP_INV=邮寄发票的供应商
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+StatusNotApplicable=不适用
+ActionAC_SHIP=发送邮件运输
+ActionAC_OTH=其他
+StatusProsp=展望状态
+DraftPropals=起草商业建议
+SearchPropal=搜索一个商业建议
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:42).

@@ -18,3 +18,10 @@ TF_OTHER=Άλλο
 TF_LUNCH=Γεύμα
 TF_TRIP=Ταξίδι
 ListTripsAndExpenses=Λίστα ταξιδιών και εξόδων
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+ExpensesArea=Ταξίδια και έξοδα περιοχή
+SearchATripAndExpense=Αναζήτηση ένα ταξίδι και τα έξοδα
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:28).

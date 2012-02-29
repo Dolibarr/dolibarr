@@ -67,3 +67,33 @@ InterventionValidatedInDolibarr=Interventie %s gevalideerd
 MenuToDoActions=Wszystkich działań niekompletne
 InterventionValidatedInDolibarr=%s interwencji zatwierdzone
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:42:53).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+LocalAgenda=Lokalnym kalendarzem
+MyEvents=Moje imprezy
+OtherEvents=Inne wydarzenia
+EventOnFullDay=Wydarzenie na cały dzień
+ViewDay=Widok dnia
+ViewWeek=Widok tygodnia
+AgendaExtSitesDesc=Ta strona pozwala zadeklarować zewnętrznych źródeł kalendarzy, aby zobaczyć swoje imprezy do porządku obrad Dolibarr.
+InvoiceBackToDraftInDolibarr=Faktura %s wrócić do stanu projektu
+OrderApprovedInDolibarr=%s Zamówienie zatwierdzone
+OrderBackToDraftInDolibarr=%s Zamówienie wrócić do stanu projektu
+OrderCanceledInDolibarr=%s Zamówienie anulowane
+ProposalSentByEMail=Commercial %s propozycji przesłanej przez e-mail
+OrderSentByEMail=%s zamówień klientów wysłane pocztą
+InvoiceSentByEMail=%s faktur klientów wysłane pocztą
+SupplierOrderSentByEMail=%s zamówienie dostawca przesłać pocztą elektroniczną
+SupplierInvoiceSentByEMail=%s faktur dostawca przesłać pocztą elektroniczną
+ShippingSentByEMail=%s przesyłki wysłane pocztą
+InterventionSentByEMail=%s interwencyjne wysłane pocztą
+ExportCal=Eksport kalendarza
+ExtSites=Importowanie zewnętrznych kalendarzy
+ExtSitesEnableThisTool=Pokaż zewnętrznych kalendarzy do porządku obrad
+ExtSitesNbOfAgenda=Liczba kalendarzy
+AgendaExtNb=Kalendarz nb %s
+ExtSiteUrlAgenda=URL dostępu. Plik iCal
+ExtSiteNoLabel=Brak opisu
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:21:07).

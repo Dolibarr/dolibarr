@@ -155,3 +155,22 @@ WarningDepositsNotIncluded=Mevduat faturalar bu muhasebe modülü ile bu sürüm
 // Reference language: en_US -> tr_TR
 RemainingAmountPayment=Tutar Kalan ödeme:
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 13:53:50).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
+// Reference language: en_US -> tr_TR
+LT2SummaryES=IRPF Dengesi
+LT2PaidES=IRPF Ücretli
+LT2CustomerES=IRPF satış
+LT2SupplierES=IRPF alımları
+newLT2PaymentES=Yeni IRPF ödeme
+LT2PaymentES=IRPF Ödeme
+LT2PaymentsES=IRPF Ödemeler
+DepositsAreNotIncluded=- Mevduat faturalar ne de dahildir
+DepositsAreIncluded=- Mevduat faturalar dahildir
+LT2ReportByCustomersInInputOutputModeES=Üçüncü parti IRPF Raporu
+RulesVATInServices=- Hizmetler için, raporun aslında ödeme tarihi esas alınan veya verilen KDV düzenlemeleri içermektedir. <br> - Maddi varlıkları için, fatura tarihi esas alınarak KDV fatura içerir.
+RulesVATInProducts=- Maddi varlıkları için, fatura tarihi esas alınarak KDV fatura içerir.
+RulesVATDueServices=- Hizmetler için rapor fatura tarihi esas nedeni, ücretli ya da KDV fatura içerir.
+RulesVATDueProducts=- Maddi varlıkları için, fatura tarihi esas KDV fatura içerir.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:35:54).

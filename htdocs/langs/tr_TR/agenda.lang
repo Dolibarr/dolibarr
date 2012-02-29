@@ -74,3 +74,15 @@ AgendaExtNb=Takvim nb %s
 ExtSiteUrlAgenda=. Ical dosyaya erişmek için URL
 ExtSiteNoLabel=Tanımlama yok
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 13:57:37).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
+// Reference language: en_US -> tr_TR
+LocalAgenda=Yerel takvim
+MyEvents=Benim Event'lerim
+OtherEvents=Diğer olaylar
+OrderApprovedInDolibarr=Sipariş %s onayladı
+OrderBackToDraftInDolibarr=Sipariş %s taslak durumuna geri dönmek
+OrderCanceledInDolibarr=Sipariş %s iptal
+ExportCal=İhracat takvim
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:36:51).

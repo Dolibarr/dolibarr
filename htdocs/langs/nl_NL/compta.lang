@@ -151,3 +151,22 @@ AddRemind=Verzending beschikbare bedrag
 RemainToDivide=Blijven verzending:
 WarningDepositsNotIncluded=Deposito facturen worden niet opgenomen in deze versie met deze accountancy module.
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 01:39:21).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
+// Reference language: en_US -> nl_NL
+LT2SummaryES=IRPF Balance
+LT2PaidES=IRPF Betaalde
+LT2CustomerES=IRPF verkoop
+LT2SupplierES=IRPF aankopen
+newLT2PaymentES=Nieuwe IRPF betaling
+LT2PaymentES=IRPF betaling
+LT2PaymentsES=IRPF Betalingen
+DepositsAreNotIncluded=- Storting facturen worden ook niet opgenomen
+DepositsAreIncluded=- Storting facturen zijn opgenomen
+LT2ReportByCustomersInInputOutputModeES=Verslag van derden IRPF
+RulesVATInServices=- Voor diensten, omvat het verslag van de BTW-regelgeving daadwerkelijk ontvangen of afgegeven op basis van de datum van betaling. <br> - Voor materiële goederen, het bevat de btw-facturen op basis van de factuurdatum.
+RulesVATInProducts=- Voor materiële goederen, het bevat de btw-facturen op basis van de factuurdatum.
+RulesVATDueServices=- Voor diensten, het rapport is inclusief BTW vervallen facturen, betaald of niet, op basis van de factuurdatum.
+RulesVATDueProducts=- Voor materiële goederen, het bevat de btw-facturen, op basis van de factuurdatum.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:11:55).

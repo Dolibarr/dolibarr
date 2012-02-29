@@ -142,3 +142,26 @@ InvoiceRef=Ref fatura.
 CodeNotDef=Não definido
 AddRemind=Despacho montante disponível
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 06:17:49).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+RemainingAmountPayment=Saldo pagamento:
+AmountToBeCharged=Montante total a pagar:
+LT2SummaryES=Balanço IRPF
+LT2PaidES=IRPF pago
+LT2CustomerES=Vendas IRPF
+LT2SupplierES=Compras IRPF
+newLT2PaymentES=Nova pagamento IRPF
+LT2PaymentES=Pagamento IRPF
+LT2PaymentsES=Pagamentos IRPF
+DepositsAreNotIncluded=- Facturas de depósito são nem incluídos
+DepositsAreIncluded=- Facturas de Depósito estão incluídos
+LT2ReportByCustomersInInputOutputModeES=Relatório de terceiros IRPF
+RulesVATInServices=- Para os serviços, o relatório inclui os regulamentos de IVA efectivamente recebidas ou emitidas com base na data do pagamento. <br> - Para os bens materiais, que inclui as facturas do IVA com base na data da fatura.
+RulesVATInProducts=- Para os bens materiais, que inclui as facturas do IVA com base na data da fatura.
+RulesVATDueServices=- Para os serviços, o relatório inclui facturas de IVA devido, pago ou não, com base na data da factura.
+RulesVATDueProducts=- Para os bens materiais, que inclui as facturas de IVA, com base na data da factura.
+RemainToDivide=Permaneça a expedição:
+WarningDepositsNotIncluded=Faturas depósitos não estão incluídos nesta versão com este módulo de contabilidade.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:45:57).

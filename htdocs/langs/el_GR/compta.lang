@@ -140,3 +140,23 @@ OrderStats=Στατιστικά στοιχεία για τις παραγγελ�
 InvoiceStats=Στατιστικά στοιχεία για τους λογαριασμούς
 WarningDepositsNotIncluded=Καταθέσεις τιμολόγια δεν περιλαμβάνονται σε αυτή την έκδοση με αυτή την ενότητα λογιστικής.
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 05:40:28).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+RemainingAmountPayment=Ποσό πληρωμής που απομένουν:
+LT2SummaryES=IRPF Υπόλοιπο
+LT2PaidES=Αμειβόμενος IRPF
+LT2CustomerES=IRPF πωλήσεις
+LT2SupplierES=IRPF αγορές
+newLT2PaymentES=Νέα IRPF πληρωμής
+LT2PaymentES=IRPF Πληρωμής
+LT2PaymentsES=Πληρωμές IRPF
+DepositsAreNotIncluded=- Τα τιμολόγια ασφαλείας ούτε περιλαμβάνονται
+DepositsAreIncluded=- Περιλαμβάνονται τιμολόγια ασφαλείας
+LT2ReportByCustomersInInputOutputModeES=Έκθεση του τρίτου IRPF
+RulesVATInServices=- Για τις υπηρεσίες, η έκθεση περιλαμβάνει τις ρυθμίσεις ΦΠΑ που πράγματι ελήφθησαν ή εκδίδονται με βάση την ημερομηνία της πληρωμής. <br> - Για τα υλικά περιουσιακά στοιχεία, περιλαμβάνει τα τιμολόγια ΦΠΑ, με βάση την ημερομηνία έκδοσης του τιμολογίου.
+RulesVATInProducts=- Για τα υλικά περιουσιακά στοιχεία, περιλαμβάνει τα τιμολόγια ΦΠΑ, με βάση την ημερομηνία έκδοσης του τιμολογίου.
+RulesVATDueServices=- Για τις υπηρεσίες, η έκθεση περιλαμβάνει τα τιμολόγια ΦΠΑ που οφείλεται, αμειβόμενη ή μη, με βάση την ημερομηνία έκδοσης του τιμολογίου.
+RulesVATDueProducts=- Για τα υλικά περιουσιακά στοιχεία, περιλαμβάνει τα τιμολόγια ΦΠΑ, με βάση την ημερομηνία έκδοσης του τιμολογίου.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:12).

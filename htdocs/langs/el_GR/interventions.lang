@@ -42,3 +42,9 @@ ClassifyBilled=Ταξινομήστε &quot;Χρεώσεις&quot;
 StatusInterInvoiced=Τιμολογείται
 RelatedInterventions=Οι παρεμβάσεις που σχετίζονται
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 05:19:27).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+ShowIntervention=Εμφάνιση παρέμβαση
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:08).

@@ -127,3 +127,11 @@ AdministratorDesc=Entidade administrador
 UserWillBeInternalUser=Usuário será criado um usuário interno (porque não ligada a um determinado partido terceiros)
 UserWillBeExternalUser=Usuário será criado um usuário externo (porque ligado a um terceiro determinado)
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:49:10).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+UserLogoff=%s o logout do usuário
+NbOfUsers=N º de usuários
+DontDowngradeSuperAdmin=Apenas um superadmin pode desclassificar um superadmin
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:08).

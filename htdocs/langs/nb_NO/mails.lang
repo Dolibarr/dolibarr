@@ -115,3 +115,12 @@ LimitSendingEmailing=Ny sending av emailings er begrenset for sikkerhet og tidsa
 YouCanUseCommaSeparatorForSeveralRecipients=Du kan bruke <b>komma</b> skilletegn for å angi flere mottakere.
 ListOfNotificationsDone=List alle e-postmeldinger sendt
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:46:00).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+MailingStatusRead=Les
+MailingModuleDescContactsByCompanyCategory=Kontakter til tredjeparter (av tredjeparter kategori)
+MailingModuleDescMembersCategories=Foundation medlemmer etter kategorier)
+MailingModuleDescContactsByFunction=Kontakter til tredjeparter (av stilling / funksjon)
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:06:59).

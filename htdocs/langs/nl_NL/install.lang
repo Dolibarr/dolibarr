@@ -220,3 +220,11 @@ MigrateIsDoneStepByStep=De beoogde versie (%s) heeft een gat van meerdere versie
 LastStepDesc=<strong>Laatste stap:</strong> Definieer hier de login en het wachtwoord die u wilt gebruiken om verbinding te maken software. Niet los dit als het is de rekening voor alle anderen te beheren.
 MigrationActioncommElement=Bijwerken van gegevens over acties
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 01:40:07).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
+// Reference language: en_US -> nl_NL
+DatabasePrefix=Database prefix tafel
+ActivateModule=Activeer module %s
+MigrationPaymentMode=Data migratie voor de betaling mode
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:11:57).

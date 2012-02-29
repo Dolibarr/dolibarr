@@ -91,3 +91,13 @@ TypeContact_project_task_internal_CONTRIBUTOR=Hozzájáruló
 TypeContact_project_task_external_CONTRIBUTOR=Hozzájáruló
 # Documents models
 DocumentModelBaleine=Teljes jelentés modell (logo, ...)
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
+// Reference language: en_US -> hu_HU
+TimesSpent=Töltött idő
+TaskIsNotAffectedToYou=Feladat nem osztottak neked
+ErrorTimeSpentIsEmpty=Töltött idő üres
+ThisWillAlsoRemoveTasks=Ez a művelet is törli az összes feladatot a projekt <b>(%s</b> feladatokat a pillanatban), és az összes bemenet eltöltött idő.
+IfNeedToUseOhterObjectKeepEmpty=Ha egyes tárgyakat (számla, megrendelés, ...), amelyek egy másik harmadik félnek kell kapcsolódniuk a projekt létrehozásához, tartsa ezt az üres, hogy a projekt, hogy több harmadik fél.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:25:33).

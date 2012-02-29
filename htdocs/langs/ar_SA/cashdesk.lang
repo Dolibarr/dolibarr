@@ -1,0 +1,48 @@
+/*
+ * Language code: ar_SA
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 15:55:27
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+CHARSET=UTF-8
+CashDeskMenu=نقطة بيع
+CashDesk=نقطة بيع
+CashDesks=نقاط البيع
+CashDeskBank=الحساب المصرفي
+CashDeskBankCash=الحساب المصرفي (نقدا)
+CashDeskBankCB=الحساب المصرفي (بطاقة)
+CashDeskBankCheque=الحساب المصرفي (شيك)
+CashDeskWarehouse=مستودع
+CashdeskShowServices=بيع الخدمات
+CashDeskProducts=المنتجات
+CashDeskStock=الأوراق المالية
+CashDeskOn=في
+CashDeskThirdParty=طرف ثالث
+ShoppingCart=عربة التسوق
+NewSell=بيع جديد
+BackOffice=المكتب الخلفي
+AddThisArticle=إضافة هذا المقال
+RestartSelling=بالعدول عن بيع
+SellFinished=بيع الانتهاء
+PrintTicket=طباعة تذكرة
+NoResults=لا توجد نتائج
+NoProductFound=لا مادة وجدت
+ProductFound=العثور على المنتج
+ProductsFound=العثور على المنتجات
+NoArticle=لا مادة
+Identification=تحديد
+Article=مادة
+Difference=فرق
+TotalTicket=مجموع التذاكر
+NoVAT=لا ضريبة القيمة المضافة لهذا بيع
+Change=تلقى الزائدة
+CalTip=انقر لعرض التقويم
+CashDeskSetupStock=كنت أسأل لخفض المخزون في إنشاء مستودع للفاتورة لكن هذا لم يتم تعريف و <br> تغيير الأوراق المالية إعداد وحدة، أو اختيار مستودع
+BankToPay=تهمة حساب
+ShowCompany=عرض شركة
+ShowStock=عرض مستودع
+DeleteArticle=انقر لإزالة هذه المادة
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:57:41).

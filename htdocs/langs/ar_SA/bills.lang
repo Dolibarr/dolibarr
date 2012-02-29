@@ -416,3 +416,24 @@ PDFLinceDescription=نموذج الفاتورة كاملة مع الطاقة ا�
 // Reference language: en_US -> ar_AR
 InvoiceReplacement=استبدال الفاتورة
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:36).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+BillsCustomer=الزبون فاتورة
+BillsSuppliersUnpaidForCompany=مورد غير المسددة لفواتير %s
+BillsLate=في وقت متأخر المدفوعات
+DisabledBecauseNotErasable=تعطيل لأنه لا يمكن أن تمحى
+ConfirmUnvalidateBill=هل أنت متأكد أنك تريد تغيير <b>%s</b> فاتورة إلى وضع مشروع؟
+UnvalidateBill=Unvalidate فاتورة
+NumberOfBillsByMonth=ملحوظة من الفواتير من قبل شهر
+AmountOfBillsByMonthHT=كمية من الفواتير من قبل شهر (بعد خصم الضرائب)
+AddRelativeDiscount=خلق خصم قريب
+EditRelativelDiscount=تحرير relatvie الخصم
+EditGlobalDiscounts=تعديل الخصومات مطلق
+AddCreditNote=علما خلق الائتمان
+InvoiceNotChecked=لا فاتورة مختارة
+ShowUnpaidAll=وتظهر جميع الفواتير غير المسددة
+ClosePaidInvoicesAutomatically=تصنيف &quot;سيولي&quot; كل معيار أو الفواتير استبدال سيولي entierely.
+AllCompletelyPayedInvoiceWillBeClosed=كل فاتورة مع عدم وجود لا تزال لدفع ستغلق تلقائيا إلى &quot;فياض&quot; الوضع.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:56:17).

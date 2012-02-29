@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-12 09:19:12
  */
@@ -31,3 +31,9 @@ BuildDonationReceipt=Erzeuge Spendenbeleg
 DonationsModels=Spendenvorlagen
 Donations=Spenden
 ValidPromess=Zusage freigeben
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+LastModifiedDonations=Zuletzt geändert %s Spenden
+SearchADonation=Suchen Sie eine Spende
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:05:57).

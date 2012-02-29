@@ -1,0 +1,18 @@
+/*
+ * Language code: ro_RO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 17:23:15
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+CHARSET=UTF-8
+WorkflowSetup=Fluxul de lucru modul de configurare
+WorkflowDesc=Acest modul este placut in aceleasi nuante pentru a modifica comportamentul de acţiuni automate în aplicare. În mod implicit, fluxul de lucru este deschis (a face ceva în ordinea dorită). Puteţi activat acţiuni automate pe care le sunt interesante inch
+ThereIsNoWorkflowToModify=Nu există nici un flux de lucru se poate modifica pentru modulul care le-aţi activat.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crearea unui ordin de client în mod automat, după o propunere comercială este semnat
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Creaţi o factură client în mod automat, după o propunere comercială este semnat
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Creaţi o factură client în mod automat după ce un contract este validat
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Creaţi o factură client în mod automat, după un ordin de client este închis
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:56).

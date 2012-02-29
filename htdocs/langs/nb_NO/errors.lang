@@ -88,3 +88,36 @@ ErrorCantReadDir=Kunne ikke lese mappen '%s'
 ErrorFailedToFindEntity=Kunne ikke lese enheten '%s'
 WarningInstallDirExists=Advarsel! Installasjonsmappen (%s) eksisterer fortsatt! Dette er et alvorlig sikkerhetshull. Du bør fjerne mappen så snart som mulig.
 WarningUntilDirRemoved=Denne advarselen vil være aktivert så lenge denne mappen eksisterer (Den vises kun til administratorer).
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+ErrorFailToCopyFile=Klarte ikke å kopiere filen <b>«%s</b> 'inn' <b>%s</b> '.
+ErrorFailToRenameFile=Kunne ikke omdøpe filen <b>'%s'</b> inn <b>'%s'.</b>
+ErrorBadValueForParameter=Feil verdi &quot;%s 'for parameter feil' Choice %s 'Choice
+ErrorBadImageFormat=Bildet filen har ikke et støttet format
+ErrorBadDateFormat=Verdien '%s' har feil dato format
+ErrorSizeTooLongForIntType=Størrelse for lang for int type (%s sifre maksimum)
+ErrorSizeTooLongForVarcharType=Størrelse for lang for streng type (%s tegn maksimum)
+ErrorContactEMail=En teknisk feil oppsto. Vennligst kontakt administrator for å følge e <b>%s</b> no gi feilmeldingsnumrene <b>%s</b> i meldingen, eller enda bedre ved å legge til en skjerm kopi av denne siden.
+ErrorFieldValueNotIn=Feil verdi for feltnummer <b>%s</b> (verdien <b>«%s&quot;</b> er ikke en verdi tilgjengelig i felten <b>%s</b> av tabellen <b>%s)</b>
+ErrorFieldRefNotIn=Feil verdi for feltnummer <b>%s</b> (verdi <b>'%s</b> &quot;er ikke en <b>%s</b> eksisterende ref)
+ErrorModuleSetupNotComplete=Oppsett av modul ser ut til å være uncomplete. Gå på Setup - Modules å fullføre.
+ErrorBadMask=Feil på maske
+ErrorBadMaskFailedToLocatePosOfSequence=Feil, maske uten sekvensnummer
+ErrorBadMaskBadRazMonth=Feil, dårlig reset verdi
+ErrorSelectAtLeastOne=Feil. Velg minst én oppføring.
+ErrorProductWithRefNotExist=Produkt med referansenummer <i>'%s</i> &quot;ikke eksisterer
+ErrorDeleteNotPossibleLineIsConsolidated=Slett ikke mulig fordi posten er knyttet til en bank betalingstransaksjonen som conciliated
+ErrorProdIdAlreadyExist=%s er tilordnet en annen tredje
+ErrorFailedToLoadRSSFile=Unnlater å få RSS feed. Prøv å legge konstant MAIN_SIMPLEXMLLOAD_DEBUG hvis feilmeldinger ikke gir nok informasjon.
+ErrorBadLoginPassword=Bad verdi for brukernavn eller passord
+ErrorLoginDisabled=Kontoen din har blitt deaktivert
+ErrorFailedToRunExternalCommand=Kunne kjøre ekstern kommando. Sjekk det er tilgjengelig og kjørbart av din PHP server. Hvis PHP <b>Safe Mode</b> er aktivert, må du kontrollere at kommandoen er inne i en katalog som er definert av parameter <b>safe_mode_exec_dir.</b>
+ErrorFailedToChangePassword=Kunne ikke endre passord
+ErrorLoginDoesNotExists=Bruker med logg <b>%s</b> kunne ikke bli funnet.
+ErrorLoginHasNoEmail=Denne brukeren har ingen e-postadresse. Behandle avbrutt.
+ErrorBadValueForCode=Bad verdi for sikkerhetskode. Prøv igjen med ny verdi ...
+ErrorBothFieldCantBeNegative=Fields %s og %s kan ikke være både negativt
+ErrorWebServerUserHasNotPermission=Brukerkonto <b>%s</b> brukes til å utføre web-server har ikke tillatelse til at
+ErrorNoActivatedBarcode=Ingen strekkodetype aktivert
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:07:23).

@@ -34,3 +34,10 @@ ListTripsAndExpenses=قائمة الرحلات والمصاريف
 // Reference language: en_US
 TripsAndExpensesStatistics=رحلات ونفقات إحصاءات
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:17:48).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+ExpensesArea=رحلات ومنطقة النفقات
+SearchATripAndExpense=بحث عن رحلة والنفقات
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:56:00).

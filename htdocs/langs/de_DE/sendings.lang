@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-12 09:09:12
  */
@@ -63,3 +63,14 @@ StatusSendingCanceledShort=Storno
 DocumentModelMerou=Merou A5-Modell
 DateDeliveryPlanned=Geplantes Zustellungsdatum
 DateReceived=Datum des Warenerhalts
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+SendShippingByEMail=Senden Sie Versand per EMail
+SendShippingRef=Senden Sendung %s
+ActionsOnShipping=Events auf Sendung
+LinkToTrackYourPackage=Link zu Ihrer Sendung nachverfolgen
+ShipmentCreationIsDoneFromOrder=Für den Augenblick ist die Schaffung einer neuen Sendung von der Bestellung Karte getan.
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstante EXPEDITION_ADDON_NUMBER nicht definiert
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:06:20).

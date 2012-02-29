@@ -24,3 +24,10 @@ TF_TRIP=Viagem
 TripsAndExpensesStatistics=Viagens e estatísticas despesas
 ListTripsAndExpenses=Lista de viagens e despesas
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 02:20:12).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+ExpensesArea=Viagens e área de despesas
+SearchATripAndExpense=Procure uma viagem e despesas
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:23).

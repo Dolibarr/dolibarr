@@ -161,3 +161,26 @@ DescPurchasesJournal=Dziennik zakupów
 InvoiceRef=Faktura ref.
 CodeNotDef=Nie zdefiniowane
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 06:16:21).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+RemainingAmountPayment=Płatność pozostałej kwoty:
+LT2SummaryES=Balans IRPF
+LT2PaidES=IRPF Płatny
+LT2CustomerES=Sprzedaż IRPF
+LT2SupplierES=Zakupy IRPF
+newLT2PaymentES=Nowy IRPF płatności
+LT2PaymentES=Płatność IRPF
+LT2PaymentsES=Płatności IRPF
+DepositsAreNotIncluded=- Faktury depozytów są ani też
+DepositsAreIncluded=- Faktury depozytowe są zawarte
+LT2ReportByCustomersInInputOutputModeES=Raport osób trzecich IRPF
+RulesVATInServices=- W przypadku usług, raport zawiera przepisy VAT faktycznie otrzymane lub wydane na podstawie daty płatności. <br> - W przypadku środków trwałych, to obejmuje faktur VAT na podstawie daty wystawienia faktury.
+RulesVATInProducts=- W przypadku środków trwałych, to obejmuje faktur VAT na podstawie daty wystawienia faktury.
+RulesVATDueServices=- W przypadku usług, raport zawiera faktur VAT należnego, płatnego lub nie, w oparciu o daty wystawienia faktury.
+RulesVATDueProducts=- W przypadku środków trwałych, to obejmuje faktury VAT, w oparciu o daty wystawienia faktury.
+AddRemind=Wysłanie dostępną kwotę
+RemainToDivide=Pozostają do wysyłki:
+WarningDepositsNotIncluded=Depozyty faktury nie są zawarte w tej wersji z tego modułu księgowego.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:18:39).

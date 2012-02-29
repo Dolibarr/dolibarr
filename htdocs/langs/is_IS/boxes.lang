@@ -79,3 +79,18 @@ BoxTitleLastModifiedSuppliers=Síðast %s breytt birgja
 BoxTitleLastModifiedCustomers=Síðast %s breytt viðskiptavini
 BoxTitleLastModifiedProspects=Síðast %s breytt horfum
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:35).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+BoxLastContacts=Síðustu tengiliðir / Vistfang
+BoxLastMembers=Síðustu meðlimir
+BoxTitleLastModifiedMembers=Síðustu %s breytt meðlimir
+BoxTitleLastModifiedContacts=Síðustu %s breytt tengiliðum / Vistfang
+BoxOldestExpiredServices=Elsta virkir útrunnin þjónustu
+BoxLastExpiredServices=Síðustu %s Elstu samskipti við virka útrunnum þjónustu
+BoxTitleLastModifiedDonations=Síðustu %s breytt framlög
+BoxTitleLastModifiedExpenses=Síðustu %s breytt útgjöld
+ClickToAdd=Smelltu hér til að bæta við.
+NoRecordedContacts=Engar skráðar tengiliðir
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:45).

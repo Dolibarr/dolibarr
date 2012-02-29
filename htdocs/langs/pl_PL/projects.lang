@@ -112,3 +112,13 @@ TypeContact_project_task_internal_CONTRIBUTOR=Współpracownik
 TypeContact_project_task_external_CONTRIBUTOR=Współpracownik
 DocumentModelBaleine=Kompletny model projektu sprawozdania (logo. ..)
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:54).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+TimesSpent=Czas spędzony
+TaskIsNotAffectedToYou=Zadanie nie przypisane do Ciebie
+ErrorTimeSpentIsEmpty=Czas spędzony jest pusty
+ThisWillAlsoRemoveTasks=Działanie to będzie także usunąć wszystkie zadania projektu <b>(%s</b> zadania w tej chwili) i wszystkimi wejściami czasu spędzonego.
+IfNeedToUseOhterObjectKeepEmpty=Jeżeli pewne obiekty (faktura, zamówienie, ...), należące do innej osoby trzeciej, musi być związane z projektem tworzenia, zachować ten pusty mieć projekt jest multi osób trzecich.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:21:19).

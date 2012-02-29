@@ -144,3 +144,11 @@ OrderByEMail=E-mail
 OrderByWWW=Online
 OrderByPhone=Telefoon
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 01:41:17).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
+// Reference language: en_US -> nl_NL
+ShippingExist=Een zending bestaat
+UnvalidateOrder=Unvalidate order
+ConfirmUnvalidateOrder=Weet je zeker dat je wilt bestellen <b>%s</b> herstellen naar ontwerp van status?
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:12:00).

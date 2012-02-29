@@ -86,3 +86,13 @@ ConfirmDeleteWarehouse=Tem certeza de que deseja excluir o <b>%s</b> armazém?
 PersonalStock=Pessoal %s stock
 ThisWarehouseIsPersonalStock=Este armazém representa estoque pessoal de %s %s
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:56).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+SellPriceMin=Vendendo Preço unitário
+EstimatedStockValueSellShort=Valor para vender
+EstimatedStockValueSell=Valor para vender
+SelectWarehouseForStockDecrease=Escolha depósito a ser usado para diminuição de ações
+SelectWarehouseForStockIncrease=Escolha depósito a ser usado para aumentar estoque
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:12).

@@ -105,3 +105,9 @@ TypeContact_contrat_external_SALESREPSIGN=Undertecknande kontrakt kundkontakt
 // Reference language: en_US -> sv_SE
 Error_CONTRACT_ADDON_NotDefined=Konstant CONTRACT_ADDON definieras inte
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 11:27:25).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+NoExpiredServices=Inga utgångna aktiva tjänster
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:20).

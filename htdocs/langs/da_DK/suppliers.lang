@@ -58,3 +58,11 @@ NoneOrBatchFileNeverRan=Ingen eller <b>parti %s</b> ikke kørte for nylig
 // Reference language: en_US
 ReferenceSupplierIsAlreadyAssociatedWithAProduct=Denne henvisning leverandøren er allerede forbundet med en reference: %s
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:20:22).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
+// Reference language: en_US -> da_DK
+BuyingPriceMin=Min købskurs
+BuyingPriceMinShort=Min købskurs
+Availability=Tilgængelighed
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:00:08).

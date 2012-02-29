@@ -403,3 +403,10 @@ AllCompletelyPayedInvoiceWillBeClosed=Alle factuur zonder te blijven om te betal
 TerreNumRefModelError=Een wetsvoorstel te beginnen met $ syymm bestaat al en is niet compatibel met dit model van de reeks. Verwijderen of hernoemen naar deze module te activeren.
 ClosePaidInvoicesAutomatically=Classificeren &quot;Betaalde&quot; alle standaard of vervanging facturen entierely betaald.
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 02:25:52).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
+// Reference language: en_US -> nl_NL
+ConfirmUnvalidateBill=Weet u zeker dat u te factureren <b>%s</b> veranderen om ontwerp-status?
+UnvalidateBill=Unvalidate factuur
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:12:06).

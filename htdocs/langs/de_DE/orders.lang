@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-10 00:11:12
  */
@@ -140,3 +140,18 @@ PDFEdisonDescription=Eine einfache Bestellungsvorlage
 PDFQuevedoDescription=Eine vollständige Bestellungsvorlage mit spanischem...
 
 DispatchSupplierOrder=Lieferantenbestellung %s erhalten
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+SuppliersOrdersToProcess=Lieferanten Bestellungen zu verarbeiten
+StatusOrderSentShort=Im Prozess
+ShippingExist=Eine Sendung besteht
+UnvalidateOrder=Unvalidate Bestellung
+ConfirmUnvalidateOrder=Sind Sie sicher, die Sie bestellen möchten <b>%s</b> zu Draft-Status wieder her?
+OrderByMail=Post
+OrderByFax=Faxen
+OrderByEMail=EMail
+OrderByWWW=Online
+OrderByPhone=Telefon
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:48).

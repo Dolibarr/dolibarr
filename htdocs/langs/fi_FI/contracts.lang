@@ -111,3 +111,10 @@ ExpiredSince=Vanhenemispäivä
 // Reference language: en_US
 RelatedContracts=Liittyvien sopimusten
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:44).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+NoExpiredServices=Ei päättynyt aktiiviset palvelut
+Error_CONTRACT_ADDON_NotDefined=Jatkuva CONTRACT_ADDON ei määritelty
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:38).

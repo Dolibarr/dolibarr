@@ -117,3 +117,9 @@ RelatedContracts=Связанные контрактов
 // Reference language: en_US -> ru_RU
 Error_CONTRACT_ADDON_NotDefined=Постоянное CONTRACT_ADDON не определена
 // STOP - Lines generated via autotranslator.php tool (2011-08-27 16:58:57).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
+// Reference language: en_US -> ru_RU
+NoExpiredServices=Не истек активных услуг
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:12).

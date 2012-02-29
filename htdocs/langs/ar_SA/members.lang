@@ -185,3 +185,47 @@ DocForAllMembersCards=إنشاء بطاقات العمل لجميع أعضاء (
 DocForOneMemberCards=إنشاء بطاقات العمل لعضو معين (تنسيق الإعداد للإخراج في الواقع : <b>%s)</b>
 DocForLabels=أوراق عنوان انتج (تنسيق الإعداد للإخراج فعلا : <b>%s)</b>
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:46).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+MembersWithSubscriptionToReceive=أعضاء مع اشتراك لتلقي
+NewSubscriptionDesc=هذا النموذج يسمح لك لتسجيل الاشتراك الخاص بك كعضو جديد من الأساس. إذا كنت ترغب في تجديد الاشتراك (إذا كان بالفعل عضوا)، يرجى الاتصال مؤسسة المجلس بدلا من %s البريد الإلكتروني.
+BlankSubscriptionFormDesc=يمكن أن توفر لك Dolibarr URL العام للسماح للزوار خارجي لطرح للاكتتاب للمؤسسة. إذا تم تمكين وحدة الدفع عبر الإنترنت، سيتم أيضا نموذج الدفع سيتم توفيرها تلقائيا.
+EnablePublicSubscriptionForm=تمكين الجمهور لصناعة السيارات في شكل اكتتاب
+ImportDataset_member_1=الأعضاء
+LastSubscriptionsModified=%s آخر تعديل الاشتراكات
+GlobalConfigUsedIfNotDefined=وسيتم استخدام النص المحدد في إعداد وحدة مؤسسة إذا لم يتم تعريف هنا
+MayBeOverwrited=ويمكن overwrited هذا النص من حيث القيمة المحددة لنوع العضو
+SubscriptionPayment=دفع الاشتراك
+LastSubscriptionDate=آخر موعد الاكتتاب
+LastSubscriptionAmount=آخر مبلغ الاشتراك
+MembersStatisticsByCountries=أعضاء إحصاءات حسب البلد
+MembersStatisticsByState=أعضاء إحصاءات الولاية / المقاطعة
+MembersStatisticsByTowne=أعضاء إحصاءات بلدة
+NbOfMembers=عدد الأعضاء
+NoValidatedMemberYet=العثور على أي أعضاء التحقق من صحة
+MembersByCountryDesc=هذه الشاشة تظهر لك إحصاءات عن أعضاء من الدول. لكن الرسم يعتمد على خدمة غوغل الرسم البياني على الإنترنت ويتوفر فقط إذا كان على اتصال بالإنترنت ويعمل.
+MembersByStateDesc=هذه الشاشة تظهر لك إحصاءات عن أفراد من قبل الدولة / المحافظات / كانتون.
+MembersByTownDesc=هذه الشاشة تظهر لك إحصاءات عن أفراد من البلدة.
+MembersStatisticsDesc=اختيار الإحصاءات التي ترغب في قراءتها ...
+MenuMembersStats=إحصائيات
+LastMemberDate=آخر عضو تاريخ
+Nature=طبيعة
+Public=معلومات علنية
+Exports=صادرات
+NewMemberbyWeb=وأضاف عضو جديد. تنتظر الموافقة
+NewMemberForm=الأعضاء الجدد في شكل
+SubscriptionsStatistics=إحصاءات عن الاشتراكات
+NbOfSubscriptions=عدد الاشتراكات
+AmountOfSubscriptions=حجم الاشتراكات
+TurnoverOrBudget=دوران (لشركة) أو الميزانية (على أساس)
+DefaultAmount=المبلغ الافتراضي للاكتتاب
+CanEditAmount=يمكن للزائر اختيار / تحرير كمية من اكتتابها
+MEMBER_NEWFORM_PAYONLINE=القفز على صفحة الدفع عبر الانترنت المتكاملة
+Associations=أسس
+Collectivités=المنظمات
+Particuliers=الشخصية
+Entreprises=الشركات
+DOLIBARRFOUNDATION_PAYMENT_FORM=أن يسدد الاشتراك باستخدام حوالة مصرفية، راجع صفحة <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> الدفع باستخدام بطاقة ائتمان أو باي بال، وانقر على زر في أسفل هذه الصفحة. <br>
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:57:34).

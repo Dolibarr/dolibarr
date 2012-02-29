@@ -122,3 +122,9 @@ MailingModuleDescMembersCategories=Vakfı üyeleri (kategorilerine göre)
 MailingModuleDescContactsByFunction=Üçüncü şahısların Rehber (konumu / işlevi tarafından)
 ListOfNotificationsDone=Gönderilen tüm e-posta bildirimleri Listesi
 // STOP - Lines generated via autotranslator.php tool (2011-10-09 14:02:56).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
+// Reference language: en_US -> tr_TR
+MailingStatusRead=Okumak
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:35:58).

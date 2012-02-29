@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-12 00:09:12
  */
@@ -142,3 +142,27 @@ PurchasesJournal=Käufe Journal
 DescSellsJournal=Vertrieb Journal
 DescPurchasesJournal=Käufe Journal
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 05:39:50).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+LT2SummaryES=IRPF Bilanz
+LT2PaidES=IRPF Paid
+LT2CustomerES=IRPF Umsatz
+LT2SupplierES=IRPF Käufe
+newLT2PaymentES=New IRPF Zahlung
+LT2PaymentES=IRPF Zahlung
+LT2PaymentsES=IRPF Zahlungen
+DepositsAreNotIncluded=- Kaution Rechnungen werden noch von
+DepositsAreIncluded=- Kaution Rechnungen enthalten sind
+LT2ReportByCustomersInInputOutputModeES=Bericht von Dritten IRPF
+RulesVATInServices=- Für Leistungen, enthält der Bericht die Mehrwertsteuer Vorschriften tatsächlich erhalten oder auf der Grundlage der zum Zeitpunkt der Zahlung erteilt. <br> - Für Sachwerte, enthält es die Rechnungen mit ausgewiesener Mehrwertsteuer auf der Grundlage der nach Rechnungsdatum.
+RulesVATInProducts=- Für Sachwerte, enthält es die Rechnungen mit ausgewiesener Mehrwertsteuer auf der Grundlage der nach Rechnungsdatum.
+RulesVATDueServices=- Für Leistungen, enthält der Bericht Rechnungen mit ausgewiesener Mehrwertsteuer fällig, bezahlt oder nicht, basierend auf dem Rechnungsdatum.
+RulesVATDueProducts=- Für Sachwerte, enthält es die Rechnungen mit ausgewiesener Mehrwertsteuer, am Tag der Rechnungsstellung basiert.
+InvoiceRef=Invoice ref.
+CodeNotDef=Nicht definiert
+AddRemind=Versand zur Verfügung stehende Betrag
+RemainToDivide=Bleiben Sie bis zum Versand:
+WarningDepositsNotIncluded=Einlagen Rechnungen werden in dieser Version nicht mit diesem Modul Rechnungswesen inklusive.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:36).

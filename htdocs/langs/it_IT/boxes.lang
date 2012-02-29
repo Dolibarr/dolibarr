@@ -96,3 +96,12 @@ BoxTitleLastModifiedContacts=%s Ultima modifica contatti / indirizzi
 ClickToAdd=Clicca qui per aggiungere.
 NoRecordedContacts=Nessun contatto registrato
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:10).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+// Reference language: en_US -> it_IT
+BoxOldestExpiredServices=Vecchi servizi attivi scaduti
+BoxLastExpiredServices=%s ultimi antichi contatti con i servizi attivi scaduti
+BoxTitleLastModifiedDonations=%s Ultima modifica donazioni
+BoxTitleLastModifiedExpenses=Ultima modifica %s spese
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:46).

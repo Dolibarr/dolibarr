@@ -232,3 +232,9 @@ ToExport = Za izvoz
 NewExport = Nov izvoz
 ##### External sites ##### = undefined
 ExternalSites = Zunanje strani
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+ShipmentValidatedInDolibarr=Pošiljka %s potrjena v Dolibarr
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:30:18).

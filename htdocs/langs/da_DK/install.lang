@@ -235,3 +235,11 @@ MigrationFinished=Migration er færdig
 LastStepDesc=<strong>Sidste trin:</strong> Definer her login og adgangskode, du planlægger at bruge til at oprette forbindelse til software. Må ikke løse dette, da det er den konto, at administrere alle andre.
 MigrationActioncommElement=Opdatere data om tiltag
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 09:39:22).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
+// Reference language: en_US -> da_DK
+DatabasePrefix=Database prefix table
+ActivateModule=Aktiver modul %s
+MigrationPaymentMode=Data migration for betaling mode
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:59:32).

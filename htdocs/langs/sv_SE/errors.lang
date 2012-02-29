@@ -98,3 +98,29 @@ ErrorLoginHasNoEmail=Denna användare har inga e-postadress. Process avbruten.
 ErrorBadValueForCode=Dåligt värde typer för kod. Försök igen med ett nytt värde ...
 WarningInstallDirExists=Varning, installera katalog <b>(htdocs / install)</b> fortfarande existerar. Detta är ett allvarligt säkerhetshål. Du bör avlägsnas så fort som möjligt.
 WarningUntilDirRemoved=Alla säkerhetsvarningar (synlig av admin-användare) förblir aktiv så länge sårbarheten är närvarande (eller att konstant MAIN_REMOVE_INSTALL_WARNING läggs i Start-&gt; Other Setup).
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+ErrorFailToCopyFile=Det gick inte att kopiera filen <b>&quot;%s&quot;</b> till <b>&quot;%s&quot;.</b>
+ErrorFailToRenameFile=Det gick inte att byta namn på filen <b>'%s</b> &quot;till&quot; <b>%s</b> &quot;.
+ErrorBadValueForParameter=Fel värde &quot;%s&quot; för parameter oriktiga &quot;%s kallad konventionen
+ErrorBadImageFormat=Bildfil har inte ett format som stöds
+ErrorBadDateFormat=Värde &quot;%s&quot; har fel datumformat
+ErrorSizeTooLongForIntType=Storlek för lång för int typ (%s siffror max)
+ErrorSizeTooLongForVarcharType=Storlek för lång för sträng typ (%s tecken max)
+ErrorContactEMail=Ett tekniskt fel uppstod. Vänligen kontakta administratören att följa <b>e-%s</b> en ge <b>%s</b> felkod i ditt meddelande, eller ännu bättre genom att lägga till en skärm kopia av denna sida.
+ErrorFieldValueNotIn=Fel värde för <b>%s</b> fältnummer (värde <b>&quot;%s&quot;</b> är inte ett värde tillgängligt i fält <b>%s</b> av tabell <b>%s)</b>
+ErrorFieldRefNotIn=Fel värde för <b>%s</b> fältnummer (värde <b>&quot;%s&quot;</b> är inte ett <b>%s</b> befintlig ref)
+ErrorModuleSetupNotComplete=Inställning av modul ser ut att vara ofullständig. Gå på Setup - Moduler för att slutföra.
+ErrorBadMask=Fel på masken
+ErrorBadMaskFailedToLocatePosOfSequence=Fel, mask utan löpnummer
+ErrorBadMaskBadRazMonth=Fel, dåligt återställningsvärde
+ErrorSelectAtLeastOne=Error. Välj minst en post.
+ErrorProductWithRefNotExist=Produkt med referens <i>&quot;%s&quot;</i> existerar inte
+ErrorDeleteNotPossibleLineIsConsolidated=Bort icke möjlig, eftersom post är kopplad till en bank Kontoinformation som blidkades
+ErrorProdIdAlreadyExist=%s tilldelas ett annat tredje
+ErrorFailedToLoadRSSFile=Inte få RSS-flöde. Försök att lägga konstant MAIN_SIMPLEXMLLOAD_DEBUG Om felmeddelanden inte ger tillräckligt med information.
+ErrorBothFieldCantBeNegative=Fält %s och %s kan inte vara både negativt
+ErrorWebServerUserHasNotPermission=Användarkonto <b>%s</b> användas för att exekvera webbserver har ingen behörighet för den
+ErrorNoActivatedBarcode=Ingen streckkod typ aktiveras
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:43).

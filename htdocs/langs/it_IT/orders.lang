@@ -157,3 +157,11 @@ OrderByEMail=EMail
 OrderByWWW=Online
 OrderByPhone=Telefono
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:53:01).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+// Reference language: en_US -> it_IT
+ShippingExist=Una spedizione esiste
+UnvalidateOrder=Unvalidate ordine
+ConfirmUnvalidateOrder=Sei sicuro di voler ripristinare <b>%s</b> ordine allo stato di progetto?
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:44).

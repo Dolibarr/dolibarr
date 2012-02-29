@@ -21,3 +21,29 @@ ToOfferALinkForOnlinePaymentOnMemberSubscription=メンバーのサブスクリ�
 MessageOK=検証済みペイメントの戻りページでメッセージ
 MessageKO=キャンセル支払い戻りページでメッセージ
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:18:31).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
+// Reference language: en_US -> ja_JP
+ThisScreenAllowsYouToPay=この画面では、%sにオンライン決済を行うことができます。
+ThisIsInformationOnPayment=これは、実行する支払いに関する情報です。
+ToComplete=完了する
+YourEMail=入金確認を受信する電子メール
+Creditor=債権者
+PaymentCode=支払いコード
+PayBoxDoPayment=支払いに行く
+YouWillBeRedirectedOnPayBox=あなたが入力するクレジットカード情報をセキュリティで保護された切符売り場のページにリダイレクトされます。
+PleaseBePatient=、もうしばらくお待ちください
+Continue=次の
+ToOfferALinkForOnlinePayment=%s支払いのURL
+YouCanAddTagOnUrl=また、独自の支払いコメントタグを追加するには、それらのURL（無料支払のためにのみ必要）のいずれかにurlパラメータ<b>·タグ= <i>値を</i></b>追加<i><b>する</b></i>こと<i><b>が</b></i>できます。
+SetupPayBoxToHavePaymentCreatedAutomatically=切符売り場で検証したときに自動的に作成支払いを持っているのurl <b>%s</b>を使用して切符売り場をセットアップします。
+YourPaymentHasBeenRecorded=このページでは、あなたの支払が記録されていることを確認します。ありがとうございます。
+YourPaymentHasNotBeenRecorded=あなたの支払は記録されていないトランザクションがキャンセルされました。ありがとうございます。
+AccountParameter=アカウントのパラメータ
+UsageParameter=使用パラメータ
+InformationToFindParameters=あなたの%sアカウント情報を見つけるのを助ける
+PAYBOX_CGI_URL_V2=支払いのために切符売り場CGIモジュールのurl
+VendorName=ベンダーの名前
+CSSUrlForPaymentForm=支払いフォームのCSSスタイルシートのURL
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:43:32).

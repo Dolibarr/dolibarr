@@ -51,3 +51,9 @@ CSSUrlForPaymentForm=Foglio di stile CSS url per il modulo di pagamento
 MessageOK=Messaggio sulla pagina di pagamento convalidate ritorno
 MessageKO=Messaggio sulla pagina di pagamento annullato ritorno
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:53:05).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+// Reference language: en_US -> it_IT
+ToOfferALinkForOnlinePayment=URL per il pagamento %s
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:43).

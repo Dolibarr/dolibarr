@@ -431,3 +431,9 @@ MemberSubscriptionAddedInDolibarr=Abonelik için üye %s Dolibarr eklendi
 ExportsArea=İhracat alanında
 AvailableFormats=Kullanılabilir biçimler
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 15:07:46).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
+// Reference language: en_US -> tr_TR
+ShipmentValidatedInDolibarr=Sevk %s Dolibarr valide
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:35:50).

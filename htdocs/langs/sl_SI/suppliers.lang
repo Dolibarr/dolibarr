@@ -35,3 +35,11 @@ AddSupplierOrder = Kreirajte naročilo pri dobavitelju
 AddSupplierInvoice = Kreirajte račun dobavitelja
 ListOfSupplierProductForSupplier = Seznam proizvodov in cen dobavitelja <b>%s</b>
 NoneOrBatchFileNeverRan = Nobena datoteka ali paket <b>%s</b> nedavno ni bila zagnana
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+BuyingPriceMin=Najnižjo odkupno ceno
+BuyingPriceMinShort=Min odkup cena
+Availability=Razpoložljivost
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:30:40).

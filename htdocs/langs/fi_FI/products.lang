@@ -193,3 +193,15 @@ ProductStatusNotOnBuy=Vanhentunut
 ProductStatusOnBuyShort=Saatavissa
 ProductStatusNotOnBuyShort=Vanhentunut
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:11).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+ParentProductsNumber=Lukumäärä emoyhtiön tuote
+ProductParentList=Luettelo tuotteista / palveluista tämän tuotteen komponentti
+ImportDataset_produit_1=Tuotteet
+ImportDataset_service_1=Palvelut
+CustomCode=Tullikoodeksi
+CountryOrigin=Alkuperä maa
+HiddenIntoCombo=Piilotettu osaksi valitse listat
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:51).

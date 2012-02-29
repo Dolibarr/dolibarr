@@ -155,3 +155,10 @@ WithdrawalPayment=Pagamento de retirada
 ShowCheckReceipt=Seleção Mostrar recibo de depósito
 Graph=Gráficos
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 07:16:14).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+FutureTransaction=Transação no futur. Não há forma de conciliar.
+SelectChequeTransactionAndGenerate=Selecione / filtro verifica que pretende incluir no recibo de depósito de verificação e clique em &quot;Criar&quot;.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:45:58).

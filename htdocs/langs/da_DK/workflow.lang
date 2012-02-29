@@ -1,0 +1,18 @@
+/*
+ * Language code: da_DK
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 15:59:19
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
+// Reference language: en_US -> da_DK
+CHARSET=UTF-8
+WorkflowSetup=Workflow-modul opsætning
+WorkflowDesc=Dette modul desinged at ændre adfærd automatiske handlinger i anvendelse. Som standard er workflow åbnet (du laver ting i rækkefølge, du ønsker). Du kan aktiveret automatiske handlinger, som du er interessant i.
+ThereIsNoWorkflowToModify=Der er ingen workflow kan du ændre til modul du har aktiveret.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Opret en kundeordre automatisk efter en kommerciel forslag er underskrevet
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Opret en kundefaktura automatisk efter en kommerciel forslag er underskrevet
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Opret en kundefaktura automatisk efter en kontrakt er valideret
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Opret en kundefaktura automatisk efter en kundeordre er lukket
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:00:08).

@@ -1,0 +1,18 @@
+/*
+ * Language code: nb_NO
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 17:06:43
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+CHARSET=UTF-8
+WorkflowSetup=Arbeidsflyt modulen oppsett
+WorkflowDesc=Denne modulen er konstruert for å endre oppførselen til automatiske handlinger inn i programmet. Som standard er arbeidsflyten åpnet (du gjør ting i rekkefølge du vil). Du kan aktivere automatiske handlinger som du er interessant i.
+ThereIsNoWorkflowToModify=Det er ingen arbeidsflyt kan du endre for modul du har aktivert.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Lag en kundeordre automatisk etter en kommersiell forslag er signert
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Lag en kunde faktura automatisk etter en kommersiell forslag er signert
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Lag en kunde faktura automatisk etter en kontrakt er validert
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Lag en kunde faktura automatisk etter en kundeordre er stengt
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:07:30).

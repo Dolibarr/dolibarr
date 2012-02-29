@@ -74,3 +74,28 @@ NotifyEmision=Uttak Emisjon
 NotifyCredit=Uttak Credit
 NumeroNationalEmetter=Nasjonale Transmitter nummer
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 02:22:53).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+NbOfInvoiceToWithdrawWithInfo=Nb av faktura med trekke tilbake anmodningen om kunder som har definert bankkonto
+StatusTrans=Overført
+PleaseSelectCustomerBankBANToWithdraw=Velg informasjon om kundens bankkonto å trekke seg
+WithBankUsingRIB=For bankkontoer bruker RIB
+WithBankUsingBANBIC=For bankkontoer bruker IBAN / BIC / SWIFT
+BankToReceiveWithdraw=Bankkonto til å motta trekker seg
+CreditDate=Kreditt på
+WithdrawalFileNotCapable=Kan ikke generere uttak kvittering fil for ditt land
+ShowWithdraw=Vis Angrerett
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Men hvis faktura har minst én tilbaketrekning betaling ennå ikke behandlet, vil det ikke bli satt som utbetales å tillate å administrere uttak før.
+DoStandingOrdersBeforePayments=Dette faner lar deg for å be om en stående ordre. Når det blir ferdig, kan du skrive inn betaling for å lukke fakturaen.
+InfoCreditSubject=Betaling av fast oppdrag %s av banken
+InfoCreditMessage=Den stående ordre %s er betalt av banken <br> Data om betaling: %s
+InfoTransSubject=Overføring av fast oppdrag %s til bank
+InfoTransMessage=Den stående ordre %s har blitt transmited til banken ved %s %s. <br><br>
+InfoTransData=Beløp: %s <br> Metode: %s <br> Dato: %s
+InfoFoot=Dette er en automatisk melding som sendes av Dolibarr
+InfoRejectSubject=Stående ordre nektet
+InfoRejectMessage=Hei, <br><br> den standig rekkefølgen av faktura %s knyttet til selskapet %s, med en mengde %s har blitt nektet av banken. <br><br> - <br> % $
+ModeWarning=Mulighet for reell modus ble ikke satt, stopper vi etter denne simuleringen
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:07:15).

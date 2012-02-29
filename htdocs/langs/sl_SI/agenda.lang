@@ -66,3 +66,15 @@ ExtSitesNbOfAgenda = Število koledarjev
 AgendaExtNb = Koledar št. %s
 ExtSiteUrlAgenda = URL za dostop do .ical datoteke
 ExtSiteNoLabel = Ni opisa
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+LocalAgenda=Lokalni koledar
+MyEvents=Moji dogodki
+OtherEvents=Drugi dogodki
+OrderApprovedInDolibarr=Naročite %s odobril
+OrderBackToDraftInDolibarr=Naročite %s segajo v stanju osnutka
+OrderCanceledInDolibarr=Naročite %s odpovedana
+ExportCal=Izvoz koledar
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:31:22).

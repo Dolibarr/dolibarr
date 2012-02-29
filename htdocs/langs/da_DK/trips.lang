@@ -46,3 +46,10 @@ CompanyVisited=Company / fundament besøgte
 // Reference language: en_US
 TripsAndExpensesStatistics=Udflugter og udgifter statistik
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:21:31).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
+// Reference language: en_US -> da_DK
+ExpensesArea=Udflugter og udgifter området
+SearchATripAndExpense=Søg en tur og regning
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:59:54).

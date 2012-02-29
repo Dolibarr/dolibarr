@@ -49,3 +49,10 @@ Donations=Darowizny
 // Reference language: en_US -> pl_PL
 ValidPromess=Sprawdź obietnicy
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:13).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+LastModifiedDonations=Ostatnie %s modyfikowane darowizn
+SearchADonation=Szukaj darowiznę
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:20:58).

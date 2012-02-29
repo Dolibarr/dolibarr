@@ -636,3 +636,25 @@ FridayMin=Fr
 SaturdayMin=Sa
 SundayMin=Su
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:41:16).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+SearchOf=Αναζήτηση
+LT1ES=ΑΠΕ
+LT2ES=IRPF
+ActionsOnMember=Εκδηλώσεις σχετικά με αυτό το μέλος
+URLPhoto=URL της φωτογραφίας / λογότυπο
+SetLinkToThirdParty=Σύνδεση με άλλο τρίτο μέρος
+CreateDraft=Δημιουργία σχεδίου
+ClickToEdit=Κάντε κλικ για να επεξεργαστείτε
+ObjectDeleted=Αντικείμενο %s διαγράφεται
+ByCountry=Με τη χώρα
+ByTown=Με την πόλη
+ByDate=Με ημερομηνία
+ByMonthYear=Με μήνας / έτος
+ByYear=Με χρόνια
+ByMonth=ανά μήνα
+ByDay=Μέχρι την ημέρα
+BySalesRepresentative=Με τον αντιπρόσωπο πωλήσεων
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:08:24).

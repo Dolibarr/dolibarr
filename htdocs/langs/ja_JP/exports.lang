@@ -1,0 +1,123 @@
+/*
+ * Language code: ja_JP
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 16:41:06
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
+// Reference language: en_US -> ja_JP
+CHARSET=UTF-8
+ExportsArea=輸出地域
+ImportArea=インポートエリア
+NewExport=新しいエクスポート
+NewImport=新しいインポート
+ExportableDatas=エクスポート可能なデータセット
+ImportableDatas=インポート可能なデータセット
+SelectExportDataSet=エクスポートするデータセットを選択...
+SelectImportDataSet=インポートしたいデータを選択...
+SelectExportFields=エクスポートするフィールドを選択するか、または事前に定義された輸出プロファイリングを選択
+SelectImportFields=アンカー%sでダウンしてそれらを移動してデータベースにインポートするソース·ファイルのフィールドとそのターゲットフィールドを選択するか、または事前に定義されたインポートプロファイリングを選択します。
+NotImportedFields=ソースファイルのフィールドがインポートされません
+SaveExportModel=後でそれを再利用する予定がある場合は、このエクスポート·プロファイルを保存...
+SaveImportModel=後でそれを再利用する予定がある場合は、このインポート·プロファイルを保存...
+ExportModelName=プロファイル名をエクスポートする
+ExportModelSaved=エクスポート·プロファイルは、名前<b>%s</b>下に保存されます。
+ExportableFields=エクスポート可能なフィールド
+ExportedFields=エクスポートするフィールド
+ImportModelName=インポート·プロファイル名
+ImportModelSaved=インポート·プロファイルは、名前<b>%s</b>下に保存されます。
+ImportableFields=インポート可能なフィールド
+ImportedFields=インポートされたフィールド
+DatasetToExport=エクスポートするデータセット
+DatasetToImport=データセットをインポートするファイル
+NoDiscardedFields=ソースファイル内のどのフィールドについても、廃棄されていません
+Dataset=データセット
+ChooseFieldsOrdersAndTitle=フィールドの順序を選択...
+FieldsOrder=フィールドの順序
+FieldsTitle=フィールドのタイトル
+FieldOrder=フィールドの順序
+FieldTitle=フィールドのタイトル
+ChooseExportFormat=エクスポート形式を選択します。
+NowClickToGenerateToBuildExportFile=現在、コンボボックスでファイル形式を選択し、エクスポートファイルを作成するには &quot;生成&quot;をクリックして...
+AvailableFormats=利用可能なフォーマット
+LibraryShort=図書館
+LibraryUsed=ライブラリを使用
+LibraryVersion=バージョン
+Step=手順
+FormatedImport=Import assistant
+FormatedImportDesc1=This area allows to import personalized data, using an assistant to help you in process without technical knowledge.
+FormatedImportDesc2=First step is to choose a king of data you want to load, then file to load, then to choose which fields you want to load.
+FormatedExport=Export assistant
+FormatedExportDesc1=This area allows to export personalized data, using an assistant to help you in process without technical knowledge.
+FormatedExportDesc2=First step is to choose a predefined dataset, then to choose which fields you want in your result files, and which order.
+FormatedExportDesc3=When data to export are selected, you can define output file format you want to export your data to.
+Sheet=シート
+NoImportableData=いいえインポート可能なデータがありません（データのインポートを可能にするための定義としないモジュール）
+FileSuccessfullyBuilt=生成されたファイルをエクスポートします。
+SQLUsedForExport=エクスポート·ファイルをビルドするために使用されるSQLリクエスト
+LineId=行のid
+LineDescription=ラインの説明
+LineUnitPrice=ラインの単価
+LineVATRate=ラインの付加価値税率
+LineQty=線の量
+LineTotalHT=ラインの税額ネット
+LineTotalTTC=ラインのための税の額
+LineTotalVAT=ラインの付加価値税の額
+TypeOfLineServiceOrProduct=回線の種類（0 =製品、1 =サービス）
+FileWithDataToImport=インポートするデータを持つファイル
+FileToImport=インポートするソースファイル
+FileMustHaveOneOfFollowingFormat=インポートするファイルの形式は次のいずれかが必要です。
+DownloadEmptyExample=空のソースファイルの例をダウンロード
+ChooseFormatOfFileToImport=それを選択するにはピクトの%sをクリックしてインポートファイル形式として使用するファイル形式を選択...
+ChooseFileToImport=ソースのインポートファイルとしてファイルを選択するピクトの%s]をクリックしてファイルをアップロード...
+SourceFileFormat=ソースファイルの形式
+FieldsInSourceFile=ソースファイル内のフィールド
+FieldsInTargetDatabase=Dolibarrデータベース内のターゲット·フィールド（* =必須）
+Field=フィールド
+NoFields=Noフィールド
+MoveField=フィールドの列番号%sを移動
+ExampleOfImportFile=Example_of_import_file
+SaveImportProfile=このインポート·プロファイルを保存する
+ErrorImportDuplicateProfil=この名前で、このインポート·プロファイルの保存に失敗しました。既存のプロファイルはこの名前で既に存在しています。
+ImportSummary=インポート設定の概要
+TablesTarget=対象の表
+FieldsTarget=対象となるフィールド
+TableTarget=対象テーブル
+FieldTarget=ターゲットとフィールド
+FieldSource=ソースフィールド
+DoNotImportFirstLine=ソースファイルの最初の行をインポートしないでください
+NbOfSourceLines=ソースファイルの行数
+NowClickToTestTheImport=あなたが定義したインポートパラメータを確認してください。彼らが正しい場合は、インポートプロセスのシミュレーションを起動するボタン<b>&quot;%s&quot;（</b>データがデータベースに変更されません、それは一瞬だけのためのシミュレーションです）をクリックしてください...
+RunSimulateImportFile=インポートシミュレーションを起動します。
+FieldNeedSource=データベース内のこのfielsは、ソースファイルからのデータを必要と
+SomeMandatoryFieldHaveNoSource=いくつかの必須フィールドは、データファイルからのソースがありません
+InformationOnSourceFile=ソースファイルに関する情報
+InformationOnTargetTables=ターゲットフィールドに関する情報
+SelectAtLeastOneField=エクスポートするフィールドの列に少なくとも1つのソースフィールドを切り替える
+SelectFormat=このインポートファイル形式を選択します。
+RunImportFile=インポートファイルを起動する
+NowClickToRunTheImport=インポートシミュレーションの結果を確認してください。すべてがうまくいっていれば、決定的なインポートを起動します。
+DataLoadedWithId=<b>%s：</b>すべてのデータは、次のimport IDでロードされます
+ErrorMissingMandatoryValue=必須データは、フィールド<b>%s</b>のソースファイル内の空です。
+TooMuchErrors=そこにエラーが発生した<b>%s</b>他のソース行はまだですが、出力が制限されていました。
+TooMuchWarnings=そこに警告と<b>%s</b>他のソース行はまだですが、出力が制限されていました。
+EmptyLine=空行（破棄されます）
+CorrectErrorBeforeRunningImport=あなたは、最初の決定的なインポートを実行する前にすべてのエラーを修正する必要があります。
+FileWasImported=ファイルが数<b>%s</b>でインポートされた。
+YouCanUseImportIdToFindRecord=あなたは、フィールド<b>import_key = '%s &quot;</b>をフィルタリングすることにより、データベース内のすべてのインポートされたレコードを見つけることができます。
+NbOfLinesOK=エラーや警告なしなしで行数<b>：%s。</b>
+NbOfLinesImported=正常にインポート行数<b>：%s。</b>
+DataComeFromNoWhere=挿入する値は、ソース·ファイル内のどこから来ている。
+DataComeFromFileFieldNb=挿入する値は、ソースファイル内のフィールド番号<b>%s</b>から来ています。
+DataComeFromIdFoundFromRef=ソース·ファイルのフィールド番号<b>%s</b>から来ている値が（だからrefを持つオブジェ<b>%s。</b>ソースファイルからはDolibarrに存在する必要があります）を使用して、親オブジェクトのIDを見つけるために使用されます。
+DataComeFromIdFoundFromCodeId=ソース·ファイルのフィールド番号<b>%s</b>から来ているコードが（だからソースファイルからコードがdictionnary <b>%s</b>に存在する必要があります）を使用して、親オブジェクトのIDを見つけるために使用されます。あなたがIDを知っていれば、あなたもソースファイルの代わりにコードにそれを使用することができます。インポートでは、両方のケースで動作する必要があります。
+DataIsInsertedInto=ソースファイルからのデータは、次のフィールドに挿入されます。
+DataIDSourceIsInsertedInto=ソースファイル内のデータを使用して見つかった親オブジェクトのIDは、次のフィールドに挿入されます。
+DataCodeIDSourceIsInsertedInto=コー​​ドから見つかった親行のIDは、次のフィールドに挿入されます。
+SourceRequired=データ値は必須です。
+SourceExample=可能なデータ値の例
+ExampleAnyRefFoundIntoElement=任意のref要素の<b>%s</b>見つかりました
+ExampleAnyCodeOrIdFoundIntoDictionnary=dictionnary <b>%s</b>に発見されたコード（またはID）
+CSVFormatDesc=<b>カンマ区切りファイル</b>形式（。CSV）。 <br>これは、フィールドがセパレータ[%s]で区切られたテキストフ​​ァイル形式です。区切り文字はフィールドの内容の中に発見されている場合は、フィールドが円形文字[%s]で丸められます。 [%s]は丸い文字をエスケープする文字をエスケープします。
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:50:17).

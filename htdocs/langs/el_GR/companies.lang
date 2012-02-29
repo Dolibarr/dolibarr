@@ -333,3 +333,48 @@ InActivity=Ανοιχτό
 ActivityCeased=Κλειστό
 ActivityStateFilter=Το καθεστώς της δραστηριότητας
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:37:16).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+CountryId=Κωδικός Χώρα
+ProfId5Short=Καθ. id 5
+ProfId5=Επαγγελματική ταυτότητα 5
+ProfId5AR=-
+ProfId5AU=-
+ProfId5BE=-
+#ProfId1BR=CNAE
+#ProfId2BR=CNPJ
+#ProfId3BR=CPF
+#ProfId4BR=INSS
+#ProfId5BR=IE
+#ProfId6BR=IM
+ProfId5CH=-
+ProfId5CL=-
+ProfId1CO=Καθ Id 1 (RUT)
+ProfId2CO=-
+ProfId3CO=-
+ProfId4CO=-
+ProfId5CO=-
+ProfId5DE=-
+ProfId5ES=-
+ProfId5FR=Καθ ID 5
+ProfId5GB=-
+ProfId5HN=-
+ProfId5IN=Καθ ID 5
+ProfId5MA=-
+ProfId5MX=-
+ProfId5NL=-
+ProfId5PT=-
+ProfId3SN=-
+ProfId4SN=-
+ProfId5SN=-
+ProfId5TN=-
+ProfId1RU=Καθ Id 1 (OGRN)
+ProfId2RU=Καθ Id 2 (INN)
+ProfId3RU=Καθ Id 3 (KPP)
+ProfId4RU=Καθ Id 4 (OKPO)
+ProfId5RU=-
+EditContact=Επεξεργασία επαφής / διεύθυνση
+ImportDataset_company_2=Επαφές (από τρίτα μέρη ή όχι) και τα χαρακτηριστικά
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:08:35).

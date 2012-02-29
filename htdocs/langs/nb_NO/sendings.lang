@@ -59,3 +59,14 @@ SendingMethodCOLSUI=Colissimo
 DocumentModelSirocco=Enkelt dokument modellen for levering kvitteringer
 DocumentModelTyphon=Mer fullstendig dokument modellen for levering kvitteringer (logo. ..)
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:48:05).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+SendShippingByEMail=Send forsendelse via e-post
+SendShippingRef=Send forsendelse %s
+ActionsOnShipping=Hendelser på forsendelse
+LinkToTrackYourPackage=Lenke for å spore pakken
+ShipmentCreationIsDoneFromOrder=For øyeblikket er opprettelsen av en ny forsendelse gjort fra ordren kortet.
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstant EXPEDITION_ADDON_NUMBER ikke definert
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:09:22).

@@ -109,3 +109,18 @@ TypeContact_propal_external_CUSTOMER=lua legatura cu clientul urmărirea propune
 DocModelRoigDescription=Un model de propunere completă cu impozit RE spaniolă şi IRPF
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:38).
 
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+ProposalCard=Propunere de carte
+ConfirmReOpenProp=Sunteţi sigur că doriţi să deschideţi înapoi <b>%s</b> comerciale propunere?
+AvailabilityPeriod=Disponibilitate întârziere
+SetAvailability=Setaţi întârziere disponibilitatea
+AfterOrder=după comandă
+AvailabilityTypeAV_NOW=Imediat
+AvailabilityTypeAV_1W=1 săptămâni
+AvailabilityTypeAV_2W=2 săptămâni
+AvailabilityTypeAV_3W=3 săptămâni
+AvailabilityTypeAV_1M=1 luna
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:26:36).

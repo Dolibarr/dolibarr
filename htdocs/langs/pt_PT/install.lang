@@ -460,3 +460,11 @@ MigrationFinished=Migração terminou
 LastStepDesc=<strong>Último passo:</strong> Defina aqui o login ea senha que você planeja usar para se conectar ao software. Não perca isso, pois é a conta para administrar todos os outros.
 MigrationActioncommElement=Atualizar os dados sobre as ações
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 10:07:36).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+DatabasePrefix=Tabela de prefixos de banco de dados
+ActivateModule=Ative %s módulo
+MigrationPaymentMode=A migração de dados para o modo de pagamento
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:01).

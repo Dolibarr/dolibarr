@@ -79,3 +79,10 @@ DeleteAWarehouse = Zbriši skladišče
 ConfirmDeleteWarehouse = Ali zares želite izbrisati skladišče <b>%s?</b>
 PersonalStock = Osebna zaloga %s
 ThisWarehouseIsPersonalStock = To skladišče predstavlja osebno zalogo %s %s
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+SelectWarehouseForStockDecrease=Izberite skladišče uporabiti za zmanjšanje zalog
+SelectWarehouseForStockIncrease=Izberite skladišče uporabiti za povečanje zalog
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:30:27).

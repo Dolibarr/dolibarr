@@ -191,3 +191,47 @@ DocForAllMembersCards=Luo käyntikortteja kaikkien jäsenten (malli lähtö tode
 DocForOneMemberCards=Luo käyntikortit erityisesti jäsen (malli lähtö todella setup: <b>%s)</b>
 DocForLabels=Luo osoite arkkia (malli lähtö todella setup: <b>%s)</b>
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:54).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+MembersWithSubscriptionToReceive=Jäsenet Merkintäoikeuksien vastaanottaa
+NewSubscriptionDesc=Tämän lomakkeen avulla voit tallentaa tilauksen uutena jäsenenä säätiön. Jos haluat uudistaa tilauksen (jos on jo jäsen), ota yhteyttä säätiön hallituksen sijasta sähköpostitse %s.
+BlankSubscriptionFormDesc=Dolibarr voi tarjota sinulle julkista URL jotta ulkopuolisia vierailijoita pyytää tilata perusta. Jos online-maksu moduuli on käytössä, maksuvälineenä myös automaattisesti säädetään.
+EnablePublicSubscriptionForm=Ota yleisölle auto-merkintälomakkeen
+ImportDataset_member_1=Jäsenet
+LastSubscriptionsModified=Viimeksi %s muutettu liittymät
+GlobalConfigUsedIfNotDefined=Teksti on määritelty säätiön moduulissa asennusohjelma käyttää, jos ei määritellä tässä
+MayBeOverwrited=Tämä teksti voidaan overwrited arvosta määritelty jäsenen mukaan
+SubscriptionPayment=Tilaus maksu
+LastSubscriptionDate=Viimeinen merkintäpäivä
+LastSubscriptionAmount=Viime merkinnän määrästä
+MembersStatisticsByCountries=Jäsenten tilastot maittain
+MembersStatisticsByState=Jäsenten tilastot valtio / lääni
+MembersStatisticsByTowne=Jäsenten tilastot kaupunki
+NbOfMembers=Jäsenmäärä
+NoValidatedMemberYet=Ei validoitu jäsenet pitivät
+MembersByCountryDesc=Tämä ruutu näyttää tilastoja jäseniä maittain. Graphic riippuu kuitenkin Googlen online-käyrä palvelu ja on käytettävissä vain, jos internet-yhteys toimii.
+MembersByStateDesc=Tämä ruutu näyttää tilastoja jäsenistä valtion / maakuntien / kantonissa.
+MembersByTownDesc=Tämä ruutu näyttää tilastoja jäsenille kaupungin.
+MembersStatisticsDesc=Valitse tilastot haluat lukea ...
+MenuMembersStats=Tilasto
+LastMemberDate=Viimeinen Tulokas
+Nature=Luonto
+Public=Tiedot ovat julkisia
+Exports=Vienti
+NewMemberbyWeb=Uusi jäsen. Odottaa hyväksyntää
+NewMemberForm=Uusi jäsen lomake
+SubscriptionsStatistics=Tilastot tilauksista
+NbOfSubscriptions=Kappaletta
+AmountOfSubscriptions=Määrä liittymää
+TurnoverOrBudget=Liikevaihto (yritykselle) tai budjetti (ja säätiö)
+DefaultAmount=Oletus määrä tilauksen
+CanEditAmount=Matkailija voi valita / muokata määrä merkitsemästään
+MEMBER_NEWFORM_PAYONLINE=Hyppää integroitu verkossa maksusivulla
+Associations=Perustukset
+Collectivités=Organisaatiot
+Particuliers=Henkilökohtainen
+Entreprises=Yritykset
+DOLIBARRFOUNDATION_PAYMENT_FORM=Voit tehdä tilauksen maksun avulla pankkisiirrolla sivulla <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Voit maksaa luottokortilla tai PayPal, klikkaa painiketta sivun alalaidassa. <br>
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:12:22).

@@ -99,3 +99,10 @@ TypeContact_contrat_external_BILLING=Innheimta viðskiptavina samband
 TypeContact_contrat_external_CUSTOMER=Eftirfylgni viðskiptavina samband
 TypeContact_contrat_external_SALESREPSIGN=Undirritun samnings viðskiptavina samband
 // STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+NoExpiredServices=Engar útrunnin virk þjónusta
+Error_CONTRACT_ADDON_NotDefined=Constant CONTRACT_ADDON skilgreind ekki
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:36).

@@ -370,3 +370,25 @@ CancelUpload=Anulaţi încărcarea
 FileIsTooBig=Fişiere este prea mare
 Export=Export
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 04:34:21).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+Notify_BILL_CANCEL=Factura client anulat
+Notify_BILL_SENTBYMAIL=Factura client trimis prin e-mail
+Notify_ORDER_SUPPLIER_VALIDATE=Pentru furnizorul validate
+Notify_ORDER_SUPPLIER_SENTBYMAIL=Pentru furnizorul trimis prin e-mail
+Notify_BILL_SUPPLIER_VALIDATE=Factura furnizorului validate
+Notify_BILL_SUPPLIER_PAYED=Factura platita cu furnizorul
+PredefinedMailContentSendInvoice=Veţi găsi aici __ factura FACREF__ \n\n respect \n\n
+PredefinedMailContentSendInvoiceReminder=Ne-ar dori să vă avertizeze că FACREF__ __ factura pare a nu fi platit. Deci, aceasta este factură în ataşamentul din nou, ca un memento. \n\n respect \n\n
+PredefinedMailContentSendProposal=Veţi găsi aici __ comercial propoal PROPREF__ \n\n respect \n\n
+PredefinedMailContentSendOrder=Veţi găsi aici, pentru __ ORDERREF__ \n\n respect \n\n
+PredefinedMailContentSendShipping=Veţi găsi aici de transport maritim __ SHIPPINGREF__ \n\n respect \n\n
+PredefinedMailContentSendFichInter=Veţi găsi aici de intervenţie __ FICHINTERREF__ \n\n respect \n\n
+Top=Top
+Bottom=De jos
+Left=Stânga
+Right=Dreapta
+ShipmentValidatedInDolibarr=%s Transport validate în Dolibarr
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:23:20).

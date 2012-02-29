@@ -1,0 +1,31 @@
+/*
+ * Language code: ja_JP
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 16:41:06
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
+// Reference language: en_US -> ja_JP
+CHARSET=UTF-8
+Trip=旅行
+Trips=ツアー
+TripsAndExpenses=旅行や経費
+TripsAndExpensesStatistics=旅行や経費の統計情報
+TripCard=旅行カード
+AddTrip=旅行を追加します。
+ListOfTrips=ツアーのリスト
+ListOfFees=手数料のリスト
+NewTrip=新しい旅行
+CompanyVisited=会社概要/基礎を訪問
+Kilometers=キロ
+FeesKilometersOrAmout=量またはキロ
+DeleteTrip=旅を削除します。
+ConfirmDeleteTrip=この旅を削除してもよろしいですか？
+TF_OTHER=その他
+TF_LUNCH=ランチ
+TF_TRIP=旅行
+ListTripsAndExpenses=旅行や費用のリスト
+ExpensesArea=旅行や経費エリア
+SearchATripAndExpense=旅行と費用を検索
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:47:05).

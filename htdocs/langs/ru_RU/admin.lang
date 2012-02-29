@@ -1279,3 +1279,27 @@ BankOrderES=Испанский
 BankOrderESDesc=Испанская порядок отображения
 SuppliersInvoiceModel=Полный шаблон поставщиком счета-фактуры (logo. ..)
 // STOP - Lines generated via autotranslator.php tool (2011-08-27 16:57:40).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
+// Reference language: en_US -> ru_RU
+WebUserGroup=Веб-сервер пользователя / группы
+NoLockBeforeInsert=Нет блокировки команды вокруг INSERT
+ThisForceAlsoTheme=С помощью этого меню менеджера будет также использовать свои собственные темы все, что выбор пользователя. Также в этом меню, менеджер специализируется на смартфонах не работает на всех смартфонов. С помощью другого меню менеджера, если у вас возникли проблемы с вашим.
+HideAnyVATInformationOnPDF=Скрыть все информацию, связанную с НДС на создаваемых PDF
+UrlGenerationParameters=Параметры для обеспечения адресов
+SecurityTokenIsUnique=Используйте уникальный параметр securekey для каждого URL
+EnterRefToBuildUrl=Введите ссылку на объект %s
+GetSecuredUrl=Получить рассчитывается URL
+Module105Name=Mailman и Sip
+Module105Desc=Mailman или SPIP интерфейс для члена модуля
+Permission50001=Используйте точки продаж
+SecurityEventsPurged=Безопасность событий очищены
+ExtraFieldHasWrongValue=Обуслов %s имеет неверное значение.
+SendmailOptionMayHurtBuggedMTA=Функция отправить почту с помощью метода &quot;прямого PHP почты&quot; будет создавать сообщения электронной почты, которые могут быть не правильно обрабатываются некоторые получения почтовых серверов. Результатом является то, что несколько писем не может быть прочитан людьми организовано thoose прослушивается платформ. Это относится к некоторым интернет-провайдеров (Ex: Orange во Франции). Это не проблема в Dolibarr ни в PHP, но на получение почтового сервера. Однако, вы можете добавить опцию MAIN_FIX_FOR_BUGGED_MTA 1 в настройки - другие изменения Dolibarr чтобы избежать этого. Тем не менее, у вас могут возникнуть проблемы с другими серверами, строго соблюдать стандарт SMTP. Другие решения (Рекомендованные) заключается в использовании метода &quot;SMTP разъем библиотека&quot;, который не имеет недостатков.
+ServiceSetup=Услуги установки модуля
+ProductServiceSetup=Продукты и услуги установки модулей
+ViewProductDescInThirdpartyLanguageAbility=Визуализация продуктов описания в сторонних язык
+AccountancyCode=Бухгалтерия код
+MailmanSpipSetup=Mailman и SPIP модуль установки
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:49).

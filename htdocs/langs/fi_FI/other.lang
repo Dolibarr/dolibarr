@@ -230,3 +230,28 @@ FileFormat=Tiedostomuoto
 SelectAColor=Valitse väri
 AddFiles=Lisää tiedostoja
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 03:21:28).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+Notify_COMPANY_CREATE=Kolmannen osapuolen luotu
+Notify_PROPAL_SENTBYMAIL=Kaupallinen ehdotus lähetetään postitse
+Notify_BILL_PAYED=Asiakas laskun maksanut
+Notify_BILL_CANCEL=Asiakas lasku peruutettu
+Notify_BILL_SENTBYMAIL=Asiakkaan lasku lähetetään postitse
+Notify_MEMBER_SUBSCRIPTION=Jäsen merkitty
+Notify_MEMBER_RESILIATE=Jäsen resiliated
+Notify_MEMBER_DELETE=Jäsen poistettu
+PredefinedMailContentSendInvoice=Löydät täältä laskun __ FACREF__ \n\n Sincerely \n\n
+PredefinedMailContentSendInvoiceReminder=Haluamme varoittaa, että lasku __ FACREF__ näyttää ei maksanut. Joten tämä on laskun liitetiedostona uudelleen, kuten muistutuksen. \n\n Vilpittömästi \n\n
+PredefinedMailContentSendProposal=Löydät täältä kaupallinen propoal __ PROPREF__ \n\n Sincerely \n\n
+PredefinedMailContentSendOrder=Löydät täältä järjestyksessä __ ORDERREF__ \n\n Sincerely \n\n
+PredefinedMailContentSendSupplierInvoice=Löydät täältä laskun __ FACREF__ \n\n Sincerely \n\n
+PredefinedMailContentSendShipping=Löydät täältä merenkulku __ SHIPPINGREF__ \n\n Sincerely \n\n
+PredefinedMailContentSendFichInter=Löydät täältä intervention __ FICHINTERREF__ \n\n Sincerely \n\n
+StartUpload=Aloita lataaminen
+CancelUpload=Peruuta Lähetä
+FileIsTooBig=Files on liian suuri
+ShipmentValidatedInDolibarr=Toimitus %s validoitu Dolibarr
+Export=Vienti
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:28).

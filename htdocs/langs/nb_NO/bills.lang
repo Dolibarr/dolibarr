@@ -421,3 +421,24 @@ TypeContact_facture_fourn_external_SHIPPING=Leverandør shipping kontakt
 TypeContact_facture_fourn_external_SERVICE=Leverandør service kontakt
 PDFLinceDescription=En komplett faktura modell med spanske RE og IRPF
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:50:35).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+BillsCustomer=Kundens faktura
+BillsSuppliersUnpaidForCompany=Ubetalt leverandørens fakturaer for %s
+BillsLate=Sene betalinger
+DisabledBecauseNotErasable=Deaktivert fordi kan ikke slettes
+ConfirmUnvalidateBill=Er du sikker på at du vil endre faktura <b>%s</b> til utkastet status?
+UnvalidateBill=Unvalidate faktura
+NumberOfBillsByMonth=Nb av fakturaer etter måned
+AmountOfBillsByMonthHT=Mengde fakturaer per måned (netto etter skatt)
+AddRelativeDiscount=Lag relativ rabatt
+EditRelativelDiscount=Rediger relatvie rabatt
+EditGlobalDiscounts=Rediger absolutte rabatter
+AddCreditNote=Lag kreditt notat
+InvoiceNotChecked=Ingen faktura er valgt
+ShowUnpaidAll=Vis alle ubetalte fakturaer
+ClosePaidInvoicesAutomatically=Klassifisere &quot;betalt&quot; alle standard eller utskifting fakturaer entierely utbetales.
+AllCompletelyPayedInvoiceWillBeClosed=Alle faktura uten gjenstår å betale vil bli automatisk stengt for status &quot;betales&quot;.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:07:28).

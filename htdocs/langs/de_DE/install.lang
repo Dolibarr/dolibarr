@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-15 19:59:12
  */
@@ -209,3 +209,12 @@ MigrateIsDoneStepByStep=Die gezielte Version (%s) hat eine Lücke von mehreren V
 MigrationFinished=Migration abgeschlossen
 LastStepDesc=<strong>Letzter Schritt:</strong> Legen Sie hier Benutzernamen und Passwort, die Sie verwenden möchten, um Software zu verbinden. Verlieren Sie ihn nicht, wie es das Konto für alle anderen zu verwalten ist.
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 09:41:08).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+DatabasePrefix=Datenbank-Präfix-Tabelle
+ActivateModule=Aktivieren Modul %s
+MigrationActioncommElement=Aktualisieren Sie Daten über die Maßnahmen
+MigrationPaymentMode=Daten-Migration für die Zahlung Modus
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:40).

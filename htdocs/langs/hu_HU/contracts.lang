@@ -91,3 +91,10 @@ TypeContact_contrat_internal_SALESREPFOLL=Értékesítési képviselő a szerző
 TypeContact_contrat_external_BILLING=Számlázandó ügyfél
 TypeContact_contrat_external_CUSTOMER=Ügyfél kapcsolat tartó
 TypeContact_contrat_external_SALESREPSIGN=A szerződést aláíró ügyfél
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
+// Reference language: en_US -> hu_HU
+NoExpiredServices=Nincs lejárt aktív szolgáltatások
+Error_CONTRACT_ADDON_NotDefined=Állandó CONTRACT_ADDON nincs definiálva
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:14:40).

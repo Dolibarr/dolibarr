@@ -91,3 +91,18 @@ BoxTitleLastModifiedSuppliers=Viimeksi %s muutettu toimittajien
 BoxTitleLastModifiedCustomers=Viimeksi %s muutettu asiakkaiden
 BoxTitleLastModifiedProspects=Viimeksi %s muutettu tulevaisuudennäkymät
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:35).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+BoxLastContacts=Viimeksi kontaktit / osoitteet
+BoxLastMembers=Viimeksi jäsentä
+BoxTitleLastModifiedMembers=Viimeksi %s muutettu jäsentä
+BoxTitleLastModifiedContacts=Viimeksi %s muutettu kontaktit / osoitteet
+BoxOldestExpiredServices=Vanhin aktiivinen päättyi palvelut
+BoxLastExpiredServices=Viimeksi %s vanhin yhteydet aktiivisten vanhentuneet palvelut
+BoxTitleLastModifiedDonations=Viimeksi %s muutettu lahjoitukset
+BoxTitleLastModifiedExpenses=Viimeksi %s muutettu kulut
+ClickToAdd=Klikkaa tästä lisätä.
+NoRecordedContacts=Ei tallennettuja yhteystietoja
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:48).

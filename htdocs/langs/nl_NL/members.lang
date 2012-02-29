@@ -212,3 +212,9 @@ SubscriptionsStatistics=Statistieken over abonnementen
 NbOfSubscriptions=Aantal abonnementen
 AmountOfSubscriptions=Hoeveelheid van abonnementen
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 02:31:52).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
+// Reference language: en_US -> nl_NL
+LastSubscriptionsModified=Laatste %s gewijzigd abonnementen
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:12:33).

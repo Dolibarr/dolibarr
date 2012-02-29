@@ -139,3 +139,28 @@ AddRemind=调度可用金额
 RemainToDivide=保持派遣：
 WarningDepositsNotIncluded=存款发票不包括在此版本与本会计模块。
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 06:38:59).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+AmountToBeCharged=支付的总金额：
+LT2SummaryES=IRPF平衡
+LT2PaidES=IRPF通知
+LT2CustomerES=IRPF销售
+LT2SupplierES=IRPF采购
+newLT2PaymentES=新IRPF付款
+LT2PaymentES=IRPF付款
+LT2PaymentsES=IRPF付款
+DepositsAreNotIncluded=- 存款发票，也不包括
+DepositsAreIncluded=- 存款发票
+LT2ReportByCustomersInInputOutputModeES=报告由第三方IRPF
+RulesVATInServices=- 对于服务，该报告包括实际收到或发出的付款日期的基础上规定的增值税。 <br> - 对于重大资产，它包括增值税专用发票发票日期的基础上。
+RulesVATInProducts=- 对于重大资产，它包括增值税专用发票发票日期的基础上。
+RulesVATDueServices=- 对于服务，该报告包括增值税专用发票，根据发票日期到期，缴纳或者未。
+RulesVATDueProducts=- 对于重大资产，它包括增值税专用发票，根据发票日期。
+ProposalStats=统计数据的建议
+OrderStats=订单统计
+InvoiceStats=法案的统计数字
+SellsJournal=销售杂志
+PurchasesJournal=购买杂志
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:21).

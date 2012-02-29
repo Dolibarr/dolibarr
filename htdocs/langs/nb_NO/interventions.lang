@@ -44,3 +44,12 @@ DocumentModelStandard=Standard dokumentet modell for intervensjoner
 // Reference language: en_US -> nb_NO
 ActionsOnFicheInter=Handlinger om inngrep
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 05:26:26).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+ClassifyBilled=Klassifisere &quot;Faktureres&quot;
+StatusInterInvoiced=Fakturert
+RelatedInterventions=Relaterte intervensjoner
+ShowIntervention=Vis intervensjon
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:06:47).

@@ -1,0 +1,18 @@
+/*
+ * Language code: fi_FI
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 16:10:23
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+CHARSET=UTF-8
+WorkflowSetup=Workflow-moduuli asennus
+WorkflowDesc=Tämä moduuli on desinged muuttaa käyttäytymistä automaattisen toimien soveltamisen. Oletuksena työnkulku avataan (teet asian, jotta haluat). Voit käyttöön automaattiset toiminnot, jotka ovat mielenkiintoisia sisään
+ThereIsNoWorkflowToModify=Ei työnkulkua voi muokata moduulien olet aktivoinut.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Luominen asiakkaan tilauksen automaattisesti kaupallinen ehdotus on allekirjoitettu
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Luo asiakkaalle laskun automaattisesti kaupallinen ehdotus on allekirjoitettu
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Luo asiakkaalle laskun automaattisesti sopimus on vahvistettu
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Luo asiakkaalle laskun automaattisesti asiakkaan tilauksen suljetaan
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:11:10).

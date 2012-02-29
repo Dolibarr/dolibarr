@@ -12,3 +12,14 @@ OSCommerceShop=osCommerceのショップ
 OSCommerce=osCommerceの
 AddProd=オンライン販売
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 11:28:38).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
+// Reference language: en_US -> ja_JP
+Shop=ショップ
+ShopWeb=ウェブショップ
+LastOrders=ラストオーダー
+OnStandBy=待機して
+TreatmentInProgress=進行中の治療
+LastCustomers=最後のお客さま
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:43:06).

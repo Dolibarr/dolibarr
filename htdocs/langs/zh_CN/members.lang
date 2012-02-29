@@ -173,3 +173,47 @@ DocForAllMembersCards=成员（名片格式生成所有输出实际上设置<b>�
 DocForOneMemberCards=设置<b>：%s</b>生成名片输出实际上是一个特定的成员（格式）
 DocForLabels=生成报告表（格式输出实际上设置<b>：%s）</b>
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:45).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+MembersWithSubscriptionToReceive=接收与认购成员
+NewSubscriptionDesc=这种形式可以让你记录你的订阅为基础的新成员。如果你想续订（如果已经是会员），请联系，而不是通过电子邮件%s基金会董事会。
+BlankSubscriptionFormDesc=dolibarr可以为您提供一个公共URL允许外部访问者问到订阅的基础。如果启用在线支付模块，付款方式也将被自动提供。
+EnablePublicSubscriptionForm=让市民自动认购表格
+ImportDataset_member_1=成员
+LastSubscriptionsModified=最后%s修改订阅
+GlobalConfigUsedIfNotDefined=如果这里没有定义，将用于基础模块设置中定义的文本
+MayBeOverwrited=这段文字可以为成员的类型定义的值overwrited
+SubscriptionPayment=认购款项
+LastSubscriptionDate=最后认购日期
+LastSubscriptionAmount=最后认购金额
+MembersStatisticsByCountries=成员由国家统计
+MembersStatisticsByState=成员由州/省的统计信息
+MembersStatisticsByTowne=成员由镇统计
+NbOfMembers=成员数
+NoValidatedMemberYet=没有验证的成员发现
+MembersByCountryDesc=该屏幕显示您成员国的统计数字。然而，图形取决于谷歌在线图服务，可只有一个互联网连接工作。
+MembersByStateDesc=此屏幕显示你的统计，成员由州/省/州。
+MembersByTownDesc=该屏幕显示您的成员由镇统计。
+MembersStatisticsDesc=选择你想读的统计...
+MenuMembersStats=统计
+LastMemberDate=最后一个成员日期
+Nature=性质
+Public=信息是公开的
+Exports=出口
+NewMemberbyWeb=增加了新成员。等待批准
+NewMemberForm=新成员的形式
+SubscriptionsStatistics=统计数据上的订阅
+NbOfSubscriptions=订阅数
+AmountOfSubscriptions=订阅金额
+TurnoverOrBudget=营业额（公司）或财政预算案（基础）
+DefaultAmount=拖欠金额认购
+CanEditAmount=游客可以选择/编辑其认购金额
+MEMBER_NEWFORM_PAYONLINE=集成在线支付页面跳转
+Associations=基金会
+Collectivités=组织
+Particuliers=个人
+Entreprises=公司
+DOLIBARRFOUNDATION_PAYMENT_FORM=为了使您的订阅使用银行转帐支付，请参阅页<a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> 。 <br>使用信用卡或PayPal支付，点击此页底部的按钮。 <br>
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:39:32).

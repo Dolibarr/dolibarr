@@ -120,3 +120,11 @@ ListOfNotificationsDone=Lista alla e-postmeddelanden skickas
 // Reference language: en_US -> sv_SE
 MailingModuleDescContactsByCompanyCategory=Kontakter med tredje part (av tredje part kategori)
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:02:33).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+MailingStatusRead=Läsa
+MailingModuleDescMembersCategories=Foundation medlemmar (per kategori)
+MailingModuleDescContactsByFunction=Kontakter från tredje part (i position / funktion)
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:20).

@@ -20,3 +20,14 @@ PAYPAL_IPN_MAIL_ADDRESS=E-Mail-Adresse für die sofortige Benachrichtigung der Z
 PredefinedMailContentSendOrderWithPaypalLink=Hier finden Sie die Reihenfolge __ORDERREF__ \n\nSie können auf der sicheren unten stehenden Link, um Ihre Zahlung via PayPal zu klicken \n\n%s \n\nSincerely \n\n
 PredefinedMailContentSendInvoiceWithPaypalLink=Hier finden Sie die Rechnung __FACREF__ \n\nSie können auf der sicheren unten stehenden Link, um Ihre Zahlung via PayPal \n\n%s \n\nSincerely \n\n machen klicken
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 10:42:13).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+PAYPAL_API_SANDBOX=Test-Modus / Sandkasten
+PAYPAL_API_USER=API-Benutzername
+PAYPAL_API_PASSWORD=API-Passwort
+PAYPAL_API_SIGNATURE=API-Signatur
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Bieten Zahlung &quot;integral&quot; (Kreditkarte + Paypal) oder &quot;Paypal&quot; nur
+YouAreCurrentlyInSandboxMode=Sie befinden sich in der &quot;Sandbox&quot;-Modus
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:42).

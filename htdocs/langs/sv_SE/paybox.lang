@@ -42,3 +42,13 @@ CSSUrlForPaymentForm=CSS-formatmall URL för inbetalningskort
 MessageOK=Meddelande på validerade betalning återvänder sida
 MessageKO=Meddelande om avbokning betalning återvänder sida
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:27:18).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+ToOfferALinkForOnlinePayment=URL för %s betalning
+YourPaymentHasBeenRecorded=Den här sidan bekräftar att din betalning har registrerats. Tack.
+YourPaymentHasNotBeenRecorded=Din betalning inte har registrerats och transaktionen har avbrutits. Tack.
+AccountParameter=Tagen parametrar
+UsageParameter=Användning parametrar
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:22).

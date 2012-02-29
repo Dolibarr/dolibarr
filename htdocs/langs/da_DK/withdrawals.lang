@@ -87,3 +87,28 @@ NotifyEmision=Tilbagetrækning Emission
 NotifyCredit=Tilbagetrækning Credit
 NumeroNationalEmetter=National Transmitter Antal
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:21:54).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
+// Reference language: en_US -> da_DK
+NbOfInvoiceToWithdrawWithInfo=Nb af faktura med trække anmodningen om kunder, der har defineret bankkontooplysninger
+StatusTrans=Transmitteret
+PleaseSelectCustomerBankBANToWithdraw=Vælg oplysninger om kundens bankkonto til at trække
+WithBankUsingRIB=For bankkonti ved hjælp af RIB
+WithBankUsingBANBIC=For bankkonti ved hjælp af IBAN / BIC / SWIFT
+BankToReceiveWithdraw=Bankkonto til at modtage trækker sig
+CreditDate=Kredit på
+WithdrawalFileNotCapable=Kan ikke generere tilbagetrækning kvittering fil til dit land
+ShowWithdraw=Vis Træk
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Hvis faktura mindst en tilbagetrækning betaling endnu ikke behandlet, vil den ikke blive angivet som betales for at tillade at styre tilbagetrækning før.
+DoStandingOrdersBeforePayments=Denne faner giver dig mulighed for at anmode om en stående ordre. Når den bliver færdig, kan du skrive betalingen for at lukke fakturaen.
+InfoCreditSubject=Betaling af stående ordre %s af banken
+InfoCreditMessage=Den stående ordre %s er betalt af banken <br> Data for betaling: %s
+InfoTransSubject=Transmission af stående ordre %s til bank
+InfoTransMessage=Den stående ordre %s er transmited til bank ved %s %s. <br><br>
+InfoTransData=Beløb: %s <br> Methodology: %s <br> Dato: %s
+InfoFoot=Dette er en automatisk sendes af Dolibarr
+InfoRejectSubject=Stående For nægtede
+InfoRejectMessage=Hej, <br><br> den standig rækkefølgen af ​​faktura %s relateret til selskabets %s, med et beløb på %s er blevet afvist af banken. <br><br> - <br> % $
+ModeWarning=Mulighed for real mode ikke var indstillet, vi stopper efter denne simulation
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:59:53).

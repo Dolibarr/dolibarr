@@ -117,3 +117,12 @@ SentTo=Enviado para <b>%s</b>
 LimitSendingEmailing=Na linha de envio de emailings são limitadas por motivos de segurança e limite de destinatários <b>%s</b> enviando sessão.
 ListOfNotificationsDone=Lista de todas as notificações de e-mail enviado
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:54).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+MailingStatusRead=Ler
+MailingModuleDescContactsByCompanyCategory=Contatos de terceiros (por terceiros categoria)
+MailingModuleDescMembersCategories=Membros da Fundação (por categorias)
+MailingModuleDescContactsByFunction=Contatos de terceiros (por cargo / função)
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:05).

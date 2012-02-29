@@ -48,3 +48,10 @@ Donations=Donationer
 // Reference language: en_US
 ValidPromess=Validér løfte
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:20:05).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
+// Reference language: en_US -> da_DK
+LastModifiedDonations=Sidste %s ændret donationer
+SearchADonation=Søg en donation
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:01:50).

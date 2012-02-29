@@ -131,3 +131,22 @@ CodeNotDef = Ni definirano
 AddRemind = Odpošlji možen znesek
 RemainToDivide = Preostanek za odpošiljanje :
 WarningDepositsNotIncluded = Avansni računi niso vključeni v tej verziji računovodskega modula.
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+LT2SummaryES=IRPF Balance
+LT2PaidES=IRPF Plačan
+LT2CustomerES=IRPF prodaja
+LT2SupplierES=IRPF nakupi
+newLT2PaymentES=Nova IRPF plačilo
+LT2PaymentES=IRPF Plačilo
+LT2PaymentsES=Plačila IRPF
+DepositsAreNotIncluded=- Vlog računi so prav tako vključeni
+DepositsAreIncluded=- Vključena so vlog računi
+LT2ReportByCustomersInInputOutputModeES=Poročilo tretjih oseb IRPF
+RulesVATInServices=- Za storitve, poročilo vključuje DDV predpise dejansko prejete ali izdane na podlagi datuma plačila. <br> - Za materialnih sredstev, da vključuje DDV račune na podlagi datuma izdaje računa.
+RulesVATInProducts=- Za materialnih sredstev, da vključuje DDV račune na podlagi datuma izdaje računa.
+RulesVATDueServices=- Za storitve, poročilo vključuje DDV račune zaradi, plačane ali ne, na podlagi datuma izdaje računa.
+RulesVATDueProducts=- Za materialnih sredstev, vključuje DDV, račune, na podlagi datuma izdaje računa.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:30:21).

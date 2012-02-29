@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-16 11:09:12
  */
@@ -164,3 +164,47 @@ LinkToGeneratedPagesDesc=Auf dieser Seite können Sie PDF-Dateien mit Visitenkar
 DocForAllMembersCards=Visitenkarten für alle Mitglieder erstellen (Gewähltes Ausgabeformat: <b>%s</b>)
 DocForOneMemberCardsVisitenkarten für ein bestimmtes Mitglied erstellen (Gewähltes Ausgabeformat: <b>%s</b>)
 DocForLabels=Etiketten erstellen (Gewähltes Ausgabeformat: <b>%s</b>)
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+MembersWithSubscriptionToReceive=Mitglieder mit Abonnement erhalten
+NewSubscriptionDesc=Dieses Formular können Sie Ihr Abonnement als neues Mitglied der Stiftung aufzunehmen. Wenn Sie Ihr Abonnement erneuern (falls bereits Mitglied) wollen, kontaktieren Sie bitte Stiftungsrat statt per E-Mail %s.
+BlankSubscriptionFormDesc=Dolibarr können Ihnen eine öffentliche URL für den externen Besuchern zu verlangen, an die Stiftung zu abonnieren. Wenn ein Online-Zahlungssystem-Modul aktiviert ist, wird ein Erlagschein auch automatisch zur Verfügung gestellt werden.
+EnablePublicSubscriptionForm=Aktivieren Sie den öffentlichen Auto-Abo-Formular
+ImportDataset_member_1=Mitglieder
+LastSubscriptionsModified=Zuletzt geändert %s Abonnements
+GlobalConfigUsedIfNotDefined=Text in Foundation-Modul Setup definiert wird verwendet, wenn hier nicht näher definiert werden
+MayBeOverwrited=Dieser Text kann von Wert für Mitglieds-Typ definiert überschrieben werden
+DocForOneMemberCards=Generieren Sie Visitenkarten für einen bestimmten Teil (Format für die Ausgabe tatsächlich Setup: <b>%s)</b>
+SubscriptionPayment=Abonnement Zahlung
+LastSubscriptionDate=Letzter Termin Abonnement
+LastSubscriptionAmount=Letzte Zeichnungssumme
+MembersStatisticsByCountries=Mitglieder Statistik nach Ländern
+MembersStatisticsByState=Mitglieder Statistiken, die von Staat / Provinz
+MembersStatisticsByTowne=Mitglieder Statistik nach Stadt
+NbOfMembers=Anzahl der Mitglieder
+NoValidatedMemberYet=Keine Mitglieder gefunden validiert
+MembersByCountryDesc=Dieser Bildschirm zeigt Ihnen Statistiken über Mitglieder nach Ländern. Grafik hängt jedoch von Google Online-Grafik-Service und ist nur verfügbar, wenn eine Internet-Verbindung funktioniert.
+MembersByStateDesc=Dieser Bildschirm zeigt Ihnen Statistiken zu Mitgliedern, die von Staat / Provinz / Kanton.
+MembersByTownDesc=Dieser Bildschirm zeigt Ihnen Statistiken zu Mitgliedern, die von der Stadt.
+MembersStatisticsDesc=Wählen Sie Statistiken, die Sie lesen möchten ...
+MenuMembersStats=Statistik
+LastMemberDate=Letztes Mitglied Datum
+Nature=Natur
+Public=Informationen sind öffentlich
+Exports=Ausfuhr
+NewMemberbyWeb=Neues Mitglied aufgenommen. Wartet auf die Genehmigung
+NewMemberForm=New member Form
+SubscriptionsStatistics=Statistiken über Abonnements
+NbOfSubscriptions=Anzahl der Abonnements
+AmountOfSubscriptions=Anzahl der Abonnements
+TurnoverOrBudget=Umsatz (für ein Unternehmen) oder Budget (für eine Stiftung)
+DefaultAmount=Standard Höhe von Abonnements
+CanEditAmount=Besucher können wählen / bearbeiten Höhe der Subskription
+MEMBER_NEWFORM_PAYONLINE=Springen Sie auf integrierte Online-Payment-Seite
+Associations=Stiftungen
+Collectivités=Organisationen
+Particuliers=Persönlich
+Entreprises=Die Unternehmen
+DOLIBARRFOUNDATION_PAYMENT_FORM=Um Ihr Abonnement Zahlung mit einer Banküberweisung machen, siehe Seite <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Zum Bezahlen mit einer Kreditkarte oder Paypal, auf Button am Ende dieser Seite klicken. <br>
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:05:32).

@@ -150,3 +150,12 @@ ShowAllAccounts=Vis for alle kontoer
 // Reference language: en_US -> nb_NO
 SelectChequeTransactionAndGenerate=Velg / filter sjekker for å inkludere inn sjekken innskudd kvitteringen og klikk på &quot;Create&quot;.
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 07:15:02).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+WithdrawalPayment=Tilbaketrekking betaling
+ShowCheckReceipt=Vis sjekk innskudd kvittering
+Graph=Grafikk
+FutureTransaction=Transaksjon i Futur. Ingen måte å forsone.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:06:53).

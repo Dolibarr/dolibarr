@@ -32,3 +32,9 @@ VendorName = Verkopersnaam
 CSSUrlForPaymentForm = URL van het CSS-stijlbestand voor het betalingsformulier
 MessageOK = Bericht opde  bevestigingspagina van een gevalideerde betaling
 MessageKO = Bericht op de bevestigingspagina van een geannuleerde betaling
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
+// Reference language: en_US -> nl_NL
+ToOfferALinkForOnlinePayment=URL voor %s betaling
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:11:59).

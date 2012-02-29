@@ -117,3 +117,14 @@ NameToCreate=第三党的名称创建
 YourRole=您的角色
 YourQuotaOfUsersIsReached=你的活跃用户达到配额！
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+AdministratorDesc=管理员的实体
+UserWillBeInternalUser=创建的用户将是一个内部用户（因为没有联系到一个特定的第三方）
+UserWillBeExternalUser=创建的用户将是外部用户（因为链接到一个特定的第三方）
+UserLogoff=用户%s注销
+NbOfUsers=NB用户
+DontDowngradeSuperAdmin=只有超级管理员可以降级超级管理员
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:35).

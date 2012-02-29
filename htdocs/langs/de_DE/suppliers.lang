@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2009-01-20 00:09:12
  */
@@ -45,3 +45,11 @@ NoneOrBatchFileNeverRan=Keiner oder Batch-Job <b>%s</b> wurde nie ausgeführt
 
 ReferenceSupplierIsAlreadyAssociatedWithAProduct=Für dieses Produkt existiert bereits ein Lieferantenpreis vom gewählten Anbieter: %s
 
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+BuyingPriceMin=Minimale Kaufpreis
+BuyingPriceMinShort=Min. Kaufpreis
+Availability=Verfügbarkeit
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:04:17).

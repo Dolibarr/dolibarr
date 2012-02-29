@@ -130,3 +130,13 @@ SourceRequired=Data værdi er obligatorisk
 SourceExample=Eksempel på mulige dataværdi
 CSVFormatDesc=<b>Semikolonseparerede Værdi</b> filformat (. Csv). <br> Dette er en tekstfil format, hvor felterne er adskilt af separator [%s]. Hvis separator er fundet inde i et felt indhold, er området afrundet med runde karakter [%s]. Escape character at flygte runde karakter er [%s].
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:21:31).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
+// Reference language: en_US -> da_DK
+FileWasImported=Fil blev indført med nummer <b>%s.</b>
+DataComeFromIdFoundFromCodeId=Kode, der kommer fra feltnummer <b>%s</b> af kildefilen vil blive brugt til at finde id af overordnede objekt at bruge (Så koden fra kildefilen, skal findes i dictionnary <b>%s).</b> Bemærk, at hvis du kender id, kan du også bruge det i kildefil i stedet for kode. Import skal arbejde i begge tilfælde.
+DataCodeIDSourceIsInsertedInto=Den id stamlinjen fundet fra kode, vil blive indsat i følgende felt:
+ExampleAnyRefFoundIntoElement=Enhver ref fundet for element <b>%s</b>
+ExampleAnyCodeOrIdFoundIntoDictionnary=Enhver kode (eller id) fundet i dictionnary <b>%s</b>
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:00:10).

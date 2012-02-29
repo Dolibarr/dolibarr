@@ -211,3 +211,11 @@ MigrationFinished=Migrasjon ferdig
 LastStepDesc=<strong>Siste trinn:</strong> Definer her login og passord du har tenkt å bruke til å koble til programvare. Ikke mist dette som det er kontoen for å administrere alle andre.
 MigrationActioncommElement=Oppdatering data på handlinger
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 10:05:59).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+DatabasePrefix=Database prefiks bord
+ActivateModule=Aktiver modulen %s
+MigrationPaymentMode=Datamigrering for betaling modus
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:06:55).

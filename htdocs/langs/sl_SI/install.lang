@@ -214,3 +214,11 @@ MigrationProjectUserResp = Prenos podatkov polja fk_user_resp tabele llx_projet 
 MigrationProjectTaskTime = Posodobitev porabljenega časa v sekundah
 # Migration Acctioncom = 
 MigrationActioncommElement = Posodobitev podatkov o aktivnostih
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+DatabasePrefix=Baza podatkov predpona miza
+ActivateModule=Vključite modul %s
+MigrationPaymentMode=Podatki, migracije za način plačila
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:30:24).

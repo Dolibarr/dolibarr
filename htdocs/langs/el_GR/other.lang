@@ -190,3 +190,47 @@ AddFiles=Προσθήκη αρχείων
 StartUpload=Έναρξη μεταφόρτωσης
 CancelUpload=Ακύρωση ανεβάσετε
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 03:12:43).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+Notify_WITHDRAW_TRANSMIT=Μετάδοση απόσυρση
+Notify_WITHDRAW_CREDIT=Πιστωτικές απόσυρση
+Notify_WITHDRAW_EMIT=Εκτελέστε την απόσυρση
+Notify_ORDER_SENTBYMAIL=Για πελατών αποστέλλονται με το ταχυδρομείο
+Notify_COMPANY_CREATE=Τρίτο κόμμα δημιουργήθηκε
+Notify_PROPAL_SENTBYMAIL=Εμπορικές προτάσεις που αποστέλλονται ταχυδρομικώς
+Notify_ORDER_SENTBYMAIL=Γραμματοσήμανση αλληλογραφίας pedido por e-mail
+Notify_SHIPPING_VALIDATE=Αποστολή επικυρωθεί
+Notify_SHIPPING_SENTBYMAIL=Αποστολές αποστέλλονται με το ταχυδρομείο
+Notify_MEMBER_VALIDATE=Επικυρωθεί μέλη
+Notify_MEMBER_SUBSCRIPTION=Εγγραφεί μέλος
+Notify_MEMBER_RESILIATE=Resiliated μέλη
+Notify_MEMBER_DELETE=Διαγράφεται μέλη
+PredefinedMailContentSendInvoice=Εδώ θα βρείτε το τιμολόγιο __ FACREF__ \n\n Ειλικρινά \n\n
+PredefinedMailContentSendInvoiceReminder=Θα θέλαμε να σας προειδοποιήσω ότι το τιμολόγιο FACREF__ __ φαίνεται να μη πληρώνονται. Έτσι, αυτό είναι το τιμολόγιο στο συνημμένο και πάλι, ως υπενθύμιση. Ειλικρινά \n\n \n\n
+PredefinedMailContentSendProposal=Εδώ θα βρείτε την εμπορική propoal __ PROPREF__ \n\n Ειλικρινά \n\n
+PredefinedMailContentSendOrder=Εδώ θα βρείτε τη σειρά __ ORDERREF__ \n\n Ειλικρινά \n\n
+PredefinedMailContentSendSupplierOrder=Εδώ θα βρείτε για μας __ ORDERREF__ \n\n Ειλικρινά \n\n
+PredefinedMailContentSendSupplierInvoice=Εδώ θα βρείτε το τιμολόγιο __ FACREF__ \n\n Ειλικρινά \n\n
+PredefinedMailContentSendFichInter=Θα βρείτε εδώ την παρέμβαση __ FICHINTERREF__ \n\n Ειλικρινά \n\n
+DemoDesc=Dolibarr είναι ένα συμπαγές ERP / CRM αποτελείται από διάφορες λειτουργικές ενότητες. Ένα demo που περιλαμβάνει όλες τις ενότητες δεν σημαίνει τίποτα, όπως ποτέ δεν συμβαίνει αυτό. Έτσι, πολλά προφίλ επίδειξη είναι διαθέσιμα.
+ChooseYourDemoProfil=Επιλέξτε το προφίλ που ταιριάζει με επίδειξη δραστηριότητά σας ...
+DemoFundation=Διαχειριστείτε τα μέλη του ιδρύματος
+DemoFundation2=Διαχειριστείτε τα μέλη και τον τραπεζικό λογαριασμό του ιδρύματος
+DemoCompanyServiceOnly=Διαχειριστείτε μια δραστηριότητα παροχής υπηρεσιών ελεύθερος πώλησης μόνο
+DemoCompanyShopWithCashDesk=Διαχειριστείτε το κατάστημα με ένα ταμείο
+EnablePhpAVModuleDesc=Θα πρέπει να εγκαταστήσετε μια μονάδα συμβατή με anti-virus σας. (ClamAV: php4-clamavlib ou php5-clamavlib)
+ProfIdShortDesc=<b>Καθ %s ταυτότητα</b> είναι μια ενημερωτική ανάλογα με τρίτη χώρα μέρος. <br> Για παράδειγμα, για <b>%s</b> χώρα, είναι <b>%s</b> κώδικα.
+DolibarrDemo=Dolibarr ERP / CRM demo
+StatsByNumberOfUnits=Στατιστικά στοιχεία τον αριθμό των προϊόντων / υπηρεσιών μονάδες
+StatsByNumberOfEntities=Στατιστικά στοιχεία τον αριθμό των φορέων που αναφέρονται
+NumberOfProposals=Ο αριθμός των προτάσεων για την τελευταία 12 μήνες
+EMailTextOrderValidated=Η σειρά %s έχει επικυρωθεί.
+EMailTextOrderApproved=Η %s παραγγελία έχει εγκριθεί.
+EMailTextOrderApprovedBy=Η σειρά %s έχει εγκριθεί από %s.
+EMailTextOrderRefused=Η σειρά %s έχει απορριφθεί.
+EMailTextOrderRefusedBy=Η σειρά %s έχει απορριφθεί από %s.
+FileIsTooBig=Τα αρχεία είναι πολύ μεγάλο
+ShipmentValidatedInDolibarr=Αποστολή %s επικυρωθεί Dolibarr
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:07).

@@ -190,3 +190,15 @@ ProductStatusNotOnBuy=Forældet
 ProductStatusOnBuyShort=Tilgængelig
 ProductStatusNotOnBuyShort=Forældet
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:08).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
+// Reference language: en_US -> da_DK
+ParentProductsNumber=Antal forælder produkt
+ProductParentList=Liste over produkter / services med dette produkt som en komponent
+ImportDataset_produit_1=Produkter
+ImportDataset_service_1=Services
+CustomCode=Toldkodeksen
+CountryOrigin=Oprindelsesland
+HiddenIntoCombo=Skjult i udvalgte lister
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:59:48).

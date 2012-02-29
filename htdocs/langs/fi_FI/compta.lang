@@ -157,3 +157,27 @@ PurchasesJournal=Ostot lehdessä
 RemainToDivide=Remain lähettää:
 WarningDepositsNotIncluded=Talletukset laskut eivät sisälly tähän versioon tämän kirjanpito moduulin.
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 05:43:27).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+LT2SummaryES=IRPF Balance
+LT2PaidES=IRPF Maksettu
+LT2CustomerES=IRPF myynti
+LT2SupplierES=IRPF ostot
+newLT2PaymentES=Uusi IRPF maksu
+LT2PaymentES=IRPF Maksu
+LT2PaymentsES=IRPF maksut
+DepositsAreNotIncluded=- Talletus laskut eivät sisälly
+DepositsAreIncluded=- Talletus laskut kuuluvat
+LT2ReportByCustomersInInputOutputModeES=Raportti kolmannen osapuolen IRPF
+RulesVATInServices=- Palvelujen osalta raportti sisältää alv säännöksiä tosiasiallisesti saanut tai antanut perusteella maksupäivä. <br> - Jos materiaali omaisuutta, se sisältää verolaskun pohjalta laskun päiväyksestä.
+RulesVATInProducts=- Jos materiaali omaisuutta, se sisältää verolaskun pohjalta laskun päiväyksestä.
+RulesVATDueServices=- Palvelujen, raportti sisältää ALV laskuja vuoksi, maksettu vai ei, perustuu laskun päivämäärästä.
+RulesVATDueProducts=- Jos materiaali omaisuutta, se sisältää alv laskujen pohjalta laskun päivämäärästä.
+DescSellsJournal=Myynti lehdessä
+DescPurchasesJournal=Ostot lehdessä
+InvoiceRef=Laskun ref.
+CodeNotDef=Ei määritelty
+AddRemind=Lähettäminen saatavissa määrä
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:32).

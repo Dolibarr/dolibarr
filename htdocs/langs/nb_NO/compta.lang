@@ -140,3 +140,27 @@ PurchasesJournal=Kjøp Journal
 DescSellsJournal=Salg Journal
 DescPurchasesJournal=Kjøp Journal
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 06:14:51).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+LT2SummaryES=IRPF Balanse
+LT2PaidES=IRPF Betalt
+LT2CustomerES=IRPF salg
+LT2SupplierES=IRPF kjøp
+newLT2PaymentES=Ny IRPF betaling
+LT2PaymentES=IRPF Betaling
+LT2PaymentsES=IRPF Betalinger
+DepositsAreNotIncluded=- Deposit fakturaer er eller inngår
+DepositsAreIncluded=- Deposit fakturaer er inkludert
+LT2ReportByCustomersInInputOutputModeES=Rapport fra tredje part IRPF
+RulesVATInServices=- For tjenester, omfatter rapporten MVA regelverket faktisk mottas eller utstedt på grunnlag av dato for betaling. <br> - For materielle eiendeler, det inkluderer MVA fakturaer på grunnlag av faktura dato.
+RulesVATInProducts=- For materielle eiendeler, det inkluderer MVA fakturaer på grunnlag av faktura dato.
+RulesVATDueServices=- For tjenester, omfatter rapporten MVA fakturaer grunn, betalt eller ikke, basert på fakturadato.
+RulesVATDueProducts=- For materielle eiendeler, det inkluderer MVA fakturaene, basert på fakturadato.
+InvoiceRef=Faktura ref.
+CodeNotDef=Ikke definert
+AddRemind=Forsendelse tilgjengelig beløp
+RemainToDivide=Forbli til levering:
+WarningDepositsNotIncluded=Innskudd fakturaer er ikke inkludert i denne versjonen med dette regnskap modulen.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:06:52).

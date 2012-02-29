@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaner.sat
  * Generation date 2010-11-16 13:09:12
  */
@@ -113,3 +113,12 @@ DateSending=Versanddatum
 SentTo=Versandt an <b>%s</b>
 LimitSendingEmailing=Aus Sicherheits- und Zeitüberschreitungsgründen ist der Online-Versadn von E-Mails auf <b>%s</b> Empfänger je Sitzung beschränkt.
 ListOfNotificationsDone=Liste aller versandten E-Mail-Benachrichtigungen
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+MailingStatusRead=Lesen
+MailingModuleDescContactsByCompanyCategory=Kontakte Dritter (durch Dritte Kategorie)
+MailingModuleDescMembersCategories=Mitglieder der Stiftung (nach Kategorien)
+MailingModuleDescContactsByFunction=Kontakte von Dritten (von Position / Funktion)
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:43).

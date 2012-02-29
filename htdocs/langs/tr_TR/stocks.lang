@@ -93,3 +93,10 @@ ConfirmDeleteWarehouse=Depo <b>%s</b> silmek istediğiniz emin misiniz ?
 PersonalStock=Kişisel stok %s
 ThisWarehouseIsPersonalStock=Bu depo %s %s kişisel stok temsil eder
 // STOP - Lines generated via autotranslator.php tool (2011-10-09 14:03:11).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
+// Reference language: en_US -> tr_TR
+SelectWarehouseForStockDecrease=Stok azalması için kullanmak üzere depo seçin
+SelectWarehouseForStockIncrease=Stok artışı için kullanılacak depo seçin
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:36:00).

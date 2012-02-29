@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-10 00:09:12
  */
@@ -310,3 +310,80 @@ SupplierCategory=Lieferantenkategorie
 ListSuppliersShort=Liste der Lieferanten
 ListProspectsShort=Liste der Leads
 ListCustomersShort=Liste der Kunden
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+SelectThirdParty=Wählen Sie einen Dritten
+Subsidiary=Tochtergesellschaft
+Subsidiaries=Tochtergesellschaften
+NoSubsidiary=Kein Tochtergesellschaft
+CountryId=Land-ID
+ProfId5Short=Prof. ID 5
+ProfId5=Professionelle ID 5
+ProfId5AR=-
+ProfId5AU=-
+ProfId5BE=-
+#ProfId1BR=CNAE
+#ProfId2BR=CNPJ
+#ProfId3BR=CPF
+#ProfId4BR=INSS
+#ProfId5BR=IE
+#ProfId6BR=IM
+ProfId5CH=-
+ProfId1CL=Prof ID 1 (RUT)
+ProfId2CL=-
+ProfId3CL=-
+ProfId4CL=-
+ProfId5CL=-
+ProfId1CO=Prof ID 1 (RUT)
+ProfId2CO=-
+ProfId3CO=-
+ProfId4CO=-
+ProfId5CO=-
+ProfId5DE=-
+ProfId5ES=-
+ProfId5FR=Prof ID 5
+ProfId5GB=-
+ProfId1HN=Id Prof. 1 (RTN)
+ProfId2HN=-
+ProfId3HN=-
+ProfId4HN=-
+ProfId5HN=-
+ProfId5IN=Prof ID 5
+ProfId1MA=Id Prof. 1 (RC)
+ProfId2MA=Id Prof. 2 (Patente)
+ProfId3MA=Id Prof. 3 (IF)
+ProfId4MA=Id Prof. 4 (CNSS)
+ProfId5MA=-
+ProfId1MX=Prof ID 1 (RFC).
+ProfId2MX=Prof Id 2 (R.. P. IMSS)
+ProfId3MX=Prof Id 3 (Profesional Charta)
+ProfId4MX=-
+ProfId5MX=-
+ProfId5NL=-
+ProfId5PT=-
+ProfId1SN=RC
+ProfId2SN=Ninea
+ProfId3SN=-
+ProfId4SN=-
+ProfId5SN=-
+ProfId5TN=-
+ProfId1RU=Prof ID 1 (OGRN)
+ProfId2RU=Prof Id 2 (INN)
+ProfId3RU=Prof Id 3 (KPP)
+ProfId4RU=Prof Id 4 (OKPO)
+ProfId5RU=-
+EditContact=Kontakt bearbeiten / Adresse
+ContactsAddresses=Ansprechpartner / Adressen
+RequiredIfSupplier=Erforderlich, wenn Dritte ist ein Lieferant
+ProspectLevelShort=Potential
+ImportDataset_company_1=Dritten (Unternehmen / Stiftungen) und Eigenschaften
+ImportDataset_company_2=Kontakte (der Dritte diese oder auch nicht) und Attribute
+ThirdPartiesArea=Dritter Bereich
+LastModifiedThirdParties=Neue %s modifiziert Dritte
+UniqueThirdParties=Insgesamt einzigartige Dritte
+InActivity=Geöffnet
+ActivityCeased=Geschlossen
+ActivityStateFilter=Activity-Status
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:06:16).

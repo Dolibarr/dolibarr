@@ -193,3 +193,9 @@ Collectivités = Organizacije
 Particuliers = Osebe
 Entreprises = Podjetja
 DOLIBARRFOUNDATION_PAYMENT_FORM = Če želite plačati članarino z bančnim nakazilom, glejte stran <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a>.<br>Za plačilo s kreditno kartico ali Paypal, kliknite na gumb na dnu te strani.<br> 
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+LastSubscriptionsModified=Zadnje spremembe %s naročnine
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:31:10).

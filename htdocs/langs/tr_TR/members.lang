@@ -236,3 +236,9 @@ NoValidatedMemberYet=Hiçbir geçerliliği üyeleri bulundu
 Entreprises=Şirketler
 DOLIBARRFOUNDATION_PAYMENT_FORM=, Banka havalesi ile abonelik ödeme yapmak için, <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">sayfa</a> http://wiki.dolibarr.org/index.php/Subscribe . <br> Kredi Kartı veya Paypal ile ödeme yapmak için, bu sayfanın alt kısmında düğmesini tıklatın. <br>
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:35:12).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
+// Reference language: en_US -> tr_TR
+LastSubscriptionsModified=Son %s abonelikleri modifiye
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:36:40).

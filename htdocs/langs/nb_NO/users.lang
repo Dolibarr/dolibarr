@@ -119,3 +119,13 @@ YourQuotaOfUsersIsReached=Din kvote på aktive brukere er nådd!
 // Reference language: en_US -> nb_NO
 AdministratorDesc=Administrator er enhet
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:47:47).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+UserWillBeInternalUser=Opprettet bruker vil være en intern bruker (fordi ikke knyttet til en bestemt tredjepart)
+UserWillBeExternalUser=Opprettet bruker vil være en ekstern bruker (fordi knyttes til et bestemt tredjepart)
+UserLogoff=Bruker %s utlogging
+NbOfUsers=Nb av brukere
+DontDowngradeSuperAdmin=Bare en superadmin kan nedgradere en superadmin
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:07:02).

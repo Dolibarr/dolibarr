@@ -16,3 +16,9 @@ PAYPAL_ADD_PAYMENT_URL = Pri pošiljanju dokumenta po pošti dodaj url Paypal pl
 PAYPAL_IPN_MAIL_ADDRESS = Naslov e-pošte za takojšnje obvestilo o plačilu (IPN)
 PredefinedMailContentSendOrderWithPaypalLink = Tukaj je naročilo __ORDERREF__\n\n Lahko kliknete na varnostno povezavo spodaj za izvršitev plačila preko PayPal\n\n%s\n\nS spoštovanjem\n\n
 PredefinedMailContentSendInvoiceWithPaypalLink = Tukaj je račun __FACREF__\n\n Lahko kliknete na varnostno povezavo spodaj za izvršitev plačila preko PayPal\n\n%s\n\nS spoštovanjem\n\n
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+YouAreCurrentlyInSandboxMode=Trenutno ste v &quot;peskovniku&quot; načinu
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:30:25).

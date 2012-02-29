@@ -35,3 +35,10 @@ AddSupplierOrder=Beszállítói megrendelés létrehozása
 AddSupplierInvoice=Beszállítói számla létrehozása
 ListOfSupplierProductForSupplier=<b>%s</b> beszállító termékei és árai
 NoneOrBatchFileNeverRan=Nincs vagy a <b>%s</b> batch fájl nem futott az utóbbi időben
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
+// Reference language: en_US -> hu_HU
+BuyingPriceMin=Minimális felvásárlási árat
+BuyingPriceMinShort=Min felvásárlási ár
+Availability=Elérhetőség
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:17:28).

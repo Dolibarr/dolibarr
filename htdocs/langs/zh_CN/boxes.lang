@@ -125,3 +125,18 @@ BoxTitleLastModifiedSuppliers=最后%s修改供应商
 BoxTitleLastModifiedCustomers=最后%s修改客户
 BoxTitleLastModifiedProspects=最后%s修改前景
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:41).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+BoxLastContacts=最后接触/地址
+BoxLastMembers=最后成员
+BoxTitleLastModifiedMembers=修改最后%s成员的
+BoxTitleLastModifiedContacts=最后%s修改联系人/地址
+BoxOldestExpiredServices=最早的活动过期服务
+BoxLastExpiredServices=上次%s最古老的接触，积极过期服务
+BoxTitleLastModifiedDonations=最后%s修改捐款
+BoxTitleLastModifiedExpenses=最后%s修改费用
+ClickToAdd=点击这里添加。
+NoRecordedContacts=没有记录的接触
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:41).

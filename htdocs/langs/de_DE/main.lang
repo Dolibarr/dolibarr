@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-12 18:09:12
  */
@@ -602,3 +602,60 @@ Prefix=Präfix
 NewAttribute=Neues Attribut
 AttributeCode=Attribut-Code
 OptionalFieldsSetup=Optionale Felder einrichten
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+FormatDateShortJQuery=dd/mm/yy
+AddLink=Link hinzufügen
+Of=von
+SearchOf=Suche
+AmountByMonth=Betrag pro Monat
+DatePayment=Datum der Zahlung
+TeraBytes=Terabyte
+Tb=Tb
+LT1ES=RE
+LT2ES=IRPF
+OtherStatistics=Andere Statistiken
+ActionNotApplicable=Nicht anwendbar
+ActionsOnMember=Veranstaltungen über dieses Mitglied
+JanuaryMin=Jan
+FebruaryMin=Februar
+MarchMin=Mar
+AprilMin=April
+MayMin=Mai
+JuneMin=Juni
+JulyMin=Juli
+AugustMin=August
+SeptemberMin=September
+OctoberMin=Oktober
+NovemberMin=November
+DecemberMin=Dezember
+CoreErrorTitle=Systemfehler
+CoreErrorMessage=Leider ist ein Fehler aufgetreten. Überprüfen Sie die Protokolle oder kontaktieren Sie Ihren Systemadministrator.
+Before=Vor
+After=Nach
+IPAddress=IP-Adresse
+Frequency=Frequenz
+IM=Instant Messaging
+URLPhoto=URL von Foto / Logo
+SetLinkToThirdParty=Link zu einem anderen Dritten
+CreateDraft=Erstellen Entwurf
+ClickToEdit=Klicken Sie zum Bearbeiten
+ObjectDeleted=Object %s gelöscht
+ByCountry=Nach Land
+ByTown=Durch die Stadt
+ByDate=Nach Datum
+ByMonthYear=Von Monat / Jahr
+ByYear=Bis zum Jahresende
+ByMonth=nach Monat
+ByDay=Bei Tag
+BySalesRepresentative=Durch die Vertriebsmitarbeiter
+MondayMin=Mo
+TuesdayMin=Tu
+WednesdayMin=Wir
+ThursdayMin=Th
+FridayMin=Fr
+SaturdayMin=Sa
+SundayMin=Su
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:05:57).

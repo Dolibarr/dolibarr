@@ -392,3 +392,24 @@ TitanNumRefModelDesc3=Definiera rörliga SOCIETE_FISCAL_MONTH_START med den mån
 TitanNumRefModelDesc4=I detta exempel skall vi ha den 1 september 2006 av en faktura som heter FA0700001
 PlutonNumRefModelDesc1=Återgå ett anpassningsbart fakturanummer enligt en fastställd mask.
 // STOP - Lines generated via autotranslator.php tool (2010-08-27 08:53:49).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+BillsCustomer=Kundens faktura
+BillsSuppliersUnpaidForCompany=Obetald leverantörens fakturor för %s
+BillsLate=Sena betalningar
+DisabledBecauseNotErasable=Inaktiverats på grund kan inte raderas
+ConfirmUnvalidateBill=Är du säker på att du vill ändra faktura <b>%s</b> att utarbeta status?
+UnvalidateBill=Unvalidate faktura
+NumberOfBillsByMonth=Nb av fakturor per månad
+AmountOfBillsByMonthHT=Mängd av fakturor per månad (netto efter skatt)
+AddRelativeDiscount=Skapa relativ rabatt
+EditRelativelDiscount=Redigera relatvie rabatt
+EditGlobalDiscounts=Redigera absoluta rabatter
+AddCreditNote=Skapa kreditnota
+InvoiceNotChecked=Faktura vald
+ShowUnpaidAll=Visa alla obetalda fakturor
+ClosePaidInvoicesAutomatically=Klassificera &quot;betalade&quot; alla standard eller fakturor ersättning entierely betalt.
+AllCompletelyPayedInvoiceWillBeClosed=Alla fakturor utan återstår att betala kommer automatiskt stängd för status &quot;betald&quot;.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:49).

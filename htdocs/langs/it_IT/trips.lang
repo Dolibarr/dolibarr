@@ -28,3 +28,10 @@ ListTripsAndExpenses=Elenco dei viaggi e delle spese
 // Reference language: en_US
 TripsAndExpensesStatistics=Viaggi e statistiche spese
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:34:13).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+// Reference language: en_US -> it_IT
+ExpensesArea=Viaggi e area spese
+SearchATripAndExpense=Cerca un viaggio e le spese
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:48).

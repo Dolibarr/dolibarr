@@ -157,3 +157,12 @@ BankAccountCountry=到国家
 RIBControlError=值的完整性检查失败。这意味着此帐号的信息不完整或错误（检查国家，数字和IBAN）。
 WithdrawalPayment=提款支付
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 07:34:47).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+ShowCheckReceipt=显示检查存单
+Graph=图像
+FutureTransaction=在FUTUR的交易。调解没有办法。
+SelectChequeTransactionAndGenerate=选择/过滤器检查纳入支票存款收据，并单击“创建”。
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:22).

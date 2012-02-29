@@ -233,3 +233,32 @@ ClickHere=点击这里
 FileIsTooBig=文件过大
 Export=出口
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 05:16:51).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+Notify_FICHINTER_VALIDATE=干预验证
+Notify_BILL_VALIDATE=客户发票验证
+Notify_ORDER_SUPPLIER_APPROVE=供应商为了批准
+Notify_ORDER_SUPPLIER_REFUSE=供应商的订单被拒绝
+Notify_ORDER_VALIDATE=验证客户订单
+Notify_PROPAL_VALIDATE=验证客户的建议
+Notify_WITHDRAW_CREDIT=信贷撤离
+Notify_WITHDRAW_EMIT=执行撤离
+Notify_ORDER_SENTBYMAIL=通过邮件发送的客户订单
+Notify_COMPANY_CREATE=第三方创建
+Notify_PROPAL_SENTBYMAIL=通过邮件发送的商业提案
+Notify_ORDER_SENTBYMAIL=envíopedido POR电子邮件
+Notify_SHIPPING_VALIDATE=航运验证
+Notify_SHIPPING_SENTBYMAIL=通过电子邮件发送的航运
+Notify_MEMBER_VALIDATE=会员验证
+Notify_MEMBER_SUBSCRIPTION=会员订阅
+Notify_MEMBER_RESILIATE=会员resiliated
+UseAdvancedPerms=一些模块使用先进的权限
+FileFormat=文件格式
+SelectAColor=选择一种颜色
+AddFiles=添加文件
+StartUpload=开始上传
+CancelUpload=取消上传
+ShipmentValidatedInDolibarr=运费%s在Dolibarr验证
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:15).

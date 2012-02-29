@@ -229,3 +229,15 @@ MigrationFinished=الانتهاء من الهجرة
 LastStepDesc=<strong>الخطوة الأخيرة</strong> : تعريف المستخدم وكلمة السر هنا كنت تخطط لاستخدامها للاتصال البرمجيات. لا تفقد هذا كما هو حساب لإدارة جميع الآخرين.
 MigrationActioncommElement=تحديث البيانات على الإجراءات
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 09:38:36).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+ConfFileReload=تحديث جميع المعلومات من ملف التكوين.
+WarningPHPVersionTooLow=PHP نسخة قديمة جدا. ومن المتوقع %s نسخة أو أكثر. وينبغي أن تسمح هذه النسخة تثبيت ولكن لم يتم اعتماد.
+DatabasePrefix=قاعدة بيانات بادئة الجدول
+KeepDefaultValuesProxmox=يمكنك استخدام معالج إعداد Dolibarr من الأجهزة الظاهرية Proxmox، بحيث يتم تحسين بالفعل القيم المقترحة هنا. تغييرها إلا إذا كنت تعرف ما تفعله.
+MigrateIsDoneStepByStep=النسخة المستهدفة (%s) لديها فجوة من إصدارات عديدة، لذلك تثبيت المعالج سوف يعود تشير إلى الهجرة مرة القادمة سوف يتم الانتهاء من هذا واحد.
+ActivateModule=تفعيل وحدة %s
+MigrationPaymentMode=بيانات الهجرة لطريقة الدفع
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:55:38).

@@ -415,3 +415,24 @@ TypeContact_facture_fourn_external_SERVICE=Furnizor de servicii de contact
 PDFLinceDescription=Un model de factura complet, cu RE şi spaniolă IRPF
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:32).
 
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+BillsCustomer=Clientului factura
+BillsSuppliersUnpaidForCompany=Furnizorul de facturi neplătite pentru %s
+BillsLate=Întârzierea efectuării plăţilor
+DisabledBecauseNotErasable=Dezactivate, deoarece nu pot fi şterse
+ConfirmUnvalidateBill=Sunteţi sigur că doriţi să schimbaţi <b>%s</b> factura la statutul de proiect?
+UnvalidateBill=Unvalidate factura
+NumberOfBillsByMonth=NB a facturilor de către luni
+AmountOfBillsByMonthHT=Valoarea facturilor de către luna (net de impozit)
+AddRelativeDiscount=Crearea reducere relativă
+EditRelativelDiscount=Editare relatvie reducere
+EditGlobalDiscounts=Editare reduceri absolute
+AddCreditNote=Creaţi note de credit
+InvoiceNotChecked=Nu factură selectat
+ShowUnpaidAll=Arata toate facturile neachitate
+ClosePaidInvoicesAutomatically=Clasifica &quot;platiti&quot;, toate facturile standard sau de înlocuire entierely platite.
+AllCompletelyPayedInvoiceWillBeClosed=Toate cu factura nu rămân la plata vor fi închise automat la statutul de &quot;platite&quot;.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:55).

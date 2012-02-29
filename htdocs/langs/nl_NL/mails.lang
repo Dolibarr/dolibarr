@@ -115,3 +115,9 @@ MailingModuleDescContactsByCompanyCategory=Contacten van derden (door derden cat
 MailingModuleDescMembersCategories=Stichting leden (per categorie)
 MailingModuleDescContactsByFunction=Contacten van derden (door de positie / functie)
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 01:40:51).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
+// Reference language: en_US -> nl_NL
+MailingStatusRead=Lezen
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:11:58).

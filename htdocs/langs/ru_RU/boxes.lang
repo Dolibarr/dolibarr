@@ -80,3 +80,10 @@ BoxTitleLastModifiedExpenses=Последние %s измененных расх
 NoModifiedSupplierBills=Нет введенных счетов-фактур поставщиков
 NoRecordedContracts=Нет введенных договоров
 // STOP - Lines generated via autotranslator.php tool (2011-08-25 22:47:13).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
+// Reference language: en_US -> ru_RU
+BoxOldestExpiredServices=Старейшие активных истек услуги
+BoxLastExpiredServices=Последнее %s старых контактов с активной истекшим услуги
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:15).

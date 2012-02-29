@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-11 00:10:12
  */
@@ -95,3 +95,11 @@ MembersCategoriesShort=Mitgliedergruppen
 ThisCategoryHasNoMember=Diese Kategorie enthält keine Mitglieder.
 CatMemberList=Liste der Kategoriemitglieder
 Ref=Bezeichnung
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+NoCategoryYet=Keine Gruppe von dieser Art erstellt
+CatSupList=Liste der Lieferanten Kategorien
+CatCusList=Liste der Kunden / Interessenten Kategorien
+CatProdList=Liste aller Produkte Kategorien
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:04:02).

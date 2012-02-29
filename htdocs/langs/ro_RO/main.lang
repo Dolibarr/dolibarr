@@ -614,3 +614,63 @@ Resources=Resurse
 Source=Sursă
 Prefix=Prefix
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:39:15).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+FormatDateShortJQuery=dd/mm/yy
+AddLink=Adauga link-ul
+Of=de
+SearchOf=Căutare
+AmountByMonth=Suma de luni
+DatePayment=Data de plată
+TeraBytes=Terabytes
+Tb=Tb
+LT1ES=RE
+LT2ES=IRPF
+OtherStatistics=Alte statistici
+ActionNotApplicable=Nu se aplică
+ActionsOnMember=Evenimente despre acest membru
+JanuaryMin=Ian
+FebruaryMin=Februarie
+MarchMin=Mar
+AprilMin=Aprilie
+MayMin=Mai
+JuneMin=Iunie
+JulyMin=Iulie
+AugustMin=August
+SeptemberMin=Septembrie
+OctoberMin=Octombrie
+NovemberMin=Noi
+DecemberMin=Decembrie
+CoreErrorTitle=Eroare de sistem
+CoreErrorMessage=Ne pare rau, a aparut o eroare. Verificaţi jurnalele sau contactaţi administratorul de sistem.
+Before=Înainte
+After=După
+IPAddress=IP
+Frequency=Frecvenţă
+IM=Mesagerie instant
+NewAttribute=Nou atribut
+AttributeCode=Atribut cod
+OptionalFieldsSetup=Suplimentar atributele de configurare
+URLPhoto=URL-ul de fotografie / logo
+SetLinkToThirdParty=Link la un alt terţ
+CreateDraft=Crearea proiectului
+ClickToEdit=Clic pentru a edita
+ObjectDeleted=%s obiect eliminat
+ByCountry=De ţară
+ByTown=Prin oraş
+ByDate=Până la data de
+ByMonthYear=Prin luna / anul
+ByYear=De ani
+ByMonth=de luni
+ByDay=De zi
+BySalesRepresentative=De reprezentant de vânzări
+MondayMin=Moment
+TuesdayMin=Tu
+WednesdayMin=Noi
+ThursdayMin=Th
+FridayMin=Fr
+SaturdayMin=Sa
+SundayMin=Su
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:26:33).

@@ -39,3 +39,21 @@ Language_sv_SV=Szwedzki
 Language_zh_CN=Chiński
 Language_is_IS=Islandzki
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:20).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+Language_ar_SA=Arabski
+Language_da_DK=Duński
+Language_de_AT=Niemiecki (Austria)
+Language_el_GR=Grecki
+Language_en_NZ=Angielski (Nowa Zelandia)
+Language_es_HN=Hiszpański (Honduras)
+Language_es_MX=Hiszpański (Meksyk)
+Language_es_PR=Hiszpański (Portoryko)
+Language_fa_IR=Perski
+Language_hu_HU=Węgierski
+Language_ja_JP=Japoński
+Language_ru_UA=Rosyjski (Ukraina)
+Language_sv_SE=Szwedzki
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:20:23).

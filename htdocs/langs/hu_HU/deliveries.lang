@@ -22,3 +22,10 @@ GoodStatusDeclaration=Have received the goods above in good condition,
 Deliverer=Deliverer : 
 Sender=Sender
 Recipient=Recipient
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
+// Reference language: en_US -> hu_HU
+DeleteDeliveryReceipt=Törlés átvételi elismervényen
+DeleteDeliveryReceiptConfirm=Biztos benne, hogy törli átvételi elismervényen <b>%s?</b>
+DeliveryNotValidated=Szállítási nem validált
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:22:51).

@@ -40,3 +40,15 @@ YourPaymentHasNotBeenRecorded=Du betaling ikke er registrert og transaksjonen ha
 AccountParameter=Konto parametere
 UsageParameter=Parametere for bruk
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:19:35).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+ToOfferALinkForOnlinePayment=URL for %s betaling
+InformationToFindParameters=Hjelp til å finne din %s kontoinformasjon
+PAYBOX_CGI_URL_V2=Url av PAYBOX CGI modul for betaling
+VendorName=Navn på leverandøren
+CSSUrlForPaymentForm=CSS-stilark url for betalingsformen
+MessageOK=Melding på godkjent betaling retur siden
+MessageKO=Melding om avbrutt betaling retur siden
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:07:01).

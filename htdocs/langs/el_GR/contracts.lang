@@ -99,3 +99,10 @@ TypeContact_contrat_internal_SALESREPFOLL=Πωλήσεις εκπρόσωπος 
 TypeContact_contrat_external_BILLING=Χρέωση επαφή με τον πελάτη
 TypeContact_contrat_external_CUSTOMER=Παρακολούθηση της επαφής με τον πελάτη
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 11:06:11).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+NoExpiredServices=Δεν έληξε ενεργές υπηρεσίες
+TypeContact_contrat_external_SALESREPSIGN=Υπογραφή σύμβασης επαφή με τον πελάτη
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:15).

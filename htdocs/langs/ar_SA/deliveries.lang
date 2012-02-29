@@ -31,3 +31,11 @@ Sender=مرسل
 Recipient=المتلقي
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+DeleteDeliveryReceipt=حذف إيصال
+DeleteDeliveryReceiptConfirm=هل أنت متأكد أنك تريد حذف <b>%s</b> إيصال؟
+DeliveryNotValidated=التسليم يتم التحقق من صحة
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:57:22).

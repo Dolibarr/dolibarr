@@ -45,3 +45,10 @@ DonationsPaid=التبرعات المدفوعة
 // Reference language: en_US
 ValidPromess=التحقق من صحة الوعد
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:23).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+LastModifiedDonations=%s آخر تعديل التبرعات
+SearchADonation=البحث تبرع
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:58:00).

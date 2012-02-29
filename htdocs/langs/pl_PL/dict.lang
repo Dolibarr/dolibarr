@@ -317,3 +317,12 @@ DemandReasonTypeSRC_CAMP_FAX=Kampania Fax
 DemandReasonTypeSRC_COMM=Handlowych kontakt
 DemandReasonTypeSRC_SHOP=Sklep kontakt
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 08:50:25).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+CurrencySingUAH=Hrywien
+DemandReasonTypeSRC_INTE=Internet
+DemandReasonTypeSRC_CAMP_MAIL=Kampanie mailingowe
+DemandReasonTypeSRC_CAMP_EMAIL=Wysyłanie kampanię
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:18:41).

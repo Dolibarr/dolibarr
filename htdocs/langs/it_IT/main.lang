@@ -657,3 +657,25 @@ FridayMin=Fr
 SaturdayMin=Sa
 SundayMin=Su
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:56).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+// Reference language: en_US -> it_IT
+SearchOf=Cerca
+LT1ES=RE
+LT2ES=IRPF
+ActionsOnMember=Eventi su questo membro
+URLPhoto=URL di foto / logo
+SetLinkToThirdParty=Link a un'altra terza parte
+CreateDraft=Creare un progetto
+ClickToEdit=Fare clic per modificare
+ObjectDeleted=%s oggetto eliminato
+ByCountry=Per paese
+ByTown=Per città
+ByDate=Per data
+ByMonthYear=Per mese / anno
+ByYear=Per anno
+ByMonth=per mese
+ByDay=Di giorno
+BySalesRepresentative=Da rappresentante di vendita
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:33:43).

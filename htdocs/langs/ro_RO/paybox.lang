@@ -47,3 +47,14 @@ AccountParameter=Considerare parametri
 UsageParameter=Utilizarea parametrilor
 InformationToFindParameters=Ajutor pentru a găsi informaţiile dvs. de cont %s
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:22:48).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+ToOfferALinkForOnlinePayment=URL-ul pentru plata %s
+PAYBOX_CGI_URL_V2=URL-ul de Paybox modul CGI pentru plata
+VendorName=Numele vânzătorului
+CSSUrlForPaymentForm=CSS foaie de URL-ul de stil pentru forma de plată
+MessageOK=Mesaj de pe pagina de întoarcere validate de plată
+MessageKO=Mesaj de pe pagina anulat schimbul de plată
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:26).
