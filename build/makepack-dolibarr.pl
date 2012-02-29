@@ -108,9 +108,8 @@ if ($ENV{"DESTI"}) { $DESTI = $ENV{"DESTI"}; }		# Force output dir if env DESTI 
 print "Makepack version $VERSION\n";
 print "Building package name: $PROJECT\n";
 print "Building package version: $MAJOR.$MINOR.$BUILD\n";
-print "Source directory: $SOURCE\n";
-print "Target directory: $DESTI\n";
-
+print "Source directory (SOURCE): $SOURCE\n";
+print "Target directory (DESTI) : $DESTI\n";
 
 
 # Choose package targets
