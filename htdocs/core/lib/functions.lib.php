@@ -243,12 +243,13 @@ function getBrowserInfo()
     elseif (preg_match('/iemobile/i',$_SERVER["HTTP_USER_AGENT"]))		{ $os='windows'; $phone='unkown'; }
     elseif (preg_match('/windows ce/i',$_SERVER["HTTP_USER_AGENT"]))	{ $os='windows'; $phone='unkown'; }
     // Name
-    if (preg_match('/firefox(\/|\s)*([\d\.]*)/i',$_SERVER["HTTP_USER_AGENT"],$reg))      { $name='firefox'; $version=$reg[2]; }
-    elseif (preg_match('/chrome(\/|\s)*([\d\.]*)/i',$_SERVER["HTTP_USER_AGENT"],$reg))   { $name='chrome'; $version=$reg[2]; }
-    elseif (preg_match('/iceweasel/i',$_SERVER["HTTP_USER_AGENT"]))     { $name='iceweasel'; $version=$reg[2]; }
-    elseif ((empty($phone) || preg_match('/iphone/i',$_SERVER["HTTP_USER_AGENT"])) && preg_match('/safari(\/|\s)*([\d\.]*)/i',$_SERVER["HTTP_USER_AGENT"],$reg)) { $name='safari'; $version=$reg[2]; }	// Safari is often present in string for mobile but its not.
-    elseif (preg_match('/opera(\/|\s)*([\d\.]*)/i',$_SERVER["HTTP_USER_AGENT"],$reg))    { $name='opera'; $version=$reg[2]; }
-    elseif (preg_match('/msie(\/|\s)*([\d\.]*)/i',$_SERVER["HTTP_USER_AGENT"],$reg))     { $name='ie'; $version=$reg[2]; }    // MS products at end
+    if (preg_match('/firefox(\/|\s)([\d\.]*)/i',    $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='firefox';   $version=$reg[2]; }
+    elseif (preg_match('/chrome(\/|\s)([\d\.]+)/i', $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='chrome';    $version=$reg[2]; }    // we can have 'chrome (Mozilla...) chrome x.y' in one string
+    elseif (preg_match('/chrome/i',                 $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='chrome'; }
+    elseif (preg_match('/iceweasel/i',$_SERVER["HTTP_USER_AGENT"]))                      { $name='iceweasel'; $version=$reg[2]; }
+    elseif ((empty($phone) || preg_match('/iphone/i',$_SERVER["HTTP_USER_AGENT"])) && preg_match('/safari(\/|\s)([\d\.]*)/i',$_SERVER["HTTP_USER_AGENT"], $reg)) { $name='safari'; $version=$reg[2]; }	// Safari is often present in string for mobile but its not.
+    elseif (preg_match('/opera(\/|\s)([\d\.]*)/i',  $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='opera';     $version=$reg[2]; }
+    elseif (preg_match('/msie(\/|\s)([\d\.]*)/i',   $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='ie';        $version=$reg[2]; }    // MS products at end
     // Other
     $firefox=0;
     if (in_array($name,array('firefox','iceweasel'))) $firefox=1;
