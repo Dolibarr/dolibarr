@@ -69,32 +69,48 @@ if ($action == 'specimen')
 
     $facture = new Facture($db);
     $facture->initAsSpecimen();
-
-    // Load template
-    $dir = DOL_DOCUMENT_ROOT . "/core/modules/facture/doc/";
-    $file = "pdf_".$modele.".modules.php";
-    if (file_exists($dir.$file))
+    
+    // Check if there is external models to do asked by plugins
+    if (is_array($conf->models_modules) && ! empty($conf->models_modules)) {
+    	$conf->file->dol_document_root = array_merge($conf->file->dol_document_root,$conf->models_modules);
+    }
+    
+    // Search template file
+    $file=''; $classname=''; $filefound=0;
+    foreach ($conf->file->dol_document_root as $dirroot)
     {
-        $classname = "pdf_".$modele;
-        require_once($dir.$file);
-
-        $obj = new $classname($db);
-
-        if ($obj->write_file($facture,$langs) > 0)
-        {
-            header("Location: ".DOL_URL_ROOT."/document.php?modulepart=facture&file=SPECIMEN.pdf");
-            return;
-        }
-        else
-        {
-            $mesg='<font class="error">'.$obj->error.'</font>';
-            dol_syslog($obj->error, LOG_ERR);
-        }
+    	// Load template
+    	$dir = $dirroot."/core/modules/facture/doc/";
+    	$file = $dir."pdf_".$modele.".modules.php";
+    	if (file_exists($file))
+    	{
+    		$filefound=1;
+    		$classname = "pdf_".$modele;
+    		break;
+    	}
+    }
+    
+    if ($filefound)
+    {
+    	require_once($file);
+    
+    	$module = new $classname($db);
+    
+    	if ($module->write_file($facture,$langs) > 0)
+    	{
+    		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=facture&file=SPECIMEN.pdf");
+    		return;
+    	}
+    	else
+    	{
+    		$mesg='<font class="error">'.$module->error.'</font>';
+    		dol_syslog($module->error, LOG_ERR);
+    	}
     }
     else
     {
-        $mesg='<font class="error">'.$langs->trans("ErrorModuleNotFound").'</font>';
-        dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+    	$mesg='<font class="error">'.$langs->trans("ErrorModuleNotFound").'</font>';
+    	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
 }
 
