@@ -158,7 +158,6 @@ function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
 
 	$error=0;
 
-	$dir = "/core/modules/commande/";
 	$srctemplatepath='';
 
 	// Positionne le modele sur le nom du modele a utiliser
@@ -181,22 +180,18 @@ function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
         $modele=$tmp[0];
         $srctemplatepath=$tmp[1];
     }
-    
-    // Check if there is external models to do asked by plugins
-    if (is_array($conf->models_modules) && ! empty($conf->models_modules)) {
-    	$conf->file->dol_document_root = array_merge($conf->file->dol_document_root,$conf->models_modules);
-    }
-    
-    foreach ($conf->file->dol_document_root as $dirroot)
-    {
-    	// Search template file
-    	$file=''; $classname=''; $filefound=0;
+
+	// Search template files
+	$file=''; $classname=''; $filefound=0;
+	$dirmodels=array_merge(array('/'),$conf->models_modules);
+	foreach($dirmodels as $reldir)
+	{
     	foreach(array('doc','pdf') as $prefix)
     	{
-    		$file = $prefix."_".$modele.".modules.php";
-    	
+    	    $file = $prefix."_".$modele.".modules.php";
+
     		// On verifie l'emplacement du modele
-    		$file = $dirroot.$dir.'doc/'.$file;
+	        $file=dol_buildpath($reldir."core/modules/commande/doc/".$file,0);
     		if (file_exists($file))
     		{
     			$filefound=1;

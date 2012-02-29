@@ -70,34 +70,27 @@ if ($action == 'specimen')
 
 	$commande = new Commande($db);
 	$commande->initAsSpecimen();
-	
-	// Check if there is external models to do asked by plugins
-	if (is_array($conf->models_modules) && ! empty($conf->models_modules)) {
-		$conf->file->dol_document_root = array_merge($conf->file->dol_document_root,$conf->models_modules);
-	}
-	
-	// Search template file
+
+	// Search template files
 	$file=''; $classname=''; $filefound=0;
-	foreach ($conf->file->dol_document_root as $dirroot)
+	$dirmodels=array_merge(array('/'),$conf->models_modules);
+	foreach($dirmodels as $reldir)
 	{
-		// Charge le modele
-		$dir = $dirroot."/core/modules/commande/doc/";
-		$file = $dir."pdf_".$modele.".modules.php";
+	    $file=dol_buildpath($reldir."core/modules/commande/doc/pdf_".$modele.".modules.php",0);
 		if (file_exists($file))
 		{
 			$filefound=1;
 			$classname = "pdf_".$modele;
 			break;
-			require_once($file);
 		}
 	}
-	
+
 	if ($filefound)
 	{
 		require_once($file);
-	
+
 		$module = new $classname($db);
-	
+
 		if ($module->write_file($commande,$langs) > 0)
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande&file=SPECIMEN.pdf");
