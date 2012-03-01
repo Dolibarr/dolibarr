@@ -70,13 +70,13 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs)
 	$langs->load("suppliers");
 
 	$error=0;
-	
+
 	// Increase limit for PDF build
     $err=error_reporting();
     error_reporting(0);
     @set_time_limit(120);
     error_reporting($err);
-	
+
     $srctemplatepath='';
 
 	// Positionne modele sur le nom du modele de invoice fournisseur a utiliser
@@ -91,7 +91,7 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs)
 		    $modele = 'canelle';
 		}
 	}
-	
+
     // If selected modele is a filename template (then $modele="modelname:filename")
 	$tmp=explode(':',$modele,2);
     if (! empty($tmp[1]))
@@ -99,16 +99,17 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs)
         $modele=$tmp[0];
         $srctemplatepath=$tmp[1];
     }
-    	
+
 	// Search template file
 	$file=''; $classname=''; $filefound=0;
-	$dirmodels=array_merge(array('/'),$conf->modules_parts['models']);
+	$dirmodels=array('/');
+	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
 	foreach($dirmodels as $reldir)
 	{
 		foreach(array('doc','pdf') as $prefix)
 		{
 			$file = $prefix."_".$modele.".modules.php";
-	
+
 			// On verifie l'emplacement du modele
 			$file=dol_buildpath($reldir."core/modules/supplier_invoice/pdf/".$file,0);
 			if (file_exists($file))
@@ -138,14 +139,14 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs)
 			// we delete preview files
         	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 			dol_delete_preview($object);
-			
+
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('BILL_BUILDDOC',$object,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
-			
+
 			return 1;
 		}
 		else
