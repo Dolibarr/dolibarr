@@ -65,9 +65,6 @@ class Conf
 	public $barcode_modules			= array();
 	public $substitutions_modules	= array();
 	public $societe_modules	        = array();
-	public $facture_modules			= array();
-	public $commande_modules		= array();
-	public $propale_modules			= array();
 
 	var $logbuffer					= array();
 
@@ -171,7 +168,7 @@ class Conf
 							$arrValue = @unserialize($value);
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
 							else if (in_array($partname,array('login','menus','triggers'))) $value = '/'.$modulename.'/core/'.$partname.'/';
-							else if (in_array($partname,array('models','facture','commande','propale'))) $value = '/'.$modulename.'/';
+							else if (in_array($partname,array('models'))) $value = '/'.$modulename.'/';
 							else if ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';
 							$this->$varname = array_merge($this->$varname, array($modulename => $value));  // TODO deprecated
 							$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value));
