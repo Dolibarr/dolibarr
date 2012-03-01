@@ -72,7 +72,7 @@ if ($action == 'specimen')
 
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
-	$dirmodels=array_merge(array('/'),$conf->models_modules);
+	$dirmodels=array_merge(array('/'),$conf->facture_modules);
 	foreach($dirmodels as $reldir)
 	{
 	    $file=dol_buildpath($reldir."core/modules/facture/doc/pdf_".$modele.".modules.php",0);
@@ -291,6 +291,8 @@ if ($action == 'setforcedate')
  * View
  */
 
+$dirmodels=array_merge(array('/'),$conf->facture_modules);
+
 llxHeader("",$langs->trans("BillsSetup"),'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura');
 
 $form=new Form($db);
@@ -318,19 +320,16 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-$dirmodels=array_merge(array('/'),$conf->models_modules);
-
 foreach ($dirmodels as $reldir)
 {
-	$dir = dol_buildpath($reldir."core/modules/commande/");
-
+	$dir = dol_buildpath($reldir."core/modules/facture/");
     if (is_dir($dir))
     {
         $handle = opendir($dir);
         if (is_resource($handle))
         {
         	$var=true;
-        	
+
             while (($file = readdir($handle))!==false)
             {
                 if (! is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS'))
@@ -485,8 +484,6 @@ print '<td align="center" width="32" colspan="2">'.$langs->trans("Infos").'</td>
 print "</tr>\n";
 
 clearstatcache();
-
-$dirmodels=array_merge(array('/'),$conf->models_modules);
 
 $var=true;
 foreach ($dirmodels as $reldir)

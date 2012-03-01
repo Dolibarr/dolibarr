@@ -1,0 +1,18 @@
+/*
+ * Language code: et_EE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 22:15:30
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
+// Reference language: en_US -> et_EE
+CHARSET=UTF-8
+WorkflowSetup=Töövoo moodul setup
+WorkflowDesc=See moodul on Projektkiirus muuta käitumist automaatne meetmete jõustumist. Vaikimisi töövoo avatakse (kui teha asi, et sa tahad). Võite lubatud automaatsed toimingud, et teil on huvitav sisse
+ThereIsNoWorkflowToModify=Ei ole töövoogu saate muuta jaoks moodul on aktiveeritud.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Loo kliendile, et automaatselt pärast äri ettepanek on allkirjastatud
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Loo kliendile arve automaatselt pärast äri ettepanek on allkirjastatud
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Loo kliendile arve automaatselt pärast lepingu sõlmimist kinnitatud
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Loo kliendile arve automaatselt kliendi tellimuse suletud
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:29:18).

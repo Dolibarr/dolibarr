@@ -1399,23 +1399,6 @@ function dol_print_address($address, $htmlid, $mode, $id)
         if ($showmap)
         {
             $url=dol_buildpath('/google/gmaps.php?mode='.$mode.'&id='.$id,1);
-            /*    print ' <img id="'.$htmlid.'" src="'.DOL_URL_ROOT.'/theme/common/gmap.png">';
-             print '<script type="text/javascript">
-             $(\'#gmap\').css(\'cursor\',\'pointer\');
-             $(\'#gmap\').click(function() {
-             $( \'<div>\').dialog({
-             modal: true,
-             open: function ()
-             {
-             $(this).load(\''.$url.'\');
-             },
-             height: 400,
-             width: 600,
-             title: \'GMap\'
-             });
-             });
-             </script>
-             '; */
             print ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
         }
     }
@@ -2777,16 +2760,20 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 }
 
 /**
- *	Return localtaxe rate for a particular tva
+ *	Return localtaxe rate for a particular vat
  *
  * 	@param	float		$tva			        Vat taxe
- * 	@param  int			$local		         	Local taxe to search and return
+ * 	@param  int			$local		         	Local tax to search and return (1 or 2)
  *  @param  Societe		$societe_acheteuse    	Object of buying third party
  * 	@return	int				   					0 if not found, localtax if found
  */
 function get_localtax($tva, $local, $societe_acheteuse="")
 {
     global $db, $conf, $mysoc;
+
+    // TODO Can we uncomment this ?
+    //if ($local == 1 && empty($conf->global->FACTURE_LOCAL_TAX1_OPTION)) return;
+    //if ($local == 2 && empty($conf->global->FACTURE_LOCAL_TAX2_OPTION)) return;
 
     $code_pays=$mysoc->pays_code;
 
@@ -2802,7 +2789,6 @@ function get_localtax($tva, $local, $societe_acheteuse="")
     $sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
     $sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$code_pays."'";
     $sql .= " AND t.taux = ".$tva." AND t.active = 1";
-    $sql .= " ORDER BY t.localtax1 ASC, t.localtax2 ASC";
 
     $resql=$db->query($sql);
     if ($resql)

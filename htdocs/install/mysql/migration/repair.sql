@@ -33,3 +33,8 @@ update llx_facture_fourn set fk_projet = null where fk_projet not in (select row
 update llx_facture_rec set fk_projet = null where fk_projet not in (select rowid from llx_projet);
 update llx_fichinter set fk_projet = null where fk_projet not in (select rowid from llx_projet);
 update llx_projet_task set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+
+
+-- VMYSQL4.1 DELETE T1 FROM llx_boxes_def as T1, llx_boxes_def as T2 where T1.entity = T2.entity AND T1.file = T2.file AND T1.note = T2.note and T1.rowid > T2.rowid
+-- VPGSQL8.2 DELETE FROM llx_boxes_def as T1 WHERE rowid NOT IN (SELECT min(rowid) FROM llx_boxes_def GROUP BY file, entity, note)
+

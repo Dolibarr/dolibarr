@@ -71,7 +71,7 @@ if ($action == 'specimen')
 
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
-	$dirmodels=array_merge(array('/'),$conf->models_modules);
+	$dirmodels=array_merge(array('/'),$conf->propale_modules);
 	foreach($dirmodels as $reldir)
 	{
 	    $file=dol_buildpath($reldir."core/modules/propale/doc/pdf_".$modele.".modules.php");
@@ -283,7 +283,7 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-$dirmodels=array_merge(array('/'),$conf->models_modules);
+$dirmodels=array_merge(array('/'),$conf->propale_modules);
 
 foreach ($dirmodels as $reldir)
 {
@@ -416,7 +416,7 @@ print "</tr>\n";
 
 clearstatcache();
 
-$dirmodels=array_merge(array('/'),$conf->models_modules);
+$dirmodels=array_merge(array('/'),$conf->propale_modules);
 
 $var=true;
 foreach ($dirmodels as $reldir)

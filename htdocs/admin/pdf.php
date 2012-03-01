@@ -224,13 +224,13 @@ else	// Show
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("DictionnaryPaperFormat").'</td><td>';
 
+    $pdfformatlabel='';
     if (empty($conf->global->MAIN_PDF_FORMAT))
     {
         include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
         $pdfformatlabel=dol_getDefaultFormat();
     }
     else $pdfformatlabel=$conf->global->MAIN_PDF_FORMAT;
-
     if (! empty($pdfformatlabel))
     {
     	$sql="SELECT code, label, width, height, unit FROM ".MAIN_DB_PREFIX."c_paper_format";

@@ -53,16 +53,20 @@ class Conf
 
 	public $modules					= array();	// List of activated modules
 
+	public $sms_engine_modules		= array();
+	// TODO Remove all thoose tabs with one generic
 	public $css_modules				= array();
 	public $tabs_modules			= array();
 	public $triggers_modules		= array();
 	public $menus_modules			= array();
 	public $hooks_modules			= array();
-	public $models_modules			= array();
 	public $login_modules			= array();
-	public $sms_engine_modules		= array();
 	public $barcode_modules			= array();
 	public $substitutions_modules	= array();
+	public $societe_modules	        = array();
+	public $facture_modules			= array();
+	public $commande_modules		= array();
+	public $propale_modules			= array();
 
 	var $logbuffer					= array();
 
@@ -152,8 +156,8 @@ class Conf
 						// If this is constant for a sms engine
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_SMS$/i',$key,$reg))
 						{
-							$module=strtolower($reg[1]);
-							$this->sms_engine_modules[$module]=$module;    // Add this module in list of modules that provide SMS
+							$modulename=strtolower($reg[1]);
+							$this->sms_engine_modules[$modulename]=$modulename;    // Add this module in list of modules that provide SMS
 						}
 						// If this is constant for all generic part activated by a module
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_([A-Z]+)$/i',$key,$reg))
@@ -164,17 +168,19 @@ class Conf
 							if (! is_array($this->$varname)) { $this->$varname = array(); }
 							$arrValue = @unserialize($value);
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
-							else if ($partname == 'models' && $value == 1) $value = '/'.$modulename.'/';
-							else $value = ($value == 1 ? '/'.$modulename.'/core/'.$partname.'/' : $value);
+							else if (in_array($partname,array('login','menus','triggers'))) $value = '/'.$modulename.'/core/'.$partname.'/';
+							else if (in_array($partname,array('facture','commande','propale'))) $value = '/'.$modulename.'/';
+							else if ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';
+							//print 'xxx'.$varname.' '.$value.'<br>';
 							$this->$varname = array_merge($this->$varname, array($modulename => $value));
 						}
                         // If this is a module constant (must be at end)
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)$/i',$key,$reg))
 						{
-							$module=strtolower($reg[1]);
-							$this->$module=(object) array();
-							$this->$module->enabled=true;
-							$this->modules[]=$module;              // Add this module in list of enabled modules
+							$modulename=strtolower($reg[1]);
+							$this->$modulename=(object) array();
+							$this->$modulename->enabled=true;
+							$this->modules[]=$modulename;              // Add this module in list of enabled modules
 						}
 					}
 				}

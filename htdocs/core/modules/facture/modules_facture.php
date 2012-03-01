@@ -181,7 +181,7 @@ function facture_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
-	$dirmodels=array_merge(array('/'),$conf->models_modules);
+	$dirmodels=array_merge(array('/'),$conf->facture_modules);
 	foreach($dirmodels as $reldir)
 	{
     	foreach(array('doc','pdf') as $prefix)

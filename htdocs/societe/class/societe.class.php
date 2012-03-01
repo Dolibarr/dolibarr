@@ -1658,15 +1658,21 @@ class Societe extends CommonObject
     }
 
     /**
-     *    \brief      Attribut un code client a partir du module de controle des codes.
-     *    \return     code_client		Code client automatique
+     *    Attribut un code client a partir du module de controle des codes.
+     *
+     *    @return     code_client		Code client automatique
      */
     function get_codeclient($objsoc=0,$type=0)
     {
         global $conf;
         if ($conf->global->SOCIETE_CODECLIENT_ADDON)
         {
-            require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/'.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php';
+            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+            foreach ($dirsociete as $dirroot)
+            {
+                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.".php");
+                if ($res) break;
+            }
             $var = $conf->global->SOCIETE_CODECLIENT_ADDON;
             $mod = new $var;
 
@@ -1678,15 +1684,21 @@ class Societe extends CommonObject
     }
 
     /**
-     *    \brief      Attribut un code fournisseur a partir du module de controle des codes.
-     *    \return     code_fournisseur		Code fournisseur automatique
+     *    Attribut un code fournisseur a partir du module de controle des codes.
+     *
+     *    @return     code_fournisseur		Code fournisseur automatique
      */
     function get_codefournisseur($objsoc=0,$type=1)
     {
         global $conf;
         if ($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON)
         {
-            require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/'.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php';
+            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+            foreach ($dirsociete as $dirroot)
+            {
+                $res=dol_include_once($dirroot.$conf->global->SOCIETE_FOURNISSEUR_ADDON.".php");
+                if ($res) break;
+            }
             $var = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
             $mod = new $var;
 
@@ -1706,7 +1718,12 @@ class Societe extends CommonObject
         global $conf;
         if ($conf->global->SOCIETE_CODECLIENT_ADDON)
         {
-            require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/'.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php';
+            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+            foreach ($dirsociete as $dirroot)
+            {
+                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.".php");
+                if ($res) break;
+            }
 
             $var = $conf->global->SOCIETE_CODECLIENT_ADDON;
 
@@ -1734,7 +1751,12 @@ class Societe extends CommonObject
         global $conf;
         if ($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON)
         {
-            require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/'.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php';
+            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+            foreach ($dirsociete as $dirroot)
+            {
+                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.".php");
+                if ($res) break;
+            }
 
             $var = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
 
@@ -1766,7 +1788,12 @@ class Societe extends CommonObject
         global $conf;
         if ($conf->global->SOCIETE_CODECLIENT_ADDON)
         {
-            require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/'.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php';
+            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+            foreach ($dirsociete as $dirroot)
+            {
+                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.".php");
+                if ($res) break;
+            }
 
             $var = $conf->global->SOCIETE_CODECLIENT_ADDON;
 
@@ -1795,7 +1822,12 @@ class Societe extends CommonObject
         global $conf;
         if ($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON)
         {
-            require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/'.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php';
+            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+            foreach ($dirsociete as $dirroot)
+            {
+                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.".php");
+                if ($res) break;
+            }
 
             $var = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
 
@@ -1824,7 +1856,12 @@ class Societe extends CommonObject
 
         if ($conf->global->SOCIETE_CODECOMPTA_ADDON)
         {
-            require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/'.$conf->global->SOCIETE_CODECOMPTA_ADDON.'.php';
+            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+            foreach ($dirsociete as $dirroot)
+            {
+                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECOMPTA_ADDON.".php");
+                if ($res) break;
+            }
 
             $var = $conf->global->SOCIETE_CODECOMPTA_ADDON;
 
