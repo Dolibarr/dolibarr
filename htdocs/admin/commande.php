@@ -73,7 +73,7 @@ if ($action == 'specimen')
 
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
-	$dirmodels=array_merge(array('/'),$conf->commande_modules);
+	$dirmodels=array_merge(array('/'),$conf->modules_parts['models']);
 	foreach($dirmodels as $reldir)
 	{
 	    $file=dol_buildpath($reldir."core/modules/commande/doc/pdf_".$modele.".modules.php",0);
@@ -223,6 +223,8 @@ if ($action == 'set_COMMANDE_FREE_TEXT')
  * View
  */
 
+$dirmodels=array_merge(array('/'),$conf->modules_parts['models']);
+
 llxHeader();
 
 $form=new Form($db);
@@ -250,8 +252,6 @@ print '<td align="center" width="16">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
 clearstatcache();
-
-$dirmodels=array_merge(array('/'),$conf->commande_modules);
 
 foreach ($dirmodels as $reldir)
 {
@@ -383,8 +383,6 @@ print '<td align="center" width="38" colspan="2">'.$langs->trans("Infos").'</td>
 print "</tr>\n";
 
 clearstatcache();
-
-$dirmodels=array_merge(array('/'),$conf->commande_modules);
 
 $var=true;
 foreach ($dirmodels as $reldir)

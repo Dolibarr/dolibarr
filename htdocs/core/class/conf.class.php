@@ -52,9 +52,10 @@ class Conf
 	public $smart_menu;
 
 	public $modules					= array();	// List of activated modules
-
-	public $sms_engine_modules		= array();
+	public $modules_parts			= array();	// List of modules parts
+	
 	// TODO Remove all thoose tabs with one generic
+	public $sms_engine_modules		= array();
 	public $css_modules				= array();
 	public $tabs_modules			= array();
 	public $triggers_modules		= array();
@@ -164,15 +165,16 @@ class Conf
 						{
 							$modulename = strtolower($reg[1]);
 							$partname = strtolower($reg[2]);
-							$varname = $partname.'_modules';
-							if (! is_array($this->$varname)) { $this->$varname = array(); }
+							$varname = $partname.'_modules';  // TODO deprecated
+							if (! is_array($this->$varname)) { $this->$varname = array(); } // TODO deprecated
+							if (! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
 							$arrValue = @unserialize($value);
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
 							else if (in_array($partname,array('login','menus','triggers'))) $value = '/'.$modulename.'/core/'.$partname.'/';
-							else if (in_array($partname,array('facture','commande','propale'))) $value = '/'.$modulename.'/';
+							else if (in_array($partname,array('models','facture','commande','propale'))) $value = '/'.$modulename.'/';
 							else if ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';
-							//print 'xxx'.$varname.' '.$value.'<br>';
-							$this->$varname = array_merge($this->$varname, array($modulename => $value));
+							$this->$varname = array_merge($this->$varname, array($modulename => $value));  // TODO deprecated
+							$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value));
 						}
                         // If this is a module constant (must be at end)
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)$/i',$key,$reg))
@@ -202,6 +204,7 @@ class Conf
 		    $db->free($resql);
 		}
 		//var_dump($this->modules);
+		//var_dump($this->modules_parts);
 
 		// Clean some variables
 		if (empty($this->global->MAIN_MENU_STANDARD)) $this->global->MAIN_MENU_STANDARD="eldy_backoffice.php";
