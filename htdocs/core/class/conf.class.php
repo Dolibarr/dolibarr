@@ -53,17 +53,20 @@ class Conf
 
 	public $modules					= array();	// List of activated modules
 
+	public $sms_engine_modules		= array();
+	// TODO Remove all thoose tabs with one generic
 	public $css_modules				= array();
 	public $tabs_modules			= array();
 	public $triggers_modules		= array();
 	public $menus_modules			= array();
 	public $hooks_modules			= array();
-	public $models_modules			= array();
 	public $login_modules			= array();
-	public $sms_engine_modules		= array();
 	public $barcode_modules			= array();
 	public $substitutions_modules	= array();
 	public $societe_modules	        = array();
+	public $facture_modules			= array();
+	public $commande_modules		= array();
+	public $propale_modules			= array();
 
 	var $logbuffer					= array();
 
@@ -166,7 +169,9 @@ class Conf
 							$arrValue = @unserialize($value);
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
 							else if (in_array($partname,array('login','menus','triggers'))) $value = '/'.$modulename.'/core/'.$partname.'/';
+							else if (in_array($partname,array('facture','commande','propale'))) $value = '/'.$modulename.'/';
 							else if ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';
+							//print 'xxx'.$varname.' '.$value.'<br>';
 							$this->$varname = array_merge($this->$varname, array($modulename => $value));
 						}
                         // If this is a module constant (must be at end)
