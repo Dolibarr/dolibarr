@@ -53,10 +53,11 @@ $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service&fournisseur',$fieldvalue,'product&product','','',$fieldtype);
+
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 $hookmanager=new HookManager($db);
-$hookmanager->callHooks(array('fournpricecard'));
+$hookmanager->callHooks(array('pricesuppliercard'));
 
 
 $sortfield = GETPOST("sortfield",'alpha');
@@ -283,7 +284,7 @@ if ($id || $ref)
 					if (is_object($hookmanager))
 					{
 						$parameters=array('filtre'=>"fournisseur=1",'html_name'=>'id_fourn','selected'=>GETPOST("id_fourn"),'showempty'=>1,'prod_id'=>$product->id);
-					    echo $hookmanager->executeHooks('formCreateCompagnyOptions',$parameters,$object,$action);
+					    echo $hookmanager->executeHooks('formCreateThirdpartyOptions',$parameters,$object,$action);
 					}
 				}
 				print '</td></tr>';

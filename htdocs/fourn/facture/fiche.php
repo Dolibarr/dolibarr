@@ -53,7 +53,7 @@ $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 $hookmanager=new HookManager($db);
-$hookmanager->callHooks(array('fournpricecard'));
+$hookmanager->callHooks(array('invoicesuppliercard'));
 
 $object=new FactureFournisseur($db);
 
@@ -1652,7 +1652,7 @@ else
                 if (is_object($hookmanager))
 				{
 			        $parameters=array('filtre'=>$filtre);
-				    echo $hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
+				    echo $hookmanager->executeHooks('formCreateProductSupplierOptions',$parameters,$object,$action);
 				}
 				
                 print '</td>';
