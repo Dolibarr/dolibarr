@@ -113,3 +113,29 @@ ErrorBadValueForCode=Bad værdi former for kode. Prøv igen med en ny værdi ...
 ErrorFileIsInfectedWith=Denne fil er inficeret med %s
 WarningInstallDirExists=Advarsel, installere directory ( %s) eksisterer stadig. Dette er en alvorlig sikkerheds-hul. Du bør fjernes så hurtigt som muligt.
 WarningUntilDirRemoved=Denne advarsel vil forblive aktiv, så længe denne mappe er til stede (vises kun til admin-brugere).
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
+// Reference language: en_US -> da_DK
+ErrorFailToCopyFile=Kunne ikke kopiere filen <b>&quot;%s&quot;</b> til <b>&quot;%s&quot;.</b>
+ErrorFailToRenameFile=Kunne ikke omdøbe filen <b>'%s'</b> til <b>'%s'.</b>
+ErrorBadValueForParameter=Forkert værdi &quot;%s&quot; for parameter forkerte &quot;%s forb.
+ErrorBadImageFormat=Billede fil har ikke et understøttet format
+ErrorBadDateFormat=Værdi '%s' har forkert datoformat
+ErrorSizeTooLongForIntType=Størrelse for lang tid for int type (%s cifre maksimum)
+ErrorSizeTooLongForVarcharType=Størrelse for lang tid for streng type (%s tegn maksimum)
+ErrorContactEMail=En teknisk fejl opstod. Kontakt venligst administrator til at følge e-mail <b>%s</b> da give fejlkoder <b>%s</b> i din besked, eller endnu bedre ved at tilføje en skærm kopi af denne side.
+ErrorFieldValueNotIn=Forkert værdi for feltnummer <b>%s</b> (value <b>&quot;%s&quot;</b> er ikke en værdi, der i felt <b>%s</b> af tabel <b>%s)</b>
+ErrorFieldRefNotIn=Forkert værdi for feltnummer <b>%s</b> (værdien <b>'%s'</b> er ikke en <b>%s</b> eksisterende ref)
+ErrorModuleSetupNotComplete=Opsætning af modulet ser ud til at være uncomplete. Gå på Setup - Moduler til at fuldføre.
+ErrorBadMask=Fejl på maske
+ErrorBadMaskFailedToLocatePosOfSequence=Fejl, maske uden loebenummeret
+ErrorBadMaskBadRazMonth=Fejl, dårlig reset værdi
+ErrorSelectAtLeastOne=Fejl. Vælg mindst én post.
+ErrorProductWithRefNotExist=Produkt med reference <i>'%s'</i> findes ikke
+ErrorDeleteNotPossibleLineIsConsolidated=Slet ikke muligt, fordi record er forbundet med en bank transation der er forsonet
+ErrorProdIdAlreadyExist=%s er tildelt til et andet tredjeland
+ErrorFailedToLoadRSSFile=Ikke formår at få RSS-feed. Prøv at tilføje konstant MAIN_SIMPLEXMLLOAD_DEBUG hvis fejlmeddelelser ikke giver nok information.
+ErrorBothFieldCantBeNegative=Fields %s og %s kan ikke være både negative
+ErrorWebServerUserHasNotPermission=Brugerkonto <b>%s</b> anvendes til at udføre web-server har ikke tilladelse til at
+ErrorNoActivatedBarcode=Ingen stregkode aktiveret typen
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:00:00).

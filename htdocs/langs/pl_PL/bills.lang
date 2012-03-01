@@ -415,3 +415,24 @@ TypeContact_facture_fourn_external_BILLING=kontakt fakturze dostawcy
 TypeContact_facture_fourn_external_SHIPPING=kontakt koszty dostawcy
 TypeContact_facture_fourn_external_SERVICE=Dostawca usługi kontakt
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:21).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+BillsCustomer=Klienta faktura
+BillsSuppliersUnpaidForCompany=Nieodpłatnej dostawcy faktury za %s
+BillsLate=Opóźnienia w płatnościach
+DisabledBecauseNotErasable=Wyłączone, ponieważ nie mogą być skasowane
+ConfirmUnvalidateBill=Czy na pewno chcesz zmienić status faktury <b>%s</b> do projektu?
+UnvalidateBill=Unvalidate faktury
+NumberOfBillsByMonth=Nb faktur przez miesiąc
+AmountOfBillsByMonthHT=Kwota faktur przez miesiąc (netto)
+AddRelativeDiscount=Tworzenie względnej zniżki
+EditRelativelDiscount=Edytuj zniżki relatvie
+EditGlobalDiscounts=Edytuj bezwzględne zniżki
+AddCreditNote=Tworzenie noty kredytowej
+InvoiceNotChecked=Nie wybrano faktura
+ShowUnpaidAll=Pokaż wszystkie niezapłacone faktury
+ClosePaidInvoicesAutomatically=Klasyfikowanie &quot;Opłacone&quot; wszystkie standardy lub fakturach zastępczych entierely zapłaci.
+AllCompletelyPayedInvoiceWillBeClosed=Wszystko faktura bez pozostawać do zapłaty zostanie automatycznie zamknięta do statusu &quot;płatny&quot;.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:19:17).

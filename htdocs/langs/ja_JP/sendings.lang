@@ -1,0 +1,72 @@
+/*
+ * Language code: ja_JP
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 16:41:06
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
+// Reference language: en_US -> ja_JP
+CHARSET=UTF-8
+RefSending=REF。出荷
+Sending=出荷
+Sendings=出荷
+Shipments=出荷
+Receivings=Receivings
+SendingsArea=出荷エリア
+ListOfSendings=出荷のリスト
+SendingMethod=配送方法
+SendingReceipt=送料の領収書
+LastSendings=最後%s出荷
+SearchASending=出荷の検索
+StatisticsOfSendings=出荷の統計
+NbOfSendings=出荷数
+SendingCard=配送カード
+NewSending=新しい出荷
+CreateASending=出荷を作成します。
+CreateSending=出荷を作成します。
+QtyOrdered=数量は、注文された
+QtyShipped=個数出荷
+QtyToShip=出荷する数量
+QtyReceived=個数は、受信した
+KeepToShip=出荷できるようにしておく
+OtherSendingsForSameOrder=このため、他の出荷
+DateSending=オーダーを送信した日付
+DateSendingShort=オーダーを送信した日付
+SendingsForSameOrder=この注文の出荷
+SendingsAndReceivingForSameOrder=この注文の出荷とreceivings
+SendingsToValidate=検証するために出荷
+StatusSendingCanceled=キャンセル
+StatusSendingDraft=ドラフト
+StatusSendingValidated=検証（製品が出荷する、またはすでに出荷されます）
+StatusSendingCanceledShort=キャンセル
+StatusSendingDraftShort=ドラフト
+StatusSendingValidatedShort=検証
+SendingSheet=シートを送信する
+Carriers=キャリア
+Carrier=キャリア
+CarriersArea=キャリアのエリア
+NewCarrier=新しいキャリア
+ConfirmDeleteSending=この出荷を削除してもよろしいですか？
+ConfirmValidateSending=あなたは、参照<b>%s</b>でこの出荷を検証してもよろしいですか？
+ConfirmCancelSending=この出荷を中止してもよろしいですか？
+GenericTransport=一般的な輸送
+Enlevement=顧客が得
+DocumentModelSimple=簡単な文書モデル
+DocumentModelMerou=メロウA5モデル
+WarningNoQtyLeftToSend=警告は、出荷されるのを待っていない製品。
+StatsOnShipmentsOnlyValidated=のみ検証の出荷に実施統計
+DateDeliveryPlanned=配達のかんな日付
+DateReceived=日付の配信は、受信した
+SendShippingByEMail=電子メールで貨物を送る
+SendShippingRef=出荷%sを送る
+ActionsOnShipping=出荷のイベント
+LinkToTrackYourPackage=あなたのパッケージを追跡するためのリンク
+ShipmentCreationIsDoneFromOrder=現時点では、新たな出荷の作成は、注文カードから行われます。
+SendingMethodCATCH=顧客がキャッチ
+SendingMethodTRANS=トランスポーター
+SendingMethodCOLSUI=Colissimo
+DocumentModelSirocco=配信確認のためのシンプルなドキュメントモデル
+DocumentModelTyphon=配信確認のために、より完全なドキュメントモデル（logo. ..）
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=定数EXPEDITION_ADDON_NUMBERが定義されていません
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:02:52).

@@ -39,3 +39,20 @@ Language_is_IS=冰岛
 Language_sv_SV=瑞典
 Language_zh_CN=中文
 Language_is_IS=冰岛
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+Language_ar_SA=阿拉伯语
+Language_da_DK=丹麦的
+Language_de_AT=德语（奥地利）
+Language_el_GR=希腊语
+Language_en_NZ=英语（新西兰）
+Language_es_HN=西班牙语（洪都拉斯）
+Language_es_MX=西班牙语（墨西哥）
+Language_es_PR=西班牙语（波多黎各）
+Language_fa_IR=波斯语
+Language_hu_HU=匈牙利
+Language_ru_UA=俄语（乌克兰）
+Language_sv_SE=瑞典
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:39:21).

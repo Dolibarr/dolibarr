@@ -108,3 +108,12 @@ DataIDSourceIsInsertedInto = Id nadrejenega objekta, ki je bil najden ob uporabi
 SourceRequired = Podatkovna vrednost je obvezna
 SourceExample = Primer možnih podatkovnih vrednosti
 CSVFormatDesc = <b>Comma Separated Value</b> format datoteke (.csv).<br>To je tekstovni format datoteke, kjer so polja ločena z ločilom [ %s ]. Če se v vsebini polja nahaja ločilo, se polje zaokroži z znakom za zaokrožitev [ %s ]. Znak za preklic zaokrožitve je [ %s ].
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+DataComeFromIdFoundFromCodeId=Kodo, ki prihaja iz <b>%s</b> številka polja izvorne datoteke se bodo uporabile za iskanje ID objekta matične uporabiti (torej mora oznaka iz izvorne datoteke ne obstaja v dictionnary <b>%s).</b> Upoštevajte, da če veš, id, lahko jo uporabite tudi v izvorni namesto kode. Uvoz morajo delovati v obeh primerih.
+DataCodeIDSourceIsInsertedInto=Id starševske linije najdete na kodo, bo vstavljena v naslednjem področju:
+ExampleAnyRefFoundIntoElement=Vsak ref našel elementov za <b>%s</b>
+ExampleAnyCodeOrIdFoundIntoDictionnary=Vsaka številka (ali ID) našel v dictionnary <b>%s</b>
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:30:42).

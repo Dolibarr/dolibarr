@@ -129,3 +129,18 @@ BoxTitleLastModifiedSuppliers=%s Ultima modificare furnizori
 BoxTitleLastModifiedCustomers=%s Ultima modificare clienţii
 BoxTitleLastModifiedProspects=%s Ultima modificare perspective
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:39).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+BoxLastContacts=Ultimele date de contact / adresele
+BoxLastMembers=Ultimele membri
+BoxTitleLastModifiedMembers=%s Ultimele membri modificate
+BoxTitleLastModifiedContacts=%s Ultima modificare contacte / adrese
+BoxOldestExpiredServices=Cele mai vechi active de servicii a expirat
+BoxLastExpiredServices=Ultimele %s mai vechi contacte cu serviciile de active expirate
+BoxTitleLastModifiedDonations=%s Ultima modificare donaţii
+BoxTitleLastModifiedExpenses=%s Ultima modificare cheltuieli
+ClickToAdd=Click aici pentru a adăuga.
+NoRecordedContacts=Nu sunt înregistrate date de contact
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:33).

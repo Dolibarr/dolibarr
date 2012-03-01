@@ -143,3 +143,18 @@ TypeContact_order_supplier_external_SHIPPING=Fornecedor Contactar com transporte
 TypeContact_order_supplier_external_CUSTOMER=Fornecedor Contactar com a seguinte ordem-up
 PDFEdisonDescription=Um modelo simples ordem
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:22).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+SuppliersOrdersToProcess=Ordens do Fornecedor para processar
+StatusOrderSentShort=No processo
+ShippingExist=Um carregamento existe
+UnvalidateOrder=Unvalidate fim
+ConfirmUnvalidateOrder=Tem certeza de que deseja restaurar <b>%s</b> ordem ao estado projecto?
+OrderByMail=Correio
+OrderByFax=Fax
+OrderByEMail=EMail
+OrderByWWW=On-line
+OrderByPhone=Telefone
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:10).

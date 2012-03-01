@@ -83,3 +83,10 @@ SellPriceMin=Verkopen Prijs per Eenheid
 EstimatedStockValueSellShort=Waarde te verkopen
 EstimatedStockValueSell=Waarde voor verkopen
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 01:44:43).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
+// Reference language: en_US -> nl_NL
+SelectWarehouseForStockDecrease=Kies magazijn te gebruiken voor voorraad daling
+SelectWarehouseForStockIncrease=Kies magazijn te gebruiken voor verhoging van voorraad
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:12:00).

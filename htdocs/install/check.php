@@ -63,6 +63,16 @@ print '</center>';
 
 print '<b>'.$langs->trans("MiscellanousChecks")."</b>:<br>\n";
 
+// Check browser
+$useragent=$_SERVER['HTTP_USER_AGENT'];
+if (! empty($useragent))
+{
+    $tmp=getBrowserInfo();
+    $browserversion=$tmp['browserversion'];
+    $browsername=$tmp['browsername'];
+    if ($browsername == 'ie' && $browserversion < 7) print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("WarningBrowserTooOld")."<br>\n";
+}
+
 
 // Check PHP version
 if (versioncompare(versionphparray(),array(4,3,10)) < 0)        // Minimum to use (error if lower)

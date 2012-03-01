@@ -422,3 +422,13 @@ AddCreditNote=Создать кредитовое авизо
 ClosePaidInvoicesAutomatically=Классифицировать как 'Оплачен' все полностью оплаченные счета-фактуры.
 AllCompletelyPayedInvoiceWillBeClosed=Все счета, без остатка к оплате будут автоматически закрыты со статусом "Оплачен".
 // STOP - Lines generated via autotranslator.php tool (2011-08-18 23:27:56).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
+// Reference language: en_US -> ru_RU
+ConfirmUnvalidateBill=Вы уверены, что хотите изменить счет <b>%s</b> к проекту статус?
+UnvalidateBill=Unvalidate счет
+AddRelativeDiscount=Создать относительная скидка
+EditRelativelDiscount=Редактировать relatvie скидки
+EditGlobalDiscounts=Редактировать абсолютной скидки
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:21).

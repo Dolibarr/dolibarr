@@ -122,3 +122,9 @@ MailingModuleDescContactsByCompanyCategory=Tengiliðir þriðja aðila (af þri�
 MailingModuleDescMembersCategories=Foundation aðilum (eftir flokkum)
 MailingModuleDescContactsByFunction=Tengiliðir þriðja aðila (með því að staða / virka)
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 11:37:19).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+MailingStatusRead=Lesa
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:36).

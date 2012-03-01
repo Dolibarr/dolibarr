@@ -140,3 +140,11 @@ OrderByFax = Faks
 OrderByEMail = E-pošta
 OrderByWWW = Internet
 OrderByPhone = Telefon
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+ShippingExist=Pošiljka ne obstaja
+UnvalidateOrder=Unvalidate red
+ConfirmUnvalidateOrder=Ali ste prepričani, da želite ponovno vzpostavi red <b>%s</b> na status osnutka?
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:30:27).

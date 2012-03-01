@@ -36,3 +36,9 @@ BankToPay = Bremenitev računa
 ShowCompany = Prikaži podjetje
 ShowStock = Prikaži skladišče
 DeleteArticle = Kliknite za izbris tega artikla
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+CashdeskShowServices=Prodaja storitev
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:31:11).

@@ -25,3 +25,9 @@ PAYPAL_IPN_MAIL_ADDRESS=Адрес электронной почты для мг
 PredefinedMailContentSendOrderWithPaypalLink=Вы найдете здесь порядок __ORDERREF__ \ п \ nВы можете нажать на ссылку ниже безопасного, чтобы сделать платеж через PayPal \ п \ n%s \ п \ nSincerely \ п \ п
 PredefinedMailContentSendInvoiceWithPaypalLink=Только здесь вы найдете счета __FACREF__ \ п \ nВы можете нажать на ссылку ниже безопасного, чтобы сделать платеж через PayPal \ п \ n%s \ п \ nSincerely \ п \ п
 // STOP - Lines generated via autotranslator.php tool (2011-08-27 17:00:37).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
+// Reference language: en_US -> ru_RU
+YouAreCurrentlyInSandboxMode=Вы в настоящее время в &quot;песочнице&quot; режим
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:12).

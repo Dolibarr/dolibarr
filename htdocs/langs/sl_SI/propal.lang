@@ -96,3 +96,9 @@ TypeContact_propal_external_CUSTOMER = Kontakt pri kupcu za sledenje ponudbe
 # Document models = undefined
 DocModelAzurDescription = Vzorec kompletne ponudbe (logo...)
 DocModelJauneDescription = Vzorec ponudbe Jaune
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+ConfirmReOpenProp=Ali ste prepričani, da želite odpreti nazaj poslovne <b>%s</b> predlog?
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:31:20).

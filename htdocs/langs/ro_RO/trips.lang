@@ -34,3 +34,10 @@ TF_TRIP=Excursie
 TripsAndExpensesStatistics=Excursii şi statistici cheltuieli
 ListTripsAndExpenses=Lista de excursii şi cheltuieli
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 02:20:12).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+ExpensesArea=Excursii şi zona de cheltuieli
+SearchATripAndExpense=Căutaţi o călătorie şi cheltuieli
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:42).

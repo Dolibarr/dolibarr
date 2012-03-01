@@ -44,3 +44,11 @@ AddSupplierInvoice=Búa til birgja Reikningar
 ListOfSupplierProductForSupplier=Listi yfir vörur og verð <b>fyrir%</b> söluaðila <b>s</b>
 NoneOrBatchFileNeverRan=Enginn eða <b>hópur %s </b> er ekki hljóp nýlega
 // STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+BuyingPriceMin=Lágmark Kaupverð
+BuyingPriceMinShort=Min Kaupverð
+Availability=Framboð
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:27:08).

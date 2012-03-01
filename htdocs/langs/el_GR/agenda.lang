@@ -70,3 +70,16 @@ AgendaExtNb=Ημερολόγιο nb %s
 ExtSiteUrlAgenda=URL για να αποκτήσετε πρόσβαση. ICal αρχείο
 ExtSiteNoLabel=Χωρίς Περιγραφή
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:36:34).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+LocalAgenda=Τοπικό ημερολόγιο
+MyEvents=Εκδηλώσεις μου
+OtherEvents=Άλλες εκδηλώσεις
+OrderApprovedInDolibarr=%s Παραγγελία εγκριθεί
+OrderBackToDraftInDolibarr=%s Τάξης να επιστρέψετε στην κατάσταση σχέδιο
+OrderCanceledInDolibarr=%s για ακυρώσεις
+InterventionSentByEMail=Παρέμβαση %s αποστέλλονται με ηλεκτρονικό ταχυδρομείο
+ExportCal=Εξαγωγή ημερολογίου
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:08:30).

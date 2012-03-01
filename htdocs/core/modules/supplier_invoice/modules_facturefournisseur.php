@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2010	Juanjo Menent	<jmenent@2byte.es>
+ * Copyright (C) 2012	Regis Houssin	<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,14 +70,13 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs)
 	$langs->load("suppliers");
 
 	$error=0;
-	
+
 	// Increase limit for PDF build
     $err=error_reporting();
     error_reporting(0);
     @set_time_limit(120);
     error_reporting($err);
-	
-	$dir = "/core/modules/supplier_invoice/";
+
     $srctemplatepath='';
 
 	// Positionne modele sur le nom du modele de invoice fournisseur a utiliser
@@ -91,7 +91,7 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs)
 		    $modele = 'canelle';
 		}
 	}
-	
+
     // If selected modele is a filename template (then $modele="modelname:filename")
 	$tmp=explode(':',$modele,2);
     if (! empty($tmp[1]))
@@ -99,22 +99,27 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs)
         $modele=$tmp[0];
         $srctemplatepath=$tmp[1];
     }
-    	
+
 	// Search template file
 	$file=''; $classname=''; $filefound=0;
-	foreach(array('doc','pdf') as $prefix)
+	$dirmodels=array('/');
+	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
+	foreach($dirmodels as $reldir)
 	{
-        $file = $prefix."_".$modele.".modules.php";
+		foreach(array('doc','pdf') as $prefix)
+		{
+			$file = $prefix."_".$modele.".modules.php";
 
-        // On verifie l'emplacement du modele
-        $file = dol_buildpath($dir.'pdf/'.$file);	// TODO rename into doc/
-
-        if (file_exists($file))
-	    {
-	        $filefound=1;
-	        $classname=$prefix.'_'.$modele;
-	        break;
-	    }
+			// On verifie l'emplacement du modele
+			$file=dol_buildpath($reldir."core/modules/supplier_invoice/pdf/".$file,0);
+			if (file_exists($file))
+			{
+				$filefound=1;
+				$classname=$prefix.'_'.$modele;
+				break;
+			}
+		}
+		if ($filefound) break;
 	}
 
 	// Charge le modele
@@ -134,14 +139,14 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs)
 			// we delete preview files
         	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 			dol_delete_preview($object);
-			
+
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('BILL_BUILDDOC',$object,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
-			
+
 			return 1;
 		}
 		else

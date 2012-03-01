@@ -222,6 +222,42 @@ function getEntity($element=false, $shared=false)
 }
 
 /**
+ * Return information about user browser
+ *
+ * @return	array		Array of information ('browsername'=>,'browseros'=>,'phone'=>,'browserfirefox'=>)
+ */
+function getBrowserInfo()
+{
+    $name='unknown'; $version=''; $os='unknown'; $phone='';
+
+    // If phone/smartphone, we set phone os name.
+    if (preg_match('/android/i',$_SERVER["HTTP_USER_AGENT"]))			{ $os=$phone='android'; }
+    elseif (preg_match('/blackberry/i',$_SERVER["HTTP_USER_AGENT"]))	{ $os=$phone='blackberry'; }
+    elseif (preg_match('/iphone/i',$_SERVER["HTTP_USER_AGENT"]))		{ $os='ios'; $phone='iphone'; }
+    elseif (preg_match('/ipod/i',$_SERVER["HTTP_USER_AGENT"]))			{ $os='ios'; $phone='iphone'; }
+    elseif (preg_match('/palm/i',$_SERVER["HTTP_USER_AGENT"]))			{ $os=$phone='palm'; }
+    elseif (preg_match('/symbian/i',$_SERVER["HTTP_USER_AGENT"]))		{ $os='symbian'; $phone='unknown'; }
+    elseif (preg_match('/webos/i',$_SERVER["HTTP_USER_AGENT"]))			{ $os='webos'; $phone='unknown'; }
+    elseif (preg_match('/maemo/i',$_SERVER["HTTP_USER_AGENT"]))			{ $os='maemo'; $phone='unknown'; }
+    // MS products at end
+    elseif (preg_match('/iemobile/i',$_SERVER["HTTP_USER_AGENT"]))		{ $os='windows'; $phone='unkown'; }
+    elseif (preg_match('/windows ce/i',$_SERVER["HTTP_USER_AGENT"]))	{ $os='windows'; $phone='unkown'; }
+    // Name
+    if (preg_match('/firefox(\/|\s)([\d\.]*)/i',    $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='firefox';   $version=$reg[2]; }
+    elseif (preg_match('/chrome(\/|\s)([\d\.]+)/i', $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='chrome';    $version=$reg[2]; }    // we can have 'chrome (Mozilla...) chrome x.y' in one string
+    elseif (preg_match('/chrome/i',                 $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='chrome'; }
+    elseif (preg_match('/iceweasel/i',$_SERVER["HTTP_USER_AGENT"]))                      { $name='iceweasel'; $version=$reg[2]; }
+    elseif ((empty($phone) || preg_match('/iphone/i',$_SERVER["HTTP_USER_AGENT"])) && preg_match('/safari(\/|\s)([\d\.]*)/i',$_SERVER["HTTP_USER_AGENT"], $reg)) { $name='safari'; $version=$reg[2]; }	// Safari is often present in string for mobile but its not.
+    elseif (preg_match('/opera(\/|\s)([\d\.]*)/i',  $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='opera';     $version=$reg[2]; }
+    elseif (preg_match('/msie(\/|\s)([\d\.]*)/i',   $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='ie';        $version=$reg[2]; }    // MS products at end
+    // Other
+    $firefox=0;
+    if (in_array($name,array('firefox','iceweasel'))) $firefox=1;
+
+    return array('browsername'=>$name, 'browserversion'=>$version, 'browseros'=>$os, 'phone'=>$phone, 'browserfirefox'=>$firefox);
+}
+
+/**
  *  Function called at end of web php process
  *
  *  @return	void
@@ -1363,23 +1399,6 @@ function dol_print_address($address, $htmlid, $mode, $id)
         if ($showmap)
         {
             $url=dol_buildpath('/google/gmaps.php?mode='.$mode.'&id='.$id,1);
-            /*    print ' <img id="'.$htmlid.'" src="'.DOL_URL_ROOT.'/theme/common/gmap.png">';
-             print '<script type="text/javascript">
-             $(\'#gmap\').css(\'cursor\',\'pointer\');
-             $(\'#gmap\').click(function() {
-             $( \'<div>\').dialog({
-             modal: true,
-             open: function ()
-             {
-             $(this).load(\''.$url.'\');
-             },
-             height: 400,
-             width: 600,
-             title: \'GMap\'
-             });
-             });
-             </script>
-             '; */
             print ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
         }
     }
@@ -2741,16 +2760,20 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 }
 
 /**
- *	Return localtaxe rate for a particular tva
+ *	Return localtaxe rate for a particular vat
  *
  * 	@param	float		$tva			        Vat taxe
- * 	@param  int			$local		         	Local taxe to search and return
+ * 	@param  int			$local		         	Local tax to search and return (1 or 2)
  *  @param  Societe		$societe_acheteuse    	Object of buying third party
  * 	@return	int				   					0 if not found, localtax if found
  */
 function get_localtax($tva, $local, $societe_acheteuse="")
 {
     global $db, $conf, $mysoc;
+
+    // TODO Can we uncomment this ?
+    //if ($local == 1 && empty($conf->global->FACTURE_LOCAL_TAX1_OPTION)) return;
+    //if ($local == 2 && empty($conf->global->FACTURE_LOCAL_TAX2_OPTION)) return;
 
     $code_pays=$mysoc->pays_code;
 
@@ -2766,7 +2789,6 @@ function get_localtax($tva, $local, $societe_acheteuse="")
     $sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
     $sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$code_pays."'";
     $sql .= " AND t.taux = ".$tva." AND t.active = 1";
-    $sql .= " ORDER BY t.localtax1 ASC, t.localtax2 ASC";
 
     $resql=$db->query($sql);
     if ($resql)

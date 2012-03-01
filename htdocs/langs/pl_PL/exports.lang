@@ -131,3 +131,13 @@ SourceRequired=Wartość danych jest obowiązkowe
 SourceExample=Przykład możliwych wartości danych
 CSVFormatDesc=Format pliku <b>oddzielonych przecinkami jakości</b> (. Csv). <br> Jest to format pliku tekstowego, gdzie pola oddzielone są separatorem [%s]. Jeśli wewnątrz znajduje się separator zawartości pola, jest zaokrąglona przez cały charakter [%s]. Ucieczka do charakteru uciec charakter rundy [%s].
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:53:25).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+FileWasImported=Plik został przywieziony z <b>%s</b> numerycznych.
+DataComeFromIdFoundFromCodeId=Kod, który pochodzi z <b>%s</b> liczba terenowych pliku źródłowego zostaną użyte, by znaleźć identyfikator obiektu nadrzędnego do korzystania (So kod z pliku źródłowego musi istnieje w dictionnary <b>%s).</b> Zauważ, że jeśli wiesz, id, można też użyć go do pliku źródłowego zamiast kodu. Import powinien działać w obu przypadkach.
+DataCodeIDSourceIsInsertedInto=Id linii macierzystej znaleźć z kodem, zostaną włączone do następnego pola:
+ExampleAnyRefFoundIntoElement=Wszelkie ref dla <b>%s</b> elementów
+ExampleAnyCodeOrIdFoundIntoDictionnary=Każdy kod (lub id) stwierdzono w dictionnary <b>%s</b>
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:19:22).

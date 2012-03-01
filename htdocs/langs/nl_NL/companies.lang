@@ -376,3 +376,17 @@ Subsidiary=Dochteronderneming
 Subsidiaries=Dochterondernemingen
 NoSubsidiary=Geen dochteronderneming
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 02:37:41).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
+// Reference language: en_US -> nl_NL
+CountryId=Land-ID
+#ProfId1BR=CNAE
+#ProfId2BR=CNPJ
+#ProfId3BR=CPF
+#ProfId4BR=INSS
+#ProfId5BR=IE
+#ProfId6BR=IM
+EditContact=Bewerk contact / adres
+ImportDataset_company_2=Contacten (van thirdparties of niet) en attributen
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:12:47).

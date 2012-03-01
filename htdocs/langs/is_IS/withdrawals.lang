@@ -83,3 +83,28 @@ LastWithdrawalReceipt=Last %s  afturkalla kvittunum
 MakeWithdrawRequest=Gerðu afturkalla beiðni
 ThirdPartyBankCode=Í þriðja aðila bankakóði
 // STOP - Lines generated via autotranslator.php tool (2010-07-10 01:20:00).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+NbOfInvoiceToWithdrawWithInfo=Nb af reikningi með afturkalla beiðni um viðskiptavini sem hafa skilgreint upplýsingar um bankareikning
+StatusTrans=Senda
+PleaseSelectCustomerBankBANToWithdraw=Veldu upplýsingar um viðskiptavini bankareikning til að taka
+WithBankUsingRIB=Fyrir bankareikninga með RIB
+WithBankUsingBANBIC=Fyrir bankareikninga með IBAN / BIC / Swift
+BankToReceiveWithdraw=Bankareikning til að fá hættir
+CreditDate=Útlán á
+WithdrawalFileNotCapable=Ekki er hægt að búa til fráhvarfs kvittunar skrá fyrir þínu landi
+ShowWithdraw=Sýna Dragið
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Hins vegar, ef reikningur hefur að minnsta kosti einn hætt greiðslu ekki enn afgreidd, mun það ekki vera eins og borgað til að leyfa að stjórna afturköllun áður.
+DoStandingOrdersBeforePayments=Þetta tabs leyfa þér að biðja fyrir standandi röð. Þegar það verður lokið, getur þú slegið greiðslu til loka reikning.
+InfoCreditSubject=Greiðsla standa röð %s af bankanum
+InfoCreditMessage=Það stendur til %s hefur verið greitt af bankanum <br> Gögn um greiðslu: %s
+InfoTransSubject=Sending standa röð %s í bankann
+InfoTransMessage=Það stendur til %s hefur verið transmited í bankann með %s %s. <br><br>
+InfoTransData=Upphæð: %s <br> Metode: %s <br> Date: %s
+InfoFoot=Þetta er sjálfvirkt skilaboð send með Dolibarr
+InfoRejectSubject=Standandi þess neitaði
+InfoRejectMessage=Halló, <br><br> að standig þess reiknings %s tengjast félaginu %s, með fjárhæð %s hefur verið hafnað af bankanum. <br><br> - <br> % $
+ModeWarning=Valkostur fyrir alvöru ham var ekki sett, að hætta við eftir þessa uppgerð
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:54).

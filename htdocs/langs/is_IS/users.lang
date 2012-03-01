@@ -117,3 +117,14 @@ NameToCreate=Nafn þriðja aðila til að stofna
 YourRole=hlutverk þín
 YourQuotaOfUsersIsReached=kvóta þinn af virkum notendum er náð!
 // STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+AdministratorDesc=Stjórnandi aðila
+UserWillBeInternalUser=Búið notandi vilja vera innri notanda (vegna þess að ekki tengd við ákveðna þriðja aðila)
+UserWillBeExternalUser=Búið notandi vilja vera ytri notandi (vegna þess að tengjast ákveðnum þriðja aðila)
+UserLogoff=Notandi %s Útskráning
+NbOfUsers=Nb notendur
+DontDowngradeSuperAdmin=Aðeins superadmin getur lækkunar a superadmin
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:40).

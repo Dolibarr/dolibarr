@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-10 00:10:12
  */
@@ -83,3 +83,14 @@ Rendez-Vous=Treffen
 AddActionRendezVous=Treffen anlegen
 ActionAC_SUP_ORD=Sende Lieferantenbestellung per Post
 ActionAC_SUP_INV=Sende Lieferantenrechnung per Post
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+StatusNotApplicable=Nicht anwendbar
+ActionAC_SHIP=Versand per Post senden
+ActionAC_OTH=Andere
+StatusProsp=Prospect-Status
+DraftPropals=Entwurf des Handelsgesetzbuchs Vorschläge
+SearchPropal=Suchen Sie eine kommerzielle Vorschlag
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:54).

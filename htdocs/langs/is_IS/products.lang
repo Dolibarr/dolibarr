@@ -176,3 +176,15 @@ ProductStatusNotOnBuy=Úrelt
 ProductStatusOnBuyShort=Laus
 ProductStatusNotOnBuyShort=Úrelt
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:13).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+ParentProductsNumber=Fjöldi vara foreldra
+ProductParentList=Listi yfir vörur og þjónustu með þessa vöru sem hluti
+ImportDataset_produit_1=Vörur
+ImportDataset_service_1=Þjónusta
+CustomCode=Tollareglna
+CountryOrigin=Uppruni land
+HiddenIntoCombo=Falinn í að velja lista
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:49).

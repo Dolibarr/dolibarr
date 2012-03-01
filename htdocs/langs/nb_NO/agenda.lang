@@ -52,3 +52,33 @@ AgendaHideBirthdayEvents=Skjul fødselsdager
 // Reference language: en_US
 InterventionValidatedInDolibarr=Intervensjon %s validert
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:42:53).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+LocalAgenda=Lokal kalender
+MyEvents=Mine hendelser
+OtherEvents=Andre arrangementer
+EventOnFullDay=Event på full dag
+ViewDay=Dagsvisning
+ViewWeek=Ukesvisning
+AgendaExtSitesDesc=Denne siden lar deg erklære eksterne kilder til kalendere for å se sine arrangementer inn Dolibarr agenda.
+InvoiceBackToDraftInDolibarr=Faktura %s gå tilbake til utkast status
+OrderApprovedInDolibarr=Bestill %s godkjent
+OrderBackToDraftInDolibarr=Bestill %s gå tilbake til utkast status
+OrderCanceledInDolibarr=Bestill %s kansellert
+ProposalSentByEMail=Kommersielle forslag %s på e-post
+OrderSentByEMail=Kundeordrer %s på e-post
+InvoiceSentByEMail=Faktura %s på e-post
+SupplierOrderSentByEMail=Leverandør bestill %s på e-post
+SupplierInvoiceSentByEMail=Leverandørfaktura %s på e-post
+ShippingSentByEMail=Frakt %s på e-post
+InterventionSentByEMail=Intervensjon %s på e-post
+ExportCal=Eksporter kalender
+ExtSites=Importer eksterne kalendere
+ExtSitesEnableThisTool=Vis eksterne kalendere til agenda
+ExtSitesNbOfAgenda=Antall kalendere
+AgendaExtNb=Kalender nb %s
+ExtSiteUrlAgenda=URL tilgang til. ICal-fil
+ExtSiteNoLabel=Ingen beskrivelse
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:09:10).

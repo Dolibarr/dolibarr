@@ -98,3 +98,30 @@ ErrorLoginHasNoEmail=Þessi notandi hefur ekki netfang. Aðferð aflýst.
 ErrorBadValueForCode=Bad gerðir gildi fyrir kóða. Prófaðu aftur með nýtt gildi ...
 WarningInstallDirExists=Aðvörun, setja í embætti skrá <b>(htdocs / setja í embætti)</b> enn til staðar. Þetta er alvarlegur öryggi gat. Þú ættir að fjarlægja það eins fljótt og auðið er.
 WarningUntilDirRemoved=Öll öryggi viðvaranir (sýnileg notendum admin eingöngu) verða áfram virkur eins lengi og varnarleysi er til staðar (eða þessi fasti MAIN_REMOVE_INSTALL_WARNING er bætt í Uppsetning-> Annað skipulag).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+ErrorFailToCopyFile=Mistókst að afrita skrá <b>'%s'</b> í 'á <b>%s</b> &quot;.
+ErrorFailToRenameFile=Ekki tókst að endurnefna skrána 'á <b>%s'</b> í 'á <b>%s</b> &quot;.
+ErrorBadValueForParameter=Rangt gildi '%s &quot;fyrir breytu rangt að' %s að '
+ErrorBadImageFormat=Mynd skrá hefur ekki studdur snið
+ErrorBadDateFormat='Á %s' gildi hefur rangt snið dagsetningar
+ErrorSizeTooLongForIntType=Stærð of lengi fyrir int tegund (%s tölustafir hámark)
+ErrorSizeTooLongForVarcharType=Stærð of lengi fyrir gerð band (%s stafir hámark)
+ErrorContactEMail=Tæknilegt villa kom upp. Vinsamlegast hafðu samband við kerfisstjóra til að fylgja email <b>%s</b> en veita merkjamál villa <b>%s</b> í skilaboðin, eða jafnvel enn betri með því að bæta skjár afrit af þessari síðu.
+ErrorFieldValueNotIn=Rangt gildi fyrir sviði númer <b>%s ('%s</b> &quot;gildi er ekki gildi í boði í <b>​​%s</b> svið <b>%s</b> borð)
+ErrorFieldRefNotIn=Rangt gildi fyrir sviði númer <b>%s</b> ('á <b>%s</b> &quot;gildi er ekki <b>%s</b> núverandi dómari)
+ErrorModuleSetupNotComplete=Skipulag á einingu lítur út fyrir að vera uncomplete. Fara á skipulag - einingar til að ljúka.
+ErrorBadMask=Villa á grímu
+ErrorBadMaskFailedToLocatePosOfSequence=Villa, gríma án fjölda röð
+ErrorBadMaskBadRazMonth=Villa, slæmt endurstilla gildi
+ErrorSelectAtLeastOne=Villa. Veldu amk eina færslu.
+ErrorProductWithRefNotExist=Vara við 'á <i>%s'</i> tilvísanir eru ekki til
+ErrorDeleteNotPossibleLineIsConsolidated=Eyða ekki hægt vegna þess að færsla er tengd við banka transation sem er conciliated
+ErrorProdIdAlreadyExist=%s er úthlutað til annars þriðja
+ErrorFailedToLoadRSSFile=Ekki til að fá RSS straum. Reyndu að bæta stöðugt MAIN_SIMPLEXMLLOAD_DEBUG ef villuskilaboð veitir ekki nægar upplýsingar.
+ErrorBothFieldCantBeNegative=Fields %s og %s getur ekki verið bæði neikvæð
+ErrorWebServerUserHasNotPermission=Notandi Reikningur <b>%s</b> notað til að framkvæma vefur framreiðslumaður hefur ekki leyfi til að
+ErrorNoActivatedBarcode=Nei barcode gerð virk
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:27:00).

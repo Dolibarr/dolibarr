@@ -36,7 +36,10 @@ $langs->load("errors");
 $langs->load("admin");
 $langs->load("companies");
 
-$action=GETPOST('action')?GETPOST('action'):'view';
+$action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
+$confirm=GETPOST('confirm','alpha');
+$id=GETPOST('id','int');
+$rowid=GETPOST('rowid','int');
 
 if (!$user->admin) accessforbidden();
 
@@ -296,7 +299,7 @@ complete_dictionnary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort
 // Define elementList and sourceList (used for dictionnary "type of contacts")
 $elementList = array();
 $sourceList=array();
-if (GETPOST('id','int') == 11)
+if ($id == 11)
 {
     $langs->load("orders");
     $langs->load("contracts");
@@ -326,10 +329,10 @@ $msg='';
  */
 if ($_POST["actionadd"] || $_POST["actionmodify"])
 {
-    $listfield=explode(',',$tabfield[$_POST["id"]]);
-    $listfieldinsert=explode(',',$tabfieldinsert[$_POST["id"]]);
-    $listfieldmodify=explode(',',$tabfieldinsert[$_POST["id"]]);
-    $listfieldvalue=explode(',',$tabfieldvalue[$_POST["id"]]);
+    $listfield=explode(',',$tabfield[$id]);
+    $listfieldinsert=explode(',',$tabfieldinsert[$id]);
+    $listfieldmodify=explode(',',$tabfieldinsert[$id]);
+    $listfieldvalue=explode(',',$tabfieldvalue[$id]);
 
     // Check that all fields are filled
     $ok=1;
@@ -355,7 +358,7 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
         }
     }
     // Autres verif
-    if ($tabname[$_POST["id"]] == MAIN_DB_PREFIX."c_actioncomm" && isset($_POST["type"]) && $_POST["type"]=='system') {
+    if ($tabname[$id] == MAIN_DB_PREFIX."c_actioncomm" && isset($_POST["type"]) && $_POST["type"]=='system') {
         $ok=0;
         $msg.="Value 'system' for type is reserved. You can use 'user' as value to add your own record.<br>";
     }
@@ -371,11 +374,11 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
     // Si verif ok et action add, on ajoute la ligne
     if ($ok && $_POST["actionadd"])
     {
-        if ($tabrowid[$_POST["id"]])
+        if ($tabrowid[$id])
         {
             // Recupere id libre pour insertion
             $newid=0;
-            $sql = "SELECT max(".$tabrowid[$_POST["id"]].") newid from ".$tabname[$_POST["id"]];
+            $sql = "SELECT max(".$tabrowid[$id].") newid from ".$tabname[$id];
             $result = $db->query($sql);
             if ($result)
             {
@@ -388,20 +391,25 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
         }
 
         // Add new entry
-        $sql = "INSERT INTO ".$tabname[$_POST["id"]]." (";
+        $sql = "INSERT INTO ".$tabname[$id]." (";
         // List of fields
-        if ($tabrowid[$_POST["id"]] &&
-        ! in_array($tabrowid[$_POST["id"]],$listfieldinsert)) $sql.= $tabrowid[$_POST["id"]].",";
-        $sql.= $tabfieldinsert[$_POST["id"]];
+        if ($tabrowid[$id] &&
+        ! in_array($tabrowid[$id],$listfieldinsert)) $sql.= $tabrowid[$id].",";
+        $sql.= $tabfieldinsert[$id];
         $sql.=",active)";
         $sql.= " VALUES(";
         // List of values
-        if ($tabrowid[$_POST["id"]] &&
-        ! in_array($tabrowid[$_POST["id"]],$listfieldinsert)) $sql.= $newid.",";
+        if ($tabrowid[$id] &&
+        ! in_array($tabrowid[$id],$listfieldinsert)) $sql.= $newid.",";
         $i=0;
         foreach ($listfieldinsert as $f => $value)
         {
-            if ($value == 'price') { $_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU'); }
+            if ($value == 'price' || preg_match('/^amount/i',$value)) {
+            	$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU');
+            }
+            else if ($value == 'entity') {
+            	$_POST[$listfieldvalue[$i]] = $conf->entity;
+            }
             if ($i) $sql.=",";
             if ($_POST[$listfieldvalue[$i]] == '') $sql.="null";
             else $sql.="'".$db->escape($_POST[$listfieldvalue[$i]])."'";
@@ -413,7 +421,7 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
         $result = $db->query($sql);
         if ($result)	// Add is ok
         {
-            $oldid=$_POST["id"];
+            $oldid=$id;
             $_POST=array('id'=>$oldid);	// Clean $_POST array, we keep only
             $_GET["id"]=$_POST["id"];   // Force affichage dictionnaire en cours d'edition
         }
@@ -431,28 +439,33 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
     // Si verif ok et action modify, on modifie la ligne
     if ($ok && $_POST["actionmodify"])
     {
-        if ($tabrowid[$_POST["id"]]) { $rowidcol=$tabrowid[$_POST["id"]]; }
+        if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
         else { $rowidcol="rowid"; }
 
         // Modify entry
-        $sql = "UPDATE ".$tabname[$_POST["id"]]." SET ";
+        $sql = "UPDATE ".$tabname[$id]." SET ";
         // Modifie valeur des champs
-        if ($tabrowid[$_POST["id"]] && !in_array($tabrowid[$_POST["id"]],$listfieldmodify))
+        if ($tabrowid[$id] && !in_array($tabrowid[$id],$listfieldmodify))
         {
-            $sql.= $tabrowid[$_POST["id"]]."=";
-            $sql.= "'".$db->escape($_POST["rowid"])."', ";
+            $sql.= $tabrowid[$id]."=";
+            $sql.= "'".$db->escape($rowid)."', ";
         }
         $i = 0;
         foreach ($listfieldmodify as $field)
         {
-            if ($field == 'price') { $_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU'); }
+            if ($field == 'price' || preg_match('/^amount/i',$field)) {
+            	$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU');
+            }
+            else if ($field == 'entity') {
+            	$_POST[$listfieldvalue[$i]] = $conf->entity;
+            }
             if ($i) $sql.=",";
             $sql.= $field."=";
             if ($_POST[$listfieldvalue[$i]] == '') $sql.="null";
             else $sql.="'".$db->escape($_POST[$listfieldvalue[$i]])."'";
             $i++;
         }
-        $sql.= " WHERE ".$rowidcol." = '".$_POST["rowid"]."'";
+        $sql.= " WHERE ".$rowidcol." = '".$rowid."'";
 
         dol_syslog("actionmodify sql=".$sql);
         //print $sql;
@@ -472,12 +485,12 @@ if ($_POST["actioncancel"])
     $_GET["id"]=$_POST["id"];       // Force affichage dictionnaire en cours d'edition
 }
 
-if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')       // delete
+if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 {
-    if ($tabrowid[$_GET["id"]]) { $rowidcol=$tabrowid[$_GET["id"]]; }
+    if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
     else { $rowidcol="rowid"; }
 
-    $sql = "DELETE from ".$tabname[$_GET["id"]]." WHERE ".$rowidcol."='".$_GET["rowid"]."'";
+    $sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol."='".$rowid."'";
 
     dol_syslog("delete sql=".$sql);
     $result = $db->query($sql);
@@ -494,16 +507,16 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')   
     }
 }
 
-if ($_GET["action"] == $acts[0])       // activate
+if ($action == $acts[0])       // activate
 {
-    if ($tabrowid[$_GET["id"]]) { $rowidcol=$tabrowid[$_GET["id"]]; }
+    if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
     else { $rowidcol="rowid"; }
 
-    if ($_GET["rowid"]) {
-        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 1 WHERE ".$rowidcol."='".$_GET["rowid"]."'";
+    if ($rowid) {
+        $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE ".$rowidcol."='".$rowid."'";
     }
     elseif ($_GET["code"]) {
-        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 1 WHERE code='".$_GET["code"]."'";
+        $sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".$_GET["code"]."'";
     }
 
     $result = $db->query($sql);
@@ -513,16 +526,16 @@ if ($_GET["action"] == $acts[0])       // activate
     }
 }
 
-if ($_GET["action"] == $acts[1])       // disable
+if ($action == $acts[1])       // disable
 {
-    if ($tabrowid[$_GET["id"]]) { $rowidcol=$tabrowid[$_GET["id"]]; }
+    if ($tabrowid[$id]) { $rowidcol=$tabrowid[$id]; }
     else { $rowidcol="rowid"; }
 
-    if ($_GET["rowid"]) {
-        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 0 WHERE ".$rowidcol."='".$_GET["rowid"]."'";
+    if ($rowid) {
+        $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE ".$rowidcol."='".$rowid."'";
     }
     elseif ($_GET["code"]) {
-        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 0 WHERE code='".$_GET["code"]."'";
+        $sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".$_GET["code"]."'";
     }
 
     $result = $db->query($sql);
@@ -544,14 +557,14 @@ llxHeader();
 
 $titre=$langs->trans("DictionnarySetup");
 $linkback='';
-if ($_GET["id"])
+if ($id)
 {
-    $titre.=' - '.$langs->trans($tablib[$_GET["id"]]);
+    $titre.=' - '.$langs->trans($tablib[$id]);
     $linkback='<a href="'.DOL_URL_ROOT.'/admin/dict.php">'.$langs->trans("BackToDictionnaryList").'</a>';
 }
 print_fiche_titre($titre,$linkback,'setup');
 
-if (empty($_GET["id"]))
+if (empty($id))
 {
     print $langs->trans("DictionnaryDesc");
     print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
@@ -562,21 +575,21 @@ print "<br>\n";
 /*
  * Confirmation de la suppression de la ligne
  */
-if ($_GET['action'] == 'delete')
+if ($action == 'delete')
 {
-    $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$_GET["rowid"].'&code='.$_GET["code"].'&id='.$_GET["id"], $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
+    $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$_GET["code"].'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete','',0,1);
     if ($ret == 'html') print '<br>';
 }
 
 /*
  * Show a dictionnary
  */
-if ($_GET["id"])
+if ($id)
 {
     dol_htmloutput_mesg($msg);
 
     // Complete requete recherche valeurs avec critere de tri
-    $sql=$tabsql[$_GET["id"]];
+    $sql=$tabsql[$id];
     if ($_GET["sortfield"])
     {
         // If sort order is "pays", we use pays_code instead
@@ -588,29 +601,29 @@ if ($_GET["id"])
         }
         $sql.=", ";
         // Remove from default sort order the choosed order
-        $tabsqlsort[$_GET["id"]]=preg_replace('/'.$_GET["sortfield"].' '.$_GET["sortorder"].',/i','',$tabsqlsort[$_GET["id"]]);
-        $tabsqlsort[$_GET["id"]]=preg_replace('/'.$_GET["sortfield"].',/i','',$tabsqlsort[$_GET["id"]]);
+        $tabsqlsort[$id]=preg_replace('/'.$_GET["sortfield"].' '.$_GET["sortorder"].',/i','',$tabsqlsort[$id]);
+        $tabsqlsort[$id]=preg_replace('/'.$_GET["sortfield"].',/i','',$tabsqlsort[$id]);
     }
     else {
         $sql.=" ORDER BY ";
     }
-    $sql.=$tabsqlsort[$_GET["id"]];
+    $sql.=$tabsqlsort[$id];
     $sql.=$db->plimit($listlimit+1,$offset);
     //print $sql;
 
-    $fieldlist=explode(',',$tabfield[$_GET["id"]]);
+    $fieldlist=explode(',',$tabfield[$id]);
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="noborder" width="100%">';
 
     // Form to add a new line
-    if ($tabname[$_GET["id"]])
+    if ($tabname[$id])
     {
         $alabelisused=0;
         $var=false;
 
-        $fieldlist=explode(',',$tabfield[$_GET["id"]]);
+        $fieldlist=explode(',',$tabfield[$id]);
         //        print '<table class="noborder" width="100%">';
 
         // Line for title
@@ -652,7 +665,7 @@ if ($_GET["id"])
                 if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') $alabelisused=1;
         }
         print '<td colspan="3">';
-        print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+        print '<input type="hidden" name="id" value="'.$id.'">';
         print '&nbsp;</td>';
         print '</tr>';
 
@@ -702,7 +715,7 @@ if ($_GET["id"])
             if ($num > $listlimit)
             {
                 print '<tr class="none"><td align="right" colspan="'.(3+count($fieldlist)).'">';
-                print_fleche_navigation($page,$_SERVER["PHP_SELF"],'&id='.GETPOST('id','int'),($num > $listlimit),$langs->trans("Page").' '.($page+1));
+                print_fleche_navigation($page,$_SERVER["PHP_SELF"],'&id='.$id,($num > $listlimit),$langs->trans("Page").' '.($page+1));
                 print '</td></tr>';
             }
 
@@ -737,10 +750,10 @@ if ($_GET["id"])
                 // Affiche nom du champ
                 if ($showfield)
                 {
-                    print_liste_field_titre($valuetoshow,"dict.php",$fieldlist[$field],($page?'page='.$page.'&':'').'&id='.GETPOST('id','int'),"","",$sortfield,$sortorder);
+                    print_liste_field_titre($valuetoshow,"dict.php",$fieldlist[$field],($page?'page='.$page.'&':'').'&id='.$id,"","",$sortfield,$sortorder);
                 }
             }
-            print_liste_field_titre($langs->trans("Status"),"dict.php","active",($page?'page='.$page.'&':'').'&id='.GETPOST('id','int'),"",'align="center"',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("Status"),"dict.php","active",($page?'page='.$page.'&':'').'&id='.$id,"",'align="center"',$sortfield,$sortorder);
             print '<td colspan="2"  class="liste_titre">&nbsp;</td>';
             print '</tr>';
 
@@ -752,20 +765,20 @@ if ($_GET["id"])
                 //print_r($obj);
                 print "<tr ".$bc[$var].">";
 
-                if ($action == 'edit' && ($_GET["rowid"] == ($obj->rowid?$obj->rowid:$obj->code)))
+                if ($action == 'edit' && ($rowid == ($obj->rowid?$obj->rowid:$obj->code)))
                 {
                     print '<form action="dict.php" method="post">';
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-                    print '<input type="hidden" name="id" value="'.GETPOST('id','int').'">';
+                    print '<input type="hidden" name="id" value="'.$id.'">';
                     print '<input type="hidden" name="page" value="'.$page.'">';
-                    print '<input type="hidden" name="rowid" value="'.$_GET["rowid"].'">';
+                    print '<input type="hidden" name="rowid" value="'.$rowid.'">';
                     
                     $tmpaction='edit';
-                    $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$_GET["id"]]);
+                    $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
                     $reshook=$hookmanager->executeHooks('editDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
                     
-                    if (empty($reshook)) fieldList($fieldlist,$obj,$tabname[$_GET["id"]]);
+                    if (empty($reshook)) fieldList($fieldlist,$obj,$tabname[$id]);
                     
                     print '<td colspan="3" align="right"><a name="'.($obj->rowid?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
                     print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
@@ -773,7 +786,7 @@ if ($_GET["id"])
                 else
                 {
                     $tmpaction = 'view';
-                    $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$_GET["id"]]);
+                    $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
                     $reshook=$hookmanager->executeHooks('viewDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
                     
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
@@ -801,7 +814,7 @@ if ($_GET["id"])
                             else if ($fieldlist[$field]=='recuperableonly' || $fieldlist[$field]=='fdm') {
                                 $valuetoshow=yn($valuetoshow);
                             }
-                            else if ($fieldlist[$field]=='price') {
+                            else if ($fieldlist[$field]=='price' || preg_match('/^amount/i',$fieldlist[$field])) {
                                 $valuetoshow=price($valuetoshow);
                             }
                             else if ($fieldlist[$field]=='libelle_facture') {
@@ -882,16 +895,16 @@ if ($_GET["id"])
                     if (isset($obj->code) && $obj->code == 'EF0') $iserasable=0;
                     if ($obj->type && $obj->type == 'system') $iserasable=0;
 
-                    if ($iserasable) print '<a href="'.$_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
+                    if ($iserasable) print '<a href="'.$_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$id.'&amp;action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
                     else print $langs->trans("AlwaysActive");
                     print "</td>";
 
                     // Modify link
-                    if ($iserasable) print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=edit#'.($obj->rowid?$obj->rowid:$obj->code).'">'.img_edit().'</a></td>';
+                    if ($iserasable) print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$id.'&amp;action=edit#'.($obj->rowid?$obj->rowid:$obj->code).'">'.img_edit().'</a></td>';
                     else print '<td>&nbsp;</td>';
                     
                     // Delete link
-                    if ($iserasable) print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=delete">'.img_delete().'</a></td>';
+                    if ($iserasable) print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$id.'&amp;action=delete">'.img_delete().'</a></td>';
                     else print '<td>&nbsp;</td>';
 
                     print "</tr>\n";
@@ -1045,7 +1058,7 @@ function fieldList($fieldlist,$obj='',$tabname='')
         elseif ($fieldlist[$field] == 'libelle_facture') {
             print '<td><textarea cols="30" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.$obj->$fieldlist[$field].'</textarea></td>';
         }
-        elseif ($fieldlist[$field] == 'price') {
+        elseif ($fieldlist[$field] == 'price' || preg_match('/^amount/i',$fieldlist[$field])) {
             print '<td><input type="text" class="flat" value="'.price($obj->$fieldlist[$field]).'" size="8" name="'.$fieldlist[$field].'"></td>';
         }
         elseif ($fieldlist[$field] == 'code') {

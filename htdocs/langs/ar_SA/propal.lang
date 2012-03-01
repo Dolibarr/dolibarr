@@ -103,3 +103,18 @@ TypeContact_propal_external_BILLING=الزبون فاتورة الاتصال
 TypeContact_propal_external_CUSTOMER=اتصل العملاء اقتراح متابعة
 DocModelRoigDescription=نموذج المقترح الكامل مع الطاقة المتجددة من الضرائب الاسبانية وIRPF
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:17:02).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+ProposalCard=اقتراح بطاقة
+ConfirmReOpenProp=هل أنت متأكد أنك تريد فتح ظهر <b>%s</b> اقتراح التجارية؟
+AvailabilityPeriod=توفر تأخير
+SetAvailability=ضبط تأخير توافر
+AfterOrder=بعد ذلك
+AvailabilityTypeAV_NOW=فوري
+AvailabilityTypeAV_1W=1 أسبوع
+AvailabilityTypeAV_2W=2 أسابيع
+AvailabilityTypeAV_3W=3 أسابيع
+AvailabilityTypeAV_1M=1 شهر
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:58:02).

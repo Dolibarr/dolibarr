@@ -104,3 +104,55 @@ ShowAllAccounts=すべてのアカウントに表示
 FutureTransaction=フューチャーのトランザクション。調停する方法はありません。
 SelectChequeTransactionAndGenerate=チェックの預金証書に含まれると、&quot;作成&quot;をクリックしてチェックをフィルタリング/選択してください。
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 07:14:28).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
+// Reference language: en_US -> ja_JP
+FinancialAccount=アカウント
+FinancialAccounts=アカウント
+BankAccount=預金
+BankAccounts=銀行口座
+AccountRef=金融口座のref
+BalanceMinimalAllowed=最小許容バランス
+BalanceMinimalDesired=必要最小限のバランス
+InitialBankBalance=期首残高
+EndBankBalance=期末残高
+CurrentBalance=経常収支
+FutureBalance=将来のバランス
+AccountStatementShort=ステートメント
+AccountStatements=アカウント文
+LastAccountStatements=前回のアカウントステートメント
+Rapprochement=Reconciliate
+IOMonthlyReporting=月次報告
+BankAccountDomiciliation=アカウントのアドレス
+NewSavingAccount=新しい普通預金口座
+NewCashAccount=新しい現金勘定
+EditFinancialAccount=アカウントを編集する
+AccountSetup=金融勘定設定
+SearchBankMovement=検索銀行の動き
+ConfirmDeleteAccount=このアカウントを削除してもよろしいですか？
+Account=アカウント
+ByCategories=種類
+ByRubriques=種類
+BankTransactionByCategories=種類の銀行取引
+BankTransactionForCategory=カテゴリ<b>%s</b>ための銀行取引
+Conciliate=調整する
+Conciliation=和解
+ConciliationForAccount=このアカウントを調整する
+IncludeClosedAccount=閉じたアカウントを含める
+OnlyOpenedAccount=唯一開かれたアカウント
+AccountToCredit=クレジットのアカウント
+ConciliatedBy=による和解
+DateConciliating=日付を調整する
+BankLineConciliated=トランザクション調整
+TransferFromToDone=<b>%s %s</b> %sからの<b>%s</b>への転送が記録されています。
+CheckTransmitter=トランスミッタ
+ValidateCheckReceipt=このチェックの領収書を検証する？
+ConfirmValidateCheckReceipt=これが完了するとあなたは、このチェックの領収書を検証してもよろしいですが、変更は可能ではないでしょうか？
+DeleteCheckReceipt=このチェックのレシートを削除しますか？
+ConfirmDeleteCheckReceipt=このチェックの領収書を削除してもよろしいですか？
+Graph=グラフィックス
+ExportDataset_banque_1=銀行取引と口座明細書
+TransactionOnTheOtherAccount=他のアカウントでのトランザクション
+TransactionWithOtherAccount=口座振替
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:41:59).

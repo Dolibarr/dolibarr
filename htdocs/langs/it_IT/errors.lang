@@ -123,3 +123,18 @@ ErrorBadValueForCode=Valore del codice errato. Riprova con un nuovo valore ...
 ErrorFileIsInfectedWith=Questo file è stato infettato da %s
 WarningInstallDirExists=Attenzione, la directory di installazione ( %s) esiste ancora. Questo à un grave buco di sicurezza. Si dovrebbe rimuovere non appena possibile. 
 WarningUntilDirRemoved=Questo avviso rimarrà attivo fino a quando questa directory è presente (disponibile solo per gli utenti admin).  
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+// Reference language: en_US -> it_IT
+ErrorFailToCopyFile=Impossibile copiare il file <b>'%s'</b> in <b>'%s'.</b>
+ErrorBadDateFormat='%s' Value ha un formato della data sbagliata
+ErrorSizeTooLongForIntType=Dimensioni troppo lungo per il tipo int (%s massima cifre)
+ErrorSizeTooLongForVarcharType=Dimensioni troppo lungo per il tipo string (%s caratteri al massimo)
+ErrorFieldRefNotIn=Valore errato per <b>%s</b> numero del campo <b>('%s'</b> valore non è un ref <b>%s</b> esistente)
+ErrorDeleteNotPossibleLineIsConsolidated=Cancellare non è possibile perché record è collegato ad un transation banca che è conciliato
+ErrorProdIdAlreadyExist=%s viene assegnato a un altro terzo
+ErrorFailedToLoadRSSFile=Non riesce a ottenere feed RSS. Provare ad aggiungere MAIN_SIMPLEXMLLOAD_DEBUG costante se i messaggi di errore non fornisce informazioni sufficienti.
+ErrorBothFieldCantBeNegative=%s campi e %s non può essere sia negativo
+ErrorWebServerUserHasNotPermission=Account utente <b>%s</b> utilizzato per eseguire server web non ha il permesso per quella
+ErrorNoActivatedBarcode=Nessun tipo di codice a barre attivato
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:51).

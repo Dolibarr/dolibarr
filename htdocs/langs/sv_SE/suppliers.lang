@@ -44,3 +44,11 @@ AddSupplierInvoice=Skapa leverantörsfaktura
 ListOfSupplierProductForSupplier=Förteckning över produkter och priser för leverantör <b>%s</b>
 NoneOrBatchFileNeverRan=Ingen eller parti <b>%s</b> sprang inte nyligen
 // STOP - Lines generated via autotranslator.php tool (2010-08-27 08:54:26).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+BuyingPriceMin=Lägsta köpkurs
+BuyingPriceMinShort=Min köpkurs
+Availability=Tillgänglighet
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:52).

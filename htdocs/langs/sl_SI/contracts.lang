@@ -91,3 +91,9 @@ TypeContact_contrat_external_BILLING = Kontakt v računovodstvu kupca
 TypeContact_contrat_external_CUSTOMER = Kontakt pri kupcu za sledenje pogodbe
 TypeContact_contrat_external_SALESREPSIGN = Kontakt pri kupcu za podpis pogodbe
 Error_CONTRACT_ADDON_NotDefined = Konstanta CONTRACT_ADDON ni definirana
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+NoExpiredServices=Ni potekla aktivne službe
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:30:25).

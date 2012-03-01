@@ -98,3 +98,13 @@ PersonalStock=%s personale stoc
 ThisWarehouseIsPersonalStock=Acest depozit reprezinta stocul personale ale %s %s
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:36:57).
 
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+SellPriceMin=Preţul de vânzare unitatii
+EstimatedStockValueSellShort=Valoarea de a vinde
+EstimatedStockValueSell=Valoarea de a vinde
+SelectWarehouseForStockDecrease=Alege depozit utilizat pentru scăderea stocului
+SelectWarehouseForStockIncrease=Alege depozit utilizat pentru creşterea stocului
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:31).

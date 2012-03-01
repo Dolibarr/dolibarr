@@ -73,3 +73,10 @@ NoRecordedContacts=Geen geregistreerde contacten
 BoxTitleLastModifiedDonations=Laatst gewijzigd %s donaties
 BoxTitleLastModifiedExpenses=Laatst gewijzigd %s kosten
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 01:44:58).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
+// Reference language: en_US -> nl_NL
+BoxOldestExpiredServices=Oudste actief verlopen diensten
+BoxLastExpiredServices=Laatste %s oudste contacten met actieve verlopen diensten
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:12:01).

@@ -173,3 +173,47 @@ DocForAllMembersCards=Generera visitkort för alla medlemmar (Format för utgån
 DocForOneMemberCards=Generera visitkort för en viss medlem (Format för utgång faktiskt setup: <b>%s)</b>
 DocForLabels=Generera adress ark (Format för utgång faktiskt setup: <b>%s)</b>
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:29:12).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+MembersWithSubscriptionToReceive=Medlemmar med abonnemang för att ta emot
+NewSubscriptionDesc=Denna blankett kan du spela in din prenumeration som en ny medlem i stiftelsen. Om du vill förnya din prenumeration (om du redan är medlem), kontakta styrelsen för stiftelsen i stället av e %s.
+BlankSubscriptionFormDesc=Dolibarr kan ge dig en offentlig URL till tillåta externa besökare att be att prenumerera på stiftelsen. Om en online-betalning modulen är aktiverad, kommer en inbetalningskort även lämnas ut automatiskt.
+EnablePublicSubscriptionForm=Aktivera offentliga auto-anmälningssedel
+ImportDataset_member_1=Medlemmar
+LastSubscriptionsModified=Sista %s modifierad abonnemang
+GlobalConfigUsedIfNotDefined=Text som anges i stiftelsen modulen installationen kommer att användas om inte definieras här
+MayBeOverwrited=Denna text kan overwrited i värde definieras för medlemmens typ
+SubscriptionPayment=Teckning betalning
+LastSubscriptionDate=Senast teckningsdag
+LastSubscriptionAmount=Senast teckningsbelopp
+MembersStatisticsByCountries=Medlemmar statistik per land
+MembersStatisticsByState=Medlemmar statistik från stat / provins
+MembersStatisticsByTowne=Medlemmar statistik per kommun
+NbOfMembers=Antal medlemmar
+NoValidatedMemberYet=Inga godkända medlemmar hittades
+MembersByCountryDesc=Denna skärm visar statistik om medlemmar med länder. Grafisk beror dock på Google online grafen service och är tillgänglig endast om en Internet-anslutning fungerar.
+MembersByStateDesc=Denna skärm visar dig statistik över ledamöter av stat / län / Canton.
+MembersByTownDesc=Denna skärm visar statistik om medlemmar med stan.
+MembersStatisticsDesc=Välj statistik du vill läsa ...
+MenuMembersStats=Statistik
+LastMemberDate=Sista medlemsstaten datum
+Nature=Naturen
+Public=Information är offentliga
+Exports=Export
+NewMemberbyWeb=Ny ledamot till. Väntar på godkännande
+NewMemberForm=Ny medlem formen
+SubscriptionsStatistics=Statistik om abonnemang
+NbOfSubscriptions=Antal abonnemang
+AmountOfSubscriptions=Mängd abonnemang
+TurnoverOrBudget=Omsättning (för ett företag) eller Budget (för en stiftelse)
+DefaultAmount=Standard mängd av abonnemang
+CanEditAmount=Besökare kan välja / redigera del av sin teckning
+MEMBER_NEWFORM_PAYONLINE=Hoppa på integrerad online-betalning sidan
+Associations=Stiftelser
+Collectivités=Organisationer
+Particuliers=Personlig
+Entreprises=Företag
+DOLIBARRFOUNDATION_PAYMENT_FORM=För att göra din prenumeration betalning via en banköverföring, se sidan <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Att betala med kreditkort eller Paypal, klicka på knappen längst ner på denna sida. <br>
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:34:04).

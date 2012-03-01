@@ -163,3 +163,22 @@ AddRemind=Отправка доступная сумма
 RemainToDivide=Оставайтесь на рассылки:
 WarningDepositsNotIncluded=Депозиты счетов не включены в эту версию с этим бухгалтерский учет модуля.
 // STOP - Lines generated via autotranslator.php tool (2011-08-27 16:58:57).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
+// Reference language: en_US -> ru_RU
+LT2SummaryES=IRPF баланс
+LT2PaidES=Платные IRPF
+LT2CustomerES=IRPF продаж
+LT2SupplierES=IRPF покупки
+newLT2PaymentES=Новые IRPF оплаты
+LT2PaymentES=IRPF оплаты
+LT2PaymentsES=IRPF платежей
+DepositsAreNotIncluded=- Депозитные счета-фактуры и не включен
+DepositsAreIncluded=- Депозитные счета включены
+LT2ReportByCustomersInInputOutputModeES=Доклад третьей стороной IRPF
+RulesVATInServices=- Для услуг, отчет включает в себя НДС, правила, фактически полученных и выданных на основании даты платежа. <br> - Для материальных ценностей, она включает в себя счета-фактуры на основе даты выставления счета.
+RulesVATInProducts=- Для материальных ценностей, она включает в себя счета-фактуры на основе даты выставления счета.
+RulesVATDueServices=- Для услуг, отчет включает в себя счета-фактуры за счет, оплачиваемый или нет, исходя из даты выставления счета.
+RulesVATDueProducts=- Для материальных ценностей, она включает в себя НДС, счета-фактуры, на основе даты выставления счета.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:09).

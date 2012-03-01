@@ -146,3 +146,18 @@ PDFQuevedoDescription=En komplett ordre modell med spanske RE og IRPF
 // Reference language: en_US -> nb_NO
 DispatchSupplierOrder=Motta leverandør bestill %s
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:06).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+SuppliersOrdersToProcess=Leverandørens ordre om å behandle
+StatusOrderSentShort=I prosessen
+ShippingExist=En forsendelse eksisterer
+UnvalidateOrder=Unvalidate ordre
+ConfirmUnvalidateOrder=Er du sikker på at du vil gjenopprette orden <b>%s</b> til utkastet status?
+OrderByMail=Mail
+OrderByFax=Faks
+OrderByEMail=-E-post
+OrderByWWW=Online
+OrderByPhone=Telefon
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:07:04).

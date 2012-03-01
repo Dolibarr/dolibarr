@@ -21,3 +21,11 @@ GoodStatusDeclaration=Recebi a mercadoria em bom estado,
 Deliverer=Destinatario:
 Sender=Origem
 Recipient=Destinatário
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+DeleteDeliveryReceipt=Excluir recibo de entrega
+DeleteDeliveryReceiptConfirm=Tem certeza de que deseja excluir <b>%s</b> recibo de entrega?
+DeliveryNotValidated=Entrega não validado
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:47:44).

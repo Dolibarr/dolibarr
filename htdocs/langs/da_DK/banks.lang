@@ -169,3 +169,11 @@ Graph=Grafik
 FutureTransaction=Transaktion i futur. Ingen måde at forene.
 SelectChequeTransactionAndGenerate=Vælg / filter, at kontrollen skal omfatte ind checken depositum modtaget og klikke på &quot;Opret&quot;.
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 06:40:18).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
+// Reference language: en_US -> da_DK
+RIBControlError=Integritet kontrol af værdier fejler. Det betyder, at oplysninger om dette kontonummer er ikke komplet eller forkert (se land, tal og IBAN).
+WithdrawalPayment=Tilbagetrækning betaling
+ShowCheckReceipt=Vis check depositum modtagelse
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:59:29).

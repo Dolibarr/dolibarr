@@ -114,3 +114,12 @@ YourQuotaOfUsersIsReached=Aktív felhasználói kvóta elérve!
 AdministratorDesc=Rendszergazda személy
 UserWillBeInternalUser=Létrehozta felhasználó lesz egy belső felhasználó (mivel nem kapcsolódik az adott harmadik fél)
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:34:05).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
+// Reference language: en_US -> hu_HU
+UserWillBeExternalUser=Létrehozott felhasználó lesz egy külső felhasználó (mivel kapcsolódnak az adott harmadik fél)
+UserLogoff=Felhasználó %s logout
+NbOfUsers=Nb felhasználók
+DontDowngradeSuperAdmin=Csak egy superadmin lehet downgrade 1 superadmin
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:14:48).

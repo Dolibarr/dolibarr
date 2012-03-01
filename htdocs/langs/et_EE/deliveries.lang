@@ -1,0 +1,34 @@
+/*
+ * Language code: et_EE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 22:15:30
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
+// Reference language: en_US -> et_EE
+CHARSET=UTF-8
+Delivery=Tarne
+Deliveries=Kohale
+DeliveryCard=Toimetaja kaart
+DeliveryOrder=Tarnekorralduse
+DeliveryOrders=Delivery tellimusi
+DeliveryDate=Tarnetähtaeg
+DeliveryDateShort=Osu. kuupäev
+CreateDeliveryOrder=Loo tarnekorralduse
+QtyDelivered=Kogus esitatud
+SetDeliveryDate=Määra tarneaeg
+ValidateDeliveryReceipt=Kinnitama tarne kättesaamist
+ValidateDeliveryReceiptConfirm=Oled sa kindel, et soovid, et kinnitada selle tarne kättesaamist?
+DeleteDeliveryReceipt=Kustuta tarne kättesaamist
+DeleteDeliveryReceiptConfirm=Oled kindel, et soovite kustutada tarne kättesaamist <b>%s?</b>
+DeliveryMethod=Edastamise meetod
+TrackingNumber=Tracking number
+DeliveryNotValidated=Toimetaja ei ole kinnitatud
+NameAndSignature=Nimi ja allkiri:
+ToAndDate=To___________________________________ on ____ / _____ / __________
+GoodStatusDeclaration=On saanud kauba üle heas seisukorras,
+Deliverer=Üleandjale:
+Sender=Saatja
+Recipient=Saaja
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:37:47).

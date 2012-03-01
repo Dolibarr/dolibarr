@@ -648,3 +648,22 @@ Saturday=Zaterdag
 Sunday=Zondag
 MondayMin=Mo
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 02:35:47).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
+// Reference language: en_US -> nl_NL
+LT1ES=RE
+LT2ES=IRPF
+ActionsOnMember=Events over dit lid
+SetLinkToThirdParty=Link naar een andere derde
+ClickToEdit=Klik om te bewerken
+ObjectDeleted=Object %s verwijderd
+ByCountry=Per land
+ByTown=Door de stad
+ByDate=Op datum
+ByMonthYear=Per maand / jaar
+ByYear=Per jaar
+ByMonth=per maand
+ByDay=Per dag
+BySalesRepresentative=Door vertegenwoordiger
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:12:42).

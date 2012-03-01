@@ -218,6 +218,9 @@ dol_fiche_head($head, 'general', $langs->trans("ThirdParty"), 0, 'company');
 dol_htmloutput_mesg($mesg);
 
 
+$dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+
+
 // Module to manage customer/supplier code
 
 print_titre($langs->trans("CompanyCodeChecker"));
@@ -232,9 +235,10 @@ print '  <td align="center" width="60">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
 $var = true;
-foreach ($conf->file->dol_document_root as $dirroot)
+foreach ($dirsociete as $dirroot)
 {
-	$dir = $dirroot . "/core/modules/societe/";
+	$dir = dol_buildpath($dirroot,0);
+
     $handle = @opendir($dir);
     if (is_resource($handle))
     {
@@ -246,7 +250,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
     			$file = substr($file, 0, dol_strlen($file)-4);
 
     			try {
-        			dol_include_once("/core/modules/societe/".$file.".php");
+        			dol_include_once($dirroot.$file.".php");
     			}
     			catch(Exception $e)
     			{
@@ -312,11 +316,11 @@ print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="60">&nbsp;</td>';
 print "</tr>\n";
 
-$var = true;
-foreach ($conf->file->dol_document_root as $dirroot)
+foreach ($dirsociete as $dirroot)
 {
-	$dir = $dirroot . "/core/modules/societe/";
-    $handle = @opendir($dir);
+	$dir = dol_buildpath($dirroot,0);
+
+	$handle = @opendir($dir);
     if (is_resource($handle))
     {
     	while (($file = readdir($handle))!==false)
@@ -325,7 +329,13 @@ foreach ($conf->file->dol_document_root as $dirroot)
     		{
     			$file = substr($file, 0, dol_strlen($file)-4);
 
-    			dol_include_once("/core/modules/societe/".$file.".php");
+    		    try {
+        			dol_include_once($dirroot.$file.".php");
+    			}
+    			catch(Exception $e)
+    			{
+    			    dol_syslog($e->getMessage(), LOG_ERR);
+    			}
 
     			$modCodeCompta = new $file;
     			$var = !$var;
@@ -398,101 +408,104 @@ print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
-$var=true;
-foreach ($conf->file->dol_document_root as $dirroot)
+foreach ($dirsociete as $dirroot)
 {
-	$dir = $dirroot . "/core/modules/societe/doc";
+	$dir = dol_buildpath($dirroot.'doc/',0);
 
-	if (is_dir($dir))
+	$handle=@opendir($dir);
+	if (is_resource($handle))
 	{
-		$handle=opendir($dir);
-		if (is_resource($handle))
+		while (($file = readdir($handle))!==false)
 		{
-			while (($file = readdir($handle))!==false)
+			if (preg_match('/\.modules\.php$/i',$file))
 			{
-				if (preg_match('/\.modules\.php$/i',$file))
+				$name = substr($file, 4, dol_strlen($file) -16);
+				$classname = substr($file, 0, dol_strlen($file) -12);
+
+			    try {
+        			dol_include_once($dirroot.'doc/'.$file);
+    			}
+    			catch(Exception $e)
+    			{
+    			    dol_syslog($e->getMessage(), LOG_ERR);
+    			}
+
+    			$module = new $classname($db);
+
+				$modulequalified=1;
+				if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
+				if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
+
+				if ($modulequalified)
 				{
-					$name = substr($file, 4, dol_strlen($file) -16);
-					$classname = substr($file, 0, dol_strlen($file) -12);
+					$var = !$var;
+					print '<tr '.$bc[$var].'><td width="100">';
+					print $module->name;
+					print "</td><td>\n";
+					if (method_exists($module,'info')) print $module->info($langs);
+					else print $module->description;
+					print '</td>';
 
-					require_once($dir.'/'.$file);
-					$module = new $classname($db);
-
-					$modulequalified=1;
-					if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
-					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
-
-					if ($modulequalified)
+					// Activate / Disable
+					if (in_array($name, $def))
 					{
-						$var = !$var;
-						print '<tr '.$bc[$var].'><td width="100">';
-						print $module->name;
-						print "</td><td>\n";
-						if (method_exists($module,'info')) print $module->info($langs);
-						else print $module->description;
-						print '</td>';
-
-						// Activate / Disable
-						if (in_array($name, $def))
+						print "<td align=\"center\">\n";
+						//if ($conf->global->COMPANY_ADDON_PDF != "$name")
+						//{
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+							print img_picto($langs->trans("Enabled"),'switch_on');
+							print '</a>';
+						//}
+						//else
+						//{
+						//	print img_picto($langs->trans("Enabled"),'on');
+						//}
+						print "</td>";
+					}
+					else
+					{
+						if (versioncompare($module->phpmin,versionphparray()) > 0)
 						{
 							print "<td align=\"center\">\n";
-							//if ($conf->global->COMPANY_ADDON_PDF != "$name")
-							//{
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-								print img_picto($langs->trans("Enabled"),'switch_on');
-								print '</a>';
-							//}
-							//else
-							//{
-							//	print img_picto($langs->trans("Enabled"),'on');
-							//}
+							print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion",join('.',$module->phpmin))),'switch_off');
 							print "</td>";
 						}
 						else
 						{
-							if (versioncompare($module->phpmin,versionphparray()) > 0)
-							{
-								print "<td align=\"center\">\n";
-								print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion",join('.',$module->phpmin))),'switch_off');
-								print "</td>";
-							}
-							else
-							{
-								print "<td align=\"center\">\n";
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-								print "</td>";
-							}
+							print "<td align=\"center\">\n";
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+							print "</td>";
 						}
-
-						// Info
-						$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-						$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-						if ($modele->type == 'pdf')
-						{
-							$htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
-						}
-						$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-						$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraft").': '.yn($module->option_draft_watermark,1,1);
-
-
-						print '<td align="center" nowrap="nowrap">';
-						if ($modele->type == 'pdf')
-						{
-							$linkspec='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
-						}
-						else
-						{
-							$linkspec=img_object($langs->trans("PreviewNotAvailable"),'generic');
-						}
-						print $form->textwithpicto(' &nbsp; '.$linkspec,$htmltooltip,1,0);
-						print '</td>';
-
-						print "</tr>\n";
 					}
+
+					// Info
+					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+					$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+					if ($modele->type == 'pdf')
+					{
+						$htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
+					}
+					$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+					$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraft").': '.yn($module->option_draft_watermark,1,1);
+
+
+					print '<td align="center" nowrap="nowrap">';
+					if ($modele->type == 'pdf')
+					{
+						$linkspec='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
+					}
+					else
+					{
+						$linkspec=img_object($langs->trans("PreviewNotAvailable"),'generic');
+					}
+					print $form->textwithpicto(' &nbsp; '.$linkspec,$htmltooltip,1,0);
+					print '</td>';
+
+					print "</tr>\n";
 				}
 			}
-			closedir($handle);
 		}
+		closedir($handle);
 	}
 }
 print '</table>';

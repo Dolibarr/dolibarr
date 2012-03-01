@@ -38,3 +38,10 @@ DonationsModels=捐赠收据的文件模式
 // Reference language: en_US -> zh_CN
 ValidPromess=验证承诺
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:14).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+LastModifiedDonations=最后%s修改捐款
+SearchADonation=搜索捐赠
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:39:58).

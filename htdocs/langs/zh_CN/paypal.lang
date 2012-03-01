@@ -19,3 +19,15 @@ PAYPAL_API_PASSWORD=API密码
 PredefinedMailContentSendOrderWithPaypalLink=你会发现这里的顺序__ORDERREF__ \n\n您可以点击下面的安全链接，使您的​​付款
 PredefinedMailContentSendInvoiceWithPaypalLink=你会发现这里的发票__FACREF__ \n\n您可以点击安全链接，使您的​​付款通过
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 11:05:12).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+PAYPAL_API_SIGNATURE=API签名
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=优惠“不可分割的”支付（信用卡+贝宝）或“贝宝”只
+PAYPAL_CSS_URL=optionnal付款页面的CSS样式表的URL
+ThisIsTransactionId=这是交易编号<b>：%s</b>
+PAYPAL_ADD_PAYMENT_URL=当你邮寄一份文件，添加URL Paypal付款
+PAYPAL_IPN_MAIL_ADDRESS=E-mail地址，即时付款通知（IPN）
+YouAreCurrentlyInSandboxMode=您目前在“沙箱”模式
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:30).

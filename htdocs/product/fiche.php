@@ -735,7 +735,7 @@ else
             print '</td></tr>';
         }
 
-        //Duration
+        // Duration
         if ($_GET["type"] == 1)
         {
             print '<tr><td>'.$langs->trans("Duration").'</td><td><input name="duration_value" size="6" maxlength="5" value="'.$product->duree.'"> &nbsp;';
@@ -1083,7 +1083,7 @@ else
                 else
                 {
                     $object->fetch_barcode();
-                    print $object->barcode_type_label?$object->barcode_type_label:'<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>';
+                    print $object->barcode_type_label?$object->barcode_type_label:($object->barcode?'<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>':'');
                 }
                 print '</td></tr>'."\n";
 

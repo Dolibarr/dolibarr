@@ -44,3 +44,10 @@ CompanyVisited=Yritys / säätiö vieraili
 // Reference language: en_US
 TripsAndExpensesStatistics=Retket ja kulut tilastot
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:28:17).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+ExpensesArea=Retket ja kulut alue
+SearchATripAndExpense=Etsi matka-ja kulut
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:57).

@@ -114,3 +114,12 @@ AddNewNotification=启动一个新的电子邮件通知的要求
 ListOfActiveNotifications=列出所有有效的电子邮件通知要求
 ListOfNotificationsDone=列出所有发送电子邮件通知
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+MailingStatusRead=阅读
+MailingModuleDescContactsByCompanyCategory=联系第三方（第三方类）
+MailingModuleDescMembersCategories=基金会的成员（按类别）
+MailingModuleDescContactsByFunction=第三方联系（职位/职务）
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:31).

@@ -166,3 +166,11 @@ RIBControlError=التحقق من تكامل القيم يفشل. وهذا يع�
 WithdrawalPayment=انسحاب الدفع
 ShowCheckReceipt=الاختيار إظهار تلقي الودائع
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 06:39:39).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+Graph=الرسومات
+FutureTransaction=الصفقة في أجل المستقبل. أي وسيلة للتوفيق.
+SelectChequeTransactionAndGenerate=حدد / تصفية الشيكات لتشمل في الاختيار استلام الودائع وانقر على &quot;إنشاء&quot;.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:55:34).

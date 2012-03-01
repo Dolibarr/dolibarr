@@ -103,3 +103,10 @@ SellPriceMin=Prezzo di vendita unitario
 EstimatedStockValueSellShort=Valore da vendere
 EstimatedStockValueSell=Valore da vendere
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:36).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+// Reference language: en_US -> it_IT
+SelectWarehouseForStockDecrease=Scegli magazzino da utilizzare per la riduzione magazzino
+SelectWarehouseForStockIncrease=Scegli magazzino da utilizzare per aumento di
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:45).

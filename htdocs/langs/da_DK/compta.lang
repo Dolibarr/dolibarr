@@ -158,3 +158,28 @@ SellsJournal=Salg Tidende
 RemainToDivide=Remain til afsendelse:
 WarningDepositsNotIncluded=Indskud fakturaer er ikke inkluderet i denne version med denne bogføring modul.
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 05:36:52).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
+// Reference language: en_US -> da_DK
+LT2SummaryES=IRPF Balance
+LT2PaidES=IRPF Betalt
+LT2CustomerES=IRPF salg
+LT2SupplierES=IRPF køb
+newLT2PaymentES=Ny IRPF betaling
+LT2PaymentES=IRPF Betaling
+LT2PaymentsES=IRPF Betalinger
+DepositsAreNotIncluded=- Depositum fakturaer eller inkluderet
+DepositsAreIncluded=- Depositum fakturaer er inkluderet
+LT2ReportByCustomersInInputOutputModeES=Rapport fra tredjepart IRPF
+RulesVATInServices=- For tjenesteydelser, omfatter rapporten de momsregler faktisk modtaget eller udstedt på grundlag af datoen for betalingen. <br> - For materielle goder, herunder det de momsfakturaer på grundlag af fakturadatoen.
+RulesVATInProducts=- For materielle goder, herunder det de momsfakturaer på grundlag af fakturadatoen.
+RulesVATDueServices=- For tjenesteydelser, indeholder rapporten momsfakturaer skyldes, betalte eller ej, er baseret på fakturadatoen.
+RulesVATDueProducts=- For materielle goder, herunder det de momsfakturaer, baseret på fakturadatoen.
+PurchasesJournal=Køb Journal
+DescSellsJournal=Salg Journal
+DescPurchasesJournal=Køb Journal
+InvoiceRef=Faktura ref.
+CodeNotDef=Ikke defineret
+AddRemind=Forsendelse disponible beløb
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:59:27).

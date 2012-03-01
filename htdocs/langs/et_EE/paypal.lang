@@ -1,0 +1,28 @@
+/*
+ * Language code: et_EE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 22:15:30
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
+// Reference language: en_US -> et_EE
+CHARSET=UTF-8
+PaypalSetup=PayPal moodul setup
+PaypalDesc=See moodul pakkumise leheküljed, mis võimaldab makse <a href="http://www.paypal.com" target="_blank">PayPal</a> kliendid. Seda saab kasutada tasuta makse või makse teatud Dolibarr objekti (arve, et ...)
+PaypalOrCBDoPayment=Maksta krediitkaardiga või Paypal
+PaypalDoPayment=Maksa Paypal
+PaypalCBDoPayment=Maksa krediitkaardi
+PAYPAL_API_SANDBOX=Režiim test / liivakast
+PAYPAL_API_USER=API kasutajanimi
+PAYPAL_API_PASSWORD=API parooli
+PAYPAL_API_SIGNATURE=API allkiri
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Paku makse &quot;lahutamatu&quot; (krediitkaart + Paypal) või &quot;Paypal&quot; ainult
+PAYPAL_CSS_URL=Optionnal Url CSS style sheet tasumise lehele
+ThisIsTransactionId=See on id tehing: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Lisa URL Paypal makse, kui saadate dokumendi mail
+PAYPAL_IPN_MAIL_ADDRESS=E-posti aadress instant tasumise teate (IPN)
+PredefinedMailContentSendOrderWithPaypalLink=Leiad siin, et __ ORDERREF__ \n\n Võite klõpsata turvaline linki teha makse PayPal \n\n %s \n\n Lugupidamisega \n\n
+PredefinedMailContentSendInvoiceWithPaypalLink=Leiad siin arve __ FACREF__ \n\n Võite klõpsata turvaline linki teha makse PayPal \n\n %s \n\n Lugupidamisega \n\n
+YouAreCurrentlyInSandboxMode=Sa oled praegu &quot;liivakasti&quot; režiimis
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:21:09).

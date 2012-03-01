@@ -90,3 +90,13 @@ ThisWarehouseIsPersonalStock=这个仓库代表的％s％的个人股票期权
 // Reference language: en_US -> zh_CN
 WarehouseEdit=修改仓库
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:05).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+SellPriceMin=销售单价
+EstimatedStockValueSellShort=销售值
+EstimatedStockValueSell=销售值
+SelectWarehouseForStockDecrease=选择仓库库存减少使用
+SelectWarehouseForStockIncrease=选择使用库存增加的仓库
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:39).

@@ -1,0 +1,18 @@
+/*
+ * Language code: pt_PT
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 15:45:52
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+CHARSET=UTF-8
+WorkflowSetup=Configuração do módulo de Workflow
+WorkflowDesc=Este módulo é desinged para modificar o comportamento de acções automáticas em aplicação. Por padrão, o fluxo de trabalho é aberto (você fazer a coisa de forma que você quiser). Você pode habilitado ações automáticas que você é interessante dentro
+ThereIsNoWorkflowToModify=Não há fluxo de trabalho você pode modificar para o módulo que você tenha ativado.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Criar um pedido do cliente automaticamente, após uma proposta comercial é assinado
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Criar uma factura de cliente automaticamente, após uma proposta comercial é assinado
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Criar uma factura de cliente automaticamente depois de um contrato é validado
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Criar uma factura de cliente automaticamente após um pedido do cliente está fechado
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:37).

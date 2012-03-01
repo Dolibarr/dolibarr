@@ -414,3 +414,24 @@ TypeContact_facture_fourn_external_SHIPPING=Toimittajan merenkulku yhteystiedot
 TypeContact_facture_fourn_external_SERVICE=Toimittajan huoltoliikkeestä
 PDFLinceDescription=Täydellinen lasku malli Espanjan RE ja IRPF
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:27:05).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+BillsCustomer=Asiakkaan laskussa
+BillsSuppliersUnpaidForCompany=Maksamattomat toimittajan laskut %s
+BillsLate=Maksuviivästykset
+DisabledBecauseNotErasable=Käytössä sillä ei voida poistaa
+ConfirmUnvalidateBill=Oletko varma että haluat muuttaa laskun <b>%s</b> Luonnos-tilaan?
+UnvalidateBill=Unvalidate lasku
+NumberOfBillsByMonth=Nb laskuista kuukausittain
+AmountOfBillsByMonthHT=Määrä laskut kuukausittain (verojen jälkeen)
+AddRelativeDiscount=Luo suhteellinen alennus
+EditRelativelDiscount=Muokkaa relatvie alennus
+EditGlobalDiscounts=Muokkaa absoluuttinen alennukset
+AddCreditNote=Luo hyvityslasku
+InvoiceNotChecked=Ei laskun valittu
+ShowUnpaidAll=Näytä kaikki maksamattomat laskut
+ClosePaidInvoicesAutomatically=Luokittele &quot;maksanut&quot; kaikki vakio-tai korvaavan laskuja entierely maksanut.
+AllCompletelyPayedInvoiceWillBeClosed=Kaikki lasku ilman jää maksaa automaattisesti suljettu tila &quot;maksanut&quot;.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:11:08).

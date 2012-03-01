@@ -432,3 +432,13 @@ ShowUnpaidAll=Εμφάνιση όλων των απλήρωτων τιμολογ
 ClosePaidInvoicesAutomatically=Ταξινομήστε &quot;Πληρωμένες» όλα τα τιμολόγια entierely payed.
 AllCompletelyPayedInvoiceWillBeClosed=Όλα τιμολόγιο χωρίς παραμένουν να πληρώσουν θα κλείσει αυτόματα σε κατάσταση &quot;Πληρωμένες».
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:36:46).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+ConfirmUnvalidateBill=Είστε βέβαιοι ότι θέλετε να αλλάξετε τιμολόγιο <b>%s</b> το καθεστώς σχέδιο;
+UnvalidateBill=Unvalidate τιμολόγιο
+AddRelativeDiscount=Δημιουργία σχετική έκπτωση
+EditRelativelDiscount=Επεξεργασία relatvie έκπτωση
+EditGlobalDiscounts=Επεξεργασία απόλυτη εκπτώσεις
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:37).

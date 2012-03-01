@@ -111,3 +111,13 @@ TypeContact_project_task_external_CONTRIBUTOR=Contribuabil
 DocumentModelBaleine=Un proiect complet modelul de raport (logo. ..)
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:07).
 
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+TimesSpent=Timpul petrecut
+TaskIsNotAffectedToYou=Sarcina nu alocate pentru tine
+ErrorTimeSpentIsEmpty=Timpul petrecut este gol
+ThisWillAlsoRemoveTasks=Această acţiune va şterge, de asemenea, toate sarcinile de proiect (sarcini <b>%s</b> la acest moment) şi toate intrările de timpul petrecut.
+IfNeedToUseOhterObjectKeepEmpty=Dacă unele obiecte (facturi, ordine, ...), care aparţin de o terţă parte, trebuie să fie legate de proiect, pentru a crea, menţine acest gol pentru a avea proiectul fiind părţi terţe multi.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:26:53).

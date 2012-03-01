@@ -31,3 +31,11 @@ Sender=Expeditor
 Recipient=Recipient
 // Date 2009-01-19 21:32:52
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+DeleteDeliveryReceipt=Ştergeţi confirmare de primire
+DeleteDeliveryReceiptConfirm=Sunteţi sigur că doriţi să ştergeţi <b>%s</b> de livrare de primire?
+DeliveryNotValidated=De livrare nu au fost validate
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:25:58).

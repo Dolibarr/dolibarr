@@ -108,3 +108,29 @@ ErrorBadValueForCode=Zła wartość typy kodu. Spróbuj ponownie z nową wartoś
 ErrorFileIsInfectedWith=Ten plik jest zainfekowany %s
 WarningInstallDirExists=Ostrzeżenie zainstalować katalog ( %s), nadal istnieje. Jest to poważne dziury bezpieczeństwa. Należy usunąć go jak najszybciej.
 WarningUntilDirRemoved=To ostrzeżenie pozostanie aktywne, dopóki ten katalog jest obecny (Widoczne tylko admin użytkowników).
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+ErrorFailToCopyFile=Nie udało się skopiować pliku <b>'%s</b> &quot;na&quot; <b>%s</b> strony'.
+ErrorFailToRenameFile=Nie można zmienić nazwy pliku <b>'%s</b> &quot;na&quot; <b>%s</b> strony'.
+ErrorBadValueForParameter=Wrong wartość '%s &quot;dla parametrów nieprawidłowe&quot; %s spacerem
+ErrorBadImageFormat=Plik obrazu ma nie obsługiwanym formacie
+ErrorBadDateFormat=Wartość '%s &quot;ma zły format daty
+ErrorSizeTooLongForIntType=Rozmiar zbyt długo typu int (%s cyfr maksimum)
+ErrorSizeTooLongForVarcharType=Rozmiar zbyt długo typu string (%s znaków maksymalnie)
+ErrorContactEMail=Techniczny błąd. Proszę skontaktować się z administratorem, aby po <b>%s</b> email pl zapewnić <b>%s</b> kod błędu w wiadomości, a nawet lepsze, dodając kopię ekranu strony.
+ErrorFieldValueNotIn=Nieprawidłowa wartość dla <b>%s</b> liczba terenowych (value <b>'%s</b> &quot;nie wartość dostępna w <b>%s</b> terenowych <b>%s</b> deserowe)
+ErrorFieldRefNotIn=Nieprawidłowa wartość dla <b>%s</b> liczba pól (wartość <b>'%s</b> &quot;nie jest <b>%s</b> istniejących ref)
+ErrorModuleSetupNotComplete=Instalacja modułu wygląda na uncomplete. Idź na instalacji - Moduły do ​​wykonania.
+ErrorBadMask=Błąd na masce
+ErrorBadMaskFailedToLocatePosOfSequence=Błąd, maska ​​bez kolejnego numeru
+ErrorBadMaskBadRazMonth=Błąd, zła wartość zresetowane
+ErrorSelectAtLeastOne=Błąd. Wybierz co najmniej jeden wpis.
+ErrorProductWithRefNotExist=Produkt z <i>'%s</i> &quot;odniesienia nie istnieje
+ErrorDeleteNotPossibleLineIsConsolidated=Usuń nie możliwe, ponieważ zapis jest związany z transation bankowego, który jest conciliated
+ErrorProdIdAlreadyExist=%s jest przypisany do innego państwa
+ErrorFailedToLoadRSSFile=Nie dostać kanału RSS. Spróbuj dodać stałą MAIN_SIMPLEXMLLOAD_DEBUG czy komunikaty o błędach nie zawiera wystarczających informacji.
+ErrorBothFieldCantBeNegative=Pola %s i %s nie może być zarówno negatywny
+ErrorWebServerUserHasNotPermission=Konto użytkownika <b>%s</b> wykorzystywane do wykonywania serwer WWW nie ma zgody na który
+ErrorNoActivatedBarcode=Nie Typ aktywny kodów kreskowych
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:19:12).

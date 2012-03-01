@@ -118,3 +118,9 @@ MailingModuleDescContactsByCompanyCategory=Επαφές των τρίτων (α�
 MailingModuleDescMembersCategories=Τα ιδρυτικά μέλη (ανά κατηγορία)
 MailingModuleDescContactsByFunction=Επαφές των τρίτων (από τη θέση / λειτουργία)
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:41:07).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+MailingStatusRead=Ανάγνωση
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:16).

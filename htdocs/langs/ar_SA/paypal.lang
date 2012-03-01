@@ -19,3 +19,15 @@ PAYPAL_IPN_MAIL_ADDRESS=عنوان البريد الإلكتروني للإخط�
 PredefinedMailContentSendOrderWithPaypalLink=سوف تجد هنا ترتيب __ORDERREF__ \ ن \ n يمكنك النقر على الرابط أدناه لتأمين تسديد الخاص بك عن طريق باي بال \ ن \ n%s \ ن \ nSincerely \ ن \ ن
 PredefinedMailContentSendInvoiceWithPaypalLink=ستجد هنا الفاتورة __FACREF__ \ ن \ n يمكنك يمكن النقر على الرابط أدناه لتأمين تسديد الخاص بك عن طريق \ ن بال \ n%s \ ن \ nSincerely \ ن \ ن
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 10:37:06).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+PAYPAL_API_USER=API المستخدم
+PAYPAL_API_PASSWORD=API كلمة السر
+PAYPAL_API_SIGNATURE=API توقيع
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=تقدم الدفع &quot;لا يتجزأ&quot; (بطاقة الائتمان + باي بال) أو &quot;باي بال&quot; فقط
+PAYPAL_CSS_URL=Optionnal عنوان الموقع من ورقة أنماط CSS في صفحة الدفع
+ThisIsTransactionId=هذا هو معرف من الصفقة: <b>%s</b>
+YouAreCurrentlyInSandboxMode=أنت حاليا في وضع &quot;رمل&quot;
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:55:40).

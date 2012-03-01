@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-13 13:09:12
  */
@@ -1165,3 +1165,124 @@ URL=Link
 OfficialMarketPlace=Offizieller Marktplatz für Module/Erweiterungen
 MAIN_MAIL_AUTOCOPY_TO=Senden Sie automatisch eine Blindkopie aller gesendeten Mails an
 FreeLegalTextOnInterventions=Freier Rechtstext für Eingriffe
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+WebUserGroup=Web-Server-Benutzer / Gruppe
+ActivityStateToSelectCompany=Fügen Sie einen Filter-Option zum Anzeigen / Verbergen Dritte diese die derzeit in Aktivität oder aufgehört hat es
+SearchFilter=Suchfilter Optionen
+NumberOfKeyToSearch=Nbr der Zeichen, die Suche auslösen: %s
+ClientOffsetWithGreenwich=Client / Browser Versatzbreite Greenwich (Sekunden)
+DaylingSavingTime=Sommerzeit (Benutzer)
+RunCommandSummaryToLaunch=Backup kann mit dem folgenden Befehl gestartet werden
+ImportPostgreSqlDesc=Um eine Backup-Datei importieren, müssen Sie pg_restore Befehl von der Kommandozeile aus nutzen:
+ImportPostgreSqlCommand=%s %s mybackupfile.sql
+FullPathToPostgreSQLdumpCommand=Der vollständige Pfad zum Befehl pg_dump
+NoLockBeforeInsert=Keine Sperre um Befehle INSERT
+CurrentMenuHandler=Aktuelle Menü-Handler
+CurrentSmartphoneMenuHandler=Aktuelle Smartphone-Menü-Handler
+MAIN_MAIL_ERRORS_TO=Absender E-Mail für Fehler erneut E-Mails geschickt genutzt
+MAIN_DISABLE_ALL_SMS=Deaktivieren Sie alle SMS-Sendungen (für Testzwecke oder Demos)
+MAIN_SMS_SENDMODE=Methode zu verwenden, um SMS zu versenden
+MAIN_MAIL_SMS_FROM=Standard Absender Telefonnummer für SMS-Versand
+FollowingSubstitutionKeysCanBeUsed=<br> Um zu wissen, wie Sie Ihre odt Dokumentenvorlagen erstellen, vor dem Speichern in diesen Verzeichnissen, lesen Wiki-Dokumentation:
+FullListOnOnlineDocumentation=http://wiki.dolibarr.org/index.php/Create_an_ODT_document_template
+DescWeather=Die folgenden Bilder wird am Armaturenbrett angezeigt, wenn die Anzahl der Aktionen spät erreichen folgende Werte:
+KeyForWebServicesAccess=Schlüssel zu Web Services (Parameter &quot;dolibarrkey&quot; in Webservices) verwenden
+TestSubmitForm=Eingangstest Form
+ThisForceAlsoTheme=Über dieses Menü-Manager wird auch sein eigenes Thema, was die Wahlfreiheit der Nutzer ist. Auch in diesem Menü-Manager für Smartphones spezialisiert hat nicht funktioniert auf allen Smartphones. Verwenden Sie ein anderes Menü-Manager, wenn Sie Probleme bei Ihnen zu erleben.
+ThemeDir=Skins-Verzeichnis
+ConnectionTimeout=Connexion-Timeout
+ResponseTimeout=Antwortverzugszeit
+SmsTestMessage=Testnachricht vom __ bis __ PHONEFROM__ PHONETO__
+ModuleMustBeEnabledFirst=Modul <b>%s</b> müssen zuerst bevor Sie diese Funktion aktiviert werden.
+SecurityToken=Schlüssel zum sicheren URLs
+NoSmsEngine=Kein SMS-Absender-Manager zur Verfügung. SMS-Absender-Manager werden nicht mit Standard-Distribution installiert ist (weil sie auf einem externen Lieferanten abhängig), aber Sie können einige auf http://www.dolistore.com finden
+PDF=PDF
+PDFDesc=Sie können jede globale Optionen im Zusammenhang mit der PDF-Erzeugung
+PDFAddressForging=Regeln zur Adresse Boxen schmieden
+HideAnyVATInformationOnPDF=Hide alle Informationen im Zusammenhang mit der Mehrwertsteuer auf generierten PDF
+UrlGenerationParameters=Parameter zu sichern URLs
+SecurityTokenIsUnique=Verwenden Sie einen eindeutigen SecureKey Parameter für jede URL
+EnterRefToBuildUrl=Geben Sie für Referenz-Objekt %s
+GetSecuredUrl=Holen Sie berechnet URL
+Module105Name=Mailman und Sip
+Module105Desc=Mailman oder Spip Schnittstelle für die Mitglied-Modul
+Module50000Name=PayBox
+Module50000Desc=Modul zur Online-Zahlung per Kreditkarte Seite bieten mit Paybox
+Module50200Name=Paypal
+Module50200Desc=Modul zur Online-Zahlung per Kreditkarte Seite bieten mit Paypal
+Permission154=Kreditkarten / Quittungen verweigern, Daueraufträge
+Permission165=Löschen Verträge
+Permission173=Löschen Reisen
+PermissionAdvanced251=Lesen Sie andere Benutzer
+PermissionAdvanced253=Erstellen / Ändern von internen / externen Benutzern und Berechtigungen
+Permission341=Lesen Sie eigene Berechtigungen
+Permission342=Erstellen / Ändern seiner eigenen Benutzer-Informationen
+Permission343=Ändern sein eigenes Passwort
+Permission344=Ändern Sie eigene Berechtigungen
+Permission351=Lesen Sie Gruppen
+Permission352=Lesen Sie Gruppen Berechtigungen
+Permission353=Erstellen / Ändern von Gruppen
+Permission354=Löschen oder Deaktivieren von Gruppen
+Permission358=Export-Benutzer
+Permission703=Löschen Spenden
+Permission1235=Senden Sie Lieferantenrechnungen per E-Mail
+Permission2502=Download-Dokumente
+Permission2503=Senden oder Löschen von Dokumenten
+Permission50001=Verwenden Sie Point of Sales
+Permission50201=Lesen Transaktionen
+Permission50202=Import-Transaktionen
+DictionnaryAvailability=Lieferverzug
+DictionnaryOrderMethods=Bestellmöglichkeiten
+DictionnarySource=Herkunft der Vorschläge / Bestellungen
+MenuSmartphoneManager=Smartphone Menü-Manager
+DefaultMenuManager=Standard-Menü-Manager
+DefaultMenuSmartphoneManager=Smartphone Menü-Manager
+DelaysOfToleranceSuppliersOrdersToProcess=Verzögerung Toleranz (in Tagen), bevor Alarm auf Lieferanten Bestellungen noch nicht bearbeitet
+SecurityEventsPurged=Security-Ereignisse gelöscht
+ShowProfIdInAddress=Zeige professionnal ID mit Adressen auf Dokumente
+TranslationUncomplete=Teilweise Übersetzung
+SomeTranslationAreUncomplete=Für einige Sprachen, teilweise übersetzt werden oder Fehler enthält. Wenn Sie etwas entdecken, können Sie <b>beheben. Lang</b> Textdateien in das Verzeichnis <b>htdocs / langs</b> und legt sie auf dem Forum bei <a href="http://www.dolibarr.org/forum" target="_blank">http://www.dolibarr.org</a> .
+MenuUseLayout=Machen Sie vertikales Menü hidable (Option Javascript muss nicht deaktiviert werden)
+MAIN_DISABLE_METEO=Deaktivieren meteo Blick
+TestLoginToAPI=Testen Sie sich anmelden, um API
+ProxyDesc=Einige Features von Dolibarr müssen einen Internet-Zugang zu Arbeit haben. Definieren Sie hier Parameter für diese. Wenn die Dolibarr Server hinter einem Proxy-Server, erzählt jene Parameter Dolibarr wie man Internet über ihn zugreifen.
+ExternalAccess=Externer Zugriff
+MAIN_PROXY_USE=Verwenden Sie einen Proxy-Server (sonst direkten Zugang zum Internet)
+MAIN_PROXY_HOST=Name / Anschrift des Proxy-Servers
+MAIN_PROXY_PORT=Port of Proxy-Server
+MAIN_PROXY_USER=Passwort an, um den Proxy-Server verwenden
+MAIN_PROXY_PASS=Kennwort ein, um den Proxy-Server verwenden
+DefineHereComplementaryAttributes=Definieren Sie hier allen Attributen, nicht bereits standardmäßig vorhanden, und dass Sie für %s unterstützt werden.
+ExtraFields=Ergänzende Attribute
+ExtraFieldHasWrongValue=Attribut %s einen falschen Wert hat.
+SendingMailSetup=Einrichten von Sendungen per E-Mail
+SendmailOptionNotComplete=Achtung, auf einigen Linux-Systemen, E-Mails von Ihrem E-Mail zu senden, sendmail Ausführung Setup muss conatins Option-ba (Parameter mail.force_extra_parameters in Ihre php.ini-Datei). Wenn einige Empfänger niemals E-Mails erhalten, versuchen, diese Parameter mit PHP mail.force_extra_parameters =-ba) zu bearbeiten.
+SendmailOptionMayHurtBuggedMTA=Feature-Mails mit der Methode &quot;PHP mail direkt&quot; senden generiert eine Mail-Nachricht, die nicht korrekt möglicherweise von einigen Mail-Servern empfangen analysiert werden. Ergebnis ist, dass manche Mails nicht von Menschen, die von thoose abgehört Plattformen gehostet gelesen werden. Es ist bei einigen Internet-Providern (Ex: Orange in Frankreich). Dies ist nicht ein Problem in Dolibarr noch in PHP aber auf empfangende Mail-Server. Sie können jedoch hinzuzufügen MAIN_FIX_FOR_BUGGED_MTA Option auf 1 in die Setup - andere zu Dolibarr ändern, um dies zu vermeiden. Sie können jedoch Probleme mit anderen Servern, dass die Achtung streng dem SMTP-Standard zu erleben. Die andere Lösung (empfohlen) ist es, die Methode &quot;SMTP-Socket-Bibliothek&quot;, die keine Nachteile hat benutzen.
+CompanyIdProfChecker=Berufs-Identifikation einzigartige
+MustBeUnique=Eindeutig sein müssen?
+Miscellanous=Verschiedenes
+ContractsSetup=Verträge Modul Setup
+ContractsNumberingModules=Verträge Nummerierung Module
+MembersSetup=Mitglieder-Modul Setup
+AdherentLoginRequired=Verwalten Sie eine Anmeldung für jedes Mitglied
+ServiceSetup=Dienstleistungen Modul Setup
+ProductServiceSetup=Produkte und Services Module Setup
+ViewProductDescInThirdpartyLanguageAbility=Visualisierung von Produkten Beschreibungen in der Sprache thirdparty
+ListOfAvailableNotifications=Liste der verfügbaren Meldungen (Diese Liste ist abhängig von aktivierten Module)
+SendingsNumberingModules=Sendungen Nummerierung Module
+FreeLegalTextOnShippings=Freier Text auf Frachtkosten
+AdvancedEditor=Erweiterter Editor
+HideUnauthorizedMenu=Hide unbefugte Menüs (grau)
+SupposedToBeInvoiceDate=Rechnungsdatum verwendet
+InvoiceDateUsed=Rechnungsdatum verwendet
+AccountancyCode=Rechnungswesen-Code
+BankOrderShow=Anzeige Reihenfolge der Bankkonten für Länder mit &quot;detaillierten Bank-Nummer&quot;
+BankOrderGlobal=General
+BankOrderGlobalDesc=Allgemeine Anzeige-Reihenfolge
+BankOrderES=Spanisch
+BankOrderESDesc=Spanisch Anzeigereihenfolge
+MailmanSpipSetup=Mailman und Spip Modul-Setup
+SuppliersInvoiceModel=Vollständige Vorlage der Lieferantenrechnung (logo. ..)
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:05:18).

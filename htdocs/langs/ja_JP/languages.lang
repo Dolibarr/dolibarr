@@ -34,3 +34,18 @@ Language_sl_SI=スロベニア語
 Language_sv_SV=スウエーデん語
 Language_zh_CN=中国語
 Language_is_IS=アイスランド語
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
+// Reference language: en_US -> ja_JP
+Language_ar_SA=アラビア語
+Language_da_DK=デンマーク語
+Language_el_GR=ギリシャ語
+Language_en_NZ=英語（ニュージーランド）
+Language_es_HN=スペイン語（ホンジュラス）
+Language_es_MX=スペイン語（メキシコ）
+Language_es_PR=スペイン語（プエルトリコ）
+Language_fa_IR=ペルシア語
+Language_ru_UA=ロシア（ウクライナ）
+Language_sv_SE=スウェーデン語
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:57:03).

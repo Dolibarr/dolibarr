@@ -29,3 +29,11 @@ Deliverer=Frelsari:
 Sender=Sendandi
 Recipient=Viðtakandi
 // STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+DeleteDeliveryReceipt=Eyða afhendingu kvittun
+DeleteDeliveryReceiptConfirm=Ertu viss um að þú viljir eyða pósti móttöku <b>%s?</b>
+DeliveryNotValidated=Afhending er ekki fullgilt
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:28:06).

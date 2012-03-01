@@ -75,33 +75,42 @@ if ($action == 'specimen')  // For orders
     $commande = new CommandeFournisseur($db);
     $commande->initAsSpecimen();
     $commande->thirdparty=$specimenthirdparty;
-
-    // Charge le modele
-    $dir = "/core/modules/supplier_order/pdf/";
-    $file = "pdf_".$modele.".modules.php";
-    $file = dol_buildpath($dir.$file);
-    if (file_exists($file))
+    
+    // Search template files
+    $file=''; $classname=''; $filefound=0;
+    $dirmodels=array_merge(array('/'),$conf->modules_parts['models']);
+    foreach($dirmodels as $reldir)
     {
-        $classname = "pdf_".$modele;
-        require_once($file);
-
-        $obj = new $classname($db,$commande);
-
-        if ($obj->write_file($commande,$langs) > 0)
-        {
-            header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande_fournisseur&file=SPECIMEN.pdf");
-            return;
-        }
-        else
-        {
-            $mesg='<div class="error">'.$obj->error.'</div>';
-            dol_syslog($obj->error, LOG_ERR);
-        }
+    	$file=dol_buildpath($reldir."core/modules/supplier_order/pdf/pdf_".$modele.".modules.php",0);
+    	if (file_exists($file))
+    	{
+    		$filefound=1;
+    		$classname = "pdf_".$modele;
+    		break;
+    	}
+    }
+    
+    if ($filefound)
+    {
+    	require_once($file);
+    
+    	$module = new $classname($db);
+    
+    	if ($module->write_file($commande,$langs) > 0)
+    	{
+    		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande_fournisseur&file=SPECIMEN.pdf");
+    		return;
+    	}
+    	else
+    	{
+    		$mesg='<font class="error">'.$module->error.'</font>';
+    		dol_syslog($module->error, LOG_ERR);
+    	}
     }
     else
     {
-        $mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
-        dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+    	$mesg='<font class="error">'.$langs->trans("ErrorModuleNotFound").'</font>';
+    	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
 }
 
@@ -112,33 +121,42 @@ if ($action == 'specimenfacture')   // For invoices
     $facture = new FactureFournisseur($db);
     $facture->initAsSpecimen();
     $facture->thirdparty=$specimenthirdparty;    // Define who should has build the invoice (so the supplier)
-
-    // Charge le modele
-    $dir = "/core/modules/supplier_invoice/pdf/";
-    $file = "pdf_".$modele.".modules.php";
-    $file = dol_buildpath($dir.$file);
-    if (file_exists($file))
+    
+	// Search template files
+    $file=''; $classname=''; $filefound=0;
+    $dirmodels=array_merge(array('/'),$conf->modules_parts['models']);
+    foreach($dirmodels as $reldir)
     {
-        $classname = "pdf_".$modele;
-        require_once($file);
-
-        $obj = new $classname($db,$facture);
-
-        if ($obj->write_file($facture,$langs) > 0)
-        {
-            header("Location: ".DOL_URL_ROOT."/document.php?modulepart=facture_fournisseur&file=SPECIMEN.pdf");
-            return;
-        }
-        else
-        {
-            $mesg='<div class="error">'.$obj->error.'</div>';
-            dol_syslog($obj->error, LOG_ERR);
-        }
+    	$file=dol_buildpath($reldir."core/modules/supplier_invoice/pdf/pdf_".$modele.".modules.php",0);
+    	if (file_exists($file))
+    	{
+    		$filefound=1;
+    		$classname = "pdf_".$modele;
+    		break;
+    	}
+    }
+    
+    if ($filefound)
+    {
+    	require_once($file);
+    
+    	$module = new $classname($db);
+    
+    	if ($module->write_file($facture,$langs) > 0)
+    	{
+    		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=facture_fournisseur&file=SPECIMEN.pdf");
+    		return;
+    	}
+    	else
+    	{
+    		$mesg='<font class="error">'.$module->error.'</font>';
+    		dol_syslog($module->error, LOG_ERR);
+    	}
     }
     else
     {
-        $mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
-        dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+    	$mesg='<font class="error">'.$langs->trans("ErrorModuleNotFound").'</font>';
+    	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
 }
 
@@ -244,9 +262,11 @@ if ($action == 'set_SUPPLIER_INVOICE_FREE_TEXT')
  * View
  */
 
-$form=new Form($db);
+$dirmodels=array_merge(array('/'),$conf->modules_parts['models']);
 
 llxHeader();
+
+$form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("SuppliersSetup"),$linkback,'setup');
@@ -269,9 +289,9 @@ print "</tr>\n";
 
 clearstatcache();
 
-foreach ($conf->file->dol_document_root as $dirroot)
+foreach ($dirmodels as $reldir)
 {
-    $dir = $dirroot . "/core/modules/supplier_order/";
+	$dir = dol_buildpath($reldir."core/modules/supplier_order/");
 
     if (is_dir($dir))
     {
@@ -403,9 +423,9 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-foreach ($conf->file->dol_document_root as $dirroot)
+foreach ($dirmodels as $reldir)
 {
-    $dir = $dirroot . "/core/modules/supplier_order/pdf/";
+	$dir = dol_buildpath($reldir."core/modules/supplier_order/pdf/");
 
     if (is_dir($dir))
     {
@@ -536,9 +556,9 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-foreach ($conf->file->dol_document_root as $dirroot)
+foreach ($dirmodels as $reldir)
 {
-    $dir = $dirroot . "/core/modules/supplier_invoice/pdf/";
+	$dir = dol_buildpath($reldir."core/modules/supplier_invoice/pdf/");
 
     if (is_dir($dir))
     {
@@ -645,7 +665,6 @@ print '</form>';
 
 dol_htmloutput_mesg($mesg);
 
-llxFooter();
-
 $db->close();
+llxFooter();
 ?>

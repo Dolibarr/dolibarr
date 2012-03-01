@@ -1,0 +1,34 @@
+/*
+ * Language code: ja_JP
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 16:41:06
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
+// Reference language: en_US -> ja_JP
+CHARSET=UTF-8
+Delivery=配達
+Deliveries=配達
+DeliveryCard=配信カード
+DeliveryOrder=配送指示書
+DeliveryOrders=配信の注文
+DeliveryDate=配達日
+DeliveryDateShort=配送は。日付
+CreateDeliveryOrder=配信順序を生成します。
+QtyDelivered=個数配信
+SetDeliveryDate=出荷の日付を設定する
+ValidateDeliveryReceipt=配信の領収書を検証する
+ValidateDeliveryReceiptConfirm=この配信の領収書を検証してもよろしいですか？
+DeleteDeliveryReceipt=配信済みメッセージを削除する
+DeleteDeliveryReceiptConfirm=あなたは、配信確認<b>%sを</b>削除し<b>てもよろしい</b>ですか？
+DeliveryMethod=配送方法
+TrackingNumber=追跡番号
+DeliveryNotValidated=配信検証されません
+NameAndSignature=名前と署名：
+ToAndDate=To___________________________________ ____ / _____ / __________で
+GoodStatusDeclaration=、良好な状態で上記の品物を受け取っている
+Deliverer=配達：
+Sender=差出人
+Recipient=受信者
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:57:01).

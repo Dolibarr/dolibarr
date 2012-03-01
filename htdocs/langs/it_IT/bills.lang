@@ -443,3 +443,13 @@ ShowUnpaidAll=Mostra tutte le fatture non pagate
 ClosePaidInvoicesAutomatically=Classificare &quot;Pagata&quot; tutte le fatture entierely pagato.
 AllCompletelyPayedInvoiceWillBeClosed=Tutte le fatture senza rimanere a pagare saranno automaticamente chiuse allo stato &quot;Pagato&quot;.
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:09).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+// Reference language: en_US -> it_IT
+ConfirmUnvalidateBill=Sei sicuro di voler cambiare <b>%s</b> fattura allo stato di progetto?
+UnvalidateBill=Unvalidate fattura
+AddRelativeDiscount=Creazione di sconto rispetto
+EditRelativelDiscount=Modifica sconto relatvie
+EditGlobalDiscounts=Modifica sconti assoluti
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:54).

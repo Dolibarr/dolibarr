@@ -93,3 +93,18 @@ TypeContact_propal_external_CUSTOMER=Kundkontakt följa upp förslag
 DocModelAzurDescription=Ett fullständigt förslag modell (logo. ..)
 DocModelJauneDescription=Jaune förslag modell
 // STOP - Lines generated via autotranslator.php tool (2010-08-27 08:54:20).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+ProposalCard=Förslaget kortet
+ConfirmReOpenProp=Är du säker på att du vill öppna upp de kommersiella förslaget <b>%s?</b>
+AvailabilityPeriod=Tillgänglighet fördröjning
+SetAvailability=Ställa tillgänglighet fördröjning
+AfterOrder=Efter att
+AvailabilityTypeAV_NOW=Omedelbar
+AvailabilityTypeAV_1W=1 vecka
+AvailabilityTypeAV_2W=2 veckor
+AvailabilityTypeAV_3W=3 veckor
+AvailabilityTypeAV_1M=1 månad
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:34:30).

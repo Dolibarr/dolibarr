@@ -229,3 +229,16 @@ MigrationProjectTaskTime=Frissítési idõ másodpercekben
 LastStepDesc=<strong>Utolsó lépés:</strong> Adjuk meg itt bejelentkezési név és jelszó használatát tervezi, hogy csatlakozik a szoftver. Ne laza ez, mivel a számla beadására az összes többi.
 MigrationActioncommElement=Frissítés adatok akciók
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 09:43:31).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
+// Reference language: en_US -> hu_HU
+ConfFileReload=Minden újratöltése információt konfigurációs fájlban.
+WarningPHPVersionTooLow=PHP verzió túl régi. %s vagy több verzió várható. Ez a változat lehetővé teszi telepíteni, de nem támogatott.
+DatabasePrefix=Adatbázis tábla előtag
+KeepDefaultValuesProxmox=Ön használja az Dolibarr Setup Wizard egy Proxmox virtuális készüléket, így az itt javasolt értékek már optimalizálva. Megváltoztatni őket, ha tudod, mit csinálsz.
+MigrateIsDoneStepByStep=A megcélzott változat (%s) van egy rés a több változata, így telepítése varázsló vissza fog térni arra utalnak következő migráció egyszer ez is elkészül.
+MigrationFinished=Migráció befejezte
+ActivateModule=Modul aktiválása %s
+MigrationPaymentMode=Adatmigráció fizetési mód
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:14:38).

@@ -1,0 +1,18 @@
+/*
+ * Language code: ja_JP
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 16:41:06
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
+// Reference language: en_US -> ja_JP
+CHARSET=UTF-8
+WorkflowSetup=ワークフローモジュールのセットアップ
+WorkflowDesc=このモジュールは、アプリケーションへの自動アクションの動作を変更する件EusLispされています。デフォルトでは、ワークフローでは、（あなたが望む順番でものを作る）が開かれます。あなたはインチ興味深いことが自動処理を有効にできます。
+ThereIsNoWorkflowToModify=あなたがアクティブ化したモジュールに変更することができないワークフローはありません。
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=商業的提案が署名された後、自動的に顧客の注文を作成します。
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=商業的提案が署名された後、自動的に顧客の請求書を作成します。
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=契約が検証された後、自動的に顧客に請求書を作成します。
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=顧客注文が閉じられた後、自動的に顧客の請求書を作成します。
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:49:32).

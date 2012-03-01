@@ -1,0 +1,18 @@
+/*
+ * Language code: hu_HU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 16:13:31
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
+// Reference language: en_US -> hu_HU
+CHARSET=UTF-8
+OSCommerce=OS Commerce
+OSCommerceSetup=OS Commerce modul beállítása
+OSCommerceSetupSaved=OS Commerce beállítás mentése
+OSCommerceServer=OS Commerce Server host / ip
+OSCommerceDatabaseName=OS Commerce adatbázis neve
+OSCommercePrefix=OS Commerce táblázatok előtag
+OSCommerceUser=OS Commerce adatbázis bejelentkezés
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:15:39).

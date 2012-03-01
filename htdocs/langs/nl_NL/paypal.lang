@@ -25,3 +25,9 @@ PAYPAL_IPN_MAIL_ADDRESS=E-mail adres voor de directe kennisgeving van de betalin
 PredefinedMailContentSendOrderWithPaypalLink=Hier vindt u de bestelling __ORDERREF__ \n\nU kunt klikken op de beveiligde link hieronder om uw betaling via PayPal te maken \n\n%s\n\nSincerely\n\n
 PredefinedMailContentSendInvoiceWithPaypalLink=Hier vindt u de factuur __FACREF__ \n\nU kunt klikken op de beveiligde link hieronder om uw betaling via PayPal te maken \n\n%s\n\nSincerely\n\n
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 01:40:41).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
+// Reference language: en_US -> nl_NL
+YouAreCurrentlyInSandboxMode=U bevindt zich momenteel in de &quot;sandbox&quot;-modus
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:11:58).

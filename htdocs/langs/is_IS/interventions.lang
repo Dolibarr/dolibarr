@@ -40,3 +40,13 @@ ArcticNumRefModelError=Ekki tókst að virkja
 PacificNumRefModelDesc1=Fara aftur numero með snið %s yymm-NNNN þar YY er ári, mm er mánuður og NNNN er röð án brot og ekki aftur snúið til 0
 PacificNumRefModelError=Íhlutun kort sem byrjar á $ syymm er til nú þegar og er ekki með þessari tegund af röð. Fjarlægja hana eða gefa henni nýtt heiti þess að virkja þessa einingu.
 // STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+ActionsOnFicheInter=Aðgerðir á íhlutun
+ClassifyBilled=Flokka &quot;borgað&quot;
+StatusInterInvoiced=Billed
+RelatedInterventions=Tengdar inngrip
+ShowIntervention=Sýna afskipti
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:25).

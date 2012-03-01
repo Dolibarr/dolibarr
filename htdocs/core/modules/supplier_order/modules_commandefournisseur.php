@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  *
@@ -42,7 +42,7 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 
 	/**
 	 *  Return list of active generation modules
-	 *  
+	 *
 	 *  @param	DoliDB		$db		Database handler
 	 */
 	function liste_modeles($db)
@@ -154,42 +154,62 @@ function supplier_order_pdf_create($db, $object, $model, $outputlangs, $hidedeta
 	global $conf,$langs;
 	$langs->load("suppliers");
 
-	$dir = "/core/modules/supplier_order/pdf/";
+	$error=0;
+
+	// Increase limit for PDF build
+	$err=error_reporting();
+	error_reporting(0);
+	@set_time_limit(120);
+	error_reporting($err);
+
 	$srctemplatepath='';
-	$modelisok=0;
-	$liste=array();
 
-	// Positionne modele sur le nom du modele de commande fournisseur a utiliser
-	$file = "pdf_".$model.".modules.php";
-	// On verifie l'emplacement du modele
-	$file = dol_buildpath($dir.$file);
-	if ($model && file_exists($file))   $modelisok=1;
-
-	// Si model pas encore bon
-	if (! $modelisok)
+	// Positionne le modele sur le nom du modele a utiliser
+	if (! dol_strlen($modele))
 	{
-		if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF) $model = $conf->global->COMMANDE_SUPPLIER_ADDON_PDF;
-		$file = "pdf_".$model.".modules.php";
-		// On verifie l'emplacement du modele
-        $file = dol_buildpath($dir.$file);
-		if (file_exists($file))   $modelisok=1;
+		if (! empty($conf->global->COMMANDE_SUPPLIER_ADDON_PDF))
+		{
+			$modele = $conf->global->COMMANDE_SUPPLIER_ADDON_PDF;
+		}
+		else
+		{
+			$modele = 'muscadet';
+		}
 	}
 
-	// Si model pas encore bon
-	if (! $modelisok)
+	// If selected modele is a filename template (then $modele="modelname:filename")
+	$tmp=explode(':',$modele,2);
+	if (! empty($tmp[1]))
 	{
-		$liste=ModelePDFSuppliersOrders::liste_modeles($db);
-		$model=key($liste);        // Renvoie la premiere valeur de cle trouvee dans le tableau
-		$file = "pdf_".$model.".modules.php";
-		// On verifie l'emplacement du modele
-        $file = dol_buildpath($dir.$file);
-		if (file_exists($file))   $modelisok=1;
+		$modele=$tmp[0];
+		$srctemplatepath=$tmp[1];
+	}
+
+	// Search template files
+	$file=''; $classname=''; $filefound=0;
+	$dirmodels=array('/');
+	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
+	foreach($dirmodels as $reldir)
+	{
+		foreach(array('doc','pdf') as $prefix)
+		{
+			$file = $prefix."_".$modele.".modules.php";
+
+			// On verifie l'emplacement du modele
+			$file=dol_buildpath($reldir."core/modules/supplier_order/pdf/".$file,0);
+			if (file_exists($file))
+			{
+				$filefound=1;
+				$classname=$prefix.'_'.$modele;
+				break;
+			}
+		}
+		if ($filefound) break;
 	}
 
 	// Charge le modele
-	if ($modelisok)
+	if ($filefound)
 	{
-		$classname = "pdf_".$model;
 		require_once($file);
 
 		$obj = new $classname($db);

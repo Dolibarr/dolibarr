@@ -144,3 +144,18 @@ PDFEdisonDescription=一份简单的订购模式
 // Reference language: en_US -> zh_CN
 DispatchSupplierOrder=接收供应商的订单%s
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:42).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+SuppliersOrdersToProcess=供应商的订单处理
+StatusOrderSentShort=在过程
+ShippingExist=A货存在
+UnvalidateOrder=Unvalidate秩序
+ConfirmUnvalidateOrder=你是否确定要恢复秩序<b>%s</b>草案状态？
+OrderByMail=邮件
+OrderByFax=传真
+OrderByEMail=电子邮件
+OrderByWWW=在线
+OrderByPhone=电话
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:37).

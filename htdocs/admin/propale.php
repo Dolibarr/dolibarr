@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio         <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier              <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne                 <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2011 Regis Houssin               <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin               <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2012 Juanjo Menent			   <jmenent@2byte.es>
  *
@@ -35,11 +35,10 @@ require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
 $langs->load("admin");
 $langs->load("errors");
 
-if (!$user->admin)
-accessforbidden();
+if (! $user->admin) accessforbidden();
 
-$action =GETPOST("action");
-$value = GETPOST("value");
+$action =GETPOST('action','alpha');
+$value = GETPOST('value','alpha');
 
 /*
  * Actions
@@ -70,13 +69,22 @@ if ($action == 'specimen')
 	$propal = new Propal($db);
 	$propal->initAsSpecimen();
 
-	// Charge le modele
-	$dir = "/core/modules/propale/doc/";
-	$file = "pdf_".$modele.".modules.php";
-	$file = dol_buildpath($dir.$file);
-	if (file_exists($file))
+	// Search template files
+	$file=''; $classname=''; $filefound=0;
+	$dirmodels=array_merge(array('/'),$conf->modules_parts['models']);
+	foreach($dirmodels as $reldir)
 	{
-		$classname = "pdf_".$modele;
+	    $file=dol_buildpath($reldir."core/modules/propale/doc/pdf_".$modele.".modules.php");
+		if (file_exists($file))
+		{
+			$filefound=1;
+			$classname = "pdf_".$modele;
+			break;
+		}
+	}
+
+	if ($filefound)
+	{
 		require_once($file);
 
 		$module = new $classname($db);
@@ -186,7 +194,8 @@ if ($action == 'set')
     $sql.= ")";
 	$resql=$db->query($sql);
 }
-if ($action == 'del')
+
+else if ($action == 'del')
 {
 	$type='propal';
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
@@ -199,7 +208,7 @@ if ($action == 'del')
 	}
 }
 
-if ($action == 'setdoc')
+else if ($action == 'setdoc')
 {
 	$label = GETPOST("label");
 	$scandir = GETPOST("scandir");
@@ -235,7 +244,7 @@ if ($action == 'setdoc')
 	}
 }
 
-if ($action == 'setmod')
+else if ($action == 'setmod')
 {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
@@ -247,6 +256,8 @@ if ($action == 'setmod')
 /*
  * Affiche page
  */
+
+$dirmodels=array_merge(array('/'),$conf->modules_parts['models']);
 
 llxHeader('',$langs->trans("PropalSetup"));
 
@@ -274,9 +285,9 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-foreach ($conf->file->dol_document_root as $dirroot)
+foreach ($dirmodels as $reldir)
 {
-	$dir = $dirroot . "/core/modules/propale/";
+	$dir = dol_buildpath($reldir."core/modules/propale/");
 
 	if (is_dir($dir))
 	{
@@ -406,11 +417,11 @@ print "</tr>\n";
 clearstatcache();
 
 $var=true;
-foreach ($conf->file->dol_document_root as $dirroot)
+foreach ($dirmodels as $reldir)
 {
     foreach (array('','/doc') as $valdir)
     {
-        $dir = $dirroot . "/core/modules/propale".$valdir;
+    	$dir = dol_buildpath($reldir."core/modules/propale".$valdir);
 
         if (is_dir($dir))
         {

@@ -54,3 +54,11 @@ ModifyIntervention=Modificare de intervenţie
 ActionsOnFicheInter=Acţiuni privind intervenţia
 ClassifyBilled=Clasifice &quot;facturate&quot;
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 05:28:00).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+StatusInterInvoiced=Facturat
+RelatedInterventions=Intervenţii similare
+ShowIntervention=Arată de intervenţie
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:23:21).

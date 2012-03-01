@@ -317,3 +317,9 @@ DemandReasonTypeSRC_CAMP_FAX=Fax campanie
 DemandReasonTypeSRC_COMM=Comercială de contact
 DemandReasonTypeSRC_SHOP=Magazin de contact
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 08:52:27).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+CurrencyUAH=Grivna
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:23:28).

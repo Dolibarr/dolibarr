@@ -1,0 +1,20 @@
+/*
+ * Language code: et_EE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 22:15:30
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
+// Reference language: en_US -> et_EE
+CHARSET=UTF-8
+Shop=Pood
+ShopWeb=Web Shop
+LastOrders=Viimased korraldused
+OnStandBy=Ootel
+TreatmentInProgress=Ravi pooleli
+LastCustomers=Viimased kliendid
+OSCommerceShop=OsCommerce pood
+OSCommerce=OsCommerce
+AddProd=Müüa online
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:21:39).

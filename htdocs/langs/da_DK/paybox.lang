@@ -44,3 +44,16 @@ CSSUrlForPaymentForm=CSS stylesheet url til indbetalingskort
 MessageOK=Besked på validerede betaling tilbage side
 MessageKO=Besked om annulleret betaling tilbage side
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:08:36).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
+// Reference language: en_US -> da_DK
+ToOfferALinkForOnlinePayment=URL til %s betaling
+YourPaymentHasBeenRecorded=Denne side bekræfter, at din betaling er registreret. Tak.
+YourPaymentHasNotBeenRecorded=Du betalingen ikke er blevet registreret, og transaktionen er blevet aflyst. Tak.
+AccountParameter=Konto parametre
+UsageParameter=Usage parametre
+InformationToFindParameters=Hjælp til at finde din %s kontooplysninger
+PAYBOX_CGI_URL_V2=URL PAYBOX CGI-modul til betaling
+VendorName=Navn på leverandør
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:59:36).

@@ -274,3 +274,9 @@ CancelUpload=إلغاء التحميل
 FileIsTooBig=ملفات كبيرة جدا
 Export=تصدير
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 02:49:49).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:03).
+// Reference language: en_US -> ar_SA
+ShipmentValidatedInDolibarr=%s شحنة التحقق من صحتها في Dolibarr
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:55:04).

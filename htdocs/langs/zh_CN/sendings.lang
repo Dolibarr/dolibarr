@@ -69,3 +69,14 @@ DocumentModelTyphon=更多的送货单（logo. ..完整的文档模型）
 // Reference language: en_US -> zh_CN
 Shipments=出货
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:30).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+SendShippingByEMail=通过电子邮件发送货物
+SendShippingRef=发送货物%s
+ActionsOnShipping=对装运的事件
+LinkToTrackYourPackage=链接到追踪您的包裹
+ShipmentCreationIsDoneFromOrder=就目前而言，建立一个新的装运完成从订单卡。
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=没有定义的常数EXPEDITION_ADDON_NUMBER
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:40:21).

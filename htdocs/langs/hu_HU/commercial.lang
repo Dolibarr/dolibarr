@@ -77,3 +77,13 @@ ActionAC_EMAILING=Tömeges email küldés
 ActionAC_COM=Ügyfél rendelése elküldése levélben
 ActionAC_SUP_ORD=Beszállítói rendelés elküldése levélben
 ActionAC_SUP_INV=Beszállítói számla elküldése levélben
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
+// Reference language: en_US -> hu_HU
+StatusNotApplicable=Nem alkalmazható
+ActionAC_SHIP=Küldje hajózás mail
+ActionAC_OTH=Más
+StatusProsp=Prospect állapot
+DraftPropals=Készítsen üzleti ajánlatot
+SearchPropal=Keressen egy kereskedelmi javaslatot
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:15:22).

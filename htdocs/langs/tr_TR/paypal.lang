@@ -25,3 +25,9 @@ PAYPAL_IPN_MAIL_ADDRESS=Anında ödeme bildirimi için e-posta adresini (NPI)
 PredefinedMailContentSendOrderWithPaypalLink=
 PredefinedMailContentSendInvoiceWithPaypalLink=
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 14:08:35).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
+// Reference language: en_US -> tr_TR
+YouAreCurrentlyInSandboxMode=Sen &quot;sandbox&quot; modu şu anda
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:35:57).

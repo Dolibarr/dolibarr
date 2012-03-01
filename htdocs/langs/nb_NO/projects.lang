@@ -95,3 +95,13 @@ TypeContact_project_task_internal_CONTRIBUTOR=Bidragsyter
 TypeContact_project_task_external_CONTRIBUTOR=Bidragsyter
 DocumentModelBaleine=En komplett prosjektets rapport modell (logo. ..)
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:47:17).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+TimesSpent=Tid brukt
+TaskIsNotAffectedToYou=Oppgaven ikke allokert til deg
+ErrorTimeSpentIsEmpty=Tid brukt er tom
+ThisWillAlsoRemoveTasks=Denne handlingen vil også slette alle oppgaver av prosjektet <b>(%s</b> oppgaver for øyeblikket) og alle innganger av medgått tid.
+IfNeedToUseOhterObjectKeepEmpty=Dersom noen objekter (faktura, orden, ...), som tilhører en annen tredjepart, må knyttes til prosjektet for å lage, beholde denne tomme for å få prosjektet blir flere tredjeparter.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:09:21).

@@ -60,3 +60,17 @@ NoRecordedProducts=Nincs bejegyzett termék / szolgáltatás
 NoRecordedProspects=Nincs bejegyzett kilátás
 NoContractedProducts=Nincs szerződött termék / szolgáltatás
 NoRecordedContracts=Nincs bejegyzett szerződés
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
+// Reference language: en_US -> hu_HU
+BoxLastContacts=Utolsó kapcsolatok / címek
+BoxLastMembers=Utolsó tagok
+BoxTitleLastModifiedMembers=Utolsó módosítás tagjai %s
+BoxTitleLastModifiedContacts=Utolsó módosítás %s kapcsolatok / címek
+BoxOldestExpiredServices=Legrégebbi aktív lejárt szolgáltatások
+BoxLastExpiredServices=Utolsó %s legidősebb aktív kapcsolatot lejárt szolgáltatások
+BoxTitleLastModifiedDonations=Utolsó módosítás adományok %s
+BoxTitleLastModifiedExpenses=Utolsó módosítás költségeit %s
+ClickToAdd=Klikkelj ide.
+NoRecordedContacts=Nincs rögzített kapcsolatok
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:15:21).

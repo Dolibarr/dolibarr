@@ -33,3 +33,9 @@ ListTripsAndExpenses=Geziler ve harcamalar listesi
 TripsAndExpensesStatistics=Gezi ve giderleri istatistikleri
 SearchATripAndExpense=Bir gezi ve gider ara
 // STOP - Lines generated via autotranslator.php tool (2011-10-09 13:54:39).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
+// Reference language: en_US -> tr_TR
+ExpensesArea=Gezileri ve giderler alanı
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:36:02).

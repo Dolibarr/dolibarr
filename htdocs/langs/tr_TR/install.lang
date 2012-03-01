@@ -502,3 +502,11 @@ MigrationFinished=Göç bitirdi
 LastStepDesc=<strong>Son adım:</strong> yazılım bağlanmak için kullanmayı planlıyorsanız, burada giriş ve şifre tanımlayın . Tüm başkalarını yönetmek için hesabı olduğu gibi bu gevşek etmeyin.
 MigrationActioncommElement=Eylemlere ilişkin veri güncelleme
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 15:08:15).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
+// Reference language: en_US -> tr_TR
+DatabasePrefix=Veritabanı tablo öneki
+ActivateModule=Modülü %s etkinleştirin
+MigrationPaymentMode=Ödeme modu veri taşıma
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:35:57).

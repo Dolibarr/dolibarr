@@ -94,3 +94,18 @@ TypeContact_propal_external_BILLING=Kunden faktura kontakt
 TypeContact_propal_external_CUSTOMER=Kundekontakt oppfølging forslag
 DocModelRoigDescription=En komplett forslag modell med spansk skatt RE og IRPF
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:52:04).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+ProposalCard=Forslag kort
+ConfirmReOpenProp=Er du sikker på at du vil åpne igjen de kommersielle forslag <b>%s?</b>
+AvailabilityPeriod=Tilgjengelighet forsinkelse
+SetAvailability=Sett tilgjengelighet forsinkelse
+AfterOrder=etter bestilling
+AvailabilityTypeAV_NOW=Umiddelbar
+AvailabilityTypeAV_1W=1 uke
+AvailabilityTypeAV_2W=2 uker
+AvailabilityTypeAV_3W=3 uker
+AvailabilityTypeAV_1M=En måned
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:09:05).

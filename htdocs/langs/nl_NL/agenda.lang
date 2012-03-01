@@ -71,3 +71,15 @@ AgendaExtNb=Kalender nb %s
 ExtSiteUrlAgenda=URL aan. Ical bestand te openen
 ExtSiteNoLabel=Geen omschrijving
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 02:37:01).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
+// Reference language: en_US -> nl_NL
+LocalAgenda=Lokale kalender
+MyEvents=Mijn evenementen
+OtherEvents=Andere evenementen
+OrderApprovedInDolibarr=Bestel %s goedgekeurd
+OrderBackToDraftInDolibarr=Bestel %s terug te gaan naar ontwerp-status
+OrderCanceledInDolibarr=Bestel %s geannuleerd
+ExportCal=Export kalender
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:12:43).

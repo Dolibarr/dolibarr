@@ -29,3 +29,9 @@ DonationsModels=Documents models for donation receipts
 // Reference language: en_US -> el_GR
 LastModifiedDonations=Τελευταία %s τροποποίηση δωρεές
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:37:31).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+SearchADonation=Αναζήτηση μια δωρεά
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:08:24).

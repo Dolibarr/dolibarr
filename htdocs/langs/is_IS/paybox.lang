@@ -37,3 +37,18 @@ SetupPayBoxToHavePaymentCreatedAutomatically=Skipulag PayBox með url <b>%s</b> 
 // Reference language: en_US -> is_IS
 MessageKO=Skilaboð á niður greiðslu aftur síðu
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:15:03).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+ToOfferALinkForOnlinePayment=Slóð fyrir %s greiðslu
+YourPaymentHasBeenRecorded=Þessi síða staðfestir að greiðsla hefur verið skráð. Þakka þér.
+YourPaymentHasNotBeenRecorded=Þú greiðsla hefur ekki verið skráð og viðskipti hefur verið aflýst. Þakka þér.
+AccountParameter=Skráningin breytur
+UsageParameter=Notkun breytur
+InformationToFindParameters=Hjálp til að finna %s upplýsingar reiknings þíns
+PAYBOX_CGI_URL_V2=Slóð Paybox CGI mát fyrir greiðslu
+VendorName=Nafn seljanda
+CSSUrlForPaymentForm=CSS stíll lak url fyrir formi greiðslu
+MessageOK=Skilaboð á staðfest greiðslu aftur síðu
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:38).

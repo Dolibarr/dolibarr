@@ -135,3 +135,9 @@ MailingModuleDescContactsByCompanyCategory=Контакты третьих ли�
 MailingModuleDescMembersCategories=Фонд членов (по категориям)
 MailingModuleDescContactsByFunction=Контакты третьих лиц (по должности / функции)
 // STOP - Lines generated via autotranslator.php tool (2011-08-27 16:59:25).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
+// Reference language: en_US -> ru_RU
+MailingStatusRead=Читать
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:13).

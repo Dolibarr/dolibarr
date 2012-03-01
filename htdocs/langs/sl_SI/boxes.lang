@@ -68,3 +68,10 @@ NoRecordedProducts = Ni vnesenih proizvodov/storitev
 NoRecordedProspects = Ni vnesenih ponudb
 NoContractedProducts = Ni pogodbenih proizvodov/storitev
 NoRecordedContracts = Ni vnesenih pogodb
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+BoxOldestExpiredServices=Najstarejši dejavni potekla storitve
+BoxLastExpiredServices=Zadnje %s najstarejši stiki z aktivnimi potekel storitev
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:30:28).

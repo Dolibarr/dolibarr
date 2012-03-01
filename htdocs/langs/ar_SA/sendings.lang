@@ -71,3 +71,14 @@ DocumentModelMerou=Mérou A5 نموذج
 DateDeliveryPlanned=مسطح تاريخ التسليم
 DateReceived=تلقى تاريخ التسليم
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:15).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+SendShippingByEMail=ارسال شحنة عن طريق البريد الالكتروني
+SendShippingRef=ارسال شحنة %s
+ActionsOnShipping=الأحداث على شحنة
+LinkToTrackYourPackage=رابط لتتبع الحزمة الخاصة بك
+ShipmentCreationIsDoneFromOrder=لحظة، ويتم إنشاء لشحنة جديدة من أجل بطاقة.
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER ثابت لم تحدد
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:58:21).

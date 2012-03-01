@@ -13,3 +13,14 @@ FailedToConnectToFTPServerWithCredentials=定義されたログイン/パスワ�
 FTPFailedToRemoveFile=ファイルの<b>%sを</b>削除できませんでした。
 FTPFailedToRemoveDir=（アクセス権を確認し、そのディレクトリが空の）ディレクトリの<b>%sを</b>削除できませんでした。
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 07:36:54).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
+// Reference language: en_US -> ja_JP
+NewFTPClient=新しいFTP接続のセットアップ
+FTPArea=FTPエリア
+FTPAreaDesc=この画面には、FTPサーバビューのコンテンツを表示する
+SetupOfFTPClientModuleNotComplete=FTPクライアントモジュールのセットアップが完了していないと思われる
+FTPFeatureNotSupportedByYourPHP=あなたのPHPは、FTP機能をサポートしていません。
+FailedToConnectToFTPServer=サーバー（サーバー%s、ポート%s）のFTPに接続に失敗しました。
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:42:01).

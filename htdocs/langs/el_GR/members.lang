@@ -190,3 +190,21 @@ SubscriptionsStatistics=Στατιστικά στοιχεία για τις συ
 NbOfSubscriptions=Αριθμός συνδρομών
 AmountOfSubscriptions=Ποσό των συνδρομών
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:41:20).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+NewSubscriptionDesc=Αυτή η φόρμα σας επιτρέπει να καταγράψετε την εγγραφή σας ως νέο μέλος του ιδρύματος. Αν θέλετε να ανανεώσετε τη συνδρομή σας (αν είναι ήδη μέλος), επικοινωνήστε με θεμέλιο του σκάφους, αντί μέσω e-mail %s.
+BlankSubscriptionFormDesc=Dolibarr μπορεί να σας παρέχει μια δημόσια διεύθυνση URL για να επιτρέψουν σε εξωτερικούς επισκέπτες να ζητήσει να εγγραφεί στο ίδρυμα. Εάν μια ηλεκτρονική πληρωμή μονάδα είναι ενεργοποιημένη, μια μορφή πληρωμής θα πρέπει επίσης να παρέχονται αυτόματα.
+EnablePublicSubscriptionForm=Ενεργοποιήστε το κοινό αυτόματη συνδρομή μορφή
+LastSubscriptionsModified=Τελευταία τροποποίηση %s συνδρομές
+TurnoverOrBudget=Κύκλος εργασιών (για μια επιχείρηση), ή του προϋπολογισμού (για ένα ίδρυμα)
+DefaultAmount=Προεπιλογή ποσό της συνδρομής
+CanEditAmount=Επισκέπτης μπορεί να επιλέξει / επεξεργαστείτε το ποσό της συνδρομής του
+MEMBER_NEWFORM_PAYONLINE=Μετάβαση στην ολοκληρωμένη ηλεκτρονική σελίδα πληρωμής
+Associations=Ιδρύματα
+Collectivités=Οργανισμοί
+Particuliers=Προσωπικά
+Entreprises=Εταιρείες
+DOLIBARRFOUNDATION_PAYMENT_FORM=Για να κάνετε την πληρωμή της συνδρομής σας χρησιμοποιώντας μια τραπεζική μεταφορά, δείτε τη σελίδα <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Για να πληρώσετε με πιστωτική κάρτα ή Paypal, κάντε κλικ στο κουμπί στο κάτω μέρος της σελίδας. <br>
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:08:13).

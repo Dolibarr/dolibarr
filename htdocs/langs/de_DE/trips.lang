@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-11 17:09:12
  */
@@ -24,3 +24,10 @@ TF_LUNCH=Mittagessen
 TF_TRIP=Reise
 ListTripsAndExpenses=Liste der Reisen und Spesen
 TripsAndExpensesStatistics=Reise- und Spesenstatistiken
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+ExpensesArea=Ausflüge und Aufwendungen Bereich
+SearchATripAndExpense=Suchen Sie eine Reise-und Aufwandsposten
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:04:02).

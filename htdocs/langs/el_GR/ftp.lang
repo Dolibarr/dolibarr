@@ -14,3 +14,9 @@ FailedToConnectToFTPServerWithCredentials=Απέτυχε να κάνετε login
 FTPFailedToRemoveFile=Απέτυχε να αφαιρέσετε <b>%s</b> αρχείο.
 FTPFailedToRemoveDir=Απέτυχε να αφαιρέσετε <b>%s</b> κατάλογο (ελέγξτε τα δικαιώματα και ότι ο κατάλογος είναι κενός).
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 07:35:50).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+FTPClientSetup=FTP εγκατάσταση μονάδας πελάτη
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:12).

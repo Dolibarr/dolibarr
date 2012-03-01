@@ -301,3 +301,13 @@ CurrencySingUAH=Hryvnia
 DemandReasonTypeSRC_COMM=Kommersiella kontakt
 DemandReasonTypeSRC_SHOP=Handla kontakt
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 09:25:09).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+DemandReasonTypeSRC_INTE=Internet
+DemandReasonTypeSRC_CAMP_MAIL=Post kampanj
+DemandReasonTypeSRC_CAMP_EMAIL=E-post till kampanj
+DemandReasonTypeSRC_CAMP_PHO=Telefonen kampanj
+DemandReasonTypeSRC_CAMP_FAX=Fax kampanjen
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:16).

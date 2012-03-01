@@ -30,3 +30,20 @@ Language_ru_RU=Orosz
 Language_tr_TR=Török
 Language_sl_SI=Szlovén
 Language_zh_CN=Kínai
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
+// Reference language: en_US -> hu_HU
+Language_ar_SA=Arab
+Language_da_DK=Dán
+Language_de_AT=Német (Ausztria)
+Language_el_GR=Görög
+Language_en_NZ=Angol (Új Zéland)
+Language_es_HN=Spanyol (Honduras)
+Language_es_MX=Spanyol (Mexikó)
+Language_es_PR=Spanyol (Puerto Rico)
+Language_fa_IR=Perzsa
+Language_ja_JP=Japán
+Language_ru_UA=Orosz (Ukrajna)
+Language_sv_SV=Svéd
+Language_sv_SE=Svéd
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:22:54).

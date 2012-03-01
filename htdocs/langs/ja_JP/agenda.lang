@@ -1,0 +1,83 @@
+/*
+ * Language code: ja_JP
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 16:41:06
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
+// Reference language: en_US -> ja_JP
+CHARSET=UTF-8
+Actions=イベント
+ActionsArea=イベントエリア（アクションとタスク）
+Agenda=議題
+Agendas=アジェンダ
+Calendar=カレンダー
+Calendars=カレンダー
+LocalAgenda=ローカルカレンダー
+AffectedTo=影響を受ける
+DoneBy=によって行われ
+Events=イベント
+MyEvents=自分のイベント
+OtherEvents=その他のイベント
+ListOfActions=イベントのリスト
+Location=場所
+EventOnFullDay=一日のイベント
+SearchAnAction=イベント/タスクを検索
+MenuToDoActions=すべての不完全なイベント
+MenuDoneActions=すべての終了イベント
+MenuToDoMyActions=私の不完全なイベント
+MenuDoneMyActions=私の終了イベント
+ListOfEvents=Dolibarrイベントのリスト
+ActionsAskedBy=によって報告されたイベント
+ActionsToDoBy=イベントへの影響を受けた
+ActionsDoneBy=によって行われたイベント
+AllMyActions=すべての私のイベント/タスク
+AllActions=すべてのイベント/タスク
+ViewList=リストビュー
+ViewCal=月間表示
+ViewDay=日表示
+ViewWeek=週ビュー
+ViewWithPredefinedFilters=定義済みのフィルタを使用して表示
+AutoActions=議題の自動充填
+AgendaAutoActionDesc=ここではDolibarrが自動的に議題でイベントを作成するイベントを定義します。何も（デフォルトで）チェックされていない場合のみ、手動アクションが議題に含まれています。
+AgendaSetupOtherDesc=このページでは、外部のカレンダーにあなたのDolibarrイベントのエクスポートを許可するオプションが用意されています（サンダーバード、Googleカレンダー、...）
+AgendaExtSitesDesc=このページでは、Dolibarrの議題にそれらのイベントを表示するにはカレンダーの外部ソースを宣言することができます。
+ActionsEvents=Dolibarrが自動的に議題でアクションを作成する対象のイベント
+PropalValidatedInDolibarr=提案%sは、検証
+InvoiceValidatedInDolibarr=請求書%sは、検証
+InvoiceBackToDraftInDolibarr=請求書%sはドラフトの状態に戻って
+OrderValidatedInDolibarr=注文%sは、検証
+OrderApprovedInDolibarr=注文%sは、承認された
+OrderBackToDraftInDolibarr=注文%sは、ドラフトの状態に戻って
+OrderCanceledInDolibarr=ご注文はキャンセル%s
+InterventionValidatedInDolibarr=介入%sは、検証
+ProposalSentByEMail=電子メールで送信商業提案%s
+OrderSentByEMail=電子メールで送信、顧客の注文%s
+InvoiceSentByEMail=電子メールで送信顧客の請求書%s
+SupplierOrderSentByEMail=電子メールで送信サプライヤの注文%s
+SupplierInvoiceSentByEMail=電子メールで送信サプライヤの請求書%s
+ShippingSentByEMail=電子メールで送信出荷%s
+InterventionSentByEMail=電子メールで送信介入%s
+NewCompanyToDolibarr=第三者が作成した
+DateActionPlannedStart=計画開始日
+DateActionPlannedEnd=計画終了日
+DateActionDoneStart=実際の開始日
+DateActionDoneEnd=実際の終了日
+DateActionStart=開始日
+DateActionEnd=終了日
+AgendaUrlOptions1=また、出力をフィルタリングするには、次のパラメータを追加することができます。
+AgendaUrlOptions2=<b>ログインは= %s</b>に影響を受けた、またはユーザー<b>%s</b>によって行われ、作成されたアクションに出力を制限する。
+AgendaUrlOptions3=ユーザー<b>%s</b>によって作成されたアクションに出力を制限loginA <b>に= %s。</b>
+AgendaUrlOptions4=ユーザー<b>%s</b>に影響を受けたアクションに出力を制限する<b>logint = %s。</b>
+AgendaUrlOptions5=ユーザー<b>%s</b>によって行われたアクションへの出力を制限する<b>logind = %s。</b>
+AgendaShowBirthdayEvents=誕生日の連絡先を表示する
+AgendaHideBirthdayEvents=誕生日の接点を隠す
+ExportCal=輸出カレンダー
+ExtSites=外部カレンダーをインポートする
+ExtSitesEnableThisTool=議題に外部カレンダーを表示する
+ExtSitesNbOfAgenda=カレンダーの数
+AgendaExtNb=カレンダーNB %s
+ExtSiteUrlAgenda=。iCalファイルにアクセスするためのURL
+ExtSiteNoLabel=全く説明がありません
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:00:59).

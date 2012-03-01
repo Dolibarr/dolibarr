@@ -152,3 +152,12 @@ ShowAllAccounts=Visa för alla konton
 FutureTransaction=Transaktioner i Futur. Inget sätt att blidka.
 SelectChequeTransactionAndGenerate=Välj / Filtret kontrollerar att inkludera i kontrollen insättning kvittot och klicka på &quot;Skapa&quot;.
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 07:33:29).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+RIBControlError=Integritet kontroll av värden misslyckas. Detta innebär att information om detta kontonummer är inte fullständiga eller fel (kontrollera land, siffror och IBAN).
+WithdrawalPayment=Tillbakadragande betalning
+ShowCheckReceipt=Visar kontrollera insättning mottagande
+Graph=Grafiken
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:13).

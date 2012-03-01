@@ -162,3 +162,11 @@ TypeContact_order_supplier_external_SHIPPING=Tedarikçi nakliye temas
 TypeContact_order_supplier_external_CUSTOMER=Tedarikçi temas takibi amacıyla
 PDFEdisonDescription=Basit bir sipariş modeli
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 13:48:46).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
+// Reference language: en_US -> tr_TR
+ShippingExist=Bir sevkiyat var
+UnvalidateOrder=Sipariş Unvalidate
+ConfirmUnvalidateOrder=Eğer taslak durumu için <b>%s</b> geri yüklemek istediğinizden emin misiniz?
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:36:00).

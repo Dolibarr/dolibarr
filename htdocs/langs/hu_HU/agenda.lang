@@ -47,3 +47,32 @@ AgendaUrlOptions4=<b>logint=%s</b> kimenet szükítése a <b>%s</b> felhasznál�
 AgendaUrlOptions5=<b>logind=%s</b> kimenet szükítése a <b>%s</b> felhasználó által végzett cselekvésekre.
 AgendaShowBirthdayEvents=Kapcsolatok születésnapjának mutatása
 AgendaHideBirthdayEvents=Kapcsolatok születésnapjának elrejtése
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
+// Reference language: en_US -> hu_HU
+LocalAgenda=Helyi naptár
+MyEvents=Saját rendezvények
+OtherEvents=Egyéb események
+EventOnFullDay=Egész napos esemény
+ViewDay=Nap nézet
+ViewWeek=Hét nézet
+AgendaExtSitesDesc=Ez az oldal lehetővé teszi, hogy nyilvánítsa külső forrásokat naptárak látják eseményeket Dolibarr napirenden.
+InvoiceBackToDraftInDolibarr=Számla %s menj vissza a tervezett jogállását
+OrderApprovedInDolibarr=Rendelés %s jóváhagyott
+OrderBackToDraftInDolibarr=Rendelés %s menj vissza vázlat
+OrderCanceledInDolibarr=Rendelés %s törölt
+ProposalSentByEMail=Üzleti ajánlat %s postáztuk
+OrderSentByEMail=Ügyfél érdekében %s postáztuk
+InvoiceSentByEMail=Az ügyfél számlát postáztuk %s
+SupplierOrderSentByEMail=Szállító érdekében %s postáztuk
+SupplierInvoiceSentByEMail=Szállító számlát postáztuk %s
+ShippingSentByEMail=Szállítás %s postáztuk
+InterventionSentByEMail=Beavatkozás %s postáztuk
+ExportCal=Export naptár
+ExtSites=Importálása külső naptárak
+ExtSitesEnableThisTool=Mutasd a napirendi külső naptárak
+ExtSitesNbOfAgenda=Száma naptárak
+AgendaExtNb=Naptár nb %s
+ExtSiteUrlAgenda=URL eléréséhez. ICal fájl
+ExtSiteNoLabel=Nincs leírás
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:24:23).

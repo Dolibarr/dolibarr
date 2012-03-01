@@ -83,3 +83,9 @@ ActionsOnShipping=Acions sulla spedizione
 LinkToTrackYourPackage=Link a monitorare il tuo pacchetto
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER costante non definita
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:29).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+// Reference language: en_US -> it_IT
+ShipmentCreationIsDoneFromOrder=Per il momento, la creazione di una nuova spedizione viene effettuata dalla scheda dell'ordine.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:33:52).

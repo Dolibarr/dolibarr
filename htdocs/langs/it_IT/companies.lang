@@ -362,3 +362,48 @@ InActivity=Aperto
 ActivityCeased=Chiuso
 ActivityStateFilter=Attività dello stato
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:19).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+// Reference language: en_US -> it_IT
+CountryId=Paese id
+ProfId5Short=Prof. id 5
+ProfId5=Professionale ID 5
+ProfId5AR=-
+ProfId5AU=-
+ProfId5BE=-
+#ProfId1BR=CNAE
+#ProfId2BR=CNPJ
+#ProfId3BR=CPF
+#ProfId4BR=INSS
+#ProfId5BR=IE
+#ProfId6BR=IM
+ProfId5CH=-
+ProfId5CL=-
+ProfId1CO=Prof Id 1 (RUT)
+ProfId2CO=-
+ProfId3CO=-
+ProfId4CO=-
+ProfId5CO=-
+ProfId5DE=-
+ProfId5ES=-
+ProfId5FR=Prof Id 5
+ProfId5GB=-
+ProfId5HN=-
+ProfId5IN=Prof Id 5
+ProfId5MA=-
+ProfId5MX=-
+ProfId5NL=-
+ProfId5PT=-
+ProfId3SN=-
+ProfId4SN=-
+ProfId5SN=-
+ProfId5TN=-
+ProfId1RU=Prof Id 1 (OGRN)
+ProfId2RU=Prof Id 2 (INN)
+ProfId3RU=Id Prof 3 (KPP)
+ProfId4RU=Prof Id 4 (Okpo)
+ProfId5RU=-
+EditContact=Modifica contatto / indirizzo
+ImportDataset_company_2=Contatti (di thirdparties o meno) e gli attributi
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:33:51).

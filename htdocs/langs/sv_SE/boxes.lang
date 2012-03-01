@@ -69,3 +69,18 @@ NoRecordedProspects=Inga registrerade framtidsutsikter
 NoContractedProducts=Inga produkter / tjänster avtalade
 NoRecordedContracts=Inga registrerade kontrakt
 // STOP - Lines generated via autotranslator.php tool (2010-08-28 13:13:03).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+BoxLastContacts=Senaste kontakter / adresser
+BoxLastMembers=Sista medlemmar
+BoxTitleLastModifiedMembers=Sista %s modifierade medlemmar
+BoxTitleLastModifiedContacts=Senaste %s modifierade kontakter / adresser
+BoxOldestExpiredServices=Äldsta aktiva passerat tjänster
+BoxLastExpiredServices=Senaste %s äldsta kontakter med aktiva utgångna tjänster
+BoxTitleLastModifiedDonations=Sista %s modifierad donationer
+BoxTitleLastModifiedExpenses=Sista %s modifierad kostnader
+ClickToAdd=Klicka här för att lägga till.
+NoRecordedContacts=Inga noterade kontakter
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:29).

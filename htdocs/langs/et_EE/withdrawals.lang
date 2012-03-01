@@ -1,0 +1,101 @@
+/*
+ * Language code: et_EE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 22:15:30
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
+// Reference language: en_US -> et_EE
+CHARSET=UTF-8
+StandingOrdersArea=Püsikorraldused ala
+CustomersStandingOrdersArea=Kliendid püsikorralduste ala
+StandingOrders=Püsikorraldused
+StandingOrder=Püsikorraldused
+NewStandingOrder=Uus püsikorraldus
+StandingOrderToProcess=Töödelda
+StandingOrderProcessed=Töödeldud
+Withdrawals=Väljamakseid
+Withdrawal=Tagasivõtmine
+WithdrawalsReceipts=Väljaastumine laekumised
+WithdrawalReceipt=Väljaastumine kätte
+WithdrawalReceiptShort=Saamist
+LastWithdrawalReceipts=Last %s tühistamise laekumised
+WithdrawedBills=Tagasi arved
+WithdrawalsLines=Väljaastumine read
+RequestStandingOrderToTreat=Taotlus püsikorralduste raviks
+RequestStandingOrderTreated=Taotlus püsikorralduste saanud
+CustomersStandingOrders=Kliendi püsikorraldused
+CustomerStandingOrder=Kliendi püsikorraldus
+NbOfInvoiceToWithdraw=Nb arve koos tagasi taotlus
+NbOfInvoiceToWithdrawWithInfo=Nb arve koos tagasi taotluse kliendid, kellel määratletud pangakonto andmed
+InvoiceWaitingWithdraw=Arve ootab tagasi
+AmountToWithdraw=Summa tagasi
+WithdrawsRefused=Loobub keeldus
+NoInvoiceToWithdraw=Ükski klient arve tasumise mode &quot;tagasi&quot; ootab. Mine &quot;Tõmmake&quot; sakk arve kaart esitada taotluse.
+ResponsibleUser=Vastutav kasutaja
+WithdrawalsSetup=Väljaastumine setup
+WithdrawStatistics=Tõmmake statistika
+WithdrawRejectStatistics=Tagasi lükata statistika
+LastWithdrawalReceipt=Last %s äravõtmise laekumised
+MakeWithdrawRequest=Tee tagasi taotlus
+ThirdPartyBankCode=Kolmanda osapoole pangakood
+ThirdPartyDeskCode=Kolmanda osapoole desk kood
+NoInvoiceCouldBeWithdrawed=Ei arve withdrawed edukas. Kontrollige, et arve on ettevõtetele, kellel on kehtiv BAN.
+ClassCredited=Liigitada kontole
+ClassCreditedConfirm=Oled sa kindel, et soovite klassifitseerida selle tühistamise kätte kui krediteeritakse oma pangakontole?
+TransData=Kuupäev edastamine
+TransMetod=Meetod edastamine
+Send=Saatma
+Lines=Lines
+StandingOrderReject=Välja jätta
+InvoiceRefused=Arve keeldus
+WithdrawalRefused=Väljaastumine lükatud
+WithdrawalRefusedConfirm=Oled kindel, et soovite sisestada tühistamise tagasilükkamine ühiskonnale
+RefusedData=Tagasilükkamise kuupäevast
+RefusedReason=Tagasilükkamise põhjuse
+RefusedInvoicing=Arve tagasilükkamine
+NoInvoiceRefused=Ärge laadige tagasilükkamine
+InvoiceRefused=Laadige tagasilükkamine kliendi
+Status=Staatus
+StatusUnknown=Tundmatu
+StatusWaiting=Ootan
+StatusTrans=Levivate
+StatusCredited=Krediteeritakse
+StatusRefused=Keeldus
+StatusMotif0=Määramata
+StatusMotif1=Ette insuffisante
+StatusMotif2=Tirage conteste
+StatusMotif3=Ei tagasivõtmine et
+StatusMotif4=Kliendi Order
+StatusMotif5=RIB inexploitable
+StatusMotif6=Konto ilma tasakaalu
+StatusMotif7=Kohtuotsus
+StatusMotif8=Muu põhjus
+CreateAll=Tühistama kõik
+CreateGuichet=Ainult kontor
+CreateBanque=Ainult panga
+OrderWaiting=Ootab ravi
+NotifyTransmision=Väljaastumine edastamine
+NotifyEmision=Väljaastumine heitkoguste
+NotifyCredit=Väljaastumine Credit
+NumeroNationalEmetter=National saatja arv
+PleaseSelectCustomerBankBANToWithdraw=Vali informatsiooni kliendi pangakontole tagasi
+WithBankUsingRIB=Sest pangakontod kasutades RIB
+WithBankUsingBANBIC=Sest pangakontod kasutades IBAN / BIC / SWIFT
+BankToReceiveWithdraw=Pangakonto saada loobub
+CreditDate=Krediidi
+WithdrawalFileNotCapable=Suutnud luua tühistamise saamist fail oma riigi
+ShowWithdraw=Näita Tõmmake
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Siiski, kui arve on vähemalt üks tagasivõtmise makse ei ole veel töödeldud, siis ei tohiks seada payed võimaldab hallata taganeda enne.
+DoStandingOrdersBeforePayments=See kaarte saab taotleda püsikorraldus. Kui see valmib, saate tippida makse sulgeda arve.
+InfoCreditSubject=Maksmise püsikorraldus %s panga poolt
+InfoCreditMessage=Püsikorralduse %s makstud panga poolt <br> Andmed makse: %s
+InfoTransSubject=Edastamise püsikorraldus %s panga
+InfoTransMessage=Püsikorralduse %s on transmited panga poolt %s %s. <br><br>
+InfoTransData=Summa: %s <br> Metode: %s <br> Kuupäev: %s
+InfoFoot=See on automatiseeritud sõnum saata Dolibarr
+InfoRejectSubject=Püsikorralduse keeldus
+InfoRejectMessage=Tere, <br><br> standig et arve %s seotud firma %s, mille summa %s lükatud panga poolt. <br><br> - <br> % $
+ModeWarning=Valik päris režiim ei olnud seatud, siis peatus pärast seda simulatsioon
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:26:06).

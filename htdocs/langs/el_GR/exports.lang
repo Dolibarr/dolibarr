@@ -107,3 +107,12 @@ DataIDSourceIsInsertedInto=The id of parent object found using the data in sourc
 SourceRequired=Data value is mandatory
 SourceExample=Example of possible data value
 CSVFormatDesc=<b>Comma Separated Value</b> file format (.csv).<br>This is a text file format where fields are separated by separator [ %s ]. If separator is found inside a field content, field is rounded by round character [ %s ]. Escape character to escape round character is [ %s ].
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+FileWasImported=Αρχείο εισήχθη με <b>%s</b> αριθμό.
+DataComeFromIdFoundFromCodeId=Ο κώδικας που προέρχεται από <b>%s</b> αριθμό πεδίο του αρχείου προέλευσης θα πρέπει να χρησιμοποιούνται για την εύρεση της ταυτότητας αντικειμένου μητρική εταιρία να χρησιμοποιήσει (Έτσι ο κώδικας από το αρχείο προέλευσης πρέπει να υπάρχει σε dictionnary <b>%s).</b> Σημειώστε ότι αν γνωρίζετε το αναγνωριστικό, μπορείτε επίσης να το χρησιμοποιήσετε στο αρχείο προέλευσης αντί του κώδικα. Εισαγωγή θα πρέπει να εργαστεί και στις δύο περιπτώσεις.
+DataCodeIDSourceIsInsertedInto=Η ταυτότητα του γονέα που βρέθηκαν γραμμή από τον κώδικα, θα πρέπει να προστεθεί στο παρακάτω πεδίο:
+ExampleAnyRefFoundIntoElement=Κάθε σχ βρέθηκαν για <b>%s</b> στοιχείο
+ExampleAnyCodeOrIdFoundIntoDictionnary=Κάθε κωδικός (ή id) βρέθηκαν σε dictionnary <b>%s</b>
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:39).

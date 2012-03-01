@@ -233,3 +233,21 @@ AddFiles=Legg til filer
 StartUpload=Starte opplasting
 CancelUpload=Avbryt opplasting
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 04:21:12).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+Notify_BILL_CANCEL=Kunden faktura kansellert
+Notify_BILL_SENTBYMAIL=Kunden faktura sendt i posten
+Notify_ORDER_SUPPLIER_VALIDATE=Leverandør orden validert
+Notify_ORDER_SUPPLIER_SENTBYMAIL=Leverandør ordre sendes med post
+Notify_BILL_SUPPLIER_VALIDATE=Leverandør faktura validert
+PredefinedMailContentSendSupplierInvoice=Du finner her fakturaen __ FACREF__ \n\n Vennlig hilsen \n\n
+PredefinedMailContentSendShipping=Du finner her shipping __ SHIPPINGREF__ \n\n Vennlig hilsen \n\n
+PredefinedMailContentSendFichInter=Du finner her intervensjonen __ FICHINTERREF__ \n\n Vennlig hilsen \n\n
+Top=Topp
+Bottom=Bottom
+FileIsTooBig=Filer er for stor
+ShipmentValidatedInDolibarr=Forsendelse %s validert i Dolibarr
+Export=Eksport
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:06:47).

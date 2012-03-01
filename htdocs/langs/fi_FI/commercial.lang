@@ -99,3 +99,14 @@ ToDoActionsFor=Puutteellinen toimia %s
 ActionAC_SUP_ORD=Lähetä toimittaja tilaa postitse
 ActionAC_SUP_INV=Lähetä toimittaja lasku postitse
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:28:03).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+StatusNotApplicable=Ei sovelleta
+ActionAC_SHIP=Lähetä toimitus postitse
+ActionAC_OTH=Muut
+StatusProsp=Prospect tila
+DraftPropals=Suunnitelmiin liiketoimintaehdotukset
+SearchPropal=Etsi kaupallinen ehdotuksen
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:49).

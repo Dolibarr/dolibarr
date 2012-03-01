@@ -40,3 +40,11 @@ ListOfSupplierProductForSupplier=Oversikt over produkter og priser for leverand�
 ReferenceSupplierIsAlreadyAssociatedWithAProduct=Denne referansen leverandøren er allerede tilknyttet en referanse: %s
 NoneOrBatchFileNeverRan=Ingen eller batch <b>%s</b> ikke løp nylig
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:52:11).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+BuyingPriceMin=Minste kjøpskurs
+BuyingPriceMinShort=Min kjøpskurs
+Availability=Tilgjengelighet
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:07:31).

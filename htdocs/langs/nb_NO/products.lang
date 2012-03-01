@@ -172,3 +172,15 @@ ProductStatusNotOnBuy=Foreldet
 ProductStatusOnBuyShort=Tilgjengelig
 ProductStatusNotOnBuyShort=Foreldet
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:17).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+ParentProductsNumber=Antall foreldre produkt
+ProductParentList=Liste over produkter / tjenester med dette produktet som en komponent
+ImportDataset_produit_1=Produkter
+ImportDataset_service_1=Tjenester
+CustomCode=Tollkodeks
+CountryOrigin=Opprinnelseslandet
+HiddenIntoCombo=Gjemt i enkelte lister
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:07:10).

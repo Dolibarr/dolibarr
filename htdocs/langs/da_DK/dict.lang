@@ -315,3 +315,13 @@ CurrencySingUAH=Hryvnia
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_SHOP=Shoppe Kontakt
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 07:40:01).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
+// Reference language: en_US -> da_DK
+DemandReasonTypeSRC_CAMP_MAIL=Mailing kampagne
+DemandReasonTypeSRC_CAMP_EMAIL=E-mail-kampagne
+DemandReasonTypeSRC_CAMP_PHO=Telefon kampagne
+DemandReasonTypeSRC_CAMP_FAX=Fax-kampagne
+DemandReasonTypeSRC_COMM=Kommerciel kontakt
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:59:31).

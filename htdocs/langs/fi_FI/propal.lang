@@ -108,3 +108,18 @@ TypeContact_propal_external_BILLING=Asiakkaan lasku yhteystiedot
 TypeContact_propal_external_CUSTOMER=Asiakas ottaa yhteyttä seurantaan ehdotus
 DocModelRoigDescription=Täydellinen ehdotus malli Espanjan vero RE ja IRPF
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:27:11).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+ProposalCard=Ehdotus kortti
+ConfirmReOpenProp=Oletko varma että haluat avata takaisin kaupallisen ehdotuksen <b>%s?</b>
+AvailabilityPeriod=Saatavuus viive
+SetAvailability=Aseta saatavuus viive
+AfterOrder=tilauksesta
+AvailabilityTypeAV_NOW=Välitön
+AvailabilityTypeAV_1W=1 viikko
+AvailabilityTypeAV_2W=2 viikkoa
+AvailabilityTypeAV_3W=3 viikkoa
+AvailabilityTypeAV_1M=1 kuukausi
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:12:48).

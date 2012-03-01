@@ -57,3 +57,10 @@ ActionsOnFicheInter=Handlinger om intervention
 ClassifyBilled=Klassificere &quot;Billed&quot;
 StatusInterInvoiced=Billed
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 05:17:53).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
+// Reference language: en_US -> da_DK
+RelatedInterventions=Relaterede interventioner
+ShowIntervention=Vis indgreb
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:59:22).

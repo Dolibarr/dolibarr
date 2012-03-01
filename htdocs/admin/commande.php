@@ -38,8 +38,8 @@ $langs->load("errors");
 
 if (! $user->admin) accessforbidden();
 
-$action = GETPOST("action");
-$value = GETPOST("value");
+$action = GETPOST('action','alpha');
+$value = GETPOST('value','alpha');
 
 /*
  * Actions
@@ -71,31 +71,40 @@ if ($action == 'specimen')
 	$commande = new Commande($db);
 	$commande->initAsSpecimen();
 
-	// Charge le modele
-	$dir = "/core/modules/commande/doc/";
-	$file = "pdf_".$modele.".modules.php";
-	$file = dol_buildpath($dir.$file);
-	if (file_exists($file))
+	// Search template files
+	$file=''; $classname=''; $filefound=0;
+	$dirmodels=array_merge(array('/'),$conf->modules_parts['models']);
+	foreach($dirmodels as $reldir)
 	{
-		$classname = "pdf_".$modele;
+	    $file=dol_buildpath($reldir."core/modules/commande/doc/pdf_".$modele.".modules.php",0);
+		if (file_exists($file))
+		{
+			$filefound=1;
+			$classname = "pdf_".$modele;
+			break;
+		}
+	}
+
+	if ($filefound)
+	{
 		require_once($file);
 
-		$obj = new $classname($db);
+		$module = new $classname($db);
 
-		if ($obj->write_file($commande,$langs) > 0)
+		if ($module->write_file($commande,$langs) > 0)
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande&file=SPECIMEN.pdf");
 			return;
 		}
 		else
 		{
-			$mesg='<div class="error">'.$obj->error.'</div>';
-			dol_syslog($obj->error, LOG_ERR);
+			$mesg='<font class="error">'.$module->error.'</font>';
+			dol_syslog($module->error, LOG_ERR);
 		}
 	}
 	else
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
+		$mesg='<font class="error">'.$langs->trans("ErrorModuleNotFound").'</font>';
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
@@ -214,6 +223,8 @@ if ($action == 'set_COMMANDE_FREE_TEXT')
  * View
  */
 
+$dirmodels=array_merge(array('/'),$conf->modules_parts['models']);
+
 llxHeader();
 
 $form=new Form($db);
@@ -242,9 +253,9 @@ print "</tr>\n";
 
 clearstatcache();
 
-foreach ($conf->file->dol_document_root as $dirroot)
+foreach ($dirmodels as $reldir)
 {
-	$dir = $dirroot . "/core/modules/commande/";
+	$dir = dol_buildpath($reldir."core/modules/commande/");
 
 	if (is_dir($dir))
 	{
@@ -374,11 +385,11 @@ print "</tr>\n";
 clearstatcache();
 
 $var=true;
-foreach ($conf->file->dol_document_root as $dirroot)
+foreach ($dirmodels as $reldir)
 {
     foreach (array('','/doc') as $valdir)
     {
-        $dir = $dirroot . "/core/modules/commande".$valdir;
+    	$dir = dol_buildpath($reldir."core/modules/commande".$valdir);
 
         if (is_dir($dir))
         {

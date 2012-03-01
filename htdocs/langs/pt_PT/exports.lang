@@ -117,3 +117,13 @@ SourceRequired=Valor dos dados é obrigatória
 SourceExample=Exemplo de valores de dados possíveis
 CSVFormatDesc=<b>Comma Separated Value</b> formato de arquivo (. Csv). <br> Este é um formato de arquivo texto onde os campos são separados por separador [%s]. Se o separador é encontrado dentro de um conteúdo do campo, o campo é arredondado por volta de caráter [%s]. caractere de escape para fugir personagem redonda é [%s].
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:53:34).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+FileWasImported=O arquivo foi importado com <b>%s</b> número.
+DataComeFromIdFoundFromCodeId=O código que vem <b>%s</b> campo de número de arquivo de origem será usado para encontrar ID do objeto pai para usar (Assim, o código de arquivo de origem deve existir em <b>%s</b> dictionnary). Note que se você souber id, você também pode usá-lo em arquivo de origem em vez de código. Importação deve funcionar em ambos os casos.
+DataCodeIDSourceIsInsertedInto=O ID da linha foi encontrado o pai a partir do código, será inserido no campo seguinte:
+ExampleAnyRefFoundIntoElement=Qualquer ref encontrado para <b>%s</b> elemento
+ExampleAnyCodeOrIdFoundIntoDictionnary=Qualquer código (ou id) encontrado em <b>%s</b> dictionnary
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:40).
