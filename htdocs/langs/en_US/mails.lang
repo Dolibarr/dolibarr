@@ -39,12 +39,14 @@ MailingStatusDraft=Draft
 MailingStatusValidated=Validated
 MailingStatusApproved=Approved
 MailingStatusSent=Sent
-MailingStatusRead=Read
 MailingStatusSentPartialy=Sent partialy
 MailingStatusSentCompletely=Sent completely
 MailingStatusError=Error
 MailingStatusNotSent=Not sent
 MailSuccessfulySent=Email successfully sent (from %s to %s)
+MailUnsubcribe=Unsubscribe
+Unsuscribe=Unsubscribe
+MailingStatusNotContact=Don't contact anymore
 ErrorMailRecipientIsEmpty=Email recipient is empty
 WarningNoEMailsAdded=No new Email to add to recipient's list.
 ConfirmValidMailing=Are you sure you want to validate this emailing ?
@@ -70,6 +72,9 @@ CloneReceivers=Cloner recipients
 DateLastSend=Date of last sending
 DateSending=Date sending
 SentTo=Sent to <b>%s</b>
+MailingStatusRead=Read
+CheckRead=Read Receipt
+YourMailUnsubcribeOK=The email <b>%s</b>  is correctly unsubcribe from mailing list
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Contacts of all third parties (customer, prospect, supplier, ...)
