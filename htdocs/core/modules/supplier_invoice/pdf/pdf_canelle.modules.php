@@ -60,7 +60,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *
 	 *  @param		DoliDB		$DB      Database handler
 	 */
-	function pdf_canelle($db,$object)
+	function pdf_canelle($db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -91,9 +91,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		$this->franchise=!$mysoc->tva_assuj;
 
-        // Get source company
-        if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
-        $this->emetteur=$object->thirdparty;
         if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 
         // Defini position des colonnes
@@ -133,6 +130,10 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$outputlangs->load("products");
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
+		
+		// Get source company
+		if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
+		$this->emetteur=$object->thirdparty;
 
 		if ($conf->fournisseur->dir_output.'/facture')
 		{

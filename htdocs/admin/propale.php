@@ -86,9 +86,9 @@ if ($action == 'specimen')
 	if ($filefound)
 	{
 		require_once($file);
-
+		
 		$module = new $classname($db);
-
+		
 		if ($module->write_file($propal,$langs) > 0)
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=propal&file=SPECIMEN.pdf");

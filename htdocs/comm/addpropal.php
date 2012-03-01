@@ -241,7 +241,7 @@ if ($action == 'create')
 	}
 
 	// Other attributes
-	$parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"');
+	$parameters=array('socid'=>$soc->id, 'colspan' => ' colspan="3"');
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
