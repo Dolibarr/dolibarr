@@ -31,16 +31,23 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 require("../../main.inc.php");
 
-$id=GETPOST('mail_cbl_id');
-$mail_reader=GETPOST('mail');
+$id=GETPOST('tag');
 
 
-$statut='2';
+if ($id!='')
+{
+	$statut='2';
+	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE tag='".$id."'";
+	dol_syslog("public/emailing/mailing-read.php : Mail read : ".$sql, LOG_DEBUG);
+	
+	$resql=$db->query($sql);
+	
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag='".$id."')";
+	dol_syslog("public/emailing/mailing-read.php : Mail read : ".$sql, LOG_DEBUG);
+	
+	$resql=$db->query($sql);
+}
 
-$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE rowid=".$id." AND email='".$mail_reader."'";
-dol_syslog("public/emailing/mailing-read.php : Mail read : ".$sql, LOG_DEBUG);
-
-$resql=$db->query($sql);
 
 $db->close();
 ?>
