@@ -1121,44 +1121,20 @@ class pdf_crabe extends ModelePDFFactures
 
 		$posy+=2;
 
-		// Add list of linked orders and proposals
-		// TODO mutualiser
-	    $object->fetchObjectLinked();
-
-	    foreach($object->linkedObjects as $objecttype => $objects)
-	    {
-	    	if ($objecttype == 'propal')
-	    	{
-	    		$outputlangs->load('propal');
-	    		$num=count($objects);
-	    		for ($i=0;$i<$num;$i++)
-	    		{
-	    			$posy+=3;
-	    			$pdf->SetXY($posx,$posy);
-	    			$pdf->SetFont('','', $default_font_size - 2);
-	    			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefProposal")." : ".$outputlangs->transnoentities($objects[$i]->ref), '', 'R');
-	    			$posy+=3;
-	    			$pdf->SetXY($posx,$posy);
-	    			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DatePropal")." : ".dol_print_date($objects[$i]->date,'day','',$outputlangs), '', 'R');
-	    		}
-			}
-			else if ($objecttype == 'commande')
+		// Add list of linked objects
+		$linkedobjects = pdf_getLinkedObjects($object,$outputlangs);
+		if (! empty($linkedobjects))
+		{
+			foreach($linkedobjects as $linkedobject)
 			{
-				$outputlangs->load('orders');
-				$num=count($objects);
-	    		for ($i=0;$i<$num;$i++)
-	    		{
-	    			$posy+=3;
-	    			$pdf->SetXY($posx,$posy);
-	    			$pdf->SetFont('','', $default_font_size - 2);
-	    			$text=$objects[$i]->ref;
-	    			if ($objects[$i]->ref_client) $text.=' ('.$objects[$i]->ref_client.')';
-	    			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
-	    			$posy+=3;
-	    			$pdf->SetXY($posx,$posy);
-	    			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($objects[$i]->date,'day','',$outputlangs), '', 'R');
-	    		}
-	    	}
+				$posy+=3;
+				$pdf->SetXY($posx,$posy);
+				$pdf->SetFont('','', $default_font_size - 2);
+				$pdf->MultiCell(100, 3, $linkedobject["ref_title"].' : '.$linkedobject["ref_value"], '', 'R');
+				$posy+=3;
+				$pdf->SetXY($posx,$posy);
+				$pdf->MultiCell(100, 3, $linkedobject["date_title"].' : '.$linkedobject["date_value"], '', 'R');
+			}
 		}
 
 		if ($showaddress)
