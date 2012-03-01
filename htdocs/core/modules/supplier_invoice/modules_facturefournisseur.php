@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2010	Juanjo Menent	<jmenent@2byte.es>
+ * Copyright (C) 2012	Regis Houssin	<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +77,6 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs)
     @set_time_limit(120);
     error_reporting($err);
 	
-	$dir = "/core/modules/supplier_invoice/";
     $srctemplatepath='';
 
 	// Positionne modele sur le nom du modele de invoice fournisseur a utiliser
@@ -102,19 +102,23 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs)
     	
 	// Search template file
 	$file=''; $classname=''; $filefound=0;
-	foreach(array('doc','pdf') as $prefix)
+	$dirmodels=array_merge(array('/'),$conf->modules_parts['models']);
+	foreach($dirmodels as $reldir)
 	{
-        $file = $prefix."_".$modele.".modules.php";
-
-        // On verifie l'emplacement du modele
-        $file = dol_buildpath($dir.'pdf/'.$file);	// TODO rename into doc/
-
-        if (file_exists($file))
-	    {
-	        $filefound=1;
-	        $classname=$prefix.'_'.$modele;
-	        break;
-	    }
+		foreach(array('doc','pdf') as $prefix)
+		{
+			$file = $prefix."_".$modele.".modules.php";
+	
+			// On verifie l'emplacement du modele
+			$file=dol_buildpath($reldir."core/modules/supplier_invoice/pdf/".$file,0);
+			if (file_exists($file))
+			{
+				$filefound=1;
+				$classname=$prefix.'_'.$modele;
+				break;
+			}
+		}
+		if ($filefound) break;
 	}
 
 	// Charge le modele
