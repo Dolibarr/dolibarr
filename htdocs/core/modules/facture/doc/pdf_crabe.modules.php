@@ -412,8 +412,11 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->Output($file,'F');
 
 				// Add pdfgeneration hook
-				include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
-				$hookmanager=new HookManager($this->db);
+				if (is_object($hookmanager))
+				{
+					include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+					$hookmanager=new HookManager($this->db);
+				}
 				$hookmanager->callHooks(array('pdfgeneration'));
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
