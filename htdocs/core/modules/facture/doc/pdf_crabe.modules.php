@@ -1125,21 +1125,8 @@ class pdf_crabe extends ModelePDFFactures
 
 		$posy+=2;
 
-		// Add list of linked objects
-		$linkedobjects = pdf_getLinkedObjects($object,$outputlangs,$hookmanager);
-		if (! empty($linkedobjects))
-		{
-			foreach($linkedobjects as $linkedobject)
-			{
-				$posy+=3;
-				$pdf->SetXY($posx,$posy);
-				$pdf->SetFont('','', $default_font_size - 2);
-				$pdf->MultiCell(100, 3, $linkedobject["ref_title"].' : '.$linkedobject["ref_value"], '', 'R');
-				$posy+=3;
-				$pdf->SetXY($posx,$posy);
-				$pdf->MultiCell(100, 3, $linkedobject["date_title"].' : '.$linkedobject["date_value"], '', 'R');
-			}
-		}
+		// Show list of linked objects
+		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 'R', $default_font_size, $hookmanager);
 
 		if ($showaddress)
 		{

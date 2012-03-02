@@ -651,21 +651,8 @@ class pdf_edison extends ModelePDFCommandes
 		
 		$posy+=1;
 		
-		// Add list of linked objects
-		$linkedobjects = pdf_getLinkedObjects($object,$outputlangs,$hookmanager);
-		if (! empty($linkedobjects))
-		{
-			foreach($linkedobjects as $linkedobject)
-			{
-				$posy+=3;
-				$pdf->SetXY(11,$posy);
-				$pdf->SetFont('','', $default_font_size + 1);
-				$pdf->MultiCell(100, 4, $linkedobject["ref_title"].' : '.$linkedobject["ref_value"], '', 'L');
-				$posy+=4;
-				$pdf->SetXY(11,$posy);
-				$pdf->MultiCell(100, 4, $linkedobject["date_title"].' : '.$linkedobject["date_value"], '', 'L');
-			}
-		}
+		// Show list of linked objects
+		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 'L', $default_font_size, $hookmanager);
 	}
 
 	/**

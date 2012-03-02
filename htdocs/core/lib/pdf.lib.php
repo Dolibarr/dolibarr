@@ -661,6 +661,39 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	}
 }
 
+/**
+ *	Show linked objects for PDF generation
+ *
+ *	@param	PDF			&$pdf			Object PDF
+ *	@param	object		$object			Object
+ *	@param  Translate	$outputlangs	Object lang
+ *	@param  int			$curx			X
+ *	@param  int			$cury			Y
+ *	@return	void
+ */
+function pdf_writeLinkedObjects(&$pdf,$object,$outputlangs,$posx,$posy,$align,$default_font_size,$hookmanager=false)
+{
+	$linkedobjects = pdf_getLinkedObjects($object,$outputlangs,$hookmanager);
+	if (! empty($linkedobjects))
+	{
+		foreach($linkedobjects as $linkedobject)
+		{
+			$posy+=3;
+			$pdf->SetXY($posx,$posy);
+			$pdf->SetFont('','', $default_font_size - 2);
+			$pdf->MultiCell(100, 3, $linkedobject["ref_title"].' : '.$linkedobject["ref_value"], '', $align);
+			
+			if (! empty($linkedobject["date_title"]) && ! empty($linkedobject["date_value"]))
+			{
+				$posy+=3;
+				$pdf->SetXY($posx,$posy);
+				$pdf->MultiCell(100, 3, $linkedobject["date_title"].' : '.$linkedobject["date_value"], '', $align);
+			}
+		}
+	}
+	
+	return $pdf->getY();
+}
 
 /**
  *	Output line description into PDF
@@ -1606,7 +1639,7 @@ function pdf_getCurrencySymbol(&$pdf, $currency_code)
 }
 
 /**
- * 	Show linked objects for PDF generation
+ * 	Return linked objects
  * 
  * 	@param	object		$object			Object
  * 	@param	Translate	$outputlangs	Object lang for output
@@ -1618,7 +1651,7 @@ function pdf_getLinkedObjects($object,$outputlangs,$hookmanager=false)
 	$linkedobjects=array();
 	
 	$object->fetchObjectLinked();
-	
+
 	foreach($object->linkedObjects as $objecttype => $objects)
 	{
 		if ($objecttype == 'propal')
