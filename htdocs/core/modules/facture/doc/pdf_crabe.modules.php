@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004-2012 Laurent Destailleur    <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin          <regis@dolibarr.fr>
- * Copyright (C) 2008      Raphael Bertrand       <raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2011 Juanjo Menent		  <jmenent@2byte.es>
+/* Copyright (C) 2004-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2008		Raphael Bertrand	<raphael.bertrand@resultic.fr>
+ * Copyright (C) 2010-2011	Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -412,15 +412,17 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->Output($file,'F');
 
 				// Add pdfgeneration hook
-				include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
-				$hookmanager=new HookManager($this->db);
-				$hookmanager->callHooks(array('pdfgeneration'));
-				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
-				global $action;
-				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				if (is_object($hookmanager))
+				{
+					$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+					global $action;
+					$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				}
 
 				if (! empty($conf->global->MAIN_UMASK))
-				@chmod($file, octdec($conf->global->MAIN_UMASK));
+				{
+					@chmod($file, octdec($conf->global->MAIN_UMASK));
+				}
 
 				return 1;   // Pas d'erreur
 			}
@@ -1121,44 +1123,20 @@ class pdf_crabe extends ModelePDFFactures
 
 		$posy+=2;
 
-		// Add list of linked orders and proposals
-		// TODO mutualiser
-	    $object->fetchObjectLinked();
-
-	    foreach($object->linkedObjects as $objecttype => $objects)
-	    {
-	    	if ($objecttype == 'propal')
-	    	{
-	    		$outputlangs->load('propal');
-	    		$num=count($objects);
-	    		for ($i=0;$i<$num;$i++)
-	    		{
-	    			$posy+=3;
-	    			$pdf->SetXY($posx,$posy);
-	    			$pdf->SetFont('','', $default_font_size - 2);
-	    			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefProposal")." : ".$outputlangs->transnoentities($objects[$i]->ref), '', 'R');
-	    			$posy+=3;
-	    			$pdf->SetXY($posx,$posy);
-	    			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DatePropal")." : ".dol_print_date($objects[$i]->date,'day','',$outputlangs), '', 'R');
-	    		}
-			}
-			else if ($objecttype == 'commande')
+		// Add list of linked objects
+		$linkedobjects = pdf_getLinkedObjects($object,$outputlangs);
+		if (! empty($linkedobjects))
+		{
+			foreach($linkedobjects as $linkedobject)
 			{
-				$outputlangs->load('orders');
-				$num=count($objects);
-	    		for ($i=0;$i<$num;$i++)
-	    		{
-	    			$posy+=3;
-	    			$pdf->SetXY($posx,$posy);
-	    			$pdf->SetFont('','', $default_font_size - 2);
-	    			$text=$objects[$i]->ref;
-	    			if ($objects[$i]->ref_client) $text.=' ('.$objects[$i]->ref_client.')';
-	    			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'R');
-	    			$posy+=3;
-	    			$pdf->SetXY($posx,$posy);
-	    			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($objects[$i]->date,'day','',$outputlangs), '', 'R');
-	    		}
-	    	}
+				$posy+=3;
+				$pdf->SetXY($posx,$posy);
+				$pdf->SetFont('','', $default_font_size - 2);
+				$pdf->MultiCell(100, 3, $linkedobject["ref_title"].' : '.$linkedobject["ref_value"], '', 'R');
+				$posy+=3;
+				$pdf->SetXY($posx,$posy);
+				$pdf->MultiCell(100, 3, $linkedobject["date_title"].' : '.$linkedobject["date_value"], '', 'R');
+			}
 		}
 
 		if ($showaddress)

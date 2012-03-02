@@ -282,7 +282,6 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 	}
 }
 
-
 /**
  *      Add a draft watermark on PDF files
  *
@@ -1250,7 +1249,6 @@ function pdf_getTotalQty($object,$type,$outputlangs,$hookmanager=false)
 	return $total;
 }
 
-
 /**
  *	Convert a currency code into its symbol
  *
@@ -1605,6 +1603,58 @@ function pdf_getCurrencySymbol(&$pdf, $currency_code)
 			break;
 	}
 	return $currency_sign;
+}
+
+/**
+ * 	Show linked objects for PDF generation
+ * 
+ * 	@param	object		$object			Object
+ * 	@param	Translate	$outputlangs	Object lang for output
+ *	@param	HookManager	$hookmanager	Hook manager instance
+ * 	@return	void
+ */
+function pdf_getLinkedObjects($object,$outputlangs,$hookmanager=false)
+{
+	$linkedobjects=array();
+	
+	$object->fetchObjectLinked();
+	
+	foreach($object->linkedObjects as $objecttype => $objects)
+	{
+		if ($objecttype == 'propal')
+		{
+			$outputlangs->load('propal');
+			$num=count($objects);
+			for ($i=0;$i<$num;$i++)
+			{
+				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefProposal");
+				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($objects[$i]->ref);
+				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DatePropal");
+				$linkedobjects[$objecttype]['date_value'] = dol_print_date($objects[$i]->date,'day','',$outputlangs);
+			}
+		}
+		else if ($objecttype == 'commande')
+		{
+			$outputlangs->load('orders');
+			$num=count($objects);
+			for ($i=0;$i<$num;$i++)
+			{
+				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder");
+				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($objects[$i]->ref) . ($objects[$i]->ref_client ? ' ('.$objects[$i]->ref_client.')' : '');
+				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate");
+				$linkedobjects[$objecttype]['date_value'] = dol_print_date($objects[$i]->date,'day','',$outputlangs);
+			}
+		}
+	}
+	
+	if (is_object($hookmanager))
+	{
+		$parameters = array('linkedobjects' => $linkedobjects, 'outputlangs'=>$outputlangs);
+		$action='';
+		$linkedobjects = $hookmanager->executeHooks('pdf_getLinkedObjects',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+	}
+	
+	return $linkedobjects;
 }
 
 ?>

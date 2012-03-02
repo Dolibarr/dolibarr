@@ -71,6 +71,8 @@ $object = new Expedition($db);
 
 if ($action == 'add')
 {
+    $error=0;
+
 	$db->begin();
 
 	$object->note				= $_POST["note"];
@@ -100,23 +102,52 @@ if ($action == 'add')
 	$object->tracking_number		= $_POST["tracking_number"];
 	$object->ref_int				= $_POST["ref_int"];
 
-	//var_dump($_POST);exit;
-	$num=count($objectsrc->lines);
+    $num=count($objectsrc->lines);
+	$totalqty=0;
 	for ($i = 0; $i < $num; $i++)
 	{
-		$qty = "qtyl".$i;
-		if ($_POST[$qty] > 0)
-		{
-			$ent = "entl".$i;
-			$idl = "idl".$i;
-			$entrepot_id = isset($_POST[$ent])?$_POST[$ent]:$_POST["entrepot_id"];
-
-			$object->addline($entrepot_id,$_POST[$idl],$_POST[$qty]);
-		}
+	    $qty = "qtyl".$i;
+	    if ($_POST[$qty] > 0) $totalqty+=$_POST[$qty];
 	}
 
-	$ret=$object->create($user);
-	if ($ret > 0)
+	if ($totalqty > 0)
+	{
+    	//var_dump($_POST);exit;
+    	for ($i = 0; $i < $num; $i++)
+    	{
+        	$qty = "qtyl".$i;
+    		if ($_POST[$qty] > 0)
+        	{
+    			$ent = "entl".$i;
+    			$idl = "idl".$i;
+    			$entrepot_id = isset($_POST[$ent])?$_POST[$ent]:$_POST["entrepot_id"];
+
+    			$ret=$object->addline($entrepot_id,$_POST[$idl],$_POST[$qty]);
+    	    	if ($ret < 0)
+            	{
+            		$mesg='<div class="error">'.$object->error.'</div>';
+            		$error++;
+            	}
+        	}
+    	}
+
+    	if (! $error)
+    	{
+        	$ret=$object->create($user);
+        	if ($ret <= 0)
+        	{
+        		$mesg='<div class="error">'.$object->error.'</div>';
+        		$error++;
+        	}
+    	}
+	}
+	else
+	{
+	    $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Qty")).'</div>';
+	    $error++;
+	}
+
+	if (! $error)
 	{
 		$db->commit();
 		Header("Location: fiche.php?id=".$object->id);
@@ -125,7 +156,6 @@ if ($action == 'add')
 	else
 	{
 		$db->rollback();
-		$mesg='<div class="error">'.$object->error.'</div>';
 		$_GET["commande_id"]=$_POST["commande_id"];
 		$action='create';
 	}
@@ -567,7 +597,7 @@ if ($action == 'create')
 			print '</tr>';
 
 			// Date delivery planned
-			print '<tr><td class="fieldrequired">'.$langs->trans("DateDeliveryPlanned").'</td>';
+			print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 			print '<td colspan="3">';
 			//print dol_print_date($object->date_livraison,"day");	// date_livraison come from order and will be stored into date_delivery planed.
 			print $form->select_date($object->date_livraison?$object->date_livraison:-1,'date_delivery',1,1);

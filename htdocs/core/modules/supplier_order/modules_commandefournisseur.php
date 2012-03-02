@@ -42,7 +42,7 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 
 	/**
 	 *  Return list of active generation modules
-	 *  
+	 *
 	 *  @param	DoliDB		$db		Database handler
 	 */
 	function liste_modeles($db)
@@ -153,17 +153,17 @@ function supplier_order_pdf_create($db, $object, $model, $outputlangs, $hidedeta
 {
 	global $conf,$langs;
 	$langs->load("suppliers");
-	
+
 	$error=0;
-	
+
 	// Increase limit for PDF build
 	$err=error_reporting();
 	error_reporting(0);
 	@set_time_limit(120);
 	error_reporting($err);
-	
+
 	$srctemplatepath='';
-	
+
 	// Positionne le modele sur le nom du modele a utiliser
 	if (! dol_strlen($modele))
 	{
@@ -176,7 +176,7 @@ function supplier_order_pdf_create($db, $object, $model, $outputlangs, $hidedeta
 			$modele = 'muscadet';
 		}
 	}
-	
+
 	// If selected modele is a filename template (then $modele="modelname:filename")
 	$tmp=explode(':',$modele,2);
 	if (! empty($tmp[1]))
@@ -184,16 +184,17 @@ function supplier_order_pdf_create($db, $object, $model, $outputlangs, $hidedeta
 		$modele=$tmp[0];
 		$srctemplatepath=$tmp[1];
 	}
-	
+
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
-	$dirmodels=array_merge(array('/'),$conf->modules_parts['models']);
+	$dirmodels=array('/');
+	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
 	foreach($dirmodels as $reldir)
 	{
 		foreach(array('doc','pdf') as $prefix)
 		{
 			$file = $prefix."_".$modele.".modules.php";
-	
+
 			// On verifie l'emplacement du modele
 			$file=dol_buildpath($reldir."core/modules/supplier_order/pdf/".$file,0);
 			if (file_exists($file))
