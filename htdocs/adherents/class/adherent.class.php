@@ -450,7 +450,7 @@ class Adherent extends CommonObject
             // Actions on extra fields (by external module)
             include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
             $hookmanager=new HookManager($this->db);
-            $hookmanager->callHooks(array('memberdao'));
+            $hookmanager->initHooks(array('memberdao'));
             $parameters=array('id'=>$this->id);
             $action='';
             $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks

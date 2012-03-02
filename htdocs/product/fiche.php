@@ -73,7 +73,7 @@ $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','',
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 $hookmanager=new HookManager($db);
-$hookmanager->callHooks(array('productcard'));
+$hookmanager->initHooks(array('productcard'));
 
 
 

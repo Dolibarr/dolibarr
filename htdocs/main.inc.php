@@ -586,7 +586,7 @@ if (! defined('NOLOGIN'))
         $action='';
         include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
         $hookmanager=new HookManager($db);
-        $hookmanager->callHooks(array('login'));
+        $hookmanager->initHooks(array('login'));
         $parameters=array('dol_authmode'=>$dol_authmode);
         $reshook=$hookmanager->executeHooks('afterLogin',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
         if ($reshook < 0) $error++;
@@ -1054,7 +1054,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     	include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
     	$hookmanager=new HookManager($db);
     }
-    $hookmanager->callHooks(array('toprightmenu'));
+    $hookmanager->initHooks(array('toprightmenu'));
 
     $toprightmenu='';
 
@@ -1310,7 +1310,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     	include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
     	$hookmanager=new HookManager($db);
 	}
-    $hookmanager->callHooks(array('searchform','leftblock','toprightmenu'));
+    $hookmanager->initHooks(array('searchform','leftblock','toprightmenu'));
 
     if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
     else print '<td class="vmenu" valign="top">';

@@ -925,7 +925,7 @@ class Commande extends CommonObject
                 // Actions hooked (by external module)
                 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
                 $hookmanager=new HookManager($this->db);
-                $hookmanager->callHooks(array('orderdao'));
+                $hookmanager->initHooks(array('orderdao'));
 
                 $parameters=array('objFrom'=>$object);
                 $action='';

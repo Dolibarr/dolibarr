@@ -562,7 +562,7 @@ class Product extends CommonObject
                 	// Actions on extra fields (by external module or standard code)
                     include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
                     $hookmanager=new HookManager($this->db);
-                    $hookmanager->callHooks(array('productdao'));
+                    $hookmanager->initHooks(array('productdao'));
                     $parameters=array(); $action='delete';
                     $reshook=$hookmanager->executeHooks('deleteProduct',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
                     if (! empty($hookmanager->error))
