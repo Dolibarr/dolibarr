@@ -398,15 +398,17 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$pdf->Output($file,'F');
 
 				// Actions on extra fields (by external module or standard code)
-				include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
-				$hookmanager=new HookManager($this->db);
-				$hookmanager->callHooks(array('pdfgeneration'));
-				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
-				global $action;
-				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				if (is_object($hookmanager))
+				{
+					$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+					global $action;
+					$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				}
 
 				if (! empty($conf->global->MAIN_UMASK))
-				@chmod($file, octdec($conf->global->MAIN_UMASK));
+				{
+					@chmod($file, octdec($conf->global->MAIN_UMASK));
+				}
 
 				return 1;   // Pas d'erreur
 			}
