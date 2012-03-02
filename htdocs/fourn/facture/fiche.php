@@ -53,7 +53,7 @@ $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 $hookmanager=new HookManager($db);
-$hookmanager->callHooks(array('invoicesuppliercard','pdfgeneration'));
+$hookmanager->callHooks(array('invoicesuppliercard'));
 
 $object=new FactureFournisseur($db);
 

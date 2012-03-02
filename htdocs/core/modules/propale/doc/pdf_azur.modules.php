@@ -395,10 +395,13 @@ class pdf_azur extends ModelePDFPropales
 				// Actions on extra fields (by external module or standard code)
 				if (is_object($hookmanager))
 				{
-					$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
-					global $action;
-					$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+					include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+					$hookmanager=new HookManager($this->db);
 				}
+				$hookmanager->callHooks(array('pdfgeneration'));
+				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+				global $action;
+				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
@@ -871,7 +874,11 @@ class pdf_azur extends ModelePDFPropales
 	 *  @param  Object		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
+<<<<<<< HEAD
 	 *	@param	object		$hookmanager	Hookmanager object
+=======
+	 *  @param	object		$hookmanager	Hookmanager object
+>>>>>>> refs/remotes/dolibarr/develop
 	 *  @return	void
 	 */
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $hookmanager)
