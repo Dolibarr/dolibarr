@@ -146,6 +146,32 @@ if (! function_exists('json_decode'))
 }
 
 /**
+ * 	Function that encodes data in json format
+ * 
+ * 	@param	mixed	$elements	PHP object to json encode
+ * 	@return	string				Json encoded string
+ */
+function dol_json_encode($elements)
+{
+	return json_encode($elements);
+}
+
+/**
+ * 	Function that decodes data from json format
+ *
+ * 	@param	string	$json		Json encoded to PHP Object or Array
+ * 	@param	bool	$assoc		False return an object, true return an array
+ * 	@return mixed				Object or Array
+ */
+function dol_json_decode($json, $assoc=false)
+{
+	$out='';
+	$out = unserialize($json); // For compatibility, test if serialized
+	if (empty($out)) $out = json_decode($json, $assoc);
+	return $out;
+}
+
+/**
  * Function to return value of a static property when class
  * name is dynamically defined (not hard coded).
  * This is because $myclass::$myvar works from PHP 5.3.0+ only
