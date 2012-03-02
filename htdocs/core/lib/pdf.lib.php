@@ -1610,9 +1610,10 @@ function pdf_getCurrencySymbol(&$pdf, $currency_code)
  * 
  * 	@param	object		$object			Object
  * 	@param	Translate	$outputlangs	Object lang for output
+ *	@param	HookManager	$hookmanager	Hook manager instance
  * 	@return	void
  */
-function pdf_getLinkedObjects($object,$outputlangs)
+function pdf_getLinkedObjects($object,$outputlangs,$hookmanager=false)
 {
 	$linkedobjects=array();
 	
@@ -1644,6 +1645,13 @@ function pdf_getLinkedObjects($object,$outputlangs)
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($objects[$i]->date,'day','',$outputlangs);
 			}
 		}
+	}
+	
+	if (is_object($hookmanager))
+	{
+		$parameters = array('linkedobjects' => $linkedobjects, 'outputlangs'=>$outputlangs);
+		$action='';
+		$linkedobjects = $hookmanager->executeHooks('pdf_getLinkedObjects',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 	}
 	
 	return $linkedobjects;
