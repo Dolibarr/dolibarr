@@ -219,7 +219,7 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->AddPage();
 				if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 				$pagenb++;
-				$this->_pagehead($pdf, $object, 1, $outputlangs);
+				$this->_pagehead($pdf, $object, 1, $outputlangs, $hookmanager);
 				$pdf->SetFont('','', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
@@ -369,7 +369,7 @@ class pdf_crabe extends ModelePDFFactures
 						$pdf->AddPage();
 				        if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 						$pagenb++;
-						$this->_pagehead($pdf, $object, 0, $outputlangs);
+						$this->_pagehead($pdf, $object, 0, $outputlangs, $hookmanager);
 						$pdf->SetFont('','', $default_font_size - 1);
 						$pdf->MultiCell(0, 3, '');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
@@ -999,9 +999,10 @@ class pdf_crabe extends ModelePDFFactures
 	 *  @param  Object		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
+	 *  @param	object		$hookmanager	Hookmanager object
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $hookmanager)
 	{
 		global $conf,$langs;
 
@@ -1125,7 +1126,7 @@ class pdf_crabe extends ModelePDFFactures
 		$posy+=2;
 
 		// Add list of linked objects
-		$linkedobjects = pdf_getLinkedObjects($object,$outputlangs);
+		$linkedobjects = pdf_getLinkedObjects($object,$outputlangs,$hookmanager);
 		if (! empty($linkedobjects))
 		{
 			foreach($linkedobjects as $linkedobject)
