@@ -997,43 +997,20 @@ class pdf_oursin extends ModelePDFFactures
 		}
 
 		$posy+=1;
-
-		// Add list of linked orders and proposals
-		// TODO mutualiser
-	    $object->fetchObjectLinked();
-
-	    foreach($object->linkedObjects as $objecttype => $objects)
-	    {
-	    	if ($objecttype == 'propal')
-	    	{
-	    		$outputlangs->load('propal');
-	    		$num=count($objects);
-	    		for ($i=0;$i<$num;$i++)
-	    		{
-	    			$posy+=3;
-	    			$pdf->SetXY($this->marges['g'],$posy);
-	    			$pdf->SetFont('','', $default_font_size - 2);
-	    			$pdf->MultiCell(60, 3, $outputlangs->transnoentities("RefProposal")." : ".$outputlangs->transnoentities($objects[$i]->ref), '', 'L');
-	    			$posy+=3;
-	    			$pdf->SetXY($this->marges['g'],$posy);
-	    			$pdf->MultiCell(60, 3, $outputlangs->transnoentities("DatePropal")." : ".dol_print_date($objects[$i]->date,'day','',$outputlangs), '', 'L');
-	    		}
-			}
-			else if ($objecttype == 'commande')
+		
+		// Add list of linked objects
+		$linkedobjects = pdf_getLinkedObjects($object,$outputlangs);
+		if (! empty($linkedobjects))
+		{
+			foreach($linkedobjects as $linkedobject)
 			{
-				$num=count($objects);
-	    		for ($i=0;$i<$num;$i++)
-	    		{
-	    			$posy+=3;
-	    			$pdf->SetXY($this->marges['g'],$posy);
-					$pdf->SetFont('','', $default_font_size - 2);
-					$text=$objects[$i]->ref;
-					if ($objects[$i]->ref_client) $text.=' ('.$objects[$i]->ref_client.')';
-					$pdf->MultiCell(60, 3, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'L');
-	    			$posy+=3;
-	    			$pdf->SetXY($this->marges['g'],$posy);
-	    			$pdf->MultiCell(60, 3, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($objects[$i]->date,'day','',$outputlangs), '', 'L');
-	    		}
+				$posy+=3;
+				$pdf->SetXY($this->marges['g'],$posy);
+				$pdf->SetFont('','', $default_font_size - 2);
+				$pdf->MultiCell(60, 3, $linkedobject["ref_title"].' : '.$linkedobject["ref_value"], '', 'L');
+				$posy+=3;
+				$pdf->SetXY($posx,$posy);
+				$pdf->MultiCell(60, 3, $linkedobject["date_title"].' : '.$linkedobject["date_value"], '', 'L');
 			}
 		}
 

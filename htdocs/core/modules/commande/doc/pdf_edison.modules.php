@@ -631,14 +631,37 @@ class pdf_edison extends ModelePDFCommandes
     		$pdf->SetXY($posx+2,$posy+4+(dol_nboflines_bis($carac_client_name,50)*4));
     		$pdf->MultiCell(86,4, $carac_client, 0, 'L');
 		}
+		
+		$curY = 80;
+		$posy=$curY;
 
 		// Date - order
 		$pdf->SetTextColor(200,0,0);
-		$pdf->SetFont('','B', $default_font_size + 2);
-		$pdf->SetXY(11, 88);
+		$pdf->SetFont('','B', $default_font_size + 1);
+		$pdf->SetXY(11, $posy);
+		$posy+=6;
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date,'day',false,$outputlangs), 0, 'L');
-        $pdf->SetXY(11, 94);
+        $pdf->SetXY(11, $posy);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Order")." ".$outputlangs->convToOutputCharset($object->ref), 0, 'L');
+		
+		
+		$posy+=1;
+		
+		// Add list of linked objects
+		$linkedobjects = pdf_getLinkedObjects($object,$outputlangs);
+		if (! empty($linkedobjects))
+		{
+			foreach($linkedobjects as $linkedobject)
+			{
+				$posy+=3;
+				$pdf->SetXY(11,$posy);
+				$pdf->SetFont('','', $default_font_size + 1);
+				$pdf->MultiCell(100, 4, $linkedobject["ref_title"].' : '.$linkedobject["ref_value"], '', 'L');
+				$posy+=4;
+				$pdf->SetXY(11,$posy);
+				$pdf->MultiCell(100, 4, $linkedobject["date_title"].' : '.$linkedobject["date_value"], '', 'L');
+			}
+		}
 	}
 
 	/**

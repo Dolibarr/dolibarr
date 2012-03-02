@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand     <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2012 Juanjo Menent	    <jmenent@2byte.es>
  *
@@ -962,6 +962,24 @@ class pdf_azur extends ModelePDFPropales
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
+		}
+		
+		$posy+=2;
+		
+		// Add list of linked objects
+		$linkedobjects = pdf_getLinkedObjects($object,$outputlangs);
+		if (! empty($linkedobjects))
+		{
+			foreach($linkedobjects as $linkedobject)
+			{
+				$posy+=3;
+				$pdf->SetXY($posx,$posy);
+				$pdf->SetFont('','', $default_font_size - 2);
+				$pdf->MultiCell(100, 3, $linkedobject["ref_title"].' : '.$linkedobject["ref_value"], '', 'R');
+				$posy+=3;
+				$pdf->SetXY($posx,$posy);
+				$pdf->MultiCell(100, 3, $linkedobject["date_title"].' : '.$linkedobject["date_value"], '', 'R');
+			}
 		}
 
 		if ($showaddress)
