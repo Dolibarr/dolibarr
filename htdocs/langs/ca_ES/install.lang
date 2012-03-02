@@ -32,6 +32,7 @@ ErrorConnectedButDatabaseNotFound=La connexió al servidor és correcta però no
 ErrorDatabaseAlreadyExists=La base de dades '%s' ja existeix.
 IfDatabaseNotExistsGoBackAndUncheckCreate=Si la base de dades no existeix, torneu enrera i activeu l'opció "Crear base de dades"
 IfDatabaseExistsGoBackAndCheckCreate=Si la base de dades ja existeix, torneu enrere i desactiveu l'opció "crear la base de dades".
+WarningBrowserTooOld=El seu navegador és molt antic. Es recomana que actualitzeu a una versió recent de Firefox, Chrome o Opera.
 PHPVersion=Versió PHP
 YouCanContinue=Pot continuar ...
 PleaseBePatient=Esperi, si us plau...
