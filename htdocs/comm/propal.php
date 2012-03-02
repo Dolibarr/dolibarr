@@ -91,6 +91,7 @@ $hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('propalcard'));
 
 
+
 /*
  * Actions
  */
