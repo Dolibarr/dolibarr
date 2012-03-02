@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,11 +47,11 @@ if ($action == "set")
     $db->begin();
     for ($i = 0 ; $i < 2 ; $i++)
     {
-        $res = dolibarr_set_const($db, $_POST["nom$i"], $_POST["value$i"],'chaine',0,'',$conf->entity);
+    	$res = dolibarr_set_const($db, GETPOST("nom$i",'alpha'), GETPOST("value$i",'alpha'),'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
     }
 
-    $id=$_POST["PRELEVEMENT_ID_BANKACCOUNT"];
+    $id=GETPOST('PRELEVEMENT_ID_BANKACCOUNT','int');
     $account = new Account($db, $id);
 
     if($account->fetch($id)>0)
@@ -90,7 +90,7 @@ if ($action == "set")
 if ($action == "addnotif")
 {
     $bon = new BonPrelevement($db);
-    $bon->AddNotification($db,$_POST["user"],$_POST["action"]);
+    $bon->AddNotification($db,GETPOST('user','int'),$action);
 
     Header("Location: prelevement.php");
     exit;
@@ -99,7 +99,7 @@ if ($action == "addnotif")
 if ($action == "deletenotif")
 {
     $bon = new BonPrelevement($db);
-    $bon->DeleteNotificationById($_GET["notif"]);
+    $bon->DeleteNotificationById(GETPOST('notif','int'));
 
     Header("Location: prelevement.php");
     exit;
