@@ -35,7 +35,7 @@ if (! isset($_GET["mainmenu"])) $_GET["mainmenu"]="home";
 
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 $hookmanager=new HookManager($db);
-$hookmanager->callHooks(array('index'));
+$hookmanager->initHooks(array('index'));
 
 
 /*

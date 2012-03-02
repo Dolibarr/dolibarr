@@ -653,7 +653,7 @@ class Facture extends CommonObject
             // Actions hooked (by external module)
             include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
             $hookmanager=new HookManager($this->db);
-            $hookmanager->callHooks(array('invoicedao'));
+            $hookmanager->initHooks(array('invoicedao'));
 
             $parameters=array('objFrom'=>$object);
             $action='';

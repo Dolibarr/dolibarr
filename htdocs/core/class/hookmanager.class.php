@@ -58,14 +58,14 @@ class HookManager
 	 *  First, a hook is declared by a module by adding a constant MAIN_MODULE_MYMODULENAME_HOOKS
 	 *  with value 'nameofcontext1:nameofcontext2:...' into $this->const of module descriptor file.
 	 *  This make conf->hooks_modules loaded with an entry ('modulename'=>array(nameofcontext1,nameofcontext2,...))
-	 *  When callHooks function is called, with callHooks(list_of_contexts), an array this->hooks is defined with instance of controler
+	 *  When initHooks function is called, with initHooks(list_of_contexts), an array this->hooks is defined with instance of controler
 	 *  class found into file /mymodule/class/actions_mymodule.class.php (if module has declared the context as a managed context).
 	 *  Then when a hook is executeHook('aMethod'...) is called, the method aMethod found into class will be executed.
 	 *
 	 *	@param	array	$arraycontext	    Array list of searched hooks tab/features. For example: 'thirdpartycard' (for hook methods into page card thirdparty), 'thirdpartydao' (for hook methods into Societe), ...
 	 *	@return	int							Always 1
 	 */
-	function callHooks($arraycontext)
+	function initHooks($arraycontext)
 	{
 		global $conf;
 
