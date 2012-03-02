@@ -298,7 +298,7 @@ class pdf_edison extends ModelePDFCommandes
 				$pdf->Output($file,'F');
 
 				// Actions on extra fields (by external module or standard code)
-				if (is_object($hookmanager))
+				if (! is_object($hookmanager))
 				{
 					include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 					$hookmanager=new HookManager($this->db);
@@ -635,7 +635,7 @@ class pdf_edison extends ModelePDFCommandes
     		$pdf->SetXY($posx+2,$posy+4+(dol_nboflines_bis($carac_client_name,50)*4));
     		$pdf->MultiCell(86,4, $carac_client, 0, 'L');
 		}
-		
+
 		$curY = 80;
 		$posy=$curY;
 
@@ -647,10 +647,10 @@ class pdf_edison extends ModelePDFCommandes
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date,'day',false,$outputlangs), 0, 'L');
         $pdf->SetXY(11, $posy);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Order")." ".$outputlangs->convToOutputCharset($object->ref), 0, 'L');
-		
-		
+
+
 		$posy+=1;
-		
+
 		// Show list of linked objects
 		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 'L', $default_font_size, $hookmanager);
 	}

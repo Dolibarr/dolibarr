@@ -300,7 +300,7 @@ class pdf_oursin extends ModelePDFFactures
 				$pdf->Output($file,'F');
 
 				// Actions on extra fields (by external module or standard code)
-				if (is_object($hookmanager))
+				if (! is_object($hookmanager))
 				{
 					include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 					$hookmanager=new HookManager($this->db);
@@ -1001,7 +1001,7 @@ class pdf_oursin extends ModelePDFFactures
 		}
 
 		$posy+=1;
-		
+
 		// Show list of linked objects
 		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 'L', $default_font_size, $hookmanager);
 

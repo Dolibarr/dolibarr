@@ -393,7 +393,7 @@ class pdf_azur extends ModelePDFPropales
 				$pdf->Output($file,'F');
 
 				// Actions on extra fields (by external module or standard code)
-				if (is_object($hookmanager))
+				if (! is_object($hookmanager))
 				{
 					include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 					$hookmanager=new HookManager($this->db);
@@ -967,9 +967,9 @@ class pdf_azur extends ModelePDFPropales
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
 		}
-		
+
 		$posy+=2;
-		
+
 		// Show list of linked objects
 		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 'R', $default_font_size, $hookmanager);
 

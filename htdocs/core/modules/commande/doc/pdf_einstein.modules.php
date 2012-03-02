@@ -407,7 +407,7 @@ class pdf_einstein extends ModelePDFCommandes
 				$pdf->Output($file,'F');
 
 				// Actions on extra fields (by external module or standard code)
-				if (is_object($hookmanager))
+				if (! is_object($hookmanager))
 				{
 					include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 					$hookmanager=new HookManager($this->db);
@@ -926,12 +926,12 @@ class pdf_einstein extends ModelePDFCommandes
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("OrderDate")." : " . dol_print_date($object->date,"%d %b %Y",false,$outputlangs,true), '', 'R');
-		
+
 		$posy+=2;
-		
+
 		// Show list of linked objects
 		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 'R', $default_font_size, $hookmanager);
-		
+
 		if ($showaddress)
 		{
 			// Sender properties
