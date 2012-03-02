@@ -1647,11 +1647,13 @@ function pdf_getLinkedObjects($object,$outputlangs,$hookmanager=false)
 		}
 	}
 	
+	// For add external linked objects
 	if (is_object($hookmanager))
 	{
 		$parameters = array('linkedobjects' => $linkedobjects, 'outputlangs'=>$outputlangs);
 		$action='';
 		$hookmanager->executeHooks('pdf_getLinkedObjects',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+		if (! empty($hookmanager->resArray)) $linkedobjects = $hookmanager->resArray;
 	}
 
 	return $linkedobjects;
