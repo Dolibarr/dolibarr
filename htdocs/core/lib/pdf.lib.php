@@ -1651,9 +1651,9 @@ function pdf_getLinkedObjects($object,$outputlangs,$hookmanager=false)
 	{
 		$parameters = array('linkedobjects' => $linkedobjects, 'outputlangs'=>$outputlangs);
 		$action='';
-		$linkedobjects = $hookmanager->executeHooks('pdf_getLinkedObjects',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+		$hookmanager->executeHooks('pdf_getLinkedObjects',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 	}
-	
+
 	return $linkedobjects;
 }
 
