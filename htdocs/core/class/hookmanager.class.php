@@ -37,6 +37,9 @@ class HookManager
 
 	// Array with instantiated classes
 	var $hooks=array();
+	
+	// Array result
+	var $resArray=array();
 
 	/**
 	 * Constructor
@@ -168,7 +171,9 @@ class HookManager
                     else if (method_exists($actioninstance,$method))
                     {
                         if (is_array($parameters) && $parameters['special_code'] > 3 && $parameters['special_code'] != $actioninstance->module_number) continue;
-                    	$resprint.=$actioninstance->$method($parameters, $object, $action, $this);
+                    	$result = $actioninstance->$method($parameters, $object, $action, $this);
+                    	if (is_array($result)) $this->resArray = array_merge($this->resArray, $result);
+                    	else $resprint.=$result;
                     }
                 }
             }
