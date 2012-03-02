@@ -1004,21 +1004,8 @@ class pdf_oursin extends ModelePDFFactures
 
 		$posy+=1;
 		
-		// Add list of linked objects
-		$linkedobjects = pdf_getLinkedObjects($object,$outputlangs,$hookmanager);
-		if (! empty($linkedobjects))
-		{
-			foreach($linkedobjects as $linkedobject)
-			{
-				$posy+=3;
-				$pdf->SetXY($this->marges['g'],$posy);
-				$pdf->SetFont('','', $default_font_size - 2);
-				$pdf->MultiCell(60, 3, $linkedobject["ref_title"].' : '.$linkedobject["ref_value"], '', 'L');
-				$posy+=3;
-				$pdf->SetXY($posx,$posy);
-				$pdf->MultiCell(60, 3, $linkedobject["date_title"].' : '.$linkedobject["date_value"], '', 'L');
-			}
-		}
+		// Show list of linked objects
+		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 'L', $default_font_size, $hookmanager);
 
 		// Amount in (at tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
