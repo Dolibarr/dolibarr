@@ -176,7 +176,7 @@ elseif ($action == 'setdate' && $user->rights->fournisseur->facture->creer)
     $result=$object->update($user);
     if ($result < 0) dol_print_error($db,$object->error);
 }
-elseif ($action == 'setdate_echeance' && $user->rights->fournisseur->facture->creer)
+elseif ($action == 'setdate_lim_reglement' && $user->rights->fournisseur->facture->creer)
 {
     $object->fetch($id);
     $object->date_echeance=dol_mktime(12,0,0,$_POST['date_lim_reglementmonth'],$_POST['date_lim_reglementday'],$_POST['date_lim_reglementyear']);
@@ -1346,6 +1346,7 @@ else
         // Due date
         print '<tr><td>'.$form->editfieldkey("DateMaxPayment",'date_lim_reglement',$object->date_echeance,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker').'</td><td colspan="3">';
         print $form->editfieldval("DateMaxPayment",'date_lim_reglement',$object->date_echeance,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker');
+        if ((empty($action) || $action == 'view') && $object->date_echeance && $object->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_warning($langs->trans('Late'));
         print '</td>';
 
         // Status
@@ -1648,13 +1649,13 @@ else
                 print '<tr '.$bc[$var].'>';
                 print '<td colspan="4">';
                 $form->select_produits_fournisseurs($object->socid,'','idprodfournprice','',$filtre);
-                
+
                 if (is_object($hookmanager))
 				{
 			        $parameters=array('filtre'=>$filtre);
 				    echo $hookmanager->executeHooks('formCreateProductSupplierOptions',$parameters,$object,$action);
 				}
-				
+
                 print '</td>';
                 print '<td align="right"><input type="text" name="qty" value="1" size="1"></td>';
                 print '<td>&nbsp;</td>';
