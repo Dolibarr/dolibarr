@@ -119,18 +119,23 @@ class modExternalRss extends DolibarrModules
 		return $this->_init($sql,$options);
 	}
 
-	/**
-	 *    \brief      Fonction appelee lors de la desactivation d'un module.
-	 *                Supprime de la base les constantes, boites et permissions du module.
-	 */
-	function remove()
-	{
+    /**
+	 *		Function called when module is disabled.
+	 *      Remove from database constants, boxes and permissions from Dolibarr database.
+	 *		Data directories are not deleted
+	 *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
+     */
+    function remove($options='')
+    {
 		$sql = array();
-
-		// Supprime anciennes delcarations de la boite RSS
+		
+		// Delete old declarations of RSS box
 		$this->boxes[0][1] = "box_external_rss.php";
+		
+		return $this->_remove($sql,$options);
+    }
 
-		return $this->_remove($sql);
-	}
 }
 ?>
