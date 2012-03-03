@@ -64,15 +64,15 @@ $entitytolang=array(		// Translation code
 	'other'=>'Other'
 );
 
-$datatoimport=isset($_GET["datatoimport"])? $_GET["datatoimport"] : (isset($_POST["datatoimport"])?$_POST["datatoimport"]:'');
-$format=isset($_GET["format"])? $_GET["format"] : (isset($_POST["format"])?$_POST["format"]:'');
-$filetoimport=isset($_GET["filetoimport"])? $_GET["filetoimport"] : (isset($_POST["filetoimport"])?$_POST["filetoimport"]:'');
-$action=isset($_GET["action"]) ? $_GET["action"] : (isset($_POST["action"])?$_POST["action"]:'');
-$step=isset($_GET["step"])? $_GET["step"] : (isset($_POST["step"])?$_POST["step"]:1);
-$import_name=isset($_POST["import_name"])? $_POST["import_name"] : '';
-$hexa=isset($_POST["hexa"])? $_POST["hexa"] : '';
-$importmodelid=isset($_POST["importmodelid"])? $_POST["importmodelid"] : '';
-$excludefirstline=isset($_GET["excludefirstline"])? $_GET["excludefirstline"] : (isset($_POST["excludefirstline"])?$_POST["excludefirstline"]:0);
+$datatoimport		= GETPOST('datatoimport');
+$format				= GETPOST('format');
+$filetoimport		= GETPOST('filetoimport');
+$action				= GETPOST('action');
+$step				= (GETPOST('step') ? GETPOST('step') : 1);
+$import_name		= GETPOST('import_name');
+$hexa				= GETPOST('hexa');
+$importmodelid		= GETPOST('importmodelid');
+$excludefirstline	= (GETPOST('excludefirstline') ? GETPOST('excludefirstline') : 0);
 
 $objimport=new Import($db);
 $objimport->load_arrays($user,($step==1?'':$datatoimport));
@@ -1638,7 +1638,12 @@ function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
 		print '</td>';
 		print '<td style="font-weight: normal">';
 		print $langs->trans("Field").' '.$pos;
-		if (! empty($fieldssource[$pos]['example1'])) print ' (<i>'.htmlentities($fieldssource[$pos]['example1']).'</i>)';
+		$example=$fieldssource[$pos]['example1'];
+		if ($example)
+		{
+		    if (! utf8_check($example)) $example=utf8_encode($example);
+		    print ' (<i>'.$example.'</i>)';
+		}
 		print '</td>';
 		print '</tr>';
 	}
