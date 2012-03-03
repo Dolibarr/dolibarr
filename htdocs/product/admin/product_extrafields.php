@@ -24,11 +24,12 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
 
 $langs->load("companies");
 $langs->load("admin");
+$langs->load("products");
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -43,7 +44,7 @@ $type2label=array(
 );
 
 $action=GETPOST("action");
-$elementtype='company';
+$elementtype='product';
 
 if (!$user->admin) accessforbidden();
 
@@ -60,19 +61,30 @@ require(DOL_DOCUMENT_ROOT."/core/admin_extrafields.inc.php");
  * View
  */
 
-$textobject=$langs->transnoentitiesnoconv("ThirdParty");
+$title = $langs->trans('ProductServiceSetup');
+$tab = $langs->trans("ProductsAndServices");
+if (empty($conf->produit->enabled))
+{
+	$title = $langs->trans('ServiceSetup');
+	$tab = $langs->trans('Services');
+}
+else if (empty($conf->service->enabled))
+{
+	$title = $langs->trans('ProductSetup');
+	$tab = $langs->trans('Products');
+}
 
 $help_url='EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers';
-llxHeader('',$langs->trans("CompanySetup"),$help_url);
+llxHeader('',$title);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("CompanySetup"),$linkback,'setup');
+print_fiche_titre($title,$linkback,'setup');
 
 
-$head = societe_admin_prepare_head(null);
+$head = product_admin_prepare_head(null, $tab);
 
-dol_fiche_head($head, 'attributes', $langs->trans("ThirdParty"), 0, 'company');
+dol_fiche_head($head, 'attributes', $tab, 0, 'product');
 
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";

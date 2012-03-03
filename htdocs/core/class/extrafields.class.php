@@ -40,6 +40,7 @@ class ExtraFields
 	var $attribute_size;
 
 	var $error;
+	var $errno;
 
 
 	/**
@@ -74,10 +75,17 @@ class ExtraFields
         if (empty($label)) return -1;
 
         $result=$this->create($attrname,$type,$size,$elementtype);
-        if ($result > 0)
+        $err1=$this->errno;
+        if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS')
         {
             $result2=$this->create_label($attrname,$label,$type,$pos,$size,$elementtype);
-            if ($result2 > 0) return 1;
+            $err2=$this->errno;
+            if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS'))
+            {
+                $this->error='';
+                $this->errno=0;
+                return 1;
+            }
             else return -2;
         }
         else
@@ -119,6 +127,7 @@ class ExtraFields
 			else
 			{
 				$this->error=$this->db->lasterror();
+				$this->errno=$this->db->lasterrno();
 				return -1;
 			}
 		}
@@ -166,8 +175,9 @@ class ExtraFields
 			}
 			else
 			{
-				print dol_print_error($this->db);
-				return 0;
+				$this->error=$this->db->lasterror();
+				$this->errno=$this->db->lasterrno();
+				return -1;
 			}
 		}
 	}

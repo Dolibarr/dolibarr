@@ -322,9 +322,14 @@ class ImportCsv extends ModeleImports
 				$i=0;
 				$errorforthistable=0;
 
-				// Loop on each fields in the match array ($key = 1..n, $val=alias of field)
+				// Loop on each fields in the match array: $key = 1..n, $val=alias of field (s.nom)
 				foreach($sort_array_match_file_to_database as $key => $val)
 				{
+				    $fieldalias=preg_replace('/\..*$/i','',$val);
+				    $fieldname=preg_replace('/^.*\./i','',$val);
+
+				    if ($alias != $fieldalias) continue;    // Not a field of current table
+
 					if ($key <= $maxfields)
 					{
 						// Set $newval with value to insert and set $listvalues with sql request part for insert
@@ -350,7 +355,7 @@ class ImportCsv extends ModeleImports
                                 //print 'Must convert '.$newval.' with rule '.join(',',$objimport->array_import_convertvalue[0][$val]).'. ';
                                 if ($objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeid' || $objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromref')
                                 {
-                                    if (! is_numeric($newval))
+                                    if (! is_numeric($newval))    // If value into input import file is not a numeric, we apply the function defined into descriptor
                                     {
                                         $file=$objimport->array_import_convertvalue[0][$val]['classfile'];
                                         $class=$objimport->array_import_convertvalue[0][$val]['class'];
@@ -383,6 +388,7 @@ class ImportCsv extends ModeleImports
                                     }
 
                                 }
+
                                 //print 'Val to use as insert is '.$newval.'<br>';
 						    }
 
@@ -442,18 +448,19 @@ class ImportCsv extends ModeleImports
 
 						// Define $listfields and $listvalues to build SQL request
 						if ($listfields) { $listfields.=', '; $listvalues.=', '; }
-						$listfields.=preg_replace('/^.*\./i','',$val);
+						$listfields.=$fieldname;
 						if ($arrayrecord[($key-1)]['type'] < 0)      	$listvalues.="null";
-						else if ($arrayrecord[($key-1)]['type'] == 0) 	$listvalues.="''";
-						else if ($arrayrecord[($key-1)]['type'] > 0)	$listvalues.="'".$this->db->escape($newval)."'";
+						elseif ($arrayrecord[($key-1)]['type'] == 0) 	$listvalues.="''";
+						elseif ($arrayrecord[($key-1)]['type'] > 0)	$listvalues.="'".$this->db->escape($newval)."'";
 					}
 					$i++;
 				}
 
-				// Loop on each hidden fields
-				if (is_array($objimport->array_import_fieldshidden[0]))
+				// We add hidden fields (but only if there is at least one field to add into table)
+				if ($listfields && is_array($objimport->array_import_fieldshidden[0]))
 				{
-    				foreach($objimport->array_import_fieldshidden[0] as $key => $val)
+    				// Loop on each hidden fields to add them into listfields/listvalues
+				    foreach($objimport->array_import_fieldshidden[0] as $key => $val)
     				{
     				    if (! preg_match('/^'.preg_quote($alias).'\./', $key)) continue;    // Not a field of current table
     				    if ($listfields) { $listfields.=', '; $listvalues.=', '; }
@@ -462,27 +469,25 @@ class ImportCsv extends ModeleImports
     				        $listfields.=preg_replace('/^'.preg_quote($alias).'\./','',$key);
     				        $listvalues.=$user->id;
     				    }
+    				    elseif (preg_match('/^lastrowid-/',$val))
+    				    {
+    				        $tmp=explode('-',$val);
+                            $lastinsertid=$this->db->last_insert_id($tmp[1]);
+    				        $listfields.=preg_replace('/^'.preg_quote($alias).'\./','',$key);
+                            $listvalues.=$lastinsertid;
+    				        //print $key."-".$val."-".$listfields."-".$listvalues."<br>";exit;
+    				    }
     				}
 				}
-				//print 'Show listfields='.$listfields.'<br>listvalues='.$listvalues.'<br>';
+				//print 'listfields='.$listfields.'<br>listvalues='.$listvalues.'<br>';
 
+				// If no error for this $alias/$tablename, we have a complete $listfields and $listvalues that are defined
 				if (! $errorforthistable)
 				{
+				    //print "$alias/$tablename/$listfields/$listvalues<br>";
 					if ($listfields)
 					{
-						// If some values need to be found somewhere else than in source file: Case we need a rowid found from a fetch on a reference.
-						// This is used when insert must be done when a parent row already exists
-						// $objimport->array_import_convertvalue=array('s.fk_soc'=>array('rule'=>'fetchidfromref',file='/societe.class.php','class'=>'Societe','method'=>'fetch'));
-						foreach($objimport->array_import_convertvalue as $alias => $rulearray)
-						{
-							if (empty($rulearray['rule']) || $rulearray['rule']!='fetchidfromref') continue;
-							dol_syslog("We need to get rowid from ref=".$alias." using value found in column ".$array_match_database_to_file." in source file, so ".$arrayrecord[$array_match_database_to_file]['val']);
-						}
-
-						// If some values need to be found somewhere else than in source file: Case we need lastinsert id from previous insert
-						// This is used when insert must be done in several tables
-						// $objimport->array_import_convertvalue=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
-						// TODO
+					    //var_dump($objimport->array_import_convertvalue); exit;
 
 						// Build SQL request
 						$sql ='INSERT INTO '.$tablename.'('.$listfields.', import_key';
@@ -513,10 +518,10 @@ class ImportCsv extends ModeleImports
 							}
 						}
 					}
-					else
+					/*else
 					{
-						dol_print_error('Ne doit pas arriver AAA');
-					}
+						dol_print_error('','ErrorFieldListEmptyFor '.$alias."/".$tablename);
+					}*/
 				}
 			}
 		}

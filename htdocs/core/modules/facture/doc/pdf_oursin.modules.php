@@ -1003,7 +1003,7 @@ class pdf_oursin extends ModelePDFFactures
 		}
 
 		$posy+=1;
-		
+
 		// Show list of linked objects
 		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 'L', $default_font_size, $hookmanager);
 

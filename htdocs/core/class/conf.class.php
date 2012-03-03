@@ -53,7 +53,7 @@ class Conf
 
 	public $modules					= array();	// List of activated modules
 	public $modules_parts			= array();	// List of modules parts
-	
+
 	// TODO Remove all thoose tabs with one generic
 	public $sms_engine_modules		= array();
 	public $css_modules				= array();
@@ -163,8 +163,8 @@ class Conf
 							$modulename = strtolower($reg[1]);
 							$partname = strtolower($reg[2]);
 							$varname = $partname.'_modules';  // TODO deprecated
-							if (! is_array($this->$varname)) { $this->$varname = array(); } // TODO deprecated
-							if (! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
+							if (! isset($this->$varname) || ! is_array($this->$varname)) { $this->$varname = array(); } // TODO deprecated
+							if (! isset($this->modules_parts[$partname]) || ! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
 							$arrValue = dol_json_decode($value,true);
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
 							else if (in_array($partname,array('login','menus','triggers'))) $value = '/'.$modulename.'/core/'.$partname.'/';

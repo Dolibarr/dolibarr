@@ -44,10 +44,11 @@ For users:
 - New: Chart are faster to build
 - New: Value of data into charts are visible on mouse hover.
 - New: Import wizard can import contacts.
+- New: Import wizard can import personalized fields.
+- New: Personalized fields support int type.
 - New: Install process is now two times faster.
 - New: Can sort files into backup tool.
 - New: Default output charset are utf8 into backup tool.
-- New: Extra fields support int type.
 - New: Add brazilian states.
 - New: Increase usability of module project.
 - New: Automatic list of documents in ECM module is ok for customers,

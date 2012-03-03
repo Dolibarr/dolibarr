@@ -236,7 +236,7 @@ class modUser extends DolibarrModules
 		global $conf;
 
 		// Permissions
-		$this->remove();
+		$this->remove($options);
 
 		$sql = array();
 
@@ -244,17 +244,19 @@ class modUser extends DolibarrModules
 	}
 
     /**
-     *      Function called when module is disabled.
-     *      Remove from database constants, boxes and permissions from Dolibarr database.
-     *      Data directories are not deleted.
-     *
-     *      @return     int             1 if OK, 0 if KO
+	 *		Function called when module is disabled.
+	 *      Remove from database constants, boxes and permissions from Dolibarr database.
+	 *		Data directories are not deleted
+	 *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
      */
-	function remove()
-	{
+    function remove($options='')
+    {
 		$sql = array();
 
-		return $this->_remove($sql);
-	}
+		return $this->_remove($sql,$options);
+    }
+
 }
 ?>

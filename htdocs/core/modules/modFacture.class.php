@@ -237,16 +237,20 @@ class modFacture extends DolibarrModules
 		return $this->_init($sql,$options);
 	}
 
-	/**
-	 *  Fonction appelee lors de la desactivation d'un module.
-	 *  Supprime de la base les constantes, boites et permissions du module.
-	 *	@param		options		Options when disabling module
-	 */
-	function remove($options='')
-	{
+    /**
+	 *		Function called when module is disabled.
+	 *      Remove from database constants, boxes and permissions from Dolibarr database.
+	 *		Data directories are not deleted
+	 *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
+     */
+    function remove($options='')
+    {
 		$sql = array();
 
 		return $this->_remove($sql,$options);
-	}
+    }
+
 }
 ?>

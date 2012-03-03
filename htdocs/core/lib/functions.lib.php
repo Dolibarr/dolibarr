@@ -147,7 +147,7 @@ if (! function_exists('json_decode'))
 
 /**
  * 	Function that encodes data in json format
- * 
+ *
  * 	@param	mixed	$elements	PHP object to json encode
  * 	@return	string				Json encoded string
  */
@@ -166,7 +166,7 @@ function dol_json_encode($elements)
 function dol_json_decode($json, $assoc=false)
 {
 	$out='';
-	$out = unserialize($json); // For compatibility, test if serialized
+	$out = @unserialize($json); // For compatibility, test if serialized
 	if (empty($out)) $out = json_decode($json, $assoc);
 	return $out;
 }

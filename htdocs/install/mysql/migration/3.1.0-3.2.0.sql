@@ -131,7 +131,8 @@ ALTER TABLE llx_categorie_societe DROP INDEX fk_categorie;
 ALTER TABLE llx_categorie_societe DROP INDEX fk_societe;
 
 ALTER TABLE llx_categorie_fournisseur DROP INDEX fk_categorie;
-ALTER TABLE llx_categorie_fournisseur DROP PRIMARY KEY;
+-- VMYSQL ALTER TABLE llx_categorie_fournisseur DROP PRIMARY KEY;
+-- VPGSQL ALTER TABLE llx_categorie_fournisseur DROP CONSTRAINT pk_categorie_fournisseur;
 ALTER TABLE llx_categorie_fournisseur ADD PRIMARY KEY pk_categorie_fournisseur (fk_categorie, fk_societe);
 ALTER TABLE llx_categorie_fournisseur ADD INDEX idx_categorie_fournisseur_fk_categorie (fk_categorie);
 ALTER TABLE llx_categorie_fournisseur ADD INDEX idx_categorie_fournisseur_fk_societe (fk_societe);
@@ -245,3 +246,8 @@ ALTER TABLE llx_product_stock DROP COLUMN location;
 -- DROP TABLE llx_cond_reglement;
 -- DROP TABLE llx_expedition_methode;
 -- DROP TABLE llx_product_fournisseur;
+
+ALTER TABLE llx_adherent_extrafields ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_product_extrafields  ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_societe_extrafields  ADD COLUMN import_key varchar(14);
+  
