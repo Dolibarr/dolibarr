@@ -234,14 +234,18 @@ jQuery(document).ready(function () {
 <input id="password" name="password" class="flat" type="password" size="15" maxlength="30" value="<?php echo $password; ?>" tabindex="2" />
 </td></tr>
 
-<?php if ($select_entity) { ?>
-	<tr><td valign="top" nowrap="nowrap"> &nbsp; <strong><?php echo $langs->trans('Entity'); ?></strong> &nbsp; </td>
-	<td valign="top" nowrap="nowrap">
-	<?php echo $select_entity; ?>
-	</td></tr>
-<?php } ?>
+<?php
+if (! empty($hookmanager->resArray['options'])) {
+	foreach ($hookmanager->resArray['options'] as $option)
+	{
+		echo '<!-- Option by hook -->';
+		echo $option;
+	}
+}
+?>
 
 <?php if ($captcha) { ?>
+	<!-- Captcha -->
 	<tr><td valign="middle" nowrap="nowrap"> &nbsp; <b><?php echo $langs->trans('SecurityCode'); ?></b></td>
 	<td valign="top" nowrap="nowrap" align="left" class="none">
 
