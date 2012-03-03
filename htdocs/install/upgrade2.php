@@ -309,7 +309,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
         	migrate_mode_reglement($db,$langs,$conf);
-        	
+
             // Reload modules
             migrate_reload_modules($db,$langs,$conf);
 
@@ -1193,7 +1193,7 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 
 /**
  * Mise a jour des totaux lignes de facture
- * 
+ *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
  * @param	Conf		$conf	Object conf
@@ -3209,10 +3209,10 @@ function migrate_shipping_delivery2($db,$langs,$conf)
 function migrate_actioncomm_element($db,$langs,$conf)
 {
 	print '<tr><td colspan="4">';
-	
+
 	print '<br>';
 	print '<b>'.$langs->trans('MigrationActioncommElement')."</b><br>\n";
-	
+
 	$elements = array(
 		'propal' => 'propalrowid',
 		'order' => 'fk_commande',
@@ -3221,7 +3221,7 @@ function migrate_actioncomm_element($db,$langs,$conf)
 		'order_supplier' => 'fk_supplier_order',
 		'invoice_supplier' => 'fk_supplier_invoice'
 	);
-	
+
 	foreach($elements as $type => $field)
 	{
 		$result = $db->DDLDescTable(MAIN_DB_PREFIX."actioncomm",$field);
@@ -3229,20 +3229,20 @@ function migrate_actioncomm_element($db,$langs,$conf)
 		if ($obj)
 		{
 			dolibarr_install_syslog("upgrade2::migrate_actioncomm_element field=".$field);
-			
+
 			$db->begin();
-			
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm SET ";
 			$sql.= "fk_element = ".$field.", elementtype = '".$type."'";
 			$sql.= " WHERE ".$field." IS NOT NULL";
 			$sql.= " AND fk_element IS NULL";
 			$sql.= " AND elementtype IS NULL";
-			
+
 			$resql = $db->query($sql);
 			if ($resql)
 			{
 				$db->commit();
-				
+
 				// DDL commands must not be inside a transaction
 				// We will drop at next version because a migrate should be runnable several times if it fails.
 				//$sqlDrop = "ALTER TABLE ".MAIN_DB_PREFIX."actioncomm DROP COLUMN ".$field;
@@ -3260,7 +3260,7 @@ function migrate_actioncomm_element($db,$langs,$conf)
 			print $langs->trans('AlreadyDone')."<br>\n";
 		}
 	}
-	
+
 	print '</td></tr>';
 }
 
@@ -3275,10 +3275,10 @@ function migrate_actioncomm_element($db,$langs,$conf)
 function migrate_mode_reglement($db,$langs,$conf)
 {
 	print '<tr><td colspan="4">';
-	
+
 	print '<br>';
 	print '<b>'.$langs->trans('MigrationPaymentMode')."</b><br>\n";
-	
+
 	$elements = array(
 		'old_id' => array(5,8,9,10,11),
 		'new_id' => array(50,51,52,53,54),
@@ -3286,13 +3286,13 @@ function migrate_mode_reglement($db,$langs,$conf)
 		'tables' => array('commande_fournisseur','commande','facture_rec','facture','propal')
 	);
 	$count=0;
-	
+
 	foreach($elements['old_id'] as $key => $old_id)
 	{
 		$error=0;
-		
+
 		dolibarr_install_syslog("upgrade2::migrate_mode_reglement code=".$elements['code'][$key]);
-		
+
 		$sqlSelect = "SELECT id";
 		$sqlSelect.= " FROM ".MAIN_DB_PREFIX."c_paiement";
 		$sqlSelect.= " WHERE id = ".$old_id;
@@ -3305,9 +3305,9 @@ function migrate_mode_reglement($db,$langs,$conf)
 			if ($num)
 			{
 				$count++;
-				
+
 				$db->begin();
-				
+
 				$sql = "UPDATE ".MAIN_DB_PREFIX."c_paiement SET ";
 				$sql.= "id = ".$elements['new_id'][$key];
 				$sql.= " WHERE id = ".$old_id;
@@ -3330,7 +3330,7 @@ function migrate_mode_reglement($db,$langs,$conf)
 						}
 						print ". ";
 					}
-						
+
 					if (! $error)
 					{
 						$db->commit();
@@ -3349,10 +3349,10 @@ function migrate_mode_reglement($db,$langs,$conf)
 			}
 		}
 	}
-	
+
 	if ($count == 0) print $langs->trans('AlreadyDone')."<br>\n";
-	
-	
+
+
 	print '</td></tr>';
 }
 
@@ -3499,36 +3499,6 @@ function migrate_reload_modules($db,$langs,$conf)
             $mod=new modAgenda($db);
             $mod->remove('noboxes');
             $mod->init('noboxes');
-        }
-    }
-    if (! empty($conf->global->MAIN_MODULE_PHENIX))
-    {
-        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Phenix");
-        $res=@include_once(DOL_DOCUMENT_ROOT.'/core/modules/modPhenix.class.php');
-        if ($res) {
-            $mod=new modPhenix($db);
-            $mod->remove('noboxes');
-            $mod->init();
-        }
-    }
-    if (! empty($conf->global->MAIN_MODULE_WEBCALENDAR))
-    {
-        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Webcalendar");
-        $res=@include_once(DOL_DOCUMENT_ROOT.'/core/modules/modWebcalendar.class.php');
-        if ($res) {
-            $mod=new modWebcalendar($db);
-            $mod->remove('noboxes');
-            $mod->init();
-        }
-    }
-    if (! empty($conf->global->MAIN_MODULE_MANTIS))
-    {
-        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module Mantis");
-        $res=@include_once(DOL_DOCUMENT_ROOT.'/core/modules/modMantis.class.php');
-        if ($res) {
-            $mod=new modMantis($db);
-            $mod->remove('noboxes');
-            $mod->init();
         }
     }
     if (! empty($conf->global->MAIN_MODULE_SOCIETE))
