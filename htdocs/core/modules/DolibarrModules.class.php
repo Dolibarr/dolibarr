@@ -1325,14 +1325,18 @@ abstract class DolibarrModules
     	global $conf;
 
     	$err=0;
+    	$entity=$conf->entity;
 
     	if (is_array($this->module_parts) && ! empty($this->module_parts))
     	{
     		foreach($this->module_parts as $key => $value)
     		{
+    			// If entity is defined
+    			if (is_array($value) && isset($value['entity'])) $entity = $value['entity'];
+    			
     			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
     			$sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->const_name."_".strtoupper($key)."'";
-    			$sql.= " AND entity = ".$conf->entity;
+    			$sql.= " AND entity = ".$entity;
 
     			dol_syslog(get_class($this)."::delete_const_".$key." sql=".$sql);
     			if (! $this->db->query($sql))
