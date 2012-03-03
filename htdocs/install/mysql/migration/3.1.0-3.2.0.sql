@@ -245,3 +245,8 @@ ALTER TABLE llx_product_stock DROP COLUMN location;
 -- DROP TABLE llx_cond_reglement;
 -- DROP TABLE llx_expedition_methode;
 -- DROP TABLE llx_product_fournisseur;
+
+ALTER TABLE llx_adherent_extrafields ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_product_extrafields  ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_societe_extrafields  ADD COLUMN import_key varchar(14);
+  
