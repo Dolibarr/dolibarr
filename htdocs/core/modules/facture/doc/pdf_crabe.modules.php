@@ -226,7 +226,7 @@ class pdf_crabe extends ModelePDFFactures
 
 				$tab_top = 90;
 				$tab_top_newpage = 50;
-				$tab_height = 110;
+				$tab_height = 130;
 				$tab_height_newpage = 150;
 
 				// Affiche notes
@@ -356,7 +356,7 @@ class pdf_crabe extends ModelePDFFactures
 					{
 					    if ($pagenb == 1)
 						{
-							$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
+							$this->_tableau($pdf, $tab_top, $tab_height + 40, $nexY, $outputlangs);
 						}
 						else
 						{
