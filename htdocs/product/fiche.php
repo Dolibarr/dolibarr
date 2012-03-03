@@ -118,8 +118,6 @@ if (empty($reshook))
             $mesg=join(',',$product->errors);
         }
         $action="";
-        $id=$_POST["id"];
-        $_GET["id"]=$_POST["id"];
     }
 
     if ($action == 'setproductaccountancycodesell')
@@ -214,6 +212,15 @@ if (empty($reshook))
                 }
             }
 
+            // Get extra fields
+            foreach($_POST as $key => $value)
+            {
+                if (preg_match("/^options_/",$key))
+                {
+                    $product->array_options[$key]=$_POST[$key];
+                }
+            }
+
             $id = $product->create($user);
 
             if ($id > 0)
@@ -264,6 +271,15 @@ if (empty($reshook))
                 $product->volume_units       = $_POST["volume_units"];
                 $product->finished           = $_POST["finished"];
                 $product->hidden             = $_POST["hidden"]=='yes'?1:0;
+
+                // Get extra fields
+                foreach($_POST as $key => $value)
+                {
+                    if (preg_match("/^options_/",$key))
+                    {
+                        $product->array_options[$key]=$_POST[$key];
+                    }
+                }
 
                 if ($product->check())
                 {
@@ -628,7 +644,7 @@ if (empty($reshook))
 if (GETPOST("cancel") == $langs->trans("Cancel"))
 {
     $action = '';
-    Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_POST["id"]);
+    Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
     exit;
 }
 
@@ -847,7 +863,9 @@ else
     else if ($id || $ref)
     {
         $object=new Product($db);
-        $object->fetch($id,$ref);
+        $res=$object->fetch($id,$ref);
+        if ($res < 0) { dol_print_error($db,$object->error); exit; }
+        $res=$object->fetch_optionals($id,$extralabels);
 
         /*
          * Fiche en mode edition
@@ -1046,7 +1064,7 @@ else
             // Label
             print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$object->libelle.'</td>';
 
-            $nblignes=9;
+            $nblignes=8;
             if ($object->type!=1) $nblignes++;
             if ($object->isservice()) $nblignes++;
             else $nblignes+=4;
@@ -1212,7 +1230,7 @@ else
             print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td colspan="2">'.getCountry($object->country_id,0,$db).'</td>';
 
             // Other attributes
-            $parameters=array('colspan' => ' colspan="2"');
+            $parameters=array('colspan' => ' colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
@@ -1220,13 +1238,13 @@ else
                 {
                     $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
                     print '<tr><td>'.$label.'</td><td colspan="3">';
-                    print $extrafields->showInputField($key,$value);
+                    print $extrafields->showOutputField($key,$value);
                     print '</td></tr>'."\n";
                 }
             }
 
             // Note
-            print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="2">'.(dol_textishtml($object->note)?$object->note:dol_nl2br($object->note,1,true)).'</td></tr>';
+            print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'">'.(dol_textishtml($object->note)?$object->note:dol_nl2br($object->note,1,true)).'</td></tr>';
 
             print "</table>\n";
 
@@ -1709,8 +1727,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
 
 
 
-$db->close();
-
 llxFooter();
 
+$db->close();
 ?>
