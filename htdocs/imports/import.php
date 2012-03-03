@@ -1638,7 +1638,12 @@ function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
 		print '</td>';
 		print '<td style="font-weight: normal">';
 		print $langs->trans("Field").' '.$pos;
-		if (! empty($fieldssource[$pos]['example1'])) print ' (<i>'.$fieldssource[$pos]['example1'].'</i>)';
+		$example=$fieldssource[$pos]['example1'];
+		if ($example)
+		{
+		    if (! utf8_check($example)) $example=utf8_encode($example);
+		    print ' (<i>'.$example.'</i>)';
+		}
 		print '</td>';
 		print '</tr>';
 	}
