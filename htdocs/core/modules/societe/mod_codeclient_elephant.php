@@ -73,7 +73,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		$langs->load("companies");
 
 		$form = new Form($this->db);
-		
+
 		$disabled = ((! empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? ' disabled="disabled"' : '');
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
@@ -153,7 +153,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	/**		Return next value
 	 *
 	 *     	@param      objsoc      Object third party
-	 *	    @param      $type       Client ou fournisseur (1:client, 2:fournisseur)
+	 *	    @param      $type       Client ou fournisseur (0:customer, 1:supplier)
 	 *     	@return     string      Value if OK, '' if module not configured, <0 if KO
 	 */
 	function getNextValue($objsoc=0,$type=-1)
@@ -274,7 +274,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	{
 		$sql = "SELECT code_client FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE code_client = '".$code."'";
-		if ($soc->id > 0) $sql.= " AND rowid != ".$soc->id;
+		if ($soc->id > 0) $sql.= " AND rowid <> ".$soc->id;
 
 		$resql=$db->query($sql);
 		if ($resql)

@@ -577,7 +577,7 @@ if ($step == 4 && $datatoimport)
 	$file = "import_".$model.".modules.php";
 	$classname = "Import".ucfirst($model);
 	require_once($dir.$file);
-	$obj = new $classname($db);
+	$obj = new $classname($db,$datatoimport);
 
 	// Load source fields in input file
 	$fieldssource=array();
@@ -1040,7 +1040,7 @@ if ($step == 5 && $datatoimport)
 	$file = "import_".$model.".modules.php";
 	$classname = "Import".ucfirst($model);
 	require_once($dir.$file);
-	$obj = new $classname($db);
+	$obj = new $classname($db,$datatoimport);
 
 	// Load source fields in input file
 	$fieldssource=array();
@@ -1369,7 +1369,7 @@ if ($step == 6 && $datatoimport)
 	$file = "import_".$model.".modules.php";
 	$classname = "Import".ucfirst($model);
 	require_once($dir.$file);
-	$obj = new $classname($db);
+	$obj = new $classname($db,$datatoimport);
 
 	// Load source fields in input file
 	$fieldssource=array();
