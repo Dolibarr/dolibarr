@@ -76,3 +76,6 @@
 [submodule "htdocs/custom/reports"]
 	path = htdocs/custom/reports
 	url = gitolite@doliforge.org:reports/reports.git
+[submodule "htdocs/custom/multicurrency"]
+	path = htdocs/custom/multicurrency
+	url = gitolite@doliforge.org:/multicurrency/multicurrency.git
