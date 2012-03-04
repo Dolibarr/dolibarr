@@ -660,6 +660,7 @@ class Propal extends CommonObject
 		$sql.= ", date_livraison";
 		$sql.= ", fk_availability";
 		$sql.= ", fk_demand_reason";
+		$sql.= ", fk_project";
 		$sql.= ", entity";
 		$sql.= ") ";
 		$sql.= " VALUES (";
@@ -684,6 +685,7 @@ class Propal extends CommonObject
 		$sql.= ", ".($this->date_livraison!=''?"'".$this->db->idate($this->date_livraison)."'":"null");
 		$sql.= ", ".$this->availability_id;
 		$sql.= ", ".$this->demand_reason_id;
+		$sql.= ",".($this->fk_project?$this->fk_project:"null");
 		$sql.= ", ".$conf->entity;
 		$sql.= ")";
 
