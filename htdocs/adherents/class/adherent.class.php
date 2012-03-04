@@ -1435,6 +1435,12 @@ class Adherent extends CommonObject
 
             $mydb=getDoliDBInstance('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB,ADHERENT_SPIP_PORT);
 
+            if (! $mydb->ok)
+            {
+                $this->error=$mydb->lasterror();
+                return 0;
+            }
+
             $result = $mydb->query($query);
             if ($result)
             {
@@ -1443,7 +1449,7 @@ class Adherent extends CommonObject
             }
             else
             {
-                $this->error=$mydb->error();
+                $this->error=$mydb->lasterror();
                 return 0;
             }
         }

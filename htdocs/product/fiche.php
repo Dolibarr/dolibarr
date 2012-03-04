@@ -664,6 +664,7 @@ llxHeader('',$langs->trans("CardProduct".$_GET["type"]),$helpurl);
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);
+$object=new Product($db);
 
 
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
@@ -862,14 +863,11 @@ else
 
     else if ($id || $ref)
     {
-        $object=new Product($db);
         $res=$object->fetch($id,$ref);
         if ($res < 0) { dol_print_error($db,$object->error); exit; }
-        $res=$object->fetch_optionals($id,$extralabels);
+        $res=$object->fetch_optionals($object->id,$extralabels);
 
-        /*
-         * Fiche en mode edition
-         */
+        // Fiche en mode edition
         if ($action == 'edit' && ($user->rights->produit->creer || $user->rights->service->creer))
         {
             $type = $langs->trans('Product');
@@ -1031,9 +1029,7 @@ else
 
             print '</form>';
         }
-        /*
-         * Fiche en mode visu
-         */
+        // Fiche en mode visu
         else
         {
             $head=product_prepare_head($object, $user);
