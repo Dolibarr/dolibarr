@@ -156,6 +156,16 @@ class Form
                 {
                     $ret.=$this->form_date($_SERVER['PHP_SELF'].'?id='.$object->id,$value,$htmlname);
                 }
+                else if (preg_match('/^select;/',$typeofdata))
+                {
+                     $arraydata=explode(',',preg_replace('/^select;/','',$typeofdata));
+                     foreach($arraydata as $val)
+                     {
+                         $tmp=explode(':',$val);
+                         $arraylist[$tmp[0]]=$tmp[1];
+                     }
+                     $ret.=$this->selectarray($htmlname,$arraylist,$value);
+                }
                 else if (preg_match('/^ckeditor/',$typeofdata))
                 {
                     $tmp=explode(':',$typeofdata);
@@ -173,6 +183,16 @@ class Form
                 if ($typeofdata == 'email')   $ret.=dol_print_email($value,0,0,0,0,1);
                 elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret.=dol_print_date($value,'day');
                 elseif ($typeofdata == 'text' || $typeofdata == 'textarea')  $ret.=dol_htmlentitiesbr($value);
+                else if (preg_match('/^select;/',$typeofdata))
+                {
+                    $arraydata=explode(',',preg_replace('/^select;/','',$typeofdata));
+                    foreach($arraydata as $val)
+                    {
+                        $tmp=explode(':',$val);
+                        $arraylist[$tmp[0]]=$tmp[1];
+                    }
+                    $ret.=$arraylist[$value];
+                }
                 else if (preg_match('/^ckeditor/',$typeofdata))
                 {
                     $tmpcontent=dol_htmlentitiesbr($value);
@@ -196,7 +216,7 @@ class Form
      * @param	string	$inputType		Type of input ('numeric', 'datepicker', 'textarea', 'ckeditor:dolibarr_zzz', 'select:xxx')
      * @param	string	$editvalue		When in edit mode, use this value as $value instead of value
      * @param	object	$extObject		External object
-     * @param	string	$success		Success message		
+     * @param	string	$success		Success message
      * @return	string   		      	HTML edit in place
      */
     private function editInPlace($object, $value, $htmlname, $condition, $inputType='textarea', $editvalue=null, $extObject=null, $success=null)
@@ -284,7 +304,7 @@ class Form
             if (! empty($success)) $out.= '<input id="success_'.$htmlname.'" value="'.$success.'" type="hidden"/>'."\n";
             //$out.= '<input id="ext_table_element_'.$htmlname.'" value="'.$ext_table_element.'" type="hidden"/>'."\n";
             //$out.= '<input id="ext_fk_element_'.$htmlname.'" value="'.$ext_fk_element.'" type="hidden"/>'."\n";
-            
+
             $out.= '<div id="viewval_'.$htmlname.'" class="viewval_'.$inputType.($button_only ? ' inactive' : ' active').'">'.$value.'</div>'."\n";
             $out.= '<div id="editval_'.$htmlname.'" class="editval_'.$inputType.($button_only ? ' inactive' : ' active').' hideobject">'.(! empty($editvalue) ? $editvalue : $value).'</div>'."\n";
         }

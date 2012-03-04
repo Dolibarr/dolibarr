@@ -87,6 +87,17 @@ $error=$hookmanager->error; $errors=$hookmanager->errors;
 
 if (empty($reshook))
 {
+    // Type
+    if ($action ==	'setproducttype' && $user->rights->produit->creer)
+    {
+    var_dump($action);
+        $object->fetch($id);
+    	$object->type = $_POST['producttype'];
+    	$result = $object->update_type($user);
+    	Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+    	exit;
+    }
+
     // Barcode type
     if ($action ==	'setbarcodetype' && $user->rights->barcode->creer)
     {
@@ -1077,6 +1088,15 @@ else
             }
 
             print '</tr>';
+
+            // Type
+            if ($conf->produit->enabled && $conf->service->enabled)
+            {
+                $typeformat='select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
+                print '<tr><td>'.$form->editfieldkey("Type",'producttype',$object->type,$object,$user->rights->produit->creer|$user->rights->service->creer,$typeformat).'</td><td colspan="2">';
+                print $form->editfieldval("Type",'producttype',$object->type,$object,$user->rights->produit->creer|$user->rights->service->creer,$typeformat);
+                print '</td></tr>';
+            }
 
             if ($showbarcode)
             {
