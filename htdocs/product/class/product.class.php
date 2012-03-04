@@ -2813,57 +2813,6 @@ class Product extends CommonObject
 		}
 	}
 
-	/**
-	 *  Mise a jour du code barre
-	 *
-	 *  @param  User	$user    Utilisateur qui fait la modification
-	 *  @return	void
-	 */
-	function update_barcode($user)
-	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."product";
-		$sql.= " SET barcode = '".$this->barcode."'";
-		$sql.= " WHERE rowid = ".$this->id;
-
-		dol_syslog(get_class($this)."::update_barcode sql=".$sql);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			return 1;
-		}
-		else
-		{
-			dol_print_error($this->db);
-			return -1;
-		}
-	}
-
-	/**
-	 *  Mise a jour du type de code barre
-	 *
-	 *  @param  User	$user     Utilisateur qui fait la modification
-	 *  @return	void
-	 */
-	function update_barcode_type($user)
-	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."product";
-		$sql.= " SET fk_barcode_type = '".$this->barcode_type."'";
-		$sql.= " WHERE rowid = ".$this->id;
-
-		dol_syslog(get_class($this)."::update_barcode_type sql=".$sql);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			return 1;
-		}
-		else
-		{
-			dol_print_error($this->db);
-			return -1;
-		}
-	}
-
-
     /**
      * Return if object is a product
      *
@@ -2871,14 +2820,7 @@ class Product extends CommonObject
      */
 	function isproduct()
 	{
-		if ($this->type != 1)
-		{
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
+		return ($this->type != 1 ? true : false);
 	}
 
     /**
@@ -2888,14 +2830,7 @@ class Product extends CommonObject
      */
 	function isservice()
 	{
-		if ($this->type==1)
-		{
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
+		return ($this->type == 1 ? true : false);
 	}
 
     /**

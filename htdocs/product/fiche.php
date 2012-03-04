@@ -87,12 +87,20 @@ $error=$hookmanager->error; $errors=$hookmanager->errors;
 
 if (empty($reshook))
 {
+    // Type
+    if ($action ==	'setfk_product_type' && $user->rights->produit->creer)
+    {
+        $object->fetch($id);
+    	$result = $object->setValueFrom('fk_product_type', $_POST['fk_product_type']);
+    	Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+    	exit;
+    }
+
     // Barcode type
     if ($action ==	'setbarcodetype' && $user->rights->barcode->creer)
     {
     	$object->fetch($id);
-    	$object->barcode_type = $_POST['barcodetype_id'];
-    	$result = $object->update_barcode_type($user);
+    	$result = $object->setValueFrom('fk_barcode_type', $_POST['barcodetype_id']);
     	Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
     	exit;
     }
@@ -101,18 +109,16 @@ if (empty($reshook))
     if ($action ==	'setbarcode' && $user->rights->barcode->creer)
     {
     	$object->fetch($id);
-    	$object->barcode = $_POST['barcode']; //Todo: ajout verification de la validite du code barre en fonction du type
-    	$result = $object->update_barcode($user);
+    	//Todo: ajout verification de la validite du code barre en fonction du type
+    	$result = $object->setValueFrom('barcode', $_POST['barcode']);
     	Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
     	exit;
     }
 
-    if ($action == 'setproductaccountancycodebuy')
+    if ($action == 'setaccountancy_code_buy')
     {
-        $product = new Product($db);
-        $result=$product->fetch($id,$ref);
-        $product->accountancy_code_buy=$_POST["productaccountancycodebuy"];
-        $result=$product->update($product->id,$user,1,0,1);
+        $object->fetch($id,$ref);
+        $result = $object->setValueFrom('accountancy_code_buy', $_POST['productaccountancycodebuy']);
         if ($result < 0)
         {
             $mesg=join(',',$product->errors);
@@ -120,12 +126,12 @@ if (empty($reshook))
         $action="";
     }
 
-    if ($action == 'setproductaccountancycodesell')
+    if ($action == 'setaccountancy_code_buy')
     {
-        $product = new Product($db);
-        $result=$product->fetch($id,$ref);
+        $object->fetch($id,$ref);
         $product->accountancy_code_sell=$_POST["productaccountancycodesell"];
         $result=$product->update($product->id,$user,1,0,1);
+        $result = $object->setValueFrom('accountancy_code_sell', $_POST['productaccountancycodesell']);
         if ($result < 0)
         {
             $mesg=join(',',$product->errors);
@@ -664,6 +670,7 @@ llxHeader('',$langs->trans("CardProduct".$_GET["type"]),$helpurl);
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);
+$object=new Product($db);
 
 
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
@@ -862,14 +869,11 @@ else
 
     else if ($id || $ref)
     {
-        $object=new Product($db);
         $res=$object->fetch($id,$ref);
         if ($res < 0) { dol_print_error($db,$object->error); exit; }
-        $res=$object->fetch_optionals($id,$extralabels);
+        $res=$object->fetch_optionals($object->id,$extralabels);
 
-        /*
-         * Fiche en mode edition
-         */
+        // Fiche en mode edition
         if ($action == 'edit' && ($user->rights->produit->creer || $user->rights->service->creer))
         {
             $type = $langs->trans('Product');
@@ -1031,9 +1035,7 @@ else
 
             print '</form>';
         }
-        /*
-         * Fiche en mode visu
-         */
+        // Fiche en mode visu
         else
         {
             $head=product_prepare_head($object, $user);
@@ -1082,6 +1084,16 @@ else
 
             print '</tr>';
 
+            // Type
+            if ($conf->produit->enabled && $conf->service->enabled)
+            {
+            	// TODO change for compatibility with edit in place
+            	$typeformat='select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
+                print '<tr><td>'.$form->editfieldkey("Type",'fk_product_type',$object->type,$object,$user->rights->produit->creer||$user->rights->service->creer,$typeformat).'</td><td colspan="2">';
+                print $form->editfieldval("Type",'fk_product_type',$object->type,$object,$user->rights->produit->creer||$user->rights->service->creer,$typeformat);
+                print '</td></tr>';
+            }
+
             if ($showbarcode)
             {
                 // Barcode type
@@ -1129,13 +1141,13 @@ else
             }
 
             // Accountancy sell code
-            print '<tr><td>'.$form->editfieldkey("ProductAccountancySellCode",'productaccountancycodesell',$object->accountancy_code_sell,$object,$user->rights->produit->creer|$user->rights->service->creer).'</td><td colspan="2">';
-            print $form->editfieldval("ProductAccountancySellCode",'productaccountancycodesell',$object->accountancy_code_sell,$object,$user->rights->produit->creer|$user->rights->service->creer);
+            print '<tr><td>'.$form->editfieldkey("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer).'</td><td colspan="2">';
+            print $form->editfieldval("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer);
             print '</td></tr>';
 
             // Accountancy buy code
-            print '<tr><td>'.$form->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodebuy',$object->accountancy_code_buy,$object,$user->rights->produit->creer|$user->rights->service->creer).'</td><td colspan="2">';
-            print $form->editfieldval("ProductAccountancyBuyCode",'productaccountancycodebuy',$object->accountancy_code_buy,$object,$user->rights->produit->creer|$user->rights->service->creer);
+            print '<tr><td>'.$form->editfieldkey("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer).'</td><td colspan="2">';
+            print $form->editfieldval("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer);
             print '</td></tr>';
 
             // Status (to sell)
@@ -1726,8 +1738,6 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
 }
 
 
-
-llxFooter();
-
 $db->close();
+llxFooter();
 ?>

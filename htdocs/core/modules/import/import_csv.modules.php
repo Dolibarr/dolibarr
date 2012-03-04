@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -173,7 +173,7 @@ class ImportCsv extends ModeleImports
 		global $langs;
 		$ret=1;
 
-		dol_syslog("ImportCsv::open_file file=".$file);
+		dol_syslog(get_class($this)."::open_file file=".$file);
 
 		ini_set('auto_detect_line_endings',1);	// For MAC compatibility
 
@@ -346,10 +346,10 @@ class ImportCsv extends ModeleImports
 							$errorforthistable++;
 							$error++;
 						}
-						// Test format only if field is not a missing mandatory field
+						// Test format only if field is not a missing mandatory field (field may be a value or empty but not mandatory)
 						else
 						{
-						    // We convert fields if required
+						    // We convert field if required
 						    if (! empty($objimport->array_import_convertvalue[0][$val]))
 						    {
                                 //print 'Must convert '.$newval.' with rule '.join(',',$objimport->array_import_convertvalue[0][$val]).'. ';
@@ -387,6 +387,10 @@ class ImportCsv extends ModeleImports
                                         }
                                     }
 
+                                }
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='zeroifnull')
+                                {
+                                    if (empty($newval)) $newval='0';
                                 }
 
                                 //print 'Val to use as insert is '.$newval.'<br>';
@@ -449,9 +453,10 @@ class ImportCsv extends ModeleImports
 						// Define $listfields and $listvalues to build SQL request
 						if ($listfields) { $listfields.=', '; $listvalues.=', '; }
 						$listfields.=$fieldname;
-						if ($arrayrecord[($key-1)]['type'] < 0)      	$listvalues.="null";
-						elseif ($arrayrecord[($key-1)]['type'] == 0) 	$listvalues.="''";
-						elseif ($arrayrecord[($key-1)]['type'] > 0)	$listvalues.="'".$this->db->escape($newval)."'";
+
+						if ($arrayrecord[($key-1)]['type'] < 0)      $listvalues.=($newval=='0'?$newval:"null");
+						elseif ($arrayrecord[($key-1)]['type'] == 0) $listvalues.="''";
+						elseif ($arrayrecord[($key-1)]['type'] > 0)	 $listvalues.="'".$this->db->escape($newval)."'";
 					}
 					$i++;
 				}
@@ -523,6 +528,8 @@ class ImportCsv extends ModeleImports
 						dol_print_error('','ErrorFieldListEmptyFor '.$alias."/".$tablename);
 					}*/
 				}
+
+			    if ($error) break;
 			}
 		}
 

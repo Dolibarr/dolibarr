@@ -57,6 +57,7 @@ For users:
 - New: All professional id can contains up to 128 chars instead of 32. 
 - New: [ task #176 ] Allow to use ODT templates for proposals and orders like it's done for invoices
 - New: Add hidden option MAIN_ADD_PDF_BACKGROUND to add a PDF as background of invoice/order generated PDF.
+- New: Can convert a product/service into service/product.
 - Fix: Can use POS module with several concurrent users.
 - Fix: Installer don't fails with Mysql version that added a ssl_cypher field.
 - Fix: Sanitize input parameters.

@@ -354,7 +354,6 @@ if ($action == 'create')
 	print "</form>";
 }
 
-llxFooter();
-
 $db->close();
+llxFooter();
 ?>
