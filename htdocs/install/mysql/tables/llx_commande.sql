@@ -29,7 +29,7 @@ create table llx_commande
   ref_client			varchar(255),					-- reference for customer
 
   fk_soc				integer NOT NULL,
-  fk_projet				integer DEFAULT 0,				-- projet auquel est rattache la commande
+  fk_projet				integer DEFAULT NULL,			-- projet auquel est rattache la commande
 
   tms					timestamp,
   date_creation			datetime,						-- date de creation 

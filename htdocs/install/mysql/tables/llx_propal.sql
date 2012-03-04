@@ -30,7 +30,7 @@ create table llx_propal
   ref_client			varchar(255),					-- customer proposal number
 
   fk_soc				integer,
-  fk_projet				integer     DEFAULT 0,			-- projet auquel est rattache la propale
+  fk_projet				integer     DEFAULT NULL,		-- projet auquel est rattache la propale
 
   tms					timestamp,
   datec					datetime,						-- date de creation 

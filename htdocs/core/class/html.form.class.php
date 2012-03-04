@@ -80,8 +80,9 @@ class Form
         global $conf,$langs;
 
         $ret='';
-
-        if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
+        
+        // TODO change for compatibility
+        if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && ! preg_match('/^select;/',$typeofdata))
         {
             if ($perm)
             {
@@ -128,7 +129,8 @@ class Form
         $ret='';
 
         // When option to edit inline is activated
-        if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
+        // TODO change for compatibility
+        if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && ! preg_match('/^select;/',$typeofdata))
         {
             $ret.=$this->editInPlace($object, $value, $htmlname, $perm, $typeofdata, $editvalue, $extObject, $success);
         }

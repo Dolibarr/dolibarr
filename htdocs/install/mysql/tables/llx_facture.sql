@@ -59,7 +59,7 @@ create table llx_facture
   fk_user_valid			integer,								-- valideur de la facture
 
   fk_facture_source		integer,								-- facture origine si facture avoir
-  fk_projet				integer,								-- projet auquel est associee la facture
+  fk_projet				integer DEFAULT NULL,					-- projet auquel est associee la facture
 
   fk_account			integer,								-- bank account
   fk_currency			varchar(2),								-- currency code

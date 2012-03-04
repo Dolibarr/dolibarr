@@ -69,6 +69,7 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 
 	if ($element == 'propal') $element = 'propale';
 	else if ($element == 'fichinter') $element = 'ficheinter';
+	else if ($element == 'product') $element = 'produit';
 	else if ($element == 'order_supplier') {
 		$element = 'fournisseur';
 		$subelement = 'commande';
