@@ -97,7 +97,7 @@ if (empty($reshook))
     }
 
     // Barcode type
-    if ($action ==	'setbarcodetype' && $user->rights->barcode->creer)
+    if ($action ==	'setfk_barcode_type' && $user->rights->barcode->creer)
     {
     	$object->fetch($id);
     	$result = $object->setValueFrom('fk_barcode_type', $_POST['fk_barcode_type']);
@@ -129,8 +129,6 @@ if (empty($reshook))
     if ($action == 'setaccountancy_code_buy')
     {
         $object->fetch($id,$ref);
-        $product->accountancy_code_sell=$_POST["productaccountancycodesell"];
-        $result=$product->update($product->id,$user,1,0,1);
         $result = $object->setValueFrom('accountancy_code_sell', $_POST['accountancy_code_sell']);
         if ($result < 0)
         {
