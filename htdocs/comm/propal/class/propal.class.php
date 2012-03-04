@@ -660,7 +660,7 @@ class Propal extends CommonObject
 		$sql.= ", date_livraison";
 		$sql.= ", fk_availability";
 		$sql.= ", fk_demand_reason";
-		$sql.= ", fk_project";
+		$sql.= ", fk_projet";
 		$sql.= ", entity";
 		$sql.= ") ";
 		$sql.= " VALUES (";
@@ -685,7 +685,7 @@ class Propal extends CommonObject
 		$sql.= ", ".($this->date_livraison!=''?"'".$this->db->idate($this->date_livraison)."'":"null");
 		$sql.= ", ".$this->availability_id;
 		$sql.= ", ".$this->demand_reason_id;
-		$sql.= ",".($this->fk_project?$this->fk_project:"null");
+		$sql.= ", ".($this->fk_project?$this->fk_project:"null");
 		$sql.= ", ".$conf->entity;
 		$sql.= ")";
 
@@ -757,17 +757,6 @@ class Propal extends CommonObject
 				{
 					$ret = $this->add_object_linked();
 					if (! $ret)	dol_print_error($this->db);
-				}
-
-				// Affectation au projet
-				if (! $error && $this->fk_project)
-				{
-					$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-					$sql.= " SET fk_projet=".$this->fk_project;
-					$sql.= " WHERE ref='".$this->ref."'";
-					$sql.= " AND entity = ".$conf->entity;
-
-					$result=$this->db->query($sql);
 				}
 
 				// Set delivery address
