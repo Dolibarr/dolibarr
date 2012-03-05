@@ -49,6 +49,7 @@ class Form
     var $cache_availability=array();
     var $cache_demand_reason=array();
     var $cache_type_fees=array();
+    var $cache_currencies=array();
 
     var $tva_taux_value;
     var $tva_taux_libelle;
@@ -2713,6 +2714,50 @@ class Form
     {
         print $this->selectcurrency($selected,$htmlname);
     }
+    
+    /**
+     *      Charge dans cache la liste des devises
+     *
+     *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     */
+    function load_cache_currencies()
+    {
+    	global $langs;
+    	
+    	$langs->load("dict");
+    
+    	if (count($this->cache_currencies)) return 0;    // Cache deja charge
+    
+    	$sql = "SELECT code, code_iso, label";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_currencies";
+        $sql.= " WHERE active = 1";
+        $sql.= " ORDER BY code_iso ASC";
+        
+    	dol_syslog('Form::load_cache_currencies sql='.$sql, LOG_DEBUG);
+    	$resql = $this->db->query($sql);
+    	if ($resql)
+    	{
+    		$num = $this->db->num_rows($resql);
+    		$i = 0;
+    		while ($i < $num)
+    		{
+    			$obj = $this->db->fetch_object($resql);
+    
+    			// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+    			$this->cache_currencies[$obj->code_iso] = ($obj->code_iso && $langs->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$langs->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:''));
+    			$i++;
+    		}
+    		
+    		asort($this->cache_currencies);
+    		
+    		return $num;
+    	}
+    	else
+    	{
+    		dol_print_error($this->db);
+    		return -1;
+    	}
+    }
 
     /**
      *    Retourne la liste des devises, dans la langue de l'utilisateur
@@ -2725,58 +2770,31 @@ class Form
         global $conf,$langs,$user;
 
         $langs->load("dict");
+        
+        $this->load_cache_currencies();
 
         $out='';
-        $currencyArray=array();
-        $label=array();
 
         if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilite
 
-        $sql = "SELECT code_iso, label";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_currencies";
-        $sql.= " WHERE active = 1";
-        $sql.= " ORDER BY code_iso ASC";
-
-        $resql=$this->db->query($sql);
-        if ($resql)
+        $out.= '<select class="flat" name="'.$htmlname.'">';
+        foreach ($this->cache_currencies as $code_iso => $label)
         {
-            $out.= '<select class="flat" name="'.$htmlname.'">';
-            $num = $this->db->num_rows($resql);
-            $i = 0;
-            if ($num)
-            {
-                $foundselected=false;
-
-                while ($i < $num) {
-                    $obj = $this->db->fetch_object($resql);
-                    $currencyArray[$i]['code_iso'] 	= $obj->code_iso;
-                    $currencyArray[$i]['label']		= ($obj->code_iso && $langs->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$langs->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:''));
-                    $label[$i] 	= $currencyArray[$i]['label'];
-                    $i++;
-                }
-
-                array_multisort($label, SORT_ASC, $currencyArray);
-
-                foreach ($currencyArray as $row) {
-                    if ($selected && $selected == $row['code_iso']) {
-                        $foundselected=true;
-                        $out.= '<option value="'.$row['code_iso'].'" selected="selected">';
-                    } else {
-                        $out.= '<option value="'.$row['code_iso'].'">';
-                    }
-                    $out.= $row['label'];
-                    if ($row['code_iso']) $out.= ' ('.$row['code_iso'] . ')';
-                    $out.= '</option>';
-                }
-            }
-            $out.= '</select>';
-            if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
-            return $out;
+        	if ($selected && $selected == $code_iso)
+        	{
+        		$out.= '<option value="'.$code_iso.'" selected="selected">';
+        	}
+        	else
+        	{
+        		$out.= '<option value="'.$code_iso.'">';
+        	}
+        	$out.= $label;
+        	if ($code_iso) $out.= ' ('.$code_iso.')';
+        	$out.= '</option>';
         }
-        else
-        {
-            dol_print_error($this->db);
-        }
+        $out.= '</select>';
+        if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+        return $out;
     }
 
     /**
