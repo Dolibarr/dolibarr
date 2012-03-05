@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,8 @@ $langs->load("interventions");
 $langs->load("sendings");
 $langs->load("companies");
 
-$fichinterid = isset($_GET["id"])?$_GET["id"]:'';
+$fichinterid = GETPOST('id','int');
+$action = GETPOST('action','alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -43,16 +45,16 @@ $result = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
  * Ajout d'un nouveau contact
  */
 
-if ($_POST["action"] == 'addcontact' && $user->rights->ficheinter->creer)
+if ($action == 'addcontact' && $user->rights->ficheinter->creer)
 {
 
 	$result = 0;
 	$fichinter = new Fichinter($db);
-	$result = $fichinter->fetch($_GET["id"]);
+	$result = $fichinter->fetch($fichinterid);
 
-    if ($result > 0 && $_GET["id"] > 0)
+    if ($result > 0 && $fichinterid > 0)
     {
-  		$result = $fichinter->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
+  		$result = $fichinter->add_contact(GETPOST('contactid','int'), GETPOST('type','int'), GETPOST('source','alpha'));
     }
 
 	if ($result >= 0)
@@ -75,12 +77,12 @@ if ($_POST["action"] == 'addcontact' && $user->rights->ficheinter->creer)
 }
 
 // bascule du statut d'un contact
-if ($_GET["action"] == 'swapstatut' && $user->rights->ficheinter->creer)
+if ($action == 'swapstatut' && $user->rights->ficheinter->creer)
 {
 	$fichinter = new Fichinter($db);
-	if ($fichinter->fetch(GETPOST('id','int')))
+	if ($fichinter->fetch($fichinterid))
 	{
-	    $result=$fichinter->swapContactStatus(GETPOST('ligne'));
+	    $result=$fichinter->swapContactStatus(GETPOST('ligne','int'));
 	}
 	else
 	{
@@ -89,11 +91,11 @@ if ($_GET["action"] == 'swapstatut' && $user->rights->ficheinter->creer)
 }
 
 // Efface un contact
-if ($_GET["action"] == 'deleteline' && $user->rights->ficheinter->creer)
+if ($action == 'deleteline' && $user->rights->ficheinter->creer)
 {
 	$fichinter = new Fichinter($db);
-	$fichinter->fetch($_GET["id"]);
-	$result = $fichinter->delete_contact($_GET["lineid"]);
+	$fichinter->fetch($fichinterid);
+	$result = $fichinter->delete_contact(GETPOST('lineid','int'));
 
 	if ($result >= 0)
 	{
@@ -125,11 +127,11 @@ $userstatic=new User($db);
 /* *************************************************************************** */
 dol_htmloutput_mesg($mesg);
 
-$id = $_GET["id"];
-if ($id > 0)
+
+if ($fichinterid > 0)
 {
 	$fichinter = new Fichinter($db);
-	if ($fichinter->fetch($_GET['id']) > 0)
+	if ($fichinter->fetch($fichinterid) > 0)
 	{
 		$soc = new Societe($db);
 		$soc->fetch($fichinter->socid);
@@ -168,7 +170,7 @@ if ($id > 0)
 		* Ajouter une ligne de contact
 		* Non affiche en mode modification de ligne
 		*/
-		if ($_GET["action"] != 'editline' && $user->rights->ficheinter->creer)
+		if ($action != 'editline' && $user->rights->ficheinter->creer)
 		{
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Source").'</td>';
@@ -180,11 +182,11 @@ if ($id > 0)
 
 			$var = false;
 
-			print '<form action="contact.php?id='.$id.'" method="post">';
+			print '<form action="contact.php?id='.$fichinterid.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="addcontact">';
 			print '<input type="hidden" name="source" value="internal">';
-			print '<input type="hidden" name="id" value="'.$id.'">';
+			print '<input type="hidden" name="id" value="'.$fichinterid.'">';
 
 			// Ligne ajout pour contact interne
 			print "<tr $bc[$var]>";
@@ -209,11 +211,11 @@ if ($id > 0)
 
 			print '</form>';
 
-			print '<form action="contact.php?id='.$id.'" method="post">';
+			print '<form action="contact.php?id='.$fichinterid.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="addcontact">';
 			print '<input type="hidden" name="source" value="external">';
-			print '<input type="hidden" name="id" value="'.$id.'">';
+			print '<input type="hidden" name="id" value="'.$fichinterid.'">';
 
 			// Ligne ajout pour contact externe
 			$var=!$var;
@@ -224,7 +226,7 @@ if ($id > 0)
 			print '</td>';
 
 			print '<td colspan="1">';
-			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$fichinter->client->id;
+			$selectedCompany = GETPOST('newcompany','int')?GETPOST('newcompany','int'):$fichinter->client->id;
 			$selectedCompany = $formcompany->selectCompaniesForNewContact($fichinter, 'id', $selectedCompany, $htmlname = 'newcompany');
 			print '</td>';
 
