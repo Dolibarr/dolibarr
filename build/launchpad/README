@@ -44,6 +44,9 @@ DEBEMAIL="<Your email address>"
   or download it from launchpad bazaar:
     cd bzr
     bzr branch lp:~eldy/dolibarr/debian
+- To update this debian directory, edit files into the bzr dir and run
+    bzr commit -m "Description of change"
+    bzr push lp:~eldy/dolibarr/debian
 - Create a file dolibarr.recipe with content
     cd bzr
     vi dolibarr.recipe
