@@ -78,7 +78,7 @@ if ($action == 'specimen')  // For orders
     
     // Search template files
     $file=''; $classname=''; $filefound=0;
-    $dirmodels=array_merge(array('/'),(array)$conf->modules_parts['models']);
+    $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
     foreach($dirmodels as $reldir)
     {
     	$file=dol_buildpath($reldir."core/modules/supplier_order/pdf/pdf_".$modele.".modules.php",0);
@@ -124,7 +124,7 @@ if ($action == 'specimenfacture')   // For invoices
     
 	// Search template files
     $file=''; $classname=''; $filefound=0;
-    $dirmodels=array_merge(array('/'),(array)$conf->modules_parts['models']);
+    $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
     foreach($dirmodels as $reldir)
     {
     	$file=dol_buildpath($reldir."core/modules/supplier_invoice/pdf/pdf_".$modele.".modules.php",0);
@@ -262,7 +262,7 @@ if ($action == 'set_SUPPLIER_INVOICE_FREE_TEXT')
  * View
  */
 
-$dirmodels=array_merge(array('/'),(array)$conf->modules_parts['models']);
+$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 
 llxHeader();
 
