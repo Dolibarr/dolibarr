@@ -612,7 +612,7 @@ foreach($mainmenuusedarray as $key => $val)
 
 /* Login */
 
-table.login {
+.login_table {
     -moz-box-shadow: 4px 4px 4px #CCC;
     -webkit-box-shadow: 4px 4px 4px #CCC;
     box-shadow: 4px 4px 4px #CCC;
