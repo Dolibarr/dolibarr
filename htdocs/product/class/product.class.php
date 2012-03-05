@@ -463,7 +463,7 @@ class Product extends CommonObject
 		$sql.= ",accountancy_code_sell= '" . $this->accountancy_code_sell."'";
 		$sql.= " WHERE rowid = " . $id;
 
-		dol_syslog("Product::update sql=".$sql);
+		dol_syslog(get_class($this)."update sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -479,7 +479,23 @@ class Product extends CommonObject
 				}
 			}
 
-			if (! $notrigger)
+			// Actions on extra fields (by external module or standard code)
+			include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+			$hookmanager=new HookManager($this->db);
+			$hookmanager->initHooks(array('productdao'));
+			$parameters=array('id'=>$this->id);
+			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			if (empty($reshook))
+			{
+			    $result=$this->insertExtraFields();
+			    if ($result < 0)
+			    {
+			        $error++;
+			    }
+			}
+			else if ($reshook < 0) $error++;
+
+			if (! $error && ! $notrigger)
 			{
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -735,7 +751,7 @@ class Product extends CommonObject
 		$sql.= " ".$this->localtax1_tx.",".$this->localtax2_tx.",".$this->price_min.",".$this->price_min_ttc;
 		$sql.= ")";
 
-		dol_syslog("Product::_log_price sql=".$sql);
+		dol_syslog(get_class($this)."_log_price sql=".$sql);
 		$resql=$this->db->query($sql);
 		if(! $resql)
 		{
@@ -762,7 +778,7 @@ class Product extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price";
 		$sql.= " WHERE rowid=".$rowid;
 
-		dol_syslog("Product::log_price_delete sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."log_price_delete sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -796,7 +812,7 @@ class Product extends CommonObject
 		$sql.= " WHERE pfp.rowid = ".$prodfournprice;
 		$sql.= " AND pfp.quantity <= ".$qty;
 
-		dol_syslog("Product::get_buyprice sql=".$sql);
+		dol_syslog(get_class($this)."get_buyprice sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -821,7 +837,7 @@ class Product extends CommonObject
 				$sql.= " ORDER BY pfp.quantity DESC";
 				$sql.= " LIMIT 1";
 
-				dol_syslog("Product::get_buyprice sql=".$sql);
+				dol_syslog(get_class($this)."get_buyprice sql=".$sql);
 				$resql = $this->db->query($sql);
 				if ($resql)
 				{
@@ -873,7 +889,7 @@ class Product extends CommonObject
 	{
 		global $conf,$langs;
 
-		dol_syslog("Product::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level." npr=".$newnpr);
+		dol_syslog(get_class($this)."update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level." npr=".$newnpr);
 
 		// Clean parameters
 		if (empty($this->tva_tx))  $this->tva_tx=0;
@@ -943,7 +959,7 @@ class Product extends CommonObject
             $sql.= " recuperableonly='".$newnpr."'";
 			$sql.= " WHERE rowid = ".$id;
 
-			dol_syslog("Product::update_price sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."update_price sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -1783,7 +1799,7 @@ class Product extends CommonObject
 				$sql.= ", ".$user->id;
 				$sql.= ")";
 
-				dol_syslog("Product::add_fournisseur sql=".$sql);
+				dol_syslog(get_class($this)."add_fournisseur sql=".$sql);
 				if ($this->db->query($sql))
 				{
 					$this->product_fourn_price_id = $this->db->last_insert_id(MAIN_DB_PREFIX."product_fournisseur_price");
@@ -2797,57 +2813,6 @@ class Product extends CommonObject
 		}
 	}
 
-	/**
-	 *  Mise a jour du code barre
-	 *
-	 *  @param  User	$user    Utilisateur qui fait la modification
-	 *  @return	void
-	 */
-	function update_barcode($user)
-	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."product";
-		$sql.= " SET barcode = '".$this->barcode."'";
-		$sql.= " WHERE rowid = ".$this->id;
-
-		dol_syslog(get_class($this)."::update_barcode sql=".$sql);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			return 1;
-		}
-		else
-		{
-			dol_print_error($this->db);
-			return -1;
-		}
-	}
-
-	/**
-	 *  Mise a jour du type de code barre
-	 *
-	 *  @param  User	$user     Utilisateur qui fait la modification
-	 *  @return	void
-	 */
-	function update_barcode_type($user)
-	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."product";
-		$sql.= " SET fk_barcode_type = '".$this->barcode_type."'";
-		$sql.= " WHERE rowid = ".$this->id;
-
-		dol_syslog(get_class($this)."::update_barcode_type sql=".$sql);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			return 1;
-		}
-		else
-		{
-			dol_print_error($this->db);
-			return -1;
-		}
-	}
-
-
     /**
      * Return if object is a product
      *
@@ -2855,14 +2820,7 @@ class Product extends CommonObject
      */
 	function isproduct()
 	{
-		if ($this->type != 1)
-		{
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
+		return ($this->type != 1 ? true : false);
 	}
 
     /**
@@ -2872,14 +2830,7 @@ class Product extends CommonObject
      */
 	function isservice()
 	{
-		if ($this->type==1)
-		{
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
+		return ($this->type == 1 ? true : false);
 	}
 
     /**

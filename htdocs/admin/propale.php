@@ -71,7 +71,7 @@ if ($action == 'specimen')
 
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
-	$dirmodels=array_merge(array('/'),$conf->modules_parts['models']);
+	$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 	foreach($dirmodels as $reldir)
 	{
 	    $file=dol_buildpath($reldir."core/modules/propale/doc/pdf_".$modele.".modules.php");
@@ -257,7 +257,7 @@ else if ($action == 'setmod')
  * Affiche page
  */
 
-$dirmodels=array_merge(array('/'),$conf->modules_parts['models']);
+$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 
 llxHeader('',$langs->trans("PropalSetup"));
 

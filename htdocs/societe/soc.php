@@ -992,7 +992,7 @@ else
             $object = new Societe($db);
             $res=$object->fetch($socid);
             if ($res < 0) { dol_print_error($db,$object->error); exit; }
-            $res=$object->fetch_optionals($socid,$extralabels);
+            $res=$object->fetch_optionals($object->id,$extralabels);
             //if ($res < 0) { dol_print_error($db); exit; }
 
             // Load object modCodeTiers
@@ -1440,7 +1440,7 @@ else
         $object = new Societe($db);
         $res=$object->fetch($socid);
         if ($res < 0) { dol_print_error($db,$object->error); exit; }
-        $res=$object->fetch_optionals($socid,$extralabels);
+        $res=$object->fetch_optionals($object->id,$extralabels);
         //if ($res < 0) { dol_print_error($db); exit; }
 
 

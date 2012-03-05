@@ -198,6 +198,7 @@ ALTER TABLE llx_expedition ADD CONSTRAINT fk_expedition_fk_expedition_methode 	F
 
 -- VMYSQL4.1 UPDATE llx_chargesociales set tms = date_creation WHERE tms = '0000-00-00 00:00:00';
 
+ALTER TABLE llx_propal MODIFY fk_projet integer DEFAULT NULL;
 ALTER TABLE llx_propal ADD COLUMN fk_account integer AFTER total;
 ALTER TABLE llx_propal ADD COLUMN fk_currency varchar(2) AFTER fk_account;
 ALTER TABLE llx_propal ADD INDEX idx_propal_fk_user_author (fk_user_author);
@@ -213,6 +214,7 @@ ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_projet		FOREIGN KEY (fk_proje
 ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_currency		FOREIGN KEY (fk_currency) REFERENCES llx_c_currencies (code);
 ALTER TABLE llx_propal DROP FOREIGN KEY fk_propal_fk_account;
 
+ALTER TABLE llx_commande MODIFY fk_projet integer DEFAULT NULL;
 ALTER TABLE llx_commande ADD COLUMN fk_account integer AFTER facture;
 ALTER TABLE llx_commande ADD COLUMN fk_currency varchar(2) AFTER fk_account;
 ALTER TABLE llx_commande ADD INDEX idx_commande_fk_user_author (fk_user_author);
@@ -228,6 +230,7 @@ ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_fk_projet		FOREIGN KEY (fk_p
 ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_fk_currency		FOREIGN KEY (fk_currency) REFERENCES llx_c_currencies (code);
 ALTER TABLE llx_commande DROP FOREIGN KEY fk_commande_fk_account;
 
+ALTER TABLE llx_facture MODIFY fk_projet integer DEFAULT NULL;
 ALTER TABLE llx_facture ADD COLUMN fk_account integer AFTER fk_projet;
 ALTER TABLE llx_facture ADD COLUMN fk_currency varchar(2) AFTER fk_account;
 ALTER TABLE llx_facture ADD INDEX idx_facture_fk_account (fk_account);

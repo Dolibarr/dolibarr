@@ -94,7 +94,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 				$now=gmmktime();
 
 				$i = 0;
-				$l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
+				$l_due_date = $langs->trans('Late').' ('.$langs->trans('DateEcheance').': %s)';
 
 				while ($i < $num)
 				{
@@ -102,7 +102,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 					$datelimite=$db->jdate($objp->datelimite);
 
 					$late='';
-					if ($datelimite < ($now - $conf->facture->fournisseur->warning_delay)) $late=img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));
+					if ($datelimite && $datelimite < ($now - $conf->facture->fournisseur->warning_delay)) $late=img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));
 
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,

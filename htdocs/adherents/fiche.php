@@ -99,7 +99,6 @@ $hookmanager->initHooks(array('membercard'));
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
-
 if ($action == 'setuserid' && ($user->rights->user->self->creer || $user->rights->user->user->creer))
 {
 	$error=0;
@@ -613,14 +612,14 @@ if ($user->rights->adherent->creer && $action == 'confirm_add_spip' && $confirm 
  * View
  */
 
+$form = new Form($db);
+$formcompany = new FormCompany($db);
+
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label('member');
 
 $help_url='EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
 llxHeader('',$langs->trans("Member"),$help_url);
-
-$form = new Form($db);
-$formcompany = new FormCompany($db);
 
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
@@ -821,10 +820,9 @@ if ($action == 'edit')
 	 *
 	 ********************************************/
 
-	//$object = new Adherent($db);
     $res=$object->fetch($rowid);
     if ($res < 0) { dol_print_error($db,$object->error); exit; }
-    //$res=$object->fetch_optionals($rowid,$extralabels);
+    //$res=$object->fetch_optionals($object->id,$extralabels);
     //if ($res < 0) { dol_print_error($db); exit; }
 
 	$adht = new AdherentType($db);
@@ -1060,8 +1058,8 @@ if ($rowid && $action != 'edit')
     //$object = new Adherent($db);
     $res=$object->fetch($rowid);
     if ($res < 0) { dol_print_error($db,$object->error); exit; }
-    //$res=$object->fetch_optionals($rowid,$extralabels);
-	//if ($res < 0) { dol_print_error($db); exit; }
+    $res=$object->fetch_optionals($object->id,$extralabels);
+	if ($res < 0) { dol_print_error($db); exit; }
 
     $adht = new AdherentType($db);
     $res=$adht->fetch($object->typeid);
