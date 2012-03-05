@@ -33,3 +33,11 @@ Sender=Nadawca
 Recipient=Odbiorca
 // Date 2009-01-19 00:44:06
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+DeleteDeliveryReceipt=Usuń potwierdzenia dostarczenia
+DeleteDeliveryReceiptConfirm=Czy na pewno chcesz usunąć <b>%s</b> potwierdzenia dostarczenia?
+DeliveryNotValidated=Dostawa nie zatwierdzone
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:20:21).

@@ -167,3 +167,10 @@ SuppliersPrices = Nabavne cene
 CustomCode = Carinska tarifa
 CountryOrigin = Država porekla
 HiddenIntoCombo = Skrito v izbranem seznamu
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+ParentProductsNumber=Število izdelkov matične
+ProductParentList=Seznam izdelkov / storitev, pri tem izdelku, kot sestavnega dela
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:30:29).

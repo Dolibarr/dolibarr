@@ -94,3 +94,18 @@ DocModelAzurDescription=一个完整的方案模型（logo. ..）
 DocModelJauneDescription=特贾恩方案模型
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
 
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+ProposalCard=建议卡
+ConfirmReOpenProp=你确定你要打开商业建议<b>%s</b>吗？
+AvailabilityPeriod=可用性延迟
+SetAvailability=设置可用性延迟
+AfterOrder=订单后
+AvailabilityTypeAV_NOW=即时
+AvailabilityTypeAV_1W=1个星期
+AvailabilityTypeAV_2W=2个星期
+AvailabilityTypeAV_3W=3个星期
+AvailabilityTypeAV_1M=1个月
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:40:01).

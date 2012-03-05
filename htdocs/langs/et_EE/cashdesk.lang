@@ -1,0 +1,48 @@
+/*
+ * Language code: et_EE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 22:15:30
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
+// Reference language: en_US -> et_EE
+CHARSET=UTF-8
+CashDeskMenu=Müügikohas
+CashDesk=Müügikohas
+CashDesks=Müügikohtade
+CashDeskBank=Pangakonto
+CashDeskBankCash=Pangakonto (sularaha)
+CashDeskBankCB=Pangakonto (kaart)
+CashDeskBankCheque=Pangakonto (kontroll)
+CashDeskWarehouse=Ladu
+CashdeskShowServices=Müük teenused
+CashDeskProducts=Tooted
+CashDeskStock=Varu
+CashDeskOn=kohta
+CashDeskThirdParty=Kolmas osapool
+ShoppingCart=Ostukorv
+NewSell=New müüa
+BackOffice=Tagasi kontor
+AddThisArticle=Lisa see artikkel
+RestartSelling=Mine tagasi müüa
+SellFinished=Müü valmis
+PrintTicket=Trüki pilet
+NoResults=Ei kohteita
+NoProductFound=Ei artikkel leitud
+ProductFound=Toote leitud
+ProductsFound=tooteid leitud
+NoArticle=Ei artikkel
+Identification=Identifitseerimine
+Article=Artikkel
+Difference=Erinevus
+TotalTicket=Kokku pilet
+NoVAT=Ei käibemaksuga selle müügi
+Change=Liigne saanud
+CalTip=Vajuta, et näha kalender
+CashDeskSetupStock=Te küsite, et vähendada varude kohta arve loomist, kuid lattu seda ei määratletud <br> Muuda varu moodul setup, või valida ladu
+BankToPay=Charge Account
+ShowCompany=Näita ettevõte
+ShowStock=Näita ladu
+DeleteArticle=Vajuta, et eemaldada see artikkel
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:39:40).

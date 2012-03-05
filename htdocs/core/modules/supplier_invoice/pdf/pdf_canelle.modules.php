@@ -177,6 +177,12 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
                     $pdf->setPrintFooter(false);
                 }
                 $pdf->SetFont(pdf_getPDFFont($outputlangs));
+                // Set path to the background PDF File
+                if (empty($conf->global->MAIN_DISABLE_FPDI) && ! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+                {
+                    $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+                    $tplidx = $pdf->importPage(1);
+                }
 
 				$pdf->Open();
 				$pagenb=0;
@@ -203,6 +209,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
                 // New page
 				$pdf->AddPage();
+				if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('','', $default_font_size - 1);
@@ -347,6 +354,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 						// New page
 						$pdf->AddPage();
+				        if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 						$pagenb++;
 						$this->_pagehead($pdf, $object, 0, $outputlangs);
 						$pdf->SetFont('','', $default_font_size - 1);
@@ -390,9 +398,12 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$pdf->Output($file,'F');
 
 				// Actions on extra fields (by external module or standard code)
-				include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
-				$hookmanager=new HookManager($this->db);
-				$hookmanager->callHooks(array('pdfgeneration'));
+				if (! is_object($hookmanager))
+				{
+					include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+					$hookmanager=new HookManager($this->db);
+				}
+				$hookmanager->initHooks(array('pdfgeneration'));
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
 				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks

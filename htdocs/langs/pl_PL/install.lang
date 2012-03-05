@@ -454,3 +454,16 @@ MigrationNotFinished=Wersja bazy danych nie jest w pełni aktualne, więc musisz
 LastStepDesc=<strong>Ostatni krok:</strong> Zdefiniuj tutaj login i hasło masz zamiar użyć do połączenia z oprogramowaniem. Nie trać tego, ponieważ jest to konto do administrowania wszystkimi innymi.
 MigrationActioncommElement=Aktualizacja danych na temat działań
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 10:06:50).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+ConfFileReload=Odśwież wszystkie informacje z pliku konfiguracyjnego.
+WarningPHPVersionTooLow=Wersja PHP jest zbyt stara. %s wersji lub więcej oczekuje. Wersja ta powinna umożliwić zainstalowanie ale nie jest obsługiwany.
+DatabasePrefix=Tabela prefiksów baza danych
+KeepDefaultValuesProxmox=Możesz skorzystać z kreatora konfiguracji Dolibarr z urządzeniem wirtualnym Proxmox, więc wartościami zaproponowanymi tutaj są już zoptymalizowane. Zmieniaj je tylko jeśli wiesz co robisz.
+MigrateIsDoneStepByStep=Ukierunkowane wersja (%s) ma lukę w kilku wersjach, tak zainstalować kreator powróci do sugerować kolejną migrację raz ten jeden będzie gotowy.
+MigrationFinished=Migracja zakończona
+ActivateModule=Aktywuj moduł %s
+MigrationPaymentMode=Migracji danych w trybie płatności
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:18:44).

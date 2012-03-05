@@ -162,7 +162,15 @@ function checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmod
 function dol_loginfunction($langs,$conf,$mysoc)
 {
 	global $dolibarr_main_demo,$db;
-	global $smartphone,$mc;
+	global $smartphone,$hookmanager;
+	
+	// Instantiate hooks of thirdparty module only if not already define
+	if (! is_object($hookmanager))
+	{
+		include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+		$hookmanager=new HookManager($db);
+	}
+	$hookmanager->initHooks(array('mainloginpage'));
 
 	$langcode=(GETPOST('lang')?((is_object($langs)&&$langs->defaultlang)?$langs->defaultlang:'auto'):GETPOST('lang'));
 	$langs->setDefaultLang($langcode);
@@ -185,7 +193,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
 
 	// Select templates
-	if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone))
+	if (preg_match('/^smartphone/',$conf->smart_menu) && ! empty($conf->browser->phone))
 	{
 		$template_dir = DOL_DOCUMENT_ROOT.'/theme/phones/smartphone/tpl/';
 	}
@@ -209,7 +217,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	$sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
 	if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", '', 0);
 
-	if (GETPOST("urlfrom")) $_SESSION["urlfrom"]=GETPOST("urlfrom");
+	if (GETPOST('urlfrom','alpha')) $_SESSION["urlfrom"]=GETPOST('urlfrom','alpha');
 	else unset($_SESSION["urlfrom"]);
 
 	if (! GETPOST("username")) $focus_element='username';
@@ -229,37 +237,18 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		$demologin=$tab[0];
 		$demopassword=$tab[1];
 	}
-
-	// Entity cookie
-	if (! empty($conf->multicompany->enabled))
-	{
-		$lastuser = '';
-		$lastentity = $_POST['entity'];
-
-		if (! empty($conf->global->MULTICOMPANY_COOKIE_ENABLED))
-		{
-			$prefix=dol_getprefix();
-			$entityCookieName = 'DOLENTITYID_'.$prefix;
-			if (isset($_COOKIE[$entityCookieName]))
-			{
-				include_once(DOL_DOCUMENT_ROOT . "/core/class/cookie.class.php");
-
-				$cryptkey = (! empty($conf->file->cookie_cryptkey) ? $conf->file->cookie_cryptkey : '' );
-
-				$entityCookie = new DolCookie($cryptkey);
-				$cookieValue = $entityCookie->_getCookie($entityCookieName);
-				list($lastuser, $lastentity) = explode('|', $cookieValue);
-			}
-		}
-	}
+	
+	// Execute hook getLoginPageOptions
+	// Should be an array with differents options in $hookmanager->resArray
+	$parameters=array('entity' => $_POST['entity']);
+	$hookmanager->executeHooks('getLoginPageOptions',$parameters);    // Note that $action and $object may have been modified by some hooks
 
 	// Login
-	$login = (!empty($lastuser)?$lastuser:(GETPOST("username","alpha",2)?GETPOST("username","alpha",2):$demologin));
+	$login = (! empty($hookmanager->resArray['username']) ? $hookmanager->resArray['username'] : (GETPOST("username","alpha",2) ? GETPOST("username","alpha",2) : $demologin));
 	$password = $demopassword;
 
 	// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
 	$width=0;
-	$rowspan=2;
 	$urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
 
 	if (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
@@ -279,14 +268,6 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	{
 		$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
 
-	}
-
-	// Entity field
-	$select_entity='';
-	if (! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_HIDE_LOGIN_COMBOBOX))
-	{
-		$rowspan++;
-		$select_entity = $mc->select_entities($lastentity, 'entity', ' tabindex="3"', 1);
 	}
 
 	// Security graphical code

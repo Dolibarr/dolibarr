@@ -136,3 +136,9 @@ MailingModuleDescContactsByCompanyCategory=Contatti di soggetti terzi (da terza 
 MailingModuleDescMembersCategories=Membri della Fondazione (per categorie)
 MailingModuleDescContactsByFunction=Contatti di soggetti terzi (da posizione / funzione)
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:47).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+// Reference language: en_US -> it_IT
+MailingStatusRead=Leggere
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:43).

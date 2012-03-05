@@ -33,3 +33,11 @@ Sender=Sender
 Recipient=Recipient
 // Date 2009-01-19 21:26:39
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
+// Reference language: en_US -> da_DK
+DeleteDeliveryReceipt=Slet kvittering for modtagelse
+DeleteDeliveryReceiptConfirm=Er du sikker på du vil slette kvittering for modtagelse <b>%s?</b>
+DeliveryNotValidated=Levering ikke valideret
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:01:11).

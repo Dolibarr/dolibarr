@@ -56,3 +56,33 @@ AgendaUrlOptions5=<b>logind = %s</b> att begränsa produktionen till åtgärder 
 AgendaShowBirthdayEvents=Visa födelsedag kontakter
 AgendaHideBirthdayEvents=Dölj födelsedag kontakter
 // STOP - Lines generated via autotranslator.php tool (2010-08-27 08:50:28).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+LocalAgenda=Lokal kalender
+MyEvents=Mina aktiviteter
+OtherEvents=Övriga händelser
+EventOnFullDay=Händelse heldag
+ViewDay=Dagsvy
+ViewWeek=Veckovy
+AgendaExtSitesDesc=Den här sidan gör det möjligt att deklarera externa kalendrar för att se sina evenemang i Dolibarr agenda.
+InvoiceBackToDraftInDolibarr=Faktura %s gå tillbaka till förslaget status
+OrderApprovedInDolibarr=Ordningens %s godkänd
+OrderBackToDraftInDolibarr=Beställ %s gå tillbaka till förslaget status
+OrderCanceledInDolibarr=Beställ %s avbryts
+ProposalSentByEMail=Kommersiella förslag %s via e-post
+OrderSentByEMail=Kundorderprojekt %s via e-post
+InvoiceSentByEMail=Kundfaktura %s via e-post
+SupplierOrderSentByEMail=Leverantör beställa %s via e-post
+SupplierInvoiceSentByEMail=Leverantörsfaktura %s via e-post
+ShippingSentByEMail=Frakt %s via e-post
+InterventionSentByEMail=Intervention %s via e-post
+ExportCal=Export kalender
+ExtSites=Importera externa kalendrar
+ExtSitesEnableThisTool=Visa externa kalendrar till dagordning
+ExtSitesNbOfAgenda=Antal kalendrar
+AgendaExtNb=Kalender nb %s
+ExtSiteUrlAgenda=URL att komma åt. Ical-fil
+ExtSiteNoLabel=Ingen beskrivning
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:34:36).

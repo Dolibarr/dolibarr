@@ -19,3 +19,15 @@ ThisIsTransactionId=Dette er id av transaksjonen: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Legg til url av Paypal betaling når du sender et dokument i posten
 PAYPAL_IPN_MAIL_ADDRESS=E-post adressen for øyeblikkelig varsling av betaling (IPN)
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 10:52:55).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+PaypalSetup=PayPal modul oppsett
+PaypalDesc=Denne modulen tilbyr sider for å tillate betaling på <a href="http://www.paypal.com" target="_blank">PayPal</a> av kunder. Dette kan brukes til en gratis betaling eller for en betaling på en bestemt Dolibarr objekt (faktura, ordre, ...)
+PaypalOrCBDoPayment=Betal med kredittkort eller Paypal
+PaypalDoPayment=Betal med Paypal
+PredefinedMailContentSendOrderWithPaypalLink=Du finner her ordren __ ORDERREF__ \n\n Du kan klikke på den sikre linken nedenfor for å gjøre betaling via PayPal \n\n %s \n\n Vennlig hilsen \n\n
+PredefinedMailContentSendInvoiceWithPaypalLink=Du finner her fakturaen __ FACREF__ \n\n Du kan klikke på den sikre linken nedenfor for å gjøre betaling via PayPal \n\n %s \n\n Vennlig hilsen \n\n
+YouAreCurrentlyInSandboxMode=Du er for øyeblikket i &quot;sandbox&quot;-modus
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:06:57).

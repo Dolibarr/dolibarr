@@ -380,3 +380,13 @@ PDFOursinDescription = Predloga računa oursin
 # NumRef Modules = undefined
 TerreNumRefModelDesc1 = Predlaga številko v formatu %syymm-nnnn za standardne račune in %syymm-nnnn za dobropise kjer je yy leto, mm mesec in nnnn zaporedna številka brez presledkov in večja od 0
 TerreNumRefModelError = Račun z začetkom $syymm že obstaja in ni kompatibilen s tem modelom zaporedja. Odstranite ga ali ga preimenujte za aktiviranje tega modula.
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+ConfirmUnvalidateBill=Ali ste prepričani, da želite spremeniti računu <b>%s</b> na status osnutka?
+UnvalidateBill=Unvalidate račun
+AddRelativeDiscount=Ustvarite relativno popust
+EditRelativelDiscount=Uredi relatvie popust
+EditGlobalDiscounts=Uredi absolutne popuste
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:30:40).

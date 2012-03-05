@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 $langs->load('bills');
 
 // Security check
-$facid=GETPOST("facid");
+$facid=GETPOST('facid','int');
 $action=GETPOST("action");
 if ($user->societe_id) $socid=$user->societe_id;
 $objecttype = 'facture_rec';
@@ -81,7 +81,7 @@ if ($_POST["action"] == 'add')
 if ($_REQUEST["action"] == 'delete' && $user->rights->facture->supprimer)
 {
 	$facrec = new FactureRec($db);
-	$facrec->fetch(GETPOST("facid"));
+	$facrec->fetch(GETPOST('facid','int'));
 	$facrec->delete();
 	$facid = 0 ;
 }

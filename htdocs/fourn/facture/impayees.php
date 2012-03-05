@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,14 +29,13 @@ require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php');
 require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
 
-if (!$user->rights->facture->lire) accessforbidden();
+if (! $user->rights->facture->lire) accessforbidden();
 
 $langs->load("companies");
 $langs->load("bills");
 
 
-
-if ($_GET["socid"]) { $socid=$_GET["socid"]; }
+$socid=GETPOST('socid','int');
 
 // Security check
 if ($user->societe_id > 0)
@@ -75,7 +75,7 @@ if (! $sortorder) $sortorder="ASC";
 
 if ($user->rights->fournisseur->facture->lire)
 {
-	$sql = "SELECT s.rowid as socid, s.nom";
+	$sql = "SELECT s.rowid as socid, s.nom,";
 	$sql.= " f.rowid as ref, f.facnumber, f.total_ht, f.total_ttc,";
 	$sql.= " f.datef as df, f.date_lim_reglement as datelimite, ";
 	$sql.= " f.paye as paye, f.rowid as facid, f.fk_statut";
@@ -256,8 +256,7 @@ if ($user->rights->fournisseur->facture->lire)
 
 }
 
-
-llxFooter();
-
+// End of page
 $db->close();
+llxFooter();
 ?>

@@ -8,17 +8,17 @@
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2008      Matteli
  * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -174,30 +174,12 @@ register_shutdown_function('dol_shutdown');
 // Detection browser
 if (isset($_SERVER["HTTP_USER_AGENT"]))
 {
-    // If phone/smartphone, we set phone os name.
-    if (preg_match('/android/i',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='android';
-    elseif (preg_match('/blackberry/i',$_SERVER["HTTP_USER_AGENT"]))	$conf->browser->phone='blackberry';
-    elseif (preg_match('/iphone/i',$_SERVER["HTTP_USER_AGENT"]))		$conf->browser->phone='iphone';
-    elseif (preg_match('/ipod/i',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='iphone';
-    elseif (preg_match('/palm/i',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='palm';
-    elseif (preg_match('/symbian/i',$_SERVER["HTTP_USER_AGENT"]))		$conf->browser->phone='symbian';
-    elseif (preg_match('/webos/i',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='webos';
-    elseif (preg_match('/maemo/i',$_SERVER["HTTP_USER_AGENT"]))			$conf->browser->phone='maemo';
-    // MS products at end
-    elseif (preg_match('/iemobile/i',$_SERVER["HTTP_USER_AGENT"]))		$conf->browser->phone='windowsmobile';
-    elseif (preg_match('/windows ce/i',$_SERVER["HTTP_USER_AGENT"]))	$conf->browser->phone='windowsmobile';
-    // Name
-    if (preg_match('/firefox/i',$_SERVER["HTTP_USER_AGENT"]))       $conf->browser->name='firefox';
-    elseif (preg_match('/chrome/i',$_SERVER["HTTP_USER_AGENT"]))    $conf->browser->name='chrome';
-    elseif (preg_match('/iceweasel/i',$_SERVER["HTTP_USER_AGENT"])) $conf->browser->name='iceweasel';
-    elseif ((empty($conf->browser->phone) || preg_match('/iphone/i',$_SERVER["HTTP_USER_AGENT"])) && preg_match('/safari/i',$_SERVER["HTTP_USER_AGENT"]))    $conf->browser->name='safari';	// Safari is often present in string but its not.
-    elseif (preg_match('/opera/i',$_SERVER["HTTP_USER_AGENT"]))     $conf->browser->name='opera';
-    // MS products at end
-    elseif (preg_match('/msie/i',$_SERVER["HTTP_USER_AGENT"]))      $conf->browser->name='ie';
-    else $conf->browser->name='unknown';
-    // Other
-    if (in_array($conf->browser->name,array('firefox','iceweasel'))) $conf->browser->firefox=1;
-    //$conf->browser->phone='android';
+    $tmp=getBrowserInfo();
+    $conf->browser->phone=$tmp['phone'];
+    $conf->browser->name=$tmp['browsername'];
+    $conf->browser->os=$tmp['browseros'];
+    $conf->browser->firefox=$tmp['browserfirefox'];
+    $conf->browser->version=$tmp['browserversion'];
 }
 
 
@@ -604,7 +586,7 @@ if (! defined('NOLOGIN'))
         $action='';
         include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
         $hookmanager=new HookManager($db);
-        $hookmanager->callHooks(array('login'));
+        $hookmanager->initHooks(array('login'));
         $parameters=array('dol_authmode'=>$dol_authmode);
         $reshook=$hookmanager->executeHooks('afterLogin',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
         if ($reshook < 0) $error++;
@@ -1065,14 +1047,14 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     global $user, $conf, $langs, $db;
     global $dolibarr_main_authentication;
     global $hookmanager;
-    
+
     // Instantiate hooks of thirdparty module only if not already define
     if (! is_object($hookmanager))
     {
     	include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
     	$hookmanager=new HookManager($db);
     }
-    $hookmanager->callHooks(array('toprightmenu'));
+    $hookmanager->initHooks(array('toprightmenu'));
 
     $toprightmenu='';
 
@@ -1328,7 +1310,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     	include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
     	$hookmanager=new HookManager($db);
 	}
-    $hookmanager->callHooks(array('searchform','leftblock','toprightmenu'));
+    $hookmanager->initHooks(array('searchform','leftblock','toprightmenu'));
 
     if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
     else print '<td class="vmenu" valign="top">';
@@ -1521,7 +1503,7 @@ function main_area($title='')
     print "\n";
 
     print '<div class="fiche"> <!-- begin div class="fiche" -->'."\n";
-    if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone))
+    if (preg_match('/^smartphone/',$conf->smart_menu) && ! empty($conf->browser->phone))
     {
         print '<div data-role="page"> <!-- begin div data-role="page" -->';
 
@@ -1646,7 +1628,7 @@ if (! function_exists("llxFooter"))
         }
 
         print "\n\n";
-        if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone))
+        if (preg_match('/^smartphone/',$conf->smart_menu) && ! empty($conf->browser->phone))
         {
             print '</div> <!-- end div data-role="content" -->'."\n";
             print '</div> <!-- end div data-role="page" -->'."\n";

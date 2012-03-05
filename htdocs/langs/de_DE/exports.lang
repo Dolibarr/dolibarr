@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-12 21:09:12
  */
@@ -115,3 +115,12 @@ DataIDSourceIsInsertedInto=Die ID des mittels Quelldatei ermittelten Elterneleme
 SourceRequired=Datenwert erforderlich
 SourceExample=Beispiel möglicher Datenwerte
 CSVFormatDesc=<b>Comma Separated Value</b> Format (.csv). <br> Dies ist ein Textdatei-Format, bei dem einzelne Spalten durch ein Trennzeichen [ %s ] getrennt sind. Wird innerhalb eines Feldes das Trennzeichen gefunden, wird der Wert des entsprechenden Feldes über ein Rundungszeichen [ %s ] gerundet. Das Escape-Zeichen für die Rundung ist [ %s ].
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+FileWasImported=Datei wurde mit Nummer <b>%s</b> importiert.
+DataComeFromIdFoundFromCodeId=Code, der vom Feld Nummer <b>%s</b> der Quelldatei kommt, wird verwendet, um ID des übergeordneten Objekt finden werden, um zu arbeiten (also der Code aus der Quelldatei muss in Dictionnary <b>%s</b> existiert). Beachten Sie, dass, wenn Sie wissen, id, können Sie auch in die Quell-Datei anstelle von Code. Import sollte in beiden Fällen zu arbeiten.
+DataCodeIDSourceIsInsertedInto=Die ID der übergeordneten Linie vom Code gefunden wird, wird in folgende Feld eingefügt:
+ExampleAnyRefFoundIntoElement=Jedes Element ref für <b>%s</b> gefunden
+ExampleAnyCodeOrIdFoundIntoDictionnary=Jeder Code (oder ID) in Dictionnary <b>%s</b> gefunden
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:04:19).

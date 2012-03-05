@@ -174,6 +174,12 @@ class pdf_oursin extends ModelePDFFactures
                     $pdf->setPrintFooter(false);
                 }
                 $pdf->SetFont(pdf_getPDFFont($outputlangs));
+                // Set path to the background PDF File
+                if (empty($conf->global->MAIN_DISABLE_FPDI) && ! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+                {
+                    $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+                    $tplidx = $pdf->importPage(1);
+                }
 
 				$pdf->Open();
 				$pagenb=0;
@@ -191,8 +197,9 @@ class pdf_oursin extends ModelePDFFactures
 
 				// New page
 				$pdf->AddPage();
+				if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 				$pagenb++;
-				$this->_pagehead($pdf, $object, 1, $outputlangs);
+				$this->_pagehead($pdf, $object, 1, $outputlangs, $hookmanager);
 				$pdf->SetFont('','', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
@@ -260,8 +267,9 @@ class pdf_oursin extends ModelePDFFactures
 
 						// New page
 						$pdf->AddPage();
+				        if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 						$pagenb++;
-						$this->_pagehead($pdf, $object, 0, $outputlangs);
+						$this->_pagehead($pdf, $object, 0, $outputlangs, $hookmanager);
 						$pdf->SetFont('','', $default_font_size - 1);
 						$pdf->MultiCell(0, 3, '');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
@@ -292,9 +300,12 @@ class pdf_oursin extends ModelePDFFactures
 				$pdf->Output($file,'F');
 
 				// Actions on extra fields (by external module or standard code)
-				include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
-				$hookmanager=new HookManager($this->db);
-				$hookmanager->callHooks(array('pdfgeneration'));
+				if (! is_object($hookmanager))
+				{
+					include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+					$hookmanager=new HookManager($this->db);
+				}
+				$hookmanager->initHooks(array('pdfgeneration'));
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
 				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -791,9 +802,10 @@ class pdf_oursin extends ModelePDFFactures
 	 *  @param  Object		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
+	 *  @param	object		$hookmanager	Hookmanager object
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $hookmanager)
 	{
 		global $langs,$conf;
 		$langs->load("main");
@@ -990,44 +1002,8 @@ class pdf_oursin extends ModelePDFFactures
 
 		$posy+=1;
 
-		// Add list of linked orders and proposals
-		// TODO mutualiser
-	    $object->fetchObjectLinked();
-
-	    foreach($object->linkedObjects as $objecttype => $objects)
-	    {
-	    	if ($objecttype == 'propal')
-	    	{
-	    		$outputlangs->load('propal');
-	    		$num=count($objects);
-	    		for ($i=0;$i<$num;$i++)
-	    		{
-	    			$posy+=3;
-	    			$pdf->SetXY($this->marges['g'],$posy);
-	    			$pdf->SetFont('','', $default_font_size - 2);
-	    			$pdf->MultiCell(60, 3, $outputlangs->transnoentities("RefProposal")." : ".$outputlangs->transnoentities($objects[$i]->ref), '', 'L');
-	    			$posy+=3;
-	    			$pdf->SetXY($this->marges['g'],$posy);
-	    			$pdf->MultiCell(60, 3, $outputlangs->transnoentities("DatePropal")." : ".dol_print_date($objects[$i]->date,'day','',$outputlangs), '', 'L');
-	    		}
-			}
-			else if ($objecttype == 'commande')
-			{
-				$num=count($objects);
-	    		for ($i=0;$i<$num;$i++)
-	    		{
-	    			$posy+=3;
-	    			$pdf->SetXY($this->marges['g'],$posy);
-					$pdf->SetFont('','', $default_font_size - 2);
-					$text=$objects[$i]->ref;
-					if ($objects[$i]->ref_client) $text.=' ('.$objects[$i]->ref_client.')';
-					$pdf->MultiCell(60, 3, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), '', 'L');
-	    			$posy+=3;
-	    			$pdf->SetXY($this->marges['g'],$posy);
-	    			$pdf->MultiCell(60, 3, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($objects[$i]->date,'day','',$outputlangs), '', 'L');
-	    		}
-			}
-		}
+		// Show list of linked objects
+		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 'L', $default_font_size, $hookmanager);
 
 		// Amount in (at tab_top - 1)
 		$pdf->SetTextColor(0,0,0);

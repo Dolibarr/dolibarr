@@ -87,7 +87,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentTheme").'</td><td colspan="2">'.$conf->theme.'</td></tr>'."\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentMenuHandler").'</td><td colspan="2">';
-if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone)) print $conf->smart_menu;
+if (preg_match('/^smartphone/',$conf->smart_menu) && ! empty($conf->browser->phone)) print $conf->smart_menu;
 else print $conf->top_menu;
 print '</td></tr>'."\n";
 print '</table>';

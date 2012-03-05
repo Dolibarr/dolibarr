@@ -110,3 +110,9 @@ SomeNotificationsWillBeSent = %s obvestil bo poslanih z e-pošto
 AddNewNotification = Aktiviraj nov zahtevek za e-poštno obvestilo
 ListOfActiveNotifications = Seznam vseh aktivnih zahtev za e-poštna obvestila
 ListOfNotificationsDone = Seznam vseh poslanih e-poštnih obvestil
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+MailingStatusRead=Preberite
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:30:25).

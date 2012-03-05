@@ -30,3 +30,9 @@ PredefinedMailContentSendInvoiceWithPaypalLink=Θα βρείτε εδώ το τ�
 // Reference language: en_US -> el_GR
 PAYPAL_IPN_MAIL_ADDRESS=Διεύθυνση ηλεκτρονικού ταχυδρομείου για την άμεση κοινοποίηση της πληρωμής (IPN)
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 10:42:19).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+YouAreCurrentlyInSandboxMode=Είστε αυτήν την περίοδο στο &quot;sandbox&quot; mode
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:15).

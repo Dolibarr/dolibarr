@@ -22,3 +22,11 @@ GoodStatusDeclaration=Forsendelsen er mottatt uten skader,
 Deliverer=Transportør : 
 Sender=Avsender
 Recipient=Mottaker
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+DeleteDeliveryReceipt=Slett levering kvittering
+DeleteDeliveryReceiptConfirm=Er du sikker på at du vil slette leveringskvitteringen <b>%s?</b>
+DeliveryNotValidated=Levering ikke validert
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:08:29).

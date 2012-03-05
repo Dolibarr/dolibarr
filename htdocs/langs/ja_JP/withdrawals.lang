@@ -1,0 +1,101 @@
+/*
+ * Language code: ja_JP
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 16:41:06
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
+// Reference language: en_US -> ja_JP
+CHARSET=UTF-8
+StandingOrdersArea=立って受注エリア
+CustomersStandingOrdersArea=受注エリアに立ってお客さま
+StandingOrders=立っている受注
+StandingOrder=立っている受注
+NewStandingOrder=新しい常任順
+StandingOrderToProcess=処理するには
+StandingOrderProcessed=処理
+Withdrawals=引き出し
+Withdrawal=撤退
+WithdrawalsReceipts=撤退の領収書
+WithdrawalReceipt=撤退の領収書
+WithdrawalReceiptShort=領収書
+LastWithdrawalReceipts=最後%s撤退領収書
+WithdrawedBills=取り下げ請求
+WithdrawalsLines=撤退ライン
+RequestStandingOrderToTreat=治療するために立っている注文のための要求
+RequestStandingOrderTreated=立っている注文の要求が処理された
+CustomersStandingOrders=顧客に立って受注
+CustomerStandingOrder=顧客の地位の順序
+NbOfInvoiceToWithdraw=要求を撤回すると請求書のNb
+NbOfInvoiceToWithdrawWithInfo=定義された銀行口座情報を持つ顧客の要求を撤回すると請求書のNb
+InvoiceWaitingWithdraw=請求書は撤回を待っている
+AmountToWithdraw=撤回する金額
+WithdrawsRefused=撤回は拒否
+NoInvoiceToWithdraw=支払いモード &quot;撤退&quot;には顧客の請求書が待っているされていません。要求を行うために請求書、カードの &quot;引き出し&quot;タブをクリックしてください。
+ResponsibleUser=担当ユーザー
+WithdrawalsSetup=撤退のセットアップ
+WithdrawStatistics=の統計情報を引き出す
+WithdrawRejectStatistics=の拒否の統計情報を引き出す
+LastWithdrawalReceipt=領収書を撤回最後%s
+MakeWithdrawRequest=撤回要求を行う
+ThirdPartyBankCode=サードパーティの銀行コード
+ThirdPartyDeskCode=サードパーティ製の机のコード
+NoInvoiceCouldBeWithdrawed=ない請求書には成功してwithdrawedはありません。有効なBANしている企業であること請求書を確認してください。
+ClassCredited=入金分類
+ClassCreditedConfirm=あなたの銀行口座に入金、この撤退の領収書を分類してもよろしいですか？
+TransData=日付伝送
+TransMetod=方式伝送
+Send=送信
+Lines=行
+StandingOrderReject=拒否を発行
+InvoiceRefused=請求書が拒否されました
+WithdrawalRefused=撤退は拒否されました
+WithdrawalRefusedConfirm=あなたは社会のために撤退拒否を入力してもよろしいです
+RefusedData=拒絶反応の日付
+RefusedReason=拒否理由
+RefusedInvoicing=拒絶反応を請求
+NoInvoiceRefused=拒絶反応を充電しないでください
+InvoiceRefused=顧客への拒絶反応を充電
+Status=ステータス
+StatusUnknown=未知の
+StatusWaiting=待っている
+StatusTrans=送信
+StatusCredited=クレジット
+StatusRefused=拒否
+StatusMotif0=特定されていない
+StatusMotif1=提供insuffisante
+StatusMotif2=ティラージュconteste
+StatusMotif3=いいえ引き出し注文数は無し
+StatusMotif4=顧客注文
+StatusMotif5=inexploitable RIB
+StatusMotif6=バランスせずにアカウント
+StatusMotif7=裁判
+StatusMotif8=他の理由
+CreateAll=全てを撤回する
+CreateGuichet=唯一のオフィス
+CreateBanque=唯一の銀行
+OrderWaiting=治療を待っている
+NotifyTransmision=撤退伝送
+NotifyEmision=撤退の排出
+NotifyCredit=撤退クレジット
+NumeroNationalEmetter=国立トランスミッタ数
+PleaseSelectCustomerBankBANToWithdraw=撤回する顧客の銀行口座に関する情報を選択します。
+WithBankUsingRIB=RIBを使用した銀行口座
+WithBankUsingBANBIC=IBAN / BIC / SWIFTを使用した銀行口座
+BankToReceiveWithdraw=撤回を受け取るために銀行口座
+CreditDate=クレジットで
+WithdrawalFileNotCapable=あなたの国のために撤退領収書ファイルを生成することができません
+ShowWithdraw=引き出しを表示
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=請求書は、まだ少なくとも一つの引き出しの支払いを処理していない場合、前に撤退を管理できるようにするために支払ったとして、しかし、それが設定されません。
+DoStandingOrdersBeforePayments=このタブでは、立っている順序のために要求することができます。それが終了されますしたら、請求書を閉じるには、支払を入力することができます。
+InfoCreditSubject=銀行によって立っている順序%sの支払い
+InfoCreditMessage=立っている順序%sは、銀行によって支払われた<br>支払いのデータ：%s
+InfoTransSubject=銀行に立っている注文%sの送信
+InfoTransMessage=スタンディングオーダー%s %s %sは、銀行にtransmitedされています。 <br><br>
+InfoTransData=金額：%s <br> Metode：%s <br>日付：%s
+InfoFoot=これはDolibarrによって送信される自動化されたメッセージです。
+InfoRejectSubject=拒否したため、立ち
+InfoRejectMessage=こんにちは、 <br><br> %sの量と、会社%sに関連した請求書%sのstandig順序は、銀行が拒否されました。 <br><br> - <br> ％$
+ModeWarning=リアルモードのオプションが設定されていない、我々は、このシミュレーションの後に停止
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:46:35).

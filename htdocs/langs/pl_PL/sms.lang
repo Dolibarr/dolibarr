@@ -1,0 +1,62 @@
+/*
+ * Language code: pl_PL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 17:18:29
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+CHARSET=UTF-8
+Sms=Sms
+SmsSetup=Sms setup
+SmsDesc=Ta strona pozwala na zdefiniowanie globals opcje SMS funkcji
+SmsCard=SMS karty
+AllSms=Wszystko SMS campains
+SmsTargets=Cele
+SmsRecipients=Cele
+SmsRecipient=Cel
+SmsTitle=Opis
+SmsFrom=Nadawca
+SmsTo=Cel
+SmsTopic=Wątek SMS
+SmsText=Wiadomość
+SmsMessage=Wiadomość SMS
+ShowSms=Pokaż Sms
+ListOfSms=Lista SMS campains
+NewSms=Nowy SMS cele kampanii
+EditSms=Edit Sms
+ResetSms=Nowe wysyłanie
+DeleteSms=Usuń Sms cele kampanii
+DeleteASms=Usuwanie sms cele kampanii
+PreviewSms=Previuw Sms
+PrepareSms=Przygotuj sms
+CreateSms=Utwórz SMS
+SmsResult=Wynik wysyłaniu SMS-ów
+TestSms=Test Sms
+ValidSms=Weryfikacja sms
+ApproveSms=Zatwierdza sms
+SmsStatusDraft=Projekt
+SmsStatusValidated=Zatwierdzone
+SmsStatusApproved=Zatwierdzony
+SmsStatusSent=Wysłane
+SmsStatusSentPartialy=Wysłane częściowo
+SmsStatusSentCompletely=Wysłane całkowicie
+SmsStatusError=Błąd
+SmsStatusNotSent=Nie wysłał
+SmsSuccessfulySent=Sms poprawnie wysłany (z %s do %s)
+ErrorSmsRecipientIsEmpty=Liczba celem jest pusty
+WarningNoSmsAdded=Nie nowy numer telefonu, aby dodać do listy docelowej
+ConfirmValidSms=Czy potwierdza zatwierdzenie tej kampanii w?
+ConfirmResetMailing=Uwaga, jeśli popełnisz reinit programu SMS kampanii w <b>%s,</b> pozwolisz zrobić masę wysyłanie z niego po raz drugi. Czy naprawdę to, co wan zrobić?
+ConfirmDeleteMailing=Czy potwierdza usunięcie cele kampanii?
+NbOfRecipients=Liczba celów
+NbOfUniqueSms=Nb dof unikatowe numery telefonów
+NbOfSms=Nbre numerów phon
+ThisIsATestMessage=To jest wiadomość testowa
+SendSms=Wyślij SMS
+SmsInfoCharRemain=Nb z pozostałych znaków
+SmsInfoNumero=(W formacie międzynarodowym np.: +33899701761)
+DelayBeforeSending=Opóźnienie przed wysłaniem (minuty)
+SmsNoPossibleRecipientFound=Żaden cel nie dostępne. Sprawdź konfigurację dostawcy SMS.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:19:32).

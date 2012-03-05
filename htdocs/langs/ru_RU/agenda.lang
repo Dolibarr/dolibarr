@@ -92,3 +92,15 @@ AgendaExtNb=Календарь NB %s
 ExtSiteUrlAgenda=URL для доступа. Ческих файлов
 ExtSiteNoLabel=Нет описания
 // STOP - Lines generated via autotranslator.php tool (2011-08-27 16:57:56).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
+// Reference language: en_US -> ru_RU
+LocalAgenda=Местное календарь
+MyEvents=Мои события
+OtherEvents=Другие события
+OrderApprovedInDolibarr=Заказ %s утвержденный
+OrderBackToDraftInDolibarr=Заказ %s вернуться к проекту статус
+OrderCanceledInDolibarr=Заказ %s отменен
+ExportCal=Экспорт календаря
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:29:01).

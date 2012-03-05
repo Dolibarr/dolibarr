@@ -69,3 +69,14 @@ DocumentModelTyphon=Meira heill skjal líkan fyrir kvittunum sending (logo. ..)
 // Reference language: en_US
 Shipments=Sendingar
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:29:22).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+SendShippingByEMail=Senda sendingu með tölvupósti
+SendShippingRef=Senda sendingunni %s
+ActionsOnShipping=Viðburðir á sendingunni
+LinkToTrackYourPackage=Tengill til að fylgjast með pakka
+ShipmentCreationIsDoneFromOrder=Í augnablikinu er sköpun af a nýr sendingunni gert úr þeirri röð kortinu.
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER skilgreind ekki
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:29:02).

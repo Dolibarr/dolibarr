@@ -86,3 +86,28 @@ NotifyCredit=Retragerea de credit
 NumeroNationalEmetter=Numărul naţional transmiţător
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:39:21).
 
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+NbOfInvoiceToWithdrawWithInfo=NB de factură cu retragă cererea pentru clienţii care au definit de informaţii de cont bancar
+StatusTrans=Transmise
+PleaseSelectCustomerBankBANToWithdraw=Selectaţi informaţii despre contul bancar client de a se retrage
+WithBankUsingRIB=Pentru conturile bancare folosind RIB
+WithBankUsingBANBIC=Pentru conturile bancare folosind codul IBAN / BIC / SWIFT
+BankToReceiveWithdraw=Cont bancar pentru a primi retrage
+CreditDate=Credit pe
+WithdrawalFileNotCapable=Imposibil de a genera primirea fişier de retragere pentru ţara dvs.
+ShowWithdraw=Arată Retragere
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Cu toate acestea, în cazul în care factura nu a cel puţin o plată de retragere încă prelucrate, aceasta nu va fi setat ca platiti pentru a permite retragerea înainte de a gestiona.
+DoStandingOrdersBeforePayments=Acest file vă permite să solicite pentru un ordin de plată. Odată ce va fi terminat, aveţi posibilitatea să tastaţi de plată pentru a închide factura.
+InfoCreditSubject=Plata %s comandă în picioare de către bancă
+InfoCreditMessage=%s pentru picioare a fost plătit de către bancă <br> Datele de plata: %s
+InfoTransSubject=Transmiterea %s ordine permanente la banca
+InfoTransMessage=%s pentru picioare a fost transmisa la banca de %s %s. <br><br>
+InfoTransData=Suma: %s <br> Metode: %s <br> Data: %s
+InfoFoot=Acesta este un mesaj automat trimis de Dolibarr
+InfoRejectSubject=Pentru a refuzat permanent
+InfoRejectMessage=Buna ziua, <br><br> standig ordinea de %s factură referitoare la %s companiei, cu o valoare de %s a fost refuzat de banca. <br><br> - <br> % $
+ModeWarning=Opţiunea pentru modul real, nu a fost stabilit, ne oprim după această simulare
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:42).

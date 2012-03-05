@@ -308,3 +308,11 @@ DemandReasonTypeSRC_CAMP_FAX=传真运动
 DemandReasonTypeSRC_COMM=商业联系
 DemandReasonTypeSRC_SHOP=商店联系
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 09:27:11).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+CurrencyUAH=赫夫纳
+CurrencySingUAH=赫夫纳
+DemandReasonTypeSRC_INTE=因特网
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:24).

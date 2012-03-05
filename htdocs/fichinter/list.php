@@ -40,11 +40,11 @@ $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$socid=GETPOST("socid");
+$socid=GETPOST('socid','int');
 $page=GETPOST("page");
 
 // Security check
-$fichinterid = GETPOST("id");
+$fichinterid = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ficheinter', $fichinterid,'fichinter');
 

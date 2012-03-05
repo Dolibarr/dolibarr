@@ -10,6 +10,7 @@ ErrorLoginAlreadyExists=El login %s ya existe.
 ErrorGroupAlreadyExists=El grupo %s ya existe.
 ErrorRecordNotFound=Registro no encontrado
 ErrorDuplicateTrigger=Un archivo trigger de nombre '<b>%s</b>' está cargado. Elimine el doble del directorio '<b>%s</b>'.
+ErrorFailToCopyFile=Error al copiar el archivo '<b>%s</b>' en '<b>%s</b>'.
 ErrorFailToRenameFile=Error al renombrar el archivo '<b>%s</b>' a '<b>%s</b>'.
 ErrorFailToCreateFile=Error al crear el archivo  '<b>%s</b>'
 ErrorFailToDeleteFile=Error al eliminar el archivo '<b>%s</b>'.
@@ -102,6 +103,8 @@ ErrorLoginHasNoEmail=Este usuario no tiene e-mail. Imposible continuar.
 ErrorBadValueForCode=Valor incorrecto para el código. Vuelva a intentar con un nuevo valor...
 ErrorBothFieldCantBeNegative=Los campos %s y %s no pueden ser negativos
 ErrorNoActivatedBarcode=Ningún tipo de código de barra activado
+ErrorWebServerUserHasNotPermission=La cuenta de ejecución del servidor web <b>%s</b> no dispone de los permisos para esto
+ErrorNoActivatedBarcode=No hay activado ningún tipo de código de barras
 
 # Warnings
 WarningSafeModeOnCheckExecDir=Atención, está activada la opción PHP <b>safe_mode</b>, el comando deberá estar dentro de un directorio declarado dentro del parámetro php <b>safe_mode_exec_dir</b>.

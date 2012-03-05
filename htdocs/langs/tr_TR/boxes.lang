@@ -92,3 +92,10 @@ BoxTitleLastModifiedSuppliers=Son %s değiştirilmiş tedarikçileri
 BoxTitleLastContracts=Son %s sözleşmeleri
 BoxTitleLastModifiedDonations=Son %s bağış modifiye
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 13:54:27).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
+// Reference language: en_US -> tr_TR
+BoxOldestExpiredServices=Eski aktif süresi dolmuş hizmetleri
+BoxLastExpiredServices=Aktif süresi dolmuş hizmetleri ile Son %s eski rehber
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:36:01).

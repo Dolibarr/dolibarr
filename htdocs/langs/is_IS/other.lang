@@ -223,3 +223,28 @@ UseAdvancedPerms=Notaðu háþróaður heimildir sum mát
 FileFormat=Skráarsnið
 SelectAColor=Veldu lit
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 03:49:52).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+Notify_COMPANY_CREATE=Þriðja aðila til
+Notify_PROPAL_SENTBYMAIL=Auglýsing tillögu send með pósti
+Notify_BILL_PAYED=Viðskiptavinur Reikningar borgað
+Notify_BILL_CANCEL=Viðskiptavinur reikning niður
+Notify_BILL_SENTBYMAIL=Viðskiptavinur Reikningar send með pósti
+Notify_MEMBER_SUBSCRIPTION=Member áskrift
+Notify_MEMBER_RESILIATE=Member resiliated
+Notify_MEMBER_DELETE=Member eytt
+PredefinedMailContentSendInvoice=Þú vilja finna hér á reikningsnúmerið __ FACREF__ \n\n kveðju \n\n
+PredefinedMailContentSendInvoiceReminder=Við viljum vara þig á að reikningur __ FACREF__ virðist ekki vera greiddur. Svo er þetta reikningur í viðhengi aftur, sem áminningu. \n\n kveðju \n\n
+PredefinedMailContentSendProposal=Þú vilja finna hér auglýsing propoal __ PROPREF__ \n\n kveðju \n\n
+PredefinedMailContentSendOrder=Þú vilja finna hér til __ ORDERREF__ \n\n kveðju \n\n
+PredefinedMailContentSendSupplierInvoice=Þú vilja finna hér á reikningsnúmerið __ FACREF__ \n\n kveðju \n\n
+PredefinedMailContentSendShipping=Þú vilja finna hér siglinga __ SHIPPINGREF__ \n\n kveðju \n\n
+AddFiles=Bæta við skrár
+StartUpload=Byrja senda
+CancelUpload=Hætta við
+FileIsTooBig=Skrár er of stór
+ShipmentValidatedInDolibarr=Sendingu %s staðfest í Dolibarr
+Export=Útflutningur
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:24).

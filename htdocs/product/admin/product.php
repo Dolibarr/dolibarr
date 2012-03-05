@@ -29,6 +29,7 @@
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formbarcode.class.php");
 
 $langs->load("admin");
@@ -130,14 +131,8 @@ llxHeader('',$title);
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($title,$linkback,'setup');
 
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/product/admin/produit.php";
-$head[$h][1] = $tab;
-$hselected=$h;
-$h++;
-
-dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
+$head = product_admin_prepare_head(null, $tab);
+dol_fiche_head($head, 'general', $tab, 0, 'product');
 
 $form=new Form($db);
 $var=true;

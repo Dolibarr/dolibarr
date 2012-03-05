@@ -11,3 +11,9 @@ CHARSET=UTF-8
 NewBookmark=Nytt bokmärke
 AddThisPageToBookmarks=Lägg till sidan som bokmärken
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:05:10).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+Bookm=Bokmärken
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:21).

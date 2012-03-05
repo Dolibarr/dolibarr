@@ -34,7 +34,7 @@ $langs->load("projects");
 $langs->load("companies");
 
 $taskid = isset($_GET["id"])?$_GET["id"]:'';
-$id = GETPOST('id');
+$id = GETPOST('id','int');
 $ref= GETPOST('ref');
 $action=GETPOST('action');
 $withproject=GETPOST('withproject');

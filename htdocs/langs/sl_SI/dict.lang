@@ -293,3 +293,10 @@ DemandReasonTypeSRC_CAMP_PHO = Telefonska kampanja
 DemandReasonTypeSRC_CAMP_FAX = Kampanja po faksu
 DemandReasonTypeSRC_COMM = Komercialni kontakt
 DemandReasonTypeSRC_SHOP = Kontakt v prodajalni
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+CurrencyUAH=Grivna
+CurrencySingUAH=Grivna
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:30:23).

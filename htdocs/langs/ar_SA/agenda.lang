@@ -63,3 +63,33 @@ AgendaHideBirthdayEvents=عيد ميلاد إخفاء اتصالات
 MenuToDoActions=جميع الأعمال غير مكتملة
 InterventionValidatedInDolibarr=التحقق من صحة التدخل %s
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:11:26).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+LocalAgenda=تقويم محلي
+MyEvents=بلدي أحداث
+OtherEvents=غيرها من الأحداث
+EventOnFullDay=حدث في يوم كامل
+ViewDay=يوم رأي
+ViewWeek=أسبوع رأي
+AgendaExtSitesDesc=هذه الصفحة تسمح لاعلان مصادر خارجية من التقويمات لمعرفة المناسبات الخاصة بهم في جدول أعمال Dolibarr.
+InvoiceBackToDraftInDolibarr=%s فاتورة العودة إلى وضع مشروع
+OrderApprovedInDolibarr=وافق النظام %s
+OrderBackToDraftInDolibarr=%s أجل العودة إلى وضع مشروع
+OrderCanceledInDolibarr=%s أجل إلغاء
+ProposalSentByEMail=%s اقتراح التجارية المرسلة عن طريق البريد الالكتروني
+OrderSentByEMail=%s النظام العميل ارسال البريد الالكتروني
+InvoiceSentByEMail=%s فاتورة العميل ارسال البريد الالكتروني
+SupplierOrderSentByEMail=%s النظام مزود ارسال البريد الالكتروني
+SupplierInvoiceSentByEMail=%s فاتورة المورد إرسالها عن طريق البريد الالكتروني
+ShippingSentByEMail=%s الشحن إرسالها عن طريق البريد الالكتروني
+InterventionSentByEMail=%s تدخل إرسالها عن طريق البريد الالكتروني
+ExportCal=تصدير التقويم
+ExtSites=استيراد التقويمات الخارجية
+ExtSitesEnableThisTool=عرض التقويمات الخارجية في جدول الأعمال
+ExtSitesNbOfAgenda=عدد من التقاويم
+AgendaExtNb=تقويم ملحوظة %s
+ExtSiteUrlAgenda=URL للوصول. كال ملف
+ExtSiteNoLabel=لا يوجد وصف
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:58:08).

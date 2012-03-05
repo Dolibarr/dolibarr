@@ -612,7 +612,6 @@ class Commande extends CommonObject
             dol_syslog("Commande::create ".$this->error, LOG_ERR);
             return -1;
         }
-        if (! $this->fk_project) $this->fk_project = 0;
 
         // $date_commande is deprecated
         $date = ($this->date_commande ? $this->date_commande : $this->date);
@@ -626,7 +625,8 @@ class Commande extends CommonObject
         $sql.= ", remise_absolue, remise_percent";
         $sql.= ", entity";
         $sql.= ")";
-        $sql.= " VALUES ('(PROV)',".$this->socid.", ".$this->db->idate(gmmktime()).", ".$user->id.", ".$this->fk_project;
+        $sql.= " VALUES ('(PROV)',".$this->socid.", ".$this->db->idate(gmmktime()).", ".$user->id;
+        $sql.= ", ".($this->fk_project?$this->fk_project:"null");
         $sql.= ", ".$this->db->idate($date);
         $sql.= ", ".($this->source>=0 && $this->source != '' ?$this->source:'null');
         $sql.= ", '".$this->db->escape($this->note)."'";
@@ -925,7 +925,7 @@ class Commande extends CommonObject
                 // Actions hooked (by external module)
                 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
                 $hookmanager=new HookManager($this->db);
-                $hookmanager->callHooks(array('orderdao'));
+                $hookmanager->initHooks(array('orderdao'));
 
                 $parameters=array('objFrom'=>$object);
                 $action='';

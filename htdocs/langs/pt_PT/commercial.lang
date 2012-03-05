@@ -83,3 +83,14 @@ Stats=Estatisticas de Venda
 ActionAC_SUP_ORD=Enviar por e-mail para fornecedor
 ActionAC_SUP_INV=Enviar fatura do fornecedor por e-mail
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:53:01).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+StatusNotApplicable=Não aplicável
+ActionAC_SHIP=Enviar envio por correio
+ActionAC_OTH=Outro
+StatusProsp=Estado Prospect
+DraftPropals=Elaborar propostas comerciais
+SearchPropal=Procure uma proposta comercial
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:16).

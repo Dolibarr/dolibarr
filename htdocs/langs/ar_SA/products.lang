@@ -188,3 +188,15 @@ ProductStatusNotOnBuy=عفا عليها الزمن
 ProductStatusOnBuyShort=متاح
 ProductStatusNotOnBuyShort=عفا عليها الزمن
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:07).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+ParentProductsNumber=عدد من الناتج الأم
+ProductParentList=قائمة من المنتجات / الخدمات مع هذا المنتج كعنصر
+ImportDataset_produit_1=المنتجات
+ImportDataset_service_1=الخدمات
+CustomCode=قانون الجمارك
+CountryOrigin=بلد المنشأ
+HiddenIntoCombo=مخبأة في قوائم مختارة
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:55:54).

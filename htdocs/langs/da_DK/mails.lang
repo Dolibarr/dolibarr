@@ -141,3 +141,9 @@ MailingModuleDescContactsByCompanyCategory=Kontakter af tredjemand (fra tredjema
 MailingModuleDescMembersCategories=Foundation medlemmer (efter kategorier)
 MailingModuleDescContactsByFunction=Kontakter af tredjeparter (ved position / funktion)
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 11:30:16).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
+// Reference language: en_US -> da_DK
+MailingStatusRead=Læs
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:59:34).

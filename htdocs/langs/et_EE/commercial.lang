@@ -1,0 +1,94 @@
+/*
+ * Language code: et_EE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 22:15:30
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
+// Reference language: en_US -> et_EE
+CHARSET=UTF-8
+Commercial=Kaubandus-
+CommercialArea=Äripind
+CommercialCard=Commercial kaart
+CustomerArea=Kliendid ala
+Customer=Klient
+Customers=Kliendid
+Prospect=Väljavaade
+Prospects=Väljavaateid
+DeleteAction=Kustuta sündmus / ülesanne
+NewAction=Uus sündmus / ülesanne
+AddAction=Lisa sündmus / ülesanne
+AddAnAction=Lisa sündmus / ülesanne
+AddActionRendezVous=Lisa Rendez-vous sündmus
+Rendez-Vous=Kogunemiskoht
+ConfirmDeleteAction=Oled sa kindel, et soovite kustutada selle sündmuse / ülesanne?
+CardAction=Event kaart
+PercentDone=Protsent kogu
+ActionOnCompany=Task firmast
+ActionOnContact=Task umbes kontakt
+TaskRDV=Koosolekud
+TaskRDVWith=Kohtumine %s
+ShowTask=Näita ülesanne
+ShowAction=Näita sündmus
+ActionsReport=Sündmused aru
+SalesRepresentative=Müügiagent
+SalesRepresentatives=Müügiesindajad
+SalesRepresentativeFollowUp=Müügiesindaja (järelkontroll)
+SalesRepresentativeSignature=Müügiesindaja (allkiri)
+CommercialInterlocutor=Commercial vestluskaaslase
+ErrorWrongCode=Vale kood
+NoSalesRepresentativeAffected=Mingit erilist müügiesindaja mõjutatud
+ShowCustomer=Näita klient
+ShowProspect=Näita väljavaade
+ListOfProspects=Nimekirja väljavaateid
+ListOfCustomers=Klientide loetelu
+LastDoneTasks=Last %s lõpetatud ülesanded
+LastRecordedTasks=Viimati salvestatud ülesanded
+LastActionsToDo=Last %s vanim meetmeid ei lõpetatud
+DoneAndToDoActionsFor=Täidetud, ning tegema üritused %s
+DoneAndToDoActions=Täidetud, ning tegema sündmused
+DoneActions=Valminud sündmused
+DoneActionsFor=Valminud üritused %s
+ToDoActions=Puudulik sündmused
+ToDoActionsFor=Puudulik üritused %s
+SendPropalRef=Saada kaubandus ettepaneku %s
+SendOrderRef=Saada selleks %s
+StatusNotApplicable=Ei ole kohaldatav
+StatusActionToDo=Teha
+StatusActionDone=Täitma
+MyActionsAsked=Sündmused olen registreeritud
+MyActionsToDo=Sündmused pean tegema
+MyActionsDone=Sündmused mõjutab mind
+StatusActionInProcess=Protsessi
+TasksHistoryForThisContact=Sündmused see kontakt
+LastProspectDoNotContact=Ärge võtke
+LastProspectNeverContacted=Kunagi ühendust
+LastProspectToContact=Ühendust
+LastProspectContactInProcess=Võta protsessi
+LastProspectContactDone=Võta teha
+DateActionPlanned=Kuupäev sündmus planeeritud
+DateActionDone=Kuupäev korral teha
+ActionAskedBy=Event teatas
+ActionAffectedTo=Event mõjutada
+ActionDoneBy=Event teha
+ActionUserAsk=Teatas
+ErrorStatusCantBeZeroIfStarted=Kui väli <b>&quot;aeg teha&quot;</b> on täidetud, tegevuse alustamisel (või lõpetanud), nii väli <b>&quot;Status&quot;</b> ei saa olla 0%%.
+ActionAC_TEL=Telefonikõne
+ActionAC_FAX=Saada faks
+ActionAC_PROP=Saada ettepaneku mail
+ActionAC_EMAIL=Saada kiri
+ActionAC_RDV=Koosolekud
+ActionAC_FAC=Saada kliendi arve posti teel
+ActionAC_REL=Saada kliendi arve posti teel (meeldetuletus)
+ActionAC_CLO=Lähedal
+ActionAC_EMAILING=Saada mass email
+ActionAC_COM=Saada kliendi tellimuse posti teel
+ActionAC_SHIP=Saada shipping by mail
+ActionAC_SUP_ORD=Saada tarnija et posti teel
+ActionAC_SUP_INV=Saada tarnija arve posti teel
+ActionAC_OTH=Teine
+StatusProsp=Prospect staatus
+DraftPropals=Koostada äri ettepanekud
+SearchPropal=Otsi äri ettepanekut
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:24:50).

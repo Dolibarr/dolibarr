@@ -20,7 +20,7 @@ include_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
 $langs->load("main");
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
-$facid=GETPOST('facid');
+$facid=GETPOST('facid','int');
 $object=new Facture($db);
 $object->fetch($facid);
 

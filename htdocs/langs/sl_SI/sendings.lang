@@ -62,3 +62,9 @@ SendingMethodCOLSUI = Zbirnik
 DocumentModelSirocco = Enostaven vzorec dobavnice
 DocumentModelTyphon = Popolnejši vzorec dobavnice (logo...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined = 
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+ShipmentCreationIsDoneFromOrder=Za trenutek je oblikovanje nove pošiljke opravi od naročila kartice.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:31:27).

@@ -204,7 +204,7 @@ class modExpedition extends DolibarrModules
 		global $conf;
 
 		// Permissions
-		$this->remove();
+		$this->remove($options);
 
 		$sql = array();
 
@@ -218,15 +218,20 @@ class modExpedition extends DolibarrModules
 		return $this->_init($sql,$options);
 	}
 
-	/**
-	 *    \brief      Fonction appelee lors de la desactivation d'un module.
-	 *                Supprime de la base les constantes, boites et permissions du module.
-	 */
-	function remove()
-	{
+    /**
+	 *		Function called when module is disabled.
+	 *      Remove from database constants, boxes and permissions from Dolibarr database.
+	 *		Data directories are not deleted
+	 *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
+     */
+    function remove($options='')
+    {
 		$sql = array();
 
-		return $this->_remove($sql);
-	}
+		return $this->_remove($sql,$options);
+    }
+
 }
 ?>

@@ -111,3 +111,29 @@ ErrorBadValueForCode=Bad arvotyypeillä koodin. Yritä uudelleen uuteen arvoon .
 ErrorFileIsInfectedWith=Tämä tiedosto on tartunnan %s
 WarningInstallDirExists=Varoitus, asentaa hakemistoon ( %s) on yhä olemassa. Tämä on vakava turvallisuuteen reikään. Sinun tulisi poistaa niin pian kuin mahdollista.
 WarningUntilDirRemoved=Tämä varoitus pysyy aktiivisena niin kauan kuin tähän hakemistoon on läsnä (Näkyy vain admin-käyttäjät).
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+ErrorFailToCopyFile=Epäonnistui kopioida tiedoston <b>%s</b> ilmaisuksi <b>%s</b> &quot;.
+ErrorFailToRenameFile=Epäonnistui nimetä tiedoston <b>%s</b> ilmaisuksi <b>%s</b> &quot;.
+ErrorBadValueForParameter=Väärä arvo &quot;%s&quot; parametrien väärä &quot;%s&quot;
+ErrorBadImageFormat=Image-tiedosto ei ole tuettu formaatti
+ErrorBadDateFormat=Arvo &quot;%s&quot; on väärä päivämäärä muoto
+ErrorSizeTooLongForIntType=Koko liian pitkä int tyyppi (%s merkkiä maksimi)
+ErrorSizeTooLongForVarcharType=Koko liian pitkä jono tyyppi (%s merkkiä maksimi)
+ErrorContactEMail=Tekninen virhe. Ota yhteys järjestelmänvalvojaan jälkeen sähköpostin <b>%s</b> en antaa virhekoodi <b>%s</b> viesti, tai jopa paremmin lisäämällä näytön kopion tästä sivusta.
+ErrorFieldValueNotIn=Väärä arvo kentän numero <b>%s</b> (arvo <b>&quot;%s&quot;</b> ei ole arvoa käytettävissä tulee kenttään <b>%s</b> taulukon <b>%s)</b>
+ErrorFieldRefNotIn=Väärä arvo kentän numero <b>%s</b> (arvo <b>&quot;%s&quot;</b> ei <b>%s</b> olemassa ref)
+ErrorModuleSetupNotComplete=Setup moduulin näyttää olevan epätäydellisiä. Mene Setup - Moduulit loppuun.
+ErrorBadMask=Virhe naamio
+ErrorBadMaskFailedToLocatePosOfSequence=Virhe, maski ilman järjestysnumeroa
+ErrorBadMaskBadRazMonth=Virhe, huono palautus arvo
+ErrorSelectAtLeastOne=Error. Valitse ainakin yksi merkintä.
+ErrorProductWithRefNotExist=Tuotteen viitaten <i>&quot;%s&quot;</i> ei ole olemassa
+ErrorDeleteNotPossibleLineIsConsolidated=Poistaminen ei ole mahdollista, koska levy on sidottu pankin transation joka sovitelleet
+ErrorProdIdAlreadyExist=%s on siirretty toiseen kolmanteen
+ErrorFailedToLoadRSSFile=Ei saada RSS-syötteen. Yritä lisätä jatkuvasti MAIN_SIMPLEXMLLOAD_DEBUG jos virheilmoituksia ei ole tarpeeksi tietoa.
+ErrorBothFieldCantBeNegative=Kentät %s ja %s voi olla sekä kielteisiä
+ErrorWebServerUserHasNotPermission=Käyttäjätili <b>%s</b> käyttää myös toteuttaa web-palvelimella ei ole lupaa, että
+ErrorNoActivatedBarcode=Ei viivakoodin tyyppi aktivoitu
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:11:02).

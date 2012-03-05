@@ -1,0 +1,36 @@
+/*
+ * Language code: et_EE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 22:15:30
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
+// Reference language: en_US -> et_EE
+CHARSET=UTF-8
+Donation=Annetus
+Donations=Annetused
+Donor=Annetaja
+Donors=Doonorid
+AddDonation=Lisa annetuse
+NewDonation=New annetuse
+DonationPromise=Kingitus lubadus
+PromisesNotValid=Ei kinnitatud lubadusi
+PromisesValid=Valideeritud lubadusi
+DonationsPaid=Annetused makstakse
+DonationsReceived=Saadud annetuste
+PublicDonation=Avalik annetuse
+DonationsNumber=Toeta number
+DonationsArea=Annetused ala
+DonationStatusPromiseNotValidated=Eelnõu lubadus
+DonationStatusPromiseValidated=Kinnitatud lubadust
+DonationStatusPaid=Toeta saanud
+DonationStatusPromiseNotValidatedShort=Eelnõu
+DonationStatusPromiseValidatedShort=Valideeritud
+DonationStatusPaidShort=Saanud
+ValidPromess=Kinnitada lubadus
+BuildDonationReceipt=Ehitada kätte
+DonationsModels=Dokumendid mudelid annetuste laekumine
+LastModifiedDonations=Last %s muutmine annetusi
+SearchADonation=Otsi annetuse
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:42:58).

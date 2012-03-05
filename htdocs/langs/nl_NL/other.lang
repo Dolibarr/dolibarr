@@ -234,3 +234,9 @@ CancelUpload=Uploaden annuleren
 FileIsTooBig=Bestanden is te groot
 Export=Export
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 01:38:48).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
+// Reference language: en_US -> nl_NL
+ShipmentValidatedInDolibarr=Verzending %s gevalideerd in Dolibarr
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:11:51).

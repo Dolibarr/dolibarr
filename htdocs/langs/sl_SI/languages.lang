@@ -41,3 +41,9 @@ Language_sl_SI = Slovenščina
 Language_sv_SV = Švedščina
 Language_sv_SE = Švedščina
 Language_zh_CN = Kitajščina
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+Language_ru_UA=Ruski (Ukrajina)
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:31:10).

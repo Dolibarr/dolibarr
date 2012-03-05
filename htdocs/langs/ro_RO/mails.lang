@@ -134,3 +134,9 @@ MailingModuleDescContactsByCompanyCategory=Date de contact ale terţilor (de că
 MailingModuleDescMembersCategories=Membrii fundaţiei (pe categorii)
 MailingModuleDescContactsByFunction=Date de contact ale terţilor (de poziţie / funcţie)
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 11:50:16).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+MailingStatusRead=Citit
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:24).

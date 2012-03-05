@@ -99,3 +99,60 @@ PaymentDateUpdateSucceeded=Fizetési határidő frissítés sikeres
 PaymentDateUpdateFailed=Fizetési határidő nem lehet frissíteni
 BankTransactionLine=Bank tranzakció
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 06:58:12).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
+// Reference language: en_US -> hu_HU
+Bank=Bank
+Banks=Bankok
+MenuBankCash=Bank / Készpénz
+MainAccount=Főszámla
+CurrentAccount=Folyószámla
+CurrentAccounts=Folyószámlák
+SavingAccount=Takarékszámla
+SavingAccounts=Megtakarítási számlák
+ErrorBankLabelAlreadyExists=Pénzügyi mérleg címke már létezik
+IBAN=IBAN szám
+BIC=BIC / SWIFT száma
+StandingOrders=Állandó megbízás
+StandingOrder=Állandó érvényű parancs
+Withdrawals=Kivonás
+Withdrawal=Visszavonás
+RIBControlError=Épségének ellenőrzése az értékek nem. Ez azt jelenti, információkat a számlaszám nem teljes vagy hibás (ellenőrzésére ország, számokat és IBAN).
+CreateAccount=Regisztráció
+NewAccount=Új fiók
+NewBankAccount=Új bankszámla
+NewFinancialAccount=Új pénzügyi számla
+MenuNewFinancialAccount=Új pénzügyi számla
+BankType1=A jelenlegi vagy hitelkártya számla
+BankType2=Készpénz számla
+IfBankAccount=Ha a bankszámla
+AccountsArea=Számlák terület
+AccountCard=Számla kártya
+DeleteAccount=Fiók törlése
+BankTransactions=Banki tranzakciók
+SearchTransaction=Keresés a tranzakció
+ListTransactions=Tranzakciók listája
+ListTransactionsByCategory=Lista tranzakció / kategória
+TransactionsToConciliate=Tranzakciók összeegyeztetni
+Conciliable=Lehet egyeztetni
+StatusAccountClosed=Zárva
+AccountIdShort=Szám
+EditBankRecord=A rekord szerkesztése
+LineRecord=Tranzakció
+AddBankRecord=Add tranzakció
+AddBankRecordLong=Add tranzakció kézzel
+TransferDesc=Át egyik fiókból a másikba, Dolibarr fog írni két rekordot (a terhelés forrás számla és a hitel a fiókot, azonos összeget. Ugyanazon a címkén és a dátumot fogják használni a tranzakció)
+TransferFrom=-Tól
+NumberOfCheques=Nb csekk
+DeleteTransaction=Törlés tranzakció
+ConfirmDeleteTransaction=Biztos benne, hogy törli ezt a tranzakciót?
+ThisWillAlsoDeleteBankRecord=Ez azt is törölni keletkezett banki tranzakciók
+BankMovements=Movements
+CashBudget=Készpénz költségvetés
+AllAccounts=Minden bank / készpénzszámlák
+BackToAccount=Visszalép a számla
+ShowAllAccounts=Mutasd az összes fiók
+FutureTransaction=Ügylet Futur. Semmiképpen egyeztetni.
+SelectChequeTransactionAndGenerate=Válassza / filter ellenőrzéseket be kell vonni a csekket befizetés beérkezésének és kattintson a &quot;Create&quot;.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:14:15).

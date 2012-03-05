@@ -98,3 +98,32 @@ ErrorFailedToSendPassword=Şifre göndereceğiz başarısız
 ErrorFailedToLoadRSSFile=RSS beslemesi almak için başarısız olur. Hata mesajları yeterli bilgi sağlamaz eğer sabit MAIN_SIMPLEXMLLOAD_DEBUG eklemeyi deneyin.
 ErrorNoActivatedBarcode=Aktive yok barkod tipi
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 15:05:52).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
+// Reference language: en_US -> tr_TR
+ErrorFailToCopyFile=<b>'%s'</b> içine dosya <b>'%s'</b> kopyalanamadı.
+ErrorSizeTooLongForIntType=(%s rakam maksimum) int türü için çok uzun Boyutu
+ErrorSizeTooLongForVarcharType=(%s karakter maksimum) dize türü için çok uzun Boyutu
+ErrorFieldRefNotIn=Alan numarası <b>%s</b> için yanlış değer (değer <b>'%s'</b> bir <b>%s</b> ref mevcut değildir)
+ErrorPasswordDiffers=Şifreler farklıdır, bunları tekrar yazın lütfen.
+ErrorForbidden=Erişim engellendi. <br> Bu kimliği doğrulanmış bir oturumda olmak ya da kullanıcı için izin verilmez olmadan bir sayfa, alan veya özelliğe erişmeye çalışın.
+ErrorForbidden2=Bu giriş izni menüsü %s-&gt; %s sizin Dolibarr yöneticisi tarafından tanımlanabilir.
+ErrorForbidden3=Bu Dolibarr kimliği doğrulanmış bir oturumu üzerinden kullanılan değil gibi görünüyor. Kimlik doğrulama (htaccess, mod_auth veya diğer ...) nasıl yönetileceğini bilmek Dolibarr kurulum belgelerine bir göz atın.
+ErrorNoImagickReadimage=Sınıf Imagick Bu PHP bulunmaz. Önizleme yok mevcut olabilir. Yöneticiler menüsünden Kur bu sekme devre dışı bırakabilirsiniz - Ekran.
+ErrorRecordAlreadyExists=Kayıt zaten var
+ErrorCantReadFile=Dosya '%s' okunamadı
+ErrorCantReadDir=Dizin '%s' okunamadı
+ErrorFailedToFindEntity=Çevre '%s' okunamadı
+ErrorBadLoginPassword=Giriş veya şifremi Bad value for
+ErrorLoginDisabled=Hesabınız devre dışı bırakıldı
+ErrorFailedToRunExternalCommand=Dış komutu çalıştırmak için başarısız oldu. Sizin PHP sunucu tarafından kullanılabilir ve çalıştırılabilir olup olmadığını kontrol edin. PHP <b>Güvenli Mod</b> etkinse, bu komut parametresi <b>safe_mode_exec_dir</b> tarafından tanımlanan bir dizin içinde olup olmadığını kontrol edin.
+ErrorFailedToChangePassword=Şifreyi değiştirmek için başarısız oldu
+ErrorLoginDoesNotExists=Giriş <b>%s</b> ile kullanıcı bulunamadı.
+ErrorLoginHasNoEmail=Bu kullanıcının e-posta adresi vardır. İşlem iptal edildi.
+ErrorBadValueForCode=Güvenlik kodunu hatalı değer. Yeni değeri ile tekrar deneyin ...
+ErrorBothFieldCantBeNegative=Alanlar ve %s %s negatif olamaz
+ErrorWebServerUserHasNotPermission=Kullanıcı hesabı web sunucusu çalıştırmak için kullanılan <b>%s</b> bunun için hiçbir izni
+WarningInstallDirExists=Uyarı, kurulum dizini <b>(htdocs / install)</b> hala var. Bu ciddi bir güvenlik açığıdır. Sen en kısa sürede kaldırıldı gerekir.
+WarningUntilDirRemoved=Güvenlik açığı mevcut gibi tüm güvenlik uyarıları (sadece admin kullanıcılar tarafından görülebilir) uzun süre aktif kalır (ya da sabit MAIN_REMOVE_INSTALL_WARNING Kur-&gt; Diğer ayar eklenir).
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:36:09).

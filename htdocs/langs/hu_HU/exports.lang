@@ -1,0 +1,123 @@
+/*
+ * Language code: hu_HU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 16:13:31
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
+// Reference language: en_US -> hu_HU
+CHARSET=UTF-8
+ExportsArea=Az export területén
+ImportArea=Import terület
+NewExport=Új export
+NewImport=Új import
+ExportableDatas=Exportálható adatkészlet
+ImportableDatas=Adathalmaz importálható
+SelectExportDataSet=Válassza ki a kívánt adatsor exportálni ...
+SelectImportDataSet=Válasszon adathalmaz kíván importálni ...
+SelectExportFields=Válassza ki a mezőket szeretné exportálni, vagy válasszunk egy előre export profil
+SelectImportFields=Válassza ki a forrás file mezőket importálni kívánt cél és a mező az adatbázisban mozgatásával fel őket, és le horgony %s, vagy válasszunk egy előre import profil:
+NotImportedFields=Területek forrás fájl importálása nem
+SaveExportModel=Mentése export profilt, ha azt tervezi, hogy újra később ...
+SaveImportModel=Mentése import profilt, ha azt tervezi, hogy újra később ...
+ExportModelName=Export profil nevét
+ExportModelSaved=Export mentett profil néven <b>%s.</b>
+ExportableFields=Exportálható mezők
+ExportedFields=Exportált mezők
+ImportModelName=Import profil nevét
+ImportModelSaved=Import profil mentett néven <b>%s.</b>
+ImportableFields=Importálható mezők
+ImportedFields=Importált mezők
+DatasetToExport=Dataset exportálni
+DatasetToImport=Import fájl adatsor
+NoDiscardedFields=Nincs mezők forrás file törlődik
+Dataset=Dataset
+ChooseFieldsOrdersAndTitle=Válassza ki a mezőket érdekében ...
+FieldsOrder=Fields érdekében
+FieldsTitle=Fields címmel
+FieldOrder=Mező rendezés
+FieldTitle=Mező cím
+ChooseExportFormat=Válasszon export formátum
+NowClickToGenerateToBuildExportFile=Most válassza ki azt a fájlformátumot, kombinált listában, és kattintson a &quot;Generate&quot; építeni export file ...
+AvailableFormats=Elérhető formátumok
+LibraryShort=Könyvtár
+LibraryUsed=Könyvtár használt
+LibraryVersion=Változat
+Step=Lépés
+FormatedImport=Import assistant
+FormatedImportDesc1=This area allows to import personalized data, using an assistant to help you in process without technical knowledge.
+FormatedImportDesc2=First step is to choose a king of data you want to load, then file to load, then to choose which fields you want to load.
+FormatedExport=Export assistant
+FormatedExportDesc1=This area allows to export personalized data, using an assistant to help you in process without technical knowledge.
+FormatedExportDesc2=First step is to choose a predefined dataset, then to choose which fields you want in your result files, and which order.
+FormatedExportDesc3=When data to export are selected, you can define output file format you want to export your data to.
+Sheet=Sheet
+NoImportableData=No importálható adat (nincs modul meghatározások lehetővé teszik az adatok import)
+FileSuccessfullyBuilt=Export generált fájl
+SQLUsedForExport=SQL kérés építésére használták exportfájlba
+LineId=Id sor
+LineDescription=Leírása vonal
+LineUnitPrice=Egységára vonal
+LineVATRate=Az áfa-kulcs online
+LineQty=Mennyiség a vonal
+LineTotalHT=Összege nettó adó vonal
+LineTotalTTC=Összeg az adó vonal
+LineTotalVAT=HÉA összegét a vonal
+TypeOfLineServiceOrProduct=Vonal típusa (0 = a termék, 1 = szolgáltatás)
+FileWithDataToImport=File adatokat importálni
+FileToImport=Forrás fájlt importálni
+FileMustHaveOneOfFollowingFormat=Fájlt importálni kell az alábbiak közül valamelyik formában
+DownloadEmptyExample=Letöltés például az üres forrás fájl
+ChooseFormatOfFileToImport=Válasszon fájlformátumot használni import fájl formátum kattintva Picto %s válasszuk ki ...
+ChooseFileToImport=Fájl feltöltése majd kattintson a Picto %s, hogy válasszon ki egy fájlt forrásként import file ...
+SourceFileFormat=Forrás fájlformátum
+FieldsInSourceFile=Mezői forrásfájlban
+FieldsInTargetDatabase=Cél mező Dolibarr adatbázis (* = kötelező)
+Field=Mező
+NoFields=Nem mezők
+MoveField=Mező áthelyezése oszlop száma %s
+ExampleOfImportFile=Example_of_import_file
+SaveImportProfile=Mentse az import profil
+ErrorImportDuplicateProfil=Nem sikerült menteni a behozatali profilt ezen a néven. Meglévő profil már létezik ezen a néven.
+ImportSummary=Import Telepítés összegzése
+TablesTarget=Célzott táblázatok
+FieldsTarget=Célzott területek
+TableTarget=Célzott táblázat
+FieldTarget=Célzott terület
+FieldSource=Forrás mezőben
+DoNotImportFirstLine=Ne importálja első sorban a forrás fájl
+NbOfSourceLines=Sorok száma a forrás fájlban
+NowClickToTestTheImport=Ellenőrizze import paramétereket megadtuk. Ha az adatok helyesek, kattintson a gombra <b>&quot;%s&quot;</b> elindítani egy szimulációt behozatali folyamat (az adatok nem változtak az adatbázisban, ez ​​csak egy szimuláció egyelőre) ...
+RunSimulateImportFile=Indítsd el a behozatali szimuláció
+FieldNeedSource=Ez az adatbázis fiels szükséges adatokat forrásfájl
+SomeMandatoryFieldHaveNoSource=Néhány kötelező mező nincs forrás adatfájl
+InformationOnSourceFile=Információ forrás fájl
+InformationOnTargetTables=Tájékoztatás a cél mezők
+SelectAtLeastOneField=Kapcsolja be legalább egy forrás mező oszlopban a mezők az export
+SelectFormat=Válassza ezt az import fájl formátum
+RunImportFile=Indítsa import file
+NowClickToRunTheImport=Ellenőrizze eredménye import szimuláció. Ha minden rendben van, indítsa el a végleges import.
+DataLoadedWithId=Minden adatot fog elindulni a következő behozatali ID: <b>%s</b>
+ErrorMissingMandatoryValue=Kötelező adatok üres a forrás fájl mezőben <b>%s.</b>
+TooMuchErrors=Van még más forrásból <b>%s</b> vonalak kimeneti hibákat, de korlátozott volt.
+TooMuchWarnings=Van még más forrásból <b>%s</b> vonalak figyelmeztetések, de kimeneti korlátozott volt.
+EmptyLine=Üres sor (törlődik)
+CorrectErrorBeforeRunningImport=Először meg kell kijavítani az összes hibát, mielőtt a végleges behozatali futó.
+FileWasImported=A fájl behozott <b>%s</b> száma.
+YouCanUseImportIdToFindRecord=Itt megtalálja az összes importált rekordok az adatbázist szűrés területén <b>import_key = &quot;%s&quot;.</b>
+NbOfLinesOK=Sorok száma és nem hiba, és nincs figyelmeztetés: <b>%s.</b>
+NbOfLinesImported=Sorok száma sikeresen importálva: <b>%s.</b>
+DataComeFromNoWhere=Érték beszúrni jön elő a semmiből a forrás fájlt.
+DataComeFromFileFieldNb=Érték beszúrni származik <b>%s</b> mező számát a forrás fájlt.
+DataComeFromIdFoundFromRef=Érték, hogy jön a mező száma <b>%s</b> a forrás fájlt fogja használni, hogy megtalálja az id szülőobjektum használni (tehát a objet <b>%s,</b> amely a ref. Forrásból kell file létezik a Dolibarr).
+DataComeFromIdFoundFromCodeId=Kód, amely számos területen származik <b>%s</b> a forrás fájlt fogja használni, hogy megtalálja az id szülőobjektum használni (tehát a kódot a forrásfájl bele kell létezik dictionnary <b>%s).</b> Megjegyezzük, hogy ha tudod id, akkor is használható, a forrás file-kód helyett. Import kell dolgozni mindkét esetben.
+DataIsInsertedInto=Érkező adatokat forrás fájlt be kell illeszteni a következő területen:
+DataIDSourceIsInsertedInto=Az id a szülő objektum található adatok felhasználásával a forrás fájlt, majd be kell illeszteni az alábbi mezőbe:
+DataCodeIDSourceIsInsertedInto=Az id a szülői vonal megtalálható a kód, akkor be kell illeszteni a következő területen:
+SourceRequired=Adatérték kötelező
+SourceExample=Példa lehet az adatok értékét
+ExampleAnyRefFoundIntoElement=Minden ref talált elem <b>%s</b>
+ExampleAnyCodeOrIdFoundIntoDictionnary=Bármely kód (vagy azonosító) találtak a dictionnary <b>%s</b>
+CSVFormatDesc=<b>Vesszővel elválasztott</b> fájlformátum (. Csv). <br> Ez egy szöveges fájl formátum ahol a mezők egymástól elválasztó [%s]. Ha az elválasztó belsejében található egy mező tartalmát, mező kerekíteni kerek karakter [%s]. Escape karakter menekülni kerek karakter [%s].
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:17:53).

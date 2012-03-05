@@ -310,3 +310,27 @@ CancelUpload=Anuluj przesyłanie
 FileIsTooBig=Plików jest zbyt duży
 Export=Eksport
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 04:25:37).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+ToolsDesc=Obszar ten jest poświęcony grupie różnorodnych nie dostępnych narzędzi do innych pozycji w menu. <br><br> Narzędzia te mogą zostać osiągnięte z menu na stronie.
+Notify_WITHDRAW_TRANSMIT=Wycofanie transmisja
+Notify_WITHDRAW_CREDIT=Wycofanie kredyt
+Notify_BILL_SUPPLIER_VALIDATE=Faktura dostawca zatwierdzone
+Notify_BILL_SUPPLIER_PAYED=Dostawca zapłaci faktury
+Notify_BILL_SUPPLIER_SENTBYMAIL=Faktura dostawca wysłane pocztą
+Notify_CONTRACT_VALIDATE=Umowa zatwierdzona
+Notify_FICHEINTER_VALIDATE=Interwencja zatwierdzone
+Notify_SHIPPING_VALIDATE=Wysyłka zatwierdzone
+PredefinedMailContentSendInvoice=Znajdziecie tu Państwo faktury __ FACREF__ \n\n poważaniem \n\n
+PredefinedMailContentSendInvoiceReminder=Pragniemy ostrzec, że faktura FACREF__ __ wydaje się nie być wypłacana. Więc to jest faktura w załączniku ponownie, jako przypomnienie. \n\n poważaniem \n\n
+PredefinedMailContentSendProposal=Znajdziecie tu komercyjnego propoal __ PROPREF__ \n\n poważaniem \n\n
+PredefinedMailContentSendOrder=Znajdziecie tutaj aby __ ORDERREF__ \n\n poważaniem \n\n
+Left=W lewo
+Right=Prawo
+ThisIsListOfModules=To jest lista modułów selekcjonowane przez tego profilu demo (tylko najczęściej moduły są widoczne w tym demo). Zmodyfikować, aby mieć bardziej spersonalizowany demo i kliknij &quot;Start&quot;.
+ClickHere=Kliknij tutaj
+UseAdvancedPerms=Korzystać z zaawansowanych uprawnień niektórych modułów
+ShipmentValidatedInDolibarr=%s wysyłki zatwierdzone w Dolibarr
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:18:34).

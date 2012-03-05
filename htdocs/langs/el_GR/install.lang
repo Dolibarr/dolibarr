@@ -234,3 +234,11 @@ MigrationFinished=Μετανάστευση τελειώσει
 LastStepDesc=<strong>Τελευταίο βήμα:</strong> Καθορίστε εδώ login και password που σκοπεύετε να χρησιμοποιήσετε για να συνδεθείτε με το λογισμικό. Να μην χάσετε αυτή, όπως είναι ο λογαριασμός για να επιτρέψει να διαχειριστεί όλες τις άλλες.
 MigrationActioncommElement=Ενημέρωση στοιχεία για τις δράσεις
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:41:02).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+DatabasePrefix=Βάση δεδομένων πίνακα πρόθεμα
+ActivateModule=Ενεργοποίηση %s ενότητα
+MigrationPaymentMode=Η μεταφορά δεδομένων για την κατάσταση πληρωμής
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:14).

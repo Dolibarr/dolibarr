@@ -301,7 +301,7 @@ class autoTranslator
 		// Example: https://www.googleapis.com/language/translate/v2?key=APIKEY&q=Setup%20area&source=en_US&target=fr_FR
 
 		// Send request
-		print "Url to translate: ".$url."\n";
+		//print "Url to translate: ".$url."\n";
 
 		if (! function_exists("curl_init"))
 		{
@@ -315,18 +315,19 @@ class autoTranslator
 		curl_setopt($ch, CURLOPT_REFERER, "Mozilla");
 		$body = curl_exec($ch);
 		curl_close($ch);
-		sleep(6);	// This is to avoid to overload server. Best value is 6.
+		//sleep(1);	// This is to avoid to overload server.
 
 		// now, process the JSON string
 		$json = json_decode($body, true);
 
-		if ($json['responseStatus'] != 200)
+		if ((! empty($json['responseStatus']) && $json['responseStatus'] != 200)
+		|| count($json['data']['translations']) == 0)
 		{
-			print "Error: ".$json['responseStatus']." ".$url."\n";
+		    print "Error: ".$json['responseStatus']." ".$url."\n";
 			return false;
 		}
 
-		$rep=$json['responseData']['translatedText'];
+		$rep=$json['data']['translations'][0]['translatedText'];
 		$rep=preg_replace('/SSSSS/i','%s',$rep);
 		$rep=preg_replace('/NNNNN/i','\n\n',$rep);
 		$rep=preg_replace('/&#39;/i','\'',$rep);

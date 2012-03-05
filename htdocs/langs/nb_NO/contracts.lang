@@ -96,3 +96,10 @@ PaymentRenewContractId=Forny kontrakt linje (antall %s)
 ExpiredSince=Utløpsdato
 RelatedContracts=Relaterte kontrakter
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:48:39).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
+// Reference language: en_US -> nb_NO
+NoExpiredServices=Ingen utgåtte aktive tjenester
+Error_CONTRACT_ADDON_NotDefined=Konstant CONTRACT_ADDON ikke definert
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:06:58).

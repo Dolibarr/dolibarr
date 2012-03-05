@@ -121,3 +121,13 @@ SourceExample=例如可能的数据值
 // Reference language: en_US -> zh_CN
 CSVFormatDesc=<b>逗号分隔值</b>文件格式（。csv格式）。 <br>这是一个文本文件格式字段被分隔在[%s]分开。如果一个字段分隔符是里面的内容发现，现场是圆形的圆字[%s]。字符转义字符是为了逃避轮[%s]。
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:53:46).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+FileWasImported=进口数量<b>%s</b>文件。
+DataComeFromIdFoundFromCodeId=代码将用于从源文件中的字段数<b>%s</b>找到父对象的ID使用（因此，从源文件中的代码必须存在dictionnary <b>%s）。</b>请注意，如果你知道ID，你也可以使用到源文件，而不是代码。进口应该在这两种情况下工作。
+DataCodeIDSourceIsInsertedInto=ID从父行代码中发现，将被插入到下面的字段：
+ExampleAnyRefFoundIntoElement=任何ref元素<b>%s</b>
+ExampleAnyCodeOrIdFoundIntoDictionnary=发现任何代码（或ID）dictionnary <b>%s</b>
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:38:12).

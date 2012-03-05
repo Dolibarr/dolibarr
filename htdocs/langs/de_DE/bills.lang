@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-11 20:58:12
  */
@@ -396,3 +396,24 @@ TypeContact_facture_fourn_external_BILLING=Lieferantenrechnung Kontakt
 TypeContact_facture_fourn_external_SHIPPING=Supplier Versand Kontakt
 TypeContact_facture_fourn_external_SERVICE=Supplier Service Kontakt
 PDFLinceDescription=Eine vollständige Rechnung Modell mit spanischen und RE IRPF
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+BillsCustomer=Der Rechnung des Kunden
+BillsSuppliersUnpaidForCompany=Unbezahlte Rechnungen des Lieferanten für %s
+BillsLate=Verspätete Zahlungen
+DisabledBecauseNotErasable=Deaktiviert, da können nicht gelöscht werden
+ConfirmUnvalidateBill=Sind Sie sicher, dass Sie <b>%s</b> Rechnung zu Draft-Status ändern?
+UnvalidateBill=Unvalidate Rechnung
+NumberOfBillsByMonth=Nb von Rechnungen pro Monat
+AmountOfBillsByMonthHT=Anzahl der Rechnungen pro Monat (nach Steuern)
+AddRelativeDiscount=Erstellen relativen Rabatt
+EditRelativelDiscount=Bearbeiten relatvie Rabatt
+EditGlobalDiscounts=Bearbeiten absolute Rabatte
+AddCreditNote=Erstellen Gutschrift
+InvoiceNotChecked=Keine Rechnung ausgewählt
+ShowUnpaidAll=Alle unbezahlten Rechnungen
+ClosePaidInvoicesAutomatically=Klassifizieren &quot;Bezahlt&quot; alle Standard-oder den Ersatz Rechnungen entierely bezahlt.
+AllCompletelyPayedInvoiceWillBeClosed=Alle Rechnungen bleiben ohne zu bezahlen wird automatisch auf den Status &quot;Bezahlt&quot; geschlossen werden.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:04:14).

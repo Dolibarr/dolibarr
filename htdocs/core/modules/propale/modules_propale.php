@@ -159,7 +159,6 @@ function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 
 	$error=0;
 
-	$dir = "/core/modules/propale/";
 	$srctemplatepath='';
 
 	// Positionne le modele sur le nom du modele a utiliser
@@ -183,22 +182,27 @@ function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
         $srctemplatepath=$tmp[1];
     }
 
-	// Search template file
+	// Search template files
 	$file=''; $classname=''; $filefound=0;
-	foreach(array('doc','pdf') as $prefix)
+	$dirmodels=array('/');
+	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
+	foreach($dirmodels as $reldir)
 	{
-        $file = $prefix."_".$modele.".modules.php";
+    	foreach(array('doc','pdf') as $prefix)
+    	{
+    	    $file = $prefix."_".$modele.".modules.php";
 
-        // On verifie l'emplacement du modele
-        $file = dol_buildpath($dir.'doc/'.$file);
-
-        if (file_exists($file))
-	    {
-	        $filefound=1;
-	        $classname=$prefix.'_'.$modele;
-	        break;
-	    }
-	}
+    		// On verifie l'emplacement du modele
+	        $file=dol_buildpath($reldir."core/modules/propale/doc/".$file,0);
+    		if (file_exists($file))
+    		{
+    			$filefound=1;
+    			$classname=$prefix.'_'.$modele;
+    			break;
+    		}
+    	}
+    	if ($filefound) break;
+    }
 
 	// Charge le modele
 	if ($filefound)

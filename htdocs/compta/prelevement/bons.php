@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,16 +31,16 @@ $langs->load("widthdrawals");
 $langs->load("categories");
 
 // Security check
-$socid = GETPOST("socid");
+$socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'prelevement','','','bons');
 
 // Get supervariables
-$page = GETPOST("page");
-$sortorder = ((GETPOST("sortorder")=="")) ? "DESC" : GETPOST("sortorder");
-$sortfield = ((GETPOST("sortfield")=="")) ? "p.datec" : GETPOST("sortfield");
-$statut = GETPOST("statut");
-$search_line = GETPOST("search_ligne");
+$page = GETPOST('page','int');
+$sortorder = ((GETPOST('sortorder','alpha')=="")) ? "DESC" : GETPOST('sortorder','alpha');
+$sortfield = ((GETPOST('sortfield','alpha')=="")) ? "p.datec" : GETPOST('sortfield','alpha');
+$statut = GETPOST('statut','int');
+$search_line = GETPOST('search_ligne','int');
 
 llxHeader('',$langs->trans("WithdrawalsReceipts"));
 

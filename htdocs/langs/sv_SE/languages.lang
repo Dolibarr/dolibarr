@@ -45,3 +45,20 @@ Language_is_IS=Isländska
 // Reference language: en_US -> sv_SV
 Language_sv_SV=Svenska
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:29:16).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+Language_ar_SA=Arabicum
+Language_da_DK=Danska
+Language_de_AT=Tyska (Österrike)
+Language_el_GR=Grekiska
+Language_en_NZ=Engelska (Nya Zeeland)
+Language_es_HN=Spanska (Honduras)
+Language_es_MX=Spanska (Mexiko)
+Language_es_PR=Spanska (Puerto Rico)
+Language_fa_IR=Persiska
+Language_hu_HU=Ungerska
+Language_ru_UA=Ryska (Ukraina)
+Language_sv_SE=Svenskt
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:33:54).

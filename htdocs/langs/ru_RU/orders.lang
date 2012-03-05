@@ -164,3 +164,11 @@ OrderByEMail=EMail
 OrderByWWW=Интернет
 OrderByPhone=Телефон
 // STOP - Lines generated via autotranslator.php tool (2011-08-27 17:00:04).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
+// Reference language: en_US -> ru_RU
+ShippingExist=Отгрузки существует
+UnvalidateOrder=Unvalidate порядке
+ConfirmUnvalidateOrder=Вы уверены, что хотите, чтобы восстановить порядок <b>%s</b> к проекту статус?
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:14).

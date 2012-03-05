@@ -1291,3 +1291,19 @@ ProjectsModelModule=Proje raporu belge, model
 // Reference language: en_US -> tr_TR
 Permission50001=Satış Noktası kullanın.
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 14:38:56).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
+// Reference language: en_US -> tr_TR
+WebUserGroup=Web sunucusu kullanıcı / grup
+NoLockBeforeInsert=INSERT etrafında Hayır kilit komutları
+Module105Name=Mailman ve Sip
+Module105Desc=Üye modül için Mailman ya SPIP arayüzü
+SecurityEventsPurged=Güvenlik olayları tasfiye
+ExtraFieldHasWrongValue=Atfedilmiştir %s yanlış bir değeri vardır.
+SendmailOptionMayHurtBuggedMTA=Yöntemi &quot;PHP posta doğrudan&quot; kullanarak postalar göndermek için Özellik doğru bazı alma posta sunucuları tarafından çözümlenen değil olabilir bir posta iletisi oluşturur. Sonuç bazı postalar thoose dinlenmişti platformlar tarafından barındırılan kişiler tarafından okunamaz olmasıdır. Bazı Internet servis sağlayıcıları (: Fransa'da Orange Ex) için durum böyle. Bu Dolibarr içine ne de PHP içine ancak posta sunucusu üzerine bir sorun değildir. Ancak kurulum içine seçeneğini 1 MAIN_FIX_FOR_BUGGED_MTA ekleyebilirsiniz - Bunu önlemek için Dolibarr değiştirmek için diğer. Ancak, diğer sunucular bu bakımdan kesinlikle SMTP standart ile sorun yaşayabilirsiniz. Diğer çözüm ise (tavsiye edilen) herhangi bir dezavantajı vardır yöntemi &quot;SMTP soket kütüphanesi&quot; kullanmaktır.
+ServiceSetup=Hizmetler modülü kurulumu
+ProductServiceSetup=Ürünler ve Hizmetler modülleri kurulum
+ViewProductDescInThirdpartyLanguageAbility=Thirdparty dilde ürünlerin açıklamalarının Görselleştirme
+MailmanSpipSetup=Mailman ve SPIP modülü Kurulum
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:36:39).

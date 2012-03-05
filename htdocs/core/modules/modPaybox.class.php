@@ -194,25 +194,27 @@ class modPayBox extends DolibarrModules
     }
 
     /**
-     *		\brief		Function called when module is disabled.
-     *              	Remove from database constants, boxes and permissions from Dolibarr database.
-     *					Data directories are not deleted.
-     *      \return     int             1 if OK, 0 if KO
+	 *		Function called when module is disabled.
+	 *      Remove from database constants, boxes and permissions from Dolibarr database.
+	 *		Data directories are not deleted
+	 *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
      */
-    function remove()
+    function remove($options='')
     {
-        $sql = array();
+		$sql = array();
 
-        return $this->_remove($sql);
+		return $this->_remove($sql,$options);
     }
 
-
     /**
-     *		\brief		Create tables and keys required by module
-     * 					Files mymodule.sql and mymodule.key.sql with create table and create keys
-     * 					commands must be stored in directory /mymodule/sql/
-     *					This function is called by this->init.
-     * 		\return		int		<=0 if KO, >0 if OK
+     *		Create tables and keys required by module
+     * 		Files mymodule.sql and mymodule.key.sql with create table and create keys
+     * 		commands must be stored in directory /mymodule/sql/
+     *		This function is called by this->init.
+     *
+     * 		@return		int		<=0 if KO, >0 if OK
      */
     function load_tables()
     {

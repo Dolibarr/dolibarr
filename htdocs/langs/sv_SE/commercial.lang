@@ -91,3 +91,14 @@ MyActionsToDo=Åtgärder skall jag göra
 MyActionsDone=Handlande påverkade mig
 StatusActionInProcess=I processen
 // STOP - Lines generated via autotranslator.php tool (2010-08-28 13:10:53).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+StatusNotApplicable=Ej tillämpligt
+ActionAC_SHIP=Skicka Leverans med e-post
+ActionAC_OTH=Andra
+StatusProsp=Prospect status
+DraftPropals=Utforma kommersiella förslag
+SearchPropal=Sök en kommersiell förslag
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:30).

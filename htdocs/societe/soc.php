@@ -49,7 +49,7 @@ $mesg=''; $error=0; $errors=array();
 
 $action		= (GETPOST('action') ? GETPOST('action') : 'view');
 $confirm	= GETPOST('confirm');
-$socid		= GETPOST("socid");
+$socid		= GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 
 $object = new Societe($db);
@@ -71,7 +71,7 @@ $result = restrictedArea($user, 'societe', $socid, '&societe', '', '', '', $objc
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 $hookmanager=new HookManager($db);
-$hookmanager->callHooks(array('thirdpartycard'));
+$hookmanager->initHooks(array('thirdpartycard'));
 
 
 /*
@@ -468,7 +468,7 @@ $formcompany = new FormCompany($db);
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 
-if (is_object($objcanvas) && $objcanvas->displayCanvasExists())
+if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
     // -----------------------------------------
     // When used with CANVAS
@@ -479,7 +479,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists())
 	     $object->fetch($socid);                // For use with "pure canvas" (canvas that contains templates only)
  	}
    	$objcanvas->assign_values($action, $socid);	// Set value for templates
-    $objcanvas->display_canvas();				// Show template
+    $objcanvas->display_canvas($action);		// Show template
 }
 else
 {
@@ -499,7 +499,12 @@ else
         {
             $module = substr($module, 0, dol_strlen($module)-4);
         }
-        require_once(DOL_DOCUMENT_ROOT ."/core/modules/societe/".$module.".php");
+        $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+        foreach ($dirsociete as $dirroot)
+        {
+            $res=dol_include_once($dirroot.$module.".php");
+            if ($res) break;
+        }
         $modCodeClient = new $module;
         $module=$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
         if (! $module) $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
@@ -507,7 +512,12 @@ else
         {
             $module = substr($module, 0, dol_strlen($module)-4);
         }
-        require_once(DOL_DOCUMENT_ROOT ."/core/modules/societe/".$module.".php");
+        $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+        foreach ($dirsociete as $dirroot)
+        {
+            $res=dol_include_once($dirroot.$module.".php");
+            if ($res) break;
+        }
         $modCodeFournisseur = new $module;
 
         //if ($_GET["type"]=='cp') { $object->client=3; }
@@ -693,10 +703,11 @@ else
 
         // Prospect/Customer
         print '<tr><td width="25%"><span class="fieldrequired">'.$langs->trans('ProspectCustomer').'</span></td><td width="25%"><select class="flat" name="client">';
-        if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2"'.($object->client==2?' selected="selected"':'').'>'.$langs->trans('Prospect').'</option>';
-        if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="3"'.($object->client==3?' selected="selected"':'').'>'.$langs->trans('ProspectCustomer').'</option>';
-        print '<option value="1"'.($object->client==1?' selected="selected"':'').'>'.$langs->trans('Customer').'</option>';
-        print '<option value="0"'.($object->client==0?' selected="selected"':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
+        $selected=isset($_POST['client'])?GETPOST('client'):$object->client;
+        if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2"'.($selected==2?' selected="selected"':'').'>'.$langs->trans('Prospect').'</option>';
+        if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="3"'.($selected==3?' selected="selected"':'').'>'.$langs->trans('ProspectCustomer').'</option>';
+        print '<option value="1"'.($selected==1?' selected="selected"':'').'>'.$langs->trans('Customer').'</option>';
+        print '<option value="0"'.($selected==0?' selected="selected"':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
         print '</select></td>';
 
         print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
@@ -716,7 +727,7 @@ else
             // Supplier
             print '<tr>';
             print '<td><span class="fieldrequired">'.$langs->trans('Supplier').'</span></td><td>';
-            print $form->selectyesno("fournisseur",$object->fournisseur,1);
+            print $form->selectyesno("fournisseur",(isset($_POST['fournisseur'])?GETPOST('fournisseur'):$object->fournisseur),1);
             print '</td>';
             print '<td>'.$langs->trans('SupplierCode').'</td><td>';
             print '<table class="nobordernopadding"><tr><td>';
@@ -981,7 +992,7 @@ else
             $object = new Societe($db);
             $res=$object->fetch($socid);
             if ($res < 0) { dol_print_error($db,$object->error); exit; }
-            $res=$object->fetch_optionals($socid,$extralabels);
+            $res=$object->fetch_optionals($object->id,$extralabels);
             //if ($res < 0) { dol_print_error($db); exit; }
 
             // Load object modCodeTiers
@@ -991,7 +1002,12 @@ else
             {
                 $module = substr($module, 0, dol_strlen($module)-4);
             }
-            require_once(DOL_DOCUMENT_ROOT ."/core/modules/societe/".$module.".php");
+            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+            foreach ($dirsociete as $dirroot)
+            {
+                $res=dol_include_once($dirroot.$module.".php");
+                if ($res) break;
+            }
             $modCodeClient = new $module;
             // We verified if the tag prefix is used
             if ($modCodeClient->code_auto)
@@ -1004,7 +1020,12 @@ else
             {
                 $module = substr($module, 0, dol_strlen($module)-4);
             }
-            require_once(DOL_DOCUMENT_ROOT ."/core/modules/societe/".$module.".php");
+            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
+            foreach ($dirsociete as $dirroot)
+            {
+                $res=dol_include_once($dirroot.$module.".php");
+                if ($res) break;
+            }
             $modCodeFournisseur = new $module;
             // On verifie si la balise prefix est utilisee
             if ($modCodeFournisseur->code_auto)
@@ -1419,7 +1440,7 @@ else
         $object = new Societe($db);
         $res=$object->fetch($socid);
         if ($res < 0) { dol_print_error($db,$object->error); exit; }
-        $res=$object->fetch_optionals($socid,$extralabels);
+        $res=$object->fetch_optionals($object->id,$extralabels);
         //if ($res < 0) { dol_print_error($db); exit; }
 
 

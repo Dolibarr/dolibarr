@@ -148,6 +148,12 @@ class pdf_edison extends ModelePDFCommandes
                     $pdf->setPrintFooter(false);
                 }
                 $pdf->SetFont(pdf_getPDFFont($outputlangs));
+                // Set path to the background PDF File
+                if (empty($conf->global->MAIN_DISABLE_FPDI) && ! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+                {
+                    $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+                    $tplidx = $pdf->importPage(1);
+                }
 
 				$pdf->Open();
 				$pagenb=0;
@@ -165,8 +171,9 @@ class pdf_edison extends ModelePDFCommandes
 
 				// New page
 				$pdf->AddPage();
+				if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 				$pagenb++;
-				$this->_pagehead($pdf, $object, 1, $outputlangs);
+				$this->_pagehead($pdf, $object, 1, $outputlangs, $hookmanager);
 				$pdf->SetFont('','', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
@@ -240,8 +247,9 @@ class pdf_edison extends ModelePDFCommandes
 
 						// New page
 						$pdf->AddPage();
+				        if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 						$pagenb++;
-						$this->_pagehead($pdf, $object, 0, $outputlangs);
+						$this->_pagehead($pdf, $object, 0, $outputlangs, $hookmanager);
 						$pdf->SetFont('','', $default_font_size - 1);
 						$pdf->MultiCell(0, 3, '');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
@@ -290,9 +298,12 @@ class pdf_edison extends ModelePDFCommandes
 				$pdf->Output($file,'F');
 
 				// Actions on extra fields (by external module or standard code)
-				include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
-				$hookmanager=new HookManager($this->db);
-				$hookmanager->callHooks(array('pdfgeneration'));
+				if (! is_object($hookmanager))
+				{
+					include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+					$hookmanager=new HookManager($this->db);
+				}
+				$hookmanager->initHooks(array('pdfgeneration'));
 				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				global $action;
 				$reshook=$hookmanager->executeHooks('afterPDFCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -509,9 +520,10 @@ class pdf_edison extends ModelePDFCommandes
 	 *  @param  Object		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
+	 *  @param	object		$hookmanager	Hookmanager object
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	function _pagehead(&$pdf, $object, $showaddress, $outputlangs ,$hookmanager)
 	{
 		global $conf,$langs,$mysoc;
 		$langs->load("orders");
@@ -624,13 +636,23 @@ class pdf_edison extends ModelePDFCommandes
     		$pdf->MultiCell(86,4, $carac_client, 0, 'L');
 		}
 
+		$curY = 80;
+		$posy=$curY;
+
 		// Date - order
 		$pdf->SetTextColor(200,0,0);
-		$pdf->SetFont('','B', $default_font_size + 2);
-		$pdf->SetXY(11, 88);
+		$pdf->SetFont('','B', $default_font_size + 1);
+		$pdf->SetXY(11, $posy);
+		$posy+=6;
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date,'day',false,$outputlangs), 0, 'L');
-        $pdf->SetXY(11, 94);
+        $pdf->SetXY(11, $posy);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Order")." ".$outputlangs->convToOutputCharset($object->ref), 0, 'L');
+
+
+		$posy+=1;
+
+		// Show list of linked objects
+		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 'L', $default_font_size, $hookmanager);
 	}
 
 	/**

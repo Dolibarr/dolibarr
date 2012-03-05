@@ -40,7 +40,8 @@ $message = '';
 $substitutionarray=array(
 '__ID__' => 'IdRecord',
 '__EMAIL__' => 'EMail',
-'__CHECK_READ__' => 'CheckMailIsRead',
+'__CHECK_READ__' => 'CheckMail',
+'__UNSUSCRIBE__' => 'Unsuscribe',
 '__LASTNAME__' => 'Lastname',
 '__FIRSTNAME__' => 'Firstname',
 '__OTHER1__' => 'Other1',
@@ -52,7 +53,8 @@ $substitutionarray=array(
 $substitutionarrayfortest=array(
 '__ID__' => 'TESTIdRecord',
 '__EMAIL__' => 'TESTEMail',
-'__CHECK_READ__' => 'TESTCheckMailIsRead',
+'__CHECK_READ__' => 'TESTCheckMail',
+'__UNSUSCRIBE__' => 'TESTUnsuscribe',
 '__LASTNAME__' => 'TESTLastname',
 '__FIRSTNAME__' => 'TESTFirstname',
 '__OTHER1__' => 'TESTOther1',
@@ -135,7 +137,7 @@ if ($_REQUEST["action"] == 'sendallconfirmed' && $_REQUEST['confirm'] == 'yes')
 
 		// On choisit les mails non deja envoyes pour ce mailing (statut=0)
 		// ou envoyes en erreur (statut=-1)
-		$sql = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email, mc.other, mc.source_url, mc.source_id, mc.source_type";
+		$sql = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email, mc.other, mc.source_url, mc.source_id, mc.source_type, mc.tag";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 		$sql .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$id;
 
@@ -180,7 +182,8 @@ if ($_REQUEST["action"] == 'sendallconfirmed' && $_REQUEST['confirm'] == 'yes')
 					$substitutionarray=array(
 						'__ID__' => $obj->source_id,
 						'__EMAIL__' => $obj->email,
-						'__CHECK_READ__' => '<IMG SRC="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?mail_cbl_id='.$obj->rowid.'&mail='.$obj->email.'" style="width:0px;height:0px" border="0"/>',
+						'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'" style="width:0px;height:0px" border="0"/>',
+						'__UNSUSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-usubscribe.php?tag='.$obj->tag.'&unsuscrib=1" target="_blank"/>'.$langs->trans("MailUnsubcribe").'</a>',
 						'__LASTNAME__' => $obj->nom,
 						'__FIRSTNAME__' => $obj->prenom,
 						'__OTHER1__' => $other1,
@@ -1030,6 +1033,7 @@ else
 			print '__ID__ = '.$langs->trans("IdRecord").'<br>';
 			print '__EMAIL__ = '.$langs->trans("EMail").'<br>';
 			print '__CHECK_READ__ = '.$langs->trans("CheckRead").'<br>';
+			print '__UNSUSCRIBE__ = '.$langs->trans("MailUnsubcribe").'<br>';
 			print '__LASTNAME__ = '.$langs->trans("Lastname").'<br>';
 			print '__FIRSTNAME__ = '.$langs->trans("Firstname").'<br>';
 			print '__OTHER1__ = '.$langs->trans("Other").'1<br>';

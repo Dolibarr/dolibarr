@@ -31,8 +31,8 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/member.lib.php");
 $WIDTH=500;
 $HEIGHT=200;
 
-$userid=GETPOST('userid'); if ($userid < 0) $userid=0;
-$socid=GETPOST('socid'); if ($socid < 0) $socid=0;
+$userid=GETPOST('userid','int'); if ($userid < 0) $userid=0;
+$socid=GETPOST('socid','int'); if ($socid < 0) $socid=0;
 // Security check
 if ($user->societe_id > 0)
 {

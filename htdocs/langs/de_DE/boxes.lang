@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-10 00:11:12
  */
@@ -72,3 +72,18 @@ NoRecordedContracts=Keine Verträge erfasst
 BoxTitleLastModifiedSuppliers=%s zuletzt bearbeitete Lieferanten
 BoxTitleLastModifiedCustomers=%s zuletzt bearbeitete Kunden
 BoxTitleLastModifiedProspects=%s zuletzt bearbeitete Leads
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+BoxLastContacts=Letzte Kontakte / Adressen
+BoxLastMembers=Letzte Mitglieder
+BoxTitleLastModifiedMembers=Zuletzt geändert %s Mitglieder
+BoxTitleLastModifiedContacts=Zuletzt geändert %s Kontakte / Adressen
+BoxOldestExpiredServices=Die ältesten aktiven Dienste abgelaufen
+BoxLastExpiredServices=Letzte %s älteste aktive Kontakte mit abgelaufenem Dienstleistungen
+BoxTitleLastModifiedDonations=Zuletzt geändert %s Spenden
+BoxTitleLastModifiedExpenses=Zuletzt geändert %s Aufwendungen
+ClickToAdd=Klicken Sie hier, um hinzuzufügen.
+NoRecordedContacts=Keine aufgenommenen Kontakte
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:52).

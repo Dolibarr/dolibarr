@@ -81,3 +81,16 @@ AgendaExtNb=Calendario nb %s
 ExtSiteUrlAgenda=URL per accedere. ICal file
 ExtSiteNoLabel=Nessuna descrizione
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:04).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+// Reference language: en_US -> it_IT
+LocalAgenda=Calendario locale
+MyEvents=I miei eventi
+OtherEvents=Altri eventi
+OrderApprovedInDolibarr=%s ordine approvato
+OrderBackToDraftInDolibarr=%s Ordine tornare allo stato di progetto
+OrderCanceledInDolibarr=%s ordine annullato
+InterventionSentByEMail=%s intervento inviati via email
+ExportCal=Export calendario
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:33:46).

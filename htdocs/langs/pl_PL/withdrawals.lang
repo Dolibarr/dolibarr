@@ -87,3 +87,28 @@ NotifyEmision=Wycofanie emisji
 NotifyCredit=Odstąpienia od umowy kredytowej
 NumeroNationalEmetter=Krajowy numer nadajnika
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 02:23:06).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+NbOfInvoiceToWithdrawWithInfo=Nb faktury z wycofać wniosek o klientów posiadających określone informacje o koncie bankowym
+StatusTrans=Przekazywane
+PleaseSelectCustomerBankBANToWithdraw=Wybierz informacje o rachunku bankowym klienta do odstąpienia
+WithBankUsingRIB=Na rachunkach bankowych z wykorzystaniem RIB
+WithBankUsingBANBIC=Na rachunkach bankowych z wykorzystaniem IBAN / BIC / SWIFT
+BankToReceiveWithdraw=Konto bankowe do odbioru odstępuje
+CreditDate=Kredyt na
+WithdrawalFileNotCapable=Nie można wygenerować plik potwierdzenia wypłaty dla swojego kraju
+ShowWithdraw=Pokaż Wypłata
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Jeśli jednak faktura nie co najmniej jeden wypłaty płatności jeszcze przetworzone, nie będzie ustawiony jako zapłaci, aby umożliwić zarządzanie wycofanie wcześniej.
+DoStandingOrdersBeforePayments=Te karty pozwala z prośbą o zlecenia stałego. Gdy będzie gotowy, możesz wpisać płatność zamknąć faktury.
+InfoCreditSubject=Płatność z %s zamówienia stojących przez bank
+InfoCreditMessage=Stojąc %s zamówienie zostało wypłacone przez bank <br> Data płatności: %s
+InfoTransSubject=Przekazywanie %s rzędu stojących na brzegu
+InfoTransMessage=Stojąc %s zamówienie zostało przesłanych do banku przez %s %s. <br><br>
+InfoTransData=Kwota: %s <br> Metode: %s <br> Data: %s
+InfoFoot=Jest to zautomatyzowany wiadomość wysłana przez Dolibarr
+InfoRejectSubject=Zlecenie stałe odmówił
+InfoRejectMessage=Witam, <br><br> standig aby fakturze %s związanych z %s firmy, w kwocie %s został odrzucony przez bank. <br><br> - <br> % $
+ModeWarning=Opcja dla trybu rzeczywistego nie był ustawiony, zatrzymujemy po tej symulacji
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:19:05).

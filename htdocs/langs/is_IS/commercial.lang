@@ -86,3 +86,14 @@ ActionAC_COM=Senda viðskiptavina þess með pósti
 ActionAC_SUP_ORD=Senda birgir röð í pósti
 ActionAC_SUP_INV=Senda birgir reikning í pósti
 // STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+StatusNotApplicable=Á ekki við
+ActionAC_SHIP=Senda skipum með pósti
+ActionAC_OTH=Annað
+StatusProsp=Prospect stöðu
+DraftPropals=Drög auglýsing tillögur
+SearchPropal=Leita að auglýsing tillögu
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:47).

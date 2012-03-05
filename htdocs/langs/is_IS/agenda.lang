@@ -56,3 +56,33 @@ AgendaUrlOptions5=<b>logind = %s </b> til að takmarka framleiðsla til aðgerð
 AgendaShowBirthdayEvents=tengiliði Sýna afmæli's
 AgendaHideBirthdayEvents=tengiliðir Fela afmæli's
 // STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+LocalAgenda=Staðbundin dagbók
+MyEvents=Viðburðir mín
+OtherEvents=Aðrir viðburðir
+EventOnFullDay=Atburður á fullu dag
+ViewDay=Dagsskjár
+ViewWeek=Vikuskjár
+AgendaExtSitesDesc=Þessi síða leyfir þér að lýsa ytri uppsprettur dagatal til að sjá atburði í Dolibarr dagskrá.
+InvoiceBackToDraftInDolibarr=Vörureikningi %s fara aftur til drög að stöðu
+OrderApprovedInDolibarr=Panta %s samþykkt
+OrderBackToDraftInDolibarr=Panta %s fara aftur til drög að stöðu
+OrderCanceledInDolibarr=Panta %s niður
+ProposalSentByEMail=Verslunarhúsnæði %s tillaga send með tölvupósti
+OrderSentByEMail=Viðskiptavinur röð %s send með tölvupósti
+InvoiceSentByEMail=Viðskiptavinur vörureikningi %s send með tölvupósti
+SupplierOrderSentByEMail=Birgir röð %s send með tölvupósti
+SupplierInvoiceSentByEMail=Birgir vörureikningi %s send með tölvupósti
+ShippingSentByEMail=Sendingarmáti %s send með tölvupósti
+InterventionSentByEMail=Inngrip %s send með tölvupósti
+ExportCal=Útflutningur dagbók
+ExtSites=Flytja ytri dagatöl
+ExtSitesEnableThisTool=Sýna utanaðkomandi dagatöl í dagskrá
+ExtSitesNbOfAgenda=Fjöldi dagatal
+AgendaExtNb=Dagatal nb %s
+ExtSiteUrlAgenda=Slóð til að opna. Kvæmd skrá
+ExtSiteNoLabel=Engin lýsing
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:28:49).

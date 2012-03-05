@@ -32,6 +32,7 @@ ErrorConnectedButDatabaseNotFound=Connexion au serveur réussi mais base '%s' in
 ErrorDatabaseAlreadyExists=La base de données '%s' existe déjà.
 IfDatabaseNotExistsGoBackAndUncheckCreate=Si la base n'existe pas, revenez en arrière et cochez l'option "Créer la base de données".
 IfDatabaseExistsGoBackAndCheckCreate=Si la base existe déjà, revenez en arrière et désactiver l'option "Créer la base de données".
+WarningBrowserTooOld=Version de navigateur trop ancienne. Nous vous recommandons de mettre à jour vers un version récente de Firefox, Chrome ou Opera.
 PHPVersion=Version PHP
 YouCanContinue=Vous pouvez continuer...
 PleaseBePatient=Merci de patienter...

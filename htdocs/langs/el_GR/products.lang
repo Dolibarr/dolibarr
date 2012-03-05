@@ -133,3 +133,44 @@ NewRefForClone=Ref. of new product/service
 CustomerPrices=Τιμές πελατών
 SuppliersPrices=Τιμές προμηθευτών
 CountryOrigin=Χώρα προέλευσης
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+ContractStatusToRun=Μια υπηρεσία mettre en
+ErrorProductBadRefOrLabel=Λάθος τιμή για την αναφορά ή την ετικέτα.
+ProductsAndServicesArea=Προϊόντων και Υπηρεσιών της περιοχής
+AllWays=Μονοπάτι να βρείτε το προϊόν σας σε απόθεμα
+BarCode=Barcode
+GenbarcodeLocation=Μπαρ παραγωγή κώδικα εντολών εργαλείο γραμμής (που χρησιμοποιείται από τη μηχανή phpbarcode για ορισμένους τύπους γραμμωτού κώδικα)
+ServiceLimitedDuration=Εάν το προϊόν είναι μια υπηρεσία με περιορισμένη διάρκεια:
+ParentProductsNumber=Αριθμός προϊόντος μητρικής
+ProductAssociationList=Κατάλογος των σχετικών προϊόντων / υπηρεσιών: το όνομα του προϊόντος / υπηρεσίας (επηρεάζονται ποσότητα)
+ProductParentList=Κατάλογος των προϊόντων / υπηρεσιών με αυτό το προϊόν ως συστατικό
+ErrorAssociationIsFatherOfThis=Ένα από τα προϊόντα που θα επιλεγούν είναι γονέας με την τρέχουσα προϊόν
+ConfirmDeleteProduct=Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτό το προϊόν / υπηρεσία;
+ProductDeleted=Προϊόν / Υπηρεσία &quot;%s&quot; διαγράφονται από τη βάση δεδομένων.
+DeleteProductLine=Διαγραφή σειρά προϊόντων
+ConfirmDeleteProductLine=Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτή τη γραμμή το προϊόν;
+NoProductMatching=Κανένα προϊόν / υπηρεσία ταιριάζουν με τα κριτήρια σας
+MatchingProducts=Συνδυάζοντας τα προϊόντα / υπηρεσίες
+NoStockForThisProduct=Δεν απόθεμα για αυτό το προϊόν
+Restock=Εφοδιάζω με νέα εμπορεύματα
+ProductSpecial=Ειδικές
+QtyMin=Ελάχιστη ποσότητα
+PriceQty=Τιμή για την ποσότητα αυτή
+PriceQtyMin=Τιμή λεπτά ποσότητα.
+NoPriceDefinedForThisSupplier=Δεν υπάρχει τιμή / έκαστος ορίζεται αυτής της επιχείρησης / του προϊόντος
+NoSupplierPriceDefinedForThisProduct=Δεν υπάρχει τιμή προμηθευτή / έκαστος ορίζονται για αυτό το προϊόν
+RecordedProducts=Προϊόντα που καταγράφονται
+RecordedProductsAndServices=Προϊόντα / υπηρεσίες που καταγράφονται
+ProductCanvasAbility=Χρησιμοποιήστε το ειδικό &quot;καμβά&quot; addons
+ListProductServiceByPopularity=Κατάλογος των προϊόντων / υπηρεσιών κατά δημοτικότητα
+ListProductByPopularity=Κατάλογος των προϊόντων κατά δημοτικότητα
+ListServiceByPopularity=Κατάλογος των υπηρεσιών κατά δημοτικότητα
+ConfirmCloneProduct=Είστε βέβαιοι ότι θέλετε να κλωνοποιήσει το προϊόν ή την υπηρεσία <b>%s;</b>
+CloneContentProduct=Κλώνος όλες τις κύριες πληροφορίες του προϊόντος / υπηρεσίας
+ClonePricesProduct=Κλώνος κύριες πληροφορίες και τιμές
+CustomCode=Τελωνειακός Κώδικας
+HiddenIntoCombo=Κρυμμένο σε λίστες επιλογής
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:28).

@@ -1,7 +1,7 @@
 <?PHP
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2011 Juanjo Menent 		<jmenent@2byte.es>
+ * Copyright (C) 2010-2012 Juanjo Menent 		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,14 +39,14 @@ $langs->load("categories");
 if ($user->societe_id > 0) accessforbidden();
 
 // Get supervariables
-$action = GETPOST("action");
-$id = GETPOST("id");
+$action = GETPOST('action','alpha');
+$id = GETPOST('id','int');
 
 /*
  * Actions
  */
 
-if ( $action == 'confirm_credite' && GETPOST("confirm") == 'yes')
+if ( $action == 'confirm_credite' && GETPOST('confirm','alpha') == 'yes')
 {
 	$bon = new BonPrelevement($db,"");
 	$bon->id = $id;
@@ -69,9 +69,9 @@ if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
 
 		if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $dir . "/" . $_FILES['userfile']['name'],1) > 0)
 		{
-			$dt = dol_mktime(12,0,0,GETPOST("remonth"),GETPOST("reday"),GETPOST("reyear"));
+			$dt = dol_mktime(12,0,0,GETPOST('remonth','int'),GETPOST('reday','int'),GETPOST('reyear','int'));
 
-			$bon->set_infotrans($user, $dt, GETPOST("methode"));
+			$bon->set_infotrans($user, $dt, GETPOST('methode','alpha'));
 		}
 
 		Header("Location: fiche.php?id=".$id);
@@ -88,7 +88,7 @@ if ($action == 'infocredit' && $user->rights->prelevement->bons->credit)
 {
 	$bon = new BonPrelevement($db,"");
 	$bon->fetch($id);
-	$dt = dol_mktime(12,0,0,GETPOST("remonth"),GETPOST("reday"),GETPOST("reyear"));
+	$dt = dol_mktime(12,0,0,GETPOST('remonth','int'),GETPOST('reday','int'),GETPOST('reyear','int'));
 
 	$error = $bon->set_infocredit($user, $dt);
 
@@ -121,9 +121,9 @@ if ($id)
 		$head = prelevement_prepare_head($bon);
 		dol_fiche_head($head, 'prelevement', $langs->trans("WithdrawalReceipt"), '', 'payment');
 
-		if (GETPOST("error")!='')
+		if (GETPOST('error','alpha')!='')
 		{
-			print '<div class="error">'.$bon->ReadError(GETPOST("error")).'</div>';
+			print '<div class="error">'.$bon->ReadError(GETPOST('error','alpha')).'</div>';
 		}
 
 		if ($action == 'credite')

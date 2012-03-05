@@ -40,7 +40,7 @@ if (empty($dolibarr_main_demo)) accessforbidden('Parameter dolibarr_main_demo mu
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 $hookmanager=new HookManager($db);
-$hookmanager->callHooks(array('demo'));
+$hookmanager->initHooks(array('demo'));
 
 $demoprofiles=array(
 	array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
@@ -222,7 +222,7 @@ if (GETPOST("action") == 'gotodemo')
 	if ($disablestring)
 	{
 		$url=DOL_URL_ROOT.'/index.php?disablemodules='.$disablestring;
-		if (GETPOST("urlfrom")) $url.='&urlfrom='.GETPOST("urlfrom");
+		if (GETPOST('urlfrom','alpha')) $url.='&urlfrom='.GETPOST('urlfrom','alpha');
 		header("Location: ".$url);
 		exit;
 	}

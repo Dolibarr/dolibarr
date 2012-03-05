@@ -30,7 +30,7 @@ $langs->load("cashdesk");
 
 $username = GETPOST("txtUsername");
 $password = GETPOST("pwdPassword");
-$thirdpartyid = (GETPOST("socid")!='')?GETPOST("socid"):$conf->global->CASHDESK_ID_THIRDPARTY;
+$thirdpartyid = (GETPOST('socid','int')!='')?GETPOST('socid','int'):$conf->global->CASHDESK_ID_THIRDPARTY;
 $warehouseid = (GETPOST("warehouseid")!='')?GETPOST("warehouseid"):$conf->global->CASHDESK_ID_WAREHOUSE;
 
 // Check username

@@ -56,3 +56,33 @@ AgendaUrlOptions5=<b>logind =％s</b>到<b>％</b>限制输出到用户的行为
 AgendaShowBirthdayEvents=显示生日的接触
 AgendaHideBirthdayEvents=隐藏生日的接触
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+LocalAgenda=本地日历
+MyEvents=我的活动
+OtherEvents=其他活动
+EventOnFullDay=全天事件
+ViewDay=日视图
+ViewWeek=周视图
+AgendaExtSitesDesc=此页面允许申报日历的外部来源，以他们的活动看到到Dolibarr议程。
+InvoiceBackToDraftInDolibarr=发票的%s去回到草案状态
+OrderApprovedInDolibarr=为了%s批准
+OrderBackToDraftInDolibarr=为了%s回到草案状态
+OrderCanceledInDolibarr=为了%s取消
+ProposalSentByEMail=商业建议通过电子邮件发送%s
+OrderSentByEMail=客户订单通过电子邮件发送%s
+InvoiceSentByEMail=客户发票通过电子邮件发送%s
+SupplierOrderSentByEMail=供应商的订单通过电子邮件发送%s
+SupplierInvoiceSentByEMail=供应商的发票通过电子邮件发送%s
+ShippingSentByEMail=通过电子邮件发送的航运%s
+InterventionSentByEMail=通过电子邮件发送的干预%s
+ExportCal=出口日历
+ExtSites=导入外部日历
+ExtSitesEnableThisTool=到议程中显示的外部日历
+ExtSitesNbOfAgenda=日历数
+AgendaExtNb=日历NB %s
+ExtSiteUrlAgenda=URL来访问。iCal文件
+ExtSiteNoLabel=无说明
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:40:07).

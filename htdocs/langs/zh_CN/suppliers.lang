@@ -44,3 +44,11 @@ AddSupplierInvoice=创建供应商发票
 ListOfSupplierProductForSupplier=<b>％</b>产品供应商名单和价格<b>的</b> S
 NoneOrBatchFileNeverRan=无或批处理<b>％不是</b>最近跑
 // STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+BuyingPriceMin=最低购买价格
+BuyingPriceMinShort=最小买入价
+Availability=可用性
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:38:10).

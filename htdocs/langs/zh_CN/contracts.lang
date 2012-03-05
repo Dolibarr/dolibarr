@@ -105,3 +105,9 @@ TypeContact_contrat_external_SALESREPSIGN=签约客户的联系
 // Reference language: en_US -> zh_CN
 Error_CONTRACT_ADDON_NotDefined=恒CONTRACT_ADDON没有定义
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 11:27:39).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+NoExpiredServices=没有过期的主动服务
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:30).

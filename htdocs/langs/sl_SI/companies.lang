@@ -354,3 +354,22 @@ MonkeyNumRefModelDesc = Predlaga kodo kupca v formatu %syymm-nnnn in kodo dobavi
 # Leopard = undefined
 LeopardNumRefModelDesc = Koda kupca / dobavitelja po želji. Lahko jo kadarkoli spremenite.
 
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).
+// Reference language: en_US -> sl_SI
+CountryId=Država id
+#ProfId1BR=CNAE
+#ProfId2BR=CNPJ
+#ProfId3BR=CPF
+#ProfId4BR=INSS
+#ProfId5BR=IE
+#ProfId6BR=IM
+ProfId1RU=Prof ID 1 (OGRN)
+ProfId2RU=Prof Id 2 (INN)
+ProfId3RU=Prof Id 3 (KPP)
+ProfId4RU=Prof Id 4 (OKPO)
+ProfId5RU=-
+EditContact=Uredi osebo / naslov
+ImportDataset_company_2=Stiki (od thirdparties ali ne) in atributi
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:31:26).

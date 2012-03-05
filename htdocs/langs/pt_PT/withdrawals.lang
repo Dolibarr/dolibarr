@@ -74,3 +74,28 @@ NotifyEmision=Retirada de emissão
 NotifyCredit=Retirada de crédito
 NumeroNationalEmetter=Número Nacional de Transmissor
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 02:23:13).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+NbOfInvoiceToWithdrawWithInfo=N º de factura com retirar pedido de clientes com informações sobre a conta bancária definida
+StatusTrans=Transmitido
+PleaseSelectCustomerBankBANToWithdraw=Selecione informações sobre conta bancária do cliente para retirar
+WithBankUsingRIB=Para contas bancárias usando RIB
+WithBankUsingBANBIC=Para contas bancárias usando IBAN / BIC / SWIFT
+BankToReceiveWithdraw=Conta bancária para receber retira
+CreditDate=Crédito em
+WithdrawalFileNotCapable=Não foi possível gerar arquivo retirada recibo para seu país
+ShowWithdraw=Mostrar Retirar
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=No entanto, se não tiver factura, pelo menos, um pagamento retirada ainda processado, que não irá ser definido como payed para permitir a retirada antes de administrar.
+DoStandingOrdersBeforePayments=Este abas permite que você pedir para uma ordem permanente. Uma vez que ele será terminado, você pode digitar o pagamento para fechar a fatura.
+InfoCreditSubject=Pagamento de %s ordem permanente pelo banco
+InfoCreditMessage=O %s ordem permanente foi pago pelo banco <br> Dados de pagamento: %s
+InfoTransSubject=Transmissão de %s ordem permanente para o banco
+InfoTransMessage=O %s ordem permanente foi transmitido para o banco por %s %s. <br><br>
+InfoTransData=Valor: %s <br> Metode: %s <br> Data: %s
+InfoFoot=Esta é uma mensagem enviada pelo automatizado Dolibarr
+InfoRejectSubject=Ordem permanente recusou
+InfoRejectMessage=Olá, <br><br> a ordem de standig %s faturas relacionadas aos %s empresa, com um montante de %s foi recusado pelo banco. <br><br> - <br> $%
+ModeWarning=Opção para o modo real não foi definido, nós paramos depois desta simulação
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:23).

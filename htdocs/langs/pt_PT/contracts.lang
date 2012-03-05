@@ -101,3 +101,10 @@ ConfirmDeleteContractLine=Tem certeza de que deseja excluir este contrato linha?
 // Reference language: en_US -> pt_PT
 RelatedContracts=contratos relacionados
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:50).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+NoExpiredServices=Nenhum serviço expirou ativos
+Error_CONTRACT_ADDON_NotDefined=CONTRACT_ADDON constante não definida
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:04).

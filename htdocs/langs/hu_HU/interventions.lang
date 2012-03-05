@@ -42,3 +42,9 @@ ClassifyBilled=Classify &quot;számlázott&quot;
 StatusInterInvoiced=Számlázott
 RelatedInterventions=Kapcsolódó beavatkozások
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 05:21:02).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
+// Reference language: en_US -> hu_HU
+ShowIntervention=Mutasd beavatkozás
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:13:50).

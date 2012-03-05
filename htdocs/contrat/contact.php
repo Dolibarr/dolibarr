@@ -77,7 +77,7 @@ if ($_POST["action"] == 'addcontact' && $user->rights->contrat->creer)
 if ($_GET["action"] == 'swapstatut' && $user->rights->contrat->creer)
 {
 	$contrat = new Contrat($db);
-	if ($contrat->fetch(GETPOST("id")))
+	if ($contrat->fetch(GETPOST('id','int')))
 	{
 	    $result=$contrat->swapContactStatus(GETPOST('ligne'));
 	}

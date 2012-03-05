@@ -53,7 +53,7 @@ if (GETPOST('mesg','int',1) && isset($_SESSION['message'])) $mesg=$_SESSION['mes
 $sall=trim(GETPOST('sall'));
 $projectid=(GETPOST('projectid')?GETPOST('projectid','int'):0);
 
-$id=(GETPOST('id')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
+$id=(GETPOST('id','int')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
 $ref=GETPOST('ref','alpha');
 $socid=GETPOST('socid','int');
 $action=GETPOST('action','alpha');
@@ -80,7 +80,7 @@ $object=new Facture($db);
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 $hookmanager=new HookManager($db);
-$hookmanager->callHooks(array('invoicecard'));
+$hookmanager->initHooks(array('invoicecard'));
 
 
 /*
@@ -558,7 +558,7 @@ if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->rights->f
  */
 if ($action == 'add' && $user->rights->facture->creer)
 {
-    $object->socid=GETPOST('socid');
+    $object->socid=GETPOST('socid','int');
 
     $db->begin();
 

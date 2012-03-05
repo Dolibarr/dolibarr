@@ -316,3 +316,10 @@ DemandReasonTypeSRC_CAMP_FAX=حملة الفاكس
 DemandReasonTypeSRC_COMM=الاتصال التجاري
 DemandReasonTypeSRC_SHOP=متجر الاتصال
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 07:38:58).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+CurrencyUAH=الهريفنيا
+CurrencySingUAH=الهريفنيا
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:55:36).

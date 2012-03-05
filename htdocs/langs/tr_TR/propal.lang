@@ -125,3 +125,9 @@ AvailabilityTypeAV_NOW=Acil
 TypeContact_propal_external_BILLING=Müşteri faturasında temas
 TypeContact_propal_external_CUSTOMER=Müşteri iletişim takibi teklifi
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 13:56:03).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
+// Reference language: en_US -> tr_TR
+ConfirmReOpenProp=Eğer ticari teklifi <b>%s</b> geri açmak istediğinizden emin misiniz?
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:36:49).

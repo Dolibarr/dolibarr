@@ -43,9 +43,9 @@ if (! empty($conf->global->FICHEINTER_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."
 $langs->load("companies");
 $langs->load("interventions");
 
-$id			= GETPOST('id');
+$id			= GETPOST('id','int');
 $ref		= GETPOST('ref');
-$socid		= GETPOST('socid');
+$socid		= GETPOST('socid','int');
 $action		= GETPOST("action");
 $confirm	= GETPOST("confirm");
 $mesg		= GETPOST("msg");

@@ -105,3 +105,9 @@ TypeContact_contrat_external_SALESREPSIGN=Sözleşme imzalama müşteri temas
 RelatedContracts=İlgili sözleşmeler
 Error_CONTRACT_ADDON_NotDefined=Sabit CONTRACT_ADDON tanımlanmamış
 // STOP - Lines generated via autotranslator.php tool (2011-10-09 13:54:38).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
+// Reference language: en_US -> tr_TR
+NoExpiredServices=Hayır süresi aktif hizmet
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:35:58).

@@ -47,8 +47,8 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 $errmsg='';
 $num=0;
 $error=0;
-$backtopage=GETPOST('backtopage');
-$action=GETPOST('action');
+$backtopage=GETPOST('backtopage','alpha');
+$action=GETPOST('action','alpha');
 
 // Load translation files
 $langs->load("main");
@@ -255,7 +255,7 @@ if ($action == 'add')
                 $result=$adh->send_an_email($conf->global->ADHERENT_AUTOREGISTER_MAIL,$conf->global->ADHERENT_AUTOREGISTER_MAIL_SUBJECT,array(),array(),array(),"","",0,-1);
             }
 
-            if ($backtopage) $urlback=$backtopage;
+            if (! empty($backtopage)) $urlback=$backtopage;
             else if ($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION)
             {
                 $urlback=$conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
@@ -545,7 +545,7 @@ print "</table>\n";
 // Save
 print '<br><center>';
 print '<input type="submit" value="'.$langs->trans("Save").'" id="submitsave" class="button">';
-if ($backtopage)
+if (! empty($backtopage))
 {
     print ' &nbsp; &nbsp; <input type="submit" value="'.$langs->trans("Cancel").'" id="submitcancel" class="button">';
 }

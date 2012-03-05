@@ -36,5 +36,4 @@ ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_fk_user_author	FOREIGN KEY (
 ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_fk_user_valid	FOREIGN KEY (fk_user_valid)  REFERENCES llx_user (rowid);
 ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_fk_user_cloture	FOREIGN KEY (fk_user_cloture) REFERENCES llx_user (rowid);
 ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_fk_projet		FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
-ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_fk_account		FOREIGN KEY (fk_account) REFERENCES llx_bank_account (rowid);
 ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_fk_currency		FOREIGN KEY (fk_currency) REFERENCES llx_c_currencies (code);

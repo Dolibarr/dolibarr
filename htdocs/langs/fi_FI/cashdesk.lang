@@ -1,0 +1,48 @@
+/*
+ * Language code: fi_FI
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 16:10:23
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+CHARSET=UTF-8
+CashDeskMenu=Myyntipiste
+CashDesk=Myyntipiste
+CashDesks=Point of myynnin
+CashDeskBank=Pankkitili
+CashDeskBankCash=Pankkitili (raha)
+CashDeskBankCB=Pankkitili (kortti)
+CashDeskBankCheque=Pankkitili (tarkistus)
+CashDeskWarehouse=Varasto
+CashdeskShowServices=Myynnin palvelut
+CashDeskProducts=Tuotteet
+CashDeskStock=Stock
+CashDeskOn=on
+CashDeskThirdParty=Kolmas osapuoli
+ShoppingCart=Ostoskori
+NewSell=Uusi myydä
+BackOffice=Back office
+AddThisArticle=Lisää tämä artikkeli
+RestartSelling=Mene takaisin myydä
+SellFinished=Myy valmis
+PrintTicket=Tulosta lippu
+NoResults=Ei tuloksia
+NoProductFound=Ei artikkeli löydetty
+ProductFound=Tuote löytyy
+ProductsFound=tuotetta löytyi
+NoArticle=Ei artikkeli
+Identification=Tunnistaminen
+Article=Artikkeli
+Difference=Ero
+TotalTicket=Yhteensä lippu
+NoVAT=Ei arvonlisävero tämän myynnin
+Change=Ylimääräinen sai
+CalTip=Klikkaa tarkastella kalenteria
+CashDeskSetupStock=Pyydät vähentää varastossa laskun luomisessa, mutta varastoon tätä ei ole määritelty <br> Muuta varastossa moduulin asennuksen tai valitse varasto
+BankToPay=Veloitustili
+ShowCompany=Näytä yrityksen
+ShowStock=Näytä varasto
+DeleteArticle=Poista napsauttamalla tämän artikkelin
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:12:29).

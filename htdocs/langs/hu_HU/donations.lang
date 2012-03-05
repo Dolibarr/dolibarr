@@ -23,3 +23,11 @@ DonationStatusPaidShort=Kapott
 ValidPromise=Ígéret hitelesítése
 BuildDonationReceipt=Nyugta készítése
 DonationsModels=Dokumentum modellek adományok nyugtájához
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
+// Reference language: en_US -> hu_HU
+ValidPromess=Érvényesítés ígéret
+LastModifiedDonations=Utolsó módosítás adományok %s
+SearchADonation=Keresés adományt
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:23:59).

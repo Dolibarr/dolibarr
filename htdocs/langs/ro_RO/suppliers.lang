@@ -56,3 +56,11 @@ NoneOrBatchFileNeverRan=Nici unul sau <b>lot %s</b> nu a fugit recent
 // Reference language: en_US
 ReferenceSupplierIsAlreadyAssociatedWithAProduct=Acest furnizor de referinţă este deja asociat cu o referinţă: %s
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:38).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
+// Reference language: en_US -> ro_RO
+BuyingPriceMin=Preţul minim de achiziţie
+BuyingPriceMinShort=Min preţul de cumpărare
+Availability=Disponibilitate
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:57).

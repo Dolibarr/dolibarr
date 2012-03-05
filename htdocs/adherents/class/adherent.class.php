@@ -450,7 +450,7 @@ class Adherent extends CommonObject
             // Actions on extra fields (by external module)
             include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
             $hookmanager=new HookManager($this->db);
-            $hookmanager->callHooks(array('memberdao'));
+            $hookmanager->initHooks(array('memberdao'));
             $parameters=array('id'=>$this->id);
             $action='';
             $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -1435,6 +1435,12 @@ class Adherent extends CommonObject
 
             $mydb=getDoliDBInstance('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB,ADHERENT_SPIP_PORT);
 
+            if (! $mydb->ok)
+            {
+                $this->error=$mydb->lasterror();
+                return 0;
+            }
+
             $result = $mydb->query($query);
             if ($result)
             {
@@ -1443,7 +1449,7 @@ class Adherent extends CommonObject
             }
             else
             {
-                $this->error=$mydb->error();
+                $this->error=$mydb->lasterror();
                 return 0;
             }
         }

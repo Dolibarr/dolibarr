@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-16 12:42:36
  */
@@ -38,3 +38,13 @@ VendorName=Name des Herstellers
 CSSUrlForPaymentForm=CSS-Stylesheet-URL für Zahlschein
 MessageOK=Nachricht auf validierten Zahlung zurück Seite
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:10:44).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+ToOfferALinkForOnlinePayment=URL für %s Zahlung
+YourPaymentHasBeenRecorded=Diese Seite wird bestätigt, dass Ihre Zahlung aufgezeichnet wurde. Danke.
+YourPaymentHasNotBeenRecorded=Sie Zahlung wurde nicht aufgezeichnet und Transaktion wurde abgebrochen. Danke.
+AccountParameter=Konto-Parameter
+MessageKO=Nachricht auf Zahlung storniert Rückkehr Seite
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:45).

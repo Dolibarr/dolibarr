@@ -146,3 +146,26 @@ AddRemind=Dispatch tillgängliga beloppet
 RemainToDivide=Återstår att sända:
 WarningDepositsNotIncluded=Insättningar fakturor ingår inte i denna version med denna redovisning modul.
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 06:36:00).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+RemainingAmountPayment=Belopp som skall erläggas resterande:
+AmountToBeCharged=Totalt belopp att betala:
+LT2SummaryES=IRPF Balans
+LT2PaidES=IRPF Betald
+LT2CustomerES=IRPF omsättning
+LT2SupplierES=IRPF inköp
+newLT2PaymentES=Ny IRPF betalning
+LT2PaymentES=IRPF Betalning
+LT2PaymentsES=IRPF betalningar
+DepositsAreNotIncluded=- Deposit fakturor eller ingår
+DepositsAreIncluded=- Deposit fakturor ingår
+LT2ReportByCustomersInInputOutputModeES=Rapport från tredje part IRPF
+RulesVATInServices=- För tjänster innehåller rapporten moms föreskrifter faktiskt mottogs eller utfärdades på grundval av dagen för betalningen. <br> - För materiella tillgångar, innehåller den för mervärdesskatt fakturor på grundval av fakturadatum.
+RulesVATInProducts=- För materiella tillgångar, innehåller den för mervärdesskatt fakturor på grundval av fakturadatum.
+RulesVATDueServices=- För tjänster inkluderar redovisa moms fakturor på grund, har betalats eller inte, baserat på fakturadatum.
+RulesVATDueProducts=- För materiella tillgångar, innehåller den för mervärdesskatt fakturor, baserat på fakturadatum.
+ProposalStats=Statistik över förslag
+OrderStats=Statistik över order
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:12).

@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-14 10:09:12
  */
@@ -100,3 +100,28 @@ ErrorBadValueForCode=Unzulässiger Code-Wert. Versuchen Sie es mit einem anderen
 ErrorFileIsInfectedWith=Diese Datei ist mit %s infiziert
 WarningInstallDirExists=Achtung: Das Installationsverzeichnis (%s) existiert noch. Dies ist eine ernsthafte Sicherheitslücke und sie sollten das Verzeichnis so rasch als möglich entfernen.
 WarningUntilDirRemoved=Diese Warnung bleibt so lange aktiv, wie dieses Verzeichnis existiert (nur für Administratoren).
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+ErrorFailToCopyFile=Konnte die Datei <b>'%s'</b> in <b>'%s'</b> zu kopieren.
+ErrorFailToRenameFile=Konnte die Datei <b>'%s'</b> in <b>'%s'</b> umzubenennen.
+ErrorBadValueForParameter=Falscher Wert &quot;%s 'für falsche Parameter' %s '
+ErrorBadImageFormat=Image-Datei hat nicht ein unterstütztes Format
+ErrorBadDateFormat=Value '%s' hat falsche Datumsformat
+ErrorSizeTooLongForIntType=Größe zu lang für Typ int (%s Ziffern maximal)
+ErrorSizeTooLongForVarcharType=Größe zu lang für Typ string (%s Zeichen maximal)
+ErrorFieldValueNotIn=Falscher Wert für Feldnummer <b>%s</b> (Wert <b>'%s'</b> ist kein Wert verfügbar in Feld <b>%s</b> der Tabelle <b>%s)</b>
+ErrorFieldRefNotIn=Falscher Wert für Feldnummer <b>%s</b> (Wert <b>'%s'</b> ist kein <b>%s</b> bestehenden ref)
+ErrorModuleSetupNotComplete=Aufbau-Modul sucht, um sein unvollständig. Gehen Sie auf Setup - Module in Anspruch nehmen.
+ErrorBadMask=Fehler auf der Maske
+ErrorBadMaskFailedToLocatePosOfSequence=Fehler, Maske ohne die laufende Nummer
+ErrorBadMaskBadRazMonth=Fehler, schlechte Reset-Wert
+ErrorSelectAtLeastOne=Fehler. Wählen Sie mindestens einen Eintrag.
+ErrorProductWithRefNotExist=Produkt mit Verweis <i>'%s'</i> gibt es nicht
+ErrorDeleteNotPossibleLineIsConsolidated=Löschen nicht möglich, weil Rekord an eine Bank, die sich versöhnt transation verknüpft ist
+ErrorProdIdAlreadyExist=%s wird ein weiteres Drittel zugewiesen
+ErrorFailedToLoadRSSFile=Fails die RSS-Feeds erhalten. Versuchen Sie, konstant MAIN_SIMPLEXMLLOAD_DEBUG hinzufügen, wenn Fehlermeldungen nicht genügend Informationen.
+ErrorBothFieldCantBeNegative=Felder %s und %s kann nicht gleichzeitig negativ
+ErrorWebServerUserHasNotPermission=Benutzerkonto <b>%s</b> verwendet, um Web-Server auszuführen hat keine Genehmigung für das
+ErrorNoActivatedBarcode=Kein Barcode-Typ aktiviert
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:04:08).

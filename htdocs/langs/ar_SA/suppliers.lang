@@ -51,3 +51,11 @@ NoneOrBatchFileNeverRan=أو لا شيء دفعة <b>٪ ق</b> لا يتعارض
 // Reference language: en_US
 ReferenceSupplierIsAlreadyAssociatedWithAProduct=ويرتبط هذا المورد بالفعل مرجع مع مرجع : %s
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:17:02).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+BuyingPriceMin=الحد الأدنى من سعر الشراء
+BuyingPriceMinShort=يوجد سعر الشراء
+Availability=توفر
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:56:19).

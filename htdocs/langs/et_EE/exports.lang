@@ -1,0 +1,123 @@
+/*
+ * Language code: et_EE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 22:15:30
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
+// Reference language: en_US -> et_EE
+CHARSET=UTF-8
+ExportsArea=Eksport ala
+ImportArea=Import ala
+NewExport=New eksport
+NewImport=New import
+ExportableDatas=Eksporditav andmekogu
+ImportableDatas=Imporditavate andmekogu
+SelectExportDataSet=Vali andmekogu soovite eksportida ...
+SelectImportDataSet=Vali andmekogu, mida soovite importida ...
+SelectExportFields=Vali väljad, mida soovite eksportida või valige eelnevalt määratletud ekspordi profil
+SelectImportFields=Vali lähtefaili väljad, mida soovite importida ja nende eesmärk valdkonnas andmebaas liigutades neid üles ja alla ankur %s või valige eelnevalt määratletud impordi profil:
+NotImportedFields=Valdkonnad lähtefaili ei impordita
+SaveExportModel=Salvesta see ekspordi profiili, kui te kavatsete seda kasutada hiljem ...
+SaveImportModel=Salvesta see import profiili, kui te kavatsete seda kasutada hiljem ...
+ExportModelName=Ekspordi profiili nimi
+ExportModelSaved=Ekspordi profiili salvestatud nimi <b>%s.</b>
+ExportableFields=Eksporditavad väljad
+ExportedFields=Eksporditakse valdkondades
+ImportModelName=Import profiili nimi
+ImportModelSaved=Import profiili salvestatud nimi <b>%s.</b>
+ImportableFields=Imporditavate väljade
+ImportedFields=Imporditud väljad
+DatasetToExport=Dataset eksportida
+DatasetToImport=Import faili andmekogu
+NoDiscardedFields=Ei välju lähtefaili kõrvaldatakse
+Dataset=Dataset
+ChooseFieldsOrdersAndTitle=Vali väljad, et ...
+FieldsOrder=Valdkondades, et
+FieldsTitle=Valdkonnad pealkiri
+FieldOrder=Valdkonnas, et
+FieldTitle=Field pealkiri
+ChooseExportFormat=Vali ekspordi formaat
+NowClickToGenerateToBuildExportFile=Nüüd vali vormingus kastis ja vajuta &quot;Genereeri&quot; ehitada ekspordi faili ...
+AvailableFormats=Kättesaadavad vormid
+LibraryShort=Raamatukogu
+LibraryUsed=Raamatukogu kasutatakse
+LibraryVersion=Versioon
+Step=Samm
+FormatedImport=Import assistant
+FormatedImportDesc1=This area allows to import personalized data, using an assistant to help you in process without technical knowledge.
+FormatedImportDesc2=First step is to choose a king of data you want to load, then file to load, then to choose which fields you want to load.
+FormatedExport=Export assistant
+FormatedExportDesc1=This area allows to export personalized data, using an assistant to help you in process without technical knowledge.
+FormatedExportDesc2=First step is to choose a predefined dataset, then to choose which fields you want in your result files, and which order.
+FormatedExportDesc3=When data to export are selected, you can define output file format you want to export your data to.
+Sheet=Leht
+NoImportableData=Ei imporditavate andmed (no mooduli mõisted, mis võimaldab andmete importi)
+FileSuccessfullyBuilt=Eksportida faili loomise
+SQLUsedForExport=SQL päring loomiseks kasutatavad ekspordi faili
+LineId=Id liini
+LineDescription=Kirjeldus liini
+LineUnitPrice=Ühikuhind rida
+LineVATRate=Käibemaksumäära rida
+LineQty=Koguse rida
+LineTotalHT=Summa pärast maksude mahaarvamist eelarverea
+LineTotalTTC=Summa koos maksu rida
+LineTotalVAT=Summa käibemaksuta rida
+TypeOfLineServiceOrProduct=Tüüp liin (0 = toode, 1 = teenust)
+FileWithDataToImport=Esitada andmeid importida
+FileToImport=Lähtefaili importida
+FileMustHaveOneOfFollowingFormat=Faili importimiseks peab olema üks järgmise vormi
+DownloadEmptyExample=Lae näide tühi lähtefaili
+ChooseFormatOfFileToImport=Vali failivormingut kasutada kui import vormingus klõpsates eva %s valimiseks ...
+ChooseFileToImport=Lisa fail siis klõpsa eva %s valida faili allikas import file ...
+SourceFileFormat=Allikas failivorming
+FieldsInSourceFile=Valdkondades lähtefaili
+FieldsInTargetDatabase=Target väljad Dolibarr andmebaasi (* = kohustuslik)
+Field=Väli
+NoFields=Ei välju
+MoveField=Liiguta valdkonnas veeru number %s
+ExampleOfImportFile=Example_of_import_file
+SaveImportProfile=Salvesta see import profiili
+ErrorImportDuplicateProfil=Ei suutnud päästa see import profiili ümber nimetada. Olemasolev profiil on juba olemas selle nimega.
+ImportSummary=Import setup kokkuvõte
+TablesTarget=Suunatud tabelid
+FieldsTarget=Eesmärgistatud valdkondades
+TableTarget=Suunatud tabel
+FieldTarget=Suunatud valdkonnas
+FieldSource=Allikas valdkonnas
+DoNotImportFirstLine=Ära impordi esimene rida lähtefaili
+NbOfSourceLines=Ridade arvu lähtefaili
+NowClickToTestTheImport=Vaata import parameetrid olete seadistanud. Kui need on õiged, klõpsake nupule <b>&quot;%s&quot;</b> käivitada simulatsiooni import protsess (no andmed on muutunud oma andmebaasi, see on ainult simulatsioon hetkel) ...
+RunSimulateImportFile=Käivitada import simulatsioon
+FieldNeedSource=See fiels andmebaasis nõuavad andmete lähtefaili
+SomeMandatoryFieldHaveNoSource=Mõned kohustuslikud väljad pole allikas andmefaili
+InformationOnSourceFile=Teave lähtefaili
+InformationOnTargetTables=Teave eesmärk valdkondades
+SelectAtLeastOneField=Lülita vähemalt üks allikas väljale veerus välju eksportida
+SelectFormat=Valige see import vormingus
+RunImportFile=Käivitada impordi faili
+NowClickToRunTheImport=Vaata tulemusena import simulatsioon. Kui kõik on ok, käivitada lõplik import.
+DataLoadedWithId=Kõik andmed laetakse koos järgmiste import id: <b>%s</b>
+ErrorMissingMandatoryValue=Kohustuslikud andmed on tühi lähtefaili jaoks välja <b>%s.</b>
+TooMuchErrors=On veel <b>%s</b> muid allikaid read vigu, kuid väljund on olnud piiratud.
+TooMuchWarnings=On veel <b>%s</b> muid allikaid read hoiatusi, kuid väljund on olnud piiratud.
+EmptyLine=Tühi rida (ära visata)
+CorrectErrorBeforeRunningImport=Esmalt tuleb parandada kõik vead enne töötab lõplik import.
+FileWasImported=Fail on imporditud number <b>%s.</b>
+YouCanUseImportIdToFindRecord=Leiad kõik imporditud andmed oma andmebaasi filtreerimine valdkonnas <b>import_key = '%s &quot;.</b>
+NbOfLinesOK=Ridade arv, kellel ei ole vigu ja ei hoiatused: <b>%s.</b>
+NbOfLinesImported=Ridade arv edukalt imporditud: <b>%s.</b>
+DataComeFromNoWhere=Väärtus sisestada pärineb kusagil lähtefaili.
+DataComeFromFileFieldNb=Väärtus sisestada pärineb valdkonnas number <b>%s</b> sisse lähtefaili.
+DataComeFromIdFoundFromRef=Väärtus, mis pärineb valdkonnas number <b>%s</b> of lähtefaili kasutatakse leida id Vanema eseme kasutada (Nii objet <b>%s</b> mis on ref. Allikast fail peab olemas sisse Dolibarr).
+DataComeFromIdFoundFromCodeId=Kood, mis pärineb valdkonnas number <b>%s</b> of lähtefaili kasutatakse leida id Vanema eseme kasutada (Nii koodi lähtefaili peab olemas sisse dictionnary <b>%s).</b> Pange tähele, et kui sa tead, id, võite kasutada ka selle lähtefaili asemel koodi. Import peaks tegema mõlemal juhul.
+DataIsInsertedInto=Andmed pärinevad lähtefaili lisada järgmised valdkonnas:
+DataIDSourceIsInsertedInto=Id Vanema eseme leiduvad andmed lähtefaili, saab lisada järgmine väli:
+DataCodeIDSourceIsInsertedInto=ID emaliini leitud koodi saab lisada järgmine väli:
+SourceRequired=Andmete väärtus on kohustuslik
+SourceExample=Näide võimaliku andmeväärtuse
+ExampleAnyRefFoundIntoElement=Iga ref leitud element <b>%s</b>
+ExampleAnyCodeOrIdFoundIntoDictionnary=Iga kood (või id) leitud sisse dictionnary <b>%s</b>
+CSVFormatDesc=<b>Komadega eraldatud väärtused</b> vormingus (. Csv). <br> See on tekstifaili vormingus, kus väljad on eraldatud eraldaja [%s]. Kui eraldajaks on leitud sees välja sisu, välja ümardatakse poolt ümmargune märk [%s]. Paomärk põgeneda ümmargune märk on [%s].
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:30:03).

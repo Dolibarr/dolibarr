@@ -135,7 +135,47 @@ function product_prepare_head($object, $user)
 	return $head;
 }
 
+/**
+*  Return array head with list of tabs to view object informations.
+*
+*  @param	Object	$object		Product
+*  @return	array   	        head array with tabs
+*/
+function product_admin_prepare_head($object, $tab)
+{
+    global $langs, $conf, $user;
 
+    $h = 0;
+    $head = array();
+
+    $head[$h][0] = DOL_URL_ROOT."/product/admin/product.php";
+    $head[$h][1] = $tab;
+    $head[$h][2] = 'general';
+    $h++;
+
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'product_admin');
+
+    $head[$h][0] = DOL_URL_ROOT.'/product/admin/product_extrafields.php';
+    $head[$h][1] = $langs->trans("ExtraFields");
+    $head[$h][2] = 'attributes';
+    $h++;
+
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'product_admin','remove');
+
+    return $head;
+}
+
+
+/**
+ *
+ * Enter description here ...
+ * @param unknown_type $product
+ * @param unknown_type $socid
+ */
 function show_stats_for_company($product,$socid)
 {
 	global $conf,$langs,$user,$db;

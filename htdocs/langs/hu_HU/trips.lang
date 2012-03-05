@@ -18,3 +18,9 @@ TF_OTHER=Other
 TF_LUNCH=Lunch
 TF_TRIP=Trip
 ListTripsAndExpenses=Utak és kiadások listája
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
+// Reference language: en_US -> hu_HU
+ExpensesArea=Kirándulások és kiadások területén
+SearchATripAndExpense=Keresés út és költségek
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:15:40).

@@ -35,7 +35,7 @@ if (! isset($_GET["mainmenu"])) $_GET["mainmenu"]="home";
 
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 $hookmanager=new HookManager($db);
-$hookmanager->callHooks(array('index'));
+$hookmanager->initHooks(array('index'));
 
 
 /*
@@ -56,7 +56,7 @@ if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_IN
  */
 
 // If smartphone mode, we do not show main page, we show only menu
-if (preg_match('/^smartphone/',$conf->smart_menu) && isset($conf->browser->phone))
+if (preg_match('/^smartphone/',$conf->smart_menu) && ! empty($conf->browser->phone))
 {
     $limitmenuto=GETPOST('limitmenuto')?GETPOST('limitmenuto'):0;
     $limitmenuto=1;	// A virer

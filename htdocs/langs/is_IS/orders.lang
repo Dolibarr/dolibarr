@@ -145,3 +145,18 @@ PDFQuevedoDescription=A heill til líkan með spænsku RE og IRPF
 // Reference language: en_US -> is_IS
 DispatchSupplierOrder=Móttaka birgir röð %s
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:03).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+SuppliersOrdersToProcess=Pantanir birgðasala til að ganga
+StatusOrderSentShort=Í ferli
+ShippingExist=A sendingunni til
+UnvalidateOrder=Unvalidate röð
+ConfirmUnvalidateOrder=Ertu viss um að þú viljir endurheimta röð <b>%s</b> að drög stöðu?
+OrderByMail=Póstur
+OrderByFax=Fax
+OrderByEMail=Tölvupóstur
+OrderByWWW=Online
+OrderByPhone=Sími
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:42).

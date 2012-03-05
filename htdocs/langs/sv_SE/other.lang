@@ -208,3 +208,28 @@ FileFormat=Filformat
 SelectAColor=Välj en färg
 AddFiles=Lägg till filer
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 05:08:05).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+Notify_PROPAL_SENTBYMAIL=Kommersiell förslag skickas per post
+Notify_BILL_PAYED=Kundfaktura betalade
+Notify_BILL_CANCEL=Kundfaktura avbryts
+Notify_BILL_SENTBYMAIL=Kundfaktura skickas per post
+Notify_MEMBER_SUBSCRIPTION=Medlem tecknat
+Notify_MEMBER_RESILIATE=Medlem resiliated
+Notify_MEMBER_DELETE=Elementet bort
+PredefinedMailContentSendInvoice=Här hittar du fakturan __ FACREF__ \n\n Sincerely \n\n
+PredefinedMailContentSendInvoiceReminder=Vi vill varna dig för att fakturan __ FACREF__ verkar inte betalt. Så detta är fakturan i bilagan igen, som en påminnelse. \n\n Sincerely \n\n
+PredefinedMailContentSendProposal=Här hittar du den kommersiella propoal __ PROPREF__ \n\n Sincerely \n\n
+PredefinedMailContentSendOrder=Här hittar du den ordning __ ORDERREF__ \n\n Sincerely \n\n
+PredefinedMailContentSendSupplierOrder=Här hittar du vårt beställningsformulär __ ORDERREF__ \n\n Sincerely \n\n
+PredefinedMailContentSendSupplierInvoice=Här hittar du fakturan __ FACREF__ \n\n Sincerely \n\n
+PredefinedMailContentSendShipping=Här hittar du sjöfarten __ SHIPPINGREF__ \n\n Sincerely \n\n
+PredefinedMailContentSendFichInter=Här hittar du insatsen __ FICHINTERREF__ \n\n Sincerely \n\n
+StartUpload=Starta upp
+CancelUpload=Avbryt upp
+FileIsTooBig=Filer är för stor
+ShipmentValidatedInDolibarr=Transport %s validerats i Dolibarr
+Export=Exportera
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:07).

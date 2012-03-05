@@ -248,3 +248,13 @@ CancelUpload=Annuller upload
 FileIsTooBig=Filer er for store
 Export=Eksport
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 02:54:05).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
+// Reference language: en_US -> da_DK
+PredefinedMailContentSendInvoice=Du vil her finde fakturaen __ FACREF__ \n\n venlig hilsen \n\n
+PredefinedMailContentSendInvoiceReminder=Vi vil gerne advare dig om, at fakturaen __ FACREF__ synes ikke betales. Så dette er den faktura i vedhæftningen igen, som en påmindelse. \n\n venlig hilsen \n\n
+PredefinedMailContentSendProposal=Du vil her finde den kommercielle propoal __ PROPREF__ \n\n venlig hilsen \n\n
+PredefinedMailContentSendOrder=Du vil her finde den rækkefølge __ ORDERREF__ \n\n venlig hilsen \n\n
+ShipmentValidatedInDolibarr=Forsendelse %s valideret i Dolibarr
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:59:21).

@@ -90,3 +90,13 @@ ThisWarehouseIsPersonalStock=Þetta vöruhús táknar persónulegt birgðir af %
 // Reference language: en_US
 WarehouseEdit=Breyta vörugeymsla
 // STOP - Lines generated via autotranslator.php tool (2010-07-10 01:17:12).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+SellPriceMin=Selja Unit verð
+EstimatedStockValueSellShort=Gildi til að selja
+EstimatedStockValueSell=Gildi til að selja
+SelectWarehouseForStockDecrease=Veldu vöruhús að nota til lækkunar hlutabréfa
+SelectWarehouseForStockIncrease=Veldu vöruhús að nota fyrir hækkun hlutabréfa
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:43).

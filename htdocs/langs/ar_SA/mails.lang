@@ -126,3 +126,12 @@ SentTo=إرسالها إلى <b>%s</b>
 LimitSendingEmailing=على خط ارسال emailings محدودة لأسباب أمنية ومهلة للمستفيدين عن طريق إرسال <b>%s</b> الدورة.
 ListOfNotificationsDone=أرسلت قائمة جميع اشعارات بالبريد الالكتروني
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:13:55).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+MailingStatusRead=قرأ
+MailingModuleDescContactsByCompanyCategory=اتصالات من أطراف ثالثة (من قبل أطراف ثالثة الفئة)
+MailingModuleDescMembersCategories=أعضاء مؤسسة (حسب الفئات)
+MailingModuleDescContactsByFunction=اتصالات من أطراف ثالثة (من قبل المنصب / الوظيفة)
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:55:41).

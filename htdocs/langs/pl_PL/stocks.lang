@@ -99,3 +99,13 @@ ConfirmDeleteWarehouse=Czy na pewno chcesz usunąć <b>%s</b> magazynie?
 PersonalStock=Osobowych %s czas
 ThisWarehouseIsPersonalStock=Tym składzie przedstawia osobiste zasobów %s %s
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:51).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+SellPriceMin=Cena sprzedaży jednostki
+EstimatedStockValueSellShort=Wartość sprzedaży
+EstimatedStockValueSell=Wartość sprzedaży
+SelectWarehouseForStockDecrease=Wybierz magazyn użyć do zmniejszenia czas
+SelectWarehouseForStockIncrease=Wybierz magazyn użyć do zwiększenia czas
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:18:54).

@@ -50,7 +50,7 @@ dol_syslog(join(',',$_GET));
 
 
 // Generation liste des societes
-if (GETPOST('newcompany') || GETPOST('socid') || GETPOST('id_fourn'))
+if (GETPOST('newcompany') || GETPOST('socid','int') || GETPOST('id_fourn'))
 {
 	$return_arr = array();
 

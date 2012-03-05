@@ -666,3 +666,22 @@ Sunday=Pazar
 MondayMin=Mo
 TuesdayMin=Tu
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 13:50:27).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
+// Reference language: en_US -> tr_TR
+LT1ES=RE
+LT2ES=IRPF
+ActionsOnMember=Bu üye hakkında Etkinlikler
+SetLinkToThirdParty=Başka bir üçüncü taraf bağlantı
+ClickToEdit=Düzenlemek için tıklayın
+ObjectDeleted=Nesne %s silindi
+ByCountry=Ülkeye göre
+ByTown=Kasaba
+ByDate=Tarihe göre
+ByMonthYear=Ay / yıl olarak
+ByYear=Yılına
+ByMonth=ay
+ByDay=Gündüzleri
+BySalesRepresentative=Satış temsilcisinin
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:36:49).

@@ -671,3 +671,22 @@ SundayMin=Вс
 SearchOf=Поиск
 CreateDraft=Создать проект
 // STOP - Lines generated via autotranslator.php tool (2011-08-27 16:59:35).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
+// Reference language: en_US -> ru_RU
+LT1ES=Повторно
+LT2ES=IRPF
+ActionsOnMember=События об этом члене
+SetLinkToThirdParty=Ссылка на другой третьей стороне
+ClickToEdit=Нажмите, чтобы изменить
+ObjectDeleted=Объект удален %s
+ByCountry=По стране
+ByTown=В городе
+ByDate=По дате
+ByMonthYear=В месяц / год
+ByYear=По годам
+ByMonth=по месяцам
+ByDay=Днем
+BySalesRepresentative=По торговым представителем
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:59).

@@ -34,7 +34,7 @@ $langs->load('companies');
 $langs->load('bills');
 $langs->load('banks');
 
-$facid=GETPOST('facid');
+$facid=GETPOST('facid','int');
 $action=GETPOST('action');
 $socid=GETPOST('socid','int');
 

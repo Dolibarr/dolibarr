@@ -83,3 +83,28 @@ NotifyEmision=撤离发射
 NotifyCredit=提款信用
 NumeroNationalEmetter=国家发射数
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 02:23:39).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
+// Reference language: en_US -> zh_CN
+NbOfInvoiceToWithdrawWithInfo=发票铌撤回界定的银行帐户信息的客户的要求
+StatusTrans=传播
+PleaseSelectCustomerBankBANToWithdraw=选择撤回有关客户的银行帐户信息
+WithBankUsingRIB=有关银行账户，使用肋
+WithBankUsingBANBIC=使用的IBAN / BIC / SWIFT的银行帐户
+BankToReceiveWithdraw=银行帐户，以接收退出
+CreditDate=信贷
+WithdrawalFileNotCapable=无法生成撤出贵国收到文件
+ShowWithdraw=显示撤柜
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=然而，如果发票已至少有一个撤出支付尚未处理的，它不会被设置为支付最高允许管理撤出之前。
+DoStandingOrdersBeforePayments=这个标签允许你为一个固定的订单要求。一旦完成，你可以键入付款，收发票。
+InfoCreditSubject=由银行支付的长期订单%s
+InfoCreditMessage=站在为了%s银行已支付<br>付款资料：%s
+InfoTransSubject=传输到银行的长期订单%s
+InfoTransMessage=%s %s银行长期订单的%s已被transmited。 <br><br>
+InfoTransData=金额：%s <br> metode：%s <br>日期：%s
+InfoFoot=这是一个自动发送的消息由Dolibarr
+InfoRejectSubject=站在为了拒绝
+InfoRejectMessage=您好！ <br><br>发票有关公司%s %s %s金额，standig秩序已被银行拒绝。 <br><br> - <br> ％$
+ModeWarning=实模式下的选项没有设置，我们停止后，这个模拟
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:51).

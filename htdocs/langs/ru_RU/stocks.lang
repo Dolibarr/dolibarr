@@ -105,3 +105,10 @@ SellPriceMin=Продажа Цена за штуку
 EstimatedStockValueSellShort=Значение продать
 EstimatedStockValueSell=Значение для продажи
 // STOP - Lines generated via autotranslator.php tool (2011-08-27 17:01:31).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
+// Reference language: en_US -> ru_RU
+SelectWarehouseForStockDecrease=Выберите хранилище, чтобы использовать для снижения акции
+SelectWarehouseForStockIncrease=Выберите склад для использования в запас увеличения
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:15).

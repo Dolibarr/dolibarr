@@ -103,3 +103,25 @@ ErrorFailedToRunExternalCommand=Απέτυχε να τρέξει εξωτερι�
 ErrorLoginDoesNotExists=Χρήστης με <b>%s</b> login δεν θα μπορούσε να βρεθεί.
 WarningInstallDirExists=Προειδοποίηση, κατάλογο εγκατάστασης <b>(htdocs / εγκατάσταση)</b> εξακολουθεί να υφίσταται. Αυτό είναι ένα σοβαρό κενό ασφαλείας. Θα πρέπει να καταργηθεί το συντομότερο δυνατό.
 WarningUntilDirRemoved=Όλες οι προειδοποιήσεις ασφαλείας (ορατό από το admin χρήστες μόνο) θα παραμείνει ενεργό για όσο διάστημα η ευπάθεια είναι παρούσα (ή ότι η συνεχής MAIN_REMOVE_INSTALL_WARNING προστίθεται στο Setup-&gt; Άλλες setup).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+ErrorFailToCopyFile=Απέτυχε η αντιγραφή του αρχείου <b>&quot;%s»</b> σε <b>«%s».</b>
+ErrorBadDateFormat=«%s« Αξία έχει λάθος μορφή ημερομηνίας
+ErrorSizeTooLongForIntType=Μέγεθος υπερβολικά μεγάλο χρονικό διάστημα για int τύπου (%s μέγιστη ψηφία)
+ErrorSizeTooLongForVarcharType=Μέγεθος υπερβολικά μεγάλο χρονικό διάστημα για τον τύπο εγχόρδων (%s μέγιστο χαρακτήρες)
+ErrorFieldRefNotIn=Λάθος τιμή για τον αριθμό <b>%s</b> τομέα <b>(«%s»</b> τιμή δεν είναι <b>%s</b> υφιστάμενων ref)
+ErrorDeleteNotPossibleLineIsConsolidated=Διαγραφή δεν είναι δυνατόν λόγω εγγραφή συνδέεται με μια τράπεζα transation που συμβιβασμό
+ErrorProdIdAlreadyExist=%s έχει ανατεθεί σε άλλη τρίτη
+ErrorFailedToLoadRSSFile=Αποτυγχάνει να πάρει RSS feed. Προσπαθήστε να προσθέσετε σταθερή MAIN_SIMPLEXMLLOAD_DEBUG εάν τα μηνύματα λάθους δεν παρέχει αρκετές πληροφορίες.
+ErrorPasswordDiffers=Κωδικοί πρόσβασης διαφέρει, παρακαλώ πληκτρολογήστε ξανά.
+ErrorForbidden=Απαγορεύεται η πρόσβαση. <br> Μπορείτε να προσπαθήσετε να αποκτήσετε πρόσβαση σε μια σελίδα, ή περιοχή, χωρίς να διαθέτουν σε πιστοποιημένο συνεδρία ή ότι δεν επιτρέπεται στο χρήστη σας.
+ErrorForbidden2=Η άδεια για αυτή τη σύνδεση μπορεί να οριστεί από το διαχειριστή σας Dolibarr από το μενού %s-&gt; %s.
+ErrorFailedToChangePassword=Αποτυχία να αλλάξετε τον κωδικό πρόσβασης
+ErrorLoginHasNoEmail=Αυτός ο χρήστης δεν έχει τη διεύθυνση ηλεκτρονικού ταχυδρομείου. Επεξεργασία ματαιώθηκε.
+ErrorBadValueForCode=Κακό αξία για τον κωδικό ασφαλείας. Δοκιμάστε ξανά με νέα τιμή ...
+ErrorBothFieldCantBeNegative=Πεδία %s %s και δεν μπορεί να είναι τόσο αρνητικές όσο
+ErrorWebServerUserHasNotPermission=Λογαριασμό χρήστη <b>%s</b> χρησιμοποιείται για την εκτέλεση του web server δεν έχει άδεια για τη συγκεκριμένη
+ErrorNoActivatedBarcode=Δεν ενεργοποιείται τύπου barcode
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:33).

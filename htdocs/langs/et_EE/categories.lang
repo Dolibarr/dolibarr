@@ -1,0 +1,102 @@
+/*
+ * Language code: et_EE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 22:15:30
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
+// Reference language: en_US -> et_EE
+CHARSET=UTF-8
+Category=Kategooria
+Categories=Kategooriad
+Rubrique=Kategooria
+Rubriques=Kategooriad
+categories=kategooriad
+TheCategorie=Kategooria
+NoCategoryYet=No category seda tüüpi loodud
+In=Sisse
+AddIn=Lisada
+modify=muutma
+Classify=Liigitama
+CategoriesArea=Kategooriad ala
+ProductsCategoriesArea=Toodete / teenuste kategooriad ala
+SuppliersCategoriesArea=Tarnijad kategooriad ala
+CustomersCategoriesArea=Kliendid kategooriad ala
+ThirdPartyCategoriesArea=Kolmandate isikute kategooriad ala
+MembersCategoriesArea=Liikmed kategooriad ala
+MainCats=Põhikategooriasse
+SubCats=Alamkategooriad
+CatStatistics=Statistika
+CatList=Kategooriate loetelu
+AllCats=Kõik kategooriad
+ViewCat=Vaata kategooria
+NewCat=Lisa kategooria
+NewCategory=Uus kategooria
+ModifCat=Muuda kategooria
+CatCreated=Kategooria loodud
+CreateCat=Loo kategooria
+CreateThisCat=Loo selles kategoorias
+ValidateFields=Kinnitada valdkondade
+NoSubCat=Ei allkategooria.
+SubCatOf=Alamkategooria
+FoundCats=Leitud kategooriad
+FoundCatsForName=Kategooriad leitud nimi:
+FoundSubCatsIn=Alamkategooriad leitud kategoorias
+ErrSameCatSelected=Valitud samasse kategooriasse mitu korda
+ErrForgotCat=Sa unustasid, et valida kategooria
+ErrForgotField=Sa unustasid, et teavitada valdkondades
+ErrCatAlreadyExists=See nimi on juba kasutusel
+AddProductToCat=Lisa selle toote kategooria?
+ImpossibleAddCat=Võimalik lisada kategooria
+ImpossibleAssociateCategory=Võimalik seostada kategooria
+WasAddedSuccessfully=<b>%s</b> edukalt lisatud.
+ObjectAlreadyLinkedToCategory=Element on juba seotud selles kategoorias.
+CategorySuccessfullyCreated=See kategooria %s on lisatud edukalt.
+ProductIsInCategories=Toote / teenuse kuulub järgmistesse kategooriatesse
+SupplierIsInCategories=Kuulub kolmandale isikule, et pärast tarnijate kategooriad
+CompanyIsInCustomersCategories=See kuulub kolmandale isikule, et pärast kliendid / väljavaateid kategooriad
+CompanyIsInSuppliersCategories=See kuulub kolmandale isikule, et pärast tarnijate kategooriad
+MemberIsInCategories=Selle liikme omandis on järgmised liikmed kategooriad
+ProductHasNoCategory=See toode / teenus ei ole üheski kategoorias
+SupplierHasNoCategory=See tarnija ei ole üheski kategoorias
+CompanyHasNoCategory=See firma ei ole üheski kategoorias
+MemberHasNoCategory=See liige ei ole üheski kategoorias
+ClassifyInCategory=Liigitada kategooriasse
+NoneCategory=Mitte ükski
+CategoryExistsAtSameLevel=See kategooria on juba olemas see ref
+ReturnInProduct=Tagasi toote / teenuse kaart
+ReturnInSupplier=Tagasi üles tarnija kaart
+ReturnInCompany=Tagasi klient / väljavaade kaart
+ContentsVisibleByAll=Sisu on nähtav kõigile
+ContentsVisibleByAllShort=Sisu nähtav kõik
+ContentsNotVisibleByAllShort=Sisu ei ole nähtav kõik
+CategoriesTree=Kategooriad puu
+DeleteCategory=Kustuta kategooria
+ConfirmDeleteCategory=Oled sa kindel, et soovite kustutada selle kategooria?
+RemoveFromCategory=Eemalda seos kategoorias
+RemoveFromCategoryConfirm=Oled kindel, et soovite kustutada seos tehingu kategooria?
+NoCategoriesDefined=No category määratletud
+SuppliersCategoryShort=Tarnijad kategooria
+CustomersCategoryShort=Kliendid kategooria
+ProductsCategoryShort=Tooted kategooria
+MembersCategoryShort=Liikmed kategooria
+SuppliersCategoriesShort=Tarnijad kategooriad
+CustomersCategoriesShort=Kliendid kategooriad
+CustomersProspectsCategoriesShort=Custo. / Prosp. kategooriad
+ProductsCategoriesShort=Toodete Kategooriad
+MembersCategoriesShort=Liikmed kategooriad
+ThisCategoryHasNoProduct=See kategooria ei sisalda ühtegi toodet.
+ThisCategoryHasNoSupplier=See kategooria ei sisalda ühtegi tarnija.
+ThisCategoryHasNoCustomer=See kategooria ei sisalda ühtegi klienti.
+ThisCategoryHasNoMember=See kategooria ei sisalda ühtegi liige.
+AssignedToCustomer=Määratud kliendi
+AssignedToTheCustomer=Määratud kliendi
+InternalCategory=Internal kategooria
+CategoryContents=Kategooria sisu
+CategId=Kategooria id
+CatSupList=Loetelu pakkuja kategooriad
+CatCusList=Loetelu kliendi / väljavaade kategooriad
+CatProdList=Toodete nimekirja kategooriate
+CatMemberList=Liikmete nimekiri kategooriad
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:26:36).

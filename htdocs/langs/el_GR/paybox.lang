@@ -41,3 +41,9 @@ CSSUrlForPaymentForm=Url CSS φύλλο στυλ για το έντυπο πλη
 MessageOK=Μήνυμα για την επικυρωμένη σελίδα επιστροφή πληρωμής
 MessageKO=Μήνυμα για την ακύρωση σελίδα επιστροφή πληρωμής
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:41:28).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:06:57).
+// Reference language: en_US -> el_GR
+ToOfferALinkForOnlinePayment=URL για %s πληρωμής
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:07:16).

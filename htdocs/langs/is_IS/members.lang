@@ -173,3 +173,47 @@ DocForAllMembersCards=Búa til nafnspjöld fyrir alla meðlimi (Format fyrir fra
 DocForOneMemberCards=Búa til nafnspjöld fyrir tiltekinn aðili (Format fyrir framleiðsla raunverulega skipulag: <b>%s)</b>
 DocForLabels=Mynda lak heimilisfang (Format fyrir framleiðsla raunverulega skipulag: <b>%s)</b>
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:56).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+MembersWithSubscriptionToReceive=Meðlimir með áskrift að fá
+NewSubscriptionDesc=Þetta eyðublað er hægt að taka áskriftina þína sem nýr aðili að stofnun. Ef þú vilt að endurnýja áskriftina þína (ef þegar meðlimur), vinsamlegast hafðu samband við grunn borð í stað með tölvupósti %s.
+BlankSubscriptionFormDesc=Dolibarr getur veitt þér almennings slóð til að leyfa utanaðkomandi gestir að biðja til að gerast áskrifandi að grunni. Ef netinu greiðslu mát er virkt, mun greiðsla mynd einnig sjálfkrafa veitt.
+EnablePublicSubscriptionForm=Virkja almenna sjálfvirka áskrift mynd
+ImportDataset_member_1=Meðlimir
+LastSubscriptionsModified=Síðustu %s breytt áskrift
+GlobalConfigUsedIfNotDefined=Texti skilgreind í Foundation mát skipulag verður notuð ef ekki er skilgreint hér
+MayBeOverwrited=Þessi texti er hægt að overwrited með gildi sem skilgreind fyrir gerð félagsaðila
+SubscriptionPayment=Áskrift greiðslu
+LastSubscriptionDate=Síðast áskrift dagsetning
+LastSubscriptionAmount=Síðast áskrift upphæð
+MembersStatisticsByCountries=Notendur tölfræði eftir landi
+MembersStatisticsByState=Notendur tölfræði eftir fylki / hérað
+MembersStatisticsByTowne=Notendur tölfræði eftir bænum
+NbOfMembers=Fjöldi félaga
+NoValidatedMemberYet=Engar fullgiltar meðlimir fundust
+MembersByCountryDesc=Þessi skjár sýnir þér tölfræði á meðlimum með löndum. Grafísk veltur þó á Google netinu línurit þjónustu og er aðeins í boði ef nettengingin er er að vinna.
+MembersByStateDesc=Þessi skjár sýnir þér tölfræði á meðlimum ríkis / héruðum / Canton.
+MembersByTownDesc=Þessi skjár sýnir þér tölfræði á meðlimum með bænum.
+MembersStatisticsDesc=Veldu tölfræði sem þú vilt lesa ...
+MenuMembersStats=Tölfræði
+LastMemberDate=Síðasta meðlimur dagsetning
+Nature=Náttúra
+Public=Upplýsingar eru almenningi
+Exports=Útflutningur
+NewMemberbyWeb=Nýr meðlimur bætt. Beðið eftir samþykki
+NewMemberForm=Nýr meðlimur mynd
+SubscriptionsStatistics=Tölur um áskrift
+NbOfSubscriptions=Fjöldi áskrifta
+AmountOfSubscriptions=Magn áskrift
+TurnoverOrBudget=Velta (fyrir fyrirtæki) eða fjárhagsáætlun (um stofnun)
+DefaultAmount=Sjálfgefin magn af áskrift
+CanEditAmount=Gestur geta valið / breyta upphæð áskrift sína
+MEMBER_NEWFORM_PAYONLINE=Stökkva á samþætt netinu greiðslu síðu
+Associations=Undirstöður
+Collectivités=Félög
+Particuliers=Starfsfólk
+Entreprises=Stofnanir
+DOLIBARRFOUNDATION_PAYMENT_FORM=Til að gera áskrift greiðslu með millifærslu, sjá síðu <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe~~dobj</a> . <br> Til að greiða með kreditkorti eða PayPal, smelltu á hnappinn neðst á síðunni. <br>
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:28:17).

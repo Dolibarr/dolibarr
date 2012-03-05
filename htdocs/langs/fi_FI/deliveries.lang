@@ -31,3 +31,11 @@ Sender=Sender
 Recipient=Edunsaajavaltiot
 // Date 2009-01-19 22:07:11
 // STOP - Lines generated via parser
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+DeleteDeliveryReceipt=Poista toimituskuitti
+DeleteDeliveryReceiptConfirm=Oletko varma että haluat poistaa toimituskuitti <b>%s?</b>
+DeliveryNotValidated=Toimitus ei validoitu
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:12:10).

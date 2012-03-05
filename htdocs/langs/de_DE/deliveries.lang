@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-11 00:11:12
  */
@@ -28,3 +28,11 @@ GoodStatusDeclaration=Haben die oben genannten Waren in einwandfreiem Zustand er
 Deliverer=Lieferant
 Sender=Absender
 Recipient=Empfänger
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+DeleteDeliveryReceipt=Löschen Lieferschein
+DeleteDeliveryReceiptConfirm=Sind Sie sicher, Sie wollen Lieferschein <b>%s</b> löschen?
+DeliveryNotValidated=Lieferung nicht validiert
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:05:19).

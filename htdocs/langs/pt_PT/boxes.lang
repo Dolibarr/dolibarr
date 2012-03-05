@@ -104,3 +104,18 @@ BoxTitleLastModifiedSuppliers=%s Modificada fornecedores
 BoxTitleLastModifiedCustomers=%s Modificada clientes
 BoxTitleLastModifiedProspects=%s Modificada perspectivas
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:38).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
+// Reference language: en_US -> pt_PT
+BoxLastContacts=Últimos contatos, endereços
+BoxLastMembers=Últimos membros
+BoxTitleLastModifiedMembers=%s últimos membros modificados
+BoxTitleLastModifiedContacts=%s Última modificação contatos, endereços
+BoxOldestExpiredServices=Mais antigos ativos de serviços vencidos
+BoxLastExpiredServices=%s últimos mais antigos contatos com serviços ativos expirados
+BoxTitleLastModifiedDonations=%s Última modificação doações
+BoxTitleLastModifiedExpenses=%s Última modificação despesas
+ClickToAdd=Clique aqui para adicionar.
+NoRecordedContacts=Não há contatos gravados
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:14).

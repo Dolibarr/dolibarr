@@ -121,3 +121,13 @@ ErrorLoginHasNoEmail = Deze gebruiker heeft geen e-mail adres. Proces afgebroken
 ErrorBadValueForCode = Onjuist waardetypen voor code. Probeer het opnieuw met een nieuwe waarde
 WarningInstallDirExists = Waarschuwing, install map (%s) bestaat nog steeds. Dit is een ernstig beveiligingslek. U dient deze map zo spoedig mogelijk te verwijderen of te hernoemen naar install.lock.
 WarningUntilDirRemoved = Alle beveiligingswaarschuwingen (alleen zichtbaar voor de beheerders) zullen actief blijven zolang de kwetsbaarheden nog bestaan. (of totdat de contante MAIN_REMOVE_INSTALL_WARNING wordt toegevoegd aan Home->Instellingen->Overige).
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
+// Reference language: en_US -> nl_NL
+ErrorFailToCopyFile=Kan bestand <b>'%s'</b> in <b>'%s'</b> te kopiëren.
+ErrorSizeTooLongForIntType=Grootte te lang voor int type (%s cijfers maximum)
+ErrorSizeTooLongForVarcharType=Grootte te lang voor string type (%s tekens maximum)
+ErrorFieldRefNotIn=Verkeerde waarde voor veldnummer <b>%s</b> (waarde <b>'%s'</b> is geen <b>%s</b> bestaande ref)
+ErrorBothFieldCantBeNegative=Velden %s %s en kan niet beide negatief
+ErrorWebServerUserHasNotPermission=User account <b>%s</b> gebruikt om web-server uit te voeren heeft geen toestemming voor die
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:12:04).

@@ -33,3 +33,20 @@ ArcticNumRefModelError=アクティブ化に失敗
 PacificNumRefModelDesc1=yyは年である%syymm - nnnnの形式でニュメロを返す、mmは月ですと、nnnnはなく休憩と0〜ノーリターンでシーケンスです。
 PacificNumRefModelError=$ syymmで始まる介入のカードは、すでに存在し、シーケンスのこのモデルと互換性がありません。それを削除するか、このモジュールをアクティブにするには、その名前を変更。
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 05:25:53).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
+// Reference language: en_US -> ja_JP
+ListOfInterventions=介入のリスト
+EditIntervention=介入を編集します。
+ActionsOnFicheInter=介入のアクション
+LastInterventions=最後%s介入
+AllInterventions=すべての介入
+CreateDraftIntervention=ドラフトを作成します。
+NameAndSignatureOfInternalContact=介入の名前と署名：
+NameAndSignatureOfExternalContact=顧客の名前と署名：
+DocumentModelStandard=介入のための標準のドキュメントモデル
+ClassifyBilled=&quot;銘打たれた&quot;分類
+StatusInterInvoiced=請求
+RelatedInterventions=関連する介入
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:41:31).

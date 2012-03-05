@@ -1,0 +1,18 @@
+/*
+ * Language code: hu_HU
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 16:13:31
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
+// Reference language: en_US -> hu_HU
+CHARSET=UTF-8
+WorkflowSetup=Workflow modul beállítása
+WorkflowDesc=Ez a modul terveztem, hogy módosítsa a viselkedését automatikus intézkedéseket alkalmazhassák. Alapértelmezésben a munkafolyamatok nyitva van (amit csinál, hogy ezt akarod). Tudod használ automatikus intézkedéseket, hogy érdekes be
+ThereIsNoWorkflowToModify=Nincs munkafolyamat akkor lehet módosítani a modul aktiválása.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Létrehozása után automatikusan az ügyfelek érdekében a kereskedelmi javaslat aláírt
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Hozzon létre egy vásárlói számlát után automatikusan egy kereskedelmi javaslat aláírt
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Hozzon létre egy vásárlói számlát után automatikusan érvényesíti a szerződés
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Hozzon létre egy vásárlói számlát követően automatikusan az ügyfelek érdekében van zárva
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:17:27).

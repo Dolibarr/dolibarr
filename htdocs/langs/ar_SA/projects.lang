@@ -105,3 +105,13 @@ TypeContact_project_task_internal_CONTRIBUTOR=مساهم
 TypeContact_project_task_external_CONTRIBUTOR=مساهم
 DocumentModelBaleine=وهناك مشروع كامل لنموذج التقرير (logo...)
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:14).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+TimesSpent=قضى وقتا
+TaskIsNotAffectedToYou=مهمة لم تخصص لك
+ErrorTimeSpentIsEmpty=الوقت الذي يقضيه فارغة
+ThisWillAlsoRemoveTasks=وهذا العمل أيضا حذف كافة مهام المشروع <b>(%s</b> المهام في الوقت الحاضر) وجميع المدخلات من الوقت الذي تستغرقه.
+IfNeedToUseOhterObjectKeepEmpty=إذا كانت بعض الكائنات (فاتورة، والنظام، ...)، الذين ينتمون إلى طرف ثالث آخر، يجب أن تكون مرتبطة بمشروع لإنشاء، والحفاظ على هذا فارغة لديها مشروع كونها متعددة الأطراف الثالثة.
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:58:20).

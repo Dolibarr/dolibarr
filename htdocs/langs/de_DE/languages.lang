@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-12 10:23:11
  */
@@ -38,3 +38,19 @@ Language_sl_SI=Slowenisch
 Language_zh_CN=Chinesisch
 Language_is_IS=Isländisch
 Language_sv_SV=Schwedisch
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+Language_ar_SA=Arabisch
+Language_da_DK=Dänisch
+Language_el_GR=Griechisch
+Language_en_NZ=Englisch (Neuseeland)
+Language_es_HN=Spanisch (Honduras)
+Language_es_MX=Spanisch (Mexiko)
+Language_es_PR=Spanisch (Puerto Rico)
+Language_fa_IR=Persisch
+Language_hu_HU=Ungarisch
+Language_ru_UA=Russisch (Ukraine)
+Language_sv_SE=Schwedisch
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:05:21).

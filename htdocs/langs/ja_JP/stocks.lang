@@ -1,0 +1,92 @@
+/*
+ * Language code: ja_JP
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 16:41:06
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
+// Reference language: en_US -> ja_JP
+CHARSET=UTF-8
+WarehouseCard=倉庫カード
+Warehouse=倉庫
+NewWarehouse=新倉庫/ストックエリア
+WarehouseEdit=倉庫を変更する
+MenuNewWarehouse=新倉庫
+WarehouseOpened=倉庫をオープン
+WarehouseClosed=倉庫は閉じた
+WarehouseSource=ソースの倉庫
+WarehouseTarget=ターゲット·ウェアハウス
+ValidateSending=送信削除
+CancelSending=送信キャンセル
+DeleteSending=送信削除
+Stock=株式
+Stocks=ストック
+Movement=運動
+Movements=動作
+ErrorWarehouseRefRequired=ウェアハウスの参照名を指定する必要があります
+ErrorWarehouseLabelRequired=倉庫のラベルが必要です
+CorrectStock=正しい株式
+ListOfWarehouses=倉庫のリスト
+ListOfStockMovements=在庫変動のリスト
+StocksArea=株式エリア
+Location=場所
+LocationSummary=短い名前の場所
+NumberOfProducts=商品の合計数
+LastMovement=最後の動き
+LastMovements=最後の動き
+Units=ユニット
+Unit=ユニット
+StockCorrection=正しい株式
+StockMovement=転送
+StockMovements=株式移転
+NumberOfUnit=ユニット数
+TotalStock=株式の総
+StockTooLow=低すぎると株式
+EnhancedValue=値
+PMPValue=加重平均価格
+PMPValueShort=WAP
+EnhancedValueOfWarehouses=倉庫の値
+UserWarehouseAutoCreate=ユーザーの作成時に自動的に倉庫を作成します。
+QtyDispatched=数量派遣
+OrderDispatch=派遣株式
+RuleForStockManagementDecrease=在庫管理の減少のためのルール
+RuleForStockManagementIncrease=在庫管理の増加のためのルール
+DeStockOnBill=お客様の請求書/クレジットメモの検証で本物の株式を減少させる
+DeStockOnValidateOrder=お客様の注文検証上の実在庫を減らす
+DeStockOnShipment=出荷の検証を実際の株式を減少させる
+ReStockOnBill=仕入先請求書/クレジットメモの検証で本物の株式を増加させる
+ReStockOnValidateOrder=サプライヤの注文賛同上の実際の株式を増加させる
+ReStockOnDispatchOrder=サプライヤーの順序が受信した後、倉庫に派遣マニュアルに本物の株式を増加させる
+OrderStatusNotReadyToDispatch=ご注文はまだないか、またはこれ以上の在庫倉庫の製品の派遣ができますステータスを持っていません。
+StockDiffPhysicTeoric=物理的および理論的な違いはストックの理由
+NoPredefinedProductToDispatch=このオブジェクト用に事前定義された製品がありません。そうは在庫に派遣する必要はありません。
+DispatchVerb=派遣
+StockLimitShort=制限
+StockLimit=アラートの在庫限り
+PhysicalStock=物理的な株式
+RealStock=リアルタイム株価
+TheoreticalStock=Therocial株式
+VirtualStock=バーチャル株式
+MininumStock=最小在庫
+StockUp=買いだめする
+MininumStockShort=株式分
+StockUpShort=買いだめする
+IdWarehouse=イド倉庫
+DescWareHouse=説明倉庫
+LieuWareHouse=ローカリゼーション倉庫
+WarehousesAndProducts=倉庫と製品
+AverageUnitPricePMPShort=加重平均の入力価格
+AverageUnitPricePMP=加重平均の入力価格
+SellPriceMin=販売単価
+EstimatedStockValueSellShort=販売するための値
+EstimatedStockValueSell=販売するための値
+EstimatedStockValueShort=入力株式価値
+EstimatedStockValue=入力株式価値
+DeleteAWarehouse=倉庫を削除します。
+ConfirmDeleteWarehouse=あなたは、ウェアハウス<b>·%sを</b>削除し<b>てもよろしい</b>ですか？
+PersonalStock=個人の株式%s
+ThisWarehouseIsPersonalStock=この倉庫は%s %sの個人的な株式を表す
+SelectWarehouseForStockDecrease=株式の減少のために使用するために倉庫を選択します。
+SelectWarehouseForStockIncrease=在庫の増加に使用する倉庫を選択します。
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:44:51).

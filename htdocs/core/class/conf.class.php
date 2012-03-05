@@ -52,16 +52,19 @@ class Conf
 	public $smart_menu;
 
 	public $modules					= array();	// List of activated modules
+	public $modules_parts			= array();	// List of modules parts
 
+	// TODO Remove all thoose tabs with one generic
+	public $sms_engine_modules		= array();
 	public $css_modules				= array();
 	public $tabs_modules			= array();
 	public $triggers_modules		= array();
 	public $menus_modules			= array();
 	public $hooks_modules			= array();
 	public $login_modules			= array();
-	public $sms_engine_modules		= array();
 	public $barcode_modules			= array();
 	public $substitutions_modules	= array();
+	public $societe_modules	        = array();
 
 	var $logbuffer					= array();
 
@@ -151,28 +154,32 @@ class Conf
 						// If this is constant for a sms engine
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_SMS$/i',$key,$reg))
 						{
-							$module=strtolower($reg[1]);
-							$this->sms_engine_modules[$module]=$module;    // Add this module in list of modules that provide SMS
+							$modulename=strtolower($reg[1]);
+							$this->sms_engine_modules[$modulename]=$modulename;    // Add this module in list of modules that provide SMS
 						}
 						// If this is constant for all generic part activated by a module
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)_([A-Z]+)$/i',$key,$reg))
 						{
 							$modulename = strtolower($reg[1]);
 							$partname = strtolower($reg[2]);
-							$varname = $partname.'_modules';
-							if (! is_array($this->$varname)) { $this->$varname = array(); }
-							$arrValue = @unserialize($value);
+							$varname = $partname.'_modules';  // TODO deprecated
+							if (! isset($this->$varname) || ! is_array($this->$varname)) { $this->$varname = array(); } // TODO deprecated
+							if (! isset($this->modules_parts[$partname]) || ! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
+							$arrValue = dol_json_decode($value,true);
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
-							else $value = ($value == 1 ? '/'.$modulename.'/core/'.$partname.'/' : $value);
-							$this->$varname = array_merge($this->$varname, array($modulename => $value));
+							else if (in_array($partname,array('login','menus','triggers'))) $value = '/'.$modulename.'/core/'.$partname.'/';
+							else if (in_array($partname,array('models'))) $value = '/'.$modulename.'/';
+							else if ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';
+							$this->$varname = array_merge($this->$varname, array($modulename => $value));  // TODO deprecated
+							$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value));
 						}
                         // If this is a module constant (must be at end)
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)$/i',$key,$reg))
 						{
-							$module=strtolower($reg[1]);
-							$this->$module=(object) array();
-							$this->$module->enabled=true;
-							$this->modules[]=$module;              // Add this module in list of enabled modules
+							$modulename=strtolower($reg[1]);
+							$this->$modulename=(object) array();
+							$this->$modulename->enabled=true;
+							$this->modules[]=$modulename;              // Add this module in list of enabled modules
 						}
 					}
 				}
@@ -194,6 +201,7 @@ class Conf
 		    $db->free($resql);
 		}
 		//var_dump($this->modules);
+		//var_dump($this->modules_parts);
 
 		// Clean some variables
 		if (empty($this->global->MAIN_MENU_STANDARD)) $this->global->MAIN_MENU_STANDARD="eldy_backoffice.php";

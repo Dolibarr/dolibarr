@@ -108,3 +108,12 @@ DataIDSourceIsInsertedInto = Het id van het bovenliggende object, gevonden door 
 SourceRequired = Gegevenswaarde is verplicht
 SourceExample = Voorbeeld van een mogelijke gegevens waarde
 CSVFormatDesc = <b>Comma Separated Value-bestandsindeling</b> (. csv).<br>Dit is een tekstbestand waarin de velden zijn gescheiden door het scheidingsteken [%s]. Als het scheidingsteken is gevonden in de inhoud van een veld, wordt het 'geescaped' door het karakter [%s]. Het 'Escape'-karakter is [%s].
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
+// Reference language: en_US -> nl_NL
+DataComeFromIdFoundFromCodeId=Code die afkomstig is van veldnummer <b>%s</b> van de bron-bestand wordt gebruikt om de id van bovenliggend object te vinden om te gebruiken (dus de code van de bron-bestand moet bestaan ​​in de woordenboek <b>%s).</b> Merk op dat als je weet id, kunt u ook het gebruik in plaats daarvan in het bronbestand van de code. Import zou moeten werken in beide gevallen.
+DataCodeIDSourceIsInsertedInto=Het id van de ouder lijn gevonden van code, zal worden ingevoegd in volgende veld:
+ExampleAnyRefFoundIntoElement=Elke ref gevonden voor element <b>%s</b>
+ExampleAnyCodeOrIdFoundIntoDictionnary=Elke code (of id) gevonden in het woordenboek <b>%s</b>
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:12:08).

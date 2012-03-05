@@ -47,3 +47,13 @@ VendorName=Nazwa dostawcy
 CSSUrlForPaymentForm=CSS url arkusz dla formy płatności
 MessageOK=Wiadomość na zatwierdzonych strony powrót płatności
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:20:39).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+ToOfferALinkForOnlinePayment=URL %s płatności
+YourPaymentHasBeenRecorded=Ta strona potwierdza, że ​​płatność została nagrana. Dziękuję.
+YourPaymentHasNotBeenRecorded=Jesteś płatność nie została nagrana i transakcja została anulowana. Dziękuję.
+AccountParameter=Parametry konta
+MessageKO=Wiadomość na odwołana strony powrotnej płatności
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:18:49).

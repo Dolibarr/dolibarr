@@ -1,0 +1,105 @@
+/*
+ * Language code: et_EE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 22:15:30
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
+// Reference language: en_US -> et_EE
+CHARSET=UTF-8
+Proposals=Commercial ettepanekuid
+Proposal=Commercial ettepanek
+ProposalShort=Ettepanek
+ProposalsDraft=Koostada äri ettepanekud
+ProposalDraft=Eelnõu kaubandus ettepanek
+ProposalsOpened=Avatud kaubandus ettepanekuid
+Prop=Commercial ettepanekuid
+CommercialProposal=Commercial ettepanek
+CommercialProposals=Commercial ettepanekuid
+ProposalCard=Ettepanek kaart
+ProposalContact=Ettepanek kontakt
+NewProp=Uus äri-ettepanekut
+NewProposal=Uus äri-ettepanekut
+NewPropal=Uus ettepanek
+Prospect=Väljavaade
+ProspectList=Prospect nimekirja
+DeleteProp=Kustuta äri ettepanekut
+ValidateProp=Kinnitada äri ettepanek
+AddProp=Lisa ettepanek
+ConfirmDeleteProp=Oled sa kindel, et soovite kustutada selle kaubanduslik ettepanek?
+ConfirmValidateProp=Oled sa kindel, et soovid, et kinnitada selle kaubanduslik ettepanek?
+LastPropals=Last %s ettepanekuid
+LastClosedProposals=Last %s suletud ettepanekuid
+LastModifiedProposals=Last %s muudetud ettepanekutega
+AllPropals=Kõik ettepanekud
+LastProposals=Last ettepanekuid
+SearchAProposal=Otsi ettepaneku
+ProposalsStatistics=Commercial ettepaneku statistika
+NumberOfProposalsByMonth=Number kuus
+AmountOfProposalsByMonthHT=Summa kuus (ilma maksudeta)
+NbOfProposals=Number äri ettepanekud
+ShowPropal=Näita ettepanek
+PropalsDraft=Kabe
+PropalsOpened=Avatud
+PropalsNotBilled=Suletud ei maksustata
+PropalStatusDraft=Eelnõu (vajadused valideerimine)
+PropalStatusValidated=Kinnitatud (ettepanek on avatud)
+PropalStatusOpened=Kinnitatud (ettepanek on avatud)
+PropalStatusClosed=Suletud
+PropalStatusSigned=Allkirjastatud (vajadused arvete)
+PropalStatusNotSigned=Pole sisse (suletud)
+PropalStatusBilled=Arve
+PropalStatusDraftShort=Eelnõu
+PropalStatusValidatedShort=Valideeritud
+PropalStatusOpenedShort=Avatud
+PropalStatusClosedShort=Suletud
+PropalStatusSignedShort=Allkirjastatud
+PropalStatusNotSignedShort=Pole sisse
+PropalStatusBilledShort=Arve
+PropalsToClose=Commercial ettepanekud sulgeda
+PropalsToBill=Allkirjastatud kaubandus ettepanekud bill
+ListOfProposals=Nimekiri Äripinnad ettepanekuid
+ActionsOnPropal=Sündmused ettepanekul
+NoOpenedPropals=Ei avanud äri ettepanekud
+NoOtherOpenedPropals=Ükski teine ​​avas äri ettepanekud
+RefProposal=Commercial ettepaneku ref
+SendPropalByMail=Saada kaubandus ettepaneku mail
+FileNotUploaded=Faili ei laetud
+FileUploaded=Fail on edukalt üles laetud
+AssociatedDocuments=Dokumendid, mis on seotud ettepanekut:
+ErrorCantOpenDir=Ei saa avada kataloogi
+DatePropal=Kuupäev ettepanek
+DateEndPropal=Kuupäev lõpus kehtivuse
+DateEndPropalShort=Kuupäev lõpus
+ValidityDuration=Kehtivuse ajaks
+CloseAs=Sulge staatusega
+ClassifyBilled=Liigitada arve
+BuildBill=Ehita arve
+ErrorPropalNotFound=Propal %s ei leitud
+Estimate=Hinnang:
+EstimateShort=Hindama
+OtherPropals=Muud ettepanekud
+CopyPropalFrom=Loo äri ettepaneku, kopeerides olemasoleva ettepanekuga
+CreateEmptyPropal=Loo tühi äri ettepanekud vierge või nimekirjast toodete / teenuste
+DefaultProposalDurationValidity=Vaikimisi kaubandus ettepaneku kehtivuse kestus (päeva)
+UseCustomerContactAsPropalRecipientIfExist=Kasutage klient kontaktaadress, kui määratletud asemel kolmanda isiku aadressi ettepaneku saaja aadress
+ClonePropal=Kloonida äri ettepanekut
+ConfirmClonePropal=Oled sa kindel, et soovid kloonida äriregistrisse ettepaneku <b>%s?</b>
+ConfirmReOpenProp=Oled kindel, et soovite avada tagasi äriregistrisse ettepaneku <b>%s?</b>
+ProposalsAndProposalsLines=Commercial ettepaneku ja liinid
+ProposalLine=Ettepanek rida
+AvailabilityPeriod=Saadavus viivitusega
+SetAvailability=Määra kättesaadavus viivitusega
+AfterOrder=pärast, et
+AvailabilityTypeAV_NOW=Vahetu
+AvailabilityTypeAV_1W=1 nädal
+AvailabilityTypeAV_2W=2 nädalat
+AvailabilityTypeAV_3W=3 nädalat
+AvailabilityTypeAV_1M=1 kuu
+TypeContact_propal_internal_SALESREPFOLL=Esindaja järelmeetmeid ettepanek
+TypeContact_propal_external_BILLING=Kliendi arve kontaktandmed
+TypeContact_propal_external_CUSTOMER=Klientide kontaktandmeid järelmeetmeid ettepanek
+DocModelAzurDescription=Täielikku ettepanekut mudel (logo. ..)
+DocModelJauneDescription=Jaune ettepaneku mudel
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:43:26).

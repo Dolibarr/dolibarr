@@ -63,3 +63,33 @@ AgendaHideBirthdayEvents=Piilota syntymäpäivä yhteyksiä
 MenuToDoActions=Kaikki puutteelliset toimet
 InterventionValidatedInDolibarr=Intervention %s validoitu
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:40).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+LocalAgenda=Paikallinen kalenteri
+MyEvents=My tapahtumia
+OtherEvents=Muut tapahtumat
+EventOnFullDay=Tapahtuma on koko päivä
+ViewDay=Päivä näkymä
+ViewWeek=Viikkonäkymä
+AgendaExtSitesDesc=Tällä sivulla voit ilmoittaa ulkoisten kalenterien näkemään tapahtumiin otetaan Dolibarr asialistalle.
+InvoiceBackToDraftInDolibarr=Laskun %s palata luonnos tila
+OrderApprovedInDolibarr=Tilaa %s hyväksytty
+OrderBackToDraftInDolibarr=Tilaa %s palata luonnos tila
+OrderCanceledInDolibarr=Tilaus %s peruutettu
+ProposalSentByEMail=Liiketoimintaehdotukset %s lähetetään sähköpostilla
+OrderSentByEMail=Asiakas tilaa %s lähetetään sähköpostilla
+InvoiceSentByEMail=Asiakas lasku %s lähetetään sähköpostilla
+SupplierOrderSentByEMail=Toimittaja järjestys %s lähetetään sähköpostilla
+SupplierInvoiceSentByEMail=Toimittaja lasku %s lähetetään sähköpostilla
+ShippingSentByEMail=Toimitus %s lähetetään sähköpostilla
+InterventionSentByEMail=Intervention %s lähetetään sähköpostilla
+ExportCal=Vie kalenteri
+ExtSites=Tuo ulkoinen kalenterit
+ExtSitesEnableThisTool=Näytä ulkoinen kalenterit otetaan asialistalle
+ExtSitesNbOfAgenda=Määrä kalenterit
+AgendaExtNb=Kalenteri nb %s
+ExtSiteUrlAgenda=URL päästä. ICal-tiedostona
+ExtSiteNoLabel=Ei kuvausta
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:12:54).

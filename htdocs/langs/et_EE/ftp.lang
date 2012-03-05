@@ -1,0 +1,21 @@
+/*
+ * Language code: et_EE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 22:15:30
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
+// Reference language: en_US -> et_EE
+CHARSET=UTF-8
+FTPClientSetup=FTP Client moodul setup
+NewFTPClient=Uus FTP ühendus setup
+FTPArea=FTP Area
+FTPAreaDesc=See ekraan näitab teile sisu FTP server vaade
+SetupOfFTPClientModuleNotComplete=Setup FTP klient moodul tundub ole täielik
+FTPFeatureNotSupportedByYourPHP=Sinu PHP ei toeta FTP funktsioone
+FailedToConnectToFTPServer=Ei õnnestunud ühendust FTP server (server %s, sadama %s)
+FailedToConnectToFTPServerWithCredentials=Suutnud sisse logida FTP serverisse määratletud login / parool
+FTPFailedToRemoveFile=Suutnud eemaldada fail <b>%s.</b>
+FTPFailedToRemoveDir=Suutnud eemaldada kataloog <b>%s</b> (kontrolli õigusi ja et kataloog on tühi).
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:18:19).

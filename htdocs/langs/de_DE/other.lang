@@ -1,5 +1,5 @@
 /*
- * Language code: de_AT
+ * Language code: de_DE
  * Manually translated by eCleaners.at
  * Generation date 2010-11-12 21:09:12
  */
@@ -213,3 +213,23 @@ StartUpload=Upload starten
 CancelUpload=Hochladen abbrechen
 FileIsTooBig=Dateien zu groß
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 03:02:54).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
+// Reference language: en_US -> de_DE
+Notify_BILL_PAYED=Kunden Rechnung bezahlt
+Notify_BILL_CANCEL=Kunden Rechnung storniert
+Notify_BILL_SENTBYMAIL=Kunden Rechnung per Post zugesandt
+Notify_ORDER_SUPPLIER_VALIDATE=Lieferant Bestellung validiert
+Notify_ORDER_SUPPLIER_SENTBYMAIL=Lieferant Bestellung per Post zugesandt
+Notify_BILL_SUPPLIER_VALIDATE=Lieferantenrechnung validiert
+PredefinedMailContentSendSupplierInvoice=Hier finden Sie die Rechnung __ FACREF__ \n\n \n\n Mit freundlichen Grüßen
+PredefinedMailContentSendShipping=Hier finden Sie die Versandkosten __ SHIPPINGREF__ \n\n \n\n Mit freundlichen Grüßen
+PredefinedMailContentSendFichInter=Sie finden hier die Intervention __ FICHINTERREF__ \n\n \n\n Mit freundlichen Grüßen
+Top=Top-
+Bottom=Boden
+Left=Links
+BookmarksManagement=Lesezeichen-Verwaltung
+ShipmentValidatedInDolibarr=Versand %s in Dolibarr validiert
+Export=Exportieren
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:31).

@@ -85,3 +85,37 @@ AddNewNotification=Aktiválása egy új e-mail értesítést kérésére
 ListOfActiveNotifications=Lista az összes aktív e-mail értesítést kér
 ListOfNotificationsDone=Lista minden e-mail értesítést küldeni
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 11:37:00).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
+// Reference language: en_US -> hu_HU
+MailingStatusRead=Olvas
+DateLastSend=Az utolsó küldés
+DateSending=Dátum küldése
+SentTo=Küldött <b>%s</b>
+MailingModuleDescContactCompanies=Kapcsolatok minden harmadik felek (vevő, kilátás, szállító, ...)
+MailingModuleDescDolibarrUsers=Dolibarr felhasználók
+MailingModuleDescFundationMembers=Alapítvány tagok e-maileket
+MailingModuleDescEmailsFromFile=E-maileket egy szöveges fájlt (email, vezetéknév, keresztnév, egyéb)
+MailingModuleDescContactsCategories=Harmadik felek (kategóriánként)
+MailingModuleDescDolibarrContractsLinesExpired=Harmadik feleknek a lejárt szerződést vonalak
+MailSelectedRecipients=Kiválasztott címzettek
+MailingArea=EMailings terület
+LastMailings=Utolsó %s emailings
+TargetsStatistics=Célok statisztikák
+NbOfCompaniesContacts=Egyedi kapcsolatok a vállalatok
+MailNoChangePossible=A címzettek validált emailing nem lehet megváltoztatni
+SearchAMailing=Keresés levelezési
+SendMailing=Küldés e-mailezés
+SendMail=E-mail küldése
+ToClearAllRecipientsClickHere=Kattintson ide, hogy törölje a címzettek listáját erre a levelezés
+ToAddRecipientsChooseHere=Add címzettek közül választhatja ki a listák
+NbOfEMailingsReceived=Mass emailings kapott
+IdRecord=Azonosító rekord
+DeliveryReceipt=Átvételi elismervényen
+YouCanUseCommaSeparatorForSeveralRecipients=Használhatja a <b>vessző</b> megadásához több címzettnek.
+Notifications=Értesítések
+NoNotificationsWillBeSent=Nincs e-mail értesítést terveznek erre az eseményre és vállalati
+ANotificationsWillBeSent=1 értesítést küldünk e-mailben
+SomeNotificationsWillBeSent=%s értesítést küldünk e-mailben
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:14:46).

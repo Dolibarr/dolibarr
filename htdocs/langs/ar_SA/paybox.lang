@@ -48,3 +48,14 @@ VendorName=اسم البائع
 CSSUrlForPaymentForm=عزيزي ورقة النمط المغلق للنموذج الدفع
 MessageOK=رسالة على الصفحة التحقق من صحة الدفع عودة
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:07:32).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+ToOfferALinkForOnlinePayment=عنوان دفع %s
+YourPaymentHasNotBeenRecorded=يمكنك دفع لم يسجل وتم إلغاء الصفقة. شكرا لك.
+AccountParameter=حساب المعلمات
+UsageParameter=استخدام المعلمات
+InformationToFindParameters=مساعدة للعثور على معلومات حسابك %s
+MessageKO=رسالة في إلغاء دفع الصفحة عودة
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:55:43).

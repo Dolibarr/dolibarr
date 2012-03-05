@@ -78,3 +78,28 @@ NotifyEmision=Återkallelse utsläpp
 NotifyCredit=Återkallelse Credit
 NumeroNationalEmetter=Nationella sändare Antal
 // STOP - Lines generated via autotranslator.php tool (2010-08-28 13:13:15).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
+// Reference language: en_US -> sv_SE
+NbOfInvoiceToWithdrawWithInfo=Nb av faktura med återkalla begäran om kunder som har definierats bankkontoinformation
+StatusTrans=Överförs
+PleaseSelectCustomerBankBANToWithdraw=Välj information om kunden bankkonto ta ut
+WithBankUsingRIB=För bankkonton med hjälp av RIB
+WithBankUsingBANBIC=För bankkonton som använder IBAN / BIC / SWIFT
+BankToReceiveWithdraw=Bankkonto för att ta emot drar
+CreditDate=Krediter på
+WithdrawalFileNotCapable=Det går inte att skapa filen uttag kvitto för ditt land
+ShowWithdraw=Visa Dra
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Om faktura har minst ett uttag betalning som ännu inte behandlats, kommer det inte anges som betalas för att hantera uttag innan.
+DoStandingOrdersBeforePayments=Detta flikar gör att du kan begära en stående order. När det kommer att vara färdig, kan du skriva betalningen för att stänga fakturan.
+InfoCreditSubject=Betalning av %s stående order av banken
+InfoCreditMessage=Den stående beställning %s har betalats av banken <br> Uppgifter om betalning: %s
+InfoTransSubject=Överföring av %s stående order till bank
+InfoTransMessage=Den stående beställning %s har transmited till bank med %s %s. <br><br>
+InfoTransData=Belopp: %s <br> Metode: %s <br> Datum: %s
+InfoFoot=Detta är ett automatiskt meddelande skickas av Dolibarr
+InfoRejectSubject=Stående order vägrade
+InfoRejectMessage=Hej, <br><br> att ständig ordning faktura %s relaterade till företagets %s med en mängd %s har avslagits av banken. <br><br> - <br> % $
+ModeWarning=Alternativ på riktigt läget inte var satt, sluta vi efter denna simulering
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:37).

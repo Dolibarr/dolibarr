@@ -122,3 +122,9 @@ AvailabilityTypeAV_2W=2-х недель
 AvailabilityTypeAV_3W=3 недели
 AvailabilityTypeAV_1M=1 месяц
 // STOP - Lines generated via autotranslator.php tool (2011-08-27 17:00:52).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
+// Reference language: en_US -> ru_RU
+ConfirmReOpenProp=Вы уверены, что хотите открыть обратно коммерческих <b>%s</b> предложение?
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:59).

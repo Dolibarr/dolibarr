@@ -105,3 +105,9 @@ AvailabilityTypeAV_1W=1 week
 AvailabilityTypeAV_2W=2 weken
 AvailabilityTypeAV_3W=3 weken
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 02:36:28).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
+// Reference language: en_US -> nl_NL
+ConfirmReOpenProp=Weet je zeker dat je wilt openen weer de commerciële voorstel <b>%s?</b>
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:12:42).

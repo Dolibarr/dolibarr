@@ -101,3 +101,14 @@ ToDoActionsFor=Niekompletne działań na rzecz %s
 ActionAC_SUP_ORD=aby dostawca przesłać pocztą
 ActionAC_SUP_INV=fakturze dostawcy przesłać pocztą
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:53:00).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
+// Reference language: en_US -> pl_PL
+StatusNotApplicable=Nie dotyczy
+ActionAC_SHIP=Wyślij wysyłki za pośrednictwem poczty
+ActionAC_OTH=Inny
+StatusProsp=Stan perspektywa
+DraftPropals=Projekt komercyjne propozycje
+SearchPropal=Szukaj komercyjnego projektu
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:18:58).

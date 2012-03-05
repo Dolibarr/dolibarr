@@ -1,0 +1,36 @@
+/*
+ * Language code: et_EE
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-02-29 22:15:30
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
+// Reference language: en_US -> et_EE
+CHARSET=UTF-8
+CommunitySupport=Forum / wiki toetust
+EMailSupport=Kirju toetada
+RemoteControlSupport=Online reaalajas / kaugtoe
+OtherSupport=Muud toetust
+ToSeeListOfAvailableRessources=Võtke / näha olemasolevaid ressursse:
+ClickHere=Vajuta siia
+HelpCenter=Abiinfo
+DolibarrHelpCenter=Dolibarr Spikri-ja tugikeskuse
+ToGoBackToDolibarr=Vastasel korral kliki <a href="%s">siia, et kasutada Dolibarr</a>
+TypeOfSupport=Allikas toetuse
+TypeSupportCommunauty=Ühendus (tasuta)
+TypeSupportCommercial=Kaubandus-
+TypeOfHelp=Liik
+NeedHelpCenter=Vajad abi või toetab?
+Efficiency=Efektiivsus
+TypeHelpOnly=Aitab ainult
+TypeHelpDev=Aidake + Development
+TypeHelpDevForm=Aidake + Development + moodustamine
+ToGetHelpGoOnSparkAngels1=Mõned ettevõtted pakuvad kiire (millalgi kohe) ja tõhusam võrgutugi võttes kontrolli arvuti. Sellised abilised võib leida <b>%s</b> kodulehel:
+ToGetHelpGoOnSparkAngels3=Võite minna ka nimekiri kõigist saadaval busse Dolibarr, seda kliki nupule
+ToGetHelpGoOnSparkAngels2=Mõnikord ei ole ettevõte hetkel teete otsingut, seega mõtle, et muuta filter otsima &quot;kõik kättesaadavus&quot;. Sul on võimalik saata rohkem taotlusi.
+BackToHelpCenter=Vastasel korral kliki siia, et minna <a href="%s">tagasi, et aidata avalehele</a> .
+LinkToGoldMember=Teil on võimalik helistada üks treener esivalittu poolt Dolibarr oma keel (%s), klõpsates oma Widget (staatus ja maksimaalne hind automaatselt uuendatud):
+PossibleLanguages=Toetatud keeled
+MakeADonation=Abi Dolibarr projekti teha annetuse
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:46:17).

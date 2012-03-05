@@ -49,7 +49,7 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action=(GETPOST('action') ? GETPOST('action') : 'view');
 $confirm=GETPOST('confirm');
-$socid=GETPOST("socid");
+$socid=GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 
 $object = new Product($db);
@@ -73,7 +73,7 @@ $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','',
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 $hookmanager=new HookManager($db);
-$hookmanager->callHooks(array('productcard'));
+$hookmanager->initHooks(array('productcard'));
 
 
 
@@ -87,12 +87,20 @@ $error=$hookmanager->error; $errors=$hookmanager->errors;
 
 if (empty($reshook))
 {
+    // Type
+    if ($action ==	'setfk_product_type' && $user->rights->produit->creer)
+    {
+        $object->fetch($id);
+    	$result = $object->setValueFrom('fk_product_type', $_POST['fk_product_type']);
+    	Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+    	exit;
+    }
+
     // Barcode type
-    if ($action ==	'setbarcodetype' && $user->rights->barcode->creer)
+    if ($action ==	'setfk_barcode_type' && $user->rights->barcode->creer)
     {
     	$object->fetch($id);
-    	$object->barcode_type = $_POST['barcodetype_id'];
-    	$result = $object->update_barcode_type($user);
+    	$result = $object->setValueFrom('fk_barcode_type', $_POST['fk_barcode_type']);
     	Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
     	exit;
     }
@@ -101,33 +109,27 @@ if (empty($reshook))
     if ($action ==	'setbarcode' && $user->rights->barcode->creer)
     {
     	$object->fetch($id);
-    	$object->barcode = $_POST['barcode']; //Todo: ajout verification de la validite du code barre en fonction du type
-    	$result = $object->update_barcode($user);
+    	//Todo: ajout verification de la validite du code barre en fonction du type
+    	$result = $object->setValueFrom('barcode', $_POST['barcode']);
     	Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
     	exit;
     }
 
-    if ($action == 'setproductaccountancycodebuy')
+    if ($action == 'setaccountancy_code_buy')
     {
-        $product = new Product($db);
-        $result=$product->fetch($id,$ref);
-        $product->accountancy_code_buy=$_POST["productaccountancycodebuy"];
-        $result=$product->update($product->id,$user,1,0,1);
+        $object->fetch($id,$ref);
+        $result = $object->setValueFrom('accountancy_code_buy', $_POST['accountancy_code_buy']);
         if ($result < 0)
         {
             $mesg=join(',',$product->errors);
         }
         $action="";
-        $id=$_POST["id"];
-        $_GET["id"]=$_POST["id"];
     }
 
-    if ($action == 'setproductaccountancycodesell')
+    if ($action == 'setaccountancy_code_buy')
     {
-        $product = new Product($db);
-        $result=$product->fetch($id,$ref);
-        $product->accountancy_code_sell=$_POST["productaccountancycodesell"];
-        $result=$product->update($product->id,$user,1,0,1);
+        $object->fetch($id,$ref);
+        $result = $object->setValueFrom('accountancy_code_sell', $_POST['accountancy_code_sell']);
         if ($result < 0)
         {
             $mesg=join(',',$product->errors);
@@ -214,6 +216,15 @@ if (empty($reshook))
                 }
             }
 
+            // Get extra fields
+            foreach($_POST as $key => $value)
+            {
+                if (preg_match("/^options_/",$key))
+                {
+                    $product->array_options[$key]=$_POST[$key];
+                }
+            }
+
             $id = $product->create($user);
 
             if ($id > 0)
@@ -264,6 +275,15 @@ if (empty($reshook))
                 $product->volume_units       = $_POST["volume_units"];
                 $product->finished           = $_POST["finished"];
                 $product->hidden             = $_POST["hidden"]=='yes'?1:0;
+
+                // Get extra fields
+                foreach($_POST as $key => $value)
+                {
+                    if (preg_match("/^options_/",$key))
+                    {
+                        $product->array_options[$key]=$_POST[$key];
+                    }
+                }
 
                 if ($product->check())
                 {
@@ -628,7 +648,7 @@ if (empty($reshook))
 if (GETPOST("cancel") == $langs->trans("Cancel"))
 {
     $action = '';
-    Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_POST["id"]);
+    Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
     exit;
 }
 
@@ -648,6 +668,7 @@ llxHeader('',$langs->trans("CardProduct".$_GET["type"]),$helpurl);
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);
+$object=new Product($db);
 
 
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
@@ -661,7 +682,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
         $object->fetch($id, $ref);                   // For use with "pure canvas" (canvas that contains templates only)
     }
    	$objcanvas->assign_values($action, $id, $ref);	// Set value for templates
-    $objcanvas->display_canvas();				// Show template
+    $objcanvas->display_canvas($action);				// Show template
 }
 else
 {
@@ -735,7 +756,7 @@ else
             print '</td></tr>';
         }
 
-        //Duration
+        // Duration
         if ($_GET["type"] == 1)
         {
             print '<tr><td>'.$langs->trans("Duration").'</td><td><input name="duration_value" size="6" maxlength="5" value="'.$product->duree.'"> &nbsp;';
@@ -846,12 +867,11 @@ else
 
     else if ($id || $ref)
     {
-        $object=new Product($db);
-        $object->fetch($id,$ref);
+        $res=$object->fetch($id,$ref);
+        if ($res < 0) { dol_print_error($db,$object->error); exit; }
+        $res=$object->fetch_optionals($object->id,$extralabels);
 
-        /*
-         * Fiche en mode edition
-         */
+        // Fiche en mode edition
         if ($action == 'edit' && ($user->rights->produit->creer || $user->rights->service->creer))
         {
             $type = $langs->trans('Product');
@@ -1013,9 +1033,7 @@ else
 
             print '</form>';
         }
-        /*
-         * Fiche en mode visu
-         */
+        // Fiche en mode visu
         else
         {
             $head=product_prepare_head($object, $user);
@@ -1046,7 +1064,7 @@ else
             // Label
             print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$object->libelle.'</td>';
 
-            $nblignes=9;
+            $nblignes=8;
             if ($object->type!=1) $nblignes++;
             if ($object->isservice()) $nblignes++;
             else $nblignes+=4;
@@ -1063,6 +1081,16 @@ else
             }
 
             print '</tr>';
+
+            // Type
+            if ($conf->produit->enabled && $conf->service->enabled)
+            {
+            	// TODO change for compatibility with edit in place
+            	$typeformat='select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
+                print '<tr><td>'.$form->editfieldkey("Type",'fk_product_type',$object->type,$object,$user->rights->produit->creer||$user->rights->service->creer,$typeformat).'</td><td colspan="2">';
+                print $form->editfieldval("Type",'fk_product_type',$object->type,$object,$user->rights->produit->creer||$user->rights->service->creer,$typeformat);
+                print '</td></tr>';
+            }
 
             if ($showbarcode)
             {
@@ -1083,7 +1111,7 @@ else
                 else
                 {
                     $object->fetch_barcode();
-                    print $object->barcode_type_label?$object->barcode_type_label:'<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>';
+                    print $object->barcode_type_label?$object->barcode_type_label:($object->barcode?'<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>':'');
                 }
                 print '</td></tr>'."\n";
 
@@ -1111,13 +1139,13 @@ else
             }
 
             // Accountancy sell code
-            print '<tr><td>'.$form->editfieldkey("ProductAccountancySellCode",'productaccountancycodesell',$object->accountancy_code_sell,$object,$user->rights->produit->creer|$user->rights->service->creer).'</td><td colspan="2">';
-            print $form->editfieldval("ProductAccountancySellCode",'productaccountancycodesell',$object->accountancy_code_sell,$object,$user->rights->produit->creer|$user->rights->service->creer);
+            print '<tr><td>'.$form->editfieldkey("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer).'</td><td colspan="2">';
+            print $form->editfieldval("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer);
             print '</td></tr>';
 
             // Accountancy buy code
-            print '<tr><td>'.$form->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodebuy',$object->accountancy_code_buy,$object,$user->rights->produit->creer|$user->rights->service->creer).'</td><td colspan="2">';
-            print $form->editfieldval("ProductAccountancyBuyCode",'productaccountancycodebuy',$object->accountancy_code_buy,$object,$user->rights->produit->creer|$user->rights->service->creer);
+            print '<tr><td>'.$form->editfieldkey("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer).'</td><td colspan="2">';
+            print $form->editfieldval("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer);
             print '</td></tr>';
 
             // Status (to sell)
@@ -1212,7 +1240,7 @@ else
             print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td colspan="2">'.getCountry($object->country_id,0,$db).'</td>';
 
             // Other attributes
-            $parameters=array('colspan' => ' colspan="2"');
+            $parameters=array('colspan' => ' colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             if (empty($reshook) && ! empty($extrafields->attribute_label))
             {
@@ -1220,13 +1248,13 @@ else
                 {
                     $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
                     print '<tr><td>'.$label.'</td><td colspan="3">';
-                    print $extrafields->showInputField($key,$value);
+                    print $extrafields->showOutputField($key,$value);
                     print '</td></tr>'."\n";
                 }
             }
 
             // Note
-            print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="2">'.(dol_textishtml($object->note)?$object->note:dol_nl2br($object->note,1,true)).'</td></tr>';
+            print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'">'.(dol_textishtml($object->note)?$object->note:dol_nl2br($object->note,1,true)).'</td></tr>';
 
             print "</table>\n";
 
@@ -1708,9 +1736,6 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
 }
 
 
-
 $db->close();
-
 llxFooter();
-
 ?>

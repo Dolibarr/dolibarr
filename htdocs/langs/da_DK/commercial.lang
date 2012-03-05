@@ -101,3 +101,14 @@ ToDoActionsFor=Ufuldstændig aktioner for %s
 ActionAC_SUP_ORD=Send leverandør opstil efter mail
 ActionAC_SUP_INV=Send leverandør faktura med posten
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:21:20).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
+// Reference language: en_US -> da_DK
+StatusNotApplicable=Ikke relevant
+ActionAC_SHIP=Send en forsendelse med posten
+ActionAC_OTH=Andet
+StatusProsp=Prospect status
+DraftPropals=Forslaget til handelslov forslag
+SearchPropal=Søg en kommerciel forslag
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:59:46).

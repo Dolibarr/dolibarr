@@ -41,3 +41,13 @@ Change=Eccesso ricevuto
 CalTip=Clicca per visualizzare il calendario
 CashDeskSetupStock=Vi chiediamo di diminuire sulla creazione di stock di magazzino fattura, ma per questo non è stato definito <br> Cambia modulo di configurazione stock, o scegliere un magazzino
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:14).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+// Reference language: en_US -> it_IT
+CashdeskShowServices=Vendita di servizi
+BankToPay=Carica Account
+ShowCompany=Mostra società
+ShowStock=Mostra warehouse
+DeleteArticle=Fare clic per rimuovere questo articolo
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:33:34).

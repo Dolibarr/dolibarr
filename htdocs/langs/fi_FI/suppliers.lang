@@ -56,3 +56,11 @@ NoneOrBatchFileNeverRan=Ei mitään tai <b>erän %s</b> ei juoksi hiljattain
 // Reference language: en_US
 ReferenceSupplierIsAlreadyAssociatedWithAProduct=Tämä viittaus toimittaja on jo liitetty viite: %s
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:27:11).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
+// Reference language: en_US -> fi_FI
+BuyingPriceMin=Minimi ostohinnan
+BuyingPriceMinShort=Min ostohinnan
+Availability=Saatavuus
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:11:10).

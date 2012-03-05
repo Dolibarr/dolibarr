@@ -93,3 +93,17 @@ ConfirmDeleteWarehouse=هل أنت متأكد أنك تريد حذف <b>%s</b> �
 PersonalStock=%s طبيعة الشخصية
 ThisWarehouseIsPersonalStock=هذا يمثل مستودع للطبيعة الشخصية لل%s %s
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:13:59).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
+// Reference language: en_US -> ar_SA
+DeStockOnBill=خفض مخزونات حقيقية على فواتير الزبائن / الائتمان التحقق من صحة الملاحظات
+DeStockOnValidateOrder=خفض مخزونات حقيقية على التحقق من صحة أوامر العملاء
+ReStockOnBill=زيادة المخزون الحقيقي في فواتير الموردين / الائتمان التحقق من صحة الملاحظات
+ReStockOnValidateOrder=زيادة مخزونات حقيقية على استحسان أوامر الموردين
+SellPriceMin=بيع سعر الوحدة
+EstimatedStockValueSellShort=قيمة لبيع
+EstimatedStockValueSell=قيمة لبيع
+SelectWarehouseForStockDecrease=اختيار مستودع لاستخدامها لانخفاض الأسهم
+SelectWarehouseForStockIncrease=اختيار مستودع لاستخدامها لزيادة المخزون
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:55:49).

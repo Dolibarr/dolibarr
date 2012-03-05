@@ -34,7 +34,7 @@ $langs->load("members");
 $langs->load("ldap");
 $langs->load("admin");
 
-$rowid = GETPOST("id");
+$rowid = GETPOST('id','int');
 $action = GETPOST('action');
 
 // Protection

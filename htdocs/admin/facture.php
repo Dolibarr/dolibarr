@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Eric Seigne					<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2011	Regis Houssin				<regis@dolibarr.fr>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis@dolibarr.fr>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,8 +34,8 @@ $langs->load("errors");
 
 if (! $user->admin) accessforbidden();
 
-$action = GETPOST("action");
-$value = GETPOST("value");
+$action = GETPOST('action','alpha');
+$value = GETPOST('value','alpha');
 
 
 /*
@@ -70,31 +70,41 @@ if ($action == 'specimen')
     $facture = new Facture($db);
     $facture->initAsSpecimen();
 
-    // Load template
-    $dir = DOL_DOCUMENT_ROOT . "/core/modules/facture/doc/";
-    $file = "pdf_".$modele.".modules.php";
-    if (file_exists($dir.$file))
+	// Search template files
+	$file=''; $classname=''; $filefound=0;
+	$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+	foreach($dirmodels as $reldir)
+	{
+	    $file=dol_buildpath($reldir."core/modules/facture/doc/pdf_".$modele.".modules.php",0);
+    	if (file_exists($file))
+    	{
+    		$filefound=1;
+    		$classname = "pdf_".$modele;
+    		break;
+    	}
+    }
+
+    if ($filefound)
     {
-        $classname = "pdf_".$modele;
-        require_once($dir.$file);
+    	require_once($file);
 
-        $obj = new $classname($db);
+    	$module = new $classname($db);
 
-        if ($obj->write_file($facture,$langs) > 0)
-        {
-            header("Location: ".DOL_URL_ROOT."/document.php?modulepart=facture&file=SPECIMEN.pdf");
-            return;
-        }
-        else
-        {
-            $mesg='<font class="error">'.$obj->error.'</font>';
-            dol_syslog($obj->error, LOG_ERR);
-        }
+    	if ($module->write_file($facture,$langs) > 0)
+    	{
+    		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=facture&file=SPECIMEN.pdf");
+    		return;
+    	}
+    	else
+    	{
+    		$mesg='<font class="error">'.$module->error.'</font>';
+    		dol_syslog($module->error, LOG_ERR);
+    	}
     }
     else
     {
-        $mesg='<font class="error">'.$langs->trans("ErrorModuleNotFound").'</font>';
-        dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+    	$mesg='<font class="error">'.$langs->trans("ErrorModuleNotFound").'</font>';
+    	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
 }
 
@@ -281,6 +291,8 @@ if ($action == 'setforcedate')
  * View
  */
 
+$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+
 llxHeader("",$langs->trans("BillsSetup"),'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura');
 
 $form=new Form($db);
@@ -308,16 +320,16 @@ print '</tr>'."\n";
 
 clearstatcache();
 
-$var=true;
-foreach ($conf->file->dol_document_root as $dirroot)
+foreach ($dirmodels as $reldir)
 {
-    $dir = $dirroot . "/core/modules/facture/";
-
+	$dir = dol_buildpath($reldir."core/modules/facture/");
     if (is_dir($dir))
     {
         $handle = opendir($dir);
         if (is_resource($handle))
         {
+        	$var=true;
+
             while (($file = readdir($handle))!==false)
             {
                 if (! is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS'))
@@ -474,11 +486,11 @@ print "</tr>\n";
 clearstatcache();
 
 $var=true;
-foreach ($conf->file->dol_document_root as $dirroot)
+foreach ($dirmodels as $reldir)
 {
     foreach (array('','/doc') as $valdir)
     {
-        $dir = $dirroot . "/core/modules/facture".$valdir;
+    	$dir = dol_buildpath($reldir."core/modules/facture".$valdir);
 
         if (is_dir($dir))
         {

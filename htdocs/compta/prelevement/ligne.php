@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,37 +38,37 @@ $langs->load("withdrawals");
 $langs->load("categories");
 
 // Get supervariables
-$action = GETPOST("action");
-$id = GETPOST("id");
-$socid = GETPOST("socid");
+$action = GETPOST('action','alpha');
+$id = GETPOST('id','int');
+$socid = GETPOST('socid','int');
 
-$page = GETPOST("page");
-$sortorder = GETPOST("sortorder");
-$sortfield = GETPOST("sortfield");
+$page = GETPOST('page','int');
+$sortorder = GETPOST('sortorder','alpha');
+$sortfield = GETPOST('sortfield','alpha');
 
 if ($action == 'confirm_rejet')
 {
 	if ( GETPOST("confirm") == 'yes')
 	{
-		$daterej = mktime(2, 0, 0, GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
+		$daterej = mktime(2, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
 
 		$lipre = new LignePrelevement($db, $user);
 
 		if ($lipre->fetch($id) == 0)
 		{
 
-			if (GETPOST("motif") > 0 && $daterej < time())
+			if (GETPOST('motif','alpha') > 0 && $daterej < time())
 			{
 				$rej = new RejetPrelevement($db, $user);
 
-				$rej->create($user, $id, GETPOST("motif"), $daterej, $lipre->bon_rowid, GETPOST("facturer"));
+				$rej->create($user, $id, GETPOST('motif','alpha'), $daterej, $lipre->bon_rowid, GETPOST('facturer','int'));
 
 				Header("Location: ligne.php?id=".$id);
 				exit;
 			}
 			else
 			{
-				dol_syslog("Motif : ".GETPOST("motif"));
+				dol_syslog("Motif : ".GETPOST('motif','alpha'));
 				dol_syslog("$daterej $time ");
 				Header("Location: ligne.php?id=".$id."&action=rejet");
 				exit;

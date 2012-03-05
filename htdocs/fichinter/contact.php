@@ -78,7 +78,7 @@ if ($_POST["action"] == 'addcontact' && $user->rights->ficheinter->creer)
 if ($_GET["action"] == 'swapstatut' && $user->rights->ficheinter->creer)
 {
 	$fichinter = new Fichinter($db);
-	if ($fichinter->fetch(GETPOST("id")))
+	if ($fichinter->fetch(GETPOST('id','int')))
 	{
 	    $result=$fichinter->swapContactStatus(GETPOST('ligne'));
 	}

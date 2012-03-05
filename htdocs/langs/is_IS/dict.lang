@@ -301,3 +301,13 @@ DemandReasonTypeSRC_CAMP_FAX=Fax herferð
 DemandReasonTypeSRC_COMM=Commercial samband
 DemandReasonTypeSRC_SHOP=Versla Hafið samband
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 08:16:59).
+
+
+// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
+// Reference language: en_US -> is_IS
+CurrencyUAH=Hrinja
+CurrencySingUAH=Hrinja
+DemandReasonTypeSRC_INTE=Internet
+DemandReasonTypeSRC_CAMP_MAIL=Póstlisti herferð
+DemandReasonTypeSRC_CAMP_EMAIL=Emailing herferð
+// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:32).

@@ -32,10 +32,11 @@ $langs->load("orders");
 $langs->load("bills");
 $langs->load("companies");
 
-$action=GETPOST('action');
+$action=GETPOST('action','alpha');
+$backtopage=GETPOST('backtopage','alpha');
 
 // Security check
-$socid = GETPOST("id");
+$socid = GETPOST('id','int');
 if ($user->societe_id > 0)
 {
 	$socid = $user->societe_id;
@@ -46,9 +47,9 @@ if ($user->societe_id > 0)
  * Actions
  */
 
-if (GETPOST('cancel') && GETPOST('backtopage'))
+if (GETPOST('cancel') && ! empty($backtopage))
 {
-     Header("Location: ".GETPOST("backtopage"));
+     Header("Location: ".$backtopage);
      exit;
 }
 
@@ -151,9 +152,9 @@ if ($action == 'setremise')
 
 			if ($discountid > 0)
 			{
-			    if (GETPOST("backtopage"))
+			    if (! empty($backtopage))
 			    {
-			        Header("Location: ".GETPOST("backtopage").'&discountid='.$discountid);
+			        Header("Location: ".$backtopage.'&discountid='.$discountid);
 			        exit;
 			    }
 				else
@@ -188,7 +189,7 @@ if (GETPOST("action") == 'confirm_remove' && GETPOST("confirm")=='yes')
 	if ($result > 0)
 	{
 		$db->commit();
-		header("Location: ".$_SERVER["PHP_SELF"].'?id='.GETPOST('id'));	// To avoid pb whith back
+		header("Location: ".$_SERVER["PHP_SELF"].'?id='.GETPOST('id','int'));	// To avoid pb whith back
 		exit;
 	}
 	else
@@ -228,7 +229,7 @@ if ($socid > 0)
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$objsoc->id.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="setremise">';
-    print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage').'">';
+    print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print '<table class="border" width="100%">';
 
@@ -280,7 +281,7 @@ if ($socid > 0)
 
 	print '<center>';
 	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AddGlobalDiscount").'">';
-    if (GETPOST("backtopage"))
+    if (! empty($backtopage))
     {
         print '&nbsp; &nbsp; ';
 	    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';

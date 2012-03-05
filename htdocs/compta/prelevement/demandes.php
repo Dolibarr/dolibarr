@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2011 	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,14 +32,14 @@ $langs->load("companies");
 $langs->load("categories");
 
 // Security check
-$socid = GETPOST("socid");
+$socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'prelevement','','','bons');
 
 // Get supervariables
-$page =  GETPOST("page");
-$sortorder = GETPOST("sortorder");
-$sortfield = GETPOST("sortfield");
+$page =  GETPOST('page','int');
+$sortorder = GETPOST('sortorder','alpha');
+$sortfield = GETPOST('sortfield','alpha');
 
 /*
  * View
@@ -77,9 +77,9 @@ if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 if (!$statut) $sql.= " AND pfd.traite = 0";
 if ($statut) $sql.= " AND pfd.traite = ".$statut;
 $sql.= " AND pfd.fk_facture = f.rowid";
-if (dol_strlen(trim(GETPOST("search_societe"))))
+if (dol_strlen(trim(GETPOST('search_societe','alpha'))))
 {
-	$sql.= " AND s.nom LIKE '%".GETPOST("search_societe")."%'";
+	$sql.= " AND s.nom LIKE '%".GETPOST('search_societe','alpha')."%'";
 }
 $sql.= " ORDER BY $sortfield $sortorder ";
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
@@ -108,8 +108,8 @@ if ($resql)
 	print '</tr>';
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_facture" size="12" value="'.GETPOST("search_facture").'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" size="18" value="'.GETPOST("search_societe").'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_facture" size="12" value="'.GETPOST('search_facture','alpha').'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" size="18" value="'.GETPOST('search_societe','alpha').'"></td>';
 	print '<td colspan="2" class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
 	print '</tr>';
 	print '</form>';
