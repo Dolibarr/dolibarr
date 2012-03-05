@@ -31,16 +31,19 @@ require_once(DOL_DOCUMENT_ROOT ."/core/modules/import/modules_import.php");
  */
 class ImportCsv extends ModeleImports
 {
-	var $id;
-	var $error;
+    var $db;
+    var $datatoimport;
+
+	var $error='';
 	var $errors=array();
 
-	var $label;
-	var $extension;
-	var $version;
+    var $id;           // Id of driver
+	var $label;        // Label of driver
+	var $extension;    // Extension of files imported by driver
+	var $version;      // Version of driver
 
-	var $label_lib;
-	var $version_lib;
+	var $label_lib;    // Label of external lib used by driver
+	var $version_lib;  // Version of external lib used by driver
 
 	var $separator;
 
@@ -53,9 +56,10 @@ class ImportCsv extends ModeleImports
 	/**
 	 *	Constructor
 	 *
-	 *	@param	DoliDB		$db		Database handler
+	 *	@param	DoliDB		$db				Database handler
+	 *	@param	string		$datatoimport	String code describing import set (ex: 'societe_1')
 	 */
-	function ImportCsv($db)
+	function ImportCsv($db,$datatoimport)
 	{
 		global $conf,$langs;
 		$this->db = $db;
@@ -75,6 +79,9 @@ class ImportCsv extends ModeleImports
 		// If driver use an external library, put its name here
 		$this->label_lib='Dolibarr';
 		$this->version_lib=DOL_VERSION;
+
+		$this->datatoimport=$datatoimport;
+		if (preg_match('/^societe_/',$datatoimport)) $this->thirpartyobject=new Societe($this->db);
 	}
 
 	function getDriverId()
@@ -287,6 +294,7 @@ class ImportCsv extends ModeleImports
 	function import_insert($arrayrecord,$array_match_file_to_database,$objimport,$maxfields,$importid)
 	{
 		global $langs,$conf,$user;
+        global $thirdparty_static;    // Specifi to thirdparty import
 
 		$error=0;
 		$warning=0;
@@ -391,6 +399,42 @@ class ImportCsv extends ModeleImports
                                 elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='zeroifnull')
                                 {
                                     if (empty($newval)) $newval='0';
+                                }
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='getcustomercodeifnull')
+                                {
+                                    if (empty($newval) || $newval='auto')
+                                    {
+                                        $this->thirpartyobject->get_codeclient(0,0);
+                                        $newval=$this->thirpartyobject->code_client;
+                                        //print 'code_client='.$newval;
+                                    }
+                                }
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='getsuppliercodeifnull')
+                                {
+                                    if (empty($newval) || $newval='auto')
+                                    {
+                                        $newval=$this->thirpartyobject->get_codefournisseur(0,1);
+                                        $newval=$this->thirpartyobject->code_fournisseur;
+                                        //print 'code_fournisseur='.$newval;
+                                    }
+                                }
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='getcustomeraccountancycodeifnull')
+                                {
+                                    if (empty($newval) || $newval='auto')
+                                    {
+                                        $this->thirpartyobject->get_codecompta('customer');
+                                        $newval=$this->thirpartyobject->code_compta;
+                                        //print 'code_compta='.$newval;
+                                    }
+                                }
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='getsupplieraccountancycodeifnull')
+                                {
+                                    if (empty($newval) || $newval='auto')
+                                    {
+                                        $this->thirpartyobject->get_codecompta('supplier');
+                                        $newval=$this->thirpartyobject->code_compta_fournisseur;
+                                        //print 'code_compta_fournisseur='.$newval;
+                                    }
                                 }
 
                                 //print 'Val to use as insert is '.$newval.'<br>';

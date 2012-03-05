@@ -26,19 +26,30 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php');
 
 
 /**
- *	\class      ModeleImports
- *	\brief      Parent class for import file readers
+ *	Parent class for import file readers
  */
 class ModeleImports
 {
+    var $db;
+    var $datatoimport;
+
 	var $error='';
 
-	var $driverlabel=array();
-	var $driverdesc=array();
-	var $driverversion=array();
+	var $id;           // Id of driver
+	var $label;        // Label of driver
+	var $extension;    // Extension of files imported by driver
+	var $version;      // Version of driver
 
-	var $liblabel=array();
-	var $libversion=array();
+	var $label_lib;    // Label of external lib used by driver
+	var $version_lib;  // Version of external lib used by driver
+
+	// Array of all drivers
+	var $_driverlabel=array();
+	var $_driverdesc=array();
+	var $_driverversion=array();
+
+	var $_liblabel=array();
+	var $_libversion=array();
 
 
 	/**
@@ -49,8 +60,9 @@ class ModeleImports
 	}
 
 	/**
-	 *      \brief      Charge en memoire et renvoie la liste des modeles actifs
-	 *      \param      db      Handler de base
+	 *   Charge en memoire et renvoie la liste des modeles actifs
+	 *
+	 *   @param	DoliDB	$db      Handler de base
 	 */
 	function liste_modeles($db)
 	{
@@ -75,29 +87,31 @@ class ModeleImports
     				$classname = "Import".ucfirst($moduleid);
 
     				require_once($file);
-    				$module = new $classname($db);
+    				$module = new $classname($db,'');
 
     				// Picto
     				$this->picto[$module->id]=$module->picto;
     				// Driver properties
-    				$this->driverlabel[$module->id]=$module->getDriverLabel();
-    				$this->driverdesc[$module->id]=$module->getDriverDesc();
-    				$this->driverversion[$module->id]=$module->getDriverVersion();
+    				$this->_driverlabel[$module->id]=$module->getDriverLabel();
+    				$this->_driverdesc[$module->id]=$module->getDriverDesc();
+    				$this->_driverversion[$module->id]=$module->getDriverVersion();
     				// If use an external lib
-    				$this->liblabel[$module->id]=$module->getLibLabel();
-    				$this->libversion[$module->id]=$module->getLibVersion();
+    				$this->_liblabel[$module->id]=$module->getLibLabel();
+    				$this->_libversion[$module->id]=$module->getLibVersion();
 
     				$i++;
     			}
     		}
         }
 
-		return array_keys($this->driverlabel);
+		return array_keys($this->_driverlabel);
 	}
 
 
 	/**
-	 *      \brief      Return picto of import driver
+	 *  Return picto of import driver
+	 *
+	 *	@return	string
 	 */
 	function getPicto($key)
 	{
@@ -105,43 +119,53 @@ class ModeleImports
 	}
 
 	/**
-	 *      \brief      Renvoi libelle d'un driver import
+	 *  Renvoi libelle d'un driver import
+	 *
+	 *	@return	string
 	 */
 	function getDriverLabel($key)
 	{
-		return $this->driverlabel[$key];
+		return $this->_driverlabel[$key];
 	}
 
 	/**
-	 *      \brief      Renvoi la description d'un driver import
+	 *  Renvoi la description d'un driver import
+	 *
+	 *	@return	string
 	 */
 	function getDriverDesc($key)
 	{
-		return $this->driverdesc[$key];
+		return $this->_driverdesc[$key];
 	}
 
 	/**
-	 *      \brief      Renvoi version d'un driver import
+	 *  Renvoi version d'un driver import
+	 *
+	 *	@return	string
 	 */
 	function getDriverVersion($key)
 	{
-		return $this->driverversion[$key];
+		return $this->_driverversion[$key];
 	}
 
 	/**
-	 *      \brief      Renvoi libelle de librairie externe du driver
+	 *  Renvoi libelle de librairie externe du driver
+	 *
+	 *	@return	string
 	 */
 	function getLibLabel($key)
 	{
-		return $this->liblabel[$key];
+		return $this->_liblabel[$key];
 	}
 
 	/**
-	 *      \brief      Renvoi version de librairie externe du driver
+	 *  Renvoi version de librairie externe du driver
+	 *
+	 *	@return	string
 	 */
 	function getLibVersion($key)
 	{
-		return $this->libversion[$key];
+		return $this->_libversion[$key];
 	}
 
 }

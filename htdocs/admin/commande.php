@@ -73,7 +73,7 @@ if ($action == 'specimen')
 
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
-	$dirmodels=array_merge(array('/'),$conf->modules_parts['models']);
+	$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 	foreach($dirmodels as $reldir)
 	{
 	    $file=dol_buildpath($reldir."core/modules/commande/doc/pdf_".$modele.".modules.php",0);
@@ -223,7 +223,7 @@ if ($action == 'set_COMMANDE_FREE_TEXT')
  * View
  */
 
-$dirmodels=array_merge(array('/'),$conf->modules_parts['models']);
+$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 
 llxHeader();
 

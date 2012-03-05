@@ -1658,9 +1658,12 @@ class Societe extends CommonObject
     }
 
     /**
-     *    Attribut un code client a partir du module de controle des codes.
+     *  Attribut un code client a partir du module de controle des codes.
+     *  Return value is stored into this->code_client
      *
-     *    @return     code_client		Code client automatique
+     *	@param	Societe		$objsoc		Object thirdparty
+     *	@param	int			$type		Should be 0 to say customer
+     *  @return void
      */
     function get_codeclient($objsoc=0,$type=0)
     {
@@ -1684,9 +1687,12 @@ class Societe extends CommonObject
     }
 
     /**
-     *    Attribut un code fournisseur a partir du module de controle des codes.
+     *  Attribut un code fournisseur a partir du module de controle des codes.
+     *  Return value is stored into this->code_fournisseur
      *
-     *    @return     code_fournisseur		Code fournisseur automatique
+     *	@param	Societe		$objsoc		Object thirdparty
+     *	@param	int			$type		Should be 1 to say supplier
+     *  @return void
      */
     function get_codefournisseur($objsoc=0,$type=1)
     {
@@ -1709,9 +1715,10 @@ class Societe extends CommonObject
     }
 
     /**
-     *    \brief      Verifie si un code client est modifiable en fonction des parametres
-     *                du module de controle des codes.
-     *    \return     int		0=Non, 1=Oui
+     *    Verifie si un code client est modifiable en fonction des parametres
+     *    du module de controle des codes.
+     *
+     *    @return     int		0=Non, 1=Oui
      */
     function codeclient_modifiable()
     {
@@ -1743,8 +1750,9 @@ class Societe extends CommonObject
 
 
     /**
-     *    \brief      Verifie si un code fournisseur est modifiable dans configuration du module de controle des codes
-     *    \return     int		0=Non, 1=Oui
+     *    Verifie si un code fournisseur est modifiable dans configuration du module de controle des codes
+     *
+     *    @return     int		0=Non, 1=Oui
      */
     function codefournisseur_modifiable()
     {
@@ -1776,8 +1784,9 @@ class Societe extends CommonObject
 
 
     /**
-     *    \brief      Check customer code
-     *    \return     int		0 if OK
+     *    Check customer code
+     *
+     *    @return     int		0 if OK
      * 							-1 ErrorBadCustomerCodeSyntax
      * 							-2 ErrorCustomerCodeRequired
      * 							-3 ErrorCustomerCodeAlreadyUsed
@@ -1810,8 +1819,9 @@ class Societe extends CommonObject
     }
 
     /**
-     *    \brief      Check supplier code
-     *    \return     int		0 if OK
+     *    Check supplier code
+     *
+     *    @return     int		0 if OK
      * 							-1 ErrorBadCustomerCodeSyntax
      * 							-2 ErrorCustomerCodeRequired
      * 							-3 ErrorCustomerCodeAlreadyUsed
@@ -1844,11 +1854,12 @@ class Societe extends CommonObject
     }
 
     /**
-     *    	\brief  	Renvoie un code compta, suivant le module de code compta.
-     *            		Peut etre identique a celui saisit ou genere automatiquement.
-     *            		A ce jour seule la generation automatique est implementee
-     *    	\param      type			Type de tiers ('customer' ou 'supplier')
-     *		\return		string			Code compta si ok, 0 si aucun, <0 si ko
+     *    	Renvoie un code compta, suivant le module de code compta.
+     *      Peut etre identique a celui saisit ou genere automatiquement.
+     *      A ce jour seule la generation automatique est implementee
+     *
+     *    	@param      type			Type of thirdparty ('customer' or 'supplier')
+     *		@return		string			Code compta si ok, 0 si aucun, <0 si ko
      */
     function get_codecompta($type)
     {
@@ -1864,7 +1875,6 @@ class Societe extends CommonObject
             }
 
             $var = $conf->global->SOCIETE_CODECOMPTA_ADDON;
-
             $mod = new $var;
 
             // Defini code compta dans $mod->code
@@ -1885,9 +1895,10 @@ class Societe extends CommonObject
     }
 
     /**
-     *    \brief      Defini la societe mere pour les filiales
-     *    \param      id      id compagnie mere a positionner
-     *    \return     int     <0 si ko, >0 si ok
+     *    Defini la societe mere pour les filiales
+     *
+     *    @param      id      id compagnie mere a positionner
+     *    @return     int     <0 si ko, >0 si ok
      */
     function set_parent($id)
     {
