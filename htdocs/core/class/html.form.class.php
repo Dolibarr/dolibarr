@@ -2728,7 +2728,7 @@ class Form
     
     	if (count($this->cache_currencies)) return 0;    // Cache deja charge
     
-    	$sql = "SELECT code, code_iso, label";
+    	$sql = "SELECT code_iso, label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_currencies";
         $sql.= " WHERE active = 1";
         $sql.= " ORDER BY code_iso ASC";
