@@ -4,7 +4,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
- * Copyright (C) 2011      Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2011-2012 Juanjo Menent         <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ $langs->load("companies");
 $langs->load("interventions");
 
 $id = GETPOST('id','int');
-$action = GETPOST("action");
+$action = GETPOST('action','alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -47,9 +47,9 @@ $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 
 // Get parameters
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -69,7 +69,7 @@ $modulepart='fichinter';
  * Actions
  */
 
-if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
+if (GETPOST('sendit','alpha') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
@@ -133,7 +133,7 @@ if ($object->id)
 
 	if ($action == 'delete')
 	{
-		$file = $upload_dir . '/' . GETPOST("urlfile");	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+		$file = $upload_dir . '/' . GETPOST('urlfile','alpha');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 		$result=dol_delete_file($file);
 		//if ($result >= 0) $mesg=$langs->trans("FileWasRemoced");
 	}
