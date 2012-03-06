@@ -2728,7 +2728,7 @@ class Form
     
     	if (count($this->cache_currencies)) return 0;    // Cache deja charge
     
-    	$sql = "SELECT code, code_iso, label";
+    	$sql = "SELECT code_iso, label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_currencies";
         $sql.= " WHERE active = 1";
         $sql.= " ORDER BY code_iso ASC";
@@ -2744,13 +2744,12 @@ class Form
     			$obj = $this->db->fetch_object($resql);
     
     			// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-    			$this->cache_currencies[$obj->code]['code_iso'] = $obj->code_iso;
-    			$this->cache_currencies[$obj->code]['label'] = ($obj->code_iso && $langs->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$langs->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:''));
-    			$label[$obj->code] = $this->cache_currencies[$obj->code]['label'];
+    			$this->cache_currencies[$obj->code_iso] = ($obj->code_iso && $langs->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$langs->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:''));
     			$i++;
     		}
     		
-    		array_multisort($label, SORT_ASC, $this->cache_currencies);
+    		// alphabetic order 
+    		asort($this->cache_currencies);
     		
     		return $num;
     	}
@@ -2780,18 +2779,18 @@ class Form
         if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilite
 
         $out.= '<select class="flat" name="'.$htmlname.'">';
-        foreach ($this->cache_currencies as $currency)
+        foreach ($this->cache_currencies as $code_iso => $label)
         {
-        	if ($selected && $selected == $currency['code_iso'])
+        	if ($selected && $selected == $code_iso)
         	{
-        		$out.= '<option value="'.$currency['code_iso'].'" selected="selected">';
+        		$out.= '<option value="'.$code_iso.'" selected="selected">';
         	}
         	else
         	{
-        		$out.= '<option value="'.$currency['code_iso'].'">';
+        		$out.= '<option value="'.$code_iso.'">';
         	}
-        	$out.= $currency['label'];
-        	if ($currency['code_iso']) $out.= ' ('.$currency['code_iso'].')';
+        	$out.= $label;
+        	$out.= ' ('.$code_iso.')';
         	$out.= '</option>';
         }
         $out.= '</select>';
