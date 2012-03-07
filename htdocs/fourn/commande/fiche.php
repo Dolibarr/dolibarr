@@ -1329,7 +1329,7 @@ if ($id > 0 || ! empty($ref))
 
 				if (is_object($hookmanager))
 				{
-			        $parameters=array('filtre'=>$filtre);
+			        $parameters=array('filtre'=>$filtre,'htmlname'=>'idprodfournprice','selected'=>$object->fourn_id,'socid'=>$object->socid);
 				    echo $hookmanager->executeHooks('formCreateProductSupplierOptions',$parameters,$object,$action);
 				}
 
