@@ -93,14 +93,21 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
     $result=include_once($conffile);	// Load conf file
     if ($result)
     {
+    	// Clean parameters
+    	$dolibarr_main_data_root=trim($dolibarr_main_data_root);
+    	$dolibarr_main_url_root=trim($dolibarr_main_url_root);
+    	$dolibarr_main_url_root_alt=trim($dolibarr_main_url_root_alt);
+    	$dolibarr_main_document_root=trim($dolibarr_main_document_root);
+    	$dolibarr_main_document_root_alt=trim($dolibarr_main_document_root_alt);
+    	
         //if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
 
         // Remove last / or \ on directories or url value
-        if (! empty($dolibarr_main_document_root) && ! preg_match('/^[\\/]+$/',$dolibarr_main_document_root)) $dolibarr_main_document_root=preg_replace('/[\\/]+$/','',$dolibarr_main_document_root);
-        if (! empty($dolibarr_main_url_root)      && ! preg_match('/^[\\/]+$/',$dolibarr_main_url_root))      $dolibarr_main_url_root=preg_replace('/[\\/]+$/','',$dolibarr_main_url_root);
-        if (! empty($dolibarr_main_data_root)     && ! preg_match('/^[\\/]+$/',$dolibarr_main_data_root))     $dolibarr_main_data_root=preg_replace('/[\\/]+$/','',$dolibarr_main_data_root);
-        if (! empty($dolibarr_main_document_root_alt) && ! preg_match('/^[\\/]+$/',$dolibarr_main_document_root_alt)) $dolibarr_main_document_root_alt=preg_replace('/[\\/]+$/','',$dolibarr_main_document_root_alt);
-        if (! empty($dolibarr_main_url_root_alt)      && ! preg_match('/^[\\/]+$/',$dolibarr_main_url_root_alt))      $dolibarr_main_url_root_alt=preg_replace('/[\\/]+$/','',$dolibarr_main_url_root_alt);
+        if (! empty($dolibarr_main_document_root)		&& ! preg_match('/^[\\/]+$/',$dolibarr_main_document_root))		$dolibarr_main_document_root=preg_replace('/[\\/]+$/','',$dolibarr_main_document_root);
+        if (! empty($dolibarr_main_url_root)			&& ! preg_match('/^[\\/]+$/',$dolibarr_main_url_root))			$dolibarr_main_url_root=preg_replace('/[\\/]+$/','',$dolibarr_main_url_root);
+        if (! empty($dolibarr_main_data_root)			&& ! preg_match('/^[\\/]+$/',$dolibarr_main_data_root))			$dolibarr_main_data_root=preg_replace('/[\\/]+$/','',$dolibarr_main_data_root);
+        if (! empty($dolibarr_main_document_root_alt)	&& ! preg_match('/^[\\/]+$/',$dolibarr_main_document_root_alt))	$dolibarr_main_document_root_alt=preg_replace('/[\\/]+$/','',$dolibarr_main_document_root_alt);
+        if (! empty($dolibarr_main_url_root_alt)		&& ! preg_match('/^[\\/]+$/',$dolibarr_main_url_root_alt))		$dolibarr_main_url_root_alt=preg_replace('/[\\/]+$/','',$dolibarr_main_url_root_alt);
 
         // Create conf object
         if (! empty($dolibarr_main_document_root))

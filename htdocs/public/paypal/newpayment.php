@@ -77,7 +77,7 @@ if (! GETPOST("action"))
     }
 }
 
-$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 $urlok=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentok.php?';
 $urlko=$urlwithouturlroot.DOL_URL_ROOT.'/public/paypal/paymentko.php?';
 

@@ -1262,7 +1262,7 @@ DelaysOfToleranceSuppliersOrdersToProcess=Forsinkelse tolerance (i dage) før al
 SecurityEventsPurged=Sikkerhed begivenheder renset
 ShowProfIdInAddress=Vis Professionel id med adresser på dokumenter
 TranslationUncomplete=Delvis oversættelse
-SomeTranslationAreUncomplete=Nogle sprog kan være delvist oversættes eller kan indeholder fejl. Hvis du opdager noget, kan du <b>rette. Lang</b> tekst filer i mappen <b>htdocs / Langs</b> og sende dem på forum i <a href="http://www.dolibarr.org/forum" target="_blank">http://www.dolibarr.org</a> .
+SomeTranslationAreUncomplete=Nogle sprog kan være delvist oversættes eller kan indeholder fejl. Hvis du opdager noget, kan du <b>rette. Lang</b> tekst filer i mappen <b>htdocs/langs</b> og sende dem på forum i <a href="http://www.dolibarr.org/forum" target="_blank">http://www.dolibarr.org</a> .
 MenuUseLayout=Gør lodret menu hidable (option javascript må ikke være deaktiveret)
 MAIN_DISABLE_METEO=Deaktiver Meteo udsigt
 TestLoginToAPI=Test logge på API

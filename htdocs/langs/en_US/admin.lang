@@ -865,6 +865,8 @@ SendmailOptionNotComplete=Warning, on some Linux systems, to send email from you
 PathToDocuments=Path to documents
 PathDirectory=Directory
 SendmailOptionMayHurtBuggedMTA=Feature to send mails using method "PHP mail direct" will generate a mail message that might be not correctly parsed by some receiving mail servers. Result is that some mails can't be read by people hosted by thoose bugged platforms. It's case for some Internet providers (Ex: Orange in France). This is not a problem into Dolibarr nor into PHP but onto receiving mail server. You can however add option MAIN_FIX_FOR_BUGGED_MTA to 1 into setup - other to modify Dolibarr to avoid this. However, you may experience problem with other servers that respect strictly the SMTP standard. The other solution (recommanded) is to use the method "SMTP socket library" that has no disadvantages.
+TranslationSetup=Configuration de la traduction
+TranslationDesc=Choice of language visible on screen can be modified:<br>* Globally from menu <strong>Home - Setup - Display</strong><br>* For user only from tab <strong>User display</strong> of user card (click on login on top of screen). 
 
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.

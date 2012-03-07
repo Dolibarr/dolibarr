@@ -19,13 +19,12 @@
 /**
  *       \file       htdocs/install/index.php
  *       \ingroup    install
- *       \brief      Affichage page selection langue si premiere install.
- *					 Si reinstall, passe directement a la page check.php
+ *       \brief      Show page to select language. This is done only for a first installation.
+ *					 For a reinstall this page redirect to page check.php
  */
 include_once("./inc.php");
 include_once("../core/class/html.form.class.php");
 include_once("../core/class/html.formadmin.class.php");
-
 
 $err = 0;
 
@@ -46,7 +45,7 @@ $langs->load("admin");
 
 $formadmin=new FormAdmin('');	// Note: $db does not exist yet but we don't need it, so we put ''.
 
-pHeader("", "check");   // Etape suivante = index2
+pHeader("", "check");   // Etape suivante = check
 
 
 print '<center>';

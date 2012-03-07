@@ -1244,7 +1244,7 @@ DefaultMenuSmartphoneManager=Смартфон менеджер меню
 DelaysOfToleranceSuppliersOrdersToProcess=Задержка толерантности (в днях) до предупреждения о поставщиках заказов еще не обработанных
 ShowProfIdInAddress=Показать профессионала идентификатор с адресами на документах
 TranslationUncomplete=Частичный перевод
-SomeTranslationAreUncomplete=Некоторые языки могут быть частично переведены или могут содержит ошибки. Если вы обнаружили некоторые, вы можете <b>исправить. Lang</b> текстовые файлы в каталоге <b>htdocs / Langs</b> и представить их на форуме в <a href="http://www.dolibarr.org/forum" target="_blank">http://www.dolibarr.org</a> .
+SomeTranslationAreUncomplete=Некоторые языки могут быть частично переведены или могут содержит ошибки. Если вы обнаружили некоторые, вы можете <b>исправить. Lang</b> текстовые файлы в каталоге <b>htdocs/langs</b> и представить их на форуме в <a href="http://www.dolibarr.org/forum" target="_blank">http://www.dolibarr.org</a> .
 MenuUseLayout=Сделайте вертикальные hidable меню (опция JavaScript не должна быть отключена)
 MAIN_DISABLE_METEO=Отключить метео зрения
 TestLoginToAPI=Испытание Войти в API
