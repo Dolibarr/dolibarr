@@ -143,12 +143,6 @@ $linuxlike=1;
 if (preg_match('/^win/i',PHP_OS)) $linuxlike=0;
 if (preg_match('/^mac/i',PHP_OS)) $linuxlike=0;
 
-
-
-/*
- * View
- */
-
 $wikihelp='EN:Setup Sms|FR:Paramétrage Sms|ES:Configuración Sms';
 llxHeader('',$langs->trans("Setup"),$wikihelp);
 
@@ -349,7 +343,7 @@ else
 }
 
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>
