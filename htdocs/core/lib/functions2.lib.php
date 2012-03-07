@@ -39,7 +39,6 @@ function dol_getDefaultFormat()
     return $selected;
 }
 
-
 /**
  *  Output content of a file $filename in version of current language (otherwise may use an alternate language)
  *
@@ -215,7 +214,6 @@ function dol_print_object_info($object)
     print $langs->trans("DateLastSend")." : " . dol_print_date($object->date_envoi,"dayhourtext") . '<br>';
 }
 
-
 /**
  *	Return true if email has a domain name that can't be resolved
  *
@@ -234,7 +232,6 @@ function isValidMailDomain($mail)
         return false;
     }
 }
-
 
 /**
  *	Url string validation
@@ -285,7 +282,6 @@ function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
     return $ValidUrl;
 }
 
-
 /**
  *	Clean an url string
  *
@@ -324,7 +320,6 @@ function clean_url($url,$http=1)
         return $CleanUrl;
     }
 }
-
 
 /**
  * 	Return lines of an html table from an array
@@ -372,7 +367,6 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
     if($tableMarkup) $text.= '</table>' ;
     return $text ;
 }
-
 
 /**
  * Return next value for a mask
@@ -662,7 +656,6 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     return $numFinal;
 }
 
-
 /**
  * Check value
  *
@@ -753,7 +746,6 @@ function check_value($mask,$value)
     return $result;
 }
 
-
 /**
  *	Convert a binary data to string that represent hexadecimal value
  *
@@ -772,7 +764,6 @@ function binhex($bin, $pad=false, $upper=false)
     return $x;
 }
 
-
 /**
  *	Convert an hexadecimal string into a binary string
  *
@@ -789,7 +780,6 @@ function hexbin($hexa)
     }
     return $bin;
 }
-
 
 /**
  *	Retourne le numero de la semaine par rapport a une date
@@ -872,7 +862,6 @@ function numero_semaine($time)
     return sprintf("%02d",$numeroSemaine);
 }
 
-
 /**
  *	Convertit une masse d'une unite vers une autre unite
  *
@@ -906,7 +895,6 @@ function weight_convert($weight,&$from_unit,$to_unit)
 
     return $weight;
 }
-
 
 /**
  *	Save personnal parameter
@@ -979,7 +967,6 @@ function dol_set_user_param($db, $conf, &$user, $tab)
     return 1;
 }
 
-
 /**
  *	Returns formated reduction
  *
@@ -1001,7 +988,6 @@ function dol_print_reduction($reduction,$langs)
 
     return $string;
 }
-
 
 /**
  * 	Return OS version.
@@ -1045,7 +1031,6 @@ function version_webserver()
 {
     return $_SERVER["SERVER_SOFTWARE"];
 }
-
 
 /**
  * 	Return list of activated modules usable for document generation
@@ -1152,7 +1137,6 @@ function is_ip($ip)
     return 1;
 }
 
-
 /**
  *  Build a login from lastname, firstname
  *
@@ -1168,8 +1152,6 @@ function dol_buildlogin($lastname,$firstname)
     $login=dol_string_nospecial($login,''); // For special names
     return $login;
 }
-
-
 
 /**
  *  Return array to use for SoapClient constructor
@@ -1214,4 +1196,371 @@ function getSoapParams()
         );
     }
     return $params;
+}
+
+/**
+ * Convert unicode
+ * 
+ * @param	string	$unicode	Unicode
+ * @param	string	$encoding	Encoding type
+ * @return	string				Unicode converted
+ */
+function unichr($unicode , $encoding = 'UTF-8')
+{
+	return mb_convert_encoding("&#{$unicode};", $encoding, 'HTML-ENTITIES');
+}
+
+/**
+ *	Convert a currency code into its symbol
+ *
+ *  @param		string	$currency_code		Currency code
+ *  @return		string						Currency symbol encoded into UTF8
+ */
+function getCurrencySymbol($currency_code)
+{
+	switch ($currency_code) {
+		case "ALL":
+			$currency_sign = " ".unichr(76).unichr(101).unichr(107);
+			break;
+		case "AFN":
+			$currency_sign = " ".unichr(1547);
+			break;
+		case "ARS":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "AWG":
+			$currency_sign = " ".unichr(402);
+			break;
+		case "AUD":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "AZN":
+			$currency_sign = " ".unichr(1084).unichr(1072).unichr(1085);
+			break;
+		case "BSD":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "BBD":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "BYR":
+			$currency_sign = " ".unichr(112).unichr(46);
+			break;
+		case "BZD":
+			$currency_sign = " ".unichr(66).unichr(90).unichr(36);
+			break;
+		case "BMD":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "BOB":
+			$currency_sign = " ".unichr(36).unichr(98);
+			break;
+		case "BAM":
+			$currency_sign = " ".unichr(75).unichr(77);
+			break;
+		case "BWP":
+			$currency_sign = " ".unichr(80);
+			break;
+		case "BGN":
+			$currency_sign = " ".unichr(1083).unichr(1074);
+			break;
+		case "BRL":
+			$currency_sign = " ".unichr(82).unichr(36);
+			break;
+		case "BND":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "KHR":
+			$currency_sign = " ".unichr(6107);
+			break;
+		case "CAD":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "KYD":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "CLP":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "CNY":
+			$currency_sign = " ".unichr(165);
+			break;
+		case "COP":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "CRC":
+			$currency_sign = " ".unichr(8353);
+			break;
+		case "HRK":
+			$currency_sign = " ".unichr(107).unichr(110);
+			break;
+		case "CUP":
+			$currency_sign = " ".unichr(8369);
+			break;
+		case "CZK":
+			$currency_sign = " ".unichr(75).unichr(269);
+			break;
+		case "DKK":
+			$currency_sign = " ".unichr(107).unichr(114);
+			break;
+		case "DOP":
+			$currency_sign = " ".unichr(82).unichr(68).unichr(36);
+			break;
+		case "XCD":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "EGP":
+			$currency_sign = " ".unichr(163);
+			break;
+		case "SVC":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "EEK":
+			$currency_sign = " ".unichr(107).unichr(114);
+			break;
+		case "EUR":
+			$currency_sign = " ".unichr(8364);
+			break;
+		case "FKP":
+			$currency_sign = " ".unichr(163);
+			break;
+		case "FJD":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "GHC":
+			$currency_sign = " ".unichr(162);
+			break;
+		case "GIP":
+			$currency_sign = " ".unichr(163);
+			break;
+		case "GTQ":
+			$currency_sign = " ".unichr(81);
+			break;
+		case "GGP":
+			$currency_sign = " ".unichr(163);
+			break;
+		case "GYD":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "HNL":
+			$currency_sign = " ".unichr(76);
+			break;
+		case "HKD":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "HUF":
+			$currency_sign = " ".unichr(70).unichr(116);
+			break;
+		case "ISK":
+			$currency_sign = " ".unichr(107).unichr(114);
+			break;
+		case "INR":
+			$currency_sign = " ".unichr(8377);
+			break;
+		case "IDR":
+			$currency_sign = " ".unichr(82).unichr(112);
+			break;
+		case "IRR":
+			$currency_sign = " ".unichr(65020);
+			break;
+		case "IMP":
+			$currency_sign = " ".unichr(163);
+			break;
+		case "ILS":
+			$currency_sign = " ".unichr(8362);
+			break;
+		case "JMD":
+			$currency_sign = " ".unichr(74).unichr(36);
+			break;
+		case "JPY":
+			$currency_sign = " ".unichr(165);
+			break;
+		case "JEP":
+			$currency_sign = " ".unichr(163);
+			break;
+		case "KZT":
+			$currency_sign = " ".unichr(1083).unichr(1074);
+			break;
+		case "KPW":
+			$currency_sign = " ".unichr(8361);
+			break;
+		case "KRW":
+			$currency_sign = " ".unichr(8361);
+			break;
+		case "KGS":
+			$currency_sign = " ".unichr(1083).unichr(1074);
+			break;
+		case "LAK":
+			$currency_sign = " ".unichr(8365);
+			break;
+		case "LVL":
+			$currency_sign = " ".unichr(76).unichr(115);
+			break;
+		case "LBP":
+			$currency_sign = " ".unichr(163);
+			break;
+		case "LRD":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "LTL":
+			$currency_sign = " ".unichr(76).unichr(116);
+			break;
+		case "MKD":
+			$currency_sign = " ".unichr(1076).unichr(1077).unichr(1085);
+			break;
+		case "MYR":
+			$currency_sign = " ".unichr(82).unichr(77);
+			break;
+		case "MUR":
+			$currency_sign = " ".unichr(8360);
+			break;
+		case "MXN":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "MNT":
+			$currency_sign = " ".unichr(8366);
+			break;
+		case "MZN":
+			$currency_sign = " ".unichr(77).unichr(84);
+			break;
+		case "NAD":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "NPR":
+			$currency_sign = " ".unichr(8360);
+			break;
+		case "ANG":
+			$currency_sign = " ".unichr(402);
+			break;
+		case "NZD":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "NIO":
+			$currency_sign = " ".unichr(67).unichr(36);
+			break;
+		case "NGN":
+			$currency_sign = " ".unichr(8358);
+			break;
+		case "NOK":
+			$currency_sign = " ".unichr(107).unichr(114);
+			break;
+		case "OMR":
+			$currency_sign = " ".unichr(65020);
+			break;
+		case "PKR":
+			$currency_sign = " ".unichr(8360);
+			break;
+		case "PAB":
+			$currency_sign = " ".unichr(66).unichr(47).unichr(46);
+			break;
+		case "PYG":
+			$currency_sign = " ".unichr(71).unichr(115);
+			break;
+		case "PEN":
+			$currency_sign = " ".unichr(83).unichr(47).unichr(46);
+			break;
+		case "PHP":
+			$currency_sign = " ".unichr(8369);
+			break;
+		case "PLN":
+			$currency_sign = " ".unichr(122).unichr(322);
+			break;
+		case "QAR":
+			$currency_sign = " ".unichr(65020);
+			break;
+		case "RON":
+			$currency_sign = " ".unichr(108).unichr(101).unichr(105);
+			break;
+		case "RUB":
+			$currency_sign = " ".unichr(1088).unichr(1091).unichr(1073);
+			break;
+		case "SHP":
+			$currency_sign = " ".unichr(163);
+			break;
+		case "SAR":
+			$currency_sign = " ".unichr(65020);
+			break;
+		case "RSD":
+			$currency_sign = " ".unichr(1044).unichr(1080).unichr(1085).unichr(46);
+			break;
+		case "SCR":
+			$currency_sign = " ".unichr(8360);
+			break;
+		case "SGD":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "SBD":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "SOS":
+			$currency_sign = " ".unichr(83);
+			break;
+		case "ZAR":
+			$currency_sign = " ".unichr(82);
+			break;
+		case "LKR":
+			$currency_sign = " ".unichr(8360);
+			break;
+		case "SEK":
+			$currency_sign = " ".unichr(107).unichr(114);
+			break;
+		case "CHF":
+			$currency_sign = " ".unichr(67).unichr(72).unichr(70);
+			break;
+		case "SRD":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "SYP":
+			$currency_sign = " ".unichr(163);
+			break;
+		case "TWD":
+			$currency_sign = " ".unichr(78).unichr(84).unichr(36);
+			break;
+		case "THB":
+			$currency_sign = " ".unichr(3647);
+			break;
+		case "TTD":
+			$currency_sign = " ".unichr(84).unichr(84).unichr(36);
+			break;
+		case "TRY":
+			$currency_sign = " ".unichr(84).unichr(76);
+			break;
+		case "TRL":
+			$currency_sign = " ".unichr(8356);
+			break;
+		case "TVD":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "UAH":
+			$currency_sign = " ".unichr(8372);
+			break;
+		case "GBP":
+			$currency_sign = " ".unichr(163);
+			break;
+		case "USD":
+			$currency_sign = " ".unichr(36);
+			break;
+		case "UYU":
+			$currency_sign = " ".unichr(36).unichr(85);
+			break;
+		case "UZS":
+			$currency_sign = " ".unichr(1083).unichr(1074);
+			break;
+		case "VEF":
+			$currency_sign = " ".unichr(66).unichr(115);
+			break;
+		case "VND":
+			$currency_sign = " ".unichr(8363);
+			break;
+		case "YER":
+			$currency_sign = " ".unichr(65020);
+			break;
+		case "ZWD":
+			$currency_sign = " ".unichr(90).unichr(36);
+			break;
+		default:
+			$currency_sign = " ".$currency_code;
+			break;
+	}
+	return $currency_sign;
 }
