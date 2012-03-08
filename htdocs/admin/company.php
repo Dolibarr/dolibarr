@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
+/* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -269,8 +270,8 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
      * Edition des parametres
      */
     print "\n".'<script type="text/javascript" language="javascript">';
-    print 'jQuery(document).ready(function () {
-              jQuery("#selectcountry_id").change(function() {
+    print '$(document).ready(function () {
+              $("#selectcountry_id").change(function() {
                 document.form_index.action.value="updateedit";
                 document.form_index.submit();
               });
@@ -661,27 +662,14 @@ else
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("State").'</td><td>';
-    if ($conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT)
-    {
-        $sql = "SELECT code_departement as code, nom as label from ".MAIN_DB_PREFIX."c_departements where rowid = '".$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT."'";
-        $resql=$db->query($sql);
-        if ($resql)
-        {
-            $obj = $db->fetch_object($resql);
-        }
-        else
-        {
-            dol_print_error($db);
-        }
-        $state=$obj->label;
-        print $state;
-    }
+    if ($conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT) print getState($conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT);
+    else print '&nbsp;';
     print '</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("CompanyCurrency").'</td><td>';
     print currency_name($conf->currency,1);
-    print ' ('.$conf->currency.')';
+    print ' ('.getCurrencySymbol($conf->currency).')';
     print '</td></tr>';
 
     $var=!$var;
@@ -980,8 +968,7 @@ else
     print '<br>';
 }
 
+
 $db->close();
-
 llxFooter();
-
 ?>
