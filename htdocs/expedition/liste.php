@@ -30,14 +30,14 @@ $langs->load("sendings");
 $langs->load('companies');
 
 // Security check
-$expeditionid = isset($_GET["id"])?$_GET["id"]:'';
+$expeditionid = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'expedition',$expeditionid,'');
 
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -77,9 +77,9 @@ if ($socid)
 {
 	$sql.= " AND e.fk_soc = ".$socid;
 }
-if ($_POST["sf_ref"])
+if (GETPOST('sf_ref','alpha'))
 {
-	$sql.= " AND e.ref like '%".$db->escape($_POST["sf_ref"])."%'";
+	$sql.= " AND e.ref like '%".$db->escape(GETPOST('sf_ref','alpha'))."%'";
 }
 
 $sql.= $db->order($sortfield,$sortorder);
@@ -94,7 +94,7 @@ if ($resql)
 
 	$param="&amp;socid=$socid";
 
-	print_barre_liste($langs->trans('ListOfSendings'), $_GET["page"], "liste.php",$param,$sortfield,$sortorder,'',$num);
+	print_barre_liste($langs->trans('ListOfSendings'), $page, "liste.php",$param,$sortfield,$sortorder,'',$num);
 
 
 	$i = 0;

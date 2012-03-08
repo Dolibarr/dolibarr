@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2011-2012 Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,19 +49,19 @@ $langs->load('stocks');
 $langs->load('other');
 $langs->load('propal');
 
-$origin		= GETPOST("origin")?GETPOST("origin"):'expedition';   // Example: commande, propal
+$origin		= GETPOST('origin','alpha')?GETPOST('origin','alpha'):'expedition';   // Example: commande, propal
 $origin_id 	= GETPOST('id','int')?GETPOST('id','int'):'';
-if (empty($origin_id)) $origin_id  = GETPOST("origin_id");    // Id of order or propal
-if (empty($origin_id)) $origin_id  = GETPOST("object_id");    // Id of order or propal
+if (empty($origin_id)) $origin_id  = GETPOST('origin_id','int');    // Id of order or propal
+if (empty($origin_id)) $origin_id  = GETPOST('object_id','int');    // Id of order or propal
 $id = $origin_id;
-$ref=GETPOST('ref');
+$ref=GETPOST('ref','alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,$origin,$origin_id);
 
-$action		= GETPOST("action");
-$confirm	= GETPOST("confirm");
+$action		= GETPOST('action','alpha');
+$confirm	= GETPOST('confirm','alpha');
 
 $object = new Expedition($db);
 
@@ -75,17 +75,17 @@ if ($action == 'add')
 
 	$db->begin();
 
-	$object->note				= $_POST["note"];
+	$object->note				= GETPOST('note','alpha');
 	$object->origin				= $origin;
 	$object->origin_id			= $origin_id;
-	$object->weight				= $_POST["weight"]==""?"NULL":$_POST["weight"];
-	$object->sizeH				= $_POST["sizeH"]==""?"NULL":$_POST["sizeH"];
-	$object->sizeW				= $_POST["sizeW"]==""?"NULL":$_POST["sizeW"];
-	$object->sizeS				= $_POST["sizeS"]==""?"NULL":$_POST["sizeS"];
-	$object->size_units			= $_POST["size_units"];
-	$object->weight_units		= $_POST["weight_units"];
+	$object->weight				= GETPOST('weight','int')==''?"NULL":GETPOST('weight','int');
+	$object->sizeH				= GETPOST('sizeH','int')==''?"NULL":GETPOST('sizeH','int');
+	$object->sizeW				= GETPOST('sizeW','int')==''?"NULL":GETPOST('sizeW','int');
+	$object->sizeS				= GETPOST('sizeS','int')==''?"NULL":GETPOST('sizeS','int');
+	$object->size_units			= GETPOST('size_units','int');
+	$object->weight_units		= GETPOST('weight_units','int');
 
-	$date_delivery = dol_mktime($_POST["date_deliveryhour"], $_POST["date_deliverymin"], 0, $_POST["date_deliverymonth"], $_POST["date_deliveryday"], $_POST["date_deliveryyear"]);
+	$date_delivery = dol_mktime(GETPOST('date_deliveryhour','int'), GETPOST('date_deliverymin','int'), 0, GETPOST('date_deliverymonth','int'), GETPOST('date_deliveryday','int'), GETPOST('date_deliveryyear','int'));
 
 	// On va boucler sur chaque ligne du document d'origine pour completer objet expedition
 	// avec info diverses + qte a livrer
@@ -98,16 +98,16 @@ if ($action == 'add')
 	$object->ref_customer			= $objectsrc->ref_client;
 	$object->date_delivery			= $date_delivery;	// Date delivery planed
 	$object->fk_delivery_address	= $objectsrc->fk_delivery_address;
-	$object->expedition_method_id	= $_POST["expedition_method_id"];
-	$object->tracking_number		= $_POST["tracking_number"];
-	$object->ref_int				= $_POST["ref_int"];
+	$object->expedition_method_id	= GETPOST('expedition_method_id','int');
+	$object->tracking_number		= GETPOST('tracking_number','alpha');
+	$object->ref_int				= GETPOST('ref_int','alpha');
 
     $num=count($objectsrc->lines);
 	$totalqty=0;
 	for ($i = 0; $i < $num; $i++)
 	{
 	    $qty = "qtyl".$i;
-	    if ($_POST[$qty] > 0) $totalqty+=$_POST[$qty];
+	    if (GETPOST($qty,'int') > 0) $totalqty+=GETPOST($qty,'int');
 	}
 
 	if ($totalqty > 0)
@@ -116,13 +116,13 @@ if ($action == 'add')
     	for ($i = 0; $i < $num; $i++)
     	{
         	$qty = "qtyl".$i;
-    		if ($_POST[$qty] > 0)
+    		if (GETPOST($qty,'int') > 0)
         	{
     			$ent = "entl".$i;
     			$idl = "idl".$i;
-    			$entrepot_id = isset($_POST[$ent])?$_POST[$ent]:$_POST["entrepot_id"];
+    			$entrepot_id = GETPOST($ent,'int')?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
 
-    			$ret=$object->addline($entrepot_id,$_POST[$idl],$_POST[$qty]);
+    			$ret=$object->addline($entrepot_id,GETPOST($idl,'int'),GETPOST($qty,'int'));
     	    	if ($ret < 0)
             	{
             		$mesg='<div class="error">'.$object->error.'</div>';
@@ -156,7 +156,7 @@ if ($action == 'add')
 	else
 	{
 		$db->rollback();
-		$_GET["commande_id"]=$_POST["commande_id"];
+		$_GET["commande_id"]=GETPOST('commande_id','int');
 		$action='create';
 	}
 }
@@ -189,7 +189,7 @@ if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->expedition
 	// Define output language
 	$outputlangs = $langs;
 	$newlang='';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','int')) $newlang=GETPOST('lang_id','int');
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
 	if (! empty($newlang))
 	{
@@ -236,7 +236,7 @@ if ($action == 'reopen' && $user->rights->expedition->valider)
 if ($action == 'setdate_livraison' && $user->rights->expedition->creer)
 {
 	//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
-	$datedelivery=dol_mktime($_POST['liv_hour'], $_POST['liv_min'], 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
+	$datedelivery=dol_mktime(GETPOST('liv_hour','int'), GETPOST('liv_min','int'), 0, GETPOST('liv_month','int'), GETPOST('liv_day','int'), GETPOST('liv_year','int'));
 
 	$object->fetch($id);
 	$result=$object->set_date_livraison($user,$datedelivery);
@@ -260,13 +260,13 @@ if ($action == 'settrackingnumber' || $action == 'settrackingurl'
 	$result=$shipping->fetch($id);
 	if ($result < 0) dol_print_error($db,$shipping->error);
 
-	if ($action == 'settrackingnumber')			$shipping->tracking_number = trim($_REQUEST["trackingnumber"]);
-	if ($action == 'settrackingurl')			$shipping->tracking_url = trim($_REQUEST["trackingurl"]);
-	if ($action == 'settrueWeight')				$shipping->trueWeight = trim($_REQUEST["trueWeight"]);
-	if ($action == 'settrueWidth')				$shipping->trueWidth = trim($_REQUEST["trueWidth"]);
-	if ($action == 'settrueHeight')				$shipping->trueHeight = trim($_REQUEST["trueHeight"]);
-	if ($action == 'settrueDepth')				$shipping->trueDepth = trim($_REQUEST["trueDepth"]);
-	if ($action == 'setexpedition_method_id')	$shipping->expedition_method_id = trim($_REQUEST["expedition_method_id"]);
+	if ($action == 'settrackingnumber')			$shipping->tracking_number = trim(GETPOST('trackingnumber','alpha'));
+	if ($action == 'settrackingurl')			$shipping->tracking_url = trim(GETPOST('trackingurl','int'));
+	if ($action == 'settrueWeight')				$shipping->trueWeight = trim(GETPOST('trueWeight','int'));
+	if ($action == 'settrueWidth')				$shipping->trueWidth = trim(GETPOST('trueWidth','int'));
+	if ($action == 'settrueHeight')				$shipping->trueHeight = trim(GETPOST('trueHeight','int'));
+	if ($action == 'settrueDepth')				$shipping->trueDepth = trim(GETPOST('trueDepth','int'));
+	if ($action == 'setexpedition_method_id')	$shipping->expedition_method_id = trim(GETPOST('expedition_method_id','int'));
 
 	if (! $error)
 	{
@@ -294,22 +294,22 @@ if ($action == 'builddoc')	// En get ou en post
 	$shipment->fetch($id);
 	$shipment->fetch_thirdparty();
 
-	if ($_REQUEST['model'])
+	if (GETPOST('model','alpha'))
 	{
-		$shipment->setDocModel($user, $_REQUEST['model']);
+		$shipment->setDocModel($user, GETPOST('model','alpha'));
 	}
 
 	// Define output language
 	$outputlangs = $langs;
 	$newlang='';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','int')) $newlang=GETPOST('lang_id','int');
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$shipment->client->default_lang;
 	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	$result=expedition_pdf_create($db,$shipment,$_REQUEST['model'],$outputlangs);
+	$result=expedition_pdf_create($db,$shipment,GETPOST('model','alpha'),$outputlangs);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);
@@ -320,7 +320,7 @@ if ($action == 'builddoc')	// En get ou en post
 /*
  * Add file in email form
  */
-if ($_POST['addfile'])
+if (GETPOST('addfile','alpha'))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
@@ -336,7 +336,7 @@ if ($_POST['addfile'])
 /*
  * Remove file in email form
  */
-if (! empty($_POST['removedfile']))
+if (GETPOST('removedfile','alpha'))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
@@ -345,7 +345,7 @@ if (! empty($_POST['removedfile']))
     $upload_dir_tmp = $vardir.'/temp';
 
 	// TODO Delete only files that was uploaded from email form
-    $mesg=dol_remove_file_process($_POST['removedfile'],0);
+    $mesg=dol_remove_file_process(GETPOST('removedfile','int'),0);
 
     $action ='presend';
 }
@@ -353,7 +353,7 @@ if (! empty($_POST['removedfile']))
 /*
  * Send mail
  */
-if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_POST['cancel'])
+if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile','alpha') && ! GETPOST('cancel','alpha'))
 {
     $langs->load('mails');
 
@@ -367,24 +367,24 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
 
         if (is_readable($file))
         {
-            if ($_POST['sendto'])
+            if (GETPOST('sendto','alpha'))
             {
                 // Le destinataire a ete fourni via le champ libre
-                $sendto = $_POST['sendto'];
+                $sendto = GETPOST('sendto','alpha');
                 $sendtoid = 0;
             }
-            elseif ($_POST['receiver'] != '-1')
+            elseif (GETPOST('receiver','alpha') != '-1')
             {
                 // Recipient was provided from combo list
-                if ($_POST['receiver'] == 'thirdparty') // Id of third party
+                if (GETPOST('receiver','alpha') == 'thirdparty') // Id of third party
                 {
                     $sendto = $object->client->email;
                     $sendtoid = 0;
                 }
                 else	// Id du contact
                 {
-                    $sendto = $object->client->contact_get_property($_POST['receiver'],'email');
-                    $sendtoid = $_POST['receiver'];
+                    $sendto = $object->client->contact_get_property(GETPOST('receiver','alpha'),'email');
+                    $sendtoid = GETPOST('receiver','alpha');
                 }
             }
 
@@ -392,15 +392,15 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
             {
                 $langs->load("commercial");
 
-                $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
-                $replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
-                $message = $_POST['message'];
-                $sendtocc = $_POST['sendtocc'];
-                $deliveryreceipt = $_POST['deliveryreceipt'];
+                $from = GETPOST('fromname','alpha') . ' <' . GETPOST('frommail','alpha') .'>';
+                $replyto = GETPOST('replytoname','alpha'). ' <' . GETPOST('replytomail','alpha').'>';
+                $message = GETPOST('message','alpha');
+                $sendtocc = GETPOST('sendtocc','alpha');
+                $deliveryreceipt = GETPOST('deliveryreceipt','alpha');
 
-                if ($_POST['action'] == 'send')
+                if ($action == 'send')
                 {
-                    if (dol_strlen($_POST['subject'])) $subject=$_POST['subject'];
+                    if (dol_strlen(GETPOST('subject','alpha'))) $subject=GETPOST('subject','alpha');
                     else $subject = $langs->transnoentities('Shipping').' '.$object->ref;
                     $actiontypecode='AC_SHIP';
                     $actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
@@ -564,9 +564,9 @@ if ($action == 'create')
 			print '<input type="hidden" name="origin" value="'.$origin.'">';
 			print '<input type="hidden" name="origin_id" value="'.$object->id.'">';
 			print '<input type="hidden" name="ref_int" value="'.$object->ref_int.'">';
-			if ($_GET["entrepot_id"])
+			if (GETPOST('entrepot_id','int'))
 			{
-				print '<input type="hidden" name="entrepot_id" value="'.$_GET["entrepot_id"].'">';
+				print '<input type="hidden" name="entrepot_id" value="'.GETPOST('entrepot_id','int').'">';
 			}
 
 			print '<table class="border" width="100%">';
@@ -612,7 +612,7 @@ if ($action == 'create')
 				print '<td colspan="3">';
 				if (!empty($object->fk_delivery_address))
 				{
-					$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$_GET['socid'],'none','commande',$object->id);
+					$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,GETPOST('socid','int'),'none','commande',$object->id);
 				}
 				print '</td></tr>'."\n";
 			}
@@ -627,31 +627,31 @@ if ($action == 'create')
 			// Weight
 			print '<tr><td>';
 			print $langs->trans("Weight");
-			print '</td><td><input name="weight" size="4" value="'.$_POST["weight"].'"></td><td>';
-			print $formproduct->select_measuring_units("weight_units","weight",$_POST["weight_units"]);
+			print '</td><td><input name="weight" size="4" value="'.GETPOST('weight','int').'"></td><td>';
+			print $formproduct->select_measuring_units("weight_units","weight",GETPOST('weight_units','int'));
 			print '</td></tr><tr><td>';
 			print $langs->trans("Width");
-			print ' </td><td><input name="sizeW" size="4" value="'.$_POST["sizeW"].'"></td><td rowspan="3">';
+			print ' </td><td><input name="sizeW" size="4" value="'.GETPOST('sizeW','int').'"></td><td rowspan="3">';
 			print $formproduct->select_measuring_units("size_units","size");
 			print '</td></tr><tr><td>';
 			print $langs->trans("Height");
-			print '</td><td><input name="sizeH" size="4" value="'.$_POST["sizeH"].'"></td>';
+			print '</td><td><input name="sizeH" size="4" value="'.GETPOST('sizeH','int').'"></td>';
 			print '</tr><tr><td>';
 			print $langs->trans("Depth");
-			print '</td><td><input name="sizeS" size="4" value="'.$_POST["sizeS"].'"></td>';
+			print '</td><td><input name="sizeS" size="4" value="'.GETPOST('sizeS','int').'"></td>';
 			print '</tr>';
 
 			// Delivery method
 			print "<tr><td>".$langs->trans("DeliveryMethod")."</td>";
 			print '<td colspan="3">';
 			$expe->fetch_delivery_methods();
-			print $form->selectarray("expedition_method_id",$expe->meths,$_POST["expedition_method_id"],1,0,0,"",1);
+			print $form->selectarray("expedition_method_id",$expe->meths,GETPOST('expedition_method_id','int'),1,0,0,"",1);
 			print "</td></tr>\n";
 
 			// Tracking number
 			print "<tr><td>".$langs->trans("TrackingNumber")."</td>";
 			print '<td colspan="3">';
-			print '<input name="tracking_number" size="20" value="'.$_POST["tracking_number"].'">';
+			print '<input name="tracking_number" size="20" value="'.GETPOST('tracking_number','alpha').'">';
 			print "</td></tr>\n";
 
 			print "</table>";
@@ -758,10 +758,10 @@ if ($action == 'create')
 				$quantityToBeDelivered = $quantityAsked - $quantityDelivered;
 
 				$defaultqty=0;
-				if ($_REQUEST["entrepot_id"])
+				if (GETPOST('entrepot_id','int'))
 				{
 					//var_dump($product);
-					$stock = $product->stock_warehouse[$_REQUEST["entrepot_id"]]->real;
+					$stock = $product->stock_warehouse[GETPOST('entrepot_id','int')]->real;
 					$stock+=0;  // Convertit en numerique
 					$defaultqty=min($quantityToBeDelivered, $stock);
 					if (($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) || $defaultqty < 0) $defaultqty=0;
@@ -784,9 +784,9 @@ if ($action == 'create')
 					if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 					{
 						// Show warehous
-						if ($_REQUEST["entrepot_id"])
+						if (GETPOST('entrepot_id','int'))
 						{
-							print $formproduct->selectWarehouses($_REQUEST["entrepot_id"],'entl'.$indiceAsked,'',1,0,$line->fk_product);
+							print $formproduct->selectWarehouses(GETPOST('entrepot_id','int'),'entl'.$indiceAsked,'',1,0,$line->fk_product);
 							//print $stock.' '.$quantityToBeDelivered;
 							//if ($stock >= 0 && $stock < $quantityToBeDelivered)
 							if ($stock < $quantityToBeDelivered)
@@ -1011,10 +1011,10 @@ else
 			print $langs->trans('DateDeliveryPlanned');
 			print '</td>';
 
-			if ($_GET['action'] != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
+			if ($action != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
-			if ($_GET['action'] == 'editdate_livraison')
+			if ($action == 'editdate_livraison')
 			{
 				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1100,10 +1100,10 @@ else
 			print $langs->trans('SendingMethod');
 			print '</td>';
 
-			if ($_GET['action'] != 'editexpedition_method_id') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editexpedition_method_id&amp;id='.$object->id.'">'.img_edit($langs->trans('SetSendingMethod'),1).'</a></td>';
+			if ($action != 'editexpedition_method_id') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editexpedition_method_id&amp;id='.$object->id.'">'.img_edit($langs->trans('SetSendingMethod'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
-			if ($_GET['action'] == 'editexpedition_method_id')
+			if ($action == 'editexpedition_method_id')
 			{
 				print '<form name="setexpedition_method_id" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1184,7 +1184,7 @@ else
       			$prod = new Product($db, $lines[$i]->fk_product);
       			$outputlangs = $langs;
             $newlang='';
-            if (empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+            if (empty($newlang) && ! GETPOST('lang_id','int')) $newlang=GETPOST('lang_id','int');
             if (empty($newlang)) $newlang=$object->client->default_lang;
             if (! empty($newlang))
             {
@@ -1392,7 +1392,7 @@ else
 			$formmail->fromname = $user->getFullName($langs);
 			$formmail->frommail = $user->email;
 			$formmail->withfrom=1;
-			$formmail->withto=empty($_POST["sendto"])?1:$_POST["sendto"];
+			$formmail->withto=GETPOST('sendto','int')?GETPOST('sendto','int'):1;
 			$formmail->withtosocid=$soc->id;
 			$formmail->withtocc=1;
 			$formmail->withtoccsocid=0;
@@ -1412,7 +1412,7 @@ else
 			$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 
 			// Init list of files
-			if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+			if (GETPOST('mode','alpha')=='init')
 			{
 				$formmail->clear_attached_files();
 				$formmail->add_attached_files($file,dol_sanitizeFilename($ref.'.pdf'),'application/pdf');
