@@ -4132,7 +4132,7 @@ function unichr($unicode , $encoding = 'UTF-8')
  */
 function getCurrencySymbol($currency_code)
 {
-	global $form;
+	global $db, $form;
 
 	$currency_sign = '';
 
