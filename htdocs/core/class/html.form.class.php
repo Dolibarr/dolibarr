@@ -2728,7 +2728,7 @@ class Form
     
     	if (count($this->cache_currencies)) return 0;    // Cache deja charge
     
-    	$sql = "SELECT code_iso, label";
+    	$sql = "SELECT code_iso, label, unicode";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_currencies";
         $sql.= " WHERE active = 1";
         $sql.= " ORDER BY code_iso ASC";
@@ -2744,13 +2744,14 @@ class Form
     			$obj = $this->db->fetch_object($resql);
     
     			// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-    			$this->cache_currencies[$obj->code_iso] = ($obj->code_iso && $langs->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$langs->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:''));
+    			$this->cache_currencies[$obj->code_iso]['label'] = ($obj->code_iso && $langs->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$langs->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:''));
+    			$this->cache_currencies[$obj->code_iso]['unicode'] = (array) dol_json_decode($obj->unicode, true);
+    			$label[$obj->code_iso] = $this->cache_currencies[$obj->code_iso]['label'];
     			$i++;
     		}
     		
-    		// alphabetic order 
-    		asort($this->cache_currencies);
-    		
+    		array_multisort($label, SORT_ASC, $this->cache_currencies);
+
     		return $num;
     	}
     	else
@@ -2779,7 +2780,7 @@ class Form
         if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilite
 
         $out.= '<select class="flat" name="'.$htmlname.'">';
-        foreach ($this->cache_currencies as $code_iso => $label)
+        foreach ($this->cache_currencies as $code_iso => $currency)
         {
         	if ($selected && $selected == $code_iso)
         	{
@@ -2789,8 +2790,8 @@ class Form
         	{
         		$out.= '<option value="'.$code_iso.'">';
         	}
-        	$out.= $label;
-        	$out.= ' ('.$code_iso.')';
+        	$out.= $currency['label'];
+        	$out.= ' ('.getCurrencySymbol($code_iso).')';
         	$out.= '</option>';
         }
         $out.= '</select>';
