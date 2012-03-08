@@ -9,7 +9,7 @@
 	url = git+ssh://hregis@doliforge.org/gitroot/paypalplus/paypalplus.git
 [submodule "htdocs/custom/milestone"]
 	path = htdocs/custom/milestone
-	url = git+ssh://hregis@doliforge.org/gitroot/milestone/milestone.git
+	url = gitolite@doliforge.org:/milestone/milestone.git
 [submodule "htdocs/custom/docgen"]
 	path = htdocs/custom/docgen
 	url = git+ssh://hregis@doliforge.org/gitroot/docgen/docgen.git
