@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2006-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2011      Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2011-2012 Juanjo Menent		 <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,6 +72,13 @@ class Expedition extends CommonObject
 	var $date_expedition;	// Date delivery real
 	var $date_creation;
 	var $date_valid;
+	
+	// For Invoicing
+	var $total_ht;			// Total net of tax
+	var $total_ttc;			// Total with tax
+	var $total_tva;			// Total VAT
+	var $total_localtax1;   // Total Local tax 1
+	var $total_localtax2;   // Total Local tax 2
 
 	/**
 	 *	Constructor
@@ -840,6 +847,8 @@ class Expedition extends CommonObject
 		// TODO: recuperer les champs du document associe a part
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.description, cd.qty as qty_asked";
+		$sql.= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
+		$sql.= ", cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.price, cd.subprice";
 		$sql.= ", ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
 		$sql.= ", p.ref as product_ref, p.label as product_label, p.fk_product_type, p.weight, p.weight_units, p.volume, p.volume_units";
 		$sql.= " FROM (".MAIN_DB_PREFIX."expeditiondet as ed,";
@@ -852,8 +861,17 @@ class Expedition extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
+			include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
+			
 			$num = $this->db->num_rows($resql);
 			$i = 0;
+			
+			$this->total_ht = 0;
+			$this->total_tva = 0;
+			$this->total_ttc = 0;
+			$this->total_localtax1 = 0;
+			$this->total_localtax2 = 0;
+			
 			while ($i < $num)
 			{
 				$line = new ExpeditionLigne($this->db);
@@ -867,7 +885,7 @@ class Expedition extends CommonObject
 				$line->ref				= $obj->product_ref;		// TODO deprecated
                 $line->product_ref		= $obj->product_ref;
                 $line->product_label	= $obj->product_label;
-                $line->label          	= $obj->product_label;
+                //$line->label          	= $obj->product_label;
 				$line->libelle        	= $obj->product_label;		// TODO deprecated
 				$line->description    	= $obj->description;
 				$line->qty_asked      	= $obj->qty_asked;
@@ -876,7 +894,29 @@ class Expedition extends CommonObject
 				$line->weight_units   	= $obj->weight_units;
 				$line->volume         	= $obj->volume;
 				$line->volume_units   	= $obj->volume_units;
-
+				
+				//Invoicing
+				$line->desc				= $obj->product_label;
+				$line->qty 				= $obj->qty_shipped;
+				$line->total_ht			= $obj->total_ht;
+				$line->total_localtax1 	= $obj->total_localtax1;
+				$line->total_localtax2 	= $obj->total_localtax2;
+				$line->total_ttc	 	= $obj->total_ttc;
+				$line->total_tva	 	= $obj->total_tva;
+				$line->tva_tx 		 	= $obj->tva_tx;
+				$line->localtax1_tx 	= $obj->localtax1_tx;
+				$line->localtax2_tx 	= $obj->localtax2_tx;
+				$line->price			= $obj->price;
+				$line->subprice			= $obj->subprice;
+				$line->remise_percent	= $obj->remise_percent;
+				
+				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $info_bits);
+				$this->total_ht+= $tabprice[0];
+				$this->total_tva+= $tabprice[1];
+				$this->total_ttc+= $tabprice[2];
+				$this->total_localtax1+= $tabprice[9];
+				$this->total_localtax2+= $tabprice[10];
+				
 				$this->lines[$i] = $line;
 
 				$i++;
@@ -1181,6 +1221,14 @@ class ExpeditionLigne
 	var $libelle;       // Label produit
 	var $product_desc;  // Description produit
 	var $ref;
+	
+	// Invoicing
+	var $remise_percent;
+	var $total_ht;			// Total net of tax
+	var $total_ttc;			// Total with tax
+	var $total_tva;			// Total VAT
+	var $total_localtax1;   // Total Local tax 1
+	var $total_localtax2;   // Total Local tax 2
 
 
     /**
