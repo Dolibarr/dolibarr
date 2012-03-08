@@ -317,7 +317,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyCurrency").'</td><td>';
-    $form->select_currency($conf->global->MAIN_MONNAIE,"currency");
+    $form->select_currency($conf->currency,"currency");
     print '</td></tr>'."\n";
 
     $var=!$var;
@@ -680,8 +680,8 @@ else
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("CompanyCurrency").'</td><td>';
-    print currency_name($conf->global->MAIN_MONNAIE,1);
-    print ' ('.$conf->global->MAIN_MONNAIE.')';
+    print currency_name($conf->currency,1);
+    print ' ('.$conf->currency.')';
     print '</td></tr>';
 
     $var=!$var;

@@ -55,7 +55,7 @@ $langs->load("paypal");
 
 $suffix=GETPOST("suffix",'alpha');
 $amount=price2num(GETPOST("amount"));
-if (! GETPOST("currency",'alpha')) $currency=$conf->global->MAIN_MONNAIE;
+if (! GETPOST("currency",'alpha')) $currency=$conf->currency;
 else $currency=GETPOST("currency",'alpha');
 
 if (! GETPOST("action"))
