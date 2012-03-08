@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copytight (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copytight (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,18 +32,20 @@ $langs->load("banks");
 if (! $user->rights->banque->transfer)
   accessforbidden();
 
+$action = GETPOST('action','alpha');
+
 
 /*
  * Action ajout d'un virement
  */
-if ($_POST["action"] == 'add')
+if ($action == 'add')
 {
 	$langs->load("errors");
 
 	$mesg='';
-	$dateo = dol_mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
-	$label = $_POST["label"];
-	$amount= $_POST["amount"];
+	$dateo = dol_mktime(12,0,0,GETPOST('remonth','int'),GETPOST('reday','int'),GETPOST('reyear','int'));
+	$label = GETPOST('label','alpha');
+	$amount= GETPOST('amount','int');
 
 	if (! $label)
 	{
@@ -54,12 +57,12 @@ if ($_POST["action"] == 'add')
 		$error=1;
 		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"))."</div>";
 	}
-	if (! $_POST['account_from'])
+	if (! GETPOST('account_from','int'))
 	{
 		$error=1;
 		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("TransferFrom"))."</div>";
 	}
-	if (! $_POST['account_to'])
+	if (! GETPOST('account_to','int'))
 	{
 		$error=1;
 		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("TransferTo"))."</div>";
@@ -69,10 +72,10 @@ if ($_POST["action"] == 'add')
 		require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
 
 		$accountfrom=new Account($db);
-		$accountfrom->fetch($_POST["account_from"]);
+		$accountfrom->fetch(GETPOST('account_from','int'));
 
 		$accountto=new Account($db);
-		$accountto->fetch($_POST["account_to"]);
+		$accountto->fetch(GETPOST('account_to','int'));
 
 		if ($accountto->id != $accountfrom->id)
 		{
@@ -133,6 +136,18 @@ llxHeader();
 
 $form=new Form($db);
 
+$account_from='';
+$account_to='';
+$label='';
+$amount='';
+
+if($error)
+{
+	$account_from =	GETPOST('account_from','int');
+	$account_to	= GETPOST('account_to','int');
+	$label = GETPOST('label','alpha');
+	$amount = GETPOST('amount','int');
+}
 
 print_fiche_titre($langs->trans("BankTransfer"));
 
@@ -153,18 +168,18 @@ print '</tr>';
 
 $var=false;
 print '<tr '.$bc[$var].'><td>';
-print $form->select_comptes($_POST['account_from'],'account_from',0,'',1);
+print $form->select_comptes($account_from,'account_from',0,'',1);
 print "</td>";
 
 print "<td>\n";
-print $form->select_comptes($_POST['account_to'],'account_to',0,'',1);
+print $form->select_comptes($account_to,'account_to',0,'',1);
 print "</td>\n";
 
 print "<td>";
 $form->select_date($dateo,'','','','','add');
 print "</td>\n";
-print '<td><input name="label" class="flat" type="text" size="40" value="'.$_POST["label"].'"></td>';
-print '<td><input name="amount" class="flat" type="text" size="8" value="'.$_POST["amount"].'"></td>';
+print '<td><input name="label" class="flat" type="text" size="40" value="'.$label.'"></td>';
+print '<td><input name="amount" class="flat" type="text" size="8" value="'.$amount.'"></td>';
 
 print "</table>";
 
