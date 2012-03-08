@@ -1,5 +1,6 @@
 -- ========================================================================
--- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005	Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) 2012	Regis Houssin		<regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,10 +19,11 @@
 
 create table llx_c_currencies
 (
-  code        varchar(2)   PRIMARY KEY,
-  code_iso    varchar(3)   NOT NULL,
-  label       varchar(64),
-  labelsing   varchar(64),
-  active      tinyint DEFAULT 1  NOT NULL
+  code			varchar(2)   PRIMARY KEY,
+  code_iso		varchar(3)   NOT NULL,
+  label			varchar(64) NOT NULL,
+  unicode		varchar(32) DEFAULT NULL,
+  active		tinyint DEFAULT 1  NOT NULL
+  
 )ENGINE=innodb;
 
