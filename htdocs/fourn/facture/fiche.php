@@ -1652,7 +1652,7 @@ else
 
                 if (is_object($hookmanager))
 				{
-			        $parameters=array('filtre'=>$filtre);
+			        $parameters=array('filtre'=>$filtre,'htmlname'=>'idprodfournprice');
 				    echo $hookmanager->executeHooks('formCreateProductSupplierOptions',$parameters,$object,$action);
 				}
 
