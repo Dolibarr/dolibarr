@@ -19,11 +19,10 @@
 
 create table llx_c_currencies
 (
-  code			varchar(2)   PRIMARY KEY,
-  code_iso		varchar(3)   NOT NULL,
+  code_iso		varchar(3)  PRIMARY KEY,
   label			varchar(64) NOT NULL,
   unicode		varchar(32) DEFAULT NULL,
-  active		tinyint DEFAULT 1  NOT NULL
+  active		tinyint		DEFAULT 1  NOT NULL
   
 )ENGINE=innodb;
 
