@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,9 +41,10 @@ if ($conf->agenda->enabled)      require_once(DOL_DOCUMENT_ROOT."/comm/action/cl
 $langs->load("projects");
 $langs->load("companies");
 $langs->load("suppliers");
-if ($conf->facture->enabled)  $langs->load("bills");
-if ($conf->commande->enabled) $langs->load("orders");
-if ($conf->propal->enabled)   $langs->load("propal");
+if ($conf->facture->enabled)  	$langs->load("bills");
+if ($conf->commande->enabled) 	$langs->load("orders");
+if ($conf->propal->enabled)   	$langs->load("propal");
+if ($conf->ficheinter->enabled)	$langs->load("interventions");
 
 $projectid='';
 $ref='';
