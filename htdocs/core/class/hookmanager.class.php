@@ -77,7 +77,6 @@ class HookManager
 
 		$this->contextarray=array_merge($arraycontext,$this->contextarray);    // All contexts are concatenated
 
-		$i=0;
 		foreach($conf->hooks_modules as $module => $hooks)
 		{
 			if ($conf->$module->enabled)
@@ -93,29 +92,14 @@ class HookManager
 						$actionfile = 'actions_'.$module.'.class.php';
 						$pathroot	= '';
 
-						$this->hooks[$i]['type']=$context;
-
 						// Include actions class overwriting hooks
 						$resaction=dol_include_once($path.$actionfile);
 						if ($resaction)
 						{
     						$controlclassname = 'Actions'.ucfirst($module);
     						$actionInstance = new $controlclassname($this->db);
-    						$this->hooks[$i]['modules'][$module] = $actionInstance;
+    						$this->hooks[$context]['modules'][$module] = $actionInstance;
 						}
-
-						// Include dataservice class (model)
-						// TODO storing dao is useless here. It's goal of controller to known which dao to manage
-						$daofile 	= 'dao_'.$module.'.class.php';
-						$resdao=dol_include_once($path.$daofile);
-						if ($resdao)
-						{
-							// Instantiate dataservice class (model)
-							$daoInstance = 'Dao'.ucfirst($module);
-							$this->hooks[$i]['modules'][$module]->object = new $daoInstance($this->db);
-						}
-
-                        $i++;
 					}
 				}
 			}
