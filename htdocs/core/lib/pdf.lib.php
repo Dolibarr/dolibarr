@@ -1291,7 +1291,7 @@ function pdf_getTotalQty($object,$type,$outputlangs,$hookmanager=false)
  */
 function pdf_getCurrencySymbol(&$pdf, $currency_code)
 {
-	global $form;
+	global $db, $form;
 	
 	$currency_sign = '';
 	
