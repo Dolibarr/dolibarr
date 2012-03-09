@@ -259,7 +259,7 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
 		$result=dol_mimetype('file.png','',1);
         $this->assertEquals('png',$result);
 		$result=dol_mimetype('file.png','',2);
-		$this->assertEquals('text.png',$result);
+		$this->assertEquals('image.png',$result);
 		$result=dol_mimetype('file.png','',3);
         $this->assertEquals('',$result);
 		// file.odt
@@ -268,7 +268,7 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
 		$result=dol_mimetype('file.odt','',1);
         $this->assertEquals('vnd.oasis.opendocument.text',$result);
 		$result=dol_mimetype('file.odt','',2);
-		$this->assertEquals('oofficet.png',$result);
+		$this->assertEquals('ooffice.png',$result);
 		$result=dol_mimetype('file.odt','',3);
         $this->assertEquals('',$result);
 		// file.php
@@ -277,7 +277,7 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
 		$result=dol_mimetype('file.php','',1);
         $this->assertEquals('plain',$result);
 		$result=dol_mimetype('file.php','',2);
-		$this->assertEquals('ooffice.png',$result);
+		$this->assertEquals('php.png',$result);
 		$result=dol_mimetype('file.php','',3);
         $this->assertEquals('php',$result);        
 		// file.php.noexe
