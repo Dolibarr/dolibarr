@@ -872,7 +872,8 @@ SendmailOptionNotComplete=Atenció, en alguns sistemes Linux, amb aquest mètode
 PathToDocuments=Rutes d'accés a documents
 PathDirectory=Directori
 SendmailOptionMayHurtBuggedMTA=La funcionalitat d'enviar correu electrònic a través del "correu directe PHP" genera una sol·licitud que pot ser mal interpretada per alguns servidors de correu. Això es tradueix en missatges de correu electrònic il·legibles per a les persones allotjades en aquestes plataformes. Aquest és el cas de clients en certs proveïdors de serveis d'Internet (Ex: Orange). Això no és un problema ni de Dolibarr ni de PHP, però sí del servidor de correu. No obstant això, podeu afegir l'opció MAIN_FIX_FOR_BUGGED_MTA amb valor 1 en configuració-varis per tractar que Dolibarr eviti l'error. Una altra solució (recomanada) és utilitzar el mètode d'enviament per SMTP que no té aquest inconvenient.
-
+TranslationSetup=Configuració traducció
+TranslationDesc=L'elecció de l'idioma mostrat en pantalla es modifica:<br>* A nivell global des del menú <strong>Inici - Configuració - Entorn</strong><br>* De manera específica a l'usuari des de la pestanya <strong>interface usuari</strong> de la seva fitxa d'usuari (fer clic al seu login a la part superior esquerra de la pantalla).
 ##### Module password generation
 PasswordGenerationStandard=Retorna una contrasenya generada per l'algoritme intern Dolibarr: 8 caràcters, números i caràcters en minúscules barrejades.
 PasswordGenerationNone=No ofereix contrasenyes. La contrasenya s'introdueix manualment.
