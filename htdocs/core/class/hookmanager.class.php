@@ -98,7 +98,7 @@ class HookManager
 						{
     						$controlclassname = 'Actions'.ucfirst($module);
     						$actionInstance = new $controlclassname($this->db);
-    						$this->hooks[$context]['modules'][$module] = $actionInstance;
+    						$this->hooks[$context][$module] = $actionInstance;
 						}
 					}
 				}
@@ -129,11 +129,11 @@ class HookManager
 
         // Loop on each hook
         $resaction=0; $resprint='';
-        foreach($this->hooks as $hook)
+        foreach($this->hooks as $modules)
         {
-            if (! empty($hook['modules']))
+            if (! empty($modules))
             {
-                foreach($hook['modules'] as $module => $actioninstance)
+                foreach($modules as $actioninstance)
                 {
                 	$var=!$var;
 
