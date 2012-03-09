@@ -44,15 +44,13 @@ if((isset($_GET['field']) && ! empty($_GET['field']))
 	&& (isset($_GET['table_element']) && ! empty($_GET['table_element']))
 	&& (isset($_GET['fk_element']) && ! empty($_GET['fk_element'])))
 {
-	$element			= GETPOST('element');
-	$table_element		= GETPOST('table_element');
-	$fk_element			= GETPOST('fk_element');
-	$ext_element		= GETPOST('ext_element');
-	//$ext_table_element	= GETPOST('ext_table_element');
-	//$ext_fk_element		= GETPOST('ext_fk_element');
-	$field				= substr(GETPOST('field'), 8); // remove prefix val_
-	$type				= GETPOST('type');
-	$loadmethod			= (GETPOST('loadmethod') ? GETPOST('loadmethod') : 'getValueFrom');
+	$element			= GETPOST('element','alpha');
+	$table_element		= GETPOST('table_element','alpha');
+	$fk_element			= GETPOST('fk_element','alpha');
+	$ext_element		= GETPOST('ext_element','alpha');
+	$field				= substr(GETPOST('field','alpha'), 8); // remove prefix val_
+	$type				= GETPOST('type','alpha');
+	$loadmethod			= (GETPOST('loadmethod','alpha') ? GETPOST('loadmethod','alpha') : 'getValueFrom');
 	
 	if ($element != 'order_supplier' && $element != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
 	{
