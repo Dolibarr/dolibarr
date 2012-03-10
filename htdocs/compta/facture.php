@@ -739,6 +739,7 @@ if ($action == 'add' && $user->rights->facture->creer)
                 if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
                 if ($element == 'contract') { $element = $subelement = 'contrat'; }
                 if ($element == 'inter')    { $element = $subelement = 'ficheinter'; }
+                if ($element == 'shipping') {$element = $subelement = 'expedition'; }
 
                 $object->origin    = $_POST['origin'];
                 $object->origin_id = $_POST['originid'];
