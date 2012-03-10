@@ -1370,29 +1370,29 @@ td.border {
 
 table.noborder, table.formdoc {
 	width: 100%;
-	
+
 	border-collapse: separate !important;
 	border-spacing: 0px;
-	
+
 	border-right-width: 0px;
 	border-right-color: #DDDDDD;
 	border-right-style: solid;
-	
+
 	border-left-width: 1px;
 	border-left-color: #DDDDDD;
 	border-left-style: solid;
-	
+
 	border-bottom-width: 1px;
 	border-bottom-color: #DDDDDD;
 	border-bottom-style: solid;
-	
+
 	margin: 0px 0px 2px 0px;
 	/*padding: 1px 2px 1px 2px;*/
-	
+
 	-moz-box-shadow: 4px 4px 4px #CCC;
 	-webkit-box-shadow: 4px 4px 4px #CCC;
 	box-shadow: 4px 4px 4px #CCC;
-	
+
 	-moz-border-radius: 0.2em;
 	-webkit-border-radius: 0.2em;
 	border-radius: 0.2em;
@@ -1400,11 +1400,11 @@ table.noborder, table.formdoc {
 
 table.noborder tr {
 	border-top-color: #FEFEFE;
-	
+
 	border-right-width: 1px;
 	border-right-color: #BBBBBB;
 	border-right-style: solid;
-	
+
 	border-left-width: 1px;
 	border-left-color: #BBBBBB;
 	border-left-style: solid;
@@ -1518,7 +1518,7 @@ tr.liste_total td {
 	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
-	
+
 	font-family: <?php print $fontlist ?>;
 	border: 0px;
 	margin-bottom: 1px;
@@ -1538,7 +1538,7 @@ tr.liste_total td {
 	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
-	
+
 	font-family: <?php print $fontlist ?>;
 	border: 0px;
 	margin-bottom: 1px;
@@ -1551,7 +1551,7 @@ tr.liste_total td {
 }
 */
 
-/* Disable shadows */ 
+/* Disable shadows */
 .noshadow {
 	-moz-box-shadow: 0px 0px 0px #CCC !important;
 	-webkit-box-shadow: 0px 0px 0px #CCC !important;
@@ -1719,6 +1719,12 @@ div.titre {
 	text-decoration: none;
 	text-shadow: 2px 2px 4px #BFBFBF;
 }
+
+#dolpaymenttable { width: 600px; font-size: 13px; }
+#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; }
+#tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
+#tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
+#tablepublicpayment tr.liste_total td { border-top: none; }
 
 
 /* ============================================================================== */
