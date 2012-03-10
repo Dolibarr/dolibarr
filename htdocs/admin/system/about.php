@@ -28,6 +28,7 @@ require("../../main.inc.php");
 
 $langs->load("admin");
 $langs->load("help");
+$langs->load("members");
 
 
 /*
@@ -39,16 +40,11 @@ llxHeader();
 
 print_fiche_titre("Dolibarr",'','setup');
 
-print $langs->trans("Version").':';
-print '<ul>';
-print '<li>'.DOL_VERSION.'</li>';
-print '</ul>';
+print '<div style="padding-left: 30px;">'.img_picto_common('', 'dolibarr_box.png','height="120"').'</div>';
 
-print "<br>\n";
-
-print $langs->trans("DolibarrLicense").':';
+print $langs->trans("Version").' / '.$langs->trans("DolibarrLicense").':';
 print '<ul>';
-print '<li>GNU/GPL</li>';
+print '<li>'.DOL_VERSION.' / <a href="http://www.gnu.org/copyleft/gpl.html">GNU-GPL</a></li>';
 print '</ul>';
 
 print "<br>\n";
@@ -56,6 +52,7 @@ print "<br>\n";
 print $langs->trans("Developpers").':';
 print '<ul>';
 print '<li>'.$langs->trans("SeeWikiForAllTeam").': <a href="http://wiki.dolibarr.org/index.php/Dolibarr_Project" target="_blank">http://wiki.dolibarr.org/index.php/Dolibarr_Project</a></li>';
+print '<li>'.$langs->trans("DoliForge").': <a href="http://www.doliforge.org" target="_blank">http://wwww.doliforge.org</a></li>';
 print '</ul>';
 
 print "<br>\n";
@@ -76,28 +73,20 @@ if (preg_match('/^fr_/i',$langs->getDefaultLang()))
 print '<li>';
 print '<a target="blank" href="http://wiki.dolibarr.org/">'.$langs->trans("OfficialWiki").'</a>';
 print '</li>';
+print '</ul>';
+
+print $langs->trans("Demo").':';
+print '<ul>';
 print '<li>';
-print '<a target="blank" href="http://demo.dolibarr.org/public/demo">'.$langs->trans("OfficialDemo").'</a>';
+print '<a target="blank" href="http://www.dolibarr.org/onlinedemo/">'.$langs->trans("OfficialDemo").'</a>';
 print '</li>';
+print '</ul>';
+
+print $langs->trans("ModulesMarketPlaces").':';
+print '<ul>';
 print '<li>';
 print '<a target="blank" href="http://www.dolistore.com">'.$langs->trans("OfficialMarketPlace").'</a>';
 print '</li>';
-
-if (preg_match('/^fr_/i',$langs->getDefaultLang()))
-{
-	print '<li>';
-	print 'Les t&acirc;ches en cours de r&eacute;alisation sur Dolibarr sont consultables dans le <a target="blank" href="http://savannah.nongnu.org/task/?group=dolibarr">gestionnaire de projets</a> sur Savannah.';
-	print '</li>';
-
-	print '<li>';
-	print 'Si vous trouvez un bogue dans Dolibarr, vous pouvez en informer les d&eacute;veloppeurs sur le <a target="blank" href="http://savannah.nongnu.org/bugs/?group=dolibarr">syst&egrave;me de gestion des bogues</a> de Savannah.';
-	print '</li>';
-
-	print '<li>';
-	print 'Le code source de Dolibarr est consultable par l\'<a target="_blank" href="http://savannah.nongnu.org/cgi-bin/viewcvs/dolibarr/dolibarr/">interface web du cvs</a>.';
-	print '</li>';
-}
-
 print '</ul>';
 
 
@@ -109,19 +98,18 @@ print '<a target="_blank" href="'.DOL_URL_ROOT.'/support/index.php">'.$langs->tr
 print '</li>';
 print '</ul>';
 
-
-print '<br>'.$langs->trans("MakeADonation").':<br>';
+print $langs->trans("Foundation").':<br>';
 
 print '<ul>';
-print '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-<input type="hidden" name="cmd" value="_s-xclick">
-<input type="hidden" name="hosted_button_id" value="6573525">';
-print '<input class="none" type="image" src="'.DOL_URL_ROOT.'/theme/common/paypal.png" border="0" name="submit" alt="Help Dolibarr making a donation">';
-print '</form>';
+$url='http://wiki.dolibarr.org/index.php/Subscribe';
+if (preg_match('/^fr_/i',$langs->getDefaultLang())) $url='http://wiki.dolibarr.org/index.php/Adh%C3%A9rer';
+print '<li><a href="'.$url.'">'.$langs->trans("SubscribeToFoundation").'</a></li>';
 print '</ul>';
 
 
 llxFooter();
+
+$db->close();
 ?>
 
 

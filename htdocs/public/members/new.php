@@ -101,7 +101,7 @@ function llxHeaderVierge($title, $head="", $disablejs=0, $disablehead=0, $arrayo
         $urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
     }
     print '<center>';
-    print '<img alt="Logo" title="" src="'.$urllogo.'" />';
+    print '<img alt="Logo" id="logosubscribe" title="" src="'.$urllogo.'" />';
     print '</center><br>';
 
     print '<div style="margin-left: 50px; margin-right: 50px;">';
@@ -362,7 +362,8 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'.
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="add">';
 
-print '<table class="border">'."\n";
+print '<div id="divsubscribe">';
+print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 
 // Type
 if (empty($conf->global->MEMBER_NEWFORM_FORCETYPE))
@@ -548,6 +549,7 @@ if (! empty($backtopage))
 print '</center>';
 
 print "<br></form>\n";
+print '</div>';
 
 
 llxFooterVierge();

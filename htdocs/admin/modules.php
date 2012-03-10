@@ -457,7 +457,7 @@ else
     $var=!$var;
     print "<tr ".$bc[$var].">\n";
     $url='http://www.dolistore.com';
-    print '<td align="left"><a href="'.$url.'" target="_blank"><img border="0" src="'.DOL_URL_ROOT.'/theme/common/dolistore.jpg"></a></td>';
+    print '<td align="left"><a href="'.$url.'" target="_blank"><img border="0" width="180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
     print '<td>'.$langs->trans("DoliStoreDesc").'</td>';
     print '<td><a href="'.$url.'" target="_blank">'.$url.'</a></td>';
     print '</tr>';

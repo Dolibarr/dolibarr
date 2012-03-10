@@ -1726,6 +1726,9 @@ div.titre {
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
 #tablepublicpayment tr.liste_total td { border-top: none; }
 
+#divsubscribe { width: 700px; }
+#tablesubscribe { width: 100%; }
+
 
 /* ============================================================================== */
 /* Formulaire confirmation (When Ajax JQuery is used)                             */
