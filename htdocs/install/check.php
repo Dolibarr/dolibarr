@@ -394,8 +394,8 @@ else
             $dolibarrversiontoarray=preg_split('/[\.-]/',$versionto);
             $version=preg_split('/[\.-]/',DOL_VERSION);
             $newversionfrombis='';
-            if (versioncompare($dolibarrversiontoarray,$version) < -2) $newversionfrombis='/'.$versionto;
-			print '<tr><td nowrap="nowrap" align="center"><b>'.$langs->trans("Upgrade").'<br>'.$newversionfrom.' -> '.$newversionto.'</b></td>';
+            if (versioncompare($dolibarrversiontoarray,$version) < -2) $newversionfrombis=' '.$langs->trans("or").' '.$versionto;
+			print '<tr><td nowrap="nowrap" align="center"><b>'.$langs->trans("Upgrade").'<br>'.$newversionfrom.$newversionfrombis.' -> '.$newversionto.'</b></td>';
 			print '<td>';
 			print $langs->trans("UpgradeDesc");
 			if ($ok)
