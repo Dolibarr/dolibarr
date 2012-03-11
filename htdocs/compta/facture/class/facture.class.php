@@ -280,7 +280,8 @@ class Facture extends CommonObject
                 if ($this->origin == 'commande')
                 {
                 	// On recupere les differents contact interne et externe
-                	$order = new Commande($this->db, $this->socid, $this->origin_id);
+                	$order = new Commande($this->db);
+                	$order->id = $this->origin_id;
                 		
                 	// On recupere le commercial suivi propale
                 	$this->userid = $order->getIdcontact('internal', 'SALESREPFOLL');
