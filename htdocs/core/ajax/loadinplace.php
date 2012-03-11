@@ -30,6 +30,11 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/class/genericobject.class.php");
 
+$field			= GETPOST('field','alpha');
+$element		= GETPOST('element','alpha');
+$table_element	= GETPOST('table_element','alpha');
+$fk_element		= GETPOST('fk_element','alpha');
+
 /*
  * View
  */
@@ -39,18 +44,12 @@ top_httphead();
 //print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
 // Load original field value
-if((isset($_GET['field']) && ! empty($_GET['field']))
-	&& (isset($_GET['element']) && ! empty($_GET['element']))
-	&& (isset($_GET['table_element']) && ! empty($_GET['table_element']))
-	&& (isset($_GET['fk_element']) && ! empty($_GET['fk_element'])))
+if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($fk_element))
 {
-	$element			= GETPOST('element','alpha');
-	$table_element		= GETPOST('table_element','alpha');
-	$fk_element			= GETPOST('fk_element','alpha');
-	$ext_element		= GETPOST('ext_element','alpha');
-	$field				= substr(GETPOST('field','alpha'), 8); // remove prefix val_
-	$type				= GETPOST('type','alpha');
-	$loadmethod			= (GETPOST('loadmethod','alpha') ? GETPOST('loadmethod','alpha') : 'getValueFrom');
+	$ext_element	= GETPOST('ext_element','alpha');
+	$field			= substr($field, 8); // remove prefix val_
+	$type			= GETPOST('type','alpha');
+	$loadmethod		= (GETPOST('loadmethod','alpha') ? GETPOST('loadmethod','alpha') : 'getValueFrom');
 	
 	if ($element != 'order_supplier' && $element != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
 	{
@@ -78,7 +77,7 @@ if((isset($_GET['field']) && ! empty($_GET['field']))
 		if ($type == 'select')
 		{
 			$methodname	= 'load_cache_'.$loadmethod;
-			$cachename = 'cache_'.GETPOST('loadmethod');
+			$cachename = 'cache_'.GETPOST('loadmethod','alpha');
 			
 			$form = new Form($db);
 			if (method_exists($form, $methodname))
