@@ -15,6 +15,19 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+
+update llx_propal set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_commande set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_facture set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_commande_fournisseur set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_contrat set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_deplacement set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_facture_fourn set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_facture_rec set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_fichinter set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_projet_task set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+
+
 ALTER TABLE llx_extrafields ADD COLUMN TYPE VARCHAR(8);
 
 UPDATE llx_c_paper_format SET active=1 WHERE active=0;
