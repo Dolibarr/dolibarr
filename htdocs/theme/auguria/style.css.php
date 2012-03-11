@@ -1291,7 +1291,7 @@ border: 0px;
 }
 */
 
-/* Disable shadows */ 
+/* Disable shadows */
 .noshadow {
 	-moz-box-shadow: 0px 0px 0px #CCC !important;
 	-webkit-box-shadow: 0px 0px 0px #CCC !important;
@@ -1436,6 +1436,12 @@ div.titre {
 	text-decoration: none;
 }
 
+#dolpaymenttable { width: 600px; font-size: 13px; }
+#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; }
+#tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
+#tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
+#tablepublicpayment tr.liste_total td { border-top: none; }
+
 
 /* ============================================================================== */
 /* Formulaire confirmation (When Ajax JQuery is used)                             */
@@ -1515,7 +1521,7 @@ table.dp {
     border-bottom: solid 1px #222222;
     padding: 0px;
 	border-spacing: 0px;
-	border-collapse: collapse;     
+	border-collapse: collapse;
 }
 .dp td, .tpHour td, .tpMinute td{padding:2px; font-size:10px;}
 /* Barre titre */

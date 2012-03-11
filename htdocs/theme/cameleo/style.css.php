@@ -1524,6 +1524,12 @@ div.titre {
     margin-left: 20px;
 }
 
+#dolpaymenttable { width: 600px; font-size: 13px; }
+#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; }
+#tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
+#tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
+#tablepublicpayment tr.liste_total td { border-top: none; }
+
 
 /* ============================================================================== */
 /* Formulaire confirmation (When Ajax JQuery is used)                             */
