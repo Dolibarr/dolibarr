@@ -1,0 +1,48 @@
+/*
+ * Language code: he_IL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-03-10 15:14:54
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-03-10 15:14:54).
+// Reference language: en_US -> he_IL
+CHARSET=UTF-8
+CashDeskMenu=Point of Sale
+CashDesk=Point of Sale
+CashDesks=נקודת מכירות
+CashDeskBank=חשבון הבנק
+CashDeskBankCash=חשבון הבנק (מזומן)
+CashDeskBankCB=חשבון הבנק (כרטיס)
+CashDeskBankCheque=חשבון הבנק (סימון)
+CashDeskWarehouse=מחסן
+CashdeskShowServices=מכירת שירותים
+CashDeskProducts=מוצרים
+CashDeskStock=מניות
+CashDeskOn=על
+CashDeskThirdParty=צד שלישי
+ShoppingCart=עגלת הקניות
+NewSell=ניו למכור
+BackOffice=Back Office
+AddThisArticle=הוסף מאמר זה
+RestartSelling=חזור על למכור
+SellFinished=סיים למכור
+PrintTicket=הדפס כרטיס
+NoResults=אין תוצאות
+NoProductFound=לא נמצא מאמר
+ProductFound=המוצר נמצא
+ProductsFound=מוצרים נמצאו
+NoArticle=אין מאמר
+Identification=הזדהות
+Article=מאמר
+Difference=הבדל
+TotalTicket=סה&quot;כ הכרטיס
+NoVAT=אין מע&quot;מ על מכירה זו
+Change=עודף קיבל
+CalTip=לחץ כדי להציג את לוח השנה
+CashDeskSetupStock=אתה שואל כדי להקטין המניות על הקמת מחסן חשבונית אבל זה לא הוגדר <br> שינוי מודול ההתקנה המניות, או לבחור מחסן
+BankToPay=חשבון הקפה
+ShowCompany=הצג החברה
+ShowStock=הצג מחסן
+DeleteArticle=לחץ כדי להסיר את המאמר הזה
+// STOP - Lines generated via autotranslator.php tool (2012-03-10 15:30:13).

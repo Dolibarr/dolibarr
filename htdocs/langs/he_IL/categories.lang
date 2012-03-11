@@ -1,0 +1,102 @@
+/*
+ * Language code: he_IL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-03-10 15:14:54
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-03-10 15:14:54).
+// Reference language: en_US -> he_IL
+CHARSET=UTF-8
+Category=קטגוריה
+Categories=קטגוריות
+Rubrique=קטגוריה
+Rubriques=קטגוריות
+categories=קטגוריות
+TheCategorie=קטגוריה
+NoCategoryYet=אין קטגוריה של סוג זה יצר
+In=בתוך
+AddIn=מוסיפים את
+modify=לשנות
+Classify=לסווג
+CategoriesArea=קטגוריות בתחום
+ProductsCategoriesArea=מוצרים / שירותים באזור קטגוריות
+SuppliersCategoriesArea=ספקים קטגוריות בתחום
+CustomersCategoriesArea=לקוחות קטגוריות בתחום
+ThirdPartyCategoriesArea=צדדים שלישיים קטגוריות בתחום
+MembersCategoriesArea=משתמשים קטגוריות בתחום
+MainCats=ראשי הקטגוריות
+SubCats=קטגוריות משנה
+CatStatistics=סטטיסטיקה
+CatList=רשימת קטגוריות
+AllCats=כל הקטגוריות
+ViewCat=בתצוגת קטגוריות
+NewCat=הוסף קטגוריה
+NewCategory=קטגוריה חדשה
+ModifCat=שנה קטגוריה
+CatCreated=קטגוריה שנוצרה
+CreateCat=יצירת קטגוריה
+CreateThisCat=יצירה של קטגוריה זו
+ValidateFields=לאמת את השדות
+NoSubCat=אין קטגוריות משנה.
+SubCatOf=המשנה
+FoundCats=נמצאו קטגוריות
+FoundCatsForName=קטגוריות שנמצאו שם:
+FoundSubCatsIn=נמצאו קטגוריות משנה בקטגוריה
+ErrSameCatSelected=בחרת את הקטגוריה אותו מספר פעמים
+ErrForgotCat=שכחת לבחור את הקטגוריה
+ErrForgotField=שכחת ליידע את השדות
+ErrCatAlreadyExists=שם זה נמצא כבר בשימוש
+AddProductToCat=הוסף את המוצר לקטגוריה?
+ImpossibleAddCat=אי אפשר להוסיף קטגוריה
+ImpossibleAssociateCategory=אי אפשר לשייך את הקטגוריה
+WasAddedSuccessfully=<b>%s</b> נרשם בהצלחה.
+ObjectAlreadyLinkedToCategory=האלמנט כבר מקושר לקטגוריה זו.
+CategorySuccessfullyCreated=%s קטגוריה זו נוספה בהצלחה.
+ProductIsInCategories=מוצר / שירות בעל לקטגוריות הבאות
+SupplierIsInCategories=צד שלישי בבעלות על הקטגוריות הבאות ספקים
+CompanyIsInCustomersCategories=זה צד שלישי בבעלות ללקוחות / לקוחות פוטנציאליים הקטגוריות הבאות
+CompanyIsInSuppliersCategories=זה צד שלישי בבעלות על הקטגוריות הבאות ספקים
+MemberIsInCategories=חברה זו מחזיקה לחברי הקטגוריות הבאות
+ProductHasNoCategory=מוצר / שירות אינו כל הקטגוריות
+SupplierHasNoCategory=הספק זה לא כל הקטגוריות
+CompanyHasNoCategory=חברה זו אינה כל הקטגוריות
+MemberHasNoCategory=משתמש זה לא נמצא כל הקטגוריות
+ClassifyInCategory=לסווג בקטגוריה
+NoneCategory=אף אחד
+CategoryExistsAtSameLevel=קטגוריה זו כבר קיים עם השופט הזה
+ReturnInProduct=חזרה לכרטיס המוצר / שירות
+ReturnInSupplier=גיבוי לכרטיס הספק
+ReturnInCompany=חזרה לכרטיס הלקוח / סיכוי
+ContentsVisibleByAll=התוכן יהיה גלוי לכל
+ContentsVisibleByAllShort=גלוי לכל תוכן
+ContentsNotVisibleByAllShort=לא נראים על ידי כל התוכן
+CategoriesTree=קטגוריות עץ
+DeleteCategory=מחיקת הקטגוריה
+ConfirmDeleteCategory=האם אתה בטוח שברצונך למחוק קטגוריה זו?
+RemoveFromCategory=הסרת הקישור עם categorie
+RemoveFromCategoryConfirm=האם אתה בטוח שברצונך להסיר את הקשר בין העסקה לבין קטגוריה?
+NoCategoriesDefined=אין קטגוריה מוגדרת
+SuppliersCategoryShort=ספקים קטגוריה
+CustomersCategoryShort=לקוחות קטגוריה
+ProductsCategoryShort=המוצרים בקטגוריה
+MembersCategoryShort=חברי הקטגוריה
+SuppliersCategoriesShort=ספקים קטגוריות
+CustomersCategoriesShort=לקוחות קטגוריות
+CustomersProspectsCategoriesShort=Custo. / Prosp. קטגוריות
+ProductsCategoriesShort=מוצרים קטגוריות
+MembersCategoriesShort=חברים הקטגוריות
+ThisCategoryHasNoProduct=קטגוריה זו אינה מכילה כל מוצר.
+ThisCategoryHasNoSupplier=קטגוריה זו אינה מכילה כל ספק.
+ThisCategoryHasNoCustomer=קטגוריה זו אינה מכילה כל לקוח.
+ThisCategoryHasNoMember=קטגוריה זו אינה מכילה כל חבר.
+AssignedToCustomer=מוקצה ללקוח
+AssignedToTheCustomer=מוקצה ללקוח
+InternalCategory=פנימית בקטגוריה
+CategoryContents=קטגוריה תוכן
+CategId=קטגוריה id
+CatSupList=רשימת קטגוריות הספק
+CatCusList=רשימת לקוחות / סיכוי הקטגוריות
+CatProdList=רשימת קטגוריות מוצרים
+CatMemberList=רשימה של חברי הקטגוריות
+// STOP - Lines generated via autotranslator.php tool (2012-03-10 15:22:15).

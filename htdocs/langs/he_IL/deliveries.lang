@@ -1,0 +1,34 @@
+/*
+ * Language code: he_IL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-03-10 15:14:54
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-03-10 15:14:54).
+// Reference language: en_US -> he_IL
+CHARSET=UTF-8
+Delivery=מסירה
+Deliveries=משלוחים
+DeliveryCard=משלוח כרטיס
+DeliveryOrder=משלוח צו
+DeliveryOrders=משלוח הזמנות
+DeliveryDate=תאריך הלידה
+DeliveryDateShort=Deliv. תאריך
+CreateDeliveryOrder=צור פקודת מסירה
+QtyDelivered=נמסר כמות
+SetDeliveryDate=קבע תאריך משלוח
+ValidateDeliveryReceipt=אמת קבלת המשלוח
+ValidateDeliveryReceiptConfirm=האם אתה בטוח שברצונך לאמת את קבלת המשלוח?
+DeleteDeliveryReceipt=מחק את קבלת המשלוח
+DeleteDeliveryReceiptConfirm=האם אתה בטוח שברצונך למחוק קבלת <b>%s</b> משלוח?
+DeliveryMethod=שיטת הצגה
+TrackingNumber=מעקב אחר מספר
+DeliveryNotValidated=משלוח לא תוקף
+NameAndSignature=שם וחתימה:
+ToAndDate=To___________________________________ על ____ / _____ / __________
+GoodStatusDeclaration=קיבלו את הסחורה מעל במצב טוב,
+Deliverer=מושיע:
+Sender=שולח
+Recipient=מקבל
+// STOP - Lines generated via autotranslator.php tool (2012-03-10 15:29:20).

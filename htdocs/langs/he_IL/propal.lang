@@ -1,0 +1,105 @@
+/*
+ * Language code: he_IL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-03-10 15:14:54
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-03-10 15:14:54).
+// Reference language: en_US -> he_IL
+CHARSET=UTF-8
+Proposals=הצעות מסחריות
+Proposal=מסחרי ההצעה
+ProposalShort=הצעה
+ProposalsDraft=לנסח הצעות מסחריות
+ProposalDraft=טיוטת ההצעה המסחרית
+ProposalsOpened=הצעות מסחריות שנפתחו
+Prop=הצעות מסחריות
+CommercialProposal=מסחרי ההצעה
+CommercialProposals=הצעות מסחריות
+ProposalCard=הצעת כרטיס
+ProposalContact=ההצעה קשר
+NewProp=ההצעה מסחריים חדשים
+NewProposal=ההצעה מסחריים חדשים
+NewPropal=הצעה חדשה
+Prospect=פרוספקט
+ProspectList=פרוספקט רשימה
+DeleteProp=מחק את ההצעה המסחרית
+ValidateProp=תוקף ההצעה המסחרית
+AddProp=הוסף הצעה
+ConfirmDeleteProp=האם אתה בטוח שברצונך למחוק זאת הצעה מסחרית?
+ConfirmValidateProp=האם אתה בטוח שברצונך לאמת את ההצעה המסחרית?
+LastPropals=%s הצעות אחרונות
+LastClosedProposals=%s האחרונות סגרה הצעות
+LastModifiedProposals=%s השתנה לאחרונה הצעות
+AllPropals=כל ההצעות
+LastProposals=הצעות אחרונות
+SearchAProposal=חפש ההצעה
+ProposalsStatistics=ההצעה המסחרית של סטטיסטיקה
+NumberOfProposalsByMonth=מספר חודש
+AmountOfProposalsByMonthHT=סכום לפי חודש (נטו ממס)
+NbOfProposals=מספר הצעות מסחריות
+ShowPropal=הצג ההצעה
+PropalsDraft=דמקה
+PropalsOpened=פתח
+PropalsNotBilled=סגור לא מחויב
+PropalStatusDraft=טיוטה (אימות הצרכים)
+PropalStatusValidated=תוקף (ההצעה פתוחה)
+PropalStatusOpened=תוקף (ההצעה פתוחה)
+PropalStatusClosed=סגור
+PropalStatusSigned=על החתום (החיוב צרכים)
+PropalStatusNotSigned=לא התחבר (סגור)
+PropalStatusBilled=מחויב
+PropalStatusDraftShort=טיוטה
+PropalStatusValidatedShort=תוקף
+PropalStatusOpenedShort=פתח
+PropalStatusClosedShort=סגור
+PropalStatusSignedShort=חתום
+PropalStatusNotSignedShort=לא התחבר
+PropalStatusBilledShort=מחויב
+PropalsToClose=הצעות מסחריות לסגור
+PropalsToBill=הצעות מסחריות חתמה על הצעת החוק
+ListOfProposals=רשימת הצעות מסחריות
+ActionsOnPropal=אירועים על ההצעה
+NoOpenedPropals=אין הצעות מסחריות שנפתחו
+NoOtherOpenedPropals=השני לא נפתח הצעות מסחריות
+RefProposal=ההצעה מסחרי נ&quot;צ
+SendPropalByMail=שלח הצעת מסחרי בדואר
+FileNotUploaded=הקובץ לא נטען
+FileUploaded=הקובץ הועלה בהצלחה
+AssociatedDocuments=מסמכים הקשורים להצעה:
+ErrorCantOpenDir=אין אפשרות לפתוח ספרייה
+DatePropal=תאריך של ההצעה
+DateEndPropal=תאריך סיום תוקף
+DateEndPropalShort=תאריך סיום
+ValidityDuration=משך תוקף
+CloseAs=לסגור עם מעמד
+ClassifyBilled=לסווג מחויב
+BuildBill=בניית חשבונית
+ErrorPropalNotFound=%s Propal לא נמצא
+Estimate=הערכה:
+EstimateShort=להעריך
+OtherPropals=הצעות אחרות
+CopyPropalFrom=צור הצעה מסחרית על ידי העתקת ההצעה הקיימת
+CreateEmptyPropal=צור בשם הבתולה הצעות ריק מסחרי או מתוך רשימה של מוצרים / שירותים
+DefaultProposalDurationValidity=ההצעה המסחרית מחדל משך תוקפו (בימים)
+UseCustomerContactAsPropalRecipientIfExist=השתמש קשר כתובת הלקוח, אם הוגדר במקום כתובת צד ג'את כתובת הנמען ההצעה
+ClonePropal=לשבט ההצעה המסחרית
+ConfirmClonePropal=האם אתה בטוח שאתה רוצה לשכפל את <b>%s</b> ההצעה מסחריים?
+ConfirmReOpenProp=האם אתה בטוח שברצונך לפתוח בחזרה את ההצעה <b>%s</b> מסחריים?
+ProposalsAndProposalsLines=הצעה מסחרית קווי
+ProposalLine=ההצעה קו
+AvailabilityPeriod=זמינות עיכוב
+SetAvailability=הגדרת עיכוב זמינות
+AfterOrder=אחרי הסדר
+AvailabilityTypeAV_NOW=מידי
+AvailabilityTypeAV_1W=1 שבוע
+AvailabilityTypeAV_2W=2 שבועות
+AvailabilityTypeAV_3W=3 שבועות
+AvailabilityTypeAV_1M=1 חודש
+TypeContact_propal_internal_SALESREPFOLL=הצעת נציג הבאה למעלה
+TypeContact_propal_external_BILLING=חשבונית הלקוח קשר
+TypeContact_propal_external_CUSTOMER=הקשר של הלקוח הבא למעלה ההצעה
+DocModelAzurDescription=מודל הצעה מלאה (logo. ..)
+DocModelJauneDescription=ההצעה Jaune מודל
+// STOP - Lines generated via autotranslator.php tool (2012-03-10 15:32:46).
