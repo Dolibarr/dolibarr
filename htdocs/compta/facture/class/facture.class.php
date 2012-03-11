@@ -253,6 +253,32 @@ class Facture extends CommonObject
             			dol_print_error($this->db);
             			$error++;
             		}
+
+            		// TODO mutualiser
+            		if ($origin == 'commande')
+            		{
+            			// On recupere les differents contact interne et externe
+            			$order = new Commande($this->db);
+            			$order->id = $origin_id;
+            		
+            			// On recupere le commercial suivi propale
+            			$this->userid = $order->getIdcontact('internal', 'SALESREPFOLL');
+            			
+            			if ($this->userid)
+            			{
+            				//On passe le commercial suivi commande en commercial suivi paiement
+            				$this->add_contact($this->userid[0], 'SALESREPFOLL', 'internal');
+            			}
+            		
+            			// On recupere le contact client facturation commande
+            			$this->contactid = $order->getIdcontact('external', 'BILLING');
+            		
+            			if ($this->contactid)
+            			{
+            				//On passe le contact client facturation commande en contact client facturation
+            				$this->add_contact($this->contactid[0], 'BILLING', 'external');
+            			}
+            		}
             	}
             }
 
