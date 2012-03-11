@@ -1065,6 +1065,10 @@ span.butAction, span.butActionDelete {
 /* Tables                                                                         */
 /* ============================================================================== */
 
+.allwidth {
+	width: 100%;
+}
+
 #undertopmenu {
     margin-top: 4px;
 }

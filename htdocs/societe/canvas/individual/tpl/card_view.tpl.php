@@ -32,7 +32,7 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 <?php if ($this->control->tpl['error']) echo $this->control->tpl['error']; ?>
 <?php if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delete']; ?>
 
-<table class="border" width="100%">
+<table class="border allwidth">
 
 <tr>
 	<td width="20%"><?php echo $langs->trans('Name'); ?></td>
@@ -132,7 +132,7 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 
 <tr>
 	<td>
-	<table width="100%" class="nobordernopadding">
+	<table class="nobordernopadding allwidth">
 		<tr>
 			<td><?php echo $langs->trans('RIB'); ?></td>
 			<td align="right">
@@ -150,7 +150,7 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 
 <tr>
 	<td>
-	<table width="100%" class="nobordernopadding">
+	<table class="nobordernopadding allwidth">
 		<tr>
 			<td><?php echo $langs->trans('SalesRepresentatives'); ?></td>
 			<td align="right">
@@ -197,9 +197,8 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 
 <br>
 
-<table width="100%"><tr><td valign="top" width="50%">
-<a name="builddoc"></a>
-
+<table class="allwidth"><tr><td valign="top" width="50%">
+<div id="builddoc"></div>
 <?php
 /*
  * Documents generes

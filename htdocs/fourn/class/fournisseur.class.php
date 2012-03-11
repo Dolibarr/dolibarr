@@ -89,7 +89,7 @@ class Fournisseur extends Societe
 	function nbOfProductRefs()
 	{
 		global $conf;
-		
+
 		$sql = "SELECT count(pfp.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		$sql.= " WHERE pfp.entity = ".$conf->entity;
@@ -213,18 +213,6 @@ class Fournisseur extends Societe
 		return $arr;
 	}
 
-	/**
-	 *	Return a link on thirdparty (with picto)
-	 *
-	 *	@param		int		$withpicto		Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
-	 *	@param		string	$option			Target of link ('', 'customer', 'prospect', 'supplier')
-	 *	@param		int		$maxlen			Max length of text
-	 *	@return		string					String with URL
-	 */
-	function getNomUrl($withpicto=0,$option='supplier',$maxlen=0)
-	{
-		return parent::getNomUrl($withpicto,$option,$maxlen);
-	}
 }
 
 ?>

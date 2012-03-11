@@ -29,7 +29,7 @@ echo '<br>';
 if ($num > 1) print_titre($langs->trans("RelatedBills"));
 else print_titre($langs->trans("RelatedBill"));
 ?>
-<table class="noborder" width="100%">
+<table class="noborder allwidth">
 <tr class="liste_titre">
 	<td><?php echo $langs->trans("Ref"); ?></td>
 	<td align="center"><?php echo $langs->trans("Date"); ?></td>

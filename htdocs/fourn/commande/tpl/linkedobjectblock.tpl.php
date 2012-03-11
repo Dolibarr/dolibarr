@@ -28,7 +28,7 @@ $langs->load("orders");
 echo '<br>';
 print_titre($langs->trans('RelatedOrders'));
 ?>
-<table class="noborder" width="100%">
+<table class="noborder allwidth">
 <tr class="liste_titre">
 	<td><?php echo $langs->trans("Ref"); ?></td>
 	<td align="center"><?php echo $langs->trans("Date"); ?></td>
