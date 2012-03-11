@@ -700,35 +700,35 @@ class Commande extends CommonObject
 					{
 						$this->ref="(PROV".$this->id.")";
 
-						// Add linked object
+						// Add linked object and contacts
 						if ($this->origin && $this->origin_id)
 						{
 							$ret = $this->add_object_linked();
 							if (! $ret)	dol_print_error($this->db);
-						}
-
-						// TODO mutualiser
-						if ($this->origin == 'propal' && $this->origin_id)
-						{
-							// On recupere les differents contact interne et externe
-							$prop = new Propal($this->db, $this->socid, $this->origin_id);
-
-							// On recupere le commercial suivi propale
-							$this->userid = $prop->getIdcontact('internal', 'SALESREPFOLL');
-
-							if ($this->userid)
+							
+							// TODO mutualiser
+							if ($this->origin == 'propal')
 							{
-								//On passe le commercial suivi propale en commercial suivi commande
-								$this->add_contact($this->userid[0], 'SALESREPFOLL', 'internal');
-							}
-
-							// On recupere le contact client suivi propale
-							$this->contactid = $prop->getIdcontact('external', 'CUSTOMER');
-
-							if ($this->contactid)
-							{
-								//On passe le contact client suivi propale en contact client suivi commande
-								$this->add_contact($this->contactid[0], 'CUSTOMER', 'external');
+								// On recupere les differents contact interne et externe
+								$prop = new Propal($this->db, $this->socid, $this->origin_id);
+							
+								// On recupere le commercial suivi propale
+								$this->userid = $prop->getIdcontact('internal', 'SALESREPFOLL');
+							
+								if ($this->userid)
+								{
+									//On passe le commercial suivi propale en commercial suivi commande
+									$this->add_contact($this->userid[0], 'SALESREPFOLL', 'internal');
+								}
+							
+								// On recupere le contact client suivi propale
+								$this->contactid = $prop->getIdcontact('external', 'CUSTOMER');
+							
+								if ($this->contactid)
+								{
+									//On passe le contact client suivi propale en contact client suivi commande
+									$this->add_contact($this->contactid[0], 'CUSTOMER', 'external');
+								}
 							}
 						}
 					}
