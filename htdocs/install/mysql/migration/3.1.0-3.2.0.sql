@@ -36,6 +36,8 @@ ALTER TABLE llx_societe MODIFY siret varchar(128);
 ALTER TABLE llx_societe MODIFY ape varchar(128);
 ALTER TABLE llx_societe MODIFY idprof4 varchar(128);
 ALTER TABLE llx_societe ADD COLUMN idprof5 varchar(128);
+ALTER TABLE llx_societe MODIFY code_compta varchar(24);
+ALTER TABLE llx_societe MODIFY code_compta_fournisseur varchar(24);
 
   
 ALTER TABLE llx_chargesociales ADD COLUMN tms                   timestamp;
