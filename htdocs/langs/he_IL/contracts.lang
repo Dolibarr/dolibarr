@@ -1,0 +1,103 @@
+/*
+ * Language code: he_IL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-03-10 15:14:54
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-03-10 15:14:54).
+// Reference language: en_US -> he_IL
+CHARSET=UTF-8
+ContractsArea=חוזים בתחום
+ListOfContracts=רשימת החוזים
+LastContracts=%s השתנה לאחרונה על חוזים
+AllContracts=כל החוזים
+ContractCard=חוזה כרטיס
+ContractStatus=החוזה מעמד
+ContractStatusNotRunning=לא פועל
+ContractStatusRunning=ריצה
+ContractStatusDraft=טיוטה
+ContractStatusValidated=תוקף
+ContractStatusClosed=סגור
+ServiceStatusInitial=לא פועל
+ServiceStatusRunning=ריצה
+ServiceStatusNotLate=ריצה, לא פג
+ServiceStatusNotLateShort=לא פג תוקף
+ServiceStatusLate=ריצה, פג
+ServiceStatusLateShort=פג תוקף
+ServiceStatusClosed=סגור
+ServicesLegend=שירותי אגדה
+Contracts=חוזים
+Contract=חוזה
+ContractContacts=חוזה אנשי קשר
+NoContracts=אין חוזים
+MenuServices=שירותים
+MenuInactiveServices=לא פעילים שירותים
+MenuRunningServices=פועלים שירותי
+MenuExpiredServices=פג שירותים
+MenuClosedServices=שירותים סגורים
+NewContract=חוזה חדש
+AddContract=הוסף החוזה
+SearchAContract=חיפוש על חוזה
+DeleteAContract=מחיקת חוזה
+CloseAContract=סגירת חוזה
+ConfirmDeleteAContract=האם אתה בטוח שברצונך למחוק זאת בחוזה וכל שירותיה?
+ConfirmValidateContract=האם אתה בטוח שברצונך לאמת את החוזה?
+ConfirmCloseContract=זה יסגור את כל השירותים (פעיל או לא). האם אתה בטוח שאתה רוצה לסגור את החוזה?
+ConfirmCloseService=האם אתה בטוח שאתה רוצה לסגור את השירות הזה עם <b>%s</b> התאריך?
+ValidateAContract=תוקף החוזה
+ActivateService=הפעלת שירות
+ConfirmActivateService=האם אתה בטוח שברצונך להפעיל את השירות הזה עם <b>%s</b> התאריך?
+DateContract=חוזה תאריך
+DateServiceActivate=הפעלת שירות תאריך
+DateServiceUnactivate=שחרור משרות שירות תאריך
+DateServiceStart=מועד תחילת השירות
+DateServiceEnd=מועד סיום שירות
+ShowContract=הצג חוזה
+ListOfServices=רשימת השירותים
+ListOfInactiveServices=רשימת שירותים לא פעילים
+ListOfExpiredServices=רשימת השירותים הפעילים פג
+ListOfClosedServices=רשימת השירותים סגורים
+ListOfRunningContractsLines=רשימת הקווים הפועלים חוזה
+ListOfRunningServices=רשימת השירותים הפועלים
+NotActivatedServices=שירותים לא פעילים (בין תוקף חוזי)
+BoardNotActivatedServices=כדי להפעיל שירותים בין חוזים תוקף
+LastContracts=% החוזים האחרונים
+LastActivatedServices=%s האחרונים מופעלים שירותים
+LastModifiedServices=%s השתנה לאחרונה שירותים
+EditServiceLine=עריכת שירות מקוון
+ContractStartDate=תאריך התחלה
+ContractEndDate=תאריך סיום
+DateStartPlanned=התחלה מתוכננת לתאריך
+DateStartPlannedShort=התחלה מתוכננת לתאריך
+DateEndPlanned=סוף המתוכנן תאריך
+DateEndPlannedShort=סוף המתוכנן תאריך
+DateStartReal=ההתחלה האמיתית תאריך
+DateStartRealShort=ההתחלה האמיתית תאריך
+DateEndReal=בסוף נדל תאריך
+DateEndRealShort=בסוף נדל תאריך
+NbOfServices=נ.ב. השירותים
+CloseService=סגירת השירות
+ServicesNomberShort=%s השירות (ים)
+RunningServices=פועלים שירותי
+BoardRunningServices=שירותים הפועלים פג
+ServiceStatus=מצב השירות
+DraftContracts=טיוטות חוזים
+CloseRefusedBecauseOneServiceActive=חוזה לא יכול להיות סגור כמו יס לפחות שירות אחד פתוח על זה
+CloseAllContracts=סגור את כל קווי החוזה
+DeleteContractLine=מחיקת קו החוזה
+ConfirmDeleteContractLine=האם אתה בטוח שברצונך למחוק זאת קו החוזה?
+MoveToAnotherContract=הזז שירות בחוזה אחר.
+ConfirmMoveToAnotherContract=אני choosed החוזה יעד חדש ולאשר אני רוצה להעביר את השירות הזה על חוזה זה.
+ConfirmMoveToAnotherContractQuestion=בחר בו החוזה הקיים (של צד שלישי אותו), אתה רוצה להעביר את השירות הזה?
+PaymentRenewContractId=לחדש את קו החוזה (%s מספר)
+ExpiredSince=תאריך תפוגה
+RelatedContracts=בנושא חוזים
+NoExpiredServices=אין שירותים פעילים פג
+TypeContact_contrat_internal_SALESREPSIGN=נציג מכירות חתימת החוזה
+TypeContact_contrat_internal_SALESREPFOLL=מכירות הבאה, נציג את החוזה
+TypeContact_contrat_external_BILLING=חיוב הלקוח קשר
+TypeContact_contrat_external_CUSTOMER=מעקב לקוחות צור קשר
+TypeContact_contrat_external_SALESREPSIGN=חתימת הלקוח קשר חוזה
+Error_CONTRACT_ADDON_NotDefined=CONTRACT_ADDON קבוע לא מוגדר
+// STOP - Lines generated via autotranslator.php tool (2012-03-10 15:18:53).

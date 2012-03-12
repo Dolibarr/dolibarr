@@ -1,0 +1,123 @@
+/*
+ * Language code: he_IL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-03-10 15:14:54
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-03-10 15:14:54).
+// Reference language: en_US -> he_IL
+CHARSET=UTF-8
+ExportsArea=יצוא שטח
+ImportArea=יבוא באזור
+NewExport=חדש לייצוא
+NewImport=חדש ייבוא
+ExportableDatas=יציא מערך נתונים
+ImportableDatas=יביא מערך נתונים
+SelectExportDataSet=בחר בסיס הנתונים שברצונך לייצא ...
+SelectImportDataSet=בחר בסיס הנתונים שברצונך לייבא ...
+SelectExportFields=בחר את השדות שברצונך לייצא, או בחר profil ייצוא מוגדר מראש
+SelectImportFields=בחר את קובץ המקור השדות שברצונך לייבא שדה היעד שלהם במסד הנתונים על ידי העברת אותם מעלה ומטה עם %s עוגן, או בחר profil יבוא מוגדר מראש:
+NotImportedFields=שדות של קובץ המקור לא יובאו
+SaveExportModel=שמור את הפרופיל של היצוא, אם אתה מתכנן להשתמש בו שוב מאוחר יותר ...
+SaveImportModel=שמור את הפרופיל של יבוא אם בכוונתך להשתמש בו שוב מאוחר יותר ...
+ExportModelName=ייצוא שם הפרופיל
+ExportModelSaved=פרופיל ייצוא הציל תחת <b>%s</b> שם.
+ExportableFields=שדות לייצוא
+ExportedFields=המיוצאים שדות
+ImportModelName=פרופיל יבוא שם
+ImportModelSaved=פרופיל ייבוא ​​הציל תחת <b>%s</b> שם.
+ImportableFields=יביא שדות
+ImportedFields=יבוא שדות
+DatasetToExport=מערך נתונים לייצא
+DatasetToImport=ייבוא ​​קובץ לתוך בסיס הנתונים
+NoDiscardedFields=שדות אין בקובץ המקור מבוטלים
+Dataset=מערך נתונים
+ChooseFieldsOrdersAndTitle=כדי לבחור שדות ...
+FieldsOrder=שדות כדי
+FieldsTitle=שדות הכותרת
+FieldOrder=סדר השדות
+FieldTitle=שדה הכותרת
+ChooseExportFormat=בחר בפורמט הייצוא
+NowClickToGenerateToBuildExportFile=עכשיו, בחר בפורמט הקובץ התיבה המשולבת ולחץ על &quot;צור&quot; כדי לבנות קובץ הייצוא ...
+AvailableFormats=זמין פורמטים
+LibraryShort=ספריה
+LibraryUsed=ספריית שימוש
+LibraryVersion=גרסה
+Step=שלב
+FormatedImport=Import assistant
+FormatedImportDesc1=This area allows to import personalized data, using an assistant to help you in process without technical knowledge.
+FormatedImportDesc2=First step is to choose a king of data you want to load, then file to load, then to choose which fields you want to load.
+FormatedExport=Export assistant
+FormatedExportDesc1=This area allows to export personalized data, using an assistant to help you in process without technical knowledge.
+FormatedExportDesc2=First step is to choose a predefined dataset, then to choose which fields you want in your result files, and which order.
+FormatedExportDesc3=When data to export are selected, you can define output file format you want to export your data to.
+Sheet=דף
+NoImportableData=אין נתונים יביא (אין מודול עם ההגדרות כדי לאפשר יבוא נתונים)
+FileSuccessfullyBuilt=ייצוא הקובץ שנוצר
+SQLUsedForExport=בקשה SQL המשמשת לבניית קובץ הייצוא
+LineId=הזיהוי של קו
+LineDescription=תיאור של הקו
+LineUnitPrice=מחיר היחידה של קו
+LineVATRate=מע&quot;מ של הקו
+LineQty=כמות לקו
+LineTotalHT=סכום נטו ממס לקו
+LineTotalTTC=עם סכום המס לקו
+LineTotalVAT=סכום המע&quot;מ עבור קו
+TypeOfLineServiceOrProduct=סוג של קו (0 = מוצר, שירות = 1)
+FileWithDataToImport=קובץ עם נתונים כדי לייבא
+FileToImport=מקור הקובץ לייבוא
+FileMustHaveOneOfFollowingFormat=קובץ לייבא חייב להיות אחד בתבנית הבאה
+DownloadEmptyExample=הורד דוגמה של קובץ המקור ריקה
+ChooseFormatOfFileToImport=בחר תבנית קובץ שישמש תבנית קובץ יבוא על ידי לחיצה על %s picto כדי לבחור אותו ...
+ChooseFileToImport=העלה את קובץ ולאחר מכן לחץ על %s picto כדי לבחור קובץ כקובץ מקור יבוא ...
+SourceFileFormat=קובץ המקור בפורמט
+FieldsInSourceFile=השדות בקובץ המקור
+FieldsInTargetDatabase=היעד שדות Dolibarr מסד הנתונים (* = חובה)
+Field=שדה
+NoFields=אין שדות
+MoveField=הזזת עמודות שדה %s מספר
+ExampleOfImportFile=Example_of_import_file
+SaveImportProfile=שמור את הפרופיל של יבוא
+ErrorImportDuplicateProfil=הצליח להציל את הפרופיל של יבוא בשם זה. פרופיל קיים כבר קיים בשם זה.
+ImportSummary=התקנה ייבוא ​​סיכום
+TablesTarget=ממוקד שולחנות
+FieldsTarget=ממוקדים בתחומים
+TableTarget=ממוקד השולחן
+FieldTarget=ממוקד בתחום
+FieldSource=מקור השדה
+DoNotImportFirstLine=אל תייבא השורה הראשונה של קובץ המקור
+NbOfSourceLines=מספר השורות בקובץ המקור
+NowClickToTestTheImport=יש לבדוק פרמטרים יבוא שהגדרת. אם הם נכונים, לחץ על <b>&quot;%s&quot;</b> על מנת להפעיל את סימולציה של תהליך הייבוא ​​(אין נתונים ישתנו במסד הנתונים שלך, זה רק סימולציה לרגע) ...
+RunSimulateImportFile=הפעל את ההדמיה יבוא
+FieldNeedSource=זה fiels בבסיס הנתונים דורשים נתונים מקובץ המקור
+SomeMandatoryFieldHaveNoSource=כמה שדות חובה אין מקור מקובץ נתונים
+InformationOnSourceFile=מידע על קובץ המקור
+InformationOnTargetTables=מידע על שדות היעד
+SelectAtLeastOneField=לעבור לפחות שדה אחד מקור בעמודה של שדות לייצא
+SelectFormat=בחר את פורמט קובץ הייבוא
+RunImportFile=הפעל את קובץ הייבוא
+NowClickToRunTheImport=בדוק תוצאה של סימולציה הייבוא. אם הכל בסדר, להפעיל את הייבוא ​​סופית.
+DataLoadedWithId=כל הנתונים יהיה טעון עם id יבוא הבאה: <b>%s</b>
+ErrorMissingMandatoryValue=נתונים הכרחיים ריקה בקובץ המקור <b>%s</b> שדה.
+TooMuchErrors=יש עדיין <b>%s</b> קווי מקור אחר עם שגיאות אבל התפוקה הייתה מוגבלת.
+TooMuchWarnings=יש עדיין <b>%s</b> קווי מקור אחר עם אזהרות אך התפוקה הייתה מוגבלת.
+EmptyLine=שורה ריקה (ייפסל)
+CorrectErrorBeforeRunningImport=ראשית, עליך לתקן את כל השגיאות לפני הפעלת יבוא סופי.
+FileWasImported=קובץ יובא עם <b>%s</b> מספר.
+YouCanUseImportIdToFindRecord=אתה יכול למצוא את כל הרשומות במסד הנתונים שיובאו על ידי סינון שדה <b>import_key = '%s &quot;.</b>
+NbOfLinesOK=מספר שורות ללא שגיאות וללא אזהרות: <b>%s.</b>
+NbOfLinesImported=מספר השורות שיובאו בהצלחה: <b>%s.</b>
+DataComeFromNoWhere=ערך להכניס מגיע משום מקום בקובץ המקור.
+DataComeFromFileFieldNb=ערך להכניס מגיע ממספר <b>%s</b> שדה בקובץ המקור.
+DataComeFromIdFoundFromRef=ערך שעולה ממספר <b>%s</b> שדה של קובץ המקור ישמש למצוא את מספר הזיהוי של אובייקט ההורה להשתמש (אז <b>%s</b> Objet כי יש REF. מקובץ המקור חייב קיים לתוך Dolibarr).
+DataComeFromIdFoundFromCodeId=קוד המגיע ממספר <b>%s</b> שדה של קובץ המקור ישמש כדי למצוא את מספר הזיהוי של אובייקט ההורה להשתמש (אז את הקוד מקובץ המקור חייב קיים לתוך <b>%s</b> dictionnary). שים לב שאם אתה יודע מזהה, אתה יכול גם להשתמש בו בתוך קובץ המקור במקום הקוד. ייבוא ​​אמור לעבוד בשני המקרים.
+DataIsInsertedInto=נתונים המגיעים קובץ המקור יוכנס לתוך השדה הבא:
+DataIDSourceIsInsertedInto=Id של אובייקט ההורה נמצא באמצעות הנתונים בקובץ המקור, יתווסף לשטח הבאה:
+DataCodeIDSourceIsInsertedInto=Id של הקו נמצא ההורה מהקוד, יתווסף לשטח הבאה:
+SourceRequired=נתוני ערך חובה
+SourceExample=דוגמה של נתוני ערך אפשרי
+ExampleAnyRefFoundIntoElement=השופט מצא עבור כל אלמנט <b>%s</b>
+ExampleAnyCodeOrIdFoundIntoDictionnary=כל קוד (או מזהה) מצאו את <b>%s</b> dictionnary
+CSVFormatDesc=<b>מופרדים באמצעות פסיקים</b> הקובץ בפורמט <b>ערך</b> (. CSV). <br> זהו קובץ טקסט בפורמט שבו השדות מופרדים באמצעות מפריד [%s]. אם מפריד נמצא בתוך תוכן שדה, שדה מעוגל על ​​ידי דמות עגולה [%s]. לברוח אופי לברוח אופי עגול הוא [%s].
+// STOP - Lines generated via autotranslator.php tool (2012-03-10 15:24:34).

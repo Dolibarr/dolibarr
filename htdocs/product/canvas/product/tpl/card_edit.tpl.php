@@ -32,7 +32,7 @@ dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']
 <input type="hidden" name="canvas" value="<?php echo $this->control->tpl['canvas']; ?>">
 
 
-<table class="border" width="100%">
+<table class="border allwidth">
 
 <tr>
 <td class="fieldrequired" width="20%"><?php echo $langs->trans("Ref"); ?></td>

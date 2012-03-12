@@ -1,0 +1,31 @@
+/*
+ * Language code: he_IL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-03-10 15:14:54
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-03-10 15:14:54).
+// Reference language: en_US -> he_IL
+CHARSET=UTF-8
+Trip=טיול
+Trips=טיולים
+TripsAndExpenses=נסיעות והוצאות
+TripsAndExpensesStatistics=טיולים וסטטיסטיקות הוצאות
+TripCard=כרטיס נסיעה
+AddTrip=הוסף הנסיעה
+ListOfTrips=רשימת טיולים
+ListOfFees=רשימת אגרות
+NewTrip=טיול חדש
+CompanyVisited=החברה / קרן ביקר
+Kilometers=ק&quot;מ
+FeesKilometersOrAmout=כמות או ק&quot;מ
+DeleteTrip=מחק את הטיול
+ConfirmDeleteTrip=האם אתה בטוח שאתה רוצה למחוק את המסע הזה?
+TF_OTHER=אחר
+TF_LUNCH=ארוחת צהריים
+TF_TRIP=טיול
+ListTripsAndExpenses=רשימת הטיולים והוצאות
+ExpensesArea=טיולים ושטח הוצאות
+SearchATripAndExpense=חיפוש נסיעה והוצאות
+// STOP - Lines generated via autotranslator.php tool (2012-03-10 15:22:19).

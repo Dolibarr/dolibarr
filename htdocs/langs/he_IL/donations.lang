@@ -1,0 +1,36 @@
+/*
+ * Language code: he_IL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-03-10 15:14:54
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-03-10 15:14:54).
+// Reference language: en_US -> he_IL
+CHARSET=UTF-8
+Donation=תרומה
+Donations=תרומות
+Donor=תורם
+Donors=התורמים
+AddDonation=הוסף תרומה
+NewDonation=חדש תרומה
+DonationPromise=מתנה ההבטחה
+PromisesNotValid=לא תוקף הבטחות
+PromisesValid=תוקף הבטחות
+DonationsPaid=תרומות תשלום
+DonationsReceived=תרומות שהתקבלו
+PublicDonation=אישי תרומה
+DonationsNumber=תרומה מספר
+DonationsArea=תרומות בתחום
+DonationStatusPromiseNotValidated=טיוטה ההבטחה
+DonationStatusPromiseValidated=תוקף ההבטחה
+DonationStatusPaid=תרומה קיבל
+DonationStatusPromiseNotValidatedShort=טיוטה
+DonationStatusPromiseValidatedShort=תוקף
+DonationStatusPaidShort=קיבל
+ValidPromess=לאמת את ההבטחה
+BuildDonationReceipt=בנה קבלת
+DonationsModels=מסמכים מודלים לאישור תרומה
+LastModifiedDonations=%s האחרונות שונה תרומות
+SearchADonation=חפש תרומה
+// STOP - Lines generated via autotranslator.php tool (2012-03-10 15:32:25).

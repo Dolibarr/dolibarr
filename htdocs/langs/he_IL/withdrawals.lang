@@ -1,0 +1,101 @@
+/*
+ * Language code: he_IL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-03-10 15:14:54
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-03-10 15:14:54).
+// Reference language: en_US -> he_IL
+CHARSET=UTF-8
+StandingOrdersArea=עומד שטח הזמנות
+CustomersStandingOrdersArea=הלקוחות עומד אזור הזמנות
+StandingOrders=הוראות קבע
+StandingOrder=הוראות קבע
+NewStandingOrder=מעמדה החדש כדי
+StandingOrderToProcess=לעבד
+StandingOrderProcessed=מעובד
+Withdrawals=משיכות
+Withdrawal=נסיגה
+WithdrawalsReceipts=גמילה קבלות
+WithdrawalReceipt=הנסיגה קבלת
+WithdrawalReceiptShort=קבלה
+LastWithdrawalReceipts=האחרונים גמילה %s קבלות
+WithdrawedBills=למשוך חשבוניות
+WithdrawalsLines=גמילה קווי
+RequestStandingOrderToTreat=בקשה הוראות קבע לטפל
+RequestStandingOrderTreated=בקשה הוראות קבע טיפול
+CustomersStandingOrders=עומדים לקוחות הזמנות
+CustomerStandingOrder=מעמדה לקוחות כדי
+NbOfInvoiceToWithdraw=Nb של החשבונית עם לסגת בקשה
+NbOfInvoiceToWithdrawWithInfo=Nb של החשבונית עם לסגת בקשה הלקוחות שיש להגדיר את פרטי חשבון הבנק
+InvoiceWaitingWithdraw=חשבונית מחכה לסגת
+AmountToWithdraw=סכום לסגת
+WithdrawsRefused=תיסוג סירב
+NoInvoiceToWithdraw=לא החשבונית ללקוח במצב תשלום &quot;לסגת&quot; מחכה. ללכת על הכרטיסייה 'משיכה' בכרטיס החשבונית להגיש בקשה.
+ResponsibleUser=אחראית המשתמש
+WithdrawalsSetup=הנסיגה ההתקנה
+WithdrawStatistics=משיכה של סטטיסטיקה
+WithdrawRejectStatistics=לסגת הסטטיסטיקה של הדוחים
+LastWithdrawalReceipt=%s האחרונות נסיגה קבלות
+MakeWithdrawRequest=הפוך למשוך בקשה
+ThirdPartyBankCode=צד שלישי קוד בנק
+ThirdPartyDeskCode=צד שלישי שולחן קוד
+NoInvoiceCouldBeWithdrawed=החשבונית לא withdrawed בהצלחה. בדוק כי החשבוניות על חברות עם איסור חוקי.
+ClassCredited=לסווג זוכה
+ClassCreditedConfirm=האם אתה בטוח שברצונך למיין את קבלת הנסיגה כפי זוכה על חשבון הבנק שלך?
+TransData=תאריך שידור
+TransMetod=שיטת שידור
+Send=לשלוח
+Lines=קווים
+StandingOrderReject=להוציא לדחות
+InvoiceRefused=חשבונית סירב
+WithdrawalRefused=הנסיגה סירב
+WithdrawalRefusedConfirm=האם אתה בטוח שאתה רוצה להיכנס דחיית הנסיגה לחברה
+RefusedData=תאריך הדחייה
+RefusedReason=סיבת הדחייה
+RefusedInvoicing=חיוב דחייה
+NoInvoiceRefused=אין לטעון את הדחייה
+InvoiceRefused=טען את דחיית ללקוח
+Status=מצב
+StatusUnknown=לא ידוע
+StatusWaiting=המתנה
+StatusTrans=מועבר
+StatusCredited=זוכה
+StatusRefused=סירב
+StatusMotif0=לא מוגדר
+StatusMotif1=הפרשה insuffisante
+StatusMotif2=Tirage conteste
+StatusMotif3=לא כדי נסיגה
+StatusMotif4=לקוחות הזמנה
+StatusMotif5=Inexploitable RIB
+StatusMotif6=חשבון ללא איזון
+StatusMotif7=החלטה שיפוטית
+StatusMotif8=סיבה אחרת
+CreateAll=תוציא את כל
+CreateGuichet=רק במשרד
+CreateBanque=רק בנק
+OrderWaiting=המתנה לטיפול
+NotifyTransmision=הנסיגה הילוכים
+NotifyEmision=הנסיגה פליטה
+NotifyCredit=הנסיגה אשראי
+NumeroNationalEmetter=משדר הלאומי מספר
+PleaseSelectCustomerBankBANToWithdraw=בחר מידע על חשבון הבנק של הלקוח לסגת
+WithBankUsingRIB=עבור חשבונות בנק באמצעות RIB
+WithBankUsingBANBIC=עבור חשבונות בנק באמצעות IBAN / BIC / SWIFT
+BankToReceiveWithdraw=חשבון הבנק לקבל תיסוג
+CreditDate=אשראי על
+WithdrawalFileNotCapable=לא ניתן ליצור הקבלה הנסיגה קובץ עבור המדינה שלך
+ShowWithdraw=הצג משיכה
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=עם זאת, אם חשבונית אחת לפחות תשלום הנסיגה לא מעובד עדיין, זה לא יהיה כפי שנקבע שילם כדי לאפשר לנהל את הנסיגה לפני.
+DoStandingOrdersBeforePayments=כרטיסיות זה מאפשר לך לבקש לסדר מעמד. ברגע שזה יושלם, תוכל להקליד את התשלום כדי לסגור את החשבונית.
+InfoCreditSubject=תשלום %s הוראת קבע על ידי הבנק
+InfoCreditMessage=%s הוראת קבע שולם על ידי הבנק <br> נתוני התשלום: %s
+InfoTransSubject=העברת %s הוראת קבע לבנק
+InfoTransMessage=%s הוראת קבע כבר transmited לבנק על ידי %s %s. <br><br>
+InfoTransData=כמות: %s <br> Metode: %s <br> תאריך: %s
+InfoFoot=זוהי הודעה אוטומטית נשלחה על ידי Dolibarr
+InfoRejectSubject=הוראת קבע סירב
+InfoRejectMessage=שלום, <br><br> כדי standig של %s חשבוניות הקשורות %s החברה, עם כמות של %s סורב על ידי הבנק. <br><br> - <br> % $
+ModeWarning=אפשרות מצב אמיתי לא נקבע, אנחנו עוצרים אחרי סימולציה זו
+// STOP - Lines generated via autotranslator.php tool (2012-03-10 15:21:56).

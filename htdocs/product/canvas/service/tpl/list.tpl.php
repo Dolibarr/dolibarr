@@ -19,7 +19,7 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
-<table width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;">
+<table class="notopnoleftnoright allwidth" style="margin-bottom: 2px;">
 <tr>
 	<td class="nobordernopadding" width="40" align="left" valign="middle">
 		<?php echo $title_picto; ?>
@@ -38,7 +38,7 @@
 <input type="hidden" name="canvas" value="service">
 <input type="hidden" name="type" value="1">
 
-<table class="liste" width="100%">
+<table class="liste allwidth">
 
 <!-- FIELDS TITLE -->
 
@@ -59,9 +59,9 @@
   				<td class="liste_titre" align="<?php echo $field['align']; ?>"><?php echo $field['title']; ?></td>
 	<?php } } } ?>
 </tr>
- 
+
  <!-- FIELDS SEARCH -->
- 
+
 <tr class="liste_titre">
 	<?php
  	$num = count($fieldlist);
@@ -83,7 +83,7 @@
 
 <?php
 $var=True;
-foreach($datas as $line) { 
+foreach($datas as $line) {
 	$var=!$var;	?>
 	<tr <?php echo $bc[$var]; ?>>
    		<?php

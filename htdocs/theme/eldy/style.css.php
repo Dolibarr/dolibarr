@@ -1306,6 +1306,9 @@ span.butAction, span.butActionDelete {
 /* Tables                                                                         */
 /* ============================================================================== */
 
+.allwidth {
+	width: 100%;
+}
 
 #undertopmenu {
 /*	background-image: url("<?php echo dol_buildpath($path.'/theme/eldy/img/gradient.gif',1) ?>"); */

@@ -1,0 +1,44 @@
+/*
+ * Language code: he_IL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-03-10 15:14:54
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-03-10 15:14:54).
+// Reference language: en_US -> he_IL
+CHARSET=UTF-8
+PayBoxSetup=PayBox ההתקנה מודול
+PayBoxDesc=זה מציעים מודול דפים המאפשרים תשלום על <a href="http://www.paybox.com" target="_blank">Paybox</a> על ידי הלקוחות. זה יכול לשמש לתשלום בחינם או תמורת תשלום על אובייקט מסוים Dolibarr (חשבונית, הסדר, ...)
+FollowingUrlAreAvailableToMakePayments=כתובות האתרים הבאות זמינות להציע דף ללקוח לבצע תשלום על Dolibarr אובייקטים
+PaymentForm=צורת תשלום
+WelcomeOnPaymentPage=ברוך הבא על שירות התשלומים המקוון שלנו
+ThisScreenAllowsYouToPay=מסך זה מאפשר לך לבצע תשלום מקוון כדי %s.
+ThisIsInformationOnPayment=זהו מידע על תשלום לעשות
+ToComplete=כדי להשלים
+YourEMail=דוא&quot;ל לקבל אישור לתשלום
+Creditor=נושה
+PaymentCode=תשלום קוד
+PayBoxDoPayment=עבור תשלום
+YouWillBeRedirectedOnPayBox=תנותב מחדש בדף Paybox מאובטח לך מידע קלט כרטיס אשראי
+PleaseBePatient=בבקשה, להיות סבלני
+Continue=הבא
+ToOfferALinkForOnlinePayment=כתובת האתר לתשלום %s
+ToOfferALinkForOnlinePaymentOnOrder=כתובת האתר מציע למשתמש ממשק %s באינטרנט תשלום עבור הזמנת הלקוח
+ToOfferALinkForOnlinePaymentOnInvoice=כתובת האתר להציע למשתמש %s באינטרנט תשלום ממשק חשבונית ללקוח
+ToOfferALinkForOnlinePaymentOnContractLine=כתובת האתר מציע למשתמש ממשק %s באינטרנט תשלום עבור קו החוזה
+ToOfferALinkForOnlinePaymentOnFreeAmount=כתובת האתר מציע למשתמש ממשק %s באינטרנט תשלום עבור סכום חינם
+ToOfferALinkForOnlinePaymentOnMemberSubscription=כתובת האתר מציע למשתמש ממשק %s באינטרנט תשלום עבור מנוי חבר
+YouCanAddTagOnUrl=ניתן גם להוסיף פרמטר url <b>&amp; תג <i>ערך</i> =</b> לכל אלה URL (חובה בלבד לתשלום חינם) להוסיף תג ההערה שלך התשלום.
+SetupPayBoxToHavePaymentCreatedAutomatically=ההתקנה PayBox עם <b>%s</b> URL כדי להיות התשלום נוצר באופן אוטומטי כאשר תוקף על ידי paybox.
+YourPaymentHasBeenRecorded=דף זה מאשר כי התשלום נרשמה. תודה.
+YourPaymentHasNotBeenRecorded=את התשלום לא נרשמה והעסקה בוטלה. תודה.
+AccountParameter=חשבון פרמטרים
+UsageParameter=שימוש בפרמטרים
+InformationToFindParameters=עזרה למצוא את פרטי החשבון שלך %s
+PAYBOX_CGI_URL_V2=כתובת האתר של המודול CGI Paybox לתשלום
+VendorName=שם הספק
+CSSUrlForPaymentForm=גיליון סגנון CSS URL עבור טופס התשלום
+MessageOK=הודעה בדף תוקף בתמורה לתשלום
+MessageKO=הודעה בדף בוטל בתמורה לתשלום
+// STOP - Lines generated via autotranslator.php tool (2012-03-10 15:19:26).

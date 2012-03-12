@@ -1,0 +1,94 @@
+/*
+ * Language code: he_IL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-03-10 15:14:54
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-03-10 15:14:54).
+// Reference language: en_US -> he_IL
+CHARSET=UTF-8
+Commercial=מסחרי
+CommercialArea=שטח מסחרי
+CommercialCard=כרטיס מסחרי
+CustomerArea=לקוחות באזור
+Customer=לקוח
+Customers=לקוחות
+Prospect=פרוספקט
+Prospects=הסיכויים
+DeleteAction=מחק את האירוע / משימה
+NewAction=האירוע משימה חדשה /
+AddAction=הוסף אירוע / פעילות
+AddAnAction=הוסף אירוע / פעילות
+AddActionRendezVous=הוסף אירוע Rendez-Vous
+Rendez-Vous=מפגש
+ConfirmDeleteAction=האם אתה בטוח שברצונך למחוק את האירוע / משימה?
+CardAction=אירוע כרטיס
+PercentDone=שלמה אחוז
+ActionOnCompany=המשימה על החברה
+ActionOnContact=משימה על קשר
+TaskRDV=מפגשים
+TaskRDVWith=פגישה עם %s
+ShowTask=הצג המשימה
+ShowAction=הצג האירוע
+ActionsReport=אירועים מדווחים
+SalesRepresentative=נציג מכירות
+SalesRepresentatives=נציגי מכירות
+SalesRepresentativeFollowUp=נציג מכירות (מעקב)
+SalesRepresentativeSignature=נציג מכירות (חתימה)
+CommercialInterlocutor=מסחרי בן שיחו
+ErrorWrongCode=קוד לא נכון
+NoSalesRepresentativeAffected=לא נציג המכירות בפרט מושפעים
+ShowCustomer=הצג הלקוח
+ShowProspect=הצג את הסיכוי
+ListOfProspects=רשימה של לקוחות פוטנציאליים
+ListOfCustomers=רשימת הלקוחות
+LastDoneTasks=%s האחרונים השלימו את משימות
+LastRecordedTasks=משימות הקלטה אחרונה
+LastActionsToDo=%s האחרונים העתיקים פעולות שלא הושלמו
+DoneAndToDoActionsFor=הושלם ולעשות אירועים עבור %s
+DoneAndToDoActions=הושלם ולעשות אירועים
+DoneActions=הושלם אירועים
+DoneActionsFor=אירועים הושלם עבור %s
+ToDoActions=שלם אירועים
+ToDoActionsFor=אירועים שלמים עבור %s
+SendPropalRef=שלח %s ההצעה מסחריים
+SendOrderRef=שלח %s סדר
+StatusNotApplicable=לא ישים
+StatusActionToDo=לעשות
+StatusActionDone=להשלים
+MyActionsAsked=אירועים אני נרשם
+MyActionsToDo=אירועים אני צריך לעשות
+MyActionsDone=האירועים השפיעו לי
+StatusActionInProcess=בתהליך
+TasksHistoryForThisContact=אירועים עבור איש קשר זה
+LastProspectDoNotContact=אין קשר
+LastProspectNeverContacted=מעולם לא יצר קשר
+LastProspectToContact=ליצירת קשר
+LastProspectContactInProcess=צור בתהליך
+LastProspectContactDone=צור עשה
+DateActionPlanned=תאריך האירוע המתוכנן
+DateActionDone=תאריך האירוע לעשות
+ActionAskedBy=האירוע דווח
+ActionAffectedTo=האירוע השפיע על
+ActionDoneBy=האירוע נעשה על ידי
+ActionUserAsk=דווח ע&quot;י
+ErrorStatusCantBeZeroIfStarted=אם <b>&quot;תאריך ראוי&quot;</b> השדה מלא, הפעולה החלה (או גמר), כדי <b>'סטטוס'</b> שדה לא יכול להיות% 0%.
+ActionAC_TEL=שיחת טלפון
+ActionAC_FAX=שלח פקס
+ActionAC_PROP=שלח הצעת בדואר
+ActionAC_EMAIL=שלח
+ActionAC_RDV=מפגשים
+ActionAC_FAC=שלח החשבונית ללקוח בדואר
+ActionAC_REL=שלח החשבונית ללקוח בדואר (תזכורת)
+ActionAC_CLO=לסגור
+ActionAC_EMAILING=שלח דוא&quot;ל המונית
+ActionAC_COM=שלח הזמנת הלקוח באמצעות הדואר
+ActionAC_SHIP=שלח משלוח בדואר
+ActionAC_SUP_ORD=כדי לשלוח בדואר הספק
+ActionAC_SUP_INV=שלח חשבונית הספק בדואר
+ActionAC_OTH=אחר
+StatusProsp=פרוספקט מעמד
+DraftPropals=לנסח הצעות מסחריות
+SearchPropal=חיפוש הצעה מסחרית
+// STOP - Lines generated via autotranslator.php tool (2012-03-10 15:21:04).

@@ -1,0 +1,123 @@
+/*
+ * Language code: he_IL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-03-10 15:14:54
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-03-10 15:14:54).
+// Reference language: en_US -> he_IL
+CHARSET=UTF-8
+MenuManager=תפריט מנהל
+Error=שגיאה
+Errors=שגיאות
+ErrorBadEMail=%s אימייל הוא בסדר
+ErrorBadUrl=%s URL שגויה
+ErrorLoginAlreadyExists=כניסה %s כבר קיים.
+ErrorGroupAlreadyExists=קבוצת %s כבר קיים.
+ErrorRecordNotFound=הקלטת לא נמצא.
+ErrorFailToCopyFile=נכשלה העתקת קובץ <b>&quot;%s</b> 'ל' <b>%s&quot;.</b>
+ErrorFailToRenameFile=נכשל נסיון לשנות את שם הקובץ <b>&quot;%s</b> 'ל' <b>%s&quot;.</b>
+ErrorFailToDeleteFile=לא הצליחו להסיר את הקובץ <b>'%s</b> &quot;.
+ErrorFailToCreateFile=נכשל ביצירת קובץ <b>'%s</b> &quot;.
+ErrorFailToRenameDir=נכשל נסיון לשנות את שמו <b>&quot;%s&quot;</b> מדריך ל <b>'%s</b> &quot;.
+ErrorFailToCreateDir=נכשל נסיון ליצור את המדריך <b>&quot;%s&quot;.</b>
+ErrorFailToDeleteDir=לא הצליחו למחוק את המדריך <b>&quot;%s&quot;.</b>
+ErrorFailedToDeleteJoinedFiles=לא יכול למחוק את הסביבה, כי יש כמה קבצים המצורפים. הסר להצטרף קבצים 1.
+ErrorThisContactIsAlreadyDefinedAsThisType=קשר זה כבר מוגדרת כאיש קשר מסוג זה.
+ErrorCashAccountAcceptsOnlyCashMoney=זה חשבון הבנק הוא חשבון הכסף, אז היא מקבלת תשלומים במזומן סוג בלבד.
+ErrorFromToAccountsMustDiffers=מקור ומטרות חשבונות הבנק חייב להיות שונה.
+ErrorBadThirdPartyName=ערך רע שם צד שלישי
+ErrorBadCustomerCodeSyntax=תחביר רע קוד לקוח
+ErrorCustomerCodeRequired=הלקוח נדרש קוד
+ErrorCustomerCodeAlreadyUsed=לקוחות הקוד כבר בשימוש
+ErrorPrefixRequired=נדרש קידומת
+ErrorUrlNotValid=כתובת האתר אינה נכונה
+ErrorBadSupplierCodeSyntax=תחביר רע קוד הספק
+ErrorSupplierCodeRequired=הספק נדרש קוד
+ErrorSupplierCodeAlreadyUsed=הספק הקוד כבר בשימוש
+ErrorBadParameters=רעות פרמטרים
+ErrorBadValueForParameter=הערך הלא נכון &quot;%s&quot; עבור שגויות פרמטר של %s של
+ErrorBadImageFormat=קובץ תמונה יש פורמט לא נתמך
+ErrorBadDateFormat=&quot;%s&quot; ערך יש תבנית התאריך לא נכון
+ErrorFailedToWriteInDir=נכשל נסיון לכתוב %s המדריך
+ErrorFoundBadEmailInFile=נמצאו דוא&quot;ל תחביר לא נכון עבור קווי %s בקובץ (שורה לדוגמה %s עם הדוא&quot;ל = %s)
+ErrorUserCannotBeDelete=המשתמש לא ניתן למחוק. יכול להיות שזה קשור על גופים Dolibarr.
+ErrorFieldsRequired=בתחומים מסוימים הנדרשים לא מולאו.
+ErrorFailedToCreateDir=נכשל נסיון ליצור ספרייה. יש לבדוק כי השרת משתמש אינטרנט בעל הרשאות לכתוב לתוך ספריית מסמכים Dolibarr. אם <b>safe_mode</b> פרמטר מופעלת על PHP זו, ודא Dolibarr PHP קבצים הבעלים למשתמש שרת אינטרנט (או קבוצה).
+ErrorNoMailDefinedForThisUser=לא דואר המוגדר עבור משתמש זה
+ErrorFeatureNeedJavascript=תכונה זו צריך JavaScript כדי להיות מופעל לעבוד. שינוי זה ההתקנה - התצוגה.
+ErrorTopMenuMustHaveAParentWithId0=התפריט של &quot;למעלה&quot; סוג לא יכול להיות תפריט האב. שים 0 בתפריט הורה או לבחור בתפריט מסוג &quot;שמאל&quot;.
+ErrorLeftMenuMustHaveAParentId=התפריט של &quot;השמאל&quot; סוג חייב להיות קוד זיהוי ההורה.
+ErrorFileNotFound=הקובץ לא נמצא <b>%s</b> (נתיב לא נכון, הרשאות לא נכונות או הגישה נדחתה ע openbasedir או פרמטר safe_mode)
+ErrorDirNotFound=<b>%s</b> מדריך לא נמצא (נתיב לא נכון, הרשאות לא נכונות או הגישה נדחתה ע openbasedir או פרמטר safe_mode)
+ErrorFunctionNotAvailableInPHP=<b>%s</b> פונקציה נדרשת תכונה זו, אך אינו זמין בגרסה זו / התקנה של PHP.
+ErrorDirAlreadyExists=ספרייה בשם זה כבר קיים.
+ErrorFileAlreadyExists=קובץ בשם זה כבר קיים.
+ErrorPartialFile=הקובץ לא קיבל לחלוטין על ידי השרת.
+ErrorNoTmpDir=%s directy זמני אינו קיים.
+ErrorUploadBlockedByAddon=טען נחסם על ידי Plugin PHP / Apache.
+ErrorFileSizeTooLarge=גודל הקובץ גדול מדי.
+ErrorSizeTooLongForIntType=זמן רב מדי עבור סוג int (מקסימום %s ספרות) גודל
+ErrorSizeTooLongForVarcharType=זמן רב מדי עבור סוג מחרוזת (מקסימום %s תווים) גודל
+ErrorFieldCanNotContainSpecialCharacters=<b>%s</b> שדה אסור מכילה תווים מיוחדים.
+ErrorNoAccountancyModuleLoaded=אין מודול הנהלת חשבונות הפעלת
+ErrorExportDuplicateProfil=זה שם profil כבר קיים עבור קבוצה זו לייצוא.
+ErrorLDAPSetupNotComplete=Dolibarr-LDAP ההתאמה אינה שלמה.
+ErrorLDAPMakeManualTest=הקובץ. LDIF נוצר ב %s במדריך. נסה לטעון אותו ידנית משורת הפקודה כדי לקבל מידע נוסף על שגיאות.
+ErrorCantSaveADoneUserWithZeroPercentage=לא ניתן לשמור פעולה עם &quot;statut לא התחיל&quot; אם השדה &quot;נעשה על ידי&quot; מלא גם.
+ErrorRefAlreadyExists=נ&quot;צ להשתמש בהם ליצירת כבר קיים.
+ErrorPleaseTypeBankTransactionReportName=אנא הבנק סוג קבלת השם שבו העסקה המדווח (פורמט YYYYMM או yyyymmdd)
+ErrorRecordHasChildren=נכשל נסיון למחוק רשומות שכן יש קצת ילד.
+ErrorModuleRequireJavascript=Javascript לא צריך להיות נכה כי תכונה זו עובדת. כדי להפעיל / להשבית Javascript, עבור אל תפריט ראשי-&gt; Setup-&gt; תצוגה.
+ErrorPasswordsMustMatch=שתי הסיסמאות שהוקלדו חייבים להתאים זה לזה
+ErrorContactEMail=ארעה שגיאה טכנית. אנא, צרו קשר עם מנהל כדי בעקבות <b>%s</b> דוא&quot;ל en לספק את קוד השגיאה <b>%s</b> בהודעה שלך, או אפילו טוב יותר על ידי הוספת עותק מסך של דף זה.
+ErrorWrongValueForField=ערך שגוי עבור מספר <b>%s</b> שדה <b>(&quot;%s&quot;</b> הערך אינו תואם כלל <b>%s</b> regex)
+ErrorFieldValueNotIn=ערך שגוי עבור מספר <b>%s</b> שדה <b>(&quot;%s&quot;</b> ערך אינו ערך זמינים <b>%s</b> לתוך שדה של <b>%s</b> שולחן)
+ErrorFieldRefNotIn=ערך שגוי עבור מספר <b>%s</b> שדה <b>(&quot;%s&quot;</b> הערך אינו קיים <b>%s</b> REF)
+ErrorsOnXLines=שגיאות קווי מקור <b>%s</b>
+ErrorFileIsInfectedWithAVirus=תוכנית האנטי וירוס לא הצליח לאמת את הקובץ (הקובץ עשוי להיות נגוע על ידי וירוס)
+ErrorSpecialCharNotAllowedForField=תווים מיוחדים אינם מותרים לשימוש &quot;%s&quot; שדה
+ErrorDatabaseParameterWrong=<b>&quot;%s</b> 'הגדרת מסד הנתונים פרמטר יש ערך אינו תואם לשימוש Dolibarr (חייב להיות&quot; <b>%s'</b> ערך).
+ErrorNumRefModel=התייחסות קיימת לתוך מסד נתונים (%s) ואינה תואמת כלל זה מספור. להסיר או לשנות את השם שיא התייחסות להפעיל מודול זה.
+ErrorQtyTooLowForThisSupplier=כמות נמוכה מדי של הספק הזה, אם בכלל, מחיר שהוגדר על מוצר זה הספק הזה
+ErrorModuleSetupNotComplete=התקנה של מודול שנראה uncomplete. ללכת על התקנה - מודולים להשלים.
+ErrorBadMask=שגיאה על מסכת
+ErrorBadMaskFailedToLocatePosOfSequence=, מסכת שגיאה ללא מספר רצף
+ErrorBadMaskBadRazMonth=, ערך השגיאה רע איפוס
+ErrorSelectAtLeastOne=שגיאה. לבחור לפחות ערך אחד.
+ErrorProductWithRefNotExist=מוצר עם <i>&quot;%s&quot;</i> התייחסות לא קיימים
+ErrorDeleteNotPossibleLineIsConsolidated=לא ניתן למחוק, כי שיא קשורה transation הבנק כי הוא מפויסת
+ErrorProdIdAlreadyExist=%s מוקצה אחר 3
+ErrorFailedToSendPassword=נכשל לשלוח את הסיסמה
+ErrorFailedToLoadRSSFile=לא מצליח לקבל עדכון RSS. נסו להוסיף MAIN_SIMPLEXMLLOAD_DEBUG קבוע אם הודעות שגיאה לא מספק מספיק מידע.
+ErrorPasswordDiffers=סיסמאות שונה, יש להקליד אותם שוב.
+ErrorForbidden=הגישה נדחתה. <br> אתה מנסה להיכנס לאזור הדף, או תכונה מבלי להיות בפגישה מאומת או אסור המשתמש שלך.
+ErrorForbidden2=אישור כניסה זו יכולה להיות מוגדרת על ידי מנהל המערכת Dolibarr מהתפריט %s-&gt; %s.
+ErrorForbidden3=נראה כי Dolibarr אינו משמש דרך פעולת אימות. תסתכל על תיעוד ההתקנה Dolibarr לדעת כיצד לנהל את אימותי (htaccess, mod_auth או אחר ...).
+ErrorNoImagickReadimage=בכיתה Imagick לא נמצא ב-PHP זה. התצוגה המקדימה לא יכול להיות זמינים. מנהלי מערכת יכולים לבטל את הכרטיסייה הגדרת התפריט - תצוגה.
+ErrorRecordAlreadyExists=שיא כבר קיים
+ErrorCantReadFile=נכשל בקריאת &quot;%s&quot; קובץ
+ErrorCantReadDir=נכשל בקריאת &quot;%s&quot; המדריך
+ErrorFailedToFindEntity=נכשל בקריאת &quot;%s&quot; סביבה
+ErrorBadLoginPassword=ערך רע התחברות או סיסמה
+ErrorLoginDisabled=החשבון שלך הושבת
+ErrorFailedToRunExternalCommand=נכשל נסיון להפעיל את הפקודה חיצוני. תבדוק את זה זמין Runnable ידי שרת PHP שלך. אם <b>מצב בטוח</b> PHP מופעלת, בדוק הפקודה כי הוא בתוך הספרייה שהוגדר על ידי <b>safe_mode_exec_dir</b> פרמטר.
+ErrorFailedToChangePassword=נכשל נסיון לשנות את הסיסמה
+ErrorLoginDoesNotExists=המשתמש עם ההתחברות <b>%s</b> לא נמצא.
+ErrorLoginHasNoEmail=למשתמש אין כל כתובת דוא&quot;ל. לעבד בוטלה.
+ErrorBadValueForCode=ערך רע קוד האבטחה. נסה שוב עם ערך חדש ...
+ErrorBothFieldCantBeNegative=שדות %s ו %s לא יכול להיות גם שלילי
+ErrorWebServerUserHasNotPermission=חשבון משתמש <b>%s</b> נהג לבצע שרת האינטרנט אין כל אישור על כך
+ErrorNoActivatedBarcode=לא סוג ברקוד מופעל
+WarningSafeModeOnCheckExecDir=אזהרה, <b>safe_mode</b> PHP אפשרות על כך הפקודה יש לשמור בתוך ספרייה הכריז <b>safe_mode_exec_dir</b> פרמטר PHP.
+WarningAllowUrlFopenMustBeOn=<b>Allow_url_fopen</b> פרמטר חייב להיות מוגדר <b>על</b> ב <b>php.ini</b> פילר על כך מודול זה עובד לחלוטין. עליך לשנות את הקובץ באופן ידני.
+WarningBuildScriptNotRunned=<b>%s</b> סקריפט עדיין לא רץ לבנות גרפיקה, או שאין נתונים להראות.
+WarningBookmarkAlreadyExists=סימניה עם התואר הזה או זה היעד (כתובת האתר) כבר קיים.
+WarningPassIsEmpty=אזהרה, סיסמת מסד נתונים ריק. זה חור אבטחה. אתה צריך להוסיף סיסמה למסד הנתונים ולשנות את הקובץ conf.php כדי לשקף את זה.
+WarningConfFileMustBeReadOnly=אזהרה, הקובץ config שלך <b>(htdocs / conf / conf.php)</b> יכולים להיות מוחלפים על ידי שרת האינטרנט. זה חור אבטחה רציני. שינוי הרשאות על הקובץ להיות למצב קריאה בלבד למשתמש מערכת ההפעלה בשימוש על ידי שרת אינטרנט. אם אתה משתמש בפורמט Windows ו-FAT על הדיסק שלך, עליך לדעת כי מערכת הקבצים אינה מאפשרת להוסיף הרשאות על קובץ, כך לא יכול להיות בטוח לחלוטין.
+WarningsOnXLines=אזהרות על קווי מקור <b>%s</b>
+WarningNoDocumentModelActivated=המודל לא, עבור הדור המסמך, הופעל. המודל יהיה choosed כברירת מחדל עד שתכניס ההתקנה מודול שלך.
+WarningInstallDirExists=, אזהרה במדריך ההתקנה <b>(htdocs / להתקין)</b> עדיין קיים. זה חור אבטחה רציני. אתה צריך להסיר אותו מוקדם ככל האפשר.
+WarningUntilDirRemoved=כל אזהרות האבטחה (גלוי על ידי המשתמשים מנהל בלבד) יישאר פעיל כל עוד הפגיעות קיים (או MAIN_REMOVE_INSTALL_WARNING קבוע נוסף על תוכנית ההתקנה של תוכנית ההתקנה של&gt; אחרים).
+// STOP - Lines generated via autotranslator.php tool (2012-03-10 15:22:46).

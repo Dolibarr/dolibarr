@@ -1239,6 +1239,10 @@ span.butAction, span.butActionDelete {
 /* Tables                                                                         */
 /* ============================================================================== */
 
+.allwidth {
+	width: 100%;
+}
+
 /*
 #undertopmenu {
 background-image: url("<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/gradient.gif' ?>");
