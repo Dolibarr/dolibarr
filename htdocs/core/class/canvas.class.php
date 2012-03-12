@@ -24,8 +24,7 @@
 
 
 /**
- *    \class      Canvas
- *    \brief      Class to manage canvas
+ *	Class to manage canvas
  */
 class Canvas
 {
@@ -126,6 +125,7 @@ class Canvas
     /**
      *	Return the template to display canvas (if it exists)
 	 *
+	 *	@param	string	$action		Action code
      *	@return		int		0=Canvas template file does not exist, 1=Canvas template file exists
      */
     function displayCanvasExists($action)
@@ -140,7 +140,8 @@ class Canvas
 	 *	Display a canvas page. This will include the template for output.
 	 *	Variables used by templates may have been defined or loaded before into the assign_values function.
 	 *
-	 *	@return		void
+	 *	@param	string	$action		Action code
+	 *	@return	void
 	 */
 	function display_canvas($action)
 	{

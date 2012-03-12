@@ -22,10 +22,9 @@
  */
 
 /**
- * 		\class      DolEditor
- *      \brief      Class to manage a WYSIWYG editor.
- *		            Usage: $doleditor=new DolEditor('body',$message,320,'toolbar_mailing');
- *		                   $doleditor->Create();
+ *      Class to manage a WYSIWYG editor.
+ *		Usage: $doleditor=new DolEditor('body',$message,320,'toolbar_mailing');
+ *		       $doleditor->Create();
  */
 class DolEditor
 {
@@ -136,11 +135,11 @@ class DolEditor
     }
 
     /**
-     *		Output edit area inside the HTML stream.
-     *		Output depends on this->tool (fckeditor, ckeditor, texatrea, ...)
+     *	Output edit area inside the HTML stream.
+     *	Output depends on this->tool (fckeditor, ckeditor, texatrea, ...)
      *
-     *      @param	int		$noprint     1=Return HTML string instead of printing it to output
-     *      @return	void
+     *  @param	int		$noprint     1=Return HTML string instead of printing it to output
+     *  @return	void
      */
     function Create($noprint=0)
     {

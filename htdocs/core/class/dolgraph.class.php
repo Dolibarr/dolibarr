@@ -38,8 +38,7 @@
 
 
 /**
- *	\class      DolGraph
- *	\brief      Parent class of graph classes
+ *	Parent class of graph classes
  */
 class DolGraph
 {
