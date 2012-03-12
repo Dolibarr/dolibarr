@@ -260,6 +260,20 @@ else if ($action == 'set_ref_client' && $user->rights->propale->creer)
 	$object->set_ref_client($user, $_POST['ref_client']);
 }
 
+else if ($action == 'setnote_public')
+{
+	$object->fetch($id);
+	$result=$object->update_note_public(GETPOST('note_public','alpha'));
+	if ($result < 0) dol_print_error($db,$object->error);
+}
+
+else if ($action == 'setnote')
+{
+	$object->fetch($id);
+	$result=$object->update_note(GETPOST('note','alpha'));
+	if ($result < 0) dol_print_error($db,$object->error);
+}
+
 // Create proposal
 else if ($action == 'add' && $user->rights->propale->creer)
 {
@@ -1184,8 +1198,6 @@ if ($id > 0 || ! empty($ref))
 	print '</td>';
 	print '</tr>';
 
-	$rowspan=11;
-
 	// Company
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$soc->getNomUrl(1).'</td>';
 	print '</tr>';
@@ -1250,20 +1262,6 @@ if ($id > 0 || ! empty($ref))
 		}
 	}
 	print '</td>';
-
-	if ($conf->projet->enabled) $rowspan++;
-	if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS) $rowspan++;
-
-	//Local taxes
-	if ($mysoc->country_code=='ES')
-	{
-		if($mysoc->localtax1_assuj=="1") $rowspan++;
-		if($mysoc->localtax2_assuj=="1") $rowspan++;
-	}
-
-	// Notes
-	print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('NotePublic').' :<br>'. nl2br($object->note_public).'</td>';
-	print '</tr>';
 
 	// Date end proposal
 	print '<tr>';
@@ -1484,12 +1482,12 @@ if ($id > 0 || ! empty($ref))
 
 	// Amount HT
 	print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
-	print '<td align="right" colspan="2" nowrap><b>'.price($object->total_ht).'</b></td>';
+	print '<td align="right" nowrap><b>'.price($object->total_ht).'</b></td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	// Amount VAT
 	print '<tr><td height="10">'.$langs->trans('AmountVAT').'</td>';
-	print '<td align="right" colspan="2" nowrap>'.price($object->total_tva).'</td>';
+	print '<td align="right" nowrap>'.price($object->total_tva).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	// Amount Local Taxes
@@ -1498,24 +1496,44 @@ if ($id > 0 || ! empty($ref))
 		if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
 		{
 			print '<tr><td height="10">'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
-			print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax1).'</td>';
+			print '<td align="right" nowrap>'.price($object->total_localtax1).'</td>';
 			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 		}
 		if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
 		{
 			print '<tr><td height="10">'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
-			print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax2).'</td>';
+			print '<td align="right" nowrap>'.price($object->total_localtax2).'</td>';
 			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 		}
 	}
 
 	// Amount TTC
 	print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td>';
-	print '<td align="right" colspan="2" nowrap>'.price($object->total_ttc).'</td>';
+	print '<td align="right" nowrap>'.price($object->total_ttc).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	// Statut
 	print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$object->getLibStatut(4).'</td></tr>';
+	
+	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans('Notes').'</td></tr>';
+	
+	// Public note
+	print '<tr><td valign="top">';
+	print $form->editfieldkey("NotePublic",'note_public',$object->note_public,$object,$user->rights->propale->creer,'textarea');
+	print '</td><td colspan="3">';
+	print $form->editfieldval("NotePublic",'note_public',$object->note_public,$object,$user->rights->propale->creer,'textarea');
+	print "</td></tr>";
+	
+	// Private note
+	if (! $user->societe_id)
+	{
+		print '<tr><td valign="top">';
+		print $form->editfieldkey("NotePrivate",'note',$object->note_private,$object,$user->rights->propale->creer,'textarea');
+		print '</td><td colspan="3">';
+		print $form->editfieldval("NotePrivate",'note',$object->note_private,$object,$user->rights->propale->creer,'textarea');
+		print "</td></tr>";
+	}
+	
 	print '</table><br>';
 
 	/*
