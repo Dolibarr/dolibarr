@@ -242,8 +242,6 @@ class Form
             $savemethod		= false;
             $ext_element	= false;
             $button_only	= false;
-            //$ext_table_element = false;
-            //$ext_fk_element = false;
 
             if (is_object($object))
             {
@@ -255,8 +253,6 @@ class Form
             if (is_object($extObject))
             {
                 $ext_element = $extObject->element;
-                //$ext_table_element = $extObject->table_element;
-                //$ext_fk_element = $extObject->id;
             }
 
             if (preg_match('/^(string|email|numeric)/',$inputType))
@@ -273,7 +269,7 @@ class Form
 
                 $out.= '<input id="timestamp" type="hidden"/>'."\n"; // Use for timestamp format
             }
-            else if (preg_match('/^select/',$inputType))
+            else if (preg_match('/^(select|autocomplete)/',$inputType))
             {
                 $tmp=explode(':',$inputType);
                 $inputType=$tmp[0]; $loadmethod=$tmp[1];
@@ -302,11 +298,9 @@ class Form
             $out.= '<input id="table_element_'.$htmlname.'" value="'.$table_element.'" type="hidden"/>'."\n";
             $out.= '<input id="fk_element_'.$htmlname.'" value="'.$fk_element.'" type="hidden"/>'."\n";
             $out.= '<input id="loadmethod_'.$htmlname.'" value="'.$loadmethod.'" type="hidden"/>'."\n";
-            $out.= '<input id="savemethod_'.$htmlname.'" value="'.$savemethod.'" type="hidden"/>'."\n";
-            $out.= '<input id="ext_element_'.$htmlname.'" value="'.$ext_element.'" type="hidden"/>'."\n";
-            if (! empty($success)) $out.= '<input id="success_'.$htmlname.'" value="'.$success.'" type="hidden"/>'."\n";
-            //$out.= '<input id="ext_table_element_'.$htmlname.'" value="'.$ext_table_element.'" type="hidden"/>'."\n";
-            //$out.= '<input id="ext_fk_element_'.$htmlname.'" value="'.$ext_fk_element.'" type="hidden"/>'."\n";
+            if (! empty($savemethod))	$out.= '<input id="savemethod_'.$htmlname.'" value="'.$savemethod.'" type="hidden"/>'."\n";
+            if (! empty($ext_element))	$out.= '<input id="ext_element_'.$htmlname.'" value="'.$ext_element.'" type="hidden"/>'."\n";
+            if (! empty($success))		$out.= '<input id="success_'.$htmlname.'" value="'.$success.'" type="hidden"/>'."\n";
 
             $out.= '<div id="viewval_'.$htmlname.'" class="viewval_'.$inputType.($button_only ? ' inactive' : ' active').'">'.$value.'</div>'."\n";
             $out.= '<div id="editval_'.$htmlname.'" class="editval_'.$inputType.($button_only ? ' inactive' : ' active').' hideobject">'.(! empty($editvalue) ? $editvalue : $value).'</div>'."\n";

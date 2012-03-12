@@ -37,14 +37,12 @@ $(document).ready(function() {
 		indicator	: indicatorInPlace,
 		loadurl		: urlLoadInPlace,
 		loaddata	: function(result, settings) {
-			var htmlname = $(this).attr('id').substr(8);
-			return getParameters('textarea', htmlname);
+			return getParameters(this, 'textarea');
 		},
 		submitdata	: function(result, settings) {
-			var htmlname = $(this).attr('id').substr(8);
-			return getParameters('textarea', htmlname);
+			return getParameters(this, 'textarea');
 		},
-		callback : function(result, settings) {
+		callback	: function(result, settings) {
 			getResult(this, result);
 		},
 		onreset		: function(result, settings) {
@@ -85,10 +83,9 @@ $(document).ready(function() {
 			toolbar: $('#ckeditor_toolbar').val()
 		},
 		submitdata	: function(result, settings) {
-			var htmlname = $(this).attr('id').substr(8);
-			return getParameters('ckeditor', htmlname);
+			return getParameters(this, 'ckeditor');
 		},
-		callback : function(result, settings) {
+		callback	: function(result, settings) {
 			getResult(this, result);
 		},
 		onreset		: function(result, settings) {
@@ -125,10 +122,9 @@ $(document).ready(function() {
 		submit		: submitInPlace,
 		indicator	: indicatorInPlace,
 		submitdata	: function(result, settings) {
-			var htmlname = $(this).attr('id').substr(8);
-			return getParameters('string', htmlname);
+			return getParameters(this, 'string');
 		},
-		callback : function(result, settings) {
+		callback	: function(result, settings) {
 			getResult(this, result);
 		},
 		onreset		: function(result, settings) {
@@ -165,10 +161,9 @@ $(document).ready(function() {
 		submit		: submitInPlace,
 		indicator	: indicatorInPlace,
 		submitdata	: function(result, settings) {
-			var htmlname = $(this).attr('id').substr(8);
-			return getParameters('numeric', htmlname);
+			return getParameters(this, 'numeric');
 		},
-		callback : function(result, settings) {
+		callback	: function(result, settings) {
 			getResult(this, result);
 		},
 		onreset		: function(result, settings) {
@@ -205,10 +200,9 @@ $(document).ready(function() {
 		submit		: submitInPlace,
 		indicator	: indicatorInPlace,
 		submitdata	: function(result, settings) {
-			var htmlname = $(this).attr('id').substr(8);
-			return getParameters('datepicker', htmlname);
+			return getParameters(this, 'datepicker');
 		},
-		callback : function(result, settings) {
+		callback	: function(result, settings) {
 			getResult(this, result);
 		},
 		onreset		: function(result, settings) {
@@ -244,12 +238,10 @@ $(document).ready(function() {
 		indicator	: indicatorInPlace,
 		loadurl		: urlLoadInPlace,
 		loaddata	: function(result, settings) {
-			var htmlname = $(this).attr('id').substr(8);
-			return getParameters('select', htmlname);
+			return getParameters(this, 'select');
 		},
 		submitdata	: function(result, settings) {
-			var htmlname = $(this).attr('id').substr(8);
-			return getParameters('select', htmlname);
+			return getParameters(this, 'select');
 		},
 		callback	: function(result, settings) {
 			getResult(this, result);
@@ -275,7 +267,23 @@ $(document).ready(function() {
 		$('#editval_' + $(this).attr('id')).show().click();
 	});
 	
-	function getParameters(type, htmlname) {
+	// for test only (not stable)
+	$('.editval_autocomplete').editable(urlSaveInPlace, {
+		type		: 'autocomplete',
+		id			: 'field',
+		onblur		: 'submit',
+		tooltip		: tooltipInPlace,
+		indicator	: indicatorInPlace,
+		autocomplete : {
+			source : urlLoadInPlace,
+			data : function(result, settings) {
+				return getParameters(this, 'select');
+			}
+		}
+	});
+	
+	function getParameters(obj, type) {
+		var htmlname		= $(obj).attr('id').substr(8);
 		var element			= $('#element_' + htmlname).val();
 		var table_element	= $('#table_element_' + htmlname).val();
 		var fk_element		= $('#fk_element_' + htmlname).val();
@@ -283,8 +291,6 @@ $(document).ready(function() {
 		var savemethod		= $('#savemethod_' + htmlname).val();
 		var ext_element		= $('#ext_element_' + htmlname).val();
 		var timestamp		= $('#timestamp').val();
-		//var ext_table_element = $( '#ext_table_element_' + htmlname ).val();
-		//var ext_fk_element = $( '#ext_fk_element_' + htmlname ).val();
 		
 		return {
 			type: type,
@@ -294,9 +300,7 @@ $(document).ready(function() {
 			loadmethod: loadmethod,
 			savemethod: savemethod,
 			timestamp: timestamp,
-			ext_element: ext_element,
-			//ext_table_element: ext_table_element,
-			//ext_fk_element: ext_fk_element
+			ext_element: ext_element
 		};
 	}
 	
@@ -323,15 +327,4 @@ $(document).ready(function() {
 		$('#editval_' + htmlname).hide();
 		$('#viewval_' + htmlname).show();
 	}
-	
-	$('.edit_autocomplete').editable(urlSaveInPlace, {
-		type		: 'autocomplete',
-		id			: 'field',
-		onblur		: 'submit',
-		tooltip		: tooltipInPlace,
-		indicator	: indicatorInPlace,
-		autocomplete : {
-			data : ["Aberdeen", "Ada", "Adamsville", "Addyston", "Adelphi", "Adena", "Adrian", "Akron"]
-		}
-	});
 });
