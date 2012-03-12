@@ -66,8 +66,6 @@ $month=GETPOST("month");
 // Nombre de ligne pour choix de produit/service predefinis
 $NBLINES=4;
 
-$object = new Propal($db);
-
 // Security check
 $module='propale';
 if (isset($socid))
@@ -84,6 +82,14 @@ else if (isset($id) &&  $id > 0)
 }
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, $module, $objectid, $dbtable);
+
+$object = new Propal($db);
+
+// Load object
+if ($id > 0 || ! empty($ref))
+{
+	$ret=$object->fetch($id, $ref);
+}
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
@@ -1062,8 +1068,6 @@ if ($id > 0 || ! empty($ref))
 
 	dol_htmloutput_mesg($mesg,$mesgs);
 
-	$object->fetch($id,$ref);
-
 	$soc = new Societe($db);
 	$soc->fetch($object->socid);
 
@@ -2013,7 +2017,6 @@ else
 }
 
 
-llxFooter();
-
 $db->close();
+llxFooter();
 ?>
