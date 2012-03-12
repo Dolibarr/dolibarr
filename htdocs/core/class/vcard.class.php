@@ -85,8 +85,7 @@ function dol_quoted_printable_encode($input, $line_max=76)
 
 
 /**
- * 	\class 	vCard
- *	\brief 	Class to buld vCard files
+ *	Class to buld vCard files
  */
 class vCard
 {
