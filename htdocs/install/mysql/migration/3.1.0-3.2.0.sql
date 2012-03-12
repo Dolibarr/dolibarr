@@ -27,6 +27,8 @@ update llx_facture_rec set fk_projet = null where fk_projet not in (select rowid
 update llx_fichinter set fk_projet = null where fk_projet not in (select rowid from llx_projet);
 update llx_projet_task set fk_projet = null where fk_projet not in (select rowid from llx_projet);
 
+update llx_commande set fk_user_author = null where fk_user_author not in (select rowid from llx_user);
+
 
 ALTER TABLE llx_extrafields ADD COLUMN TYPE VARCHAR(8);
 
