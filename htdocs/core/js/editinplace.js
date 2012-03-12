@@ -48,8 +48,7 @@ $(document).ready(function() {
 			getResult(this, result);
 		},
 		onreset		: function(result, settings) {
-			$('#editval_' + $('.editval_textarea').attr('id').substr(8)).hide();
-			$('#viewval_' + $('.editval_textarea').attr('id').substr(8)).show();
+			getDefault(settings);
 		}
 	});
 	$('.editkey_textarea').hover(
@@ -93,8 +92,7 @@ $(document).ready(function() {
 			getResult(this, result);
 		},
 		onreset		: function(result, settings) {
-			$('#editval_' + $('.editval_ckeditor').attr('id').substr(8)).hide();
-			$('#viewval_' + $('.editval_ckeditor').attr('id').substr(8)).show();
+			getDefault(settings);
 		}
 	});
 	$('.editkey_ckeditor').hover(
@@ -134,8 +132,7 @@ $(document).ready(function() {
 			getResult(this, result);
 		},
 		onreset		: function(result, settings) {
-			$('#editval_' + $('.editval_string').attr('id').substr(8)).hide();
-			$('#viewval_' + $('.editval_string').attr('id').substr(8)).show();
+			getDefault(settings);
 		}
 	});
 	$('.editkey_string').hover(
@@ -175,8 +172,7 @@ $(document).ready(function() {
 			getResult(this, result);
 		},
 		onreset		: function(result, settings) {
-			$('#editval_' + $('.editval_numeric').attr('id').substr(8)).hide();
-			$('#viewval_' + $('.editval_numeric').attr('id').substr(8)).show();
+			getDefault(settings);
 		}
 	});
 	$('.editkey_numeric').hover(
@@ -216,8 +212,7 @@ $(document).ready(function() {
 			getResult(this, result);
 		},
 		onreset		: function(result, settings) {
-			$('#editval_' + $('.editval_datepicker').attr('id').substr(8)).hide();
-			$('#viewval_' + $('.editval_datepicker').attr('id').substr(8)).show();
+			getDefault(settings);
 		}
 	});
 	$('.editkey_datepicker').hover(
@@ -260,8 +255,7 @@ $(document).ready(function() {
 			getResult(this, result);
 		},
 		onreset		: function(result, settings) {
-			$('#editval_' + $('.editval_select').attr('id').substr(8)).hide();
-			$('#viewval_' + $('.editval_select').attr('id').substr(8)).show();
+			getDefault(settings);
 		}
 	});
 	$('.editkey_select').hover(
@@ -322,6 +316,12 @@ $(document).ready(function() {
 			$('#viewval_' + htmlname).html(res.view);
 			$('#viewval_' + htmlname).show();
 		}
+	}
+	
+	function getDefault(settings) {
+		var htmlname = $(settings).attr('id').substr(8);
+		$('#editval_' + htmlname).hide();
+		$('#viewval_' + htmlname).show();
 	}
 	
 	$('.edit_autocomplete').editable(urlSaveInPlace, {
