@@ -83,7 +83,8 @@ class Propal extends CommonObject
 	var $remise;
 	var $remise_percent;
 	var $remise_absolue;
-	var $note;
+	var $note;						// deprecated (for compatibility)
+	var $note_private;
 	var $note_public;
 	var $fk_delivery_address;		// deprecated (for compatibility)
 	var $fk_address;
@@ -954,7 +955,7 @@ class Propal extends CommonObject
 		$sql.= ", ca.code as availability_code, ca.label as availability";
 		$sql.= ", dr.code as demand_reason_code, dr.label as demand_reason";
 		$sql.= ", model_pdf, ref_client";
-		$sql.= ", note, note_public";
+		$sql.= ", note as note_private, note_public";
 		$sql.= ", fk_projet, fk_statut";
 		$sql.= ", fk_user_author, fk_user_valid, fk_user_cloture";
 		$sql.= ", fk_adresse_livraison";
@@ -999,13 +1000,14 @@ class Propal extends CommonObject
 				$this->socid                = $obj->fk_soc;
 				$this->fk_project           = $obj->fk_projet;
 				$this->modelpdf             = $obj->model_pdf;
-				$this->note                 = $obj->note;
+				$this->note                 = $obj->note_private; // TODO obsolete
+				$this->note_private         = $obj->note_private;
 				$this->note_public          = $obj->note_public;
 				$this->statut               = $obj->fk_statut;
 				$this->statut_libelle       = $obj->statut_label;
 
-				$this->datec                = $this->db->jdate($obj->datec); //TODO obsolete
-				$this->datev                = $this->db->jdate($obj->datev); //TODO obsolete
+				$this->datec                = $this->db->jdate($obj->datec); // TODO obsolete
+				$this->datev                = $this->db->jdate($obj->datev); // TODO obsolete
 				$this->date_creation		= $this->db->jdate($obj->datec); //Creation date
                 $this->date_validation		= $this->db->jdate($obj->datev); //Validation date
 				$this->date                 = $this->db->jdate($obj->dp);	// Proposal date
