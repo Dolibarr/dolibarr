@@ -271,15 +271,44 @@ $(document).ready(function() {
 	$('.editval_autocomplete').editable(urlSaveInPlace, {
 		type		: 'autocomplete',
 		id			: 'field',
-		onblur		: 'submit',
+		width		: 300,
+		onblur		: 'ignore',
 		tooltip		: tooltipInPlace,
+		placeholder	: '&nbsp;',
+		cancel		: cancelInPlace,
+		submit		: submitInPlace,
 		indicator	: indicatorInPlace,
 		autocomplete : {
 			source : urlLoadInPlace,
 			data : function(result, settings) {
 				return getParameters(this, 'select');
 			}
+		},
+		submitdata	: function(result, settings) {
+			return getParameters(this, 'select');
+		},
+		callback	: function(result, settings) {
+			getResult(this, result);
+		},
+		onreset		: function(result, settings) {
+			getDefault(settings);
 		}
+	});
+	$('.editkey_autocomplete').hover(
+			function () {
+				$('#viewval_' + $(this).attr('id')).addClass("viewval_hover");
+			},
+			function () {
+				$('#viewval_' + $(this).attr('id')).removeClass("viewval_hover");
+			}
+	);
+	$('.viewval_autocomplete.active').click(function() {
+		$('#viewval_' + $(this).attr('id').substr(8)).hide();
+		$('#editval_' + $(this).attr('id').substr(8)).show().click();
+	});
+	$('.editkey_autocomplete').click(function() {
+		$('#viewval_' + $(this).attr('id')).hide();
+		$('#editval_' + $(this).attr('id')).show().click();
 	});
 	
 	function getParameters(obj, type) {
