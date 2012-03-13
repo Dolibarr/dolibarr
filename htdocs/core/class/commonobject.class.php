@@ -861,8 +861,42 @@ abstract class CommonObject
             return -1;
         }
     }
-
-
+    
+    /**
+     *  Change the payments terms
+     *
+     *  @param		int		$id		Id of new payment terms
+     *  @return		int				>0 if OK, <0 if KO
+     */
+    function setPaymentTerms($id)
+    {
+    	dol_syslog(get_class($this).'::setPaymentTerms('.$id.')');
+    	if ($this->statut >= 0)
+    	{
+    		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+    		$sql .= ' SET fk_cond_reglement = '.$id;
+    		$sql .= ' WHERE rowid='.$this->id;
+    		
+    		if ($this->db->query($sql))
+    		{
+    			$this->cond_reglement_id = $id;
+    			return 1;
+    		}
+    		else
+    		{
+    			dol_syslog(get_class($this).'::setPaymentTerms Erreur '.$sql.' - '.$this->db->error());
+    			$this->error=$this->db->error();
+    			return -1;
+    		}
+    	}
+    	else
+    	{
+    		dol_syslog(get_class($this).'::setPaymentTerms, status of the object is incompatible');
+    		$this->error='Status of the object is incompatible '.$this->statut;
+    		return -2;
+    	}
+    }
+    
     /**
      *		Set last model used by doc generator
      *

@@ -1980,6 +1980,7 @@ class Commande extends CommonObject
      *
      *	@param      int	$cond_reglement_id      Id de la nouvelle condition de reglement
      *	@return     int                    		>0 if OK, <0 if KO
+     *	TODO deprecated
      */
     function cond_reglement($cond_reglement_id)
     {

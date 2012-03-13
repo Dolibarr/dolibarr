@@ -267,6 +267,7 @@ if ($action == 'setinvoicedate')
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
+// TODO obsolete ? not used
 if ($action == 'setpaymentterm')
 {
     $object->fetch($id);
@@ -278,7 +279,7 @@ if ($action == 'setpaymentterm')
 if ($action == 'setconditions')
 {
     $object->fetch($id);
-    $result=$object->cond_reglement($_POST['cond_reglement_id']);
+    $result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 

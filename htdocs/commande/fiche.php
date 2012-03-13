@@ -470,7 +470,7 @@ if ($action == 'setdemandreason' && $user->rights->commande->creer)
 if ($action == 'setconditions' && $user->rights->commande->creer)
 {
     $object->fetch($id);
-    $result=$object->cond_reglement($_POST['cond_reglement_id']);
+    $result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 

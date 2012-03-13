@@ -115,7 +115,7 @@ if ($action == 'setconditions' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
 	$commande->fetch($id);
-	$result=$commande->cond_reglement(GETPOST('mode_reglement_id','int'));
+	$result=$commande->setPaymentTerms(GETPOST('cond_reglement_id','int'));
 	if ($result < 0) dol_print_error($db,$commande->error);
 }
 

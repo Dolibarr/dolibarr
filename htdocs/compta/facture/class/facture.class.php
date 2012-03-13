@@ -2692,6 +2692,7 @@ class Facture extends CommonObject
      *  @param      int		$cond_reglement_id      Id de la nouvelle condition de reglement
      * 	@param		date	$date					Date to force payment term
      *  @return     int                    			>0 si ok, <0 si ko
+     *  TODO deprecated, not used
      */
     function cond_reglement($cond_reglement_id,$date='')
     {

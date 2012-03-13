@@ -1305,6 +1305,7 @@ class CommandeFournisseur extends Commande
      *
      *  @param      int		$cond_reglement_id      Id de la nouvelle condition de reglement
      *  @return     int                    			>0 si ok, <0 si ko
+     *  TODO deprecated
      */
     function cond_reglement($cond_reglement_id)
     {
