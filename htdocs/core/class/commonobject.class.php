@@ -878,7 +878,7 @@ abstract class CommonObject
     		if ($this->element == 'societe') $fieldname = 'cond_reglement';
     		
     		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-    		$sql .= ' SET fk_cond_reglement = '.$id;
+    		$sql .= ' SET '.$fieldname.' = '.$id;
     		$sql .= ' WHERE rowid='.$this->id;
     		
     		if ($this->db->query($sql))
