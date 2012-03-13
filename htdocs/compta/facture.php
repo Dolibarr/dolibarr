@@ -254,7 +254,7 @@ if ($action == 'classin')
 if ($action == 'setmode')
 {
     $object->fetch($id);
-    $result=$object->mode_reglement($_POST['mode_reglement_id']);
+    $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 

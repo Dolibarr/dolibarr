@@ -84,7 +84,7 @@ if ($action == 'setconditions' && $user->rights->fournisseur->commande->creer)
 if ($action == 'setmode' && $user->rights->fournisseur->commande->creer)
 {
     $object->fetch($id);
-    $result=$object->mode_reglement($_POST['mode_reglement_id']);
+    $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
 }
 
 // Set project

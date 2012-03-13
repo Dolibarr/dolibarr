@@ -2016,6 +2016,7 @@ class Commande extends CommonObject
      *
      *  @param      int		$mode       Id du nouveau mode
      *  @return     int         		>0 si ok, <0 si ko
+     *  TODO deprecated
      */
     function mode_reglement($mode_reglement_id)
     {

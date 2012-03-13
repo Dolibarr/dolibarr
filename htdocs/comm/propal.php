@@ -1008,7 +1008,7 @@ else if ($action == 'setremiseabsolue' && $user->rights->propale->creer)
 else if ($action == 'setmode')
 {
 	$object->fetch($id);
-	$result = $object->mode_reglement($_POST['mode_reglement_id']);
+	$result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
 }
 
 /*

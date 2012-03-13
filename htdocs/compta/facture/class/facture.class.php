@@ -2742,6 +2742,7 @@ class Facture extends CommonObject
      *
      *	@param		int		$mode_reglement_id      Id du nouveau mode
      *	@return     int         					>0 if OK, <0 if KO
+     *	TODO deprecated
      */
     function mode_reglement($mode_reglement_id)
     {
