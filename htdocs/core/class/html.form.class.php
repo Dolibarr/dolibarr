@@ -729,7 +729,7 @@ class Form
         if ($filter) $sql.= " AND ".$filter;
         $sql.= " ORDER BY re.description ASC";
 
-        dol_syslog(get_class(this)."::select_remises sql=".$sql);
+        dol_syslog(get_class($this)."::select_remises sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
