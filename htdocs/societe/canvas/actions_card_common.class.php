@@ -96,7 +96,7 @@ abstract class ActionsCardCommon
     /**
      *	Load data control
      *
-     *	@param	int		$socid		Id of third party
+     *	@param	int		&$action	Action code
      *	@return	void
      */
     function doActions(&$action)
