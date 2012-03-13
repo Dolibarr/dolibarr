@@ -27,6 +27,8 @@ update llx_facture_rec set fk_projet = null where fk_projet not in (select rowid
 update llx_fichinter set fk_projet = null where fk_projet not in (select rowid from llx_projet);
 update llx_projet_task set fk_projet = null where fk_projet not in (select rowid from llx_projet);
 
+update llx_commande set fk_user_author = null where fk_user_author not in (select rowid from llx_user);
+
 
 ALTER TABLE llx_extrafields ADD COLUMN TYPE VARCHAR(8);
 
@@ -423,4 +425,6 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'MXP'
 ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_currency		FOREIGN KEY (fk_currency) REFERENCES llx_c_currencies (code_iso);
 ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_fk_currency	FOREIGN KEY (fk_currency) REFERENCES llx_c_currencies (code_iso);
 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_currency   FOREIGN KEY (fk_currency) REFERENCES llx_c_currencies (code_iso);
-  
+
+ALTER TABLE llx_expedition DROP COLUMN billed;
+ 

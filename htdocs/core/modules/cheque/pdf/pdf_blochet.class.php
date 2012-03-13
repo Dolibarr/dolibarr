@@ -79,10 +79,10 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	/**
 	 *	Fonction generant le rapport sur le disque
 	 *
-	 *	@param		_dir			Directory
-	 *	@param		number			Number
-	 *	@param		outputlangs		Lang output object
-     *	@return	    int     		1=ok, 0=ko
+	 *	@param	string		$_dir			Directory
+	 *	@param	string		$number			Number
+	 *	@param	Translate	$outputlangs	Lang output object
+     *	@return	int     					1=ok, 0=ko
 	 */
 	function write_file($_dir, $number, $outputlangs)
 	{
@@ -282,6 +282,12 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 	/**
 	 *	Output array
+	 *
+	 *	@param	PDF			&$pdf			PDF object
+	 *	@param	int			$pagenb			Page nb
+	 *	@param	int			$pages			Pages
+	 *	@param	Translate	$outputlangs	Object lang
+	 *	@return	void
 	 */
 	function Body(&$pdf, $pagenb, $pages, $outputlangs)
 	{

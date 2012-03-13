@@ -36,10 +36,11 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
     var $error='';
 
     /**
-     *     Return list of active generation modules
+     *  Return list of active generation modules
      *
-     * 	   @param	DoliDB	$db                 Database handler
-     *     @param   string	$maxfilenamelength  Max length of value to show
+	 * 	@param	DoliDB		$db					Database handler
+     *  @param	string		$maxfilenamelength  Max length of value to show
+     * 	@return	array							List of templates
      */
     function liste_modeles($db,$maxfilenamelength=0)
     {
@@ -137,12 +138,13 @@ abstract class ModeleThirdPartyCode
     }
 
     /**
-     *      Renvoi la liste des modeles de numéroation
+     *  Renvoi la liste des modeles de numéroation
      *
-     *      @param	DoliDB	$db     Database handler
-     *      @return	array			List of numbers
+     *  @param	DoliDB	$db     			Database handler
+     *  @param  string	$maxfilenamelength  Max length of value to show
+     *  @return	array						List of numbers
      */
-    function liste_modeles($db)
+    function liste_modeles($db,$maxfilenamelength=0)
     {
         $liste=array();
         $sql ="";
@@ -172,7 +174,7 @@ abstract class ModeleThirdPartyCode
      *      @param	Translate	$langs      Output language
      *		@param	Societe		$soc		Third party object
      *		@param	int			$type		-1=Nothing, 0=Customer, 1=Supplier
-     *		@return	tring					HTML translated description
+     *		@return	string					HTML translated description
      */
     function getToolTip($langs,$soc,$type)
     {

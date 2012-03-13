@@ -85,11 +85,6 @@ if ($action == 'setcustomeraccountancycode')
 	$action="";
 }
 
-if ($action == 'attribute_prefix' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$object->attribute_prefix($db, $id);
-}
 // conditions de reglement
 if ($action == 'setconditions' && $user->rights->societe->creer)
 {

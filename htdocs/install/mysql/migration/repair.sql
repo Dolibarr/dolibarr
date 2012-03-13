@@ -34,6 +34,9 @@ update llx_facture_rec set fk_projet = null where fk_projet not in (select rowid
 update llx_fichinter set fk_projet = null where fk_projet not in (select rowid from llx_projet);
 update llx_projet_task set fk_projet = null where fk_projet not in (select rowid from llx_projet);
 
+update llx_commande set fk_user_author = null where fk_user_author not in (select rowid from llx_user);
+
+
 DELETE FROM llx_boxes where box_id NOT IN (SELECT rowid FROM llx_boxes_def);
 
 -- VMYSQL4.1 DELETE T1 FROM llx_boxes_def as T1, llx_boxes_def as T2 where T1.entity = T2.entity AND T1.file = T2.file AND T1.note = T2.note and T1.rowid > T2.rowid

@@ -38,6 +38,7 @@ abstract class ModeleBarCode
 
 	/**
 	 * Return if a module can be used or not
+	 *
 	 * @return		boolean     true if module can be used
 	 */
 	function isEnabled()

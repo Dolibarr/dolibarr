@@ -76,7 +76,8 @@ class modPhpbarcode extends ModeleBarCode
 	/**
 	 *	Return true if encodinf is supported
 	 *
-	 *	@return		int		>0 if supported, 0 if not
+	 *	@param	string	$encoding		Encoding norm
+	 *	@return	int						>0 if supported, 0 if not
 	 */
 	function encodingIsSupported($encoding)
 	{
@@ -104,6 +105,7 @@ class modPhpbarcode extends ModeleBarCode
 	 *	@param	string   	$code			Value to encode
 	 *	@param  string	 	$encoding		Mode of encoding
 	 *	@param  string	 	$readable		Code can be read
+	 *	@return	int							<0 if KO, >0 if OK
      */
 	function buildBarCode($code,$encoding,$readable='Y')
 	{
@@ -142,6 +144,7 @@ class modPhpbarcode extends ModeleBarCode
 	 *	@param	string   	$code			Value to encode
 	 *	@param	string   	$encoding		Mode of encoding
 	 *	@param  string	 	$readable		Code can be read
+	 *	@return	int							<0 if KO, >0 if OK
 	 */
 	function writeBarCode($code,$encoding,$readable='Y')
 	{

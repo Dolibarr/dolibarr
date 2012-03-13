@@ -43,9 +43,11 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param	DoliDB		$db		Database handler
+     *  @param	DoliDB	$db     			Database handler
+     *  @param  string	$maxfilenamelength  Max length of value to show
+     *  @return	array						List of numbers
 	 */
-	function liste_modeles($db)
+	function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
 
@@ -53,7 +55,7 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 		$liste=array();
 
 		include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
-		$liste=getListOfModels($db,$type,'');
+		$liste=getListOfModels($db,$type,$maxfilenamelength);
 
 		return $liste;
 	}
