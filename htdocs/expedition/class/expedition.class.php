@@ -56,6 +56,7 @@ class Expedition extends CommonObject
 	var $tracking_number;
 	var $tracking_url;
 	var $statut;
+	var $billed;
 
 	var $trueWeight;
 	var $weight_units;
@@ -95,6 +96,7 @@ class Expedition extends CommonObject
 		$this->statuts[-1] = 'StatusSendingCanceled';
 		$this->statuts[0]  = 'StatusSendingDraft';
 		$this->statuts[1]  = 'StatusSendingValidated';
+		$this->statuts[2]  = 'StatusSendingProcessed';
 	}
 
 	/**
@@ -371,6 +373,7 @@ class Expedition extends CommonObject
 				$this->tracking_number      = $obj->tracking_number;
 				$this->origin               = ($obj->origin?$obj->origin:'commande'); // For compatibility
 				$this->origin_id            = $obj->origin_id;
+				$this->billed				= ($obj->fk_statut==2?1:0);
 
 				$this->trueWeight           = $obj->weight;
 				$this->weight_units         = $obj->weight_units;
@@ -988,27 +991,32 @@ class Expedition extends CommonObject
 		if ($mode==0)
 		{
 			if ($statut==0) return $langs->trans($this->statuts[$statut]);
-			if ($statut==1) return $langs->trans($this->statuts[$statut]);
+			if ($statut==1)  return $langs->trans($this->statuts[$statut]);
+			if ($statut==2)  return $langs->trans($this->statuts[$statut]);
 		}
 		if ($mode==1)
 		{
 			if ($statut==0) return $langs->trans('StatusSendingDraftShort');
 			if ($statut==1) return $langs->trans('StatusSendingValidatedShort');
+			if ($statut==2) return $langs->trans('StatusSendingProcessedShort');
 		}
 		if ($mode == 3)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
 			if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4');
+			if ($statut==2) return img_picto($langs->trans('StatusSendingProcessed'),'statut6');
 		}
 		if ($mode == 4)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==2) return img_picto($langs->trans('StatusSendingProcessed'),'statut6').' '.$langs->trans('StatusSendingProcessed');
 		}
 		if ($mode == 5)
 		{
 			if ($statut==0) return $langs->trans('StatusSendingDraftShort').' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
 			if ($statut==1) return $langs->trans('StatusSendingValidatedShort').' '.img_picto($langs->trans($this->statuts[$statut]),'statut4');
+			if ($statut==2) return $langs->trans('StatusSendingProcessedShort').' '.img_picto($langs->trans('StatusSendingProcessedShort'),'statut6');
 		}
 	}
 
@@ -1201,6 +1209,30 @@ class Expedition extends CommonObject
 			$this->tracking_url = $value;
 		}
 	}
+	
+	/**
+	 *	Classify the shipping as invoiced
+	 *
+	 *	@return     int     <0 if ko, >0 if ok
+	 */
+	function set_billed()
+	{
+		global $conf;
+	
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=2';
+		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0 ;';
+		if ($this->db->query($sql) )
+		{
+			//TODO: Option to set order billed if 100% of order is shipped
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+	
 }
 
 
