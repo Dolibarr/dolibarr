@@ -89,13 +89,9 @@ if ($action == 'setcustomeraccountancycode')
 if ($action == 'setconditions' && $user->rights->societe->creer)
 {
 	$object->fetch($id);
-	$object->cond_reglement=$_POST['cond_reglement_id'];
-
-	// TODO move to DAO class
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET cond_reglement='".$_POST['cond_reglement_id'];
-	$sql.= "' WHERE rowid='".$id."'";
-	$result = $db->query($sql);
-	if (! $result) dol_print_error($result);
+	$object->cond_reglement=GETPOST('cond_reglement_id','int');
+	$result=$object->setPaymentTerms($object->cond_reglement);
+	if ($result < 0) dol_print_error($db,$object->error);
 }
 // mode de reglement
 if ($action == 'setmode' && $user->rights->societe->creer)

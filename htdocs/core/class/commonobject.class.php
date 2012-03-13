@@ -871,8 +871,12 @@ abstract class CommonObject
     function setPaymentTerms($id)
     {
     	dol_syslog(get_class($this).'::setPaymentTerms('.$id.')');
-    	if ($this->statut >= 0)
+    	if ($this->statut >= 0 || $this->element == 'societe')
     	{
+    		// TODO uniformize field name
+    		$fieldname = 'fk_cond_reglement';
+    		if ($this->element == 'societe') $fieldname = 'cond_reglement';
+    		
     		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
     		$sql .= ' SET fk_cond_reglement = '.$id;
     		$sql .= ' WHERE rowid='.$this->id;
