@@ -505,6 +505,11 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
     }
 }
 
+if ($action == 'classifybilled')
+{
+	$object->fetch($id);
+	$object->set_billed();
+}
 
 /*
  * View
@@ -1296,7 +1301,7 @@ else
 			}*/
 
 			// Send
-			if ($object->statut == 1)
+			if ($object->statut > 0)
 			{
 				$ref = dol_sanitizeFileName($object->ref);
 				$file = $conf->expedition->dir_output . '/sending/'.$ref.'/'.$ref.'.pdf';
@@ -1321,7 +1326,7 @@ else
 				}
 
 				// TODO add alternative status
-				if ($user->rights->expedition->creer && $object->statut > 2)
+				if ($user->rights->expedition->creer && $object->statut > 0)
 				{
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
 				}
@@ -1360,6 +1365,12 @@ else
 			//$delallowed=0;
 
 			$somethingshown=$formfile->show_documents('expedition',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
+			
+			/*
+			 * Linked object block
+			*/
+			$somethingshown=$object->showLinkedObjectBlock();
+			
 			if ($genallowed && ! $somethingshown) $somethingshown=1;
 
 			print '</td><td valign="top" width="50%">';
