@@ -449,7 +449,7 @@ if ($action == 'setaddress' && $user->rights->commande->creer)
 if ($action == 'setmode' && $user->rights->commande->creer)
 {
     $object->fetch($id);
-    $result=$object->mode_reglement($_POST['mode_reglement_id']);
+    $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -470,7 +470,7 @@ if ($action == 'setdemandreason' && $user->rights->commande->creer)
 if ($action == 'setconditions' && $user->rights->commande->creer)
 {
     $object->fetch($id);
-    $result=$object->cond_reglement($_POST['cond_reglement_id']);
+    $result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 

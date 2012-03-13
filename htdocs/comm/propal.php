@@ -989,7 +989,7 @@ else if ($action == 'setdemandreason')
 else if ($action == 'setconditions')
 {
 	$object->fetch($id);
-	$result = $object->cond_reglement($_POST['cond_reglement_id']);
+	$result = $object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
 }
 
 else if ($action == 'setremisepercent' && $user->rights->propale->creer)
@@ -1008,7 +1008,7 @@ else if ($action == 'setremiseabsolue' && $user->rights->propale->creer)
 else if ($action == 'setmode')
 {
 	$object->fetch($id);
-	$result = $object->mode_reglement($_POST['mode_reglement_id']);
+	$result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
 }
 
 /*

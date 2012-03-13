@@ -121,7 +121,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
 }
 
 // Change status of invoice
-if ($action == 'reopen' && $user->rights->facture->creer)
+else if ($action == 'reopen' && $user->rights->facture->creer)
 {
     $result = $object->fetch($id);
     if ($object->statut == 2
@@ -141,7 +141,7 @@ if ($action == 'reopen' && $user->rights->facture->creer)
 }
 
 // Delete invoice
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->supprimer)
+else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->supprimer)
 {
     if ($user->rights->facture->supprimer)
     {
@@ -160,7 +160,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->
 }
 
 // Delete line
-if ($action == 'confirm_deleteline' && $confirm == 'yes')
+else if ($action == 'confirm_deleteline' && $confirm == 'yes')
 {
     if ($user->rights->facture->creer)
     {
@@ -200,7 +200,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes')
 }
 
 // Delete link of credit note to invoice
-if ($action == 'unlinkdiscount')
+else if ($action == 'unlinkdiscount')
 {
     if ($user->rights->facture->creer)
     {
@@ -211,7 +211,7 @@ if ($action == 'unlinkdiscount')
 }
 
 // Validation
-if ($action == 'valid')
+else if ($action == 'valid')
 {
     $object->fetch($id);
 
@@ -236,7 +236,7 @@ if ($action == 'valid')
     }
 }
 
-if ($action == 'set_thirdparty')
+else if ($action == 'set_thirdparty')
 {
     $object->fetch($id);
     $object->setValueFrom('fk_soc',$socid);
@@ -245,20 +245,20 @@ if ($action == 'set_thirdparty')
     exit;
 }
 
-if ($action == 'classin')
+else if ($action == 'classin')
 {
     $object->fetch($id);
     $object->setProject($_POST['projectid']);
 }
 
-if ($action == 'setmode')
+else if ($action == 'setmode')
 {
     $object->fetch($id);
-    $result=$object->mode_reglement($_POST['mode_reglement_id']);
+    $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
-if ($action == 'setinvoicedate')
+else if ($action == 'setinvoicedate')
 {
     $object->fetch($id);
     $object->date=dol_mktime(12,0,0,$_POST['invoicedatemonth'],$_POST['invoicedateday'],$_POST['invoicedateyear']);
@@ -267,18 +267,10 @@ if ($action == 'setinvoicedate')
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
-if ($action == 'setpaymentterm')
+else if ($action == 'setconditions')
 {
     $object->fetch($id);
-    $date_lim_reglement=dol_mktime(12,0,0,$_POST['paymenttermmonth'],$_POST['paymenttermday'],$_POST['paymenttermyear']);
-    $result=$object->cond_reglement($object->cond_reglement_id,$date_lim_reglement);
-    if ($result < 0) dol_print_error($db,$object->error);
-}
-
-if ($action == 'setconditions')
-{
-    $object->fetch($id);
-    $result=$object->cond_reglement($_POST['cond_reglement_id']);
+    $result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -288,7 +280,7 @@ if ($action == 'setremisepercent' && $user->rights->facture->creer)
     $result = $object->set_remise($user, $_POST['remise_percent']);
 }
 
-if ($action == "setabsolutediscount" && $user->rights->facture->creer)
+else if ($action == "setabsolutediscount" && $user->rights->facture->creer)
 {
     // POST[remise_id] ou POST[remise_id_for_payment]
     if (! empty($_POST["remise_id"]))
@@ -321,14 +313,14 @@ if ($action == "setabsolutediscount" && $user->rights->facture->creer)
     }
 }
 
-if ($action == 'set_ref_client')
+else if ($action == 'set_ref_client')
 {
     $object->fetch($id);
     $object->set_ref_client($_POST['ref_client']);
 }
 
 // Classify to validated
-if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->facture->valider)
+else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->facture->valider)
 {
     $idwarehouse=GETPOST('idwarehouse');
 
@@ -375,7 +367,7 @@ if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->facture->v
 }
 
 // Go back to draft status (unvalidate)
-if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->facture->valider) || $user->rights->facture->invoice_advance->unvalidate))
+else if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->facture->valider) || $user->rights->facture->invoice_advance->unvalidate))
 {
     $idwarehouse=GETPOST('idwarehouse');
 
@@ -448,13 +440,13 @@ if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS
 }
 
 // Classify "paid"
-if ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->facture->paiement)
+else if ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->facture->paiement)
 {
     $object->fetch($id);
     $result = $object->set_paid($user);
 }
 // Classif  "paid partialy"
-if ($action == 'confirm_paid_partially' && $confirm == 'yes' && $user->rights->facture->paiement)
+else if ($action == 'confirm_paid_partially' && $confirm == 'yes' && $user->rights->facture->paiement)
 {
     $object->fetch($id);
     $close_code=$_POST["close_code"];
@@ -469,7 +461,7 @@ if ($action == 'confirm_paid_partially' && $confirm == 'yes' && $user->rights->f
     }
 }
 // Classify "abandoned"
-if ($action == 'confirm_canceled' && $confirm == 'yes')
+else if ($action == 'confirm_canceled' && $confirm == 'yes')
 {
     $object->fetch($id);
     $close_code=$_POST["close_code"];
@@ -485,7 +477,7 @@ if ($action == 'confirm_canceled' && $confirm == 'yes')
 }
 
 // Convertir en reduc
-if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->rights->facture->creer)
+else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->rights->facture->creer)
 {
     $db->begin();
 
@@ -560,7 +552,7 @@ if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->rights->f
 /*
  * Insert new invoice in database
  */
-if ($action == 'add' && $user->rights->facture->creer)
+else if ($action == 'add' && $user->rights->facture->creer)
 {
     $object->socid=GETPOST('socid','int');
 
@@ -921,7 +913,7 @@ if ($action == 'add' && $user->rights->facture->creer)
 }
 
 // Add a new line
-if (($action == 'addline' || $action == 'addline_predef') && $user->rights->facture->creer)
+else if (($action == 'addline' || $action == 'addline_predef') && $user->rights->facture->creer)
 {
     $result=0;
 
@@ -1129,7 +1121,7 @@ if (($action == 'addline' || $action == 'addline_predef') && $user->rights->fact
     $action='';
 }
 
-if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['save'] == $langs->trans('Save'))
+else if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['save'] == $langs->trans('Save'))
 {
     if (! $object->fetch($id) > 0) dol_print_error($db);
     $object->fetch_thirdparty();
@@ -1217,15 +1209,14 @@ if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['save'] 
     }
 }
 
-if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['cancel'] == $langs->trans('Cancel'))
+else if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['cancel'] == $langs->trans('Cancel'))
 {
     Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);   // Pour reaffichage de la fiche en cours d'edition
     exit;
 }
 
-
 // Modify line position (up)
-if ($action == 'up' && $user->rights->facture->creer)
+else if ($action == 'up' && $user->rights->facture->creer)
 {
     $object->fetch($id);
     $object->fetch_thirdparty();
@@ -1247,7 +1238,7 @@ if ($action == 'up' && $user->rights->facture->creer)
     exit;
 }
 // Modify line position (down)
-if ($action == 'down' && $user->rights->facture->creer)
+else if ($action == 'down' && $user->rights->facture->creer)
 {
     $object->fetch($id);
     $object->fetch_thirdparty();
@@ -1477,7 +1468,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 /*
  * Generate document
  */
-if (GETPOST('action') == 'builddoc')	// En get ou en post
+else if ($action == 'builddoc')	// En get ou en post
 {
     $object->fetch($id);
     $object->fetch_thirdparty();
