@@ -88,8 +88,9 @@ class doc_generic_invoice_odt extends ModelePDFFactures
     /**
      * Define array with couple substitution key => substitution value
      *
-     * @param   $object             Main object to use as data source
-     * @param   $outputlangs        Lang object to use for output
+     * @param   Object			$object             Main object to use as data source
+     * @param   Translate		$outputlangs        Lang object to use for output
+     * @return	array								Array of substitution
      */
     function get_substitutionarray_object($object,$outputlangs)
     {

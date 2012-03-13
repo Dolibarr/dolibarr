@@ -39,10 +39,13 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 	var $error='';
 
 	/**
-	 *      \brief      Return list of active generation modules
-	 * 		\param		$db		Database handler
+	 *  Return list of active generation modules
+	 *
+     *  @param	DoliDB	$db     			Database handler
+     *  @param  string	$maxfilenamelength  Max length of value to show
+     *  @return	array						List of templates
 	 */
-	function liste_modeles($db)
+	function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
 
@@ -50,7 +53,7 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 		$liste=array();
 
 		include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
-		$liste=getListOfModels($db,$type,'');
+		$liste=getListOfModels($db,$type,$maxfilenamelength);
 		// TODO Remove this to use getListOfModels only
 		$liste = array('blochet'=>'blochet');
 
@@ -60,13 +63,14 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 
 
 /**
- *	\brief   	Cree un bordereau remise de cheque
- *	\param   	db  			objet base de donnee
- *	\param   	id				Object invoice (or id of invoice)
- *	\param	    message			message
- *	\param	    modele			force le modele a utiliser ('' to not force)
- *	\param		outputlangs		objet lang a utiliser pour traduction
- *	\return  	int        		<0 if KO, >0 if OK
+ *	Cree un bordereau remise de cheque
+ *
+ * 	@param	DoliDB		$db				Database handler
+ *	@param	int			$id				Object invoice (or id of invoice)
+ *	@param	string		$message		Message
+ *	@param	string		$modele			Force le modele a utiliser ('' to not force)
+ *	@param	Translate	$outputlangs	Object lang a utiliser pour traduction
+ *	@return int        					<0 if KO, >0 if OK
  * 	TODO
  */
 function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)

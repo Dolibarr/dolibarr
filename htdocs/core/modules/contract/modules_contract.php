@@ -31,9 +31,10 @@ class ModelNumRefContracts
 {
 	var $error='';
 
-	/**     
+	/**
 	 *	Return if a module can be used or not
-	 * @return		boolean     true if module can be used
+	 *
+	 * 	@return		boolean     true if module can be used
 	 */
 	function isEnabled()
 	{
@@ -42,6 +43,7 @@ class ModelNumRefContracts
 
 	/**
 	 *	Return default description of numbering model
+	 *
 	 *	@return     string      text description
 	 */
 	function info()
@@ -51,8 +53,9 @@ class ModelNumRefContracts
 		return $langs->trans("NoDescription");
 	}
 
-	/**     
+	/**
 	 *	Return numbering example
+	 *
 	 *	@return     string      Example
 	 */
 	function getExample()
@@ -62,8 +65,9 @@ class ModelNumRefContracts
 		return $langs->trans("NoExample");
 	}
 
-	/**     
+	/**
 	 *	Test if existing numbers make problems with numbering
+	 *
 	 *	@return     boolean     false if conflit, true if ok
 	 */
 	function canBeActivated()
@@ -71,8 +75,9 @@ class ModelNumRefContracts
 		return true;
 	}
 
-	/** 
+	/**
 	 *	Return next value
+	 *
 	 *	@return     string      Value
 	 */
 	function getNextValue()
@@ -83,6 +88,7 @@ class ModelNumRefContracts
 
 	/**
 	 *	Return numbering version module
+	 *
 	 *	@return     string      Value
 	 */
 	function getVersion()

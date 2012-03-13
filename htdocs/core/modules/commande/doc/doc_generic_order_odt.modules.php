@@ -91,6 +91,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
      *
      * @param   Object			$object             Main object to use as data source
      * @param   Translate		$outputlangs        Lang object to use for output
+     * @return	array								Array of substitution
      */
     function get_substitutionarray_object($object,$outputlangs)
     {

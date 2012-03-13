@@ -41,12 +41,15 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 
 
 	/**
-	 *      \brief      Charge en memoire et renvoie la liste des modeles actifs
-	 *      \param      db      Handler de base
+	 *  Charge en memoire et renvoie la liste des modeles actifs
+	 *
+     *  @param	DoliDB	$db     			Database handler
+     *  @param  string	$maxfilenamelength  Max length of value to show
+     *  @return	array						List of templates
 	 */
-	function liste_modeles($db)
+	function liste_modeles($db,$maxfilenamelength=0)
 	{
-		dol_syslog("ModeleExport::liste_modeles");
+		dol_syslog(get_class($this)."::liste_modeles");
 
 		$dir=DOL_DOCUMENT_ROOT."/core/modules/export/";
 		$handle=opendir($dir);
