@@ -425,4 +425,5 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'MXP'
 ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_currency		FOREIGN KEY (fk_currency) REFERENCES llx_c_currencies (code_iso);
 ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_fk_currency	FOREIGN KEY (fk_currency) REFERENCES llx_c_currencies (code_iso);
 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_currency   FOREIGN KEY (fk_currency) REFERENCES llx_c_currencies (code_iso);
-  
+ 
+ALTER TABLE llx_expedition ADD COLUMN billed tinyin	DEFAULT 0 AFTER fk_statut;
