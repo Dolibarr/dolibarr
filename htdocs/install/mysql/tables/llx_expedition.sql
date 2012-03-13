@@ -41,7 +41,6 @@ create table llx_expedition
   fk_expedition_methode integer,
   tracking_number       varchar(50),
   fk_statut             smallint	DEFAULT 0,
-  billed				tinyint		DEFAULT 0,
   
   height                integer,
   width                 integer,
