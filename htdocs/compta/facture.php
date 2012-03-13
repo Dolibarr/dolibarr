@@ -267,15 +267,6 @@ if ($action == 'setinvoicedate')
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
-// TODO obsolete ? not used
-if ($action == 'setpaymentterm')
-{
-    $object->fetch($id);
-    $date_lim_reglement=dol_mktime(12,0,0,$_POST['paymenttermmonth'],$_POST['paymenttermday'],$_POST['paymenttermyear']);
-    $result=$object->cond_reglement($object->cond_reglement_id,$date_lim_reglement);
-    if ($result < 0) dol_print_error($db,$object->error);
-}
-
 if ($action == 'setconditions')
 {
     $object->fetch($id);
