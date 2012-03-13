@@ -9,7 +9,7 @@
 	url = git+ssh://hregis@doliforge.org/gitroot/paypalplus/paypalplus.git
 [submodule "htdocs/custom/milestone"]
 	path = htdocs/custom/milestone
-	url = gitolite@doliforge.org:/milestone/milestone.git
+	url = gitolite@doliforge.org:milestone/milestone.git
 [submodule "htdocs/custom/docgen"]
 	path = htdocs/custom/docgen
 	url = git+ssh://hregis@doliforge.org/gitroot/docgen/docgen.git
@@ -30,7 +30,7 @@
 	url = git+ssh://hregis@doliforge.org/gitroot/lead/lead.git
 [submodule "htdocs/custom/team"]
 	path = htdocs/custom/team
-	url = git+ssh://hregis@doliforge.org/gitroot/team/team.git
+	url = gitolite@doliforge.org:team/team.git
 [submodule "htdocs/custom/highcharts"]
 	path = htdocs/custom/highcharts
 	url = git+ssh://hregis@doliforge.org/gitroot/highcharts/highcharts.git
@@ -78,4 +78,4 @@
 	url = gitolite@doliforge.org:reports/reports.git
 [submodule "htdocs/custom/multicurrency"]
 	path = htdocs/custom/multicurrency
-	url = gitolite@doliforge.org:/multicurrency/multicurrency.git
+	url = gitolite@doliforge.org:multicurrency/multicurrency.git
