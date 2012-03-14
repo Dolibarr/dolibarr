@@ -720,7 +720,7 @@ class FormOther
     }
 
     /**
-     * Show form to select addresse
+     * Show form to select address
      *
      * @param	int		$page        	Page
      * @param  	string	$selected    	Id condition pre-selectionne

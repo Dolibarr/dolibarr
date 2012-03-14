@@ -433,6 +433,28 @@ class Address
 			print $this->db->error() . '<br>' . $sql;
 		}
 	}
+	
+	/**
+	 *  Return name of address with link (and eventually picto)
+	 *	Use $this->id, $this->label, $this->socid
+	 *
+	 *	@param		int			$withpicto		Include picto with link
+	 *	@param		string		$option			Where the link point to
+	 *	@return		string						String with URL
+	 */
+	function getNomUrl($withpicto=0,$option='')
+	{
+		global $langs;
+	
+		$result='';
+	
+		$lien = '<a href="'.DOL_URL_ROOT.'/comm/address.php?id='.$this->id.'&socid='.$this->socid.'">';
+		$lienfin='</a>';
+	
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowAddress").': '.$this->label,'address').$lienfin.' ');
+		$result.=$lien.$this->label.$lienfin;
+		return $result;
+	}
 
 
 	/**

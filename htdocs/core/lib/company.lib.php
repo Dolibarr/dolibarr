@@ -632,7 +632,6 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 	print '<td>'.$langs->trans("Country").'</td>';
 	print '<td>'.$langs->trans("Tel").'</td>';
 	print '<td>'.$langs->trans("Fax").'</td>';
-	//print '<td>'.$langs->trans("EMail").'</td>';
 	print "<td>&nbsp;</td>";
 	print "</tr>";
 
@@ -647,8 +646,9 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 			print "<tr ".$bc[$var].">";
 
 			print '<td>';
-			print $address->label;
-			//print $addressstatic->getNomUrl(1);
+			$addressstatic->id = $address->id;
+			$addressstatic->label = $address->label;
+			print $addressstatic->getNomUrl(1);
 			print '</td>';
 
 			print '<td>'.$address->name.'</td>';
@@ -665,11 +665,6 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 			print '<td>';
 			print dol_print_phone($address->fax,$address->country_code,$address->id,$object->id,'AC_FAX');
 			print '</td>';
-			/*
-			print '<td>';
-			print dol_print_email($address->email,$address->id,$object->id,'AC_EMAIL');
-			print '</td>';
-			*/
 
 			if ($user->rights->societe->creer)
 			{
