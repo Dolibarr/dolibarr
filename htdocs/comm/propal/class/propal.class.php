@@ -1283,34 +1283,6 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *	Define delivery address
-	 *
-	 *	@param      User	$user        	Object user that modify
-	 *	@param      int		$fk_address		Delivery address id
-	 *	@return     int			         	<0 si ko, >0 si ok
-	 */
-	function set_adresse_livraison($user, $fk_address)
-	{
-		if ($user->rights->propale->creer)
-		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_adresse_livraison = '".$fk_address."'";
-			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
-
-			if ($this->db->query($sql) )
-			{
-				$this->fk_delivery_address = $fk_address;
-				return 1;
-			}
-			else
-			{
-				$this->error=$this->db->error();
-				dol_syslog("Propal::set_adresse_livraison Erreur SQL");
-				return -1;
-			}
-		}
-	}
-
-	/**
 	 *  Set delivery
 	 *
 	 *  @param		User	$user		  	Object user that modify

@@ -108,7 +108,7 @@ else if ($action == 'deleteline' && $user->rights->commande->creer)
 else if ($action == 'setaddress' && $user->rights->commande->creer)
 {
 	$object->fetch($id);
-	$object->set_adresse_livraison($user,$_POST['fk_address']);
+	$object->setDeliveryAddress($_POST['fk_address']);
 }
 
 /*

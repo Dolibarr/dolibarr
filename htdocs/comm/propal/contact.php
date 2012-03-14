@@ -112,7 +112,7 @@ else if ($action == 'deleteline' && $user->rights->propale->creer)
 else if ($action == 'setaddress' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
-	$result=$object->set_adresse_livraison($user,$_POST['fk_address']);
+	$result=$object->setDeliveryAddress($_POST['fk_address']);
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 

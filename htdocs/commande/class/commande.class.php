@@ -1845,34 +1845,6 @@ class Commande extends CommonObject
     }
 
     /**
-     *	Set address
-     *
-     *	@param      User		$user        	Object user making change
-     *	@param      int			$fk_address	    Adress of delivery
-     *	@return     int         				<0 ig KO, >0 if Ok
-     */
-    function set_adresse_livraison($user, $fk_address)
-    {
-        if ($user->rights->commande->creer)
-        {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_adresse_livraison = '".$fk_address."'";
-            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
-
-            if ($this->db->query($sql) )
-            {
-                $this->fk_delivery_address = $fk_address;
-                return 1;
-            }
-            else
-            {
-                $this->error=$this->db->error();
-                dol_syslog("Commande::set_adresse_livraison Erreur SQL");
-                return -1;
-            }
-        }
-    }
-
-    /**
      *	Set availability
      *
      *	@param      User	$user		Object user making change

@@ -18,15 +18,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Code identique a /expedition/fiche.php
-
 /**
  *	\file       htdocs/expedition/shipment.php
  *	\ingroup    expedition
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
@@ -100,7 +97,7 @@ if ($action == 'setdeliveryaddress' && $user->rights->commande->creer)
 {
 	$commande = new Commande($db);
 	$commande->fetch($id);
-	$commande->set_adresse_livraison($user,GETPOST('delivery_address_id','int'));
+	$commande->setDeliveryAddress(GETPOST('delivery_address_id','int'));
 }
 
 if ($action == 'setmode' && $user->rights->commande->creer)
@@ -127,7 +124,6 @@ if ($action == 'setconditions' && $user->rights->commande->creer)
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-$formother = new FormOther($db);
 $formproduct = new FormProduct($db);
 
 llxHeader('',$langs->trans('OrderCard'),'');
@@ -273,29 +269,6 @@ if ($id > 0 || ! empty($ref))
 		print nl2br($commande->note_public);
 		print '</td>';
 		print '</tr>';
-
-		// Delivery address
-		if ($conf->global->COMMANDE_ADD_DELIVERY_ADDRESS)
-		{
-			print '<tr><td height="10">';
-			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $langs->trans('DeliveryAddress');
-			print '</td>';
-
-			if ($action != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socid.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
-			print '</tr></table>';
-			print '</td><td colspan="2">';
-
-			if ($action == 'editdelivery_adress')
-			{
-				$formother->form_address($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,GETPOST('socid','int'),'delivery_address_id','commande',$commande->id);
-			}
-			else
-			{
-				$formother->form_address($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->fk_delivery_address,GETPOST('socid','int'),'none','commande',$commande->id);
-			}
-			print '</td></tr>';
-		}
 
 		// Terms of payment
 		print '<tr><td height="10">';
