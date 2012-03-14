@@ -42,7 +42,7 @@ $action=GETPOST('action','alpha');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'expedition', $id,'');
 
-$object = new expedition($db);
+$object = new Expedition($db);
 if ($id > 0 || ! empty($ref))
 {
     $object->fetch($id, $ref);
@@ -119,6 +119,12 @@ else if ($action == 'deleteline' && $user->rights->expedition->creer)
 	}
 }
 
+else if ($action == 'setaddress' && $user->rights->expedition->creer)
+{
+	$object->fetch($id);
+	$result=$object->setDeliveryAddress($_POST['fk_address']);
+	if ($result < 0) dol_print_error($db,$object->error);
+}
 
 
 /*
@@ -203,6 +209,29 @@ if ($id > 0 || ! empty($ref))
 	print $objectsrc->ref_client;
 	print '</td>';
 	print '</tr>';
+	
+	// Delivery address
+	if ($conf->global->SOCIETE_ADDRESSES_MANAGEMENT)
+	{
+		print '<tr><td>';
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print $langs->trans('DeliveryAddress');
+		print '</td>';
+	
+		if ($action != 'editdelivery_address' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_address&amp;socid='.$object->socid.'&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDeliveryAddress'),1).'</a></td>';
+		print '</tr></table>';
+		print '</td><td colspan="3">';
+	
+		if ($action == 'editdelivery_address')
+		{
+			$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$object->socid,'fk_address','shipping',$object->id);
+		}
+		else
+		{
+			$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$object->socid,'none','shipping',$object->id);
+		}
+		print '</td></tr>';
+	}
 
 	print "</table>";
 
