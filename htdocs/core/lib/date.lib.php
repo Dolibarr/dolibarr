@@ -755,7 +755,8 @@ function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
 
 
 /**
- *	Return array of translated months or selected month
+ *	Return array of translated months or selected month.
+ *  This replace old function monthArrayOrSelected.
  *
  *	@param	Translate	$outputlangs	Object langs
  *	@return array						Month string or array if selected < 0
