@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2008 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011-2012 Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,8 +18,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-// Code identique a /expedition/shipment.php
 
 /**
  *	\file       htdocs/expedition/fiche.php
@@ -164,7 +162,7 @@ if ($action == 'add')
 /*
  * Build a receiving receipt
  */
-if ($action == 'create_delivery' && $conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer)
+else if ($action == 'create_delivery' && $conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer)
 {
 	$object->fetch($id);
 	$result = $object->create_delivery($user);
@@ -179,7 +177,7 @@ if ($action == 'create_delivery' && $conf->livraison_bon->enabled && $user->righ
 	}
 }
 
-if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->expedition->valider)
+else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->expedition->valider)
 {
 	$object->fetch($id);
 	$object->fetch_thirdparty();
@@ -208,7 +206,7 @@ if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->expedition
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expedition->supprimer)
+else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expedition->supprimer)
 {
 	$object->fetch($id);
 	$result = $object->delete();
@@ -223,7 +221,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expeditio
 	}
 }
 
-if ($action == 'reopen' && $user->rights->expedition->valider)
+else if ($action == 'reopen' && $user->rights->expedition->valider)
 {
 	$object->fetch($id);
 	$result = $object->setStatut(0);
@@ -233,7 +231,7 @@ if ($action == 'reopen' && $user->rights->expedition->valider)
 	}
 }
 
-if ($action == 'setdate_livraison' && $user->rights->expedition->creer)
+else if ($action == 'setdate_livraison' && $user->rights->expedition->creer)
 {
 	//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
 	$datedelivery=dol_mktime(GETPOST('liv_hour','int'), GETPOST('liv_min','int'), 0, GETPOST('liv_month','int'), GETPOST('liv_day','int'), GETPOST('liv_year','int'));
@@ -247,7 +245,7 @@ if ($action == 'setdate_livraison' && $user->rights->expedition->creer)
 }
 
 // Action update description of emailing
-if ($action == 'settrackingnumber' || $action == 'settrackingurl'
+else if ($action == 'settrackingnumber' || $action == 'settrackingurl'
 || $action == 'settrueWeight'
 || $action == 'settrueWidth'
 || $action == 'settrueHeight'
@@ -286,7 +284,7 @@ if ($action == 'settrackingnumber' || $action == 'settrackingurl'
 /*
  * Build doc
  */
-if ($action == 'builddoc')	// En get ou en post
+else if ($action == 'builddoc')	// En get ou en post
 {
 
 	// Sauvegarde le dernier modele choisi pour generer un document
@@ -505,11 +503,19 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
     }
 }
 
-if ($action == 'classifybilled')
+else if ($action == 'classifybilled')
 {
 	$object->fetch($id);
 	$object->set_billed();
 }
+
+else if ($action == 'setaddress' && $user->rights->expedition->creer)
+{
+	$object->fetch($id);
+	$result=$object->setDeliveryAddress($_POST['fk_address']);
+	if ($result < 0) dol_print_error($db,$object->error);
+}
+
 
 /*
  * View
@@ -1036,16 +1042,26 @@ else
 			print '</tr>';
 
 			// Delivery address
-			if (($origin == 'commande' && $conf->global->COMMANDE_ADD_DELIVERY_ADDRESS)
-				|| ($origin == 'propal' && $conf->global->PROPAL_ADD_DELIVERY_ADDRESS))
+			if ($conf->global->COMMANDE_ADD_DELIVERY_ADDRESS || $conf->global->PROPAL_ADD_DELIVERY_ADDRESS)
 			{
-				print '<tr><td>'.$langs->trans('DeliveryAddress').'</td>';
-				print '<td colspan="3">';
-				if (!empty($object->fk_delivery_address))
+				print '<tr><td>';
+				print '<table class="nobordernopadding" width="100%"><tr><td>';
+				print $langs->trans('DeliveryAddress');
+				print '</td>';
+				
+				if ($action != 'editdelivery_address' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_address&amp;socid='.$object->socid.'&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDeliveryAddress'),1).'</a></td>';
+				print '</tr></table>';
+				print '</td><td colspan="3">';
+				
+				if ($action == 'editdelivery_address')
 				{
-					$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$object->deliveryaddress->socid,'none','shipment',$object->id);
+					$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$object->socid,'fk_address','shipment',$object->id);
 				}
-				print '</td></tr>'."\n";
+				else
+				{
+					$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$object->socid,'none','shipment',$object->id);
+				}
+				print '</td></tr>';
 			}
 
 			// Weight

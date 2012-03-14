@@ -1845,34 +1845,6 @@ class Commande extends CommonObject
     }
 
     /**
-     *	Set address
-     *
-     *	@param      User		$user        	Object user making change
-     *	@param      int			$fk_address	    Adress of delivery
-     *	@return     int         				<0 ig KO, >0 if Ok
-     */
-    function set_adresse_livraison($user, $fk_address)
-    {
-        if ($user->rights->commande->creer)
-        {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_adresse_livraison = '".$fk_address."'";
-            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
-
-            if ($this->db->query($sql) )
-            {
-                $this->fk_delivery_address = $fk_address;
-                return 1;
-            }
-            else
-            {
-                $this->error=$this->db->error();
-                dol_syslog("Commande::set_adresse_livraison Erreur SQL");
-                return -1;
-            }
-        }
-    }
-
-    /**
      *	Set availability
      *
      *	@param      User	$user		Object user making change
@@ -1972,77 +1944,6 @@ class Commande extends CommonObject
         {
             dol_print_error($this->db);
             return -1;
-        }
-    }
-
-    /**
-     *	Change les conditions de reglement de la commande
-     *
-     *	@param      int	$cond_reglement_id      Id de la nouvelle condition de reglement
-     *	@return     int                    		>0 if OK, <0 if KO
-     *	TODO deprecated
-     */
-    function cond_reglement($cond_reglement_id)
-    {
-        dol_syslog('Commande::cond_reglement('.$cond_reglement_id.')');
-        if ($this->statut >= 0)
-        {
-            $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-            $sql .= ' SET fk_cond_reglement = '.$cond_reglement_id;
-            $sql .= ' WHERE rowid='.$this->id;
-            if ( $this->db->query($sql) )
-            {
-                $this->cond_reglement_id = $cond_reglement_id;
-                return 1;
-            }
-            else
-            {
-                dol_syslog('Commande::cond_reglement Erreur '.$sql.' - '.$this->db->error(), LOG_ERR);
-                $this->error=$this->db->lasterror();
-                return -1;
-            }
-        }
-        else
-        {
-            dol_syslog('Commande::cond_reglement, etat commande incompatible', LOG_ERR);
-            $this->error='Etat commande incompatible '.$this->statut;
-            return -2;
-        }
-    }
-
-
-    /**
-     *  Change le mode de reglement
-     *
-     *  @param      int		$mode       Id du nouveau mode
-     *  @return     int         		>0 si ok, <0 si ko
-     *  TODO deprecated
-     */
-    function mode_reglement($mode_reglement_id)
-    {
-        dol_syslog('Commande::mode_reglement('.$mode_reglement_id.')');
-        if ($this->statut >= 0)
-        {
-            $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-            $sql .= ' SET fk_mode_reglement = '.$mode_reglement_id;
-            $sql .= ' WHERE rowid='.$this->id;
-            if ( $this->db->query($sql) )
-            {
-                $this->mode_reglement_id = $mode_reglement_id;
-                return 1;
-            }
-            else
-            {
-                dol_syslog('Commande::mode_reglement Erreur '.$sql.' - '.$this->db->error(), LOG_ERR);
-                $this->error=$this->db->lasterror();
-                return -1;
-            }
-        }
-        else
-        {
-            dol_syslog('Commande::mode_reglement, etat facture incompatible', LOG_ERR);
-            $this->error='Etat commande incompatible '.$this->statut;
-            return -2;
         }
     }
 

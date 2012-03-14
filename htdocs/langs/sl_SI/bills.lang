@@ -53,7 +53,6 @@ SupplierInvoice = Račun dobavitelja
 SuppliersInvoices = Računi dobaviteljev
 SupplierBill = Račun dobavitelja
 SupplierBills = Računi dobaviteljev
-BillContacts = Kontakt za račun
 Payment = Plačilo
 PaymentBack = Vrnitev plačila
 Payments = Plačila

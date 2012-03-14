@@ -45,7 +45,6 @@ SupplierInvoice=Toimittajan laskun
 SuppliersInvoices=Tavarantoimittajat laskujen
 SupplierBill=Toimittajan laskun
 SupplierBills=tavarantoimittajien laskut
-BillContacts=Laskun yhteystiedot
 Payment=Maksu
 PaymentBack=Maksun
 Payments=Maksut

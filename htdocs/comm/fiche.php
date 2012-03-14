@@ -37,7 +37,6 @@ if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/class/co
 if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 if ($conf->ficheinter->enabled) require_once(DOL_DOCUMENT_ROOT."/fichinter/class/fichinter.class.php");
-if (!empty($conf->global->MAIN_MODULE_CHRONODOCS)) require_once(DOL_DOCUMENT_ROOT."/chronodocs/chronodocs_entries.class.php");
 
 $langs->load("companies");
 if ($conf->contrat->enabled)  $langs->load("contracts");
@@ -46,7 +45,6 @@ if ($conf->facture->enabled) $langs->load("bills");
 if ($conf->projet->enabled)  $langs->load("projects");
 if ($conf->ficheinter->enabled) $langs->load("interventions");
 if ($conf->notification->enabled) $langs->load("mails");
-if (!empty($conf->global->MAIN_MODULE_CHRONODOCS)) $langs->load("chronodocs");
 
 // Security check
 $id = (GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id','int'));

@@ -50,7 +50,6 @@ SupplierInvoice=Facture fournisseur
 SuppliersInvoices=Factures fournisseurs
 SupplierBill=Facture fournisseur
 SupplierBills=Factures fournisseurs
-BillContacts=Contacts facture
 Payment=Règlement
 PaymentBack=Remboursement
 Payments=Règlements

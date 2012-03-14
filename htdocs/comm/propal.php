@@ -246,13 +246,6 @@ else if ($action == 'setdate_livraison')
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-else if ($action == 'setaddress' && $user->rights->propale->creer)
-{
-	$object->fetch($id);
-	$result=$object->set_adresse_livraison($user,$_POST['fk_address']);
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-
 // Positionne ref client
 else if ($action == 'set_ref_client' && $user->rights->propale->creer)
 {
@@ -1339,29 +1332,6 @@ if ($id > 0 || ! empty($ref))
 	}
 	print '</td>';
 	print '</tr>';
-
-	// Delivery address (deprecated)
-	if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS)
-	{
-		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('DeliveryAddress');
-		print '</td>';
-
-		if ($action != 'editdelivery_address' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_address&amp;socid='.$object->socid.'&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDeliveryAddress'),1).'</a></td>';
-		print '</tr></table>';
-		print '</td><td colspan="3">';
-
-		if ($action == 'editdelivery_address')
-		{
-			$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,GETPOST('socid','int'),'fk_address','propal',$object->id);
-		}
-		else
-		{
-			$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,GETPOST('socid','int'),'none','propal',$object->id);
-		}
-		print '</td></tr>';
-	}
 
 	// Delivery delay
 	print '<tr><td>';

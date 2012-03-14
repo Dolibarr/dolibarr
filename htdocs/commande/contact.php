@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,61 +27,61 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/order.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
 
 $langs->load("orders");
 $langs->load("sendings");
 $langs->load("companies");
 
-$comid = isset($_GET["id"])?$_GET["id"]:'';
+$id=GETPOST('id','int');
+$ref=GETPOST('ref','alpha');
+$action=GETPOST('action','alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'commande', $comid,'');
+$result = restrictedArea($user, 'commande', $id,'');
 
+$object = new Commande($db);
 
 /*
  * Ajout d'un nouveau contact
  */
 
-if ($_POST["action"] == 'addcontact' && $user->rights->commande->creer)
+if ($action == 'addcontact' && $user->rights->commande->creer)
 {
+	$result = $object->fetch($id);
 
-	$result = 0;
-	$commande = new Commande($db);
-	$result = $commande->fetch($_GET["id"]);
-
-    if ($result > 0 && $_GET["id"] > 0)
+    if ($result > 0 && $id > 0)
     {
-  		$result = $commande->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
+  		$result = $object->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
     }
 
 	if ($result >= 0)
 	{
-		Header("Location: contact.php?id=".$commande->id);
+		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	}
 	else
 	{
-		if ($commande->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
 			$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
 		}
 		else
 		{
-			$mesg = '<div class="error">'.$commande->error.'</div>';
+			$mesg = '<div class="error">'.$object->error.'</div>';
 		}
 	}
 }
 
 // bascule du statut d'un contact
-if ($_GET["action"] == 'swapstatut' && $user->rights->commande->creer)
+else if ($action == 'swapstatut' && $user->rights->commande->creer)
 {
-	$commande = new Commande($db);
-	if ($commande->fetch(GETPOST('id','int')))
+	if ($object->fetch($id))
 	{
-	    $result=$commande->swapContactStatus(GETPOST('ligne'));
+	    $result=$object->swapContactStatus(GETPOST('ligne'));
 	}
 	else
 	{
@@ -90,15 +90,14 @@ if ($_GET["action"] == 'swapstatut' && $user->rights->commande->creer)
 }
 
 // Efface un contact
-if ($_GET["action"] == 'deleteline' && $user->rights->commande->creer)
+else if ($action == 'deleteline' && $user->rights->commande->creer)
 {
-	$commande = new Commande($db);
-	$commande->fetch($_GET["id"]);
-	$result = $commande->delete_contact($_GET["lineid"]);
+	$object->fetch($id);
+	$result = $object->delete_contact($_GET["lineid"]);
 
 	if ($result >= 0)
 	{
-		Header("Location: contact.php?id=".$commande->id);
+		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	}
 	else {
@@ -106,6 +105,11 @@ if ($_GET["action"] == 'deleteline' && $user->rights->commande->creer)
 	}
 }
 
+else if ($action == 'setaddress' && $user->rights->commande->creer)
+{
+	$object->fetch($id);
+	$object->setDeliveryAddress($_POST['fk_address']);
+}
 
 /*
  * View
@@ -115,6 +119,7 @@ llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
+$formother = new FormOther($db);
 $contactstatic=new Contact($db);
 $userstatic=new User($db);
 
@@ -126,19 +131,17 @@ $userstatic=new User($db);
 /* *************************************************************************** */
 dol_htmloutput_mesg($mesg);
 
-$id = $_GET['id'];
-$ref= $_GET['ref'];
 if ($id > 0 || ! empty($ref))
 {
 	$langs->trans("OrderCard");
-	$commande = new Commande($db);
-	if ( $commande->fetch($_GET['id'],$_GET['ref']) > 0)
+	
+	if ($object->fetch($id, $ref) > 0)
 	{
 		$soc = new Societe($db);
-		$soc->fetch($commande->socid);
+		$soc->fetch($object->socid);
 
 
-		$head = commande_prepare_head($commande);
+		$head = commande_prepare_head($object);
 		dol_fiche_head($head, 'contact', $langs->trans("CustomerOrder"), 0, 'order');
 
 
@@ -149,7 +152,7 @@ if ($id > 0 || ! empty($ref))
 
 		// Ref
 		print '<tr><td width="18%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $form->showrefnav($commande,'ref','',1,'ref','ref');
+		print $form->showrefnav($object,'ref','',1,'ref','ref');
 		print "</td></tr>";
 
 		// Ref commande client
@@ -159,16 +162,39 @@ if ($id > 0 || ! empty($ref))
         print '</td>';
         print '</tr></table>';
         print '</td><td colspan="3">';
-		print $commande->ref_client;
+		print $object->ref_client;
 		print '</td>';
 		print '</tr>';
 
 		// Customer
-		if ( is_null($commande->client) )
-			$commande->fetch_thirdparty();
+		if (is_null($object->client))	$object->fetch_thirdparty();
 
 		print "<tr><td>".$langs->trans("Company")."</td>";
-		print '<td colspan="3">'.$commande->client->getNomUrl(1).'</td></tr>';
+		print '<td colspan="3">'.$object->client->getNomUrl(1).'</td></tr>';
+		
+		// Delivery address
+		if ($conf->global->COMMANDE_ADD_DELIVERY_ADDRESS)
+		{
+			print '<tr><td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('DeliveryAddress');
+			print '</td>';
+		
+			if ($action != 'editdelivery_address' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_address&amp;socid='.$object->socid.'&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDeliveryAddress'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
+		
+			if ($action == 'editdelivery_address')
+			{
+				$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,GETPOST('socid','int'),'fk_address','commande',$object->id);
+			}
+			else
+			{
+				$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,GETPOST('socid','int'),'none','commande',$object->id);
+			}
+			print '</td></tr>';
+		}
+		
 		print "</table>";
 
 		print '</div>';
@@ -182,7 +208,7 @@ if ($id > 0 || ! empty($ref))
 		* Ajouter une ligne de contact
 		* Non affiche en mode modification de ligne
 		*/
-		if ($_GET["action"] != 'editline' && $user->rights->commande->creer)
+		if ($action != 'editline' && $user->rights->commande->creer)
 		{
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Source").'</td>';
@@ -195,7 +221,7 @@ if ($id > 0 || ! empty($ref))
 
 			$var = false;
 
-			print '<form action="contact.php?id='.$id.'" method="post">';
+			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="addcontact">';
 			print '<input type="hidden" name="source" value="internal">';
@@ -213,18 +239,18 @@ if ($id > 0 || ! empty($ref))
 			print '</td>';
 
 			print '<td colspan="1">';
-			//$userAlreadySelected = $commande->getListContactId('internal');	// On ne doit pas desactiver un contact deja selectionne car on doit pouvoir le selectionner une deuxieme fois pour un autre type
+			//$userAlreadySelected = $object->getListContactId('internal');	// On ne doit pas desactiver un contact deja selectionne car on doit pouvoir le selectionner une deuxieme fois pour un autre type
 			$form->select_users($user->id,'contactid',0,$userAlreadySelected);
 			print '</td>';
 			print '<td>';
-			$formcompany->selectTypeContact($commande, '', 'type','internal');
+			$formcompany->selectTypeContact($object, '', 'type','internal');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 			print '</tr>';
 
 			print '</form>';
 
-			print '<form action="contact.php?id='.$id.'" method="post">';
+			print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="addcontact">';
 			print '<input type="hidden" name="source" value="external">';
@@ -239,8 +265,8 @@ if ($id > 0 || ! empty($ref))
 			print '</td>';
 
 			print '<td colspan="1">';
-			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$commande->client->id;
-			$selectedCompany = $formcompany->selectCompaniesForNewContact($commande, 'id', $selectedCompany, 'newcompany');
+			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$object->client->id;
+			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany');
 			print '</td>';
 
 			print '<td colspan="1">';
@@ -248,7 +274,7 @@ if ($id > 0 || ! empty($ref))
 			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 			print '</td>';
 			print '<td>';
-			$formcompany->selectTypeContact($commande, '', 'type','external');
+			$formcompany->selectTypeContact($object, '', 'type','external');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"';
 			if (! $nbofcontacts) print ' disabled="disabled"';
@@ -275,7 +301,7 @@ if ($id > 0 || ! empty($ref))
 
 		foreach(array('internal','external') as $source)
 		{
-			$tab = $commande->liste_contact(-1,$source);
+			$tab = $object->liste_contact(-1,$source);
 			$num=count($tab);
 
 			$i = 0;
@@ -332,17 +358,17 @@ if ($id > 0 || ! empty($ref))
 				// Statut
 				print '<td align="center">';
 				// Activation desativation du contact
-				if ($commande->statut >= 0)	print '<a href="contact.php?id='.$commande->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
+				if ($object->statut >= 0)	print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
 				print $contactstatic->LibStatut($tab[$i]['status'],3);
-				if ($commande->statut >= 0)	print '</a>';
+				if ($object->statut >= 0)	print '</a>';
 				print '</td>';
 
 				// Icon update et delete
 				print '<td align="center" nowrap="nowrap" colspan="2">';
-				if ($commande->statut < 5 && $user->rights->commande->creer)
+				if ($object->statut < 5 && $user->rights->commande->creer)
 				{
 					print '&nbsp;';
-					print '<a href="contact.php?id='.$commande->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';
+					print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';
 					print img_delete();
 					print '</a>';
 				}
@@ -362,7 +388,7 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-$db->close();
 
+$db->close();
 llxFooter();
 ?>

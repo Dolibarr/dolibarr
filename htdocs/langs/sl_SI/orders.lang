@@ -7,7 +7,6 @@ Order = Naročilo
 Orders = Naročila
 OrderLine = Vrstica naročila
 OrderFollow = Sledenje naročilu
-OrderContact = Kontakt za naročilo
 OrderDate = Datum naročila
 OrderToProcess = Naročilo za obdelavo
 NewOrder = Novo naročilo

@@ -40,7 +40,7 @@ function facture_prepare_head($object)
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/contact.php?facid='.$object->id;
-	$head[$h][1] = $langs->trans('BillContacts');
+	$head[$h][1] = $langs->trans('ContactsAddresses');
 	$head[$h][2] = 'contact';
 	$h++;
 

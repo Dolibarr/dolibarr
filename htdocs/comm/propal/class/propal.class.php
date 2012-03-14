@@ -1283,34 +1283,6 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *	Define delivery address
-	 *
-	 *	@param      User	$user        	Object user that modify
-	 *	@param      int		$fk_address		Delivery address id
-	 *	@return     int			         	<0 si ko, >0 si ok
-	 */
-	function set_adresse_livraison($user, $fk_address)
-	{
-		if ($user->rights->propale->creer)
-		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_adresse_livraison = '".$fk_address."'";
-			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
-
-			if ($this->db->query($sql) )
-			{
-				$this->fk_delivery_address = $fk_address;
-				return 1;
-			}
-			else
-			{
-				$this->error=$this->db->error();
-				dol_syslog("Propal::set_adresse_livraison Erreur SQL");
-				return -1;
-			}
-		}
-	}
-
-	/**
 	 *  Set delivery
 	 *
 	 *  @param		User	$user		  	Object user that modify
@@ -1877,78 +1849,6 @@ class Propal extends CommonObject
 			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
-		}
-	}
-
-
-	/**
-	 *  Change the payments conditions of the invoice
-	 *
-	 *  @param		int		$cond_reglement_id	Id of new payment condition
-	 *  @return     int                    		>0 if OK, <0 if KO
-	 *  TODO deprecated
-	 */
-	function cond_reglement($cond_reglement_id)
-	{
-		dol_syslog('Propale::cond_reglement('.$cond_reglement_id.')');
-		if ($this->statut >= 0)
-		{
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
-			$sql .= ' SET fk_cond_reglement = '.$cond_reglement_id;
-			$sql .= ' WHERE rowid='.$this->id;
-			if ( $this->db->query($sql) )
-			{
-				$this->cond_reglement_id = $cond_reglement_id;
-				return 1;
-			}
-			else
-			{
-				dol_syslog('Propale::cond_reglement Erreur '.$sql.' - '.$this->db->error());
-				$this->error=$this->db->error();
-				return -1;
-			}
-		}
-		else
-		{
-			dol_syslog('Propale::cond_reglement, etat propale incompatible');
-			$this->error='Etat propale incompatible '.$this->statut;
-			return -2;
-		}
-	}
-
-
-	/**
-	 *  Change the payment mode
-	 *
-	 *  @param	int	$mode_reglement_id	Id of new payment mode
-	 *  @return int         			>0 if OK, <0 if KO
-	 *  TODO deprecated
-	 */
-	function mode_reglement($mode_reglement_id)
-	{
-		dol_syslog('Propale::mode_reglement('.$mode_reglement_id.')');
-		if ($this->statut >= 0)
-		{
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
-			$sql .= ' SET fk_mode_reglement = '.$mode_reglement_id;
-			$sql .= ' WHERE rowid='.$this->id;
-			if ( $this->db->query($sql) )
-			{
-				$this->mode_reglement_id = $mode_reglement_id;
-				return 1;
-			}
-			else
-			{
-				dol_syslog('Propale::mode_reglement Erreur '.$sql.' - '.$this->db->error());
-				$this->error=$this->db->error();
-				return -1;
-			}
-		}
-		else
-		{
-			dol_syslog('Propale::mode_reglement, etat propale incompatible');
-			$this->error='Etat facture incompatible '.$this->statut;
-			return -2;
 		}
 	}
 

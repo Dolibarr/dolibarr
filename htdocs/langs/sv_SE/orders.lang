@@ -15,7 +15,6 @@ Order=Beställ
 Orders=Beställningar
 OrderLine=Orderrad
 OrderFollow=Uppföljning
-OrderContact=Beställ kontakt
 OrderDate=Beställ datum
 OrderToProcess=Att kunna bearbeta
 NewOrder=Ny ordning

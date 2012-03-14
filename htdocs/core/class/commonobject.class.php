@@ -943,6 +943,33 @@ abstract class CommonObject
     }
     
     /**
+     *	Define delivery address
+     *
+     *	@param      int		$id		Address id
+     *	@return     int				<0 si ko, >0 si ok
+     */
+    function setDeliveryAddress($id)
+    {
+    	$fieldname = 'fk_adresse_livraison';
+    	if ($this->element == 'delivery' || $this->element == 'shipping') $fieldname = 'fk_address';
+    	
+    	$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ".$fieldname." = ".$id;
+    	$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+    	
+    	if ($this->db->query($sql))
+    	{
+    		$this->fk_delivery_address = $id;
+    		return 1;
+    	}
+    	else
+    	{
+    		$this->error=$this->db->error();
+    		dol_syslog(get_class($this).'::setDeliveryAddress Erreur '.$sql.' - '.$this->error);
+    		return -1;
+    	}
+    }
+    
+    /**
      *		Set last model used by doc generator
      *
      *		@param		User	$user		User object that make change
