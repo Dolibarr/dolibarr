@@ -42,7 +42,7 @@ class mailing_framboise extends MailingTargets
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function mailing_framboise($db)
+	function __construct($db)
 	{
 		$this->db=$db;
 	}

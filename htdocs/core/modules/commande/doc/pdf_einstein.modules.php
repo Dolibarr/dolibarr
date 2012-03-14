@@ -63,7 +63,7 @@ class pdf_einstein extends ModelePDFCommandes
 	 *
 	 *  @param		DoliDB		$DB      Database handler
 	 */
-	function pdf_einstein($db)
+	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 

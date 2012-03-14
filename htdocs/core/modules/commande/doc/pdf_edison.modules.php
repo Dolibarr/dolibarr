@@ -41,7 +41,7 @@ class pdf_edison extends ModelePDFCommandes
      *
 	 *	@param		DoliDb	$db		Database access handler
 	 */
-	function pdf_edison($db=0)
+	function __construct($db=0)
 	{
         global $conf,$langs,$mysoc;
 

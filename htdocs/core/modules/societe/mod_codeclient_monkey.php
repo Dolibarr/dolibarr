@@ -48,7 +48,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	/**
 	 * 	Constructor
 	 */
-	function mod_codeclient_monkey()
+	function __construct()
 	{
 		$this->nom = "Monkey";
 		$this->version = "dolibarr";

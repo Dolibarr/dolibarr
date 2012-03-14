@@ -36,6 +36,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 
 	/**
 	 *	Return default description of numbering model
+	 *
 	 *	@return     string      text description
 	 */
     function info()
@@ -47,6 +48,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 
 	/**
 	 *	Return numbering example
+	 *
 	 *	@return     string      Example
 	 */
 	function getExample()
@@ -57,6 +59,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 
 	/**
 	 *	Test if existing numbers make problems with numbering
+	 *
 	 *	@return     boolean     false if conflit, true if ok
 	 */
 	function canBeActivated()
@@ -89,6 +92,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 
 	/**
 	 *	Return next value
+	 *
 	 *	@param      objsoc      third party object
 	 *	@param		shipment	shipment object
 	 *	@return     string      Value if OK, 0 if KO
@@ -125,7 +129,8 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	}
 
 	/**
-	 *Return next free value
+	 *  Return next free value
+	 *
 	 *	@param      objsoc      Object third party
 	 *	@param		objforref	Object for number to search
 	 *	@return     string      Next free value

@@ -37,8 +37,10 @@ class mod_facture_mercure extends ModeleNumRefFactures
     var $error = '';
 
 
-    /**     \brief      Renvoi la description du modele de numerotation
-     *      \return     string      Texte descripif
+    /**
+     *  Renvoi la description du modele de numerotation
+     *
+     *  @return     string      Texte descripif
      */
     function info()
     {
@@ -81,8 +83,10 @@ class mod_facture_mercure extends ModeleNumRefFactures
         return $texte;
     }
 
-    /**     \brief      Return an example of number value
-     *      \return     string      Example
+    /**
+     *  Return an example of number value
+     *
+     *  @return     string      Example
      */
     function getExample()
     {

@@ -37,8 +37,10 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	var $prefix='CF';
 
 
-    /**     \brief      Return description of numbering module
-     *      \return     string      Text with description
+    /**
+     * 	Return description of numbering module
+     *
+     *  @return     string      Text with description
      */
     function info()
     {
@@ -47,8 +49,10 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
     }
 
 
-    /**     \brief      Renvoi un exemple de numerotation
-     *      \return     string      Example
+    /**
+     * 	Renvoi un exemple de numerotation
+     *
+     *  @return     string      Example
      */
     function getExample()
     {
@@ -56,9 +60,11 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
     }
 
 
-    /**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
-     *                  de conflits qui empechera cette numerotation de fonctionner.
-     *      \return     boolean     false si conflit, true si ok
+    /**
+     * 	Test si les numeros deja en vigueur dans la base ne provoquent pas de
+     *  de conflits qui empechera cette numerotation de fonctionner.
+     *
+     *  @return     boolean     false si conflit, true si ok
      */
     function canBeActivated()
     {
@@ -89,11 +95,13 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
         }
     }
 
-    /**     \brief      Return next value
-	*      	\param      objsoc      Object third party
-	*      	\param      object		Object
-	*       \return     string      Valeur
-    */
+    /**
+     * 	Return next value
+	 *
+	 *  @param	Societe		$objsoc     Object third party
+	 *  @param  Object		$object		Object
+	 *  @return string      			Value if OK, 0 if KO
+     */
     function getNextValue($objsoc=0,$object='')
     {
         global $db,$conf;
@@ -123,11 +131,13 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
     }
 
 
-    /**     \brief      Renvoie la reference de commande suivante non utilisee
-	*      	\param      objsoc      Object third party
-	*      	\param      object		Object
-    *      	\return     string      Texte descripif
-    */
+    /**
+     * 	Renvoie la reference de commande suivante non utilisee
+     *
+	 *  @param	Societe		$objsoc     Object third party
+	 *  @param  Object	    $object		Object
+     *  @return string      			Texte descripif
+     */
     function commande_get_num($objsoc=0,$object='')
     {
         return $this->getNextValue($objsoc,$object);

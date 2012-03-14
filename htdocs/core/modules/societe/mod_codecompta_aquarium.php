@@ -41,7 +41,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	/**
 	 * 	Constructor
 	 */
-	function mod_codecompta_aquarium()
+	function __construct()
 	{
 	    global $conf;
 		if (empty($conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER)) $conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER='411';

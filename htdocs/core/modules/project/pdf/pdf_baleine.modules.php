@@ -42,9 +42,9 @@ class pdf_baleine extends ModelePDFProjects
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	function pdf_baleine($db)
+	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 

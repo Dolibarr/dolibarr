@@ -41,9 +41,9 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 	/**
 	 *	Constructor
 	 *
-	 *	@param	db		Database handler
+	 *	@param	DoliDB	$db		Database handler
 	 */
-	function pdf_expedition_rouget($db=0)
+	function __construct($db=0)
 	{
 		global $conf,$langs,$mysoc;
 

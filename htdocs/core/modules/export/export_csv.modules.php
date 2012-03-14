@@ -49,7 +49,7 @@ class ExportCsv extends ModeleExports
 	 *
 	 *	@param	    DoliDB	$db      Database handler
 	 */
-	function ExportCsv($db)
+	function __construct($db)
 	{
 		global $conf,$langs;
 		$this->db = $db;
