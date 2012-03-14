@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009-2010 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2007-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2012	Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -525,9 +525,9 @@ class Menubase
         $sql = "SELECT m.rowid, m.type, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu";
         $sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
         $sql.= " WHERE m.entity = ".$conf->entity;
-        $sql.= " AND m.menu_handler in('".$menu_handler."','all')";
-        if ($type_user == 0) $sql.= " AND m.usertype in (0,2)";
-        if ($type_user == 1) $sql.= " AND m.usertype in (1,2)";
+        $sql.= " AND m.menu_handler IN ('".$menu_handler."','all')";
+        if ($type_user == 0) $sql.= " AND m.usertype IN (0,2)";
+        if ($type_user == 1) $sql.= " AND m.usertype IN (1,2)";
         // If type_user == 2, no test required
         $sql.= " ORDER BY m.position, m.rowid";
 
@@ -577,6 +577,13 @@ class Menubase
                         {
                             $tab_titre = explode("/",$menu['titre']);
                             $title = $langs->trans($tab_titre[0])."/".$langs->trans($tab_titre[1]);
+                        }
+                        else if (preg_match('/\|\|/',$menu['titre'])) // To manage different translation
+                        {
+                        	$tab_title = explode("||",$menu['titre']);
+                        	$alt_title = explode("@",$tab_title[1]);
+                        	$title_enabled = verifCond($alt_title[1]);
+                        	$title = ($title_enabled ? $langs->trans($alt_title[0]) : $langs->trans($tab_title[0]));
                         }
                         else
                         {
