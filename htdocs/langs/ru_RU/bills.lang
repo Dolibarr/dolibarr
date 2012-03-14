@@ -45,7 +45,6 @@ SupplierInvoice=Счет-фактура Поставщика
 SuppliersInvoices=Счета-фактуры Поставщиков
 SupplierBill=Счет-фактура Поставщика
 SupplierBills=счета-фактуры Поставщиков
-BillContacts=Контакты Счета-фактуры
 Payment=Платеж
 PaymentBack=Возврат платежа
 Payments=Платежи

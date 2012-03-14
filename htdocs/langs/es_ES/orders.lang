@@ -7,7 +7,6 @@ Order=Pedido
 Orders=Pedidos
 OrderLine=Línea de pedido
 OrderFollow=Seguimiento
-OrderContact=Contactos pedido
 OrderDate=Fecha pedido
 OrderToProcess=Pedido a procesar
 NewOrder=Nuevo pedido

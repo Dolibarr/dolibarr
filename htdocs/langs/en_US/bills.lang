@@ -54,7 +54,6 @@ SupplierInvoice=Supplier invoice
 SuppliersInvoices=Supplier's invoices
 SupplierBill=Supplier invoice
 SupplierBills=suppliers invoices
-BillContacts=Invoice contacts
 Payment=Payment
 PaymentBack=Payment back
 Payments=Payments

@@ -7,7 +7,6 @@ Order=Order
 Orders=Orders
 OrderLine=Order line
 OrderFollow=Follow up
-OrderContact=Contacts / Addresses
 OrderDate=Order date
 OrderToProcess=Order to process
 NewOrder=New order
