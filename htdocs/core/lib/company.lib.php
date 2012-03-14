@@ -593,6 +593,104 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     return $i;
 }
 
+/**
+ * 		Show html area for list of addresses
+ *
+ *		@param	Conf		$conf		Object conf
+ * 		@param	Translate	$langs		Object langs
+ * 		@param	DoliDB		$db			Database handler
+ * 		@param	Object		$object		Third party object
+ *      @param  string		$backtopage	Url to go once address is created
+ *      @return	void
+ */
+function show_addresses($conf,$langs,$db,$object,$backtopage='')
+{
+	global $user;
+	global $bc;
+	
+	require_once(DOL_DOCUMENT_ROOT."/societe/class/address.class.php");
+
+	$addressstatic = new Address($db);
+	$num = $addressstatic->fetch_lines($object->id);
+
+	$buttoncreate='';
+	if ($user->rights->societe->creer)
+	{
+		$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/comm/address.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddAddress").' '.img_picto($langs->trans("AddAddress"),'filenew').'</a>'."\n";
+	}
+
+	print "\n";
+	print_fiche_titre($langs->trans("AddressesForCompany"),$buttoncreate,'');
+
+	print "\n".'<table class="noborder" width="100%">'."\n";
+
+	print '<tr class="liste_titre"><td>'.$langs->trans("Label").'</td>';
+	print '<td>'.$langs->trans("CompanyName").'</td>';
+	print '<td>'.$langs->trans("Town").'</td>';
+	print '<td>'.$langs->trans("Country").'</td>';
+	print '<td>'.$langs->trans("Tel").'</td>';
+	print '<td>'.$langs->trans("Fax").'</td>';
+	//print '<td>'.$langs->trans("EMail").'</td>';
+	print "<td>&nbsp;</td>";
+	print "</tr>";
+
+	if ($num > 0)
+	{
+		$var=true;
+
+		foreach ($addressstatic->lines as $address)
+		{
+			$var = !$var;
+
+			print "<tr ".$bc[$var].">";
+
+			print '<td>';
+			print $address->label;
+			//print $addressstatic->getNomUrl(1);
+			print '</td>';
+
+			print '<td>'.$address->name.'</td>';
+			
+			print '<td>'.$address->town.'</td>';
+			
+			print '<td>'.$address->country.'</td>';
+
+			// Lien click to dial
+			print '<td>';
+			print dol_print_phone($address->phone,$address->country_code,$address->id,$object->id,'AC_TEL');
+			print '</td>';
+			print '<td>';
+			print dol_print_phone($address->fax,$address->country_code,$address->id,$object->id,'AC_FAX');
+			print '</td>';
+			/*
+			print '<td>';
+			print dol_print_email($address->email,$address->id,$object->id,'AC_EMAIL');
+			print '</td>';
+			*/
+
+			if ($user->rights->societe->creer)
+			{
+				print '<td align="right">';
+				print '<a href="'.DOL_URL_ROOT.'/comm/address.php?action=edit&amp;id='.$address->id.'&amp;socid='.$object->id.'&amp;backtopage='.urlencode($backtopage).'">';
+				print img_edit();
+				print '</a></td>';
+			}
+
+			print "</tr>\n";
+		}
+	}
+	else
+	{
+		//print "<tr ".$bc[$var].">";
+		//print '<td>'.$langs->trans("NoAddressYetDefined").'</td>';
+		//print "</tr>\n";
+	}
+	print "\n</table>\n";
+
+	print "<br>\n";
+
+	return $num;
+}
 
 /**
  *    	Show html area with actions to do
