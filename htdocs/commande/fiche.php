@@ -440,12 +440,6 @@ if ($action == 'setdate_livraison' && $user->rights->commande->creer)
     }
 }
 
-if ($action == 'setaddress' && $user->rights->commande->creer)
-{
-    $object->fetch($id);
-    $object->set_adresse_livraison($user,$_POST['fk_address']);
-}
-
 if ($action == 'setmode' && $user->rights->commande->creer)
 {
     $object->fetch($id);
@@ -1329,15 +1323,6 @@ if ($action == 'create' && $user->rights->commande->creer)
     }
     $form->select_date($datedelivery,'liv_','','','',"crea_commande",1,1);
     print "</td></tr>";
-
-    // Delivery address
-    if ($conf->global->COMMANDE_ADD_DELIVERY_ADDRESS)
-    {
-        print '<tr><td nowrap="nowrap">'.$langs->trans('DeliveryAddress').'</td><td colspan="2">';
-        $numaddress = $formother->select_address($soc->fk_delivery_address, $socid,'fk_address',1);
-        print ' &nbsp; <a href="../comm/address.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddAddress").'</a>';
-        print '</td></tr>';
-    }
 
     // Conditions de reglement
     print '<tr><td nowrap="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';

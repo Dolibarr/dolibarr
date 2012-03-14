@@ -27,6 +27,7 @@ require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/propal.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
 
 $langs->load("facture");
@@ -43,6 +44,8 @@ $action=GETPOST('action', 'alpha');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'propale', $id, 'propal');
 
+$object = new Propal($db);
+
 
 /*
  * Ajout d'un nouveau contact
@@ -50,42 +53,38 @@ $result = restrictedArea($user, 'propale', $id, 'propal');
 
 if ($action == 'addcontact' && $user->rights->propale->creer)
 {
-
-	$result = 0;
-	$propal = new Propal($db);
-	$result = $propal->fetch($id);
+	$result = $object->fetch($id);
 
     if ($result > 0 && $id > 0)
     {
-  		$result = $propal->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
+  		$result = $object->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
     }
 
 	if ($result >= 0)
 	{
-		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$propal->id);
+		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	}
 	else
 	{
-		if ($propal->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
 			$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
 		}
 		else
 		{
-			$mesg = '<div class="error">'.$propal->error.'</div>';
+			$mesg = '<div class="error">'.$object->error.'</div>';
 		}
 	}
 }
 
 // Bascule du statut d'un contact
-if ($action == 'swapstatut' && $user->rights->propale->creer)
+else if ($action == 'swapstatut' && $user->rights->propale->creer)
 {
-	$propal = new Propal($db);
-	if ($propal->fetch($id) > 0)
+	if ($object->fetch($id) > 0)
 	{
-	    $result=$propal->swapContactStatus(GETPOST('ligne'));
+	    $result=$object->swapContactStatus(GETPOST('ligne'));
 	}
 	else
 	{
@@ -94,21 +93,27 @@ if ($action == 'swapstatut' && $user->rights->propale->creer)
 }
 
 // Efface un contact
-if ($action == 'deleteline' && $user->rights->propale->creer)
+else if ($action == 'deleteline' && $user->rights->propale->creer)
 {
-	$propal = new Propal($db);
-	$propal->fetch($id);
-	$result = $propal->delete_contact($lineid);
+	$object->fetch($id);
+	$result = $object->delete_contact($lineid);
 
 	if ($result >= 0)
 	{
-		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$propal->id);
+		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	}
 	else
 	{
 		dol_print_error($db);
 	}
+}
+
+else if ($action == 'setaddress' && $user->rights->propale->creer)
+{
+	$object->fetch($id);
+	$result=$object->set_adresse_livraison($user,$_POST['fk_address']);
+	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 
@@ -120,6 +125,7 @@ llxHeader('', $langs->trans("Proposal"), "Propal");
 
 $form = new Form($db);
 $formcompany= new FormCompany($db);
+$formother = new FormOther($db);
 $contactstatic=new Contact($db);
 $userstatic=new User($db);
 
@@ -133,13 +139,12 @@ dol_htmloutput_mesg($mesg);
 
 if ($id > 0 || ! empty($ref))
 {
-	$propal = New Propal($db);
-	if ($propal->fetch($id,$ref) > 0)
+	if ($object->fetch($id,$ref) > 0)
 	{
 		$soc = new Societe($db);
-		$soc->fetch($propal->socid);
+		$soc->fetch($object->socid);
 
-		$head = propal_prepare_head($propal);
+		$head = propal_prepare_head($object);
 		dol_fiche_head($head, 'contact', $langs->trans("Proposal"), 0, 'propal');
 
 		/*
@@ -151,7 +156,7 @@ if ($id > 0 || ! empty($ref))
 
 		// Ref
 		print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
-		print $form->showrefnav($propal,'ref',$linkback,1,'ref','ref','');
+		print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','');
 		print '</td></tr>';
 
 		// Ref client
@@ -161,15 +166,37 @@ if ($id > 0 || ! empty($ref))
 		print '</td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
-		print $propal->ref_client;
+		print $object->ref_client;
 		print '</td>';
 		print '</tr>';
 
 		// Customer
-		if ( is_null($propal->client) )
-			$propal->fetch_thirdparty();
+		if (is_null($object->client)) $object->fetch_thirdparty();
 		print "<tr><td>".$langs->trans("Company")."</td>";
-		print '<td colspan="3">'.$propal->client->getNomUrl(1).'</td></tr>';
+		print '<td colspan="3">'.$object->client->getNomUrl(1).'</td></tr>';
+		
+		// Delivery address
+		if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS)
+		{
+			print '<tr><td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('DeliveryAddress');
+			print '</td>';
+		
+			if ($action != 'editdelivery_address' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_address&amp;socid='.$object->socid.'&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDeliveryAddress'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
+		
+			if ($action == 'editdelivery_address')
+			{
+				$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,GETPOST('socid','int'),'fk_address','propal',$object->id);
+			}
+			else
+			{
+				$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,GETPOST('socid','int'),'none','propal',$object->id);
+			}
+			print '</td></tr>';
+		}
 
 		print "</table>";
 
@@ -215,11 +242,11 @@ if ($id > 0 || ! empty($ref))
 
 			print '<td>';
 			// On recupere les id des users deja selectionnes
-			//$userAlreadySelected = $propal->getListContactId('internal');	// On ne doit pas desactiver un contact deja selectionne car on doit pouvoir le selectionner une deuxieme fois pour un autre type
+			//$userAlreadySelected = $object->getListContactId('internal');	// On ne doit pas desactiver un contact deja selectionne car on doit pouvoir le selectionner une deuxieme fois pour un autre type
 			$form->select_users($user->id,'contactid',0,$userAlreadySelected);
 			print '</td>';
 			print '<td>';
-			$formcompany->selectTypeContact($propal, '', 'type','internal');
+			$formcompany->selectTypeContact($object, '', 'type','internal');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 			print '</tr>';
@@ -241,8 +268,8 @@ if ($id > 0 || ! empty($ref))
 			print '</td>';
 
 			print '<td>';
-			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$propal->client->id;
-			$selectedCompany = $formcompany->selectCompaniesForNewContact($propal, 'id', $selectedCompany, 'newcompany');
+			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$object->client->id;
+			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany');
 			print '</td>';
 
 			print '<td>';
@@ -250,7 +277,7 @@ if ($id > 0 || ! empty($ref))
 			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 			print '</td>';
 			print '<td>';
-			$formcompany->selectTypeContact($propal, '', 'type','external');
+			$formcompany->selectTypeContact($object, '', 'type','external');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"';
 			if (! $nbofcontacts) print ' disabled="disabled"';
@@ -278,7 +305,7 @@ if ($id > 0 || ! empty($ref))
 
 		foreach(array('internal','external') as $source)
 		{
-			$tab = $propal->liste_contact(-1,$source);
+			$tab = $object->liste_contact(-1,$source);
 			$num=count($tab);
 
 			$i = 0;
@@ -335,9 +362,9 @@ if ($id > 0 || ! empty($ref))
 				// Statut
 				print '<td align="center">';
 				// Activation desativation du contact
-				if ($propal->statut >= 0) print '<a href="contact.php?id='.$propal->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
+				if ($object->statut >= 0) print '<a href="contact.php?id='.$object->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
 				print $contactstatic->LibStatut($tab[$i]['status'],3);
-				if ($propal->statut >= 0) print '</a>';
+				if ($object->statut >= 0) print '</a>';
 				print '</td>';
 
 				// Icon update et delete
@@ -345,7 +372,7 @@ if ($id > 0 || ! empty($ref))
 				if ($user->rights->propale->creer)
 				{
 					print '&nbsp;';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$propal->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';
 					print img_delete();
 					print '</a>';
 				}
@@ -364,8 +391,6 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-llxFooter();
-
 $db->close();
-
+llxFooter();
 ?>
