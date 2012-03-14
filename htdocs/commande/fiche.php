@@ -29,7 +29,6 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formorder.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/modules/commande/modules_commande.php");
@@ -1187,7 +1186,6 @@ llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-$formother = new FormOther($db);
 $formorder = new FormOrder($db);
 
 
@@ -1786,29 +1784,6 @@ else
             print dol_htmlcleanlastbr($object->note_public);
             print '</td>';
             print '</tr>';
-
-            // Delivery address
-            if ($conf->global->COMMANDE_ADD_DELIVERY_ADDRESS)
-            {
-                print '<tr><td height="10">';
-                print '<table class="nobordernopadding" width="100%"><tr><td>';
-                print $langs->trans('DeliveryAddress');
-                print '</td>';
-
-                if ($action != 'editdelivery_adress' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$object->socid.'&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
-                print '</tr></table>';
-                print '</td><td colspan="2">';
-
-                if ($action == 'editdelivery_adress')
-                {
-                    $formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$socid,'fk_address','commande',$object->id);
-                }
-                else
-                {
-                    $formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$socid,'none','commande',$object->id);
-                }
-                print '</td></tr>';
-            }
 
             // Terms of payment
             print '<tr><td height="10">';
