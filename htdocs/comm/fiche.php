@@ -795,6 +795,12 @@ if ($id > 0)
 		// List of contacts
 		show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
 	}
+	
+	// Addresses list
+	if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) && ! empty($conf->global->MAIN_REPEATADDRESSONEACHTAB))
+	{
+		$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+	}
 
     if (! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
     {

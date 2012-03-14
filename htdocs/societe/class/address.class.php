@@ -57,7 +57,7 @@ class Address
 	 *
 	 *  @param	DoliDB		$db     Database handler
 	 */
-	function Address($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -77,7 +77,7 @@ class Address
 		$this->name  = trim($this->name);
 		$this->label = trim($this->label);
 
-		dol_syslog("Address::create label=".$this->label);
+		dol_syslog(get_class($this)."::create label=".$this->label);
 
 		$this->db->begin();
 
@@ -97,13 +97,13 @@ class Address
 
 				if ($ret >= 0)
 				{
-					dol_syslog("Address::create success id=".$this->id);
+					dol_syslog(get_class($this)."::create success id=".$this->id);
 					$this->db->commit();
 					return 0;
 				}
 				else
 				{
-					dol_syslog("Address::create echec update");
+					dol_syslog(get_class($this)."::create echec update");
 					$this->db->rollback();
 					return -3;
 				}
@@ -118,7 +118,7 @@ class Address
 				}
 				else
 				{
-					dol_syslog("Address::create echec insert sql=$sql");
+					dol_syslog(get_class($this)."::create echec insert sql=$sql");
 				}
 				$this->db->rollback();
 				return -2;
@@ -128,7 +128,7 @@ class Address
 		else
 		{
 			$this->db->rollback();
-			dol_syslog("Address::create echec verify sql=$sql");
+			dol_syslog(get_class($this)."::create echec verify sql=$sql");
 			return -1;
 		}
 	}
@@ -165,79 +165,69 @@ class Address
 	{
 		global $langs;
 
-		dol_syslog("Address::Update");
-
-		// Nettoyage des parametres
-
-		$this->fk_soc	= $socid;
-		$this->label	= trim($this->label);
-		$this->name		= trim($this->name);
-		$this->address	= trim($this->address);
-		$this->cp		= trim($this->cp);
-		$this->ville	= trim($this->ville);
-		$this->pays_id	= trim($this->pays_id);
+		// Clean parameters
+		$this->fk_soc		= $socid;
+		$this->label		= trim($this->label);
+		$this->name			= trim($this->name);
+		$this->address		= trim($this->address);
+		$this->zip			= trim($this->zip);
+		$this->town			= trim($this->town);
 		$this->country_id	= trim($this->country_id);
-		$this->tel		= trim($this->tel);
-		$this->tel		= preg_replace("/\s/","",$this->tel);
-		$this->tel		= preg_replace("/\./","",$this->tel);
-		$this->fax		= trim($this->fax);
-		$this->fax		= preg_replace("/\s/","",$this->fax);
-		$this->fax		= preg_replace("/\./","",$this->fax);
-		$this->note		= trim($this->note);
+		$this->phone		= trim($this->phone);
+		$this->phone		= preg_replace("/\s/","",$this->phone);
+		$this->phone		= preg_replace("/\./","",$this->phone);
+		$this->fax			= trim($this->fax);
+		$this->fax			= preg_replace("/\s/","",$this->fax);
+		$this->fax			= preg_replace("/\./","",$this->fax);
+		$this->note			= trim($this->note);
 
 		$result = $this->verify();		// Verifie que nom et label obligatoire
 
 		if ($result >= 0)
 		{
-			dol_syslog("Address::Update verify ok");
+			dol_syslog(get_class($this)."::Update verify ok");
+			
+			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe_address";
 			$sql.= " SET label = '" . $this->db->escape($this->label) ."'"; // Champ obligatoire
-			$sql.= ",name = '" . $this->db->escape($this->name) ."'"; // Champ obligatoire
-			$sql.= ",address = '" . $this->db->escape($this->address) ."'";
-
-			if ($this->cp)
-			{ $sql .= ",cp = '" . $this->cp ."'"; }
-
-			if ($this->ville)
-			{ $sql .= ",ville = '" . $this->db->escape($this->ville) ."'"; }
-
-			$sql .= ",fk_pays = '" . ($this->country_id?$this->country_id:'0') ."'";
-			$sql.= ",note = '" . $this->db->escape($this->note) ."'";
-
-			if ($this->tel)
-			{ $sql .= ",tel = '" . $this->tel ."'"; }
-
-			if ($this->fax)
-			{ $sql .= ",fax = '" . $this->fax ."'"; }
-
+			$sql.= ", name = '" . $this->db->escape($this->name) ."'"; // Champ obligatoire
+			$sql.= ", address = ".($this->address?"'".$this->db->escape($this->address)."'":"null");
+			$sql.= ", cp = ".($this->zip?"'".$this->db->escape($this->zip)."'":"null");
+			$sql.= ", ville = ".($this->town?"'".$this->db->escape($this->town)."'":"null");
+			$sql.= ", fk_pays = '" . ($this->country_id?$this->country_id:'0') ."'";
+			$sql.= ", note = ".($this->note?"'".$this->db->escape($this->note)."'":"null");
+			$sql.= ", tel = ".($this->phone?"'".$this->db->escape($this->phone)."'":"null");
+			$sql.= ", fax = ".($this->fax?"'".$this->db->escape($this->fax)."'":"null");
 			if ($user) $sql .= ",fk_user_modif = '".$user->id."'";
 			$sql .= " WHERE fk_soc = '" . $socid ."' AND rowid = '" . $id ."'";
-
+			
+			dol_syslog(get_class($this)."::Update sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
-				$result = 1;
+				dol_syslog(get_class($this)."::Update success");
+				$this->db->commit();
+				return 1;
 			}
 			else
 			{
 				if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
-					// Doublon
-					$this->error = $langs->trans("ErrorDuplicateField");
-					$result =  -1;
+				
+					$this->error=$langs->trans("ErrorDuplicateField",$this->name);
+					$result=-1;
 				}
 				else
 				{
-
-					$this->error = $langs->trans("Error sql=$sql");
-					dol_syslog("Address::Update echec sql=$sql");
-					$result =  -2;
+					$this->error=$this->db->lasterror();
+					dol_syslog(get_class($this)."::Update error sql=".$sql, LOG_ERR);
+					$result=-2;
 				}
+				$this->db->rollback();
+				return $result;
 			}
 		}
-
-		return $result;
 
 	}
 
@@ -257,7 +247,6 @@ class Address
 		$sql .= ' WHERE rowid = '.$socid;
 
 		$resqlsoc=$this->db->query($sql);
-
 		if ($resqlsoc)
 		{
 			if ($this->db->num_rows($resqlsoc))
@@ -328,19 +317,19 @@ class Address
 				}
 				else
 				{
-					dol_syslog('Address::Fetch Erreur: aucune adresse');
+					dol_syslog(get_class($this).'::Fetch Erreur: aucune adresse', LOG_ERR);
 					return 0;
 				}
 			}
 			else
 			{
-				dol_syslog('Address::Fetch Erreur: societe inconnue');
+				dol_syslog(get_class($this).'::Fetch Erreur: societe inconnue', LOG_ERR);
 				return -1;
 			}
 		}
 		else
 		{
-			dol_syslog('Societe::Fetch '.$this->db->error());
+			dol_syslog(get_class($this).'::Fetch '.$this->db->error(), LOG_ERR);
 			$this->error=$this->db->error();
 		}
 	}
@@ -508,13 +497,13 @@ class AddressLine
 	var $date_update;
 	var $label;
 	var $name;
-	var $adresse;
-	var $cp;
-	var $ville;
-	var $pays_id;
-	var $pays_code;
-	var $pays;
-	var $tel;
+	var $address;
+	var $zip;
+	var $town;
+	var $country_id;
+	var $country_code;
+	var $country;
+	var $phone;
 	var $fax;
 	var $note;
 
