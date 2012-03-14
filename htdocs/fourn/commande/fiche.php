@@ -77,14 +77,14 @@ $object = new CommandeFournisseur($db);
 if ($action == 'setconditions' && $user->rights->fournisseur->commande->creer)
 {
     $object->fetch($id);
-    $result=$object->cond_reglement($_POST['cond_reglement_id']);
+    $result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
 }
 
 // mode de reglement
 if ($action == 'setmode' && $user->rights->fournisseur->commande->creer)
 {
     $object->fetch($id);
-    $result=$object->mode_reglement($_POST['mode_reglement_id']);
+    $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
 }
 
 // Set project

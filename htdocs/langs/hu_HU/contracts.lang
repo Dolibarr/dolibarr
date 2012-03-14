@@ -21,7 +21,6 @@ ServiceStatusClosed=Lezárva
 ServicesLegend=Szolgáltatások magyarázat
 Contracts=Szerződések
 Contract=Szerződés
-ContractContacts=Szerződés kapcsolattartói
 NoContracts=Nincs szerződés
 MenuServices=Szolgáltatás
 MenuInactiveServices=Nincs aktív szolgáltatás

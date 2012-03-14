@@ -1005,13 +1005,13 @@ function pdf_getlineupexcltax($object,$i,$outputlangs,$hidedetails=0,$hookmanage
  */
 function pdf_getlineupwithtax($object,$i,$outputlangs,$hidedetails=0)
 {
-    if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+    if (! empty($object->hooks) && (($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line)))
     {
         $special_code = $object->lines[$i]->special_code;
     	if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-    	foreach($object->hooks as $hook)
+    	foreach($object->hooks as $modules)
     	{
-    		if (method_exists($hook['modules'][$special_code],'pdf_getlineupwithtax')) return $hook['modules'][$special_code]->pdf_getlineupwithtax($object,$i,$outputlangs,$hidedetails);
+    		if (method_exists($modules[$special_code],'pdf_getlineupwithtax')) return $modules[$special_code]->pdf_getlineupwithtax($object,$i,$outputlangs,$hidedetails);
 		}
     }
     else
@@ -1222,13 +1222,13 @@ function pdf_getlinetotalwithtax($object,$i,$outputlangs,$hidedetails=0)
     }
     else
     {
-        if (! empty($object->hooks) && ( ($object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+        if (! empty($object->hooks) && (($object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line)))
         {
         	$special_code = $object->lines[$i]->special_code;
         	if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-        	foreach($object->hooks as $hook)
+        	foreach($object->hooks as $modules)
 	    	{
-	    		if (method_exists($hook['modules'][$special_code],'pdf_getlinetotalwithtax')) return $hook['modules'][$special_code]->pdf_getlinetotalwithtax($object,$i,$outputlangs,$hidedetails);
+	    		if (method_exists($modules[$special_code],'pdf_getlinetotalwithtax')) return $modules[$special_code]->pdf_getlinetotalwithtax($object,$i,$outputlangs,$hidedetails);
 			}
         }
         else
@@ -1291,7 +1291,7 @@ function pdf_getTotalQty($object,$type,$outputlangs,$hookmanager=false)
  */
 function pdf_getCurrencySymbol(&$pdf, $currency_code)
 {
-	global $form;
+	global $db, $form;
 	
 	$currency_sign = '';
 	

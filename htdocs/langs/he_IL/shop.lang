@@ -1,0 +1,20 @@
+/*
+ * Language code: he_IL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-03-10 15:14:54
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-03-10 15:14:54).
+// Reference language: en_US -> he_IL
+CHARSET=UTF-8
+Shop=קניות
+ShopWeb=חנות האינטרנט
+LastOrders=האחרונים הזמנות
+OnStandBy=על המתנה
+TreatmentInProgress=הטיפול מתבצע
+LastCustomers=אחרון הלקוחות
+OSCommerceShop=חנות osCommerce
+OSCommerce=OsCommerce
+AddProd=מוכר באופן מקוון
+// STOP - Lines generated via autotranslator.php tool (2012-03-10 15:18:55).

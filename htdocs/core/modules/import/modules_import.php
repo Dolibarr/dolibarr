@@ -55,18 +55,20 @@ class ModeleImports
 	/**
      *  Constructor
 	 */
-	function ModeleImports()
+	function __construct()
 	{
 	}
 
 	/**
-	 *   Charge en memoire et renvoie la liste des modeles actifs
+	 *  Charge en memoire et renvoie la liste des modeles actifs
 	 *
-	 *   @param	DoliDB	$db      Handler de base
+     *  @param	DoliDB	$db     			Database handler
+     *  @param  string	$maxfilenamelength  Max length of value to show
+     *  @return	array						List of templates
 	 */
-	function liste_modeles($db)
+	function liste_modeles($db,$maxfilenamelength=0)
 	{
-		dol_syslog("ModeleImport::liste_modeles");
+		dol_syslog(get_class($this)."::liste_modeles");
 
 		$dir=DOL_DOCUMENT_ROOT."/core/modules/import/";
 		$handle=opendir($dir);

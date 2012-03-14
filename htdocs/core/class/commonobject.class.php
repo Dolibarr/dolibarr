@@ -861,8 +861,114 @@ abstract class CommonObject
             return -1;
         }
     }
-
-
+    
+    /**
+     *  Change the payments methods
+     *
+     *  @param		int		$id		Id of new payment method
+     *  @return		int				>0 if OK, <0 if KO
+     */
+    function setPaymentMethods($id)
+    {
+    	dol_syslog(get_class($this).'::setPaymentMethods('.$id.')');
+    	if ($this->statut >= 0 || $this->element == 'societe')
+    	{
+    		// TODO uniformize field name
+    		$fieldname = 'fk_mode_reglement';
+    		if ($this->element == 'societe') $fieldname = 'mode_reglement';
+    
+    		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+    		$sql .= ' SET '.$fieldname.' = '.$id;
+    		$sql .= ' WHERE rowid='.$this->id;
+    
+    		if ($this->db->query($sql))
+    		{
+    			$this->mode_reglement_id = $id;
+    			$this->mode_reglement = $id;	// for compatibility
+    			return 1;
+    		}
+    		else
+    		{
+    			dol_syslog(get_class($this).'::setPaymentMethods Erreur '.$sql.' - '.$this->db->error());
+    			$this->error=$this->db->error();
+    			return -1;
+    		}
+    	}
+    	else
+    	{
+    		dol_syslog(get_class($this).'::setPaymentMethods, status of the object is incompatible');
+    		$this->error='Status of the object is incompatible '.$this->statut;
+    		return -2;
+    	}
+    }
+    
+    /**
+     *  Change the payments terms
+     *
+     *  @param		int		$id		Id of new payment terms
+     *  @return		int				>0 if OK, <0 if KO
+     */
+    function setPaymentTerms($id)
+    {
+    	dol_syslog(get_class($this).'::setPaymentTerms('.$id.')');
+    	if ($this->statut >= 0 || $this->element == 'societe')
+    	{
+    		// TODO uniformize field name
+    		$fieldname = 'fk_cond_reglement';
+    		if ($this->element == 'societe') $fieldname = 'cond_reglement';
+    		
+    		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+    		$sql .= ' SET '.$fieldname.' = '.$id;
+    		$sql .= ' WHERE rowid='.$this->id;
+    		
+    		if ($this->db->query($sql))
+    		{
+    			$this->cond_reglement_id = $id;
+    			$this->cond_reglement = $id;	// for compatibility
+    			return 1;
+    		}
+    		else
+    		{
+    			dol_syslog(get_class($this).'::setPaymentTerms Erreur '.$sql.' - '.$this->db->error());
+    			$this->error=$this->db->error();
+    			return -1;
+    		}
+    	}
+    	else
+    	{
+    		dol_syslog(get_class($this).'::setPaymentTerms, status of the object is incompatible');
+    		$this->error='Status of the object is incompatible '.$this->statut;
+    		return -2;
+    	}
+    }
+    
+    /**
+     *	Define delivery address
+     *
+     *	@param      int		$id		Address id
+     *	@return     int				<0 si ko, >0 si ok
+     */
+    function setDeliveryAddress($id)
+    {
+    	$fieldname = 'fk_adresse_livraison';
+    	if ($this->element == 'delivery' || $this->element == 'shipping') $fieldname = 'fk_address';
+    	
+    	$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ".$fieldname." = ".$id;
+    	$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+    	
+    	if ($this->db->query($sql))
+    	{
+    		$this->fk_delivery_address = $id;
+    		return 1;
+    	}
+    	else
+    	{
+    		$this->error=$this->db->error();
+    		dol_syslog(get_class($this).'::setDeliveryAddress Erreur '.$sql.' - '.$this->error);
+    		return -1;
+    	}
+    }
+    
     /**
      *		Set last model used by doc generator
      *

@@ -39,10 +39,13 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
 
 
 	/**
-	 *      \brief      Return list of active generation modules
-	 * 		\param		$db		Database handler
+	 *  Return list of active generation modules
+	 *
+     *  @param	DoliDB	$db     			Database handler
+     *  @param  string	$maxfilenamelength  Max length of value to show
+     *  @return	array						List of templates
 	 */
-	function liste_modeles($db)
+	function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
 
@@ -50,7 +53,7 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
 		$liste=array();
 
 		include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
-		$liste=getListOfModels($db,$type,'');
+		$liste=getListOfModels($db,$type,$maxfilenamelength);
 
 		return $liste;
 	}
@@ -65,8 +68,8 @@ abstract class ModelNumRefExpedition
 {
 	var $error='';
 
-	/** Return if a module can be used or not    
-	 *	
+	/** Return if a module can be used or not
+	 *
 	 *  @return		boolean     true if module can be used
 	 */
 	function isEnabled()
@@ -85,7 +88,7 @@ abstract class ModelNumRefExpedition
 		return $langs->trans("NoDescription");
 	}
 
-	/**     
+	/**
 	 *	Return numbering example
 	 *	@return     string      Example
 	 */
@@ -96,7 +99,7 @@ abstract class ModelNumRefExpedition
 		return $langs->trans("NoExample");
 	}
 
-	/**     
+	/**
 	 *	Test if existing numbers make problems with numbering
 	 *	@return     boolean     false if conflit, true if ok
 	 */
@@ -105,7 +108,7 @@ abstract class ModelNumRefExpedition
 		return true;
 	}
 
-	/** 
+	/**
 	 *	Return next value
 	 *	@return     string      Value
 	 */

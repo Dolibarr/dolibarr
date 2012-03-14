@@ -1306,6 +1306,9 @@ span.butAction, span.butActionDelete {
 /* Tables                                                                         */
 /* ============================================================================== */
 
+.allwidth {
+	width: 100%;
+}
 
 #undertopmenu {
 /*	background-image: url("<?php echo dol_buildpath($path.'/theme/eldy/img/gradient.gif',1) ?>"); */
@@ -1370,29 +1373,29 @@ td.border {
 
 table.noborder, table.formdoc {
 	width: 100%;
-	
+
 	border-collapse: separate !important;
 	border-spacing: 0px;
-	
+
 	border-right-width: 0px;
 	border-right-color: #DDDDDD;
 	border-right-style: solid;
-	
+
 	border-left-width: 1px;
 	border-left-color: #DDDDDD;
 	border-left-style: solid;
-	
+
 	border-bottom-width: 1px;
 	border-bottom-color: #DDDDDD;
 	border-bottom-style: solid;
-	
+
 	margin: 0px 0px 2px 0px;
 	/*padding: 1px 2px 1px 2px;*/
-	
+
 	-moz-box-shadow: 4px 4px 4px #CCC;
 	-webkit-box-shadow: 4px 4px 4px #CCC;
 	box-shadow: 4px 4px 4px #CCC;
-	
+
 	-moz-border-radius: 0.2em;
 	-webkit-border-radius: 0.2em;
 	border-radius: 0.2em;
@@ -1400,11 +1403,11 @@ table.noborder, table.formdoc {
 
 table.noborder tr {
 	border-top-color: #FEFEFE;
-	
+
 	border-right-width: 1px;
 	border-right-color: #BBBBBB;
 	border-right-style: solid;
-	
+
 	border-left-width: 1px;
 	border-left-color: #BBBBBB;
 	border-left-style: solid;
@@ -1518,7 +1521,7 @@ tr.liste_total td {
 	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
-	
+
 	font-family: <?php print $fontlist ?>;
 	border: 0px;
 	margin-bottom: 1px;
@@ -1538,7 +1541,7 @@ tr.liste_total td {
 	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
-	
+
 	font-family: <?php print $fontlist ?>;
 	border: 0px;
 	margin-bottom: 1px;
@@ -1551,7 +1554,7 @@ tr.liste_total td {
 }
 */
 
-/* Disable shadows */ 
+/* Disable shadows */
 .noshadow {
 	-moz-box-shadow: 0px 0px 0px #CCC !important;
 	-webkit-box-shadow: 0px 0px 0px #CCC !important;
@@ -1719,6 +1722,15 @@ div.titre {
 	text-decoration: none;
 	text-shadow: 2px 2px 4px #BFBFBF;
 }
+
+#dolpaymenttable { width: 600px; font-size: 13px; }
+#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; }
+#tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
+#tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
+#tablepublicpayment tr.liste_total td { border-top: none; }
+
+#divsubscribe { width: 700px; }
+#tablesubscribe { width: 100%; }
 
 
 /* ============================================================================== */
@@ -1968,7 +1980,7 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 /*  jQuery - jeditable                                                            */
 /* ============================================================================== */
 
-.editkey_textarea, .editkey_ckeditor, .editkey_string, .editkey_email, .editkey_numeric, .editkey_select {
+.editkey_textarea, .editkey_ckeditor, .editkey_string, .editkey_email, .editkey_numeric, .editkey_select, .editkey_autocomplete {
 	background: url(<?php echo dol_buildpath($path.'/theme/eldy/img/edit.png',1) ?>) right top no-repeat;
 	cursor: pointer;
 }
@@ -1978,12 +1990,12 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 	cursor: pointer;
 }
 
-.editval_textarea.active:hover, .editval_ckeditor.active:hover, .editval_string.active:hover, .editval_email.active:hover, .editval_numeric.active:hover, .editval_select.active:hover, .editval_datepicker.active:hover {
+.editval_textarea.active:hover, .editval_ckeditor.active:hover, .editval_string.active:hover, .editval_email.active:hover, .editval_numeric.active:hover, .editval_select.active:hover, .editval_autocomplete.active:hover, .editval_datepicker.active:hover {
 	background: white;
 	cursor: pointer;
 }
 
-.viewval_textarea.active:hover, .viewval_ckeditor.active:hover, .viewval_string.active:hover, .viewval_email.active:hover, .viewval_numeric.active:hover, .viewval_select.active:hover, .viewval_datepicker.active:hover {
+.viewval_textarea.active:hover, .viewval_ckeditor.active:hover, .viewval_string.active:hover, .viewval_email.active:hover, .viewval_numeric.active:hover, .viewval_select.active:hover, .viewval_autocomplete.active:hover, .viewval_datepicker.active:hover {
 	background: white;
 	cursor: pointer;
 }

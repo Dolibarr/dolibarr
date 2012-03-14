@@ -78,6 +78,7 @@ For developers:
 - New: A page can force reload of css style sheet
 - New: A module can add import description for import wizard, even for tables with foreign keys.
 - New: Can add tabs on statistics views.
+- New: Add CSS id/class into public payment pages.
 - Qual: Add a lot of more PHPUnit tests.
 - Qual: Data structure for supplier prices is simpler.
 - Qual: Removed no more used external libraries.

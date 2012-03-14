@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2006-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2011      Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2011-2012 Juanjo Menent		 <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,7 @@ if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/class/co
 
 
 /**
- *	\class      Expedition
- *	\brief      Class to manage shippings
+ *	Class to manage shipments
  */
 class Expedition extends CommonObject
 {
@@ -56,6 +55,7 @@ class Expedition extends CommonObject
 	var $tracking_number;
 	var $tracking_url;
 	var $statut;
+	var $billed;
 
 	var $trueWeight;
 	var $weight_units;
@@ -73,14 +73,22 @@ class Expedition extends CommonObject
 	var $date_creation;
 	var $date_valid;
 
+	// For Invoicing
+	var $total_ht;			// Total net of tax
+	var $total_ttc;			// Total with tax
+	var $total_tva;			// Total VAT
+	var $total_localtax1;   // Total Local tax 1
+	var $total_localtax2;   // Total Local tax 2
+
+
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	function Expedition($DB)
+	function Expedition($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 		$this->lines = array();
 		$this->products = array();
 
@@ -88,6 +96,7 @@ class Expedition extends CommonObject
 		$this->statuts[-1] = 'StatusSendingCanceled';
 		$this->statuts[0]  = 'StatusSendingDraft';
 		$this->statuts[1]  = 'StatusSendingValidated';
+		$this->statuts[2]  = 'StatusSendingProcessed';
 	}
 
 	/**
@@ -364,6 +373,7 @@ class Expedition extends CommonObject
 				$this->tracking_number      = $obj->tracking_number;
 				$this->origin               = ($obj->origin?$obj->origin:'commande'); // For compatibility
 				$this->origin_id            = $obj->origin_id;
+				$this->billed				= ($obj->fk_statut==2?1:0);
 
 				$this->trueWeight           = $obj->weight;
 				$this->weight_units         = $obj->weight_units;
@@ -840,6 +850,8 @@ class Expedition extends CommonObject
 		// TODO: recuperer les champs du document associe a part
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.description, cd.qty as qty_asked";
+		$sql.= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
+		$sql.= ", cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.price, cd.subprice";
 		$sql.= ", ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
 		$sql.= ", p.ref as product_ref, p.label as product_label, p.fk_product_type, p.weight, p.weight_units, p.volume, p.volume_units";
 		$sql.= " FROM (".MAIN_DB_PREFIX."expeditiondet as ed,";
@@ -852,8 +864,17 @@ class Expedition extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
+			include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
+
 			$num = $this->db->num_rows($resql);
 			$i = 0;
+
+			$this->total_ht = 0;
+			$this->total_tva = 0;
+			$this->total_ttc = 0;
+			$this->total_localtax1 = 0;
+			$this->total_localtax2 = 0;
+
 			while ($i < $num)
 			{
 				$line = new ExpeditionLigne($this->db);
@@ -867,7 +888,7 @@ class Expedition extends CommonObject
 				$line->ref				= $obj->product_ref;		// TODO deprecated
                 $line->product_ref		= $obj->product_ref;
                 $line->product_label	= $obj->product_label;
-                $line->label          	= $obj->product_label;
+                //$line->label          	= $obj->product_label;
 				$line->libelle        	= $obj->product_label;		// TODO deprecated
 				$line->description    	= $obj->description;
 				$line->qty_asked      	= $obj->qty_asked;
@@ -876,6 +897,28 @@ class Expedition extends CommonObject
 				$line->weight_units   	= $obj->weight_units;
 				$line->volume         	= $obj->volume;
 				$line->volume_units   	= $obj->volume_units;
+
+				//Invoicing
+				$line->desc				= $obj->product_label;
+				$line->qty 				= $obj->qty_shipped;
+				$line->total_ht			= $obj->total_ht;
+				$line->total_localtax1 	= $obj->total_localtax1;
+				$line->total_localtax2 	= $obj->total_localtax2;
+				$line->total_ttc	 	= $obj->total_ttc;
+				$line->total_tva	 	= $obj->total_tva;
+				$line->tva_tx 		 	= $obj->tva_tx;
+				$line->localtax1_tx 	= $obj->localtax1_tx;
+				$line->localtax2_tx 	= $obj->localtax2_tx;
+				$line->price			= $obj->price;
+				$line->subprice			= $obj->subprice;
+				$line->remise_percent	= $obj->remise_percent;
+
+				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $info_bits);
+				$this->total_ht+= $tabprice[0];
+				$this->total_tva+= $tabprice[1];
+				$this->total_ttc+= $tabprice[2];
+				$this->total_localtax1+= $tabprice[9];
+				$this->total_localtax2+= $tabprice[10];
 
 				$this->lines[$i] = $line;
 
@@ -948,27 +991,32 @@ class Expedition extends CommonObject
 		if ($mode==0)
 		{
 			if ($statut==0) return $langs->trans($this->statuts[$statut]);
-			if ($statut==1) return $langs->trans($this->statuts[$statut]);
+			if ($statut==1)  return $langs->trans($this->statuts[$statut]);
+			if ($statut==2)  return $langs->trans($this->statuts[$statut]);
 		}
 		if ($mode==1)
 		{
 			if ($statut==0) return $langs->trans('StatusSendingDraftShort');
 			if ($statut==1) return $langs->trans('StatusSendingValidatedShort');
+			if ($statut==2) return $langs->trans('StatusSendingProcessedShort');
 		}
 		if ($mode == 3)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
 			if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4');
+			if ($statut==2) return img_picto($langs->trans('StatusSendingProcessed'),'statut6');
 		}
 		if ($mode == 4)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==2) return img_picto($langs->trans('StatusSendingProcessed'),'statut6').' '.$langs->trans('StatusSendingProcessed');
 		}
 		if ($mode == 5)
 		{
 			if ($statut==0) return $langs->trans('StatusSendingDraftShort').' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
 			if ($statut==1) return $langs->trans('StatusSendingValidatedShort').' '.img_picto($langs->trans($this->statuts[$statut]),'statut4');
+			if ($statut==2) return $langs->trans('StatusSendingProcessedShort').' '.img_picto($langs->trans('StatusSendingProcessedShort'),'statut6');
 		}
 	}
 
@@ -1161,6 +1209,30 @@ class Expedition extends CommonObject
 			$this->tracking_url = $value;
 		}
 	}
+
+	/**
+	 *	Classify the shipping as invoiced
+	 *
+	 *	@return     int     <0 if ko, >0 if ok
+	 */
+	function set_billed()
+	{
+		global $conf;
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=2';
+		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0 ;';
+		if ($this->db->query($sql) )
+		{
+			//TODO: Option to set order billed if 100% of order is shipped
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
 }
 
 
@@ -1181,6 +1253,14 @@ class ExpeditionLigne
 	var $libelle;       // Label produit
 	var $product_desc;  // Description produit
 	var $ref;
+
+	// Invoicing
+	var $remise_percent;
+	var $total_ht;			// Total net of tax
+	var $total_ttc;			// Total with tax
+	var $total_tva;			// Total VAT
+	var $total_localtax1;   // Total Local tax 1
+	var $total_localtax2;   // Total Local tax 2
 
 
     /**

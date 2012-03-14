@@ -42,7 +42,7 @@ class mailing_thirdparties extends MailingTargets
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function mailing_thirdparties($db)
+	function __construct($db)
 	{
 		$this->db=$db;
 	}

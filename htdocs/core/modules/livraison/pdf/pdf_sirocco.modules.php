@@ -40,9 +40,9 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	function pdf_sirocco($db)
+	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 

@@ -52,7 +52,7 @@ class ExportExcel extends ModeleExports
 	 *
 	 *	@param	    DoliDB	$db      Database handler
 	 */
-	function ExportExcel($db)
+	function __construct($db)
 	{
 		global $conf;
 		$this->db = $db;

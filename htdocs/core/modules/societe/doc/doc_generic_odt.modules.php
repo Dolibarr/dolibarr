@@ -44,7 +44,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function doc_generic_odt($db)
+	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 

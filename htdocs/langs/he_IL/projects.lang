@@ -1,0 +1,105 @@
+/*
+ * Language code: he_IL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-03-10 15:14:54
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-03-10 15:14:54).
+// Reference language: en_US -> he_IL
+CHARSET=UTF-8
+Project=פרויקט
+Projects=פרוייקטים
+SharedProject=כולם
+PrivateProject=אנשי הקשר של הפרויקט
+MyProjectsDesc=תפיסה זו מוגבלת פרויקטים שאתה ליצירת קשר (לא משנה מה הוא סוג).
+ProjectsPublicDesc=תצוגה זו מציגה את כל הפרויקטים אתה רשאי לקרוא.
+ProjectsDesc=תצוגה זו מציגה את כל הפרויקטים (הרשאות המשתמש שלך לאפשר לך הרשאה לראות הכל).
+MyTasksDesc=תפיסה זו מוגבלת פרויקטים או משימות שאתה ליצירת קשר (לא משנה מה הוא סוג).
+TasksPublicDesc=תצוגה זו מציגה את כל הפרויקטים והמשימות אתה רשאי לקרוא.
+TasksDesc=תצוגה זו מציגה את כל הפרויקטים והמשימות (הרשאות המשתמש שלך לאפשר לך הרשאה לראות הכל).
+Myprojects=פרויקטים שלי
+ProjectsArea=פרוייקטים בתחום
+NewProject=פרוייקט חדש
+AddProject=הוסף הפרויקט
+DeleteAProject=מחק את הפרויקט
+DeleteATask=מחק משימה
+ConfirmDeleteAProject=האם אתה בטוח שברצונך למחוק את הפרויקט הזה?
+ConfirmDeleteATask=האם אתה בטוח שברצונך למחוק משימה זו?
+OfficerProject=מנהל הפרויקט
+LastProjects=%s פרויקטים אחרונים
+AllProjects=כל הפרויקטים
+ProjectsList=רשימת הפרוייקטים
+ShowProject=הצג פרויקט
+SetProject=הגדרת הפרויקט
+NoProject=הפרויקט לא מוגדר או בבעלות
+NbOpenTasks=Nb של משימות שנפתחו
+NbOfProjects=Nb של פרויקטים
+TimeSpent=משך הזמן
+TimesSpent=משך הזמן
+RefTask=Ref. משימה
+LabelTask=התווית המשימה
+NewTimeSpent=מועד חדש בילו
+MyTimeSpent=הזמן שלי ביליתי
+MyTasks=המשימות שלי
+Tasks=משימות
+Task=משימה
+NewTask=המשימות החדשה
+AddTask=הוסף משימה
+AddDuration=הוסף את משך
+Activity=פעילות
+Activities=משימות / פעילויות
+MyActivity=הפעילות שלי
+MyActivities=שלי משימות / פעילויות
+MyProjects=פרויקטים שלי
+DurationEffective=יעיל למשך
+Progress=התקדמות
+Time=זמן
+ListProposalsAssociatedProject=רשימת ההצעות מסחריים הקשורים לפרויקט
+ListOrdersAssociatedProject=רשימת הזמנות של לקוחות הקשורים לפרויקט
+ListInvoicesAssociatedProject=רשימת חשבוניות של לקוחות הקשורים לפרויקט
+ListPredefinedInvoicesAssociatedProject=רשימת חשבוניות מוגדרים מראש של הלקוח הקשורים לפרויקט
+ListSupplierOrdersAssociatedProject=רשימת ההזמנות של הספק הקשור בפרויקט
+ListSupplierInvoicesAssociatedProject=רשימת חשבוניות של ספקים הקשורים לפרויקט
+ListContractAssociatedProject=רשימת החוזים הקשורים לפרוייקט
+ListFichinterAssociatedProject=רשימת התערבויות הקשורים לפרויקט
+ListTripAssociatedProject=רשימת הטיולים והוצאות הקשורות לפרויקט
+ListActionsAssociatedProject=רשימת אירועים הפרויקט
+ActivityOnProjectThisWeek=פעילות על הפרויקט השבוע
+ActivityOnProjectThisMonth=פעילות על הפרויקט החודש
+ActivityOnProjectThisYear=פעילות על הפרויקט השנה
+ChildOfTask=הילד של הפרויקט / משימה
+NotOwnerOfProject=לא הבעלים של הפרויקט פרטית
+AffectedTo=שהוקצה
+CantRemoveProject=פרויקט זה לא ניתן להסיר כפי שהוא מפנה כמה אובייקטים אחרים (הזמנות, חשבוניות או אחר). ראה לשונית משייכים.
+ValidateProject=אמת projet
+ConfirmValidateProject=האם אתה בטוח שברצונך לאמת את הפרויקט הזה?
+CloseAProject=סגור הפרויקט
+ConfirmCloseAProject=האם אתה בטוח שאתה רוצה לסגור את הפרויקט הזה?
+ReOpenAProject=פתח את הפרויקט
+ConfirmReOpenAProject=האם אתה בטוח שאתה רוצה לפתוח מחדש את הפרויקט הזה?
+ProjectContact=פרויקט אנשי קשר
+ActionsOnProject=אירועים על הפרויקט
+YouAreNotContactOfProject=אתה לא איש קשר של הפרויקט פרטית
+DeleteATimeSpent=מחק את משך הזמן
+ConfirmDeleteATimeSpent=האם אתה בטוח שברצונך למחוק הפעם בילה?
+DoNotShowMyTasksOnly=ראה גם משימות שלא הוקצו לי
+ShowMyTasksOnly=הצג את המשימות שהוקצו רק לי
+TaskRessourceLinks=Ressources
+ProjectsDedicatedToThisThirdParty=פרוייקטים המוקדש חיצוני זה 3
+NoTasks=אין משימות עבור פרוייקט זה
+LinkedToAnotherCompany=מקושרים צד שלישי אחר
+TaskIsNotAffectedToYou=המשימה לא הוקצו לך
+ErrorTimeSpentIsEmpty=משך הזמן ריקה
+ThisWillAlsoRemoveTasks=פעולה זו תמחק גם את כל המשימות של הפרויקט (משימות <b>%s</b> כרגע) וכל תשומות הזמן המושקע.
+IfNeedToUseOhterObjectKeepEmpty=אם כמה חפצים (חשבונית, בסדר, ...), השייכים לגורם אחר 3, חייב להיות קשור הפרויקט ליצור, לשמור על ריק לקבל את הפרויקט להיות צדדים שלישיים רב.
+TypeContact_project_internal_PROJECTLEADER=מנהל הפרויקט
+TypeContact_project_external_PROJECTLEADER=מנהל הפרויקט
+TypeContact_project_internal_CONTRIBUTOR=תורם
+TypeContact_project_external_CONTRIBUTOR=תורם
+TypeContact_project_task_internal_TASKEXECUTIVE=המשימות של הפועל
+TypeContact_project_task_external_TASKEXECUTIVE=המשימות של הפועל
+TypeContact_project_task_internal_CONTRIBUTOR=תורם
+TypeContact_project_task_external_CONTRIBUTOR=תורם
+DocumentModelBaleine=הדו&quot;ח מודל פרויקט שלם של (logo. ..)
+// STOP - Lines generated via autotranslator.php tool (2012-03-10 15:34:21).

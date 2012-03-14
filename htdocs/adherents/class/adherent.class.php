@@ -1741,7 +1741,6 @@ class Adherent extends CommonObject
     /**
      * 	Return full address of member
      *
-     *
      * 	@param		int			$withcountry		1=Add country into address string
      *  @param		string		$sep				Separator to use to build string
      *	@return		string							Full address string

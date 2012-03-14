@@ -1,0 +1,21 @@
+/*
+ * Language code: he_IL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-03-10 15:14:54
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-03-10 15:14:54).
+// Reference language: en_US -> he_IL
+CHARSET=UTF-8
+FTPClientSetup=מודול ה-FTP Client Setup
+NewFTPClient=התקנה החדשה חיבור FTP
+FTPArea=FTP שטח
+FTPAreaDesc=מסך זה להראות לך תוכן מבט שרת ה-FTP
+SetupOfFTPClientModuleNotComplete=התקנה של מודול ה-FTP הלקוח נראה לא שלם
+FTPFeatureNotSupportedByYourPHP=PHP שלך לא תומך בפונקציות ה-FTP
+FailedToConnectToFTPServer=נכשל נסיון להתחבר שרת FTP (שרת %s, יציאת %s)
+FailedToConnectToFTPServerWithCredentials=לא הצליחו להיכנס ל שרת FTP עם הכניסה מוגדר / סיסמה
+FTPFailedToRemoveFile=נכשל נסיון להסיר <b>%s</b> קבצים.
+FTPFailedToRemoveDir=נכשל נסיון להסיר <b>%s</b> במדריך (יש לבדוק את הרשאות הספריה ריקה).
+// STOP - Lines generated via autotranslator.php tool (2012-03-10 15:16:43).

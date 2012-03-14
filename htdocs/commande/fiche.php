@@ -29,7 +29,6 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formorder.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/modules/commande/modules_commande.php");
@@ -440,16 +439,10 @@ if ($action == 'setdate_livraison' && $user->rights->commande->creer)
     }
 }
 
-if ($action == 'setaddress' && $user->rights->commande->creer)
-{
-    $object->fetch($id);
-    $object->set_adresse_livraison($user,$_POST['fk_address']);
-}
-
 if ($action == 'setmode' && $user->rights->commande->creer)
 {
     $object->fetch($id);
-    $result=$object->mode_reglement($_POST['mode_reglement_id']);
+    $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -470,7 +463,7 @@ if ($action == 'setdemandreason' && $user->rights->commande->creer)
 if ($action == 'setconditions' && $user->rights->commande->creer)
 {
     $object->fetch($id);
-    $result=$object->cond_reglement($_POST['cond_reglement_id']);
+    $result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -1193,7 +1186,6 @@ llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-$formother = new FormOther($db);
 $formorder = new FormOrder($db);
 
 
@@ -1329,15 +1321,6 @@ if ($action == 'create' && $user->rights->commande->creer)
     }
     $form->select_date($datedelivery,'liv_','','','',"crea_commande",1,1);
     print "</td></tr>";
-
-    // Delivery address
-    if ($conf->global->COMMANDE_ADD_DELIVERY_ADDRESS)
-    {
-        print '<tr><td nowrap="nowrap">'.$langs->trans('DeliveryAddress').'</td><td colspan="2">';
-        $numaddress = $formother->select_address($soc->fk_delivery_address, $socid,'fk_address',1);
-        print ' &nbsp; <a href="../comm/address.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddAddress").'</a>';
-        print '</td></tr>';
-    }
 
     // Conditions de reglement
     print '<tr><td nowrap="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
@@ -1801,29 +1784,6 @@ else
             print dol_htmlcleanlastbr($object->note_public);
             print '</td>';
             print '</tr>';
-
-            // Delivery address
-            if ($conf->global->COMMANDE_ADD_DELIVERY_ADDRESS)
-            {
-                print '<tr><td height="10">';
-                print '<table class="nobordernopadding" width="100%"><tr><td>';
-                print $langs->trans('DeliveryAddress');
-                print '</td>';
-
-                if ($action != 'editdelivery_adress' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$object->socid.'&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
-                print '</tr></table>';
-                print '</td><td colspan="2">';
-
-                if ($action == 'editdelivery_adress')
-                {
-                    $formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$socid,'fk_address','commande',$object->id);
-                }
-                else
-                {
-                    $formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$socid,'none','commande',$object->id);
-                }
-                print '</td></tr>';
-            }
 
             // Terms of payment
             print '<tr><td height="10">';

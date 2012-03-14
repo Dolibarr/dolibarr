@@ -15,6 +15,21 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+
+update llx_propal set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_commande set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_facture set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_commande_fournisseur set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_contrat set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_deplacement set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_facture_fourn set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_facture_rec set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_fichinter set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+update llx_projet_task set fk_projet = null where fk_projet not in (select rowid from llx_projet);
+
+update llx_commande set fk_user_author = null where fk_user_author not in (select rowid from llx_user);
+
+
 ALTER TABLE llx_extrafields ADD COLUMN TYPE VARCHAR(8);
 
 UPDATE llx_c_paper_format SET active=1 WHERE active=0;
@@ -36,6 +51,8 @@ ALTER TABLE llx_societe MODIFY siret varchar(128);
 ALTER TABLE llx_societe MODIFY ape varchar(128);
 ALTER TABLE llx_societe MODIFY idprof4 varchar(128);
 ALTER TABLE llx_societe ADD COLUMN idprof5 varchar(128);
+ALTER TABLE llx_societe MODIFY code_compta varchar(24);
+ALTER TABLE llx_societe MODIFY code_compta_fournisseur varchar(24);
 
   
 ALTER TABLE llx_chargesociales ADD COLUMN tms                   timestamp;
@@ -254,6 +271,9 @@ ALTER TABLE llx_adherent_extrafields ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_product_extrafields  ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_societe_extrafields  ADD COLUMN import_key varchar(14);
 
+-- Disable foreign key checks for external modules constraints
+SET FOREIGN_KEY_CHECKS=0;
+
 DROP TABLE llx_c_currencies;
 create table llx_c_currencies
 (
@@ -405,7 +425,11 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'XEU'
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'ARP', NULL, 0,	'Pesos argentins');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'MXP', NULL, 0,	'Pesos Mexicans');
 
+SET FOREIGN_KEY_CHECKS=1;
+
 ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_currency		FOREIGN KEY (fk_currency) REFERENCES llx_c_currencies (code_iso);
 ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_fk_currency	FOREIGN KEY (fk_currency) REFERENCES llx_c_currencies (code_iso);
 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_currency   FOREIGN KEY (fk_currency) REFERENCES llx_c_currencies (code_iso);
-  
+
+ALTER TABLE llx_expedition DROP COLUMN billed;
+ 

@@ -34,8 +34,10 @@ class mod_facture_terre extends ModeleNumRefFactures
 	var $prefixcreditnote='AV';
 	var $error='';
 
-	/**     \brief      Renvoi la description du modele de numerotation
-	 *      \return     string      Texte descripif
+	/**
+	 *  Renvoi la description du modele de numerotation
+	 *
+	 *  @return     string      Texte descripif
 	 */
 	function info()
 	{
@@ -44,17 +46,21 @@ class mod_facture_terre extends ModeleNumRefFactures
 		return $langs->trans('TerreNumRefModelDesc1',$this->prefixinvoice,$this->prefixcreditnote);
 	}
 
-	/**     \brief      Renvoi un exemple de numerotation
-	 *      \return     string      Example
+	/**
+	 *  Renvoi un exemple de numerotation
+	 *
+	 *  @return     string      Example
 	 */
 	function getExample()
 	{
 		return $this->prefixinvoice."0501-0001";
 	}
 
-	/**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
-	 *                  de conflits qui empechera cette numerotation de fonctionner.
-	 *      \return     boolean     false si conflit, true si ok
+	/**
+	 *  Test si les numeros deja en vigueur dans la base ne provoquent pas de
+	 *  de conflits qui empechera cette numerotation de fonctionner.
+	 *
+	 *  @return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
 	{

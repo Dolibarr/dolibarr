@@ -38,11 +38,16 @@ class Address
 	var $socid;
 	var $name;
 	var $address;
-	var $cp;
-	var $ville;
-	var $pays_id;
-	var $pays_code;
-	var $tel;
+	var $cp;			// deprecated
+	var $zip;
+	var $ville;			// deprecated
+	var $town;
+	var $pays_id;		// deprecated
+	var $country_id;
+	var $pays_code;		// deprecated
+	var $country_code;
+	var $tel;			// deprecated
+	var $phone;
 	var $fax;
 	var $note;
 
@@ -290,7 +295,7 @@ class Address
 					{
 						$objp = $this->db->fetch_object($resql);
 
-						$line = new AddressLine();
+						$line = new AddressLine($this->db);
 
 						$line->id				= $objp->id;
 						$line->date_creation	= $this->db->jdate($objp->dc);
@@ -298,36 +303,39 @@ class Address
 						$line->label			= $objp->label;
 						$line->name				= $objp->name;
 						$line->address			= $objp->address;
-						$line->cp				= $objp->zip;
-						$line->ville			= $objp->town;
 						$line->zip				= $objp->zip;
 						$line->town				= $objp->town;
-						$line->pays_id			= $objp->country_id;
-						$line->pays_code		= $objp->country_id?$objp->country_code:'';
-						$line->pays				= $objp->country_id?($langs->trans('Country'.$objp->country_code)!='Country'.$objp->country_code?strtoupper($langs->trans('Country'.$objp->country_code)):$objp->country):'';
 						$line->country_id		= $objp->country_id;
 						$line->country_code		= $objp->country_id?$objp->country_code:'';
 						$line->country			= $objp->country_id?($langs->trans('Country'.$objp->country_code)!='Country'.$objp->country_code?strtoupper($langs->trans('Country'.$objp->country_code)):$objp->country):'';
-						$line->tel				= $objp->tel;
+						$line->phone			= $objp->tel;
 						$line->fax				= $objp->fax;
 						$line->note				= $objp->note;
+						
+						// deprecated
+						$line->cp				= $line->zip;
+						$line->ville			= $line->town;
+						$line->pays_id			= $line->country_id;
+						$line->pays_code		= $line->country_code;
+						$line->pays				= $line->country;
+						$line->tel				= $line->phone;
 
 						$this->lines[$i]		= $line;
 						$i++;
 					}
 					$this->db->free($resql);
-					return 1;
+					return $num;
 				}
 				else
 				{
 					dol_syslog('Address::Fetch Erreur: aucune adresse');
-					return -1;
+					return 0;
 				}
 			}
 			else
 			{
 				dol_syslog('Address::Fetch Erreur: societe inconnue');
-				return -2;
+				return -1;
 			}
 		}
 		else
@@ -372,21 +380,24 @@ class Address
 				$this->label 			= $obj->label;
 				$this->name 			= $obj->name;
 				$this->address 			= $obj->address;
-				$this->cp 				= $obj->zip;
-				$this->ville 			= $obj->town;
 				$this->zip 				= $obj->zip;
 				$this->town 			= $obj->town;
 
-				$this->pays_id 			= $obj->country_id;
-				$this->pays_code 		= $obj->country_id?$obj->country_code:'';
-				$this->pays				= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->trans('Country'.$obj->country_code):$obj->country):'';
-				$this->country_id 			= $obj->country_id;
-				$this->country_code 		= $obj->country_id?$obj->country_code:'';
-				$this->country				= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->trans('Country'.$obj->country_code):$obj->country):'';
+				$this->country_id 		= $obj->country_id;
+				$this->country_code 	= $obj->country_id?$obj->country_code:'';
+				$this->country			= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->trans('Country'.$obj->country_code):$obj->country):'';
 
-				$this->tel				= $obj->tel;
+				$this->phone			= $obj->tel;
 				$this->fax				= $obj->fax;
 				$this->note				= $obj->note;
+				
+				// deprecated
+				$line->cp				= $line->zip;
+				$line->ville			= $line->town;
+				$line->pays_id			= $line->country_id;
+				$line->pays_code		= $line->country_code;
+				$line->pays				= $line->country;
+				$line->tel				= $line->phone;
 
 				$result = 1;
 			}
@@ -513,7 +524,7 @@ class AddressLine
 	 *
 	 *  @param	DoliDB		$db     Database handler
 	 */
-	function AddressLine($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 	}

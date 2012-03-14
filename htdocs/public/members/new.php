@@ -101,7 +101,7 @@ function llxHeaderVierge($title, $head="", $disablejs=0, $disablehead=0, $arrayo
         $urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
     }
     print '<center>';
-    print '<img alt="Logo" title="" src="'.$urllogo.'" />';
+    print '<img alt="Logo" id="logosubscribe" title="" src="'.$urllogo.'" />';
     print '</center><br>';
 
     print '<div style="margin-left: 50px; margin-right: 50px;">';
@@ -221,9 +221,6 @@ if ($action == 'add')
         $adh->address     = $_POST["address"];
         $adh->zip         = $_POST["zipcode"];
         $adh->town        = $_POST["town"];
-        $adh->adresse     = $_POST["address"];    // TODO deprecated
-        $adh->cp          = $_POST["zipcode"];    // TODO deprecated
-        $adh->ville       = $_POST["town"];    // TODO deprecated
         $adh->email       = $_POST["email"];
         if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
         {
@@ -233,7 +230,6 @@ if ($action == 'add')
         $adh->photo       = $_POST["photo"];
         $adh->note        = $_POST["note"];
         $adh->country_id  = $_POST["country_id"];
-        $adh->pays_id     = $_POST["country_id"];    // TODO deprecated
         $adh->state_id    = $_POST["state_id"];
         $adh->typeid      = $_POST["type"];
         $adh->note        = $_POST["comment"];
@@ -366,7 +362,8 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'.
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="add">';
 
-print '<table class="border">'."\n";
+print '<div id="divsubscribe">';
+print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 
 // Type
 if (empty($conf->global->MEMBER_NEWFORM_FORCETYPE))
@@ -454,7 +451,7 @@ if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
     print '<tr><td>'.$langs->trans("PasswordAgain").' <FONT COLOR="red">*</FONT></td><td><input type="password" name="pass2" size="20" value="'.GETPOST("pass2").'"></td></tr>'."\n";
 }
 // Birthday
-print '<tr><td>'.$langs->trans("Birthday").'</td><td>';
+print '<tr><td>'.$langs->trans("DateToBirth").'</td><td>';
 print $form->select_date($birthday,'birth',0,0,1,"newmember");
 print '</td></tr>'."\n";
 // Photo
@@ -552,6 +549,7 @@ if (! empty($backtopage))
 print '</center>';
 
 print "<br></form>\n";
+print '</div>';
 
 
 llxFooterVierge();

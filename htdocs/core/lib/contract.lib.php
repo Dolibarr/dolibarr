@@ -40,7 +40,7 @@ function contract_prepare_head($object)
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/contrat/contact.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("ContractContacts");
+	$head[$h][1] = $langs->trans("ContactsAddresses");
 	$head[$h][2] = 'contact';
 	$h++;
 

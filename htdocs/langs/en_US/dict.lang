@@ -290,6 +290,9 @@ CurrencySingXOF=CFA Franc BCEAO
 CurrencyXPF=CFP Francs
 CurrencySingXPF=CFP Franc
 
+CurrencyCentSingEUR=cent
+CurrencyThousandthSingTND=thousandth
+
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Mailing campaign

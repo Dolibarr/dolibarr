@@ -21,7 +21,6 @@ ServiceStatusClosed = Zaključena
 ServicesLegend = Legenda storitev
 Contracts = Pogodbe
 Contract = Pogodba
-ContractContacts = Kontakti za pogodbo
 NoContracts = Ni pogodb
 MenuServices = Storitve
 MenuInactiveServices = Storitve niso aktivne

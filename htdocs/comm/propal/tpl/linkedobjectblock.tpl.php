@@ -27,7 +27,7 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 echo '<br>';
 print_titre($langs->trans('RelatedCommercialProposals'));
 ?>
-<table class="noborder" width="100%">
+<table class="noborder allwidth">
 <tr class="liste_titre">
 	<td><?php echo $langs->trans("Ref"); ?></td>
 	<td><?php echo $langs->trans('RefCustomer'); ?></td>

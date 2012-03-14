@@ -50,7 +50,6 @@ SupplierInvoice = Leveranciersfactuur
 SuppliersInvoices = Leveranciersfacturen
 SupplierBill = Leveranciersfactuur
 SupplierBills = leveranciersfacturen
-BillContacts = Factuurcontacten
 Payment = Betaling
 PaymentBack = Terugbetaling
 Payments = Betalingen

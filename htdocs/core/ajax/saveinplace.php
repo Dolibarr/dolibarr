@@ -30,6 +30,11 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/class/genericobject.class.php");
 
+$field			= GETPOST('field','alpha');
+$element		= GETPOST('element','alpha');
+$table_element	= GETPOST('table_element','alpha');
+$fk_element		= GETPOST('fk_element','alpha');
+
 /*
  * View
  */
@@ -40,21 +45,14 @@ top_httphead();
 //print_r($_POST);
 
 // Load original field value
-if((isset($_POST['field']) && ! empty($_POST['field']))
-	&& (isset($_POST['element']) && ! empty($_POST['element']))
-	&& (isset($_POST['table_element']) && ! empty($_POST['table_element']))
-	&& (isset($_POST['fk_element']) && ! empty($_POST['fk_element'])))
+if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($fk_element))
 {
-	$element			= GETPOST('element');
-	$table_element		= GETPOST('table_element');
-	$fk_element			= GETPOST('fk_element');
-	$ext_element		= GETPOST('ext_element');
-	//$ext_table_element	= GETPOST('ext_table_element');
-	//$ext_fk_element		= GETPOST('ext_fk_element');
-	$field				= substr(GETPOST('field'), 8); // remove prefix val_
-	$value				= GETPOST('value');
-	$type				= GETPOST('type');
-	$savemethodname		= (GETPOST('savemethod') ? GETPOST('savemethod') : 'setValueFrom');
+	$ext_element		= GETPOST('ext_element','alpha');
+	$field				= substr($field, 8); // remove prefix val_
+	$value				= GETPOST('value','alpha');
+	$type				= GETPOST('type','alpha');
+	$savemethod			= GETPOST('savemethod','alpha');
+	$savemethodname		= (! empty($savemethod) ? $savemethod : 'setValueFrom');
 
 	$view='';
 	$format='text';
@@ -100,15 +98,15 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 		}
 		else if ($type == 'datepicker')
 		{
-			$timestamp	= GETPOST('timestamp');
+			$timestamp	= GETPOST('timestamp','int');
 			$format		= 'date';
 			$newvalue	= ($timestamp / 1000);
 		}
 		else if ($type == 'select')
 		{
-			$loadmethodname	= 'load_cache_'.GETPOST('loadmethod');
-			$loadcachename	= 'cache_'.GETPOST('loadmethod');
-			$loadviewname	= 'view_'.GETPOST('loadmethod');
+			$loadmethodname	= 'load_cache_'.GETPOST('loadmethod','alpha');
+			$loadcachename	= 'cache_'.GETPOST('loadmethod','alpha');
+			$loadviewname	= 'view_'.GETPOST('loadmethod','alpha');
 
 			$form = new Form($db);
 			if (method_exists($form, $loadmethodname))
@@ -158,7 +156,7 @@ if((isset($_POST['field']) && ! empty($_POST['field']))
 
 		if (! $error)
 		{
-			if (! is_object($object)) $object = new GenericObject($db);
+			if (! is_object($object) || empty($savemethod)) $object = new GenericObject($db);
 
 			// Specific for add_object_linked()
 			// TODO add a function for variable treatment

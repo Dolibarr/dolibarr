@@ -219,6 +219,7 @@ abstract class DolibarrModules
     /**
      *  Retourne le nom traduit du module si la traduction existe dans admin.lang,
      *  sinon le nom defini par defaut dans le module.
+     *
      *  @return     string      Nom du module traduit
      */
     function getName()
@@ -297,7 +298,8 @@ abstract class DolibarrModules
     /**
      *  Return translated label of a export dataset
      *
-     *  @return     string      Label of databaset
+     *	@param	int		$r		Index of dataset
+     *  @return string      	Label of databaset
      */
     function getExportDatasetLabel($r)
     {
@@ -320,7 +322,8 @@ abstract class DolibarrModules
     /**
      *  Return translated label of an import dataset
      *
-     *  @return     string      Label of databaset
+     *  @param	int		$r		Index of dataset
+     *  @return	string    		Label of databaset
      */
     function getImportDatasetLabel($r)
     {
@@ -465,12 +468,13 @@ abstract class DolibarrModules
 
 
     /**
-     *      Create tables and keys required by module.
-     *      Files module.sql and module.key.sql with create table and create keys
-     *      commands must be stored in directory reldir='/module/sql/'
-     *      This function is called by this->init
+     *  Create tables and keys required by module.
+     *  Files module.sql and module.key.sql with create table and create keys
+     *  commands must be stored in directory reldir='/module/sql/'
+     *  This function is called by this->init
      *
-     *      @return     int     <=0 if KO, >0 if OK
+     *  @param	string	$reldir		Relative directory where to scan files
+     *  @return	int     			<=0 if KO, >0 if OK
      */
     function _load_tables($reldir)
     {
@@ -849,8 +853,8 @@ abstract class DolibarrModules
     /**
      *  Insert permissions definitions related to the module into llx_rights_def
      *
-     *  @param      $reinitadminperms   If 1, we also grant them to all admin users
-     *  @return     int                 Number of error (0 if OK)
+     *  @param	int		$reinitadminperms   If 1, we also grant them to all admin users
+     *  @return int                 		Number of error (0 if OK)
      */
     function insert_permissions($reinitadminperms=0)
     {
@@ -1188,7 +1192,9 @@ abstract class DolibarrModules
     /**
      *  Insert directories in llx_const
      *
-     *  @return     int     Nb of errors (0 if OK)
+     *  @param	string	$name		Name
+     *  @param	string	$dir		Directory
+     *  @return	int     			Nb of errors (0 if OK)
      */
     function insert_dirs($name,$dir)
     {
@@ -1333,7 +1339,7 @@ abstract class DolibarrModules
     		{
     			// If entity is defined
     			if (is_array($value) && isset($value['entity'])) $entity = $value['entity'];
-    			
+
     			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
     			$sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->const_name."_".strtoupper($key)."'";
     			$sql.= " AND entity = ".$entity;

@@ -39,8 +39,10 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	var $nom = 'Saphir';
 
 
-    /**     \brief      Renvoi la description du modele de numerotation
-     *      \return     string      Texte descripif
+    /**
+     *  Renvoi la description du modele de numerotation
+     *
+     *  @return     string      Texte descripif
      */
 	function info()
     {
@@ -77,8 +79,10 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 		return $texte;
     }
 
-    /**     \brief      Renvoi un exemple de numerotation
-     *      \return     string      Example
+    /**
+     *  Renvoi un exemple de numerotation
+     *
+     *  @return     string      Example
      */
     function getExample()
     {
@@ -96,11 +100,13 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 		return $numExample;
     }
 
-	/**		\brief      Return next value
-	*      	\param      objsoc      Objet third party
-	*		\param		commande	Object order
-	*      	\return     string      Value if OK, 0 if KO
-	*/
+	/**
+	 * 	Return next free value
+	 *
+	 *  @param	Societe		$objsoc     Object thirdparty
+	 *  @param  Object		$object		Object we need next value for
+	 *  @return string      			Value if KO, <0 if KO
+	 */
     function getNextValue($objsoc,$commande)
     {
 		global $db,$conf;

@@ -36,7 +36,7 @@ echo $this->control->tpl['ajax_selectcountry']; ?>
 <input type="hidden" name="socid" value="<?php echo $this->control->tpl['company_id']; ?>">
 <?php } ?>
 
-<table class="border" width="100%">
+<table class="border allwidth">
 
 <tr>
 	<td width="15%" class="fieldrequired"><?php echo $langs->trans("Lastname").' / '.$langs->trans("Label"); ?></td>

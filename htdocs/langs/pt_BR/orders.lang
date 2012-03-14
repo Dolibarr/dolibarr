@@ -7,7 +7,6 @@ Order=Pedido
 Orders=Pedidos
 OrderLine=Linha de Comando
 OrderFollow=Seguimento
-OrderContact=Contato do Pedido
 OrderDate=Data Pedido
 NewOrder=Novo Pedido
 ToOrder=Realizar Pedido
@@ -25,8 +24,8 @@ OrdersInProcess=Pedidos em Processo
 OrdersToProcess=Pedidos a Processar
 
 
-## Fazer a programação da NFE dentro do módulo de Pedidos. è o jeito indo pelos status. Ir pesquisando no src code pelo status Processado (StatusOrderProcessedShort)
-## Incluir o src code da NFE como os pedidos e propostasanexas na negociação.
+## Fazer a programaï¿½ï¿½o da NFE dentro do mï¿½dulo de Pedidos. ï¿½ o jeito indo pelos status. Ir pesquisando no src code pelo status Processado (StatusOrderProcessedShort)
+## Incluir o src code da NFE como os pedidos e propostasanexas na negociaï¿½ï¿½o.
 
 StatusOrderNFEProcessed=Nota Fiscal Emitida
 StatusOrderCanceledShort=Anulado

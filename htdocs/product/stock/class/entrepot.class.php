@@ -43,9 +43,16 @@ class Entrepot extends CommonObject
 	var $lieu;
 	var $address;
 	//! Code Postal
-	var $cp;
-	var $ville;
-	var $pays_id;
+	var $cp;        // deprecated
+	var $ville;     // deprecated
+	var $zip;
+	var $town;
+
+	var $country;
+	var $country_id;
+	var $country_code;
+	var $pays_id;   // deprecated
+
 
 	/**
 	 *  Constructor
@@ -81,7 +88,7 @@ class Entrepot extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (datec, fk_user_author, label)";
-		$sql .= " VALUES (".$this->db->idate($now).",".$user->id.",'".$this->db->escape($this->libelle)."')";
+		$sql .= " VALUES ('".$this->db->idate($now)."',".$user->id.",'".$this->db->escape($this->libelle)."')";
 
 		dol_syslog(get_class($this)."::create sql=".$sql);
 		$result=$this->db->query($sql);
@@ -133,22 +140,21 @@ class Entrepot extends CommonObject
 		$this->description=$this->db->escape(trim($this->description));
 
 		$this->lieu=$this->db->escape(trim($this->lieu));
+
 		$this->address=$this->db->escape(trim($this->address));
-		$this->cp=trim($this->cp);
-		$this->ville=$this->db->escape(trim($this->ville));
-		$this->zip=trim($this->cp);
-		$this->town=$this->db->escape(trim($this->ville));
-		$this->country_id=($this->country_id > 0 ? $this->country_id:$this->pays_id);
+        $this->zip=$this->zip?trim($this->zip):trim($this->cp);
+        $this->town=$this->town?trim($this->town):trim($this->ville);
+		$this->country_id=($this->country_id > 0 ? $this->country_id : $this->pays_id);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
-		$sql .= " SET label = '" . $this->libelle ."'";
-		$sql .= ",description = '" . $this->description ."'";
-		$sql .= ",statut = " . $this->statut ;
-		$sql .= ",lieu = '" . $this->lieu ."'";
-		$sql .= ",address = '" . $this->address ."'";
-		$sql .= ",cp = '" . $this->zip ."'";
-		$sql .= ",ville = '" . $this->town ."'";
-		$sql .= ",fk_pays = " . $this->country_id;
+		$sql .= " SET label = '" . $this->db->escape($this->libelle) ."'";
+		$sql .= ", description = '" . $this->db->escape($this->description) ."'";
+		$sql .= ", statut = " . $this->statut;
+		$sql .= ", lieu = '" . $this->db->escape($this->lieu) ."'";
+		$sql .= ", address = '" . $this->db->escape($this->address) ."'";
+		$sql .= ", cp = '" . $this->db->escape($this->zip) ."'";
+		$sql .= ", ville = '" . $this->db->escape($this->town) ."'";
+		$sql .= ", fk_pays = " . $this->country_id;
 		$sql .= " WHERE rowid = " . $id;
 
 		$this->db->begin();
@@ -247,17 +253,17 @@ class Entrepot extends CommonObject
 			$this->statut         = $obj->statut;
 			$this->lieu           = $obj->lieu;
 			$this->address        = $obj->address;
-			$this->cp             = $obj->zip;
-			$this->ville          = $obj->town;
-			$this->pays_id        = $obj->country_id;
+			$this->cp             = $obj->zip;         // deprecated
+			$this->ville          = $obj->town;        // deprecated
+			$this->pays_id        = $obj->country_id;  // deprecated
 			$this->zip            = $obj->zip;
 			$this->town           = $obj->town;
 			$this->country_id     = $obj->country_id;
 
 			include_once(DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php');
             $tmp=getCountry($this->country_id,'all');
-			$this->pays=$tmp['label'];
-			$this->pays_code=$tmp['code'];
+			$this->pays=$tmp['label'];                // deprecated
+			$this->pays_code=$tmp['code'];            // deprecated
 			$this->country=$tmp['label'];
 			$this->country_code=$tmp['code'];
 
