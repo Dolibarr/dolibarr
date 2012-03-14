@@ -91,8 +91,9 @@ $result = $db->query($sql);
 if ($result)
 {
     $num = $db->num_rows($result);
-
-    print_barre_liste($langs->trans("ListOfContacts")." (".$langs->trans("Suppliers").")",$page, "contact.php", "",$sortfield,$sortorder,"",$num);
+    
+    $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
+    print_barre_liste($title." (".$langs->trans("Suppliers").")",$page, "contact.php", "",$sortfield,$sortorder,"",$num);
 
     print '<table class="liste" width="100%">';
     print '<tr class="liste_titre">';

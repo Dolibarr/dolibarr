@@ -324,8 +324,9 @@ else
 
         // Show tabs
         $head = contact_prepare_head($object);
-
-        dol_fiche_head($head, 'card', $langs->trans("ContactsAddresses"), 0, 'contact');
+        
+        $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+        dol_fiche_head($head, 'card', $title, 0, 'contact');
     }
 
     if ($user->rights->societe->contact->creer)
