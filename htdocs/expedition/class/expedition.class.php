@@ -31,8 +31,7 @@ if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/class/co
 
 
 /**
- *	\class      Expedition
- *	\brief      Class to manage shippings
+ *	Class to manage shipments
  */
 class Expedition extends CommonObject
 {
@@ -73,7 +72,7 @@ class Expedition extends CommonObject
 	var $date_expedition;	// Date delivery real
 	var $date_creation;
 	var $date_valid;
-	
+
 	// For Invoicing
 	var $total_ht;			// Total net of tax
 	var $total_ttc;			// Total with tax
@@ -81,14 +80,15 @@ class Expedition extends CommonObject
 	var $total_localtax1;   // Total Local tax 1
 	var $total_localtax2;   // Total Local tax 2
 
+
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	function Expedition($DB)
+	function Expedition($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 		$this->lines = array();
 		$this->products = array();
 
@@ -865,16 +865,16 @@ class Expedition extends CommonObject
 		if ($resql)
 		{
 			include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
-			
+
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			
+
 			$this->total_ht = 0;
 			$this->total_tva = 0;
 			$this->total_ttc = 0;
 			$this->total_localtax1 = 0;
 			$this->total_localtax2 = 0;
-			
+
 			while ($i < $num)
 			{
 				$line = new ExpeditionLigne($this->db);
@@ -897,7 +897,7 @@ class Expedition extends CommonObject
 				$line->weight_units   	= $obj->weight_units;
 				$line->volume         	= $obj->volume;
 				$line->volume_units   	= $obj->volume_units;
-				
+
 				//Invoicing
 				$line->desc				= $obj->product_label;
 				$line->qty 				= $obj->qty_shipped;
@@ -912,14 +912,14 @@ class Expedition extends CommonObject
 				$line->price			= $obj->price;
 				$line->subprice			= $obj->subprice;
 				$line->remise_percent	= $obj->remise_percent;
-				
+
 				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $info_bits);
 				$this->total_ht+= $tabprice[0];
 				$this->total_tva+= $tabprice[1];
 				$this->total_ttc+= $tabprice[2];
 				$this->total_localtax1+= $tabprice[9];
 				$this->total_localtax2+= $tabprice[10];
-				
+
 				$this->lines[$i] = $line;
 
 				$i++;
@@ -1209,7 +1209,7 @@ class Expedition extends CommonObject
 			$this->tracking_url = $value;
 		}
 	}
-	
+
 	/**
 	 *	Classify the shipping as invoiced
 	 *
@@ -1218,7 +1218,7 @@ class Expedition extends CommonObject
 	function set_billed()
 	{
 		global $conf;
-	
+
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=2';
 		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0 ;';
 		if ($this->db->query($sql) )
@@ -1232,7 +1232,7 @@ class Expedition extends CommonObject
 			return -1;
 		}
 	}
-	
+
 }
 
 
@@ -1253,7 +1253,7 @@ class ExpeditionLigne
 	var $libelle;       // Label produit
 	var $product_desc;  // Description produit
 	var $ref;
-	
+
 	// Invoicing
 	var $remise_percent;
 	var $total_ht;			// Total net of tax

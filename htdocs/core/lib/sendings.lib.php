@@ -53,6 +53,11 @@ function shipping_prepare_head($object)
 		$h++;
 	}
 
+	$head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".$object->id;
+	$head[$h][1] = $langs->trans("ContactsAddresses");
+	$head[$h][2] = 'contact';
+	$h++;
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -133,7 +138,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 	$sql.= " AND obj.rowid = ed.fk_origin_line";
 	$sql.= " AND ed.fk_expedition = e.rowid";
 	if ($filter) $sql.= $filter;
-	
+
 	$sql.= " ORDER BY obj.fk_product";
 
 	dol_syslog("show_list_sending_receive sql=".$sql, LOG_DEBUG);
