@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +31,12 @@ require_once(DOL_DOCUMENT_ROOT."/societe/class/address.class.php");
 $langs->load("companies");
 $langs->load("commercial");
 
-$id = isset($_GET["id"])?$_GET["id"]:'';
-$origin = isset($_GET["origin"])?$_GET["origin"]:'';
-$originid = isset($_GET["originid"])?$_GET["originid"]:'';
-$socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
-if (! $socid && ($_REQUEST["action"] != 'create' && $_REQUEST["action"] != 'add' && $_REQUEST["action"] != 'update')) accessforbidden();
+$id = GETPOST('id','int');
+$action = GETPOST('action','alpha');
+$origin = GETPOST('origin','alpha');
+$originid = GETPOST('originid','int');
+$socid = GETPOST('socid','int');
+if (! $socid && ($action != 'create' && $action != 'add' && $action != 'update')) accessforbidden();
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -46,11 +47,11 @@ $result = restrictedArea($user, 'societe', $socid);
  * Actions
  */
 
-if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
+if ($action == 'add' || $action == 'update')
 {
     $address = new Address($db);
 
-    $address->socid		= $_POST["socid"];
+    $address->socid		= $socid;
     $address->label		= ($_POST["label"]!=$langs->trans('RequiredField')?$_POST["label"]:'');
     $address->name		= ($_POST["name"]!=$langs->trans('RequiredField')?$_POST["name"]:'');
     $address->address	= $_POST["address"];
@@ -64,24 +65,29 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
     $address->fax		= $_POST["fax"];
     $address->note		= $_POST["note"];
 
-    if ($_POST["action"] == 'add')
+    if ($action == 'add')
     {
-        $socid		= $_POST["socid"];
-        $origin		= $_POST["origin"];
-        $originid 	= $_POST["originid"];
+        $socid		= $socid;
+        $origin		= $origin;
+        $originid 	= $originid;
         $result		= $address->create($socid, $user);
 
         if ($result >= 0)
         {
             if ($origin == 'commande')
             {
-                Header("Location: ../commande/fiche.php?action=editdelivery_adress&socid=".$socid."&id=".$originid);
+                Header("Location: ../commande/contact.php?action=editdelivery_adress&socid=".$socid."&id=".$originid);
                 exit;
             }
             elseif ($origin == 'propal')
             {
-                Header("Location: ../comm/propal.php?action=editdelivery_adress&socid=".$socid."&id=".$originid);
+                Header("Location: ../comm/propal/contact.php?action=editdelivery_adress&socid=".$socid."&id=".$originid);
                 exit;
+            }
+            elseif ($origin == 'shipment')
+            {
+            	Header("Location: ../expedition/fiche.php?id=".$originid);
+            	exit;
             }
             else
             {
@@ -92,11 +98,11 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
         else
         {
             $mesg = $address->error;
-            $_GET["action"]='create';
+            $action='create';
         }
     }
 
-    if ($_POST["action"] == 'update')
+    if ($action == 'update')
     {
         $socid		= $_POST["socid"];
         $origin		= $_POST["origin"];
@@ -107,12 +113,12 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
         {
             if ($origin == 'commande')
             {
-                Header("Location: ../commande/fiche.php?id=".$originid);
+                Header("Location: ../commande/contact.php?id=".$originid);
                 exit;
             }
             elseif ($origin == 'propal')
             {
-                Header("Location: ../comm/propal.php?id=".$originid);
+                Header("Location: ../comm/propal/contact.php?id=".$originid);
                 exit;
             }
             elseif ($origin == 'shipment')
@@ -130,16 +136,16 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
         {
             $reload = 0;
             $mesg = $address->error;
-            $_GET["action"]= "edit";
+            $actino= "edit";
         }
     }
 
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->societe->supprimer)
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->societe->supprimer)
 {
     $address = new Address($db);
-    $result = $address->delete($_GET["id"], $socid);
+    $result = $address->delete($id, $socid);
 
     if ($result == 0)
     {
@@ -167,7 +173,7 @@ $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("Se
 dol_htmloutput_errors($mesg);
 
 
-if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
+if ($action == 'create')
 {
     if ($user->rights->societe->creer)
     {
@@ -221,23 +227,23 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
         if ($conf->use_javascript_ajax)
         {
             print "\n".'<script type="text/javascript" language="javascript">';
-            print 'jQuery(document).ready(function () {
-                        jQuery("#label").focus(function() {
+            print '$(document).ready(function () {
+                        $("#label").focus(function() {
                             hideMessage("label","'.$langs->trans('RequiredField').'");
                         });
-                        jQuery("#label").blur(function() {
+                        $("#label").blur(function() {
                             displayMessage("label","'.$langs->trans('RequiredField').'");
                         });
-                        jQuery("#name").focus(function() {
+                        $("#name").focus(function() {
                             hideMessage("name","'.$langs->trans('RequiredField').'");
                         });
-                        jQuery("#name").blur(function() {
+                        $("#name").blur(function() {
                             displayMessage("name","'.$langs->trans('RequiredField').'");
                         });
                         displayMessage("label","'.$langs->trans('RequiredField').'");
                         displayMessage("name","'.$langs->trans('RequiredField').'");
-                        jQuery("#label").css("color","grey");
-                        jQuery("#name").css("color","grey");
+                        $("#label").css("color","grey");
+                        $("#name").css("color","grey");
                     })';
             print '</script>'."\n";
         }
@@ -289,7 +295,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 
     }
 }
-elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
+elseif ($action == 'edit')
 {
     /*
      * Fiche societe en mode edition
@@ -314,8 +320,8 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         }
         else
         {
-            $address->id		=	$_POST["id"];
-            $address->socid		=	$_POST["socid"];
+            $address->id		=	$id;
+            $address->socid		=	$socid;
             $address->label		=	$_POST["label"];
             $address->name		=	$_POST["name"];
             $address->address	=	$_POST["address"];
@@ -484,7 +490,7 @@ else
      * Bouton actions
      */
 
-    if ($_GET["action"] == '')
+    if ($action == '')
     {
         print '<div class="tabsAction">';
 
@@ -497,8 +503,7 @@ else
 
 }
 
+
 $db->close();
-
-
 llxFooter();
 ?>
