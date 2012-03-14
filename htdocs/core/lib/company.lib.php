@@ -655,7 +655,8 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 			
 			print '<td>'.$address->town.'</td>';
 			
-			print '<td>'.$address->country.'</td>';
+			$img=picto_from_langcode($address->country_code);
+			print '<td>'.($img?$img.' ':'').$address->country.'</td>';
 
 			// Lien click to dial
 			print '<td>';

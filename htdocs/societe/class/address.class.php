@@ -296,7 +296,7 @@ class Address
 						$line->town				= $objp->town;
 						$line->country_id		= $objp->country_id;
 						$line->country_code		= $objp->country_id?$objp->country_code:'';
-						$line->country			= $objp->country_id?($langs->trans('Country'.$objp->country_code)!='Country'.$objp->country_code?strtoupper($langs->trans('Country'.$objp->country_code)):$objp->country):'';
+						$line->country			= $objp->country_id?($langs->trans('Country'.$objp->country_code)!='Country'.$objp->country_code?$langs->trans('Country'.$objp->country_code):$objp->country):'';
 						$line->phone			= $objp->tel;
 						$line->fax				= $objp->fax;
 						$line->note				= $objp->note;
