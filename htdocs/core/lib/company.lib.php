@@ -502,12 +502,14 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     $buttoncreate='';
     if ($user->rights->societe->contact->creer)
     {
-        //$buttoncreate='<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddContact").'</a>'."\n";
-		$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddContact").' '.img_picto($langs->trans("AddContact"),'filenew').'</a>'."\n";
+    	$addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
+		$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$addcontact.' '.img_picto($addcontact,'filenew').'</a>'."\n";
     }
 
     print "\n";
-    print_fiche_titre($langs->trans("ContactsForCompany"),$buttoncreate,'');
+    
+    $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ContactsForCompany") : $langs->trans("ContactsAddressesForCompany"));
+    print_fiche_titre($title,$buttoncreate,'');
 
     print "\n".'<table class="noborder" width="100%">'."\n";
 

@@ -349,8 +349,9 @@ else
                 $object->country_code = $tmparray['code'];
                 $object->country      = $tmparray['label'];
             }
-
-            print_fiche_titre($langs->trans("AddContact"));
+            
+            $title = $addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
+            print_fiche_titre($title);
 
             // Affiche les erreurs
             dol_htmloutput_errors($error,$errors);

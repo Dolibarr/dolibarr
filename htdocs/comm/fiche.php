@@ -786,11 +786,6 @@ if ($id > 0)
 		}
 	}
 
-	/*if ($user->rights->societe->contact->creer)
-	{
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
-	}*/
-
 	print '</div>';
 	print "<br>\n";
 
