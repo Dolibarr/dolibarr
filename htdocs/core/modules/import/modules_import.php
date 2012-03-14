@@ -55,7 +55,7 @@ class ModeleImports
 	/**
      *  Constructor
 	 */
-	function ModeleImports()
+	function __construct()
 	{
 	}
 

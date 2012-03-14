@@ -39,8 +39,10 @@ class mod_propale_saphir extends ModeleNumRefPropales
 	var $nom = 'Saphir';
 
 
-    /**     \brief      Return description of module
-     *      \return     string      Texte descripif
+    /**
+     *  Return description of module
+     *
+     *  @return     string      Texte descripif
      */
 	function info()
     {
@@ -77,8 +79,10 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		return $texte;
     }
 
-    /**     \brief      Renvoi un exemple de numerotation
-     *      \return     string      Example
+    /**
+     *  Renvoi un exemple de numerotation
+     *
+     *  @return     string      Example
      */
     function getExample()
     {

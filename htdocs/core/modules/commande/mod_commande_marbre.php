@@ -35,8 +35,10 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	var $nom='Marbre';
 
 
-    /**     \brief      Return description of numbering module
-     *      \return     string      Text with description
+    /**
+     *  Return description of numbering module
+     *
+     *  @return     string      Text with description
      */
     function info()
     {
@@ -45,8 +47,10 @@ class mod_commande_marbre extends ModeleNumRefCommandes
     }
 
 
-	/**     \brief      Renvoi un exemple de numerotation
-	 *      \return     string      Example
+	/**
+	 *  Renvoi un exemple de numerotation
+	 *
+	 *  @return     string      Example
 	 */
 	function getExample()
 	{
@@ -54,9 +58,11 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	}
 
 
-	/**     \brief      Test si les numeros deje en vigueur dans la base ne provoquent pas de
-	 *                  de conflits qui empechera cette numerotation de fonctionner.
-	 *      \return     boolean     false si conflit, true si ok
+	/**
+	 *  Test si les numeros deje en vigueur dans la base ne provoquent pas de
+	 *  de conflits qui empechera cette numerotation de fonctionner.
+	 *
+	 *  @return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
 	{
@@ -86,10 +92,12 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 		return true;
 	}
 
-	/**		\brief      Return next value
-	 *      \param      objsoc      Objet third party
-	 *		\param		commande	Object order
-	 *      \return     string      Value if OK, 0 if KO
+	/**
+	 * 	Return next free value
+	 *
+	 *  @param	Societe		$objsoc     Object thirdparty
+	 *  @param  Object		$object		Object we need next value for
+	 *  @return string      			Value if KO, <0 if KO
 	 */
 	function getNextValue($objsoc,$commande)
 	{

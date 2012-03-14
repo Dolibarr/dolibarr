@@ -70,7 +70,8 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php');
  *	\class      pdf_standard
  *	\brief      Classe afin d'editer au format PDF des cartes de visite au format Avery ou personnalise
  */
-class pdf_standard {
+class pdf_standard
+{
 
 	var $code;		// Code of format
 	var $format;	// Array with informations
@@ -98,9 +99,9 @@ class pdf_standard {
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	function pdf_standard($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -108,7 +109,8 @@ class pdf_standard {
 
 	//Methode qui permet de modifier la taille des caracteres
 	// Cela modiera aussi l'espace entre chaque ligne
-	function Set_Char_Size(&$pdf,$pt) {
+	function Set_Char_Size(&$pdf,$pt)
+	{
 		if ($pt > 3) {
 			$this->_Char_Size = $pt;
 			$this->_Line_Height = $this->_Get_Height_Chars($pt);
@@ -118,7 +120,7 @@ class pdf_standard {
 
 
 	// On imprime une etiquette
-	function Add_PDF_card(&$pdf,$textleft,$header='',$footer='',$outputlangs,$textright='',$idmember,$photomember)
+	function Add_PDF_card(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='',$idmember=0,$photomember='')
 	{
 		global $mysoc,$conf,$langs;
 

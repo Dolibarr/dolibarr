@@ -33,21 +33,12 @@ class mod_arctic extends ModeleNumRefFicheinter
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $error = '';
-	var $nom = 'Artic';
+	var $nom = 'arctic';
+
 
 	/**
-     *  Constructor
-     *
-     *  @param      DoliDb		$db      Database handler
- 	 */
-	function mod_arctic()
-	{
-		$this->nom = "arctic";
-	}
-
-    /**
      *  Renvoi la description du modele de numerotation
-     * 
+     *
      *  @return     string      Texte descripif
      */
 	function info()
@@ -87,7 +78,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 
     /**
      * Renvoi un exemple de numerotation
-     * 
+     *
      * @return     string      Example
      */
     function getExample()
@@ -107,11 +98,11 @@ class mod_arctic extends ModeleNumRefFicheinter
     }
 
 	/**
-	 *  Renvoi prochaine valeur attribuee
-	 * 
-	 *  @param  Societe		$objsoc     Objet societe
-	 *  @param	Ficheinter	$object		Object ficheinter
-	 *  @return string      			Valeur
+	 * 	Return next free value
+	 *
+	 *  @param	Societe		$objsoc     Object thirdparty
+	 *  @param  Object		$object		Object we need next value for
+	 *  @return string      			Value if KO, <0 if KO
 	 */
     function getNextValue($objsoc=0,$object='')
     {
@@ -136,7 +127,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 
 	/**
 	 * 	Return next free value
-	 * 
+	 *
      *  @param	Societe		$objsoc     Object third party
 	 * 	@param	Object		$objforref	Object for number to search
      *  @return string      			Next free value

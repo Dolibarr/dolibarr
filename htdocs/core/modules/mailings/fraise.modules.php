@@ -52,7 +52,7 @@ class mailing_fraise extends MailingTargets
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-    function mailing_fraise($db)
+    function __construct($db)
     {
         $this->db=$db;
     }

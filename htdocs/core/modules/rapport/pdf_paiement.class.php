@@ -36,7 +36,7 @@ class pdf_paiement
      *
      *  @param      DoliDb		$db      Database handler
 	 */
-	function pdf_paiement($db)
+	function __construct($db)
 	{
 		global $langs;
 		$langs->load("bills");

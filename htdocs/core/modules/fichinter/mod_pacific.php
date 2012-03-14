@@ -37,7 +37,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 
 	/**
 	 *  Return description of numbering module
-	 * 
+	 *
      *  @return     string      Text with description
      */
     function info()
@@ -48,7 +48,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 
 	/**
 	 *  Renvoi un exemple de numerotation
-	 * 
+	 *
 	 *  @return     string      Example
 	 */
 	function getExample()
@@ -56,10 +56,10 @@ class mod_pacific extends ModeleNumRefFicheinter
 		return $this->prefix."0501-0001";
 	}
 
-	/** 
+	/**
 	 *  Test si les numeros deja en vigueur dans la base ne provoquent pas de
 	 *  de conflits qui empechera cette numerotation de fonctionner.
-	 * 
+	 *
 	 *  @return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
@@ -94,12 +94,12 @@ class mod_pacific extends ModeleNumRefFicheinter
 		}
 	}
 
-	/**	
-	 * 	Renvoi prochaine valeur attribuee
-	 * 
-	 *  @param      objsoc      Objet societe
-	 *  @param      ficheinter	Object ficheinter
-	 *  @return     string      Valeur
+	/**
+	 * 	Return next free value
+	 *
+	 *  @param	Societe		$objsoc     Object thirdparty
+	 *  @param  Object		$object		Object we need next value for
+	 *  @return string      			Value if KO, <0 if KO
 	 */
 	function getNextValue($objsoc=0,$object='')
 	{
@@ -128,9 +128,9 @@ class mod_pacific extends ModeleNumRefFicheinter
 		return $this->prefix.$yymm."-".$num;
 	}
 
-	/**		
+	/**
 	 * 	Return next free value
-	 * 
+	 *
 	 *  @param	Societe	$objsoc     Object third party
 	 * 	@param	Object	$objforref	Object for number to search
 	 *  @return string      		Next free value

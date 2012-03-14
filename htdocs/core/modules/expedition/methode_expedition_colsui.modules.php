@@ -25,8 +25,12 @@ include_once "methode_expedition.modules.php";
 
 class methode_expedition_colsui extends ModeleShippingMethod
 {
-
-	function methode_expedition_colsui($db=0)
+    /**
+     * Constructor
+     *
+     * @param	DoliDB		$db		Database handler
+     */
+	function __construct($db=0)
 	{
 		$this->db = $db;
 		$this->id = 3; // Do not change this value
@@ -35,6 +39,12 @@ class methode_expedition_colsui extends ModeleShippingMethod
 		$this->description = "Colissimo Suivi";
 	}
 
+	/**
+	 * Return URL of provider
+	 *
+	 * @param	string	$tracking_number	Tracking number
+	 * @return	string						URL for tracking
+	 */
 	function provider_url_status($tracking_number)
 	{
 		return sprintf("http://www.coliposte.net/particulier/suivi_particulier.jsp?colispart=%s",$tracking_number);

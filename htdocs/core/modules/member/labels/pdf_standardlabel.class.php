@@ -70,7 +70,8 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php');
  *	\class      pdf_standardlabel
  *	\brief      Classe afin d'editer au format PDF des pages d'etiquette adresse au format Avery ou personnalise
  */
-class pdf_standardlabel {
+class pdf_standardlabel
+{
 
 	var $code;		// Code of format
 	var $format;	// Array with informations
@@ -99,9 +100,9 @@ class pdf_standardlabel {
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	function pdf_standard($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -146,7 +147,7 @@ class pdf_standardlabel {
 		}
 		// Define photo
 		$photo='';
-		
+
 		// Print lines
 		if ($this->code == "CARD")
 		{

@@ -50,7 +50,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	/**
 	 *	Constructor
 	 */
-	function mod_codeclient_elephant()
+	function __construct()
 	{
 		$this->code_null = 0;
 		$this->code_modifiable = 1;

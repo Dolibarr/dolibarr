@@ -37,8 +37,10 @@ class mod_propale_marbre extends ModeleNumRefPropales
 	var $nom = "Marbre";
 
 
-    /**     \brief      Return description of numbering module
-     *      \return     string      Text with description
+    /**
+     *  Return description of numbering module
+     *
+     *  @return     string      Text with description
      */
     function info()
     {
@@ -47,8 +49,10 @@ class mod_propale_marbre extends ModeleNumRefPropales
     }
 
 
-	/**     \brief      Return an example of numbering module values
-	 *      \return     string      Example
+	/**
+	 *  Return an example of numbering module values
+	 *
+	 *  @return     string      Example
 	 */
 	function getExample()
 	{

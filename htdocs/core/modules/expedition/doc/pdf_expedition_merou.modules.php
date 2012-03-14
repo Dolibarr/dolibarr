@@ -44,7 +44,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function pdf_expedition_merou($db=0)
+	function __construct($db=0)
 	{
 		global $conf,$langs,$mysoc;
 
