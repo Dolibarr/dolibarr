@@ -1918,6 +1918,12 @@ else
         {
             $result=show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
         }
+        
+        // Addresses list
+        if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
+        {
+        	$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+        }
 
         // Projects list
         $result=show_projects($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);

@@ -61,7 +61,7 @@ if ($action == 'add' || $action == 'update')
     $object->zip		= $_POST["zipcode"];
     $object->town		= $_POST["town"];
     $object->pays_id	= $_POST["country_id"];
-    $object->country_id= $_POST["country_id"];
+    $object->country_id = $_POST["country_id"];
     $object->tel		= $_POST["tel"];
     $object->fax		= $_POST["fax"];
     $object->note		= $_POST["note"];
