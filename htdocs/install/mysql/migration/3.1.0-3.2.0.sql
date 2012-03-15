@@ -430,6 +430,7 @@ ALTER TABLE llx_expedition DROP COLUMN billed;
 
 ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseur_price_fk_product_fournisseur;
 ALTER TABLE llx_product_fournisseur_price DROP INDEX idx_product_fournisseur_price_fk_product_fournisseur;
-ALTER TABLE llx_product_fournisseur_price DROP COLUMN fk_product_fournisseur;
-ALTER TABLE llx_product_fournisseur_price ADD COLUMN tva_tx	double(6,3) NOT NULL AFTER unitprice;
+--We keep column for the moment because we must not loose data if migrate process fails (upgrade2) to allow a second chance fix. We will delete it at next version.
+--ALTER TABLE llx_product_fournisseur_price DROP COLUMN fk_product_fournisseur;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN tva_tx	double(6,3) NOT NULL DEFAULT 0 AFTER unitprice;
  
