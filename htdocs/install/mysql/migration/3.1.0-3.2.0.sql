@@ -271,9 +271,6 @@ ALTER TABLE llx_adherent_extrafields ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_product_extrafields  ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_societe_extrafields  ADD COLUMN import_key varchar(14);
 
--- Disable foreign key checks for external modules constraints
---SET FOREIGN_KEY_CHECKS=0;
-
 DROP TABLE llx_c_currencies;
 create table llx_c_currencies
 (
@@ -425,11 +422,14 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'XEU'
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'ARP', NULL, 0,	'Pesos argentins');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'MXP', NULL, 0,	'Pesos Mexicans');
 
---SET FOREIGN_KEY_CHECKS=1;
-
 ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_currency		FOREIGN KEY (fk_currency) REFERENCES llx_c_currencies (code_iso);
 ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_fk_currency	FOREIGN KEY (fk_currency) REFERENCES llx_c_currencies (code_iso);
 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_currency   FOREIGN KEY (fk_currency) REFERENCES llx_c_currencies (code_iso);
 
 ALTER TABLE llx_expedition DROP COLUMN billed;
+
+ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseur_price_fk_product_fournisseur;
+ALTER TABLE llx_product_fournisseur_price DROP INDEX idx_product_fournisseur_price_fk_product_fournisseur;
+ALTER TABLE llx_product_fournisseur_price DROP COLUMN fk_product_fournisseur;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN tva_tx	double(6,3) NOT NULL AFTER unitprice;
  

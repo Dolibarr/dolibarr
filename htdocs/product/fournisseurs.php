@@ -67,7 +67,6 @@ if (! $sortfield) $sortfield="s.nom";
 if (! $sortorder) $sortorder="ASC";
 
 
-
 /*
  * Actions
  */
@@ -93,13 +92,14 @@ if ($action == 'updateprice' && $_POST["cancel"] <> $langs->trans("Cancel"))
     $ref_fourn=GETPOST("ref_fourn");
     if (empty($ref_fourn)) $ref_fourn=GETPOST("search_ref_fourn");
     $quantity=GETPOST("qty");
+    $tva_tx=GETPOST('tva_tx','alpha');
 
 	if (empty($quantity))
 	{
 		$error++;
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Qty")).'</div>';
 	}
-	if (empty($ref_fourn))    // TODO Why not making this optionnal ?
+	if (empty($ref_fourn))
 	{
 		$error++;
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("RefSupplier")).'</div>';
@@ -151,7 +151,7 @@ if ($action == 'updateprice' && $_POST["cancel"] <> $langs->trans("Cancel"))
 			$supplier=new Fournisseur($db);
 			$result=$supplier->fetch($id_fourn);
 
-			$ret=$product->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn);
+			$ret=$product->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx);
 			if ($ret < 0)
 			{
 				$error++;
@@ -279,7 +279,9 @@ if ($id || $ref)
 				}
 				else
 				{
-					print $form->select_company(GETPOST("id_fourn"),'id_fourn','fournisseur=1',1);
+					$events=array();
+					$events[]=array('method' => 'getVatRates', 'url' => dol_buildpath('/core/ajax/vatrates.php',1), 'htmlname' => 'tva_tx', 'params' => array());
+					print $form->select_company(GETPOST("id_fourn"),'id_fourn','fournisseur=1',1,0,0,$events);
 					
 					if (is_object($hookmanager))
 					{
@@ -301,9 +303,13 @@ if ($id || $ref)
 				}
 				print '</td>';
 				print '</tr>';
+				
+				// Vat rate
+				print '<tr><td class="fieldrequired">'.$langs->trans("VATRate").'</td>';
+				print '<td colspan="3">'.$form->load_tva('tva_tx',$product->tva_tx,$supplier,$mysoc).'</td></tr>';
 
 				// Availability
-				if(!empty($conf->global->FOURN_PRODUCT_AVAILABILITY))
+				if (! empty($conf->global->FOURN_PRODUCT_AVAILABILITY))
 				{
 					$langs->load("propal");
 					print '<tr><td>'.$langs->trans("Availability").'</td><td colspan="3">';
@@ -313,8 +319,8 @@ if ($id || $ref)
 
 				// Qty min
 				print '<tr>';
-				print '<td class="fieldrequired" width="25%">'.$langs->trans("QtyMin").'</td>';
-				print '<td width="25%">';
+				print '<td class="fieldrequired">'.$langs->trans("QtyMin").'</td>';
+				print '<td>';
 				$quantity = $_REQUEST["qty"] ? $_REQUEST["qty"] : "1";
 				if ($_GET["rowid"])
 				{
@@ -326,8 +332,10 @@ if ($id || $ref)
 					print '<input class="flat" name="qty" size="5" value="'.$quantity.'">';
 				}
 				print '</td>';
-				print '<td class="fieldrequired" width="25%">'.$langs->trans("PriceQtyMin").'</td>';
-				print '<td width="25%"><input class="flat" name="price" size="8" value="'.($_POST["price"]?$_POST["price"]:(isset($product->fourn_price)?price($product->fourn_price):'')).'">';
+				
+				// Price qty min
+				print '<td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
+				print '<td><input class="flat" name="price" size="8" value="'.($_POST["price"]?$_POST["price"]:(isset($product->fourn_price)?price($product->fourn_price):'')).'">';
 				print '&nbsp;';
 				print $form->select_PriceBaseType(($_POST["price_base_type"]?$_POST["price_base_type"]:$product->price_base_type), "price_base_type");
                 print '</td>';
@@ -335,7 +343,7 @@ if ($id || $ref)
 
 				print '</table>';
 
-				print '<center><input class="button" type="submit" value="'.$langs->trans("Save").'">';
+				print '<br><center><input class="button" type="submit" value="'.$langs->trans("Save").'">';
 				print '&nbsp; &nbsp;';
 				print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
 
@@ -376,6 +384,7 @@ if ($id || $ref)
 				print '<td class="liste_titre">'.$langs->trans("SupplierRef").'</td>';
 				if (!empty($conf->global->FOURN_PRODUCT_AVAILABILITY)) print_liste_field_titre($langs->trans("Availability"),$_SERVER["PHP_SELF"],"pfp.fk_availability","",$param,"",$sortfield,$sortorder);
 				print_liste_field_titre($langs->trans("QtyMin"),$_SERVER["PHP_SELF"],"pfp.quantity","",$param,'align="right"',$sortfield,$sortorder);
+				print '<td class="liste_titre" align="right">'.$langs->trans("VATRate").'</td>';
 				print '<td class="liste_titre" align="right">'.$langs->trans("PriceQtyMinHT").'</td>';
 				print_liste_field_titre($langs->trans("UnitPriceHT"),$_SERVER["PHP_SELF"],"pfp.unitprice","",$param,'align="right"',$sortfield,$sortorder);
 				print '<td class="liste_titre"></td>';
@@ -410,6 +419,11 @@ if ($id || $ref)
 						// Quantity
 						print '<td align="right">';
 						print $productfourn->fourn_qty;
+						print '</td>';
+						
+						// VAT rate
+						print '<td align="right">';
+						print vatrate($productfourn->fourn_tva_tx,true);
 						print '</td>';
 
 						// Price quantity
@@ -448,7 +462,7 @@ else
 }
 
 
-$db->close();
-
+// End of page
 llxFooter();
+$db->close();
 ?>

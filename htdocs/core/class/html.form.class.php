@@ -640,9 +640,10 @@ class Form
      *	@param	int		$showempty		Add an empty field
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
+     	 @param	array	$event			Event options
      * 	@return	string					HTML string with
      */
-    function select_company($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0)
+    function select_company($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $event=array())
     {
         global $conf,$user,$langs;
 
@@ -665,7 +666,7 @@ class Form
             {
                 //$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
 
-                $out.= ajax_combobox($htmlname);
+                $out.= ajax_combobox($htmlname, $event);
             }
 
             $out.= '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">';
@@ -2890,9 +2891,10 @@ class Form
      *                  					Si (vendeur et acheteur dans Communaute europeenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
      *                  					Si (vendeur et acheteur dans Communaute europeenne) et bien vendu autre que transport neuf alors la TVA par defaut=TVA du produit vendu. Fin de regle.
      *                  					Sinon la TVA proposee par defaut=0. Fin de regle.
+     *  @param	bool	$options_only		Return options only (for ajax treatment)
      *  @return	void
      */
-    function load_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='')
+    function load_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='', $options_only=false)
     {
         global $langs,$conf,$mysoc;
 
@@ -2981,7 +2983,7 @@ class Form
         		$defaulttx = $this->cache_vatrates[$num-1]['txtva'];
         	}
         	
-        	$return.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
+        	if (! $options_only) $return.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
         	
         	foreach ($this->cache_vatrates as $rate)
         	{
@@ -3001,7 +3003,7 @@ class Form
         		$this->tva_taux_npr[]		= $rate['nprtva'];
         	}
         	
-        	$return.= '</select>';
+        	if (! $options_only) $return.= '</select>';
         }
         else
         {
