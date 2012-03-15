@@ -82,7 +82,7 @@ class Form
         global $conf,$langs;
 
         $ret='';
-        
+
         // TODO change for compatibility
         if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && ! preg_match('/^select;/',$typeofdata))
         {
@@ -1961,7 +1961,7 @@ class Form
      *  @param  string	$filtre            To filter list
      *  @param  int		$useempty          1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
      *  @param  string	$moreattrib        To add more attribute on select
-     * 	@return	void	
+     * 	@return	void
      */
     function select_comptes($selected='',$htmlname='accountid',$statut=0,$filtre='',$useempty=0,$moreattrib='')
     {
@@ -2575,7 +2575,7 @@ class Form
      *  @param  string	$more           More string to add
      *  @return	void
      */
-    function form_remise_dispo($page, $selected='', $htmlname='remise_id',$socid, $amount, $filter='', $maxvalue=0, $more='')
+    function form_remise_dispo($page, $selected='', $htmlname='remise_id', $socid, $amount, $filter='', $maxvalue=0, $more='')
     {
         global $conf,$langs;
         if ($htmlname != "none")
@@ -2721,7 +2721,7 @@ class Form
     {
         print $this->selectcurrency($selected,$htmlname);
     }
-    
+
     /**
      *      Load into the cache all currencies
      *
@@ -2730,16 +2730,16 @@ class Form
     function load_cache_currencies()
     {
     	global $langs;
-    	
+
     	$langs->load("dict");
-    
+
     	if (count($this->cache_currencies)) return 0;    // Cache deja charge
-    
+
     	$sql = "SELECT code_iso, label, unicode";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_currencies";
         $sql.= " WHERE active = 1";
         $sql.= " ORDER BY code_iso ASC";
-        
+
     	dol_syslog(get_class($this).'::load_cache_currencies sql='.$sql, LOG_DEBUG);
     	$resql = $this->db->query($sql);
     	if ($resql)
@@ -2749,14 +2749,14 @@ class Form
     		while ($i < $num)
     		{
     			$obj = $this->db->fetch_object($resql);
-    
+
     			// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
     			$this->cache_currencies[$obj->code_iso]['label'] = ($obj->code_iso && $langs->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$langs->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:''));
     			$this->cache_currencies[$obj->code_iso]['unicode'] = (array) dol_json_decode($obj->unicode, true);
     			$label[$obj->code_iso] = $this->cache_currencies[$obj->code_iso]['label'];
     			$i++;
     		}
-    		
+
     		array_multisort($label, SORT_ASC, $this->cache_currencies);
 
     		return $num;
@@ -2773,14 +2773,14 @@ class Form
      *
      *  @param	string	$selected    preselected currency code
      *  @param  string	$htmlname    name of HTML select list
-     * 	@return	void	
+     * 	@return	void
      */
     function selectcurrency($selected='',$htmlname='currency_id')
     {
         global $conf,$langs,$user;
 
         $langs->load("dict");
-        
+
         $this->load_cache_currencies();
 
         $out='';
@@ -2829,7 +2829,7 @@ class Form
     {
         print $this->load_tva($htmlname, $selectedrate, $societe_vendeuse, $societe_acheteuse, $idprod, $info_bits, $type);
     }
-    
+
     /**
      *	Load into the cache vat rates of a country
      *
@@ -2839,14 +2839,14 @@ class Form
     function load_cache_vatrates($country_code)
     {
     	if (count($this->cache_vatrates)) return 0;    // Cache deja charge
-    	
+
     	$sql  = "SELECT DISTINCT t.taux, t.recuperableonly";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
     	$sql.= " WHERE t.fk_pays = p.rowid";
     	$sql.= " AND t.active = 1";
     	$sql.= " AND p.code IN (".$country_code.")";
     	$sql.= " ORDER BY t.taux ASC, t.recuperableonly ASC";
-    	
+
     	$resql=$this->db->query($sql);
     	if ($resql)
     	{
@@ -2860,7 +2860,7 @@ class Form
     				$this->cache_vatrates[$i]['libtva']	= $obj->taux.'%';
     				$this->cache_vatrates[$i]['nprtva']	= $obj->recuperableonly;
     			}
-    			
+
     			return $num;
     		}
     		else
@@ -2963,10 +2963,10 @@ class Form
                 }
             }
         }
-        
+
         // Now we get list
         $num = $this->load_cache_vatrates($code_pays);
-        
+
         if ($num > 0)
         {
         	// Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')
@@ -2975,16 +2975,16 @@ class Form
         		$defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$idprod);
         		$defaultnpr=get_default_npr($societe_vendeuse,$societe_acheteuse,$idprod);
         	}
-        	
+
         	// Si taux par defaut n'a pu etre determine, on prend dernier de la liste.
         	// Comme ils sont tries par ordre croissant, dernier = plus eleve = taux courant
         	if ($defaulttx < 0 || dol_strlen($defaulttx) == 0)
         	{
         		$defaulttx = $this->cache_vatrates[$num-1]['txtva'];
         	}
-        	
+
         	if (! $options_only) $return.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
-        	
+
         	foreach ($this->cache_vatrates as $rate)
         	{
         		$return.= '<option value="'.$rate['txtva'];
@@ -2997,12 +2997,12 @@ class Form
         		$return.= '>'.vatrate($rate['libtva']);
         		$return.= $rate['nprtva'] ? ' *': '';
         		$return.= '</option>';
-        		
+
         		$this->tva_taux_value[]		= $rate['txtva'];
         		$this->tva_taux_libelle[]	= $rate['libtva'];
         		$this->tva_taux_npr[]		= $rate['nprtva'];
         	}
-        	
+
         	if (! $options_only) $return.= '</select>';
         }
         else
