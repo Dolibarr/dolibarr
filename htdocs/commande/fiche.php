@@ -1190,6 +1190,9 @@ if ($action == 'create' && $user->rights->commande->creer)
             $remise_percent     = (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
             $remise_absolue     = (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
             $dateinvoice        = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+            
+            $note_private		= (! empty($objectsrc->note) ? $objectsrc->note : (! empty($objectsrc->note_private) ? $objectsrc->note_private : ''));
+            $note_public		= (! empty($objectsrc->note_public) ? $objectsrc->note_public : '');
 
             // Object source contacts list
             $srccontactslist = $objectsrc->liste_contact(-1,'external',1);
@@ -1327,8 +1330,8 @@ if ($action == 'create' && $user->rights->commande->creer)
     print '<tr>';
     print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
     print '<td valign="top" colspan="2">';
-    print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">';
-    print '</textarea></td></tr>';
+    print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
+    print '</td></tr>';
 
     // Note privee
     if (! $user->societe_id)
@@ -1336,8 +1339,8 @@ if ($action == 'create' && $user->rights->commande->creer)
         print '<tr>';
         print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
         print '<td valign="top" colspan="2">';
-        print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">';
-        print '</textarea></td></tr>';
+        print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
+        print '</td></tr>';
     }
 
     if (is_object($objectsrc))

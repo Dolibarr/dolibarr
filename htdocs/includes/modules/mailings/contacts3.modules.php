@@ -82,7 +82,7 @@ class mailing_contacts3 extends MailingTargets
     	$sql.= " AND sp.entity = ".$conf->entity;
     	if ($filtersarray[0] <> 'all') $sql.= " AND cs.fk_categorie = c.rowid";
     	if ($filtersarray[0] <> 'all') $sql.= " AND cs.fk_societe = sp.fk_soc";
-    	if ($filtersarray[0] <> 'all') $sql.= " AND c.label = '".$this->db>escape($filtersarray[0])."'";
+    	if ($filtersarray[0] <> 'all') $sql.= " AND c.label = '".$this->db->escape($filtersarray[0])."'";
     	$sql.= " ORDER BY sp.name, sp.firstname";
 
     	$resql = $this->db->query($sql);
