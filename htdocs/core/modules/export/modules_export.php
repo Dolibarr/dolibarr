@@ -92,7 +92,10 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 
 
 	/**
-	 *      \brief      Return picto of export driver
+	 *  Return picto of export driver
+	 *
+	 *  @param	string	$key	Key of driver
+	 *  @return	string			Picto string
 	 */
 	function getPicto($key)
 	{
@@ -100,7 +103,10 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	}
 
 	/**
-	 *      \brief      Renvoi libelle d'un driver export
+	 *  Renvoi libelle d'un driver export
+	 *
+	 *  @param	string	$key	Key of driver
+	 *  @return	string			Label
 	 */
 	function getDriverLabel($key)
 	{
@@ -108,7 +114,10 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	}
 
 	/**
-	 *      \brief      Renvoi le descriptif d'un driver export
+	 *  Renvoi le descriptif d'un driver export
+	 *
+	 *  @param	string	$key	Key of driver
+	 *  @return	string			Description
 	 */
 	function getDriverDesc($key)
 	{
@@ -116,7 +125,10 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	}
 
 	/**
-	 *      \brief      Renvoi version d'un driver export
+	 *  Renvoi version d'un driver export
+	 *
+	 *  @param	string	$key	Key of driver
+	 *  @return	string			Driver version
 	 */
 	function getDriverVersion($key)
 	{
@@ -124,7 +136,10 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	}
 
 	/**
-	 *      \brief      Renvoi libelle de librairie externe du driver
+	 *  Renvoi libelle de librairie externe du driver
+	 *
+	 *  @param	string	$key	Key of driver
+	 *  @return	string			Label of library
 	 */
 	function getLibLabel($key)
 	{
@@ -132,7 +147,10 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	}
 
 	/**
-	 *      \brief      Renvoi version de librairie externe du driver
+	 *  Renvoi version de librairie externe du driver
+	 *
+	 *  @param	string	$key	Key of driver
+	 *  @return	string			Version of library
 	 */
 	function getLibVersion($key)
 	{
