@@ -43,7 +43,7 @@ if ($conf->projet->enabled)
 {
 	require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
 	require_once(DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php');
-}  
+}
 
 $langs->load('bills');
 //print 'ee'.$langs->trans('BillsCustomer');exit;
@@ -228,7 +228,7 @@ else if ($action == 'valid')
     else
     {
         // Si non avoir, le signe doit etre positif
-        if ($object->total_ht < 0)
+        if (empty($conf->global->FACTURE_ENABLE_NEGATIVE) && $object->total_ht < 0)
         {
             $mesg='<div class="error">'.$langs->trans("ErrorInvoiceOfThisTypeMustBePositive").'</div>';
             $action='';
@@ -739,7 +739,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 
                 $object->origin    = $_POST['origin'];
                 $object->origin_id = $_POST['originid'];
-                
+
                 // Possibility to add external linked objects with hooks
                 $object->linked_objects[$object->origin] = $object->origin_id;
                 if (is_array($_POST['other_linked_objects']) && ! empty($_POST['other_linked_objects']))
@@ -2089,8 +2089,11 @@ else
                     //array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
                     array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
                 }
-
-                $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('ValidateBill'),$text,'confirm_valid',$formquestion,"yes",($conf->notification->enabled?0:2));
+                if ($object->type != 2 && $object->total_ttc < 0)    // Can happen only if $conf->global->FACTURE_ENABLE_NEGATIVE is on
+                {
+                     $text.='<br>'.img_warning().' '.$langs->trans("ErrorInvoiceOfThisTypeMustBePositive");
+                }
+                $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('ValidateBill'),$text,'confirm_valid',$formquestion,(($object->type != 2 && $object->total_ttc < 0)?"no":"yes"),($conf->notification->enabled?0:2));
             }
 
             // Confirm back to draft status
@@ -2345,7 +2348,7 @@ else
                 if ($absolute_creditnote > 0)    // If not, link will be added later
                 {
                     if ($object->statut == 0 && $object->type != 2 && $object->type != 3) print ' ('.$addabsolutediscount.')<br>';
-                    else print '.';
+                    else print '. ';
                 }
                 else print '. ';
             }
@@ -2822,14 +2825,13 @@ else
                     // Validate
                     if ($object->statut == 0 && count($object->lines) > 0 &&
                     (
-                    (($object->type == 0 || $object->type == 1 || $object->type == 3 || $object->type == 4) && $object->total_ttc >= 0)
+                    (($object->type == 0 || $object->type == 1 || $object->type == 3 || $object->type == 4) && (! empty($conf->global->FACTURE_ENABLE_NEGATIVE) || $object->total_ttc >= 0))
                     || ($object->type == 2 && $object->total_ttc <= 0))
                     )
                     {
                         if ($user->rights->facture->valider)
                         {
-                            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=valid"';
-                            print '>'.$langs->trans('Validate').'</a>';
+                            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=valid">'.$langs->trans('Validate').'</a>';
                         }
                     }
 
