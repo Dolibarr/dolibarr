@@ -176,7 +176,7 @@ if ($id > 0 || ! empty($ref))
 		print '<td colspan="3">'.$object->client->getNomUrl(1).'</td></tr>';
 		
 		// Delivery address
-		if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS)
+		if ($conf->global->SOCIETE_ADDRESSES_MANAGEMENT)
 		{
 			print '<tr><td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -189,11 +189,11 @@ if ($id > 0 || ! empty($ref))
 		
 			if ($action == 'editdelivery_address')
 			{
-				$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,GETPOST('socid','int'),'fk_address','propal',$object->id);
+				$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$object->socid,'fk_address','propal',$object->id);
 			}
 			else
 			{
-				$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,GETPOST('socid','int'),'none','propal',$object->id);
+				$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$object->socid,'none','propal',$object->id);
 			}
 			print '</td></tr>';
 		}

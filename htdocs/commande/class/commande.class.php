@@ -868,6 +868,7 @@ class Commande extends CommonObject
     function createFromProposal($object)
     {
         global $conf,$user,$langs;
+        global $hookmanager;
 
         $error=0;
 
@@ -915,16 +916,26 @@ class Commande extends CommonObject
             $this->note                 = $object->note;
             $this->note_public          = $object->note_public;
 
-            $this->origin      = $object->element;
-            $this->origin_id   = $object->id;
+            $this->origin				= $object->element;
+            $this->origin_id			= $object->id;
+            
+            // Possibility to add external linked objects with hooks
+            $this->linked_objects[$this->origin] = $this->origin_id;
+            if (is_array($object->other_linked_objects) && ! empty($object->other_linked_objects))
+            {
+            	$this->linked_objects = array_merge($this->linked_objects, $object->other_linked_objects);
+            }
 
             $ret = $this->create($user);
 
             if ($ret > 0)
             {
                 // Actions hooked (by external module)
-                include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
-                $hookmanager=new HookManager($this->db);
+                if (! is_object($hookmanager))
+                {
+                	include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+                	$hookmanager=new HookManager($this->db);
+                }
                 $hookmanager->initHooks(array('orderdao'));
 
                 $parameters=array('objFrom'=>$object);

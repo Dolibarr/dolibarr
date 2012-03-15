@@ -331,6 +331,7 @@ ActionDoneShort=Terminé
 CompanyFoundation=Société ou institution
 ContactsForCompany=Contacts de ce tiers
 ContactsAddressesForCompany=Contacts/adresses de ce tiers
+AddressesForCompany=Adresses de ce tiers
 ActionsOnCompany=Événements vis à vis de ce tiers
 ActionsOnMember=Événements vis à vis de cet adhérent
 NActions=%s événements

@@ -1236,13 +1236,16 @@ if ($action == 'create' && $user->rights->commande->creer)
             $ref_client         = (!empty($objectsrc->ref_client)?$object->ref_client:'');
 
             $soc = $objectsrc->client;
-            $cond_reglement_id  = (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
-            $mode_reglement_id  = (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
-            $availability_id  = (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
-            $demand_reason_id  = (!empty($objectsrc->demand_reason_id)?$objectsrc->demand_reason_id:(!empty($soc->demand_reason_id)?$soc->demand_reason_id:0));
-            $remise_percent     = (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
-            $remise_absolue     = (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
-            $dateinvoice        = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+            $cond_reglement_id	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
+            $mode_reglement_id	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+            $availability_id	= (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
+            $demand_reason_id	= (!empty($objectsrc->demand_reason_id)?$objectsrc->demand_reason_id:(!empty($soc->demand_reason_id)?$soc->demand_reason_id:0));
+            $remise_percent		= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
+            $remise_absolue		= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
+            $dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+            
+            $note_private		= (! empty($objectsrc->note) ? $objectsrc->note : (! empty($objectsrc->note_private) ? $objectsrc->note_private : ''));
+            $note_public		= (! empty($objectsrc->note_public) ? $objectsrc->note_public : '');
 
             // Object source contacts list
             $srccontactslist = $objectsrc->liste_contact(-1,'external',1);
@@ -1383,8 +1386,8 @@ if ($action == 'create' && $user->rights->commande->creer)
     print '<tr>';
     print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
     print '<td valign="top" colspan="2">';
-    print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">';
-    print '</textarea></td></tr>';
+    print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
+    print '</td></tr>';
 
     // Note privee
     if (! $user->societe_id)
@@ -1392,8 +1395,8 @@ if ($action == 'create' && $user->rights->commande->creer)
         print '<tr>';
         print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
         print '<td valign="top" colspan="2">';
-        print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">';
-        print '</textarea></td></tr>';
+        print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
+        print '</td></tr>';
     }
 
     if (is_object($objectsrc))

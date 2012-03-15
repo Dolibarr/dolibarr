@@ -31,12 +31,13 @@ require_once(DOL_DOCUMENT_ROOT."/societe/class/address.class.php");
 $langs->load("companies");
 $langs->load("commercial");
 
-$id = GETPOST('id','int');
-$action = GETPOST('action','alpha');
-$confirm = GETPOST('confirm','alpha');
-$origin = GETPOST('origin','alpha');
-$originid = GETPOST('originid','int');
-$socid = GETPOST('socid','int');
+$id			= GETPOST('id','int');
+$action		= GETPOST('action','alpha');
+$confirm	= GETPOST('confirm','alpha');
+$backtopage	= GETPOST('backtopage','alpha');
+$origin		= GETPOST('origin','alpha');
+$originid	= GETPOST('originid','int');
+$socid		= GETPOST('socid','int');
 if (! $socid && ($action != 'create' && $action != 'add' && $action != 'update')) accessforbidden();
 
 // Security check
@@ -50,19 +51,23 @@ $object = new Address($db);
  * Actions
  */
 
+// Cancel
+if (GETPOST("cancel") && ! empty($backtopage))
+{
+	header("Location: ".$backtopage);
+	exit;
+}
+
 if ($action == 'add' || $action == 'update')
 {
     $object->socid		= $socid;
     $object->label		= ($_POST["label"]!=$langs->trans('RequiredField')?$_POST["label"]:'');
     $object->name		= ($_POST["name"]!=$langs->trans('RequiredField')?$_POST["name"]:'');
     $object->address	= $_POST["address"];
-    $object->cp			= $_POST["zipcode"];
-    $object->ville		= $_POST["town"];
     $object->zip		= $_POST["zipcode"];
     $object->town		= $_POST["town"];
-    $object->pays_id	= $_POST["country_id"];
     $object->country_id = $_POST["country_id"];
-    $object->tel		= $_POST["tel"];
+    $object->phone		= $_POST["phone"];
     $object->fax		= $_POST["fax"];
     $object->note		= $_POST["note"];
     
@@ -73,7 +78,12 @@ if ($action == 'add' || $action == 'update')
 
         if ($result >= 0)
         {
-            if ($origin == 'commande')
+        	if (! empty($backtopage))
+        	{
+        		Header("Location: ".$backtopage);
+        		exit;
+        	}
+            else if ($origin == 'commande')
             {
                 Header("Location: ../commande/contact.php?action=editdelivery_adress&socid=".$socid."&id=".$originid);
                 exit;
@@ -108,7 +118,12 @@ if ($action == 'add' || $action == 'update')
 
         if ($result >= 0)
         {
-            if ($origin == 'commande')
+        	if (! empty($backtopage))
+        	{
+        		Header("Location: ".$backtopage);
+        		exit;
+        	}
+            else if ($origin == 'commande')
             {
                 Header("Location: ../commande/contact.php?id=".$originid);
                 exit;
@@ -177,45 +192,31 @@ if ($action == 'create')
          * Creation
          */
 
-        $societe=new Societe($db);
-        $societe->fetch($socid);
-        $head = societe_prepare_head($societe);
-
-        dol_fiche_head($head, 'customer', $societe->nom);
-
         if ($_POST["label"] && $_POST["name"])
         {
             $object->socid		=	$socid;
             $object->label		=	$_POST["label"];
             $object->name		=	$_POST["name"];
             $object->address	=	$_POST["address"];
-            $object->cp			=	$_POST["zipcode"];
-            $object->ville		=	$_POST["town"];
-            $object->tel		=	$_POST["tel"];
+            $object->zip		=	$_POST["zipcode"];
+            $object->town		=	$_POST["town"];
+            $object->phone		=	$_POST["phone"];
             $object->fax		=	$_POST["fax"];
             $object->note		=	$_POST["note"];
         }
 
         // On positionne pays_id, pays_code et libelle du pays choisi
-        $object->country_id=$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
+        $object->country_id = (GETPOST('country_id','int') ? GETPOST('country_id','int') : $mysoc->country_id);
         if ($object->country_id)
         {
         	$tmparray=getCountry($object->country_id,'all');
-            $object->pays_code	= $tmparray['code'];
-            $object->pays		= $tmparray['label'];
             $object->country_code	= $tmparray['code'];
             $object->country		= $tmparray['label'];
         }
+        
+        print_fiche_titre($langs->trans("AddAddress"));
 
-        print_titre($langs->trans("AddAddress"));
         print "<br>\n";
-
-        if ($object->error)
-        {
-            print '<div class="error">';
-            print nl2br($object->error);
-            print '</div>';
-        }
 
         // If javascript enabled, we add interactivity on mandatory fields
         if ($conf->use_javascript_ajax)
@@ -243,11 +244,12 @@ if ($action == 'create')
         }
 
         print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" name="formsoc">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        print '<input type="hidden" name="socid" value="'.$socid.'">';
-        print '<input type="hidden" name="origin" value="'.$origin.'">';
-        print '<input type="hidden" name="originid" value="'.$originid.'">';
-        print '<input type="hidden" name="action" value="add">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'"/>';
+        print '<input type="hidden" name="socid" value="'.$socid.'"/>';
+        print '<input type="hidden" name="backtopage" value="'.$backtopage.'"/>';
+        print '<input type="hidden" name="origin" value="'.$origin.'"/>';
+        print '<input type="hidden" name="originid" value="'.$originid.'"/>';
+        print '<input type="hidden" name="action" value="add"/>';
 
         print '<table class="border" width="100%">';
 
@@ -260,19 +262,19 @@ if ($action == 'create')
 
         // Zip
         print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-        print $formcompany->select_ziptown($object->cp,'zipcode',array('town','selectcountry_id'),6);
+        print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id'),6);
         print '</td></tr>';
 
         // Town
         print '<tr><td>'.$langs->trans('Town').'</td><td>';
-        print $formcompany->select_ziptown($object->ville,'town',array('zipcode','selectcountry_id'));
+        print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id'));
         print '</td></tr>';
 
         print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
         print $form->select_country($object->country_id,'selectcountry_id');
         print '</td></tr>';
 
-        print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$object->tel.'"></td></tr>';
+        print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="phone" value="'.$object->phone.'"></td></tr>';
 
         print '<tr><td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$object->fax.'"></td></tr>';
 
@@ -283,7 +285,13 @@ if ($action == 'create')
         print '</table>'."\n";
 
         print '<br><center>';
-        print '<input type="submit" class="button" value="'.$langs->trans('AddAddress').'"></center>'."\n";
+        print '<input type="submit" class="button" value="'.$langs->trans('Add').'">';
+        if (! empty($backtopage))
+        {
+        	print ' &nbsp; &nbsp; ';
+        	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+        }
+        print '</center>'."\n";
 
         print '</form>'."\n";
 
@@ -299,7 +307,7 @@ elseif ($action == 'edit')
     $societe->fetch($socid);
     $head = societe_prepare_head($societe);
 
-    dol_fiche_head($head, 'customer', $societe->nom);
+    dol_fiche_head($head, 'card', $societe->nom);
 
     print_titre($langs->trans("EditAddress"));
     print "<br>\n";
@@ -318,10 +326,10 @@ elseif ($action == 'edit')
             $object->label		=	$_POST["label"];
             $object->name		=	$_POST["name"];
             $object->address	=	$_POST["address"];
-            $object->cp			=	$_POST["zipcode"];
-            $object->ville		=	$_POST["town"];
+            $object->zip		=	$_POST["zipcode"];
+            $object->town		=	$_POST["town"];
             $object->country_id	=	$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
-            $object->tel		=	$_POST["tel"];
+            $object->phone		=	$_POST["phone"];
             $object->fax		=	$_POST["fax"];
             $object->note		=	$_POST["note"];
 
@@ -329,27 +337,19 @@ elseif ($action == 'edit')
             if ($object->country_id)
             {
 	        	$tmparray=getCountry($object->country_id,'all');
-	            $object->pays_code		= $tmparray['code'];
-	            $object->pays			= $tmparray['label'];
 	            $object->country_code	= $tmparray['code'];
 	            $object->country		= $tmparray['label'];
             }
         }
 
-        if ($object->error)
-        {
-            print '<div class="error">';
-            print $object->error;
-            print '</div>';
-        }
-
         print '<form action="'.$_SERVER['PHP_SELF'].'?socid='.$object->socid.'" method="POST" name="formsoc">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        print '<input type="hidden" name="action" value="update">';
-        print '<input type="hidden" name="socid" value="'.$object->socid.'">';
-        print '<input type="hidden" name="origin" value="'.$origin.'">';
-        print '<input type="hidden" name="originid" value="'.$originid.'">';
-        print '<input type="hidden" name="id" value="'.$object->id.'">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'"/>';
+        print '<input type="hidden" name="action" value="update"/>';
+        print '<input type="hidden" name="socid" value="'.$object->socid.'"/>';
+        print '<input type="hidden" name="backtopage" value="'.$backtopage.'"/>';
+        print '<input type="hidden" name="origin" value="'.$origin.'"/>';
+        print '<input type="hidden" name="originid" value="'.$originid.'"/>';
+        print '<input type="hidden" name="id" value="'.$object->id.'"/>';
 
         print '<table class="border" width="100%">';
 
@@ -362,29 +362,34 @@ elseif ($action == 'edit')
 
         // Zip
         print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-        print $formcompany->select_ziptown($object->cp,'zipcode',array('town','selectcountry_id'),6);
+        print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id'),6);
         print '</td></tr>';
 
         // Town
         print '<tr><td>'.$langs->trans('Town').'</td><td>';
-        print $formcompany->select_ziptown($object->ville,'town',array('zipcode','selectcountry_id'));
+        print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id'));
         print '</td></tr>';
 
         print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
         print $form->select_country($object->country_id,'country_id');
         print '</td></tr>';
 
-        print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$object->tel.'"></td></tr>';
+        print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="phone" value="'.$object->phone.'"></td></tr>';
 
         print '<tr><td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$object->fax.'"></td></tr>';
 
         print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3"><textarea name="note" cols="40" rows="6" wrap="soft">';
         print $object->note;
         print '</textarea></td></tr>';
-
-        print '<tr><td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
-
-        print '</table>';
+        
+        print '</table><br>';
+        
+        print '<center>';
+        print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+        print ' &nbsp; ';
+        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+        print '</center>';
+        
         print '</form>';
     }
 }
@@ -409,18 +414,11 @@ else
 
 
     // Confirmation delete
-    if ($_GET["action"] == 'delete')
+    if ($action == 'delete')
     {
         $form = new Form($db);
         $ret=$form->form_confirm($_SERVER['PHP_SELF']."?socid=".$object->socid."&amp;id=".$id,$langs->trans("DeleteAddress"),$langs->trans("ConfirmDeleteAddress"),"confirm_delete");
         if ($ret == 'html') print '<br>';
-    }
-
-    if ($object->error)
-    {
-        print '<div class="error">';
-        print $object->error;
-        print '</div>';
     }
 
     $nblines = count($object->lines);
@@ -437,12 +435,12 @@ else
 
             print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($object->lines[$i]->address)."</td></tr>";
 
-            print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$object->lines[$i]->cp."</td></tr>";
-            print '<tr><td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$object->lines[$i]->ville."</td></tr>";
+            print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$object->lines[$i]->zip."</td></tr>";
+            print '<tr><td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$object->lines[$i]->town."</td></tr>";
 
-            print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$object->lines[$i]->pays.'</td>';
+            print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$object->lines[$i]->country.'</td>';
 
-            print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($object->lines[$i]->tel,$object->lines[$i]->country_code,0,$object->socid,'AC_TEL').'</td></tr>';
+            print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($object->lines[$i]->phone,$object->lines[$i]->country_code,0,$object->socid,'AC_TEL').'</td></tr>';
 
             print '<tr><td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($object->lines[$i]->fax,$object->lines[$i]->country_code,0,$object->socid,'AC_FAX').'</td></tr>';
 
