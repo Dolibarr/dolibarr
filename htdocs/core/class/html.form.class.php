@@ -50,6 +50,7 @@ class Form
     var $cache_demand_reason=array();
     var $cache_type_fees=array();
     var $cache_currencies=array();
+    var $cache_vatrates=array();
 
     var $tva_taux_value;
     var $tva_taux_libelle;
@@ -2827,7 +2828,52 @@ class Form
     {
         print $this->load_tva($htmlname, $selectedrate, $societe_vendeuse, $societe_acheteuse, $idprod, $info_bits, $type);
     }
-
+    
+    /**
+     *	Load into the cache vat rates of a country
+     *
+     *	@param		string		Country code
+     *	@return		int			Nb of loaded lines, 0 if already loaded, <0 if KO
+     */
+    function load_cache_vatrates($country_code)
+    {
+    	if (count($this->cache_vatrates)) return 0;    // Cache deja charge
+    	
+    	$sql  = "SELECT DISTINCT t.taux, t.recuperableonly";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
+    	$sql.= " WHERE t.fk_pays = p.rowid";
+    	$sql.= " AND t.active = 1";
+    	$sql.= " AND p.code IN (".$country_code.")";
+    	$sql.= " ORDER BY t.taux ASC, t.recuperableonly ASC";
+    	
+    	$resql=$this->db->query($sql);
+    	if ($resql)
+    	{
+    		$num = $this->db->num_rows($resql);
+    		if ($num)
+    		{
+    			for ($i = 0; $i < $num; $i++)
+    			{
+    				$obj = $this->db->fetch_object($resql);
+    				$this->cache_vatrates[$i]['txtva']	= $obj->taux;
+    				$this->cache_vatrates[$i]['libtva']	= $obj->taux.'%';
+    				$this->cache_vatrates[$i]['nprtva']	= $obj->recuperableonly;
+    			}
+    			
+    			return $num;
+    		}
+    		else
+    		{
+    			$this->error = '<font class="error">'.$langs->trans("ErrorNoVATRateDefinedForSellerCountry",$code_pays).'</font>';
+    			return -1;
+    		}
+    	}
+    	else
+    	{
+    		$this->error = '<font class="error">'.$this->db->error().'</font>';
+    		return -2;
+    	}
+    }
 
     /**
      *  Output an HTML select vat rate
@@ -2915,76 +2961,51 @@ class Form
                 }
             }
         }
+        
         // Now we get list
-        $sql  = "SELECT DISTINCT t.taux, t.recuperableonly";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-        $sql.= " WHERE t.fk_pays = p.rowid";
-        $sql.= " AND t.active = 1";
-        $sql.= " AND p.code in (".$code_pays.")";
-        $sql.= " ORDER BY t.taux ASC, t.recuperableonly ASC";
-
-        $resql=$this->db->query($sql);
-        if ($resql)
+        $num = $this->load_cache_vatrates($code_pays);
+        
+        if ($num > 0)
         {
-            $num = $this->db->num_rows($resql);
-            if ($num)
-            {
-                for ($i = 0; $i < $num; $i++)
-                {
-                    $obj = $this->db->fetch_object($resql);
-                    $txtva[$i]  = $obj->taux;
-                    $libtva[$i] = $obj->taux.'%';
-                    $nprtva[$i] = $obj->recuperableonly;
-                }
-            }
-            else
-            {
-                $return.= '<font class="error">'.$langs->trans("ErrorNoVATRateDefinedForSellerCountry",$code_pays).'</font>';
-            }
+        	// Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')
+        	if ($defaulttx < 0 || dol_strlen($defaulttx) == 0)
+        	{
+        		$defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$idprod);
+        		$defaultnpr=get_default_npr($societe_vendeuse,$societe_acheteuse,$idprod);
+        	}
+        	
+        	// Si taux par defaut n'a pu etre determine, on prend dernier de la liste.
+        	// Comme ils sont tries par ordre croissant, dernier = plus eleve = taux courant
+        	if ($defaulttx < 0 || dol_strlen($defaulttx) == 0)
+        	{
+        		$defaulttx = $this->cache_vatrates[$num-1]['txtva'];
+        	}
+        	
+        	$return.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
+        	
+        	foreach ($this->cache_vatrates as $rate)
+        	{
+        		$return.= '<option value="'.$rate['txtva'];
+        		$return.= $rate['nprtva'] ? '*': '';
+        		$return.= '"';
+        		if ($rate['txtva'] == $defaulttx && $rate['nprtva'] == $defaultnpr)
+        		{
+        			$return.= ' selected="selected"';
+        		}
+        		$return.= '>'.vatrate($rate['libtva']);
+        		$return.= $rate['nprtva'] ? ' *': '';
+        		$return.= '</option>';
+        		
+        		$this->tva_taux_value[]		= $rate['txtva'];
+        		$this->tva_taux_libelle[]	= $rate['libtva'];
+        		$this->tva_taux_npr[]		= $rate['nprtva'];
+        	}
+        	
+        	$return.= '</select>';
         }
         else
         {
-            $return.= '<font class="error">'.$this->db->error().'</font>';
-        }
-
-        // Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')
-        if ($defaulttx < 0 || dol_strlen($defaulttx) == 0)
-        {
-            $defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$idprod);
-            $defaultnpr=get_default_npr($societe_vendeuse,$societe_acheteuse,$idprod);
-        }
-
-        // Si taux par defaut n'a pu etre determine, on prend dernier de la liste.
-        // Comme ils sont tries par ordre croissant, dernier = plus eleve = taux courant
-        if ($defaulttx < 0 || dol_strlen($defaulttx) == 0)
-        {
-            $defaulttx = $txtva[count($txtva)-1];
-        }
-
-        $nbdetaux = count($txtva);
-        if ($nbdetaux > 0)
-        {
-            $return.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
-
-            for ($i = 0 ; $i < $nbdetaux ; $i++)
-            {
-                //print "xxxxx".$txtva[$i]."-".$nprtva[$i];
-                $return.= '<option value="'.$txtva[$i];
-                $return.= $nprtva[$i] ? '*': '';
-                $return.= '"';
-                if ($txtva[$i] == $defaulttx && $nprtva[$i] == $defaultnpr)
-                {
-                    $return.= ' selected="selected"';
-                }
-                $return.= '>'.vatrate($libtva[$i]);
-                $return.= $nprtva[$i] ? ' *': '';
-                $return.= '</option>';
-
-                $this->tva_taux_value[$i] = $txtva[$i];
-                $this->tva_taux_libelle[$i] = $libtva[$i];
-                $this->tva_taux_npr[$i] = $nprtva[$i];
-            }
-            $return.= '</select>';
+            $return.= $this->error;
         }
 
         return $return;
