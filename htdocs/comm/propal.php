@@ -438,7 +438,6 @@ else if ($action == 'setstatut' && $user->rights->propale->cloturer)
         {
             $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("CloseAs")).'</div>';
             $action='statut';
-            $action='statut';
         }
         else
         {
