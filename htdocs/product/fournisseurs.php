@@ -261,7 +261,7 @@ if ($id || $ref)
 					print_fiche_titre($langs->trans("AddSupplierPrice"));
 				}
 
-				print '<form action="fournisseurs.php?id='.$product->id.'" method="post">';
+				print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" method="POST">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="updateprice">';
 
@@ -427,8 +427,8 @@ if ($id || $ref)
 						print '<td align="center">';
 						if ($user->rights->produit->creer || $user->rights->service->creer)
 						{
-							print '<a href="fournisseurs.php?id='.$product->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=add_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
-							print '<a href="fournisseurs.php?id='.$product->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=remove_pf&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_picto($langs->trans("Remove"),'disable.png').'</a>';
+							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=add_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
+							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=remove_pf&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_picto($langs->trans("Remove"),'disable.png').'</a>';
 						}
 
 						print '</td>';
