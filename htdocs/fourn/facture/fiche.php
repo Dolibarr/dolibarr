@@ -1060,7 +1060,8 @@ if ($action == 'create')
     }
     else
     {
-        if ($conf->global->PRODUCT_SHOW_WHEN_CREATE)
+    	// TODO more bugs
+        if (1==2 && $conf->global->PRODUCT_SHOW_WHEN_CREATE)
         {
             print '<tr class="liste_titre">';
             print '<td>&nbsp;</td><td>'.$langs->trans('Label').'</td>';
@@ -1838,7 +1839,8 @@ else
     }
 }
 
-llxFooter();
 
+// End of page
+llxFooter();
 $db->close();
 ?>

@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  *
@@ -1231,7 +1231,7 @@ if ($id > 0 || ! empty($ref))
 
                 print '</td>';
                 print '<td>';
-                print $form->load_tva('tva_tx',$line->tva_tx);
+                print $form->load_tva('tva_tx',$line->tva_tx,$soc,$mysoc);
                 print '</td>';
                 print '<td align="right"><input	size="5" type="text" name="pu"	value="'.price($line->subprice).'"></td>';
                 print '<td align="right"><input size="2" type="text" name="qty" value="'.$line->qty.'"></td>';
@@ -1605,7 +1605,8 @@ if ($id > 0 || ! empty($ref))
     }
 }
 
-$db->close();
 
+// End of page
 llxFooter();
+$db->close();
 ?>
