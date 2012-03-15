@@ -2004,6 +2004,7 @@ else
 }
 
 
-$db->close();
+// End of page
 llxFooter();
+$db->close();
 ?>

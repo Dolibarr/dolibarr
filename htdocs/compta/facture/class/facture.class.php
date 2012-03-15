@@ -669,8 +669,15 @@ class Facture extends CommonObject
         $this->note                 = $object->note;
         $this->note_public          = $object->note_public;
 
-        $this->origin      = $object->element;
-        $this->origin_id   = $object->id;
+        $this->origin				= $object->element;
+        $this->origin_id			= $object->id;
+        
+        // Possibility to add external linked objects with hooks
+        $this->linked_objects[$this->origin] = $this->origin_id;
+        if (is_array($object->other_linked_objects) && ! empty($object->other_linked_objects))
+        {
+        	$this->linked_objects = array_merge($this->linked_objects, $object->other_linked_objects);
+        }
 
         $ret = $this->create($user);
 
