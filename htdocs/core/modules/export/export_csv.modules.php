@@ -72,36 +72,71 @@ class ExportCsv extends ModeleExports
 
 	}
 
+	/**
+	 * getDriverId
+	 *
+	 * @return int
+	 */
 	function getDriverId()
 	{
 		return $this->id;
 	}
 
+	/**
+	 * getDriverLabel
+	 *
+	 * @return string
+	 */
 	function getDriverLabel()
 	{
 		return $this->label;
 	}
 
+	/**
+	 * getDriverDesc
+	 *
+	 * @return string
+	 */
 	function getDriverDesc()
 	{
 		return $this->desc;
 	}
 
+	/**
+	 * getDriverExtension
+	 *
+	 * @return string
+	 */
 	function getDriverExtension()
 	{
 		return $this->extension;
 	}
 
+	/**
+	 * getDriverVersion
+	 *
+	 * @return string
+	 */
 	function getDriverVersion()
 	{
 		return $this->version;
 	}
 
+	/**
+	 * getLabelLabel
+	 *
+	 * @return string
+	 */
 	function getLibLabel()
 	{
 		return $this->label_lib;
 	}
 
+	/**
+	 * getLibVersion
+	 *
+	 * @return string
+	 */
 	function getLibVersion()
 	{
 		return $this->version_lib;
