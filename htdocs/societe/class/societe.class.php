@@ -702,7 +702,7 @@ class Societe extends CommonObject
 
                 $this->state_id     = $obj->fk_departement;
                 $this->state_code   = $obj->state_code;
-                $this->state        = $obj->state;
+                $this->state        = ($obj->state!='-'?$obj->state:'');
 
                 $transcode=$langs->trans('StatusProspect'.$obj->fk_stcomm);
                 $libelle=($transcode!='StatusProspect'.$obj->fk_stcomm?$transcode:$obj->stcomm);

@@ -37,7 +37,7 @@ class HookManager
 
 	// Array with instantiated classes
 	var $hooks=array();
-	
+
 	// Array result
 	var $resArray=array();
 
@@ -75,7 +75,7 @@ class HookManager
         // For backward compatibility
 		if (! is_array($arraycontext)) $arraycontext=array($arraycontext);
 
-		$this->contextarray=array_merge($arraycontext,$this->contextarray);    // All contexts are concatenated
+		$this->contextarray=array_unique(array_merge($arraycontext,$this->contextarray));    // All contexts are concatenated
 
 		foreach($conf->hooks_modules as $module => $hooks)
 		{
@@ -108,7 +108,7 @@ class HookManager
 	}
 
     /**
-     * 		Execute hooks (if the were initialized) for the given method
+     * 		Execute hooks (if they were initialized) for the given method
      *
      * 		@param		string	$method			Name of method hooked ('doActions', 'printSearchForm', 'showInputField', ...)
      * 	    @param		array	$parameters		Array of parameters
@@ -127,23 +127,28 @@ class HookManager
         $parameters['context']=join(':',$this->contextarray);
         dol_syslog(get_class($this).'::executeHooks method='.$method." action=".$action." context=".$parameters['context']);
 
-        // Loop on each hook
+        // Loop on each hook to qualify modules that declared context
+        $modulealreadyexecuted=array();
         $resaction=0; $resprint='';
-        foreach($this->hooks as $modules)
+        foreach($this->hooks as $modules)    // this->hooks is an array with context as key and value is an array of modules that handle this context
         {
             if (! empty($modules))
             {
-                foreach($modules as $actioninstance)
+                foreach($modules as $module => $actionclassinstance)
                 {
+                    // test to avoid to run twice a hook, when a module implements several active contexts
+                    if (in_array($module,$modulealreadyexecuted)) continue;
+                    $modulealreadyexecuted[$module]=$module;
+
                 	$var=!$var;
 
                     // Hooks that return int
-                    if (($method == 'doActions' || $method == 'formObjectOptions') && method_exists($actioninstance,$method))
+                    if (($method == 'doActions' || $method == 'formObjectOptions') && method_exists($actionclassinstance,$method))
                     {
-                        $resaction+=$actioninstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
-                        if ($resaction < 0 || ! empty($actioninstance->error) || (! empty($actioninstance->errors) && count($actioninstance->errors) > 0))
+                        $resaction+=$actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
+                        if ($resaction < 0 || ! empty($actionclassinstance->error) || (! empty($actionclassinstance->errors) && count($actionclassinstance->errors) > 0))
                         {
-                            $this->error=$actioninstance->error; $this->errors=$actioninstance->errors;
+                            $this->error=$actionclassinstance->error; $this->errors=$actionclassinstance->errors;
                             if ($method == 'doActions')
                             {
                                 if ($action=='add')    $action='create';    // TODO this change must be inside the doActions
@@ -152,10 +157,10 @@ class HookManager
                         }
                     }
                     // Generic hooks that return a string (printSearchForm, printLeftBlock, formBuilddocOptions, ...)
-                    else if (method_exists($actioninstance,$method))
+                    else if (method_exists($actionclassinstance,$method))
                     {
-                        if (is_array($parameters) && $parameters['special_code'] > 3 && $parameters['special_code'] != $actioninstance->module_number) continue;
-                    	$result = $actioninstance->$method($parameters, $object, $action, $this);
+                        if (is_array($parameters) && $parameters['special_code'] > 3 && $parameters['special_code'] != $actionclassinstance->module_number) continue;
+                    	$result = $actionclassinstance->$method($parameters, $object, $action, $this);
                     	if (is_array($result)) $this->resArray = array_merge($this->resArray, $result);
                     	else $resprint.=$result;
                     }

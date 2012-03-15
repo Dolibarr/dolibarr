@@ -791,7 +791,7 @@ else
         if (empty($conf->global->SOCIETE_DISABLE_STATE))
         {
             print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-            if ($object->country_id) $formcompany->select_departement($object->state_id,$object->country_code,'departement_id');
+            if ($object->country_id) print $formcompany->select_state($object->state_id,$object->country_code,'departement_id');
             else print $countrynotdefined;
             print '</td></tr>';
         }
@@ -1246,7 +1246,7 @@ else
             if (empty($conf->global->SOCIETE_DISABLE_STATE))
             {
                 print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-                $formcompany->select_departement($object->state_id,$object->country_code);
+                print $formcompany->select_state($object->state_id,$object->country_code);
                 print '</td></tr>';
             }
 
@@ -1918,7 +1918,7 @@ else
         {
             $result=show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
         }
-        
+
         // Addresses list
         if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
         {

@@ -211,7 +211,7 @@ class FormCompany
 	{
 		global $conf,$langs,$user;
 
-		dol_syslog("FormCompany::select_departement selected=$selected, country_codeid=$country_codeid",LOG_DEBUG);
+		dol_syslog(get_class($this)."::select_departement selected=".$selected.", country_codeid=".$country_codeid,LOG_DEBUG);
 
 		$langs->load("dict");
 
@@ -226,7 +226,7 @@ class FormCompany
 		if ($country_codeid && ! is_numeric($country_codeid)) $sql .= " AND p.code = '".$country_codeid."'";
 		$sql .= " ORDER BY p.code, d.code_departement";
 
-		dol_syslog("FormCompany::select_departement sql=".$sql);
+		dol_syslog(get_class($this)."::select_departement sql=".$sql);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
