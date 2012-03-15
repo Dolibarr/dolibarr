@@ -868,6 +868,7 @@ class Commande extends CommonObject
     function createFromProposal($object)
     {
         global $conf,$user,$langs;
+        global $hookmanager;
 
         $error=0;
 
@@ -915,16 +916,26 @@ class Commande extends CommonObject
             $this->note                 = $object->note;
             $this->note_public          = $object->note_public;
 
-            $this->origin      = $object->element;
-            $this->origin_id   = $object->id;
+            $this->origin				= $object->element;
+            $this->origin_id			= $object->id;
+            
+            // Possibility to add external linked objects with hooks
+            $this->linked_objects[$this->origin] = $this->origin_id;
+            if (is_array($object->other_linked_objects) && ! empty($object->other_linked_objects))
+            {
+            	$this->linked_objects = array_merge($this->linked_objects, $object->other_linked_objects);
+            }
 
             $ret = $this->create($user);
 
             if ($ret > 0)
             {
                 // Actions hooked (by external module)
-                include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
-                $hookmanager=new HookManager($this->db);
+                if (! is_object($hookmanager))
+                {
+                	include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+                	$hookmanager=new HookManager($this->db);
+                }
                 $hookmanager->initHooks(array('orderdao'));
 
                 $parameters=array('objFrom'=>$object);
@@ -1841,34 +1852,6 @@ class Commande extends CommonObject
         else
         {
             return -2;
-        }
-    }
-
-    /**
-     *	Set address
-     *
-     *	@param      User		$user        	Object user making change
-     *	@param      int			$fk_address	    Adress of delivery
-     *	@return     int         				<0 ig KO, >0 if Ok
-     */
-    function set_adresse_livraison($user, $fk_address)
-    {
-        if ($user->rights->commande->creer)
-        {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_adresse_livraison = '".$fk_address."'";
-            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
-
-            if ($this->db->query($sql) )
-            {
-                $this->fk_delivery_address = $fk_address;
-                return 1;
-            }
-            else
-            {
-                $this->error=$this->db->error();
-                dol_syslog("Commande::set_adresse_livraison Erreur SQL");
-                return -1;
-            }
         }
     }
 

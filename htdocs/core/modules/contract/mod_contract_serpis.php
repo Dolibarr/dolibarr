@@ -36,6 +36,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 
 	/**
 	 *	Return default description of numbering model
+	 *
 	 *	@return     string      text description
 	 */
     function info()
@@ -45,8 +46,9 @@ class mod_contract_serpis extends ModelNumRefContracts
     }
 
 
-	/**     
+	/**
 	 *	Return numbering example
+	 *
 	 *	@return     string      Example
 	 */
 	function getExample()
@@ -55,8 +57,9 @@ class mod_contract_serpis extends ModelNumRefContracts
 	}
 
 
-	/**     
+	/**
 	 *	Test if existing numbers make problems with numbering
+	 *
 	 *	@return     boolean     false if conflit, true if ok
 	 */
 	function canBeActivated()
@@ -87,8 +90,9 @@ class mod_contract_serpis extends ModelNumRefContracts
 		return true;
 	}
 
-	/**		
+	/**
 	 *	Return next value
+	 *
 	 *	@param      objsoc      third party object
 	 *	@param		contract	contract object
 	 *	@return     string      Value if OK, 0 if KO
@@ -125,8 +129,9 @@ class mod_contract_serpis extends ModelNumRefContracts
 	}
 
 
-	/**		
-	 *Return next free value
+	/**
+	 *  Return next free value
+	 *
 	 *	@param      objsoc      Object third party
 	 *	@param		objforref	Object for number to search
 	 *	@return     string      Next free value

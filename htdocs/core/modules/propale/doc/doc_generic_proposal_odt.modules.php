@@ -47,7 +47,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function doc_generic_proposal_odt($db)
+	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 

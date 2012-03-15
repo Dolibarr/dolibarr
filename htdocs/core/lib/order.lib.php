@@ -69,7 +69,7 @@ function commande_prepare_head($object)
 	}
 
 	$head[$h][0] = DOL_URL_ROOT.'/commande/contact.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('OrderContact');
+	$head[$h][1] = $langs->trans('ContactsAddresses');
 	$head[$h][2] = 'contact';
 	$h++;
 

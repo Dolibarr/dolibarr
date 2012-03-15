@@ -62,29 +62,31 @@ $limit = $conf->liste_limit;
 $offset = $limit * $page;
 
 $langs->load("companies");
-$titre=$langs->trans("ListOfContacts");
+$titre = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
 if ($type == "c")
 {
-	$titre=$langs->trans("ListOfContacts").'  ('.$langs->trans("ThirdPartyCustomers").')';
+	$titre.='  ('.$langs->trans("ThirdPartyCustomers").')';
 	$urlfiche="fiche.php";
 }
-if ($type == "p")
+else if ($type == "p")
 {
-	$titre=$langs->trans("ListOfContacts").'  ('.$langs->trans("ThirdPartyProspects").')';
+	$titre.='  ('.$langs->trans("ThirdPartyProspects").')';
 	$urlfiche="prospect/fiche.php";
 }
-if ($type == "f") {
-	$titre=$langs->trans("ListOfContacts").' ('.$langs->trans("ThirdPartySuppliers").')';
+else if ($type == "f")
+{
+	$titre.=' ('.$langs->trans("ThirdPartySuppliers").')';
 	$urlfiche="fiche.php";
 }
-if ($type == "o") {
-	$titre=$langs->trans("ListOfContacts").' ('.$langs->trans("OthersNotLinkedToThirdParty").')';
+else if ($type == "o")
+{
+	$titre.=' ('.$langs->trans("OthersNotLinkedToThirdParty").')';
 	$urlfiche="";
 }
 if ($view == 'phone')  { $text=" (Vue Telephones)"; }
 if ($view == 'mail')   { $text=" (Vue EMail)"; }
 if ($view == 'recent') { $text=" (Recents)"; }
-$titre = $titre." $text";
+$titre.= " $text";
 
 if ($_POST["button_removefilter"])
 {
@@ -109,7 +111,8 @@ if ($search_priv < 0) $search_priv='';
  * View
  */
 
-llxHeader('',$langs->trans("ContactsAddresses"),'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
+$title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+llxHeader('',$title,'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas');
 
 $form=new Form($db);
 

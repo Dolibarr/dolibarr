@@ -59,7 +59,7 @@ class ImportCsv extends ModeleImports
 	 *	@param	DoliDB		$db				Database handler
 	 *	@param	string		$datatoimport	String code describing import set (ex: 'societe_1')
 	 */
-	function ImportCsv($db,$datatoimport)
+	function __construct($db,$datatoimport)
 	{
 		global $conf,$langs;
 		$this->db = $db;

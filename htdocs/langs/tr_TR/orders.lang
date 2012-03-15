@@ -15,7 +15,6 @@ Order=Sipariş
 Orders=Siparişler
 OrderLine=Sipariş Hattı
 OrderFollow=Takip
-OrderContact=Sipariş İletişim
 OrderDate=Sipariş Tarihi
 NewOrder=New order
 ToOrder=Yapmak amacıyla

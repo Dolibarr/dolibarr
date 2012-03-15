@@ -125,8 +125,9 @@ $resql = $db->query($sql);
 if ($resql)
 {
   $num = $db->num_rows($resql);
-
-  print_barre_liste($langs->trans("ListOfContacts").($label?" (".$label.")":""),$page, $_SERVER["PHP_SELF"], "&amp;type=$type",$sortfield,$sortorder,"",$num);
+  
+  $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
+  print_barre_liste($title.($label?" (".$label.")":""),$page, $_SERVER["PHP_SELF"], "&amp;type=$type",$sortfield,$sortorder,"",$num);
 
   print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';

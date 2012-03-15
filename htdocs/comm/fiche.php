@@ -365,42 +365,6 @@ if ($id > 0)
 		print '</tr>';
 	}
 
-	// Old way to define delivery address (deprecated).
-	// Now all addresses types (like delivery addresses, invoices addresses,...) are saved as contacts.
-	if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS)	// Hidden deprecated feature.
-	{
-		print '<tr><td nowrap>';
-		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
-		print $langs->trans("DeliveriesAddress");
-		print '<td><td align="right">';
-		if ($user->rights->societe->creer)
-		{
-			print '<a href="'.DOL_URL_ROOT.'/comm/address.php?socid='.$object->id.'">'.img_edit($langs->trans("Modify")).'</a>';
-		}
-		print '</td></tr></table>';
-		print '</td><td colspan="3">';
-
-		// TODO move to DAO class
-		$sql = "SELECT count(rowid) as nb";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe_address";
-		$sql.= " WHERE fk_soc =".$object->id;
-
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
-			$objal = $db->fetch_object($resql);
-			print $objal->nb?($objal->nb):$langs->trans("NoOtherDeliveryAddress");
-		}
-		else
-		{
-			dol_print_error($db);
-		}
-
-		print '</td>';
-		print '</tr>';
-	}
-
     // Module Adherent
     if ($conf->adherent->enabled)
     {
@@ -822,11 +786,6 @@ if ($id > 0)
 		}
 	}
 
-	/*if ($user->rights->societe->contact->creer)
-	{
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
-	}*/
-
 	print '</div>';
 	print "<br>\n";
 
@@ -835,6 +794,12 @@ if ($id > 0)
 	    print '<br>';
 		// List of contacts
 		show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+	}
+	
+	// Addresses list
+	if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) && ! empty($conf->global->MAIN_REPEATADDRESSONEACHTAB))
+	{
+		$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
 	}
 
     if (! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
@@ -854,7 +819,7 @@ else
 }
 
 
+// End of page
 llxFooter();
-
 $db->close();
 ?>

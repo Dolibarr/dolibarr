@@ -15,7 +15,6 @@ Order=Et
 Orders=Tellimused
 OrderLine=Et liini
 OrderFollow=Järelmeetmed
-OrderContact=Selleks kontakt
 OrderDate=Selleks kuupäevaks
 OrderToProcess=Selleks, et protsess
 NewOrder=New et

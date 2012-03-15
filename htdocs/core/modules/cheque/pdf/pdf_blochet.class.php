@@ -43,7 +43,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *
 	 *	@param	DoliDB	$db		Database handler
 	 */
-	function BordereauChequeBlochet($db)
+	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 

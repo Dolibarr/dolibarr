@@ -50,9 +50,9 @@ class pdf_oursin extends ModelePDFFactures
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	function pdf_oursin($db)
+	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 

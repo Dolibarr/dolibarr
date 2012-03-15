@@ -15,7 +15,6 @@ Order=オーダー
 Orders=受注
 OrderLine=注文明細行
 OrderFollow=フォローアップ
-OrderContact=ご注文お問い合わせ
 OrderDate=注文日
 OrderToProcess=プロセスの順序
 NewOrder=新規注文

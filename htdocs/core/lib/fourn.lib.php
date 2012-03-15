@@ -41,7 +41,7 @@ function facturefourn_prepare_head($object)
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/contact.php?facid='.$object->id;
-	$head[$h][1] = $langs->trans('BillContacts');
+	$head[$h][1] = $langs->trans('ContactsAddresses');
 	$head[$h][2] = 'contact';
 	$h++;
 
@@ -101,7 +101,7 @@ function ordersupplier_prepare_head($object)
 	}
 
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/contact.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('OrderContact');
+	$head[$h][1] = $langs->trans('ContactsAddresses');
 	$head[$h][2] = 'contact';
 	$h++;
 

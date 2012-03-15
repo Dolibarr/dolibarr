@@ -58,9 +58,9 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	function pdf_canelle($db)
+	function __construct($db,$object)
 	{
 		global $conf,$langs,$mysoc;
 

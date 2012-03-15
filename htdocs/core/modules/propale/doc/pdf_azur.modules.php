@@ -44,9 +44,9 @@ class pdf_azur extends ModelePDFPropales
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	function pdf_azur($db)
+	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 

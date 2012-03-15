@@ -47,7 +47,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function doc_generic_order_odt($db)
+	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 

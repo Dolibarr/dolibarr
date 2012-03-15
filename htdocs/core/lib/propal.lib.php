@@ -64,7 +64,7 @@ function propal_prepare_head($object)
 	}
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/contact.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('ProposalContact');
+	$head[$h][1] = $langs->trans('ContactsAddresses');
 	$head[$h][2] = 'contact';
 	$h++;
 

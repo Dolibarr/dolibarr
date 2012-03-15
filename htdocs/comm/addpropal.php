@@ -201,19 +201,6 @@ if ($action == 'create')
 	}
 	print '</td></tr>';
 
-	// Delivery address
-	if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS)
-	{
-		print '<tr><td>'.$langs->trans('DeliveryAddress').'</td>';
-		print '<td colspan="3">';
-		$numaddress = $form->select_address($soc->fk_delivery_address, $_GET['socid'],'fk_address',1);
-		if ($numaddress==0)
-		{
-			print ' &nbsp; <a href=../comm/address.php?socid='.$soc->id.'&action=create>'.$langs->trans("AddAddress").'</a>';
-		}
-		print '</td></tr>';
-	}
-
 	// Model
 	print '<tr>';
 	print '<td>'.$langs->trans("DefaultModel").'</td>';

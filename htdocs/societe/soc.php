@@ -1646,12 +1646,12 @@ else
         print '</td>';
 
         // VAT Code
-        print '<td nowrap="nowrpa">'.$langs->trans('VATIntra').'</td><td>';
+        print '<td nowrap="nowrap">'.$langs->trans('VATIntra').'</td><td>';
         if ($object->tva_intra)
         {
             $s='';
             $s.=$object->tva_intra;
-            $s.='<input type="hidden" name="tva_intra" size="12" maxlength="20" value="'.$object->tva_intra.'">';
+            $s.='<input type="hidden" id="tva_intra" name="tva_intra" size="12" maxlength="20" value="'.$object->tva_intra.'">';
 
             if (empty($conf->global->MAIN_DISABLEVATCHECK))
             {
@@ -1666,7 +1666,7 @@ else
                     print "}\n";
                     print '</script>';
                     print "\n";
-                    $s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+                    $s.='<a href="#" onclick="javascript: CheckVAT( $(\'#tva_intra\').val() );">'.$langs->trans("VATIntraCheck").'</a>';
                     $s = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
                 }
                 else
@@ -1918,6 +1918,12 @@ else
         {
             $result=show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
         }
+        
+        // Addresses list
+        if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
+        {
+        	$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+        }
 
         // Projects list
         $result=show_projects($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
@@ -1926,7 +1932,7 @@ else
 }
 
 
-$db->close();
-
+// End of page
 llxFooter();
+$db->close();
 ?>

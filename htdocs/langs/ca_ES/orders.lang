@@ -7,7 +7,6 @@ Order=Comanda
 Orders=Comandes
 OrderLine=Línia de comanda
 OrderFollow=Seguiment
-OrderContact=Contactes comanda
 OrderDate=Data comanda
 OrderToProcess=Comanda a processar
 NewOrder=Nova comanda

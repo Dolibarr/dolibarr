@@ -943,6 +943,33 @@ abstract class CommonObject
     }
     
     /**
+     *	Define delivery address
+     *
+     *	@param      int		$id		Address id
+     *	@return     int				<0 si ko, >0 si ok
+     */
+    function setDeliveryAddress($id)
+    {
+    	$fieldname = 'fk_adresse_livraison';
+    	if ($this->element == 'delivery' || $this->element == 'shipping') $fieldname = 'fk_address';
+    	
+    	$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ".$fieldname." = ".$id;
+    	$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+    	
+    	if ($this->db->query($sql))
+    	{
+    		$this->fk_delivery_address = $id;
+    		return 1;
+    	}
+    	else
+    	{
+    		$this->error=$this->db->error();
+    		dol_syslog(get_class($this).'::setDeliveryAddress Erreur '.$sql.' - '.$this->error);
+    		return -1;
+    	}
+    }
+    
+    /**
      *		Set last model used by doc generator
      *
      *		@param		User	$user		User object that make change
@@ -1788,32 +1815,38 @@ abstract class CommonObject
 	}
 
     /**
-     *      Set statut of an object
+     *      Set status of an object
      *
-     *      @param	int		$statut			Statut to set
+     *      @param	int		$status			Status to set
      *      @param	int		$elementId		Id of element to force (use this->id by default)
      *      @param	string	$elementType	Type of element to force (use ->this->element by default)
      *      @return int						<0 if KO, >0 if OK
      */
-    function setStatut($statut,$elementId='',$elementType='')
+    function setStatut($status,$elementId='',$elementType='')
     {
         $elementId = (!empty($elementId)?$elementId:$this->id);
         $elementTable = (!empty($elementType)?$elementType:$this->table_element);
+        
+        $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
-        $sql.= " SET fk_statut = ".$statut;
+        $sql.= " SET fk_statut = ".$status;
         $sql.= " WHERE rowid=".$elementId;
 
         dol_syslog(get_class($this)."::setStatut sql=".$sql, LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if (!$resql)
+        if ($this->db->query($sql))
         {
-            $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::setStatut ".$this->error, LOG_ERR);
-            return -1;
+        	$this->db->commit();
+        	$this->statut = $status;
+        	return 1;
         }
-
-        return 1;
+        else
+        {
+        	$this->error=$this->db->lasterror();
+        	dol_syslog(get_class($this)."::setStatut ".$this->error, LOG_ERR);
+        	$this->db->rollback();
+        	return -1;
+        }
     }
 
 
