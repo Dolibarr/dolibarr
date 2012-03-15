@@ -105,6 +105,7 @@ $categ = array();
 $dirmod = array();
 $i = 0;	// is a sequencer of modules found
 $j = 0;	// j is module number. Automatically affected if module number not defined.
+$modNameLoaded=array();
 
 foreach ($modulesdir as $dir)
 {
@@ -123,10 +124,18 @@ foreach ($modulesdir as $dir)
 
 		        if ($modName)
 		        {
+		        	if (in_array($modName,$modNameLoaded))
+		        	{
+		        		$mesg="Error: Module ".$modName." was found twice: Into ".$modNameLoaded[$modName]." and ".$dir.". You probably have an old file on your disk.<br>";
+		                dol_syslog($mesg, LOG_ERR);
+						continue;		        		
+		        	}
+		        	
 		            try
 		            {
 		                $res=include_once($dir.$file);
 		                $objMod = new $modName($db);
+						$modNameLoaded[$modName]=$dir;
 
     		            if ($objMod->numero > 0)
     		            {
