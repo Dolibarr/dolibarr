@@ -124,7 +124,7 @@ foreach ($modulesdir as $dir)
 
 		        if ($modName)
 		        {
-		        	if (in_array($modName,$modNameLoaded))
+		        	if (! empty($modNameLoaded[$modName]))
 		        	{
 		        		$mesg="Error: Module ".$modName." was found twice: Into ".$modNameLoaded[$modName]." and ".$dir.". You probably have an old file on your disk.<br>";
 		                dol_syslog($mesg, LOG_ERR);
