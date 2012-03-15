@@ -695,7 +695,7 @@ else
 		$formmail->param["returnurl"]=$_SERVER["PHP_SELF"];
 
 		// Init list of files
-		if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+        if (GETPOST("mode")=='init')
 		{
 			$formmail->clear_attached_files();
 		}
@@ -741,7 +741,7 @@ else
 		$formmail->param["returnurl"]=$_SERVER["PHP_SELF"];
 
 		// Init list of files
-		if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+        if (GETPOST("mode")=='init')
 		{
 			$formmail->clear_attached_files();
 		}

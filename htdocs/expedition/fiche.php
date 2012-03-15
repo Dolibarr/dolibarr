@@ -4,17 +4,17 @@
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011-2012 Juanjo Menent	    <jmenent@2byte.es>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -359,11 +359,11 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
 
     if ($result > 0)
     {
-        $ref = dol_sanitizeFileName($object->ref);
-        $file = $conf->expedition->dir_output . '/sending/' . $ref . '/' . $ref . '.pdf';
+//        $ref = dol_sanitizeFileName($object->ref);
+//        $file = $conf->expedition->dir_output . '/sending/' . $ref . '/' . $ref . '.pdf';
 
-        if (is_readable($file))
-        {
+//        if (is_readable($file))
+//        {
             if (GETPOST('sendto','alpha'))
             {
                 // Le destinataire a ete fourni via le champ libre
@@ -488,13 +488,13 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
                 $action='presend';
                 dol_syslog('Recipient email is empty');
             }
-        }
+/*        }
         else
         {
             $langs->load("errors");
             $mesg='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
             dol_syslog('Failed to read file: '.$file);
-        }
+        }*/
     }
     else
     {
@@ -1280,16 +1280,11 @@ else
             // Send
             if ($object->statut > 0)
             {
-                $ref = dol_sanitizeFileName($object->ref);
-                $file = $conf->expedition->dir_output . '/sending/'.$ref.'/'.$ref.'.pdf';
-                if (file_exists($file))
+                if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expedition->shipping_advance->send)
                 {
-                    if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expedition->shipping_advance->send)
-                    {
-                        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
-                    }
-                    else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
+                    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
                 }
+                else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
             }
 
             // Create bill and Classify billed
@@ -1362,12 +1357,37 @@ else
 
         /*
          * Action presend
-        *
-        */
+         */
         if ($action == 'presend')
         {
             $ref = dol_sanitizeFileName($object->ref);
-            $file = $conf->expedition->dir_output . '/sending/' . $ref . '/' . $ref . '.pdf';
+            include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+            $fileparams = dol_most_recent_file($conf->expedition->dir_output . '/sending/' . $ref);
+            $file=$fileparams['fullname'];
+
+            // Build document if it not exists
+            if (! $file || ! is_readable($file))
+            {
+                // Define output language
+                $outputlangs = $langs;
+                $newlang='';
+                if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+                if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+                if (! empty($newlang))
+                {
+                    $outputlangs = new Translate("",$conf);
+                    $outputlangs->setDefaultLang($newlang);
+                }
+
+                $result=expedition_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+                if ($result <= 0)
+                {
+                    dol_print_error($db,$result);
+                    exit;
+                }
+                $fileparams = dol_most_recent_file($conf->expedition->dir_output . '/sending/' . $ref);
+                $file=$fileparams['fullname'];
+            }
 
             print '<br>';
             print_titre($langs->trans('SendShippingByEMail'));
@@ -1400,10 +1420,10 @@ else
             $formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 
             // Init list of files
-            if (GETPOST('mode','alpha')=='init')
+            if (GETPOST("mode")=='init')
             {
                 $formmail->clear_attached_files();
-                $formmail->add_attached_files($file,dol_sanitizeFilename($ref.'.pdf'),'application/pdf');
+                $formmail->add_attached_files($file,basename($file),dol_mimetype($file));
             }
 
             // Show form

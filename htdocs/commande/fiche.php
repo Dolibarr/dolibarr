@@ -1034,11 +1034,11 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
 
     if ($result > 0)
     {
-        $ref = dol_sanitizeFileName($object->ref);
-        $file = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+//        $ref = dol_sanitizeFileName($object->ref);
+//        $file = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 
-        if (is_readable($file))
-        {
+//        if (is_readable($file))
+//        {
             if ($_POST['sendto'])
             {
                 // Le destinataire a ete fourni via le champ libre
@@ -1153,14 +1153,14 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                         $mesg.='</div>';
                     }
                 }
-            }
+/*            }
             else
             {
                 $langs->load("other");
                 $mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
                 $action='presend';
                 dol_syslog('Recipient email is empty');
-            }
+            }*/
         }
         else
         {
@@ -1243,7 +1243,7 @@ if ($action == 'create' && $user->rights->commande->creer)
             $remise_percent		= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
             $remise_absolue		= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
             $dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
-            
+
             $note_private		= (! empty($objectsrc->note) ? $objectsrc->note : (! empty($objectsrc->note_private) ? $objectsrc->note_private : ''));
             $note_public		= (! empty($objectsrc->note_public) ? $objectsrc->note_public : '');
 
@@ -2008,16 +2008,11 @@ else
                     // Send
                     if ($object->statut > 0)
                     {
-                        $comref = dol_sanitizeFileName($object->ref);
-                        $file = $conf->commande->dir_output . '/'.$comref.'/'.$comref.'.pdf';
-                        if (file_exists($file))
+                        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->commande->order_advance->send))
                         {
-                            if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->commande->order_advance->send))
-                            {
-                                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
-                            }
-                            else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
+                            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
                         }
+                        else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
                     }
 
                     // Ship
@@ -2147,7 +2142,33 @@ else
             if ($action == 'presend')
             {
                 $ref = dol_sanitizeFileName($object->ref);
-                $file = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+                include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+                $fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref);
+                $file=$fileparams['fullname'];
+
+                // Build document if it not exists
+                if (! $file || ! is_readable($file))
+                {
+                    // Define output language
+                    $outputlangs = $langs;
+                    $newlang='';
+                    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+                    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+                    if (! empty($newlang))
+                    {
+                        $outputlangs = new Translate("",$conf);
+                        $outputlangs->setDefaultLang($newlang);
+                    }
+
+                    $result=commande_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+                    if ($result <= 0)
+                    {
+                        dol_print_error($db,$result);
+                        exit;
+                    }
+                    $fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref);
+                    $file=$fileparams['fullname'];
+                }
 
                 print '<br>';
                 print_titre($langs->trans('SendOrderByMail'));
@@ -2180,10 +2201,10 @@ else
                 $formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 
                 // Init list of files
-                if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+                if (GETPOST("mode")=='init')
                 {
                     $formmail->clear_attached_files();
-                    $formmail->add_attached_files($file,dol_sanitizeFilename($ref.'.pdf'),'application/pdf');
+                    $formmail->add_attached_files($file,basename($file),dol_mimetype($file));
                 }
 
                 // Show form

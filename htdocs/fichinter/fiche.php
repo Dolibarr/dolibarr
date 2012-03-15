@@ -482,11 +482,11 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
 
     if ($object->fetch($id) > 0)
     {
-        $objectref = dol_sanitizeFileName($object->ref);
-        $file = $conf->ficheinter->dir_output . '/' . $objectref . '/' . $objectref . '.pdf';
+//        $objectref = dol_sanitizeFileName($object->ref);
+//        $file = $conf->ficheinter->dir_output . '/' . $objectref . '/' . $objectref . '.pdf';
 
-        if (is_readable($file))
-        {
+//        if (is_readable($file))
+//        {
             $object->fetch_thirdparty();
 
             if (GETPOST('sendto','alpha'))
@@ -610,13 +610,13 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
                 $mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
                 dol_syslog('Recipient email is empty');
             }
-        }
+/*        }
         else
         {
             $langs->load("errors");
             $mesg='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
             dol_syslog('Failed to read file: '.$file);
-        }
+        }*/
     }
     else
     {
@@ -1099,16 +1099,11 @@ else if ($id > 0 || ! empty($ref))
             // Send
             if ($object->statut > 0)
             {
-                $objectref = dol_sanitizeFileName($object->ref);
-                $file = $conf->ficheinter->dir_output . '/'.$objectref.'/'.$objectref.'.pdf';
-                if (file_exists($file))
+                if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->ficheinter->ficheinter_advance->send)
                 {
-                    if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->ficheinter->ficheinter_advance->send)
-                    {
-                        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
-                    }
-                    else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
+                    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
                 }
+                else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
             }
 
         	// Invoicing
@@ -1184,7 +1179,33 @@ else if ($id > 0 || ! empty($ref))
     if ($action == 'presend')
     {
         $ref = dol_sanitizeFileName($object->ref);
-        $file = $conf->ficheinter->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+        include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+        $fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref);
+        $file=$fileparams['fullname'];
+
+        // Build document if it not exists
+        if (! $file || ! is_readable($file))
+        {
+            // Define output language
+            $outputlangs = $langs;
+            $newlang='';
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+            if (! empty($newlang))
+            {
+                $outputlangs = new Translate("",$conf);
+                $outputlangs->setDefaultLang($newlang);
+            }
+
+            $result=fichinter_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+            if ($result <= 0)
+            {
+                dol_print_error($db,$result);
+                exit;
+            }
+            $fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref);
+            $file=$fileparams['fullname'];
+        }
 
         print '<br>';
         print_titre($langs->trans('SendInterventionByMail'));
@@ -1218,10 +1239,10 @@ else if ($id > 0 || ! empty($ref))
         $formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 
         // Init list of files
-        if (GETPOST('mode','alpha')=='init')
+        if (GETPOST("mode")=='init')
         {
             $formmail->clear_attached_files();
-            $formmail->add_attached_files($file,$object->ref.'.pdf','application/pdf');
+            $formmail->add_attached_files($file,basename($file),dol_mimetype($file));
         }
 
         $formmail->show_form();

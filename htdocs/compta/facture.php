@@ -1307,11 +1307,11 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
     if ($result > 0)
     {
-        $ref = dol_sanitizeFileName($object->ref);
-        $file = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+//        $ref = dol_sanitizeFileName($object->ref);
+//        $file = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 
-        if (is_readable($file))
-        {
+//        if (is_readable($file))
+//        {
             if ($_POST['sendto'])
             {
                 // Le destinataire a ete fourni via le champ libre
@@ -1440,13 +1440,13 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
                         $mesg.='</div>';
                     }
                 }
-            }
+/*            }
             else
             {
                 $langs->load("other");
                 $mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').'</div>';
                 dol_syslog('Recipient email is empty');
-            }
+            }*/
         }
         else
         {
@@ -3048,10 +3048,12 @@ else
                 }
 
                 $ref = dol_sanitizeFileName($object->ref);
-                $file = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+                include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+                $fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref);
+                $file=$fileparams['fullname'];
 
-                // Construit PDF si non existant
-                if (! is_readable($file))
+                // Build document if it not exists
+                if (! $file || ! is_readable($file))
                 {
                     // Define output language
                     $outputlangs = $langs;
@@ -3063,12 +3065,15 @@ else
                         $outputlangs = new Translate("",$conf);
                         $outputlangs->setDefaultLang($newlang);
                     }
-                    $result=facture_pdf_create($db, $object, $_REQUEST['model'], $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+
+                    $result=facture_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
                     if ($result <= 0)
                     {
                         dol_print_error($db,$result);
                         exit;
                     }
+                    $fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref);
+                    $file=$fileparams['fullname'];
                 }
 
                 print '<br>';
@@ -3102,10 +3107,10 @@ else
                 $formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 
                 // Init list of files
-                if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+                if (GETPOST("mode")=='init')
                 {
                     $formmail->clear_attached_files();
-                    $formmail->add_attached_files($file,dol_sanitizeFilename($ref.'.pdf'),'application/pdf');
+                    $formmail->add_attached_files($file,basename($file),dol_mimetype($file));
                 }
 
                 $formmail->show_form();
