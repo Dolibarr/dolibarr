@@ -83,6 +83,9 @@ class Commande extends CommonObject
     var $rang;
     var $special_code;
     var $source;			// Origin of order
+    var $note;				// deprecated
+    var $note_private;
+    var $note_public;
 
     var $origin;
     var $origin_id;
@@ -1221,7 +1224,7 @@ class Commande extends CommonObject
         $sql.= ', c.date_commande';
         $sql.= ', c.date_livraison';
         $sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as facturee';
-        $sql.= ', c.note, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.fk_adresse_livraison';
+        $sql.= ', c.note as note_private, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.fk_adresse_livraison';
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
         $sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
         $sql.= ', ca.code as availability_code';
@@ -1266,7 +1269,8 @@ class Commande extends CommonObject
                 $this->remise_absolue         = $obj->remise_absolue;
                 $this->source                 = $obj->source;
                 $this->facturee               = $obj->facturee;
-                $this->note                   = $obj->note;
+                $this->note                   = $obj->note_private;	// deprecated
+                $this->note_private           = $obj->note_private;
                 $this->note_public            = $obj->note_public;
                 $this->fk_project             = $obj->fk_projet;
                 $this->modelpdf               = $obj->model_pdf;

@@ -104,7 +104,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
 }
 
 // Reopen a closed order
-if ($action == 'reopen' && $user->rights->commande->creer)
+else if ($action == 'reopen' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     if ($object->statut == 3)
@@ -123,7 +123,7 @@ if ($action == 'reopen' && $user->rights->commande->creer)
 }
 
 // Suppression de la commande
-if ($action == 'confirm_delete' && $confirm == 'yes')
+else if ($action == 'confirm_delete' && $confirm == 'yes')
 {
     if ($user->rights->commande->supprimer)
     {
@@ -142,7 +142,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 }
 
 // Remove a product line
-if ($action == 'confirm_deleteline' && $confirm == 'yes')
+else if ($action == 'confirm_deleteline' && $confirm == 'yes')
 {
     if ($user->rights->commande->creer)
     {
@@ -178,14 +178,14 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes')
 }
 
 // Categorisation dans projet
-if ($action == 'classin')
+else if ($action == 'classin')
 {
     $object->fetch($id);
     $object->setProject($_POST['projectid']);
 }
 
 // Add order
-if ($action == 'add' && $user->rights->commande->creer)
+else if ($action == 'add' && $user->rights->commande->creer)
 {
     $datecommande  = dol_mktime(12, 0, 0, $_POST['remonth'],  $_POST['reday'],  $_POST['reyear']);
     $datelivraison = dol_mktime(12, 0, 0, $_POST['liv_month'],$_POST['liv_day'],$_POST['liv_year']);
@@ -378,26 +378,26 @@ if ($action == 'add' && $user->rights->commande->creer)
 
 }
 
-if ($action == 'classifybilled')
+else if ($action == 'classifybilled')
 {
     $object->fetch($id);
     $object->classer_facturee();
 }
 
 // Positionne ref commande client
-if ($action == 'set_ref_client' && $user->rights->commande->creer)
+else if ($action == 'set_ref_client' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     $object->set_ref_client($user, $_POST['ref_client']);
 }
 
-if ($action == 'setremise' && $user->rights->commande->creer)
+else if ($action == 'setremise' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     $object->set_remise($user, $_POST['remise']);
 }
 
-if ($action == 'setabsolutediscount' && $user->rights->commande->creer)
+else if ($action == 'setabsolutediscount' && $user->rights->commande->creer)
 {
     if ($_POST["remise_id"])
     {
@@ -413,7 +413,7 @@ if ($action == 'setabsolutediscount' && $user->rights->commande->creer)
     }
 }
 
-if ($action == 'setdate' && $user->rights->commande->creer)
+else if ($action == 'setdate' && $user->rights->commande->creer)
 {
     //print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
     $date=dol_mktime(0, 0, 0, $_POST['order_month'], $_POST['order_day'], $_POST['order_year']);
@@ -426,7 +426,7 @@ if ($action == 'setdate' && $user->rights->commande->creer)
     }
 }
 
-if ($action == 'setdate_livraison' && $user->rights->commande->creer)
+else if ($action == 'setdate_livraison' && $user->rights->commande->creer)
 {
     //print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
     $datelivraison=dol_mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
@@ -439,50 +439,64 @@ if ($action == 'setdate_livraison' && $user->rights->commande->creer)
     }
 }
 
-if ($action == 'setmode' && $user->rights->commande->creer)
+else if ($action == 'setmode' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
-if ($action == 'setavailability' && $user->rights->commande->creer)
+else if ($action == 'setavailability' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     $result=$object->availability($_POST['availability_id']);
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
-if ($action == 'setdemandreason' && $user->rights->commande->creer)
+else if ($action == 'setdemandreason' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     $result=$object->demand_reason($_POST['demand_reason_id']);
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
-if ($action == 'setconditions' && $user->rights->commande->creer)
+else if ($action == 'setconditions' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     $result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
-if ($action == 'setremisepercent' && $user->rights->facture->creer)
+else if ($action == 'setremisepercent' && $user->rights->facture->creer)
 {
     $object->fetch($id);
     $result = $object->set_remise($user, $_POST['remise_percent']);
 }
 
-if ($action == 'setremiseabsolue' && $user->rights->facture->creer)
+else if ($action == 'setremiseabsolue' && $user->rights->facture->creer)
 {
     $object->fetch($id);
     $result = $object->set_remise_absolue($user, $_POST['remise_absolue']);
 }
 
+else if ($action == 'setnote_public')
+{
+	$object->fetch($id);
+	$result=$object->update_note_public(GETPOST('note_public','alpha'));
+	if ($result < 0) dol_print_error($db,$object->error);
+}
+
+else if ($action == 'setnote')
+{
+	$object->fetch($id);
+	$result=$object->update_note(GETPOST('note','alpha'));
+	if ($result < 0) dol_print_error($db,$object->error);
+}
+
 /*
  *  Ajout d'une ligne produit dans la commande
  */
-if ($action == 'addline' && $user->rights->commande->creer)
+else if ($action == 'addline' && $user->rights->commande->creer)
 {
     $result=0;
 
@@ -667,7 +681,7 @@ if ($action == 'addline' && $user->rights->commande->creer)
 /*
  *  Mise a jour d'une ligne dans la commande
  */
-if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['save'] == $langs->trans('Save'))
+else if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['save'] == $langs->trans('Save'))
 {
     if (! $object->fetch($id) > 0) dol_print_error($db);
     $object->fetch_thirdparty();
@@ -767,13 +781,13 @@ if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['save']
     }
 }
 
-if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['cancel'] == $langs->trans('Cancel'))
+else if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['cancel'] == $langs->trans('Cancel'))
 {
     Header('Location: fiche.php?id='.$id);   // Pour reaffichage de la fiche en cours d'edition
     exit;
 }
 
-if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->commande->valider)
+else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->commande->valider)
 {
     $idwarehouse=GETPOST('idwarehouse');
 
@@ -812,7 +826,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->command
 }
 
 // Go back to draft status
-if ($action == 'confirm_modif' && $user->rights->commande->creer)
+else if ($action == 'confirm_modif' && $user->rights->commande->creer)
 {
     $idwarehouse=GETPOST('idwarehouse');
 
@@ -854,7 +868,7 @@ if ($action == 'confirm_modif' && $user->rights->commande->creer)
 	}
 }
 
-if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->commande->cloturer)
+else if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->commande->cloturer)
 {
     $object->fetch($id);		// Load order and lines
 
@@ -862,7 +876,7 @@ if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->commande->
     if ($result < 0) $mesgs=$object->errors;
 }
 
-if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->commande->valider)
+else if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->commande->valider)
 {
     $idwarehouse=GETPOST('idwarehouse');
 
@@ -891,7 +905,7 @@ if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->commande-
  * Ordonnancement des lignes
  */
 
-if ($action == 'up' && $user->rights->commande->creer)
+else if ($action == 'up' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     $object->fetch_thirdparty();
@@ -914,7 +928,7 @@ if ($action == 'up' && $user->rights->commande->creer)
     exit;
 }
 
-if ($action == 'down' && $user->rights->commande->creer)
+else if ($action == 'down' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     $object->fetch_thirdparty();
@@ -936,7 +950,7 @@ if ($action == 'down' && $user->rights->commande->creer)
     exit;
 }
 
-if ($action == 'builddoc')	// In get or post
+else if ($action == 'builddoc')	// In get or post
 {
     /*
      * Generate order document
@@ -976,7 +990,7 @@ if ($action == 'builddoc')	// In get or post
 }
 
 // Remove file in doc form
-if ($action == 'remove_file')
+else if ($action == 'remove_file')
 {
     if ($object->fetch($id))
     {
@@ -1783,10 +1797,6 @@ else
                 print $object->date_livraison ? dol_print_date($object->date_livraison,'daytext') : '&nbsp;';
             }
             print '</td>';
-            print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
-            print dol_htmlcleanlastbr($object->note_public);
-            print '</td>';
-            print '</tr>';
 
             // Terms of payment
             print '<tr><td height="10">';
@@ -1937,9 +1947,14 @@ else
             print '<tr><td>'.$langs->trans('Status').'</td>';
             print '<td colspan="2">'.$object->getLibStatut(4).'</td>';
             print '</tr>';
-
+            
             print '</table><br>';
             print "\n";
+            
+            if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+            {
+            	include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
+            }
 
             /*
              * Lines

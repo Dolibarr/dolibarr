@@ -1483,31 +1483,13 @@ if ($id > 0 || ! empty($ref))
 
 	// Statut
 	print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$object->getLibStatut(4).'</td></tr>';
-
+	
+	print '</table><br>';
 
     if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     {
-	    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans('Notes').'</td></tr>';
-
-        // Public note
-    	print '<tr><td valign="top">';
-    	print $form->editfieldkey("NotePublic",'note_public',$object->note_public,$object,$user->rights->propale->creer,'textarea');
-    	print '</td><td colspan="3">';
-    	print $form->editfieldval("NotePublic",'note_public',$object->note_public,$object,$user->rights->propale->creer,'textarea');
-    	print "</td></tr>";
-
-    	// Private note
-    	if (! $user->societe_id)
-    	{
-    		print '<tr><td valign="top">';
-    		print $form->editfieldkey("NotePrivate",'note',$object->note_private,$object,$user->rights->propale->creer,'textarea');
-    		print '</td><td colspan="3">';
-    		print $form->editfieldval("NotePrivate",'note',$object->note_private,$object,$user->rights->propale->creer,'textarea');
-    		print "</td></tr>";
-    	}
+    	include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
     }
-
-	print '</table><br>';
 
 	/*
 	 * Lines
