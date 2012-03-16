@@ -159,6 +159,7 @@ FileNameToGenerate=Nom del fitxer a generar
 CommandsToDisableForeignKeysForImport=Comanda per desactivar les claus excloents a la importació
 ExportCompatibility=Compatibilitat de l'arxiu d'exportació generat
 MySqlExportParameters=Paràmetres de l'exportació MySql
+PostgreSqlExportParameters=Paràmetres de l'exportació PostgreSQL
 UseTransactionnalMode=Utilitzar el mode transaccional
 FullPathToMysqldumpCommand=Ruta completa de la comanda mysqldump
 FullPathToPostgreSQLdumpCommand=ruta completa cap al comandament pg_dump
