@@ -107,7 +107,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-    function getNextValue($objsoc,$commande)
+    function getNextValue($objsoc,$object)
     {
 		global $db,$conf;
 
@@ -122,17 +122,19 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'commande','ref','',$objsoc->code_client,$commande->date);
+		$numFinal=get_next_value($db,$mask,'commande','ref','',$objsoc->code_client,$object->date);
 
 		return  $numFinal;
 	}
 
 
-	/**		\brief      Return next free value
-    *      	\param      objsoc      Object third party
-	* 		\param		objforref	Object for number to search
-    *   	\return     string      Next free value
-    */
+	/**
+	 *  Return next free value
+	 *
+	 *  @param	Societe		$objsoc     Object third party
+	 * 	@param	string		$objforref	Object for number to search
+	 *  @return string      			Next free value
+     */
     function commande_get_num($objsoc,$objforref)
     {
         return $this->getNextValue($objsoc,$objforref);
