@@ -433,4 +433,5 @@ ALTER TABLE llx_product_fournisseur_price DROP INDEX idx_product_fournisseur_pri
 --We keep column for the moment because we must not loose data if migrate process fails (upgrade2) to allow a second chance fix. We will delete it at next version.
 --ALTER TABLE llx_product_fournisseur_price DROP COLUMN fk_product_fournisseur;
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN tva_tx	double(6,3) NOT NULL DEFAULT 0 AFTER unitprice;
- 
+
+UPDATE llx_c_departements SET ncc='JUJUY', nom = 'Jujuy' WHERE code_departement='2302' and fk_region='2301';
