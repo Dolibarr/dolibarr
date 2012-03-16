@@ -1461,7 +1461,7 @@ table.liste td {
 	padding-right: 2px;
 }
 
-tr.liste_titre, tr.liste_titre_sel
+div.liste_titre, tr.liste_titre, tr.liste_titre_sel
 {
     height: 20px !important;
     background-repeat: repeat-x;

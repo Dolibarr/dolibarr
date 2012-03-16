@@ -31,13 +31,13 @@ else if ($module == 'fichinter') { $module = 'ficheinter'; $note_private = 'note
 $(document).ready(function() {
 	$("#hide-notes").click(function(){
 		setShowHide(1);
-		$(".notes_line").hide().removeClass("nohideobject");
+		$("#notes_bloc").hide("blind", {direction: "vertical"}, 800).removeClass("nohideobject");
 		$(this).hide();
 		$("#show-notes").show();
 	});
 	$("#show-notes").click(function(){
 		setShowHide(0);
-		$(".notes_line").show().addClass("nohideobject");
+		$("#notes_bloc").show("blind", {direction: "vertical"}, 800).addClass("nohideobject");
 		$(this).hide();
 		$("#hide-notes").show();
 	});
@@ -52,28 +52,26 @@ $(document).ready(function() {
 });
 </script>
 
-<table class="border allwidth">
+<div style="float:right; position: relative; top: 3px; right:5px;" id="hide-notes" class="linkobject<?php echo ($hide ? ' hideobject' : ''); ?>"><?php echo img_picto('', '1uparrow.png'); ?></div>
+<div style="float:right; position: relative; top: 3px; right:5px;" id="show-notes" class="linkobject<?php echo ($hide ? '' : ' hideobject'); ?>"><?php echo img_picto('', '1downarrow.png'); ?></div>
+<div class="liste_titre"><?php echo $langs->trans('Notes'); ?></div>
 
-	<tr class="liste_titre">
-		<td colspan="2">
-			<div style="float:right;" id="hide-notes" class="linkobject<?php echo ($hide ? ' hideobject' : ''); ?>"><?php echo img_picto('', '1uparrow.png'); ?></div>
-			<div style="float:right;" id="show-notes" class="linkobject<?php echo ($hide ? '' : ' hideobject'); ?>"><?php echo img_picto('', '1downarrow.png'); ?></div>
-			<?php echo $langs->trans('Notes'); ?>
-		</td>
-	</tr>
-		
-	<tr id="note_public_line" class="notes_line <?php echo ($hide ? 'hideobject' : 'nohideobject'); ?>">
+<div id="notes_bloc" class="<?php echo ($hide ? 'hideobject' : 'nohideobject'); ?>">
+<table class="border allwidth">		
+	<tr>
 		<td width="25%" valign="top"><?php echo $form->editfieldkey("NotePublic",$note_public,$object->note_public,$object,$user->rights->$module->creer,'textarea'); ?></td>
 		<td><?php echo $form->editfieldval("NotePublic",$note_public,$object->note_public,$object,$user->rights->$module->creer,'textarea'); ?></td>
 	</tr>
 	
 	<?php if (! $user->societe_id) { ?>
-	<tr id="note_private_line"  class="notes_line <?php echo ($hide ? 'hideobject' : 'nohideobject'); ?>">
+	<tr>
 		<td width="25%" valign="top"><?php echo $form->editfieldkey("NotePrivate",$note_private,$object->note_private,$object,$user->rights->$module->creer,'textarea'); ?></td>
 		<td><?php echo $form->editfieldval("NotePrivate",$note_private,$object->note_private,$object,$user->rights->$module->creer,'textarea'); ?></td>
 	</tr>
 	<?php } ?>
 	
-</table><br>
+</table>
+</div>
+<br>
 
 <!-- END PHP TEMPLATE -->
