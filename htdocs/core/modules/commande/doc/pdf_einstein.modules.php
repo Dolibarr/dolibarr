@@ -61,7 +61,7 @@ class pdf_einstein extends ModelePDFCommandes
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
 	function __construct($db)
 	{
@@ -438,13 +438,13 @@ class pdf_einstein extends ModelePDFCommandes
 	}
 
 	/**
-	 *   Affiche tableau des versement
+	 *  Affiche tableau des versement
      *
-	 *   @param     pdf     		Object PDF
-	 *   @param     object			Object order
-	 *	 @param		posy			Position y in PDF
-	 *	 @param		outputlangs		Object langs for output
-	 *	 @return 	int				<0 if KO, >0 if OK
+	 *  @param	PDF			&$pdf     		Object PDF
+	 *  @param  Object		$object			Object order
+	 *	@param	int			$posy			Position y in PDF
+	 *	@param	Translate	$outputlangs	Object langs for output
+	 *	@return int							<0 if KO, >0 if OK
 	 */
 	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
