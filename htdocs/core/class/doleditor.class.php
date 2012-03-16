@@ -170,7 +170,7 @@ class DolEditor
             	$skin='kama';
 
             	$out.= '<script type="text/javascript">
-            			jQuery(document).ready(function () {
+            			$(document).ready(function () {
                             /* if (CKEDITOR.loadFullCore) CKEDITOR.loadFullCore(); */
                             CKEDITOR.replace(\''.$this->htmlname.'\',
             					{
