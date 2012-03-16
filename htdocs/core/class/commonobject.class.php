@@ -2131,13 +2131,11 @@ abstract class CommonObject
     /**
      *	Set extra parameters
      *
-     *	@param	array	$params		Extra parameters
+     *	@return	void
      */
-    function setExtraParameters($params)
+    function setExtraParameters()
     {
     	$this->db->begin();
-    	
-    	$this->extraparams = array_merge($this->extraparams, (array) $params);
     	
     	$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
     	$sql.= ' SET extraparams = "'.$this->db->escape(dol_json_encode($this->extraparams)).'"';
