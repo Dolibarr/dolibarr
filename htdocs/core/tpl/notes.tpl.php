@@ -18,7 +18,10 @@
 
 $hide = $object->extraparams['notes']['showhide'];
 $module = $object->element;
+$note_public = 'note_public';
+$note_private = 'note';
 if ($module == 'propal') $module = 'propale';
+else if ($module == 'fichinter') { $module = 'ficheinter'; $note_private = 'note_private'; }
 
 ?>
 
@@ -60,14 +63,14 @@ $(document).ready(function() {
 	</tr>
 		
 	<tr id="note_public_line" class="notes_line <?php echo ($hide ? 'hideobject' : 'nohideobject'); ?>">
-		<td width="25%" valign="top"><?php echo $form->editfieldkey("NotePublic",'note_public',$object->note_public,$object,$user->rights->$module->creer,'textarea'); ?></td>
-		<td><?php echo $form->editfieldval("NotePublic",'note_public',$object->note_public,$object,$user->rights->$module->creer,'textarea'); ?></td>
+		<td width="25%" valign="top"><?php echo $form->editfieldkey("NotePublic",$note_public,$object->note_public,$object,$user->rights->$module->creer,'textarea'); ?></td>
+		<td><?php echo $form->editfieldval("NotePublic",$note_public,$object->note_public,$object,$user->rights->$module->creer,'textarea'); ?></td>
 	</tr>
 	
 	<?php if (! $user->societe_id) { ?>
 	<tr id="note_private_line"  class="notes_line <?php echo ($hide ? 'hideobject' : 'nohideobject'); ?>">
-		<td width="25%" valign="top"><?php echo $form->editfieldkey("NotePrivate",'note',$object->note_private,$object,$user->rights->$module->creer,'textarea'); ?></td>
-		<td><?php echo $form->editfieldval("NotePrivate",'note',$object->note_private,$object,$user->rights->$module->creer,'textarea'); ?></td>
+		<td width="25%" valign="top"><?php echo $form->editfieldkey("NotePrivate",$note_private,$object->note_private,$object,$user->rights->$module->creer,'textarea'); ?></td>
+		<td><?php echo $form->editfieldval("NotePrivate",$note_private,$object->note_private,$object,$user->rights->$module->creer,'textarea'); ?></td>
 	</tr>
 	<?php } ?>
 	

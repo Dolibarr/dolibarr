@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  * Copyright (C) 2011-2012  Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -61,7 +61,7 @@ $object = new Fichinter($db);
  * Actions
  */
 
-if ($action == 'confirm_validate' && $confirm == 'yes')
+if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->ficheinter->creer)
 {
     $object->fetch($id);
     $object->fetch_thirdparty();
@@ -89,7 +89,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes')
     }
 }
 
-if ($action == 'confirm_modify' && $confirm == 'yes')
+else if ($action == 'confirm_modify' && $confirm == 'yes' && $user->rights->ficheinter->creer)
 {
     $object->fetch($id);
     $object->fetch_thirdparty();
@@ -117,7 +117,7 @@ if ($action == 'confirm_modify' && $confirm == 'yes')
     }
 }
 
-if ($action == 'add')
+else if ($action == 'add' && $user->rights->ficheinter->creer)
 {
     $object->socid			= $socid;
     $object->duree			= GETPOST('duree','int');
@@ -150,7 +150,7 @@ if ($action == 'add')
     }
 }
 
-if ($action == 'update')
+else if ($action == 'update' && $user->rights->ficheinter->creer)
 {
     $object->fetch($id);
 
@@ -166,7 +166,7 @@ if ($action == 'update')
 /*
  * Build doc
  */
-if ($action == 'builddoc')	// En get ou en post
+else if ($action == 'builddoc' && $user->rights->ficheinter->creer)	// En get ou en post
 {
     $object->fetch($id);
     $object->fetch_thirdparty();
@@ -196,37 +196,35 @@ if ($action == 'builddoc')	// En get ou en post
 }
 
 // Set into a project
-if ($action == 'classin')
+else if ($action == 'classin' && $user->rights->ficheinter->creer)
 {
     $object->fetch($id);
     $result=$object->setProject(GETPOST('projectid','int'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes')
+else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->ficheinter->supprimer)
 {
-    if ($user->rights->ficheinter->supprimer)
-    {
-        $object->fetch($id);
-        $object->delete($user);
-    }
+	$object->fetch($id);
+	$object->delete($user);
+	
     Header('Location: '.DOL_URL_ROOT.'/fichinter/list.php?leftmenu=ficheinter');
     exit;
 }
 
-if ($action == 'setdescription')
+else if ($action == 'setdescription' && $user->rights->ficheinter->creer)
 {
     $object->fetch($id);
     $result=$object->set_description($user,GETPOST('description','alpha'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
-if ($action == 'setnote_public')
+else if ($action == 'setnote_public' && $user->rights->ficheinter->creer)
 {
     $object->fetch($id);
     $result=$object->update_note_public(GETPOST('note_public','alpha'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
-if ($action == 'setnote_private')
+else if ($action == 'setnote_private' && $user->rights->ficheinter->creer)
 {
     $object->fetch($id);
     $result=$object->update_note(GETPOST('note_private','alpha'));
@@ -234,7 +232,7 @@ if ($action == 'setnote_private')
 }
 
 // Add line
-if ($action == "addline" && $user->rights->ficheinter->creer)
+else if ($action == "addline" && $user->rights->ficheinter->creer)
 {
     if (!GETPOST('np_desc','alpha'))
     {
@@ -292,7 +290,7 @@ if ($action == "addline" && $user->rights->ficheinter->creer)
 }
 
 // Classify Billed
-if ($action == 'classifybilled')
+else if ($action == 'classifybilled' && $user->rights->ficheinter->creer)
 {
     $object->fetch($id);
 	$result=$object->setBilled();
@@ -310,7 +308,7 @@ if ($action == 'classifybilled')
 /*
  *  Mise a jour d'une ligne d'intervention
  */
-if ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST('save','alpha') == $langs->trans("Save"))
+else if ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST('save','alpha') == $langs->trans("Save"))
 {
     $objectline = new FichinterLigne($db);
     if ($objectline->fetch(GETPOST('line_id','int')) <= 0)
@@ -359,45 +357,40 @@ if ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST('save
 /*
  *  Supprime une ligne d'intervention AVEC confirmation
  */
-if ($action == 'confirm_deleteline' && $confirm == 'yes')
+else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->ficheinter->creer)
 {
-    if ($user->rights->ficheinter->creer)
-    {
-        $objectline = new FichinterLigne($db);
-        if ($objectline->fetch(GETPOST('line_id','int')) <= 0)
-        {
-            dol_print_error($db);
-            exit;
-        }
-        $result=$objectline->deleteline();
-
-        if ($object->fetch($objectline->fk_fichinter) <= 0)
-        {
-            dol_print_error($db);
-            exit;
-        }
-
-        // Define output language
-        $outputlangs = $langs;
-        $newlang='';
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','alpha')) $newlang=GETPOST('lang_id','alpha');
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-        if (! empty($newlang))
-        {
-            $outputlangs = new Translate("",$conf);
-            $outputlangs->setDefaultLang($newlang);
-        }
-        fichinter_create($db, $object, $object->modelpdf, $outputlangs);
-    }
-    Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-    exit;
+	$objectline = new FichinterLigne($db);
+	if ($objectline->fetch(GETPOST('line_id','int')) <= 0)
+	{
+		dol_print_error($db);
+		exit;
+	}
+	$result=$objectline->deleteline();
+	
+	if ($object->fetch($objectline->fk_fichinter) <= 0)
+	{
+		dol_print_error($db);
+		exit;
+	}
+	
+	// Define output language
+	$outputlangs = $langs;
+	$newlang='';
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','alpha')) $newlang=GETPOST('lang_id','alpha');
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+	if (! empty($newlang))
+	{
+		$outputlangs = new Translate("",$conf);
+		$outputlangs->setDefaultLang($newlang);
+	}
+	fichinter_create($db, $object, $object->modelpdf, $outputlangs);
 }
 
 /*
  * Ordonnancement des lignes
  */
 
-if ($action == 'up' && $user->rights->ficheinter->creer)
+else if ($action == 'up' && $user->rights->ficheinter->creer)
 {
     $object->fetch($id);
     $object->fetch_thirdparty();
@@ -418,7 +411,7 @@ if ($action == 'up' && $user->rights->ficheinter->creer)
     exit;
 }
 
-if ($action == 'down' && $user->rights->ficheinter->creer)
+else if ($action == 'down' && $user->rights->ficheinter->creer)
 {
     $object->fetch($id);
     $object->fetch_thirdparty();
@@ -861,25 +854,13 @@ else if ($id > 0 || ! empty($ref))
 
     // Statut
     print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
+    
+    print "</table><br>";
 
-    // Public note
-    print '<tr><td valign="top">';
-    print $form->editfieldkey("NotePublic",'note_public',$object->note_public,$object,$user->rights->ficheinter->creer,'ckeditor:dolibarr_notes:600:180');
-    print '</td><td colspan="3">';
-    print $form->editfieldval("NotePublic",'note_public',$object->note_public,$object,$user->rights->ficheinter->creer,'ckeditor:dolibarr_notes:600:180');
-    print "</td></tr>";
-
-    // Private note
-    if (! $user->societe_id)
+	if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     {
-    	print '<tr><td valign="top">';
-        print $form->editfieldkey("NotePrivate",'note_private',$object->note_private,$object,$user->rights->ficheinter->creer,'ckeditor:dolibarr_notes:600:180');
-        print '</td><td colspan="3">';
-        print $form->editfieldval("NotePrivate",'note_private',$object->note_private,$object,$user->rights->ficheinter->creer,'ckeditor:dolibarr_notes:600:180');
-    	print "</td></tr>";
+    	include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
     }
-
-    print "</table>";
 
     /*
      * Lignes d'intervention
@@ -898,7 +879,7 @@ else if ($id > 0 || ! empty($ref))
 
         if ($num)
         {
-            print '<br><table class="noborder" width="100%">';
+            print '<table class="noborder" width="100%">';
 
             print '<tr class="liste_titre">';
             print '<td>'.$langs->trans('Description').'</td>';

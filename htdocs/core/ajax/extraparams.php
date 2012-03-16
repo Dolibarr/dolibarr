@@ -49,14 +49,17 @@ if(! empty($id) && ! empty($element) && ! empty($htmlelement) && ! empty($type))
 	
 	dol_syslog("AjaxSetExtraParameters id=".$id." element=".$element." htmlelement=".$htmlelement." type=".$type." value=".$value, LOG_DEBUG);
 	
-	// For compatibility
-	if ($element == 'order' || $element == 'commande')    { $element = $subelement = 'commande'; }
-	if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
-	if ($element == 'facture')	{ $element = 'compta/facture'; $subelement = 'facture'; }
-	if ($element == 'contract') { $element = $subelement = 'contrat'; }
-	if ($element == 'shipping') { $element = $subelement = 'expedition'; }
+	$classpath = $subelement = $element;
 	
-	dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
+	// For compatibility
+	if ($element == 'order' || $element == 'commande')    { $classpath = $subelement = 'commande'; }
+	else if ($element == 'propal')		{ $classpath = 'comm/propal'; $subelement = 'propal'; }
+	else if ($element == 'facture')		{ $classpath = 'compta/facture'; $subelement = 'facture'; }
+	else if ($element == 'contract')	{ $classpath = $subelement = 'contrat'; }
+	else if ($element == 'shipping')	{ $classpath = $subelement = 'expedition'; }
+	else if ($element == 'deplacement')	{ $classpath = 'compta/deplacement'; $subelement = 'deplacement'; }
+	
+	dol_include_once('/'.$classpath.'/class/'.$subelement.'.class.php');
 	
 	$classname	= ucfirst($subelement);
 	$object		= new $classname($db);

@@ -440,4 +440,6 @@ ALTER TABLE llx_propal ADD COLUMN import_key varchar(14) AFTER fk_demand_reason;
 ALTER TABLE llx_propal ADD COLUMN extraparams varchar(255) AFTER import_key;
 ALTER TABLE llx_commande ADD COLUMN extraparams varchar(255) AFTER import_key;
 ALTER TABLE llx_facture ADD COLUMN extraparams varchar(255) AFTER import_key;
+ALTER TABLE llx_fichinter ADD COLUMN extraparams varchar(255) AFTER model_pdf;
+ALTER TABLE llx_deplacement ADD COLUMN extraparams varchar(255) AFTER note_public;
 

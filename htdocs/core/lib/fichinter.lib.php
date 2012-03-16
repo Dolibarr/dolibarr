@@ -60,11 +60,14 @@ function fichinter_prepare_head($object)
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'intervention');
-
-    $head[$h][0] = DOL_URL_ROOT.'/fichinter/note.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('Notes');
-	$head[$h][2] = 'note';
-	$h++;
+    
+    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+    {
+    	$head[$h][0] = DOL_URL_ROOT.'/fichinter/note.php?id='.$object->id;
+    	$head[$h][1] = $langs->trans('Notes');
+    	$head[$h][2] = 'note';
+    	$h++;
+    }
 
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");

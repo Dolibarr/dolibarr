@@ -54,6 +54,7 @@ class Fichinter extends CommonObject
 	var $note_public;
 	var $fk_project;
 	var $modelpdf;
+	var $extraparams=array();
 
 	var $lines = array();
 
@@ -213,11 +214,11 @@ class Fichinter extends CommonObject
 	 */
 	function fetch($rowid,$ref='')
 	{
-		$sql = "SELECT rowid, ref, description, fk_soc, fk_statut,";
-		$sql.= " datec,";
-		$sql.= " date_valid as datev,";
-		$sql.= " tms as datem,";
-		$sql.= " duree, fk_projet, note_public, note_private, model_pdf";
+		$sql = "SELECT f.rowid, f.ref, f.description, f.fk_soc, f.fk_statut,";
+		$sql.= " f.datec,";
+		$sql.= " f.date_valid as datev,";
+		$sql.= " f.tms as datem,";
+		$sql.= " f.duree, f.fk_projet, f.note_public, f.note_private, f.model_pdf, f.extraparams";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 		if ($ref) $sql.= " WHERE f.ref='".$ref."'";
 		else $sql.= " WHERE f.rowid=".$rowid;
@@ -243,6 +244,8 @@ class Fichinter extends CommonObject
 				$this->note_public  = $obj->note_public;
 				$this->note_private = $obj->note_private;
 				$this->modelpdf     = $obj->model_pdf;
+				
+				$this->extraparams	= (array) dol_json_decode($obj->extraparams, true);
 
 				if ($this->statut == 0) $this->brouillon = 1;
 

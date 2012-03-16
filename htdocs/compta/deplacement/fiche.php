@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011	Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012	Regis Houssin        <regis@dolibarr.fr>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ if ($action == 'validate' && $user->rights->deplacement->creer)
 }
 
 /*
-if ($action == 'unblock' && $user->rights->deplacement->unvalidate)
+else if ($action == 'unblock' && $user->rights->deplacement->unvalidate)
 {
     $object->fetch($id);
     if ($object->fk_statut == '1') 	// Not blocked...
@@ -99,7 +99,7 @@ if ($action == 'unblock' && $user->rights->deplacement->unvalidate)
     }
 }*/
 
-if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->deplacement->supprimer)
+else if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->deplacement->supprimer)
 {
     $result=$object->delete($id);
     if ($result >= 0)
@@ -113,7 +113,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->deplaceme
     }
 }
 
-if ($action == 'add' && $user->rights->deplacement->creer)
+else if ($action == 'add' && $user->rights->deplacement->creer)
 {
     if (! $_POST["cancel"])
     {
@@ -172,7 +172,7 @@ if ($action == 'add' && $user->rights->deplacement->creer)
 }
 
 // Update record
-if ($action == 'update' && $user->rights->deplacement->creer)
+else if ($action == 'update' && $user->rights->deplacement->creer)
 {
     if (empty($_POST["cancel"]))
     {
@@ -206,7 +206,7 @@ if ($action == 'update' && $user->rights->deplacement->creer)
 }
 
 // Set into a project
-if ($action == 'classin')
+else if ($action == 'classin' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
     $result=$object->setProject($_POST['projectid']);
@@ -214,26 +214,26 @@ if ($action == 'classin')
 }
 
 // Set fields
-if ($action == 'setdated')
+else if ($action == 'setdated' && $user->rights->deplacement->creer)
 {
     $dated=dol_mktime($_POST['datedhour'], $_POST['datedmin'], $_POST['datedsec'], $_POST['datedmonth'], $_POST['datedday'], $_POST['datedyear']);
     $object->fetch($id);
     $result=$object->setValueFrom('dated',$dated,'','','date');
     if ($result < 0) dol_print_error($db, $object->error);
 }
-if ($action == 'setkm')
+else if ($action == 'setkm' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
     $result=$object->setValueFrom('km',GETPOST('km'));
     if ($result < 0) dol_print_error($db, $object->error);
 }
-if ($action == 'setnote_public')
+else if ($action == 'setnote_public' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
     $result=$object->setValueFrom('note_public',GETPOST('note_public'));
     if ($result < 0) dol_print_error($db, $object->error);
 }
-if ($action == 'setnote')
+else if ($action == 'setnote' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
     $result=$object->setValueFrom('note',GETPOST('note'));
@@ -424,7 +424,7 @@ else if ($id)
             print '<table class="border" width="100%">';
 
             // Ref
-            print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>';
+            print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>';
             print $form->showrefnav($object,'id','',1,'rowid','ref','');
             print '</td></tr>';
 
@@ -494,25 +494,11 @@ else if ($id)
 
             // Statut
             print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
-
-            // Public note
-            print '<tr><td valign="top">';
-            print $form->editfieldkey("NotePublic",'note_public',$object->note_public,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'ckeditor:dolibarr_notes:600:180');
-            print '</td><td>';
-            print $form->editfieldval("NotePublic",'note_public',$object->note_public,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'ckeditor:dolibarr_notes:600:180');
-            print "</td></tr>";
-
-            // Private note
-            if (! $user->societe_id)
-            {
-                print '<tr><td valign="top">';
-                print $form->editfieldkey("NotePrivate",'note',$object->note_private,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'ckeditor:dolibarr_notes:600:180');
-                print '</td><td>';
-                print $form->editfieldval("NotePrivate",'note',$object->note_private,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'ckeditor:dolibarr_notes:600:180');
-                print "</td></tr>";
-            }
-
-            print "</table>";
+            
+            print "</table><br>";
+            
+            // Notes
+            include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
 
             print '</div>';
 
