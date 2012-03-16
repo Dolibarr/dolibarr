@@ -114,5 +114,5 @@ WarningPassIsEmpty=Warning, database password is empty. This is a security hole.
 WarningConfFileMustBeReadOnly=Warning, your config file (<b>htdocs/conf/conf.php</b>) can be overwritten by the web server. This is a serious security hole. Modify permissions on file to be in read only mode for operating system user used by Web server. If you use Windows and FAT format for your disk, you must know that this file system does not allow to add permissions on file, so can't be completely safe.
 WarningsOnXLines=Warnings on <b>%s</b> source lines
 WarningNoDocumentModelActivated=No model, for document generation, has been activated. A model will be choosed by default until you check your module setup.
-WarningInstallDirExists=Warning, install directory (<b>htdocs/install</b>) still exists. This is a serious security hole. You should removed it as soon as possible.
+WarningLockFileDoesNotExists=Warning, once setup is finished, you must disable install/migrate tools by adding a file <b>install.lock</b> into directory <b>%s</b>. Missing this file is a security hole. 
 WarningUntilDirRemoved=All security warnings (visible by admin users only) will remain active as long as the vulnerability is present (or that constant MAIN_REMOVE_INSTALL_WARNING is added in Setup->Other setup).
