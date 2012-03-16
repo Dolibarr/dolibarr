@@ -16,7 +16,6 @@
  *
  */
 
-$hide = $object->extraparams['notes']['showhide'];
 $module = $object->element;
 $note_public = 'note_public';
 $note_private = 'note';
@@ -25,38 +24,7 @@ else if ($module == 'fichinter') { $module = 'ficheinter'; $note_private = 'note
 
 ?>
 
-<!-- BEGIN PHP TEMPLATE -->
-
-<script type="text/javascript">
-$(document).ready(function() {
-	$("#hide-notes").click(function(){
-		setShowHide(1);
-		$("#notes_bloc").hide("blind", {direction: "vertical"}, 800).removeClass("nohideobject");
-		$(this).hide();
-		$("#show-notes").show();
-	});
-	$("#show-notes").click(function(){
-		setShowHide(0);
-		$("#notes_bloc").show("blind", {direction: "vertical"}, 800).addClass("nohideobject");
-		$(this).hide();
-		$("#hide-notes").show();
-	});
-	function setShowHide(status) {
-		var id			= <?php echo $object->id; ?>;
-		var element		= '<?php echo $object->element; ?>';
-		var htmlelement	= 'notes';
-		var type		= 'showhide';
-		
-		$.get("<?php echo dol_buildpath('/core/ajax/extraparams.php', 1); ?>?id="+id+"&element="+element+"&htmlelement="+htmlelement+"&type="+type+"&value="+status);
-	}
-});
-</script>
-
-<div style="float:right; position: relative; top: 3px; right:5px;" id="hide-notes" class="linkobject<?php echo ($hide ? ' hideobject' : ''); ?>"><?php echo img_picto('', '1uparrow.png'); ?></div>
-<div style="float:right; position: relative; top: 3px; right:5px;" id="show-notes" class="linkobject<?php echo ($hide ? '' : ' hideobject'); ?>"><?php echo img_picto('', '1downarrow.png'); ?></div>
-<div class="liste_titre"><?php echo $langs->trans('Notes'); ?></div>
-
-<div id="notes_bloc" class="<?php echo ($hide ? 'hideobject' : 'nohideobject'); ?>">
+<!-- BEGIN PHP TEMPLATE NOTES -->
 <table class="border allwidth">		
 	<tr>
 		<td width="25%" valign="top"><?php echo $form->editfieldkey("NotePublic",$note_public,$object->note_public,$object,$user->rights->$module->creer,'textarea'); ?></td>
@@ -71,7 +39,4 @@ $(document).ready(function() {
 	<?php } ?>
 	
 </table>
-</div>
-<br>
-
-<!-- END PHP TEMPLATE -->
+<!-- END PHP TEMPLATE NOTES-->

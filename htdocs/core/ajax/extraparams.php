@@ -61,12 +61,14 @@ if(! empty($id) && ! empty($element) && ! empty($htmlelement) && ! empty($type))
 	
 	dol_include_once('/'.$classpath.'/class/'.$subelement.'.class.php');
 	
-	$classname	= ucfirst($subelement);
-	$object		= new $classname($db);
-	$object->id	= $id;
+	$classname = ucfirst($subelement);
+	$object	= new $classname($db);
+	$object->fetch($id);
 	
 	$params[$htmlelement] = array($type => $value);
-	$result=$object->setExtraParameters($params);
+	$object->extraparams = array_merge($object->extraparams, $params);
+	
+	$result=$object->setExtraParameters();
 }
 
 ?>
