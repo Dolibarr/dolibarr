@@ -17,14 +17,13 @@
  */
 
 /**
- *       \file       htdocs/core/class/stats.class.php
- *       \ingroup    core
- *       \brief      Common class to manage statistics reports
+ *  \file       htdocs/core/class/stats.class.php
+ *  \ingroup    core
+ *  \brief      Common class to manage statistics reports
  */
 
 /**
- * 		\class		Stats
- * 		\brief		Parent class of statistics class
+ * 	Parent class of statistics class
  */
 abstract class Stats
 {

@@ -80,6 +80,8 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 
         if ($conf->global->SOCIETE_CODECLIENT_ADDON != 'mod_codeclient_monkey') { print __METHOD__." third party ref checker must be setup to 'mod_codeclient_monkey' not to '".$conf->global->SOCIETE_CODECLIENT_ADDON."'.\n"; die(); }
 
+        if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) { print __METHOD__." constant MAIN_DISABLEPROFIDRULE must be empty (if a module set it, disable module).\n"; die(); }
+
         $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
     	print __METHOD__."\n";
@@ -327,10 +329,6 @@ class SocieteTest extends PHPUnit_Framework_TestCase
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertNotEquals($result, '');
 
-        $result=$localobject->getFullAddress(1);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertContains("New address\nNew zip New town\nBelgium", $result);
-
         $result=$localobject->isInEEC();
         print __METHOD__." id=".$localobject->id." country_code=".$this->country_code." result=".$result."\n";
         $this->assertTrue(true, $result);
@@ -341,6 +339,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 
         return $localobject->id;
     }
+
 
     /**
      * testSocieteDelete
@@ -387,5 +386,70 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 
         return;
     }
+
+
+    /**
+     * testSocieteGetFullAddress
+     *
+     * @return	int		$id				Id of company
+     */
+    public function testSocieteGetFullAddress()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        $localobjectadd=new Societe($db);
+        $localobjectadd->initAsSpecimen();
+
+        // France
+        unset($localobjectadd->country_code);
+        $localobjectadd->country_id=1;
+        $localobjectadd->name='New name';
+        $localobjectadd->address='New address';
+        $localobjectadd->zip='New zip';
+        $localobjectadd->town='New town';
+        $result=$localobjectadd->getFullAddress(1);
+        print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
+        $this->assertContains("New address\nNew zip New town\nFrance", $result);
+
+        // Belgium
+        unset($localobjectadd->country_code);
+        $localobjectadd->country_id=2;
+        $localobjectadd->name='New name';
+        $localobjectadd->address='New address';
+        $localobjectadd->zip='New zip';
+        $localobjectadd->town='New town';
+        $result=$localobjectadd->getFullAddress(1);
+        print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
+        $this->assertContains("New address\nNew zip New town\nBelgium", $result);
+
+        // Switzerland
+        unset($localobjectadd->country_code);
+        $localobjectadd->country_id=6;
+        $localobjectadd->name='New name';
+        $localobjectadd->address='New address';
+        $localobjectadd->zip='New zip';
+        $localobjectadd->town='New town';
+        $result=$localobjectadd->getFullAddress(1);
+        print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
+        $this->assertContains("New address\nNew zip New town\nSwitzerland", $result);
+
+        // USA
+        unset($localobjectadd->country_code);
+        $localobjectadd->country_id=11;
+        $localobjectadd->name='New name';
+        $localobjectadd->address='New address';
+        $localobjectadd->zip='New zip';
+        $localobjectadd->town='New town';
+        $result=$localobjectadd->getFullAddress(1);
+        print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
+        $this->assertContains("New address\nNew zip New town\nUnited States", $result);
+
+        return $localobjectadd->id;
+    }
+
 }
 ?>

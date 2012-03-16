@@ -417,8 +417,8 @@ class UserGroup extends CommonObject
 	/**
 	 *  Charge dans l'objet group, la liste des permissions auquels le groupe a droit
 	 *
-	 *  @param      string	$module    	Nom du module dont il faut recuperer les droits ('' par defaut signifie tous les droits)
-	 *	@return		int					<0 if KO, >0 if OK
+	 *  @param      string	$moduletag	 	Name of module we want permissions ('' means all)
+	 *	@return		int						<0 if KO, >0 if OK
 	 */
 	function getrights($moduletag='')
 	{

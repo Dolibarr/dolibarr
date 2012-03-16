@@ -33,6 +33,8 @@ if (! $user->admin) accessforbidden();
  * View
  */
 
+$label=getStaticMember($db, 'label');
+
 $help_url='EN:Restores|FR:Restaurations|ES:Restauraciones';
 llxHeader('','',$help_url);
 
@@ -48,6 +50,10 @@ jQuery(document).ready(function() {
 	jQuery("#radio_dump_postgresql").click(function() {
 		jQuery("#postgresql_options").show();
 	});
+	<?php
+	    if ($label == 'MySQL')      print 'jQuery("#radio_dump_mysql").click();';
+	    if ($label == 'PostgreSQL') print 'jQuery("#radio_dump_postgresql").click();';
+	?>
 });
 </script>
 <?php
@@ -57,8 +63,6 @@ print_fiche_titre($langs->trans("Restore"),'','setup');
 print $langs->trans("RestoreDesc",DOL_DATA_ROOT).'<br><br>';
 print $langs->trans("RestoreDesc2",DOL_DATA_ROOT).'<br><br>';
 print $langs->trans("RestoreDesc3",DOL_DATA_ROOT).'<br><br>';
-
-$label=getStaticMember($db, 'label');
 
 ?>
 

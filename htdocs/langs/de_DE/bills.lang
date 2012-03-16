@@ -42,7 +42,6 @@ SupplierInvoice=Lieferantenrechnung
 SuppliersInvoices=Lieferantenrechnungen
 SupplierBill=Lieferantenrechnung
 SupplierBills=Lieferantenrechnungen
-BillContacts=Rechnungskontakte
 Payment=Zahlung
 PaymentBack=Rückzahlung
 Payments=Zahlungen

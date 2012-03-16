@@ -83,7 +83,8 @@ class Propal extends CommonObject
 	var $remise;
 	var $remise_percent;
 	var $remise_absolue;
-	var $note;
+	var $note;						// deprecated (for compatibility)
+	var $note_private;
 	var $note_public;
 	var $fk_delivery_address;		// deprecated (for compatibility)
 	var $fk_address;
@@ -954,7 +955,7 @@ class Propal extends CommonObject
 		$sql.= ", ca.code as availability_code, ca.label as availability";
 		$sql.= ", dr.code as demand_reason_code, dr.label as demand_reason";
 		$sql.= ", model_pdf, ref_client";
-		$sql.= ", note, note_public";
+		$sql.= ", note as note_private, note_public";
 		$sql.= ", fk_projet, fk_statut";
 		$sql.= ", fk_user_author, fk_user_valid, fk_user_cloture";
 		$sql.= ", fk_adresse_livraison";
@@ -999,13 +1000,14 @@ class Propal extends CommonObject
 				$this->socid                = $obj->fk_soc;
 				$this->fk_project           = $obj->fk_projet;
 				$this->modelpdf             = $obj->model_pdf;
-				$this->note                 = $obj->note;
+				$this->note                 = $obj->note_private; // TODO obsolete
+				$this->note_private         = $obj->note_private;
 				$this->note_public          = $obj->note_public;
 				$this->statut               = $obj->fk_statut;
 				$this->statut_libelle       = $obj->statut_label;
 
-				$this->datec                = $this->db->jdate($obj->datec); //TODO obsolete
-				$this->datev                = $this->db->jdate($obj->datev); //TODO obsolete
+				$this->datec                = $this->db->jdate($obj->datec); // TODO obsolete
+				$this->datev                = $this->db->jdate($obj->datev); // TODO obsolete
 				$this->date_creation		= $this->db->jdate($obj->datec); //Creation date
                 $this->date_validation		= $this->db->jdate($obj->datev); //Validation date
 				$this->date                 = $this->db->jdate($obj->dp);	// Proposal date
@@ -1275,34 +1277,6 @@ class Propal extends CommonObject
 			{
 				$this->error=$this->db->error();
 				dol_syslog(get_class($this)."::set_date_livraison Erreur SQL");
-				return -1;
-			}
-		}
-	}
-
-	/**
-	 *	Define delivery address
-	 *
-	 *	@param      User	$user        	Object user that modify
-	 *	@param      int		$fk_address		Delivery address id
-	 *	@return     int			         	<0 si ko, >0 si ok
-	 */
-	function set_adresse_livraison($user, $fk_address)
-	{
-		if ($user->rights->propale->creer)
-		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_adresse_livraison = '".$fk_address."'";
-			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
-
-			if ($this->db->query($sql) )
-			{
-				$this->fk_delivery_address = $fk_address;
-				return 1;
-			}
-			else
-			{
-				$this->error=$this->db->error();
-				dol_syslog("Propal::set_adresse_livraison Erreur SQL");
 				return -1;
 			}
 		}
@@ -1875,76 +1849,6 @@ class Propal extends CommonObject
 			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
-		}
-	}
-
-
-	/**
-	 *  Change the payments conditions of the invoice
-	 *
-	 *  @param		int		$cond_reglement_id	Id of new payment condition
-	 *  @return     int                    		>0 if OK, <0 if KO
-	 */
-	function cond_reglement($cond_reglement_id)
-	{
-		dol_syslog('Propale::cond_reglement('.$cond_reglement_id.')');
-		if ($this->statut >= 0)
-		{
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
-			$sql .= ' SET fk_cond_reglement = '.$cond_reglement_id;
-			$sql .= ' WHERE rowid='.$this->id;
-			if ( $this->db->query($sql) )
-			{
-				$this->cond_reglement_id = $cond_reglement_id;
-				return 1;
-			}
-			else
-			{
-				dol_syslog('Propale::cond_reglement Erreur '.$sql.' - '.$this->db->error());
-				$this->error=$this->db->error();
-				return -1;
-			}
-		}
-		else
-		{
-			dol_syslog('Propale::cond_reglement, etat propale incompatible');
-			$this->error='Etat propale incompatible '.$this->statut;
-			return -2;
-		}
-	}
-
-
-	/**
-	 *  Change the payment mode
-	 *
-	 *  @param	int	$mode_reglement_id	Id of new payment mode
-	 *  @return int         			>0 if OK, <0 if KO
-	 */
-	function mode_reglement($mode_reglement_id)
-	{
-		dol_syslog('Propale::mode_reglement('.$mode_reglement_id.')');
-		if ($this->statut >= 0)
-		{
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
-			$sql .= ' SET fk_mode_reglement = '.$mode_reglement_id;
-			$sql .= ' WHERE rowid='.$this->id;
-			if ( $this->db->query($sql) )
-			{
-				$this->mode_reglement_id = $mode_reglement_id;
-				return 1;
-			}
-			else
-			{
-				dol_syslog('Propale::mode_reglement Erreur '.$sql.' - '.$this->db->error());
-				$this->error=$this->db->error();
-				return -1;
-			}
-		}
-		else
-		{
-			dol_syslog('Propale::mode_reglement, etat propale incompatible');
-			$this->error='Etat facture incompatible '.$this->statut;
-			return -2;
 		}
 	}
 

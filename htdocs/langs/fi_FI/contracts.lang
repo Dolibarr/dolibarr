@@ -27,7 +27,6 @@ ServiceStatusClosed=Suljettu
 ServicesLegend=Palvelut legenda
 Contracts=Sopimukset
 Contract=Sopimus
-ContractContacts=Sopimus yhteystiedot
 NoContracts=Sopimuksia ei
 MenuServices=Palvelut
 MenuInactiveServices=Palvelut, joita ei aktiivinen

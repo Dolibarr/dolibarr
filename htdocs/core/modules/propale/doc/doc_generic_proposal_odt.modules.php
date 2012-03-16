@@ -47,7 +47,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function doc_generic_proposal_odt($db)
+	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -91,6 +91,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
      *
      * @param   Object			$object             Main object to use as data source
      * @param   Translate		$outputlangs        Lang object to use for output
+     * @return	array								Array of substitution
      */
     function get_substitutionarray_object($object,$outputlangs)
     {

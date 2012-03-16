@@ -38,7 +38,7 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 	/**
 	 * 	Constructor
 	 */
-	function mod_codecompta_panicum()
+	function __construct()
 	{
 	}
 
@@ -53,11 +53,13 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 		return $langs->trans("ModuleCompanyCode".$this->nom);
 	}
 
-	/**		Return an example of result returned by getNextValue
+	/**
+	 *  Return an example of result returned by getNextValue
 	 *
-	 *      @param	Translate	$langs		Object langs
-	 *      @param	Societe		$objsoc		Object thirdparty
-	 *      @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 *  @param	Translate	$langs		Object langs
+	 *  @param	Societe		$objsoc		Object thirdparty
+	 *  @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 *  @return	string					Example
 	 */
 	function getExample($langs,$objsoc=0,$type=-1)
 	{

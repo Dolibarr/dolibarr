@@ -29,7 +29,6 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formorder.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/modules/commande/modules_commande.php");
@@ -440,16 +439,10 @@ if ($action == 'setdate_livraison' && $user->rights->commande->creer)
     }
 }
 
-if ($action == 'setaddress' && $user->rights->commande->creer)
-{
-    $object->fetch($id);
-    $object->set_adresse_livraison($user,$_POST['fk_address']);
-}
-
 if ($action == 'setmode' && $user->rights->commande->creer)
 {
     $object->fetch($id);
-    $result=$object->mode_reglement($_POST['mode_reglement_id']);
+    $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -470,7 +463,7 @@ if ($action == 'setdemandreason' && $user->rights->commande->creer)
 if ($action == 'setconditions' && $user->rights->commande->creer)
 {
     $object->fetch($id);
-    $result=$object->cond_reglement($_POST['cond_reglement_id']);
+    $result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -1041,11 +1034,11 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
 
     if ($result > 0)
     {
-        $ref = dol_sanitizeFileName($object->ref);
-        $file = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+//        $ref = dol_sanitizeFileName($object->ref);
+//        $file = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 
-        if (is_readable($file))
-        {
+//        if (is_readable($file))
+//        {
             if ($_POST['sendto'])
             {
                 // Le destinataire a ete fourni via le champ libre
@@ -1160,14 +1153,14 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                         $mesg.='</div>';
                     }
                 }
-            }
+/*            }
             else
             {
                 $langs->load("other");
                 $mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
                 $action='presend';
                 dol_syslog('Recipient email is empty');
-            }
+            }*/
         }
         else
         {
@@ -1193,7 +1186,6 @@ llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-$formother = new FormOther($db);
 $formorder = new FormOrder($db);
 
 
@@ -1244,13 +1236,16 @@ if ($action == 'create' && $user->rights->commande->creer)
             $ref_client         = (!empty($objectsrc->ref_client)?$object->ref_client:'');
 
             $soc = $objectsrc->client;
-            $cond_reglement_id  = (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
-            $mode_reglement_id  = (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
-            $availability_id  = (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
-            $demand_reason_id  = (!empty($objectsrc->demand_reason_id)?$objectsrc->demand_reason_id:(!empty($soc->demand_reason_id)?$soc->demand_reason_id:0));
-            $remise_percent     = (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
-            $remise_absolue     = (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
-            $dateinvoice        = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+            $cond_reglement_id	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
+            $mode_reglement_id	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+            $availability_id	= (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
+            $demand_reason_id	= (!empty($objectsrc->demand_reason_id)?$objectsrc->demand_reason_id:(!empty($soc->demand_reason_id)?$soc->demand_reason_id:0));
+            $remise_percent		= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
+            $remise_absolue		= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
+            $dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+
+            $note_private		= (! empty($objectsrc->note) ? $objectsrc->note : (! empty($objectsrc->note_private) ? $objectsrc->note_private : ''));
+            $note_public		= (! empty($objectsrc->note_public) ? $objectsrc->note_public : '');
 
             // Object source contacts list
             $srccontactslist = $objectsrc->liste_contact(-1,'external',1);
@@ -1330,15 +1325,6 @@ if ($action == 'create' && $user->rights->commande->creer)
     $form->select_date($datedelivery,'liv_','','','',"crea_commande",1,1);
     print "</td></tr>";
 
-    // Delivery address
-    if ($conf->global->COMMANDE_ADD_DELIVERY_ADDRESS)
-    {
-        print '<tr><td nowrap="nowrap">'.$langs->trans('DeliveryAddress').'</td><td colspan="2">';
-        $numaddress = $formother->select_address($soc->fk_delivery_address, $socid,'fk_address',1);
-        print ' &nbsp; <a href="../comm/address.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddAddress").'</a>';
-        print '</td></tr>';
-    }
-
     // Conditions de reglement
     print '<tr><td nowrap="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
     $form->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id',-1,1);
@@ -1400,8 +1386,8 @@ if ($action == 'create' && $user->rights->commande->creer)
     print '<tr>';
     print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
     print '<td valign="top" colspan="2">';
-    print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">';
-    print '</textarea></td></tr>';
+    print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
+    print '</td></tr>';
 
     // Note privee
     if (! $user->societe_id)
@@ -1409,8 +1395,8 @@ if ($action == 'create' && $user->rights->commande->creer)
         print '<tr>';
         print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
         print '<td valign="top" colspan="2">';
-        print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">';
-        print '</textarea></td></tr>';
+        print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
+        print '</td></tr>';
     }
 
     if (is_object($objectsrc))
@@ -1802,29 +1788,6 @@ else
             print '</td>';
             print '</tr>';
 
-            // Delivery address
-            if ($conf->global->COMMANDE_ADD_DELIVERY_ADDRESS)
-            {
-                print '<tr><td height="10">';
-                print '<table class="nobordernopadding" width="100%"><tr><td>';
-                print $langs->trans('DeliveryAddress');
-                print '</td>';
-
-                if ($action != 'editdelivery_adress' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$object->socid.'&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
-                print '</tr></table>';
-                print '</td><td colspan="2">';
-
-                if ($action == 'editdelivery_adress')
-                {
-                    $formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$socid,'fk_address','commande',$object->id);
-                }
-                else
-                {
-                    $formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$socid,'none','commande',$object->id);
-                }
-                print '</td></tr>';
-            }
-
             // Terms of payment
             print '<tr><td height="10">';
             print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -2045,16 +2008,11 @@ else
                     // Send
                     if ($object->statut > 0)
                     {
-                        $comref = dol_sanitizeFileName($object->ref);
-                        $file = $conf->commande->dir_output . '/'.$comref.'/'.$comref.'.pdf';
-                        if (file_exists($file))
+                        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->commande->order_advance->send))
                         {
-                            if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->commande->order_advance->send))
-                            {
-                                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
-                            }
-                            else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
+                            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
                         }
+                        else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
                     }
 
                     // Ship
@@ -2184,7 +2142,33 @@ else
             if ($action == 'presend')
             {
                 $ref = dol_sanitizeFileName($object->ref);
-                $file = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+                include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+                $fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref);
+                $file=$fileparams['fullname'];
+
+                // Build document if it not exists
+                if (! $file || ! is_readable($file))
+                {
+                    // Define output language
+                    $outputlangs = $langs;
+                    $newlang='';
+                    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+                    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+                    if (! empty($newlang))
+                    {
+                        $outputlangs = new Translate("",$conf);
+                        $outputlangs->setDefaultLang($newlang);
+                    }
+
+                    $result=commande_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+                    if ($result <= 0)
+                    {
+                        dol_print_error($db,$result);
+                        exit;
+                    }
+                    $fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref);
+                    $file=$fileparams['fullname'];
+                }
 
                 print '<br>';
                 print_titre($langs->trans('SendOrderByMail'));
@@ -2217,10 +2201,10 @@ else
                 $formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 
                 // Init list of files
-                if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+                if (GETPOST("mode")=='init')
                 {
                     $formmail->clear_attached_files();
-                    $formmail->add_attached_files($file,dol_sanitizeFilename($ref.'.pdf'),'application/pdf');
+                    $formmail->add_attached_files($file,basename($file),dol_mimetype($file));
                 }
 
                 // Show form

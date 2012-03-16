@@ -32,8 +32,7 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
 
 
 /**
- *	\class      pdf_soleil
- *	\brief      Class to build interventions documents with model Soleil
+ *	Class to build interventions documents with model Soleil
  */
 class pdf_soleil extends ModelePDFFicheinter
 {
@@ -211,10 +210,10 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->MultiCell(190,8,$outputlangs->transnoentities("Description"),0,'L',0);
 				$pdf->line($this->marge_gauche, $tab_top + 8, $this->page_largeur-$this->marge_droite, $tab_top + 8 );
 
-				$pdf->SetFont('','', $default_font_size - 1);
+				$pdf->SetFont('', '', $default_font_size - 1);
 
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
-				$pdf->SetXY($this->marge_gauche, $tab_top + 8 );
+				$pdf->SetXY($this->marge_gauche, $tab_top + 8);
 				$text=$object->description;
 				if ($object->duree > 0)
 				{

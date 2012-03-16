@@ -4112,6 +4112,48 @@ function printCommonFooter($zone='private')
 
 }
 
+/**
+ * Convert unicode
+ *
+ * @param	string	$unicode	Unicode
+ * @param	string	$encoding	Encoding type
+ * @return	string				Unicode converted
+ */
+function unichr($unicode , $encoding = 'UTF-8')
+{
+	return mb_convert_encoding("&#{$unicode};", $encoding, 'HTML-ENTITIES');
+}
+
+/**
+ *	Convert a currency code into its symbol
+ *
+ *  @param		string	$currency_code		Currency code
+ *  @return		string						Currency symbol encoded into UTF8
+ */
+function getCurrencySymbol($currency_code)
+{
+	global $db, $form;
+
+	$currency_sign = '';
+
+	if (! is_object($form)) $form = new Form($db);
+
+	$form->load_cache_currencies();
+
+	if (is_array($form->cache_currencies[$currency_code]['unicode']) && ! empty($form->cache_currencies[$currency_code]['unicode']))
+	{
+		foreach($form->cache_currencies[$currency_code]['unicode'] as $unicode)
+		{
+			$currency_sign.= unichr($unicode);
+		}
+	}
+	else
+	{
+		$currency_sign = $currency_code;
+	}
+
+	return $currency_sign;
+}
 
 if (! function_exists('getmypid'))
 {

@@ -66,8 +66,6 @@ $month=GETPOST("month");
 // Nombre de ligne pour choix de produit/service predefinis
 $NBLINES=4;
 
-$object = new Propal($db);
-
 // Security check
 $module='propale';
 if (isset($socid))
@@ -84,6 +82,14 @@ else if (isset($id) &&  $id > 0)
 }
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, $module, $objectid, $dbtable);
+
+$object = new Propal($db);
+
+// Load object
+if ($id > 0 || ! empty($ref))
+{
+	$ret=$object->fetch($id, $ref);
+}
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
@@ -240,18 +246,25 @@ else if ($action == 'setdate_livraison')
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-else if ($action == 'setaddress' && $user->rights->propale->creer)
-{
-	$object->fetch($id);
-	$result=$object->set_adresse_livraison($user,$_POST['fk_address']);
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-
 // Positionne ref client
 else if ($action == 'set_ref_client' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
 	$object->set_ref_client($user, $_POST['ref_client']);
+}
+
+else if ($action == 'setnote_public')
+{
+	$object->fetch($id);
+	$result=$object->update_note_public(GETPOST('note_public','alpha'));
+	if ($result < 0) dol_print_error($db,$object->error);
+}
+
+else if ($action == 'setnote')
+{
+	$object->fetch($id);
+	$result=$object->update_note(GETPOST('note','alpha'));
+	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 // Create proposal
@@ -425,7 +438,6 @@ else if ($action == 'setstatut' && $user->rights->propale->cloturer)
         {
             $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("CloseAs")).'</div>';
             $action='statut';
-            $action='statut';
         }
         else
         {
@@ -486,11 +498,11 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
 
 	if ($result > 0)
 	{
-		$objectref = dol_sanitizeFileName($object->ref);
-		$file = $conf->propale->dir_output . '/' . $objectref . '/' . $objectref . '.pdf';
+//		$objectref = dol_sanitizeFileName($object->ref);
+//		$file = $conf->propale->dir_output . '/' . $objectref . '/' . $objectref . '.pdf';
 
-		if (is_readable($file))
-		{
+//		if (is_readable($file))
+//		{
 			if ($_POST['sendto'])
 			{
 				// Le destinataire a ete fourni via le champ libre
@@ -612,13 +624,13 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
 				$mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
 				dol_syslog('Recipient email is empty');
 			}
-		}
+/*		}
 		else
 		{
 			$langs->load("errors");
 			$mesg='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
 			dol_syslog('Failed to read file: '.$file);
-		}
+		}*/
 	}
 	else
 	{
@@ -969,7 +981,7 @@ else if ($action == 'setdemandreason')
 else if ($action == 'setconditions')
 {
 	$object->fetch($id);
-	$result = $object->cond_reglement($_POST['cond_reglement_id']);
+	$result = $object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
 }
 
 else if ($action == 'setremisepercent' && $user->rights->propale->creer)
@@ -988,7 +1000,7 @@ else if ($action == 'setremiseabsolue' && $user->rights->propale->creer)
 else if ($action == 'setmode')
 {
 	$object->fetch($id);
-	$result = $object->mode_reglement($_POST['mode_reglement_id']);
+	$result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
 }
 
 /*
@@ -1061,8 +1073,6 @@ if ($id > 0 || ! empty($ref))
 	 */
 
 	dol_htmloutput_mesg($mesg,$mesgs);
-
-	$object->fetch($id,$ref);
 
 	$soc = new Societe($db);
 	$soc->fetch($object->socid);
@@ -1180,8 +1190,6 @@ if ($id > 0 || ! empty($ref))
 	print '</td>';
 	print '</tr>';
 
-	$rowspan=11;
-
 	// Company
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$soc->getNomUrl(1).'</td>';
 	print '</tr>';
@@ -1246,20 +1254,6 @@ if ($id > 0 || ! empty($ref))
 		}
 	}
 	print '</td>';
-
-	if ($conf->projet->enabled) $rowspan++;
-	if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS) $rowspan++;
-
-	//Local taxes
-	if ($mysoc->country_code=='ES')
-	{
-		if($mysoc->localtax1_assuj=="1") $rowspan++;
-		if($mysoc->localtax2_assuj=="1") $rowspan++;
-	}
-
-	// Notes
-	print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('NotePublic').' :<br>'. nl2br($object->note_public).'</td>';
-	print '</tr>';
 
 	// Date end proposal
 	print '<tr>';
@@ -1337,29 +1331,6 @@ if ($id > 0 || ! empty($ref))
 	}
 	print '</td>';
 	print '</tr>';
-
-	// Delivery address (deprecated)
-	if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS)
-	{
-		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('DeliveryAddress');
-		print '</td>';
-
-		if ($action != 'editdelivery_address' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_address&amp;socid='.$object->socid.'&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDeliveryAddress'),1).'</a></td>';
-		print '</tr></table>';
-		print '</td><td colspan="3">';
-
-		if ($action == 'editdelivery_address')
-		{
-			$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,GETPOST('socid','int'),'fk_address','propal',$object->id);
-		}
-		else
-		{
-			$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,GETPOST('socid','int'),'none','propal',$object->id);
-		}
-		print '</td></tr>';
-	}
 
 	// Delivery delay
 	print '<tr><td>';
@@ -1480,12 +1451,12 @@ if ($id > 0 || ! empty($ref))
 
 	// Amount HT
 	print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
-	print '<td align="right" colspan="2" nowrap><b>'.price($object->total_ht).'</b></td>';
+	print '<td align="right" nowrap><b>'.price($object->total_ht).'</b></td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	// Amount VAT
 	print '<tr><td height="10">'.$langs->trans('AmountVAT').'</td>';
-	print '<td align="right" colspan="2" nowrap>'.price($object->total_tva).'</td>';
+	print '<td align="right" nowrap>'.price($object->total_tva).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	// Amount Local Taxes
@@ -1494,24 +1465,48 @@ if ($id > 0 || ! empty($ref))
 		if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
 		{
 			print '<tr><td height="10">'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
-			print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax1).'</td>';
+			print '<td align="right" nowrap>'.price($object->total_localtax1).'</td>';
 			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 		}
 		if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
 		{
 			print '<tr><td height="10">'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
-			print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax2).'</td>';
+			print '<td align="right" nowrap>'.price($object->total_localtax2).'</td>';
 			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 		}
 	}
 
 	// Amount TTC
 	print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td>';
-	print '<td align="right" colspan="2" nowrap>'.price($object->total_ttc).'</td>';
+	print '<td align="right" nowrap>'.price($object->total_ttc).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	// Statut
 	print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$object->getLibStatut(4).'</td></tr>';
+
+
+    if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+    {
+	    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans('Notes').'</td></tr>';
+
+        // Public note
+    	print '<tr><td valign="top">';
+    	print $form->editfieldkey("NotePublic",'note_public',$object->note_public,$object,$user->rights->propale->creer,'textarea');
+    	print '</td><td colspan="3">';
+    	print $form->editfieldval("NotePublic",'note_public',$object->note_public,$object,$user->rights->propale->creer,'textarea');
+    	print "</td></tr>";
+
+    	// Private note
+    	if (! $user->societe_id)
+    	{
+    		print '<tr><td valign="top">';
+    		print $form->editfieldkey("NotePrivate",'note',$object->note_private,$object,$user->rights->propale->creer,'textarea');
+    		print '</td><td colspan="3">';
+    		print $form->editfieldval("NotePrivate",'note',$object->note_private,$object,$user->rights->propale->creer,'textarea');
+    		print "</td></tr>";
+    	}
+    }
+
 	print '</table><br>';
 
 	/*
@@ -1626,16 +1621,11 @@ if ($id > 0 || ! empty($ref))
 			// Send
 			if ($object->statut == 1 || $object->statut == 2)
 			{
-				$propref = dol_sanitizeFileName($object->ref);
-				$file = $conf->propale->dir_output . '/'.$propref.'/'.$propref.'.pdf';
-				if (file_exists($file))
-				{
-                    if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->propale->propal_advance->send)
-                    {
-					   print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
-                    }
-                    else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
-				}
+                if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->propale->propal_advance->send)
+                {
+				   print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
+                }
+                else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
 			}
 
             // Create an order
@@ -1731,7 +1721,33 @@ if ($id > 0 || ! empty($ref))
 	if ($action == 'presend')
 	{
 		$ref = dol_sanitizeFileName($object->ref);
-		$file = $conf->propale->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+        include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+        $fileparams = dol_most_recent_file($conf->propale->dir_output . '/' . $ref);
+        $file=$fileparams['fullname'];
+
+        // Build document if it not exists
+        if (! $file || ! is_readable($file))
+        {
+            // Define output language
+            $outputlangs = $langs;
+            $newlang='';
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+            if (! empty($newlang))
+            {
+                $outputlangs = new Translate("",$conf);
+                $outputlangs->setDefaultLang($newlang);
+            }
+
+            $result=propale_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+            if ($result <= 0)
+            {
+                dol_print_error($db,$result);
+                exit;
+            }
+            $fileparams = dol_most_recent_file($conf->propale->dir_output . '/' . $ref);
+            $file=$fileparams['fullname'];
+        }
 
 		print '<br>';
 		print_titre($langs->trans('SendPropalByMail'));
@@ -1765,10 +1781,10 @@ if ($id > 0 || ! empty($ref))
 		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 
 		// Init list of files
-		if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+        if (GETPOST("mode")=='init')
 		{
 			$formmail->clear_attached_files();
-			$formmail->add_attached_files($file,dol_sanitizeFilename($object->ref).'.pdf','application/pdf');
+            $formmail->add_attached_files($file,basename($file),dol_mimetype($file));
 		}
 
 		$formmail->show_form();
@@ -2013,7 +2029,7 @@ else
 }
 
 
+// End of page
 llxFooter();
-
 $db->close();
 ?>

@@ -55,7 +55,7 @@ print "***** ".$script_file." (".$version.") *****\n";
 $dir=DOL_DOCUMENT_ROOT."/langs";
 
 // Check parameters
-if (! isset($argv[2])) {
+if (! isset($argv[3])) {
     print "Usage:   ".$script_file."  lang_code_src lang_code_dest|all APIKEY [langfile.lang]\n";
     print "Example: ".$script_file."  en_US         pt_PT              123456\n";
     print "Rem:     lang_code to use can be found on http://www.google.com/language_tools\n";

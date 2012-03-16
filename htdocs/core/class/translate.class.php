@@ -338,11 +338,7 @@ class Translate
 	{
 		global $db;
 		$newstr=$key;
-		if (preg_match('/^CurrencySing([A-Z][A-Z][A-Z])$/i',$key,$reg))
-		{
-			$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','labelsing');
-		}
-		else if (preg_match('/^Currency([A-Z][A-Z][A-Z])$/i',$key,$reg))
+		if (preg_match('/^Currency([A-Z][A-Z][A-Z])$/i',$key,$reg))
 		{
 			$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','label');
 		}

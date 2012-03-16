@@ -21,7 +21,6 @@ ServiceStatusClosed=Cerrado
 ServicesLegend=Leyenda para los servicios
 Contracts=Contratos
 Contract=Contrato
-ContractContacts=Contactos contrato
 NoContracts=Sin contratos
 MenuServices=Servicios
 MenuInactiveServices=Servicios inactivos

@@ -25,3 +25,4 @@ BackToHelpCenter=Otherwise, click here to go <a href="%s">back to help center ho
 LinkToGoldMember=You can call one of the coach preselected by Dolibarr for your language (%s) by clicking his Widget (status and maximum price are automatically updated):
 PossibleLanguages=Supported languages
 MakeADonation=Help Dolibarr project, make a donation
+SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation

@@ -51,8 +51,8 @@ class AntiVir
 	 *	Scan a file with antivirus.
 	 *  This function runs the command defined in setup. This antivirus command must return 0 if OK.
 	 *
-	 *	@param	 	file			File to scan
-	 *	@return	 	int				<0 if KO (-98 if error, -99 if virus), 0 if OK
+	 *	@param	string	$file		File to scan
+	 *	@return	int					<0 if KO (-98 if error, -99 if virus), 0 if OK
 	 */
 	function dol_avscan_file($file)
 	{
@@ -126,9 +126,10 @@ class AntiVir
 
 
 	/**
-	 *	\brief  	get full Command Line to run
-	 *	\param	 	file			File to scan
-	 *	\return	 	string			Full command line to run
+	 *	Get full Command Line to run
+	 *
+	 *	@param	string	$file		File to scan
+	 *	@return	string				Full command line to run
 	 */
 	function getCliCommand($file)
 	{

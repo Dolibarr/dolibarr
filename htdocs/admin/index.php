@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,7 @@ require("../main.inc.php");
 $langs->load("admin");
 $langs->load("companies");
 
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) accessforbidden();
 
 $mesg='';
 
@@ -65,7 +64,7 @@ print img_picto('','puce').' '.$langs->trans("SetupDescription4")."<br>";
 print "<br>";
 print '<br>';
 //print '<hr style="color: #DDDDDD;">';
-print img_picto('','puce').' '.$langs->trans("SetupDescription5")."<br>";
+print $langs->trans("SetupDescription5")."<br>";
 //print '<hr style="color: #DDDDDD;">';
 print "<br>";
 

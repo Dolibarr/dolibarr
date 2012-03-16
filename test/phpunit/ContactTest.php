@@ -329,5 +329,68 @@ class ContactTest extends PHPUnit_Framework_TestCase
 
         return;
     }
+
+    /**
+     * testContactGetFullAddress
+     *
+     * @return	int		$id				Id of company
+     */
+    public function testContactGetFullAddress()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        $localobjectadd=new Contact($db);
+        $localobjectadd->initAsSpecimen();
+
+        // France
+        unset($localobjectadd->country_code);
+        $localobjectadd->country_id=1;
+        $localobjectadd->name='New name';
+        $localobjectadd->address='New address';
+        $localobjectadd->zip='New zip';
+        $localobjectadd->town='New town';
+        $result=$localobjectadd->getFullAddress(1);
+        print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
+        $this->assertContains("New address\nNew zip New town\nFrance", $result);
+
+        // Belgium
+        unset($localobjectadd->country_code);
+        $localobjectadd->country_id=2;
+        $localobjectadd->name='New name';
+        $localobjectadd->address='New address';
+        $localobjectadd->zip='New zip';
+        $localobjectadd->town='New town';
+        $result=$localobjectadd->getFullAddress(1);
+        print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
+        $this->assertContains("New address\nNew zip New town\nBelgium", $result);
+
+        // Switzerland
+        unset($localobjectadd->country_code);
+        $localobjectadd->country_id=6;
+        $localobjectadd->name='New name';
+        $localobjectadd->address='New address';
+        $localobjectadd->zip='New zip';
+        $localobjectadd->town='New town';
+        $result=$localobjectadd->getFullAddress(1);
+        print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
+        $this->assertContains("New address\nNew zip New town\nSwitzerland", $result);
+
+        // USA
+        unset($localobjectadd->country_code);
+        $localobjectadd->country_id=11;
+        $localobjectadd->name='New name';
+        $localobjectadd->address='New address';
+        $localobjectadd->zip='New zip';
+        $localobjectadd->town='New town';
+        $result=$localobjectadd->getFullAddress(1);
+        print __METHOD__." id=".$localobjectadd->id." result=".$result."\n";
+        $this->assertContains("New address\nNew zip New town\nUnited States", $result);
+
+        return $localobjectadd->id;
+    }
 }
 ?>

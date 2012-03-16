@@ -44,9 +44,9 @@ class pdf_jaune extends ModelePDFPropales
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	function pdf_jaune($db)
+	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 

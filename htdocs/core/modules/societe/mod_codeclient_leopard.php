@@ -51,7 +51,7 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	/**
 	 *	Constructor
 	 */
-	function mod_codeclient_leopard()
+	function __construct()
 	{
 		$this->code_null = 1;
 		$this->code_modifiable = 1;

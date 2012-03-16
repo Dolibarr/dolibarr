@@ -15,7 +15,6 @@ Order=Megrendelés
 Orders=Megrendelés
 OrderLine=Rendelés vonal
 OrderFollow=Nyomon követés
-OrderContact=Megrendelés Kapcsolat
 OrderDate=Rendezés dátum
 OrderToProcess=Feldolgozása érdekében
 NewOrder=Új megbízás

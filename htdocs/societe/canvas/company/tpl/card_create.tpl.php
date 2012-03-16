@@ -47,7 +47,7 @@
 <input type="hidden" name="code_auto" value="1">
 <?php } ?>
 
-<table class="border" width="100%">
+<table class="border allwidth">
 
 <tr>
 	<td><span class="fieldrequired"><?php echo $langs->trans('ThirdPartyName'); ?></span></td>

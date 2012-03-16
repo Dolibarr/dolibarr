@@ -76,6 +76,13 @@ if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not do
 	exit;
 }
 
+// Clean parameters
+$dolibarr_main_data_root=trim($dolibarr_main_data_root);
+$dolibarr_main_url_root=trim($dolibarr_main_url_root);
+$dolibarr_main_url_root_alt=trim($dolibarr_main_url_root_alt);
+$dolibarr_main_document_root=trim($dolibarr_main_document_root);
+$dolibarr_main_document_root_alt=trim($dolibarr_main_document_root_alt);
+
 if (empty($dolibarr_main_db_port)) $dolibarr_main_db_port=0;		// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
 if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
 if (empty($dolibarr_main_db_prefix)) $dolibarr_main_db_prefix='llx_';

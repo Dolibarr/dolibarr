@@ -720,7 +720,7 @@ class FormOther
     }
 
     /**
-     * Show form to select addresse
+     * Show form to select address
      *
      * @param	int		$page        	Page
      * @param  	string	$selected    	Id condition pre-selectionne
@@ -733,6 +733,8 @@ class FormOther
     function form_address($page, $selected, $socid, $htmlname='address_id', $origin='', $originid='')
     {
         global $langs,$conf;
+        global $form;
+        
         if ($htmlname != "none")
         {
             print '<form method="post" action="'.$page.'">';
@@ -740,7 +742,7 @@ class FormOther
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            $this->select_address($selected, $socid, $htmlname, 1);
+            $form->select_address($selected, $socid, $htmlname, 1);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
             $langs->load("companies");

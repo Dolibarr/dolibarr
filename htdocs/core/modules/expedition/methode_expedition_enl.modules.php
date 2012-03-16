@@ -24,8 +24,12 @@ include_once "methode_expedition.modules.php";
 
 class methode_expedition_enl extends ModeleShippingMethod
 {
-
-	function methode_expedition_enl($db=0)
+    /**
+     * Constructor
+     *
+     * @param	DoliDB		$db		Database handler
+     */
+	function __construct($db=0)
 	{
 		global $langs;
 		$this->db = $db;
@@ -35,7 +39,13 @@ class methode_expedition_enl extends ModeleShippingMethod
 		$this->description = $langs->trans("Enlevement");
 	}
 
-	Function provider_url_status($tracking_number)
+	/**
+	 * Return URL of provider
+	 *
+	 * @param	string	$tracking_number	Tracking number
+	 * @return	string						URL for tracking
+	 */
+	function provider_url_status($tracking_number)
 	{
 		return '';
 	}

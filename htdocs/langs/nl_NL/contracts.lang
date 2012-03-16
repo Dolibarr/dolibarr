@@ -21,7 +21,6 @@ ServiceStatusClosed = Gesloten
 ServicesLegend = Dienstenlegenda
 Contracts = Contracten
 Contract = Contract
-ContractContacts = Contractcontactpersonen
 NoContracts = Geen contracten
 MenuServices = Diensten
 MenuInactiveServices = Inactieve diensten

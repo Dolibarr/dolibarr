@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  *
@@ -77,14 +77,14 @@ $object = new CommandeFournisseur($db);
 if ($action == 'setconditions' && $user->rights->fournisseur->commande->creer)
 {
     $object->fetch($id);
-    $result=$object->cond_reglement($_POST['cond_reglement_id']);
+    $result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
 }
 
 // mode de reglement
 if ($action == 'setmode' && $user->rights->fournisseur->commande->creer)
 {
     $object->fetch($id);
-    $result=$object->mode_reglement($_POST['mode_reglement_id']);
+    $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
 }
 
 // Set project
@@ -658,11 +658,11 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
 
     if ($result > 0)
     {
-        $ref = dol_sanitizeFileName($object->ref);
-        $file = $conf->fournisseur->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+//        $ref = dol_sanitizeFileName($object->ref);
+//        $file = $conf->fournisseur->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 
-        if (is_readable($file))
-        {
+//        if (is_readable($file))
+//        {
             if ($_POST['sendto'])
             {
                 // Le destinataire a ete fourni via le champ libre
@@ -777,14 +777,14 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                         $mesg.='</div>';
                     }
                 }
-            }
+/*            }
             else
             {
                 $langs->load("other");
                 $mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
                 $action='presend';
                 dol_syslog('Recipient email is empty');
-            }
+            }*/
         }
         else
         {
@@ -1231,7 +1231,7 @@ if ($id > 0 || ! empty($ref))
 
                 print '</td>';
                 print '<td>';
-                print $form->load_tva('tva_tx',$line->tva_tx);
+                print $form->load_tva('tva_tx',$line->tva_tx,$soc,$mysoc);
                 print '</td>';
                 print '<td align="right"><input	size="5" type="text" name="pu"	value="'.price($line->subprice).'"></td>';
                 print '<td align="right"><input size="2" type="text" name="qty" value="'.$line->qty.'"></td>';
@@ -1329,7 +1329,7 @@ if ($id > 0 || ! empty($ref))
 
 				if (is_object($hookmanager))
 				{
-			        $parameters=array('filtre'=>$filtre);
+			        $parameters=array('filtre'=>$filtre,'htmlname'=>'idprodfournprice');
 				    echo $hookmanager->executeHooks('formCreateProductSupplierOptions',$parameters,$object,$action);
 				}
 
@@ -1393,12 +1393,7 @@ if ($id > 0 || ! empty($ref))
                 {
                     if ($user->rights->fournisseur->commande->commander)
                     {
-                        $comref = dol_sanitizeFileName($object->ref);
-                        $file = $conf->fournisseur->commande->dir_output . '/'.$comref.'/'.$comref.'.pdf';
-                        if (file_exists($file))
-                        {
-                            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
-                        }
+                        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
                     }
                 }
 
@@ -1550,7 +1545,33 @@ if ($id > 0 || ! empty($ref))
         if ($action == 'presend')
         {
             $ref = dol_sanitizeFileName($object->ref);
-            $file = $conf->fournisseur->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+            include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+            $fileparams = dol_most_recent_file($conf->fournisseur->commande->dir_output . '/' . $ref);
+            $file=$fileparams['fullname'];
+
+            // Build document if it not exists
+            if (! $file || ! is_readable($file))
+            {
+                // Define output language
+                $outputlangs = $langs;
+                $newlang='';
+                if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+                if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+                if (! empty($newlang))
+                {
+                    $outputlangs = new Translate("",$conf);
+                    $outputlangs->setDefaultLang($newlang);
+                }
+
+                $result=supplier_order_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+                if ($result <= 0)
+                {
+                    dol_print_error($db,$result);
+                    exit;
+                }
+                $fileparams = dol_most_recent_file($conf->fournisseur->commande->dir_output . '/' . $ref);
+                $file=$fileparams['fullname'];
+            }
 
             print '<br>';
             print_titre($langs->trans('SendOrderByMail'));
@@ -1583,10 +1604,10 @@ if ($id > 0 || ! empty($ref))
             $formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 
             // Init list of files
-            if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+            if (GETPOST("mode")=='init')
             {
                 $formmail->clear_attached_files();
-                $formmail->add_attached_files($file,dol_sanitizeFilename($ref.'.pdf'),'application/pdf');
+                $formmail->add_attached_files($file,basename($file),dol_mimetype($file));
             }
 
             // Show form
@@ -1605,7 +1626,8 @@ if ($id > 0 || ! empty($ref))
     }
 }
 
-$db->close();
 
+// End of page
 llxFooter();
+$db->close();
 ?>

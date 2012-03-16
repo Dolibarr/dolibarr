@@ -47,7 +47,7 @@ class mailing_contacts1 extends MailingTargets
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function mailing_contacts1($db)
+	function __construct($db)
 	{
 		$this->db=$db;
 	}

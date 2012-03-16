@@ -676,6 +676,7 @@ function hash_call($methodName,$nvpStr)
      exit;*/
     curl_setopt($ch, CURLOPT_URL, $API_Endpoint);
     curl_setopt($ch, CURLOPT_VERBOSE, 1);
+    curl_setopt($ch, CURLOPT_SSLVERSION, 3); // Force SSLv3
 
     //turning off the server and peer verification(TrustManager Concept).
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
@@ -760,6 +761,28 @@ function deformatNVP($nvpstr)
         $nvpstr=substr($nvpstr,$valuepos+1,strlen($nvpstr));
     }
     return $nvpArray;
+}
+
+/**
+ * 	Get API errors
+ */
+function getApiError()
+{
+	$errors=array();
+
+	$resArray=$_SESSION['reshash'];
+
+	if(isset($_SESSION['curl_error_no']))
+	{
+		$errors[] = $_SESSION['curl_error_no'].'-'.$_SESSION['curl_error_msg'];
+	}
+
+	foreach($resArray as $key => $value)
+	{
+		$errors[] = $key.'-'.$value;
+	}
+
+	return $errors;
 }
 
 ?>

@@ -1277,7 +1277,7 @@ DelaysOfToleranceSuppliersOrdersToProcess=Tolerância de atraso (em dias) antes 
 SecurityEventsPurged=Os eventos de segurança purgado
 ShowProfIdInAddress=Mostrar ID professionnal com endereços em documentos
 TranslationUncomplete=Tradução parcial
-SomeTranslationAreUncomplete=Alguns idiomas podem ser parcialmente traduzido ou pode conter erros. Se detectar algum, você pode <b>corrigir.</b> Arquivos de texto <b>lang</b> em diretório <b>htdocs / Langs</b> e submetê-los no fórum em <a href="http://www.dolibarr.org/forum" target="_blank">http://www.dolibarr.org</a> .
+SomeTranslationAreUncomplete=Alguns idiomas podem ser parcialmente traduzido ou pode conter erros. Se detectar algum, você pode <b>corrigir.</b> Arquivos de texto <b>lang</b> em diretório <b>htdocs/langs</b> e submetê-los no fórum em <a href="http://www.dolibarr.org/forum" target="_blank">http://www.dolibarr.org</a> .
 MenuUseLayout=Faça menu vertical hidable (javascript opção não deve ser desativado)
 MAIN_DISABLE_METEO=Desativar meteo vista
 TestLoginToAPI=Teste o login para API

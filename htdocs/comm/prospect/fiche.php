@@ -312,8 +312,6 @@ if ($socid > 0)
         }
     }
 
-    //print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
-
 	print '</div>';
 
 	print '<br>';

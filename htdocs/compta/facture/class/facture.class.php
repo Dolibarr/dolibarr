@@ -253,6 +253,32 @@ class Facture extends CommonObject
             			dol_print_error($this->db);
             			$error++;
             		}
+
+            		// TODO mutualiser
+            		if ($origin == 'commande')
+            		{
+            			// On recupere les differents contact interne et externe
+            			$order = new Commande($this->db);
+            			$order->id = $origin_id;
+            		
+            			// On recupere le commercial suivi propale
+            			$this->userid = $order->getIdcontact('internal', 'SALESREPFOLL');
+            			
+            			if ($this->userid)
+            			{
+            				//On passe le commercial suivi commande en commercial suivi paiement
+            				$this->add_contact($this->userid[0], 'SALESREPFOLL', 'internal');
+            			}
+            		
+            			// On recupere le contact client facturation commande
+            			$this->contactid = $order->getIdcontact('external', 'BILLING');
+            		
+            			if ($this->contactid)
+            			{
+            				//On passe le contact client facturation commande en contact client facturation
+            				$this->add_contact($this->contactid[0], 'BILLING', 'external');
+            			}
+            		}
             	}
             }
 
@@ -643,8 +669,15 @@ class Facture extends CommonObject
         $this->note                 = $object->note;
         $this->note_public          = $object->note_public;
 
-        $this->origin      = $object->element;
-        $this->origin_id   = $object->id;
+        $this->origin				= $object->element;
+        $this->origin_id			= $object->id;
+        
+        // Possibility to add external linked objects with hooks
+        $this->linked_objects[$this->origin] = $this->origin_id;
+        if (is_array($object->other_linked_objects) && ! empty($object->other_linked_objects))
+        {
+        	$this->linked_objects = array_merge($this->linked_objects, $object->other_linked_objects);
+        }
 
         $ret = $this->create($user);
 
@@ -2659,91 +2692,6 @@ class Facture extends CommonObject
             dol_print_error($this->db);
         }
     }
-
-    /**
-     *  Change les conditions de reglement de la facture
-     *
-     *  @param      int		$cond_reglement_id      Id de la nouvelle condition de reglement
-     * 	@param		date	$date					Date to force payment term
-     *  @return     int                    			>0 si ok, <0 si ko
-     */
-    function cond_reglement($cond_reglement_id,$date='')
-    {
-        if ($this->statut >= 0 && $this->paye == 0)
-        {
-            // Define cond_reglement_id and datelim
-            if (strval($date) != '')
-            {
-                $datelim=$date;
-                $cond_reglement_id=0;
-            }
-            else
-            {
-                $datelim=$this->calculate_date_lim_reglement($cond_reglement_id);
-                $cond_reglement_id=$cond_reglement_id;
-            }
-
-            $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-            $sql.= ' SET fk_cond_reglement = '.$cond_reglement_id.',';
-            $sql.= ' date_lim_reglement='.$this->db->idate($datelim);
-            $sql.= ' WHERE rowid='.$this->id;
-
-            dol_syslog(get_class($this)."::cond_reglement sql=".$sql, LOG_DEBUG);
-            if ( $this->db->query($sql) )
-            {
-                $this->cond_reglement_id = $cond_reglement_id;
-                return 1;
-            }
-            else
-            {
-                dol_syslog(get_class($this)."::cond_reglement Erreur ".$sql.' - '.$this->db->error());
-                $this->error=$this->db->error();
-                return -1;
-            }
-        }
-        else
-        {
-            dol_syslog(get_class($this)."::cond_reglement, etat facture incompatible");
-            $this->error='Entity status not compatible '.$this->statut.' '.$this->paye;
-            return -2;
-        }
-    }
-
-
-    /**
-     *	Change le mode de reglement
-     *
-     *	@param		int		$mode_reglement_id      Id du nouveau mode
-     *	@return     int         					>0 if OK, <0 if KO
-     */
-    function mode_reglement($mode_reglement_id)
-    {
-        dol_syslog(get_class($this).'::mode_reglement('.$mode_reglement_id.')', LOG_DEBUG);
-        if ($this->statut >= 0 && $this->paye == 0)
-        {
-            $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-            $sql .= ' SET fk_mode_reglement = '.$mode_reglement_id;
-            $sql .= ' WHERE rowid='.$this->id;
-            if ( $this->db->query($sql) )
-            {
-                $this->mode_reglement_id = $mode_reglement_id;
-                return 1;
-            }
-            else
-            {
-                dol_syslog(get_class($this).'::mode_reglement Erreur '.$sql.' - '.$this->db->error());
-                $this->error=$this->db->error();
-                return -1;
-            }
-        }
-        else
-        {
-            dol_syslog(get_class($this).'::mode_reglement, etat facture incompatible');
-            $this->error='Etat facture incompatible '.$this->statut.' '.$this->paye;
-            return -2;
-        }
-    }
-
 
     /**
      *	Renvoi si les lignes de facture sont ventilees et/ou exportees en compta

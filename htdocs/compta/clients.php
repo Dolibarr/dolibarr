@@ -64,13 +64,6 @@ llxHeader();
 
 $thirdpartystatic=new Societe($db);
 
-if ($action == 'attribute_prefix')
-{
-	$societe = new Societe($db);
-	$societe->fetch($socid);
-	$societe->attribute_prefix($db, $socid);
-}
-
 if ($action == 'note')
 {
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".$note."' WHERE rowid=".$socid;

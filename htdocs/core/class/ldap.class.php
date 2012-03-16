@@ -142,6 +142,7 @@ class Ldap
 	 * false if failed. Takes an array of possible servers - if one doesn't work,
 	 * it tries the next and so on.
 	 * 
+	 * @return	void
 	 * @deprecated		Utiliser connect_bind a la place
 	 */
 	function connect()
@@ -184,7 +185,7 @@ class Ldap
 	 * 	Use this->server, this->serverPort, this->ldapProtocolVersion, this->serverType, this->searchUser, this->searchPassword
 	 * 	After return, this->connection and $this->bind are defined
 	 *
-	 *	@return		int		<0 si KO, 1 si bind anonymous, 2 si bind auth
+	 *	@return		int		<0 if KO, 1 if bind anonymous, 2 if bind auth
 	 */
 	function connect_bind()
 	{

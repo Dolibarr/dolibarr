@@ -61,6 +61,8 @@ if ($action == 'delete')
 $form=new Form($db);
 $formfile = new FormFile($db);
 
+$label=getStaticMember($db, 'label');
+
 $help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
 llxHeader('','',$help_url);
 
@@ -75,7 +77,6 @@ jQuery(document).ready(function() {
 	}
 
 	hideoptions();
-
 	jQuery("#radio_dump_mysql").click(function() {
 		hideoptions();
 		jQuery("#mysql_options").show();
@@ -94,6 +95,11 @@ jQuery(document).ready(function() {
 			jQuery("#checkbox_dump_disable-add-locks").attr('checked',true);
 		};
 	});
+
+	<?php
+	    if ($label == 'MySQL')      print 'jQuery("#radio_dump_mysql").click();';
+	    if ($label == 'PostgreSQL') print 'jQuery("#radio_dump_postgresql").click();';
+	?>
 });
 </script>
 <?php
@@ -113,8 +119,6 @@ if ($_GET["msg"])
 	print "\n";
 }
 
-
-$label=getStaticMember($db, 'label');
 
 ?>
 

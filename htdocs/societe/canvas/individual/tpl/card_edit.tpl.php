@@ -37,7 +37,7 @@ dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']
 <input type="hidden" name="code_auto" value="1">
 <?php } ?>
 
-<table class="border" width="100%">
+<table class="border allwidth">
 
 <tr>
 	<td><span class="fieldrequired"><?php echo $langs->trans('Name'); ?></span></td>

@@ -1,0 +1,18 @@
+/*
+ * Language code: he_IL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-03-10 15:14:54
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-03-10 15:14:54).
+// Reference language: en_US -> he_IL
+CHARSET=UTF-8
+OSCommerce=OS המסחר
+OSCommerceSetup=OS המסחר ההתקנה מודול
+OSCommerceSetupSaved=תוכנית ההתקנה של מערכת ההפעלה המסחר נשמר
+OSCommerceServer=OS המסחר מארח שרת / IP
+OSCommerceDatabaseName=OS המסחר שם מסד הנתונים
+OSCommercePrefix=מערכת ההפעלה שולחנות מסחר להקדים
+OSCommerceUser=OS המסחר באתר התחברות
+// STOP - Lines generated via autotranslator.php tool (2012-03-10 15:21:57).

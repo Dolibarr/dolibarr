@@ -53,7 +53,7 @@ class ExportExcel2007 extends ExportExcel
 	 *
 	 *	@param	    DoliDB	$db      Database handler
 	 */
-	function ExportExcel2007($db)
+	function __construct($db)
 	{
 		global $conf;
 		$this->db = $db;
@@ -72,36 +72,71 @@ class ExportExcel2007 extends ExportExcel
 		$this->row=0;
 	}
 
+	/**
+	 * getDriverLabel
+	 *
+	 * @return int
+	 */
 	function getDriverId()
 	{
 		return $this->id;
 	}
 
+	/**
+	 * getDriverLabel
+	 *
+	 * @return string
+	 */
 	function getDriverLabel()
 	{
 		return $this->label;
 	}
 
-    function getDriverDesc()
+	/**
+	 * getDriverDesc
+	 *
+	 * @return string
+	 */
+	function getDriverDesc()
     {
         return $this->desc;
     }
 
-	function getDriverExtension()
+	/**
+	 * getDriverExtension
+	 *
+	 * @return string
+	 */
+    function getDriverExtension()
 	{
 		return $this->extension;
 	}
 
+	/**
+	 * getDriverVersion
+	 *
+	 * @return string
+	 */
 	function getDriverVersion()
 	{
 		return $this->version;
 	}
 
+	/**
+	 * getLibLabel
+	 *
+	 * @return string
+	 */
 	function getLibLabel()
 	{
 		return $this->label_lib;
 	}
 
+	/**
+	 * getLibVersion
+	 *
+	 * @return string
+	 */
 	function getLibVersion()
 	{
 		return $this->version_lib;

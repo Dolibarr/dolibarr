@@ -145,11 +145,12 @@ class modCashDesk extends DolibarrModules
   	}
 
     /**
-     *      Function called when module is disabled.
-     *      Remove from database constants, boxes and permissions from Dolibarr database.
-     *      Data directories are not deleted.
+     *  Function called when module is disabled.
+     *  Remove from database constants, boxes and permissions from Dolibarr database.
+     *  Data directories are not deleted.
      *
-     *      @return     int             1 if OK, 0 if KO
+     *  @param	string	$options	Options
+     *  @return int             	1 if OK, 0 if KO
      */
   	function remove($options='')
 	{
