@@ -16,8 +16,8 @@
  */
 
 /**
- *	\file       /htdocs/core/ajax/showhide.php
- *	\brief      File to return Ajax response on set show/hide element
+ *	\file       /htdocs/core/ajax/extraparams.php
+ *	\brief      File to return Ajax response on set extra parameters of elements
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
@@ -42,7 +42,6 @@ top_httphead();
 
 print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
-// Registering the location of boxes
 if(! empty($id) && ! empty($element) && ! empty($htmlelement) && ! empty($type))
 {
 	$value = GETPOST('value','alpha');
