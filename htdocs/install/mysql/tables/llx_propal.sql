@@ -34,7 +34,7 @@ create table llx_propal
 
   tms					timestamp,
   datec					datetime,						-- date de creation 
-  date					date,							-- date de la propal
+  datep					date,							-- date de la propal
   fin_validite			datetime,						-- date de fin de validite
   date_valid			datetime,						-- date de validation
   date_cloture			datetime,						-- date de cloture
