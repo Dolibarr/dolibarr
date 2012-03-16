@@ -843,7 +843,7 @@ else if ($action == "addline" && $user->rights->propale->creer)
 }
 
 // Mise a jour d'une ligne dans la propale
-if ($action == 'updateligne' && $user->rights->propale->creer && $_POST["save"] == $langs->trans("Save"))
+else if ($action == 'updateligne' && $user->rights->propale->creer && $_POST["save"] == $langs->trans("Save"))
 {
 	if (! $object->fetch($_POST["id"]) > 0)
 	{
@@ -950,28 +950,28 @@ else if ($action == 'builddoc' && $user->rights->propale->creer)
 }
 
 // Set project
-else if ($action == 'classin')
+else if ($action == 'classin' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
 	$object->setProject($_POST['projectid']);
 }
 
 // Delai de livraison
-else if ($action == 'setavailability')
+else if ($action == 'setavailability' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
 	$result = $object->availability($_POST['availability_id']);
 }
 
 // Origine de la propale
-else if ($action == 'setdemandreason')
+else if ($action == 'setdemandreason' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
 	$result = $object->demand_reason($_POST['demand_reason_id']);
 }
 
 // Conditions de reglement
-else if ($action == 'setconditions')
+else if ($action == 'setconditions' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
 	$result = $object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
@@ -990,7 +990,7 @@ else if ($action == 'setremiseabsolue' && $user->rights->propale->creer)
 }
 
 // Mode de reglement
-else if ($action == 'setmode')
+else if ($action == 'setmode' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
 	$result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
@@ -1090,25 +1090,25 @@ if ($id > 0 || ! empty($ref))
 	}
 
 	// Confirm delete
-	if ($action == 'delete')
+	else if ($action == 'delete')
 	{
 		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp',$object->ref), 'confirm_delete','',0,1);
 	}
 
 	// Confirm reopen
-	if ($action == 'reopen')
+	else if ($action == 'reopen')
 	{
 		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenProp',$object->ref), 'confirm_reopen','',0,1);
 	}
 
 	// Confirmation delete product/service line
-	if ($action == 'ask_deleteline')
+	else if ($action == 'ask_deleteline')
 	{
 		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline','',0,1);
 	}
 
 	// Confirm validate proposal
-	if ($action == 'validate')
+	else if ($action == 'validate')
 	{
 	    $error=0;
 
