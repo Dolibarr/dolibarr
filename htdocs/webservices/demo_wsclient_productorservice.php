@@ -28,8 +28,9 @@ require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
 
 $WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_productorservice.php';
 //$WS_DOL_URL = 'http://localhost:8080/';	// To test with Soapui mock. If not a page, should end with /
-$WS_METHOD1  = 'createProductOrService';
-$WS_METHOD2  = 'getProductOrService';
+$WS_METHOD1 = 'createProductOrService';
+$WS_METHOD2 = 'getProductOrService';
+$WS_METHOD3 = 'getListOfProductsOrServices';
 $ns='http://www.dolibarr.org/ns/';
 
 
@@ -47,6 +48,13 @@ if ($soapclient2)
     $soapclient2->soap_defencoding='UTF-8';
 	$soapclient2->decodeUTF8(false);
 }
+$soapclient3 = new nusoap_client($WS_DOL_URL);
+if ($soapclient3)
+{
+    $soapclient3->soap_defencoding='UTF-8';
+	$soapclient3->decodeUTF8(false);
+}
+
 
 // Call the WebService method and store its result in $result.
 $authentication=array(
@@ -79,14 +87,31 @@ if ($WS_METHOD2)
 {
     $parameters = array('authentication'=>$authentication,'id'=>1,'ref'=>'');
     dol_syslog("Call method ".$WS_METHOD2);
-    $result2 = $soapclient1->call($WS_METHOD2,$parameters,$ns,'');
+    $result2 = $soapclient2->call($WS_METHOD2,$parameters,$ns,'');
     if (! $result2)
     {
-    	print $soapclient1->error_str;
+    	print $soapclient2->error_str;
     	print "<br>\n\n";
-    	print $soapclient1->request;
+    	print $soapclient2->request;
     	print "<br>\n\n";
-    	print $soapclient1->response;
+    	print $soapclient2->response;
+    	exit;
+    }
+}
+
+// Test url 3
+if ($WS_METHOD3)
+{
+    $parameters = array('authentication'=>$authentication,'filterproduct'=>array('type'=>-1));
+    dol_syslog("Call method ".$WS_METHOD3);
+    $result3 = $soapclient3->call($WS_METHOD3,$parameters,$ns,'');
+    if (! $result3)
+    {
+    	print $soapclient3->error_str;
+    	print "<br>\n\n";
+    	print $soapclient3->request;
+    	print "<br>\n\n";
+    	print $soapclient3->response;
     	exit;
     }
 }
@@ -111,7 +136,7 @@ echo '<h4>Function</h4>';
 echo $WS_METHOD1;
 echo '<h4>SOAP Message</h4>';
 echo '<pre>' . htmlspecialchars($soapclient1->request, ENT_QUOTES) . '</pre>';
-echo '<hr>';
+//echo '<hr>';
 echo "<h2>Response:</h2>";
 echo '<h4>Result</h4>';
 echo '<pre>';
@@ -127,7 +152,7 @@ echo '<h4>Function</h4>';
 echo $WS_METHOD2;
 echo '<h4>SOAP Message</h4>';
 echo '<pre>' . htmlspecialchars($soapclient2->request, ENT_QUOTES) . '</pre>';
-echo '<hr>';
+//echo '<hr>';
 echo "<h2>Response:</h2>";
 echo '<h4>Result</h4>';
 echo '<pre>';
@@ -135,6 +160,22 @@ print_r($result2);
 echo '</pre>';
 echo '<h4>SOAP Message</h4>';
 echo '<pre>' . htmlspecialchars($soapclient2->response, ENT_QUOTES) . '</pre>';
+
+print '<hr>';
+
+echo "<h2>Request:</h2>";
+echo '<h4>Function</h4>';
+echo $WS_METHOD3;
+echo '<h4>SOAP Message</h4>';
+echo '<pre>' . htmlspecialchars($soapclient3->request, ENT_QUOTES) . '</pre>';
+//echo '<hr>';
+echo "<h2>Response:</h2>";
+echo '<h4>Result</h4>';
+echo '<pre>';
+print_r($result3);
+echo '</pre>';
+echo '<h4>SOAP Message</h4>';
+echo '<pre>' . htmlspecialchars($soapclient3->response, ENT_QUOTES) . '</pre>';
 
 echo '</body>'."\n";;
 echo '</html>'."\n";;
