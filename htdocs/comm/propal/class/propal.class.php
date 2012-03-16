@@ -96,6 +96,7 @@ class Propal extends CommonObject
 	var $demand_reason_code;
 
 	var $products=array();
+	var $extraparams=array();
 
 	var $lines = array();
 	var $line;
@@ -945,25 +946,25 @@ class Propal extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT p.rowid,ref,remise,remise_percent,remise_absolue,fk_soc";
-		$sql.= ", total, tva, localtax1, localtax2, total_ht";
-		$sql.= ", datec";
-		$sql.= ", date_valid as datev";
-		$sql.= ", datep as dp";
-		$sql.= ", fin_validite as dfv";
-		$sql.= ", date_livraison as date_livraison";
-		$sql.= ", ca.code as availability_code, ca.label as availability";
-		$sql.= ", dr.code as demand_reason_code, dr.label as demand_reason";
-		$sql.= ", model_pdf, ref_client";
-		$sql.= ", note as note_private, note_public";
-		$sql.= ", fk_projet, fk_statut";
-		$sql.= ", fk_user_author, fk_user_valid, fk_user_cloture";
-		$sql.= ", fk_adresse_livraison";
+		$sql = "SELECT p.rowid, p.ref, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
+		$sql.= ", p.total, p.tva, p.localtax1, p.localtax2, p.total_ht";
+		$sql.= ", p.datec";
+		$sql.= ", p.date_valid as datev";
+		$sql.= ", p.datep as dp";
+		$sql.= ", p.fin_validite as dfv";
+		$sql.= ", p.date_livraison as date_livraison";
+		$sql.= ", p.model_pdf, p.ref_client, p.extraparams";
+		$sql.= ", p.note as note_private, p.note_public";
+		$sql.= ", p.fk_projet, p.fk_statut";
+		$sql.= ", p.fk_user_author, p.fk_user_valid, p.fk_user_cloture";
+		$sql.= ", p.fk_adresse_livraison";
 		$sql.= ", p.fk_availability";
 		$sql.= ", p.fk_demand_reason";
 		$sql.= ", p.fk_cond_reglement";
 		$sql.= ", p.fk_mode_reglement";
 		$sql.= ", c.label as statut_label";
+		$sql.= ", ca.code as availability_code, ca.label as availability";
+		$sql.= ", dr.code as demand_reason_code, dr.label as demand_reason";
 		$sql.= ", cr.code as cond_reglement_code, cr.libelle as cond_reglement, cr.libelle_facture as cond_reglement_libelle_doc";
 		$sql.= ", cp.code as mode_reglement_code, cp.libelle as mode_reglement";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."propal as p";
@@ -1023,13 +1024,15 @@ class Propal extends CommonObject
 				$this->fk_delivery_address  = $obj->fk_adresse_livraison;	// TODO obsolete
 				$this->fk_address  			= $obj->fk_adresse_livraison;
 
-				$this->mode_reglement_id       = $obj->fk_mode_reglement;
-				$this->mode_reglement_code     = $obj->mode_reglement_code;
-				$this->mode_reglement          = $obj->mode_reglement;
-				$this->cond_reglement_id       = $obj->fk_cond_reglement;
-				$this->cond_reglement_code     = $obj->cond_reglement_code;
-				$this->cond_reglement          = $obj->cond_reglement;
-				$this->cond_reglement_doc      = $obj->cond_reglement_libelle_doc;
+				$this->mode_reglement_id    = $obj->fk_mode_reglement;
+				$this->mode_reglement_code  = $obj->mode_reglement_code;
+				$this->mode_reglement       = $obj->mode_reglement;
+				$this->cond_reglement_id    = $obj->fk_cond_reglement;
+				$this->cond_reglement_code  = $obj->cond_reglement_code;
+				$this->cond_reglement       = $obj->cond_reglement;
+				$this->cond_reglement_doc   = $obj->cond_reglement_libelle_doc;
+				
+				$this->extraparams			= (array) dol_json_decode($obj->extraparams, true);
 
 				$this->user_author_id = $obj->fk_user_author;
 				$this->user_valid_id  = $obj->fk_user_valid;

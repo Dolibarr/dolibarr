@@ -435,3 +435,9 @@ ALTER TABLE llx_product_fournisseur_price DROP INDEX idx_product_fournisseur_pri
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN tva_tx	double(6,3) NOT NULL DEFAULT 0 AFTER unitprice;
 
 UPDATE llx_c_departements SET ncc='JUJUY', nom = 'Jujuy' WHERE code_departement='2302' and fk_region='2301';
+
+ALTER TABLE llx_propal ADD COLUMN import_key varchar(14) AFTER fk_demand_reason;
+ALTER TABLE llx_propal ADD COLUMN extraparams varchar(255) AFTER import_key;
+ALTER TABLE llx_commande ADD COLUMN extraparams varchar(255) AFTER import_key;
+ALTER TABLE llx_facture ADD COLUMN extraparams varchar(255) AFTER import_key;
+

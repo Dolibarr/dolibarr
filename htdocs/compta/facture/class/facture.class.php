@@ -102,6 +102,7 @@ class Facture extends CommonObject
     var $products=array();	// deprecated
     var $lines=array();
     var $line;
+    var $extraparams=array();
     //! Pour board
     var $nbtodo;
     var $nbtodolate;
@@ -766,7 +767,7 @@ class Facture extends CommonObject
         $sql.= ', f.tms as datem';
         $sql.= ', f.note as note_private, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.model_pdf';
         $sql.= ', f.fk_facture_source';
-        $sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet';
+        $sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet, f.extraparams';
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
         $sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
@@ -825,6 +826,8 @@ class Facture extends CommonObject
                 $this->user_author			= $obj->fk_user_author;
                 $this->user_valid			= $obj->fk_user_valid;
                 $this->modelpdf				= $obj->model_pdf;
+                
+                $this->extraparams			= (array) dol_json_decode($obj->extraparams, true);
 
                 if ($this->statut == 0)	$this->brouillon = 1;
 

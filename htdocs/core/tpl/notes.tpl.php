@@ -16,6 +16,7 @@
  *
  */
 
+$hide = $object->extraparams['notes']['showhide'];
 $module = $object->element;
 if ($module == 'propal') $module = 'propale';
 
@@ -38,14 +39,17 @@ $(document).ready(function() {
 		$("#hide-notes").show();
 	});
 	function setShowHide(status) {
-		var id = <?php echo $object->id; ?>;
-		var element = '<?php echo $object->element; ?>';
-		//$.get("<?php echo dol_buildpath('/core/ajax/showhide.php', 1); ?>?id="+id+"&element="+element+"&status="+status);
+		var id			= <?php echo $object->id; ?>;
+		var element		= '<?php echo $object->element; ?>';
+		var htmlelement	= 'notes';
+		var type		= 'showhide';
+		
+		$.get("<?php echo dol_buildpath('/core/ajax/extraparams.php', 1); ?>?id="+id+"&element="+element+"&htmlelement="+htmlelement+"&type="+type+"&value="+status);
 	}
 });
 </script>
 
-<table class="border" width="100%">
+<table class="border allwidth">
 
 	<tr class="liste_titre">
 		<td colspan="2">

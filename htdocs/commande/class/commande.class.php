@@ -86,6 +86,7 @@ class Commande extends CommonObject
     var $note;				// deprecated
     var $note_private;
     var $note_public;
+    var $extraparams=array();
 
     var $origin;
     var $origin_id;
@@ -1224,7 +1225,7 @@ class Commande extends CommonObject
         $sql.= ', c.date_commande';
         $sql.= ', c.date_livraison';
         $sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as facturee';
-        $sql.= ', c.note as note_private, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.fk_adresse_livraison';
+        $sql.= ', c.note as note_private, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.fk_adresse_livraison, c.extraparams';
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
         $sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
         $sql.= ', ca.code as availability_code';
@@ -1288,6 +1289,8 @@ class Commande extends CommonObject
                 $this->date_livraison         = $this->db->jdate($obj->date_livraison);
                 $this->fk_delivery_address    = $obj->fk_adresse_livraison;
                 $this->propale_id             = $obj->fk_source;
+                
+                $this->extraparams			  = (array) dol_json_decode($obj->extraparams, true);
 
                 $this->lines                 = array();
 

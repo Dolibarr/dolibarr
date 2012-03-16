@@ -2127,6 +2127,38 @@ abstract class CommonObject
         dol_syslog(get_class($this).'::hasProductsOrServices we found '.$nb.' qualified lines of products/servcies');
         return $nb;
     }
+    
+    /**
+     *	Set extra parameters
+     *
+     *	@param	array	$params		Extra parameters
+     */
+    function setExtraParameters($params)
+    {
+    	$this->db->begin();
+    	
+    	$this->extraparams = array_merge($this->extraparams, (array) $params);
+    	
+    	$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+    	$sql.= ' SET extraparams = "'.$this->db->escape(dol_json_encode($this->extraparams)).'"';
+    	$sql.= ' WHERE rowid = '.$this->id;
+    	
+    	dol_syslog(get_class($this)."::setExtraParameters sql=".$sql, LOG_DEBUG);
+    	$resql = $this->db->query($sql);
+    	if (! $resql)
+    	{
+    		$this->error=$this->db->lasterror();
+    		dol_syslog(get_class($this)."::setExtraParameters ".$this->error, LOG_ERR);
+    		$this->db->rollback();
+    		return -1;
+    	}
+    	else
+    	{
+    		$this->db->commit();
+    		return 1;
+    	}
+    }
+    
 
     // --------------------
     // TODO: All functions here must be redesigned and moved as they are not business functions but output functions
