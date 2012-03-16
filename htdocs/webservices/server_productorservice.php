@@ -117,6 +117,34 @@ $server->wsdl->addComplexType(
     )
 );
 
+// Define other specific objects
+$server->wsdl->addComplexType(
+    'filterproduct',
+ 	'complexType',
+	'struct',
+	'all',
+	'',
+    array(
+//    	'limit' => array('name'=>'limit','type'=>'xsd:string'),
+		'type' => array('name'=>'type','type'=>'xsd:string'),
+	    'status_tobuy' => array('name'=>'status_tobuy','type'=>'xsd:string'),
+	    'status_tosell' => array('name'=>'status_tosell','type'=>'xsd:string'),
+    )
+);
+
+// Define other specific objects
+$server->wsdl->addComplexType(
+    'arrayproducts',
+ 	'complexType',
+	'struct',
+	'all',
+	'',
+    array(
+	    'id' => array('name'=>'id','type'=>'xsd:string'),
+	    'ref' => array('name'=>'ref','type'=>'xsd:string'),
+	    'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
+    )
+);
 
 
 // 5 styles: RPC/encoded, RPC/literal, Document/encoded (not WS-I compliant), Document/literal, Document/literal wrapped
@@ -153,6 +181,20 @@ $server->register(
     $styledoc,
     $styleuse,
     'WS to create a product or service'
+);
+
+// Register WSDL
+$server->register(
+    'getListOfProductsOrServices',
+    // Entry values
+    array('authentication'=>'tns:authentication','filterproduct'=>'tns:filterproduct'),
+    // Exit values
+    array('result'=>'tns:result','arrayproducts'=>'tns:arrayproducts'),
+    $ns,
+    $ns.'#getListOfProductsOrServices',
+    $styledoc,
+    $styleuse,
+    'WS to get list of all products or services id and ref'
 );
 
 
@@ -356,6 +398,84 @@ function createProductOrService($authentication,$product)
 
     return $objectresp;
 }
+
+
+/**
+ * getListOfProductsOrServices
+ *
+ * @param	array		$authentication		Array of authentication information
+ * @param	array		$filterproduct		Filter fields
+ * @return	array							Array result
+ */
+function getListOfProductsOrServices($authentication,$filterproduct)
+{
+    global $db,$conf,$langs;
+
+    $now=dol_now();
+
+    dol_syslog("Function: getListOfProductsOrServices login=".$authentication['login']);
+
+    if ($authentication['entity']) $conf->entity=$authentication['entity'];
+
+    // Init and check authentication
+    $objectresp=array();
+    $arrayproducts=array();
+    $errorcode='';$errorlabel='';
+    $error=0;
+    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    // Check parameters
+
+    if (! $error)
+    {
+        $sql ="SELECT rowid, ref, ref_ext";
+        $sql.=" FROM ".MAIN_DB_PREFIX."product";
+        $sql.=" WHERE entity=".$conf->entity;
+        foreach($filterproduct as $key => $val)
+        {
+        	if ($key == 'type' && $val >= 0)   	$sql.=" AND fk_product_type = ".$db->escape($val);
+        	if ($key == 'tosell') 				$sql.=" AND to_sell = ".$db->escape($val);
+        	if ($key == 'tobuy')  				$sql.=" AND to_buy = ".$db->escape($val);
+        }
+		$resql=$db->query($sql);
+        if ($resql)
+        {
+         	$num=$db->num_rows($resql);
+         	
+         	$i=0;
+         	while ($i < $num)
+         	{
+         		$obj=$db->fetch_object($resql);
+         		$arrayproducts[$obj->rowid]=array('id'=>$obj->rowid,'ref'=>$obj->ref,'ref_ext'=>$obj->ref_ext);
+         		$i++;
+         	}
+        }
+        else
+        {
+            $error++;
+            $errorcode=$db->lasterrno();
+            $errorlabel=$db->lasterror();
+        }
+    }
+
+    if ($error)
+    {
+        $objectresp = array(
+			'result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel),
+        	'arrayproducts'=>$arrayproducts
+        );
+    }
+    else
+    {
+        $objectresp = array(
+			'result'=>array('result_code' => 'OK', 'result_label' => ''),
+        	'arrayproducts'=>$arrayproducts
+        );
+    }
+var_dump($objectresp);exit;
+    return $objectresp;
+}
+
+
 
 
 // Return the results.
