@@ -1575,6 +1575,7 @@ class Propal extends CommonObject
 
 		if ($this->db->query($sql))
 		{
+			$this->statut = 0;
 			return 1;
 		}
 		else
