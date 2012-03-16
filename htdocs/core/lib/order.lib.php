@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2006-2012	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007		Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2010-2012	Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010		Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,11 +87,14 @@ function commande_prepare_head($object)
 	$head[$h][1] = $langs->trans('Documents');
 	$head[$h][2] = 'documents';
 	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/commande/note.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('Notes');
-	$head[$h][2] = 'note';
-	$h++;
+	
+	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/commande/note.php?id='.$object->id;
+		$head[$h][1] = $langs->trans('Notes');
+		$head[$h][2] = 'note';
+		$h++;
+	}
 
 	$head[$h][0] = DOL_URL_ROOT.'/commande/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
