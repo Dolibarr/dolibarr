@@ -467,26 +467,26 @@ else if ($action == 'setconditions' && $user->rights->commande->creer)
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
-else if ($action == 'setremisepercent' && $user->rights->facture->creer)
+else if ($action == 'setremisepercent' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     $result = $object->set_remise($user, $_POST['remise_percent']);
 }
 
-else if ($action == 'setremiseabsolue' && $user->rights->facture->creer)
+else if ($action == 'setremiseabsolue' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     $result = $object->set_remise_absolue($user, $_POST['remise_absolue']);
 }
 
-else if ($action == 'setnote_public')
+else if ($action == 'setnote_public' && $user->rights->commande->creer)
 {
 	$object->fetch($id);
 	$result=$object->update_note_public(GETPOST('note_public','alpha'));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-else if ($action == 'setnote')
+else if ($action == 'setnote' && $user->rights->commande->creer)
 {
 	$object->fetch($id);
 	$result=$object->update_note(GETPOST('note','alpha'));

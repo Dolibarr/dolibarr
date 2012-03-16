@@ -95,7 +95,7 @@ $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 // Action clone object
-if ($action == 'confirm_clone' && $confirm == 'yes')
+if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->facture->creer)
 {
     if (1==0 && empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"]))
     {
@@ -143,75 +143,66 @@ else if ($action == 'reopen' && $user->rights->facture->creer)
 // Delete invoice
 else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->supprimer)
 {
-    if ($user->rights->facture->supprimer)
-    {
-        $result = $object->fetch($id);
-        $result = $object->delete();
-        if ($result > 0)
-        {
-            Header('Location: '.$_SERVER["PHP_SELF"]);
-            exit;
-        }
-        else
-        {
-            $mesg='<div class="error">'.$object->error.'</div>';
-        }
-    }
+	$result = $object->fetch($id);
+	$result = $object->delete();
+	if ($result > 0)
+	{
+		Header('Location: '.$_SERVER["PHP_SELF"]);
+		exit;
+	}
+	else
+	{
+		$mesg='<div class="error">'.$object->error.'</div>';
+	}
 }
 
 // Delete line
-else if ($action == 'confirm_deleteline' && $confirm == 'yes')
+else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->facture->creer)
 {
-    if ($user->rights->facture->creer)
-    {
-        $object->fetch($id);
-        $object->fetch_thirdparty();
-
-        $result = $object->deleteline($_GET['lineid'], $user);
-        if ($result > 0)
-        {
-            // Define output language
-            $outputlangs = $langs;
-            $newlang='';
-            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-            if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-            if (! empty($newlang))
-            {
-                $outputlangs = new Translate("",$conf);
-                $outputlangs->setDefaultLang($newlang);
-            }
-            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-            {
-                $ret=$object->fetch($id);    // Reload to get new records
-                $result=facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
-            }
-            if ($result >= 0)
-            {
-                Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
-                exit;
-            }
-        }
-        else
-        {
-            $mesg='<div clas="error">'.$object->error.'</div>';
-            $action='';
-        }
-    }
+	$object->fetch($id);
+	$object->fetch_thirdparty();
+	
+	$result = $object->deleteline($_GET['lineid'], $user);
+	if ($result > 0)
+	{
+		// Define output language
+		$outputlangs = $langs;
+		$newlang='';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+		if (! empty($newlang))
+		{
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang($newlang);
+		}
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+			$ret=$object->fetch($id);    // Reload to get new records
+			$result=facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+		}
+		if ($result >= 0)
+		{
+			Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
+			exit;
+		}
+	}
+	else
+	{
+		$mesg='<div clas="error">'.$object->error.'</div>';
+		$action='';
+	}
 }
 
 // Delete link of credit note to invoice
-else if ($action == 'unlinkdiscount')
+else if ($action == 'unlinkdiscount' && $user->rights->facture->creer)
 {
-    if ($user->rights->facture->creer)
-    {
-        $discount=new DiscountAbsolute($db);
-        $result=$discount->fetch($_GET["discountid"]);
-        $discount->unlink_invoice();
-    }
+    $discount=new DiscountAbsolute($db);
+    $result=$discount->fetch($_GET["discountid"]);
+    $discount->unlink_invoice();
 }
 
 // Validation
-else if ($action == 'valid')
+else if ($action == 'valid' && $user->rights->facture->creer)
 {
     $object->fetch($id);
 
@@ -236,7 +227,7 @@ else if ($action == 'valid')
     }
 }
 
-else if ($action == 'set_thirdparty')
+else if ($action == 'set_thirdparty' && $user->rights->facture->creer)
 {
     $object->fetch($id);
     $object->setValueFrom('fk_soc',$socid);
@@ -245,20 +236,20 @@ else if ($action == 'set_thirdparty')
     exit;
 }
 
-else if ($action == 'classin')
+else if ($action == 'classin' && $user->rights->facture->creer)
 {
     $object->fetch($id);
     $object->setProject($_POST['projectid']);
 }
 
-else if ($action == 'setmode')
+else if ($action == 'setmode' && $user->rights->facture->creer)
 {
     $object->fetch($id);
     $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
-else if ($action == 'setinvoicedate')
+else if ($action == 'setinvoicedate' && $user->rights->facture->creer)
 {
     $object->fetch($id);
     $object->date=dol_mktime(12,0,0,$_POST['invoicedatemonth'],$_POST['invoicedateday'],$_POST['invoicedateyear']);
@@ -267,14 +258,14 @@ else if ($action == 'setinvoicedate')
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
-else if ($action == 'setconditions')
+else if ($action == 'setconditions' && $user->rights->facture->creer)
 {
     $object->fetch($id);
     $result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
-if ($action == 'setremisepercent' && $user->rights->facture->creer)
+else if ($action == 'setremisepercent' && $user->rights->facture->creer)
 {
     $object->fetch($id);
     $result = $object->set_remise($user, $_POST['remise_percent']);
@@ -313,10 +304,24 @@ else if ($action == "setabsolutediscount" && $user->rights->facture->creer)
     }
 }
 
-else if ($action == 'set_ref_client')
+else if ($action == 'set_ref_client' && $user->rights->facture->creer)
 {
     $object->fetch($id);
     $object->set_ref_client($_POST['ref_client']);
+}
+
+else if ($action == 'setnote_public' && $user->rights->facture->creer)
+{
+	$object->fetch($id);
+	$result=$object->update_note_public(GETPOST('note_public','alpha'));
+	if ($result < 0) dol_print_error($db,$object->error);
+}
+
+else if ($action == 'setnote' && $user->rights->facture->creer)
+{
+	$object->fetch($id);
+	$result=$object->update_note(GETPOST('note','alpha'));
+	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 // Classify to validated

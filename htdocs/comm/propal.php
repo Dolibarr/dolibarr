@@ -150,39 +150,32 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->prop
 }
 
 // Remove line
-else if ($action == 'confirm_deleteline' && $confirm == 'yes')
+else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->propale->creer)
 {
-	if ($user->rights->propale->creer)
+	$object->fetch($id);
+	$object->fetch_thirdparty();
+	$result = $object->deleteline($lineid);
+	// reorder lines
+	if ($result) $object->line_order(true);
+	
+	// Define output language
+	$outputlangs = $langs;
+	$newlang='';
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+	if (! empty($newlang))
 	{
-		$object->fetch($id);
-		$object->fetch_thirdparty();
-		$result = $object->deleteline($lineid);
-		// reorder lines
-		if ($result) $object->line_order(true);
-
-		// Define output language
-		$outputlangs = $langs;
-		$newlang='';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-		if (! empty($newlang))
-		{
-			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($newlang);
-		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-		{
-            $ret=$object->fetch($id);    // Reload to get new records
-		    propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
-		}
-
-		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-		exit;
+		$outputlangs = new Translate("",$conf);
+		$outputlangs->setDefaultLang($newlang);
 	}
-	else
+	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 	{
-		$mesg='<div class="error">'.$object->error.'</div>';
+		$ret=$object->fetch($id);    // Reload to get new records
+		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 	}
+	
+	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+	exit;
 }
 
 // Validation
@@ -216,7 +209,7 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->pr
 	}
 }
 
-else if ($action == 'setdate')
+else if ($action == 'setdate' && $user->rights->propale->creer)
 {
     $datep=dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
@@ -233,13 +226,13 @@ else if ($action == 'setdate')
     	if ($result < 0) dol_print_error($db,$object->error);
     }
 }
-else if ($action == 'setecheance')
+else if ($action == 'setecheance' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
 	$result=$object->set_echeance($user,dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
-else if ($action == 'setdate_livraison')
+else if ($action == 'setdate_livraison' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
 	$result=$object->set_date_livraison($user,dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
@@ -253,14 +246,14 @@ else if ($action == 'set_ref_client' && $user->rights->propale->creer)
 	$object->set_ref_client($user, $_POST['ref_client']);
 }
 
-else if ($action == 'setnote_public')
+else if ($action == 'setnote_public' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
 	$result=$object->update_note_public(GETPOST('note_public','alpha'));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-else if ($action == 'setnote')
+else if ($action == 'setnote' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
 	$result=$object->update_note(GETPOST('note','alpha'));
@@ -409,7 +402,7 @@ else if ($action == 'add' && $user->rights->propale->creer)
 }
 
 // Classify billed
-else if ($action == 'classifybilled')
+else if ($action == 'classifybilled' && $user->rights->propale->cloturer)
 {
 	$object->fetch($id);
 	$object->cloture($user, 4, '');
