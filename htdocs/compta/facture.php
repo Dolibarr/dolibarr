@@ -2737,7 +2737,11 @@ else
             }
 
             print '</table><br>';
-
+            
+            if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+            {
+            	include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
+            }
 
             /*
              * Lines

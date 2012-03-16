@@ -72,7 +72,8 @@ class Facture extends CommonObject
     var $total_ht=0;
     var $total_tva=0;
     var $total_ttc=0;
-    var $note;
+    var $note;			// deprecated
+    var $note_private;
     var $note_public;
     //! 0=draft,
     //! 1=validated (need to be paid),
@@ -763,7 +764,7 @@ class Facture extends CommonObject
         $sql.= ', f.datec as datec';
         $sql.= ', f.date_valid as datev';
         $sql.= ', f.tms as datem';
-        $sql.= ', f.note, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.model_pdf';
+        $sql.= ', f.note as note_private, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.model_pdf';
         $sql.= ', f.fk_facture_source';
         $sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet';
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
@@ -818,7 +819,8 @@ class Facture extends CommonObject
                 $this->cond_reglement_doc	= $obj->cond_reglement_libelle_doc;
                 $this->fk_project			= $obj->fk_projet;
                 $this->fk_facture_source	= $obj->fk_facture_source;
-                $this->note					= $obj->note;
+                $this->note					= $obj->note_private;
+                $this->note_private			= $obj->note_private;	// deprecated
                 $this->note_public			= $obj->note_public;
                 $this->user_author			= $obj->fk_user_author;
                 $this->user_valid			= $obj->fk_user_valid;

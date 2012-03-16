@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,11 +67,14 @@ function facture_prepare_head($object)
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'invoice');
-
-    $head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$object->id;
-	$head[$h][1] = $langs->trans('Notes');
-	$head[$h][2] = 'note';
-	$h++;
+    
+    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+    {
+    	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$object->id;
+    	$head[$h][1] = $langs->trans('Notes');
+    	$head[$h][2] = 'note';
+    	$h++;
+    }
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/document.php?facid='.$object->id;
 	/*$filesdir = $conf->facture->dir_output . "/" . dol_sanitizeFileName($fac->ref);
