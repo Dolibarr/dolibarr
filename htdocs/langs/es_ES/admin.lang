@@ -159,6 +159,7 @@ FileNameToGenerate=Nombre del archivo a generar
 CommandsToDisableForeignKeysForImport=Comando para desactivar las claves excluyentes a la importación
 ExportCompatibility=Compatibilidad del archivo de exportación generado
 MySqlExportParameters=Parámetros de la exportación MySql
+PostgreSqlExportParameters=Parámetros de la exportación PostgreSQL
 UseTransactionnalMode=Utilizar el modo transaccional
 FullPathToMysqldumpCommand=Ruta completa del comando mysqldump
 FullPathToPostgreSQLdumpCommand=ruta completa hacia el comando pg_dump
