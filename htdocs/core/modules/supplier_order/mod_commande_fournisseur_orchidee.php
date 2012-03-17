@@ -107,7 +107,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	 *  @param  Object	    $object		Object
      *  @return string      			Value if OK, 0 if KO
 	*/
-    function getNextValue($objsoc=0,$commande='')
+    function getNextValue($objsoc=0,$object='')
     {
 		global $db,$conf;
 
@@ -122,7 +122,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'commande_fournisseur','ref','',$objsoc->code_fournisseur,$commande->date_commande);
+		$numFinal=get_next_value($db,$mask,'commande_fournisseur','ref','',$objsoc->code_fournisseur,$object->date_commande);
 
 		return  $numFinal;
 	}
@@ -135,9 +135,9 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	 *  @param  Object	    $object		Object
      *  @return string      			Texte descripif
      */
-    function commande_get_num($objsoc=0,$commande='')
+    function commande_get_num($objsoc=0,$object='')
     {
-        return $this->getNextValue($objsoc,$commande);
+        return $this->getNextValue($objsoc,$object);
     }
 }
 
