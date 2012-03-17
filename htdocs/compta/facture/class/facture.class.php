@@ -3080,6 +3080,7 @@ class Facture extends CommonObject
         $this->mode_reglement_code = 'CHQ';
         $this->note_public='This is a comment (public)';
         $this->note_private='This is a comment (private)';
+        $this->note='This is a comment (private)';
 
         if (empty($option) || $option != 'nolines')
         {
