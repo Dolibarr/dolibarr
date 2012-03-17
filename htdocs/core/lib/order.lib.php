@@ -67,11 +67,14 @@ function commande_prepare_head($object)
 		$head[$h][2] = 'preview';
 		$h++;
 	}
-
-	$head[$h][0] = DOL_URL_ROOT.'/commande/contact.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('ContactsAddresses');
-	$head[$h][2] = 'contact';
-	$h++;
+	
+	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/commande/contact.php?id='.$object->id;
+		$head[$h][1] = $langs->trans('ContactsAddresses');
+		$head[$h][2] = 'contact';
+		$h++;
+	}
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line

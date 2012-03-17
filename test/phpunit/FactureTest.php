@@ -280,7 +280,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
      */
     public function changeProperties(&$localobject)
     {
-        $localobject->note='New note';
+        $localobject->note_private='New note';
         //$localobject->note='New note after update';
     }
 

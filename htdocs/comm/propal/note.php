@@ -143,21 +143,12 @@ if ($id > 0 || ! empty($ref))
 			print '</td>';
 			print '</tr>';
 			
+			print "</table>";
+			
+			print '<br>';
+			
 			include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
 
-			print "</table>";
-
-			print '</div>';
-
-			/*
-			 * Actions
-			 */
-
-			print '<div class="tabsAction">';
-			if ($user->rights->propale->creer && $action <> 'edit')
-			{
-				print '<a class="butAction" href="note.php?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
-			}
 			print '</div>';
 		}
 	}
