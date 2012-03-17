@@ -87,6 +87,8 @@ if ($id > 0)
 			
 			print "</table>";
 			
+			print '<br>';
+			
 			include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
 			
 			print '</div>';
