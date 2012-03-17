@@ -136,7 +136,8 @@ class Facture extends CommonObject
         // Clean parameters
         if (empty($this->type)) $this->type = 0;
         $this->ref_client=trim($this->ref_client);
-        $this->note=trim($this->note);
+        $this->note=(isset($this->note) ? trim($this->note) : trim($this->note_private)); // deprecated
+        $this->note_private=(isset($this->note_private) ? trim($this->note_private) : trim($this->note));
         $this->note_public=trim($this->note_public);
         if (! $this->cond_reglement_id) $this->cond_reglement_id = 0;
         if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
@@ -219,7 +220,7 @@ class Facture extends CommonObject
         $sql.= ",".($this->remise_absolue>0?$this->remise_absolue:'NULL');
         $sql.= ",".($this->remise_percent>0?$this->remise_percent:'NULL');
         $sql.= ", '".$this->db->idate($this->date)."'";
-        $sql.= ",".($this->note?"'".$this->db->escape($this->note)."'":"null");
+        $sql.= ",".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
         $sql.= ",".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
         $sql.= ",".($this->ref_client?"'".$this->db->escape($this->ref_client)."'":"null");
         $sql.= ",".($this->ref_int?"'".$this->db->escape($this->ref_int)."'":"null");
@@ -820,8 +821,8 @@ class Facture extends CommonObject
                 $this->cond_reglement_doc	= $obj->cond_reglement_libelle_doc;
                 $this->fk_project			= $obj->fk_projet;
                 $this->fk_facture_source	= $obj->fk_facture_source;
-                $this->note					= $obj->note_private;
-                $this->note_private			= $obj->note_private;	// deprecated
+                $this->note					= $obj->note_private;	// deprecated
+                $this->note_private			= $obj->note_private;
                 $this->note_public			= $obj->note_public;
                 $this->user_author			= $obj->fk_user_author;
                 $this->user_valid			= $obj->fk_user_valid;
@@ -964,7 +965,8 @@ class Facture extends CommonObject
         if (isset($this->increment)) $this->increment=trim($this->increment);
         if (isset($this->close_code)) $this->close_code=trim($this->close_code);
         if (isset($this->close_note)) $this->close_note=trim($this->close_note);
-        if (isset($this->note)) $this->note=trim($this->note);
+        if (isset($this->note) || isset($this->note_private)) $this->note=(isset($this->note) ? trim($this->note) : trim($this->note_private));		// deprecated
+        if (isset($this->note) || isset($this->note_private)) $this->note_private=(isset($this->note_private) ? trim($this->note_private) : trim($this->note));
         if (isset($this->note_public)) $this->note_public=trim($this->note_public);
         if (isset($this->modelpdf)) $this->modelpdf=trim($this->modelpdf);
         if (isset($this->import_key)) $this->import_key=trim($this->import_key);
@@ -1002,7 +1004,7 @@ class Facture extends CommonObject
         $sql.= " fk_cond_reglement=".(isset($this->cond_reglement_id)?$this->cond_reglement_id:"null").",";
         $sql.= " fk_mode_reglement=".(isset($this->mode_reglement_id)?$this->mode_reglement_id:"null").",";
         $sql.= " date_lim_reglement=".(strval($this->date_lim_reglement)!='' ? "'".$this->db->idate($this->date_lim_reglement)."'" : 'null').",";
-        $sql.= " note=".(isset($this->note)?"'".$this->db->escape($this->note)."'":"null").",";
+        $sql.= " note=".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null").",";
         $sql.= " note_public=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
         $sql.= " model_pdf=".(isset($this->modelpdf)?"'".$this->db->escape($this->modelpdf)."'":"null").",";
         $sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null")."";
@@ -3077,7 +3079,7 @@ class Facture extends CommonObject
         $this->mode_reglement_id   = 7;
         $this->mode_reglement_code = 'CHQ';
         $this->note_public='This is a comment (public)';
-        $this->note='This is a comment (private)';
+        $this->note_private='This is a comment (private)';
 
         if (empty($option) || $option != 'nolines')
         {
