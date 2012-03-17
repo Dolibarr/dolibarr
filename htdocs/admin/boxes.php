@@ -84,8 +84,11 @@ if ($action == 'add')
 			$resql = $db->query($sql);
 
 			// Remove all personalized setup when a box is activated or disabled (to be sure user see new box)
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
-			$sql.= " WHERE param LIKE 'MAIN_BOXES_%'";
+			// TODO Disable this when adding combo will be available on home page for each user.
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param WHERE param LIKE 'MAIN_BOXES_%'";
+			dol_syslog("boxes.php delete user_param sql=".$sql);
+			$resql = $db->query($sql);
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE fk_user != 0";
 			dol_syslog("boxes.php delete user_param sql=".$sql);
 			$resql = $db->query($sql);
 
