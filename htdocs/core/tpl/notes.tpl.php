@@ -22,18 +22,20 @@ $note_private = 'note';
 if ($module == 'propal') $module = 'propale';
 else if ($module == 'fichinter') { $module = 'ficheinter'; $note_private = 'note_private'; }
 
+if (! empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) $typeofdata='ckeditor:dolibarr_notes:100%:200:1:12:100';
+else $typeofdata='textarea:12:100';
 ?>
 
 <!-- BEGIN PHP TEMPLATE NOTES -->
 <div class="table-border">
 	<div class="table-border-row">
-		<div class="table-key-border-col"><?php echo $form->editfieldkey("NotePublic",$note_public,$object->note_public,$object,$user->rights->$module->creer,'textarea'); ?></div>
-		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePublic",$note_public,$object->note_public,$object,$user->rights->$module->creer,'textarea'); ?></div>
+		<div class="table-key-border-col"><?php echo $form->editfieldkey("NotePublic",$note_public,$object->note_public,$object,$user->rights->$module->creer,$typeofdata); ?></div>
+		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePublic",$note_public,$object->note_public,$object,$user->rights->$module->creer,$typeofdata); ?></div>
 	</div>
 <?php if (! $user->societe_id) { ?>
 	<div class="table-border-row">
-		<div class="table-key-border-col"><?php echo $form->editfieldkey("NotePrivate",$note_private,$object->note_private,$object,$user->rights->$module->creer,'textarea'); ?></div>
-		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePrivate",$note_private,$object->note_private,$object,$user->rights->$module->creer,'textarea'); ?></div>
+		<div class="table-key-border-col"><?php echo $form->editfieldkey("NotePrivate",$note_private,$object->note_private,$object,$user->rights->$module->creer,$typeofdata); ?></div>
+		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePrivate",$note_private,$object->note_private,$object,$user->rights->$module->creer,$typeofdata); ?></div>
 	</div>
 <?php } ?>
 </div>

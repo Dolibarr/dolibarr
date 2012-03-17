@@ -1402,22 +1402,22 @@ border-top: 1px solid #333;
 div#stats {
 }
 
-tr.liste_titre {
+div.liste_titre, tr.liste_titre {
     text-align: <?php echo $left; ?>;
 }
 
-tr.liste_titre a {
+div.liste_titre a, tr.liste_titre a {
 color: #333333;
 margin: 0px 5px;
 }
 
-tr.liste_titre td {
+div.liste_titre td, tr.liste_titre td {
 	padding: 0px 5px;
     vertical-align: middle;
     background: none !important;
 }
 
-th.liste_titre, td.liste_titre
+div.liste_titre, th.liste_titre, td.liste_titre
 {
     background-repeat: repeat-x;
     color: #333333;
@@ -1428,14 +1428,7 @@ th.liste_titre, td.liste_titre
     background: none;
 }
 
-/*tr.liste_titre select.flat {
-	float: left;
-    width: 200px;
-    position: relative;
-    margin: 30px 10px 10px 0px;
-}*/
-
-tr.liste_titre input.button {
+div.liste_titre input.button, tr.liste_titre input.button {
 	float: left;
     position: relative;
     /*margin: 30px 10px 10px 0px;*/
@@ -2197,6 +2190,36 @@ a.cke_dialog_ui_button
 
 .template-upload {
     height: 72px !important;
+}
+
+
+/* ============================================================================== */
+/*  Table with div                                                                */
+/* ============================================================================== */
+
+div.table-border {
+	display:table;
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #9CACBB;
+}
+div.table-border-row {
+	display:table-row;
+}
+div.table-key-border-col {
+	display:table-cell;
+	width: 25%;
+	vertical-align:top;
+	padding: 1px 2px 1px 1px;
+	border: 1px solid #9CACBB;
+	border-collapse: collapse;
+}
+div.table-val-border-col {
+	display:table-cell;
+	width:auto;
+	padding: 1px 2px 1px 1px;
+	border: 1px solid #9CACBB;
+	border-collapse: collapse;
 }
 
 
