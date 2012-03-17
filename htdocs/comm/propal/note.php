@@ -143,9 +143,9 @@ if ($id > 0 || ! empty($ref))
 			print '</td>';
 			print '</tr>';
 			
-			include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
-
 			print "</table>";
+			
+			include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
 
 			print '</div>';
 		}

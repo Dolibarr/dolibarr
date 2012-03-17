@@ -85,9 +85,9 @@ if ($id > 0)
 			// Company
 			print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
 			
-			include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
-			
 			print "</table>";
+			
+			include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
 			
 			print '</div>';
 		}

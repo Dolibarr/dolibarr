@@ -25,30 +25,16 @@ else if ($module == 'fichinter') { $module = 'ficheinter'; $note_private = 'note
 ?>
 
 <!-- BEGIN PHP TEMPLATE NOTES -->
-<table class="border allwidth">		
-	<tr>
-		<td width="25%" valign="top"><?php echo $form->editfieldkey("NotePublic",$note_public,$object->note_public,$object,$user->rights->$module->creer,'textarea'); ?></td>
-		<td><?php echo $form->editfieldval("NotePublic",$note_public,$object->note_public,$object,$user->rights->$module->creer,'textarea'); ?></td>
-	</tr>
-	
-	<?php if (! $user->societe_id) { ?>
-	<tr>
-		<td width="25%" valign="top"><?php echo $form->editfieldkey("NotePrivate",$note_private,$object->note_private,$object,$user->rights->$module->creer,'textarea'); ?></td>
-		<td><?php echo $form->editfieldval("NotePrivate",$note_private,$object->note_private,$object,$user->rights->$module->creer,'textarea'); ?></td>
-	</tr>
-	<?php } ?>
-	
-</table>
-<!--  Test table with div
 <div class="table-border">
 	<div class="table-border-row">
-		<div class="table-border-col"><?php //echo $form->editfieldkey("NotePublic",$note_public,$object->note_public,$object,$user->rights->$module->creer,'textarea'); ?></div>
-		<div class="table-border-col"><?php //echo $form->editfieldval("NotePublic",$note_public,$object->note_public,$object,$user->rights->$module->creer,'textarea'); ?></div>
+		<div class="table-key-border-col"><?php echo $form->editfieldkey("NotePublic",$note_public,$object->note_public,$object,$user->rights->$module->creer,'textarea'); ?></div>
+		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePublic",$note_public,$object->note_public,$object,$user->rights->$module->creer,'textarea'); ?></div>
 	</div>
+<?php if (! $user->societe_id) { ?>
 	<div class="table-border-row">
-		<div class="table-border-col"><?php //echo $form->editfieldkey("NotePrivate",$note_private,$object->note_private,$object,$user->rights->$module->creer,'textarea'); ?></div>
-		<div class="table-border-col"><?php //echo $form->editfieldval("NotePrivate",$note_private,$object->note_private,$object,$user->rights->$module->creer,'textarea'); ?></div>
+		<div class="table-key-border-col"><?php echo $form->editfieldkey("NotePrivate",$note_private,$object->note_private,$object,$user->rights->$module->creer,'textarea'); ?></div>
+		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePrivate",$note_private,$object->note_private,$object,$user->rights->$module->creer,'textarea'); ?></div>
 	</div>
+<?php } ?>
 </div>
--->
 <!-- END PHP TEMPLATE NOTES-->

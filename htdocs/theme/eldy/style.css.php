@@ -2331,8 +2331,17 @@ div.table-border {
 div.table-border-row {
 	display:table-row;
 }
-div.table-border-col {
+div.table-key-border-col {
 	display:table-cell;
+	width: 25%;
+	vertical-align:top;
+	padding: 1px 2px 1px 1px;
+	border: 1px solid #9CACBB;
+	border-collapse: collapse;
+}
+div.table-val-border-col {
+	display:table-cell;
+	width:auto;
 	padding: 1px 2px 1px 1px;
 	border: 1px solid #9CACBB;
 	border-collapse: collapse;

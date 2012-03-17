@@ -106,10 +106,10 @@ if ($id > 0 || ! empty($ref))
     // Company
     print '<tr><td>'.$langs->trans("Company").'</td>';
     print '<td colspan="3">'.$soc->getNomUrl(1,'compta').'</td>';
+    
+    print "</table>";
 
 	include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
-
-	print "</table>";
 
 	print '</div>';
 
