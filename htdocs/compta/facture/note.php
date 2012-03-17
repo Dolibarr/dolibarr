@@ -106,18 +106,18 @@ if ($id > 0 || ! empty($ref))
     // Company
     print '<tr><td>'.$langs->trans("Company").'</td>';
     print '<td colspan="3">'.$soc->getNomUrl(1,'compta').'</td>';
-    
+
     print "</table>";
-    
+
     print '<br>';
-    
+
 	include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
 
-	print '</div>';
-
+	dol_fiche_end();
 }
 
 
 llxFooter();
+
 $db->close();
 ?>
