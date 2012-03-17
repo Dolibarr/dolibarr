@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,62 +28,40 @@ require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php');
 
-$socid=isset($_GET["socid"])?$_GET["socid"]:isset($_POST["socid"])?$_POST["socid"]:"";
-
-if (!$user->rights->facture->lire)
-  accessforbidden();
-
 $langs->load("companies");
 $langs->load("bills");
 
+$id=(GETPOST('id','int')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
+$ref=GETPOST('ref','alpha');
+$socid=GETPOST('socid','int');
+$action=GETPOST('action','alpha');
+
 // Security check
-if ($user->societe_id > 0)
-{
-  unset($_GET["action"]);
-  $socid = $user->societe_id;
-}
+$socid=0;
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'facture',$id,'');
 
-
-$fac = new Facture($db);
-$fac->fetch($_GET["facid"]);
+$object = new Facture($db);
+$object->fetch($id);
 
 
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($_POST["action"] == 'update_public' && $user->rights->facture->creer)
+if ($action == 'setnote_public' && $user->rights->facture->creer)
 {
-	$db->begin();
-
-	$res=$fac->update_note_public($_POST["note_public"],$user);
-	if ($res < 0)
-	{
-		$mesg='<div class="error">'.$fac->error.'</div>';
-		$db->rollback();
-	}
-	else
-	{
-		$db->commit();
-	}
+	$object->fetch($id);
+	$result=$object->update_note_public(GETPOST('note_public','alpha'));
+	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-if ($_POST["action"] == 'update' && $user->rights->facture->creer)
+else if ($action == 'setnote' && $user->rights->facture->creer)
 {
-	$db->begin();
-
-	$res=$fac->update_note($_POST["note"],$user);
-	if ($res < 0)
-	{
-		$mesg='<div class="error">'.$fac->error.'</div>';
-		$db->rollback();
-	}
-	else
-	{
-		$db->commit();
-	}
+	$object->fetch($id);
+	$result=$object->update_note(GETPOST('note','alpha'));
+	if ($result < 0) dol_print_error($db,$object->error);
 }
-
 
 
 /******************************************************************************/
@@ -93,28 +72,26 @@ llxHeader();
 
 $form = new Form($db);
 
-$id = $_GET['facid'];
-$ref= $_GET['ref'];
 if ($id > 0 || ! empty($ref))
 {
-	$fac = new Facture($db);
-	$fac->fetch($id,$ref);
+	$object = new Facture($db);
+	$object->fetch($id,$ref);
 
 	$soc = new Societe($db);
-    $soc->fetch($fac->socid);
+    $soc->fetch($object->socid);
 
-    $head = facture_prepare_head($fac);
+    $head = facture_prepare_head($object);
     dol_fiche_head($head, 'note', $langs->trans("InvoiceCustomer"), 0, 'bill');
 
 
     print '<table class="border" width="100%">';
 
 	// Ref
-	print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
+	print '<tr><td width="25%">'.$langs->trans('Ref').'</td>';
 	print '<td colspan="3">';
 	$morehtmlref='';
 	$discount=new DiscountAbsolute($db);
-	$result=$discount->fetch(0,$fac->id);
+	$result=$discount->fetch(0,$object->id);
 	if ($result > 0)
 	{
 		$morehtmlref=' ('.$langs->trans("CreditNoteConvertedIntoDiscount",$discount->getNomUrl(1,'discount')).')';
@@ -123,72 +100,22 @@ if ($id > 0 || ! empty($ref))
 	{
 		dol_print_error('',$discount->error);
 	}
-	print $form->showrefnav($fac,'ref','',1,'facnumber','ref',$morehtmlref);
+	print $form->showrefnav($object,'ref','',1,'facnumber','ref',$morehtmlref);
 	print '</td></tr>';
 
     // Company
     print '<tr><td>'.$langs->trans("Company").'</td>';
     print '<td colspan="3">'.$soc->getNomUrl(1,'compta').'</td>';
 
-	// Note publique
-    print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';
-	print '<td valign="top" colspan="3">';
-    if ($_GET["action"] == 'edit')
-    {
-        print '<form method="post" action="note.php?facid='.$fac->id.'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        print '<input type="hidden" name="action" value="update_public">';
-        print '<textarea name="note_public" cols="80" rows="8">'.$fac->note_public."</textarea><br>";
-        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-        print '</form>';
-    }
-    else
-    {
-	    print ($fac->note_public?nl2br($fac->note_public):"&nbsp;");
-    }
-	print "</td></tr>";
+	include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
 
-	// Note priv�e
-	if (! $user->societe_id)
-	{
-	    print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
-		print '<td valign="top" colspan="3">';
-	    if ($_GET["action"] == 'edit')
-	    {
-	        print '<form method="post" action="note.php?facid='.$fac->id.'">';
-	        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	        print '<input type="hidden" name="action" value="update">';
-	        print '<textarea name="note" cols="80" rows="8">'.$fac->note."</textarea><br>";
-	        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-	        print '</form>';
-	    }
-		else
-		{
-		    print ($fac->note?nl2br($fac->note):"&nbsp;");
-		}
-		print "</td></tr>";
-	}
+	print "</table>";
 
-    print "</table>";
-
-
-    /*
-    * Actions
-    */
-    print '</div>';
-    print '<div class="tabsAction">';
-
-    if ($user->rights->facture->creer && $_GET["action"] <> 'edit')
-    {
-        print "<a class=\"butAction\" href=\"note.php?facid=$fac->id&amp;action=edit\">".$langs->trans('Modify')."</a>";
-    }
-
-    print "</div>";
-
+	print '</div>';
 
 }
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>

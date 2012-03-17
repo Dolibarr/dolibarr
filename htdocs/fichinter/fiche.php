@@ -621,6 +621,66 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
     $action='presend';
 }
 
+if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+{
+	if ($action == 'addcontact' && $user->rights->ficheinter->creer)
+	{
+		$result = $object->fetch($id);
+	
+		if ($result > 0 && $id > 0)
+		{
+			$result = $object->add_contact(GETPOST('contactid','int'), GETPOST('type','int'), GETPOST('source','alpha'));
+		}
+	
+		if ($result >= 0)
+		{
+			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
+		else
+		{
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+			{
+				$langs->load("errors");
+				$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+			}
+			else
+			{
+				$mesg = '<div class="error">'.$object->error.'</div>';
+			}
+		}
+	}
+	
+	// bascule du statut d'un contact
+	else if ($action == 'swapstatut' && $user->rights->ficheinter->creer)
+	{
+		if ($object->fetch($id))
+		{
+			$result=$object->swapContactStatus(GETPOST('ligne','int'));
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
+	
+	// Efface un contact
+	else if ($action == 'deletecontact' && $user->rights->ficheinter->creer)
+	{
+		$object->fetch($id);
+		$result = $object->delete_contact(GETPOST('lineid','int'));
+	
+		if ($result >= 0)
+		{
+			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
+		else {
+			dol_print_error($db);
+		}
+	}
+}
+
 
 /*
  * View
@@ -856,10 +916,23 @@ else if ($id > 0 || ! empty($ref))
     print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
     
     print "</table><br>";
+    
+    if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+    {
+    	require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
+    	require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+    	$formcompany= new FormCompany($db);
+    
+    	$blocname = 'contacts';
+    	$title = $langs->trans('ContactsAddresses');
+    	include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
+    }
 
 	if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     {
-    	include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
+    	$blocname = 'notes';
+    	$title = $langs->trans('Notes');
+    	include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
     }
 
     /*

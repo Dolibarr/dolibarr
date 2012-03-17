@@ -39,11 +39,14 @@ function facture_prepare_head($object)
 	$head[$h][1] = $langs->trans('CardBill');
 	$head[$h][2] = 'compta';
 	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/contact.php?facid='.$object->id;
-	$head[$h][1] = $langs->trans('ContactsAddresses');
-	$head[$h][2] = 'contact';
-	$h++;
+	
+	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/contact.php?facid='.$object->id;
+		$head[$h][1] = $langs->trans('ContactsAddresses');
+		$head[$h][2] = 'contact';
+		$h++;
+	}
 
 	if (! empty($conf->global->MAIN_USE_PREVIEW_TABS))
 	{

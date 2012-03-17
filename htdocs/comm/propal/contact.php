@@ -199,12 +199,10 @@ if ($id > 0 || ! empty($ref))
 		print "</table>";
 
 		print '</div>';
-
-		/*
-		 * Lignes de contacts
-		 */
+		
 		print '<br>';
 		
+		// Contacts lines
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php');
 		
 	}

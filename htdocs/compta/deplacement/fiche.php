@@ -498,7 +498,9 @@ else if ($id)
             print "</table><br>";
             
             // Notes
-            include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
+            $blocname = 'notes';
+            $title = $langs->trans('Notes');
+            include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
 
             print '</div>';
 

@@ -148,17 +148,6 @@ if ($id > 0 || ! empty($ref))
 			print "</table>";
 
 			print '</div>';
-
-			/*
-			 * Actions
-			 */
-
-			print '<div class="tabsAction">';
-			if ($user->rights->propale->creer && $action <> 'edit')
-			{
-				print '<a class="butAction" href="note.php?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
-			}
-			print '</div>';
 		}
 	}
 }

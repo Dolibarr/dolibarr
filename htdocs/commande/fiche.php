@@ -1191,6 +1191,66 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
     }
 }
 
+if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+{
+	if ($action == 'addcontact' && $user->rights->commande->creer)
+	{
+		$result = $object->fetch($id);
+	
+		if ($result > 0 && $id > 0)
+		{
+			$result = $object->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
+		}
+	
+		if ($result >= 0)
+		{
+			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
+		else
+		{
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+			{
+				$langs->load("errors");
+				$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+			}
+			else
+			{
+				$mesg = '<div class="error">'.$object->error.'</div>';
+			}
+		}
+	}
+	
+	// bascule du statut d'un contact
+	else if ($action == 'swapstatut' && $user->rights->commande->creer)
+	{
+		if ($object->fetch($id))
+		{
+			$result=$object->swapContactStatus(GETPOST('ligne'));
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
+	
+	// Efface un contact
+	else if ($action == 'deletecontact' && $user->rights->commande->creer)
+	{
+		$object->fetch($id);
+		$result = $object->delete_contact($lineid);
+	
+		if ($result >= 0)
+		{
+			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
+		else {
+			dol_print_error($db);
+		}
+	}
+}
+
 
 /*
  *	View
@@ -1951,9 +2011,21 @@ else
             print '</table><br>';
             print "\n";
             
+            if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+            {
+            	require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+            	$formcompany= new FormCompany($db);
+            		
+            	$blocname = 'contacts';
+            	$title = $langs->trans('ContactsAddresses');
+            	include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
+            }
+            
             if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
             {
-            	include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
+            	$blocname = 'notes';
+            	$title = $langs->trans('Notes');
+            	include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
             }
 
             /*
