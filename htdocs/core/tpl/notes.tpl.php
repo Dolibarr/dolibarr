@@ -39,4 +39,16 @@ else if ($module == 'fichinter') { $module = 'ficheinter'; $note_private = 'note
 	<?php } ?>
 	
 </table>
+<!--  Test table with div
+<div class="table-border">
+	<div class="table-border-row">
+		<div class="table-border-col"><?php //echo $form->editfieldkey("NotePublic",$note_public,$object->note_public,$object,$user->rights->$module->creer,'textarea'); ?></div>
+		<div class="table-border-col"><?php //echo $form->editfieldval("NotePublic",$note_public,$object->note_public,$object,$user->rights->$module->creer,'textarea'); ?></div>
+	</div>
+	<div class="table-border-row">
+		<div class="table-border-col"><?php //echo $form->editfieldkey("NotePrivate",$note_private,$object->note_private,$object,$user->rights->$module->creer,'textarea'); ?></div>
+		<div class="table-border-col"><?php //echo $form->editfieldval("NotePrivate",$note_private,$object->note_private,$object,$user->rights->$module->creer,'textarea'); ?></div>
+	</div>
+</div>
+-->
 <!-- END PHP TEMPLATE NOTES-->
