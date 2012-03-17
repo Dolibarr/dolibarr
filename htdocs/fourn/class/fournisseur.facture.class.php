@@ -283,7 +283,7 @@ class FactureFournisseur extends Facture
         $sql.= " t.fk_projet,";
         $sql.= " t.fk_cond_reglement,";
         $sql.= " t.date_lim_reglement,";
-        $sql.= " t.note,";
+        $sql.= " t.note as note_private,";
         $sql.= " t.note_public,";
         $sql.= " t.model_pdf,";
         $sql.= " t.import_key,";
@@ -336,7 +336,8 @@ class FactureFournisseur extends Facture
                 $this->fk_project = $obj->fk_projet;
                 $this->fk_cond_reglement = $obj->fk_cond_reglement;
                 $this->date_echeance = $this->db->jdate($obj->date_lim_reglement);
-                $this->note = $obj->note;
+                $this->note = $obj->note_private;
+                $this->note_private = $obj->note_private;
                 $this->note_public = $obj->note_public;
                 $this->model_pdf = $obj->model_pdf;
                 $this->import_key = $obj->import_key;

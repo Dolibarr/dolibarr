@@ -161,7 +161,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 {
 	$object->fetch($id);
 	$object->fetch_thirdparty();
-	
+
 	$result = $object->deleteline($_GET['lineid'], $user);
 	if ($result > 0)
 	{
@@ -313,14 +313,14 @@ else if ($action == 'set_ref_client' && $user->rights->facture->creer)
 else if ($action == 'setnote_public' && $user->rights->facture->creer)
 {
 	$object->fetch($id);
-	$result=$object->update_note_public(GETPOST('note_public','alpha'));
+	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 else if ($action == 'setnote' && $user->rights->facture->creer)
 {
 	$object->fetch($id);
-	$result=$object->update_note(GETPOST('note','alpha'));
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -1511,12 +1511,12 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	if ($action == 'addcontact' && $user->rights->facture->creer)
 	{
 		$result = $object->fetch($id);
-	
+
 		if ($result > 0 && $id > 0)
 		{
 			$result = $object->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
 		}
-	
+
 		if ($result >= 0)
 		{
 			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -1535,7 +1535,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 			}
 		}
 	}
-	
+
 	// bascule du statut d'un contact
 	else if ($action == 'swapstatut' && $user->rights->facture->creer)
 	{
@@ -1548,13 +1548,13 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 			dol_print_error($db);
 		}
 	}
-	
+
 	// Efface un contact
 	else if ($action == 'deletecontact' && $user->rights->facture->creer)
 	{
 		$object->fetch($id);
 		$result = $object->delete_contact($lineid);
-	
+
 		if ($result >= 0)
 		{
 			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -2796,18 +2796,18 @@ else
             }
 
             print '</table><br>';
-            
+
             if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
             {
             	require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
             	require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
             	$formcompany= new FormCompany($db);
-            
+
             	$blocname = 'contacts';
             	$title = $langs->trans('ContactsAddresses');
             	include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
             }
-            
+
             if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
             {
             	$blocname = 'notes';

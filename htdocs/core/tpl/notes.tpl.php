@@ -19,8 +19,14 @@
 $module = $object->element;
 $note_public = 'note_public';
 $note_private = 'note';
-if ($module == 'propal') $module = 'propale';
-else if ($module == 'fichinter') { $module = 'ficheinter'; $note_private = 'note_private'; }
+$colwidth=(empty($colwidth)?25:$colwidth);
+$permission=$user->rights->$module->creer;
+
+// Special cases
+if ($module == 'propal')                { $module = 'propale'; }
+elseif ($module == 'fichinter')         { $module = 'ficheinter'; $note_private = 'note_private'; }
+elseif ($module == 'invoice_supplier')  { $permission=$user->rights->fournisseur->facture->creer; }
+elseif ($module == 'order_supplier')    { $permission=$user->rights->fournisseur->commande->creer; }
 
 if (! empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) $typeofdata='ckeditor:dolibarr_notes:100%:200:1:12:100';
 else $typeofdata='textarea:12:100';
@@ -29,13 +35,13 @@ else $typeofdata='textarea:12:100';
 <!-- BEGIN PHP TEMPLATE NOTES -->
 <div class="table-border">
 	<div class="table-border-row">
-		<div class="table-key-border-col"><?php echo $form->editfieldkey("NotePublic",$note_public,$object->note_public,$object,$user->rights->$module->creer,$typeofdata); ?></div>
-		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePublic",$note_public,$object->note_public,$object,$user->rights->$module->creer,$typeofdata); ?></div>
+		<div class="table-key-border-col"<?php echo ' style="width: '.$colwidth.'%"'; ?>><?php echo $form->editfieldkey("NotePublic",$note_public,$object->note_public,$object,$permission,$typeofdata); ?></div>
+		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePublic",$note_public,$object->note_public,$object,$permission,$typeofdata); ?></div>
 	</div>
 <?php if (! $user->societe_id) { ?>
 	<div class="table-border-row">
-		<div class="table-key-border-col"><?php echo $form->editfieldkey("NotePrivate",$note_private,$object->note_private,$object,$user->rights->$module->creer,$typeofdata); ?></div>
-		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePrivate",$note_private,$object->note_private,$object,$user->rights->$module->creer,$typeofdata); ?></div>
+		<div class="table-key-border-col"<?php echo ' style="width: '.$colwidth.'%"'; ?>><?php echo $form->editfieldkey("NotePrivate",$note_private,$object->note_private,$object,$permission,$typeofdata); ?></div>
+		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePrivate",$note_private,$object->note_private,$object,$permission,$typeofdata); ?></div>
 	</div>
 <?php } ?>
 </div>

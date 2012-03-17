@@ -111,7 +111,7 @@ class CommandeFournisseur extends Commande
         $sql = "SELECT c.rowid, c.ref, c.date_creation, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
         $sql.= " c.localtax1, c.localtax2, ";
         $sql.= " c.date_commande as date_commande, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
-        $sql.= " c.note, c.note_public, c.model_pdf,";
+        $sql.= " c.note as note_private, c.note_public, c.model_pdf,";
         $sql.= " cm.libelle as methode_commande,";
         $sql.= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle,";
         $sql.= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle";
@@ -162,7 +162,8 @@ class CommandeFournisseur extends Commande
             $this->mode_reglement_id   = $obj->fk_mode_reglement;
             $this->mode_reglement_code = $obj->mode_reglement_code;
             $this->mode_reglement      = $obj->mode_reglement_libelle;
-            $this->note                = $obj->note;
+            $this->note                = $obj->note_private;    // deprecated
+            $this->note_private        = $obj->note_private;
             $this->note_public         = $obj->note_public;
             $this->modelpdf            = $obj->model_pdf;
 
@@ -271,7 +272,7 @@ class CommandeFournisseur extends Commande
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog("FournisseurCommande::log ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::log ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -1404,46 +1405,6 @@ class CommandeFournisseur extends Commande
         return 1;
     }
 
-
-    /**
-     *	Update notes
-     *
-     *	@param		User		$user			Object user
-     *	@param		string		$note			Private note
-     *	@param		string		$note_public	Public note
-     *	@return		int							<0 if KO, >=0 if OK
-     *
-     *	TODO Use instead update_note_public and update_note
-     */
-    function UpdateNote($user, $note, $note_public)
-    {
-        // Clean parameters
-        $note=trim($note);
-        $note_public=trim($note_public);
-
-        $result = 0;
-
-        $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
-        $sql.= " SET note  ='".$this->db->escape($note)."',";
-        $sql.= " note_public  ='".$this->db->escape($note_public)."'";
-        $sql.= " WHERE rowid = ".$this->id;
-
-        dol_syslog(get_class($this)."::UpdateNote sql=".$sql);
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            $result = 0;
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::UpdateNote ".$this->error, LOG_ERR);
-            $result = -1;
-        }
-
-        return $result ;
-    }
-
     /**
      *  Tag order with a particular status
      *
@@ -1462,7 +1423,7 @@ class CommandeFournisseur extends Commande
         $sql.= ' SET fk_statut='.$status;
         $sql.= ' WHERE rowid = '.$this->id;
 
-        dol_syslog("CommandeFournisseur::setStatus sql=".$sql);
+        dol_syslog(get_class($this)."::setStatus sql=".$sql);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -1472,7 +1433,7 @@ class CommandeFournisseur extends Commande
         {
             $error++;
             $this->error=$this->db->lasterror();
-            dol_syslog("CommandeFournisseur::setStatus ".$this->error);
+            dol_syslog(get_class($this)."::setStatus ".$this->error);
         }
 
         if (! $error)
@@ -1505,7 +1466,7 @@ class CommandeFournisseur extends Commande
      */
     function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0)
     {
-        dol_syslog("CommandeFournisseur::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $type");
+        dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $type");
         include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 
         if ($this->brouillon)

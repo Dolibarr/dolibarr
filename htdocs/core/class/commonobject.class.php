@@ -861,7 +861,7 @@ abstract class CommonObject
             return -1;
         }
     }
-    
+
     /**
      *  Change the payments methods
      *
@@ -876,11 +876,11 @@ abstract class CommonObject
     		// TODO uniformize field name
     		$fieldname = 'fk_mode_reglement';
     		if ($this->element == 'societe') $fieldname = 'mode_reglement';
-    
+
     		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
     		$sql .= ' SET '.$fieldname.' = '.$id;
     		$sql .= ' WHERE rowid='.$this->id;
-    
+
     		if ($this->db->query($sql))
     		{
     			$this->mode_reglement_id = $id;
@@ -901,7 +901,7 @@ abstract class CommonObject
     		return -2;
     	}
     }
-    
+
     /**
      *  Change the payments terms
      *
@@ -916,11 +916,11 @@ abstract class CommonObject
     		// TODO uniformize field name
     		$fieldname = 'fk_cond_reglement';
     		if ($this->element == 'societe') $fieldname = 'cond_reglement';
-    		
+
     		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
     		$sql .= ' SET '.$fieldname.' = '.$id;
     		$sql .= ' WHERE rowid='.$this->id;
-    		
+
     		if ($this->db->query($sql))
     		{
     			$this->cond_reglement_id = $id;
@@ -941,7 +941,7 @@ abstract class CommonObject
     		return -2;
     	}
     }
-    
+
     /**
      *	Define delivery address
      *
@@ -952,10 +952,10 @@ abstract class CommonObject
     {
     	$fieldname = 'fk_adresse_livraison';
     	if ($this->element == 'delivery' || $this->element == 'shipping') $fieldname = 'fk_address';
-    	
+
     	$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ".$fieldname." = ".$id;
     	$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
-    	
+
     	if ($this->db->query($sql))
     	{
     		$this->fk_delivery_address = $id;
@@ -968,7 +968,7 @@ abstract class CommonObject
     		return -1;
     	}
     }
-    
+
     /**
      *		Set last model used by doc generator
      *
@@ -1390,7 +1390,8 @@ abstract class CommonObject
         dol_syslog(get_class($this)."::update_note sql=".$sql, LOG_DEBUG);
         if ($this->db->query($sql))
         {
-            $this->note = $note;
+            $this->note = $note;            // deprecated
+            $this->note_private = $note;
             return 1;
         }
         else
@@ -1574,7 +1575,7 @@ abstract class CommonObject
     {
     	$origin = (! empty($origin) ? $origin : $this->origin);
     	$origin_id = (! empty($origin_id) ? $origin_id : $this->origin_id);
-    	
+
         $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
@@ -1826,7 +1827,7 @@ abstract class CommonObject
     {
         $elementId = (!empty($elementId)?$elementId:$this->id);
         $elementTable = (!empty($elementType)?$elementType:$this->table_element);
-        
+
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
@@ -2127,7 +2128,7 @@ abstract class CommonObject
         dol_syslog(get_class($this).'::hasProductsOrServices we found '.$nb.' qualified lines of products/servcies');
         return $nb;
     }
-    
+
     /**
      *	Set extra parameters
      *
@@ -2136,11 +2137,11 @@ abstract class CommonObject
     function setExtraParameters()
     {
     	$this->db->begin();
-    	
+
     	$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
     	$sql.= ' SET extraparams = "'.$this->db->escape(dol_json_encode($this->extraparams)).'"';
     	$sql.= ' WHERE rowid = '.$this->id;
-    	
+
     	dol_syslog(get_class($this)."::setExtraParameters sql=".$sql, LOG_DEBUG);
     	$resql = $this->db->query($sql);
     	if (! $resql)
@@ -2156,7 +2157,7 @@ abstract class CommonObject
     		return 1;
     	}
     }
-    
+
 
     // --------------------
     // TODO: All functions here must be redesigned and moved as they are not business functions but output functions

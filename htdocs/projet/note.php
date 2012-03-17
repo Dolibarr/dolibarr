@@ -52,7 +52,7 @@ if ($action == 'update_public' && $user->rights->projet->creer)
 
 	$db->begin();
 
-	$res=$project->update_note_public($_POST["note_public"],$user);
+	$res=$project->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
 	if ($res < 0)
 	{
 		$mesg='<div class="error">'.$project->error.'</div>';
@@ -71,7 +71,7 @@ if ($action == 'update_private' && $user->rights->projet->creer)
 
 	$db->begin();
 
-	$res=$project->update_note($_POST["note_private"],$user);
+	$res=$project->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
 	if ($res < 0)
 	{
 		$mesg='<div class="error">'.$project->error.'</div>';

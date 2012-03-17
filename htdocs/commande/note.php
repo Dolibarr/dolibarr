@@ -57,14 +57,14 @@ if (! $object->fetch($id, $ref) > 0)
 if ($action == 'setnote_public' && $user->rights->commande->creer)
 {
 	$object->fetch($id);
-	$result=$object->update_note_public(GETPOST('note_public','alpha'));
+	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 else if ($action == 'setnote' && $user->rights->commande->creer)
 {
 	$object->fetch($id);
-	$result=$object->update_note(GETPOST('note','alpha'));
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -106,11 +106,11 @@ if ($id > 0 || ! empty($ref))
 	// Customer
 	print "<tr><td>".$langs->trans("Company")."</td>";
 	print '<td colspan="3">'.$soc->getNomUrl(1).'</td></tr>';
-	
+
 	print "</table>";
-	
+
 	print '<br>';
-	
+
 	include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
 
 	print '</div>';

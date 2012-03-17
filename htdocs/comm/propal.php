@@ -157,7 +157,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 	$result = $object->deleteline($lineid);
 	// reorder lines
 	if ($result) $object->line_order(true);
-	
+
 	// Define output language
 	$outputlangs = $langs;
 	$newlang='';
@@ -173,7 +173,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 		$ret=$object->fetch($id);    // Reload to get new records
 		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
 	}
-	
+
 	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 	exit;
 }
@@ -249,14 +249,14 @@ else if ($action == 'set_ref_client' && $user->rights->propale->creer)
 else if ($action == 'setnote_public' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
-	$result=$object->update_note_public(GETPOST('note_public','alpha'));
+	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 else if ($action == 'setnote' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
-	$result=$object->update_note(GETPOST('note','alpha'));
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -1049,12 +1049,12 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	if ($action == 'addcontact' && $user->rights->propale->creer)
 	{
 		$result = $object->fetch($id);
-	
+
 		if ($result > 0 && $id > 0)
 		{
 			$result = $object->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
 		}
-	
+
 		if ($result >= 0)
 		{
 			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -1073,7 +1073,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 			}
 		}
 	}
-	
+
 	// Bascule du statut d'un contact
 	else if ($action == 'swapstatut' && $user->rights->propale->creer)
 	{
@@ -1086,13 +1086,13 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 			dol_print_error($db);
 		}
 	}
-	
+
 	// Efface un contact
 	else if ($action == 'deletecontact' && $user->rights->propale->creer)
 	{
 		$object->fetch($id);
 		$result = $object->delete_contact($lineid);
-	
+
 		if ($result >= 0)
 		{
 			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -1537,19 +1537,19 @@ if ($id > 0 || ! empty($ref))
 
 	// Statut
 	print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$object->getLibStatut(4).'</td></tr>';
-	
+
 	print '</table><br>';
 
 	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
 		require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
 		$formcompany= new FormCompany($db);
-		 
+
 		$blocname = 'contacts';
 		$title = $langs->trans('ContactsAddresses');
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
 	}
-	
+
     if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     {
     	$blocname = 'notes';

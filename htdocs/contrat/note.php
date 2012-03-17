@@ -52,7 +52,7 @@ if ($_POST["action"] == 'update_public' && $user->rights->contrat->creer)
 {
 	$db->begin();
 
-	$res=$contrat->update_note_public($_POST["note_public"],$user);
+	$res=$contrat->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
 	if ($res < 0)
 	{
 		$mesg='<div class="error">'.$contrat->error.'</div>';
@@ -68,7 +68,7 @@ if ($_POST["action"] == 'update' && $user->rights->contrat->creer)
 {
 	$db->begin();
 
-	$res=$contrat->update_note($_POST["note"],$user);
+	$res=$contrat->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
 	if ($res < 0)
 	{
 		$mesg='<div class="error">'.$contrat->error.'</div>';

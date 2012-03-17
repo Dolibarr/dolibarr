@@ -3178,7 +3178,7 @@ function picto_required()
 function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
 {
     $pattern = "/<[^>]+>/";
-    $temp = dol_entity_decode($StringHtml,$pagecodeto);
+    $temp = dol_html_entity_decode($StringHtml,ENT_COMPAT,$pagecodeto);
     $temp = preg_replace($pattern,"",$temp);
 
     // Supprime aussi les retours
@@ -3284,19 +3284,6 @@ function dol_htmlcleanlastbr($stringtodecode)
 }
 
 /**
- *	This function is called to decode a string with HTML entities (it decodes entities tags)
- *
- * 	@param	string	$stringhtml     stringhtml
- *  @param  string	$pagecodeto     Encoding of input string
- * 	@return string	  	    		decodestring
- */
-function dol_entity_decode($stringhtml,$pagecodeto='UTF-8')
-{
-    $ret=dol_html_entity_decode($stringhtml,ENT_COMPAT,$pagecodeto);
-    return $ret;
-}
-
-/**
  * Replace html_entity_decode functions to manage errors
  *
  * @param   string	$a		Operand a
@@ -3304,7 +3291,7 @@ function dol_entity_decode($stringhtml,$pagecodeto='UTF-8')
  * @param   string	$c		Operand c
  * @return  string			String decoded
  */
-function dol_html_entity_decode($a,$b,$c)
+function dol_html_entity_decode($a,$b,$c='UTF-8')
 {
     // We use @ to avoid warning on PHP4 that does not support entity decoding to UTF8;
     $ret=@html_entity_decode($a,$b,$c);
@@ -3319,7 +3306,7 @@ function dol_html_entity_decode($a,$b,$c)
  * @param   string	$c		Operand c
  * @return  string      	String encoded
  */
-function dol_htmlentities($a,$b,$c)
+function dol_htmlentities($a,$b,$c='UTF-8')
 {
     // We use @ to avoid warning on PHP4 that does not support entity decoding to UTF8;
     $ret=@htmlentities($a,$b,$c);

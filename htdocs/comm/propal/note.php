@@ -50,14 +50,14 @@ $object = new Propal($db);
 if ($action == 'setnote_public' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
-	$result=$object->update_note_public(GETPOST('note_public','alpha'));
+	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 else if ($action == 'setnote' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
-	$result=$object->update_note(GETPOST('note','alpha'));
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -142,11 +142,11 @@ if ($id > 0 || ! empty($ref))
 			}
 			print '</td>';
 			print '</tr>';
-			
+
 			print "</table>";
-			
+
 			print '<br>';
-			
+
 			include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
 
 			print '</div>';

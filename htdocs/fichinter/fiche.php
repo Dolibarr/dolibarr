@@ -207,7 +207,7 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fich
 {
 	$object->fetch($id);
 	$object->delete($user);
-	
+
     Header('Location: '.DOL_URL_ROOT.'/fichinter/list.php?leftmenu=ficheinter');
     exit;
 }
@@ -221,13 +221,13 @@ else if ($action == 'setdescription' && $user->rights->ficheinter->creer)
 else if ($action == 'setnote_public' && $user->rights->ficheinter->creer)
 {
     $object->fetch($id);
-    $result=$object->update_note_public(GETPOST('note_public','alpha'));
+    $result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 else if ($action == 'setnote_private' && $user->rights->ficheinter->creer)
 {
     $object->fetch($id);
-    $result=$object->update_note(GETPOST('note_private','alpha'));
+    $result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -366,13 +366,13 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 		exit;
 	}
 	$result=$objectline->deleteline();
-	
+
 	if ($object->fetch($objectline->fk_fichinter) <= 0)
 	{
 		dol_print_error($db);
 		exit;
 	}
-	
+
 	// Define output language
 	$outputlangs = $langs;
 	$newlang='';
@@ -626,12 +626,12 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	if ($action == 'addcontact' && $user->rights->ficheinter->creer)
 	{
 		$result = $object->fetch($id);
-	
+
 		if ($result > 0 && $id > 0)
 		{
 			$result = $object->add_contact(GETPOST('contactid','int'), GETPOST('type','int'), GETPOST('source','alpha'));
 		}
-	
+
 		if ($result >= 0)
 		{
 			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -650,7 +650,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 			}
 		}
 	}
-	
+
 	// bascule du statut d'un contact
 	else if ($action == 'swapstatut' && $user->rights->ficheinter->creer)
 	{
@@ -663,13 +663,13 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 			dol_print_error($db);
 		}
 	}
-	
+
 	// Efface un contact
 	else if ($action == 'deletecontact' && $user->rights->ficheinter->creer)
 	{
 		$object->fetch($id);
 		$result = $object->delete_contact(GETPOST('lineid','int'));
-	
+
 		if ($result >= 0)
 		{
 			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -914,15 +914,15 @@ else if ($id > 0 || ! empty($ref))
 
     // Statut
     print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
-    
+
     print "</table><br>";
-    
+
     if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
     {
     	require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
     	require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
     	$formcompany= new FormCompany($db);
-    
+
     	$blocname = 'contacts';
     	$title = $langs->trans('ContactsAddresses');
     	include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
