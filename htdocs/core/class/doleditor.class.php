@@ -65,7 +65,7 @@ class DolEditor
     {
     	global $conf,$langs;
 
-    	dol_syslog("DolEditor::DolEditor htmlname=".$htmlname." toolbarname=".$toolbarname);
+    	dol_syslog(get_class($this)."::DolEditor htmlname=".$htmlname." toolbarname=".$toolbarname);
 
     	if (! $rows) $rows=round($height/20);
     	if (! $cols) $cols=($width?round($width/6):80);
@@ -177,7 +177,7 @@ class DolEditor
             						customConfig : \''.dol_buildpath('/theme/'.$conf->theme.'/ckeditor/config.js',1).'\',
             						toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
-            						width: '.($this->width ? $this->width : '\'\'').',
+            						width: '.($this->width ? '\''.$this->width.'\'' : '\'\'').',
             						height: '.$this->height.',
                                     skin: \''.$skin.'\',
                                     on :
