@@ -207,11 +207,11 @@ for ($i=1; $i<=4; $i++) {
 </table>
 <br>
 
-<center>
+<div align="center">
 <input type="submit" class="button" name="save" value="<?php echo $langs->trans("Save"); ?>">
 &nbsp; &nbsp;
 <input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
-</center>
+</div>
 
 </form>
 

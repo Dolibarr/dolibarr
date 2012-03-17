@@ -120,7 +120,7 @@
 <br>
 <?php } ?>
 
-<center><input type="submit" class="button" value="<?php echo $langs->trans("Create"); ?>"></center>
+<div align="center"><input type="submit" class="button" value="<?php echo $langs->trans("Create"); ?>"></div>
 
 </form>
 
