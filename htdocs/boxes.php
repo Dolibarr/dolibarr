@@ -27,49 +27,41 @@
 
 
 /**
- * 		Show a HTML Tab with boxes of a particular area including personalized choices of user
+ * 	Show a HTML Tab with boxes of a particular area including personalized choices of user
  *
- * 		@param	   User         $user		 Object User
- * 		@param	   String       $areacode    Code of area for pages (0=value for Home page)
- * 		@return    int                       <0 if KO, Nb of boxes shown of OK (0 to n)
+ * 	@param	   User         $user		 Object User
+ * 	@param	   String       $areacode    Code of area for pages (0=value for Home page)
+ * 	@return    int                       <0 if KO, Nb of boxes shown of OK (0 to n)
  */
 function printBoxesArea($user,$areacode)
 {
     global $conf,$langs,$db;
 
     $infobox=new InfoBox($db);
-    $boxarray=$infobox->listboxes('activated',$areacode,$user);
+    $boxactivated=$infobox->listboxes('activated',$areacode,$user);
+    $arrayboxactivatedid=array();
+    foreach($boxactivated as $box) $arrayboxactivatedid[$box->id]=$box->id;
 
     $selectboxlist='';
-    /*
     if ($conf->use_javascript_ajax)
     {
-        $sql = "SELECT rowid, file, note, tms";
-        $sql.= " FROM ".MAIN_DB_PREFIX."boxes_def";
-        $sql.= " WHERE entity = ".$conf->entity;
-        $resql = $db->query($sql);
-        $var=true;
+        $emptyuser=new User($db);
+        $boxavailable=$infobox->listboxes('available',$areacode,$emptyuser,$arrayboxactivatedid);
 
-        if ($resql)
+        $arrayboxtoactivatelabel=array();
+        foreach($boxavailable as $box)
         {
-            $num = $db->num_rows($resql);
-            $i = 0;
-
-            // Boucle sur toutes les boites
-            while ($i < $num)
-            {
-                $obj = $db->fetch_object($resql);
-
-
-
-            }
+            $arrayboxtoactivatelabel[$box->id]=$box->boxlabel;
         }
-    }*/
+        $form=new Form($db);
+        // TODO enable
+        //$selectboxlist=$form->selectarray('boxcombo', $arrayboxtoactivatelabel);
+    }
 
-    if (count($boxarray))
+    print load_fiche_titre($langs->trans("OtherInformationsBoxes"),$selectboxlist,'','','otherboxes');
+
+    if (count($boxactivated))
     {
-        print load_fiche_titre($langs->trans("OtherInformationsBoxes"),$selectboxlist,'','','otherboxes');
-
         print '<table width="100%" class="notopnoleftnoright">';
         print '<tr><td class="notopnoleftnoright">'."\n";
 
@@ -83,13 +75,13 @@ function printBoxesArea($user,$areacode)
         if (! empty($conf->global->MAIN_BOXES_MAXLINES)) $box_max_lines=$conf->global->MAIN_BOXES_MAXLINES;
 
         $ii=0;
-        foreach ($boxarray as $key => $box)
+        foreach ($boxactivated as $key => $box)
         {
             if (preg_match('/^A/i',$box->box_order)) // column A
             {
                 $ii++;
-                //print 'box_id '.$boxarray[$ii]->box_id.' ';
-                //print 'box_order '.$boxarray[$ii]->box_order.'<br>';
+                //print 'box_id '.$boxactivated[$ii]->box_id.' ';
+                //print 'box_order '.$boxactivated[$ii]->box_order.'<br>';
                 // Affichage boite key
                 $box->loadBox($box_max_lines);
                 $box->showBox();
@@ -111,13 +103,13 @@ function printBoxesArea($user,$areacode)
         print '<div id="right" class="connectedSortable">'."\n";
 
         $ii=0;
-        foreach ($boxarray as $key => $box)
+        foreach ($boxactivated as $key => $box)
         {
             if (preg_match('/^B/i',$box->box_order)) // colonne B
             {
                 $ii++;
-                //print 'box_id '.$boxarray[$ii]->box_id.' ';
-                //print 'box_order '.$boxarray[$ii]->box_order.'<br>';
+                //print 'box_id '.$boxactivated[$ii]->box_id.' ';
+                //print 'box_order '.$boxactivated[$ii]->box_order.'<br>';
                 // Affichage boite key
                 $box->loadBox($box_max_lines);
                 $box->showBox();
@@ -143,6 +135,7 @@ function printBoxesArea($user,$areacode)
         {
             print "\n";
             print '<script type="text/javascript" language="javascript">';
+            // For moving
             print 'jQuery(function() {
                         jQuery("#left, #right").sortable({
                             /* placeholder: \'ui-state-highlight\', */
@@ -152,25 +145,32 @@ function printBoxesArea($user,$areacode)
                             containment: \'.fiche\',
                             connectWith: \'.connectedSortable\',
                             stop: function(event, ui) {
-                                updateOrder();
+                                updateOrder(0);
                             }
                         });
                     });
-            ';
-            print "\n";
-            print 'function updateOrder(){'."\n";
-            print 'var left_list = cleanSerialize(jQuery("#left").sortable("serialize" ));'."\n";
-            print 'var right_list = cleanSerialize(jQuery("#right").sortable("serialize" ));'."\n";
-            print 'var boxorder = \'A:\' + left_list + \'-B:\' + right_list;'."\n";
-            //print 'alert(\'boxorder=\' + boxorder);';
-            print 'var userid = \''.$user->id.'\';'."\n";
-            print 'jQuery.get(\'core/ajax/box.php?boxorder=\'+boxorder+\'&userid=\'+'.$user->id.');'."\n";
-            print '}'."\n";
+            '."\n";
+            print 'function updateOrder() {
+            		var left_list = cleanSerialize(jQuery("#left").sortable("serialize" ));
+            		var right_list = cleanSerialize(jQuery("#right").sortable("serialize" ));
+            		var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
+                    var userid = \''.$user->id.'\';
+					jQuery.get(\''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&userid=\'+'.$user->id.');
+            		}'."\n";
+            // For closing
+            print 'jQuery(document).ready(function() {
+                      	jQuery(".boxclose").click(function() {
+                      		var self = this;	// because JQuery can modify this
+                          	var boxid=self.id.substring(8);
+                            jQuery(\'#boxto_\'+boxid).remove();
+                            updateOrder();
+                       	});
+                   });'."\n";
             print '</script>'."\n";
         }
     }
 
-    return count($boxarray);
+    return count($boxactivated);
 }
 
 
@@ -199,7 +199,7 @@ class InfoBox
      *  @param	string	$mode			'available' or 'activated'
      *  @param	string	$zone			Name or area (-1 for all, 0 for Homepage, 1 for xxx, ...)
      *  @param  User    $user	  		Objet user to filter (used only if $zone >= 0)
-     *  @param	array	$excludelist	Array of box.box_id = boxes_def.rowid to exclude
+     *  @param	array	$excludelist	Array of box id (box.box_id = boxes_def.rowid) to exclude
      *  @return array               	Array of boxes
      */
     function listBoxes($mode,$zone,$user,$excludelist=array())
@@ -259,6 +259,7 @@ class InfoBox
 
                         // box properties
                         $box->rowid=$obj->rowid;
+                        $box->id=$obj->box_id;
                         $box->position=$obj->position;
                         $box->box_order=$obj->box_order;
                         $box->fk_user=$obj->fk_user;
@@ -302,14 +303,13 @@ class InfoBox
     }
 
 
-
     /**
-     *      Save order of boxes for area and user
+     *  Save order of boxes for area and user
      *
-     *      @param      string     $zone       Name of area (0 for Homepage, ...)
-     *      @param      string     $boxorder   List of boxes with correct order 'A:123,456,...-B:789,321...'
-     *      @param      int        $userid     Id of user
-     *      @return     int                    <0 if KO, >= 0 if OK
+     *  @param	string	$zone       		Name of area (0 for Homepage, ...)
+     *  @param  string  $boxorder   		List of boxes with correct order 'A:123,456,...-B:789,321...'
+     *  @param  int     $userid     		Id of user
+     *  @return int                   		<0 if KO, >= 0 if OK
      */
     function saveboxorder($zone,$boxorder,$userid=0)
     {
@@ -319,7 +319,7 @@ class InfoBox
 
         require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 
-        dol_syslog(get_class($this)."::saveboxorder zone=".$zone." user=".$userid);
+        dol_syslog(get_class($this)."::saveboxorder zone=".$zone." userid=".$userid);
 
         if (! $userid || $userid == 0) return 0;
 
@@ -328,7 +328,7 @@ class InfoBox
 
         $this->db->begin();
 
-        // Sauve parametre indiquant que le user a une
+        // Sauve parametre indiquant que le user a une config dediee
         $confuserzone='MAIN_BOXES_'.$zone;
         $tab[$confuserzone]=1;
         if (dol_set_user_param($this->db, $conf, $user, $tab) < 0)
@@ -338,6 +338,7 @@ class InfoBox
             return -3;
         }
 
+        // Delete all lines
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
         $sql.= " USING ".MAIN_DB_PREFIX."boxes, ".MAIN_DB_PREFIX."boxes_def";
         $sql.= " WHERE ".MAIN_DB_PREFIX."boxes.box_id = ".MAIN_DB_PREFIX."boxes_def.rowid";
@@ -355,7 +356,7 @@ class InfoBox
                 $part=explode(':',$collist);
                 $colonne=$part[0];
                 $list=$part[1];
-                dol_syslog('InfoBox::saveboxorder column='.$colonne.' list='.$list);
+                dol_syslog(get_class($this)."::saveboxorder column=".$colonne.' list='.$list);
 
                 $i=0;
                 $listarray=explode(',',$list);

@@ -50,7 +50,7 @@ class box_members extends ModeleBoxes
 		global $langs;
 		$langs->load("boxes");
 
-		$this->boxlabel=$langs->trans("BoxLastMembers");
+		$this->boxlabel=$langs->transnoentitiesnoconv("BoxLastMembers");
 	}
 
 	/**

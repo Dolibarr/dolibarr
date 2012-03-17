@@ -52,55 +52,85 @@ if ($action == 'addconst')
 
 if ($action == 'add')
 {
-	$sql = "SELECT rowid";
-	$sql.= " FROM ".MAIN_DB_PREFIX."boxes";
-	$sql.= " WHERE fk_user = 0";
-	$sql.= " AND box_id = ".$_POST["boxid"];
-	$sql.= " AND position = ".$_POST["pos"];
+    $error=0;
 
-	$resql = $db->query($sql);
-	dol_syslog("boxes.php::search if box active sql=".$sql);
-	if ($resql)
+    $db->begin();
+
+	// Initialize distinctfkuser with all already existing values of fk_user (user that use a personalized view of boxes for pos)
+	$distinctfkuser=array();
+	if (! $error)
 	{
-		$num = $db->num_rows($resql);
-		if ($num == 0)
+		$sql = "SELECT fk_user";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user_param";
+		$sql.= " WHERE param = 'MAIN_BOXES_".$db->escape(GETPOST("pos","alpha"))."' AND value = '1'";
+		$sql.= " AND entity = ".$conf->entity;
+		$resql = $db->query($sql);
+		dol_syslog("boxes.php search fk_user to activate box for sql=".$sql);
+		if ($resql)
 		{
-			$db->begin();
-
-			// Si la boite n'est pas deja active, insert with box_order=''
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (";
-			$sql.= "box_id";
-			$sql.= ", position";
-			$sql.= ", box_order";
-			$sql.= ", fk_user";
-			$sql.= ") values (";
-			$sql.= $_POST["boxid"];
-			$sql.= ", ".$_POST["pos"];
-			$sql.= ", ''";
-			$sql.= ", 0";
-			$sql.= ")";
-
-			dol_syslog("boxes.php activate box sql=".$sql);
-			$resql = $db->query($sql);
-
-			// Remove all personalized setup when a box is activated or disabled (to be sure user see new box)
-			// TODO Disable this when adding combo will be available on home page for each user.
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param WHERE param LIKE 'MAIN_BOXES_%'";
-			dol_syslog("boxes.php delete user_param sql=".$sql);
-			$resql = $db->query($sql);
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE fk_user != 0";
-			dol_syslog("boxes.php delete user_param sql=".$sql);
-			$resql = $db->query($sql);
-
-			$db->commit();
+		    $num = $db->num_rows($resql);
+            $i=0;
+		    while ($i < $num)
+		    {
+		        $obj=$db->fetch_object($resql);
+		        $distinctfkuser[$obj->fk_user]=$obj->fk_user;
+		        $i++;
+		    }
 		}
+		else
+		{
+		    $errmesg=$db->lasterror();
+		    $error++;
+		}
+	}
 
+	foreach($distinctfkuser as $fk_user)
+	{
+	    if (! $error && $fk_user != 0)    // We will add fk_user = 0 later.
+	    {
+	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (";
+	        $sql.= "box_id, position, box_order, fk_user";
+	        $sql.= ") values (";
+	        $sql.= GETPOST("boxid","int").", ".GETPOST("pos","alpha").", 'A01', ".$fk_user;
+	        $sql.= ")";
+
+	        dol_syslog("boxes.php activate box sql=".$sql);
+	        $resql = $db->query($sql);
+	        if (! $resql)
+	        {
+		        $errmesg=$db->lasterror();
+	            $error++;
+	        }
+	    }
+	}
+
+	// If value 0 was not included, we add it.
+	if (! $error)
+	{
+	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (";
+	    $sql.= "box_id, position, box_order, fk_user";
+	    $sql.= ") values (";
+	    $sql.= GETPOST("boxid","int").", ".GETPOST("pos","alpha").", 'A01', 0";
+	    $sql.= ")";
+
+	    dol_syslog("boxes.php activate box sql=".$sql);
+	    $resql = $db->query($sql);
+        if (! $resql)
+        {
+		    $errmesg=$db->lasterror();
+            $error++;
+        }
+	}
+
+	if (! $error)
+	{
 		Header("Location: boxes.php");
+	    $db->commit();
 		exit;
 	}
 	else
 	{
-		dol_print_error($db);
+	    $db->rollback();
 	}
 }
 
@@ -176,6 +206,8 @@ print_fiche_titre($langs->trans("Boxes"),'','setup');
 
 print $langs->trans("BoxesDesc")." ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
 
+dol_htmloutput_errors($errmesg);
+
 
 /*
  * Recherche des boites actives par defaut pour chaque position possible
@@ -212,7 +244,7 @@ if ($resql)
 		// This occurs just after an insert.
 		if ($decalage)
 		{
-			$sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order=".$decalage." WHERE rowid=".$obj->rowid;
+			$sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order='".$decalage."' WHERE rowid=".$obj->rowid;
 			$db->query($sql);
 		}
 	}
@@ -236,13 +268,13 @@ if ($resql)
 					if (preg_match("/[13579]{1}/",substr($record['box_order'],-1)))
 					{
 						$box_order = "A0".$record['box_order'];
-						$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE box_order = ".$record['box_order'];
+						$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE box_order = '".$record['box_order']."'";
 						$resql = $db->query($sql);
 					}
 					else if (preg_match("/[02468]{1}/",substr($record['box_order'],-1)))
 					{
 						$box_order = "B0".$record['box_order'];
-						$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE box_order = ".$record['box_order'];
+						$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE box_order = '".$record['box_order']."'";
 						$resql = $db->query($sql);
 					}
 				}
@@ -251,13 +283,13 @@ if ($resql)
 					if (preg_match("/[13579]{1}/",substr($record['box_order'],-1)))
 					{
 						$box_order = "A".$record['box_order'];
-						$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE box_order = ".$record['box_order'];
+						$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE box_order = '".$record['box_order']."'";
 						$resql = $db->query($sql);
 					}
 					else if (preg_match("/[02468]{1}/",substr($record['box_order'],-1)))
 					{
 						$box_order = "B".$record['box_order'];
-						$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE box_order = ".$record['box_order'];
+						$sql="UPDATE ".MAIN_DB_PREFIX."boxes SET box_order = '".$box_order."' WHERE box_order = '".$record['box_order']."'";
 						$resql = $db->query($sql);
 					}
 				}

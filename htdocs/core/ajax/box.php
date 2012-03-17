@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 /**
  *       \file       htdocs/core/ajax/box.php
- *       \brief      File to return Ajax response on Box move
+ *       \brief      File to return Ajax response on Box move or close
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
@@ -45,14 +45,14 @@ top_httphead();
 
 print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
-// Registering the location of boxes
-if((isset($_GET['boxorder']) && !empty($_GET['boxorder'])) && (isset($_GET['userid']) && !empty($_GET['userid'])))
+// Registering the location of boxes after a move
+if (GETPOST('boxorder') && GETPOST('userid'))
 {
 	// boxorder value is the target order: "A:idboxA1,idboxA2,A-B:idboxB1,idboxB2,B"
-	dol_syslog("AjaxBox boxorder=".$_GET['boxorder']." userid=".$_GET['userid'], LOG_DEBUG);
+	dol_syslog("AjaxBox boxorder=".GETPOST('boxorder')." userid=".GETPOST('userid'), LOG_DEBUG);
 
 	$infobox=new InfoBox($db);
-	$result=$infobox->saveboxorder("0",$_GET['boxorder'],$_GET['userid']);
+	$result=$infobox->saveboxorder("0",GETPOST('boxorder'),GETPOST('userid'));
 }
 
 ?>

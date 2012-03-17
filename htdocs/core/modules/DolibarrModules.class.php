@@ -613,7 +613,7 @@ abstract class DolibarrModules
                             $lastid=$this->db->last_insert_id(MAIN_DB_PREFIX."boxes_def","rowid");
 
                             $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id,position,box_order,fk_user)";
-                            $sql.= " VALUES (".$lastid.", 0, 0, 0)";
+                            $sql.= " VALUES (".$lastid.", 0, '0', 0)";
 
                             dol_syslog(get_class($this)."::insert_boxes sql=".$sql);
                             $resql=$this->db->query($sql);

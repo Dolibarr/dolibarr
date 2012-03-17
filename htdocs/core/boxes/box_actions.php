@@ -50,7 +50,7 @@ class box_actions extends ModeleBoxes
 		global $langs;
 		$langs->load("boxes");
 
-		$this->boxlabel=$langs->trans("BoxLastActions");
+		$this->boxlabel=$langs->transnoentitiesnoconv("BoxLastActions");
 	}
 
 	/**

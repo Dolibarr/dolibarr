@@ -50,7 +50,7 @@ class box_commandes extends ModeleBoxes
         global $langs;
         $langs->load("boxes");
 
-        $this->boxlabel=$langs->trans("BoxLastCustomerOrders");
+        $this->boxlabel=$langs->transnoentitiesnoconv("BoxLastCustomerOrders");
     }
 
     /**

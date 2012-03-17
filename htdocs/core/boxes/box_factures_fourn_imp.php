@@ -49,7 +49,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 		global $langs;
 		$langs->load("boxes");
 
-		$this->boxlabel=$langs->trans("BoxOldestUnpaidSupplierBills");
+		$this->boxlabel=$langs->transnoentitiesnoconv("BoxOldestUnpaidSupplierBills");
 	}
 
 	/**
