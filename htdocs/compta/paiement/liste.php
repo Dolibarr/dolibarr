@@ -115,7 +115,7 @@ else
     if ($_REQUEST["search_company"])     $sql .=" AND s.nom LIKE '%".$db->escape($_REQUEST["search_company"])."%'";
 }
 $sql.= $db->order($sortfield,$sortorder);
-$sql.= $db->plimit($limit+1 ,$offset);
+$sql.= $db->plimit($limit+1, $offset);
 //print "$sql";
 
 $resql = $db->query($sql);

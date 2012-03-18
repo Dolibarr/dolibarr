@@ -35,7 +35,7 @@ class InterfaceNotification
 
     /**
      *   Constructor
-     * 
+     *
      *   @param		DoliDB		$db      Database handler
      */
     function InterfaceNotification($db)
@@ -51,6 +51,7 @@ class InterfaceNotification
 
     /**
      *   Return name of trigger file
+     *
      *   @return     string      Name of trigger file
      */
     function getName()
@@ -60,6 +61,7 @@ class InterfaceNotification
 
     /**
      *   Return description of trigger file
+     *
      *   @return     string      Description of trigger file
      */
     function getDesc()
@@ -69,6 +71,7 @@ class InterfaceNotification
 
     /**
      *   Return version of trigger file
+     *
      *   @return     string      Version of trigger file
      */
     function getVersion()
@@ -85,6 +88,7 @@ class InterfaceNotification
     /**
      *      Function called when a Dolibarrr business event is done.
      *      All functions "run_trigger" are triggered if file is inside directory htdocs/core/triggers
+     *
      *      @param      action      Event code (COMPANY_CREATE, PROPAL_VALIDATE, ...)
      *      @param      object      Object action is done on
      *      @param      user        Object user
@@ -202,6 +206,7 @@ class InterfaceNotification
 
     /**
      * Return list of events managed by notification module
+     *
      * @return      array       Array of events managed by notification module
      */
     function getListOfManagedEvents()

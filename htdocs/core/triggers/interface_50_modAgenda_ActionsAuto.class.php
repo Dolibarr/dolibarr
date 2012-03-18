@@ -40,7 +40,7 @@ class InterfaceActionsAuto
 
     /**
      *   Constructor
-     * 
+     *
      *   @param		DoliDB		$db      Database handler
      */
     function InterfaceActionsAuto($db)
@@ -56,6 +56,7 @@ class InterfaceActionsAuto
 
     /**
      *   Return name of trigger file
+     *
      *   @return     string      Name of trigger file
      */
     function getName()
@@ -65,6 +66,7 @@ class InterfaceActionsAuto
 
     /**
      *   Return description of trigger file
+     *
      *   @return     string      Description of trigger file
      */
     function getDesc()
@@ -74,6 +76,7 @@ class InterfaceActionsAuto
 
     /**
      *   Return version of trigger file
+     *
      *   @return     string      Version of trigger file
      */
     function getVersion()

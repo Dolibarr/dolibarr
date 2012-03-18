@@ -1463,8 +1463,8 @@ function isValidEmail($address)
 /**
  *  Return true if phone number syntax is ok
  *
- *  @param      string		$address    phone (Ex: "0601010101")
- *  @return     boolean     			true if phone syntax is OK, false if KO or empty string
+ *  @param	string		$phone		phone (Ex: "0601010101")
+ *  @return boolean     			true if phone syntax is OK, false if KO or empty string
  */
 function isValidPhone($phone)
 {

@@ -35,7 +35,7 @@ class InterfaceLdapsynchro
 
     /**
      *   Constructor
-     * 
+     *
      *   @param		DoliDB		$db      Database handler
      */
     function InterfaceLdapsynchro($db)
@@ -51,6 +51,7 @@ class InterfaceLdapsynchro
 
     /**
      *   Return name of trigger file
+     *
      *   @return     string      Name of trigger file
      */
     function getName()
@@ -60,6 +61,7 @@ class InterfaceLdapsynchro
 
     /**
      *   Return description of trigger file
+     *
      *   @return     string      Description of trigger file
      */
     function getDesc()
@@ -69,6 +71,7 @@ class InterfaceLdapsynchro
 
     /**
      *   Return version of trigger file
+     *
      *   @return     string      Version of trigger file
      */
     function getVersion()
@@ -85,6 +88,7 @@ class InterfaceLdapsynchro
     /**
      *      Function called when a Dolibarrr business event is done.
      *      All functions "run_trigger" are triggered if file is inside directory htdocs/core/triggers
+     *
      *      @param      action      Event code (COMPANY_CREATE, PROPAL_VALIDATE, ...)
      *      @param      object      Object action is done on
      *      @param      user        Object user
@@ -117,7 +121,7 @@ class InterfaceLdapsynchro
 	    	    $result=$ldap->add($dn,$info,$user);
 				if ($result < 0)
 				{
-					$this->error="ErrorLDAP"." ".$ldap->error;
+					$this->error="ErrorLDAP ".$ldap->error;
 				}
 				return $result;
     		}
@@ -148,7 +152,7 @@ class InterfaceLdapsynchro
 	    	    $result=$ldap->update($dn,$info,$user,$olddn);
 				if ($result < 0)
 				{
-					$this->error="ErrorLDAP"." ".$ldap->error;
+					$this->error="ErrorLDAP ".$ldap->error;
 				}
 				return $result;
     		}
@@ -179,7 +183,7 @@ class InterfaceLdapsynchro
                 $result=$ldap->update($dn,$info,$user,$olddn);
                 if ($result < 0)
                 {
-                    $this->error="ErrorLDAP"." ".$ldap->error;
+                    $this->error="ErrorLDAP ".$ldap->error;
                 }
                 return $result;
             }
@@ -202,7 +206,7 @@ class InterfaceLdapsynchro
 	    	    $result=$ldap->delete($dn,$info,$user);
 				if ($result < 0)
 				{
-					$this->error="ErrorLDAP"." ".$ldap->error;
+					$this->error="ErrorLDAP ".$ldap->error;
 				}
 				return $result;
     		}
@@ -226,7 +230,7 @@ class InterfaceLdapsynchro
 	    	    $result=$ldap->add($dn,$info,$user);
 				if ($result < 0)
 				{
-					$this->error="ErrorLDAP"." ".$ldap->error;
+					$this->error="ErrorLDAP ".$ldap->error;
 				}
 				return $result;
     		}
@@ -256,7 +260,7 @@ class InterfaceLdapsynchro
 	    	    $result=$ldap->update($dn,$info,$user,$olddn);
 				if ($result < 0)
 				{
-					$this->error="ErrorLDAP"." ".$ldap->error;
+					$this->error="ErrorLDAP ".$ldap->error;
 				}
 				return $result;
     		}
@@ -274,7 +278,7 @@ class InterfaceLdapsynchro
 	    	    $result=$ldap->delete($dn,$info,$user);
 				if ($result < 0)
 				{
-					$this->error="ErrorLDAP"." ".$ldap->error;
+					$this->error="ErrorLDAP ".$ldap->error;
 				}
 				return $result;
     		}
@@ -295,7 +299,7 @@ class InterfaceLdapsynchro
 	    	    $result=$ldap->add($dn,$info,$user);
 				if ($result < 0)
 				{
-					$this->error="ErrorLDAP"." ".$ldap->error;
+					$this->error="ErrorLDAP ".$ldap->error;
 				}
 				return $result;
     		}
@@ -326,7 +330,7 @@ class InterfaceLdapsynchro
 	    	    $result=$ldap->update($dn,$info,$user,$olddn);
 				if ($result < 0)
 				{
-					$this->error="ErrorLDAP"." ".$ldap->error;
+					$this->error="ErrorLDAP ".$ldap->error;
 				}
 				return $result;
     		}
@@ -345,7 +349,7 @@ class InterfaceLdapsynchro
 	    	    $result=$ldap->delete($dn,$info,$user);
 				if ($result < 0)
 				{
-					$this->error="ErrorLDAP"." ".$ldap->error;
+					$this->error="ErrorLDAP ".$ldap->error;
 				}
 	    	    return $result;
 			}
@@ -366,7 +370,7 @@ class InterfaceLdapsynchro
 	    	    $result=$ldap->add($dn,$info,$user);
 				if ($result < 0)
 				{
-					$this->error="ErrorLDAP"." ".$ldap->error;
+					$this->error="ErrorLDAP ".$ldap->error;
 				}
 	    	    return $result;
     		}
@@ -389,7 +393,7 @@ class InterfaceLdapsynchro
 		    	    $result=$ldap->update($dn,$info,$user,$olddn);
 					if ($result < 0)
 					{
-						$this->error="ErrorLDAP"." ".$ldap->error;
+						$this->error="ErrorLDAP ".$ldap->error;
 					}
 		    	    return $result;
 				}
@@ -417,7 +421,7 @@ class InterfaceLdapsynchro
 		    	    $result=$ldap->update($dn,$info,$user,$olddn);
 					if ($result < 0)
 					{
-						$this->error="ErrorLDAP"." ".$ldap->error;
+						$this->error="ErrorLDAP ".$ldap->error;
 					}
 		    	    return $result;
 				}
@@ -449,7 +453,7 @@ class InterfaceLdapsynchro
 	    	    $result=$ldap->update($dn,$info,$user,$olddn);
 				if ($result < 0)
 				{
-					$this->error="ErrorLDAP"." ".$ldap->error;
+					$this->error="ErrorLDAP ".$ldap->error;
 				}
 	    	    return $result;
     		}
@@ -472,7 +476,7 @@ class InterfaceLdapsynchro
 		    	    $result=$ldap->update($dn,$info,$user,$olddn);
 					if ($result < 0)
 					{
-						$this->error="ErrorLDAP"." ".$ldap->error;
+						$this->error="ErrorLDAP ".$ldap->error;
 					}
 		    	    return $result;
 				}
@@ -496,7 +500,7 @@ class InterfaceLdapsynchro
 		    	    $result=$ldap->update($dn,$info,$user,$olddn);
 					if ($result < 0)
 					{
-						$this->error="ErrorLDAP"." ".$ldap->error;
+						$this->error="ErrorLDAP ".$ldap->error;
 					}
 		    	    return $result;
 				}
@@ -516,7 +520,7 @@ class InterfaceLdapsynchro
 				$result=$ldap->delete($dn,$info,$user);
 				if ($result < 0)
 				{
-					$this->error="ErrorLDAP"." ".$ldap->error;
+					$this->error="ErrorLDAP ".$ldap->error;
 				}
 				return $result;
 			}

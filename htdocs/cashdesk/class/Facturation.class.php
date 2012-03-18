@@ -75,7 +75,7 @@ class Facturation
     public function Facturation()
     {
         $this->raz();
-        $this->raz_pers();
+        $this->razPers();
     }
 
 
@@ -115,7 +115,7 @@ class Facturation
 
 
         // Define part of HT, VAT, TTC
-        $resultarray=calcul_price_total($this->qte,$this->prix(),$this->remise_percent(),$vat_rate,0,0,0,'HT',0);
+        $resultarray=calcul_price_total($this->qte,$this->prix(),$this->remisePercent(),$vat_rate,0,0,0,'HT',0);
 
         // Calcul du total ht sans remise
         $total_ht = $resultarray[0];
@@ -123,14 +123,14 @@ class Facturation
         $total_ttc = $resultarray[2];
 
         // Calcul du montant de la remise
-        if ($this->remise_percent())
+        if ($this->remisePercent())
         {
-            $remise_percent = $this->remise_percent();
+            $remise_percent = $this->remisePercent();
         } else {
             $remise_percent = 0;
         }
         $montant_remise_ht = ($resultarray[6] - $resultarray[0]);
-        $this->montant_remise($montant_remise_ht);
+        $this->montantRemise($montant_remise_ht);
 
         $product = new Product($db);
         $product->fetch($this->id);
@@ -234,8 +234,8 @@ class Facturation
         $this->ref('RESET');
         $this->qte('RESET');
         $this->stock('RESET');
-        $this->remise_percent('RESET');
-        $this->montant_remise('RESET');
+        $this->remisePercent('RESET');
+        $this->montantRemise('RESET');
         $this->prix('RESET');
         $this->tva('RESET');
     }
@@ -245,13 +245,13 @@ class Facturation
      *
      *  @return	void
      */
-    public function raz_pers()
+    private function razPers()
     {
-        $this->num_facture('RESET');
+        $this->numInvoice('RESET');
         $this->getSetPaymentMode('RESET');
-        $this->montant_encaisse('RESET');
-        $this->montant_rendu('RESET');
-        $this->paiement_le('RESET');
+        $this->montantEncaisse('RESET');
+        $this->montantRendu('RESET');
+        $this->paiementLe('RESET');
 
         $this->prix_total_ht('RESET');
         $this->montant_tva('RESET');
@@ -368,7 +368,7 @@ class Facturation
      * @param	string	$aRemisePercent		Discount
      * @return	string						Discount
      */
-    public function remise_percent($aRemisePercent=null)
+    public function remisePercent($aRemisePercent=null)
     {
 
         if ( !$aRemisePercent )
@@ -392,7 +392,7 @@ class Facturation
      * @param	int		$aMontantRemise		Amount
      * @return	string						Amount
      */
-    public function montant_remise($aMontantRemise=null)
+    public function montantRemise($aMontantRemise=null)
     {
 
         if ( !$aMontantRemise ) {
@@ -467,7 +467,7 @@ class Facturation
      * @param string	$aNumFacture		Invoice ref
      * @return	string						Invoice ref
      */
-    public function num_facture( $aNumFacture=null )
+    public function numInvoice( $aNumFacture=null )
     {
 
         if ( !$aNumFacture ) {
@@ -516,7 +516,7 @@ class Facturation
      * @param	int		$aMontantEncaisse		Amount
      * @return	int								Amount
      */
-    public function montant_encaisse( $aMontantEncaisse=null )
+    public function montantEncaisse( $aMontantEncaisse=null )
     {
 
         if ( !$aMontantEncaisse ) {
@@ -541,7 +541,7 @@ class Facturation
      * @param	int			$aMontantRendu		Amount
      * @return	int								Amount
      */
-    public function montant_rendu( $aMontantRendu=null )
+    public function montantRendu( $aMontantRendu=null )
     {
 
         if ( !$aMontantRendu ) {
@@ -565,7 +565,7 @@ class Facturation
      * @param	date		$aPaiementLe		Date
      * @return	date							Date
      */
-    public function paiement_le( $aPaiementLe=null )
+    public function paiementLe( $aPaiementLe=null )
     {
         if ( !$aPaiementLe ) {
 

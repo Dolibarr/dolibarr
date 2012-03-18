@@ -34,7 +34,7 @@ class InterfaceWorkflowManager
 
     /**
      *   Constructor
-     * 
+     *
      *   @param		DoliDB		$db      Database handler
      */
     function InterfaceWorkflowManager($db)
@@ -51,6 +51,7 @@ class InterfaceWorkflowManager
 
     /**
      *   Return name of trigger file
+     *
      *   @return     string      Name of trigger file
      */
     function getName()
@@ -60,6 +61,7 @@ class InterfaceWorkflowManager
 
     /**
      *   Return description of trigger file
+     *
      *   @return     string      Description of trigger file
      */
     function getDesc()
@@ -69,6 +71,7 @@ class InterfaceWorkflowManager
 
     /**
      *   Return version of trigger file
+     *
      *   @return     string      Version of trigger file
      */
     function getVersion()

@@ -64,7 +64,7 @@ class localtax extends CommonObject
     	global $conf, $langs;
 
 		$error=0;
-		
+
 		// Clean parameters
 		$this->amount=trim($this->amount);
 		$this->label=trim($this->label);
@@ -131,7 +131,7 @@ class localtax extends CommonObject
     	global $conf, $langs;
 
 		$error=0;
-		
+
 		// Clean parameters
 		$this->amount=trim($this->amount);
 		$this->label=trim($this->label);
@@ -250,7 +250,7 @@ class localtax extends CommonObject
 		global $conf, $langs;
 
 		$error=0;
-		
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."localtax";
 		$sql.= " WHERE rowid=".$this->id;
 
@@ -300,6 +300,8 @@ class localtax extends CommonObject
     /**
      *	Hum la fonction s'appelle 'Solde' elle doit a mon avis calcluer le solde de localtax, non ?
      *
+     *	@param	int		$year		Year
+     *	@return	int					???
      */
     function solde($year = 0)
     {
@@ -317,8 +319,9 @@ class localtax extends CommonObject
     /**
      *	Total de la localtax des factures emises par la societe.
      *
+     *	@param	int		$year		Year
+     *	@return	int					???
      */
-
     function localtax_sum_collectee($year = 0)
     {
 
@@ -357,8 +360,9 @@ class localtax extends CommonObject
     /**
      *	localtax payed
      *
+     *	@param	int		$year		Year
+     *	@return	int					???
      */
-
     function localtax_sum_payee($year = 0)
     {
 
@@ -398,8 +402,9 @@ class localtax extends CommonObject
      *	localtax payed
      *  Total de la localtax payed
      *
+     *	@param	int		$year		Year
+     *	@return	int					???
      */
-
     function localtax_sum_reglee($year = 0)
     {
 

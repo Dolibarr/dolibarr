@@ -101,7 +101,7 @@ $filter_date2=dol_mktime(0,0,0,$_REQUEST['op2month'],$_REQUEST['op2day'],$_REQUE
 if (! empty($_REQUEST['filter_op1']) && $_REQUEST['filter_op1'] != -1 && $filter_date1 != '') $sql.= " AND date_ouverture_prevue ".$_REQUEST['filter_op1']." ".$db->idate($filter_date1);
 if (! empty($_REQUEST['filter_op2']) && $_REQUEST['filter_op2'] != -1 && $filter_date2 != '') $sql.= " AND date_fin_validite ".$_REQUEST['filter_op2']." ".$db->idate($filter_date2);
 $sql .= $db->order($sortfield,$sortorder);
-$sql .= $db->plimit($limit + 1 ,$offset);
+$sql .= $db->plimit($limit + 1, $offset);
 
 //print $sql;
 dol_syslog("contrat/services.php sql=".$sql);

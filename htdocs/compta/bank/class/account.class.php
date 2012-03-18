@@ -130,12 +130,12 @@ class Account extends CommonObject
     /**
      *      Add a link between bank line record and its source
      *
-     *      @param      line_id     Id ecriture bancaire
-     *      @param      url_id      Id parametre url
-     *      @param      url         Url
-     *      @param      label       Link label
-     *      @param      type        Type of link ('payment', 'company', 'member', ...)
-     *      @return     int         <0 if KO, id line if OK
+     *      @param	int		$line_id    Id ecriture bancaire
+     *      @param  int		$url_id     Id parametre url
+     *      @param  string	$url        Url
+     *      @param  string	$label      Link label
+     *      @param  string	$type       Type of link ('payment', 'company', 'member', ...)
+     *      @return int         		<0 if KO, id line if OK
      */
     function add_url_line($line_id, $url_id, $url, $label, $type)
     {
@@ -171,10 +171,10 @@ class Account extends CommonObject
      * 		TODO Move this into AccountLine
      *      Return array with links from llx_bank_url
      *
-     *      @param      fk_bank         To search using bank transaction id
-     *      @param		url_id          To search using link to
-     *      @param      type            To search using type
-     *      @return     array           Array of links
+     *      @param	int		$fk_bank        To search using bank transaction id
+     *      @param	int		$url_id         To search using link to
+     *      @param  string	$type           To search using type
+     *      @return array           		Array of links
      */
     function get_url($fk_bank='', $url_id='', $type='')
     {
@@ -227,18 +227,18 @@ class Account extends CommonObject
     /**
      *  Add an entry into table ".MAIN_DB_PREFIX."bank
      *
-     *  @param		$date			Date operation
-     *  @param		$oper			1,2,3,4... (deprecated) or TYP,VIR,PRE,LIQ,VAD,CB,CHQ...
-     *  @param		$label			Descripton
-     *  @param		$amount			Amount
-     *  @param		$num_chq		Numero cheque ou virement
-     *  @param		$categorie		Categorie optionnelle
-     *  @param		$user			User that create
-     *  @param		$emetteur		Name of cheque writer
-     *  @param		$banque			Bank of cheque writer
-     *  @return		int				Rowid of added entry, <0 if KO
+     *  @param	timsestmap	$date			Date operation
+     *  @param	string		$oper			1,2,3,4... (deprecated) or TYP,VIR,PRE,LIQ,VAD,CB,CHQ...
+     *  @param	string		$label			Descripton
+     *  @param	float		$amount			Amount
+     *  @param	string		$num_chq		Numero cheque ou virement
+     *  @param	string		$categorie		Categorie optionnelle
+     *  @param	User		$user			User that create
+     *  @param	string		$emetteur		Name of cheque writer
+     *  @param	string		$banque			Bank of cheque writer
+     *  @return	int							Rowid of added entry, <0 if KO
      */
-    function addline($date, $oper, $label, $amount, $num_chq='', $categorie='', $user, $emetteur='',$banque='')
+    function addline($date, $oper, $label, $amount, $num_chq, $categorie, $user, $emetteur='',$banque='')
     {
         // Clean parameters
         $emetteur=trim($emetteur);
@@ -344,10 +344,10 @@ class Account extends CommonObject
     }
 
     /**
-     *      Create bank account into database
+     *  Create bank account into database
      *
-     *      @param      user        Object user making action
-     *      @return     int        < 0 if KO, > 0 if OK
+     *  @param	User	$user       Object user making action
+     *  @return int        			< 0 if KO, > 0 if OK
      */
     function create($user='')
     {
@@ -455,8 +455,8 @@ class Account extends CommonObject
     /**
      *    	Update bank account card
      *
-     *    	@param      user        Object user making action
-     *		@return		int			<0 si ko, >0 si ok
+     *    	@param	User	$user       Object user making action
+     *		@return	int					<0 si ko, >0 si ok
      */
     function update($user='')
     {
@@ -520,8 +520,8 @@ class Account extends CommonObject
     /**
      *    	Update BBAN (RIB) account fields
      *
-     *    	@param      user        Object user making update
-     *		@return		int			<0 if KO, >0 if OK
+     *    	@param	User	$user       Object user making update
+     *		@return	int					<0 if KO, >0 if OK
      */
     function update_bban($user='')
     {
@@ -574,9 +574,10 @@ class Account extends CommonObject
     /**
      *      Load a bank account into memory from database
      *
-     *      @param      id      	Id of bank account to get
-     *      @param      ref     	Ref of bank account to get
-     *      @param		ref_ext		External ref of bank account to get
+     *      @param	int		$id      	Id of bank account to get
+     *      @param  string	$ref     	Ref of bank account to get
+     *      @param	string	$ref_ext	External ref of bank account to get
+     *      @return	int					<0 if KO, >0 if OK
      */
     function fetch($id,$ref='',$ref_ext='')
     {
@@ -697,8 +698,8 @@ class Account extends CommonObject
     /**
      *    Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
      *
-     *    @param      mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
-     *    @return     string        Libelle
+     *    @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+     *    @return   string        		Libelle
      */
     function getLibStatut($mode=0)
     {
@@ -706,10 +707,11 @@ class Account extends CommonObject
     }
 
     /**
-     *    	Renvoi le libelle d'un statut donne
-     *    	@param      statut        	Id statut
-     *    	@param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-     *    	@return     string        	Libelle du statut
+     *    Renvoi le libelle d'un statut donne
+     *
+     *    @param	int		$statut        	Id statut
+     *    @param    int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *    @return   string        			Libelle du statut
      */
     function LibStatut($statut,$mode=0)
     {
@@ -751,6 +753,7 @@ class Account extends CommonObject
 
     /**
      *    Renvoi si un compte peut etre supprimer ou non (sans mouvements)
+     *
      *    @return     boolean     vrai si peut etre supprime, faux sinon
      */
     function can_be_deleted()
@@ -775,6 +778,8 @@ class Account extends CommonObject
 
     /**
      *   Return error
+     *
+     *   @return	string		Error string
      */
     function error()
     {
@@ -856,9 +861,10 @@ class Account extends CommonObject
 
     /**
      *    	Renvoie nom clicable (avec eventuellement le picto)
-     *		@param		withpicto		Inclut le picto dans le lien
-     *      @param      mode            ''=Link to card, 'transactions'=Link to transactions card
-     *		@return		string			Chaine avec URL
+     *
+     *		@param	int		$withpicto		Inclut le picto dans le lien
+     *      @param  string	$mode           ''=Link to card, 'transactions'=Link to transactions card
+     *		@return	string					Chaine avec URL
      */
     function getNomUrl($withpicto=0, $mode='')
     {
@@ -888,6 +894,7 @@ class Account extends CommonObject
 
     /**
      *     Return if an account has valid information
+     *
      *     @return     int         1 if correct, <=0 if wrong
      */
     function verif()
@@ -913,7 +920,8 @@ class Account extends CommonObject
 
     /**
      * 	Return account country code
-     *	@return		String		country code
+     *
+     *	@return		string		country code
      */
     function getCountryCode()
     {
@@ -948,6 +956,7 @@ class Account extends CommonObject
 
     /**
      * 	Return if a bank account is defined with detailed information (bank code, desk code, number and key)
+     *
      * 	@return		int        0=Use only an account number
      *                         1=Need Bank, Desk, Number and Key (France, Spain, ...)
      *                         2=Neek Bank only (BSB for Australia)
@@ -989,8 +998,7 @@ class Account extends CommonObject
 
 
 /**
- *	\class      AccountLine
- *	\brief      Class to manage bank transaction lines
+ *	Class to manage bank transaction lines
  */
 class AccountLine extends CommonObject
 {
@@ -1032,10 +1040,11 @@ class AccountLine extends CommonObject
 
     /**
      *  Load into memory content of a bank transaction line
-     *  @param      rowid   Id of bank transaction to load
-     *  @param      ref     Ref of bank transaction to load
-     *  @param      num     External num to load (ex: num of transaction for paypal fee)
-     *	@return		int		<0 if KO, >0 if OK
+     *
+     *  @param		int		$rowid   	Id of bank transaction to load
+     *  @param      string	$ref     	Ref of bank transaction to load
+     *  @param      string	$num     	External num to load (ex: num of transaction for paypal fee)
+     *	@return		int					<0 if KO, >0 if OK
      */
     function fetch($rowid,$ref='',$num='')
     {
@@ -1104,8 +1113,8 @@ class AccountLine extends CommonObject
     /**
      *      Delete transaction bank line record
      *
-     *		@param		user	User object that delete
-     *      @return		int 	<0 if KO, >0 if OK
+     *		@param	User	$user	User object that delete
+     *      @return	int 			<0 if KO, >0 if OK
      */
     function delete($user=0)
     {
@@ -1153,8 +1162,8 @@ class AccountLine extends CommonObject
     /**
      *      Delete bank line records
      *
-     *		@param		user	User object that delete
-     *      @return		int 	<0 if KO, >0 if OK
+     *		@param	User	$user	User object that delete
+     *      @return	int 			<0 if KO, >0 if OK
      */
     function delete_urls($user=0)
     {
@@ -1190,9 +1199,9 @@ class AccountLine extends CommonObject
     /**
      *		Update bank account record in database
      *
-     *		@param 		user			Object user making update
-     *		@param 		notrigger		0=Disable all triggers
-     *		@return		int				<0 if KO, >0 if OK
+     *		@param	User	$user			Object user making update
+     *		@param 	int		$notrigger		0=Disable all triggers
+     *		@return	int						<0 if KO, >0 if OK
      */
     function update($user,$notrigger=0)
     {
@@ -1224,9 +1233,9 @@ class AccountLine extends CommonObject
     /**
      *		Update conciliation field
      *
-     *		@param 		user			Objet user making update
-     *		@param 		cat				Category id
-     *		@return		int				<0 if KO, >0 if OK
+     *		@param	User	$user		Objet user making update
+     *		@param 	int		$cat		Category id
+     *		@return	int					<0 if KO, >0 if OK
      */
     function update_conciliation($user,$cat)
     {
@@ -1274,8 +1283,8 @@ class AccountLine extends CommonObject
     /**
      * 	Increase/decrease value date of a rowid
      *
-     *	@param	int		$rowid
-     *	@param	int		sign		1 or -1
+     *	@param	int		$rowid		Id of line
+     *	@param	int		$sign		1 or -1
      *	@return	int					>0 if OK, 0 if KO
      */
     function datev_change($rowid,$sign=1)
@@ -1335,7 +1344,8 @@ class AccountLine extends CommonObject
     /**
      *      Charge les informations d'ordre info dans l'objet
      *
-     *      @param     rowid       Id of object
+     *      @param	int		$rowid       Id of object
+     *      @return	void
      */
     function info($rowid)
     {
@@ -1380,10 +1390,10 @@ class AccountLine extends CommonObject
     /**
      *    	Renvoie nom clicable (avec eventuellement le picto)
      *
-     *		@param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     *		@param		maxlen			Longueur max libelle
-     *		@param		option			Option ('showall')
-     *		@return		string			Chaine avec URL
+     *		@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     *		@param	int		$maxlen			Longueur max libelle
+     *		@param	string	$option			Option ('showall')
+     *		@return	string					Chaine avec URL
      */
     function getNomUrl($withpicto=0,$maxlen=0,$option='')
     {
