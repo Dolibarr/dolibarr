@@ -2791,7 +2791,7 @@ class Form
 
     			// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
     			$this->cache_currencies[$obj->code_iso]['label'] = ($obj->code_iso && $langs->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$langs->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:''));
-    			$this->cache_currencies[$obj->code_iso]['unicode'] = (array) dol_json_decode($obj->unicode, true);
+    			$this->cache_currencies[$obj->code_iso]['unicode'] = (array) json_decode($obj->unicode, true);
     			$label[$obj->code_iso] = $this->cache_currencies[$obj->code_iso]['label'];
     			$i++;
     		}

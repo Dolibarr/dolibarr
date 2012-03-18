@@ -165,7 +165,7 @@ class Conf
 							$varname = $partname.'_modules';  // TODO deprecated
 							if (! isset($this->$varname) || ! is_array($this->$varname)) { $this->$varname = array(); } // TODO deprecated
 							if (! isset($this->modules_parts[$partname]) || ! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
-							$arrValue = dol_json_decode($value,true);
+							$arrValue = json_decode($value,true);
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
 							else if (in_array($partname,array('login','menus','substitutions','triggers'))) $value = '/'.$modulename.'/core/'.$partname.'/';
 							else if (in_array($partname,array('models'))) $value = '/'.$modulename.'/';

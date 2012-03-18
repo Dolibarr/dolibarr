@@ -346,7 +346,7 @@ class FactureFournisseur extends Facture
                 $this->model_pdf			= $obj->model_pdf;
                 $this->import_key			= $obj->import_key;
                 
-                $this->extraparams			= (array) dol_json_decode($obj->extraparams, true);
+                $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
                 $this->socid  = $obj->socid;
                 $this->socnom = $obj->socnom;

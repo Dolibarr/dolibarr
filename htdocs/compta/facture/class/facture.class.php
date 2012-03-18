@@ -828,7 +828,7 @@ class Facture extends CommonObject
                 $this->user_valid			= $obj->fk_user_valid;
                 $this->modelpdf				= $obj->model_pdf;
                 
-                $this->extraparams			= (array) dol_json_decode($obj->extraparams, true);
+                $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
                 if ($this->statut == 0)	$this->brouillon = 1;
 
