@@ -2416,7 +2416,7 @@ abstract class CommonObject
             }
             else
             {
-                $this->_printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$hookmanager);
+                $this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$hookmanager);
             }
 
             $i++;
@@ -2443,7 +2443,7 @@ abstract class CommonObject
      *  @param	HookManager	$hookmanager		Hook manager
      *  @return	void
 	 */
-	private function _printObjectLine($action,$line,$var=true,$num=0,$i=0,$dateSelector=0,$seller,$buyer,$selected=0,$hookmanager=false)
+	function printObjectLine($action,$line,$var=true,$num=0,$i=0,$dateSelector=0,$seller,$buyer,$selected=0,$hookmanager=false)
 	{
 		global $conf,$langs,$user;
 		global $form,$bc,$bcdd;
@@ -2567,7 +2567,7 @@ abstract class CommonObject
             }
             else
             {
-                $this->_printOriginLine($line,$var);
+                $this->printOriginLine($line,$var);
             }
 
             $i++;
@@ -2584,7 +2584,7 @@ abstract class CommonObject
      * 	@param	string	$var		Var
      * 	@return	void
      */
-    private function _printOriginLine($line,$var)
+    function printOriginLine($line,$var)
     {
         global $langs,$bc;
 
