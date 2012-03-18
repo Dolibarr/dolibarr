@@ -146,18 +146,24 @@ if (! function_exists('json_decode'))
 }
 
 /**
- * 	Function that encodes data in json format
+ * 	Function that encodes data in json format.
+ *  TODO Remove this function because the json_encode is already redesigned by dolibarr function and
+ *  this functions was designed for compatibility between an instable 3.2 version with final 3.2 version. We must
+ *  manage compatibility only between 2 stable versions.
  *
  * 	@param	mixed	$elements	PHP object to json encode
  * 	@return	string				Json encoded string
  */
 function dol_json_encode($elements)
 {
-	return json_encode($elements);
+	return json_encode($elements);    // This function is redesigned into functions.lib.php
 }
 
 /**
  * 	Function that decodes data from json format
+ *  TODO Remove this function because the json_encode is already redesigned by dolibarr function and
+ *  this functions was designed for compatibility between an instable 3.2 version with final 3.2 version. We must
+ *  manage compatibility only between 2 stable versions.
  *
  * 	@param	string	$json		Json encoded to PHP Object or Array
  * 	@param	bool	$assoc		False return an object, true return an array
@@ -167,7 +173,7 @@ function dol_json_decode($json, $assoc=false)
 {
 	$out='';
 	$out = @unserialize($json); // For compatibility, test if serialized
-	if (empty($out)) $out = json_decode($json, $assoc);
+	if (empty($out)) $out = json_decode($json, $assoc);        // This function is redesigned into functions.lib.php
 	return $out;
 }
 
