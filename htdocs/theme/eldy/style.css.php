@@ -1576,6 +1576,7 @@ div.tabBar .noborder {
 -moz-box-shadow: 4px 4px 4px #CCC;
 -webkit-box-shadow: 4px 4px 4px #CCC;
 box-shadow: 4px 4px 4px #CCC;
+margin-bottom: 8px !important;
 }
 
 
