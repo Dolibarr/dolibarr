@@ -3047,7 +3047,8 @@ class Form
         {
             $return.= $this->error;
         }
-
+        
+        $this->num = $num;
         return $return;
     }
 

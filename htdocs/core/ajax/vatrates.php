@@ -49,7 +49,13 @@ if (! empty($id) && ! empty($action) && ! empty($htmlname))
 	
 	$soc->fetch($id);
 	
-	echo $form->load_tva('tva_tx','',$soc,$mysoc,0,0,'',true);
+	$return=array();
+	
+	$return['value']	= $form->load_tva('tva_tx','',$soc,$mysoc,0,0,'',true);
+	$return['num']		= $form->num;
+	$return['error']	= $form->error;
+	
+	echo json_encode($return);
 }
 
 ?>
