@@ -74,7 +74,7 @@ function project_prepare_head($object)
 
     $head[$h][0] = DOL_URL_ROOT.'/projet/note.php?id='.$object->id;
     $head[$h][1] = $langs->trans('Notes');
-    $head[$h][2] = 'note';
+    $head[$h][2] = 'notes';
     $h++;
 
     // Then tab for sub level of projet, i mean tasks
@@ -113,17 +113,17 @@ function task_prepare_head($object)
 
     $head[$h][0] = DOL_URL_ROOT.'/projet/tasks/task.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
     $head[$h][1] = $langs->trans("Card");
-    $head[$h][2] = 'task';
+    $head[$h][2] = 'task_task';
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
     $head[$h][1] = $langs->trans("TaskRessourceLinks");
-    $head[$h][2] = 'contact';
+    $head[$h][2] = 'task_contact';
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
     $head[$h][1] = $langs->trans("TimeSpent");
-    $head[$h][2] = 'time';
+    $head[$h][2] = 'task_time';
     $h++;
 
     // Show more tabs from modules
@@ -138,12 +138,12 @@ function task_prepare_head($object)
     $listoffiles=dol_dir_list($filesdir,'files',1);
     $head[$h][1] = (count($listoffiles)?$langs->trans('DocumentsNb',count($listoffiles)):$langs->trans('Documents'));*/
     $head[$h][1] = $langs->trans('Documents');
-    $head[$h][2] = 'document';
+    $head[$h][2] = 'task_document';
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/projet/tasks/note.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
     $head[$h][1] = $langs->trans('Notes');
-    $head[$h][2] = 'note';
+    $head[$h][2] = 'task_notes';
     $h++;
 
     return $head;

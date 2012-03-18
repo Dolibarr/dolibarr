@@ -91,7 +91,7 @@ if ($id > 0 || ! empty($ref))
 
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
 
-		print '</div>';
+		dol_fiche_end();
 	}
 }
 

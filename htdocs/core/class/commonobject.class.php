@@ -1330,7 +1330,7 @@ abstract class CommonObject
     }
 
     /**
-     *  Update private note of element
+     *  Update external ref of element
      *
      *  @param      string		$ref_ext	Update field ref_ext
      *  @return     int      		   		<0 if KO, >0 if OK
@@ -1376,7 +1376,7 @@ abstract class CommonObject
         }
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-        // TODO uniformize fields note_private
+        // TODO uniformize fields to note_private
         if ($this->table_element == 'fichinter' || $this->table_element == 'projet' || $this->table_element == 'projet_task')
         {
             $sql.= " SET note_private = '".$this->db->escape($note)."'";

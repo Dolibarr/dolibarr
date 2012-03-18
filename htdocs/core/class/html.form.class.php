@@ -75,9 +75,10 @@ class Form
      * @param	object	$object			Object
      * @param	boolean	$perm			Permission to allow button to edit parameter
      * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height', 'select:xxx'...)
+     * @param	string	$moreparam		More param to add on a href URL
      * @return	string					HTML edit field
      */
-    function editfieldkey($text,$htmlname,$preselected,$object,$perm,$typeofdata='string')
+    function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata='string', $moreparam='')
     {
         global $conf,$langs;
 
@@ -103,7 +104,7 @@ class Form
             $ret.='<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
             $ret.=$langs->trans($text);
             $ret.='</td>';
-            if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
+            if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;id='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
             $ret.='</tr></table>';
         }
 
@@ -118,17 +119,14 @@ class Form
      * @param	string	$value			Value to show/edit
      * @param	object	$object			Object
      * @param	boolean	$perm			Permission to allow button to edit parameter
-<<<<<<< HEAD
      * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea:rows:cols', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:1:rows:cols', 'select:xxx'...)
-=======
-     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:1', 'select:xxx'...)
->>>>>>> branch 'develop' of ssh://git@github.com/Dolibarr/dolibarr.git
      * @param	string	$editvalue		When in edit mode, use this value as $value instead of value
      * @param	object	$extObject		External object
      * @param	string	$success		Success message
+     * @param	string	$moreparam		More param to add on a href URL
      * @return  string					HTML edit field
      */
-    function editfieldval($text,$htmlname,$value,$object,$perm,$typeofdata='string',$editvalue='',$extObject=null,$success=null)
+    function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata='string', $editvalue='', $extObject=null, $success=null, $moreparam='')
     {
         global $conf,$langs,$db;
 
@@ -145,7 +143,7 @@ class Form
             if (GETPOST('action') == 'edit'.$htmlname)
             {
                 $ret.="\n";
-                $ret.='<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+                $ret.='<form method="post" action="'.$_SERVER["PHP_SELF"].($moreparam?'?'.$moreparam:'').'">';
                 $ret.='<input type="hidden" name="action" value="set'.$htmlname.'">';
                 $ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                 $ret.='<input type="hidden" name="id" value="'.$object->id.'">';

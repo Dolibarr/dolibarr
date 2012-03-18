@@ -113,7 +113,7 @@ if ($id > 0 || ! empty($ref))
         //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
 		$head = project_prepare_head($project);
-		dol_fiche_head($head, 'note', $langs->trans('Project'), 0, ($project->public?'projectpub':'project'));
+		dol_fiche_head($head, 'notes', $langs->trans('Project'), 0, ($project->public?'projectpub':'project'));
 
 		print '<table class="border" width="100%">';
 

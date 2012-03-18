@@ -216,7 +216,7 @@ if ($id > 0 || ! empty($ref))
 		}
 
 		$head=task_prepare_head($task);
-		dol_fiche_head($head, 'time', $langs->trans("Task"),0,'projecttask');
+		dol_fiche_head($head, 'task_time', $langs->trans("Task"),0,'projecttask');
 
 		dol_htmloutput_mesg($mesg);
 
