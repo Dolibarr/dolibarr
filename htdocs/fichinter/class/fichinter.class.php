@@ -245,7 +245,7 @@ class Fichinter extends CommonObject
 				$this->note_private = $obj->note_private;
 				$this->modelpdf     = $obj->model_pdf;
 
-				$this->extraparams	= (array) dol_json_decode($obj->extraparams, true);
+				$this->extraparams	= (array) json_decode($obj->extraparams, true);
 
 				if ($this->statut == 0) $this->brouillon = 1;
 

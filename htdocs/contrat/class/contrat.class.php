@@ -61,9 +61,9 @@ class Contrat extends CommonObject
 	var $note_public;
 
 	var $fk_projet;
-	
+
 	var $extraparams=array();
-	
+
 	var $lines=array();
 
 
@@ -128,12 +128,12 @@ class Contrat extends CommonObject
 	/**
 	 *  Activate a contract line
 	 *
-	 *  @param      user        Objet User qui active le contrat
-	 *  @param      line_id     Id de la ligne de detail a activer
-	 *  @param      date        Date d'ouverture
-	 *  @param      date_end    Date fin prevue
-	 * 	@param		comment		A comment typed by user
-	 *  @return     int         <0 if KO, >0 if OK
+	 *  @param	User		$user       Objet User qui active le contrat
+	 *  @param  int			$line_id    Id de la ligne de detail a activer
+	 *  @param  timestamp	$date       Date d'ouverture
+	 *  @param  timestamp	$date_end   Date fin prevue
+	 * 	@param	string		$comment	A comment typed by user
+	 *  @return int         			<0 if KO, >0 if OK
 	 */
 	function active_line($user, $line_id, $date, $date_end='', $comment='')
 	{
@@ -178,11 +178,11 @@ class Contrat extends CommonObject
 	/**
 	 *  Close a contract line
 	 *
-	 *  @param      user        Objet User qui active le contrat
-	 *  @param      line_id     Id de la ligne de detail a activer
-	 *  @param      date_end	Date fin
-	 * 	@param		comment		A comment typed by user
-	 *  @return     int         <0 if KO, >0 if OK
+	 *  @param	User		$user       Objet User qui active le contrat
+	 *  @param  int			$line_id    Id de la ligne de detail a activer
+	 *  @param  timestamp	$date_end	Date fin
+	 * 	@param	string		$comment	A comment typed by user
+	 *  @return int         			<0 if KO, >0 if OK
 	 */
 	function close_line($user, $line_id, $date_end, $comment='')
 	{
@@ -276,10 +276,10 @@ class Contrat extends CommonObject
 	/**
 	 *  Validate a contract
 	 *
-	 *  @param      user      	Objet User
-	 *  @param      langs     	Environnement langue de l'utilisateur
-	 *  @param      conf      	Environnement de configuration lors de l'operation
-	 * 	@return		int			<0 if KO, >0 if OK
+	 *  @param	User		$user      	Objet User
+	 *  @param  Translate	$langs     	Environnement langue de l'utilisateur
+	 *  @param  Conf		$conf      	Environnement de configuration lors de l'operation
+	 * 	@return	int						<0 if KO, >0 if OK
 	 */
 	function validate($user,$langs,$conf)
 	{
@@ -312,6 +312,7 @@ class Contrat extends CommonObject
 	 *    Load a contract from database
 	 *
 	 *    @param	int		$id     Id of contract to load
+	 *    @param	string	$ref	Ref
 	 *    @return   int     		<0 if KO, id of contract if OK
 	 */
 	function fetch($id,$ref='')
@@ -353,8 +354,8 @@ class Contrat extends CommonObject
 
 				$this->socid					= $result["fk_soc"];
 				$this->fk_soc					= $result["fk_soc"];
-				
-				$this->extraparams				= (array) dol_json_decode($result["extraparams"], true);
+
+				$this->extraparams				= (array) json_decode($result["extraparams"], true);
 
 				$this->db->free($resql);
 
@@ -690,10 +691,10 @@ class Contrat extends CommonObject
 	/**
 	 *  Supprime l'objet de la base
 	 *
-	 *  @param      user        Utilisateur qui supprime
-	 *  @param      langs       Environnement langue de l'utilisateur
-	 *  @param      conf        Environnement de configuration lors de l'operation
-	 *  @return     int         < 0 si erreur, > 0 si ok
+	 *  @param	User		$user       Utilisateur qui supprime
+	 *  @param  Translate	$langs      Environnement langue de l'utilisateur
+	 *  @param  Conf		$conf       Environnement de configuration lors de l'operation
+	 *  @return int         			< 0 si erreur, > 0 si ok
 	 */
 	function delete($user,$langs='',$conf='')
 	{
@@ -810,22 +811,22 @@ class Contrat extends CommonObject
 	/**
 	 *  Ajoute une ligne de contrat en base
 	 *
-	 *  @param      desc            	Description de la ligne
-	 *  @param      pu_ht              	Prix unitaire HT
-	 *  @param      qty             	Quantite
-	 *  @param      txtva           	Taux tva
-	 *  @param      txlocaltax1         Local tax 1 rate
-	 *  @param      txlocaltax2         Local tax 2 rate
-	 *  @param      fk_product      	Id produit
-	 *  @param      remise_percent  	Pourcentage de remise de la ligne
-	 *  @param      date_start      	Date de debut prevue
-	 *  @param      date_end        	Date de fin prevue
-	 *	@param		price_base_type		HT ou TTC
-	 * 	@param    	pu_ttc             	Prix unitaire TTC
-	 * 	@param    	info_bits			Bits de type de lignes
-	 *  @return     int             	<0 si erreur, >0 si ok
+	 *  @param	string		$desc            	Description de la ligne
+	 *  @param  float		$pu_ht              Prix unitaire HT
+	 *  @param  int			$qty             	Quantite
+	 *  @param  float		$txtva           	Taux tva
+	 *  @param  float		$txlocaltax1        Local tax 1 rate
+	 *  @param  float		$txlocaltax2        Local tax 2 rate
+	 *  @param  int			$fk_product      	Id produit
+	 *  @param  float		$remise_percent  	Pourcentage de remise de la ligne
+	 *  @param  timestamp	$date_start      	Date de debut prevue
+	 *  @param  timestamp	$date_end        	Date de fin prevue
+	 *	@param	float		$price_base_type	HT ou TTC
+	 * 	@param  float		$pu_ttc             Prix unitaire TTC
+	 * 	@param  int			$info_bits			Bits de type de lignes
+	 *  @return int             				<0 si erreur, >0 si ok
 	 */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0, $info_bits=0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0, $info_bits=0)
 	{
 		global $user, $langs, $conf;
 
@@ -936,21 +937,21 @@ class Contrat extends CommonObject
 	/**
 	 *  Mets a jour une ligne de contrat
 	 *
-	 *  @param     rowid            Id de la ligne de facture
-	 *  @param     desc             Description de la ligne
-	 *  @param     pu               Prix unitaire
-	 *  @param     qty              Quantite
-	 *  @param     remise_percent   Pourcentage de remise de la ligne
-	 *  @param     date_start       Date de debut prevue
-	 *  @param     date_end         Date de fin prevue
-	 *  @param     tvatx            Taux TVA
-	 *  @param     localtax1tx      Local tax 1 rate
-	 *  @param     localtax2tx      Local tax 2 rate
-	 *  @param     date_debut_reel  Date de debut reelle
-	 *  @param     date_fin_reel    Date de fin reelle
-	 *  @return    int              < 0 si erreur, > 0 si ok
+	 *  @param	int			$rowid            	Id de la ligne de facture
+	 *  @param  string		$desc             	Description de la ligne
+	 *  @param  float		$pu               	Prix unitaire
+	 *  @param  int			$qty              	Quantite
+	 *  @param  float		$remise_percent   	Pourcentage de remise de la ligne
+	 *  @param  timestamp	$date_start       	Date de debut prevue
+	 *  @param  timestamp	$date_end         	Date de fin prevue
+	 *  @param  float		$tvatx            	Taux TVA
+	 *  @param  float		$localtax1tx      	Local tax 1 rate
+	 *  @param  float		$localtax2tx      	Local tax 2 rate
+	 *  @param  timestamp	$date_debut_reel  	Date de debut reelle
+	 *  @param  timestamp	$date_fin_reel    	Date de fin reelle
+	 *  @return int              				< 0 si erreur, > 0 si ok
 	 */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start='', $date_end='', $tvatx, $localtax1tx=0, $localtax2tx=0, $date_debut_reel='', $date_fin_reel='')
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx=0, $localtax2tx=0, $date_debut_reel='', $date_fin_reel='')
 	{
 		global $user, $conf, $langs;
 
@@ -1026,9 +1027,9 @@ class Contrat extends CommonObject
 	/**
 	 *  Delete a contract line
 	 *
-	 *  @param      idline		Id of line to delete
-	 *	@param      user        User that delete
-	 *  @return     int         >0 if OK, <0 if KO
+	 *  @param	int		$idline		Id of line to delete
+	 *	@param  User	$user       User that delete
+	 *  @return int         		>0 if OK, <0 if KO
 	 */
 	function deleteline($idline,$user)
 	{
@@ -1069,7 +1070,8 @@ class Contrat extends CommonObject
 	/**
 	 *  Update statut of contract according to services
 	 *
-	 *	@return     int     <0 if KO, >0 if OK
+	 *	@param	User	$user		Object user
+	 *	@return int     			<0 if KO, >0 if OK
 	 */
 	function update_statut($user)
 	{
@@ -1092,8 +1094,8 @@ class Contrat extends CommonObject
 	/**
 	 *  Return label of a contract status
 	 *
-	 *  @param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services
-	 *  @return     string      	Label
+	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services
+	 *  @return string      		Label
 	 */
 	function getLibStatut($mode)
 	{
@@ -1103,9 +1105,9 @@ class Contrat extends CommonObject
 	/**
 	 *  Renvoi label of a given contrat status
 	 *
-	 *  @param      statut      	Status id
-	 *  @param      mode          	0=Long label, 1=Short label, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services
-	 *	@return     string      	Label
+	 *  @param	int		$statut      	Status id
+	 *  @param  int		$mode          	0=Long label, 1=Short label, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services
+	 *	@return string      			Label
 	 */
 	function LibStatut($statut,$mode)
 	{
@@ -1238,8 +1240,8 @@ class Contrat extends CommonObject
 	/**
 	 *  Return list of line rowid
 	 *
-	 *  @param      statut      Status of lines to get
-	 *  @return     array       Array of line's rowid
+	 *  @param	int		$statut     Status of lines to get
+	 *  @return array       		Array of line's rowid
 	 */
 	function array_detail($statut=-1)
 	{
@@ -1274,8 +1276,8 @@ class Contrat extends CommonObject
 	/**
 	 *  Return list of other contracts for same company than current contract
 	 *
-	 *	@param		option		'all' or 'others'
-	 *  @return     array   	Array of contracts id
+	 *	@param	string		$option		'all' or 'others'
+	 *  @return array   				Array of contracts id
 	 */
 	function getListOfContracts($option='all')
 	{
@@ -1313,9 +1315,9 @@ class Contrat extends CommonObject
 	/**
      *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
-     *      @param      user                Objet user
-     *      @param      mode                "inactive" pour services a activer, "expired" pour services expires
-     *      @return     int                 <0 if KO, >0 if OK
+     *      @param	User	$user           Objet user
+     *      @param  string	$mode           "inactive" pour services a activer, "expired" pour services expires
+     *      @return int                 	<0 if KO, >0 if OK
 	 */
 	function load_board($user,$mode)
 	{
@@ -1510,8 +1512,7 @@ class Contrat extends CommonObject
 
 
 /**
- *	\class      ContratLigne
- *	\brief      Classe permettant la gestion des lignes de contrats
+ *	Classe permettant la gestion des lignes de contrats
  */
 class ContratLigne
 {
@@ -1570,10 +1571,10 @@ class ContratLigne
 
 
 	/**
-	 *    	Return label of this contract line status
+	 *  Return label of this contract line status
 	 *
-	 *		@param      mode        	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    	@return     string      	Libelle
+	 *	@param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return string      		Libelle
 	 */
 	function getLibStatut($mode)
 	{
@@ -1581,12 +1582,12 @@ class ContratLigne
 	}
 
 	/**
-	 *    	Return label of a contract line status
+	 *  Return label of a contract line status
 	 *
-	 *    	@param      statut      id statut
-	 *		@param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *		@param		expired		0=Not expired, 1=Expired, -1=Both or unknown
-	 *    	@return     string      Libelle
+	 *  @param	int		$statut     Id statut
+	 *	@param  int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *	@param	int		$expired	0=Not expired, 1=Expired, -1=Both or unknown
+	 *  @return string      		Libelle
 	 */
 	function LibStatut($statut,$mode,$expired=-1)
 	{
@@ -1645,8 +1646,9 @@ class ContratLigne
 	/**
 	 *	Renvoie nom clicable (avec eventuellement le picto)
 	 *
-	 *  @param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *  @return		string			Chaine avec URL
+	 *  @param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *  @param	int		$maxlength		Max length
+	 *  @return	string					Chaine avec URL
  	 */
 	function getNomUrl($withpicto=0,$maxlength=0)
 	{
@@ -1670,9 +1672,9 @@ class ContratLigne
 	/**
 	 *    	Load object in memory from database
 	 *
-	 *    	@param      id          id object
-	 * 		@param		ref			Ref of contract
-	 *    	@return     int         <0 if KO, >0 if OK
+	 *    	@param	int		$id         Id object
+	 * 		@param	string	$ref		Ref of contract
+	 *    	@return int         		<0 if KO, >0 if OK
 	 */
 	function fetch($id, $ref='')
 	{

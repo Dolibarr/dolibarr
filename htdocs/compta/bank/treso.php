@@ -229,7 +229,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	// Sort array
 	if (! $error)
 	{
-		array_multisort ($tab_sqlobjOrder,$tab_sqlobj);
+		array_multisort($tab_sqlobjOrder,$tab_sqlobj);
 
 		//Apply distinct filter
 		foreach ($tab_sqlobj as $key=>$value) {

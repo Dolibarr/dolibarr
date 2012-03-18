@@ -32,7 +32,7 @@ class InterfacePaypalWorkflow
 
     /**
      *   Constructor
-     * 
+     *
      *   @param		DoliDB		$db      Database handler
      */
     function InterfacePaypalWorkflow($db)
@@ -48,8 +48,9 @@ class InterfacePaypalWorkflow
 
 
     /**
-     *   \brief      Renvoi nom du lot de triggers
-     *   \return     string      Nom du lot de triggers
+     *  Renvoi nom du lot de triggers
+     *
+     *  @return     string      Nom du lot de triggers
      */
     function getName()
     {
@@ -57,8 +58,9 @@ class InterfacePaypalWorkflow
     }
 
     /**
-     *   \brief      Renvoi descriptif du lot de triggers
-     *   \return     string      Descriptif du lot de triggers
+     *  Renvoi descriptif du lot de triggers
+     *
+     *  @return     string      Descriptif du lot de triggers
      */
     function getDesc()
     {
@@ -66,8 +68,9 @@ class InterfacePaypalWorkflow
     }
 
     /**
-     *   \brief      Renvoi version du lot de triggers
-     *   \return     string      Version du lot de triggers
+     *  Renvoi version du lot de triggers
+     *
+     *  @return     string      Version du lot de triggers
      */
     function getVersion()
     {
@@ -88,7 +91,7 @@ class InterfacePaypalWorkflow
      *  @param	string			$action     Code de l'evenement
      *  @param  CommonObject	$object     Objet concerne
      *  @param  User			$user       Objet user
-     *  @param  Translate		$lang       Objet lang
+     *  @param  Translate		$langs      Objet lang
      *  @param  Conf			$conf       Objet conf
      *  @return int         				<0 if fatal error, 0 si nothing done, >0 if ok
      */

@@ -266,6 +266,7 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlen
  * @param 	int			$showproject		Show project columns
  * @param	int			&$taskrole			Array of roles of user for each tasks
  * @param	int			$projectsListId		List of id of project allowed to user (separated with comma)
+ * @return	void
  */
 function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId='')
 {

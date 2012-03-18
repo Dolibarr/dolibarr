@@ -51,9 +51,10 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
  * to report the amounts for different VAT rates as different lines.
  * This function also accounts recurrent invoices.
  *
- * @param		db		Database handler
- * @param		y		Year
- * @param		q		Year quarter (1-4)
+ * @param	DoliDB	$db		Database handler
+ * @param	int		$y		Year
+ * @param	int		$q		Year quarter (1-4)
+ * @return	void
  */
 function tva_coll($db,$y,$q)
 {
@@ -118,9 +119,10 @@ function tva_coll($db,$y,$q)
  * The function gets the VAT in split results, as the VAT declaration asks
  * to report the amounts for different VAT rates as different lines
  *
- * @param		DoliDB	$db			Database handler object
- * @param		int		$y			Year
- * @param		int		$q			Year quarter (1-4)
+ * @param	DoliDB	$db			Database handler object
+ * @param	int		$y			Year
+ * @param	int		$q			Year quarter (1-4)
+ * @return	void
  */
 function tva_paye($db, $y,$q)
 {
@@ -289,16 +291,16 @@ if ($conf->global->COMPTA_MODE == "CREANCES-DETTES")
 
 		$i++;
 	}
-	print '<tr class="liste_total">' .
-			'<td align="right">'.$langs->trans("Total").':</td>' .
-			'<td nowrap align="right">'.price($subtot_coll_total).'</td>' .
-			'<td nowrap align="right">'.price($subtot_coll_vat).'</td>' .
-			'<td></td>' .
-			'<td nowrap align="right">'.price($subtot_paye_total).'</td>' .
-			'<td nowrap align="right">'.price($subtot_paye_vat).'</td>' .
-			'<td></td>' .
-			'<td nowrap align="right"><b>'.price($total).'</b>' .
-			'</td>';
+	print '<tr class="liste_total">';
+	print '<td align="right">'.$langs->trans("Total").':</td>';
+	print '<td nowrap="nowrap" align="right">'.price($subtot_coll_total).'</td>';
+	print '<td nowrap="nowrap" align="right">'.price($subtot_coll_vat).'</td>';
+	print '<td></td>';
+	print '<td nowrap="nowrap" align="right">'.price($subtot_paye_total).'</td>';
+	print '<td nowrap="nowrap" align="right">'.price($subtot_paye_vat).'</td>';
+	print '<td></td>';
+	print '<td nowrap="nowrap" align="right"><b>'.price($total).'</b>';
+	print '</td>';
 	print '</tr>';
 
 }

@@ -39,7 +39,7 @@ class InterfaceLogevents
 
     /**
      *   Constructor
-     * 
+     *
      *   @param		DoliDB		$db      Database handler
      */
     function InterfaceLogevents($db)
@@ -55,6 +55,7 @@ class InterfaceLogevents
 
     /**
      *   Return name of trigger file
+     *
      *   @return     string      Name of trigger file
      */
     function getName()
@@ -64,6 +65,7 @@ class InterfaceLogevents
 
     /**
      *   Return description of trigger file
+     *
      *   @return     string      Description of trigger file
      */
     function getDesc()
@@ -73,6 +75,7 @@ class InterfaceLogevents
 
     /**
      *   Return version of trigger file
+     *
      *   @return     string      Version of trigger file
      */
     function getVersion()
@@ -89,6 +92,7 @@ class InterfaceLogevents
     /**
      *      Function called when a Dolibarrr business event is done.
      *      All functions "run_trigger" are triggered if file is inside directory htdocs/core/triggers
+     *
      *      @param      action      Code de l'evenement
      *      @param      object      Objet concerne
      *      @param      user        Objet user

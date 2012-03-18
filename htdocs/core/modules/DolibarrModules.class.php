@@ -1308,12 +1308,12 @@ abstract class DolibarrModules
     				// Can defined other parameters
     				if (is_array($value['data']) && ! empty($value['data']))
     				{
-    					$newvalue = dol_json_encode($value['data']);
+    					$newvalue = json_encode($value['data']);
     					if (isset($value['entity'])) $entity = $value['entity'];
     				}
     				else
     				{
-    					$newvalue = dol_json_encode($value);
+    					$newvalue = json_encode($value);
     				}
     			}
 

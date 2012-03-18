@@ -50,8 +50,9 @@ class Prospect extends Societe
 
 
     /**
-     *      \brief      Charge indicateurs this->nb de tableau de bord
-     *      \return     int         <0 if KO, >0 if OK
+     *  Charge indicateurs this->nb de tableau de bord
+     *
+     *  @return     int         <0 if KO, >0 if OK
      */
     function load_state_board()
     {
@@ -92,9 +93,10 @@ class Prospect extends Societe
 
 
 	/**
-	 *    \brief      Return status of prospect
-	 *    \param      mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
-	 *    \return     string        Libelle
+	 *  Return status of prospect
+	 *
+	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+	 *  @return string        		Libelle
 	 */
 	function getLibProspStatut($mode=0)
 	{
@@ -102,10 +104,11 @@ class Prospect extends Societe
 	}
 
 	/**
-	 *    	\brief      Return label of a given status
-	 *    	\param      statut        	Id statut
-	 *    	\param      mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *    	\return     string        	Libelle du statut
+	 *  Return label of a given status
+	 *
+	 *  @param	int		$statut        	Id statut
+	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *  @return string        			Libelle du statut
 	 */
 	function LibProspStatut($statut,$mode=0)
 	{
@@ -141,8 +144,9 @@ class Prospect extends Societe
 	}
 
 	/**
-	 *	\brief      Renvoi le libelle du niveau
-	 *  \return     string        Libelle
+	 *	Renvoi le libelle du niveau
+	 *
+	 *  @return     string        Libelle
 	 */
 	function getLibLevel()
 	{
@@ -150,9 +154,10 @@ class Prospect extends Societe
 	}
 
 	/**
-	 *    	\brief      Renvoi le libelle du niveau
-	 *    	\param      fk_prospectlevel   	Prospect level
-	 *    	\return     string        		Libelle du niveau
+	 *  Renvoi le libelle du niveau
+	 *
+	 *  @param	int		$fk_prospectlevel   	Prospect level
+	 *  @return string        					Libelle du niveau
 	 */
 	function LibLevel($fk_prospectlevel)
 	{

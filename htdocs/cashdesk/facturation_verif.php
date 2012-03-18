@@ -36,7 +36,7 @@ switch ( $_GET['action'] )
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 			if ($conf->stock->enabled && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = ".$conf_fkentrepot;
 			$sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
-			
+
 			// Recuperation des donnees en fonction de la source (liste deroulante ou champ texte) ...
 			if ( $_POST['hdnSource'] == 'LISTE' )
 			{
@@ -138,7 +138,7 @@ switch ( $_GET['action'] )
 		{
 			$obj_facturation->qte($_POST['txtQte']);
 			$obj_facturation->tva($_POST['selTva']);
-			$obj_facturation->remise_percent($_POST['txtRemise']);
+			$obj_facturation->remisePercent($_POST['txtRemise']);
 			$obj_facturation->ajoutArticle();
 
 		}

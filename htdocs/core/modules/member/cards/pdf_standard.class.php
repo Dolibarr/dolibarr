@@ -361,9 +361,9 @@ class pdf_standard
 	/**
 	 *	Function to build PDF on disk, then output on HTTP strem.
 	 *
-	 *	@param	    arrayofmembers	Array of members informations
-	 *	@param		outputlangs		Lang object for output language
-	 *	@return	    int     		1=ok, 0=ko
+	 *	@param	array		$arrayofmembers		Array of members informations
+	 *	@param	Translata	$outputlangs		Lang object for output language
+	 *	@return	int     						1=ok, 0=ko
 	 */
 	function write_file($arrayofmembers,$outputlangs)
 	{

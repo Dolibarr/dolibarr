@@ -85,7 +85,7 @@ if ($sall)            $sql.= " AND (s.nom like '%".$db->escape($sall)."%' OR cd.
 $sql.= " GROUP BY c.rowid, c.ref, c.datec, c.date_contrat, c.statut,";
 $sql.= " s.nom, s.rowid";
 $sql.= " ORDER BY $sortfield $sortorder";
-$sql.= $db->plimit($conf->liste_limit + 1 ,$offset);
+$sql.= $db->plimit($conf->liste_limit + 1, $offset);
 
 $resql=$db->query($sql);
 if ($resql)

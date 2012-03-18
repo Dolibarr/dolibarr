@@ -324,7 +324,7 @@ else
 
         // Show tabs
         $head = contact_prepare_head($object);
-        
+
         $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
         dol_fiche_head($head, 'card', $title, 0, 'contact');
     }
@@ -350,7 +350,7 @@ else
                 $object->country_code = $tmparray['code'];
                 $object->country      = $tmparray['label'];
             }
-            
+
             $title = $addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
             print_fiche_titre($title);
 
@@ -576,7 +576,7 @@ else
             print $formcompany->select_civility(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id);
             print '</td></tr>';
 
-            print '<tr><td>'.$langs->trans("PostOrFunction" ).'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.(isset($_POST["poste"])?$_POST["poste"]:$object->poste).'"></td></tr>';
+            print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.(isset($_POST["poste"])?$_POST["poste"]:$object->poste).'"></td></tr>';
 
             // Address
             print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><textarea class="flat" name="address" cols="70">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea></td>';
@@ -762,7 +762,7 @@ else
         print '</td></tr>';
 
         // Role
-        print '<tr><td>'.$langs->trans("PostOrFunction" ).'</td><td colspan="3">'.$object->poste.'</td>';
+        print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="3">'.$object->poste.'</td>';
 
         // Address
         print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3">';

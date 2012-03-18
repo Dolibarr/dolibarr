@@ -50,7 +50,7 @@ switch ($action)
 		$invoice->type=0;
 		$num=$invoice->getNextNumRef($company);
 
-		$obj_facturation->num_facture($num);
+		$obj_facturation->numInvoice($num);
 
 		$obj_facturation->getSetPaymentMode($_POST['hdnChoix']);
 
@@ -63,20 +63,20 @@ switch ($action)
 		}
 
 		if ( $mode_reglement != 'DIF') {
-			$obj_facturation->montant_encaisse($montant);
+			$obj_facturation->montantEncaisse($montant);
 
 			//Determination de la somme rendue
 			$total = $obj_facturation->prix_total_ttc();
-			$encaisse = $obj_facturation->montant_encaisse();
+			$encaisse = $obj_facturation->montantEncaisse();
 
-			$obj_facturation->montant_rendu($encaisse - $total);
+			$obj_facturation->montantRendu($encaisse - $total);
 		}
 		else
 		{
 		    //$txtDatePaiement=$_POST['txtDatePaiement'];
 		    $datePaiement=dol_mktime(0,0,0,$_POST['txtDatePaiementmonth'],$_POST['txtDatePaiementday'],$_POST['txtDatePaiementyear']);
 		    $txtDatePaiement=dol_print_date($datePaiement,'dayrfc');
-			$obj_facturation->paiement_le($txtDatePaiement);
+			$obj_facturation->paiementLe($txtDatePaiement);
 		}
 
 		$redirection = 'affIndex.php?menu=validation';
@@ -115,8 +115,8 @@ switch ($action)
 				$mode_reglement_id = dol_getIdFromCode($db,'LIQ','c_paiement');
 				$cond_reglement_id = 0;
 				$note .= $langs->trans("Cash")."\n";
-				$note .= $langs->trans("Received").' : '.$obj_facturation->montant_encaisse()." ".$conf->currency."\n";
-				$note .= $langs->trans("Rendu").' : '.$obj_facturation->montant_rendu()." ".$conf->currency."\n";
+				$note .= $langs->trans("Received").' : '.$obj_facturation->montantEncaisse()." ".$conf->currency."\n";
+				$note .= $langs->trans("Rendu").' : '.$obj_facturation->montantRendu()." ".$conf->currency."\n";
 				$note .= "\n";
 				$note .= '--------------------------------------'."\n\n";
 				break;
@@ -209,10 +209,10 @@ switch ($action)
 		// Si paiement differe ...
 		if ( $obj_facturation->getSetPaymentMode() == 'DIF' )
 		{
-			$resultcreate=$invoice->create($user,0,dol_stringtotime($obj_facturation->paiement_le()));
+			$resultcreate=$invoice->create($user,0,dol_stringtotime($obj_facturation->paiementLe()));
 			if ($resultcreate > 0)
 			{
-				$resultvalid=$invoice->validate($user,$obj_facturation->num_facture());
+				$resultvalid=$invoice->validate($user,$obj_facturation->numInvoice());
 			}
 			else
 			{
@@ -226,7 +226,7 @@ switch ($action)
 			$resultcreate=$invoice->create($user,0,0);
 			if ($resultcreate > 0)
 			{
-				$resultvalid=$invoice->validate($user, $obj_facturation->num_facture(), (isset($_SESSION["CASHDESK_ID_WAREHOUSE"])?$_SESSION["CASHDESK_ID_WAREHOUSE"]:0));
+				$resultvalid=$invoice->validate($user, $obj_facturation->numInvoice(), (isset($_SESSION["CASHDESK_ID_WAREHOUSE"])?$_SESSION["CASHDESK_ID_WAREHOUSE"]:0));
 
 				$id = $invoice->id;
 
@@ -235,7 +235,7 @@ switch ($action)
 				$payment->datepaye=$now;
 				$payment->bank_account=$conf_fkaccount;
 				$payment->amounts[$invoice->id]=$obj_facturation->prix_total_ttc();
-				$payment->note=$langs->trans("Payment").' '.$langs->trans("Invoice").' '.$obj_facturation->num_facture();
+				$payment->note=$langs->trans("Payment").' '.$langs->trans("Invoice").' '.$obj_facturation->numInvoice();
 				$payment->paiementid=$invoice->mode_reglement_id;
 				$payment->num_paiement='';
 
