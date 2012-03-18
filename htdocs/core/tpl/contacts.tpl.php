@@ -76,7 +76,6 @@ $userstatic=new User($db);
 		</td>
 		<td>
 			<?php $nbofcontacts=$form->select_contacts($selectedCompany, '', 'contactid'); ?>
-			<?php if ($nbofcontacts == 0) echo $langs->trans("NoContactDefined"); ?>
 		</td>
 		<td>
 			<?php $formcompany->selectTypeContact($object, '', 'type','external'); ?>

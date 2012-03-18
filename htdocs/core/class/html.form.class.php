@@ -815,9 +815,9 @@ class Form
         if ($resql)
         {
             $num=$this->db->num_rows($resql);
-            if ($num == 0) return 0;
+            $disable=($num==0 ? ' disabled="disabled"' : '');
 
-            if ($htmlname != 'none') print '<select class="flat'.($moreclass?' '.$moreclass:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
+            if ($htmlname != 'none') print '<select class="flat'.($moreclass?' '.$moreclass:'').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$disable.'>';
             if ($showempty) print '<option value="0"></option>';
             $num = $this->db->num_rows($resql);
             $i = 0;
@@ -869,6 +869,10 @@ class Form
                     }
                     $i++;
                 }
+            }
+            else
+            {
+            	print '<option value="-1" selected="selected">'.$langs->trans("NoContactDefined").'</option>';
             }
             if ($htmlname != 'none')
             {
