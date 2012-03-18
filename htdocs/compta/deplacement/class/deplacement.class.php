@@ -232,7 +232,7 @@ class Deplacement extends CommonObject
 			$this->note_public	= $obj->note_public;
 			$this->fk_project	= $obj->fk_projet;
 			
-			$this->extraparams	= (array) dol_json_decode($obj->extraparams, true);
+			$this->extraparams	= (array) json_decode($obj->extraparams, true);
 
 			return 1;
 		}

@@ -2142,7 +2142,7 @@ abstract class CommonObject
     	$this->db->begin();
 
     	$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-    	$sql.= ' SET extraparams = "'.$this->db->escape(dol_json_encode($this->extraparams)).'"';
+    	$sql.= ' SET extraparams = "'.$this->db->escape(json_encode($this->extraparams)).'"';
     	$sql.= ' WHERE rowid = '.$this->id;
 
     	dol_syslog(get_class($this)."::setExtraParameters sql=".$sql, LOG_DEBUG);

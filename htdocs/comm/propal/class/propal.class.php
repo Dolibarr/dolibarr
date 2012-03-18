@@ -1037,7 +1037,7 @@ class Propal extends CommonObject
                 $this->cond_reglement       = $obj->cond_reglement;
                 $this->cond_reglement_doc   = $obj->cond_reglement_libelle_doc;
 
-                $this->extraparams			= (array) dol_json_decode($obj->extraparams, true);
+                $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
                 $this->user_author_id = $obj->fk_user_author;
                 $this->user_valid_id  = $obj->fk_user_valid;

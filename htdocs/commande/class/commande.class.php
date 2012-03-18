@@ -1293,7 +1293,7 @@ class Commande extends CommonObject
                 $this->fk_delivery_address    = $obj->fk_adresse_livraison;
                 $this->propale_id             = $obj->fk_source;
 
-                $this->extraparams			  = (array) dol_json_decode($obj->extraparams, true);
+                $this->extraparams			  = (array) json_decode($obj->extraparams, true);
 
                 $this->lines                 = array();
 
