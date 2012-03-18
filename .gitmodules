@@ -15,7 +15,7 @@
 	url = git+ssh://hregis@doliforge.org/gitroot/docgen/docgen.git
 [submodule "htdocs/custom/extrafields"]
 	path = htdocs/custom/extrafields
-	url = git+ssh://hregis@doliforge.org/gitroot/extrafields/extrafields.git
+	url = gitolite@doliforge.org:extrafields/extrafields.git
 [submodule "htdocs/custom/business"]
 	path = htdocs/custom/business
 	url = git+ssh://hregis@doliforge.org/gitroot/business/business.git
