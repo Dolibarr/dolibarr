@@ -35,10 +35,10 @@ $langs->load("orders");
 $langs->load("sendings");
 $langs->load("companies");
 
-$id=GETPOST('id', 'int');
-$ref= GETPOST('ref', 'alpha');
-$lineid=GETPOST('lineid', 'int');
-$action=GETPOST('action', 'alpha');
+$id=GETPOST('id','int');
+$ref= GETPOST('ref','alpha');
+$lineid=GETPOST('lineid','int');
+$action=GETPOST('action','alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -57,7 +57,8 @@ if ($action == 'addcontact' && $user->rights->propale->creer)
 
     if ($result > 0 && $id > 0)
     {
-  		$result = $object->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
+    	$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
+  		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
     }
 
 	if ($result >= 0)

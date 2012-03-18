@@ -54,7 +54,7 @@ $userstatic=new User($db);
 	<tr <?php echo $bc[$var]; ?>>
 		<td nowrap="nowrap"><?php echo img_object('','user').' '.$langs->trans("Users"); ?></td>
 		<td><?php echo $conf->global->MAIN_INFO_SOCIETE_NOM; ?></td>
-		<td><?php echo $form->select_users($user->id,'contactid',0,$userAlreadySelected); ?></td>
+		<td><?php echo $form->select_users($user->id,'userid',0,$userAlreadySelected); ?></td>
 		<td><?php echo $formcompany->selectTypeContact($object, '', 'type','internal'); ?></td>
 		<td align="right" colspan="3" ><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></td>
 	</tr>
@@ -71,17 +71,23 @@ $userstatic=new User($db);
 	<tr <?php echo $bc[$var]; ?>>
 		<td nowrap="nowrap"><?php echo img_object('','contact').' '.$langs->trans("ThirdPartyContacts"); ?></td>
 		<td>
-			<?php $selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$object->socid; ?>
-			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany'); ?>
+			<?php //$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$object->socid; ?>
+			<?php //$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany'); ?>
+			<?php 
+			$events=array();
+			$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+			print $form->select_company($object->socid,'socid','',1,0,0,$events);
+			?>
 		</td>
 		<td>
-			<?php $nbofcontacts=$form->select_contacts($selectedCompany, '', 'contactid'); ?>
+			<?php //$nbofcontacts=$form->select_contacts($selectedCompany, '', 'contactid'); ?>
+			<?php $nbofcontacts=$form->select_contacts($object->socid, '', 'contactid'); ?>
 		</td>
 		<td>
 			<?php $formcompany->selectTypeContact($object, '', 'type','external'); ?>
 		</td>
 		<td align="right" colspan="3" >
-			<input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"<?php if (! $nbofcontacts) echo ' disabled="disabled"'; ?>>
+			<input type="submit" id="add-customer-contact" class="button" value="<?php echo $langs->trans("Add"); ?>"<?php if (! $nbofcontacts) echo ' disabled="disabled"'; ?>>
 		</td>
 	</tr>
 	</form>

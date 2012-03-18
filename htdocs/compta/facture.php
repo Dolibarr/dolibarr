@@ -1514,7 +1514,8 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 
 		if ($result > 0 && $id > 0)
 		{
-			$result = $object->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
+			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
+			$result = $result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
 		}
 
 		if ($result >= 0)

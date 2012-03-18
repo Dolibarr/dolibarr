@@ -42,6 +42,7 @@ class Form
 {
     var $db;
     var $error;
+    var $num;
 
     // Cache arrays
     var $cache_types_paiements=array();
@@ -785,23 +786,45 @@ class Form
         }
     }
 
-
     /**
-     *    	Return list of all contacts (for a third party or all)
+     *	Return list of all contacts (for a third party or all)
      *
-     *    	@param	int		$socid      	Id ot third party or 0 for all
-     *    	@param  string	$selected   	Id contact pre-selectionne
-     *    	@param  string	$htmlname  	    Name of HTML field ('none' for a not editable field)
-     *      @param  int		$show_empty     0=no empty value, 1=add an empty value
-     *      @param  string	$exclude        List of contacts id to exclude
-     * 		@param	string	$limitto		Disable answers that are not id in this array list
-     * 	    @param	string	$showfunction   Add function into label
-     * 		@param	string	$moreclass		Add more class to class style
-     *		@return	int						<0 if KO, Nb of contact in list if OK
+     *	@param	int		$socid      	Id ot third party or 0 for all
+     *	@param  string	$selected   	Id contact pre-selectionne
+     *	@param  string	$htmlname  	    Name of HTML field ('none' for a not editable field)
+     *	@param  int		$show_empty     0=no empty value, 1=add an empty value
+     *	@param  string	$exclude        List of contacts id to exclude
+     *	@param	string	$limitto		Disable answers that are not id in this array list
+     *	@param	string	$showfunction   Add function into label
+     *	@param	string	$moreclass		Add more class to class style
+     *	@return	int						<0 if KO, Nb of contact in list if OK
      */
     function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='')
     {
+    	print $this->selectcontacts($socid,$selected,$htmlname,$showempty,$exclude,$limitto,$showfunction, $moreclass);
+    }
+
+    /**
+     *	Return list of all contacts (for a third party or all)
+     *
+     *	@param	int		$socid      	Id ot third party or 0 for all
+     *	@param  string	$selected   	Id contact pre-selectionne
+     *	@param  string	$htmlname  	    Name of HTML field ('none' for a not editable field)
+     *	@param  int		$show_empty     0=no empty value, 1=add an empty value
+     *	@param  string	$exclude        List of contacts id to exclude
+     *	@param	string	$limitto		Disable answers that are not id in this array list
+     *	@param	string	$showfunction   Add function into label
+     *	@param	string	$moreclass		Add more class to class style
+     *	@param	bool	$options_only	Return options only (for ajax treatment)
+     *	@return	int						<0 if KO, Nb of contact in list if OK
+     */
+    function selectcontacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $options_only=false)
+    {
         global $conf,$langs;
+        
+        $langs->load('companies');
+        
+        $out='';
 
         // On recherche les societes
         $sql = "SELECT sp.rowid, sp.name as name, sp.firstname, sp.poste";
@@ -815,10 +838,9 @@ class Form
         if ($resql)
         {
             $num=$this->db->num_rows($resql);
-            $disable=($num==0 ? ' disabled="disabled"' : '');
 
-            if ($htmlname != 'none') print '<select class="flat'.($moreclass?' '.$moreclass:'').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$disable.'>';
-            if ($showempty) print '<option value="0"></option>';
+            if ($htmlname != 'none' || $options_only) $out.= '<select class="flat'.($moreclass?' '.$moreclass:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
+            if ($showempty) $out.= '<option value="0"></option>';
             $num = $this->db->num_rows($resql);
             $i = 0;
             if ($num)
@@ -842,29 +864,29 @@ class Form
                         if (is_array($limitto) && count($limitto) && ! in_array($obj->rowid,$limitto)) $disabled=1;
                         if ($selected && $selected == $obj->rowid)
                         {
-                            print '<option value="'.$obj->rowid.'"';
-                            if ($disabled) print ' disabled="disabled"';
-                            print ' selected="selected">';
-                            print $contactstatic->getFullName($langs);
-                            if ($showfunction && $obj->poste) print ' ('.$obj->poste.')';
-                            print '</option>';
+                            $out.= '<option value="'.$obj->rowid.'"';
+                            if ($disabled) $out.= ' disabled="disabled"';
+                            $out.= ' selected="selected">';
+                            $out.= $contactstatic->getFullName($langs);
+                            if ($showfunction && $obj->poste) $out.= ' ('.$obj->poste.')';
+                            $out.= '</option>';
                         }
                         else
                         {
-                            print '<option value="'.$obj->rowid.'"';
-                            if ($disabled) print ' disabled="disabled"';
-                            print '>';
-                            print $contactstatic->getFullName($langs);
-                            if ($showfunction && $obj->poste) print ' ('.$obj->poste.')';
-                            print '</option>';
+                            $out.= '<option value="'.$obj->rowid.'"';
+                            if ($disabled) $out.= ' disabled="disabled"';
+                            $out.= '>';
+                            $out.= $contactstatic->getFullName($langs);
+                            if ($showfunction && $obj->poste) $out.= ' ('.$obj->poste.')';
+                            $out.= '</option>';
                         }
                     }
                     else
                     {
                         if ($selected == $obj->rowid)
                         {
-                            print $contactstatic->getFullName($langs);
-                            if ($showfunction && $obj->poste) print ' ('.$obj->poste.')';
+                            $out.= $contactstatic->getFullName($langs);
+                            if ($showfunction && $obj->poste) $out.= ' ('.$obj->poste.')';
                         }
                     }
                     $i++;
@@ -872,13 +894,15 @@ class Form
             }
             else
             {
-            	print '<option value="-1" selected="selected">'.$langs->trans("NoContactDefined").'</option>';
+            	$out.= '<option value="-1" selected="selected" disabled="disabled">'.$langs->trans("NoContactDefined").'</option>';
             }
-            if ($htmlname != 'none')
+            if ($htmlname != 'none' || $options_only)
             {
-                print '</select>';
+                $out.= '</select>';
             }
-            return $num;
+            
+            $this->num = $num;
+            return $out;
         }
         else
         {

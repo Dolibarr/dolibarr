@@ -225,14 +225,24 @@ function ajax_combobox($htmlname, $event=array())
 			var method = obj.method;
 			var url = obj.url;
 			var htmlname = obj.htmlname;
-    		$.get(url,
+    		$.getJSON(url,
 					{
 						action: method,
 						id: id,
 						htmlname: htmlname
 					},
 					function(response) {
-						$("select#" + htmlname).html(response);
+						$.each(obj.params, function(key,action) {
+							if (key.length) {
+								var num = response.num;
+								if (num > 0) {
+									$("#" + key).removeAttr(action);
+								} else {
+									$("#" + key).attr(action, action);
+								}
+							}
+						});
+						$("select#" + htmlname).html(response.value);
 					});
 		}
 	});';
