@@ -191,7 +191,7 @@
 	<rule ref="PEAR.Functions.ValidDefaultValue" />
 
 	<rule ref="PEAR.NamingConventions.ValidClassName" />
-	<rule ref="PEAR.NamingConventions.ValidClassName.Invalid" />
+	<rule ref="PEAR.NamingConventions.ValidClassName.Invalid">
         <severity>0</severity>
 	</rule>
 	<rule ref="PEAR.NamingConventions.ValidClassName.StartWithCaptial">
