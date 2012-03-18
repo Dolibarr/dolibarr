@@ -30,10 +30,10 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/class/genericobject.class.php");
 
-$field			= GETPOST('field','alpha');
-$element		= GETPOST('element','alpha');
-$table_element	= GETPOST('table_element','alpha');
-$fk_element		= GETPOST('fk_element','alpha');
+$field			= GETPOST('field','alpha',2);
+$element		= GETPOST('element','alpha',2);
+$table_element	= GETPOST('table_element','alpha',2);
+$fk_element		= GETPOST('fk_element','alpha',2);
 
 /*
  * View
@@ -47,11 +47,11 @@ top_httphead();
 // Load original field value
 if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($fk_element))
 {
-	$ext_element		= GETPOST('ext_element','alpha');
+	$ext_element		= GETPOST('ext_element','alpha',2);
 	$field				= substr($field, 8); // remove prefix val_
-	$type				= GETPOST('type','alpha');
-	$value				= ($type == 'ckeditor' ? GETPOST('value') : GETPOST('value','alpha'));
-	$savemethod			= GETPOST('savemethod','alpha');
+	$type				= GETPOST('type','alpha',2);
+	$value				= ($type == 'ckeditor' ? GETPOST('value',2) : GETPOST('value','alpha',2));
+	$savemethod			= GETPOST('savemethod','alpha',2);
 	$savemethodname		= (! empty($savemethod) ? $savemethod : 'setValueFrom');
 
 	$view='';
@@ -98,7 +98,7 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 		}
 		else if ($type == 'datepicker')
 		{
-			$timestamp	= GETPOST('timestamp','int');
+			$timestamp	= GETPOST('timestamp','int',2);
 			$format		= 'date';
 			$newvalue	= ($timestamp / 1000);
 		}
