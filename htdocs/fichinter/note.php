@@ -30,6 +30,7 @@ $langs->load('companies');
 $langs->load("interventions");
 
 $id = GETPOST('id','int');
+$ref = GETPOST('ref', 'alpha');
 $action=GETPOST('action','alpha');
 
 // Security check
@@ -37,62 +38,60 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 $object = new Fichinter($db);
+$object->fetch($id,$ref);
 
 
-/******************************************************************************/
-/*                     Actions                                                */
-/******************************************************************************/
+/*
+ * Actions
+ */
 
 if ($action == 'setnote_public' && $user->rights->ficheinter->creer)
 {
-	$object->fetch($id);
 	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-else if ($action == 'setnote' && $user->rights->ficheinter->creer)
+else if ($action == 'setnote_private' && $user->rights->ficheinter->creer)
 {
-	$object->fetch($id);
-	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 
-/******************************************************************************/
-/* Affichage fiche                                                            */
-/******************************************************************************/
+/*
+ * View
+ */
 
 llxHeader();
 
 $form = new Form($db);
 
-if ($id > 0)
+if ($id > 0 || ! empty($ref))
 {
-	if ($mesg) print $mesg;
+	dol_htmloutput_mesg($mesg);
 
-	if ($object->fetch($id))
+	$societe = new Societe($db);
+	if ($societe->fetch($object->socid))
 	{
-		$societe = new Societe($db);
-		if ($societe->fetch($object->socid))
-		{
-			$head = fichinter_prepare_head($object);
-			dol_fiche_head($head, 'note', $langs->trans('InterventionCard'), 0, 'intervention');
+		$head = fichinter_prepare_head($object);
+		dol_fiche_head($head, 'note', $langs->trans('InterventionCard'), 0, 'intervention');
 
-			print '<table class="border" width="100%">';
+		print '<table class="border" width="100%">';
 
-			print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">'.$object->ref.'</td></tr>';
+		print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
+		print $form->showrefnav($object,'ref','',1,'ref','ref');
+		print '</td></tr>';
 
-			// Company
-			print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
+		// Company
+		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
 
-			print "</table>";
+		print "</table>";
 
-			print '<br>';
+		print '<br>';
 
-			include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
+		include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
 
-			print '</div>';
-		}
+		print '</div>';
 	}
 }
 

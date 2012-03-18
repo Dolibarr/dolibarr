@@ -220,7 +220,7 @@ class Fichinter extends CommonObject
 		$sql.= " f.tms as datem,";
 		$sql.= " f.duree, f.fk_projet, f.note_public, f.note_private, f.model_pdf, f.extraparams";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
-		if ($ref) $sql.= " WHERE f.ref='".$ref."'";
+		if ($ref) $sql.= " WHERE f.ref='".$this->db->escape($ref)."'";
 		else $sql.= " WHERE f.rowid=".$rowid;
 
 		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
@@ -244,7 +244,7 @@ class Fichinter extends CommonObject
 				$this->note_public  = $obj->note_public;
 				$this->note_private = $obj->note_private;
 				$this->modelpdf     = $obj->model_pdf;
-				
+
 				$this->extraparams	= (array) dol_json_decode($obj->extraparams, true);
 
 				if ($this->statut == 0) $this->brouillon = 1;
