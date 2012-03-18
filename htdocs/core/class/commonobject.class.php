@@ -665,6 +665,8 @@ abstract class CommonObject
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$table;
         $sql.= " WHERE ".$field." = '".$key."'";
         $sql.= " AND entity = ".$conf->entity;
+
+        dol_syslog(get_class($this).'::fetchObjectFrom sql='.$sql);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -690,6 +692,7 @@ abstract class CommonObject
         $sql = "SELECT ".$field." FROM ".MAIN_DB_PREFIX.$table;
         $sql.= " WHERE rowid = ".$id;
 
+        dol_syslog(get_class($this).'::getValueFrom sql='.$sql);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2413,7 +2416,7 @@ abstract class CommonObject
             }
             else
             {
-                $this->printLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$hookmanager);
+                $this->_printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$hookmanager);
             }
 
             $i++;
@@ -2440,7 +2443,7 @@ abstract class CommonObject
      *  @param	HookManager	$hookmanager		Hook manager
      *  @return	void
 	 */
-	function printLine($action,$line,$var=true,$num=0,$i=0,$dateSelector=0,$seller,$buyer,$selected=0,$hookmanager=false)
+	private function _printObjectLine($action,$line,$var=true,$num=0,$i=0,$dateSelector=0,$seller,$buyer,$selected=0,$hookmanager=false)
 	{
 		global $conf,$langs,$user;
 		global $form,$bc,$bcdd;
@@ -2564,7 +2567,7 @@ abstract class CommonObject
             }
             else
             {
-                $this->printOriginLine($line,$var);
+                $this->_printOriginLine($line,$var);
             }
 
             $i++;
@@ -2581,7 +2584,7 @@ abstract class CommonObject
      * 	@param	string	$var		Var
      * 	@return	void
      */
-    function printOriginLine($line,$var)
+    private function _printOriginLine($line,$var)
     {
         global $langs,$bc;
 
