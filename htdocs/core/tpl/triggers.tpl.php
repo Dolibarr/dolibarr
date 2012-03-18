@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin <regis@dolibarr.fr>
+/* Copyright (C) 2010-2012 Regis Houssin <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 <!-- BEGIN PHP TEMPLATE -->
 
-<table class="noborder" style="width: 100%">
+<table class="noborder">
 <tr class="liste_titre">
 <td colspan="2"><?php echo $langs->trans("File"); ?></td>
 <td align="center"><?php echo $langs->trans("Version"); ?></td>

@@ -184,6 +184,18 @@ elseif ($action == 'setdate_lim_reglement' && $user->rights->fournisseur->factur
     $result=$object->update($user);
     if ($result < 0) dol_print_error($db,$object->error);
 }
+elseif ($action == 'setnote_public' && $user->rights->fournisseur->facture->creer)
+{
+	$object->fetch($id);
+	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
+	if ($result < 0) dol_print_error($db,$object->error);
+}
+elseif ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
+{
+	$object->fetch($id);
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
+	if ($result < 0) dol_print_error($db,$object->error);
+}
 
 // Delete payment
 elseif($action == 'deletepaiement')
@@ -629,11 +641,11 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
     $result=$object->fetch_thirdparty();
     if ($result > 0)
     {
-        $ref = dol_sanitizeFileName($object->ref);
-        $file = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref.'/'.$ref.'.pdf';
+//        $ref = dol_sanitizeFileName($object->ref);
+//        $file = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref.'/'.$ref.'.pdf';
 
-        if (is_readable($file))
-        {
+//        if (is_readable($file))
+//        {
             if ($_POST['sendto'])
             {
                 // Le destinataire a ete fourni via le champ libre
@@ -758,13 +770,13 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                 $mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').'</div>';
                 dol_syslog('Recipient email is empty');
             }
-        }
+/*        }
         else
         {
             $langs->load("errors");
             $mesg='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
             dol_syslog('Failed to read file: '.$file);
-        }
+        }*/
     }
     else
     {
@@ -817,6 +829,67 @@ elseif ($action == 'remove_file')
         dol_delete_file($file);
         $mesg	= '<div	class="ok">'.$langs->trans("FileWasRemoved").'</div>';
     }
+}
+
+if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+{
+	if ($action == 'addcontact' && $user->rights->fournisseur->facture->creer)
+	{
+		$result = $object->fetch($id);
+	
+		if ($result > 0 && $id > 0)
+		{
+			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
+			$result = $result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+		}
+	
+		if ($result >= 0)
+		{
+			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
+		else
+		{
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+			{
+				$langs->load("errors");
+				$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+			}
+			else
+			{
+				$mesg = '<div class="error">'.$object->error.'</div>';
+			}
+		}
+	}
+	
+	// bascule du statut d'un contact
+	else if ($action == 'swapstatut' && $user->rights->fournisseur->facture->creer)
+	{
+		if ($object->fetch($id))
+		{
+			$result=$object->swapContactStatus(GETPOST('ligne'));
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
+	
+	// Efface un contact
+	else if ($action == 'deletecontact' && $user->rights->fournisseur->facture->creer)
+	{
+		$object->fetch($id);
+		$result = $object->delete_contact($_GET["lineid"]);
+	
+		if ($result >= 0)
+		{
+			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
+		else {
+			dol_print_error($db);
+		}
+	}
 }
 
 
@@ -1060,7 +1133,8 @@ if ($action == 'create')
     }
     else
     {
-        if ($conf->global->PRODUCT_SHOW_WHEN_CREATE)
+    	// TODO more bugs
+        if (1==2 && $conf->global->PRODUCT_SHOW_WHEN_CREATE)
         {
             print '<tr class="liste_titre">';
             print '<td>&nbsp;</td><td>'.$langs->trans('Label').'</td>';
@@ -1405,7 +1479,26 @@ else
             print '</tr>';
         }
 
-        print '</table>';
+        print '</table><br>';
+        
+        if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+        {
+        	require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+        	require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
+        	$formcompany= new FormCompany($db);
+        
+        	$blocname = 'contacts';
+        	$title = $langs->trans('ContactsAddresses');
+        	include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
+        }
+        
+        if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+        {
+        	$colwidth=20;
+        	$blocname = 'notes';
+        	$title = $langs->trans('Notes');
+        	include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
+        }
 
 
         /*
@@ -1791,7 +1884,33 @@ else
         if ($action == 'presend')
         {
             $ref = dol_sanitizeFileName($object->ref);
-            $file = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref.'/'.$ref.'.pdf';
+            include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+            $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref);
+            $file=$fileparams['fullname'];
+
+            // Build document if it not exists
+            if (! $file || ! is_readable($file))
+            {
+                // Define output language
+                $outputlangs = $langs;
+                $newlang='';
+                if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+                if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+                if (! empty($newlang))
+                {
+                    $outputlangs = new Translate("",$conf);
+                    $outputlangs->setDefaultLang($newlang);
+                }
+
+                $result=supplier_invoice_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+                if ($result <= 0)
+                {
+                    dol_print_error($db,$result);
+                    exit;
+                }
+                $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref);
+                $file=$fileparams['fullname'];
+            }
 
             print '<br>';
             print_titre($langs->trans('SendBillByMail'));
@@ -1824,10 +1943,10 @@ else
             $formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 
             // Init list of files
-            if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+            if (GETPOST("mode")=='init')
             {
                 $formmail->clear_attached_files();
-                $formmail->add_attached_files($file,dol_sanitizeFilename($ref.'.pdf'),'application/pdf');
+                $formmail->add_attached_files($file,basename($file),dol_mimetype($file));
             }
 
             // Show form
@@ -1838,7 +1957,8 @@ else
     }
 }
 
-llxFooter();
 
+// End of page
+llxFooter();
 $db->close();
 ?>

@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,60 +25,39 @@
 
 require ("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php');
-if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
-
-$socid=isset($_GET["socid"])?$_GET["socid"]:isset($_POST["socid"])?$_POST["socid"]:"";
-
-if (!$user->rights->contrat->lire)
-  accessforbidden();
+require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 
 $langs->load("companies");
 $langs->load("contracts");
 
+$action=GETPOST('action','alpha');
+$confirm=GETPOST('confirm','alpha');
+$socid=GETPOST('socid','int');
+$id=GETPOST('id','int');
+$ref=GETPOST('ref','alpha');
+
 // Security check
-$id = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'contrat',$id,'');
+$result=restrictedArea($user,'contrat',$id);
 
-
-$contrat = new Contrat($db);
-$contrat->fetch($_GET["id"]);
+$object = new Contrat($db);
+$object->fetch($id,$ref);
 
 
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($_POST["action"] == 'update_public' && $user->rights->contrat->creer)
+if ($action == 'setnote_public' && $user->rights->contrat->creer)
 {
-	$db->begin();
-
-	$res=$contrat->update_note_public($_POST["note_public"],$user);
-	if ($res < 0)
-	{
-		$mesg='<div class="error">'.$contrat->error.'</div>';
-		$db->rollback();
-	}
-	else
-	{
-		$db->commit();
-	}
+	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
+	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-if ($_POST["action"] == 'update' && $user->rights->contrat->creer)
+else if ($action == 'setnote' && $user->rights->contrat->creer)
 {
-	$db->begin();
-
-	$res=$contrat->update_note($_POST["note"],$user);
-	if ($res < 0)
-	{
-		$mesg='<div class="error">'.$contrat->error.'</div>';
-		$db->rollback();
-	}
-	else
-	{
-		$db->commit();
-	}
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
+	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 
@@ -90,14 +70,13 @@ llxHeader();
 
 $form = new Form($db);
 
-if ($_GET["id"])
+if ($id > 0 || ! empty($ref))
 {
 	dol_htmloutput_mesg($mesg);
 
-    $soc = new Societe($db);
-    $soc->fetch($contrat->societe->id);
+    $object->fetch_thirdparty();
 
-    $head = contract_prepare_head($contrat);
+    $head = contract_prepare_head($object);
 
     $hselected = 2;
 
@@ -107,82 +86,34 @@ if ($_GET["id"])
     print '<table class="border" width="100%">';
 
     // Reference
-	print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="5">'.$contrat->ref.'</td></tr>';
+	print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="5">'.$object->ref.'</td></tr>';
 
     // Societe
     print '<tr><td>'.$langs->trans("Customer").'</td>';
-    print '<td colspan="3">'.$soc->getNomUrl(1).'</td></tr>';
+    print '<td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
 
 	// Ligne info remises tiers
     print '<tr><td>'.$langs->trans('Discount').'</td><td>';
-	if ($contrat->societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$contrat->societe->remise_client);
+	if ($object->thirdparty->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$object->thirdparty->remise_client);
 	else print $langs->trans("CompanyHasNoRelativeDiscount");
-	$absolute_discount=$contrat->societe->getAvailableDiscounts();
+	$absolute_discount=$object->thirdparty->getAvailableDiscounts();
 	print '. ';
 	if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->currency));
 	else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 	print '.';
 	print '</td></tr>';
+	
+	print "</table>";
 
-	// Note publique
-    print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';
-	print '<td valign="top" colspan="3">';
-    if ($_GET["action"] == 'edit')
-    {
-        print '<form method="post" action="note.php?id='.$contrat->id.'">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        print '<input type="hidden" name="action" value="update_public">';
-        print '<textarea name="note_public" cols="80" rows="'.ROWS_8.'">'.$contrat->note_public."</textarea><br>";
-        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-        print '</form>';
-    }
-    else
-    {
-	    print ($contrat->note_public?nl2br($contrat->note_public):"&nbsp;");
-    }
-	print "</td></tr>";
+	print '<br>';
 
-	// Note priv�e
-	if (! $user->societe_id)
-	{
-	    print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
-		print '<td valign="top" colspan="3">';
-	    if ($_GET["action"] == 'edit')
-	    {
-	        print '<form method="post" action="note.php?id='.$contrat->id.'">';
-	        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	        print '<input type="hidden" name="action" value="update">';
-	        print '<textarea name="note" cols="80" rows="'.ROWS_8.'">'.$contrat->note."</textarea><br>";
-	        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-	        print '</form>';
-	    }
-		else
-		{
-		    print ($contrat->note?nl2br($contrat->note):"&nbsp;");
-		}
-		print "</td></tr>";
-	}
+	include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
 
-    print "</table>";
-
-
-    /*
-    * Actions
-    */
-    print '</div>';
-    print '<div class="tabsAction">';
-
-    if ($user->rights->contrat->creer && $_GET["action"] <> 'edit')
-    {
-        print "<a class=\"butAction\" href=\"note.php?id=".$contrat->id."&amp;action=edit\">".$langs->trans('Modify')."</a>";
-    }
-
-    print "</div>";
-
+	dol_fiche_end();
 
 }
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>

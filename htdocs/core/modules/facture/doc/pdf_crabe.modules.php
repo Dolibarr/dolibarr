@@ -448,11 +448,11 @@ class pdf_crabe extends ModelePDFFactures
 	/**
 	 *  Show payments table
 	 *
-     *  @param      pdf             Object PDF
-     *  @param      object          Object invoice
-     *  @param      posy            Position y in PDF
-     *  @param      outputlangs     Object langs for output
-     *  @return     int             <0 if KO, >0 if OK
+     *  @param	PDF			&$pdf           Object PDF
+     *  @param  Object		$object         Object invoice
+     *  @param  int			$posy           Position y in PDF
+     *  @param  Translate	$outputlangs    Object langs for output
+     *  @return int             			<0 if KO, >0 if OK
 	 */
 	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -470,13 +470,13 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->line($tab3_posx, $tab3_top-1+$tab3_height, $tab3_posx+$tab3_width, $tab3_top-1+$tab3_height);
 
 		$pdf->SetFont('','', $default_font_size - 4);
-		$pdf->SetXY($tab3_posx, $tab3_top );
+		$pdf->SetXY($tab3_posx, $tab3_top);
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Payment"), 0, 'L', 0);
-		$pdf->SetXY($tab3_posx+21, $tab3_top );
+		$pdf->SetXY($tab3_posx+21, $tab3_top);
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Amount"), 0, 'L', 0);
-		$pdf->SetXY($tab3_posx+40, $tab3_top );
+		$pdf->SetXY($tab3_posx+40, $tab3_top);
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Type"), 0, 'L', 0);
-		$pdf->SetXY($tab3_posx+58, $tab3_top );
+		$pdf->SetXY($tab3_posx+58, $tab3_top);
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Num"), 0, 'L', 0);
 
 		$y=0;
@@ -506,7 +506,7 @@ class pdf_crabe extends ModelePDFFactures
 
 				$invoice->fetch($obj->fk_facture_source);
 
-				$pdf->SetXY($tab3_posx, $tab3_top+$y );
+				$pdf->SetXY($tab3_posx, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, dol_print_date($obj->datef,'day',false,$outputlangs,true), 0, 'L', 0);
 				$pdf->SetXY($tab3_posx+21, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, price($obj->amount_ttc), 0, 'L', 0);
@@ -543,7 +543,7 @@ class pdf_crabe extends ModelePDFFactures
 				$y+=3;
 				$row = $this->db->fetch_object($resql);
 
-				$pdf->SetXY($tab3_posx, $tab3_top+$y );
+				$pdf->SetXY($tab3_posx, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row->date),'day',false,$outputlangs,true), 0, 'L', 0);
 				$pdf->SetXY($tab3_posx+21, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, price($row->amount), 0, 'L', 0);

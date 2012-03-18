@@ -1,6 +1,7 @@
 -- ============================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+-- Copyright (C) 2005-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+-- Copyright (C) 2009-2012	Regis Houssin			<regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,10 +20,8 @@
 
 
 ALTER TABLE llx_product_fournisseur_price ADD INDEX idx_product_fournisseur_price_fk_user (fk_user);
---ALTER TABLE llx_product_fournisseur_price ADD INDEX idx_product_fournisseur_price_fk_product_fournisseur (fk_product_fournisseur);
 
 ALTER TABLE llx_product_fournisseur_price ADD CONSTRAINT fk_product_fournisseur_price_fk_user    FOREIGN KEY (fk_user)    REFERENCES llx_user (rowid);
---ALTER TABLE llx_product_fournisseur_price ADD CONSTRAINT fk_product_fournisseur_price_fk_product_fournisseur FOREIGN KEY (fk_product_fournisseur) REFERENCES llx_product_fournisseur (rowid);
 
 -- Added to remove table llx_product_fournisseur
 

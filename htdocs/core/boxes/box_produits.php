@@ -52,7 +52,7 @@ class box_produits extends ModeleBoxes
 		global $langs;
 		$langs->load("boxes");
 
-		$this->boxlabel=$langs->trans("BoxLastProducts");
+		$this->boxlabel=$langs->transnoentitiesnoconv("BoxLastProducts");
 	}
 
 	/**

@@ -631,31 +631,31 @@ function hideMessage(fieldId,message) {
 
 
 /* This is to allow to transform all select box into ajax autocomplete box
- * with just one line: jQuery(function() { jQuery( "#listmotifcons" ).combobox(); });
+ * with just one line: $(function() { $( "#listmotifcons" ).combobox(); });
  */
-(function( jQuery ) {
-	jQuery.widget( "ui.combobox", {
+(function( $ ) {
+	$.widget( "ui.combobox", {
         _create: function() {
             var self = this,
                 select = this.element.hide(),
                 selected = select.children( ":selected" ),
                 value = selected.val() ? selected.text() : "";
-            var input = this.input = jQuery( "<input>" )
+            var input = this.input = $( "<input>" )
                 .insertAfter( select )
                 .val( value )
                 .autocomplete({
                     delay: 0,
                     minLength: 0,
                     source: function( request, response ) {
-                        var matcher = new RegExp( jQuery.ui.autocomplete.escapeRegex(request.term), "i" );
+                        var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
                         response( select.children( "option" ).map(function() {
-                            var text = jQuery( this ).text();
+                            var text = $( this ).text();
                             if ( this.value && ( !request.term || matcher.test(text) ) )
                                 return {
                                     label: text.replace(
                                         new RegExp(
                                             "(?![^&;]+;)(?!<[^<>]*)(" +
-                                            jQuery.ui.autocomplete.escapeRegex(request.term) +
+                                            $.ui.autocomplete.escapeRegex(request.term) +
                                             ")(?![^<>]*>)(?![^&;]+;)", "gi"
                                         ), "<strong>$1</strong>" ),
                                     value: text,
@@ -671,17 +671,17 @@ function hideMessage(fieldId,message) {
                     },
                     change: function( event, ui ) {
                         if ( !ui.item ) {
-                            var matcher = new RegExp( "^" + jQuery.ui.autocomplete.escapeRegex( jQuery(this).val() ) + "$", "i" ),
+                            var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( $(this).val() ) + "$", "i" ),
                                 valid = false;
                             select.children( "option" ).each(function() {
-                                if ( jQuery( this ).text().match( matcher ) ) {
+                                if ( $( this ).text().match( matcher ) ) {
                                     this.selected = valid = true;
                                     return false;
                                 }
                             });
                             if ( !valid ) {
                                 // remove invalid value, as it didnt match anything
-                            	jQuery( this ).val( "" );
+                            	$( this ).val( "" );
                                 select.val( "" );
                                 input.data( "autocomplete" ).term = "";
                                 return false;
@@ -692,13 +692,13 @@ function hideMessage(fieldId,message) {
                 .addClass( "ui-widget ui-widget-content ui-corner-left dolibarrcombobox" );
 
             input.data( "autocomplete" )._renderItem = function( ul, item ) {
-                return jQuery( "<li></li>" )
+                return $( "<li></li>" )
                     .data( "item.autocomplete", item )
                     .append( "<a>" + item.label + "</a>" )
                     .appendTo( ul );
             };
 
-            this.button = jQuery( "<button type=\'button\'>&nbsp;</button>" )
+            this.button = $( "<button type=\'button\'>&nbsp;</button>" )
                 .attr( "tabIndex", -1 )
                 .attr( "title", "Show All Items" )
                 .insertAfter( input )
@@ -727,7 +727,7 @@ function hideMessage(fieldId,message) {
             this.input.remove();
             this.button.remove();
             this.element.show();
-            jQuery.Widget.prototype.destroy.call( this );
+            $.Widget.prototype.destroy.call( this );
         }
     });
 })( jQuery );

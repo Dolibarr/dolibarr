@@ -100,12 +100,13 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
     }
 
     /**
-	 * 		\brief      Return next value
-	 *    	\param      objsoc      Object third party
-	 *    	\param      delivery	Object delivery
-	 *    	\return     string      Value if OK, 0 if KO
+	 * 	Return next free value
+	 *
+	 *  @param	Societe		$objsoc     Object thirdparty
+	 *  @param  Object		$object		Object we need next value for
+	 *  @return string      			Value if KO, <0 if KO
 	 */
-    function getNextValue($objsoc=0,$delivery='')
+    function getNextValue($objsoc=0,$object='')
     {
         global $db,$conf;
 
@@ -130,7 +131,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
             return -1;
         }
 
-        $date=$delivery->date_delivery;
+        $date=$object->date_delivery;
         if (empty($date)) $date=dol_now();
         $yymm = strftime("%y%m",$date);
         $num = sprintf("%04s",$max+1);
@@ -140,15 +141,17 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
     }
 
 
-    /**
-     * 		\brief      Renvoie la reference de commande suivante non utilisee
-     *      \param      objsoc      Objet societe
-     *      \param      livraison	Objet livraison
-     *      \return     string      Texte descripif
+	/**
+	 *  Return next free ref
+	 *
+     *  @param	Societe		$objsoc      	Object thirdparty
+     *  @param  Object		$object			Object livraison
+     *  @return string      				Texte descripif
      */
-    function livraison_get_num($objsoc=0,$livraison='')
+    function livraison_get_num($objsoc=0,$object='')
     {
-        return $this->getNextValue($objsoc,$livraison);
+        return $this->getNextValue($objsoc,$object);
     }
+
 }
 ?>

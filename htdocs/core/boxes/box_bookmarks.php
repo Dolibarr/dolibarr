@@ -46,7 +46,7 @@ class box_bookmarks extends ModeleBoxes
 		global $langs;
 		$langs->load("boxes");
 
-		$this->boxlabel=$langs->trans("BoxMyLastBookmarks");
+		$this->boxlabel=$langs->transnoentitiesnoconv("BoxMyLastBookmarks");
 	}
 
 	/**

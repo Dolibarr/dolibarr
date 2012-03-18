@@ -104,7 +104,7 @@ class FormMail
 
     /**
      * Clear list of attached files in send mail form (stored in session)
-     * 
+     *
      * @return	void
      */
     function clear_attached_files()

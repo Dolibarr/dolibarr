@@ -55,7 +55,7 @@ class box_prospect extends ModeleBoxes
 		$this->db=$DB;
 		$this->param=$param;
 
-		$this->boxlabel=$langs->trans("BoxLastProspects");
+		$this->boxlabel=$langs->transnoentitiesnoconv("BoxLastProspects");
 	}
 
 	/**

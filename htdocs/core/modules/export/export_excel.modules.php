@@ -71,36 +71,71 @@ class ExportExcel extends ModeleExports
 		$this->row=0;
 	}
 
+	/**
+	 * getDriverId
+	 *
+	 * @return int
+	 */
 	function getDriverId()
 	{
 		return $this->id;
 	}
 
+	/**
+	 * getDriverLabel
+	 *
+	 * @return string
+	 */
 	function getDriverLabel()
 	{
 		return $this->label;
 	}
 
-    function getDriverDesc()
+	/**
+	 * getDriverDesc
+	 *
+	 * @return string
+	 */
+	function getDriverDesc()
     {
         return $this->desc;
     }
 
-	function getDriverExtension()
+	/**
+	 * getDriverExtension
+	 *
+	 * @return string
+	 */
+    function getDriverExtension()
 	{
 		return $this->extension;
 	}
 
+	/**
+	 * getDriverVersion
+	 *
+	 * @return string
+	 */
 	function getDriverVersion()
 	{
 		return $this->version;
 	}
 
+	/**
+	 * getLibLabel
+	 *
+	 * @return string
+	 */
 	function getLibLabel()
 	{
 		return $this->label_lib;
 	}
 
+	/**
+	 * getLibVersion
+	 *
+	 * @return string
+	 */
 	function getLibVersion()
 	{
 		return $this->version_lib;

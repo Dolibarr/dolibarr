@@ -1310,7 +1310,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     	include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
     	$hookmanager=new HookManager($db);
 	}
-    $hookmanager->initHooks(array('searchform','leftblock','toprightmenu'));
+    $hookmanager->initHooks(array('searchform','leftblock'));
 
     if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
     else print '<td class="vmenu" valign="top">';

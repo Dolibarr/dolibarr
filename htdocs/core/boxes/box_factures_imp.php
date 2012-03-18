@@ -52,7 +52,7 @@ class box_factures_imp extends ModeleBoxes
 		global $langs;
 		$langs->load("boxes");
 
-		$this->boxlabel=$langs->trans("BoxOldestUnpaidCustomerBills");
+		$this->boxlabel=$langs->transnoentitiesnoconv("BoxOldestUnpaidCustomerBills");
 	}
 
 	/**

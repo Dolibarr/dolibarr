@@ -115,6 +115,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	}
 
 	/**     Return next value not used or last value used
+	 *
 	 *      @param     objsoc		Object third party
 	 *      @param     facture		Object invoice
      *      @param     mode         'next' for next value or 'last' for last value
@@ -181,11 +182,13 @@ class mod_facture_terre extends ModeleNumRefFactures
 		else dol_print_error('','Bad parameter for getNextValue');
 	}
 
-	/**		Return next free value
-	 *     	@param      objsoc      Object third party
-	 * 		@param		objforref	Object for number to search
-     *      @param      mode        'next' for next value or 'last' for last value
-	 *   	@return     string      Next free value
+	/**
+	 * Return next free value
+	 *
+     * @param	Societe		$objsoc     	Object third party
+     * @param	string		$objforref		Object for number to search
+     * @param   string		$mode       	'next' for next value or 'last' for last value
+     * @return  string      				Next free value
 	 */
 	function getNumRef($objsoc,$objforref,$mode='next')
 	{

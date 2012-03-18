@@ -23,6 +23,9 @@
 include_once "methode_expedition.modules.php";
 
 
+/**
+ * Class to manage shipment lettremax
+ */
 class methode_expedition_lettremax extends ModeleShippingMethod
 {
     /**

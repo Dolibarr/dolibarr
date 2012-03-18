@@ -132,8 +132,9 @@ class doc_generic_invoice_odt extends ModelePDFFactures
     /**
      * Define array with couple substitution key => substitution value
      *
-     * @param   $line
-     * @param   $outputlangs        Lang object to use for output
+     * @param   array		$line			Array of lines
+     * @param   Translate	$outputlangs    Lang object to use for output
+     * @return	array						Return substitution array
      */
     function get_substitutionarray_lines($line,$outputlangs)
     {
@@ -159,8 +160,8 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	/**
 	 * Return description of a module
 	 *
-     * @param      langs        Lang object to use for output
-	 * @return     string       Description
+     * @param	Translate	$langs      Lang object to use for output
+	 * @return	string      			Description
 	 */
 	function info($langs)
 	{
@@ -350,11 +351,14 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
                 // Open and load template
 				require_once(ODTPHP_PATH.'odf.php');
-				$odfHandler = new odf($srctemplatepath, array(
+				$odfHandler = new odf(
+				    $srctemplatepath,
+				    array(
 						'PATH_TO_TMP'	  => $conf->facture->dir_temp,
 						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 						'DELIMITER_LEFT'  => '{',
-						'DELIMITER_RIGHT' => '}')
+						'DELIMITER_RIGHT' => '}'
+					)
 				);
 				// After construction $odfHandler->contentXml contains content and
 				// [!-- BEGIN row.lines --]*[!-- END row.lines --] has been replaced by

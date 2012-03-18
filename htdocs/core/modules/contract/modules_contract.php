@@ -27,6 +27,9 @@
  *  \brief      File of class to manage contract numbering
  */
 
+/**
+ * Parent class for all contract numbering modules
+ */
 class ModelNumRefContracts
 {
 	var $error='';

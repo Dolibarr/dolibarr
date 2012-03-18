@@ -69,8 +69,8 @@ echo $this->object->tpl['textarea_description'];
 
 <br>
 
-<center><input type="submit" class="button" value="<?php echo $langs->trans("Save"); ?>"> &nbsp; &nbsp;
-<input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>"></center>
+<div align="center"><input type="submit" class="button" value="<?php echo $langs->trans("Save"); ?>"> &nbsp; &nbsp;
+<input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>"></div>
 
 </form>
 

@@ -69,6 +69,7 @@ abstract class ModeleNumRefFicheinter
 
 	/**
 	 * 	Return if a module can be used or not
+	 *
 	 * 	@return		boolean     true if module can be used
 	 */
 	function isEnabled()
@@ -78,6 +79,7 @@ abstract class ModeleNumRefFicheinter
 
 	/**
 	 * 	Renvoi la description par defaut du modele de numerotation
+	 *
 	 * 	@return     string      Texte descripif
 	 */
 	function info()
@@ -89,6 +91,7 @@ abstract class ModeleNumRefFicheinter
 
 	/**
 	 * 	Renvoi un exemple de numerotation
+	 *
 	 * 	@return     string      Example
 	 */
 	function getExample()
@@ -101,6 +104,7 @@ abstract class ModeleNumRefFicheinter
 	/**
 	 * 	Test si les numeros deja en vigueur dans la base ne provoquent pas de
 	 * 	de conflits qui empechera cette numerotation de fonctionner.
+	 *
 	 * 	@return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
@@ -110,6 +114,7 @@ abstract class ModeleNumRefFicheinter
 
 	/**
 	 * 	Renvoi prochaine valeur attribuee
+	 *
 	 * 	@return     string      Valeur
 	 */
 	function getNextValue()
@@ -120,6 +125,7 @@ abstract class ModeleNumRefFicheinter
 
 	/**
 	 * 	Renvoi version du module numerotation
+	 *
 	 * 	@return     string      Valeur
 	 */
 	function getVersion()
@@ -137,11 +143,12 @@ abstract class ModeleNumRefFicheinter
 
 /**
  *  Create an intervention document on disk using template defined into FICHEINTER_ADDON_PDF
- *  @param	    db  			objet base de donnee
- *  @param	    object			Object fichinter
- *  @param	    modele			force le modele a utiliser ('' par defaut)
- *  @param		outputlangs		objet lang a utiliser pour traduction
- *  @return     int         	0 si KO, 1 si OK
+ *
+ *  @param	DoliDB		$db  			objet base de donnee
+ *  @param	Object		$object			Object fichinter
+ *  @param	string		$modele			force le modele a utiliser ('' par defaut)
+ *  @param	Translate	$outputlangs	objet lang a utiliser pour traduction
+ *  @return int         				0 if KO, 1 if OK
  */
 function fichinter_create($db, $object, $modele='', $outputlangs='')
 {

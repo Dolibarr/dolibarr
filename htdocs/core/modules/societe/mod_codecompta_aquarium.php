@@ -51,10 +51,11 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	}
 
 
-	/**		Return description of module
+	/**
+	 * Return description of module
 	 *
-	 * 		@param	Translate	$langs		Object langs
-	 * 		@return string   		   		Description of module
+	 * @param	Translate	$langs		Object langs
+	 * @return	string   		   		Description of module
 	 */
 	function info($langs)
 	{
@@ -82,11 +83,13 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		return $texte;
 	}
 
-	/**		Return an example of result returned by getNextValue
+	/**
+	 * Return an example of result returned by getNextValue
 	 *
-	 *      @param		$langs		Object langs
-	 *      @param		$objsoc		Object thirdparty
-	 *      @param		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @param	Translate	$langs		Object langs
+	 * @param	societe		$objsoc		Object thirdparty
+	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @return	string					Return string example
 	 */
 	function getExample($langs,$objsoc=0,$type=-1)
 	{

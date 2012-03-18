@@ -30,7 +30,7 @@
  *  @param	string	$types        	Can be "directories", "files", or "all"
  *  @param	int		$recursive		Determines whether subdirectories are searched
  *  @param	string	$filter        	Regex for include filter
- *  @param	string	$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.')
+ *  @param	string	$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.'))
  *  @param	string	$sortcriteria	Sort criteria ("","fullname","name","date","size")
  *  @param	string	$sortorder		Sort order (SORT_ASC, SORT_DESC)
  *	@param	int		$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
@@ -1047,4 +1047,18 @@ function dol_compress_file($inputfile, $outputfile, $mode="gz")
     }
 }
 
+
+/**
+ * Return most recent file
+ *
+ * @param 	string	$dir			Directory to scan
+ * @param	string	$regexfilter	Regexfilter
+ * @param	string	$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.'))
+ * @return	strnig					Full path to most recent file
+ */
+function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('\.meta$','^\.'))
+{
+    $tmparray=dol_dir_list($dir,'files',0,$regexfilter,$excludefilter,'date',SORT_DESC);
+    return $tmparray[0];
+}
 ?>

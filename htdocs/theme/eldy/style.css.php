@@ -1461,7 +1461,7 @@ table.liste td {
 	padding-right: 2px;
 }
 
-tr.liste_titre, tr.liste_titre_sel
+div.liste_titre, tr.liste_titre, tr.liste_titre_sel
 {
     height: 20px !important;
     background-repeat: repeat-x;
@@ -1576,6 +1576,7 @@ div.tabBar .noborder {
 -moz-box-shadow: 4px 4px 4px #CCC;
 -webkit-box-shadow: 4px 4px 4px #CCC;
 box-shadow: 4px 4px 4px #CCC;
+margin-bottom: 8px !important;
 }
 
 
@@ -2318,6 +2319,34 @@ div.scroll2 {
 	width: 582px !important;
 }
 
+/* ============================================================================== */
+/*  Table with div                                                                */
+/* ============================================================================== */
+
+div.table-border {
+	display:table;
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #9CACBB;
+}
+div.table-border-row {
+	display:table-row;
+}
+div.table-key-border-col {
+	display:table-cell;
+	width: 25%;
+	vertical-align:top;
+	padding: 1px 2px 1px 1px;
+	border: 1px solid #9CACBB;
+	border-collapse: collapse;
+}
+div.table-val-border-col {
+	display:table-cell;
+	width:auto;
+	padding: 1px 2px 1px 1px;
+	border: 1px solid #9CACBB;
+	border-collapse: collapse;
+}
 
 <?php
 if (is_object($db)) $db->close();

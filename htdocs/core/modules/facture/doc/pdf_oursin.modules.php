@@ -334,12 +334,13 @@ class pdf_oursin extends ModelePDFFactures
 
 
 	/**
-	 *  \brief      Affiche tableau des versement
-	 *  \param      pdf     		Objet PDF
-	 *  \param      fac     		Objet facture
-	 *	\param		posy			Position y in PDF
-	 *	\param		outputlangs		Object langs for output
-	 *	\return 	int				<0 if KO, >0 if OK
+	 *  Show payments table
+	 *
+     *  @param	PDF			&$pdf           Object PDF
+     *  @param  Object		$object         Object invoice
+     *  @param  int			$posy           Position y in PDF
+     *  @param  Translate	$outputlangs    Object langs for output
+     *  @return int             			<0 if KO, >0 if OK
 	 */
 	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{

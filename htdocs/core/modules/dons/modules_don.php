@@ -156,7 +156,7 @@ function don_create($db, $id, $message, $modele, $outputlangs)
 
     $dir = DOL_DOCUMENT_ROOT . "/core/modules/dons/";
 
-    // Positionne modele sur le nom du modele � utiliser
+    // Set template to use
     if (! dol_strlen($modele))
     {
         if ($conf->global->DON_ADDON_MODEL)

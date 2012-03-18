@@ -43,7 +43,7 @@ if ($conf->projet->enabled)
 {
 	require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
 	require_once(DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php');
-}  
+}
 
 $langs->load('bills');
 //print 'ee'.$langs->trans('BillsCustomer');exit;
@@ -95,7 +95,7 @@ $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 // Action clone object
-if ($action == 'confirm_clone' && $confirm == 'yes')
+if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->facture->creer)
 {
     if (1==0 && empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"]))
     {
@@ -143,75 +143,66 @@ else if ($action == 'reopen' && $user->rights->facture->creer)
 // Delete invoice
 else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->supprimer)
 {
-    if ($user->rights->facture->supprimer)
-    {
-        $result = $object->fetch($id);
-        $result = $object->delete();
-        if ($result > 0)
-        {
-            Header('Location: '.$_SERVER["PHP_SELF"]);
-            exit;
-        }
-        else
-        {
-            $mesg='<div class="error">'.$object->error.'</div>';
-        }
-    }
+	$result = $object->fetch($id);
+	$result = $object->delete();
+	if ($result > 0)
+	{
+		Header('Location: '.$_SERVER["PHP_SELF"]);
+		exit;
+	}
+	else
+	{
+		$mesg='<div class="error">'.$object->error.'</div>';
+	}
 }
 
 // Delete line
-else if ($action == 'confirm_deleteline' && $confirm == 'yes')
+else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->facture->creer)
 {
-    if ($user->rights->facture->creer)
-    {
-        $object->fetch($id);
-        $object->fetch_thirdparty();
+	$object->fetch($id);
+	$object->fetch_thirdparty();
 
-        $result = $object->deleteline($_GET['lineid'], $user);
-        if ($result > 0)
-        {
-            // Define output language
-            $outputlangs = $langs;
-            $newlang='';
-            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-            if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-            if (! empty($newlang))
-            {
-                $outputlangs = new Translate("",$conf);
-                $outputlangs->setDefaultLang($newlang);
-            }
-            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-            {
-                $ret=$object->fetch($id);    // Reload to get new records
-                $result=facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
-            }
-            if ($result >= 0)
-            {
-                Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
-                exit;
-            }
-        }
-        else
-        {
-            $mesg='<div clas="error">'.$object->error.'</div>';
-            $action='';
-        }
-    }
+	$result = $object->deleteline($_GET['lineid'], $user);
+	if ($result > 0)
+	{
+		// Define output language
+		$outputlangs = $langs;
+		$newlang='';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+		if (! empty($newlang))
+		{
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang($newlang);
+		}
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+			$ret=$object->fetch($id);    // Reload to get new records
+			$result=facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+		}
+		if ($result >= 0)
+		{
+			Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
+			exit;
+		}
+	}
+	else
+	{
+		$mesg='<div clas="error">'.$object->error.'</div>';
+		$action='';
+	}
 }
 
 // Delete link of credit note to invoice
-else if ($action == 'unlinkdiscount')
+else if ($action == 'unlinkdiscount' && $user->rights->facture->creer)
 {
-    if ($user->rights->facture->creer)
-    {
-        $discount=new DiscountAbsolute($db);
-        $result=$discount->fetch($_GET["discountid"]);
-        $discount->unlink_invoice();
-    }
+    $discount=new DiscountAbsolute($db);
+    $result=$discount->fetch($_GET["discountid"]);
+    $discount->unlink_invoice();
 }
 
 // Validation
-else if ($action == 'valid')
+else if ($action == 'valid' && $user->rights->facture->creer)
 {
     $object->fetch($id);
 
@@ -228,7 +219,7 @@ else if ($action == 'valid')
     else
     {
         // Si non avoir, le signe doit etre positif
-        if ($object->total_ht < 0)
+        if (empty($conf->global->FACTURE_ENABLE_NEGATIVE) && $object->total_ht < 0)
         {
             $mesg='<div class="error">'.$langs->trans("ErrorInvoiceOfThisTypeMustBePositive").'</div>';
             $action='';
@@ -236,7 +227,7 @@ else if ($action == 'valid')
     }
 }
 
-else if ($action == 'set_thirdparty')
+else if ($action == 'set_thirdparty' && $user->rights->facture->creer)
 {
     $object->fetch($id);
     $object->setValueFrom('fk_soc',$socid);
@@ -245,20 +236,20 @@ else if ($action == 'set_thirdparty')
     exit;
 }
 
-else if ($action == 'classin')
+else if ($action == 'classin' && $user->rights->facture->creer)
 {
     $object->fetch($id);
     $object->setProject($_POST['projectid']);
 }
 
-else if ($action == 'setmode')
+else if ($action == 'setmode' && $user->rights->facture->creer)
 {
     $object->fetch($id);
     $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
-else if ($action == 'setinvoicedate')
+else if ($action == 'setinvoicedate' && $user->rights->facture->creer)
 {
     $object->fetch($id);
     $object->date=dol_mktime(12,0,0,$_POST['invoicedatemonth'],$_POST['invoicedateday'],$_POST['invoicedateyear']);
@@ -267,14 +258,14 @@ else if ($action == 'setinvoicedate')
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
-else if ($action == 'setconditions')
+else if ($action == 'setconditions' && $user->rights->facture->creer)
 {
     $object->fetch($id);
     $result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
-if ($action == 'setremisepercent' && $user->rights->facture->creer)
+else if ($action == 'setremisepercent' && $user->rights->facture->creer)
 {
     $object->fetch($id);
     $result = $object->set_remise($user, $_POST['remise_percent']);
@@ -313,10 +304,24 @@ else if ($action == "setabsolutediscount" && $user->rights->facture->creer)
     }
 }
 
-else if ($action == 'set_ref_client')
+else if ($action == 'set_ref_client' && $user->rights->facture->creer)
 {
     $object->fetch($id);
     $object->set_ref_client($_POST['ref_client']);
+}
+
+else if ($action == 'setnote_public' && $user->rights->facture->creer)
+{
+	$object->fetch($id);
+	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
+	if ($result < 0) dol_print_error($db,$object->error);
+}
+
+else if ($action == 'setnote' && $user->rights->facture->creer)
+{
+	$object->fetch($id);
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
+	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 // Classify to validated
@@ -739,7 +744,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 
                 $object->origin    = $_POST['origin'];
                 $object->origin_id = $_POST['originid'];
-                
+
                 // Possibility to add external linked objects with hooks
                 $object->linked_objects[$object->origin] = $object->origin_id;
                 if (is_array($_POST['other_linked_objects']) && ! empty($_POST['other_linked_objects']))
@@ -1307,11 +1312,11 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
     if ($result > 0)
     {
-        $ref = dol_sanitizeFileName($object->ref);
-        $file = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+//        $ref = dol_sanitizeFileName($object->ref);
+//        $file = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 
-        if (is_readable($file))
-        {
+//        if (is_readable($file))
+//        {
             if ($_POST['sendto'])
             {
                 // Le destinataire a ete fourni via le champ libre
@@ -1440,13 +1445,13 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
                         $mesg.='</div>';
                     }
                 }
-            }
+/*            }
             else
             {
                 $langs->load("other");
                 $mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').'</div>';
                 dol_syslog('Recipient email is empty');
-            }
+            }*/
         }
         else
         {
@@ -1501,6 +1506,66 @@ else if ($action == 'builddoc')	// En get ou en post
     }
 }
 
+if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+{
+	if ($action == 'addcontact' && $user->rights->facture->creer)
+	{
+		$result = $object->fetch($id);
+
+		if ($result > 0 && $id > 0)
+		{
+			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
+			$result = $result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+		}
+
+		if ($result >= 0)
+		{
+			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
+		else
+		{
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+			{
+				$langs->load("errors");
+				$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+			}
+			else
+			{
+				$mesg = '<div class="error">'.$object->error.'</div>';
+			}
+		}
+	}
+
+	// bascule du statut d'un contact
+	else if ($action == 'swapstatut' && $user->rights->facture->creer)
+	{
+		if ($object->fetch($id))
+		{
+			$result=$object->swapContactStatus(GETPOST('ligne'));
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
+
+	// Efface un contact
+	else if ($action == 'deletecontact' && $user->rights->facture->creer)
+	{
+		$object->fetch($id);
+		$result = $object->delete_contact($lineid);
+
+		if ($result >= 0)
+		{
+			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
+		else {
+			dol_print_error($db);
+		}
+	}
+}
 
 
 /*
@@ -2089,8 +2154,11 @@ else
                     //array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
                     array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
                 }
-
-                $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('ValidateBill'),$text,'confirm_valid',$formquestion,"yes",($conf->notification->enabled?0:2));
+                if ($object->type != 2 && $object->total_ttc < 0)    // Can happen only if $conf->global->FACTURE_ENABLE_NEGATIVE is on
+                {
+                     $text.='<br>'.img_warning().' '.$langs->trans("ErrorInvoiceOfThisTypeMustBePositive");
+                }
+                $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('ValidateBill'),$text,'confirm_valid',$formquestion,(($object->type != 2 && $object->total_ttc < 0)?"no":"yes"),($conf->notification->enabled?0:2));
             }
 
             // Confirm back to draft status
@@ -2345,7 +2413,7 @@ else
                 if ($absolute_creditnote > 0)    // If not, link will be added later
                 {
                     if ($object->statut == 0 && $object->type != 2 && $object->type != 3) print ' ('.$addabsolutediscount.')<br>';
-                    else print '.';
+                    else print '. ';
                 }
                 else print '. ';
             }
@@ -2368,7 +2436,8 @@ else
                 {
                     // Remise dispo de type avoir
                     if (! $absolute_discount) print '<br>';
-                    $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filtercreditnote, $resteapayer);
+                    //$form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filtercreditnote, $resteapayer);
+                    $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filtercreditnote, 0);    // We must allow credit not even if amount is higher
                 }
             }
             if (! $absolute_discount && ! $absolute_creditnote)
@@ -2729,6 +2798,23 @@ else
 
             print '</table><br>';
 
+            if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+            {
+            	require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
+            	require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+            	$formcompany= new FormCompany($db);
+
+            	$blocname = 'contacts';
+            	$title = $langs->trans('ContactsAddresses');
+            	include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
+            }
+
+            if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+            {
+            	$blocname = 'notes';
+            	$title = $langs->trans('Notes');
+            	include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
+            }
 
             /*
              * Lines
@@ -2822,14 +2908,13 @@ else
                     // Validate
                     if ($object->statut == 0 && count($object->lines) > 0 &&
                     (
-                    (($object->type == 0 || $object->type == 1 || $object->type == 3 || $object->type == 4) && $object->total_ttc >= 0)
+                    (($object->type == 0 || $object->type == 1 || $object->type == 3 || $object->type == 4) && (! empty($conf->global->FACTURE_ENABLE_NEGATIVE) || $object->total_ttc >= 0))
                     || ($object->type == 2 && $object->total_ttc <= 0))
                     )
                     {
                         if ($user->rights->facture->valider)
                         {
-                            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=valid"';
-                            print '>'.$langs->trans('Validate').'</a>';
+                            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=valid">'.$langs->trans('Validate').'</a>';
                         }
                     }
 
@@ -3045,10 +3130,12 @@ else
                 }
 
                 $ref = dol_sanitizeFileName($object->ref);
-                $file = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+                include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+                $fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref);
+                $file=$fileparams['fullname'];
 
-                // Construit PDF si non existant
-                if (! is_readable($file))
+                // Build document if it not exists
+                if (! $file || ! is_readable($file))
                 {
                     // Define output language
                     $outputlangs = $langs;
@@ -3060,12 +3147,15 @@ else
                         $outputlangs = new Translate("",$conf);
                         $outputlangs->setDefaultLang($newlang);
                     }
-                    $result=facture_pdf_create($db, $object, $_REQUEST['model'], $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+
+                    $result=facture_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
                     if ($result <= 0)
                     {
                         dol_print_error($db,$result);
                         exit;
                     }
+                    $fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref);
+                    $file=$fileparams['fullname'];
                 }
 
                 print '<br>';
@@ -3099,10 +3189,10 @@ else
                 $formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 
                 // Init list of files
-                if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+                if (GETPOST("mode")=='init')
                 {
                     $formmail->clear_attached_files();
-                    $formmail->add_attached_files($file,dol_sanitizeFilename($ref.'.pdf'),'application/pdf');
+                    $formmail->add_attached_files($file,basename($file),dol_mimetype($file));
                 }
 
                 $formmail->show_form();
@@ -3375,7 +3465,7 @@ else
     }
 }
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>

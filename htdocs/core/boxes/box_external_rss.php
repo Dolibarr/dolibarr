@@ -57,7 +57,7 @@ class box_external_rss extends ModeleBoxes
 		$this->db=$db;
 		$this->param=$param;
 
-        $this->boxlabel=$langs->trans("BoxLastRssInfos");
+        $this->boxlabel=$langs->transnoentitiesnoconv("BoxLastRssInfos");
     }
 
     /**
