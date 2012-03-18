@@ -16,8 +16,8 @@
  */
 
 /**
- *       \file       htdocs/core/ajax/vatrates.php
- *       \brief      File to load vat rates combobox
+ *       \file       htdocs/core/ajax/contacts.php
+ *       \brief      File to load contacts combobox
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
@@ -45,13 +45,10 @@ top_httphead();
 if (! empty($id) && ! empty($action) && ! empty($htmlname))
 {
 	$form = new Form($db);
-	$soc = new Societe($db);
-	
-	$soc->fetch($id);
 	
 	$return=array();
 	
-	$return['value']	= $form->load_tva('tva_tx','',$soc,$mysoc,0,0,'',true);
+	$return['value']	= $form->selectcontacts($id,'','contactid',0,'','',0,'',true);
 	$return['num']		= $form->num;
 	$return['error']	= $form->error;
 	
