@@ -286,8 +286,6 @@ class Form
             	$inputType=$tmp[0];
             	if (! empty($tmp[1])) $rows=$tmp[1];
             	if (! empty($tmp[2])) $cols=$tmp[2];
-            
-            	$out.= '<input id="timestamp" type="hidden"/>'."\n"; // Use for timestamp format
             }
             else if (preg_match('/^ckeditor/',$inputType))
             {
