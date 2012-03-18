@@ -94,13 +94,11 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
     if ($result)
     {
     	// Clean parameters
-    	$dolibarr_main_data_root=trim($dolibarr_main_data_root);
-    	$dolibarr_main_url_root=trim($dolibarr_main_url_root);
-    	$dolibarr_main_url_root_alt=trim($dolibarr_main_url_root_alt);
-    	$dolibarr_main_document_root=trim($dolibarr_main_document_root);
-    	$dolibarr_main_document_root_alt=trim($dolibarr_main_document_root_alt);
-    	
-        //if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
+    	$dolibarr_main_data_root        =isset($dolibarr_main_data_root)?trim($dolibarr_main_data_root):'';
+    	$dolibarr_main_url_root         =isset($dolibarr_main_url_root)?trim($dolibarr_main_url_root):'';
+    	$dolibarr_main_url_root_alt     =isset($dolibarr_main_url_root_alt)?trim($dolibarr_main_url_root_alt):'';
+    	$dolibarr_main_document_root    =isset($dolibarr_main_document_root)?trim($dolibarr_main_document_root):'';
+    	$dolibarr_main_document_root_alt=isset($dolibarr_main_document_root_alt)?trim($dolibarr_main_document_root_alt):'';
 
         // Remove last / or \ on directories or url value
         if (! empty($dolibarr_main_document_root)		&& ! preg_match('/^[\\/]+$/',$dolibarr_main_document_root))		$dolibarr_main_document_root=preg_replace('/[\\/]+$/','',$dolibarr_main_document_root);
