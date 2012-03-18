@@ -32,7 +32,7 @@ elseif ($module == 'project_task')      { $note_private = 'note_private'; }
 elseif ($module == 'invoice_supplier')  { $permission=$user->rights->fournisseur->facture->creer; }
 elseif ($module == 'order_supplier')    { $permission=$user->rights->fournisseur->commande->creer; }
 
-if (! empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) $typeofdata='ckeditor:dolibarr_notes:100%:200:1:12:100';
+if (! empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) $typeofdata='ckeditor:dolibarr_notes:100%:200::1:12:100';
 else $typeofdata='textarea:12:100';
 ?>
 

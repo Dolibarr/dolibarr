@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2006      Marc Barilley / Ocebo <marc@ocebo.com>
+/* Copyright (C) 2005-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2006		Marc Barilley		<marc@ocebo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,22 +40,28 @@ function facturefourn_prepare_head($object)
 	$head[$h][1] = $langs->trans('CardBill');
 	$head[$h][2] = 'card';
 	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/contact.php?facid='.$object->id;
-	$head[$h][1] = $langs->trans('ContactsAddresses');
-	$head[$h][2] = 'contact';
-	$h++;
+	
+	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/contact.php?facid='.$object->id;
+		$head[$h][1] = $langs->trans('ContactsAddresses');
+		$head[$h][2] = 'contact';
+		$h++;
+	}
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'supplier_invoice');
-
-    $head[$h][0] = DOL_URL_ROOT.'/fourn/facture/note.php?facid='.$object->id;
-	$head[$h][1] = $langs->trans('Notes');
-	$head[$h][2] = 'note';
-	$h++;
+    
+    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+    {
+    	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/note.php?facid='.$object->id;
+    	$head[$h][1] = $langs->trans('Notes');
+    	$head[$h][2] = 'note';
+    	$h++;
+    }
 
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$object->id;
 	/*$filesdir = $conf->fournisseur->dir_output.'/facture/'.get_exdir($fac->id,2).$fac->id;
@@ -99,22 +106,28 @@ function ordersupplier_prepare_head($object)
 		$head[$h][2] = 'dispatch';
 		$h++;
 	}
-
-	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/contact.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('ContactsAddresses');
-	$head[$h][2] = 'contact';
-	$h++;
+	
+	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/contact.php?id='.$object->id;
+		$head[$h][1] = $langs->trans('ContactsAddresses');
+		$head[$h][2] = 'contact';
+		$h++;
+	}
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'supplier_order');
-
-    $head[$h][0] = DOL_URL_ROOT.'/fourn/commande/note.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Notes");
-	$head[$h][2] = 'note';
-	$h++;
+    
+    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+    {
+    	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/note.php?id='.$object->id;
+    	$head[$h][1] = $langs->trans("Notes");
+    	$head[$h][2] = 'note';
+    	$h++;
+    }
 
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/document.php?id='.$object->id;
 	/*$filesdir = $conf->fournisseur->dir_output . "/commande/" . dol_sanitizeFileName($commande->ref);

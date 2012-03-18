@@ -17,8 +17,13 @@
  */
 
 $module = $object->element;
-if ($module == 'propal') $module = 'propale';
-else if ($module == 'fichinter') { $module = 'ficheinter'; }
+$permission=(isset($permission)?$permission:$user->rights->$module->creer);    // If already defined by caller page
+
+// Special cases
+if ($module == 'propal')				{ $permission=$user->rights->propale->creer; }
+elseif ($module == 'fichinter')			{ $permission=$user->rights->ficheinter->creer; }
+elseif ($module == 'invoice_supplier')	{ $permission=$user->rights->fournisseur->facture->creer; }
+elseif ($module == 'order_supplier')	{ $permission=$user->rights->fournisseur->commande->creer; }
 
 $companystatic=new Societe($db);
 $contactstatic=new Contact($db);
@@ -29,7 +34,7 @@ $userstatic=new User($db);
 <!-- BEGIN PHP TEMPLATE CONTACTS -->
 <table class="noborder allwidth">
 
-<?php if ($user->rights->$module->creer) { ?>
+<?php if ($permission) { ?>
 	<tr class="liste_titre">
 		<td><?php echo $langs->trans("Source"); ?></td>
 		<td><?php echo $langs->trans("Company"); ?></td>
@@ -155,7 +160,7 @@ $userstatic=new User($db);
 			<?php if ($object->statut >= 0) echo '</a>'; ?>
 		</td>
 		<td align="center" nowrap="nowrap" colspan="2">
-			<?php if ($user->rights->$module->creer) { ?>
+			<?php if ($permission) { ?>
 				&nbsp;<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deletecontact&amp;lineid='.$tab[$i]['rowid']; ?>"><?php echo img_delete(); ?></a>
 			<?php } ?>
 		</td>

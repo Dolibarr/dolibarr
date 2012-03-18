@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
-* Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -31,9 +31,9 @@ require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php');
 $langs->load('bills');
 $langs->load("companies");
 
-$id = GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int');
-$ref = GETPOST('ref');
-$action = GETPOST('action');
+$id = (GETPOST('id','int') ? GETPOST('id','int') : GETPOST('facid','int'));
+$ref = GETPOST('ref','alpha');
+$action = GETPOST('action','alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;

@@ -442,5 +442,9 @@ ALTER TABLE llx_commande ADD COLUMN extraparams varchar(255) AFTER import_key;
 ALTER TABLE llx_facture ADD COLUMN extraparams varchar(255) AFTER import_key;
 ALTER TABLE llx_fichinter ADD COLUMN extraparams varchar(255) AFTER model_pdf;
 ALTER TABLE llx_deplacement ADD COLUMN extraparams varchar(255) AFTER note_public;
+ALTER TABLE llx_contrat ADD COLUMN import_key varchar(14) AFTER note_public;
+ALTER TABLE llx_contrat ADD COLUMN extraparams varchar(255) AFTER import_key;
+ALTER TABLE llx_commande_fournisseur ADD COLUMN extraparams varchar(255) AFTER import_key;
+ALTER TABLE llx_facture_fourn ADD COLUMN extraparams varchar(255) AFTER import_key;
 
 ALTER TABLE llx_boxes ADD COLUMN maxline integer NULL;

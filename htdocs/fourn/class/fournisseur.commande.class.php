@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2003-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
- * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
+/* Copyright (C) 2003-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2011	Philippe Grand			<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,6 +68,8 @@ class CommandeFournisseur extends Commande
     var $cond_reglement_code;
     var $mode_reglement_id;
     var $mode_reglement_code;
+    
+    var $extraparams=array();
 
 
     /**
@@ -111,7 +113,7 @@ class CommandeFournisseur extends Commande
         $sql = "SELECT c.rowid, c.ref, c.date_creation, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
         $sql.= " c.localtax1, c.localtax2, ";
         $sql.= " c.date_commande as date_commande, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
-        $sql.= " c.note as note_private, c.note_public, c.model_pdf,";
+        $sql.= " c.note as note_private, c.note_public, c.model_pdf, c.extraparams,";
         $sql.= " cm.libelle as methode_commande,";
         $sql.= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle,";
         $sql.= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle";
@@ -135,37 +137,39 @@ class CommandeFournisseur extends Commande
                 return 0;
             }
 
-            $this->id                  = $obj->rowid;
-            $this->ref                 = $obj->ref;
-            $this->socid               = $obj->fk_soc;
-            $this->fourn_id            = $obj->fk_soc;
-            $this->statut              = $obj->fk_statut;
-            $this->user_author_id      = $obj->fk_user_author;
-            $this->total_ht            = $obj->total_ht;
-            $this->total_tva           = $obj->tva;
-            $this->total_localtax1	   = $obj->localtax1;
-            $this->total_localtax2	   = $obj->localtax2;
-            $this->total_ttc           = $obj->total_ttc;
-            $this->date_commande       = $this->db->jdate($obj->date_commande); // date a laquelle la commande a ete transmise
-            $this->date                = $this->db->jdate($obj->date_creation);
-            $this->remise_percent      = $obj->remise_percent;
-            $this->methode_commande_id = $obj->fk_methode_commande;
-            $this->methode_commande    = $obj->methode_commande;
+            $this->id					= $obj->rowid;
+            $this->ref					= $obj->ref;
+            $this->socid				= $obj->fk_soc;
+            $this->fourn_id				= $obj->fk_soc;
+            $this->statut				= $obj->fk_statut;
+            $this->user_author_id		= $obj->fk_user_author;
+            $this->total_ht				= $obj->total_ht;
+            $this->total_tva			= $obj->tva;
+            $this->total_localtax1		= $obj->localtax1;
+            $this->total_localtax2		= $obj->localtax2;
+            $this->total_ttc			= $obj->total_ttc;
+            $this->date_commande		= $this->db->jdate($obj->date_commande); // date a laquelle la commande a ete transmise
+            $this->date					= $this->db->jdate($obj->date_creation);
+            $this->remise_percent		= $obj->remise_percent;
+            $this->methode_commande_id	= $obj->fk_methode_commande;
+            $this->methode_commande		= $obj->methode_commande;
 
-            $this->source              = $obj->source;
+            $this->source				= $obj->source;
             //$this->facturee            = $obj->facture;
-            $this->fk_project          = $obj->fk_project;
-            $this->cond_reglement_id   = $obj->fk_cond_reglement;
-            $this->cond_reglement_code = $obj->cond_reglement_code;
-            $this->cond_reglement      = $obj->cond_reglement_libelle;
-            $this->cond_reglement_doc  = $obj->cond_reglement_libelle;
-            $this->mode_reglement_id   = $obj->fk_mode_reglement;
-            $this->mode_reglement_code = $obj->mode_reglement_code;
-            $this->mode_reglement      = $obj->mode_reglement_libelle;
-            $this->note                = $obj->note_private;    // deprecated
-            $this->note_private        = $obj->note_private;
-            $this->note_public         = $obj->note_public;
-            $this->modelpdf            = $obj->model_pdf;
+            $this->fk_project			= $obj->fk_project;
+            $this->cond_reglement_id	= $obj->fk_cond_reglement;
+            $this->cond_reglement_code	= $obj->cond_reglement_code;
+            $this->cond_reglement		= $obj->cond_reglement_libelle;
+            $this->cond_reglement_doc	= $obj->cond_reglement_libelle;
+            $this->mode_reglement_id	= $obj->fk_mode_reglement;
+            $this->mode_reglement_code	= $obj->mode_reglement_code;
+            $this->mode_reglement		= $obj->mode_reglement_libelle;
+            $this->note					= $obj->note_private;    // deprecated
+            $this->note_private			= $obj->note_private;
+            $this->note_public			= $obj->note_public;
+            $this->modelpdf				= $obj->model_pdf;
+            
+            $this->extraparams			= (array) dol_json_decode($obj->extraparams, true);
 
             $this->db->free($resql);
 
