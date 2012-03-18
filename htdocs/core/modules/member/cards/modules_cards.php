@@ -62,11 +62,12 @@ class ModelePDFCards
 
 /**
  *	Cree un fichier de cartes de visites en fonction du modele de ADHERENT_CARDS_ADDON_PDF
- *	@param   	db  			Database handler
- *	@param   	arrayofmembers	Array of members
- *	@param	    modele			Force modele to use ('' to not force)
- *	@param		outputlangs		Objet langs to use for translation
- *	@return  	int        		<0 if KO, >0 if OK
+ *
+ *	@param	DoliDB		$db  			Database handler
+ *	@param  array		$arrayofmembers	Array of members
+ *	@param	string		$modele			Force modele to use ('' to not force)
+ *	@param	Translate	$outputlangs	Objet langs to use for translation
+ *	@return int        					<0 if KO, >0 if OK
  */
 function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs)
 {

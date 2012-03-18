@@ -22,6 +22,9 @@
 include_once "methode_expedition.modules.php";
 
 
+/**
+ * Class to manage shipment Trans
+ */
 class methode_expedition_trans extends ModeleShippingMethod
 {
 
