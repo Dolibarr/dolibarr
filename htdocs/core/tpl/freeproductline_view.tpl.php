@@ -23,7 +23,7 @@
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 	<td align="center"><?php echo ($i+1); ?></td>
 	<?php } ?>
-	<td><a name="<?php echo $line->rowid; ?>"></a>
+	<td><div id="<?php echo $line->rowid; ?>"></div>
 	<?php if (($line->info_bits & 2) == 2) { ?>
 		<a href="<?php echo DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid; ?>">
 		<?php

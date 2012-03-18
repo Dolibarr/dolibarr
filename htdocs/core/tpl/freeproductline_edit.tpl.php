@@ -35,7 +35,7 @@
 
 <tr <?php echo $bc[$var]; ?>>
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
-	<a name="<?php echo $line->id; ?>"></a>
+	<div id="<?php echo $line->id; ?>"></div>
 
 	<?php
 	if (is_object($hookmanager))
