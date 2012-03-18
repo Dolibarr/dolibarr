@@ -70,9 +70,8 @@ $userstatic=new User($db);
 	
 	<tr <?php echo $bc[$var]; ?>>
 		<td nowrap="nowrap"><?php echo img_object('','contact').' '.$langs->trans("ThirdPartyContacts"); ?></td>
+		<?php if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT) { ?>
 		<td>
-			<?php //$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$object->socid; ?>
-			<?php //$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany'); ?>
 			<?php 
 			$events=array();
 			$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
@@ -80,9 +79,17 @@ $userstatic=new User($db);
 			?>
 		</td>
 		<td>
-			<?php //$nbofcontacts=$form->select_contacts($selectedCompany, '', 'contactid'); ?>
 			<?php $nbofcontacts=$form->select_contacts($object->socid, '', 'contactid'); ?>
 		</td>
+		<?php } else { ?>
+		<td>
+			<?php $selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$object->socid; ?>
+			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany'); ?>
+		</td>
+		<td>
+			<?php $nbofcontacts=$form->select_contacts($selectedCompany, '', 'contactid'); ?>
+		</td>
+		<?php } ?>
 		<td>
 			<?php $formcompany->selectTypeContact($object, '', 'type','external'); ?>
 		</td>
