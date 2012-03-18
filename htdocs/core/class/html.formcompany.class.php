@@ -509,6 +509,9 @@ class FormCompany
 	 * 	@param	string		$limitto		Disable answers that are not id in this array list
 	 *  @param	int			$forceid		This is to force antoher object id than object->id
 	 * 	@return	void
+	 * 	TODO obsolete ?
+	 * 	cette fonction doit utiliser du javascript quoi qu'il en soit !
+	 * 	autant utiliser le système combobox sans rechargement de page non ?
 	 */
 	function selectCompaniesForNewContact($object, $var_id, $selected='', $htmlname='newcompany', $limitto='', $forceid=0)
 	{
