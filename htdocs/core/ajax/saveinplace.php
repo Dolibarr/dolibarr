@@ -49,8 +49,8 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 {
 	$ext_element		= GETPOST('ext_element','alpha');
 	$field				= substr($field, 8); // remove prefix val_
-	$value				= GETPOST('value','alpha');
 	$type				= GETPOST('type','alpha');
+	$value				= ($type == 'ckeditor' ? GETPOST('value') : GETPOST('value','alpha'));
 	$savemethod			= GETPOST('savemethod','alpha');
 	$savemethodname		= (! empty($savemethod) ? $savemethod : 'setValueFrom');
 
