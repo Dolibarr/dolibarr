@@ -513,7 +513,7 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetXY($tab3_posx+58, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, $invoice->ref, 0, 'L', 0);
 
-				$pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3 );
+				$pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3);
 
 				$i++;
 			}
@@ -552,7 +552,7 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetXY($tab3_posx+58, $tab3_top+$y);
 				$pdf->MultiCell(30, 3, $row->num, 0, 'L', 0);
 
-				$pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3 );
+				$pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3);
 
 				$i++;
 			}

@@ -116,9 +116,9 @@ abstract class ModeleNumRefFactures
 	/**
 	 * Renvoi prochaine valeur attribuee
 	 *
-	 * @param     objsoc		Objet societe
-	 * @param     facture		Objet facture
-	 * @return    string      Valeur
+	 * @param	Societe		$objsoc		Objet societe
+	 * @param   Facture		$facture	Objet facture
+	 * @return  string      			Value
 	 */
 	function getNextValue($objsoc,$facture)
 	{

@@ -50,27 +50,6 @@ if (isset($_SERVER["DOCUMENT_URI"]) && $_SERVER["DOCUMENT_URI"])
 }
 
 
-// Define syslog constants
-if (! defined('LOG_DEBUG'))
-{
-    if (function_exists("define_syslog_variables"))
-    {
-    	define_syslog_variables(); // Deprecated since php 5.3.0, syslog variables no longer need to be initialized
-    }
-    else
-    {
-    	// Pour PHP sans syslog (comme sous Windows)
-    	define('LOG_EMERG',0);
-    	define('LOG_ALERT',1);
-    	define('LOG_CRIT',2);
-    	define('LOG_ERR',3);
-    	define('LOG_WARNING',4);
-    	define('LOG_NOTICE',5);
-    	define('LOG_INFO',6);
-    	define('LOG_DEBUG',7);
-    }
-}
-
 $includeconferror='';
 
 // Define vars
@@ -134,28 +113,6 @@ if (empty($conf->db->dolibarr_main_db_encryption)) $conf->db->dolibarr_main_db_e
 if (empty($conf->db->dolibarr_main_db_cryptkey))   $conf->db->dolibarr_main_db_cryptkey='';
 if (empty($conf->db->user)) $conf->db->user='';
 
-
-
-// Removed magic_quotes
-if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
-{
-	if (get_magic_quotes_gpc())
-	{
-		// Forcing parameter setting magic_quotes_gpc and cleaning parameters
-		// (Otherwise he would have for each position, condition
-		// Reading stripslashes variable according to state get_magic_quotes_gpc).
-		// Off mode (recommended, you just do $db->escape when an insert / update.
-		function stripslashes_deep($value)
-		{
-			return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
-		}
-		$_GET     = array_map('stripslashes_deep', $_GET);
-		$_POST    = array_map('stripslashes_deep', $_POST);
-		$_COOKIE  = array_map('stripslashes_deep', $_COOKIE);
-		$_REQUEST = array_map('stripslashes_deep', $_REQUEST);
-		@set_magic_quotes_runtime(0);
-	}
-}
 
 // Defini objet langs
 $langs = new Translate('..',$conf);
@@ -255,18 +212,6 @@ function pFooter($nonext=0,$setuplang='')
 
 	print '</body>'."\n";
 	print '</html>'."\n";
-}
-
-/**
- * Output a text into a log file
- *
- * @param	string	$message		Message to show
- * @param   string	$level			Log level
- */
-function dolibarr_support_syslog($message, $level=LOG_DEBUG)
-{
-	if (! defined('LOG_DEBUG')) define('LOG_DEBUG',6);
-	dol_syslog($message,$level);
 }
 
 ?>

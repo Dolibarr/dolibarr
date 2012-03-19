@@ -242,7 +242,6 @@ class SimpleOpenID
     /**
      * GetIdentity
      *
-     * @param	string	$a		Server
      * @return	void
      */
     function GetIdentity()
@@ -253,7 +252,6 @@ class SimpleOpenID
     /**
      * SetOpenIDServer
      *
-     * @param	string	$a		Server
      * @return	void
      */
     function GetError()
@@ -265,7 +263,8 @@ class SimpleOpenID
     /**
      * ErrorStore
      *
-     * @param	string	$a		Server
+     * @param	string	$code		Code
+     * @param	string	$desc		Description
      * @return	void
      */
     function ErrorStore($code, $desc = null)
@@ -280,14 +279,16 @@ class SimpleOpenID
     /**
      * IsError
      *
-     * @param	string	$a		Server
      * @return	void
      */
     function IsError()
     {
-        if (count($this->error) > 0){
+        if (count($this->error) > 0)
+        {
             return true;
-        }else{
+        }
+        else
+        {
             return false;
         }
     }
@@ -295,7 +296,7 @@ class SimpleOpenID
     /**
      * splitResponse
      *
-     * @param	string	$a		Server
+     * @param	string	$response		Server
      * @return	void
      */
     function splitResponse($response)
@@ -315,7 +316,7 @@ class SimpleOpenID
     /**
      * OpenID_Standarize
      *
-     * @param	string	$a		Server
+     * @param	string	$openidçidentity		Server
      * @return	void
      */
     function OpenID_Standarize($openid_identity = null)
@@ -434,7 +435,6 @@ class SimpleOpenID
     /**
      * GetRedirectURL
      *
-     * @param	string	$a		Server
      * @return	void
      */
     function GetRedirectURL()
@@ -459,7 +459,6 @@ class SimpleOpenID
     /**
      * Redirect
      *
-     * @param	string	$a		Server
      * @return	void
      */
     function Redirect()
@@ -480,7 +479,6 @@ class SimpleOpenID
     /**
      * ValidateWithServer
      *
-     * @param	string	$a		Server
      * @return	void
      */
     function ValidateWithServer()

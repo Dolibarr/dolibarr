@@ -205,7 +205,7 @@ print '</tr>';
 print '<tr class="impair">';
 print '<td width="100">'.$langs->trans("Title").'</td>';
 print '<td><input type="text" name="external_rss_title_'.($lastexternalrss+1).'" value="'.@constant("EXTERNAL_RSS_TITLE_" . ($lastexternalrss+1)).'" size="64"></td>';
-print '<td>April,<br>LinuxFR,<br>Lolix</td>';
+print '<td>An interesting RSS feed</td>';
 print '</tr>';
 
 print '<tr class="pair">';

@@ -152,11 +152,12 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		return $examplecust.'<br>'.$examplesup;
 	}
 
-	/**		Return next value
+	/**
+	 * Return next value
 	 *
-	 *     	@param      objsoc      Object third party
-	 *	    @param      $type       Client ou fournisseur (0:customer, 1:supplier)
-	 *     	@return     string      Value if OK, '' if module not configured, <0 if KO
+	 * @param	Societe		$objsoc     Object third party
+	 * @param  	int		    $type       Client ou fournisseur (0:customer, 1:supplier)
+	 * @return 	string      			Value if OK, '' if module not configured, <0 if KO
 	 */
 	function getNextValue($objsoc=0,$type=-1)
 	{

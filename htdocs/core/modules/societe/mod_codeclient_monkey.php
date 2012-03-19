@@ -247,7 +247,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 *	Renvoi si un code respecte la syntaxe
 	 *
 	 *	@param	string		$code		Code a verifier
-*	 *	@return	int						0 si OK, <0 si KO
+	 *	@return	int						0 si OK, <0 si KO
 	 */
 	function verif_syntax($code)
 	{

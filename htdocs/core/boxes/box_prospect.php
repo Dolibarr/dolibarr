@@ -39,21 +39,22 @@ class box_prospect extends ModeleBoxes
 	var $depends = array("societe");
 
 	var $db;
-	var $param;
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
 
+
 	/**
      *  Constructor
+     *
+     *  @param	DoliDB	$db		Database handler
 	 */
-	function box_prospect($DB,$param)
+	function box_prospect($db)
 	{
 		global $langs;
 		$langs->load("boxes");
 
-		$this->db=$DB;
-		$this->param=$param;
+		$this->db=$db;
 
 		$this->boxlabel=$langs->transnoentitiesnoconv("BoxLastProspects");
 	}

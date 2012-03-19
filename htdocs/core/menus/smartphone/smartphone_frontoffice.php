@@ -23,10 +23,10 @@
 
 
 /**
- *      \class      MenuSmart
- *	    \brief      Class to manage smartphone menu smartphone (for external users)
+ *	Class to manage smartphone menu smartphone (for external users)
  */
-class MenuSmart {
+class MenuSmart
+{
 
 	var $require_left=array("smartphone_frontoffice");    // Si doit etre en phase avec un gestionnaire de menu particulier
 	var $hideifnotallowed=1;						// Put 0 for back office menu, 1 for front office menu
@@ -36,7 +36,7 @@ class MenuSmart {
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
 	function MenuSmart($db)
 	{
@@ -47,7 +47,7 @@ class MenuSmart {
 	/**
 	 *    Show menu
 	 *
-	 *    @param		limitmenuto		To limit menu to a top or left menu value
+	 *    @param	string		$limitmenuto		To limit menu to a top or left menu value
 	 */
 	function showmenu($limitmenuto)
 	{

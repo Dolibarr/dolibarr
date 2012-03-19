@@ -8,17 +8,17 @@
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2011 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand			<philippe.grand@atoo-net.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -206,8 +206,8 @@ class Propal extends CommonObject
     /**
      *	Adding line of fixed discount in the proposal in DB
      *
-     *	@param     int		@idremise			Id of fixed discount
-     *  @return    int          				>0 si ok, <0 si ko
+     *	@param     int		$idremise			Id of fixed discount
+     *  @return    int          				>0 if OK, <0 if KO
      */
     function insert_discount($idremise)
     {
@@ -723,22 +723,22 @@ class Propal extends CommonObject
                         }
 
                         $result = $this->addline(
-                        $this->id,
-                        $this->lines[$i]->desc,
-                        $this->lines[$i]->subprice,
-                        $this->lines[$i]->qty,
-                        $this->lines[$i]->tva_tx,
-                        $this->lines[$i]->localtax1_tx,
-                        $this->lines[$i]->localtax2_tx,
-                        $this->lines[$i]->fk_product,
-                        $this->lines[$i]->remise_percent,
-    						'HT',
-                        0,
-                        0,
-                        $this->lines[$i]->product_type,
-                        $this->lines[$i]->rang,
-                        $this->lines[$i]->special_code,
-                        $fk_parent_line
+                            $this->id,
+                            $this->lines[$i]->desc,
+                            $this->lines[$i]->subprice,
+                            $this->lines[$i]->qty,
+                            $this->lines[$i]->tva_tx,
+                            $this->lines[$i]->localtax1_tx,
+                            $this->lines[$i]->localtax2_tx,
+                            $this->lines[$i]->fk_product,
+                            $this->lines[$i]->remise_percent,
+                            'HT',
+                            0,
+                            0,
+                            $this->lines[$i]->product_type,
+                            $this->lines[$i]->rang,
+                            $this->lines[$i]->special_code,
+                            $fk_parent_line
                         );
 
                         if ($result < 0)
@@ -828,6 +828,7 @@ class Propal extends CommonObject
 
     /**
      *	Insert into DB a proposal object completely defined by its data members (ex, results from copy).
+     *
      *	@param 		User	$user	User that create
      *	@return    	int				Id of the new object if ok, <0 if ko
      *	@see       	create

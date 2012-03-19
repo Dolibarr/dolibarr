@@ -667,8 +667,8 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
  *	@param	PDF			&$pdf				Object PDF
  *	@param	object		$object				Object
  *	@param  Translate	$outputlangs		Object lang
- *	@param  int			$curx				X
- *	@param  int			$cury				Y
+ *	@param  int			$posx				X
+ *	@param  int			$posy				Y
  *	@param	int			$align				Align
  *	@param	string		$default_font_size	Font size
  *	@param	HookManager	$hookmanager		Hook manager object

@@ -115,9 +115,10 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 	/**
      *      Write the invoice as a document onto disk
-     *      @param      object          Object invoice to build (or id if old method)
-     *      @param      outputlangs     Lang object for output language
-     *      @return     int             1=OK, 0=KO
+     *
+     *      @param	Object		$object         Object invoice to build (or id if old method)
+     *      @param  Translate	$outputlangs    Lang object for output language
+     *      @return int             			1=OK, 0=KO
 	 */
 	function write_file($object,$outputlangs='')
 	{
@@ -712,13 +713,13 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$pdf->line($tab3_posx, $tab3_top-1+$tab3_height, $tab3_posx+$tab3_width, $tab3_top-1+$tab3_height);
 
 		$pdf->SetFont('','', $default_font_size - 4);
-		$pdf->SetXY($tab3_posx, $tab3_top );
+		$pdf->SetXY($tab3_posx, $tab3_top);
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Payment"), 0, 'L', 0);
-		$pdf->SetXY($tab3_posx+21, $tab3_top );
+		$pdf->SetXY($tab3_posx+21, $tab3_top);
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Amount"), 0, 'L', 0);
-		$pdf->SetXY($tab3_posx+40, $tab3_top );
+		$pdf->SetXY($tab3_posx+40, $tab3_top);
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Type"), 0, 'L', 0);
-		$pdf->SetXY($tab3_posx+58, $tab3_top );
+		$pdf->SetXY($tab3_posx+58, $tab3_top);
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Num"), 0, 'L', 0);
 
 		$y=0;
@@ -752,7 +753,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$pdf->SetXY($tab3_posx+58, $tab3_top+$y);
 				$pdf->MultiCell(30, 3, $row->num, 0, 'L', 0);
 
-				$pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3 );
+				$pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3);
 
 				$i++;
 			}

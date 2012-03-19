@@ -132,7 +132,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *  Return next free value
 	 *
 	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Object		$shipment	Shipment object
+	 *	@param	Object		$objforref	Shipment object
 	 *	@return string      			Next free value
 	 */
 	function expedition_get_num($objsoc,$objforref)

@@ -30,6 +30,7 @@ class InfoBox
     /**
      *  Return array of boxes qualified for area and user
      *
+     *  @param	DoliDB	$db				Database handler
      *  @param	string	$mode			'available' or 'activated'
      *  @param	string	$zone			Name or area (-1 for all, 0 for Homepage, 1 for xxx, ...)
      *  @param  User    $user	  		Objet user to filter (used only if $zone >= 0)
@@ -140,10 +141,11 @@ class InfoBox
     /**
      *  Save order of boxes for area and user
      *
-     *  @param	string	$zone       		Name of area (0 for Homepage, ...)
-     *  @param  string  $boxorder   		List of boxes with correct order 'A:123,456,...-B:789,321...'
-     *  @param  int     $userid     		Id of user
-     *  @return int                   		<0 if KO, >= 0 if OK
+     *  @param	DoliDB	$db				Database handler
+     *  @param	string	$zone       	Name of area (0 for Homepage, ...)
+     *  @param  string  $boxorder   	List of boxes with correct order 'A:123,456,...-B:789,321...'
+     *  @param  int     $userid     	Id of user
+     *  @return int                   	<0 if KO, >= 0 if OK
      */
     static function saveboxorder($db, $zone,$boxorder,$userid=0)
     {

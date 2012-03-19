@@ -209,7 +209,7 @@ class pdf_oursin extends ModelePDFFactures
 
 				$pdf->SetFillColor(220,220,220);
 				$pdf->SetFont('','', $default_font_size - 1);
-				$pdf->SetXY($this->marges['g'], $tab_top + $this->marges['g'] );
+				$pdf->SetXY($this->marges['g'], $tab_top + $this->marges['g']);
 
 				$iniY = $pdf->GetY();
 				$curY = $pdf->GetY();
@@ -356,13 +356,13 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->Rect($tab3_posx, $tab3_top-1, $tab3_width, $tab3_height);
 
 		$pdf->SetFont('','', $default_font_size - 4);
-		$pdf->SetXY($tab3_posx, $tab3_top-1 );
+		$pdf->SetXY($tab3_posx, $tab3_top-1);
 		$pdf->MultiCell(20, 4, $outputlangs->transnoentities("Payment"), 0, 'L', 0);
-		$pdf->SetXY($tab3_posx+21, $tab3_top-1 );
+		$pdf->SetXY($tab3_posx+21, $tab3_top-1);
 		$pdf->MultiCell(20, 4, $outputlangs->transnoentities("Amount"), 0, 'L', 0);
-		$pdf->SetXY($tab3_posx+40, $tab3_top-1 );
+		$pdf->SetXY($tab3_posx+40, $tab3_top-1);
 		$pdf->MultiCell(20, 4, $outputlangs->transnoentities("Type"), 0, 'L', 0);
-		$pdf->SetXY($tab3_posx+58, $tab3_top-1 );
+		$pdf->SetXY($tab3_posx+58, $tab3_top-1);
 		$pdf->MultiCell(20, 4, $outputlangs->transnoentities("Num"), 0, 'L', 0);
 
 		$y=0;
@@ -746,6 +746,7 @@ class pdf_oursin extends ModelePDFFactures
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
+	 *   @param		Object		$object			Object
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
 	 */

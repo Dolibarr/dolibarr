@@ -2433,8 +2433,8 @@ abstract class CommonObject
      *
      *  @param	string		$action				GET/POST action
      * 	@param	array	    $line		       	Selected object line to output
-     *  @param  string	    $var               	Is it a an odd line
-     *  @param  int		    $num               	Number of line
+     *  @param  string	    $var               	Is it a an odd line (true)
+     *  @param  int		    $num               	Number of line (0)
      *  @param  int		    $i					I
      *  @param  int		    $dateSelector      	1=Show also date range input fields
      *  @param  string	    $seller            	Object of seller third party
@@ -2443,7 +2443,7 @@ abstract class CommonObject
      *  @param	HookManager	$hookmanager		Hook manager
      *  @return	void
 	 */
-	function printObjectLine($action,$line,$var=true,$num=0,$i=0,$dateSelector=0,$seller,$buyer,$selected=0,$hookmanager=false)
+	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$hookmanager=false)
 	{
 		global $conf,$langs,$user;
 		global $form,$bc,$bcdd;
