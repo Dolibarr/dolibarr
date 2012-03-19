@@ -4048,7 +4048,7 @@ function printCommonFooter($zone='private')
         {
             print ' - Zend encoded file: '.(zend_loader_file_encoded()?'yes':'no');
         }
-        print '")'."\n";
+        print '");'."\n";
         print '</script>'."\n";
 
         // Add Xdebug coverage of code
