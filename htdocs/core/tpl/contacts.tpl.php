@@ -42,15 +42,15 @@ $userstatic=new User($db);
 		<td><?php echo $langs->trans("ContactType"); ?></td>
 		<td colspan="3">&nbsp;</td>
 	</tr>
-	
+
 	<?php $var=false; ?>
-	
+
 	<form action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 	<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
 	<input type="hidden" name="action" value="addcontact" />
 	<input type="hidden" name="source" value="internal" />
-	
+
 	<tr <?php echo $bc[$var]; ?>>
 		<td nowrap="nowrap"><?php echo img_object('','user').' '.$langs->trans("Users"); ?></td>
 		<td><?php echo $conf->global->MAIN_INFO_SOCIETE_NOM; ?></td>
@@ -59,7 +59,7 @@ $userstatic=new User($db);
 		<td align="right" colspan="3" ><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></td>
 	</tr>
 	</form>
-	
+
 	<form action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 	<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
@@ -67,12 +67,12 @@ $userstatic=new User($db);
 	<input type="hidden" name="source" value="internal" />
 
 	<?php $var=!$var; ?>
-	
+
 	<tr <?php echo $bc[$var]; ?>>
 		<td nowrap="nowrap"><?php echo img_object('','contact').' '.$langs->trans("ThirdPartyContacts"); ?></td>
 		<?php if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT) { ?>
 		<td>
-			<?php 
+			<?php
 			$events=array();
 			$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 			print $form->select_company($object->socid,'socid','',1,0,0,$events);
@@ -98,10 +98,7 @@ $userstatic=new User($db);
 		</td>
 	</tr>
 	</form>
-	
-	<tr>
-		<td colspan="7">&nbsp;</td>
-	</tr>
+
 <?php } ?>
 
 	<tr class="liste_titre">
@@ -114,17 +111,17 @@ $userstatic=new User($db);
 	</tr>
 
 	<?php $var=true; ?>
-	
+
 	<?php
 	foreach(array('internal','external') as $source) {
 		$tab = $object->liste_contact(-1,$source);
 		$num=count($tab);
-	
+
 		$i = 0;
 		while ($i < $num) {
 			$var = !$var;
 	?>
-	
+
 	<tr <?php echo $bc[$var]; ?> valign="top">
 		<td align="left">
 			<?php if ($tab[$i]['source']=='internal') echo $langs->trans("User"); ?>
@@ -148,7 +145,7 @@ $userstatic=new User($db);
 			?>
 		</td>
 		<td>
-			<?php 
+			<?php
 			if ($tab[$i]['source']=='internal')
 			{
 				$userstatic->id=$tab[$i]['id'];
@@ -177,9 +174,9 @@ $userstatic=new User($db);
 			<?php } ?>
 		</td>
 	</tr>
-	
+
 <?php $i++; ?>
 <?php } } ?>
-	
+
 </table>
 <!-- END PHP TEMPLATE CONTACTS -->
