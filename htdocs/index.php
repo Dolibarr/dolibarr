@@ -31,6 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/boxes.php");
 
 // If not defined, we select menu "home"
 if (! isset($_GET["mainmenu"])) $_GET["mainmenu"]="home";
+$action=GETPOST('action');
 
 
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');

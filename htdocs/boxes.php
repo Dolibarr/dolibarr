@@ -1,27 +1,25 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
-* Copyright (C) 2005-2011	Regis Houssin			<regis@dolibarr.fr>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2005-2011	Regis Houssin			<regis@dolibarr.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  *	\file       htdocs/boxes.php
  *	\brief      File of class to manage widget boxes
- *	\author     Rodolphe Qiedeville
- *	\author	    Laurent Destailleur
  */
 
 
@@ -46,7 +44,7 @@ function printBoxesArea($user,$areacode)
     if ($conf->use_javascript_ajax)
     {
         $emptyuser=new User($db);
-        $boxavailable=$infobox->listboxes('available',$areacode,$emptyuser,$arrayboxactivatedid);
+        $boxavailable=$infobox->listboxes('activated',$areacode,$emptyuser,$arrayboxactivatedid);    // Available here is activated for empty user
 
         $arrayboxtoactivatelabel=array();
         foreach($boxavailable as $box)
@@ -54,11 +52,32 @@ function printBoxesArea($user,$areacode)
             $arrayboxtoactivatelabel[$box->id]=$box->boxlabel;
         }
         $form=new Form($db);
-        // TODO enable
-        //$selectboxlist=$form->selectarray('boxcombo', $arrayboxtoactivatelabel);
+
+        $selectboxlist=$form->selectarray('boxcombo', $arrayboxtoactivatelabel,'',1);
     }
 
-    print load_fiche_titre($langs->trans("OtherInformationsBoxes"),$selectboxlist,'','','otherboxes');
+    print '<script type="text/javascript" language="javascript">
+    jQuery(document).ready(function() {
+    	jQuery("#boxcombo").change(function() {
+    	var boxid=jQuery("#boxcombo").val();
+    		if (boxid > 0) {
+        		var left_list = cleanSerialize(jQuery("#left").sortable("serialize"));
+        		var right_list = cleanSerialize(jQuery("#right").sortable("serialize"));
+        		var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
+				jQuery.ajax({ url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\',
+			        async:   false
+		        });
+    			//jQuery.get(\''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\');
+    			window.location.search=\'mainmenu='.GETPOST("mainmenu").'&leftmenu='.GETPOST('leftmenu').'&action=addbox&boxid=\'+boxid;
+				//window.location.href=\''.$_SERVER["PHP_SELF"].'\';
+            }
+    	});';
+    if (! count($arrayboxtoactivatelabel)) print 'jQuery("#boxcombo").hide();';
+    print  '
+	});
+    </script>';
+
+    print load_fiche_titre((count($boxactivated)?$langs->trans("OtherInformationsBoxes"):''),$selectboxlist,'','','otherboxes');
 
     if (count($boxactivated))
     {
@@ -151,11 +170,10 @@ function printBoxesArea($user,$areacode)
                     });
             '."\n";
             print 'function updateOrder() {
-            		var left_list = cleanSerialize(jQuery("#left").sortable("serialize" ));
-            		var right_list = cleanSerialize(jQuery("#right").sortable("serialize" ));
+            		var left_list = cleanSerialize(jQuery("#left").sortable("serialize"));
+            		var right_list = cleanSerialize(jQuery("#right").sortable("serialize"));
             		var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
-                    var userid = \''.$user->id.'\';
-					jQuery.get(\''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&userid=\'+'.$user->id.');
+					jQuery.get(\''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.');
             		}'."\n";
             // For closing
             print 'jQuery(document).ready(function() {

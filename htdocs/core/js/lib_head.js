@@ -578,13 +578,13 @@ function newpopup(url,title) {
  * ================================================================= 
  * Purpose:
  * Clean values of a "Sortable.serialize". Used by drag and drop.
- * Works for Scriptaculous and jQuery. 
  * Input:   expr 
  * Author:  Regis Houssin 
  * Licence: GPL
  * ==================================================================
  */
 function cleanSerialize(expr) {
+	if (typeof(expr) != 'string') return '';
 	var reg = new RegExp("(&)", "g");
 	var reg2 = new RegExp("[^A-Z0-9,]", "g");
 	var liste1 = expr.replace(reg, ",");

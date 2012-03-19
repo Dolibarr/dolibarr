@@ -8,6 +8,7 @@ WARNING: Because of a major datastructure change onto supplier prices tabkes, be
 to make a backup of your database before making upgrade.
 
 For users:
+- New: Each user can remove/add its own boxes.
 - New: Can use personalized fields of products/services.
 - New: Can attach files on social contributions.
 - New: Show payments terms and conditions onto muscadet template.
