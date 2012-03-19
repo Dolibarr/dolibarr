@@ -458,14 +458,15 @@ class Task extends CommonObject
      * Return list of tasks for all projects or for one particular project
      * Sort order is on project, TODO then of position of task, and last on title of first level task
      *
-     * @param	User	$usert		Object user to limit tasks affected to a particular user
-     * @param	User	$userp		Object user to limit projects of a particular user and public projects
-     * @param	int		$projectid	Project id
-     * @param	int		$socid		Third party id
-     * @param	int		$mode		0=Return list of tasks and their projects, 1=Return projects and tasks if exists
-     * @return 	array				Array of tasks
+     * @param	User	$usert				Object user to limit tasks affected to a particular user
+     * @param	User	$userp				Object user to limit projects of a particular user and public projects
+     * @param	int		$projectid			Project id
+     * @param	int		$socid				Third party id
+     * @param	int		$mode				0=Return list of tasks and their projects, 1=Return projects and tasks if exists
+     * @param	string	$filteronprojref	Filter on project ref
+     * @return 	array						Array of tasks
      */
-    function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0, $mode=0)
+    function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0, $mode=0, $filteronprojref='')
     {
         global $conf;
 
@@ -494,6 +495,7 @@ class Task extends CommonObject
             if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
             if ($projectid) $sql.= " AND p.rowid in (".$projectid.")";
         }
+        if ($filteronprojref) $sql.= " AND p.ref LIKE '%".$filteronprojref."%'";
         $sql.= " ORDER BY p.ref, t.label";
 
         //print $sql;
