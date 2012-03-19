@@ -79,3 +79,6 @@
 [submodule "htdocs/custom/multicurrency"]
 	path = htdocs/custom/multicurrency
 	url = gitolite@doliforge.org:multicurrency/multicurrency.git
+[submodule "htdocs/custom/google"]
+	path = htdocs/custom/google
+	url = gitolite@doliforge.org:google/google.git
