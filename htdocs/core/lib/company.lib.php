@@ -92,7 +92,7 @@ function societe_prepare_head($object)
     if ($user->societe_id == 0)
     {
     	// Notes
-        $head[$h][0] = DOL_URL_ROOT.'/societe/socnote.php?socid='.$object->id;
+        $head[$h][0] = DOL_URL_ROOT.'/societe/note.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Note");
         $head[$h][2] = 'note';
         $h++;
@@ -507,7 +507,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     }
 
     print "\n";
-    
+
     $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ContactsForCompany") : $langs->trans("ContactsAddressesForCompany"));
     print_fiche_titre($title,$buttoncreate,'');
 
@@ -609,7 +609,7 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 {
 	global $user;
 	global $bc;
-	
+
 	require_once(DOL_DOCUMENT_ROOT."/societe/class/address.class.php");
 
 	$addressstatic = new Address($db);
@@ -652,9 +652,9 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 			print '</td>';
 
 			print '<td>'.$address->name.'</td>';
-			
+
 			print '<td>'.$address->town.'</td>';
-			
+
 			$img=picto_from_langcode($address->country_code);
 			print '<td>'.($img?$img.' ':'').$address->country.'</td>';
 
