@@ -29,7 +29,7 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
 require('../../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/boxes.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/infobox.class.php");
 
 $boxid=GETPOST('boxid','int');
 $boxorder=GETPOST('boxorder');
@@ -63,8 +63,8 @@ if ($boxorder && $zone != '' &&  $userid > 0)
 	// boxorder value is the target order: "A:idboxA1,idboxA2,A-B:idboxB1,idboxB2,B"
 	dol_syslog("AjaxBox boxorder=".$boxorder." zone=".$zone." userid=".$userid, LOG_DEBUG);
 
-	$infobox=new InfoBox($db);
-	$result=$infobox->saveboxorder($zone,$boxorder,$userid);
+	//$infobox=new InfoBox($db);
+	$result=InfoBox::saveboxorder($db,$zone,$boxorder,$userid);
 }
 
 ?>

@@ -734,7 +734,7 @@ class FormOther
     {
         global $langs,$conf;
         global $form;
-        
+
         if ($htmlname != "none")
         {
             print '<form method="post" action="'.$page.'">';
@@ -764,6 +764,179 @@ class FormOther
             }
         }
     }
+
+
+
+
+    /**
+     * 	Show a HTML Tab with boxes of a particular area including personalized choices of user
+     *
+     * 	@param	   User         $user		 Object User
+     * 	@param	   String       $areacode    Code of area for pages (0=value for Home page)
+     * 	@return    int                       <0 if KO, Nb of boxes shown of OK (0 to n)
+     */
+    static function printBoxesArea($user,$areacode)
+    {
+        global $conf,$langs,$db;
+
+        include_once(DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php');
+
+        //$infobox=new InfoBox($db);
+        $boxactivated=InfoBox::listboxes($db,'activated',$areacode,$user);
+        $arrayboxactivatedid=array();
+        foreach($boxactivated as $box) $arrayboxactivatedid[$box->id]=$box->id;
+
+        $selectboxlist='';
+        if ($conf->use_javascript_ajax)
+        {
+            $emptyuser=new User($db);
+            $boxavailable=InfoBox::listboxes($db,'activated',$areacode,$emptyuser,$arrayboxactivatedid);    // Available here is activated for empty user
+
+            $arrayboxtoactivatelabel=array();
+            foreach($boxavailable as $box)
+            {
+                $arrayboxtoactivatelabel[$box->id]=$box->boxlabel;
+            }
+            $form=new Form($db);
+
+            $selectboxlist=$form->selectarray('boxcombo', $arrayboxtoactivatelabel,'',1);
+        }
+
+        print '<script type="text/javascript" language="javascript">
+        jQuery(document).ready(function() {
+        	jQuery("#boxcombo").change(function() {
+        	var boxid=jQuery("#boxcombo").val();
+        		if (boxid > 0) {
+            		var left_list = cleanSerialize(jQuery("#left").sortable("serialize"));
+            		var right_list = cleanSerialize(jQuery("#right").sortable("serialize"));
+            		var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
+    				jQuery.ajax({ url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\',
+    			        async:   false
+    		        });
+        			//jQuery.get(\''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\');
+        			window.location.search=\'mainmenu='.GETPOST("mainmenu").'&leftmenu='.GETPOST('leftmenu').'&action=addbox&boxid=\'+boxid;
+    				//window.location.href=\''.$_SERVER["PHP_SELF"].'\';
+                }
+        	});';
+        if (! count($arrayboxtoactivatelabel)) print 'jQuery("#boxcombo").hide();';
+        print  '
+    	});
+        </script>';
+
+        print load_fiche_titre((count($boxactivated)?$langs->trans("OtherInformationsBoxes"):''),$selectboxlist,'','','otherboxes');
+
+        if (count($boxactivated))
+        {
+            print '<table width="100%" class="notopnoleftnoright">';
+            print '<tr><td class="notopnoleftnoright">'."\n";
+
+            print '<div class="fichehalfleft">';
+
+            print "\n<!-- Box left container -->\n";
+            print '<div id="left" class="connectedSortable">'."\n";
+
+            // Define $box_max_lines
+            $box_max_lines=5;
+            if (! empty($conf->global->MAIN_BOXES_MAXLINES)) $box_max_lines=$conf->global->MAIN_BOXES_MAXLINES;
+
+            $ii=0;
+            foreach ($boxactivated as $key => $box)
+            {
+                if (preg_match('/^A/i',$box->box_order)) // column A
+                {
+                    $ii++;
+                    //print 'box_id '.$boxactivated[$ii]->box_id.' ';
+                    //print 'box_order '.$boxactivated[$ii]->box_order.'<br>';
+                    // Affichage boite key
+                    $box->loadBox($box_max_lines);
+                    $box->showBox();
+                }
+            }
+
+            $emptybox=new ModeleBoxes($db);
+            $emptybox->box_id='A';
+            $emptybox->info_box_head=array();
+            $emptybox->info_box_contents=array();
+            $emptybox->showBox(array(),array());
+
+            print "</div>\n";
+            print "<!-- End box container -->\n";
+
+            print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+            print "\n<!-- Box right container -->\n";
+            print '<div id="right" class="connectedSortable">'."\n";
+
+            $ii=0;
+            foreach ($boxactivated as $key => $box)
+            {
+                if (preg_match('/^B/i',$box->box_order)) // colonne B
+                {
+                    $ii++;
+                    //print 'box_id '.$boxactivated[$ii]->box_id.' ';
+                    //print 'box_order '.$boxactivated[$ii]->box_order.'<br>';
+                    // Affichage boite key
+                    $box->loadBox($box_max_lines);
+                    $box->showBox();
+                }
+            }
+
+            $emptybox=new ModeleBoxes($db);
+            $emptybox->box_id='B';
+            $emptybox->info_box_head=array();
+            $emptybox->info_box_contents=array();
+            $emptybox->showBox(array(),array());
+
+            print "</div>\n";
+            print "<!-- End box container -->\n";
+
+            print '</div></div>';
+            print "\n";
+
+            print "</td></tr>";
+            print "</table>";
+
+            if ($conf->use_javascript_ajax)
+            {
+                print "\n";
+                print '<script type="text/javascript" language="javascript">';
+                // For moving
+                print 'jQuery(function() {
+                            jQuery("#left, #right").sortable({
+                                /* placeholder: \'ui-state-highlight\', */
+                                handle: \'.boxhandle\',
+                                revert: \'invalid\',
+                                items: \'.box\',
+                                containment: \'.fiche\',
+                                connectWith: \'.connectedSortable\',
+                                stop: function(event, ui) {
+                                    updateOrder(0);
+                                }
+                            });
+                        });
+                '."\n";
+                print 'function updateOrder() {
+                		var left_list = cleanSerialize(jQuery("#left").sortable("serialize"));
+                		var right_list = cleanSerialize(jQuery("#right").sortable("serialize"));
+                		var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
+    					jQuery.get(\''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.');
+                		}'."\n";
+                // For closing
+                print 'jQuery(document).ready(function() {
+                          	jQuery(".boxclose").click(function() {
+                          		var self = this;	// because JQuery can modify this
+                              	var boxid=self.id.substring(8);
+                                jQuery(\'#boxto_\'+boxid).remove();
+                                updateOrder();
+                           	});
+                       });'."\n";
+                print '</script>'."\n";
+            }
+        }
+
+        return count($boxactivated);
+    }
+
 
 }
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,199 +18,15 @@
  */
 
 /**
- *	\file       htdocs/boxes.php
+ *	\file       htdocs/core/class/infobox.php
  *	\brief      File of class to manage widget boxes
  */
-
-
-
-/**
- * 	Show a HTML Tab with boxes of a particular area including personalized choices of user
- *
- * 	@param	   User         $user		 Object User
- * 	@param	   String       $areacode    Code of area for pages (0=value for Home page)
- * 	@return    int                       <0 if KO, Nb of boxes shown of OK (0 to n)
- */
-function printBoxesArea($user,$areacode)
-{
-    global $conf,$langs,$db;
-
-    $infobox=new InfoBox($db);
-    $boxactivated=$infobox->listboxes('activated',$areacode,$user);
-    $arrayboxactivatedid=array();
-    foreach($boxactivated as $box) $arrayboxactivatedid[$box->id]=$box->id;
-
-    $selectboxlist='';
-    if ($conf->use_javascript_ajax)
-    {
-        $emptyuser=new User($db);
-        $boxavailable=$infobox->listboxes('activated',$areacode,$emptyuser,$arrayboxactivatedid);    // Available here is activated for empty user
-
-        $arrayboxtoactivatelabel=array();
-        foreach($boxavailable as $box)
-        {
-            $arrayboxtoactivatelabel[$box->id]=$box->boxlabel;
-        }
-        $form=new Form($db);
-
-        $selectboxlist=$form->selectarray('boxcombo', $arrayboxtoactivatelabel,'',1);
-    }
-
-    print '<script type="text/javascript" language="javascript">
-    jQuery(document).ready(function() {
-    	jQuery("#boxcombo").change(function() {
-    	var boxid=jQuery("#boxcombo").val();
-    		if (boxid > 0) {
-        		var left_list = cleanSerialize(jQuery("#left").sortable("serialize"));
-        		var right_list = cleanSerialize(jQuery("#right").sortable("serialize"));
-        		var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
-				jQuery.ajax({ url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\',
-			        async:   false
-		        });
-    			//jQuery.get(\''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\');
-    			window.location.search=\'mainmenu='.GETPOST("mainmenu").'&leftmenu='.GETPOST('leftmenu').'&action=addbox&boxid=\'+boxid;
-				//window.location.href=\''.$_SERVER["PHP_SELF"].'\';
-            }
-    	});';
-    if (! count($arrayboxtoactivatelabel)) print 'jQuery("#boxcombo").hide();';
-    print  '
-	});
-    </script>';
-
-    print load_fiche_titre((count($boxactivated)?$langs->trans("OtherInformationsBoxes"):''),$selectboxlist,'','','otherboxes');
-
-    if (count($boxactivated))
-    {
-        print '<table width="100%" class="notopnoleftnoright">';
-        print '<tr><td class="notopnoleftnoright">'."\n";
-
-        print '<div class="fichehalfleft">';
-
-        print "\n<!-- Box left container -->\n";
-        print '<div id="left" class="connectedSortable">'."\n";
-
-        // Define $box_max_lines
-        $box_max_lines=5;
-        if (! empty($conf->global->MAIN_BOXES_MAXLINES)) $box_max_lines=$conf->global->MAIN_BOXES_MAXLINES;
-
-        $ii=0;
-        foreach ($boxactivated as $key => $box)
-        {
-            if (preg_match('/^A/i',$box->box_order)) // column A
-            {
-                $ii++;
-                //print 'box_id '.$boxactivated[$ii]->box_id.' ';
-                //print 'box_order '.$boxactivated[$ii]->box_order.'<br>';
-                // Affichage boite key
-                $box->loadBox($box_max_lines);
-                $box->showBox();
-            }
-        }
-
-        $emptybox=new ModeleBoxes($db);
-        $emptybox->box_id='A';
-        $emptybox->info_box_head=array();
-        $emptybox->info_box_contents=array();
-        $emptybox->showBox(array(),array());
-
-        print "</div>\n";
-        print "<!-- End box container -->\n";
-
-        print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
-        print "\n<!-- Box right container -->\n";
-        print '<div id="right" class="connectedSortable">'."\n";
-
-        $ii=0;
-        foreach ($boxactivated as $key => $box)
-        {
-            if (preg_match('/^B/i',$box->box_order)) // colonne B
-            {
-                $ii++;
-                //print 'box_id '.$boxactivated[$ii]->box_id.' ';
-                //print 'box_order '.$boxactivated[$ii]->box_order.'<br>';
-                // Affichage boite key
-                $box->loadBox($box_max_lines);
-                $box->showBox();
-            }
-        }
-
-        $emptybox=new ModeleBoxes($db);
-        $emptybox->box_id='B';
-        $emptybox->info_box_head=array();
-        $emptybox->info_box_contents=array();
-        $emptybox->showBox(array(),array());
-
-        print "</div>\n";
-        print "<!-- End box container -->\n";
-
-        print '</div></div>';
-        print "\n";
-
-        print "</td></tr>";
-        print "</table>";
-
-        if ($conf->use_javascript_ajax)
-        {
-            print "\n";
-            print '<script type="text/javascript" language="javascript">';
-            // For moving
-            print 'jQuery(function() {
-                        jQuery("#left, #right").sortable({
-                            /* placeholder: \'ui-state-highlight\', */
-                            handle: \'.boxhandle\',
-                            revert: \'invalid\',
-                            items: \'.box\',
-                            containment: \'.fiche\',
-                            connectWith: \'.connectedSortable\',
-                            stop: function(event, ui) {
-                                updateOrder(0);
-                            }
-                        });
-                    });
-            '."\n";
-            print 'function updateOrder() {
-            		var left_list = cleanSerialize(jQuery("#left").sortable("serialize"));
-            		var right_list = cleanSerialize(jQuery("#right").sortable("serialize"));
-            		var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
-					jQuery.get(\''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.');
-            		}'."\n";
-            // For closing
-            print 'jQuery(document).ready(function() {
-                      	jQuery(".boxclose").click(function() {
-                      		var self = this;	// because JQuery can modify this
-                          	var boxid=self.id.substring(8);
-                            jQuery(\'#boxto_\'+boxid).remove();
-                            updateOrder();
-                       	});
-                   });'."\n";
-            print '</script>'."\n";
-        }
-    }
-
-    return count($boxactivated);
-}
-
-
 
 /**
  *	Class to manage boxes on pages
  */
 class InfoBox
 {
-    var $db;
-
-    /**
-     *  Constructor
-     *
-     *  @param      DoliDb     $db        Database handler
-     */
-    function InfoBox($db)
-    {
-        $this->db=$db;
-    }
-
-
     /**
      *  Return array of boxes qualified for area and user
      *
@@ -220,7 +36,7 @@ class InfoBox
      *  @param	array	$excludelist	Array of box id (box.box_id = boxes_def.rowid) to exclude
      *  @return array               	Array of boxes
      */
-    function listBoxes($mode,$zone,$user,$excludelist=array())
+    static function listBoxes($db, $mode,$zone,$user,$excludelist=array())
     {
         global $conf;
 
@@ -247,14 +63,14 @@ class InfoBox
         }
 
         dol_syslog(get_class($this)."::listBoxes get default box list sql=".$sql, LOG_DEBUG);
-        $resql = $this->db->query($sql);
+        $resql = $db->query($sql);
         if ($resql)
         {
-            $num = $this->db->num_rows($resql);
+            $num = $db->num_rows($resql);
             $j = 0;
             while ($j < $num)
             {
-                $obj = $this->db->fetch_object($resql);
+                $obj = $db->fetch_object($resql);
 
                 if (! in_array($obj->box_id, $excludelist))
                 {
@@ -273,7 +89,7 @@ class InfoBox
                     dol_include_once($relsourcefile);
                     if (class_exists($boxname))
                     {
-                        $box=new $boxname($this->db,$obj->note);
+                        $box=new $boxname($db,$obj->note);
 
                         // box properties
                         $box->rowid=$obj->rowid;
@@ -311,8 +127,8 @@ class InfoBox
         }
         else
         {
-            //dol_print_error($this->db);
-            $this->error=$this->db->error();
+            //dol_print_error($db);
+            $this->error=$db->error();
             dol_syslog(get_class($this)."::listBoxes Error ".$this->error, LOG_ERR);
             return array();
         }
@@ -329,7 +145,7 @@ class InfoBox
      *  @param  int     $userid     		Id of user
      *  @return int                   		<0 if KO, >= 0 if OK
      */
-    function saveboxorder($zone,$boxorder,$userid=0)
+    static function saveboxorder($db, $zone,$boxorder,$userid=0)
     {
         global $conf;
 
@@ -341,18 +157,18 @@ class InfoBox
 
         if (! $userid || $userid == 0) return 0;
 
-        $user = new User($this->db);
+        $user = new User($db);
         $user->id=$userid;
 
-        $this->db->begin();
+        $db->begin();
 
         // Sauve parametre indiquant que le user a une config dediee
         $confuserzone='MAIN_BOXES_'.$zone;
         $tab[$confuserzone]=1;
-        if (dol_set_user_param($this->db, $conf, $user, $tab) < 0)
+        if (dol_set_user_param($db, $conf, $user, $tab) < 0)
         {
-            $this->error=$this->db->lasterror();
-            $this->db->rollback();
+            $this->error=$db->lasterror();
+            $db->rollback();
             return -3;
         }
 
@@ -365,7 +181,7 @@ class InfoBox
         $sql.= " AND ".MAIN_DB_PREFIX."boxes.position = ".$zone;
 
         dol_syslog(get_class($this)."::saveboxorder sql=".$sql);
-        $result = $this->db->query($sql);
+        $result = $db->query($sql);
         if ($result)
         {
             $colonnes=explode('-',$boxorder);
@@ -395,7 +211,7 @@ class InfoBox
                         $sql.= ")";
 
                         dol_syslog(get_class($this)."::saveboxorder sql=".$sql);
-                        $result = $this->db->query($sql);
+                        $result = $db->query($sql);
                         if ($result < 0)
                         {
                             $error++;
@@ -406,20 +222,20 @@ class InfoBox
             }
             if ($error)
             {
-                $this->error=$this->db->error();
-                $this->db->rollback();
+                $this->error=$db->error();
+                $db->rollback();
                 return -2;
             }
             else
             {
-                $this->db->commit();
+                $db->commit();
                 return 1;
             }
         }
         else
         {
-            $this->error=$this->db->lasterror();
-            $this->db->rollback();
+            $this->error=$db->lasterror();
+            $db->rollback();
             dol_syslog(get_class($this)."::saveboxorder ".$this->error);
             return -1;
         }
