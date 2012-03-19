@@ -109,7 +109,6 @@ jQuery(document).ready(function() {
 	{
 		jQuery("#myid").removeAttr(\'disabled\');
 		jQuery("#myid").attr(\'disabled\',\'disabled\');
-		}
 	}
 	init_myfunc();
 	jQuery("#mybutton").click(function() {

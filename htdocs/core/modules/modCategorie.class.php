@@ -39,6 +39,8 @@ class modCategorie extends DolibarrModules
 	 */
 	function modCategorie($db)
 	{
+	    global $conf;
+
 		$this->db = $db;
 		$this->numero = 1780;
 

@@ -47,7 +47,8 @@ class box_external_rss extends ModeleBoxes
     /**
      *  Constructor
      *
-     * 	@param	DoliDB	$db		Database handler
+     * 	@param	DoliDB	$db			Database handler
+     *  @param	string	$param		More parameters
      */
     function box_external_rss($db,$param)
     {

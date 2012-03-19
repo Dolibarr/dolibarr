@@ -24,8 +24,8 @@
 
 require("../main.inc.php");
 include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/infobox.class.php");
 include_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/boxes.php");
 
 $langs->load("admin");
 
@@ -198,7 +198,7 @@ if ($action == 'switch')
 
 $form=new Form($db);
 $emptyuser=new User($db);
-$infobox=new InfoBox($db);
+//$infobox=new InfoBox($db);
 
 llxHeader('',$langs->trans("Boxes"));
 
@@ -301,7 +301,7 @@ if ($resql)
 
 
 // Available boxes
-$boxtoadd=$infobox->listboxes('available',-1,$emptyuser,$actives);
+$boxtoadd=InfoBox::listboxes($db,'available',-1,$emptyuser,$actives);
 
 print "<br>\n";
 print_titre($langs->trans("BoxesAvailable"));
@@ -351,7 +351,7 @@ print '</table>';
 
 
 // Activated boxes
-$boxactivated=$infobox->listboxes('activated',-1,$emptyuser);
+$boxactivated=InfoBox::listboxes($db,'activated',-1,$emptyuser);
 
 print "<br>\n\n";
 print_titre($langs->trans("BoxesActivated"));

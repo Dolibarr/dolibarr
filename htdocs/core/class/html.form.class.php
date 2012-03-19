@@ -389,7 +389,7 @@ class Form
      *	Show a text with a picto and a tooltip on picto
      *
      *	@param	string	$text				Text to show
-     *	@param  string	$htmltooltip     	Content of tooltip
+     *	@param  string	$htmltext	     	Content of tooltip
      *	@param	int		$direction			1=Icon is after text, -1=Icon is before text, 0=no icon
      * 	@param	string	$type				Type of picto (info, help, warning, superadmin...)
      *  @param  string	$extracss           Add a CSS style to td tags
@@ -651,7 +651,7 @@ class Form
      *	@param	int		$showempty		Add an empty field
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
-     	 @param	array	$event			Event options
+     *  @param	array	$event			Event options
      * 	@return	string					HTML string with
      */
     function select_company($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $event=array())
@@ -811,7 +811,7 @@ class Form
      *	@param	int		$socid      	Id ot third party or 0 for all
      *	@param  string	$selected   	Id contact pre-selectionne
      *	@param  string	$htmlname  	    Name of HTML field ('none' for a not editable field)
-     *	@param  int		$show_empty     0=no empty value, 1=add an empty value
+     *	@param  int		$showempty     	0=no empty value, 1=add an empty value
      *	@param  string	$exclude        List of contacts id to exclude
      *	@param	string	$limitto		Disable answers that are not id in this array list
      *	@param	string	$showfunction   Add function into label
@@ -822,9 +822,9 @@ class Form
     function selectcontacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $options_only=false)
     {
         global $conf,$langs;
-        
+
         $langs->load('companies');
-        
+
         $out='';
 
         // On recherche les societes
@@ -901,7 +901,7 @@ class Form
             {
                 $out.= '</select>';
             }
-            
+
             $this->num = $num;
             return $out;
         }
@@ -1055,6 +1055,7 @@ class Form
      *  @param		int			$status					-1=Return all products, 0=Products not on sell, 1=Products on sell
      *  @param		int			$finished				2=all, 1=finished, 0=raw material
      *  @param		string		$selected_input_value	Value of preselected input text (with ajax)
+     *  @param		int			$hide_label				Hide label
      *  @return		void
      */
     function select_produits($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$status=1,$finished=2,$selected_input_value='',$hidelabel=0)
@@ -1306,13 +1307,13 @@ class Form
      *	Return list of products for customer (in Ajax if Ajax activated or go to select_produits_fournisseurs_do)
      *
      *	@param	int		$socid			Id third party
-     *	@param  string	$selected        Preselected product
-     *	@param  string	$htmlname        Name of HTML Select
-     *  @param	string	$filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
-     *	@param  string	$filtre          For a SQL filter
+     *	@param  string	$selected       Preselected product
+     *	@param  string	$htmlname       Name of HTML Select
+     *  @param	string	$filtertype     Filter on product type (''=nofilter, 0=product, 1=service)
+     *	@param  string	$filtre			For a SQL filter
      *	@return	void
      */
-    function select_produits_fournisseurs($socid,$selected='',$htmlname='productid',$filtertype='',$filtre)
+    function select_produits_fournisseurs($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='')
     {
         global $langs,$conf;
         global $price_level, $status, $finished;
@@ -1576,7 +1577,7 @@ class Form
      *    @param    int		$showempty         	Add an empty field
      *    @return	void
      */
-    function select_address($selected='', $socid, $htmlname='address_id',$showempty=0)
+    function select_address($selected, $socid, $htmlname='address_id',$showempty=0)
     {
         // On recherche les utilisateurs
         $sql = "SELECT a.rowid, a.label";
@@ -2064,6 +2065,7 @@ class Form
      *    @param    string	$select_name		HTML field name
      *    @param    int		$maxlength      	Maximum length for labels
      *    @param    int		$excludeafterid 	Exclude all categories after this leaf in category tree.
+     *    @return	void
      */
     function select_all_categories($type, $selected='', $select_name="", $maxlength=64, $excludeafterid=0)
     {
@@ -2606,7 +2608,7 @@ class Form
      *
      *  @param  string	$page        	Page URL where form is shown
      *  @param  int		$selected    	Value pre-selected
-     *	@param  string	$htmlname    	Nom du formulaire select. Si none, non modifiable
+     *	@param  string	$htmlname    	Nom du formulaire select. Si 'none', non modifiable. Example 'remise_id'.
      *	@param	int		$socid			Third party id
      * 	@param	float	$amount			Total amount available
      * 	@param	string	$filter			SQL filter on discounts
@@ -2614,7 +2616,7 @@ class Form
      *  @param  string	$more           More string to add
      *  @return	void
      */
-    function form_remise_dispo($page, $selected='', $htmlname='remise_id', $socid, $amount, $filter='', $maxvalue=0, $more='')
+    function form_remise_dispo($page, $selected, $htmlname, $socid, $amount, $filter='', $maxvalue=0, $more='')
     {
         global $conf,$langs;
         if ($htmlname != "none")
@@ -2728,7 +2730,7 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            print $this->select_company($selected , $htmlname);
+            print $this->select_company($selected, $htmlname);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
@@ -2855,7 +2857,7 @@ class Form
      *  @param  Societe	$societe_acheteuse  Object societe acheteuse
      *  @param  int		$idprod             Id product
      *  @param  int		$info_bits          Miscellaneous information on line
-     *  @param  type               			''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
+     *  @param  string	$type      			''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
      *  						            Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
      *              						Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
      *              						Si (vendeur et acheteur dans Communaute europeenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
@@ -3048,7 +3050,7 @@ class Form
         {
             $return.= $this->error;
         }
-        
+
         $this->num = $num;
         return $return;
     }
@@ -3428,7 +3430,7 @@ class Form
     /**
      *	Return an html string with a select combo box to choose yes or no
      *
-     *	@param	string	$name			Name of html select field
+     *	@param	string	$htmlname		Name of html select field
      *	@param	string	$value			Pre-selected value
      *	@param	int		$option			0 return yes/no, 1 return 1/0
      *	@param	bool	$disabled		true or false
@@ -3649,7 +3651,7 @@ class Form
                 {
                     global $dolibarr_main_url_root;
                     $ret.='<!-- Put link to gravatar -->';
-                    $ret.='<img alt="Photo found on Gravatar" title="Photo Gravatar.com - email '.$email.'" border="0" width="'.$width.'" src="http://www.gravatar.com/avatar/'.dol_hash($email).'?s='.$width.'&d='.urlencode( dol_buildpath('/theme/common/nophoto.jpg',2) ).'">';
+                    $ret.='<img alt="Photo found on Gravatar" title="Photo Gravatar.com - email '.$email.'" border="0" width="'.$width.'" src="http://www.gravatar.com/avatar/'.dol_hash($email).'?s='.$width.'&d='.urlencode(dol_buildpath('/theme/common/nophoto.jpg',2)).'">';
                 }
                 else
                 {

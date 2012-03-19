@@ -114,12 +114,13 @@ class mod_facture_terre extends ModeleNumRefFactures
 		return true;
 	}
 
-	/**     Return next value not used or last value used
+	/**
+	 * Return next value not used or last value used
 	 *
-	 *      @param     objsoc		Object third party
-	 *      @param     facture		Object invoice
-     *      @param     mode         'next' for next value or 'last' for last value
-	 *      @return    string       Value
+	 * @param	Societe		$objsoc		Object third party
+	 * @param   Facture		$facture	Object invoice
+     * @param   string		$mode       'next' for next value or 'last' for last value
+	 * @return  string       			Value
 	 */
 	function getNextValue($objsoc,$facture,$mode='next')
 	{

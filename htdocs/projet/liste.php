@@ -55,15 +55,20 @@ $pagenext = $page + 1;
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 
+$search_ref=GETPOST("search_ref");
+$search_label=GETPOST("search_label");
+$search_societe=GETPOST("search_societe");
+
 
 /*
  * View
  */
 
-llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
-
 $projectstatic = new Project($db);
 $socstatic = new Societe($db);
+
+llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
+
 
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,($mine?$mine:($user->rights->projet->all->lire?2:0)),1,$socid);
 
@@ -79,15 +84,15 @@ if ($mine || ! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$pro
 if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 if ($_GET["search_ref"])
 {
-	$sql.= " AND p.ref LIKE '%".$db->escape($_GET["search_ref"])."%'";
+	$sql.= " AND p.ref LIKE '%".$db->escape($search_ref)."%'";
 }
 if ($_GET["search_label"])
 {
-	$sql.= " AND p.title LIKE '%".$db->escape($_GET["search_label"])."%'";
+	$sql.= " AND p.title LIKE '%".$db->escape($search_label)."%'";
 }
 if ($_GET["search_societe"])
 {
-	$sql.= " AND s.nom LIKE '%".$db->escape($_GET["search_societe"])."%'";
+	$sql.= " AND s.nom LIKE '%".$db->escape($search_societe)."%'";
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
@@ -111,6 +116,8 @@ if ($resql)
 		else print $langs->trans("ProjectsPublicDesc").'<br><br>';
 	}
 
+	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
+
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.ref","","","",$sortfield,$sortorder);
@@ -120,16 +127,15 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],'p.fk_statut',"","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
-	print '<form method="get" action="liste.php">';
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre"valign="right">';
-	print '<input type="text" class="flat" name="search_ref" value="'.$_GET["search_ref"].'" size="6">';
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_ref" value="'.$search_ref.'" size="6">';
 	print '</td>';
-	print '<td class="liste_titre"valign="right">';
-	print '<input type="text" class="flat" name="search_label" value="'.$_GET["search_label"].'">';
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_label" value="'.$search_label.'">';
 	print '</td>';
-	print '<td class="liste_titre"valign="right">';
-	print '<input type="text" class="flat" name="search_societe" value="'.$_GET["search_societe"].'">';
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_societe" value="'.$search_societe.'">';
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';

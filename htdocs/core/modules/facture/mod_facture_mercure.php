@@ -110,10 +110,10 @@ class mod_facture_mercure extends ModeleNumRefFactures
     /**
      * Return next value
      *
-     * @param      objsoc      Object third party
-     * @param      facture		Object invoice
-     * @param      mode        'next' for next value or 'last' for last value
-     * @return     string      Value if OK, 0 if KO
+     * @param	Societe		$objsoc     Object third party
+     * @param   Facture		$facture	Object invoice
+     * @param   string		$mode       'next' for next value or 'last' for last value
+     * @return  string      			Value if OK, 0 if KO
      */
     function getNextValue($objsoc,$facture,$mode='next')
     {

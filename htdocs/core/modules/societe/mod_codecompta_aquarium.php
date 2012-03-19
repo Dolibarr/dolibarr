@@ -100,10 +100,10 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	/**
 	 *  Set accountancy account code for a third party into this->code
 	 *
-	 *  @param      db              Database handler
-	 *  @param      societe         Third party object
-	 *  @param      type			'customer' or 'supplier'
-	 *  @return		int				>=0 if OK, <0 if KO
+	 *  @param	DoliDB		$db             Database handler
+	 *  @param  Societe		$societe        Third party object
+	 *  @param  string		$type			'customer' or 'supplier'
+	 *  @return	int							>=0 if OK, <0 if KO
 	 */
 	function get_code($db, $societe, $type)
 	{
@@ -138,11 +138,11 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	/**
 	 *  Return if a code is available
 	 *
-	 *	@param		db			Database handler
-	 * 	@param		code		Code of third party
-	 * 	@param		societe		Object third party
-	 * 	@param		type		'supplier' or 'customer'
-	 *	@return		int			0 if OK but not available, >0 if OK and available, <0 if KO
+	 *	@param	DoliDB		$db			Database handler
+	 * 	@param	string		$code		Code of third party
+	 * 	@param	Societe		$societe	Object third party
+	 * 	@param	string		$type		'supplier' or 'customer'
+	 *	@return	int						0 if OK but not available, >0 if OK and available, <0 if KO
 	 */
 	function verif($db, $code, $societe, $type)
 	{

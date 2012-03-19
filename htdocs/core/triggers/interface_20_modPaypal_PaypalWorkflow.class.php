@@ -88,12 +88,12 @@ class InterfacePaypalWorkflow
      *  Fonction appelee lors du declenchement d'un evenement Dolibarr.
      *  D'autres fonctions run_trigger peuvent etre presentes dans core/triggers
      *
-     *  @param	string			$action     Code de l'evenement
-     *  @param  CommonObject	$object     Objet concerne
-     *  @param  User			$user       Objet user
-     *  @param  Translate		$langs      Objet lang
-     *  @param  Conf			$conf       Objet conf
-     *  @return int         				<0 if fatal error, 0 si nothing done, >0 if ok
+     *      @param	string		$action		Event action code
+     *      @param  Object		$object     Object
+     *      @param  User		$user       Object user
+     *      @param  Translate	$langs      Object langs
+     *      @param  conf		$conf       Object conf
+     *      @return int         			<0 if KO, 0 if no triggered ran, >0 if OK
      */
 	function run_trigger($action,$object,$user,$langs,$conf)
     {

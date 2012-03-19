@@ -76,7 +76,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 	/**
 	 *	Fonction generant le document sur le disque
 	 *
-	 *	@param	Object		$object			Objet expedition a generer (ou id si ancienne methode)
+	 *	@param	Object		&$object			Objet expedition a generer (ou id si ancienne methode)
 	 *	@param	Translate	$outputlangs	Lang output object
 	 * 	@return	int     					1=ok, 0=ko
 	 */

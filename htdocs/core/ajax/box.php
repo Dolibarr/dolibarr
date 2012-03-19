@@ -29,7 +29,13 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
 require('../../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/boxes.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/infobox.class.php");
+
+$boxid=GETPOST('boxid','int');
+$boxorder=GETPOST('boxorder');
+$userid=GETPOST('userid');
+$zone=GETPOST('zone','int');
+$userid=GETPOST('userid','int');
 
 
 /*
@@ -45,14 +51,20 @@ top_httphead();
 
 print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
+// Add a box
+if ($boxid > 0 && $zone !='' && $userid > 0)
+{
+    $boxorder=preg_replace('/^A:/','A:'.$boxid.',',$boxorder);    // Insert id of new box into list
+}
+
 // Registering the location of boxes after a move
-if (GETPOST('boxorder') && GETPOST('userid'))
+if ($boxorder && $zone != '' &&  $userid > 0)
 {
 	// boxorder value is the target order: "A:idboxA1,idboxA2,A-B:idboxB1,idboxB2,B"
-	dol_syslog("AjaxBox boxorder=".GETPOST('boxorder')." userid=".GETPOST('userid'), LOG_DEBUG);
+	dol_syslog("AjaxBox boxorder=".$boxorder." zone=".$zone." userid=".$userid, LOG_DEBUG);
 
-	$infobox=new InfoBox($db);
-	$result=$infobox->saveboxorder("0",GETPOST('boxorder'),GETPOST('userid'));
+	//$infobox=new InfoBox($db);
+	$result=InfoBox::saveboxorder($db,$zone,$boxorder,$userid);
 }
 
 ?>
