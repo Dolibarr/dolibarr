@@ -130,7 +130,7 @@ if (empty($reshook))
         if ($canvas) $object->canvas=$canvas;
 
         $object->socid			= $_POST["socid"];
-        $object->name			= $_POST["name"];
+        $object->lastname		= $_POST["lastname"];
         $object->firstname		= $_POST["firstname"];
         $object->civilite_id	= $_POST["civilite_id"];
         $object->poste			= $_POST["poste"];
@@ -154,13 +154,13 @@ if (empty($reshook))
         $object->birthday = dol_mktime(0,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
         $object->birthday_alert = $_POST["birthday_alert"];
 
-        if (! $_POST["name"])
+        if (! $_POST["lastname"])
         {
             $error++; $errors[]=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label"));
             $action = 'create';
         }
-
-        if ($_POST["name"])
+        
+        if (! $error)
         {
             $id =  $object->create($user);
             if ($id <= 0)
@@ -205,13 +205,13 @@ if (empty($reshook))
 
     if ($action == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact->creer)
     {
-        if (empty($_POST["name"]))
+        if (empty($_POST["lastname"]))
         {
             $error++; $errors=array($langs->trans("ErrorFieldRequired",$langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
             $action = 'edit';
         }
 
-        if (! count($errors))
+        if (! $error)
         {
             $object->fetch($_POST["contactid"]);
 
@@ -221,7 +221,7 @@ if (empty($reshook))
             $object->old_firstname	= $_POST["old_firstname"];
 
             $object->socid			= $_POST["socid"];
-            $object->name			= $_POST["name"];
+            $object->lastname		= $_POST["lastname"];
             $object->firstname		= $_POST["firstname"];
             $object->civilite_id	= $_POST["civilite_id"];
             $object->poste			= $_POST["poste"];
@@ -377,7 +377,7 @@ else
             print '<table class="border" width="100%">';
 
             // Name
-            print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%"><input name="name" type="text" size="30" maxlength="80" value="'.(isset($_POST["name"])?$_POST["name"]:$object->name).'"></td>';
+            print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%"><input name="lastname" type="text" size="30" maxlength="80" value="'.(isset($_POST["lastname"])?$_POST["lastname"]:$object->lastname).'"></td>';
             print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%"><input name="firstname" type="text" size="30" maxlength="80" value="'.(isset($_POST["firstname"])?$_POST["firstname"]:$object->firstname).'"></td></tr>';
 
             // Company
@@ -558,7 +558,7 @@ else
             print '</td></tr>';
 
             // Name
-            print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%"><input name="name" type="text" size="20" maxlength="80" value="'.(isset($_POST["name"])?$_POST["name"]:$object->name).'"></td>';
+            print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%"><input name="lastname" type="text" size="20" maxlength="80" value="'.(isset($_POST["lastname"])?$_POST["lastname"]:$object->lastname).'"></td>';
             print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%"><input name="firstname" type="text" size="20" maxlength="80" value="'.(isset($_POST["firstname"])?$_POST["firstname"]:$object->firstname).'"></td></tr>';
 
             // Company
@@ -737,7 +737,7 @@ else
         print '</td></tr>';
 
         // Name
-        print '<tr><td width="20%">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%">'.$object->name.'</td>';
+        print '<tr><td width="20%">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%">'.$object->lastname.'</td>';
         print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%">'.$object->firstname.'</td></tr>';
 
         // Company
