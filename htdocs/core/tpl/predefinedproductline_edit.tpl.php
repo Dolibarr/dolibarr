@@ -34,7 +34,7 @@
 
 <tr <?php echo $bc[$var]; ?>>
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
-		<a name="<?php echo $line->id; ?>"></a>
+		<div id="<?php echo $line->id; ?>"></div>
 		<input type="hidden"	name="productid" value="<?php echo $line->fk_product; ?>" />
 		<a href="<?php echo DOL_URL_ROOT.'/product/fiche.php?id='.$line->fk_product; ?>">
 		<?php
