@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,11 +62,14 @@ function propal_prepare_head($object)
 		$head[$h][2] = 'preview';
 		$h++;
 	}
-
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/contact.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('ContactsAddresses');
-	$head[$h][2] = 'contact';
-	$h++;
+	
+	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/contact.php?id='.$object->id;
+		$head[$h][1] = $langs->trans('ContactsAddresses');
+		$head[$h][2] = 'contact';
+		$h++;
+	}
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line

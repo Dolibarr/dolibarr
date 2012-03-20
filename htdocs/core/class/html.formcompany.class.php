@@ -509,6 +509,9 @@ class FormCompany
 	 * 	@param	string		$limitto		Disable answers that are not id in this array list
 	 *  @param	int			$forceid		This is to force antoher object id than object->id
 	 * 	@return	void
+	 * 	TODO obsolete ?
+	 * 	cette fonction doit utiliser du javascript quoi qu'il en soit !
+	 * 	autant utiliser le système combobox sans rechargement de page non ?
 	 */
 	function selectCompaniesForNewContact($object, $var_id, $selected='', $htmlname='newcompany', $limitto='', $forceid=0)
 	{
@@ -545,7 +548,7 @@ class FormCompany
 				}
 
 				// We call a page after a small delay when a new input has been selected
-				$javaScript = "window.location=\'./contact.php?".$var_id."=".($forceid>0?$forceid:$object->id)."&amp;".$htmlname."=\' + document.getElementById(\'".$htmlname."\').value;";
+				$javaScript = "window.location=\'".$_SERVER['PHP_SELF']."?".$var_id."=".($forceid>0?$forceid:$object->id)."&amp;".$htmlname."=\' + document.getElementById(\'".$htmlname."\').value;";
                 $htmloption = 'onChange="ac_delay(\''.$javaScript.'\',\'500\');"';                              // When we select with mouse
 				$htmloption.= 'onKeyUp="if (event.keyCode== 13) { ac_delay(\''.$javaScript.'\',\'500\'); }"';   // When we select with keyboard
 
@@ -571,7 +574,7 @@ class FormCompany
 			}
 			else
 			{
-				$javaScript = "window.location='./contact.php?".$var_id."=".($forceid>0?$forceid:$object->id)."&amp;".$htmlname."=' + form.".$htmlname.".options[form.".$htmlname.".selectedIndex].value;";
+				$javaScript = "window.location='".$_SERVER['PHP_SELF']."?".$var_id."=".($forceid>0?$forceid:$object->id)."&amp;".$htmlname."=' + form.".$htmlname.".options[form.".$htmlname.".selectedIndex].value;";
 				print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'" onChange="'.$javaScript.'">';
 				$num = $this->db->num_rows($resql);
 				$i = 0;

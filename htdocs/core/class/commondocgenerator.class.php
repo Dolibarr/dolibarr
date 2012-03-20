@@ -38,8 +38,9 @@ abstract class CommonDocGenerator
     /**
      * Define array with couple subtitution key => subtitution value
      *
-     * @param   $user               User
-     * @param   $outputlangs        Language object for output
+     * @param   User		$user           User
+     * @param   Translate	$outputlangs    Language object for output
+     * @return	array						Array of substitution key->code
      */
     function get_substitutionarray_user($user,$outputlangs)
     {
@@ -61,8 +62,9 @@ abstract class CommonDocGenerator
     /**
      * Define array with couple subtitution key => subtitution value
      *
-     * @param   $mysoc
-     * @param   $outputlangs        Language object for output
+     * @param   Societe		$mysoc			Object thirdparty
+     * @param   Translate	$outputlangs    Language object for output
+     * @return	array						Array of substitution key->code
      */
     function get_substitutionarray_mysoc($mysoc,$outputlangs)
     {
@@ -103,8 +105,9 @@ abstract class CommonDocGenerator
     /**
      * Define array with couple subtitution key => subtitution value
      *
-     * @param   $object
-     * @param   $outputlangs        Language object for output
+     * @param	Object		$object			Object
+     * @param   Translate	$outputlangs    Language object for output
+     * @return	array						Array of substitution key->code
      */
     function get_substitutionarray_thirdparty($object,$outputlangs)
     {

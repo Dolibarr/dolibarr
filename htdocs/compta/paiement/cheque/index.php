@@ -44,7 +44,7 @@ $accountstatic=new Account($db);
 
 llxHeader('',$langs->trans("ChequesArea"));
 
-print_fiche_titre($langs->trans("ChequesArea") );
+print_fiche_titre($langs->trans("ChequesArea"));
 
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 

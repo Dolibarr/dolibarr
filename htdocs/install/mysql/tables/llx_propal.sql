@@ -34,7 +34,7 @@ create table llx_propal
 
   tms					timestamp,
   datec					datetime,						-- date de creation 
-  date					date,							-- date de la propal
+  datep					date,							-- date de la propal
   fin_validite			datetime,						-- date de fin de validite
   date_valid			datetime,						-- date de validation
   date_cloture			datetime,						-- date de cloture
@@ -63,5 +63,8 @@ create table llx_propal
   date_livraison		date DEFAULT NULL,				-- delivery date
   fk_availability		integer NULL,
   fk_demand_reason		integer,
+  import_key			varchar(14),
+  extraparams			varchar(255),					-- for stock other parameters with json format
   fk_adresse_livraison	integer							-- delivery address (deprecated)
+  
 )ENGINE=innodb;

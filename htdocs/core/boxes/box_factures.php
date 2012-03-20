@@ -49,7 +49,7 @@ class box_factures extends ModeleBoxes
 		global $langs;
 		$langs->load("boxes");
 
-		$this->boxlabel=$langs->trans("BoxLastCustomerBills");
+		$this->boxlabel=$langs->transnoentitiesnoconv("BoxLastCustomerBills");
 	}
 
 	/**

@@ -137,26 +137,56 @@ class SimpleOpenID
         }
     }
 
+    /**
+     * SetOpenIDServer
+     *
+     * @param	string	$a		Server
+     * @return	void
+     */
     function SetOpenIDServer($a)
     {
         $this->URLs['openid_server'] = $a;
     }
 
+    /**
+     * SetOpenIDServer
+     *
+     * @param	string	$a		Server
+     * @return	void
+     */
     function SetTrustRoot($a)
     {
         $this->URLs['trust_root'] = $a;
     }
 
+    /**
+     * SetOpenIDServer
+     *
+     * @param	string	$a		Server
+     * @return	void
+     */
     function SetCancelURL($a)
     {
         $this->URLs['cancel'] = $a;
     }
 
+    /**
+     * SetApprovedURL
+     *
+     * @param	string	$a		Server
+     * @return	void
+     */
     function SetApprovedURL($a)
     {
         $this->URLs['approved'] = $a;
     }
 
+    /**
+     * SetRequiredFields
+     *
+     * @param	string	$a		Server
+     * @return	void
+     */
     function SetRequiredFields($a)
     {
         if (is_array($a)){
@@ -166,6 +196,12 @@ class SimpleOpenID
         }
     }
 
+    /**
+     * SetOptionalFields
+     *
+     * @param	string	$a		Server
+     * @return	void
+     */
     function SetOptionalFields($a)
     {
         if (is_array($a)){
@@ -175,6 +211,12 @@ class SimpleOpenID
         }
     }
 
+    /**
+     * SetIdentity
+     *
+     * @param	string	$a		Server
+     * @return	void
+     */
     function SetIdentity($a)
     { 	// Set Identity URL
         if ((stripos($a, 'http://') === false)
@@ -197,17 +239,34 @@ class SimpleOpenID
         $this->openid_url_identity = $a;
     }
 
+    /**
+     * GetIdentity
+     *
+     * @return	void
+     */
     function GetIdentity()
     { 	// Get Identity
         return $this->openid_url_identity;
     }
 
+    /**
+     * SetOpenIDServer
+     *
+     * @return	void
+     */
     function GetError()
     {
         $e = $this->error;
         return array('code'=>$e[0],'description'=>$e[1]);
     }
 
+    /**
+     * ErrorStore
+     *
+     * @param	string	$code		Code
+     * @param	string	$desc		Description
+     * @return	void
+     */
     function ErrorStore($code, $desc = null)
     {
         $errs['OPENID_NOSERVERSFOUND'] = 'Cannot find OpenID Server TAG on Identity page.';
@@ -217,15 +276,29 @@ class SimpleOpenID
         $this->error = array($code,$desc);
     }
 
+    /**
+     * IsError
+     *
+     * @return	void
+     */
     function IsError()
     {
-        if (count($this->error) > 0){
+        if (count($this->error) > 0)
+        {
             return true;
-        }else{
+        }
+        else
+        {
             return false;
         }
     }
 
+    /**
+     * splitResponse
+     *
+     * @param	string	$response		Server
+     * @return	void
+     */
     function splitResponse($response)
     {
         $r = array();
@@ -240,6 +313,12 @@ class SimpleOpenID
         return $r;
     }
 
+    /**
+     * OpenID_Standarize
+     *
+     * @param	string	$openidçidentity		Server
+     * @return	void
+     */
     function OpenID_Standarize($openid_identity = null)
     {
         if ($openid_identity === null)
@@ -353,6 +432,11 @@ class SimpleOpenID
         return $servers[0];
     }
 
+    /**
+     * GetRedirectURL
+     *
+     * @return	void
+     */
     function GetRedirectURL()
     {
         $params = array();
@@ -372,18 +456,31 @@ class SimpleOpenID
         return $this->URLs['openid_server'] . "?". $this->array2url($params);
     }
 
+    /**
+     * Redirect
+     *
+     * @return	void
+     */
     function Redirect()
     {
         $redirect_to = $this->GetRedirectURL();
-        if (headers_sent()){ // Use JavaScript to redirect if content has been previously sent (not recommended, but safe)
+        if (headers_sent())
+        { // Use JavaScript to redirect if content has been previously sent (not recommended, but safe)
             echo '<script language="JavaScript" type="text/javascript">window.location=\'';
             echo $redirect_to;
             echo '\';</script>';
-        }else{	// Default Header Redirect
+        }
+        else
+        {	// Default Header Redirect
             header('Location: ' . $redirect_to);
         }
     }
 
+    /**
+     * ValidateWithServer
+     *
+     * @return	void
+     */
     function ValidateWithServer()
     {
         $params = array(
@@ -405,14 +502,18 @@ class SimpleOpenID
         $params['openid.mode'] = "check_authentication";
 
         $openid_server = $this->GetOpenIDServer();
-        if ($openid_server == false){
+        if ($openid_server == false)
+        {
             return false;
         }
         $response = $this->CURL_Request($openid_server,'POST',$params);
         $data = $this->splitResponse($response);
-        if ($data['is_valid'] == "true") {
+        if ($data['is_valid'] == "true")
+        {
             return true;
-        }else{
+        }
+        else
+        {
             return false;
         }
     }

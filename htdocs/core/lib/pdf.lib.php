@@ -77,7 +77,11 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 {
 	global $conf;
 
-	require_once(TCPDF_PATH.'tcpdf.php');
+	if (! empty($conf->global->MAIN_USE_FPDF) && ! empty($conf->global->MAIN_DISABLE_FPDI))
+    	return "Error MAIN_USE_PDF and MAIN_DISABLE_FPDI can't be set together";
+
+	// We use by default TCPDF
+	if (empty($conf->global->MAIN_USE_FPDF)) require_once(TCPDF_PATH.'tcpdf.php');
 	// We need to instantiate fpdi object (instead of tcpdf) to use merging features. But we can disable it.
 	if (empty($conf->global->MAIN_DISABLE_FPDI)) require_once(FPDI_PATH.'fpdi.php');
 
@@ -664,11 +668,14 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 /**
  *	Show linked objects for PDF generation
  *
- *	@param	PDF			&$pdf			Object PDF
- *	@param	object		$object			Object
- *	@param  Translate	$outputlangs	Object lang
- *	@param  int			$curx			X
- *	@param  int			$cury			Y
+ *	@param	PDF			&$pdf				Object PDF
+ *	@param	object		$object				Object
+ *	@param  Translate	$outputlangs		Object lang
+ *	@param  int			$posx				X
+ *	@param  int			$posy				Y
+ *	@param	int			$align				Align
+ *	@param	string		$default_font_size	Font size
+ *	@param	HookManager	$hookmanager		Hook manager object
  *	@return	void
  */
 function pdf_writeLinkedObjects(&$pdf,$object,$outputlangs,$posx,$posy,$align,$default_font_size,$hookmanager=false)
@@ -682,7 +689,7 @@ function pdf_writeLinkedObjects(&$pdf,$object,$outputlangs,$posx,$posy,$align,$d
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->MultiCell(100, 3, $linkedobject["ref_title"].' : '.$linkedobject["ref_value"], '', $align);
-			
+
 			if (! empty($linkedobject["date_title"]) && ! empty($linkedobject["date_value"]))
 			{
 				$posy+=3;
@@ -691,7 +698,7 @@ function pdf_writeLinkedObjects(&$pdf,$object,$outputlangs,$posx,$posy,$align,$d
 			}
 		}
 	}
-	
+
 	return $pdf->getY();
 }
 
@@ -1292,13 +1299,13 @@ function pdf_getTotalQty($object,$type,$outputlangs,$hookmanager=false)
 function pdf_getCurrencySymbol(&$pdf, $currency_code)
 {
 	global $db, $form;
-	
+
 	$currency_sign = '';
-	
+
 	if (! is_object($form)) $form = new Form($db);
-	
+
 	$form->load_cache_currencies();
-	
+
 	if (is_array($form->cache_currencies[$currency_code]['unicode']) && ! empty($form->cache_currencies[$currency_code]['unicode']))
 	{
 		foreach($form->cache_currencies[$currency_code]['unicode'] as $unicode)
@@ -1310,13 +1317,13 @@ function pdf_getCurrencySymbol(&$pdf, $currency_code)
 	{
 		$currency_sign = $currency_code;
 	}
-	
+
 	return $currency_sign;
 }
 
 /**
  * 	Return linked objects
- * 
+ *
  * 	@param	object		$object			Object
  * 	@param	Translate	$outputlangs	Object lang for output
  *	@param	HookManager	$hookmanager	Hook manager instance
@@ -1325,7 +1332,7 @@ function pdf_getCurrencySymbol(&$pdf, $currency_code)
 function pdf_getLinkedObjects($object,$outputlangs,$hookmanager=false)
 {
 	$linkedobjects=array();
-	
+
 	$object->fetchObjectLinked();
 
 	foreach($object->linkedObjects as $objecttype => $objects)
@@ -1355,7 +1362,7 @@ function pdf_getLinkedObjects($object,$outputlangs,$hookmanager=false)
 			}
 		}
 	}
-	
+
 	// For add external linked objects
 	if (is_object($hookmanager))
 	{

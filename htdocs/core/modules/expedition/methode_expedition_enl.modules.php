@@ -22,6 +22,9 @@
 include_once "methode_expedition.modules.php";
 
 
+/**
+ * Class to manage shipment Enl
+ */
 class methode_expedition_enl extends ModeleShippingMethod
 {
     /**

@@ -50,7 +50,7 @@ class box_contracts extends ModeleBoxes
 
     	$langs->load("contracts");
 
-    	$this->boxlabel=$langs->trans("BoxLastContracts");
+    	$this->boxlabel=$langs->transnoentitiesnoconv("BoxLastContracts");
     }
 
     /**

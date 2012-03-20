@@ -70,8 +70,8 @@ abstract class ActionsContactCardCommon
 	/**
      *  Get object
 	 *
-     *  @param		int			Object id
-     *  @return		object		Object loaded
+     *  @param	int		$id		Object id
+     *  @return	object			Object loaded
      */
     function getObject($id)
     {
@@ -226,8 +226,8 @@ abstract class ActionsContactCardCommon
 	/**
      *  Set content of ->tpl array, to use into template
      *
-     *  @param      string		$action     Type of action
-     *  @return		string					HTML output
+     *  @param	string		&$action    Type of action
+     *  @return	string					HTML output
      */
     function assign_values(&$action)
     {

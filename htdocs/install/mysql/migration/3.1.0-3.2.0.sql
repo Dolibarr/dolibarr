@@ -433,4 +433,18 @@ ALTER TABLE llx_product_fournisseur_price DROP INDEX idx_product_fournisseur_pri
 --We keep column for the moment because we must not loose data if migrate process fails (upgrade2) to allow a second chance fix. We will delete it at next version.
 --ALTER TABLE llx_product_fournisseur_price DROP COLUMN fk_product_fournisseur;
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN tva_tx	double(6,3) NOT NULL DEFAULT 0 AFTER unitprice;
- 
+
+UPDATE llx_c_departements SET ncc='JUJUY', nom = 'Jujuy' WHERE code_departement='2302' and fk_region='2301';
+
+ALTER TABLE llx_propal ADD COLUMN import_key varchar(14) AFTER fk_demand_reason;
+ALTER TABLE llx_propal ADD COLUMN extraparams varchar(255) AFTER import_key;
+ALTER TABLE llx_commande ADD COLUMN extraparams varchar(255) AFTER import_key;
+ALTER TABLE llx_facture ADD COLUMN extraparams varchar(255) AFTER import_key;
+ALTER TABLE llx_fichinter ADD COLUMN extraparams varchar(255) AFTER model_pdf;
+ALTER TABLE llx_deplacement ADD COLUMN extraparams varchar(255) AFTER note_public;
+ALTER TABLE llx_contrat ADD COLUMN import_key varchar(14) AFTER note_public;
+ALTER TABLE llx_contrat ADD COLUMN extraparams varchar(255) AFTER import_key;
+ALTER TABLE llx_commande_fournisseur ADD COLUMN extraparams varchar(255) AFTER import_key;
+ALTER TABLE llx_facture_fourn ADD COLUMN extraparams varchar(255) AFTER import_key;
+
+ALTER TABLE llx_boxes ADD COLUMN maxline integer NULL;

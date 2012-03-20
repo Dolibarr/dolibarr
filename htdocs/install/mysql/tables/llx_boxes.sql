@@ -1,6 +1,6 @@
 -- ============================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -28,5 +28,6 @@ create table llx_boxes
   box_id      integer NOT NULL,
   position    smallint NOT NULL,
   box_order   varchar(3) NOT NULL,
-  fk_user	  integer default 0 NOT NULL
+  fk_user	  integer default 0 NOT NULL,
+  maxline	  integer NULL
 )ENGINE=innodb;

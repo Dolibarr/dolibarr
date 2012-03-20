@@ -27,13 +27,16 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
 
 
 /**
- *	\class      ModeleShippingMethod
- *	\brief      Parent class for shipping method classes
+ *	Parent class for shipping method classes
  */
 class ModeleShippingMethod
 {
-
-	function ModeleShippingMethod($db=0)
+    /**
+     * Constructo
+     *
+     * @param	DoliDB		$db		Database handler
+     */
+	function ModeleShippingMethod($db)
 	{
 		$this->db = $db;
 		$this->name = "NOT DEFINED";

@@ -8,6 +8,7 @@ WARNING: Because of a major datastructure change onto supplier prices tabkes, be
 to make a backup of your database before making upgrade.
 
 For users:
+- New: Each user can remove/add its own boxes.
 - New: Can use personalized fields of products/services.
 - New: Can attach files on social contributions.
 - New: Show payments terms and conditions onto muscadet template.
@@ -52,6 +53,7 @@ For users:
 - New: Default output charset are utf8 into backup tool.
 - New: Add brazilian states.
 - New: Increase usability of module project.
+- New: [ task #285 ] Add search filter on project in tasks list.
 - New: Automatic list of documents in ECM module is ok for customers,
        suppliers invoice, orders, customers orders, proposals and social contributions.
 - New: All professional id can contains up to 128 chars instead of 32. 

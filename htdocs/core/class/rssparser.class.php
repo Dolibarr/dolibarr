@@ -25,18 +25,18 @@ class RssParser
     var $db;
     var $error;
 
-    protected $_format='';
-    protected $_urlRSS;
-    protected $_language;
-    protected $_generator;
-    protected $_copyright;
-    protected $_lastbuilddate;
-    protected $_imageurl;
-    protected $_link;
-    protected $_title;
-    protected $_description;
-    protected $_lastfetchdate;    // Last successful fetch
-    protected $_rssarray=array();
+    private $_format='';
+    private $_urlRSS;
+    private $_language;
+    private $_generator;
+    private $_copyright;
+    private $_lastbuilddate;
+    private $_imageurl;
+    private $_link;
+    private $_title;
+    private $_description;
+    private $_lastfetchdate;    // Last successful fetch
+    private $_rssarray=array();
 
     /**
      * getFormat

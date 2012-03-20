@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Matthieu Valleton	<mv@seeschloss.org>
  * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin		<patrick.raguin@gmail.com>
- * Copyright (C) 2005-2011 Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ if ($id == "")
 }
 
 // Security check
-$result = restrictedArea($user, 'categorie', $id);
+$result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
 $result=$object->fetch($id);

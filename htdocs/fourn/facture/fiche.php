@@ -184,6 +184,18 @@ elseif ($action == 'setdate_lim_reglement' && $user->rights->fournisseur->factur
     $result=$object->update($user);
     if ($result < 0) dol_print_error($db,$object->error);
 }
+elseif ($action == 'setnote_public' && $user->rights->fournisseur->facture->creer)
+{
+	$object->fetch($id);
+	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
+	if ($result < 0) dol_print_error($db,$object->error);
+}
+elseif ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
+{
+	$object->fetch($id);
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
+	if ($result < 0) dol_print_error($db,$object->error);
+}
 
 // Delete payment
 elseif($action == 'deletepaiement')
@@ -819,6 +831,67 @@ elseif ($action == 'remove_file')
     }
 }
 
+if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+{
+	if ($action == 'addcontact' && $user->rights->fournisseur->facture->creer)
+	{
+		$result = $object->fetch($id);
+	
+		if ($result > 0 && $id > 0)
+		{
+			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
+			$result = $result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+		}
+	
+		if ($result >= 0)
+		{
+			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
+		else
+		{
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+			{
+				$langs->load("errors");
+				$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+			}
+			else
+			{
+				$mesg = '<div class="error">'.$object->error.'</div>';
+			}
+		}
+	}
+	
+	// bascule du statut d'un contact
+	else if ($action == 'swapstatut' && $user->rights->fournisseur->facture->creer)
+	{
+		if ($object->fetch($id))
+		{
+			$result=$object->swapContactStatus(GETPOST('ligne'));
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
+	
+	// Efface un contact
+	else if ($action == 'deletecontact' && $user->rights->fournisseur->facture->creer)
+	{
+		$object->fetch($id);
+		$result = $object->delete_contact($_GET["lineid"]);
+	
+		if ($result >= 0)
+		{
+			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
+		else {
+			dol_print_error($db);
+		}
+	}
+}
+
 
 /*
  *	View
@@ -1406,7 +1479,26 @@ else
             print '</tr>';
         }
 
-        print '</table>';
+        print '</table><br>';
+        
+        if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+        {
+        	require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+        	require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
+        	$formcompany= new FormCompany($db);
+        
+        	$blocname = 'contacts';
+        	$title = $langs->trans('ContactsAddresses');
+        	include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
+        }
+        
+        if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+        {
+        	$colwidth=20;
+        	$blocname = 'notes';
+        	$title = $langs->trans('Notes');
+        	include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
+        }
 
 
         /*

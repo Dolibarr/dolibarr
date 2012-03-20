@@ -26,11 +26,12 @@
 define('NOCSRFCHECK',1);	// This is login page. We must be able to go on it from another web site.
 
 require("./main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/boxes.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 
 
 // If not defined, we select menu "home"
 if (! isset($_GET["mainmenu"])) $_GET["mainmenu"]="home";
+$action=GETPOST('action');
 
 
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
@@ -528,7 +529,7 @@ print '</div></div></div><div class="fichecenter"><br>';
  * Show boxes
  */
 
-printBoxesArea($user,"0");
+FormOther::printBoxesArea($user,"0");
 
 
 print '</div>';
@@ -548,7 +549,7 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
     {
         $langs->load("errors");
         //if (! empty($message)) $message.='<br>';
-        $message.=info_admin($langs->trans("WarningInstallDirExists",DOL_DOCUMENT_ROOT."/install").' '.$langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
+        $message.=info_admin($langs->trans("WarningLockFileDoesNotExists",DOL_DATA_ROOT).' '.$langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
     }
 
     // Conf files must be in read only mode

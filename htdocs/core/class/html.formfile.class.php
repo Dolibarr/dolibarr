@@ -66,7 +66,7 @@ class FormFile
 
         if ($conf->global->MAIN_USE_JQUERY_FILEUPLOAD)
         {
-            return $this->_form_ajaxfileupload($object);
+            return $this->_formAjaxFileUpload($object);
         }
         else
         {
@@ -779,7 +779,7 @@ class FormFile
      *    @param	Object	$object		Object to use
      *    @return	void
      */
-    private function _form_ajaxfileupload($object)
+    private function _formAjaxFileUpload($object)
     {
         global $langs;
 

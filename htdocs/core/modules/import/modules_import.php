@@ -113,6 +113,7 @@ class ModeleImports
 	/**
 	 *  Return picto of import driver
 	 *
+	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
 	function getPicto($key)
@@ -123,6 +124,7 @@ class ModeleImports
 	/**
 	 *  Renvoi libelle d'un driver import
 	 *
+	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
 	function getDriverLabel($key)
@@ -133,6 +135,7 @@ class ModeleImports
 	/**
 	 *  Renvoi la description d'un driver import
 	 *
+	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
 	function getDriverDesc($key)
@@ -143,6 +146,7 @@ class ModeleImports
 	/**
 	 *  Renvoi version d'un driver import
 	 *
+	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
 	function getDriverVersion($key)
@@ -153,6 +157,7 @@ class ModeleImports
 	/**
 	 *  Renvoi libelle de librairie externe du driver
 	 *
+	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
 	function getLibLabel($key)
@@ -163,6 +168,7 @@ class ModeleImports
 	/**
 	 *  Renvoi version de librairie externe du driver
 	 *
+	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
 	function getLibVersion($key)
@@ -171,6 +177,5 @@ class ModeleImports
 	}
 
 }
-
 
 ?>

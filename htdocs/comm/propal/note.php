@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,56 +32,34 @@ $langs->load('propal');
 $langs->load('compta');
 $langs->load('bills');
 
-$id = isset($_GET["id"])?$_GET["id"]:'';
+$id = GETPOST('id','int');
+$ref=GETPOST('ref','alpha');
+$action=GETPOST('action','alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'propale', $id, 'propal');
 
+$object = new Propal($db);
 
 
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($_POST["action"] == 'update_public' && $user->rights->propale->creer)
+if ($action == 'setnote_public' && $user->rights->propale->creer)
 {
-	$propal = new Propal($db);
-	$propal->fetch($_GET["id"]);
-
-	$db->begin();
-
-	$res=$propal->update_note_public($_POST["note_public"],$user);
-	if ($res < 0)
-	{
-		$mesg='<div class="error">'.$propal->error.'</div>';
-		$db->rollback();
-	}
-	else
-	{
-		$db->commit();
-	}
+	$object->fetch($id);
+	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
+	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-if ($_POST['action'] == 'update' && $user->rights->propale->creer)
+else if ($action == 'setnote' && $user->rights->propale->creer)
 {
-	$propal = new Propal($db);
-	$propal->fetch($_GET["id"]);
-
-	$db->begin();
-
-	$res=$propal->update_note($_POST["note"],$user);
-	if ($res < 0)
-	{
-		$mesg='<div class="error">'.$propal->error.'</div>';
-		$db->rollback();
-	}
-	else
-	{
-		$db->commit();
-	}
+	$object->fetch($id);
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
+	if ($result < 0) dol_print_error($db,$object->error);
 }
-
 
 
 /******************************************************************************/
@@ -92,21 +70,18 @@ llxHeader();
 
 $form = new Form($db);
 
-$id = $_GET["id"];
-$ref= $_GET["ref"];
 if ($id > 0 || ! empty($ref))
 {
 	if ($mesg) print $mesg;
 
 	$now=gmmktime();
 
-	$propal = new Propal($db);
-	if ($propal->fetch($id, $ref))
+	if ($object->fetch($id, $ref))
 	{
 		$societe = new Societe($db);
-		if ( $societe->fetch($propal->socid) )
+		if ( $societe->fetch($object->socid) )
 		{
-			$head = propal_prepare_head($propal);
+			$head = propal_prepare_head($object);
 			dol_fiche_head($head, 'note', $langs->trans('Proposal'), 0, 'propal');
 
 			print '<table class="border" width="100%">';
@@ -115,7 +90,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Ref
 			print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
-			print $form->showrefnav($propal,'ref',$linkback,1,'ref','ref','');
+			print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','');
 			print '</td></tr>';
 
 			// Ref client
@@ -125,15 +100,15 @@ if ($id > 0 || ! empty($ref))
 			print '</td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
-			print $propal->ref_client;
+			print $object->ref_client;
 			print '</td>';
 			print '</tr>';
 
 			// Customer
-			if ( is_null($propal->client) )
-				$propal->fetch_thirdparty();
+			if ( is_null($object->client) )
+				$object->fetch_thirdparty();
 			print "<tr><td>".$langs->trans("Company")."</td>";
-			print '<td colspan="3">'.$propal->client->getNomUrl(1).'</td></tr>';
+			print '<td colspan="3">'.$object->client->getNomUrl(1).'</td></tr>';
 
 			// Ligne info remises tiers
 			print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
@@ -148,17 +123,17 @@ if ($id > 0 || ! empty($ref))
 
 			// Date
 			print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
-			print dol_print_date($propal->date,'daytext');
+			print dol_print_date($object->date,'daytext');
 			print '</td>';
 			print '</tr>';
 
 			// Date fin propal
 			print '<tr>';
 			print '<td>'.$langs->trans('DateEndPropal').'</td><td colspan="3">';
-			if ($propal->fin_validite)
+			if ($object->fin_validite)
 			{
-				print dol_print_date($propal->fin_validite,'daytext');
-				if ($propal->statut == 1 && $propal->fin_validite < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+				print dol_print_date($object->fin_validite,'daytext');
+				if ($object->statut == 1 && $object->fin_validite < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 			}
 			else
 			{
@@ -167,63 +142,18 @@ if ($id > 0 || ! empty($ref))
 			print '</td>';
 			print '</tr>';
 
-			// Note publique
-			print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';
-			print '<td valign="top" colspan="3">';
-			if ($_GET["action"] == 'edit')
-			{
-				print '<form method="post" action="note.php?id='.$propal->id.'">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-				print '<input type="hidden" name="action" value="update_public">';
-				print '<textarea name="note_public" cols="80" rows="8">'.$propal->note_public."</textarea><br>";
-				print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-				print '</form>';
-			}
-			else
-			{
-				print ($propal->note_public?nl2br($propal->note_public):"&nbsp;");
-			}
-			print "</td></tr>";
-
-			// Note privee
-			if (! $user->societe_id)
-			{
-				print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
-				print '<td valign="top" colspan="3">';
-				if ($_GET["action"] == 'edit')
-				{
-					print '<form method="post" action="note.php?id='.$propal->id.'">';
-					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-					print '<input type="hidden" name="action" value="update">';
-					print '<textarea name="note" cols="80" rows="8">'.$propal->note."</textarea><br>";
-					print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-					print '</form>';
-				}
-				else
-				{
-					print ($propal->note?nl2br($propal->note):"&nbsp;");
-				}
-				print "</td></tr>";
-			}
-
 			print "</table>";
 
-			print '</div>';
+			print '<br>';
 
-			/*
-			 * Actions
-			 */
+			include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
 
-			print '<div class="tabsAction">';
-			if ($user->rights->propale->creer && $_GET['action'] <> 'edit')
-			{
-				print '<a class="butAction" href="note.php?id='.$propal->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
-			}
-			print '</div>';
+			dol_fiche_end();
 		}
 	}
 }
-$db->close();
+
 
 llxFooter();
+$db->close();
 ?>

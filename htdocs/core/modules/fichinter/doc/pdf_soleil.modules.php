@@ -208,7 +208,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				$pdf->SetXY($this->marge_gauche, $tab_top);
 				$pdf->MultiCell(190,8,$outputlangs->transnoentities("Description"),0,'L',0);
-				$pdf->line($this->marge_gauche, $tab_top + 8, $this->page_largeur-$this->marge_droite, $tab_top + 8 );
+				$pdf->line($this->marge_gauche, $tab_top + 8, $this->page_largeur-$this->marge_droite, $tab_top + 8);
 
 				$pdf->SetFont('', '', $default_font_size - 1);
 
@@ -445,7 +445,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		{
 			if (is_readable($logo))
 			{
-				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 24);
+				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 22);	// width=0 (auto), max height=22
 			}
 			else
 			{

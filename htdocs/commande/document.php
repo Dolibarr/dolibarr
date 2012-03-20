@@ -189,7 +189,8 @@ else
 	Header('Location: index.php');
 }
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

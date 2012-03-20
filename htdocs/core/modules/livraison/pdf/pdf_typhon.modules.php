@@ -97,9 +97,10 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 	/**
 	 *	Fonction generant le bon de livraison sur le disque
-	 *	@param	    object   		Object livraison a generer
-	 *	@param		outputlangs		Lang output object
-	 *	@return	    int         	1 if OK, <=0 if KO
+	 *
+	 *	@param	Object		$object   		Object livraison a generer
+	 *	@param	Translate	$outputlangs	Lang output object
+	 *	@return	int         				1 if OK, <=0 if KO
 	 */
 	function write_file($object,$outputlangs)
 	{
@@ -470,11 +471,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		// Modif Seb cadres signatures
 		$pdf->SetFont('','', $default_font_size);
 		$larg_sign = ($this->page_largeur-$this->marge_gauche-$this->marge_droite)/3;
-		$pdf->Rect($this->marge_gauche, ($tab_top + $tab_height + 3), $larg_sign, 25 );
+		$pdf->Rect($this->marge_gauche, ($tab_top + $tab_height + 3), $larg_sign, 25);
 		$pdf->SetXY($this->marge_gauche + 2, $tab_top + $tab_height + 5);
 		$pdf->MultiCell($larg_sign,2, $outputlangs->trans("For").' '.$outputlangs->convToOutputCharset($mysoc->name).":",'','L');
 
-		$pdf->Rect(2*$larg_sign+$this->marge_gauche, ($tab_top + $tab_height + 3), $larg_sign, 25 );
+		$pdf->Rect(2*$larg_sign+$this->marge_gauche, ($tab_top + $tab_height + 3), $larg_sign, 25);
 		$pdf->SetXY(2*$larg_sign+$this->marge_gauche + 2, $tab_top + $tab_height + 5);
 		$pdf->MultiCell($larg_sign,2, $outputlangs->trans("ForCustomer").':','','L');
 
@@ -510,7 +511,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		{
 			if (is_readable($logo))
 			{
-				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 22);
+				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 22);	// width=0 (auto), max height=22
 			}
 			else
 			{

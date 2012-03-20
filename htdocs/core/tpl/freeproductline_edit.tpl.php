@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2011 Regis Houssin       <regis@dolibarr.fr>
- * Copyright (C) 2010-2011 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2012 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +34,8 @@
 <input type="hidden" name="type" value="<?php echo $line->product_type; ?>">
 
 <tr <?php echo $bc[$var]; ?>>
-	<td>
-	<a name="<?php echo $line->id; ?>"></a>
+	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
+	<div id="<?php echo $line->id; ?>"></div>
 
 	<?php
 	if (is_object($hookmanager))

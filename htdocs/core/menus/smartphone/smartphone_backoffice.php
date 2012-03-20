@@ -25,8 +25,8 @@
 /**
  *	Class to manage smartphone menu smartphone (for internal users)
  */
-class MenuSmart {
-
+class MenuSmart
+{
 	var $db;
 	var $require_left=array("smartphone_backoffice");     // Si doit etre en phase avec un gestionnaire de menu particulier
 	var $hideifnotallowed=0;						// Put 0 for back office menu, 1 for front office menu
@@ -46,7 +46,7 @@ class MenuSmart {
 
 	/**
 	 *    Show menu
-	 * 
+	 *
 	 *    @param	string	$limitmenuto		To limit menu to a top or left menu value
 	 * 	  @return	void
 	 */

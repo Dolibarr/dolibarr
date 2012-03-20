@@ -195,7 +195,7 @@ if ($result)
             $thirdparty_static->datem=$db->jdate($objp->datem);
             $thirdparty_static->status=$objp->status;
             $thirdparty_static->canvas=$objp->canvas;
-            print $thirdparty_static->getNomUrl(1,'',16);
+            print $thirdparty_static->getNomUrl(1);
             print "</td>\n";
             // Type
             print '<td align="center">';

@@ -1319,7 +1319,7 @@ table.liste td {
     padding-right: 2px;
 }
 
-tr.liste_titre {
+div.liste_titre, tr.liste_titre {
     height: 20px;
     color: #842F00;
     font-weight: bold;
@@ -2129,6 +2129,37 @@ a.cke_dialog_ui_button
 .template-upload {
     height: 72px !important;
 }
+
+
+/* ============================================================================== */
+/*  Table with div                                                                */
+/* ============================================================================== */
+
+div.table-border {
+	display:table;
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #9CACBB;
+}
+div.table-border-row {
+	display:table-row;
+}
+div.table-key-border-col {
+	display:table-cell;
+	width: 25%;
+	vertical-align:top;
+	padding: 1px 2px 1px 1px;
+	border: 1px solid #9CACBB;
+	border-collapse: collapse;
+}
+div.table-val-border-col {
+	display:table-cell;
+	width:auto;
+	padding: 1px 2px 1px 1px;
+	border: 1px solid #9CACBB;
+	border-collapse: collapse;
+}
+
 
 <?php
 if (is_object($db)) $db->close();

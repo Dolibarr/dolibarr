@@ -108,9 +108,10 @@ class DeplacementStats extends Stats
 
 
 	/**
-	 * 	\brief	Renvoie le montant de facture par mois pour une annee donnee
-	 *	\param	year	Year to scan
-	 *	\return	array	Array of values
+	 * 	Renvoie le montant de facture par mois pour une annee donnee
+	 *
+	 *	@param	int		$year		Year to scan
+	 *	@return	array				Array of values
 	 */
 	function getAmountByMonth($year)
 	{
@@ -127,9 +128,10 @@ class DeplacementStats extends Stats
 	}
 
 	/**
-	 *	\brief	Return average amount
-	 *	\param	year	Year to scan
-	 *	\return	array	Array of values
+	 *	Return average amount
+	 *
+	 *	@param	int		$year		Year to scan
+	 *	@return	array				Array of values
 	 */
 	function getAverageByMonth($year)
 	{
@@ -144,8 +146,9 @@ class DeplacementStats extends Stats
 	}
 
 	/**
-	 *	\brief	Return nb, total and average
-	 *	\return	array	Array of values
+	 *	Return nb, total and average
+	 *
+	 *	@return	array				Array of values
 	 */
 	function getAllByYear()
 	{

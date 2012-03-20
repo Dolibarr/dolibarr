@@ -171,7 +171,7 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
 
     // Check write permission from module
     $createok=1;
-    if (GETPOST("action") && GETPOST("action")  == 'create')
+    if (GETPOST("action")  == 'create')
     {
         foreach ($features as $feature)
         {
@@ -218,7 +218,7 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
 
     // Check create user permission
     $createuserok=1;
-    if ( GETPOST("action") && (GETPOST("action") == 'confirm_create_user' && GETPOST("confirm") == 'yes') )
+    if (GETPOST("action") == 'confirm_create_user' && GETPOST("confirm") == 'yes')
     {
         if (! $user->rights->user->user->creer) $createuserok=0;
 
@@ -228,7 +228,7 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
 
     // Check delete permission from module
     $deleteok=1;
-    if ( GETPOST("action") && ( (GETPOST("action")  == 'confirm_delete' && GETPOST("confirm") && GETPOST("confirm") == 'yes') || GETPOST("action")  == 'delete') )
+    if ((GETPOST("action")  == 'confirm_delete' && GETPOST("confirm") == 'yes') || GETPOST("action")  == 'delete')
     {
         foreach ($features as $feature)
         {

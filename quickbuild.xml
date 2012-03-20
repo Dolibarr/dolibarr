@@ -2,7 +2,7 @@
 <project name="dolibarr" default="hudson" basedir=".">
 
 <!-- Exclude/ignore paths -->
- <property name="ignorepaths" value="${basedir}/htdocs/core/filemanagerdol,${basedir}/htdocs/includes" />
+ <property name="ignorepaths" value="${basedir}/htdocs/conf,${basedir}/htdocs/core/filemanagerdol,${basedir}/htdocs/includes" />
  <property name="ignoreregexp" value="**/PEAR/*,**/NET/*,**/HTTP/*" />
  
  <target name="clean">
@@ -41,6 +41,7 @@
  <target name="phpcpd">
   <exec executable="phpcpd">
    <arg line="	--log-pmd '${basedir}/hudson/logs/pmd-cpd.xml'
+				--exclude '${basedir}/htdocs/conf'
    				--exclude '${basedir}/htdocs/core/filemanagerdol'
    				--exclude '${basedir}/htdocs/includes'
    				--exclude '**/PEAR/*,**/NET/*,**/HTTP/*'
@@ -55,6 +56,7 @@
  <target name="phploc">
   <exec executable="phploc">
    <arg line="	--log-csv '${basedir}/hudson/logs/phploc.csv'
+				--exclude '${basedir}/htdocs/conf'
    				--exclude '${basedir}/htdocs/core/filemanagerdol'
    				--exclude '${basedir}/htdocs/includes'
    				--exclude '**/PEAR/*,**/NET/*,**/HTTP/*'

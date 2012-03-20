@@ -150,39 +150,32 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->prop
 }
 
 // Remove line
-else if ($action == 'confirm_deleteline' && $confirm == 'yes')
+else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->propale->creer)
 {
-	if ($user->rights->propale->creer)
-	{
-		$object->fetch($id);
-		$object->fetch_thirdparty();
-		$result = $object->deleteline($lineid);
-		// reorder lines
-		if ($result) $object->line_order(true);
+	$object->fetch($id);
+	$object->fetch_thirdparty();
+	$result = $object->deleteline($lineid);
+	// reorder lines
+	if ($result) $object->line_order(true);
 
-		// Define output language
-		$outputlangs = $langs;
-		$newlang='';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-		if (! empty($newlang))
-		{
-			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($newlang);
-		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-		{
-            $ret=$object->fetch($id);    // Reload to get new records
-		    propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
-		}
-
-		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-		exit;
-	}
-	else
+	// Define output language
+	$outputlangs = $langs;
+	$newlang='';
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+	if (! empty($newlang))
 	{
-		$mesg='<div class="error">'.$object->error.'</div>';
+		$outputlangs = new Translate("",$conf);
+		$outputlangs->setDefaultLang($newlang);
 	}
+	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+	{
+		$ret=$object->fetch($id);    // Reload to get new records
+		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+	}
+
+	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+	exit;
 }
 
 // Validation
@@ -216,7 +209,7 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->pr
 	}
 }
 
-else if ($action == 'setdate')
+else if ($action == 'setdate' && $user->rights->propale->creer)
 {
     $datep=dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
@@ -233,13 +226,13 @@ else if ($action == 'setdate')
     	if ($result < 0) dol_print_error($db,$object->error);
     }
 }
-else if ($action == 'setecheance')
+else if ($action == 'setecheance' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
 	$result=$object->set_echeance($user,dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
-else if ($action == 'setdate_livraison')
+else if ($action == 'setdate_livraison' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
 	$result=$object->set_date_livraison($user,dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
@@ -253,17 +246,17 @@ else if ($action == 'set_ref_client' && $user->rights->propale->creer)
 	$object->set_ref_client($user, $_POST['ref_client']);
 }
 
-else if ($action == 'setnote_public')
+else if ($action == 'setnote_public' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
-	$result=$object->update_note_public(GETPOST('note_public','alpha'));
+	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-else if ($action == 'setnote')
+else if ($action == 'setnote' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
-	$result=$object->update_note(GETPOST('note','alpha'));
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -409,7 +402,7 @@ else if ($action == 'add' && $user->rights->propale->creer)
 }
 
 // Classify billed
-else if ($action == 'classifybilled')
+else if ($action == 'classifybilled' && $user->rights->propale->cloturer)
 {
 	$object->fetch($id);
 	$object->cloture($user, 4, '');
@@ -850,7 +843,7 @@ else if ($action == "addline" && $user->rights->propale->creer)
 }
 
 // Mise a jour d'une ligne dans la propale
-if ($action == 'updateligne' && $user->rights->propale->creer && $_POST["save"] == $langs->trans("Save"))
+else if ($action == 'updateligne' && $user->rights->propale->creer && $_POST["save"] == $langs->trans("Save"))
 {
 	if (! $object->fetch($_POST["id"]) > 0)
 	{
@@ -957,28 +950,28 @@ else if ($action == 'builddoc' && $user->rights->propale->creer)
 }
 
 // Set project
-else if ($action == 'classin')
+else if ($action == 'classin' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
 	$object->setProject($_POST['projectid']);
 }
 
 // Delai de livraison
-else if ($action == 'setavailability')
+else if ($action == 'setavailability' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
 	$result = $object->availability($_POST['availability_id']);
 }
 
 // Origine de la propale
-else if ($action == 'setdemandreason')
+else if ($action == 'setdemandreason' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
 	$result = $object->demand_reason($_POST['demand_reason_id']);
 }
 
 // Conditions de reglement
-else if ($action == 'setconditions')
+else if ($action == 'setconditions' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
 	$result = $object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
@@ -997,7 +990,7 @@ else if ($action == 'setremiseabsolue' && $user->rights->propale->creer)
 }
 
 // Mode de reglement
-else if ($action == 'setmode')
+else if ($action == 'setmode' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
 	$result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
@@ -1051,6 +1044,68 @@ else if ($action == 'down' && $user->rights->propale->creer)
 	exit;
 }
 
+if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+{
+	if ($action == 'addcontact' && $user->rights->propale->creer)
+	{
+		$result = $object->fetch($id);
+
+		if ($result > 0 && $id > 0)
+		{
+			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
+			$result = $result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+		}
+
+		if ($result >= 0)
+		{
+			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
+		else
+		{
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+			{
+				$langs->load("errors");
+				$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+			}
+			else
+			{
+				$mesg = '<div class="error">'.$object->error.'</div>';
+			}
+		}
+	}
+
+	// Bascule du statut d'un contact
+	else if ($action == 'swapstatut' && $user->rights->propale->creer)
+	{
+		if ($object->fetch($id) > 0)
+		{
+			$result=$object->swapContactStatus(GETPOST('ligne'));
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
+
+	// Efface un contact
+	else if ($action == 'deletecontact' && $user->rights->propale->creer)
+	{
+		$object->fetch($id);
+		$result = $object->delete_contact($lineid);
+
+		if ($result >= 0)
+		{
+			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
+}
+
 
 /*
  * View
@@ -1097,25 +1152,25 @@ if ($id > 0 || ! empty($ref))
 	}
 
 	// Confirm delete
-	if ($action == 'delete')
+	else if ($action == 'delete')
 	{
 		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp',$object->ref), 'confirm_delete','',0,1);
 	}
 
 	// Confirm reopen
-	if ($action == 'reopen')
+	else if ($action == 'reopen')
 	{
 		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenProp',$object->ref), 'confirm_reopen','',0,1);
 	}
 
 	// Confirmation delete product/service line
-	if ($action == 'ask_deleteline')
+	else if ($action == 'ask_deleteline')
 	{
 		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline','',0,1);
 	}
 
 	// Confirm validate proposal
-	if ($action == 'validate')
+	else if ($action == 'validate')
 	{
 	    $error=0;
 
@@ -1484,30 +1539,24 @@ if ($id > 0 || ! empty($ref))
 	// Statut
 	print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 
+	print '</table><br>';
+
+	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+	{
+		require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+		$formcompany= new FormCompany($db);
+
+		$blocname = 'contacts';
+		$title = $langs->trans('ContactsAddresses');
+		include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
+	}
 
     if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     {
-	    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans('Notes').'</td></tr>';
-
-        // Public note
-    	print '<tr><td valign="top">';
-    	print $form->editfieldkey("NotePublic",'note_public',$object->note_public,$object,$user->rights->propale->creer,'textarea');
-    	print '</td><td colspan="3">';
-    	print $form->editfieldval("NotePublic",'note_public',$object->note_public,$object,$user->rights->propale->creer,'textarea');
-    	print "</td></tr>";
-
-    	// Private note
-    	if (! $user->societe_id)
-    	{
-    		print '<tr><td valign="top">';
-    		print $form->editfieldkey("NotePrivate",'note',$object->note_private,$object,$user->rights->propale->creer,'textarea');
-    		print '</td><td colspan="3">';
-    		print $form->editfieldval("NotePrivate",'note',$object->note_private,$object,$user->rights->propale->creer,'textarea');
-    		print "</td></tr>";
-    	}
+    	$blocname = 'notes';
+    	$title = $langs->trans('Notes');
+    	include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
     }
-
-	print '</table><br>';
 
 	/*
 	 * Lines
