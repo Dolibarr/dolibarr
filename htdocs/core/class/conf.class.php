@@ -185,19 +185,7 @@ class Conf
 				}
 				$i++;
 			}
-
-			// Object $mc
-			if (! defined('NOREQUIREMC') && ! empty($this->multicompany->enabled))
-			{
-				global $mc;
-
-				$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
-				if ($ret)
-				{
-					$mc = new ActionsMulticompany($db);
-					$mc->setValues($this);
-				}
-			}
+			
 		    $db->free($resql);
 		}
 		//var_dump($this->modules);
@@ -388,6 +376,19 @@ class Conf
         // For backward compatibility
         if ($this->top_menu == 'eldy.php') $this->top_menu='eldy_backoffice.php';
         elseif ($this->top_menu == 'rodolphe.php') $this->top_menu='eldy_backoffice.php';
+        
+        // Object $mc
+        if (! defined('NOREQUIREMC') && ! empty($this->multicompany->enabled))
+        {
+        	global $mc;
+        
+        	$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
+        	if ($ret)
+        	{
+        		$mc = new ActionsMulticompany($db);
+        		$mc->setValues($this);
+        	}
+        }
 	}
 }
 
