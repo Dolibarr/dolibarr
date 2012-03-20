@@ -125,6 +125,7 @@ class Categorie
 	 * 	@return	int 				-1 : erreur SQL
 	 *          					-2 : nouvel ID inconnu
 	 *          					-3 : categorie invalide
+	 * 								-4 : category already exists
 	 */
 	function create($user='')
 	{
@@ -141,7 +142,7 @@ class Categorie
 		{
 			$this->error=$langs->trans("ImpossibleAddCat");
 			$this->error.=" : ".$langs->trans("CategoryExistsAtSameLevel");
-			return -1;
+			return -4;
 		}
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label, description,";
@@ -176,7 +177,7 @@ class Categorie
 					if($this->add_fille() < 0)
 					{
 						$this->error=$langs->trans("ImpossibleAssociateCategory");
-						return -1;
+						return -3;
 					}
 				}
 
