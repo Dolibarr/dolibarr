@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2005      Davoleau Brice       <brice.davoleau@gmail.com>
  * Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2006-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
@@ -589,11 +589,11 @@ class Categorie
 	 */
 	function get_desc($cate)
 	{
-		$sql  = "SELECT description FROM ".MAIN_DB_PREFIX."categorie ";
-		$sql .= "WHERE rowid = ".$cate;
+		$sql = "SELECT description FROM ".MAIN_DB_PREFIX."categorie";
+		$sql.= " WHERE rowid = ".$cate;
 
-		$res  = $this->db->query($sql);
-		$n    = $this->db->fetch_array($res);
+		$res = $this->db->query($sql);
+		$n   = $this->db->fetch_array($res);
 
 		return($n[0]);
 	}
@@ -632,8 +632,6 @@ class Categorie
 	 */
 	function get_full_arbo($type,$markafterid=0)
 	{
-		global $conf;
-
 		$this->cats = array();
 
 		// Charge tableau des meres
@@ -641,7 +639,7 @@ class Categorie
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_association ca";
 		$sql.= ", ".MAIN_DB_PREFIX."categorie as c";
 		$sql.= " WHERE ca.fk_categorie_mere = c.rowid";
-		$sql.= " AND c.entity = ".$conf->entity;
+		$sql.= " AND c.entity IN (".getEntity('category',1).")";
 
 		// Load array this->motherof
 		dol_syslog("Categorie::get_full_arbo build motherof array sql=".$sql, LOG_DEBUG);
@@ -665,7 +663,7 @@ class Categorie
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_association as ca";
 		$sql.= " ON c.rowid = ca.fk_categorie_mere";
 		$sql.= " WHERE c.type = ".$type;
-		$sql.= " AND c.entity = ".$conf->entity;
+		$sql.= " AND c.entity IN (".getEntity('category',1).")";
 		$sql.= " ORDER BY c.label, c.rowid";
 
 		dol_syslog("Categorie::get_full_arbo get category list sql=".$sql, LOG_DEBUG);
@@ -811,6 +809,7 @@ class Categorie
 	function get_all_categories ()
 	{
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
+		$sql.= " WHERE entity IN (".getEntity('category',1).")";
 
 		$res = $this->db->query($sql);
 		if ($res)
@@ -839,6 +838,7 @@ class Categorie
 	{
 		$sql = "SELECT count(rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
+		$sql.= " WHERE entity IN (".getEntity('category',1).")";
 		$res = $this->db->query($sql);
 		if ($res)
 		{
@@ -870,6 +870,7 @@ class Categorie
 			$sql.= " ON c.rowid=ca.fk_categorie_fille";
 			$sql.= " WHERE ca.fk_categorie_mere=".$this->id_mere;
 			$sql.= " AND c.label='".$this->db->escape($this->label)."'";
+			$sql.= " AND c.entity IN (".getEntity('category',1).")";
 		}
 		else 										// mother_id undefined (so it's root)
 		{
@@ -883,6 +884,7 @@ class Categorie
 			$sql.= " ON c.rowid!=ca.fk_categorie_fille";
 			$sql.= " WHERE c.type=".$this->type;
 			$sql.= " AND c.label='".$this->db->escape($this->label)."'";
+			$sql.= " AND c.entity IN (".getEntity('category',1).")";
 		}
 		dol_syslog("Categorie::already_exists sql=".$sql);
 		$resql = $this->db->query($sql);
@@ -1101,6 +1103,7 @@ class Categorie
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$type." as ct";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON ct.fk_categorie = c.rowid";
 		$sql.= " WHERE ct.fk_".$table." = ".$id." AND c.type = ".$typeid;
+		$sql.= " AND c.entity IN (".getEntity('category',1).")";
 
 		$res = $this->db->query($sql);
 		if ($res)
@@ -1135,8 +1138,9 @@ class Categorie
 		$cats = array ();
 
 		// Generation requete recherche
-		$sql  = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie ";
-		$sql .= "WHERE type = ".$type." ";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
+		$sql.= " WHERE type = ".$type." ";
+		$sql.= " AND entity IN (".getEntity('category',1).")";
 		if ($nom)
 		{
 			if (! $exact)
