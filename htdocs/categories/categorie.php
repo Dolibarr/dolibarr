@@ -65,6 +65,7 @@ if ($id || $ref)
 		$elementtype = 'societe';
 		$objecttype = 'societe&categorie';
 		$objectid = isset($id)?$id:(isset($socid)?$socid:'');
+		$dbtablename = '&societe';
 		$fieldid = 'rowid';
 	}
 	if ($type == 3) {
