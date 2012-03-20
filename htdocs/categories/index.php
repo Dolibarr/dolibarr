@@ -3,7 +3,7 @@
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,11 +29,12 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/treeview.lib.php");
 
-$type=(GETPOST('type') ? GETPOST('type') : 0);
-
-if (!$user->rights->categorie->lire) accessforbidden();
-
 $langs->load("categories");
+
+if (! $user->rights->categorie->lire) accessforbidden();
+
+$id=GETPOST('id','int');
+$type=(GETPOST('type') ? GETPOST('type') : 0);
 
 
 /*
@@ -88,9 +89,9 @@ print '</td><td valign="top" width="70%">';
 /*
  * Categories found
  */
-if($_POST['catname'] || $_REQUEST['id'])
+if($_POST['catname'] || $id > 0)
 {
-	$cats = $categstatic->rechercher($_REQUEST['id'],$_POST['catname'],$_POST['type']);
+	$cats = $categstatic->rechercher($id,$_POST['catname'],$type);
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
@@ -309,7 +310,7 @@ if ($nbofentries == 0)
 
 print "</table>";
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>
