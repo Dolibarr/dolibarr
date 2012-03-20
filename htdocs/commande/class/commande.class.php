@@ -2111,7 +2111,7 @@ class Commande extends CommonObject
      *  @param    	double			$pu               	Prix unitaire
      *  @param    	double			$qty              	Quantity
      *  @param    	double			$remise_percent   	Pourcentage de remise de la ligne
-     *  @param    	double			$tva_tx           	Taux TVA
+     *  @param    	double			$txtva           	Taux TVA
      * 	@param		double			$txlocaltax1		Local tax 1 rate
      *  @param		double			$txlocaltax2		Local tax 2 rate
      *  @param    	string			$price_base_type	HT or TTC

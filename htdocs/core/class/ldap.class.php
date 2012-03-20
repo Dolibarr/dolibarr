@@ -1011,8 +1011,8 @@ class Ldap
 	 *  Converts a little-endian hex-number to one, that 'hexdec' can convert
 	 *	Required by Active Directory
 	 *
-	 *	@param	string		$hex
-	 *	@return	string		little endian
+	 *	@param	string		$hex			Hex value
+	 *	@return	string						Little endian		
 	 */
 	function littleEndian($hex)
 	{
