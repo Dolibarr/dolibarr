@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
@@ -37,6 +37,8 @@ $id		= GETPOST('id','int');
 $ref	= GETPOST('ref');
 $type	= GETPOST('type');
 $mesg	= GETPOST('mesg');
+
+$removecat = GETPOST('removecat','int');
 
 $dbtablename = '';
 
@@ -87,7 +89,7 @@ $result = restrictedArea($user,$objecttype,$objectid,$dbtablename,'','',$fieldid
  */
 
 //Suppression d'un objet d'une categorie
-if ($_REQUEST["removecat"])
+if ($removecat > 0)
 {
 	if ($type==0 && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
@@ -113,7 +115,7 @@ if ($_REQUEST["removecat"])
 		$result = $object->fetch($objectid);
 	}
 	$cat = new Categorie($db);
-	$result=$cat->fetch($_REQUEST["removecat"]);
+	$result=$cat->fetch($removecat);
 
 	$result=$cat->del_type($object,$elementtype);
 }
@@ -270,11 +272,11 @@ if ($socid)
 
 	dol_htmloutput_mesg($mesg);
 
-	if ($soc->client) formCategory($db,$soc,2);
+	if ($soc->client) formCategory($db,$soc,2,$socid);
 
 	if ($soc->client && $soc->fournisseur) print '<br><br>';
 
-	if ($soc->fournisseur) formCategory($db,$soc,1);
+	if ($soc->fournisseur) formCategory($db,$soc,1,$socid);
 }
 else if ($id || $ref)
 {
@@ -424,7 +426,7 @@ else if ($id || $ref)
  * 	@param		int			$typeid		Type of category (0, 1, 2, 3)
  *  @return		int			0
  */
-function formCategory($db,$object,$typeid)
+function formCategory($db,$object,$typeid,$socid=0)
 {
 	global $user,$langs,$form,$bc;
 
@@ -499,7 +501,7 @@ function formCategory($db,$object,$typeid)
 				if ($typeid == 3) $permission=$user->rights->adherent->creer;
 				if ($permission)
 				{
-					print "<a href= '".DOL_URL_ROOT."/categories/categorie.php?".(empty($_REQUEST["socid"])?'id':'socid')."=".$object->id.(empty($_REQUEST["socid"])?"&amp;type=".$typeid."&amp;typeid=".$typeid:'')."&amp;removecat=".$cat->id."'>";
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removecat=".$cat->id."'>";
 					print img_delete($langs->trans("DeleteFromCat")).' ';
 					print $langs->trans("DeleteFromCat")."</a>";
 				}
@@ -530,7 +532,7 @@ function formCategory($db,$object,$typeid)
 	return 0;
 }
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>
