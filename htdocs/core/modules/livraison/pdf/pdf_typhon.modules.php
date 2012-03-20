@@ -511,7 +511,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		{
 			if (is_readable($logo))
 			{
-				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 22);
+				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 22);	// width=0 (auto), max height=22
 			}
 			else
 			{

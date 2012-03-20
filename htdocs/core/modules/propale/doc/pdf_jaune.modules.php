@@ -609,7 +609,7 @@ class pdf_jaune extends ModelePDFPropales
 		$pdf->SetFont('','', $default_font_size - 1);
 
 		// Tableau total
-		$lltot = 200; $col1x = 120; $col2x = 170; $largcol2 = $lltot - $col2x;
+		$col1x = 120; $col2x = 170; $largcol2 = ($this->page_largeur - $this->marge_droite - $col2x);
 
 		// Total HT
 		$pdf->SetFillColor(255,255,255);
@@ -909,7 +909,7 @@ class pdf_jaune extends ModelePDFPropales
 		{
 			if (is_readable($logo))
 			{
-				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 24);
+				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 22);	// width=0 (auto), max height=22
 			}
 			else
 			{
