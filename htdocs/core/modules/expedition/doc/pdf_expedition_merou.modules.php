@@ -382,7 +382,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		{
 			if (is_readable($logo))
 			{
-				$pdf->Image($logo,10, 5, 0, 22);
+				$pdf->Image($logo,10, 5, 0, 22);	// width=0 (auto), max height=22
 			}
 			else
 			{
