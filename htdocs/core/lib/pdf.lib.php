@@ -77,7 +77,11 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 {
 	global $conf;
 
-	require_once(TCPDF_PATH.'tcpdf.php');
+	if (! empty($conf->global->MAIN_USE_FPDF) && ! empty($conf->global->MAIN_DISABLE_FPDI))
+    	return "Error MAIN_USE_PDF and MAIN_DISABLE_FPDI can't be set together";
+
+	// We use by default TCPDF
+	if (empty($conf->global->MAIN_USE_FPDF)) require_once(TCPDF_PATH.'tcpdf.php');
 	// We need to instantiate fpdi object (instead of tcpdf) to use merging features. But we can disable it.
 	if (empty($conf->global->MAIN_DISABLE_FPDI)) require_once(FPDI_PATH.'fpdi.php');
 
