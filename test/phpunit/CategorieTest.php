@@ -129,12 +129,16 @@ class CategorieTest extends PHPUnit_Framework_TestCase
 
 		$localobject=new Categorie($this->savdb);
     	$localobject->initAsSpecimen();
-    	$result=$localobject->create($user);
 
+		// We create category
+    	$result=$localobject->create($user);
     	$this->assertLessThan($result, 0);
     	print __METHOD__." result=".$result."\n";
 
-    	// TODO Add test on error when creating duplicate
+		// We try to create same category again
+    	$result=$localobject->create($user);
+    	$this->assertLessThan($result, -4);
+    	print __METHOD__." result=".$result."\n";
 
 
     	return $result;
