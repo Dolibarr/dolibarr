@@ -237,6 +237,7 @@ class Conf
 		// For backward compatibility
 		// TODO Replace this->xxx->enabled by this->modulename->enabled to remove this code
 		if (isset($this->propale->enabled)) $this->propal->enabled=$this->propale->enabled;
+		if (isset($this->categorie->enabled)) $this->category->enabled=$this->categorie->enabled;
 
 		// Define default dir_output and dir_temp for directories of modules
 		foreach($this->modules as $module)
