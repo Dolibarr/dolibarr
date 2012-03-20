@@ -617,8 +617,7 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->SetFont('','', $default_font_size - 1);
 
 		// Tableau total
-		$col1x=$this->marges['g']+110; $col2x=$this->marges['g']+164;
-		$lltot = 200; $largcol2 = $lltot - $col2x;
+		$col1x=$this->marges['g']+110; $col2x=$this->marges['g']+164; $largcol2 = ($this->page_largeur - $this->marge_droite - $col2x);
 
 		$pdf->SetXY($this->marges['g'], $tab2_top + 0);
 
@@ -837,7 +836,7 @@ class pdf_oursin extends ModelePDFFactures
 			{
 				$taille=getimagesize($logo);
 				$length=$taille[0]/2.835;
-				$pdf->Image($logo, $this->marges['g'], $this->marges['h'], 0, 24);
+				$pdf->Image($logo, $this->marges['g'], $this->marges['h'], 0, 22);	// width=0 (auto), max height=22
 			}
 			else
 			{
