@@ -144,6 +144,8 @@ class Categorie
 			$this->error.=" : ".$langs->trans("CategoryExistsAtSameLevel");
 			return -4;
 		}
+		
+		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label, description,";
 		if ($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
@@ -177,6 +179,7 @@ class Categorie
 					if($this->add_fille() < 0)
 					{
 						$this->error=$langs->trans("ImpossibleAssociateCategory");
+						$this->db->rollback();
 						return -3;
 					}
 				}
@@ -187,17 +190,21 @@ class Categorie
 				$result=$interface->run_triggers('CATEGORY_CREATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
-
+				
+				$this->db->commit();
 				return $id;
 			}
 			else
 			{
+				$this->db->rollback();
 				return -2;
 			}
 		}
 		else
 		{
-			dol_print_error($this->db);
+			$this->error=$this->db->error();
+            dol_syslog(get_class($this)."::create error ".$this->error." sql=".$sql, LOG_ERR);
+			$this->db->rollback();
 			return -1;
 		}
 	}
