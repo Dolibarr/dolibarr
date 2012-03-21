@@ -131,30 +131,24 @@ class CategorieTest extends PHPUnit_Framework_TestCase
     	$localobject->initAsSpecimen();
 
 		// We create category
-    	$result=$localobject->create($user);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertGreaterThan(0, $result);
+    	$resultFirstCreate=$localobject->create($user);
+    	print __METHOD__." resultFirstCreate=".$resultFirstCreate."\n";
+    	$this->assertGreaterThan(0, $resultFirstCreate);
     	
-    	// Save and unset $this->id for good check test
-    	$saveid = (int) $localobject->id;
-    	$localobject->id = 0;
+    	//Unset $this->id for good check test
+    	unset($localobject->id);
     	
     	// We check if exist
-    	$result=$localobject->already_exists();
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertGreaterThan(0, $result);
+    	$resultCheck=$localobject->already_exists();
+    	print __METHOD__." resultCheck=".$resultCheck."\n";
+    	$this->assertGreaterThan(0, $resultCheck);
 
 		// We try to create same category again
-    	$result=$localobject->create($user);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals(-4, $result);
-    	
-    	// Restore $this->id with save value
-    	$localobject->id = $saveid;
-    	print __METHOD__." saveid=".$localobject->id."\n";
+    	$resultSecondCreate=$localobject->create($user);
+    	print __METHOD__." result=".$resultSecondCreate."\n";
+    	$this->assertEquals(-4, $resultSecondCreate);
 
-
-    	return $result;
+    	return $resultFirstCreate;
     }
 
     /**
