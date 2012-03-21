@@ -134,6 +134,11 @@ class CategorieTest extends PHPUnit_Framework_TestCase
     	$result=$localobject->create($user);
     	print __METHOD__." result=".$result."\n";
     	$this->assertGreaterThan(0, $result);
+    	
+    	// We check if exist
+    	$result=$localobject->already_exists();
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertGreaterThan(0, $result);
 
 		// We try to create same category again
     	$result=$localobject->create($user);
