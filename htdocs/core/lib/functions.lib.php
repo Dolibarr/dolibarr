@@ -1101,8 +1101,8 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 function dol_now($mode='gmt')
 {
     // Note that gmmktime and mktime return same value (GMT) whithout parameters
-    if ($mode == 'gmt') $ret=gmmktime();	// Time for now at greenwich.
-    else if ($mode == 'tzserver')			// Time for now with PHP server timezone added
+    if ($mode == 'gmt') $ret=time();	// Time for now at greenwich.
+    else if ($mode == 'tzserver')		// Time for now with PHP server timezone added
     {
         require_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
         $tzsecond=getServerTimeZoneInt();    // Contains tz+dayling saving time
