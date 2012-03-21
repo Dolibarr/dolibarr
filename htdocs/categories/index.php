@@ -236,8 +236,7 @@ foreach($fulltree as $key => $val)
 		$resarray=tree_showpad($fulltree,$key);
 		$a=$resarray[0];
 		$nbofsubdir=$resarray[1];
-		$c=$resarray[2];
-		$nboffilesinsubdir=$resarray[3];
+		$nboffilesinsubdir=$resarray[2];
 		print '</td>';
 
 		// Show picto
