@@ -887,7 +887,7 @@ class Categorie
 			$sql.= " AND c.label='".$this->db->escape($this->label)."'";
 			$sql.= " AND c.entity IN (".getEntity('category',1).")";
 		}
-		dol_syslog("Categorie::already_exists sql=".$sql);
+		dol_syslog(get_class($this)."::already_exists sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -899,13 +899,19 @@ class Categorie
 				 * So if the result have the same id, update is not for label, and if result have an other one,
 				 * update may be for label.
 				 */
-				if($obj[0] > 0 && $obj[0] != $this->id) return 1;
+				if($obj[0] > 0 && $obj[0] != $this->id)
+				{
+					dol_syslog(get_class($this)."::already_exists category with name=".$this->label." exist id=".$obj[0], LOG_DEBUG);
+					return 1;
+				}
 			}
+			dol_syslog(get_class($this)."::already_exists no category with same name=".$this->label, LOG_DEBUG);
 			return 0;
 		}
 		else
 		{
-			dol_print_error($this->db);
+			$this->error=$this->db->error();
+            dol_syslog(get_class($this)."::already_exists error ".$this->error." sql=".$sql, LOG_ERR);
 			return -1;
 		}
 	}
