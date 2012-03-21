@@ -908,11 +908,11 @@ class Categorie
 				 */
 				if($obj[0] > 0 && $obj[0] != $this->id)
 				{
-					dol_syslog(get_class($this)."::already_exists category with name=".$this->label." exist id=".$obj[0], LOG_DEBUG);
+					dol_syslog(get_class($this)."::already_exists category with name=".$this->label." exist rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
 					return 1;
 				}
 			}
-			dol_syslog(get_class($this)."::already_exists no category with same name=".$this->label, LOG_DEBUG);
+			dol_syslog(get_class($this)."::already_exists no category with same name=".$this->label." rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
 			return 0;
 		}
 		else
