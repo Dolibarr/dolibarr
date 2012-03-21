@@ -139,7 +139,7 @@ class DolEditor
      *	Output depends on this->tool (fckeditor, ckeditor, texatrea, ...)
      *
      *  @param	int		$noprint    1=Return HTML string instead of printing it to output
-     *  @param	string	$morejs		Add more js. For example: "editor.on( \'saveSnapshot\', function(e) { alert(\'ee\'); });"
+     *  @param	string	$morejs		Add more js. For example: ".on( \'saveSnapshot\', function(e) { alert(\'ee\'); });"
      *  @return	void
      */
     function Create($noprint=0,$morejs='')
@@ -173,7 +173,8 @@ class DolEditor
             	$out.= '<script type="text/javascript">
             			$(document).ready(function () {
                             /* if (CKEDITOR.loadFullCore) CKEDITOR.loadFullCore(); */
-                            editor=CKEDITOR.replace(\''.$this->htmlname.'\',
+                            /* should be editor=CKEDITOR.replace but what if serveral editors ? */
+                            CKEDITOR.replace(\''.$this->htmlname.'\',
             					{
             						customConfig : \''.dol_buildpath('/theme/'.$conf->theme.'/ckeditor/config.js',1).'\',
             						toolbar: \''.$this->toolbarname.'\',
@@ -218,9 +219,7 @@ class DolEditor
                                filebrowserImageWindowWidth : \'900\',
                                filebrowserImageWindowHeight : \'500\'';
             	}
-            	$out.= '
-            					});';
-            	$out.= $morejs;
+            	$out.= '	})'.$morejs;
             	$out.= '});
             			</script>';
             }
