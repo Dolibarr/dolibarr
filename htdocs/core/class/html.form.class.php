@@ -120,7 +120,7 @@ class Form
      * @param	string	$value			Value to show/edit
      * @param	object	$object			Object
      * @param	boolean	$perm			Permission to allow button to edit parameter
-     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea:rows:cols', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select:xxx'...)
+     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'numeric:99', 'text' or 'textarea:rows:cols', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select:xxx'...)
      * @param	string	$editvalue		When in edit mode, use this value as $value instead of value
      * @param	object	$extObject		External object
      * @param	string	$success		Success message
@@ -204,9 +204,13 @@ class Form
                 else if (preg_match('/^ckeditor/',$typeofdata))
                 {
                     $tmpcontent=dol_htmlentitiesbr($value);
-                    $firstline=preg_replace('/<br>.*/','',$tmpcontent);
-                    $firstline=preg_replace('/[\n\r].*/','',$firstline);
-                    $ret.=$firstline.((strlen($firstline) != strlen($tmpcontent))?'...':'');
+                    if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+                    {
+                        $firstline=preg_replace('/<br>.*/','',$tmpcontent);
+                        $firstline=preg_replace('/[\n\r].*/','',$firstline);
+                        $tmpcontent=$firstline.((strlen($firstline) != strlen($tmpcontent))?'...':'');
+                    }
+                    $ret.=$tmpcontent;
                 }
                 else $ret.=$value;
             }
