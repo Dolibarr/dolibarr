@@ -135,7 +135,8 @@ class CategorieTest extends PHPUnit_Framework_TestCase
     	print __METHOD__." result=".$result."\n";
     	$this->assertGreaterThan(0, $result);
     	
-    	// Unset $this->id for good check test
+    	// Save and unset $this->id for good check test
+    	$saveid = $localobject->id;
     	unset($localobject->id);
     	
     	// We check if exist
@@ -147,6 +148,9 @@ class CategorieTest extends PHPUnit_Framework_TestCase
     	$result=$localobject->create($user);
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals(-4, $result);
+    	
+    	// Restore $this->id with save value
+    	$localobject->id = $saveid;
 
 
     	return $result;
