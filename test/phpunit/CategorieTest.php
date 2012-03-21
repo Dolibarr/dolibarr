@@ -132,13 +132,13 @@ class CategorieTest extends PHPUnit_Framework_TestCase
 
 		// We create category
     	$result=$localobject->create($user);
-    	$this->assertGreaterThan(0, $result);
     	print __METHOD__." result=".$result."\n";
+    	$this->assertGreaterThan(0, $result);
 
 		// We try to create same category again
     	$result=$localobject->create($user);
-    	$this->assertEquals(-4, $result);
     	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals(-4, $result);
 
 
     	return $result;
@@ -203,9 +203,9 @@ class CategorieTest extends PHPUnit_Framework_TestCase
 
 		$localobject=new Categorie($this->savdb);
     	$result=$localobject->fetch($id);
-
-    	$this->assertGreaterThan(0, $result);
+    	
     	print __METHOD__." id=".$id." result=".$result."\n";
+    	$this->assertGreaterThan(0, $result);
     	return $localobject;
     }
 
