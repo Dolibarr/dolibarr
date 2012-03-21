@@ -137,7 +137,7 @@ class CategorieTest extends PHPUnit_Framework_TestCase
 
 		// We try to create same category again
     	$result=$localobject->create($user);
-    	$this->assertLessThan($result, -4);
+    	$this->assertEquals($result, -4);
     	print __METHOD__." result=".$result."\n";
 
 
