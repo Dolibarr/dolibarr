@@ -91,6 +91,9 @@ class Conf
         $this->mycompany=(object) array();
         $this->admin=(object) array();
         $this->user=(object) array();
+        $this->syslog=(object) array();
+        $this->browser=(object) array();
+        $this->multicompany=(object) array();
 	    //! Charset for HTML output and for storing data in memory
 	    $this->file->character_set_client='UTF-8';   // UTF-8, ISO-8859-1
 	}
@@ -250,21 +253,29 @@ class Conf
 		// for backward compatibility.
 
 		// Sous module bons d'expedition
-		$this->expedition_bon->enabled=defined("MAIN_SUBMODULE_EXPEDITION")?MAIN_SUBMODULE_EXPEDITION:0;
+		$this->expedition_bon = (object) array();
+		$this->expedition_bon->enabled= defined("MAIN_SUBMODULE_EXPEDITION")?MAIN_SUBMODULE_EXPEDITION:0;
 		// Sous module bons de livraison
+		$this->livraison_bon = (object) array();
 		$this->livraison_bon->enabled=defined("MAIN_SUBMODULE_LIVRAISON")?MAIN_SUBMODULE_LIVRAISON:0;
 
 		// Module fournisseur
+		$this->fournisseur = (object) array();
+		$this->fournisseur->commande = (object) array();
 		$this->fournisseur->commande->dir_output=$rootfordata."/fournisseur/commande";
 		$this->fournisseur->commande->dir_temp  =$rootfordata."/fournisseur/commande/temp";
+		$this->fournisseur->facture = (object) array();
 		$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";
 		$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";
 		// Module product/service
+		$this->product = (object) array();
 		$this->product->dir_output=$rootfordata."/produit";
 		$this->product->dir_temp  =$rootfordata."/produit/temp";
+		$this->service = (object) array();
 		$this->service->dir_output=$rootfordata."/produit";
 		$this->service->dir_temp  =$rootfordata."/produit/temp";
 		// Module contrat
+		$this->contrat = (object) array();
 		$this->contrat->dir_output=$rootfordata."/contracts";
 		$this->contrat->dir_temp  =$rootfordata."/contracts/temp";
 
@@ -311,10 +322,12 @@ class Conf
 		if (! empty($this->global->MAIN_MAIL_EMAIL_FROM)) $this->email_from = $this->global->MAIN_MAIL_EMAIL_FROM;
 
 		// conf->notification->email_from = email pour envoi par Dolibarr des notifications
+		$this->notification = (object) array();
 		$this->notification->email_from=$this->email_from;
 		if (! empty($this->global->NOTIFICATION_EMAIL_FROM)) $this->notification->email_from=$this->global->NOTIFICATION_EMAIL_FROM;
 
 		// conf->mailing->email_from = email pour envoi par Dolibarr des mailings
+		$this->mailing = (object) array();
 		$this->mailing->email_from=$this->email_from;
 		if (! empty($this->global->MAILING_EMAIL_FROM))	$this->mailing->email_from=$this->global->MAILING_EMAIL_FROM;
 
@@ -345,17 +358,36 @@ class Conf
         if (empty($this->global->TAX_MODE_BUY_SERVICE))  $this->global->TAX_MODE_BUY_SERVICE='payment';
 
 		// Delay before warnings
+        $this->actions = (object) array();
 		$this->actions->warning_delay=(isset($this->global->MAIN_DELAY_ACTIONS_TODO)?$this->global->MAIN_DELAY_ACTIONS_TODO:7)*24*60*60;
+		$this->commande = (object) array();
+		$this->commande->client = (object) array();
 		$this->commande->client->warning_delay=(isset($this->global->MAIN_DELAY_ORDERS_TO_PROCESS)?$this->global->MAIN_DELAY_ORDERS_TO_PROCESS:2)*24*60*60;
-        $this->commande->fournisseur->warning_delay=(isset($this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS)?$this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS:7)*24*60*60;
-		$this->propal->cloture->warning_delay=(isset($this->global->MAIN_DELAY_PROPALS_TO_CLOSE)?$this->global->MAIN_DELAY_PROPALS_TO_CLOSE:0)*24*60*60;
-		$this->propal->facturation->warning_delay=(isset($this->global->MAIN_DELAY_PROPALS_TO_BILL)?$this->global->MAIN_DELAY_PROPALS_TO_BILL:0)*24*60*60;
+		$this->commande->fournisseur = (object) array();
+		$this->commande->fournisseur->warning_delay=(isset($this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS)?$this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS:7)*24*60*60;
+        $this->propal = (object) array();
+        $this->propal->cloture = (object) array();
+        $this->propal->cloture->warning_delay=(isset($this->global->MAIN_DELAY_PROPALS_TO_CLOSE)?$this->global->MAIN_DELAY_PROPALS_TO_CLOSE:0)*24*60*60;
+        $this->propal->facturation = (object) array();
+        $this->propal->facturation->warning_delay=(isset($this->global->MAIN_DELAY_PROPALS_TO_BILL)?$this->global->MAIN_DELAY_PROPALS_TO_BILL:0)*24*60*60;
+		$this->facture = (object) array();
+		$this->facture->client = (object) array();
 		$this->facture->client->warning_delay=(isset($this->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED)?$this->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED:0)*24*60*60;
-        $this->facture->fournisseur->warning_delay=(isset($this->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY)?$this->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY:0)*24*60*60;
-		$this->contrat->services->inactifs->warning_delay=(isset($this->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES)?$this->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES:0)*24*60*60;
-		$this->contrat->services->expires->warning_delay=(isset($this->global->MAIN_DELAY_RUNNING_SERVICES)?$this->global->MAIN_DELAY_RUNNING_SERVICES:0)*24*60*60;
+		$this->facture->fournisseur = (object) array();
+		$this->facture->fournisseur->warning_delay=(isset($this->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY)?$this->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY:0)*24*60*60;
+        $this->contrat = (object) array();
+        $this->contrat->services = (object) array();
+        $this->contrat->services->inactifs = (object) array();
+        $this->contrat->services->inactifs->warning_delay=(isset($this->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES)?$this->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES:0)*24*60*60;
+        $this->contrat->services->expires = (object) array();
+        $this->contrat->services->expires->warning_delay=(isset($this->global->MAIN_DELAY_RUNNING_SERVICES)?$this->global->MAIN_DELAY_RUNNING_SERVICES:0)*24*60*60;
+		$this->adherent = (object) array();
+		$this->adherent->cotisation = (object) array();
 		$this->adherent->cotisation->warning_delay=(isset($this->global->MAIN_DELAY_MEMBERS)?$this->global->MAIN_DELAY_MEMBERS:0)*24*60*60;
+		$this->bank = (object) array();
+		$this->bank->rappro = (object) array();
 		$this->bank->rappro->warning_delay=(isset($this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE)?$this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE:0)*24*60*60;
+		$this->bank->cheque = (object) array();
 		$this->bank->cheque->warning_delay=(isset($this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT)?$this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT:0)*24*60*60;
 
 		// For backward compatibility
