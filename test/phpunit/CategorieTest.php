@@ -132,12 +132,12 @@ class CategorieTest extends PHPUnit_Framework_TestCase
 
 		// We create category
     	$result=$localobject->create($user);
-    	$this->assertLessThan($result, 0);
+    	$this->assertLessThan(0, $result);
     	print __METHOD__." result=".$result."\n";
 
 		// We try to create same category again
     	$result=$localobject->create($user);
-    	$this->assertEquals($result, -4);
+    	$this->assertEquals(-4, $result);
     	print __METHOD__." result=".$result."\n";
 
 
@@ -168,7 +168,7 @@ class CategorieTest extends PHPUnit_Framework_TestCase
     	$catid=$localobjecttmp->create($user);
 
         print __METHOD__." catid=".$catid."\n";
-        $this->assertLessThanOrEqual($catid, 0);
+        $this->assertLessThanOrEqual(0, $catid);
 
         // Category
 		$localobject2=new Product($this->savdb);
@@ -179,7 +179,7 @@ class CategorieTest extends PHPUnit_Framework_TestCase
     	$result=$localobject2->create($user);
 
         print __METHOD__." result=".$result."\n";
-    	$this->assertLessThanOrEqual($result, 0);
+    	$this->assertLessThanOrEqual(0, $result);
 
     	return $id;
     }
@@ -204,7 +204,7 @@ class CategorieTest extends PHPUnit_Framework_TestCase
 		$localobject=new Categorie($this->savdb);
     	$result=$localobject->fetch($id);
 
-    	$this->assertLessThan($result, 0);
+    	$this->assertLessThan(0, $result);
     	print __METHOD__." id=".$id." result=".$result."\n";
     	return $localobject;
     }
@@ -230,7 +230,7 @@ class CategorieTest extends PHPUnit_Framework_TestCase
     	$result=$localobject->update($user);
 
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+    	$this->assertLessThan(0, $result);
     	return $localobject;
     }
 
@@ -291,7 +291,7 @@ class CategorieTest extends PHPUnit_Framework_TestCase
 		$result=$localobject->delete($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+    	$this->assertLessThan(0, $result);
     	return $result;
     }
 
