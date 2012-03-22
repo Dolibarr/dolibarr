@@ -22,7 +22,5 @@ PAYPAL_CSS_URL=Optionnal Url CSS style sheet tasumise lehele
 ThisIsTransactionId=See on id tehing: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Lisa URL Paypal makse, kui saadate dokumendi mail
 PAYPAL_IPN_MAIL_ADDRESS=E-posti aadress instant tasumise teate (IPN)
-PredefinedMailContentSendOrderWithPaypalLink=Leiad siin, et __ ORDERREF__ \n\n Võite klõpsata turvaline linki teha makse PayPal \n\n %s \n\n Lugupidamisega \n\n
-PredefinedMailContentSendInvoiceWithPaypalLink=Leiad siin arve __ FACREF__ \n\n Võite klõpsata turvaline linki teha makse PayPal \n\n %s \n\n Lugupidamisega \n\n
 YouAreCurrentlyInSandboxMode=Sa oled praegu &quot;liivakasti&quot; režiimis
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 22:21:09).

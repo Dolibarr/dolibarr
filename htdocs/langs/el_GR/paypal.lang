@@ -21,8 +21,6 @@ PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Προσφορά πληρωμής &quot;ανα
 PAYPAL_CSS_URL=Optionnal url του φύλλου στυλ CSS στη σελίδα πληρωμής
 ThisIsTransactionId=Αυτό είναι id της συναλλαγής: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Προσθέστε το url του Paypal πληρωμής όταν στέλνετε ένα έγγραφο με το ταχυδρομείο
-PredefinedMailContentSendOrderWithPaypalLink=Θα βρείτε εδώ τη σειρά __ORDERREF__ \ n \ nΜπορείτε να κάνετε κλικ στο ασφαλές παρακάτω σύνδεσμο για να κάνετε την πληρωμή σας μέσω PayPal \ n \ n%s \ n \ nSincerely \ n \ n
-PredefinedMailContentSendInvoiceWithPaypalLink=Θα βρείτε εδώ το τιμολόγιο __FACREF__ \ n \ nΜπορείτε να κάνετε κλικ στο ασφαλές παρακάτω σύνδεσμο για να κάνετε την πληρωμή σας μέσω PayPal \ n \ n%s \ n \ nSincerely \ n \ n
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:35:33).
 
 

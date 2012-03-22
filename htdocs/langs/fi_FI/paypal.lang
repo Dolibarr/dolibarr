@@ -17,8 +17,6 @@ PAYPAL_CSS_URL=Optionnal Url CSS-tyylisivun maksamisesta sivu
 ThisIsTransactionId=Tämä on id liiketoimen: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Lisää URL Paypal-maksujärjestelmää, kun lähetät asiakirjan postitse
 PAYPAL_IPN_MAIL_ADDRESS=Sähköpostiosoite varten instant tiedon maksusta (IPN)
-PredefinedMailContentSendOrderWithPaypalLink=Löydät tässä järjestyksessä __ORDERREF__ \ n \ nVoit klikata suojatun linkin alla voit tehdä PayPal \ n \ n%s \ n \ nSincerely \ n \ n
-PredefinedMailContentSendInvoiceWithPaypalLink=Löydät täältä laskun __FACREF__ \ n \ nVoit klikata suojatun linkin alla voit tehdä PayPal \ n \ n%s \ n \ nSincerely \ n \ n
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 10:45:52).
 
 

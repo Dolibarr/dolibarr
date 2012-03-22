@@ -22,8 +22,6 @@ PAYPAL_CSS_URL=, Eventueel met Url van CSS style sheet op betaalpagina
 ThisIsTransactionId=Dit is id van de transactie: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Voeg de url van Paypal betaling wanneer u een document verzendt via e-mail
 PAYPAL_IPN_MAIL_ADDRESS=E-mail adres voor de directe kennisgeving van de betaling (IPN)
-PredefinedMailContentSendOrderWithPaypalLink=Hier vindt u de bestelling __ORDERREF__ \n\nU kunt klikken op de beveiligde link hieronder om uw betaling via PayPal te maken \n\n%s\n\nSincerely\n\n
-PredefinedMailContentSendInvoiceWithPaypalLink=Hier vindt u de factuur __FACREF__ \n\nU kunt klikken op de beveiligde link hieronder om uw betaling via PayPal te maken \n\n%s\n\nSincerely\n\n
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 01:40:41).
 
 

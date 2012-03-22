@@ -836,13 +836,13 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	if ($action == 'addcontact' && $user->rights->fournisseur->facture->creer)
 	{
 		$result = $object->fetch($id);
-	
+
 		if ($result > 0 && $id > 0)
 		{
 			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
 			$result = $result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
 		}
-	
+
 		if ($result >= 0)
 		{
 			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -861,7 +861,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 			}
 		}
 	}
-	
+
 	// bascule du statut d'un contact
 	else if ($action == 'swapstatut' && $user->rights->fournisseur->facture->creer)
 	{
@@ -874,13 +874,13 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 			dol_print_error($db);
 		}
 	}
-	
+
 	// Efface un contact
 	else if ($action == 'deletecontact' && $user->rights->fournisseur->facture->creer)
 	{
 		$object->fetch($id);
 		$result = $object->delete_contact($_GET["lineid"]);
-	
+
 		if ($result >= 0)
 		{
 			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -1480,18 +1480,18 @@ else
         }
 
         print '</table><br>';
-        
+
         if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
         {
         	require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
         	require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
         	$formcompany= new FormCompany($db);
-        
+
         	$blocname = 'contacts';
         	$title = $langs->trans('ContactsAddresses');
         	include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
         }
-        
+
         if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
         {
         	$colwidth=20;
@@ -1936,6 +1936,8 @@ else
             $formmail->withcancel=1;
             // Tableau des substitutions
             $formmail->substit['__FACREF__']=$object->ref;
+            $formmail->substit['__SIGNATURE__']='';
+            $formmail->substit['__PERSONALIZED__']='';
             // Tableau des parametres complementaires
             $formmail->param['action']='send';
             $formmail->param['models']='invoice_supplier_send';

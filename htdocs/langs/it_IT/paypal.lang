@@ -21,8 +21,6 @@ PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offerta di pagamento &quot;integrale&quot; (Ca
 PAYPAL_CSS_URL=Url Optionnal del foglio di stile CSS alla pagina di pagamento
 ThisIsTransactionId=Questo è id di transazione: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Aggiungere l&#39;url di pagamento Paypal quando si invia un documento per posta
-PredefinedMailContentSendOrderWithPaypalLink=Troverete qui l&#39;ordine __ORDERREF__ \ n \ nÈ possibile fare clic sul link sottostante per rendere sicuro il pagamento tramite PayPal \ n \ n%s \ n \ nSincerely \ n \ n
-PredefinedMailContentSendInvoiceWithPaypalLink=Troverete qui la fattura __FACREF__ \ n \ nÈ possibile fare clic sul link sottostante per rendere sicuro il pagamento tramite PayPal \ n \ n%s \ n \ nSincerely \ n \ n
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:51:26).
 
 
