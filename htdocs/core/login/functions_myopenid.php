@@ -316,7 +316,7 @@ class SimpleOpenID
     /**
      * OpenID_Standarize
      *
-     * @param	string	$openidçidentity		Server
+     * @param	string	$openid_identity		Server
      * @return	void
      */
     function OpenID_Standarize($openid_identity = null)

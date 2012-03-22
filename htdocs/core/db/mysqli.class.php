@@ -83,9 +83,10 @@ class DoliDBMysqli
     function DoliDBMysqli($type, $host, $user, $pass, $name='', $port=0)
     {
         global $conf,$langs;
-
-        if (! empty($conf->db->character_set)) $this->forcecharset=$conf->db->character_set;
-        if (! empty($conf->db->dolibarr_main_db_collation)) $this->forcecollate=$conf->db->dolibarr_main_db_collation;
+        
+        // TODO error in strict mode (static property for "$forcecharset" and "$forcecollate")
+        //if (! empty($conf->db->character_set)) $this->forcecharset=$conf->db->character_set;
+        //if (! empty($conf->db->dolibarr_main_db_collation)) $this->forcecollate=$conf->db->dolibarr_main_db_collation;
 
         $this->database_user=$user;
 
@@ -142,7 +143,7 @@ class DoliDBMysqli
                 $clientmustbe='';
                 if (preg_match('/UTF-8/i',$conf->file->character_set_client))      $clientmustbe='utf8';
                 if (preg_match('/ISO-8859-1/i',$conf->file->character_set_client)) $clientmustbe='latin1';
-                if (mysqli_client_encoding($this->db) != $clientmustbe)
+                if (mysqli_character_set_name($this->db) != $clientmustbe)
                 {
                     $this->query("SET NAMES '".$clientmustbe."'", $this->db);
                     //$this->query("SET CHARACTER SET ". $this->forcecharset);
@@ -168,7 +169,7 @@ class DoliDBMysqli
                 $clientmustbe='';
                 if (preg_match('/UTF-8/i',$conf->file->character_set_client))      $clientmustbe='utf8';
                 if (preg_match('/ISO-8859-1/i',$conf->file->character_set_client)) $clientmustbe='latin1';
-                if (mysqli_client_encoding($this->db) != $clientmustbe)
+                if (mysqli_character_set_name($this->db) != $clientmustbe)
                 {
                     $this->query("SET NAMES '".$clientmustbe."'", $this->db);
                     //$this->query("SET CHARACTER SET ". $this->forcecharset);
@@ -230,16 +231,6 @@ class DoliDBMysqli
 
         //print "Resultat fonction connect: ".$this->db;
         return $this->db;
-    }
-
-    /**
-	 * Return label of manager
-	 *
-	 * @return			string      Label
-     */
-    function getLabel()
-    {
-        return $this->label;
     }
 
     /**

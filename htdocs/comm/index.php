@@ -515,7 +515,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 				print '</td>';
 				print '<td width="16" align="center" class="nobordernopadding">';
 				$filename=dol_sanitizeFileName($obj->ref);
-				$filedir=$conf->propale->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+				$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->propalid;
 				$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','',1,'',1);
 				print '</td></tr></table>';

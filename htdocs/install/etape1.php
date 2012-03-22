@@ -236,8 +236,8 @@ if (! $error && $db->connected)
 {
     if (! empty($_POST["db_create_database"]))	// If we create database, we force default value
     {
-        $defaultCharacterSet=$db->forcecharset;
-        $defaultCollationConnection=$db->forcecollate;
+    	$defaultCharacterSet=getStaticMember(get_class($db),'forcecharset');
+    	$defaultCollationConnection=getStaticMember(get_class($db),'forcecollate');
     }
     else	// If already created, we take current value
     {

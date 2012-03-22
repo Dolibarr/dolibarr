@@ -86,7 +86,7 @@ function propal_prepare_head($object)
     }
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?id='.$object->id;
-	/*$filesdir = $conf->propale->dir_output . "/" . dol_sanitizeFileName($propal->ref);
+	/*$filesdir = $conf->propal->dir_output . "/" . dol_sanitizeFileName($propal->ref);
 	include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 	$listoffiles=dol_dir_list($filesdir,'files',1);
 	$head[$h][1] = (count($listoffiles)?$langs->trans('DocumentsNb',count($listoffiles)):$langs->trans('Documents'));*/

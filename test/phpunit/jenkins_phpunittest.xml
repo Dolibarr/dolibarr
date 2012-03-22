@@ -8,7 +8,7 @@
 	convertWarningsToExceptions="true"
 	colors="true"
 	processIsolation="false"
-	stopOnFailure="false"
+	stopOnFailure="true"
 	syntaxCheck="true">
 <filter>
   <blacklist>

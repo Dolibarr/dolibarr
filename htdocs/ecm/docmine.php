@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,11 +74,9 @@ $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 
 
 
-/*******************************************************************
-* ACTIONS
-*
-* Put here all code to do according to value of "action" parameter
-********************************************************************/
+/*
+ * Actions
+ */
 
 // Upload file
 if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
@@ -156,7 +154,7 @@ if (GETPOST('action') == 'update' && ! GETPOST('cancel'))
 	$olddir=$conf->ecm->dir_output.'/'.$olddir;
 
 	// Fetch was already done
-	$ecmdir->label = GETPOST("label");
+	$ecmdir->label = dol_sanitizeFileName(GETPOST("label"));
 	$ecmdir->description = GETPOST("description");
 	$result=$ecmdir->update($user);
 	if ($result > 0)

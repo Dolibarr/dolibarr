@@ -144,6 +144,8 @@ class Categorie
 			$this->error.=" : ".$langs->trans("CategoryExistsAtSameLevel");
 			return -4;
 		}
+		
+		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label, description,";
 		if ($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
@@ -177,6 +179,7 @@ class Categorie
 					if($this->add_fille() < 0)
 					{
 						$this->error=$langs->trans("ImpossibleAssociateCategory");
+						$this->db->rollback();
 						return -3;
 					}
 				}
@@ -187,17 +190,21 @@ class Categorie
 				$result=$interface->run_triggers('CATEGORY_CREATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
-
+				
+				$this->db->commit();
 				return $id;
 			}
 			else
 			{
+				$this->db->rollback();
 				return -2;
 			}
 		}
 		else
 		{
-			dol_print_error($this->db);
+			$this->error=$this->db->error();
+            dol_syslog(get_class($this)."::create error ".$this->error." sql=".$sql, LOG_ERR);
+			$this->db->rollback();
 			return -1;
 		}
 	}
@@ -887,7 +894,7 @@ class Categorie
 			$sql.= " AND c.label='".$this->db->escape($this->label)."'";
 			$sql.= " AND c.entity IN (".getEntity('category',1).")";
 		}
-		dol_syslog("Categorie::already_exists sql=".$sql);
+		dol_syslog(get_class($this)."::already_exists sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -899,13 +906,19 @@ class Categorie
 				 * So if the result have the same id, update is not for label, and if result have an other one,
 				 * update may be for label.
 				 */
-				if($obj[0] > 0 && $obj[0] != $this->id) return 1;
+				if($obj[0] > 0 && $obj[0] != $this->id)
+				{
+					dol_syslog(get_class($this)."::already_exists category with name=".$this->label." exist rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
+					return 1;
+				}
 			}
+			dol_syslog(get_class($this)."::already_exists no category with same name=".$this->label." rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
 			return 0;
 		}
 		else
 		{
-			dol_print_error($this->db);
+			$this->error=$this->db->error();
+            dol_syslog(get_class($this)."::already_exists error ".$this->error." sql=".$sql, LOG_ERR);
 			return -1;
 		}
 	}

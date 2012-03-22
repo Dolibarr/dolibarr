@@ -97,5 +97,5 @@
   </exec>
  </target>
 
- <target name="hudson" depends="clean,parallelTasks,phpunit"/>
+ <target name="hudson" depends="clean,phpunit,parallelTasks"/>
 </project>

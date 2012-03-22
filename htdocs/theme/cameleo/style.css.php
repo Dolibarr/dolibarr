@@ -1732,46 +1732,6 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 .cal_event a:hover   {font-size: 11px; font-weight: bold !important; }
 
 
-
-/* ============================================================================== */
-/*  Afficher/cacher                                                               */
-/* ============================================================================== */
-
-#evolForm input.error {
-                        font-weight: bold;
-                        border: solid 1px #FF0000;
-                        padding: 1px 1px 1px 1px;
-                        margin: 1px 1px 1px 1px;
-              }
-
-#evolForm input.focuserr {
-                        font-weight: bold;
-                        background: #FAF8E8;
-                        color: black;
-                        border: solid 1px #FF0000;
-                        padding: 1px 1px 1px 1px;
-                        margin: 1px 1px 1px 1px;
-              }
-
-
-#evolForm input.focus {	/*** Mise en avant des champs en cours d'utilisation ***/
-                        background: #FAF8E8;
-                        color: black;
-                        border: solid 1px #000000;
-                        padding: 1px 1px 1px 1px;
-                        margin: 1px 1px 1px 1px;
-              }
-
-#evolForm input.normal {	/*** Retour a l'etat normal apres l'utilisation ***/
-                         background: white;
-                         color: black;
-                         border: solid 1px white;
-                         padding: 1px 1px 1px 1px;
-                         margin: 1px 1px 1px 1px;
-               }
-
-
-
 /* ============================================================================== */
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
 /* ============================================================================== */

@@ -430,14 +430,15 @@ function dol_size($size,$type='')
  *
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with
+ *  @param	string	$unaccent		1=Remove also accent (default), 0 do not remove them
  *	@return string          		String cleaned (a-zA-Z_)
  *
  * 	@see        	dol_string_nospecial, dol_string_unaccent
  */
-function dol_sanitizeFileName($str,$newstr='_')
+function dol_sanitizeFileName($str,$newstr='_',$unaccent=1)
 {
 	$filesystem_forbidden_chars = array('<','>',':','/','\\','?','*','|','"');
-    return dol_string_nospecial(dol_string_unaccent($str), $newstr, $filesystem_forbidden_chars);
+    return dol_string_nospecial($unaccent?dol_string_unaccent($str):$str, $newstr, $filesystem_forbidden_chars);
 }
 
 /**
@@ -1101,8 +1102,8 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 function dol_now($mode='gmt')
 {
     // Note that gmmktime and mktime return same value (GMT) whithout parameters
-    if ($mode == 'gmt') $ret=gmmktime();	// Time for now at greenwich.
-    else if ($mode == 'tzserver')			// Time for now with PHP server timezone added
+    if ($mode == 'gmt') $ret=time();	// Time for now at greenwich.
+    else if ($mode == 'tzserver')		// Time for now with PHP server timezone added
     {
         require_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
         $tzsecond=getServerTimeZoneInt();    // Contains tz+dayling saving time

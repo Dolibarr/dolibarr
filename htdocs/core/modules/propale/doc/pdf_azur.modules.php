@@ -129,7 +129,7 @@ class pdf_azur extends ModelePDFPropales
 		$outputlangs->load("propal");
 		$outputlangs->load("products");
 
-		if ($conf->propale->dir_output)
+		if ($conf->propal->dir_output)
 		{
 			$object->fetch_thirdparty();
 
@@ -138,13 +138,13 @@ class pdf_azur extends ModelePDFPropales
 			// Definition de $dir et $file
 			if ($object->specimen)
 			{
-				$dir = $conf->propale->dir_output;
+				$dir = $conf->propal->dir_output;
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->propale->dir_output . "/" . $objectref;
+				$dir = $conf->propal->dir_output . "/" . $objectref;
 				$file = $dir . "/" . $objectref . ".pdf";
 			}
 

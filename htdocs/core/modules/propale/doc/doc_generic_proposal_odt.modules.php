@@ -252,7 +252,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
 
-		if ($conf->propale->dir_output)
+		if ($conf->propal->dir_output)
 		{
 			// If $object is id instead of object
 			if (! is_object($object))
@@ -267,7 +267,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				}
 			}
 
-			$dir = $conf->propale->dir_output;
+			$dir = $conf->propal->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
 			$file = $dir . "/" . $objectref . ".odt";
@@ -296,7 +296,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				//print "file=".$file;
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
-				dol_mkdir($conf->propale->dir_temp);
+				dol_mkdir($conf->propal->dir_temp);
 
 
                 // If BILLING contact defined on invoice, we use it
@@ -343,7 +343,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				$odfHandler = new odf(
 				    $srctemplatepath,
 				    array(
-						'PATH_TO_TMP'	  => $conf->propale->dir_temp,
+						'PATH_TO_TMP'	  => $conf->propal->dir_temp,
 						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 						'DELIMITER_LEFT'  => '{',
 						'DELIMITER_RIGHT' => '}'
