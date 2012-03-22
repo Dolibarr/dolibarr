@@ -492,7 +492,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
 	if ($result > 0)
 	{
 //		$objectref = dol_sanitizeFileName($object->ref);
-//		$file = $conf->propale->dir_output . '/' . $objectref . '/' . $objectref . '.pdf';
+//		$file = $conf->propal->dir_output . '/' . $objectref . '/' . $objectref . '.pdf';
 
 //		if (is_readable($file))
 //		{
@@ -1737,7 +1737,7 @@ if ($id > 0 || ! empty($ref))
 		 * Documents generes
 		 */
 		$filename=dol_sanitizeFileName($object->ref);
-		$filedir=$conf->propale->dir_output . "/" . dol_sanitizeFileName($object->ref);
+		$filedir=$conf->propal->dir_output . "/" . dol_sanitizeFileName($object->ref);
 		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed=$user->rights->propale->creer;
 		$delallowed=$user->rights->propale->supprimer;
@@ -1771,7 +1771,7 @@ if ($id > 0 || ! empty($ref))
 	{
 		$ref = dol_sanitizeFileName($object->ref);
         include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
-        $fileparams = dol_most_recent_file($conf->propale->dir_output . '/' . $ref);
+        $fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref);
         $file=$fileparams['fullname'];
 
         // Build document if it not exists
@@ -1794,7 +1794,7 @@ if ($id > 0 || ! empty($ref))
                 dol_print_error($db,$result);
                 exit;
             }
-            $fileparams = dol_most_recent_file($conf->propale->dir_output . '/' . $ref);
+            $fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref);
             $file=$fileparams['fullname'];
         }
 
@@ -2003,7 +2003,7 @@ else
 
 			print '<td width="16" align="right" class="nobordernopadding">';
 			$filename=dol_sanitizeFileName($objp->ref);
-			$filedir=$conf->propale->dir_output . '/' . dol_sanitizeFileName($objp->ref);
+			$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($objp->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->propalid;
 			$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','',1,'',1);
 			print '</td></tr></table>';

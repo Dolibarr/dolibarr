@@ -1801,10 +1801,10 @@ class Propal extends CommonObject
                     {
                         // We remove directory
                         $propalref = dol_sanitizeFileName($this->ref);
-                        if ($conf->propale->dir_output)
+                        if ($conf->propal->dir_output)
                         {
-                            $dir = $conf->propale->dir_output . "/" . $propalref ;
-                            $file = $conf->propale->dir_output . "/" . $propalref . "/" . $propalref . ".pdf";
+                            $dir = $conf->propal->dir_output . "/" . $propalref ;
+                            $file = $conf->propal->dir_output . "/" . $propalref . "/" . $propalref . ".pdf";
                             if (file_exists($file))
                             {
                                 dol_delete_preview($this);

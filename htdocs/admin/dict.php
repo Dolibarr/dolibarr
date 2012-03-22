@@ -277,8 +277,8 @@ $tabcond[8] = $conf->societe->enabled;
 $tabcond[9] = true;
 $tabcond[10]= true;
 $tabcond[11]= true;
-$tabcond[12]= $conf->commande->enabled||$conf->propale->enabled||$conf->facture->enabled||$conf->fournisseur->enabled;
-$tabcond[13]= $conf->commande->enabled||$conf->propale->enabled||$conf->facture->enabled||$conf->fournisseur->enabled;
+$tabcond[12]= $conf->commande->enabled||$conf->propal->enabled||$conf->facture->enabled||$conf->fournisseur->enabled;
+$tabcond[13]= $conf->commande->enabled||$conf->propal->enabled||$conf->facture->enabled||$conf->fournisseur->enabled;
 $tabcond[14]= $conf->product->enabled&&$conf->ecotax->enabled;
 $tabcond[15]= true;
 $tabcond[16]= $conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_PROSPECTS);
@@ -286,8 +286,8 @@ $tabcond[17]= $conf->deplacement->enabled;
 $tabcond[18]= $conf->expedition->enabled;
 $tabcond[19]= $conf->societe->enabled;
 $tabcond[20]= $conf->fournisseur->enabled;
-$tabcond[21]= $conf->propale->enabled;
-$tabcond[22]= $conf->commande->enabled||$conf->propale->enabled;
+$tabcond[21]= $conf->propal->enabled;
+$tabcond[22]= $conf->commande->enabled||$conf->propal->enabled;
 
 
 complete_dictionnary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond);

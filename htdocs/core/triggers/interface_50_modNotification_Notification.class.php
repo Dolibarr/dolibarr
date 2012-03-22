@@ -137,7 +137,7 @@ class InterfaceNotification
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
             $ref = dol_sanitizeFileName($object->ref);
-            $filepdf = $conf->propale->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+            $filepdf = $conf->propal->dir_output . '/' . $ref . '/' . $ref . '.pdf';
             if (! file_exists($filepdf)) $filepdf='';
             $filepdf='';	// We can't add PDF as it is not generated yet.
             $langs->load("other");

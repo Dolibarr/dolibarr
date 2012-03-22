@@ -881,7 +881,7 @@ else if ($module == 'invoice_supplier')  // Auto area for suppliers invoices
 }
 else if ($module == 'propal')  // Auto area for customers orders
 {
-    $upload_dir = $conf->propale->dir_output;
+    $upload_dir = $conf->propal->dir_output;
     $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^payments$','^CVS$','^thumbs$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
     $param.='&module='.$module;

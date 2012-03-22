@@ -119,7 +119,7 @@ if ($id > 0 || ! empty($ref))
 		 * Documents
 		 */
 		$objectref = dol_sanitizeFileName($object->ref);
-		$dir_output = $conf->propale->dir_output . "/";
+		$dir_output = $conf->propal->dir_output . "/";
 		$filepath = $dir_output . $objectref . "/";
 		$file = $filepath . $objectref . ".pdf";
 		$filedetail = $filepath . $objectref . "-detail.pdf";
