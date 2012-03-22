@@ -109,7 +109,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 
         if (! $conf->facture->enabled) { print __METHOD__." invoice module not enabled\n"; die(); }
         if (! $conf->commande->enabled) { print __METHOD__." order module not enabled\n"; die(); }
-        if (! $conf->propale->enabled) { print __METHOD__." propal module not enabled\n"; die(); }
+        if (! $conf->propal->enabled) { print __METHOD__." propal module not enabled\n"; die(); }
         if (! $conf->projet->enabled) { print __METHOD__." project module not enabled\n"; die(); }
         if (! $conf->expedition->enabled) { print __METHOD__." shipment module not enabled\n"; die(); }
 
@@ -164,15 +164,22 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 		$db=$this->savdb;
 
 		$conf->facture->dir_output.='/temp';
+
+		$localobjectcom=new Commande($this->savdb);
+		$localobjectcom->initAsSpecimen();
+
 		$localobject=new Facture($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$localobject->socid=1;
+    	$localobject->createFromOrder($localobjectcom);
+    	$localobject->date_lim_reglement = dol_now() + 3600 * 24 *30;
 
     	// Crabe
     	$localobject->modelpdf='crabe';
     	$result=facture_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
 
-    	$this->assertLessThan($result, 0);
+		$localobject=new Facture($this->savdb);
+		$localobject->initAsSpecimen();
+
+		$this->assertLessThan($result, 0);
     	print __METHOD__." result=".$result."\n";
 
     	// Oursin
@@ -201,7 +208,6 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         $conf->fournisseur->facture->dir_output.='/temp';
         $localobject=new FactureFournisseur($this->savdb);
         $localobject->initAsSpecimen();
-        $localobject->socid=1;
 
         // Canelle
         $localobject->modelpdf='canelle';
@@ -229,7 +235,6 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         $conf->commande->dir_output.='/temp';
         $localobject=new Commande($this->savdb);
         $localobject->initAsSpecimen();
-        $localobject->socid=1;
 
         // Einstein
         $localobject->modelpdf='einstein';
@@ -265,7 +270,6 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         $conf->fournisseur->commande->dir_output.='/temp';
         $localobject=new CommandeFournisseur($this->savdb);
         $localobject->initAsSpecimen();
-        $localobject->socid=1;
 
         // Muscadet
         $localobject->modelpdf='muscadet';
@@ -290,10 +294,9 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $conf->propale->dir_output.='/temp';
+        $conf->propal->dir_output.='/temp';
         $localobject=new Propal($this->savdb);
         $localobject->initAsSpecimen();
-        $localobject->socid=1;
 
         // Einstein
         $localobject->modelpdf='azur';
@@ -328,7 +331,6 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         $conf->project->dir_output.='/temp';
         $localobject=new Project($this->savdb);
         $localobject->initAsSpecimen();
-        $localobject->socid=1;
 
         // Soleil
         $localobject->modelpdf='baleine';
@@ -356,7 +358,6 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         $conf->fichinter->dir_output.='/temp';
         $localobject=new Fichinter($this->savdb);
         $localobject->initAsSpecimen();
-        $localobject->socid=1;
 
         // Soleil
         $localobject->modelpdf='soleil';
@@ -384,7 +385,6 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         $conf->expedition->dir_output.='/temp';
         $localobject=new Expedition($this->savdb);
         $localobject->initAsSpecimen();
-        $localobject->socid=1;
 
         // Soleil
         $localobject->modelpdf='merou';

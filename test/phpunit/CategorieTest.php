@@ -127,24 +127,23 @@ class CategorieTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+
+		// We create a category
 		$localobject=new Categorie($this->savdb);
     	$localobject->initAsSpecimen();
-
-		// We create category
-    	$resultFirstCreate=$localobject->create($user);
+		$resultFirstCreate=$localobject->create($user);
     	print __METHOD__." resultFirstCreate=".$resultFirstCreate."\n";
     	$this->assertGreaterThan(0, $resultFirstCreate);
-    	
-    	//Unset $this->id for good check test
-    	unset($localobject->id);
-    	
-    	// We check if exist
-    	$resultCheck=$localobject->already_exists();
+
+    	// We try to create another one with same ref
+		$localobject2=new Categorie($this->savdb);
+    	$localobject2->initAsSpecimen();
+
+    	$resultCheck=$localobject2->already_exists();
     	print __METHOD__." resultCheck=".$resultCheck."\n";
     	$this->assertGreaterThan(0, $resultCheck);
 
-		// We try to create same category again
-    	$resultSecondCreate=$localobject->create($user);
+    	$resultSecondCreate=$localobject2->create($user);
     	print __METHOD__." result=".$resultSecondCreate."\n";
     	$this->assertEquals(-4, $resultSecondCreate);
 
@@ -210,7 +209,7 @@ class CategorieTest extends PHPUnit_Framework_TestCase
 
 		$localobject=new Categorie($this->savdb);
     	$result=$localobject->fetch($id);
-    	
+
     	print __METHOD__." id=".$id." result=".$result."\n";
     	$this->assertGreaterThan(0, $result);
     	return $localobject;

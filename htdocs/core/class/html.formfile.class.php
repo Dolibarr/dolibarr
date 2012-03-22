@@ -78,7 +78,7 @@ class FormFile
             if ($title != 'none') print_titre($title);
 
             print '<form name="userfile" action="'.$url.'" enctype="multipart/form-data" method="POST">';
-            print '<input type="hidden" name="section" value="'.$sectionid.'">';
+            print '<input type="hidden" id="userfile_section" name="section" value="'.$sectionid.'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
             print '<table width="100%" class="nobordernopadding">';

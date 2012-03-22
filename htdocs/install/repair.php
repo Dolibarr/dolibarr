@@ -200,14 +200,13 @@ if (GETPOST('purge'))
     foreach ($listmodulepart as $modulepart)
     {
         $filearray=array();
+        $upload_dir = $conf->$modulepart->dir_output;
         if ($modulepart == 'company') $upload_dir = $conf->societe->dir_output;
         if ($modulepart == 'invoice') $upload_dir = $conf->facture->dir_output;
         if ($modulepart == 'invoice_supplier') $upload_dir = $conf->fournisseur->facture->dir_output;
-        if ($modulepart == 'propal') $upload_dir = $conf->propale->dir_output;
         if ($modulepart == 'order') $upload_dir = $conf->commande->dir_output;
         if ($modulepart == 'order_supplier') $upload_dir = $conf->fournisseur->commande->dir_output;
         if ($modulepart == 'contract') $upload_dir = $conf->contrat->dir_output;
-        if ($modulepart == 'tax') $upload_dir = $conf->tax->dir_output;
 
         if (empty($upload_dir)) continue;
 

@@ -723,29 +723,6 @@ class Project extends CommonObject
 
         $now = mktime();
 
-        // Charge tableau des id de societe socids
-        $socids = array();
-
-        $sql = "SELECT rowid";
-        $sql.= " FROM " . MAIN_DB_PREFIX . "societe";
-        $sql.= " WHERE client IN (1, 3)";
-        $sql.= " AND entity = " . $conf->entity;
-        $sql.= " LIMIT 10";
-
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $num_socs = $this->db->num_rows($resql);
-            $i = 0;
-            while ($i < $num_socs)
-            {
-                $i++;
-
-                $row = $this->db->fetch_row($resql);
-                $socids[$i] = $row[0];
-            }
-        }
-
         // Charge tableau des produits prodids
         $prodids = array();
 
@@ -772,7 +749,7 @@ class Project extends CommonObject
         $this->ref = 'SPECIMEN';
         $this->specimen = 1;
         $socid = rand(1, $num_socs);
-        $this->socid = $socids[$socid];
+        $this->socid = 1;
         $this->date_c = $now;
         $this->date_m = $now;
         $this->date_start = $now;

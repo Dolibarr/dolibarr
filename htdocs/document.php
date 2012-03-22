@@ -183,7 +183,7 @@ if ($modulepart)
 			$accessallowed=1;
 		}
 
-		$original_file=$conf->propale->dir_output.'/'.$original_file;
+		$original_file=$conf->propal->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."propal WHERE ref='".$refname."' AND entity=".$conf->entity;
 	}
 
