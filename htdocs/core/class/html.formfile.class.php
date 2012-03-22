@@ -49,16 +49,17 @@ class FormFile
 
 
     /**
-     *    	Show form to upload a new file
+     *  Show form to upload a new file
 	 *
-     *    	@param      string	$url			Url
-     *    	@param      string	$title			Title zone (Title or '' or 'none')
-     *    	@param      int		$addcancel		1=Add 'Cancel' button
-     *		@param		int		$sectionid		If upload must be done inside a particular ECM section
-     * 		@param		int		$perm			Value of permission to allow upload
-     *      @param      int		$size           Length of input file area
-     *    	@param		Object	$object			Object to use (when attachment is done on an element)
-     * 		@return		int						<0 if KO, >0 if OK
+     *  @param  string	$url			Url
+     *  @param  string	$title			Title zone (Title or '' or 'none')
+     *  @param  int		$addcancel		1=Add 'Cancel' button
+     *	@param	int		$sectionid		If upload must be done inside a particular ECM section
+     * 	@param	int		$perm			Value of permission to allow upload
+     *  @param  int		$size           Length of input file area
+     *  @param	Object	$object			Object to use (when attachment is done on an element)
+     *  @param	string	$options		Options
+     * 	@return	int						<0 if KO, >0 if OK
      */
     function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='')
     {
@@ -83,13 +84,10 @@ class FormFile
 
             print '<table width="100%" class="nobordernopadding">';
             print '<tr>';
-            
-            if (! empty($options))
-            {
-            	print '<td>'.$options.'</td>';
-            }
-            
-            print '<td width="50%" valign="top" nowrap="nowrap">';
+
+            if (! empty($options)) print '<td>'.$options.'</td>';
+
+            print '<td valign="top" nowrap="nowrap">';
 
             $max=$conf->global->MAIN_UPLOAD_DOC;		// En Kb
             $maxphp=@ini_get('upload_max_filesize');	// En inconnu
