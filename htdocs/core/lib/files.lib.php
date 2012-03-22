@@ -742,16 +742,15 @@ function dol_delete_preview($object)
 {
 	global $langs,$conf;
     require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+    
+    $element = $object->element;
+    $dir = $conf->$element->dir_output;
 
-    if ($object->element == 'commande')             $dir = $conf->commande->dir_output;
-    elseif ($object->element == 'propal')           $dir = $conf->propale->dir_output;
-    elseif ($object->element == 'ficheinter')       $dir = $conf->ficheinter->dir_output;
-    elseif ($object->element == 'order_supplier')   $dir = $conf->fournisseur->dir_output.'/commande';
+    if ($object->element == 'order_supplier')   $dir = $conf->fournisseur->dir_output.'/commande';
     elseif ($object->element == 'invoice_supplier') $dir = $conf->fournisseur->dir_output.'/facture';
     elseif ($object->element == 'project')          $dir = $conf->projet->dir_output;
     elseif ($object->element == 'delivery')         $dir = $conf->livraison->dir_output;
-    elseif ($object->element == 'facture')          $dir = $conf->facture->dir_output;
-    elseif ($object->element == 'don')              $dir = $conf->don->dir_output;
+
     if (empty($dir)) return 'ErrorObjectNoSupportedByFunction';
 
 	$refsan = dol_sanitizeFileName($object->ref);

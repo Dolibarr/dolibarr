@@ -133,7 +133,7 @@ if ($modulepart)
     elseif ($modulepart == 'apercupropal')
     {
         if ($user->rights->propale->lire) $accessallowed=1;
-        $original_file=$conf->propale->dir_output.'/'.$original_file;
+        $original_file=$conf->propal->dir_output.'/'.$original_file;
     }
     // Wrapping pour les apercu commande
     elseif ($modulepart == 'apercucommande')
@@ -151,7 +151,7 @@ if ($modulepart)
     elseif ($modulepart == 'propalstats')
     {
         if ($user->rights->propale->lire) $accessallowed=1;
-        $original_file=$conf->propale->dir_temp.'/'.$original_file;
+        $original_file=$conf->propal->dir_temp.'/'.$original_file;
     }
     // Wrapping pour les images des stats commandes
     elseif ($modulepart == 'orderstats')

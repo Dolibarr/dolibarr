@@ -109,7 +109,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 
         if (! $conf->facture->enabled) { print __METHOD__." invoice module not enabled\n"; die(); }
         if (! $conf->commande->enabled) { print __METHOD__." order module not enabled\n"; die(); }
-        if (! $conf->propale->enabled) { print __METHOD__." propal module not enabled\n"; die(); }
+        if (! $conf->propal->enabled) { print __METHOD__." propal module not enabled\n"; die(); }
         if (! $conf->projet->enabled) { print __METHOD__." project module not enabled\n"; die(); }
         if (! $conf->expedition->enabled) { print __METHOD__." shipment module not enabled\n"; die(); }
 
@@ -294,7 +294,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $conf->propale->dir_output.='/temp';
+        $conf->propal->dir_output.='/temp';
         $localobject=new Propal($this->savdb);
         $localobject->initAsSpecimen();
 
