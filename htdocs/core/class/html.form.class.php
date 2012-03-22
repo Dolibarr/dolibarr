@@ -3409,22 +3409,20 @@ class Form
                 }
 
                 $out.='>';
-
+                
+                $newval=($translate?$langs->trans(ucfirst($value)):$value);
                 if ($key_in_label)
                 {
-                    $newval=($translate?$langs->trans($value):$value);
                     $selectOptionValue = dol_htmlentitiesbr($key.' - '.($maxlen?dol_trunc($newval,$maxlen):$newval));
-                    $out.=$selectOptionValue;
                 }
                 else
                 {
-                    $newval=($translate?$langs->trans($value):$value);
                     $selectOptionValue = dol_htmlentitiesbr($maxlen?dol_trunc($newval,$maxlen):$newval);
                     if ($value == '' || $value == '-') {
                         $selectOptionValue='&nbsp;';
                     }
-                    $out.=$selectOptionValue;
                 }
+                $out.=$selectOptionValue;
                 $out.="</option>\n";
             }
         }

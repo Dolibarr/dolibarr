@@ -60,7 +60,7 @@ class FormFile
      *    	@param		Object	$object			Object to use (when attachment is done on an element)
      * 		@return		int						<0 if KO, >0 if OK
      */
-    function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='')
+    function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='')
     {
         global $conf,$langs;
 
@@ -82,7 +82,14 @@ class FormFile
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
             print '<table width="100%" class="nobordernopadding">';
-            print '<tr><td width="50%" valign="top">';
+            print '<tr>';
+            
+            if (! empty($options))
+            {
+            	print '<td>'.$options.'</td>';
+            }
+            
+            print '<td width="50%" valign="top" nowrap="nowrap">';
 
             $max=$conf->global->MAIN_UPLOAD_DOC;		// En Kb
             $maxphp=@ini_get('upload_max_filesize');	// En inconnu
