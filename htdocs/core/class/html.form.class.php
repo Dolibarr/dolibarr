@@ -796,7 +796,7 @@ class Form
      *	@param	int		$socid      	Id ot third party or 0 for all
      *	@param  string	$selected   	Id contact pre-selectionne
      *	@param  string	$htmlname  	    Name of HTML field ('none' for a not editable field)
-     *	@param  int		$show_empty     0=no empty value, 1=add an empty value
+     *	@param  int		$showempty      0=no empty value, 1=add an empty value
      *	@param  string	$exclude        List of contacts id to exclude
      *	@param	string	$limitto		Disable answers that are not id in this array list
      *	@param	string	$showfunction   Add function into label
@@ -1059,7 +1059,7 @@ class Form
      *  @param		int			$status					-1=Return all products, 0=Products not on sell, 1=Products on sell
      *  @param		int			$finished				2=all, 1=finished, 0=raw material
      *  @param		string		$selected_input_value	Value of preselected input text (with ajax)
-     *  @param		int			$hide_label				Hide label
+     *  @param		int			$hidelabel				Hide label
      *  @return		void
      */
     function select_produits($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$status=1,$finished=2,$selected_input_value='',$hidelabel=0)
@@ -1338,15 +1338,15 @@ class Form
     /**
      *	Return list of suppliers products
      *
-     *	@param		socid   		Id societe fournisseur (0 pour aucun filtre)
-     *	@param      selected        Produit pre-selectionne
-     *	@param      htmlname        Nom de la zone select
-     *  @param		filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
-     *	@param      filtre          Pour filtre sql
-     *	@param      filterkey       Filtre des produits
-     *  @param      status          -1=Return all products, 0=Products not on sell, 1=Products on sell
-     *  @param      disableout      Disable print output
-     *  @return     array           Array of keys for json
+     *	@param	int		$socid   		Id societe fournisseur (0 pour aucun filtre)
+     *	@param  int		$selected       Produit pre-selectionne
+     *	@param  string	$htmlname       Nom de la zone select
+     *  @param	string	$filtertype     Filter on product type (''=nofilter, 0=product, 1=service)
+     *	@param  string	$filtre         Pour filtre sql
+     *	@param  string	$filterkey      Filtre des produits
+     *  @param  int		$statut         -1=Return all products, 0=Products not on sell, 1=Products on sell
+     *  @param  int		$disableout     Disable print output
+     *  @return array           		Array of keys for json
      */
     function select_produits_fournisseurs_do($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$filterkey='',$statut=-1,$disableout=0)
     {
@@ -1769,7 +1769,7 @@ class Form
                 $tmparray[$obj->rowid]['label']=$label;
                 $i++;
             }
-            $this->cache_demand_reason=dol_sort_array($tmparray,'label', $order='asc');
+            $this->cache_demand_reason=dol_sort_array($tmparray, 'label', 'asc');
 
             unset($tmparray);
             return 1;
@@ -2118,6 +2118,7 @@ class Form
      * 	   @param	string		$selectedchoice		"" or "no" or "yes"
      * 	   @param	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No
      *     @param	int			$height          	Force height of box
+     *     @param	int			$width				Force width of box
      *     @return 	void
      */
     function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=170, $width=500)
@@ -2136,6 +2137,7 @@ class Form
      * 	   @param  	string		$selectedchoice  	"" or "no" or "yes"
      * 	   @param  	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=preoutput confirm box with div id=dialog-confirm-xxx
      *     @param  	int			$height          	Force height of box
+     *     @param	int			$width				Force width of bow
      *     @return 	string      	    			'ajax' if a confirm ajax popup is shown, 'html' if it's an html form
      */
     function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=170, $width=500)
@@ -2499,7 +2501,7 @@ class Form
      *    @param    string		$htmlname    Name of input html field
      *    @return	void
      */
-    function form_date($page, $selected='', $htmlname)
+    function form_date($page, $selected, $htmlname)
     {
         global $langs;
 
@@ -2672,9 +2674,10 @@ class Form
     /**
      *    Affiche formulaire de selection des contacts
      *
-     *    @param	string	$page        Page
-     *    @param    int		$selected    Id contact pre-selectionne
-     *    @param    string	$htmlname    Nom du formulaire select
+     *    @param	string	$page        	Page
+     *    @param	Societe	$societe		Third party
+     *    @param    int		$selected    	Id contact pre-selectionne
+     *    @param    string	$htmlname    	Nom du formulaire select
      *    @return	void
      */
     function form_contacts($page, $societe, $selected='', $htmlname='contactidp')
@@ -2878,8 +2881,8 @@ class Form
     /**
      *	Load into the cache vat rates of a country
      *
-     *	@param		string		Country code
-     *	@return		int			Nb of loaded lines, 0 if already loaded, <0 if KO
+     *	@param	string	$country_code		Country code
+     *	@return	int							Nb of loaded lines, 0 if already loaded, <0 if KO
      */
     function load_cache_vatrates($country_code)
     {
@@ -3406,22 +3409,20 @@ class Form
                 }
 
                 $out.='>';
-
+                
+                $newval=($translate?$langs->trans(ucfirst($value)):$value);
                 if ($key_in_label)
                 {
-                    $newval=($translate?$langs->trans($value):$value);
                     $selectOptionValue = dol_htmlentitiesbr($key.' - '.($maxlen?dol_trunc($newval,$maxlen):$newval));
-                    $out.=$selectOptionValue;
                 }
                 else
                 {
-                    $newval=($translate?$langs->trans($value):$value);
                     $selectOptionValue = dol_htmlentitiesbr($maxlen?dol_trunc($newval,$maxlen):$newval);
                     if ($value == '' || $value == '-') {
                         $selectOptionValue='&nbsp;';
                     }
-                    $out.=$selectOptionValue;
                 }
+                $out.=$selectOptionValue;
                 $out.="</option>\n";
             }
         }

@@ -29,10 +29,6 @@ AttachANewFile=إرفاق ملف جديد / وثيقة
 LinkedObject=ربط وجوه
 Miscellanous=متفرقات
 NbOfActiveNotifications=عدد الإخطارات
-PredefinedMailContentSendInvoice=Veuillez trouver كايماني المشترك بين لوس انجليس لfacture __FACREF__ \ ن \ nCordialement \ ن \ ن
-PredefinedMailContentSendInvoiceReminder=Nous apportons à vôtre connaissance كيو facture __FACREF__ شمال شرق لوس انجليس semble النظام avoir été réglée. لوس انجليس لvoici donc ، من أجل إهبط ، én pièce jointe. \ ن \ nCordialement \ ن \ ن
-PredefinedMailContentSendProposal=Veuillez trouver كايماني المشترك بين لوس انجليس لاقتراح التجاري __PROPREF__ \ ن \ nCordialement \ ن \ ن
-PredefinedMailContentSendOrder=Veuillez trouver كايماني المشترك بين لوس انجليس لcommande __ORDERREF__ \ ن \ nCordialement \ ن \ ن
 ChooseYourDemoProfil=اختيار عرض ملف المباراة التي أنشطتك...
 DemoFundation=أعضاء في إدارة مؤسسة
 DemoFundation2=إدارة وأعضاء في الحساب المصرفي للمؤسسة
@@ -200,7 +196,6 @@ ExternalSites=المواقع الخارجية
 
 // START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
 // Reference language: en_US -> ar_AR
-PredefinedMailContentSendSupplierOrder=ستجد هنا ن لدينا نظام \ __ORDERREF__ \ nSincerely \ ن \ ن
 WeightUnitpound=جنيه
 VolumeUnitounce=أوقية
 VolumeUnitlitre=لتر
@@ -226,9 +221,6 @@ Notify_BILL_SUPPLIER_PAYED=صورتحساب تامین کننده payed
 Notify_MEMBER_SUBSCRIPTION=عضو مشترک
 Notify_MEMBER_RESILIATE=عضو resiliated
 Notify_MEMBER_DELETE=اعضا حذف
-PredefinedMailContentSendSupplierInvoice=اینجا را پیدا خواهد کرد فاکتور __FACREF__ \n\n Sincerely\n\n
-PredefinedMailContentSendShipping=شما در اینجا خواهید دید حمل و نقل __SHIPPINGREF__ \n\nSincerely\n\n
-PredefinedMailContentSendFichInter=اینجا را پیدا خواهد کرد از مداخله __FICHINTERREF__ \n\nSincerely\n\n
 Top=بالا
 Bottom=پایین
 Left=چپ
