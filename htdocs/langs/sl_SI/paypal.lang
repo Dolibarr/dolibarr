@@ -14,8 +14,6 @@ PAYPAL_CSS_URL = Opcijski Url ali list CSS oblike na plačilni strani
 ThisIsTransactionId = To je ID transakcije: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL = Pri pošiljanju dokumenta po pošti dodaj url Paypal plačila
 PAYPAL_IPN_MAIL_ADDRESS = Naslov e-pošte za takojšnje obvestilo o plačilu (IPN)
-PredefinedMailContentSendOrderWithPaypalLink = Tukaj je naročilo __ORDERREF__\n\n Lahko kliknete na varnostno povezavo spodaj za izvršitev plačila preko PayPal\n\n%s\n\nS spoštovanjem\n\n
-PredefinedMailContentSendInvoiceWithPaypalLink = Tukaj je račun __FACREF__\n\n Lahko kliknete na varnostno povezavo spodaj za izvršitev plačila preko PayPal\n\n%s\n\nS spoštovanjem\n\n
 
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 17:30:17).

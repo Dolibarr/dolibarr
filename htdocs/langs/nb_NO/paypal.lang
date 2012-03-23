@@ -27,7 +27,5 @@ PaypalSetup=PayPal modul oppsett
 PaypalDesc=Denne modulen tilbyr sider for å tillate betaling på <a href="http://www.paypal.com" target="_blank">PayPal</a> av kunder. Dette kan brukes til en gratis betaling eller for en betaling på en bestemt Dolibarr objekt (faktura, ordre, ...)
 PaypalOrCBDoPayment=Betal med kredittkort eller Paypal
 PaypalDoPayment=Betal med Paypal
-PredefinedMailContentSendOrderWithPaypalLink=Du finner her ordren __ ORDERREF__ \n\n Du kan klikke på den sikre linken nedenfor for å gjøre betaling via PayPal \n\n %s \n\n Vennlig hilsen \n\n
-PredefinedMailContentSendInvoiceWithPaypalLink=Du finner her fakturaen __ FACREF__ \n\n Du kan klikke på den sikre linken nedenfor for å gjøre betaling via PayPal \n\n %s \n\n Vennlig hilsen \n\n
 YouAreCurrentlyInSandboxMode=Du er for øyeblikket i &quot;sandbox&quot;-modus
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 17:06:57).

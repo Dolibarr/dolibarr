@@ -86,9 +86,9 @@ if ($action == 'specimen')
 	if ($filefound)
 	{
 		require_once($file);
-		
+
 		$module = new $classname($db);
-		
+
 		if ($module->write_file($propal,$langs) > 0)
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=propal&file=SPECIMEN.pdf");
@@ -338,14 +338,14 @@ foreach ($dirmodels as $reldir)
 						}
 						print '</td>';
 
-						$propale=new Propal($db);
-						$propale->initAsSpecimen();
+						$propal=new Propal($db);
+						$propal->initAsSpecimen();
 
 						// Info
 						$htmltooltip='';
 						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 						$facture->type=0;
-						$nextval=$module->getNextValue($mysoc,$propale);
+						$nextval=$module->getNextValue($mysoc,$propal);
 						if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
 						{
 							$htmltooltip.=''.$langs->trans("NextValue").': ';

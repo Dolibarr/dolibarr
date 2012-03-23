@@ -1413,6 +1413,8 @@ else
             $formmail->withcancel=1;
             // Tableau des substitutions
             $formmail->substit['__SHIPPINGREF__']=$object->ref;
+            $formmail->substit['__SIGNATURE__']='';
+            $formmail->substit['__PERSONALIZED__']='';
             // Tableau des parametres complementaires
             $formmail->param['action']='send';
             $formmail->param['models']='shipping_send';

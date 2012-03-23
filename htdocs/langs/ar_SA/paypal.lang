@@ -16,8 +16,6 @@ PaypalCBDoPayment=تدفع بواسطة بطاقة ائتمان
 PAYPAL_API_SANDBOX=وضع الاختبار / رمل
 PAYPAL_ADD_PAYMENT_URL=إضافة رابط الدفع باي بال عند إرسال مستند عبر البريد
 PAYPAL_IPN_MAIL_ADDRESS=عنوان البريد الإلكتروني للإخطار لحظة الدفع (IPN)
-PredefinedMailContentSendOrderWithPaypalLink=سوف تجد هنا ترتيب __ORDERREF__ \ ن \ n يمكنك النقر على الرابط أدناه لتأمين تسديد الخاص بك عن طريق باي بال \ ن \ n%s \ ن \ nSincerely \ ن \ ن
-PredefinedMailContentSendInvoiceWithPaypalLink=ستجد هنا الفاتورة __FACREF__ \ ن \ n يمكنك يمكن النقر على الرابط أدناه لتأمين تسديد الخاص بك عن طريق \ ن بال \ n%s \ ن \ nSincerely \ ن \ ن
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 10:37:06).
 
 

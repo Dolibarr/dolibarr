@@ -14,6 +14,5 @@ PAYPAL_CSS_URL=Url opcional del full d'estil CSS de la pàgina de pagament
 ThisIsTransactionId=Identificador de la transacció: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Afegir la url del pagament Paypal en enviar un document per e-mail
 PAYPAL_IPN_MAIL_ADDRESS=Adreça e-mail per les notificacions instantànies de pagament (IPN)
-PredefinedMailContentSendOrderWithPaypalLink=Us adjuntem la comanda __ORDERREF__\n\nPodeu fer clic a l'enllaç assegurança de sota per realitzar el seu pagament a través de PayPal\n\n%s\n\nCordialment\n\n
-PredefinedMailContentSendInvoiceWithPaypalLink=Us adjuntem la factura __FACREF__\n\nPodeu fer clic a l'enllaç assegurança de sota per realitzar el seu pagament a través de PayPal\n\n%s\n\nCordialment\n\n
+PredefinedMailContentLink=Podeu fer clic a l'enllaç assegurança de sota per realitzar el seu pagament a través de PayPal\n\n%s\n\n
 YouAreCurrentlyInSandboxMode=Actualment es troba en mode "sandbox"

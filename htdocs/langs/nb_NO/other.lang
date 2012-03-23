@@ -24,10 +24,10 @@ AttachANewFile=Legg ved ny fil/dokument
 LinkedObject=Lenkede objekter
 Miscellanous=Diverse
 NbOfActiveNotifications=Antall påminnelser
-PredefinedMailContentSendInvoice=Vedlagt oversendes faktura __FACREF__\n\nMed vennlig hilsen\n\n
-PredefinedMailContentSendInvoiceReminder=I følge våre noteringer ser det ut til at vår faktura  __FACREF__ fortsatt står ubetalt hos oss. Dersom Deres betaling har krysset denne påminnelsen ber vi Dem vennligst se bort fra denne henvendelsen. \n\nMed vennlig hilsen\n\n
-PredefinedMailContentSendProposal=Vedlagt oversendes tilbud __PROPREF__\n\nMed vennlig hilsen\n\n
-PredefinedMailContentSendOrder=Vedlagt oversendese __ORDERREF__\n\nMed vennlig hilsen\n\n
+PredefinedMailContentSendInvoice=Vedlagt oversendes faktura __FACREF__\n\n__PERSONALIZED__Med vennlig hilsen\n\n__SIGNATURE__
+PredefinedMailContentSendInvoiceReminder=I følge våre noteringer ser det ut til at vår faktura  __FACREF__ fortsatt står ubetalt hos oss. Dersom Deres betaling har krysset denne påminnelsen ber vi Dem vennligst se bort fra denne henvendelsen. \n\n__PERSONALIZED__Med vennlig hilsen\n\n__SIGNATURE__
+PredefinedMailContentSendProposal=Vedlagt oversendes tilbud __PROPREF__\n\n__PERSONALIZED__Med vennlig hilsen\n\n__SIGNATURE__
+PredefinedMailContentSendOrder=Vedlagt oversendese __ORDERREF__\n\n__PERSONALIZED__Med vennlig hilsen\n\n__SIGNATURE__
 DemoDesc=Dolibarr er ikke en komplett ERP, men er bygget opp av flere forskjellige moduler. Vi har derfor laget flere forskjellige demoprofiler
 ChooseYourDemoProfil=Velg demoprofilen som passer til ditt område...
 DemoFundation=Håndtere medlemmer i en organisasjon
@@ -190,7 +190,7 @@ ExternalSites=Eksterne nettsteder
 
 // START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
 // Reference language: en_US -> nb_NO
-PredefinedMailContentSendSupplierOrder=Du finner her vårt bestillingsskjema __ORDERREF__ \ n \ nSincerely \ n \ n
+PredefinedMailContentSendSupplierOrder=Du finner her vårt bestillingsskjema __ORDERREF__ \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
 WeightUnitpound=pund
 VolumeUnitounce=unse
 VolumeUnitlitre=liter
@@ -242,9 +242,9 @@ Notify_BILL_SENTBYMAIL=Kunden faktura sendt i posten
 Notify_ORDER_SUPPLIER_VALIDATE=Leverandør orden validert
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Leverandør ordre sendes med post
 Notify_BILL_SUPPLIER_VALIDATE=Leverandør faktura validert
-PredefinedMailContentSendSupplierInvoice=Du finner her fakturaen __ FACREF__ \n\n Vennlig hilsen \n\n
-PredefinedMailContentSendShipping=Du finner her shipping __ SHIPPINGREF__ \n\n Vennlig hilsen \n\n
-PredefinedMailContentSendFichInter=Du finner her intervensjonen __ FICHINTERREF__ \n\n Vennlig hilsen \n\n
+PredefinedMailContentSendSupplierInvoice=Du finner her fakturaen __FACREF__ \n\n__PERSONALIZED__ Vennlig hilsen \n\n__SIGNATURE__
+PredefinedMailContentSendShipping=Du finner her shipping __SHIPPINGREF__ \n\n__PERSONALIZED__ Vennlig hilsen \n\n__SIGNATURE__
+PredefinedMailContentSendFichInter=Du finner her intervensjonen __FICHINTERREF__ \n\n__PERSONALIZED__ Vennlig hilsen \n\n__SIGNATURE__
 Top=Topp
 Bottom=Bottom
 FileIsTooBig=Filer er for stor

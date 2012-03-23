@@ -39,7 +39,9 @@ $substitutionarrayfortest=array(
 '__ID__' => 'TESTIdRecord',
 '__EMAIL__' => 'TESTEMail',
 '__LASTNAME__' => 'TESTLastname',
-'__FIRSTNAME__' => 'TESTFirstname'
+'__FIRSTNAME__' => 'TESTFirstname',
+'__SIGNATURE__' => 'TESTSignature',
+'__PERSONALIZED__' => 'TESTPersonalized'
 );
 complete_substitutions_array($substitutionarrayfortest, $langs);
 

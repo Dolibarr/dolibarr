@@ -16,8 +16,6 @@ PAYPAL_CSS_URL=Optionnal Url CSS stíll lak á bls greiðslu
 ThisIsTransactionId=Þetta er id viðskipta: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Bæta við slóð Paypal greiðslu þegar þú sendir skjal með pósti
 PAYPAL_IPN_MAIL_ADDRESS=E-mail fyrir augnablik tilkynningu um greiðslu (IPN)
-PredefinedMailContentSendOrderWithPaypalLink=Þú vilja finna hér til __ORDERREF__ \ n \ nYou geta smellt á öruggum tengilinn hér að neðan til að greiða í gegnum PayPal \ n \ n%s \ n \ nSincerely \ n \ n
-PredefinedMailContentSendInvoiceWithPaypalLink=Þú vilja finna hér á vörureikningi __FACREF__ \ n \ nYou geta smellt á öruggum tengilinn hér að neðan til að greiða í gegnum PayPal \ n \ n%s \ n \ nSincerely \ n \ n
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 10:49:20).
 
 

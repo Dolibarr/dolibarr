@@ -564,6 +564,7 @@ class FormMail
             elseif ($this->param["models"]=='fichinter_send')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendFichInter"); }
             elseif (! is_numeric($this->withbody))                      { $defaultmessage=$this->withbody; }
 
+            // Complete substitution array
             if ($conf->paypal->enabled && $conf->global->PAYPAL_ADD_PAYMENT_URL)
             {
                 require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
@@ -573,12 +574,12 @@ class FormMail
                 if ($this->param["models"]=='order_send')
                 {
                     $url=getPaypalPaymentUrl(0,'order',$this->substit['__ORDERREF__']);
-                    $defaultmessage=$langs->transnoentities("PredefinedMailContentSendOrderWithPaypalLink",$url);
+                    $this->substit['__PERSONALIZED__']=$langs->transnoentitiesnoconv("PredefinedMailContentLink",$url);
                 }
                 if ($this->param["models"]=='facture_send')
                 {
                     $url=getPaypalPaymentUrl(0,'invoice',$this->substit['__FACREF__']);
-                    $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoiceWithPaypalLink",$url);
+                    $this->substit['__PERSONALIZED__']=$langs->transnoentitiesnoconv("PredefinedMailContentLink",$url);
                 }
             }
 

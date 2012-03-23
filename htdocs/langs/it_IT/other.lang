@@ -187,7 +187,7 @@ ExternalSites=Siti esterni
 
 // START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
 // Reference language: en_US -> it_IT
-PredefinedMailContentSendSupplierOrder=Troverete qui il nostro ordine n __ORDERREF__ \ \ nSincerely \ n \ n
+PredefinedMailContentSendSupplierOrder=Troverete qui il nostro ordine n __ORDERREF__ \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
 WeightUnitpound=sterlina
 VolumeUnitounce=oncia
 VolumeUnitlitre=litro
@@ -204,8 +204,8 @@ ToolsDesc=Quest&#39;area è dedicata agli strumenti di gruppo non disponibili in
 Notify_WITHDRAW_TRANSMIT=Trasmissione ritiro
 Notify_WITHDRAW_CREDIT=Credito ritiro
 Notify_WITHDRAW_EMIT=Isue ritiro
-PredefinedMailContentSendSupplierInvoice=Troverete qui la fattura __FACREF__ \ n \ nSincerely \ n \ n
-PredefinedMailContentSendShipping=Troverete qui la spedizione __SHIPPINGREF__ \ n \ nSincerely \ n \ n
+PredefinedMailContentSendSupplierInvoice=Troverete qui la fattura __FACREF__ \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
+PredefinedMailContentSendShipping=Troverete qui la spedizione __SHIPPINGREF__ \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
 Top=Top
 Bottom=Fondo
 Left=Sinistra
@@ -235,7 +235,7 @@ Notify_MEMBER_VALIDATE=Iscritto convalidato
 Notify_MEMBER_SUBSCRIPTION=Iscritto sottoscritto
 Notify_MEMBER_RESILIATE=Iscritto resiliated
 Notify_MEMBER_DELETE=Membro eliminato
-PredefinedMailContentSendFichInter=Troverete qui l&#39;intervento __FICHINTERREF__ \ n \ nSincerely \ n \ n
+PredefinedMailContentSendFichInter=Troverete qui l&#39;intervento __FICHINTERREF__ \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
 AddFiles=Aggiungi file
 StartUpload=Avviare il caricamento
 CancelUpload=Cancella il caricamento
@@ -251,9 +251,9 @@ Notify_CONTRACT_VALIDATE=Contratto convalidato
 Notify_FICHEINTER_VALIDATE=Intervento convalidato
 Notify_SHIPPING_VALIDATE=Spedizione convalidato
 Notify_SHIPPING_SENTBYMAIL=Spese di spedizione inviate per posta
-PredefinedMailContentSendInvoice=Troverete qui il __ fattura FACREF__ \n\n Sinceramente \n\n
-PredefinedMailContentSendInvoiceReminder=Vorremmo mettere in guardia che il FACREF__ __ fattura sembra non essere pagato. Quindi questa è la fattura in allegato di nuovo, come un promemoria. \n\n Sinceramente \n\n
-PredefinedMailContentSendProposal=Troverete qui il __ commerciale propoal PROPREF__ \n\n Sinceramente \n\n
-PredefinedMailContentSendOrder=Troverete qui l'ordine __ ORDERREF__ \n\n Sinceramente \n\n
+PredefinedMailContentSendInvoice=Troverete qui il fattura __FACREF__ \n\n__PERSONALIZED__ Sinceramente \n\n__SIGNATURE__
+PredefinedMailContentSendInvoiceReminder=Vorremmo mettere in guardia che il __FACREF__ fattura sembra non essere pagato. Quindi questa è la fattura in allegato di nuovo, come un promemoria. \n\n__PERSONALIZED__ Sinceramente \n\n__SIGNATURE__
+PredefinedMailContentSendProposal=Troverete qui il commerciale propoal __PROPREF__ \n\n__PERSONALIZED__ Sinceramente \n\n__SIGNATURE__
+PredefinedMailContentSendOrder=Troverete qui l'ordine __ORDERREF__ \n\n__PERSONALIZED__ Sinceramente \n\n__SIGNATURE__
 ShipmentValidatedInDolibarr=%s spedizione convalidato in Dolibarr
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:35).

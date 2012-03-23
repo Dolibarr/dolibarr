@@ -16,6 +16,4 @@ PaypalCBDoPayment=Bezahlen mit Kreditkarte
 ThisIsTransactionId=Dies ist id Geschäftsart: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Fügen Sie die URL der Paypal Zahlung, wenn Sie ein Dokument per E-Mail senden
 PAYPAL_IPN_MAIL_ADDRESS=E-Mail-Adresse für die sofortige Benachrichtigung der Zahlung (IPN)
-PredefinedMailContentSendOrderWithPaypalLink=Hier finden Sie die Reihenfolge __ORDERREF__ \ n \ nSie können auf der sicheren unten stehenden Link, um Ihre Zahlung via PayPal zu klicken \ n \ n%s \ n \ nSincerely \ n \ n
-PredefinedMailContentSendInvoiceWithPaypalLink=Hier finden Sie die Rechnung __FACREF__ \ n \ nSie können auf der sicheren unten stehenden Link, um Ihre Zahlung via PayPal \ n \ n%s \ n \ nSincerely \ n \ n machen klicken
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 10:40:31).

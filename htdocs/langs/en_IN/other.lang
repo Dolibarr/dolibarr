@@ -1,3 +1,3 @@
 # Dolibarr language file - en_US - other
 CHARSET=UTF-8
-PredefinedMailContentSendProposal=You will find here the quotation __PROPREF__\n\nSincerely\n\n
+PredefinedMailContentSendProposal=You will find here the quotation __PROPREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__

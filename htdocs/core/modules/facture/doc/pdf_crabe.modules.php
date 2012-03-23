@@ -235,9 +235,7 @@ class pdf_crabe extends ModelePDFFactures
 					$tab_top = 88;
 
 					$pdf->SetFont('','', $default_font_size - 1);
-					$pdf->SetXY($this->posxdesc-1, $tab_top);
-                    //$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'J', false, 1, '', '', true, 0, false, false, 0, 'T', true);
-                    $pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'L');    // FPDF
+                    $pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, $outputlangs->convToOutputCharset($object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
