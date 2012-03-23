@@ -599,7 +599,6 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	    {
 	        //alert('filename='+filename);
 	        //jQuery('#fileview').empty();
-	        return;
 
 	        url='<?php echo dol_buildpath('/core/ajax/ajaxshowpreview.php',1); ?>?action=preview&rootpath=<?php echo $filemanagerroots->id ?>&modulepart=filemanager&type=auto&file='+urlencode(filedirname);
 
@@ -617,7 +616,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	                filediractive=filedirname;    // Save current dirname
 	                filetypeactive='file';
 	            }
-	            //jQuery('#fileview').append(data);
+	            jQuery('#ecmfileview').append(data);
 	        });
 	    }
 
@@ -832,6 +831,8 @@ if ($conf->use_javascript_ajax)
     </div>
     <div id="ecm-layout-center" class="hidden">
     <div class="pane-in ecm-in-layout-center">
+    <div id="ecmfileview" class="ecmfileview">
+
 <?php
 }
 else
@@ -948,6 +949,7 @@ else    // Manual area
 if ($conf->use_javascript_ajax)
 {
 ?>
+	</div>
     </div>
     <div class="pane-in ecm-in-layout-south layout-padding">
 <?php

@@ -102,7 +102,7 @@ if( file_exists($fullpathselecteddir) )
     	natcasesort($files);
     	if( count($files) > 2 )    /* The 2 accounts for . and .. */
     	{
-    		echo "<ul class=\"jqueryFileTree\" style=\"display: none;\">\n";
+    		echo "<ul class=\"ecmjqft\" style=\"display: none;\">\n";
 
     		// All dirs
     		foreach( $files as $file )    // $file can be '.', '..', or 'My dir'
@@ -176,6 +176,7 @@ if( file_exists($fullpathselecteddir) )
     				print "</tr></table>\n";
                     print '</div>';
 
+                    //print '<div>&nbsp;</div>';
     				print "</li>\n";
     			}
     		}
