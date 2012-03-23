@@ -119,6 +119,7 @@ if ($resql)
 		while ($i < $num)
 		{
 			$res=1;
+			$now=dol_now();
 
 			$obj = $db->fetch_object($resql);
 
@@ -192,7 +193,7 @@ if ($resql)
 				dol_syslog("ok for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
 
 				$sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-				$sql.=" SET statut=1, date_envoi=".$db->idate(gmmktime())." WHERE rowid=".$obj->rowid;
+				$sql.=" SET statut=1, date_envoi=".$db->idate($now)." WHERE rowid=".$obj->rowid;
 				$resql2=$db->query($sql);
 				if (! $resql2)
 				{
@@ -207,7 +208,7 @@ if ($resql)
 				dol_syslog("error for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
 
 				$sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-				$sql.=" SET statut=-1, date_envoi=".$db->idate(gmmktime())." WHERE rowid=".$obj->rowid;
+				$sql.=" SET statut=-1, date_envoi=".$db->idate($now)." WHERE rowid=".$obj->rowid;
 				$resql2=$db->query($sql);
 				if (! $resql2)
 				{

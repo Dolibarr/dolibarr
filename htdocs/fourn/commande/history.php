@@ -44,7 +44,7 @@ $result = restrictedArea($user, 'commande_fournisseur', $id,'');
 
 $form =	new	Form($db);
 
-$now=gmmktime();
+$now=dol_now();
 
 $ref= $_GET['ref'];
 

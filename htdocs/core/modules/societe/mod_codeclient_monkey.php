@@ -135,10 +135,9 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 			return -1;
 		}
 
-		//$date=time();
-		$date=gmmktime();
-		$yymm = strftime("%y%m",$date);
-		$num = sprintf("%04s",$max+1);
+		$date	= dol_now();
+		$yymm	= strftime("%y%m",$date);
+		$num	= sprintf("%04s",$max+1);
 
 		dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
 		return $prefix.$yymm."-".$num;

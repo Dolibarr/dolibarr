@@ -71,7 +71,7 @@ class html_cerfafr extends ModeleDon
     {
 		global $user,$conf,$langs,$mysoc;
 
-		$now=gmmktime();
+		$now=dol_now();
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 

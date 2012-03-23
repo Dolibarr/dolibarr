@@ -49,11 +49,11 @@ class CompanyBankAccount extends Account
     /**
 	 *  Constructor
 	 *
-	 *  @param      DoliDB		$DB      Database handler
+	 *  @param      DoliDB		$db      Database handler
      */
-    function CompanyBankAccount($DB)
+    function __construct($db)
     {
-        $this->db = $DB;
+        $this->db = $db;
 
         $this->socid = 0;
         $this->clos = 0;

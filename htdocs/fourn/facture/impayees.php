@@ -49,7 +49,7 @@ if ($user->societe_id > 0)
  * View
  */
 
-$now=gmmktime();
+$now=dol_now();
 
 llxHeader('',$langs->trans("BillsSuppliersUnpaid"));
 

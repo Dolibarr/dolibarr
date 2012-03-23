@@ -84,49 +84,36 @@ class Conf
 	 */
 	function Conf()
 	{
-	    // Avoid warnings when filling this->xxx
-	    $this->file							= (object) array();
-        $this->db							= (object) array();
-        $this->global						= (object) array();
-        $this->mycompany					= (object) array();
-        $this->admin						= (object) array();
-        $this->user							= (object) array();
-        $this->syslog						= (object) array();
-        $this->browser						= (object) array();
-        $this->multicompany					= (object) array();
-        
-        $this->expedition_bon				= (object) array();
-        $this->livraison_bon				= (object) array();
-        $this->fournisseur					= (object) array();
-        $this->fournisseur->commande 		= (object) array();
-        $this->fournisseur->facture			= (object) array();
-        $this->product						= (object) array();
-        $this->service						= (object) array();
-        $this->contrat						= (object) array();
-        $this->actions						= (object) array();
-        $this->commande						= (object) array();
-        $this->commande->client				= (object) array();
-        $this->commande->fournisseur		= (object) array();
-        $this->propal						= (object) array();
-        $this->propal->cloture				= (object) array();
-        $this->propal->facturation			= (object) array();
-        $this->facture						= (object) array();
-        $this->facture->client				= (object) array();
-        $this->facture->fournisseur			= (object) array();
-        $this->contrat						= (object) array();
-        $this->contrat->services			= (object) array();
-        $this->contrat->services->inactifs	= (object) array();
-        $this->contrat->services->expires	= (object) array();
-        $this->adherent						= (object) array();
-        $this->adherent->cotisation			= (object) array();
-        $this->bank							= (object) array();
-        $this->bank->rappro					= (object) array();
-        $this->bank->cheque					= (object) array();
-        $this->notification					= (object) array();
-        $this->mailing						= (object) array();
-        
-	    //! Charset for HTML output and for storing data in memory
-	    $this->file->character_set_client='UTF-8';   // UTF-8, ISO-8859-1
+		// Avoid warnings when filling this->xxx
+		$this->file				= (object) array();
+		$this->db				= (object) array();
+		$this->global			= (object) array();
+		$this->mycompany		= (object) array();
+		$this->admin			= (object) array();
+		$this->user				= (object) array();
+		$this->syslog			= (object) array();
+		$this->browser			= (object) array();
+		$this->multicompany		= (object) array();
+		
+		// First level object
+		$this->expedition_bon	= (object) array();
+		$this->livraison_bon	= (object) array();
+		$this->fournisseur		= (object) array();
+		$this->product			= (object) array();
+		$this->service			= (object) array();
+		$this->contrat			= (object) array();
+		$this->actions			= (object) array();
+		$this->commande			= (object) array();
+		$this->propal			= (object) array();
+		$this->facture			= (object) array();
+		$this->contrat			= (object) array();
+		$this->adherent			= (object) array();
+		$this->bank				= (object) array();
+		$this->notification		= (object) array();
+		$this->mailing			= (object) array();
+		
+		//! Charset for HTML output and for storing data in memory
+		$this->file->character_set_client='UTF-8';   // UTF-8, ISO-8859-1
 	}
 
 
@@ -225,6 +212,22 @@ class Conf
 		}
 		//var_dump($this->modules);
 		//var_dump($this->modules_parts);
+		
+		// Second or others levels object
+		$this->propal->cloture				= (object) array();
+		$this->propal->facturation			= (object) array();
+		$this->commande->client				= (object) array();
+		$this->commande->fournisseur		= (object) array();
+		$this->facture->client				= (object) array();
+		$this->facture->fournisseur			= (object) array();
+		$this->fournisseur->commande 		= (object) array();
+		$this->fournisseur->facture			= (object) array();
+		$this->contrat->services			= (object) array();
+		$this->contrat->services->inactifs	= (object) array();
+		$this->contrat->services->expires	= (object) array();
+		$this->adherent->cotisation			= (object) array();
+		$this->bank->rappro					= (object) array();
+		$this->bank->cheque					= (object) array();
 
 		// Clean some variables
 		if (empty($this->global->MAIN_MENU_STANDARD)) $this->global->MAIN_MENU_STANDARD="eldy_backoffice.php";

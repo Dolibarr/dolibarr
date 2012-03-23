@@ -45,7 +45,7 @@ abstract class ModelePDFPropales extends CommonDocGenerator
      *  @param  string	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	function liste_modeles($db,$maxfilenamelength=0)
+	static function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
 
@@ -115,9 +115,11 @@ abstract class ModeleNumRefPropales
 	/**
 	 * 	Renvoi prochaine valeur attribuee
 	 *
-	 *  @return     string      Valeur
+	 *	@param		Societe		$objsoc     Object third party
+	 *	@param		Propal		$propal		Object commercial proposal
+	 *	@return     string      Valeur
 	 */
-	function getNextValue()
+	function getNextValue($objsoc,$propal)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
