@@ -404,19 +404,19 @@ if ($action == 'add')
 }
 
 // Action update description of emailing
-if ($action == 'setdesc' || $action == 'setfrom' || $actino == 'setreplyto' || $action == 'seterrorsto')
+if ($action == 'settitre' || $action == 'setemail_from' || $actino == 'setreplyto' || $action == 'setemail_errorsto')
 {
 	$object->fetch($id);
 
 	$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
 
-	if ($action == 'setdesc')     $object->titre          = trim($_REQUEST["desc"]);
-	else if ($action == 'setfrom')     $object->email_from     = trim($_REQUEST["from"]);
-	else if ($action == 'setreplyto')  $object->email_replyto  = trim($_REQUEST["replyto"]);
-	else if ($action == 'seterrorsto') $object->email_errorsto = trim($_REQUEST["errorsto"]);
+	if ($action == 'settitre')					$object->titre          = trim(GETPOST('titre','alpha'));
+	else if ($action == 'setemail_from')		$object->email_from     = trim(GETPOST('email_from','alpha'));
+	else if ($action == 'setemail_replyto')		$object->email_replyto  = trim(GETPOST('email_replyto','alpha'));
+	else if ($action == 'setemail_errorsto')	$object->email_errorsto = trim(GETPOST('email_errorsto','alpha'));
 
-	else if ($action == 'setdesc' && empty($object->titre))      $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTitle"));
-	else if ($action == 'setfrom' && empty($object->email_from)) $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailFrom"));
+	else if ($action == 'settitre' && empty($object->titre))		$message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTitle"));
+	else if ($action == 'setfrom' && empty($object->email_from))	$message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailFrom"));
 
 	if (! $message)
 	{
@@ -697,18 +697,18 @@ else
 			print '</td></tr>';
 
 			// Description
-			print '<tr><td>'.$form->editfieldkey("MailTitle",'desc',$object->titre,$object,$user->rights->mailing->creer).'</td><td colspan="3">';
-			print $form->editfieldval("MailTitle",'desc',$object->titre,$object,$user->rights->mailing->creer);
+			print '<tr><td>'.$form->editfieldkey("MailTitle",'titre',$object->titre,$object,$user->rights->mailing->creer && $object->statut < 3,'string').'</td><td colspan="3">';
+			print $form->editfieldval("MailTitle",'titre',$object->titre,$object,$user->rights->mailing->creer && $object->statut < 3,'string');
 			print '</td></tr>';
 
 			// From
-			print '<tr><td>'.$form->editfieldkey("MailFrom",'from',$object->email_from,$object,$user->rights->mailing->creer && $object->statut < 3,'email').'</td><td colspan="3">';
-			print $form->editfieldval("MailFrom",'from',$object->email_from,$object,$user->rights->mailing->creer && $object->statut < 3,'email');
+			print '<tr><td>'.$form->editfieldkey("MailFrom",'email_from',$object->email_from,$object,$user->rights->mailing->creer && $object->statut < 3,'string').'</td><td colspan="3">';
+			print $form->editfieldval("MailFrom",'email_from',$object->email_from,$object,$user->rights->mailing->creer && $object->statut < 3,'string');
 			print '</td></tr>';
 
 			// Errors to
-			print '<tr><td>'.$form->editfieldkey("MailErrorsTo",'errorsto',$object->email_errorsto,$object,$user->rights->mailing->creer && $object->statut < 3,'email').'</td><td colspan="3">';
-			print $form->editfieldval("MailErrorsTo",'errorsto',$object->email_errorsto,$object,$user->rights->mailing->creer && $object->statut < 3,'email');
+			print '<tr><td>'.$form->editfieldkey("MailErrorsTo",'email_errorsto',$object->email_errorsto,$object,$user->rights->mailing->creer && $object->statut < 3,'string').'</td><td colspan="3">';
+			print $form->editfieldval("MailErrorsTo",'email_errorsto',$object->email_errorsto,$object,$user->rights->mailing->creer && $object->statut < 3,'string');
 			print '</td></tr>';
 
 			// Status
