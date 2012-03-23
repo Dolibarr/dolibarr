@@ -154,9 +154,11 @@ if ($_REQUEST["action"] == 'sendallconfirmed' && $_REQUEST['confirm'] == 'yes')
 			if ($num)
 			{
 				dol_syslog("comm/mailing/fiche.php: nb of targets = ".$num, LOG_DEBUG);
+				
+				$now=dol_now();
 
 				// Positionne date debut envoi
-				$sql="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi=".$db->idate(gmmktime())." WHERE rowid=".$id;
+				$sql="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi=".$db->idate($now)." WHERE rowid=".$id;
 				$resql2=$db->query($sql);
 				if (! $resql2)
 				{
@@ -245,7 +247,7 @@ if ($_REQUEST["action"] == 'sendallconfirmed' && $_REQUEST['confirm'] == 'yes')
 						dol_syslog("comm/mailing/fiche.php: ok for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
 
 						$sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-						$sql.=" SET statut=1, date_envoi=".$db->idate(gmmktime())." WHERE rowid=".$obj->rowid;
+						$sql.=" SET statut=1, date_envoi=".$db->idate($now)." WHERE rowid=".$obj->rowid;
 						$resql2=$db->query($sql);
 						if (! $resql2)
 						{
@@ -260,7 +262,7 @@ if ($_REQUEST["action"] == 'sendallconfirmed' && $_REQUEST['confirm'] == 'yes')
 						dol_syslog("comm/mailing/fiche.php: error for #".$i.($mail->error?' - '.$mail->error:''), LOG_WARNING);
 
 						$sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-						$sql.=" SET statut=-1, date_envoi=".$db->idate(gmmktime())." WHERE rowid=".$obj->rowid;
+						$sql.=" SET statut=-1, date_envoi=".$db->idate($now)." WHERE rowid=".$obj->rowid;
 						$resql2=$db->query($sql);
 						if (! $resql2)
 						{

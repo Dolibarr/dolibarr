@@ -1166,7 +1166,7 @@ class FactureFournisseur extends Facture
     {
         global $conf, $user;
 
-        $now=gmmktime();
+        $now=dol_now();
 
         $this->nbtodo=$this->nbtodolate=0;
         $sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin';

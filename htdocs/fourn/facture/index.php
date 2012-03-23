@@ -94,7 +94,7 @@ if ($mode == 'search')
  * View
  */
 
-$now=gmmktime();
+$now=dol_now();
 $form=new Form($db);
 $htmlother=new FormOther($db);
 

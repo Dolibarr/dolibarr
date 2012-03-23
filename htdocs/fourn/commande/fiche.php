@@ -926,7 +926,7 @@ if ($id > 0 || ! empty($ref))
          */
         if ($action	== 'valid')
         {
-            $object->date_commande=gmmktime();
+            $object->date_commande=dol_now();
 
             // We check if number is temporary number
             if (preg_match('/^[\(]?PROV/i',$object->ref)) $newref = $object->getNextNumRef($soc);

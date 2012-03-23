@@ -74,7 +74,7 @@ if ($id > 0 || ! empty($ref))
 {
 	if ($mesg) print $mesg;
 
-	$now=gmmktime();
+	$now=dol_now();
 
 	if ($object->fetch($id, $ref))
 	{

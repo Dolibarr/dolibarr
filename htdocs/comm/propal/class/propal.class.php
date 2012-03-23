@@ -2072,7 +2072,7 @@ class Propal extends CommonObject
     {
         global $conf, $user;
 
-        $now=gmmktime();
+        $now=dol_now();
 
         $this->nbtodo=$this->nbtodolate=0;
         $clause = " WHERE";
