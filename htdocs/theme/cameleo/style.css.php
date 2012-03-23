@@ -1195,6 +1195,10 @@ span.butAction, span.butActionDelete {
 /* Tables                                                                         */
 /* ============================================================================== */
 
+.allwidth {
+	width: 100%;
+}
+
 /*
 #undertopmenu {
 background-image: url("<?php echo DOL_URL_ROOT.'/theme/cameleo/img/gradient.gif' ?>");
@@ -1315,7 +1319,7 @@ table.liste td {
     padding-right: 2px;
 }
 
-tr.liste_titre {
+div.liste_titre, tr.liste_titre {
     height: 20px;
     color: #842F00;
     font-weight: bold;
@@ -1524,6 +1528,12 @@ div.titre {
     margin-left: 20px;
 }
 
+#dolpaymenttable { width: 600px; font-size: 13px; }
+#tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; }
+#tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
+#tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
+#tablepublicpayment tr.liste_total td { border-top: none; }
+
 
 /* ============================================================================== */
 /* Formulaire confirmation (When Ajax JQuery is used)                             */
@@ -1722,46 +1732,6 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 .cal_event a:hover   {font-size: 11px; font-weight: bold !important; }
 
 
-
-/* ============================================================================== */
-/*  Afficher/cacher                                                               */
-/* ============================================================================== */
-
-#evolForm input.error {
-                        font-weight: bold;
-                        border: solid 1px #FF0000;
-                        padding: 1px 1px 1px 1px;
-                        margin: 1px 1px 1px 1px;
-              }
-
-#evolForm input.focuserr {
-                        font-weight: bold;
-                        background: #FAF8E8;
-                        color: black;
-                        border: solid 1px #FF0000;
-                        padding: 1px 1px 1px 1px;
-                        margin: 1px 1px 1px 1px;
-              }
-
-
-#evolForm input.focus {	/*** Mise en avant des champs en cours d'utilisation ***/
-                        background: #FAF8E8;
-                        color: black;
-                        border: solid 1px #000000;
-                        padding: 1px 1px 1px 1px;
-                        margin: 1px 1px 1px 1px;
-              }
-
-#evolForm input.normal {	/*** Retour a l'etat normal apres l'utilisation ***/
-                         background: white;
-                         color: black;
-                         border: solid 1px white;
-                         padding: 1px 1px 1px 1px;
-                         margin: 1px 1px 1px 1px;
-               }
-
-
-
 /* ============================================================================== */
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
 /* ============================================================================== */
@@ -1795,7 +1765,7 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 /*  jQuery - jeditable                                                            */
 /* ============================================================================== */
 
-.editkey_textarea, .editkey_ckeditor, .editkey_string, .editkey_email, .editkey_numeric, .editkey_select {
+.editkey_textarea, .editkey_ckeditor, .editkey_string, .editkey_email, .editkey_numeric, .editkey_select, .editkey_autocomplete {
 	background: url(<?php echo dol_buildpath($path.'/theme/cameleo/img/edit.png',1) ?>) right top no-repeat;
 	cursor: pointer;
 }
@@ -1805,12 +1775,12 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 	cursor: pointer;
 }
 
-.editval_textarea.active:hover, .editval_ckeditor.active:hover, .editval_string.active:hover, .editval_email.active:hover, .editval_numeric.active:hover, .editval_select.active:hover, .editval_datepicker.active:hover {
+.editval_textarea.active:hover, .editval_ckeditor.active:hover, .editval_string.active:hover, .editval_email.active:hover, .editval_numeric.active:hover, .editval_select.active:hover, .editval_autocomplete.active:hover, .editval_datepicker.active:hover {
 	background: white;
 	cursor: pointer;
 }
 
-.viewval_textarea.active:hover, .viewval_ckeditor.active:hover, .viewval_string.active:hover, .viewval_email.active:hover, .viewval_numeric.active:hover, .viewval_select.active:hover, .viewval_datepicker.active:hover {
+.viewval_textarea.active:hover, .viewval_ckeditor.active:hover, .viewval_string.active:hover, .viewval_email.active:hover, .viewval_numeric.active:hover, .viewval_select.active:hover, .viewval_autocomplete.active:hover, .viewval_datepicker.active:hover {
 	background: white;
 	cursor: pointer;
 }
@@ -2119,6 +2089,37 @@ a.cke_dialog_ui_button
 .template-upload {
     height: 72px !important;
 }
+
+
+/* ============================================================================== */
+/*  Table with div                                                                */
+/* ============================================================================== */
+
+div.table-border {
+	display:table;
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #9CACBB;
+}
+div.table-border-row {
+	display:table-row;
+}
+div.table-key-border-col {
+	display:table-cell;
+	width: 25%;
+	vertical-align:top;
+	padding: 1px 2px 1px 1px;
+	border: 1px solid #9CACBB;
+	border-collapse: collapse;
+}
+div.table-val-border-col {
+	display:table-cell;
+	width:auto;
+	padding: 1px 2px 1px 1px;
+	border: 1px solid #9CACBB;
+	border-collapse: collapse;
+}
+
 
 <?php
 if (is_object($db)) $db->close();

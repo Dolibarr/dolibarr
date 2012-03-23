@@ -582,10 +582,10 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
     if (! empty($conf->global->MAIN_ECM_TRY_JS))
     {
-        print '<tr><td>';
+        print '<tr><td colspan="6" style="padding-left: 20px">';
 
     	// Show filemanager tree
-	    print '<div id="filetree" class="filetree">';
+	    print '<div id="filetree" class="ecmfiletree">';
 	    print '</div>';
 
 	    print '</td></tr>';
@@ -599,6 +599,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	    {
 	        //alert('filename='+filename);
 	        //jQuery('#fileview').empty();
+	        return;
 
 	        url='<?php echo dol_buildpath('/core/ajax/ajaxshowpreview.php',1); ?>?action=preview&rootpath=<?php echo $filemanagerroots->id ?>&modulepart=filemanager&type=auto&file='+urlencode(filedirname);
 
@@ -622,12 +623,12 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 		jQuery(document).ready( function() {
     	    jQuery('#filetree').fileTree({ root: '<?php print dol_escape_js($openeddir); ?>',
-                       script: '<?php echo DOL_URL_ROOT.'/core/ajax/ajaxfiletree.php?modulepart=ecm&openeddir='.urlencode($openeddir); ?>',
-                       folderEvent: 'click',
-                       multiFolder: false  },
+                     script: '<?php echo DOL_URL_ROOT.'/core/ajax/ajaxfiletree.php?modulepart=ecm&openeddir='.urlencode($openeddir); ?>',
+                     folderEvent: 'click',
+                     multiFolder: false  },
                      function(file) {
-                    	   jQuery("#mesg").hide();
-                    	   loadandshowpreview(file);
+                    	 jQuery("#mesg").hide();
+                    	 loadandshowpreview(file);
                		 }
                );
 		});
@@ -737,8 +738,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
     			$resarray=tree_showpad($sqltree,$key);
     			$a=$resarray[0];
     			$nbofsubdir=$resarray[1];
-    			$c=$resarray[2];
-    			$nboffilesinsubdir=$resarray[3];
+    			$nboffilesinsubdir=$resarray[2];
     			print '</td>';
 
     			// Show picto
@@ -881,7 +881,7 @@ else if ($module == 'invoice_supplier')  // Auto area for suppliers invoices
 }
 else if ($module == 'propal')  // Auto area for customers orders
 {
-    $upload_dir = $conf->propale->dir_output;
+    $upload_dir = $conf->propal->dir_output;
     $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^payments$','^CVS$','^thumbs$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
     $param.='&module='.$module;
@@ -963,9 +963,9 @@ else
 
 
 // To attach new file
-if (! empty($section))
+if (! empty($conf->global->MAIN_ECM_TRY_JS) || ! empty($section))
 {
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/index.php', 'none', 0, $section,$user->rights->ecm->upload, 48);
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/index.php', 'none', 0, $section, $user->rights->ecm->upload, 48);
 }
 else print '&nbsp;';
 

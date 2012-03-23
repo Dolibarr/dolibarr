@@ -109,7 +109,6 @@ jQuery(document).ready(function() {
 	{
 		jQuery("#myid").removeAttr(\'disabled\');
 		jQuery("#myid").attr(\'disabled\',\'disabled\');
-		}
 	}
 	init_myfunc();
 	jQuery("#mybutton").click(function() {
@@ -125,6 +124,6 @@ $somethingshown=$myobject->showLinkedObjectBlock();
 
 
 // End of page
-$db->close();
 llxFooter();
+$db->close();
 ?>

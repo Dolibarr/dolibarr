@@ -7,7 +7,6 @@ Order = Opdracht
 Orders = Opdrachten
 OrderLine = Opdrachtregel
 OrderFollow = Opvolging
-OrderContact = Opdrachtcontactpersoon
 OrderDate = Opdrachtdatum
 OrderToProcess = Te verwerken opdracht
 NewOrder = Nieuwe opdracht

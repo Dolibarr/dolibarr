@@ -159,6 +159,7 @@ FileNameToGenerate=Nombre del archivo a generar
 CommandsToDisableForeignKeysForImport=Comando para desactivar las claves excluyentes a la importación
 ExportCompatibility=Compatibilidad del archivo de exportación generado
 MySqlExportParameters=Parámetros de la exportación MySql
+PostgreSqlExportParameters=Parámetros de la exportación PostgreSQL
 UseTransactionnalMode=Utilizar el modo transaccional
 FullPathToMysqldumpCommand=Ruta completa del comando mysqldump
 FullPathToPostgreSQLdumpCommand=ruta completa hacia el comando pg_dump
@@ -872,6 +873,8 @@ SendmailOptionNotComplete=Atención, en algunos sistemas Linux, con este método
 PathToDocuments=Rutas de acceso a documentos
 PathDirectory=Directorio
 SendmailOptionMayHurtBuggedMTA=La funcionalidad de enviar correo electrónico a través del "correo directo PHP" genera una solicitud que puede ser mal interpretado por algunos servidores de correo. Esto se traduce en mensajes de correo electrónico ilegibles para las personas alojadas en  estas plataformas. Este es el caso de clientes en ciertos proveedores de servicios de Internet (Ej: Orange). Esto no es un problema ni de Dolibarr ni de PHP, pero sí del servidor de correo. Sin embargo, puede agregar la opción MAIN_FIX_FOR_BUGGED_MTA con valor 1 en configuración-varios para tratar que Dolibarr evite el error. Otra solución (recomendada) es utilizar el método de envío por SMTP que no tiene este inconveniente. 
+TranslationSetup=Configuración traducción
+TranslationDesc=La elección del idioma mostrado en pantalla se modifica:<br>* A nivel global desde el menú <strong>Inicio - Configuración - Entorno</strong><br>* De manera específica al usuario desde la pestaña <strong>Interface usuario</strong> de su ficha de usuario (hacer clic en su login en la parte superior izquierda de la pantalla). 
 ##### Module password generation
 PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.

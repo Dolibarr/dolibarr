@@ -293,6 +293,8 @@ CurrencyXOF=Francos CFA BCEAO
 CurrencySingXOF=Franco CFA BCEAO
 CurrencyXPF=Francos CFP
 CurrencySingXPF=Franco CFP
+CurrencyCentSingEUR=céntimo
+CurrencyThousandthSingTND=milésimo
 
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet

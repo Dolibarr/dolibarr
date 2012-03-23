@@ -199,7 +199,7 @@ if ($id > 0 || ! empty($ref))
 		dol_htmloutput_mesg($mesg);
 
 		$head = task_prepare_head($task);
-		dol_fiche_head($head, 'contact', $langs->trans("Task"), 0, 'projecttask');
+		dol_fiche_head($head, 'task_contact', $langs->trans("Task"), 0, 'projecttask');
 
 
 		/*

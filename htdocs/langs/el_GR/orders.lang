@@ -7,7 +7,6 @@ Order=Παραγγελία
 Orders=Παραγγελίες
 OrderLine=Γραμμή Παραγγελίας
 OrderFollow=Follow up
-OrderContact=Πρόσωπο Επικοιν. παραγγελίας
 OrderDate=Ημερομηνία παραγγελίας
 OrderToProcess=Παραγγελία προς επεξεργασία
 NewOrder=Νέα παραγγελία

@@ -36,7 +36,7 @@ class pdf_paiement
      *
      *  @param      DoliDb		$db      Database handler
 	 */
-	function pdf_paiement($db)
+	function __construct($db)
 	{
 		global $langs;
 		$langs->load("bills");
@@ -72,6 +72,7 @@ class pdf_paiement
 	 *	@param	int		$month			mois du rapport
 	 *	@param	int		$year			annee du rapport
 	 *	@param	string	$outputlangs	Lang output object
+	 *	@return	int						<0 if KO, >0 if OK
 	 */
 	function write_file($_dir, $month, $year, $outputlangs)
 	{
@@ -210,7 +211,7 @@ class pdf_paiement
 	 *  Show top header of page.
 	 *
 	 *  @param	PDF			&$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
+	 *  @param  int			$page	     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
@@ -257,7 +258,7 @@ class pdf_paiement
         $pdf->SetXY(162, $this->tab_top+2);
 		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("AmountPayment"), 0, 'L');
 
-		$pdf->line(10, $this->tab_top + 10, 200, $this->tab_top + 10 );
+		$pdf->line(10, $this->tab_top + 10, 200, $this->tab_top + 10);
 
 		$pdf->Rect(9, $this->tab_top, 192, $this->tab_height + 10);
 	}
@@ -266,10 +267,10 @@ class pdf_paiement
 	/**
 	 *	Output body
 	 *
-	 *	@param	PDF			&$pdf		PDF object
-	 *	@param	string		$page		Page
-	 *	@param	array		$lines		Array of lines
-	 *	@param	Translate	$langs		Object langs
+	 *	@param	PDF			&$pdf			PDF object
+	 *	@param	string		$page			Page
+	 *	@param	array		$lines			Array of lines
+	 *	@param	Translate	$outputlangs	Object langs
 	 *	@return	void
 	 */
 	function Body(&$pdf, $page, $lines, $outputlangs)

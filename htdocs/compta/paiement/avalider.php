@@ -71,7 +71,7 @@ if ($socid)
 }
 $sql.= " AND p.statut = 0";
 $sql.= " ORDER BY $sortfield $sortorder";
-$sql.= $db->plimit($limit +1 ,$offset);
+$sql.= $db->plimit($limit+1, $offset);
 $resql = $db->query($sql);
 
 if ($resql)
@@ -96,7 +96,7 @@ if ($resql)
         $objp = $db->fetch_object($resql);
         $var=!$var;
         print "<tr $bc[$var]>";
-        print '<td>'.'<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$objp->rowid.'</a></td>';
+        print '<td><a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$objp->rowid.'</a></td>';
         print '<td width="80" align="center">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
         print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
         print '<td align="right">'.price($objp->amount).'</td>';

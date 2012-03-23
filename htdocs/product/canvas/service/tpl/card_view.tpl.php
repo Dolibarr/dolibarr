@@ -22,7 +22,7 @@
 
 <?php dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']); ?>
 
-<table class="border" width="100%">
+<table class="border allwidth">
 
 <tr>
 <td width="15%"><?php echo $langs->trans("Ref"); ?></td>

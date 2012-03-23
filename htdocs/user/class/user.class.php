@@ -719,6 +719,7 @@ class User extends CommonObject
 	function create($user,$notrigger=0)
 	{
 		global $conf,$langs;
+		global $mysoc;
 
 		// Clean parameters
 		$this->login = trim($this->login);
@@ -743,7 +744,7 @@ class User extends CommonObject
 		$sql.= " WHERE login ='".$this->db->escape($this->login)."'";
 		$sql.= " AND entity IN (0,".$conf->entity.")";
 
-		dol_syslog("User::Create sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -789,9 +790,10 @@ class User extends CommonObject
 						require_once(DOL_DOCUMENT_ROOT."/product/stock/class/entrepot.class.php");
 						$langs->load("stocks");
 						$entrepot = new Entrepot($this->db);
-						$entrepot->libelle = $langs->trans("PersonalStock",$this->nom);
-						$entrepot->description = $langs->trans("ThisWarehouseIsPersonalStock",$this->prenom,$this->nom);
+						$entrepot->libelle = $langs->trans("PersonalStock",$this->getFullName($langs));
+						$entrepot->description = $langs->trans("ThisWarehouseIsPersonalStock",$this->getFullName($langs));
 						$entrepot->statut = 1;
+						$entrepot->country_id = $mysoc->country_id;
 						$entrepot->create($user);
 					}
 
@@ -1203,7 +1205,7 @@ class User extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
 		$sql.= " datepreviouslogin = datelastlogin,";
-		$sql.= " datelastlogin = ".$this->db->idate($now).",";
+		$sql.= " datelastlogin = '".$this->db->idate($now)."',";
 		$sql.= " tms = tms";    // La date de derniere modif doit changer sauf pour la mise a jour de date de derniere connexion
 		$sql.= " WHERE rowid = ".$this->id;
 

@@ -18,7 +18,6 @@ ServiceStatusClosed				  =Chiuso
 ServicesLegend					  =Servizi leggenda
 Contracts					  =Contratti per servizi
 Contract					  =Contratto per servizi
-ContractContacts				  =Contatti del contratto per servizi
 MenuServices					  =Servizi
 MenuInactiveServices				  =Servizi non attivi
 MenuRunningServices				  =Servizi in esecuzione

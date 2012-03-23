@@ -24,8 +24,7 @@
 
 
 /**
- *    \class      Canvas
- *    \brief      Class to manage canvas
+ *	Class to manage canvas
  */
 class Canvas
 {
@@ -47,7 +46,7 @@ class Canvas
    /**
 	*   Constructor
 	*
-	*   @param     DoliDB	$DB          	Database handler
+	*   @param     DoliDB	$db          	Database handler
 	*   @param     string   $actiontype		Action type ('create', 'view', 'edit', 'list')
 	*/
 	function __construct($db, $actiontype='view')
@@ -126,10 +125,11 @@ class Canvas
     /**
      *	Return the template to display canvas (if it exists)
 	 *
+	 *	@param	string	$action		Action code
      *	@return		int		0=Canvas template file does not exist, 1=Canvas template file exists
      */
     function displayCanvasExists($action)
-    {	
+    {
         if (empty($this->template_dir)) return 0;
 
         if (file_exists($this->template_dir.($this->card?$this->card.'_':'').$this->action.'.tpl.php')) return 1;
@@ -140,7 +140,8 @@ class Canvas
 	 *	Display a canvas page. This will include the template for output.
 	 *	Variables used by templates may have been defined or loaded before into the assign_values function.
 	 *
-	 *	@return		void
+	 *	@param	string	$action		Action code
+	 *	@return	void
 	 */
 	function display_canvas($action)
 	{

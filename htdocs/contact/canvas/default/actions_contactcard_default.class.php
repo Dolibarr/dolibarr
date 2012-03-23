@@ -52,9 +52,12 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
         $this->canvas           = $canvas;
         $this->card             = $card;
 	}
-	
+
 	/**
 	 * 	Return the title of card
+	 *
+	 * 	@param	string	$action		Code action
+	 * 	@return	string				Title
 	 */
 	private function getTitle($action)
 	{
@@ -62,24 +65,25 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 
 		$out='';
 
-		if ($action == 'view') 		$out.= $langs->trans("Contact");
-		if ($action == 'edit') 		$out.= $langs->trans("EditContact");
-		if ($action == 'create')	$out.= $langs->trans("NewContact");
-		
+		if ($action == 'view') 		$out.= (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contact") : $langs->trans("ContactAddress"));
+		if ($action == 'edit') 		$out.= (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("EditContact") : $langs->trans("EditContactAddress"));
+		if ($action == 'create')	$out.= (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
+
 		return $out;
 	}
 
 	/**
 	 *  Assign custom values for canvas
 	 *
-	 *  @param		string		$action     Type of action
-	 *  @return		void
+	 *  @param	string		&$action    	Type of action
+	 *  @param	int			$id				Id
+	 *  @return	void
 	 */
 	function assign_values(&$action, $id)
 	{
 		global $conf, $db, $langs, $user;
 		global $form;
-		
+
 		$ret = $this->getObject($id);
 
         parent::assign_values($action);

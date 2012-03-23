@@ -33,6 +33,8 @@ if (! $user->admin) accessforbidden();
  * View
  */
 
+$label=getStaticMember($db, 'label');
+
 $help_url='EN:Restores|FR:Restaurations|ES:Restauraciones';
 llxHeader('','',$help_url);
 
@@ -48,6 +50,10 @@ jQuery(document).ready(function() {
 	jQuery("#radio_dump_postgresql").click(function() {
 		jQuery("#postgresql_options").show();
 	});
+	<?php
+	    if ($label == 'MySQL')      print 'jQuery("#radio_dump_mysql").click();';
+	    if ($label == 'PostgreSQL') print 'jQuery("#radio_dump_postgresql").click();';
+	?>
 });
 </script>
 <?php
@@ -57,8 +63,6 @@ print_fiche_titre($langs->trans("Restore"),'','setup');
 print $langs->trans("RestoreDesc",DOL_DATA_ROOT).'<br><br>';
 print $langs->trans("RestoreDesc2",DOL_DATA_ROOT).'<br><br>';
 print $langs->trans("RestoreDesc3",DOL_DATA_ROOT).'<br><br>';
-
-$label=getStaticMember($db, 'label');
 
 ?>
 
@@ -166,7 +170,7 @@ else if ($label == 'PostgreSQL')
     print '<br>';
     print '<textarea rows="1" cols="120">'.$langs->trans("ImportPostgreSqlCommand",$command,$_GET["showpass"]?$paramclear:$paramcrypted).'</textarea><br>';
 
-    if (empty($_GET["showpass"]) && $dolibarr_main_db_pass) print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=1&amp;radio_dump=postgresql_options">'.$langs->trans("UnHidePassword").'</a>';
+    //if (empty($_GET["showpass"]) && $dolibarr_main_db_pass) print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=1&amp;radio_dump=postgresql_options">'.$langs->trans("UnHidePassword").'</a>';
     //else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
     ?>
     </div>

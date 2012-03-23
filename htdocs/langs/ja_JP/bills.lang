@@ -62,7 +62,6 @@ SupplierInvoice=サプライヤーの請求書
 SuppliersInvoices=仕入先の請求書
 SupplierBill=サプライヤーの請求書
 SupplierBills=仕入先の請求書
-BillContacts=請求書の連絡先
 Payment=支払い
 PaymentBack=戻って支払い
 Payments=支払い

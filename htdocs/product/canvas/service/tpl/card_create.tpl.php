@@ -29,7 +29,7 @@
 <input type="hidden" name="type" value="1">
 <input type="hidden" name="canvas" value="<?php echo $canvas; ?>">
 
-<table class="border" width="100%">
+<table class="border allwidth">
 
 <tr>
 <td class="fieldrequired" width="20%"><?php echo $langs->trans("Ref"); ?></td>
@@ -73,7 +73,7 @@
 
 <?php if (! $conf->global->PRODUIT_MULTIPRICES) { ?>
 
-<table class="border" width="100%">
+<table class="border allwidth">
 
 <tr><td><?php echo $langs->trans("SellingPrice"); ?></td>
 <td><input name="price" size="10" value="<?php echo $this->object->tpl['price']; ?>">
@@ -93,7 +93,7 @@
 <br>
 <?php } ?>
 
-<center><input type="submit" class="button" value="<?php echo $langs->trans("Create"); ?>"></center>
+<div align="center"><input type="submit" class="button" value="<?php echo $langs->trans("Create"); ?>"></div>
 
 </form>
 

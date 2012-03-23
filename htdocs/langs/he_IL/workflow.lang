@@ -1,0 +1,18 @@
+/*
+ * Language code: he_IL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-03-10 15:14:54
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-03-10 15:14:54).
+// Reference language: en_US -> he_IL
+CHARSET=UTF-8
+WorkflowSetup=מודול זרימת עבודה ההתקנה
+WorkflowDesc=מודול זה desinged לשנות את ההתנהגות של פעולות אוטומטיות ליישום. כברירת מחדל, זרימת העבודה נפתח (אתה עושה דבר על מנת שאתה רוצה). אתה יכול לאפשר פעולות אוטומטיות כי אתה מעניין פנימה
+ThereIsNoWorkflowToModify=אין עבודה אתה יכול לשנות את מודול שהפעלת.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=ליצור סדר הלקוח באופן אוטומטי לאחר הצעה מסחרית נחתם
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=יצירת חשבונית הלקוח באופן אוטומטי לאחר הצעה מסחרית נחתם
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=יצירת חשבונית הלקוח באופן אוטומטי לאחר החוזה תוקף
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=יצירת חשבונית הלקוח באופן אוטומטי לאחר הזמנת הלקוח סגור
+// STOP - Lines generated via autotranslator.php tool (2012-03-10 15:24:03).

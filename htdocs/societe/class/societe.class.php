@@ -31,8 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 
 
 /**
- *	\class 		Societe
- *	\brief 		Class to manage third parties objects (customers, suppliers, prospects...)
+ *	Class to manage third parties objects (customers, suppliers, prospects...)
  */
 class Societe extends CommonObject
 {
@@ -703,7 +702,7 @@ class Societe extends CommonObject
 
                 $this->state_id     = $obj->fk_departement;
                 $this->state_code   = $obj->state_code;
-                $this->state        = $obj->state;
+                $this->state        = ($obj->state!='-'?$obj->state:'');
 
                 $transcode=$langs->trans('StatusProspect'.$obj->fk_stcomm);
                 $libelle=($transcode!='StatusProspect'.$obj->fk_stcomm?$transcode:$obj->stcomm);
@@ -933,7 +932,7 @@ class Societe extends CommonObject
 
                 // Delete directory
                 $docdir = $conf->societe->dir_output . "/" . $id;
-                if (file_exists ($docdir))
+                if (file_exists($docdir))
                 {
                     dol_delete_dir_recursive($docdir);
                 }
@@ -949,106 +948,10 @@ class Societe extends CommonObject
 
     }
 
-
     /**
-     *    Update record to set prefix
+     *  Define third party as a customer
      *
-     *    @return	void
-     */
-    function attribute_prefix()
-    {
-        global $conf;
-
-        $sql = "SELECT nom as name FROM ".MAIN_DB_PREFIX."societe WHERE rowid = '".$this->id."'";
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
-                $obj=$this->db->fetch_object($resql);
-                $nom = preg_replace("/[[:punct:]]/","",$obj->name);
-                $this->db->free();
-
-                $prefix = $this->genprefix($nom,4);
-
-                $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."societe";
-                $sql.= " WHERE prefix_comm = '".$prefix."'";
-                $sql.= " AND entity = ".$conf->entity;
-
-                $resql=$this->db->query($sql);
-                if ($resql)
-                {
-                    $obj=$this->db->fetch_object($resql);
-                    $this->db->free($resql);
-                    if (! $obj->nb)
-                    {
-                        $sql = "UPDATE ".MAIN_DB_PREFIX."societe set prefix_comm='".$prefix."' WHERE rowid='".$this->id."'";
-
-                        if ( $this->db->query($sql) )
-                        {
-
-                        }
-                        else
-                        {
-                            dol_print_error($this->db);
-                        }
-                    }
-                }
-                else
-                {
-                    dol_print_error($this->db);
-                }
-            }
-        }
-        else
-        {
-            dol_print_error($this->db);
-        }
-        return $prefix;
-    }
-
-    /**
-     *  Genere le prefix de la societe
-     *
-     *  @param      nom         nom de la societe
-     *  @param      taille      taille du prefix a retourner
-     *  @param      mot         l'indice du mot a utiliser
-     */
-    function genprefix($nom, $taille=4, $mot=0)
-    {
-        $retour = "";
-        $tab = explode(" ",$nom);
-
-        if ($mot < count($tab))
-        {
-            $prefix = strtoupper(substr($tab[$mot],0,$taille));
-
-            // On verifie que ce prefix n'a pas deja ete pris ...
-            $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."societe";
-            $sql.= " WHERE prefix_comm = '".$prefix."'";
-            $sql.= " AND entity = ".$conf->entity;
-
-            $resql=$this->db->query($sql);
-            if ($resql)
-            {
-                $obj=$this->db->fetch_object($resql);
-                if ($obj->nb)
-                {
-                    $this->db->free();
-                    $retour = $this->genprefix($nom,$taille,$mot+1);
-                }
-                else
-                {
-                    $retour = $prefix;
-                }
-            }
-        }
-        return $retour;
-    }
-
-    /**
-     *    	\brief     	Define third party as a customer
-     *		\return		int		<0 if KO, >0 if OK
+     *	@return		int		<0 if KO, >0 if OK
      */
     function set_as_client()
     {
@@ -1072,11 +975,12 @@ class Societe extends CommonObject
     }
 
     /**
-     *    	\brief      Definit la societe comme un client
-     *    	\param      remise		Valeur en % de la remise
-     *    	\param      note		Note/Motif de modification de la remise
-     *    	\param      user		Utilisateur qui definie la remise
-     *		\return		int			<0 si ko, >0 si ok
+     *  Definit la societe comme un client
+     *
+     *  @param	float	$remise		Valeur en % de la remise
+     *  @param  string	$note		Note/Motif de modification de la remise
+     *  @param  User	$user		Utilisateur qui definie la remise
+     *	@return	int					<0 if KO, >0 if OK
      */
     function set_remise_client($remise, $note, $user)
     {
@@ -1209,9 +1113,10 @@ class Societe extends CommonObject
     }
 
     /**
-     *      Return array of sales representatives
+     *  Return array of sales representatives
      *
-     *      @return     array       Array of sales representatives of third party
+     *  @param	User	$user		Object user
+     *  @return array       		Array of sales representatives of third party
      */
     function getSalesRepresentatives($user='')
     {
@@ -1250,6 +1155,7 @@ class Societe extends CommonObject
      *
      * @param 	int		$price_level	Level of price
      * @param 	User	$user			Use making change
+     * @return	int						<0 if KO, >0 if OK
      */
     function set_price_level($price_level, $user)
     {
@@ -1278,34 +1184,38 @@ class Societe extends CommonObject
     }
 
     /**
+     *	Add link to sales representative
      *
-     *
+     *	@param	User	$user		Object user
+     *	@param	int		$commid		Id of user
+     *	@return	void
      */
     function add_commercial($user, $commid)
     {
         if ($this->id > 0 && $commid > 0)
         {
-            $sql  = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux ";
-            $sql .= " WHERE fk_soc = ".$this->id." AND fk_user =".$commid;
+            $sql = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux";
+            $sql.= " WHERE fk_soc = ".$this->id." AND fk_user =".$commid;
 
             $this->db->query($sql);
 
-            $sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_commerciaux ";
-            $sql .= " ( fk_soc, fk_user )";
-            $sql .= " VALUES (".$this->id.",".$commid.")";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_commerciaux";
+            $sql.= " ( fk_soc, fk_user )";
+            $sql.= " VALUES (".$this->id.",".$commid.")";
 
             if (! $this->db->query($sql) )
             {
                 dol_syslog(get_class($this)."::add_commercial Erreur");
             }
-
         }
     }
 
     /**
+     *	Add link to sales representative
      *
-     *
-     *
+     *	@param	User	$user		Object user
+     *	@param	int		$commid		Id of user
+     *	@return	void
      */
     function del_commercial($user, $commid)
     {
@@ -1318,7 +1228,6 @@ class Societe extends CommonObject
             {
                 dol_syslog(get_class($this)."::del_commercial Erreur");
             }
-
         }
     }
 
@@ -1326,10 +1235,10 @@ class Societe extends CommonObject
     /**
      *    	Return a link on thirdparty (with picto)
      *
-     *		@param		withpicto		Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
-     *		@param		option			Target of link ('', 'customer', 'prospect', 'supplier')
-     *		@param		maxlen			Max length of text
-     *		@return		string			String with URL
+     *		@param	int		$withpicto		Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
+     *		@param	string	$option			Target of link ('', 'customer', 'prospect', 'supplier')
+     *		@param	int		$maxlen			Max length of text
+     *		@return	string					String with URL
      */
     function getNomUrl($withpicto=0,$option='',$maxlen=0)
     {
@@ -1378,8 +1287,9 @@ class Societe extends CommonObject
 
     /**
      *    Return label of status (activity, closed)
-     *    @param      mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
-     *    @return     string        Libelle
+     *
+     *    @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+     *    @return   string        		Libelle
      */
     function getLibStatut($mode=0)
     {
@@ -1387,10 +1297,11 @@ class Societe extends CommonObject
     }
 
     /**
-     *      Renvoi le libelle d'un statut donne
-     *      @param      statut          Id statut
-     *      @param      mode            0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-     *      @return     string          Libelle du statut
+     *  Renvoi le libelle d'un statut donne
+     *
+     *  @param	int		$statut         Id statut
+     *  @param	int		$mode           0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @return	string          		Libelle du statut
      */
     function LibStatut($statut,$mode=0)
     {
@@ -1505,8 +1416,8 @@ class Societe extends CommonObject
     /**
      *    Return list of contacts emails or mobile existing for third party
      *
-     *    @param        mode        'email' or 'mobile'
-     *    @return       array       Array of contacts emails or mobile
+     *    @param	string	$mode       'email' or 'mobile'
+     *    @return   array       		Array of contacts emails or mobile
      */
     function contact_property_array($mode='email')
     {
@@ -1574,11 +1485,11 @@ class Societe extends CommonObject
     }
 
     /**
-     *    Return property of contact from its id
+     *  Return property of contact from its id
      *
-     *    @param      rowid       id of contact
-     *    @param      mode        'email' or 'mobile'
-     *    @return     string      email of contact
+     *  @param	int		$rowid      id of contact
+     *  @param  string	$mode       'email' or 'mobile'
+     *  @return string  			email of contact
      */
     function contact_get_property($rowid,$mode)
     {
@@ -1638,6 +1549,8 @@ class Societe extends CommonObject
 
     /**
      * Load this->bank_account attribut
+     *
+     * @return	int		1
      */
     function load_ban()
     {
@@ -1650,7 +1563,11 @@ class Societe extends CommonObject
         return 1;
     }
 
-
+    /**
+     * Check bank numbers
+     *
+     * @return int		<0 if KO, >0 if OK
+     */
     function verif_rib()
     {
         $this->load_ban();
@@ -1858,8 +1775,8 @@ class Societe extends CommonObject
      *      Peut etre identique a celui saisit ou genere automatiquement.
      *      A ce jour seule la generation automatique est implementee
      *
-     *    	@param      type			Type of thirdparty ('customer' or 'supplier')
-     *		@return		string			Code compta si ok, 0 si aucun, <0 si ko
+     *    	@param	string	$type		Type of thirdparty ('customer' or 'supplier')
+     *		@return	string				Code compta si ok, 0 si aucun, <0 si ko
      */
     function get_codecompta($type)
     {
@@ -1897,8 +1814,8 @@ class Societe extends CommonObject
     /**
      *    Defini la societe mere pour les filiales
      *
-     *    @param      id      id compagnie mere a positionner
-     *    @return     int     <0 si ko, >0 si ok
+     *    @param	int		$id     id compagnie mere a positionner
+     *    @return	int     		<0 if KO, >0 if OK
      */
     function set_parent($id)
     {
@@ -1920,9 +1837,10 @@ class Societe extends CommonObject
     }
 
     /**
-     *    \brief      Supprime la societe mere
-     *    \param      id      id compagnie mere a effacer
-     *    \return     int     <0 si ko, >0 si ok
+     *  Supprime la societe mere
+     *
+     *  @param	int		$id     id compagnie mere a effacer
+     *  @return int     		<0 if KO, >0 if KO
      */
     function remove_parent($id)
     {
@@ -1944,9 +1862,10 @@ class Societe extends CommonObject
     }
 
 	/**
-     *    Returns if a profid sould be verified
-     *    @param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
-     *    @return     boolean         true , false
+     *  Returns if a profid sould be verified
+     *
+     *  @param	int		$idprof		1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
+     *  @return boolean         	true , false
      */
     function id_prof_verifiable($idprof)
     {
@@ -2021,11 +1940,12 @@ class Societe extends CommonObject
     }
 
     /**
-     *    Verifie la validite d'un identifiant professionnel en fonction du pays de la societe (siren, siret, ...)
-     *    @param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
-     *    @param      soc             Objet societe
-     *    @return     int             <=0 if KO, >0 if OK
-     *    TODO not in business class
+     *  Verifie la validite d'un identifiant professionnel en fonction du pays de la societe (siren, siret, ...)
+     *
+     *  @param	int			$idprof         1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
+     *  @param  Societe		$soc            Objet societe
+     *  @return int             			<=0 if KO, >0 if OK
+     *  TODO not in business class
      */
     function id_prof_check($idprof,$soc)
     {
@@ -2233,8 +2153,9 @@ class Societe extends CommonObject
     }
 
     /**
-     *       Return if third party is a company (Business) or an end user (Consumer)
-     *       @return    boolean     true=is a company, false=a and user
+     *  Return if third party is a company (Business) or an end user (Consumer)
+     *
+     *  @return    boolean     true=is a company, false=a and user
      */
     function isACompany()
     {
@@ -2251,8 +2172,9 @@ class Societe extends CommonObject
 
 
     /**
-     *       Return if a country is inside the EEC (European Economic Community)
-     *       @return     boolean		true = pays inside EEC, false= pays outside EEC
+     *  Return if a country is inside the EEC (European Economic Community)
+     *
+     *  @return     boolean		true = pays inside EEC, false= pays outside EEC
      */
     function isInEEC()
     {
@@ -2296,6 +2218,7 @@ class Societe extends CommonObject
 
     /**
      *  Charge la liste des categories fournisseurs
+     *
      *  @return    int      0 if success, <> 0 if error
      */
     function LoadSupplierCateg()
@@ -2322,7 +2245,9 @@ class Societe extends CommonObject
 
     /**
      *  Charge la liste des categories fournisseurs
-     *  @return    int      0 if success, <> 0 if error
+     *
+     *	@param	int		$categorie_id		Id of category
+     *  @return int      					0 if success, <> 0 if error
      */
     function AddFournisseurInCategory($categorie_id)
     {
@@ -2342,11 +2267,11 @@ class Societe extends CommonObject
 
 
     /**
-     *      Create a third party into database from a member object
+     *  Create a third party into database from a member object
      *
-     *      @param      member		Object member
-     * 		@param		socname		Name of third party to force
-     *      @return     int			<0 if KO, id of created account if OK
+     *  @param	Member	$member		Object member
+     * 	@param	string	$socname	Name of third party to force
+     *  @return int					<0 if KO, id of created account if OK
      */
     function create_from_member($member,$socname='')
     {

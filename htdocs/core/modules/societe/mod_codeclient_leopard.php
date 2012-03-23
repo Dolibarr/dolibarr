@@ -51,7 +51,7 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	/**
 	 *	Constructor
 	 */
-	function mod_codeclient_leopard()
+	function __construct()
 	{
 		$this->code_null = 1;
 		$this->code_modifiable = 1;
@@ -72,11 +72,12 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	}
 
 
-	/**		Return an example of result returned by getNextValue
+	/**
+	 * Return an example of result returned by getNextValue
 	 *
-	 *      @param		$langs		Object langs
-	 *      @param		$objsoc		Object thirdparty
-	 *      @param		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @param	societe		$objsoc		Object thirdparty
+	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @return	string					Return next value
 	 */
 	function getNextValue($objsoc=0,$type=-1)
 	{
@@ -86,17 +87,17 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 
 
 	/**
-	 * 		Check validity of code according to its rules
+	 * 	Check validity of code according to its rules
 	 *
-	 *		@param		$db		Database handler
-	 *		@param		$code	Code to check/correct
-	 *		@param		$soc	Object third party
-	 *   	@param    	$type   0 = customer/prospect , 1 = supplier
-	 *    	@return     int		0 if OK
-	 * 							-1 ErrorBadCustomerCodeSyntax
-	 * 							-2 ErrorCustomerCodeRequired
-	 * 							-3 ErrorCustomerCodeAlreadyUsed
-	 * 							-4 ErrorPrefixRequired
+	 *	@param	DoliDB		$db		Database handler
+	 *	@param	string		&$code	Code to check/correct
+	 *	@param	Societe		$soc	Object third party
+	 *  @param  int		  	$type   0 = customer/prospect , 1 = supplier
+	 *  @return int					0 if OK
+	 * 								-1 ErrorBadCustomerCodeSyntax
+	 * 								-2 ErrorCustomerCodeRequired
+	 * 								-3 ErrorCustomerCodeAlreadyUsed
+	 * 								-4 ErrorPrefixRequired
 	 */
 	function verif($db, &$code, $soc, $type)
 	{

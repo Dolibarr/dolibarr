@@ -806,6 +806,7 @@ function migrate_contracts_det($db,$langs,$conf)
 }
 
 /**
+ * Function to migrate links into llx_bank_url
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -2687,9 +2688,14 @@ function migrate_project_task_actors($db,$langs,$conf)
 /**
  * Migration des tables de relation
  *
- * @param	DoliDB		$db		Database handler
- * @param	Translate	$langs	Object langs
- * @param	Conf		$conf	Object conf
+ * @param	DoliDB		$db				Database handler
+ * @param	Translate	$langs			Object langs
+ * @param	Conf		$conf			Object conf
+ * @param	string		$table			Table name
+ * @param	int			$fk_source		Id of element source
+ * @param	type		$sourcetype		Type of element source
+ * @param	int			$fk_target		Id of element target
+ * @param	type		$targettype		Type of element target
  * @return	void
  */
 function migrate_relationship_tables($db,$langs,$conf,$table,$fk_source,$sourcetype,$fk_target,$targettype)

@@ -75,7 +75,7 @@ class Tva extends CommonObject
     	global $conf, $langs;
 
 		$error=0;
-		
+
 		// Clean parameters
 		$this->amount=trim($this->amount);
 		$this->label=trim($this->label);
@@ -147,7 +147,7 @@ class Tva extends CommonObject
     	global $conf, $langs;
 
 		$error=0;
-		
+
 		// Clean parameters
 		$this->amount=trim($this->amount);
 		$this->label=trim($this->label);
@@ -273,7 +273,7 @@ class Tva extends CommonObject
 		global $conf, $langs;
 
 		$error=0;
-		
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."tva";
 		$sql.= " WHERE rowid=".$this->id;
 
@@ -460,9 +460,10 @@ class Tva extends CommonObject
 
 
     /**
-     *      \brief      Ajoute un paiement de TVA
-	 *		\param		user		Object user that insert
-	 *		\return		int			<0 if KO, rowid in tva table if OK
+     *  Ajoute un paiement de TVA
+     *
+	 *	@param	User	$user		Object user that insert
+	 *	@return	int					<0 if KO, rowid in tva table if OK
      */
     function addPayment($user)
     {
@@ -572,9 +573,10 @@ class Tva extends CommonObject
     }
 
     /**
-     *      \brief      Mise a jour du lien entre le paiement tva et la ligne g�n�r�e dans llx_bank
-     *      \param      id_bank     Id compte bancaire
-	 *		\return		int			<0 if KO, >0 if OK
+     *  Mise a jour du lien entre le paiement tva et la ligne g�n�r�e dans llx_bank
+     *
+     *  @param	int		$id_bank    Id compte bancaire
+	 *	@return	int					<0 if KO, >0 if OK
      */
 	function update_fk_bank($id_bank)
 	{
@@ -594,11 +596,12 @@ class Tva extends CommonObject
 
 
 	/**
-		\brief      Renvoie nom clicable (avec eventuellement le picto)
-		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-		\param		option			Sur quoi pointe le lien
-		\return		string			Chaine avec URL
-	*/
+	 *	Renvoie nom clicable (avec eventuellement le picto)
+	 *
+	 *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	@param	string	$option			Sur quoi pointe le lien
+	 *	@return	string					Chaine avec URL
+	 */
 	function getNomUrl($withpicto=0,$option='')
 	{
 		global $langs;

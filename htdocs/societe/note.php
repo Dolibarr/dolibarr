@@ -19,7 +19,7 @@
  */
 
 /**
- *   \file       htdocs/societe/socnote.php
+ *   \file       htdocs/societe/note.php
  *   \brief      Tab for notes on third party
  *   \ingroup    societe
  */
@@ -27,7 +27,7 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 
-$action = isset($_GET["action"])?$_GET["action"]:$_POST["action"];
+$action = GETPOST('action');
 
 $langs->load("companies");
 
@@ -37,6 +37,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
 $object = new Societe($db);
+if ($socid > 0) $object->fetch($socid);
 
 /*
  * Actions
@@ -44,9 +45,11 @@ $object = new Societe($db);
 
 if ($action == 'add' && ! GETPOST('cancel'))
 {
-    // TODO move to DAO class
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".$db->escape($_POST["note"])."' WHERE rowid=".$socid;
-    $result = $db->query($sql);
+    $result=$object->update_note($_POST["note"]);
+    if ($result < 0)
+    {
+         $errors[]=$object->errors;
+    }
 }
 
 
@@ -63,14 +66,13 @@ llxHeader('',$langs->trans("ThirdParty").' - '.$langs->trans("Notes"),$help_url)
 
 if ($socid > 0)
 {
-	$object->fetch($socid);
-
     /*
      * Affichage onglets
      */
     if ($conf->notification->enabled) $langs->load("mails");
 
     $head = societe_prepare_head($object);
+
 
     dol_fiche_head($head, 'note', $langs->trans("ThirdParty"),0,'company');
 
@@ -138,9 +140,11 @@ if ($socid > 0)
     }
 
     print '</form>';
+
+    dol_fiche_end();
 }
 
-print '</div>';
+dol_htmloutput_errors('',$errors);
 
 
 /*

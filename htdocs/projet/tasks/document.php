@@ -187,7 +187,7 @@ if ($id > 0 || ! empty($ref))
 		}
 
     	$head = task_prepare_head($task);
-    	dol_fiche_head($head, 'document', $langs->trans("Task"), 0, 'projecttask');
+    	dol_fiche_head($head, 'task_document', $langs->trans("Task"), 0, 'projecttask');
 
     	$param=(GETPOST('withproject')?'&withproject=1':'');
     	$linkback=GETPOST('withproject')?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$project->id.'">'.$langs->trans("BackToList").'</a>':'';

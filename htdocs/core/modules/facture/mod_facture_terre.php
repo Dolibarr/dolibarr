@@ -34,8 +34,10 @@ class mod_facture_terre extends ModeleNumRefFactures
 	var $prefixcreditnote='AV';
 	var $error='';
 
-	/**     \brief      Renvoi la description du modele de numerotation
-	 *      \return     string      Texte descripif
+	/**
+	 *  Renvoi la description du modele de numerotation
+	 *
+	 *  @return     string      Texte descripif
 	 */
 	function info()
 	{
@@ -44,17 +46,21 @@ class mod_facture_terre extends ModeleNumRefFactures
 		return $langs->trans('TerreNumRefModelDesc1',$this->prefixinvoice,$this->prefixcreditnote);
 	}
 
-	/**     \brief      Renvoi un exemple de numerotation
-	 *      \return     string      Example
+	/**
+	 *  Renvoi un exemple de numerotation
+	 *
+	 *  @return     string      Example
 	 */
 	function getExample()
 	{
 		return $this->prefixinvoice."0501-0001";
 	}
 
-	/**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
-	 *                  de conflits qui empechera cette numerotation de fonctionner.
-	 *      \return     boolean     false si conflit, true si ok
+	/**
+	 *  Test si les numeros deja en vigueur dans la base ne provoquent pas de
+	 *  de conflits qui empechera cette numerotation de fonctionner.
+	 *
+	 *  @return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
 	{
@@ -108,11 +114,13 @@ class mod_facture_terre extends ModeleNumRefFactures
 		return true;
 	}
 
-	/**     Return next value not used or last value used
-	 *      @param     objsoc		Object third party
-	 *      @param     facture		Object invoice
-     *      @param     mode         'next' for next value or 'last' for last value
-	 *      @return    string       Value
+	/**
+	 * Return next value not used or last value used
+	 *
+	 * @param	Societe		$objsoc		Object third party
+	 * @param   Facture		$facture	Object invoice
+     * @param   string		$mode       'next' for next value or 'last' for last value
+	 * @return  string       			Value
 	 */
 	function getNextValue($objsoc,$facture,$mode='next')
 	{
@@ -175,11 +183,13 @@ class mod_facture_terre extends ModeleNumRefFactures
 		else dol_print_error('','Bad parameter for getNextValue');
 	}
 
-	/**		Return next free value
-	 *     	@param      objsoc      Object third party
-	 * 		@param		objforref	Object for number to search
-     *      @param      mode        'next' for next value or 'last' for last value
-	 *   	@return     string      Next free value
+	/**
+	 * Return next free value
+	 *
+     * @param	Societe		$objsoc     	Object third party
+     * @param	string		$objforref		Object for number to search
+     * @param   string		$mode       	'next' for next value or 'last' for last value
+     * @return  string      				Next free value
 	 */
 	function getNumRef($objsoc,$objforref,$mode='next')
 	{

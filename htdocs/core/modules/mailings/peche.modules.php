@@ -45,7 +45,7 @@ class mailing_peche extends MailingTargets
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function mailing_peche($db)
+	function __construct($db)
 	{
 		$this->db=$db;
 	}

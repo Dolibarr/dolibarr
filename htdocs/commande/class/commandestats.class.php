@@ -51,11 +51,11 @@ class CommandeStats extends Stats
 	 * @param 	string	$mode	   Option
 	 * @param   int		$userid    Id user for filter
 	 */
-	function CommandeStats($DB, $socid=0, $mode, $userid=0)
+	function CommandeStats($db, $socid, $mode, $userid=0)
 	{
 		global $user, $conf;
 
-		$this->db = $DB;
+		$this->db = $db;
 
 		$this->socid = $socid;
         $this->userid = $userid;
@@ -88,7 +88,7 @@ class CommandeStats extends Stats
 
 	/**
 	 * Return orders number by month for a year
-	 * 
+	 *
 	 * @param	int		$year	year for stats
 	 * @return	array			array with number by month
 	 */
@@ -110,7 +110,7 @@ class CommandeStats extends Stats
 
 	/**
 	 * Return orders number by year
-	 * 
+	 *
 	 * @return	array	array with number by year
 	 *
 	 */
@@ -175,7 +175,7 @@ class CommandeStats extends Stats
 
 	/**
 	 *	Return nb, total and average
-	 *	
+	 *
 	 *	@return	array	Array of values
 	 */
 	function getAllByYear()

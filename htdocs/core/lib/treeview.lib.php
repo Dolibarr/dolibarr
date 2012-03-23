@@ -72,68 +72,70 @@ function is_in_subtree($fulltree,$parentid,$childid)
 
 
 /**
- * Show picto of a tree view
- * 
+ * Show indent and picto of a tree line. Return array with information of line.
+ *
  * @param	array	&$fulltree		Array of entries in correct order
  * @param 	string	$key			Key of value to show picto
- * @param 	int		$selected		Selected value
- * @return	array					(0 or 1 if at least one of this level after, 0 or 1 if at least one of higher level after)
+ * @param	int		$silent			Do not output indent and picto, returns only value
+ * @return	array					array(0 or 1 if at least one of this level after, 0 or 1 if at least one of higher level after, nbofdirinsub, nbofdocinsub)
  */
-function tree_showpad(&$fulltree,$key,$selected=0)
+function tree_showpad(&$fulltree,$key,$silent=0)
 {
 	$pos=1;
 
 	// Loop on each pos, because we will output an img for each pos
 	while ($pos <= $fulltree[$key]['level'] && $fulltree[$key]['level'] > 0)
 	{
-		// Process picto for column $pos
+		// Process for column $pos
 
-		$atleastonofthislevelafter=0;
-		$nbofhigherlevelafter=0;
+		$atleastoneofthislevelafter=0;
 		$nbofdirinsub=0;
 		$nbofdocinsub=0;
 		$found=0;
 		//print 'x'.$key;
 		foreach($fulltree as $key2 => $val2)
 		{
+            //print "x".$pos." ".$key2." ".$found." ".$fulltree[$key2]['level'];
 			if ($found == 1) // We are after the entry to show
 			{
 				if ($fulltree[$key2]['level'] > $pos)
 				{
 					$nbofdirinsub++;
 					$nbofdocinsub+=$fulltree[$key2]['cachenbofdoc'];
-					$nbofhigherlevelafter++;
 				}
 				if ($fulltree[$key2]['level'] == $pos)
 				{
-					$atleastonofthislevelafter=1;
+					$atleastoneofthislevelafter=1;
 				}
 				if ($fulltree[$key2]['level'] <= $pos)
 				{
 					break;
 				}
 			}
-			if ($key2 == $key)
+			if ($key2 == $key)    // We found ourself, so now every lower level will be counted
 			{
 				$found=1;
 			}
 		}
-		//print $atleastonofthislevelafter;
+		//print $atleastoneofthislevelafter;
 
-		if ($atleastonofthislevelafter)
+		if (! $silent)
 		{
-			if ($fulltree[$key]['level'] == $pos) print img_picto_common('','treemenu/branch.gif');
-			else print img_picto_common('','treemenu/line.gif');
-		}
-		else
-		{
-			if ($fulltree[$key]['level'] == $pos) print img_picto_common('','treemenu/branchbottom.gif');
-			else print img_picto_common('','treemenu/linebottom.gif');
+    		if ($atleastoneofthislevelafter)
+    		{
+    			if ($fulltree[$key]['level'] == $pos) print img_picto_common('','treemenu/branch.gif');
+    			else print img_picto_common('','treemenu/line.gif');
+    		}
+    		else
+    		{
+    			if ($fulltree[$key]['level'] == $pos) print img_picto_common('','treemenu/branchbottom.gif');
+    			else print img_picto_common('','treemenu/linebottom.gif');
+    		}
 		}
 		$pos++;
 	}
 
-	return array($atleastonofthislevelafter,$nbofhigherlevelafter,$nbofdirinsub,$nbofdocinsub);
+	return array($atleastoneofthislevelafter,$nbofdirinsub,$nbofdocinsub);
 }
 
 
@@ -142,7 +144,7 @@ function tree_showpad(&$fulltree,$key,$selected=0)
 
 /**
  *  Show an element with correct offset
- *  
+ *
  *  @param	array	$tab    	Array of all elements
  *  @param  int	    $rang   	Level of offset
  *  @return	void
@@ -215,7 +217,7 @@ function tree_showline($tab,$rang)
 
 /**
  *  Recursive function to output menu tree
- *  
+ *
  *  @param	array	$tab    Array of elements
  *  @param  int	    $pere   Id of parent
  *  @param  int	    $rang   Level of element

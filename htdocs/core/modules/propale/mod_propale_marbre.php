@@ -37,8 +37,10 @@ class mod_propale_marbre extends ModeleNumRefPropales
 	var $nom = "Marbre";
 
 
-    /**     \brief      Return description of numbering module
-     *      \return     string      Text with description
+    /**
+     *  Return description of numbering module
+     *
+     *  @return     string      Text with description
      */
     function info()
     {
@@ -47,8 +49,10 @@ class mod_propale_marbre extends ModeleNumRefPropales
     }
 
 
-	/**     \brief      Return an example of numbering module values
-	 *      \return     string      Example
+	/**
+	 *  Return an example of numbering module values
+	 *
+	 *  @return     string      Example
 	 */
 	function getExample()
 	{
@@ -56,9 +60,11 @@ class mod_propale_marbre extends ModeleNumRefPropales
 	}
 
 
-	/**     \brief      Test si les numeros deje en vigueur dans la base ne provoquent pas de
-	 *                  de conflits qui empechera cette numerotation de fonctionner.
-	 *      \return     boolean     false si conflit, true si ok
+	/**
+	 *  Test si les numeros deje en vigueur dans la base ne provoquent pas de
+	 *  de conflits qui empechera cette numerotation de fonctionner.
+	 *
+	 *  @return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
 	{
@@ -91,10 +97,12 @@ class mod_propale_marbre extends ModeleNumRefPropales
 		}
 	}
 
-	/**		\brief      Return next value
-	 *      \param      objsoc      Object third party
-	 * 		\param		propal		Object commercial proposal
-	 *   	\return     string      Valeur
+	/**
+	 *  Return next value
+	 *
+	 *  @param	Societe		$objsoc     Object third party
+	 * 	@param	Propal		$propal		Object commercial proposal
+	 *  @return string      			Next value
 	 */
 	function getNextValue($objsoc,$propal)
 	{
@@ -128,10 +136,12 @@ class mod_propale_marbre extends ModeleNumRefPropales
 		return $this->prefix.$yymm."-".$num;
 	}
 
-	/**		\brief      Return next free value
-	 *      	\param      objsoc      Object third party
-	 * 		\param		objforref	Object for number to search
-	 *   	\return     string      Next free value
+	/**
+	 *  Return next free value
+	 *
+	 *  @param	Societe		$objsoc      	Object third party
+	 * 	@param	Object		$objforref		Object for number to search
+	 *  @return string      				Next free value
 	 */
 	function getNumRef($objsoc,$objforref)
 	{

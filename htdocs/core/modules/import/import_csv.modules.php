@@ -59,7 +59,7 @@ class ImportCsv extends ModeleImports
 	 *	@param	DoliDB		$db				Database handler
 	 *	@param	string		$datatoimport	String code describing import set (ex: 'societe_1')
 	 */
-	function ImportCsv($db,$datatoimport)
+	function __construct($db,$datatoimport)
 	{
 		global $conf,$langs;
 		$this->db = $db;
@@ -84,36 +84,71 @@ class ImportCsv extends ModeleImports
 		if (preg_match('/^societe_/',$datatoimport)) $this->thirpartyobject=new Societe($this->db);
 	}
 
+	/**
+	 * getDriverId
+	 *
+	 * @return int		Id
+	 */
 	function getDriverId()
 	{
 		return $this->id;
 	}
 
+	/**
+	 * getDriverLabel
+	 *
+	 * @return string	Label
+	 */
 	function getDriverLabel()
 	{
 		return $this->label;
 	}
 
+	/**
+	 * getDriverDesc
+	 *
+	 * @return string	Description
+	 */
 	function getDriverDesc()
 	{
 		return $this->desc;
 	}
 
+	/**
+	 * getDriverExtension
+	 *
+	 * @return string	Driver suffix
+	 */
 	function getDriverExtension()
 	{
 		return $this->extension;
 	}
 
+	/**
+	 * getDriverVersion
+	 *
+	 * @return string	Driver version
+	 */
 	function getDriverVersion()
 	{
 		return $this->version;
 	}
 
+	/**
+	 * getDriverLabel
+	 *
+	 * @return string	Label of external lib
+	 */
 	function getLibLabel()
 	{
 		return $this->label_lib;
 	}
 
+	/**
+	 * getLibVersion
+	 *
+	 * @return string	Version of external lib
+	 */
 	function getLibVersion()
 	{
 		return $this->version_lib;
@@ -135,6 +170,7 @@ class ImportCsv extends ModeleImports
 	 * 	Output title line of an example file for this format
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
+	 *  @param	array		$headerlinefields	Array of fields name
 	 * 	@return	string
 	 */
 	function write_title_example($outputlangs,$headerlinefields)
@@ -289,6 +325,7 @@ class ImportCsv extends ModeleImports
 	 * @param	array	$array_match_file_to_database	Array of target fields where to insert data: [fieldpos] => 's.fieldname', [fieldpos+1]...
 	 * @param 	Object	$objimport						Object import (contains objimport->import_tables_array, objimport->import_fields_array, objimport->import_convertvalue_array, ...)
 	 * @param	int		$maxfields						Max number of fields to use
+	 * @param	string	$importid						Import key
 	 * @return	int										<0 if KO, >0 if OK
 	 */
 	function import_insert($arrayrecord,$array_match_file_to_database,$objimport,$maxfields,$importid)

@@ -39,7 +39,7 @@ $langs->load("companies");
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
 $id=GETPOST('id','int');
-$rowid=GETPOST('rowid','int');
+$rowid=GETPOST('rowid','alpha');
 
 if (!$user->admin) accessforbidden();
 
@@ -128,8 +128,7 @@ $tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.civilite AS libelle, c.
 $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active, a.module, a.position FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
 $tabsql[7] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.deductible, p.code as pays_code, p.libelle as pays, a.fk_pays as pays_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_pays as p WHERE a.fk_pays=p.rowid and p.active=1";
 $tabsql[8] = "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_typent";
-//$tabsql[9] = "SELECT code, code_iso, label as libelle, symbole, active FROM ".MAIN_DB_PREFIX."c_currencies";
-$tabsql[9] = "SELECT code, code_iso, label as libelle, active FROM ".MAIN_DB_PREFIX."c_currencies";
+$tabsql[9] = "SELECT code_iso as code, label as libelle, unicode, active FROM ".MAIN_DB_PREFIX."c_currencies";
 $tabsql[10]= "SELECT t.rowid, t.taux, t.localtax1, t.localtax2, p.libelle as pays, p.code as pays_code, t.fk_pays as pays_id, t.recuperableonly, t.note, t.active, t.accountancy_code FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p WHERE t.fk_pays=p.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 $tabsql[12]= "SELECT c.rowid as rowid, code, sortorder, c.libelle, c.libelle_facture, nbjour, fdm, decalage, active FROM ".MAIN_DB_PREFIX.'c_payment_term AS c';
@@ -153,7 +152,7 @@ $tabsqlsort[5] ="libelle ASC";
 $tabsqlsort[6] ="a.type ASC, a.module, a.position, a.code ASC";
 $tabsqlsort[7] ="pays ASC, code ASC, a.libelle ASC";
 $tabsqlsort[8] ="libelle ASC";
-$tabsqlsort[9] ="code ASC";
+$tabsqlsort[9] ="libelle ASC";
 $tabsqlsort[10]="pays ASC, taux ASC, recuperableonly ASC, localtax1 ASC, localtax2 ASC";
 $tabsqlsort[11]="element ASC, source ASC, code ASC";
 $tabsqlsort[12]="sortorder ASC, code ASC";
@@ -177,8 +176,7 @@ $tabfield[5] = "code,libelle";
 $tabfield[6] = "code,libelle,type,position";
 $tabfield[7] = "code,libelle,pays_id,pays,deductible";
 $tabfield[8] = "code,libelle";
-//$tabfield[9] = "code,code_iso,libelle,symbole";
-$tabfield[9] = "code,code_iso,libelle";
+$tabfield[9] = "code,libelle,unicode";
 $tabfield[10]= "pays_id,pays,taux,recuperableonly,localtax1,localtax2,accountancy_code,note";
 $tabfield[11]= "element,source,code,libelle";
 $tabfield[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
@@ -202,8 +200,7 @@ $tabfieldvalue[5] = "code,libelle";
 $tabfieldvalue[6] = "code,libelle,type,position";
 $tabfieldvalue[7] = "code,libelle,pays,deductible";
 $tabfieldvalue[8] = "code,libelle";
-//$tabfieldvalue[9] = "code,code_iso,libelle,symbole";
-$tabfieldvalue[9] = "code,code_iso,libelle";
+$tabfieldvalue[9] = "code,libelle,unicode";
 $tabfieldvalue[10]= "pays,taux,recuperableonly,localtax1,localtax2,accountancy_code,note";
 $tabfieldvalue[11]= "element,source,code,libelle";
 $tabfieldvalue[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
@@ -227,8 +224,7 @@ $tabfieldinsert[5] = "code,civilite";
 $tabfieldinsert[6] = "code,libelle,type,position";
 $tabfieldinsert[7] = "code,libelle,fk_pays,deductible";
 $tabfieldinsert[8] = "code,libelle";
-//$tabfieldinsert[9] = "code,code_iso,label,symbole";
-$tabfieldinsert[9] = "code,code_iso,label";
+$tabfieldinsert[9] = "code_iso,label,unicode";
 $tabfieldinsert[10]= "fk_pays,taux,recuperableonly,localtax1,localtax2,accountancy_code,note";
 $tabfieldinsert[11]= "element,source,code,libelle";
 $tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
@@ -254,7 +250,7 @@ $tabrowid[5] = "rowid";
 $tabrowid[6] = "id";
 $tabrowid[7] = "id";
 $tabrowid[8] = "id";
-$tabrowid[9] = "code";
+$tabrowid[9] = "code_iso";
 $tabrowid[10]= "";
 $tabrowid[11]= "rowid";
 $tabrowid[12]= "rowid";
@@ -281,8 +277,8 @@ $tabcond[8] = $conf->societe->enabled;
 $tabcond[9] = true;
 $tabcond[10]= true;
 $tabcond[11]= true;
-$tabcond[12]= $conf->commande->enabled||$conf->propale->enabled||$conf->facture->enabled||$conf->fournisseur->enabled;
-$tabcond[13]= $conf->commande->enabled||$conf->propale->enabled||$conf->facture->enabled||$conf->fournisseur->enabled;
+$tabcond[12]= $conf->commande->enabled||$conf->propal->enabled||$conf->facture->enabled||$conf->fournisseur->enabled;
+$tabcond[13]= $conf->commande->enabled||$conf->propal->enabled||$conf->facture->enabled||$conf->fournisseur->enabled;
 $tabcond[14]= $conf->product->enabled&&$conf->ecotax->enabled;
 $tabcond[15]= true;
 $tabcond[16]= $conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_PROSPECTS);
@@ -290,8 +286,8 @@ $tabcond[17]= $conf->deplacement->enabled;
 $tabcond[18]= $conf->expedition->enabled;
 $tabcond[19]= $conf->societe->enabled;
 $tabcond[20]= $conf->fournisseur->enabled;
-$tabcond[21]= $conf->propale->enabled;
-$tabcond[22]= $conf->commande->enabled||$conf->propale->enabled;
+$tabcond[21]= $conf->propal->enabled;
+$tabcond[22]= $conf->commande->enabled||$conf->propal->enabled;
 
 
 complete_dictionnary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond);
@@ -645,24 +641,24 @@ if ($id)
             if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
             if ($fieldlist[$field]=='pays')            {
                 if (in_array('region_id',$fieldlist)) { print '<td>&nbsp;</td>'; continue; }		// For region page, we do not show the country input
-                $valuetoshow=$langs->trans("Country"); }
-                if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=MAIN_LABEL_MENTION_NPR; }
-                if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
-                if ($fieldlist[$field]=='fdm')             { $valuetoshow=$langs->trans("AtEndOfMonth"); }
-                if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
-                if ($fieldlist[$field]=='width')           { $valuetoshow=$langs->trans("Width"); }
-                if ($fieldlist[$field]=='height')          { $valuetoshow=$langs->trans("Height"); }
-                if ($fieldlist[$field]=='unit')            { $valuetoshow=$langs->trans("MeasuringUnit"); }
-                if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='pays_id') { $valuetoshow=''; }
-                if ($fieldlist[$field]=='accountancy_code'){ $valuetoshow=$langs->trans("AccountancyCode"); }
-                if ($valuetoshow != '')
-                {
-                    print '<td>';
-                    print $valuetoshow;
-                    print '</td>';
-                }
-
-                if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') $alabelisused=1;
+                $valuetoshow=$langs->trans("Country");
+            }
+            if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=MAIN_LABEL_MENTION_NPR; }
+            if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
+            if ($fieldlist[$field]=='fdm')             { $valuetoshow=$langs->trans("AtEndOfMonth"); }
+            if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
+            if ($fieldlist[$field]=='width')           { $valuetoshow=$langs->trans("Width"); }
+            if ($fieldlist[$field]=='height')          { $valuetoshow=$langs->trans("Height"); }
+            if ($fieldlist[$field]=='unit')            { $valuetoshow=$langs->trans("MeasuringUnit"); }
+            if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='pays_id') { $valuetoshow=''; }
+            if ($fieldlist[$field]=='accountancy_code'){ $valuetoshow=$langs->trans("AccountancyCode"); }
+            if ($valuetoshow != '')
+            {
+            	print '<td>';
+            	print $valuetoshow;
+                print '</td>';
+             }
+             if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') $alabelisused=1;
         }
         print '<td colspan="3">';
         print '<input type="hidden" name="id" value="'.$id.'">';
@@ -882,6 +878,9 @@ if ($id)
                             }
                             else if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='pays_id') {
                                 $showfield=0;
+                            }
+                            else if ($fieldlist[$field]=='unicode') {
+                            	$valuetoshow = getCurrencySymbol($obj->code);
                             }
                             if ($showfield) print '<td>'.$valuetoshow.'</td>';
                         }

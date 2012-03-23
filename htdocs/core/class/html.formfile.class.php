@@ -49,24 +49,25 @@ class FormFile
 
 
     /**
-     *    	Show form to upload a new file
+     *  Show form to upload a new file
 	 *
-     *    	@param      string	$url			Url
-     *    	@param      string	$title			Title zone (Title or '' or 'none')
-     *    	@param      int		$addcancel		1=Add 'Cancel' button
-     *		@param		int		$sectionid		If upload must be done inside a particular ECM section
-     * 		@param		int		$perm			Value of permission to allow upload
-     *      @param      int		$size           Length of input file area
-     *    	@param		Object	$object			Object to use (when attachment is done on an element)
-     * 		@return		int						<0 if KO, >0 if OK
+     *  @param  string	$url			Url
+     *  @param  string	$title			Title zone (Title or '' or 'none')
+     *  @param  int		$addcancel		1=Add 'Cancel' button
+     *	@param	int		$sectionid		If upload must be done inside a particular ECM section
+     * 	@param	int		$perm			Value of permission to allow upload
+     *  @param  int		$size           Length of input file area
+     *  @param	Object	$object			Object to use (when attachment is done on an element)
+     *  @param	string	$options		Options
+     * 	@return	int						<0 if KO, >0 if OK
      */
-    function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='')
+    function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='')
     {
         global $conf,$langs;
 
         if ($conf->global->MAIN_USE_JQUERY_FILEUPLOAD)
         {
-            return $this->_form_ajaxfileupload($object);
+            return $this->_formAjaxFileUpload($object);
         }
         else
         {
@@ -78,11 +79,15 @@ class FormFile
             if ($title != 'none') print_titre($title);
 
             print '<form name="userfile" action="'.$url.'" enctype="multipart/form-data" method="POST">';
-            print '<input type="hidden" name="section" value="'.$sectionid.'">';
+            print '<input type="hidden" id="userfile_section" name="section" value="'.$sectionid.'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
             print '<table width="100%" class="nobordernopadding">';
-            print '<tr><td width="50%" valign="top">';
+            print '<tr>';
+
+            if (! empty($options)) print '<td>'.$options.'</td>';
+
+            print '<td valign="top" nowrap="nowrap">';
 
             $max=$conf->global->MAIN_UPLOAD_DOC;		// En Kb
             $maxphp=@ini_get('upload_max_filesize');	// En inconnu
@@ -779,7 +784,7 @@ class FormFile
      *    @param	Object	$object		Object to use
      *    @return	void
      */
-    private function _form_ajaxfileupload($object)
+    private function _formAjaxFileUpload($object)
     {
         global $langs;
 

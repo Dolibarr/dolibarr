@@ -39,7 +39,6 @@ function dol_getDefaultFormat()
     return $selected;
 }
 
-
 /**
  *  Output content of a file $filename in version of current language (otherwise may use an alternate language)
  *
@@ -215,7 +214,6 @@ function dol_print_object_info($object)
     print $langs->trans("DateLastSend")." : " . dol_print_date($object->date_envoi,"dayhourtext") . '<br>';
 }
 
-
 /**
  *	Return true if email has a domain name that can't be resolved
  *
@@ -234,7 +232,6 @@ function isValidMailDomain($mail)
         return false;
     }
 }
-
 
 /**
  *	Url string validation
@@ -285,7 +282,6 @@ function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
     return $ValidUrl;
 }
 
-
 /**
  *	Clean an url string
  *
@@ -324,7 +320,6 @@ function clean_url($url,$http=1)
         return $CleanUrl;
     }
 }
-
 
 /**
  * 	Return lines of an html table from an array
@@ -372,7 +367,6 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
     if($tableMarkup) $text.= '</table>' ;
     return $text ;
 }
-
 
 /**
  * Return next value for a mask
@@ -662,7 +656,6 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     return $numFinal;
 }
 
-
 /**
  * Check value
  *
@@ -753,7 +746,6 @@ function check_value($mask,$value)
     return $result;
 }
 
-
 /**
  *	Convert a binary data to string that represent hexadecimal value
  *
@@ -772,7 +764,6 @@ function binhex($bin, $pad=false, $upper=false)
     return $x;
 }
 
-
 /**
  *	Convert an hexadecimal string into a binary string
  *
@@ -789,7 +780,6 @@ function hexbin($hexa)
     }
     return $bin;
 }
-
 
 /**
  *	Retourne le numero de la semaine par rapport a une date
@@ -872,7 +862,6 @@ function numero_semaine($time)
     return sprintf("%02d",$numeroSemaine);
 }
 
-
 /**
  *	Convertit une masse d'une unite vers une autre unite
  *
@@ -906,7 +895,6 @@ function weight_convert($weight,&$from_unit,$to_unit)
 
     return $weight;
 }
-
 
 /**
  *	Save personnal parameter
@@ -979,7 +967,6 @@ function dol_set_user_param($db, $conf, &$user, $tab)
     return 1;
 }
 
-
 /**
  *	Returns formated reduction
  *
@@ -1001,7 +988,6 @@ function dol_print_reduction($reduction,$langs)
 
     return $string;
 }
-
 
 /**
  * 	Return OS version.
@@ -1045,7 +1031,6 @@ function version_webserver()
 {
     return $_SERVER["SERVER_SOFTWARE"];
 }
-
 
 /**
  * 	Return list of activated modules usable for document generation
@@ -1152,7 +1137,6 @@ function is_ip($ip)
     return 1;
 }
 
-
 /**
  *  Build a login from lastname, firstname
  *
@@ -1168,8 +1152,6 @@ function dol_buildlogin($lastname,$firstname)
     $login=dol_string_nospecial($login,''); // For special names
     return $login;
 }
-
-
 
 /**
  *  Return array to use for SoapClient constructor

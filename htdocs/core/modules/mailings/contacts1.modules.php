@@ -34,7 +34,8 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 class mailing_contacts1 extends MailingTargets
 {
 	var $name='ContactCompanies';                     // Identifiant du module mailing
-	var $desc='Contacts des tiers (prospects, clients, fournisseurs...)';      			// Libell� utilis� si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
+	// This label is used if no translation is found for key MailingModuleDescXXX where XXX=name is found
+	var $desc='Contacts des tiers (prospects, clients, fournisseurs...)';
 	var $require_module=array("societe");               // Module mailing actif si modules require_module actifs
 	var $require_admin=0;                               // Module mailing actif pour user admin ou non
 	var $picto='contact';
@@ -47,7 +48,7 @@ class mailing_contacts1 extends MailingTargets
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function mailing_contacts1($db)
+	function __construct($db)
 	{
 		$this->db=$db;
 	}

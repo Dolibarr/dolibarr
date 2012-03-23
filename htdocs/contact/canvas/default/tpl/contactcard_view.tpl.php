@@ -29,7 +29,7 @@ dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']
 <?php if ($this->control->tpl['action_create_user']) echo $this->control->tpl['action_create_user']; ?>
 <?php if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delete']; ?>
 
-<table class="border" width="100%">
+<table class="border allwidth">
 
 <tr>
 	<td width="20%"><?php echo $langs->trans("Ref"); ?></td>

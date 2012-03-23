@@ -47,7 +47,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function doc_generic_order_odt($db)
+	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -91,6 +91,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
      *
      * @param   Object			$object             Main object to use as data source
      * @param   Translate		$outputlangs        Lang object to use for output
+     * @return	array								Array of substitution
      */
     function get_substitutionarray_object($object,$outputlangs)
     {
@@ -121,8 +122,9 @@ class doc_generic_order_odt extends ModelePDFCommandes
     /**
      *	Define array with couple substitution key => substitution value
      *
-     *	@param   array			$line
-     *	@param   Translate		$outputlangs        Lang object to use for output
+     *	@param  array			$line				Array of lines
+     *	@param  Translate		$outputlangs        Lang object to use for output
+     *  @return	array								Return a substitution array
      */
     function get_substitutionarray_lines($line,$outputlangs)
     {
@@ -147,8 +149,9 @@ class doc_generic_order_odt extends ModelePDFCommandes
 
 	/**
 	 *	Return description of a module
-     *	@param      langs        Lang object to use for output
-	 *	@return     string       Description
+	 *
+     *	@param	Translate	$langs      Lang object to use for output
+	 *	@return string       			Description
 	 */
 	function info($langs)
 	{
@@ -338,11 +341,14 @@ class doc_generic_order_odt extends ModelePDFCommandes
 
                 // Open and load template
 				require_once(ODTPHP_PATH.'odf.php');
-				$odfHandler = new odf($srctemplatepath, array(
+				$odfHandler = new odf(
+				    $srctemplatepath,
+				    array(
 						'PATH_TO_TMP'	  => $conf->commande->dir_temp,
 						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 						'DELIMITER_LEFT'  => '{',
-						'DELIMITER_RIGHT' => '}')
+						'DELIMITER_RIGHT' => '}'
+					)
 				);
 				// After construction $odfHandler->contentXml contains content and
 				// [!-- BEGIN row.lines --]*[!-- END row.lines --] has been replaced by

@@ -28,6 +28,7 @@
 include_once("./inc.php");
 if (file_exists($conffile)) include_once($conffile);
 require_once($dolibarr_main_document_root . "/core/lib/admin.lib.php");
+require_once($dolibarr_main_document_root . "/core/lib/security.lib.php"); // for dol_hash
 
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
@@ -49,7 +50,7 @@ $action=GETPOST('action');
 
 $success=0;
 
-// Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
+// Init "forced values" to nothing. "forced values" are used after using an install wizard (using a file install.forced.php).
 if (! isset($force_install_type))              $force_install_type='';
 if (! isset($force_install_dbserver))          $force_install_dbserver='';
 if (! isset($force_install_port))              $force_install_port='';

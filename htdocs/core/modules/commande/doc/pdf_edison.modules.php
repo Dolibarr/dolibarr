@@ -41,7 +41,7 @@ class pdf_edison extends ModelePDFCommandes
      *
 	 *	@param		DoliDb	$db		Database access handler
 	 */
-	function pdf_edison($db=0)
+	function __construct($db=0)
 	{
         global $conf,$langs,$mysoc;
 
@@ -547,7 +547,7 @@ class pdf_edison extends ModelePDFCommandes
 		{
 			if (is_readable($logo))
 			{
-				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 24);
+				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 22);	// width=0 (auto), max height=22
 			}
 			else
 			{

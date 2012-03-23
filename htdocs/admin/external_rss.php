@@ -205,13 +205,13 @@ print '</tr>';
 print '<tr class="impair">';
 print '<td width="100">'.$langs->trans("Title").'</td>';
 print '<td><input type="text" name="external_rss_title_'.($lastexternalrss+1).'" value="'.@constant("EXTERNAL_RSS_TITLE_" . ($lastexternalrss+1)).'" size="64"></td>';
-print '<td>April,<br>LinuxFR,<br>Lolix</td>';
+print '<td>An interesting RSS feed</td>';
 print '</tr>';
 
 print '<tr class="pair">';
 print '<td>URL du RSS</td>';
 print '<td><input type="text" name="external_rss_urlrss_'.($lastexternalrss+1).'" value="'.@constant("EXTERNAL_RSS_URLRSS_" . ($lastexternalrss+1)).'" size="64"></td>';
-print '<td>http://news.google.com/news?ned=us&topic=h&output=rss<br>http://linuxfr.org/backend/news/rss20.rss</td>';
+print '<td>http://news.google.com/news?ned=us&topic=h&output=rss<br>http://www.dolibarr.org/rss</td>';
 print '</tr>';
 print '</table>';
 

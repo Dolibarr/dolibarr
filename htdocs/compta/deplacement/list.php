@@ -75,7 +75,7 @@ if (trim($search_ref) != '')
     $sql.= ' AND d.rowid LIKE \'%'.$db->escape(trim($search_ref)) . '%\'';
 }
 $sql.= $db->order($sortfield,$sortorder);
-$sql.= $db->plimit($limit + 1 ,$offset);
+$sql.= $db->plimit($limit + 1, $offset);
 
 //print $sql;
 $resql=$db->query($sql);

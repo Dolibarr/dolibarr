@@ -17,8 +17,6 @@ PAYPAL_API_SANDBOX=Läge test / sandlåda
 PAYPAL_API_USER=API användarnamn
 PAYPAL_API_PASSWORD=API-lösenord
 PAYPAL_API_SIGNATURE=API signatur
-PredefinedMailContentSendOrderWithPaypalLink=Du hittar här ordern __ORDERREF__ \ n \ nDu kan klicka på den säkra länken nedan för att göra din betalning via PayPal \ n \ n%s \ n \ nSincerely \ n \ n
-PredefinedMailContentSendInvoiceWithPaypalLink=Här hittar du fakturan __FACREF__ \ n \ nDu kan klicka på den säkra länken nedan för att göra din betalning via PayPal \ n \ n%s \ n \ nSincerely \ n \ n
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 11:01:48).
 
 

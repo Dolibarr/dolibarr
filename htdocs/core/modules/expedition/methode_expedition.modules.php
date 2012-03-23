@@ -27,13 +27,16 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
 
 
 /**
- *	\class      ModeleShippingMethod
- *	\brief      Parent class for shipping method classes
+ *	Parent class for shipping method classes
  */
 class ModeleShippingMethod
 {
-
-	function ModeleShippingMethod($db=0)
+    /**
+     * Constructo
+     *
+     * @param	DoliDB		$db		Database handler
+     */
+	function ModeleShippingMethod($db)
 	{
 		$this->db = $db;
 		$this->name = "NOT DEFINED";
@@ -42,10 +45,13 @@ class ModeleShippingMethod
 
 
 	/**
-	 *      Return list of active generation modules
-	 * 		@param		$db		Database handler
+	 *  Return list of active generation modules
+	 *
+     *  @param	DoliDB	$db     			Database handler
+     *  @param  string	$maxfilenamelength  Max length of value to show
+     *  @return	array						List of templates
 	 */
-	function liste_modeles($db)
+	function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
 
@@ -53,7 +59,7 @@ class ModeleShippingMethod
 		$liste=array();
 
 		include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
-		$liste=getListOfModels($db,$type,'');
+		$liste=getListOfModels($db,$type,$maxfilenamelength);
 
 		return $liste;
 	}

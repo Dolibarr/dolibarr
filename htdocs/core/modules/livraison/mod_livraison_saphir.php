@@ -36,8 +36,10 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 	var $nom = 'Saphir';
 
 
-    /**     \brief      Renvoi la description du modele de numerotation
-     *      \return     string      Texte descripif
+    /**
+     *  Renvoi la description du modele de numerotation
+     *
+     *  @return     string      Texte descripif
      */
 	function info()
 	{
@@ -74,8 +76,10 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 		return $texte;
     }
 
-    /**     \brief      Renvoi un exemple de num�rotation
-     *      \return     string      Example
+    /**
+     *  Return an example of number
+     *
+     *  @return     string      Example
      */
     function getExample()
     {
@@ -94,11 +98,13 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
     }
 
 
-	/**		\brief      Return next value
-	*      	\param      objsoc      Object third party
-	*      	\param      livraison	Object delivery
-	*      	\return     string      Value if OK, 0 if KO
-	*/
+	/**
+	 *  Return next value
+	 *
+	 *  @param	Societe		$objsoc     	Object third party
+	 *  @param  Object		$livraison		Object delivery
+	 *  @return string      				Value if OK, 0 if KO
+	 */
     function getNextValue($objsoc=0,$livraison='')
     {
 		global $db,$conf;
@@ -120,25 +126,29 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
     }
 
 
-	/**		\brief      Return next free value
-    *      	\param      objsoc      Object third party
-	* 		\param		objforref	Object for number to search
-    *   	\return     string      Next free value
-    */
+	/**
+	 *  Return next free value
+	 *
+     *  @param	Societe		$objsoc     Object third party
+	 * 	@param	string		$objforref	Object for number to search
+     *  @return string      			Next free value
+     */
     function getNumRef($objsoc,$objforref)
     {
         return $this->getNextValue($objsoc,$objforref);
     }
 
 
-	/**     \brief      Renvoie la r�f�rence de commande suivante non utilis�e
-     *      \param      objsoc      Objet soci�t�
-     *      \param      livraison	Objet livraison
-     *      \return     string      Texte descripif
+	/**
+	 *  Return next free ref
+	 *
+     *  @param	Societe		$objsoc      	Object thirdparty
+     *  @param  Object		$object			Objet livraison
+     *  @return string      				Texte descripif
      */
-    function livraison_get_num($objsoc=0,$livraison='')
+    function livraison_get_num($objsoc=0,$object='')
     {
-        return $this->getNextValue($objsoc,$livraison);
+        return $this->getNextValue($objsoc,$object);
     }
 
 }

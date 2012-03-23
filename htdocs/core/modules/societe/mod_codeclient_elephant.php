@@ -50,7 +50,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	/**
 	 *	Constructor
 	 */
-	function mod_codeclient_elephant()
+	function __construct()
 	{
 		$this->code_null = 0;
 		$this->code_modifiable = 1;
@@ -110,11 +110,13 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	}
 
 
-	/**		Return an example of result returned by getNextValue
+	/**
+	 * Return an example of result returned by getNextValue
 	 *
-	 *      @param		$langs		Object langs
-	 *      @param		$objsoc		Object thirdparty
-	 *      @param		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @param	Translate	$langs		Object langs
+	 * @param	societe		$objsoc		Object thirdparty
+	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @return	string					Return string example
 	 */
 	function getExample($langs,$objsoc=0,$type=-1)
 	{
@@ -150,11 +152,12 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		return $examplecust.'<br>'.$examplesup;
 	}
 
-	/**		Return next value
+	/**
+	 * Return next value
 	 *
-	 *     	@param      objsoc      Object third party
-	 *	    @param      $type       Client ou fournisseur (0:customer, 1:supplier)
-	 *     	@return     string      Value if OK, '' if module not configured, <0 if KO
+	 * @param	Societe		$objsoc     Object third party
+	 * @param  	int		    $type       Client ou fournisseur (0:customer, 1:supplier)
+	 * @return 	string      			Value if OK, '' if module not configured, <0 if KO
 	 */
 	function getNextValue($objsoc=0,$type=-1)
 	{
@@ -196,7 +199,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	/**
 	 *   Check if mask/numbering use prefix
 	 *
-	 *   @param		int		0=no, 1=yes
+	 *   @return	int			0 or 1
 	 */
 	function verif_prefixIsUsed()
 	{
@@ -213,17 +216,17 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 
 	/**
-	 * 		Check validity of code according to its rules
+	 * 	Check validity of code according to its rules
 	 *
-	 *		@param		$db		Database handler
-	 *		@param		$code	Code to check/correct
-	 *		@param		$soc	Object third party
-	 *   	@param    	$type   0 = customer/prospect , 1 = supplier
-	 *    	@return     int		0 if OK
-	 * 							-1 ErrorBadCustomerCodeSyntax
-	 * 							-2 ErrorCustomerCodeRequired
-	 * 							-3 ErrorCustomerCodeAlreadyUsed
-	 * 							-4 ErrorPrefixRequired
+	 *	@param	DoliDB		$db		Database handler
+	 *	@param	string		&$code	Code to check/correct
+	 *	@param	Societe		$soc	Object third party
+	 *  @param  int		  	$type   0 = customer/prospect , 1 = supplier
+	 *  @return int					0 if OK
+	 * 								-1 ErrorBadCustomerCodeSyntax
+	 * 								-2 ErrorCustomerCodeRequired
+	 * 								-3 ErrorCustomerCodeAlreadyUsed
+	 * 								-4 ErrorPrefixRequired
 	 */
 	function verif($db, &$code, $soc, $type)
 	{
@@ -265,10 +268,10 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	/**
 	 *		Renvoi si un code est pris ou non (par autre tiers)
 	 *
-	 *		@param		$db			Handler acces base
-	 *		@param		$code		Code a verifier
-	 *		@param		$soc		Objet societe
-	 *		@return		int			0 si dispo, <0 si erreur
+	 *		@param	DoliDB		$db			Handler acces base
+	 *		@param	string		$code		Code a verifier
+	 *		@param	Societe		$soc		Objet societe
+	 *		@return	int						0 if available, <0 if KO
 	 */
 	function verif_dispo($db, $code, $soc)
 	{

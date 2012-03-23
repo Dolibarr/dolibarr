@@ -39,7 +39,9 @@ $substitutionarrayfortest=array(
 '__ID__' => 'TESTIdRecord',
 '__EMAIL__' => 'TESTEMail',
 '__LASTNAME__' => 'TESTLastname',
-'__FIRSTNAME__' => 'TESTFirstname'
+'__FIRSTNAME__' => 'TESTFirstname',
+'__SIGNATURE__' => 'TESTSignature',
+'__PERSONALIZED__' => 'TESTPersonalized'
 );
 complete_substitutions_array($substitutionarrayfortest, $langs);
 
@@ -695,7 +697,7 @@ else
 		$formmail->param["returnurl"]=$_SERVER["PHP_SELF"];
 
 		// Init list of files
-		if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+        if (GETPOST("mode")=='init')
 		{
 			$formmail->clear_attached_files();
 		}
@@ -741,7 +743,7 @@ else
 		$formmail->param["returnurl"]=$_SERVER["PHP_SELF"];
 
 		// Init list of files
-		if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+        if (GETPOST("mode")=='init')
 		{
 			$formmail->clear_attached_files();
 		}

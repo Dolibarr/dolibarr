@@ -44,7 +44,7 @@ class mailing_example extends MailingTargets
 	 *
 	 *  @param		DoliDB		$DB      Database handler
 	 */
-    function mailing_example($DB)
+    function __construct($DB)
     {
         $this->db=$DB;
     }

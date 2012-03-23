@@ -50,9 +50,9 @@ class pdf_oursin extends ModelePDFFactures
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	function pdf_oursin($db)
+	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -209,7 +209,7 @@ class pdf_oursin extends ModelePDFFactures
 
 				$pdf->SetFillColor(220,220,220);
 				$pdf->SetFont('','', $default_font_size - 1);
-				$pdf->SetXY($this->marges['g'], $tab_top + $this->marges['g'] );
+				$pdf->SetXY($this->marges['g'], $tab_top + $this->marges['g']);
 
 				$iniY = $pdf->GetY();
 				$curY = $pdf->GetY();
@@ -332,12 +332,13 @@ class pdf_oursin extends ModelePDFFactures
 
 
 	/**
-	 *  \brief      Affiche tableau des versement
-	 *  \param      pdf     		Objet PDF
-	 *  \param      fac     		Objet facture
-	 *	\param		posy			Position y in PDF
-	 *	\param		outputlangs		Object langs for output
-	 *	\return 	int				<0 if KO, >0 if OK
+	 *  Show payments table
+	 *
+     *  @param	PDF			&$pdf           Object PDF
+     *  @param  Object		$object         Object invoice
+     *  @param  int			$posy           Position y in PDF
+     *  @param  Translate	$outputlangs    Object langs for output
+     *  @return int             			<0 if KO, >0 if OK
 	 */
 	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -355,13 +356,13 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->Rect($tab3_posx, $tab3_top-1, $tab3_width, $tab3_height);
 
 		$pdf->SetFont('','', $default_font_size - 4);
-		$pdf->SetXY($tab3_posx, $tab3_top-1 );
+		$pdf->SetXY($tab3_posx, $tab3_top-1);
 		$pdf->MultiCell(20, 4, $outputlangs->transnoentities("Payment"), 0, 'L', 0);
-		$pdf->SetXY($tab3_posx+21, $tab3_top-1 );
+		$pdf->SetXY($tab3_posx+21, $tab3_top-1);
 		$pdf->MultiCell(20, 4, $outputlangs->transnoentities("Amount"), 0, 'L', 0);
-		$pdf->SetXY($tab3_posx+40, $tab3_top-1 );
+		$pdf->SetXY($tab3_posx+40, $tab3_top-1);
 		$pdf->MultiCell(20, 4, $outputlangs->transnoentities("Type"), 0, 'L', 0);
-		$pdf->SetXY($tab3_posx+58, $tab3_top-1 );
+		$pdf->SetXY($tab3_posx+58, $tab3_top-1);
 		$pdf->MultiCell(20, 4, $outputlangs->transnoentities("Num"), 0, 'L', 0);
 
 		$y=0;
@@ -616,8 +617,7 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->SetFont('','', $default_font_size - 1);
 
 		// Tableau total
-		$col1x=$this->marges['g']+110; $col2x=$this->marges['g']+164;
-		$lltot = 200; $largcol2 = $lltot - $col2x;
+		$col1x=$this->marges['g']+110; $col2x=$this->marges['g']+164; $largcol2 = ($this->page_largeur - $this->marge_droite - $col2x);
 
 		$pdf->SetXY($this->marges['g'], $tab2_top + 0);
 
@@ -745,6 +745,7 @@ class pdf_oursin extends ModelePDFFactures
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
+	 *   @param		Object		$object			Object
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @return	void
 	 */
@@ -835,7 +836,7 @@ class pdf_oursin extends ModelePDFFactures
 			{
 				$taille=getimagesize($logo);
 				$length=$taille[0]/2.835;
-				$pdf->Image($logo, $this->marges['g'], $this->marges['h'], 0, 24);
+				$pdf->Image($logo, $this->marges['g'], $this->marges['h'], 0, 22);	// width=0 (auto), max height=22
 			}
 			else
 			{

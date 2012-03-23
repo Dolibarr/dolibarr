@@ -64,6 +64,7 @@ create table llx_commande
   fk_availability		integer NULL,
   fk_demand_reason		integer,						-- should be named fk_input_reason
   fk_adresse_livraison	integer,						-- delivery address (deprecated)
-  import_key			varchar(14)
+  import_key			varchar(14),
+  extraparams			varchar(255)					-- for stock other parameters with json format
   
 )ENGINE=innodb;

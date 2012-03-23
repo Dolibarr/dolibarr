@@ -35,6 +35,7 @@ class mod_contract_magre extends ModelNumRefContracts
 
 	/**
 	 *	Return default description of numbering model
+	 *
 	 *	@return     string      text description
 	 */
 	function info()
@@ -68,8 +69,9 @@ class mod_contract_magre extends ModelNumRefContracts
 		return $texte;
     }
 
-	/**     
+	/**
 	 *	Return numbering example
+	 *
 	 *	@return     string      Example
 	 */
     function getExample()
@@ -88,11 +90,12 @@ class mod_contract_magre extends ModelNumRefContracts
 		return $numExample;
     }
 
-	/**		
+	/**
 	 *	Return next value
-	 *	@param      objsoc      third party object
-	 *	@param		contract	contract object
-	 *	@return     string      Value if OK, 0 if KO
+	 *
+	 *	@param	Societe		$objsoc     third party object
+	 *	@param	Object		$contract	contract object
+	 *	@return string      			Value if OK, 0 if KO
 	 */
     function getNextValue($objsoc,$contract)
     {
@@ -113,11 +116,12 @@ class mod_contract_magre extends ModelNumRefContracts
 		return  $numFinal;
 	}
 
-	/**		
-	 *Return next free value
-	 *	@param      objsoc      Object third party
-	 *	@param		objforref	Object for number to search
-	 *	@return     string      Next free value
+	/**
+	 *	Return next value
+	 *
+	 *	@param	Societe		$objsoc     third party object
+	 *	@param	Object		$objforref	contract object
+	 *	@return string      			Value if OK, 0 if KO
 	 */
     function contract_get_num($objsoc,$objforref)
     {

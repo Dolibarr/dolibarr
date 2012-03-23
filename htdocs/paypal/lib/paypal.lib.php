@@ -55,18 +55,18 @@ function llxHeaderPaypal($title, $head = "")
 		print '.CTableRow2      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #FFFFFF; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';
 		print '</style>';
 	}
-	
+
 	if ($conf->use_javascript_ajax)
 	{
 		print '<!-- Includes for JQuery (Ajax library) -->'."\n";
 		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify-alt.min.css" />'."\n";          // JNotify
-		
+
 		// Output standard javascript links
 		$ext='.js';
 		if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x01)) {
 			$ext='.jgz';
 		}	// mini='_mini', ext='.gz'
-	
+
 		// JQuery. Must be before other includes
 		print '<!-- Includes JS for JQuery -->'."\n";
 		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-latest.min'.$ext.'"></script>'."\n";
@@ -676,6 +676,7 @@ function hash_call($methodName,$nvpStr)
      exit;*/
     curl_setopt($ch, CURLOPT_URL, $API_Endpoint);
     curl_setopt($ch, CURLOPT_VERBOSE, 1);
+    curl_setopt($ch, CURLOPT_SSLVERSION, 3); // Force SSLv3
 
     //turning off the server and peer verification(TrustManager Concept).
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
@@ -760,6 +761,30 @@ function deformatNVP($nvpstr)
         $nvpstr=substr($nvpstr,$valuepos+1,strlen($nvpstr));
     }
     return $nvpArray;
+}
+
+/**
+ * 	Get API errors
+ *
+ * 	@return	array		Array of errors
+ */
+function getApiError()
+{
+	$errors=array();
+
+	$resArray=$_SESSION['reshash'];
+
+	if(isset($_SESSION['curl_error_no']))
+	{
+		$errors[] = $_SESSION['curl_error_no'].'-'.$_SESSION['curl_error_msg'];
+	}
+
+	foreach($resArray as $key => $value)
+	{
+		$errors[] = $key.'-'.$value;
+	}
+
+	return $errors;
 }
 
 ?>

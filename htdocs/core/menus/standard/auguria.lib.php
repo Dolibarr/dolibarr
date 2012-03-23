@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2010		Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2012	Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +108,11 @@ function print_auguria_menu($db,$atarget,$type_user)
 }
 
 
-
+/**
+ * Output start menu entry
+ *
+ * @return	void
+ */
 function print_start_menu_array_auguria()
 {
 	global $conf;
@@ -116,6 +120,12 @@ function print_start_menu_array_auguria()
 	else print '<ul class="tmenu">';
 }
 
+/**
+ * Output menu entry
+ *
+ * @param	string	$idsel		Text
+ * @return	void
+ */
 function print_start_menu_entry_auguria($idsel)
 {
 	global $conf;
@@ -123,6 +133,12 @@ function print_start_menu_entry_auguria($idsel)
 	else print '<li class="tmenu" id="mainmenutd_'.$idsel.'">';
 }
 
+/**
+ * Output menu entry
+ *
+ * @param	string	$text		Text
+ * @return	void
+ */
 function print_text_menu_entry_auguria($text)
 {
 	global $conf;
@@ -131,6 +147,11 @@ function print_text_menu_entry_auguria($text)
 	print '</span>';
 }
 
+/**
+ * Output end menu entry
+ *
+ * @return	void
+ */
 function print_end_menu_entry_auguria()
 {
 	global $conf;
@@ -139,6 +160,11 @@ function print_end_menu_entry_auguria()
 	print "\n";
 }
 
+/**
+ * Output menu array
+ *
+ * @return	void
+ */
 function print_end_menu_array_auguria()
 {
 	global $conf;

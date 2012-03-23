@@ -47,7 +47,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function doc_generic_proposal_odt($db)
+	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -91,6 +91,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
      *
      * @param   Object			$object             Main object to use as data source
      * @param   Translate		$outputlangs        Lang object to use for output
+     * @return	array								Array of substitution
      */
     function get_substitutionarray_object($object,$outputlangs)
     {
@@ -120,8 +121,9 @@ class doc_generic_proposal_odt extends ModelePDFPropales
     /**
      *	Define array with couple substitution key => substitution value
      *
-     *	@param   array			$line
-     *	@param   Translate		$outputlangs        Lang object to use for output
+     *	@param  array			$line				Array of lines
+     *	@param  Translate		$outputlangs        Lang object to use for output
+     *	@return	array								Substitution array
      */
     function get_substitutionarray_lines($line,$outputlangs)
     {
@@ -146,8 +148,9 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 
 	/**
 	 *	Return description of a module
-     *	@param      langs        Lang object to use for output
-	 *	@return     string       Description
+	 *
+     *	@param	Translate	$langs      Lang object to use for output
+	 *	@return string       			Description
 	 */
 	function info($langs)
 	{
@@ -249,7 +252,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
 
-		if ($conf->propale->dir_output)
+		if ($conf->propal->dir_output)
 		{
 			// If $object is id instead of object
 			if (! is_object($object))
@@ -264,7 +267,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				}
 			}
 
-			$dir = $conf->propale->dir_output;
+			$dir = $conf->propal->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
 			$file = $dir . "/" . $objectref . ".odt";
@@ -293,7 +296,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				//print "file=".$file;
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
-				dol_mkdir($conf->propale->dir_temp);
+				dol_mkdir($conf->propal->dir_temp);
 
 
                 // If BILLING contact defined on invoice, we use it
@@ -337,11 +340,14 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 
                 // Open and load template
 				require_once(ODTPHP_PATH.'odf.php');
-				$odfHandler = new odf($srctemplatepath, array(
-						'PATH_TO_TMP'	  => $conf->propale->dir_temp,
+				$odfHandler = new odf(
+				    $srctemplatepath,
+				    array(
+						'PATH_TO_TMP'	  => $conf->propal->dir_temp,
 						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 						'DELIMITER_LEFT'  => '{',
-						'DELIMITER_RIGHT' => '}')
+						'DELIMITER_RIGHT' => '}'
+					)
 				);
 				// After construction $odfHandler->contentXml contains content and
 				// [!-- BEGIN row.lines --]*[!-- END row.lines --] has been replaced by

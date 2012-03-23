@@ -40,7 +40,7 @@ class InterfaceActionsAuto
 
     /**
      *   Constructor
-     * 
+     *
      *   @param		DoliDB		$db      Database handler
      */
     function InterfaceActionsAuto($db)
@@ -56,6 +56,7 @@ class InterfaceActionsAuto
 
     /**
      *   Return name of trigger file
+     *
      *   @return     string      Name of trigger file
      */
     function getName()
@@ -65,6 +66,7 @@ class InterfaceActionsAuto
 
     /**
      *   Return description of trigger file
+     *
      *   @return     string      Description of trigger file
      */
     function getDesc()
@@ -74,6 +76,7 @@ class InterfaceActionsAuto
 
     /**
      *   Return version of trigger file
+     *
      *   @return     string      Version of trigger file
      */
     function getVersion()
@@ -101,12 +104,12 @@ class InterfaceActionsAuto
      *      $object->fk_element
      *      $object->elementtype
      *
-     *      @param      action      Event code (COMPANY_CREATE, PROPAL_VALIDATE, ...)
-     *      @param      object      Object action is done on
-     *      @param      user        Object user
-     *      @param      langs       Object langs
-     *      @param      conf        Object conf
-     *      @return     int         <0 if KO, 0 if no action are done, >0 if OK
+     *      @param	string		$action		Event action code
+     *      @param  Object		$object     Object
+     *      @param  User		$user       Object user
+     *      @param  Translate	$langs      Object langs
+     *      @param  conf		$conf       Object conf
+     *      @return int         			<0 if KO, 0 if no triggered ran, >0 if OK
      */
     function run_trigger($action,$object,$user,$langs,$conf)
     {

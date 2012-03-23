@@ -29,7 +29,6 @@ ServiceStatusClosed=Suletud
 ServicesLegend=Teenused legend
 Contracts=Lepingud
 Contract=Leping
-ContractContacts=Leping kontaktid
 NoContracts=Lepinguid
 MenuServices=Teenused
 MenuInactiveServices=Teenused ole aktiivne

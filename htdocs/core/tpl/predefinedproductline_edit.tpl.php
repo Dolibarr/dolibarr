@@ -33,8 +33,8 @@
 <input type="hidden" name="lineid" value="<?php echo $line->id; ?>" />
 
 <tr <?php echo $bc[$var]; ?>>
-	<td>
-		<a name="<?php echo $line->id; ?>"></a>
+	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
+		<div id="<?php echo $line->id; ?>"></div>
 		<input type="hidden"	name="productid" value="<?php echo $line->fk_product; ?>" />
 		<a href="<?php echo DOL_URL_ROOT.'/product/fiche.php?id='.$line->fk_product; ?>">
 		<?php

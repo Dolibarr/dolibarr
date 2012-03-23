@@ -146,32 +146,6 @@ if (! function_exists('json_decode'))
 }
 
 /**
- * 	Function that encodes data in json format
- *
- * 	@param	mixed	$elements	PHP object to json encode
- * 	@return	string				Json encoded string
- */
-function dol_json_encode($elements)
-{
-	return json_encode($elements);
-}
-
-/**
- * 	Function that decodes data from json format
- *
- * 	@param	string	$json		Json encoded to PHP Object or Array
- * 	@param	bool	$assoc		False return an object, true return an array
- * 	@return mixed				Object or Array
- */
-function dol_json_decode($json, $assoc=false)
-{
-	$out='';
-	$out = @unserialize($json); // For compatibility, test if serialized
-	if (empty($out)) $out = json_decode($json, $assoc);
-	return $out;
-}
-
-/**
  * Function to return value of a static property when class
  * name is dynamically defined (not hard coded).
  * This is because $myclass::$myvar works from PHP 5.3.0+ only
@@ -456,14 +430,15 @@ function dol_size($size,$type='')
  *
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with
+ *  @param	string	$unaccent		1=Remove also accent (default), 0 do not remove them
  *	@return string          		String cleaned (a-zA-Z_)
  *
  * 	@see        	dol_string_nospecial, dol_string_unaccent
  */
-function dol_sanitizeFileName($str,$newstr='_')
+function dol_sanitizeFileName($str,$newstr='_',$unaccent=1)
 {
 	$filesystem_forbidden_chars = array('<','>',':','/','\\','?','*','|','"');
-    return dol_string_nospecial(dol_string_unaccent($str), $newstr, $filesystem_forbidden_chars);
+    return dol_string_nospecial($unaccent?dol_string_unaccent($str):$str, $newstr, $filesystem_forbidden_chars);
 }
 
 /**
@@ -1127,8 +1102,8 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 function dol_now($mode='gmt')
 {
     // Note that gmmktime and mktime return same value (GMT) whithout parameters
-    if ($mode == 'gmt') $ret=gmmktime();	// Time for now at greenwich.
-    else if ($mode == 'tzserver')			// Time for now with PHP server timezone added
+    if ($mode == 'gmt') $ret=time();	// Time for now at greenwich.
+    else if ($mode == 'tzserver')		// Time for now with PHP server timezone added
     {
         require_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
         $tzsecond=getServerTimeZoneInt();    // Contains tz+dayling saving time
@@ -1457,8 +1432,8 @@ function isValidEmail($address)
 /**
  *  Return true if phone number syntax is ok
  *
- *  @param      string		$address    phone (Ex: "0601010101")
- *  @return     boolean     			true if phone syntax is OK, false if KO or empty string
+ *  @param	string		$phone		phone (Ex: "0601010101")
+ *  @return boolean     			true if phone syntax is OK, false if KO or empty string
  */
 function isValidPhone($phone)
 {
@@ -2429,7 +2404,7 @@ function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpat
  *	@param	string	$titre				Title to show
  *	@param	string	$mesg				Added message to show on right
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
- *	@param	int		$pictoisfullpath		1=Icon name is a full absolute url of image
+ *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
  * 	@param	int		$id					To force an id on html objects
  * 	@return	void
  */
@@ -3178,7 +3153,7 @@ function picto_required()
 function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
 {
     $pattern = "/<[^>]+>/";
-    $temp = dol_entity_decode($StringHtml,$pagecodeto);
+    $temp = dol_html_entity_decode($StringHtml,ENT_COMPAT,$pagecodeto);
     $temp = preg_replace($pattern,"",$temp);
 
     // Supprime aussi les retours
@@ -3284,19 +3259,6 @@ function dol_htmlcleanlastbr($stringtodecode)
 }
 
 /**
- *	This function is called to decode a string with HTML entities (it decodes entities tags)
- *
- * 	@param	string	$stringhtml     stringhtml
- *  @param  string	$pagecodeto     Encoding of input string
- * 	@return string	  	    		decodestring
- */
-function dol_entity_decode($stringhtml,$pagecodeto='UTF-8')
-{
-    $ret=dol_html_entity_decode($stringhtml,ENT_COMPAT,$pagecodeto);
-    return $ret;
-}
-
-/**
  * Replace html_entity_decode functions to manage errors
  *
  * @param   string	$a		Operand a
@@ -3304,7 +3266,7 @@ function dol_entity_decode($stringhtml,$pagecodeto='UTF-8')
  * @param   string	$c		Operand c
  * @return  string			String decoded
  */
-function dol_html_entity_decode($a,$b,$c)
+function dol_html_entity_decode($a,$b,$c='UTF-8')
 {
     // We use @ to avoid warning on PHP4 that does not support entity decoding to UTF8;
     $ret=@html_entity_decode($a,$b,$c);
@@ -3319,7 +3281,7 @@ function dol_html_entity_decode($a,$b,$c)
  * @param   string	$c		Operand c
  * @return  string      	String encoded
  */
-function dol_htmlentities($a,$b,$c)
+function dol_htmlentities($a,$b,$c='UTF-8')
 {
     // We use @ to avoid warning on PHP4 that does not support entity decoding to UTF8;
     $ret=@htmlentities($a,$b,$c);
@@ -4087,7 +4049,7 @@ function printCommonFooter($zone='private')
         {
             print ' - Zend encoded file: '.(zend_loader_file_encoded()?'yes':'no');
         }
-        print '")'."\n";
+        print '");'."\n";
         print '</script>'."\n";
 
         // Add Xdebug coverage of code
@@ -4112,6 +4074,48 @@ function printCommonFooter($zone='private')
 
 }
 
+/**
+ * Convert unicode
+ *
+ * @param	string	$unicode	Unicode
+ * @param	string	$encoding	Encoding type
+ * @return	string				Unicode converted
+ */
+function unichr($unicode , $encoding = 'UTF-8')
+{
+	return mb_convert_encoding("&#{$unicode};", $encoding, 'HTML-ENTITIES');
+}
+
+/**
+ *	Convert a currency code into its symbol
+ *
+ *  @param		string	$currency_code		Currency code
+ *  @return		string						Currency symbol encoded into UTF8
+ */
+function getCurrencySymbol($currency_code)
+{
+	global $db, $form;
+
+	$currency_sign = '';
+
+	if (! is_object($form)) $form = new Form($db);
+
+	$form->load_cache_currencies();
+
+	if (is_array($form->cache_currencies[$currency_code]['unicode']) && ! empty($form->cache_currencies[$currency_code]['unicode']))
+	{
+		foreach($form->cache_currencies[$currency_code]['unicode'] as $unicode)
+		{
+			$currency_sign.= unichr($unicode);
+		}
+	}
+	else
+	{
+		$currency_sign = $currency_code;
+	}
+
+	return $currency_sign;
+}
 
 if (! function_exists('getmypid'))
 {

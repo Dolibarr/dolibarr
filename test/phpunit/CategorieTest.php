@@ -127,17 +127,27 @@ class CategorieTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+
+		// We create a category
 		$localobject=new Categorie($this->savdb);
     	$localobject->initAsSpecimen();
-    	$result=$localobject->create($user);
+		$resultFirstCreate=$localobject->create($user);
+    	print __METHOD__." resultFirstCreate=".$resultFirstCreate."\n";
+    	$this->assertGreaterThan(0, $resultFirstCreate);
 
-    	$this->assertLessThan($result, 0);
-    	print __METHOD__." result=".$result."\n";
+    	// We try to create another one with same ref
+		$localobject2=new Categorie($this->savdb);
+    	$localobject2->initAsSpecimen();
 
-    	// TODO Add test on error when creating duplicate
+    	$resultCheck=$localobject2->already_exists();
+    	print __METHOD__." resultCheck=".$resultCheck."\n";
+    	$this->assertGreaterThan(0, $resultCheck);
 
+    	$resultSecondCreate=$localobject2->create($user);
+    	print __METHOD__." result=".$resultSecondCreate."\n";
+    	$this->assertEquals(-4, $resultSecondCreate);
 
-    	return $result;
+    	return $resultFirstCreate;
     }
 
     /**
@@ -164,7 +174,7 @@ class CategorieTest extends PHPUnit_Framework_TestCase
     	$catid=$localobjecttmp->create($user);
 
         print __METHOD__." catid=".$catid."\n";
-        $this->assertLessThanOrEqual($catid, 0);
+        $this->assertGreaterThan(0, $catid);
 
         // Category
 		$localobject2=new Product($this->savdb);
@@ -175,7 +185,7 @@ class CategorieTest extends PHPUnit_Framework_TestCase
     	$result=$localobject2->create($user);
 
         print __METHOD__." result=".$result."\n";
-    	$this->assertLessThanOrEqual($result, 0);
+    	$this->assertGreaterThan(0, $result);
 
     	return $id;
     }
@@ -200,8 +210,8 @@ class CategorieTest extends PHPUnit_Framework_TestCase
 		$localobject=new Categorie($this->savdb);
     	$result=$localobject->fetch($id);
 
-    	$this->assertLessThan($result, 0);
     	print __METHOD__." id=".$id." result=".$result."\n";
+    	$this->assertGreaterThan(0, $result);
     	return $localobject;
     }
 
@@ -226,7 +236,7 @@ class CategorieTest extends PHPUnit_Framework_TestCase
     	$result=$localobject->update($user);
 
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+    	$this->assertGreaterThan(0, $result);
     	return $localobject;
     }
 
@@ -287,7 +297,7 @@ class CategorieTest extends PHPUnit_Framework_TestCase
 		$result=$localobject->delete($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+    	$this->assertGreaterThan(0, $result);
     	return $result;
     }
 

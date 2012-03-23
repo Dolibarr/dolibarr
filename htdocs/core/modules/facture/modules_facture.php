@@ -41,9 +41,12 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 
 	/**
 	 *  Return list of active generation modules
-	 * 	@param		$db		Database handler
+	 *
+     *  @param	DoliDB	$db     			Database handler
+     *  @param  string	$maxfilenamelength  Max length of value to show
+     *  @return	array						List of templates
 	 */
-	function liste_modeles($db)
+	function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
 
@@ -51,7 +54,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 		$liste=array();
 
 		include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
-		$liste=getListOfModels($db,$type,'');
+		$liste=getListOfModels($db,$type,$maxfilenamelength);
 
 		return $liste;
 	}
@@ -65,16 +68,20 @@ abstract class ModeleNumRefFactures
 {
 	var $error='';
 
-	/**  Return if a module can be used or not
-	 *   @return	boolean     true if module can be used
+	/**
+	 * Return if a module can be used or not
+	 *
+	 * @return	boolean     true if module can be used
 	 */
 	function isEnabled()
 	{
 		return true;
 	}
 
-	/**	 Renvoi la description par defaut du modele de numerotation
-	 *   @return    string      Texte descripif
+	/**
+	 * Renvoi la description par defaut du modele de numerotation
+	 *
+	 * @return    string      Texte descripif
 	 */
 	function info()
 	{
@@ -83,8 +90,10 @@ abstract class ModeleNumRefFactures
 		return $langs->trans("NoDescription");
 	}
 
-	/**  Renvoi un exemple de numerotation
-	 *	 @return	string      Example
+	/**
+	 * Renvoi un exemple de numerotation
+	 *
+	 * @return	string      Example
 	 */
 	function getExample()
 	{
@@ -93,19 +102,23 @@ abstract class ModeleNumRefFactures
 		return $langs->trans("NoExample");
 	}
 
-	/**  Test si les numeros deja en vigueur dans la base ne provoquent pas
-	 *   de conflits qui empecheraient cette numerotation de fonctionner.
-	 *   @return	boolean     false si conflit, true si ok
+	/**
+	 * Test si les numeros deja en vigueur dans la base ne provoquent pas
+	 * de conflits qui empecheraient cette numerotation de fonctionner.
+	 *
+	 * @return	boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
 	{
 		return true;
 	}
 
-	/**  Renvoi prochaine valeur attribuee
-	 *   @param     objsoc		Objet societe
-	 *   @param     facture		Objet facture
-	 *   @return    string      Valeur
+	/**
+	 * Renvoi prochaine valeur attribuee
+	 *
+	 * @param	Societe		$objsoc		Objet societe
+	 * @param   Facture		$facture	Objet facture
+	 * @return  string      			Value
 	 */
 	function getNextValue($objsoc,$facture)
 	{
@@ -113,8 +126,10 @@ abstract class ModeleNumRefFactures
 		return $langs->trans("NotAvailable");
 	}
 
-	/**  Renvoi version du modele de numerotation
-	 *   @return    string      Valeur
+	/**
+	 * Renvoi version du modele de numerotation
+	 *
+	 * @return    string      Valeur
 	 */
 	function getVersion()
 	{

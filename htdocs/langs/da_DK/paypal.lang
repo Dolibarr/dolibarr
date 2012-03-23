@@ -17,8 +17,6 @@ PAYPAL_API_SANDBOX=Mode test / sandkasse
 ThisIsTransactionId=Dette er id af transaktionen: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Tilsæt url Paypal betaling, når du sender et dokument med posten
 PAYPAL_IPN_MAIL_ADDRESS=E-mail-adresse til øjeblikkelig meddelelse om betaling (IPN)
-PredefinedMailContentSendOrderWithPaypalLink=Du vil her finde den rækkefølge __ORDERREF__ \ n \ nDu kan klikke på den sikre linket nedenfor for at gøre din betaling via PayPal \ n \ n%s \ n \ nSincerely \ n \ n
-PredefinedMailContentSendInvoiceWithPaypalLink=Du vil her finde fakturaen __FACREF__ \ n \ nDu kan klikke på den sikre linket nedenfor for at gøre din betaling via PayPal \ n \ n%s \ n \ nSincerely \ n \ n
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 10:38:48).
 
 

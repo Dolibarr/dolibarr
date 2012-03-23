@@ -511,6 +511,12 @@ function print_start_menu_array()
 	else print '<ul class="tmenu">';
 }
 
+/**
+ * Output start menu entry
+ *
+ * @param	string	$idsel		Text
+ * @return	void
+ */
 function print_start_menu_entry($idsel)
 {
 	global $conf;
@@ -518,6 +524,12 @@ function print_start_menu_entry($idsel)
 	else print '<li class="tmenu" id="mainmenutd_'.$idsel.'">';
 }
 
+/**
+ * Output menu entry
+ *
+ * @param	string	$text		Text
+ * @return	void
+ */
 function print_text_menu_entry($text)
 {
 	global $conf;
@@ -526,6 +538,11 @@ function print_text_menu_entry($text)
 	print '</span>';
 }
 
+/**
+ * Output end menu entry
+ *
+ * @return	void
+ */
 function print_end_menu_entry()
 {
 	global $conf;
@@ -534,6 +551,11 @@ function print_end_menu_entry()
 	print "\n";
 }
 
+/**
+ * Output menu array
+ *
+ * @return	void
+ */
 function print_end_menu_array()
 {
 	global $conf;
@@ -629,52 +651,69 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 $langs->load("admin");
                 $langs->load("help");
 
+                // Setup
                 $newmenu->add("/admin/index.php?leftmenu=setup", $langs->trans("Setup"), 0, 1, '', $mainmenu, 'setup');
-                if ($leftmenu=="setup") $newmenu->add("/admin/company.php", $langs->trans("MenuCompanySetup"),1);
-                if ($leftmenu=="setup") $newmenu->add("/admin/modules.php", $langs->trans("Modules"),1);
-                if ($leftmenu=="setup") $newmenu->add("/admin/menus.php", $langs->trans("Menus"),1);
-                if ($leftmenu=="setup") $newmenu->add("/admin/ihm.php", $langs->trans("GUISetup"),1);
-                if ($leftmenu=="setup") $newmenu->add("/admin/boxes.php", $langs->trans("Boxes"),1);
-                if ($leftmenu=="setup") $newmenu->add("/admin/delais.php",$langs->trans("Alerts"),1);
+                if ($leftmenu=="setup")
+                {
+                    $newmenu->add("/admin/company.php", $langs->trans("MenuCompanySetup"),1);
+                    $newmenu->add("/admin/modules.php", $langs->trans("Modules"),1);
+                    $newmenu->add("/admin/menus.php", $langs->trans("Menus"),1);
+                    $newmenu->add("/admin/ihm.php", $langs->trans("GUISetup"),1);
+                    if (! in_array($langs->defaultlang,array('en_US','en_GB','en_NZ','en_AU','fr_FR','fr_BE','es_ES','ca_ES')))
+                    {
+                        if ($leftmenu=="setup") $newmenu->add("/admin/translation.php", $langs->trans("Translation"),1);
+                    }
+                    $newmenu->add("/admin/boxes.php", $langs->trans("Boxes"),1);
+                    $newmenu->add("/admin/delais.php",$langs->trans("Alerts"),1);
+                    $newmenu->add("/admin/proxy.php", $langs->trans("Security"),1);
+                    $newmenu->add("/admin/limits.php", $langs->trans("MenuLimits"),1);
+                    $newmenu->add("/admin/pdf.php", $langs->trans("PDF"),1);
+                    $newmenu->add("/admin/mails.php", $langs->trans("Emails"),1);
+                    $newmenu->add("/admin/sms.php", $langs->trans("Sms"),1);
+                    $newmenu->add("/admin/dict.php", $langs->trans("DictionnarySetup"),1);
+                    $newmenu->add("/admin/const.php", $langs->trans("OtherSetup"),1);
+                }
 
-                if ($leftmenu=="setup") $newmenu->add("/admin/proxy.php", $langs->trans("Security"),1);
-                if ($leftmenu=="setup") $newmenu->add("/admin/limits.php", $langs->trans("MenuLimits"),1);
-                if ($leftmenu=="setup") $newmenu->add("/admin/pdf.php", $langs->trans("PDF"),1);
-                if ($leftmenu=="setup") $newmenu->add("/admin/mails.php", $langs->trans("Emails"),1);
-                if ($leftmenu=="setup") $newmenu->add("/admin/sms.php", $langs->trans("Sms"),1);
-                if ($leftmenu=="setup") $newmenu->add("/admin/dict.php", $langs->trans("DictionnarySetup"),1);
-                if ($leftmenu=="setup") $newmenu->add("/admin/const.php", $langs->trans("OtherSetup"),1);
-
+                // System info
                 $newmenu->add("/admin/system/index.php?leftmenu=system", $langs->trans("SystemInfo"), 0, 1, '', $mainmenu, 'system');
-                if ($leftmenu=="system") $newmenu->add("/admin/system/dolibarr.php", $langs->trans("Dolibarr"),1);
-                if ($leftmenu=="system") $newmenu->add("/admin/system/constall.php", $langs->trans("AllParameters"),2);
-                if ($leftmenu=="system") $newmenu->add("/admin/system/modules.php", $langs->trans("Modules"),2);
-                if ($leftmenu=="system") $newmenu->add("/admin/triggers.php", $langs->trans("Triggers"),2);
-                if ($leftmenu=="system") $newmenu->add("/admin/system/about.php", $langs->trans("About"),2);
-                if ($leftmenu=="system") $newmenu->add("/admin/system/os.php", $langs->trans("OS"),1);
-                if ($leftmenu=="system") $newmenu->add("/admin/system/web.php", $langs->trans("WebServer"),1);
-                if ($leftmenu=="system") $newmenu->add("/admin/system/phpinfo.php", $langs->trans("Php"),1);
-                //if ($leftmenu=="system" && function_exists('xdebug_is_enabled')) $newmenu->add("/admin/system/xdebug.php", $langs->trans("XDebug"),1);
-                if ($leftmenu=="system") $newmenu->add("/admin/system/database.php", $langs->trans("Database"),1);
-                if ($leftmenu=="system") $newmenu->add("/admin/system/database-tables.php", $langs->trans("Tables"),2);
-                if ($leftmenu=="system") $newmenu->add("/admin/system/database-tables-contraintes.php", $langs->trans("Constraints"),2);
-
+                if ($leftmenu=="system")
+                {
+                    $newmenu->add("/admin/system/dolibarr.php", $langs->trans("Dolibarr"),1);
+                    $newmenu->add("/admin/system/constall.php", $langs->trans("AllParameters"),2);
+                    $newmenu->add("/admin/system/modules.php", $langs->trans("Modules"),2);
+                    $newmenu->add("/admin/triggers.php", $langs->trans("Triggers"),2);
+                    $newmenu->add("/admin/system/about.php", $langs->trans("About"),2);
+                    $newmenu->add("/admin/system/os.php", $langs->trans("OS"),1);
+                    $newmenu->add("/admin/system/web.php", $langs->trans("WebServer"),1);
+                    $newmenu->add("/admin/system/phpinfo.php", $langs->trans("Php"),1);
+                    //if (function_exists('xdebug_is_enabled')) $newmenu->add("/admin/system/xdebug.php", $langs->trans("XDebug"),1);
+                    $newmenu->add("/admin/system/database.php", $langs->trans("Database"),1);
+                    $newmenu->add("/admin/system/database-tables.php", $langs->trans("Tables"),2);
+                    $newmenu->add("/admin/system/database-tables-contraintes.php", $langs->trans("Constraints"),2);
+                }
+                // System info
                 $newmenu->add("/admin/tools/index.php?leftmenu=admintools", $langs->trans("SystemTools"), 0, 1, '', $mainmenu, 'admintools');
-                if ($leftmenu=="admintools") $newmenu->add("/admin/tools/dolibarr_export.php", $langs->trans("Backup"),1);
-                if ($leftmenu=="admintools") $newmenu->add("/admin/tools/dolibarr_import.php", $langs->trans("Restore"),1);
-                if ($leftmenu=="admintools") $newmenu->add("/admin/tools/update.php", $langs->trans("MenuUpgrade"),1);
-                if ($leftmenu=="admintools" && function_exists('eaccelerator_info')) $newmenu->add("/admin/tools/eaccelerator.php", $langs->trans("EAccelerator"),1);
-                if ($leftmenu=="admintools") $newmenu->add("/admin/tools/listevents.php", $langs->trans("Audit"),1);
-                if ($leftmenu=="admintools") $newmenu->add("/admin/tools/listsessions.php", $langs->trans("Sessions"),1);
-                if ($leftmenu=="admintools") $newmenu->add("/admin/tools/purge.php", $langs->trans("Purge"),1);
-                if ($leftmenu=="admintools") $newmenu->add("/support/index.php", $langs->trans("HelpCenter"),1,1,'targethelp');
+                if ($leftmenu=="admintools")
+                {
+                    $newmenu->add("/admin/tools/dolibarr_export.php", $langs->trans("Backup"),1);
+                    $newmenu->add("/admin/tools/dolibarr_import.php", $langs->trans("Restore"),1);
+                    $newmenu->add("/admin/tools/update.php", $langs->trans("MenuUpgrade"),1);
+                    if (function_exists('eaccelerator_info')) $newmenu->add("/admin/tools/eaccelerator.php", $langs->trans("EAccelerator"),1);
+                    $newmenu->add("/admin/tools/listevents.php", $langs->trans("Audit"),1);
+                    $newmenu->add("/admin/tools/listsessions.php", $langs->trans("Sessions"),1);
+                    $newmenu->add("/admin/tools/purge.php", $langs->trans("Purge"),1);
+                    $newmenu->add("/support/index.php", $langs->trans("HelpCenter"),1,1,'targethelp');
+                }
             }
 
             $newmenu->add("/user/home.php?leftmenu=users", $langs->trans("MenuUsersAndGroups"), 0, 1, '', $mainmenu, 'users');
-            if ($leftmenu=="users") $newmenu->add("/user/index.php", $langs->trans("Users"), 1, $user->rights->user->user->lire || $user->admin);
-            if ($leftmenu=="users") $newmenu->add("/user/fiche.php?action=create", $langs->trans("NewUser"),2, $user->rights->user->user->creer || $user->admin);
-            if ($leftmenu=="users") $newmenu->add("/user/group/index.php", $langs->trans("Groups"), 1, ($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->read:$user->rights->user->user->lire) || $user->admin);
-            if ($leftmenu=="users") $newmenu->add("/user/group/fiche.php?action=create", $langs->trans("NewGroup"), 2, ($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->write:$user->rights->user->user->creer) || $user->admin);
+            if ($leftmenu=="users")
+            {
+                $newmenu->add("/user/index.php", $langs->trans("Users"), 1, $user->rights->user->user->lire || $user->admin);
+                $newmenu->add("/user/fiche.php?action=create", $langs->trans("NewUser"),2, $user->rights->user->user->creer || $user->admin);
+                $newmenu->add("/user/group/index.php", $langs->trans("Groups"), 1, ($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->read:$user->rights->user->user->lire) || $user->admin);
+                $newmenu->add("/user/group/fiche.php?action=create", $langs->trans("NewGroup"), 2, ($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->write:$user->rights->user->user->creer) || $user->admin);
+            }
         }
 
 
@@ -743,8 +782,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
             }
 
             // Contacts
-            $newmenu->add("/contact/list.php?leftmenu=contacts", $langs->trans("ContactsAddresses"), 0, $user->rights->societe->contact->lire, '', $mainmenu, 'contacts');
-            $newmenu->add("/contact/fiche.php?leftmenu=contacts&amp;action=create", $langs->trans("NewContact"), 1, $user->rights->societe->contact->creer);
+            $newmenu->add("/contact/list.php?leftmenu=contacts", (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses")), 0, $user->rights->societe->contact->lire, '', $mainmenu, 'contacts');
+            $newmenu->add("/contact/fiche.php?leftmenu=contacts&amp;action=create", (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("NewContact") : $langs->trans("NewContactAddress")), 1, $user->rights->societe->contact->creer);
             $newmenu->add("/contact/list.php?leftmenu=contacts", $langs->trans("List"), 1, $user->rights->societe->contact->lire);
             if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) $newmenu->add("/contact/list.php?leftmenu=contacts&type=p", $langs->trans("Prospects"), 2, $user->rights->societe->contact->lire);
             $newmenu->add("/contact/list.php?leftmenu=contacts&type=c", $langs->trans("Customers"), 2, $user->rights->societe->contact->lire);

@@ -23,10 +23,17 @@
 include_once "methode_expedition.modules.php";
 
 
+/**
+ * Class to manage shipment lettremax
+ */
 class methode_expedition_lettremax extends ModeleShippingMethod
 {
-
-	function methode_expedition_lettremax($db=0)
+    /**
+     * Constructor
+     *
+     * @param	DoliDB		$db		Database handler
+     */
+	function __construct($db=0)
 	{
 		$this->db = $db;
 		$this->id = 4; // Do not change this value
@@ -35,6 +42,12 @@ class methode_expedition_lettremax extends ModeleShippingMethod
 		$this->description = "Courrier suivi et lettre max";
 	}
 
+	/**
+	 * Return URL of provider
+	 *
+	 * @param	string	$tracking_number	Tracking number
+	 * @return	string						URL for tracking
+	 */
 	function provider_url_status($tracking_number)
 	{
 		return sprintf("http://www.csuivi.courrier.laposte.fr/default.asp?EZ_ACTION=rechercheRapide&numObjet=%s",$tracking_number);

@@ -61,9 +61,6 @@ class modCashDesk extends DolibarrModules
 		// Data directories to create when module is enabled
 		$this->dirs = array();
 
-		// Relative path to module style sheet if exists. Example: '/mymodule/mycss.css'.
-		$this->style_sheet = '';
-
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
 		$this->config_page_url = array("cashdesk.php@cashdesk");
 
@@ -145,11 +142,12 @@ class modCashDesk extends DolibarrModules
   	}
 
     /**
-     *      Function called when module is disabled.
-     *      Remove from database constants, boxes and permissions from Dolibarr database.
-     *      Data directories are not deleted.
+     *  Function called when module is disabled.
+     *  Remove from database constants, boxes and permissions from Dolibarr database.
+     *  Data directories are not deleted.
      *
-     *      @return     int             1 if OK, 0 if KO
+     *  @param	string	$options	Options
+     *  @return int             	1 if OK, 0 if KO
      */
   	function remove($options='')
 	{

@@ -22,10 +22,9 @@
  */
 
 /**
- * 		\class      DolEditor
- *      \brief      Class to manage a WYSIWYG editor.
- *		            Usage: $doleditor=new DolEditor('body',$message,320,'toolbar_mailing');
- *		                   $doleditor->Create();
+ *      Class to manage a WYSIWYG editor.
+ *		Usage: $doleditor=new DolEditor('body',$message,320,'toolbar_mailing');
+ *		       $doleditor->Create();
  */
 class DolEditor
 {
@@ -66,7 +65,7 @@ class DolEditor
     {
     	global $conf,$langs;
 
-    	dol_syslog("DolEditor::DolEditor htmlname=".$htmlname." toolbarname=".$toolbarname);
+    	dol_syslog(get_class($this)."::DolEditor htmlname=".$htmlname." toolbarname=".$toolbarname);
 
     	if (! $rows) $rows=round($height/20);
     	if (! $cols) $cols=($width?round($width/6):80);
@@ -136,13 +135,14 @@ class DolEditor
     }
 
     /**
-     *		Output edit area inside the HTML stream.
-     *		Output depends on this->tool (fckeditor, ckeditor, texatrea, ...)
+     *	Output edit area inside the HTML stream.
+     *	Output depends on this->tool (fckeditor, ckeditor, texatrea, ...)
      *
-     *      @param	int		$noprint     1=Return HTML string instead of printing it to output
-     *      @return	void
+     *  @param	int		$noprint    1=Return HTML string instead of printing it to output
+     *  @param	string	$morejs		Add more js. For example: ".on( \'saveSnapshot\', function(e) { alert(\'ee\'); });"
+     *  @return	void
      */
-    function Create($noprint=0)
+    function Create($noprint=0,$morejs='')
     {
     	global $conf;
 
@@ -171,14 +171,15 @@ class DolEditor
             	$skin='kama';
 
             	$out.= '<script type="text/javascript">
-            			jQuery(document).ready(function () {
+            			$(document).ready(function () {
                             /* if (CKEDITOR.loadFullCore) CKEDITOR.loadFullCore(); */
+                            /* should be editor=CKEDITOR.replace but what if serveral editors ? */
                             CKEDITOR.replace(\''.$this->htmlname.'\',
             					{
             						customConfig : \''.dol_buildpath('/theme/'.$conf->theme.'/ckeditor/config.js',1).'\',
             						toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
-            						width: '.($this->width ? $this->width : '\'\'').',
+            						width: '.($this->width ? '\''.$this->width.'\'' : '\'\'').',
             						height: '.$this->height.',
                                     skin: \''.$skin.'\',
                                     on :
@@ -218,10 +219,8 @@ class DolEditor
                                filebrowserImageWindowWidth : \'900\',
                                filebrowserImageWindowHeight : \'500\'';
             	}
-            	$out.= '
-            					});
-
-            			});
+            	$out.= '	})'.$morejs;
+            	$out.= '});
             			</script>';
             }
         }

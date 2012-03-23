@@ -239,5 +239,50 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
         $this->assertTrue($result);
     }
+    
+    /**
+     * testDolMimeType
+     *
+     * @return	string
+     */
+    public function testDolMimeType()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+		// file.png
+		$result=dol_mimetype('file.png','',0);
+        $this->assertEquals('image/png',$result);
+		$result=dol_mimetype('file.png','',1);
+        $this->assertEquals('png',$result);
+		$result=dol_mimetype('file.png','',2);
+		$this->assertEquals('image.png',$result);
+		$result=dol_mimetype('file.png','',3);
+        $this->assertEquals('',$result);
+		// file.odt
+		$result=dol_mimetype('file.odt','',0);
+        $this->assertEquals('application/vnd.oasis.opendocument.text',$result);
+		$result=dol_mimetype('file.odt','',1);
+        $this->assertEquals('vnd.oasis.opendocument.text',$result);
+		$result=dol_mimetype('file.odt','',2);
+		$this->assertEquals('ooffice.png',$result);
+		$result=dol_mimetype('file.odt','',3);
+        $this->assertEquals('',$result);
+		// file.php
+		$result=dol_mimetype('file.php','',0);
+        $this->assertEquals('text/plain',$result);
+		$result=dol_mimetype('file.php','',1);
+        $this->assertEquals('plain',$result);
+		$result=dol_mimetype('file.php','',2);
+		$this->assertEquals('php.png',$result);
+		$result=dol_mimetype('file.php','',3);
+        $this->assertEquals('php',$result);        
+		// file.php.noexe
+		$result=dol_mimetype('file.php.noexe','',0);
+        $this->assertEquals('text/plain',$result);
+    }		
 }
 ?>

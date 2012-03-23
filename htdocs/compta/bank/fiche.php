@@ -508,7 +508,7 @@ else
         // Type
         print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("AccountType").'</td>';
         print '<td colspan="3">';
-		print $form->select_type_comptes_financiers((isset($_POST["type"])?$_POST["type"]:$account->type),"type");
+		print $formbank->select_type_comptes_financiers((isset($_POST["type"])?$_POST["type"]:$account->type),"type");
         print '</td></tr>';
 
 		// Currency

@@ -55,18 +55,20 @@ class ModeleImports
 	/**
      *  Constructor
 	 */
-	function ModeleImports()
+	function __construct()
 	{
 	}
 
 	/**
-	 *   Charge en memoire et renvoie la liste des modeles actifs
+	 *  Charge en memoire et renvoie la liste des modeles actifs
 	 *
-	 *   @param	DoliDB	$db      Handler de base
+     *  @param	DoliDB	$db     			Database handler
+     *  @param  string	$maxfilenamelength  Max length of value to show
+     *  @return	array						List of templates
 	 */
-	function liste_modeles($db)
+	function liste_modeles($db,$maxfilenamelength=0)
 	{
-		dol_syslog("ModeleImport::liste_modeles");
+		dol_syslog(get_class($this)."::liste_modeles");
 
 		$dir=DOL_DOCUMENT_ROOT."/core/modules/import/";
 		$handle=opendir($dir);
@@ -111,6 +113,7 @@ class ModeleImports
 	/**
 	 *  Return picto of import driver
 	 *
+	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
 	function getPicto($key)
@@ -121,6 +124,7 @@ class ModeleImports
 	/**
 	 *  Renvoi libelle d'un driver import
 	 *
+	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
 	function getDriverLabel($key)
@@ -131,6 +135,7 @@ class ModeleImports
 	/**
 	 *  Renvoi la description d'un driver import
 	 *
+	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
 	function getDriverDesc($key)
@@ -141,6 +146,7 @@ class ModeleImports
 	/**
 	 *  Renvoi version d'un driver import
 	 *
+	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
 	function getDriverVersion($key)
@@ -151,6 +157,7 @@ class ModeleImports
 	/**
 	 *  Renvoi libelle de librairie externe du driver
 	 *
+	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
 	function getLibLabel($key)
@@ -161,6 +168,7 @@ class ModeleImports
 	/**
 	 *  Renvoi version de librairie externe du driver
 	 *
+	 *	@param	string	$key	Key
 	 *	@return	string
 	 */
 	function getLibVersion($key)
@@ -169,6 +177,5 @@ class ModeleImports
 	}
 
 }
-
 
 ?>

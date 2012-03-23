@@ -39,7 +39,7 @@ class InterfaceLogevents
 
     /**
      *   Constructor
-     * 
+     *
      *   @param		DoliDB		$db      Database handler
      */
     function InterfaceLogevents($db)
@@ -55,6 +55,7 @@ class InterfaceLogevents
 
     /**
      *   Return name of trigger file
+     *
      *   @return     string      Name of trigger file
      */
     function getName()
@@ -64,6 +65,7 @@ class InterfaceLogevents
 
     /**
      *   Return description of trigger file
+     *
      *   @return     string      Description of trigger file
      */
     function getDesc()
@@ -73,6 +75,7 @@ class InterfaceLogevents
 
     /**
      *   Return version of trigger file
+     *
      *   @return     string      Version of trigger file
      */
     function getVersion()
@@ -89,13 +92,14 @@ class InterfaceLogevents
     /**
      *      Function called when a Dolibarrr business event is done.
      *      All functions "run_trigger" are triggered if file is inside directory htdocs/core/triggers
-     *      @param      action      Code de l'evenement
-     *      @param      object      Objet concerne
-     *      @param      user        Objet user
-     *      @param      langs       Objet langs
-     *      @param      conf        Objet conf
-     *      @param      entity      Value for instance of data (Always 1 except if module MultiCompany is installed)
-     *      @return     int         <0 if KO, 0 if no triggered ran, >0 if OK
+     *
+     *      @param	string		$action		Event action code
+     *      @param  Object		$object     Object
+     *      @param  User		$user       Object user
+     *      @param  Translate	$langs      Object langs
+     *      @param  conf		$conf       Object conf
+     *      @param  string		$entity     Value for instance of data (Always 1 except if module MultiCompany is installed)
+     *      @return int         			<0 if KO, 0 if no triggered ran, >0 if OK
      */
     function run_trigger($action,$object,$user,$langs,$conf,$entity=1)
     {

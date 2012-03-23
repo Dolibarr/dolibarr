@@ -31,7 +31,6 @@
 /**
  *  Return line description translated in outputlangs and encoded into UTF8
  *
- *  @param  Object		$object              Object
  *  @param  Line		$line                Current line number (0 = first line, 1 = second line, ...)
  *  @param  Translate	$outputlangs         Object langs for output
  *  @param  int			$hideref             Hide reference

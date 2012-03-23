@@ -50,7 +50,7 @@ class Interfaces
      *   @param		string		$action     Trigger event code
      *   @param     Object		$object     Objet concern
      *   @param     User		$user       Objet user
-     *   @param     Lang		$lang       Objet lang
+     *   @param     Lang		$langs      Objet lang
      *   @param     Conf		$conf       Objet conf
      *   @return    int         			Nb of triggers ran if no error, -Nb of triggers with errors otherwise.
      */

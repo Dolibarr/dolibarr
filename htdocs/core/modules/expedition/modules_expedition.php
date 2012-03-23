@@ -39,10 +39,13 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
 
 
 	/**
-	 *      \brief      Return list of active generation modules
-	 * 		\param		$db		Database handler
+	 *  Return list of active generation modules
+	 *
+     *  @param	DoliDB	$db     			Database handler
+     *  @param  string	$maxfilenamelength  Max length of value to show
+     *  @return	array						List of templates
 	 */
-	function liste_modeles($db)
+	function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
 
@@ -50,7 +53,7 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
 		$liste=array();
 
 		include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
-		$liste=getListOfModels($db,$type,'');
+		$liste=getListOfModels($db,$type,$maxfilenamelength);
 
 		return $liste;
 	}
@@ -65,8 +68,8 @@ abstract class ModelNumRefExpedition
 {
 	var $error='';
 
-	/** Return if a module can be used or not    
-	 *	
+	/** Return if a module can be used or not
+	 *
 	 *  @return		boolean     true if module can be used
 	 */
 	function isEnabled()
@@ -76,6 +79,7 @@ abstract class ModelNumRefExpedition
 
 	/**
 	 *	Return default description of numbering model
+	 *
 	 *	@return     string      text description
 	 */
 	function info()
@@ -85,8 +89,9 @@ abstract class ModelNumRefExpedition
 		return $langs->trans("NoDescription");
 	}
 
-	/**     
+	/**
 	 *	Return numbering example
+	 *
 	 *	@return     string      Example
 	 */
 	function getExample()
@@ -96,8 +101,9 @@ abstract class ModelNumRefExpedition
 		return $langs->trans("NoExample");
 	}
 
-	/**     
+	/**
 	 *	Test if existing numbers make problems with numbering
+	 *
 	 *	@return     boolean     false if conflit, true if ok
 	 */
 	function canBeActivated()
@@ -105,8 +111,9 @@ abstract class ModelNumRefExpedition
 		return true;
 	}
 
-	/** 
+	/**
 	 *	Return next value
+	 *
 	 *	@return     string      Value
 	 */
 	function getNextValue()
@@ -117,6 +124,7 @@ abstract class ModelNumRefExpedition
 
 	/**
 	 *	Return numbering version module
+	 *
 	 *	@return     string      Value
 	 */
 	function getVersion()
@@ -133,11 +141,12 @@ abstract class ModelNumRefExpedition
 
 /**
  * 	Cree un bon d'expedition sur disque
- * 	@param	    db  			objet base de donnee
- * 	@param	    object			object expedition
- * 	@param	    modele			force le modele a utiliser ('' to not force)
- * 	@param		outputlangs		objet lang a utiliser pour traduction
- *  @return     int             <=0 if KO, >0 if OK
+ *
+ * 	@param	DoliDB		$db  			Objet base de donnee
+ * 	@param	Object		$object			Object expedition
+ * 	@param	string		$modele			Force le modele a utiliser ('' to not force)
+ * 	@param	Translate	$outputlangs	Objet lang a utiliser pour traduction
+ *  @return int             			<=0 if KO, >0 if OK
  */
 function expedition_pdf_create($db, $object, $modele, $outputlangs)
 {

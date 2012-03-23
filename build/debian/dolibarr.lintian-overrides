@@ -1,4 +1,1 @@
-# Embedded libraries, which don't seem to be available in Debian in correct version
-# or because they were modified and are specific dolibarr code
-#
-# There is no embeded library in this package that are available into other Debian packages.
+# No overrided lintian rules is this version.

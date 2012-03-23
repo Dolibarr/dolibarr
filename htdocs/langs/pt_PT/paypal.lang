@@ -27,7 +27,5 @@ PaypalSetup=Configuração do módulo de PayPal
 PaypalDesc=Esta oferta módulo de páginas para permitir o pagamento em <a href="http://www.paypal.com" target="_blank">PayPal</a> pelos clientes. Isto pode ser utilizado para um pagamento livre ou para um pagamento por um objecto Dolibarr particular (factura, ordem, ...)
 PaypalOrCBDoPayment=Pague com cartão de crédito ou Paypal
 PAYPAL_IPN_MAIL_ADDRESS=E-mail de notificação instantânea de pagamento (IPN)
-PredefinedMailContentSendOrderWithPaypalLink=Você vai encontrar aqui a ordem __ ORDERREF__ \n\n Você pode clicar no link seguro abaixo para fazer o pagamento via PayPal \n\n %s \n\n Sinceramente \n\n
-PredefinedMailContentSendInvoiceWithPaypalLink=Você vai encontrar aqui o __ factura FACREF__ \n\n Você pode clicar no link seguro abaixo para fazer o pagamento via PayPal \n\n %s \n\n Sinceramente \n\n
 YouAreCurrentlyInSandboxMode=Você está atualmente no &quot;sandbox&quot; modo de
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:03).

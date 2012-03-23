@@ -48,10 +48,6 @@ Miscellanous=متفرقات
 NbOfActiveNotifications=عدد الإخطارات
 WarningInstallDirExists=تحذير تركيب دليل (٪) لا تزال موجودة. هذه هي ثغرة أمنية خطيرة. يجب عليك إزالة عليه في أقرب وقت ممكن.
 WarningUntilDirRemoved=هذا التحذير وسوف تظل نشطة ما دام هذا الدليل هو هذا (يظهر فقط لمستخدمي المشرف).
-PredefinedMailContentSendInvoice=Veuillez trouver كايماني المشترك بين لوس انجليس لfacture __FACREF__ \ ن \ nCordialement \ ن \ ن
-PredefinedMailContentSendInvoiceReminder=Nous apportons à vôtre connaissance كيو facture __FACREF__ شمال شرق لوس انجليس semble النظام avoir été réglée. لوس انجليس لvoici donc ، من أجل إهبط ، én pièce jointe. \ ن \ nCordialement \ ن \ ن
-PredefinedMailContentSendProposal=Veuillez trouver كايماني المشترك بين لوس انجليس لاقتراح التجاري __PROPREF__ \ ن \ nCordialement \ ن \ ن
-PredefinedMailContentSendOrder=Veuillez trouver كايماني المشترك بين لوس انجليس لcommande __ORDERREF__ \ ن \ nCordialement \ ن \ ن
 ChooseYourDemoProfil=اختيار عرض ملف المباراة التي أنشطتك...
 DemoFundation=أعضاء في إدارة مؤسسة
 DemoFundation2=إدارة وأعضاء في الحساب المصرفي للمؤسسة
@@ -219,7 +215,6 @@ ExternalSites=المواقع الخارجية
 
 // START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
 // Reference language: en_US -> ar_AR
-PredefinedMailContentSendSupplierOrder=ستجد هنا ن لدينا نظام \ __ORDERREF__ \ nSincerely \ ن \ ن
 WeightUnitpound=جنيه
 VolumeUnitounce=أوقية
 VolumeUnitlitre=لتر
@@ -256,9 +251,6 @@ Notify_MEMBER_VALIDATE=عضو مصدق
 Notify_MEMBER_SUBSCRIPTION=عضو المكتتب
 Notify_MEMBER_RESILIATE=عضو resiliated
 Notify_MEMBER_DELETE=عضو حذف
-PredefinedMailContentSendSupplierInvoice=ستجد هنا الفاتورة __FACREF__ \n\nSincerely \n\n
-PredefinedMailContentSendShipping=ستجد هنا الشحن __SHIPPINGREF__ \n\nSincerely \n\n
-PredefinedMailContentSendFichInter=ستجد هنا تدخل __FICHINTERREF__ \n\nSincerely \n\n
 Top=أعلى
 Bottom=أسفل
 Left=اليسار

@@ -38,8 +38,10 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	var $nom = 'Orchidee';
 
 
-    /**     \brief      Renvoi la description du modele de numerotation
-     *      \return     string      Texte descripif
+    /**
+     *  Renvoi la description du modele de numerotation
+     *
+     * 	@return     string      Texte descripif
      */
 	function info()
     {
@@ -77,8 +79,10 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 		return $texte;
     }
 
-    /**     \brief      Renvoi un exemple de numerotation
-     *      \return     string      Example
+    /**
+     *  Renvoi un exemple de numerotation
+     *
+     *  @return     string      Example
      */
     function getExample()
     {
@@ -96,12 +100,14 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 		return $numExample;
     }
 
-	/**		\brief      Return next value
-	*      	\param      objsoc      Object third party
-	*      	\param      commande	Object supplier order
-	*      	\return     string      Value if OK, 0 if KO
+	/**
+	 *  Return next value
+	 *
+	 *  @param	Societe		$objsoc     Object third party
+	 *  @param  Object	    $object		Object
+     *  @return string      			Value if OK, 0 if KO
 	*/
-    function getNextValue($objsoc=0,$commande='')
+    function getNextValue($objsoc=0,$object='')
     {
 		global $db,$conf;
 
@@ -116,20 +122,22 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'commande_fournisseur','ref','',$objsoc->code_fournisseur,$commande->date_commande);
+		$numFinal=get_next_value($db,$mask,'commande_fournisseur','ref','',$objsoc->code_fournisseur,$object->date_commande);
 
 		return  $numFinal;
 	}
 
 
-    /**     \brief      Renvoie la reference de commande suivante non utilisee
-     *      \param      objsoc      Objet societe
-     *      \param      commande		Objet commande
-     *      \return     string      Texte descripif
+    /**
+     *  Renvoie la reference de commande suivante non utilisee
+     *
+	 *  @param	Societe		$objsoc     Object third party
+	 *  @param  Object	    $object		Object
+     *  @return string      			Texte descripif
      */
-    function commande_get_num($objsoc=0,$commande='')
+    function commande_get_num($objsoc=0,$object='')
     {
-        return $this->getNextValue($objsoc,$commande);
+        return $this->getNextValue($objsoc,$object);
     }
 }
 

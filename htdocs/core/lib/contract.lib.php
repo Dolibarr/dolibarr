@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2012	Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,22 +38,28 @@ function contract_prepare_head($object)
 	$head[$h][1] = $langs->trans("ContractCard");
 	$head[$h][2] = 'card';
 	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/contrat/contact.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("ContractContacts");
-	$head[$h][2] = 'contact';
-	$h++;
+	
+	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/contrat/contact.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("ContactsAddresses");
+		$head[$h][2] = 'contact';
+		$h++;
+	}
 
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'contract');
-
-    $head[$h][0] = DOL_URL_ROOT.'/contrat/note.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Note");
-	$head[$h][2] = 'note';
-	$h++;
+    
+    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+    {
+    	$head[$h][0] = DOL_URL_ROOT.'/contrat/note.php?id='.$object->id;
+    	$head[$h][1] = $langs->trans("Note");
+    	$head[$h][2] = 'note';
+    	$h++;
+    }
 
 	$head[$h][0] = DOL_URL_ROOT.'/contrat/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");

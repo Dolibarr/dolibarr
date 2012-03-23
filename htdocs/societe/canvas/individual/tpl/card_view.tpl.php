@@ -32,7 +32,7 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 <?php if ($this->control->tpl['error']) echo $this->control->tpl['error']; ?>
 <?php if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delete']; ?>
 
-<table class="border" width="100%">
+<table class="border allwidth">
 
 <tr>
 	<td width="20%"><?php echo $langs->trans('Name'); ?></td>
@@ -132,7 +132,7 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 
 <tr>
 	<td>
-	<table width="100%" class="nobordernopadding">
+	<table class="nobordernopadding allwidth">
 		<tr>
 			<td><?php echo $langs->trans('RIB'); ?></td>
 			<td align="right">
@@ -150,7 +150,7 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 
 <tr>
 	<td>
-	<table width="100%" class="nobordernopadding">
+	<table class="nobordernopadding allwidth">
 		<tr>
 			<td><?php echo $langs->trans('SalesRepresentatives'); ?></td>
 			<td align="right">
@@ -182,10 +182,6 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 <a class="butAction" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&amp;action=edit&amp;canvas='.$canvas; ?>"><?php echo $langs->trans("Modify"); ?></a>
 <?php } ?>
 
-<?php if ($user->rights->societe->contact->creer) { ?>
-<a class="butAction" href="<?php echo DOL_URL_ROOT.'/contact/fiche.php?socid='.$this->control->tpl['id'].'&amp;action=create&amp;canvas=default'; ?>"><?php echo $langs->trans("AddContact"); ?></a>
-<?php } ?>
-
 <?php if ($user->rights->societe->supprimer) { ?>
 	<?php if ($conf->use_javascript_ajax) { ?>
 		<span id="action-delete" class="butActionDelete"><?php echo $langs->trans('Delete'); ?></span>
@@ -197,9 +193,8 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 
 <br>
 
-<table width="100%"><tr><td valign="top" width="50%">
-<a name="builddoc"></a>
-
+<table class="allwidth"><tr><td valign="top" width="50%">
+<div id="builddoc"></div>
 <?php
 /*
  * Documents generes

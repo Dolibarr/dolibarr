@@ -51,7 +51,7 @@ class box_services_expired extends ModeleBoxes
 
     	$langs->load("contracts");
 
-    	$this->boxlabel=$langs->trans("BoxOldestExpiredServices");
+    	$this->boxlabel=$langs->transnoentitiesnoconv("BoxOldestExpiredServices");
     }
 
     /**

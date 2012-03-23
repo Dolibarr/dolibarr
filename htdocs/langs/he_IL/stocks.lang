@@ -1,0 +1,92 @@
+/*
+ * Language code: he_IL
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-03-10 15:14:54
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-03-10 15:14:54).
+// Reference language: en_US -> he_IL
+CHARSET=UTF-8
+WarehouseCard=המחסן כרטיס
+Warehouse=מחסן
+NewWarehouse=תחום חדש מחסן / צילומים
+WarehouseEdit=שנה במחסן
+MenuNewWarehouse=מחסן חדש
+WarehouseOpened=המחסן נפתח
+WarehouseClosed=המחסן סגור
+WarehouseSource=מקור מחסן
+WarehouseTarget=המטרה של Google
+ValidateSending=מחק את שליחת
+CancelSending=ביטול שליחת
+DeleteSending=מחק את שליחת
+Stock=מניות
+Stocks=מניות
+Movement=תנועה
+Movements=תנועות
+ErrorWarehouseRefRequired=שם מחסן התייחסות נדרש
+ErrorWarehouseLabelRequired=תווית של Google נדרש
+CorrectStock=נכון במלאי
+ListOfWarehouses=רשימת מחסנים
+ListOfStockMovements=רשימה של תנועות מלאי
+StocksArea=מניות אזור
+Location=מקום
+LocationSummary=שם קצר מיקום
+NumberOfProducts=המספר הכולל של מוצרים
+LastMovement=לאחרונה התנועה
+LastMovements=תנועות אחרונות
+Units=יחידות
+Unit=יחידה
+StockCorrection=נכון במלאי
+StockMovement=להעביר
+StockMovements=מניות העברות
+NumberOfUnit=מספר יחידות
+TotalStock=סך כל המניות
+StockTooLow=המניה נמוך מדי
+EnhancedValue=ערך
+PMPValue=מחיר ממוצע משוקלל
+PMPValueShort=WAP
+EnhancedValueOfWarehouses=מחסני ערך
+UserWarehouseAutoCreate=צור מחסן אוטומטי בעת יצירת משתמש
+QtyDispatched=כמות שיגר
+OrderDispatch=המניות שיגור
+RuleForStockManagementDecrease=כלל לירידה ניהול מלאי
+RuleForStockManagementIncrease=כלל לעלייה ניהול מלאי
+DeStockOnBill=ירידה במניות אמיתיות על חשבוניות לקוחות / הערות אימות אשראי
+DeStockOnValidateOrder=ירידה במניות אמיתיות על אימות הזמנות הלקוחות
+DeStockOnShipment=ירידה במניות אמיתיות על אימות המשלוח
+ReStockOnBill=הגדל את מניות אמיתיים על חשבוניות ספקים / הערות אימות אשראי
+ReStockOnValidateOrder=הגדל את מניות אמיתיים על הסכמה הזמנות ספקים
+ReStockOnDispatchOrder=הגדל את מניות אמיתיים על המדריך שיגרו אל מחסני הספק, לאחר קבלת צו
+OrderStatusNotReadyToDispatch=סדר עדיין לא, אם בכלל, יותר מעמד המאפשר שיגור של מוצרים במחסנים מלאי.
+StockDiffPhysicTeoric=הסיבה המניות ההבדל הפיזי תיאורטי
+NoPredefinedProductToDispatch=אין מוצרים מוגדרים מראש עבור אובייקט זה. אז לא שגור במלאי נדרשת.
+DispatchVerb=לשגר
+StockLimitShort=להגביל
+StockLimit=המניות הגבול התראות
+PhysicalStock=פיזית המניה
+RealStock=נדל במלאי
+TheoreticalStock=Therocial המניות
+VirtualStock=Virtual המניות
+MininumStock=מינימום המניות
+StockUp=להכין מלאי
+MininumStockShort=המניות דקות
+StockUpShort=להכין מלאי
+IdWarehouse=Id מחסן
+DescWareHouse=תיאור מחסן
+LieuWareHouse=Localisation מחסן
+WarehousesAndProducts=מחסני ומוצרים
+AverageUnitPricePMPShort=מחיר הכניסה הממוצע המשוקלל
+AverageUnitPricePMP=מחיר הכניסה הממוצע המשוקלל
+SellPriceMin=מכירת מחיר ליחידה
+EstimatedStockValueSellShort=ערך למכור
+EstimatedStockValueSell=ערך למכור
+EstimatedStockValueShort=מניות ערך קלט
+EstimatedStockValue=מניות ערך קלט
+DeleteAWarehouse=מחיקת מחסן
+ConfirmDeleteWarehouse=האם אתה בטוח שברצונך למחוק את <b>%s</b> מחסן?
+PersonalStock=מניות %s אישיים
+ThisWarehouseIsPersonalStock=מחסן זה מייצג המניות האישי של %s %s
+SelectWarehouseForStockDecrease=בחר מחסן לשימוש ירידה במלאי
+SelectWarehouseForStockIncrease=בחר במחסן להשתמש לעלייה במלאי
+// STOP - Lines generated via autotranslator.php tool (2012-03-10 15:20:35).

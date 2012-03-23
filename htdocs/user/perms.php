@@ -46,14 +46,14 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
 	$canreaduser=($user->admin || ($user->rights->user->user->lire && $user->rights->user->user_advance->readperms));
 	$caneditselfperms=($user->id == $id && $user->rights->user->self_advance->writeperms);
-	$caneditperms = '('.$caneditperms.' || '.$caneditselfperms.')';
+	$caneditperms = (($caneditperms || $caneditselfperms) ? 0 : 1);
 }
 
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $id)	// A user can always read its own card
+if ($user->id == $id && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->user->self_advance->readperms))	// A user can always read its own card if not advanced perms enabled, or if he has advanced perms
 {
 	$feature2='';
 	$canreaduser=1;
@@ -343,9 +343,8 @@ if ($result)
         print '</td>';
 
         // Permission and tick
-        if ($fuser->admin && $objMod->rights_admin_allowed)
+        if ($fuser->admin && $objMod->rights_admin_allowed)    // Permission own because admin
         {
-            // Permission own because admin
             if ($caneditperms)
             {
                 print '<td align="center">'.img_picto($langs->trans("Administrator"),'star').'</td>';
@@ -354,9 +353,8 @@ if ($result)
             print img_picto($langs->trans("Active"),'tick');
             print '</td>';
         }
-        else if (in_array($obj->id, $permsuser))
+        else if (in_array($obj->id, $permsuser))                // Permission own by user
         {
-            // Permission own by user
             if ($caneditperms)
             {
                 print '<td align="center"><a href="perms.php?id='.$fuser->id.'&amp;action=delrights&amp;rights='.$obj->id.'#'.$objMod->getName().'">'.img_edit_remove($langs->trans("Remove")).'</a></td>';
@@ -365,8 +363,8 @@ if ($result)
             print img_picto($langs->trans("Active"),'tick');
             print '</td>';
         }
-        else if (in_array($obj->id, $permsgroup)) {
-            // Permission own by group
+        else if (in_array($obj->id, $permsgroup))              // Permission own by group
+        {
             if ($caneditperms)
             {
                 print '<td align="center">';
@@ -399,7 +397,8 @@ if ($result)
 else dol_print_error($db);
 print '</table>';
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

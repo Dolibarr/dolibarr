@@ -67,10 +67,10 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php');
 
 
 /**
- *	\class      pdf_standardlabel
- *	\brief      Classe afin d'editer au format PDF des pages d'etiquette adresse au format Avery ou personnalise
+ *	Classe afin d'editer au format PDF des pages d'etiquette adresse au format Avery ou personnalise
  */
-class pdf_standardlabel {
+class pdf_standardlabel
+{
 
 	var $code;		// Code of format
 	var $format;	// Array with informations
@@ -99,16 +99,17 @@ class pdf_standardlabel {
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	function pdf_standard($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 	}
 
 	//Methode qui permet de modifier la taille des caracteres
 	// Cela modiera aussi l'espace entre chaque ligne
-	function Set_Char_Size(&$pdf,$pt) {
+	function Set_Char_Size(&$pdf,$pt)
+	{
 		if ($pt > 3) {
 			$this->_Char_Size = $pt;
 			$this->_Line_Height = $this->_Get_Height_Chars($pt);
@@ -118,7 +119,7 @@ class pdf_standardlabel {
 
 
 	// On imprime une etiquette
-	function Add_PDF_card(&$pdf,$textleft,$header='',$footer='',$outputlangs,$textright='')
+	function Add_PDF_card(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='')
 	{
 		global $mysoc,$conf,$langs;
 
@@ -146,7 +147,7 @@ class pdf_standardlabel {
 		}
 		// Define photo
 		$photo='';
-		
+
 		// Print lines
 		if ($this->code == "CARD")
 		{
@@ -338,10 +339,11 @@ class pdf_standardlabel {
 
 
     /**
-     *      \brief      Function to build PDF on disk, then output on HTTP strem.
-     *      \param      arrayofmembers  Array of members informations
-     *      \param      outputlangs     Lang object for output language
-     *      \return     int             1=ok, 0=ko
+     *  Function to build PDF on disk, then output on HTTP strem.
+     *
+     *  @param	array		$arrayofmembers  	Array of members informations
+     *  @param  Translate	$outputlangs     	Lang object for output language
+     *  @return int             				1=OK, 0=KO
      */
     function write_file($arrayofmembers,$outputlangs)
     {

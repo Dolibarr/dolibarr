@@ -66,8 +66,6 @@ $month=GETPOST("month");
 // Nombre de ligne pour choix de produit/service predefinis
 $NBLINES=4;
 
-$object = new Propal($db);
-
 // Security check
 $module='propale';
 if (isset($socid))
@@ -84,6 +82,14 @@ else if (isset($id) &&  $id > 0)
 }
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, $module, $objectid, $dbtable);
+
+$object = new Propal($db);
+
+// Load object
+if ($id > 0 || ! empty($ref))
+{
+	$ret=$object->fetch($id, $ref);
+}
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
@@ -144,39 +150,32 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->prop
 }
 
 // Remove line
-else if ($action == 'confirm_deleteline' && $confirm == 'yes')
+else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->propale->creer)
 {
-	if ($user->rights->propale->creer)
-	{
-		$object->fetch($id);
-		$object->fetch_thirdparty();
-		$result = $object->deleteline($lineid);
-		// reorder lines
-		if ($result) $object->line_order(true);
+	$object->fetch($id);
+	$object->fetch_thirdparty();
+	$result = $object->deleteline($lineid);
+	// reorder lines
+	if ($result) $object->line_order(true);
 
-		// Define output language
-		$outputlangs = $langs;
-		$newlang='';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-		if (! empty($newlang))
-		{
-			$outputlangs = new Translate("",$conf);
-			$outputlangs->setDefaultLang($newlang);
-		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-		{
-            $ret=$object->fetch($id);    // Reload to get new records
-		    propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
-		}
-
-		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-		exit;
-	}
-	else
+	// Define output language
+	$outputlangs = $langs;
+	$newlang='';
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+	if (! empty($newlang))
 	{
-		$mesg='<div class="error">'.$object->error.'</div>';
+		$outputlangs = new Translate("",$conf);
+		$outputlangs->setDefaultLang($newlang);
 	}
+	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+	{
+		$ret=$object->fetch($id);    // Reload to get new records
+		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+	}
+
+	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+	exit;
 }
 
 // Validation
@@ -210,7 +209,7 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->pr
 	}
 }
 
-else if ($action == 'setdate')
+else if ($action == 'setdate' && $user->rights->propale->creer)
 {
     $datep=dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
@@ -227,23 +226,16 @@ else if ($action == 'setdate')
     	if ($result < 0) dol_print_error($db,$object->error);
     }
 }
-else if ($action == 'setecheance')
+else if ($action == 'setecheance' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
 	$result=$object->set_echeance($user,dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
-else if ($action == 'setdate_livraison')
+else if ($action == 'setdate_livraison' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
 	$result=$object->set_date_livraison($user,dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
-	if ($result < 0) dol_print_error($db,$object->error);
-}
-
-else if ($action == 'setaddress' && $user->rights->propale->creer)
-{
-	$object->fetch($id);
-	$result=$object->set_adresse_livraison($user,$_POST['fk_address']);
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
@@ -252,6 +244,20 @@ else if ($action == 'set_ref_client' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
 	$object->set_ref_client($user, $_POST['ref_client']);
+}
+
+else if ($action == 'setnote_public' && $user->rights->propale->creer)
+{
+	$object->fetch($id);
+	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
+	if ($result < 0) dol_print_error($db,$object->error);
+}
+
+else if ($action == 'setnote' && $user->rights->propale->creer)
+{
+	$object->fetch($id);
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
+	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 // Create proposal
@@ -396,7 +402,7 @@ else if ($action == 'add' && $user->rights->propale->creer)
 }
 
 // Classify billed
-else if ($action == 'classifybilled')
+else if ($action == 'classifybilled' && $user->rights->propale->cloturer)
 {
 	$object->fetch($id);
 	$object->cloture($user, 4, '');
@@ -424,7 +430,6 @@ else if ($action == 'setstatut' && $user->rights->propale->cloturer)
         if (! GETPOST('statut'))
         {
             $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("CloseAs")).'</div>';
-            $action='statut';
             $action='statut';
         }
         else
@@ -486,11 +491,11 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
 
 	if ($result > 0)
 	{
-		$objectref = dol_sanitizeFileName($object->ref);
-		$file = $conf->propale->dir_output . '/' . $objectref . '/' . $objectref . '.pdf';
+//		$objectref = dol_sanitizeFileName($object->ref);
+//		$file = $conf->propal->dir_output . '/' . $objectref . '/' . $objectref . '.pdf';
 
-		if (is_readable($file))
-		{
+//		if (is_readable($file))
+//		{
 			if ($_POST['sendto'])
 			{
 				// Le destinataire a ete fourni via le champ libre
@@ -612,13 +617,13 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
 				$mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
 				dol_syslog('Recipient email is empty');
 			}
-		}
+/*		}
 		else
 		{
 			$langs->load("errors");
 			$mesg='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
 			dol_syslog('Failed to read file: '.$file);
-		}
+		}*/
 	}
 	else
 	{
@@ -838,7 +843,7 @@ else if ($action == "addline" && $user->rights->propale->creer)
 }
 
 // Mise a jour d'une ligne dans la propale
-if ($action == 'updateligne' && $user->rights->propale->creer && $_POST["save"] == $langs->trans("Save"))
+else if ($action == 'updateligne' && $user->rights->propale->creer && $_POST["save"] == $langs->trans("Save"))
 {
 	if (! $object->fetch($_POST["id"]) > 0)
 	{
@@ -945,31 +950,31 @@ else if ($action == 'builddoc' && $user->rights->propale->creer)
 }
 
 // Set project
-else if ($action == 'classin')
+else if ($action == 'classin' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
 	$object->setProject($_POST['projectid']);
 }
 
 // Delai de livraison
-else if ($action == 'setavailability')
+else if ($action == 'setavailability' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
 	$result = $object->availability($_POST['availability_id']);
 }
 
 // Origine de la propale
-else if ($action == 'setdemandreason')
+else if ($action == 'setdemandreason' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
 	$result = $object->demand_reason($_POST['demand_reason_id']);
 }
 
 // Conditions de reglement
-else if ($action == 'setconditions')
+else if ($action == 'setconditions' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
-	$result = $object->cond_reglement($_POST['cond_reglement_id']);
+	$result = $object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
 }
 
 else if ($action == 'setremisepercent' && $user->rights->propale->creer)
@@ -985,10 +990,10 @@ else if ($action == 'setremiseabsolue' && $user->rights->propale->creer)
 }
 
 // Mode de reglement
-else if ($action == 'setmode')
+else if ($action == 'setmode' && $user->rights->propale->creer)
 {
 	$object->fetch($id);
-	$result = $object->mode_reglement($_POST['mode_reglement_id']);
+	$result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
 }
 
 /*
@@ -1039,6 +1044,68 @@ else if ($action == 'down' && $user->rights->propale->creer)
 	exit;
 }
 
+if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+{
+	if ($action == 'addcontact' && $user->rights->propale->creer)
+	{
+		$result = $object->fetch($id);
+
+		if ($result > 0 && $id > 0)
+		{
+			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
+			$result = $result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+		}
+
+		if ($result >= 0)
+		{
+			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
+		else
+		{
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+			{
+				$langs->load("errors");
+				$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+			}
+			else
+			{
+				$mesg = '<div class="error">'.$object->error.'</div>';
+			}
+		}
+	}
+
+	// Bascule du statut d'un contact
+	else if ($action == 'swapstatut' && $user->rights->propale->creer)
+	{
+		if ($object->fetch($id) > 0)
+		{
+			$result=$object->swapContactStatus(GETPOST('ligne'));
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
+
+	// Efface un contact
+	else if ($action == 'deletecontact' && $user->rights->propale->creer)
+	{
+		$object->fetch($id);
+		$result = $object->delete_contact($lineid);
+
+		if ($result >= 0)
+		{
+			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
+}
+
 
 /*
  * View
@@ -1061,8 +1128,6 @@ if ($id > 0 || ! empty($ref))
 	 */
 
 	dol_htmloutput_mesg($mesg,$mesgs);
-
-	$object->fetch($id,$ref);
 
 	$soc = new Societe($db);
 	$soc->fetch($object->socid);
@@ -1087,25 +1152,25 @@ if ($id > 0 || ! empty($ref))
 	}
 
 	// Confirm delete
-	if ($action == 'delete')
+	else if ($action == 'delete')
 	{
 		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp',$object->ref), 'confirm_delete','',0,1);
 	}
 
 	// Confirm reopen
-	if ($action == 'reopen')
+	else if ($action == 'reopen')
 	{
 		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenProp',$object->ref), 'confirm_reopen','',0,1);
 	}
 
 	// Confirmation delete product/service line
-	if ($action == 'ask_deleteline')
+	else if ($action == 'ask_deleteline')
 	{
 		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline','',0,1);
 	}
 
 	// Confirm validate proposal
-	if ($action == 'validate')
+	else if ($action == 'validate')
 	{
 	    $error=0;
 
@@ -1180,8 +1245,6 @@ if ($id > 0 || ! empty($ref))
 	print '</td>';
 	print '</tr>';
 
-	$rowspan=11;
-
 	// Company
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$soc->getNomUrl(1).'</td>';
 	print '</tr>';
@@ -1246,20 +1309,6 @@ if ($id > 0 || ! empty($ref))
 		}
 	}
 	print '</td>';
-
-	if ($conf->projet->enabled) $rowspan++;
-	if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS) $rowspan++;
-
-	//Local taxes
-	if ($mysoc->country_code=='ES')
-	{
-		if($mysoc->localtax1_assuj=="1") $rowspan++;
-		if($mysoc->localtax2_assuj=="1") $rowspan++;
-	}
-
-	// Notes
-	print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('NotePublic').' :<br>'. nl2br($object->note_public).'</td>';
-	print '</tr>';
 
 	// Date end proposal
 	print '<tr>';
@@ -1337,29 +1386,6 @@ if ($id > 0 || ! empty($ref))
 	}
 	print '</td>';
 	print '</tr>';
-
-	// Delivery address (deprecated)
-	if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS)
-	{
-		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('DeliveryAddress');
-		print '</td>';
-
-		if ($action != 'editdelivery_address' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_address&amp;socid='.$object->socid.'&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDeliveryAddress'),1).'</a></td>';
-		print '</tr></table>';
-		print '</td><td colspan="3">';
-
-		if ($action == 'editdelivery_address')
-		{
-			$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,GETPOST('socid','int'),'fk_address','propal',$object->id);
-		}
-		else
-		{
-			$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,GETPOST('socid','int'),'none','propal',$object->id);
-		}
-		print '</td></tr>';
-	}
 
 	// Delivery delay
 	print '<tr><td>';
@@ -1480,12 +1506,12 @@ if ($id > 0 || ! empty($ref))
 
 	// Amount HT
 	print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
-	print '<td align="right" colspan="2" nowrap><b>'.price($object->total_ht).'</b></td>';
+	print '<td align="right" nowrap><b>'.price($object->total_ht).'</b></td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	// Amount VAT
 	print '<tr><td height="10">'.$langs->trans('AmountVAT').'</td>';
-	print '<td align="right" colspan="2" nowrap>'.price($object->total_tva).'</td>';
+	print '<td align="right" nowrap>'.price($object->total_tva).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	// Amount Local Taxes
@@ -1494,25 +1520,43 @@ if ($id > 0 || ! empty($ref))
 		if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
 		{
 			print '<tr><td height="10">'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
-			print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax1).'</td>';
+			print '<td align="right" nowrap>'.price($object->total_localtax1).'</td>';
 			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 		}
 		if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
 		{
 			print '<tr><td height="10">'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
-			print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax2).'</td>';
+			print '<td align="right" nowrap>'.price($object->total_localtax2).'</td>';
 			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 		}
 	}
 
 	// Amount TTC
 	print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td>';
-	print '<td align="right" colspan="2" nowrap>'.price($object->total_ttc).'</td>';
+	print '<td align="right" nowrap>'.price($object->total_ttc).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	// Statut
 	print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$object->getLibStatut(4).'</td></tr>';
+
 	print '</table><br>';
+
+	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+	{
+		require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+		$formcompany= new FormCompany($db);
+
+		$blocname = 'contacts';
+		$title = $langs->trans('ContactsAddresses');
+		include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
+	}
+
+    if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+    {
+    	$blocname = 'notes';
+    	$title = $langs->trans('Notes');
+    	include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
+    }
 
 	/*
 	 * Lines
@@ -1626,16 +1670,11 @@ if ($id > 0 || ! empty($ref))
 			// Send
 			if ($object->statut == 1 || $object->statut == 2)
 			{
-				$propref = dol_sanitizeFileName($object->ref);
-				$file = $conf->propale->dir_output . '/'.$propref.'/'.$propref.'.pdf';
-				if (file_exists($file))
-				{
-                    if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->propale->propal_advance->send)
-                    {
-					   print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
-                    }
-                    else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
-				}
+                if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->propale->propal_advance->send)
+                {
+				   print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
+                }
+                else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
 			}
 
             // Create an order
@@ -1698,7 +1737,7 @@ if ($id > 0 || ! empty($ref))
 		 * Documents generes
 		 */
 		$filename=dol_sanitizeFileName($object->ref);
-		$filedir=$conf->propale->dir_output . "/" . dol_sanitizeFileName($object->ref);
+		$filedir=$conf->propal->dir_output . "/" . dol_sanitizeFileName($object->ref);
 		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed=$user->rights->propale->creer;
 		$delallowed=$user->rights->propale->supprimer;
@@ -1731,7 +1770,33 @@ if ($id > 0 || ! empty($ref))
 	if ($action == 'presend')
 	{
 		$ref = dol_sanitizeFileName($object->ref);
-		$file = $conf->propale->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+        include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+        $fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref);
+        $file=$fileparams['fullname'];
+
+        // Build document if it not exists
+        if (! $file || ! is_readable($file))
+        {
+            // Define output language
+            $outputlangs = $langs;
+            $newlang='';
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+            if (! empty($newlang))
+            {
+                $outputlangs = new Translate("",$conf);
+                $outputlangs->setDefaultLang($newlang);
+            }
+
+            $result=propale_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+            if ($result <= 0)
+            {
+                dol_print_error($db,$result);
+                exit;
+            }
+            $fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref);
+            $file=$fileparams['fullname'];
+        }
 
 		print '<br>';
 		print_titre($langs->trans('SendPropalByMail'));
@@ -1758,6 +1823,8 @@ if ($id > 0 || ! empty($ref))
 
 		// Tableau des substitutions
 		$formmail->substit['__PROPREF__']=$object->ref;
+        $formmail->substit['__SIGNATURE__']='';
+        $formmail->substit['__PERSONALIZED__']='';
 		// Tableau des parametres complementaires
 		$formmail->param['action']='send';
 		$formmail->param['models']='propal_send';
@@ -1765,10 +1832,10 @@ if ($id > 0 || ! empty($ref))
 		$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 
 		// Init list of files
-		if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+        if (GETPOST("mode")=='init')
 		{
 			$formmail->clear_attached_files();
-			$formmail->add_attached_files($file,dol_sanitizeFilename($object->ref).'.pdf','application/pdf');
+            $formmail->add_attached_files($file,basename($file),dol_mimetype($file));
 		}
 
 		$formmail->show_form();
@@ -1938,7 +2005,7 @@ else
 
 			print '<td width="16" align="right" class="nobordernopadding">';
 			$filename=dol_sanitizeFileName($objp->ref);
-			$filedir=$conf->propale->dir_output . '/' . dol_sanitizeFileName($objp->ref);
+			$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($objp->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->propalid;
 			$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','',1,'',1);
 			print '</td></tr></table>';
@@ -2013,7 +2080,7 @@ else
 }
 
 
+// End of page
 llxFooter();
-
 $db->close();
 ?>

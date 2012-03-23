@@ -32,7 +32,7 @@
 <input type="hidden" name="canvas" value="<?php echo $this->object->tpl['canvas']; ?>">
 
 
-<table class="border" width="100%">
+<table class="border allwidth">
 
 <tr>
 <td class="fieldrequired" width="20%"><?php echo $langs->trans("Ref"); ?></td>
@@ -69,8 +69,8 @@ echo $this->object->tpl['textarea_description'];
 
 <br>
 
-<center><input type="submit" class="button" value="<?php echo $langs->trans("Save"); ?>"> &nbsp; &nbsp;
-<input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>"></center>
+<div align="center"><input type="submit" class="button" value="<?php echo $langs->trans("Save"); ?>"> &nbsp; &nbsp;
+<input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>"></div>
 
 </form>
 

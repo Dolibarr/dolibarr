@@ -23,7 +23,7 @@
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 	<td align="center"><?php echo ($i+1); ?></td>
 	<?php } ?>
-	<td><a name="<?php echo $line->id; ?>"></a>
+	<td><div id="<?php echo $line->id; ?>"></div>
 	<?php
 	echo $form->textwithtooltip($text,$description,3,'','',$i,0,($line->fk_parent_line?img_picto('', 'rightarrow'):''));
 

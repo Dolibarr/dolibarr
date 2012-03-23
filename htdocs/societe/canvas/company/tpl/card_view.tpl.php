@@ -33,7 +33,7 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 <?php if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delete']; ?>
 <?php if ($this->control->tpl['js_checkVatPopup']) echo $this->control->tpl['js_checkVatPopup']; ?>
 
-<table class="border" width="100%">
+<table class="border allwidth">
 
 <tr>
 	<td width="20%"><?php echo $langs->trans('ThirdPartyName'); ?></td>
@@ -173,7 +173,7 @@ for ($i=1; $i<=4; $i++) {
 
 <tr>
 	<td>
-	<table width="100%" class="nobordernopadding">
+	<table class="nobordernopadding allwidth">
 		<tr>
 			<td><?php echo $langs->trans('RIB'); ?></td>
 			<td align="right">
@@ -191,7 +191,7 @@ for ($i=1; $i<=4; $i++) {
 
 <tr>
 	<td>
-	<table width="100%" class="nobordernopadding">
+	<table class="nobordernopadding allwidth">
 		<tr>
 			<td><?php echo $langs->trans('ParentCompany'); ?></td>
 			<td align="right">
@@ -209,7 +209,7 @@ for ($i=1; $i<=4; $i++) {
 
 <tr>
 	<td>
-	<table width="100%" class="nobordernopadding">
+	<table class="nobordernopadding allwidth">
 		<tr>
 			<td><?php echo $langs->trans('SalesRepresentatives'); ?></td>
 			<td align="right">
@@ -241,10 +241,6 @@ for ($i=1; $i<=4; $i++) {
 <a class="butAction" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&amp;action=edit&amp;canvas='.$canvas; ?>"><?php echo $langs->trans("Modify"); ?></a>
 <?php } ?>
 
-<?php if ($user->rights->societe->contact->creer) { ?>
-<a class="butAction" href="<?php echo DOL_URL_ROOT.'/contact/fiche.php?socid='.$this->control->tpl['id'].'&amp;action=create&amp;canvas=default'; ?>"><?php echo $langs->trans("AddContact"); ?></a>
-<?php } ?>
-
 <?php if ($user->rights->societe->supprimer) { ?>
 	<?php if ($conf->use_javascript_ajax) { ?>
 		<span id="action-delete" class="butActionDelete"><?php echo $langs->trans('Delete'); ?></span>
@@ -256,8 +252,8 @@ for ($i=1; $i<=4; $i++) {
 
 <br>
 
-<table width="100%"><tr><td valign="top" width="50%">
-<a name="builddoc"></a>
+<table class="allwidth"><tr><td valign="top" width="50%">
+<div id="builddoc"></div>
 
 <?php
 /*
