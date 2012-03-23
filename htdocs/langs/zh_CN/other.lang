@@ -50,10 +50,6 @@ WarningInstallDirExists=警告，安装目录<b>（htdocs中/安装</b> ）依�
 WarningUntilDirRemoved=所有安全警告（可见由管理员用户只）将保持活跃，只要是存在的脆弱性（或常数MAIN_REMOVE_INSTALL_WARNING是在安装程序->其他设置添加）。
 PredefinedMailTest=这是一个测试邮件。\ n该两行是由一个回车分隔。
 PredefinedMailTestHtml=这是一个<b>测试</b>邮件（单词测试必须大胆）。 <br>这两条线隔开，回车。
-PredefinedMailContentSendInvoice=Veuillez trouver慈联合报制作__FACREF__ \ ñ \ nCordialement \ ñ \ ñ
-PredefinedMailContentSendInvoiceReminder=努斯apportons à votre明知地阙拉制作__FACREF__东北桑布勒考绩avoir埃泰réglée。香格里拉voici donc，倒入垂降，恩一块jointe。\ ñ \ nCordialement \ ñ \ ñ
-PredefinedMailContentSendProposal=Veuillez trouver慈联合报主张商业设备__PROPREF__ \ ñ \ nCordialement \ ñ \ ñ
-PredefinedMailContentSendOrder=Veuillez trouver慈联合报commande __ORDERREF__ \ ñ \ nCordialement \ ñ \ ñ
 DemoDesc=Dolibarr是紧凑型的ERP / CRM的几个功能模块组成。一个演示，其中包括所有模块并不意味着什么，因为这永远不会发生。因此，一些演示配置文件都可用。
 ChooseYourDemoProfil=演示材选择符合您的活动...
 DemoFundation=一个基金会管理成员
@@ -195,7 +191,6 @@ CalculatedVolume=计算量
 
 // START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
 // Reference language: en_US -> zh_CN
-PredefinedMailContentSendSupplierOrder=在这里你会发现我们的订单__ORDERREF__ \ ñ \ nSincerely \ ñ \ ñ
 WeightUnitpound=英镑
 VolumeUnitounce=盎司
 VolumeUnitlitre=升
@@ -221,9 +216,6 @@ Notify_BILL_SUPPLIER_SENTBYMAIL=通过邮件发送的供应商发票
 Notify_CONTRACT_VALIDATE=合同验证
 Notify_FICHEINTER_VALIDATE=干预验证
 Notify_MEMBER_DELETE=会员删除
-PredefinedMailContentSendSupplierInvoice=你会发现这里的发票__FACREF__ \n\nSincerely \n\n
-PredefinedMailContentSendShipping=你会发现这里的航运__SHIPPINGREF__ \n\nSincerely \n\n
-PredefinedMailContentSendFichInter=你会发现这里的干预__FICHINTERREF__ \n\nSincerely \n\n
 Top=顶部
 Bottom=底部的
 Left=左

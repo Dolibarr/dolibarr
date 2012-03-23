@@ -184,7 +184,7 @@ CalculatedVolume=Reiknað magn
 
 // START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
 // Reference language: en_US -> is_IS
-PredefinedMailContentSendSupplierOrder=Þú vilja finna hér til __ORDERREF__ \ okkar n \ nSincerely \ n \ n
+PredefinedMailContentSendSupplierOrder=Þú vilja finna hér til __ORDERREF__ okkar \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
 WeightUnitpound=pund
 VolumeUnitounce=eyri
 VolumeUnitlitre=l
@@ -212,7 +212,7 @@ Notify_FICHEINTER_VALIDATE=Afskipti fullgilt
 Notify_SHIPPING_VALIDATE=Shipping fullgilt
 Notify_SHIPPING_SENTBYMAIL=Shipping send með pósti
 Notify_MEMBER_VALIDATE=Member fullgilt
-PredefinedMailContentSendFichInter=Þú vilja finna hér á afskiptum __FICHINTERREF__ \ n \ nSincerely \ n \ n
+PredefinedMailContentSendFichInter=Þú vilja finna hér á afskiptum __FICHINTERREF__ \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
 Top=Top
 Bottom=Bottom
 Left=Vinstri
@@ -235,12 +235,12 @@ Notify_BILL_SENTBYMAIL=Viðskiptavinur Reikningar send með pósti
 Notify_MEMBER_SUBSCRIPTION=Member áskrift
 Notify_MEMBER_RESILIATE=Member resiliated
 Notify_MEMBER_DELETE=Member eytt
-PredefinedMailContentSendInvoice=Þú vilja finna hér á reikningsnúmerið __ FACREF__ \n\n kveðju \n\n
-PredefinedMailContentSendInvoiceReminder=Við viljum vara þig á að reikningur __ FACREF__ virðist ekki vera greiddur. Svo er þetta reikningur í viðhengi aftur, sem áminningu. \n\n kveðju \n\n
-PredefinedMailContentSendProposal=Þú vilja finna hér auglýsing propoal __ PROPREF__ \n\n kveðju \n\n
-PredefinedMailContentSendOrder=Þú vilja finna hér til __ ORDERREF__ \n\n kveðju \n\n
-PredefinedMailContentSendSupplierInvoice=Þú vilja finna hér á reikningsnúmerið __ FACREF__ \n\n kveðju \n\n
-PredefinedMailContentSendShipping=Þú vilja finna hér siglinga __ SHIPPINGREF__ \n\n kveðju \n\n
+PredefinedMailContentSendInvoice=Þú vilja finna hér á reikningsnúmerið __ FACREF__ \n\n__PERSONALIZED__ kveðju \n\n__SIGNATURE__
+PredefinedMailContentSendInvoiceReminder=Við viljum vara þig á að reikningur __ FACREF__ virðist ekki vera greiddur. Svo er þetta reikningur í viðhengi aftur, sem áminningu. \n\n__PERSONALIZED__ kveðju \n\n__SIGNATURE__
+PredefinedMailContentSendProposal=Þú vilja finna hér auglýsing propoal __ PROPREF__ \n\n__PERSONALIZED__ kveðju \n\n__SIGNATURE__
+PredefinedMailContentSendOrder=Þú vilja finna hér til __ ORDERREF__ \n\n__PERSONALIZED__ kveðju \n\n__SIGNATURE__
+PredefinedMailContentSendSupplierInvoice=Þú vilja finna hér á reikningsnúmerið __ FACREF__ \n\n__PERSONALIZED__ kveðju \n\n__SIGNATURE__
+PredefinedMailContentSendShipping=Þú vilja finna hér siglinga __ SHIPPINGREF__ \n\n__PERSONALIZED__ kveðju \n\n__SIGNATURE__
 AddFiles=Bæta við skrár
 StartUpload=Byrja senda
 CancelUpload=Hætta við

@@ -191,7 +191,7 @@ ExternalSites=Ulkoiset sivustot
 
 // START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
 // Reference language: en_US -> fi_FI
-PredefinedMailContentSendSupplierOrder=Löydät tästä meidän järjestys __ORDERREF__ \ n \ nSincerely \ n \ n
+PredefinedMailContentSendSupplierOrder=Löydät tästä meidän järjestys __ORDERREF__ \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
 WeightUnitpound=punta
 VolumeUnitounce=unssi
 VolumeUnitlitre=litra
@@ -242,13 +242,13 @@ Notify_BILL_SENTBYMAIL=Asiakkaan lasku lähetetään postitse
 Notify_MEMBER_SUBSCRIPTION=Jäsen merkitty
 Notify_MEMBER_RESILIATE=Jäsen resiliated
 Notify_MEMBER_DELETE=Jäsen poistettu
-PredefinedMailContentSendInvoice=Löydät täältä laskun __ FACREF__ \n\n Sincerely \n\n
-PredefinedMailContentSendInvoiceReminder=Haluamme varoittaa, että lasku __ FACREF__ näyttää ei maksanut. Joten tämä on laskun liitetiedostona uudelleen, kuten muistutuksen. \n\n Vilpittömästi \n\n
-PredefinedMailContentSendProposal=Löydät täältä kaupallinen propoal __ PROPREF__ \n\n Sincerely \n\n
-PredefinedMailContentSendOrder=Löydät täältä järjestyksessä __ ORDERREF__ \n\n Sincerely \n\n
-PredefinedMailContentSendSupplierInvoice=Löydät täältä laskun __ FACREF__ \n\n Sincerely \n\n
-PredefinedMailContentSendShipping=Löydät täältä merenkulku __ SHIPPINGREF__ \n\n Sincerely \n\n
-PredefinedMailContentSendFichInter=Löydät täältä intervention __ FICHINTERREF__ \n\n Sincerely \n\n
+PredefinedMailContentSendInvoice=Löydät täältä laskun __ FACREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
+PredefinedMailContentSendInvoiceReminder=Haluamme varoittaa, että lasku __ FACREF__ näyttää ei maksanut. Joten tämä on laskun liitetiedostona uudelleen, kuten muistutuksen. \n\n__PERSONALIZED__ Vilpittömästi \n\n__SIGNATURE__
+PredefinedMailContentSendProposal=Löydät täältä kaupallinen propoal __ PROPREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
+PredefinedMailContentSendOrder=Löydät täältä järjestyksessä __ ORDERREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
+PredefinedMailContentSendSupplierInvoice=Löydät täältä laskun __ FACREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
+PredefinedMailContentSendShipping=Löydät täältä merenkulku __ SHIPPINGREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
+PredefinedMailContentSendFichInter=Löydät täältä intervention __ FICHINTERREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
 StartUpload=Aloita lataaminen
 CancelUpload=Peruuta Lähetä
 FileIsTooBig=Files on liian suuri

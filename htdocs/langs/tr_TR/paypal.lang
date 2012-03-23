@@ -22,8 +22,6 @@ PAYPAL_CSS_URL=Ödeme sayfası CSS stil sayfasının Optionnal URL
 ThisIsTransactionId=<b>%s:</b> Bu işlem kimliği
 PAYPAL_ADD_PAYMENT_URL=Posta yoluyla bir belge gönderdiğinizde, Paypal ödeme url ekle
 PAYPAL_IPN_MAIL_ADDRESS=Anında ödeme bildirimi için e-posta adresini (NPI)
-PredefinedMailContentSendOrderWithPaypalLink=
-PredefinedMailContentSendInvoiceWithPaypalLink=
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 14:08:35).
 
 

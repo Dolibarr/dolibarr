@@ -48,7 +48,9 @@ $substitutionarray=array(
 '__OTHER2__' => 'Other2',
 '__OTHER3__' => 'Other3',
 '__OTHER4__' => 'Other4',
-'__OTHER5__' => 'Other5'
+'__OTHER5__' => 'Other5',
+'__SIGNATURE__' => 'Signature',
+'__PERSONALIZED__' => 'Personalized'
 );
 $substitutionarrayfortest=array(
 '__ID__' => 'TESTIdRecord',
@@ -61,7 +63,9 @@ $substitutionarrayfortest=array(
 '__OTHER2__' => 'TESTOther2',
 '__OTHER3__' => 'TESTOther3',
 '__OTHER4__' => 'TESTOther4',
-'__OTHER5__' => 'TESTOther5'
+'__OTHER5__' => 'TESTOther5',
+'__SIGNATURE__' => 'TESTSignature',
+'__PERSONALIZED__' => 'TESTPersonalized'
 );
 
 
@@ -192,7 +196,7 @@ if ($_REQUEST["action"] == 'sendallconfirmed' && $_REQUEST['confirm'] == 'yes')
 						'__OTHER4__' => $other4,
 						'__OTHER5__' => $other5
 					);
-										
+
 					$substitutionisok=true;
                     complete_substitutions_array($substitutionarray, $langs);
 					$newsubject=make_substitutions($subject,$substitutionarray);

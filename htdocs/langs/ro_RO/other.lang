@@ -327,7 +327,7 @@ ExternalSites=Sites externos
 
 // START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
 // Reference language: en_US -> ro_RO
-PredefinedMailContentSendSupplierOrder=Veţi găsi aici noastre pentru __ORDERREF__ \ n \ nSincerely \ n \ n
+PredefinedMailContentSendSupplierOrder=Veţi găsi aici noastre pentru __ORDERREF__ \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
 WeightUnitpound=livră
 VolumeUnitounce=uncie
 VolumeUnitlitre=litru
@@ -358,7 +358,7 @@ Notify_MEMBER_VALIDATE=Membru validate
 Notify_MEMBER_SUBSCRIPTION=Membru subscris
 Notify_MEMBER_RESILIATE=Membru reziliat
 Notify_MEMBER_DELETE=Membre elimină
-PredefinedMailContentSendSupplierInvoice=Veţi găsi aici factura __FACREF__ \ n \ nSincerely \ n \ n
+PredefinedMailContentSendSupplierInvoice=Veţi găsi aici factura __FACREF__ \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
 ThisIsListOfModules=Aceasta este o listă de module preselectate de acest profil de demo-ul (numai modulele cele mai comune sunt vizibile în această demonstraţie). Editeaza aceasta să aibă un demo mai personalizate şi apăsaţi pe &quot;Start&quot;.
 ClickHere=Click aici
 UseAdvancedPerms=Utilizaţi permisiunile avansate ale unor module
@@ -380,12 +380,12 @@ Notify_ORDER_SUPPLIER_VALIDATE=Pentru furnizorul validate
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Pentru furnizorul trimis prin e-mail
 Notify_BILL_SUPPLIER_VALIDATE=Factura furnizorului validate
 Notify_BILL_SUPPLIER_PAYED=Factura platita cu furnizorul
-PredefinedMailContentSendInvoice=Veţi găsi aici __ factura FACREF__ \n\n respect \n\n
-PredefinedMailContentSendInvoiceReminder=Ne-ar dori să vă avertizeze că FACREF__ __ factura pare a nu fi platit. Deci, aceasta este factură în ataşamentul din nou, ca un memento. \n\n respect \n\n
-PredefinedMailContentSendProposal=Veţi găsi aici __ comercial propoal PROPREF__ \n\n respect \n\n
-PredefinedMailContentSendOrder=Veţi găsi aici, pentru __ ORDERREF__ \n\n respect \n\n
-PredefinedMailContentSendShipping=Veţi găsi aici de transport maritim __ SHIPPINGREF__ \n\n respect \n\n
-PredefinedMailContentSendFichInter=Veţi găsi aici de intervenţie __ FICHINTERREF__ \n\n respect \n\n
+PredefinedMailContentSendInvoice=Veţi găsi aici factura __FACREF__ \n\n__PERSONALIZED__ respect \n\n__SIGNATURE__
+PredefinedMailContentSendInvoiceReminder=Ne-ar dori să vă avertizeze că __FACREF__ factura pare a nu fi platit. Deci, aceasta este factură în ataşamentul din nou, ca un memento. \n\n__PERSONALIZED__ respect \n\n__SIGNATURE__
+PredefinedMailContentSendProposal=Veţi găsi aici comercial propoal __PROPREF__ \n\n__PERSONALIZED__ respect \n\n__SIGNATURE__
+PredefinedMailContentSendOrder=Veţi găsi aici, pentru __ORDERREF__ \n\n__PERSONALIZED__ respect \n\n__SIGNATURE__
+PredefinedMailContentSendShipping=Veţi găsi aici de transport maritim __SHIPPINGREF__ \n\n__PERSONALIZED__ respect \n\n__SIGNATURE__
+PredefinedMailContentSendFichInter=Veţi găsi aici de intervenţie __FICHINTERREF__ \n\n__PERSONALIZED__ respect \n\n__SIGNATURE__
 Top=Top
 Bottom=De jos
 Left=Stânga

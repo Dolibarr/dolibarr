@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2010-2012 Regis Houssin  <regis@dolibarr.fr>
 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -173,8 +173,7 @@ class pdf_baleine extends ModelePDFProjects
 				if (! empty($object->note_public))
 				{
 					$pdf->SetFont('','', $default_font_size - 1);
-					$pdf->SetXY($this->posxref-1, $tab_top-2);
-					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'L');
+					$pdf->writeHTMLCell(190, 3, $this->posxref-1, $tab_top-2, $outputlangs->convToOutputCharset($object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-($tab_top-2);
 

@@ -17,8 +17,6 @@ PAYPAL_CSS_URL=Optionnal Url a CSS stíluslap a fizetési oldalon
 ThisIsTransactionId=Ez a tranzakció id: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Add az url a Paypal fizetési amikor a dokumentumot postán
 PAYPAL_IPN_MAIL_ADDRESS=E-mail cím az azonnali értesítést a fizetés (IPN)
-PredefinedMailContentSendOrderWithPaypalLink=Meg fogja találni itt a sorrendben __ORDERREF__ \ n \ nA kattintson az alábbi linkre biztos, hogy a fizetés PayPal \ n \ n%s \ n \ nSincerely \ n \ n
-PredefinedMailContentSendInvoiceWithPaypalLink=Meg fogja találni itt a számla __FACREF__ \ n \ nA kattintson az alábbi linkre biztos, hogy a fizetés PayPal \ n \ n%s \ n \ nSincerely \ n \ n
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 10:47:35).
 
 

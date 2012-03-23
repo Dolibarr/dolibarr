@@ -269,7 +269,7 @@ ExternalSites=tereny zewnętrzne
 
 // START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
 // Reference language: en_US -> pl_PL
-PredefinedMailContentSendSupplierOrder=Znajdziecie tu nasze zamówienie n __ORDERREF__ \ \ nSincerely \ n \ n
+PredefinedMailContentSendSupplierOrder=Znajdziecie tu nasze zamówienie __ORDERREF__ \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
 WeightUnitpound=funt
 VolumeUnitounce=uncja
 VolumeUnitlitre=litr
@@ -297,9 +297,9 @@ Notify_MEMBER_VALIDATE=Członek zatwierdzone
 Notify_MEMBER_SUBSCRIPTION=Członek subskrybowanych
 Notify_MEMBER_RESILIATE=Członek resiliated
 Notify_MEMBER_DELETE=Członek usunięte
-PredefinedMailContentSendSupplierInvoice=Znajdziecie tu Państwo fakturę __FACREF__ \ n \ nSincerely \ n \ n
-PredefinedMailContentSendShipping=Znajdziesz tu wysyłki __SHIPPINGREF__ \ n \ nSincerely \ n \ n
-PredefinedMailContentSendFichInter=Znajdziesz tu interwencji __FICHINTERREF__ \ n \ nSincerely \ n \ n
+PredefinedMailContentSendSupplierInvoice=Znajdziecie tu Państwo fakturę __FACREF__ \n\nSincerely \n\n
+PredefinedMailContentSendShipping=Znajdziesz tu wysyłki __SHIPPINGREF__ \n\n__PERSONALIZED__Sincerely \n\n
+PredefinedMailContentSendFichInter=Znajdziesz tu interwencji __FICHINTERREF__ \n\n__PERSONALIZED__Sincerely \n\n
 Top=Top
 Bottom=Dno
 FileFormat=Format pliku
@@ -323,10 +323,10 @@ Notify_BILL_SUPPLIER_SENTBYMAIL=Faktura dostawca wysłane pocztą
 Notify_CONTRACT_VALIDATE=Umowa zatwierdzona
 Notify_FICHEINTER_VALIDATE=Interwencja zatwierdzone
 Notify_SHIPPING_VALIDATE=Wysyłka zatwierdzone
-PredefinedMailContentSendInvoice=Znajdziecie tu Państwo faktury __ FACREF__ \n\n poważaniem \n\n
-PredefinedMailContentSendInvoiceReminder=Pragniemy ostrzec, że faktura FACREF__ __ wydaje się nie być wypłacana. Więc to jest faktura w załączniku ponownie, jako przypomnienie. \n\n poważaniem \n\n
-PredefinedMailContentSendProposal=Znajdziecie tu komercyjnego propoal __ PROPREF__ \n\n poważaniem \n\n
-PredefinedMailContentSendOrder=Znajdziecie tutaj aby __ ORDERREF__ \n\n poważaniem \n\n
+PredefinedMailContentSendInvoice=Znajdziecie tu Państwo faktury __FACREF__ \n\n__PERSONALIZED__ poważaniem \n\n__SIGNATURE__
+PredefinedMailContentSendInvoiceReminder=Pragniemy ostrzec, że faktura __FACREF__ wydaje się nie być wypłacana. Więc to jest faktura w załączniku ponownie, jako przypomnienie. \n\n__PERSONALIZED__ poważaniem \n\n__SIGNATURE__
+PredefinedMailContentSendProposal=Znajdziecie tu komercyjnego propoal __PROPREF__ \n\n__PERSONALIZED__ poważaniem \n\n__SIGNATURE__
+PredefinedMailContentSendOrder=Znajdziecie tutaj aby __ORDERREF__ \n\n__PERSONALIZED__ poważaniem \n\n__SIGNATURE__
 Left=W lewo
 Right=Prawo
 ThisIsListOfModules=To jest lista modułów selekcjonowane przez tego profilu demo (tylko najczęściej moduły są widoczne w tym demo). Zmodyfikować, aby mieć bardziej spersonalizowany demo i kliknij &quot;Start&quot;.
