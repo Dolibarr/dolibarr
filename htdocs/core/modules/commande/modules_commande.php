@@ -48,7 +48,7 @@ abstract class ModelePDFCommandes extends CommonDocGenerator
      *  @param  string	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	function liste_modeles($db,$maxfilenamelength=0)
+	static function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
 
@@ -73,18 +73,20 @@ abstract class ModeleNumRefCommandes
 {
 	var $error='';
 
-	/**  Return if a module can be used or not
+	/**
+	 *	Return if a module can be used or not
 	 *
-	 *   @return		boolean     true if module can be used
+	 *	@return		boolean     true if module can be used
 	 */
 	function isEnabled()
 	{
 		return true;
 	}
 
-	/**  Renvoie la description par defaut du modele de numerotation
+	/**
+	 *	Renvoie la description par defaut du modele de numerotation
 	 *
-	 *   @return     string      Texte descripif
+	 *	@return     string      Texte descripif
 	 */
 	function info()
 	{
@@ -93,9 +95,10 @@ abstract class ModeleNumRefCommandes
 		return $langs->trans("NoDescription");
 	}
 
-	/**  Renvoie un exemple de numerotation
+	/**
+	 *	Renvoie un exemple de numerotation
 	 *
-	 *   @return     string      Example
+	 *	@return     string      Example
 	 */
 	function getExample()
 	{
@@ -104,28 +107,33 @@ abstract class ModeleNumRefCommandes
 		return $langs->trans("NoExample");
 	}
 
-	/**  Test si les numeros deja en vigueur dans la base ne provoquent pas de conflits qui empecheraient cette numerotation de fonctionner.
+	/**
+	 *	Test si les numeros deja en vigueur dans la base ne provoquent pas de conflits qui empecheraient cette numerotation de fonctionner.
 	 *
-	 *   @return     boolean     false si conflit, true si ok
+	 *	@return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
 	{
 		return true;
 	}
 
-	/**  Renvoie prochaine valeur attribuee
+	/**
+	 *	Renvoie prochaine valeur attribuee
 	 *
-	 *   @return     string      Valeur
+	 *	@param	Societe		$objsoc     Object thirdparty
+	 *	@param	Object		$object		Object we need next value for
+	 *	@return	string      Valeur
 	 */
-	function getNextValue()
+	function getNextValue($objsoc,$object)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
 	}
 
-	/**  Renvoie version du module numerotation
+	/**
+	 *	Renvoie version du module numerotation
 	 *
-	 *   @return     string      Valeur
+	 *	@return     string      Valeur
 	 */
 	function getVersion()
 	{

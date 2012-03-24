@@ -87,14 +87,15 @@ if ($result)
 	$db->free($result);
 }
 
+$now=dol_now();
 
 // List members up to date
 // current rule: uptodate = the end date is in future whatever is type
 // old rule: uptodate = if type does not need payment, that end date is null, if type need payment that end date is in future)
 $sql = "SELECT count(*) as somme , d.fk_adherent_type";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-//$sql.= " WHERE d.statut = 1 AND ((t.cotisation = 0 AND d.datefin IS NULL) OR d.datefin >= ".$db->idate(gmmktime()).')';
-$sql.= " WHERE d.statut = 1 AND d.datefin >= ".$db->idate(gmmktime());
+//$sql.= " WHERE d.statut = 1 AND ((t.cotisation = 0 AND d.datefin IS NULL) OR d.datefin >= ".$db->idate($now).')';
+$sql.= " WHERE d.statut = 1 AND d.datefin >= ".$db->idate($now);
 $sql.= " AND t.rowid = d.fk_adherent_type";
 $sql.= " GROUP BY d.fk_adherent_type";
 
@@ -321,7 +322,7 @@ foreach ($AdherentType as $key => $adhtype)
 	print '<td><a href="type.php?rowid='.$adhtype->id.'">'.img_object($langs->trans("ShowType"),"group").' '.$adhtype->getNomUrl(0,dol_size(16)).'</a></td>';
 	print '<td align="right">'.(isset($MemberToValidate[$key]) && $MemberToValidate[$key] > 0?$MemberToValidate[$key]:'').' '.$staticmember->LibStatut(-1,$adhtype->cotisation,0,3).'</td>';
 	print '<td align="right">'.(isset($MembersValidated[$key]) && ($MembersValidated[$key]-$MemberUpToDate[$key] > 0) ? $MembersValidated[$key]-$MemberUpToDate[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</td>';
-	print '<td align="right">'.(isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,gmmktime(),3).'</td>';
+	print '<td align="right">'.(isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,$now,3).'</td>';
 	print '<td align="right">'.(isset($MembersResiliated[$key]) && $MembersResiliated[$key]> 0 ?$MembersResiliated[$key]:'').' '.$staticmember->LibStatut(0,$adhtype->cotisation,0,3).'</td>';
 	print "</tr>\n";
 }
@@ -329,7 +330,7 @@ print '<tr class="liste_total">';
 print '<td class="liste_total">'.$langs->trans("Total").'</td>';
 print '<td class="liste_total" align="right">'.$SommeA.' '.$staticmember->LibStatut(-1,$adhtype->cotisation,0,3).'</td>';
 print '<td class="liste_total" align="right">'.$SommeB.' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</td>';
-print '<td class="liste_total" align="right">'.$SommeC.' '.$staticmember->LibStatut(1,$adhtype->cotisation,gmmktime(),3).'</td>';
+print '<td class="liste_total" align="right">'.$SommeC.' '.$staticmember->LibStatut(1,$adhtype->cotisation,$now,3).'</td>';
 print '<td class="liste_total" align="right">'.$SommeD.' '.$staticmember->LibStatut(0,$adhtype->cotisation,0,3).'</td>';
 print '</tr>';
 

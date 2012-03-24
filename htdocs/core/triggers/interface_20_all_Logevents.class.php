@@ -111,7 +111,7 @@ class InterfaceLogevents
 
     	if (empty($conf->entity)) $conf->entity = $entity;  // forcing of the entity if it's not defined (ex: in login form)
 
-        $this->date=gmmktime();
+        $this->date=dol_now();
         $this->duree=0;
 
         // Actions
