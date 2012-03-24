@@ -106,18 +106,27 @@ if ($action == 'specimen')
 	$inter = new Fichinter($db);
 	$inter->initAsSpecimen();
 
-	// Charge le modele
-	$dir = "/core/modules/fichinter/doc/";
-	$file = "pdf_".$modele.".modules.php";
-	$file = dol_buildpath($dir.$file);
-	if (file_exists($file))
+	// Search template files
+	$file=''; $classname=''; $filefound=0;
+	$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+	foreach($dirmodels as $reldir)
 	{
-		$classname = "pdf_".$modele;
+	    $file=dol_buildpath($reldir."core/modules/fichinter/doc/pdf_".$modele.".modules.php",0);
+		if (file_exists($file))
+		{
+			$filefound=1;
+			$classname = "pdf_".$modele;
+			break;
+		}
+	}
+
+	if ($filefound)
+	{
 		require_once($file);
 
-		$obj = new $classname($db);
+		$module = new $classname($db);
 
-		if ($obj->write_file($inter,$langs) > 0)
+		if ($module->write_file($inter,$langs) > 0)
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=ficheinter&file=SPECIMEN.pdf");
 			return;
@@ -219,6 +228,8 @@ if ($action == 'setmod')
  * View
  */
 
+$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+
 llxHeader();
 
 $form=new Form($db);
@@ -242,9 +253,9 @@ print "</tr>\n";
 
 clearstatcache();
 
-foreach ($conf->file->dol_document_root as $dirroot)
+foreach ($dirmodels as $reldir)
 {
-	$dir = $dirroot . "/core/modules/fichinter/";
+	$dir = dol_buildpath($reldir."core/modules/fichinter/");
 
 	if (is_dir($dir))
 	{
@@ -260,7 +271,7 @@ foreach ($conf->file->dol_document_root as $dirroot)
 					$file = $reg[1];
 					$classname = substr($file,4);
 
-					require_once($dir.$file.".php");
+					require_once(DOL_DOCUMENT_ROOT ."/core/modules/fichinter/".$file.".php");
 
 					$module = new $file;
 

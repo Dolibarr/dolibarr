@@ -1,0 +1,10 @@
+# Dolibarr language file - en_US - concatpdf 
+CHARSET= UTF-8
+ConcatPdfSetup=ConcatPDF module setup
+ConcatPDfTakeFileFrom=ConcatPDF module will suggest to concat:
+ConcatPDfTakeFileFrom2=To generated PDF <b>%s</b>, any PDF file found into directory: <b>%s</b>
+ConcatPDfPutFileManually=PDF files can be stored here using your file manager.
+NoPDFFileFound=No PDF files found into directory for the moment
+ConcatFile=Concat PDF file
+Module101400Name=Concat PDF
+Module101400Desc=Module to contact PDF (sells conditions for example) to any generated PDF (invoices, orders or proposals)
