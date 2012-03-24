@@ -1,14 +1,13 @@
 htdocs/conf/conf.php
 htdocs/conf/conf.php.old
 documents/
-custom/
-custom2/
 nbproject
 default.properties
 .settings/
 .buildpath
-.gitmodules
 dolibarr_install.log
 doxygen_warnings.log
 /.project
 .DS_Store
+htdocs/custom/core/
+htdocs/custom/ecommerce/

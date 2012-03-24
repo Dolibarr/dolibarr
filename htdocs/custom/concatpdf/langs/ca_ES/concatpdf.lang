@@ -1,0 +1,10 @@
+# Dolibarr language file - ca_ES - concatpdf 
+CHARSET= UTF-8
+ConcatPdfSetup=Configuració del mòdul concatPDF
+ConcatPDfTakeFileFrom=El mòdul ConcatPDF permet concatenar:
+ConcatPDfTakeFileFrom2=A <b>%s</b> PDF generats, qualsevol arxiu PDF trobat al directori: <b>%s</b>
+ConcatPDfPutFileManually=Els arxius PDF es poden col·locar manualment amb el gestor de fitxers.
+NoPDFFileFound=Actualment no hi ha cap arxiu PDF.
+ConcatFile=Concatenar l'arxiu PDF
+Module101400Name=Concat PDF
+Module101400Desc=Mòdul per concatenar PDF (condicions de vendes, per exemple) tots els PDF generats (factures, comandes o pressupostos)

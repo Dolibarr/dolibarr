@@ -150,14 +150,16 @@ abstract class ModeleNumRefFicheinter
  *  @param	Translate	$outputlangs	objet lang a utiliser pour traduction
  *  @return int         				0 if KO, 1 if OK
  */
-function fichinter_create($db, $object, $modele='', $outputlangs='')
+function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $hookmanager=false)
 {
 	global $conf,$langs;
 	$langs->load("ficheinter");
 
-	$dir = "/core/modules/fichinter/doc/";
+	$error=0;
 
-	// Positionne modele sur le nom du modele de facture a utiliser
+	$srctemplatepath='';
+
+	// Positionne modele sur le nom du modele de fichinter a utiliser
 	if (! dol_strlen($modele))
 	{
 		if ($conf->global->FICHEINTER_ADDON_PDF)
@@ -170,33 +172,70 @@ function fichinter_create($db, $object, $modele='', $outputlangs='')
 		}
 	}
 
-	// Charge le modele
-	$file = "pdf_".$modele.".modules.php";
+	// If selected modele is a filename template (then $modele="modelname:filename")
+	$tmp=explode(':',$modele,2);
+    if (! empty($tmp[1]))
+    {
+        $modele=$tmp[0];
+        $srctemplatepath=$tmp[1];
+    }
 
-	// On verifie l'emplacement du modele
-	$file = dol_buildpath($dir.$file);
-
-	if (file_exists($file))
+	// Search template files
+	$file=''; $classname=''; $filefound=0;
+	$dirmodels=array('/');
+	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
+	foreach($dirmodels as $reldir)
 	{
-		$classname = "pdf_".$modele;
+    	foreach(array('doc','pdf') as $prefix)
+    	{
+    	    $file = $prefix."_".$modele.".modules.php";
+
+    		// On verifie l'emplacement du modele
+	        $file=dol_buildpath($reldir."core/modules/fichinter/doc/".$file,0);
+    		if (file_exists($file))
+    		{
+    			$filefound=1;
+    			$classname=$prefix.'_'.$modele;
+    			break;
+    		}
+    	}
+    	if ($filefound) break;
+    }
+
+	// Charge le modele
+	if ($filefound)
+	{
 		require_once($file);
 
 		$obj = new $classname($db);
 
-		dol_syslog("fichinter_create build PDF", LOG_DEBUG);
-
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($object,$outputlangs) > 0)
+		if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $hookmanager) > 0)
 		{
 			$outputlangs->charset_output=$sav_charset_output;
+
+			// We delete old preview
+			require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+			dol_delete_preview($object);
+
+			// Success in building document. We build meta file.
+			dol_meta_create($object);
+
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('FICHEINTER_BUILDDOC',$object,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+
 			return 1;
 		}
 		else
 		{
 			$outputlangs->charset_output=$sav_charset_output;
-			dol_print_error($db,$obj->error);
+			dol_print_error($db,"fichinter_pdf_create Error: ".$obj->error);
 			return 0;
 		}
 	}
