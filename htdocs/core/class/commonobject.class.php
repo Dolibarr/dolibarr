@@ -2140,10 +2140,12 @@ abstract class CommonObject
     function setExtraParameters()
     {
     	$this->db->begin();
+    	
+    	$extraparams = (! empty($this->extraparams) ? json_encode($this->extraparams) : null);
 
-    	$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-    	$sql.= ' SET extraparams = "'.$this->db->escape(json_encode($this->extraparams)).'"';
-    	$sql.= ' WHERE rowid = '.$this->id;
+    	$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+    	$sql.= " SET extraparams = ".(! empty($extraparams) ? "'".$this->db->escape($extraparams)."'" : "null");
+    	$sql.= " WHERE rowid = ".$this->id;
 
     	dol_syslog(get_class($this)."::setExtraParameters sql=".$sql, LOG_DEBUG);
     	$resql = $this->db->query($sql);
