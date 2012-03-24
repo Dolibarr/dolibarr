@@ -91,7 +91,7 @@ class Account extends CommonObject
      *
      *  @param	DoliDB		$db		Database handler
      */
-    function Account($db)
+    function __construct($db)
     {
         global $langs;
 
@@ -344,10 +344,9 @@ class Account extends CommonObject
     /**
      *  Create bank account into database
      *
-     *  @param	User	$user       Object user making action
      *  @return int        			< 0 if KO, > 0 if OK
      */
-    function create($user='')
+    function create()
     {
         global $langs,$conf;
 
@@ -597,14 +596,13 @@ class Account extends CommonObject
      *
      *      @param	int		$id      	Id of bank account to get
      *      @param  string	$ref     	Ref of bank account to get
-     *      @param	string	$ref_ext	External ref of bank account to get
      *      @return	int					<0 if KO, >0 if OK
      */
-    function fetch($id,$ref='',$ref_ext='')
+    function fetch($id,$ref='')
     {
         global $conf;
 
-        if (empty($id) && empty($ref) && empty($ref_ext))
+        if (empty($id) && empty($ref))
         {
             $this->error="ErrorBadParameters";
             return -1;

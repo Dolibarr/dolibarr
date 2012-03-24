@@ -155,6 +155,8 @@ class Expedition extends CommonObject
 	function create($user)
 	{
 		global $conf, $langs;
+		
+		$now=dol_now();
 
 		require_once DOL_DOCUMENT_ROOT ."/product/stock/class/mouvementstock.class.php";
 		$error = 0;
@@ -192,7 +194,7 @@ class Expedition extends CommonObject
 		$sql.= ", ".$conf->entity;
 		$sql.= ", ".($this->ref_customer?"'".$this->ref_customer."'":"null");
 		$sql.= ", ".($this->ref_int?"'".$this->ref_int."'":"null");
-		$sql.= ", '".$this->db->idate(gmmktime())."'";
+		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", ".$user->id;
 		$sql.= ", ".($this->date_expedition>0?"'".$this->db->idate($this->date_expedition)."'":"null");
 		$sql.= ", ".($this->date_delivery>0?"'".$this->db->idate($this->date_delivery)."'":"null");

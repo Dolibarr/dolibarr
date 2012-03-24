@@ -275,7 +275,7 @@ function dol_shutdown()
  *  Return value of a param into GET or POST supervariable
  *
  *  @param	string	$paramname   Name of parameter to found
- *  @param	string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's alpha only)
+ *  @param	string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's alpha only, 'array'=check it's array)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
  *  @return string      		 Value found or '' if check fails
  */
@@ -289,16 +289,24 @@ function GETPOST($paramname,$check='',$method=0)
 
 	if (! empty($check))
 	{
-	    $out=trim($out);
 		// Check if numeric
-		if ($check == 'int' && ! preg_match('/^[-\.,0-9]+$/i',$out)) $out='';
+		if ($check == 'int' && ! preg_match('/^[-\.,0-9]+$/i',$out))
+		{
+			$out=trim($out);
+			$out='';
+		}
 		// Check if alpha
 		elseif ($check == 'alpha')
 		{
+			$out=trim($out);
 	    	// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
     		// '../' is dangerous because it allows dir transversals
 		    if (preg_match('/"/',$out)) $out='';
 			else if (preg_match('/\.\.\//',$out)) $out='';
+		}
+		elseif ($check == 'array')
+		{
+			if (! is_array($out) || empty($out)) $out=array();
 		}
 	}
 
@@ -1102,6 +1110,7 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 function dol_now($mode='gmt')
 {
     // Note that gmmktime and mktime return same value (GMT) whithout parameters
+	//if ($mode == 'gmt') $ret=gmmktime(); // Strict Standards: gmmktime(): You should be using the time() function instead
     if ($mode == 'gmt') $ret=time();	// Time for now at greenwich.
     else if ($mode == 'tzserver')		// Time for now with PHP server timezone added
     {

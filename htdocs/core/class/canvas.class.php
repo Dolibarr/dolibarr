@@ -132,7 +132,7 @@ class Canvas
     {
         if (empty($this->template_dir)) return 0;
 
-        if (file_exists($this->template_dir.($this->card?$this->card.'_':'').$this->action.'.tpl.php')) return 1;
+        if (file_exists($this->template_dir.($this->card?$this->card.'_':'').$this->actiontype.'.tpl.php')) return 1;
         else return 0;
     }
 
@@ -148,7 +148,7 @@ class Canvas
 		global $db, $conf, $langs, $user, $canvas;
 		global $form, $formfile;
 
-		include($this->template_dir.($this->card?$this->card.'_':'').$this->action.'.tpl.php');        // Include native PHP template
+		include($this->template_dir.($this->card?$this->card.'_':'').$this->actiontype.'.tpl.php');        // Include native PHP template
 	}
 
 

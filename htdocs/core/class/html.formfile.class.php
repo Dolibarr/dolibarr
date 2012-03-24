@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2008-2011 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2010-2011 Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2010-2012 Regis Houssin		<regis@dolibarr.fr>
  * Copyright (c) 2010      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -435,7 +435,7 @@ class FormFile
 
             // Execute hooks
             $parameters=array('socid'=>$GLOBALS['socid'],'id'=>$GLOBALS['id'],'modulepart'=>$modulepart);
-            if (is_object($hookmanager)) $out.= $hookmanager->executeHooks('formBuilddocOptions',$parameters);
+            if (is_object($hookmanager)) $out.= $hookmanager->executeHooks('formBuilddocOptions',$parameters,$GLOBALS['object']);
         }
 
         // Get list of files

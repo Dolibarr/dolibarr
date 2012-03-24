@@ -314,8 +314,10 @@ class Mailing extends CommonObject
 	 */
 	function valid($user)
 	{
+		$now=dol_now();
+		
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
-		$sql .= " SET statut = 1, date_valid = ".$this->db->idate(gmmktime()).", fk_user_valid=".$user->id;
+		$sql .= " SET statut = 1, date_valid = ".$this->db->idate($now).", fk_user_valid=".$user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog("Mailing::valid sql=".$sql, LOG_DEBUG);

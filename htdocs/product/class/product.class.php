@@ -885,7 +885,7 @@ class Product extends CommonObject
 	 *  @param     	int		$newnpr         0=Standard vat rate, 1=Special vat rate for French NPR VAT
 	 * 	@return		int						<0 if KO, >0 if OK
 	 */
-	function update_price($id, $newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0)
+	function updatePrice($id, $newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0)
 	{
 		global $conf,$langs;
 
