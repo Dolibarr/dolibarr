@@ -3389,6 +3389,8 @@ class Form
     function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $option='', $translate=0, $maxlen=0, $disabled=0)
     {
         global $langs;
+        
+        if ($value_as_key) $array=array_combine($array, $array);
 
         $out='<select id="'.$htmlname.'" '.($disabled?'disabled="disabled" ':'').'class="flat" name="'.$htmlname.'" '.($option != ''?$option:'').'>';
 
@@ -3401,9 +3403,9 @@ class Form
         {
             foreach($array as $key => $value)
             {
-                $out.='<option value="'.($value_as_key?$value:$key).'"';
+                $out.='<option value="'.$key.'"';
                 // Si il faut pre-selectionner une valeur
-                if ($id != '' && ($id == $key || $id == $value))
+                if ($id != '' && $id == $key)
                 {
                     $out.=' selected="selected"';
                 }
@@ -3429,6 +3431,81 @@ class Form
 
         $out.="</select>";
         return $out;
+    }
+    
+    /**
+     *	Show a multiselect form from an array.
+     *
+     *	@param	string	$htmlname		Name of select
+     *	@param	array	$array			Array with key+value
+     *	@param	array	$selected		Preselected keys
+     *	@param	int		$key_in_label   1 pour afficher la key dans la valeur "[key] value"
+     *	@param	int		$value_as_key   1 to use value as key
+     *	@param  string	$option         Valeur de l'option en fonction du type choisi
+     *	@param  int		$translate		Translate and encode value
+     *	@return	string					HTML multiselect string
+     */
+    function multiselectarray($htmlname, $array, $selected=array(), $key_in_label=0, $value_as_key=0, $option='', $translate=0)
+    {
+    	global $conf, $langs;
+
+    	$out = '<select id="'.$htmlname.'" class="multiselect" multiple="multiple" name="'.$htmlname.'[]"'.$option.'>'."\n";
+    	if (is_array($array) && ! empty($array))
+    	{
+    		if ($value_as_key) $array=array_combine($array, $array);
+
+    		if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && is_array($selected) && ! empty($selected))
+    		{
+    			foreach ($selected as $selected_value)
+    			{
+    				foreach($array as $key => $value)
+    				{
+    					if ($selected_value == $key)
+    					{
+    						$value=$array[$selected_value];
+    						$out.= '<option value="'.$key.'" selected="selected">';
+    						$newval = ($translate ? $langs->trans(ucfirst($value)) : $value);
+    						$newval = ($key_in_label ? $key.' - '.$newval : $newval);
+    						$out.= dol_htmlentitiesbr($newval);
+    						$out.= '</option>'."\n";
+    						unset($array[$key]);
+    					}
+    				}
+    			}
+    			
+    			if (! empty($array))
+    			{
+    				foreach ($array as $key => $value)
+    				{
+    					$out.= '<option value="'.$key.'">';
+    					$newval = ($translate ? $langs->trans(ucfirst($value)) : $value);
+    					$newval = ($key_in_label ? $key.' - '.$newval : $newval);
+    					$out.= dol_htmlentitiesbr($newval);
+    					$out.= '</option>'."\n";
+    				}
+    			}
+    		}
+    		else
+    		{
+    			foreach ($array as $key => $value)
+    			{
+    				$out.= '<option value="'.$key.'"';
+    				if (is_array($selected) && ! empty($selected) && in_array($key, $selected))
+    				{
+    					$out.= ' selected="selected"';
+    				}
+    				$out.= '>';
+    				 
+    				$newval = ($translate ? $langs->trans(ucfirst($value)) : $value);
+    				$newval = ($key_in_label ? $key.' - '.$newval : $newval);
+    				$out.= dol_htmlentitiesbr($newval);
+    				$out.= '</option>'."\n";
+    			}
+    		}
+    	}
+    	$out.= '</select>'."\n";
+    
+    	return $out;
     }
 
 
