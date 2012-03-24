@@ -75,7 +75,7 @@ function is_in_subtree($fulltree,$parentid,$childid)
  * Show indent and picto of a tree line. Return array with information of line.
  *
  * @param	array	&$fulltree		Array of entries in correct order
- * @param 	string	$key			Key of value to show picto
+ * @param 	string	$key			Key of entry into fulltree to show picto
  * @param	int		$silent			Do not output indent and picto, returns only value
  * @return	array					array(0 or 1 if at least one of this level after, 0 or 1 if at least one of higher level after, nbofdirinsub, nbofdocinsub)
  */

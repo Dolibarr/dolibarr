@@ -847,26 +847,36 @@ td.photo {
 /* ============================================================================== */
 
 .toolbar {
+    background-image: linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
+    background-image: -o-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
+    background-image: -moz-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
+    background-image: -webkit-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
+    background-image: -ms-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
 
-/* DYN */
-background-image: linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 15%, rgb(<?php echo $colorback2; ?>) 100%) !important;
-background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 15%, rgb(<?php echo $colorback2; ?>) 100%) !important;
-background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 15%, rgb(<?php echo $colorback2; ?>) 100%) !important;
-background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 15%, rgb(<?php echo $colorback2; ?>) 100%) !important;
-background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 15%, rgb(<?php echo $colorback2; ?>) 100%) !important;
+    border: 1px solid #CCC !important;
 
-    border: 1px solid #BBB !important;
+    -moz-border-radius: 5px 5px 5px 5px !important;
+	-webkit-border-radius: 5px 5px 5px 5px !important;
+	border-radius: 5px 5px 5px 5px !important;
+    -moz-box-shadow: 4px 4px 4px #EEE;
+    -webkit-box-shadow: 4px 4px 4px #EEE;
+    box-shadow: 4px 4px 4px #EEE;
+
+    padding: 0 4px 0 4px !important;
 }
 
-.toolbarbutton {
-    margin-top: 2px;
+a.toolbarbutton {
+    margin-top: 1px;
     margin-left: 4px;
+    margin-right: 4px;
+    height: 30px;
 /*    border: solid 1px #AAAAAA;
-    width: 34px;*/
-    height: 34px;
-/*    background: #FFFFFF;*/
+    width: 32px;
+    background: #FFFFFF;*/
 }
-
+img.toolbarbutton {
+    height: 28px;
+}
 
 /* ============================================================================== */
 /* Panes for ECM or Filemanager                                                   */
@@ -1039,12 +1049,10 @@ background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 15
 }
 
 .ecm-layout-resizer  { /* all 'resizer-bars' */
-    background:     #EEEEEE;
     border:         1px solid #BBB;
     border-width:   0;
     }
 .ecm-layout-resizer-closed {
-    background-color: #EEEEEE;
 }
 
 .ecm-in-layout-center {
@@ -2287,7 +2295,7 @@ ui-layout-north {
 
 }
 
-ul.jqueryFileTree {
+ul.ecmjqft {
 	font-family: Verdana, sans-serif;
 	font-size: 11px;
 	line-height: 18px;
@@ -2296,7 +2304,7 @@ ul.jqueryFileTree {
 	font-weight: normal;
 }
 
-ul.jqueryFileTree li {
+ul.ecmjqft li {
 	list-style: none;
 	padding: 0px;
 	padding-left: 20px;
@@ -2304,85 +2312,85 @@ ul.jqueryFileTree li {
 	white-space: nowrap;
 }
 
-ul.jqueryFileTree a {
-	display: float;
+ul.ecmjqft a {
+	color: #333;
 	padding: 0px 0px;
 	font-weight:normal;
 }
-ul.jqueryFileTree a:active {
+ul.ecmjqft a:active {
 	font-weight: bold !important;
 }
 
-ul.jqueryFileTree a:hover {
+ul.ecmjqft a:hover {
     text-decoration: underline;
 }
 
 /* Core Styles */
-.jqueryFileTree LI.directory { font-weight:normal; background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/directory.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.expanded { font-weight:normal; background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/folder_open.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.file { font-weight:normal; background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/file.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.wait { font-weight:normal; background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/spinner.gif',1); ?>) left top no-repeat; }
+.ecmjqft LI.directory { font-weight:normal; background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/directory.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.expanded { font-weight:normal; background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/folder_open.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.file { font-weight:normal; background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/file.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.wait { font-weight:normal; background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/spinner.gif',1); ?>) left top no-repeat; }
 /* File Extensions*/
-.jqueryFileTree LI.ext_3gp { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/film.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_afp { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_afpa { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_asp { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_aspx { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_avi { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/film.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_bat { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/application.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_bmp { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/picture.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_c { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_cfm { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_cgi { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_com { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/application.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_cpp { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_css { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/css.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_doc { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/doc.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_exe { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/application.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_gif { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/picture.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_fla { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/flash.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_h { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_htm { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/html.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_html { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/html.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_jar { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/java.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_jpg { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/picture.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_jpeg { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/picture.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_js { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/script.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_lasso { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_log { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/txt.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_m4p { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/music.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_mov { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/film.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_mp3 { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/music.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_mp4 { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/film.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_mpg { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/film.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_mpeg { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/film.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_ogg { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/music.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_ogv { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/film.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_pcx { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/picture.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_pdf { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/pdf.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_php { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/php.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_png { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/picture.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_ppt { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/ppt.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_psd { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/psd.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_pl { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/script.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_py { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/script.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_rb { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/ruby.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_rbx { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/ruby.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_rhtml { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/ruby.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_rpm { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/linux.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_ruby { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/ruby.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_sql { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/db.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_swf { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/flash.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_tif { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/picture.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_tiff { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/picture.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_txt { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/txt.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_vb { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_wav { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/music.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_webm { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/film.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_wmv { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/film.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_xls { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/xls.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_xml { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
-.jqueryFileTree LI.ext_zip { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/zip.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_3gp { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/film.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_afp { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_afpa { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_asp { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_aspx { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_avi { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/film.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_bat { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/application.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_bmp { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/picture.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_c { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_cfm { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_cgi { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_com { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/application.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_cpp { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_css { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/css.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_doc { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/doc.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_exe { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/application.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_gif { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/picture.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_fla { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/flash.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_h { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_htm { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/html.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_html { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/html.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_jar { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/java.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_jpg { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/picture.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_jpeg { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/picture.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_js { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/script.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_lasso { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_log { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/txt.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_m4p { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/music.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_mov { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/film.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_mp3 { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/music.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_mp4 { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/film.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_mpg { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/film.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_mpeg { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/film.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_ogg { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/music.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_ogv { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/film.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_pcx { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/picture.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_pdf { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/pdf.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_php { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/php.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_png { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/picture.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_ppt { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/ppt.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_psd { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/psd.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_pl { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/script.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_py { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/script.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_rb { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/ruby.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_rbx { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/ruby.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_rhtml { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/ruby.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_rpm { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/linux.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_ruby { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/ruby.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_sql { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/db.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_swf { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/flash.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_tif { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/picture.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_tiff { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/picture.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_txt { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/txt.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_vb { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_wav { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/music.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_webm { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/film.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_wmv { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/film.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_xls { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/xls.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_xml { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/code.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.ext_zip { background: url(<?php echo dol_buildpath('/filemanager/includes/jqueryFileTree/images/zip.png',1); ?>) left top no-repeat; }
 
 /* Right panel */
 

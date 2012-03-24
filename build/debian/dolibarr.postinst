@@ -92,7 +92,7 @@ case "$1" in
 			chown -R root:www-data $config
 		else
 			# File already exist. We add params not found.
-			// Add new params to overwrite path to use shared libraries/fonts
+			echo Add new params to overwrite path to use shared libraries/fonts
 			grep -q -c "dolibarr_lib_ADODB_PATH" $config || echo "<?php \$dolibarr_lib_ADODB_PATH='/usr/share/php/adodb'; ?>" >> $config
 			grep -q -c "dolibarr_lib_FPDI_PATH" $config || echo "<?php \$dolibarr_lib_FPDI_PATH='/usr/share/php/fpdi'; ?>" >> $config
 			grep -q -c "dolibarr_lib_GEOIP_PATH" $config || echo "<?php \$dolibarr_lib_GEOIP_PATH=''; ?>" >> $config
