@@ -18,13 +18,10 @@ $langs->load("ecm");
 $langs->load("companies");
 $langs->load("other");
 
-// Load permissions
-$user->getrights('ecm');
-
 // Get parameters
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST("socid","int");
 
-// Permissions
+// Security check
 if ($user->societe_id > 0)
 {
 	$action = '';

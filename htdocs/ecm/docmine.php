@@ -29,18 +29,10 @@ require_once(DOL_DOCUMENT_ROOT."/ecm/class/ecmdirectory.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/ecm.lib.php");
 
-
 // Load traductions files
 $langs->load("ecm");
 $langs->load("companies");
 $langs->load("other");
-
-// Load permissions
-$user->getrights('ecm');
-
-
-// Security check
-if ($user->societe_id > 0) $socid = $user->societe_id;
 
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');

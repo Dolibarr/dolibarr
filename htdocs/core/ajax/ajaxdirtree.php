@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       htdocs/core/ajax/ajaxFileTree.php
+ *      \file       htdocs/core/ajax/ajaxdirtree.php
  *      \ingroup    ecm
  *      \brief      This script returns content of a directory for filetree
  *      \version    $Id: ajaxFileTree.php,v 1.8 2011/07/06 17:03:41 eldy Exp $
@@ -36,7 +36,6 @@ if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 // C'est un wrapper, donc header vierge
 function llxHeader() { }
 
-$res=0;
 $res=@include("../../main.inc.php");
 include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 include_once(DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php');
@@ -76,6 +75,7 @@ if ($modulepart == 'ecm')
 /*
  * View
  */
+
 $userstatic=new User($db);
 $form=new Form($db);
 $ecmdirstatic = new EcmDirectory($db);
@@ -94,6 +94,8 @@ foreach($sqltree as $keycursor => $val)
     }
 }
 
+//var_dump($sqltree);
+
 if( file_exists($fullpathselecteddir) )
 {
 	$files = @scandir($fullpathselecteddir);
@@ -111,27 +113,28 @@ if( file_exists($fullpathselecteddir) )
     	        $nboffilesinsubdir=0;
 
     		    // Try to find key into $sqltree
-		        $ecmdir_id=-1;
-		        foreach($sqltree as $ecmdir_idcursor => $val)
+    	        $val=array();
+		        foreach($sqltree as $key => $tmpval)
 		        {
     	            //print "-- ".$val['fullrelativename']." vs ".(($selecteddir != '/'?$selecteddir.'/':'').$file).'<br>';
-		            if ($val['fullrelativename'] == (($selecteddir != '/'?$selecteddir.'/':'').$file))
-		             {
-                        $ecmdir_id = $ecmdir_idcursor;
-                        $resarray=tree_showpad($sqltree,$ecmdir_id,1);
+		            if ($tmpval['fullrelativename'] == (($selecteddir != '/'?$selecteddir.'/':'').$file))
+		            {
+		                $val=$tmpval;
+                        $resarray=tree_showpad($sqltree,$key,1);
                         $a=$resarray[0];
                         $nbofsubdir=$resarray[1];
                         $nboffilesinsubdir=$resarray[2];
-		             }
+                        break;
+		            }
 		        }
 
 		        //if (file_exists($fullpathselecteddir . $file) && $file != '.' && $file != '..' && is_dir($fullpathselecteddir . $file))
-    		    if ($file != '.' && $file != '..' && ($ecmdir_id >= 0 || dol_is_dir($fullpathselecteddir . $file)))
+    		    if ($file != '.' && $file != '..' && ($val['id'] >= 0 || dol_is_dir($fullpathselecteddir . $file)))
     		    {
     				print '<li class="directory collapsed">';
 
     				print "<a class=\"fmdirlia jqft\" href=\"#\" rel=\"" . dol_escape_htmltag($file . '/') . "\"";
-    				print " onClick=\"loadandshowpreview('".dol_escape_js($file)."')\">";
+    				print " onClick=\"loadandshowpreview('".dol_escape_js($val['fullrelativename'])."',".$val['id'].")\">";
     				print dol_escape_htmltag($file);
     				print "</a>";
 
@@ -152,7 +155,7 @@ if( file_exists($fullpathselecteddir) )
     				print '</td>';
 
     				// Edit link
-    				print '<td align="right" width="18"><a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$val['id'].'">'.img_view().'</a></td>';
+    				print '<td align="right" width="18"><a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$val['id'].'&relativedir='.urlencode($val['fullrelativename']).'">'.img_view().'</a></td>';
 
     				// Add link
     				//print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create&amp;catParent='.$val['id'].'">'.img_edit_add().'</a></td>';

@@ -847,26 +847,36 @@ td.photo {
 /* ============================================================================== */
 
 .toolbar {
+    background-image: linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
+    background-image: -o-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
+    background-image: -moz-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
+    background-image: -webkit-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
+    background-image: -ms-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
 
-/* DYN */
-background-image: linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 15%, rgb(<?php echo $colorback2; ?>) 100%) !important;
-background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 15%, rgb(<?php echo $colorback2; ?>) 100%) !important;
-background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 15%, rgb(<?php echo $colorback2; ?>) 100%) !important;
-background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 15%, rgb(<?php echo $colorback2; ?>) 100%) !important;
-background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 15%, rgb(<?php echo $colorback2; ?>) 100%) !important;
+    border: 1px solid #CCC !important;
 
-    border: 1px solid #BBB !important;
+    -moz-border-radius: 5px 5px 5px 5px !important;
+	-webkit-border-radius: 5px 5px 5px 5px !important;
+	border-radius: 5px 5px 5px 5px !important;
+    -moz-box-shadow: 4px 4px 4px #EEE;
+    -webkit-box-shadow: 4px 4px 4px #EEE;
+    box-shadow: 4px 4px 4px #EEE;
+
+    padding: 0 4px 0 4px !important;
 }
 
-.toolbarbutton {
-    margin-top: 2px;
+a.toolbarbutton {
+    margin-top: 1px;
     margin-left: 4px;
+    margin-right: 4px;
+    height: 30px;
 /*    border: solid 1px #AAAAAA;
-    width: 34px;*/
-    height: 34px;
-/*    background: #FFFFFF;*/
+    width: 32px;
+    background: #FFFFFF;*/
 }
-
+img.toolbarbutton {
+    height: 28px;
+}
 
 /* ============================================================================== */
 /* Panes for ECM or Filemanager                                                   */
@@ -1039,12 +1049,10 @@ background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 15
 }
 
 .ecm-layout-resizer  { /* all 'resizer-bars' */
-    background:     #EEEEEE;
     border:         1px solid #BBB;
     border-width:   0;
     }
 .ecm-layout-resizer-closed {
-    background-color: #EEEEEE;
 }
 
 .ecm-in-layout-center {

@@ -46,9 +46,6 @@ $langs->load("contracts");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ecm', 0);
 
-// Load permissions
-$user->getrights('ecm');
-
 // Get parameters
 $socid=GETPOST('socid','int');
 $action=GETPOST("action");
@@ -84,11 +81,9 @@ $ecmdirstatic = new EcmDirectory($db);
 $userstatic = new User($db);
 
 
-/*******************************************************************
- * ACTIONS
- *
- * Put here all code to do according to value of "action" parameter
- ********************************************************************/
+/*
+ *	Actions
+ */
 
 // Upload file
 if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
@@ -290,9 +285,9 @@ if ($action == 'refreshmanual')
 
 
 
-/*******************************************************************
- * View
- ********************************************************************/
+/*
+ *	View
+ */
 
 $userstatic = new User($db);
 $ecmdirstatic = new EcmDirectory($db);
@@ -389,7 +384,7 @@ if ($conf->use_javascript_ajax)
 else
 {
     print '<table class="border" width="100%">';
-    print '<tr><td colspan="2" style="background: #FFFFFF" style="height: 24px !important">';
+    print '<tr><td colspan="2" style="background: #FFFFFF" style="height: 34px !important">';
 }
 // Start top panel, toolbar
 
@@ -397,19 +392,19 @@ else
 // Toolbar
 if ($user->rights->ecm->setup)
 {
-    print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
-    print '<img width="32" height="32" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
+    print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create" class="toolbarbutton" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
+    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
     print '</a>';
 }
 else
 {
-    print '<a href="#" title="'.$langs->trans("NotAllowed").'">';
-    print '<img width="32" height="32" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
+    print '<a href="#" class="toolbarbutton" title="'.$langs->trans("NotAllowed").'">';
+    print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
     print '</a>';
 }
 
-print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;module='.$module:'').($section?'&amp;section='.$section:'').'"  title="'.dol_escape_htmltag($langs->trans('Refresh')).'">';
-print '<img width="32" height="32" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
+print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;module='.$module:'').($section?'&amp;section='.$section:'').'" class="toolbarbutton" title="'.dol_escape_htmltag($langs->trans('Refresh')).'">';
+//print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
 print '</a>';
 
 
@@ -595,12 +590,12 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 	   	<script type="text/javascript">
 
-	    function loadandshowpreview(filedirname)
+	    function loadandshowpreview(filedirname,section)
 	    {
 	        //alert('filename='+filename);
-	        //jQuery('#fileview').empty();
+	        jQuery('#ecmfileview').empty();
 
-	        url='<?php echo dol_buildpath('/core/ajax/ajaxshowpreview.php',1); ?>?action=preview&rootpath=<?php echo $filemanagerroots->id ?>&modulepart=filemanager&type=auto&file='+urlencode(filedirname);
+	        url='<?php echo dol_buildpath('/core/ajax/ajaxdirpreview.php',1); ?>?action=preview&module=ecm&section='+section+'&file='+urlencode(filedirname);
 
 	        jQuery.get(url, function(data) {
 	            //alert('Load of url '+url+' was performed : '+data);
@@ -622,7 +617,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 		jQuery(document).ready( function() {
     	    jQuery('#filetree').fileTree({ root: '<?php print dol_escape_js($openeddir); ?>',
-                     script: '<?php echo DOL_URL_ROOT.'/core/ajax/ajaxfiletree.php?modulepart=ecm&openeddir='.urlencode($openeddir); ?>',
+                     script: '<?php echo DOL_URL_ROOT.'/core/ajax/ajaxdirtree.php?modulepart=ecm&openeddir='.urlencode($openeddir); ?>',
                      folderEvent: 'click',
                      multiFolder: false  },
                      function(file) {

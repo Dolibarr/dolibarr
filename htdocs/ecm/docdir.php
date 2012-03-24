@@ -39,13 +39,17 @@ $langs->load("bills");
 $langs->load("contracts");
 $langs->load("categories");
 
-// Load permissions
-$user->getrights('ecm');
-
 if (!$user->rights->ecm->setup) accessforbidden();
 
 // Get parameters
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST("socid","int");
+
+// Security check
+if ($user->societe_id > 0)
+{
+    $action = '';
+    $socid = $user->societe_id;
+}
 
 $section=$_GET["section"];
 if (! $section) $section='misc';
