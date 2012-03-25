@@ -411,7 +411,7 @@ a.tmenu:hover, a.tmenu:active {
 }
 
 a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
-    font-weight: normal;
+	font-weight: normal;
 	color: #233030;
 	padding: 0px 5px 0px 5px;
 	margin: 0px 0px 0px 0px;
@@ -637,7 +637,7 @@ div.login_block table {
 
 div.login {
 	white-space:nowrap;
-    padding: <?php echo ($conf->browser->phone?'0':'8')?>px 0px 0px 0px;
+	padding: <?php echo ($conf->browser->phone?'0':'8')?>px 0px 0px 0px;
     margin: 0px 0px 0px 8px;
 	font-weight: bold;
 }
@@ -1379,24 +1379,24 @@ table.nobordernopadding td {
 /* For lists */
 
 table.liste {
-    width: 100%;
-    border-collapse: collapse;
-    border-top-color: #FEFEFE;
+	width: 100%;
+	border-collapse: collapse;
+	border-top-color: #FEFEFE;
 
-    border-right-width: 1px;
-    border-right-color: #BBBBBB;
-    border-right-style: solid;
+	border-right-width: 1px;
+	border-right-color: #BBBBBB;
+	border-right-style: solid;
 
     border-left-width: 1px;
     border-left-color: #CCCCCC;
     border-left-style: solid;
 
-    border-bottom-width: 1px;
-    border-bottom-color: #BBBBBB;
-    border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: #BBBBBB;
+	border-bottom-style: solid;
 
-    margin-bottom: 2px;
-    margin-top: 0px;
+	margin-bottom: 2px;
+	margin-top: 0px;
 
     -moz-box-shadow: 4px 4px 4px #CCC;
     -webkit-box-shadow: 4px 4px 4px #CCC;
@@ -1762,7 +1762,7 @@ border-radius: 6px;
 /* Calendar                                                                       */
 /* ============================================================================== */
 
-img.datecallink { padding-left: 2px !important; padding-right: 2px !important;}
+img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 
 .ui-datepicker-trigger {
 	vertical-align: middle;
@@ -1944,7 +1944,7 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 /* CSS for treeview */
 
 /* Lien plier /deplier tout */
-	.arbre-switch {
+.arbre-switch {
     text-align: right;
     padding: 0 5px;
     margin: 0 0 -18px 0;
