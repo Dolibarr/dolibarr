@@ -33,7 +33,7 @@
 
 if (! function_exists('json_encode'))
 {
-    require_once(DOL_DOCUMENT_ROOT ."/core/lib/json.lib.php");
+    include_once(DOL_DOCUMENT_ROOT ."/core/lib/json.lib.php");
 }
 
 /**
