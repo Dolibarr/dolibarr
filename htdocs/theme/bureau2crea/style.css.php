@@ -2412,6 +2412,23 @@ div.ecmjqft {
 .ecmjqft LI.wait { font-weight:normal; background: url(<?php echo dol_buildpath('/theme/eldy/img/working.gif',1); ?>) left top no-repeat; }
 
 
+/* ============================================================================== */
+/*  jNotify                                                                       */
+/* ============================================================================== */
+
+.jnotify-container {
+	position: fixed !important;
+<?php if ($conf->global->MAIN_JQUERY_JNOTIFY_BOTTOM) { ?>
+	top: auto !important;
+	bottom: 4px !important;
+<?php } ?>
+	text-align: center;
+	min-width: 500px;
+	width: auto;
+	padding-left: 10px !important;
+	padding-right: 10px !important;
+}
+
 
 <?php
 if (is_object($db)) $db->close();
