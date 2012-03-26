@@ -152,7 +152,7 @@ if( file_exists($fullpathselecteddir) )
     				print '</td>';
 
     				// Edit link
-    				print '<td align="right" width="18"><a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$val['id'].'&relativedir='.urlencode($val['fullrelativename']).'">'.img_view().'</a></td>';
+    				print '<td align="right" width="18"><a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$val['id'].'&relativedir='.urlencode($val['fullrelativename']).'">'.img_view('',$langs->trans("Edit").' - '.$langs->trans("View")).'</a></td>';
 
     				// Add link
     				//print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create&amp;catParent='.$val['id'].'">'.img_edit_add().'</a></td>';
