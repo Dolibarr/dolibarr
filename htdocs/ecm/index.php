@@ -784,7 +784,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
     			print '</td>';
 
     			// Edit link
-    			print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$val['id'].'">'.img_view().'</a></td>';
+    			print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$val['id'].'">'.img_view($langs->trans("Edit").' - '.$langs->trans("Show")).'</a></td>';
 
     			// Add link
     			//print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create&amp;catParent='.$val['id'].'">'.img_edit_add().'</a></td>';
