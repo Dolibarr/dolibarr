@@ -26,10 +26,11 @@
 /**
  * Core function to output top menu smartphone
  *
- * @param $db
- * @param $atarget
- * @param $type_user     0=Internal,1=External,2=All
- * @param $limitmenuto	 To limit menu to a top or left menu value
+ * @param 	DoliDB		$db				Database handler
+ * @param 	string		$atarget		Target
+ * @param 	int			$type_user     	0=Internal,1=External,2=All
+ * @param 	string		$limitmenuto	To limit menu to a top or left menu value
+ * @return	void
  */
 function print_smartphone_menu($db,$atarget,$type_user,$limitmenuto)
 {
@@ -141,34 +142,66 @@ function print_smartphone_menu($db,$atarget,$type_user,$limitmenuto)
 	print "\n";
 }
 
+/**
+ * Output menu entry
+ *
+ * @param	string	$theme		Theme
+ * @return	void
+ */
 function print_start_menu_array($theme='c')
 {
 	print '<ul data-role="listview" data-theme="'.$theme.'">';
 	print "\n";
 }
 
+/**
+ * Output start submenu entry
+ *
+ * @return	void
+ */
 function print_start_submenu_array()
 {
 	print '<ul>';
 	print "\n";
 }
 
+/**
+ * Output start menu entry
+ *
+ * @return	void
+ */
 function print_start_menu_entry()
 {
 	print '<li>';
 }
 
+/**
+ * Output menu entry
+ *
+ * @param	string	$text		Text
+ * @return	void
+ */
 function print_text_menu_entry($text)
 {
 	print $text;
 }
 
+/**
+ * Output end menu entry
+ *
+ * @return	void
+ */
 function print_end_menu_entry()
 {
 	print '</li>';
 	print "\n";
 }
 
+/**
+ * Output end menu
+ *
+ * @return	void
+ */
 function print_end_menu()
 {
 	print '</ul>';

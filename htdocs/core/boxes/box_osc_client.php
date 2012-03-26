@@ -49,7 +49,7 @@ class box_osc_clients extends ModeleBoxes
         global $langs;
         $langs->load("boxes");
 
-        $this->boxlabel=$langs->trans("BoxNbOfCustomers");
+        $this->boxlabel=$langs->transnoentitiesnoconv("BoxNbOfCustomers");
     }
 
     /**

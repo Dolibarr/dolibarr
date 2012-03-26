@@ -32,27 +32,31 @@ $langs->load("suppliers");
 $langs->load("companies");
 $langs->load('stocks');
 
+$id = GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int');
+$ref = GETPOST('ref');
+$action = GETPOST('action');
+
 // Security check
-$id = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande_fournisseur', $id,'');
+
+$object = new CommandeFournisseur($db);
+$object->fetch($id, $ref);
 
 
 /*
  * Actions
  */
 
-if ($_POST["action"] == 'updatenote' && $user->rights->fournisseur->commande->creer)
+if ($action == 'setnote_public' && $user->rights->fournisseur->commande->creer)
 {
-    $commande = new CommandeFournisseur($db);
-    $commande->fetch($_GET["id"]);
-
-    $result = $commande->UpdateNote($user, $_POST["note"], $_POST["note_public"]);
-    if ($result >= 0)
-    {
-        Header("Location: note.php?id=".$_GET["id"]);
-        exit;
-    }
+    $result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
+    if ($result < 0) dol_print_error($db,$object->error);
+}
+elseif ($action == 'setnote' && $user->rights->fournisseur->commande->creer)
+{
+    $result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
+    if ($result < 0) dol_print_error($db,$object->error);
 }
 
 
@@ -72,21 +76,17 @@ $form = new Form($db);
 
 $now=dol_now();
 
-$id = $_GET['id'];
-$ref= $_GET['ref'];
 if ($id > 0 || ! empty($ref))
 {
-    $commande = new CommandeFournisseur($db);
-    $result=$commande->fetch($_GET["id"],$_GET['ref']);
     if ($result >= 0)
     {
         $soc = new Societe($db);
-        $soc->fetch($commande->socid);
+        $soc->fetch($object->socid);
 
         $author = new User($db);
-        $author->fetch($commande->user_author_id);
+        $author->fetch($object->user_author_id);
 
-        $head = ordersupplier_prepare_head($commande);
+        $head = ordersupplier_prepare_head($object);
 
         $title=$langs->trans("SupplierOrder");
         dol_fiche_head($head, 'note', $title, 0, 'order');
@@ -95,16 +95,12 @@ if ($id > 0 || ! empty($ref))
         /*
          *   Commande
          */
-        print '<form action="note.php?id='.$commande->id.'" method="post">';
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        print '<input type="hidden" name="action" value="updatenote">';
-
         print '<table class="border" width="100%">';
 
         // Ref
         print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
         print '<td colspan="2">';
-        print $form->showrefnav($commande,'ref','',1,'ref','ref');
+        print $form->showrefnav($object,'ref','',1,'ref','ref');
         print '</td>';
         print '</tr>';
 
@@ -117,55 +113,36 @@ if ($id > 0 || ! empty($ref))
         print '<tr>';
         print '<td>'.$langs->trans("Status").'</td>';
         print '<td colspan="2">';
-        print $commande->getLibStatut(4);
+        print $object->getLibStatut(4);
         print "</td></tr>";
 
         // Date
-        if ($commande->methode_commande_id > 0)
+        if ($object->methode_commande_id > 0)
         {
             print '<tr><td>'.$langs->trans("Date").'</td><td colspan="2">';
-            if ($commande->date_commande)
+            if ($object->date_commande)
             {
-                print dol_print_date($commande->date_commande,"dayhourtext")."\n";
+                print dol_print_date($object->date_commande,"dayhourtext")."\n";
             }
             print "</td></tr>";
 
-            if ($commande->methode_commande)
+            if ($object->methode_commande)
             {
-                print '<tr><td>'.$langs->trans("Method").'</td><td colspan="2">'.$commande->methode_commande.'</td></tr>';
+                print '<tr><td>'.$langs->trans("Method").'</td><td colspan="2">'.$object->methode_commande.'</td></tr>';
             }
         }
 
-        // Auteur
+        // Author
         print '<tr><td>'.$langs->trans("AuthorRequest").'</td>';
         print '<td colspan="2">'.$author->getNomUrl(1).'</td>';
         print '</tr>';
 
-        print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
-        print '<td colspan="2">';
-        if ($user->rights->fournisseur->commande->creer) print '<textarea cols="90" rows="'.ROWS_4.'" name="note_public">';
-        print $commande->note_public;
-        if ($user->rights->fournisseur->commande->creer) print '</textarea>';
-        print '</td></tr>';
-
-        if (! $user->societe_id)
-        {
-            print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
-            print '<td colspan="2">';
-            if ($user->rights->fournisseur->commande->creer) print '<textarea cols="90" rows="'.ROWS_8.'" name="note">';
-            print $commande->note;
-            if ($user->rights->fournisseur->commande->creer) print '</textarea>';
-            print '</td></tr>';
-        }
-
         print "</table>";
 
-        if ($user->rights->fournisseur->commande->creer)
-        {
-            print '<center><br><input type="submit" class="button" value="'.$langs->trans("Save").'"></center>';
-        }
+        print '<br>';
 
-        print "</form>";
+        $colwidth=20;
+        include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
 
         dol_fiche_end();
     }
@@ -178,7 +155,7 @@ if ($id > 0 || ! empty($ref))
 }
 
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

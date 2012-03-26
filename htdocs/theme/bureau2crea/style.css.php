@@ -794,13 +794,17 @@ td.photo {
     border: 1px solid #BBB !important;
 }
 
-.toolbarbutton {
-    margin-top: 2px;
+a.toolbarbutton {
+    margin-top: 1px;
     margin-left: 4px;
+    margin-right: 4px;
+    height: 30px;
 /*    border: solid 1px #AAAAAA;
-    width: 34px;*/
-    height: 34px;
-/*    background: #FFFFFF;*/
+    width: 32px;
+    background: #FFFFFF;*/
+}
+img.toolbarbutton {
+    height: 28px;
 }
 
 
@@ -1402,22 +1406,22 @@ border-top: 1px solid #333;
 div#stats {
 }
 
-tr.liste_titre {
+div.liste_titre, tr.liste_titre {
     text-align: <?php echo $left; ?>;
 }
 
-tr.liste_titre a {
+div.liste_titre a, tr.liste_titre a {
 color: #333333;
 margin: 0px 5px;
 }
 
-tr.liste_titre td {
+div.liste_titre td, tr.liste_titre td {
 	padding: 0px 5px;
     vertical-align: middle;
     background: none !important;
 }
 
-th.liste_titre, td.liste_titre
+div.liste_titre, th.liste_titre, td.liste_titre
 {
     background-repeat: repeat-x;
     color: #333333;
@@ -1428,14 +1432,7 @@ th.liste_titre, td.liste_titre
     background: none;
 }
 
-/*tr.liste_titre select.flat {
-	float: left;
-    width: 200px;
-    position: relative;
-    margin: 30px 10px 10px 0px;
-}*/
-
-tr.liste_titre input.button {
+div.liste_titre input.button, tr.liste_titre input.button {
 	float: left;
     position: relative;
     /*margin: 30px 10px 10px 0px;*/
@@ -1818,46 +1815,6 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 .cal_event a:hover   { color: #111111; font-size: 11px; font-weight: normal !important; }
 
 
-
-/* ============================================================================== */
-/*  Afficher/cacher                                                               */
-/* ============================================================================== */
-
-#evolForm input.error {
-                        font-weight: bold;
-                        border: solid 1px #FF0000;
-                        padding: 1px 1px 1px 1px;
-                        margin: 1px 1px 1px 1px;
-              }
-
-#evolForm input.focuserr {
-                        font-weight: bold;
-                        background: #FAF8E8;
-                        color: black;
-                        border: solid 1px #FF0000;
-                        padding: 1px 1px 1px 1px;
-                        margin: 1px 1px 1px 1px;
-              }
-
-
-#evolForm input.focus {	/*** Mise en avant des champs en cours d'utilisation ***/
-                        background: #FAF8E8;
-                        color: black;
-                        border: solid 1px #000000;
-                        padding: 1px 1px 1px 1px;
-                        margin: 1px 1px 1px 1px;
-              }
-
-#evolForm input.normal {	/*** Retour a l'etat normal apres l'utilisation ***/
-                         background: white;
-                         color: black;
-                         border: solid 1px white;
-                         padding: 1px 1px 1px 1px;
-                         margin: 1px 1px 1px 1px;
-               }
-
-
-
 /* ============================================================================== */
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
 /* ============================================================================== */
@@ -2201,6 +2158,36 @@ a.cke_dialog_ui_button
 
 
 /* ============================================================================== */
+/*  Table with div                                                                */
+/* ============================================================================== */
+
+div.table-border {
+	display:table;
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #9CACBB;
+}
+div.table-border-row {
+	display:table-row;
+}
+div.table-key-border-col {
+	display:table-cell;
+	width: 25%;
+	vertical-align:top;
+	padding: 1px 2px 1px 1px;
+	border: 1px solid #9CACBB;
+	border-collapse: collapse;
+}
+div.table-val-border-col {
+	display:table-cell;
+	width:auto;
+	padding: 1px 2px 1px 1px;
+	border: 1px solid #9CACBB;
+	border-collapse: collapse;
+}
+
+
+/* ============================================================================== */
 /*  Login                                                                   */
 /* ============================================================================== */
 
@@ -2320,6 +2307,128 @@ form.listactionsfilter img {
 form.listactionsfilter input[type="submit"] {
 	margin: 2px 0px;
 }
+
+
+
+/* ============================================================================== */
+/*  JSGantt                                                                       */
+/* ============================================================================== */
+
+div.scroll2 {
+	width: 582px !important;
+}
+
+
+/* ============================================================================== */
+/*  jFileTree                                                                     */
+/* ============================================================================== */
+
+.ecmfiletree {
+	width: 99%;
+	height: 99%;
+	background: #FFF;
+	padding-left: 2px;
+	font-weight: normal;
+}
+
+.fileview {
+	width: 99%;
+	height: 99%;
+	background: #FFF;
+	padding-left: 2px;
+	padding-top: 4px;
+	font-weight: normal;
+}
+
+div.filedirelem {
+    position: relative;
+    display: block;
+    text-decoration: none;
+}
+
+ul.filedirelem {
+    padding: 2px;
+    margin: 0 5px 5px 5px;
+}
+ul.filedirelem li {
+    list-style: none;
+    padding: 2px;
+    margin: 0 10px 20px 10px;
+    width: 160px;
+    height: 120px;
+    text-align: center;
+    display: block;
+    float: <?php print $left; ?>;
+    border: solid 1px #DDDDDD;
+}
+
+ui-layout-north {
+
+}
+
+ul.ecmjqft {
+	font-size: 11px;
+	line-height: 16px;
+	padding: 0px;
+	margin: 0px;
+	font-weight: normal;
+}
+
+ul.ecmjqft li {
+	list-style: none;
+	padding: 0px;
+	padding-left: 20px;
+	margin: 0px;
+	white-space: nowrap;
+	display: block;
+}
+
+ul.ecmjqft a {
+	line-height: 16px;
+	vertical-align: middle;
+	color: #333;
+	padding: 0px 0px;
+	font-weight:normal;
+	display: inline-block !important;
+/*	float: left;*/
+}
+ul.ecmjqft a:active {
+	font-weight: bold !important;
+}
+ul.ecmjqft a:hover {
+    text-decoration: underline;
+}
+div.ecmjqft {
+	vertical-align: middle;
+	display: inline-block !important;
+	text-align: right;
+	position:absolute;
+	right:8px;
+}
+
+/* Core Styles */
+.ecmjqft LI.directory { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.expanded { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2-expanded.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.wait { font-weight:normal; background: url(<?php echo dol_buildpath('/theme/eldy/img/working.gif',1); ?>) left top no-repeat; }
+
+
+/* ============================================================================== */
+/*  jNotify                                                                       */
+/* ============================================================================== */
+
+.jnotify-container {
+	position: fixed !important;
+<?php if ($conf->global->MAIN_JQUERY_JNOTIFY_BOTTOM) { ?>
+	top: auto !important;
+	bottom: 4px !important;
+<?php } ?>
+	text-align: center;
+	min-width: 500px;
+	width: auto;
+	padding-left: 10px !important;
+	padding-right: 10px !important;
+}
+
 
 <?php
 if (is_object($db)) $db->close();

@@ -104,7 +104,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
 }
 
 // Reopen a closed order
-if ($action == 'reopen' && $user->rights->commande->creer)
+else if ($action == 'reopen' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     if ($object->statut == 3)
@@ -123,7 +123,7 @@ if ($action == 'reopen' && $user->rights->commande->creer)
 }
 
 // Suppression de la commande
-if ($action == 'confirm_delete' && $confirm == 'yes')
+else if ($action == 'confirm_delete' && $confirm == 'yes')
 {
     if ($user->rights->commande->supprimer)
     {
@@ -142,7 +142,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 }
 
 // Remove a product line
-if ($action == 'confirm_deleteline' && $confirm == 'yes')
+else if ($action == 'confirm_deleteline' && $confirm == 'yes')
 {
     if ($user->rights->commande->creer)
     {
@@ -178,14 +178,14 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes')
 }
 
 // Categorisation dans projet
-if ($action == 'classin')
+else if ($action == 'classin')
 {
     $object->fetch($id);
     $object->setProject($_POST['projectid']);
 }
 
 // Add order
-if ($action == 'add' && $user->rights->commande->creer)
+else if ($action == 'add' && $user->rights->commande->creer)
 {
     $datecommande  = dol_mktime(12, 0, 0, $_POST['remonth'],  $_POST['reday'],  $_POST['reyear']);
     $datelivraison = dol_mktime(12, 0, 0, $_POST['liv_month'],$_POST['liv_day'],$_POST['liv_year']);
@@ -378,26 +378,26 @@ if ($action == 'add' && $user->rights->commande->creer)
 
 }
 
-if ($action == 'classifybilled')
+else if ($action == 'classifybilled')
 {
     $object->fetch($id);
     $object->classer_facturee();
 }
 
 // Positionne ref commande client
-if ($action == 'set_ref_client' && $user->rights->commande->creer)
+else if ($action == 'set_ref_client' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     $object->set_ref_client($user, $_POST['ref_client']);
 }
 
-if ($action == 'setremise' && $user->rights->commande->creer)
+else if ($action == 'setremise' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     $object->set_remise($user, $_POST['remise']);
 }
 
-if ($action == 'setabsolutediscount' && $user->rights->commande->creer)
+else if ($action == 'setabsolutediscount' && $user->rights->commande->creer)
 {
     if ($_POST["remise_id"])
     {
@@ -413,7 +413,7 @@ if ($action == 'setabsolutediscount' && $user->rights->commande->creer)
     }
 }
 
-if ($action == 'setdate' && $user->rights->commande->creer)
+else if ($action == 'setdate' && $user->rights->commande->creer)
 {
     //print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
     $date=dol_mktime(0, 0, 0, $_POST['order_month'], $_POST['order_day'], $_POST['order_year']);
@@ -426,7 +426,7 @@ if ($action == 'setdate' && $user->rights->commande->creer)
     }
 }
 
-if ($action == 'setdate_livraison' && $user->rights->commande->creer)
+else if ($action == 'setdate_livraison' && $user->rights->commande->creer)
 {
     //print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
     $datelivraison=dol_mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
@@ -439,50 +439,64 @@ if ($action == 'setdate_livraison' && $user->rights->commande->creer)
     }
 }
 
-if ($action == 'setmode' && $user->rights->commande->creer)
+else if ($action == 'setmode' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
-if ($action == 'setavailability' && $user->rights->commande->creer)
+else if ($action == 'setavailability' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     $result=$object->availability($_POST['availability_id']);
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
-if ($action == 'setdemandreason' && $user->rights->commande->creer)
+else if ($action == 'setdemandreason' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     $result=$object->demand_reason($_POST['demand_reason_id']);
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
-if ($action == 'setconditions' && $user->rights->commande->creer)
+else if ($action == 'setconditions' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     $result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
-if ($action == 'setremisepercent' && $user->rights->facture->creer)
+else if ($action == 'setremisepercent' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     $result = $object->set_remise($user, $_POST['remise_percent']);
 }
 
-if ($action == 'setremiseabsolue' && $user->rights->facture->creer)
+else if ($action == 'setremiseabsolue' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     $result = $object->set_remise_absolue($user, $_POST['remise_absolue']);
 }
 
+else if ($action == 'setnote_public' && $user->rights->commande->creer)
+{
+	$object->fetch($id);
+	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
+	if ($result < 0) dol_print_error($db,$object->error);
+}
+
+else if ($action == 'setnote' && $user->rights->commande->creer)
+{
+	$object->fetch($id);
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
+	if ($result < 0) dol_print_error($db,$object->error);
+}
+
 /*
  *  Ajout d'une ligne produit dans la commande
  */
-if ($action == 'addline' && $user->rights->commande->creer)
+else if ($action == 'addline' && $user->rights->commande->creer)
 {
     $result=0;
 
@@ -667,7 +681,7 @@ if ($action == 'addline' && $user->rights->commande->creer)
 /*
  *  Mise a jour d'une ligne dans la commande
  */
-if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['save'] == $langs->trans('Save'))
+else if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['save'] == $langs->trans('Save'))
 {
     if (! $object->fetch($id) > 0) dol_print_error($db);
     $object->fetch_thirdparty();
@@ -767,13 +781,13 @@ if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['save']
     }
 }
 
-if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['cancel'] == $langs->trans('Cancel'))
+else if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['cancel'] == $langs->trans('Cancel'))
 {
     Header('Location: fiche.php?id='.$id);   // Pour reaffichage de la fiche en cours d'edition
     exit;
 }
 
-if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->commande->valider)
+else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->commande->valider)
 {
     $idwarehouse=GETPOST('idwarehouse');
 
@@ -812,7 +826,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->command
 }
 
 // Go back to draft status
-if ($action == 'confirm_modif' && $user->rights->commande->creer)
+else if ($action == 'confirm_modif' && $user->rights->commande->creer)
 {
     $idwarehouse=GETPOST('idwarehouse');
 
@@ -854,7 +868,7 @@ if ($action == 'confirm_modif' && $user->rights->commande->creer)
 	}
 }
 
-if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->commande->cloturer)
+else if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->commande->cloturer)
 {
     $object->fetch($id);		// Load order and lines
 
@@ -862,7 +876,7 @@ if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->commande->
     if ($result < 0) $mesgs=$object->errors;
 }
 
-if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->commande->valider)
+else if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->commande->valider)
 {
     $idwarehouse=GETPOST('idwarehouse');
 
@@ -891,7 +905,7 @@ if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->commande-
  * Ordonnancement des lignes
  */
 
-if ($action == 'up' && $user->rights->commande->creer)
+else if ($action == 'up' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     $object->fetch_thirdparty();
@@ -914,7 +928,7 @@ if ($action == 'up' && $user->rights->commande->creer)
     exit;
 }
 
-if ($action == 'down' && $user->rights->commande->creer)
+else if ($action == 'down' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     $object->fetch_thirdparty();
@@ -936,7 +950,7 @@ if ($action == 'down' && $user->rights->commande->creer)
     exit;
 }
 
-if ($action == 'builddoc')	// In get or post
+else if ($action == 'builddoc')	// In get or post
 {
     /*
      * Generate order document
@@ -976,7 +990,7 @@ if ($action == 'builddoc')	// In get or post
 }
 
 // Remove file in doc form
-if ($action == 'remove_file')
+else if ($action == 'remove_file')
 {
     if ($object->fetch($id))
     {
@@ -1034,11 +1048,11 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
 
     if ($result > 0)
     {
-        $ref = dol_sanitizeFileName($object->ref);
-        $file = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+//        $ref = dol_sanitizeFileName($object->ref);
+//        $file = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 
-        if (is_readable($file))
-        {
+//        if (is_readable($file))
+//        {
             if ($_POST['sendto'])
             {
                 // Le destinataire a ete fourni via le champ libre
@@ -1153,14 +1167,14 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                         $mesg.='</div>';
                     }
                 }
-            }
+/*            }
             else
             {
                 $langs->load("other");
                 $mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
                 $action='presend';
                 dol_syslog('Recipient email is empty');
-            }
+            }*/
         }
         else
         {
@@ -1175,6 +1189,67 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
         $mesg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Order")).'</div>';
         dol_syslog($langs->trans('ErrorFailedToReadEntity', $langs->trans("Order")));
     }
+}
+
+if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+{
+	if ($action == 'addcontact' && $user->rights->commande->creer)
+	{
+		$result = $object->fetch($id);
+
+		if ($result > 0 && $id > 0)
+		{
+			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
+			$result = $result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+		}
+
+		if ($result >= 0)
+		{
+			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
+		else
+		{
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+			{
+				$langs->load("errors");
+				$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+			}
+			else
+			{
+				$mesg = '<div class="error">'.$object->error.'</div>';
+			}
+		}
+	}
+
+	// bascule du statut d'un contact
+	else if ($action == 'swapstatut' && $user->rights->commande->creer)
+	{
+		if ($object->fetch($id))
+		{
+			$result=$object->swapContactStatus(GETPOST('ligne'));
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
+
+	// Efface un contact
+	else if ($action == 'deletecontact' && $user->rights->commande->creer)
+	{
+		$object->fetch($id);
+		$result = $object->delete_contact($lineid);
+
+		if ($result >= 0)
+		{
+			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
+		else {
+			dol_print_error($db);
+		}
+	}
 }
 
 
@@ -1243,7 +1318,7 @@ if ($action == 'create' && $user->rights->commande->creer)
             $remise_percent		= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
             $remise_absolue		= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
             $dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
-            
+
             $note_private		= (! empty($objectsrc->note) ? $objectsrc->note : (! empty($objectsrc->note_private) ? $objectsrc->note_private : ''));
             $note_public		= (! empty($objectsrc->note_public) ? $objectsrc->note_public : '');
 
@@ -1783,10 +1858,6 @@ else
                 print $object->date_livraison ? dol_print_date($object->date_livraison,'daytext') : '&nbsp;';
             }
             print '</td>';
-            print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
-            print dol_htmlcleanlastbr($object->note_public);
-            print '</td>';
-            print '</tr>';
 
             // Terms of payment
             print '<tr><td height="10">';
@@ -1941,6 +2012,23 @@ else
             print '</table><br>';
             print "\n";
 
+            if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+            {
+            	require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+            	$formcompany= new FormCompany($db);
+
+            	$blocname = 'contacts';
+            	$title = $langs->trans('ContactsAddresses');
+            	include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
+            }
+
+            if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+            {
+            	$blocname = 'notes';
+            	$title = $langs->trans('Notes');
+            	include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
+            }
+
             /*
              * Lines
              */
@@ -2008,16 +2096,11 @@ else
                     // Send
                     if ($object->statut > 0)
                     {
-                        $comref = dol_sanitizeFileName($object->ref);
-                        $file = $conf->commande->dir_output . '/'.$comref.'/'.$comref.'.pdf';
-                        if (file_exists($file))
+                        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->commande->order_advance->send))
                         {
-                            if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->commande->order_advance->send))
-                            {
-                                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
-                            }
-                            else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
+                            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
                         }
+                        else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
                     }
 
                     // Ship
@@ -2147,7 +2230,33 @@ else
             if ($action == 'presend')
             {
                 $ref = dol_sanitizeFileName($object->ref);
-                $file = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+                include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+                $fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref);
+                $file=$fileparams['fullname'];
+
+                // Build document if it not exists
+                if (! $file || ! is_readable($file))
+                {
+                    // Define output language
+                    $outputlangs = $langs;
+                    $newlang='';
+                    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+                    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+                    if (! empty($newlang))
+                    {
+                        $outputlangs = new Translate("",$conf);
+                        $outputlangs->setDefaultLang($newlang);
+                    }
+
+                    $result=commande_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+                    if ($result <= 0)
+                    {
+                        dol_print_error($db,$result);
+                        exit;
+                    }
+                    $fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref);
+                    $file=$fileparams['fullname'];
+                }
 
                 print '<br>';
                 print_titre($langs->trans('SendOrderByMail'));
@@ -2173,6 +2282,8 @@ else
                 $formmail->withcancel=1;
                 // Tableau des substitutions
                 $formmail->substit['__ORDERREF__']=$object->ref;
+                $formmail->substit['__SIGNATURE__']='';
+                $formmail->substit['__PERSONALIZED__']='';
                 // Tableau des parametres complementaires
                 $formmail->param['action']='send';
                 $formmail->param['models']='order_send';
@@ -2180,10 +2291,10 @@ else
                 $formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
 
                 // Init list of files
-                if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+                if (GETPOST("mode")=='init')
                 {
                     $formmail->clear_attached_files();
-                    $formmail->add_attached_files($file,dol_sanitizeFilename($ref.'.pdf'),'application/pdf');
+                    $formmail->add_attached_files($file,basename($file),dol_mimetype($file));
                 }
 
                 // Show form

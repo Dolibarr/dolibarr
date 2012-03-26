@@ -139,6 +139,7 @@ function product_prepare_head($object, $user)
 *  Return array head with list of tabs to view object informations.
 *
 *  @param	Object	$object		Product
+*  @param	string	$tab		Tab id
 *  @return	array   	        head array with tabs
 */
 function product_admin_prepare_head($object, $tab)
@@ -171,10 +172,11 @@ function product_admin_prepare_head($object, $tab)
 
 
 /**
+ * Show stats for company
  *
- * Enter description here ...
- * @param unknown_type $product
- * @param unknown_type $socid
+ * @param	Product		$product	Product object
+ * @param 	int			$socid		Thirdparty id
+ * @return	void
  */
 function show_stats_for_company($product,$socid)
 {

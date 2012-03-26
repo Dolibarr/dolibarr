@@ -43,6 +43,13 @@ require_once(ADODB_PATH.'adodb-time.inc.php');
 
 error_reporting(E_ALL);	// To have all errors without disabled E_STRICT
 
+// IMPORTANT with strict mode E_STRICT
+$conf = new stdClass(); // instantiate $conf explicitely
+$conf->global	= (object) array();
+$conf->file		= (object) array();
+$conf->db		= (object) array();
+$conf->syslog	= (object) array();
+
 // Define $_REQUEST["logtohtml"]
 $_REQUEST["logtohtml"]=1;
 
@@ -94,13 +101,11 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
     if ($result)
     {
     	// Clean parameters
-    	$dolibarr_main_data_root=trim($dolibarr_main_data_root);
-    	$dolibarr_main_url_root=trim($dolibarr_main_url_root);
-    	$dolibarr_main_url_root_alt=trim($dolibarr_main_url_root_alt);
-    	$dolibarr_main_document_root=trim($dolibarr_main_document_root);
-    	$dolibarr_main_document_root_alt=trim($dolibarr_main_document_root_alt);
-    	
-        //if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
+    	$dolibarr_main_data_root        =isset($dolibarr_main_data_root)?trim($dolibarr_main_data_root):'';
+    	$dolibarr_main_url_root         =isset($dolibarr_main_url_root)?trim($dolibarr_main_url_root):'';
+    	$dolibarr_main_url_root_alt     =isset($dolibarr_main_url_root_alt)?trim($dolibarr_main_url_root_alt):'';
+    	$dolibarr_main_document_root    =isset($dolibarr_main_document_root)?trim($dolibarr_main_document_root):'';
+    	$dolibarr_main_document_root_alt=isset($dolibarr_main_document_root_alt)?trim($dolibarr_main_document_root_alt):'';
 
         // Remove last / or \ on directories or url value
         if (! empty($dolibarr_main_document_root)		&& ! preg_match('/^[\\/]+$/',$dolibarr_main_document_root))		$dolibarr_main_document_root=preg_replace('/[\\/]+$/','',$dolibarr_main_document_root);
@@ -136,7 +141,7 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
         $includeconferror='ErrorBadFormatForConfFile';
     }
 }
-$conf->global->MAIN_LOGTOHTML=1;
+$conf->global->MAIN_LOGTOHTML = 1;
 
 // Define prefix
 if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_';
@@ -224,7 +229,7 @@ if (! defined('SYSLOG_FILE'))	// To avoid warning on systems with constant alrea
 if (! defined('SYSLOG_FILE_NO_ERROR')) define('SYSLOG_FILE_NO_ERROR',1);
 
 // Removed magic_quotes
-if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
+if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP 5.4
 {
     if (get_magic_quotes_gpc())
     {

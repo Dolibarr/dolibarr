@@ -154,9 +154,9 @@ $tab_tva = $ret;
 
 // Reinitialisation du mode de paiement, en cas de retour aux achats apres validation
 $obj_facturation->getSetPaymentMode('RESET');
-$obj_facturation->montant_encaisse('RESET');
-$obj_facturation->montant_rendu('RESET');
-$obj_facturation->paiement_le('RESET');
+$obj_facturation->montantEncaisse('RESET');
+$obj_facturation->montantRendu('RESET');
+$obj_facturation->paiementLe('RESET');
 
 
 // Affichage des templates

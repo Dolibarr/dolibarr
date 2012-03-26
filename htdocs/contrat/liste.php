@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ $staticcontratligne=new ContratLigne($db);
  * View
  */
 
-$now=gmmktime();
+$now=dol_now();
 
 llxHeader();
 
@@ -85,7 +85,7 @@ if ($sall)            $sql.= " AND (s.nom like '%".$db->escape($sall)."%' OR cd.
 $sql.= " GROUP BY c.rowid, c.ref, c.datec, c.date_contrat, c.statut,";
 $sql.= " s.nom, s.rowid";
 $sql.= " ORDER BY $sortfield $sortorder";
-$sql.= $db->plimit($conf->liste_limit + 1 ,$offset);
+$sql.= $db->plimit($conf->liste_limit + 1, $offset);
 
 $resql=$db->query($sql);
 if ($resql)

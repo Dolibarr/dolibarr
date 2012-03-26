@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +50,7 @@ class Deplacement extends CommonObject
 	var $socid;
 	var $statut;		// 0=draft, 1=validated
 	var $fk_project;
+	var $extraparams=array();
 
    /**
 	* Constructor
@@ -209,7 +210,7 @@ class Deplacement extends CommonObject
 	*/
 	function fetch($id)
 	{
-		$sql = "SELECT rowid, fk_user, type, fk_statut, km, fk_soc, dated, note, note_public, fk_projet";
+		$sql = "SELECT rowid, fk_user, type, fk_statut, km, fk_soc, dated, note, note_public, fk_projet, extraparams";
 		$sql.= " FROM ".MAIN_DB_PREFIX."deplacement";
 		$sql.= " WHERE rowid = ".$id;
 
@@ -230,6 +231,8 @@ class Deplacement extends CommonObject
 			$this->note_private	= $obj->note;
 			$this->note_public	= $obj->note_public;
 			$this->fk_project	= $obj->fk_projet;
+			
+			$this->extraparams	= (array) json_decode($obj->extraparams, true);
 
 			return 1;
 		}

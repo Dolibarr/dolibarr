@@ -61,7 +61,7 @@ class pdf_einstein extends ModelePDFCommandes
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
 	function __construct($db)
 	{
@@ -236,8 +236,7 @@ class pdf_einstein extends ModelePDFCommandes
 					$tab_top = 88;
 
 					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
-					$pdf->SetXY($this->posxdesc-1, $tab_top);
-					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'L');
+					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, $outputlangs->convToOutputCharset($object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
@@ -438,13 +437,13 @@ class pdf_einstein extends ModelePDFCommandes
 	}
 
 	/**
-	 *   Affiche tableau des versement
+	 *  Affiche tableau des versement
      *
-	 *   @param     pdf     		Object PDF
-	 *   @param     object			Object order
-	 *	 @param		posy			Position y in PDF
-	 *	 @param		outputlangs		Object langs for output
-	 *	 @return 	int				<0 if KO, >0 if OK
+	 *  @param	PDF			&$pdf     		Object PDF
+	 *  @param  Object		$object			Object order
+	 *	@param	int			$posy			Position y in PDF
+	 *	@param	Translate	$outputlangs	Object langs for output
+	 *	@return int							<0 if KO, >0 if OK
 	 */
 	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -606,7 +605,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$pdf->SetFont('','', $default_font_size - 1);
 
 		// Tableau total
-		$lltot = 200; $col1x = 120; $col2x = 170; $largcol2 = $lltot - $col2x;
+        $col1x = 120; $col2x = 170; $largcol2 = ($this->page_largeur - $this->marge_droite - $col2x);
 
 		$useborder=0;
 		$index = 0;
@@ -890,7 +889,7 @@ class pdf_einstein extends ModelePDFCommandes
 		{
 			if (is_readable($logo))
 			{
-				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 24);	// width=0 (auto), max height=24
+				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 22);	// width=0 (auto), max height=22
 			}
 			else
 			{

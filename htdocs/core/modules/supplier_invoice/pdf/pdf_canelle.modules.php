@@ -58,7 +58,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$db      Database handler
+	 *  @param	DoliDB		$db     	Database handler
+	 *  @param	Societe		$object		Third party providing invoice
 	 */
 	function __construct($db,$object)
 	{
@@ -114,9 +115,10 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 	/**
      *      Write the invoice as a document onto disk
-     *      @param      object          Object invoice to build (or id if old method)
-     *      @param      outputlangs     Lang object for output language
-     *      @return     int             1=OK, 0=KO
+     *
+     *      @param	Object		$object         Object invoice to build (or id if old method)
+     *      @param  Translate	$outputlangs    Lang object for output language
+     *      @return int             			1=OK, 0=KO
 	 */
 	function write_file($object,$outputlangs='')
 	{
@@ -227,8 +229,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$tab_top = 88;
 
 					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
-					$pdf->SetXY($this->posxdesc-1, $tab_top);
-					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'L');
+					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, $outputlangs->convToOutputCharset($object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
@@ -455,7 +456,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		}
 
 		// Tableau total
-		$lltot = 200; $col1x = 120; $col2x = 170; $largcol2 = $lltot - $col2x;
+		$col1x = 120; $col2x = 170; $largcol2 = ($this->page_largeur - $this->marge_droite - $col2x);
 
 		// Total HT
 		$pdf->SetFillColor(255,255,255);
@@ -688,11 +689,12 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 	/**
 	 *  Show payments table
-	 *  @param      pdf     		Object PDF
-	 *  @param      object     		Object invoice
-	 *	@param		posy			Position y in PDF
-	 *	@param		outputlangs		Object langs for output
-	 *	@return 	int				<0 if KO, >0 if OK
+	 *
+	 *  @param	PDF			&$pdf     		Object PDF
+	 *  @param  Object		$object     	Object invoice
+	 *	@param	int			$posy			Position y in PDF
+	 *	@param	Translate	$outputlangs	Object langs for output
+	 *	@return int							<0 if KO, >0 if OK
 	 */
 	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -710,13 +712,13 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$pdf->line($tab3_posx, $tab3_top-1+$tab3_height, $tab3_posx+$tab3_width, $tab3_top-1+$tab3_height);
 
 		$pdf->SetFont('','', $default_font_size - 4);
-		$pdf->SetXY($tab3_posx, $tab3_top );
+		$pdf->SetXY($tab3_posx, $tab3_top);
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Payment"), 0, 'L', 0);
-		$pdf->SetXY($tab3_posx+21, $tab3_top );
+		$pdf->SetXY($tab3_posx+21, $tab3_top);
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Amount"), 0, 'L', 0);
-		$pdf->SetXY($tab3_posx+40, $tab3_top );
+		$pdf->SetXY($tab3_posx+40, $tab3_top);
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Type"), 0, 'L', 0);
-		$pdf->SetXY($tab3_posx+58, $tab3_top );
+		$pdf->SetXY($tab3_posx+58, $tab3_top);
 		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Num"), 0, 'L', 0);
 
 		$y=0;
@@ -750,7 +752,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$pdf->SetXY($tab3_posx+58, $tab3_top+$y);
 				$pdf->MultiCell(30, 3, $row->num, 0, 'L', 0);
 
-				$pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3 );
+				$pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3);
 
 				$i++;
 			}
@@ -802,7 +804,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		{
 			if (is_readable($logo))
 			{
-				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 24);
+				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 22);	// width=0 (auto), max height=22
 			}
 			else
 			{
@@ -823,6 +825,13 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("SupplierInvoice")." ".$outputlangs->convToOutputCharset($object->ref), '', 'R');
 		$pdf->SetFont('','', $default_font_size + 2);
+
+		if ($object->ref_supplier)
+		{
+    		$posy+=5;
+    		$pdf->SetXY($posx,$posy);
+			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefSupplier")." : " . $object->ref_supplier, '', 'R');
+		}
 
 		$posy+=6;
 		$pdf->SetXY($posx,$posy);

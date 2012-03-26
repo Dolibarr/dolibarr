@@ -44,7 +44,7 @@ abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
      *  @param  string	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	function liste_modeles($db,$maxfilenamelength=0)
+	static function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
 
@@ -68,16 +68,20 @@ abstract class ModeleNumRefDeliveryOrder
 {
 	var $error='';
 
-	/**     \brief     	Return if a module can be used or not
-	 *      	\return		boolean     true if module can be used
+	/**
+	 * Return if a module can be used or not
+	 *
+	 * @return		boolean     true if module can be used
 	 */
 	function isEnabled()
 	{
 		return true;
 	}
 
-	/**     \brief      Renvoi la description par defaut du modele de numerotation
-	 *      \return     string      Texte descripif
+	/**
+	 * Renvoi la description par defaut du modele de numerotation
+	 *
+	 * @return     string      Texte descripif
 	 */
 	function info()
 	{
@@ -86,8 +90,10 @@ abstract class ModeleNumRefDeliveryOrder
 		return $langs->trans("NoDescription");
 	}
 
-	/**     \brief      Renvoi un exemple de numerotation
-	 *      \return     string      Example
+	/**
+	 * Renvoi un exemple de numerotation
+	 *
+	 * @return     string      Example
 	 */
 	function getExample()
 	{
@@ -96,17 +102,21 @@ abstract class ModeleNumRefDeliveryOrder
 		return $langs->trans("NoExample");
 	}
 
-	/**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas d
-	 *                  de conflits qui empechera cette numerotation de fonctionner.
-	 *      \return     boolean     false si conflit, true si ok
+	/**
+	 * Test si les numeros deja en vigueur dans la base ne provoquent pas d
+	 * de conflits qui empechera cette numerotation de fonctionner.
+	 *
+	 * @return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
 	{
 		return true;
 	}
 
-	/**     \brief      Renvoi prochaine valeur attribuee
-	 *      \return     string      Valeur
+	/**
+	 * Renvoi prochaine valeur attribuee
+	 *
+	 * @return     string      Valeur
 	 */
 	function getNextValue()
 	{
@@ -114,8 +124,10 @@ abstract class ModeleNumRefDeliveryOrder
 		return $langs->trans("NotAvailable");
 	}
 
-	/**     \brief      Renvoi version du module numerotation
-	 *      	\return     string      Valeur
+	/**
+	 * Renvoi version du module numerotation
+	 *
+	 * @return     string      Valeur
 	 */
 	function getVersion()
 	{
@@ -132,12 +144,13 @@ abstract class ModeleNumRefDeliveryOrder
 
 
 /**
- *		Create object on disk
- *		@param	    db  			objet base de donnee
- *		@param	    object			object delivery
- *		@param	    model			force le modele a utiliser ('' to not force)
- *		@param		outputlangs		objet lang a utiliser pour traduction
- *      @return     int         	0 si KO, 1 si OK
+ *	Create object on disk
+ *
+ *	@param	DoliDB		$db  			objet base de donnee
+ *	@param	Object		$object			object delivery
+ *	@param	string		$model			force le modele a utiliser ('' to not force)
+ *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
+ *  @return int         				0 if KO, 1 if OK
  */
 function delivery_order_pdf_create($db, $object, $model='', $outputlangs='')
 {

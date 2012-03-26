@@ -47,7 +47,8 @@ class box_external_rss extends ModeleBoxes
     /**
      *  Constructor
      *
-     * 	@param	DoliDB	$db		Database handler
+     * 	@param	DoliDB	$db			Database handler
+     *  @param	string	$param		More parameters
      */
     function box_external_rss($db,$param)
     {
@@ -57,7 +58,7 @@ class box_external_rss extends ModeleBoxes
 		$this->db=$db;
 		$this->param=$param;
 
-        $this->boxlabel=$langs->trans("BoxLastRssInfos");
+        $this->boxlabel=$langs->transnoentitiesnoconv("BoxLastRssInfos");
     }
 
     /**

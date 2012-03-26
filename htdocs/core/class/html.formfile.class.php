@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2008-2011 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2010-2011 Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2010-2012 Regis Houssin		<regis@dolibarr.fr>
  * Copyright (c) 2010      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,24 +49,25 @@ class FormFile
 
 
     /**
-     *    	Show form to upload a new file
+     *  Show form to upload a new file
 	 *
-     *    	@param      string	$url			Url
-     *    	@param      string	$title			Title zone (Title or '' or 'none')
-     *    	@param      int		$addcancel		1=Add 'Cancel' button
-     *		@param		int		$sectionid		If upload must be done inside a particular ECM section
-     * 		@param		int		$perm			Value of permission to allow upload
-     *      @param      int		$size           Length of input file area
-     *    	@param		Object	$object			Object to use (when attachment is done on an element)
-     * 		@return		int						<0 if KO, >0 if OK
+     *  @param  string	$url			Url
+     *  @param  string	$title			Title zone (Title or '' or 'none')
+     *  @param  int		$addcancel		1=Add 'Cancel' button
+     *	@param	int		$sectionid		If upload must be done inside a particular ECM section
+     * 	@param	int		$perm			Value of permission to allow upload
+     *  @param  int		$size           Length of input file area
+     *  @param	Object	$object			Object to use (when attachment is done on an element)
+     *  @param	string	$options		Options
+     * 	@return	int						<0 if KO, >0 if OK
      */
-    function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='')
+    function form_attach_new_file($url, $title='', $addcancel=0, $sectionid=0, $perm=1, $size=50, $object='', $options='')
     {
         global $conf,$langs;
 
         if ($conf->global->MAIN_USE_JQUERY_FILEUPLOAD)
         {
-            return $this->_form_ajaxfileupload($object);
+            return $this->_formAjaxFileUpload($object);
         }
         else
         {
@@ -77,12 +78,17 @@ class FormFile
             if (empty($title)) $title=$langs->trans("AttachANewFile");
             if ($title != 'none') print_titre($title);
 
-            print '<form name="userfile" action="'.$url.'" enctype="multipart/form-data" method="POST">';
-            print '<input type="hidden" name="section" value="'.$sectionid.'">';
+            print '<form name="formuserfile" action="'.$url.'" enctype="multipart/form-data" method="POST">';
+            print '<input type="hidden" id="formuserfile_section_dir" name="section_dir" value="">';
+            print '<input type="hidden" id="formuserfile_section_id"  name="section_id" value="'.$sectionid.'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
             print '<table width="100%" class="nobordernopadding">';
-            print '<tr><td width="50%" valign="top">';
+            print '<tr>';
+
+            if (! empty($options)) print '<td>'.$options.'</td>';
+
+            print '<td valign="middle" nowrap="nowrap">';
 
             $max=$conf->global->MAIN_UPLOAD_DOC;		// En Kb
             $maxphp=@ini_get('upload_max_filesize');	// En inconnu
@@ -430,7 +436,7 @@ class FormFile
 
             // Execute hooks
             $parameters=array('socid'=>$GLOBALS['socid'],'id'=>$GLOBALS['id'],'modulepart'=>$modulepart);
-            if (is_object($hookmanager)) $out.= $hookmanager->executeHooks('formBuilddocOptions',$parameters);
+            if (is_object($hookmanager)) $out.= $hookmanager->executeHooks('formBuilddocOptions',$parameters,$GLOBALS['object']);
         }
 
         // Get list of files
@@ -600,8 +606,8 @@ class FormFile
                 }
                 // Delete or view link
                 print '<td align="right">';
-                if (! empty($useinecm)) print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'">'.img_view().'</a> &nbsp; ';
-                if ($permtodelete) print '<a href="'.$url.'?id='.$object->id.'&action=delete&urlfile='.urlencode($file['name']).$param.'">'.img_delete().'</a>';
+                if ($useinecm)     print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view().'</a> &nbsp; ';
+                if ($permtodelete) print '<a href="'.(($useinecm && ! empty($conf->global->MAIN_ECM_TRY_JS))?'#':$url.'?id='.$object->id.'&action=delete&urlfile='.urlencode($file['name']).$param).'" class="deletefilelink" rel="'.urlencode($file['name']).'">'.img_delete().'</a>';
                 else print '&nbsp;';
                 print "</td>";
                 print "</tr>\n";
@@ -779,7 +785,7 @@ class FormFile
      *    @param	Object	$object		Object to use
      *    @return	void
      */
-    private function _form_ajaxfileupload($object)
+    private function _formAjaxFileUpload($object)
     {
         global $langs;
 

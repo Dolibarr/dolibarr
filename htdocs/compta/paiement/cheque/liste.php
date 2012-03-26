@@ -66,7 +66,7 @@ if ($_GET["search_montant"])
 	$sql.=" AND bc.amount=".price2num($_GET["search_montant"]);
 }
 $sql.= " ORDER BY $sortfield $sortorder";
-$sql.= $db->plimit($limit+1 ,$offset);
+$sql.= $db->plimit($limit+1, $offset);
 //print "$sql";
 
 $resql = $db->query($sql);

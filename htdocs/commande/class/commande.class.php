@@ -83,6 +83,10 @@ class Commande extends CommonObject
     var $rang;
     var $special_code;
     var $source;			// Origin of order
+    var $note;				// deprecated
+    var $note_private;
+    var $note_public;
+    var $extraparams=array();
 
     var $origin;
     var $origin_id;
@@ -506,6 +510,7 @@ class Commande extends CommonObject
      * 	Cancel an order
      * 	If stock is decremented on order validation, we must reincrement it
      *
+     *	@param	User	$user			Object user
      *	@param	int		$idwarehouse	Id warehouse to use for stock change.
      *	@return	int						<0 if KO, >0 if OK
      */
@@ -584,7 +589,7 @@ class Commande extends CommonObject
      *	Note that this->ref can be set or empty. If empty, we will use "(PROV)"
      *
      *	@param		User	$user 		Objet user that make creation
-     *	@param		int		notrigger	Disable all triggers
+     *	@param		int		$notrigger	Disable all triggers
      *	@return 	int					<0 if KO, >0 if OK
      */
     function create($user, $notrigger=0)
@@ -615,7 +620,8 @@ class Commande extends CommonObject
 
         // $date_commande is deprecated
         $date = ($this->date_commande ? $this->date_commande : $this->date);
-
+        
+        $now=dol_now();
 
         $this->db->begin();
 
@@ -625,7 +631,7 @@ class Commande extends CommonObject
         $sql.= ", remise_absolue, remise_percent";
         $sql.= ", entity";
         $sql.= ")";
-        $sql.= " VALUES ('(PROV)',".$this->socid.", ".$this->db->idate(gmmktime()).", ".$user->id;
+        $sql.= " VALUES ('(PROV)',".$this->socid.", ".$this->db->idate($now).", ".$user->id;
         $sql.= ", ".($this->fk_project?$this->fk_project:"null");
         $sql.= ", ".$this->db->idate($date);
         $sql.= ", ".($this->source>=0 && $this->source != '' ?$this->source:'null');
@@ -667,25 +673,25 @@ class Commande extends CommonObject
                     }
 
                     $result = $this->addline(
-                    $this->id,
-                    $this->lines[$i]->desc,
-                    $this->lines[$i]->subprice,
-                    $this->lines[$i]->qty,
-                    $this->lines[$i]->tva_tx,
-                    $this->lines[$i]->localtax1_tx,
-                    $this->lines[$i]->localtax2_tx,
-                    $this->lines[$i]->fk_product,
-                    $this->lines[$i]->remise_percent,
-                    $this->lines[$i]->info_bits,
-                    $this->lines[$i]->fk_remise_except,
-					'HT',
-                    0,
-                    $this->lines[$i]->date_start,
-                    $this->lines[$i]->date_end,
-                    $this->lines[$i]->product_type,
-                    $this->lines[$i]->rang,
-                    $this->lines[$i]->special_code,
-                    $fk_parent_line
+                        $this->id,
+                        $this->lines[$i]->desc,
+                        $this->lines[$i]->subprice,
+                        $this->lines[$i]->qty,
+                        $this->lines[$i]->tva_tx,
+                        $this->lines[$i]->localtax1_tx,
+                        $this->lines[$i]->localtax2_tx,
+                        $this->lines[$i]->fk_product,
+                        $this->lines[$i]->remise_percent,
+                        $this->lines[$i]->info_bits,
+                        $this->lines[$i]->fk_remise_except,
+    					'HT',
+                        0,
+                        $this->lines[$i]->date_start,
+                        $this->lines[$i]->date_end,
+                        $this->lines[$i]->product_type,
+                        $this->lines[$i]->rang,
+                        $this->lines[$i]->special_code,
+                        $fk_parent_line
                     );
                     if ($result < 0)
                     {
@@ -707,7 +713,7 @@ class Commande extends CommonObject
                     if ($this->id)
                     {
                         $this->ref="(PROV".$this->id.")";
-                        
+
                         // Add object linked
                         if (is_array($this->linked_objects) && ! empty($this->linked_objects))
                         {
@@ -719,25 +725,25 @@ class Commande extends CommonObject
                         			dol_print_error($this->db);
                         			$error++;
                         		}
-                        		
+
                         		// TODO mutualiser
                         		if ($origin == 'propal' && $origin_id)
                         		{
                         			// On recupere les differents contact interne et externe
                         			$prop = new Propal($this->db, $this->socid, $origin_id);
-                        		
+
                         			// On recupere le commercial suivi propale
                         			$this->userid = $prop->getIdcontact('internal', 'SALESREPFOLL');
-                        		
+
                         			if ($this->userid)
                         			{
                         				//On passe le commercial suivi propale en commercial suivi commande
                         				$this->add_contact($this->userid[0], 'SALESREPFOLL', 'internal');
                         			}
-                        		
+
                         			// On recupere le contact client suivi propale
                         			$this->contactid = $prop->getIdcontact('external', 'CUSTOMER');
-                        		
+
                         			if ($this->contactid)
                         			{
                         				//On passe le contact client suivi propale en contact client suivi commande
@@ -918,7 +924,7 @@ class Commande extends CommonObject
 
             $this->origin				= $object->element;
             $this->origin_id			= $object->id;
-            
+
             // Possibility to add external linked objects with hooks
             $this->linked_objects[$this->origin] = $this->origin_id;
             if (is_array($object->other_linked_objects) && ! empty($object->other_linked_objects))
@@ -981,6 +987,8 @@ class Commande extends CommonObject
      *	@param      timestamp		$date_end         	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
      *	@param      int				$type				Type of line (0=product, 1=service)
      *	@param      int				$rang             	Position of line
+     *	@param		int				$special_code		Special code
+     *	@param		int				$fk_parent_line		Parent line
      *	@return     int             					>0 if OK, <0 if KO
      *
      *	@see        add_product
@@ -1221,7 +1229,7 @@ class Commande extends CommonObject
         $sql.= ', c.date_commande';
         $sql.= ', c.date_livraison';
         $sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as facturee';
-        $sql.= ', c.note, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.fk_adresse_livraison';
+        $sql.= ', c.note as note_private, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.fk_adresse_livraison, c.extraparams';
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
         $sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
         $sql.= ', ca.code as availability_code';
@@ -1266,7 +1274,8 @@ class Commande extends CommonObject
                 $this->remise_absolue         = $obj->remise_absolue;
                 $this->source                 = $obj->source;
                 $this->facturee               = $obj->facturee;
-                $this->note                   = $obj->note;
+                $this->note                   = $obj->note_private;	// deprecated
+                $this->note_private           = $obj->note_private;
                 $this->note_public            = $obj->note_public;
                 $this->fk_project             = $obj->fk_projet;
                 $this->modelpdf               = $obj->model_pdf;
@@ -1284,6 +1293,8 @@ class Commande extends CommonObject
                 $this->date_livraison         = $this->db->jdate($obj->date_livraison);
                 $this->fk_delivery_address    = $obj->fk_adresse_livraison;
                 $this->propale_id             = $obj->fk_source;
+
+                $this->extraparams			  = (array) json_decode($obj->extraparams, true);
 
                 $this->lines                 = array();
 
@@ -1563,6 +1574,8 @@ class Commande extends CommonObject
 
     /**
      * Returns a array with expeditions lines number
+     *
+     * @return	int		Nb of shipments
      *
      * TODO deprecated, move to Shipping class
      */
@@ -2028,6 +2041,7 @@ class Commande extends CommonObject
 
     /**
      *	Set customer ref
+     *
      *	@param      User	$user           User that make change
      *	@param      string	$ref_client     Customer ref
      *	@return     int             		<0 if KO, >0 if OK
@@ -2098,7 +2112,7 @@ class Commande extends CommonObject
      *  @param    	double			$pu               	Prix unitaire
      *  @param    	double			$qty              	Quantity
      *  @param    	double			$remise_percent   	Pourcentage de remise de la ligne
-     *  @param    	double			$tva_tx           	Taux TVA
+     *  @param    	double			$txtva           	Taux TVA
      * 	@param		double			$txlocaltax1		Local tax 1 rate
      *  @param		double			$txlocaltax2		Local tax 2 rate
      *  @param    	string			$price_base_type	HT or TTC
@@ -2106,6 +2120,8 @@ class Commande extends CommonObject
      *  @param    	timestamp		$date_start        	Start date of the line
      *  @param    	timestamp		$date_end          	End date of the line
      * 	@param		int				$type				Type of line (0=product, 1=service)
+     *  @param		int				$fk_parent_line		Parent line id
+     *  @param		int				$skip_update_total	Skip update of total
      *  @return   	int              					< 0 if KO, > 0 if OK
      */
     function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0)
@@ -2237,7 +2253,7 @@ class Commande extends CommonObject
         $error = 0;
 
         $this->db->begin();
-        
+
         if (! $error && ! $notrigger)
         {
         	// Appel des triggers
@@ -2249,7 +2265,7 @@ class Commande extends CommonObject
         	}
         	// Fin appel triggers
         }
-        
+
         if (! $error)
         {
         	// Delete order details
@@ -2260,7 +2276,7 @@ class Commande extends CommonObject
         		dol_syslog(get_class($this)."::delete error", LOG_ERR);
         		$error++;
         	}
-        	
+
         	// Delete order
         	$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande WHERE rowid = ".$this->id;
         	dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
@@ -2269,15 +2285,15 @@ class Commande extends CommonObject
         		dol_syslog(get_class($this)."::delete error", LOG_ERR);
         		$error++;
         	}
-        	
+
         	// Delete linked object
         	$res = $this->deleteObjectLinked();
         	if ($res < 0) $error++;
-        	
+
         	// Delete linked contacts
         	$res = $this->delete_linked_contact();
         	if ($res < 0) $error++;
-        	
+
         	// On efface le repertoire de pdf provisoire
         	$comref = dol_sanitizeFileName($this->ref);
         	if ($conf->commande->dir_output)
@@ -2287,7 +2303,7 @@ class Commande extends CommonObject
         		if (file_exists($file))	// We must delete all files before deleting directory
         		{
         			dol_delete_preview($this);
-        	
+
         			if (!dol_delete_file($file))
         			{
         				$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
@@ -2306,7 +2322,7 @@ class Commande extends CommonObject
         		}
         	}
         }
-        
+
         if (! $error)
         {
         	dol_syslog(get_class($this)."::delete $this->id by $user->id", LOG_DEBUG);
@@ -2333,7 +2349,7 @@ class Commande extends CommonObject
     {
         global $conf, $user;
 
-        $now=gmmktime();
+        $now=dol_now();
 
         $this->nbtodo=$this->nbtodolate=0;
         $clause = " WHERE";
@@ -2414,7 +2430,7 @@ class Commande extends CommonObject
             if ($statut==3 && ! $facturee) return $langs->trans('StatusOrderToBill');
             if ($statut==3 && $facturee) return $langs->trans('StatusOrderProcessed');
         }
-        if ($mode == 1)
+        elseif ($mode == 1)
         {
             if ($statut==-1) return $langs->trans('StatusOrderCanceledShort');
             if ($statut==0) return $langs->trans('StatusOrderDraftShort');
@@ -2423,7 +2439,7 @@ class Commande extends CommonObject
             if ($statut==3 && ! $facturee) return $langs->trans('StatusOrderToBillShort');
             if ($statut==3 && $facturee) return $langs->trans('StatusOrderProcessed');
         }
-        if ($mode == 2)
+        elseif ($mode == 2)
         {
             if ($statut==-1) return img_picto($langs->trans('StatusOrderCanceled'),'statut5').' '.$langs->trans('StatusOrderCanceledShort');
             if ($statut==0) return img_picto($langs->trans('StatusOrderDraft'),'statut0').' '.$langs->trans('StatusOrderDraftShort');
@@ -2432,7 +2448,7 @@ class Commande extends CommonObject
             if ($statut==3 && ! $facturee) return img_picto($langs->trans('StatusOrderToBill'),'statut7').' '.$langs->trans('StatusOrderToBillShort');
             if ($statut==3 && $facturee) return img_picto($langs->trans('StatusOrderProcessed'),'statut6').' '.$langs->trans('StatusOrderProcessedShort');
         }
-        if ($mode == 3)
+        elseif ($mode == 3)
         {
             if ($statut==-1) return img_picto($langs->trans('StatusOrderCanceled'),'statut5');
             if ($statut==0) return img_picto($langs->trans('StatusOrderDraft'),'statut0');
@@ -2441,7 +2457,7 @@ class Commande extends CommonObject
             if ($statut==3 && ! $facturee) return img_picto($langs->trans('StatusOrderToBill'),'statut7');
             if ($statut==3 && $facturee) return img_picto($langs->trans('StatusOrderProcessed'),'statut6');
         }
-        if ($mode == 4)
+        elseif ($mode == 4)
         {
             if ($statut==-1) return img_picto($langs->trans('StatusOrderCanceled'),'statut5').' '.$langs->trans('StatusOrderCanceled');
             if ($statut==0) return img_picto($langs->trans('StatusOrderDraft'),'statut0').' '.$langs->trans('StatusOrderDraft');
@@ -2450,7 +2466,7 @@ class Commande extends CommonObject
             if ($statut==3 && ! $facturee) return img_picto($langs->trans('StatusOrderToBill'),'statut7').' '.$langs->trans('StatusOrderToBill');
             if ($statut==3 && $facturee) return img_picto($langs->trans('StatusOrderProcessed'),'statut6').' '.$langs->trans('StatusOrderProcessed');
         }
-        if ($mode == 5)
+        elseif ($mode == 5)
         {
             if ($statut==-1) return $langs->trans('StatusOrderCanceledShort').' '.img_picto($langs->trans('StatusOrderCanceled'),'statut5');
             if ($statut==0) return $langs->trans('StatusOrderDraftShort').' '.img_picto($langs->trans('StatusOrderDraft'),'statut0');
@@ -2498,7 +2514,8 @@ class Commande extends CommonObject
     /**
      *	Charge les informations d'ordre info dans l'objet commande
      *
-     *	@param     int		$id       Id of order
+     *	@param  int		$id       Id of order
+     *	@return	void
      */
     function info($id)
     {
@@ -2813,7 +2830,8 @@ class OrderLine
     /**
      *  Load line order
      *
-     *  @param     rowid           id line order
+     *  @param  int		$rowid          Id line order
+     *  @return	int						<0 if KO, >0 if OK
      */
     function fetch($rowid)
     {

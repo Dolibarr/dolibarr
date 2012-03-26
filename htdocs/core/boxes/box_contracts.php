@@ -50,7 +50,7 @@ class box_contracts extends ModeleBoxes
 
     	$langs->load("contracts");
 
-    	$this->boxlabel=$langs->trans("BoxLastContracts");
+    	$this->boxlabel=$langs->transnoentitiesnoconv("BoxLastContracts");
     }
 
     /**
@@ -87,7 +87,7 @@ class box_contracts extends ModeleBoxes
     		if ($resql)
     		{
     			$num = $db->num_rows($resql);
-    			$now=gmmktime();
+    			$now=dol_now();
 
     			$i = 0;
 

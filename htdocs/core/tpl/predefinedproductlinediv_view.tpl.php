@@ -22,7 +22,7 @@
 
 <div class="tr pair" <?php echo 'id="row-'.$line->id.'"'; ?>>
 	<div class="td firstcol">
-	<a name="<?php echo $line->id; ?>"></a>
+	<div id="<?php echo $line->id; ?>"></div>
 	<?php
 	echo $form->textwithtooltip($text,$description,3,'','',$i,0,($line->fk_parent_line?img_picto('', 'rightarrow'):''));
 

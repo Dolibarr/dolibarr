@@ -373,7 +373,7 @@ abstract class DolibarrModules
         $sql.= $this->numero;
         $sql.= ", ".$conf->entity;
         $sql.= ", 1";
-        $sql.= ", '".$this->db->idate(gmmktime())."'";
+        $sql.= ", '".$this->db->idate(dol_now())."'";
         $sql.= ", '".$this->version."'";
         $sql.= ")";
 
@@ -582,28 +582,53 @@ abstract class DolibarrModules
                 $file  = isset($this->boxes[$key][1])?$this->boxes[$key][1]:'';
                 $note  = isset($this->boxes[$key][2])?$this->boxes[$key][2]:'';
 
-                $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."boxes_def";
-                $sql.= " WHERE file = '".$file."'";
+                $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."boxes_def";
+                $sql.= " WHERE file = '".$this->db->escape($file)."'";
                 $sql.= " AND entity = ".$conf->entity;
-
                 if ($note) $sql.=" AND note ='".$this->db->escape($note)."'";
 
                 $result=$this->db->query($sql);
                 if ($result)
                 {
-                    $row = $this->db->fetch_row($result);
-                    if ($row[0] == 0)
+                    $obj = $this->db->fetch_object($result);
+                    if ($obj->nb == 0)
                     {
-                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file,entity,note)";
-                        $sql.= " VALUES ('".$this->db->escape($file)."',";
-                        $sql.= $conf->entity.",";
-                        $sql.= $note?"'".$this->db->escape($note)."'":"null";
-                        $sql.= ")";
+                        $this->db->begin();
 
-                        dol_syslog(get_class($this)."::insert_boxes sql=".$sql);
-                        if (! $this->db->query($sql))
+                        if (! $err)
                         {
-                            $err++;
+                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file,entity,note)";
+                            $sql.= " VALUES ('".$this->db->escape($file)."',";
+                            $sql.= $conf->entity.",";
+                            $sql.= $note?"'".$this->db->escape($note)."'":"null";
+                            $sql.= ")";
+
+                            dol_syslog(get_class($this)."::insert_boxes sql=".$sql);
+                            $resql=$this->db->query($sql);
+                            if (! $resql) $err++;
+
+                        }
+                        if (! $err)
+                        {
+                            $lastid=$this->db->last_insert_id(MAIN_DB_PREFIX."boxes_def","rowid");
+
+                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id,position,box_order,fk_user)";
+                            $sql.= " VALUES (".$lastid.", 0, '0', 0)";
+
+                            dol_syslog(get_class($this)."::insert_boxes sql=".$sql);
+                            $resql=$this->db->query($sql);
+                            if (! $resql) $err++;
+                        }
+
+                        if (! $err)
+                        {
+                            $this->db->commit();
+                        }
+                        else
+                        {
+                            $this->error=$this->db->lasterror();
+                            dol_syslog(get_class($this)."::insert_boxes ".$this->error, LOG_ERR);
+                            $this->db->rollback();
                         }
                     }
                 }
@@ -1268,7 +1293,7 @@ abstract class DolibarrModules
     {
     	global $conf;
 
-    	$err=0;
+    	$error=0;
     	$entity=$conf->entity;
 
     	if (is_array($this->module_parts) && ! empty($this->module_parts))
@@ -1283,12 +1308,12 @@ abstract class DolibarrModules
     				// Can defined other parameters
     				if (is_array($value['data']) && ! empty($value['data']))
     				{
-    					$newvalue = dol_json_encode($value['data']);
+    					$newvalue = json_encode($value['data']);
     					if (isset($value['entity'])) $entity = $value['entity'];
     				}
     				else
     				{
-    					$newvalue = dol_json_encode($value);
+    					$newvalue = json_encode($value);
     				}
     			}
 
@@ -1310,15 +1335,23 @@ abstract class DolibarrModules
     			$sql.= ")";
 
     			dol_syslog(get_class($this)."::insert_const_".$key." sql=".$sql);
-    			$resql=$this->db->query($sql);
+    			$resql=$this->db->query($sql,1);
     			if (! $resql)
     			{
-    				$this->error=$this->db->lasterror();
-    				dol_syslog(get_class($this)."::insert_const_".$key." ".$this->error);
+    			    if ($this->db->lasterrno() != 'DB_ERROR_RECORD_ALREADY_EXISTS')
+    			    {
+        			    $error++;
+        				$this->error=$this->db->lasterror();
+        				dol_syslog(get_class($this)."::insert_const_".$key." ".$this->error, LOG_ERR);
+    			    }
+    			    else
+    			    {
+    			        dol_syslog(get_class($this)."::insert_const_".$key." Record already exists.", LOG_WARNING);
+    			    }
     			}
     		}
     	}
-    	return $err;
+    	return $error;
     }
 
     /**

@@ -139,9 +139,10 @@ class ProductFournisseur extends Product
      *    @param  	Societe		$fourn				Supplier
      *    @param  	int			$availability		Product availability
      *    @param	string		$ref_fourn			Supplier ref
+     *    @param	float		$tva_tx				VAT rate
      *    @return	int								>0 if KO, >0 if OK
      */
-    function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn)
+    function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx)
     {
         global $conf,$mysoc;
 
@@ -166,8 +167,9 @@ class ProductFournisseur extends Product
         {
             if ($price_base_type == 'TTC')
             {
-                $ttx = get_default_tva($fourn,$mysoc,$this->id);
-                $buyprice = $buyprice/(1+($ttx/100));
+                //$ttx = get_default_tva($fourn,$mysoc,$this->id);
+                //$buyprice = $buyprice/(1+($ttx/100));
+                $buyprice = $buyprice/(1+($tva_tx/100));
             }
             $unitBuyPrice = price2num($buyprice/$qty,'MU');
 
@@ -175,7 +177,7 @@ class ProductFournisseur extends Product
 
             // Ajoute prix courant du fournisseur pour cette quantite
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price(";
-            $sql.= "datec, fk_product, fk_soc, ref_fourn, fk_user, price, quantity, unitprice, fk_availability, entity)";
+            $sql.= "datec, fk_product, fk_soc, ref_fourn, fk_user, price, quantity, unitprice, tva_tx, fk_availability, entity)";
             $sql.= " values('".$this->db->idate($now)."',";
             $sql.= " ".$this->id.",";
             $sql.= " ".$fourn->id.",";
@@ -184,6 +186,7 @@ class ProductFournisseur extends Product
             $sql.= " ".price2num($buyprice).",";
             $sql.= " ".$qty.",";
             $sql.= " ".$unitBuyPrice.",";
+            $sql.= " ".$tva_tx.",";
             $sql.= " ".$availability.",";
             $sql.= $conf->entity;
             $sql.=")";
@@ -279,7 +282,7 @@ class ProductFournisseur extends Product
      */
     function fetch_product_fournisseur_price($rowid)
     {
-        $sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.fk_availability,";
+        $sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.tva_tx, pfp.fk_availability,";
         $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.fk_product";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " WHERE pfp.rowid = ".$rowid;
@@ -291,14 +294,15 @@ class ProductFournisseur extends Product
             $obj = $this->db->fetch_object($resql);
             if ($obj)
             {
-                $this->product_fourn_price_id = $rowid;
-                $this->fourn_ref              = $obj->ref_fourn;
-                $this->fourn_price            = $obj->price;
-                $this->fourn_qty              = $obj->quantity;
-                $this->fourn_unitprice        = $obj->unitprice;
-                $this->product_id             = $obj->fk_product;	// deprecated
-                $this->fk_product             = $obj->fk_product;
-                $this->fk_availability		  = $obj->fk_availability;
+                $this->product_fourn_price_id	= $rowid;
+                $this->fourn_ref				= $obj->ref_fourn;
+                $this->fourn_price				= $obj->price;
+                $this->fourn_qty				= $obj->quantity;
+                $this->fourn_unitprice			= $obj->unitprice;
+                $this->tva_tx					= $obj->tva_tx;
+                $this->product_id				= $obj->fk_product;	// deprecated
+                $this->fk_product				= $obj->fk_product;
+                $this->fk_availability			= $obj->fk_availability;
                 return 1;
             }
             else
@@ -327,7 +331,7 @@ class ProductFournisseur extends Product
         
         $sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
         $sql.= " pfp.rowid as product_fourn_pri_id, pfp.ref_fourn,";
-        $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.fk_availability";
+        $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.tva_tx, pfp.fk_availability";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= ", ".MAIN_DB_PREFIX."societe as s";
         $sql.= " WHERE pfp.entity IN (".getEntity('product', 1).")";
@@ -347,16 +351,17 @@ class ProductFournisseur extends Product
                 //define base attribute
                 $prodfourn = new ProductFournisseur($this->db);
 
-                $prodfourn->product_fourn_price_id = $record["product_fourn_pri_id"];
-                $prodfourn->product_fourn_id       = $record["product_fourn_id"];
-                $prodfourn->fourn_ref              = $record["ref_fourn"];
-                $prodfourn->fourn_price            = $record["price"];
-                $prodfourn->fourn_qty              = $record["quantity"];
-                $prodfourn->fourn_unitprice        = $record["unitprice"];
-                $prodfourn->fourn_id			   = $record["fourn_id"];
-                $prodfourn->fourn_name			   = $record["supplier_name"];
-                $prodfourn->fk_availability    	   = $record["fk_availability"];
-                $prodfourn->id					   = $prodid;
+                $prodfourn->product_fourn_price_id	= $record["product_fourn_pri_id"];
+                $prodfourn->product_fourn_id		= $record["product_fourn_id"];
+                $prodfourn->fourn_ref				= $record["ref_fourn"];
+                $prodfourn->fourn_price				= $record["price"];
+                $prodfourn->fourn_qty				= $record["quantity"];
+                $prodfourn->fourn_unitprice			= $record["unitprice"];
+                $prodfourn->fourn_tva_tx			= $record["tva_tx"];
+                $prodfourn->fourn_id				= $record["fourn_id"];
+                $prodfourn->fourn_name				= $record["supplier_name"];
+                $prodfourn->fk_availability			= $record["fk_availability"];
+                $prodfourn->id						= $prodid;
 
                 if (!isset($prodfourn->fourn_unitprice))
                 {
@@ -406,7 +411,7 @@ class ProductFournisseur extends Product
 
         $sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
         $sql.= " pfp.rowid as product_fourn_price_id, pfp.ref_fourn,";
-        $sql.= " pfp.price, pfp.quantity, pfp.unitprice";
+        $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.tva_tx";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND pfp.fk_product = ".$prodid;
@@ -420,14 +425,15 @@ class ProductFournisseur extends Product
         if ($resql)
         {
             $record = $this->db->fetch_array($resql);
-            $this->product_fourn_price_id = $record["product_fourn_price_id"];
-            $this->fourn_ref              = $record["ref_fourn"];
-            $this->fourn_price            = $record["price"];
-            $this->fourn_qty              = $record["quantity"];
-            $this->fourn_unitprice        = $record["unitprice"];
-            $this->fourn_id			      = $record["fourn_id"];
-            $this->fourn_name			  = $record["supplier_name"];
-            $this->id					  = $prodid;
+            $this->product_fourn_price_id	= $record["product_fourn_price_id"];
+            $this->fourn_ref				= $record["ref_fourn"];
+            $this->fourn_price				= $record["price"];
+            $this->fourn_qty				= $record["quantity"];
+            $this->fourn_unitprice			= $record["unitprice"];
+            $this->fourn_tva_tx				= $record["tva_tx"];
+            $this->fourn_id					= $record["fourn_id"];
+            $this->fourn_name				= $record["supplier_name"];
+            $this->id						= $prodid;
             $this->db->free($resql);
             return 1;
         }

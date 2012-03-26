@@ -65,6 +65,12 @@ function check_authentication($authentication,&$error,&$errorcode,&$errorlabel)
             $errorcode='BAD_CREDENTIALS'; $errorlabel='Bad value for login or password';
         }
 
+		if (! $error && $fuser->statut == 0)
+		{
+			$error++;
+			$errorcode='ERROR_USER_DISABLED'; $errorlabel='This user has been locked or disabled';
+		}
+		
     	// Validation of login
 		if (! $error)
 		{

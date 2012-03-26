@@ -22,7 +22,9 @@
  */
 include_once "methode_expedition.modules.php";
 
-
+/**
+ * Class to manage shipment Colsui
+ */
 class methode_expedition_colsui extends ModeleShippingMethod
 {
     /**

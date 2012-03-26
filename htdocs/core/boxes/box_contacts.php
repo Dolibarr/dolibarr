@@ -51,7 +51,7 @@ class box_contacts extends ModeleBoxes
 		global $langs;
 		$langs->load("boxes");
 
-		$this->boxlabel=$langs->trans("BoxLastContacts");
+		$this->boxlabel=$langs->transnoentitiesnoconv("BoxLastContacts");
 	}
 
 	/**

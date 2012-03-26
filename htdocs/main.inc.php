@@ -859,6 +859,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 //print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/ColVis/css/ColVisAlt.css" />'."\n";
                 print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/TableTools/css/TableTools.css" />'."\n";
             }
+            if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT))     // jQuery multiselect
+            {
+            	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/multiselect/css/ui.multiselect.css" />'."\n";
+            }
         }
 
         print '<!-- Includes for Dolibarr, modules or specific pages-->'."\n";
@@ -871,13 +875,13 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         // CSS forced by modules (relative url starting with /)
         if (is_array($conf->css_modules))
         {
-            foreach($conf->css_modules as $cssfile)
+            foreach($conf->css_modules as $key => $cssfile)
             {
                 // cssfile is an absolute path
                 print '<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
                 // We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters, so browser cache is not used.
                 if (!preg_match('/\.css$/i',$cssfile)) print $themeparam;
-                print '">'."\n";
+                print '"><!-- Added by module '.$key. '-->'."\n";
             }
         }
         // CSS forced by page in top_htmlhead call (relative url starting with /)
@@ -888,7 +892,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 print '<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
                 // We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters and browser cache is not used.
                 if (!preg_match('/\.css$/i',$cssfile)) print $themeparam;
-                print '">'."\n";
+                print '"><!-- Added by page -->'."\n";
             }
         }
 
@@ -976,6 +980,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/ColReorder/js/ColReorder.min'.$ext.'"></script>'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/ColVis/js/ColVis.min'.$ext.'"></script>'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/TableTools/js/TableTools.min'.$ext.'"></script>'."\n";
+            }
+            // jQuery Multiselect
+            if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT))
+            {
+            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/multiselect/js/ui.multiselect.js"></script>'."\n";
             }
             // CKEditor
             if (! empty($conf->fckeditor->enabled) && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor'))
@@ -1310,7 +1319,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     	include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
     	$hookmanager=new HookManager($db);
 	}
-    $hookmanager->initHooks(array('searchform','leftblock','toprightmenu'));
+    $hookmanager->initHooks(array('searchform','leftblock'));
 
     if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
     else print '<td class="vmenu" valign="top">';

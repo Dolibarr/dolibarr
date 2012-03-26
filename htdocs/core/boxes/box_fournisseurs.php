@@ -49,7 +49,7 @@ class box_fournisseurs extends ModeleBoxes
         global $langs;
         $langs->load("boxes");
 
-        $this->boxlabel=$langs->trans("BoxLastSuppliers");
+        $this->boxlabel=$langs->transnoentitiesnoconv("BoxLastSuppliers");
     }
 
     /**

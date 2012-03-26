@@ -97,9 +97,10 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 	/**
 	 *	Fonction generant le bon de livraison sur le disque
-	 *	@param	    object   		Object livraison a generer
-	 *	@param		outputlangs		Lang output object
-	 *	@return	    int         	1 if OK, <=0 if KO
+	 *
+	 *	@param	Object		$object   		Object livraison a generer
+	 *	@param	Translate	$outputlangs	Lang output object
+	 *	@return	int         				1 if OK, <=0 if KO
 	 */
 	function write_file($object,$outputlangs)
 	{
@@ -212,8 +213,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$tab_top = 88;
 
 					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
-					$pdf->SetXY($this->posxdesc-1, $tab_top);
-					$pdf->MultiCell(190, 3, $outputlangs->convToOutputCharset($object->note_public), 0, 'L');
+					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, $outputlangs->convToOutputCharset($object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
@@ -470,11 +470,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		// Modif Seb cadres signatures
 		$pdf->SetFont('','', $default_font_size);
 		$larg_sign = ($this->page_largeur-$this->marge_gauche-$this->marge_droite)/3;
-		$pdf->Rect($this->marge_gauche, ($tab_top + $tab_height + 3), $larg_sign, 25 );
+		$pdf->Rect($this->marge_gauche, ($tab_top + $tab_height + 3), $larg_sign, 25);
 		$pdf->SetXY($this->marge_gauche + 2, $tab_top + $tab_height + 5);
 		$pdf->MultiCell($larg_sign,2, $outputlangs->trans("For").' '.$outputlangs->convToOutputCharset($mysoc->name).":",'','L');
 
-		$pdf->Rect(2*$larg_sign+$this->marge_gauche, ($tab_top + $tab_height + 3), $larg_sign, 25 );
+		$pdf->Rect(2*$larg_sign+$this->marge_gauche, ($tab_top + $tab_height + 3), $larg_sign, 25);
 		$pdf->SetXY(2*$larg_sign+$this->marge_gauche + 2, $tab_top + $tab_height + 5);
 		$pdf->MultiCell($larg_sign,2, $outputlangs->trans("ForCustomer").':','','L');
 
@@ -510,7 +510,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		{
 			if (is_readable($logo))
 			{
-				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 22);
+				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 22);	// width=0 (auto), max height=22
 			}
 			else
 			{

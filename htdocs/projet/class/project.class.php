@@ -723,29 +723,6 @@ class Project extends CommonObject
 
         $now = mktime();
 
-        // Charge tableau des id de societe socids
-        $socids = array();
-
-        $sql = "SELECT rowid";
-        $sql.= " FROM " . MAIN_DB_PREFIX . "societe";
-        $sql.= " WHERE client IN (1, 3)";
-        $sql.= " AND entity = " . $conf->entity;
-        $sql.= " LIMIT 10";
-
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $num_socs = $this->db->num_rows($resql);
-            $i = 0;
-            while ($i < $num_socs)
-            {
-                $i++;
-
-                $row = $this->db->fetch_row($resql);
-                $socids[$i] = $row[0];
-            }
-        }
-
         // Charge tableau des produits prodids
         $prodids = array();
 
@@ -772,7 +749,7 @@ class Project extends CommonObject
         $this->ref = 'SPECIMEN';
         $this->specimen = 1;
         $socid = rand(1, $num_socs);
-        $this->socid = $socids[$socid];
+        $this->socid = 1;
         $this->date_c = $now;
         $this->date_m = $now;
         $this->date_start = $now;
@@ -843,11 +820,11 @@ class Project extends CommonObject
     /**
      * Return array of projects a user has permission on, is affected to, or all projects
      *
-     * @param 	User	$user		User object
-     * @param 	int		$mode		0=All project I have permission on, 1=Projects affected to me only, 2=Will return list of all projects with no test on contacts
-     * @param 	int		$list		0=Return array,1=Return string list
-     * @param	int		$socid		0=No filter on third party, id of third party
-     * @return 	array 				Array of projects
+     * @param 	User	$user			User object
+     * @param 	int		$mode			0=All project I have permission on, 1=Projects affected to me only, 2=Will return list of all projects with no test on contacts
+     * @param 	int		$list			0=Return array,1=Return string list
+     * @param	int		$socid			0=No filter on third party, id of third party
+     * @return 	array 					Array of projects
      */
     function getProjectsAuthorizedForUser($user, $mode=0, $list=0, $socid=0)
     {
@@ -864,11 +841,9 @@ class Project extends CommonObject
             $sql.= ", " . MAIN_DB_PREFIX . "c_type_contact as ctc";
         }
         $sql.= " WHERE p.entity = " . $conf->entity;
-
         // Internal users must see project he is contact to even if project linked to a third party he can't see.
         //if ($socid || ! $user->rights->societe->client->voir)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
-        if ($socid)
-            $sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = " . $socid . ")";
+        if ($socid > 0) $sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = " . $socid . ")";
 
         if ($mode == 0)
         {

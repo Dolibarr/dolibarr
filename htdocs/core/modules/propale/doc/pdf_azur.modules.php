@@ -129,7 +129,7 @@ class pdf_azur extends ModelePDFPropales
 		$outputlangs->load("propal");
 		$outputlangs->load("products");
 
-		if ($conf->propale->dir_output)
+		if ($conf->propal->dir_output)
 		{
 			$object->fetch_thirdparty();
 
@@ -138,13 +138,13 @@ class pdf_azur extends ModelePDFPropales
 			// Definition de $dir et $file
 			if ($object->specimen)
 			{
-				$dir = $conf->propale->dir_output;
+				$dir = $conf->propal->dir_output;
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->propale->dir_output . "/" . $objectref;
+				$dir = $conf->propal->dir_output . "/" . $objectref;
 				$file = $dir . "/" . $objectref . ".pdf";
 			}
 
@@ -222,8 +222,7 @@ class pdf_azur extends ModelePDFPropales
 					$tab_top = 88;
 
 					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
-					$pdf->SetXY($this->posxdesc-1, $tab_top);
-					$pdf->MultiCell(190, 4, $outputlangs->convToOutputCharset($object->note_public), 0, 'L');
+					$pdf->writeHTMLCell(190, 4, $this->posxdesc-1, $tab_top, $outputlangs->convToOutputCharset($object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
@@ -623,7 +622,7 @@ class pdf_azur extends ModelePDFPropales
 		$pdf->SetFont('','', $default_font_size - 1);
 
 		// Tableau total
-		$lltot = 200; $col1x = 120; $col2x = 170; $largcol2 = $lltot - $col2x;
+		$col1x = 120; $col2x = 170; $largcol2 = ($this->page_largeur - $this->marge_droite - $col2x);
 
 		// Total HT
 		$pdf->SetFillColor(255,255,255);
@@ -924,7 +923,7 @@ class pdf_azur extends ModelePDFPropales
 		{
 			if (is_readable($logo))
 			{
-				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 24);
+				$pdf->Image($logo, $this->marge_gauche, $posy, 0, 22);	// width=0 (auto), max height=22
 			}
 			else
 			{

@@ -77,9 +77,10 @@ class Mailing extends CommonObject
 	}
 
 	/**
-	 *    \brief      Create an EMailing
-	 *    \param      user 		Object of user making creation
-	 *    \return     -1 if error, Id of created object if OK
+	 *  Create an EMailing
+	 *
+	 *  @param	User	$user 		Object of user making creation
+	 *  @return int	   				-1 if error, Id of created object if OK
 	 */
 	function create($user)
 	{
@@ -133,9 +134,10 @@ class Mailing extends CommonObject
 	}
 
 	/**
-	 *    \brief      Update emailing record
-	 *    \param      user 		Object of user making change
-	 *    \return     < 0 if KO, > 0 if OK
+	 *  Update emailing record
+	 *
+	 *  @param	User	$user 		Object of user making change
+	 *  @return int				    < 0 if KO, > 0 if OK
 	 */
 	function update($user)
 	{
@@ -165,9 +167,10 @@ class Mailing extends CommonObject
 	}
 
 	/**
-	 *		\brief      Get object from database
-	 *		\param      rowid       id du mailing
-	 *		\return		int
+	 *	Get object from database
+	 *
+	 *	@param	int		$rowid      Id of emailing
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	function fetch($rowid)
 	{
@@ -227,9 +230,10 @@ class Mailing extends CommonObject
 
 
 	/**
-	 *		\brief      Load an object from its id and create a new one in database
-	 *		\param      fromid     	Id of object to clone
-	 *		\return		int			New id of clone
+	 *	Load an object from its id and create a new one in database
+	 *
+	 *	@param  int		$fromid     	Id of object to clone
+	 *	@return	int						New id of clone
 	 */
 	function createFromClone($fromid,$option1,$option2)
 	{
@@ -303,14 +307,17 @@ class Mailing extends CommonObject
 	}
 
 	/**
-	 *    	\brief     	Validate emailing
-	 *    	\param     	user      	Objet user qui valide
-	 * 		\return		int			<0 if KO, >0 if OK
+	 *  Validate emailing
+	 *
+	 *  @param	User	$user      	Objet user qui valide
+	 * 	@return	int					<0 if KO, >0 if OK
 	 */
 	function valid($user)
 	{
+		$now=dol_now();
+		
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
-		$sql .= " SET statut = 1, date_valid = ".$this->db->idate(gmmktime()).", fk_user_valid=".$user->id;
+		$sql .= " SET statut = 1, date_valid = ".$this->db->idate($now).", fk_user_valid=".$user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog("Mailing::valid sql=".$sql, LOG_DEBUG);
@@ -328,9 +335,10 @@ class Mailing extends CommonObject
 
 
 	/**
-	 *    \brief      Delete emailing
-	 *    \param      rowid       id du mailing a supprimer
-	 *    \return     int         1 en cas de succes
+	 *  Delete emailing
+	 *
+	 *  @param	int		$rowid      id du mailing a supprimer
+	 *  @return int         		1 en cas de succes
 	 */
 	function delete($rowid)
 	{
@@ -353,9 +361,10 @@ class Mailing extends CommonObject
 
 
 	/**
-	 *    	\brief      Change status of each recipient
-	 *		\param     	user      	Objet user qui valide
-	 *    	\return     int         <0 if KO, >0 if OK
+	 *  Change status of each recipient
+	 *
+	 *	@param	User	$user      	Objet user qui valide
+	 *  @return int         		<0 if KO, >0 if OK
 	 */
 	function reset_targets_status($user)
 	{
@@ -379,9 +388,10 @@ class Mailing extends CommonObject
 
 
 	/**
-	 *    \brief      Retourne le libelle du statut d'un mailing (brouillon, validee, ...
-	 *    \param      mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
-	 *    \return     string        Libelle
+	 *  Retourne le libelle du statut d'un mailing (brouillon, validee, ...
+	 *
+	 *  @param	int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+	 *  @return string        			Label
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -389,10 +399,11 @@ class Mailing extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoi le libelle d'un statut donn�
-	 *    	\param      statut        	Id statut
-	 *    	\param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    	\return     string        	Libelle du statut
+	 *  Renvoi le libelle d'un statut donne
+	 *
+	 *  @param	int		$statut        	Id statut
+	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return string        			Label
 	 */
 	function LibStatut($statut,$mode=0)
 	{

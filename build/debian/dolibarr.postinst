@@ -83,15 +83,29 @@ case "$1" in
 		chown -R root:www-data $installconfig
 	   	chmod -R 660 $installconfig
 
-		# Create an empty conf.php with permission to web server
 		if [ ! -f $config ]
 		then 
+			# Create an empty conf.php with permission to web server
 			echo Create empty file $config		
 			touch $config
-			chown -R root:www-data $config
 	    	chmod -R 660 $config
+			chown -R root:www-data $config
+		else
+			# File already exist. We add params not found.
+			echo Add new params to overwrite path to use shared libraries/fonts
+			grep -q -c "dolibarr_lib_ADODB_PATH" $config || echo "<?php \$dolibarr_lib_ADODB_PATH='/usr/share/php/adodb'; ?>" >> $config
+			grep -q -c "dolibarr_lib_FPDI_PATH" $config || echo "<?php \$dolibarr_lib_FPDI_PATH='/usr/share/php/fpdi'; ?>" >> $config
+			grep -q -c "dolibarr_lib_GEOIP_PATH" $config || echo "<?php \$dolibarr_lib_GEOIP_PATH=''; ?>" >> $config
+			grep -q -c "dolibarr_lib_NUSOAP_PATH" $config || echo "<?php \$dolibarr_lib_NUSOAP_PATH='/usr/share/php/nusoap'; ?>" >> $config
+			grep -q -c "dolibarr_lib_ODTPHP_PATHTOPCLZIP" $config || echo "<?php \$dolibarr_lib_ODTPHP_PATHTOPCLZIP='/usr/share/php/libphp-pclzip'; ?>" >> $config
+			grep -q -c "dolibarr_lib_PHPEXCEL_PATH" $config || echo "<?php \$dolibarr_lib_PHPEXCEL_PATH=''; ?>" >> $config
+			grep -q -c "dolibarr_lib_TCPDF_PATH" $config || echo "<?php \$dolibarr_lib_TCPDF_PATH=''; ?>" >> $config
+			grep -q -c "dolibarr_js_CKEDITOR" $config || echo "<?php \$dolibarr_js_CKEDITOR='/javascript/ckeditor'; ?>" >> $config
+			grep -q -c "dolibarr_js_JQUERY" $config || echo "<?php \$dolibarr_js_JQUERY='/javascript/jquery'; ?>" >> $config
+			grep -q -c "dolibarr_js_JQUERY_UI" $config || echo "<?php \$dolibarr_js_JQUERY_UI='/javascript/jquery-ui'; ?>" >> $config
+			grep -q -c "dolibarr_js_JQUERY_FLOT" $config || echo "<?php \$dolibarr_js_JQUERY_FLOT='/javascript/flot'; ?>" >> $config
+			grep -q -c "dolibarr_font_DOL_DEFAULT_TTF_BOLD" $config || echo "<?php \$dolibarr_font_DOL_DEFAULT_TTF_BOLD='/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans-Bold.ttf'; ?>" >> $config			
 		fi
-
 	
 		db_get dolibarr/reconfigure-webserver
 	

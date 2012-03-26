@@ -70,7 +70,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
     {
         $object->fetch_thirdparty();
 
-    	$upload_dir = $conf->propale->dir_output . "/" . dol_sanitizeFileName($object->ref);
+    	$upload_dir = $conf->propal->dir_output . "/" . dol_sanitizeFileName($object->ref);
 
 		if (dol_mkdir($upload_dir) >= 0)
 		{
@@ -106,7 +106,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
     {
     	$object->fetch_thirdparty();
 
-        $upload_dir = $conf->propale->dir_output . "/" . dol_sanitizeFileName($object->ref);
+        $upload_dir = $conf->propal->dir_output . "/" . dol_sanitizeFileName($object->ref);
     	$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
     	dol_delete_file($file,0,0,0,$object);
         $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
@@ -128,7 +128,7 @@ if ($id > 0 || ! empty($ref))
     {
     	$object->fetch_thirdparty();
 
-		$upload_dir = $conf->propale->dir_output.'/'.dol_sanitizeFileName($object->ref);
+		$upload_dir = $conf->propal->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
 		$head = propal_prepare_head($object);
 		dol_fiche_head($head, 'document', $langs->trans('Proposal'), 0, 'propal');

@@ -50,7 +50,7 @@ $action=GETPOST('action');
 
 $success=0;
 
-// Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
+// Init "forced values" to nothing. "forced values" are used after using an install wizard (using a file install.forced.php).
 if (! isset($force_install_type))              $force_install_type='';
 if (! isset($force_install_dbserver))          $force_install_dbserver='';
 if (! isset($force_install_port))              $force_install_port='';

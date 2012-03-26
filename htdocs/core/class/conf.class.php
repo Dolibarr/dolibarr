@@ -84,15 +84,36 @@ class Conf
 	 */
 	function Conf()
 	{
-	    // Avoid warnings when filling this->xxx
-	    $this->file=(object) array();
-        $this->db=(object) array();
-        $this->global=(object) array();
-        $this->mycompany=(object) array();
-        $this->admin=(object) array();
-        $this->user=(object) array();
-	    //! Charset for HTML output and for storing data in memory
-	    $this->file->character_set_client='UTF-8';   // UTF-8, ISO-8859-1
+		// Avoid warnings when filling this->xxx
+		$this->file				= (object) array();
+		$this->db				= (object) array();
+		$this->global			= (object) array();
+		$this->mycompany		= (object) array();
+		$this->admin			= (object) array();
+		$this->user				= (object) array();
+		$this->syslog			= (object) array();
+		$this->browser			= (object) array();
+		$this->multicompany		= (object) array();
+		
+		// First level object
+		$this->expedition_bon	= (object) array();
+		$this->livraison_bon	= (object) array();
+		$this->fournisseur		= (object) array();
+		$this->product			= (object) array();
+		$this->service			= (object) array();
+		$this->contrat			= (object) array();
+		$this->actions			= (object) array();
+		$this->commande			= (object) array();
+		$this->propal			= (object) array();
+		$this->facture			= (object) array();
+		$this->contrat			= (object) array();
+		$this->adherent			= (object) array();
+		$this->bank				= (object) array();
+		$this->notification		= (object) array();
+		$this->mailing			= (object) array();
+		
+		//! Charset for HTML output and for storing data in memory
+		$this->file->character_set_client='UTF-8';   // UTF-8, ISO-8859-1
 	}
 
 
@@ -165,7 +186,7 @@ class Conf
 							$varname = $partname.'_modules';  // TODO deprecated
 							if (! isset($this->$varname) || ! is_array($this->$varname)) { $this->$varname = array(); } // TODO deprecated
 							if (! isset($this->modules_parts[$partname]) || ! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
-							$arrValue = dol_json_decode($value,true);
+							$arrValue = json_decode($value,true);
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
 							else if (in_array($partname,array('login','menus','substitutions','triggers'))) $value = '/'.$modulename.'/core/'.$partname.'/';
 							else if (in_array($partname,array('models'))) $value = '/'.$modulename.'/';
@@ -177,6 +198,7 @@ class Conf
 						elseif (preg_match('/^MAIN_MODULE_([A-Z_]+)$/i',$key,$reg))
 						{
 							$modulename=strtolower($reg[1]);
+							if ($modulename == 'propale') $modulename='propal';
 							$this->$modulename=(object) array();
 							$this->$modulename->enabled=true;
 							$this->modules[]=$modulename;              // Add this module in list of enabled modules
@@ -185,23 +207,27 @@ class Conf
 				}
 				$i++;
 			}
-
-			// Object $mc
-			if (! defined('NOREQUIREMC') && ! empty($this->multicompany->enabled))
-			{
-				global $mc;
-
-				$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
-				if ($ret)
-				{
-					$mc = new ActionsMulticompany($db);
-					$mc->setValues($this);
-				}
-			}
+			
 		    $db->free($resql);
 		}
 		//var_dump($this->modules);
 		//var_dump($this->modules_parts);
+		
+		// Second or others levels object
+		$this->propal->cloture				= (object) array();
+		$this->propal->facturation			= (object) array();
+		$this->commande->client				= (object) array();
+		$this->commande->fournisseur		= (object) array();
+		$this->facture->client				= (object) array();
+		$this->facture->fournisseur			= (object) array();
+		$this->fournisseur->commande 		= (object) array();
+		$this->fournisseur->facture			= (object) array();
+		$this->contrat->services			= (object) array();
+		$this->contrat->services->inactifs	= (object) array();
+		$this->contrat->services->expires	= (object) array();
+		$this->adherent->cotisation			= (object) array();
+		$this->bank->rappro					= (object) array();
+		$this->bank->cheque					= (object) array();
 
 		// Clean some variables
 		if (empty($this->global->MAIN_MENU_STANDARD)) $this->global->MAIN_MENU_STANDARD="eldy_backoffice.php";
@@ -236,7 +262,7 @@ class Conf
 
 		// For backward compatibility
 		// TODO Replace this->xxx->enabled by this->modulename->enabled to remove this code
-		if (isset($this->propale->enabled)) $this->propal->enabled=$this->propale->enabled;
+		if (isset($this->categorie->enabled)) $this->category->enabled=$this->categorie->enabled;
 
 		// Define default dir_output and dir_temp for directories of modules
 		foreach($this->modules as $module)
@@ -256,12 +282,16 @@ class Conf
 		// For user storage
 		$this->user->dir_output=$rootforuser."/users";
 		$this->user->dir_temp=$rootforuser."/users/temp";
+		
+		// For propal storage
+		$this->propal->dir_output=$rootforuser."/propale";
+		$this->propal->dir_temp=$rootforuser."/propale/temp";
 
 		// Exception: Some dir are not the name of module. So we keep exception here
 		// for backward compatibility.
 
 		// Sous module bons d'expedition
-		$this->expedition_bon->enabled=defined("MAIN_SUBMODULE_EXPEDITION")?MAIN_SUBMODULE_EXPEDITION:0;
+		$this->expedition_bon->enabled= defined("MAIN_SUBMODULE_EXPEDITION")?MAIN_SUBMODULE_EXPEDITION:0;
 		// Sous module bons de livraison
 		$this->livraison_bon->enabled=defined("MAIN_SUBMODULE_LIVRAISON")?MAIN_SUBMODULE_LIVRAISON:0;
 
@@ -358,13 +388,13 @@ class Conf
 		// Delay before warnings
 		$this->actions->warning_delay=(isset($this->global->MAIN_DELAY_ACTIONS_TODO)?$this->global->MAIN_DELAY_ACTIONS_TODO:7)*24*60*60;
 		$this->commande->client->warning_delay=(isset($this->global->MAIN_DELAY_ORDERS_TO_PROCESS)?$this->global->MAIN_DELAY_ORDERS_TO_PROCESS:2)*24*60*60;
-        $this->commande->fournisseur->warning_delay=(isset($this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS)?$this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS:7)*24*60*60;
-		$this->propal->cloture->warning_delay=(isset($this->global->MAIN_DELAY_PROPALS_TO_CLOSE)?$this->global->MAIN_DELAY_PROPALS_TO_CLOSE:0)*24*60*60;
-		$this->propal->facturation->warning_delay=(isset($this->global->MAIN_DELAY_PROPALS_TO_BILL)?$this->global->MAIN_DELAY_PROPALS_TO_BILL:0)*24*60*60;
+		$this->commande->fournisseur->warning_delay=(isset($this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS)?$this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS:7)*24*60*60;
+        $this->propal->cloture->warning_delay=(isset($this->global->MAIN_DELAY_PROPALS_TO_CLOSE)?$this->global->MAIN_DELAY_PROPALS_TO_CLOSE:0)*24*60*60;
+        $this->propal->facturation->warning_delay=(isset($this->global->MAIN_DELAY_PROPALS_TO_BILL)?$this->global->MAIN_DELAY_PROPALS_TO_BILL:0)*24*60*60;
 		$this->facture->client->warning_delay=(isset($this->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED)?$this->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED:0)*24*60*60;
-        $this->facture->fournisseur->warning_delay=(isset($this->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY)?$this->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY:0)*24*60*60;
-		$this->contrat->services->inactifs->warning_delay=(isset($this->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES)?$this->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES:0)*24*60*60;
-		$this->contrat->services->expires->warning_delay=(isset($this->global->MAIN_DELAY_RUNNING_SERVICES)?$this->global->MAIN_DELAY_RUNNING_SERVICES:0)*24*60*60;
+		$this->facture->fournisseur->warning_delay=(isset($this->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY)?$this->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY:0)*24*60*60;
+        $this->contrat->services->inactifs->warning_delay=(isset($this->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES)?$this->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES:0)*24*60*60;
+        $this->contrat->services->expires->warning_delay=(isset($this->global->MAIN_DELAY_RUNNING_SERVICES)?$this->global->MAIN_DELAY_RUNNING_SERVICES:0)*24*60*60;
 		$this->adherent->cotisation->warning_delay=(isset($this->global->MAIN_DELAY_MEMBERS)?$this->global->MAIN_DELAY_MEMBERS:0)*24*60*60;
 		$this->bank->rappro->warning_delay=(isset($this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE)?$this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE:0)*24*60*60;
 		$this->bank->cheque->warning_delay=(isset($this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT)?$this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT:0)*24*60*60;
@@ -387,6 +417,19 @@ class Conf
         // For backward compatibility
         if ($this->top_menu == 'eldy.php') $this->top_menu='eldy_backoffice.php';
         elseif ($this->top_menu == 'rodolphe.php') $this->top_menu='eldy_backoffice.php';
+        
+        // Object $mc
+        if (! defined('NOREQUIREMC') && ! empty($this->multicompany->enabled))
+        {
+        	global $mc;
+        
+        	$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
+        	if ($ret)
+        	{
+        		$mc = new ActionsMulticompany($db);
+        		$mc->setValues($this);
+        	}
+        }
 	}
 }
 

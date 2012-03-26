@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Christophe Combelles  <ccomb@free.fr>
- * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
- * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
+/* Copyright (C) 2002-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
+ * Copyright (C) 2005		Marc Barilley			<marc@ocebo.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,12 +71,15 @@ class FactureFournisseur extends Facture
     var $total_localtax1;
     var $total_localtax2;
     var $total_ttc;
-    var $note;
+    var $note;			// deprecated
+    var $note_private;
     var $note_public;
     var $propalid;
 
     var $lines;
     var $fournisseur;
+    
+    var $extraparams=array();
 
 
     /**
@@ -283,10 +286,11 @@ class FactureFournisseur extends Facture
         $sql.= " t.fk_projet,";
         $sql.= " t.fk_cond_reglement,";
         $sql.= " t.date_lim_reglement,";
-        $sql.= " t.note,";
+        $sql.= " t.note as note_private,";
         $sql.= " t.note_public,";
         $sql.= " t.model_pdf,";
         $sql.= " t.import_key,";
+        $sql.= " t.extraparams,";
         $sql.= ' s.nom as socnom, s.rowid as socid';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as t,'.MAIN_DB_PREFIX.'societe as s';
         if ($id)  $sql.= " WHERE t.rowid=".$id;
@@ -301,45 +305,48 @@ class FactureFournisseur extends Facture
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id    = $obj->rowid;
-                $this->ref   = $obj->rowid;
+                $this->id					= $obj->rowid;
+                $this->ref					= $obj->rowid;
 
-                $this->ref_supplier = $obj->facnumber;
-                $this->facnumber = $obj->facnumber;
-                $this->entity = $obj->entity;
-                $this->type = empty($obj->type)?0:$obj->type;
-                $this->fk_soc = $obj->fk_soc;
-                $this->datec = $this->db->jdate($obj->datec);
-                $this->date  = $this->db->jdate($obj->datef);
-                $this->datep = $this->db->jdate($obj->datef);
-                $this->tms = $this->db->jdate($obj->tms);
-                $this->libelle = $obj->libelle;
-                $this->label = $obj->libelle;
-                $this->paye = $obj->paye;
-                $this->amount = $obj->amount;
-                $this->remise = $obj->remise;
-                $this->close_code = $obj->close_code;
-                $this->close_note = $obj->close_note;
-                $this->tva = $obj->tva;
-                $this->total_localtax1 = $obj->localtax1;
-                $this->total_localtax2 = $obj->localtax2;
-                $this->total = $obj->total;
-                $this->total_ht = $obj->total_ht;
-                $this->total_tva = $obj->total_tva;
-                $this->total_ttc = $obj->total_ttc;
-                $this->fk_statut = $obj->fk_statut;
-                $this->statut = $obj->fk_statut;
-                $this->fk_user_author = $obj->fk_user_author;
-                $this->author = $obj->fk_user_author;
-                $this->fk_user_valid = $obj->fk_user_valid;
-                $this->fk_facture_source = $obj->fk_facture_source;
-                $this->fk_project = $obj->fk_projet;
-                $this->fk_cond_reglement = $obj->fk_cond_reglement;
-                $this->date_echeance = $this->db->jdate($obj->date_lim_reglement);
-                $this->note = $obj->note;
-                $this->note_public = $obj->note_public;
-                $this->model_pdf = $obj->model_pdf;
-                $this->import_key = $obj->import_key;
+                $this->ref_supplier			= $obj->facnumber;
+                $this->facnumber			= $obj->facnumber;
+                $this->entity				= $obj->entity;
+                $this->type					= empty($obj->type)?0:$obj->type;
+                $this->fk_soc				= $obj->fk_soc;
+                $this->datec				= $this->db->jdate($obj->datec);
+                $this->date					= $this->db->jdate($obj->datef);
+                $this->datep				= $this->db->jdate($obj->datef);
+                $this->tms					= $this->db->jdate($obj->tms);
+                $this->libelle				= $obj->libelle;
+                $this->label				= $obj->libelle;
+                $this->paye					= $obj->paye;
+                $this->amount				= $obj->amount;
+                $this->remise				= $obj->remise;
+                $this->close_code			= $obj->close_code;
+                $this->close_note			= $obj->close_note;
+                $this->tva					= $obj->tva;
+                $this->total_localtax1		= $obj->localtax1;
+                $this->total_localtax2		= $obj->localtax2;
+                $this->total				= $obj->total;
+                $this->total_ht				= $obj->total_ht;
+                $this->total_tva			= $obj->total_tva;
+                $this->total_ttc			= $obj->total_ttc;
+                $this->fk_statut			= $obj->fk_statut;
+                $this->statut				= $obj->fk_statut;
+                $this->fk_user_author		= $obj->fk_user_author;
+                $this->author				= $obj->fk_user_author;
+                $this->fk_user_valid		= $obj->fk_user_valid;
+                $this->fk_facture_source	= $obj->fk_facture_source;
+                $this->fk_project			= $obj->fk_projet;
+                $this->fk_cond_reglement	= $obj->fk_cond_reglement;
+                $this->date_echeance		= $this->db->jdate($obj->date_lim_reglement);
+                $this->note					= $obj->note_private;	// deprecated
+                $this->note_private			= $obj->note_private;
+                $this->note_public			= $obj->note_public;
+                $this->model_pdf			= $obj->model_pdf;
+                $this->import_key			= $obj->import_key;
+                
+                $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
                 $this->socid  = $obj->socid;
                 $this->socnom = $obj->socnom;
@@ -1159,7 +1166,7 @@ class FactureFournisseur extends Facture
     {
         global $conf, $user;
 
-        $now=gmmktime();
+        $now=dol_now();
 
         $this->nbtodo=$this->nbtodolate=0;
         $sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin';

@@ -26,8 +26,8 @@
 require_once(DOL_DOCUMENT_ROOT ."/core/modules/supplier_order/modules_commandefournisseur.php");
 
 
-/**	    \class      mod_commande_fournisseur_muguet
- *		\brief      Classe du modele de numerotation de reference de commande fournisseur Muguet
+/**
+ *	Classe du modele de numerotation de reference de commande fournisseur Muguet
  */
 class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 {

@@ -511,6 +511,12 @@ function print_start_menu_array()
 	else print '<ul class="tmenu">';
 }
 
+/**
+ * Output start menu entry
+ *
+ * @param	string	$idsel		Text
+ * @return	void
+ */
 function print_start_menu_entry($idsel)
 {
 	global $conf;
@@ -518,6 +524,12 @@ function print_start_menu_entry($idsel)
 	else print '<li class="tmenu" id="mainmenutd_'.$idsel.'">';
 }
 
+/**
+ * Output menu entry
+ *
+ * @param	string	$text		Text
+ * @return	void
+ */
 function print_text_menu_entry($text)
 {
 	global $conf;
@@ -526,6 +538,11 @@ function print_text_menu_entry($text)
 	print '</span>';
 }
 
+/**
+ * Output end menu entry
+ *
+ * @return	void
+ */
 function print_end_menu_entry()
 {
 	global $conf;
@@ -534,6 +551,11 @@ function print_end_menu_entry()
 	print "\n";
 }
 
+/**
+ * Output menu array
+ *
+ * @return	void
+ */
 function print_end_menu_array()
 {
 	global $conf;

@@ -154,7 +154,7 @@ print '</td></tr></table>';
 
 print '</td>';
 print '</tr><tr>';
-$urlwiki='http://wiki.dolibarr.org/index.php/List_of_OpenSource_Software_companies_and_freelancers';
+$urlwiki='http://wiki.dolibarr.org/index.php/List of Dolibarr partners and providers';
 print '<td align="center" valign="top">';
 print '<table class="nocellnopadd">';
 /*print '<tr><td align="center" valign="top">';
@@ -190,7 +190,7 @@ print '</td></tr></table>';
 
 print '</td>';
 print '</tr><tr>';
-$urlwiki='http://wiki.dolibarr.org/index.php/List_of_OpenSource_Software_companies_and_freelancers';
+$urlwiki='http://wiki.dolibarr.org/index.php/List of Dolibarr partners and providers';
 print '<td align="center" valign="top">';
 print '<table class="nocellnopadd">';
 /*print '<tr><td align="center" valign="top">';

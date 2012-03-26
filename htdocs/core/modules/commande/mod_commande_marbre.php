@@ -99,7 +99,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-	function getNextValue($objsoc,$commande)
+	function getNextValue($objsoc,$object)
 	{
 		global $db,$conf;
 
@@ -124,7 +124,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 		}
 
 		//$date=time();
-		$date=$commande->date;
+		$date=$object->date;
 		$yymm = strftime("%y%m",$date);
 		$num = sprintf("%04s",$max+1);
 
@@ -133,10 +133,12 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	}
 
 
-	/**		\brief      Return next free value
-	 *      \param      objsoc      Object third party
-	 * 		\param		objforref	Object for number to search
-	 *   	\return     string      Next free value
+	/**
+	 *  Return next free value
+	 *
+	 *  @param	Societe		$objsoc     Object third party
+	 * 	@param	string		$objforref	Object for number to search
+	 *  @return string      			Next free value
 	 */
 	function commande_get_num($objsoc,$objforref)
 	{

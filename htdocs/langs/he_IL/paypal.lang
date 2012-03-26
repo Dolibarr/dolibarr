@@ -22,7 +22,5 @@ PAYPAL_CSS_URL=כתובת Optionnal של גיליון סגנונות CSS בדף 
 ThisIsTransactionId=זה מזהה עסקה: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=להוסיף את כתובת האתר של Paypal תשלום בעת שליחת מסמך בדואר
 PAYPAL_IPN_MAIL_ADDRESS=כתובת דוא&quot;ל עבור הודעה מיידית של התשלום (IPN)
-PredefinedMailContentSendOrderWithPaypalLink=תוכלו למצוא כאן את הסדר __ ORDERREF__ אננננן אתה יכול ללחוץ על הקישור למטה מאובטח כדי להפוך את התשלום באמצעות PayPal אננננן %s אננננן בברכה אננננן
-PredefinedMailContentSendInvoiceWithPaypalLink=תוכלו למצוא כאן __ חשבונית FACREF__ אננננן אתה יכול ללחוץ על הקישור למטה מאובטח כדי להפוך את התשלום באמצעות PayPal אננננן %s אננננן בברכה אננננן
 YouAreCurrentlyInSandboxMode=אתה נמצא כעת במצב &quot;ארגז חול&quot;
 // STOP - Lines generated via autotranslator.php tool (2012-03-10 15:18:34).

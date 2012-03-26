@@ -1222,7 +1222,7 @@ else
 
 
             /*
-             * Barre d'actions
+             * Buttons actions
              */
 
             print '<div class="tabsAction">';
@@ -1247,13 +1247,21 @@ else
             // Si on a un gestionnaire de generation de mot de passe actif
             if ($conf->global->USER_PASSWORD_GENERATED != 'none')
             {
-                if (($user->id != $id && $caneditpassword) && $fuser->login && !$fuser->ldap_sid &&
+				if ($fuser->statut == 0)
+				{
+	                print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("UserDisabled")).'">'.$langs->trans("ReinitPassword").'</a>';
+				}
+                elseif (($user->id != $id && $caneditpassword) && $fuser->login && !$fuser->ldap_sid &&
                 (empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
                 {
                     print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=password">'.$langs->trans("ReinitPassword").'</a>';
                 }
 
-                if (($user->id != $id && $caneditpassword) && $fuser->login && !$fuser->ldap_sid &&
+				if ($fuser->statut == 0)
+				{
+	                print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("UserDisabled")).'">'.$langs->trans("SendNewPassword").'</a>';
+				}
+                else if (($user->id != $id && $caneditpassword) && $fuser->login && !$fuser->ldap_sid &&
                 (empty($conf->multicompany->enabled) || ($fuser->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)) )
                 {
                     if ($fuser->email) print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a>';

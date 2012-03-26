@@ -45,7 +45,7 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
      *  @param  string	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	function liste_modeles($db,$maxfilenamelength=0)
+	static function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
 
@@ -79,6 +79,7 @@ abstract class ModelNumRefExpedition
 
 	/**
 	 *	Return default description of numbering model
+	 *
 	 *	@return     string      text description
 	 */
 	function info()
@@ -90,6 +91,7 @@ abstract class ModelNumRefExpedition
 
 	/**
 	 *	Return numbering example
+	 *
 	 *	@return     string      Example
 	 */
 	function getExample()
@@ -101,6 +103,7 @@ abstract class ModelNumRefExpedition
 
 	/**
 	 *	Test if existing numbers make problems with numbering
+	 *
 	 *	@return     boolean     false if conflit, true if ok
 	 */
 	function canBeActivated()
@@ -110,6 +113,7 @@ abstract class ModelNumRefExpedition
 
 	/**
 	 *	Return next value
+	 *
 	 *	@return     string      Value
 	 */
 	function getNextValue()
@@ -120,6 +124,7 @@ abstract class ModelNumRefExpedition
 
 	/**
 	 *	Return numbering version module
+	 *
 	 *	@return     string      Value
 	 */
 	function getVersion()
@@ -136,11 +141,12 @@ abstract class ModelNumRefExpedition
 
 /**
  * 	Cree un bon d'expedition sur disque
- * 	@param	    db  			objet base de donnee
- * 	@param	    object			object expedition
- * 	@param	    modele			force le modele a utiliser ('' to not force)
- * 	@param		outputlangs		objet lang a utiliser pour traduction
- *  @return     int             <=0 if KO, >0 if OK
+ *
+ * 	@param	DoliDB		$db  			Objet base de donnee
+ * 	@param	Object		$object			Object expedition
+ * 	@param	string		$modele			Force le modele a utiliser ('' to not force)
+ * 	@param	Translate	$outputlangs	Objet lang a utiliser pour traduction
+ *  @return int             			<=0 if KO, >0 if OK
  */
 function expedition_pdf_create($db, $object, $modele, $outputlangs)
 {

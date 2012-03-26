@@ -397,7 +397,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 			break;
 		case IMAGETYPE_JPEG:    // 2
 			$img = imagecreatefromjpeg($fichier);
-			$extImg = '.jpg'; // Extension de l'image
+			$extImg = (preg_match('/\.jpeg$/',$file)?'.jpeg':'.jpg'); // Extension de l'image
 			break;
 		case IMAGETYPE_PNG:	    // 3
 			$img = imagecreatefrompng($fichier);
@@ -426,11 +426,14 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	$imgWhFact = $imgWidth/$imgHeight; // Facteur largeur/hauteur de l'original
 
 	// Fixe les dimensions de la vignette
-	if($whFact < $imgWhFact){
+	if($whFact < $imgWhFact)
+	{
 		// Si largeur determinante
 		$thumbWidth  = $maxWidth;
 		$thumbHeight = $thumbWidth / $imgWhFact;
-	} else {
+	}
+	else
+	{
 		// Si hauteur determinante
 		$thumbHeight = $maxHeight;
 		$thumbWidth  = $thumbHeight * $imgWhFact;
@@ -475,7 +478,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
             break;
 		case IMAGETYPE_JPEG:    // 2
             $trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
-            $extImgTarget = '.jpg';
+            $extImgTarget = (preg_match('/\.jpeg$/',$file)?'.jpeg':'.jpg');
             $newquality=$quality;
             break;
 		case IMAGETYPE_PNG:	    // 3

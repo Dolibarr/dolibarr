@@ -115,8 +115,14 @@ else
 
 print '</body></html>'."\n";
 
-
-function xyzToUnixTimestamp($mysqldate){
+/**
+ * 	Convert date to timestamp
+ *
+ * 	@param	string		$mysqldate		Date YYYMMDD
+ *  @return	timestamp					Timestamp
+ */
+function xyzToUnixTimestamp($mysqldate)
+{
 	$year=substr($mysqldate,0,4);
 	$month=substr($mysqldate,4,2);
 	$day=substr($mysqldate,6,2);
@@ -124,6 +130,14 @@ function xyzToUnixTimestamp($mysqldate){
 	return $unixtimestamp;
 }
 
+/**
+ * Show box
+ *
+ * @param	string	$selectedDate	Date YYYMMDD
+ * @param	int		$month			Month
+ * @param 	int		$year			Year
+ * @return	void
+ */
 function displayBox($selectedDate,$month,$year)
 {
 	global $langs,$conf;

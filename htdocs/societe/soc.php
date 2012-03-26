@@ -614,7 +614,7 @@ else
 
         if ($conf->use_javascript_ajax)
         {
-            print "\n".'<script type="text/javascript" language="javascript">';
+            print "\n".'<script type="text/javascript">';
             print '$(document).ready(function () {
 						id_te_private=8;
                         id_ef15=1;
@@ -791,7 +791,7 @@ else
         if (empty($conf->global->SOCIETE_DISABLE_STATE))
         {
             print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-            if ($object->country_id) $formcompany->select_departement($object->state_id,$object->country_code,'departement_id');
+            if ($object->country_id) print $formcompany->select_state($object->state_id,$object->country_code,'departement_id');
             else print $countrynotdefined;
             print '</td></tr>';
         }
@@ -985,7 +985,8 @@ else
         /*
          * Edition
          */
-        print_fiche_titre($langs->trans("EditCompany"));
+        
+        //print_fiche_titre($langs->trans("EditCompany"));
 
         if ($socid)
         {
@@ -994,6 +995,12 @@ else
             if ($res < 0) { dol_print_error($db,$object->error); exit; }
             $res=$object->fetch_optionals($object->id,$extralabels);
             //if ($res < 0) { dol_print_error($db); exit; }
+
+
+	        $head = societe_prepare_head($object);
+	
+	        dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
+
 
             // Load object modCodeTiers
             $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
@@ -1246,7 +1253,7 @@ else
             if (empty($conf->global->SOCIETE_DISABLE_STATE))
             {
                 print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-                $formcompany->select_departement($object->state_id,$object->country_code);
+                print $formcompany->select_state($object->state_id,$object->country_code);
                 print '</td></tr>';
             }
 
@@ -1430,6 +1437,8 @@ else
             print '</center>';
 
             print '</form>';
+
+	        dol_fiche_end();
         }
     }
     else
@@ -1447,9 +1456,6 @@ else
         $head = societe_prepare_head($object);
 
         dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
-
-        $form = new Form($db);
-
 
         // Confirm delete third party
         if ($action == 'delete' || $conf->use_javascript_ajax)
@@ -1918,7 +1924,7 @@ else
         {
             $result=show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
         }
-        
+
         // Addresses list
         if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
         {

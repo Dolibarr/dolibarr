@@ -23,6 +23,11 @@
  * connector.
  */
 
+/**
+ * SetXmlHeaders
+ *
+ * @return	void
+ */
 function SetXmlHeaders()
 {
 	ob_end_clean();

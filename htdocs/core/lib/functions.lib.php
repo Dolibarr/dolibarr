@@ -33,142 +33,7 @@
 
 if (! function_exists('json_encode'))
 {
-    /**
-     * Implement json_encode for PHP that does not support it
-     *
-     * @param	mixed	$elements		PHP Object to json encode
-     * @return 	string					Json encoded string
-     */
-    function json_encode($elements)
-    {
-    	$num = count($elements);
-
-    	// determine type
-    	if (is_numeric(key($elements)))
-    	{
-    		// indexed (list)
-    		$output = '[';
-    		for ($i = 0, $last = ($num - 1); isset($elements[$i]); ++$i)
-    		{
-    			if (is_array($elements[$i])) $output.= json_encode($elements[$i]);
-    			else $output .= _val($elements[$i]);
-    			if($i !== $last) $output.= ',';
-    		}
-    		$output.= ']';
-    	}
-    	else
-    	{
-    		// associative (object)
-    		$output = '{';
-    		$last = $num - 1;
-    		$i = 0;
-    		foreach($elements as $key => $value)
-    		{
-    			$output .= '"'.$key.'":';
-    			if (is_array($value)) $output.= json_encode($value);
-    			else $output .= _val($value);
-    			if ($i !== $last) $output.= ',';
-    			++$i;
-    		}
-    		$output.= '}';
-    	}
-
-    	// return
-    	return $output;
-    }
-
-    /**
-     * Return text according to type
-     *
-     * @param 	mixed	$val	Value to show
-     * @return	string			Formated value
-     */
-    function _val($val)
-    {
-    	if (is_string($val)) return '"'.rawurlencode($val).'"';
-    	elseif (is_int($val)) return sprintf('%d', $val);
-    	elseif (is_float($val)) return sprintf('%F', $val);
-    	elseif (is_bool($val)) return ($val ? 'true' : 'false');
-    	else  return 'null';
-    }
-}
-
-if (! function_exists('json_decode'))
-{
-	/**
-	 * Implement json_decode for PHP that does not support it
-	 *
-	 * @param	string	$json		Json encoded to PHP Object or Array
-	 * @param	bool	$assoc		False return an object, true return an array
-	 * @return 	mixed				Object or Array
-	 */
-	function json_decode($json, $assoc=false)
-	{
-		$comment = false;
-
-		$strLength = dol_strlen($json);
-		for ($i=0; $i<$strLength; $i++)
-		{
-			if (! $comment)
-			{
-				if (($json[$i] == '{') || ($json[$i] == '[')) $out.= 'array(';
-				else if (($json[$i] == '}') || ($json[$i] == ']')) $out.= ')';
-				else if ($json[$i] == ':') $out.= ' => ';
-				else $out.= $json[$i];
-			}
-			else $out.= $json[$i];
-			if ($json[$i] == '"' && $json[($i-1)]!="\\") $comment = !$comment;
-		}
-
-		// Return an array
-		eval('$array = '.$out.';');
-
-		// Return an object
-		if (! $assoc)
-		{
-			if (! empty($array))
-			{
-				$object = false;
-
-				foreach ($array as $key => $value)
-				{
-					$object->{$key} = $value;
-				}
-
-				return $object;
-			}
-
-			return false;
-		}
-
-		return $array;
-	}
-}
-
-/**
- * 	Function that encodes data in json format
- *
- * 	@param	mixed	$elements	PHP object to json encode
- * 	@return	string				Json encoded string
- */
-function dol_json_encode($elements)
-{
-	return json_encode($elements);
-}
-
-/**
- * 	Function that decodes data from json format
- *
- * 	@param	string	$json		Json encoded to PHP Object or Array
- * 	@param	bool	$assoc		False return an object, true return an array
- * 	@return mixed				Object or Array
- */
-function dol_json_decode($json, $assoc=false)
-{
-	$out='';
-	$out = @unserialize($json); // For compatibility, test if serialized
-	if (empty($out)) $out = json_decode($json, $assoc);
-	return $out;
+    include_once(DOL_DOCUMENT_ROOT ."/core/lib/json.lib.php");
 }
 
 /**
@@ -301,7 +166,7 @@ function dol_shutdown()
  *  Return value of a param into GET or POST supervariable
  *
  *  @param	string	$paramname   Name of parameter to found
- *  @param	string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's alpha only)
+ *  @param	string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's alpha only, 'array'=check it's array)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
  *  @return string      		 Value found or '' if check fails
  */
@@ -315,16 +180,24 @@ function GETPOST($paramname,$check='',$method=0)
 
 	if (! empty($check))
 	{
-	    $out=trim($out);
 		// Check if numeric
-		if ($check == 'int' && ! preg_match('/^[-\.,0-9]+$/i',$out)) $out='';
+		if ($check == 'int' && ! preg_match('/^[-\.,0-9]+$/i',$out))
+		{
+			$out=trim($out);
+			$out='';
+		}
 		// Check if alpha
 		elseif ($check == 'alpha')
 		{
+			$out=trim($out);
 	    	// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
     		// '../' is dangerous because it allows dir transversals
 		    if (preg_match('/"/',$out)) $out='';
 			else if (preg_match('/\.\.\//',$out)) $out='';
+		}
+		elseif ($check == 'array')
+		{
+			if (! is_array($out) || empty($out)) $out=array();
 		}
 	}
 
@@ -456,14 +329,15 @@ function dol_size($size,$type='')
  *
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with
+ *  @param	string	$unaccent		1=Remove also accent (default), 0 do not remove them
  *	@return string          		String cleaned (a-zA-Z_)
  *
  * 	@see        	dol_string_nospecial, dol_string_unaccent
  */
-function dol_sanitizeFileName($str,$newstr='_')
+function dol_sanitizeFileName($str,$newstr='_',$unaccent=1)
 {
 	$filesystem_forbidden_chars = array('<','>',':','/','\\','?','*','|','"');
-    return dol_string_nospecial(dol_string_unaccent($str), $newstr, $filesystem_forbidden_chars);
+    return dol_string_nospecial($unaccent?dol_string_unaccent($str):$str, $newstr, $filesystem_forbidden_chars);
 }
 
 /**
@@ -1127,8 +1001,9 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 function dol_now($mode='gmt')
 {
     // Note that gmmktime and mktime return same value (GMT) whithout parameters
-    if ($mode == 'gmt') $ret=gmmktime();	// Time for now at greenwich.
-    else if ($mode == 'tzserver')			// Time for now with PHP server timezone added
+	//if ($mode == 'gmt') $ret=gmmktime(); // Strict Standards: gmmktime(): You should be using the time() function instead
+    if ($mode == 'gmt') $ret=time();	// Time for now at greenwich.
+    else if ($mode == 'tzserver')		// Time for now with PHP server timezone added
     {
         require_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
         $tzsecond=getServerTimeZoneInt();    // Contains tz+dayling saving time
@@ -1457,8 +1332,8 @@ function isValidEmail($address)
 /**
  *  Return true if phone number syntax is ok
  *
- *  @param      string		$address    phone (Ex: "0601010101")
- *  @return     boolean     			true if phone syntax is OK, false if KO or empty string
+ *  @param	string		$phone		phone (Ex: "0601010101")
+ *  @return boolean     			true if phone syntax is OK, false if KO or empty string
  */
 function isValidPhone($phone)
 {
@@ -2429,7 +2304,7 @@ function print_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpat
  *	@param	string	$titre				Title to show
  *	@param	string	$mesg				Added message to show on right
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
- *	@param	int		$pictoisfullpath		1=Icon name is a full absolute url of image
+ *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
  * 	@param	int		$id					To force an id on html objects
  * 	@return	void
  */
@@ -3178,7 +3053,7 @@ function picto_required()
 function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
 {
     $pattern = "/<[^>]+>/";
-    $temp = dol_entity_decode($StringHtml,$pagecodeto);
+    $temp = dol_html_entity_decode($StringHtml,ENT_COMPAT,$pagecodeto);
     $temp = preg_replace($pattern,"",$temp);
 
     // Supprime aussi les retours
@@ -3284,19 +3159,6 @@ function dol_htmlcleanlastbr($stringtodecode)
 }
 
 /**
- *	This function is called to decode a string with HTML entities (it decodes entities tags)
- *
- * 	@param	string	$stringhtml     stringhtml
- *  @param  string	$pagecodeto     Encoding of input string
- * 	@return string	  	    		decodestring
- */
-function dol_entity_decode($stringhtml,$pagecodeto='UTF-8')
-{
-    $ret=dol_html_entity_decode($stringhtml,ENT_COMPAT,$pagecodeto);
-    return $ret;
-}
-
-/**
  * Replace html_entity_decode functions to manage errors
  *
  * @param   string	$a		Operand a
@@ -3304,7 +3166,7 @@ function dol_entity_decode($stringhtml,$pagecodeto='UTF-8')
  * @param   string	$c		Operand c
  * @return  string			String decoded
  */
-function dol_html_entity_decode($a,$b,$c)
+function dol_html_entity_decode($a,$b,$c='UTF-8')
 {
     // We use @ to avoid warning on PHP4 that does not support entity decoding to UTF8;
     $ret=@html_entity_decode($a,$b,$c);
@@ -3319,7 +3181,7 @@ function dol_html_entity_decode($a,$b,$c)
  * @param   string	$c		Operand c
  * @return  string      	String encoded
  */
-function dol_htmlentities($a,$b,$c)
+function dol_htmlentities($a,$b,$c='UTF-8')
 {
     // We use @ to avoid warning on PHP4 that does not support entity decoding to UTF8;
     $ret=@htmlentities($a,$b,$c);
@@ -4087,7 +3949,7 @@ function printCommonFooter($zone='private')
         {
             print ' - Zend encoded file: '.(zend_loader_file_encoded()?'yes':'no');
         }
-        print '")'."\n";
+        print '");'."\n";
         print '</script>'."\n";
 
         // Add Xdebug coverage of code

@@ -49,7 +49,7 @@ class box_factures extends ModeleBoxes
 		global $langs;
 		$langs->load("boxes");
 
-		$this->boxlabel=$langs->trans("BoxLastCustomerBills");
+		$this->boxlabel=$langs->transnoentitiesnoconv("BoxLastCustomerBills");
 	}
 
 	/**
@@ -93,7 +93,7 @@ class box_factures extends ModeleBoxes
 			if ($result)
 			{
 				$num = $db->num_rows($result);
-				$now=gmmktime();
+				$now=dol_now();
 
 				$i = 0;
 				$l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';

@@ -39,6 +39,7 @@ $langs->load("companies");
 $langs->load("interventions");
 
 $id = GETPOST('id','int');
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action','alpha');
 
 // Security check
@@ -59,7 +60,7 @@ if (! $sortfield) $sortfield="name";
 
 
 $object = new Fichinter($db);
-$object->fetch($id);
+$object->fetch($id, $ref);
 
 $upload_dir = $conf->ficheinter->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart='fichinter';
@@ -155,7 +156,9 @@ if ($object->id)
     print '<table class="border" width="100%">';
 
 	// Ref
-	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>'.$object->ref.'</td></tr>';
+	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+	print $form->showrefnav($object,'ref','',1,'ref','ref');
+	print '</td></tr>';
 
 	// Societe
 	print "<tr><td>".$langs->trans("Company")."</td><td>".$object->client->getNomUrl(1)."</td></tr>";

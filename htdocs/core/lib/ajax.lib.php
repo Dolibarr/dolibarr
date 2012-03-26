@@ -202,17 +202,51 @@ function ajax_dialog($title,$message,$w=350,$h=150)
  * 	Convert a select html field into an ajax combobox
  *
  * 	@param	string	$htmlname		Name of html field
+ * 	@param	array	$event			Event options
  *  @return	string					Return html string to convert a select field into a combo
  */
-function ajax_combobox($htmlname)
+function ajax_combobox($htmlname, $event=array())
 {
 	$msg.= '<script type="text/javascript">
     $(function() {
-    	$("#'.$htmlname.'" ).combobox();
-    });
-	</script>';
-
-    $msg.= "\n";
+    	$("#'.$htmlname.'").combobox({
+    		selected : function(event,ui) {
+    			var obj = '.json_encode($event).';
+    			$.each(obj, function(key,values) { 
+    				if (values.method.length) {
+    					getMethod(values);
+    				}
+				});
+			}
+		});
+    	
+		function getMethod(obj) {
+			var id = $("#'.$htmlname.'").val();
+			var method = obj.method;
+			var url = obj.url;
+			var htmlname = obj.htmlname;
+    		$.getJSON(url,
+					{
+						action: method,
+						id: id,
+						htmlname: htmlname
+					},
+					function(response) {
+						$.each(obj.params, function(key,action) {
+							if (key.length) {
+								var num = response.num;
+								if (num > 0) {
+									$("#" + key).removeAttr(action);
+								} else {
+									$("#" + key).attr(action, action);
+								}
+							}
+						});
+						$("select#" + htmlname).html(response.value);
+					});
+		}
+	});';
+    $msg.= "</script>\n";
 
     return $msg;
 }

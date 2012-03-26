@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2006-2007	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2012		Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,11 +42,14 @@ function fichinter_prepare_head($object)
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/fichinter/contact.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('InterventionContact');
-	$head[$h][2] = 'contact';
-	$h++;
+	
+	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/fichinter/contact.php?id='.$object->id;
+		$head[$h][1] = $langs->trans('InterventionContact');
+		$head[$h][2] = 'contact';
+		$h++;
+	}
 
 	if (! empty($conf->global->MAIN_USE_PREVIEW_TABS))
 	{
@@ -60,11 +64,14 @@ function fichinter_prepare_head($object)
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'intervention');
-
-    $head[$h][0] = DOL_URL_ROOT.'/fichinter/note.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('Notes');
-	$head[$h][2] = 'note';
-	$h++;
+    
+    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+    {
+    	$head[$h][0] = DOL_URL_ROOT.'/fichinter/note.php?id='.$object->id;
+    	$head[$h][1] = $langs->trans('Notes');
+    	$head[$h][2] = 'note';
+    	$h++;
+    }
 
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");

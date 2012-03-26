@@ -76,9 +76,10 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 	/**
 	 *	Fonction generant le bon de livraison sur le disque
-	 *	@param	    object   		Object livraison a generer
-	 *	@param		outputlangs		Lang output object
-	 *	@return	    int         	1 if OK, <=0 if KO
+	 *
+	 *	@param	Object		$object   		Object livraison a generer
+	 *	@param	Translate	$outputlangs	Lang output object
+	 *	@return	int         				1 if OK, <=0 if KO
 	 */
 	function write_file($object,$outputlangs)
 	{
@@ -191,7 +192,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
 					$nexY = $pdf->GetY();
 
-					$pdf->SetXY(10, $curY );
+					$pdf->SetXY(10, $curY);
 
 					$pdf->MultiCell(20, 3, $outputlangs->convToOutputCharset($object->lines[$i]->ref), 0, 'C');
 
@@ -199,7 +200,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 					//$pdf->SetXY(133, $curY );
 					//$pdf->MultiCell(10, 5, $object->lines[$i]->tva_tx, 0, 'C');
 
-					$pdf->SetXY(145, $curY );
+					$pdf->SetXY(145, $curY);
 					$pdf->MultiCell(10, 3, $object->lines[$i]->qty_shipped, 0, 'C');
 
 					// TODO Field not yet saved in database

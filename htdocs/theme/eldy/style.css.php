@@ -185,7 +185,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
     font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;
 	background: #FDFDFD;
-    border: 1px solid #ACBCBB;
+    border: 1px solid #C0C0C0;
     padding: 1px 1px 1px 1px;
     margin: 0px 0px 0px 0px;
 }
@@ -196,6 +196,7 @@ input:disabled {
 	background:#ddd;
 }
 input:-webkit-autofill { background-color: #FCFEFA !important; background-image:none !important; }
+
 textarea:disabled {
 	background:#ddd;
 }
@@ -203,7 +204,7 @@ textarea:disabled {
     font-family: <?php print $fontlist ?>;
 	background-image: url(<?php echo $img_button ?>);
 	background-position: bottom;
-    border: 1px solid #ACBCBB;
+    border: 1px solid #C0C0C0;
 	padding: 0.1em 0.7em;
 	margin: 0em 0.5em;
     -moz-border-radius:0px 5px 0px 5px;
@@ -218,7 +219,7 @@ textarea:disabled {
 	color: #222244;
 	background-image: url(<?php echo $img_button ?>);
 	background-position: bottom;
-    border: 1px solid #ACBCBB;
+    border: 1px solid #C0C0C0;
 }
 .button:hover   {
 	background: #dee7ec;
@@ -255,6 +256,9 @@ th .button {
 	-moz-border-radius:0px !important;
 	-webkit-border-radius:0px !important;
 	border-radius:0px !important;
+}
+.valignmiddle {
+	vertical-align: middle;
 }
 
 /* ============================================================================== */
@@ -408,7 +412,7 @@ a.tmenu:hover, a.tmenu:active {
 }
 
 a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
-    font-weight: normal;
+	font-weight: normal;
 	color: #233030;
 	padding: 0px 5px 0px 5px;
 	margin: 0px 0px 0px 0px;
@@ -634,7 +638,7 @@ div.login_block table {
 
 div.login {
 	white-space:nowrap;
-    padding: <?php echo ($conf->browser->phone?'0':'8')?>px 0px 0px 0px;
+	padding: <?php echo ($conf->browser->phone?'0':'8')?>px 0px 0px 0px;
     margin: 0px 0px 0px 8px;
 	font-weight: bold;
 }
@@ -847,26 +851,36 @@ td.photo {
 /* ============================================================================== */
 
 .toolbar {
+    background-image: linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
+    background-image: -o-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
+    background-image: -moz-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
+    background-image: -webkit-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
+    background-image: -ms-linear-gradient(bottom, rgb(<?php echo '240,240,240'; ?>) 15%, rgb(<?php echo '255,255,255'; ?>) 100%) !important;
 
-/* DYN */
-background-image: linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 15%, rgb(<?php echo $colorback2; ?>) 100%) !important;
-background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 15%, rgb(<?php echo $colorback2; ?>) 100%) !important;
-background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 15%, rgb(<?php echo $colorback2; ?>) 100%) !important;
-background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 15%, rgb(<?php echo $colorback2; ?>) 100%) !important;
-background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 15%, rgb(<?php echo $colorback2; ?>) 100%) !important;
+    border: 1px solid #CCC !important;
 
-    border: 1px solid #BBB !important;
+    -moz-border-radius: 5px 5px 5px 5px !important;
+	-webkit-border-radius: 5px 5px 5px 5px !important;
+	border-radius: 5px 5px 5px 5px !important;
+    -moz-box-shadow: 4px 4px 4px #EEE;
+    -webkit-box-shadow: 4px 4px 4px #EEE;
+    box-shadow: 4px 4px 4px #EEE;
+
+    padding: 0 4px 0 4px !important;
 }
 
-.toolbarbutton {
-    margin-top: 2px;
+a.toolbarbutton {
+    margin-top: 1px;
     margin-left: 4px;
+    margin-right: 4px;
+    height: 30px;
 /*    border: solid 1px #AAAAAA;
-    width: 34px;*/
-    height: 34px;
-/*    background: #FFFFFF;*/
+    width: 32px;
+    background: #FFFFFF;*/
 }
-
+img.toolbarbutton {
+    height: 28px;
+}
 
 /* ============================================================================== */
 /* Panes for ECM or Filemanager                                                   */
@@ -990,6 +1004,7 @@ background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 15
 	height: <?php print (empty($conf->browser->phone)?'54':'21'); ?>px !important;
 }
 
+
 /* ECM */
 
 #containerlayout .ecm-layout-pane { /* all 'panes' */
@@ -1038,12 +1053,10 @@ background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 15
 }
 
 .ecm-layout-resizer  { /* all 'resizer-bars' */
-    background:     #EEEEEE;
     border:         1px solid #BBB;
     border-width:   0;
     }
 .ecm-layout-resizer-closed {
-    background-color: #EEEEEE;
 }
 
 .ecm-in-layout-center {
@@ -1067,7 +1080,7 @@ background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 15
 
 div.tabs {
     top: 20px;
-    margin: 1px 0px 0px 0px;
+    margin: 1px 0px 2px 0px;
     padding: 0px 6px 0px 0px;
     text-align: <?php print $left; ?>;
 }
@@ -1086,7 +1099,6 @@ div.tabBar {
     border-bottom: 1px solid #CCCCCC;
     border-left: 1px solid #D0D0D0;
     border-top: 1px solid #D8D8D8;
-/*    background: #dee7ec url(<?php echo dol_buildpath($path.'/theme/eldy/img/tab_background.png',1) ?>) repeat-x; */
 
 	/* DYN */
 	background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktabcard1; ?>) 25%, rgb(<?php echo $colorbacktabcard2; ?>) 100%);
@@ -1112,16 +1124,15 @@ a.tabTitle {
     color: white;
 	font-family: <?php print $fontlist ?>;
 	font-weight: normal;
-    padding: 0px 6px;
+    padding: 0px 6px 2px 6px;
     margin: 0px 6px;
     text-decoration: none;
     white-space: nowrap;
 }
 
-a.tab:link {
-    background: #dee7ec;
+a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	font-family: <?php print $fontlist ?>;
-    padding: 0px 6px;
+    padding: 2px 6px 2px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
@@ -1133,85 +1144,20 @@ a.tab:link {
     border-<?php print $left; ?>: 1px solid #D8D8D8;
     border-top: 1px solid #D8D8D8;
 
-/* DYN */
-background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-
+    /* DYN */
+    background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
+    background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
+    background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
+    background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
+    background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
 }
-a.tab:visited {
-    background: #dee7ec;
-	font-family: <?php print $fontlist ?>;
-    padding: 0px 6px;
-    margin: 0em 0.2em;
-    text-decoration: none;
-    white-space: nowrap;
-    -moz-border-radius:6px 6px 0px 0px;
-	-webkit-border-radius:6px 6px 0px 0px;
-	border-radius:6px 6px 0px 0px;
 
-    border-<?php print $right; ?>: 1px solid #555555;
-    border-<?php print $left; ?>: 1px solid #D8D8D8;
-    border-top: 1px solid #D8D8D8;
-
-/* DYN */
-background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-
-}
 a.tab#active {
-    background: white;
-	font-family: <?php print $fontlist ?>;
-    padding: 0px 6px;
-    margin: 0em 0.2em;
-    text-decoration: none;
-    -moz-border-radius:6px 6px 0px 0px;
-	-webkit-border-radius:6px 6px 0px 0px;
-	border-radius:6px 6px 0px 0px;
-
-    border-<?php print $right; ?>: 1px solid #555555;
-    border-<?php print $left; ?>: 1px solid #D8D8D8;
-    border-top: 1px solid #D8D8D8;
-/*    border-bottom: 1px solid white; */
-
-/* DYN */
-/*background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-*/
-    border-bottom: 1px solid rgb(<?php echo $colorbacktabactive; ?>);
-	background-color: rgb(<?php echo $colorbacktabactive; ?>);
+    border-bottom: 1px solid rgb(<?php echo $colorbacktabactive; ?>) !important;
+	background-color: rgb(<?php echo $colorbacktabactive; ?>) !important;
+	background-image: none !important;
 }
-a.tab:hover {
-    background: white;
-	font-family: <?php print $fontlist ?>;
-    padding: 0px 6px;
-    margin: 0em 0.2em;
-    text-decoration: none;
-    -moz-border-radius:6px 6px 0px 0px;
-	-webkit-border-radius:6px 6px 0px 0px;
-	border-radius:6px 6px 0px 0px;
-
-    border-<?php print $right; ?>: 1px solid #555555;
-    border-<?php print $left; ?>: 1px solid #D8D8D8;
-    border-top: 1px solid #D8D8D8;
-
-/* DYN */
-background-image: linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacktab1; ?>) 35%, rgb(<?php echo $colorbacktab2; ?>) 100%);
-}
-
-a.tab:link, a.tab:visited, a.tab#active, a.tab:hover
+a.tab:link, a.tab:visited, a.tab:hover, a.tab#active
 {
     color: #<?php echo $colortextmain; ?>;
 }
@@ -1311,9 +1257,9 @@ span.butAction, span.butActionDelete {
 }
 
 #undertopmenu {
-/*	background-image: url("<?php echo dol_buildpath($path.'/theme/eldy/img/gradient.gif',1) ?>"); */
+	/*	background-image: url("<?php echo dol_buildpath($path.'/theme/eldy/img/gradient.gif',1) ?>"); */
 	background-repeat: repeat-x;
-	margin-top: 8px;
+	margin-top: 12px;
 }
 
 
@@ -1357,7 +1303,7 @@ table.border {
 }
 
 table.border td {
-	padding: 1px 2px 1px 1px;
+	padding: 1px 2px 1px 2px;
 	border: 1px solid #9CACBB;
 	border-collapse: collapse;
 }
@@ -1434,24 +1380,24 @@ table.nobordernopadding td {
 /* For lists */
 
 table.liste {
-    width: 100%;
-    border-collapse: collapse;
-    border-top-color: #FEFEFE;
+	width: 100%;
+	border-collapse: collapse;
+	border-top-color: #FEFEFE;
 
-    border-right-width: 1px;
-    border-right-color: #BBBBBB;
-    border-right-style: solid;
+	border-right-width: 1px;
+	border-right-color: #BBBBBB;
+	border-right-style: solid;
 
     border-left-width: 1px;
     border-left-color: #CCCCCC;
     border-left-style: solid;
 
-    border-bottom-width: 1px;
-    border-bottom-color: #BBBBBB;
-    border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: #BBBBBB;
+	border-bottom-style: solid;
 
-    margin-bottom: 2px;
-    margin-top: 0px;
+	margin-bottom: 2px;
+	margin-top: 0px;
 
     -moz-box-shadow: 4px 4px 4px #CCC;
     -webkit-box-shadow: 4px 4px 4px #CCC;
@@ -1461,7 +1407,7 @@ table.liste td {
 	padding-right: 2px;
 }
 
-tr.liste_titre, tr.liste_titre_sel
+div.liste_titre, tr.liste_titre, tr.liste_titre_sel
 {
     height: 20px !important;
     background-repeat: repeat-x;
@@ -1576,6 +1522,7 @@ div.tabBar .noborder {
 -moz-box-shadow: 4px 4px 4px #CCC;
 -webkit-box-shadow: 4px 4px 4px #CCC;
 box-shadow: 4px 4px 4px #CCC;
+margin-bottom: 8px !important;
 }
 
 
@@ -1732,6 +1679,31 @@ div.titre {
 #divsubscribe { width: 700px; }
 #tablesubscribe { width: 100%; }
 
+div.table-border {
+	display:table;
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #9CACBB;
+}
+div.table-border-row {
+	display:table-row;
+}
+div.table-key-border-col {
+	display:table-cell;
+	width: 25%;
+	vertical-align:top;
+	padding: 1px 2px 1px 1px;
+	border: 1px solid #9CACBB;
+	border-collapse: collapse;
+}
+div.table-val-border-col {
+	display:table-cell;
+	width:auto;
+	padding: 1px 2px 1px 1px;
+	border: 1px solid #9CACBB;
+	border-collapse: collapse;
+}
+
 
 /* ============================================================================== */
 /* Formulaire confirmation (When Ajax JQuery is used)                             */
@@ -1791,7 +1763,7 @@ border-radius: 6px;
 /* Calendar                                                                       */
 /* ============================================================================== */
 
-img.datecallink { padding-left: 2px !important; padding-right: 2px !important;}
+img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 
 .ui-datepicker-trigger {
 	vertical-align: middle;
@@ -1859,14 +1831,14 @@ table.dp {
 /* Bouton X fermer */
 .dpInvisibleButtons
 {
-border-style:none;
-background-color:transparent;
-padding:0px;
-font-size:9px;
-border-width:0px;
-color:#0B63A2;
-vertical-align:middle;
-cursor: pointer;
+    border-style:none;
+    background-color:transparent;
+    padding:0px;
+    font-size:9px;
+    border-width:0px;
+    color:#0B63A2;
+    vertical-align:middle;
+    cursor: pointer;
 }
 
 
@@ -1895,9 +1867,9 @@ td.hidden {
 /*  Module agenda                                                                 */
 /* ============================================================================== */
 
-.cal_other_month   { opacity: 0.6; background: #DDDDDD; border: solid 1px #ACBCBB; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_past_month    { opacity: 0.6; background: #EEEEEE; border: solid 1px #ACBCBB; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_current_month { background: #FFFFFF; border: solid 1px #ACBCBB; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_other_month   { opacity: 0.6; background: #DDDDDD; border: solid 1px #C0C0C0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_past_month    { opacity: 0.6; background: #EEEEEE; border: solid 1px #C0C0C0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_current_month { background: #FFFFFF; border: solid 1px #C0C0C0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today         { background: #FFFFFF; border: solid 2px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past          { }
 table.cal_event    { border-collapse: collapse; margin-bottom: 1px; -webkit-border-radius: 6px; border-radius: 6px; }
@@ -1906,45 +1878,6 @@ table.cal_event td { border: 0px; padding-<?php print $left; ?>: 0px; padding-<?
 .cal_event a:visited { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:hover   { color: #111111; font-size: 11px; font-weight: normal !important; }
-
-
-/* ============================================================================== */
-/*  Afficher/cacher                                                               */
-/* ============================================================================== */
-
-#evolForm input.error {
-                        font-weight: bold;
-                        border: solid 1px #FF0000;
-                        padding: 1px 1px 1px 1px;
-                        margin: 1px 1px 1px 1px;
-              }
-
-#evolForm input.focuserr {
-                        font-weight: bold;
-                        background: #FAF8E8;
-                        color: black;
-                        border: solid 1px #FF0000;
-                        padding: 1px 1px 1px 1px;
-                        margin: 1px 1px 1px 1px;
-              }
-
-
-#evolForm input.focus {	/*** Mise en avant des champs en cours d'utilisation ***/
-                        background: #FAF8E8;
-                        color: black;
-                        border: solid 1px #000000;
-                        padding: 1px 1px 1px 1px;
-                        margin: 1px 1px 1px 1px;
-              }
-
-#evolForm input.normal {	/*** Retour a l'etat normal apres l'utilisation ***/
-                         background: white;
-                         color: black;
-                         border: solid 1px white;
-                         padding: 1px 1px 1px 1px;
-                         margin: 1px 1px 1px 1px;
-               }
-
 
 
 /* ============================================================================== */
@@ -2285,7 +2218,7 @@ a.cke_dialog_ui_button
     font-family: <?php print $fontlist ?> !important;
 	background-image: url(<?php echo $img_button ?>) !important;
 	background-position: bottom !important;
-    border: 1px solid #ACBCBB !important;
+    border: 1px solid #C0C0C0 !important;
 	padding: 0.1em 0.7em !important;
 	margin: 0em 0.5em !important;
     -moz-border-radius:0px 5px 0px 5px !important;
@@ -2316,6 +2249,117 @@ a.cke_dialog_ui_button
 
 div.scroll2 {
 	width: 582px !important;
+}
+
+
+/* ============================================================================== */
+/*  jFileTree                                                                     */
+/* ============================================================================== */
+
+.ecmfiletree {
+	width: 99%;
+	height: 99%;
+	background: #FFF;
+	padding-left: 2px;
+	font-weight: normal;
+}
+
+.fileview {
+	width: 99%;
+	height: 99%;
+	background: #FFF;
+	padding-left: 2px;
+	padding-top: 4px;
+	font-weight: normal;
+}
+
+div.filedirelem {
+    position: relative;
+    display: block;
+    text-decoration: none;
+}
+
+ul.filedirelem {
+    padding: 2px;
+    margin: 0 5px 5px 5px;
+}
+ul.filedirelem li {
+    list-style: none;
+    padding: 2px;
+    margin: 0 10px 20px 10px;
+    width: 160px;
+    height: 120px;
+    text-align: center;
+    display: block;
+    float: <?php print $left; ?>;
+    border: solid 1px #DDDDDD;
+}
+
+ui-layout-north {
+
+}
+
+ul.ecmjqft {
+	font-size: 11px;
+	line-height: 16px;
+	padding: 0px;
+	margin: 0px;
+	font-weight: normal;
+}
+
+ul.ecmjqft li {
+	list-style: none;
+	padding: 0px;
+	padding-left: 20px;
+	margin: 0px;
+	white-space: nowrap;
+	display: block;
+}
+
+ul.ecmjqft a {
+	line-height: 16px;
+	vertical-align: middle;
+	color: #333;
+	padding: 0px 0px;
+	font-weight:normal;
+	display: inline-block !important;
+/*	float: left;*/
+}
+ul.ecmjqft a:active {
+	font-weight: bold !important;
+}
+ul.ecmjqft a:hover {
+    text-decoration: underline;
+}
+div.ecmjqft {
+	vertical-align: middle;
+	display: inline-block !important;
+	text-align: right;
+	position:absolute;
+	right:4px;
+}
+
+/* Core Styles */
+.ecmjqft LI.directory { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.expanded { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2-expanded.png',1); ?>) left top no-repeat; }
+.ecmjqft LI.wait { font-weight:normal; background: url(<?php echo dol_buildpath('/theme/eldy/img/working.gif',1); ?>) left top no-repeat; }
+
+
+/* ============================================================================== */
+/*  jNotify                                                                       */
+/* ============================================================================== */
+
+.jnotify-container {
+	position: fixed !important;
+<?php if ($conf->global->MAIN_JQUERY_JNOTIFY_BOTTOM) { ?>
+	top: auto !important;
+	bottom: 4px !important;
+<?php } ?>
+	text-align: center;
+	min-width: 500px;
+	width: auto;
+	padding-left: 10px !important;
+	padding-right: 10px !important;
 }
 
 

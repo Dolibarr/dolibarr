@@ -193,7 +193,7 @@ ExternalSites=Eksterne sites
 
 // START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
 // Reference language: en_US -> da_DA
-PredefinedMailContentSendSupplierOrder=Du vil her finde vores ordre __ORDERREF__ \ n \ nSincerely \ n \ n
+PredefinedMailContentSendSupplierOrder=Du vil her finde vores ordre __ORDERREF__ \n\n__PERSONALIZED__Sincerely \n\n
 WeightUnitpound=pund
 VolumeUnitounce=unse
 VolumeUnitlitre=liter
@@ -230,9 +230,9 @@ Notify_MEMBER_VALIDATE=Medlem valideret
 Notify_MEMBER_SUBSCRIPTION=Medlem abonnerer
 Notify_MEMBER_RESILIATE=Medlem resiliated
 Notify_MEMBER_DELETE=Medlem slettet
-PredefinedMailContentSendSupplierInvoice=Du vil her finde fakturaen __FACREF__ \n\nSincerely \n\n
-PredefinedMailContentSendShipping=Du vil her finde shipping __SHIPPINGREF__ \n\nSincerely \n\n
-PredefinedMailContentSendFichInter=Du vil her finde interventionen __FICHINTERREF__ \n\nSincerely \n\n
+PredefinedMailContentSendSupplierInvoice=Du vil her finde fakturaen __FACREF__ \n\n__PERSONALIZED__Sincerely \n\n
+PredefinedMailContentSendShipping=Du vil her finde shipping __SHIPPINGREF__ \n\n__PERSONALIZED__Sincerely \n\n
+PredefinedMailContentSendFichInter=Du vil her finde interventionen __FICHINTERREF__ \n\n__PERSONALIZED__Sincerely \n\n
 Top=Top
 Bottom=Bund
 Left=Venstre
@@ -252,9 +252,9 @@ Export=Eksport
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
 // Reference language: en_US -> da_DK
-PredefinedMailContentSendInvoice=Du vil her finde fakturaen __ FACREF__ \n\n venlig hilsen \n\n
-PredefinedMailContentSendInvoiceReminder=Vi vil gerne advare dig om, at fakturaen __ FACREF__ synes ikke betales. Så dette er den faktura i vedhæftningen igen, som en påmindelse. \n\n venlig hilsen \n\n
-PredefinedMailContentSendProposal=Du vil her finde den kommercielle propoal __ PROPREF__ \n\n venlig hilsen \n\n
-PredefinedMailContentSendOrder=Du vil her finde den rækkefølge __ ORDERREF__ \n\n venlig hilsen \n\n
+PredefinedMailContentSendInvoice=Du vil her finde fakturaen __FACREF__ \n\n__PERSONALIZED__ venlig hilsen \n\n__SIGNATURE__
+PredefinedMailContentSendInvoiceReminder=Vi vil gerne advare dig om, at fakturaen __FACREF__ synes ikke betales. Så dette er den faktura i vedhæftningen igen, som en påmindelse. \n\n__PERSONALIZED__ venlig hilsen \n\n__SIGNATURE__
+PredefinedMailContentSendProposal=Du vil her finde den kommercielle propoal __PROPREF__ \n\n__PERSONALIZED__ venlig hilsen \n\n__SIGNATURE__
+PredefinedMailContentSendOrder=Du vil her finde den rækkefølge __ORDERREF__ \n\n__PERSONALIZED__ venlig hilsen \n\n__SIGNATURE__
 ShipmentValidatedInDolibarr=Forsendelse %s valideret i Dolibarr
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 15:59:21).

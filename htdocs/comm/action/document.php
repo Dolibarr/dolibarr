@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
@@ -162,7 +162,7 @@ if ($objectid > 0)
 		else print dol_print_date($act->datep,'day');
 		if ($act->percentage == 0 && $act->datep && $act->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td>';
-		print '<td rowspan="3" align="center" valign="middle" width="180">'."\n";
+		print '<td rowspan="4" align="center" valign="middle" width="180">'."\n";
         print '<form name="listactionsfiltermonth" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="show_month">';
@@ -206,10 +206,10 @@ if ($objectid > 0)
 		print '</td></tr>';
 
         // Location
-        print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$act->location.'</td></tr>';
+        print '<tr><td>'.$langs->trans("Location").'</td><td colspan="2">'.$act->location.'</td></tr>';
 
 
-        print '</table><br><table class="border" width="100%">';
+        print '</table><br><br><table class="border" width="100%">';
 
 
         // Third party - Contact
@@ -261,7 +261,7 @@ if ($objectid > 0)
         print '</td></tr>';
 
 
-        print '</table><br><table class="border" width="100%">';
+        print '</table><br><br><table class="border" width="100%">';
 
 		// Construit liste des fichiers
 		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);

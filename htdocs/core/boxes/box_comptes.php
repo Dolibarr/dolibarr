@@ -51,7 +51,7 @@ class box_comptes extends ModeleBoxes
 		global $langs;
 		$langs->load("boxes");
 
-		$this->boxlabel=$langs->trans('BoxCurrentAccounts');
+		$this->boxlabel=$langs->transnoentitiesnoconv('BoxCurrentAccounts');
 	}
 
 	/**

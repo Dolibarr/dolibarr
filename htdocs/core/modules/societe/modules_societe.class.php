@@ -42,7 +42,7 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
      *  @param	string		$maxfilenamelength  Max length of value to show
      * 	@return	array							List of templates
      */
-    function liste_modeles($db,$maxfilenamelength=0)
+    static function liste_modeles($db,$maxfilenamelength=0)
     {
         global $conf;
 
@@ -144,7 +144,7 @@ abstract class ModeleThirdPartyCode
      *  @param  string	$maxfilenamelength  Max length of value to show
      *  @return	array						List of numbers
      */
-    function liste_modeles($db,$maxfilenamelength=0)
+    static function liste_modeles($db,$maxfilenamelength=0)
     {
         $liste=array();
         $sql ="";

@@ -338,14 +338,14 @@ foreach ($dirmodels as $reldir)
 						}
 						print '</td>';
 
-						$propale=new Propal($db);
-						$propale->initAsSpecimen();
+						$propal=new Propal($db);
+						$propal->initAsSpecimen();
 
 						// Info
 						$htmltooltip='';
 						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$facture->type=0;
-						$nextval=$module->getNextValue($mysoc,$propale);
+						$propal->type=0;
+						$nextval=$module->getNextValue($mysoc,$propal);
 						if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
 						{
 							$htmltooltip.=''.$langs->trans("NextValue").': ';
@@ -631,7 +631,7 @@ print "<tr class=\"liste_titre\">\n";
 print "  <td>".$langs->trans("Name")."</td>\n";
 print "  <td>".$langs->trans("Value")."</td>\n";
 print "</tr>\n";
-print "<tr ".$bc[false].">\n  <td width=\"140\">".$langs->trans("PathDirectory")."</td>\n  <td>".$conf->propale->dir_output."</td>\n</tr>\n";
+print "<tr ".$bc[false].">\n  <td width=\"140\">".$langs->trans("PathDirectory")."</td>\n  <td>".$conf->propal->dir_output."</td>\n</tr>\n";
 print "</table>\n<br>";
 
 dol_htmloutput_mesg($mesg);

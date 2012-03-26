@@ -208,7 +208,7 @@ if ($taskid)
 		dol_htmloutput_mesg($mesg);
 
 		$head=task_prepare_head($task);
-		dol_fiche_head($head, 'task', $langs->trans("Task"),0,'projecttask');
+		dol_fiche_head($head, 'task_task', $langs->trans("Task"),0,'projecttask');
 
 		if ($action == 'edit' && $user->rights->projet->creer)
 		{

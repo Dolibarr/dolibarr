@@ -636,7 +636,7 @@ class Societe extends CommonObject
         $sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
         $sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
         $sql .= ', s.localtax1_assuj, s.localtax2_assuj, s.fk_prospectlevel, s.default_lang, s.logo';
-        $sql .= ', s.import_key';
+        $sql .= ', s.import_key, s.canvas';
         $sql .= ', fj.libelle as forme_juridique';
         $sql .= ', e.libelle as effectif';
         $sql .= ', p.code as country_code, p.libelle as country';
@@ -676,6 +676,7 @@ class Societe extends CommonObject
 
                 $this->id           = $obj->rowid;
                 $this->entity       = $obj->entity;
+                $this->canvas		= $obj->canvas;
 
                 $this->ref          = $obj->rowid;
                 $this->name 		= $obj->name;
@@ -702,7 +703,7 @@ class Societe extends CommonObject
 
                 $this->state_id     = $obj->fk_departement;
                 $this->state_code   = $obj->state_code;
-                $this->state        = $obj->state;
+                $this->state        = ($obj->state!='-'?$obj->state:'');
 
                 $transcode=$langs->trans('StatusProspect'.$obj->fk_stcomm);
                 $libelle=($transcode!='StatusProspect'.$obj->fk_stcomm?$transcode:$obj->stcomm);

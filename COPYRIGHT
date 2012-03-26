@@ -12,8 +12,7 @@ Composant         Version  License                     Compatible GPL   Usage
 ----------------------------------------------------------------------------
 PHP libraries:
 AdoDb-Date        0.21		Modified BSD License		Yes				Date convertion (not into rpm package)
-ArtiChow          1.07		Public Domain				Yes				Graphics
-CKEditor		  3.6.1		GPL or LGPL 2.1 or MPL 1.1	Yes				Editor WYSIWYG
+CKEditor		  3.6.2		GPL or LGPL 2.1 or MPL 1.1	Yes				Editor WYSIWYG
 FPDI              1.4.1		Apache Software License 2.0	?				PDF templates management
 GeoIP			  2004      LGPL 2.1                    Yes             Sample code to make geoip convert (not into deb package)
 NuSoap            0.9.5		LGPL 2.1					Yes				Library to develop SOAP Web services (not into rpm and deb package)

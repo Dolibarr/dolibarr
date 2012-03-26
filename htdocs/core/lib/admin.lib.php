@@ -813,7 +813,6 @@ function unActivateModule($value, $requiredby=1)
         // TODO Cannot instantiate abstract class
     	//$genericMod = new DolibarrModul($db);
         //$genericMod->name=preg_replace('/^mod/i','',$modName);
-        //$genericMod->style_sheet=1;
         //$genericMod->rights_class=strtolower(preg_replace('/^mod/i','',$modName));
         //$genericMod->const_name='MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',$modName));
         dol_syslog("modules::unActivateModule Failed to find module file, we use generic function with name " . $modName);

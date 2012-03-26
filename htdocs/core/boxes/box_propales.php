@@ -51,7 +51,7 @@ class box_propales extends ModeleBoxes
     	global $langs;
       $langs->load("boxes");
 
-      $this->boxlabel=$langs->trans("BoxLastProposals");
+      $this->boxlabel=$langs->transnoentitiesnoconv("BoxLastProposals");
     }
 
     /**
@@ -90,7 +90,7 @@ class box_propales extends ModeleBoxes
         if ($result)
         {
         	$num = $db->num_rows($result);
-        	$now=gmmktime();
+        	$now=dol_now();
 
         	$i = 0;
 

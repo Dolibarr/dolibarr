@@ -72,7 +72,7 @@ class RemiseCheque extends CommonObject
 		$sql.= " WHERE bc.entity = ".$conf->entity;
 		if ($id)  $sql.= " AND bc.rowid = ".$id;
 		if ($ref) $sql.= " AND bc.number = '".$this->db->escape($ref)."'";
-		
+
 		dol_syslog("RemiseCheque::fetch sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -113,13 +113,13 @@ class RemiseCheque extends CommonObject
 	/**
 	 *	Create a receipt to send cheques
 	 *
-	 *	@param  	user 			User making creation
-	 *	@param  	account_id 		Bank account for cheque receipt
-	 *  @param      limit           Limit number of cheque to this
-	 *  @param		toRemise		array with cheques to remise
-	 *	@return		int				<0 if KO, >0 if OK
+	 *	@param	User	$user 			User making creation
+	 *	@param  int		$account_id 	Bank account for cheque receipt
+	 *  @param  int		$limit          Limit number of cheque to this
+	 *  @param	array	$toRemise		array with cheques to remise
+	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function create($user, $account_id, $limit=40,$toRemise)
+	function create($user, $account_id, $limit=40, $toRemise)
 	{
 		global $conf;
 
@@ -271,7 +271,8 @@ class RemiseCheque extends CommonObject
 	/**
 	 *	Supprime la remise en base
 	 *
-	 *	@param  user utilisateur qui effectue l'operation
+	 *	@param  User	$user 		Utilisateur qui effectue l'operation
+	 *	@return	void
 	 */
 	function delete($user='')
 	{
@@ -326,8 +327,8 @@ class RemiseCheque extends CommonObject
 	/**
 	 *  Validate a receipt
 	 *
-	 *  @param     user 	User
-	 *  @return    int      <0 if KO, >0 if OK
+	 *  @param	User	$user 		User
+	 *  @return int      			<0 if KO, >0 if OK
 	 */
 	function validate($user)
 	{
@@ -472,11 +473,11 @@ class RemiseCheque extends CommonObject
 	/**
 	 *	Build document
 	 *
-	 *	@param 		model 			Model name
-	 *	@param 		outputlangs		Object langs
-	 * 	@return  	int        		<0 if KO, >0 if OK
+	 *	@param	string		$model 			Model name
+	 *	@param 	Tranlsate	$outputlangs	Object langs
+	 * 	@return int        					<0 if KO, >0 if OK
 	 */
-	function generatePdf($model='blochet', $outputlangs)
+	function generatePdf($model, $outputlangs)
 	{
 		global $langs,$conf;
 
@@ -555,8 +556,9 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 *	\brief  	Mets a jour le montant total
-	 *	\return 	int		0 en cas de succes
+	 *	Mets a jour le montant total
+	 *
+	 *	@return 	int		0 en cas de succes
 	 */
 	function updateAmount()
 	{
@@ -614,9 +616,10 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 *	\brief  	Insere la remise en base
-	 *	\param  	account_id 		Compte bancaire concerne
-	 * 	\return		int
+	 *	Insere la remise en base
+	 *
+	 *	@param	int		$account_id 		Compte bancaire concerne
+	 * 	@return	int
 	 */
 	function removeCheck($account_id)
 	{
@@ -643,8 +646,9 @@ class RemiseCheque extends CommonObject
 		return 0;
 	}
 	/**
-	 *	\brief      Charge les proprietes ref_previous et ref_next
-	 *	\return     int   <0 si ko, 0 si ok
+	 *	Charge les proprietes ref_previous et ref_next
+	 *
+	 *	@return     int   <0 if KO, 0 if OK
 	 */
 	function load_previous_next_id()
 	{
@@ -684,9 +688,10 @@ class RemiseCheque extends CommonObject
 
     /**
      *      Set the creation date
-     *      @param      user                Object user
-     *      @param      date                Date creation
-     *      @return     int                 <0 if KO, >0 if OK
+     *
+     *      @param	User		$user           Object user
+     *      @param  timestamp   $date           Date creation
+     *      @return int                 		<0 if KO, >0 if OK
      */
     function set_date($user, $date)
     {
@@ -719,9 +724,10 @@ class RemiseCheque extends CommonObject
 
 	/**
 	 *    	Renvoie nom clicable (avec eventuellement le picto)
-	 *		@param		withpicto		Inclut le picto dans le lien
-	 *		@param		option			Sur quoi pointe le lien
-	 *		@return		string			Chaine avec URL
+	 *
+	 *		@param	int		$withpicto		Inclut le picto dans le lien
+	 *		@param	string	$option			Sur quoi pointe le lien
+	 *		@return	string					Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0,$option='')
 	{
@@ -741,9 +747,10 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
-	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    	\return     string		Libelle
+	 *  Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *
+	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return string				Libelle
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -751,10 +758,11 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 *    	Return label of a status
-	 *    	@param      status      Statut
-	 *		@param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    	@return     string      Libelle du statut
+	 *  Return label of a status
+	 *
+	 *  @param	int		$status     Statut
+	 *	@param  int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return string      		Libelle du statut
 	 */
 	function LibStatut($status,$mode=0)
 	{

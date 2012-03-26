@@ -92,8 +92,8 @@ dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']
 
 <br>
 
-<center><input type="submit" class="button" value="<?php echo $langs->trans("Save"); ?>"> &nbsp; &nbsp;
-<input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>"></center>
+<div align="center"><input type="submit" class="button" value="<?php echo $langs->trans("Save"); ?>"> &nbsp; &nbsp;
+<input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>"></div>
 
 </form>
 

@@ -100,11 +100,13 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		return $numExample;
     }
 
-	/**		\brief      Return next value
-	*      	\param      objsoc      Object third party
-	* 		\param		propal		Object commercial proposal
-	*      	\return     string      Value if OK, 0 if KO
-	*/
+	/**
+	 *  Return next value
+	 *
+	 *  @param	Societe		$objsoc     Object third party
+	 * 	@param	Propal		$propal		Object commercial proposal
+	 *  @return string      			Value if OK, 0 if KO
+	 */
 	function getNextValue($objsoc,$propal)
 	{
 		global $db,$conf;
