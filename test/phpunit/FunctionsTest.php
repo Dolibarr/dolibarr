@@ -378,10 +378,18 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         $this->savdb=$db;
 
         $arraytotest=array(0=>array('key'=>1,'value'=>'PRODREF','label'=>'Product ref with é and special chars \\ \' "'));
+        
         $encoded=json_encode($arraytotest);
         //var_dump($encoded);
         $this->assertEquals('[{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}]',$encoded);
         $decoded=json_decode($encoded,true);
+        //var_dump($decoded);
+        $this->assertEquals($arraytotest,$decoded);
+        
+        $encoded=dol_json_encode($arraytotest);
+        //var_dump($encoded);
+        $this->assertEquals('[{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}]',$encoded);
+        $decoded=dol_json_decode($encoded,true);
         //var_dump($decoded);
         $this->assertEquals($arraytotest,$decoded);
     }
