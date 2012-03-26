@@ -23,6 +23,19 @@
  * 		\ingroup	core
  */
 
+if (! function_exists('json_encode'))
+{
+	/**
+	 * Implement json_encode for PHP that does not support it
+	 *
+	 * @param	mixed	$elements		PHP Object to json encode
+	 * @return 	string					Json encoded string
+	 */
+	function json_encode($elements)
+	{
+		return dol_json_encode($elements);
+	}
+}
 
 /**
  * Implement json_encode for PHP that does not support it
@@ -30,7 +43,7 @@
  * @param	mixed	$elements		PHP Object to json encode
  * @return 	string					Json encoded string
  */
-function json_encode($elements)
+function dol_json_encode($elements)
 {
 	$num = count($elements);
 
@@ -174,6 +187,20 @@ function _val($val)
 	else  return 'null';
 }
 
+if (! function_exists('json_decode'))
+{
+	/**
+	 * Implement json_decode for PHP that does not support it
+	 *
+	 * @param	string	$json		Json encoded to PHP Object or Array
+	 * @param	bool	$assoc		False return an object, true return an array
+	 * @return 	mixed				Object or Array
+	 */
+	function json_decode($json, $assoc=false)
+	{
+		return dol_json_decode($json, $assoc);
+	}
+}
 
 /**
  * Implement json_decode for PHP that does not support it
@@ -182,7 +209,7 @@ function _val($val)
  * @param	bool	$assoc		False return an object, true return an array
  * @return 	mixed				Object or Array
  */
-function json_decode($json, $assoc=false)
+function dol_json_decode($json, $assoc=false)
 {
 	$comment = false;
 
@@ -226,7 +253,6 @@ function json_decode($json, $assoc=false)
 	return $array;
 }
 
-
 /**
  * Return text according to type
  *
@@ -244,7 +270,6 @@ function _unval($val)
 	}
 	return $val;
 }
-
 
 /**
  * convert a string from one UTF-16 char to one UTF-8 char
@@ -288,7 +313,6 @@ function utf162utf8($utf16)
 	// ignoring UTF-32 for now, sorry
 	return '';
 }
-
 
 /**
  * convert a string from one UTF-8 char to one UTF-16 char

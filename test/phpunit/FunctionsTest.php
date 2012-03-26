@@ -28,6 +28,7 @@ global $conf,$user,$langs,$db;
 require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/json.lib.php';
 
 if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
 if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
@@ -378,10 +379,18 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         $this->savdb=$db;
 
         $arraytotest=array(0=>array('key'=>1,'value'=>'PRODREF','label'=>'Product ref with é and special chars \\ \' "'));
+        
         $encoded=json_encode($arraytotest);
         //var_dump($encoded);
         $this->assertEquals('[{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}]',$encoded);
         $decoded=json_decode($encoded,true);
+        //var_dump($decoded);
+        $this->assertEquals($arraytotest,$decoded);
+        
+        $encoded=dol_json_encode($arraytotest);
+        //var_dump($encoded);
+        $this->assertEquals('[{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}]',$encoded);
+        $decoded=dol_json_decode($encoded,true);
         //var_dump($decoded);
         $this->assertEquals($arraytotest,$decoded);
     }
