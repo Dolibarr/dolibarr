@@ -57,7 +57,7 @@ switch ($action)
 		// Si paiement autre qu'en especes, montant encaisse = prix total
 		$mode_reglement = $obj_facturation->getSetPaymentMode();
 		if ( $mode_reglement != 'ESP' ) {
-			$montant = $obj_facturation->prix_total_ttc();
+			$montant = $obj_facturation->prixTotalTtc();
 		} else {
 			$montant = $_POST['txtEncaisse'];
 		}
@@ -66,7 +66,7 @@ switch ($action)
 			$obj_facturation->montantEncaisse($montant);
 
 			//Determination de la somme rendue
-			$total = $obj_facturation->prix_total_ttc();
+			$total = $obj_facturation->prixTotalTtc();
 			$encaisse = $obj_facturation->montantEncaisse();
 
 			$obj_facturation->montantRendu($encaisse - $total);
@@ -198,9 +198,9 @@ switch ($action)
 		$invoice->date_creation=$now;
 		$invoice->date=$now;
 		$invoice->date_lim_reglement=0;
-		$invoice->total_ht=$obj_facturation->prix_total_ht();
-		$invoice->total_tva=$obj_facturation->montant_tva();
-		$invoice->total_ttc=$obj_facturation->prix_total_ttc();
+		$invoice->total_ht=$obj_facturation->prixTotalHt();
+		$invoice->total_tva=$obj_facturation->montantTva();
+		$invoice->total_ttc=$obj_facturation->prixTotalTtc();
 		$invoice->note=$note;
 		$invoice->cond_reglement_id=$cond_reglement_id;
 		$invoice->mode_reglement_id=$mode_reglement_id;
@@ -234,7 +234,7 @@ switch ($action)
 				$payment=new Paiement($db);
 				$payment->datepaye=$now;
 				$payment->bank_account=$conf_fkaccount;
-				$payment->amounts[$invoice->id]=$obj_facturation->prix_total_ttc();
+				$payment->amounts[$invoice->id]=$obj_facturation->prixTotalTtc();
 				$payment->note=$langs->trans("Payment").' '.$langs->trans("Invoice").' '.$obj_facturation->numInvoice();
 				$payment->paiementid=$invoice->mode_reglement_id;
 				$payment->num_paiement='';
@@ -254,7 +254,7 @@ switch ($action)
 
                     if (! $error)
                     {
-                    	if ($invoice->total_ttc == $obj_facturation->prix_total_ttc()
+                    	if ($invoice->total_ttc == $obj_facturation->prixTotalTtc()
                     		&& $obj_facturation->getSetPaymentMode() != 'DIFF')
                     	{
                     		// We set status to payed

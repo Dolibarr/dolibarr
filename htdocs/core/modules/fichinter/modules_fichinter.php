@@ -30,8 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
 
 
 /**
- *	\class      ModelePDFFicheinter
- *	\brief      Classe mere des modeles de fiche intervention
+ *	Parent class to manage intervention document templates
  */
 abstract class ModelePDFFicheinter extends CommonDocGenerator
 {
@@ -149,6 +148,10 @@ abstract class ModeleNumRefFicheinter
  *  @param	Object		$object			Object fichinter
  *  @param	string		$modele			force le modele a utiliser ('' par defaut)
  *  @param	Translate	$outputlangs	objet lang a utiliser pour traduction
+ *  @param  int			$hidedetails    Hide details of lines
+ *  @param  int			$hidedesc       Hide description
+ *  @param  int			$hideref        Hide ref
+ *  @param  HookManager	$hookmanager	Hook manager instance
  *  @return int         				0 if KO, 1 if OK
  */
 function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $hookmanager=false)
