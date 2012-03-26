@@ -33,9 +33,6 @@ if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
-// C'est un wrapper, donc header vierge
-function llxHeader() { }
-
 $res=@include("../../main.inc.php");
 include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 include_once(DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php');
@@ -107,7 +104,7 @@ if( file_exists($fullpathselecteddir) )
     		echo "<ul class=\"ecmjqft\" style=\"display: none;\">\n";
 
     		// All dirs
-    		foreach( $files as $file )    // $file can be '.', '..', or 'My dir'
+    		foreach( $files as $file )    // $file can be '.', '..', or 'My dir' or 'My file'
     		{
     	        $nbofsubdir=0;
     	        $nboffilesinsubdir=0;
@@ -129,16 +126,16 @@ if( file_exists($fullpathselecteddir) )
 		        }
 
 		        //if (file_exists($fullpathselecteddir . $file) && $file != '.' && $file != '..' && is_dir($fullpathselecteddir . $file))
-    		    if ($file != '.' && $file != '..' && ($val['id'] >= 0 || dol_is_dir($fullpathselecteddir . $file)))
+    		    if ($file != '.' && $file != '..' && ((! empty($val['fullrelativename']) && $val['id'] >= 0) || dol_is_dir($fullpathselecteddir . $file)))
     		    {
     				print '<li class="directory collapsed">';
 
-    				print "<a class=\"fmdirlia jqft\" href=\"#\" rel=\"" . dol_escape_htmltag($file . '/') . "\"";
+    				print "<a class=\"fmdirlia jqft ecmjqft\" href=\"#\" rel=\"" . dol_escape_htmltag($val['fullrelativename'].'/') . "\" id=\"fmdirlia_id_".$val['id']."\"";
     				print " onClick=\"loadandshowpreview('".dol_escape_js($val['fullrelativename'])."',".$val['id'].")\">";
     				print dol_escape_htmltag($file);
     				print "</a>";
 
-    				print '<div style="float: right;">';
+    				print '<div class="ecmjqft">';
 
     				print '<table class="nobordernopadding"><tr>';
 
@@ -148,7 +145,7 @@ if( file_exists($fullpathselecteddir) )
 
     				// Nb of docs
     				print '<td align="right">';
-    				print $val['cachenbofdoc'];
+    				print isset($val['cachenbofdoc'])?$val['cachenbofdoc']:'&nbsp;';
     				print '</td>';
     				print '<td align="left">';
     				if ($nbofsubdir && $nboffilesinsubdir) print '<font color="#AAAAAA">+'.$nboffilesinsubdir.'</font> ';
@@ -173,7 +170,7 @@ if( file_exists($fullpathselecteddir) )
     				$htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.$val['cachenbofdoc'].'<br>';
     				if ($nbofsubdir) $htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInSubDir").'</b>: '.$nboffilesinsubdir;
     				else $htmltooltip.='<b>'.$langs->trans("ECMNbOfSubDir").'</b>: '.$nbofsubdir.'<br>';
-    				print $form->textwithpicto('',$htmltooltip,1,0);
+    				print $form->textwithpicto('',$htmltooltip,1,"info");
     				print "</td>";
 
     				print "</tr></table>\n";
@@ -184,25 +181,14 @@ if( file_exists($fullpathselecteddir) )
     			}
     		}
 
-    		// All files
-    		/*
-    		foreach( $files as $file )
-    		{
-    			if( file_exists($fullpathselecteddir . $file) && $file != '.' && $file != '..' && !is_dir($fullpathselecteddir . $file) )
-    			{
-    				$ext = preg_replace('/^.*\./', '', $file);
-    				print "<li class=\"file ext_".$ext."\">";
-    				print "<a class=\"fmfilelia jqft\" href=\"#\" rel=\"" . dol_escape_htmltag($selecteddir . $file) . "\">" . dol_escape_htmltag($file) . "</a>";
-    				print "</li>\n";
-    			}
-    		}
-			*/
-
-    		// Enable tooltips
+    		// Enable jquery handlers on new generated HTML objects
             print '<script type="text/javascript">';
             print 'jQuery(".classfortooltip").tipTip({ maxWidth: "600px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});';
-            print 'jQuery(".fmdirlia").click(function(e) { jQuery("#userfile_section").val(jQuery(this).attr(\'rel\')); });';
-
+            print 'jQuery(".fmdirlia").click(function(e) {
+            			id=jQuery(this).attr(\'id\').substr(12);
+            			jQuery("#formuserfile_section_dir").val(jQuery(this).attr(\'rel\'));
+            			jQuery("#formuserfile_section_id").val(id);
+    				});';
             print '</script>';
 
     		echo "</ul>\n";
