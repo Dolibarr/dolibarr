@@ -3,7 +3,7 @@
 	url = git+ssh://hregis@doliforge.org/gitroot/productdiscount/productdiscount.git
 [submodule "htdocs/custom/multicompany"]
 	path = htdocs/custom/multicompany
-	url = git+ssh://hregis@doliforge.org/gitroot/multicompany/multicompany.git
+	url = gitolite@doliforge.org:multicompany/multicompany.git
 [submodule "htdocs/custom/paypalplus"]
 	path = htdocs/custom/paypalplus
 	url = git+ssh://hregis@doliforge.org/gitroot/paypalplus/paypalplus.git
@@ -21,7 +21,7 @@
 	url = git+ssh://hregis@doliforge.org/gitroot/business/business.git
 [submodule "htdocs/custom/agefodd"]
 	path = htdocs/custom/agefodd
-	url = git+ssh://hregis@doliforge.org/gitroot/agefodd/agefodd.git
+	url = gitolite@doliforge.org:agefodd/agefodd.git
 [submodule "htdocs/custom/genfac"]
 	path = htdocs/custom/genfac
 	url = git+ssh://hregis@doliforge.org/gitroot/massfacturation/massfacturation.git
