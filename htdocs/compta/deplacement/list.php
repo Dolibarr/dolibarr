@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2012	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011	Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012		Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="d.dated";
 $limit = $conf->liste_limit;
 
-$search_ref=GETPOST('search_ref');
+$search_ref=GETPOST('search_ref','alpha');
 
 
 /*
