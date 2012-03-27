@@ -83,7 +83,7 @@ case "$1" in
 		chown -R root:www-data $installconfig
 	   	chmod -R 660 $installconfig
 
-		if [ ! -f $config ]
+		if [ ! -s $config ]
 		then 
 			# Create an empty conf.php with permission to web server
 			echo Create empty file $config		
