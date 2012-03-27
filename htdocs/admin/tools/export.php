@@ -102,7 +102,7 @@ $time_start = time();
 // MYSQL
 if ($what == 'mysql')
 {
-    $cmddump=$_POST["mysqldump"];
+    $cmddump=GETPOST("mysqldump");	// Do not sanitize here with 'alpha', will be sanitize later by escapeshellarg
     if ($cmddump)
     {
         dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $cmddump,'chaine',0,'',$conf->entity);
@@ -265,7 +265,7 @@ if ($what == 'mysqlnobin')
 // POSTGRESQL
 if ($what == 'postgresql')
 {
-    $cmddump=$_POST["postgresqldump"];
+    $cmddump=GETPOST("postgresqldump");	// Do not sanitize here with 'alpha', will be sanitize later by escapeshellarg
     if ($cmddump)
     {
         dolibarr_set_const($db, 'SYSTEMTOOLS_POSTGRESQLDUMP', $cmddump,'chaine',0,'',$conf->entity);
@@ -295,7 +295,7 @@ if ($what == 'postgresql')
         if (GETPOST("drop"))			 $param.=" --add-drop-table";
         if (! GETPOST("sql_data"))       $param.=" -s";
     }
-    if ($_POST["sql_data"])
+    if (GETPOST("sql_data"))
     {
         if (! GETPOST("sql_structure"))	 $param.=" -a";
         if (GETPOST("showcolumns"))	     $param.=" -c";
