@@ -25,8 +25,7 @@
 
 
 /**
- *	\class      InterfaceActionsAuto
- *  \brief      Class of triggered functions for agenda module
+ *  Class of triggered functions for agenda module
  */
 class InterfaceActionsAuto
 {

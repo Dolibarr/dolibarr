@@ -316,7 +316,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
                             $date_end,
                             0,
                             $lines[$i]->info_bits,
-        					'HT',
+                            'HT',
                             $product_type
                         );
 

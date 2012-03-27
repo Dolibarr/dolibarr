@@ -190,7 +190,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
                     $_POST['idprodfournprice'],
                     $productsupplier->fourn_ref,
                     $remise_percent,
-       				'HT',
+                    'HT',
                     $type
                 );
             }

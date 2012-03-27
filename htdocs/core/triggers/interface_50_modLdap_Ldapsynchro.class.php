@@ -16,16 +16,15 @@
  */
 
 /**
- *      \file       htdocs/core/triggers/interface_50_modLdap_Ldapsynchro.class.php
- *      \ingroup    core
- *      \brief      Fichier de gestion des triggers LDAP
+ *  \file       htdocs/core/triggers/interface_50_modLdap_Ldapsynchro.class.php
+ *  \ingroup    core
+ *  \brief      Fichier de gestion des triggers LDAP
  */
 require_once (DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
 
 
 /**
- *       \class      InterfaceLdapsynchro
- *       \brief      Class of triggers for ldap module
+ *  Class of triggers for ldap module
  */
 class InterfaceLdapsynchro
 {
