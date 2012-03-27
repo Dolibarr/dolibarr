@@ -1194,7 +1194,7 @@ if ($id > 0 || ! empty($ref))
 
 		      	print '</td>';
 				print '<td>';
-				print $html->load_tva('tva_tx',$line->tva_tx);
+				print $form->load_tva('tva_tx',$line->tva_tx,$soc,$mysoc);
 				print '</td>';
 				print '<td align="right"><input	size="5" type="text" name="pu"	value="'.price($line->subprice).'"></td>';
 				print '<td align="right"><input size="2" type="text" name="qty" value="'.$line->qty.'"></td>';

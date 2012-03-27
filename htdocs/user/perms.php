@@ -45,14 +45,14 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
 	$canreaduser=($user->admin || ($user->rights->user->user->lire && $user->rights->user->user_advance->readperms));
 	$caneditselfperms=($user->id == $id && $user->rights->user->self_advance->writeperms);
-	$caneditperms = '('.$caneditperms.' || '.$caneditselfperms.')';
+	$caneditperms = (($caneditperms || $caneditselfperms) ? 0 : 1);
 }
 
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $id)	// A user can always read its own card
+if ($user->id == $id && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->user->self_advance->readperms))	// A user can always read its own card if not advanced perms enabled, or if he has advanced perms
 {
 	$feature2='';
 	$canreaduser=1;

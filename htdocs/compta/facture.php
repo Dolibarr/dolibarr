@@ -38,8 +38,12 @@ require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
-if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
-if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
+if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
+if ($conf->projet->enabled)
+{
+	require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
+	require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
+}  
 
 $langs->load('bills');
 //print 'ee'.$langs->trans('BillsCustomer');exit;
@@ -2286,7 +2290,8 @@ else
                 {
                     // Remise dispo de type avoir
                     if (! $absolute_discount) print '<br>';
-                    $html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filtercreditnote, $resteapayer);
+                    //$html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filtercreditnote, $resteapayer);
+                    $html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filtercreditnote, 0);    // We must allow credit not even if amount is higher
                 }
             }
             if (! $absolute_discount && ! $absolute_creditnote)
