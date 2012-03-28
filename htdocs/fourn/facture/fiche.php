@@ -168,7 +168,7 @@ elseif ($action == 'setlabel' && $user->rights->fournisseur->facture->creer)
     if ($result < 0) dol_print_error($db);
 }
 
-elseif ($action == 'setdate' && $user->rights->fournisseur->facture->creer)
+elseif ($action == 'setdatef' && $user->rights->fournisseur->facture->creer)
 {
     $object->fetch($id);
     $object->date=dol_mktime(12,0,0,$_POST['datefmonth'],$_POST['datefday'],$_POST['datefyear']);
