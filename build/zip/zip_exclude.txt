@@ -88,4 +88,3 @@ cvschangelogbuilder_dolibarr*
 */pdf_huitre.modules.php
 doxygen_warnings.log
 dolibarr_install.log
-*/doc_generic_invoice_odt.modules.php
