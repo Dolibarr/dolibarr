@@ -83,10 +83,10 @@ $server->wsdl->addComplexType(
 // Define other specific objects
 $server->wsdl->addComplexType(
     'product',
- 	'complexType',
-	'struct',
-	'all',
-	'',
+    'complexType',
+    'struct',
+    'all',
+    '',
     array(
     	'id' => array('name'=>'id','type'=>'xsd:string'),
 		'ref' => array('name'=>'ref','type'=>'xsd:string'),
@@ -120,10 +120,10 @@ $server->wsdl->addComplexType(
 // Define other specific objects
 $server->wsdl->addComplexType(
     'filterproduct',
- 	'complexType',
-	'struct',
-	'all',
-	'',
+    'complexType',
+    'struct',
+    'all',
+    '',
     array(
 //    	'limit' => array('name'=>'limit','type'=>'xsd:string'),
 		'type' => array('name'=>'type','type'=>'xsd:string'),

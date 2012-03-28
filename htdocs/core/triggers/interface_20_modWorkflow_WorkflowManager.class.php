@@ -17,15 +17,14 @@
  */
 
 /**
- *      \file       htdocs/core/triggers/interface_20_modWorkflow_WorkflowManager.class.php
- *      \ingroup    core
- *      \brief      Trigger file for workflows
+ *  \file       htdocs/core/triggers/interface_20_modWorkflow_WorkflowManager.class.php
+ *  \ingroup    core
+ *  \brief      Trigger file for workflows
  */
 
 
 /**
- *      \class      InterfaceWorkflowManager
- *      \brief      Class of triggers for workflow module
+ *  Class of triggers for workflow module
  */
 
 class InterfaceWorkflowManager
@@ -95,7 +94,6 @@ class InterfaceWorkflowManager
      *      @param  User		$user       Object user
      *      @param  Translate	$langs      Object langs
      *      @param  conf		$conf       Object conf
-     *      @param  string		$entity     Value for instance of data (Always 1 except if module MultiCompany is installed)
      *      @return int         			<0 if KO, 0 if no triggered ran, >0 if OK
      */
 	function run_trigger($action,$object,$user,$langs,$conf)

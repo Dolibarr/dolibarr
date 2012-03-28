@@ -147,15 +147,15 @@ abstract class ModeleNumRefFactures
 /**
  *  Create a document onto disk according to template module.
  *
- *	@param   	DoliDB		$db  			Database handler
- *	@param   	Object		$object			Object invoice
- *	@param	    string		$modele			Force template to use ('' to not force)
- *	@param		Translate	$outputlangs	objet lang a utiliser pour traduction
- *  @param      int			$hidedetails    Hide details of lines
- *  @param      int			$hidedesc       Hide description
- *  @param      int			$hideref        Hide ref
- *  @param      HookManager	$hookmanager	Hook manager instance
- *	@return  	int        					<0 if KO, >0 if OK
+ *	@param	DoliDB		$db  			Database handler
+ *	@param  Object		$object			Object invoice
+ *	@param	string		$modele			Force template to use ('' to not force)
+ *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
+ *  @param  int			$hidedetails    Hide details of lines
+ *  @param  int			$hidedesc       Hide description
+ *  @param  int			$hideref        Hide ref
+ *  @param  HookManager	$hookmanager	Hook manager instance
+ *	@return int        					<0 if KO, >0 if OK
  */
 function facture_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $hookmanager=false)
 {

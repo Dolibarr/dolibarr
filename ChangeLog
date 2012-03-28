@@ -9,6 +9,7 @@ to make a backup of your database before making upgrade.
 
 For users:
 - New: Each user can remove/add its own boxes.
+- New: Add signature at end of predefined email text.
 - New: Can use personalized fields of products/services.
 - New: Can attach files on social contributions.
 - New: Show payments terms and conditions onto muscadet template.

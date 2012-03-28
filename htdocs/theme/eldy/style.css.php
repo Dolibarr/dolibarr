@@ -185,7 +185,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
     font-size: <?php print $fontsize ?>px;
 	font-family: <?php print $fontlist ?>;
 	background: #FDFDFD;
-    border: 1px solid #ACBCBB;
+    border: 1px solid #C0C0C0;
     padding: 1px 1px 1px 1px;
     margin: 0px 0px 0px 0px;
 }
@@ -196,6 +196,7 @@ input:disabled {
 	background:#ddd;
 }
 input:-webkit-autofill { background-color: #FCFEFA !important; background-image:none !important; }
+
 textarea:disabled {
 	background:#ddd;
 }
@@ -203,7 +204,7 @@ textarea:disabled {
     font-family: <?php print $fontlist ?>;
 	background-image: url(<?php echo $img_button ?>);
 	background-position: bottom;
-    border: 1px solid #ACBCBB;
+    border: 1px solid #C0C0C0;
 	padding: 0.1em 0.7em;
 	margin: 0em 0.5em;
     -moz-border-radius:0px 5px 0px 5px;
@@ -218,7 +219,7 @@ textarea:disabled {
 	color: #222244;
 	background-image: url(<?php echo $img_button ?>);
 	background-position: bottom;
-    border: 1px solid #ACBCBB;
+    border: 1px solid #C0C0C0;
 }
 .button:hover   {
 	background: #dee7ec;
@@ -869,7 +870,7 @@ td.photo {
 }
 
 a.toolbarbutton {
-    margin-top: 1px;
+    margin-top: 0px;
     margin-left: 4px;
     margin-right: 4px;
     height: 30px;
@@ -878,7 +879,8 @@ a.toolbarbutton {
     background: #FFFFFF;*/
 }
 img.toolbarbutton {
-    height: 28px;
+	margin-top: 1px;
+    height: 30px;
 }
 
 /* ============================================================================== */
@@ -1302,7 +1304,7 @@ table.border {
 }
 
 table.border td {
-	padding: 1px 2px 1px 1px;
+	padding: 1px 2px 1px 2px;
 	border: 1px solid #9CACBB;
 	border-collapse: collapse;
 }
@@ -1866,9 +1868,9 @@ td.hidden {
 /*  Module agenda                                                                 */
 /* ============================================================================== */
 
-.cal_other_month   { opacity: 0.6; background: #DDDDDD; border: solid 1px #ACBCBB; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_past_month    { opacity: 0.6; background: #EEEEEE; border: solid 1px #ACBCBB; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_current_month { background: #FFFFFF; border: solid 1px #ACBCBB; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_other_month   { opacity: 0.6; background: #DDDDDD; border: solid 1px #C0C0C0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_past_month    { opacity: 0.6; background: #EEEEEE; border: solid 1px #C0C0C0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_current_month { background: #FFFFFF; border: solid 1px #C0C0C0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today         { background: #FFFFFF; border: solid 2px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past          { }
 table.cal_event    { border-collapse: collapse; margin-bottom: 1px; -webkit-border-radius: 6px; border-radius: 6px; }
@@ -2217,7 +2219,7 @@ a.cke_dialog_ui_button
     font-family: <?php print $fontlist ?> !important;
 	background-image: url(<?php echo $img_button ?>) !important;
 	background-position: bottom !important;
-    border: 1px solid #ACBCBB !important;
+    border: 1px solid #C0C0C0 !important;
 	padding: 0.1em 0.7em !important;
 	margin: 0em 0.5em !important;
     -moz-border-radius:0px 5px 0px 5px !important;
