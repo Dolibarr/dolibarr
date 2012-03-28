@@ -102,7 +102,7 @@ $time_start = time();
 // MYSQL
 if ($what == 'mysql')
 {
-    $cmddump=$_POST["mysqldump"];
+    $cmddump=GETPOST("mysqldump");	// Do not sanitize here with 'alpha', will be sanitize later by escapeshellarg
     if ($cmddump)
     {
         dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $cmddump,'chaine',0,'',$conf->entity);
@@ -111,7 +111,7 @@ if ($what == 'mysql')
     $outputdir  = $conf->admin->dir_output.'/backup';
     $outputfile = $outputdir.'/'.$file;
     // for compression format, we add extension
-    $compression=isset($_POST['compression']) ? $_POST['compression'] : 'none';
+    $compression=GETPOST('compression') ? GETPOST('compression','alpha') : 'none';
     if ($compression == 'gz') $outputfile.='.gz';
     if ($compression == 'bz') $outputfile.='.bz2';
     $outputerror = $outputfile.'.err';
@@ -125,28 +125,28 @@ if ($what == 'mysql')
     $param=$dolibarr_main_db_name." -h ".$dolibarr_main_db_host;
     $param.=" -u ".$dolibarr_main_db_user;
     if (! empty($dolibarr_main_db_port)) $param.=" -P ".$dolibarr_main_db_port;
-    if (! $_POST["use_transaction"]) $param.=" -l --single-transaction";
-    if ($_POST["disable_fk"])        $param.=" -K";
-    if ($_POST["sql_compat"] && $_POST["sql_compat"] != 'NONE') $param.=" --compatible=".$_POST["sql_compat"];
-    if ($_POST["drop_database"])     $param.=" --add-drop-database";
-    if ($_POST["sql_structure"])
+    if (! GETPOST("use_transaction"))    $param.=" -l --single-transaction";
+    if (GETPOST("disable_fk"))           $param.=" -K";
+    if (GETPOST("sql_compat") && GETPOST("sql_compat") != 'NONE') $param.=" --compatible=".GETPOST("sql_compat","alpha");
+    if (GETPOST("drop_database"))        $param.=" --add-drop-database";
+    if (GETPOST("sql_structure"))
     {
-        if ($_POST["drop"])			 $param.=" --add-drop-table";
+        if (GETPOST("drop"))			 $param.=" --add-drop-table";
     }
     else
     {
         $param.=" -t";
     }
-    if ($_POST["disable-add-locks"]) $param.=" --add-locks=FALSE";
-    if ($_POST["sql_data"])
+    if (GETPOST("disable-add-locks")) $param.=" --add-locks=FALSE";
+    if (GETPOST("sql_data"))
     {
         $param.=" --tables";
-        if ($_POST["showcolumns"])	$param.=" -c";
-        if ($_POST["extended_ins"])	$param.=" -e";
+        if (GETPOST("showcolumns"))	 $param.=" -c";
+        if (GETPOST("extended_ins")) $param.=" -e";
         else $param.=" --skip-extended-insert";
-        if ($_POST["delayed"])	 	$param.=" --delayed-insert";
-        if ($_POST["sql_ignore"])	$param.=" --insert-ignore";
-        if ($_POST["hexforbinary"])	$param.=" --hex-blob";
+        if (GETPOST("delayed"))	 	 $param.=" --delayed-insert";
+        if (GETPOST("sql_ignore"))	 $param.=" --insert-ignore";
+        if (GETPOST("hexforbinary")) $param.=" --hex-blob";
     }
     else
     {
@@ -244,7 +244,7 @@ if ($what == 'mysqlnobin')
     $outputfile = $outputdir.'/'.$file;
     $outputfiletemp = $outputfile.'-TMP.sql';
     // for compression format, we add extension
-    $compression=isset($_POST['compression']) ? $_POST['compression'] : 'none';
+    $compression=GETPOST('compression') ? GETPOST('compression','alpha') : 'none';
     if ($compression == 'gz') $outputfile.='.gz';
     if ($compression == 'bz') $outputfile.='.bz2';
     $outputerror = $outputfile.'.err';
@@ -265,7 +265,7 @@ if ($what == 'mysqlnobin')
 // POSTGRESQL
 if ($what == 'postgresql')
 {
-    $cmddump=$_POST["postgresqldump"];
+    $cmddump=GETPOST("postgresqldump");	// Do not sanitize here with 'alpha', will be sanitize later by escapeshellarg
     if ($cmddump)
     {
         dolibarr_set_const($db, 'SYSTEMTOOLS_POSTGRESQLDUMP', $cmddump,'chaine',0,'',$conf->entity);
@@ -274,7 +274,7 @@ if ($what == 'postgresql')
     $outputdir  = $conf->admin->dir_output.'/backup';
     $outputfile = $outputdir.'/'.$file;
     // for compression format, we add extension
-    $compression=isset($_POST['compression']) ? $_POST['compression'] : 'none';
+    $compression=GETPOST('compression') ? GETPOST('compression','alpha') : 'none';
     if ($compression == 'gz') $outputfile.='.gz';
     if ($compression == 'bz') $outputfile.='.bz2';
     $outputerror = $outputfile.'.err';
@@ -288,17 +288,17 @@ if ($what == 'postgresql')
     $param=" --no-tablespaces --inserts -h ".$dolibarr_main_db_host;
     $param.=" -U ".$dolibarr_main_db_user;
     if (! empty($dolibarr_main_db_port)) $param.=" -p ".$dolibarr_main_db_port;
-    if ($_POST["sql_compat"] && $_POST["sql_compat"] == 'ANSI') $param.="  --disable-dollar-quoting";
-    if ($_POST["drop_database"])     $param.=" -c -C";
-    if ($_POST["sql_structure"])
+    if (GETPOST("sql_compat") && GETPOST("sql_compat") == 'ANSI') $param.="  --disable-dollar-quoting";
+    if (GETPOST("drop_database"))        $param.=" -c -C";
+    if (GETPOST("sql_structure"))
     {
-        if ($_POST["drop"])			 $param.=" --add-drop-table";
-        if (empty($_POST["sql_data"])) $param.=" -s";
+        if (GETPOST("drop"))			 $param.=" --add-drop-table";
+        if (! GETPOST("sql_data"))       $param.=" -s";
     }
-    if ($_POST["sql_data"])
+    if (GETPOST("sql_data"))
     {
-        if (empty($_POST["sql_structure"]))	 	$param.=" -a";
-        if ($_POST["showcolumns"])	$param.=" -c";
+        if (! GETPOST("sql_structure"))	 $param.=" -a";
+        if (GETPOST("showcolumns"))	     $param.=" -c";
     }
     $param.=' -f "'.$outputfile.'"';
     //if ($compression == 'none')

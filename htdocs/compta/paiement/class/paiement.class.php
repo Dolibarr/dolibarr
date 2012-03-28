@@ -287,11 +287,14 @@ class Paiement extends CommonObject
 			return -2;
 		}
 
-		// Delete bank urls. If payment if on a conciliated line, return error.
+		$accline = new AccountLine($this->db);
+
+		// Delete bank urls. If payment is on a conciliated line, return error.
 		if ($bank_line_id)
 		{
-			$accline = new AccountLine($this->db);
-			$accline->fetch($bank_line_id);
+			$result=$accline->fetch($bank_line_id);
+			if ($result == 0) $accline->rowid=$bank_line_id;    // If not found, we set artificially rowid to allow delete of llx_bank_url
+
             $result=$accline->delete_urls($user);
             if ($result < 0)
             {
@@ -304,11 +307,13 @@ class Paiement extends CommonObject
 		// Delete payment (into paiement_facture and paiement)
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiement_facture';
 		$sql.= ' WHERE fk_paiement = '.$this->id;
+		dol_syslog($sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiement';
 			$sql.= ' WHERE rowid = '.$this->id;
+		    dol_syslog($sql);
 			$result = $this->db->query($sql);
 			if (! $result)
 			{
@@ -320,9 +325,7 @@ class Paiement extends CommonObject
 			// Supprimer l'ecriture bancaire si paiement lie a ecriture
 			if ($bank_line_id)
 			{
-				$accline = new AccountLine($this->db);
-				$accline->fetch($bank_line_id);
-				$result=$accline->delete();
+				$result=$accline->delete($user);
 				if ($result < 0)
 				{
 					$this->error=$accline->error;

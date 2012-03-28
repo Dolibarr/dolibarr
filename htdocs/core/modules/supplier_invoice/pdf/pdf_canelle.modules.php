@@ -744,7 +744,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			    $y+=3;
 				$row = $this->db->fetch_object($resql);
 
-				$pdf->SetXY($tab3_posx, $tab3_top+$y );
+				$pdf->SetXY($tab3_posx, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row->date),'day',false,$outputlangs,true), 0, 'L', 0);
 				$pdf->SetXY($tab3_posx+21, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, price($row->amount), 0, 'L', 0);

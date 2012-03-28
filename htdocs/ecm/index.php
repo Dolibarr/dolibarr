@@ -327,7 +327,7 @@ $moreheadjs="
         ,   north__paneSelector:    \"#ecm-layout-north\"
         ,   west__paneSelector:     \"#ecm-layout-west\"
         ,   resizable: true
-        ,   north__size:        34
+        ,   north__size:        32
         ,   north__resizable:   false
         ,   north__closable:    false
         ,   west__size:         340
@@ -395,7 +395,7 @@ else
     print '<tr><td colspan="2" style="background: #FFFFFF" style="height: 34px !important">';
 }
 // Start top panel, toolbar
-
+print '<div class="toolbarbutton">';
 
 // Toolbar
 if ($user->rights->ecm->setup)
@@ -414,7 +414,7 @@ print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;mo
 print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
 print '</a>';
 
-
+print '</div>';
 // End top panel, toolbar
 if ($conf->use_javascript_ajax)
 {
@@ -784,7 +784,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
     			print '</td>';
 
     			// Edit link
-    			print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$val['id'].'">'.img_view().'</a></td>';
+    			print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$val['id'].'">'.img_view($langs->trans("Edit").' - '.$langs->trans("Show")).'</a></td>';
 
     			// Add link
     			//print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create&amp;catParent='.$val['id'].'">'.img_edit_add().'</a></td>';

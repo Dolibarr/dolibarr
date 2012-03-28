@@ -985,7 +985,8 @@ else
         /*
          * Edition
          */
-        print_fiche_titre($langs->trans("EditCompany"));
+        
+        //print_fiche_titre($langs->trans("EditCompany"));
 
         if ($socid)
         {
@@ -994,6 +995,12 @@ else
             if ($res < 0) { dol_print_error($db,$object->error); exit; }
             $res=$object->fetch_optionals($object->id,$extralabels);
             //if ($res < 0) { dol_print_error($db); exit; }
+
+
+	        $head = societe_prepare_head($object);
+	
+	        dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
+
 
             // Load object modCodeTiers
             $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
@@ -1430,6 +1437,8 @@ else
             print '</center>';
 
             print '</form>';
+
+	        dol_fiche_end();
         }
     }
     else
@@ -1447,9 +1456,6 @@ else
         $head = societe_prepare_head($object);
 
         dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
-
-        $form = new Form($db);
-
 
         // Confirm delete third party
         if ($action == 'delete' || $conf->use_javascript_ajax)

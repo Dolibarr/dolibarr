@@ -1066,7 +1066,7 @@ class AccountLine extends CommonObject
      *  @param		int		$rowid   	Id of bank transaction to load
      *  @param      string	$ref     	Ref of bank transaction to load
      *  @param      string	$num     	External num to load (ex: num of transaction for paypal fee)
-     *	@return		int					<0 if KO, >0 if OK
+     *	@return		int					<0 if KO, 0 if OK but not found, >0 if OK and found
      */
     function fetch($rowid,$ref='',$num='')
     {
@@ -1081,18 +1081,20 @@ class AccountLine extends CommonObject
         $sql.= " b.fk_bordereau, b.banque, b.emetteur,";
         //$sql.= " b.author"; // Is this used ?
         $sql.= " ba.label as bank_account_label";
-        $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-        $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+        $sql.= " FROM ".MAIN_DB_PREFIX."bank as b,";
+        $sql.= " ".MAIN_DB_PREFIX."bank_account as ba";
         $sql.= " WHERE b.fk_account = ba.rowid";
         $sql.= " AND ba.entity = ".$conf->entity;
-        if ($num) $sql.= " AND b.num_chq='".$num."'";
-        else if ($ref) $sql.= " AND b.rowid='".$ref."'";
+        if ($num) $sql.= " AND b.num_chq='".$this->db->escape($num)."'";
+        else if ($ref) $sql.= " AND b.rowid='".$this->db->escape($ref)."'";
         else $sql.= " AND b.rowid=".$rowid;
 
         dol_syslog(get_class($this)."::fetch sql=".$sql);
         $result = $this->db->query($sql);
         if ($result)
         {
+            $ret=0;
+
             $obj = $this->db->fetch_object($result);
             if ($obj)
             {
@@ -1120,9 +1122,11 @@ class AccountLine extends CommonObject
 
                 $this->fk_account		= $obj->fk_account;
                 $this->bank_account_label = $obj->bank_account_label;
+
+                $ret=1;
             }
             $this->db->free($result);
-            return 1;
+            return $ret;
         }
         else
         {
