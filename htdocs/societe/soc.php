@@ -66,7 +66,7 @@ if (! empty($canvas))
 }
 
 // Security check
-$result = restrictedArea($user, 'societe', $socid, '&societe', '', '', '', $objcanvas);
+$result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', $objcanvas);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
