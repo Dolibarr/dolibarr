@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2011-2012 Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@ $langs->load("deliveries");
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST("action");
-$value = GETPOST("value");
+$action = GETPOST('action','alpha');
+$value = GETPOST('value','alpha');
 
 /*
  * Actions
@@ -45,8 +45,8 @@ $value = GETPOST("value");
 
 if ($action == 'updateMask')
 {
-	$maskconstdelivery=GETPOST("maskconstdelivery");
-	$maskdelivery=GETPOST("maskdelivery");
+	$maskconstdelivery=GETPOST('maskconstdelivery','alpha');
+	$maskdelivery=GETPOST('maskdelivery','alpha');
 	if ($maskconstdelivery)  $res = dolibarr_set_const($db,$maskconstdelivery,$maskdelivery,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
@@ -63,7 +63,7 @@ if ($action == 'updateMask')
 
 if ($action == 'specimen')
 {
-	$modele=GETPOST("module");
+	$modele=GETPOST('module','alpha');
 
 	$sending = new Livraison($db);
 	$sending->initAsSpecimen();
@@ -99,8 +99,8 @@ if ($action == 'specimen')
 
 if ($action == 'set')
 {
-	$label = GETPOST("label");
-	$scandir = GETPOST("scandir");
+	$label = GETPOST('label','alpha');
+	$scandir = GETPOST('scandir','alpha');
 
 	$type='delivery';
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
@@ -127,8 +127,8 @@ if ($action == 'del')
 
 if ($action == 'setdoc')
 {
-	$label = GETPOST("label");
-	$scandir = GETPOST("scandir");
+	$label = GETPOST('label','alpha');
+	$scandir = GETPOST('scandir','alpha');
 	$db->begin();
 
     if (dolibarr_set_const($db, "LIVRAISON_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
@@ -162,7 +162,7 @@ if ($action == 'setdoc')
 
 if ($action == 'set_DELIVERY_FREE_TEXT')
 {
-	$free=GETPOST("DELIVERY_FREE_TEXT");
+	$free=GETPOST('DELIVERY_FREE_TEXT','alpha');
     $res=dolibarr_set_const($db, "DELIVERY_FREE_TEXT",$free,'chaine',0,'',$conf->entity);
 
     if (! $res > 0) $error++;

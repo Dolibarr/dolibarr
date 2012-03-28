@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Benoit Mortier               <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin                <regis@dolibarr.fr>
  * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
- * Copyright (C) 2011 	   Juanjo Menent			    <jmenent@2byte.es>
+ * Copyright (C) 2011-2012 Juanjo Menent			    <jmenent@2byte.es>
  * Copyright (C) 2011-2012 Philippe Grand			    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,8 +39,8 @@ $langs->load("interventions");
 if (!$user->admin)
 accessforbidden();
 
-$action = GETPOST("action");
-$value = GETPOST("value");
+$action = GETPOST('action','alpha');
+$value = GETPOST('value','alpha');
 
 
 /*
@@ -48,8 +48,8 @@ $value = GETPOST("value");
  */
 if ($action == 'updateMask')
 {
-	$maskconst=GETPOST("maskconst");
-	$maskvalue=GETPOST("maskvalue");
+	$maskconst=GETPOST('maskconst','alpha');
+	$maskvalue=GETPOST('maskvalue','alpha');
 	if ($maskconst) $res = dolibarr_set_const($db,$maskconst,$maskvalue,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
@@ -66,7 +66,7 @@ if ($action == 'updateMask')
 
 if ($action == 'set_FICHINTER_FREE_TEXT')
 {
-	$freetext= GETPOST("FICHINTER_FREE_TEXT");
+	$freetext= GETPOST('FICHINTER_FREE_TEXT','alpha');
 	$res = dolibarr_set_const($db, "FICHINTER_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
@@ -83,7 +83,7 @@ if ($action == 'set_FICHINTER_FREE_TEXT')
 
 if ($action == 'set_FICHINTER_DRAFT_WATERMARK')
 {
-	$draft= GETPOST("FICHINTER_DRAFT_WATERMARK");
+	$draft= GETPOST('FICHINTER_DRAFT_WATERMARK','alpha');
 
 	$res = dolibarr_set_const($db, "FICHINTER_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
 
@@ -101,7 +101,7 @@ if ($action == 'set_FICHINTER_DRAFT_WATERMARK')
 
 if ($action == 'specimen')
 {
-	$modele=$_GET["module"];
+	$modele= GETPOST('module','alpha');
 
 	$inter = new Fichinter($db);
 	$inter->initAsSpecimen();
@@ -146,8 +146,8 @@ if ($action == 'specimen')
 
 if ($action == 'set')
 {
-	$label = GETPOST("label");
-	$scandir = GETPOST("scandir");
+	$label = GETPOST('label','alpha');
+	$scandir = GETPOST('scandir','alpha');
 
 	$type='ficheinter';
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
@@ -177,8 +177,8 @@ if ($action == 'del')
 
 if ($action == 'setdoc')
 {
-	$label = GETPOST("label");
-	$scandir = GETPOST("scandir");
+	$label = GETPOST('label','alpha');
+	$scandir = GETPOST('scandir','alpha');
 
 	$db->begin();
 
