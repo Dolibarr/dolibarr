@@ -116,7 +116,6 @@ print $langs->trans("EnablePublicSubscriptionForm");
 print '</td><td width="60" align="right">';
 print $form->selectyesno("MEMBER_ENABLE_PUBLIC",$conf->global->MEMBER_ENABLE_PUBLIC,1);
 print "</td></tr>\n";
-print '</form>';
 
 // Type
 /*$var=! $var;
