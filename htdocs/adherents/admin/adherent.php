@@ -49,8 +49,8 @@ $action = GETPOST("action");
 // Action mise a jour ou ajout d'une constante
 if ($action == 'update' || $action == 'add')
 {
-	$constname=GETPOST("constname");
-	$constvalue=GETPOST("constvalue");
+	$constname=GETPOST('constname','alpha');
+	$constvalue=(GETPOST('constvalue_'.$constname,'alpha') ? GETPOST('constvalue_'.$constname,'alpha') : GETPOST('constvalue','alpha'));
 
 	if (($constname=='ADHERENT_CARD_TYPE' || $constname=='ADHERENT_ETIQUETTE_TYPE') && $constvalue == -1) $constvalue='';
 	if ($constname=='ADHERENT_LOGIN_NOT_REQUIRED') // Invert choice
@@ -59,9 +59,8 @@ if ($action == 'update' || $action == 'add')
 		else $constvalue=1;
 	}
 
-	if (in_array($constname,array('ADHERENT_MAIL_VALID','ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL'))) $constvalue=$_POST["constvalue".$constname];
-	$consttype=$_POST["consttype"];
-	$constnote=GETPOST("constnote");
+	$consttype=GETPOST('consttype','alpha');
+	$constnote=GETPOST('constnote','alpha');
 	$res=dolibarr_set_const($db,$constname,$constvalue,$type[$consttype],0,$constnote,$conf->entity);
 
 	if (! $res > 0) $error++;
