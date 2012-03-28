@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 
 $langs->load("admin");
 
-$action=GETPOST("action");
-$value=GETPOST("value");
+$action=GETPOST('action','alpha');
+$value=GETPOST('value','alpha');
 
 if (!$user->admin) accessforbidden();
 
@@ -69,7 +69,7 @@ if ($action == 'setcodecompta')
 
 if ($action == 'COMPANY_USE_SEARCH_TO_SELECT')
 {
-	$companysearch = GETPOST("activate_COMPANY_USE_SEARCH_TO_SELECT");
+	$companysearch = GETPOST('activate_COMPANY_USE_SEARCH_TO_SELECT','alpha');
 	$res = dolibarr_set_const($db, "COMPANY_USE_SEARCH_TO_SELECT", $companysearch,'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
 	if (! $error)
@@ -93,8 +93,8 @@ if ($action == 'setModuleOptions')
     {
     	if (array_key_exists('param'.$i,$_POST))
     	{
-    		$param=$_POST["param".$i];
-    		$value=$_POST["value".$i];
+    		$param=GETPOST("param".$i,'alpha');
+    		$value=GETPOST("value".$i,'alpha');
     		if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
 	    	if (! $res > 0) $error++;
     	}
@@ -114,8 +114,8 @@ if ($action == 'setModuleOptions')
 // Activate a document generator module
 if ($action == 'set')
 {
-	$label = GETPOST("label");
-	$scandir = GETPOST("scandir");
+	$label = GETPOST('label','alpha');
+	$scandir = GETPOST('scandir','alpha');
 
 	$type='company';
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
@@ -141,8 +141,8 @@ if ($action== 'del')
 // Define default generator
 if ($action == 'setdoc')
 {
-	$label = GETPOST("label");
-	$scandir = GETPOST("scandir");
+	$label = GETPOST('label','alpha');
+	$scandir = GETPOST('scandir','alpha');
 
 	$db->begin();
 
@@ -154,7 +154,7 @@ if ($action == 'setdoc')
 	// On active le modele
 	$type='company';
 	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del.= " WHERE nom = '".$db->escape($_GET["value"])."'";
+	$sql_del.= " WHERE nom = '".$db->escape(GETPOST('value','alpha'))."'";
 	$sql_del.= " AND type = '".$type."'";
 	$sql_del.= " AND entity = ".$conf->entity;
     dol_syslog("societe.php ".$sql);
@@ -181,7 +181,7 @@ if ($action == 'setdoc')
 //Activate ProfId
 if ($action == 'setprofid')
 {
-	$status = GETPOST("status");
+	$status = GETPOST('status','alpha');
 
 	$idprof="SOCIETE_IDPROF".$value."_UNIQUE";
 	if (dolibarr_set_const($db, $idprof,$status,'chaine',0,'',$conf->entity) > 0)
