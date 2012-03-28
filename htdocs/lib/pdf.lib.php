@@ -208,25 +208,25 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
         if ($targetcompany->tva_intra) $stringaddress.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($targetcompany->tva_intra);
 
         // Professionnal Ids
-        if ($conf->global->MAIN_PROFID1_IN_ADDRESS)
+		if (! empty($conf->global->MAIN_PROFID1_IN_ADDRESS) && ! empty($targetcompany->idprof1))
         {
             $tmp=$outputlangs->transcountrynoentities("ProfId1",$targetcompany->pays_code);
             if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
             $stringaddress.="\n".$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof1);
         }
-        if ($conf->global->MAIN_PROFID2_IN_ADDRESS)
+		if (! empty($conf->global->MAIN_PROFID2_IN_ADDRESS) && ! empty($targetcompany->idprof2))
         {
             $tmp=$outputlangs->transcountrynoentities("ProfId2",$targetcompany->pays_code);
             if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
             $stringaddress.="\n".$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof2);
         }
-        if ($conf->global->MAIN_PROFID3_IN_ADDRESS)
+		if (! empty($conf->global->MAIN_PROFID3_IN_ADDRESS) && ! empty($targetcompany->idprof3))
         {
             $tmp=$outputlangs->transcountrynoentities("ProfId3",$targetcompany->pays_code);
             if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
             $stringaddress.="\n".$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof3);
         }
-        if ($conf->global->MAIN_PROFID4_IN_ADDRESS)
+		if (! empty($conf->global->MAIN_PROFID4_IN_ADDRESS) && ! empty($targetcompany->idprof4))
         {
             $tmp=$outputlangs->transcountrynoentities("ProfId4",$targetcompany->pays_code);
             if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
