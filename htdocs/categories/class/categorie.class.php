@@ -523,22 +523,28 @@ class Categorie
 	/**
 	 * 	Return list of contents of a category
 	 *
-	 * 	@param	string	$field		Field name for select in table. Full field name will be fk_field.
-	 * 	@param	string	$classname	PHP Class of object to store entity
-	 * 	@param	string	$table		Table name for select in table. Full table name will be PREFIX_categorie_table.
+	 * 	@param	string	$field				Field name for select in table. Full field name will be fk_field.
+	 * 	@param	string	$classname			PHP Class of object to store entity
+	 * 	@param	string	$category_table		Table name for select in table. Full table name will be PREFIX_categorie_table.
+	 *	@param	string	$object_table		Table name for select in table. Full table name will be PREFIX_table.
 	 *	@return	void
 	 */
-	function get_type($field,$classname,$table='')
+	function get_type($field,$classname,$category_table='',$object_table='')
 	{
 		$objs = array();
 
 		// Clean parameters
-		if (empty($table)) $table=$field;
+		if (empty($category_table)) $category_table=$field;
+		if (empty($object_table)) $object_table=$field;
 
-		$sql = "SELECT fk_".$field." FROM ".MAIN_DB_PREFIX."categorie_".$table;
-		$sql.= " WHERE fk_categorie = ".$this->id;
+		$sql = "SELECT c.fk_".$field;
+		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$category_table." as c";
+		$sql.= ", ".MAIN_DB_PREFIX.$object_table." as o";
+		$sql.= " WHERE c.fk_categorie = ".$this->id;
+		$sql.= " AND c.fk_".$field." = o.rowid";
+		$sql.= " AND o.entity IN (".getEntity($field, 1).")";
 
-		dol_syslog("Categorie::get_type sql=".$sql);
+		dol_syslog(get_class($this)."::get_type sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -553,7 +559,7 @@ class Categorie
 		else
 		{
 			$this->error=$this->db->error().' sql='.$sql;
-			dol_syslog("Categorie::get_type ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::get_type ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
