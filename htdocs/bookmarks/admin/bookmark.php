@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.org>
- * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +30,11 @@ $langs->load("admin");
 if (!$user->admin)
 accessforbidden();
 
-$action=GETPOST("action");
+$action=GETPOST('action','alpha');
 
 if ($action == 'setvalue')
 {
-	$showmenu = GETPOST("BOOKMARKS_SHOW_IN_MENU");
+	$showmenu = GETPOST('BOOKMARKS_SHOW_IN_MENU','alpha');
 	$res = dolibarr_set_const($db, "BOOKMARKS_SHOW_IN_MENU",$showmenu,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
@@ -53,8 +53,7 @@ if ($action == 'setvalue')
 
 
 /*
- *
- *
+ * View
  */
 
 llxHeader();
