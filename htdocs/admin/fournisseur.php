@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2011 Regis Houssin           <regis@dolibarr.fr>
  * Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2010-2011 Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2010-2012 Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand          <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,9 +38,9 @@ $langs->load("admin");
 if (!$user->admin)
 accessforbidden();
 
-$type=GETPOST('type');
-$value=GETPOST('value');
-$action=GETPOST('action');
+$type=GETPOST('type', 'alpha');
+$value=GETPOST('value', 'alpha');
+$action=GETPOST('action', 'alpha');
 
 $specimenthirdparty=new Societe($db);
 $specimenthirdparty->initAsSpecimen();
@@ -52,8 +52,9 @@ $specimenthirdparty->initAsSpecimen();
 
 if ($action == 'updateMask')
 {
-    $maskconstorder=$_POST['maskconstorder'];
-    $maskorder=$_POST['maskorder'];
+    $maskconstorder=GETPOST('maskconstorder','alpha');
+    $maskorder=GETPOST('maskorder','alpha');
+    
     if ($maskconstorder)  $res = dolibarr_set_const($db,$maskconstorder,$maskorder,'chaine',0,'',$conf->entity);
 
     if (! $res > 0) $error++;
@@ -70,7 +71,7 @@ if ($action == 'updateMask')
 
 if ($action == 'specimen')  // For orders
 {
-    $modele=GETPOST("module");
+    $modele=GETPOST('module','alpha');
 
     $commande = new CommandeFournisseur($db);
     $commande->initAsSpecimen();
@@ -116,7 +117,7 @@ if ($action == 'specimen')  // For orders
 
 if ($action == 'specimenfacture')   // For invoices
 {
-    $modele=GETPOST("module");
+    $modele=GETPOST('module','alpha');
 
     $facture = new FactureFournisseur($db);
     $facture->initAsSpecimen();
@@ -162,10 +163,13 @@ if ($action == 'specimenfacture')   // For invoices
 
 if ($action == 'set')
 {
+	$label = GETPOST('label','alpha');
+	$scandir = GETPOST('scandir','alpha');
+	
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
     $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
-    $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
-    $sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
+    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
+    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
     $sql.= ")";
     $res=$db->query($sql);
     if ($res)
@@ -191,14 +195,17 @@ if ($action == 'del')
 
 if ($action == 'setdoc')
 {
+	$label = GETPOST('label','alpha');
+	$scandir = GETPOST('scandir','alpha');
+	
     $db->begin();
 
-    if ($_GET["type"] == 'order_supplier' && dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
+    if ($type == 'order_supplier' && dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
     {
         $conf->global->COMMANDE_SUPPLIER_ADDON_PDF = $value;
     }
 
-    if ($_GET["type"] == 'invoice_supplier' && dolibarr_set_const($db, "INVOICE_SUPPLIER_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
+    if ($type == 'invoice_supplier' && dolibarr_set_const($db, "INVOICE_SUPPLIER_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
     {
         $conf->global->INVOICE_SUPPLIER_ADDON_PDF = $value;
     }
@@ -212,8 +219,8 @@ if ($action == 'setdoc')
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
     $sql.= " VALUES ('".$db->escape($value)."', '".$type."', ".$conf->entity.", ";
-    $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
-    $sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
+    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
+    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
     $sql.= ")";
     $result2=$db->query($sql);
     if ($result1 && $result2)
@@ -242,7 +249,7 @@ if ($action == 'addcat')
 
 if ($action == 'set_SUPPLIER_INVOICE_FREE_TEXT')
 {
-    $free = GETPOST("SUPPLIER_INVOICE_FREE_TEXT");
+    $free = GETPOST('SUPPLIER_INVOICE_FREE_TEXT','alpha');
     $res = dolibarr_set_const($db, "SUPPLIER_INVOICE_FREE_TEXT",$free,'chaine',0,'',$conf->entity);
 
     if (! $res > 0) $error++;
