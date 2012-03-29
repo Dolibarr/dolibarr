@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2010  Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,14 +32,16 @@ if (!$user->admin) accessforbidden();
 
 $typeconst=array('yesno','texte','chaine');
 
+$action = GETPOST('action','alpha');
+
 
 /*
  * Action
  */
 
-if ($_GET["action"] == 'specimen')
+if ($action == 'specimen')
 {
-    $modele=$_GET["module"];
+    $modele=GETPOST('module','alpha');
 
     $don = new Don($db);
     $don->initAsSpecimen();
@@ -71,25 +74,29 @@ if ($_GET["action"] == 'specimen')
     }
 }
 
-if ($_GET["action"] == 'setdoc')
+if ($action == 'setdoc')
 {
+	$value = GETPOST('value','alpha');
+	$label = GETPOST('label','alpha');
+	$scandir = GETPOST('scandir','alpha');
+	
     $db->begin();
 
-    if (dolibarr_set_const($db, "DON_ADDON_MODEL",$_GET["value"],'chaine',0,'',$conf->entity))
+    if (dolibarr_set_const($db, "DON_ADDON_MODEL",$value,'chaine',0,'',$conf->entity))
     {
-        $conf->global->DON_ADDON_MODEL = $_GET["value"];
+        $conf->global->DON_ADDON_MODEL = $value;
     }
 
     // On active le modele
     $type='donation';
     $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql_del.= " WHERE nom = '".$db->escape($_GET["value"])."' AND type = '".$type."'";
+    $sql_del.= " WHERE nom = '".$db->escape($value)."' AND type = '".$type."'";
     $result1=$db->query($sql_del);
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($_GET["value"])."', '".$type."', ".$conf->entity.", ";
-    $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
-    $sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
+    $sql.= " VALUES ('".$db->escape($value)."', '".$type."', ".$conf->entity.", ";
+    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
+    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
     $sql.= ")";
     $result2=$db->query($sql);
     if ($result1 && $result2)
@@ -102,22 +109,28 @@ if ($_GET["action"] == 'setdoc')
     }
 }
 
-if ($_GET["action"] == 'set')
+if ($action == 'set')
 {
+	$value = GETPOST('value','alpha');
+	$label = GETPOST('label','alpha');
+	$scandir = GETPOST('scandir','alpha');
+	
     $type='donation';
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($_GET["value"])."','".$type."',".$conf->entity.", ";
-    $sql.= ($_GET["label"]?"'".$db->escape($_GET["label"])."'":'null').", ";
-    $sql.= (! empty($_GET["scandir"])?"'".$db->escape($_GET["scandir"])."'":"null");
+    $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
+    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
+    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
     $sql.= ")";
     $resql=$db->query($sql);
 }
 
-if ($_GET["action"] == 'del')
+if ($action == 'del')
 {
+	$value = GETPOST('value','alpha');
+	
     $type='donation';
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
+    $sql .= "  WHERE nom = '".$value."' AND type = '".$type."'";
     $resql=$db->query($sql);
 }
 

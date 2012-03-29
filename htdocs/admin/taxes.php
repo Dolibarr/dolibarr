@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2012 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ $langs->load('admin');
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST("action");
+$action = GETPOST('action','alpha');
 
 /*
  * Actions
@@ -53,7 +53,7 @@ $tax_mode = empty($conf->global->TAX_MODE)?0:$conf->global->TAX_MODE;
 
 if ($action == 'settaxmode')
 {
-    $tax_mode = GETPOST("tax_mode");
+    $tax_mode = GETPOST('tax_mode','alpha');
 
     $db->begin();
 

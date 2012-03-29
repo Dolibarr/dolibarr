@@ -35,7 +35,7 @@ $langs->load("withdrawals");
 // Security check
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST("action");
+$action = GETPOST('action','alpha');
 
 
 /*
