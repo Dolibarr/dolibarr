@@ -82,3 +82,6 @@
 [submodule "htdocs/custom/google"]
 	path = htdocs/custom/google
 	url = gitolite@doliforge.org:google/google.git
+[submodule "htdocs/custom/dolibox"]
+	path = htdocs/custom/dolibox
+	url = gitolite@doliforge.org:dolibox/dolibox.git
