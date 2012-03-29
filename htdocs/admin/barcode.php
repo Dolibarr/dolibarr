@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,7 @@ $langs->load("admin");
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST("action");
+$action = GETPOST('action','alpha');
 
 
 /*
@@ -40,8 +41,8 @@ $action = GETPOST("action");
 
 if ($action == 'setcoder')
 {
-	$coder = GETPOST("coder");
-	$code_id = GETPOST("code_id");
+	$coder = GETPOST('coder','alpha');
+	$code_id = GETPOST('code_id','alpha');
 	$sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
 	$sqlp.= " SET coder = '" . $coder."'";
 	$sqlp.= " WHERE rowid = ". $code_id;
@@ -52,17 +53,17 @@ if ($action == 'setcoder')
 }
 else if ($action == 'setgenbarcodelocation')
 {
-	$location = GETPOST("genbarcodelocation");
+	$location = GETPOST('genbarcodelocation','alpha');
 	$res = dolibarr_set_const($db, "GENBARCODE_LOCATION",$location,'chaine',0,'',$conf->entity);
 }
 else if ($action == 'setdefaultbarcodetype')
 {
-	$coder_id = GETPOST("coder_id");
+	$coder_id = GETPOST('coder_id','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_DEFAULT_BARCODE_TYPE", $coder_id,'chaine',0,'',$conf->entity);
 }
 else if ($action == 'GENBARCODE_BARCODETYPE_THIRDPARTY')
 {
-	$coder_id = GETPOST("coder_id");
+	$coder_id = GETPOST('coder_id','alpha');
 	$res = dolibarr_set_const($db, "GENBARCODE_BARCODETYPE_THIRDPARTY", $coder_id,'chaine',0,'',$conf->entity);
 }
 /*

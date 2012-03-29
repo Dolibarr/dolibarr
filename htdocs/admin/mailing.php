@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.org>
- * Copyright (C) 2011 Juanjo Menent		   <jmenent@2byte.es>
+/* Copyright (C) 2004      Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2011 Laurent Destailleur  	<eldy@users.sourceforge.org>
+ * Copyright (C) 2011-2012 Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ $langs->load("mails");
 if (!$user->admin)
   accessforbidden();
 
-$action = GETPOST("action");
+$action = GETPOST('action','alpha');
 
 /*
  * Actions
@@ -42,8 +42,8 @@ if ($action == 'setvalue' && $user->admin)
 {
 	$db->begin();
 	
-	$mailfrom = GETPOST("MAILING_EMAIL_FROM");
-	$mailerror = GETPOST("MAILING_EMAIL_ERRORSTO");
+	$mailfrom = GETPOST('MAILING_EMAIL_FROM','alpha');
+	$mailerror = GETPOST('MAILING_EMAIL_ERRORSTO','alpha');
 	
 	$res=dolibarr_set_const($db, "MAILING_EMAIL_FROM",$mailfrom,'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;

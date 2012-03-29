@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2012	   Juanjo Menent         <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,8 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
 
 $langs->load("admin");
 $langs->load("fckeditor");
+
+$action = GETPOST('action','alpha');
 
 if (!$user->admin) accessforbidden();
 
@@ -62,7 +65,7 @@ $picto = array(
 
 foreach($modules as $const => $desc)
 {
-    if ($_GET["action"] == 'activate_'.strtolower($const))
+    if ($action == 'activate_'.strtolower($const))
     {
         dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1",'chaine',0,'',$conf->entity);
         // Si fckeditor est active dans la description produit/service, on l'active dans les formulaires
@@ -73,7 +76,7 @@ foreach($modules as $const => $desc)
         Header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
     }
-    if ($_GET["action"] == 'disable_'.strtolower($const))
+    if ($action == 'disable_'.strtolower($const))
     {
         dolibarr_del_const($db, "FCKEDITOR_ENABLE_".$const,$conf->entity);
         Header("Location: ".$_SERVER["PHP_SELF"]);
@@ -81,9 +84,9 @@ foreach($modules as $const => $desc)
     }
 }
 
-if ($_POST["save"])
+if (GETPOST('save','alpha'))
 {
-    dolibarr_set_const($db, "FCKEDITOR_TEST", $_POST["formtestfield"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "FCKEDITOR_TEST", GETPOST('formtestfield','alpha'),'chaine',0,'',$conf->entity);
 }
 
 
