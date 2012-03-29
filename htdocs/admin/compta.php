@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2011-2012 Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,13 +33,13 @@ $langs->load('compta');
 if (!$user->admin)
 accessforbidden();
 
-$action = GETPOST("action");
+$action = GETPOST('action','alpha');
 
 $compta_mode = defined('COMPTA_MODE')?COMPTA_MODE:'RECETTES-DEPENSES';
 
 if ($action == 'setcomptamode')
 {
-	$compta_mode = GETPOST("compta_mode");
+	$compta_mode = GETPOST('compta_mode','alpha');
 	
 	$res = dolibarr_set_const($db, 'COMPTA_MODE', $compta_mode,'chaine',0,'',$conf->entity);
 	
@@ -58,10 +58,10 @@ if ($action == 'setcomptamode')
 
 if ($action == 'update' || $action == 'add')
 {
-	$constname = GETPOST("constname");
-	$constvalue = GETPOST("constvalue");
-	$consttype = GETPOST("consttype");
-	$constnote = GETPOST("constnote");
+	$constname = GETPOST('constname','alpha');
+	$constvalue = GETPOST('constvalue','alpha');
+	$consttype = GETPOST('consttype','alpha');
+	$constnote = GETPOST('constnote','alpha');
 	
 	$res = dolibarr_set_const($db, $constname, $constvalue, $consttype, 0, $constnote, $conf->entity);
 	

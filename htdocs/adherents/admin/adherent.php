@@ -4,8 +4,8 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011-2012 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ if (! $user->admin) accessforbidden();
 
 $type=array('yesno','texte','chaine');
 
-$action = GETPOST("action");
+$action = GETPOST('action','alpha');
 
 
 /*
@@ -78,7 +78,7 @@ if ($action == 'update' || $action == 'add')
 // Action activation d'un sous module du module adherent
 if ($action == 'set')
 {
-    $result=dolibarr_set_const($db, $_GET["name"],$_GET["value"],'',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, GETPOST('name','alpha'),GETPOST('value','alpha'),'',0,'',$conf->entity);
     if ($result < 0)
     {
         print $db->error();
@@ -88,7 +88,7 @@ if ($action == 'set')
 // Action desactivation d'un sous module du module adherent
 if ($action == 'unset')
 {
-    $result=dolibarr_del_const($db,$_GET["name"],$conf->entity);
+    $result=dolibarr_del_const($db,GETPOST('name','alpha'),$conf->entity);
     if ($result < 0)
     {
         print $db->error();

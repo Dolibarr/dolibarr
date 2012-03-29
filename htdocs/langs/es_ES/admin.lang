@@ -868,7 +868,8 @@ MAIN_PROXY_PASS=Contraseña del servidor proxy
 DefineHereComplementaryAttributes=Defina aquí la lista de atributos adicionales, no disponibles en estándar, y que desea gestionar para %s.
 ExtraFields=Atributos adicionales
 ExtraFieldHasWrongValue=El atributo %s tiene un valor incorrecto.
-SendingMailSetup=Configuració de l'enviament per mail
+AlphaNumOnlyCharsAndNoSpace=solamente caracteres alfanuméricos sin espacios
+SendingMailSetup=Configuración del envío por mail
 SendmailOptionNotComplete=Atención, en algunos sistemas Linux, con este método de envio, para poder enviar mails en su nombre, la configuración de sendmail debe contener la opción <b>-ba</b> (parámetro <b>mail.force_extra_parameters</b> en el archivo <b>php.ini</b>). Si algunos de sus destinatarios no reciben sus mensajes, pruebe a modificar este parámetro PHP con <b>mail.force_extra_parameters=-ba</b>.
 PathToDocuments=Rutas de acceso a documentos
 PathDirectory=Directorio

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2010	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2011		Regis Houssin		<regis@dolibarr.fr>
- * Copyright (C) 2011 	    Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2012  Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,8 @@ if (!$user->admin)
 $langs->load("admin");
 $langs->load("other");
 
-$action=$_POST["action"];
+$action = GETPOST('action','alpha');
+$cancel = GETPOST('cancel','alpha');
 
 // Get list of triggers available
 $sql = "SELECT a.rowid, a.code, a.label, a.elementtype";
@@ -66,7 +67,7 @@ else
 /*
 *	Actions
 */
-if ($action == "save" && empty($_POST["cancel"]))
+if ($action == "save" && empty($cancel))
 {
     $i=0;
 
@@ -76,7 +77,7 @@ if ($action == "save" && empty($_POST["cancel"]))
 	{
 		$param='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
 		//print "param=".$param." - ".$_POST[$param];
-		if (! empty($_POST[$param])) $res = dolibarr_set_const($db,$param,$_POST[$param],'chaine',0,'',$conf->entity);
+		if (GETPOST($param,'alpha')) $res = dolibarr_set_const($db,$param,GETPOST($param,'alpha'),'chaine',0,'',$conf->entity);
 		else $res = dolibarr_del_const($db,$param,$conf->entity);
 		if (! $res > 0) $error++;
 	}
@@ -141,7 +142,7 @@ if (! empty($triggers))
 			print '<td align="right" width="40">';
 			$key='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
 			$value=$conf->global->$key;
-			print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.((($_GET["action"]=='selectall'||$value) && $_GET["action"]!="selectnone")?' checked="checked"':'').'>';
+			print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.((($action=='selectall'||$value) && $action!="selectnone")?' checked="checked"':'').'>';
 			print '</td></tr>'."\n";
 		}
 	}

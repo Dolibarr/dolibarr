@@ -124,7 +124,6 @@ LastMembersModified=Les %s derniers adhérents modifiés
 LastSubscriptionsModified=Les %s dernières adhésions modifiées
 AttributeName=Nom de l'attribut
 FieldEdition=Édition du champ %s
-AlphaNumOnlyCharsAndNoSpace=uniquement caractères alphanumériques sans espace
 String=Chaîne
 Text=Texte long
 Int=Numérique
