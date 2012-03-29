@@ -4,6 +4,7 @@
  * Copyright (C) 2005		Eric Seigne					<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012	Regis Houssin				<regis@dolibarr.fr>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
+ * Copyright (C) 2012		Juanjo Menent				<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,10 +45,10 @@ $value = GETPOST('value','alpha');
 
 if ($action == 'updateMask')
 {
-    $maskconstinvoice=GETPOST("maskconstinvoice");
-    $maskconstcredit=GETPOST("maskconstcredit");
-    $maskinvoice=GETPOST("maskinvoice");
-    $maskcredit=GETPOST("maskcredit");
+    $maskconstinvoice=GETPOST('maskconstinvoice','alpha');
+    $maskconstcredit=GETPOST('maskconstcredit','alpha');
+    $maskinvoice=GETPOST('maskinvoice','alpha');
+    $maskcredit=GETPOST('maskcredit','alpha');
     if ($maskconstinvoice) $res = dolibarr_set_const($db,$maskconstinvoice,$maskinvoice,'chaine',0,'',$conf->entity);
     if ($maskconstcredit)  $res = dolibarr_set_const($db,$maskconstcredit,$maskcredit,'chaine',0,'',$conf->entity);
 
@@ -65,7 +66,7 @@ if ($action == 'updateMask')
 
 if ($action == 'specimen')
 {
-    $modele=GETPOST("module");
+    $modele=GETPOST('module','alpha');
 
     $facture = new Facture($db);
     $facture->initAsSpecimen();
@@ -116,8 +117,8 @@ if ($action == 'setModuleOptions')
     {
         if (array_key_exists('param'.$i,$_POST))
         {
-            $param=$_POST["param".$i];
-            $value=$_POST["value".$i];
+            $param=GETPOST("param".$i,'alpha');
+            $value=GETPOST("value".$i,'alpha');
             if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
         }
     }
@@ -135,8 +136,8 @@ if ($action == 'setModuleOptions')
 
 if ($action == 'set')
 {
-	$label = GETPOST("label");
-	$scandir = GETPOST("scandir");
+	$label = GETPOST('label','alpha');
+	$scandir = GETPOST('scandir','alpha');
 
     $type='invoice';
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
@@ -166,8 +167,8 @@ if ($action == 'del')
 
 if ($action == 'setdoc')
 {
-	$label = GETPOST("label");
-	$scandir = GETPOST("scandir");
+	$label = GETPOST('label','alpha');
+	$scandir = GETPOST('scandir','alpha');
 
     $db->begin();
 
@@ -214,8 +215,8 @@ if ($action == 'setmod')
 
 if ($action == 'setribchq')
 {
-	$rib = GETPOST("rib");
-	$chq = GETPOST("chq");
+	$rib = GETPOST('rib','alpha');
+	$chq = GETPOST('chq','alpha');
 
 	$res = dolibarr_set_const($db, "FACTURE_RIB_NUMBER",$rib,'chaine',0,'',$conf->entity);
     $res = dolibarr_set_const($db, "FACTURE_CHQ_NUMBER",$chq,'chaine',0,'',$conf->entity);
@@ -234,7 +235,7 @@ if ($action == 'setribchq')
 
 if ($action == 'set_FACTURE_DRAFT_WATERMARK')
 {
-	$draft = GETPOST("FACTURE_DRAFT_WATERMARK");
+	$draft = GETPOST('FACTURE_DRAFT_WATERMARK','alpha');
 
     $res = dolibarr_set_const($db, "FACTURE_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
 
@@ -252,7 +253,7 @@ if ($action == 'set_FACTURE_DRAFT_WATERMARK')
 
 if ($action == 'set_FACTURE_FREE_TEXT')
 {
-	$free = GETPOST("FACTURE_FREE_TEXT");
+	$free = GETPOST('FACTURE_FREE_TEXT','alpha');
 
     $res = dolibarr_set_const($db, "FACTURE_FREE_TEXT",$free,'chaine',0,'',$conf->entity);
 
@@ -270,7 +271,7 @@ if ($action == 'set_FACTURE_FREE_TEXT')
 
 if ($action == 'setforcedate')
 {
-	$forcedate = GETPOST("forcedate");
+	$forcedate = GETPOST('forcedate','alpha');
 
     $res = dolibarr_set_const($db, "FAC_FORCE_DATE_VALIDATION",$forcedate,'chaine',0,'',$conf->entity);
 
