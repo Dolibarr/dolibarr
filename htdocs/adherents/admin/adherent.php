@@ -39,7 +39,7 @@ if (! $user->admin) accessforbidden();
 
 $type=array('yesno','texte','chaine');
 
-$action = POST('action','alpha');
+$action = GETPOST('action','alpha');
 
 
 /*
