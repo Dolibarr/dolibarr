@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011 	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@ $langs->load("admin");
 $langs->load("other");
 
 $def = array();
-$actiontest=GETPOST("test");
-$actionsave=GETPOST("save");
+$actiontest=GETPOST('test','alpha');
+$actionsave=GETPOST('save','alpha');
 
 if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB=5;
 $MAXAGENDA=empty($conf->global->AGENDA_EXT_NB)?5:$conf->global->AGENDA_EXT_NB;
@@ -53,7 +53,7 @@ if ($actionsave)
 {
     $db->begin();
 
-    $disableext=GETPOST("AGENDA_DISABLE_EXT");
+    $disableext=GETPOST('AGENDA_DISABLE_EXT','alpha');
     if ($disableext) $disableext=0; else $disableext=1;
 	$res=dolibarr_set_const($db,'AGENDA_DISABLE_EXT',$disableext,'chaine',0);
 
@@ -63,20 +63,20 @@ if ($actionsave)
 	// Save agendas
 	while ($i <= $MAXAGENDA)
 	{
-		$color=trim(GETPOST("agenda_ext_color".$i));
+		$color=trim(GETPOST('agenda_ext_color'.$i,'alpha'));
 		if ($color=='-1') $color='';
 
 		//print 'color='.$color;
-		$res=dolibarr_set_const($db,'AGENDA_EXT_NAME'.$i,trim(GETPOST("agenda_ext_name".$i)),'chaine',0);
+		$res=dolibarr_set_const($db,'AGENDA_EXT_NAME'.$i,trim(GETPOST('agenda_ext_name'.$i),'alpha'),'chaine',0);
 		if (! $res > 0) $error++;
-		$res=dolibarr_set_const($db,'AGENDA_EXT_SRC'.$i,trim(GETPOST("agenda_ext_src".$i)),'chaine',0);
+		$res=dolibarr_set_const($db,'AGENDA_EXT_SRC'.$i,trim(GETPOST('agenda_ext_src'.$i,'alpha')),'chaine',0);
 		if (! $res > 0) $error++;
 		$res=dolibarr_set_const($db,'AGENDA_EXT_COLOR'.$i,$color,'chaine',0);
 		if (! $res > 0) $error++;
 		$i++;
 	}
 	// Save nb of agenda
-	$res=dolibarr_set_const($db,'AGENDA_EXT_NB',trim(GETPOST("AGENDA_EXT_NB")),'chaine',0);
+	$res=dolibarr_set_const($db,'AGENDA_EXT_NB',trim(GETPOST('AGENDA_EXT_NB','alpha')),'chaine',0);
 	if (! $res > 0) $error++;
 	if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB=5;
 	$MAXAGENDA=empty($conf->global->AGENDA_EXT_NB)?5:$conf->global->AGENDA_EXT_NB;
@@ -119,7 +119,7 @@ dol_fiche_head($head, 'extsites', $langs->trans("Agenda"));
 
 print '<form name="extsitesconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 
-$selectedvalue=(GETPOST("AGENDA_DISABLE_AGENDA"))?GETPOST("AGENDA_DISABLE_EXT"):$conf->global->AGENDA_DISABLE_EXT;
+$selectedvalue=(GETPOST('AGENDA_DISABLE_AGENDA','alpha'))?GETPOST('AGENDA_DISABLE_EXT','alpha'):$conf->global->AGENDA_DISABLE_EXT;
 if ($selectedvalue==1) $selectedvalue=0; else $selectedvalue=1;
 print $langs->trans("ExtSitesEnableThisTool").' '.$form->selectyesno("AGENDA_DISABLE_EXT",$selectedvalue,1).'<br><br>';
 

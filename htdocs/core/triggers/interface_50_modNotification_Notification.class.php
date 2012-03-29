@@ -17,15 +17,14 @@
  */
 
 /**
- *      \file       htdocs/core/triggers/interface_50_modNotification_Notification.class.php
- *      \ingroup    notification
- *      \brief      File of class of triggers for notification module
+ *  \file       htdocs/core/triggers/interface_50_modNotification_Notification.class.php
+ *  \ingroup    notification
+ *  \brief      File of class of triggers for notification module
  */
 
 
 /**
- *     \class      InterfaceNotification
- *     \brief      Class of triggers for notification module
+ *  Class of triggers for notification module
  */
 class InterfaceNotification
 {

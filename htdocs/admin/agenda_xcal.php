@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2010 	Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ $langs->load("other");
 $langs->load("agenda");
 
 $def = array();
-$actionsave=$_POST["save"];
+$actionsave=GETPOST('save','alpha');
 
 // Sauvegardes parametres
 if ($actionsave)
@@ -43,9 +44,9 @@ if ($actionsave)
 
     $db->begin();
 
-    $i+=dolibarr_set_const($db,'MAIN_AGENDA_XCAL_EXPORTKEY',trim($_POST["MAIN_AGENDA_XCAL_EXPORTKEY"]),'chaine',0,'',$conf->entity);
-    $i+=dolibarr_set_const($db,'MAIN_AGENDA_EXPORT_PAST_DELAY',trim($_POST["MAIN_AGENDA_EXPORT_PAST_DELAY"]),'chaine',0,'',$conf->entity);
-    $i+=dolibarr_set_const($db,'MAIN_AGENDA_EXPORT_CACHE',trim($_POST["MAIN_AGENDA_EXPORT_CACHE"]),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'MAIN_AGENDA_XCAL_EXPORTKEY',trim(GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY','alpha')),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'MAIN_AGENDA_EXPORT_PAST_DELAY',trim(GETPOST('MAIN_AGENDA_EXPORT_PAST_DELAY','alpha')),'chaine',0,'',$conf->entity);
+    $i+=dolibarr_set_const($db,'MAIN_AGENDA_EXPORT_CACHE',trim(GETPOST('MAIN_AGENDA_EXPORT_CACHE','alpha')),'chaine',0,'',$conf->entity);
 
     if ($i >= 3)
     {
@@ -94,19 +95,19 @@ print "</tr>";
 
 print "<tr class=\"impair\">";
 print '<td class="fieldrequired">'.$langs->trans("PasswordTogetVCalExport")."</td>";
-print "<td><input type=\"text\" class=\"flat\" name=\"MAIN_AGENDA_XCAL_EXPORTKEY\" value=\"". ($_POST["MAIN_AGENDA_XCAL_EXPORTKEY"]?$_POST["MAIN_AGENDA_XCAL_EXPORTKEY"]:$conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) . "\" size=\"40\"></td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"MAIN_AGENDA_XCAL_EXPORTKEY\" value=\"". (GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY','alpha')?GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY','alpha'):$conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) . "\" size=\"40\"></td>";
 print "<td>&nbsp;</td>";
 print "</tr>";
 
 print "<tr class=\"pair\">";
 print "<td>".$langs->trans("PastDelayVCalExport")."</td>";
-print "<td><input type=\"text\" class=\"flat\" name=\"MAIN_AGENDA_EXPORT_PAST_DELAY\" value=\"". ($_POST["MAIN_AGENDA_EXPORT_PAST_DELAY"]?$_POST["MAIN_AGENDA_EXPORT_PAST_DELAY"]:$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY) . "\" size=\"10\"> ".$langs->trans("days")."</td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"MAIN_AGENDA_EXPORT_PAST_DELAY\" value=\"". (GETPOST('MAIN_AGENDA_EXPORT_PAST_DELAY','alpha')?GETPOST('MAIN_AGENDA_EXPORT_PAST_DELAY','alpha'):$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY) . "\" size=\"10\"> ".$langs->trans("days")."</td>";
 print "<td>&nbsp;</td>";
 print "</tr>";
 
 print "<tr class=\"impair\">";
 print "<td>".$langs->trans("UseACacheDelay")."</td>";
-print "<td><input type=\"text\" class=\"flat\" name=\"MAIN_AGENDA_EXPORT_CACHE\" value=\"". ($_POST["MAIN_AGENDA_EXPORT_CACHE"]?$_POST["MAIN_AGENDA_EXPORT_CACHE"]:$conf->global->MAIN_AGENDA_EXPORT_CACHE) . "\" size=\"10\"></td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"MAIN_AGENDA_EXPORT_CACHE\" value=\"". (GETPOST('MAIN_AGENDA_EXPORT_CACHE','alpha')?GETPOST('MAIN_AGENDA_EXPORT_CACHE','alpha'):$conf->global->MAIN_AGENDA_EXPORT_CACHE) . "\" size=\"10\"></td>";
 print "<td>&nbsp;</td>";
 print "</tr>";
 

@@ -10,6 +10,8 @@ LocalAgenda=Calendari local
 AffectedTo=Assignada a
 DoneBy=Realitzat per
 Events=Esdeveniments
+MyEvents=Els meus events
+OtherEvents=Altres events
 ListOfActions=Llista d'esdeveniments
 EventOnFullDay=Esdeveniment per tot el dia
 Location=Localització
@@ -63,9 +65,9 @@ AgendaUrlOptions4=<b>logint=%s</b> per a restringir insercions a accions que afe
 AgendaUrlOptions5=<b>logind=%s</b> per a restringir insercions a accions realitzades per l'usuari <b>%s</b>.
 AgendaShowBirthdayEvents=Mostra aniversari dels contactes
 AgendaHideBirthdayEvents=Amaga aniversari dels contacte
-ExtSites=Calendaris externs
 
 # External Sites ical
+ExportCal=Exportar calendari
 ExtSites=Calendaris externs
 ExtSitesEnableThisTool=Mostrar calendaris externs a l'agenda
 ExtSitesNbOfAgenda=Nombre de calendaris

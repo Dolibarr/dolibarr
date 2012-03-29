@@ -327,7 +327,7 @@ $moreheadjs="
         ,   north__paneSelector:    \"#ecm-layout-north\"
         ,   west__paneSelector:     \"#ecm-layout-west\"
         ,   resizable: true
-        ,   north__size:        34
+        ,   north__size:        32
         ,   north__resizable:   false
         ,   north__closable:    false
         ,   west__size:         340
@@ -395,7 +395,7 @@ else
     print '<tr><td colspan="2" style="background: #FFFFFF" style="height: 34px !important">';
 }
 // Start top panel, toolbar
-
+print '<div class="toolbarbutton">';
 
 // Toolbar
 if ($user->rights->ecm->setup)
@@ -414,7 +414,7 @@ print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;mo
 print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
 print '</a>';
 
-
+print '</div>';
 // End top panel, toolbar
 if ($conf->use_javascript_ajax)
 {

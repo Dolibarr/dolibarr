@@ -17,15 +17,14 @@
  */
 
 /**
- *      \file       htdocs/core/triggers/interface_20_all_Logevents.class.php
- *      \ingroup    core
- *      \brief      Trigger file for
+ *  \file       htdocs/core/triggers/interface_20_all_Logevents.class.php
+ *  \ingroup    core
+ *  \brief      Trigger file for
  */
 
 
 /**
- *      \class      InterfaceLogevents
- *      \brief      Class of triggers for security events
+ *  Class of triggers for security events
  */
 class InterfaceLogevents
 {

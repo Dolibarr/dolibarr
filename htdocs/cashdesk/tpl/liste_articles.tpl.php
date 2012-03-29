@@ -68,7 +68,7 @@ else
 }
 
 $obj_facturation->calculTotaux();
-$total_ttc = $obj_facturation->prix_total_ttc();
+$total_ttc = $obj_facturation->prixTotalTtc();
 echo ('<p class="cadre_prix_total">'.$langs->trans("Total").' : '.price2num($total_ttc, 'MT').' '.$conf->currency.'<br></p>'."\n");
 
 ?></div>

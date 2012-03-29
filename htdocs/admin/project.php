@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011 Juanjo Menent		   <jmenent@2byte.es>
+/* Copyright (C) 2010 		Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2011 		Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2012 	Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,8 +35,8 @@ $langs->load("projects");
 if (!$user->admin)
 accessforbidden();
 
-$value=GETPOST('value');
-$action=GETPOST('action');
+$value=GETPOST('value','action');
+$action=GETPOST('action','action');
 
 
 /*
@@ -45,8 +45,9 @@ $action=GETPOST('action');
 
 if ($action == 'updateMask')
 {
-	$maskconstproject=GETPOST("maskconstproject");
-	$maskproject=GETPOST("maskproject");
+	$maskconstproject=GETPOST('maskconstproject','alpha');
+	$maskproject=GETPOST('maskproject','alpha');
+	
 	if ($maskconstproject)  $res = dolibarr_set_const($db,$maskconstproject,$maskproject,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
@@ -63,7 +64,7 @@ if ($action == 'updateMask')
 
 if ($action == 'specimen')
 {
-	$modele=GETPOST("module");
+	$modele=GETPOST('module','alpha');
 
 	$project = new Project($db);
 	$project->initAsSpecimen();
@@ -98,8 +99,8 @@ if ($action == 'specimen')
 
 if ($action == 'set')
 {
-	$label = GETPOST("label");
-	$scandir = GETPOST("scandir");
+	$label = GETPOST('label','alpha');
+	$scandir = GETPOST('scandir','alpha');
 
 	$type='project';
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
@@ -125,8 +126,8 @@ if ($action == 'del')
 
 if ($action == 'setdoc')
 {
-	$label = GETPOST("label");
-	$scandir = GETPOST("scandir");
+	$label = GETPOST('label','alpha');
+	$scandir = GETPOST('scandir','alpha');
 
 	$db->begin();
 
@@ -164,7 +165,7 @@ if ($action == 'setmod')
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
 
-	dolibarr_set_const($db, "PROJECT_ADDON",$_GET["value"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "PROJECT_ADDON",GETPOST('value','alpha'),'chaine',0,'',$conf->entity);
 }
 
 /*

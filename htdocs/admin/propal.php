@@ -46,8 +46,8 @@ $value = GETPOST('value','alpha');
 
 if ($action == 'updateMask')
 {
-	$maskconstpropal=GETPOST("maskconstpropal");
-	$maskpropal=GETPOST("maskpropal");
+	$maskconstpropal=GETPOST('maskconstpropal','alpha');
+	$maskpropal=GETPOST('maskpropal','alpha');
 	if ($maskconstpropal) $res = dolibarr_set_const($db,$maskconstpropal,$maskpropal,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
@@ -64,7 +64,7 @@ if ($action == 'updateMask')
 
 if ($action == 'specimen')
 {
-	$modele=GETPOST("module");
+	$modele=GETPOST('module','alpha');
 
 	$propal = new Propal($db);
 	$propal->initAsSpecimen();
@@ -109,7 +109,7 @@ if ($action == 'specimen')
 
 if ($action == 'set_PROPALE_DRAFT_WATERMARK')
 {
-	$draft = GETPOST("PROPALE_DRAFT_WATERMARK");
+	$draft = GETPOST('PROPALE_DRAFT_WATERMARK','alpha');
 
 	$res = dolibarr_set_const($db, "PROPALE_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
@@ -126,7 +126,7 @@ if ($action == 'set_PROPALE_DRAFT_WATERMARK')
 
 if ($action == 'set_PROPALE_FREE_TEXT')
 {
-	$freetext = GETPOST("PROPALE_FREE_TEXT");
+	$freetext = GETPOST('PROPALE_FREE_TEXT','alpha');
 
 	$res = dolibarr_set_const($db, "PROPALE_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
@@ -183,8 +183,8 @@ if ($action == 'setclassifiedinvoiced')
 
 if ($action == 'set')
 {
-	$label = GETPOST("label");
-	$scandir = GETPOST("scandir");
+	$label = GETPOST('label','alpha');
+	$scandir = GETPOST('scandir','alpha');
 
 	$type='propal';
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
@@ -210,8 +210,8 @@ else if ($action == 'del')
 
 else if ($action == 'setdoc')
 {
-	$label = GETPOST("label");
-	$scandir = GETPOST("scandir");
+	$label = GETPOST('label','alpha');
+	$scandir = GETPOST('scandir','alpha');
 
 	$db->begin();
 

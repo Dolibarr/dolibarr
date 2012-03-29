@@ -2,6 +2,7 @@
 /* Copyright (C) 2003		Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012		Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +41,8 @@ $id = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'deplacement', $id,'');
 
-$action = GETPOST('action');
-$confirm = GETPOST('confirm');
+$action = GETPOST('action','alpha');
+$confirm = GETPOST('confirm','alpha');
 
 $mesg = '';
 
@@ -115,17 +116,17 @@ else if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->depl
 
 else if ($action == 'add' && $user->rights->deplacement->creer)
 {
-    if (! $_POST["cancel"])
+    if (! GETPOST('cancel','alpha'))
     {
         $error=0;
 
-        $object->date			= dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-        $object->km				= $_POST["km"];
-        $object->type			= $_POST["type"];
-        $object->socid			= $_POST["socid"];
-        $object->fk_user		= $_POST["fk_user"];
-        $object->note_private	= $_POST["note_private"];
-        $object->note_public	= $_POST["note_public"];
+        $object->date			= dol_mktime(12, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
+        $object->km				= GETPOST('km','int');
+        $object->type			= GETPOST('type','alpha');
+        $object->socid			= GETPOST('socid','int');
+        $object->fk_user		= GETPOST('fk_user','int');
+        $object->note_private	= GETPOST('note_private','alpha');
+        $object->note_public	= GETPOST('note_public','alpha');
         $object->statut     	= 0;
 
         if (! $object->date)
@@ -174,17 +175,17 @@ else if ($action == 'add' && $user->rights->deplacement->creer)
 // Update record
 else if ($action == 'update' && $user->rights->deplacement->creer)
 {
-    if (empty($_POST["cancel"]))
+    if (! GETPOST('cancel','alpha'))
     {
         $result = $object->fetch($id);
 
-        $object->date			= dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-        $object->km				= $_POST["km"];
-        $object->type			= $_POST["type"];
-        $object->fk_user		= $_POST["fk_user"];
-        $object->socid			= $_POST["socid"];
-        $object->note_private	= $_POST["note_private"];
-        $object->note_public	= $_POST["note_public"];
+        $object->date			= dol_mktime(12, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
+        $object->km				= GETPOST('km','int');
+        $object->type			= GETPOST('type','alpha');
+        $object->socid			= GETPOST('socid','int');
+        $object->fk_user		= GETPOST('fk_user','int');
+        $object->note_private	= GETPOST('note_private','alpha');
+        $object->note_public	= GETPOST('note_public','alpha');
 
         $result = $object->update($user);
 
@@ -209,14 +210,14 @@ else if ($action == 'update' && $user->rights->deplacement->creer)
 else if ($action == 'classin' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
-    $result=$object->setProject($_POST['projectid']);
+    $result=$object->setProject(GETPOST('projectid','int'));
     if ($result < 0) dol_print_error($db, $object->error);
 }
 
 // Set fields
 else if ($action == 'setdated' && $user->rights->deplacement->creer)
 {
-    $dated=dol_mktime($_POST['datedhour'], $_POST['datedmin'], $_POST['datedsec'], $_POST['datedmonth'], $_POST['datedday'], $_POST['datedyear']);
+    $dated=dol_mktime(GETPOST('datedhour','int'), GETPOST('datedmin','int'), GETPOST('datedsec','int'), GETPOST('datedmonth','int'), GETPOST('datedday','int'), GETPOST('datedyear','int'));
     $object->fetch($id);
     $result=$object->setValueFrom('dated',$dated,'','','date');
     if ($result < 0) dol_print_error($db, $object->error);
@@ -224,19 +225,19 @@ else if ($action == 'setdated' && $user->rights->deplacement->creer)
 else if ($action == 'setkm' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
-    $result=$object->setValueFrom('km',GETPOST('km'));
+    $result=$object->setValueFrom('km',GETPOST('km','int'));
     if ($result < 0) dol_print_error($db, $object->error);
 }
 else if ($action == 'setnote_public' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
-    $result=$object->setValueFrom('note_public',GETPOST('note_public'));
+    $result=$object->setValueFrom('note_public',GETPOST('note_public','alpha'));
     if ($result < 0) dol_print_error($db, $object->error);
 }
 else if ($action == 'setnote' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
-    $result=$object->setValueFrom('note',GETPOST('note'));
+    $result=$object->setValueFrom('note',GETPOST('note','alpha'));
     if ($result < 0) dol_print_error($db, $object->error);
 }
 
@@ -258,7 +259,7 @@ if ($action == 'create')
 
     dol_htmloutput_errors($mesg);
 
-    $datec = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+    $datec = dol_mktime(12, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
 
     print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -268,12 +269,12 @@ if ($action == 'create')
 
     print "<tr>";
     print '<td width="25%" class="fieldrequired">'.$langs->trans("Type").'</td><td>';
-    print $form->select_type_fees(GETPOST("type"),'type',1);
+    print $form->select_type_fees(GETPOST('type','int'),'type',1);
     print '</td></tr>';
 
     print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
-    print $form->select_users(GETPOST("fk_user"),'fk_user',1);
+    print $form->select_users(GETPOST('fk_user','int'),'fk_user',1);
     print '</td></tr>';
 
     print "<tr>";
@@ -295,7 +296,7 @@ if ($action == 'create')
     print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
     print '<td valign="top" colspan="2">';
     require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-    $doleditor=new DolEditor('note_public',GETPOST('note_public'),600,200,'dolibarr_notes','In',false,true,true,ROWS_8,100);
+    $doleditor=new DolEditor('note_public',GETPOST('note_public','alpha'),600,200,'dolibarr_notes','In',false,true,true,ROWS_8,100);
     print $doleditor->Create(1);
     print '</td></tr>';
 
@@ -306,7 +307,7 @@ if ($action == 'create')
         print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
         print '<td valign="top" colspan="2">';
         require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-        $doleditor=new DolEditor('note_private',GETPOST('note_private'),600,200,'dolibarr_notes','In',false,true,true,ROWS_8,100);
+        $doleditor=new DolEditor('note_private',GETPOST('note_private','alpha'),600,200,'dolibarr_notes','In',false,true,true,ROWS_8,100);
         print $doleditor->Create(1);
         print '</td></tr>';
     }
@@ -353,13 +354,13 @@ else if ($id)
             // Type
             print "<tr>";
             print '<td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
-            print $form->select_type_fees($_POST["type"]?$_POST["type"]:$object->type,'type',0);
+            print $form->select_type_fees(GETPOST('type','int')?GETPOST('type','int'):$object->type,'type',0);
             print '</td></tr>';
 
             // Who
             print "<tr>";
             print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
-            print $form->select_users($_POST["fk_user"]?$_POST["fk_user"]:$object->fk_user,'fk_user',0);
+            print $form->select_users(GETPOST('fk_user','int')?GETPOST('fk_user','int'):$object->fk_user,'fk_user',0);
             print '</td></tr>';
 
             // Date

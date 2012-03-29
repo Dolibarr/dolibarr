@@ -322,7 +322,7 @@ if ($object->type == 3)
 {
 	require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 
-	$prods = $object->get_type("member","Adherent");
+	$prods = $object->get_type("member","Adherent","","adherent");
 	if ($prods < 0)
 	{
 		dol_print_error($db,$object->error);
@@ -358,7 +358,7 @@ if ($object->type == 3)
 	}
 }
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>

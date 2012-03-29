@@ -48,6 +48,7 @@ class MenuSmart
 	 *    Show menu
 	 *
 	 *    @param	string		$limitmenuto		To limit menu to a top or left menu value
+	 *    @return	void
 	 */
 	function showmenu($limitmenuto)
 	{

@@ -870,7 +870,7 @@ td.photo {
 }
 
 a.toolbarbutton {
-    margin-top: 1px;
+    margin-top: 0px;
     margin-left: 4px;
     margin-right: 4px;
     height: 30px;
@@ -879,7 +879,8 @@ a.toolbarbutton {
     background: #FFFFFF;*/
 }
 img.toolbarbutton {
-    height: 28px;
+	margin-top: 1px;
+    height: 30px;
 }
 
 /* ============================================================================== */

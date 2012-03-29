@@ -23,8 +23,7 @@
 
 
 /**
- *      \class      InterfacePaypalWorkflow
- *      \brief      Class of triggers for paypal module
+ *  Class of triggers for paypal module
  */
 class InterfacePaypalWorkflow
 {

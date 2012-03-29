@@ -25,14 +25,14 @@
 /**
  *  \file       htdocs/user/class/user.class.php
  *	\brief      File of class to manage users
+ *  \ingroup	core
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
 
 /**
- *	\class      User
- *	\brief      Class to manage users
+ *	Class to manage users
  */
 class User extends CommonObject
 {
@@ -108,7 +108,7 @@ class User extends CommonObject
 
 		$this->all_permissions_are_loaded = 0;
 		$this->admin=0;
-		
+
 		$this->rights				= (object) array();
 		$this->rights->user			= (object) array();
 		$this->rights->user->user	= (object) array();
@@ -1433,17 +1433,17 @@ class User extends CommonObject
 			dol_syslog("User::send_password url=".$url);
 		}
 		$mailfile = new CMailFile(
-			$subject,
-			$this->email,
-			$conf->notification->email_from,
-			$mesg,
-			array(),
-			array(),
-			array(),
-		    '',
-		    '',
-			0,
-			$msgishtml
+            $subject,
+            $this->email,
+            $conf->notification->email_from,
+            $mesg,
+            array(),
+            array(),
+            array(),
+            '',
+            '',
+            0,
+            $msgishtml
 		);
 
 		if ($mailfile->sendfile())

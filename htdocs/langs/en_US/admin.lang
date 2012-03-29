@@ -861,6 +861,7 @@ MAIN_PROXY_PASS=Password to use the proxy server
 DefineHereComplementaryAttributes=Define here all atributes, not already available by default, and that you want to be supported for %s.
 ExtraFields=Complementary attributes
 ExtraFieldHasWrongValue=Attribut %s has a wrong value.
+AlphaNumOnlyCharsAndNoSpace=only alphanumericals characters without space
 SendingMailSetup=Setup of sendings by email
 SendmailOptionNotComplete=Warning, on some Linux systems, to send email from your email, sendmail execution setup must conatins option -ba (parameter mail.force_extra_parameters into your php.ini file). If some recipients never receive emails, try to edit this PHP parameter with mail.force_extra_parameters = -ba).
 PathToDocuments=Path to documents

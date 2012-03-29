@@ -168,7 +168,7 @@ elseif ($action == 'setlabel' && $user->rights->fournisseur->facture->creer)
     if ($result < 0) dol_print_error($db);
 }
 
-elseif ($action == 'setdate' && $user->rights->fournisseur->facture->creer)
+elseif ($action == 'setdatef' && $user->rights->fournisseur->facture->creer)
 {
     $object->fetch($id);
     $object->date=dol_mktime(12,0,0,$_POST['datefmonth'],$_POST['datefday'],$_POST['datefyear']);
@@ -316,7 +316,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
                             $date_end,
                             0,
                             $lines[$i]->info_bits,
-        					'HT',
+                            'HT',
                             $product_type
                         );
 
@@ -1936,7 +1936,7 @@ else
             $formmail->withcancel=1;
             // Tableau des substitutions
             $formmail->substit['__FACREF__']=$object->ref;
-            $formmail->substit['__SIGNATURE__']='';
+            $formmail->substit['__SIGNATURE__']=$user->signature;
             $formmail->substit['__PERSONALIZED__']='';
             // Tableau des parametres complementaires
             $formmail->param['action']='send';
