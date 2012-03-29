@@ -511,7 +511,7 @@ class ImportCsv extends ModeleImports
 									// Now we check cache is not empty (should not) and key is into cache
 									if (! is_array($this->cachefieldtable[$field.'@'.$table]) || ! in_array($newval,$this->cachefieldtable[$field.'@'.$table]))
 									{
-										$this->errors[$error]['lib']=$langs->trans('ErrorFieldValueNotIn',$key,$newval,$field,$table);
+										$this->errors[$error]['lib']=$langs->transnoentitiesnoconv('ErrorFieldValueNotIn',$key,$newval,$field,$table);
 										$this->errors[$error]['type']='FOREIGNKEY';
 									    $errorforthistable++;
 										$error++;
@@ -520,7 +520,8 @@ class ImportCsv extends ModeleImports
 								// If test is just a static regex
 								else if (! preg_match('/'.$objimport->array_import_regex[0][$val].'/i',$newval))
 								{
-									$this->errors[$error]['lib']=$langs->trans('ErrorWrongValueForField',$key,$newval,$objimport->array_import_regex[0][$val]);
+								    //if ($key == 19) print "xxx".$newval."zzz".$objimport->array_import_regex[0][$val]."<br>";
+									$this->errors[$error]['lib']=$langs->transnoentitiesnoconv('ErrorWrongValueForField',$key,$newval,$objimport->array_import_regex[0][$val]);
 									$this->errors[$error]['type']='REGEX';
 									$errorforthistable++;
 									$error++;
