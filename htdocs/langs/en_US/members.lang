@@ -120,7 +120,6 @@ LastMembersModified=Last %s modified members
 LastSubscriptionsModified=Last %s modified subscriptions
 AttributeName=Attribute name
 FieldEdition=Edition of field %s
-AlphaNumOnlyCharsAndNoSpace=only alphanumericals characters without space
 String=String
 Text=Text
 Int=Int
