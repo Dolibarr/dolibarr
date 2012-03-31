@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012-2012 Vinicius Nogueira    <viniciusvgn@gmail.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,47 +148,54 @@ else
 }
 
 /*
- * Commandes brouillons
+ * Legends / Status
+ * 
+ *      Motivo: Mostrar todos os Status e dar a possibilidade de filtrar apenas um deles 
+ *      Reason: Show all Status and give the possibility to filter only one  
  */
-if ($conf->fournisseur->enabled)
+
+$sql = "SELECT count(cf.rowid), fk_statut";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
+if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " WHERE cf.fk_soc = s.rowid";
+$sql.= " AND s.entity = ".$conf->entity;
+if ($user->societe_id) $sql.=' AND cf.fk_soc = '.$user->societe_id;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+$sql.= " GROUP BY cf.fk_statut";
+
+$resql = $db->query($sql);
+if ($resql)
 {
-    $sql = "SELECT c.rowid, c.ref, s.nom, s.rowid as socid";
-    $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
-    $sql.= ", ".MAIN_DB_PREFIX."societe as s";
-    if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    $sql.= " WHERE c.fk_soc = s.rowid";
-    $sql.= " AND c.entity = ".$conf->entity;
-    $sql.= " AND c.fk_statut = 0";
-    if ($socid) $sql.= " AND c.fk_soc = ".$socid;
-    if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+  $num = $db->num_rows($resql);
+  $i = 0;
 
-    $resql=$db->query($sql);
-    if ($resql)
+  print '<table class="liste" width="100%">';
+
+  print '<tr class="liste_titre"><td>'.$langs->trans("Status").'</td>';
+  print '<td align="right">'.$langs->trans("Nb").'</td>';
+  print "</tr>\n";
+  $var=True;
+
+  while ($i < $num)
     {
-        print '<table class="noborder" width="100%">';
-        print '<tr class="liste_titre">';
-        print '<td colspan="2">'.$langs->trans("DraftOrders").'</td></tr>';
-        $langs->load("orders");
-        $num = $db->num_rows($resql);
-        if ($num)
-        {
-            $i = 0;
-            $var = True;
-            while ($i < $num)
-            {
-                $var=!$var;
-                $obj = $db->fetch_object($resql);
-                print "<tr $bc[$var]>";
-                print '<td nowrap="nowrap">';
-                print "<a href=\"fiche.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";
-                print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,24).'</a></td></tr>';
-                $i++;
-            }
-        }
-        print "</table><br>";
-    }
-}
+      $row = $db->fetch_row($resql);
+      $var=!$var;
 
+      print "<tr $bc[$var]>";
+      print '<td>'.$langs->trans($commandestatic->statuts[$row[1]]).'</td>';
+      print '<td align="right"><a href="liste.php?statut='.$row[1].'">'.$row[0].' '.$commandestatic->LibStatut($row[1],3).'</a></td>';
+
+      print "</tr>\n";
+      $i++;
+    }
+  print "</table><br>";
+  $db->free($resql);
+}
+else
+{
+  dol_print_error($db);
+}
 
 /*
  * List of users allowed
@@ -312,11 +320,54 @@ if ($resql)
 }
 else dol_print_error($db);
 
+/*
+ * Commandes brouillons
+ */
+ // Drafts position of the box changed to a better visualization
+ 
+if ($conf->fournisseur->enabled)
+{
+    $sql = "SELECT c.rowid, c.ref, s.nom, s.rowid as socid";
+    $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
+    $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+    if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql.= " WHERE c.fk_soc = s.rowid";
+    $sql.= " AND c.entity = ".$conf->entity;
+    $sql.= " AND c.fk_statut = 0";
+    if ($socid) $sql.= " AND c.fk_soc = ".$socid;
+    if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+        print '<td colspan="2">'.$langs->trans("DraftOrders").'</td></tr>';
+        $langs->load("orders");
+        $num = $db->num_rows($resql);
+        if ($num)
+        {
+            $i = 0;
+            $var = True;
+            while ($i < $num)
+            {
+                $var=!$var;
+                $obj = $db->fetch_object($resql);
+                print "<tr $bc[$var]>";
+                print '<td nowrap="nowrap">';
+                print "<a href=\"fiche.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";
+                print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,24).'</a></td></tr>';
+                $i++;
+            }
+        }
+        print "</table><br>";
+    }
+}
 
 /*
  * Orders to process
  */
-/*
+ /*
  $sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom, s.rowid as socid";
  $sql.=" FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
  $sql.= ", ".MAIN_DB_PREFIX."societe as s";
