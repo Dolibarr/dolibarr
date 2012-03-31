@@ -317,7 +317,7 @@ if ($result)
                 }
                 else if ($links[$key]['type']=='company') {
                     print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$links[$key]['url_id'].'">';
-                    print img_object($langs->trans('ShowThirdParty'),'company').' ';
+                    print img_object($langs->trans('ShowCompany'),'company').' ';
                     print $links[$key]['label'];
                     print '</a>';
                 }
