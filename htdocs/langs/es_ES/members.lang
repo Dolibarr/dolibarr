@@ -123,7 +123,6 @@ LastMembersModified=Los %s últimos miembros modificados
 LastSubscriptionsModified=Lass %s últimas afiliaciones modificadas
 AttributeName=Nombre del atributo
 FieldEdition=Edición del campo %s
-AlphaNumOnlyCharsAndNoSpace=solamente caracteres alfanuméricos sin espacios
 String=Cadena
 Text=Texto largo
 Int=Numérico

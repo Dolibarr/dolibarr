@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007      Auguria SARL         <info@auguria.org>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2011 	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
 **
  * This program is free software; you can redistribute it and/or modify
@@ -38,8 +38,8 @@ $langs->load("products");
 // Security check
 if (! $user->admin) accessforbidden();
 
-$action = GETPOST("action");
-$value = GETPOST("value");
+$action = GETPOST('action','alpha');
+$value = GETPOST('value','alpha');
 
 
 /*
@@ -56,35 +56,35 @@ else if ($action == 'multiprix_num')
 }
 if ($action == 'multiprix')
 {
-	$multiprix = GETPOST("activate_multiprix");
+	$multiprix = GETPOST('activate_multiprix','alpha');
 
 	$res = dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $multiprix,'chaine',0,'',$conf->entity);
 	$res =dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "5",'chaine',0,'',$conf->entity);
 }
 else if ($action == 'sousproduits')
 {
-	$sousproduits = GETPOST("activate_sousproduits");
+	$sousproduits = GETPOST('activate_sousproduits','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $sousproduits,'chaine',0,'',$conf->entity);
 }
 else if ($action == 'viewProdDescInForm')
 {
-	$view = GETPOST("activate_viewProdDescInForm");
+	$view = GETPOST('activate_viewProdDescInForm','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $view,'chaine',0,'',$conf->entity);
 }
 else if ($action == 'viewProdTextsInThirdpartyLanguage')
 {
-	$view = GETPOST("activate_viewProdTextsInThirdpartyLanguage");
+	$view = GETPOST('activate_viewProdTextsInThirdpartyLanguage','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE", $view,'chaine',0,'',$conf->entity);
 }
 else if ($action == 'usesearchtoselectproduct')
 {
-	$usesearch = GETPOST("activate_usesearchtoselectproduct");
+	$usesearch = GETPOST('activate_usesearchtoselectproduct','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $usesearch,'chaine',0,'',$conf->entity);
 }
 else if ($action == 'set')
 {
-	$const = "PRODUCT_SPECIAL_".strtoupper($_GET["spe"]);
-	if ($_GET["value"]) $res = dolibarr_set_const($db, $const, $value,'chaine',0,'',$conf->entity);
+	$const = "PRODUCT_SPECIAL_".strtoupper(GETPOST('spe','alpha'));
+	if (GETPOST('value','alpha')) $res = dolibarr_set_const($db, $const, $value,'chaine',0,'',$conf->entity);
 	else $res = dolibarr_del_const($db, $const,$conf->entity);
 }
 /*else if ($action == 'useecotaxe')

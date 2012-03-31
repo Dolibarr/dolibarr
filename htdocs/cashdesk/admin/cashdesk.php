@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2012 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,9 @@ require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
 // If socid provided by ajax company selector
 if (! empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id']))
 {
-	$_GET['CASHDESK_ID_THIRDPARTY'] = $_GET['CASHDESK_ID_THIRDPARTY_id'];
-	$_POST['CASHDESK_ID_THIRDPARTY'] = $_POST['CASHDESK_ID_THIRDPARTY_id'];
-	$_REQUEST['CASHDESK_ID_THIRDPARTY'] = $_REQUEST['CASHDESK_ID_THIRDPARTY_id'];
+	$_GET['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id','alpha');
+	$_POST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id','alpha');
+	$_REQUEST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id','alpha');
 }
 
 // Security check
@@ -45,7 +45,7 @@ $langs->load("cashdesk");
 /*
  * Actions
  */
-if (GETPOST("action") == 'set')
+if (GETPOST('action','alpha') == 'set')
 {
 	$db->begin();
 
@@ -54,13 +54,13 @@ if (GETPOST("action") == 'set')
 	if (GETPOST("CASHDESK_ID_WAREHOUSE") < 0)  $_POST["CASHDESK_ID_WAREHOUSE"]='';*/
 
 	$res = dolibarr_set_const($db,"CASHDESK_ID_THIRDPARTY",GETPOST('socid','int'),'chaine',0,'',$conf->entity);
-	$res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CASH",GETPOST("CASHDESK_ID_BANKACCOUNT_CASH"),'chaine',0,'',$conf->entity);
-	$res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CHEQUE",GETPOST("CASHDESK_ID_BANKACCOUNT_CHEQUE"),'chaine',0,'',$conf->entity);
-	$res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CB",GETPOST("CASHDESK_ID_BANKACCOUNT_CB"),'chaine',0,'',$conf->entity);
-	$res = dolibarr_set_const($db,"CASHDESK_ID_WAREHOUSE",GETPOST("CASHDESK_ID_WAREHOUSE"),'chaine',0,'',$conf->entity);
-	$res = dolibarr_set_const($db,"CASHDESK_SERVICES", GETPOST("CASHDESK_SERVICES"),'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CASH",GETPOST('CASHDESK_ID_BANKACCOUNT_CASH','alpha'),'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CHEQUE",GETPOST('CASHDESK_ID_BANKACCOUNT_CHEQUE','alpha'),'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db,"CASHDESK_ID_BANKACCOUNT_CB",GETPOST('CASHDESK_ID_BANKACCOUNT_CB','alpha'),'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db,"CASHDESK_ID_WAREHOUSE",GETPOST('CASHDESK_ID_WAREHOUSE','alpha'),'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db,"CASHDESK_SERVICES", GETPOST('CASHDESK_SERVICES','alpha'),'chaine',0,'',$conf->entity);
 
-	dol_syslog("admin/cashdesk: level ".GETPOST("level"));
+	dol_syslog("admin/cashdesk: level ".GETPOST('level','alpha'));
 
 	if (! $res > 0) $error++;
 
