@@ -1,4 +1,5 @@
 # Dolibarr language file - pt_BR rev. 0.0 - products
+# 2012      Vinícius Nogueira        <viniciusvgn@gmail.com>
 CHARSET=UTF-8
 ProductRef=Ref. Produto
 ProductLabel=Nome do Produto
