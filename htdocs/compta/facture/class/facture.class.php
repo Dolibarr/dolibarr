@@ -35,8 +35,7 @@ require_once(DOL_DOCUMENT_ROOT ."/societe/class/client.class.php");
 
 
 /**
- *	\class      Facture
- *	\brief      Class to manage invoices
+ *	Class to manage invoices
  */
 class Facture extends CommonObject
 {
@@ -78,7 +77,7 @@ class Facture extends CommonObject
     //! 0=draft,
     //! 1=validated (need to be paid),
     //! 2=classified paid partially (close_code='discount_vat','badcustomer') or completely (close_code=null),
-    //! 3=classified abandoned and no payment done (close_code='badcustomer','abandon' ou 'replaced')
+    //! 3=classified abandoned and no payment done (close_code='badcustomer','abandon' or 'replaced')
     var $statut;
     //! Fermeture apres paiement partiel: discount_vat, badcustomer, abandon
     //! Fermeture alors que aucun paiement: replaced (si remplace), abandon

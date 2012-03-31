@@ -131,8 +131,8 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire)
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchASupplierInvoice").'</td></tr>';
 	print "<tr ".$bc[0].">";
 	print "<td>".$langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="18"></td>';
-	print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-	//print "<tr ".$bc[0]."><td>".$langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="18"></td>';
+	print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+	print "<tr $bc[0]><td>".$langs->trans("RefSupplier").':</td><td><input type="text" name="search_ref_supplier" class="flat" size="18"></td>';
 	print '</tr>';
 	print "</table></form><br>";
 }
