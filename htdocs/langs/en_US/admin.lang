@@ -215,6 +215,7 @@ OfficialWebSiteFr=French official web site
 OfficialWiki=Dolibarr documentation on Wiki
 OfficialDemo=Dolibarr online demo
 OfficialMarketPlace=Official market place for external modules/addons
+OfficialWebHostingService=Official web hosting service (Cloud hosting)
 ForDocumentationSeeWiki=For user's or developer's documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank">%s</a></b>
 ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1=This area can help you to get a Help support service on Dolibarr.
