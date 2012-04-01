@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  * Copyright (C) 2011-2012  Juanjo Menent			<jmenent@2byte.es>
  *
@@ -253,13 +253,13 @@ else if ($action == "addline" && $user->rights->ficheinter->creer)
 
         $desc=GETPOST('np_desc','alpha');
         $date_intervention = dol_mktime(GETPOST('dihour','int'), GETPOST('dimin','int'), 0, GETPOST('dimonth','int'), GETPOST('diday','int'), GETPOST('diyear','int'));
-        $duration = convertTime2Seconds(GETPOST('durationhour','int'),GETPOST('durationmin','int'));
+        $duration = convertTime2Seconds(GETPOST('durationhour','int'), GETPOST('durationmin','int'));
 
         $result=$object->addline(
-        	$id,
-        	$desc,
-        	$date_intervention,
-        	$duration
+            $id,
+            $desc,
+            $date_intervention,
+            $duration
         );
 
         // Define output language
@@ -603,7 +603,7 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
                 $mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
                 dol_syslog('Recipient email is empty');
             }
-/*        }
+		/*}
         else
         {
             $langs->load("errors");
@@ -1212,8 +1212,8 @@ else if ($id > 0 || ! empty($ref))
         $somethingshown=$formfile->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
     	/*
-    	* Linked object block
-    	*/
+    	 * Linked object block
+    	 */
     	$somethingshown=$object->showLinkedObjectBlock();
 
     	print '</td><td valign="top" width="50%">';
@@ -1307,7 +1307,8 @@ else if ($id > 0 || ! empty($ref))
     }
 }
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>
