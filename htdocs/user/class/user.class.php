@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
 
 /**
- *	Class to manage users
+ *	Class to manage Dolibarr users
  */
 class User extends CommonObject
 {
@@ -1279,7 +1279,6 @@ class User extends CommonObject
 			$sql.= " WHERE rowid = ".$this->id;
 
 			dol_syslog(get_class($this)."::setPassword sql=hidden", LOG_DEBUG);
-			//dol_syslog("User::Password sql=".$sql);
 			$result = $this->db->query($sql);
 			if ($result)
 			{
@@ -1430,7 +1429,7 @@ class User extends CommonObject
 			$url = $urlwithouturlroot.DOL_URL_ROOT.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordmd5=".dol_hash($password);
 			$mesg.= $url."\n\n";
 			$mesg.= "If you didn't ask anything, just forget this email\n\n";
-			dol_syslog("User::send_password url=".$url);
+			dol_syslog(get_class($this)."::send_password url=".$url);
 		}
 		$mailfile = new CMailFile(
             $subject,
