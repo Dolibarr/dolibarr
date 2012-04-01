@@ -169,6 +169,27 @@ function pdf_getPDFFontSize($outputlangs)
 
 
 /**
+ * Return height to use for Logo onot PDF
+ *
+ * @param	string		$logo		Full path to logo file to use
+ * @return	number
+ */
+function pdf_getHeightForLogo($logo)
+{
+    $height=22; $maxwidth=130;
+    include_once(DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php');
+    $tmp=dol_getImageSize($logo);
+    if ($tmp['height'])
+    {
+        $width=round($height*$tmp['width']/$tmp['height']);
+        if ($width > $maxwidth) $height=$height*$maxwidth/$width;
+    }
+    //print $tmp['width'].' '.$tmp['height'].' '.$width; exit;
+    return $height;
+}
+
+
+/**
  *   	Return a string with full address formated
  *
  * 		@param	Translate	$outputlangs		Output langs object
