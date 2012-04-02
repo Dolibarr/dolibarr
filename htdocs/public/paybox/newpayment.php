@@ -126,6 +126,8 @@ if (GETPOST("action") == 'dopayment')
 	elseif (empty($email))          $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
 	elseif (! isValidEMail($email)) $mesg=$langs->trans("ErrorBadEMail",$email);
 	elseif (empty($FULLTAG))        $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
+    elseif (dol_strlen($urlok) > 150) $mesg='Error urlok too long '.$urlok;
+    elseif (dol_strlen($urlko) > 150) $mesg='Error urlko too long '.$urlko;
 
 	if (empty($mesg))
 	{
@@ -302,7 +304,8 @@ if (GETPOST("source") == 'order' && $valid)
     if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
     $amount=price2num($amount);
 
-	$fulltag='IR='.$order->ref.'.TPID='.$order->thirdparty->id.'.TP='.strtr($order->thirdparty->name,"-"," ");
+	$fulltag='IR='.$order->ref.'.TPID='.$order->thirdparty->id;
+	//$fulltag.='.TP='.strtr($order->thirdparty->name,"-"," ");    We disable this because url that will contains FULLTAG must be lower than 150
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
 
@@ -389,7 +392,8 @@ if (GETPOST("source") == 'invoice' && $valid)
     if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
     $amount=price2num($amount);
 
-	$fulltag='IR='.$invoice->ref.'.TPID='.$invoice->thirdparty->id.'.TP='.strtr($invoice->thirdparty->name,"-"," ");
+	$fulltag='IR='.$invoice->ref.'.TPID='.$invoice->thirdparty->id;
+	//$fulltag.='.TP='.strtr($invoice->thirdparty->name,"-"," ");        We disable this because url that will contains FULLTAG must be lower than 150
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
 
@@ -519,7 +523,8 @@ if (GETPOST("source") == 'contractline' && $valid)
     if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
     $amount=price2num($amount);
 
-	$fulltag='CLR='.$contractline->ref.'.CR='.$contract->ref.'.TPID='.$contract->thirdparty->id.'.TP='.strtr($contract->thirdparty->name,"-"," ");
+	$fulltag='CLR='.$contractline->ref.'.CR='.$contract->ref.'.TPID='.$contract->thirdparty->id;
+	//$fulltag.='.TP='.strtr($contract->thirdparty->name,"-"," ");    We disable this because url that will contains FULLTAG must be lower than 150
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
 
@@ -652,7 +657,8 @@ if (GETPOST("source") == 'membersubscription' && $valid)
     if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
     $amount=price2num($amount);
 
-	$fulltag='MID='.$member->id.'.M='.strtr($member->getFullName($langs),"-"," ");
+	$fulltag='MID='.$member->id;
+	//$fulltag.='.M='.dol_trunc(strtr($member->getFullName($langs),"-"," "),12);        We disable this because url that will contains FULLTAG must be lower than 150
 	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
 
