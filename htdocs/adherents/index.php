@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,8 +129,12 @@ print "</tr>\n";
 $var=false;
 print "<tr $bc[$var]>";
 print '<td>';
-print $langs->trans("Name").':</td><td><input type="text" name="search" class="flat" size="16">';
-print '</td><td rowspan="2"><input class="button" type="submit" value="'.$langs->trans("Search").'"></td></tr>';
+print $langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="16">';
+print '</td><td rowspan="3"><input class="button" type="submit" value="'.$langs->trans("Search").'"></td></tr>';
+print "<tr $bc[$var]>";
+print '<td>';
+print $langs->trans("Name").':</td><td><input type="text" name="search_nom" class="flat" size="16">';
+print '</td></tr>';
 print "<tr $bc[$var]>";
 print '<td>';
 print $langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="16">';
