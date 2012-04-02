@@ -1,13 +1,13 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- *e
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -116,7 +116,7 @@ if (! empty($SECUREKEY))
 $urlok=preg_replace('/&$/','',$urlok);  // Remove last &
 $urlko=preg_replace('/&$/','',$urlko);  // Remove last &
 
-// Clean parameters
+// Check parameters
 $PAYPAL_API_OK="";
 if ($urlok) $PAYPAL_API_OK=$urlok;
 $PAYPAL_API_KO="";
@@ -341,7 +341,7 @@ if (! GETPOST("source") && $valid)
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount",'int').'">';
+	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
 	else {
 		print '<b>'.price($amount).'</b>';
         print '<input type="hidden" name="amount" value="'.$amount.'">';
@@ -420,7 +420,7 @@ if (GETPOST("source") == 'order' && $valid)
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount",'int').'">';
+	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
 	else {
 		print '<b>'.price($amount).'</b>';
         print '<input type="hidden" name="amount" value="'.$amount.'">';
@@ -523,7 +523,7 @@ if (GETPOST("source") == 'invoice' && $valid)
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount",'int').'">';
+	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
 	else {
 		print '<b>'.price($amount).'</b>';
         print '<input type="hidden" name="amount" value="'.$amount.'">';
@@ -714,7 +714,7 @@ if (GETPOST("source") == 'contractline' && $valid)
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount",'int').'">';
+	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
 	else {
 		print '<b>'.price($amount).'</b>';
         print '<input type="hidden" name="amount" value="'.$amount.'">';
@@ -833,11 +833,18 @@ if (GETPOST("source") == 'membersubscription' && $valid)
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount",'int').'">';
+	if (empty($amount) || ! is_numeric($amount))
+	{
+	    $valtoshow=GETPOST("newamount",'int');
+	    if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
+	    print '<input class="flat" size="8" type="text" name="newamount" value="'.$valtoshow.'">';
+	}
 	else {
-		print '<b>'.price($amount).'</b>';
-        print '<input type="hidden" name="amount" value="'.$amount.'">';
-		print '<input type="hidden" name="newamount" value="'.$amount.'">';
+	    $valtoshow=$amount;
+	    if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
+	    print '<b>'.price($valtoshow).'</b>';
+        print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
+		print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
 	}
 	// Currency
 	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
