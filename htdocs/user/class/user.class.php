@@ -1431,7 +1431,7 @@ class User extends CommonObject
 			$mesg.= "If you didn't ask anything, just forget this email\n\n";
 			dol_syslog(get_class($this)."::send_password url=".$url);
 		}
-		$mailfile = new CMailFile(
+        $mailfile = new CMailFile(
             $subject,
             $this->email,
             $conf->notification->email_from,
