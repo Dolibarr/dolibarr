@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,6 +106,11 @@ if ($type > 0)
 if (isset($_GET["statut"]) || isset($_POST["statut"]))
 {
 	$sql.=" AND d.statut in (".$statut.")";     // Peut valoir un nombre ou liste de nombre separes par virgules
+}
+if ($search_ref)
+{
+	if (is_numeric($search_ref)) $sql.= " AND (d.rowid = ".$search_ref.")";
+	else $sql.=" AND 1 = 2";    // Always wrong
 }
 if ($search_nom)
 {
@@ -257,23 +262,27 @@ if ($resql)
 		$objp = $db->fetch_object($resql);
 
 		$datefin=$db->jdate($objp->datefin);
+		$memberstatic->id=$objp->rowid;
+		$memberstatic->ref=$objp->rowid;
+		$memberstatic->lastname=$objp->lastname;
+		$memberstatic->firstname=$objp->firstname;
 
 		$var=!$var;
 		print "<tr ".$bc[$var].">";
 
 		// Ref
-		print "<td>".$objp->rowid."</td>\n";
+		print "<td>";
+		print $memberstatic->getNomUrl(1);
+		print "</td>\n";
 
 		// Lastname
-		$memberstatic->lastname=$objp->lastname;
-		$memberstatic->firstname=$objp->firstname;
 		if ($objp->societe != '')
 		{
-			print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowMember"),"user").' '.dol_trunc($memberstatic->getFullName($langs))." / ".dol_trunc($objp->societe,12)."</a></td>\n";
+			print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".dol_trunc($memberstatic->getFullName($langs))." / ".dol_trunc($objp->societe,12)."</a></td>\n";
 		}
 		else
 		{
-			print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowMember"),"user").' '.dol_trunc($memberstatic->getFullName($langs))."</a></td>\n";
+			print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".dol_trunc($memberstatic->getFullName($langs))."</a></td>\n";
 		}
 
 		// Login
