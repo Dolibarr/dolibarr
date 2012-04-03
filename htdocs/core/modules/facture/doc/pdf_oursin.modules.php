@@ -1005,7 +1005,7 @@ class pdf_oursin extends ModelePDFFactures
 		$posy+=1;
 
 		// Show list of linked objects
-		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 'L', $default_font_size, $hookmanager);
+		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'L', $default_font_size, $hookmanager);
 
 		// Amount in (at tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
