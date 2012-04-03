@@ -279,6 +279,7 @@ ActionRunningShort=Iniciado
 ActionDoneShort=Terminado
 CompanyFundation=Empresa ou Instituição
 ContactsForCompany=Contatos desta empresa
+ContactsAddressesForCompany=Contatos/Endereços do Cliente ou Fornecedor
 ActionsOnCompany=Ações nesta sociedade
 NActions=%s ações
 NActionsLate=%s em atraso
