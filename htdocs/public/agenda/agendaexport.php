@@ -155,16 +155,15 @@ if ($format == 'ical' || $format == 'vcal')
 		// Ajout directives pour resoudre bug IE
 		//header('Cache-Control: Public, must-revalidate');
 		//header('Pragma: public');
-		
-		// Google Agenda import tweak
-		header('Cache-Control: max-age=7200, private, must-revalidate');
+		if ($cachedelay) header('Cache-Control: max-age='.$cachedelay.', private, must-revalidate');
+		else header('Cache-Control: private, must-revalidate');
 
 		// Clean parameters
 		$outputfile=$conf->agenda->dir_temp.'/'.$filename;
 		$result=readfile($outputfile);
 		if (! $result) print 'File '.$outputfile.' was empty.';
 
-	//	header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
+	    //header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
 		exit;
 	}
 	else
