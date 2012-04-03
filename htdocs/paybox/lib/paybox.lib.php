@@ -221,7 +221,7 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     print '<input type="hidden" name="PBX_TXT" value="'.$IBS_TXT.'">'."\n";
     print '<input type="hidden" name="PBX_BKGD" value="'.$IBS_BKGD.'">'."\n";
     print '<input type="hidden" name="PBX_WAIT" value="'.$IBS_WAIT.'">'."\n";
-    print '<input type="hidden" name="PBX_LANG" value="'.$IBS_LANG.'">'."\n";
+    print '<input type="hidden" name="PBX_LANGUE" value="'.$IBS_LANG.'">'."\n";
     print '<input type="hidden" name="PBX_OUTPUT" value="'.$IBS_OUTPUT.'">'."\n";
     print '<input type="hidden" name="PBX_SOURCE" value="'.$PBX_SOURCE.'">'."\n";
     print '<input type="hidden" name="PBX_TYPEPAIEMENT" value="'.$PBX_TYPEPAIEMENT.'">'."\n";

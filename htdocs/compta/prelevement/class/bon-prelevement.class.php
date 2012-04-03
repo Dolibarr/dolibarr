@@ -31,8 +31,7 @@ if ($conf->esaeb->enabled) require_once(DOL_DOCUMENT_ROOT.'/esaeb/class/esaeb19.
 
 
 /**
- *	\class      BonPrelevement
- *	\brief      Classe permettant la gestion des bons de prelevements
+ *	Class to manage withdrawal receipts
  */
 class BonPrelevement extends CommonObject
 {
@@ -1173,11 +1172,11 @@ class BonPrelevement extends CommonObject
 
         $result = 0;
 
-        dol_syslog("BonPrelevement::Generate build file ".$this->filename);
+        dol_syslog(get_class($this)."::Generate build file ".$this->filename);
 
         $this->file = fopen($this->filename,"w");
 
-        //Build file for Spain
+        // Build file for Spain
         if ($mysoc->country_code=='ES')
         {
             if ($conf->esaeb->enabled)
@@ -1210,14 +1209,14 @@ class BonPrelevement extends CommonObject
 
                         $esaeb19->agregaRecibo(
                             $idOrdenante,
-    	                	"idcliente".$i+1,
+                            "idcliente".$i+1,
                             $obj->client_nom,
                             $obj->code_banque,
                             $obj->code_guichet,
                             $obj->cle_rib,
                             $obj->number,
                             $obj->amount,
-    	                	"Fra.".$obj->facnumber." ".$obj->amount
+                            "Fra.".$obj->facnumber." ".$obj->amount
                         );
 
                         $this->total = $this->total + $obj->amount;

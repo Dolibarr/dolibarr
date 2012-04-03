@@ -34,8 +34,7 @@ include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
 
 
 /**
- *
- *	Classe de description et activation du module Produit
+ *	Class descriptor of Product module
  */
 class modProduct extends DolibarrModules
 {

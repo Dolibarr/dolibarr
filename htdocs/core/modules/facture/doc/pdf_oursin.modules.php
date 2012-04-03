@@ -836,9 +836,8 @@ class pdf_oursin extends ModelePDFFactures
 		{
 			if (is_readable($logo))
 			{
-				$taille=getimagesize($logo);
-				$length=$taille[0]/2.835;
-				$pdf->Image($logo, $this->marges['g'], $this->marges['h'], 0, 22);	// width=0 (auto), max height=22
+			    $height=pdf_getHeightForLogo($logo);
+				$pdf->Image($logo, $this->marges['g'], $this->marges['h'], 0, $height);	// width=0 (auto)
 			}
 			else
 			{

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,12 +150,7 @@ llxHeader('',$langs->trans("SubscriptionCard"),'EN:Module_Foundations|FR:Module_
 $form = new Form($db);
 
 
-
-if ($errmsg)
-{
-    print '<div class="error">'.$errmsg.'</div>';
-    print "\n";
-}
+dol_htmloutput_errors($errmsg);
 
 
 if ($user->rights->adherent->cotisation->creer && $action == 'edit')
@@ -316,9 +311,14 @@ if ($rowid && $action != 'edit')
 	print '<td>'.$langs->trans("Member").'</td><td class="valeur" colspan="3">'.$adh->getNomUrl(1,0,'subscription').'</td>';
     print '</tr>';
 
+    // Date record
+    /*print '<tr>';
+	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="3">'.dol_print_date($subscription->datec,'dayhour').'</td>';
+    print '</tr>';*/
+
     // Date subscription
     print '<tr>';
-	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="3">'.dol_print_date($subscription->dateh,'dayhour').'</td>';
+	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="3">'.dol_print_date($subscription->dateh,'day').'</td>';
     print '</tr>';
 
     // Date end subscription

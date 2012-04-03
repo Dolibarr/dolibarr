@@ -444,19 +444,19 @@ function dol_escape_htmltag($stringtoescape,$keepb=0)
  *	Write log message into outputs. Possible outputs can be:
  *	A file if SYSLOG_FILE_ON defined:   	file name is then defined by SYSLOG_FILE
  *	Syslog if SYSLOG_SYSLOG_ON defined:    	facility is then defined by SYSLOG_FACILITY
- * 	Warning, syslog functions are bugged on Windows, generating memory protection faults. To solve
- *	this, use logging to files instead of syslog (see setup of module).
- *	Note: If SYSLOG_FILE_NO_ERROR defined, we never output any error message when writing to log fails.
+ *  Warning, syslog functions are bugged on Windows, generating memory protection faults. To solve
+ *  this, use logging to files instead of syslog (see setup of module).
+ *  Note: If SYSLOG_FILE_NO_ERROR defined, we never output any error message when writing to log fails.
  *  Note: You can get log message into html sources by adding parameter &logtohtml=1 (constant MAIN_LOGTOHTML must be set)
  *
- *	This function works only if syslog module is enabled.
+ *  This function works only if syslog module is enabled.
  * 	This must not use any call to other function calling dol_syslog (avoid infinite loop).
  *
  * 	@param  string		$message	Line to log. Ne doit pas etre traduit si level = LOG_ERR
- *	@param  int			$level		Log level
+ *  @param  int			$level		Log level
  *									On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
  *									On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
- *	@return	void
+ *  @return	void
  */
 function dol_syslog($message, $level=LOG_INFO)
 {
@@ -880,8 +880,8 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
  *  WARNING: This function always use PHP server timezone to return locale informations.
  *  Usage must be avoid.
  *
- *	@param	timestamp	$timestamp		Timestamp
- *	@param	boolean		$fast			Fast mode
+ *	@param	timestamp	$timestamp      Timestamp
+ *	@param	boolean		$fast           Fast mode
  *	@return	array						Array of informations
  *										If no fast mode:
  *										'seconds' => $secs,
