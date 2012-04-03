@@ -20,7 +20,7 @@
 
 
 /**
- *      \file       scripts/emailings/mailing-read.php
+ *      \file       scripts/emailings/mailing-usubscribe.php
  *      \ingroup    mailing
  *      \brief      Script use to update unsubcribe contact to prospect mailing list
  */
@@ -45,13 +45,13 @@ if (($id!='') && ($unsuscrib=='1'))
 	//Udate status of mail in Destinaries maling list
 	$statut='3';
 	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE tag='".$id."'";
-	dol_syslog("public/emailing/mailing-read.php : Mail unsubcribe : ".$sql, LOG_DEBUG);
+	dol_syslog("public/emailing/mailing-usubscribe.php : Mail unsubcribe : ".$sql, LOG_DEBUG);
 	
 	$resql=$db->query($sql);
 	
 	//Update status communication of prospect
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=-1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag='".$id."' AND source_type='thirdparty')";
-	dol_syslog("public/emailing/mailing-read.php : Mail unsubcribe : ".$sql, LOG_DEBUG);
+	dol_syslog("public/emailing/mailing-usubscribe.php : Mail unsubcribe : ".$sql, LOG_DEBUG);
 	
 	$resql=$db->query($sql);
 
