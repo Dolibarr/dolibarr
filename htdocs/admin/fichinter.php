@@ -36,11 +36,13 @@ $langs->load("admin");
 $langs->load("errors");
 $langs->load("interventions");
 
-if (!$user->admin)
-accessforbidden();
+if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
+$label = GETPOST('label','alpha');
+$scandir = GETPOST('scandir','alpha');
+$type='ficheinter';
 
 
 /*
@@ -146,30 +148,13 @@ if ($action == 'specimen')
 
 if ($action == 'set')
 {
-	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
-
-	$type='ficheinter';
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
-    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
-    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
-    $sql.= ")";
-	if ($db->query($sql))
-	{
-
-	}
+	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
 if ($action == 'del')
 {
-	$type='ficheinter';
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql.= " WHERE nom = '".$db->escape($value)."'";
-	$sql.= " AND type = '".$type."'";
-	$sql.= " AND entity = ".$conf->entity;
-
-	if ($db->query($sql))
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
 	{
         if ($conf->global->FICHEINTER_ADDON_PDF == "$value") dolibarr_del_const($db, 'FICHEINTER_ADDON_PDF',$conf->entity);
 	}
@@ -177,11 +162,6 @@ if ($action == 'del')
 
 if ($action == 'setdoc')
 {
-	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
-
-	$db->begin();
-
 	if (dolibarr_set_const($db, "FICHEINTER_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
 	{
 		// La constante qui a ete lue en avant du nouveau set
@@ -190,28 +170,10 @@ if ($action == 'setdoc')
 	}
 
 	// On active le modele
-	$type='ficheinter';
-	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del.= " WHERE nom = '".$db->escape($value)."'";
-	$sql_del.= " AND type = '".$type."'";
-	$sql_del.= " AND entity = ".$conf->entity;
-	dol_syslog("fichinter: sql_del=".$sql_del);
-	$result1=$db->query($sql_del);
-
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($value)."', '".$type."', ".$conf->entity.", ";
-    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
-    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
-    $sql.= ")";
-	dol_syslog("fichinter: sql_del=".$sql_del);
-	$result2=$db->query($sql);
-	if ($result1 && $result2)
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
 	{
-		$db->commit();
-	}
-	else
-	{
-		$db->rollback();
+		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
 }
 
@@ -372,9 +334,9 @@ print "</tr>\n";
 clearstatcache();
 
 $var=true;
-foreach ($conf->file->dol_document_root as $dirroot)
+foreach ($dirmodels as $reldir)
 {
-	$dir = $dirroot . "/core/modules/fichinter/doc/";
+	$dir = dol_buildpath($reldir."core/modules/fichinter/doc/");
 
 	if (is_dir($dir))
 	{
