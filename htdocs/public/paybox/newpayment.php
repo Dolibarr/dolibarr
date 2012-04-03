@@ -80,9 +80,22 @@ $urlok=$urlwithouturlroot.DOL_URL_ROOT.'/public/paybox/paymentok.php?';
 $urlko=$urlwithouturlroot.DOL_URL_ROOT.'/public/paybox/paymentko.php?';
 
 // Complete urls
+$SOURCE=GETPOST("source",'alpha');
+$ref=$REF=GETPOST('ref','alpha');
 $TAG=GETPOST("tag",'alpha');
 $FULLTAG=GETPOST("fulltag",'alpha');  // fulltag is tag with more informations
+$SECUREKEY=GETPOST("securekey");	        // Secure key
 
+if (! empty($SOURCE))
+{
+    $urlok.='source='.urlencode($SOURCE).'&';
+    $urlko.='source='.urlencode($SOURCE).'&';
+}
+if (! empty($REF))
+{
+    $urlok.='ref='.urlencode($REF).'&';
+    $urlko.='ref='.urlencode($REF).'&';
+}
 if (!empty($TAG))
 {
     $urlok.='tag='.urlencode($TAG).'&';
@@ -95,6 +108,9 @@ if (!empty($FULLTAG))
 }
 $urlok=preg_replace('/&$/','',$urlok);  // Remove last &
 $urlko=preg_replace('/&$/','',$urlko);  // Remove last &
+
+// Check security token
+$valid=true;
 
 
 /*
@@ -110,6 +126,8 @@ if (GETPOST("action") == 'dopayment')
 	elseif (empty($email))          $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
 	elseif (! isValidEMail($email)) $mesg=$langs->trans("ErrorBadEMail",$email);
 	elseif (empty($FULLTAG))        $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
+    elseif (dol_strlen($urlok) > 150) $mesg='Error urlok too long '.$urlok;
+    elseif (dol_strlen($urlko) > 150) $mesg='Error urlko too long '.$urlko;
 
 	if (empty($mesg))
 	{
@@ -142,12 +160,12 @@ print '<center>';
 print '<form id="dolpaymentform" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="dopayment">';
-print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
 print '<input type="hidden" name="tag" value="'.GETPOST("tag",'alpha').'">';
 print '<input type="hidden" name="suffix" value="'.GETPOST("suffix",'alpha').'">';
 print "\n";
 print '<!-- Form to send a Paybox payment -->'."\n";
 print '<!-- PAYBOX_CREDITOR = '.$conf->global->PAYPAL_CREDITOR.' -->'."\n";
+print '<!-- creditor = '.$creditor.' -->'."\n";
 print '<!-- urlok = '.$urlok.' -->'."\n";
 print '<!-- urlko = '.$urlko.' -->'."\n";
 print "\n";
@@ -212,7 +230,7 @@ $var=false;
 
 
 // Free payment
-if (! GETPOST("source"))
+if (! GETPOST("source") && $valid)
 {
 	$found=true;
     $tag=GETPOST("tag");
@@ -230,7 +248,11 @@ if (! GETPOST("source"))
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount").'">';
+	if (empty($amount) || ! is_numeric($amount))
+	{
+        print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
+	    print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+	}
 	else {
 		print '<b>'.price($amount).'</b>';
         print '<input type="hidden" name="amount" value="'.$amount.'">';
@@ -259,7 +281,7 @@ if (! GETPOST("source"))
 
 
 // Payment on customer order
-if (GETPOST("source") == 'order')
+if (GETPOST("source") == 'order' && $valid)
 {
 	$found=true;
 	$langs->load("orders");
@@ -267,7 +289,7 @@ if (GETPOST("source") == 'order')
 	require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 
 	$order=new Commande($db);
-	$result=$order->fetch('',$_REQUEST["ref"]);
+	$result=$order->fetch('',$ref);
 	if ($result < 0)
 	{
 		$mesg=$order->error;
@@ -282,8 +304,9 @@ if (GETPOST("source") == 'order')
     if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
     $amount=price2num($amount);
 
-	$fulltag='IR='.$order->ref.'.TPID='.$order->thirdparty->id.'.TP='.strtr($order->thirdparty->name,"-"," ");
-	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
+	$fulltag='IR='.$order->ref.'.TPID='.$order->thirdparty->id;
+	//$fulltag.='.TP='.strtr($order->thirdparty->name,"-"," ");    We disable this because url that will contains FULLTAG must be lower than 150
+	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
@@ -312,7 +335,11 @@ if (GETPOST("source") == 'order')
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount").'">';
+	if (empty($amount) || ! is_numeric($amount))
+	{
+        print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
+	    print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+	}
 	else {
 		print '<b>'.price($amount).'</b>';
         print '<input type="hidden" name="amount" value="'.$amount.'">';
@@ -342,7 +369,7 @@ if (GETPOST("source") == 'order')
 
 
 // Payment on customer invoice
-if (GETPOST("source") == 'invoice')
+if (GETPOST("source") == 'invoice' && $valid)
 {
 	$found=true;
 	$langs->load("bills");
@@ -350,7 +377,7 @@ if (GETPOST("source") == 'invoice')
 	require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 
 	$invoice=new Facture($db);
-	$result=$invoice->fetch('',$_REQUEST["ref"]);
+	$result=$invoice->fetch('',$ref);
 	if ($result < 0)
 	{
 		$mesg=$invoice->error;
@@ -361,12 +388,13 @@ if (GETPOST("source") == 'invoice')
 		$result=$invoice->fetch_thirdparty($invoice->socid);
 	}
 
-	$amount=$invoice->total_ttc - $invoice->getSommePaiement();
+	$amount=price2num($invoice->total_ttc - $invoice->getSommePaiement());
     if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
     $amount=price2num($amount);
 
-	$fulltag='IR='.$invoice->ref.'.TPID='.$invoice->thirdparty->id.'.TP='.strtr($invoice->thirdparty->name,"-"," ");
-	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
+	$fulltag='IR='.$invoice->ref.'.TPID='.$invoice->thirdparty->id;
+	//$fulltag.='.TP='.strtr($invoice->thirdparty->name,"-"," ");        We disable this because url that will contains FULLTAG must be lower than 150
+	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
@@ -395,7 +423,11 @@ if (GETPOST("source") == 'invoice')
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount").'">';
+	if (empty($amount) || ! is_numeric($amount))
+	{
+        print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
+	    print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+	}
 	else {
 		print '<b>'.price($amount).'</b>';
         print '<input type="hidden" name="amount" value="'.$amount.'">';
@@ -424,7 +456,7 @@ if (GETPOST("source") == 'invoice')
 }
 
 // Payment on contract line
-if (GETPOST("source") == 'contractline')
+if (GETPOST("source") == 'contractline' && $valid)
 {
 	$found=true;
 	$langs->load("contracts");
@@ -432,7 +464,7 @@ if (GETPOST("source") == 'contractline')
 	require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 
 	$contractline=new ContratLigne($db);
-	$result=$contractline->fetch('',$_REQUEST["ref"]);
+	$result=$contractline->fetch('',$ref);
 	if ($result < 0)
 	{
 		$mesg=$contractline->error;
@@ -491,12 +523,13 @@ if (GETPOST("source") == 'contractline')
     if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
     $amount=price2num($amount);
 
-	$fulltag='CLR='.$contractline->ref.'.CR='.$contract->ref.'.TPID='.$contract->thirdparty->id.'.TP='.strtr($contract->thirdparty->name,"-"," ");
-	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
+	$fulltag='CLR='.$contractline->ref.'.CR='.$contract->ref.'.TPID='.$contract->thirdparty->id;
+	//$fulltag.='.TP='.strtr($contract->thirdparty->name,"-"," ");    We disable this because url that will contains FULLTAG must be lower than 150
+	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
 
 	$qty=1;
-	if (isset($_REQUEST["qty"])) $qty=$_REQUEST["qty"];
+	if (GETPOST('qty')) $qty=GETPOST('qty');
 
 	// Creditor
 	$var=!$var;
@@ -566,7 +599,11 @@ if (GETPOST("source") == 'contractline')
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.$_REQUEST["newamount"].'">';
+	if (empty($amount) || ! is_numeric($amount))
+	{
+        print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
+	    print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
+	}
 	else {
 		print '<b>'.price($amount).'</b>';
         print '<input type="hidden" name="amount" value="'.$amount.'">';
@@ -596,7 +633,7 @@ if (GETPOST("source") == 'contractline')
 }
 
 // Payment on member subscription
-if (GETPOST("source") == 'membersubscription')
+if (GETPOST("source") == 'membersubscription' && $valid)
 {
 	$found=true;
 	$langs->load("members");
@@ -605,7 +642,7 @@ if (GETPOST("source") == 'membersubscription')
 	require_once(DOL_DOCUMENT_ROOT."/adherents/class/cotisation.class.php");
 
 	$member=new Adherent($db);
-	$result=$member->fetch('',GETPOST("ref"));
+	$result=$member->fetch('',$ref);
 	if ($result < 0)
 	{
 		$mesg=$member->error;
@@ -620,8 +657,9 @@ if (GETPOST("source") == 'membersubscription')
     if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
     $amount=price2num($amount);
 
-	$fulltag='MID='.$member->id.'.M='.strtr($member->getFullName($langs),"-"," ");
-	if (! empty($_REQUEST["tag"])) { $tag=$_REQUEST["tag"]; $fulltag.='.TAG='.$_REQUEST["tag"]; }
+	$fulltag='MID='.$member->id;
+	//$fulltag.='.M='.dol_trunc(strtr($member->getFullName($langs),"-"," "),12);        We disable this because url that will contains FULLTAG must be lower than 150
+	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
 	$fulltag=dol_string_unaccent($fulltag);
 
 	// Creditor
@@ -639,7 +677,7 @@ if (GETPOST("source") == 'membersubscription')
 	// Object
 	$var=!$var;
 	$text='<b>'.$langs->trans("PaymentSubscription").'</b>';
-	print '<tr><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
+	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
 	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
 	print '<input type="hidden" name="ref" value="'.$member->ref.'">';
@@ -667,11 +705,19 @@ if (GETPOST("source") == 'membersubscription')
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
 	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
 	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-	if (empty($amount) || ! is_numeric($amount)) print '<input class="flat" size=8 type="text" name="newamount" value="'.$_REQUEST["newamount"].'">';
+	if (empty($amount) || ! is_numeric($amount))
+	{
+	    $valtoshow=GETPOST("newamount",'int');
+	    if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
+        print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
+	    print '<input class="flat" size="8" type="text" name="newamount" value="'.$valtoshow.'">';
+	}
 	else {
-		print '<b>'.price($amount).'</b>';
-        print '<input type="hidden" name="amount" value="'.$amount.'">';
-		print '<input type="hidden" name="newamount" value="'.$amount.'">';
+	    $valtoshow=$amount;
+	    if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
+	    print '<b>'.price($valtoshow).'</b>';
+	    print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
+	    print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
 	}
 	// Currency
 	print ' <b>'.$langs->trans("Currency".$currency).'</b>';

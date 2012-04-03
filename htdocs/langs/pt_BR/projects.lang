@@ -2,7 +2,8 @@
 CHARSET=UTF-8
 Project=Projeto
 Projects=Projetos
-SharedProject=Projeto Partilhado
+SharedProject=Projeto Compartilhado
+PrivateProject=Contatos do Projeto
 Myprojects=Os Meus Projetos
 ProjectsArea=Área de Projetos
 NewProject=Novo Projeto

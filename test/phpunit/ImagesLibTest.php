@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
  */
 
 /**
- *      \file       test/phpunit/PdfDocTest.php
+ *      \file       test/phpunit/ImagesLibTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *		\remarks	To run this script as CLI:  phpunit filename.php
@@ -27,10 +28,7 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
-require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/pdf.lib.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/doc.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/images.lib.php';
 
 if (empty($user->id))
 {
@@ -48,7 +46,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class PdfDocTest extends PHPUnit_Framework_TestCase
+class ImagesLibTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -59,9 +57,9 @@ class PdfDocTest extends PHPUnit_Framework_TestCase
 	 * Constructor
 	 * We save global variables into local variables
 	 *
-	 * @return PdfDocTest
+	 * @return ImagesLibTest
 	 */
-	function PdfDocTest()
+	function ImagesLibTest()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -116,50 +114,33 @@ class PdfDocTest extends PHPUnit_Framework_TestCase
     	print __METHOD__."\n";
     }
 
-    /**
-     * testPdfDocGetLineDesc
-     *
-     * @return void
-     */
-    public function testPdfDocGetLineDesc()
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$localobject=new Facture($this->savdb);
-		$localobject->initAsSpecimen();
-		$localobject->lines=array();
-		$localobject->lines[0]->fk_product=1;
-		$localobject->lines[0]->label='Label 1';
-		$localobject->lines[0]->desc="This is a description with a é accent\n(Country of origin: France)";
-
-    	$result=pdf_getlinedesc($localobject,0,$langs);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result,"PIDRESS - Label 1<br>This is a description with a &eacute; accent<br>(Country of origin: France)");
-
-    	$result=doc_getlinedesc($localobject->lines[0],$langs);
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result,"PIDRESS - Label 1\nThis is a description with a é accent\n(Country of origin: France)");
-    }
-
-    /**
-    * testPdfGetHeightForLogo
+   /**
+    * testDolCountNbOfLine
     *
-    * @return void
+    * @return	int
     */
-    public function testPdfGetHeightForLogo()
+    public function testgetImageSize()
     {
-        $file=dirname(__FILE__).'/img250x50.jpg';
-        $result=pdf_getHeightForLogo($file);
-        print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result,22);
-        $file=dirname(__FILE__).'/img250x20.png';
-        $result=pdf_getHeightForLogo($file);
-        print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result,10.4);
+		$file=dirname(__FILE__).'/img250x50.jpg';
+		$tmp=dol_getImageSize($file);
+    	print __METHOD__." result=".$tmp['width'].'/'.$tmp['height']."\n";
+		$this->assertEquals($tmp['width'],250);
+		$this->assertEquals($tmp['height'],50);
+
+		$file=dirname(__FILE__).'/img250x20.png';
+		$tmp=dol_getImageSize($file);
+    	print __METHOD__." result=".$tmp['width'].'/'.$tmp['height']."\n";
+		$this->assertEquals($tmp['width'],250);
+		$this->assertEquals($tmp['height'],20);
+
+		/*$file=dirname(__FILE__).'/filenotfound.png';
+		$tmp=dol_getImageSize($file);
+    	print __METHOD__." result=".$tmp['width'].'/'.$tmp['height']."\n";
+		$this->assertEquals($tmp['width'],250);
+		$this->assertEquals($tmp['height'],20);*/
+
+		return $result;
     }
+
 }
 ?>

@@ -213,7 +213,7 @@ Developpers=Desarrolladores/contribuidores
 OtherDeveloppers=Otros desarrolladores/contribuidores
 OfficialWebSite=Sitio web oficial internacional
 OfficialWebSiteFr=sitio web oficial habla francesa
-OfficialWiki=Wiki Dolibarr
+OfficialWiki=Wiki documentación Dolibarr
 OfficialDemo=Demo en línea Dolibarr
 OfficialMarketPlace=Sitio oficial de módulos complementarios y extensiones
 ForDocumentationSeeWiki=Para la documentación de usuario, desarrollador o Preguntas Frecuentes (FAQ), consulte el wiki Dolibarr: <br><b><a href="%s" target="_blank">%s</a></b>

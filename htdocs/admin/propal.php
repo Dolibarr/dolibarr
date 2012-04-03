@@ -37,8 +37,11 @@ $langs->load("errors");
 
 if (! $user->admin) accessforbidden();
 
-$action =GETPOST('action','alpha');
+$action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
+$label = GETPOST('label','alpha');
+$scandir = GETPOST('scandir','alpha');
+$type='propal';
 
 /*
  * Actions
@@ -183,26 +186,13 @@ if ($action == 'setclassifiedinvoiced')
 
 if ($action == 'set')
 {
-	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
-
-	$type='propal';
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
-    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
-    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
-    $sql.= ")";
-	$resql=$db->query($sql);
+	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
 else if ($action == 'del')
 {
-	$type='propal';
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql.= " WHERE nom = '".$db->escape($value)."'";
-	$sql.= " AND type = '".$type."'";
-	$sql.= " AND entity = ".$conf->entity;
-	if ($db->query($sql))
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
 	{
         if ($conf->global->PROPALE_ADDON_PDF == "$value") dolibarr_del_const($db, 'PROPALE_ADDON_PDF',$conf->entity);
 	}
@@ -210,37 +200,16 @@ else if ($action == 'del')
 
 else if ($action == 'setdoc')
 {
-	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
-
-	$db->begin();
-
     if (dolibarr_set_const($db, "PROPALE_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
 	{
 		$conf->global->PROPALE_ADDON_PDF = $value;
 	}
 
 	// On active le modele
-	$type='propal';
-	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del.= " WHERE nom = '".$db->escape($value)."'";
-	$sql_del.= " AND type = '".$type."'";
-	$sql_del.= " AND entity = ".$conf->entity;
-	$result1=$db->query($sql_del);
-
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($value)."', '".$type."', ".$conf->entity.", ";
-    $sql.= ($value?"'".$db->escape($label)."'":'null').", ";
-    $sql.= (! empty($value)?"'".$db->escape($scandir)."'":"null");
-    $sql.= ")";
-	$result2=$db->query($sql);
-	if ($result1 && $result2)
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
 	{
-		$db->commit();
-	}
-	else
-	{
-		$db->rollback();
+		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
 }
 

@@ -612,7 +612,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 			// Paques
 
 			// Calcul du jour de l ascension (38 jours apres Paques)
-			$date_ascension = mktime(
+            $date_ascension = mktime(
                 date("H", $date_paques),
                 date("i", $date_paques),
                 date("s", $date_paques),
