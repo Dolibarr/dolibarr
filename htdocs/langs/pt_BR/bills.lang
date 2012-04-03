@@ -1,4 +1,5 @@
 # Dolibarr language file - pt_BR rev. 0.0 - bills
+# 2012      Vinícius Nogueira        <viniciusvgn@gmail.com>
 CHARSET=UTF-8
 Bill=Fatura
 Bills=Faturas
@@ -356,6 +357,8 @@ ShowUnpayedAll=Ver todos os não remunerados
 ShowUnpayedLateOnly=Mostrar apenas os não remunerados
 PaymentInvoiceRef=Pagamento Fatura %s
 ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Não é possível excluir pagamento de uma Fatura fechada.
+CustomerBillsUnpaid=Faturas de Clientes Pendentes de Cobrança
+BillsCustomersUnpaid=Faturas de Clientes Pendentes de Cobrança
 
 # oursin PDF model
 Of=de

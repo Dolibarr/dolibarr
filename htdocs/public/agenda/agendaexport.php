@@ -155,6 +155,9 @@ if ($format == 'ical' || $format == 'vcal')
 		// Ajout directives pour resoudre bug IE
 		//header('Cache-Control: Public, must-revalidate');
 		//header('Pragma: public');
+		
+		// Google Agenda import tweak
+		header('Cache-Control: max-age=7200, private, must-revalidate');
 
 		// Clean parameters
 		$outputfile=$conf->agenda->dir_temp.'/'.$filename;
