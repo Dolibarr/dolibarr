@@ -85,3 +85,6 @@
 [submodule "htdocs/custom/dolibox"]
 	path = htdocs/custom/dolibox
 	url = gitolite@doliforge.org:dolibox/dolibox.git
+[submodule "htdocs/custom/ultimatepdf"]
+	path = htdocs/custom/ultimatepdf
+	url = gitolite@doliforge.org:ultimatepdf/ultimatepdf.git
