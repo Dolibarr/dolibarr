@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
  *
@@ -50,10 +50,10 @@ error_reporting(0);
 @set_time_limit(120);
 error_reporting($err);
 
-$setuplang=isset($_POST['selectlang'])?$_POST['selectlang']:(isset($_GET['selectlang'])?$_GET['selectlang']:'auto');
+$setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):'auto';
 $langs->setDefaultLang($setuplang);
-$versionfrom=isset($_POST["versionfrom"])?$_POST["versionfrom"]:(isset($_GET["versionfrom"])?$_GET["versionfrom"]:'');
-$versionto=isset($_POST["versionto"])?$_POST["versionto"]:(isset($_GET["versionto"])?$_GET["versionto"]:'');
+$versionfrom=GETPOST("versionfrom",'',3)?GETPOST("versionfrom",'',3):(empty($argv[1])?'':$argv[1]);
+$versionto=GETPOST("versionto",'',3)?GETPOST("versionto",'',3):(empty($argv[2])?'':$argv[2]);
 
 $langs->load('admin');
 $langs->load('install');
@@ -341,6 +341,12 @@ else
 
 
 pFooter($error,$setuplang);
+
+if ($db->connected) $db->close();
+
+// Return code if ran from command line
+if ($error && isset($argv[1])) exit(1);
+
 
 
 /**

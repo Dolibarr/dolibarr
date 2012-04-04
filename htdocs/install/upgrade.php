@@ -42,10 +42,10 @@ error_reporting(0);
 @set_time_limit(120);
 error_reporting($err);
 
-$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
+$setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):'auto';
 $langs->setDefaultLang($setuplang);
-$versionfrom=isset($_POST["versionfrom"])?$_POST["versionfrom"]:(isset($_GET["versionfrom"])?$_GET["versionfrom"]:'');
-$versionto=isset($_POST["versionto"])?$_POST["versionto"]:(isset($_GET["versionto"])?$_GET["versionto"]:'');
+$versionfrom=GETPOST("versionfrom",'',3)?GETPOST("versionfrom",'',3):(empty($argv[1])?'':$argv[1]);
+$versionto=GETPOST("versionto",'',3)?GETPOST("versionto",'',3):(empty($argv[2])?'':$argv[2]);
 
 $langs->load("admin");
 $langs->load("install");
@@ -64,11 +64,11 @@ if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initial
  * View
  */
 
-pHeader('',"upgrade2",isset($_REQUEST['action'])?$_REQUEST['action']:'','versionfrom='.$versionfrom.'&versionto='.$versionto);
+pHeader('',"upgrade2",GETPOST('action'),'versionfrom='.$versionfrom.'&versionto='.$versionto);
 
 $actiondone=0;
 
-// Action to launch the repair or migrate script
+// Action to launch the migrate script
 if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 {
     $actiondone=1;
@@ -77,7 +77,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 
     if (! $versionfrom && ! $versionto)
     {
-        print '<div class="error">Parameter versionfrom or version to missing. Upgrade is launched from page install/index.php (like a first install) instead of install/upgrade.php</div>';
+        print '<div class="error">Parameter versionfrom or versionto missing. Upgrade is launched from page install/index.php (like a first install) instead of install/upgrade.php</div>';
         exit;
     }
 
@@ -245,7 +245,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
             					MAIN_DB_PREFIX.'c_methode_commande_fournisseur',   // table renamed
     		                    MAIN_DB_PREFIX.'c_input_method'
             );
-            
+
             $listtables = $db->DDLListTables($conf->db->name,'');
             foreach ($listtables as $val)
             {
@@ -353,4 +353,8 @@ if (empty($actiondone))
 
 pFooter(! $ok && empty($_GET["ignoreerrors"]),$setuplang);
 
+if ($db->connected) $db->close();
+
+// Return code if ran from command line
+if (! $ok && isset($argv[1])) exit(1);
 ?>
