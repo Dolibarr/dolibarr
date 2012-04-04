@@ -34,8 +34,8 @@ if (!$user->admin) accessforbidden();
 $def = array();
 $lastftpentry=0;
 
-$action = GETPOST("action");
-$entry = GETPOST("numero_entry");
+$action = GETPOST('action','alpha');
+$entry = GETPOST('numero_entry','alpha');
 
 // Positionne la variable pour le nombre de rss externes
 $sql ="select MAX(name) as name from ".MAIN_DB_PREFIX."const";
@@ -52,7 +52,7 @@ else
     dol_print_error($db);
 }
 
-if ($action == 'add' || GETPOST("modify"))
+if ($action == 'add' || GETPOST('modify','alpha'))
 {
     $ftp_name = "FTP_NAME_" . $entry;// $_POST["numero_entry"];
 	$ftp_server = "FTP_SERVER_" . $entry; //$_POST["numero_entry"];
@@ -60,13 +60,13 @@ if ($action == 'add' || GETPOST("modify"))
 	$error=0;
 	$mesg='';
 
-	if (! GETPOST("$ftp_name"))
+	if (! GETPOST("$ftp_name",'alpha'))
 	{
 		$error=1;
 		$mesg.='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Label")).'</div>';
 	}
 
-	if (! GETPOST("$ftp_server"))
+	if (! GETPOST("$ftp_server",'alpha'))
 	{
 		$error=1;
 		$mesg.='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Server")).'</div>';
@@ -81,11 +81,11 @@ if ($action == 'add' || GETPOST("modify"))
 
         $db->begin();
 
-		$result1=dolibarr_set_const($db, "FTP_PORT_" . $entry,GETPOST($ftp_port),'chaine',0,'',$conf->entity);
-		if ($result1) $result2=dolibarr_set_const($db, "FTP_SERVER_" . $entry, GETPOST($ftp_server),'chaine',0,'',$conf->entity);
-		if ($result2) $result3=dolibarr_set_const($db, "FTP_USER_" . $entry,GETPOST($ftp_user),'chaine',0,'',$conf->entity);
-		if ($result3) $result4=dolibarr_set_const($db, "FTP_PASSWORD_" . $entry,GETPOST($ftp_password),'chaine',0,'',$conf->entity);
-		if ($result4) $result5=dolibarr_set_const($db, "FTP_NAME_" . $entry,GETPOST($ftp_name),'chaine',0,'',$conf->entity);
+		$result1=dolibarr_set_const($db, "FTP_PORT_" . $entry,GETPOST($ftp_port,'alpha'),'chaine',0,'',$conf->entity);
+		if ($result1) $result2=dolibarr_set_const($db, "FTP_SERVER_" . $entry, GETPOST($ftp_server,'alpha'),'chaine',0,'',$conf->entity);
+		if ($result2) $result3=dolibarr_set_const($db, "FTP_USER_" . $entry,GETPOST($ftp_user,'alpha'),'chaine',0,'',$conf->entity);
+		if ($result3) $result4=dolibarr_set_const($db, "FTP_PASSWORD_" . $entry,GETPOST($ftp_password,'alpha'),'chaine',0,'',$conf->entity);
+		if ($result4) $result5=dolibarr_set_const($db, "FTP_NAME_" . $entry,GETPOST($ftp_name,'alpha'),'chaine',0,'',$conf->entity);
 
         if ($result1 && $result2 && $result3 && $result4 && $result5)
         {
@@ -102,7 +102,7 @@ if ($action == 'add' || GETPOST("modify"))
     }
 }
 
-if ($_POST["delete"])
+if (GETPOST('delete','alpha'))
 {
     if($entry)
     {
