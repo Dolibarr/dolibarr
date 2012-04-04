@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2012 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ $langs->load("externalsite");
 
 $def = array();
 
-$action = GETPOST("action");
+$action = GETPOST('action','alpha');
 
 // Sauvegardes parametres
 if ($action == 'update')
@@ -49,7 +49,7 @@ if ($action == 'update')
 
     $db->begin();
     
-    $exturl = GETPOST("EXTERNALSITE_URL");
+    $exturl = GETPOST('EXTERNALSITE_URL','alpha');
 
     $i+=dolibarr_set_const($db,'EXTERNALSITE_URL',trim($exturl),'chaine',0,'',$conf->entity);
     //$i+=dolibarr_set_const($db,'EXTERNALSITE_LABEL',trim($_POST["EXTERNALSITE_LABEL"]),'chaine',0,'',$conf->entity);
@@ -99,7 +99,7 @@ print "</tr>";
 
 print "<tr class=\"impair\">";
 print "<td>".$langs->trans("ExternalSiteURL")."</td>";
-print "<td><input type=\"text\" class=\"flat\" name=\"EXTERNALSITE_URL\" value=\"". ($_POST["EXTERNALSITE_URL"]?$_POST["EXTERNALSITE_URL"]:$conf->global->EXTERNALSITE_URL) . "\" size=\"40\"></td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"EXTERNALSITE_URL\" value=\"". (GETPOST('EXTERNALSITE_URL','alpha')?GETPOST('EXTERNALSITE_URL','alpha'):$conf->global->EXTERNALSITE_URL) . "\" size=\"40\"></td>";
 print "<td>http://localhost/myurl/";
 print "<br>http://wikipedia.org/";
 print "</td>";
