@@ -930,7 +930,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$posy+=2;
 
 		// Show list of linked objects
-		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 'R', $default_font_size, $hookmanager);
+		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size, $hookmanager);
 
 		if ($showaddress)
 		{

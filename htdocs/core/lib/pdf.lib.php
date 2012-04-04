@@ -695,12 +695,14 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
  *	@param  Translate	$outputlangs		Object lang
  *	@param  int			$posx				X
  *	@param  int			$posy				Y
+ *	@param	float		$w					Width of cells. If 0, they extend up to the right margin of the page.
+ *	@param	float		$h					Cell minimum height. The cell extends automatically if needed.
  *	@param	int			$align				Align
  *	@param	string		$default_font_size	Font size
  *	@param	HookManager	$hookmanager		Hook manager object
  *	@return	void
  */
-function pdf_writeLinkedObjects(&$pdf,$object,$outputlangs,$posx,$posy,$align,$default_font_size,$hookmanager=false)
+function pdf_writeLinkedObjects(&$pdf,$object,$outputlangs,$posx,$posy,$w,$h,$align,$default_font_size,$hookmanager=false)
 {
 	$linkedobjects = pdf_getLinkedObjects($object,$outputlangs,$hookmanager);
 	if (! empty($linkedobjects))
@@ -710,13 +712,13 @@ function pdf_writeLinkedObjects(&$pdf,$object,$outputlangs,$posx,$posy,$align,$d
 			$posy+=3;
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetFont('','', $default_font_size - 2);
-			$pdf->MultiCell(100, 3, $linkedobject["ref_title"].' : '.$linkedobject["ref_value"], '', $align);
+			$pdf->MultiCell($w, $h, $linkedobject["ref_title"].' : '.$linkedobject["ref_value"], '', $align);
 
 			if (! empty($linkedobject["date_title"]) && ! empty($linkedobject["date_value"]))
 			{
 				$posy+=3;
 				$pdf->SetXY($posx,$posy);
-				$pdf->MultiCell(100, 3, $linkedobject["date_title"].' : '.$linkedobject["date_value"], '', $align);
+				$pdf->MultiCell($w, $h, $linkedobject["date_title"].' : '.$linkedobject["date_value"], '', $align);
 			}
 		}
 	}
