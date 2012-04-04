@@ -216,6 +216,7 @@ OfficialWebSiteFr=sitio web oficial habla francesa
 OfficialWiki=Wiki documentación Dolibarr
 OfficialDemo=Demo en línea Dolibarr
 OfficialMarketPlace=Sitio oficial de módulos complementarios y extensiones
+OfficialWebHostingService=Servicio oficial de alojamiento (SaaS)
 ForDocumentationSeeWiki=Para la documentación de usuario, desarrollador o Preguntas Frecuentes (FAQ), consulte el wiki Dolibarr: <br><b><a href="%s" target="_blank">%s</a></b>
 ForAnswersSeeForum=Para otras cuestiones o realizar sus propias consultas, puede utilizar el foro Dolibarr: <br><b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1=Esta aplicación, independiente de Dolibarr, le permite ayudarle a obtener un servicio de soporte de Dolibarr.
