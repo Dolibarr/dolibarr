@@ -152,9 +152,6 @@ if ($format == 'ical' || $format == 'vcal')
 		if ($contenttype)       header('Content-Type: '.$contenttype.($outputencoding?'; charset='.$outputencoding:''));
 		if ($attachment) 		header('Content-Disposition: attachment; filename="'.$shortfilename.'"');
 
-		// Ajout directives pour resoudre bug IE
-		//header('Cache-Control: Public, must-revalidate');
-		//header('Pragma: public');
 		if ($cachedelay) header('Cache-Control: max-age='.$cachedelay.', private, must-revalidate');
 		else header('Cache-Control: private, must-revalidate');
 
@@ -193,6 +190,8 @@ if ($format == 'rss')
 		// Ajout directives pour resoudre bug IE
 		//header('Cache-Control: Public, must-revalidate');
 		//header('Pragma: public');
+		if ($cachedelay) header('Cache-Control: max-age='.$cachedelay.', private, must-revalidate');
+		else header('Cache-Control: private, must-revalidate');
 
 		// Clean parameters
 		$outputfile=$conf->agenda->dir_temp.'/'.$filename;
