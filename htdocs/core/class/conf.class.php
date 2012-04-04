@@ -401,6 +401,9 @@ class Conf
 
 		// For backward compatibility
 		$this->produit=$this->product;
+		$this->invoice=$this->facture;
+		$this->order=$this->commande;
+		$this->contract=$this->contrat;
 
 
         // Define menu manager in setup
