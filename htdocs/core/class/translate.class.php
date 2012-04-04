@@ -89,7 +89,7 @@ class Translate
 
 		if (empty($srclang) || $srclang == 'auto')
 		{
-			$langpref=$_SERVER['HTTP_ACCEPT_LANGUAGE'];
+			$langpref=empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])?'':$_SERVER['HTTP_ACCEPT_LANGUAGE'];
 			$langpref=preg_replace("/;([^,]*)/i","",$langpref);
 			$langpref=str_replace("-","_",$langpref);
 			$langlist=preg_split("/[;,]/",$langpref);
