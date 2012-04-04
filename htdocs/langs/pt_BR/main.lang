@@ -1,4 +1,5 @@
 # Dolibarr language file - pt_BR rev. 0.0 - main
+# 2012      Vinícius Nogueira        <viniciusvgn@gmail.com>
 CHARSET=UTF-8
 SeparatorDecimal=,
 SeparatorThousand=.
@@ -521,5 +522,6 @@ ShortThursday=Qui
 ShortFriday=Sex
 ShortSaturday=Sab
 ShortSunday=Dom
+CreateDraft=Criar Rascunho
 
 
