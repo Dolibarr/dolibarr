@@ -1446,7 +1446,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
             print '" href="';
             print sprintf($helpbaseurl,urlencode(html_entity_decode($helppage)));
             print '">';
-            print img_picto('',DOL_URL_ROOT.'/theme/common/helpdoc.png','',1).' ';
+            print img_picto('', 'helpdoc').' ';
             print $langs->trans($mode == 'wiki' ? 'OnlineHelp': 'Help');
             //if ($mode == 'wiki') print ' ('.dol_trunc(strtr($helppage,'_',' '),8).')';
             print '</a>';
