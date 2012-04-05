@@ -31,6 +31,9 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 $langs->load("banks");
 $langs->load("bills");
 
+$action=GETPOST('action');
+$id=GETPOST('id');
+
 // Security check
 if (isset($_GET["id"]) || isset($_GET["ref"]))
 {
@@ -44,11 +47,12 @@ $result=restrictedArea($user,'banque',$id,'bank_account','','',$fieldid);
 /*
  * Actions
  */
-if ($_POST["action"] == 'update' && ! $_POST["cancel"])
+
+if ($action == 'update' && ! $_POST["cancel"])
 {
 	// Modification
-	$account = new Account($db, $_POST["id"]);
-	$account->fetch($_POST["id"]);
+	$account = new Account($db);
+	$account->fetch($id);
 
 	$account->bank            = trim($_POST["bank"]);
 	$account->code_banque     = trim($_POST["code_banque"]);
@@ -74,12 +78,12 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 		else
 		{
 			$message='<div class="error">'.$account->error.'</div>';
-			$_GET["action"]='edit';     // Force chargement page edition
+			$action='edit';     // Force chargement page edition
 		}
 	}
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->banque->configurer)
+if ($action == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->banque->configurer)
 {
 	// Modification
 	$account = new Account($db, $_GET["id"]);
@@ -104,12 +108,12 @@ $form = new Form($db);
 /*                                                                            */
 /* ************************************************************************** */
 
-if (($_GET["id"] || $_GET["ref"]) && $_GET["action"] != 'edit')
+if (($_GET["id"] || $_GET["ref"]) && $action != 'edit')
 {
 	$account = new Account($db);
 	if ($_GET["id"])
 	{
-		$result=$account->fetch($_GET["id"]);
+		$result=$account->fetch($id);
 	}
 	if ($_GET["ref"])
 	{
@@ -117,26 +121,15 @@ if (($_GET["id"] || $_GET["ref"]) && $_GET["action"] != 'edit')
 		$_GET["id"]=$account->id;
 	}
 
-	/*
-		* Affichage onglets
-		*/
 	// Onglets
 	$head=bank_prepare_head($account);
 	dol_fiche_head($head, 'bankid', $langs->trans("FinancialAccount"),0,'account');
 
-	/*
-		* Confirmation de la suppression
-		*/
-	if ($_GET["action"] == 'delete')
+	// Confirmation de la suppression
+	if ($action == 'delete')
 	{
 		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$account->id,$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
 		if ($ret == 'html') print '<br>';
-	}
-
-	// Check BBAN
-	if (! checkBanForAccount($account))
-	{
-		print '<div class="warning">'.$langs->trans("RIBControlError").'</div><br>';
 	}
 
 
@@ -235,13 +228,20 @@ if (($_GET["id"] || $_GET["ref"]) && $_GET["action"] != 'edit')
 
 	print '</table>';
 
+
+	// Check BBAN
+	if (! checkBanForAccount($account))
+	{
+	    print '<div class="warning">'.$langs->trans("RIBControlError").'</div>';
+	}
+
 	print "\n</div>\n";
 
 
 	/*
-		* Barre d'actions
-		*
-		*/
+ 	 * Barre d'actions
+	 */
+
 	print '<div class="tabsAction">';
 
 	if ($user->rights->banque->configurer)
@@ -259,15 +259,15 @@ if (($_GET["id"] || $_GET["ref"]) && $_GET["action"] != 'edit')
 /*                                                                            */
 /* ************************************************************************** */
 
-if ($_GET["id"] && $_GET["action"] == 'edit' && $user->rights->banque->configurer)
+if ($_GET["id"] && $action == 'edit' && $user->rights->banque->configurer)
 {
-	$account = new Account($db, $_GET["id"]);
-	$account->fetch($_GET["id"]);
+	$account = new Account($db);
+	$account->fetch($id);
 
 	print_fiche_titre($langs->trans("EditFinancialAccount"));
 	print "<br>";
 
-	if ($message) { print "$message<br>\n"; }
+	dol_htmloutput_mesg($message);
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$account->id.'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -381,8 +381,7 @@ if ($_GET["id"] && $_GET["action"] == 'edit' && $user->rights->banque->configure
 }
 
 
+llxFooter();
 
 $db->close();
-
-llxFooter();
 ?>

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copytight (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -135,9 +135,8 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 
     $account->currency_code   = trim($_POST["account_currency_code"]);
 
-    $account->fk_departement  = $_POST["account_departement_id"];
-    $account->fk_pays         = $_POST["account_country_id"];
-
+    $account->state_id        = $_POST["account_departement_id"];
+    $account->country_id      = $_POST["account_country_id"];
 
     $account->min_allowed     = $_POST["account_min_allowed"];
     $account->min_desired     = $_POST["account_min_desired"];

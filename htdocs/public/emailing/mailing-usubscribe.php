@@ -49,9 +49,15 @@ if (($id!='') && ($unsuscrib=='1'))
 	
 	$resql=$db->query($sql);
 	
-	//Update status communication of prospect
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=-1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag='".$id."' AND source_type='thirdparty')";
-	dol_syslog("public/emailing/mailing-usubscribe.php : Mail unsubcribe : ".$sql, LOG_DEBUG);
+	//Update status communication of thirdparty prospect
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=-1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag='".$id."' AND source_type='thirdparty' AND source_id is not null)";
+	dol_syslog("public/emailing/mailing-unsubscribe.php : Mail unsubcribe thirdparty : ".$sql, LOG_DEBUG);
+	
+	$resql=$db->query($sql);
+
+    //Update status communication of contact prospect
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=-1 WHERE rowid IN (SELECT fk_soc FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.tag = '".$id."' AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
+	dol_syslog("public/emailing/mailing-unsubscribe.php : Mail unsubcribe contact : ".$sql, LOG_DEBUG);
 	
 	$resql=$db->query($sql);
 

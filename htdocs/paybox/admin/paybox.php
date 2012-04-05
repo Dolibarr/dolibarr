@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.org>
- * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2012 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,30 +36,30 @@ $langs->load("paybox");
 if (!$user->admin)
   accessforbidden();
   
-$action = GETPOST("action");
+$action = GETPOST('action','alpha');
 
 
 if ($action == 'setvalue' && $user->admin)
 {
 	$db->begin();
 	//$result=dolibarr_set_const($db, "PAYBOX_IBS_DEVISE",$_POST["PAYBOX_IBS_DEVISE"],'chaine',0,'',$conf->entity);
-	$result=dolibarr_set_const($db, "PAYBOX_CGI_URL_V1", GETPOST("PAYBOX_CGI_URL_V1"),'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, "PAYBOX_CGI_URL_V1", GETPOST('PAYBOX_CGI_URL_V1','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "PAYBOX_CGI_URL_V2",GETPOST("PAYBOX_CGI_URL_V2"),'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, "PAYBOX_CGI_URL_V2",GETPOST('PAYBOX_CGI_URL_V2','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "PAYBOX_IBS_SITE",GETPOST("PAYBOX_IBS_SITE"),'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, "PAYBOX_IBS_SITE",GETPOST('PAYBOX_IBS_SITE','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "PAYBOX_IBS_RANG",GETPOST("PAYBOX_IBS_RANG"),'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, "PAYBOX_IBS_RANG",GETPOST('PAYBOX_IBS_RANG','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "PAYBOX_PBX_IDENTIFIANT",GETPOST("PAYBOX_PBX_IDENTIFIANT"),'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, "PAYBOX_PBX_IDENTIFIANT",GETPOST('PAYBOX_PBX_IDENTIFIANT','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "PAYBOX_CREDITOR",GETPOST("PAYBOX_CREDITOR"),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "PAYBOX_CREDITOR",GETPOST('PAYBOX_CREDITOR','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "PAYBOX_CSS_URL",GETPOST("PAYBOX_CSS_URL"),'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, "PAYBOX_CSS_URL",GETPOST('PAYBOX_CSS_URL','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "PAYBOX_MESSAGE_OK",GETPOST("PAYBOX_MESSAGE_OK"),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "PAYBOX_MESSAGE_OK",GETPOST('PAYBOX_MESSAGE_OK','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "PAYBOX_MESSAGE_KO",GETPOST("PAYBOX_MESSAGE_KO"),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "PAYBOX_MESSAGE_KO",GETPOST('PAYBOX_MESSAGE_KO','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
 	
     if (! $error)

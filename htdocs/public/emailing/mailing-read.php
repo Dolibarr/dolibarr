@@ -1,4 +1,3 @@
-#!/usr/bin/php
 <?php
 /*
  * Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
@@ -41,12 +40,22 @@ if ($id!='')
 	dol_syslog("public/emailing/mailing-read.php : Mail read : ".$sql, LOG_DEBUG);
 	
 	$resql=$db->query($sql);
-	
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag='".$id."')";
-	dol_syslog("public/emailing/mailing-read.php : Mail read : ".$sql, LOG_DEBUG);
+
+	//Update status communication of thirdparty prospect
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=3 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag='".$id."' AND source_type='thirdparty' AND source_id is not null)";
+	dol_syslog("public/emailing/mailing-read.php : Mail read thirdparty : ".$sql, LOG_DEBUG);
 	
 	$resql=$db->query($sql);
+
+    //Update status communication of contact prospect
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=3 WHERE rowid IN (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.tag = '".$id."' AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
+	dol_syslog("public/emailing/mailing-read.php : Mail read contact : ".$sql, LOG_DEBUG);
+	
+	$resql=$db->query($sql);
+
 }
+
+
 
 
 $db->close();
