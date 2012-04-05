@@ -3,6 +3,7 @@
  * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2012 Juanjo Menent		   <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,17 +40,17 @@ if (!$user->admin) accessforbidden();
  * Actions
  */
 
-if ($_POST["save"])
+if (GETPOST('save','alpha'))
 {
 	$db->begin();
 
 	$i=0;
 
-	$i+=dolibarr_set_const($db,'OSC_DB_HOST',trim($_POST["oscommerce_dbhost"]),'chaine',0,'',$conf->entity);
-	$i+=dolibarr_set_const($db,'OSC_DB_NAME',trim($_POST["oscommerce_dbname"]),'chaine',0,'',$conf->entity);
-	$i+=dolibarr_set_const($db,'OSC_DB_USER',trim($_POST["oscommerce_dbuser"]),'chaine',0,'',$conf->entity);
-	$i+=dolibarr_set_const($db,'OSC_DB_PASS',trim($_POST["oscommerce_dbpass"]),'chaine',0,'',$conf->entity);
-	$i+=dolibarr_set_const($db,'OSC_DB_TABLE_PREFIX',trim($_POST["oscommerce_db_table_prefix"]),'chaine',0,'',$conf->entity);
+	$i+=dolibarr_set_const($db,'OSC_DB_HOST',trim(GETPOST('oscommerce_dbhost','alpha')),'chaine',0,'',$conf->entity);
+	$i+=dolibarr_set_const($db,'OSC_DB_NAME',trim(GETPOST('oscommerce_dbname','alpha')),'chaine',0,'',$conf->entity);
+	$i+=dolibarr_set_const($db,'OSC_DB_USER',trim(GETPOST('oscommerce_dbuser','alpha')),'chaine',0,'',$conf->entity);
+	$i+=dolibarr_set_const($db,'OSC_DB_PASS',trim(GETPOST('oscommerce_dbpass','alpha')),'chaine',0,'',$conf->entity);
+	$i+=dolibarr_set_const($db,'OSC_DB_TABLE_PREFIX',trim(GETPOST('oscommerce_db_table_prefix','alpha')),'chaine',0,'',$conf->entity);
 	$i+=dolibarr_set_const($db,'OSC_LANGUAGE_ID',1,'chaine',0,'',$conf->entity);
 
 	if ($i >= 4)
@@ -64,18 +65,18 @@ if ($_POST["save"])
 		exit;
 	}
 }
-elseif ($_POST["test"])
+elseif (GETPOST('test','alpha'))
 {
 	//$resql=$db->query("select count(*) from ".MAIN_DB_PREFIX."const");
 	//print "< ".$db." - ".$db->db." - ".$resql." - ".$db->error()."><br>\n";
 
 	// Test de la connexion a la database webcalendar
 	$conf->oscommerce->db->type=$dolibarr_main_db_type;
-	$conf->oscommerce->db->host=$_POST["oscommerce_dbhost"];
-	$conf->oscommerce->db->port=$_POST["oscommerce_dbport"];
-	$conf->oscommerce->db->name=$_POST["oscommerce_dbname"];
-	$conf->oscommerce->db->user=$_POST["oscommerce_dbuser"];
-	$conf->oscommerce->db->pass=$_POST["oscommerce_dbpass"];
+	$conf->oscommerce->db->host=GETPOST('oscommerce_dbhost','alpha');
+	$conf->oscommerce->db->port=GETPOST('oscommerce_dbport','alpha');
+	$conf->oscommerce->db->name=GETPOST('oscommerce_dbname','alpha');
+	$conf->oscommerce->db->user=GETPOST('oscommerce_dbuser','alpha');
+	$conf->oscommerce->db->pass=GETPOST('oscommerce_dbpass','alpha');
 
     $oscommercedb=getDoliDBInstance($conf->oscommerce->db->type,$conf->oscommerce->db->host,$conf->oscommerce->db->user,$conf->oscommerce->db->pass,$conf->oscommerce->db->name,$conf->oscommerce->db->port);
 
@@ -87,11 +88,11 @@ elseif ($_POST["test"])
 		$sql.=" WHERE configuration_key='STORE_NAME'";
 		$resql=$oscommercedb->query($sql);
 		if ($resql) {
-			$mesg ="<div class=\"ok\">".$langs->trans("OSCommerceTestOk",$_POST["oscommerce_dbhost"],$_POST["oscommerce_dbname"],$_POST["oscommerce_dbuser"]);
+			$mesg ="<div class=\"ok\">".$langs->trans("OSCommerceTestOk",GETPOST('oscommerce_dbhost','alpha'),GETPOST('oscommerce_dbname','alpha'),GETPOST('oscommerce_dbuser','alpha'));
 			$mesg.="</div>";
 		}
 		else {
-			$mesg ="<div class=\"error\">".$langs->trans("OSCommerceErrorConnectOkButWrongDatabase",'STORE_NAME',$_POST["oscommerce_db_table_prefix"]."configuration");
+			$mesg ="<div class=\"error\">".$langs->trans("OSCommerceErrorConnectOkButWrongDatabase",'STORE_NAME',GETPOST('oscommerce_db_table_prefix','alpha')."configuration");
 			$mesg.="</div>";
 		}
 
@@ -99,14 +100,14 @@ elseif ($_POST["test"])
 	}
 	elseif ($oscommercedb->connected == 1 && $oscommercedb->database_selected != 1)
 	{
-		$mesg ="<div class=\"error\">".$langs->trans("OSCommerceTestKo1",$_POST["oscommerce_dbhost"],$_POST["oscommerce_dbname"]);
+		$mesg ="<div class=\"error\">".$langs->trans("OSCommerceTestKo1",GETPOST('oscommerce_dbhost','alpha'),GETPOST('oscommerce_dbname','alpha'));
 		$mesg.="<br>".$oscommercedb->error();
 		$mesg.="</div>";
 		//$oscommercedb->close();    Ne pas fermer car la conn de webcal est la meme que dolibarr si parametre host/user/pass identique
 	}
 	else
 	{
-		$mesg ="<div class=\"error\">".$langs->trans("OSCommerceTestKo2",$_POST["oscommerce_dbhost"],$_POST["oscommerce_dbuser"]);
+		$mesg ="<div class=\"error\">".$langs->trans("OSCommerceTestKo2",GETPOST('oscommerce_dbhost','alpha'),GETPOST('oscommerce_dbuser','alpha'));
 		$mesg.="<br>".$oscommercedb->error();
 		$mesg.="</div>";
 	}
@@ -142,7 +143,7 @@ print "</tr>";
 $var=!$var;
 print "<tr ".$bc[$var].">";
 print "<td>".$langs->trans("OSCommerceServer")."</td>";
-print "<td><input type=\"text\" class=\"flat\" name=\"oscommerce_dbhost\" value=\"". ($_POST["oscommerce_dbhost"]?$_POST["oscommerce_dbhost"]:$conf->global->OSC_DB_HOST) . "\" size=\"30\"></td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"oscommerce_dbhost\" value=\"". (GETPOST('oscommerce_dbhost','alpha')?GETPOST('oscommerce_dbhost','alpha'):$conf->global->OSC_DB_HOST) . "\" size=\"30\"></td>";
 print "<td>localhost";
 //print "<br>__dolibarr_main_db_host__ <i>(".$dolibarr_main_db_host.")</i>"
 print "</td>";
@@ -150,7 +151,7 @@ print "</tr>";
 $var=!$var;
 print "<tr ".$bc[$var].">";
 print "<td>".$langs->trans("OSCommerceDatabaseName")."</td>";
-print "<td><input type=\"text\" class=\"flat\" name=\"oscommerce_dbname\" value=\"". ($_POST["oscommerce_dbname"]?$_POST["oscommerce_dbname"]:$conf->global->OSC_DB_NAME) . "\" size=\"30\"></td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"oscommerce_dbname\" value=\"". (GETPOST('oscommerce_dbname','alpha')?GETPOST('oscommerce_dbname','alpha'):$conf->global->OSC_DB_NAME) . "\" size=\"30\"></td>";
 print "<td>oscommerce";
 //print "<br>__dolibarr_main_db_name__ <i>(".$dolibarr_main_db_name.")</i>";
 print "</td>";
@@ -158,14 +159,14 @@ print "</tr>";
 $var=!$var;
 print "<tr ".$bc[$var].">";
 print "<td>".$langs->trans("OSCommercePrefix")."</td>";
-print "<td><input type=\"text\" class=\"flat\" name=\"oscommerce_db_table_prefix\" value=\"". ($_POST["oscommerce_db_table_prefix"]?$_POST["oscommerce_db_table_prefix"]:$conf->global->DB_TABLE_PREFIX) . "\" size=\"30\"></td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"oscommerce_db_table_prefix\" value=\"". (GETPOST('oscommerce_db_table_prefix','alpha')?GETPOST('oscommerce_db_table_prefix','alpha'):$conf->global->DB_TABLE_PREFIX) . "\" size=\"30\"></td>";
 print "<td>osc_";
 print "</td>";
 print "</tr>";
 $var=!$var;
 print "<tr ".$bc[$var].">";
 print "<td>".$langs->trans("OSCommerceUser")."</td>";
-print "<td><input type=\"text\" class=\"flat\" name=\"oscommerce_dbuser\" value=\"". ($_POST["oscommerce_dbuser"]?$_POST["oscommerce_dbuser"]:$conf->global->OSC_DB_USER) . "\" size=\"30\"></td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"oscommerce_dbuser\" value=\"". (GETPOST('oscommerce_dbuser','alpha')?GETPOST('oscommerce_dbuser','alpha'):$conf->global->OSC_DB_USER) . "\" size=\"30\"></td>";
 print "<td>oscommerceuser";
 //print "<br>__dolibarr_main_db_user__ <i>(".$dolibarr_main_db_user.")</i>";
 print "</td>";
@@ -173,7 +174,7 @@ print "</tr>";
 $var=!$var;
 print "<tr ".$bc[$var].">";
 print "<td>".$langs->trans("Password")."</td>";
-print "<td><input type=\"password\" class=\"flat\" name=\"oscommerce_dbpass\" value=\"" . ($_POST["oscommerce_dbpass"]?$_POST["oscommerce_dbpass"]:$conf->global->OSC_DB_PASS) . "\" size=\"30\"></td>";
+print "<td><input type=\"password\" class=\"flat\" name=\"oscommerce_dbpass\" value=\"" . (GETPOST('oscommerce_dbpass','alpha')?GETPOST('oscommerce_dbpass','alpha'):$conf->global->OSC_DB_PASS) . "\" size=\"30\"></td>";
 print '<td>';
 //if ($dolibarr_main_db_pass) print '__dolibarr_main_db_pass__ <i>('.preg_replace('/./i','*',$dolibarr_main_db_pass).')</i>';
 print '&nbsp;</td>';
@@ -181,7 +182,7 @@ print "</tr>";
 $var=!$var;
 print "<tr ".$bc[$var].">";
 print "<td>".$langs->trans("PasswordRetype")."</td>";
-print "<td><input type=\"password\" class=\"flat\" name=\"oscommerce_dbpass2\" value=\"" . ($_POST["oscommerce_dbpass2"]?$_POST["oscommerce_dbpass2"]:$conf->global->OSC_DB_PASS) ."\" size=\"30\"></td>";
+print "<td><input type=\"password\" class=\"flat\" name=\"oscommerce_dbpass2\" value=\"" . (GETPOST('oscommerce_dbpass2','alpha')?GETPOST('oscommerce_dbpass2','alpha'):$conf->global->OSC_DB_PASS) ."\" size=\"30\"></td>";
 print '<td>';
 //if ($dolibarr_main_db_pass) print '__dolibarr_main_db_pass__ <i>('.preg_replace('/./i','*',$dolibarr_main_db_pass).')</i>';
 print '&nbsp;</td>';
