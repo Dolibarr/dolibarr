@@ -24,7 +24,7 @@
  *      \ingroup    mailing
  *      \brief      Script use to update mail status if destinaries read it (if images during mail read are display)
  */
- 
+
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
@@ -32,31 +32,34 @@ require("../../main.inc.php");
 
 $id=GETPOST('tag');
 
+if (empty($conf->global->MAIN_SOCIETE_UNSUBSCRIBE)) accessforbidden('Option not enabled');
+
+
+/*
+ * Actions
+ */
 
 if ($id!='')
 {
 	$statut='2';
 	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE tag='".$id."'";
 	dol_syslog("public/emailing/mailing-read.php : Mail read : ".$sql, LOG_DEBUG);
-	
+
 	$resql=$db->query($sql);
 
 	//Update status communication of thirdparty prospect
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=3 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag='".$id."' AND source_type='thirdparty' AND source_id is not null)";
 	dol_syslog("public/emailing/mailing-read.php : Mail read thirdparty : ".$sql, LOG_DEBUG);
-	
+
 	$resql=$db->query($sql);
 
     //Update status communication of contact prospect
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=3 WHERE rowid IN (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.tag = '".$id."' AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
 	dol_syslog("public/emailing/mailing-read.php : Mail read contact : ".$sql, LOG_DEBUG);
-	
+
 	$resql=$db->query($sql);
 
 }
-
-
-
 
 $db->close();
 ?>

@@ -106,8 +106,11 @@ if ($resql)
 	{
 		dol_syslog("nb of targets = ".$num, LOG_DEBUG);
 
+		$now=dol_now();
+
 		// Positionne date debut envoi
-		$sql="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi=SYSDATE() WHERE rowid=".$id;
+		$sql="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi='".$db->idate($now)."' WHERE rowid=".$id;
+
 		$resql2=$db->query($sql);
 		if (! $resql2)
 		{
@@ -135,9 +138,9 @@ if ($resql)
 			$other5=$other[4];
 			$substitutionarray=array(
 				'__ID__' => $obj->source_id,
-				'__EMAIL__' => '<a href="mailto:'.$obj->email.'">'.$obj->email.'</a>',
+				'__EMAIL__' => $obj->email,
 				'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'" width="0" height="0" style="width:0px;height:0px" border="0"/>',
-				'__UNSUSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-usubscribe.php?tag='.$obj->tag.'&unsuscrib=1" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
+				'__UNSUSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
 				'__LASTNAME__' => $obj->lastname,
 				'__FIRSTNAME__' => $obj->firstname,
 				'__OTHER1__' => $other1,
@@ -212,11 +215,11 @@ if ($resql)
 						{
 							dol_print_error($db);
 						}
-					
+
 					    //Update status communication of contact prospect
 						$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.rowid=".$obj->rowid." AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
 						dol_syslog("fiche.php: set prospect contact status sql=".$sql, LOG_DEBUG);
-						
+
 						$resql2=$db->query($sql);
 						if (! $resql2)
 						{
