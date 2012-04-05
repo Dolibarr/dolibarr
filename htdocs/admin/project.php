@@ -30,14 +30,17 @@ require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/projet/class/task.class.php');
 
 $langs->load("admin");
+$langs->load("errors");
 $langs->load("other");
 $langs->load("projects");
 
-if (!$user->admin)
-accessforbidden();
+if (!$user->admin) accessforbidden();
 
-$value=GETPOST('value','alpha');
-$action=GETPOST('action','alpha');
+$value = GETPOST('value','alpha');
+$action = GETPOST('action','alpha');
+$label = GETPOST('label','alpha');
+$scandir = GETPOST('scandir','alpha');
+$type='project';
 
 
 /*
@@ -83,7 +86,6 @@ if ($action == 'specimen')
 			break;
 		}
 	}
-
 	
 	if ($filefound)
 	{
@@ -111,26 +113,13 @@ if ($action == 'specimen')
 
 if ($action == 'set')
 {
-	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
-
-	$type='project';
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
-    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
-    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
-    $sql.= ")";
-	$resql=$db->query($sql);
+	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
 if ($action == 'del')
 {
-	$type='project';
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql.= " WHERE nom = '".$db->escape($value)."'";
-	$sql.= " AND type = '".$type."'";
-	$sql.= " AND entity = ".$conf->entity;
-	if ($db->query($sql))
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
 	{
         if ($conf->global->PROJECT_ADDON_PDF == "$value") dolibarr_del_const($db, 'PROJECT_ADDON_PDF',$conf->entity);
 	}
@@ -138,37 +127,18 @@ if ($action == 'del')
 
 if ($action == 'setdoc')
 {
-	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
-
-	$db->begin();
-
 	if (dolibarr_set_const($db, "PROJECT_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
 	{
+		// La constante qui a ete lue en avant du nouveau set
+		// on passe donc par une variable pour avoir un affichage coherent
 		$conf->global->PROJECT_ADDON_PDF = $value;
 	}
 
 	// On active le modele
-	$type='project';
-	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del.= " WHERE nom = '".$db->escape($value)."'";
-	$sql_del.= " AND type = '".$type."'";
-	$sql_del.= " AND entity = ".$conf->entity;
-	$result1=$db->query($sql_del);
-
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($value)."', '".$type."', ".$conf->entity.", ";
-    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
-    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
-    $sql.= ")";
-	$result2=$db->query($sql);
-	if ($result1 && $result2)
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
 	{
-		$db->commit();
-	}
-	else
-	{
-		$db->rollback();
+		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
 }
 
@@ -177,7 +147,7 @@ if ($action == 'setmod')
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
 
-	dolibarr_set_const($db, "PROJECT_ADDON",GETPOST('value','alpha'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "PROJECT_ADDON",$value,'chaine',0,'',$conf->entity);
 }
 
 /*
@@ -186,9 +156,9 @@ if ($action == 'setmod')
 
 $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 
-$form=new Form($db);
-
 llxHeader();
+
+$form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("ProjectsSetup"),$linkback,'setup');
@@ -197,9 +167,6 @@ print "<br>";
 
 
 // Project numbering module
-
-$dir = DOL_DOCUMENT_ROOT."/core/modules/project/";
-
 print_titre($langs->trans("ProjectsNumberingModules"));
 
 print '<table class="noborder" width="100%">';
@@ -235,12 +202,12 @@ foreach ($dirmodels as $reldir)
 
 					$module = new $file;
 
-					if ($module->isEnabled())
-					{
-						// Show modules according to features level
-						if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+					// Show modules according to features level
+					if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
+					if ($module->isEnabled())
+					{						
 						$var=!$var;
 						print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
 						print $module->info();
@@ -255,13 +222,13 @@ foreach ($dirmodels as $reldir)
 						print '</td>'."\n";
 
 						print '<td align="center">';
-						if ($conf->global->PROJECT_ADDON == "$file")
+						if ($conf->global->PROJECT_ADDON == $classname)
 						{
 							print img_picto($langs->trans("Activated"),'switch_on');
 						}
 						else
 						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 						}
 						print '</td>';
 
@@ -304,8 +271,6 @@ print '</table><br>';
 /*
  * Modeles documents for projects
  */
-
-//$dir = DOL_DOCUMENT_ROOT.'/core/modules/project/pdf/';
 
 print_titre($langs->trans("ProjectsModelModule"));
 
@@ -374,17 +339,10 @@ foreach ($dirmodels as $reldir)
 					// Active
 					if (in_array($name, $def))
 					{
-						print "<td align=\"center\">\n";
-						//if ($conf->global->PROJECT_ADDON_PDF != "$name")
-						//{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-							print img_picto($langs->trans("Enabled"),'switch_on');
-							print '</a>';
-						//}
-						//else
-						//{
-						//	print img_picto($langs->trans("Enabled"),'on');
-						//}
+						print "<td align=\"center\">\n";						
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+						print img_picto($langs->trans("Enabled"),'switch_on');
+						print '</a>';						
 						print "</td>";
 					}
 					else
