@@ -186,7 +186,7 @@ if ($result)
 
 		print '<table class="noborder" width="100%">';
 
-		print '<tr class="liste_titre"><td colspan="5">'.$transRecordedType.'</td></tr>';
+		print '<tr class="liste_titre"><td colspan="6">'.$transRecordedType.'</td></tr>';
 
 		$var=True;
 
@@ -222,6 +222,14 @@ if ($result)
 			print "<td>";
 			print dol_print_date($db->jdate($objp->datem),'day');
 			print "</td>";
+			// Sell price
+			if (empty($conf->global->PRODUIT_MULTIPRICES))
+			{
+				print '<td align="right">';
+    				if ($objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
+    				else print price($objp->price).' '.$langs->trans("HT");
+    				print '</td>';
+			}
 			print '<td align="right" nowrap="nowrap">';
 			print $product_static->LibStatut($objp->tosell,5,0);
 			print "</td>";
