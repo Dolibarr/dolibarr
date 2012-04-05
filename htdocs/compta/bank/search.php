@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copytight (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2001-2002  Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2008  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copytight (C) 2005-2010  Regis Houssin        <regis@dolibarr.fr>
+ * Copytight (C) 20012-2012 Vinícius Nogueira   <viniciusvgn@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -211,7 +212,7 @@ if ($resql)
 
         // Payment type
         print "<td align=\"center\">";
-        $labeltype=$langs->getLabelFromKey($db,$objp->fk_type,'c_paiement','code','libelle');
+        $labeltype=($langs->trans("PaymentTypeShort".$objp->fk_type)!="PaymentTypeShort".$objp->fk_type)?$langs->trans("PaymentTypeShort".$objp->fk_type):$objp->fk_type;
         if ($labeltype == 'SOLD') print '&nbsp;'; //$langs->trans("InitialBankBalance");
         else print $labeltype;
         print "</td>\n";
