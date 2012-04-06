@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006      Auguria SARL         <info@auguria.org>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
@@ -47,8 +47,8 @@ $mesg=''; $error=0; $errors=array();
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action=(GETPOST('action') ? GETPOST('action') : 'view');
-$confirm=GETPOST('confirm');
+$action=(GETPOST('action','alpha') ? GETPOST('action','alpha') : 'view');
+$confirm=GETPOST('confirm','alpha');
 $socid=GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 
@@ -121,7 +121,7 @@ if (empty($reshook))
         $result = $object->setValueFrom('accountancy_code_buy', $_POST['accountancy_code_buy']);
         if ($result < 0)
         {
-            $mesg=join(',',$product->errors);
+            $mesg=join(',',$object->errors);
         }
         $action="";
     }
@@ -132,7 +132,7 @@ if (empty($reshook))
         $result = $object->setValueFrom('accountancy_code_sell', $_POST['accountancy_code_sell']);
         if ($result < 0)
         {
-            $mesg=join(',',$product->errors);
+            $mesg=join(',',$object->errors);
         }
         $action="";
     }
@@ -159,45 +159,43 @@ if (empty($reshook))
             $error++;
         }
 
-        $product=new Product($db);
-
         if (! $error)
         {
-            $product->ref                = $ref;
-            $product->libelle            = $_POST["libelle"];
-            $product->price_base_type    = $_POST["price_base_type"];
-            if ($product->price_base_type == 'TTC') $product->price_ttc = $_POST["price"];
-            else $product->price = $_POST["price"];
-            if ($product->price_base_type == 'TTC') $product->price_min_ttc = $_POST["price_min"];
-            else $product->price_min = $_POST["price_min"];
-            $product->tva_tx             = str_replace('*','',$_POST['tva_tx']);
-            $product->tva_npr            = preg_match('/\*/',$_POST['tva_tx'])?1:0;
+            $object->ref                = $ref;
+            $object->libelle            = $_POST["libelle"];
+            $object->price_base_type    = $_POST["price_base_type"];
+            if ($object->price_base_type == 'TTC') $object->price_ttc = $_POST["price"];
+            else $object->price = $_POST["price"];
+            if ($object->price_base_type == 'TTC') $object->price_min_ttc = $_POST["price_min"];
+            else $object->price_min = $_POST["price_min"];
+            $object->tva_tx             = str_replace('*','',$_POST['tva_tx']);
+            $object->tva_npr            = preg_match('/\*/',$_POST['tva_tx'])?1:0;
 
             // local taxes.
-            $product->localtax1_tx 			= get_localtax($product->tva_tx,1);
-            $product->localtax2_tx 			= get_localtax($product->tva_tx,2);
+            $object->localtax1_tx 			= get_localtax($object->tva_tx,1);
+            $object->localtax2_tx 			= get_localtax($object->tva_tx,2);
 
-            $product->type               	= $_POST["type"];
-            $product->status             	= $_POST["statut"];
-            $product->status_buy           	= $_POST["statut_buy"];
-            $product->description        	= dol_htmlcleanlastbr($_POST["desc"]);
-            $product->note               	= dol_htmlcleanlastbr($_POST["note"]);
-            $product->customcode            = $_POST["customcode"];
-            $product->country_id            = $_POST["country_id"];
-            $product->duration_value     	= $_POST["duration_value"];
-            $product->duration_unit      	= $_POST["duration_unit"];
-            $product->seuil_stock_alerte 	= $_POST["seuil_stock_alerte"]?$_POST["seuil_stock_alerte"]:0;
-            $product->canvas             	= $_POST["canvas"];
-            $product->weight             	= $_POST["weight"];
-            $product->weight_units       	= $_POST["weight_units"];
-            $product->length             	= $_POST["size"];
-            $product->length_units       	= $_POST["size_units"];
-            $product->surface            	= $_POST["surface"];
-            $product->surface_units      	= $_POST["surface_units"];
-            $product->volume             	= $_POST["volume"];
-            $product->volume_units       	= $_POST["volume_units"];
-            $product->finished           	= $_POST["finished"];
-            $product->hidden             	= $_POST["hidden"]=='yes'?1:0;
+            $object->type               	= $_POST["type"];
+            $object->status             	= $_POST["statut"];
+            $object->status_buy           	= $_POST["statut_buy"];
+            $object->description        	= dol_htmlcleanlastbr($_POST["desc"]);
+            $object->note               	= dol_htmlcleanlastbr($_POST["note"]);
+            $object->customcode            = $_POST["customcode"];
+            $object->country_id            = $_POST["country_id"];
+            $object->duration_value     	= $_POST["duration_value"];
+            $object->duration_unit      	= $_POST["duration_unit"];
+            $object->seuil_stock_alerte 	= $_POST["seuil_stock_alerte"]?$_POST["seuil_stock_alerte"]:0;
+            $object->canvas             	= $_POST["canvas"];
+            $object->weight             	= $_POST["weight"];
+            $object->weight_units       	= $_POST["weight_units"];
+            $object->length             	= $_POST["size"];
+            $object->length_units       	= $_POST["size_units"];
+            $object->surface            	= $_POST["surface"];
+            $object->surface_units      	= $_POST["surface_units"];
+            $object->volume             	= $_POST["volume"];
+            $object->volume_units       	= $_POST["volume_units"];
+            $object->finished           	= $_POST["finished"];
+            $object->hidden             	= $_POST["hidden"]=='yes'?1:0;
 
             // MultiPrix
             if($conf->global->PRODUIT_MULTIPRICES)
@@ -206,12 +204,12 @@ if (empty($reshook))
                 {
                     if($_POST["price_".$i])
                     {
-                        $product->multiprices["$i"] = price2num($_POST["price_".$i],'MU');
-                        $product->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
+                        $object->multiprices["$i"] = price2num($_POST["price_".$i],'MU');
+                        $object->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
                     }
                     else
                     {
-                        $product->multiprices["$i"] = "";
+                        $object->multiprices["$i"] = "";
                     }
                 }
             }
@@ -221,11 +219,11 @@ if (empty($reshook))
             {
                 if (preg_match("/^options_/",$key))
                 {
-                    $product->array_options[$key]=$_POST[$key];
+                    $object->array_options[$key]=$_POST[$key];
                 }
             }
 
-            $id = $product->create($user);
+            $id = $object->create($user);
 
             if ($id > 0)
             {
@@ -234,7 +232,7 @@ if (empty($reshook))
             }
             else
             {
-                $mesg='<div class="error">'.$langs->trans($product->error).'</div>';
+                $mesg='<div class="error">'.$langs->trans($object->error).'</div>';
                 $action = "create";
                 $_GET["type"] = $_POST["type"];
             }
@@ -250,51 +248,50 @@ if (empty($reshook))
         }
         else
         {
-            $product=new Product($db);
-            if ($product->fetch($id,$ref))
+            if ($object->fetch($id,$ref))
             {
-                $product->ref                = $ref;
-                $product->libelle            = $_POST["libelle"];
-                $product->description        = dol_htmlcleanlastbr($_POST["desc"]);
-                $product->note               = dol_htmlcleanlastbr($_POST["note"]);
-                $product->customcode         = $_POST["customcode"];
-                $product->country_id         = $_POST["country_id"];
-                $product->status             = $_POST["statut"];
-                $product->status_buy         = $_POST["statut_buy"];
-                $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
-                $product->duration_value     = $_POST["duration_value"];
-                $product->duration_unit      = $_POST["duration_unit"];
-                $product->canvas             = $_POST["canvas"];
-                $product->weight             = $_POST["weight"];
-                $product->weight_units       = $_POST["weight_units"];
-                $product->length             = $_POST["size"];
-                $product->length_units       = $_POST["size_units"];
-                $product->surface            = $_POST["surface"];
-                $product->surface_units      = $_POST["surface_units"];
-                $product->volume             = $_POST["volume"];
-                $product->volume_units       = $_POST["volume_units"];
-                $product->finished           = $_POST["finished"];
-                $product->hidden             = $_POST["hidden"]=='yes'?1:0;
+                $object->ref                = $ref;
+                $object->libelle            = $_POST["libelle"];
+                $object->description        = dol_htmlcleanlastbr($_POST["desc"]);
+                $object->note               = dol_htmlcleanlastbr($_POST["note"]);
+                $object->customcode         = $_POST["customcode"];
+                $object->country_id         = $_POST["country_id"];
+                $object->status             = $_POST["statut"];
+                $object->status_buy         = $_POST["statut_buy"];
+                $object->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
+                $object->duration_value     = $_POST["duration_value"];
+                $object->duration_unit      = $_POST["duration_unit"];
+                $object->canvas             = $_POST["canvas"];
+                $object->weight             = $_POST["weight"];
+                $object->weight_units       = $_POST["weight_units"];
+                $object->length             = $_POST["size"];
+                $object->length_units       = $_POST["size_units"];
+                $object->surface            = $_POST["surface"];
+                $object->surface_units      = $_POST["surface_units"];
+                $object->volume             = $_POST["volume"];
+                $object->volume_units       = $_POST["volume_units"];
+                $object->finished           = $_POST["finished"];
+                $object->hidden             = $_POST["hidden"]=='yes'?1:0;
 
                 // Get extra fields
                 foreach($_POST as $key => $value)
                 {
                     if (preg_match("/^options_/",$key))
                     {
-                        $product->array_options[$key]=$_POST[$key];
+                        $object->array_options[$key]=$_POST[$key];
                     }
                 }
 
-                if ($product->check())
+                if ($object->check())
                 {
-                    if ($product->update($product->id, $user) > 0)
+                    if ($object->update($object->id, $user) > 0)
                     {
                         $action = '';
                     }
                     else
                     {
                         $action = 'edit';
-                        $mesg = $product->error;
+                        $mesg = $object->error;
                     }
                 }
                 else
@@ -317,47 +314,46 @@ if (empty($reshook))
         {
             $db->begin();
 
-            $product = new Product($db);
             $originalId = $id;
-            if ($product->fetch($id,$ref) > 0)
+            if ($object->fetch($id,$ref) > 0)
             {
-                $product->ref = GETPOST('clone_ref');
-                $product->status = 0;
-                $product->status_buy = 0;
-                $product->finished = 1;
-                $product->id = null;
+                $object->ref = GETPOST('clone_ref');
+                $object->status = 0;
+                $object->status_buy = 0;
+                $object->finished = 1;
+                $object->id = null;
 
-                if ($product->check())
+                if ($object->check())
                 {
-                    $id = $product->create($user);
+                    $id = $object->create($user);
                     if ($id > 0)
                     {
-                        // $product->clone_fournisseurs($originalId, $id);
+                        // $object->clone_fournisseurs($originalId, $id);
 
                         $db->commit();
                         $db->close();
 
-                        Header("Location: fiche.php?id=$id");
+                        Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
                         exit;
                     }
                     else
                     {
-                        if ($product->error == 'ErrorProductAlreadyExists')
+                        if ($object->error == 'ErrorProductAlreadyExists')
                         {
                             $db->rollback();
 
                             $_error = 1;
                             $action = "";
 
-                            $mesg='<div class="error">'.$langs->trans("ErrorProductAlreadyExists",$product->ref);
-                            $mesg.=' <a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref.'">'.$langs->trans("ShowCardHere").'</a>.';
+                            $mesg='<div class="error">'.$langs->trans("ErrorProductAlreadyExists",$object->ref);
+                            $mesg.=' <a href="'.$_SERVER["PHP_SELF"].'?ref='.$object->ref.'">'.$langs->trans("ShowCardHere").'</a>.';
                             $mesg.='</div>';
-                            //dol_print_error($product->db);
+                            //dol_print_error($object->db);
                         }
                         else
                         {
                             $db->rollback();
-                            dol_print_error($product->db);
+                            dol_print_error($object->db);
                         }
                     }
                 }
@@ -365,7 +361,7 @@ if (empty($reshook))
             else
             {
                 $db->rollback();
-                dol_print_error($product->db);
+                dol_print_error($object->db);
             }
         }
     }
@@ -759,7 +755,7 @@ else
         // Duration
         if ($_GET["type"] == 1)
         {
-            print '<tr><td>'.$langs->trans("Duration").'</td><td><input name="duration_value" size="6" maxlength="5" value="'.$product->duree.'"> &nbsp;';
+            print '<tr><td>'.$langs->trans("Duration").'</td><td><input name="duration_value" size="6" maxlength="5" value="'.$object->duree.'"> &nbsp;';
             print '<input name="duration_unit" type="radio" value="h">'.$langs->trans("Hour").'&nbsp;';
             print '<input name="duration_unit" type="radio" value="d">'.$langs->trans("Day").'&nbsp;';
             print '<input name="duration_unit" type="radio" value="w">'.$langs->trans("Week").'&nbsp;';
@@ -837,13 +833,13 @@ else
 
             // PRIX
             print '<tr><td>'.$langs->trans("SellingPrice").'</td>';
-            print '<td><input name="price" size="10" value="'.$product->price.'">';
-            print $form->select_PriceBaseType($product->price_base_type, "price_base_type");
+            print '<td><input name="price" size="10" value="'.$object->price.'">';
+            print $form->select_PriceBaseType($object->price_base_type, "price_base_type");
             print '</td></tr>';
 
             // MIN PRICE
             print '<tr><td>'.$langs->trans("MinPrice").'</td>';
-            print '<td><input name="price_min" size="10" value="'.$product->price_min.'">';
+            print '<td><input name="price_min" size="10" value="'.$object->price_min.'">';
             print '</td></tr>';
 
             // VAT
@@ -861,7 +857,7 @@ else
         print '</form>';
     }
 
-    /**
+    /*
      * Product card
      */
 
@@ -881,12 +877,12 @@ else
             dol_htmloutput_errors($mesg);
 
             // Main official, simple, and not duplicated code
-            print '<form action="fiche.php" method="POST">'."\n";
+            print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">'."\n";
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="id" value="'.$object->id.'">';
             print '<input type="hidden" name="canvas" value="'.$object->canvas.'">';
-            print '<table class="border" width="100%">';
+            print '<table class="border allwidth">';
 
             // Ref
             print '<tr><td width="15%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="40" maxlength="32" value="'.$object->ref.'"></td></tr>';
@@ -1048,7 +1044,7 @@ else
                 if ($ret == 'html') print '<br>';
             }
 
-            $showphoto=$object->is_photo_available($conf->product->dir_output);
+            $showphoto=$object->is_photo_available($conf->product->dir_output[$object->entity]);
             $showbarcode=$conf->barcode->enabled && $user->rights->barcode->lire;
 
             // En mode visu
@@ -1074,7 +1070,7 @@ else
             if ($showphoto || $showbarcode)
             {
                 print '<td valign="middle" align="center" width="25%" rowspan="'.$nblignes.'">';
-                if ($showphoto)   print $object->show_photos($conf->product->dir_output,1,1,0,0,0,80);
+                if ($showphoto)   print $object->show_photos($conf->product->dir_output[$object->entity],1,1,0,0,0,80);
                 if ($showphoto && $showbarcode) print '<br><br>';
                 if ($showbarcode) print $form->showbarcode($object);
                 print '</td>';
@@ -1099,10 +1095,10 @@ else
                 print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
                 print $langs->trans("BarcodeType");
                 print '<td>';
-                if (($_GET['action'] != 'editbarcodetype') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
+                if (($action != 'editbarcodetype') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
-                if ($_GET['action'] == 'editbarcodetype')
+                if ($action == 'editbarcodetype')
                 {
                     require_once(DOL_DOCUMENT_ROOT."/core/class/html.formbarcode.class.php");
                     $formbarcode = new FormBarCode($db);
@@ -1120,10 +1116,10 @@ else
                 print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
                 print $langs->trans("BarcodeValue");
                 print '<td>';
-                if (($_GET['action'] != 'editbarcode') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
+                if (($action != 'editbarcode') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
-                if ($_GET['action'] == 'editbarcode')
+                if ($action == 'editbarcode')
                 {
                     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1281,7 +1277,7 @@ if ($action == 'clone' || $conf->use_javascript_ajax)
     array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true)
     );
     // Paiement incomplet. On demande si motif = escompte ou autre
-    $form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestion,'yes','action-clone',230,600);
+    $form->form_confirm($_SERVER["PHP_SELF"].'?id='.$id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestion,'yes','action-clone',230,600);
 }
 
 
@@ -1297,7 +1293,7 @@ if ($action == '' || $action == 'view')
 {
     if ($user->rights->produit->creer || $user->rights->service->creer)
     {
-        if ($object->no_button_edit <> 1) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a>';
+        if ($object->no_button_edit <> 1) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$id.'">'.$langs->trans("Modify").'</a>';
 
         if ($object->no_button_copy <> 1)
         {
@@ -1307,12 +1303,12 @@ if ($action == '' || $action == 'view')
             }
             else
             {
-                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
+                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$id.'">'.$langs->trans("ToClone").'</a>';
             }
         }
     }
 
-    $object_is_used = $object->isObjectUsed($object->id);
+    $object_is_used = $object->isObjectUsed($id);
     if (($object->type == 0 && $user->rights->produit->supprimer)
     || ($object->type == 1 && $user->rights->service->supprimer))
     {
@@ -1324,7 +1320,7 @@ if ($action == '' || $action == 'view')
             }
             else
             {
-                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a>';
+                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$id.'">'.$langs->trans("Delete").'</a>';
             }
         }
         else
@@ -1345,7 +1341,7 @@ print "\n</div><br>\n";
  * All the "Add to" areas
  */
 
-if ($object->id && ($action == '' || $action == 'view') && $object->status)
+if ($id && ($action == '' || $action == 'view') && $object->status)
 {
     print '<table width="100%" class="noborder">';
 
@@ -1395,7 +1391,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
                 {
                     $objp = $db->fetch_object($result);
                     $var=!$var;
-                    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
+                    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'">';
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                     print '<input type="hidden" name="action" value="addinpropal">';
                     print "<tr ".$bc[$var].">";
@@ -1433,7 +1429,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
 
             $var=true;
             $otherprop = $propal->liste_array(1,1,1);
-            print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
+            print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" width="100%">';
             if (is_array($otherprop) && count($otherprop))
@@ -1512,7 +1508,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
                 {
                     $objc = $db->fetch_object($result);
                     $var=!$var;
-                    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
+                    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'">';
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                     print '<input type="hidden" name="action" value="addincommande">';
                     print "<tr ".$bc[$var].">";
@@ -1551,7 +1547,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
 
             $var=true;
             $othercom = $commande->liste_array(1, $user);
-            print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
+            print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" width="100%">';
             if (is_array($othercom) && count($othercom))
@@ -1626,7 +1622,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
                 {
                     $objp = $db->fetch_object($result);
                     $var=!$var;
-                    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
+                    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'">';
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                     print '<input type="hidden" name="action" value="addinfacture">';
                     print "<tr $bc[$var]>";
@@ -1691,7 +1687,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
                         $objp = $db->fetch_object($result);
 
                         $var=!$var;
-                        print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
+                        print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'">';
                         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                         print '<input type="hidden" name="action" value="addinfacture">';
                         print "<tr ".$bc[$var].">";

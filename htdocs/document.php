@@ -310,8 +310,8 @@ if ($modulepart)
 		{
 			$accessallowed=1;
 		}
-		if ($conf->product->enabled) $original_file=$conf->product->dir_output.'/'.$original_file;
-		elseif ($conf->service->enabled) $original_file=$conf->service->dir_output.'/'.$original_file;
+		if ($conf->product->enabled) $original_file=$conf->product->dir_output[GETPOST('entity','int')].'/'.$original_file;
+		elseif ($conf->service->enabled) $original_file=$conf->service->dir_output[GETPOST('entity','int')].'/'.$original_file;
 	}
 
 	// Wrapping pour les contrats
