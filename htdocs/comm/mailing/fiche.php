@@ -47,8 +47,6 @@ $object=new Mailing($db);
 $substitutionarray=array(
 '__ID__' => 'IdRecord',
 '__EMAIL__' => 'EMail',
-'__CHECK_READ__' => 'CheckMail',
-'__UNSUSCRIBE__' => 'Unsuscribe',
 '__LASTNAME__' => 'Lastname',
 '__FIRSTNAME__' => 'Firstname',
 '__OTHER1__' => 'Other1',
@@ -59,11 +57,20 @@ $substitutionarray=array(
 '__SIGNATURE__' => 'Signature',
 '__PERSONALIZED__' => 'Personalized'
 );
+if ($conf->global->MAIN_SOCIETE_UNSUBSCRIBE)
+{
+    $substitutionarray=array_merge(
+        $substitutionarray,
+        array(
+			'__CHECK_READ__' => 'CheckMail',
+			'__UNSUSCRIBE__' => 'Unsuscribe'
+	        )
+    );
+}
+
 $substitutionarrayfortest=array(
 '__ID__' => 'TESTIdRecord',
 '__EMAIL__' => 'TESTEMail',
-'__CHECK_READ__' => 'TESTCheckMail',
-'__UNSUSCRIBE__' => 'TESTUnsuscribe',
 '__LASTNAME__' => 'TESTLastname',
 '__FIRSTNAME__' => 'TESTFirstname',
 '__OTHER1__' => 'TESTOther1',
@@ -74,7 +81,16 @@ $substitutionarrayfortest=array(
 '__SIGNATURE__' => 'TESTSignature',
 '__PERSONALIZED__' => 'TESTPersonalized'
 );
-
+if ($conf->global->MAIN_SOCIETE_UNSUBSCRIBE)
+{
+    $substitutionarray=array_merge(
+    $substitutionarray,
+    array(
+			'__CHECK_READ__' => 'TESTCheckMail',
+			'__UNSUSCRIBE__' => 'TESTCheckMail'
+    )
+    );
+}
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes')
@@ -158,7 +174,7 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 			if ($num)
 			{
 				dol_syslog("comm/mailing/fiche.php: nb of targets = ".$num, LOG_DEBUG);
-				
+
 				$now=dol_now();
 
 				// Positionne date debut envoi
@@ -191,9 +207,9 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
                     $tmpfield=explode('=',$other[4],2); $other5=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
 					$substitutionarray=array(
 						'__ID__' => $obj->source_id,
-						'__EMAIL__' => '<a href="mailto:'.$obj->email.'">'.$obj->email.'</a>',
-						'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'" width="0" height="0" style="width:0px;height:0px" border="0"/>',
-						'__UNSUSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-usubscribe.php?tag='.$obj->tag.'&unsuscrib=1" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
+						'__EMAIL__' => $obj->email,
+					    '__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'" width="0" height="0" style="width:0px;height:0px" border="0"/>',
+					    '__UNSUSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
 						'__LASTNAME__' => $obj->nom,
 						'__FIRSTNAME__' => $obj->prenom,
 						'__OTHER1__' => $other1,
@@ -270,11 +286,11 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 								{
 									dol_print_error($db);
 								}
-							
+
 							    //Update status communication of contact prospect
 								$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.rowid=".$obj->rowid." AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
 								dol_syslog("fiche.php: set prospect contact status sql=".$sql, LOG_DEBUG);
-								
+
 								$resql2=$db->query($sql);
 								if (! $resql2)
 								{
@@ -282,8 +298,8 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 								}
 							}
 						}
-						
-						
+
+
 						//test if CHECK READ change statut prospect contact
 					}
 					else
@@ -531,11 +547,11 @@ if ($action == 'update' && empty($_POST["removedfile"]) && empty($_POST["cancel"
 
 // Action confirmation validation
 if ($action == 'confirm_valid' && $confirm == 'yes')
-{	
+{
 	if ($object->fetch($id) >= 0)
 	{
 		$object->valid($user);
-	
+
 		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	}
@@ -547,17 +563,17 @@ if ($action == 'confirm_valid' && $confirm == 'yes')
 
 // Resend
 if ($action == 'confirm_reset' && $confirm == 'yes')
-{	
+{
 	if ($object->fetch($id) >= 0)
 	{
 		$db->begin();
-	
+
 		$result=$object->valid($user);
 		if ($result > 0)
 		{
 			$result=$object->reset_targets_status($user);
 		}
-	
+
 		if ($result > 0)
 		{
 			$db->commit();
@@ -580,7 +596,7 @@ if ($action == 'confirm_reset' && $confirm == 'yes')
 if ($action == 'confirm_delete' && $confirm == 'yes')
 {
 	$object->fetch($id);
-	
+
 	if ($object->delete($object->id))
 	{
 		Header("Location: liste.php");
@@ -1027,8 +1043,11 @@ else
 			print '<br><i>'.$langs->trans("CommonSubstitutions").':<br>';
 			print '__ID__ = '.$langs->trans("IdRecord").'<br>';
 			print '__EMAIL__ = '.$langs->trans("EMail").'<br>';
-			print '__CHECK_READ__ = '.$langs->trans("CheckRead").'<br>';
-			print '__UNSUSCRIBE__ = '.$langs->trans("MailUnsubcribe").'<br>';
+            if ($conf->global->MAIN_SOCIETE_UNSUBSCRIBE)
+            {
+    			print '__CHECK_READ__ = '.$langs->trans("CheckRead").'<br>';
+	    		print '__UNSUSCRIBE__ = '.$langs->trans("MailUnsubcribe").'<br>';
+            }
 			print '__LASTNAME__ = '.$langs->trans("Lastname").'<br>';
 			print '__FIRSTNAME__ = '.$langs->trans("Firstname").'<br>';
 			print '__OTHER1__ = '.$langs->trans("Other").'1<br>';

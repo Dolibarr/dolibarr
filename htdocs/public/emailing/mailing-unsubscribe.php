@@ -20,11 +20,11 @@
 
 
 /**
- *      \file       scripts/emailings/mailing-usubscribe.php
+ *      \file       scripts/emailings/mailing-unsubscribe.php
  *      \ingroup    mailing
  *      \brief      Script use to update unsubcribe contact to prospect mailing list
  */
- 
+
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
@@ -39,26 +39,32 @@ $langs->load("mails");
 $id=GETPOST('tag');
 $unsuscrib=GETPOST('unsuscrib');
 
+if (empty($conf->global->MAIN_SOCIETE_UNSUBSCRIBE)) accessforbidden('Option not enabled');
+
+
+/*
+ * Actions
+ */
 
 if (($id!='') && ($unsuscrib=='1'))
 {
 	//Udate status of mail in Destinaries maling list
 	$statut='3';
 	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE tag='".$id."'";
-	dol_syslog("public/emailing/mailing-usubscribe.php : Mail unsubcribe : ".$sql, LOG_DEBUG);
-	
+	dol_syslog("public/emailing/mailing-unsubscribe.php : Mail unsubcribe : ".$sql, LOG_DEBUG);
+
 	$resql=$db->query($sql);
-	
+
 	//Update status communication of thirdparty prospect
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=-1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE tag='".$id."' AND source_type='thirdparty' AND source_id is not null)";
 	dol_syslog("public/emailing/mailing-unsubscribe.php : Mail unsubcribe thirdparty : ".$sql, LOG_DEBUG);
-	
+
 	$resql=$db->query($sql);
 
     //Update status communication of contact prospect
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=-1 WHERE rowid IN (SELECT fk_soc FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.tag = '".$id."' AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
 	dol_syslog("public/emailing/mailing-unsubscribe.php : Mail unsubcribe contact : ".$sql, LOG_DEBUG);
-	
+
 	$resql=$db->query($sql);
 
 	$sql = "SELECT mc.email";
@@ -66,9 +72,9 @@ if (($id!='') && ($unsuscrib=='1'))
 	$sql .= " WHERE mc.tag='".$id."'";
 
 	$resql=$db->query($sql);
-	
+
 	$obj = $db->fetch_object($resql);
-	
+
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
 	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
@@ -92,8 +98,6 @@ if (($id!='') && ($unsuscrib=='1'))
 	print '</td></tr></table>';
 	print "</body>\n";
 	print "</html>\n";
-	
-
 }
 
 $db->close();
