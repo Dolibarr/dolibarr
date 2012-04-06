@@ -592,6 +592,12 @@ class User extends CommonObject
 			}
 			$this->db->free($resql);
 		}
+		
+		// For backward compatibility
+		if (isset($this->rights->propale))
+		{
+			$this->rights->propal = $this->rights->propale;
+		}
 
 		if (! $moduletag)
 		{
