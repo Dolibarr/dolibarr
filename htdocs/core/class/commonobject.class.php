@@ -2429,6 +2429,8 @@ abstract class CommonObject
 		global $conf,$langs,$user;
 		global $form,$bc,$bcdd;
 		
+		$element=$this->element;
+		
 		// Show product and description
 		$type=$line->product_type?$line->product_type:$line->fk_product_type;
 		// Try to enhance type detection using date_start and date_end for free lines where type
