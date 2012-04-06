@@ -25,6 +25,7 @@
 
 require ("../main.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
+require_once (DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
 $langs->load("products");
 $langs->load("companies");
@@ -290,9 +291,9 @@ print '</td><td width="70%" valign="top" class="notopnoleftnoright">';
 $max=5;
 $sql = 'SELECT ';
 $sql.= ' sum('.$db->ifsql("cd.statut=0",1,0).') as nb_initial,';
-$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= ".$db->idate($now).")",1,0).') as nb_running,';
-$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < ".$db->idate($now).")",1,0).') as nb_expired,';
-$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < ".$db->idate($now - $conf->contrat->services->expires->warning_delay).")",1,0).') as nb_late,';
+$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= '".$db->idate($now)."')",1,0).') as nb_running,';
+$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now)."')",1,0).') as nb_expired,';
+$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contrat->services->expires->warning_delay)."')",1,0).') as nb_late,';
 $sql.= ' sum('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
 $sql.= " c.rowid as cid, c.ref, c.datec, c.tms, c.statut, s.nom, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
@@ -367,11 +368,11 @@ $sql = "SELECT c.ref, c.fk_soc, ";
 $sql.= " cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat, cd.date_fin_validite,";
 $sql.= " s.nom,";
 $sql.= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype";
-$sql.= " FROM (".MAIN_DB_PREFIX."contratdet as cd";
-$sql.= ", ".MAIN_DB_PREFIX."contrat as c";
+$sql.= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " ) LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
+$sql.= ", ".MAIN_DB_PREFIX."contratdet as cd";
+$sql.= ") LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 $sql.= " WHERE c.entity = ".$conf->entity;
 $sql.= " AND cd.fk_contrat = c.rowid";
 $sql.= " AND c.fk_soc = s.rowid";
@@ -445,10 +446,10 @@ print '<br>';
 $sql = "SELECT c.ref, c.fk_soc, cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat,";
 $sql.= " s.nom,";
 $sql.= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype";
-$sql.= " FROM (".MAIN_DB_PREFIX."contratdet as cd";
-$sql.= ", ".MAIN_DB_PREFIX."contrat as c";
+$sql.= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= ", ".MAIN_DB_PREFIX."contratdet as cd";
 $sql.= " ) LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 $sql.= " WHERE c.entity = ".$conf->entity;
 $sql.= " AND c.statut = 1";
@@ -524,10 +525,10 @@ print '<br>';
 $sql = "SELECT c.ref, c.fk_soc, cd.rowid as cid, cd.statut, cd.label, cd.fk_product, cd.description as note, cd.fk_contrat,";
 $sql.= " s.nom,";
 $sql.= " p.rowid as pid, p.ref as pref, p.label as plabel, p.fk_product_type as ptype";
-$sql.= " FROM (".MAIN_DB_PREFIX."contratdet as cd";
-$sql.= ", ".MAIN_DB_PREFIX."contrat as c";
+$sql.= " FROM (".MAIN_DB_PREFIX."contrat as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= ", ".MAIN_DB_PREFIX."contratdet as cd";
 $sql.= " ) LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 $sql.= " WHERE c.entity = ".$conf->entity;
 $sql.= " AND c.statut = 1";
@@ -602,7 +603,8 @@ print '</td></tr></table>';
 
 print '<br>';
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>
