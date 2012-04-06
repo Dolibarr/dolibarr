@@ -688,7 +688,7 @@ class FormOther
         $currentyear = date("Y")+$offset;
         $max_year = $currentyear+$max_year;
         $min_year = $currentyear-$min_year;
-        if(empty($selected)) $selected = $currentyear;
+        if(empty($selected) && empty($useempty)) $selected = $currentyear;
 
         $out.= '<select class="flat" id="' . $htmlname . '" name="' . $htmlname . '"'.$option.' >';
         if($useempty)
