@@ -148,7 +148,7 @@ if ($_POST["remonth"] && $_POST["reday"] && $_POST["reyear"])
     $datecontrat = dol_mktime($_POST["rehour"], $_POST["remin"], 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 }
 
-else if ($action == 'add' && $user->rights->contrat->creer)
+if ($action == 'add' && $user->rights->contrat->creer)
 {
     $object->socid						= $socid;
     $object->date_contrat				= $datecontrat;
@@ -481,13 +481,13 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	if ($action == 'addcontact' && $user->rights->contrat->creer)
 	{
 		$result = $object->fetch($id);
-	
+
 		if ($result > 0 && $id > 0)
 		{
 			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
 			$result = $result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
 		}
-	
+
 		if ($result >= 0)
 		{
 			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -506,7 +506,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 			}
 		}
 	}
-	
+
 	// bascule du statut d'un contact
 	else if ($action == 'swapstatut' && $user->rights->contrat->creer)
 	{
@@ -519,13 +519,13 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 			dol_print_error($db);
 		}
 	}
-	
+
 	// Efface un contact
 	else if ($action == 'deletecontact' && $user->rights->contrat->creer)
 	{
 		$object->fetch($id);
 		$result = $object->delete_contact($_GET["lineid"]);
-	
+
 		if ($result >= 0)
 		{
 			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -660,7 +660,7 @@ else
         }
 
         dol_htmloutput_errors($mesg,'');
-        
+
         $object->fetch_thirdparty();
 
         $nbofservices=count($object->lines);
@@ -781,24 +781,24 @@ else
         }
 
         echo '<br>';
-        
+
         if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
         {
         	require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
         	$formcompany= new FormCompany($db);
-        
+
         	$blocname = 'contacts';
         	$title = $langs->trans('ContactsAddresses');
         	include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
         }
-        
+
         if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
         {
         	$blocname = 'notes';
         	$title = $langs->trans('Notes');
         	include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
         }
-        
+
 
         $servicepos=(isset($_REQUEST["servicepos"])?$_REQUEST["servicepos"]:1);
         $colorb='666666';
@@ -809,9 +809,9 @@ else
          * Lines of contracts
          */
         $productstatic=new Product($db);
-        
+
         // TODO move css and DAO
-        
+
         // Title line for service
         print '<table class="notopnoleft allwidth">';	// Array with (n*2)+1 lines
         $cursorline=1;
