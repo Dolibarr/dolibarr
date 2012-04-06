@@ -111,7 +111,7 @@ if (! empty($id) || ! empty($ref))
 		// Generation des graphs
 		$WIDTH=380;
 		$HEIGHT=160;
-		$dir = (!empty($conf->product->dir_temp)?$conf->product->dir_temp:$conf->service->dir_temp);
+		$dir = (! empty($conf->product->dir_temp[$object->entity])?$conf->product->dir_temp[$object->entity]:$conf->service->dir_temp[$object->entity]);
 		if (! file_exists($dir.'/'.$object->id))
 		{
 			if (dol_mkdir($dir.'/'.$object->id) < 0)
@@ -168,7 +168,7 @@ if (! empty($id) || ! empty($ref))
 						$px->SetShading(3);
 						//print 'x '.$key.' '.$graphfiles[$key]['file'];
 
-						$url=DOL_URL_ROOT.'/viewimage.php?modulepart='.$graphfiles[$key]['modulepart'].'&file='.urlencode($graphfiles[$key]['file']);
+						$url=DOL_URL_ROOT.'/viewimage.php?modulepart='.$graphfiles[$key]['modulepart'].'&entity='.$object->entity.'&file='.urlencode($graphfiles[$key]['file']);
 						$px->draw($dir."/".$graphfiles[$key]['file'],$url);
 
 						$graphfiles[$key]['output']=$px->show();

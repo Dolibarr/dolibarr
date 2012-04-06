@@ -1873,9 +1873,9 @@ abstract class CommonObject
 
         $sql = "SELECT rowid, canvas";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-        $sql.= " WHERE entity = ".$conf->entity;
-        if (!empty($id))  $sql.= " AND rowid = ".$id;
-        if (!empty($ref)) $sql.= " AND ref = '".$ref."'";
+        $sql.= " WHERE entity IN (".getEntity($this->element, 1).")";
+        if (! empty($id))  $sql.= " AND rowid = ".$id;
+        if (! empty($ref)) $sql.= " AND ref = '".$ref."'";
 
         $resql = $this->db->query($sql);
         if ($resql)
