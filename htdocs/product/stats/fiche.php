@@ -111,7 +111,7 @@ if (! empty($id) || ! empty($ref))
 		// Generation des graphs
 		$WIDTH=380;
 		$HEIGHT=160;
-		$dir = (! empty($conf->product->dir_temp[$object->entity])?$conf->product->dir_temp[$object->entity]:$conf->service->dir_temp[$object->entity]);
+		$dir = (! empty($conf->product->multidir_temp[$object->entity])?$conf->product->multidir_temp[$object->entity]:$conf->service->multidir_temp[$object->entity]);
 		if (! file_exists($dir.'/'.$object->id))
 		{
 			if (dol_mkdir($dir.'/'.$object->id) < 0)

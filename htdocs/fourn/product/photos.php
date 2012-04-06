@@ -42,7 +42,7 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	{
 		$result = $object->fetch($id);
 
-		$object->add_photo($conf->product->dir_output[$object->entity], $_FILES['photofile']);
+		$object->add_photo($conf->product->multidir_output[$object->entity], $_FILES['photofile']);
 	}
 }
 /*
@@ -139,7 +139,7 @@ if ($id)
 			$nbbyrow=5;
 
 			$pdir = get_exdir($object->id,2) . $object->id ."/photos/";
-			$dir = $conf->product->dir_output[$object->entity] . '/'. $pdir;
+			$dir = $conf->product->multidir_output[$object->entity] . '/'. $pdir;
 
 			print '<br><table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
 

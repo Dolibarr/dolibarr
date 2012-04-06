@@ -208,9 +208,9 @@ class ActionsCardService extends Product
 
 		    // Photo
 			$this->tpl['nblignes'] = 4;
-			if ($this->object->is_photo_available($conf->service->dir_output))
+			if ($this->object->is_photo_available($conf->service->multidir_output[$this->object->entity]))
 			{
-				$this->tpl['photos'] = $this->object->show_photos($conf->service->dir_output,1,1,0,0,0,80);
+				$this->tpl['photos'] = $this->object->show_photos($conf->service->multidir_output[$this->object->entity],1,1,0,0,0,80);
 			}
 
 			// Duration

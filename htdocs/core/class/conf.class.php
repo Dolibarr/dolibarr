@@ -272,8 +272,11 @@ class Conf
 		// Define default dir_output and dir_temp for directories of modules
 		foreach($this->modules as $module)
 		{
-			$this->$module->dir_output=$rootfordata."/".$module;
-			$this->$module->dir_temp=$rootfordata."/".$module."/temp";
+			$this->$module->multidir_output	= array($this->entity => $rootfordata."/".$module);
+			$this->$module->multidir_temp	= array($this->entity => $rootfordata."/".$module."/temp");
+			// For backward compatibility
+			$this->$module->dir_output	= $rootfordata."/".$module;
+			$this->$module->dir_temp	= $rootfordata."/".$module."/temp";
 		}
 
 		// For mycompany storage
@@ -285,6 +288,9 @@ class Conf
 		$this->admin->dir_temp=$rootfordata.'/admin/temp';
 
 		// For user storage
+		$this->user->multidir_output	= array($this->entity => $rootfordata."/users");
+		$this->user->multidir_temp		= array($this->entity => $rootfordata."/users/temp");
+		// For backward compatibility
 		$this->user->dir_output=$rootforuser."/users";
 		$this->user->dir_temp=$rootforuser."/users/temp";
 		
@@ -305,11 +311,18 @@ class Conf
 		$this->fournisseur->commande->dir_temp  =$rootfordata."/fournisseur/commande/temp";
 		$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";
 		$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";
+		
 		// Module product/service
-		$this->product->dir_output=array($this->entity => $rootfordata."/produit");
-		$this->product->dir_temp  =array($this->entity => $rootfordata."/produit/temp");
-		$this->service->dir_output=array($this->entity => $rootfordata."/produit");
-		$this->service->dir_temp  =array($this->entity => $rootfordata."/produit/temp");
+		$this->product->multidir_output=array($this->entity => $rootfordata."/produit");
+		$this->product->multidir_temp  =array($this->entity => $rootfordata."/produit/temp");
+		$this->service->multidir_output=array($this->entity => $rootfordata."/produit");
+		$this->service->multidir_temp  =array($this->entity => $rootfordata."/produit/temp");
+		// For backward compatibility
+		$this->product->dir_output=$rootfordata."/produit";
+		$this->product->dir_temp  =$rootfordata."/produit/temp";
+		$this->service->dir_output=$rootfordata."/produit";
+		$this->service->dir_temp  =$rootfordata."/produit/temp";
+		
 		// Module contrat
 		$this->contrat->dir_output=$rootfordata."/contracts";
 		$this->contrat->dir_temp  =$rootfordata."/contracts/temp";

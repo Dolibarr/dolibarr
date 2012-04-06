@@ -49,7 +49,7 @@ $object = new Product($db);
 if ($id > 0 || ! empty($ref))
 {
 	$result = $object->fetch($id, $ref);
-	$dir = (! empty($conf->product->dir_output[$object->entity])?$conf->product->dir_output[$object->entity]:$conf->service->dir_output[$object->entity]);
+	$dir = (! empty($conf->product->multidir_output[$object->entity])?$conf->product->multidir_output[$object->entity]:$conf->service->multidir_output[$object->entity]);
 }
 
 

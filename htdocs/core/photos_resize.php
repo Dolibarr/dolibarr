@@ -69,9 +69,9 @@ if ($id > 0)
 {
 	$result = $object->fetch($id);
 	if ($result <= 0) dol_print_error($db,'Failed to load object');
-	$dir=$conf->product->dir_output[$object->entity];	// By default
-	if ($object->type == 0) $dir=$conf->product->dir_output[$object->entity];
-	if ($object->type == 1) $dir=$conf->service->dir_output[$object->entity];
+	$dir=$conf->product->multidir_output[$object->entity];	// By default
+	if ($object->type == 0) $dir=$conf->product->multidir_output[$object->entity];
+	if ($object->type == 1) $dir=$conf->service->multidir_output[$object->entity];
 }
 
 /*
