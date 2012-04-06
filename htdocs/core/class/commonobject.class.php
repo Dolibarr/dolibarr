@@ -2347,183 +2347,159 @@ abstract class CommonObject
     /* This is to show array of line of details */
 
 
-    /**
-     * 	Return HTML table for object lines
-     *  TODO Move this into an output class file (htmlline.class.php)
-     *  If lines are into a template, title must also be into a template
-     *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
-     *
-     *  @param	string		$action				Action code
-     *  @param  string		$seller            	Object of seller third party
-     *  @param  string  	$buyer             	Object of buyer third party
-     *  @param	string		$selected		   	Object line selected
-     *  @param  int	    	$dateSelector      	1=Show also date range input fields
-     *  @param	HookManager	$hookmanager		Hookmanager
-     *  @return	void
-     */
-    function printObjectLines($action,$seller,$buyer,$selected=0,$dateSelector=0,$hookmanager=false)
-    {
-        global $conf,$langs;
-
-        // TODO test using div instead of tables
-        /*
-        print '<div class="table" id="tablelines">';
-        print '<div class="thead">';
-        print '<div class="tr">';
-        print '<div class="td firstcol">'.$langs->trans('Description').'</div>';
-        print '<div class="td">'.$langs->trans('VAT').'</div>';
-        print '<div class="td">'.$langs->trans('PriceUHT').'</div>';
-        print '<div class="td">'.$langs->trans('Qty').'</div>';
-        print '<div class="td">'.$langs->trans('ReductionShort').'</div>';
-        print '<div class="td">'.$langs->trans('TotalHTShort').'</div>';
-        print '<div class="td endcol">&nbsp;</div>';
-        print '<div class="td endcol">&nbsp;</div>';
-        print '<div class="td end">&nbsp;</div>';
-        print '</div></div>';
-        */
-
-        print '<tr class="liste_titre nodrag nodrop">';
-        if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
-        {
-        	print '<td align="center" width="5">&nbsp;</td>';
-        }
-        print '<td>'.$langs->trans('Description').'</td>';
-        print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
-        print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
-        print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
-        print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
-        print '<td align="right" width="50">'.$langs->trans('TotalHTShort').'</td>';
-        print '<td width="10">&nbsp;</td>';
-        print '<td width="10">&nbsp;</td>';
-        print '<td nowrap="nowrap">&nbsp;</td>'; // No width to allow autodim
-        print "</tr>\n";
-
-        $num = count($this->lines);
-        $var = true;
-        $i	 = 0;
-
-        //print '<div class="tbody">';
-
-        foreach ($this->lines as $line)
-        {
-            $var=!$var;
-
-            if (is_object($hookmanager) && ( ($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line) ) )
-            {
-                if (empty($line->fk_parent_line))
-                {
-                    $parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected);
-                    $reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-                }
-            }
-            else
-            {
-                $this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$hookmanager);
-            }
-
-            $i++;
-        }
-
-        //print '</div></div>';
-    }
-
-    /**
-     * 	Return HTML content of a detail line
-     *  TODO Move this into an output class file (htmlline.class.php)
-     *  If lines are into a template, title must also be into a template
-     *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
-     *
-     *  @param	string		$action				GET/POST action
-     * 	@param	array	    $line		       	Selected object line to output
-     *  @param  string	    $var               	Is it a an odd line (true)
-     *  @param  int		    $num               	Number of line (0)
-     *  @param  int		    $i					I
-     *  @param  int		    $dateSelector      	1=Show also date range input fields
-     *  @param  string	    $seller            	Object of seller third party
-     *  @param  string	    $buyer             	Object of buyer third party
-     *  @param	string		$selected		   	Object line selected
-     *  @param	HookManager	$hookmanager		Hook manager
-     *  @return	void
+	/**
+	 *	Return HTML table for object lines
+	 *	TODO Move this into an output class file (htmlline.class.php)
+	 *	If lines are into a template, title must also be into a template
+	 *	But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
+	 *
+	 *	@param	string		$action				Action code
+	 *	@param  string		$seller            	Object of seller third party
+	 *	@param  string  	$buyer             	Object of buyer third party
+	 *	@param	string		$selected		   	Object line selected
+	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
+	 *	@param	HookManager	$hookmanager		Hookmanager
+	 *	@return	void
+	 */
+	function printObjectLines($action,$seller,$buyer,$selected=0,$dateSelector=0,$hookmanager=false)
+	{
+		global $conf,$langs;
+		
+		print '<tr class="liste_titre nodrag nodrop">';
+		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
+		{
+			print '<td align="center" width="5">&nbsp;</td>';
+		}
+		print '<td>'.$langs->trans('Description').'</td>';
+		print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
+		print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
+		print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
+		print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
+		print '<td align="right" width="50">'.$langs->trans('TotalHTShort').'</td>';
+		print '<td width="10">&nbsp;</td>';
+		print '<td width="10">&nbsp;</td>';
+		print '<td nowrap="nowrap">&nbsp;</td>'; // No width to allow autodim
+		print "</tr>\n";
+		
+		$num = count($this->lines);
+		$var = true;
+		$i	 = 0;
+		
+		foreach ($this->lines as $line)
+		{
+			$var=!$var;
+			
+			if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
+			{
+				if (empty($line->fk_parent_line))
+				{
+					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected);
+					$reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				}
+			}
+			else
+			{
+				$this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$hookmanager);
+			}
+			
+			$i++;
+		}
+	}
+	
+	/**
+	 *	Return HTML content of a detail line
+	 *	TODO Move this into an output class file (htmlline.class.php)
+	 *	If lines are into a template, title must also be into a template
+	 *	But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
+	 *
+	 *	@param	string		$action				GET/POST action
+	 *	@param	array	    $line		       	Selected object line to output
+	 *	@param  string	    $var               	Is it a an odd line (true)
+	 *	@param  int		    $num               	Number of line (0)
+	 *	@param  int		    $i					I
+	 *	@param  int		    $dateSelector      	1=Show also date range input fields
+	 *	@param  string	    $seller            	Object of seller third party
+	 *	@param  string	    $buyer             	Object of buyer third party
+	 *	@param	string		$selected		   	Object line selected
+	 *	@param	HookManager	$hookmanager		Hook manager
+	 *	@return	void
 	 */
 	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$hookmanager=false)
 	{
 		global $conf,$langs,$user;
 		global $form,$bc,$bcdd;
-
-        $element = $this->element;
-        if ($element == 'propal') $element = 'propale';   // To work with non standard path
-
-        // Show product and description
-        $type=$line->product_type?$line->product_type:$line->fk_product_type;
-        // Try to enhance type detection using date_start and date_end for free lines where type
-        // was not saved.
-        if (! empty($line->date_start)) $type=1;
-        if (! empty($line->date_end)) $type=1;
-
-        // Ligne en mode visu
-        if ($action != 'editline' || $selected != $line->id)
-        {
-            // Produit
-            if ($line->fk_product > 0)
-            {
-                $product_static = new Product($this->db);
-
-                // Define output language
-           			if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
-			          {
-                  $this->fetch_thirdparty();
-            			$prod = new Product($this->db, $line->fk_product);
-
-          				$outputlangs = $langs;
-          				$newlang='';
-          				if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-          				if (empty($newlang)) $newlang=$this->client->default_lang;
-          				if (! empty($newlang))
-          				{
-          					$outputlangs = new Translate("",$conf);
-          					$outputlangs->setDefaultLang($newlang);
-          				}
-
-                  $label = (! empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $line->product_label;
-                }
-                else {
-                  $label = $line->product_label;
-                }
-
-        				$product_static->type=$line->fk_product_type;
-        				$product_static->id=$line->fk_product;
-        				$product_static->ref=$line->ref;
-        				$product_static->libelle=$label;
-        				$text=$product_static->getNomUrl(1);
-        				$text.= ' - '.$label;
-                $description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
-
-                // Use global variables + $seller and $buyer
-                include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_view.tpl.php');
-                //include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductlinediv_view.tpl.php');
-            }
-            else
-            {
-                // Use global variables + $dateSelector + $seller and $buyer
-                include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_view.tpl.php');
-            }
-        }
-
-        // Ligne en mode update
-        if ($this->statut == 0 && $action == 'editline' && $selected == $line->id)
-        {
-            if ($line->fk_product > 0)
-            {
-                // Use global variables + $dateSelector + $seller and $buyer
-                include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_edit.tpl.php');
-            }
-            else
-            {
-                // Use global variables + $dateSelector + $seller and $buyer
-                include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_edit.tpl.php');
-            }
-        }
-    }
+		
+		// Show product and description
+		$type=$line->product_type?$line->product_type:$line->fk_product_type;
+		// Try to enhance type detection using date_start and date_end for free lines where type
+		// was not saved.
+		if (! empty($line->date_start)) $type=1;
+		if (! empty($line->date_end)) $type=1;
+		
+		// Ligne en mode visu
+		if ($action != 'editline' || $selected != $line->id)
+		{
+			// Produit
+			if ($line->fk_product > 0)
+			{
+				$product_static = new Product($this->db);
+				
+				// Define output language
+				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
+				{
+					$this->fetch_thirdparty();
+					$prod = new Product($this->db, $line->fk_product);
+					
+					$outputlangs = $langs;
+					$newlang='';
+					if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
+					if (empty($newlang)) $newlang=$this->client->default_lang;
+					if (! empty($newlang))
+					{
+						$outputlangs = new Translate("",$conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
+					
+					$label = (! empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $line->product_label;
+				}
+				else
+				{
+					$label = $line->product_label;
+				}
+				
+				$product_static->type=$line->fk_product_type;
+				$product_static->id=$line->fk_product;
+				$product_static->ref=$line->ref;
+				$product_static->libelle=$label;
+				$text=$product_static->getNomUrl(1);
+				$text.= ' - '.$label;
+				$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
+				
+				// Use global variables + $seller and $buyer
+				include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_view.tpl.php');
+			}
+			else
+			{
+				// Use global variables + $dateSelector + $seller and $buyer
+				include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_view.tpl.php');
+			}
+		}
+		
+		// Ligne en mode update
+		if ($this->statut == 0 && $action == 'editline' && $selected == $line->id)
+		{
+			if ($line->fk_product > 0)
+			{
+				// Use global variables + $dateSelector + $seller and $buyer
+				include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_edit.tpl.php');
+			}
+			else
+			{
+				// Use global variables + $dateSelector + $seller and $buyer
+				include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_edit.tpl.php');
+			}
+		}
+	}
 
 
     /* This is to show array of line of details of source object */

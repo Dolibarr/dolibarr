@@ -104,9 +104,9 @@ if (!$user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
 if ($search_categ) $sql.= " AND s.rowid = cs.fk_societe";	// Join for the needed table to filter by categ
-if ($search_nom)   $sql.= " AND s.nom like '%".$db->escape(strtolower($search_nom))."%'";
-if ($search_ville) $sql.= " AND s.ville like '%".$db->escape(strtolower($search_ville))."%'";
-if ($search_code)  $sql.= " AND s.code_client like '%".$db->escape(strtolower($search_code))."%'";
+if ($search_nom)   $sql.= " AND s.nom LIKE '%".$db->escape(strtolower($search_nom))."%'";
+if ($search_ville) $sql.= " AND s.ville LIKE '%".$db->escape(strtolower($search_ville))."%'";
+if ($search_code)  $sql.= " AND s.code_client LIKE '%".$db->escape(strtolower($search_code))."%'";
 if ($search_compta) $sql .= " AND s.code_compta LIKE '%".$db->escape($search_compta)."%'";
 // Insert sale filter
 if ($search_sale)
@@ -120,7 +120,7 @@ if ($search_categ)
 }
 if ($socname)
 {
-	$sql.= " AND s.nom like '%".$db->escape(strtolower($socname))."%'";
+	$sql.= " AND s.nom LIKE '%".$db->escape(strtolower($socname))."%'";
 	$sortfield = "s.nom";
 	$sortorder = "ASC";
 }
