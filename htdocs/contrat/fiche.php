@@ -1078,9 +1078,9 @@ else
                 {
                     if ($object->statut > 0 && $action != 'activateline' && $action != 'unactivateline')
                     {
-                        $action='activateline';
-                        if ($objp->statut == 4) $action='unactivateline';
-                        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline-1]->id.'&amp;action='.$action.'">';
+                        $tmpaction='activateline';
+                        if ($objp->statut == 4) $tmpaction='unactivateline';
+                        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline-1]->id.'&amp;action='.$tmpaction.'">';
                         print img_edit();
                         print '</a>';
                     }
