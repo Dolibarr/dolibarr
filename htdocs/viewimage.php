@@ -197,13 +197,13 @@ if ($modulepart)
     elseif (preg_match('/^productstats_/i',$modulepart))
     {
         if ($user->rights->produit->lire || $user->rights->service->lire) $accessallowed=1;
-        $original_file=(!empty($conf->product->dir_temp[GETPOST('entity','int')])?$conf->product->dir_temp[GETPOST('entity','int')]:$conf->service->dir_temp[GETPOST('entity','int')]).'/'.$original_file;
+        $original_file=(!empty($conf->product->multidir_temp[GETPOST('entity','int')])?$conf->product->multidir_temp[GETPOST('entity','int')]:$conf->service->multidir_temp[GETPOST('entity','int')]).'/'.$original_file;
     }
     // Wrapping for products or services
     elseif ($modulepart == 'product')
     {
         if ($user->rights->produit->lire || $user->rights->service->lire) $accessallowed=1;
-        $original_file=(! empty($conf->product->dir_output[GETPOST('entity','int')])?$conf->product->dir_output[GETPOST('entity','int')]:$conf->service->dir_output[GETPOST('entity','int')]).'/'.$original_file;
+        $original_file=(! empty($conf->product->multidir_output[GETPOST('entity','int')])?$conf->product->multidir_output[GETPOST('entity','int')]:$conf->service->multidir_output[GETPOST('entity','int')]).'/'.$original_file;
     }
     // Wrapping for products or services
     elseif ($modulepart == 'tax')
@@ -239,7 +239,7 @@ if ($modulepart)
     elseif ($modulepart == 'graph_product')
     {
         $accessallowed=1;
-        $original_file=$conf->product->dir_temp[GETPOST('entity','int')].'/'.$original_file;
+        $original_file=$conf->product->multidir_temp[GETPOST('entity','int')].'/'.$original_file;
     }
     // Wrapping pour les code barre
     elseif ($modulepart == 'barcode')

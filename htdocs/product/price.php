@@ -130,14 +130,14 @@ print '</tr>';
 // Label
 print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->libelle.'</td>';
 
-$isphoto=$object->is_photo_available($conf->product->dir_output[$object->entity]);
+$isphoto=$object->is_photo_available($conf->product->multidir_output[$object->entity]);
 
 $nblignes=5;
 if ($isphoto)
 {
 	// Photo
 	print '<td valign="middle" align="center" width="30%" rowspan="'.$nblignes.'">';
-	print $object->show_photos($conf->product->dir_output[$object->entity],1,1,0,0,0,80);
+	print $object->show_photos($conf->product->multidir_output[$object->entity],1,1,0,0,0,80);
 	print '</td>';
 }
 

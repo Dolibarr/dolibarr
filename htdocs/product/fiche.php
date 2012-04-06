@@ -1044,7 +1044,7 @@ else
                 if ($ret == 'html') print '<br>';
             }
 
-            $showphoto=$object->is_photo_available($conf->product->dir_output[$object->entity]);
+            $showphoto=$object->is_photo_available($conf->product->multidir_output[$object->entity]);
             $showbarcode=$conf->barcode->enabled && $user->rights->barcode->lire;
 
             // En mode visu
@@ -1070,7 +1070,7 @@ else
             if ($showphoto || $showbarcode)
             {
                 print '<td valign="middle" align="center" width="25%" rowspan="'.$nblignes.'">';
-                if ($showphoto)   print $object->show_photos($conf->product->dir_output[$object->entity],1,1,0,0,0,80);
+                if ($showphoto)   print $object->show_photos($conf->product->multidir_output[$object->entity],1,1,0,0,0,80);
                 if ($showphoto && $showbarcode) print '<br><br>';
                 if ($showbarcode) print $form->showbarcode($object);
                 print '</td>';
