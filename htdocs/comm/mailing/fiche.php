@@ -45,50 +45,50 @@ $object=new Mailing($db);
 
 // Tableau des substitutions possibles
 $substitutionarray=array(
-'__ID__' => 'IdRecord',
-'__EMAIL__' => 'EMail',
-'__LASTNAME__' => 'Lastname',
-'__FIRSTNAME__' => 'Firstname',
-'__OTHER1__' => 'Other1',
-'__OTHER2__' => 'Other2',
-'__OTHER3__' => 'Other3',
-'__OTHER4__' => 'Other4',
-'__OTHER5__' => 'Other5',
-'__SIGNATURE__' => 'Signature',
-'__PERSONALIZED__' => 'Personalized'
+		'__ID__' => 'IdRecord',
+		'__EMAIL__' => 'EMail',
+		'__LASTNAME__' => 'Lastname',
+		'__FIRSTNAME__' => 'Firstname',
+		'__OTHER1__' => 'Other1',
+		'__OTHER2__' => 'Other2',
+		'__OTHER3__' => 'Other3',
+		'__OTHER4__' => 'Other4',
+		'__OTHER5__' => 'Other5',
+		'__SIGNATURE__' => 'Signature',
+		'__PERSONALIZED__' => 'Personalized'
 );
 if ($conf->global->MAIN_SOCIETE_UNSUBSCRIBE)
 {
-    $substitutionarray=array_merge(
-        $substitutionarray,
-        array(
-			'__CHECK_READ__' => 'CheckMail',
-			'__UNSUSCRIBE__' => 'Unsuscribe'
-	        )
-    );
+	$substitutionarray=array_merge(
+			$substitutionarray,
+			array(
+					'__CHECK_READ__' => 'CheckMail',
+					'__UNSUSCRIBE__' => 'Unsuscribe'
+			)
+	);
 }
 
 $substitutionarrayfortest=array(
-'__ID__' => 'TESTIdRecord',
-'__EMAIL__' => 'TESTEMail',
-'__LASTNAME__' => 'TESTLastname',
-'__FIRSTNAME__' => 'TESTFirstname',
-'__OTHER1__' => 'TESTOther1',
-'__OTHER2__' => 'TESTOther2',
-'__OTHER3__' => 'TESTOther3',
-'__OTHER4__' => 'TESTOther4',
-'__OTHER5__' => 'TESTOther5',
-'__SIGNATURE__' => 'TESTSignature',
-'__PERSONALIZED__' => 'TESTPersonalized'
+		'__ID__' => 'TESTIdRecord',
+		'__EMAIL__' => 'TESTEMail',
+		'__LASTNAME__' => 'TESTLastname',
+		'__FIRSTNAME__' => 'TESTFirstname',
+		'__OTHER1__' => 'TESTOther1',
+		'__OTHER2__' => 'TESTOther2',
+		'__OTHER3__' => 'TESTOther3',
+		'__OTHER4__' => 'TESTOther4',
+		'__OTHER5__' => 'TESTOther5',
+		'__SIGNATURE__' => 'TESTSignature',
+		'__PERSONALIZED__' => 'TESTPersonalized'
 );
 if ($conf->global->MAIN_SOCIETE_UNSUBSCRIBE)
 {
-    $substitutionarray=array_merge(
-    $substitutionarray,
-    array(
-			'__CHECK_READ__' => 'TESTCheckMail',
-			'__UNSUSCRIBE__' => 'TESTCheckMail'
-    )
+    $substitutionarrayfortest=array_merge(
+    		$substitutionarrayfortest,
+    		array(
+    				'__CHECK_READ__' => 'TESTCheckMail',
+    				'__UNSUSCRIBE__' => 'TESTCheckMail'
+    		)
     );
 }
 
@@ -206,17 +206,17 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
                     $tmpfield=explode('=',$other[3],2); $other4=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
                     $tmpfield=explode('=',$other[4],2); $other5=(isset($tmpfield[1])?$tmpfield[1]:$tmpfield[0]);
 					$substitutionarray=array(
-						'__ID__' => $obj->source_id,
-						'__EMAIL__' => $obj->email,
-					    '__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'" width="0" height="0" style="width:0px;height:0px" border="0"/>',
-					    '__UNSUSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
-						'__LASTNAME__' => $obj->nom,
-						'__FIRSTNAME__' => $obj->prenom,
-						'__OTHER1__' => $other1,
-						'__OTHER2__' => $other2,
-						'__OTHER3__' => $other3,
-						'__OTHER4__' => $other4,
-						'__OTHER5__' => $other5
+							'__ID__' => $obj->source_id,
+							'__EMAIL__' => $obj->email,
+							'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'" width="0" height="0" style="width:0px;height:0px" border="0"/>',
+							'__UNSUSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
+							'__LASTNAME__' => $obj->nom,
+							'__FIRSTNAME__' => $obj->prenom,
+							'__OTHER1__' => $other1,
+							'__OTHER2__' => $other2,
+							'__OTHER3__' => $other3,
+							'__OTHER4__' => $other4,
+							'__OTHER5__' => $other5
 					);
 
 					$substitutionisok=true;
