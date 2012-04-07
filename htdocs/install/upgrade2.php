@@ -308,6 +308,8 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         $beforeversionarray=explode('.','3.2.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
+            migrate_price_contrat($db,$langs,$conf);
+
         	migrate_mode_reglement($db,$langs,$conf);
 
             // Reload modules
@@ -1460,7 +1462,6 @@ function migrate_price_contrat($db,$langs,$conf)
                 $pu = $obj->subprice;
                 $txtva = $obj->tva_taux;
                 $remise_percent = $obj->remise_percent;
-                $remise_percent_global = $obj->remise_percent_global;
                 $info_bits = $obj->info_bits;
 
                 // On met a jour les 3 nouveaux champs
@@ -1468,7 +1469,7 @@ function migrate_price_contrat($db,$langs,$conf)
                 //$contratligne->fetch($rowid); Non requis car le update_total ne met a jour que chp redefinis
                 $contratligne->rowid=$rowid;
 
-                $result=calcul_price_total($qty,$pu,$remise_percent,$txtva,0,0,$remise_percent_global,'HT',$info_bits);
+                $result=calcul_price_total($qty,$pu,$remise_percent,$txtva,0,0,0,'HT',$info_bits);
                 $total_ht  = $result[0];
                 $total_tva = $result[1];
                 $total_ttc = $result[2];
@@ -1477,30 +1478,10 @@ function migrate_price_contrat($db,$langs,$conf)
                 $contratligne->total_tva = $total_tva;
                 $contratligne->total_ttc = $total_ttc;
 
-                dolibarr_install_syslog("upgrade2: Line $rowid: contratdetid=$obj->rowid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
+                dolibarr_install_syslog("upgrade2: Line $rowid: contratdetid=$obj->rowid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent -> $total_ht, $total_tva, $total_ttc");
                 print ". ";
                 $contratligne->update_total($rowid);
 
-
-                /* On touche pas a contrat mere
-                 $propal = new Propal($db);
-                 $propal->id=$obj->rowid;
-                 if ( $propal->fetch($propal->id) >= 0 )
-                 {
-                 if ( $propal->update_price() > 0 )
-                 {
-                 print ". ";
-                 }
-                 else
-                 {
-                 print "Error id=".$propal->id;
-                 }
-                 }
-                 else
-                 {
-                 print "Error #3";
-                 }
-                 */
                 $i++;
             }
         }

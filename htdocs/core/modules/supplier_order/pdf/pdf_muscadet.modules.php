@@ -956,7 +956,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 			// If BILLING contact defined on invoice, we use it
 			$usecontact=false;
-			$arrayidcontact=$object->getIdContact('external','BILLING');
+			$arrayidcontact=$object->getIdContact('internal','BILLING');
 			if (count($arrayidcontact) > 0)
 			{
 				$usecontact=true;
@@ -968,15 +968,15 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			{
 				// On peut utiliser le nom de la societe du contact
 				if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socname = $object->contact->socname;
-				else $socname = $object->client->nom;
+				else $socname = $mysoc->nom;
 				$carac_client_name=$outputlangs->convToOutputCharset($socname);
 			}
 			else
 			{
-				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
+				$carac_client_name=$outputlangs->convToOutputCharset($mysoc->nom);
 			}
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$mysoc,$object->contact,$usecontact,'target');
 
 			// Show recipient
 			$posy=42;

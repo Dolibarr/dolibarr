@@ -15,6 +15,9 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+-- Delete old themes setup
+DELETE FROM llx_user_param WHERE param = 'MAIN_THEME' and value = 'freelug';
+
 
 update llx_propal set fk_projet = null where fk_projet not in (select rowid from llx_projet);
 update llx_commande set fk_projet = null where fk_projet not in (select rowid from llx_projet);
