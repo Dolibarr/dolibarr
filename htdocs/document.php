@@ -124,13 +124,13 @@ if ($modulepart)
 	// On fait une verification des droits et on definit le repertoire concerne
 
 	// Wrapping for third parties
-	if ($modulepart == 'company')
+	if ($modulepart == 'company' || $modulepart == 'societe')
 	{
 		if ($user->rights->societe->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->societe->dir_output.'/'.$original_file;
+		$original_file=$conf->societe->multidir_output[GETPOST('entity','int')].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid='".$refname."' AND entity=".$conf->entity;
 	}
 
@@ -250,17 +250,6 @@ if ($modulepart)
 			$accessallowed=1;
 		}
 		$original_file=$conf->compta->dir_output.'/'.$original_file;
-	}
-
-	// Wrapping pour les societe
-	else if ($modulepart == 'societe')
-	{
-		if ($user->rights->societe->lire || preg_match('/^specimen/i',$original_file))
-		{
-			$accessallowed=1;
-		}
-		$original_file=$conf->societe->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid='".$refname."' AND entity=".$conf->entity;
 	}
 
 	// Wrapping pour les expedition

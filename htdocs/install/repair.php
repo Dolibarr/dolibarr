@@ -199,7 +199,7 @@ if (GETPOST('purge'))
     {
         $filearray=array();
         $upload_dir = $conf->$modulepart->dir_output;
-        if ($modulepart == 'company') $upload_dir = $conf->societe->dir_output;
+        if ($modulepart == 'company') $upload_dir = $conf->societe->dir_output; // TODO change for multicompany sharing
         if ($modulepart == 'invoice') $upload_dir = $conf->facture->dir_output;
         if ($modulepart == 'invoice_supplier') $upload_dir = $conf->fournisseur->facture->dir_output;
         if ($modulepart == 'order') $upload_dir = $conf->commande->dir_output;

@@ -162,7 +162,7 @@ if ($type == 'directory')
     // Right area
     if ($module == 'company')  // Auto area for suppliers invoices
     {
-        $upload_dir = $conf->societe->dir_output;
+        $upload_dir = $conf->societe->dir_output; // TODO change for multicompany sharing
         $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^payments$','^CVS$','^thumbs$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
         $param.='&module='.$module;

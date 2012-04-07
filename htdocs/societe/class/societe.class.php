@@ -845,7 +845,7 @@ class Societe extends CommonObject
             // Remove contacts
             if (! $error)
             {
-                $sql = "DELETE from ".MAIN_DB_PREFIX."socpeople";
+                $sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
                 $sql.= " WHERE fk_soc = " . $id;
                 dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
                 if (! $this->db->query($sql))
@@ -873,7 +873,7 @@ class Societe extends CommonObject
             // Remove ban
             if (! $error)
             {
-                $sql = "DELETE from ".MAIN_DB_PREFIX."societe_rib";
+                $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
                 $sql.= " WHERE fk_soc = " . $id;
                 dol_syslog(get_class($this)."::Delete sql=".$sql, LOG_DEBUG);
                 if (! $this->db->query($sql))
@@ -906,7 +906,7 @@ class Societe extends CommonObject
             // Remove third party
             if (! $error)
             {
-                $sql = "DELETE from ".MAIN_DB_PREFIX."societe";
+                $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe";
                 $sql.= " WHERE rowid = " . $id;
                 dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
                 if (! $this->db->query($sql))
@@ -932,7 +932,7 @@ class Societe extends CommonObject
                 $this->db->commit();
 
                 // Delete directory
-                $docdir = $conf->societe->dir_output . "/" . $id;
+                $docdir = $conf->societe->multidir_output[$this->entity] . "/" . $id;
                 if (file_exists($docdir))
                 {
                     dol_delete_dir_recursive($docdir);
