@@ -265,10 +265,6 @@ class Conf
 			$rootfordata.='/'.$this->entity;
 		}
 
-		// For backward compatibility
-		// TODO Replace this->xxx->enabled by this->modulename->enabled to remove this code
-		if (isset($this->categorie->enabled)) $this->category->enabled=$this->categorie->enabled;
-
 		// Define default dir_output and dir_temp for directories of modules
 		foreach($this->modules as $module)
 		{
@@ -422,6 +418,7 @@ class Conf
 		$this->invoice=$this->facture;
 		$this->order=$this->commande;
 		$this->contract=$this->contrat;
+		$this->category=$this->categorie;
 
 
         // Define menu manager in setup
