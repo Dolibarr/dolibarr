@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
@@ -1924,7 +1924,7 @@ if ($action == 'create')
             // Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
             $objectsrc->remise_absolue=$remise_absolue;
             $objectsrc->remise_percent=$remise_percent;
-            $objectsrc->update_price(1);
+            $objectsrc->update_price(1,-1,1);
         }
 
         print "\n<!-- ".$classname." info -->";

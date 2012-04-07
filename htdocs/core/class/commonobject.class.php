@@ -1439,18 +1439,19 @@ abstract class CommonObject
     /**
      *	Update total_ht, total_ttc and total_vat for an object (sum of lines)
      *
-     *	@param	int		$exclspec          Exclude special product (product_type=9)
-     *  @param  int		$roundingadjust    -1=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND or 0), 0=Use total of rounding, 1=Use rounding of total
-     *	@return	int    			           <0 if KO, >0 if OK
+     *	@param	int		$exclspec          	Exclude special product (product_type=9)
+     *  @param  int		$roundingadjust    	-1=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND or 0), 0=Use total of rounding, 1=Use rounding of total
+     *  @param	int		$nodatabaseupdate	1=Do not update database. Update only properties of object.
+     *	@return	int    			           	<0 if KO, >0 if OK
      */
-    function update_price($exclspec=0,$roundingadjust=-1)
+    function update_price($exclspec=0,$roundingadjust=-1,$nodatabaseupdate=0)
     {
         include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 
         if ($roundingadjust < 0 && isset($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)) $roundingadjust=$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND;
         if ($roundingadjust < 0) $roundingadjust=0;
 
-        $err=0;
+        $error=0;
 
         // Define constants to find lines to sum
         $fieldtva='total_tva';
@@ -1462,7 +1463,12 @@ abstract class CommonObject
         $sql.= ' tva_tx as vatrate';
         $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line;
         $sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
-        if ($exclspec) $sql.= ' AND product_type <> 9';
+        if ($exclspec)
+        {
+            $product_field='product_type';
+            if ($this->table_element_line == 'contratdet') $product_field='';    // contratdet table has no product_type field
+            if ($product_field) $sql.= ' AND '.$product_field.' <> 9';
+        }
 
         dol_syslog(get_class($this)."::update_price sql=".$sql);
         $resql = $this->db->query($sql);
@@ -1537,32 +1543,39 @@ abstract class CommonObject
             if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') $fieldtva='total_tva';
             if ($this->element == 'propal')                                                $fieldttc='total';
 
-            $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
-            $sql .= " ".$fieldht."='".price2num($this->total_ht)."',";
-            $sql .= " ".$fieldtva."='".price2num($this->total_tva)."',";
-            $sql .= " ".$fieldlocaltax1."='".price2num($this->total_localtax1)."',";
-            $sql .= " ".$fieldlocaltax2."='".price2num($this->total_localtax2)."',";
-            $sql .= " ".$fieldttc."='".price2num($this->total_ttc)."'";
-            $sql .= ' WHERE rowid = '.$this->id;
+            if (empty($nodatabaseupdate))
+            {
+                $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
+                $sql .= " ".$fieldht."='".price2num($this->total_ht)."',";
+                $sql .= " ".$fieldtva."='".price2num($this->total_tva)."',";
+                $sql .= " ".$fieldlocaltax1."='".price2num($this->total_localtax1)."',";
+                $sql .= " ".$fieldlocaltax2."='".price2num($this->total_localtax2)."',";
+                $sql .= " ".$fieldttc."='".price2num($this->total_ttc)."'";
+                $sql .= ' WHERE rowid = '.$this->id;
 
-            //print "xx".$sql;
-            dol_syslog(get_class($this)."::update_price sql=".$sql);
-            $resql=$this->db->query($sql);
-            if ($resql)
+                //print "xx".$sql;
+                dol_syslog(get_class($this)."::update_price sql=".$sql);
+                $resql=$this->db->query($sql);
+                if (! $resql)
+                {
+                    $error++;
+                    $this->error=$this->db->error();
+                    dol_syslog(get_class($this)."::update_price error=".$this->error,LOG_ERR);
+                }
+            }
+
+            if (! $error)
             {
                 return 1;
             }
             else
             {
-                $this->error=$this->db->error();
-                dol_syslog(get_class($this)."::update_price error=".$this->error,LOG_ERR);
                 return -1;
             }
         }
         else
         {
-            $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::update_price error=".$this->error,LOG_ERR);
+            dol_print_error($this->db,'Bad request in update_price');
             return -1;
         }
     }
@@ -2140,7 +2153,7 @@ abstract class CommonObject
     function setExtraParameters()
     {
     	$this->db->begin();
-    	
+
     	$extraparams = (! empty($this->extraparams) ? json_encode($this->extraparams) : null);
 
     	$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
@@ -2364,7 +2377,7 @@ abstract class CommonObject
 	function printObjectLines($action,$seller,$buyer,$selected=0,$dateSelector=0,$hookmanager=false)
 	{
 		global $conf,$langs;
-		
+
 		print '<tr class="liste_titre nodrag nodrop">';
 		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 		{
@@ -2380,15 +2393,15 @@ abstract class CommonObject
 		print '<td width="10">&nbsp;</td>';
 		print '<td nowrap="nowrap">&nbsp;</td>'; // No width to allow autodim
 		print "</tr>\n";
-		
+
 		$num = count($this->lines);
 		$var = true;
 		$i	 = 0;
-		
+
 		foreach ($this->lines as $line)
 		{
 			$var=!$var;
-			
+
 			if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
 			{
 				if (empty($line->fk_parent_line))
@@ -2401,11 +2414,11 @@ abstract class CommonObject
 			{
 				$this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$hookmanager);
 			}
-			
+
 			$i++;
 		}
 	}
-	
+
 	/**
 	 *	Return HTML content of a detail line
 	 *	TODO Move this into an output class file (htmlline.class.php)
@@ -2428,16 +2441,16 @@ abstract class CommonObject
 	{
 		global $conf,$langs,$user;
 		global $form,$bc,$bcdd;
-		
+
 		$element=$this->element;
-		
+
 		// Show product and description
 		$type=$line->product_type?$line->product_type:$line->fk_product_type;
 		// Try to enhance type detection using date_start and date_end for free lines where type
 		// was not saved.
 		if (! empty($line->date_start)) $type=1;
 		if (! empty($line->date_end)) $type=1;
-		
+
 		// Ligne en mode visu
 		if ($action != 'editline' || $selected != $line->id)
 		{
@@ -2445,13 +2458,13 @@ abstract class CommonObject
 			if ($line->fk_product > 0)
 			{
 				$product_static = new Product($this->db);
-				
+
 				// Define output language
 				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
 				{
 					$this->fetch_thirdparty();
 					$prod = new Product($this->db, $line->fk_product);
-					
+
 					$outputlangs = $langs;
 					$newlang='';
 					if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
@@ -2461,14 +2474,14 @@ abstract class CommonObject
 						$outputlangs = new Translate("",$conf);
 						$outputlangs->setDefaultLang($newlang);
 					}
-					
+
 					$label = (! empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $line->product_label;
 				}
 				else
 				{
 					$label = $line->product_label;
 				}
-				
+
 				$product_static->type=$line->fk_product_type;
 				$product_static->id=$line->fk_product;
 				$product_static->ref=$line->ref;
@@ -2476,7 +2489,7 @@ abstract class CommonObject
 				$text=$product_static->getNomUrl(1);
 				$text.= ' - '.$label;
 				$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
-				
+
 				// Use global variables + $seller and $buyer
 				include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_view.tpl.php');
 			}
@@ -2486,7 +2499,7 @@ abstract class CommonObject
 				include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_view.tpl.php');
 			}
 		}
-		
+
 		// Ligne en mode update
 		if ($this->statut == 0 && $action == 'editline' && $selected == $line->id)
 		{
