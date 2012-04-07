@@ -3,6 +3,7 @@
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2012-2012  Vinicius Nogueira       <viniciusvgn@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,7 @@ $langs->load("bills");
 
 
 $socid=GETPOST('socid','int');
+$option = GETPOST('option');
 
 // Security check
 if ($user->societe_id > 0)
@@ -52,6 +54,8 @@ if ($user->societe_id > 0)
 $now=dol_now();
 
 llxHeader('',$langs->trans("BillsSuppliersUnpaid"));
+
+$title=$langs->trans("BillsSuppliersUnpaid");
 
 $facturestatic=new FactureFournisseur($db);
 $companystatic=new Societe($db);
@@ -87,6 +91,7 @@ if ($user->rights->fournisseur->facture->lire)
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf ON f.rowid=pf.fk_facturefourn ";
 	$sql.= " WHERE f.fk_soc = s.rowid";
 	$sql.= " AND f.paye = 0 AND f.fk_statut = 1";
+	if ($option == 'late') $sql.=" AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->fournisseur->warning_delay)."'";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql .= " AND s.rowid = ".$socid;
 
@@ -145,9 +150,23 @@ if ($user->rights->fournisseur->facture->lire)
 			$soc = new Societe($db);
 			$soc->fetch($socid);
 		}
+		
+		$param="";
+		$param.=($option?"&amp;option=".$option:"");
+		if ($late)               $param.='&amp;late='.urlencode($late);
+		$urlsource.=str_replace('&amp;','&',$param);
 
 		$titre=($socid?$langs->trans("BillsSuppliersUnpaidForCompany",$soc->nom):$langs->trans("BillsSuppliersUnpaid"));
-		print_barre_liste($titre,$page,"impayees.php","&amp;socid=$socid",$sortfield,$sortorder,'',0);	// We don't want pagination on this page
+		
+		if ($option == 'late') $titre.=' ('.$langs->trans("Late").')';
+	else $titre.=' ('.$langs->trans("All").')';
+	
+		$link='';
+		if (empty($option)) $link='<a href="'.$_SERVER["PHP_SELF"].'?option=late">'.$langs->trans("ShowUnpaidLateOnly").'</a>';
+			elseif ($option == 'late') $link='<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("ShowUnpaidAll").'</a>';
+		print_fiche_titre($titre,$link);
+
+		print_barre_liste('','',"impayees.php","&amp;socid=$socid",$sortfield,$sortorder,'',0);	// We don't want pagination on this page
 		$i = 0;
 		print '<table class="liste" width="100%">';
 		print '<tr class="liste_titre">';
