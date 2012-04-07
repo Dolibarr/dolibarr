@@ -159,7 +159,7 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
 
 if ($action == 'addthumb')
 {
-    if (file_exists($conf->societe->dir_output.'/logos/'.$_GET["file"]))
+    if (file_exists($conf->mycompany->dir_output.'/logos/'.$_GET["file"]))
     {
         $isimage=image_format_supported($_GET["file"]);
 

@@ -199,7 +199,7 @@ dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 /*
  * Documents generes
  */
-$filedir=$conf->societe->dir_output.'/'.$socid;
+$filedir=$conf->societe->multidir_output[$this->control->tpl['entity']].'/'.$socid;
 $urlsource=$_SERVER["PHP_SELF"]."?socid=".$socid;
 $genallowed=$user->rights->societe->creer;
 $delallowed=$user->rights->societe->supprimer;

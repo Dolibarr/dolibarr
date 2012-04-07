@@ -121,7 +121,7 @@ if ($modulepart)
     elseif ($modulepart == 'societe')
     {
         $accessallowed=1;
-        $original_file=$conf->societe->dir_output.'/'.$original_file;
+        $original_file=$conf->societe->multidir_output[GETPOST('entity','int')].'/'.$original_file;
     }
     // Wrapping pour les apercu factures
     elseif ($modulepart == 'apercufacture')

@@ -252,7 +252,7 @@ if (empty($reshook))
                     }
 
                     // Gestion du logo de la société
-                    $dir     = $conf->societe->dir_output."/".$object->id."/logos/";
+                    $dir     = $conf->societe->multidir_output[$conf->entity]."/".$object->id."/logos/";
                     $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
                     if ($file_OK)
                     {
@@ -328,14 +328,14 @@ if (empty($reshook))
                 }
 
                 // Gestion du logo de la société
-                $dir     = $conf->societe->dir_output."/".$object->id."/logos";
+                $dir     = $conf->societe->multidir_output[$object->entity]."/".$object->id."/logos";
                 $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
                 if ($file_OK)
                 {
                     if (GETPOST('deletephoto'))
                     {
-                        $fileimg=$conf->societe->dir_output.'/'.$object->id.'/logos/'.$object->logo;
-                        $dirthumbs=$conf->societe->dir_output.'/'.$object->id.'/logos/thumbs';
+                        $fileimg=$dir.'/'.$object->logo;
+                        $dirthumbs=$dir.'/thumbs';
                         dol_delete_file($fileimg);
                         dol_delete_dir_recursive($dirthumbs);
                     }
@@ -568,7 +568,7 @@ else
         $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
 
         // Gestion du logo de la société
-        $dir     = $conf->societe->dir_output."/".$object->id."/logos";
+        $dir     = $conf->societe->multidir_output[$object->entity]."/".$object->id."/logos";
         $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
         if ($file_OK)
         {
@@ -1821,7 +1821,7 @@ else
             /*
              * Documents generes
              */
-            $filedir=$conf->societe->dir_output.'/'.$object->id;
+            $filedir=$conf->societe->multidir_output[$object->entity].'/'.$object->id;
             $urlsource=$_SERVER["PHP_SELF"]."?socid=".$object->id;
             $genallowed=$user->rights->societe->creer;
             $delallowed=$user->rights->societe->supprimer;
