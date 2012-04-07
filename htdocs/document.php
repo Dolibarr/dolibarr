@@ -50,10 +50,11 @@ require("./main.inc.php");	// Load $user and permissions
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 
 $encoding = '';
-$action = GETPOST('action','alpha');
-$original_file = GETPOST('file','alpha');	// Do not use urldecode here ($_GET are already decoded by PHP).
-$modulepart = GETPOST('modulepart','alpha');
-$urlsource = GETPOST('urlsource','alpha');
+$action=GETPOST('action','alpha');
+$original_file=GETPOST('file','alpha');	// Do not use urldecode here ($_GET are already decoded by PHP).
+$modulepart=GETPOST('modulepart','alpha');
+$urlsource=GETPOST('urlsource','alpha');
+$entity=GETPOST('entity','int');
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
@@ -130,8 +131,8 @@ if ($modulepart)
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->societe->multidir_output[GETPOST('entity','int')].'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid='".$refname."' AND entity=".$conf->entity;
+		$original_file=$conf->societe->multidir_output[$entity].'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid='".$refname."' AND entity IN (".getEntity('societe', 1).")";
 	}
 
 	// Wrapping for invoices
@@ -299,8 +300,8 @@ if ($modulepart)
 		{
 			$accessallowed=1;
 		}
-		if ($conf->product->enabled) $original_file=$conf->product->multidir_output[GETPOST('entity','int')].'/'.$original_file;
-		elseif ($conf->service->enabled) $original_file=$conf->service->multidir_output[GETPOST('entity','int')].'/'.$original_file;
+		if ($conf->product->enabled) $original_file=$conf->product->multidir_output[$entity].'/'.$original_file;
+		elseif ($conf->service->enabled) $original_file=$conf->service->multidir_output[$entity].'/'.$original_file;
 	}
 
 	// Wrapping pour les contrats
