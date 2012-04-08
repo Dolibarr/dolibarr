@@ -110,11 +110,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 
 	/**
-     *      Write the invoice as a document onto disk
+     *  Build document onto disk
      *
-     *      @param	Object		$object         Object invoice to build (or id if old method)
-     *      @param  Translate	$outputlangs    Lang object for output language
-     *      @return int             			1=OK, 0=KO
+     *  @param	Object		$object         Object invoice to build (or id if old method)
+     *  @param  Translate	$outputlangs    Lang object for output language
+     *  @return int             			1=OK, 0=KO
 	 */
 	function write_file($object,$outputlangs='')
 	{
@@ -876,7 +876,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
 
 			// Show sender information
-			$pdf->SetXY($posx+2,$posy+8);
+			$pdf->SetXY($posx+2,$posy+4+(dol_nboflines_bis($this->emetteur->name,44)*4));
 			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 

@@ -47,8 +47,8 @@ class DolEditor
     /**
      *      Create an object to build an HTML area to edit a large string content
      *
-     *      @param 	string	$htmlname		        HTML name of WYSIWIG form
-     *      @param 	string	$content		        Content of WYSIWIG form
+     *      @param 	string	$htmlname		        HTML name of WYSIWIG field
+     *      @param 	string	$content		        Content of WYSIWIG field
      *      @param	int		$width					Width in pixel of edit area (auto by default)
      *      @param 	int		$height			        Height in pixel of edit area (200px by default)
      *      @param 	string	$toolbarname	        Name of bar set to use ('Full', 'dolibarr_notes', 'dolibarr_details', 'dolibarr_mailings')

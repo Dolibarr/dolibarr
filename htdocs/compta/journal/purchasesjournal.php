@@ -161,17 +161,6 @@ foreach ($tabfac as $key => $val)
 	$invoicestatic->ref=$val["ref"];
 	$invoicestatic->type=$val["type"];
 
-	print "<tr ".$bc[$var].">";
-	// third party
-	//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
-	print "<td>".$val["date"]."</td>";
-	print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-
-	foreach ($tabttc[$key] as $k => $mt)
-	{
-		print "<td>".$k."</td><td>".$langs->trans("ThirdParty")."</td><td align='right'>".($mt>=0?price($mt):'')."</td><td align='right'>".($mt<0?-price(-$mt):'')."</td>";
-	}
-	print "</tr>";
 	// product
 	foreach ($tabht[$key] as $k => $mt)
 	{
@@ -181,7 +170,10 @@ foreach ($tabfac as $key => $val)
 			//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
 			print "<td>".$val["date"]."</td>";
 			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-			print "<td>".$k."</td><td>".$langs->trans("Products")."</td><td align='right'>".($mt<0?price(-$mt):'')."</td><td align='right'>".($mt>=0?price($mt):'')."</td></tr>";
+			print "<td>".$k."</td><td>".$langs->trans("Products")."</td>";
+			print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
+			print '<td align="right">'.($mt<0?price(-$mt):'')."</td>";
+			print "</tr>";
 		}
 	}
 	// vat
@@ -194,10 +186,26 @@ foreach ($tabfac as $key => $val)
 			//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
 			print "<td>".$val["date"]."</td>";
 			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-			print "<td>".$k."</td><td>".$langs->trans("VAT")."</td><td align='right'>".($mt<0?price(-$mt):'')."</td><td align='right'>".($mt>=0?price($mt):'')."</td></tr>";
+			print "<td>".$k."</td><td>".$langs->trans("VAT")." ".$key."</td>";
+			print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
+			print '<td align="right">'.($mt<0?price(-$mt):'')."</td>";
+			print "</tr>";
 		}
 	}
-
+	print "<tr ".$bc[$var].">";
+	// third party
+	//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
+	print "<td>".$val["date"]."</td>";
+	print "<td>".$invoicestatic->getNomUrl(1)."</td>";
+	
+	foreach ($tabttc[$key] as $k => $mt)
+	{
+	    print "<td>".$k."</td><td>".$langs->trans("ThirdParty")."</td>";
+	    print '<td align="right">'.($mt<0?-price(-$mt):'')."</td>";
+	    print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
+	}
+	print "</tr>";
+		
 	$var = !$var;
 }
 
@@ -206,5 +214,6 @@ print "</table>";
 
 // End of page
 llxFooter();
+
 $db->close();
 ?>

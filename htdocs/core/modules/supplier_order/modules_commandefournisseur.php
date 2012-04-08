@@ -23,7 +23,7 @@
 
 /**
  *		\file       htdocs/core/modules/supplier_order/modules_commandefournisseur.php
- *      \ingroup    commande
+ *      \ingroup    commande fournisseur
  *      \brief      File that contain parent class for supplier orders models
  *                  and parent class for supplier orders numbering models
  */
@@ -32,8 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");	// requi
 
 
 /**
- *	\class      ModelePDFSuppliersOrders
- *	\brief      Parent class for supplier orders models
+ *	Parent class for supplier orders models
  */
 abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 {
@@ -65,8 +64,7 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 
 
 /**
- *	\class      ModeleNumRefSuppliersOrders
- *	\brief      Classe mere des modeles de numerotation des references de commandes fournisseurs
+ *	Classe mere des modeles de numerotation des references de commandes fournisseurs
  */
 abstract class ModeleNumRefSuppliersOrders
 {
@@ -140,20 +138,20 @@ abstract class ModeleNumRefSuppliersOrders
 
 
 /**
- *  Create a document onto disk accordign to template module.
+ *  Create a document onto disk according to template module.
  *
- *  @param	    DoliDB		$db  			data base object
- *  @param	    Object		$object			object order
- *  @param	    string		$model			force le modele a utiliser ('' to not force)
- *  @param		Translate	$outputlangs	Objet lang a utiliser pour traduction
+ *  @param	    DoliDB		$db  			Database handler
+ *  @param	    Object		$object			Object supplier order
+ *  @param	    string		$modele			Force template to use ('' to not force)
+ *  @param		Translate	$outputlangs	Object lang a utiliser pour traduction
  *  @param      int			$hidedetails    Hide details of lines
  *  @param      int			$hidedesc       Hide description
  *  @param      int			$hideref        Hide ref
  *  @return     int          				0 if KO, 1 if OK
  */
-function supplier_order_pdf_create($db, $object, $model, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+function supplier_order_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
-	global $conf,$langs;
+	global $conf, $user, $langs;
 	$langs->load("suppliers");
 
 	$error=0;
@@ -214,7 +212,7 @@ function supplier_order_pdf_create($db, $object, $model, $outputlangs, $hidedeta
 	{
 		require_once($file);
 
-		$obj = new $classname($db);
+		$obj = new $classname($db,$object);
 
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
@@ -226,6 +224,14 @@ function supplier_order_pdf_create($db, $object, $model, $outputlangs, $hidedeta
 			// we delete preview files
         	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 			dol_delete_preview($object);
+			
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('SUPPLIER_ORDER_BUILDDOC',$object,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+
 			return 1;
 		}
 		else

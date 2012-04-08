@@ -121,8 +121,8 @@ class modDeplacement extends DolibarrModules
 		$this->export_code[$r]='trips_'.$r;
 		$this->export_label[$r]='ListTripsAndExpenses';
 		$this->export_permission[$r]=array(array("deplacement","export"));
-        $this->export_fields_array[$r]=array('d.rowid'=>"TripId",'d.type'=>"Type",'d.km'=>"FeesKilometersOrAmout",'d.note'=>'NotePrivate','d.note_public'=>'NotePublic','s.nom'=>'ThirdParty','u.name'=>'Lastname','u.firstname'=>'Firstname','d.dated'=>"Date");
-        $this->export_entities_array[$r]=array('d.rowid'=>"Trip",'d.type'=>"Trip",'d.km'=>"Trip",'d.note'=>'Trip','d.note_public'=>'Trip','s.nom'=>'company','u.name'=>'user','u.firstname'=>'user','d.dated'=>"Date");
+        $this->export_fields_array[$r]=array('u.login'=>'Login','u.name'=>'Lastname','u.firstname'=>'Firstname','d.rowid'=>"TripId",'d.type'=>"Type",'d.km'=>"FeesKilometersOrAmout",'d.dated'=>"Date",'d.note'=>'NotePrivate','d.note_public'=>'NotePublic','s.nom'=>'ThirdParty');
+        $this->export_entities_array[$r]=array('u.login'=>'user','u.name'=>'user','u.firstname'=>'user','d.rowid'=>"trip",'d.type'=>"trip",'d.km'=>"trip",'d.dated'=>"trip",'d.note'=>'trip','d.note_public'=>'trip','s.nom'=>'company');
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'user as u';
