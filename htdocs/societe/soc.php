@@ -1496,7 +1496,11 @@ else
         // Barcode
         if ($conf->global->MAIN_MODULE_BARCODE)
         {
-            print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">'.$object->barcode.'</td></tr>';
+            print '<tr><td>';
+            print $langs->trans('Gencod').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">'.$object->barcode;
+            print '</td>';
+            print $htmllogobar; $htmllogobar='';
+            print '</tr>';
         }
 
         // Status
