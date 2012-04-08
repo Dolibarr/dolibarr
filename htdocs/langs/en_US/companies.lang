@@ -273,6 +273,7 @@ LastProspect=Last
 ProspectToContact=Prospect to contact
 CompanyDeleted=Company "%s" deleted from database.
 ListOfContacts=List of contacts/addresses
+ListOfContactsAddresses=List of contacts/adresses
 ListOfProspectsContacts=List of prospect contacts
 ListOfCustomersContacts=List of customer contacts
 ListOfSuppliersContacts=List of supplier contacts

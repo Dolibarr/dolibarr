@@ -420,7 +420,7 @@ if ($action == 'create')
 	print '<form name="formaction" action="'.DOL_URL_ROOT.'/comm/action/fiche.php" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add_action">';
-	print '<input type="hidden" name="backtopage" value="'.(! empty($backtopage) ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
+	print '<input type="hidden" name="backtopage" value="'.((! empty($backtopage) && $backtopage != '1') ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
 	if (GETPOST("actioncode") == 'AC_RDV') print_fiche_titre($langs->trans("AddActionRendezVous"));
 	else print_fiche_titre($langs->trans("AddAnAction"));
@@ -673,7 +673,7 @@ if ($id)
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="ref_ext" value="'.$act->ref_ext.'">';
-		print '<input type="hidden" name="backtopage" value="'.(! empty($backtopage) ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
+		print '<input type="hidden" name="backtopage" value="'.((! empty($backtopage) && $backtopage != '1')? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
 		print '<table class="border" width="100%">';
 
