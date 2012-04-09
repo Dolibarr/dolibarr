@@ -195,11 +195,6 @@ function GETPOST($paramname,$check='',$method=0)
 		    if (preg_match('/"/',$out)) $out='';
 			else if (preg_match('/\.\.\//',$out)) $out='';
 		}
-		elseif ($check == 'special')
-		{
-			$out=trim($out);
-			if (preg_match('/(\s)*|(%20)*/',$out)) $out='';
-		}
 		elseif ($check == 'array')
 		{
 			if (! is_array($out) || empty($out)) $out=array();
