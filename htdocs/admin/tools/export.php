@@ -111,7 +111,7 @@ if ($what == 'mysql')
 	if (! empty($dolibarr_main_db_port)) $param.=" -P ".$dolibarr_main_db_port;
 	if (! $_POST["use_transaction"]) $param.=" -l --single-transaction";
 	if ($_POST["disable_fk"])        $param.=" -K";
-	if ($_POST["sql_compat"] && $_POST["sql_compat"] != 'NONE') $param.=" --compatible=".GETPOST("sql_compat","special");
+	if ($_POST["sql_compat"] && $_POST["sql_compat"] != 'NONE') $param.=" --compatible=".GETPOST("sql_compat","alpha");
 	if ($_POST["drop_database"])     $param.=" --add-drop-database";
 	if ($_POST["sql_structure"])
 	{

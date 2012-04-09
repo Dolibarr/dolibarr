@@ -185,12 +185,7 @@ function GETPOST($paramname,$check='',$method=0)
         if ($check == 'int' && ! preg_match('/^[-\.,0-9]+$/i',trim($out))) $out='';
         // Check if alpha
         //if ($check == 'alpha' && ! preg_match('/^[ =:@#\/\\\(\)\-\._a-z0-9]+$/i',trim($out))) $out='';
-        elseif ($check == 'alpha' && preg_match('/"/',trim($out))) $out='';    // Only " is dangerous because param in url can close the href= or src= and add javascript functions
-        elseif ($check == 'special')
-        {
-        	$out=trim($out);
-        	if (preg_match('/(\s)*|(%20)*/',$out)) $out='';
-        }
+        if ($check == 'alpha' && preg_match('/"/',trim($out))) $out='';    // Only " is dangerous because param in url can close the href= or src= and add javascript functions
     }
 
     return $out;
