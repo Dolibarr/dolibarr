@@ -9,8 +9,8 @@ use Cwd;
 
 $PROJECT="dolibarr";
 $MAJOR="3";
-$MINOR="2";
-$BUILD="0-beta";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
+$MINOR="3";
+$BUILD="0-alpha";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
 $RPMSUBVERSION="auto";	# auto use value found into BUILD
 
 @LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","APS","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
