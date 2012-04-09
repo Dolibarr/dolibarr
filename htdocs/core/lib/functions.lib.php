@@ -194,6 +194,12 @@ function GETPOST($paramname,$check='',$method=0)
     		// '../' is dangerous because it allows dir transversals
 		    if (preg_match('/"/',$out)) $out='';
 			else if (preg_match('/\.\.\//',$out)) $out='';
+			else if (preg_match('/(\s)*|(%20)*/',$out)) $out='';
+		}
+		elseif ($check == 'special')
+		{
+			$out=trim($out);
+			if (preg_match('/(\s)*|(%20)*/',$out)) $out='';
 		}
 		elseif ($check == 'array')
 		{
