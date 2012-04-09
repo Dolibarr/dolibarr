@@ -28,14 +28,14 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 
 $langs->load("admin");
 
-$action=GETPOST('action','alpha');
-$what=GETPOST('what','alpha');
-$export_type=GETPOST('export_type','alpha');
-$file=GETPOST('filename_template','alpha');
+$action=GETPOST('action');
+$what=GETPOST("what");
+$export_type=GETPOST("export_type");
+$file=GETPOST('filename_template');
 
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$sortfield = GETPOST("sortfield");
+$sortorder = GETPOST("sortorder");
+$page = GETPOST("page");
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="date";
 if ($page < 0) { $page = 0; }
