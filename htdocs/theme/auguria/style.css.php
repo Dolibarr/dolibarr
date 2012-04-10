@@ -2175,6 +2175,15 @@ div.ecmjqft {
 	padding-right: 10px !important;
 }
 
+/* ============================================================================== */
+/*  Maps                                                                          */
+/* ============================================================================== */
+
+.divmap, #google-visualization-geomap-embed-0, #google-visualization-geomap-embed-1, google-visualization-geomap-embed-2 {
+    -moz-box-shadow: 0px 0px 10px #AAA;
+    -webkit-box-shadow: 0px 0px 10px #AAA;
+    box-shadow: 0px 0px 10px #AAA;
+}
 
 <?php
 if (is_object($db)) $db->close();

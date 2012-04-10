@@ -2177,6 +2177,52 @@ abstract class CommonObject
     }
 
 
+    /**
+     *  Return if a country is inside the EEC (European Economic Community)
+     *
+     *  @return     boolean		true = country inside EEC, false = country outside EEC
+     */
+    function isInEEC()
+    {
+        // List of all country codes that are in europe for european vat rules
+        // List found on http://ec.europa.eu/taxation_customs/vies/lang.do?fromWhichPage=vieshome
+        $country_code_in_EEC=array(
+    			'AT',	// Austria
+    			'BE',	// Belgium
+    			'BG',	// Bulgaria
+    			'CY',	// Cyprus
+    			'CZ',	// Czech republic
+    			'DE',	// Germany
+    			'DK',	// Danemark
+    			'EE',	// Estonia
+    			'ES',	// Spain
+    			'FI',	// Finland
+    			'FR',	// France
+    			'GB',	// Royaume-uni
+    			'GR',	// Greece
+    			'NL',	// Holland
+    			'HU',	// Hungary
+    			'IE',	// Ireland
+    			'IT',	// Italy
+    			'LT',	// Lithuania
+    			'LU',	// Luxembourg
+    			'LV',	// Latvia
+    			'MC',	// Monaco 		Seems to use same IntraVAT than France (http://www.gouv.mc/devwww/wwwnew.nsf/c3241c4782f528bdc1256d52004f970b/9e370807042516a5c1256f81003f5bb3!OpenDocument)
+    			'MT',	// Malta
+        //'NO',	// Norway
+    			'PL',	// Poland
+    			'PT',	// Portugal
+    			'RO',	// Romania
+    			'SE',	// Sweden
+    			'SK',	// Slovakia
+    			'SI',	// Slovenia
+        //'CH',	// Switzerland - No. Swizerland in not in EEC
+        );
+        //print "dd".$this->country_code;
+        return in_array($this->country_code,$country_code_in_EEC);
+    }
+
+
     // --------------------
     // TODO: All functions here must be redesigned and moved as they are not business functions but output functions
     // --------------------

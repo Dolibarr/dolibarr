@@ -36,11 +36,11 @@ $langs->setDefaultLang($setuplang);
 $langs->load("admin");
 $langs->load("install");
 
-// Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
-if (! isset($force_install_dolibarrlogin))     $force_install_dolibarrlogin='';
+// Now we load forced value from install.forced.php file.
 $useforcedwizard=false;
-if (file_exists("./install.forced.php")) { $useforcedwizard=true; include_once("./install.forced.php"); }
-else if (file_exists("/etc/dolibarr/install.forced.php")) { $useforcedwizard=include_once("/etc/dolibarr/install.forced.php"); }
+$forcedfile="./install.forced.php";
+if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
+if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once($forcedfile); }
 
 dolibarr_install_syslog("--- etape4: Entering etape4.php page");
 
@@ -74,7 +74,7 @@ $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db-
 if ($db->ok == 1)
 {
     print '<tr><td>'.$langs->trans("DolibarrAdminLogin").' :</td><td>';
-    print '<input name="login" value="'.(! empty($_GET["login"])?$_GET["login"]:$force_install_dolibarrlogin).'"></td></tr>';
+    print '<input name="login" value="'.(! empty($_GET["login"])?$_GET["login"]:(isset($force_install_dolibarrlogin)?$force_install_dolibarrlogin:'')).'"></td></tr>';
     print '<tr><td>'.$langs->trans("Password").' :</td><td>';
     print '<input type="password" name="pass"></td></tr>';
     print '<tr><td>'.$langs->trans("PasswordAgain").' :</td><td>';
@@ -106,9 +106,9 @@ if ($db->ok == 1)
 
 }
 
-$db->close();
-
 dolibarr_install_syslog("--- install/etape4.php end", LOG_INFO);
 
 pFooter($err,$setuplang);
+
+$db->close();
 ?>

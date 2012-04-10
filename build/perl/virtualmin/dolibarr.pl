@@ -30,7 +30,7 @@ return "Regis Houssin";
 # script_dolibarr_versions()
 sub script_dolibarr_versions
 {
-return ( "3.2.0", "3.1.0", "3.0.1", "2.9.0" );
+return ( "3.3.0", "3.2.0", "3.1.0", "3.0.1", "2.9.0" );
 }
 
 sub script_dolibarr_category

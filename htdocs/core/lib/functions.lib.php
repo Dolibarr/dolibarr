@@ -3996,6 +3996,19 @@ function unichr($unicode , $encoding = 'UTF-8')
 }
 
 /**
+ *	Convert an array with RGB value into hex RGB value
+ *
+ *  @param	array	$arraycolor			Array
+ *  @param	string	$colorifnotfound	Color code to return if entry not defined
+ *  @return	string						RGB hex value (without # before). For example: FF00FF
+ */
+function colorArrayToHex($arraycolor,$colorifnotfound='888888')
+{
+    if (! is_array($arraycolor)) return $colorifnotfound;
+    return dechex($arraycolor[0]).dechex($arraycolor[1]).dechex($arraycolor[2]);
+}
+
+/**
  *	Convert a currency code into its symbol
  *
  *  @param		string	$currency_code		Currency code

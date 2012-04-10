@@ -194,7 +194,11 @@ else
 // Show graphics
 if ($mode == 'memberbycountry')
 {
+    $color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/graph-color.php';
+    if (is_readable($color_file)) include_once($color_file);
+
     // Assume we've already included the proper headers so just call our script inline
+    // More doc: https://developers.google.com/chart/interactive/docs/gallery/geomap?hl=fr-FR
     print "\n<script type='text/javascript'>\n";
     print "google.load('visualization', '1', {'packages': ['geomap']});\n";
     print "google.setOnLoadCallback(drawMap);\n";
@@ -209,10 +213,9 @@ if ($mode == 'memberbycountry')
     $i=0;
     foreach($data as $val)
     {
-        //$valcountry=ucfirst($val['code']);
-        $valcountry=ucfirst($val['label_en']);
-        // fix case of uk
-        if ($valcountry == 'Great Britain') { $valcountry = 'United Kingdom'; }
+        $valcountry=strtoupper($val['code']);    // Should be ISO-3166 code (faster)
+        //$valcountry=ucfirst($val['label_en']);
+        if ($valcountry == 'Great Britain') { $valcountry = 'United Kingdom'; }    // fix case of uk (when we use labels)
         print "\tdata.setValue(".$i.", 0, \"".$valcountry."\");\n";
         print "\tdata.setValue(".$i.", 1, ".$val['nb'].");\n";
         // Google's Geomap only supports up to 400 entries
@@ -226,6 +229,7 @@ if ($mode == 'memberbycountry')
     //print "\toptions['zoomOutLabel'] = '".dol_escape_js($langs->transnoentitiesnoconv("Numbers"))."';\n";
     print "\toptions['width'] = ".$graphwidth.";\n";
     print "\toptions['height'] = ".$graphheight.";\n";
+    print "\toptions['colors'] = [0x".colorArrayToHex($theme_datacolor[1],'BBBBBB').", 0x".colorArrayToHex($theme_datacolor[0],'444444')."];\n";
     print "\tvar container = document.getElementById('".$mode."');\n";
     print "\tvar geomap = new google.visualization.GeoMap(container);\n";
     print "\tgeomap.draw(data, options);\n";

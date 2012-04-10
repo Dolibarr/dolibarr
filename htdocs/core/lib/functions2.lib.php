@@ -476,14 +476,14 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         if (dol_strlen($reg[$posy]) == 2) $yearcomp=sprintf("%02d",date("y",$date)+$yearoffset);
         if (dol_strlen($reg[$posy]) == 1) $yearcomp=substr(date("y",$date),2,1)+$yearoffset;
         $sqlwhere='';
-        $sqlwhere.='( (SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).') >= '.$yearcomp;
+        $sqlwhere.='( (SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).") >= '".$yearcomp."'";
         if ($monthcomp > 1)	// Test useless if monthcomp = 1 (or 0 is same as 1)
         {
             if (dol_strlen($reg[$posy]) == 4) $yearcomp1=sprintf("%04d",date("Y",$date)+$yearoffset+1);
             if (dol_strlen($reg[$posy]) == 2) $yearcomp1=sprintf("%02d",date("y",$date)+$yearoffset+1);
             // FIXME If mask is {mm}{yy}, sqlwhere is wrong here
-            $sqlwhere.=' AND SUBSTRING('.$field.', '.(dol_strlen($reg[1])+dol_strlen($reg[2])+1).', '.dol_strlen($reg[3]).') >= '.$monthcomp.')';
-            $sqlwhere.=' OR SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).') >= '.$yearcomp1.' )';
+            $sqlwhere.=' AND SUBSTRING('.$field.', '.(dol_strlen($reg[1])+dol_strlen($reg[2])+1).', '.dol_strlen($reg[3]).") >= '".$monthcomp."')";
+            $sqlwhere.=' OR SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).") >= '".$yearcomp1."' )";
         }
         else
         {
@@ -558,7 +558,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         $sql.= " WHERE facnumber LIKE '".$maskLike."'";
         $sql.= " AND entity IN (".getEntity($table, 1).")";
 
-        dol_syslog("mod_facture_terre::getNextValue sql=".$sql);
+        dol_syslog("functions2::get_next_value sql=".$sql);
         $resql=$db->query($sql);
         if ($resql)
         {
