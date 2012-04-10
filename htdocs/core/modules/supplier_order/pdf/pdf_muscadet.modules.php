@@ -98,8 +98,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$this->franchise=!$mysoc->tva_assuj;
 
         // Get source company
-        if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
-        $this->emetteur=$object->thirdparty;
+        $this->emetteur=$mysoc;
         if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 
 		// Defini position des colonnes
@@ -902,8 +901,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$pdf->SetXY($this->marge_gauche,$posy);
 
 		// Logo
-		$logo=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
-		if ($mysoc->logo)
+		$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
+		if ($this->emetteur->logo)
 		{
 			if (is_readable($logo))
 			{
@@ -958,7 +957,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		if ($showaddress)
 		{
 			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs,$mysoc);
+			$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
 
 			// Show sender
 			$posy=42;
@@ -979,10 +978,10 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			// Show sender name
 			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('','B', $default_font_size);
-			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($mysoc->name), 0, 'L');
+			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
 
 			// Show sender information
-			$pdf->SetXY($posx+2,$posy+4+(dol_nboflines_bis($mysoc->name,44)*4));
+			$pdf->SetXY($posx+2,$posy+4+(dol_nboflines_bis($this->emetteur->name,44)*4));
 			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
@@ -1002,12 +1001,12 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			{
 				// On peut utiliser le nom de la societe du contact
 				if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socname = $object->contact->socname;
-				else $socname = $this->emetteur->name;
+				else $socname = $object->client->name;
 				$carac_client_name=$outputlangs->convToOutputCharset($socname);
 			}
 			else
 			{
-				$carac_client_name=$outputlangs->convToOutputCharset($this->emetteur->name);
+				$carac_client_name=$outputlangs->convToOutputCharset($object->client->name);
 			}
 			
 			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
