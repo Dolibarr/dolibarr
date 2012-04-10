@@ -28,13 +28,13 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 
 $langs->load("admin");
 
-$action=GETPOST('action');
-$what=GETPOST("what");
-$export_type=GETPOST("export_type");
-$file=GETPOST('filename_template');
+$action=GETPOST('action','alpha');
+$what=GETPOST('what','alpha');
+$export_type=GETPOST('export_type','alpha');
+$file=GETPOST('filename_template','alpha');
 
-$sortfield = GETPOST("sortfield");
-$sortorder = GETPOST("sortorder");
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST("page");
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="date";
@@ -127,7 +127,7 @@ if ($what == 'mysql')
     if (! empty($dolibarr_main_db_port)) $param.=" -P ".$dolibarr_main_db_port;
     if (! GETPOST("use_transaction"))    $param.=" -l --single-transaction";
     if (GETPOST("disable_fk"))           $param.=" -K";
-    if (GETPOST("sql_compat") && GETPOST("sql_compat") != 'NONE') $param.=" --compatible=".preg_replace('/[^a-zA-Z0-9]/','',GETPOST("sql_compat","alpha"));
+    if (GETPOST("sql_compat") && GETPOST("sql_compat") != 'NONE') $param.=" --compatible=".escapeshellarg(GETPOST("sql_compat","alpha"));
     if (GETPOST("drop_database"))        $param.=" --add-drop-database";
     if (GETPOST("sql_structure"))
     {
