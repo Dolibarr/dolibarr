@@ -3,6 +3,7 @@ CHARSET=UTF-8
 OrdersArea=Customers orders area
 SuppliersOrdersArea=Suppliers orders area
 OrderCard=Order card
+OrderId=Order Id
 Order=Order
 Orders=Orders
 OrderLine=Order line
