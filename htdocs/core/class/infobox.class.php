@@ -63,7 +63,7 @@ class InfoBox
             $sql.= " WHERE entity = ".$conf->entity;
         }
 
-        dol_syslog(get_class($this)."::listBoxes get default box list sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class()."::listBoxes get default box list sql=".$sql, LOG_DEBUG);
         $resql = $db->query($sql);
         if ($resql)
         {
