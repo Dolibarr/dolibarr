@@ -44,13 +44,10 @@ if ($action == 'setvalue' && $user->admin)
 	
 	$mailfrom = GETPOST('MAILING_EMAIL_FROM','alpha');
 	$mailerror = GETPOST('MAILING_EMAIL_ERRORSTO','alpha');
-	$checkread = GETPOST('value','alpha');
 	
 	$res=dolibarr_set_const($db, "MAILING_EMAIL_FROM",$mailfrom,'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
 	$res=dolibarr_set_const($db, "MAILING_EMAIL_ERRORSTO",$mailerror,'chaine',0,'',$conf->entity);
-	if (! $res > 0) $error++;
-	$res=dolibarr_set_const($db, "MAIN_SOCIETE_UNSUBSCRIBE",$checkread,'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
 	
  	if (! $error)
@@ -103,25 +100,6 @@ print $langs->trans("MailingEMailError").'</td><td>';
 print '<input size="32" type="text" name="MAILING_EMAIL_ERRORSTO" value="'.$conf->global->MAILING_EMAIL_ERRORSTO.'">';
 if (!empty($conf->global->MAILING_EMAIL_ERRORSTO) && ! isValidEmail($conf->global->MAILING_EMAIL_ERRORSTO)) print ' '.img_warning($langs->trans("BadEMail"));
 print '</td></tr>';
-
-$var=!$var;
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("ActivateCheckRead").'</td><td>';
-if ($conf->global->MAIN_SOCIETE_UNSUBSCRIBE==1)
-{
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&value=0">';
-	print img_picto($langs->trans("Enabled"),'switch_on');
-	print '</a>';
-}
-else
-{
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&value=1">';
-	print img_picto($langs->trans("Disabled"),'switch_off');
-	print '</a>';
-}
-print '</td></tr>';
-
-
 
 print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table></form>';
