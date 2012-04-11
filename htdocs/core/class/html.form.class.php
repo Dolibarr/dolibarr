@@ -2138,7 +2138,7 @@ class Form
      * 	   @param  	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=preoutput confirm box with div id=dialog-confirm-xxx
      *     @param  	int			$height          	Force height of box
      *     @param	int			$width				Force width of bow
-     *     @return 	string      	    			'ajax' if a confirm ajax popup is shown, 'html' if it's an html form
+     *     @return 	string      	    			HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
      */
     function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=170, $width=500)
     {
@@ -3389,7 +3389,7 @@ class Form
     function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $option='', $translate=0, $maxlen=0, $disabled=0)
     {
         global $langs;
-        
+
         if ($value_as_key) $array=array_combine($array, $array);
 
         $out='<select id="'.$htmlname.'" '.($disabled?'disabled="disabled" ':'').'class="flat" name="'.$htmlname.'" '.($option != ''?$option:'').'>';
@@ -3411,7 +3411,7 @@ class Form
                 }
 
                 $out.='>';
-                
+
                 $newval=($translate?$langs->trans(ucfirst($value)):$value);
                 if ($key_in_label)
                 {
@@ -3432,7 +3432,7 @@ class Form
         $out.="</select>";
         return $out;
     }
-    
+
     /**
      *	Show a multiselect form from an array.
      *
@@ -3472,7 +3472,7 @@ class Form
     					}
     				}
     			}
-    			
+
     			if (! empty($array))
     			{
     				foreach ($array as $key => $value)
@@ -3495,7 +3495,7 @@ class Form
     					$out.= ' selected="selected"';
     				}
     				$out.= '>';
-    				 
+
     				$newval = ($translate ? $langs->trans(ucfirst($value)) : $value);
     				$newval = ($key_in_label ? $key.' - '.$newval : $newval);
     				$out.= dol_htmlentitiesbr($newval);
@@ -3504,7 +3504,7 @@ class Form
     		}
     	}
     	$out.= '</select>'."\n";
-    
+
     	return $out;
     }
 
