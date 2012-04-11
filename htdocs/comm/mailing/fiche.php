@@ -49,6 +49,7 @@ $substitutionarray=array(
 		'__EMAIL__' => 'EMail',
 		'__LASTNAME__' => 'Lastname',
 		'__FIRSTNAME__' => 'Firstname',
+		'__MAILTOEMAIL__' => 'MailtoEmail',
 		'__OTHER1__' => 'Other1',
 		'__OTHER2__' => 'Other2',
 		'__OTHER3__' => 'Other3',
@@ -73,6 +74,7 @@ $substitutionarrayfortest=array(
 		'__EMAIL__' => 'TESTEMail',
 		'__LASTNAME__' => 'TESTLastname',
 		'__FIRSTNAME__' => 'TESTFirstname',
+		'__MAILTOEMAIL__' => 'TESTMailtoEmail',
 		'__OTHER1__' => 'TESTOther1',
 		'__OTHER2__' => 'TESTOther2',
 		'__OTHER3__' => 'TESTOther3',
@@ -208,8 +210,9 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 					$substitutionarray=array(
 							'__ID__' => $obj->source_id,
 							'__EMAIL__' => $obj->email,
-							'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'" width="0" height="0" style="width:0px;height:0px" border="0"/>',
+							'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
 							'__UNSUSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
+							'__MAILTOEMAIL__' => '<a href="mailto:'.$obj->email.'">'.$obj->email.'</a>',
 							'__LASTNAME__' => $obj->nom,
 							'__FIRSTNAME__' => $obj->prenom,
 							'__OTHER1__' => $other1,
@@ -1048,6 +1051,7 @@ else
     			print '__CHECK_READ__ = '.$langs->trans("CheckRead").'<br>';
 	    		print '__UNSUSCRIBE__ = '.$langs->trans("MailUnsubcribe").'<br>';
             }
+            print '__MAILTOEMAIL__ = '.$langs->trans("MailtoEMail").'<br>';
 			print '__LASTNAME__ = '.$langs->trans("Lastname").'<br>';
 			print '__FIRSTNAME__ = '.$langs->trans("Firstname").'<br>';
 			print '__OTHER1__ = '.$langs->trans("Other").'1<br>';
