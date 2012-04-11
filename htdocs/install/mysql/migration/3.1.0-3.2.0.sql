@@ -451,3 +451,5 @@ ALTER TABLE llx_commande_fournisseur ADD COLUMN extraparams varchar(255) AFTER i
 ALTER TABLE llx_facture_fourn ADD COLUMN extraparams varchar(255) AFTER import_key;
 
 ALTER TABLE llx_boxes ADD COLUMN maxline integer NULL;
+
+ALTER TABLE llx_commande_fournisseur ADD COLUMN date_livraison date NULL;

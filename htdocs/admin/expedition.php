@@ -40,6 +40,9 @@ if (!$user->admin) accessforbidden();
 
 $action=GETPOST('action','alpha');
 $value=GETPOST('value','alpha');
+$label = GETPOST('label','alpha');
+$scandir = GETPOST('scandir','alpha');
+$type='shipping';
 
 if (empty($conf->global->EXPEDITION_ADDON_NUMBER))
 {
@@ -50,6 +53,59 @@ if (empty($conf->global->EXPEDITION_ADDON_NUMBER))
 /*
  * Actions
  */
+ if ($action == 'updateMask')
+{
+	$maskconst=GETPOST('maskconstexpedition','alpha');
+	$maskvalue=GETPOST('maskexpedition','alpha');
+	if ($maskconst) $res = dolibarr_set_const($db,$maskconst,$maskvalue,'chaine',0,'',$conf->entity);
+
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
+}
+
+if ($action == 'set_SHIPPING_FREE_TEXT')
+{
+	$freetext=GETPOST('SHIPPING_FREE_TEXT','alpha');
+	$res = dolibarr_set_const($db, "SHIPPING_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
+
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
+}
+
+if ($action == 'set_SHIPPING_DRAFT_WATERMARK')
+{
+	$draft=GETPOST('SHIPPING_DRAFT_WATERMARK','alpha');
+
+	$res = dolibarr_set_const($db, "SHIPPING_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
+
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
+}
+
 if ($action == 'specimen')
 {
 	$modele=GETPOST('module','alpha');
@@ -84,8 +140,8 @@ if ($action == 'specimen')
 		}
 		else
 		{
-			$mesg='<font class="error">'.$module->error.'</font>';
-			dol_syslog($module->error, LOG_ERR);
+			$mesg='<font class="error">'.$obj->error.'</font>';
+			dol_syslog($obj->error, LOG_ERR);
 		}
 	}
 	else
@@ -98,30 +154,13 @@ if ($action == 'specimen')
 // Activate a model
 if ($action == 'set')
 {
-	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
-
-	$type='shipping';
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
-    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
-    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
-    $sql.= ")";
-	if ($db->query($sql))
-	{
-
-	}
+	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
 if ($action == 'del')
 {
-	$type='shipping';
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql.= " WHERE nom = '".$db->escape($value)."'";
-	$sql.= " AND type = '".$type."'";
-	$sql.= " AND entity = ".$conf->entity;
-
-	if ($db->query($sql))
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
 	{
         if ($conf->global->EXPEDITION_ADDON_PDF == "$value") dolibarr_del_const($db, 'EXPEDITION_ADDON_PDF',$conf->entity);
 	}
@@ -130,37 +169,18 @@ if ($action == 'del')
 // Set default model
 if ($action == 'setdoc')
 {
-	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
-
-	$db->begin();
-
 	if (dolibarr_set_const($db, "EXPEDITION_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
 	{
+		// La constante qui a ete lue en avant du nouveau set
+		// on passe donc par une variable pour avoir un affichage coherent
 		$conf->global->EXPEDITION_ADDON_PDF = $value;
 	}
 
 	// On active le modele
-	$type='shipping';
-	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del.= " WHERE nom = '".$db->escape($value)."'";
-	$sql_del.= " AND type = '".$type."'";
-	$sql_del.= " AND entity = ".$conf->entity;
-	$result1=$db->query($sql_del);
-
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($value)."', '".$type."', ".$conf->entity.", ";
-    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
-    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
-    $sql.= ")";
-	$result2=$db->query($sql);
-	if ($result1 && $result2)
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
 	{
-		$db->commit();
-	}
-	else
-	{
-		$db->rollback();
+		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
 }
 
@@ -240,66 +260,13 @@ if ($action == 'setmod')
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
 
-	$module=GETPOST('module','alpha');
+    dolibarr_set_const($db, "EXPEDITION_ADDON",$value,'chaine',0,'',$conf->entity);
 
-    dolibarr_set_const($db, "EXPEDITION_ADDON",$module,'chaine',0,'',$conf->entity);
-
-}
-
-if ($action == 'updateMask')
-{
-	$maskconst=GETPOST('maskconstexpedition','alpha');
-	$maskvalue=GETPOST('maskexpedition','alpha');
-	if ($maskconst) $res = dolibarr_set_const($db,$maskconst,$maskvalue,'chaine',0,'',$conf->entity);
-
-	if (! $res > 0) $error++;
-
- 	if (! $error)
-    {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-    }
 }
 
 if ($action == 'setmodel')
 {
 	dolibarr_set_const($db, "EXPEDITION_ADDON_NUMBER",$value,'chaine',0,'',$conf->entity);
-}
-
-if ($action == 'set_SHIPPING_DRAFT_WATERMARK')
-{
-	$draft=GETPOST('SHIPPING_DRAFT_WATERMARK','alpha');
-	$res = dolibarr_set_const($db, "SHIPPING_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
-
-	if (! $res > 0) $error++;
-
- 	if (! $error)
-    {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-    }
-}
-
-if ($action == 'set_SHIPPING_FREE_TEXT')
-{
-	$free=GETPOST('SHIPPING_FREE_TEXT','alpha');
-	$res = dolibarr_set_const($db, "SHIPPING_FREE_TEXT",$free,'chaine',0,'',$conf->entity);
-	if (! $res > 0) $error++;
-
- 	if (! $error)
-    {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-    }
 }
 
 
