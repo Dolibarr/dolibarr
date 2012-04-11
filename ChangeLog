@@ -2,10 +2,6 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
-***** ChangeLog for 3.3 compared to 3.2 *****
-
-
-
 ***** ChangeLog for 3.2 compared to 3.1 *****
 WARNING: PHP lower than 5.x are no more supported.
 WARNING: Because of a major datastructure change onto supplier prices tables, be aware
