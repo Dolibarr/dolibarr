@@ -464,7 +464,28 @@ else if ($action == 'setconditions' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     $result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
-    if ($result < 0) dol_print_error($db,$object->error);
+    if ($result < 0)
+    { 
+    	dol_print_error($db,$object->error);
+    }
+    else
+	{  
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+        {
+        	// Define output language
+        	$outputlangs = $langs;
+        	$newlang=GETPOST('lang_id','alpha');
+        	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+        	if (! empty($newlang))
+        	{
+        		$outputlangs = new Translate("",$conf);
+        		$outputlangs->setDefaultLang($newlang);
+        	}
+
+            $ret=$object->fetch($id);    // Reload to get new records
+            commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+        }
+    } 
 }
 
 else if ($action == 'setremisepercent' && $user->rights->commande->creer)
