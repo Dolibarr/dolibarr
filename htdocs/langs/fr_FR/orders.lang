@@ -3,6 +3,7 @@ CHARSET=UTF-8
 OrdersArea=Espace commandes clients
 SuppliersOrdersArea=Espace commandes fournisseurs
 OrderCard=Fiche commande
+OrderId=Id commande
 Order=Commande
 Orders=Commandes
 OrderLine=Ligne de commande
