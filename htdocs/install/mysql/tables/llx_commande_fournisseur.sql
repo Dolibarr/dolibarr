@@ -53,8 +53,7 @@ create table llx_commande_fournisseur
   note					text,
   note_public			text,
   model_pdf				varchar(255),
-
-  date_livraison		date 	  default NULL,
+  
   fk_cond_reglement		integer,                       -- condition de reglement
   fk_mode_reglement		integer,                       -- mode de reglement
   fk_methode_commande	integer default 0,			 -- should be named fk_input_method

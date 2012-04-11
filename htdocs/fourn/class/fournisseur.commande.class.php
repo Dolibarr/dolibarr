@@ -54,7 +54,6 @@ class CommandeFournisseur extends Commande
     var $fourn_id;
     var $date;
     var $date_commande;
-	var $date_livraison;	// Date livraison souhaitee
     var $total_ht;
     var $total_tva;
     var $total_localtax1;   // Total Local tax 1
@@ -1366,41 +1365,6 @@ class CommandeFournisseur extends Commande
             $result = -3;
         }
         return $result ;
-    }
-
-	/**
-     *	Set the planned delivery date
-     *
-     *	@param      User			$user        		Objet utilisateur qui modifie
-     *	@param      timestamp		$date_livraison     Date de livraison
-     *	@return     int         						<0 si ko, >0 si ok
-     */
-    function set_date_livraison($user, $date_livraison)
-    {
-        if ($user->rights->fournisseur->commande->creer)
-        {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
-            $sql.= " SET date_livraison = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
-            $sql.= " WHERE rowid = ".$this->id;
-
-            dol_syslog("CommandeFournisseur::set_date_livraison sql=".$sql,LOG_DEBUG);
-            $resql=$this->db->query($sql);
-            if ($resql)
-            {
-                $this->date_livraison = $date_livraison;
-                return 1;
-            }
-            else
-            {
-                $this->error=$this->db->error();
-                dol_syslog("CommandeFournisseur::set_date_livraison ".$this->error,LOG_ERR);
-                return -1;
-            }
-        }
-        else
-        {
-            return -2;
-        }
     }
 
     /**
