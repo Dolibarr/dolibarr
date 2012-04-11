@@ -74,6 +74,8 @@ SentTo=Enviado a <b>%s</b>
 MailingStatusRead=Leido
 CheckRead=Confirmación de lectura
 YourMailUnsubcribeOK=El correo electrónico <b>%s</b> es correcta desuscribe.
+MailtoEMail=mailto email (hyperlink)
+ActivateCheckRead=Activar Confirmación de lectura y desuscribe option
 
 # Libelle des modules de liste de destinataires mailing=
 MailingModuleDescContactCompanies=Contactos de terceros (clientes potenciales, clientes, proveedores...)
