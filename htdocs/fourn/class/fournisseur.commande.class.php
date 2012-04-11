@@ -113,7 +113,7 @@ class CommandeFournisseur extends Commande
 
         $sql = "SELECT c.rowid, c.ref, c.date_creation, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
         $sql.= " c.localtax1, c.localtax2, ";
-        $sql.= " c.date_commande as date_commande, c.date_livraison as date_livraison, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
+        $sql.= " c.date_commande as date_commande, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
         $sql.= " c.note as note_private, c.note_public, c.model_pdf, c.extraparams,";
         $sql.= " cm.libelle as methode_commande,";
         $sql.= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle,";
@@ -151,7 +151,6 @@ class CommandeFournisseur extends Commande
             $this->total_ttc			= $obj->total_ttc;
             $this->date_commande		= $this->db->jdate($obj->date_commande); // date a laquelle la commande a ete transmise
             $this->date					= $this->db->jdate($obj->date_creation);
-			$this->date_livraison       = $this->db->jdate($obj->date_livraison);
             $this->remise_percent		= $obj->remise_percent;
             $this->methode_commande_id	= $obj->fk_methode_commande;
             $this->methode_commande		= $obj->methode_commande;
@@ -890,7 +889,6 @@ class CommandeFournisseur extends Commande
         $sql.= ", entity";
         $sql.= ", fk_soc";
         $sql.= ", date_creation";
-		$sql.= ", date_livraison";
         $sql.= ", fk_user_author";
         $sql.= ", fk_statut";
         $sql.= ", source";
@@ -902,7 +900,6 @@ class CommandeFournisseur extends Commande
         $sql.= ", ".$conf->entity;
         $sql.= ", ".$this->socid;
         $sql.= ", ".$this->db->idate($now);
-		$sql.= ", ".$this->db->idate($now);
         $sql.= ", ".$user->id;
         $sql.= ", 0";
         $sql.= ", 0";
