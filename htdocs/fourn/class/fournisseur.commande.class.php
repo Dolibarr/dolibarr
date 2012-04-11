@@ -69,7 +69,7 @@ class CommandeFournisseur extends Commande
     var $cond_reglement_code;
     var $mode_reglement_id;
     var $mode_reglement_code;
-    
+
     var $extraparams=array();
 
 
@@ -111,7 +111,7 @@ class CommandeFournisseur extends Commande
         // Check parameters
         if (empty($id) && empty($ref)) return -1;
 
-        $sql = "SELECT c.rowid, c.ref, c.date_creation, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
+        $sql = "SELECT c.rowid, c.ref, ref_supplier, c.date_creation, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
         $sql.= " c.localtax1, c.localtax2, ";
         $sql.= " c.date_commande as date_commande, c.date_livraison as date_livraison, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
         $sql.= " c.note as note_private, c.note_public, c.model_pdf, c.extraparams,";
@@ -140,6 +140,7 @@ class CommandeFournisseur extends Commande
 
             $this->id					= $obj->rowid;
             $this->ref					= $obj->ref;
+            $this->ref_supplier			= $obj->ref_supplier;
             $this->socid				= $obj->fk_soc;
             $this->fourn_id				= $obj->fk_soc;
             $this->statut				= $obj->fk_statut;
@@ -170,7 +171,7 @@ class CommandeFournisseur extends Commande
             $this->note_private			= $obj->note_private;
             $this->note_public			= $obj->note_public;
             $this->modelpdf				= $obj->model_pdf;
-            
+
             $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
             $this->db->free($resql);

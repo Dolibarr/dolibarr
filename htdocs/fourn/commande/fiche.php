@@ -72,6 +72,12 @@ $object = new CommandeFournisseur($db);
 /*
  * Actions
  */
+if ($action == 'setref_supplier' && $user->rights->fournisseur->commande->creer)
+{
+    $object->fetch($id);
+    $result=$object->setValueFrom('ref_supplier',GETPOST('ref_supplier','alpha'));
+    if ($result < 0) dol_print_error($db, $object->error);
+}
 
 // conditions de reglement
 if ($action == 'setconditions' && $user->rights->fournisseur->commande->creer)
@@ -1037,10 +1043,12 @@ if ($id > 0 || ! empty($ref))
         print '</tr>';
 
         // Ref supplier
-        /*		print '<tr><td>'.$langs->trans("RefSupplier")."</td>";
-        print '<td colspan="2">'.$object->ref_supplier.'</td>';
-        print '</tr>';
-        */
+        print '<tr><td>';
+        print $form->editfieldkey("RefSupplier",'ref_supplier',$langs->trans($object->ref_supplier),$object,$user->rights->fournisseur->commande->creer);
+        print '</td><td colspan="2">';
+        print $form->editfieldval("RefSupplier",'ref_supplier',$langs->trans($object->ref_supplier),$object,$user->rights->fournisseur->commande->creer);
+        print '</td></tr>';
+
         // Fournisseur
         print '<tr><td>'.$langs->trans("Supplier")."</td>";
         print '<td colspan="2">'.$soc->getNomUrl(1,'supplier').'</td>';
@@ -1758,5 +1766,6 @@ if ($id > 0 || ! empty($ref))
 
 // End of page
 llxFooter();
+
 $db->close();
 ?>
