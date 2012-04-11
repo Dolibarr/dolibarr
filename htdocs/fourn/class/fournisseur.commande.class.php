@@ -54,6 +54,7 @@ class CommandeFournisseur extends Commande
     var $fourn_id;
     var $date;
     var $date_commande;
+	var $date_livraison;	// Date livraison souhaitee
     var $total_ht;
     var $total_tva;
     var $total_localtax1;   // Total Local tax 1
@@ -112,7 +113,7 @@ class CommandeFournisseur extends Commande
 
         $sql = "SELECT c.rowid, c.ref, c.date_creation, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
         $sql.= " c.localtax1, c.localtax2, ";
-        $sql.= " c.date_commande as date_commande, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
+        $sql.= " c.date_commande as date_commande, c.date_livraison as date_livraison, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
         $sql.= " c.note as note_private, c.note_public, c.model_pdf, c.extraparams,";
         $sql.= " cm.libelle as methode_commande,";
         $sql.= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle,";
@@ -150,6 +151,7 @@ class CommandeFournisseur extends Commande
             $this->total_ttc			= $obj->total_ttc;
             $this->date_commande		= $this->db->jdate($obj->date_commande); // date a laquelle la commande a ete transmise
             $this->date					= $this->db->jdate($obj->date_creation);
+			$this->date_livraison       = $this->db->jdate($obj->date_livraison);
             $this->remise_percent		= $obj->remise_percent;
             $this->methode_commande_id	= $obj->fk_methode_commande;
             $this->methode_commande		= $obj->methode_commande;
@@ -888,6 +890,7 @@ class CommandeFournisseur extends Commande
         $sql.= ", entity";
         $sql.= ", fk_soc";
         $sql.= ", date_creation";
+		$sql.= ", date_livraison";
         $sql.= ", fk_user_author";
         $sql.= ", fk_statut";
         $sql.= ", source";
@@ -899,6 +902,7 @@ class CommandeFournisseur extends Commande
         $sql.= ", ".$conf->entity;
         $sql.= ", ".$this->socid;
         $sql.= ", ".$this->db->idate($now);
+		$sql.= ", ".$this->db->idate($now);
         $sql.= ", ".$user->id;
         $sql.= ", 0";
         $sql.= ", 0";
@@ -1365,6 +1369,41 @@ class CommandeFournisseur extends Commande
             $result = -3;
         }
         return $result ;
+    }
+
+	/**
+     *	Set the planned delivery date
+     *
+     *	@param      User			$user        		Objet utilisateur qui modifie
+     *	@param      timestamp		$date_livraison     Date de livraison
+     *	@return     int         						<0 si ko, >0 si ok
+     */
+    function set_date_livraison($user, $date_livraison)
+    {
+        if ($user->rights->fournisseur->commande->creer)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+            $sql.= " SET date_livraison = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
+            $sql.= " WHERE rowid = ".$this->id;
+
+            dol_syslog("CommandeFournisseur::set_date_livraison sql=".$sql,LOG_DEBUG);
+            $resql=$this->db->query($sql);
+            if ($resql)
+            {
+                $this->date_livraison = $date_livraison;
+                return 1;
+            }
+            else
+            {
+                $this->error=$this->db->error();
+                dol_syslog("CommandeFournisseur::set_date_livraison ".$this->error,LOG_ERR);
+                return -1;
+            }
+        }
+        else
+        {
+            return -2;
+        }
     }
 
     /**

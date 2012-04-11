@@ -35,11 +35,11 @@ $langs->setDefaultLang($setuplang);
 
 $langs->load("install");
 
-// Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
-if (! isset($force_install_dolibarrlogin))     $force_install_dolibarrlogin='';
+// Now we load forced value from install.forced.php file.
 $useforcedwizard=false;
-if (@file_exists("./install.forced.php")) { $useforcedwizard=true; include_once("./install.forced.php"); }
-else if (@file_exists("/etc/dolibarr/install.forced.php")) { $useforcedwizard=include_once("/etc/dolibarr/install.forced.php"); }
+$forcedfile="./install.forced.php";
+if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
+if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once($forcedfile); }
 
 dolibarr_install_syslog("Dolibarr install/upgrade process started");
 

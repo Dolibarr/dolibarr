@@ -98,8 +98,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$this->franchise=!$mysoc->tva_assuj;
 
         // Get source company
-        if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
-        $this->emetteur=$object->thirdparty;
+        $this->emetteur=$mysoc;
         if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 
 		// Defini position des colonnes
@@ -902,9 +901,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$pdf->SetXY($this->marge_gauche,$posy);
 
 		// Logo
-		/*
-		$logo=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
-		if ($mysoc->logo)
+		$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
+		if ($this->emetteur->logo)
 		{
 			if (is_readable($logo))
 			{
@@ -920,10 +918,10 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			}
 		}
 		else
-		{*/
+		{
 			$text=$this->emetteur->name;
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
-		//}
+		}
 
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx,$posy);
@@ -991,7 +989,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 			// If BILLING contact defined on order, we use it
 			$usecontact=false;
-			$arrayidcontact=$object->getIdContact('internal','BILLING');
+			$arrayidcontact=$object->getIdContact('external','BILLING');
 			if (count($arrayidcontact) > 0)
 			{
 				$usecontact=true;
@@ -1003,15 +1001,15 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			{
 				// On peut utiliser le nom de la societe du contact
 				if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socname = $object->contact->socname;
-				else $socname = $mysoc->nom;
+				else $socname = $object->client->name;
 				$carac_client_name=$outputlangs->convToOutputCharset($socname);
 			}
 			else
 			{
-				$carac_client_name=$outputlangs->convToOutputCharset($mysoc->nom);
+				$carac_client_name=$outputlangs->convToOutputCharset($object->client->name);
 			}
-
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$mysoc,$object->contact,$usecontact,'target');
+			
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
 
 			// Show recipient
 			$posy=42;

@@ -53,11 +53,11 @@ if (! isset($force_install_databaserootlogin))	$force_install_databaserootlogin=
 if (! isset($force_install_databaserootpass))	$force_install_databaserootpass='';
 // Now we load forced value from install.forced.php file.
 $useforcedwizard=false;
-if (file_exists("./install.forced.php")) { $useforcedwizard=true; include_once("./install.forced.php"); }
-else if (file_exists("/etc/dolibarr/install.forced.php")) { $useforcedwizard=include_once("/etc/dolibarr/install.forced.php"); }
+$forcedfile="./install.forced.php";
+if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
+if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once($forcedfile); }
 
 dolibarr_install_syslog("Fileconf: Entering fileconf.php page");
-
 
 
 
