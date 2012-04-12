@@ -69,6 +69,9 @@ class CommandeFournisseur extends Commande
     var $cond_reglement_code;
     var $mode_reglement_id;
     var $mode_reglement_code;
+    var $user_author_id;
+    var $user_valid_id;
+    var $user_cloture_id;
 
     var $extraparams=array();
 
@@ -111,8 +114,9 @@ class CommandeFournisseur extends Commande
         // Check parameters
         if (empty($id) && empty($ref)) return -1;
 
-        $sql = "SELECT c.rowid, c.ref, ref_supplier, c.date_creation, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
+        $sql = "SELECT c.rowid, c.ref, ref_supplier, c.date_creation, c.fk_soc, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
         $sql.= " c.localtax1, c.localtax2, ";
+        $sql.= " c.fk_user_author, c.fk_user_valid, c.fk_user_cloture,";
         $sql.= " c.date_commande as date_commande, c.date_livraison as date_livraison, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
         $sql.= " c.note as note_private, c.note_public, c.model_pdf, c.extraparams,";
         $sql.= " cm.libelle as methode_commande,";
@@ -145,6 +149,8 @@ class CommandeFournisseur extends Commande
             $this->fourn_id				= $obj->fk_soc;
             $this->statut				= $obj->fk_statut;
             $this->user_author_id		= $obj->fk_user_author;
+            $this->user_valid_id		= $obj->fk_user_valid;
+            $this->user_cloture_id		= $obj->fk_user_cloture;
             $this->total_ht				= $obj->total_ht;
             $this->total_tva			= $obj->tva;
             $this->total_localtax1		= $obj->localtax1;

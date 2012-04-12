@@ -2163,7 +2163,7 @@ function dol_print_error($db='',$error='')
             $syslog.=", msg=".$msg;
         }
     }
-    if (empty($dolibarr_main_prod) && $_SERVER['DOCUMENT_ROOT'] && function_exists('xdebug_call_file'))
+    if (empty($dolibarr_main_prod) && $_SERVER['DOCUMENT_ROOT'] && function_exists('xdebug_print_function_stack') && function_exists('xdebug_call_file'))
     {
         xdebug_print_function_stack();
         $out.='<b>XDebug informations:</b>'."<br>\n";
