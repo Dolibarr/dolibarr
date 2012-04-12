@@ -332,7 +332,7 @@ class pdf_azur extends ModelePDFPropales
 						$tab_top_in_current_page=$tab_top_newpage;
 						$tab_height_in_current_page=$tab_height_middlepage;
 					}
-					if (($nexY+$nblineFollowDesc) > ($tab_top_in_current_page+$tab_height_in_current_page) && $i < ($nblignes - 1))
+					if ((($nexY+$nblineFollowDesc) > ($tab_top_in_current_page+$tab_height_in_current_page) && $i < ($nblignes - 1)) || (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak))
 					{
 						if ($pagenb == 1)
 						{

@@ -241,7 +241,7 @@ class pdf_edison extends ModelePDFCommandes
 						$nblineFollowDesc = 0;
 					}
 
-					if (($nexY+$nblineFollowDesc) > ($tab_top+$tab_height) && $i < ($nblignes - 1))
+					if ((($nexY+$nblineFollowDesc) > ($tab_top+$tab_height) && $i < ($nblignes - 1)) || (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak))
 					{
 						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
 
