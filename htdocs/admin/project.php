@@ -222,13 +222,13 @@ foreach ($dirmodels as $reldir)
 						print '</td>'."\n";
 
 						print '<td align="center">';
-						if ($conf->global->PROJECT_ADDON == $classname)
+						if ($conf->global->PROJECT_ADDON == 'mod_'.$classname)
 						{
 							print img_picto($langs->trans("Activated"),'switch_on');
 						}
 						else
 						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value=mod_'.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 						}
 						print '</td>';
 
