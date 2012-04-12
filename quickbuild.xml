@@ -3,7 +3,7 @@
 
 <!-- Exclude/ignore paths -->
  <property name="ignorepaths" value="${basedir}/htdocs/conf,${basedir}/htdocs/core/filemanagerdol,${basedir}/htdocs/includes" />
- <property name="ignoreregexp" value="**/PEAR/*,**/NET/*,**/HTTP/*" />
+ <property name="ignoreregexp" value="**/PEAR/*,**/NET/*,**/HTTP/*,**/zendgdata/*,**/reportico/*" />
  
  <target name="clean">
   <!-- Clean up -->
@@ -44,7 +44,7 @@
 				--exclude '${basedir}/htdocs/conf'
    				--exclude '${basedir}/htdocs/core/filemanagerdol'
    				--exclude '${basedir}/htdocs/includes'
-   				--exclude '**/PEAR/*,**/NET/*,**/HTTP/*'
+   				--exclude '**/PEAR/*,**/NET/*,**/HTTP/*,**/zendgdata/*,**/reportico/*'
    				--min-tokens 70
    				--min-lines 20 
    				htdocs
@@ -59,7 +59,7 @@
 				--exclude '${basedir}/htdocs/conf'
    				--exclude '${basedir}/htdocs/core/filemanagerdol'
    				--exclude '${basedir}/htdocs/includes'
-   				--exclude '**/PEAR/*,**/NET/*,**/HTTP/*'
+   				--exclude '**/PEAR/*,**/NET/*,**/HTTP/*,**/zendgdata/*,**/reportico/*'
    				htdocs
    				" />
   </exec>
