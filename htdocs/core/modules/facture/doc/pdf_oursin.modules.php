@@ -260,7 +260,7 @@ class pdf_oursin extends ModelePDFFactures
 					$pdf->MultiCell(21, 3, $total_excl_tax, 0, 'R', 0);
 
 
-					if ($nexY > 200 && $i < $nblignes - 1)
+					if (($nexY > 200 && $i < $nblignes - 1) || (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak))
 					{
 						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $object, $outputlangs);
 						$nexY = $iniY;
