@@ -54,6 +54,9 @@ $confirm		= GETPOST('confirm','alpha');
 $comclientid 	= GETPOST('comid','int');
 $socid			= GETPOST('socid','int');
 $projectid		= GETPOST('projectid','int');
+$hidedetails	= GETPOST('hidedetails','alpha');
+$hidedesc		= GETPOST('hidedesc','alpha');
+$hideref		= GETPOST('hideref','alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -119,14 +122,14 @@ else if ($action ==	'setremisepercent' && $user->rights->fournisseur->commande->
     $result = $object->set_remise($user, $_POST['remise_percent']);
 }
 
-else if ($action == 'setnote_public' && $user->rights->propale->creer)
+else if ($action == 'setnote_public' && $user->rights->fournisseur->commande->creer)
 {
 	$object->fetch($id);
 	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-else if ($action == 'setnote' && $user->rights->propale->creer)
+else if ($action == 'setnote' && $user->rights->fournisseur->commande->creer)
 {
 	$object->fetch($id);
 	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
@@ -268,7 +271,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
             	}
 
                 $ret=$object->fetch($id);    // Reload to get new records
-                supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+                supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
             }
             unset($_POST['qty']);
             unset($_POST['type']);
@@ -330,7 +333,7 @@ else if ($action == 'updateligne' && $user->rights->fournisseur->commande->creer
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
         {
             $ret=$object->fetch($id);    // Reload to get new records
-            supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+            supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
         }
     }
     else
@@ -356,7 +359,7 @@ else if ($action == 'confirm_deleteproductline' && $confirm == 'yes' && $user->r
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
         {
             $ret=$object->fetch($id);    // Reload to get new records
-            supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+            supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
         }
     }
     else
@@ -389,7 +392,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourn
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
         {
             $ret=$object->fetch($id);    // Reload to get new records
-            supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+            supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
         }
     }
     else
@@ -406,7 +409,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourn
 
 else if ($action == 'confirm_approve' && $confirm == 'yes' && $user->rights->fournisseur->commande->approuver)
 {
-    $idwarehouse=GETPOST('idwarehouse');
+    $idwarehouse=GETPOST('idwarehouse', 'int');
 
     $object->fetch($id);
     $object->fetch_thirdparty();
@@ -541,7 +544,7 @@ else if ($action == 'up'	&& $user->rights->fournisseur->commande->creer)
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
-    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
     Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#'.$_GET['rowid']));
     exit;
 }
@@ -556,7 +559,7 @@ else if ($action == 'down' && $user->rights->fournisseur->commande->creer)
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
-    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
     Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#'.$_GET['rowid']));
     exit;
 }
@@ -578,7 +581,7 @@ else if ($action == 'builddoc' && $user->rights->fournisseur->commande->creer)	/
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
-    $result=supplier_order_pdf_create($db, $object,$object->modelpdf,$outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'));
+    $result=supplier_order_pdf_create($db, $object,$object->modelpdf,$outputlangs, $hidedetails, $hidedesc, $hideref);
     if ($result	<= 0)
     {
         dol_print_error($db,$result);
@@ -1698,7 +1701,7 @@ if ($id > 0 || ! empty($ref))
                     $outputlangs->setDefaultLang($newlang);
                 }
 
-                $result=supplier_order_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+                $result=supplier_order_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
                 if ($result <= 0)
                 {
                     dol_print_error($db,$result);
