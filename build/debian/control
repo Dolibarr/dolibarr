@@ -11,7 +11,6 @@ Depends: libapache2-mod-php5 | libapache2-mod-php5filter | php5-cgi | php5-fpm |
     php5-mysql | php5-mysqli, 
     php5-cli, php5-curl, php5-gd, php5-ldap, php-pear, php-mail-mime, php5-geoip, php-fpdf,
 	libphp-adodb,
-    libfpdi-php,
     libfpdf-tpl-php,
     libnusoap-php,
     libphp-pclzip,
