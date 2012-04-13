@@ -902,7 +902,7 @@ class CommandeFournisseur extends Commande
         $sql.= ", entity";
         $sql.= ", fk_soc";
         $sql.= ", date_creation";
-		$sql.= ", date_livraison";
+		//$sql.= ", date_livraison";
         $sql.= ", fk_user_author";
         $sql.= ", fk_statut";
         $sql.= ", source";
@@ -914,7 +914,7 @@ class CommandeFournisseur extends Commande
         $sql.= ", ".$conf->entity;
         $sql.= ", ".$this->socid;
         $sql.= ", ".$this->db->idate($now);
-		$sql.= ", ".$this->db->idate($now);
+		//$sql.= ", ".$this->db->idate($now);
         $sql.= ", ".$user->id;
         $sql.= ", 0";
         $sql.= ", 0";
