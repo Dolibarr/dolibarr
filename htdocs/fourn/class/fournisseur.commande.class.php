@@ -53,6 +53,8 @@ class CommandeFournisseur extends Commande
     var $socid;
     var $fourn_id;
     var $date;
+    var $date_valid;
+    var $date_cloture;
     var $date_commande;
 	var $date_livraison;	// Date livraison souhaitee
     var $total_ht;
@@ -114,8 +116,9 @@ class CommandeFournisseur extends Commande
         // Check parameters
         if (empty($id) && empty($ref)) return -1;
 
-        $sql = "SELECT c.rowid, c.ref, ref_supplier, c.date_creation, c.fk_soc, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
+        $sql = "SELECT c.rowid, c.ref, ref_supplier, c.fk_soc, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
         $sql.= " c.localtax1, c.localtax2, ";
+        $sql.= " c.date_creation, c.date_valid, c.date_cloture,";
         $sql.= " c.fk_user_author, c.fk_user_valid, c.fk_user_cloture,";
         $sql.= " c.date_commande as date_commande, c.date_livraison as date_livraison, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
         $sql.= " c.note as note_private, c.note_public, c.model_pdf, c.extraparams,";
@@ -156,8 +159,10 @@ class CommandeFournisseur extends Commande
             $this->total_localtax1		= $obj->localtax1;
             $this->total_localtax2		= $obj->localtax2;
             $this->total_ttc			= $obj->total_ttc;
-            $this->date_commande		= $this->db->jdate($obj->date_commande); // date a laquelle la commande a ete transmise
             $this->date					= $this->db->jdate($obj->date_creation);
+            $this->date_valid			= $this->db->jdate($obj->date_valid);
+            $this->date_cloture			= $this->db->jdate($obj->date_cloture);
+            $this->date_commande		= $this->db->jdate($obj->date_commande); // date a laquelle la commande a ete transmise
 			$this->date_livraison       = $this->db->jdate($obj->date_livraison);
             $this->remise_percent		= $obj->remise_percent;
             $this->methode_commande_id	= $obj->fk_methode_commande;
@@ -897,7 +902,7 @@ class CommandeFournisseur extends Commande
         $sql.= ", entity";
         $sql.= ", fk_soc";
         $sql.= ", date_creation";
-		$sql.= ", date_livraison";
+		//$sql.= ", date_livraison";
         $sql.= ", fk_user_author";
         $sql.= ", fk_statut";
         $sql.= ", source";
@@ -909,7 +914,7 @@ class CommandeFournisseur extends Commande
         $sql.= ", ".$conf->entity;
         $sql.= ", ".$this->socid;
         $sql.= ", ".$this->db->idate($now);
-		$sql.= ", ".$this->db->idate($now);
+		//$sql.= ", ".$this->db->idate($now);
         $sql.= ", ".$user->id;
         $sql.= ", 0";
         $sql.= ", 0";
