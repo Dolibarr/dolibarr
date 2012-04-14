@@ -281,5 +281,5 @@ fi
 
 
 %changelog
-* Wed Mar 4 2012 Laurent Destailleur 3.2.0-0.1.a
+* Wed Mar 4 2012 Laurent Destailleur 3.2.0-0.2.beta1
 - Initial version (#723326)
