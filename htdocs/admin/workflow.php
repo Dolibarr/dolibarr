@@ -87,7 +87,8 @@ $workflow=array(
 				//, 'propal' => array('WORKFLOW_PROPAL_AUTOCREATE_INVOICE')
 		)
 );
-$workflow = array_merge($workflow, $conf->modules_parts['workflow']);
+
+if (! empty($conf->modules_parts['workflow'])) $workflow = array_merge($workflow, $conf->modules_parts['workflow']);
 
 foreach($workflow as $child => $parents)
 {

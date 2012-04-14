@@ -114,9 +114,11 @@ abstract class ModelNumRefExpedition
 	/**
 	 *	Return next value
 	 *
-	 *	@return     string      Value
+	 *	@param	Societe		$objsoc     Third party object
+	 *	@param	Object		$shipment	Shipment object
+	 *	@return	string					Value
 	 */
-	function getNextValue()
+	function getNextValue($objsoc, $shipment)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");

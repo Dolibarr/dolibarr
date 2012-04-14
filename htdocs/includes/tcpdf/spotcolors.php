@@ -1,13 +1,13 @@
 <?php
 //============================================================+
 // File name   : spotcolors.php
-// Version     : 1.0.000
+// Version     : 1.0.001
 // Begin       : 2010-11-11
-// Last Update : 2010-12-16
-// Author      : Nicola Asuni - Tecnick.com S.r.l - Via Della Pace, 11 - 09044 - Quartucciu (CA) - ITALY - www.tecnick.com - info@tecnick.com
+// Last Update : 2011-10-03
+// Author      : Nicola Asuni - Tecnick.com LTD - Manor Coach House, Church Hill, Aldershot, Hants, GU12 4RQ, UK - www.tecnick.com - info@tecnick.com
 // License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
-// Copyright (C) 2002-2010  Nicola Asuni - Tecnick.com S.r.l.
+// Copyright (C) 2002-2012  Nicola Asuni - Tecnick.com LTD
 //
 // This file is part of TCPDF software library.
 //
@@ -42,13 +42,16 @@
 /**
  * Array of Spot colors (C,M,Y,K,name)
  * Color keys must be in lowercase and without spaces.
- * Add here your spot colors ...
+ * As long as no open standard for spot colours exists, you have to buy a colour book by one of the colour manufacturers and insert the values and names of spot colours directly.
+ * Common industry standard spot colors are: ANPA-COLOR, DIC, FOCOLTONE, GCMI, HKS, PANTONE, TOYO, TRUMATCH.
  */
 $spotcolor = array (
-	// these are just examples, add your own spot colors ...
-	'pantone116c' => array(0, 20, 100, 0, 'Pantone 116 C'),
-	'pantone288c' => array(100, 60, 10, 5, 'Pantone 288 C'),
-	'hks16k' => array(30, 100, 90, 10, 'HKS 16 K'),
+	// the following are just examples, fill the array with your own values
+	'mytcpdfblack' => array(0, 0, 0, 100, 'My TCPDF Black'),
+	'mytcpdfred' => array(30, 100, 90, 10, 'My TCPDF Red'),
+	'mytcpdfgreen' => array(100, 30, 100, 0, 'My TCPDF Green'),
+	'mytcpdfblue' => array(100, 60, 10, 5, 'My TCPDF Blue'),
+	'mytcpdfyellow' => array(0, 20, 100, 0, 'My TCPDF Yellow'),
 	// ...
 );
 
