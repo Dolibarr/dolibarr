@@ -6,6 +6,7 @@
 -- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2012 	   Sebastian Neuwert    <sebastian.neuwert@modula71.de>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,7 +20,6 @@
 --
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
---
 --
 
 --
@@ -118,10 +118,15 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '209', 'GI
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '210', 'GEIE - Groupement européen d intérêt économique');
 
 -- Germany
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '500', 'Limited liability corporation (GmbH)');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '501', 'Stock corporation (AG)');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '502', 'Partnerships general or limited (GmbH & CO. KG)');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '503', 'Sole proprietor / Private business');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '500', 'GmbH - Gesellschaft mit beschränkter Haftung');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '501', 'AG - Aktiengesellschaft ');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '502', 'GmbH&Co. KG - Gesellschaft mit beschränkter Haftung & Compagnie Kommanditgesellschaft');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '503', 'Gewerbe - Personengesellschaft');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '504', 'UG - Unternehmergesellschaft -haftungsbeschränkt-');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '505', 'GbR - Gesellschaft des bürgerlichen Rechts');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '506', 'KG - Kommanditgesellschaft');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '507', 'Ltd. - Limited Company');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (5, '508', 'OHG - Offene Handelsgesellschaft');
 
 -- Italy
 INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('301',3,'Società semplice',0,1);
