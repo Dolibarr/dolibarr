@@ -31,8 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 
 
 /**
- *	\class      CommandeFournisseur
- *	\brief      Class to manage predefined suppliers products
+ *	Class to manage predefined suppliers products
  */
 class CommandeFournisseur extends Commande
 {
@@ -47,12 +46,14 @@ class CommandeFournisseur extends Commande
     var $ref_supplier;
     var $brouillon;
     var $statut;			// 0=Draft -> 1=Validated -> 2=Approved -> 3=Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
-    //                                                          -> 7=Canceled/Never received -> (reopen) 3=Process runing
-    //										-> 6=Canceled -> (reopen) 2=Approved
-    //  		              -> 9=Refused  -> (reopen) 1=Validated
+    //                                                              -> 7=Canceled/Never received -> (reopen) 3=Process runing
+    //									              -> 6=Canceled -> (reopen) 2=Approved
+    //  		                                      -> 9=Refused  -> (reopen) 1=Validated
     var $socid;
     var $fourn_id;
     var $date;
+    var $date_valid;
+    var $date_cloture;
     var $date_commande;
 	var $date_livraison;	// Date livraison souhaitee
     var $total_ht;
@@ -69,7 +70,10 @@ class CommandeFournisseur extends Commande
     var $cond_reglement_code;
     var $mode_reglement_id;
     var $mode_reglement_code;
-    
+    var $user_author_id;
+    var $user_valid_id;
+    var $user_cloture_id;
+
     var $extraparams=array();
 
 
@@ -111,8 +115,10 @@ class CommandeFournisseur extends Commande
         // Check parameters
         if (empty($id) && empty($ref)) return -1;
 
-        $sql = "SELECT c.rowid, c.ref, c.date_creation, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
+        $sql = "SELECT c.rowid, c.ref, ref_supplier, c.fk_soc, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
         $sql.= " c.localtax1, c.localtax2, ";
+        $sql.= " c.date_creation, c.date_valid, c.date_cloture,";
+        $sql.= " c.fk_user_author, c.fk_user_valid, c.fk_user_cloture,";
         $sql.= " c.date_commande as date_commande, c.date_livraison as date_livraison, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
         $sql.= " c.note as note_private, c.note_public, c.model_pdf, c.extraparams,";
         $sql.= " cm.libelle as methode_commande,";
@@ -140,17 +146,22 @@ class CommandeFournisseur extends Commande
 
             $this->id					= $obj->rowid;
             $this->ref					= $obj->ref;
+            $this->ref_supplier			= $obj->ref_supplier;
             $this->socid				= $obj->fk_soc;
             $this->fourn_id				= $obj->fk_soc;
             $this->statut				= $obj->fk_statut;
             $this->user_author_id		= $obj->fk_user_author;
+            $this->user_valid_id		= $obj->fk_user_valid;
+            $this->user_cloture_id		= $obj->fk_user_cloture;
             $this->total_ht				= $obj->total_ht;
             $this->total_tva			= $obj->tva;
             $this->total_localtax1		= $obj->localtax1;
             $this->total_localtax2		= $obj->localtax2;
             $this->total_ttc			= $obj->total_ttc;
-            $this->date_commande		= $this->db->jdate($obj->date_commande); // date a laquelle la commande a ete transmise
             $this->date					= $this->db->jdate($obj->date_creation);
+            $this->date_valid			= $this->db->jdate($obj->date_valid);
+            $this->date_cloture			= $this->db->jdate($obj->date_cloture);
+            $this->date_commande		= $this->db->jdate($obj->date_commande); // date a laquelle la commande a ete transmise
 			$this->date_livraison       = $this->db->jdate($obj->date_livraison);
             $this->remise_percent		= $obj->remise_percent;
             $this->methode_commande_id	= $obj->fk_methode_commande;
@@ -170,7 +181,7 @@ class CommandeFournisseur extends Commande
             $this->note_private			= $obj->note_private;
             $this->note_public			= $obj->note_public;
             $this->modelpdf				= $obj->model_pdf;
-            
+
             $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
             $this->db->free($resql);
@@ -286,17 +297,18 @@ class CommandeFournisseur extends Commande
     /**
      *	Validate an order
      *
-     *	@param	User	$user		Validator User
-     *	@return	int					<0 if KO, >0 if OK
+     *	@param	User	$user			Validator User
+     *	@param	int		$idwarehouse	Id of warehouse to use for stock decrease
+     *	@return	int						<0 if KO, >0 if OK
      */
-    function valid($user)
+    function valid($user,$idwarehouse=0)
     {
         global $langs,$conf;
         require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
         $error=0;
 
-        dol_syslog("CommandeFournisseur::Valid");
+        dol_syslog(get_class($this)."::valid");
         $result = 0;
         if ($user->rights->fournisseur->commande->valider)
         {
@@ -327,7 +339,7 @@ class CommandeFournisseur extends Commande
             $resql=$this->db->query($sql);
             if (! $resql)
             {
-                dol_syslog("CommandeFournisseur::valid() Echec update - 10 - sql=".$sql, LOG_ERR);
+                dol_syslog(get_class($this)."::valid Echec update - 10 - sql=".$sql, LOG_ERR);
                 dol_print_error($this->db);
                 $error++;
             }
@@ -345,7 +357,7 @@ class CommandeFournisseur extends Commande
                     $dirdest = $conf->fournisseur->dir_output.'/commande/'.$newref;
                     if (file_exists($dirsource))
                     {
-                        dol_syslog("CommandeFournisseur::valid() rename dir ".$dirsource." into ".$dirdest);
+                        dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
 
                         if (@rename($dirsource, $dirdest))
                         {
@@ -381,7 +393,7 @@ class CommandeFournisseur extends Commande
             }
             else
             {
-                dol_syslog("CommandeFournisseur::valid ".$this->error, LOG_ERR);
+                dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
                 $this->db->rollback();
                 $this->error=$this->db->lasterror();
                 return -1;
@@ -390,7 +402,7 @@ class CommandeFournisseur extends Commande
         else
         {
             $this->error='Not Authorized';
-            dol_syslog("CommandeFournisseur::valid ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -412,7 +424,7 @@ class CommandeFournisseur extends Commande
         // Protection
         if ($this->statut == 0)
         {
-            dol_syslog("CommandeFournisseur::set_draft already draft status", LOG_WARNING);
+            dol_syslog(get_class($this)."::set_draft already draft status", LOG_WARNING);
             return 0;
         }
 
@@ -428,7 +440,7 @@ class CommandeFournisseur extends Commande
         $sql.= " SET fk_statut = 0";
         $sql.= " WHERE rowid = ".$this->id;
 
-        dol_syslog("CommandeFournisseur::set_draft sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::set_draft sql=".$sql, LOG_DEBUG);
         if ($this->db->query($sql))
         {
             // If stock is incremented on validate order, we must redecrement it
@@ -619,7 +631,7 @@ class CommandeFournisseur extends Commande
                 }
                 else
                 {
-                    dol_print_error($db,"CommandeFournisseur::getNextNumRef ".$obj->error);
+                    dol_print_error($db, get_class($this)."::getNextNumRef ".$obj->error);
                     return -1;
                 }
             }
@@ -649,7 +661,7 @@ class CommandeFournisseur extends Commande
 
         $error=0;
 
-        dol_syslog(get_class($this)."::Approve");
+        dol_syslog(get_class($this)."::approve");
 
         if ($user->rights->fournisseur->commande->approuver)
         {
@@ -708,13 +720,13 @@ class CommandeFournisseur extends Commande
             {
                 $this->db->rollback();
                 $this->error=$this->db->lasterror();
-                dol_syslog("CommandeFournisseur::Approve Error ",$this->error, LOG_ERR);
+                dol_syslog(get_class($this)."::approve Error ",$this->error, LOG_ERR);
                 return -1;
             }
         }
         else
         {
-            dol_syslog("CommandeFournisseur::Approve Not Authorized", LOG_ERR);
+            dol_syslog(get_class($this)."::approve Not Authorized", LOG_ERR);
         }
         return -1;
     }
@@ -731,7 +743,7 @@ class CommandeFournisseur extends Commande
 
 		$error=0;
 
-        dol_syslog("CommandeFournisseur::Refuse");
+        dol_syslog(get_class($this)."::refuse");
         $result = 0;
         if ($user->rights->fournisseur->commande->approuver)
         {
@@ -755,13 +767,13 @@ class CommandeFournisseur extends Commande
             }
             else
             {
-                dol_syslog("CommandeFournisseur::Refuse Error -1");
+                dol_syslog(get_class($this)."::refuse Error -1");
                 $result = -1;
             }
         }
         else
         {
-            dol_syslog("CommandeFournisseur::Refuse Not Authorized");
+            dol_syslog(get_class($this)."::refuse Not Authorized");
         }
         return $result ;
     }
@@ -789,7 +801,7 @@ class CommandeFournisseur extends Commande
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".$statut;
             $sql .= " WHERE rowid = ".$this->id;
-            dol_syslog("CommandeFournisseur::Cancel sql=".$sql);
+            dol_syslog(get_class($this)."::cancel sql=".$sql);
             if ($this->db->query($sql))
             {
                 $result = 0;
@@ -818,13 +830,13 @@ class CommandeFournisseur extends Commande
             {
                 $this->db->rollback();
                 $this->error=$this->db->lasterror();
-                dol_syslog("CommandeFournisseur::Cancel ".$this->error);
+                dol_syslog(get_class($this)."::cancel ".$this->error);
                 return -1;
             }
         }
         else
         {
-            dol_syslog("CommandeFournisseur::Cancel Not Authorized");
+            dol_syslog(get_class($this)."::cancel Not Authorized");
             return -1;
         }
     }
@@ -841,14 +853,14 @@ class CommandeFournisseur extends Commande
      */
     function commande($user, $date, $methode, $comment='')
     {
-        dol_syslog("CommandeFournisseur::Commande");
+        dol_syslog(get_class($this)."::commande");
         $result = 0;
         if ($user->rights->fournisseur->commande->commander)
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 3, fk_methode_commande=".$methode.",date_commande=".$this->db->idate("$date");
             $sql .= " WHERE rowid = ".$this->id;
 
-            dol_syslog("CommandeFournisseur::Commande sql=".$sql, LOG_DEBUG);
+            dol_syslog(get_class($this)."::commande sql=".$sql, LOG_DEBUG);
             if ($this->db->query($sql))
             {
                 $result = 0;
@@ -856,13 +868,13 @@ class CommandeFournisseur extends Commande
             }
             else
             {
-                dol_syslog("CommandeFournisseur::Commande Error -1", LOG_ERR);
+                dol_syslog(get_class($this)."::cCommande Error -1", LOG_ERR);
                 $result = -1;
             }
         }
         else
         {
-            dol_syslog("CommandeFournisseur::Commande User not Authorized", LOG_ERR);
+            dol_syslog(get_class($this)."::commande User not Authorized", LOG_ERR);
         }
         return $result ;
     }
@@ -890,7 +902,7 @@ class CommandeFournisseur extends Commande
         $sql.= ", entity";
         $sql.= ", fk_soc";
         $sql.= ", date_creation";
-		$sql.= ", date_livraison";
+		//$sql.= ", date_livraison";
         $sql.= ", fk_user_author";
         $sql.= ", fk_statut";
         $sql.= ", source";
@@ -902,7 +914,7 @@ class CommandeFournisseur extends Commande
         $sql.= ", ".$conf->entity;
         $sql.= ", ".$this->socid;
         $sql.= ", ".$this->db->idate($now);
-		$sql.= ", ".$this->db->idate($now);
+		//$sql.= ", ".$this->db->idate($now);
         $sql.= ", ".$user->id;
         $sql.= ", 0";
         $sql.= ", 0";
@@ -974,7 +986,7 @@ class CommandeFournisseur extends Commande
     {
         global $langs,$mysoc;
 
-        dol_syslog("FournisseurCommande::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2. $fk_product, $fk_prod_fourn_price, $fourn_ref, $remise_percent, $price_base_type, $pu_ttc, $type");
+        dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2. $fk_product, $fk_prod_fourn_price, $fourn_ref, $remise_percent, $price_base_type, $pu_ttc, $type");
         include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 
         // Clean parameters
@@ -1032,14 +1044,14 @@ class CommandeFournisseur extends Commande
                     {
                         $this->error="No price found for this quantity. Quantity may be too low ?";
                         $this->db->rollback();
-                        dol_syslog("FournisseurCommande::addline result=".$result." - ".$this->error, LOG_DEBUG);
+                        dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_DEBUG);
                         return -1;
                     }
                     if ($result < -1)
                     {
                         $this->error=$prod->error;
                         $this->db->rollback();
-                        dol_syslog("Fournisseur.commande::addline result=".$result." - ".$this->error, LOG_ERR);
+                        dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_ERR);
                         return -1;
                     }
                 }
@@ -1093,7 +1105,7 @@ class CommandeFournisseur extends Commande
             $sql.= "'".price2num($total_ttc)."'";
             $sql.= ")";
 
-            dol_syslog('FournisseurCommande::addline sql='.$sql);
+            dol_syslog(get_class($this)."::addline sql=".$sql);
             $resql=$this->db->query($sql);
             //print $sql;
             if ($resql)
@@ -1107,7 +1119,7 @@ class CommandeFournisseur extends Commande
             {
                 $this->error=$this->db->error();
                 $this->db->rollback();
-                dol_syslog('FournisseurCommande::addline '.$this->error, LOG_ERR);
+                dol_syslog(get_class($this)."::addline ".$this->error, LOG_ERR);
                 return -1;
             }
         }
@@ -1148,7 +1160,7 @@ class CommandeFournisseur extends Commande
             $sql.= " (fk_commande,fk_product, qty, fk_entrepot, fk_user, datec) VALUES ";
             $sql.= " ('".$this->id."','".$product."','".$qty."',".($entrepot>0?"'".$entrepot."'":"null").",'".$user->id."','".$this->db->idate($now)."')";
 
-            dol_syslog("CommandeFournisseur::DispatchProduct sql=".$sql);
+            dol_syslog(get_class($this)."::DispatchProduct sql=".$sql);
             $resql = $this->db->query($sql);
             if (! $resql)
             {
@@ -1166,7 +1178,7 @@ class CommandeFournisseur extends Commande
                     if ($result < 0)
                     {
                         $this->error=$mouv->error;
-                        dol_syslog("CommandeFournisseur::DispatchProduct ".$this->error, LOG_ERR);
+                        dol_syslog(get_class($this)."::DispatchProduct ".$this->error, LOG_ERR);
                         $error++;
                     }
                 }
@@ -1236,14 +1248,14 @@ class CommandeFournisseur extends Commande
         $this->db->begin();
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE fk_commande =". $this->id ;
-        dol_syslog("FournisseurCommande::delete sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
         if (! $this->db->query($sql) )
         {
             $error++;
         }
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE rowid =".$this->id;
-        dol_syslog("FournisseurCommande::delete sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
         if ($resql = $this->db->query($sql) )
         {
             if ($this->db->affected_rows($resql) < 1)
@@ -1265,7 +1277,7 @@ class CommandeFournisseur extends Commande
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
 
-            dol_syslog("CommandeFournisseur::delete : Success");
+            dol_syslog(get_class($this)."::delete : Success");
             $this->db->commit();
             return 1;
         }
@@ -1322,7 +1334,7 @@ class CommandeFournisseur extends Commande
     {
         $result = 0;
 
-        dol_syslog("CommandeFournisseur::Livraison");
+        dol_syslog(get_class($this)."::Livraison");
 
         if ($user->rights->fournisseur->commande->receptionner)
         {
@@ -1340,7 +1352,7 @@ class CommandeFournisseur extends Commande
                 $sql.= " WHERE rowid = ".$this->id;
                 $sql.= " AND fk_statut IN (3,4)";	// Process running or Partially received
 
-                dol_syslog("CommandeFournisseur::Livraison sql=".$sql);
+                dol_syslog(get_class($this)."::Livraison sql=".$sql);
                 $resql=$this->db->query($sql);
                 if ($resql)
                 {
@@ -1353,19 +1365,19 @@ class CommandeFournisseur extends Commande
                 {
                     $this->db->rollback();
                     $this->error=$this->db->lasterror();
-                    dol_syslog("CommandeFournisseur::Livraison Error ".$this->error, LOG_ERR);
+                    dol_syslog(get_class($this)."::Livraison Error ".$this->error, LOG_ERR);
                     $result = -1;
                 }
             }
             else
             {
-                dol_syslog("CommandeFournisseur::Livraison Error -2", LOG_ERR);
+                dol_syslog(get_class($this)."::Livraison Error -2", LOG_ERR);
                 $result = -2;
             }
         }
         else
         {
-            dol_syslog("CommandeFournisseur::Livraison Not Authorized");
+            dol_syslog(get_class($this)."::Livraison Not Authorized");
             $result = -3;
         }
         return $result ;
@@ -1386,7 +1398,7 @@ class CommandeFournisseur extends Commande
             $sql.= " SET date_livraison = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
             $sql.= " WHERE rowid = ".$this->id;
 
-            dol_syslog("CommandeFournisseur::set_date_livraison sql=".$sql,LOG_DEBUG);
+            dol_syslog(get_class($this)."::set_date_livraison sql=".$sql,LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -1396,7 +1408,7 @@ class CommandeFournisseur extends Commande
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog("CommandeFournisseur::set_date_livraison ".$this->error,LOG_ERR);
+                dol_syslog(get_class($this)."::set_date_livraison ".$this->error,LOG_ERR);
                 return -1;
             }
         }
@@ -1579,7 +1591,7 @@ class CommandeFournisseur extends Commande
             $sql.= ",product_type='".$type."'";
             $sql.= " WHERE rowid = ".$rowid;
 
-            dol_syslog("CommandeFournisseur::updateline sql=".$sql);
+            dol_syslog(get_class($this)."::updateline sql=".$sql);
             $result = $this->db->query($sql);
             if ($result > 0)
             {
@@ -1592,7 +1604,7 @@ class CommandeFournisseur extends Commande
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog("CommandeFournisseur::updateline ".$this->error, LOG_ERR);
+                dol_syslog(get_class($this)."::updateline ".$this->error, LOG_ERR);
                 $this->db->rollback();
                 return -1;
             }
@@ -1600,7 +1612,7 @@ class CommandeFournisseur extends Commande
         else
         {
             $this->error="Order status makes operation forbidden";
-            dol_syslog("CommandeFournisseur::updateline ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::updateline ".$this->error, LOG_ERR);
             return -2;
         }
     }
@@ -1617,7 +1629,7 @@ class CommandeFournisseur extends Commande
     {
         global $user,$langs,$conf;
 
-        dol_syslog("CommandeFournisseur::initAsSpecimen");
+        dol_syslog(get_class($this)."::initAsSpecimen");
 
         $now=dol_now();
 
@@ -1742,8 +1754,7 @@ class CommandeFournisseur extends Commande
 
 
 /**
- *  \class      CommandeFournisseurLigne
- *  \brief      Classe de gestion des lignes de commande
+ *  Classe de gestion des lignes de commande
  */
 class CommandeFournisseurLigne extends OrderLine
 {

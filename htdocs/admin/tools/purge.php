@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -167,10 +167,11 @@ if (preg_match('/^confirm/i',$choice))
 {
 	print '<br>';
 	$formquestion=array();
-	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?choice=allfiles',$langs->trans('Purge'),$langs->trans('ConfirmPurge').' '.img_warning(),'purge',$formquestion,'no',2);
-	if ($ret == 'html') print '<br>';
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?choice=allfiles', $langs->trans('Purge'), $langs->trans('ConfirmPurge').' '.img_warning(), 'purge', $formquestion, 'no', 2);
 }
 
 
 llxFooter();
+
+$db->close();
 ?>

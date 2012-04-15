@@ -8,9 +8,7 @@ script to build a package, ready to be distributed,
 with format .DEB (for Debian, Ubuntu, ...).
 
 # To build a debian package, you need first
-# apt-get -i debhelper 
-# apt-get -i dpkg-source 
-# apt-get -i gpg
+# apt-get -i debhelper dpkg-source gpg lintian
 
 
 # This is standard command to work on Debian packaging:
@@ -35,7 +33,8 @@ with format .DEB (for Debian, Ubuntu, ...).
 # dpkg --purge                           Remove config files and interactive saved answers
 #
 # dpkg-buildpackage -us -uc              Build a source and binary package
-
+#
+# gdebi package.deb						 Install a package + dependencies
 
 To submit a package to Debian:
 

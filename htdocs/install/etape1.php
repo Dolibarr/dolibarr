@@ -380,7 +380,7 @@ if (! $error && $db->connected && $action == "set")
     $main_force_https = ((GETPOST("main_force_https") && (GETPOST("main_force_https") == "on" || GETPOST("main_force_https") == 1)) ? '1' : '0');
 
     // Use alternative directory
-    $main_use_alt_dir = ((GETPOST("main_use_alt_dir") && (GETPOST("main_use_alt_dir") == "on" || GETPOST("main_use_alt_dir") == 1)) ? '' : '#');
+    $main_use_alt_dir = ((GETPOST("main_use_alt_dir") && (GETPOST("main_use_alt_dir") == "on" || GETPOST("main_use_alt_dir") == 1)) ? '' : '//');
 
     // Alternative root directory name
     $main_alt_dir_name = ((GETPOST("main_alt_dir_name") && GETPOST("main_alt_dir_name") != '') ? GETPOST("main_alt_dir_name") : 'custom');
@@ -868,10 +868,10 @@ function write_conf_file($conffile)
 
         // Write params to overwrites default font path
         fputs($fp,"\n");
-        if (empty($force_dolibarr_font_DOL_DEFAULT_TTF)) { fputs($fp, '#'); $force_dolibarr_font_DOL_DEFAULT_TTF=''; }
+        if (empty($force_dolibarr_font_DOL_DEFAULT_TTF)) { fputs($fp, '//'); $force_dolibarr_font_DOL_DEFAULT_TTF=''; }
    		fputs($fp, '$dolibarr_font_DOL_DEFAULT_TTF=\''.$force_dolibarr_font_DOL_DEFAULT_TTF.'\';');
         fputs($fp,"\n");
-        if (empty($force_dolibarr_font_DOL_DEFAULT_TTF_BOLD)) { fputs($fp, '#'); $force_dolibarr_font_DOL_DEFAULT_TTF_BOLD=''; }
+        if (empty($force_dolibarr_font_DOL_DEFAULT_TTF_BOLD)) { fputs($fp, '//'); $force_dolibarr_font_DOL_DEFAULT_TTF_BOLD=''; }
         fputs($fp, '$dolibarr_font_DOL_DEFAULT_TTF_BOLD=\''.$force_dolibarr_font_DOL_DEFAULT_TTF_BOLD.'\';');
         fputs($fp,"\n");
 

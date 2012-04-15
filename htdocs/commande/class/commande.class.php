@@ -106,10 +106,8 @@ class Commande extends CommonObject
      *
      *  @param		DoliDB		$db      Database handler
      */
-    function Commande($db)
+    function __construct($db)
     {
-        global $langs;
-        $langs->load('orders');
         $this->db = $db;
 
         $this->remise = 0;

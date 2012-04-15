@@ -57,10 +57,10 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 if ($id)
 {
     // $user est le user qui edite, $_GET["id"] est l'id de l'utilisateur edite
-    $caneditfield=( (($user->id == $id) && $user->rights->user->self->creer)
-    || (($user->id != $id) && $user->rights->user->user->creer) );
-    $caneditpassword=( (($user->id == $id) && $user->rights->user->self->password)
-    || (($user->id != $id) && $user->rights->user->user->password) );
+    $caneditfield=((($user->id == $id) && $user->rights->user->self->creer)
+    || (($user->id != $id) && $user->rights->user->user->creer));
+    $caneditpassword=((($user->id == $id) && $user->rights->user->self->password)
+    || (($user->id != $id) && $user->rights->user->user->password));
 }
 
 //Multicompany in mode transversal

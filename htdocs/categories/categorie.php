@@ -75,7 +75,7 @@ if ($id || $ref)
 		$objecttype = 'adherent&categorie';
 		$objectid = isset($id)?$id:(isset($ref)?$ref:'');
 		$dbtablename = 'adherent';
-		$fieldid = isset($ref)?'ref':'rowid';
+		$fieldid = ! empty($ref)?'ref':'rowid';
 	}
 }
 

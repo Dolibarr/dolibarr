@@ -110,10 +110,12 @@ abstract class ModeleNumRefProjects
 
 	/**
 	 *  Renvoi prochaine valeur attribuee
-	 *
-	 *  @return     string      Valeur
+	 *	
+	 *	@param	Societe		$objsoc		Object third party
+	 *	@param	Project		$project	Object project
+	 *	@return	string					Valeur
 	 */
-	function getNextValue()
+	function getNextValue($objsoc, $project)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");

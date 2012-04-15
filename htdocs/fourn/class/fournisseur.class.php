@@ -41,17 +41,13 @@ class Fournisseur extends Societe
 	 *
 	 *  @param	DoliDB	$db		Database handler
 	 */
-	function Fournisseur($db)
+	function __construct($db)
 	{
-		global $config;
-
 		$this->db = $db;
 		$this->client = 0;
 		$this->fournisseur = 0;
 		$this->effectif_id  = 0;
 		$this->forme_juridique_code  = 0;
-
-		return 0;
 	}
 
 

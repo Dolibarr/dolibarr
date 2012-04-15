@@ -76,7 +76,7 @@ MailingStatusRead=Lu
 CheckRead=Accusé de lecture
 YourMailUnsubcribeOK=L'adresse e-mail <b>%s</b> est bien désincrite de la liste.
 MailtoEMail=Ecrire a e-mail (lien)
-ActivateCheckRead=Activer les tag d'accusé de lecture et de désincription
+ActivateCheckRead=Activer les tags d'accusé de lecture et de désincription
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Contacts de tiers (prospects, clients, fournisseurs...)
