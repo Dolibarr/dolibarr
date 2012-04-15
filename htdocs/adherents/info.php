@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +32,10 @@ $langs->load("bills");
 $langs->load("members");
 $langs->load("users");
 
-if (!$user->rights->adherent->lire)
-	accessforbidden();
+$id=(GETPOST('id','int') ? GETPOST('id','int') : GETPOST('rowid','int'));
+
+// Security check
+$result=restrictedArea($user,'adherent',$id);
 
 
 /*
@@ -43,9 +45,8 @@ if (!$user->rights->adherent->lire)
 llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 $adh = new Adherent($db);
-$adh->id=$_GET["id"];
-$adh->fetch($_GET["id"]);
-$adh->info($_GET["id"]);
+$adh->fetch($id);
+$adh->info($id);
 
 $head = member_prepare_head($adh);
 
@@ -59,7 +60,6 @@ print '</td></tr></table>';
 print '</div>';
 
 
-$db->close();
-
 llxFooter();
+$db->close();
 ?>

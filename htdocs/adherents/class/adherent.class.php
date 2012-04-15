@@ -968,7 +968,7 @@ class Adherent extends CommonObject
      */
     function fetch($rowid,$ref='',$fk_soc='')
     {
-        global $conf, $langs;
+        global $langs;
 
         $sql = "SELECT d.rowid, d.civilite, d.prenom as firstname, d.nom as lastname, d.societe, d.fk_soc, d.statut, d.public, d.adresse as address, d.cp as zip, d.ville as town, d.note,";
         $sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
@@ -989,10 +989,12 @@ class Adherent extends CommonObject
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as dep ON d.fk_departement = dep.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON d.rowid = u.fk_member";
         $sql.= " WHERE d.fk_adherent_type = t.rowid";
-        $sql.= " AND d.entity = ".$conf->entity;
-        if ($ref) $sql.= " AND d.rowid='".$ref."'";
-        elseif ($fk_soc) $sql.= " AND d.fk_soc='".$fk_soc."'";
-        else $sql.= " AND d.rowid=".$rowid;
+        if ($rowid) $sql.= " AND d.rowid=".$rowid;
+        elseif ($ref || $fk_soc) {
+        	$sql.= " AND d.entity IN (".getEntity().")";
+        	if ($ref) $sql.= " AND d.rowid='".$ref."'";
+        	elseif ($fk_soc) $sql.= " AND d.fk_soc='".$fk_soc."'";
+        }
 
         dol_syslog(get_class($this)."::fetch sql=".$sql);
         $resql=$this->db->query($sql);
