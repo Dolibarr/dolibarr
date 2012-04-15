@@ -439,21 +439,9 @@ class Project extends CommonObject
             if ($conf->projet->dir_output)
             {
                 $dir = $conf->projet->dir_output . "/" . $projectref;
-                $file = $conf->projet->dir_output . "/" . $projectref . "/" . $projectref . ".pdf";
-                if (file_exists($file))
-                {
-                    dol_delete_preview($this);
-
-                    if (!dol_delete_file($file))
-                    {
-                        $this->error = 'ErrorFailToDeleteFile';
-                        $this->db->rollback();
-                        return 0;
-                    }
-                }
                 if (file_exists($dir))
                 {
-                    $res = @dol_delete_dir($dir);
+                    $res = @dol_delete_dir_recursive($dir);
                     if (!$res)
                     {
                         $this->error = 'ErrorFailToDeleteDir';
