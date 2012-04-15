@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +60,10 @@ $AdherentType=array();
 $sql = "SELECT t.rowid, t.libelle, t.cotisation,";
 $sql.= " d.statut, count(d.rowid) as somme";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d ON t.rowid = d.fk_adherent_type";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d";
+$sql.= " ON t.rowid = d.fk_adherent_type";
+$sql.= " AND d.entity IN (".getEntity().")";
+$sql.= " WHERE t.entity IN (".getEntity().")";
 $sql.= " GROUP BY t.rowid, t.libelle, t.cotisation, d.statut";
 
 dol_syslog("index.php::select nb of members by type sql=".$sql, LOG_DEBUG);
@@ -94,8 +98,9 @@ $now=dol_now();
 // old rule: uptodate = if type does not need payment, that end date is null, if type need payment that end date is in future)
 $sql = "SELECT count(*) as somme , d.fk_adherent_type";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-//$sql.= " WHERE d.statut = 1 AND ((t.cotisation = 0 AND d.datefin IS NULL) OR d.datefin >= ".$db->idate($now).')';
-$sql.= " WHERE d.statut = 1 AND d.datefin >= ".$db->idate($now);
+$sql.= " WHERE d.entity IN (".getEntity().")";
+//$sql.= " AND d.statut = 1 AND ((t.cotisation = 0 AND d.datefin IS NULL) OR d.datefin >= ".$db->idate($now).')';
+$sql.= " AND d.statut = 1 AND d.datefin >= ".$db->idate($now);
 $sql.= " AND t.rowid = d.fk_adherent_type";
 $sql.= " GROUP BY d.fk_adherent_type";
 
@@ -212,7 +217,8 @@ $sql = "SELECT a.rowid, a.statut, a.nom as lastname, a.prenom as firstname,";
 $sql.= " a.tms as datem, datefin as date_end_subscription,";
 $sql.= " ta.rowid as typeid, ta.libelle, ta.cotisation";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as ta";
-$sql.= " WHERE a.fk_adherent_type = ta.rowid";
+$sql.= " WHERE a.entity IN (".getEntity().")";
+$sql.= " AND a.fk_adherent_type = ta.rowid";
 $sql.= $db->order("a.tms","DESC");
 $sql.= $db->plimit($max, 0);
 
@@ -264,7 +270,8 @@ $sql = "SELECT a.rowid, a.statut, a.nom, a.prenom,";
 $sql.= " datefin as date_end_subscription,";
 $sql.= " c.rowid as cid, c.tms as datem, c.datec as datec, c.dateadh as date_start, c.datef as date_end, c.cotisation";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."cotisation as c";
-$sql.= " WHERE c.fk_adherent = a.rowid";
+$sql.= " WHERE a.entity IN (".getEntity().")";
+$sql.= " AND c.fk_adherent = a.rowid";
 $sql.= $db->order("c.tms","DESC");
 $sql.= $db->plimit($max, 0);
 
@@ -350,7 +357,8 @@ $numb=0;
 
 $sql = "SELECT c.cotisation, c.dateadh";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
-$sql.= " WHERE d.rowid = c.fk_adherent";
+$sql.= " WHERE d.entity IN (".getEntity().")";
+$sql.= " AND d.rowid = c.fk_adherent";
 if(isset($date_select) && $date_select != '')
 {
 	$sql .= " AND dateadh LIKE '$date_select%'";
@@ -406,7 +414,6 @@ print '</td></tr>';
 print '</table>';
 
 
-$db->close();
-
 llxFooter();
+$db->close();
 ?>

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,18 +31,21 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
 
+$langs->load("members");
 $langs->load("companies");
 $langs->load('other');
 
+$id=GETPOST('id','int');
+$action=GETPOST('action','alpha');
+$confirm=GETPOST('confirm','alpha');
 $mesg = "";
 
 // Security check
-$id = GETPOST('id','int');
 if ($user->societe_id > 0)
 {
 	$id = $user->societe_id;
 }
-//$result = restrictedArea($user, 'societe', $id);
+$result=restrictedArea($user,'adherent',$id);
 
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
@@ -65,7 +68,7 @@ $upload_dir = $conf->adherent->dir_output . "/" . get_exdir($id,2,0,1) . '/' . $
  */
 
 // Envoie fichier
-if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
+if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
@@ -96,7 +99,7 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 }
 
 // Suppression fichier
-if ($_REQUEST['action'] == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes')
+if ($action == 'confirm_deletefile' && $confirm == 'yes')
 {
 	$file = $upload_dir . "/" . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 	dol_delete_file($file);
@@ -197,21 +200,21 @@ if ($id > 0)
 		/*
 		 * Confirmation suppression fichier
 		 */
-		if ($_GET['action'] == 'delete')
+		if ($action == 'delete')
 		{
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+			$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$member->id.'&urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
 			if ($ret == 'html') print '<br>';
 		}
 
 
 		// Affiche formulaire upload
 		$formfile=new FormFile($db);
-		$formfile->form_attach_new_file(DOL_URL_ROOT.'/adherents/document.php?id='.$id,'',0,0,$user->rights->adherent->creer);
+		$formfile->form_attach_new_file(DOL_URL_ROOT.'/adherents/document.php?id='.$member->id,'',0,0,$user->rights->adherent->creer);
 
 
 		// List of document
 		$param='&socid='.$societe->id;
-		$formfile->list_of_documents($filearray,$member,'member',$param, 0, get_exdir($id,2,0,1).'/'.$id.'/');
+		$formfile->list_of_documents($filearray,$member,'member',$param, 0, get_exdir($member->id,2,0,1).'/'.$member->id.'/');
 
 		print "<br><br>";
 	}
@@ -226,9 +229,7 @@ else
 	print $langs->trans("ErrorRecordNotFound");
 }
 
-$db->close();
-
 
 llxFooter();
-
+$db->close();
 ?>
