@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2010-2011	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2012	Philippe Grand			<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ class CommandeFournisseur extends Commande
     var $fourn_id;
     var $date;
     var $date_valid;
-    var $date_cloture;
+    var $date_approve;
     var $date_commande;
 	var $date_livraison;	// Date livraison souhaitee
     var $total_ht;
@@ -72,7 +72,7 @@ class CommandeFournisseur extends Commande
     var $mode_reglement_code;
     var $user_author_id;
     var $user_valid_id;
-    var $user_cloture_id;
+    var $user_approve_id;
 
     var $extraparams=array();
 
@@ -80,9 +80,9 @@ class CommandeFournisseur extends Commande
     /**
      * 	Constructor
      *
-     *  @param      DoliDB		$db      Handler d'acces aux bases de donnees
+     *  @param      DoliDB		$db      Database handler
      */
-    function CommandeFournisseur($db)
+    function __Construct($db)
     {
         $this->db = $db;
         $this->products = array();
@@ -117,8 +117,8 @@ class CommandeFournisseur extends Commande
 
         $sql = "SELECT c.rowid, c.ref, ref_supplier, c.fk_soc, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
         $sql.= " c.localtax1, c.localtax2, ";
-        $sql.= " c.date_creation, c.date_valid, c.date_cloture,";
-        $sql.= " c.fk_user_author, c.fk_user_valid, c.fk_user_cloture,";
+        $sql.= " c.date_creation, c.date_valid, c.date_approve,";
+        $sql.= " c.fk_user_author, c.fk_user_valid, c.fk_user_approve,";
         $sql.= " c.date_commande as date_commande, c.date_livraison as date_livraison, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
         $sql.= " c.note as note_private, c.note_public, c.model_pdf, c.extraparams,";
         $sql.= " cm.libelle as methode_commande,";
@@ -152,7 +152,7 @@ class CommandeFournisseur extends Commande
             $this->statut				= $obj->fk_statut;
             $this->user_author_id		= $obj->fk_user_author;
             $this->user_valid_id		= $obj->fk_user_valid;
-            $this->user_cloture_id		= $obj->fk_user_cloture;
+            $this->user_approve_id		= $obj->fk_user_approve;
             $this->total_ht				= $obj->total_ht;
             $this->total_tva			= $obj->tva;
             $this->total_localtax1		= $obj->localtax1;
@@ -160,7 +160,7 @@ class CommandeFournisseur extends Commande
             $this->total_ttc			= $obj->total_ttc;
             $this->date					= $this->db->jdate($obj->date_creation);
             $this->date_valid			= $this->db->jdate($obj->date_valid);
-            $this->date_cloture			= $this->db->jdate($obj->date_cloture);
+            $this->date_approve			= $this->db->jdate($obj->date_approve);
             $this->date_commande		= $this->db->jdate($obj->date_commande); // date a laquelle la commande a ete transmise
 			$this->date_livraison       = $this->db->jdate($obj->date_livraison);
             $this->remise_percent		= $obj->remise_percent;
@@ -667,8 +667,13 @@ class CommandeFournisseur extends Commande
         {
             $this->db->begin();
 
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 2";
-            $sql .= " WHERE rowid = ".$this->id." AND fk_statut = 1 ;";
+            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+			$sql.= " SET ref='".$num."'";
+            $sql.= ", fk_statut = 2";
+            $sql.= ", date_approve=".$this->db->idate(mktime());
+            $sql.= ", fk_user_approve = ".$user->id;
+            $sql.= " WHERE rowid = ".$this->id;
+            $sql.= " AND fk_statut = 1";
 
             if ($this->db->query($sql))
             {
