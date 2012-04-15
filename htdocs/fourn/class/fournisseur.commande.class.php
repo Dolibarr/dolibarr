@@ -329,10 +329,10 @@ class CommandeFournisseur extends Commande
             }
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur";
-            $sql.= " SET ref='".$num."'";
-            $sql.= ", fk_statut = 1";
-            $sql.= ", date_valid=".$this->db->idate(mktime());
-            $sql.= ", fk_user_valid = ".$user->id;
+            $sql.= " SET ref='".$num."',";
+            $sql.= " fk_statut = 1,";
+            $sql.= " date_valid='".$this->db->idate(dol_now())."',";
+            $sql.= " fk_user_valid = ".$user->id;
             $sql.= " WHERE rowid = ".$this->id;
             $sql.= " AND fk_statut = 0";
 
@@ -668,10 +668,10 @@ class CommandeFournisseur extends Commande
             $this->db->begin();
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
-			$sql.= " SET ref='".$num."'";
-            $sql.= ", fk_statut = 2";
-            $sql.= ", date_approve=".$this->db->idate(mktime());
-            $sql.= ", fk_user_approve = ".$user->id;
+			$sql.= " SET ref='".$this->db->escape($num)."',";
+            $sql.= " fk_statut = 2,";
+            $sql.= " date_approve='".$this->db->idate(dol_now())."',";
+            $sql.= " fk_user_approve = ".$user->id;
             $sql.= " WHERE rowid = ".$this->id;
             $sql.= " AND fk_statut = 1";
 
