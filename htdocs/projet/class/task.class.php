@@ -66,10 +66,9 @@ class Task extends CommonObject
      *
      *  @param      DoliDB		$DB      Database handler
      */
-    function Task($DB)
+    function __construct($db)
     {
-        $this->db = $DB;
-        return 1;
+        $this->db = $db;
     }
 
 
@@ -320,24 +319,6 @@ class Task extends CommonObject
             return 0;
         }
 
-      	//Delete associated link file
-    	//retreive project ref to know project folder
-    	$sql = "SELECT p.ref";
-        $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t INNER JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid=t.fk_projet";
-        $sql.= " WHERE t.rowid = ".$this->id;
-
-   		dol_syslog(get_class($this)."::delete(retreive proj ref) sql=".$sql, LOG_DEBUG);
-    	$resql_projref=$this->db->query($sql);
-   		if ($resql_projref)
-    	{
-        	if ($this->db->num_rows($resql_projref))
-        	{
-            	$obj = $this->db->fetch_object($resql_projref);
-            	$projectref	= $obj->ref;
-        	}
-        }
-		$this->db->free($resql_projref);
-
         if (! $error)
         {
             // Delete linked contacts
@@ -392,8 +373,11 @@ class Task extends CommonObject
 			//Delete associated link file
 	        if ($conf->projet->dir_output)
 	        {
-	            $dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($projectref) . '/' . dol_sanitizeFileName($this->id);
-	            dol_syslog(get_class($this)."::delete(retreive proj ref) dir=".$dir, LOG_DEBUG);
+	        	$projectstatic=new Project($this->db);
+	        	$projectstatic->fetch($this->fk_project);
+
+	            $dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($projectstatic->ref) . '/' . dol_sanitizeFileName($this->id);
+	            dol_syslog(get_class($this)."::delete dir=".$dir, LOG_DEBUG);
 	            if (file_exists($dir))
 	            {
 	            	require_once(DOL_DOCUMENT_ROOT . "/core/lib/files.lib.php");

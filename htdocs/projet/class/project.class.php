@@ -56,10 +56,10 @@ class Project extends CommonObject
      *
      *  @param      DoliDB		$DB      Database handler
      */
-    function Project($DB)
+    function __construct($db)
     {
-        $this->db = $DB;
-        $this->societe = new Societe($DB);
+        $this->db = $db;
+        $this->societe = new Societe($db);
 
         $this->statuts_short = array(0 => 'Draft', 1 => 'Validated', 2 => 'Closed');
         $this->statuts = array(0 => 'Draft', 1 => 'Validated', 2 => 'Closed');
