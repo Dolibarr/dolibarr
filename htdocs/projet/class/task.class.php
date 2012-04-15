@@ -368,16 +368,14 @@ class Task extends CommonObject
         }
         else
         {
-            $this->db->commit();
-            
             $this->db->free($resql);
-            
+
 			//Delete associated link file
 	        if ($conf->projet->dir_output)
 	        {
 	        	$projectstatic=new Project($this->db);
 	        	$projectstatic->fetch($this->fk_project);
-	        	
+
 	            $dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($projectstatic->ref) . '/' . dol_sanitizeFileName($this->id);
 	            dol_syslog(get_class($this)."::delete dir=".$dir, LOG_DEBUG);
 	            if (file_exists($dir))
@@ -392,8 +390,10 @@ class Task extends CommonObject
 	                }
 	            }
 	        }
-            
-            return 1;
+
+            $this->db->commit();
+
+	        return 1;
         }
     }
 
