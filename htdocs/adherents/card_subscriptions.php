@@ -39,8 +39,12 @@ $langs->load("users");
 $langs->load("mails");
 
 
+$action=GETPOST('action','alpha');
+$rowid=GETPOST('rowid','int');
+$typeid=GETPOST('typeid','int');
+
 // Security check
-if (! $user->rights->adherent->cotisation->lire) accessforbidden();
+$result=restrictedArea($user,'adherent',$rowid);
 
 $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
@@ -49,10 +53,6 @@ $errmsg='';
 
 $defaultdelay=1;
 $defaultdelayunit='y';
-
-$action=GETPOST('action');
-$rowid=GETPOST('rowid');
-$typeid=GETPOST('typeid');
 
 if ($rowid)
 {
