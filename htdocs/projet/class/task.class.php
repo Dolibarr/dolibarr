@@ -319,7 +319,7 @@ class Task extends CommonObject
             $this->db->rollback();
             return 0;
         }
-        
+
       	//Delete associated link file
     	//retreive project ref to know project folder
     	$sql = "SELECT p.ref";
@@ -329,7 +329,7 @@ class Task extends CommonObject
    		dol_syslog(get_class($this)."::delete(retreive proj ref) sql=".$sql, LOG_DEBUG);
     	$resql_projref=$this->db->query($sql);
    		if ($resql_projref)
-    	{  
+    	{
         	if ($this->db->num_rows($resql_projref))
         	{
             	$obj = $this->db->fetch_object($resql_projref);
@@ -387,10 +387,8 @@ class Task extends CommonObject
         }
         else
         {
-            $this->db->commit();
-            
             $this->db->free($resql);
-            
+
 			//Delete associated link file
 	        if ($conf->projet->dir_output)
 	        {
@@ -408,7 +406,9 @@ class Task extends CommonObject
 	                }
 	            }
 	        }
-            
+
+            $this->db->commit();
+
             return 1;
         }
     }
