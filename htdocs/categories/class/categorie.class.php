@@ -55,14 +55,10 @@ class Categorie
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db     Database handler
-	 *  @param		int			$id		Id of category to fetch during init
 	 */
-	function Categorie($db, $id=-1)
+	function __construct($db)
 	{
 		$this->db = $db;
-		$this->id = $id;
-
-		if ($id != -1) $this->fetch($this->id);
 	}
 
 	/**

@@ -1,14 +1,14 @@
 <?php
 //============================================================+
-// File name   : eng.php
-// Begin       : 2004-03-03
-// Last Update : 2010-10-26
+// File name   : jpn.php
+// Begin       : 2011-01-24
+// Last Update : 2011-01-24
 //
 // Description : Language module for TCPDF
 //               (contains translated texts)
-//               English
+//               Japanese
 //
-// Author: Nicola Asuni
+// Author: Nicola Asuni - Translation by redcocker
 //
 // (c) Copyright:
 //               Nicola Asuni
@@ -23,12 +23,12 @@
 /**
  * TCPDF language file (contains translated texts).
  * @package com.tecnick.tcpdf
- * @brief TCPDF language file: English
- * @author Nicola Asuni
- * @since 2004-03-03
+ * @brief TCPDF language file: Japanese
+ * @author Nicola Asuni - Translation by redcocker
+ * @since 2012-01-24
  */
 
-// English
+// Japanese
 
 global $l;
 $l = Array();
@@ -37,10 +37,10 @@ $l = Array();
 
 $l['a_meta_charset'] = 'UTF-8';
 $l['a_meta_dir'] = 'ltr';
-$l['a_meta_language'] = 'en';
+$l['a_meta_language'] = 'ja';
 
 // TRANSLATIONS --------------------------------------
-$l['w_page'] = 'page';
+$l['w_page'] = 'ページ';
 
 //============================================================+
 // END OF FILE

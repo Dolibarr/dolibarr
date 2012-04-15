@@ -1,13 +1,13 @@
 <?php
 //============================================================+
 // File name   : barcodes.php
-// Version     : 1.0.017
+// Version     : 1.0.023
 // Begin       : 2008-06-09
-// Last Update : 2011-06-01
-// Author      : Nicola Asuni - Tecnick.com S.r.l - Via Della Pace, 11 - 09044 - Quartucciu (CA) - ITALY - www.tecnick.com - info@tecnick.com
+// Last Update : 2012-01-14
+// Author      : Nicola Asuni - Tecnick.com LTD - Manor Coach House, Church Hill, Aldershot, Hants, GU12 4RQ, UK - www.tecnick.com - info@tecnick.com
 // License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
-// Copyright (C) 2008-2011  Nicola Asuni - Tecnick.com S.r.l.
+// Copyright (C) 2008-2012  Nicola Asuni - Tecnick.com LTD
 //
 // This file is part of TCPDF software library.
 //
@@ -37,14 +37,14 @@
  * PHP class to creates array representations for common 1D barcodes to be used with TCPDF.
  * @package com.tecnick.tcpdf
  * @author Nicola Asuni
- * @version 1.0.017
+ * @version 1.0.023
  */
 
 /**
  * @class TCPDFBarcode
  * PHP class to creates array representations for common 1D barcodes to be used with TCPDF (http://www.tcpdf.org).<br>
  * @package com.tecnick.tcpdf
- * @version 1.0.017
+ * @version 1.0.023
  * @author Nicola Asuni
  */
 class TCPDFBarcode {
@@ -91,7 +91,7 @@ class TCPDFBarcode {
  	 * @public
 	 */
 	public function getBarcodeSVG($w=2, $h=30, $color='black') {
-		// send XML headers
+		// send headers
 		$code = $this->getBarcodeSVGcode($w, $h, $color);
 		header('Content-Type: application/svg+xml');
 		header('Cache-Control: public, must-revalidate, max-age=0'); // HTTP/1.1
@@ -134,6 +134,93 @@ class TCPDFBarcode {
 		$svg .= "\t".'</g>'."\n";
 		$svg .= '</svg>'."\n";
 		return $svg;
+	}
+
+	/**
+	 * Return an HTML representation of barcode.
+	 * @param $w (int) Width of a single bar element in pixels.
+	 * @param $h (int) Height of a single bar element in pixels.
+	 * @param $color (string) Foreground color for bar elements (background is transparent).
+ 	 * @return string HTML code.
+ 	 * @public
+	 */
+	public function getBarcodeHTML($w=2, $h=30, $color='black') {
+		$html = '<div style="font-size:0;position:relative;width:'.($this->barcode_array['maxw'] * $w).'px;height:'.($h).'px;">'."\n";
+		// print bars
+		$x = 0;
+		foreach ($this->barcode_array['bcode'] as $k => $v) {
+			$bw = round(($v['w'] * $w), 3);
+			$bh = round(($v['h'] * $h / $this->barcode_array['maxh']), 3);
+			if ($v['t']) {
+				$y = round(($v['p'] * $h / $this->barcode_array['maxh']), 3);
+				// draw a vertical bar
+				$html .= '<div style="background-color:'.$color.';width:'.$bw.'px;height:'.$bh.'px;position:absolute;left:'.$x.'px;top:'.$y.'px;">&nbsp;</div>'."\n";
+			}
+			$x += $bw;
+		}
+		$html .= '</div>'."\n";
+		return $html;
+	}
+
+	/**
+	 * Return a PNG image representation of barcode (requires GD or Imagick library).
+	 * @param $w (int) Width of a single bar element in pixels.
+	 * @param $h (int) Height of a single bar element in pixels.
+	 * @param $color (array) RGB (0-255) foreground color for bar elements (background is transparent).
+ 	 * @return image or false in case of error.
+ 	 * @public
+	 */
+	public function getBarcodePNG($w=2, $h=30, $color=array(0,0,0)) {
+		// calculate image size
+		$width = ($this->barcode_array['maxw'] * $w);
+		$height = $h;
+		if (function_exists('imagecreate')) {
+			// GD library
+			$imagick = false;
+			$png = imagecreate($width, $height);
+			$bgcol = imagecolorallocate($png, 255, 255, 255);
+			imagecolortransparent($png, $bgcol);
+			$fgcol = imagecolorallocate($png, $color[0], $color[1], $color[2]);
+		} elseif (extension_loaded('imagick')) {
+			$imagick = true;
+			$bgcol = new imagickpixel('rgb(255,255,255');
+			$fgcol = new imagickpixel('rgb('.$color[0].','.$color[1].','.$color[2].')');
+			$png = new Imagick();
+			$png->newImage($width, $height, 'none', 'png');
+			$bar = new imagickdraw();
+			$bar->setfillcolor($fgcol);
+		} else {
+			return false;
+		}
+		// print bars
+		$x = 0;
+		foreach ($this->barcode_array['bcode'] as $k => $v) {
+			$bw = round(($v['w'] * $w), 3);
+			$bh = round(($v['h'] * $h / $this->barcode_array['maxh']), 3);
+			if ($v['t']) {
+				$y = round(($v['p'] * $h / $this->barcode_array['maxh']), 3);
+				// draw a vertical bar
+				if ($imagick) {
+					$bar->rectangle($x, $y, ($x + $bw), ($y + $bh));
+				} else {
+					imagefilledrectangle($png, $x, $y, ($x + $bw), ($y + $bh), $fgcol);
+				}
+			}
+			$x += $bw;
+		}
+		// send headers
+		header('Content-Type: image/png');
+		header('Cache-Control: public, must-revalidate, max-age=0'); // HTTP/1.1
+		header('Pragma: public');
+		header('Expires: Sat, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+		header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+		if ($imagick) {
+			$png->drawimage($bar);
+			echo $png;
+		} else {
+			imagepng($png);
+			imagedestroy($png);
+		}
 	}
 
 	/**
@@ -284,50 +371,50 @@ class TCPDFBarcode {
 	 * @protected
 	 */
 	protected function barcode_code39($code, $extended=false, $checksum=false) {
-		$chr['0'] = '111221211';
-		$chr['1'] = '211211112';
-		$chr['2'] = '112211112';
-		$chr['3'] = '212211111';
-		$chr['4'] = '111221112';
-		$chr['5'] = '211221111';
-		$chr['6'] = '112221111';
-		$chr['7'] = '111211212';
-		$chr['8'] = '211211211';
-		$chr['9'] = '112211211';
-		$chr['A'] = '211112112';
-		$chr['B'] = '112112112';
-		$chr['C'] = '212112111';
-		$chr['D'] = '111122112';
-		$chr['E'] = '211122111';
-		$chr['F'] = '112122111';
-		$chr['G'] = '111112212';
-		$chr['H'] = '211112211';
-		$chr['I'] = '112112211';
-		$chr['J'] = '111122211';
-		$chr['K'] = '211111122';
-		$chr['L'] = '112111122';
-		$chr['M'] = '212111121';
-		$chr['N'] = '111121122';
-		$chr['O'] = '211121121';
-		$chr['P'] = '112121121';
-		$chr['Q'] = '111111222';
-		$chr['R'] = '211111221';
-		$chr['S'] = '112111221';
-		$chr['T'] = '111121221';
-		$chr['U'] = '221111112';
-		$chr['V'] = '122111112';
-		$chr['W'] = '222111111';
-		$chr['X'] = '121121112';
-		$chr['Y'] = '221121111';
-		$chr['Z'] = '122121111';
-		$chr['-'] = '121111212';
-		$chr['.'] = '221111211';
-		$chr[' '] = '122111211';
-		$chr['$'] = '121212111';
-		$chr['/'] = '121211121';
-		$chr['+'] = '121112121';
-		$chr['%'] = '111212121';
-		$chr['*'] = '121121211';
+		$chr['0'] = '111331311';
+		$chr['1'] = '311311113';
+		$chr['2'] = '113311113';
+		$chr['3'] = '313311111';
+		$chr['4'] = '111331113';
+		$chr['5'] = '311331111';
+		$chr['6'] = '113331111';
+		$chr['7'] = '111311313';
+		$chr['8'] = '311311311';
+		$chr['9'] = '113311311';
+		$chr['A'] = '311113113';
+		$chr['B'] = '113113113';
+		$chr['C'] = '313113111';
+		$chr['D'] = '111133113';
+		$chr['E'] = '311133111';
+		$chr['F'] = '113133111';
+		$chr['G'] = '111113313';
+		$chr['H'] = '311113311';
+		$chr['I'] = '113113311';
+		$chr['J'] = '111133311';
+		$chr['K'] = '311111133';
+		$chr['L'] = '113111133';
+		$chr['M'] = '313111131';
+		$chr['N'] = '111131133';
+		$chr['O'] = '311131131';
+		$chr['P'] = '113131131';
+		$chr['Q'] = '111111333';
+		$chr['R'] = '311111331';
+		$chr['S'] = '113111331';
+		$chr['T'] = '111131331';
+		$chr['U'] = '331111113';
+		$chr['V'] = '133111113';
+		$chr['W'] = '333111111';
+		$chr['X'] = '131131113';
+		$chr['Y'] = '331131111';
+		$chr['Z'] = '133131111';
+		$chr['-'] = '131111313';
+		$chr['.'] = '331111311';
+		$chr[' '] = '133111311';
+		$chr['$'] = '131313111';
+		$chr['/'] = '131311131';
+		$chr['+'] = '131113131';
+		$chr['%'] = '111313131';
+		$chr['*'] = '131131311';
 		$code = strtoupper($code);
 		if ($extended) {
 			// extended mode
@@ -362,6 +449,7 @@ class TCPDFBarcode {
 				$bararray['maxw'] += $w;
 				++$k;
 			}
+			// intercharacter gap
 			$bararray['bcode'][$k] = array('t' => false, 'w' => 1, 'h' => 1, 'p' => 0);
 			$bararray['maxw'] += 1;
 			++$k;

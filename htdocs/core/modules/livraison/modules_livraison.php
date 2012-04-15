@@ -116,9 +116,11 @@ abstract class ModeleNumRefDeliveryOrder
 	/**
 	 * Renvoi prochaine valeur attribuee
 	 *
-	 * @return     string      Valeur
+	 *	@param	Societe		$objsoc     	Object third party
+	 *  @param  Object		$object			Object delivery
+	 *	@return	string						Valeur
 	 */
-	function getNextValue()
+	function getNextValue($objsoc, $object)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");

@@ -6,6 +6,7 @@
 -- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2012      Sebastian Neuwert    <sebastian.neuwert@modula71.de>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,7 +20,6 @@
 --
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
---
 --
 
 --
@@ -90,9 +90,11 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 1
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 17,  1,   '7','0','VAT reduced rate',1);
 
 -- GERMANY (id country=5)
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 51,  5,  '19','0','VAT standard rate',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 52,  5,   '7','0','VAT reduced rate', 1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 53,  5,   '0','0','VAT Rate 0', 1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 51,  5,  '19.0','0','allgemeine Ust.',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 52,  5,   '7.0','0','ermäßigte USt.', 1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 53,  5,   '0.0','0','keine USt.', 1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 54,  5,   '5.5','0','USt. Forst', 0);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 55,  5,  '10.7','0','USt. Landwirtschaft', 0);
 
 -- ICELAND (id country=116)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (1161, 116,'25.5','0','VAT standard rate',1);

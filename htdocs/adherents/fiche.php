@@ -70,12 +70,8 @@ if ($rowid > 0)
 		$caneditfielduser=( (($user->id == $object->user_id) && $user->rights->user->self->creer)
 		|| (($user->id != $object->user_id) && $user->rights->user->user->creer) );
 		$caneditpassworduser=( (($user->id == $object->user_id) && $user->rights->user->self->password)
-		|| (($user->id != $adh->user_id) && $user->rights->user->user->password) );
+		|| (($user->id != $object->user_id) && $user->rights->user->user->password) );
 	}
-}
-else
-{
-	accessforbidden();
 }
 
 // Define variables to know what current user can do on members
