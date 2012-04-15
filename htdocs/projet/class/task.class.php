@@ -320,8 +320,7 @@ class Task extends CommonObject
             return 0;
         }
         
-        //Delete associated link file
-        	
+      	//Delete associated link file
     	//retreive project ref to know project folder
     	$sql = "SELECT p.ref";
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t INNER JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid=t.fk_projet";
@@ -338,24 +337,6 @@ class Task extends CommonObject
         	}
         }
 		$this->db->free($resql_projref);
-		
-        if ($conf->projet->dir_output)
-        {
-            $dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($projectref) . '/' . dol_sanitizeFileName($this->id);
-            dol_syslog(get_class($this)."::delete(retreive proj ref) dir=".$dir, LOG_DEBUG);
-            if (file_exists($dir))
-            {
-            	require_once(DOL_DOCUMENT_ROOT . "/core/lib/files.lib.php");
-                $res = @dol_delete_dir_recursive($dir);
-                if (!$res)
-                {
-                    $this->error = 'ErrorFailToDeleteDir';
-                    $this->db->rollback();
-                    return 0;
-                }
-            }
-        }
-        
 
         if (! $error)
         {
@@ -369,8 +350,7 @@ class Task extends CommonObject
                 return 0;
             }
         }
-        
-     
+
         // Delete rang of line
         //$this->delRangOfLine($this->id, $this->element);
 
@@ -406,9 +386,29 @@ class Task extends CommonObject
             return -1*$error;
         }
         else
-        {	
-        	
+        {
             $this->db->commit();
+            
+            $this->db->free($resql);
+            
+			//Delete associated link file
+	        if ($conf->projet->dir_output)
+	        {
+	            $dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($projectref) . '/' . dol_sanitizeFileName($this->id);
+	            dol_syslog(get_class($this)."::delete(retreive proj ref) dir=".$dir, LOG_DEBUG);
+	            if (file_exists($dir))
+	            {
+	            	require_once(DOL_DOCUMENT_ROOT . "/core/lib/files.lib.php");
+	                $res = @dol_delete_dir_recursive($dir);
+	                if (!$res)
+	                {
+	                    $this->error = 'ErrorFailToDeleteDir';
+	                    $this->db->rollback();
+	                    return 0;
+	                }
+	            }
+	        }
+            
             return 1;
         }
     }
