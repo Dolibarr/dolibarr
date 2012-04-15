@@ -66,10 +66,9 @@ class Task extends CommonObject
      *
      *  @param      DoliDB		$DB      Database handler
      */
-    function Task($DB)
+    function __construct($db)
     {
-        $this->db = $DB;
-        return 1;
+        $this->db = $db;
     }
 
 
@@ -374,15 +373,13 @@ class Task extends CommonObject
             $this->db->free($resql);
             
 			//Delete associated link file
-			// TODO you can not delete project document folder in delete task method
-			/*
 	        if ($conf->projet->dir_output)
 	        {
 	        	$projectstatic=new Project($this->db);
 	        	$projectstatic->fetch($this->fk_project);
 	        	
 	            $dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($projectstatic->ref) . '/' . dol_sanitizeFileName($this->id);
-	            dol_syslog(get_class($this)."::delete(retreive proj ref) dir=".$dir, LOG_DEBUG);
+	            dol_syslog(get_class($this)."::delete dir=".$dir, LOG_DEBUG);
 	            if (file_exists($dir))
 	            {
 	            	require_once(DOL_DOCUMENT_ROOT . "/core/lib/files.lib.php");
@@ -395,7 +392,6 @@ class Task extends CommonObject
 	                }
 	            }
 	        }
-	        */
             
             return 1;
         }
