@@ -447,7 +447,8 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     if (! empty($reg[2]) && preg_match('/^@/',$reg[2]))	$maskraz=preg_replace('/^@/','',$reg[2]);
     if (! empty($reg[3]) && preg_match('/^@/',$reg[3]))	$maskraz=preg_replace('/^@/','',$reg[3]);
     if ($maskraz == 0) $maskraz = $conf->global->SOCIETE_FISCAL_MONTH_START;
-    if ($maskraz > 0)
+    //print "maskraz=".$maskraz;
+    if ($maskraz > 0)    // A reset is required
     {
         if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
 
@@ -476,21 +477,26 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         if (dol_strlen($reg[$posy]) == 2) $yearcomp=sprintf("%02d",date("y",$date)+$yearoffset);
         if (dol_strlen($reg[$posy]) == 1) $yearcomp=substr(date("y",$date),2,1)+$yearoffset;
         $sqlwhere='';
-        $sqlwhere.='( (SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).") >= '".$yearcomp."'";
-        if ($monthcomp > 1)	// Test useless if monthcomp = 1 (or 0 is same as 1)
+        if ($monthcomp > 1)	// Test with month is useless if monthcomp = 0 or 1 (0 is same as 1)
         {
             if (dol_strlen($reg[$posy]) == 4) $yearcomp1=sprintf("%04d",date("Y",$date)+$yearoffset+1);
             if (dol_strlen($reg[$posy]) == 2) $yearcomp1=sprintf("%02d",date("y",$date)+$yearoffset+1);
+
             // FIXME If mask is {mm}{yy}, sqlwhere is wrong here
-            $sqlwhere.=' AND SUBSTRING('.$field.', '.(dol_strlen($reg[1])+dol_strlen($reg[2])+1).', '.dol_strlen($reg[3]).") >= '".$monthcomp."')";
-            $sqlwhere.=' OR SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).") >= '".$yearcomp1."' )";
+            $sqlwhere.='(';
+            $sqlwhere.=' (SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).") = '".$yearcomp."'";
+            $sqlwhere.=' AND SUBSTRING('.$field.', '.(dol_strlen($reg[1])+dol_strlen($reg[2])+1).', '.dol_strlen($reg[3]).") >= '".str_pad($monthcomp, dol_strlen($reg[3]), '0', STR_PAD_LEFT)."')";
+            $sqlwhere.=' OR';
+            $sqlwhere.=' (SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).") = '".$yearcomp1."'";
+            $sqlwhere.=' AND SUBSTRING('.$field.', '.(dol_strlen($reg[1])+dol_strlen($reg[2])+1).', '.dol_strlen($reg[3]).") < '".str_pad($monthcomp, dol_strlen($reg[3]), '0', STR_PAD_LEFT)."') ";
+            $sqlwhere.=')';
         }
-        else
+        else   // reset is done on january
         {
-            $sqlwhere.=') )';
+            $sqlwhere.='( SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).") = '".$yearcomp."' )";
         }
     }
-    //print $sqlwhere;
+    //print "sqlwhere=".$sqlwhere."<br>\n";
     //print "masktri=".$masktri." maskcounter=".$maskcounter." maskraz=".$maskraz." maskoffset=".$maskoffset." yearcomp=".$yearcomp."<br>\n";
 
     // Define $sqlstring
