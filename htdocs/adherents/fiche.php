@@ -73,10 +73,6 @@ if ($rowid > 0)
 		|| (($user->id != $adh->user_id) && $user->rights->user->user->password) );
 	}
 }
-else
-{
-	accessforbidden();
-}
 
 // Define variables to know what current user can do on members
 $canaddmember=$user->rights->adherent->creer;
