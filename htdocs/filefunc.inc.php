@@ -76,6 +76,12 @@ if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not do
 	exit;
 }
 
+// Disable php display errors
+if (! empty($dolibarr_main_prod))
+{
+	ini_set('display_errors','Off');
+}
+
 // Clean parameters
 $dolibarr_main_data_root=trim($dolibarr_main_data_root);
 $dolibarr_main_url_root=trim($dolibarr_main_url_root);
