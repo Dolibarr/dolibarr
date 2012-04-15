@@ -318,6 +318,24 @@ class Task extends CommonObject
             $this->db->rollback();
             return 0;
         }
+        
+      	//Delete associated link file
+    	//retreive project ref to know project folder
+    	$sql = "SELECT p.ref";
+        $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t INNER JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid=t.fk_projet";
+        $sql.= " WHERE t.rowid = ".$this->id;
+
+   		dol_syslog(get_class($this)."::delete(retreive proj ref) sql=".$sql, LOG_DEBUG);
+    	$resql_projref=$this->db->query($sql);
+   		if ($resql_projref)
+    	{  
+        	if ($this->db->num_rows($resql_projref))
+        	{
+            	$obj = $this->db->fetch_object($resql_projref);
+            	$projectref	= $obj->ref;
+        	}
+        }
+		$this->db->free($resql_projref);
 
         if (! $error)
         {
@@ -392,8 +410,28 @@ class Task extends CommonObject
 	        }
 
             $this->db->commit();
-
-	        return 1;
+            
+            $this->db->free($resql);
+            
+			//Delete associated link file
+	        if ($conf->projet->dir_output)
+	        {
+	            $dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($projectref) . '/' . dol_sanitizeFileName($this->id);
+	            dol_syslog(get_class($this)."::delete(retreive proj ref) dir=".$dir, LOG_DEBUG);
+	            if (file_exists($dir))
+	            {
+	            	require_once(DOL_DOCUMENT_ROOT . "/core/lib/files.lib.php");
+	                $res = @dol_delete_dir_recursive($dir);
+	                if (!$res)
+	                {
+	                    $this->error = 'ErrorFailToDeleteDir';
+	                    $this->db->rollback();
+	                    return 0;
+	                }
+	            }
+	        }
+            
+            return 1;
         }
     }
 
