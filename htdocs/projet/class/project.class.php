@@ -439,7 +439,6 @@ class Project extends CommonObject
             if ($conf->projet->dir_output)
             {
                 $dir = $conf->projet->dir_output . "/" . $projectref;
-                
                 if (file_exists($dir))
                 {
                     $res = @dol_delete_dir_recursive($dir);
