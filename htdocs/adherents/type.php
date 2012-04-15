@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ if (! $sortorder) {  $sortorder="DESC"; }
 if (! $sortfield) {  $sortfield="d.nom"; }
 
 // Security check
-if (! $user->rights->adherent->lire) accessforbidden();
+$result=restrictedArea($user,'adherent',$rowid,'adherent_type');
 
 if (GETPOST('button_removefilter'))
 {
@@ -153,7 +153,8 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 
 
 	$sql = "SELECT d.rowid, d.libelle, d.cotisation, d.vote";
-	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
+	$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
+	$sql.= " WHERE d.entity IN (".getEntity().")";
 
 	$result = $db->query($sql);
 	if ($result)
@@ -267,9 +268,7 @@ if ($rowid > 0)
 	if ($action != 'edit')
 	{
 		$adht = new AdherentType($db);
-		$adht->id = $rowid;
 		$adht->fetch($rowid);
-
 
 		$h=0;
 
@@ -344,7 +343,7 @@ if ($rowid > 0)
 		$sql.= " t.libelle as type, t.cotisation";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql.= " WHERE d.fk_adherent_type = t.rowid ";
-		$sql.= " AND d.entity = ".$conf->entity;
+		$sql.= " AND d.entity IN (".getEntity().")";
 		$sql.= " AND t.rowid = ".$adht->id;
 		if ($sall)
 		{
