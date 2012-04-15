@@ -11,7 +11,7 @@
 #------------------------------------------------------
 
 
-export dumpfile="mysqldump_dolibarr_3.2.0.sql"
+export dumpfile=`ls mysqldump_dolibarr_*.sql | sort | tail -n 1`
 export mydir=`echo "$0" | sed -e 's/initdemo.sh//'`;
 if [ "x$mydir" = "x" ]
 then
