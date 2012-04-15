@@ -60,8 +60,8 @@ class AllTests
     {
 		$suite = new PHPUnit_Framework_TestSuite('PHPUnit Framework');
 
-        //require_once dirname(__FILE__).'/CoreTest.php';
-        //$suite->addTestSuite('CoreTest');
+        require_once dirname(__FILE__).'/CoreTest.php';
+        $suite->addTestSuite('CoreTest');
 		require_once dirname(__FILE__).'/AdminLibTest.php';
 		$suite->addTestSuite('AdminLibTest');
 		require_once dirname(__FILE__).'/DateLibTest.php';
@@ -72,6 +72,8 @@ class AllTests
 		$suite->addTestSuite('ImagesLibTest');
 		require_once dirname(__FILE__).'/FunctionsTest.php';
 		$suite->addTestSuite('FunctionsTest');
+        require_once dirname(__FILE__).'/NumberingModulesTest.php';
+        $suite->addTestSuite('NumberingModulesTest');
 		require_once dirname(__FILE__).'/PdfDocTest.php';
 		$suite->addTestSuite('PdfDocTest');
 
