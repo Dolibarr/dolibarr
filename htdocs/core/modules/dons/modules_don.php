@@ -174,31 +174,31 @@ function don_create($db, $id, $message, $modele, $outputlangs)
     $file = $modele.".modules.php";
     if (file_exists($dir.$file))
     {
-        $classname = $modele;
+        $object=new Don($db);
+        $object->fetch($id);
+
 
         require_once($dir.$file);
-
-        $obj = new $classname($db);
-
-        $obj->message = $message;
+        $classname = $modele;
+        $module = new $classname($db);
 
         // We save charset_output to restore it because write_file can change it if needed for
         // output format that does not support UTF8.
         $sav_charset_output=$outputlangs->charset_output;
-        if ($obj->write_file($id,$outputlangs) > 0)
+        if ($module->write_file($object,$outputlangs) > 0)
         {
             $outputlangs->charset_output=$sav_charset_output;
 
 			// we delete preview files
         	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-            dol_delete_preview($obj);
+            dol_delete_preview($object);
             return 1;
         }
         else
         {
             $outputlangs->charset_output=$sav_charset_output;
             dol_syslog("Erreur dans don_create");
-            dol_print_error($db,$obj->error);
+            dol_print_error($db,$module->error);
             return 0;
         }
     }
