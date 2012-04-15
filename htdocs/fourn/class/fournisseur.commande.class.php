@@ -263,7 +263,7 @@ class CommandeFournisseur extends Commande
     function log($user, $statut, $datelog, $comment='')
     {
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur_log (datelog, fk_commande, fk_statut, fk_user, comment)";
-        $sql.= " VALUES (".$this->db->idate($datelog).",".$this->id.", ".$statut.", ";
+        $sql.= " VALUES ('".$this->db->idate($datelog)."',".$this->id.", ".$statut.", ";
         $sql.= $user->id.", ";
         $sql.= ($comment?"'".$this->db->escape($comment)."'":'null');
         $sql.= ")";
