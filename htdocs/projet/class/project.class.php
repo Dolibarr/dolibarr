@@ -465,14 +465,14 @@ class Project extends CommonObject
                 // End call triggers
             }
 
-            dol_syslog("Project::delete sql=" . $sql, LOG_DEBUG);
+            dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
             $this->db->commit();
             return 1;
         }
         else
         {
             $this->error = $this->db->lasterror();
-            dol_syslog("Project::delete " . $this->error, LOG_ERR);
+            dol_syslog(get_class($this) . "::delete " . $this->error, LOG_ERR);
             $this->db->rollback();
             return -1;
         }
