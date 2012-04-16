@@ -34,6 +34,7 @@ $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 $id = GETPOST('id','int');
 $ref= GETPOST('ref', 'alpha');
 $withproject=GETPOST('withproject');
+$project_ref = GETPOST('proj_ref','alfa');
 
 // Security check
 $socid=0;
@@ -41,9 +42,27 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 if (!$user->rights->projet->lire) accessforbidden();
 //$result = restrictedArea($user, 'projet', $id, '', 'task'); // TODO ameliorer la verification
 
-$object = new Task($db);
-$object->fetch($id, $ref);
+// Retreive First Task ID of Project if withprojet is on to allow project prev next to work
+if (($project_ref) && ($withproject))
+{
+	$projectstatic = new Project($db);
+	if ($projectstatic->fetch(0,$project_ref) > 0)
+	{
+		$taskstatic = new Task($db);
+		$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
+		if (count($tasksarray) > 0)
+		{
+			$id=$tasksarray[0]->id;
+		}
+		else
+		{
+			Header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.(empty($mode)?'':'&mode='.$mode));
+		}
+	}
+}
 
+$object = new Task($db);
+$object->fetch($id);
 
 /*
  * Actions
@@ -60,8 +79,6 @@ else if ($action == 'setnote_private' && $user->rights->ficheinter->creer)
     $result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
     if ($result < 0) dol_print_error($db,$object->error);
 }
-
-
 
 /*
  * View
@@ -103,7 +120,7 @@ if ($id > 0 || ! empty($ref))
 		    $projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,0);
 		    $project->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
 		}
-		print $form->showrefnav($project,'ref','',1,'ref','ref','',$param);
+		print $form->showrefnav($project,'proj_ref','',1,'ref','ref','',$param.'&withproject=1');
 		print '</td></tr>';
 
 		// Project
