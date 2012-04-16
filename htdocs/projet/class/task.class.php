@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2010_2012	Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,10 +66,9 @@ class Task extends CommonObject
      *
      *  @param      DoliDB		$DB      Database handler
      */
-    function Task($DB)
+    function __construct($db)
     {
-        $this->db = $DB;
-        return 1;
+        $this->db = $db;
     }
 
 
@@ -369,8 +368,30 @@ class Task extends CommonObject
         }
         else
         {
+			//Delete associated link file
+	        if ($conf->projet->dir_output)
+	        {
+	        	$projectstatic=new Project($this->db);
+	        	$projectstatic->fetch($this->fk_project);
+
+	            $dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($projectstatic->ref) . '/' . dol_sanitizeFileName($this->id);
+	            dol_syslog(get_class($this)."::delete dir=".$dir, LOG_DEBUG);
+	            if (file_exists($dir))
+	            {
+	            	require_once(DOL_DOCUMENT_ROOT . "/core/lib/files.lib.php");
+	                $res = @dol_delete_dir_recursive($dir);
+	                if (!$res)
+	                {
+	                    $this->error = 'ErrorFailToDeleteDir';
+	                    $this->db->rollback();
+	                    return 0;
+	                }
+	            }
+	        }
+
             $this->db->commit();
-            return 1;
+
+	        return 1;
         }
     }
 
@@ -395,6 +416,7 @@ class Task extends CommonObject
         {
             $obj=$this->db->fetch_object($resql);
             if ($obj) $ret=$obj->nb;
+            $this->db->free($resql);
         }
 
         if (! $error)

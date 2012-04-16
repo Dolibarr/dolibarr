@@ -41,13 +41,6 @@ $langs->load("bills");
 $langs->load("members");
 $langs->load("users");
 
-// Security check
-if (! $user->rights->adherent->lire) accessforbidden();
-
-$object = new Adherent($db);
-$extrafields = new ExtraFields($db);
-
-$errmsg=''; $errmsgs=array();
 
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
@@ -55,6 +48,14 @@ $rowid=GETPOST('rowid','int');
 $typeid=GETPOST('typeid','int');
 $userid=GETPOST('userid','int');
 $socid=GETPOST('socid','int');
+
+// Security check
+$result=restrictedArea($user,'adherent',$rowid);
+
+$object = new Adherent($db);
+$extrafields = new ExtraFields($db);
+
+$errmsg=''; $errmsgs=array();
 
 if ($rowid > 0)
 {
@@ -67,15 +68,11 @@ if ($rowid > 0)
 	if ($object->user_id)
 	{
 		// $user est le user qui edite, $object->user_id est l'id de l'utilisateur lies au membre edite
-		$caneditfielduser=( (($user->id == $object->user_id) && $user->rights->user->self->creer)
-		|| (($user->id != $object->user_id) && $user->rights->user->user->creer) );
-		$caneditpassworduser=( (($user->id == $object->user_id) && $user->rights->user->self->password)
-		|| (($user->id != $adh->user_id) && $user->rights->user->user->password) );
+		$caneditfielduser=((($user->id == $object->user_id) && $user->rights->user->self->creer)
+		|| (($user->id != $object->user_id) && $user->rights->user->user->creer));
+		$caneditpassworduser=((($user->id == $object->user_id) && $user->rights->user->self->password)
+		|| (($user->id != $object->user_id) && $user->rights->user->user->password));
 	}
-}
-else
-{
-	accessforbidden();
 }
 
 // Define variables to know what current user can do on members

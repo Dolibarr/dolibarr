@@ -93,17 +93,18 @@ clean:
 	# clean from all embedded libraries (we use package dependencies instead)
 	rm -fr htdocs/includes/adodbtime
 	rm -fr htdocs/includes/ckeditor
-	rm -fr htdocs/includes/fpdfi
+#	rm -fr htdocs/includes/fpdfi
 	rm -fr htdocs/includes/fonts
 	rm -fr htdocs/includes/geoip
 	rm -fr htdocs/includes/nusoap
 	rm -fr htdocs/includes/odtphp/zip/pclzip
 	rm -fr htdocs/includes/jquery/css
 	rm -fr htdocs/includes/jquery/js
-	rm -fr htdocs/includes/jquery/plugins/flot
+#	rm -fr htdocs/includes/jquery/plugins/flot
 	rm -fr htdocs/includes/jquery/plugins/jstree
 	rm -fr htdocs/includes/jquery/plugins/lightbox
 	rm -fr htdocs/includes/jquery/plugins/mobile
+	rm -fr htdocs/includes/jquery/plugins/multiselect
 	rm -fr htdocs/includes/phpexcel/PHPExcel/Shared/PDF
 	rm -fr htdocs/includes/phpexcel/PHPExcel/Shared/PCLZip
 	rm -fr htdocs/includes/tcpdf/fonts/dejavu-fonts-ttf-2.33

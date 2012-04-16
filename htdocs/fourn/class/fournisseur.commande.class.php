@@ -68,7 +68,7 @@ class CommandeFournisseur extends Commande
     var $cond_reglement_code;
     var $mode_reglement_id;
     var $mode_reglement_code;
-    
+
     var $extraparams=array();
 
 
@@ -168,7 +168,7 @@ class CommandeFournisseur extends Commande
             $this->note_private			= $obj->note_private;
             $this->note_public			= $obj->note_public;
             $this->modelpdf				= $obj->model_pdf;
-            
+
             $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
             $this->db->free($resql);
@@ -263,7 +263,7 @@ class CommandeFournisseur extends Commande
     function log($user, $statut, $datelog, $comment='')
     {
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur_log (datelog, fk_commande, fk_statut, fk_user, comment)";
-        $sql.= " VALUES (".$this->db->idate($datelog).",".$this->id.", ".$statut.", ";
+        $sql.= " VALUES ('".$this->db->idate($datelog)."',".$this->id.", ".$statut.", ";
         $sql.= $user->id.", ";
         $sql.= ($comment?"'".$this->db->escape($comment)."'":'null');
         $sql.= ")";
@@ -317,7 +317,7 @@ class CommandeFournisseur extends Commande
             $sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur";
             $sql.= " SET ref='".$num."'";
             $sql.= ", fk_statut = 1";
-            $sql.= ", date_valid=".$this->db->idate(mktime());
+            $sql.= ", date_valid='".$this->db->idate(mktime())."'";
             $sql.= ", fk_user_valid = ".$user->id;
             $sql.= " WHERE rowid = ".$this->id;
             $sql.= " AND fk_statut = 0";

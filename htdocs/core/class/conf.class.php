@@ -357,7 +357,11 @@ class Conf
 		$this->product->limit_size=$this->global->PRODUIT_LIMIT_SIZE;
 
 		// conf->theme et $this->css
-		if (empty($this->global->MAIN_THEME)) $this->global->MAIN_THEME="eldy";
+		if (empty($this->global->MAIN_THEME))
+		{
+			if (isset($_SERVER["HTTP_USER_AGENT"]) && preg_match('/(epiphany|iceweasel)/i',$_SERVER["HTTP_USER_AGENT"])) $this->global->MAIN_THEME="auguria";
+			else $this->global->MAIN_THEME="eldy";
+		}
 		$this->theme=$this->global->MAIN_THEME;
 		$this->css  = "/theme/".$this->theme."/style.css.php";
 

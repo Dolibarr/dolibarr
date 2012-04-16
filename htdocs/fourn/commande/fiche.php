@@ -100,14 +100,14 @@ else if ($action ==	'setremisepercent' && $user->rights->fournisseur->commande->
     $result = $object->set_remise($user, $_POST['remise_percent']);
 }
 
-else if ($action == 'setnote_public' && $user->rights->propale->creer)
+else if ($action == 'setnote_public' && $user->rights->fournisseur->commande->creer)
 {
 	$object->fetch($id);
 	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-else if ($action == 'setnote' && $user->rights->propale->creer)
+else if ($action == 'setnote' && $user->rights->fournisseur->commande->creer)
 {
 	$object->fetch($id);
 	$result=$object->update_note(dol_html_entity_decode(GETPOST('note'), ENT_QUOTES));
