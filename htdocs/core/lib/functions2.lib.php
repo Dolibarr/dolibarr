@@ -121,7 +121,7 @@ function dol_print_object_info($object)
         print '<br>';
     }
 
-    // Date
+    // Date creation
     if (isset($object->date_creation))
     print $langs->trans("DateCreation")." : " . dol_print_date($object->date_creation,"dayhourtext") . '<br>';
 
@@ -142,7 +142,7 @@ function dol_print_object_info($object)
         print '<br>';
     }
 
-    // Date
+    // Date change
     if (isset($object->date_modification))
     print $langs->trans("DateLastModification")." : " . dol_print_date($object->date_modification,"dayhourtext") . '<br>';
 
@@ -163,9 +163,30 @@ function dol_print_object_info($object)
         print '<br>';
     }
 
-    // Date
+    // Date validation
     if (isset($object->date_validation))
     print $langs->trans("DateValidation")." : " . dol_print_date($object->date_validation,"dayhourtext") . '<br>';
+
+    // User approve
+    if (isset($object->user_approve))
+    {
+        print $langs->trans("ApprovedBy")." : ";
+        if (is_object($object->user_approve))
+        {
+            print $object->user_approve->getNomUrl(1);
+        }
+        else
+        {
+            $userstatic=new User($db);
+            $userstatic->fetch($object->user_approve);
+            print $userstatic->getNomUrl(1);
+        }
+        print '<br>';
+    }
+
+    // Date approve
+    if (isset($object->date_approve))
+    print $langs->trans("DateApprove")." : " . dol_print_date($object->date_approve,"dayhourtext") . '<br>';
 
     // User close
     if (isset($object->user_cloture))
@@ -184,7 +205,7 @@ function dol_print_object_info($object)
         print '<br>';
     }
 
-    // Date
+    // Date close
     if (isset($object->date_cloture))
     print $langs->trans("DateClosing")." : " . dol_print_date($object->date_cloture,"dayhourtext") . '<br>';
 
@@ -205,11 +226,11 @@ function dol_print_object_info($object)
         print '<br>';
     }
 
-    // Date
+    // Date conciliate
     if (isset($object->date_rappro))
     print $langs->trans("DateConciliating")." : " . dol_print_date($object->date_rappro,"dayhourtext") . '<br>';
 
-    //Date send
+    // Date send
     if (isset($object->date_envoi))
     print $langs->trans("DateLastSend")." : " . dol_print_date($object->date_envoi,"dayhourtext") . '<br>';
 }
