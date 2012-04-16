@@ -85,7 +85,7 @@ class ModelNumRefContracts
 	 *	@param	Object		$contract	contract object
 	 *	@return	string					Value
 	 */
-	function getNextValue($objsoc, $contrat)
+	function getNextValue($objsoc, $contract)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");

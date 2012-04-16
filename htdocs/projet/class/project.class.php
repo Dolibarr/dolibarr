@@ -54,7 +54,7 @@ class Project extends CommonObject
     /**
      *  Constructor
      *
-     *  @param      DoliDB		$DB      Database handler
+     *  @param      DoliDB		$db      Database handler
      */
     function __construct($db)
     {

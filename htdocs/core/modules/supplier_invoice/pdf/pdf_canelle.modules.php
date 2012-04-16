@@ -58,7 +58,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *	Constructor
 	 *
 	 *  @param	DoliDB		$db     	Database handler
-	 *  @param	Societe		$object		Third party providing invoice
+	 *  @param	Societe		$object		Supplier invoice
 	 */
 	function __construct($db,$object)
 	{

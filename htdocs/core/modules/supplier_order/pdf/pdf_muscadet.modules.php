@@ -60,7 +60,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$db      Database handler
+	 *  @param	DoliDB		$db      	Database handler
+	 *  @param	Object		$object		Supplier order
 	 */
 	function __construct($db,$object)
 	{
@@ -98,7 +99,10 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$this->franchise=!$mysoc->tva_assuj;
 
         // Get source company
-        $this->emetteur=$mysoc;
+        //if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
+        //$this->emetteur=$object->thirdparty;
+        //if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
+		$this->emetteur=$mysoc;
         if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 
 		// Defini position des colonnes
@@ -1008,7 +1012,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			{
 				$carac_client_name=$outputlangs->convToOutputCharset($object->client->name);
 			}
-			
+
 			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
 
 			// Show recipient

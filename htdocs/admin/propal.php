@@ -23,9 +23,9 @@
  */
 
 /**
- *	    \file       htdocs/admin/propale.php
+ *	    \file       htdocs/admin/propal.php
  *		\ingroup    propale
- *		\brief      Page d'administration/configuration du module Propale
+ *		\brief      Setup page for commercial proposal module
  */
 
 require("../main.inc.php");

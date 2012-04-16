@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/propale/pdf_azur.modules.php
+ *	\file       htdocs/core/modules/propale/doc/pdf_azur.modules.php
  *	\ingroup    propale
  *	\brief      Fichier de la classe permettant de generer les propales au modele Azur
  *	\author	    Laurent Destailleur

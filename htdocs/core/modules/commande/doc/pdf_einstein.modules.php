@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/commande/pdf_einstein.modules.php
+ *	\file       htdocs/core/modules/commande/doc/pdf_einstein.modules.php
  *	\ingroup    commande
  *	\brief      Fichier de la classe permettant de generer les commandes au modele Einstein
  *	\author	    Laurent Destailleur
@@ -309,7 +309,7 @@ class pdf_einstein extends ModelePDFCommandes
 					if ($object->remise_percent) $tvaligne-=($tvaligne*$object->remise_percent)/100;
 					if ($object->remise_percent) $localtax1ligne-=($localtax1ligne*$object->remise_percent)/100;
 					if ($object->remise_percent) $localtax2ligne-=($localtax2ligne*$object->remise_percent)/100;
-					
+
 					$vatrate=(string) $object->lines[$i]->tva_tx;
 					$localtax1rate=(string) $object->lines[$i]->localtax1_tx;
 					$localtax2rate=(string) $object->lines[$i]->localtax2_tx;

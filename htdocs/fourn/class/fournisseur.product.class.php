@@ -153,7 +153,7 @@ class ProductFournisseur extends Product
 
         $error=0;
         $this->db->begin();
-        
+
         if ($this->product_fourn_price_id)
         {
         	// Supprime prix courant du fournisseur pour cette quantite
@@ -237,43 +237,6 @@ class ProductFournisseur extends Product
         }
     }
 
-
-    /**
-     *    Load information about a provider
-     *
-     *    @param      fournid         Supplier ID
-     *    @return     int             < 0 if error, > 0 if ok
-     */
-    /*function fetch_fourn_data($fournid)
-    {
-        global $conf;
-
-        // Check parameters
-        if (empty($fournid)) return -1;
-
-        $sql = "SELECT rowid, ref_fourn";
-        $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
-        $sql.= " WHERE fk_product = ".$this->id;
-        $sql.= " AND fk_soc = ".$fournid;
-        $sql.= " AND entity = ".$conf->entity;
-
-        dol_syslog(get_class($this)."::fetch_fourn_data sql=".$sql);
-        $result = $this->db->query($sql);
-        if ($result)
-        {
-            $result = $this->db->fetch_array($result);
-            $this->ref_fourn = $result["ref_fourn"];
-            $this->product_fourn_price_id = $result["rowid"];
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::fetch_fourn_data error=".$this->error, LOG_ERR);
-            return -1;
-        }
-    }*/
-
     /**
      *    Loads the price information of a provider
      *
@@ -328,7 +291,7 @@ class ProductFournisseur extends Product
     function list_product_fournisseur_price($prodid)
     {
         global $conf;
-        
+
         $sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
         $sql.= " pfp.rowid as product_fourn_pri_id, pfp.ref_fourn,";
         $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.tva_tx, pfp.fk_availability";
