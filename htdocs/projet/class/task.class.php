@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2010_2012	Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -368,8 +368,6 @@ class Task extends CommonObject
         }
         else
         {
-            $this->db->free($resql);
-
 			//Delete associated link file
 	        if ($conf->projet->dir_output)
 	        {

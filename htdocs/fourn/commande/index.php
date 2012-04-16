@@ -436,7 +436,7 @@ print "</table><br>";
 
 print '</td></tr></table>';
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

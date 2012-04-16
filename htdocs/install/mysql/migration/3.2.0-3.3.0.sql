@@ -29,3 +29,5 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 2
 
 ALTER TABLE llx_commande_fournisseur CHANGE COLUMN date_cloture date_approve datetime;
 ALTER TABLE llx_commande_fournisseur CHANGE COLUMN fk_user_cloture fk_user_approve integer;
+
+ALTER TABLE llx_mailing MODIFY COLUMN body mediumtext;
