@@ -54,7 +54,7 @@ $action=GETPOST('action','alpha');
 $original_file=GETPOST('file','alpha');	// Do not use urldecode here ($_GET are already decoded by PHP).
 $modulepart=GETPOST('modulepart','alpha');
 $urlsource=GETPOST('urlsource','alpha');
-$entity=GETPOST('entity','int');
+$entity=GETPOST('entity')?GETPOST('entity','int'):$conf->entity;
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
