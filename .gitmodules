@@ -88,3 +88,6 @@
 [submodule "htdocs/custom/ultimatepdf"]
 	path = htdocs/custom/ultimatepdf
 	url = gitolite@doliforge.org:ultimatepdf/ultimatepdf.git
+[submodule "htdocs/custom/variantpro"]
+	path = htdocs/custom/variantpro
+	url = gitolite@doliforge.org:variantpro/variantpro.git
