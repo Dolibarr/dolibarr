@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Andre Cianfarani  <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -109,21 +109,25 @@ if ($_socid > 0)
 	}
 	print '</select>';
 	print '</td></tr>';
-	print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
 
 	print "</table>";
-	print "</form>";
 
 	print "</td>\n";
 
 
 	print "</td></tr>";
-	print "</table></div>\n";
+	print "</table>";
+
+	print '<div align="center"><br><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+
+	print "</form>";
+
+	print "</div>\n";
 	print '<br>';
 
 
 	/*
-	 * Liste de l'historique des remises
+	 * List historic of multiprices
 	 */
 	$sql  = "SELECT rc.rowid,rc.price_level, rc.datec as dc, u.rowid as uid, u.login";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe_prices as rc, ".MAIN_DB_PREFIX."user as u";
