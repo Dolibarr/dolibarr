@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012	   Florian Henry  <florian.henry@open-concept.pro>
@@ -20,7 +20,7 @@
 
 
 /**
- *      \file       scripts/emailings/mailing-read.php
+ *      \file       public/emailing/mailing-read.php
  *      \ingroup    mailing
  *      \brief      Script use to update mail status if destinaries read it (if images during mail read are display)
  */

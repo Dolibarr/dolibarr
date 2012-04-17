@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file       htdocs/core/class/infobox.php
+ *	\file       htdocs/core/class/infobox.class.php
  *	\brief      File of class to manage widget boxes
  */
 

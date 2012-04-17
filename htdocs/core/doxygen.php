@@ -18,7 +18,7 @@
  */
 
 /**
- *	    \file       htdocs/lib/doxygen.php
+ *	    \file       htdocs/core/doxygen.php
  *      \ingroup    core
  *		\mainpage	Dolibarr project
  *

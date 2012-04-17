@@ -300,8 +300,7 @@ print '</td><td width="70%" valign="top" class="notopnoleftnoright">';
 */
 $max=5;
 
-$sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom, s.rowid as socid,";
-$sql.= " date_cloture as datec";
+$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.tms, s.nom, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -355,7 +354,7 @@ if ($resql)
             print '</td>';
 
             print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
-            print '<td>'.dol_print_date($db->jdate($obj->datec)).'</td>';
+            print '<td>'.dol_print_date($db->jdate($obj->tms),'day').'</td>';
             print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,5).'</td>';
             print '</tr>';
             $i++;
@@ -437,7 +436,7 @@ print "</table><br>";
 
 print '</td></tr></table>';
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

@@ -22,9 +22,9 @@
  */
 
 /**
- *  \file       htdocs/product/admin/produit.php
+ *  \file       htdocs/product/admin/product.php
  *  \ingroup    produit
- *  \brief      Page d'administration/configuration du module Produit
+ *  \brief      Setup page of product module
  */
 
 require("../../main.inc.php");

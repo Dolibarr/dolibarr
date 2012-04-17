@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/propale/doc_generic_proposal_odt.modules.php
+ *	\file       htdocs/core/modules/propale/doc/doc_generic_proposal_odt.modules.php
  *	\ingroup    societe
  *	\brief      File of class to build ODT documents for third parties
  */

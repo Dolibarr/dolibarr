@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/core/barcode.lib.php
+ *	\file       htdocs/core/lib/barcode.lib.php
  *	\brief      Set of functions used for barcode generation
  *	\ingroup    core
  */
@@ -289,9 +289,7 @@ function barcode_encode_genbarcode($code,$encoding)
  *
  * @param	string	$text		the text-line (<position>:<font-size>:<character> ...)
  * @param	string	$bars   	where to place the bars  (<space-width><bar-width><space-width><bar-width>...)
- * @param	int		$scale		scale factor ( 1 < scale < unlimited (scale 50 will produce
- *                                                   5400x300 pixels when
- *                                                   using EAN-13!!!))
+ * @param	int		$scale		scale factor ( 1 < scale < unlimited (scale 50 will produce 5400x300 pixels when using EAN-13!!!))
  * @param	string	$mode   	png,gif,jpg (default='png')
  * @param	int		$total_y	the total height of the image ( default: scale * 60 )
  * @param	array	$space		default:  $space[top]   = 2 * $scale; $space[bottom]= 2 * $scale;  $space[left]  = 2 * $scale;  $space[right] = 2 * $scale;

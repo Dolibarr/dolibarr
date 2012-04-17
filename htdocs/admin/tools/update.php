@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,7 +39,7 @@ $urldolibarrmodules='http://www.dolistore.com/';
 $urldolibarrthemes='http://www.dolistore.com/';
 $dolibarrroot=preg_replace('/([\\/]+)$/i','',DOL_DOCUMENT_ROOT);
 $dolibarrroot=preg_replace('/([^\\/]+)$/i','',$dolibarrroot);
-
+$dolibarrdataroot=preg_replace('/([\\/]+)$/i','',DOL_DATA_ROOT);
 
 /*
  *	Actions
@@ -93,10 +93,7 @@ print $langs->trans("CurrentVersion").' : <b>'.DOL_VERSION.'</b><br>';
 print $langs->trans("LastStableVersion").' : <b>'.$langs->trans("FeatureNotYetAvailable").'</b><br>';
 print '<br>';
 
-if ($mesg)
-{
-	print '<div class="error">'.$mesg.'</div><br>';
-}
+dol_htmloutput_errors($mesg);
 
 print $langs->trans("Upgrade").'<br>';
 print '<hr>';
@@ -107,12 +104,12 @@ print $langs->trans("DownloadPackageFromWebSite",$fullurl).'<br>';
 print '<b>'.$langs->trans("StepNb",2).'</b>: ';
 print $langs->trans("UnpackPackageInDolibarrRoot",$dolibarrroot).'<br>';
 print '<b>'.$langs->trans("StepNb",3).'</b>: ';
-print $langs->trans("RemoveLock",$dolibarrroot.'install.lock').'<br>';
+print $langs->trans("RemoveLock",$dolibarrdataroot.'/install.lock').'<br>';
 print '<b>'.$langs->trans("StepNb",4).'</b>: ';
 $fullurl='<a href="'.DOL_URL_ROOT.'/install/" target="_blank">'.DOL_URL_ROOT.'/install/</a>';
 print $langs->trans("CallUpdatePage",$fullurl).'<br>';
 print '<b>'.$langs->trans("StepNb",5).'</b>: ';
-print $langs->trans("RestoreLock",$dolibarrroot.'install.lock').'<br>';
+print $langs->trans("RestoreLock",$dolibarrdataroot.'/install.lock').'<br>';
 
 print '<br>';
 print '<br>';
@@ -141,4 +138,6 @@ print $langs->trans("SetupIsReadyForUse").'<br>';
 print '</form>';
 
 llxFooter();
+
+$db->close();
 ?>

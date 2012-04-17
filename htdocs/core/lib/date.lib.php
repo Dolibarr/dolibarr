@@ -103,8 +103,8 @@ function getServerTimeZoneInt($refgmtdate='now')
  * Return server timezone string
  *
  * @return string			Parent company timezone string ('Europe/Paris')
- */
-/*function getParentCompanyTimeZoneString()
+ *
+function getParentCompanyTimeZoneString()
 {
     if (function_exists('date_default_timezone_get')) return date_default_timezone_get();
     else return '';
@@ -117,8 +117,8 @@ function getServerTimeZoneInt($refgmtdate='now')
  *
  * @param	string	$refdate	Reference date for timezone (timezone differs on winter and summer)
  * @return 	int					An offset in hour (+1 for Europe/Paris on winter and +2 for Europe/Paris on summer)
- */
-/*function getParentCompanyTimeZoneInt($refgmtdate='now')
+ *
+function getParentCompanyTimeZoneInt($refgmtdate='now')
 {
     global $conf;
     if (class_exists('DateTime') && ! empty($conf->global->MAIN_NEW_DATE))
