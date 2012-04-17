@@ -91,3 +91,6 @@
 [submodule "htdocs/custom/variantpro"]
 	path = htdocs/custom/variantpro
 	url = gitolite@doliforge.org:variantpro/variantpro.git
+[submodule "htdocs/custom/speedfinder"]
+	path = htdocs/custom/speedfinder
+	url = gitolite@doliforge.org:speedfinder/speedfinder.git
