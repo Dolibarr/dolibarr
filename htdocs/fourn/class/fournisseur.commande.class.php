@@ -658,6 +658,7 @@ class CommandeFournisseur extends Commande
     function approve($user, $idwarehouse=0)
     {
         global $langs,$conf;
+		require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
         $error=0;
 
@@ -666,6 +667,20 @@ class CommandeFournisseur extends Commande
         if ($user->rights->fournisseur->commande->approuver)
         {
             $this->db->begin();
+
+			// Definition du nom de modele de numerotation de commande
+            $soc = new Societe($this->db);
+            $soc->fetch($this->fourn_id);
+
+            // Check if object has a temporary ref
+            if (preg_match('/^[\(]?PROV/i', $this->ref))
+            {
+                $num = $this->getNextNumRef($soc);
+            }
+            else
+            {
+                $num = $this->ref;
+            }
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
 			$sql.= " SET ref='".$this->db->escape($num)."',";
