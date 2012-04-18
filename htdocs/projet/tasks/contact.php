@@ -66,7 +66,7 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 
 	if ($result >= 0)
 	{
-		Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
+		Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject?'&withproject=1':''));
 		exit;
 	}
 	else
@@ -104,7 +104,7 @@ if ($action == 'deleteline' && $user->rights->projet->creer)
 
 	if ($result >= 0)
 	{
-		Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
+		Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject?'&withproject=1':''));
 		exit;
 	}
 	else
@@ -125,7 +125,8 @@ if (! empty($project_ref) && ! empty($withproject))
 		}
 		else
 		{
-			Header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.(empty($mode)?'':'&mode='.$mode));
+			Header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject?'&withproject=1':'').(empty($mode)?'':'&mode='.$mode));
+			exit;
 		}
 	}
 }
@@ -282,6 +283,7 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="action" value="addcontact">';
 			print '<input type="hidden" name="source" value="internal">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
+			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
 			// Ligne ajout pour contact interne
 			print "<tr $bc[$var]>";
@@ -418,7 +420,7 @@ if ($id > 0 || ! empty($ref))
 				// Statut
 				print '<td align="center">';
 				// Activation desativation du contact
-				if ($object->statut >= 0) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
+				if ($object->statut >= 0) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=swapstatut&ligne='.$tab[$i]['rowid'].($withproject?'&withproject=1':'').'">';
 				print $contactstatic->LibStatut($tab[$i]['status'],3);
 				if ($object->statut >= 0) print '</a>';
 				print '</td>';
@@ -428,7 +430,7 @@ if ($id > 0 || ! empty($ref))
 				if ($user->rights->projet->creer)
 				{
 					print '&nbsp;';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&lineid='.$tab[$i]['rowid'].($withproject?'&withproject=1':'').'">';
 					print img_delete();
 					print '</a>';
 				}
@@ -449,5 +451,6 @@ if ($id > 0 || ! empty($ref))
 
 
 llxFooter();
+
 $db->close();
 ?>
