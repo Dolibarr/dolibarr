@@ -24,7 +24,7 @@ $RPMSUBVERSION="auto";	# auto use value found into BUILD
 "RPM_OPENSUSE"=>"rpmbuild",
 "DEB"=>"dpkg",
 "APS"=>"zip",
-"EXEDOLIWAMP"=>"iscc.exe"
+"EXEDOLIWAMP"=>"ISCC.exe"
 );
 %ALTERNATEPATH=(
 "7z"=>"7-ZIP",
@@ -38,7 +38,7 @@ $FILENAMEZIP="$PROJECT-$MAJOR.$MINOR.$BUILD";
 $FILENAMERPM="$PROJECT-$MAJOR.$MINOR.$BUILD-$RPMSUBVERSION";
 $FILENAMEDEB="${PROJECT}_${MAJOR}.${MINOR}.${BUILD}";
 $FILENAMEAPS="$PROJECT-$MAJOR.$MINOR.$BUILD.app";
-$FILENAMEEXEDOLIWAMP="$PROJECT-$MAJOR.$MINOR.$BUILD";
+$FILENAMEEXEDOLIWAMP="DoliWamp-$MAJOR.$MINOR.$BUILD";
 if (-d "/usr/src/redhat") { $RPMDIR="/usr/src/redhat"; } # redhat
 if (-d "/usr/src/RPM")    { $RPMDIR="/usr/src/RPM"; } # mandrake
 
@@ -763,8 +763,10 @@ if ($nboftargetok) {
      		print "Remove target $FILENAMEEXEDOLIWAMP.exe...\n";
     		unlink "$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe";
  
-    		print "Compil exe $FILENAMEEXEDOLIWAMP.exe file from iss file \"$SOURCE\\build\\exe\\doliwamp\\doliwamp.iss\"\n";
-    		$cmd= "iscc.exe \"$SOURCE\\build\\exe\\doliwamp\\doliwamp.iss\"";
+ 			$SOURCEBACK=$SOURCE;
+ 			$SOURCEBACK =~ s/\//\\/g;
+    		print "Compil exe $FILENAMEEXEDOLIWAMP.exe file from iss file \"$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.iss\"\n";
+    		$cmd= "ISCC.exe \"$SOURCEBACK\\build\\exe\\doliwamp\\doliwamp.iss\"";
 			print "$cmd\n";
 			$ret= `$cmd`;
 			#print "$ret\n";
@@ -772,6 +774,8 @@ if ($nboftargetok) {
     		# Move to final dir
 			print "Move \"$SOURCE\\build\\$FILENAMEEXEDOLIWAMP.exe\" to $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe\n";
     		rename("$SOURCE/build/$FILENAMEEXEDOLIWAMP.exe","$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe");
+            print "Move $SOURCE/build/$FILENAMEEXEDOLIWAMP.exe to $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe\n";
+            $ret=`mv "$SOURCE/build/$FILENAMEEXEDOLIWAMP.exe" "$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe"`;
     		next;
     	}
     }
