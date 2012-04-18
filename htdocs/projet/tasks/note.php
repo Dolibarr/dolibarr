@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2010-2012 Regis Houssin  <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,12 +28,14 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
 
 $langs->load('projects');
 
-$action=GETPOST('action');
+$action=GETPOST('action','alpha');
+$confirm=GETPOST('confirm','alpha');
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 $id = GETPOST('id','int');
 $ref= GETPOST('ref', 'alpha');
-$withproject=GETPOST('withproject');
+$withproject=GETPOST('withproject','int');
+$project_ref = GETPOST('project_ref','alpha');
 
 // Security check
 $socid=0;
@@ -42,7 +44,39 @@ if (!$user->rights->projet->lire) accessforbidden();
 //$result = restrictedArea($user, 'projet', $id, '', 'task'); // TODO ameliorer la verification
 
 $object = new Task($db);
-$object->fetch($id, $ref);
+$projectstatic = new Project($db);
+
+if ($id > 0 || ! empty($ref))
+{
+	if ($object->fetch($id,$ref) > 0)
+	{
+		$projectstatic->fetch($object->fk_project);
+		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+}
+
+
+// Retreive First Task ID of Project if withprojet is on to allow project prev next to work
+if (! empty($project_ref) && ! empty($withproject))
+{
+	if ($projectstatic->fetch(0,$project_ref) > 0)
+	{
+		$tasksarray=$object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
+		if (count($tasksarray) > 0)
+		{
+			$id=$tasksarray[0]->id;
+			$object->fetch($id);
+		}
+		else
+		{
+			Header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.(empty($mode)?'':'&mode='.$mode));
+		}
+	}
+}
 
 
 /*
@@ -70,24 +104,20 @@ else if ($action == 'setnote_private' && $user->rights->ficheinter->creer)
 llxHeader();
 
 $form = new Form($db);
-$project = new Project($db);
 $userstatic = new User($db);
 
 $now=dol_now();
 
-if ($id > 0 || ! empty($ref))
+if ($object->id > 0)
 {
-	$result=$project->fetch($object->fk_project);
-	if (! empty($project->socid)) $project->societe->fetch($project->socid);
+	$userWrite  = $projectstatic->restrictedProjectArea($user,'write');
 
-	$userWrite  = $project->restrictedProjectArea($user,'write');
-
-	if ($withproject)
+	if (! empty($withproject))
 	{
 		// Tabs for project
 		$tab='tasks';
-		$head=project_prepare_head($project);
-		dol_fiche_head($head, $tab, $langs->trans("Project"),0,($project->public?'projectpub':'project'));
+		$head=project_prepare_head($projectstatic);
+		dol_fiche_head($head, $tab, $langs->trans("Project"),0,($projectstatic->public?'projectpub':'project'));
 
 		$param=($mode=='mine'?'&mode=mine':'');
 
@@ -100,30 +130,30 @@ if ($id > 0 || ! empty($ref))
 		// Define a complementary filter for search of next/prev ref.
 		if (! $user->rights->projet->all->lire)
 		{
-		    $projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,0);
-		    $project->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,0);
+		    $projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
 		}
-		print $form->showrefnav($project,'ref','',1,'ref','ref','',$param);
+		print $form->showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
 		print '</td></tr>';
 
 		// Project
-		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$project->title.'</td></tr>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
 
 		// Company
 		print '<tr><td>'.$langs->trans("Company").'</td><td>';
-		if (! empty($project->societe->id)) print $project->societe->getNomUrl(1);
+		if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
 		else print '&nbsp;';
 		print '</td>';
 		print '</tr>';
 
 		// Visibility
 		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-		if ($project->public) print $langs->trans('SharedProject');
+		if ($projectstatic->public) print $langs->trans('SharedProject');
 		else print $langs->trans('PrivateProject');
 		print '</td></tr>';
 
 		// Statut
-		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$project->getLibStatut(4).'</td></tr>';
+		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projectstatic->getLibStatut(4).'</td></tr>';
 
 		print '</table>';
 
@@ -138,16 +168,16 @@ if ($id > 0 || ! empty($ref))
 	print '<table class="border" width="100%">';
 
 	$param=(GETPOST('withproject')?'&withproject=1':'');
-	$linkback=GETPOST('withproject')?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$project->id.'">'.$langs->trans("BackToList").'</a>':'';
+	$linkback=GETPOST('withproject')?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
 
 	// Ref
 	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
-	if (! GETPOST('withproject') || empty($project->id))
+	if (empty($withproject) || empty($projectstatic->id))
 	{
-	    $projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
+	    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
 	    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 	}
-	else $object->next_prev_filter=" fk_projet = ".$project->id;
+	else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
 	print $form->showrefnav($object,'id',$linkback,1,'rowid','ref','',$param);
 	print '</td></tr>';
 
@@ -158,12 +188,12 @@ if ($id > 0 || ! empty($ref))
 	if (empty($withproject))
 	{
 		print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
-		print $project->getNomUrl(1);
+		print $projectstatic->getNomUrl(1);
 		print '</td></tr>';
 
 		// Third party
 		print '<tr><td>'.$langs->trans("Company").'</td><td>';
-		if ($project->societe->id > 0) print $project->societe->getNomUrl(1);
+		if ($projectstatic->societe->id > 0) print $projectstatic->societe->getNomUrl(1);
 		else print'&nbsp;';
 		print '</td></tr>';
 	}
@@ -180,7 +210,7 @@ if ($id > 0 || ! empty($ref))
 	dol_fiche_end();
 }
 
-llxFooter();
 
+llxFooter();
 $db->close();
 ?>
