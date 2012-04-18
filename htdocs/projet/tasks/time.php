@@ -51,6 +51,7 @@ $projectstatic = new Project($db);
 /*
  * Actions
  */
+
 if ($action == 'addtimespent' && $user->rights->projet->creer)
 {
 	$error=0;
@@ -155,7 +156,8 @@ if (! empty($project_ref) && ! empty($withproject))
 		}
 		else
 		{
-			Header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.(empty($mode)?'':'&mode='.$mode));
+			Header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject?'&withproject=1':'').(empty($mode)?'':'&mode='.$mode));
+			exit;
 		}
 	}
 }
@@ -236,7 +238,7 @@ if ($id > 0 || ! empty($ref))
 
 		if ($action == 'deleteline')
 		{
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id.'&lineid='.$_GET["lineid"],$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
+			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id.'&lineid='.$_GET["lineid"].($withproject?'&withproject=1':''),$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -291,6 +293,7 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="addtimespent">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
 			print '<table class="noborder" width="100%">';
 
@@ -451,12 +454,12 @@ if ($id > 0 || ! empty($ref))
   		    else if ($user->rights->projet->creer)
 			{
 				print '&nbsp;';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;lineid='.$task_time->rowid.'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';
 				print img_edit();
 				print '</a>';
 
 				print '&nbsp;';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';
 				print img_delete();
 				print '</a>';
 			}
