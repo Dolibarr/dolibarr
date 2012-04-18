@@ -325,7 +325,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 
 				print "</td>";
 
-				print '<td align="left"><a href="fiche.php?socid='.$obj->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,44).'</a></td>'."\n";
+				print '<td align="left"><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,44).'</a></td>'."\n";
 				print '<td align="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
