@@ -524,6 +524,46 @@ li.tmenu a.tmenudisabled {
 
 /* Login */
 
+form#login {
+	margin-top: 70px;
+	margin-bottom: 30px;
+	font-size: 13px;
+}
+.login_table_title {
+	width: 540px;
+	color: #888888;
+	text-shadow: 1px 1px 1px #FFF;
+}
+.login_table label {
+	text-shadow: 1px 1px 1px #FFF;
+}
+.login_table {
+	padding:12px;
+	width: 540px;
+	border: 1px solid #C0C0C0;
+	background-color: #E0E0E0;
+
+    -moz-box-shadow: 4px 4px 4px #CCC;
+    -webkit-box-shadow: 4px 4px 4px #CCC;
+    box-shadow: 4px 4px 4px #CCC;
+
+	border-radius: 12px;
+	border:solid 1px rgba(168,168,168,.4);
+	border-top:solid 1px f8f8f8;
+	background-color: #f8f8f8;
+	background-image: -o-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
+	background-image: -moz-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
+	background-image: -webkit-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
+	background-image: -ms-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
+	background-image: linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
+}
+#img_securitycode {
+	border: 1px solid #DDDDDD;
+}
+#img_logo {
+	max-width: 200px;
+}
+
 div.login_block {
 	position: absolute;
 	<?php print $right; ?>: 5px;
