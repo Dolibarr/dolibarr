@@ -440,6 +440,7 @@ if ($modulepart)
 	}
 }
 
+
 // Basic protection (against external users only)
 if ($user->societe_id > 0)
 {
