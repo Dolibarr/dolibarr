@@ -57,25 +57,6 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
-
-
-$task = new Task($db);
-
-if ($task->fetch($id,$ref) > 0)
-{
-	$projectstatic = new Project($db);
-	$projectstatic->fetch($task->fk_project);
-
-	if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
-
-	$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($task->ref);
-}
-else
-{
-	dol_print_error($db);
-}
-
-
 /*
  * Actions
  */
