@@ -38,20 +38,7 @@ else print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includ
 print '<!-- Includes JS for JQuery -->'."\n";
 if (constant('JS_JQUERY')) print '<script type="text/javascript" src="'.JS_JQUERY.'jquery.min.js"></script>'."\n";
 else print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-latest.min'.$ext.'"></script>'."\n";
-print '<link rel="stylesheet" type="text/css" href="'.$conf_css.'" />
-<style type="text/css">
-<!--
-#login {
-	margin-top: 70px;
-	margin-bottom: 30px;
-}
-.login_table {
-	width: 512px;
-	border: 1px solid #C0C0C0;
-	background: #F0F0F0 url('.$login_background.') repeat-x;
-}
--->
-</style>'."\n";
+print '<link rel="stylesheet" type="text/css" href="'.$conf_css.'" />'."\n";
 if (! empty($conf->global->MAIN_HTML_HEADER)) print $conf->global->MAIN_HTML_HEADER;
 print '<!-- HTTP_USER_AGENT = '.$_SERVER['HTTP_USER_AGENT'].' -->
 </head>';

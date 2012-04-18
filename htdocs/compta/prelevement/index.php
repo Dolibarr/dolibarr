@@ -74,7 +74,7 @@ print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
 print '<td align="right">';
-print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&mainmenu=bank">';
+print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0">';
 print $bprev->NbFactureAPrelever();
 print '</a>';
 print '</td></tr>';

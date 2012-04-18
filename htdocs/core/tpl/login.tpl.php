@@ -41,20 +41,7 @@ print '<!-- Includes JS for JQuery -->'."\n";
 if (constant('JS_JQUERY')) print '<script type="text/javascript" src="'.JS_JQUERY.'jquery.min.js"></script>'."\n";
 else print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-latest.min'.$ext.'"></script>'."\n";
 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/dst.js"></script>'."\n";
-print '<link rel="stylesheet" type="text/css" href="'.$conf_css.'" />
-<style type="text/css">
-<!--
-#login {
-	margin-top: 70px;
-	margin-bottom: 30px;
-}
-.login_table {
-	width: 512px;
-	border: 1px solid #C0C0C0;
-	background: #F0F0F0 url('.$login_background.') repeat-x;
-}
--->
-</style>'."\n";
+print '<link rel="stylesheet" type="text/css" href="'.dol_escape_htmltag($conf_css).'" />'."\n";
 if (! empty($conf->global->MAIN_HTML_HEADER)) print $conf->global->MAIN_HTML_HEADER;
 print '<!-- HTTP_USER_AGENT = '.$_SERVER['HTTP_USER_AGENT'].' -->
 </head>';
@@ -82,7 +69,7 @@ $(document).ready(function () {
 <input type="hidden" name="screenwidth" id="screenwidth" value="" />
 <input type="hidden" name="screenheight" id="screenheight" value="" />
 
-<table class="login_table" summary="<?php echo $title; ?>" cellpadding="0" cellspacing="0" border="0" align="center">
+<table class="login_table_title" summary="<?php echo $title; ?>" cellpadding="0" cellspacing="0" border="0" align="center">
 <tr class="vmenu"><td align="center"><?php echo $title; ?></td></tr>
 </table>
 <br>
@@ -134,7 +121,7 @@ if (! empty($hookmanager->resArray['options'])) {
 </td>
 
 <td align="center" valign="top">
-<img alt="Logo" title="" src="<?php echo $urllogo; ?>" />
+<img alt="Logo" title="" src="<?php echo $urllogo; ?>" id="img_logo" />
 </td>
 
 </tr>

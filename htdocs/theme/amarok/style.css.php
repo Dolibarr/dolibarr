@@ -69,12 +69,12 @@ body {
     font-family: <?php print $fontlist ?>;
      <?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 	}
-	
+
 a {
 	text-decoration: none;
 	color:#333;
 	}
-	
+
 a:hover, a:sel{
 	color:black;
 	}
@@ -109,7 +109,7 @@ border-left: solid 1px rgba(0,0,0,.3);
 	border-top:solid 1px rgba(0,0,0,.1);
 */
 	border-radius:.6em;
-    
+
     background-image: linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
 	background-image: -o-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
 	background-image: -moz-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
@@ -123,7 +123,7 @@ border-left: solid 1px rgba(0,0,0,.3);
 		color-stop(1, rgba(0,0,0,.3))
 	);
 	}
-	
+
 .button,  a.butAction{color:white;}
 
 .butActionDelete{color:white;}
@@ -150,6 +150,8 @@ td.formdocbutton {padding-top:6px;}
 
 /* LOGIN : */
 form#login {
+	margin-top: 70px;
+	margin-bottom: 30px;
 	display:block;
 	border:solid 1px rgba(0,0,0,.4);
 	border-top:solid 1px white;
@@ -187,19 +189,19 @@ form#login img {
 	border-bottom:solid 1px rgba(0,0,0,.3);
 	box-shadow: 1px 1px 6px rgba(0,0,0,.3) inset , 0 0 1px rgba(255,255,255,.6);
 	}
-	
+
 form#login input{
 	padding:8px;
 	font-size:120%;
 	}
-	
+
 form#login label {
 	vertical-align:middle;
 	line-height:46px;
 	color:rgba(0,0,0,.4);
 	text-shadow: 1px 1px 1px rgba(255,255,255,.6);
 	}
-	
+
 form#login table.login{margin:0;border:none;background:none !important;}
 table.login tr td a {color:#333 !important;}
 table.login tr td a:hover {color:#000 !important;}
@@ -213,7 +215,7 @@ table.login .button {
 	border:solid 1px #2e7992;
 	box-shadow: 1px 1px 3px rgba(0,0,0,.4);
 	}
-	
+
 table.login .vmenu{
 	color:rgba(0,0,0,.3);
 	text-shadow: 1px 1px 1px rgba(255,255,255,.6);
@@ -235,12 +237,12 @@ div.tmenu {
     white-space: nowrap;
 	height:36px;
 	line-height:36px;
-	
+
 	background: #168ac2; /* bleu */
 	background: #b7e0e7; /* bleu_clair */
 	background: #6d6887; /* violet */
 	background: #333; /* obsidienne */
-    
+
     background-image: linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
 	background-image: -o-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
 	background-image: -moz-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
@@ -253,7 +255,7 @@ div.tmenu {
 		color-stop(0, rgba(255,255,255,.3)),
 		color-stop(1, rgba(0,0,0,.3))
 	);
-	
+
 	border-bottom:solid 1px rgba(0,0,0,.8);
 	box-shadow: 0 0 6px rgba(0,0,0,.4) !important;
 	z-index:100;
@@ -319,7 +321,7 @@ div.vmenu {
 	padding-left:3px;
 	border-top: solid 1px rgba(255,255,255,.5);
 	border-bottom: solid 1px rgba(0,0,0,.5);
-	
+
 	}
 
 .menu_contenu {
@@ -339,7 +341,7 @@ div.vmenu {
 .blockvmenusearch .menu_titre {
 	margin-top:6px;
 	}
-	
+
 
 /* AIDE EN LIGNE : */
 #blockvmenuhelp {
@@ -355,13 +357,13 @@ div.vmenu {
 	margin-bottom:-2px;
 	padding-bottom:0;
 	}
-	
-.tabTitle {	
+
+.tabTitle {
 	color:rgba(0,0,0,.5);
 	margin-right:12px;
 	text-shadow: 1px 1px 1px white;
 	}
-	
+
 .tab {
 	margin-left:2px;
 	margin-right:2px;
@@ -395,7 +397,7 @@ table {
 	}
 
 table.liste{border:solid 0px #aaa; padding:.6em;}
-	
+
 table.liste tbody tr.liste_titre>td, table.liste .liste_total, table.liste .liste_titre {
 	padding:4px;
 	background-color:white;
@@ -417,7 +419,7 @@ tr.liste_titre td.liste_titre_sel {
 	background-color: rgba(0,0,0,.2);
 	color:black;
 	}
-	
+
 table.liste a img{padding: 1px;}
 
 table#undertopmenu { /* tableau contenant tous les autres : */
@@ -439,7 +441,7 @@ tr.liste_titre td {
 	border-top:solid 1px rgba(0,0,0,.08);
 	color:rgba(0,0,0,.6);
 	}
-	
+
 table.noborder, table.border, div.tabBar, table.liste {
 	background-color:white;
 	border:solid 1px #aaa;
@@ -447,7 +449,7 @@ table.noborder, table.border, div.tabBar, table.liste {
 	width:99% !important;
 	border-bottom:solid 2px #aaa;
 	}
-	
+
 table.liste tr td img {padding-right:2px;}
 table.noborder tr td{padding-right:2px;}
 table.noborder tr.liste_total td{ /* total en bas d'un tableau */
@@ -474,7 +476,7 @@ table.noborder tbody tr.liste_titre td { /* titre des tableaux : */
 	);
 	border-bottom:solid 1px rgba(0,0,0,.2);
 	}
-	
+
 table.noborder tbody{
 	border:solid 1px rgba(0,0,0,.3);
 	border-bottom:solid 1px rgba(0,0,0,.08);

@@ -163,7 +163,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 {
 	global $dolibarr_main_demo,$db;
 	global $smartphone,$hookmanager;
-	
+
 	// Instantiate hooks of thirdparty module only if not already define
 	if (! is_object($hookmanager))
 	{
@@ -209,7 +209,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		}
 	}
 
-	$conf->css = "/theme/".$conf->theme."/style.css.php?lang=".$langs->defaultlang;
+	$conf->css = "/theme/".(GETPOST('theme')?GETPOST('theme','alpha'):$conf->theme)."/style.css.php?lang=".$langs->defaultlang;
 	$conf_css = DOL_URL_ROOT.$conf->css;
 
 	// Set cookie for timeout management
@@ -237,7 +237,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		$demologin=$tab[0];
 		$demopassword=$tab[1];
 	}
-	
+
 	// Execute hook getLoginPageOptions
 	// Should be an array with differents options in $hookmanager->resArray
 	$parameters=array('entity' => $_POST['entity']);
