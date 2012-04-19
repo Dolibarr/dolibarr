@@ -63,6 +63,8 @@ $object = new Task($db);
 $projectstatic = new Project($db);
 
 
+
+
 /*
  * Actions
  */
@@ -125,7 +127,7 @@ if (! empty($project_ref) && ! empty($withproject))
 	}
 }
 
-// find Upload directory (after retrieve task id if neccesary)
+// Find upload dir after retreive is task if necessary
 if ($id > 0 || ! empty($ref))
 {
 	if ($object->fetch($id,$ref) > 0)
@@ -141,8 +143,6 @@ if ($id > 0 || ! empty($ref))
 		dol_print_error($db);
 	}
 }
-
-
 
 /*
  * View
