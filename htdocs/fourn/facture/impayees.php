@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  * Copyright (C) 2012-2012  Vinicius Nogueira       <viniciusvgn@gmail.com>
+ * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,6 +70,14 @@ $companystatic=new Societe($db);
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
+
+$search_ref = GETPOST('search_ref','alpha');
+$search_ref_supplier = GETPOST('search_ref_supplier','alpha');
+$search_societe = GETPOST('search_societe','alpha');
+$search_montant_ht = GETPOST('search_montant_ht','int');
+$search_montant_ttc = GETPOST('search_montant_ttc','int');
+
+
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
@@ -105,28 +114,28 @@ if ($user->rights->fournisseur->facture->lire)
 		}
 	}
 
-	if ($_GET["search_ref"])
+	if ($search_ref)
 	{
-		$sql .= " AND f.rowid like '%".$_GET["search_ref"]."%'";
+		$sql .= " AND f.rowid like '%".$search_ref."%'";
 	}
-	if ($_GET["search_ref_supplier"])
+	if ($search_ref_supplier)
 	{
-		$sql .= " AND f.facnumber like '%".$_GET["search_ref_supplier"]."%'";
-	}
-
-	if ($_GET["search_societe"])
-	{
-		$sql .= " AND s.nom like '%".$_GET["search_societe"]."%'";
+		$sql .= " AND f.facnumber like '%".$search_ref_supplier."%'";
 	}
 
-	if ($_GET["search_montant_ht"])
+	if ($search_societe)
 	{
-		$sql .= " AND f.total_ht = '".$_GET["search_montant_ht"]."'";
+		$sql .= " AND s.nom like '%".$search_societe."%'";
 	}
 
-	if ($_GET["search_montant_ttc"])
+	if ($search_montant_ht)
 	{
-		$sql .= " AND f.total_ttc = '".$_GET["search_montant_ttc"]."'";
+		$sql .= " AND f.total_ht = '".$search_montant_ht."'";
+	}
+
+	if ($search_montant_ttc)
+	{
+		$sql .= " AND f.total_ttc = '".$search_montant_ttc."'";
 	}
 
 	if (dol_strlen($_POST["sf_ref"]) > 0)
@@ -153,6 +162,12 @@ if ($user->rights->fournisseur->facture->lire)
 
 		$param ='';
 		if ($socid) $param.="&socid=".$socid;
+		
+		if ($search_ref)         $param.='&amp;search_ref='.urlencode($search_ref);
+		if ($search_societe)     $param.='&amp;search_societe='.urlencode($search_societe);
+		if ($search_montant_ht)  $param.='&amp;search_montant_ht='.urlencode($search_montant_ht);
+		if ($search_montant_ttc) $param.='&amp;search_montant_ttc='.urlencode($search_montant_ttc);
+		
 		$param.=($option?"&option=".$option:"");
 		if ($late) $param.='&late='.urlencode($late);
 		$urlsource.=str_replace('&amp;','&',$param);
@@ -187,17 +202,17 @@ if ($user->rights->fournisseur->facture->lire)
 		// Lines with filter fields
 		print '<tr class="liste_titre">';
 		print '<td class="liste_titre">';
-		print '<input class="flat" size="8" type="text" name="search_ref" value="'.$_GET["search_ref"].'"></td>';
+		print '<input class="flat" size="8" type="text" name="search_ref" value="'.$search_ref.'"></td>';
 		print '<td class="liste_titre">';
-		print '<input class="flat" size="8" type="text" name="search_ref_supplier" value="'.$_GET["search_ref_supplier"].'"></td>';
+		print '<input class="flat" size="8" type="text" name="search_ref_supplier" value="'.$search_ref_supplier.'"></td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" size="6" name="search_societe" value="'.$_GET["search_societe"].'">';
+		print '<input class="flat" type="text" size="6" name="search_societe" value="'.$search_societe.'">';
 		print '</td><td class="liste_titre" align="right">';
-		print '<input class="flat" type="text" size="8" name="search_montant_ht" value="'.$_GET["search_montant_ht"].'">';
+		print '<input class="flat" type="text" size="8" name="search_montant_ht" value="'.$search_montant_ht.'">';
 		print '</td><td class="liste_titre" align="right">';
-		print '<input class="flat" type="text" size="8" name="search_montant_ttc" value="'.$_GET["search_montant_ttc"].'">';
+		print '<input class="flat" type="text" size="8" name="search_montant_ttc" value="'.$search_montant_ttc.'">';
 		print '</td><td class="liste_titre" colspan="2" align="right">';
 		print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 		print '</td>';
