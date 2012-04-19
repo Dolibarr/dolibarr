@@ -163,10 +163,11 @@ if ($user->rights->fournisseur->facture->lire)
 		$param ='';
 		if ($socid) $param.="&socid=".$socid;
 		
-		if ($search_ref)         $param.='&amp;search_ref='.urlencode($search_ref);
-		if ($search_societe)     $param.='&amp;search_societe='.urlencode($search_societe);
-		if ($search_montant_ht)  $param.='&amp;search_montant_ht='.urlencode($search_montant_ht);
-		if ($search_montant_ttc) $param.='&amp;search_montant_ttc='.urlencode($search_montant_ttc);
+		if ($search_ref)         	$param.='&amp;search_ref='.urlencode($search_ref);
+		if ($search_ref_supplier)	$param.='&amp;search_ref_supplier='.urlencode($search_ref_supplier);
+		if ($search_societe)     	$param.='&amp;search_societe='.urlencode($search_societe);
+		if ($search_montant_ht)  	$param.='&amp;search_montant_ht='.urlencode($search_montant_ht);
+		if ($search_montant_ttc) 	$param.='&amp;search_montant_ttc='.urlencode($search_montant_ttc);
 		
 		$param.=($option?"&option=".$option:"");
 		if ($late) $param.='&late='.urlencode($late);
