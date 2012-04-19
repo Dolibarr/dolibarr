@@ -2915,7 +2915,7 @@ class Form
     		}
     		else
     		{
-    			$this->error = '<font class="error">'.$langs->trans("ErrorNoVATRateDefinedForSellerCountry",$code_pays).'</font>';
+    			$this->error = '<font class="error">'.$langs->trans("ErrorNoVATRateDefinedForSellerCountry",$country_code).'</font>';
     			return -1;
     		}
     	}
