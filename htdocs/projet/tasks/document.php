@@ -62,9 +62,6 @@ if (! $sortfield) $sortfield="name";
 $object = new Task($db);
 $projectstatic = new Project($db);
 
-
-
-
 /*
  * Actions
  */
