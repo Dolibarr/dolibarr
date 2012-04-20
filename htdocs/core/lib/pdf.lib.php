@@ -214,7 +214,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 	if ($sourcecompany->state_id && empty($sourcecompany->departement)) $sourcecompany->departement=getState($sourcecompany->state_id);
 	if ($targetcompany->state_id && empty($targetcompany->departement)) $targetcompany->departement=getState($targetcompany->state_id);
 
-	if ($mode == 'source')
+	if ($mode == 'source' || ! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS))
 	{
 		$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($sourcecompany))."\n";
 
