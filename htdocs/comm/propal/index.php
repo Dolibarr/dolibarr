@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,8 @@ if ($user->societe_id > 0)
  */
 
 $propalstatic=new Propal($db);
-$html = new Form($db);
+$companystatic=new Societe($db);
+$form = new Form($db);
 $formfile = new FormFile($db);
 $help_url="EN:Module_Commercial_Proposals|FR:Module_Propositions_commerciales|ES:Módulo Presupuestos";
 
@@ -155,7 +156,7 @@ else
  */
 if ($conf->propal->enabled)
 {
-	$sql = "SELECT c.rowid, c.ref, s.nom, s.rowid as socid";
+	$sql = "SELECT c.rowid, c.ref, s.nom as socname, s.rowid as socid, s.canvas, s.client";
 	$sql.= " FROM ".MAIN_DB_PREFIX."propal as c";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -182,9 +183,18 @@ if ($conf->propal->enabled)
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
 				print "<tr $bc[$var]>";
-				print '<td nowrap="nowrap">';
-				print "<a href=".DOL_URL_ROOT."/comm/propal.php?id=".$obj->rowid.">".img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref."</a></td>";
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,24).'</a></td></tr>';
+
+				$propalstatic->id=$obj->rowid;
+				$propalstatic->ref=$obj->ref;
+				print '<td nowrap="nowrap">'.$propalstatic->getNomUrl(1).'</td>';
+
+				$companystatic->id=$obj->socid;
+				$companystatic->name=$obj->socname;
+				$companystatic->client=$obj->client;
+				$companystatic->canvas=$obj->canvas;
+				print '<td>'.$companystatic->getNomUrl(1,'customer',24).'</td>';
+				
+				print '</tr>';
 				$i++;
 			}
 		}
@@ -201,7 +211,7 @@ $max=5;
  * Last modified proposals
  */
 
-$sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom, s.rowid as socid,";
+$sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom as socname, s.rowid as socid, s.canvas, s.client,";
 $sql.= " date_cloture as datec";
 $sql.= " FROM ".MAIN_DB_PREFIX."propal as c";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -255,7 +265,12 @@ if ($resql)
 
 			print '</td>';
 
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+			$companystatic->id=$obj->socid;
+			$companystatic->name=$obj->socname;
+			$companystatic->client=$obj->client;
+			$companystatic->canvas=$obj->canvas;
+			print '<td>'.$companystatic->getNomUrl(1,'customer').'</td>';
+			
 			print '<td>'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
 			print '<td align="right">'.$propalstatic->LibStatut($obj->fk_statut,5).'</td>';
 			print '</tr>';
@@ -274,7 +289,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 {
 	$langs->load("propal");
 
-	$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp";
+	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -324,8 +339,13 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 				print '</td></tr></table>';
 
 				print "</td>";
+				
+				$companystatic->id=$obj->socid;
+				$companystatic->name=$obj->socname;
+				$companystatic->client=$obj->client;
+				$companystatic->canvas=$obj->canvas;
+				print '<td align="left">'.$companystatic->getNomUrl(1,'customer',44).'</td>'."\n";
 
-				print '<td align="left"><a href="fiche.php?socid='.$obj->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->nom,44).'</a></td>'."\n";
 				print '<td align="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
