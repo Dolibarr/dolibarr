@@ -710,7 +710,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
             if ($leftmenu=="users")
             {
                 $newmenu->add("/user/index.php?mainmenu=home", $langs->trans("Users"), 1, $user->rights->user->user->lire || $user->admin);
-                $newmenu->add("/user/fiche.php?action=create?mainmenu=home", $langs->trans("NewUser"),2, $user->rights->user->user->creer || $user->admin);
+                $newmenu->add("/user/fiche.php?action=create&mainmenu=home", $langs->trans("NewUser"),2, $user->rights->user->user->creer || $user->admin);
                 $newmenu->add("/user/group/index.php?mainmenu=home", $langs->trans("Groups"), 1, ($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->read:$user->rights->user->user->lire) || $user->admin);
                 $newmenu->add("/user/group/fiche.php?mainmenu=home&action=create", $langs->trans("NewGroup"), 2, ($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->write:$user->rights->user->user->creer) || $user->admin);
             }
