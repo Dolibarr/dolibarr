@@ -189,8 +189,8 @@ class Form
             else
             {
                 if ($typeofdata == 'email')   $ret.=dol_print_email($value,0,0,0,0,1);
+                elseif (preg_match('/^text/',$typeofdata) || preg_match('/^note/',$typeofdata))  $ret.=dol_htmlentitiesbr($value);
                 elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret.=dol_print_date($value,'day');
-                elseif ($typeofdata == 'text' || $typeofdata == 'textarea')  $ret.=dol_htmlentitiesbr($value);
                 else if (preg_match('/^select;/',$typeofdata))
                 {
                     $arraydata=explode(',',preg_replace('/^select;/','',$typeofdata));
@@ -2887,7 +2887,7 @@ class Form
     function load_cache_vatrates($country_code)
     {
     	global $langs;
-    	
+
     	if (count($this->cache_vatrates)) return 0;    // Cache deja charge
 
     	$sql  = "SELECT DISTINCT t.taux, t.recuperableonly";
@@ -3391,7 +3391,7 @@ class Form
     function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $option='', $translate=0, $maxlen=0, $disabled=0)
     {
         global $langs;
-        
+
         if ($value_as_key) $array=array_combine($array, $array);
 
         $out='<select id="'.$htmlname.'" '.($disabled?'disabled="disabled" ':'').'class="flat" name="'.$htmlname.'" '.($option != ''?$option:'').'>';
@@ -3413,7 +3413,7 @@ class Form
                 }
 
                 $out.='>';
-                
+
                 $newval=($translate?$langs->trans(ucfirst($value)):$value);
                 if ($key_in_label)
                 {
@@ -3434,7 +3434,7 @@ class Form
         $out.="</select>";
         return $out;
     }
-    
+
     /**
      *	Show a multiselect form from an array.
      *
@@ -3474,7 +3474,7 @@ class Form
     					}
     				}
     			}
-    			
+
     			if (! empty($array))
     			{
     				foreach ($array as $key => $value)
@@ -3497,7 +3497,7 @@ class Form
     					$out.= ' selected="selected"';
     				}
     				$out.= '>';
-    				 
+
     				$newval = ($translate ? $langs->trans(ucfirst($value)) : $value);
     				$newval = ($key_in_label ? $key.' - '.$newval : $newval);
     				$out.= dol_htmlentitiesbr($newval);
@@ -3506,7 +3506,7 @@ class Form
     		}
     	}
     	$out.= '</select>'."\n";
-    
+
     	return $out;
     }
 
