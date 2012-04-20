@@ -706,13 +706,13 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 }
             }
 
-            $newmenu->add("/user/home.php?mainmenu=home&leftmenu=users", $langs->trans("MenuUsersAndGroups"), 0, 1, '', $mainmenu, 'users');
+            $newmenu->add("/user/home.php?leftmenu=users", $langs->trans("MenuUsersAndGroups"), 0, 1, '', $mainmenu, 'users');
             if ($leftmenu=="users")
             {
-                $newmenu->add("/user/index.php?mainmenu=home", $langs->trans("Users"), 1, $user->rights->user->user->lire || $user->admin);
-                $newmenu->add("/user/fiche.php?action=create?mainmenu=home", $langs->trans("NewUser"),2, $user->rights->user->user->creer || $user->admin);
-                $newmenu->add("/user/group/index.php?mainmenu=home", $langs->trans("Groups"), 1, ($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->read:$user->rights->user->user->lire) || $user->admin);
-                $newmenu->add("/user/group/fiche.php?mainmenu=home&action=create", $langs->trans("NewGroup"), 2, ($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->write:$user->rights->user->user->creer) || $user->admin);
+                $newmenu->add("/user/index.php", $langs->trans("Users"), 1, $user->rights->user->user->lire || $user->admin);
+                $newmenu->add("/user/fiche.php?action=create", $langs->trans("NewUser"),2, $user->rights->user->user->creer || $user->admin);
+                $newmenu->add("/user/group/index.php", $langs->trans("Groups"), 1, ($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->read:$user->rights->user->user->lire) || $user->admin);
+                $newmenu->add("/user/group/fiche.php?action=create", $langs->trans("NewGroup"), 2, ($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->write:$user->rights->user->user->creer) || $user->admin);
             }
         }
 
