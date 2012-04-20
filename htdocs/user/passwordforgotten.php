@@ -70,8 +70,6 @@ if ($action == 'validatenewpassword' && $username && $passwordmd5)
         {
             $newpassword=$edituser->setPassword($user,$edituser->pass_temp,0);
             dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
-            //session_start();
-            //$_SESSION["loginmesg"]=$langs->trans("PasswordChanged");
             header("Location: ".DOL_URL_ROOT.'/');
             exit;
         }
