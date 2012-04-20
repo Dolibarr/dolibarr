@@ -834,6 +834,7 @@ else if ($action == "addline" && $user->rights->propale->creer)
 				unset($_POST['np_price']);
 				unset($_POST['dp_desc']);
 				unset($_POST['np_tva_tx']);
+				unset($_POST['np_desc']);
 			}
 			else
 			{
@@ -2028,7 +2029,7 @@ else
 			print '<td>';
 			print $companystatic->getNomUrl(1,'customer');
 			print '</td>';
-			
+
 			// Customer ref
 			print '<td nowrap="nowrap">';
 			print $objp->ref_client;
