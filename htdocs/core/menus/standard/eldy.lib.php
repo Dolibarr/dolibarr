@@ -472,7 +472,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 
 				// Define the class (top menu selected or not)
 				if (! empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname='class="tmenusel"';
-				else if (! empty($_SESSION['mainmenu']) && $newTabMenu[$i]['mainmenu'] == $_SESSION['mainmenu']) $classname='class="tmenusel"';
+				else if (! empty($_SESSION["mainmenu"]) && $newTabMenu[$i]['mainmenu'] == $_SESSION["mainmenu"]) $classname='class="tmenusel"';
 				else $classname='class="tmenu"';
 
 				print_start_menu_entry($idsel);
