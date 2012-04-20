@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 Regis Houssin <regis@dolibarr.fr>
+ * Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2012      Florian Henry
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,21 +64,7 @@ if (! $sortfield) $sortfield="name";
 $object = new Task($db);
 $projectstatic = new Project($db);
 
-if ($id > 0 || ! empty($ref))
-{
-	if ($object->fetch($id,$ref) > 0)
-	{
-		$projectstatic->fetch($object->fk_project);
 
-		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
-
-		$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
-	}
-	else
-	{
-		dol_print_error($db);
-	}
-}
 
 
 /*
@@ -141,6 +129,22 @@ if (! empty($project_ref) && ! empty($withproject))
 	}
 }
 
+// Find upload dir after retreive is task if necessary
+if ($id > 0 || ! empty($ref))
+{
+	if ($object->fetch($id,$ref) > 0)
+	{
+		$projectstatic->fetch($object->fk_project);
+
+		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
+
+		$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+}
 
 /*
  * View
