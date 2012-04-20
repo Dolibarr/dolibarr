@@ -82,6 +82,7 @@ if (isset($_POST["button_removefilter_x"]))
 	$sref="";
 	$sbarcode="";
 	$snom="";
+	$search_categ=0;
 }
 
 if ($conf->categorie->enabled && GETPOST('catid'))
@@ -190,6 +191,7 @@ else
 
     	$param="&amp;sref=".$sref.($sbarcode?"&amp;sbarcode=".$sbarcode:"")."&amp;snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy;
     	$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
+    	$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
     	$param.=isset($type)?"&amp;type=".$type:"";
     	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
 

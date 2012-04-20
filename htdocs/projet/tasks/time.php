@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 /**
  *	\file       htdocs/projet/tasks/time.php
- *	\ingroup    projet
+ *	\ingroup    project
  *	\brief      Page to add new time spent on a task
  */
 
@@ -32,21 +32,26 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 
 $langs->load('projects');
 
-$taskid = isset($_GET["id"])?$_GET["id"]:'';
-$id = GETPOST('id','int');
-$ref= GETPOST('ref');
-$action=GETPOST('action');
-$withproject=GETPOST('withproject');
+$id=GETPOST('id','int');
+$ref=GETPOST('ref','alpha');
+$action=GETPOST('action','alpha');
+$confirm=GETPOST('confirm','alpha');
+$withproject=GETPOST('withproject','int');
+$project_ref=GETPOST('project_ref','alpha');
 
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 if (!$user->rights->projet->lire) accessforbidden();
 
+$object = new Task($db);
+$projectstatic = new Project($db);
+
 
 /*
  * Actions
  */
+
 if ($action == 'addtimespent' && $user->rights->projet->creer)
 {
 	$error=0;
@@ -64,28 +69,27 @@ if ($action == 'addtimespent' && $user->rights->projet->creer)
 
 	if (! $error)
 	{
-		$task = new Task($db);
-		$task->fetch($_POST["id"]);
+		$object->fetch($id);
 
-		$task->timespent_note = $_POST["timespent_note"];
-		$task->timespent_duration = $_POST["timespent_durationhour"]*60*60;	// We store duration in seconds
-		$task->timespent_duration+= $_POST["timespent_durationmin"]*60;		// We store duration in seconds
-		$task->timespent_date = dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
-		$task->timespent_fk_user = $_POST["userid"];
+		$object->timespent_note = $_POST["timespent_note"];
+		$object->timespent_duration = $_POST["timespent_durationhour"]*60*60;	// We store duration in seconds
+		$object->timespent_duration+= $_POST["timespent_durationmin"]*60;		// We store duration in seconds
+		$object->timespent_date = dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
+		$object->timespent_fk_user = $_POST["userid"];
 
-		$result=$task->addTimeSpent($user);
+		$result=$object->addTimeSpent($user);
 		if ($result >= 0)
 		{
 
 		}
 		else
 		{
-			$mesg='<div class="error">'.$langs->trans($task->error).'</div>';
+			$mesg='<div class="error">'.$langs->trans($object->error).'</div>';
 		}
 	}
 	else
 	{
-		$_POST["action"]='';
+		$action='';
 	}
 }
 
@@ -101,44 +105,60 @@ if ($action == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->cree
 
 	if (! $error)
 	{
-		$task = new Task($db);
-		$task->fetch($_POST["id"]);
+		$object->fetch($id);
 
-		$task->timespent_id = $_POST["lineid"];
-		$task->timespent_note = $_POST["timespent_note_line"];
-		$task->timespent_old_duration = $_POST["old_duration"];
-		$task->timespent_duration = $_POST["new_durationhour"]*60*60;	// We store duration in seconds
-		$task->timespent_duration+= $_POST["new_durationmin"]*60;		// We store duration in seconds
-		$task->timespent_date = dol_mktime(12,0,0,$_POST["timelinemonth"],$_POST["timelineday"],$_POST["timelineyear"]);
-		$task->timespent_fk_user = $_POST["userid_line"];
+		$object->timespent_id = $_POST["lineid"];
+		$object->timespent_note = $_POST["timespent_note_line"];
+		$object->timespent_old_duration = $_POST["old_duration"];
+		$object->timespent_duration = $_POST["new_durationhour"]*60*60;	// We store duration in seconds
+		$object->timespent_duration+= $_POST["new_durationmin"]*60;		// We store duration in seconds
+		$object->timespent_date = dol_mktime(12,0,0,$_POST["timelinemonth"],$_POST["timelineday"],$_POST["timelineyear"]);
+		$object->timespent_fk_user = $_POST["userid_line"];
 
-		$result=$task->updateTimeSpent($user);
+		$result=$object->updateTimeSpent($user);
 		if ($result >= 0)
 		{
 
 		}
 		else
 		{
-			$mesg='<div class="error">'.$langs->trans($task->error).'</div>';
+			$mesg='<div class="error">'.$langs->trans($object->error).'</div>';
 		}
 	}
 	else
 	{
-		$_POST["action"]='';
+		$action='';
 	}
 }
 
-if ($action == 'confirm_delete' && $_REQUEST["confirm"] == "yes" && $user->rights->projet->creer)
+if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->creer)
 {
-	$task = new Task($db);
-	$task->fetchTimeSpent($_GET['lineid']);
-	$result = $task->delTimeSpent($user);
+	$object->fetchTimeSpent($_GET['lineid']);
+	$result = $object->delTimeSpent($user);
 
 	if (!$result)
 	{
 		$langs->load("errors");
-		$mesg='<div class="error">'.$langs->trans($task->error).'</div>';
-		$_POST["action"]='';
+		$mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+		$action='';
+	}
+}
+
+// Retreive First Task ID of Project if withprojet is on to allow project prev next to work
+if (! empty($project_ref) && ! empty($withproject))
+{
+	if ($projectstatic->fetch(0,$project_ref) > 0)
+	{
+		$tasksarray=$object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
+		if (count($tasksarray) > 0)
+		{
+			$id=$tasksarray[0]->id;
+		}
+		else
+		{
+			Header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject?'&withproject=1':'').(empty($mode)?'':'&mode='.$mode));
+			exit;
+		}
 	}
 }
 
@@ -146,10 +166,6 @@ if ($action == 'confirm_delete' && $_REQUEST["confirm"] == "yes" && $user->right
 /*
  * View
  */
-
-$form = new Form($db);
-$project = new Project($db);
-$task = new Task($db);
 
 llxHeader("",$langs->trans("Task"));
 
@@ -160,19 +176,19 @@ if ($id > 0 || ! empty($ref))
 	/*
 	 * Fiche projet en mode visu
 	 */
-	if ($task->fetch($id,$ref) >= 0)
+	if ($object->fetch($id) >= 0)
 	{
-		$result=$project->fetch($task->fk_project);
-		if (! empty($project->socid)) $project->societe->fetch($project->socid);
+		$result=$projectstatic->fetch($object->fk_project);
+		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
 
-		$userWrite  = $project->restrictedProjectArea($user,'write');
+		$userWrite = $projectstatic->restrictedProjectArea($user,'write');
 
 		if ($withproject)
 		{
     		// Tabs for project
     		$tab='tasks';
-    		$head=project_prepare_head($project);
-    		dol_fiche_head($head, $tab, $langs->trans("Project"),0,($project->public?'projectpub':'project'));
+    		$head=project_prepare_head($projectstatic);
+    		dol_fiche_head($head, $tab, $langs->trans("Project"),0,($projectstatic->public?'projectpub':'project'));
 
     		$param=($mode=='mine'?'&mode=mine':'');
 
@@ -185,28 +201,28 @@ if ($id > 0 || ! empty($ref))
     		// Define a complementary filter for search of next/prev ref.
     		if (! $user->rights->projet->all->lire)
     		{
-    		    $projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,0);
-    		    $project->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+    		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,0);
+    		    $projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
     		}
-    		print $form->showrefnav($project,'ref','',1,'ref','ref','',$param);
+    		print $form->showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
     		print '</td></tr>';
 
-    		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$project->title.'</td></tr>';
+    		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
 
     		print '<tr><td>'.$langs->trans("Company").'</td><td>';
-    		if (! empty($project->societe->id)) print $project->societe->getNomUrl(1);
+    		if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
     		else print '&nbsp;';
     		print '</td>';
     		print '</tr>';
 
     		// Visibility
     		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-    		if ($project->public) print $langs->trans('SharedProject');
+    		if ($projectstatic->public) print $langs->trans('SharedProject');
     		else print $langs->trans('PrivateProject');
     		print '</td></tr>';
 
     		// Statut
-    		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$project->getLibStatut(4).'</td></tr>';
+    		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projectstatic->getLibStatut(4).'</td></tr>';
 
     		print '</table>';
 
@@ -215,48 +231,48 @@ if ($id > 0 || ! empty($ref))
     		print '<br>';
 		}
 
-		$head=task_prepare_head($task);
+		$head=task_prepare_head($object);
 		dol_fiche_head($head, 'task_time', $langs->trans("Task"),0,'projecttask');
 
 		dol_htmloutput_mesg($mesg);
 
 		if ($action == 'deleteline')
 		{
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&lineid='.$_GET["lineid"],$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
+			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id.'&lineid='.$_GET["lineid"].($withproject?'&withproject=1':''),$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
 			if ($ret == 'html') print '<br>';
 		}
 
 		print '<table class="border" width="100%">';
 
 		$param=($withproject?'&withproject=1':'');
-		$linkback=$withproject?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$project->id.'">'.$langs->trans("BackToList").'</a>':'';
+		$linkback=$withproject?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
 
 		// Ref
 		print '<tr><td width="30%">';
 		print $langs->trans("Ref");
 		print '</td><td colspan="3">';
-		if (! GETPOST('withproject') || empty($project->id))
+		if (! GETPOST('withproject') || empty($projectstatic->id))
 		{
-		    $projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,1);
-		    $task->next_prev_filter=" fk_projet in (".$projectsListId.")";
+		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
+		    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 		}
-		else $task->next_prev_filter=" fk_projet = ".$project->id;
-	    print $form->showrefnav($task,'id',$linkback,1,'rowid','ref','',$param);
+		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
+	    print $form->showrefnav($object,'id',$linkback,1,'rowid','ref','',$param);
 		print '</td></tr>';
 
 		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$task->label.'</td></tr>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
 
 		// Project
 		if (empty($withproject))
 		{
     		print '<tr><td>'.$langs->trans("Project").'</td><td>';
-    		print $project->getNomUrl(1);
+    		print $projectstatic->getNomUrl(1);
     		print '</td></tr>';
 
     		// Third party
     		print '<td>'.$langs->trans("Company").'</td><td>';
-    		if ($project->societe->id) print $project->societe->getNomUrl(1);
+    		if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
     		else print '&nbsp;';
     		print '</td></tr>';
 		}
@@ -273,10 +289,11 @@ if ($id > 0 || ! empty($ref))
 		{
 			print '<br>';
 
-			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'">';
+			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="addtimespent">';
-			print '<input type="hidden" name="id" value="'.$task->id.'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
 			print '<table class="noborder" width="100%">';
 
@@ -298,7 +315,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Contributor
 			print '<td nowrap="nowrap">';
-			$contactoftask=$task->getListContactId('internal');
+			$contactoftask=$object->getListContactId('internal');
 			print img_object('','user');
 			print $form->select_users($_POST["userid"]?$_POST["userid"]:$user->id,'userid',0,'',0,'',$contactoftask);
 			print '</td>';
@@ -329,7 +346,7 @@ if ($id > 0 || ! empty($ref))
 		$sql.= ", u.name, u.firstname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
 		$sql .= " , ".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE t.fk_task =".$task->id;
+		$sql .= " WHERE t.fk_task =".$object->id;
 		$sql .= " AND t.fk_user = u.rowid";
 		$sql .= " ORDER BY t.task_date DESC";
 
@@ -353,10 +370,10 @@ if ($id > 0 || ! empty($ref))
 			dol_print_error($db);
 		}
 
-		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'">';
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="updateline">';
-		print '<input type="hidden" name="id" value="'.$task->id.'">';
+		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
@@ -427,7 +444,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Edit and delete icon
 			print '<td align="center" valign="middle" width="80">';
-			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
+			if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid)
   		    {
   		    	print '<input type="hidden" name="lineid" value="'.$_GET['lineid'].'">';
   		    	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -437,12 +454,12 @@ if ($id > 0 || ! empty($ref))
   		    else if ($user->rights->projet->creer)
 			{
 				print '&nbsp;';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'&amp;action=editline&amp;lineid='.$task_time->rowid.'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';
 				print img_edit();
 				print '</a>';
 
 				print '&nbsp;';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$task->id.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';
 				print img_delete();
 				print '</a>';
 			}
@@ -460,7 +477,7 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>
