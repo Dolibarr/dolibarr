@@ -582,15 +582,16 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
     if (isset($_GET["mainmenu"]))
     {
         // On sauve en session le menu principal choisi
-        $mainmenu=$_GET["mainmenu"];
-        $_SESSION["mainmenu"]=$mainmenu;
+        $_SESSION["mainmenu"]=$_GET["mainmenu"];
         $_SESSION["leftmenuopened"]="";
+        $mainmenu=$_GET["mainmenu"];
     }
     else
     {
         // On va le chercher en session si non defini par le lien
         $mainmenu=isset($_SESSION["mainmenu"])?$_SESSION["mainmenu"]:'';
     }
+    //print 'mainmenu='.$mainmenu.' SESSION='.$_SESSION["mainmenu"].' GLOBAL='.$GLOBALS["mainmenu"];
 
     if (isset($_GET["leftmenu"]))
     {
