@@ -82,7 +82,7 @@ class CommandeFournisseur extends Commande
      *
      *  @param      DoliDB		$db      Database handler
      */
-    function __Construct($db)
+    function __construct($db)
     {
         $this->db = $db;
         $this->products = array();
@@ -1807,7 +1807,7 @@ class CommandeFournisseurLigne extends OrderLine
      *
      *  @param		DoliDB		$db      Database handler
      */
-    function CommandeFournisseurLigne($db)
+    function __construct($db)
     {
         $this->db= $db;
     }
