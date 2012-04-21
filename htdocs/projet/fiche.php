@@ -416,7 +416,9 @@ else
 
         // Customer
         print '<tr><td>'.$langs->trans("Company").'</td><td>';
-        print $form->select_company($project->societe->id,'socid','',1,1);
+        $text=$form->select_company($project->societe->id,'socid','',1,1);
+        $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
+        print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
         print '</td></tr>';
 
         // Visibility
@@ -449,7 +451,7 @@ else
         print '<div align="center"><br>';
         print '<input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'"> &nbsp; ';
         print '<input type="submit" class="button" name="cancel" Value="'.$langs->trans("Cancel").'"></div>';
-        
+
         print '</form>';
     }
     else
