@@ -108,9 +108,9 @@ if (! empty($hookmanager->resArray['options'])) {
 	<tr><td valign="middle" nowrap="nowrap"> &nbsp; <b><?php echo $langs->trans('SecurityCode'); ?></b></td>
 	<td valign="top" nowrap="nowrap" align="left" class="none">
 
-	<table class="login_table" style="width: 100px;"><tr>
+	<table class="login_table_securitycode" style="width: 100px;"><tr>
 	<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="4" /></td>
-	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" /></td>
+	<td><img src="<?php echo DOL_URL_ROOT ?>/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" /></td>
 	<td><a href="<?php echo $php_self; ?>"><?php echo $captcha_refresh; ?></a></td>
 	</tr></table>
 
