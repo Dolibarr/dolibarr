@@ -140,8 +140,8 @@ if ($action == 'specimen')
 		}
 		else
 		{
-			$mesg='<font class="error">'.$obj->error.'</font>';
-			dol_syslog($obj->error, LOG_ERR);
+			$mesg='<font class="error">'.$module->error.'</font>';
+			dol_syslog($module->error, LOG_ERR);
 		}
 	}
 	else
