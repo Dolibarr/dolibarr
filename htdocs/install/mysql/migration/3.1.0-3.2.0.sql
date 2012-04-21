@@ -213,8 +213,10 @@ ALTER TABLE llx_paiement ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowi
 ALTER TABLE llx_product_price ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 
 -- Restore foreign key (on llx_expedition_methode before) on correct table (llx_c_shipment_mode)
+UPDATE llx_expedition SET fk_expedition_methode = null WHERE fk_expedition_methode NOT IN (SELECT rowid FROM llx_c_shipment_mode);
 ALTER TABLE llx_expedition DROP FOREIGN KEY fk_expedition_fk_expedition_methode;
 ALTER TABLE llx_expedition ADD CONSTRAINT fk_expedition_fk_expedition_methode 	FOREIGN KEY (fk_expedition_methode) REFERENCES llx_c_shipment_mode (rowid);
+
 
 -- VMYSQL4.1 UPDATE llx_chargesociales set tms = date_creation WHERE tms = '0000-00-00 00:00:00';
 
