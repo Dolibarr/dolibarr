@@ -82,8 +82,13 @@ if (GETPOST('action','alpha')=='install')
 				$langs->load("errors");
 				$mesg = "<font class=\"error\">".$langs->trans("ErrorOSSystem")."</font>";
 			}
-			else 
+			elseif ($result==3)
 			{
+				$langs->load("errors");
+				$mesg = "<font class=\"error\">".$langs->trans("ErrorUncompFile",$_FILES['fileinstall']['name'])."</font>";
+			}
+			
+			else {
 				$mesg = "<font class=\"ok\">".$langs->trans("SetupIsReadyForUse")."</font>";
 			}
 		}

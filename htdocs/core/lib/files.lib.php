@@ -658,7 +658,8 @@ function dol_uncompress($newfile,$typefile,$dstdir)
 	$ruta=$diruncom.'/'.$original_file;
 	chdir ($dstdir);
 	$command= $prog.$ruta;
-	exec($command);
+	$res=exec($command);
+	if (! $res) $error=3;
 	
 	return $error;
 }

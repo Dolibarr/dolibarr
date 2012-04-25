@@ -106,6 +106,7 @@ ErrorNoActivatedBarcode=Cap tipus de codi de barres activat
 ErrorWebServerUserHasNotPermission=El compte d'execució del servidor web <b>%s</b> no disposa dels permisos per això
 ErrorNoActivatedBarcode=No hi ha activat cap tipus de codi de barres
 ErrorOSSystem=La instal·lació en línia no suporta el seu sistema operatiu. <br> Instal·leu l'extensió manualment.
+ErrorUncompFile=No és possible instal·lar el paquet %s
 
 # Warnings
 WarningSafeModeOnCheckExecDir=Atenció, està activada l'opció PHP <b>safe_mode</b>, la comanda ha d'estar dins d'un directori declarat dins del paràmetre php <b>safe_mode_exec_dir</b>.
