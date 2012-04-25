@@ -66,6 +66,8 @@ For users:
 - Fix: Can use POS module with several concurrent users.
 - Fix: Installer don't fails with Mysql version that added a ssl_cypher field.
 - Fix: Sanitize input parameters.
+- Fix: [ bug #368 ] Product list
+- Fix: [ bug #370 ] Filter in accountancy -> suppliers_bills
 
 For developers:
 - New: Can add a left menu into an existing top menu or left menu.
