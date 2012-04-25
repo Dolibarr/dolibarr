@@ -50,7 +50,7 @@ if ($action == 'setvalue' && $user->admin)
 	if (! $res > 0) $error++;
 	$res=dolibarr_set_const($db, "MAILING_EMAIL_ERRORSTO",$mailerror,'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
-	$res=dolibarr_set_const($db, "MAIN_SOCIETE_UNSUBSCRIBE",$checkread,'chaine',0,'',$conf->entity);
+	$res=dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE",$checkread,'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
 	
  	if (! $error)
@@ -107,7 +107,7 @@ print '</td></tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("ActivateCheckRead").'</td><td>';
-if ($conf->global->MAIN_SOCIETE_UNSUBSCRIBE==1)
+if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE==1)
 {
 	print '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&value=0">';
 	print img_picto($langs->trans("Enabled"),'switch_on');

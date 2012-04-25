@@ -58,7 +58,7 @@ $substitutionarray=array(
 		'__SIGNATURE__' => 'Signature',
 		'__PERSONALIZED__' => 'Personalized'
 );
-if ($conf->global->MAIN_SOCIETE_UNSUBSCRIBE)
+if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE)
 {
 	$substitutionarray=array_merge(
 			$substitutionarray,
@@ -83,7 +83,7 @@ $substitutionarrayfortest=array(
 		'__SIGNATURE__' => 'TESTSignature',
 		'__PERSONALIZED__' => 'TESTPersonalized'
 );
-if ($conf->global->MAIN_SOCIETE_UNSUBSCRIBE)
+if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE)
 {
     $substitutionarrayfortest=array_merge(
     		$substitutionarrayfortest,
@@ -1046,7 +1046,7 @@ else
 			print '<br><i>'.$langs->trans("CommonSubstitutions").':<br>';
 			print '__ID__ = '.$langs->trans("IdRecord").'<br>';
 			print '__EMAIL__ = '.$langs->trans("EMail").'<br>';
-            if ($conf->global->MAIN_SOCIETE_UNSUBSCRIBE)
+            if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE)
             {
     			print '__CHECK_READ__ = '.$langs->trans("CheckRead").'<br>';
 	    		print '__UNSUSCRIBE__ = '.$langs->trans("MailUnsubcribe").'<br>';

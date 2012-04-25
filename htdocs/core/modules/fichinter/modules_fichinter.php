@@ -156,7 +156,7 @@ abstract class ModeleNumRefFicheinter
  */
 function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $hookmanager=false)
 {
-	global $conf,$langs;
+	global $conf,$langs,$user;
 	$langs->load("ficheinter");
 
 	$error=0;
