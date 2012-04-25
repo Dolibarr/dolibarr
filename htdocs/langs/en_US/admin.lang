@@ -265,6 +265,10 @@ FindPackageFromWebSite=Find a package that provides feature you want (for exampl
 DownloadPackageFromWebSite=Download package.
 UnpackPackageInDolibarrRoot=Unpack package file into Dolibarr's root directory <b>%s</b>
 SetupIsReadyForUse=Install is finished and Dolibarr is ready to use with this new component.
+NotExistsDirect=The alternative root directory is not defined.<br>
+InfDirAlt=Since version 3 it is possible to define an alternative root directory.This allows you to store, same place, plug-ins and custom templates.<br>Just create a directory at the root of Dolibarr (eg: custom).<br>
+InfDirExample=<br>Then declare it in the file conf.php<br> $dolibarr_main_url_root_alt='http://myserver/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>*These lines are commented with "#", to uncomment only remove the character.
+YouCanSubmitFile=Select module:
 CurrentVersion=Dolibarr current version
 CallUpdatePage=Go to the page that updates the database structure and datas: %s.
 LastStableVersion=Last stable version

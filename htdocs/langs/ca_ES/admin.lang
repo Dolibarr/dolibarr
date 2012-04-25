@@ -266,6 +266,10 @@ FindPackageFromWebSite=Cercar el paquet que respon a la seva necessitat (per exe
 DownloadPackageFromWebSite=Descarregar el paquet des del lloc %s.
 UnpackPackageInDolibarrRoot=Descomprimir el paquet a la carpeta arrel de Dolibarr <b>%s</b> sobre els arxius existents (sense desplaçar o esborrar els existents, sota pena de perdre la seva configuració o els mòduls no oficials instal·lats)
 SetupIsReadyForUse=La instal·lació ha finalitzat i Dolibarr està disponible amb el nou component.
+NotExistsDirect=No existeix el directori alternatiu.<br>
+InfDirAlt=Des de la versió 3 és possible definir un directori root alternatiu, això li permet emmagatzemar en el mateix lloc mòduls i temes personalitzades.<br>Només cal crear un directori en l'arrel de Dolibarr (per exemple: custom).<br>
+InfDirExample=<br>Seguidament es declara a l'arxiu conf.php:<br> $dolibarr_main_url_root_alt='http://miservidor/custom'<br>$dolibarr_main_document_root_alt='/directorio/de/dolibarr/htdocs/custom'<br>*Aquestes línies venen comentades amb un "#", per descomentar-les només cal retirar el caràcter.
+YouCanSubmitFile=Seleccioneu mòdul:
 CurrentVersion=Versió actual de Dolibarr
 CallUpdatePage=Trucar a la pàgina d'actualització de l'estructura i dades de la base de dades %s.
 LastStableVersion=Última versió estable disponible
