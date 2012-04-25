@@ -39,7 +39,7 @@ $langs->load("mails");
 $id=GETPOST('tag');
 $unsuscrib=GETPOST('unsuscrib');
 
-if (empty($conf->global->MAIN_SOCIETE_UNSUBSCRIBE)) accessforbidden('Option not enabled');
+if (empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE)) accessforbidden('Option not enabled');
 
 
 /*
