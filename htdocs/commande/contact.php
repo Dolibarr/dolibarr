@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2011-2012 Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -202,8 +203,15 @@ if ($id > 0 || ! empty($ref))
 
 		print '<br>';
 		
-		// Contacts lines
-		include(DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php');
+		// Select template for Contacts lines
+		if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/contacts.tpl.php"))
+		{
+			include(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/contacts.tpl.php");
+		}
+		else
+		{
+			include(DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php');
+		}
 
 	}
 	else
