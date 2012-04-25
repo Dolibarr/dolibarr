@@ -173,7 +173,7 @@ class pdf_baleine extends ModelePDFProjects
 				if (! empty($object->note_public))
 				{
 					$pdf->SetFont('','', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxref-1, $tab_top-2, $outputlangs->convToOutputCharset($object->note_public), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxref-1, $tab_top-2, dol_htmlentitiesbr($object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-($tab_top-2);
 

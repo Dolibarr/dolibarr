@@ -35,6 +35,7 @@ require_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
 
 $langs->load("admin");
 $langs->load("errors");
+$langs->load("orders");
 
 if (! $user->admin) accessforbidden();
 

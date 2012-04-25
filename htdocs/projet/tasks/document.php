@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 Regis Houssin <regis@dolibarr.fr>
+ * Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2012      Florian Henry
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,21 +64,7 @@ if (! $sortfield) $sortfield="name";
 $object = new Task($db);
 $projectstatic = new Project($db);
 
-if ($id > 0 || ! empty($ref))
-{
-	if ($object->fetch($id,$ref) > 0)
-	{
-		$projectstatic->fetch($object->fk_project);
-		
-		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
-		
-		$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
-	}
-	else
-	{
-		dol_print_error($db);
-	}
-}
+
 
 
 /*
@@ -135,11 +123,28 @@ if (! empty($project_ref) && ! empty($withproject))
 		}
 		else
 		{
-			Header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.(empty($mode)?'':'&mode='.$mode));
+			Header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject?'&withproject=1':'').(empty($mode)?'':'&mode='.$mode));
+			exit;
 		}
 	}
 }
 
+// Find upload dir after retreive is task if necessary
+if ($id > 0 || ! empty($ref))
+{
+	if ($object->fetch($id,$ref) > 0)
+	{
+		$projectstatic->fetch($object->fk_project);
+
+		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
+
+		$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+}
 
 /*
  * View
@@ -152,20 +157,20 @@ llxHeader('',$langs->trans('Project'));
 if ($object->id > 0)
 {
 	if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
-	
+
 	$userWrite  = $projectstatic->restrictedProjectArea($user,'write');
-	
+
 	if (! empty($withproject))
 	{
 		// Tabs for project
 		$tab='tasks';
 		$head=project_prepare_head($projectstatic);
 		dol_fiche_head($head, $tab, $langs->trans("Project"),0,($projectstatic->public?'projectpub':'project'));
-	
+
 		$param=($mode=='mine'?'&mode=mine':'');
-	
+
 		print '<table class="border" width="100%">';
-	
+
 		// Ref
 		print '<tr><td width="30%">';
 		print $langs->trans("Ref");
@@ -178,37 +183,37 @@ if ($object->id > 0)
 		}
 		print $form->showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
 		print '</td></tr>';
-	
+
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
-	
+
 		print '<tr><td>'.$langs->trans("Company").'</td><td>';
 		if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
 		else print '&nbsp;';
 		print '</td>';
 		print '</tr>';
-	
+
 		// Visibility
 		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
 		if ($projectstatic->public) print $langs->trans('SharedProject');
 		else print $langs->trans('PrivateProject');
 		print '</td></tr>';
-	
+
 		// Statut
 		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projectstatic->getLibStatut(4).'</td></tr>';
-	
+
 		print '</table>';
-	
+
 		dol_fiche_end();
-	
+
 		print '<br>';
 	}
-	
+
 	$head = task_prepare_head($object);
 	dol_fiche_head($head, 'task_document', $langs->trans("Task"), 0, 'projecttask');
-	
+
 	$param=(GETPOST('withproject')?'&withproject=1':'');
 	$linkback=GETPOST('withproject')?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
-	
+
 	// Files list constructor
 	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
@@ -216,9 +221,9 @@ if ($object->id > 0)
 	{
 		$totalsize+=$file['size'];
 	}
-	
+
 	print '<table class="border" width="100%">';
-	
+
 	// Ref
 	print '<tr><td width="30%">';
 	print $langs->trans("Ref");
@@ -232,42 +237,42 @@ if ($object->id > 0)
 	print $form->showrefnav($object,'id',$linkback,1,'rowid','ref','',$param);
 	print '</td>';
 	print '</tr>';
-	
+
 	// Label
 	print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
-	
+
 	// Project
 	if (empty($withproject))
 	{
 		print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
 		print $projectstatic->getNomUrl(1);
 		print '</td></tr>';
-	
+
 		// Third party
 		print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
 		if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
 		else print '&nbsp;';
 		print '</td></tr>';
 	}
-	
+
 	// Files infos
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
-	
+
 	print "</table>\n";
-	
+
 	dol_fiche_end();
-	
+
 	print '<br>';
-	
+
 	dol_htmloutput_mesg($mesg);
-	
-	
+
+
 	// Affiche formulaire upload
 	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id,'',0,0,$user->rights->projet->creer);
-	
-	
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.($withproject?'&withproject=1':''),'',0,0,$user->rights->projet->creer);
+
+
 	// List of document
 	$param='&id='.$object->id;
 	$formfile->list_of_documents($filearray,$object,'projet',$param,0,dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref).'/');
@@ -280,5 +285,6 @@ else
 
 
 llxFooter();
+
 $db->close();
 ?>

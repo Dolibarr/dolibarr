@@ -214,7 +214,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 	if ($sourcecompany->state_id && empty($sourcecompany->departement)) $sourcecompany->departement=getState($sourcecompany->state_id);
 	if ($targetcompany->state_id && empty($targetcompany->departement)) $targetcompany->departement=getState($targetcompany->state_id);
 
-	if ($mode == 'source')
+	if ($mode == 'source' || ! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS))
 	{
 		$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($sourcecompany))."\n";
 
@@ -858,7 +858,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 
 			if ( empty($hideref) )
 			{
-				if ($issupplierline) $ref_prodserv = $prodser->ref.' ('.$outputlangs->trans("SupplierRef").' '.$ref_supplier.')';   // Show local ref and supplier ref
+				if ($issupplierline) $ref_prodserv = $prodser->ref.' ('.$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.')';   // Show local ref and supplier ref
 				else $ref_prodserv = $prodser->ref; // Show local ref only
 
 				$ref_prodserv .= " - ";

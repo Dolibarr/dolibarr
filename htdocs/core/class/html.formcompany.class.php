@@ -506,7 +506,7 @@ class FormCompany
 	 *  @param  string		$var_id         Name of id field
 	 *  @param  string		$selected       Pre-selected third party
 	 *  @param  string		$htmlname       Name of HTML form
-	 * 	@param	string		$limitto		Disable answers that are not id in this array list
+	 * 	@param	array		$limitto		Disable answers that are not id in this array list
 	 *  @param	int			$forceid		This is to force antoher object id than object->id
 	 * 	@return	void
 	 * 	TODO obsolete ?

@@ -189,8 +189,8 @@ class Form
             else
             {
                 if ($typeofdata == 'email')   $ret.=dol_print_email($value,0,0,0,0,1);
+                elseif (preg_match('/^text/',$typeofdata) || preg_match('/^note/',$typeofdata))  $ret.=dol_htmlentitiesbr($value);
                 elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') $ret.=dol_print_date($value,'day');
-                elseif ($typeofdata == 'text' || $typeofdata == 'textarea')  $ret.=dol_htmlentitiesbr($value);
                 else if (preg_match('/^select;/',$typeofdata))
                 {
                     $arraydata=explode(',',preg_replace('/^select;/','',$typeofdata));
@@ -2887,7 +2887,7 @@ class Form
     function load_cache_vatrates($country_code)
     {
     	global $langs;
-    	
+
     	if (count($this->cache_vatrates)) return 0;    // Cache deja charge
 
     	$sql  = "SELECT DISTINCT t.taux, t.recuperableonly";
