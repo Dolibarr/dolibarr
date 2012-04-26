@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
-if ($conf->esaeb->enabled) require_once(DOL_DOCUMENT_ROOT.'/esaeb/class/esaeb19.class.php');
+if ($conf->esaeb->enabled) dol_include_once('/esaeb/class/esaeb19.class.php');
 
 
 /**
@@ -1179,7 +1179,8 @@ class BonPrelevement extends CommonObject
         // Build file for Spain
         if ($mysoc->country_code=='ES')
         {
-            if ($conf->esaeb->enabled)
+            // TODO replace by a hook (external modules)
+        	if ($conf->esaeb->enabled)
             {
                 //Head
                 $esaeb19 = new AEB19DocWritter;

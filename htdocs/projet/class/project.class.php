@@ -736,7 +736,6 @@ class Project extends CommonObject
         $this->id = 0;
         $this->ref = 'SPECIMEN';
         $this->specimen = 1;
-        $socid = rand(1, $num_socs);
         $this->socid = 1;
         $this->date_c = $now;
         $this->date_m = $now;

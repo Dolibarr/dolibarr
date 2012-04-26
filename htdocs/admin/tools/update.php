@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@ $langs->load("other");
 
 if (! $user->admin) accessforbidden();
 
-if ($_GET["msg"]) $message='<div class="error">'.$_GET["msg"].'</div>';
+if (GETPOST('msg','alpha')) $message='<div class="error">'.GETPOST('msg','alpha').'</div>';
 
 
 $urldolibarr='http://www.dolibarr.org/downloads/';
@@ -45,7 +46,7 @@ $dolibarrdataroot=preg_replace('/([\\/]+)$/i','',DOL_DATA_ROOT);
  *	Actions
  */
 
-if ($_POST["action"]=='install')
+if (GETPOST('action','alpha')=='install')
 {
 	$error=0;
 
@@ -59,7 +60,7 @@ if ($_POST["action"]=='install')
 	}
 	else
 	{
-		if (! preg_match('/\.tgz/i',$original_file))
+		if (! preg_match('/\.tgz/i',$original_file) && ! preg_match('/\.zip/i',$original_file))
 		{
 			$mesg=$langs->trans("ErrorFileMustBeADolibarrPackage");
 			$error++;
@@ -71,18 +72,36 @@ if ($_POST["action"]=='install')
 		@dol_delete_dir_recursive($conf->admin->dir_temp.'/'.$original_file);
 		dol_mkdir($conf->admin->dir_temp.'/'.$original_file);
 
-		$result=dol_move_uploaded_file($_FILES["fileinstall"]["tmp_name"],$newfile,1,0,$_FILES['fileinstall']['error']);
+		$result=dol_move_uploaded_file($_FILES['fileinstall']['tmp_name'],$newfile,1,0,$_FILES['fileinstall']['error']);
 		if ($result > 0)
 		{
-			//dol_uncompress($newfile);
+			$rutax=DOL_DOCUMENT_ROOT_ALT;
+			$result=dol_uncompress($newfile,$_FILES['fileinstall']['type'],$rutax);
+			if ($result==2)
+			{
+				$langs->load("errors");
+				$mesg = "<font class=\"error\">".$langs->trans("ErrorOSSystem")."</font>";
+			}
+			elseif ($result==3)
+			{
+				$langs->load("errors");
+				$mesg = "<font class=\"error\">".$langs->trans("ErrorUncompFile",$_FILES['fileinstall']['name'])."</font>";
+			}
+			
+			else {
+				$mesg = "<font class=\"ok\">".$langs->trans("SetupIsReadyForUse")."</font>";
+			}
 		}
 	}
 }
 
-
 /*
  * View
  */
+
+$dirins=DOL_DOCUMENT_ROOT_ALT;
+$vale=(is_dir($dirins));
+$system=PHP_OS;
 
 $wikihelp='EN:Installation_-_Upgrade|FR:Installation_-_Mise_à_jour|ES:Instalaci&omodulon_-_Actualizaci&omodulon';
 llxHeader('',$langs->trans("Upgrade"),$wikihelp);
@@ -93,7 +112,8 @@ print $langs->trans("CurrentVersion").' : <b>'.DOL_VERSION.'</b><br>';
 print $langs->trans("LastStableVersion").' : <b>'.$langs->trans("FeatureNotYetAvailable").'</b><br>';
 print '<br>';
 
-dol_htmloutput_errors($mesg);
+//dol_htmloutput_errors($mesg);
+dol_htmloutput_mesg($mesg);
 
 print $langs->trans("Upgrade").'<br>';
 print '<hr>';
@@ -126,18 +146,33 @@ print '<b>'.$langs->trans("StepNb",3).'</b>: ';
 print $langs->trans("UnpackPackageInDolibarrRoot",$dolibarrroot).'<br>';
 if (! empty($conf->global->MAIN_ONLINE_INSTALL_MODULE))
 {
-	print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
-	print '<input type="hidden" name="action" value="install">';
-	print $langs->trans("YouCanSubmitFile").' <input type="file" name="fileinstall"> ';
-	print '<input type="submit" name="'.dol_escape_htmltag($langs->trans("Send")).'" class="button">';
-	print '</form>';
+	if ($vale == 1 && $dirins != 'DOL_DOCUMENT_ROOT_ALT' && ($system=="Linux"))
+	{
+		print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
+		print '<input type="hidden" name="action" value="install">';
+		print $langs->trans("YouCanSubmitFile").' <input type="file" name="fileinstall"> ';
+		print '<input type="submit" name="'.dol_escape_htmltag($langs->trans("Send")).'" class="button">';
+		print '</form>';
+	}
+	elseif ($system!='Linux')
+	{
+		$langs->load('errors');
+		$message=info_admin($langs->transnoentities("ErrorOSSystem"));
+		print $message;
+	}
+	else 
+	{
+		$message=info_admin($langs->trans("NotExistsDirect").$langs->trans("InfDirAlt").$langs->trans("InfDirExample"));
+		print $message;
+	}	
 }
-print '<b>'.$langs->trans("StepNb",4).'</b>: ';
-print $langs->trans("SetupIsReadyForUse").'<br>';
-
+else 
+{
+	print '<b>'.$langs->trans("StepNb",4).'</b>: ';
+	print $langs->trans("SetupIsReadyForUse").'<br>';
+}
 print '</form>';
 
 llxFooter();
-
 $db->close();
 ?>

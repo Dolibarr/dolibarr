@@ -1060,7 +1060,7 @@ class Expedition extends CommonObject
 
 		// Initialise parametres
 		$this->id=0;
-		$this->ref = 'SPECIMEN_SHIP';
+		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
 		$this->statut               = 1;
 		$this->livraison_id         = 0;
