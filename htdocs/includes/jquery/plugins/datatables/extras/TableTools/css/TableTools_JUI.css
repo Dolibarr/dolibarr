@@ -37,6 +37,7 @@
  * TableTools container element and styles applying to all components
  */
 div.DTTT_container {
+	position: relative;
 	float: left;
 }
 
@@ -68,36 +69,36 @@ table.DTTT_selectable tbody tr {
 	*cursor: hand;
 }
 
-tr.DTTT_selected.odd {
+table.dataTable tr.DTTT_selected.odd {
 	background-color: #9FAFD1;
 }
 
-tr.DTTT_selected.odd td.sorting_1 {
+table.dataTable tr.DTTT_selected.odd td.sorting_1 {
 	background-color: #9FAFD1;
 }
 
-tr.DTTT_selected.odd td.sorting_2 {
+table.dataTable tr.DTTT_selected.odd td.sorting_2 {
 	background-color: #9FAFD1;
 }
 
-tr.DTTT_selected.odd td.sorting_3 {
+table.dataTable tr.DTTT_selected.odd td.sorting_3 {
 	background-color: #9FAFD1;
 }
 
 
-tr.DTTT_selected.even {
+table.dataTable tr.DTTT_selected.even {
 	background-color: #B0BED9;
 }
 
-tr.DTTT_selected.even td.sorting_1 {
+table.dataTable tr.DTTT_selected.even td.sorting_1 {
 	background-color: #B0BED9;
 }
 
-tr.DTTT_selected.even td.sorting_2 {
+table.dataTable tr.DTTT_selected.even td.sorting_2 {
 	background-color: #B0BED9;
 }
 
-tr.DTTT_selected.even td.sorting_3 {
+table.dataTable tr.DTTT_selected.even td.sorting_3 {
 	background-color: #B0BED9;
 }
 

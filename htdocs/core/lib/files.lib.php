@@ -629,14 +629,16 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 function dol_uncompress($newfile,$typefile,$dstdir)
 {
 	global $conf;
+	
 	$error=0;
+	$output=array();
 	$system=PHP_OS;
 	
 	//TODO: See best method for this
 	
-	if ($system=="Linux")
+	if ($system=="Linux" || $system=="Darwin")
 	{
-		if ($typefile == 'application/x-gzip')
+		if ($typefile == 'application/x-gzip' || $typefile == 'application/x-gtar')
 		{
 			$prog= "tar -xzvf ";
 		}
@@ -646,22 +648,33 @@ function dol_uncompress($newfile,$typefile,$dstdir)
 		}
 		else 
 		{
-			$error=1;
+			$output['error'] = -1;
+			$error++;
 		}
 	}
 	else 
 	{
-		$error=2;
+		$output['error'] = -2;
+		$error++;
 	}
-	$original_file=basename($_FILES["fileinstall"]["name"]);
-	$diruncom=$conf->admin->dir_temp.'/'.$original_file;
-	$ruta=$diruncom.'/'.$original_file;
-	chdir ($dstdir);
-	$command= $prog.$ruta;
-	$res=exec($command);
-	if (! $res) $error=3;
 	
-	return $error;
+	if (! $error)
+	{
+		$original_file=basename($_FILES["fileinstall"]["name"]);
+		$dir=$conf->admin->dir_temp.'/'.$original_file;
+		$file=$dir.'/'.$original_file;
+		$command= $prog.$file.' 2>&1';
+		
+		chdir($dstdir);
+		
+		exec($command, $out, $return_var);
+		if ($return_var == 1) $output['error'] = -3;		// OK with Warning
+		elseif ($return_var == 127) $output['error'] = -4;	// KO
+		
+		$output['return'] = $out;
+	}
+	
+	return $output;
 }
 
 /**
