@@ -54,7 +54,7 @@
         url = git+ssh://hregis@doliforge.org/gitroot/ventilation/ventilation.git
 [submodule "htdocs/custom/book"]
         path = htdocs/custom/book
-        url = git+ssh://hregis@doliforge.org/gitroot/book/book.git
+        url = gitolite@doliforge.org:book/book.git
 [submodule "htdocs/custom/accounting"]
 	path = htdocs/custom/accounting
 	url = git+ssh://hregis@doliforge.org/gitroot/accounting/accounting.git
@@ -94,3 +94,6 @@
 [submodule "htdocs/custom/speedfinder"]
 	path = htdocs/custom/speedfinder
 	url = gitolite@doliforge.org:speedfinder/speedfinder.git
+[submodule "htdocs/custom/locker"]
+	path = htdocs/custom/locker
+	url = gitolite@doliforge.org:book/locker.git
