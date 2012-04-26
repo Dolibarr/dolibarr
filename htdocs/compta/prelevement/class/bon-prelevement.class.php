@@ -1179,7 +1179,8 @@ class BonPrelevement extends CommonObject
         // Build file for Spain
         if ($mysoc->country_code=='ES')
         {
-            if ($conf->esaeb->enabled)
+            // TODO replace by a hook (external modules)
+        	if ($conf->esaeb->enabled)
             {
                 //Head
                 $esaeb19 = new AEB19DocWritter;
