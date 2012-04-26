@@ -807,7 +807,11 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 	// Description long of product line
 	if ($desc && ($desc != $label))
 	{
-		if ( $libelleproduitservice && empty($hidedesc) ) $libelleproduitservice.="\n";
+		if ($libelleproduitservice && empty($hidedesc))
+		{
+			if ($conf->global->FCKEDITOR_ENABLE_DETAILS) $libelleproduitservice.='<br />';
+			else $libelleproduitservice.="\n";
+		}
 
 		if ($desc == '(CREDIT_NOTE)' && $object->lines[$i]->fk_remise_except)
 		{
@@ -827,7 +831,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		{
 			if ($idprod)
 			{
-				if ( empty($hidedesc) ) $libelleproduitservice.=$desc;
+				if (empty($hidedesc)) $libelleproduitservice.=$desc;
 			}
 			else
 			{
@@ -846,7 +850,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			$ref_prodserv = "";
 			if ($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS)   // In standard mode, we do not show this
 			{
-				if($prodser->isservice())
+				if ($prodser->isservice())
 				{
 					$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Service")." ";
 				}
@@ -856,7 +860,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 				}
 			}
 
-			if ( empty($hideref) )
+			if (empty($hideref))
 			{
 				if ($issupplierline) $ref_prodserv = $prodser->ref.' ('.$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.')';   // Show local ref and supplier ref
 				else $ref_prodserv = $prodser->ref; // Show local ref only
