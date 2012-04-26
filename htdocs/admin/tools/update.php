@@ -75,20 +75,33 @@ if (GETPOST('action','alpha')=='install')
 		$result=dol_move_uploaded_file($_FILES['fileinstall']['tmp_name'],$newfile,1,0,$_FILES['fileinstall']['error']);
 		if ($result > 0)
 		{
-			$rutax=DOL_DOCUMENT_ROOT_ALT;
-			$result=dol_uncompress($newfile,$_FILES['fileinstall']['type'],$rutax);
-			if ($result==2)
+			$documentrootalt=DOL_DOCUMENT_ROOT_ALT;
+			$result=dol_uncompress($newfile,$_FILES['fileinstall']['type'],$documentrootalt);
+			if (! empty($result['error']))
 			{
-				$langs->load("errors");
-				$mesg = "<font class=\"error\">".$langs->trans("ErrorOSSystem")."</font>";
+				if ($result['error'] == -1)
+				{
+					$langs->load("errors");
+					$mesg = '<div class="error">'.$langs->trans("ErrorBadFileFormat").'</div>';
+				}
+				elseif ($result['error'] == -2)
+				{
+					$langs->load("errors");
+					$mesg = '<div class="error">'.$langs->trans("ErrorOSSystem").'</div>';
+				}
+				elseif ($result['error'] == -3)
+				{
+					$langs->load("errors");
+					$mesg = '<div class="warning">'.$langs->trans("ErrorUncompFile",$_FILES['fileinstall']['name']).'</div>';
+				}
+				elseif ($result['error'] == -4)
+				{
+					$langs->load("errors");
+					$mesg = '<div class="error">'.$langs->trans("ErrorUncompFile",$_FILES['fileinstall']['name']).'</div>';
+				}
 			}
-			elseif ($result==3)
+			else
 			{
-				$langs->load("errors");
-				$mesg = "<font class=\"error\">".$langs->trans("ErrorUncompFile",$_FILES['fileinstall']['name'])."</font>";
-			}
-			
-			else {
 				$mesg = "<font class=\"ok\">".$langs->trans("SetupIsReadyForUse")."</font>";
 			}
 		}
@@ -146,7 +159,7 @@ print '<b>'.$langs->trans("StepNb",3).'</b>: ';
 print $langs->trans("UnpackPackageInDolibarrRoot",$dolibarrroot).'<br>';
 if (! empty($conf->global->MAIN_ONLINE_INSTALL_MODULE))
 {
-	if ($vale == 1 && $dirins != 'DOL_DOCUMENT_ROOT_ALT' && ($system=="Linux"))
+	if ($vale == 1 && $dirins != 'DOL_DOCUMENT_ROOT_ALT' && ($system=="Linux" || $system=="Darwin"))
 	{
 		print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
 		print '<input type="hidden" name="action" value="install">';
@@ -172,6 +185,16 @@ else
 	print $langs->trans("SetupIsReadyForUse").'<br>';
 }
 print '</form>';
+
+if (! empty($result['return']))
+{
+	print '<br>';
+	
+	foreach($result['return'] as $value)
+	{
+		echo $value.'<br>';
+	}
+}
 
 llxFooter();
 $db->close();
