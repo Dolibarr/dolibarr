@@ -1,8 +1,10 @@
 /*
  *  File:         demo_table_jui.css
+ *  CVS:          $Id$
  *  Description:  CSS descriptions for DataTables demo pages
  *  Author:       Allan Jardine
  *  Created:      Tue May 12 06:47:22 BST 2009
+ *  Modified:     $Date$ by $Author$
  *  Language:     CSS
  *  Project:      DataTables
  *
@@ -40,6 +42,7 @@
 	margin: 0;
 	cursor: pointer;
 	* cursor: hand;
+	color: #333 !important;
 }
 
 .dataTables_paginate .ui-button {
@@ -107,8 +110,6 @@ table.display thead th div.DataTables_sort_wrapper span {
 
 .dataTables_wrapper {
 	position: relative;
-	min-height: 302px;
-	_height: 302px;
 	clear: both;
 }
 
@@ -295,6 +296,10 @@ tr.even {
 	clear: both;
 }
 
+.dataTables_scrollBody {
+	-webkit-overflow-scrolling: touch;
+}
+
 .top, .bottom {
 	padding: 15px;
 	background-color: #F5F5F5;
@@ -339,8 +344,8 @@ td.details {
 	width: 40%;
 }
 
-.paging_full_numbers span.paginate_button,
- 	.paging_full_numbers span.paginate_active {
+.paging_full_numbers a.paginate_button,
+ 	.paging_full_numbers a.paginate_active {
 	border: 1px solid #aaa;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
@@ -348,17 +353,19 @@ td.details {
 	margin: 0 3px;
 	cursor: pointer;
 	*cursor: hand;
+	color: #333 !important;
 }
 
-.paging_full_numbers span.paginate_button {
+.paging_full_numbers a.paginate_button {
 	background-color: #ddd;
 }
 
-.paging_full_numbers span.paginate_button:hover {
+.paging_full_numbers a.paginate_button:hover {
 	background-color: #ccc;
+	text-decoration: none !important;
 }
 
-.paging_full_numbers span.paginate_active {
+.paging_full_numbers a.paginate_active {
 	background-color: #99B3FF;
 }
 
