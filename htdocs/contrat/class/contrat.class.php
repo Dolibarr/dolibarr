@@ -821,7 +821,7 @@ class Contrat extends CommonObject
 	 *  @param  float		$remise_percent  	Pourcentage de remise de la ligne
 	 *  @param  timestamp	$date_start      	Date de debut prevue
 	 *  @param  timestamp	$date_end        	Date de fin prevue
-	 *	@param	float		$price_base_type	HT ou TTC
+	 *	@param	float		$price_base_type	HT or TTC
 	 * 	@param  float		$pu_ttc             Prix unitaire TTC
 	 * 	@param  int			$info_bits			Bits de type de lignes
 	 *  @return int             				<0 si erreur, >0 si ok
@@ -897,8 +897,8 @@ class Contrat extends CommonObject
 			$sql.= " ".price2num($total_ht).",".price2num($total_tva).",".price2num($total_localtax1).",".price2num($total_localtax2).",".price2num($total_ttc).",";
 			$sql.= " '".$info_bits."',";
 			$sql.= " ".price2num($price).",".price2num($remise);	// TODO A virer
-			if ($date_start > 0) { $sql.= ",".$this->db->idate($date_start); }
-			if ($date_end > 0) { $sql.= ",".$this->db->idate($date_end); }
+			if ($date_start > 0) { $sql.= ",'".$this->db->idate($date_start)."'"; }
+			if ($date_end > 0) { $sql.= ",'".$this->db->idate($date_end)."'"; }
 			$sql.= ")";
 
 			dol_syslog(get_class($this)."::addline sql=".$sql);
@@ -949,9 +949,11 @@ class Contrat extends CommonObject
 	 *  @param  float		$localtax2tx      	Local tax 2 rate
 	 *  @param  timestamp	$date_debut_reel  	Date de debut reelle
 	 *  @param  timestamp	$date_fin_reel    	Date de fin reelle
+	 *	@param	float		$price_base_type	HT or TTC
+	 * 	@param  int			$info_bits			Bits de type de lignes
 	 *  @return int              				< 0 si erreur, > 0 si ok
 	 */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx=0, $localtax2tx=0, $date_debut_reel='', $date_fin_reel='')
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx, $localtax1tx=0, $localtax2tx=0, $date_debut_reel='', $date_fin_reel='', $price_base_type='HT', $info_bits=0)
 	{
 		global $user, $conf, $langs;
 
@@ -975,30 +977,55 @@ class Contrat extends CommonObject
 			$remise_percent=0;
 		}
 
-		dol_syslog(get_class($this)."::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $date_debut_reel, $date_fin_reel, $tvatx, $localtax1tx, $localtax2tx");
+		dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $date_debut_reel, $date_fin_reel, $tvatx, $localtax1tx, $localtax2tx, $price_base_type, $info_bits");
 
 		$this->db->begin();
 
+		// Calcul du total TTC et de la TVA pour la ligne a partir de
+		// qty, pu, remise_percent et txtva
+		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
+		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+		$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $localtaxtx1, $txlocaltaxtx2, 0, $price_base_type, $info_bits);
+		$total_ht  = $tabprice[0];
+		$total_tva = $tabprice[1];
+		$total_ttc = $tabprice[2];
+		$total_localtax1= $tabprice[9];
+		$total_localtax2= $tabprice[10];
+		// TODO A virer
+		// Anciens indicateurs: $price, $remise (a ne plus utiliser)
+		$remise = 0;
+		$price = price2num(round($pu_ht, 2));
+		if (dol_strlen($remise_percent) > 0)
+		{
+		    $remise = round(($pu_ht * $remise_percent / 100), 2);
+		    $price = $pu_ht - $remise;
+		}
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet set description='".$this->db->escape($desc)."'";
-		$sql .= ",price_ht='" .     price2num($price)."'";
-		$sql .= ",subprice='" .     price2num($subprice)."'";
-		$sql .= ",remise='" .       price2num($remise)."'";
-		$sql .= ",remise_percent='".price2num($remise_percent)."'";
-		$sql .= ",qty='$qty'";
-		$sql .= ",tva_tx='".        price2num($tvatx)."'";
-		$sql .= ",localtax1_tx='".        price2num($localtax1tx)."'";
-		$sql .= ",localtax2_tx='".        price2num($localtax2tx)."'";
-		if ($date_start > 0) { $sql.= ",date_ouverture_prevue=".$this->db->idate($date_start); }
+		$sql.= ",price_ht='" .     price2num($price)."'";
+		$sql.= ",subprice='" .     price2num($subprice)."'";
+		$sql.= ",remise='" .       price2num($remise)."'";
+		$sql.= ",remise_percent='".price2num($remise_percent)."'";
+		$sql.= ",qty='".$qty."'";
+		$sql.= ",tva_tx='".        price2num($tvatx)."'";
+		$sql.= ",localtax1_tx='".  price2num($localtax1tx)."'";
+		$sql.= ",localtax2_tx='".  price2num($localtax2tx)."'";
+		$sql.= ", total_ht='".     price2num($total_ht)."'";
+		$sql.= ", total_tva='".    price2num($total_tva)."'";
+		$sql.= ", total_localtax1='".price2num($total_localtax1)."'";
+		$sql.= ", total_localtax2='".price2num($total_localtax2)."'";
+		$sql.= ", total_ttc='".      price2num($total_ttc)."'";
+		if ($date_start > 0) { $sql.= ",date_ouverture_prevue='".$this->db->idate($date_start)."'"; }
 		else { $sql.=",date_ouverture_prevue=null"; }
-		if ($date_end > 0) { $sql.= ",date_fin_validite=".$this->db->idate($date_end); }
+		if ($date_end > 0) { $sql.= ",date_fin_validite='".$this->db->idate($date_end)."'"; }
 		else { $sql.=",date_fin_validite=null"; }
-		if ($date_debut_reel > 0) { $sql.= ",date_ouverture=".$this->db->idate($date_debut_reel); }
+		if ($date_debut_reel > 0) { $sql.= ",date_ouverture='".$this->db->idate($date_debut_reel)."'"; }
 		else { $sql.=",date_ouverture=null"; }
-		if ($date_fin_reel > 0) { $sql.= ",date_cloture=".$this->db->idate($date_fin_reel); }
+		if ($date_fin_reel > 0) { $sql.= ",date_cloture='".$this->db->idate($date_fin_reel)."'"; }
 		else { $sql.=",date_cloture=null"; }
 		$sql .= " WHERE rowid = ".$rowid;
 
-		dol_syslog(get_class($this)."::UpdateLine sql=".$sql);
+		dol_syslog(get_class($this)."::updateline sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -1011,7 +1038,7 @@ class Contrat extends CommonObject
 			else
 			{
 				$this->db->rollback();
-				dol_syslog(get_class($this)."::UpdateLigne Erreur -2");
+				dol_syslog(get_class($this)."::updateligne Erreur -2");
 				return -2;
 			}
 		}
@@ -1019,7 +1046,7 @@ class Contrat extends CommonObject
 		{
 			$this->db->rollback();
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::UpdateLigne Erreur -1");
+			dol_syslog(get_class($this)."::updateligne Erreur -1");
 			return -1;
 		}
 	}
@@ -1323,7 +1350,7 @@ class Contrat extends CommonObject
 	{
 		global $conf, $user;
 
-		$now=gmmktime();
+		$now=dol_now();
 
 		$this->nbtodo=$this->nbtodolate=0;
 
@@ -1818,6 +1845,17 @@ class ContratLigne
 		// Check parameters
 		// Put here code to add control on parameters values
 
+		// Calcul du total TTC et de la TVA pour la ligne a partir de
+		// qty, pu, remise_percent et txtva
+		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
+		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+		$tabprice=calcul_price_total($this->qty, $this->price_ht, $this->remise_percent, $this->tva_tx, $this->localtax1_tx, $this->localtax2_tx, 0, 'HT', 0);
+		$this->total_ht  = $tabprice[0];
+		$this->total_tva = $tabprice[1];
+		$this->total_ttc = $tabprice[2];
+		$this->total_localtax1= $tabprice[9];
+		$this->total_localtax2= $tabprice[10];
+
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";
 		$sql.= " fk_contrat='".$this->fk_contrat."',";
@@ -1825,11 +1863,11 @@ class ContratLigne
 		$sql.= " statut='".$this->statut."',";
 		$sql.= " label='".$this->db->escape($this->label)."',";
 		$sql.= " description='".$this->db->escape($this->description)."',";
-		$sql.= " date_commande=".($this->date_commande!=''?$this->db->idate($this->date_commande):"null").",";
-		$sql.= " date_ouverture_prevue=".($this->date_ouverture_prevue!=''?$this->db->idate($this->date_ouverture_prevue):"null").",";
-		$sql.= " date_ouverture=".($this->date_ouverture!=''?$this->db->idate($this->date_ouverture):"null").",";
-		$sql.= " date_fin_validite=".($this->date_fin_validite!=''?$this->db->idate($this->date_fin_validite):"null").",";
-		$sql.= " date_cloture=".($this->date_cloture!=''?$this->db->idate($this->date_cloture):"null").",";
+		$sql.= " date_commande=".($this->date_commande!=''?"'".$this->db->idate($this->date_commande)."'":"null").",";
+		$sql.= " date_ouverture_prevue=".($this->date_ouverture_prevue!=''?"'".$this->db->idate($this->date_ouverture_prevue)."'":"null").",";
+		$sql.= " date_ouverture=".($this->date_ouverture!=''?"'".$this->db->idate($this->date_ouverture)."'":"null").",";
+		$sql.= " date_fin_validite=".($this->date_fin_validite!=''?"'".$this->db->idate($this->date_fin_validite)."'":"null").",";
+		$sql.= " date_cloture=".($this->date_cloture!=''?"'".$this->db->idate($this->date_cloture)."'":"null").",";
 		$sql.= " tva_tx='".$this->tva_tx."',";
 		$sql.= " localtax1_tx='".$this->localtax1_tx."',";
 		$sql.= " localtax2_tx='".$this->localtax2_tx."',";
@@ -1851,7 +1889,7 @@ class ContratLigne
 		$sql.= " commentaire='".$this->db->escape($this->commentaire)."'";
 		$sql.= " WHERE rowid=".$this->id;
 
-		dol_syslog("ContratLigne::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1862,7 +1900,7 @@ class ContratLigne
 		else
 		{
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog("ContratLigne::update ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -1899,7 +1937,7 @@ class ContratLigne
 		$sql.= ",total_ttc=".price2num($this->total_ttc,'MT')."";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
-		dol_syslog("ContratLigne::update_total sql=".$sql);
+		dol_syslog(get_class($this)."::update_total sql=".$sql);
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -1910,7 +1948,7 @@ class ContratLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("ContratLigne::update_total Error ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::update_total Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}

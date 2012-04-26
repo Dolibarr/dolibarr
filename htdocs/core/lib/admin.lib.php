@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1090,7 +1090,7 @@ function form_constantes($tableau)
                 else if (in_array($const,array('ADHERENT_AUTOREGISTER_MAIL','ADHERENT_MAIL_VALID','ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL')))
                 {
                     require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-                    $doleditor=new DolEditor('constvalue'.$const,$obj->value,'',160,'dolibarr_notes','',false,false,$conf->fckeditor->enabled,5,60);
+                    $doleditor=new DolEditor('constvalue_'.$const,$obj->value,'',160,'dolibarr_notes','',false,false,$conf->fckeditor->enabled,5,60);
                     $doleditor->Create();
 
                     print '</td><td>';
@@ -1119,6 +1119,75 @@ function form_constantes($tableau)
         }
     }
     print '</table>';
+}
+
+/**
+ *	Add document model used by doc generator
+ *
+ *	@param		string	$name			Model name
+ *	@param		string	$type			Model type
+ *	@param		string	$label			Model label
+ *	@param		string	$description	Model description
+ *	@return		int						<0 if KO, >0 if OK
+ */
+function addDocumentModel($name, $type, $label='', $description='')
+{
+	global $db, $conf;
+	
+	$db->begin();
+	
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
+    $sql.= " VALUES ('".$db->escape($name)."','".$type."',".$conf->entity.", ";
+    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
+    $sql.= (! empty($description)?"'".$db->escape($description)."'":"null");
+    $sql.= ")";
+    
+    dol_syslog("admin.lib::addDocumentModel sql=".$sql);
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$db->commit();
+		return 1;
+	}
+	else
+	{
+		dol_print_error($db);
+		$db->rollback();
+		return -1;
+	}
+}
+
+/**
+ *	Delete document model used by doc generator
+ *
+ *	@param		string	$name			Model name
+ *	@param		string	$type			Model type
+ *	@return		int						<0 if KO, >0 if OK
+ */
+function delDocumentModel($name, $type)
+{
+	global $db, $conf;
+	
+	$db->begin();
+	
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
+	$sql.= " WHERE nom = '".$db->escape($name)."'";
+	$sql.= " AND type = '".$type."'";
+	$sql.= " AND entity = ".$conf->entity;
+
+	dol_syslog("admin.lib::delDocumentModel sql=".$sql);
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$db->commit();
+		return 1;
+	}
+	else
+	{
+		dol_print_error($db);
+		$db->rollback();
+		return -1;
+	}
 }
 
 ?>

@@ -50,10 +50,11 @@ require("./main.inc.php");	// Load $user and permissions
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 
 $encoding = '';
-$action = GETPOST('action','alpha');
-$original_file = GETPOST('file','alpha');	// Do not use urldecode here ($_GET are already decoded by PHP).
-$modulepart = GETPOST('modulepart','alpha');
-$urlsource = GETPOST('urlsource','alpha');
+$action=GETPOST('action','alpha');
+$original_file=GETPOST('file','alpha');	// Do not use urldecode here ($_GET are already decoded by PHP).
+$modulepart=GETPOST('modulepart','alpha');
+$urlsource=GETPOST('urlsource','alpha');
+$entity=GETPOST('entity')?GETPOST('entity','int'):$conf->entity;
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
@@ -124,14 +125,14 @@ if ($modulepart)
 	// On fait une verification des droits et on definit le repertoire concerne
 
 	// Wrapping for third parties
-	if ($modulepart == 'company')
+	if ($modulepart == 'company' || $modulepart == 'societe')
 	{
 		if ($user->rights->societe->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->societe->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid='".$refname."' AND entity=".$conf->entity;
+		$original_file=$conf->societe->multidir_output[$entity].'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid='".$refname."' AND entity IN (".getEntity('societe', 1).")";
 	}
 
 	// Wrapping for invoices
@@ -252,17 +253,6 @@ if ($modulepart)
 		$original_file=$conf->compta->dir_output.'/'.$original_file;
 	}
 
-	// Wrapping pour les societe
-	else if ($modulepart == 'societe')
-	{
-		if ($user->rights->societe->lire || preg_match('/^specimen/i',$original_file))
-		{
-			$accessallowed=1;
-		}
-		$original_file=$conf->societe->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid='".$refname."' AND entity=".$conf->entity;
-	}
-
 	// Wrapping pour les expedition
 	else if ($modulepart == 'expedition')
 	{
@@ -310,8 +300,8 @@ if ($modulepart)
 		{
 			$accessallowed=1;
 		}
-		if ($conf->product->enabled) $original_file=$conf->product->dir_output.'/'.$original_file;
-		elseif ($conf->service->enabled) $original_file=$conf->service->dir_output.'/'.$original_file;
+		if ($conf->product->enabled) $original_file=$conf->product->multidir_output[$entity].'/'.$original_file;
+		elseif ($conf->service->enabled) $original_file=$conf->service->multidir_output[$entity].'/'.$original_file;
 	}
 
 	// Wrapping pour les contrats
@@ -449,6 +439,7 @@ if ($modulepart)
 		}
 	}
 }
+
 
 // Basic protection (against external users only)
 if ($user->societe_id > 0)

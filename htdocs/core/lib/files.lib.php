@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2012	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -615,6 +616,65 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		dol_syslog("Files.lib::dol_move_uploaded_file Failed to move ".$src_file." to ".$file_name, LOG_ERR);
 		return -3;	// Unknown error
 	}
+}
+
+/**
+ * Uncompress a file
+ * 
+ * @param 	string 	$newfile	file to uncompress
+ * @param 	stirng	$typefile	type of file
+ * @param 	string	$dstdir		destination dir
+ * @return 	int					0 if ok, >0 if ko
+ */
+function dol_uncompress($newfile,$typefile,$dstdir)
+{
+	global $conf;
+	
+	$error=0;
+	$output=array();
+	$system=PHP_OS;
+	
+	//TODO: See best method for this
+	
+	if ($system=="Linux" || $system=="Darwin")
+	{
+		if ($typefile == 'application/x-gzip' || $typefile == 'application/x-gtar')
+		{
+			$prog= "tar -xzvf ";
+		}
+		elseif ($typefile == 'application/zip')
+		{
+			$prog= "unzip ";
+		}
+		else 
+		{
+			$output['error'] = -1;
+			$error++;
+		}
+	}
+	else 
+	{
+		$output['error'] = -2;
+		$error++;
+	}
+	
+	if (! $error)
+	{
+		$original_file=basename($_FILES["fileinstall"]["name"]);
+		$dir=$conf->admin->dir_temp.'/'.$original_file;
+		$file=$dir.'/'.$original_file;
+		$command= $prog.$file.' 2>&1';
+		
+		chdir($dstdir);
+		
+		exec($command, $out, $return_var);
+		if ($return_var == 1) $output['error'] = -3;		// OK with Warning
+		elseif ($return_var == 127) $output['error'] = -4;	// KO
+		
+		$output['return'] = $out;
+	}
+	
+	return $output;
 }
 
 /**

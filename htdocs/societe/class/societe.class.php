@@ -636,7 +636,7 @@ class Societe extends CommonObject
         $sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
         $sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
         $sql .= ', s.localtax1_assuj, s.localtax2_assuj, s.fk_prospectlevel, s.default_lang, s.logo';
-        $sql .= ', s.import_key';
+        $sql .= ', s.import_key, s.canvas';
         $sql .= ', fj.libelle as forme_juridique';
         $sql .= ', e.libelle as effectif';
         $sql .= ', p.code as country_code, p.libelle as country';
@@ -676,6 +676,7 @@ class Societe extends CommonObject
 
                 $this->id           = $obj->rowid;
                 $this->entity       = $obj->entity;
+                $this->canvas		= $obj->canvas;
 
                 $this->ref          = $obj->rowid;
                 $this->name 		= $obj->name;
@@ -844,7 +845,7 @@ class Societe extends CommonObject
             // Remove contacts
             if (! $error)
             {
-                $sql = "DELETE from ".MAIN_DB_PREFIX."socpeople";
+                $sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
                 $sql.= " WHERE fk_soc = " . $id;
                 dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
                 if (! $this->db->query($sql))
@@ -872,7 +873,7 @@ class Societe extends CommonObject
             // Remove ban
             if (! $error)
             {
-                $sql = "DELETE from ".MAIN_DB_PREFIX."societe_rib";
+                $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
                 $sql.= " WHERE fk_soc = " . $id;
                 dol_syslog(get_class($this)."::Delete sql=".$sql, LOG_DEBUG);
                 if (! $this->db->query($sql))
@@ -905,7 +906,7 @@ class Societe extends CommonObject
             // Remove third party
             if (! $error)
             {
-                $sql = "DELETE from ".MAIN_DB_PREFIX."societe";
+                $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe";
                 $sql.= " WHERE rowid = " . $id;
                 dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
                 if (! $this->db->query($sql))
@@ -931,7 +932,7 @@ class Societe extends CommonObject
                 $this->db->commit();
 
                 // Delete directory
-                $docdir = $conf->societe->dir_output . "/" . $id;
+                $docdir = $conf->societe->multidir_output[$this->entity] . "/" . $id;
                 if (file_exists($docdir))
                 {
                     dol_delete_dir_recursive($docdir);
@@ -2168,52 +2169,6 @@ class Societe extends CommonObject
         else if (! empty($this->typent_code) && in_array($this->typent_code,array('TE_SMALL','TE_MEDIUM','TE_LARGE'))) $isacompany=1;
 
         return $isacompany;
-    }
-
-
-    /**
-     *  Return if a country is inside the EEC (European Economic Community)
-     *
-     *  @return     boolean		true = pays inside EEC, false= pays outside EEC
-     */
-    function isInEEC()
-    {
-        // List of all country codes that are in europe for european vat rules
-        // List found on http://ec.europa.eu/taxation_customs/vies/lang.do?fromWhichPage=vieshome
-        $country_code_in_EEC=array(
-			'AT',	// Austria
-			'BE',	// Belgium
-			'BG',	// Bulgaria
-			'CY',	// Cyprus
-			'CZ',	// Czech republic
-			'DE',	// Germany
-			'DK',	// Danemark
-			'EE',	// Estonia
-			'ES',	// Spain
-			'FI',	// Finland
-			'FR',	// France
-			'GB',	// Royaume-uni
-			'GR',	// Greece
-			'NL',	// Holland
-			'HU',	// Hungary
-			'IE',	// Ireland
-			'IT',	// Italy
-			'LT',	// Lithuania
-			'LU',	// Luxembourg
-			'LV',	// Latvia
-			'MC',	// Monaco 		Seems to use same IntraVAT than France (http://www.gouv.mc/devwww/wwwnew.nsf/c3241c4782f528bdc1256d52004f970b/9e370807042516a5c1256f81003f5bb3!OpenDocument)
-			'MT',	// Malta
-        //'NO',	// Norway
-			'PL',	// Poland
-			'PT',	// Portugal
-			'RO',	// Romania
-			'SE',	// Sweden
-			'SK',	// Slovakia
-			'SI',	// Slovenia
-        //'CH',	// Switzerland - No. Swizerland in not in EEC
-        );
-        //print "dd".$this->country_code;
-        return in_array($this->country_code,$country_code_in_EEC);
     }
 
     /**

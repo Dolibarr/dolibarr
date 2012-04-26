@@ -6,11 +6,10 @@ Installed-Size: 61200
 Depends: libapache2-mod-php5 | libapache2-mod-php5filter | php5-cgi | php5-fpm | php5,
     php5-mysql | php5-mysqli, 
     php5-cli, php5-curl, php5-gd, php5-ldap, php-pear, php-mail-mime, php5-geoip,
+	libphp-adodb,
     libnusoap-php,
     libphp-pclzip,
-    libfpdi-php,
-    libfpdf-tpl-php,
-    ckeditor,
+    libjs-jquery, libjs-jquery-ui, ckeditor,
     ttf-dejavu-core,
     xdg-utils,
     mysql-server
@@ -27,6 +26,7 @@ Description: Web based software to manage a small company or foundation
  .
  Dolibarr was designed to be easy to use. Only features you need are 
  visible, depending on which module were activated.
+ Most common used modules are:
  .
  Customers, Suppliers or Prospects directory,
  Contacts directory,

@@ -121,7 +121,7 @@ function dol_print_object_info($object)
         print '<br>';
     }
 
-    // Date
+    // Date creation
     if (isset($object->date_creation))
     print $langs->trans("DateCreation")." : " . dol_print_date($object->date_creation,"dayhourtext") . '<br>';
 
@@ -142,7 +142,7 @@ function dol_print_object_info($object)
         print '<br>';
     }
 
-    // Date
+    // Date change
     if (isset($object->date_modification))
     print $langs->trans("DateLastModification")." : " . dol_print_date($object->date_modification,"dayhourtext") . '<br>';
 
@@ -163,9 +163,30 @@ function dol_print_object_info($object)
         print '<br>';
     }
 
-    // Date
+    // Date validation
     if (isset($object->date_validation))
     print $langs->trans("DateValidation")." : " . dol_print_date($object->date_validation,"dayhourtext") . '<br>';
+
+    // User approve
+    if (isset($object->user_approve))
+    {
+        print $langs->trans("ApprovedBy")." : ";
+        if (is_object($object->user_approve))
+        {
+            print $object->user_approve->getNomUrl(1);
+        }
+        else
+        {
+            $userstatic=new User($db);
+            $userstatic->fetch($object->user_approve);
+            print $userstatic->getNomUrl(1);
+        }
+        print '<br>';
+    }
+
+    // Date approve
+    if (isset($object->date_approve))
+    print $langs->trans("DateApprove")." : " . dol_print_date($object->date_approve,"dayhourtext") . '<br>';
 
     // User close
     if (isset($object->user_cloture))
@@ -184,7 +205,7 @@ function dol_print_object_info($object)
         print '<br>';
     }
 
-    // Date
+    // Date close
     if (isset($object->date_cloture))
     print $langs->trans("DateClosing")." : " . dol_print_date($object->date_cloture,"dayhourtext") . '<br>';
 
@@ -205,11 +226,11 @@ function dol_print_object_info($object)
         print '<br>';
     }
 
-    // Date
+    // Date conciliate
     if (isset($object->date_rappro))
     print $langs->trans("DateConciliating")." : " . dol_print_date($object->date_rappro,"dayhourtext") . '<br>';
 
-    //Date send
+    // Date send
     if (isset($object->date_envoi))
     print $langs->trans("DateLastSend")." : " . dol_print_date($object->date_envoi,"dayhourtext") . '<br>';
 }
@@ -447,7 +468,8 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     if (! empty($reg[2]) && preg_match('/^@/',$reg[2]))	$maskraz=preg_replace('/^@/','',$reg[2]);
     if (! empty($reg[3]) && preg_match('/^@/',$reg[3]))	$maskraz=preg_replace('/^@/','',$reg[3]);
     if ($maskraz == 0) $maskraz = $conf->global->SOCIETE_FISCAL_MONTH_START;
-    if ($maskraz > 0)
+    //print "maskraz=".$maskraz;
+    if ($maskraz > 0)    // A reset is required
     {
         if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
 
@@ -476,21 +498,26 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         if (dol_strlen($reg[$posy]) == 2) $yearcomp=sprintf("%02d",date("y",$date)+$yearoffset);
         if (dol_strlen($reg[$posy]) == 1) $yearcomp=substr(date("y",$date),2,1)+$yearoffset;
         $sqlwhere='';
-        $sqlwhere.='( (SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).') >= '.$yearcomp;
-        if ($monthcomp > 1)	// Test useless if monthcomp = 1 (or 0 is same as 1)
+        if ($monthcomp > 1)	// Test with month is useless if monthcomp = 0 or 1 (0 is same as 1)
         {
             if (dol_strlen($reg[$posy]) == 4) $yearcomp1=sprintf("%04d",date("Y",$date)+$yearoffset+1);
             if (dol_strlen($reg[$posy]) == 2) $yearcomp1=sprintf("%02d",date("y",$date)+$yearoffset+1);
+
             // FIXME If mask is {mm}{yy}, sqlwhere is wrong here
-            $sqlwhere.=' AND SUBSTRING('.$field.', '.(dol_strlen($reg[1])+dol_strlen($reg[2])+1).', '.dol_strlen($reg[3]).') >= '.$monthcomp.')';
-            $sqlwhere.=' OR SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).') >= '.$yearcomp1.' )';
+            $sqlwhere.='(';
+            $sqlwhere.=' (SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).") = '".$yearcomp."'";
+            $sqlwhere.=' AND SUBSTRING('.$field.', '.(dol_strlen($reg[1])+dol_strlen($reg[2])+1).', '.dol_strlen($reg[3]).") >= '".str_pad($monthcomp, dol_strlen($reg[3]), '0', STR_PAD_LEFT)."')";
+            $sqlwhere.=' OR';
+            $sqlwhere.=' (SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).") = '".$yearcomp1."'";
+            $sqlwhere.=' AND SUBSTRING('.$field.', '.(dol_strlen($reg[1])+dol_strlen($reg[2])+1).', '.dol_strlen($reg[3]).") < '".str_pad($monthcomp, dol_strlen($reg[3]), '0', STR_PAD_LEFT)."') ";
+            $sqlwhere.=')';
         }
-        else
+        else   // reset is done on january
         {
-            $sqlwhere.=') )';
+            $sqlwhere.='( SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).") = '".$yearcomp."' )";
         }
     }
-    //print $sqlwhere;
+    //print "sqlwhere=".$sqlwhere."<br>\n";
     //print "masktri=".$masktri." maskcounter=".$maskcounter." maskraz=".$maskraz." maskoffset=".$maskoffset." yearcomp=".$yearcomp."<br>\n";
 
     // Define $sqlstring
@@ -558,7 +585,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         $sql.= " WHERE facnumber LIKE '".$maskLike."'";
         $sql.= " AND entity IN (".getEntity($table, 1).")";
 
-        dol_syslog("mod_facture_terre::getNextValue sql=".$sql);
+        dol_syslog("functions2::get_next_value sql=".$sql);
         $resql=$db->query($sql);
         if ($resql)
         {

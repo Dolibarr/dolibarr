@@ -25,14 +25,14 @@
 /**
  *  \file       htdocs/user/class/user.class.php
  *	\brief      File of class to manage users
+ *  \ingroup	core
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
 
 /**
- *	\class      User
- *	\brief      Class to manage users
+ *	Class to manage Dolibarr users
  */
 class User extends CommonObject
 {
@@ -108,6 +108,11 @@ class User extends CommonObject
 
 		$this->all_permissions_are_loaded = 0;
 		$this->admin=0;
+
+		$this->rights				= (object) array();
+		$this->rights->user			= (object) array();
+		$this->rights->user->user	= (object) array();
+		$this->rights->user->self	= (object) array();
 	}
 
 	/**
@@ -501,7 +506,7 @@ class User extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
 		$sql.= ", ".MAIN_DB_PREFIX."rights_def as r";
 		$sql.= " WHERE r.id = ur.fk_id";
-		$sql.= " AND r.entity in (0,".(!empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+		$sql.= " AND r.entity IN (0,".(!empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
 		$sql.= " AND ur.fk_user= ".$this->id;
 		$sql.= " AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
@@ -522,14 +527,12 @@ class User extends CommonObject
 
 				if ($perms)
 				{
+					if (! is_object($this->rights)) $this->rights = (object) array(); // For avoid error
+					if (! is_object($this->rights->$module)) $this->rights->$module = (object) array();
 					if ($subperms)
 					{
-						if (! isset($this->rights->$module) ||
-						(is_object($this->rights->$module) && ! isset($this->rights->$module->$perms)) ||
-						(is_object($this->rights->$module->$perms)) )
-						{
-							$this->rights->$module->$perms->$subperms = 1;
-						}
+						if (! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = (object) array();
+						$this->rights->$module->$perms->$subperms = 1;
 					}
 					else
 					{
@@ -584,6 +587,12 @@ class User extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
+		}
+		
+		// For backward compatibility
+		if (isset($this->rights->propale))
+		{
+			$this->rights->propal = $this->rights->propale;
 		}
 
 		if (! $moduletag)
@@ -1272,7 +1281,6 @@ class User extends CommonObject
 			$sql.= " WHERE rowid = ".$this->id;
 
 			dol_syslog(get_class($this)."::setPassword sql=hidden", LOG_DEBUG);
-			//dol_syslog("User::Password sql=".$sql);
 			$result = $this->db->query($sql);
 			if ($result)
 			{
@@ -1423,20 +1431,20 @@ class User extends CommonObject
 			$url = $urlwithouturlroot.DOL_URL_ROOT.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordmd5=".dol_hash($password);
 			$mesg.= $url."\n\n";
 			$mesg.= "If you didn't ask anything, just forget this email\n\n";
-			dol_syslog("User::send_password url=".$url);
+			dol_syslog(get_class($this)."::send_password url=".$url);
 		}
-		$mailfile = new CMailFile(
-			$subject,
-			$this->email,
-			$conf->notification->email_from,
-			$mesg,
-			array(),
-			array(),
-			array(),
-		    '',
-		    '',
-			0,
-			$msgishtml
+        $mailfile = new CMailFile(
+            $subject,
+            $this->email,
+            $conf->notification->email_from,
+            $mesg,
+            array(),
+            array(),
+            array(),
+            '',
+            '',
+            0,
+            $msgishtml
 		);
 
 		if ($mailfile->sendfile())

@@ -52,10 +52,11 @@ if ($dolibarr_main_db_type == "pgsql")  $choix=2;
 if ($dolibarr_main_db_type == "mssql")  $choix=3;
 //if (empty($choix)) dol_print_error('','Database type '.$dolibarr_main_db_type.' not supported into etape2.php page');
 
-// Init "forced values" to nothing. "forced values" are used after a Doliwamp install wizard.
+// Now we load forced value from install.forced.php file.
 $useforcedwizard=false;
-if (file_exists("./install.forced.php")) { $useforcedwizard=true; include_once("./install.forced.php"); }
-else if (file_exists("/etc/dolibarr/install.forced.php")) { $useforcedwizard=include_once("/etc/dolibarr/install.forced.php"); }
+$forcedfile="./install.forced.php";
+if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
+if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once($forcedfile); }
 
 dolibarr_install_syslog("--- etape2: Entering etape2.php page");
 

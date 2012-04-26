@@ -1,5 +1,5 @@
--- Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2011 Philippe Grand
+-- Copyright (C) 2011-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2011      Philippe Grand
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,10 +21,13 @@
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
-INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES (1, 'SRC_INTE',       'Web site', 1);
-INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES (2, 'SRC_CAMP_MAIL',  'Mailing campaign', 1);
-INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES (3, 'SRC_CAMP_PHO',   'Phone campaign', 1);
-INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES (4, 'SRC_CAMP_FAX',   'Fax campaign', 1);
-INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES (5, 'SRC_COMM',       'Commercial contact', 1);
-INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES (6, 'SRC_SHOP',       'Shop contact', 1);
-INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES (7, 'SRC_CAMP_EMAIL', 'EMailing campaign', 1);
+INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES ( 1, 'SRC_INTE',       'Web site', 1);
+INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES ( 2, 'SRC_CAMP_MAIL',  'Mailing campaign', 1);
+INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES ( 3, 'SRC_CAMP_PHO',   'Phone campaign', 1);
+INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES ( 4, 'SRC_CAMP_FAX',   'Fax campaign', 1);
+INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES ( 5, 'SRC_COMM',       'Commercial contact', 1);
+INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES ( 6, 'SRC_SHOP',       'Shop contact', 1);
+INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES ( 7, 'SRC_CAMP_EMAIL', 'EMailing campaign', 1);
+INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES ( 8, 'SRC_WOM',        'Word of mount', 1);
+INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES ( 9, 'SRC_PARTNER',    'Partner', 1);
+INSERT INTO llx_c_input_reason (rowid,code,label,active) VALUES (10, 'SRC_EMPLOYEE',   'Employee', 1);

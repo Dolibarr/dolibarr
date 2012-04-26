@@ -27,14 +27,15 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php');
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
 
-$action=GETPOST('action');
-$id=GETPOST('id','int');
-
 $langs->load("companies");
 $langs->load("members");
 $langs->load("bills");
 
-if (!$user->rights->adherent->lire) accessforbidden();
+$action=GETPOST('action','alpha');
+$id=GETPOST('id','int');
+
+// Security check
+$result=restrictedArea($user,'adherent',$id);
 
 $object = new Adherent($db);
 $result=$object->fetch($id);
@@ -49,7 +50,7 @@ if ($result > 0)
  * Actions
  */
 
-if ($_POST["action"] == 'update' && $user->rights->adherent->creer && ! $_POST["cancel"])
+if ($action == 'update' && $user->rights->adherent->creer && ! $_POST["cancel"])
 {
 	$db->begin();
 
@@ -174,7 +175,7 @@ if ($id)
 
 }
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>

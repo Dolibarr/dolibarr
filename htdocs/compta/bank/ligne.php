@@ -317,7 +317,7 @@ if ($result)
                 }
                 else if ($links[$key]['type']=='company') {
                     print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$links[$key]['url_id'].'">';
-                    print img_object($langs->trans('ShowThirdParty'),'company').' ';
+                    print img_object($langs->trans('ShowCompany'),'company').' ';
                     print $links[$key]['label'];
                     print '</a>';
                 }
@@ -539,6 +539,7 @@ if ($result)
                 {
                     print $langs->trans("AccountStatement").' <input name="num_rel" class="flat" value="'.$objp->num_releve.'"'.($objp->rappro?' disabled="disabled"':'').'>';
                 }
+                if ($objp->num_releve) print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?num='.$objp->num_releve.'&account='.$acct->id.'">'.$langs->trans("AccountStatement").' '.$objp->num_releve.')</a>';
                 print '</td><td align="center" rowspan="2" width="20%"><input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
             }
             else

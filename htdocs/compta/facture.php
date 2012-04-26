@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
@@ -835,7 +835,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
                                     0,
                                     $lines[$i]->info_bits,
                                     $lines[$i]->fk_remise_except,
-        							'HT',
+                                    'HT',
                                     0,
                                     $product_type,
                                     $lines[$i]->rang,
@@ -1078,7 +1078,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
                     $date_end,
                     0,
                     $info_bits,
-    				'',
+                    '',
                     $price_base_type,
                     $pu_ttc,
                     $type,
@@ -1190,7 +1190,7 @@ else if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['sa
             $vat_rate,
             $localtax1_rate,
             $localtax2_rate,
-    		'HT',
+            'HT',
             $info_bits,
             $type,
             GETPOST('fk_parent_line')
@@ -1924,7 +1924,7 @@ if ($action == 'create')
             // Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
             $objectsrc->remise_absolue=$remise_absolue;
             $objectsrc->remise_percent=$remise_percent;
-            $objectsrc->update_price(1);
+            $objectsrc->update_price(1,-1,1);
         }
 
         print "\n<!-- ".$classname." info -->";
@@ -2143,16 +2143,18 @@ else
                     $text.=$notify->confirmMessage('NOTIFY_VAL_FAC',$object->socid);
                 }
                 $formquestion=array();
+
                 if ($object->type != 3 && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $object->hasProductsOrServices(1))
                 {
                     $langs->load("stocks");
                     require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
                     $formproduct=new FormProduct($db);
+                    $label=$object->type==2?$langs->trans("SelectWarehouseForStockIncrease"):$langs->trans("SelectWarehouseForStockDecrease");
                     $formquestion=array(
                     //'text' => $langs->trans("ConfirmClone"),
                     //array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
                     //array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
-                    array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
+                    array('type' => 'other', 'name' => 'idwarehouse',   'label' => $label,   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
                 }
                 if ($object->type != 2 && $object->total_ttc < 0)    // Can happen only if $conf->global->FACTURE_ENABLE_NEGATIVE is on
                 {
@@ -2171,11 +2173,12 @@ else
                     $langs->load("stocks");
                     require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
                     $formproduct=new FormProduct($db);
+                    $label=$object->type==2?$langs->trans("SelectWarehouseForStockDecrease"):$langs->trans("SelectWarehouseForStockIncrease");
                     $formquestion=array(
                     //'text' => $langs->trans("ConfirmClone"),
                     //array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
                     //array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
-                    array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
+                    array('type' => 'other', 'name' => 'idwarehouse',   'label' => $label,   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
                 }
 
                 $formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id,$langs->trans('UnvalidateBill'),$text,'confirm_modif',$formquestion,"yes",1);
@@ -3182,7 +3185,7 @@ else
                 $formmail->withcancel=1;
                 // Tableau des substitutions
                 $formmail->substit['__FACREF__']=$object->ref;
-                $formmail->substit['__SIGNATURE__']='';
+                $formmail->substit['__SIGNATURE__']=$user->signature;
                 $formmail->substit['__PERSONALIZED__']='';
                 // Tableau des parametres complementaires du post
                 $formmail->param['action']=$action;

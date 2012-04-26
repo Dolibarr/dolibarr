@@ -115,6 +115,7 @@ class Export
 						// Defined if module is enabled
 						$enabled=true;
 						$part=strtolower(preg_replace('/^mod/i','',$modulename));
+						if ($part == 'propale') $part='propal';
 						if (empty($conf->$part->enabled)) $enabled=false;
 
 						if ($enabled)

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,6 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
 $langs->load("members");
 $langs->load("companies");
 
-$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
-
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -43,27 +41,32 @@ $pagenext = $page + 1;
 if (! $sortorder) {  $sortorder="ASC"; }
 if (! $sortfield) {  $sortfield="d.nom"; }
 
-$filter=$_GET["filter"];
-$statut=isset($_GET["statut"])?$_GET["statut"]:'';
+$action=GETPOST("action");
+$filter=GETPOST("filter");
+$statut=GETPOST("statut");
+$search=GETPOST("search");
+$search_ref=GETPOST("search_ref");
+$search_nom=GETPOST("search_nom");
+$search_prenom=GETPOST("search_prenom");
+$search_login=GETPOST("search_login");
+$type=GETPOST("type");
+$search_email=GETPOST("search_email");
+$search_categ=GETPOST("search_categ");
+$sall=GETPOST("sall",'int');
 
-
-if ($_REQUEST["button_removefilter"])
+if (GETPOST("button_removefilter"))
 {
-	$_GET["search_nom"]="";
-	$_REQUEST["search_nom"]="";
-	$_GET["search_prenom"]="";
-	$_REQUEST["search_prenom"]="";
-	$_GET["type"]="";
-	$_REQUEST["type"]="";
-	$_GET["search_email"]="";
-	$_REQUEST["search_email"]="";
-	$_GET["search_categ"]="";
-	$_REQUEST["search_categ"]="";
+    $search="";
+	$search_ref="";
+    $search_nom="";
+	$search_prenom="";
+	$search_login="";
+	$type="";
+	$search_email="";
+	$search_categ="";
 	$sall="";
 }
 
-// Load categ filters
-$search_categ = isset($_GET["search_categ"])?$_GET["search_categ"]:$_POST["search_categ"];
 
 
 /*
@@ -90,44 +93,44 @@ if ($search_categ) $sql.= " AND d.rowid = cf.fk_member";	// Join for the needed 
 $sql.= " AND d.entity = ".$conf->entity;
 if ($sall)
 {
-	$sql.=" AND (d.prenom like '%".$sall."%' OR d.nom like '%".$sall."%' OR d.societe like '%".$sall."%'";
-	$sql.=" OR d.email like '%".$sall."%' OR d.login like '%".$sall."%' OR d.adresse like '%".$sall."%'";
-	$sql.=" OR d.ville like '%".$sall."%' OR d.note like '%".$sall."%')";
+	$sql.=" AND (";
+	if (is_numeric($sall)) $sql.= "d.rowid = ".$sall." OR ";
+	$sql.=" d.prenom LIKE '%".$sall."%' OR d.nom LIKE '%".$sall."%' OR d.societe LIKE '%".$sall."%'";
+	$sql.=" OR d.email LIKE '%".$sall."%' OR d.login LIKE '%".$sall."%' OR d.adresse LIKE '%".$sall."%'";
+	$sql.=" OR d.ville LIKE '%".$sall."%' OR d.note LIKE '%".$sall."%')";
 }
-if ($_REQUEST["type"] > 0)
+if ($type > 0)
 {
-	$sql.=" AND t.rowid=".$_REQUEST["type"];
+	$sql.=" AND t.rowid=".$type;
 }
-if (isset($_GET["statut"]))
+if (isset($_GET["statut"]) || isset($_POST["statut"]))
 {
-	$sql.=" AND d.statut in ($statut)";     // Peut valoir un nombre ou liste de nombre separes par virgules
+	$sql.=" AND d.statut in (".$statut.")";     // Peut valoir un nombre ou liste de nombre separes par virgules
 }
-if ( $_POST["action"] == 'search')
+if ($search_ref)
 {
-	if (isset($_POST['search']) && $_POST['search'] != '')
-	{
-		$sql.= " AND (d.prenom LIKE '%".$_POST['search']."%' OR d.nom LIKE '%".$_POST['search']."%')";
-	}
+	if (is_numeric($search_ref)) $sql.= " AND (d.rowid = ".$search_ref.")";
+	else $sql.=" AND 1 = 2";    // Always wrong
 }
-if ($_GET["search_nom"])
+if ($search_nom)
 {
-	$sql.= " AND (d.prenom LIKE '%".$_GET["search_nom"]."%' OR d.nom LIKE '%".$_GET["search_nom"]."%')";
+	$sql.= " AND (d.prenom LIKE '%".$search_nom."%' OR d.nom LIKE '%".$search_nom."%')";
 }
-if ($_GET["search_login"])
+if ($search_login)
 {
-	$sql.= " AND d.login LIKE '%".$_GET["search_login"]."%'";
+	$sql.= " AND d.login LIKE '%".$search_login."%'";
 }
-if ($_GET["search_email"])
+if ($search_email)
 {
-	$sql.= " AND (d.email LIKE '%".$_GET["search_email"]."%')";
+	$sql.= " AND (d.email LIKE '%".$search_email."%')";
 }
 if ($filter == 'uptodate')
 {
-	$sql.=" AND datefin >= ".$db->idate($now);
+	$sql.=" AND datefin >= '".$db->idate($now)."'";
 }
 if ($filter == 'outofdate')
 {
-	$sql.=" AND datefin < ".$db->idate($now);
+	$sql.=" AND datefin < '".$db->idate($now)."'";
 }
 // Insert categ filter
 if ($search_categ)
@@ -147,6 +150,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
+dol_syslog("get list sql=".$sql);
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -163,12 +167,12 @@ if ($resql)
 		if ($statut == '1' && $filter=='outofdate')	{ $titre=$langs->trans("MembersListNotUpToDate"); }
 		if ($statut == '0')    { $titre=$langs->trans("MembersListResiliated"); }
 	}
-	elseif ($_POST["action"] == 'search')
+	elseif ($action == 'search')
 	{
 		$titre=$langs->trans("MembersListQualified");
 	}
 
-	if ($_REQUEST["type"] > 0)
+	if ($type > 0)
 	{
 		$membertype=new AdherentType($db);
 		$result=$membertype->fetch($_REQUEST["type"]);
@@ -176,16 +180,16 @@ if ($resql)
 	}
 
 	$param="";
-	if (isset($_GET["statut"]))       $param.="&statut=".$_GET["statut"];
-	if (isset($_GET["search_nom"]))   $param.="&search_nom=".$_GET["search_nom"];
-	if (isset($_GET["search_login"])) $param.="&search_login=".$_GET["search_login"];
-	if (isset($_GET["search_email"])) $param.="&search_email=".$_GET["search_email"];
-	if (isset($_GET["filter"]))       $param.="&filter=".$_GET["filter"];
+	if (isset($_GET["statut"]))       $param.="&statut=".$statut;
+	if ($search_nom)   $param.="&search_nom=".$search_nom;
+	if ($search_login) $param.="&search_login=".$search_login;
+	if ($search_email) $param.="&search_email=".$search_email;
+	if ($filter)       $param.="&filter=".$filter;
 	print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
 	if ($sall)
 	{
-		print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
+		print $langs->trans("Filter")." (".$langs->trans("Ref").", ".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
 	}
 
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
@@ -202,40 +206,44 @@ if ($resql)
 	if ($moreforfilter)
 	{
 		print '<tr class="liste_titre">';
-		print '<td class="liste_titre" colspan="8">';
+		print '<td class="liste_titre" colspan="9">';
 		print $moreforfilter;
 		print '</td></tr>';
 	}
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),"liste.php","d.nom",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Login"),"liste.php","d.login",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Type"),"liste.php","t.libelle",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Person"),"liste.php","d.morphy",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("EMail"),"liste.php","d.email",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),"liste.php","d.statut,d.datefin",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("EndSubscription"),"liste.php","d.datefin",$param,"",'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Action"),"liste.php","",$param,"",'width="60" align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.nom",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Login"),$_SERVER["PHP_SELF"],"d.login",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"t.libelle",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"d.morphy",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"d.email",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.statut,d.datefin",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("EndSubscription"),$_SERVER["PHP_SELF"],"d.datefin",$param,"",'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"",$param,"",'width="60" align="center"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
 	print '<tr class="liste_titre">';
 
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_nom" value="'.$_REQUEST["search_nom"].'" size="12"></td>';
+	print '<input class="flat" type="text" name="search_ref" value="'.$search_ref.'" size="4"></td>';
 
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_login" value="'.$_REQUEST["search_login"].'" size="7"></td>';
+	print '<input class="flat" type="text" name="search_nom" value="'.$search_nom.'" size="12"></td>';
+
+	print '<td class="liste_titre" align="left">';
+	print '<input class="flat" type="text" name="search_login" value="'.$search_login.'" size="7"></td>';
 
 	print '<td class="liste_titre">';
 	$listetype=$membertypestatic->liste_array();
-	print $form->selectarray("type", $listetype, $_REQUEST["type"], 1, 0, 0, '', 0, 12);
+	print $form->selectarray("type", $listetype, $type, 1, 0, 0, '', 0, 12);
 	print '</td>';
 
 	print '<td class="liste_titre">&nbsp;</td>';
 
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_email" value="'.$_REQUEST["search_email"].'" size="12"></td>';
+	print '<input class="flat" type="text" name="search_email" value="'.$search_email.'" size="12"></td>';
 
 	print '<td class="liste_titre">&nbsp;</td>';
 
@@ -254,19 +262,27 @@ if ($resql)
 		$objp = $db->fetch_object($resql);
 
 		$datefin=$db->jdate($objp->datefin);
-
-		// Nom
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		$memberstatic->id=$objp->rowid;
+		$memberstatic->ref=$objp->rowid;
 		$memberstatic->lastname=$objp->lastname;
 		$memberstatic->firstname=$objp->firstname;
+
+		$var=!$var;
+		print "<tr ".$bc[$var].">";
+
+		// Ref
+		print "<td>";
+		print $memberstatic->getNomUrl(1);
+		print "</td>\n";
+
+		// Lastname
 		if ($objp->societe != '')
 		{
-			print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowMember"),"user").' '.dol_trunc($memberstatic->getFullName($langs))." / ".dol_trunc($objp->societe,12)."</a></td>\n";
+			print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".dol_trunc($memberstatic->getFullName($langs))." / ".dol_trunc($objp->societe,12)."</a></td>\n";
 		}
 		else
 		{
-			print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowMember"),"user").' '.dol_trunc($memberstatic->getFullName($langs))."</a></td>\n";
+			print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".dol_trunc($memberstatic->getFullName($langs))."</a></td>\n";
 		}
 
 		// Login
@@ -343,7 +359,7 @@ else
 }
 
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

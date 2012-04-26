@@ -2,7 +2,7 @@
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2011	Laurent Destailleur		<eldy@users.sourceforge.org>
  * Copyright (C) 2011-2012	Regis Houssin			<regis@dolibarr.fr>
- * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011-2012  Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,34 +39,34 @@ $langs->load("paybox");
 if (!$user->admin)
   accessforbidden();
 
-$action = GETPOST("action");
+$action = GETPOST('action','alpha');
 
 if ($action == 'setvalue' && $user->admin)
 {
 	$db->begin();
-    $result=dolibarr_set_const($db, "PAYPAL_API_SANDBOX",GETPOST("PAYPAL_API_SANDBOX"),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "PAYPAL_API_SANDBOX",GETPOST('PAYPAL_API_SANDBOX','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "PAYPAL_API_USER",GETPOST("PAYPAL_API_USER"),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "PAYPAL_API_USER",GETPOST('PAYPAL_API_USER','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "PAYPAL_API_PASSWORD",GETPOST("PAYPAL_API_PASSWORD"),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "PAYPAL_API_PASSWORD",GETPOST('PAYPAL_API_PASSWORD','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "PAYPAL_API_SIGNATURE",GETPOST("PAYPAL_API_SIGNATURE"),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "PAYPAL_API_SIGNATURE",GETPOST('PAYPAL_API_SIGNATURE','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "PAYPAL_CREDITOR",GETPOST("PAYPAL_CREDITOR"),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "PAYPAL_CREDITOR",GETPOST('PAYPAL_CREDITOR','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "PAYPAL_API_INTEGRAL_OR_PAYPALONLY",GETPOST("PAYPAL_API_INTEGRAL_OR_PAYPALONLY"),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "PAYPAL_API_INTEGRAL_OR_PAYPALONLY",GETPOST('PAYPAL_API_INTEGRAL_OR_PAYPALONLY','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "PAYPAL_CSS_URL",GETPOST("PAYPAL_CSS_URL"),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "PAYPAL_CSS_URL",GETPOST('PAYPAL_CSS_URL','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "PAYPAL_SECURITY_TOKEN",GETPOST("PAYPAL_SECURITY_TOKEN"),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "PAYPAL_SECURITY_TOKEN",GETPOST('PAYPAL_SECURITY_TOKEN','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "PAYPAL_SECURITY_TOKEN_UNIQUE",GETPOST("PAYPAL_SECURITY_TOKEN_UNIQUE"),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "PAYPAL_SECURITY_TOKEN_UNIQUE",GETPOST('PAYPAL_SECURITY_TOKEN_UNIQUE','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "PAYPAL_ADD_PAYMENT_URL",GETPOST("PAYPAL_ADD_PAYMENT_URL"),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "PAYPAL_ADD_PAYMENT_URL",GETPOST('PAYPAL_ADD_PAYMENT_URL','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "PAYPAL_MESSAGE_OK",GETPOST("PAYPAL_MESSAGE_OK"),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "PAYPAL_MESSAGE_OK",GETPOST('PAYPAL_MESSAGE_OK','alpha'),'chaine',0,'',$conf->entity);
     if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "PAYPAL_MESSAGE_KO",GETPOST("PAYPAL_MESSAGE_KO"),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "PAYPAL_MESSAGE_KO",GETPOST('PAYPAL_MESSAGE_KO','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
 	
 	if (! $error)
@@ -286,12 +286,12 @@ if ($conf->commande->enabled)
 	    $langs->load("orders");
 	    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	    print $langs->trans("EnterRefToBuildUrl",$langs->transnoentitiesnoconv("Order")).': ';
-        print '<input type="text class="flat" id="generate_order_ref" name="generate_order_ref" value="'.GETPOST('generate_order_ref').'" size="10">';
+        print '<input type="text class="flat" id="generate_order_ref" name="generate_order_ref" value="'.GETPOST('generate_order_ref','alpha').'" size="10">';
         print '<input type="submit" class="none" value="'.$langs->trans("GetSecuredUrl").'">';
-        if (GETPOST('generate_order_ref'))
+        if (GETPOST('generate_order_ref','alpha'))
         {
             print '<br> -> <strong>';
-            $url=getPaypalPaymentUrl(0,'order',GETPOST('generate_order_ref'));
+            $url=getPaypalPaymentUrl(0,'order',GETPOST('generate_order_ref','alpha'));
             print $url;
             print "</strong><br>\n";
         }
@@ -308,12 +308,12 @@ if ($conf->facture->enabled)
 	    $langs->load("bills");
 	    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	    print $langs->trans("EnterRefToBuildUrl",$langs->transnoentitiesnoconv("Invoice")).': ';
-        print '<input type="text class="flat" id="generate_invoice_ref" name="generate_invoice_ref" value="'.GETPOST('generate_invoice_ref').'" size="10">';
+        print '<input type="text class="flat" id="generate_invoice_ref" name="generate_invoice_ref" value="'.GETPOST('generate_invoice_ref','alpha').'" size="10">';
         print '<input type="submit" class="none" value="'.$langs->trans("GetSecuredUrl").'">';
-        if (GETPOST('generate_invoice_ref'))
+        if (GETPOST('generate_invoice_ref','alpha'))
         {
             print '<br> -> <strong>';
-            $url=getPaypalPaymentUrl(0,'invoice',GETPOST('generate_invoice_ref'));
+            $url=getPaypalPaymentUrl(0,'invoice',GETPOST('generate_invoice_ref','alpha'));
             print $url;
             print "</strong><br>\n";
         }
@@ -330,12 +330,12 @@ if ($conf->contrat->enabled)
 	    $langs->load("contract");
 	    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	    print $langs->trans("EnterRefToBuildUrl",$langs->transnoentitiesnoconv("Contract")).': ';
-        print '<input type="text class="flat" id="generate_contract_ref" name="generate_contract_ref" value="'.GETPOST('generate_contract_ref').'" size="10">';
+        print '<input type="text class="flat" id="generate_contract_ref" name="generate_contract_ref" value="'.GETPOST('generate_contract_ref','alpha').'" size="10">';
         print '<input type="submit" class="none" value="'.$langs->trans("GetSecuredUrl").'">';
         if (GETPOST('generate_contract_ref'))
         {
             print '<br> -> <strong>';
-            $url=getPaypalPaymentUrl(0,'contractline',GETPOST('generate_contract_ref'));
+            $url=getPaypalPaymentUrl(0,'contractline',GETPOST('generate_contract_ref','alpha'));
             print $url;
             print "</strong><br>\n";
         }
@@ -352,12 +352,12 @@ if ($conf->adherent->enabled)
 	    $langs->load("members");
 	    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	    print $langs->trans("EnterRefToBuildUrl",$langs->transnoentitiesnoconv("Member")).': ';
-        print '<input type="text class="flat" id="generate_member_ref" name="generate_member_ref" value="'.GETPOST('generate_member_ref').'" size="10">';
+        print '<input type="text class="flat" id="generate_member_ref" name="generate_member_ref" value="'.GETPOST('generate_member_ref','alpha').'" size="10">';
         print '<input type="submit" class="none" value="'.$langs->trans("GetSecuredUrl").'">';
         if (GETPOST('generate_member_ref'))
         {
             print '<br> -> <strong>';
-            $url=getPaypalPaymentUrl(0,'membersubscription',GETPOST('generate_member_ref'));
+            $url=getPaypalPaymentUrl(0,'membersubscription',GETPOST('generate_member_ref','alpha'));
             print $url;
             print "</strong><br>\n";
         }

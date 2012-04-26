@@ -259,7 +259,7 @@ for ($i=1; $i<=4; $i++) {
 /*
  * Documents generes
  */
-$filedir=$conf->societe->dir_output.'/'.$socid;
+$filedir=$conf->societe->multidir_output[$this->control->tpl['entity']].'/'.$socid;
 $urlsource=$_SERVER["PHP_SELF"]."?socid=".$socid;
 $genallowed=$user->rights->societe->creer;
 $delallowed=$user->rights->societe->supprimer;

@@ -3,6 +3,7 @@ CHARSET=UTF-8
 OrdersArea=Espace commandes clients
 SuppliersOrdersArea=Espace commandes fournisseurs
 OrderCard=Fiche commande
+OrderId=Id commande
 Order=Commande
 Orders=Commandes
 OrderLine=Ligne de commande
@@ -109,6 +110,7 @@ PaymentOrderRef=Paiement commande %s
 CloneOrder=Cloner commande
 ConfirmCloneOrder=Êtes-vous sûr de vouloir cloner cette commande <b>%s</b> ?
 DispatchSupplierOrder=Réception de la commande fournisseur %s
+DateDeliveryPlanned=Date de livraison prévue
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Responsable suivi commande client
 TypeContact_commande_internal_SHIPPING=Responsable envoi commande client

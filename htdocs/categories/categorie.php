@@ -75,7 +75,7 @@ if ($id || $ref)
 		$objecttype = 'adherent&categorie';
 		$objectid = isset($id)?$id:(isset($ref)?$ref:'');
 		$dbtablename = 'adherent';
-		$fieldid = isset($ref)?'ref':'rowid';
+		$fieldid = ! empty($ref)?'ref':'rowid';
 	}
 }
 
@@ -424,6 +424,7 @@ else if ($id || $ref)
  * 	@param		DoliDb		$db			Database handler
  * 	@param		Object		$object		Object we want to see categories it can be classified into
  * 	@param		int			$typeid		Type of category (0, 1, 2, 3)
+ *  @param		int			$socid		Id thirdparty
  *  @return		int			0
  */
 function formCategory($db,$object,$typeid,$socid=0)

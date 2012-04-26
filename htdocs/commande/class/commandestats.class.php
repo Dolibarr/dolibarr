@@ -46,7 +46,7 @@ class CommandeStats extends Stats
 	/**
 	 * Constructor
 	 *
-	 * @param 	DoliDB	$DB		   Database handler
+	 * @param 	DoliDB	$db		   Database handler
 	 * @param 	int		$socid	   Id third party for filter
 	 * @param 	string	$mode	   Option
 	 * @param   int		$userid    Id user for filter

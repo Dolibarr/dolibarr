@@ -47,8 +47,8 @@ print '<div class="liste_articles">';
 
 require ('tpl/liste_articles.tpl.php');
 
-$obj_facturation->prix_total_ht($lst_total_ht);
-$obj_facturation->prix_total_ttc($lst_total_ttc);
+$obj_facturation->prixTotalHt($lst_total_ht);
+$obj_facturation->prixTotalTtc($lst_total_ttc);
 
 print '</div>';
 

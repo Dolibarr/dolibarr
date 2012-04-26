@@ -55,14 +55,10 @@ class Categorie
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db     Database handler
-	 *  @param		int			$id		Id of category to fetch during init
 	 */
-	function Categorie($db, $id=-1)
+	function __construct($db)
 	{
 		$this->db = $db;
-		$this->id = $id;
-
-		if ($id != -1) $this->fetch($this->id);
 	}
 
 	/**
@@ -73,7 +69,7 @@ class Categorie
 	 */
 	function fetch($id)
 	{
-		$sql = "SELECT rowid, label, description, fk_soc, visible, type";
+		$sql = "SELECT rowid, entity, label, description, fk_soc, visible, type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
 		$sql.= " WHERE rowid = ".$id;
 
@@ -83,12 +79,13 @@ class Categorie
 		{
 			$res = $this->db->fetch_array($resql);
 
-			$this->id		       = $res['rowid'];
-			$this->label	     = $res['label'];
-			$this->description = $res['description'];
-			$this->socid       = $res['fk_soc'];
-			$this->visible     = $res['visible'];
-			$this->type        = $res['type'];
+			$this->id			= $res['rowid'];
+			$this->label		= $res['label'];
+			$this->description	= $res['description'];
+			$this->socid		= $res['fk_soc'];
+			$this->visible		= $res['visible'];
+			$this->type			= $res['type'];
+			$this->entity		= $res['entity'];
 
 			$this->db->free($resql);
 		}
@@ -523,22 +520,28 @@ class Categorie
 	/**
 	 * 	Return list of contents of a category
 	 *
-	 * 	@param	string	$field		Field name for select in table. Full field name will be fk_field.
-	 * 	@param	string	$classname	PHP Class of object to store entity
-	 * 	@param	string	$table		Table name for select in table. Full table name will be PREFIX_categorie_table.
+	 * 	@param	string	$field				Field name for select in table. Full field name will be fk_field.
+	 * 	@param	string	$classname			PHP Class of object to store entity
+	 * 	@param	string	$category_table		Table name for select in table. Full table name will be PREFIX_categorie_table.
+	 *	@param	string	$object_table		Table name for select in table. Full table name will be PREFIX_table.
 	 *	@return	void
 	 */
-	function get_type($field,$classname,$table='')
+	function get_type($field,$classname,$category_table='',$object_table='')
 	{
 		$objs = array();
 
 		// Clean parameters
-		if (empty($table)) $table=$field;
+		if (empty($category_table)) $category_table=$field;
+		if (empty($object_table)) $object_table=$field;
 
-		$sql = "SELECT fk_".$field." FROM ".MAIN_DB_PREFIX."categorie_".$table;
-		$sql.= " WHERE fk_categorie = ".$this->id;
+		$sql = "SELECT c.fk_".$field;
+		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$category_table." as c";
+		$sql.= ", ".MAIN_DB_PREFIX.$object_table." as o";
+		$sql.= " WHERE c.fk_categorie = ".$this->id;
+		$sql.= " AND c.fk_".$field." = o.rowid";
+		$sql.= " AND o.entity IN (".getEntity($field, 1).")";
 
-		dol_syslog("Categorie::get_type sql=".$sql);
+		dol_syslog(get_class($this)."::get_type sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -553,7 +556,7 @@ class Categorie
 		else
 		{
 			$this->error=$this->db->error().' sql='.$sql;
-			dol_syslog("Categorie::get_type ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::get_type ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -1278,6 +1281,8 @@ class Categorie
 	 */
 	function liste_photos($dir,$nbmax=0)
 	{
+		include_once(DOL_DOCUMENT_ROOT ."/core/lib/files.lib.php");
+		
 		$nbphoto=0;
 		$tabobj=array();
 
@@ -1290,7 +1295,7 @@ class Categorie
             {
     			while (($file = readdir($handle)) != false)
     			{
-    				if (is_file($dir.$file))
+    				if (dol_is_file($dir.$file) && preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$dir.$file))
     				{
     					$nbphoto++;
     					$photo = $file;

@@ -106,10 +106,8 @@ class Commande extends CommonObject
      *
      *  @param		DoliDB		$db      Database handler
      */
-    function Commande($db)
+    function __construct($db)
     {
-        global $langs;
-        $langs->load('orders');
         $this->db = $db;
 
         $this->remise = 0;
@@ -620,7 +618,8 @@ class Commande extends CommonObject
 
         // $date_commande is deprecated
         $date = ($this->date_commande ? $this->date_commande : $this->date);
-
+        
+        $now=dol_now();
 
         $this->db->begin();
 
@@ -630,7 +629,7 @@ class Commande extends CommonObject
         $sql.= ", remise_absolue, remise_percent";
         $sql.= ", entity";
         $sql.= ")";
-        $sql.= " VALUES ('(PROV)',".$this->socid.", ".$this->db->idate(gmmktime()).", ".$user->id;
+        $sql.= " VALUES ('(PROV)',".$this->socid.", ".$this->db->idate($now).", ".$user->id;
         $sql.= ", ".($this->fk_project?$this->fk_project:"null");
         $sql.= ", ".$this->db->idate($date);
         $sql.= ", ".($this->source>=0 && $this->source != '' ?$this->source:'null');
@@ -2348,7 +2347,7 @@ class Commande extends CommonObject
     {
         global $conf, $user;
 
-        $now=gmmktime();
+        $now=dol_now();
 
         $this->nbtodo=$this->nbtodolate=0;
         $clause = " WHERE";

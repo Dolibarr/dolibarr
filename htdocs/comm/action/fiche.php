@@ -420,7 +420,7 @@ if ($action == 'create')
 	print '<form name="formaction" action="'.DOL_URL_ROOT.'/comm/action/fiche.php" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add_action">';
-	print '<input type="hidden" name="backtopage" value="'.(! empty($backtopage) ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
+	print '<input type="hidden" name="backtopage" value="'.((! empty($backtopage) && $backtopage != '1') ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
 	if (GETPOST("actioncode") == 'AC_RDV') print_fiche_titre($langs->trans("AddActionRendezVous"));
 	else print_fiche_titre($langs->trans("AddAnAction"));
@@ -673,7 +673,7 @@ if ($id)
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="ref_ext" value="'.$act->ref_ext.'">';
-		print '<input type="hidden" name="backtopage" value="'.(! empty($backtopage) ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
+		print '<input type="hidden" name="backtopage" value="'.((! empty($backtopage) && $backtopage != '1')? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
 		print '<table class="border" width="100%">';
 
@@ -812,7 +812,7 @@ if ($id)
 		else print dol_print_date($act->datep,'day');
 		if ($act->percentage == 0 && $act->datep && $act->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td>';
-		print '<td rowspan="3" align="center" valign="middle" width="180">'."\n";
+		print '<td rowspan="4" align="center" valign="middle" width="180">'."\n";
         print '<form name="listactionsfiltermonth" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="show_month">';
@@ -856,7 +856,7 @@ if ($id)
 		print '</td></tr>';
 
         // Location
-        print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$act->location.'</td></tr>';
+        print '<tr><td>'.$langs->trans("Location").'</td><td colspan="2">'.$act->location.'</td></tr>';
 
 		print '</table><br><br><table class="border" width="100%">';
 

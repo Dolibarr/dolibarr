@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo    <jlb@j1b.org>
- * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2005-2007 Regis Houssin         <regis@dolibarr.fr>
  *
@@ -47,7 +47,7 @@ print '<ul>';
 print '<li>'.DOL_VERSION.' / <a href="http://www.gnu.org/copyleft/gpl.html">GNU-GPL</a></li>';
 print '</ul>';
 
-print "<br>\n";
+//print "<br>\n";
 
 print $langs->trans("Developpers").':';
 print '<ul>';
@@ -55,37 +55,37 @@ print '<li>'.$langs->trans("SeeWikiForAllTeam").': <a href="http://wiki.dolibarr
 print '<li>'.$langs->trans("DoliForge").': <a href="http://www.doliforge.org" target="_blank">http://wwww.doliforge.org</a></li>';
 print '</ul>';
 
-print "<br>\n";
+//print "<br>\n";
 
 print $langs->trans("OtherInformations").':';
 
 print '<ul>';
 print '<li>';
-print '<a target="blank" href="http://www.dolibarr.org/">'.$langs->trans("OfficialWebSite").'</a>';
+print '<a target="_blank" href="http://www.dolibarr.org/">'.$langs->trans("OfficialWebSite").'</a>';
 print '</li>';
 // If the French language, it displays French website
 if (preg_match('/^fr_/i',$langs->getDefaultLang()))
 {
 	print '<li>';
-	print '<a target="blank" href="http://www.dolibarr.fr/">'.$langs->trans("OfficialWebSiteFr").'</a>';
+	print '<a target="_blank" href="http://www.dolibarr.fr/">'.$langs->trans("OfficialWebSiteFr").'</a>';
 	print '</li>';
 }
 print '<li>';
-print '<a target="blank" href="http://wiki.dolibarr.org/">'.$langs->trans("OfficialWiki").'</a>';
+print '<a target="_blank" href="http://wiki.dolibarr.org/">'.$langs->trans("OfficialWiki").'</a>';
 print '</li>';
 print '</ul>';
 
 print $langs->trans("Demo").':';
 print '<ul>';
 print '<li>';
-print '<a target="blank" href="http://www.dolibarr.org/onlinedemo/">'.$langs->trans("OfficialDemo").'</a>';
+print '<a target="_blank" href="http://www.dolibarr.org/onlinedemo/">'.$langs->trans("OfficialDemo").'</a>';
 print '</li>';
 print '</ul>';
 
 print $langs->trans("ModulesMarketPlaces").':';
 print '<ul>';
 print '<li>';
-print '<a target="blank" href="http://www.dolistore.com">'.$langs->trans("OfficialMarketPlace").'</a>';
+print '<a target="_blank" href="http://www.dolistore.com">'.$langs->trans("OfficialMarketPlace").'</a>';
 print '</li>';
 print '</ul>';
 
@@ -103,7 +103,24 @@ print $langs->trans("Foundation").':<br>';
 print '<ul>';
 $url='http://wiki.dolibarr.org/index.php/Subscribe';
 if (preg_match('/^fr_/i',$langs->getDefaultLang())) $url='http://wiki.dolibarr.org/index.php/Adh%C3%A9rer';
-print '<li><a href="'.$url.'">'.$langs->trans("SubscribeToFoundation").'</a></li>';
+if (preg_match('/^es_/i',$langs->getDefaultLang())) $url='http://wiki.dolibarr.org/index.php/Subscribirse';
+print '<li><a href="'.$url.'" target="_blank">'.$langs->trans("SubscribeToFoundation").'</a></li>';
+print '</ul>';
+
+
+print $langs->trans("OfficialWebHostingService");
+$url='http://www.dolicloud.com'; $title='DoliCloud';
+print '<ul>';
+print '<li>';
+print '<a target="_blank" href="'.$url.'">'.$title.'</a>';
+print '</li>';
+if (preg_match('/^fr_/i',$langs->getDefaultLang()))
+{
+    $url='http://www.dolibox.fr'; $title='DoliBox';
+    print '<li>';
+    print '<a target="_blank" href="'.$url.'">'.$title.'</a>';
+    print '</li>';
+}
 print '</ul>';
 
 

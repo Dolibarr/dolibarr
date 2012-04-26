@@ -35,6 +35,7 @@ require_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
 
 $langs->load("admin");
 $langs->load("errors");
+$langs->load("orders");
 
 if (! $user->admin) accessforbidden();
 
@@ -47,8 +48,8 @@ $value = GETPOST('value','alpha');
 
 if ($action == 'updateMask')
 {
-	$maskconstorder=GETPOST("maskconstorder");
-	$maskorder=GETPOST("maskorder");
+	$maskconstorder=GETPOST('maskconstorder','alpha');
+	$maskorder=GETPOST('maskorder','alpha');
 
 	if ($maskconstorder) $res = dolibarr_set_const($db,$maskconstorder,$maskorder,'chaine',0,'',$conf->entity);
 
@@ -66,7 +67,7 @@ if ($action == 'updateMask')
 
 if ($action == 'specimen')
 {
-	$modele=GETPOST("module");
+	$modele=GETPOST('module','alpha');
 
 	$commande = new Commande($db);
 	$commande->initAsSpecimen();
@@ -111,8 +112,8 @@ if ($action == 'specimen')
 
 if ($action == 'set')
 {
-	$label = GETPOST("label");
-	$scandir = GETPOST("scandir");
+	$label = GETPOST('label','alpha');
+	$scandir = GETPOST('scandir','alpha');
 
 	$type='order';
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
@@ -142,8 +143,8 @@ if ($action == 'del')
 
 if ($action == 'setdoc')
 {
-	$label = GETPOST("label");
-	$scandir = GETPOST("scandir");
+	$label = GETPOST('label','alpha');
+	$scandir = GETPOST('scandir','alpha');
 
 	$db->begin();
 
@@ -312,7 +313,7 @@ foreach ($dirmodels as $reldir)
 						// Info
 						$htmltooltip='';
 						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$facture->type=0;
+						$commande->type=0;
 						$nextval=$module->getNextValue($mysoc,$commande);
 						if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
 						{

@@ -885,7 +885,7 @@ class Product extends CommonObject
 	 *  @param     	int		$newnpr         0=Standard vat rate, 1=Special vat rate for French NPR VAT
 	 * 	@return		int						<0 if KO, >0 if OK
 	 */
-	function update_price($id, $newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0)
+	function updatePrice($id, $newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0)
 	{
 		global $conf,$langs;
 
@@ -1015,7 +1015,7 @@ class Product extends CommonObject
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
-		$sql.= " datec, tms, import_key";
+		$sql.= " datec, tms, import_key, entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = '".$id."'";
 		else
@@ -1031,60 +1031,61 @@ class Product extends CommonObject
 		{
 			if ($this->db->num_rows($resql) > 0)
 			{
-				$object = $this->db->fetch_object($resql);
+				$obj = $this->db->fetch_object($resql);
 
-				$this->id					= $object->rowid;
-				$this->ref					= $object->ref;
-				$this->libelle				= $object->label;		// TODO deprecated
-				$this->label				= $object->label;
-				$this->description			= $object->description;
-				$this->note					= $object->note;
+				$this->id						= $obj->rowid;
+				$this->ref						= $obj->ref;
+				$this->libelle					= $obj->label;		// TODO deprecated
+				$this->label					= $obj->label;
+				$this->description				= $obj->description;
+				$this->note						= $obj->note;
 
-				$this->type					= $object->fk_product_type;
-				$this->status				= $object->tosell;
-				$this->status_buy			= $object->tobuy;
+				$this->type						= $obj->fk_product_type;
+				$this->status					= $obj->tosell;
+				$this->status_buy				= $obj->tobuy;
 
-	            $this->customcode			= $object->customcode;
-	            $this->country_id			= $object->fk_country;
-	            $this->country_code			= getCountry($this->country_id,2,$this->db);
-	            $this->price				= $object->price;
-				$this->price_ttc			= $object->price_ttc;
-				$this->price_min			= $object->price_min;
-				$this->price_min_ttc		= $object->price_min_ttc;
-				$this->price_base_type		= $object->price_base_type;
-				$this->tva_tx				= $object->tva_tx;
+	            $this->customcode				= $obj->customcode;
+	            $this->country_id				= $obj->fk_country;
+	            $this->country_code				= getCountry($this->country_id,2,$this->db);
+	            $this->price					= $obj->price;
+				$this->price_ttc				= $obj->price_ttc;
+				$this->price_min				= $obj->price_min;
+				$this->price_min_ttc			= $obj->price_min_ttc;
+				$this->price_base_type			= $obj->price_base_type;
+				$this->tva_tx					= $obj->tva_tx;
 				//! French VAT NPR
-				$this->tva_npr				= $object->tva_npr;
+				$this->tva_npr					= $obj->tva_npr;
 				//! Spanish local taxes
-				$this->localtax1_tx			= $object->localtax1_tx;
-				$this->localtax2_tx			= $object->localtax2_tx;
+				$this->localtax1_tx				= $obj->localtax1_tx;
+				$this->localtax2_tx				= $obj->localtax2_tx;
 
-				$this->finished				= $object->finished;
-				$this->duration				= $object->duration;
-				$this->duration_value		= substr($object->duration,0,dol_strlen($object->duration)-1);
-				$this->duration_unit		= substr($object->duration,-1);
-				$this->canvas				= $object->canvas;
-				$this->weight				= $object->weight;
-				$this->weight_units			= $object->weight_units;
-				$this->length				= $object->length;
-				$this->length_units			= $object->length_units;
-				$this->surface				= $object->surface;
-				$this->surface_units		= $object->surface_units;
-				$this->volume				= $object->volume;
-				$this->volume_units			= $object->volume_units;
-				$this->barcode				= $object->barcode;
-				$this->barcode_type			= $object->fk_barcode_type;
+				$this->finished					= $obj->finished;
+				$this->duration					= $obj->duration;
+				$this->duration_value			= substr($obj->duration,0,dol_strlen($obj->duration)-1);
+				$this->duration_unit			= substr($obj->duration,-1);
+				$this->canvas					= $obj->canvas;
+				$this->weight					= $obj->weight;
+				$this->weight_units				= $obj->weight_units;
+				$this->length					= $obj->length;
+				$this->length_units				= $obj->length_units;
+				$this->surface					= $obj->surface;
+				$this->surface_units			= $obj->surface_units;
+				$this->volume					= $obj->volume;
+				$this->volume_units				= $obj->volume_units;
+				$this->barcode					= $obj->barcode;
+				$this->barcode_type				= $obj->fk_barcode_type;
 
-				$this->accountancy_code_buy = $object->accountancy_code_buy;
-				$this->accountancy_code_sell= $object->accountancy_code_sell;
+				$this->accountancy_code_buy		= $obj->accountancy_code_buy;
+				$this->accountancy_code_sell	= $obj->accountancy_code_sell;
 
-				$this->seuil_stock_alerte = $object->seuil_stock_alerte;
-				$this->stock_reel         = $object->stock;
-				$this->pmp                = $object->pmp;
+				$this->seuil_stock_alerte		= $obj->seuil_stock_alerte;
+				$this->stock_reel				= $obj->stock;
+				$this->pmp						= $obj->pmp;
 
-				$this->date_creation      = $object->datec;
-				$this->date_modification  = $object->tms;
-				$this->import_key         = $object->import_key;
+				$this->date_creation			= $obj->datec;
+				$this->date_modification		= $obj->tms;
+				$this->import_key				= $obj->import_key;
+				$this->entity					= $obj->entity;
 
 				$this->db->free($resql);
 
@@ -2596,7 +2597,7 @@ class Product extends CommonObject
     						if ($nbbyrow) $return.= '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
 
     						$return.= "\n";
-    						$return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" class="lightbox" target="_blank">';
+    						$return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" class="lightbox" target="_blank">';
 
     						// Show image (width height=$maxHeight)
     						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
@@ -2604,11 +2605,11 @@ class Product extends CommonObject
     						$alt.=' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
     						if ($photo_vignette && $imgarray['height'] > $maxHeight) {
     							$return.= '<!-- Show thumb -->';
-    							$return.= '<img class="photo" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+    							$return.= '<img class="photo" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
     						}
     						else {
     							$return.= '<!-- Show original file -->';
-    							$return.= '<img class="photo" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
+    							$return.= '<img class="photo" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
     						}
 
     						$return.= '</a>'."\n";
@@ -2640,7 +2641,7 @@ class Product extends CommonObject
     					}
 
     					if ($size == 0) {     // Format origine
-    						$return.= '<img class="photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
+    						$return.= '<img class="photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'">';
 
     						if ($showfilename) $return.= '<br>'.$viewfilename;
     						if ($showaction)

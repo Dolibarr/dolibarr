@@ -145,5 +145,21 @@ class PdfDocTest extends PHPUnit_Framework_TestCase
     	$this->assertEquals($result,"PIDRESS - Label 1\nThis is a description with a é accent\n(Country of origin: France)");
     }
 
+    /**
+    * testPdfGetHeightForLogo
+    *
+    * @return void
+    */
+    public function testPdfGetHeightForLogo()
+    {
+        $file=dirname(__FILE__).'/img250x50.jpg';
+        $result=pdf_getHeightForLogo($file);
+        print __METHOD__." result=".$result."\n";
+    	$this->assertEquals($result,22);
+        $file=dirname(__FILE__).'/img250x20.png';
+        $result=pdf_getHeightForLogo($file);
+        print __METHOD__." result=".$result."\n";
+    	$this->assertEquals($result,10.4);
+    }
 }
 ?>

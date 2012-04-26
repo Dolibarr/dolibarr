@@ -130,7 +130,7 @@ class box_produits extends ModeleBoxes
 					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
                     'text' => $price);
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="center" width="20" nowrap="nowrap"',
+					$this->info_box_contents[$i][3] = array('td' => 'align="left" nowrap="nowrap"',
                     'text' => $price_base_type);
 
 					$this->info_box_contents[$i][4] = array('td' => 'align="right"',

@@ -34,16 +34,16 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 $langs->load("other");
 $langs->load("products");
 
-$action=GETPOST('action', 'alpha');
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action=GETPOST('action','alpha');
+$confirm=GETPOST('confirm','alpha');
 
 // Security check
-if (isset($_GET["id"]) || isset($_GET["ref"]))
-{
-	$id = isset($_GET["id"])?$_GET["id"]:(isset($_GET["ref"])?$_GET["ref"]:'');
-}
-$fieldid = isset($_GET["ref"])?'ref':'rowid';
+$fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
+$fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit|service',$id,'product&product','','',$fieldid);
+$result=restrictedArea($user,'produit|service',$fielvalue,'product&product','','',$fieldtype);
 
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
@@ -57,14 +57,13 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
 
-$product = new Product($db);
-if ($_GET['id'] || $_GET["ref"])
+$object = new Product($db);
+if ($id > 0 || ! empty($ref))
 {
-    if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
-    if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
+    $result = $object->fetch($id, $ref);
 
-    if ($conf->product->enabled) $upload_dir = $conf->product->dir_output.'/'.dol_sanitizeFileName($product->ref);
-    elseif ($conf->service->enabled) $upload_dir = $conf->service->dir_output.'/'.dol_sanitizeFileName($product->ref);
+    if ($conf->product->enabled) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+    elseif ($conf->service->enabled) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 }
 $modulepart='produit';
 
@@ -109,10 +108,10 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 
 $form = new Form($db);
 
-llxHeader("","",$langs->trans("CardProduct".$product->type));
+llxHeader("","",$langs->trans("CardProduct".$object->type));
 
 
-if ($product->id)
+if ($object->id)
 {
 	if ( $error_msg )
 	{
@@ -126,9 +125,9 @@ if ($product->id)
 		//if ($result >= 0) $mesg=$langs->trans("FileWasRemoced");
 	}
 
-	$head=product_prepare_head($product, $user);
-	$titre=$langs->trans("CardProduct".$product->type);
-	$picto=($product->type==1?'service':'product');
+	$head=product_prepare_head($object, $user);
+	$titre=$langs->trans("CardProduct".$object->type);
+	$picto=($object->type==1?'service':'product');
 	dol_fiche_head($head, 'documents', $titre, 0, $picto);
 
 
@@ -146,21 +145,21 @@ if ($product->id)
     // Ref
     print '<tr>';
     print '<td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $form->showrefnav($product,'ref','',1,'ref');
+	print $form->showrefnav($object,'ref','',1,'ref');
     print '</td>';
     print '</tr>';
 
     // Label
-    print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td></tr>';
+    print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->libelle.'</td></tr>';
 
 	// Status (to sell)
 	print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
-	print $product->getLibStatut(2,0);
+	print $object->getLibStatut(2,0);
 	print '</td></tr>';
 
 	// Status (to buy)
 	print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td>';
-	print $product->getLibStatut(2,1);
+	print $object->getLibStatut(2,1);
 	print '</td></tr>';
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
@@ -172,12 +171,12 @@ if ($product->id)
 
     // Affiche formulaire upload
    	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/product/document.php?id='.$product->id,'',0,0,($user->rights->produit->creer||$user->rights->service->creer));
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/product/document.php?id='.$object->id,'',0,0,($user->rights->produit->creer||$user->rights->service->creer));
 
 
 	// List of document
-	$param='&id='.$product->id;
-	$formfile->list_of_documents($filearray,$product,'produit',$param);
+	$param='&id='.$object->id;
+	$formfile->list_of_documents($filearray,$object,'produit',$param);
 
 }
 else
@@ -185,7 +184,7 @@ else
 	print $langs->trans("UnkownError");
 }
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>

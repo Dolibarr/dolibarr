@@ -23,6 +23,7 @@ class Odf
 		);
 		protected $file;
 		protected $contentXml;			// To store content of content.xml file
+		protected $stylesXml;			// To store content of styles.xml file
 		protected $manifestXml;			// To store content of META-INF/manifest.xml file
 		protected $tmpfile;
 		protected $tmpdir='';
@@ -82,6 +83,9 @@ class Odf
 			}
 			if (($this->manifestXml = $this->file->getFromName('META-INF/manifest.xml')) === false) {
  				throw new OdfException("Something is wrong with META-INF/manifest.xm in source file '$filename'");
+			}
+			if (($this->stylesXml = $this->file->getFromName('styles.xml')) === false) {
+				throw new OdfException("Nothing to parse - Check that the styles.xml file is correctly formed in source file '$filename'");
 			}
 			$this->file->close();
 
@@ -181,11 +185,13 @@ IMG;
 		 * Merge template variables
 		 * Called automatically for a save
 		 *
+         * @param  string	$type		'content' or 'styles'
 		 * @return void
 		 */
-		private function _parse()
+		private function _parse($type='content')
 		{
-			$this->contentXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->contentXml);
+            if ($type == 'content')	$this->contentXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->contentXml);
+            if ($type == 'styles')	$this->stylesXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->stylesXml);
 		}
 
 		/**
@@ -286,9 +292,14 @@ IMG;
 		 */
 		private function _save()
 		{
-			$res=$this->file->open($this->tmpfile);
-			$this->_parse();
+			$res=$this->file->open($this->tmpfile);    // tmpfile is odt template
+			$this->_parse('content');
+			$this->_parse('styles');
+
 			if (! $this->file->addFromString('content.xml', $this->contentXml)) {
+				throw new OdfException('Error during file export addFromString');
+			}
+			if (! $this->file->addFromString('styles.xml', $this->stylesXml)) {
 				throw new OdfException('Error during file export addFromString');
 			}
 			foreach ($this->images as $imageKey => $imageValue) {

@@ -19,15 +19,14 @@
 
 /**
  *		\file       htdocs/core/modules/supplier_invoice/modules_facturefournisseur.php
- *      \ingroup    facture fourniseur
+ *      \ingroup    facture fournisseur
  *      \brief      File that contain parent class for supplier invoices models
  */
 require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
 
 
 /**
- *	\class      ModelePDFSuppliersInvoices
- *	\brief      Parent class for supplier invoices models
+ *	Parent class for supplier invoices models
  */
 abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
 {
@@ -41,7 +40,7 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
      *  @param  string	$maxfilenamelength  Max length of value to show
      *  @return	array						List of numbers
 	 */
-	function liste_modeles($db,$maxfilenamelength=0)
+	static function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
 
@@ -57,15 +56,18 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
 }
 
 /**
- *	Create object on disk.
+ *	Create a document onto disk according to template module.
  *
- *	@param	    DoliDB		$db  			objet base de donnee
- *	@param	    Object		$object			object supplier invoice
+ *	@param	    DoliDB		$db  			Database handler
+ *	@param	    Object		$object			Object supplier invoice
  *	@param	    string		$modele			Force template to use ('' to not force)
- *	@param		Translate	$outputlangs	objet lang a utiliser pour traduction
+ *	@param		Translate	$outputlangs	Object lang a utiliser pour traduction
+ *  @param      int			$hidedetails    Hide details of lines
+ *  @param      int			$hidedesc       Hide description
+ *  @param      int			$hideref        Hide ref
  *  @return     int         				0 if KO, 1 if OK
  */
-function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs)
+function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
 	global $conf, $user, $langs;
 
@@ -81,7 +83,7 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs)
 
     $srctemplatepath='';
 
-	// Positionne modele sur le nom du modele de invoice fournisseur a utiliser
+	// Positionne le modele sur le nom du modele a utiliser
 	if (! dol_strlen($modele))
 	{
 		if (! empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF))
@@ -102,7 +104,7 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs)
         $srctemplatepath=$tmp[1];
     }
 
-	// Search template file
+	// Search template files
 	$file=''; $classname=''; $filefound=0;
 	$dirmodels=array('/');
 	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
@@ -134,7 +136,7 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs)
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($object,$outputlangs) > 0)
+		if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc) > 0)
 		{
 			$outputlangs->charset_output=$sav_charset_output;
 
@@ -145,7 +147,7 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs)
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($db);
-			$result=$interface->run_triggers('BILL_BUILDDOC',$object,$user,$langs,$conf);
+			$result=$interface->run_triggers('SUPPLIER_INVOICE_BUILDDOC',$object,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 

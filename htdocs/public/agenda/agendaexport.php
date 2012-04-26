@@ -55,9 +55,6 @@ require_once(DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php');
 // Security check
 if (! $conf->agenda->enabled) accessforbidden('',1,1,1);
 
-$mainmenu=isset($_GET["mainmenu"])?$_GET["mainmenu"]:"";
-$leftmenu=isset($_GET["leftmenu"])?$_GET["leftmenu"]:"";
-
 // Define format, type and filter
 $format='ical';
 $type='event';
@@ -152,19 +149,15 @@ if ($format == 'ical' || $format == 'vcal')
 		if ($contenttype)       header('Content-Type: '.$contenttype.($outputencoding?'; charset='.$outputencoding:''));
 		if ($attachment) 		header('Content-Disposition: attachment; filename="'.$shortfilename.'"');
 
-		// Ajout directives pour resoudre bug IE
-		//header('Cache-Control: Public, must-revalidate');
-		//header('Pragma: public');
-		
-		// Google Agenda import tweak
-		header('Cache-Control: max-age=7200, private, must-revalidate');
+		if ($cachedelay) header('Cache-Control: max-age='.$cachedelay.', private, must-revalidate');
+		else header('Cache-Control: private, must-revalidate');
 
 		// Clean parameters
 		$outputfile=$conf->agenda->dir_temp.'/'.$filename;
 		$result=readfile($outputfile);
 		if (! $result) print 'File '.$outputfile.' was empty.';
 
-	//	header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
+	    //header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
 		exit;
 	}
 	else
@@ -194,6 +187,8 @@ if ($format == 'rss')
 		// Ajout directives pour resoudre bug IE
 		//header('Cache-Control: Public, must-revalidate');
 		//header('Pragma: public');
+		if ($cachedelay) header('Cache-Control: max-age='.$cachedelay.', private, must-revalidate');
+		else header('Cache-Control: private, must-revalidate');
 
 		// Clean parameters
 		$outputfile=$conf->agenda->dir_temp.'/'.$filename;

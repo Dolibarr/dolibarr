@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2009 		Laurent Destailleur            <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2011  Juanjo Menent			       <jmenent@2byte.es>
+ * Copyright (C) 2010-2012  Juanjo Menent			       <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ $langs->load("banks");
 if (!$user->admin)
   accessforbidden();
 
-$action = GETPOST("action");
+$action = GETPOST('action','alpha');
 
 
 /*
@@ -45,7 +45,7 @@ $action = GETPOST("action");
 
 if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
 {
-	$free = GETPOST("BANK_CHEQUERECEIPT_FREE_TEXT");
+	$free = GETPOST('BANK_CHEQUERECEIPT_FREE_TEXT','alpha');
     $res = dolibarr_set_const($db, "BANK_CHEQUERECEIPT_FREE_TEXT",$free,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
@@ -63,7 +63,7 @@ if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
 //Order display of bank account
 if ($action == 'setbankorder')
 {
-	if (dolibarr_set_const($db, "BANK_SHOW_ORDER_OPTION",$_GET["value"],'chaine',0,'',$conf->entity) > 0)
+	if (dolibarr_set_const($db, "BANK_SHOW_ORDER_OPTION",GETPOST('value','alpha'),'chaine',0,'',$conf->entity) > 0)
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;

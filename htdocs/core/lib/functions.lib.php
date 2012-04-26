@@ -33,116 +33,7 @@
 
 if (! function_exists('json_encode'))
 {
-    /**
-     * Implement json_encode for PHP that does not support it
-     *
-     * @param	mixed	$elements		PHP Object to json encode
-     * @return 	string					Json encoded string
-     */
-    function json_encode($elements)
-    {
-    	$num = count($elements);
-
-    	// determine type
-    	if (is_numeric(key($elements)))
-    	{
-    		// indexed (list)
-    		$output = '[';
-    		for ($i = 0, $last = ($num - 1); isset($elements[$i]); ++$i)
-    		{
-    			if (is_array($elements[$i])) $output.= json_encode($elements[$i]);
-    			else $output .= _val($elements[$i]);
-    			if($i !== $last) $output.= ',';
-    		}
-    		$output.= ']';
-    	}
-    	else
-    	{
-    		// associative (object)
-    		$output = '{';
-    		$last = $num - 1;
-    		$i = 0;
-    		foreach($elements as $key => $value)
-    		{
-    			$output .= '"'.$key.'":';
-    			if (is_array($value)) $output.= json_encode($value);
-    			else $output .= _val($value);
-    			if ($i !== $last) $output.= ',';
-    			++$i;
-    		}
-    		$output.= '}';
-    	}
-
-    	// return
-    	return $output;
-    }
-
-    /**
-     * Return text according to type
-     *
-     * @param 	mixed	$val	Value to show
-     * @return	string			Formated value
-     */
-    function _val($val)
-    {
-    	if (is_string($val)) return '"'.rawurlencode($val).'"';
-    	elseif (is_int($val)) return sprintf('%d', $val);
-    	elseif (is_float($val)) return sprintf('%F', $val);
-    	elseif (is_bool($val)) return ($val ? 'true' : 'false');
-    	else  return 'null';
-    }
-}
-
-if (! function_exists('json_decode'))
-{
-	/**
-	 * Implement json_decode for PHP that does not support it
-	 *
-	 * @param	string	$json		Json encoded to PHP Object or Array
-	 * @param	bool	$assoc		False return an object, true return an array
-	 * @return 	mixed				Object or Array
-	 */
-	function json_decode($json, $assoc=false)
-	{
-		$comment = false;
-
-		$strLength = dol_strlen($json);
-		for ($i=0; $i<$strLength; $i++)
-		{
-			if (! $comment)
-			{
-				if (($json[$i] == '{') || ($json[$i] == '[')) $out.= 'array(';
-				else if (($json[$i] == '}') || ($json[$i] == ']')) $out.= ')';
-				else if ($json[$i] == ':') $out.= ' => ';
-				else $out.= $json[$i];
-			}
-			else $out.= $json[$i];
-			if ($json[$i] == '"' && $json[($i-1)]!="\\") $comment = !$comment;
-		}
-
-		// Return an array
-		eval('$array = '.$out.';');
-
-		// Return an object
-		if (! $assoc)
-		{
-			if (! empty($array))
-			{
-				$object = false;
-
-				foreach ($array as $key => $value)
-				{
-					$object->{$key} = $value;
-				}
-
-				return $object;
-			}
-
-			return false;
-		}
-
-		return $array;
-	}
+    include_once(DOL_DOCUMENT_ROOT ."/core/lib/json.lib.php");
 }
 
 /**
@@ -247,6 +138,7 @@ function getBrowserInfo()
     elseif (preg_match('/chrome(\/|\s)([\d\.]+)/i', $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='chrome';    $version=$reg[2]; }    // we can have 'chrome (Mozilla...) chrome x.y' in one string
     elseif (preg_match('/chrome/i',                 $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='chrome'; }
     elseif (preg_match('/iceweasel/i',$_SERVER["HTTP_USER_AGENT"]))                      { $name='iceweasel'; $version=$reg[2]; }
+    elseif (preg_match('/epiphany/i',$_SERVER["HTTP_USER_AGENT"]))                       { $name='epiphany';  $version=$reg[2]; }
     elseif ((empty($phone) || preg_match('/iphone/i',$_SERVER["HTTP_USER_AGENT"])) && preg_match('/safari(\/|\s)([\d\.]*)/i',$_SERVER["HTTP_USER_AGENT"], $reg)) { $name='safari'; $version=$reg[2]; }	// Safari is often present in string for mobile but its not.
     elseif (preg_match('/opera(\/|\s)([\d\.]*)/i',  $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='opera';     $version=$reg[2]; }
     elseif (preg_match('/msie(\/|\s)([\d\.]*)/i',   $_SERVER["HTTP_USER_AGENT"], $reg))  { $name='ie';        $version=$reg[2]; }    // MS products at end
@@ -275,7 +167,7 @@ function dol_shutdown()
  *  Return value of a param into GET or POST supervariable
  *
  *  @param	string	$paramname   Name of parameter to found
- *  @param	string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's alpha only)
+ *  @param	string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's alpha only, 'array'=check it's array)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get)
  *  @return string      		 Value found or '' if check fails
  */
@@ -289,16 +181,24 @@ function GETPOST($paramname,$check='',$method=0)
 
 	if (! empty($check))
 	{
-	    $out=trim($out);
 		// Check if numeric
-		if ($check == 'int' && ! preg_match('/^[-\.,0-9]+$/i',$out)) $out='';
+		if ($check == 'int' && ! preg_match('/^[-\.,0-9]+$/i',$out))
+		{
+			$out=trim($out);
+			$out='';
+		}
 		// Check if alpha
 		elseif ($check == 'alpha')
 		{
+			$out=trim($out);
 	    	// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
     		// '../' is dangerous because it allows dir transversals
 		    if (preg_match('/"/',$out)) $out='';
 			else if (preg_match('/\.\.\//',$out)) $out='';
+		}
+		elseif ($check == 'array')
+		{
+			if (! is_array($out) || empty($out)) $out=array();
 		}
 	}
 
@@ -545,19 +445,19 @@ function dol_escape_htmltag($stringtoescape,$keepb=0)
  *	Write log message into outputs. Possible outputs can be:
  *	A file if SYSLOG_FILE_ON defined:   	file name is then defined by SYSLOG_FILE
  *	Syslog if SYSLOG_SYSLOG_ON defined:    	facility is then defined by SYSLOG_FACILITY
- * 	Warning, syslog functions are bugged on Windows, generating memory protection faults. To solve
- *	this, use logging to files instead of syslog (see setup of module).
- *	Note: If SYSLOG_FILE_NO_ERROR defined, we never output any error message when writing to log fails.
+ *  Warning, syslog functions are bugged on Windows, generating memory protection faults. To solve
+ *  this, use logging to files instead of syslog (see setup of module).
+ *  Note: If SYSLOG_FILE_NO_ERROR defined, we never output any error message when writing to log fails.
  *  Note: You can get log message into html sources by adding parameter &logtohtml=1 (constant MAIN_LOGTOHTML must be set)
  *
- *	This function works only if syslog module is enabled.
+ *  This function works only if syslog module is enabled.
  * 	This must not use any call to other function calling dol_syslog (avoid infinite loop).
  *
  * 	@param  string		$message	Line to log. Ne doit pas etre traduit si level = LOG_ERR
- *	@param  int			$level		Log level
+ *  @param  int			$level		Log level
  *									On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
  *									On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
- *	@return	void
+ *  @return	void
  */
 function dol_syslog($message, $level=LOG_INFO)
 {
@@ -981,8 +881,8 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
  *  WARNING: This function always use PHP server timezone to return locale informations.
  *  Usage must be avoid.
  *
- *	@param	timestamp	$timestamp		Timestamp
- *	@param	boolean		$fast			Fast mode
+ *	@param	timestamp	$timestamp      Timestamp
+ *	@param	boolean		$fast           Fast mode
  *	@return	array						Array of informations
  *										If no fast mode:
  *										'seconds' => $secs,
@@ -1102,6 +1002,7 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 function dol_now($mode='gmt')
 {
     // Note that gmmktime and mktime return same value (GMT) whithout parameters
+	//if ($mode == 'gmt') $ret=gmmktime(); // Strict Standards: gmmktime(): You should be using the time() function instead
     if ($mode == 'gmt') $ret=time();	// Time for now at greenwich.
     else if ($mode == 'tzserver')		// Time for now with PHP server timezone added
     {
@@ -1393,14 +1294,23 @@ function dol_print_address($address, $htmlid, $mode, $id)
     {
         print nl2br($address);
         $showmap=0;
-        if ($mode=='thirdparty' && $conf->google->enabled && $conf->global->GOOGLE_ENABLE_GMAPS) $showmap=1;
-        if ($mode=='contact' && $conf->google->enabled && $conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS) $showmap=1;
-        if ($mode=='member' && $conf->google->enabled && $conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS) $showmap=1;
+        if ($mode=='thirdparty' && $conf->google->enabled && $conf->global->GOOGLE_ENABLE_GMAPS) $showgmap=1;
+        if ($mode=='contact' && $conf->google->enabled && $conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS) $showgmap=1;
+        if ($mode=='member' && $conf->google->enabled && $conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS) $showgmap=1;
+        if ($mode=='thirdparty' && $conf->openstreetmap->enabled && $conf->global->OPENSTREETMAP_ENABLE_MAPS) $showomap=1;
+        if ($mode=='contact' && $conf->openstreetmap->enabled && $conf->global->OPENSTREETMAP_ENABLE_MAPS_CONTACTS) $showomap=1;
+        if ($mode=='member' && $conf->openstreetmap->enabled && $conf->global->OPENSTREETMAP_ENABLE_MAPS_MEMBERS) $showomap=1;
 
-        if ($showmap)
+        // TODO Add a hook here
+        if ($showgmap)
         {
             $url=dol_buildpath('/google/gmaps.php?mode='.$mode.'&id='.$id,1);
             print ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
+        }
+        if ($showomap)
+        {
+            $url=dol_buildpath('/openstreetmap/maps.php?mode='.$mode.'&id='.$id,1);
+            print ' <a href="'.$url.'" target="_gmaps"><img id="'.$htmlid.'_openstreetmap" border="0" src="'.DOL_URL_ROOT.'/theme/common/gmap.png"></a>';
         }
     }
 }
@@ -1796,7 +1706,7 @@ function img_picto_common($alt, $picto, $options='', $pictoisfullpath=0)
     global $conf;
     if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
     if ($pictoisfullpath) return '<img src="'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
-    if (! empty($conf->global->MAIN_MODULE_CAN_OVERWRITE_COMMONICONS) && file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/'.$picto)) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
+    if (! empty($conf->global->MAIN_MODULE_CAN_OVERWRITE_COMMONICONS) && file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/'.$picto)) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
     return '<img src="'.DOL_URL_ROOT.'/theme/common/'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
 }
 
@@ -2254,7 +2164,7 @@ function dol_print_error($db='',$error='')
             $syslog.=", msg=".$msg;
         }
     }
-    if (empty($dolibarr_main_prod) && $_SERVER['DOCUMENT_ROOT'] && function_exists('xdebug_call_file'))
+    if (empty($dolibarr_main_prod) && $_SERVER['DOCUMENT_ROOT'] && function_exists('xdebug_print_function_stack') && function_exists('xdebug_call_file'))
     {
         xdebug_print_function_stack();
         $out.='<b>XDebug informations:</b>'."<br>\n";
@@ -4084,6 +3994,19 @@ function printCommonFooter($zone='private')
 function unichr($unicode , $encoding = 'UTF-8')
 {
 	return mb_convert_encoding("&#{$unicode};", $encoding, 'HTML-ENTITIES');
+}
+
+/**
+ *	Convert an array with RGB value into hex RGB value
+ *
+ *  @param	array	$arraycolor			Array
+ *  @param	string	$colorifnotfound	Color code to return if entry not defined
+ *  @return	string						RGB hex value (without # before). For example: FF00FF
+ */
+function colorArrayToHex($arraycolor,$colorifnotfound='888888')
+{
+    if (! is_array($arraycolor)) return $colorifnotfound;
+    return dechex($arraycolor[0]).dechex($arraycolor[1]).dechex($arraycolor[2]);
 }
 
 /**

@@ -101,6 +101,8 @@ class Bookmark
     	$this->url=trim($this->url);
     	$this->title=trim($this->title);
 		if (empty($this->position)) $this->position=0;
+		
+		$now=dol_now();
 
     	$this->db->begin();
 
@@ -109,7 +111,7 @@ class Bookmark
         if ($this->fk_soc) $sql.=",fk_soc";
         $sql.= ") VALUES (";
         $sql.= ($this->fk_user > 0?"'".$this->fk_user."'":"0").",";
-        $sql.= " ".$this->db->idate(gmmktime()).",";
+        $sql.= " ".$this->db->idate($now).",";
         $sql.= " '".$this->url."', '".$this->target."',";
         $sql.= " '".$this->db->escape($this->title)."', '".$this->favicon."', '".$this->position."'";
         if ($this->fk_soc) $sql.=",".$this->fk_soc;

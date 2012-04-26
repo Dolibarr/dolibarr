@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
  *
@@ -50,10 +50,10 @@ error_reporting(0);
 @set_time_limit(120);
 error_reporting($err);
 
-$setuplang=isset($_POST['selectlang'])?$_POST['selectlang']:(isset($_GET['selectlang'])?$_GET['selectlang']:'auto');
+$setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):'auto';
 $langs->setDefaultLang($setuplang);
-$versionfrom=isset($_POST["versionfrom"])?$_POST["versionfrom"]:(isset($_GET["versionfrom"])?$_GET["versionfrom"]:'');
-$versionto=isset($_POST["versionto"])?$_POST["versionto"]:(isset($_GET["versionto"])?$_GET["versionto"]:'');
+$versionfrom=GETPOST("versionfrom",'',3)?GETPOST("versionfrom",'',3):(empty($argv[1])?'':$argv[1]);
+$versionto=GETPOST("versionto",'',3)?GETPOST("versionto",'',3):(empty($argv[2])?'':$argv[2]);
 
 $langs->load('admin');
 $langs->load('install');
@@ -75,7 +75,7 @@ if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initial
  * View
  */
 
-pHeader('','etape5',GETPOST("action"),'versionfrom='.$versionfrom.'&versionto='.$versionto);
+pHeader('','etape5',GETPOST("action")?GETPOST("action"):'upgrade','versionfrom='.$versionfrom.'&versionto='.$versionto);
 
 
 if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
@@ -308,6 +308,8 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         $beforeversionarray=explode('.','3.2.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
+            migrate_price_contrat($db,$langs,$conf);
+
         	migrate_mode_reglement($db,$langs,$conf);
 
             // Reload modules
@@ -341,6 +343,12 @@ else
 
 
 pFooter($error,$setuplang);
+
+if ($db->connected) $db->close();
+
+// Return code if ran from command line
+if ($error && isset($argv[1])) exit(1);
+
 
 
 /**
@@ -1454,7 +1462,6 @@ function migrate_price_contrat($db,$langs,$conf)
                 $pu = $obj->subprice;
                 $txtva = $obj->tva_taux;
                 $remise_percent = $obj->remise_percent;
-                $remise_percent_global = $obj->remise_percent_global;
                 $info_bits = $obj->info_bits;
 
                 // On met a jour les 3 nouveaux champs
@@ -1462,7 +1469,7 @@ function migrate_price_contrat($db,$langs,$conf)
                 //$contratligne->fetch($rowid); Non requis car le update_total ne met a jour que chp redefinis
                 $contratligne->rowid=$rowid;
 
-                $result=calcul_price_total($qty,$pu,$remise_percent,$txtva,0,0,$remise_percent_global,'HT',$info_bits);
+                $result=calcul_price_total($qty,$pu,$remise_percent,$txtva,0,0,0,'HT',$info_bits);
                 $total_ht  = $result[0];
                 $total_tva = $result[1];
                 $total_ttc = $result[2];
@@ -1471,30 +1478,10 @@ function migrate_price_contrat($db,$langs,$conf)
                 $contratligne->total_tva = $total_tva;
                 $contratligne->total_ttc = $total_ttc;
 
-                dolibarr_install_syslog("upgrade2: Line $rowid: contratdetid=$obj->rowid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
+                dolibarr_install_syslog("upgrade2: Line $rowid: contratdetid=$obj->rowid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent -> $total_ht, $total_tva, $total_ttc");
                 print ". ";
                 $contratligne->update_total($rowid);
 
-
-                /* On touche pas a contrat mere
-                 $propal = new Propal($db);
-                 $propal->id=$obj->rowid;
-                 if ( $propal->fetch($propal->id) >= 0 )
-                 {
-                 if ( $propal->update_price() > 0 )
-                 {
-                 print ". ";
-                 }
-                 else
-                 {
-                 print "Error id=".$propal->id;
-                 }
-                 }
-                 else
-                 {
-                 print "Error #3";
-                 }
-                 */
                 $i++;
             }
         }

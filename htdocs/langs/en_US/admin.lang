@@ -38,7 +38,7 @@ SetupArea=Setup area
 FormToTestFileUploadForm=Form to test file upload (according to setup)
 IfModuleEnabled=Note: yes is effective only if module <b>%s</b> is enabled
 RemoveLock=Remove file <b>%s</b> if it exists to allow usage of the update tool.
-RestoreLock=Replace file <b>%s</b>, with read permission only, to disable any usage of update tool.
+RestoreLock=Restore file <b>%s</b>, with read permission only, to disable any usage of update tool.
 SecuritySetup=Security setup
 ErrorModuleRequirePHPVersion=Error, this module requires PHP version %s or higher
 ErrorModuleRequireDolibarrVersion=Error, this module requires Dolibarr version %s or higher
@@ -215,6 +215,7 @@ OfficialWebSiteFr=French official web site
 OfficialWiki=Dolibarr documentation on Wiki
 OfficialDemo=Dolibarr online demo
 OfficialMarketPlace=Official market place for external modules/addons
+OfficialWebHostingService=Official web hosting service (Cloud hosting)
 ForDocumentationSeeWiki=For user's or developer's documentation (Doc, FAQs...),<br>take a look at the Dolibarr Wiki:<br><b><a href="%s" target="_blank">%s</a></b>
 ForAnswersSeeForum=For any other questions/help, you can use the Dolibarr forum:<br><b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1=This area can help you to get a Help support service on Dolibarr.
@@ -264,6 +265,10 @@ FindPackageFromWebSite=Find a package that provides feature you want (for exampl
 DownloadPackageFromWebSite=Download package.
 UnpackPackageInDolibarrRoot=Unpack package file into Dolibarr's root directory <b>%s</b>
 SetupIsReadyForUse=Install is finished and Dolibarr is ready to use with this new component.
+NotExistsDirect=The alternative root directory is not defined.<br>
+InfDirAlt=Since version 3 it is possible to define an alternative root directory.This allows you to store, same place, plug-ins and custom templates.<br>Just create a directory at the root of Dolibarr (eg: custom).<br>
+InfDirExample=<br>Then declare it in the file conf.php<br> $dolibarr_main_url_root_alt='http://myserver/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>*These lines are commented with "#", to uncomment only remove the character.
+YouCanSubmitFile=Select module:
 CurrentVersion=Dolibarr current version
 CallUpdatePage=Go to the page that updates the database structure and datas: %s.
 LastStableVersion=Last stable version
@@ -310,7 +315,7 @@ ResponseTimeout=Response timeout
 SmsTestMessage=Test message from __PHONEFROM__ to __PHONETO__
 ModuleMustBeEnabledFirst=Module <b>%s</b> must be enabled first before using this feature.
 SecurityToken=Key to secure URLs
-NoSmsEngine=No SMS sender manager available. SMS sender manager are not installed with default distribution (because they depends on an external supplier) but you can find some on http://www.dolistore.com
+NoSmsEngine=No SMS sender manager available. SMS sender manager are not installed with default distribution (because they depends on an external supplier) but you can find some on %s
 PDF=PDF
 PDFDesc=You can set each global options related to the PDF generation
 PDFAddressForging=Rules to forge address boxes
@@ -861,6 +866,7 @@ MAIN_PROXY_PASS=Password to use the proxy server
 DefineHereComplementaryAttributes=Define here all atributes, not already available by default, and that you want to be supported for %s.
 ExtraFields=Complementary attributes
 ExtraFieldHasWrongValue=Attribut %s has a wrong value.
+AlphaNumOnlyCharsAndNoSpace=only alphanumericals characters without space
 SendingMailSetup=Setup of sendings by email
 SendmailOptionNotComplete=Warning, on some Linux systems, to send email from your email, sendmail execution setup must conatins option -ba (parameter mail.force_extra_parameters into your php.ini file). If some recipients never receive emails, try to edit this PHP parameter with mail.force_extra_parameters = -ba).
 PathToDocuments=Path to documents

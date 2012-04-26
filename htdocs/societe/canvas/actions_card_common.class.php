@@ -80,17 +80,9 @@ abstract class ActionsCardCommon
     {
     	$ret = $this->getInstanceDao();
 
-    	if (is_object($this->object) && method_exists($this->object,'fetch'))
-    	{
-    		if (! empty($id) || ! empty($ref)) $this->object->fetch($id,$ref);
-    	}
-    	else
-    	{
-    	    // TODO Keep only this part of code. Previous in this method is useless
-    		$object = new Societe($this->db);
-    		if (! empty($id) || ! empty($ref)) $object->fetch($id,$ref);
-            $this->object = $object;
-    	}
+    	$object = new Societe($this->db);
+    	if (! empty($id) || ! empty($ref)) $object->fetch($id,$ref);
+    	$this->object = $object;
     }
 
     /**
@@ -398,14 +390,14 @@ abstract class ActionsCardCommon
         	if ($conf->use_javascript_ajax)
 			{
 				$this->tpl['ajax_selecttype'] = "\n".'<script type="text/javascript" language="javascript">
-				jQuery(document).ready(function () {
-		              jQuery("#radiocompany").click(function() {
+				$(document).ready(function () {
+		              $("#radiocompany").click(function() {
                             document.formsoc.action.value="create";
                             document.formsoc.canvas.value="company";
                             document.formsoc.private.value=0;
                             document.formsoc.submit();
 		              });
-		               jQuery("#radioprivate").click(function() {
+		               $("#radioprivate").click(function() {
                             document.formsoc.action.value="create";
                             document.formsoc.canvas.value="individual";
                             document.formsoc.private.value=1;
@@ -421,8 +413,8 @@ abstract class ActionsCardCommon
         	if ($conf->use_javascript_ajax)
 			{
 				$this->tpl['ajax_selectcountry'] = "\n".'<script type="text/javascript" language="javascript">
-				jQuery(document).ready(function () {
-						jQuery("#selectcountry_id").change(function() {
+				$(document).ready(function () {
+						$("#selectcountry_id").change(function() {
 							document.formsoc.action.value="'.$action.'";
 							document.formsoc.canvas.value="'.$canvas.'";
 							document.formsoc.submit();

@@ -1,8 +1,10 @@
 <?php
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2012-2012  Vinicius Nogueira       <viniciusvgn@gmail.com>
+ * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +38,7 @@ $langs->load("bills");
 
 
 $socid=GETPOST('socid','int');
+$option = GETPOST('option');
 
 // Security check
 if ($user->societe_id > 0)
@@ -49,9 +52,11 @@ if ($user->societe_id > 0)
  * View
  */
 
-$now=gmmktime();
+$now=dol_now();
 
 llxHeader('',$langs->trans("BillsSuppliersUnpaid"));
+
+$title=$langs->trans("BillsSuppliersUnpaid");
 
 $facturestatic=new FactureFournisseur($db);
 $companystatic=new Societe($db);
@@ -65,6 +70,14 @@ $companystatic=new Societe($db);
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
+
+$search_ref = GETPOST('search_ref','alpha');
+$search_ref_supplier = GETPOST('search_ref_supplier','alpha');
+$search_societe = GETPOST('search_societe','alpha');
+$search_montant_ht = GETPOST('search_montant_ht','int');
+$search_montant_ttc = GETPOST('search_montant_ttc','int');
+
+
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
@@ -87,6 +100,7 @@ if ($user->rights->fournisseur->facture->lire)
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf ON f.rowid=pf.fk_facturefourn ";
 	$sql.= " WHERE f.fk_soc = s.rowid";
 	$sql.= " AND f.paye = 0 AND f.fk_statut = 1";
+	if ($option == 'late') $sql.=" AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->fournisseur->warning_delay)."'";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql .= " AND s.rowid = ".$socid;
 
@@ -100,28 +114,28 @@ if ($user->rights->fournisseur->facture->lire)
 		}
 	}
 
-	if ($_GET["search_ref"])
+	if ($search_ref)
 	{
-		$sql .= " AND f.rowid like '%".$_GET["search_ref"]."%'";
+		$sql .= " AND f.rowid like '%".$search_ref."%'";
 	}
-	if ($_GET["search_ref_supplier"])
+	if ($search_ref_supplier)
 	{
-		$sql .= " AND f.facnumber like '%".$_GET["search_ref_supplier"]."%'";
-	}
-
-	if ($_GET["search_societe"])
-	{
-		$sql .= " AND s.nom like '%".$_GET["search_societe"]."%'";
+		$sql .= " AND f.facnumber like '%".$search_ref_supplier."%'";
 	}
 
-	if ($_GET["search_montant_ht"])
+	if ($search_societe)
 	{
-		$sql .= " AND f.total_ht = '".$_GET["search_montant_ht"]."'";
+		$sql .= " AND s.nom like '%".$search_societe."%'";
 	}
 
-	if ($_GET["search_montant_ttc"])
+	if ($search_montant_ht)
 	{
-		$sql .= " AND f.total_ttc = '".$_GET["search_montant_ttc"]."'";
+		$sql .= " AND f.total_ht = '".$search_montant_ht."'";
+	}
+
+	if ($search_montant_ttc)
+	{
+		$sql .= " AND f.total_ttc = '".$search_montant_ttc."'";
 	}
 
 	if (dol_strlen($_POST["sf_ref"]) > 0)
@@ -146,44 +160,64 @@ if ($user->rights->fournisseur->facture->lire)
 			$soc->fetch($socid);
 		}
 
+		$param ='';
+		if ($socid) $param.="&socid=".$socid;
+		
+		if ($search_ref)         	$param.='&amp;search_ref='.urlencode($search_ref);
+		if ($search_ref_supplier)	$param.='&amp;search_ref_supplier='.urlencode($search_ref_supplier);
+		if ($search_societe)     	$param.='&amp;search_societe='.urlencode($search_societe);
+		if ($search_montant_ht)  	$param.='&amp;search_montant_ht='.urlencode($search_montant_ht);
+		if ($search_montant_ttc) 	$param.='&amp;search_montant_ttc='.urlencode($search_montant_ttc);
+		
+		$param.=($option?"&option=".$option:"");
+		if ($late) $param.='&late='.urlencode($late);
+		$urlsource.=str_replace('&amp;','&',$param);
+
 		$titre=($socid?$langs->trans("BillsSuppliersUnpaidForCompany",$soc->nom):$langs->trans("BillsSuppliersUnpaid"));
-		print_barre_liste($titre,$page,"impayees.php","&amp;socid=$socid",$sortfield,$sortorder,'',0);	// We don't want pagination on this page
+
+		if ($option == 'late') $titre.=' ('.$langs->trans("Late").')';
+	    else $titre.=' ('.$langs->trans("All").')';
+
+		$link='';
+		if (empty($option)) $link='<a href="'.$_SERVER["PHP_SELF"].'?option=late'.($socid?'&socid='.$socid:'').'">'.$langs->trans("ShowUnpaidLateOnly").'</a>';
+		elseif ($option == 'late') $link='<a href="'.$_SERVER["PHP_SELF"].'?'.($socid?'&socid='.$socid:'').'">'.$langs->trans("ShowUnpaidAll").'</a>';
+		print_fiche_titre($titre,$link);
+
+		print_barre_liste('','',$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',0);	// We don't want pagination on this page
 		$i = 0;
+		print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
+
 		print '<table class="liste" width="100%">';
 		print '<tr class="liste_titre">';
-
-		print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.rowid","","&amp;socid=$socid","",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("RefSupplier"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socid=$socid","",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","","&amp;socid=$socid",'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"f.date_lim_reglement","","&amp;socid=$socid",'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;socid=$socid","",$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total_ht","","&amp;socid=$socid",'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"f.total_ttc","","&amp;socid=$socid",'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("AlreadyPaid"),$_SERVER["PHP_SELF"],"am","","&amp;socid=$socid",'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye,am","","&amp;socid=$socid",'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.rowid","",$param,"",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("RefSupplier"),$_SERVER["PHP_SELF"],"f.facnumber","",$param,"",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"f.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total_ht","",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("AlreadyPaid"),$_SERVER["PHP_SELF"],"am","",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye,am","",$param,'align="right"',$sortfield,$sortorder);
 		print "</tr>\n";
 
-		// Lignes des champs de filtre
-		print '<form method="get" action="impayees.php">';
+		// Lines with filter fields
 		print '<tr class="liste_titre">';
 		print '<td class="liste_titre">';
-		print '<input class="flat" size="8" type="text" name="search_ref" value="'.$_GET["search_ref"].'"></td>';
+		print '<input class="flat" size="8" type="text" name="search_ref" value="'.$search_ref.'"></td>';
 		print '<td class="liste_titre">';
-		print '<input class="flat" size="8" type="text" name="search_ref_supplier" value="'.$_GET["search_ref_supplier"].'"></td>';
+		print '<input class="flat" size="8" type="text" name="search_ref_supplier" value="'.$search_ref_supplier.'"></td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" size="6" name="search_societe" value="'.$_GET["search_societe"].'">';
+		print '<input class="flat" type="text" size="6" name="search_societe" value="'.$search_societe.'">';
 		print '</td><td class="liste_titre" align="right">';
-		print '<input class="flat" type="text" size="8" name="search_montant_ht" value="'.$_GET["search_montant_ht"].'">';
+		print '<input class="flat" type="text" size="8" name="search_montant_ht" value="'.$search_montant_ht.'">';
 		print '</td><td class="liste_titre" align="right">';
-		print '<input class="flat" type="text" size="8" name="search_montant_ttc" value="'.$_GET["search_montant_ttc"].'">';
+		print '<input class="flat" type="text" size="8" name="search_montant_ttc" value="'.$search_montant_ttc.'">';
 		print '</td><td class="liste_titre" colspan="2" align="right">';
 		print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 		print '</td>';
 		print "</tr>\n";
-		print '</form>';
-
 
 		if ($num > 0)
 		{
@@ -209,9 +243,9 @@ if ($user->rights->fournisseur->facture->lire)
 
 				print "<td nowrap>".dol_trunc($objp->facnumber,12)."</td>\n";
 
-				print "<td nowrap align=\"center\">".dol_print_date($db->jdate($objp->df))."</td>\n";
-				print "<td nowrap align=\"center\">".dol_print_date($db->jdate($objp->datelimite));
-				if ($db->jdate($objp->datelimite) < ($now - $conf->facture->fournisseur->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
+				print "<td nowrap align=\"center\">".dol_print_date($db->jdate($objp->df),'day')."</td>\n";
+				print "<td nowrap align=\"center\">".dol_print_date($db->jdate($objp->datelimite),'day');
+				if ($objp->datelimite && $db->jdate($objp->datelimite) < ($now - $conf->facture->fournisseur->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
 				print "</td>\n";
 
 				print '<td>';
@@ -247,6 +281,9 @@ if ($user->rights->fournisseur->facture->lire)
 		}
 
 		print "</table>";
+
+		print '</form>';
+
 		$db->free($resql);
 	}
 	else

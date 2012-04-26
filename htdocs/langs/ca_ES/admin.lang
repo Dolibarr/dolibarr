@@ -216,6 +216,7 @@ OfficialWebSiteFr=lloc web oficial francòfon
 OfficialWiki=Wiki Dolibarr
 OfficialDemo=Demo en línia Dolibarr
 OfficialMarketPlace=Lloc oficial de mòduls complementaris i extensions
+OfficialWebHostingService=Servei oficial d'allotjament (SaaS)
 ForDocumentationSeeWiki=Per a la documentació d'usuari, desenvolupador o Preguntes Freqüents (FAQ), consulteu el wiki Dolibarr: <br><b><a href="%s" target="_blank">%s</a></b>
 ForAnswersSeeForum=Per altres qüestions o realitzar les seves pròpies consultes, pot utilitzar el fòrum Dolibarr: <br><b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1=Aquesta aplicació, independent de Dolibarr, us permet ajudar a obtenir un servei de suport de Dolibarr.
@@ -265,6 +266,10 @@ FindPackageFromWebSite=Cercar el paquet que respon a la seva necessitat (per exe
 DownloadPackageFromWebSite=Descarregar el paquet des del lloc %s.
 UnpackPackageInDolibarrRoot=Descomprimir el paquet a la carpeta arrel de Dolibarr <b>%s</b> sobre els arxius existents (sense desplaçar o esborrar els existents, sota pena de perdre la seva configuració o els mòduls no oficials instal·lats)
 SetupIsReadyForUse=La instal·lació ha finalitzat i Dolibarr està disponible amb el nou component.
+NotExistsDirect=No existeix el directori alternatiu.<br>
+InfDirAlt=Des de la versió 3 és possible definir un directori root alternatiu, això li permet emmagatzemar en el mateix lloc mòduls i temes personalitzades.<br>Només cal crear un directori en l'arrel de Dolibarr (per exemple: custom).<br>
+InfDirExample=<br>Seguidament es declara a l'arxiu conf.php:<br> $dolibarr_main_url_root_alt='http://miservidor/custom'<br>$dolibarr_main_document_root_alt='/directorio/de/dolibarr/htdocs/custom'<br>*Aquestes línies venen comentades amb un "#", per descomentar-les només cal retirar el caràcter.
+YouCanSubmitFile=Seleccioneu mòdul:
 CurrentVersion=Versió actual de Dolibarr
 CallUpdatePage=Trucar a la pàgina d'actualització de l'estructura i dades de la base de dades %s.
 LastStableVersion=Última versió estable disponible
@@ -868,6 +873,7 @@ MAIN_PROXY_PASS=Contrasenya del servidor proxy
 DefineHereComplementaryAttributes=Definiu aquí la llista d'atributs addicionals, no disponibles a estàndard, i que vol gestionar per %s.
 ExtraFields=Atributs addicionals
 ExtraFieldHasWrongValue=L'atribut %s te un valor incorrecte.
+AlphaNumOnlyCharsAndNoSpace=només carateres alfanumèrics sense espais
 SendingMailSetup=Configuració de l'enviament per mail
 SendmailOptionNotComplete=Atenció, en alguns sistemes Linux, amb aquest mètode d'enviament, per poder enviar mails en nom seu, la configuració de sendmail ha de contenir l'opció <b>-ba</b> (paràmetre <b>mail.force_extra_parameters</b> a l'arxiu <b>php.ini</b>). Si alguns dels seus destinataris no reben els seus missatges, proveu de modificar aquest paràmetre PHP amb <b>mail.force_extra_parameters =-ba </b>.
 PathToDocuments=Rutes d'accés a documents

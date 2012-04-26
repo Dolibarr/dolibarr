@@ -260,7 +260,7 @@ class pdf_oursin extends ModelePDFFactures
 					$pdf->MultiCell(21, 3, $total_excl_tax, 0, 'R', 0);
 
 
-					if ($nexY > 200 && $i < $nblignes - 1)
+					if (($nexY > 200 && $i < $nblignes - 1) || (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak))
 					{
 						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $object, $outputlangs);
 						$nexY = $iniY;
@@ -834,9 +834,8 @@ class pdf_oursin extends ModelePDFFactures
 		{
 			if (is_readable($logo))
 			{
-				$taille=getimagesize($logo);
-				$length=$taille[0]/2.835;
-				$pdf->Image($logo, $this->marges['g'], $this->marges['h'], 0, 22);	// width=0 (auto), max height=22
+			    $height=pdf_getHeightForLogo($logo);
+				$pdf->Image($logo, $this->marges['g'], $this->marges['h'], 0, $height);	// width=0 (auto)
 			}
 			else
 			{
@@ -1004,7 +1003,7 @@ class pdf_oursin extends ModelePDFFactures
 		$posy+=1;
 
 		// Show list of linked objects
-		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 'L', $default_font_size, $hookmanager);
+		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'L', $default_font_size, $hookmanager);
 
 		// Amount in (at tab_top - 1)
 		$pdf->SetTextColor(0,0,0);

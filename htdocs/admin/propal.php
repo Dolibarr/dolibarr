@@ -23,9 +23,9 @@
  */
 
 /**
- *	    \file       htdocs/admin/propale.php
+ *	    \file       htdocs/admin/propal.php
  *		\ingroup    propale
- *		\brief      Page d'administration/configuration du module Propale
+ *		\brief      Setup page for commercial proposal module
  */
 
 require("../main.inc.php");
@@ -37,8 +37,11 @@ $langs->load("errors");
 
 if (! $user->admin) accessforbidden();
 
-$action =GETPOST('action','alpha');
+$action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
+$label = GETPOST('label','alpha');
+$scandir = GETPOST('scandir','alpha');
+$type='propal';
 
 /*
  * Actions
@@ -46,8 +49,8 @@ $value = GETPOST('value','alpha');
 
 if ($action == 'updateMask')
 {
-	$maskconstpropal=GETPOST("maskconstpropal");
-	$maskpropal=GETPOST("maskpropal");
+	$maskconstpropal=GETPOST('maskconstpropal','alpha');
+	$maskpropal=GETPOST('maskpropal','alpha');
 	if ($maskconstpropal) $res = dolibarr_set_const($db,$maskconstpropal,$maskpropal,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
@@ -64,7 +67,7 @@ if ($action == 'updateMask')
 
 if ($action == 'specimen')
 {
-	$modele=GETPOST("module");
+	$modele=GETPOST('module','alpha');
 
 	$propal = new Propal($db);
 	$propal->initAsSpecimen();
@@ -109,7 +112,7 @@ if ($action == 'specimen')
 
 if ($action == 'set_PROPALE_DRAFT_WATERMARK')
 {
-	$draft = GETPOST("PROPALE_DRAFT_WATERMARK");
+	$draft = GETPOST('PROPALE_DRAFT_WATERMARK','alpha');
 
 	$res = dolibarr_set_const($db, "PROPALE_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
@@ -126,7 +129,7 @@ if ($action == 'set_PROPALE_DRAFT_WATERMARK')
 
 if ($action == 'set_PROPALE_FREE_TEXT')
 {
-	$freetext = GETPOST("PROPALE_FREE_TEXT");
+	$freetext = GETPOST('PROPALE_FREE_TEXT','alpha');
 
 	$res = dolibarr_set_const($db, "PROPALE_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
@@ -183,26 +186,13 @@ if ($action == 'setclassifiedinvoiced')
 
 if ($action == 'set')
 {
-	$label = GETPOST("label");
-	$scandir = GETPOST("scandir");
-
-	$type='propal';
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
-    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
-    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
-    $sql.= ")";
-	$resql=$db->query($sql);
+	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
 else if ($action == 'del')
 {
-	$type='propal';
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql.= " WHERE nom = '".$db->escape($value)."'";
-	$sql.= " AND type = '".$type."'";
-	$sql.= " AND entity = ".$conf->entity;
-	if ($db->query($sql))
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
 	{
         if ($conf->global->PROPALE_ADDON_PDF == "$value") dolibarr_del_const($db, 'PROPALE_ADDON_PDF',$conf->entity);
 	}
@@ -210,37 +200,16 @@ else if ($action == 'del')
 
 else if ($action == 'setdoc')
 {
-	$label = GETPOST("label");
-	$scandir = GETPOST("scandir");
-
-	$db->begin();
-
     if (dolibarr_set_const($db, "PROPALE_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
 	{
 		$conf->global->PROPALE_ADDON_PDF = $value;
 	}
 
 	// On active le modele
-	$type='propal';
-	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del.= " WHERE nom = '".$db->escape($value)."'";
-	$sql_del.= " AND type = '".$type."'";
-	$sql_del.= " AND entity = ".$conf->entity;
-	$result1=$db->query($sql_del);
-
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($value)."', '".$type."', ".$conf->entity.", ";
-    $sql.= ($value?"'".$db->escape($label)."'":'null').", ";
-    $sql.= (! empty($value)?"'".$db->escape($scandir)."'":"null");
-    $sql.= ")";
-	$result2=$db->query($sql);
-	if ($result1 && $result2)
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
 	{
-		$db->commit();
-	}
-	else
-	{
-		$db->rollback();
+		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
 }
 
@@ -344,7 +313,7 @@ foreach ($dirmodels as $reldir)
 						// Info
 						$htmltooltip='';
 						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$facture->type=0;
+						$propal->type=0;
 						$nextval=$module->getNextValue($mysoc,$propal);
 						if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
 						{

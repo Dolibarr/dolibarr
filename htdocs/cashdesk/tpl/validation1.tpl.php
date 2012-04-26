@@ -26,12 +26,12 @@ $langs->load("main");
 	<table class="table_resume">
 
 		<tr><td class="resume_label"><?php echo $langs->trans("Invoice"); ?></td><td><?php  echo $obj_facturation->numInvoice(); ?></td></tr>
-		<tr><td class="resume_label"><?php echo $langs->trans("TotalHT"); ?></td><td><?php echo price2num($obj_facturation->prix_total_ht(),'MT').' '.$conf->currency; ?></td></tr>
+		<tr><td class="resume_label"><?php echo $langs->trans("TotalHT"); ?></td><td><?php echo price2num($obj_facturation->prixTotalHt(),'MT').' '.$conf->currency; ?></td></tr>
 		<?php
 			// Affichage de la tva par taux
-			if ( $obj_facturation->montant_tva() ) {
+			if ( $obj_facturation->montantTva() ) {
 
-				echo ('<tr><td class="resume_label">'.$langs->trans("VAT").'</td><td>'.price2num($obj_facturation->montant_tva(),'MT').' '.$conf->currency.'</td></tr>');
+				echo ('<tr><td class="resume_label">'.$langs->trans("VAT").'</td><td>'.price2num($obj_facturation->montantTva(),'MT').' '.$conf->currency.'</td></tr>');
 
 			}
 			else
@@ -41,7 +41,7 @@ $langs->load("main");
 
 			}
 		?>
-		<tr><td class="resume_label"><?php echo $langs->trans("TotalTTC"); ?> </td><td><?php echo price2num($obj_facturation->prix_total_ttc(),'MT').' '.$conf->currency; ?></td></tr>
+		<tr><td class="resume_label"><?php echo $langs->trans("TotalTTC"); ?> </td><td><?php echo price2num($obj_facturation->prixTotalTtc(),'MT').' '.$conf->currency; ?></td></tr>
 		<tr><td class="resume_label"><?php echo $langs->trans("PaymentMode"); ?> </td><td>
 		<?php
 		switch ($obj_facturation->getSetPaymentMode())

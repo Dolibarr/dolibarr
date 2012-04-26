@@ -1,6 +1,8 @@
 # Dolibarr language file - pt_BR rev. 0.0 - orders
+# 2012      Vinícius Nogueira        <viniciusvgn@gmail.com>
+
 CHARSET=UTF-8
-OrdersArea=Area de Pedidos de Clientes
+OrdersArea=Área de Pedidos de Clientes
 SuppliersOrdersArea=Área de Pedidos a Fornecedores
 OrderCard=Ficha Pedido
 Order=Pedido
@@ -59,7 +61,7 @@ ShipProduct=Enviar Produto
 Discount=Desconto
 CreateOrder=Criar Pedido
 RefuseOrder=Rejeitar o Pedido
-ApproveOrder=Aceptar o Pedido
+ApproveOrder=Aceitar o Pedido
 ValidateOrder=Confirmar o Pedido
 DeleteOrder=Eliminar o pedido
 CancelOrder=Anular o Pedido

@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +60,10 @@ $AdherentType=array();
 $sql = "SELECT t.rowid, t.libelle, t.cotisation,";
 $sql.= " d.statut, count(d.rowid) as somme";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d ON t.rowid = d.fk_adherent_type";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d";
+$sql.= " ON t.rowid = d.fk_adherent_type";
+$sql.= " AND d.entity IN (".getEntity().")";
+$sql.= " WHERE t.entity IN (".getEntity().")";
 $sql.= " GROUP BY t.rowid, t.libelle, t.cotisation, d.statut";
 
 dol_syslog("index.php::select nb of members by type sql=".$sql, LOG_DEBUG);
@@ -87,14 +91,16 @@ if ($result)
 	$db->free($result);
 }
 
+$now=dol_now();
 
 // List members up to date
 // current rule: uptodate = the end date is in future whatever is type
 // old rule: uptodate = if type does not need payment, that end date is null, if type need payment that end date is in future)
 $sql = "SELECT count(*) as somme , d.fk_adherent_type";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-//$sql.= " WHERE d.statut = 1 AND ((t.cotisation = 0 AND d.datefin IS NULL) OR d.datefin >= ".$db->idate(gmmktime()).')';
-$sql.= " WHERE d.statut = 1 AND d.datefin >= ".$db->idate(gmmktime());
+$sql.= " WHERE d.entity IN (".getEntity().")";
+//$sql.= " AND d.statut = 1 AND ((t.cotisation = 0 AND d.datefin IS NULL) OR d.datefin >= ".$db->idate($now).')';
+$sql.= " AND d.statut = 1 AND d.datefin >= ".$db->idate($now);
 $sql.= " AND t.rowid = d.fk_adherent_type";
 $sql.= " GROUP BY d.fk_adherent_type";
 
@@ -128,8 +134,12 @@ print "</tr>\n";
 $var=false;
 print "<tr $bc[$var]>";
 print '<td>';
-print $langs->trans("Name").':</td><td><input type="text" name="search" class="flat" size="16">';
-print '</td><td rowspan="2"><input class="button" type="submit" value="'.$langs->trans("Search").'"></td></tr>';
+print $langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="16">';
+print '</td><td rowspan="3"><input class="button" type="submit" value="'.$langs->trans("Search").'"></td></tr>';
+print "<tr $bc[$var]>";
+print '<td>';
+print $langs->trans("Name").':</td><td><input type="text" name="search_nom" class="flat" size="16">';
+print '</td></tr>';
 print "<tr $bc[$var]>";
 print '<td>';
 print $langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="16">';
@@ -207,7 +217,8 @@ $sql = "SELECT a.rowid, a.statut, a.nom as lastname, a.prenom as firstname,";
 $sql.= " a.tms as datem, datefin as date_end_subscription,";
 $sql.= " ta.rowid as typeid, ta.libelle, ta.cotisation";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as ta";
-$sql.= " WHERE a.fk_adherent_type = ta.rowid";
+$sql.= " WHERE a.entity IN (".getEntity().")";
+$sql.= " AND a.fk_adherent_type = ta.rowid";
 $sql.= $db->order("a.tms","DESC");
 $sql.= $db->plimit($max, 0);
 
@@ -259,7 +270,8 @@ $sql = "SELECT a.rowid, a.statut, a.nom, a.prenom,";
 $sql.= " datefin as date_end_subscription,";
 $sql.= " c.rowid as cid, c.tms as datem, c.datec as datec, c.dateadh as date_start, c.datef as date_end, c.cotisation";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."cotisation as c";
-$sql.= " WHERE c.fk_adherent = a.rowid";
+$sql.= " WHERE a.entity IN (".getEntity().")";
+$sql.= " AND c.fk_adherent = a.rowid";
 $sql.= $db->order("c.tms","DESC");
 $sql.= $db->plimit($max, 0);
 
@@ -321,7 +333,7 @@ foreach ($AdherentType as $key => $adhtype)
 	print '<td><a href="type.php?rowid='.$adhtype->id.'">'.img_object($langs->trans("ShowType"),"group").' '.$adhtype->getNomUrl(0,dol_size(16)).'</a></td>';
 	print '<td align="right">'.(isset($MemberToValidate[$key]) && $MemberToValidate[$key] > 0?$MemberToValidate[$key]:'').' '.$staticmember->LibStatut(-1,$adhtype->cotisation,0,3).'</td>';
 	print '<td align="right">'.(isset($MembersValidated[$key]) && ($MembersValidated[$key]-$MemberUpToDate[$key] > 0) ? $MembersValidated[$key]-$MemberUpToDate[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</td>';
-	print '<td align="right">'.(isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,gmmktime(),3).'</td>';
+	print '<td align="right">'.(isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,$now,3).'</td>';
 	print '<td align="right">'.(isset($MembersResiliated[$key]) && $MembersResiliated[$key]> 0 ?$MembersResiliated[$key]:'').' '.$staticmember->LibStatut(0,$adhtype->cotisation,0,3).'</td>';
 	print "</tr>\n";
 }
@@ -329,7 +341,7 @@ print '<tr class="liste_total">';
 print '<td class="liste_total">'.$langs->trans("Total").'</td>';
 print '<td class="liste_total" align="right">'.$SommeA.' '.$staticmember->LibStatut(-1,$adhtype->cotisation,0,3).'</td>';
 print '<td class="liste_total" align="right">'.$SommeB.' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</td>';
-print '<td class="liste_total" align="right">'.$SommeC.' '.$staticmember->LibStatut(1,$adhtype->cotisation,gmmktime(),3).'</td>';
+print '<td class="liste_total" align="right">'.$SommeC.' '.$staticmember->LibStatut(1,$adhtype->cotisation,$now,3).'</td>';
 print '<td class="liste_total" align="right">'.$SommeD.' '.$staticmember->LibStatut(0,$adhtype->cotisation,0,3).'</td>';
 print '</tr>';
 
@@ -345,7 +357,8 @@ $numb=0;
 
 $sql = "SELECT c.cotisation, c.dateadh";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
-$sql.= " WHERE d.rowid = c.fk_adherent";
+$sql.= " WHERE d.entity IN (".getEntity().")";
+$sql.= " AND d.rowid = c.fk_adherent";
 if(isset($date_select) && $date_select != '')
 {
 	$sql .= " AND dateadh LIKE '$date_select%'";
@@ -401,7 +414,6 @@ print '</td></tr>';
 print '</table>';
 
 
-$db->close();
-
 llxFooter();
+$db->close();
 ?>

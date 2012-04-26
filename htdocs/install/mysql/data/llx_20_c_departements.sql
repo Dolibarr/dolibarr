@@ -6,6 +6,7 @@
 -- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2012 	   Sebastian Neuwert    <sebastian.neuwert@modula71.de>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,7 +20,6 @@
 --
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
---
 --
 
 --
@@ -325,6 +325,24 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('52', 409, '', 9, 'MELILLA', 'Melilla', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('53', 420, '', 20, 'OTROS', 'Otros', 1);
 
+-- Provinces Germany (id country=5)
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (501,'BW','BADEN-WÜRTTEMBERG','Baden-Württemberg',1); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (501,'BY','BAYERN','Bayern',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (501,'BE','BERLIN','Berlin',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (501,'BB','BRANDENBURG','Brandenburg',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (501,'HB','BREMEN','Bremen',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (501,'HH','HAMBURG','Hamburg',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (501,'HE','HESSEN','Hessen',1); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (501,'MV','MECKLENBURG-VORPOMMERN','Mecklenburg-Vorpommern',1); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (501,'NI','NIEDERSACHSEN','Niedersachsen',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (501,'NW','NORDRHEIN-WESTFALEN','Nordrhein-Westfalen',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (501,'RP','RHEINLAND-PFALZ','Rheinland-Pfalz',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (501,'SL','SAARLAND','Saarland',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (501,'SN','SACHSEN','Sachsen',1);
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (501,'ST','SACHSEN-ANHALT','Sachsen-Anhalt',1); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (501,'SH','SCHLESWIG-HOLSTEIN','Schleswig-Holstein',1); 
+INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (501,'TH','THÜRINGEN','Thüringen',1);
+
 -- Cantons Switzerland (id country=6)
 INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (601,'AG','ARGOVIE','Argovie',1); 
 INSERT INTO llx_c_departements (fk_region, code_departement, ncc, nom, active) VALUES (601,'AI','APPENZELL RHODES INTERIEURES','Appenzell Rhodes intérieures',1); 
@@ -473,8 +491,10 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('RR', 5601, 'RORAIMA', 0, 'RR', 'Roraima', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('SC', 5601, 'SANTA CATARINA', 0, 'SC', 'Santa Catarina', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('SE', 5601, 'SERGIPE', 0, 'SE', 'Sergipe', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('SP', 5601, 'SAO PAULO', 0, 'SP', 'Sao Paulo', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('TO', 5601, 'TOCANTINS', 0, 'TO', 'Tocantins', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('DF', 5601, 'DISTRITO FEDERAL', 0, 'DF', 'Distrito Federal', 1);
+
 
 -- Provinces Chile (id country=67)
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('151', 6715, '', 0, '151', 'Arica', 1);

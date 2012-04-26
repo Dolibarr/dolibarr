@@ -2,13 +2,23 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 3.3 compared to 3.2 *****
+For users:
+- New: Add supplier ref on supplier orders.
+- New: Can export supplier orders.
+
+For developers:
+
+
 ***** ChangeLog for 3.2 compared to 3.1 *****
 WARNING: PHP lower than 5.x are no more supported.
-WARNING: Because of a major datastructure change onto supplier prices tabkes, be aware
+WARNING: Because of a major datastructure change onto supplier prices tables, be aware
 to make a backup of your database before making upgrade.
 
 For users:
 - New: Each user can remove/add its own boxes.
+- New: Add signature at end of predefined email text.
 - New: Can use personalized fields of products/services.
 - New: Can attach files on social contributions.
 - New: Show payments terms and conditions onto muscadet template.
@@ -61,9 +71,12 @@ For users:
 - New: Add hidden option MAIN_ADD_PDF_BACKGROUND to add a PDF as background of invoice/order generated PDF.
 - New: Can convert a product/service into service/product.
 - New: Show delivery date into proposal template azur. 
+- New: Support tags into header and footer into ODT templates.
 - Fix: Can use POS module with several concurrent users.
 - Fix: Installer don't fails with Mysql version that added a ssl_cypher field.
 - Fix: Sanitize input parameters.
+- Fix: [ bug #368 ] Product list
+- Fix: [ bug #370 ] Filter in accountancy -> suppliers_bills
 
 For developers:
 - New: Can add a left menu into an existing top menu or left menu.

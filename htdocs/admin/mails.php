@@ -162,8 +162,7 @@ if (! empty($_POST['removedfile']) || ! empty($_POST['removedfilehtml']))
 /*
  * Send mail
  */
-if (($action == 'send' || $action == 'sendhtml')
-&& ! $_POST['addfile'] && ! $_POST['addfilehtml'] && ! $_POST["removedfile"] && ! $_POST['cancel'])
+if (($action == 'send' || $action == 'sendhtml') && ! $_POST['addfile'] && ! $_POST['addfilehtml'] && ! $_POST["removedfile"] && ! $_POST['cancel'])
 {
 	$error=0;
 
@@ -212,9 +211,18 @@ if (($action == 'send' || $action == 'sendhtml')
 
 		require_once(DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
 		$mailfile = new CMailFile(
-			$subject, $sendto, $email_from, $body,
-			$filepath, $mimetype, $filename,
-			$sendtocc, $sendtoccc, $deliveryreceipt, $msgishtml, $errors_to
+            $subject,
+            $sendto,
+            $email_from,
+            $body,
+            $filepath,
+            $mimetype,
+            $filename,
+            $sendtocc,
+            $sendtoccc,
+            $deliveryreceipt,
+            $msgishtml,
+            $errors_to
 		);
 
 		$result=$mailfile->sendfile();

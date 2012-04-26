@@ -39,10 +39,10 @@ error_reporting(0);
 @set_time_limit(120);
 error_reporting($err);
 
-$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
+$setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):'auto';
 $langs->setDefaultLang($setuplang);
-$versionfrom=isset($_GET["versionfrom"])?$_GET["versionfrom"]:'';
-$versionto=isset($_GET["versionto"])?$_GET["versionto"]:'';
+$versionfrom=GETPOST("versionfrom",'',3)?GETPOST("versionfrom",'',3):(empty($argv[1])?'':$argv[1]);
+$versionto=GETPOST("versionto",'',3)?GETPOST("versionto",'',3):(empty($argv[2])?'':$argv[2]);
 
 $langs->load("admin");
 $langs->load("install");
@@ -147,9 +147,7 @@ print '<tr><td colspan="2">'.$langs->trans("PleaseBePatient").'</td></tr>';
 flush();
 
 
-/*
- *	Load sql files
-*/
+// Run repair SQL file
 if ($ok)
 {
     $dir = "mysql/migration/";
@@ -178,7 +176,7 @@ if ($ok)
         }
     }
 
-    // Boucle sur chaque fichier
+    // Loop on each file
     foreach($filelist as $file)
     {
         print '<tr><td nowrap>';
@@ -191,7 +189,7 @@ if ($ok)
     }
 }
 
-
+// Run purge of directory
 if (GETPOST('purge'))
 {
     $conf->setValues($db);
@@ -201,7 +199,7 @@ if (GETPOST('purge'))
     {
         $filearray=array();
         $upload_dir = $conf->$modulepart->dir_output;
-        if ($modulepart == 'company') $upload_dir = $conf->societe->dir_output;
+        if ($modulepart == 'company') $upload_dir = $conf->societe->dir_output; // TODO change for multicompany sharing
         if ($modulepart == 'invoice') $upload_dir = $conf->facture->dir_output;
         if ($modulepart == 'invoice_supplier') $upload_dir = $conf->fournisseur->facture->dir_output;
         if ($modulepart == 'order') $upload_dir = $conf->commande->dir_output;
@@ -317,11 +315,6 @@ print '</table>';
 
 
 
-
-if ($db->connected) $db->close();
-
-
-
 if (empty($actiondone))
 {
     print '<div class="error">'.$langs->trans("ErrorWrongParameters").'</div>';
@@ -334,4 +327,8 @@ print '</a></center>';
 
 pFooter(1,$setuplang);
 
+if ($db->connected) $db->close();
+
+// Return code if ran from command line
+if (! $ok && isset($argv[1])) exit(1);
 ?>

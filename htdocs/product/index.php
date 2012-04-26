@@ -159,7 +159,7 @@ print '</table>';
 print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 /*
- * Derniers produits/services en vente
+ * Last modified products
  */
 $max=15;
 $sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy,";
@@ -186,7 +186,10 @@ if ($result)
 
 		print '<table class="noborder" width="100%">';
 
-		print '<tr class="liste_titre"><td colspan="5">'.$transRecordedType.'</td></tr>';
+		$colnb=5;
+		if (empty($conf->global->PRODUIT_MULTIPRICES)) $colnb++;
+
+		print '<tr class="liste_titre"><td colspan="'.$colnb.'">'.$transRecordedType.'</td></tr>';
 
 		$var=True;
 
@@ -211,7 +214,7 @@ if ($result)
 			}
 
 			$var=!$var;
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 			print '<td nowrap="nowrap">';
 			$product_static->id=$objp->rowid;
 			$product_static->ref=$objp->ref;
@@ -222,6 +225,14 @@ if ($result)
 			print "<td>";
 			print dol_print_date($db->jdate($objp->datem),'day');
 			print "</td>";
+			// Sell price
+			if (empty($conf->global->PRODUIT_MULTIPRICES))
+			{
+				print '<td align="right">';
+    			if ($objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
+    			else print price($objp->price).' '.$langs->trans("HT");
+    			print '</td>';
+			}
 			print '<td align="right" nowrap="nowrap">';
 			print $product_static->LibStatut($objp->tosell,5,0);
 			print "</td>";
@@ -244,7 +255,7 @@ else
 
 print '</td></tr></table>';
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

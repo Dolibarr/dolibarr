@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,10 +48,11 @@ require("./main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 
 
-$action = GETPOST("action");
-$original_file = GETPOST("file");
-$modulepart = GETPOST("modulepart");
-$urlsource = GETPOST("urlsource");
+$action=GETPOST('action','alpha');
+$original_file=GETPOST("file");
+$modulepart=GETPOST('modulepart','alpha');
+$urlsource=GETPOST("urlsource");
+$entity=GETPOST('entity','int');
 
 
 // Security check
@@ -121,7 +122,7 @@ if ($modulepart)
     elseif ($modulepart == 'societe')
     {
         $accessallowed=1;
-        $original_file=$conf->societe->dir_output.'/'.$original_file;
+        $original_file=$conf->societe->multidir_output[$entity].'/'.$original_file;
     }
     // Wrapping pour les apercu factures
     elseif ($modulepart == 'apercufacture')
@@ -197,13 +198,13 @@ if ($modulepart)
     elseif (preg_match('/^productstats_/i',$modulepart))
     {
         if ($user->rights->produit->lire || $user->rights->service->lire) $accessallowed=1;
-        $original_file=(!empty($conf->product->dir_temp)?$conf->product->dir_temp:$conf->service->dir_temp).'/'.$original_file;
+        $original_file=(!empty($conf->product->multidir_temp[$entity])?$conf->product->multidir_temp[$entity]:$conf->service->multidir_temp[$entity]).'/'.$original_file;
     }
     // Wrapping for products or services
     elseif ($modulepart == 'product')
     {
         if ($user->rights->produit->lire || $user->rights->service->lire) $accessallowed=1;
-        $original_file=(!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output).'/'.$original_file;
+        $original_file=(! empty($conf->product->multidir_output[$entity])?$conf->product->multidir_output[$entity]:$conf->service->multidir_output[$entity]).'/'.$original_file;
     }
     // Wrapping for products or services
     elseif ($modulepart == 'tax')
@@ -215,7 +216,7 @@ if ($modulepart)
     elseif ($modulepart == 'category')
     {
         if ($user->rights->categorie->lire) $accessallowed=1;
-        $original_file=$conf->categorie->dir_output.'/'.$original_file;
+        $original_file=$conf->categorie->multidir_output[$entity].'/'.$original_file;
     }
     // Wrapping pour les prelevements
     elseif ($modulepart == 'prelevement')
@@ -239,7 +240,7 @@ if ($modulepart)
     elseif ($modulepart == 'graph_product')
     {
         $accessallowed=1;
-        $original_file=$conf->product->dir_temp.'/'.$original_file;
+        $original_file=$conf->product->multidir_temp[$entity].'/'.$original_file;
     }
     // Wrapping pour les code barre
     elseif ($modulepart == 'barcode')

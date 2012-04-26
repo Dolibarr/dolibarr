@@ -253,9 +253,9 @@ class Facturation
         $this->montantRendu('RESET');
         $this->paiementLe('RESET');
 
-        $this->prix_total_ht('RESET');
-        $this->montant_tva('RESET');
-        $this->prix_total_ttc('RESET');
+        $this->prixTotalHt('RESET');
+        $this->montantTva('RESET');
+        $this->prixTotalTtc('RESET');
 
     }
 
@@ -588,7 +588,7 @@ class Facturation
      * @param	int		$aTotalHt		Total amount
      * @return	int						Total amount
      */
-    public function prix_total_ht( $aTotalHt=null )
+    public function prixTotalHt( $aTotalHt=null )
     {
         if ( !$aTotalHt ) {
 
@@ -611,7 +611,7 @@ class Facturation
      * @param	int		$aMontantTva	Amount vat
      * @return	int						Amount vat
      */
-    public function montant_tva( $aMontantTva=null )
+    public function montantTva( $aMontantTva=null )
     {
         if ( !$aMontantTva ) {
 
@@ -635,7 +635,7 @@ class Facturation
      * @param	int		$aTotalTtc		Amount ttc
      * @return	int						Amount ttc
      */
-    public function prix_total_ttc( $aTotalTtc=null )
+    public function prixTotalTtc( $aTotalTtc=null )
     {
         if ( !$aTotalTtc )
         {

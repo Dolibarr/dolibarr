@@ -55,6 +55,7 @@ $confirm=GETPOST('confirm','alpha');
 $lineid=GETPOST('lineid','int');
 
 $search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','alpha');
+$search_refcustomer=GETPOST('search_refcustomer','alpha');
 $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
 
@@ -833,6 +834,7 @@ else if ($action == "addline" && $user->rights->propale->creer)
 				unset($_POST['np_price']);
 				unset($_POST['dp_desc']);
 				unset($_POST['np_tva_tx']);
+				unset($_POST['np_desc']);
 			}
 			else
 			{
@@ -1145,7 +1147,7 @@ if ($id > 0 || ! empty($ref))
 		//'text' => $langs->trans("ConfirmClone"),
 		//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
 		//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
-		array('type' => 'other', 'name' => 'socid',   'label' => $langs->trans("SelectThirdParty"),   'value' => $form->select_company(GETPOST('socid','int'),'socid','(s.client=1 OR s.client=3)'))
+		array('type' => 'other', 'name' => 'socid',   'label' => $langs->trans("SelectThirdParty"),   'value' => $form->select_company(GETPOST('socid','int'),'socid','(s.client=1 OR s.client=2 OR s.client=3)'))
 		);
 		// Paiement incomplet. On demande si motif = escompte ou autre
 		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('ClonePropal'),$langs->trans('ConfirmClonePropal',$object->ref),'confirm_clone',$formquestion,'yes',1);
@@ -1567,15 +1569,11 @@ if ($id > 0 || ! empty($ref))
 		include(DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php');
 	}
 
-	// TODO test using div instead of tables
-	//print '<div class="table" id="tablelines">';
 	print '<table id="tablelines" class="noborder" width="100%">';
 
 	// Show object lines
 	$result = $object->getLinesArray();
 	if (! empty($object->lines)) $object->printObjectLines($action,$mysoc,$soc,$lineid,0,$hookmanager);
-
-	//print '<table id="tablelines" class="noborder" width="100%">';
 
 	/*
 	 * Form to add new line
@@ -1601,9 +1599,7 @@ if ($id > 0 || ! empty($ref))
 		}
 	}
 
-	// TODO test using div instead of tables
 	print '</table>';
-	//print '</div>';
 
 	print '</div>';
 	print "\n";
@@ -1823,7 +1819,7 @@ if ($id > 0 || ! empty($ref))
 
 		// Tableau des substitutions
 		$formmail->substit['__PROPREF__']=$object->ref;
-        $formmail->substit['__SIGNATURE__']='';
+        $formmail->substit['__SIGNATURE__']=$user->signature;
         $formmail->substit['__PERSONALIZED__']='';
 		// Tableau des parametres complementaires
 		$formmail->param['action']='send';
@@ -1872,24 +1868,28 @@ else
 	$limit = $conf->liste_limit;
 
 	$sql = 'SELECT s.nom, s.rowid, s.client, ';
-	$sql.= 'p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " sc.fk_soc, sc.fk_user,";
+	$sql.= 'p.rowid as propalid, p.total_ht, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
+	if (! $user->rights->societe->client->voir && ! $socid) $sql .= " sc.fk_soc, sc.fk_user,";
 	$sql.= ' u.login';
 	$sql.= ' FROM ('.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= ')';
 	if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid=pd.fk_propal';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
 	$sql.= ' WHERE p.fk_soc = s.rowid';
 	$sql.= ' AND p.entity = '.$conf->entity;
 
-	if (!$user->rights->societe->client->voir && !$socid) //restriction
+	if (! $user->rights->societe->client->voir && ! $socid) //restriction
 	{
 		$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	}
 	if ($search_ref)
 	{
 		$sql.= " AND p.ref LIKE '%".$db->escape(trim($search_ref))."%'";
+	}
+	if ($search_refcustomer)
+	{
+		$sql.= " AND p.ref_client LIKE '%".$db->escape(trim($search_refcustomer))."%'";
 	}
 	if ($search_societe)
 	{
@@ -1944,6 +1944,7 @@ else
 		print '<tr class="liste_titre">';
 		print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','',$param,'',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'p.ref_client','',$param,'',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'p.datep','',$param, 'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('DateEndPropalShort'),$_SERVER["PHP_SELF"],'dfv','',$param, 'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'p.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
@@ -1961,11 +1962,13 @@ else
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat" type="text" size="16" name="search_societe" value="'.$search_societe.'">';
 		print '</td>';
+		print '<td class="liste_titre">';
+		print '<input class="flat" size="10" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
+		print '</td>';
 		print '<td class="liste_titre" colspan="1" align="center">';
 		print $langs->trans('Month').': <input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
 		print '&nbsp;'.$langs->trans('Year').': ';
 		$syear = $year;
-		//if($syear == '') $syear = date("Y");
 		$formother->select_year($syear,'year',1, 20, 5);
 		print '</td>';
 		print '<td class="liste_titre" colspan="1">&nbsp;</td>';
@@ -2025,6 +2028,11 @@ else
 			$companystatic->client=$objp->client;
 			print '<td>';
 			print $companystatic->getNomUrl(1,'customer');
+			print '</td>';
+
+			// Customer ref
+			print '<td nowrap="nowrap">';
+			print $objp->ref_client;
 			print '</td>';
 
 			// Date propale

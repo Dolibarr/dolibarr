@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file       htdocs/core/class/infobox.php
+ *	\file       htdocs/core/class/infobox.class.php
  *	\brief      File of class to manage widget boxes
  */
 
@@ -63,7 +63,7 @@ class InfoBox
             $sql.= " WHERE entity = ".$conf->entity;
         }
 
-        dol_syslog(get_class($this)."::listBoxes get default box list sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class()."::listBoxes get default box list sql=".$sql, LOG_DEBUG);
         $resql = $db->query($sql);
         if ($resql)
         {
@@ -130,7 +130,7 @@ class InfoBox
         {
             //dol_print_error($db);
             $this->error=$db->error();
-            dol_syslog(get_class($this)."::listBoxes Error ".$this->error, LOG_ERR);
+            dol_syslog(get_class()."::listBoxes Error ".$this->error, LOG_ERR);
             return array();
         }
 
@@ -155,7 +155,7 @@ class InfoBox
 
         require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 
-        dol_syslog(get_class($this)."::saveboxorder zone=".$zone." userid=".$userid);
+        dol_syslog(get_class()."::saveboxorder zone=".$zone." userid=".$userid);
 
         if (! $userid || $userid == 0) return 0;
 
@@ -182,7 +182,7 @@ class InfoBox
         $sql.= " AND ".MAIN_DB_PREFIX."boxes.fk_user = ".$userid;
         $sql.= " AND ".MAIN_DB_PREFIX."boxes.position = ".$zone;
 
-        dol_syslog(get_class($this)."::saveboxorder sql=".$sql);
+        dol_syslog(get_class()."::saveboxorder sql=".$sql);
         $result = $db->query($sql);
         if ($result)
         {
@@ -192,7 +192,7 @@ class InfoBox
                 $part=explode(':',$collist);
                 $colonne=$part[0];
                 $list=$part[1];
-                dol_syslog(get_class($this)."::saveboxorder column=".$colonne.' list='.$list);
+                dol_syslog(get_class()."::saveboxorder column=".$colonne.' list='.$list);
 
                 $i=0;
                 $listarray=explode(',',$list);
@@ -212,7 +212,7 @@ class InfoBox
                         $sql.= " ".$userid;
                         $sql.= ")";
 
-                        dol_syslog(get_class($this)."::saveboxorder sql=".$sql);
+                        dol_syslog(get_class()."::saveboxorder sql=".$sql);
                         $result = $db->query($sql);
                         if ($result < 0)
                         {
@@ -238,7 +238,7 @@ class InfoBox
         {
             $this->error=$db->lasterror();
             $db->rollback();
-            dol_syslog(get_class($this)."::saveboxorder ".$this->error);
+            dol_syslog(get_class()."::saveboxorder ".$this->error);
             return -1;
         }
     }

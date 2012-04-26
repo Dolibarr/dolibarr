@@ -59,6 +59,7 @@ create table llx_societe
   ape                      varchar(128),                         		-- IDProf3: code ape for france
   idprof4                  varchar(128),                         		-- IDProf4: nu for france
   idprof5                  varchar(128),                         		-- IDProf5: nu for france
+  idprof6                  varchar(128),                         		-- IDProf6: nu for france
   tva_intra                varchar(20),                         		-- tva
   capital                  real,                                		-- capital de la societe
   description              text,                                		--

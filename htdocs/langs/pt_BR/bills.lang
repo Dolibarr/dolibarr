@@ -1,4 +1,5 @@
 # Dolibarr language file - pt_BR rev. 0.0 - bills
+# 2012      Vinícius Nogueira        <viniciusvgn@gmail.com>
 CHARSET=UTF-8
 Bill=Fatura
 Bills=Faturas
@@ -12,6 +13,8 @@ BillsUnpayed=Pendentes de Pagamento
 BillsLate=Atrasos de Pagamento
 BillsStatistics=Estatísticas faturas a clientes
 BillsStatisticsSuppliers=Estatísticas faturas de Fornecedores
+RelatedBill=Fatura Anexo
+RelatedBills=Faturas Anexos
 InvoiceStandard=Fatura Standard
 InvoiceStandardAsk=Fatura Standard
 InvoiceStandardDesc=Este tipo de fatura é a fatura tradicional. Também é conhecida como <b>Fatura de Débito</b>.
@@ -183,8 +186,6 @@ RemainderToTake=Falta Cobrar
 AmountExpected=Valor Reclamado
 ExcessReceived=Recebido em Excesso
 EscompteOffered=Desconto (Pronto pagamento)
-CreateDraft=Criar Rascunho
-CreateeDraft=Criar Rascunho
 SendBillRef=Enviar Fatura %s
 SendReminderBillRef=Lembrete Fatura %s
 StandingOrders=Débitos Diretos
@@ -352,10 +353,12 @@ ChequeDeposits=Depósito de Cheques
 Cheques=Cheques
 CreditNoteConvertedIntoDiscount=Este depósito converteu-se em %s
 UsBillingContactAsIncoiveRecipientIfExist=Utilizar o endereço do contato de cliente de faturação da fatura em vez do endereço do Fornecedor como destinatário das faturas
-ShowUnpayedAll=Ver todos os não remunerados
-ShowUnpayedLateOnly=Mostrar apenas os não remunerados
+ShowUnpaidAll=Mostrar todas as faturas
+ShowUnpaidLateOnly=Mostrar apenas faturas em Atraso
 PaymentInvoiceRef=Pagamento Fatura %s
 ErrorDeletePaymentLinkedToAClosedInvoiceNotPossible=Não é possível excluir pagamento de uma Fatura fechada.
+CustomerBillsUnpaid=Faturas de Clientes Pendentes de Cobrança
+BillsCustomersUnpaid=Faturas de Clientes Pendentes de Cobrança
 
 # oursin PDF model
 Of=de

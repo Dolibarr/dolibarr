@@ -40,7 +40,7 @@ abstract class ModelePDFProjects extends CommonDocGenerator
      *  @param  string	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	function liste_modeles($db,$maxfilenamelength=0)
+	static function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
 
@@ -110,10 +110,12 @@ abstract class ModeleNumRefProjects
 
 	/**
 	 *  Renvoi prochaine valeur attribuee
-	 *
-	 *  @return     string      Valeur
+	 *	
+	 *	@param	Societe		$objsoc		Object third party
+	 *	@param	Project		$project	Object project
+	 *	@return	string					Valeur
 	 */
-	function getNextValue()
+	function getNextValue($objsoc, $project)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -138,68 +140,110 @@ abstract class ModeleNumRefProjects
 
 
 /**
- *	Create object on disk
+ *  Create an intervention document on disk using template defined into PROJECT_ADDON_PDF
  *
- *	@param	DoliDB		$db  			objet base de donnee
- *	@param	Object		$object			object project
- *	@param	string		$model			force le modele a utiliser ('' to not force)
- *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
+ *  @param	DoliDB		$db  			objet base de donnee
+ *  @param	Object		$object			Object fichinter
+ *  @param	string		$modele			force le modele a utiliser ('' par defaut)
+ *  @param	Translate	$outputlangs	objet lang a utiliser pour traduction
+ *  @param  int			$hidedetails    Hide details of lines
+ *  @param  int			$hidedesc       Hide description
+ *  @param  int			$hideref        Hide ref
+ *  @param  HookManager	$hookmanager	Hook manager instance
  *  @return int         				0 if KO, 1 if OK
  */
-function project_pdf_create($db, $object, $model,$outputlangs)
+function project_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $hookmanager=false)
 {
 	global $conf,$langs;
 	$langs->load("projects");
 
-	$dir = DOL_DOCUMENT_ROOT."/core/modules/project/pdf/";
+	$error=0;
+
+	$srctemplatepath='';
 
 	// Positionne modele sur le nom du modele de projet a utiliser
-	if (! dol_strlen($model))
+	if (! dol_strlen($modele))
 	{
 		if (! empty($conf->global->PROJECT_ADDON_PDF))
 		{
-			$model = $conf->global->PROJECT_ADDON_PDF;
+			$modele = $conf->global->PROJECT_ADDON_PDF;
 		}
 		else
 		{
-			$model='baleine';
-			//print $langs->trans("Error")." ".$langs->trans("Error_PROJECT_ADDON_PDF_NotDefined");
-			//return 0;
+			$modele='baleine';
 		}
 	}
 
-	// Charge le modele
-	$file = "pdf_".$model.".modules.php";
-	if (file_exists($dir.$file))
+	// If selected modele is a filename template (then $modele="modelname:filename")
+	$tmp=explode(':',$modele,2);
+    if (! empty($tmp[1]))
+    {
+        $modele=$tmp[0];
+        $srctemplatepath=$tmp[1];
+    }
+
+	// Search template files
+	$file=''; $classname=''; $filefound=0;
+	$dirmodels=array('/');
+	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
+	foreach($dirmodels as $reldir)
 	{
-		$classname = "pdf_".$model;
-		require_once($dir.$file);
+    	foreach(array('doc','pdf') as $prefix)
+    	{
+    	    $file = $prefix."_".$modele.".modules.php";
+
+    		// On verifie l'emplacement du modele
+	        $file=dol_buildpath($reldir."core/modules/project/pdf/".$file,0);
+    		if (file_exists($file))
+    		{
+    			$filefound=1;
+    			$classname=$prefix.'_'.$modele;
+    			break;
+    		}
+    	}
+    	if ($filefound) break;
+    }
+
+	// Charge le modele
+	if ($filefound)
+	{
+		require_once($file);
 
 		$obj = new $classname($db);
 
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($object,$outputlangs) > 0)
+		if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $hookmanager) > 0)
 		{
 			$outputlangs->charset_output=$sav_charset_output;
 
 			// we delete preview files
         	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 			dol_delete_preview($object);
+
+			// Success in building document. We build meta file.
+			dol_meta_create($object);
+
+			// Appel des triggers
+			/*include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('PROJECT_BUILDDOC',$object,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }*/
+			// Fin appel triggers
+
 			return 1;
 		}
 		else
 		{
 			$outputlangs->charset_output=$sav_charset_output;
-			dol_syslog("Erreur dans project_pdf_create");
-			dol_print_error($db,$obj->error);
+			dol_print_error($db,"project_pdf_create Error: ".$obj->error);
 			return 0;
 		}
 	}
 	else
 	{
-		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$file);
 		return 0;
 	}
 }

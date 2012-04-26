@@ -481,7 +481,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		print '<td align="right">&nbsp;';
 		if ($decaiss_ttc[$case] != 0)
 		{
-			print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.'">'.price($decaiss_ttc[$case]).'</a>';
+			print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.'">'.price(price2num($decaiss_ttc[$case],'MT')).'</a>';
 			$totsorties[$annee]+=$decaiss_ttc[$case];
 		}
 		print "</td>";
@@ -489,7 +489,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		print '<td align="right">&nbsp;';
 		if ($encaiss_ttc[$case] != 0)
 		{
-			print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.'">'.price($encaiss_ttc[$case]).'</a>';
+			print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.'">'.price(price2num($encaiss_ttc[$case],'MT')).'</a>';
 			$totentrees[$annee]+=$encaiss_ttc[$case];
 		}
 		print "</td>";
@@ -505,8 +505,8 @@ print '<tr class="liste_total"><td>'.$langs->trans("TotalTTC").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
 	$nbcols+=2;
-	print '<td align="right">'.(isset($totsorties[$annee])?price($totsorties[$annee]):'&nbsp;').'</td>';
-	print '<td align="right">'.(isset($totentrees[$annee])?price($totentrees[$annee]):'&nbsp;').'</td>';
+	print '<td align="right">'.(isset($totsorties[$annee])?price(price2num($totsorties[$annee],'MT')):'&nbsp;').'</td>';
+	print '<td align="right">'.(isset($totentrees[$annee])?price(price2num($totentrees[$annee],'MT')):'&nbsp;').'</td>';
 }
 print "</tr>\n";
 
@@ -523,7 +523,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	print '<td align="right" colspan="2"> ';
 	if (isset($totentrees[$annee]) || isset($totsorties[$annee]))
 	{
-		print price($totentrees[$annee]-$totsorties[$annee]).'</td>';
+		print price(price2num($totentrees[$annee]-$totsorties[$annee],'MT')).'</td>';
 		//  print '<td>&nbsp;</td>';
 	}
 }

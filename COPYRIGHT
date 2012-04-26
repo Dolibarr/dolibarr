@@ -18,13 +18,13 @@ GeoIP			  2004      LGPL 2.1                    Yes             Sample code to m
 NuSoap            0.9.5		LGPL 2.1					Yes				Library to develop SOAP Web services (not into rpm and deb package)
 OdtPHP            1.0.1		GPL 2.0						Yes				Library to build/edit ODT files
 PHPExcel		  1.7.6		LGPL 2.1					Yes				Read/Write XLS files, read ODS files
-TCPDF             5.9.098	LGPL 3.0					Yes				PDF generation
+TCPDF             5.9.156	LGPL 3.0					Yes				PDF generation
 
 JS libraries:
 jQuery            1.7.1		GPL and MIT Licence			Yes				JS library
 jQuery UI         1.8.17	GPL and MIT Licence			Yes				JS library plugin UI
 jQuery Colorpicker 1.1	    MIT Licence					Yes				JS library for color picker for a defined list of colors
-jQuery DataTable  1.8.1     BSD							Yes				JS library for tables output
+jQuery DataTables 1.9.1     BSD							Yes				JS library for tables output
 jQuery Flot       0.7		MIT Licence					Yes				JS library to build graph
 jQuery FileUpload 5.0.3		GPL and MIT Licence			Yes				JS library to upload files
 jQuery JCrop      0.9.8		GPL and MIT Licence			Yes				JS library plugin Crop (to crop images)

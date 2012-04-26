@@ -1,8 +1,8 @@
 <?php
 
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,12 +54,12 @@ class Project extends CommonObject
     /**
      *  Constructor
      *
-     *  @param      DoliDB		$DB      Database handler
+     *  @param      DoliDB		$db      Database handler
      */
-    function Project($DB)
+    function __construct($db)
     {
-        $this->db = $DB;
-        $this->societe = new Societe($DB);
+        $this->db = $db;
+        $this->societe = new Societe($db);
 
         $this->statuts_short = array(0 => 'Draft', 1 => 'Validated', 2 => 'Closed');
         $this->statuts = array(0 => 'Draft', 1 => 'Validated', 2 => 'Closed');
@@ -439,21 +439,9 @@ class Project extends CommonObject
             if ($conf->projet->dir_output)
             {
                 $dir = $conf->projet->dir_output . "/" . $projectref;
-                $file = $conf->projet->dir_output . "/" . $projectref . "/" . $projectref . ".pdf";
-                if (file_exists($file))
-                {
-                    dol_delete_preview($this);
-
-                    if (!dol_delete_file($file))
-                    {
-                        $this->error = 'ErrorFailToDeleteFile';
-                        $this->db->rollback();
-                        return 0;
-                    }
-                }
                 if (file_exists($dir))
                 {
-                    $res = @dol_delete_dir($dir);
+                    $res = @dol_delete_dir_recursive($dir);
                     if (!$res)
                     {
                         $this->error = 'ErrorFailToDeleteDir';
@@ -477,14 +465,14 @@ class Project extends CommonObject
                 // End call triggers
             }
 
-            dol_syslog("Project::delete sql=" . $sql, LOG_DEBUG);
+            dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
             $this->db->commit();
             return 1;
         }
         else
         {
             $this->error = $this->db->lasterror();
-            dol_syslog("Project::delete " . $this->error, LOG_ERR);
+            dol_syslog(get_class($this) . "::delete " . $this->error, LOG_ERR);
             $this->db->rollback();
             return -1;
         }
@@ -721,7 +709,7 @@ class Project extends CommonObject
     {
         global $user, $langs, $conf;
 
-        $now = mktime();
+        $now = dol_now();
 
         // Charge tableau des produits prodids
         $prodids = array();
@@ -748,7 +736,6 @@ class Project extends CommonObject
         $this->id = 0;
         $this->ref = 'SPECIMEN';
         $this->specimen = 1;
-        $socid = rand(1, $num_socs);
         $this->socid = 1;
         $this->date_c = $now;
         $this->date_m = $now;

@@ -213,9 +213,10 @@ Developpers=Desarrolladores/contribuidores
 OtherDeveloppers=Otros desarrolladores/contribuidores
 OfficialWebSite=Sitio web oficial internacional
 OfficialWebSiteFr=sitio web oficial habla francesa
-OfficialWiki=Wiki Dolibarr
+OfficialWiki=Wiki documentación Dolibarr
 OfficialDemo=Demo en línea Dolibarr
 OfficialMarketPlace=Sitio oficial de módulos complementarios y extensiones
+OfficialWebHostingService=Servicio oficial de alojamiento (SaaS)
 ForDocumentationSeeWiki=Para la documentación de usuario, desarrollador o Preguntas Frecuentes (FAQ), consulte el wiki Dolibarr: <br><b><a href="%s" target="_blank">%s</a></b>
 ForAnswersSeeForum=Para otras cuestiones o realizar sus propias consultas, puede utilizar el foro Dolibarr: <br><b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1=Esta aplicación, independiente de Dolibarr, le permite ayudarle a obtener un servicio de soporte de Dolibarr.
@@ -265,6 +266,12 @@ FindPackageFromWebSite=Buscar el paquete que responde a su necesidad (por ejempl
 DownloadPackageFromWebSite=Descargar el paquete desde el sitio %s.
 UnpackPackageInDolibarrRoot=Descomprimir el paquete en el directorio raíz de Dolibarr <b>%s</b> sobre los archivos existentes (sin desplazar o borrar los existentes, so pena de perder su configuración o los módulos no oficiales instalados)
 SetupIsReadyForUse=La instalación ha finalizado y Dolibarr está disponible con el nuevo componente.
+
+NotExistsDirect=No existe el directorio alternativo.<br>
+InfDirAlt=Desde la versión 3 es posible definir un directorio root alternativo, esto le permite almacenar en el mismo lugar módulos y temas personalizados.<br>Basta con crear un directorio en el raíz de Dolibarr (por ejemplo: custom).<br>
+InfDirExample=<br>Seguidamente se declara en el archivo conf.php:<br> $dolibarr_main_url_root_alt='http://miservidor/custom'<br>$dolibarr_main_document_root_alt='/directorio/de/dolibarr/htdocs/custom'<br>*Estas lineas vienen comentadas con un "#", para descomentarlas solo hay que retirar el caracter.
+YouCanSubmitFile=Seleccione módulo:
+
 CurrentVersion=Versión actual de Dolibarr
 CallUpdatePage=Llamar a la página de actualización de la estructura y datos de la base de datos %s.
 LastStableVersion=Última versión estable disponible
@@ -311,7 +318,7 @@ ResponseTimeout=Timeout de respuesta
 SmsTestMessage=Mensaje de prueba de __PHONEFROM__ para __PHONETO__
 ModuleMustBeEnabledFirst=Para usar esta función debe estar activado el módulo <b>%s</b>.
 SecurityToken=Clave para encriptar urls
-NoSmsEngine=No hay disponible ningún gestor de envío de SMS. Los gestores de envío de SMS no se instalan en estándar (ya que dependen de un proveedor), pero puede encontrar en la plataforma http://www.dolistore.com
+NoSmsEngine=No hay disponible ningún gestor de envío de SMS. Los gestores de envío de SMS no se instalan en estándar (ya que dependen de un proveedor), pero puede encontrar en la plataforma %s
 PDF=PDF
 PDFDesc=Puede definir aquí las opciones globales para la generación de los PDF
 PDFAddressForging=Reglas de visualización de direcciones
@@ -868,7 +875,8 @@ MAIN_PROXY_PASS=Contraseña del servidor proxy
 DefineHereComplementaryAttributes=Defina aquí la lista de atributos adicionales, no disponibles en estándar, y que desea gestionar para %s.
 ExtraFields=Atributos adicionales
 ExtraFieldHasWrongValue=El atributo %s tiene un valor incorrecto.
-SendingMailSetup=Configuració de l'enviament per mail
+AlphaNumOnlyCharsAndNoSpace=solamente caracteres alfanuméricos sin espacios
+SendingMailSetup=Configuración del envío por mail
 SendmailOptionNotComplete=Atención, en algunos sistemas Linux, con este método de envio, para poder enviar mails en su nombre, la configuración de sendmail debe contener la opción <b>-ba</b> (parámetro <b>mail.force_extra_parameters</b> en el archivo <b>php.ini</b>). Si algunos de sus destinatarios no reciben sus mensajes, pruebe a modificar este parámetro PHP con <b>mail.force_extra_parameters=-ba</b>.
 PathToDocuments=Rutas de acceso a documentos
 PathDirectory=Directorio

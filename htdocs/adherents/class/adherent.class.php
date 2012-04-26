@@ -182,54 +182,56 @@ class Adherent extends CommonObject
      * @param	string	$text       Text to make substitution to
      * @return  string      		Value of input text string with substitutions done
      */
-    function makeSubstitution($text)
-    {
-        global $langs;
-
-        $birthday = dol_print_date($this->naiss,'day');
-
-        $msgishtml = 0;
-        if (dol_textishtml($text,1)) $msgishtml = 1;
-
-        $infos='';
-        if ($this->civilite_id) $infos.= $langs->transnoentities("UserTitle").": ".$this->getCivilityLabel(1)."\n";
-        $infos.= $langs->transnoentities("Lastname").": ".$this->lastname."\n";
-        $infos.= $langs->transnoentities("Firstname").": ".$this->firstname."\n";
-        $infos.= $langs->transnoentities("Company").": ".$this->societe."\n";
-        $infos.= $langs->transnoentities("Address").": ".$this->address."\n";
-        $infos.= $langs->transnoentities("Zip").": ".$this->zip."\n";
-        $infos.= $langs->transnoentities("Town").": ".$this->town."\n";
-        $infos.= $langs->transnoentities("Country").": ".$this->country."\n";
-        $infos.= $langs->transnoentities("EMail").": ".$this->email."\n";
-        $infos.= $langs->transnoentities("Login").": ".$this->login."\n";
-        $infos.= $langs->transnoentities("Password").": ".$this->pass."\n";
-        $infos.= $langs->transnoentities("Birthday").": ".$birthday."\n";
-        $infos.= $langs->transnoentities("Photo").": ".$this->photo."\n";
-        $infos.= $langs->transnoentities("Public").": ".yn($this->public);
-
-        // Substitutions
-        $substitutionarray=array(
-               '%DOL_MAIN_URL_ROOT%'=>DOL_MAIN_URL_ROOT,
-               '%INFOS%'=>$msgishtml?dol_htmlentitiesbr($infos):$infos,
-               '%CIVILITE%'=>$this->getCivilityLabel($msgishtml?0:1),
-               '%PRENOM%'=>$msgishtml?dol_htmlentitiesbr($this->firstname):$this->firstname,
-               '%NOM%'=>$msgishtml?dol_htmlentitiesbr($this->lastname):$this->lastname,
-               '%SOCIETE%'=>$msgishtml?dol_htmlentitiesbr($this->societe):$this->societe,
-               '%ADRESSE%'=>$msgishtml?dol_htmlentitiesbr($this->address):$this->address,
-               '%CP%'=>$msgishtml?dol_htmlentitiesbr($this->zip):$this->zip,
-               '%VILLE%'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
-               '%PAYS%'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
-               '%EMAIL%'=>$msgishtml?dol_htmlentitiesbr($this->email):$this->email,
-               '%NAISS%'=>$msgishtml?dol_htmlentitiesbr($birthday):$birthday,
-               '%PHOTO%'=>$msgishtml?dol_htmlentitiesbr($this->photo):$this->photo,
-               '%LOGIN%'=>$msgishtml?dol_htmlentitiesbr($this->login):$this->login,
-               '%PASSWORD%'=>$msgishtml?dol_htmlentitiesbr($this->pass):$this->pass
-        );
-
-        complete_substitutions_array($substitutionarray, $langs);
-
-        return make_substitutions($text,$substitutionarray);
-    }
+	function makeSubstitution($text)
+	{
+		global $langs;
+		
+		$birthday = dol_print_date($this->naiss,'day');
+		
+		$msgishtml = 0;
+		if (dol_textishtml($text,1)) $msgishtml = 1;
+		
+		$infos='';
+		if ($this->civilite_id) $infos.= $langs->transnoentities("UserTitle").": ".$this->getCivilityLabel(1)."\n";
+		$infos.= $langs->transnoentities("id").": ".$this->id."\n";
+		$infos.= $langs->transnoentities("Lastname").": ".$this->lastname."\n";
+		$infos.= $langs->transnoentities("Firstname").": ".$this->firstname."\n";
+		$infos.= $langs->transnoentities("Company").": ".$this->societe."\n";
+		$infos.= $langs->transnoentities("Address").": ".$this->address."\n";
+		$infos.= $langs->transnoentities("Zip").": ".$this->zip."\n";
+		$infos.= $langs->transnoentities("Town").": ".$this->town."\n";
+		$infos.= $langs->transnoentities("Country").": ".$this->country."\n";
+		$infos.= $langs->transnoentities("EMail").": ".$this->email."\n";
+		$infos.= $langs->transnoentities("Login").": ".$this->login."\n";
+		$infos.= $langs->transnoentities("Password").": ".$this->pass."\n";
+		$infos.= $langs->transnoentities("Birthday").": ".$birthday."\n";
+		$infos.= $langs->transnoentities("Photo").": ".$this->photo."\n";
+		$infos.= $langs->transnoentities("Public").": ".yn($this->public);
+		
+		// Substitutions
+		$substitutionarray=array(
+				'%DOL_MAIN_URL_ROOT%'=>DOL_MAIN_URL_ROOT,
+				'%ID%'=>$msgishtml?dol_htmlentitiesbr($this->id):$this->id,
+				'%INFOS%'=>$msgishtml?dol_htmlentitiesbr($infos):$infos,
+				'%CIVILITE%'=>$this->getCivilityLabel($msgishtml?0:1),
+				'%PRENOM%'=>$msgishtml?dol_htmlentitiesbr($this->firstname):$this->firstname,
+				'%NOM%'=>$msgishtml?dol_htmlentitiesbr($this->lastname):$this->lastname,
+				'%SOCIETE%'=>$msgishtml?dol_htmlentitiesbr($this->societe):$this->societe,
+				'%ADRESSE%'=>$msgishtml?dol_htmlentitiesbr($this->address):$this->address,
+				'%CP%'=>$msgishtml?dol_htmlentitiesbr($this->zip):$this->zip,
+				'%VILLE%'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
+				'%PAYS%'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
+				'%EMAIL%'=>$msgishtml?dol_htmlentitiesbr($this->email):$this->email,
+				'%NAISS%'=>$msgishtml?dol_htmlentitiesbr($birthday):$birthday,
+				'%PHOTO%'=>$msgishtml?dol_htmlentitiesbr($this->photo):$this->photo,
+				'%LOGIN%'=>$msgishtml?dol_htmlentitiesbr($this->login):$this->login,
+				'%PASSWORD%'=>$msgishtml?dol_htmlentitiesbr($this->pass):$this->pass
+		);
+		
+		complete_substitutions_array($substitutionarray, $langs);
+		
+		return make_substitutions($text,$substitutionarray);
+	}
 
 
     /**
@@ -966,7 +968,7 @@ class Adherent extends CommonObject
      */
     function fetch($rowid,$ref='',$fk_soc='')
     {
-        global $conf, $langs;
+        global $langs;
 
         $sql = "SELECT d.rowid, d.civilite, d.prenom as firstname, d.nom as lastname, d.societe, d.fk_soc, d.statut, d.public, d.adresse as address, d.cp as zip, d.ville as town, d.note,";
         $sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
@@ -987,10 +989,12 @@ class Adherent extends CommonObject
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as dep ON d.fk_departement = dep.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON d.rowid = u.fk_member";
         $sql.= " WHERE d.fk_adherent_type = t.rowid";
-        $sql.= " AND d.entity = ".$conf->entity;
-        if ($ref) $sql.= " AND d.rowid='".$ref."'";
-        elseif ($fk_soc) $sql.= " AND d.fk_soc='".$fk_soc."'";
-        else $sql.= " AND d.rowid=".$rowid;
+        if ($rowid) $sql.= " AND d.rowid=".$rowid;
+        elseif ($ref || $fk_soc) {
+        	$sql.= " AND d.entity IN (".getEntity().")";
+        	if ($ref) $sql.= " AND d.rowid='".$ref."'";
+        	elseif ($fk_soc) $sql.= " AND d.fk_soc='".$fk_soc."'";
+        }
 
         dol_syslog(get_class($this)."::fetch sql=".$sql);
         $resql=$this->db->query($sql);

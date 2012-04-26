@@ -61,5 +61,25 @@ DEBEMAIL="<Your email address>"
     sudo pbuilder build <working-dir>/<project>_<version>.dsc
 
     
+# To get/download package:
+Add signing key of the Launchpad repository:
+> gpg --keyserver keyserver.ubuntu.com --recv-key A38BF8FD
+> sudo apt-key add ~/.gnupg/pubring.gpg
+
+Add Dolibarr Launchpad repository to your system setup by adding the two lines to /etc/apt/sources.list
+For the development snapshot version: 
+deb http://ppa.launchpad.net/eldy/dolibarr-dev/ubuntu precise main 
+deb-src http://ppa.launchpad.net/eldy/dolibarr-dev/ubuntu precise main 
+For the stable version:
+deb http://ppa.launchpad.net/eldy/dolibarr-stable/ubuntu precise main 
+deb-src http://ppa.launchpad.net/eldy/dolibarr-stable/ubuntu precise main 
+
+Update your package cache:
+> apt-get update
+
+Install Dolibarr: 
+> apt-get install dolibarr
+
+
     
     

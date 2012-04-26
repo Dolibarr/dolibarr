@@ -87,7 +87,7 @@ class box_contracts extends ModeleBoxes
     		if ($resql)
     		{
     			$num = $db->num_rows($resql);
-    			$now=gmmktime();
+    			$now=dol_now();
 
     			$i = 0;
 

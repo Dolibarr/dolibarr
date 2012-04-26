@@ -84,7 +84,7 @@ if ($action == 'update_price' && ! $_POST["cancel"] && ($user->rights->produit->
 		$newvat=str_replace('*','',$_POST["tva_tx"]);
 	}
 
-	if ($object->update_price($object->id, $newprice, $newpricebase, $user, $newvat, $newprice_min, $level, $newnpr) > 0)
+	if ($object->updatePrice($object->id, $newprice, $newpricebase, $user, $newvat, $newprice_min, $level, $newnpr) > 0)
 	{
 		$action = '';
 		$mesg = '<div class="ok">'.$langs->trans("RecordSaved").'</div>';
@@ -130,14 +130,14 @@ print '</tr>';
 // Label
 print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->libelle.'</td>';
 
-$isphoto=$object->is_photo_available($conf->product->dir_output);
+$isphoto=$object->is_photo_available($conf->product->multidir_output[$object->entity]);
 
 $nblignes=5;
 if ($isphoto)
 {
 	// Photo
 	print '<td valign="middle" align="center" width="30%" rowspan="'.$nblignes.'">';
-	print $object->show_photos($conf->product->dir_output,1,1,0,0,0,80);
+	print $object->show_photos($conf->product->multidir_output[$object->entity],1,1,0,0,0,80);
 	print '</td>';
 }
 
@@ -446,7 +446,7 @@ if ($result)
 
 		// Il doit au moins y avoir la ligne de prix initial.
 		// On l'ajoute donc pour remettre a niveau (pb vieilles versions)
-		$object->update_price($object->id, $object->price, 'HT', $user, $newprice_min);
+		$object->updatePrice($object->id, $object->price, 'HT', $user, $newprice_min);
 
 		$result = $db->query($sql);
 		$num = $db->num_rows($result);
