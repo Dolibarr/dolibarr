@@ -97,3 +97,6 @@
 [submodule "htdocs/custom/locker"]
 	path = htdocs/custom/locker
 	url = gitolite@doliforge.org:book/locker.git
+[submodule "htdocs/custom/composition"]
+	path = htdocs/custom/composition
+	url = gitolite@doliforge.org:composition/composition.git
