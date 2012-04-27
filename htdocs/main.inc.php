@@ -665,6 +665,14 @@ if (! defined('NOREQUIRETRAN'))
     }
 }
 
+// Use php template engine
+if ($conf->global->MAIN_USE_TEMPLATE_ENGINE && ! defined('NOTEMPLATEENGINE'))
+{
+	require_once(DOL_DOCUMENT_ROOT.'/includes/savant/Savant3.php');
+	
+	$tpl = new Savant3();
+}
+
 // Case forcing style from url
 if (GETPOST('theme'))
 {
