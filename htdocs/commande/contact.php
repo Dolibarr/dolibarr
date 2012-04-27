@@ -55,8 +55,8 @@ if ($action == 'addcontact' && $user->rights->commande->creer)
 
     if ($result > 0 && $id > 0)
     {
-    	$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-  		$result = $result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+    	$contactid = (GETPOST('userid','int') ? GETPOST('userid','int') : GETPOST('contactid','int'));
+  		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
     }
 
 	if ($result >= 0)
@@ -110,7 +110,8 @@ else if ($action == 'deletecontact' && $user->rights->commande->creer)
 else if ($action == 'setaddress' && $user->rights->commande->creer)
 {
 	$object->fetch($id);
-	$object->setDeliveryAddress($_POST['fk_address']);
+	$result=$object->setDeliveryAddress($_POST['fk_address']);
+	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 /*
