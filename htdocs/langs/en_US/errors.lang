@@ -106,6 +106,8 @@ ErrorWebServerUserHasNotPermission=User account <b>%s</b> used to execute web se
 ErrorNoActivatedBarcode=No barcode type activated
 ErrorOSSystem=The online installation does not support your operating system.<br>Install the component manually.
 ErrorUncompFile=Unable to install the package %s
+ErrorFileMustBeADolibarrPackage=The file must be a Dolibarr package
+ErrorFileRequired=It takes a package Dolibarr file
 
 # Warnings
 WarningSafeModeOnCheckExecDir=Warning, PHP option <b>safe_mode</b> is on so command must be stored inside a directory declared by php parameter <b>safe_mode_exec_dir</b>.

@@ -107,6 +107,8 @@ ErrorWebServerUserHasNotPermission=El compte d'execució del servidor web <b>%s<
 ErrorNoActivatedBarcode=No hi ha activat cap tipus de codi de barres
 ErrorOSSystem=La instal·lació en línia no suporta el seu sistema operatiu. <br> Instal·leu l'extensió manualment.
 ErrorUncompFile=No és possible instal·lar el paquet %s
+ErrorFileMustBeADolibarrPackage=L'arxiu ha de ser un paquet Dolibarr
+ErrorFileRequired=Es requereix un fitxer de paquet Dolibarr
 
 # Warnings
 WarningSafeModeOnCheckExecDir=Atenció, està activada l'opció PHP <b>safe_mode</b>, la comanda ha d'estar dins d'un directori declarat dins del paràmetre php <b>safe_mode_exec_dir</b>.
