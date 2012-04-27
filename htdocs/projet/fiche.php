@@ -117,6 +117,7 @@ if ($action == 'add' && $user->rights->projet->creer)
         $db->begin();
 
         $project = new Project($db);
+
         $project->ref             = GETPOST('ref','alpha');
         $project->title           = GETPOST('title','alpha');
         $project->socid           = GETPOST('socid','int');
@@ -477,11 +478,8 @@ else
         $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$project->id,$langs->trans("DeleteAProject"),$text,"confirm_delete",'','',1);
         if ($ret == 'html') print '<br>';
     }
-<<<<<<< OURS
+
     // Clone confirmation
-=======
-       // Clone confirmation
->>>>>>> THEIRS
     if ($action == 'clone')
     {
         $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$project->id,$langs->trans("CloneProject"),$langs->trans("ConfirmCloneProject"),"confirm_clone",'','',1);
