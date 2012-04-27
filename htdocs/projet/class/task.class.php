@@ -64,7 +64,7 @@ class Task extends CommonObject
     /**
      *  Constructor
      *
-     *  @param      DoliDB		$db      Database handler
+     *  @param      DoliDB		$DB      Database handler
      */
     function __construct($db)
     {
@@ -305,6 +305,7 @@ class Task extends CommonObject
      */
     function delete($user, $notrigger=0)
     {
+        
         global $conf, $langs;
 
         $error=0;
@@ -391,7 +392,7 @@ class Task extends CommonObject
 
             $this->db->commit();
 
-            return 1;
+	        return 1;
         }
     }
 
