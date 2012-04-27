@@ -55,13 +55,15 @@ if (GETPOST('action','alpha')=='install')
 
 	if (! $original_file)
 	{
-		$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("File"));
+		$langs->load("Error");
+		$mesg=$langs->trans("ErrorFileRequired");
 		$error++;
 	}
 	else
 	{
 		if (! preg_match('/\.tgz/i',$original_file) && ! preg_match('/\.zip/i',$original_file))
 		{
+			$langs->load("errors");
 			$mesg=$langs->trans("ErrorFileMustBeADolibarrPackage");
 			$error++;
 		}

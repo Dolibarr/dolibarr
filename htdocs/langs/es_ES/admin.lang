@@ -266,12 +266,10 @@ FindPackageFromWebSite=Buscar el paquete que responde a su necesidad (por ejempl
 DownloadPackageFromWebSite=Descargar el paquete desde el sitio %s.
 UnpackPackageInDolibarrRoot=Descomprimir el paquete en el directorio raíz de Dolibarr <b>%s</b> sobre los archivos existentes (sin desplazar o borrar los existentes, so pena de perder su configuración o los módulos no oficiales instalados)
 SetupIsReadyForUse=La instalación ha finalizado y Dolibarr está disponible con el nuevo componente.
-
 NotExistsDirect=No existe el directorio alternativo.<br>
 InfDirAlt=Desde la versión 3 es posible definir un directorio root alternativo, esto le permite almacenar en el mismo lugar módulos y temas personalizados.<br>Basta con crear un directorio en el raíz de Dolibarr (por ejemplo: custom).<br>
 InfDirExample=<br>Seguidamente se declara en el archivo conf.php:<br> $dolibarr_main_url_root_alt='http://miservidor/custom'<br>$dolibarr_main_document_root_alt='/directorio/de/dolibarr/htdocs/custom'<br>*Estas lineas vienen comentadas con un "#", para descomentarlas solo hay que retirar el caracter.
-YouCanSubmitFile=Seleccione módulo:
-
+YouCanSubmitFile=Seleccione paquete:
 CurrentVersion=Versión actual de Dolibarr
 CallUpdatePage=Llamar a la página de actualización de la estructura y datos de la base de datos %s.
 LastStableVersion=Última versión estable disponible
