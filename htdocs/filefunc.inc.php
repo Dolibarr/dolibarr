@@ -54,7 +54,7 @@ if (! defined('LOG_DEBUG'))
 }
 
 // Force PHP error_reporting setup (Dolibarr may report warning without this)
-error_reporting(E_ALL ^ E_NOTICE ^ E_STRICT);
+error_reporting(E_ALL & ~(E_STRICT|E_NOTICE));
 //error_reporting(E_ALL | E_STRICT);
 
 // End of common declaration part
