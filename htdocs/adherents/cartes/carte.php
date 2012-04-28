@@ -153,7 +153,7 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
     	}
 
     	// Build and output PDF
-        if (empty($mode) || $mode=='card' || $mode='cardlogin')
+        if (empty($mode) || $mode=='card' || $mode=='cardlogin')
         {
             if (! count($arrayofmembers))
             {
