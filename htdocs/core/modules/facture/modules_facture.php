@@ -32,8 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");   // Req
 
 
 /**
- *	\class      ModelePDFFactures
- *	\brief      Classe mere des modeles de facture
+ *	Parent class of invoice document generators
  */
 abstract class ModelePDFFactures extends CommonDocGenerator
 {
@@ -61,8 +60,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 }
 
 /**
- *	\class      ModeleNumRefFactures
- *	\brief      Classe mere des modeles de numerotation des references de facture
+ *	Classe mere des modeles de numerotation des references de facture
  */
 abstract class ModeleNumRefFactures
 {

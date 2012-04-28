@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007      Patrick Raguin <patrick.raguin@gmail.com>
  *
@@ -25,12 +25,11 @@
  */
 
 
-
 global $_Avery_Labels;
 
 
 $_Avery_Labels = array (
-			      '5160'=>array('name'=>'5160',
+			      '5160'=>array('name'=>'5160 (Letter)',
 					    'paper-size'=>'letter',
 					    'metric'=>'mm',
 					    'marginLeft'=>1.762,
@@ -42,7 +41,7 @@ $_Avery_Labels = array (
 					    'width'=>66.675,
 					    'height'=>25.4,
 					    'font-size'=>8),
-			      '5161'=>array('name'=>'5161',
+			      '5161'=>array('name'=>'5161 (Letter)',
 					    'paper-size'=>'letter',
 					    'metric'=>'mm',
 					    'marginLeft'=>0.967,
@@ -54,7 +53,7 @@ $_Avery_Labels = array (
 					    'width'=>101.6,
 					    'height'=>25.4,
 					    'font-size'=>8),
-			      '5162'=>array('name'=>'5162',
+			      '5162'=>array('name'=>'5162 (Letter)',
 					    'paper-size'=>'letter',
 					    'metric'=>'mm',
 					    'marginLeft'=>0.97,
@@ -66,7 +65,7 @@ $_Avery_Labels = array (
 					    'width'=>100.807,
 					    'height'=>35.72,
 					    'font-size'=>8),
-			      '5163'=>array('name'=>'5163',
+			      '5163'=>array('name'=>'5163 (Letter)',
 					    'paper-size'=>'letter',
 					    'metric'=>'mm',
 					    'marginLeft'=>1.762,
@@ -78,7 +77,7 @@ $_Avery_Labels = array (
 					    'width'=>101.6,
 					    'height'=>50.8,
 					    'font-size'=>8),
-			      '5164'=>array('name'=>'5164',
+			      '5164'=>array('name'=>'5164 (Letter)',
 					    'paper-size'=>'letter',
 					    'metric'=>'in',
 					    'marginLeft'=>0.148,
@@ -90,7 +89,7 @@ $_Avery_Labels = array (
 					    'width'=>4.0,
 					    'height'=>3.33,
 					    'font-size'=>12),
-			      '8600'=>array('name'=>'8600',
+			      '8600'=>array('name'=>'8600 (Letter)',
 					    'paper-size'=>'letter',
 					    'metric'=>'mm',
 					    'marginLeft'=>7.1,
@@ -102,7 +101,7 @@ $_Avery_Labels = array (
 					    'width'=>66.6,
 					    'height'=>25.4,
 					    'font-size'=>8),
-			      'L7163'=>array('name'=>'L7163',
+			      'L7163'=>array('name'=>'L7163 (A4)',
 					     'paper-size'=>'A4',
 					     'metric'=>'mm',
 					     'marginLeft'=>5,
@@ -114,7 +113,7 @@ $_Avery_Labels = array (
 					     'width'=>99.1,
 					     'height'=>38.1,
 					     'font-size'=>10),
-			      'AVERYC32010'=>array('name'=>'AVERY-C32010',
+			      'AVERYC32010'=>array('name'=>'AVERY-C32010 (A4)',
 					     'paper-size'=>'A4',
 					     'metric'=>'mm',
 					     'marginLeft'=>15,
@@ -126,7 +125,7 @@ $_Avery_Labels = array (
 					     'width'=>85,
 					     'height'=>54,
 					     'font-size'=>10),
-					'CARD'=>array('name'=>'Dolibarr cards',
+					'CARD'=>array('name'=>'Dolibarr Business cards (A4)',
 					    'paper-size'=>'A4',
 					    'metric'=>'mm',
 					    'marginLeft'=>15,
