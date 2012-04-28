@@ -809,8 +809,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 	{
 		if ($libelleproduitservice && empty($hidedesc))
 		{
-			if ($conf->global->FCKEDITOR_ENABLE_DETAILS) $libelleproduitservice.='<br />';
-			else $libelleproduitservice.="\n";
+			$libelleproduitservice.='__N__';
 		}
 
 		if ($desc == '(CREDIT_NOTE)' && $object->lines[$i]->fk_remise_except)
@@ -889,11 +888,13 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			$period='('.$outputlangs->transnoentitiesnoconv('DateUntil',dol_print_date($object->lines[$i]->date_end, $format, false, $outputlangs)).')';
 		}
 		//print '>'.$outputlangs->charset_output.','.$period;
-		$libelleproduitservice.="\n".$period;
+		$libelleproduitservice.="__N__".$period;
 		//print $libelleproduitservice;
 	}
 
 	// Now we convert \n into br
+	if (dol_textishtml($libelleproduitservice)) $libelleproduitservice=preg_replace('/__N__/','<br>',$libelleproduitservice);
+	else $libelleproduitservice=preg_replace('/__N__/',"\n",$libelleproduitservice);
 	$libelleproduitservice=dol_htmlentitiesbr($libelleproduitservice,1);
 
 	return $libelleproduitservice;
