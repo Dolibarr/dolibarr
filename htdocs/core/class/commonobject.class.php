@@ -2,7 +2,8 @@
 /* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2011-2012 Philippe Grand	    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2378,7 +2379,14 @@ abstract class CommonObject
 		global $form,$bcnd,$var;
 
         // Use global variables + $dateSelector + $seller and $buyer
-        include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_create.tpl.php');
+		if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/predefinedproductline_create.tpl.php"))
+		{
+			include(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/predefinedproductline_create.tpl.php");
+		}
+		else
+		{
+			include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_create.tpl.php');
+		}
     }
 
     /**
@@ -2398,7 +2406,14 @@ abstract class CommonObject
 		global $form,$bcnd,$var;
 
         // Use global variables + $dateSelector + $seller and $buyer
-        include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_create.tpl.php');
+		if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/freeproductline_create.tpl.php"))
+		{
+			include(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/freeproductline_create.tpl.php");
+		}
+		else
+		{
+			include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_create.tpl.php');
+		}
     }
 
 
@@ -2537,12 +2552,26 @@ abstract class CommonObject
 				$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
 
 				// Use global variables + $seller and $buyer
-				include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_view.tpl.php');
+				if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/predefinedproductline_view.tpl.php"))
+				{
+					include(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/predefinedproductline_view.tpl.php");
+				}
+				else
+				{
+					include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_view.tpl.php');
+				}
 			}
 			else
 			{
 				// Use global variables + $dateSelector + $seller and $buyer
-				include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_view.tpl.php');
+				if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/freeproductline_view.tpl.php"))
+				{
+					include(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/freeproductline_view.tpl.php");
+				}
+				else
+				{
+					include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_view.tpl.php');
+				}
 			}
 		}
 
@@ -2552,12 +2581,26 @@ abstract class CommonObject
 			if ($line->fk_product > 0)
 			{
 				// Use global variables + $dateSelector + $seller and $buyer
-				include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_edit.tpl.php');
+				if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/predefinedproductline_edit.tpl.php"))
+				{
+					include(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/predefinedproductline_edit.tpl.php");
+				}
+				else
+				{
+					include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_edit.tpl.php');
+				}
 			}
 			else
 			{
 				// Use global variables + $dateSelector + $seller and $buyer
-				include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_edit.tpl.php');
+				if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/freeproductline_edit.tpl.php"))
+				{
+					include(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/freeproductline_edit.tpl.php");
+				}
+				else
+				{
+					include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_edit.tpl.php');
+				}
 			}
 		}
 	}
@@ -2696,8 +2739,15 @@ abstract class CommonObject
         $this->tpl['price'] = price($line->subprice);
         $this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
         $this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate($line->remise_percent, true) : '&nbsp;';
-
-        include(DOL_DOCUMENT_ROOT.'/core/tpl/originproductline.tpl.php');
+		
+		if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/originproductline.tpl.php"))
+				{
+					include(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/originproductline.tpl.php");
+				}
+				else
+				{
+					include(DOL_DOCUMENT_ROOT.'/core/tpl/originproductline.tpl.php');
+				}
     }
 }
 
