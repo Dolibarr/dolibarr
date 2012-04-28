@@ -802,10 +802,11 @@ class CommandeFournisseur extends Commande
      * 	Cancel an approved order.
      *	L'annulation se fait apres l'approbation
      *
-     * 	@param		User	$user		User making action
-     * 	@return		int					>0 if Ok, <0 if Ko
+     * 	@param	User	$user			User making action
+     *	@param	int		$idwarehouse	Id warehouse to use for stock change (not used for supplier orders).
+     * 	@return	int						>0 if Ok, <0 if Ko
      */
-    function Cancel($user)
+    function Cancel($user, $idwarehouse=-1)
     {
         global $langs,$conf;
 
@@ -900,12 +901,13 @@ class CommandeFournisseur extends Commande
     }
 
     /**
-     *      Create order with draft status
+     *  Create order with draft status
      *
-     *      @param      User	$user       User making creation
-     *      @return     int         		<0 if KO, Id of supplier order if OK
+     *  @param      User	$user       User making creation
+     *	@param		int		$notrigger	Disable all triggers
+     *  @return     int         		<0 if KO, Id of supplier order if OK
      */
-    function create($user)
+    function create($user, $notrigger=0)
     {
         global $langs,$conf;
 
@@ -956,12 +958,15 @@ class CommandeFournisseur extends Commande
                 // On logue creation pour historique
                 $this->log($user, 0, time());
 
-                // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('ORDER_SUPPLIER_CREATE',$this,$user,$langs,$conf);
-                if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                // Fin appel triggers
+                if (! $notrigger)
+                {
+                    // Appel des triggers
+                    include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                    $interface=new Interfaces($this->db);
+                    $result=$interface->run_triggers('ORDER_SUPPLIER_CREATE',$this,$user,$langs,$conf);
+                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                    // Fin appel triggers
+                }
 
                 $this->db->commit();
                 return $this->id;
