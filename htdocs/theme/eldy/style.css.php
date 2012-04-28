@@ -105,7 +105,7 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 {
 	$conf->global->THEME_ELDY_TOPMENU_BACK1='180,196,216';    // topmenu
     $conf->global->THEME_ELDY_TOPMENU_BACK2='190,206,226';
-    $conf->global->THEME_ELDY_VERMENU_BACK1='246,248,250';    // vmenu
+	$conf->global->THEME_ELDY_VERMENU_BACK1='246,248,250';    // vmenu
     $conf->global->THEME_ELDY_VERMENU_BACK1b='226,228,230';   // vmenu (not menu)
     $conf->global->THEME_ELDY_VERMENU_BACK2='220,224,227';
     $conf->global->THEME_ELDY_BACKTITLE1='140,160,185';       // title of arrays
@@ -196,6 +196,17 @@ input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
     padding: 1px 1px 1px 1px;
     margin: 0px 0px 0px 0px;
 }
+input, textarea, select {
+	border-radius:4px;
+	border:solid 1px rgba(0,0,0,.3);
+	border-top:solid 1px rgba(0,0,0,.3);
+	border-bottom:solid 1px rgba(0,0,0,.2);
+	box-shadow: 1px 1px 2px rgba(0,0,0,.2) inset;
+	padding:2px;
+	margin-left:1px;
+	margin-bottom:1px;
+	margin-top:1px;
+	}
 select.flat, form.flat select {
 	font-weight: normal;
 }
@@ -737,7 +748,7 @@ a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextmain; ?>; }
 a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #666666; }
 
 
-div.blockvmenupair, div.blockvmenuimpair
+div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks
 {
     width:174px;
 	font-family: <?php print $fontlist ?>;
@@ -804,7 +815,7 @@ div.blockvmenusearch
     box-shadow: 4px 4px 4px #CCC;
 }
 
-div.blockvmenubookmarks
+div.blockvmenubookmarksold
 {
     width:174px;
     border-right: 1px solid #555555;
