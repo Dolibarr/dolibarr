@@ -38,9 +38,9 @@ class DoliDBMysqli
     //! Database label
     static $label='MySQL';
     //! Charset used to force charset when creating database
-    static $forcecharset='utf8';	// latin1, utf8
+    var $forcecharset='utf8';	// latin1, utf8. Can't be static as it may be forced with a dynamic value
     //! Collate used to force collate when creating database
-    static $forcecollate='utf8_general_ci';	// latin1_swedish_ci, utf8_general_ci
+    var $forcecollate='utf8_general_ci';	// latin1_swedish_ci, utf8_general_ci. Can't be static as it may be forced with a dynamic value
     //! Version min database
     static $versionmin=array(4,1,0);
 	//! Resultset of last request
@@ -83,7 +83,7 @@ class DoliDBMysqli
     function DoliDBMysqli($type, $host, $user, $pass, $name='', $port=0)
     {
         global $conf,$langs;
-        
+
         // TODO error in strict mode (static property for "$forcecharset" and "$forcecollate")
         //if (! empty($conf->db->character_set)) $this->forcecharset=$conf->db->character_set;
         //if (! empty($conf->db->dolibarr_main_db_collation)) $this->forcecollate=$conf->db->dolibarr_main_db_collation;

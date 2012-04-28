@@ -38,9 +38,9 @@ class DoliDBMssql
 	//! Database label
 	static $label='MSSQL';
 	//! Charset used to force charset when creating database
-	static $forcecharset='latin1';
+	var $forcecharset='latin1';      // Can't be static as it may be forced with a dynamic value
 	//! Collate used to force collate when creating database
-	static $forcecollate='latin1_swedish_ci';
+	var $forcecollate='latin1_swedish_ci';      // Can't be static as it may be forced with a dynamic value
 	//! Version min database
 	static $versionmin=array(2000);
 	//! Resultset of last request
