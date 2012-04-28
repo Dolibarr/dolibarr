@@ -34,7 +34,7 @@ require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
 $langs->load("bills");
 $langs->load("companies");
 
-$id     = (GETPOST('id','int')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
+$id     = (GETPOST('id')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
 $ref    = GETPOST('ref','alpha');
 $lineid = GETPOST('lineid','int');
 $socid  = GETPOST('socid','int');
@@ -57,7 +57,7 @@ if ($action == 'addcontact' && $user->rights->facture->creer)
 
     if ($result > 0 && $id > 0)
     {
-    	$contactid = (GETPOST('userid','int') ? GETPOST('userid','int') : GETPOST('contactid','int'));
+    	$contactid = (GETPOST('userid') ? GETPOST('userid','int') : GETPOST('contactid','int'));
   		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
     }
 
@@ -169,15 +169,13 @@ if ($id > 0 || ! empty($ref))
 		print '</div>';
 
 		print '<br>';
-		
-		// Contacts lines
-		if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/contacts.tpl.php"))
+
+		// Contacts lines (modules that overwrite templates must declare this into descriptor)
+		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+		foreach($dirtpls as $reldir)
 		{
-			include(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/contacts.tpl.php");
-		}
-		else
-		{
-			include(DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php');
+		    $res=@include(dol_buildpath($reldir.'/contacts.tpl.php'));
+		    if ($res) break;
 		}
 
 	}

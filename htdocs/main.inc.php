@@ -669,7 +669,7 @@ if (! defined('NOREQUIRETRAN'))
 if ($conf->global->MAIN_USE_TEMPLATE_ENGINE && ! defined('NOTEMPLATEENGINE'))
 {
 	require_once(DOL_DOCUMENT_ROOT.'/includes/savant/Savant3.php');
-	
+
 	$tpl = new Savant3();
 }
 
@@ -1181,7 +1181,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     if (! class_exists('MenuTop'))
     {
         $menufound=0;
-        $dirmenus=array_merge(array("/core/menus/"),$conf->menus_modules);
+        $dirmenus=array_merge(array("/core/menus/"),$conf->modules_parts['menus']);
         foreach($dirmenus as $dirmenu)
         {
             $menufound=dol_include_once($dirmenu."standard/".$top_menu);
@@ -1387,7 +1387,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     if (! class_exists('MenuLeft'))
     {
         $menufound=0;
-        $dirmenus=array_merge(array("/core/menus/"),$conf->menus_modules);
+        $dirmenus=array_merge(array("/core/menus/"),$conf->modules_parts['menus']);
         foreach($dirmenus as $dirmenu)
         {
             $menufound=dol_include_once($dirmenu."standard/".$left_menu);

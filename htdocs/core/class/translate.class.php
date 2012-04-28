@@ -591,7 +591,7 @@ class Translate
 
 		$newnumber=$number;
 
-		$dirsubstitutions=array_merge(array(),$conf->substitutions_modules);
+		$dirsubstitutions=array_merge(array(),$conf->modules_parts['substitutions']);
 		foreach($dirsubstitutions as $reldir)
 		{
 		    $dir=dol_buildpath($reldir,0);
