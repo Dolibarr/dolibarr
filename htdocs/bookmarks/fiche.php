@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,12 +28,12 @@ require_once(DOL_DOCUMENT_ROOT."/bookmarks/class/bookmark.class.php");
 
 $langs->load("other");
 
-$action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
-$title=isset($_GET["title"])?$_GET["title"]:$_POST["title"];
-$url=isset($_GET["url"])?$_GET["url"]:$_POST["url"];
-$target=isset($_GET["target"])?$_GET["target"]:$_POST["target"];
-$userid=isset($_GET["userid"])?$_GET["userid"]:$_POST["userid"];
-$position=isset($_GET["position"])?$_GET["position"]:$_POST["position"];
+$action=GETPOST("action");
+$title=GETPOST("title");
+$url=GETPOST("url");
+$target=GETPOST("target");
+$userid=GETPOST("userid");
+$position=GETPOST("position");
 
 
 /*
@@ -139,7 +139,9 @@ if ($action == 'create')
 
 	print_fiche_titre($langs->trans("NewBookmark"));
 
-	if ($mesg) print "$mesg<br>";
+	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"),0,'bookmark');
+	
+	dol_htmloutput_mesg($mesg);
 
 	print '<table class="border" width="100%">';
 
@@ -159,16 +161,18 @@ if ($action == 'create')
 	// Position
 	print '<tr><td>'.$langs->trans("Position").'</td><td>';
 	print '<input class="flat" name="position" size="5" value="'.(isset($_POST["position"])?$_POST["position"]:$bookmark->position).'">';
-	print '</td></tr>';
+	print '</td><td>&nbsp;</td></tr>';
 
-	print '<tr><td colspan="3" align="center">';
+	print '</table><br>';
+	
+	print '<div align="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("CreateBookmark").'" name="create"> &nbsp; ';
 	print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'" name="cancel">';
-	print '</td></tr>';
-
-	print '</table>';
+	print '</div>';
 
 	print '</form>';
+	
+	dol_fiche_end();
 }
 
 
@@ -248,17 +252,13 @@ if ($_GET["id"] > 0 && ! preg_match('/^add/i',$_GET["action"]))
 	// Date creation
 	print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.dol_print_date($bookmark->datec,'dayhour').'</td></tr>';
 
-	if ($_GET["action"] == 'edit') print '<tr><td colspan="2" align="center"><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
-
-
 	print '</table>';
 
+	if ($_GET["action"] == 'edit') print '<br><div align="center"><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+	
 	if ($_GET["action"] == 'edit') print '</form>';
 
-
-
-	print "</div>\n";
-
+	dol_fiche_end();
 
 
 	print "<div class=\"tabsAction\">\n";

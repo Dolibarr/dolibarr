@@ -212,8 +212,22 @@ class Adherent extends CommonObject
 		$substitutionarray=array(
 				'%DOL_MAIN_URL_ROOT%'=>DOL_MAIN_URL_ROOT,
 				'%ID%'=>$msgishtml?dol_htmlentitiesbr($this->id):$this->id,
-				'%INFOS%'=>$msgishtml?dol_htmlentitiesbr($infos):$infos,
 				'%CIVILITE%'=>$this->getCivilityLabel($msgishtml?0:1),
+				'%FIRSTNAME%'=>$msgishtml?dol_htmlentitiesbr($this->firstname):$this->firstname,
+				'%LASTNAME%'=>$msgishtml?dol_htmlentitiesbr($this->lastname):$this->lastname,
+				'%FULLNAME%'=>$msgishtml?dol_htmlentitiesbr($this->getFullName($langs)):$this->getFullName($langs),
+				'%COMPANY%'=>$msgishtml?dol_htmlentitiesbr($this->societe):$this->societe,
+				'%ADDRESS%'=>$msgishtml?dol_htmlentitiesbr($this->address):$this->address,
+				'%ZIP%'=>$msgishtml?dol_htmlentitiesbr($this->zip):$this->zip,
+				'%TOWN%'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
+				'%COUNTRY%'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
+				'%EMAIL%'=>$msgishtml?dol_htmlentitiesbr($this->email):$this->email,
+				'%NAISS%'=>$msgishtml?dol_htmlentitiesbr($birthday):$birthday,
+				'%PHOTO%'=>$msgishtml?dol_htmlentitiesbr($this->photo):$this->photo,
+				'%LOGIN%'=>$msgishtml?dol_htmlentitiesbr($this->login):$this->login,
+				'%PASSWORD%'=>$msgishtml?dol_htmlentitiesbr($this->pass):$this->pass,
+				// For backward compatibility
+				'%INFOS%'=>$msgishtml?dol_htmlentitiesbr($infos):$infos,
 				'%PRENOM%'=>$msgishtml?dol_htmlentitiesbr($this->firstname):$this->firstname,
 				'%NOM%'=>$msgishtml?dol_htmlentitiesbr($this->lastname):$this->lastname,
 				'%SOCIETE%'=>$msgishtml?dol_htmlentitiesbr($this->societe):$this->societe,
@@ -221,11 +235,6 @@ class Adherent extends CommonObject
 				'%CP%'=>$msgishtml?dol_htmlentitiesbr($this->zip):$this->zip,
 				'%VILLE%'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
 				'%PAYS%'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
-				'%EMAIL%'=>$msgishtml?dol_htmlentitiesbr($this->email):$this->email,
-				'%NAISS%'=>$msgishtml?dol_htmlentitiesbr($birthday):$birthday,
-				'%PHOTO%'=>$msgishtml?dol_htmlentitiesbr($this->photo):$this->photo,
-				'%LOGIN%'=>$msgishtml?dol_htmlentitiesbr($this->login):$this->login,
-				'%PASSWORD%'=>$msgishtml?dol_htmlentitiesbr($this->pass):$this->pass
 		);
 		
 		complete_substitutions_array($substitutionarray, $langs);

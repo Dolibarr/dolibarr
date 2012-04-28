@@ -376,7 +376,7 @@ class DoliDBPgsql
 		//if (! $name) $name="postgres";
 
 		// try first Unix domain socket (local)
-		if (! $host || $host == "" || $host == "localhost" || $host == "127.0.0.1")
+		if ((! $host || $host == "" || $host == "localhost" || $host == "127.0.0.1") && ! defined('NOLOCALSOCKETPGCONNECT'))
 		{
 			$con_string = "dbname='".$name."' user='".$login."' password='".$passwd."'";
 			$this->db = pg_connect($con_string);

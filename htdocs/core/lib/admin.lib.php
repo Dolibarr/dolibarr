@@ -1081,9 +1081,9 @@ function form_constantes($tableau)
             {
                 print '<td>';
                 //print 'aa'.$const;
-                if (in_array($const,array('ADHERENT_CARD_TEXT','ADHERENT_CARD_TEXT_RIGHT')))
+                if (in_array($const,array('ADHERENT_CARD_TEXT','ADHERENT_CARD_TEXT_RIGHT','ADHERENT_ETIQUETTE_TEXT')))
                 {
-                    print '<textarea class="flat" name="constvalue" cols="35" rows="5" wrap="soft">'."\n";
+                    print '<textarea class="flat" name="constvalue" cols="50" rows="5" wrap="soft">'."\n";
                     print $obj->value;
                     print "</textarea>\n";
                     print '</td><td>';
