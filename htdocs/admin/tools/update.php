@@ -78,7 +78,7 @@ if (GETPOST('action','alpha')=='install')
 		if ($result > 0)
 		{
 			$documentrootalt=DOL_DOCUMENT_ROOT_ALT;
-			$result=dol_uncompress($newfile,$_FILES['fileinstall']['type'],$documentrootalt);
+			$result=dol_uncompress($newfile,$documentrootalt);
 			if (! empty($result['error']))
 			{
 				if ($result['error'] == -1)
@@ -175,13 +175,13 @@ if (! empty($conf->global->MAIN_ONLINE_INSTALL_MODULE))
 		$message=info_admin($langs->transnoentities("ErrorOSSystem"));
 		print $message;
 	}
-	else 
+	else
 	{
 		$message=info_admin($langs->trans("NotExistsDirect").$langs->trans("InfDirAlt").$langs->trans("InfDirExample"));
 		print $message;
-	}	
+	}
 }
-else 
+else
 {
 	print '<b>'.$langs->trans("StepNb",4).'</b>: ';
 	print $langs->trans("SetupIsReadyForUse").'<br>';
@@ -191,7 +191,7 @@ print '</form>';
 if (! empty($result['return']))
 {
 	print '<br>';
-	
+
 	foreach($result['return'] as $value)
 	{
 		echo $value.'<br>';
