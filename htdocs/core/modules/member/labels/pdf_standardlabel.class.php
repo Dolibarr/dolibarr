@@ -177,7 +177,7 @@ class pdf_standardlabel
 			else
 			{
 				$pdf->SetXY($_PosX+3, $_PosY+3+$this->_Line_Height);
-				$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
+				$pdf->MultiCell($this->_Width, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
 			}
 		}
 		else if ($textleft!='' && $textright!='')	//
@@ -194,12 +194,12 @@ class pdf_standardlabel
 				if ($textright == '%LOGO%' && $logo) $pdf->Image($logo,$_PosX+$this->_Width-21,$_PosY+3+$this->_Line_Height,20);
 				else if ($textright == '%PHOTO%' && $photo) $pdf->Image($photo,$_PosX+$this->_Width-21,$_PosY+3+$this->_Line_Height,20);
 				$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
-				$pdf->MultiCell($this->_Width-22, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
+				$pdf->MultiCell($this->_Width-22, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
 			}
 			else
 			{
 				$pdf->SetXY($_PosX+2, $_PosY+3+$this->_Line_Height);
-				$pdf->MultiCell(round($this->_Width/2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft));
+				$pdf->MultiCell(round($this->_Width/2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft),0,'L');
 				$pdf->SetXY($_PosX+round($this->_Width/2), $_PosY+3+$this->_Line_Height);
 				$pdf->MultiCell(round($this->_Width/2)-2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright),0,'R');
 			}
