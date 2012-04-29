@@ -2833,7 +2833,8 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
     // Le test ci-dessus ne devrait pas etre necessaire. Me signaler l'exemple du cas juridique concerne si le test suivant n'est pas suffisant.
 
     // Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
-    if ($societe_vendeuse->country_code == $societe_acheteuse->country_code) // Warning ->country_code not always defined
+    if (($societe_vendeuse->country_code == $societe_acheteuse->country_code)
+    || (in_array($societe_vendeuse->country_code,array('FR,MC')) && in_array($societe_acheteuse->country_code,array('FR','MC')))) // Warning ->country_code not always defined
     {
         //print 'VATRULE 3';
         return get_product_vat_for_country($idprod,$societe_vendeuse->country_code);
