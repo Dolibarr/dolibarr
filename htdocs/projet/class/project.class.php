@@ -52,7 +52,7 @@ class Project extends CommonObject
     /**
      *  Constructor
      *
-     *  @param      DoliDB		$db      Database handler
+     *  @param      DoliDB		$DB      Database handler
      */
     function __construct($db)
     {
@@ -707,7 +707,7 @@ class Project extends CommonObject
     {
         global $user, $langs, $conf;
 
-        $now = dol_now();
+        $now = mktime();
 
         // Charge tableau des produits prodids
         $prodids = array();

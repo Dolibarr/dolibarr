@@ -125,7 +125,6 @@ if (! empty($project_ref) && ! empty($withproject))
 	}
 }
 
-// Find upload dir after retreive is task if necessary
 if ($id > 0 || ! empty($ref))
 {
 	if ($object->fetch($id,$ref) > 0)
@@ -141,7 +140,6 @@ if ($id > 0 || ! empty($ref))
 		dol_print_error($db);
 	}
 }
-
 /*
  * View
  */

@@ -85,6 +85,10 @@ TaskIsNotAffectedToYou=Tâche qui ne vous est pas affectée
 ErrorTimeSpentIsEmpty=Le temps consommé n'est pas renseigné
 ThisWillAlsoRemoveTasks=Cette opération détruira également les tâches du projet (<b>%s</b> tâches actuellement) et le suivi des consommés.
 IfNeedToUseOhterObjectKeepEmpty=Si des objets (facture, commande, ...), appartenant à un autre tiers que celui choisi, doivent être liés au projet à créer, laisser vide afin de laisser le projet multi-tiers.
+CloneProject=Cloner le projet (les taches associées sont dupliquées également)
+ConfirmCloneProject=Êtes-vous sûr de vouloir cloner ce projet ?
+ProjectReportDate=Reporter les dates des taches en fonction de la date de départ.
+ErrorShiftTaskDate=Une erreur c'est produite dans le report des dates des taches.
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Chef de projet
 TypeContact_project_external_PROJECTLEADER=Chef de projet
