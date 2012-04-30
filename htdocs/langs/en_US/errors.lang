@@ -104,9 +104,9 @@ ErrorBadValueForCode=Bad value for security code. Try again with new value...
 ErrorBothFieldCantBeNegative=Fields %s and %s can't be both negative
 ErrorWebServerUserHasNotPermission=User account <b>%s</b> used to execute web server has no permission for that
 ErrorNoActivatedBarcode=No barcode type activated
-ErrorOSSystem=The online installation does not support your operating system.<br>Install the component manually.
-ErrorUncompFile=Unable to install the package %s
-ErrorFileMustBeADolibarrPackage=The file must be a Dolibarr package
+ErrUnzipFails=Failed to unzip %s with ZipArchive
+ErrNoZipEngine=No engine to unzip %s file in this PHP
+ErrorFileMustBeADolibarrPackage=The file %s must be a Dolibarr zip package
 ErrorFileRequired=It takes a package Dolibarr file
 
 # Warnings
