@@ -246,6 +246,7 @@ if ($action == 'builddoc' && $user->rights->projet->creer)
     }
 }
 
+
 if ($action == 'confirm_validate' && GETPOST('confirm') == 'yes')
 {
     $project = new Project($db);
@@ -315,6 +316,24 @@ if ($action == 'confirm_clone' && $user->rights->projet->creer && GETPOST('confi
     }
 }
 
+if ($action == 'confirm_clone' && $user->rights->projet->creer && GETPOST('confirm') == 'yes')
+{
+	$idtoclone=$id;
+	$project = new Project($db);
+    $project->fetch($idtoclone);
+    $result=$project->createFromClone($idtoclone,true,true,true,true);
+    if ($result <= 0)
+    {
+        $mesg='<div class="error">'.$project->error.'</div>';
+    }
+    else
+    {
+    	$id=$result;
+    	$action='edit';
+    	$comefromclone=true;
+    }
+}
+
 
 /*
  *	View
@@ -353,7 +372,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     {
         require_once(DOL_DOCUMENT_ROOT ."/core/modules/project/".$conf->global->PROJECT_ADDON.".php");
         $modProject = new $obj;
-        $defaultref = $modProject->getNextValue($soc,$project);
+        $defaultref = $modProject->getNextValue($soc,$project);      
     }
 
     if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
@@ -459,6 +478,7 @@ else
         $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$project->id,$langs->trans("DeleteAProject"),$text,"confirm_delete",'','',1);
         if ($ret == 'html') print '<br>';
     }
+
     // Clone confirmation
     if ($action == 'clone')
     {
@@ -486,9 +506,7 @@ else
 
         // Customer
         print '<tr><td>'.$langs->trans("Company").'</td><td>';
-        $text=$form->select_company($project->societe->id,'socid','',1,1);
-        $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
-        print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
+        print $form->select_company($project->societe->id,'socid','',1,1);
         print '</td></tr>';
 
         // Visibility
@@ -562,7 +580,7 @@ else
 
         // Date start
         print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-        print dol_print_date($project->date_start,'day');
+        print dol_print_date($project->date_start,'day'); 
         print '</td></tr>';
 
         // Date end
