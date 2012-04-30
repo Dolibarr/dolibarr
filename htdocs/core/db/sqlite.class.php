@@ -939,7 +939,7 @@ class DoliDBSqlite
     function DDLCreateDb($database,$charset='',$collation='',$owner='')
     {
         if (empty($charset))   $charset=$this->forcecharset;
-        if (empty($collation)) $collation=$this->collation;
+        if (empty($collation)) $collation=$this->forcecollate;
 
         // ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
         $sql = 'CREATE DATABASE '.$database;
