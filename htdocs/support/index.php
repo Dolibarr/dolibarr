@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
  *       \brief     Provide an Online Help support
  */
 
-error_reporting(0);
 
 // Use its own include to not share the include of Dolibarr
 // This is a standalone feature with no information from Dolibarr to show
@@ -40,7 +39,7 @@ $langs->load("help");
  * View
  */
 
-pHeader($langs->trans("DolibarrHelpCenter"),$_SERVER["PHP_SELF"]);
+pHeader($langs->trans("DolibarrHelpCenter").' '.DOL_VERSION, $_SERVER["PHP_SELF"]);
 
 print $langs->trans("HelpCenterDesc1")."<br>\n";
 print $langs->trans("HelpCenterDesc2")."<br>\n";

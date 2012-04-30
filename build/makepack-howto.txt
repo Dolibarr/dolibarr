@@ -9,15 +9,13 @@ beta version of Dolibarr, step by step.
 
 - Check all files are commited.
 - Update version/info in / directory (README*.txt, ChangeLog...)
-- Update version number with x.x.x   in build/doxygen/dolibarr-doxygen.doxyfile
-- Update version number with x.x.x   in build/perl/virtualmin/dolibarr.pl
+- Update version number with x.x.x-y in htdocs/filefunc.inc.php
 - Update version number with x.x.x-y in build/makepack-dolibarr.pl
 - Update version number with x.x.x-y in build/debian/changelog
 - Update version number with x.x.x-y in build/exe/doliwamp/doliwamp.iss
-- Update version number with x.x.x-y in htdocs/filefunc.inc.php
-- Update version number with x.x.x-y in htdocs/install/inc.php
-- Update version number with x.x.x-y in htdocs/support/inc.php
-- Update version number with x.x.x-y in htdocs/build/rpm/*.spec
+- Update version number with x.x.x-y in build/rpm/*.spec
+- Update version number with x.x.x   in build/doxygen/dolibarr-doxygen.doxyfile
+- Update version number with x.x.x   in build/perl/virtualmin/dolibarr.pl
 - Commit all changes.
 - Add a Tag (DOLIBARR_x_y_BETA)
 - Create a branch (DOLIBARR_x_y_BRANCH).
@@ -35,12 +33,11 @@ complete release of Dolibarr, step by step.
 
 - Check all files are commited.
 - Update version/info in / directory (README*.txt, ChangeLog...)
-- Update version number with x.x.x-y in build/makepack-dolibarr.pl
-- Update version number with x.x.x-y in build/exe/doliwamp/doliwamp.iss
 - Update version number with x.x.x-y in htdocs/filefunc.inc.php
-- Update version number with x.x.x-y in htdocs/install/inc.php
-- Update version number with x.x.x-y in htdocs/support/inc.php
-- Update version number with x.x.x-y in htdocs/build/rpm/*.spec
+- Update version number with x.x.x-y in build/makepack-dolibarr.pl
+- Update version number with x.x.x-y in build/debian/changelog
+- Update version number with x.x.x-y in build/exe/doliwamp/doliwamp.iss
+- Update version number with x.x.x-y in build/rpm/*.spec
 - Update PAD files.
 - Commit all changes.
 - Add a Tag (DOLIBARR_x_y)

@@ -105,7 +105,7 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 {
 	$conf->global->THEME_ELDY_TOPMENU_BACK1='180,196,216';    // topmenu
     $conf->global->THEME_ELDY_TOPMENU_BACK2='190,206,226';
-    $conf->global->THEME_ELDY_VERMENU_BACK1='246,248,250';    // vmenu
+	$conf->global->THEME_ELDY_VERMENU_BACK1='246,248,250';    // vmenu
     $conf->global->THEME_ELDY_VERMENU_BACK1b='226,228,230';   // vmenu (not menu)
     $conf->global->THEME_ELDY_VERMENU_BACK2='220,224,227';
     $conf->global->THEME_ELDY_BACKTITLE1='140,160,185';       // title of arrays
@@ -196,6 +196,17 @@ input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
     padding: 1px 1px 1px 1px;
     margin: 0px 0px 0px 0px;
 }
+input, textarea, select {
+	border-radius:4px;
+	border:solid 1px rgba(0,0,0,.3);
+	border-top:solid 1px rgba(0,0,0,.3);
+	border-bottom:solid 1px rgba(0,0,0,.2);
+	box-shadow: 1px 1px 2px rgba(0,0,0,.2) inset;
+	padding:2px;
+	margin-left:1px;
+	margin-bottom:1px;
+	margin-top:1px;
+	}
 select.flat, form.flat select {
 	font-weight: normal;
 }
@@ -655,11 +666,11 @@ form#login {
 	border:solid 1px rgba(168,168,168,.4);
 	border-top:solid 1px f8f8f8;
 	background-color: #f8f8f8;
-	background-image: -o-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
-	background-image: -moz-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
-	background-image: -webkit-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
-	background-image: -ms-linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
-	background-image: linear-gradient(top, rgba(240,240,240,.3) 0%, rgba(192,192,192,.3) 100%);
+	background-image: -o-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
+	background-image: -moz-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
+	background-image: -webkit-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
+	background-image: -ms-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
+	background-image: linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
 }
 #img_securitycode {
 	border: 1px solid #DDDDDD;
@@ -737,7 +748,7 @@ a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextmain; ?>; }
 a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #666666; }
 
 
-div.blockvmenupair, div.blockvmenuimpair
+div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks
 {
     width:174px;
 	font-family: <?php print $fontlist ?>;
@@ -804,7 +815,7 @@ div.blockvmenusearch
     box-shadow: 4px 4px 4px #CCC;
 }
 
-div.blockvmenubookmarks
+div.blockvmenubookmarksold
 {
     width:174px;
     border-right: 1px solid #555555;
@@ -1696,7 +1707,7 @@ div.error {
 /* Info admin */
 div.info {
   color: #807050;
-  padding: 0.2em 0.2em 0.2em 0.2em;
+  padding: 0.4em 0.4em 0.4em 0.4em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #DFDFA0;
   -moz-border-radius:6px;

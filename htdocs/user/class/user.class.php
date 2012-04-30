@@ -89,7 +89,7 @@ class User extends CommonObject
 	private $_tab_loaded=array();		// Array of cache of already loaded permissions
 
 	var $conf;           // To store personal config
-	var $oldcopy;        // To contains a clone of this when we need to save old properties of object
+	var $oldcopy;                // To contains a clone of this when we need to save old properties of object
 
 
 
@@ -109,6 +109,7 @@ class User extends CommonObject
 		$this->all_permissions_are_loaded = 0;
 		$this->admin=0;
 
+		$this->conf				    = (object) array();
 		$this->rights				= (object) array();
 		$this->rights->user			= (object) array();
 		$this->rights->user->user	= (object) array();
@@ -588,7 +589,7 @@ class User extends CommonObject
 			}
 			$this->db->free($resql);
 		}
-		
+
 		// For backward compatibility
 		if (isset($this->rights->propale))
 		{

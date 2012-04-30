@@ -38,9 +38,9 @@ class DoliDBMysql
 	//! Database label
 	static $label='MySQL';
 	//! Charset used to force charset when creating database
-	static $forcecharset='utf8';	// latin1, utf8
+	var $forcecharset='utf8';	// latin1, utf8. Can't be static as it may be forced with a dynamic value
 	//! Collate used to force collate when creating database
-	static $forcecollate='utf8_general_ci';	// latin1_swedish_ci, utf8_general_ci
+	var $forcecollate='utf8_general_ci';	// latin1_swedish_ci, utf8_general_ci. Can't be static as it may be forced with a dynamic value
 	//! Version min database
 	static $versionmin=array(4,1,0);
 	//! Resultset of last request
@@ -797,7 +797,7 @@ class DoliDBMysql
 	function DDLCreateDb($database,$charset='',$collation='',$owner='')
 	{
 		if (empty($charset))   $charset=$this->forcecharset;
-		if (empty($collation)) $collation=$this->collation;
+		if (empty($collation)) $collation=$this->forcecollate;
 
 		// ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
 		$sql = 'CREATE DATABASE '.$database;

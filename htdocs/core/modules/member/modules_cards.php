@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/member/cards/modules_cards.php
+ *	\file       htdocs/core/modules/member/modules_cards.php
  *	\ingroup    member
  *	\brief      File of parent class of document generator for members cards.
  */
@@ -30,8 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
 
 /**
- *	\class      ModelePDFCards
- *	\brief      Parent class of document generator for members cards.
+ *	Parent class of document generator for members cards.
  */
 class ModelePDFCards
 {
@@ -74,35 +73,75 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs)
 	global $conf,$langs;
 	$langs->load("members");
 
-	$dir = DOL_DOCUMENT_ROOT . "/core/modules/member/cards/";
-
-	// Positionne modele sur le nom du modele a utiliser
+	$error=0;
+	
+	// Increase limit for PDF build
+	$err=error_reporting();
+	error_reporting(0);
+	@set_time_limit(120);
+	error_reporting($err);
+	
+	$code='';
+	$srctemplatepath='';
+	
+	// Positionne le modele sur le nom du modele a utiliser
 	if (! dol_strlen($modele))
 	{
-		if ($conf->global->ADHERENT_CARDS_ADDON_PDF)
+		if (! empty($conf->global->ADHERENT_CARDS_ADDON_PDF))
 		{
-			$modele = $conf->global->ADHERENT_CARDS_ADDON_PDF;
+			$code = $conf->global->ADHERENT_CARDS_ADDON_PDF;
 		}
 		else
 		{
-			$modele = 'standard';
+			$code = $modele;
 		}
 	}
-
-
-	// Charge le modele
-	$file = "pdf_".$modele.".class.php";
-	if (file_exists($dir.$file))
+	else $code=$modele;
+	$modele='standard';
+	
+	// If selected modele is a filename template (then $modele="modelname:filename")
+	$tmp=explode(':',$modele,2);
+	if (! empty($tmp[1]))
 	{
-		$classname = "pdf_".$modele;
-		require_once($dir.$file);
+		$modele=$tmp[0];
+		$srctemplatepath=$tmp[1];
+	}
+	else $srctemplatepath=$code;
+	
+	// Search template files
+	$file=''; $classname=''; $filefound=0;
+	$dirmodels=array('/');
+	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
+	foreach($dirmodels as $reldir)
+	{
+		foreach(array('doc','pdf') as $prefix)
+		{
+			$file = $prefix."_".$modele.".class.php";
+	
+			// On verifie l'emplacement du modele
+			$file=dol_buildpath($reldir."core/modules/member/doc/".$file,0);
+			if (file_exists($file))
+			{
+				$filefound=1;
+				$classname=$prefix.'_'.$modele;
+				break;
+			}
+		}
+		if ($filefound) break;
+	}
+	
+	
+	// Charge le modele
+	if ($filefound)
+	{
+		require_once($file);
 
 		$obj = new $classname($db);
 
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($arrayofmembers, $outputlangs) > 0)
+		if ($obj->write_file($arrayofmembers, $outputlangs, $srctemplatepath) > 0)
 		{
 			$outputlangs->charset_output=$sav_charset_output;
 			return 1;

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -379,20 +379,89 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         $this->savdb=$db;
 
         $arraytotest=array(0=>array('key'=>1,'value'=>'PRODREF','label'=>'Product ref with é and special chars \\ \' "'));
-        
+
         $encoded=json_encode($arraytotest);
         //var_dump($encoded);
         $this->assertEquals('[{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}]',$encoded);
         $decoded=json_decode($encoded,true);
         //var_dump($decoded);
         $this->assertEquals($arraytotest,$decoded);
-        
+
         $encoded=dol_json_encode($arraytotest);
         //var_dump($encoded);
         $this->assertEquals('[{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}]',$encoded);
         $decoded=dol_json_decode($encoded,true);
         //var_dump($decoded);
         $this->assertEquals($arraytotest,$decoded);
+    }
+
+    /**
+     * testGetDefaultTva
+     *
+     * @return	void
+     */
+    public function testGetDefaultTva()
+    {
+        global $conf,$user,$langs,$db;
+        $this->savconf=$conf;
+        $this->savuser=$user;
+        $this->savlangs=$langs;
+        $this->savdb=$db;
+
+        $companyfrnovat=new Societe($db);
+        $companyfrnovat->country_code='FR';
+        $companyfrnovat->tva_assuj=0;
+
+        $companyfr=new Societe($db);
+        $companyfr->country_code='FR';
+        $companyfr->tva_assuj=1;
+
+        $companymo=new Societe($db);
+        $companymo->country_code='MC';
+        $companymo->tva_assuj=1;
+
+        $companyit=new Societe($db);
+        $companyit->country_code='IT';
+        $companyit->tva_assuj=1;
+        $companyit->tva_intra='IT99999';
+
+        $notcompanyit=new Societe($db);
+        $notcompanyit->country_code='IT';
+        $notcompanyit->tva_assuj=1;
+        $notcompanyit->tva_intra='';
+        $notcompanyit->typent_code='TE_PRIVATE';
+
+        $companyus=new Societe($db);
+        $companyus->country_code='US';
+        $companyus->tva_assuj=1;
+        $companyus->tva_intra='';
+
+        // Test RULE 1-2
+        $vat=get_default_tva($companyfrnovat,$companymo,0);
+        $this->assertEquals(0,$vat);
+
+        // Test RULE 3 (FR-FR)
+        $vat=get_default_tva($companyfr,$companyfr,0);
+        $this->assertEquals(19.6,$vat);
+
+        // Test RULE 3 (FR-MC)
+        $vat=get_default_tva($companyfr,$companymo,0);
+        $this->assertEquals(19.6,$vat);
+
+        // Test RULE 4 (FR-IT)
+        $vat=get_default_tva($companyfr,$companyit,0);
+        $this->assertEquals(0,$vat);
+
+        // Test RULE 5 (FR-IT)
+        $vat=get_default_tva($companyfr,$notcompanyit,0);
+        $this->assertEquals(19.6,$vat);
+
+        // Test RULE 6 (FR-IT)
+        // Not tested
+
+        // Test RULE 7 (FR-US)
+        $vat=get_default_tva($companyfr,$companyus,0);
+        $this->assertEquals(0,$vat);
     }
 }
 ?>

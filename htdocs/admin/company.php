@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  * Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
@@ -137,7 +137,7 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
     dolibarr_set_const($db, "MAIN_INFO_SIRET",$_POST["siret"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_INFO_APE",$_POST["ape"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_INFO_RCS",$_POST["rcs"],'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, "MAIN_INFO_TRAINER",$_POST["trainer"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_INFO_PROFID5",$_POST["MAIN_INFO_PROFID5"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_INFO_PROFID6",$_POST["MAIN_INFO_PROFID6"],'chaine',0,'',$conf->entity);
 
     dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$_POST["tva"],'chaine',0,'',$conf->entity);
@@ -481,7 +481,7 @@ if ($action == 'edit' || $action == 'updateedit')
         print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId5",$country_code).'</td><td>';
         if ($country_code)
         {
-            print '<input name="trainer" size="20" value="' . $conf->global->MAIN_INFO_TRAINER . '">';
+            print '<input name="MAIN_INFO_PROFID5" size="20" value="' . $conf->global->MAIN_INFO_PROFID5 . '">';
         }
         else
         {
@@ -818,7 +818,7 @@ else
         print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId5",$country_code).'</td><td>';
         if ($langs->transcountry("ProfId5",$country_code) != '-')
         {
-            print $conf->global->MAIN_INFO_TRAINER;
+            print $conf->global->MAIN_INFO_PROFID5;
         }
         print '</td></tr>';
     }

@@ -218,10 +218,9 @@ print_fiche_titre($langs->trans("MembersCards"),'','');
 form_constantes($constantes);
 
 print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-print '%DOL_MAIN_URL_ROOT%, %ID%, %PRENOM%, %NOM%, %LOGIN%, %PASSWORD%, ';
-print '%SOCIETE%, %ADRESSE%, %CP%, %VILLE%, %PAYS%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%, ';
+print '%DOL_MAIN_URL_ROOT%, %ID%, %FIRSTNAME%, %LASTNAME%, %FULLNAME%, %LOGIN%, %PASSWORD%, ';
+print '%COMPANY%, %ADDRESS%, %ZIP%, %TOWN%, %COUNTRY%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%, ';
 print '%YEAR%, %MONTH%, %DAY%';
-//print '%INFOS%'; Deprecated
 print '<br>';
 
 print '<br>';
@@ -230,11 +229,17 @@ print '<br>';
 /*
  * Edition info modele document
  */
-$constantes=array('ADHERENT_ETIQUETTE_TYPE');
+$constantes=array('ADHERENT_ETIQUETTE_TYPE','ADHERENT_ETIQUETTE_TEXT');
 
 print_fiche_titre($langs->trans("MembersTickets"),'','');
 
 form_constantes($constantes);
+
+print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+print '%DOL_MAIN_URL_ROOT%, %ID%, %FIRSTNAME%, %LASTNAME%, %FULLNAME%, %LOGIN%, %PASSWORD%, ';
+print '%COMPANY%, %ADDRESS%, %ZIP%, %TOWN%, %COUNTRY%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%, ';
+print '%YEAR%, %MONTH%, %DAY%';
+print '<br>';
 
 print '<br>';
 
@@ -259,10 +264,9 @@ print_fiche_titre($langs->trans("Other"),'','');
 form_constantes($constantes);
 
 print '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-print '%DOL_MAIN_URL_ROOT%, %ID%, %PRENOM%, %NOM%, %LOGIN%, %PASSWORD%,';
-print '%SOCIETE%, %ADRESSE%, %CP%, %VILLE%, %PAYS%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%';
+print '%DOL_MAIN_URL_ROOT%, %ID%, %FIRSTNAME%, %LASTNAME%, %FULLNAME%, %LOGIN%, %PASSWORD%, ';
+print '%COMPANY%, %ADDRESS%, %ZIP%, %TOWN%, %COUNTRY%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%, ';
 //print '%YEAR%, %MONTH%, %DAY%';	// Not supported
-//print '%INFOS%'; Deprecated
 print '<br>';
 
 dol_fiche_end();

@@ -2,6 +2,8 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) Steve Dillon
+ * Copyright (C) Laurent Passebecq
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,13 +55,9 @@
 ////////////////////////////////////////////////////
 
 /**
- *	\file       htdocs/core/modules/member/cards/pdf_standard.class.php
+ *	\file       htdocs/core/modules/member/doc/pdf_standard.class.php
  *	\ingroup    member
  *	\brief      Fichier de la classe permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
- *	\author     Steve Dillon
- *	\author	    Laurent Passebecq
- *	\author	    Rodolphe Quiedville
- *	\author	    Jean Louis Bergamo.
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
@@ -67,8 +65,7 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php');
 
 
 /**
- *	\class      pdf_standard
- *	\brief      Classe afin d'editer au format PDF des cartes de visite au format Avery ou personnalise
+ *	Classe afin d'editer au format PDF des cartes de visite au format Avery ou personnalise
  */
 class pdf_standard
 {
@@ -107,8 +104,10 @@ class pdf_standard
 	}
 
 
-	//Methode qui permet de modifier la taille des caracteres
-	// Cela modiera aussi l'espace entre chaque ligne
+	/**
+	 * Methode qui permet de modifier la taille des caracteres
+	 * Cela modiera aussi l'espace entre chaque ligne
+	 */
 	function Set_Char_Size(&$pdf,$pt)
 	{
 		if ($pt > 3) {
@@ -119,7 +118,11 @@ class pdf_standard
 	}
 
 
-	// On imprime une etiquette
+	/**
+	 * On imprime une etiquette
+	 * 
+	 * @param PDF	&$pdf				PDF
+	 */
 	function Add_PDF_card(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='',$idmember=0,$photomember='')
 	{
 		global $mysoc,$conf,$langs;
@@ -263,7 +266,17 @@ class pdf_standard
 		}
 	}
 
-
+	/**
+	 * Print dot line
+	 * 
+	 * @param PDF	&$pdf				PDF
+	 * @param int	$x1					X1
+	 * @param int	$y1					Y1
+	 * @param int	$x2					X2
+	 * @param int	$y2					Y2
+	 * @param int	$epaisseur			Epaisseur
+	 * @param int	$nbPointilles		Nb pointilles
+	 */
 	function _Pointille(&$pdf,$x1=0,$y1=0,$x2=210,$y2=297,$epaisseur=1,$nbPointilles=15)
 	{
 		$pdf->SetLineWidth($epaisseur);
@@ -293,7 +306,7 @@ class pdf_standard
 		}
 	}
 
-	/*
+	/**
 	 * Fonction realisant une croix aux 4 coins des cartes
 	 */
 	function _Croix(&$pdf,$x1=0,$y1=0,$x2=210,$y2=297,$epaisseur=1,$taille=4)
@@ -362,15 +375,15 @@ class pdf_standard
 	 *	Function to build PDF on disk, then output on HTTP strem.
 	 *
 	 *	@param	array		$arrayofmembers		Array of members informations
-	 *	@param	Translata	$outputlangs		Lang object for output language
-	 *	@return	int     						1=ok, 0=ko
+	 *	@param	Translate	$outputlangs		Lang object for output language
+     *  @param	string		$srctemplatepath	Full path of source filename for generator using a template file
+	 *	@return	int     						1=OK, 0=KO
 	 */
-	function write_file($arrayofmembers,$outputlangs)
+	function write_file($arrayofmembers,$outputlangs,$srctemplatepath)
 	{
 		global $user,$conf,$langs,$mysoc,$_Avery_Labels;
 
-		// Choose type (CARD by default)
-		$this->code=empty($conf->global->ADHERENT_CARD_TYPE)?'CARD':$conf->global->ADHERENT_CARD_TYPE;
+		$this->code=$srctemplatepath;
 		$this->Tformat = $_Avery_Labels[$this->code];
 		if (empty($this->Tformat)) { dol_print_error('','ErrorBadTypeForCard'.$this->code); exit; }
 		$this->type = 'pdf';
@@ -387,8 +400,9 @@ class pdf_standard
 		$outputlangs->load("admin");
 
 
-		$dir = $conf->adherent->dir_temp;
-		$file = $dir . "/tmpcards.pdf";
+		$dir = (empty($outputdir)?$conf->adherent->dir_temp:$outputdir);
+		$filename='tmp_cards.pdf';
+		$file = $dir."/".$filename;
 
 		if (! file_exists($dir))
 		{
@@ -457,7 +471,6 @@ class pdf_standard
 
 		$attachment=true;
 		if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
-		$filename='tmpcards.pdf';
 		$type=dol_mimetype($filename);
 
 		//if ($encoding)   header('Content-Encoding: '.$encoding);
