@@ -57,12 +57,14 @@ if ($user->societe_id > 0)
 
 if (isset($_GET["action"]) && $_GET["action"] == 'add_bookmark')
 {
+	$now=dol_now();
+	
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE fk_soc = ".$socid." AND fk_user=".$user->id;
 	if (! $db->query($sql) )
 	{
 		dol_print_error($db);
 	}
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES (".$socid.", ".$db->idate(mktime()).",".$user->id.");";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES (".$socid.", ".$db->idate($now).",".$user->id.");";
 	if (! $db->query($sql) )
 	{
 		dol_print_error($db);

@@ -1097,7 +1097,8 @@ else if ($id > 0 || ! empty($ref))
 
             // Date intervention
             print '<td align="center" nowrap="nowrap">';
-            $timearray=dol_getdate(mktime());
+            $now=dol_now();
+            $timearray=dol_getdate($now);
             if (!GETPOST('diday','int')) $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
             else $timewithnohour=dol_mktime(GETPOST('dihour','int'),GETPOST('dimin','int'),GETPOST('disec','int'),GETPOST('dimonth','int'),GETPOST('diday','int'),GETPOST('diyear','int'));
             $form->select_date($timewithnohour,'di',1,1,0,"addinter");

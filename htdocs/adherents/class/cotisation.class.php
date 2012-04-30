@@ -65,6 +65,9 @@ class Cotisation extends CommonObject
 	function create($userid)
 	{
 		global $langs;
+		
+		$now=dol_now();
+		
 		// Check parameters
 		if ($this->datef <= $this->dateh)
 		{
@@ -73,7 +76,7 @@ class Cotisation extends CommonObject
 		}
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."cotisation (fk_adherent, datec, dateadh, datef, cotisation, note)";
-        $sql.= " VALUES (".$this->fk_adherent.", '".$this->db->idate(mktime())."',";
+        $sql.= " VALUES (".$this->fk_adherent.", '".$this->db->idate($now)."',";
 		$sql.= " '".$this->db->idate($this->dateh)."',";
 		$sql.= " '".$this->db->idate($this->datef)."',";
 		$sql.= " ".$this->amount.",'".$this->db->escape($this->note)."')";

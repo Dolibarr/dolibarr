@@ -336,6 +336,8 @@ if ($rowid > 0)
 		// Show list of members (nearly same code than in page liste.php)
 
 		$membertypestatic=new AdherentType($db);
+		
+		$now=dol_now();
 
 		$sql = "SELECT d.rowid, d.login, d.prenom as firstname, d.nom as lastname, d.societe, ";
 		$sql.= " d.datefin,";
@@ -376,11 +378,11 @@ if ($rowid > 0)
 		}
 		if ($filter == 'uptodate')
 		{
-		    $sql.=" AND datefin >= ".$db->idate(mktime());
+		    $sql.=" AND datefin >= ".$db->idate($now);
 		}
 		if ($filter == 'outofdate')
 		{
-		    $sql.=" AND datefin < ".$db->idate(mktime());
+		    $sql.=" AND datefin < ".$db->idate($now);
 		}
 		// Count total nb of records
 		$nbtotalofrecords = 0;
