@@ -935,12 +935,12 @@ class User extends CommonObject
 
 		// Positionne parametres
 		$this->admin = 0;
-		$this->nom = $member->nom;
-		$this->prenom = $member->prenom;
+		$this->lastname = $member->lastname;
+		$this->firstname = $member->firstname;
 		$this->email = $member->email;
 		$this->pass = $member->pass;
 
-		if (empty($login)) $login=strtolower(substr($member->prenom, 0, 4)) . strtolower(substr($member->nom, 0, 4));
+		if (empty($login)) $login=strtolower(substr($member->firstname, 0, 4)) . strtolower(substr($member->lastname, 0, 4));
 		$this->login = $login;
 
 		$this->db->begin();
@@ -1044,8 +1044,8 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncmember=".$nosyncmember.", nosyncmemberpass=".$nosyncmemberpass);
 
 		// Clean parameters
-		$this->nom          = trim($this->nom);		// TODO deprecated
-		$this->prenom       = trim($this->prenom);  // TODO deprecated
+		$this->nom          = trim($this->nom);		// deprecated
+		$this->prenom       = trim($this->prenom);  // deprecated
 		$this->lastname     = trim($this->lastname);
 		$this->firstname    = trim($this->firstname);
 		$this->login        = trim($this->login);
@@ -1139,8 +1139,10 @@ class User extends CommonObject
 
 					if ($result >= 0)
 					{
-						$adh->prenom=$this->firstname;
-						$adh->nom=$this->lastname;
+						$adh->prenom=$this->firstname;    // deprecated
+						$adh->nom=$this->lastname;        // deprecated
+						$adh->firstname=$this->firstname;
+						$adh->lastname=$this->lastname;
 						$adh->login=$this->login;
 						$adh->pass=$this->pass;
 						$adh->societe=(empty($adh->societe) && $this->societe_id ? $this->societe_id : $adh->societe);

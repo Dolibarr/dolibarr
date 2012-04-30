@@ -345,6 +345,8 @@ class Livraison extends CommonObject
 				if (is_readable(DOL_DOCUMENT_ROOT .'/core/modules/livraison/'.$modName.'.php'))
 				{
 					require_once DOL_DOCUMENT_ROOT .'/core/modules/livraison/'.$modName.'.php';
+					
+					$now=dol_now();
 
 					// Recuperation de la nouvelle reference
 					$objMod = new $modName($this->db);
@@ -379,7 +381,7 @@ class Livraison extends CommonObject
 					$sql = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
 					$sql.= " ref='".$this->db->escape($this->ref)."'";
 					$sql.= ", fk_statut = 1";
-					$sql.= ", date_valid = ".$this->db->idate(mktime());
+					$sql.= ", date_valid = ".$this->db->idate($now);
 					$sql.= ", fk_user_valid = ".$user->id;
 					$sql.= " WHERE rowid = ".$this->id;
 					$sql.= " AND fk_statut = 0";

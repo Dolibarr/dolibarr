@@ -2897,11 +2897,13 @@ class Facture extends CommonObject
                 $row = $this->db->fetch_row($resql);
                 if ($row[0] == 0)
                 {
+                	$now=dol_now();
+                	
                     $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'prelevement_facture_demande';
                     $sql .= ' (fk_facture, amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib)';
                     $sql .= ' VALUES ('.$this->id;
                     $sql .= ",'".price2num($this->total_ttc)."'";
-                    $sql .= ",".$this->db->idate(mktime()).",".$user->id;
+                    $sql .= ",".$this->db->idate($now).",".$user->id;
                     $sql .= ",'".$soc->bank_account->code_banque."'";
                     $sql .= ",'".$soc->bank_account->code_guichet."'";
                     $sql .= ",'".$soc->bank_account->number."'";

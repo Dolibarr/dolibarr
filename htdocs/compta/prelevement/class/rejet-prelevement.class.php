@@ -84,6 +84,7 @@ class RejetPrelevement
 		$error = 0;
 		$this->id = $id;
 		$this->bon_id = $bonid;
+		$now=dol_now();
 
 		dol_syslog("RejetPrelevement::Create id $id");
 		$bankaccount = $conf->global->PRELEVEMENT_ID_BANKACCOUNT;
@@ -104,7 +105,7 @@ class RejetPrelevement
 		$sql.= ", '".$this->db->idate($date_rejet)."'";
 		$sql.= ", ".$motif;
 		$sql.= ", ".$user->id;
-		$sql.= ", ".$this->db->idate(mktime());
+		$sql.= ", ".$this->db->idate($now);
 		$sql.= ", ".$facturation;
 		$sql.= ")";
 

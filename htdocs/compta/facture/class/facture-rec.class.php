@@ -88,6 +88,7 @@ class FactureRec extends Facture
 		global $conf, $langs;
 
 		$error=0;
+		$now=dol_now();
 
 		// Clean parameters
 		$this->titre=trim($this->titre);
@@ -125,7 +126,7 @@ class FactureRec extends Facture
 			$sql.= "'".$this->titre."'";
 			$sql.= ", '".$facsrc->socid."'";
 			$sql.= ", ".$conf->entity;
-			$sql.= ", ".$this->db->idate(mktime());
+			$sql.= ", ".$this->db->idate($now);
 			$sql.= ", '".$facsrc->amount."'";
 			$sql.= ", '".$facsrc->remise."'";
 			$sql.= ", '".$this->db->escape($this->note)."'";

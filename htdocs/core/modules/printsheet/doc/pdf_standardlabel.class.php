@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003 Steve Dillon
+ * Copyright (C) 2003 Laurent Passebecq
+ * Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) Steve Dillon
- * Copyright (C) Laurent Passebecq
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -27,16 +27,6 @@
  * disponible ici : http://www.fpdf.org/fr/script/script29.php
  */
 
-////////////////////////////////////////////////////
-// PDF_Label
-//
-// Classe afin d'editer au format PDF des etiquettes
-// au format Avery ou personnalise
-//
-//
-// Copyright (C) 2003 Laurent PASSEBECQ (LPA)
-// Base sur les fonctions de Steve Dillon : steved@mad.scientist.com
-//
 //-------------------------------------------------------------------
 // VERSIONS :
 // 1.0  : Initial release
@@ -107,6 +97,10 @@ class pdf_standardlabel
 	/**
 	 * Methode qui permet de modifier la taille des caracteres
 	 * Cela modiera aussi l'espace entre chaque ligne
+	 *
+	 * @param    PDF    &$pdf      PDF
+	 * @param    int    $pt        point
+	 * @return   void
 	 */
 	function Set_Char_Size(&$pdf,$pt)
 	{
@@ -119,8 +113,14 @@ class pdf_standardlabel
 
 	/**
 	 * On imprime une etiquette
-	 * 
-	 * @param PDF	&$pdf				PDF
+	 *
+	 * @param    PDF	    &$pdf		    PDF
+	 * @param    string     $textleft       Textleft
+	 * @param    string     $header         Header
+	 * @param    string     $footer         Footer
+	 * @param    Translate  $outputlangs    Output langs
+	 * @param    string     $textright      Text right
+	 * @return   void
 	 */
 	function Add_PDF_card(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='')
 	{
@@ -153,7 +153,7 @@ class pdf_standardlabel
 
 		// Define background image
 		$backgroundimage='';
-		
+
 		// Print lines
 		if ($this->code == "CARD")
 		{
@@ -167,7 +167,7 @@ class pdf_standardlabel
 		{
 			$pdf->image($backgroundimage,$_PosX,$_PosY,$this->_Width,$this->_Height);
 		}
-		
+
 		// Top
 		if ($header!='')
 		{
@@ -259,7 +259,7 @@ class pdf_standardlabel
 
 	/**
 	 * Print dot line
-	 * 
+	 *
 	 * @param PDF	&$pdf				PDF
 	 * @param int	$x1					X1
 	 * @param int	$y1					Y1
@@ -299,6 +299,15 @@ class pdf_standardlabel
 
 	/**
 	 * Fonction realisant une croix aux 4 coins des cartes
+	 *
+	 * @param PDF	&$pdf				PDF
+	 * @param int	$x1					X1
+	 * @param int	$y1					Y1
+	 * @param int	$x2					X2
+	 * @param int	$y2					Y2
+	 * @param int	$epaisseur			Epaisseur
+	 * @param int	$taille             Size
+	 * @return void
 	 */
 	function _Croix(&$pdf,$x1=0,$y1=0,$x2=210,$y2=297,$epaisseur=1,$taille=4)
 	{
@@ -322,8 +331,15 @@ class pdf_standardlabel
 		$pdf->SetDrawColor(0,0,0);
 	}
 
-	// convert units (in to mm, mm to in)
-	// $src and $dest must be 'in' or 'mm'
+	/**
+	 * Convert units (in to mm, mm to in)
+	 * $src and $dest must be 'in' or 'mm'
+	 *
+	 * @param int       $value  value
+	 * @param string    $src    from
+	 * @param string    $dest   to
+	 * @return float    value   value after conversion
+	 */
 	function _Convert_Metric ($value, $src, $dest) {
 		if ($src != $dest) {
 			$tab['in'] = 39.37008;
@@ -334,7 +350,12 @@ class pdf_standardlabel
 		}
 	}
 
-	// Give the height for a char size given.
+	/**
+	 * Give the height for a char size given.
+	 *
+	 * @param  int    $pt    Point
+	 * @return int           Height chars
+	 */
 	function _Get_Height_Chars($pt) {
 		// Tableau de concordance entre la hauteur des caracteres et de l'espacement entre les lignes
 		$_Table_Hauteur_Chars = array(6=>2, 7=>2.5, 8=>3, 9=>3.5, 10=>4, 11=>6, 12=>7, 13=>8, 14=>9, 15=>10);
@@ -345,7 +366,15 @@ class pdf_standardlabel
 		}
 	}
 
-	function _Set_Format(&$pdf, $format) {
+	/**
+	 * Set format
+	 *
+	 * @param    PDF       &$pdf    PDF
+	 * @param    string    $format  Format
+	 * @return   void
+	 */
+	function _Set_Format(&$pdf, $format)
+	{
 		$this->_Metric 	= $format['metric'];
 		$this->_Avery_Name 	= $format['name'];
 		$this->_Avery_Code	= $format['code'];

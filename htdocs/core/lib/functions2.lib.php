@@ -410,7 +410,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     else $valueforccc=$objsoc->code_client;
 
     // Clean parameters
-    if ($date == '') $date=mktime();	// We use local year and month of PHP server to search numbers
+    if ($date == '') $date=dol_now();	// We use local year and month of PHP server to search numbers
     // but we should use local year and month of user
 
     // Extract value for mask counter, mask raz and mask offset

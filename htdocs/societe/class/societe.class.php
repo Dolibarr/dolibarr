@@ -1000,6 +1000,8 @@ class Societe extends CommonObject
         if ($this->id)
         {
             $this->db->begin();
+            
+            $now=dol_now();
 
             // Positionne remise courante
             $sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
@@ -1016,7 +1018,7 @@ class Societe extends CommonObject
             // Ecrit trace dans historique des remises
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise ";
             $sql.= " (datec, fk_soc, remise_client, note, fk_user_author)";
-            $sql.= " VALUES (".$this->db->idate(mktime()).", ".$this->id.", '".$remise."',";
+            $sql.= " VALUES (".$this->db->idate($now).", ".$this->id.", '".$remise."',";
             $sql.= " '".$this->db->escape($note)."',";
             $sql.= " ".$user->id;
             $sql.= ")";

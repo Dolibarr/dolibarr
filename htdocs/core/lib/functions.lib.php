@@ -2190,7 +2190,8 @@ function dol_print_error_email()
     global $langs,$conf;
 
     $langs->load("errors");
-    print '<br><div class="error">'.$langs->trans("ErrorContactEMail",$conf->global->MAIN_INFO_SOCIETE_MAIL,'ERRORNEWPAYMENT'.dol_print_date(mktime(),'%Y%m%d')).'</div>';
+    $now=dol_now();
+    print '<br><div class="error">'.$langs->trans("ErrorContactEMail",$conf->global->MAIN_INFO_SOCIETE_MAIL,'ERRORNEWPAYMENT'.dol_print_date($now,'%Y%m%d')).'</div>';
 }
 
 /**

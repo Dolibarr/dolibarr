@@ -95,10 +95,12 @@ class Mailing extends CommonObject
 			$this->error = $langs->trans("ErrorMailFromRequired");
 			return -1;
 		}
+		
+		$now=dol_now();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing";
 		$sql .= " (date_creat, fk_user_creat, entity)";
-		$sql .= " VALUES (".$this->db->idate(mktime()).", ".$user->id.", ".$conf->entity.")";
+		$sql .= " VALUES (".$this->db->idate($now).", ".$user->id.", ".$conf->entity.")";
 
 		if (! $this->titre)
 		{

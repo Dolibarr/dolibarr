@@ -210,7 +210,7 @@ if (($action == 'send' || $action == 'sendhtml') && ! $_POST['addfile'] && ! $_P
 		$body=make_substitutions($body,$substitutionarrayfortest);
 
 		require_once(DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
-		$mailfile = new CMailFile(
+        $mailfile = new CMailFile(
             $subject,
             $sendto,
             $email_from,

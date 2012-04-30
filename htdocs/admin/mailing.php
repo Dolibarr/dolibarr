@@ -34,6 +34,8 @@ if (!$user->admin)
 
 $action = GETPOST('action','alpha');
 
+   
+
 /*
  * Actions
  */
@@ -45,13 +47,34 @@ if ($action == 'setvalue' && $user->admin)
 	$mailfrom = GETPOST('MAILING_EMAIL_FROM','alpha');
 	$mailerror = GETPOST('MAILING_EMAIL_ERRORSTO','alpha');
 	$checkread = GETPOST('value','alpha');
+	$checkread_key = GETPOST('MAILING_EMAIL_UNSUBSCRIBE_KEY','alpha');
 
 	$res=dolibarr_set_const($db, "MAILING_EMAIL_FROM",$mailfrom,'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
 	$res=dolibarr_set_const($db, "MAILING_EMAIL_ERRORSTO",$mailerror,'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
-	//$res=dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE",$checkread,'chaine',0,'',$conf->entity);
-	//if (! $res > 0) $error++;
+	if ($checkread=='on')
+	{
+		$res=dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE",1,'chaine',0,'',$conf->entity);
+		if (! $res > 0) $error++;
+	}
+	else if ($checkread=='off')
+	{
+		$res=dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE",0,'chaine',0,'',$conf->entity);
+		if (! $res > 0) $error++;
+	}
+	
+	//Create temporary encryption key if nedded
+	if (($conf->global->MAILING_EMAIL_UNSUBSCRIBE==1) && (empty($checkread_key)))
+	{
+		$chars = "abcdef(ghijklmnopqrstuvwxyz;!ABCDEFGH,IJKLMNOPQRSTUVWXYZ01_23456789";
+	    mt_srand(10000000*(double)microtime());
+	    for ($i = 0, $str = '', $lc = strlen($chars)-1; $i < 30; $i++) {
+	        $checkread_key .= $chars[mt_rand(0, $lc)];
+	    }
+	}
+	$res=dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE_KEY",$checkread_key,'chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
 
  	if (! $error)
     {
@@ -104,24 +127,31 @@ print '<input size="32" type="text" name="MAILING_EMAIL_ERRORSTO" value="'.$conf
 if (!empty($conf->global->MAILING_EMAIL_ERRORSTO) && ! isValidEmail($conf->global->MAILING_EMAIL_ERRORSTO)) print ' '.img_warning($langs->trans("BadEMail"));
 print '</td></tr>';
 
-/*
+
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("ActivateCheckRead").'</td><td>';
 if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE==1)
 {
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&value=0">';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&value=off">';
 	print img_picto($langs->trans("Enabled"),'switch_on');
 	print '</a>';
+	$readonly='';
 }
 else
 {
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&value=1">';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&value=on">';
 	print img_picto($langs->trans("Disabled"),'switch_off');
 	print '</a>';
+	$readonly='disabled="disabled"';
 }
 print '</td></tr>';
-*/
+
+$var=!$var;
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("ActivateCheckReadKey").'</td><td>';
+print '<input size="32" type="text" name="MAILING_EMAIL_UNSUBSCRIBE_KEY" '.$readonly.' value="'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY.'">';
+print '</td></tr>';
 
 
 print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
