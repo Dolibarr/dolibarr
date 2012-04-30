@@ -956,7 +956,9 @@ class Task extends CommonObject
 
 		$error=0;
 		
-		$now = dol_mktime(0,0,0,idate('m',mktime()),idate('d',mktime()),idate('Y',mktime()));
+		$now=dol_now();
+		
+		$datec = dol_mktime(0,0,0,idate('m',$now),idate('d',$now),idate('Y',$now));
 
 		$clone_task=new Task($this->db);
 
@@ -970,7 +972,7 @@ class Task extends CommonObject
 		$clone_task->id					= 0;
         $clone_task->fk_project			= $project_id;
         $clone_task->fk_task_parent		= $parent_task_id;
-        $clone_task->date_c				= $now;
+        $clone_task->date_c				= $datec;
         
         //Manage Task Date
         if ($clone_change_dt)

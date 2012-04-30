@@ -85,8 +85,10 @@ class Address
 
 		if ($result >= 0)
 		{
+			$now=dol_now();
+			
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_address (label, fk_soc, name, datec, fk_user_creat) ";
-			$sql .= " VALUES ('".$this->db->escape($this->label)."', '".$socid."', '".$this->db->escape($this->name)."', ".$this->db->idate(mktime()).", '".$user->id."')";
+			$sql .= " VALUES ('".$this->db->escape($this->label)."', '".$socid."', '".$this->db->escape($this->name)."', ".$this->db->idate($now).", '".$user->id."')";
 
 			$result=$this->db->query($sql);
 			if ($result)

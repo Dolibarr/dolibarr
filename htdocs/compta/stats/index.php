@@ -216,9 +216,10 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 	print "<td>".dol_print_date(dol_mktime(12,0,0,$mois_modulo,1,2000),"%B")."</td>";
 	for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	{
+		$now=dol_now();
 		$annee_decalage=$annee;
-		if($mois>12) {$annee_decalage=$annee+1;}
-		$casenow = dol_print_date(mktime(),"%Y-%m");
+		if ($mois>12) {$annee_decalage=$annee+1;}
+		$casenow = dol_print_date($now,"%Y-%m");
 		$case = dol_print_date(dol_mktime(1,1,1,$mois_modulo,1,$annee_decalage),"%Y-%m");
 		$caseprev = dol_print_date(dol_mktime(1,1,1,$mois_modulo,1,$annee_decalage-1),"%Y-%m");
 

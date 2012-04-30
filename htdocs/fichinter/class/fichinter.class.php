@@ -321,10 +321,12 @@ class Fichinter extends CommonObject
 		if ($this->statut != 1)
 		{
 			$this->db->begin();
+			
+			$now=dol_now();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 			$sql.= " SET fk_statut = 1";
-			$sql.= ", date_valid = ".$this->db->idate(mktime());
+			$sql.= ", date_valid = ".$this->db->idate($now);
 			$sql.= ", fk_user_valid = ".$user->id;
 			$sql.= " WHERE rowid = ".$this->id;
 			$sql.= " AND entity = ".$conf->entity;
