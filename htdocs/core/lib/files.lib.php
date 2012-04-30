@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2012 	   Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2012	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1102,11 +1103,11 @@ function dol_uncompress($inputfile,$outputdir)
         }
         else
         {
-            return array('error'=>'Failed to unzip with ZipArchive');
+            return array('error'=>'ErrUnzipFails');
         }
     }
 
-    return array('error'=>'No engine to unzip files int this PHP');
+    return array('error'=>'ErrNoZipEngine');
 }
 
 

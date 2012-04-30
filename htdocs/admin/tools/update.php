@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2009-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -56,15 +56,15 @@ if (GETPOST('action','alpha')=='install')
 	if (! $original_file)
 	{
 		$langs->load("Error");
-		$mesg=$langs->trans("ErrorFileRequired");
+		$mesg = '<div class="warning">'.$langs->trans("ErrorFileRequired").'</div>';
 		$error++;
 	}
 	else
 	{
-		if (! preg_match('/\.tgz/i',$original_file) && ! preg_match('/\.zip/i',$original_file))
+		if (! preg_match('/\.zip/i',$original_file))
 		{
 			$langs->load("errors");
-			$mesg=$langs->trans("ErrorFileMustBeADolibarrPackage");
+			$mesg = '<div class="error">'.$langs->trans("ErrorFileMustBeADolibarrPackage",$original_file).'</div>';
 			$error++;
 		}
 	}
@@ -81,26 +81,9 @@ if (GETPOST('action','alpha')=='install')
 			$result=dol_uncompress($newfile,$documentrootalt);
 			if (! empty($result['error']))
 			{
-				if ($result['error'] == -1)
-				{
-					$langs->load("errors");
-					$mesg = '<div class="error">'.$langs->trans("ErrorBadFileFormat").'</div>';
-				}
-				elseif ($result['error'] == -2)
-				{
-					$langs->load("errors");
-					$mesg = '<div class="error">'.$langs->trans("ErrorOSSystem").'</div>';
-				}
-				elseif ($result['error'] == -3)
-				{
-					$langs->load("errors");
-					$mesg = '<div class="warning">'.$langs->trans("ErrorUncompFile",$_FILES['fileinstall']['name']).'</div>';
-				}
-				elseif ($result['error'] == -4)
-				{
-					$langs->load("errors");
-					$mesg = '<div class="error">'.$langs->trans("ErrorUncompFile",$_FILES['fileinstall']['name']).'</div>';
-				}
+				$langs->load("errors");
+				$mesg = '<div class="error">'.$langs->trans($result['error'],$original_file).'</div>';
+				
 			}
 			else
 			{
@@ -161,19 +144,13 @@ print '<b>'.$langs->trans("StepNb",3).'</b>: ';
 print $langs->trans("UnpackPackageInDolibarrRoot",$dolibarrroot).'<br>';
 if (! empty($conf->global->MAIN_ONLINE_INSTALL_MODULE))
 {
-	if ($vale == 1 && $dirins != 'DOL_DOCUMENT_ROOT_ALT' && ($system=="Linux" || $system=="Darwin"))
+	if ($vale == 1 && $dirins != 'DOL_DOCUMENT_ROOT_ALT')
 	{
 		print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
 		print '<input type="hidden" name="action" value="install">';
 		print $langs->trans("YouCanSubmitFile").' <input type="file" name="fileinstall"> ';
 		print '<input type="submit" name="'.dol_escape_htmltag($langs->trans("Send")).'" class="button">';
 		print '</form>';
-	}
-	elseif ($system!='Linux')
-	{
-		$langs->load('errors');
-		$message=info_admin($langs->transnoentities("ErrorOSSystem"));
-		print $message;
 	}
 	else
 	{
