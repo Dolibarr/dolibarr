@@ -77,6 +77,7 @@ CheckRead=Read Receipt
 YourMailUnsubcribeOK=The email <b>%s</b>  is correctly unsubcribe from mailing list
 MailtoEMail=Hyper link to email
 ActivateCheckRead=Activate Read receipt and unsubcribe tag
+ActivateCheckReadKey=Key use to encrypt URL use for Read Receipt and unsubcribe function
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Contacts of all third parties (customer, prospect, supplier, ...)

@@ -143,6 +143,8 @@ class MailingTargets    // This can't be abstract as it is used for some method
      */
     function add_to_target($mailing_id, $cibles)
     {
+    	global $conf;
+    	
     	$this->db->begin();
 
         // Insert emailing targest from array into database
@@ -162,7 +164,10 @@ class MailingTargets    // This can't be abstract as it is used for some method
             $sql .= "'".$this->db->escape($cibles[$i]['other'])."',";
             $sql .= "'".$this->db->escape($cibles[$i]['source_url'])."',";
             $sql .= "'".$this->db->escape($cibles[$i]['source_id'])."',";
-            $sql .= "'".$this->db->escape(md5($cibles[$i]['email'].';'.$cibles[$i]['name'].';'.$mailing_id))."',";
+            if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE==1)
+            {
+            	$sql .= "'".$this->db->escape(md5($cibles[$i]['email'].';'.$cibles[$i]['name'].';'.$mailing_id.';'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY))."',";
+            }
             $sql .= "'".$this->db->escape($cibles[$i]['source_type'])."')";
             $result=$this->db->query($sql);
             if ($result)
