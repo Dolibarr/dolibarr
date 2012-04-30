@@ -77,6 +77,7 @@ class modMyModule extends DolibarrModules
 		//							'login' => 0,                                    // Set this to 1 if module has its own login method directory (core/login)
 		//							'substitutions' => 0,                            // Set this to 1 if module has its own substitution function file (core/substitutions)
 		//							'menus' => 0,                                    // Set this to 1 if module has its own menus handler directory (core/menus)
+		//							'theme' => 0,                                    // Set this to 1 if module has its own theme directory (core/theme)
 		//                        	'tpl' => 0,                                      // Set this to 1 if module overwrite template dir (core/tpl)
 		//							'barcode' => 0,                                  // Set this to 1 if module has its own barcode directory (core/modules/barcode)
 		//							'models' => 0,                                   // Set this to 1 if module has its own models directory (core/modules/xxx)
