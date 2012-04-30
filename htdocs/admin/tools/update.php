@@ -85,7 +85,7 @@ if (GETPOST('action','alpha')=='install')
 			}
 			else
 			{
-				$mesg = "<font class=\"ok\">".$langs->trans("SetupIsReadyForUse")."</font>";
+				$mesg = '<div class="ok">'.$langs->trans("SetupIsReadyForUse").'</div>';
 			}
 		}
 	}
@@ -96,10 +96,9 @@ if (GETPOST('action','alpha')=='install')
  */
 
 $dirins=DOL_DOCUMENT_ROOT_ALT;
-$vale=(is_dir($dirins));
-$system=PHP_OS;
+$dirins_ok=(is_dir($dirins));
 
-$wikihelp='EN:Installation_-_Upgrade|FR:Installation_-_Mise_à_jour|ES:Instalaci&omodulon_-_Actualizaci&omodulon';
+$wikihelp='EN:Installation_-_Upgrade|FR:Installation_-_Mise_à_jour|ES:Instalación_-_Actualización';
 llxHeader('',$langs->trans("Upgrade"),$wikihelp);
 
 print_fiche_titre($langs->trans("Upgrade"),'','setup');
@@ -142,7 +141,7 @@ print '<b>'.$langs->trans("StepNb",3).'</b>: ';
 print $langs->trans("UnpackPackageInDolibarrRoot",$dolibarrroot).'<br>';
 if (! empty($conf->global->MAIN_ONLINE_INSTALL_MODULE))
 {
-	if ($vale == 1 && $dirins != 'DOL_DOCUMENT_ROOT_ALT')
+	if ($dirins_ok && $dirins != 'DOL_DOCUMENT_ROOT_ALT')
 	{
 		print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
 		print '<input type="hidden" name="action" value="install">';
