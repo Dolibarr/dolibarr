@@ -34,9 +34,7 @@ if (GETPOST('msg','alpha')) $message='<div class="error">'.GETPOST('msg','alpha'
 
 
 $urldolibarr='http://www.dolibarr.org/downloads/';
-//$urldolibarrmodules='http://www.dolibarr.org/downloads/cat_view/65-modulesaddon';
 $urldolibarrmodules='http://www.dolistore.com/';
-//$urldolibarrthemes='http://www.dolibarr.org/';
 $urldolibarrthemes='http://www.dolistore.com/';
 $dolibarrroot=preg_replace('/([\\/]+)$/i','',DOL_DOCUMENT_ROOT);
 $dolibarrroot=preg_replace('/([^\\/]+)$/i','',$dolibarrroot);
@@ -83,7 +81,7 @@ if (GETPOST('action','alpha')=='install')
 			{
 				$langs->load("errors");
 				$mesg = '<div class="error">'.$langs->trans($result['error'],$original_file).'</div>';
-				
+
 			}
 			else
 			{
