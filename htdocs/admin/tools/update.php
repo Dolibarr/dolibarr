@@ -33,9 +33,7 @@ if ($_GET["msg"]) $message='<div class="error">'.$_GET["msg"].'</div>';
 
 
 $urldolibarr='http://www.dolibarr.org/downloads/';
-//$urldolibarrmodules='http://www.dolibarr.org/downloads/cat_view/65-modulesaddon';
 $urldolibarrmodules='http://www.dolistore.com/';
-//$urldolibarrthemes='http://www.dolibarr.org/';
 $urldolibarrthemes='http://www.dolistore.com/';
 $dolibarrroot=preg_replace('/([\\/]+)$/i','',DOL_DOCUMENT_ROOT);
 $dolibarrroot=preg_replace('/([^\\/]+)$/i','',$dolibarrroot);
