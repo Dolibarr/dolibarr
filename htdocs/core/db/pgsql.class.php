@@ -979,7 +979,7 @@ class DoliDBPgsql
 	function DDLCreateDb($database,$charset='',$collation='',$owner='')
 	{
 		if (empty($charset))   $charset=$this->forcecharset;
-		if (empty($collation)) $collation=$this->collation;
+		if (empty($collation)) $collation=$this->forcecollate;
 
 		$ret=$this->query('CREATE DATABASE '.$database.' OWNER '.$owner.' ENCODING \''.$charset.'\'');
 		return $ret;

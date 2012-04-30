@@ -796,9 +796,12 @@ class DoliDBMssql
 	 */
 	function DDLCreateDb($database,$charset='',$collation='',$owner='')
 	{
-		// ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
+        if (empty($charset))   $charset=$this->forcecharset;
+        if (empty($collation)) $collation=$this->forcecollate;
+
+        // ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
 		$sql = 'CREATE DATABASE '.$database;
-		$sql.= ' DEFAULT CHARACTER SET '.$this->forcecharset.' DEFAULT COLLATE '.$this->forcecollate;
+		$sql.= ' DEFAULT CHARACTER SET '.$charset.' DEFAULT COLLATE '.$collation;
 		$ret=$this->query($sql);
 		if (! $ret)
 		{
