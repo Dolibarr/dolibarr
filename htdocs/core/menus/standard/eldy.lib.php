@@ -55,7 +55,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		$classname = 'class="tmenu"';
 	}
 	$idsel='home';
-	print_start_menu_entry($idsel);
+	print_start_menu_entry($idsel,$classname);
 	print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/index.php?mainmenu=home&amp;leftmenu="'.($atarget?" target=$atarget":"").'>';
 	print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
 	print '</a>';
@@ -85,7 +85,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		if (($conf->societe->enabled && $user->rights->societe->lire)
 		|| ($conf->fournisseur->enabled && $user->rights->fournisseur->lire))
 		{
-			print_start_menu_entry($idsel);
+			print_start_menu_entry($idsel,$classname);
 			print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/societe/index.php?mainmenu=companies&amp;leftmenu="'.($atarget?' target="'.$atarget.'"':'').'>';
 			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
 			print '</a>';
@@ -98,7 +98,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		{
 			if (! $type_user)
 			{
-				print_start_menu_entry($idsel);
+				print_start_menu_entry($idsel,$classname);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
 				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
 				print_text_menu_entry($langs->trans("ThirdParties"));
@@ -131,7 +131,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		$idsel='products';
 		if ($user->rights->produit->lire || $user->rights->service->lire)
 		{
-			print_start_menu_entry($idsel);
+			print_start_menu_entry($idsel,$classname);
 			print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/product/index.php?mainmenu=products&amp;leftmenu="'.($atarget?' target="'.$atarget.'"':'').'>';
 			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage"  id="mainmenuspan_'.$idsel.'"></span></div>';
 			print '</a>';
@@ -144,7 +144,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		{
 			if (! $type_user)
 			{
-				print_start_menu_entry($idsel);
+				print_start_menu_entry($idsel,$classname);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
 				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
 				print_text_menu_entry($chaine);
@@ -178,7 +178,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		$idsel='commercial';
 		if($user->rights->societe->lire || $user->rights->societe->contact->lire)
 		{
-			print_start_menu_entry($idsel);
+			print_start_menu_entry($idsel,$classname);
 			print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&amp;leftmenu="'.($atarget?' target="'.$atarget.'"':'').'>';
 			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="'.$id.'"></span></div>';
 			print '</a>';
@@ -191,7 +191,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		{
 			if (! $type_user)
 			{
-				print_start_menu_entry($idsel);
+				print_start_menu_entry($idsel,$classname);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
 				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
 				print print_text_menu_entry($langs->trans("Commercial"));
@@ -221,7 +221,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		if ($user->rights->compta->resultat->lire || $user->rights->accounting->plancompte->lire
 		|| $user->rights->facture->lire || $user->rights->deplacement->lire || $user->rights->don->lire || $user->rights->tax->charges->lire)
 		{
-			print_start_menu_entry($idsel);
+			print_start_menu_entry($idsel,$classname);
 			print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy&amp;leftmenu="'.($atarget?' target="'.$atarget.'"':'').'>';
 			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
 			print '</a>';
@@ -234,7 +234,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		{
 			if (! $type_user)
 			{
-				print_start_menu_entry($idsel);
+				print_start_menu_entry($idsel,$classname);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
 				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
 				print_text_menu_entry($langs->trans("MenuFinancial"));
@@ -263,7 +263,7 @@ function print_eldy_menu($db,$atarget,$type_user)
         $idsel='bank';
         if ($user->rights->banque->lire)
         {
-            print_start_menu_entry($idsel);
+            print_start_menu_entry($idsel,$classname);
             print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/compta/bank/index.php?mainmenu=bank&amp;leftmenu="'.($atarget?' target="'.$atarget.'"':'').'>';
             print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
             print '</a>';
@@ -276,7 +276,7 @@ function print_eldy_menu($db,$atarget,$type_user)
         {
             if (! $type_user)
             {
-                print_start_menu_entry($idsel);
+                print_start_menu_entry($idsel,$classname);
                 print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
                 print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
                 print_text_menu_entry($langs->trans("MenuBankCash"));
@@ -304,7 +304,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		$idsel='project';
 		if ($user->rights->projet->lire)
 		{
-			print_start_menu_entry($idsel);
+			print_start_menu_entry($idsel,$classname);
 			print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/projet/index.php?mainmenu=project&amp;leftmenu="'.($atarget?' target="'.$atarget.'"':'').'>';
 			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
 			print '</a>';
@@ -317,7 +317,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		{
 			if (! $type_user)
 			{
-				print_start_menu_entry($idsel);
+				print_start_menu_entry($idsel,$classname);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
 				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
 				print_text_menu_entry($langs->trans("Projects"));
@@ -345,7 +345,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		$idsel='tools';
 		if ($user->rights->mailing->lire || $user->rights->export->lire || $user->rights->import->run)
 		{
-			print_start_menu_entry($idsel);
+			print_start_menu_entry($idsel,$classname);
 			print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/core/tools.php?mainmenu=tools&amp;leftmenu="'.($atarget?' target="'.$atarget.'"':'').'>';
 			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
 			print '</a>';
@@ -358,7 +358,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		{
 			if (! $type_user)
 			{
-				print_start_menu_entry($idsel);
+				print_start_menu_entry($idsel,$classname);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
 				print '<a class="tmenudisabled"  id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
 				print_text_menu_entry($langs->trans("Tools"));
@@ -384,7 +384,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		}
 
 		$idsel='shop';
-		print_start_menu_entry($idsel);
+		print_start_menu_entry($idsel,$classname);
 		print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/boutique/index.php?mainmenu=shop&amp;leftmenu="'.($atarget?' target="'.$atarget.'"':'').'>';
 		print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '</a>';
@@ -412,7 +412,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		$idsel='members';
 		if ($user->rights->adherent->lire)
 		{
-			print_start_menu_entry($idsel);
+			print_start_menu_entry($idsel,$classname);
 			print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/adherents/index.php?mainmenu=members&amp;leftmenu="'.($atarget?' target="'.$atarget.'"':'').'>';
 			print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
 			print '</a>';
@@ -425,7 +425,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		{
 			if (! $type_user)
 			{
-				print_start_menu_entry($idsel);
+				print_start_menu_entry($idsel,$classname);
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
 				print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
 				print_text_menu_entry($langs->trans("MenuMembers"));
@@ -475,7 +475,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 				else if (! empty($_SESSION["mainmenu"]) && $newTabMenu[$i]['mainmenu'] == $_SESSION["mainmenu"]) $classname='class="tmenusel"';
 				else $classname='class="tmenu"';
 
-				print_start_menu_entry($idsel);
+				print_start_menu_entry($idsel,$classname);
 				print '<a class="tmenuimage" href="'.$url.'"'.($newTabMenu[$i]['target']?" target='".$newTabMenu[$i]['target']."'":($atarget?' target="'.$atarget.'"':'')).'>';
 				print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
 				print '</a>';
@@ -488,7 +488,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 			{
 				if (! $type_user)
 				{
-					print_start_menu_entry($idsel);
+					print_start_menu_entry($idsel,'class="tmenu"');
 					print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
 					print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
 					print_text_menu_entry($newTabMenu[$i]['titre']);
@@ -503,12 +503,15 @@ function print_eldy_menu($db,$atarget,$type_user)
 }
 
 
-
+/**
+ * Output start menu array
+ *
+ * @return	void
+ */
 function print_start_menu_array()
 {
-	global $conf;
-	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '<table class="tmenu" summary="topmenu"><tr class="tmenu">';
-	else print '<ul class="tmenu">';
+	print '<div class="tmenudiv">';
+	print '<ul class="tmenu">';
 }
 
 /**
@@ -517,11 +520,10 @@ function print_start_menu_array()
  * @param	string	$idsel		Text
  * @return	void
  */
-function print_start_menu_entry($idsel)
+function print_start_menu_entry($idsel,$classname)
 {
-	global $conf;
-	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '<td class="tmenu" id="mainmenutd_'.$idsel.'">';
-	else print '<li class="tmenu" id="mainmenutd_'.$idsel.'">';
+	print '<li '.$classname.' id="mainmenutd_'.$idsel.'">';
+	print '<div class="tmenuleft"></div><div class="tmenucenter">';
 }
 
 /**
@@ -532,7 +534,6 @@ function print_start_menu_entry($idsel)
  */
 function print_text_menu_entry($text)
 {
-	global $conf;
 	print '<span class="mainmenuaspan">';
 	print $text;
 	print '</span>';
@@ -545,9 +546,7 @@ function print_text_menu_entry($text)
  */
 function print_end_menu_entry()
 {
-	global $conf;
-	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '</td>';
-	else print '</li>';
+	print '</div></li>';
 	print "\n";
 }
 
@@ -558,9 +557,8 @@ function print_end_menu_entry()
  */
 function print_end_menu_array()
 {
-	global $conf;
-	if (preg_match('/bluelagoon|eldy|freelug|rodolphe|yellow|dev/',$conf->css)) print '</tr></table>';
-	else print '</ul>';
+	print '</div>';
+    print '</ul>';
 	print "\n";
 }
 

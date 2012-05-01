@@ -353,12 +353,28 @@ if (! empty($conf->browser->phone))
 }
 else
 {
-	$minwidthtmenu=64;
-	$heightmenu=48;
+	$minwidthtmenu=66;
+//	$heightmenu=48;
+	$heightmenu=54;
 }
 ?>
 
-div.tmenu {
+
+div#tmenu_tooltip {
+<?php if (! empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED) || ! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)) {
+    $colortexttopmenu=$colortextmain;
+?>
+	background: rgb(<?php echo $colorback1 ?>);
+<?php } else {
+    if ($usecss3) $colortexttopmenu='FFFFFF';
+    else $colortexttopmenu='000000';
+?>
+	background: #305582; /* 2C68A3 */
+<?php
+    } ?>
+}
+
+div.tmenudiv {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
 	display:none;
 <?php } else { ?>
@@ -370,17 +386,18 @@ div.tmenu {
     border-<?php print $right; ?>: 0px solid #555555;
     border-bottom: 1px solid #FFFFFF;
     padding: 0px 0px 0px 0px;	/* t r b l */
-    margin: 0px 0px 7px 0px;	/* t r b l */
+    margin: 0px 0px 0px 0px;	/* t r b l */
 	font-size: 13px;
     font-weight: normal;
     height: <?php print ($heightmenu+1); ?>px;
 
 <?php if ($usecss3) { ?>
-    background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 75%, rgb(<?php echo $colorback2; ?>) 100%);
-    background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 75%, rgb(<?php echo $colorback2; ?>) 100%);
-    background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 40%, rgb(<?php echo $colorback2; ?>) 60%, rgb(<?php echo $colorback1; ?>) 100%);
-    background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 75%, rgb(<?php echo $colorback2; ?>) 100%);
-    background-image: linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 75%, rgb(<?php echo $colorback2; ?>) 100%);
+    /*    background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 75%, rgb(<?php echo $colorback2; ?>) 100%); */
+    /*    background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 75%, rgb(<?php echo $colorback2; ?>) 100%);*/
+    /*    background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 40%, rgb(<?php echo $colorback2; ?>) 60%, rgb(<?php echo $colorback1; ?>) 100%);*/
+    /*    background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 75%, rgb(<?php echo $colorback2; ?>) 100%);*/
+    /*    background-image: linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 75%, rgb(<?php echo $colorback2; ?>) 100%); */
+	background: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/nav-overlay3.png' ?>) 50% 0% repeat-x;
 <?php } else { ?>
     background-image: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/tmenu2.jpg' ?>);
     background-position:top;
@@ -391,20 +408,8 @@ div.tmenu {
 <?php } ?>
 }
 
-table.tmenu {
-    padding: 0px 0px 10px 0px;	/* t r b l */
-    margin: 0px 0px 0px 0px;	/* t r b l */
-	text-align: center;
-}
-td.tmenu {
-	<?php print $minwidthtmenu?'width: '.$minwidthtmenu.'px;':''; ?>
-	text-align: center;
-	vertical-align: bottom;
-	white-space: nowrap;
-}
-
 a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudisabled:active {
-	color: #757575;
+	color: #808080;
     font-weight: normal;
 	padding: 0px 5px 0px 5px;
 	margin: 0px 1px 2px 1px;
@@ -416,49 +421,46 @@ a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudis
 a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
     font-weight: normal;
 	padding: 0px 5px 0px 5px;
-	margin: 0px 1px 2px 1px;
 	white-space: nowrap;
-	text-shadow: 1px 1px 1px #FFFFFF;
+	/*	text-shadow: 1px 1px 1px #000000; */
+	color: #<?php echo $colortexttopmenu; ?>;
 }
 a.tmenu:link, a.tmenu:visited {
-	color: #<?php echo $colortextmain; ?>;
+	color: #<?php echo $colortexttopmenu; ?>;
 }
 a.tmenu:hover, a.tmenu:active {
-	color: #233030;
 	margin: 0px 0px 0px 0px;
-	border-<?php print $right; ?>: 1px solid #555555;
-	border-<?php print $left; ?>: 1px solid #D8D8D8;
-	border-top: 1px solid #D8D8D8;
-	border-bottom: 2px solid #F4F4F4;
-	background: #F4F4F4;
-	text-shadow: 1px 1px 1px #FFFFFF;
+    /*	border-<?php print $right; ?>: 1px solid #555555; */
+    /*	border-<?php print $left; ?>: 1px solid #D8D8D8; */
+    /*	border-top: 1px solid #D8D8D8; */
+    /*	border-bottom: 2px solid #F4F4F4; */
+    /*	background: #F4F4F4; */
+    /*	text-shadow: 1px 1px 1px #FFFFFF !important; */
+	color: #<?php echo $colortexttopmenu; ?>;
 }
 
 a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
 	font-weight: normal;
-	color: #233030;
 	padding: 0px 5px 0px 5px;
 	margin: 0px 0px 0px 0px;
-	background: #F4F4F4;
-	border-<?php print $right; ?>: 1px solid #555555;
-	border-top: 1px solid #D8D8D8;
-	border-<?php print $left; ?>: 1px solid #D8D8D8;
-	border-bottom: 2px solid #F4F4F4;
+    /*	background: #F4F4F4; */
+    /*	border-<?php print $right; ?>: 1px solid #555555; */
+    /*	border-top: 1px solid #D8D8D8; */
+    /*	border-<?php print $left; ?>: 1px solid #D8D8D8; */
+    /*	border-bottom: 2px solid #F4F4F4; */
 	white-space: nowrap;
-	text-shadow: 1px 1px 1px #FFFFFF;
-}
-
-
-* html li.tmenu a {
-	min-width:60px;
+	/*	text-shadow: 1px 1px 1px #FFFFFF;*/
+	color: #<?php echo $colortexttopmenu; ?>;
 }
 
 ul.tmenu {	/* t r b l */
-    padding: 0px 0px 10px 0px;
-    margin: 0px 0px 0px 6px;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
 	list-style: none;
+    height: <?php print $heightmenu; ?>px;
+    background: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/nav-overlay3.png' ?>) 0 0 repeat-x !important;
 }
-li.tmenu {
+li.tmenu, li.tmenusel {
 	<?php print $minwidthtmenu?'min-width: '.$minwidthtmenu.'px;':''; ?>
 	text-align: center;
 	vertical-align: bottom;
@@ -466,9 +468,32 @@ li.tmenu {
     height: <?php print $heightmenu; ?>px;
 	position:relative;
 	display: block;
-	padding: 2px 5px 0px 5px;
-    margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+	margin: 0px 0px 0px 0px;
 	font-weight: normal;
+}
+li.tmenu:hover, li.tmenusel {
+<?php if ($usecss3) { ?>
+    /*    background-image: -o-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 75%, rgb(<?php echo $colorback2; ?>) 100%); */
+    /*    background-image: -moz-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 75%, rgb(<?php echo $colorback2; ?>) 100%);*/
+    /*    background-image: -webkit-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 40%, rgb(<?php echo $colorback2; ?>) 60%, rgb(<?php echo $colorback1; ?>) 100%); */
+    /*    background-image: -ms-linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 75%, rgb(<?php echo $colorback2; ?>) 100%);*/
+    /*    background-image: linear-gradient(bottom, rgb(<?php echo $colorback1; ?>) 75%, rgb(<?php echo $colorback2; ?>) 100%); */
+	background: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/nav-overlay3.png' ?>) 50% 0 repeat-x;
+<?php } ?>
+}
+div.tmenuleft
+{
+	width: 5px;
+	float: <?php print $left; ?>;
+    height: <?php print $heightmenu; ?>px;
+	background: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menutab-r.png' ?>) 100% 0 no-repeat;
+}
+div.tmenucenter
+{
+	padding-top: 2px;
+	padding-right: 5px;
+    height: <?php print $heightmenu; ?>px;
 }
 
 
@@ -619,7 +644,6 @@ foreach($mainmenuusedarray as $key => $val)
 	{
 		print "div.mainmenu.".$val." {\n";
 		print "	background-image: url(".$url.");\n";
-		print "	height:28px;\n";
 		print "}\n";
 	}
 }
@@ -700,10 +724,10 @@ div.login {
 	font-weight: bold;
 }
 div.login a {
-	color: #233030;
+	color: #<?php echo $colortextmain; ?>;
 }
 div.login a:hover {
-	color: black;
+	color: #<?php echo $colortextmain; ?>;
 	text-decoration:underline;
 }
 
@@ -1702,6 +1726,13 @@ div.error {
   -webkit-border-radius: 6px;
   border-radius: 6px;
   background: #EFCFCF;
+}
+
+div.jnotify-background {
+	opacity : 0.95 !important;
+    -moz-box-shadow: 4px 4px 4px #888 !important;
+    -webkit-box-shadow: 4px 4px 4px #888 !important;
+    box-shadow: 4px 4px 4px #888 !important;
 }
 
 /* Info admin */
