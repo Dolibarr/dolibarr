@@ -29,6 +29,7 @@ StatusOrderCanceledShort=Canceled
 StatusOrderDraftShort=Draft
 StatusOrderValidatedShort=Validated
 StatusOrderSentShort=In process
+StatusOrderSent=Shipment in process
 StatusOrderOnProcessShort=Reception
 StatusOrderProcessedShort=Processed
 StatusOrderToBillShort=To bill
