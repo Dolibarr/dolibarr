@@ -354,8 +354,7 @@ if (! empty($conf->browser->phone))
 else
 {
 	$minwidthtmenu=66;
-//	$heightmenu=48;
-	$heightmenu=54;
+	$heightmenu=52;
 }
 ?>
 
@@ -366,10 +365,12 @@ div#tmenu_tooltip {
 ?>
 	background: rgb(<?php echo $colorback1 ?>);
 <?php } else {
-    if ($usecss3) $colortexttopmenu='FFFFFF';
-    else $colortexttopmenu='000000';
+    //if ($usecss3) $colortexttopmenu='FFFFFF';
+    //else
+    $colortexttopmenu='000000';
 ?>
-	background: #305582; /* 2C68A3 */
+	background: rgb(<?php echo $colorback1 ?>);
+	/* background: #305582; *//* 2C68A3 */
 <?php
     } ?>
 }
@@ -486,8 +487,9 @@ div.tmenuleft
 {
 	width: 5px;
 	float: <?php print $left; ?>;
-    height: <?php print $heightmenu; ?>px;
-	background: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menutab-r.png' ?>) 100% 0 no-repeat;
+    height: <?php print $heightmenu+4; ?>px;
+	background: url(<?php echo DOL_URL_ROOT.'/theme/eldy/img/menutab-r.png' ?>) 0 0 no-repeat;
+	margin-top: -4px;
 }
 div.tmenucenter
 {
