@@ -156,6 +156,8 @@ ALTER TABLE llx_categorie_fournisseur DROP INDEX fk_categorie;
 ALTER TABLE llx_categorie_fournisseur ADD PRIMARY KEY pk_categorie_fournisseur (fk_categorie, fk_societe);
 ALTER TABLE llx_categorie_fournisseur ADD INDEX idx_categorie_fournisseur_fk_categorie (fk_categorie);
 ALTER TABLE llx_categorie_fournisseur ADD INDEX idx_categorie_fournisseur_fk_societe (fk_societe);
+DELETE FROM llx_categorie_fournisseur WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie);
+DELETE FROM llx_categorie_fournisseur WHERE fk_societe NOT IN (SELECT rowid FROM llx_societe);
 ALTER TABLE llx_categorie_fournisseur ADD CONSTRAINT fk_categorie_fournisseur_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_fournisseur ADD CONSTRAINT fk_categorie_fournisseur_fk_soc   FOREIGN KEY (fk_societe) REFERENCES llx_societe (rowid);
 
