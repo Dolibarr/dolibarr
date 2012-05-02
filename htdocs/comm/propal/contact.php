@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
  * Copyright (C) 2005-2009 Destailleur Laurent  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2011-2012 Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +58,7 @@ if ($action == 'addcontact' && $user->rights->propale->creer)
 
     if ($result > 0 && $id > 0)
     {
-    	$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
+    	$contactid = (GETPOST('userid','int') ? GETPOST('userid','int') : GETPOST('contactid','int'));
   		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
     }
 
@@ -173,7 +174,7 @@ if ($id > 0 || ! empty($ref))
 		if (is_null($object->client)) $object->fetch_thirdparty();
 		print "<tr><td>".$langs->trans("Company")."</td>";
 		print '<td colspan="3">'.$object->client->getNomUrl(1).'</td></tr>';
-		
+
 		// Delivery address
 		if ($conf->global->SOCIETE_ADDRESSES_MANAGEMENT)
 		{
@@ -181,11 +182,11 @@ if ($id > 0 || ! empty($ref))
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('DeliveryAddress');
 			print '</td>';
-		
+
 			if ($action != 'editdelivery_address' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_address&amp;socid='.$object->socid.'&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDeliveryAddress'),1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
-		
+
 			if ($action == 'editdelivery_address')
 			{
 				$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$object->socid,'fk_address','propal',$object->id);
@@ -200,12 +201,17 @@ if ($id > 0 || ! empty($ref))
 		print "</table>";
 
 		print '</div>';
-		
+
 		print '<br>';
-		
-		// Contacts lines
-		include(DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php');
-		
+
+		// Contacts lines (modules that overwrite templates must declare this into descriptor)
+		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+		foreach($dirtpls as $reldir)
+		{
+		    $res=@include(dol_buildpath($reldir.'/contacts.tpl.php'));
+		    if ($res) break;
+		}
+
 	}
 	else
 	{
@@ -213,6 +219,7 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-$db->close();
 llxFooter();
+
+$db->close();
 ?>

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 Regis Houssin <regis@dolibarr.fr>
  * Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2012      Florian Henry
+ * Copyright (C) 2012      Florian Henry <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,12 +60,8 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
-
 $object = new Task($db);
 $projectstatic = new Project($db);
-
-
-
 
 /*
  * Actions
@@ -129,7 +125,6 @@ if (! empty($project_ref) && ! empty($withproject))
 	}
 }
 
-// Find upload dir after retreive is task if necessary
 if ($id > 0 || ! empty($ref))
 {
 	if ($object->fetch($id,$ref) > 0)
@@ -145,7 +140,6 @@ if ($id > 0 || ! empty($ref))
 		dol_print_error($db);
 	}
 }
-
 /*
  * View
  */

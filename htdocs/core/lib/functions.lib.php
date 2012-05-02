@@ -2190,7 +2190,8 @@ function dol_print_error_email()
     global $langs,$conf;
 
     $langs->load("errors");
-    print '<br><div class="error">'.$langs->trans("ErrorContactEMail",$conf->global->MAIN_INFO_SOCIETE_MAIL,'ERRORNEWPAYMENT'.dol_print_date(mktime(),'%Y%m%d')).'</div>';
+    $now=dol_now();
+    print '<br><div class="error">'.$langs->trans("ErrorContactEMail",$conf->global->MAIN_INFO_SOCIETE_MAIL,'ERRORNEWPAYMENT'.dol_print_date($now,'%Y%m%d')).'</div>';
 }
 
 /**
@@ -2833,7 +2834,8 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
     // Le test ci-dessus ne devrait pas etre necessaire. Me signaler l'exemple du cas juridique concerne si le test suivant n'est pas suffisant.
 
     // Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
-    if ($societe_vendeuse->country_code == $societe_acheteuse->country_code) // Warning ->country_code not always defined
+    if (($societe_vendeuse->country_code == $societe_acheteuse->country_code)
+    || (in_array($societe_vendeuse->country_code,array('FR,MC')) && in_array($societe_acheteuse->country_code,array('FR','MC')))) // Warning ->country_code not always defined
     {
         //print 'VATRULE 3';
         return get_product_vat_for_country($idprod,$societe_vendeuse->country_code);
@@ -3361,7 +3363,7 @@ function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='
     require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 
     // Check if there is external substitution to do asked by plugins
-    $dirsubstitutions=array_merge(array(),$conf->substitutions_modules);
+    $dirsubstitutions=array_merge(array(),$conf->modules_parts['substitutions']);
 
     foreach($dirsubstitutions as $reldir)
     {

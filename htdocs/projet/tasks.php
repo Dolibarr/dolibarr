@@ -65,8 +65,8 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 {
 	$error=0;
 
-	$date_start = dol_mktime(12,0,0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear']);
-    $date_end = dol_mktime(12,0,0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
+	$date_start = dol_mktime(0,0,0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear']);
+    $date_end = dol_mktime(0,0,0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
 
 	if (empty($_POST["cancel"]))
 	{
@@ -198,6 +198,16 @@ if ($id > 0 || ! empty($ref))
     print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
     if ($object->public) print $langs->trans('SharedProject');
     else print $langs->trans('PrivateProject');
+    print '</td></tr>';
+
+ 	// Date start
+    print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+    print dol_print_date($object->date_start,'day'); 
+    print '</td></tr>';
+
+    // Date end
+    print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+    print dol_print_date($object->date_end,'day');
     print '</td></tr>';
 
     // Statut

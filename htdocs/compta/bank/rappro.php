@@ -380,8 +380,9 @@ if ($resql)
                 print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;orig_account='.$acct->id.'">';
                 print img_edit();
                 print '</a>&nbsp; ';
-
-                if ($db->jdate($objp->do) <= mktime()) {
+                
+                $now=dol_now();
+                if ($db->jdate($objp->do) <= $now) {
                     print '<a href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?action=del&amp;rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
                     print img_delete();
                     print '</a>';

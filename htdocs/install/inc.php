@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
- * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,11 @@
  *	\brief      File that define environment for support pages
  */
 
-define('DOL_VERSION','3.3.0-alpha');	// Also defined in htdocs/master.inc.php (Ex: x.y.z-alpha, x.y.z)
+// Just to define version DOL_VERSION
+if (! defined('DOL_INC_FOR_VERSION_ERROR')) define('DOL_INC_FOR_VERSION_ERROR','1');
+require_once('../filefunc.inc.php');
 
-// Define DOL_DOCUMENT_ROOT an ADODB_PATH used for install/upgrade process
+// Define DOL_DOCUMENT_ROOT and ADODB_PATH used for install/upgrade process
 if (! defined('DOL_DOCUMENT_ROOT'))	    define('DOL_DOCUMENT_ROOT', '..');
 if (! defined('ADODB_PATH'))
 {
@@ -35,22 +37,20 @@ if (! defined('ADODB_PATH'))
     define('ADODB_PATH', $foundpath);
 }
 
-require_once('../core/class/translate.class.php');
-require_once('../core/lib/functions.lib.php');
-require_once('../core/lib/admin.lib.php');
-require_once('../core/lib/files.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/class/translate.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 require_once(ADODB_PATH.'adodb-time.inc.php');
 
-error_reporting(E_ALL);	// To have all errors without disabled E_STRICT
-
-// IMPORTANT with strict mode E_STRICT
+// Avoid warnings with strict mode E_STRICT
 $conf = new stdClass(); // instantiate $conf explicitely
 $conf->global	= (object) array();
 $conf->file		= (object) array();
 $conf->db		= (object) array();
 $conf->syslog	= (object) array();
 
-// Define $_REQUEST["logtohtml"]
+// Force $_REQUEST["logtohtml"]
 $_REQUEST["logtohtml"]=1;
 
 // Correction PHP_SELF (ex pour apache via caudium) car PHP_SELF doit valoir URL relative
@@ -60,27 +60,6 @@ if (isset($_SERVER["DOCUMENT_URI"]) && $_SERVER["DOCUMENT_URI"])
     $_SERVER["PHP_SELF"]=$_SERVER["DOCUMENT_URI"];
 }
 
-
-// Define syslog constants
-if (! defined('LOG_DEBUG'))
-{
-    if (function_exists("define_syslog_variables"))
-    {
-        define_syslog_variables(); // Deprecated since php 5.3.0, syslog variables no longer need to be initialized
-    }
-    else
-    {
-        // Pour PHP sans syslog (comme sous Windows)
-        define('LOG_EMERG',0);
-        define('LOG_ALERT',1);
-        define('LOG_CRIT',2);
-        define('LOG_ERR',3);
-        define('LOG_WARNING',4);
-        define('LOG_NOTICE',5);
-        define('LOG_INFO',6);
-        define('LOG_DEBUG',7);
-    }
-}
 
 $includeconferror='';
 
@@ -100,7 +79,9 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
     $result=include_once($conffile);	// Load conf file
     if ($result)
     {
-    	// Clean parameters
+		if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
+    	
+		// Clean parameters
     	$dolibarr_main_data_root        =isset($dolibarr_main_data_root)?trim($dolibarr_main_data_root):'';
     	$dolibarr_main_url_root         =isset($dolibarr_main_url_root)?trim($dolibarr_main_url_root):'';
     	$dolibarr_main_url_root_alt     =isset($dolibarr_main_url_root_alt)?trim($dolibarr_main_url_root_alt):'';
@@ -251,7 +232,8 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP 5.
 
 // Defini objet langs
 $langs = new Translate('..',$conf);
-$langs->setDefaultLang('auto');
+if (GETPOST('lang')) $langs->setDefaultLang(GETPOST('lang'));
+else $langs->setDefaultLang('auto');
 
 $bc[false]=' class="bg1"';
 $bc[true]=' class="bg2"';
@@ -316,9 +298,9 @@ function conf($dolibarr_main_document_root)
 
 
 /**
- * Show header of install pages
+ * Show HTML header of install pages
  *
- * @param	string		$soutitre	Sous titre
+ * @param	string		$soutitre	Title
  * @param 	string		$next		Next
  * @param 	string		$action     Action code ('set' or 'upgrade')
  * @param 	string		$param		Param
@@ -338,7 +320,7 @@ function pHeader($soutitre,$next,$action='set',$param='')
     print '<html>'."\n";
     print '<head>'."\n";
     print '<meta http-equiv="content-type" content="text/html; charset='.$conf->file->character_set_client.'">'."\n";
-    print '<link rel="stylesheet" type="text/css" href="./default.css">'."\n";
+    print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
     print '<link rel="stylesheet" type="text/css" href="../includes/jquery/css/smoothness/jquery-ui-latest.custom.css" type="text/css">'."\n";
     print '<script type="text/javascript" src="../includes/jquery/js/jquery-latest.min.js"></script>'."\n";
     print '<script type="text/javascript" src="../includes/jquery/js/jquery-ui-latest.custom.min.js"></script>'."\n";
@@ -361,10 +343,10 @@ function pHeader($soutitre,$next,$action='set',$param='')
 }
 
 /**
- * Output footer of install pages
+ * Print HTML footer of install pages
  *
- * @param 	string	$nonext				No next
- * @param	string	$setuplang			Setup lang
+ * @param 	string	$nonext				No button "Next step"
+ * @param	string	$setuplang			Language code
  * @param	string	$jscheckfunction	Add a javascript check function
  * @return	void
  */

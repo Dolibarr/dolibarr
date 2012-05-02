@@ -49,10 +49,12 @@ print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Description").'</td>';
 print '<td align="right">'.$langs->trans("Total").'</td></tr>';
 
+$now=dol_now();
+
 $sql = "SELECT sum(t.value) as value, MONTH(o.date_purchased) as mois";
 $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t";
 $sql .= " JOIN ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders as o ON o.orders_id = t.orders_id";
-$sql .= " WHERE t.class = 'ot_subtotal' AND YEAR(o.date_purchased) = YEAR(".$dbosc->idate(mktime()).")";
+$sql .= " WHERE t.class = 'ot_subtotal' AND YEAR(o.date_purchased) = YEAR(".$dbosc->idate($now).")";
 $sql .= " GROUP BY mois ORDER BY mois";
 
 $result=$dbosc->query($sql);

@@ -2,7 +2,8 @@
 /* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2011-2012 Philippe Grand	    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2311,7 +2312,7 @@ abstract class CommonObject
      */
     function showLinkedObjectBlock()
     {
-        global $langs,$bc;
+        global $conf,$langs,$bc;
 
         $this->fetchObjectLinked();
 
@@ -2351,7 +2352,13 @@ abstract class CommonObject
             global $linkedObjectBlock;
             $linkedObjectBlock = $objects;
 
-            dol_include_once('/'.$tplpath.'/tpl/linkedobjectblock.tpl.php');
+            // Output template part (modules that overwrite templates must declare this into descriptor)
+            $dirtpls=array_merge($conf->modules_parts['tpl'],array('/'.$tplpath.'/tpl'));
+            foreach($dirtpls as $reldir)
+            {
+                $res=@include(dol_buildpath($reldir.'/linkedobjectblock.tpl.php'));
+                if ($res) break;
+            }
         }
 
         return $num;
@@ -2377,8 +2384,14 @@ abstract class CommonObject
 		global $conf,$langs,$object;
 		global $form,$bcnd,$var;
 
+		// Output template part (modules that overwrite templates must declare this into descriptor)
         // Use global variables + $dateSelector + $seller and $buyer
-        include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_create.tpl.php');
+		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+		foreach($dirtpls as $reldir)
+		{
+		    $res=@include(dol_buildpath($reldir.'/predefinedproductline_create.tpl.php'));
+		    if ($res) break;
+		}
     }
 
     /**
@@ -2397,8 +2410,14 @@ abstract class CommonObject
 		global $conf,$langs,$object;
 		global $form,$bcnd,$var;
 
+		// Output template part (modules that overwrite templates must declare this into descriptor)
         // Use global variables + $dateSelector + $seller and $buyer
-        include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_create.tpl.php');
+		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+		foreach($dirtpls as $reldir)
+		{
+		    $res=@include(dol_buildpath($reldir.'/freeproductline_create.tpl.php'));
+		    if ($res) break;
+		}
     }
 
 
@@ -2536,13 +2555,25 @@ abstract class CommonObject
 				$text.= ' - '.$label;
 				$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
 
-				// Use global variables + $seller and $buyer
-				include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_view.tpl.php');
+				// Output template part (modules that overwrite templates must declare this into descriptor)
+                // Use global variables + $dateSelector + $seller and $buyer
+        		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+        		foreach($dirtpls as $reldir)
+        		{
+        		    $res=@include(dol_buildpath($reldir.'/predefinedproductline_view.tpl.php'));
+        		    if ($res) break;
+        		}
 			}
 			else
 			{
-				// Use global variables + $dateSelector + $seller and $buyer
-				include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_view.tpl.php');
+				// Output template part (modules that overwrite templates must declare this into descriptor)
+                // Use global variables + $dateSelector + $seller and $buyer
+        		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+        		foreach($dirtpls as $reldir)
+        		{
+        		    $res=@include(dol_buildpath($reldir.'/freeproductline_view.tpl.php'));
+        		    if ($res) break;
+        		}
 			}
 		}
 
@@ -2551,13 +2582,25 @@ abstract class CommonObject
 		{
 			if ($line->fk_product > 0)
 			{
-				// Use global variables + $dateSelector + $seller and $buyer
-				include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_edit.tpl.php');
+				// Output template part (modules that overwrite templates must declare this into descriptor)
+                // Use global variables + $dateSelector + $seller and $buyer
+        		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+        		foreach($dirtpls as $reldir)
+        		{
+        		    $res=@include(dol_buildpath($reldir.'/predefinedproductline_edit.tpl.php'));
+        		    if ($res) break;
+        		}
 			}
 			else
 			{
-				// Use global variables + $dateSelector + $seller and $buyer
-				include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_edit.tpl.php');
+				// Output template part (modules that overwrite templates must declare this into descriptor)
+                // Use global variables + $dateSelector + $seller and $buyer
+        		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+        		foreach($dirtpls as $reldir)
+        		{
+        		    $res=@include(dol_buildpath($reldir.'/freeproductline_edit.tpl.php'));
+        		    if ($res) break;
+        		}
 			}
 		}
 	}
@@ -2625,7 +2668,7 @@ abstract class CommonObject
      */
     function printOriginLine($line,$var)
     {
-        global $langs,$bc;
+        global $conf,$langs,$bc;
 
         //var_dump($line);
 
@@ -2697,7 +2740,14 @@ abstract class CommonObject
         $this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
         $this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate($line->remise_percent, true) : '&nbsp;';
 
-        include(DOL_DOCUMENT_ROOT.'/core/tpl/originproductline.tpl.php');
+        // Output template part (modules that overwrite templates must declare this into descriptor)
+        // Use global variables + $dateSelector + $seller and $buyer
+        $dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+        foreach($dirtpls as $reldir)
+        {
+            $res=@include(dol_buildpath($reldir.'/originproductline.tpl.php'));
+            if ($res) break;
+        }
     }
 }
 

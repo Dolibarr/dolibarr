@@ -7,8 +7,12 @@ English Dolibarr ChangeLog
 For users:
 - New: Add supplier ref on supplier orders.
 - New: Can export supplier orders.
+- New: First feature to install external plugins from gui. 
+- New: Monaco is like France for default vat calculation
 
 For developers:
+- A module can overwrite templates parts.
+- Can add a link on title field of added dictionnary.
 
 
 ***** ChangeLog for 3.2 compared to 3.1 *****

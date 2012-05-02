@@ -64,55 +64,59 @@ YouCanAddYourOwnPredefindedListHere=Für nähere Informationen zur Erstellung Ih
 EMailTestSubstitutionReplacedByGenericValues=Im Testmodus werden die Variablen durch generische Werte ersetzt
 MailingAddFile=Diese Datei anhängen
 NoAttachedFiles=Keine angehängten Dateien
+BadEMail=Ungültige E-Mail-Adresse
+CloneEMailing=E-Mail Kampagne duplizieren
+ConfirmCloneEMailing=Möchten Sie diese E-Mail Kampagne wirklich duplizieren?
+CloneContent=Inhalt duplizieren
+CloneReceivers=Empfängerliste duplizieren
+DateLastSend=Datum des letzten Versands
+DateSending=Versanddatum
+SentTo=Versandt an <b>%s</b>
+
+# Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Kontakte aller Partner (Kunden, Leads, Lieferanten, ...)
 MailingModuleDescDolibarrUsers=Alle Systembenutzer mit E-Mail-Adresse
 MailingModuleDescFundationMembers=Alle Stiftungsmitglieder mit E-Mail-Adresse
 MailingModuleDescEmailsFromFile=E-Mail-Adressen aus einer Text-Datei (Format: E-Mail, Vorname, Nachname)
 MailingModuleDescContactsCategories=Partnerkontakte (nach Kategorie)
+MailingModuleDescDolibarrContractsLinesExpired=Partner mit abgelaufenen Vertragspositionen
+MailingModuleDescContactsByCompanyCategory=Kontakt über Partner (durch Kategorie)
+MailingModuleDescMembersCategories=Mitglieder der Stiftung (durch Kategorie)
+MailingModuleDescContactsByFunction=Kontakt über Partner (durch Position/Funktion)
+
+
 LineInFile=Zeile %s in der Datei
 RecipientSelectionModules=Definiert Empfängerauswahlen
 MailSelectedRecipients=Ausgewählte Empfänger
-MailingArea=E-Mail-Kampagnenübersicht
-LastMailings=%s neueste E-Mail-Kampagnen
+MailingArea=E-Mail Kampagnenübersicht
+LastMailings=%s neueste E-Mail Kampagnen
 TargetsStatistics=Zielstatistiken
 NbOfCompaniesContacts=Einzigartige Partnerkontakte
-MailNoChangePossible=Die Empfängerliste einer freigegebenen E-Mail-Kampagne kann nicht mehr geändert werden
-SearchAMailing=Suche E-Mail-Kampagne
-SendMailing=E-Mail-Kampagne versenden
+MailNoChangePossible=Die Empfängerliste einer freigegebenen E-Mail Kampagne kann nicht mehr geändert werden
+SearchAMailing=Suche E-Mail Kampagne
+SendMailing=E-Mail Kampagne versenden
 SendMail=E-Mail versenden
 SentBy=Gesendet von
-MailingNeedCommand=Aus Sicherheitsgründen sollten E-Mail-Kampagnen von der Kommandozeile aus versandt werden. Bitten Sie Ihren Administrator um die Ausführung des folgenden Befehls, um den Versand an alle Empfänger zu starten:
+MailingNeedCommand=Aus Sicherheitsgründen sollten E-Mail Kampagnen von der Kommandozeile aus versandt werden. Bitten Sie Ihren Administrator um die Ausführung des folgenden Befehls, um den Versand an alle Empfänger zu starten:
 MailingNeedCommand2=Sie können den Versand jedoch auch online starten, indem Sie den Parameter MAILING_LIMIT_SENDBYWEB auf den Wert der pro Sitzung gleichzeitig zu versendenden Mails setzen. Die entsprechenden Einstellungen finden Sie unter Übersicht-Einstellungen-Andere.
-ConfirmSendingEmailing=Möchten Sie diese E-Mail-Kampagne wirklich versenden?<br>Aus Sicherheitsgründen ist der gleichzeitige Versand auf <b>%s</b> Empfänger pro Sitzung beschränkt.
+ConfirmSendingEmailing=Möchten Sie diese E-Mail Kampagne wirklich versenden?<br>Aus Sicherheitsgründen ist der gleichzeitige Versand auf <b>%s</b> Empfänger pro Sitzung beschränkt.
+LimitSendingEmailing=Aus Sicherheits- und Zeitüberschreitungsgründen ist der Online-Versadn von E-Mails auf <b>%s</b> Empfänger je Sitzung beschränkt.
 TargetsReset=Liste leeren
 ToClearAllRecipientsClickHere=Klicken Sie hier, um die Empfängerliste zu leeren
 ToAddRecipientsChooseHere=Fügen Sie Empfänger über die Listenauswahl hinzu
 NbOfEMailingsReceived=Empfangene E-Mail-Kampagnen
-IdRecord=Eintrags ID
+IdRecord=Eintrag-ID
 DeliveryReceipt=Zustellbestätigung
-Notifications=Benachrichtigungen
-NoNotificationsWillBeSent=Für dieses Ereignis und diesen Partner sind keine Benachrichtigungen geplant
-ANotificationsWillBeSent=1 Benachrichtigung wird per E-Mail versandt
-SomeNotificationsWillBeSent=%s Benachrichtigungen werden per E-Mail versandt
-AddNewNotification=Aktivieren Sie eine neue E-Mail-Benachrichtigungsanfrage
-ListOfActiveNotifications=Liste aller aktiven E-Mail-Benachrichtigungen
-
-AllEMailings=Alle E-Mail-Kampagnen
-ResetMailing=E-Mail-Kampagne erneut senden
-ConfirmResetMailing=Achtung: Die neuerliche Ausführung der E-Mail-Kampagne <b>%s</b> erlaubt Ihnen den Massenversand von E-Mails zu einem anderen Zeitpunkt. Möchten Sie wirklich fortfahren?
-BadEMail=Ungültige E-Mail-Adresse
-CloneEMailing=E-Mail-Kampagne duplizieren
-ConfirmCloneEMailing=Möchten Sie diese E-Mail-Kampagne wirklich duplizieren?
-CloneContent=Inhalt duplizieren
-CloneReceivers=Empfängerliste duplizieren
-DateLastSend=Datum des letzten Versands
-MailingModuleDescDolibarrContractsLinesExpired=Partner mit abgelaufenen Vertragspositionen
 YouCanUseCommaSeparatorForSeveralRecipients=Trennen Sie mehrere Empfänger mit einem <b>Komma</b>
 
-DateSending=Versanddatum
-SentTo=Versandt an <b>%s</b>
-LimitSendingEmailing=Aus Sicherheits- und Zeitüberschreitungsgründen ist der Online-Versadn von E-Mails auf <b>%s</b> Empfänger je Sitzung beschränkt.
-ListOfNotificationsDone=Liste aller versandten E-Mail-Benachrichtigungen
+# Module Notifications
+Notifications=Benachrichtigungen
+NoNotificationsWillBeSent=Für dieses Ereignis und diesen Partner sind keine Benachrichtigungen geplant
+ANotificationsWillBeSent=Eine Benachrichtigung wird per E-Mail versandt
+SomeNotificationsWillBeSent=%s Benachrichtigungen werden per E-Mail versandt
+AddNewNotification=Aktivieren Sie eine neue E-Mail-Benachrichtigungsanfrage
+ListOfActiveNotifications=Liste aller aktiven E-Mail Benachrichtigungen
+ListOfNotificationsDone=Liste aller versandten E-Mail Benachrichtigungen
 
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
@@ -122,3 +126,16 @@ MailingModuleDescContactsByCompanyCategory=Kontakte Dritter (durch Dritte Katego
 MailingModuleDescMembersCategories=Mitglieder der Stiftung (nach Kategorien)
 MailingModuleDescContactsByFunction=Kontakte von Dritten (von Position / Funktion)
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:43).
+
+
+// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
+// Reference language: en_US -> de_DE
+AllEMailings=Alle Mailings
+ResetMailing=E-Mail erneut senden
+MailUnsubcribe=Abmelden
+Unsuscribe=Abmelden
+MailingStatusNotContact=Sie nicht mehr kontaktieren
+ConfirmResetMailing=Achtung, nach erneuter Initialisierung per E-Mail <b>%s,</b> können Sie einen Massenversand von dieser E-Mail ein weiteres Mal zu machen. Sind Sie sicher, das ist, was du tun willst?
+CheckRead=Lesebestätigung
+YourMailUnsubcribeOK=Die E-Mail <b>%s</b> korrekt von Mailing-Liste abmelden
+// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:03).

@@ -27,11 +27,10 @@ LDAPFieldFirstSubscriptionDate=Datum der Erstmitgliedschaft
 LDAPFieldFirstSubscriptionAmount=Höhe des ersten Mitgliedsbeitrags
 LDAPFieldLastSubscriptionDate=Datum der letzten Mitgliedschaft
 LDAPFieldLastSubscriptionAmount=Höhe des letzten Mitgliedsbeitrags
-SynchronizeDolibarr2Ldap=Systembenutzer & LDAP-Benutzer synchronisieren
+SynchronizeDolibarr2Ldap=Systembenutzer synchronisieren (Dolibarr -> LDAP)
 UserSynchronized=Benutzer synchronisiert
-ForceSynchronize=Erzwinge System-LDAP-Synchronisation
-ErrorFailedToReadLDAP=Fehler beim Lesen der LDAP-Datenbank. Überprüfen Sie die Verfügbarkeit der Datenbank sowie die entsprechenden Moduleinstellungen.
 GroupSynchronized=Gruppe synchronisiert
 MemberSynchronized=Mitglied synchronisiert
 ContactSynchronized=Kontakt synchronisiert
-
+ForceSynchronize=Erzwinge Synchronisation  Dolibarr -> LDAP
+ErrorFailedToReadLDAP=Fehler beim Lesen der LDAP-Datenbank. Überprüfen Sie die Verfügbarkeit der Datenbank sowie die entsprechenden Moduleinstellungen.

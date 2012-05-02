@@ -73,11 +73,13 @@ class Promotion
 
 		$newprice = $percent * $this->price_init;
 
-		$date_exp = "2003-05-01";
+		$date_exp = "2003-05-01";  // TODO ????
+		
+		$now=dol_now();
 
 		$sql = "INSERT INTO ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."specials ";
 		$sql .= " (products_id, specials_new_products_price, specials_date_added, specials_last_modified, expires_date, date_status_change, status) ";
-		$sql .= " VALUES ($pid, $newprice, '".$this->db->idate(mktime())."', NULL, '".$this->db->idate(mktime()+3600*24*365)."', NULL, 1)";
+		$sql .= " VALUES ($pid, $newprice, '".$this->db->idate($now)."', NULL, '".$this->db->idate($now+3600*24*365)."', NULL, 1)";
 
 		if ($this->db->query($sql) )
 		{

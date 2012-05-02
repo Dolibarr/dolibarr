@@ -816,7 +816,7 @@ if ($rowid)
         print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($company->name).'">';
         print "<table class=\"border\" width=\"100%\">\n";
 
-        $today=mktime();
+        $today=dol_now();
         $datefrom=0;
         $dateto=0;
         $paymentdate=-1;
@@ -841,7 +841,7 @@ if ($rowid)
             }
             else
             {
-                $datefrom=mktime();
+                $datefrom=dol_now();
             }
         }
         $form->select_date($datefrom,'','','','',"cotisation");

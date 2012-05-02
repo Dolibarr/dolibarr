@@ -244,7 +244,7 @@ class Contrat extends CommonObject
 			// Close line not already closed
 	        if ($contratline->statut != 5)
 	        {
-				$contratline->date_cloture=mktime();
+				$contratline->date_cloture=dol_now();
 				$contratline->fk_user_cloture=$user->id;
 				$contratline->statut='5';
 				$result=$contratline->update($user);
@@ -618,12 +618,14 @@ class Contrat extends CommonObject
 		if (! $paramsok) return -1;
 
 		$this->db->begin();
+		
+		$now=dol_now();
 
 		// Insert contract
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, date_contrat,";
 		$sql.= " fk_commercial_signature, fk_commercial_suivi, fk_projet,";
 		$sql.= " ref)";
-		$sql.= " VALUES (".$this->db->idate(mktime()).",".$this->socid.",".$user->id;
+		$sql.= " VALUES (".$this->db->idate($now).",".$this->socid.",".$user->id;
 		$sql.= ",".$this->db->idate($this->date_contrat);
 		$sql.= ",".($this->commercial_signature_id>0?$this->commercial_signature_id:"NULL");
 		$sql.= ",".($this->commercial_suivi_id>0?$this->commercial_suivi_id:"NULL");

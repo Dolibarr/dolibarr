@@ -105,8 +105,10 @@ ErrorBothFieldCantBeNegative=Los campos %s y %s no pueden ser negativos
 ErrorNoActivatedBarcode=Ningún tipo de código de barra activado
 ErrorWebServerUserHasNotPermission=La cuenta de ejecución del servidor web <b>%s</b> no dispone de los permisos para esto
 ErrorNoActivatedBarcode=No hay activado ningún tipo de código de barras
-ErrorOSSystem=La instalación online no soporta su sistema operativo.<br>Instale la extensión manualmente.
-ErrorUncompFile=No es posible instalar el paquete %s
+ErrUnzipFails=No se ha podido descomprimir el archivo %s con ZipArchive
+ErrNoZipEngine=En este PHP no hay motor para descomprimir el archivo %s
+ErrorFileMustBeADolibarrPackage=El archivo %s debe ser un paquete Dolibarr en formato zip
+ErrorFileRequired=Se requiere un archivo de paquete Dolibarr en formato zip
 
 # Warnings
 WarningSafeModeOnCheckExecDir=Atención, está activada la opción PHP <b>safe_mode</b>, el comando deberá estar dentro de un directorio declarado dentro del parámetro php <b>safe_mode_exec_dir</b>.

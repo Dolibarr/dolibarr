@@ -29,3 +29,9 @@ PAYPAL_API_SIGNATURE=API-Signatur
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Bieten Zahlung &quot;integral&quot; (Kreditkarte + Paypal) oder &quot;Paypal&quot; nur
 YouAreCurrentlyInSandboxMode=Sie befinden sich in der &quot;Sandbox&quot;-Modus
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:42).
+
+
+// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
+// Reference language: en_US -> de_DE
+PredefinedMailContentLink=Sie können auf der sicheren Link unten klicken, um Ihre Zahlung durch PayPal \n\n %s \n\n machen
+// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:00).

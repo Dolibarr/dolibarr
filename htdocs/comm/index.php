@@ -46,6 +46,7 @@ if ($user->societe_id > 0)
 }
 
 $max=5;
+$now=dol_now();
 
 /*
  * Actions
@@ -58,7 +59,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'add_bookmark')
 	{
 		dol_print_error($db);
 	}
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES (".$_GET["socid"].", ".$db->idate(mktime()).",".$user->id.");";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES (".$_GET["socid"].", ".$db->idate($now).",".$user->id.");";
 	if (! $db->query($sql) )
 	{
 		dol_print_error($db);

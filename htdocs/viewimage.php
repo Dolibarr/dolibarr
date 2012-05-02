@@ -336,7 +336,7 @@ if ($modulepart == 'barcode')
     $encoding=$_GET["encoding"];
     $readable=$_GET["readable"]?$_GET["readable"]:"Y";
 
-    $dirbarcode=array_merge(array("/core/modules/barcode/"),$conf->barcode_modules);
+    $dirbarcode=array_merge(array("/core/modules/barcode/"),$conf->modules_parts['barcode']);
 
     $result=0;
 

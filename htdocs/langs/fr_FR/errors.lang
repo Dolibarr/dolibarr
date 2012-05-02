@@ -105,8 +105,10 @@ ErrorBadValueForCode=Mauvaise valeur saisie pour le code. Réessayez avec une no
 ErrorBothFieldCantBeNegative=Les champs %s et %s ne peuvent être tous deux négatifs
 ErrorWebServerUserHasNotPermission=Le compte d'execution du serveur web <b>%s</b> n'a pas les permissions pour cela
 ErrorNoActivatedBarcode=Aucun type de code bar activé
-ErrorOSSystem=L'installation en ligne ne prend pas en charge votre OS. <br> Installez le composant manuellement.
-ErrorUncompFile=Impossible d'installer le package %s
+ErrUnzipFails=Impossible de décompresser le fichier %s avec ZipArchive
+ErrNoZipEngine=Pas de moteur pour décompresser le fichier %s dans ce PHP
+ErrorFileMustBeADolibarrPackage=Le fichier doit être un package Dolibarr
+ErrorFileRequired=Il faut un fichier de package Dolibarr
 
 # Warnings
 WarningSafeModeOnCheckExecDir=Attention, l'option PHP <b>safe_mode</b> est active, la commande doit dont être dans un répertoire déclaré dans le paramètre php <b>safe_mode_exec_dir</b>.

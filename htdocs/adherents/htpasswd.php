@@ -37,6 +37,8 @@ if (! $user->rights->adherent->export) accessforbidden();
 
 llxHeader();
 
+$now=dol_now();
+
 if ($sortorder == "") {  $sortorder="ASC"; }
 if ($sortfield == "") {  $sortfield="d.login"; }
 if (! isset($statut))
@@ -56,7 +58,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d ";
 $sql .= " WHERE d.statut = $statut ";
 if ($cotis==1)
 {
-	$sql .= " AND datefin > '".$db->idate(mktime())."'";
+	$sql .= " AND datefin > '".$db->idate($now)."'";
 }
 $sql.= $db->order($sortfield,$sortorder);
 //$sql.=$db->plimit($conf->liste_limit, $offset);

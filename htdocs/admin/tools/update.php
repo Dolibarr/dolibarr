@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2009-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,9 +34,7 @@ if (GETPOST('msg','alpha')) $message='<div class="error">'.GETPOST('msg','alpha'
 
 
 $urldolibarr='http://www.dolibarr.org/downloads/';
-//$urldolibarrmodules='http://www.dolibarr.org/downloads/cat_view/65-modulesaddon';
 $urldolibarrmodules='http://www.dolistore.com/';
-//$urldolibarrthemes='http://www.dolibarr.org/';
 $urldolibarrthemes='http://www.dolistore.com/';
 $dolibarrroot=preg_replace('/([\\/]+)$/i','',DOL_DOCUMENT_ROOT);
 $dolibarrroot=preg_replace('/([^\\/]+)$/i','',$dolibarrroot);
@@ -55,14 +53,16 @@ if (GETPOST('action','alpha')=='install')
 
 	if (! $original_file)
 	{
-		$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("File"));
+		$langs->load("Error");
+		$mesg = '<div class="warning">'.$langs->trans("ErrorFileRequired").'</div>';
 		$error++;
 	}
 	else
 	{
-		if (! preg_match('/\.tgz/i',$original_file) && ! preg_match('/\.zip/i',$original_file))
+		if (! preg_match('/\.zip/i',$original_file))
 		{
-			$mesg=$langs->trans("ErrorFileMustBeADolibarrPackage");
+			$langs->load("errors");
+			$mesg = '<div class="error">'.$langs->trans("ErrorFileMustBeADolibarrPackage",$original_file).'</div>';
 			$error++;
 		}
 	}
@@ -76,33 +76,16 @@ if (GETPOST('action','alpha')=='install')
 		if ($result > 0)
 		{
 			$documentrootalt=DOL_DOCUMENT_ROOT_ALT;
-			$result=dol_uncompress($newfile,$_FILES['fileinstall']['type'],$documentrootalt);
+			$result=dol_uncompress($newfile,$documentrootalt);
 			if (! empty($result['error']))
 			{
-				if ($result['error'] == -1)
-				{
-					$langs->load("errors");
-					$mesg = '<div class="error">'.$langs->trans("ErrorBadFileFormat").'</div>';
-				}
-				elseif ($result['error'] == -2)
-				{
-					$langs->load("errors");
-					$mesg = '<div class="error">'.$langs->trans("ErrorOSSystem").'</div>';
-				}
-				elseif ($result['error'] == -3)
-				{
-					$langs->load("errors");
-					$mesg = '<div class="warning">'.$langs->trans("ErrorUncompFile",$_FILES['fileinstall']['name']).'</div>';
-				}
-				elseif ($result['error'] == -4)
-				{
-					$langs->load("errors");
-					$mesg = '<div class="error">'.$langs->trans("ErrorUncompFile",$_FILES['fileinstall']['name']).'</div>';
-				}
+				$langs->load("errors");
+				$mesg = '<div class="error">'.$langs->trans($result['error'],$original_file).'</div>';
+
 			}
 			else
 			{
-				$mesg = "<font class=\"ok\">".$langs->trans("SetupIsReadyForUse")."</font>";
+				$mesg = '<div class="ok">'.$langs->trans("SetupIsReadyForUse").'</div>';
 			}
 		}
 	}
@@ -113,10 +96,9 @@ if (GETPOST('action','alpha')=='install')
  */
 
 $dirins=DOL_DOCUMENT_ROOT_ALT;
-$vale=(is_dir($dirins));
-$system=PHP_OS;
+$dirins_ok=(is_dir($dirins));
 
-$wikihelp='EN:Installation_-_Upgrade|FR:Installation_-_Mise_à_jour|ES:Instalaci&omodulon_-_Actualizaci&omodulon';
+$wikihelp='EN:Installation_-_Upgrade|FR:Installation_-_Mise_à_jour|ES:Instalación_-_Actualización';
 llxHeader('',$langs->trans("Upgrade"),$wikihelp);
 
 print_fiche_titre($langs->trans("Upgrade"),'','setup');
@@ -159,7 +141,7 @@ print '<b>'.$langs->trans("StepNb",3).'</b>: ';
 print $langs->trans("UnpackPackageInDolibarrRoot",$dolibarrroot).'<br>';
 if (! empty($conf->global->MAIN_ONLINE_INSTALL_MODULE))
 {
-	if ($vale == 1 && $dirins != 'DOL_DOCUMENT_ROOT_ALT' && ($system=="Linux" || $system=="Darwin"))
+	if ($dirins_ok && $dirins != 'DOL_DOCUMENT_ROOT_ALT')
 	{
 		print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
 		print '<input type="hidden" name="action" value="install">';
@@ -167,19 +149,13 @@ if (! empty($conf->global->MAIN_ONLINE_INSTALL_MODULE))
 		print '<input type="submit" name="'.dol_escape_htmltag($langs->trans("Send")).'" class="button">';
 		print '</form>';
 	}
-	elseif ($system!='Linux')
-	{
-		$langs->load('errors');
-		$message=info_admin($langs->transnoentities("ErrorOSSystem"));
-		print $message;
-	}
-	else 
+	else
 	{
 		$message=info_admin($langs->trans("NotExistsDirect").$langs->trans("InfDirAlt").$langs->trans("InfDirExample"));
 		print $message;
-	}	
+	}
 }
-else 
+else
 {
 	print '<b>'.$langs->trans("StepNb",4).'</b>: ';
 	print $langs->trans("SetupIsReadyForUse").'<br>';
@@ -189,7 +165,7 @@ print '</form>';
 if (! empty($result['return']))
 {
 	print '<br>';
-	
+
 	foreach($result['return'] as $value)
 	{
 		echo $value.'<br>';

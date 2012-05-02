@@ -1195,7 +1195,7 @@ else
                         $dateactend = dol_time_plus_duree(time(), $product->duration_value, $product->duration_unit);
                     }
                 }
-                $now=mktime();
+                $now=dol_now();
                 if ($dateactend > $now) $dateactend=$now;
 
                 print '<tr '.$bc[$var].'><td colspan="2">';

@@ -1,7 +1,7 @@
 <?PHP
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
@@ -29,7 +29,7 @@
  *  \brief      File that include conf.php file and commons lib like functions.lib.php
  */
 
-if (! defined('DOL_VERSION')) define('DOL_VERSION','3.3.0-alpha');	// Also defined in htdocs/install/inc.php (Ex: x.y.z-alpha, x.y.z)
+if (! defined('DOL_VERSION')) define('DOL_VERSION','3.3.0-alpha');
 if (! defined('EURO')) define('EURO',chr(128));
 
 // Define syslog constants
@@ -53,9 +53,12 @@ if (! defined('LOG_DEBUG'))
     }
 }
 
-// Forcage du parametrage PHP error_reporting (Dolibarr non utilisable en mode error E_ALL)
-error_reporting(E_ALL ^ E_NOTICE);
+// Force PHP error_reporting setup (Dolibarr may report warning without this)
+error_reporting(E_ALL & ~(E_STRICT|E_NOTICE));
 //error_reporting(E_ALL | E_STRICT);
+
+// End of common declaration part
+if (defined('DOL_INC_FOR_VERSION_ERROR')) return;
 
 
 // Define vars
@@ -77,10 +80,7 @@ if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not do
 }
 
 // Disable php display errors
-if (! empty($dolibarr_main_prod))
-{
-	ini_set('display_errors','Off');
-}
+if (! empty($dolibarr_main_prod)) ini_set('display_errors','Off');
 
 // Clean parameters
 $dolibarr_main_data_root=trim($dolibarr_main_data_root);

@@ -864,6 +864,8 @@ class BonPrelevement extends CommonObject
              * We create withdraw receipt and build withdraw into disk
              */
             $this->db->begin();
+            
+            $now=dol_now();
 
             /*
              * Traitements
@@ -900,7 +902,7 @@ class BonPrelevement extends CommonObject
                 $sql.= ") VALUES (";
                 $sql.= "'".$ref."'";
                 $sql.= ", ".$conf->entity;
-                $sql.= ", '".$this->db->idate(mktime())."'";
+                $sql.= ", '".$this->db->idate($now)."'";
                 $sql.= ")";
 
                 dol_syslog("Bon-Prelevement::Create sql=".$sql, LOG_DEBUG);
@@ -960,7 +962,7 @@ class BonPrelevement extends CommonObject
                          */
                         $sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande";
                         $sql.= " SET traite = 1";
-                        $sql.= ", date_traite = ".$this->db->idate(mktime());
+                        $sql.= ", date_traite = ".$this->db->idate($now);
                         $sql.= ", fk_prelevement_bons = ".$prev_id;
                         $sql.= " WHERE rowid = ".$fac[1];
 
@@ -1137,8 +1139,10 @@ class BonPrelevement extends CommonObject
 
         if ($this->DeleteNotification($user, $action) == 0)
         {
+        	$now=dol_now();
+        	
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_user, fk_soc, fk_contact, fk_action)";
-            $sql .= " VALUES (".$db->idate(mktime()).",".$user.", 'NULL', 'NULL', '".$action."')";
+            $sql .= " VALUES (".$db->idate($now).",".$user.", 'NULL', 'NULL', '".$action."')";
 
             dol_syslog("adnotiff: ".$sql);
             if ($this->db->query($sql))

@@ -30,6 +30,7 @@ StatusOrderDraftShort=Brouillon
 StatusOrderValidatedShort=Validée
 StatusOrderOnProcessShort=Réception
 StatusOrderSentShort=Envoi en cours
+StatusOrderSent=Envoi en cours
 StatusOrderProcessedShort=Traitée
 StatusOrderToBillShort=À facturer
 StatusOrderApprovedShort=Approuvée

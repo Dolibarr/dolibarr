@@ -239,7 +239,7 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
         $this->assertTrue($result);
     }
-    
+
     /**
      * testDolMimeType
      *
@@ -279,10 +279,41 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
 		$result=dol_mimetype('file.php','',2);
 		$this->assertEquals('php.png',$result);
 		$result=dol_mimetype('file.php','',3);
-        $this->assertEquals('php',$result);        
+        $this->assertEquals('php',$result);
 		// file.php.noexe
 		$result=dol_mimetype('file.php.noexe','',0);
         $this->assertEquals('text/plain',$result);
-    }		
+    }
+
+    /**
+     * testDolCompressUnCompress
+     *
+     * @return	string
+     */
+    public function testDolCompressUnCompress()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+
+        $format='zip';
+        $filein=dirname(__FILE__).'/Example_import_company_1.csv';
+        $fileout=$conf->admin->dir_temp.'/test.'.$format;
+        $dirout=$conf->admin->dir_temp.'/test';
+
+        dol_delete_file($fileout);
+        $count=0;
+        dol_delete_dir_recursive($dirout,$count,1);
+
+        $result=dol_compress_file($filein, $fileout, $format);
+        print __METHOD__." result=".$result."\n";
+        $this->assertGreaterThanOrEqual(1,$result);
+
+        $result=dol_uncompress($fileout, $dirout);
+        print __METHOD__." result=".join(',',$result)."\n";
+        $this->assertEquals(0,count($result));
+    }
 }
 ?>

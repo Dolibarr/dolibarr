@@ -120,7 +120,7 @@ if (! empty($hookmanager->resArray['options'])) {
 </table>
 </td>
 
-<td align="center" valign="top">
+<td align="center" valign="middle">
 <img alt="Logo" title="" src="<?php echo $urllogo; ?>" id="img_logo" />
 </td>
 

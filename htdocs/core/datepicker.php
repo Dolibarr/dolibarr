@@ -145,7 +145,7 @@ function displayBox($selectedDate,$month,$year)
 	//print "$selectedDate,$month,$year";
 	$thedate=dol_mktime(12,0,0,$month,1,$year);
 	//print "thedate=$thedate";
-	$today=mktime();
+	$today=dol_now();
 	$todayArray=dol_getdate($today);
 	if($selectedDate != "00000000")
 	{

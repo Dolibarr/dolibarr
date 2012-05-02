@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2012 	   Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2012	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -619,65 +620,6 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 }
 
 /**
- * Uncompress a file
- * 
- * @param 	string 	$newfile	file to uncompress
- * @param 	stirng	$typefile	type of file
- * @param 	string	$dstdir		destination dir
- * @return 	int					0 if ok, >0 if ko
- */
-function dol_uncompress($newfile,$typefile,$dstdir)
-{
-	global $conf;
-	
-	$error=0;
-	$output=array();
-	$system=PHP_OS;
-	
-	//TODO: See best method for this
-	
-	if ($system=="Linux" || $system=="Darwin")
-	{
-		if ($typefile == 'application/x-gzip' || $typefile == 'application/x-gtar')
-		{
-			$prog= "tar -xzvf ";
-		}
-		elseif ($typefile == 'application/zip')
-		{
-			$prog= "unzip ";
-		}
-		else 
-		{
-			$output['error'] = -1;
-			$error++;
-		}
-	}
-	else 
-	{
-		$output['error'] = -2;
-		$error++;
-	}
-	
-	if (! $error)
-	{
-		$original_file=basename($_FILES["fileinstall"]["name"]);
-		$dir=$conf->admin->dir_temp.'/'.$original_file;
-		$file=$dir.'/'.$original_file;
-		$command= $prog.$file.' 2>&1';
-		
-		chdir($dstdir);
-		
-		exec($command, $out, $return_var);
-		if ($return_var == 1) $output['error'] = -3;		// OK with Warning
-		elseif ($return_var == 127) $output['error'] = -4;	// KO
-		
-		$output['return'] = $out;
-	}
-	
-	return $output;
-}
-
-/**
  *  Remove a file or several files with a mask
  *
  *  @param	string	$file           File to delete or mask of file to delete
@@ -802,7 +744,7 @@ function dol_delete_preview($object)
 {
 	global $langs,$conf;
     require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-    
+
     $element = $object->element;
     $dir = $conf->$element->dir_output;
 
@@ -1081,20 +1023,44 @@ function dol_convert_file($file,$ext='png')
  *
  * @param 	string	$inputfile		Source file name
  * @param 	string	$outputfile		Target file name
- * @param 	string	$mode			'gz' or 'bz'
+ * @param 	string	$mode			'gz' or 'bz' or 'zip'
  * @return	int						<0 if KO, >0 if OK
  */
 function dol_compress_file($inputfile, $outputfile, $mode="gz")
 {
+    $foundhandler=0;
+
     try
     {
-        $data = implode("", file($inputfile));
-        if ($mode == 'gz') $compressdata = gzencode($data, 9);
-        elseif ($mode == 'bz') $compressdata = bzcompress($data, 9);
+        $data = implode("", file(dol_osencode($inputfile)));
+        if ($mode == 'gz')     { $foundhandler=1; $compressdata = gzencode($data, 9); }
+        elseif ($mode == 'bz') { $foundhandler=1; $compressdata = bzcompress($data, 9); }
+        elseif ($mode == 'zip')
+        {
+            if (defined('ODTPHP_PATHTOPCLZIP'))
+            {
+                $foundhandler=1;
 
-        $fp = fopen($outputfile, "w");
-        fwrite($fp, $compressdata);
-        fclose($fp);
+                include_once(ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php');
+                $archive = new PclZip($outputfile);
+                $archive->add($inputfile, PCLZIP_OPT_REMOVE_PATH, dirname($inputfile));
+                //$archive->add($inputfile);
+                return 1;
+            }
+        }
+
+        if ($foundhandler)
+        {
+            $fp = fopen($outputfile, "w");
+            fwrite($fp, $compressdata);
+            fclose($fp);
+            return 1;
+        }
+        else
+        {
+            dol_syslog("Try to zip with format ".$mode." with no handler for this format",LOG_ERR);
+            return -2;
+        }
     }
     catch (Exception $e)
     {
@@ -1104,6 +1070,44 @@ function dol_compress_file($inputfile, $outputfile, $mode="gz")
         $errormsg=$langs->trans("ErrorFailedToWriteInDir");
         return -1;
     }
+}
+
+/**
+ * Uncompress a file
+ *
+ * @param 	string 	$inputfile		File to uncompress
+ * @param 	string	$outputdir		Target dir name
+ * @return 	array					array('error'=>'Error code') or array() if no error
+ */
+function dol_uncompress($inputfile,$outputdir)
+{
+    global $conf;
+
+    if (defined('ODTPHP_PATHTOPCLZIP'))
+    {
+        include_once(ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php');
+        $archive = new PclZip($inputfile);
+        if ($archive->extract(PCLZIP_OPT_PATH, $outputdir) == 0) return array('error'=>$archive->errorInfo(true));
+        else return array();
+    }
+
+    if (class_exists('ZipArchive'))
+    {
+        $zip = new ZipArchive;
+        $res = $zip->open($inputfile);
+        if ($res === TRUE)
+        {
+            $zip->extractTo($outputdir.'/');
+            $zip->close();
+            return array();
+        }
+        else
+        {
+            return array('error'=>'ErrUnzipFails');
+        }
+    }
+
+    return array('error'=>'ErrNoZipEngine');
 }
 
 

@@ -15,6 +15,7 @@ ConfFileDoesNotExistsAndCouldNotBeCreated=Die Konfigurationsdatei <b>%s</b> ist 
 ConfFileCouldBeCreated=Die Konfigurationsdatei <b>%s</b> wurde erfolgreich erstellt.
 ConfFileIsNotWritable=Die Konfigurationsdatei <b>%s</b> ist nicht beschreibbar. Bitte überprüfen Sie die Dateizugriffsrechte. Für die Erstinstallation muss Ihr Webserver in die Konfigurationsdatei schreiben können, sezzten Sie die Dateiberechtigungen entsprechend (z.B. mittels "chmod 666" auf Unix-Betriebssystemen).
 ConfFileIsWritable=Die Konfigurationsdatei <b>%s</b> ist beschreibbar.
+ConfFileReload=Alle Information aus der Konfigurationsdatei laden.
 PHPSupportSessions=Ihre PHP-Konfiguration unterstützt Sitzungen (Sessions).
 PHPSupportPOSTGETOk=Ihre PHP-Konfiguration unterstützt GET- und POST-Variablen
 PHPSupportPOSTGETKo=Ihre PHP-Konfiguration scheint GET- und/oder POST-Variablen nicht zu unterstützen. Überprüfen Sie in der php.ini den Parameter <b>variables_order</b>.
@@ -32,6 +33,7 @@ ErrorWrongValueForParameter=Sie haben einen falschen Wert für den Parameter '%s
 ErrorFailedToCreateDatabase=Fehler beim Erstellen der Datenbank '%s'.
 ErrorFailedToConnectToDatabase=Es konnte keine Verbindung zur Datenbank ' %s'.
 ErrorPHPVersionTooLow=Ihre PHP-Version ist veraltet. Sie benötigen mindestens Version %s .
+WarningPHPVersionTooLow=Die PHP-Version ist zu alt. Es wird Version %s oder höher erwartet. Sie können unter dieser PHP-Version installieren, aber sie wird nicht unterstützt.
 ErrorConnectedButDatabaseNotFound=Die Verbindung zum Server wurde erfolgreich hergestellt, die Datenbank '%s' jedoch nicht gefunden.
 ErrorDatabaseAlreadyExists=Eine Datenbank mit dem Namen '%s' exisitiert bereits.
 IfDatabaseNotExistsGoBackAndUncheckCreate=Sollte die Datenbank noch nicht existieren, gehen Sie bitte zurück und aktivieren Sie das Kontrollkästchen "Datenbank erstellen".
@@ -44,6 +46,8 @@ ConfigurationFile=Konfigurationsdatei
 WebPagesDirectory=Verzeichnis für die Speicherung von Websites
 DocumentsDirectory=Verzeichnis zur Speicherung von Dokumenten (Dokumentenverzeichnis)
 URLRoot=URL root
+ForceHttps=Sichere Verbindung (https) erzwingen
+CheckToForceHttps=Aktivieren Sie diese Option, um sichere Verbindungen (https) zu erzwingen.<br>Hierfür ist ein auf Ihrem Webserver eingerichtetes SSL-Zertifikat erforderlich.
 DolibarrDatabase=dolibarr-Datenbank
 DatabaseChoice=Datenbankwahl
 DatabaseType=Datenbanktyp
@@ -52,9 +56,9 @@ Server=Server
 ServerAddressDescription=Name oder IP-Adresse des Datenbankservers, in der Regel ist dies "localhost" (Datenbank und Webserver liegen auf demselben Server).
 ServerPortDescription=Datenbankserver-Port. Lassen Sie dieses Feld im Zweifel leer.
 DatabaseServer=Datenbankserver
-DatabaseName=Datenbankname
+DatabaseName=Name der Datenbank
 Login=Anmeldung
-AdminLogin=Login für Dolibarr Datenbank-Administrator. Halten Sie leer, wenn Sie in anonymisierter
+AdminLogin=Login für Dolibarr Datenbank-Administrator.
 Password=Passwort
 PasswordAgain=Passwort wiederholen
 AdminPassword=Passwort des dolibarr-Datenbankadministrators
@@ -65,7 +69,7 @@ CheckToCreateDatabase=Aktivieren Sie dieses Kontrollkästchen, falls Sie noch ke
 CheckToCreateUser=Aktivieren Sie dieses Kontrollkästchen, falls Sie noch keinen Datenbankbenutzer angelegt haben und dieser im Zuge der Installation erstellt werden soll.<br>Hierfür müssen Sie Benutzername und Passwort des Datenbank-Superusers am Ende der Seite angeben.
 Experimental=(experimentell)
 DatabaseRootLoginDescription=Anmeldedaten des Datenbank-Superusers zur Erstellung neuer Datenbanken und -benutzer. Sollten diese bereits existieren (z.B. weil Ihre Website bei einem Hosting-Provider liegt), ist diese Option nutzlos.
-KeepEmptyIfNoPassword=Leer lassen um kein Passwort zu setzen (nicht empfohlen)
+KeepEmptyIfNoPassword=Leer lassen wenn der Benutzer kein Passwort hat (nicht empfohlen)
 SaveConfigurationFile=Einstellungen speichern
 ConfigurationSaving=Speichern der Konfigurationsdatei
 ServerConnection=Serververbindung
@@ -88,9 +92,13 @@ SystemIsInstalled=Die Installation wurde erfolgreich abgeschlossen.
 SystemIsUpgraded=Der Aktualisierungsvorgang wurde erfolgreich abgeschlossen.
 YouNeedToPersonalizeSetup=Nun sollten Sie dolibarr an Ihre Bedürfnisse anpassen (Aussehen, Funktionen, ...). Hierzu folgen Sie bitte dem untenstehenden Link:
 AdminLoginCreatedSuccessfuly=Das dolibarr-Administratorkonto '<b>%s</b>' wurde erfolgreich erstellt.
+GoToDolibarr=Zu dolibarr wechseln
 GoToSetupArea=Zu den dolibarr-Einstellungen
+MigrationNotFinished=Ihre Datenbankversion ist nicht auf dem neuesten Stand, bitte wiederholen Sie den Aktualisierungsvorgang.
+GoToUpgradePage=Noch einmal zur Aktualisierungsseite
 Examples=Beispiele
 WithNoSlashAtTheEnd=Ohne Schrägstrich "/" am Ende
+DirectoryRecommendation=Es empfiehlt sich die Verwendung eines Ordners außerhalb Ihres Webverzeichnisses.
 LoginAlreadyExists=Dieser Benutzername ist bereits vergeben
 DolibarrAdminLogin=Anmeldung für dolibarr-Administrator
 AdminLoginAlreadyExists=Ein Administratorkonto namens '<b>%s</b>' ist bereits vorhanden.
@@ -119,7 +127,7 @@ YouMustCreateItAndAllowServerToWrite=Bitte erstellen Sie dieses Verzeichnis und 
 CharsetChoice=Zeichensatzauswahl
 CharacterSetClient=Zeichensatz für die generierten HTML-Seiten
 CharacterSetClientComment=Wählen Sie den gewünschten Zeichensatz für die Anzeige im Web.<br/>Standardmäßig empfiehlt sich jener Ihrer Datenbank.
-CollationConnection=Reihenfolge der Zeichensortierung (Collation)
+CollationConnection=Reihenfolge der Zeichensortierung 
 CollationConnectionComment=Wählen Sie den page-code zur Definition der Sortierreihenfolge für Zeichen in der Datenbank. Dieser Parameter wird von einigen Datenbanken auch als "Collation" bezeichnet.<br/>Dieser Wert kann nicht festgelegt werden, wenn die Datenbank bereits existiert.
 CharacterSetDatabase=Datenbankzeichensatz
 CharacterSetDatabaseComment=Wählen Sie den Zeichensatz für die anzulegende Datenbank.<br/>Dieser Wert kann nicht festgelegt werden, wenn die Datenbank bereits existiert.
@@ -129,59 +137,15 @@ BecauseConnectionFailedParametersMayBeWrong=Der Verbindungsaufbau ist fehlgeschl
 OrphelinsPaymentsDetectedByMethod=Verwaiste Zahlung gefunden durch Methode %s
 RemoveItManuallyAndPressF5ToContinue=Bitte manuell entfernen und F5 drücken um fortzufahren.
 KeepDefaultValuesWamp=Sie verwenden den DoliWamp-Installationsassistent, entsprechend sind die hier vorgeschlagenen Werte bereits optimiert. Ändern Sie diese nur wenn Sie wissen was Sie tun.
+KeepDefaultValuesDeb=Sie verwenden den dolibarr-Installationsassistenten auf einem Ubuntu oder Debian-Paket, entsprechend sind die hier vorgeschlagenen Werte bereits optimiert. Sie müssen lediglich das Passwort des anzulegenden Datenbankbenutzers angeben. Ändern Sie die übrigen Parameter nur, wenn Sie wissen was Sie tun.
 KeepDefaultValuesMamp=Sie verwenden den DoliMamp-Installationsassistent, entsprechend sind die hier vorgeschlagenen Werte bereits optimiert. Ändern Sie diese nur wenn Sie wissen was Sie tun.
+KeepDefaultValuesProxmox=Sie verwenden den Dolibarr Installationsassistenten einer Proxmox "virtual appliance". Die hier vorgeschlagenen Werte sind bereits optimiert. Bitte nehmen Sie nur Änderungen vor wenn Sie wissen was Sie tun.
 FieldRenamed=Feld umbenannt
 IfLoginDoesNotExistsCheckCreateUser=Sollte der Benutzer noch nicht existieren, müssen Sie das Kontrollkästchen "Benutzer erstellen" aktivieren
 ErrorConnection=Server <b>%s</b>', Datenbank '<b>%s</b>', Benutzer '<b>%s</b>' oder Datenbankpasswort scheinen falsch zu sein. Eventuell verhindert auch eine veraltete PHP- oder Datenbankversion den korrekten Verbindungsaufbau.
-MigrationOrder=Datenmigration für Kundenbestellungen
-MigrationSupplierOrder=Datenmigration für Lieferantenbestellungen
-MigrationProposal=Datenmigration für Angebote
-MigrationInvoice=Datenmigration für Kundenrechnungen
-MigrationContract=Datenmigration für Verträge
-MigrationSuccessfullUpdate=Aktualisierung erfolgreich
-MigrationPaymentsUpdate=Zahlungsdatenkorrektur
-MigrationPaymentsNumberToUpdate=%s Zahlung(en) zu aktualisieren
-MigrationProcessPaymentUpdate=Aktualisiere Zahlunge(en) %s
-MigrationPaymentsNothingToUpdate=Keine weiteren Schritte.
-MigrationPaymentsNothingUpdatable=Keine weiteren, korrekturfähigen Zahlungen
-MigrationContractsUpdate=Vertragsdatenkorrektur
-MigrationContractsNumberToUpdate=%s Vertrag/Verträge zu aktualisieren
-MigrationContractsLineCreation=Erstelle Vertragszeile für Vertrag Nr. %s
-MigrationContractsNothingToUpdate=Keine weiteren Schritte.
-MigrationContractsFieldDontExist=Feld fk_facture existiert nicht mehr. Keine weiteren Schritte.
-MigrationContractsEmptyDatesUpdate=Korrektur nicht gesetzter Vertragsdaten
-MigrationContractsEmptyDatesUpdateSuccess=Korrektur nicht gesetzter Vertragsdaten
-MigrationContractsEmptyDatesNothingToUpdate=Kein nicht gesetztes Vertragsdatum zur Korrektur
-MigrationContractsEmptyCreationDatesNothingToUpdate=Kein Vertragserstellungsdatum zur Korrektur
-MigrationContractsInvalidDatesUpdate=Korrektur ungültiger Vertragsdaten
-MigrationContractsInvalidDateFix=Korrigierte Vertrag %s (Vertragsdatum=%s, frühestes Leistungserbringungsdatum=%s)
-MigrationContractsInvalidDatesNumber=%s Verträge geändert
-MigrationContractsInvalidDatesNothingToUpdate=Kein ungültiges Vertragsdatum zur Korrektur
-MigrationContractsIncoherentCreationDateUpdate=Korrektur ungültiger Vertragserstellungsdaten
-MigrationContractsIncoherentCreationDateUpdateSuccess=Korrektur ungültiger Vertragserstellungsdaten erfolgreich
-MigrationContractsIncoherentCreationDateNothingToUpdate=Kein ungültiges Vertragserstellungsdatum zur Korrektur
-MigrationReopeningContracts=Durch Fehler geschlossenen Vertrag wiedereröffnen
-MigrationReopenThisContract=Vertrag %s wiedereröffnen
-MigrationReopenedContractsNumber=%s Verträge geändert
-MigrationReopeningContractsNothingToUpdate=Keine geschlossenen Verträge zur Wiedereröffnung
-MigrationBankTransfertsNothingToUpdate=Alle Banktransaktionen sind auf neuestem Stand.
-MigrationShipmentOrderMatching=Aktualisiere Sendungsscheine
-MigrationDeliveryOrderMatching=Aktualisiere Lieferscheine
-MigrationDeliveryDetail=Aktualisiere Lieferungen
-
-GoToDolibarr=Zu dolibarr
-GoToUpgradePage=Zur Aktualisierungsseite
 InstallChoiceRecommanded=Es empfiehlt sich eine Aktualisierung auf Version <b>%s</b>. Ihre aktuelle Version ist <b>%s</b>.
 InstallChoiceSuggested=<b>Vom Installationsassistenten vorgeschlagene Wahl.</b>
-MigrationStockDetail=Produklagerwerte aktualisieren
-MigrationMenusDetail=Tabellen der dynamischen Menüs aktualisieren
-MigrationDeliveryAddress=Lieferadresse in Sendungen aktualisieren
-MigrationUpdateFailed=Aktualisierungsvorgang fehlgeschlagen.
-MigrationBankTransfertsUpdate=Verknüpfung zwischen Banktransaktion und einer Überweisung aktualisieren
-ForceHttps=Sichere Verbindung (https) erzwingen
-CheckToForceHttps=Aktivieren Sie diese Option, um sichere Verbindungen (https) zu erzwingen.<br>Hierfür ist ein auf Ihrem Webserver eingerichtetes SSL-Zertifikat erforderlich.
-DirectoryRecommendation=Es empfiehlt sich die Verwendung eines Ordners außerhalb Ihres Webverzeichnisses.
-KeepDefaultValuesDeb=Sie verwenden den dolibarr-Installationsassistenten auf einem Ubuntu oder Debian-Paket, entsprechend sind die hier vorgeschlagenen Werte bereits optimiert. Sie müssen lediglich das Passwort des anzulegenden Datenbankbenutzers angeben. Ändern Sie die übrigen Parameter nur, wenn Sie wissen was Sie tun.
+MigrateIsDoneStepByStep=Die gewählte Version (%s) hat ein Lücke von mehrerer Versionen. Der Installationsassistent wird sich wieder melden, um die nächste Migration vorzuschlagen. Dies geschieht bis zur endgültigen Fertigstellung.
 CheckThatDatabasenameIsCorrect=Bitte überprüfen Sie die Schreibweise des Datenbanknamens "<b>%s</b>".
 IfAlreadyExistsCheckOption=Sollte dieser Name korrekt und die Datenbank noch nicht vorhanden sein, aktivieren Sie bitte das Kontrollkästchen "Datenbank erstellen".
 OpenBaseDir=PHP openbasedir Einstellungen
@@ -191,13 +155,89 @@ NextStepMightLastALongTime=Der aktuelle Vorgang kann mehrere Minuten dauern. Hol
 MigrationCustomerOrderShipping=Kundenbestellungsversand aktualisieren
 MigrationShippingDelivery=Aktualisiere die Speicherung von Lieferungen (Versandart?)
 MigrationShippingDelivery2=Aktualisiere die Speicherung von Lieferungen 2 (Versandart 2?)
-MigrationFixData=Denormalisierte Daten bereinigen
-MigrationRelationshipTables=Datenmigration für Relationentabellen (%s)
-MigrationProjectTaskActors=Datenmigration für llx_projet_task_actors Tabelle
-MigrationProjectUserResp=Datenmigration des Feldes fk_user_resp von llx_projet nach llx_element_contact
-MigrationProjectTaskTime=Aktualisiere aufgewandte Zeit (in Sekunden)
-MigrationNotFinished=Ihre Datenbankversion ist nicht auf dem neuesten Stand, bitte wiederholen Sie den Aktualisierungsvorgang.
+MigrationFinished=Migration beendet
+LastStepDesc=<strong>Letzter Schritt</strong>: Legen Sie Ihr Logo und das Passwort fest, welches Sie für dolibarr verwenden möchten. Verlieren Sie diese Administrator-Passwort nicht, da es der "Generalschlüssel" ist.
 
+#########
+# upgrade
+#########
+MigrationFixData=Denormalisierte Daten bereinigen
+MigrationOrder=Datenmigration für Kundenbestellungen
+MigrationSupplierOrder=Datenmigration für Lieferantenbestellungen
+MigrationProposal=Datenmigration für Angebote
+MigrationInvoice=Datenmigration für Kundenrechnungen
+MigrationContract=Datenmigration für Verträge
+MigrationSuccessfullUpdate=Aktualisierung erfolgreich
+MigrationUpdateFailed=Aktualisierungsvorgang fehlgeschlagen.
+MigrationRelationshipTables=Datenmigration für Relationentabellen (%s)
+
+# Payments Update
+MigrationPaymentsUpdate=Zahlungsdatenkorrektur
+MigrationPaymentsNumberToUpdate=%s Zahlung(en) zu aktualisieren
+MigrationProcessPaymentUpdate=Aktualisiere Zahlunge(en) %s
+MigrationPaymentsNothingToUpdate=Keine weiteren Schritte.
+MigrationPaymentsNothingUpdatable=Keine weiteren, korrekturfähigen Zahlungen
+
+# Contracts Update
+MigrationContractsUpdate=Vertragsdatenkorrektur
+MigrationContractsNumberToUpdate=%s Vertrag/Verträge zu aktualisieren
+MigrationContractsLineCreation=Erstelle Vertragszeile für Vertrag Nr. %s
+MigrationContractsNothingToUpdate=Keine weiteren Schritte.
+MigrationContractsFieldDontExist=Feld fk_facture existiert nicht mehr. Keine weiteren Schritte.
+
+# Contracts Empty Dates Update
+MigrationContractsEmptyDatesUpdate=Korrektur nicht gesetzter Vertragsdaten
+MigrationContractsEmptyDatesUpdateSuccess=Korrektur nicht gesetzter Vertragsdaten
+MigrationContractsEmptyDatesNothingToUpdate=Kein nicht gesetztes Vertragsdatum zur Korrektur
+MigrationContractsEmptyCreationDatesNothingToUpdate=Kein Vertragserstellungsdatum zur Korrektur
+
+# Contracts Invalid Dates Update
+MigrationContractsInvalidDatesUpdate=Korrektur ungültiger Vertragsdaten
+MigrationContractsInvalidDateFix=Korrigierte Vertrag %s (Vertragsdatum=%s, frühestes Leistungserbringungsdatum=%s)
+MigrationContractsInvalidDatesNumber=%s Verträge geändert
+MigrationContractsInvalidDatesNothingToUpdate=Kein ungültiges Vertragsdatum zur Korrektur
+
+# Contracts Incoherent Dates Update
+MigrationContractsIncoherentCreationDateUpdate=Korrektur ungültiger Vertragserstellungsdaten
+MigrationContractsIncoherentCreationDateUpdateSuccess=Korrektur ungültiger Vertragserstellungsdaten erfolgreich
+MigrationContractsIncoherentCreationDateNothingToUpdate=Kein ungültiges Vertragserstellungsdatum zur Korrektur
+
+# Reopening Contracts
+MigrationReopeningContracts=Durch Fehler geschlossenen Vertrag wiedereröffnen
+MigrationReopenThisContract=Vertrag %s wiedereröffnen
+MigrationReopenedContractsNumber=%s Verträge geändert
+MigrationReopeningContractsNothingToUpdate=Keine geschlossenen Verträge zur Wiedereröffnung
+
+# Migration transfer
+MigrationBankTransfertsUpdate=Verknüpfung zwischen Banktransaktion und einer Überweisung aktualisieren
+MigrationBankTransfertsNothingToUpdate=Alle Banktransaktionen sind auf neuestem Stand.
+
+# Migration delivery
+MigrationShipmentOrderMatching=Aktualisiere Sendungsscheine
+MigrationDeliveryOrderMatching=Aktualisiere Lieferscheine
+MigrationDeliveryDetail=Aktualisiere Lieferungen
+
+# Migration stock
+MigrationStockDetail=Produklagerwerte aktualisieren
+
+# Migration menus
+MigrationMenusDetail=Tabellen der dynamischen Menüs aktualisieren
+
+# Migration delivery address
+MigrationDeliveryAddress=Lieferadresse in Sendungen aktualisieren
+
+# Migration project task actors
+MigrationProjectTaskActors=Datenmigration für llx_projet_task_actors Tabelle
+
+# Migration project user resp
+MigrationProjectUserResp=Datenmigration des Feldes fk_user_resp von llx_projet nach llx_element_contact
+
+# Migration project task time
+MigrationProjectTaskTime=Aktualisiere aufgewandte Zeit (in Sekunden)
+
+# Migration Acctioncom
+MigrationActioncommElement=Aktualisiere die Maßnahmen
+MigrationActioncommElement=Aktualisiere die Maßnahmen
 
 // START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
 // Reference language: en_US -> de_DE
@@ -218,3 +258,9 @@ ActivateModule=Aktivieren Modul %s
 MigrationActioncommElement=Aktualisieren Sie Daten über die Maßnahmen
 MigrationPaymentMode=Daten-Migration für die Zahlung Modus
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:40).
+
+
+// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
+// Reference language: en_US -> de_DE
+WarningBrowserTooOld=Eine zu alte Version des Browsers. Upgrades in Ihrem Browser auf eine aktuelle Version von Firefox, Chrome oder Opera ist sehr empfehlenswert.
+// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:27:59).

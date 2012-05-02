@@ -1,8 +1,8 @@
 <?php
 
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,8 +39,6 @@ class Project extends CommonObject
     var $description;
     var $statut;
     var $title;
-    var $date_c;
-    var $date_m;
     var $date_start;
     var $date_end;
     var $socid;
@@ -54,7 +52,7 @@ class Project extends CommonObject
     /**
      *  Constructor
      *
-     *  @param      DoliDB		$db      Database handler
+     *  @param      DoliDB		$DB      Database handler
      */
     function __construct($db)
     {
@@ -83,7 +81,7 @@ class Project extends CommonObject
         if (!trim($this->ref))
         {
             $this->error = 'ErrorFieldsRequired';
-            dol_syslog("Project::Create error -1 ref null", LOG_ERR);
+            dol_syslog(get_class($this)."::Create error -1 ref null", LOG_ERR);
             return -1;
         }
 
@@ -109,13 +107,13 @@ class Project extends CommonObject
         $sql.= ", " . $user->id;
         $sql.= ", 0";
         $sql.= ", " . ($this->public ? 1 : 0);
-        $sql.= ", " . ($this->datec != '' ? $this->db->idate($this->datec) : 'null');
-        $sql.= ", " . ($this->dateo != '' ? $this->db->idate($this->dateo) : 'null');
-        $sql.= ", " . ($this->datee != '' ? $this->db->idate($this->datee) : 'null');
+        $sql.= ", " . $this->db->idate(dol_now());
+        $sql.= ", " . ($this->date_start != '' ? $this->db->idate($this->date_start) : 'null');
+        $sql.= ", " . ($this->date_end != '' ? $this->db->idate($this->date_end) : 'null');
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
-        dol_syslog("Project::create sql=" . $sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::create sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -140,7 +138,7 @@ class Project extends CommonObject
         {
             $this->error = $this->db->lasterror();
             $this->errno = $this->db->lasterrno();
-            dol_syslog("Project::Create error -2 " . $this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::Create error -2 " . $this->error, LOG_ERR);
             $error++;
         }
 
@@ -193,7 +191,7 @@ class Project extends CommonObject
             $sql.= ", datee=" . ($this->date_end != '' ? $this->db->idate($this->date_end) : 'null');
             $sql.= " WHERE rowid = " . $this->id;
 
-            dol_syslog("Project::Update sql=" . $sql, LOG_DEBUG);
+            dol_syslog(get_class($this)."::Update sql=" . $sql, LOG_DEBUG);
             if ($this->db->query($sql))
             {
                 if (!$notrigger)
@@ -215,13 +213,13 @@ class Project extends CommonObject
             else
             {
                 $this->error = $this->db->lasterror();
-                dol_syslog("Project::Update error -2 " . $this->error, LOG_ERR);
+                dol_syslog(get_class($this)."::Update error -2 " . $this->error, LOG_ERR);
                 $result = -2;
             }
         }
         else
         {
-            dol_syslog("Project::Update ref null");
+            dol_syslog(get_class($this)."::Update ref null");
             $result = -1;
         }
 
@@ -245,7 +243,7 @@ class Project extends CommonObject
         if ($ref) $sql.= " WHERE ref='" . $ref . "'";
         else $sql.= " WHERE rowid=" . $id;
 
-        dol_syslog("Project::fetch sql=" . $sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetch sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -284,7 +282,7 @@ class Project extends CommonObject
         else
         {
             $this->error = $this->db->lasterror();
-            dol_syslog("Project::fetch " . $this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::fetch " . $this->error, LOG_ERR);
             return -1;
         }
     }
@@ -364,7 +362,7 @@ class Project extends CommonObject
         if (! $sql) return -1;
 
         //print $sql;
-        dol_syslog("Project::get_element_list sql=" . $sql);
+        dol_syslog(get_class($this)."::get_element_list sql=" . $sql);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -499,7 +497,7 @@ class Project extends CommonObject
             $sql.= " WHERE rowid = " . $this->id;
             $sql.= " AND entity = " . $conf->entity;
 
-            dol_syslog("Project::setValid sql=" . $sql);
+            dol_syslog(get_class($this)."::setValid sql=" . $sql);
             $resql = $this->db->query($sql);
             if ($resql)
             {
@@ -523,7 +521,7 @@ class Project extends CommonObject
                 {
                     $this->db->rollback();
                     $this->error = join(',', $this->errors);
-                    dol_syslog("Project::setValid " . $this->error, LOG_ERR);
+                    dol_syslog(get_class($this)."::setValid " . $this->error, LOG_ERR);
                     return -1;
                 }
             }
@@ -531,7 +529,7 @@ class Project extends CommonObject
             {
                 $this->db->rollback();
                 $this->error = $this->db->lasterror();
-                dol_syslog("Project::setValid " . $this->error, LOG_ERR);
+                dol_syslog(get_class($this)."::setValid " . $this->error, LOG_ERR);
                 return -1;
             }
         }
@@ -559,7 +557,7 @@ class Project extends CommonObject
             $sql.= " AND entity = " . $conf->entity;
             $sql.= " AND fk_statut = 1";
 
-            dol_syslog("Project::setClose sql=" . $sql);
+            dol_syslog(get_class($this)."::setClose sql=" . $sql);
             $resql = $this->db->query($sql);
             if ($resql)
             {
@@ -583,7 +581,7 @@ class Project extends CommonObject
                 {
                     $this->db->rollback();
                     $this->error = join(',', $this->errors);
-                    dol_syslog("Project::setClose " . $this->error, LOG_ERR);
+                    dol_syslog(get_class($this)."::setClose " . $this->error, LOG_ERR);
                     return -1;
                 }
             }
@@ -591,7 +589,7 @@ class Project extends CommonObject
             {
                 $this->db->rollback();
                 $this->error = $this->db->lasterror();
-                dol_syslog("Project::setClose " . $this->error, LOG_ERR);
+                dol_syslog(get_class($this)."::setClose " . $this->error, LOG_ERR);
                 return -1;
             }
         }
@@ -709,7 +707,7 @@ class Project extends CommonObject
     {
         global $user, $langs, $conf;
 
-        $now = dol_now();
+        $now=dol_now();
 
         // Charge tableau des produits prodids
         $prodids = array();
@@ -882,6 +880,359 @@ class Project extends CommonObject
 
         return $projects;
     }
+    
+     /**	Load an object from its id and create a new one in database
+	 *
+	 *	@param	int		$fromid     	Id of object to clone
+	 *	@param	bool	$clone_contact	clone contact of project
+	 *	@param	bool	$clone_ref		clone ref of project
+	 *	@param	bool	$clone_task		clone task of project
+	 *	@param	bool	$clone_file		clone file of project
+	 *	@param	bool	$clone_note		clone note of project
+	 * 	@return	int						New id of clone
+	 */
+	function createFromClone($fromid,$clone_contact=false,$clone_task=true,$clone_file=true,$clone_note=true)
+	{
+		global $user,$langs,$conf;
+
+		$error=0;
+		
+		$now = dol_mktime(0,0,0,idate('m',dol_now()),idate('d',dol_now()),idate('Y',dol_now()));
+
+		$clone_project=new Project($this->db);
+
+		$this->db->begin();
+
+		// Load source object
+		$clone_project->fetch($fromid);
+		
+		$orign_dt_start=$clone_project->date_start;
+	   
+		
+		$orign_project_ref=$clone_project->ref;
+		
+		$clone_project->id=0;
+        $clone_project->date_start = $now;
+        if (!(empty($clone_project->date_end)))
+        {
+        	//Calculate new project end date ragarding difference between original project start date and new start date (now)
+        	$datetime_start = new DateTime();
+    		$datetime_start->setTimestamp($orign_dt_start);
+			$datetime_now = new DateTime();
+			$datetime_now->setTimestamp($now);
+			$diff_dt = $datetime_start->diff($datetime_now);
+			
+        	$datetime_end = new DateTime();
+        	$datetime_end->setTimestamp($clone_project->date_end);
+        	$datetime_end->add($diff_dt);
+        	$clone_project->date_end = $datetime_end->getTimestamp();	
+        }
+        
+        $clone_project->datec = $now;
+
+        if (!$clone_note)
+        {
+        	    $clone_project->note_private='';
+    			$clone_project->note_public='';
+        }
+		
+		//Generate next ref
+		$defaultref='';
+    	$obj = empty($conf->global->PROJECT_ADDON)?'mod_project_simple':$conf->global->PROJECT_ADDON;
+    	if (! empty($conf->global->PROJECT_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/project/".$conf->global->PROJECT_ADDON.".php"))
+    	{
+    		
+        	require_once(DOL_DOCUMENT_ROOT ."/core/modules/project/".$conf->global->PROJECT_ADDON.".php");
+        	$modProject = new $obj;
+        	$defaultref = $modProject->getNextValue($clone_project->societe->id,$clone_project);
+    	}
+		
+    	if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
+    	
+		$clone_project->ref=$defaultref;
+
+		// Create clone
+		$result=$clone_project->create($user);
+
+		// Other options
+		if ($result < 0)
+		{
+			$this->error.=$clone_project->error;
+			$error++;
+		}
+
+		if (! $error)
+		{
+			$this->db->commit();
+			
+			//Get the new project id
+			$clone_project_id=$clone_project->id;
+			
+			//Note Update
+			if (!$clone_note)
+       		{
+        	    $clone_project->note_private='';
+    			$clone_project->note_public='';
+        	}
+        	else
+        	{
+        		$this->db->begin();
+				$res=$clone_project->update_note_public(dol_html_entity_decode($clone_project->note_public, ENT_QUOTES));
+				if ($res < 0)
+				{
+					$this->error.=$clone_project->error;
+					$error++;
+					$this->db->rollback();
+				}
+				else
+				{
+					$this->db->commit();
+				}
+				
+				$this->db->begin();
+				$res=$clone_project->update_note(dol_html_entity_decode($clone_project->note_private, ENT_QUOTES));
+				if ($res < 0)
+				{
+					$this->error.=$clone_project->error;
+					$error++;
+					$this->db->rollback();
+				}
+				else
+				{
+					$this->db->commit();
+				}
+        	}
+			
+			//Duplicate contact
+			if ($clone_contact)
+			{	
+				$origin_project = new Project($this->db);
+				$origin_project->fetch($fromid);
+				
+				foreach(array('internal','external') as $source)
+				{
+					$tab = $origin_project->liste_contact(-1,$source);
+					
+					foreach ($tab as $contacttoadd)
+					{
+						$clone_project->add_contact($contacttoadd['id'], $contacttoadd['code'], $contacttoadd['source']);
+						if ($clone_project->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+						{
+							$langs->load("errors");
+							$this->error.=$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
+							$error++;
+						}
+						else
+						{ 
+							if ($clone_project->error!='')
+							{
+								$this->error.=$clone_project->error;
+								$error++;
+							}
+						}
+					}
+				}
+			}
+			
+			//Duplicate file
+			if ($clone_file)
+			{	
+				require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+				
+				$clone_project_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($defaultref);
+				$ori_project_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($orign_project_ref);
+				
+				if (dol_mkdir($clone_project_dir) >= 0)
+				{
+					$filearray=dol_dir_list($ori_project_dir,"files",0,'','\.meta$','',SORT_ASC,1);
+					foreach($filearray as $key => $file)
+					{
+						$rescopy = dol_copy($ori_project_dir . '/' . $file['name'], $clone_project_dir . '/' . $file['name'],0,1);
+						if (is_numeric($rescopy) && $rescopy < 0)
+						{
+							$this->error.=$langs->trans("ErrorFailToCopyFile",$ori_project_dir . '/' . $file['name'],$clone_project_dir . '/' . $file['name']);
+							$error++;
+						}
+					}
+				}
+				else
+				{
+					$this->error.=$langs->trans('ErrorInternalErrorDetected').':dol_mkdir';
+					$error++;
+				}
+			}
+			
+			//Duplicate task
+			if ($clone_task)
+			{	
+				$taskstatic = new Task($this->db);
+				
+				// Security check
+				$socid=0;
+				if ($user->societe_id > 0) $socid = $user->societe_id;
+				
+				$tasksarray=$taskstatic->getTasksArray(0, 0, $fromid, $socid, 0);
+			
+				//manage new parent clone task id
+				$tab_conv_child_parent=array();
+
+			    foreach ($tasksarray as $tasktoclone)
+			    {
+					$result_clone = $taskstatic->createFromClone($tasktoclone->id,$clone_project_id,$tasktoclone->fk_parent,true,true,false,true,true,false);
+					if ($result_clone <= 0)
+				    {
+				    	$this->error.=$result_clone->error;
+						$error++;
+				    }
+				    else
+				    {
+				    	$new_task_id=$result_clone;
+				    	$taskstatic->fetch($tasktoclone->id);
+				    	
+				    	//manage new parent clone task id
+				    	// if the current task has child we store the original task id and the equivalent clone task id
+						if (($taskstatic->hasChildren()) && !array_key_exists($tasktoclone->id,$tab_conv_child_parent))
+						{
+							$tab_conv_child_parent[$tasktoclone->id] =  $new_task_id;
+						}
+				    }
+					
+			    }
+			    
+			    //Parse all clone node to be sure to update new parent
+			    $tasksarray=$taskstatic->getTasksArray(0, 0, $clone_project_id, $socid, 0);	    
+			    foreach ($tasksarray as $task_cloned)
+			    {
+			    	$taskstatic->fetch($task_cloned->id);
+			    	if ($taskstatic->fk_task_parent!=0)
+			    	{
+			    		$taskstatic->fk_task_parent=$tab_conv_child_parent[$taskstatic->fk_task_parent];
+			    	}
+			    	$res=$taskstatic->update($user);
+			    	if ($result_clone <= 0)
+				    {
+				    	$this->error.=$taskstatic->error;
+						$error++;
+				    }
+			    }
+			}
+			
+			
+			
+			if (! $error)
+			{
+				return $clone_project_id;
+			}
+			else
+			{
+				dol_syslog(get_class($this)."::createFromClone nbError: ".$error." error : " . $this->error, LOG_ERR);
+				return -1;
+			}
+			
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
+	}
+	
+	
+	 /**	Shift project task date from current date to delta
+	 *
+	 *	@param	timestamp		$old_project_dt_start	old project start date
+	 * 	@return	int					1 if OK or < 0 if KO
+	 */
+	function shiftTaskDate($old_project_dt_start)
+	{
+		global $user,$langs,$conf;
+
+		$error=0;
+		
+		$taskstatic = new Task($this->db);
+				
+		// Security check
+		$socid=0;
+		if ($user->societe_id > 0) $socid = $user->societe_id;
+		
+		//convert timestamp to datetime
+		$old_project_dt_st = new DateTime();
+		$old_project_dt_st->setTimestamp($old_project_dt_start);
+		$old_project_dt_st->setTime(0,0,0); //Use 00:00:00 as time to be sure to not have side
+		
+		$tasksarray=$taskstatic->getTasksArray(0, 0, $this->id, $socid, 0);
+
+	    foreach ($tasksarray as $tasktoshiftdate)
+	    {
+	    	$to_update=false;
+	    	// Fetch only if update of date will be made
+	    	if ((!empty($tasktoshiftdate->date_start)) || (!empty($tasktoshiftdate->date_end)))
+	    	{
+	    		//dol_syslog(get_class($this)."::shiftTaskDate to_update", LOG_DEBUG);
+	    		$to_update=true;
+		    	$task = new Task($this->db);
+		    	$result = $task->fetch($tasktoshiftdate->id);
+		    	if (!$result)
+		    	{
+		    		$error++;
+		    		$this->error.=$task->error;
+		    	}
+	    	}
+
+	    	//Calcultate new task start date with difference between old proj start date and origin task start date
+	    	if (!empty($tasktoshiftdate->date_start))
+	    	{	    		
+	    		dol_syslog(get_class($this)."::shiftTaskDate to_update", LOG_DEBUG);
+		    	$orign_task_datetime_start = new DateTime();
+	    		$orign_task_datetime_start->setTimestamp($tasktoshiftdate->date_start);
+	    		$orign_task_datetime_start->setTime(0,0,0); //Use 00:00:00 as time to be sure to not have side effect
+				$diff_dt_st = $old_project_dt_st->diff($orign_task_datetime_start);
+				
+				//Project new start date
+				$datetime_start = new DateTime();
+				$datetime_start->setTimestamp($this->date_start);
+				$datetime_start->setTime(0,0,0); //Use 00:00:00 as time to be sure to not have side
+				
+        		//New task start date
+				$datetime_start->add($diff_dt_st);
+				$task->date_start			= $datetime_start->getTimestamp();
+	    	}
+	    	
+	    	//Calcultate new task end date with difference between origin proj end date and origin task end date
+	    	if (!empty($tasktoshiftdate->date_end))
+	    	{
+        		$orign_task_datetime_end = new DateTime();
+	    		$orign_task_datetime_end->setTimestamp($tasktoshiftdate->date_end);
+	    		$orign_task_datetime_end->setTime(0,0,0); //Use 00:00:00 as hour to be sure to not have side effect
+	    		
+				$diff_dt_end = $old_project_dt_st->diff($orign_task_datetime_end);
+				
+				//Project new start date
+				$datetime_end = new DateTime();
+				$datetime_end->setTimestamp($this->date_start);
+				$datetime_end->setTime(0,0,0); //Use 00:00:00 as time to be sure to not have side
+				
+        		//New task start date
+				$datetime_end->add($diff_dt_end);
+				$task->date_end			= $datetime_end->getTimestamp();
+	    	}
+
+			if ($to_update)
+			{
+		    	$result = $task->update($user);
+		    	if (!$result)
+		    	{
+		    		$error++;
+		    		$this->error.=$task->error;
+		    	}
+			}
+	    }
+	    if ($error!=0)
+	    {
+	    	return -1;	
+	    }
+	    return $result;
+	} 
 
 }
 

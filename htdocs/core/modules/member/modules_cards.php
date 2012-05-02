@@ -20,9 +20,9 @@
  */
 
 /**
- *	\file       htdocs/core/modules/member/labels/modules_labels.php
+ *	\file       htdocs/core/modules/member/modules_cards.php
  *	\ingroup    member
- *	\brief      File of parent class of document generator for members labels sheets.
+ *	\brief      File of parent class of document generator for members cards.
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
@@ -30,10 +30,9 @@ require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
 
 /**
- *	\class      ModelePDFLabels
- *	\brief      Parent class of document generator for members cards.
+ *	Parent class of document generator for members cards.
  */
-class ModelePDFLabels
+class ModelePDFCards
 {
 	var $error='';
 
@@ -49,7 +48,7 @@ class ModelePDFLabels
 	{
 		global $conf;
 
-		$type='members_labels';
+		$type='members_card';
 		$liste=array();
 
 		include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
@@ -61,50 +60,88 @@ class ModelePDFLabels
 
 
 /**
- *  Create a document onto disk accordign to template module
+ *	Cree un fichier de cartes de visites en fonction du modele de ADHERENT_CARDS_ADDON_PDF
  *
- *	@param   	DoliDB		$db					Database handler
- *	@param   	array		$arrayofmembers		Array of members
- *	@param	    string		$modele				Force le modele a utiliser ('' to not force)
- *	@param		Translate	$outputlangs		Objet lang a utiliser pour traduction
- *	@return  	int        						<0 if KO, >0 if OK
+ *	@param	DoliDB		$db  			Database handler
+ *	@param  array		$arrayofmembers	Array of members
+ *	@param	string		$modele			Force modele to use ('' to not force)
+ *	@param	Translate	$outputlangs	Objet langs to use for translation
+ *	@return int        					<0 if KO, >0 if OK
  */
-function members_label_pdf_create($db, $arrayofmembers, $modele, $outputlangs)
+function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs)
 {
 	global $conf,$langs;
 	$langs->load("members");
 
-	$dir = DOL_DOCUMENT_ROOT . "/core/modules/member/labels/";
-
-	// Positionne modele sur le nom du modele a utiliser
+	$error=0;
+	
+	// Increase limit for PDF build
+	$err=error_reporting();
+	error_reporting(0);
+	@set_time_limit(120);
+	error_reporting($err);
+	
+	$code='';
+	$srctemplatepath='';
+	
+	// Positionne le modele sur le nom du modele a utiliser
 	if (! dol_strlen($modele))
 	{
-		if ($conf->global->ADHERENT_ETIQUETTE_TYPE)
+		if (! empty($conf->global->ADHERENT_CARDS_ADDON_PDF))
 		{
-			$modele = $conf->global->ADHERENT_ETIQUETTE_TYPE;
-			$code = $conf->global->ADHERENT_ETIQUETTE_TYPE;
+			$code = $conf->global->ADHERENT_CARDS_ADDON_PDF;
 		}
 		else
 		{
-		    $modele = 'L7163';
-		    $code = 'L7163';
+			$code = $modele;
 		}
 	}
-    $modele='standardlabel';
-
-	// Charge le modele
-	$file = "pdf_".$modele.".class.php";
-	if (file_exists($dir.$file))
+	else $code=$modele;
+	$modele='standard';
+	
+	// If selected modele is a filename template (then $modele="modelname:filename")
+	$tmp=explode(':',$modele,2);
+	if (! empty($tmp[1]))
 	{
-		$classname = "pdf_".$modele;
-		require_once($dir.$file);
+		$modele=$tmp[0];
+		$srctemplatepath=$tmp[1];
+	}
+	else $srctemplatepath=$code;
+	
+	// Search template files
+	$file=''; $classname=''; $filefound=0;
+	$dirmodels=array('/');
+	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels,$conf->modules_parts['models']);
+	foreach($dirmodels as $reldir)
+	{
+		foreach(array('doc','pdf') as $prefix)
+		{
+			$file = $prefix."_".$modele.".class.php";
+	
+			// On verifie l'emplacement du modele
+			$file=dol_buildpath($reldir."core/modules/member/doc/".$file,0);
+			if (file_exists($file))
+			{
+				$filefound=1;
+				$classname=$prefix.'_'.$modele;
+				break;
+			}
+		}
+		if ($filefound) break;
+	}
+	
+	
+	// Charge le modele
+	if ($filefound)
+	{
+		require_once($file);
 
 		$obj = new $classname($db);
 
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($arrayofmembers, $outputlangs) > 0)
+		if ($obj->write_file($arrayofmembers, $outputlangs, $srctemplatepath) > 0)
 		{
 			$outputlangs->charset_output=$sav_charset_output;
 			return 1;
