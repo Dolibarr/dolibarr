@@ -81,3 +81,4 @@ PersonalStock=Stoc personal %s
 ThisWarehouseIsPersonalStock=Aquest magatzem representa l'estoc personal de %s %s
 SelectWarehouseForStockDecrease=Seleccioneu el magatzem a usar en el decrement d'estoc
 SelectWarehouseForStockIncrease=Seleccioneu el magatzem a utilitzar en l'increment d'estoc
+LastWaitingSupplierOrders=Comandes en espera de recepció
