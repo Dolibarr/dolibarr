@@ -2312,7 +2312,7 @@ abstract class CommonObject
      */
     function showLinkedObjectBlock()
     {
-        global $langs,$bc;
+        global $conf,$langs,$bc;
 
         $this->fetchObjectLinked();
 
@@ -2668,7 +2668,7 @@ abstract class CommonObject
      */
     function printOriginLine($line,$var)
     {
-        global $langs,$bc;
+        global $conf,$langs,$bc;
 
         //var_dump($line);
 

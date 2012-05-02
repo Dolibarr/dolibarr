@@ -41,19 +41,31 @@ $upload_dir=$conf->admin->dir_temp;
 
 if (GETPOST("action") == 'set_proxy')
 {
-    $result=0;
-    $result+=dolibarr_set_const($db, 'MAIN_USE_CONNECT_TIMEOUT', $_POST["MAIN_USE_CONNECT_TIMEOUT"], 'chaine',0,'',$conf->entity);
-    $result+=dolibarr_set_const($db, 'MAIN_USE_RESPONSE_TIMEOUT', $_POST["MAIN_USE_RESPONSE_TIMEOUT"], 'chaine',0,'',$conf->entity);
-    $result+=dolibarr_set_const($db, 'MAIN_PROXY_USE', $_POST["MAIN_PROXY_USE"], 'chaine',0,'',$conf->entity);
-    $result+=dolibarr_set_const($db, 'MAIN_PROXY_HOST',$_POST["MAIN_PROXY_HOST"],'chaine',0,'',$conf->entity);
-    $result+=dolibarr_set_const($db, 'MAIN_PROXY_PORT',$_POST["MAIN_PROXY_PORT"],'chaine',0,'',$conf->entity);
-    $result+=dolibarr_set_const($db, 'MAIN_PROXY_USER',$_POST["MAIN_PROXY_USER"],'chaine',0,'',$conf->entity);
-    $result+=dolibarr_set_const($db, 'MAIN_PROXY_PASS',$_POST["MAIN_PROXY_PASS"],'chaine',0,'',$conf->entity);
-    if ($result < 5)
+    if (GETPOST("MAIN_USE_CONNECT_TIMEOUT") && ! is_numeric(GETPOST("MAIN_USE_CONNECT_TIMEOUT")))
     {
-        dol_print_error($db);
+        $mesg='<div class="error">'.$langs->trans("ErrorValueMustBeInteger").'</div>';
+        $error++;
     }
-    else
+    if (GETPOST("MAIN_USE_RESPONSE_TIMEOUT") && ! is_numeric(GETPOST("MAIN_USE_RESPONSE_TIMEOUT")))
+    {
+        $mesg='<div class="error">'.$langs->trans("ErrorValueMustBeInteger").'</div>';
+        $error++;
+    }
+
+    if (! $error)
+    {
+        $result=0;
+        $result+=dolibarr_set_const($db, 'MAIN_USE_CONNECT_TIMEOUT', GETPOST("MAIN_USE_CONNECT_TIMEOUT"), 'chaine',0,'',$conf->entity);
+        $result+=dolibarr_set_const($db, 'MAIN_USE_RESPONSE_TIMEOUT', GETPOST("MAIN_USE_RESPONSE_TIMEOUT"), 'chaine',0,'',$conf->entity);
+        $result+=dolibarr_set_const($db, 'MAIN_PROXY_USE', GETPOST("MAIN_PROXY_USE"), 'chaine',0,'',$conf->entity);
+        $result+=dolibarr_set_const($db, 'MAIN_PROXY_HOST',GETPOST("MAIN_PROXY_HOST"),'chaine',0,'',$conf->entity);
+        $result+=dolibarr_set_const($db, 'MAIN_PROXY_PORT',GETPOST("MAIN_PROXY_PORT"),'chaine',0,'',$conf->entity);
+        $result+=dolibarr_set_const($db, 'MAIN_PROXY_USER',GETPOST("MAIN_PROXY_USER"),'chaine',0,'',$conf->entity);
+        $result+=dolibarr_set_const($db, 'MAIN_PROXY_PASS',GETPOST("MAIN_PROXY_PASS"),'chaine',0,'',$conf->entity);
+        if ($result < 5) dol_print_error($db);
+    }
+
+    if (! $error)
     {
         $mesg='<div class="ok">'.$langs->trans("RecordModifiedSuccessfully").'</div>';
     }
@@ -122,7 +134,7 @@ print '<td>'.$langs->trans("ConnectionTimeout").'</td><td align="right">';
 //print $form->textwithpicto('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
 print '</td>';
 print '<td nowrap="nowrap">';
-print '<input class="flat" name="MAIN_USE_CONNECT_TIMEOUT" type="text" size="4" value="'.$conf->global->MAIN_USE_CONNECT_TIMEOUT.'">';
+print '<input class="flat" name="MAIN_USE_CONNECT_TIMEOUT" type="text" size="4" value="'.(isset($_POST["MAIN_USE_CONNECT_TIMEOUT"])?GETPOST("MAIN_USE_CONNECT_TIMEOUT"):$conf->global->MAIN_USE_CONNECT_TIMEOUT).'">';
 print ' '.$langs->trans("seconds");
 print '</td>';
 print '</tr>';
