@@ -55,9 +55,6 @@ require_once(DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php');
 // Security check
 if (! $conf->agenda->enabled) accessforbidden('',1,1,1);
 
-$mainmenu=isset($_GET["mainmenu"])?$_GET["mainmenu"]:"";
-$leftmenu=isset($_GET["leftmenu"])?$_GET["leftmenu"]:"";
-
 // Define format, type and filter
 $format='ical';
 $type='event';

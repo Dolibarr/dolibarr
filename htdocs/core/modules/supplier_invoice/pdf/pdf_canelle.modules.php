@@ -228,7 +228,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$tab_top = 88;
 
 					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
-					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, $outputlangs->convToOutputCharset($object->note_public), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
@@ -398,7 +398,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$pdf->Output($file,'F');
 
 				// Actions on extra fields (by external module or standard code)
-				if (! is_object($hookmanager))
+				if (!is_object($hookmanager))
 				{
 					include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 					$hookmanager=new HookManager($this->db);

@@ -403,7 +403,7 @@ a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
 	padding: 0px 5px 0px 5px;
 	margin: 0px 1px 2px 1px;
 	white-space: nowrap;
-	text-shadow: 1px 2px 4px #BFBFBF;
+	text-shadow: 1px 1px 1px #BFBFBF;
 }
 a.tmenu:link, a.tmenu:visited {
 	color: #<?php echo $colortextmain; ?>;
@@ -416,7 +416,7 @@ a.tmenu:hover, a.tmenu:active {
 	border-top: 1px solid #D8D8D8;
 	border-bottom: 2px solid #F4F4F4;
 	background: #F4F4F4;
-	text-shadow: 1px 2px 4px #BFBFBF;
+	text-shadow: 1px 1px 1px #BFBFBF;
 }
 
 a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
@@ -430,7 +430,7 @@ a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
 	border-<?php print $left; ?>: 1px solid #D8D8D8;
 	border-bottom: 2px solid #F4F4F4;
 	white-space: nowrap;
-	text-shadow: 1px 2px 4px #BFBFBF;
+	text-shadow: 1px 1px 1px #BFBFBF;
 }
 
 

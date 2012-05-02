@@ -411,7 +411,7 @@ class Menubase
      * 	Load entries found in database in a menu array.
      *
      * 	@param	array	$newmenu        Menu array to complete (in most cases, it's empty, may be already initialized with some menu manager like eldy)
-     * 	@param	string	$mymainmenu		Value for mainmenu to filter menu to load (often $_SESSION['mainmenu'])
+     * 	@param	string	$mymainmenu		Value for mainmenu to filter menu to load (often $_SESSION["mainmenu"])
      * 	@param	string	$myleftmenu		Value for leftmenu to filter menu to load (always '')
      * 	@param	int		$type_user		Filter on type of user (0=Internal,1=External,2=All)
      * 	@param	string	$menu_handler	Filter on name of menu_handler used (auguria, eldy...)

@@ -214,7 +214,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 	if ($sourcecompany->state_id && empty($sourcecompany->departement)) $sourcecompany->departement=getState($sourcecompany->state_id);
 	if ($targetcompany->state_id && empty($targetcompany->departement)) $targetcompany->departement=getState($targetcompany->state_id);
 
-	if ($mode == 'source')
+	if ($mode == 'source' || ! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS))
 	{
 		$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($sourcecompany))."\n";
 
@@ -807,7 +807,10 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 	// Description long of product line
 	if ($desc && ($desc != $label))
 	{
-		if ( $libelleproduitservice && empty($hidedesc) ) $libelleproduitservice.="\n";
+		if ($libelleproduitservice && empty($hidedesc))
+		{
+			$libelleproduitservice.='__N__';
+		}
 
 		if ($desc == '(CREDIT_NOTE)' && $object->lines[$i]->fk_remise_except)
 		{
@@ -827,7 +830,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		{
 			if ($idprod)
 			{
-				if ( empty($hidedesc) ) $libelleproduitservice.=$desc;
+				if (empty($hidedesc)) $libelleproduitservice.=$desc;
 			}
 			else
 			{
@@ -846,7 +849,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			$ref_prodserv = "";
 			if ($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS)   // In standard mode, we do not show this
 			{
-				if($prodser->isservice())
+				if ($prodser->isservice())
 				{
 					$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Service")." ";
 				}
@@ -856,9 +859,9 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 				}
 			}
 
-			if ( empty($hideref) )
+			if (empty($hideref))
 			{
-				if ($issupplierline) $ref_prodserv = $prodser->ref.' ('.$outputlangs->trans("SupplierRef").' '.$ref_supplier.')';   // Show local ref and supplier ref
+				if ($issupplierline) $ref_prodserv = $prodser->ref.' ('.$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.')';   // Show local ref and supplier ref
 				else $ref_prodserv = $prodser->ref; // Show local ref only
 
 				$ref_prodserv .= " - ";
@@ -885,11 +888,13 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			$period='('.$outputlangs->transnoentitiesnoconv('DateUntil',dol_print_date($object->lines[$i]->date_end, $format, false, $outputlangs)).')';
 		}
 		//print '>'.$outputlangs->charset_output.','.$period;
-		$libelleproduitservice.="\n".$period;
+		$libelleproduitservice.="__N__".$period;
 		//print $libelleproduitservice;
 	}
 
 	// Now we convert \n into br
+	if (dol_textishtml($libelleproduitservice)) $libelleproduitservice=preg_replace('/__N__/','<br>',$libelleproduitservice);
+	else $libelleproduitservice=preg_replace('/__N__/',"\n",$libelleproduitservice);
 	$libelleproduitservice=dol_htmlentitiesbr($libelleproduitservice,1);
 
 	return $libelleproduitservice;

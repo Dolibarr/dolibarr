@@ -834,6 +834,7 @@ else if ($action == "addline" && $user->rights->propale->creer)
 				unset($_POST['np_price']);
 				unset($_POST['dp_desc']);
 				unset($_POST['np_tva_tx']);
+				unset($_POST['np_desc']);
 			}
 			else
 			{
@@ -1146,7 +1147,7 @@ if ($id > 0 || ! empty($ref))
 		//'text' => $langs->trans("ConfirmClone"),
 		//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
 		//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
-		array('type' => 'other', 'name' => 'socid',   'label' => $langs->trans("SelectThirdParty"),   'value' => $form->select_company(GETPOST('socid','int'),'socid','(s.client=1 OR s.client=3)'))
+		array('type' => 'other', 'name' => 'socid',   'label' => $langs->trans("SelectThirdParty"),   'value' => $form->select_company(GETPOST('socid','int'),'socid','(s.client=1 OR s.client=2 OR s.client=3)'))
 		);
 		// Paiement incomplet. On demande si motif = escompte ou autre
 		$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('ClonePropal'),$langs->trans('ConfirmClonePropal',$object->ref),'confirm_clone',$formquestion,'yes',1);
@@ -2028,7 +2029,7 @@ else
 			print '<td>';
 			print $companystatic->getNomUrl(1,'customer');
 			print '</td>';
-			
+
 			// Customer ref
 			print '<td nowrap="nowrap">';
 			print $objp->ref_client;

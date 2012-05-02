@@ -160,7 +160,7 @@ if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->rights->user
 	{
 		// Creation user
 		$nuser = new User($db);
-		$result=$nuser->create_from_member($object,GETPOST('login','alpha'));
+		$result=$nuser->create_from_member($object,GETPOST('login'));
 
 		if ($result < 0)
 		{
@@ -181,7 +181,7 @@ if ($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights
 	{
 		// Creation user
 		$company = new Societe($db);
-		$result=$company->create_from_member($object,GETPOST('companyname','alpha'));
+		$result=$company->create_from_member($object,GETPOST('companyname'));
 
 		if ($result < 0)
 		{

@@ -248,8 +248,8 @@ if ($id > 0 || ! empty($ref))
 			print '</form>';
 
 			// Line to add external contact. Only if project is linked to a third party.
-			if ($project->societe->id)
-			{
+			//if ($project->societe->id)
+			//{
 				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="addcontact">';
@@ -265,12 +265,12 @@ if ($id > 0 || ! empty($ref))
 
 				print '<td colspan="1">';
 				$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$project->societe->id;
-				$selectedCompany = $formcompany->selectCompaniesForNewContact($project, 'id', $selectedCompany, 'newcompany');
+				$selectedCompany = $formcompany->selectCompaniesForNewContact($project, 'id', $selectedCompany, 'newcompany', (empty($project->societe->id)?array():array($project->societe->id)));
 				print '</td>';
 
 				print '<td colspan="1">';
 				$nbofcontacts=$form->select_contacts($selectedCompany, '', 'contactid');
-				if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
+				//if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 				print '</td>';
 				print '<td>';
 				$formcompany->selectTypeContact($project, '', 'type','external','rowid');
@@ -287,7 +287,7 @@ if ($id > 0 || ! empty($ref))
 				print '</tr>';
 
 				print "</form>";
-			}
+			//}
 
 			print '<tr><td colspan="6">&nbsp;</td></tr>';
 		}

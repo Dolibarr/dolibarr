@@ -40,7 +40,7 @@ class DoliDBPgsql
     //! Database label
 	static $label='PostgreSQL';      // Label of manager
 	//! Charset
-	static $forcecharset='latin1';
+	var $forcecharset='latin1';      // Can't be static as it may be forced with a dynamic value
 	//! Version min database
 	static $versionmin=array(8,4,0);	// Version min database
 
@@ -81,8 +81,9 @@ class DoliDBPgsql
 	{
 		global $conf,$langs;
 
-		$this->forcecharset=$conf->file->character_set_client;
-		$this->forcecollate=$conf->db->dolibarr_main_db_collation;
+		if (! empty($conf->db->character_set)) $this->forcecharset=$conf->db->character_set;
+		if (! empty($conf->db->dolibarr_main_db_collation))	$this->forcecollate=$conf->db->dolibarr_main_db_collation;
+
 		$this->database_user=$user;
 
 		$this->transaction_opened=0;
@@ -978,7 +979,7 @@ class DoliDBPgsql
 	function DDLCreateDb($database,$charset='',$collation='',$owner='')
 	{
 		if (empty($charset))   $charset=$this->forcecharset;
-		if (empty($collation)) $collation=$this->collation;
+		if (empty($collation)) $collation=$this->forcecollate;
 
 		$ret=$this->query('CREATE DATABASE '.$database.' OWNER '.$owner.' ENCODING \''.$charset.'\'');
 		return $ret;

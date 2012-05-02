@@ -52,7 +52,7 @@ $search_login=GETPOST("search_login");
 $type=GETPOST("type");
 $search_email=GETPOST("search_email");
 $search_categ=GETPOST("search_categ");
-$sall=GETPOST("sall",'int');
+$sall=GETPOST("sall");
 
 if (GETPOST("button_removefilter"))
 {

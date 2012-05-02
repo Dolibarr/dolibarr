@@ -22,8 +22,17 @@
  * \brief      Page with Paypal init var.
  */
 
-if (session_id() == "") session_start();
-
+if (session_id() == "")
+{
+    session_start();
+    if (ini_get('register_globals'))    // To solve bug in using $_SESSION
+    {
+        foreach ($_SESSION as $key=>$value)
+        {
+            if (isset($GLOBALS[$key])) unset($GLOBALS[$key]);
+        }
+    }
+}
 
 // ==================================
 // PayPal Express Checkout Module

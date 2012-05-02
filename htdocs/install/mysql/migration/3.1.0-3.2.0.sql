@@ -156,6 +156,8 @@ ALTER TABLE llx_categorie_fournisseur DROP INDEX fk_categorie;
 ALTER TABLE llx_categorie_fournisseur ADD PRIMARY KEY pk_categorie_fournisseur (fk_categorie, fk_societe);
 ALTER TABLE llx_categorie_fournisseur ADD INDEX idx_categorie_fournisseur_fk_categorie (fk_categorie);
 ALTER TABLE llx_categorie_fournisseur ADD INDEX idx_categorie_fournisseur_fk_societe (fk_societe);
+DELETE FROM llx_categorie_fournisseur WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie);
+DELETE FROM llx_categorie_fournisseur WHERE fk_societe NOT IN (SELECT rowid FROM llx_societe);
 ALTER TABLE llx_categorie_fournisseur ADD CONSTRAINT fk_categorie_fournisseur_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_fournisseur ADD CONSTRAINT fk_categorie_fournisseur_fk_soc   FOREIGN KEY (fk_societe) REFERENCES llx_societe (rowid);
 
@@ -213,8 +215,10 @@ ALTER TABLE llx_paiement ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowi
 ALTER TABLE llx_product_price ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 
 -- Restore foreign key (on llx_expedition_methode before) on correct table (llx_c_shipment_mode)
+UPDATE llx_expedition SET fk_expedition_methode = null WHERE fk_expedition_methode NOT IN (SELECT rowid FROM llx_c_shipment_mode);
 ALTER TABLE llx_expedition DROP FOREIGN KEY fk_expedition_fk_expedition_methode;
 ALTER TABLE llx_expedition ADD CONSTRAINT fk_expedition_fk_expedition_methode 	FOREIGN KEY (fk_expedition_methode) REFERENCES llx_c_shipment_mode (rowid);
+
 
 -- VMYSQL4.1 UPDATE llx_chargesociales set tms = date_creation WHERE tms = '0000-00-00 00:00:00';
 
