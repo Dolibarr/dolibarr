@@ -374,7 +374,9 @@ div#tmenu_tooltip {
 	background: rgb(<?php echo $colorback1 ?>);
 	/* background: #305582; *//* 2C68A3 */
 <?php
-    } ?>
+    }
+?>
+	margin-bottom: 10px;
 }
 
 div.tmenudiv {
@@ -496,24 +498,31 @@ div.tmenuleft
 div.tmenucenter
 {
 	padding-top: 2px;
-	padding-right: 5px;
+	padding-left: 0px;
+	padding-right: 0px;
     height: <?php print $heightmenu; ?>px;
+    width: 100%;
+}
+.mainmenuaspan
+{
+	padding-right: 4px;
 }
 
 
 div.mainmenu {
 	position : relative;
-	color: white;
 	background-repeat:no-repeat;
 	background-position:center top;
 	height: <?php echo ($heightmenu-19); ?>px;
 	margin-left: 0px;
+	min-width: 40px;
 }
 
 <?php if (empty($conf->browser->phone)) { ?>
 
 div.mainmenu.home{
 	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/home.png',1) ?>);
+	background-position-x: middle;
 }
 
 div.mainmenu.accountancy {
@@ -1369,7 +1378,7 @@ span.butAction, span.butActionDelete {
 #undertopmenu {
 	/*	background-image: url("<?php echo dol_buildpath($path.'/theme/eldy/img/gradient.gif',1) ?>"); */
 	background-repeat: repeat-x;
-	margin-top: 12px;
+	margin-top: 0px;
 }
 
 
