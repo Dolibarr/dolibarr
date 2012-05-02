@@ -81,3 +81,4 @@ PersonalStock=Stock personal %s
 ThisWarehouseIsPersonalStock=Este almacén representa el stock personal de %s %s
 SelectWarehouseForStockDecrease=Seleccione el almacén a usar en el decremento de stock
 SelectWarehouseForStockIncrease=Seleccione el almacén a usar en el incremento de stock
+LastWaitingSupplierOrders=Pedidos en espera de recepción
