@@ -36,6 +36,7 @@ ECMSearchByEntity=Buscar por objeto
 ECMSectionOfDocuments=Directorios de documentos
 ECMTypeManual=Manual
 ECMTypeAuto=Automático
+ECMDocsBySocialContributions=Documentos asociados a cargas sociales
 ECMDocsByThirdParties=Documentos asociados a terceros
 ECMDocsByProposals=Documentos asociados a presupuestos
 ECMDocsByOrders=Documentos asociados a pedidos
