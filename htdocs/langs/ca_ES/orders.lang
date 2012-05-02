@@ -3,6 +3,7 @@ CHARSET=UTF-8
 OrdersArea=Àrea comandes de clients
 SuppliersOrdersArea=Àrea comandes a proveïdors
 OrderCard=Fitxa comanda
+OrderId=Id comanda
 Order=Comanda
 Orders=Comandes
 OrderLine=Línia de comanda
@@ -29,6 +30,7 @@ StatusOrderDraftShort=Esborrany
 StatusOrderValidatedShort=Validada
 StatusOrderOnProcessShort=Per rebre
 StatusOrderSentShort=Expedició en curs
+StatusOrderSent=Enviament en curs
 StatusOrderProcessedShort=Processada
 StatusOrderToBillShort=A facturar
 StatusOrderApprovedShort=Aprovada
@@ -108,6 +110,7 @@ PaymentOrderRef=Pagament comanda %s
 CloneOrder=Clonar comanda
 ConfirmCloneOrder=Esteu segur de voler clonar aquesta comanda <b>%s</b>?
 DispatchSupplierOrder=Recepció de la comanda a proveïdor %s
+DateDeliveryPlanned=Data prevista de lliurament
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Responsable seguiment comanda client
 TypeContact_commande_internal_SHIPPING=Responsable enviament comanda client
@@ -119,10 +122,12 @@ TypeContact_order_supplier_internal_SHIPPING=Responsable recepció comanda a pro
 TypeContact_order_supplier_external_BILLING=Contacte proveïdor facturació comanda
 TypeContact_order_supplier_external_SHIPPING=Contacte proveïdor lliurament comanda
 TypeContact_order_supplier_external_CUSTOMER=Contacte proveïdor seguiment comanda
+
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON no definida
 Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON no definida
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Error en la càrrega de l'arxiu mòdul '%s'
 Error_FailedToLoad_COMMANDE_ADDON_File=Error en la càrrega de l'arxiu mòdul '%s'
+
 # Sources
 OrderSource0=Pressupost
 OrderSource1=Internet
@@ -134,9 +139,11 @@ OrderSource6=Revistes
 QtyOrdered=Qt. demanda
 AddDeliveryCostLine=Afegir una línia de despeses de ports indicant el pes de la comanda
 SetDemandReason=Indicar origen de la comanda
+
 # Document models
 PDFEinsteinDescription=Model de comanda complet (logo...)
 PDFEdisonDescription=Model de comanda simple
+
 # Orders modes
 OrderByMail=Correu
 OrderByFax=Fax
