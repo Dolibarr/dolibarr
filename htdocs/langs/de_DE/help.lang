@@ -24,10 +24,16 @@ Efficiency=Effizienz
 TypeHelpOnly=Ausschließlich Hilfe
 TypeHelpDev=Hilfe & Entwicklung
 TypeHelpDevForm=Hilfe, Entwicklung & Bildung
-ToGetHelpGoOnSparkAngels1=Einige Unternehmen bieten eine schnelle (manchmal prompte) und effiziente Online-Unterstützung durch Fernwartung Ihres Computers. Solche Helfer finden Sie auf dieser Website <b>%s</b>
+ToGetHelpGoOnSparkAngels1=Einige Unternehmen bieten eine schnelle (manchmal prompte) und effiziente Online-Unterstützung durch Fernwartung. Solche Helfer finden Sie auf dieser Website <b>%s</b>
 ToGetHelpGoOnSparkAngels3=Über einen Klick auf diese Schaltfläche erhalten Sie eine Liste aller verfügbaren Trainer für das System
 ToGetHelpGoOnSparkAngels2=Gelegentlich ist zum Zeitpunkt Ihrer Suche vielleicht kein Partner verfügbar. Denken Sie daran, den Filter auf "Alle verfügbaren" zu setzen. So können Sie mehr Anfragen stellen.
 BackToHelpCenter=Klicken Sie hier um zur <a href="%s">Hilfeseite</a> zurückzukehren.
 LinkToGoldMember=Sie können einen, vom System für Ihre Sprache (%s) automatisch ausgewählten, Trainer über einen Klick auf sein Widget kontaktieren (Status und Maximalpreis aktualisieren sich automatisch):
 PossibleLanguages=Unterstützte Sprachen
 MakeADonation=Unterstützen Sie das Projekt über eine Spende
+
+
+// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
+// Reference language: en_US -> de_DE
+SubscribeToFoundation=Hilfe Dolibarr Projekt, abonnieren Sie den Grundstein
+// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:54).

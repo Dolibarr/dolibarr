@@ -25,11 +25,13 @@ CustomersOrdersRunning=Aktuelle Kundenbestellungen
 CustomersOrdersAndOrdersLines=Kundenbestellungen und Bestellpositionen
 OrdersToValid=Freizugebende Bestellungen
 OrdersToBill=Zu verrechnende Bestellungen
-OrdersInProcess=Bestellunen in Bearbeitung
+OrdersInProcess=Bestellungen in Bearbeitung
 OrdersToProcess=Zu bearbeitende Bestellungen
+SuppliersOrdersToProcess=Lieferantenbestellung in Bearbeitung
 StatusOrderCanceledShort=Storniert
 StatusOrderDraftShort=Entwurf
 StatusOrderValidatedShort=Freigegeben
+StatusOrderSentShort=In Bearbeitung
 StatusOrderOnProcessShort=In Arbeit
 StatusOrderProcessedShort=Bearbeitet
 StatusOrderToBillShort=Zu verrechnen
@@ -37,19 +39,19 @@ StatusOrderApprovedShort=Genehmigt
 StatusOrderRefusedShort=Abgelehnt
 StatusOrderToProcessShort=Zu bearbeiten
 StatusOrderReceivedPartiallyShort=Teilweise erhalten
-StatusOrderReceivedAllShort=Zur Gänze erhalten
+StatusOrderReceivedAllShort=Komplett erhalten
 StatusOrderCanceled=Storniert
 StatusOrderDraft=Entwurf (freizugeben)
 StatusOrderValidated=Freigegeben
-StatusOrderOnProcess=In Arbeit
+StatusOrderOnProcess=Warten auf Empfang
 StatusOrderProcessed=Bearbeitet
 StatusOrderToBill=Zu verrechnen
 StatusOrderApproved=Genehmigt
 StatusOrderRefused=Abgelehnt
 StatusOrderReceivedPartially=Teilweise erhalten
-StatusOrderReceivedAll=Zur Gänze erhalten
-DraftOrWaitingApproved=Entwurf oder freigegeben, noch nicht bestellt
-DraftOrWaitingShipped=Entwurf oder freigegeben, noch nicht versandt
+StatusOrderReceivedAll=Komplett erhalten
+DraftOrWaitingApproved=Entwurf oder genehmigt, noch nicht bestellt
+DraftOrWaitingShipped=Entwurf oder bestätigt, noch nicht versandt
 MenuOrdersToBill=Bestellverrechnung
 SearchOrder=Suche Bestellung
 Sending=Sendung
@@ -69,7 +71,7 @@ ShowOrder=Zeige Bestellung
 NoOpenedOrders=Keine offenen Bestellungen
 NoOtherOpenedOrders=Keine offenen Bestellungen Anderer
 OtherOrders=Bestellungen Anderer
-LastOrders=Neueste %s Bestellungen
+LastOrders=Neuesten %s Bestellungen
 LastModifiedOrders=%s zuletzt bearbeitete Bestellungen
 LastClosedOrders=%s zuletzt geschlossene Bestellungen
 AllOrders=Alle Bestellungen
@@ -92,22 +94,40 @@ ComptaCard=Buchhaltungskarte
 DraftOrders=Bestellentwürfe
 RelatedOrders=Verknüpfte Bestellungen
 OnProcessOrders=Bestellungen in Bearbeitung
-RefOrder=Bestellung Nr.
-RefCustomerOrder=Kundenbestellung Nr.
+RefOrder=Bestell-Nr.
+RefCustomerOrder=Kunden-Bestellung-Nr.
 CustomerOrder=Kundenbestellung
-RefCustomerOrderShort=Kundenbestellung Nr.
+RefCustomerOrderShort=Kunden-BestellNr.
 SendOrderByMail=Bestellung per Post versenden
 ActionsOnOrder=Maßnahmen zu dieser Bestellung
 NoArticleOfTypeProduct=Keine Artikel vom Typ 'Produkt' und deshalb keine Versandkostenposition
 OrderMode=Bestellweise
-AuthorRequest=Authorenrechte beantragen
+AuthorRequest=Authorenrechte anfordern
 UseCustomerContactAsOrderRecipientIfExist=Anschrift des Partnerkontakts statt Partneradresse für die Zustellung verwenden
 RunningOrders=Offene Bestellungen
 UserWithApproveOrderGrant=Benutzer mit Berechtigung zur 'Bestellfreigabe'
+PaymentOrderRef=Zahlung zur Bestellung %s
+CloneOrder=Bestellung duplizieren
+ConfirmCloneOrder=Möchten Sie die Bestellung <b>%s</b> wirklich duplizieren?
+DispatchSupplierOrder=Lieferantenbestellung %s erhalten
+##### Types de contacts #####
+TypeContact_commande_internal_SALESREPFOLL=Kundenauftrag-Nachverfolgung durch Vertreter
+TypeContact_commande_internal_SHIPPING=Versand-Nachverfolgung durch Vertreter
+TypeContact_commande_external_BILLING=Rechnungskontakt des Kunden
+TypeContact_commande_external_SHIPPING=Versandkontakt des Kunden
+TypeContact_commande_external_CUSTOMER=Bestellung-Nachverfolgung durch Kundenkontakt
+TypeContact_order_supplier_internal_SALESREPFOLL=Lieferantenbestellung-Nachverfolgung durch Vertreter
+TypeContact_order_supplier_internal_SHIPPING=Versand-Nachverfolgung durch Vertreter
+TypeContact_order_supplier_external_BILLING=Kontakt für Lieferantenrechnungen
+TypeContact_order_supplier_external_SHIPPING=Kontakt für Lieferantenversand
+TypeContact_order_supplier_external_CUSTOMER=Lieferantenkontakt für Bestellverfolgung
+
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Konstante COMMANDE_SUPPLIER_ADDON nicht definiert
 Error_COMMANDE_ADDON_NotDefined=Konstante COMMANDE_ADDON nicht definiert
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Fehler beim Laden der Moduldatei '%s'
 Error_FailedToLoad_COMMANDE_ADDON_File=Fehler beim Laden der Moduldatei '%s'
+
+# Sources
 OrderSource0=Angebot
 OrderSource1=Internet
 OrderSource2=E-Mail-Kampagne
@@ -117,29 +137,16 @@ OrderSource5=Vertrieb
 OrderSource6=Andere
 QtyOrdered=Bestellmenge
 AddDeliveryCostLine=Fügen Sie eine Versandkostenzeile zur Erfassung des Bestellgewichts ein
-PDFEinsteinDescription=Eine vollständige Bestellvorlage (Logo, ...)
 
-OrderLine=Bestellposition
-PaymentOrderRef=Zahlung zu Bestellung %s
-CloneOrder=Duplizieren
-ConfirmCloneOrder=Möchten Sie die Bestellung <b>%s</b> wirklich duplizieren?
-
-OrderToProcess=Zu bearbeitende Bestellung
-TypeContact_commande_internal_SALESREPFOLL=Kundenauftrags-Nachverfolgung durch Vertreter
-TypeContact_commande_internal_SHIPPING=Versand-Nachverfolgung durch Vertreter
-TypeContact_commande_external_BILLING=Rechnungskontakt des Kunden
-TypeContact_commande_external_SHIPPING=Versandkontakt des Kunden
-TypeContact_commande_external_CUSTOMER=Bestellungs-Nachverfolgung durch Kundenkontakt
-TypeContact_order_supplier_internal_SALESREPFOLL=Lieferantenbestellungs-Nachverfolgung durch Vertreter
-TypeContact_order_supplier_internal_SHIPPING=Versand-Nachverfolgung durch Vertreter
-TypeContact_order_supplier_external_BILLING=Kontakt für Lieferantenrechnungen
-TypeContact_order_supplier_external_SHIPPING=Kontakt für Lieferantenversand
-TypeContact_order_supplier_external_CUSTOMER=Lieferantenkontakt für Bestellverfolgung
+# Documents models
+PDFEinsteinDescription=Eine vollständige Bestellvorlage (Logo, uwm.)
 PDFEdisonDescription=Eine einfache Bestellungsvorlage
-PDFQuevedoDescription=Eine vollständige Bestellungsvorlage mit spanischem...
-
-DispatchSupplierOrder=Lieferantenbestellung %s erhalten
-
+# Orders modes
+OrderByMail=Mail
+OrderByFax=Fax
+OrderByEMail=E-Mail
+OrderByWWW=Online
+OrderByPhone=Telefon
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
 // Reference language: en_US -> de_DE
@@ -154,3 +161,11 @@ OrderByEMail=EMail
 OrderByWWW=Online
 OrderByPhone=Telefon
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:48).
+
+
+// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
+// Reference language: en_US -> de_DE
+OrderLine=Bestellen Sie Online
+OrderToProcess=Zur Bearbeitung
+StatusOrderSent=Der Versand in Prozess
+// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:04).

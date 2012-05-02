@@ -4,9 +4,8 @@
  * Generation date 2010-11-12 10:23:11
  */
 
-
-
 CHARSET=UTF-8
+
 FTPClientSetup=FTP-Verbindungseinstellungen
 NewFTPClient=Neue FTP-Verbindung
 FTPArea=FTP-Übersicht

@@ -24,10 +24,19 @@ ToOfferALinkForOnlinePaymentOnOrder=URL um Ihren Kunden eine %s Online-Bezahlsei
 ToOfferALinkForOnlinePaymentOnInvoice=URL um Ihren Kunden eine %s Online-Bezahlseite für Rechnungen anzubieten
 ToOfferALinkForOnlinePaymentOnContractLine=URL um Ihren Kunden eine %s Online-Bezahlseite für Vertragspositionen anzubieten
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL um Ihren Kunden eine %s Online-Bezahlseite für frei wählbare Beträge anzubieten
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL um Ihren Mitgliedern eine %s Online-Bezahlseite für Mitgliedsbeiträge
 YouCanAddTagOnUrl=Sie können auch den URL-Parameter <b>&tag=<i>value</i></b> an eine beliebige dieser URLs anhängen (erforderlich nur bei der freien Zahlung) um einen eigenen Zahlungskommentar hinzuzufügen.
 SetupPayBoxToHavePaymentCreatedAutomatically=Richten Sie PayBox mit der URL <b>%s</b> ein, um nach Freigabe durch PayBox automatisch eine Zahlung anzulegen.
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL um Ihren Kunden eine %s Online-Bezahlseite für Abonnements anzubieten
-
+YourPaymentHasBeenRecorded=Hiermit Bestätigen wir die Zahlung ausgeführt wurde. Vielen Dank.
+YourPaymentHasNotBeenRecorded=Die Zahlung wurde abgebrochen und nicht ausgeführt. Vielen Dank.
+AccountParameter=Konto Parameter
+UsageParameter=Einsatzparameter
+InformationToFindParameters=Hilfe für das Finden der %s Kontoinformationen
+PAYBOX_CGI_URL_V2=Url für das Paybox Zahlungsmodul "CGI Modul" 
+VendorName=Name des Anbieters
+CSSUrlForPaymentForm=CSS-Datei für das Zahlungsmodul
+MessageOK=Nachrichtenseite für bestätigte Zahlung
+MessageKO=Nachrichtenseite für abgebrochene Zahlung
 
 // START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
 // Reference language: en_US -> de_DE

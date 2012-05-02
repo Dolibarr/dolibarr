@@ -20,13 +20,12 @@ ECMNbOfDocsSmall=Anz. Dok.
 ECMSection=Verzeichnis
 ECMSectionManual=Manuelles Verzeichnis
 ECMSectionAuto=Automatisches Verzeichnis
-ECMSectionsManual=Manuelle Verzeichnisse
-ECMSectionsAuto=Automatische Verzeichnisse
+ECMSectionsManual=Manuelle Hierarchie
+ECMSectionsAuto=Automatische Hierarchie
 ECMSections=Verzeichnis
 ECMRoot=Stammordner
 ECMNewSection=Neues Verzeichnis
 ECMAddSection=Verzeichnis hinzufügen
-ECMNewSection=Neues Verzeichnis
 ECMNewDocument=Neues Dokument
 ECMCreationDate=Erstellungsdatum
 ECMNbOfFilesInDir=Anzahl der Dateien im Verzeichnis
@@ -35,7 +34,7 @@ ECMNbOfFilesInSubDir=Anzahl der Dateien im Unterverzeichnis
 ECMCreationUser=Author
 ECMArea=ECM-Übersicht
 ECMAreaDesc=Das ECM (Electronic Content Management)-System erlaubt Ihnen das Speichern, Teilen und rasche Auffinden von Dokumenten.
-ECMAreaDesc2=* Automatische Verzeichnisse werden automatisch befüllt, wenn Sie Dokumente von der Karte eines Elements erstellen. <br> * Manuelle Verzeichnisse können Sie dazu nutzen, nicht mit anderen Elementen verbundene Dokumente zu speichern.
+ECMAreaDesc2=* In den automatischen Verzeichnissen werden die vom System erzeugeten Dokumente abgelegt. <br> * Die manuellen Verzeichnisse können Sie selbst verwalten und zusätzliche nicht direkt zuordenbare Dokument hinterlegen.
 ECMSectionWasRemoved=Das Verzeichnis <b>%s</b> wurde gelöscht.
 ECMDocumentsSection=Dokument des Verzeichnisses
 ECMSearchByKeywords=Suche nach Stichwörtern
@@ -57,3 +56,9 @@ ECMDirectoryForFiles=Relatives Verzeichnis für Dateien
 CannotRemoveDirectoryContainsFiles=Entfernen des Verzeichnisses nicht möglich, da es noch Dateien enthält
 ECMFileManager=Dateiverwaltung
 ECMSelectASection=Wählen Sie ein Verzeichnis aus der Baumansicht auf der linken Seite...
+
+
+// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
+// Reference language: en_US -> de_DE
+ECMDocsBySocialContributions=Documents to Sozialabgaben verbunden
+// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:27:58).
