@@ -36,6 +36,7 @@ ECMSearchByEntity=Cercar per objecte
 ECMSectionOfDocuments=Carpetes de documents
 ECMTypeManual=Manual
 ECMTypeAuto=Automàtic
+ECMDocsBySocialContributions=Documents asociats a càrreges socials
 ECMDocsByThirdParties=Documents associats a tercers
 ECMDocsByProposals=Documents associats a pressupostos
 ECMDocsByOrders=Documents associats a comandes
