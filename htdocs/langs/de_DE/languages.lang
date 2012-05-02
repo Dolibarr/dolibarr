@@ -30,14 +30,15 @@ Language_nl_BE=Niederländisch (Belgien)
 Language_nl_NL=Niederländisch (Niederlande)
 Language_pl_PL=Polnisch
 Language_pt_BR=Portugiesisch (Brasilien)
-Language_pt_PT=Portugiesisch
+Language_pt_PT=Portugiesisch (Portugal)
 Language_ro_RO=Rumänisch
 Language_ru_RU=Russisch
 Language_tr_TR=Türkisch
 Language_sl_SI=Slowenisch
+Language_sv_SV=Schwedisch
+Language_sv_SE=Schwedisch
 Language_zh_CN=Chinesisch
 Language_is_IS=Isländisch
-Language_sv_SV=Schwedisch
 
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
@@ -54,3 +55,10 @@ Language_hu_HU=Ungarisch
 Language_ru_UA=Russisch (Ukraine)
 Language_sv_SE=Schwedisch
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 16:05:21).
+
+
+// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
+// Reference language: en_US -> de_DE
+Language_et_EE=Estnisch
+Language_he_IL=Hebräisch
+// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:39).

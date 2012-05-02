@@ -1,11 +1,11 @@
 /*
  * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-12 21:09:12
+ * Manually translated by modula71.de
+ * Generation date 2011-04-02
  */
 
-
 CHARSET=UTF-8
+
 ExportsArea=Exportübersicht
 ImportArea=Importübersicht
 NewExport=Neuer Export
@@ -13,20 +13,33 @@ NewImport=Neuer Import
 ExportableDatas=Exportfähige Datensätze
 ImportableDatas=Importfähige Datensätze
 SelectExportDataSet=Wählen Sie den zu exportierenden Datensatz...
+SelectImportDataSet=Wählen Sie den zu importierenden Datensatz...
 SelectExportFields=Wählen Sie die zu exportierenden Felder oder ein vordefiniertes Exportprofil
+SelectImportFields=Wählen Sie die zu importierenden Felder oder ein vordefiniertes Importprofil
+NotImportedFields=Quelldateifelder nicht importiert
 SaveExportModel=Speichern Sie diese Exportprofil für eine spätere Verwendung...
+SaveImportModel=Speichern Sie diese Importprofil für eine spätere Verwendung...
 ExportModelName=Name des Exportprofils
 ExportModelSaved=Exportprofil unter dem Namen <b>%s</b> gespeichert
 ExportableFields=Exportfähige Felder
 ExportedFields=Exportierte Felder
+ImportModelName=Name des Importprofils
+ImportModelSaved=Importprofil unter dem Namen <b>%s</b> gespeichert
+ImportableFields=Importfähige Felder
+ImportedFields=Importierte Felder
 DatasetToExport=Zu exportierender Datensatz
+DatasetToImport=Zu importierender Datensatz
+NoDiscardedFields=Keine Felder der Quelldatei verworfen
 Dataset=Datensatz
 ChooseFieldsOrdersAndTitle=Wählen Sie die Reihenfolge und Bezeichnung der Felder...
 FieldsOrder=Feldreihenfolge
 FieldsTitle=Feldtitel
+FieldOrder=Feldreihenfolge
+FieldTitle=Feldbezeichnung
 ChooseExportFormat=Wählen Sie das Exportformat
 NowClickToGenerateToBuildExportFile=Wählen Sie das Exportformat aus dem Auswahlfeld und klicken Sie auf "Erstellen" um die Datei zu generieren... 
 AvailableFormats=Verfügbare Formate
+LibraryShort=Bibliothek
 LibraryUsed=Verwendete Bibliothek
 LibraryVersion=Bibliotheksversion
 Step=Schritt
@@ -40,16 +53,6 @@ FormatedExportDesc3=Wenn die Daten für den Export ausgewählt haben, können Si
 Sheet=Blatt
 NoImportableData=Keine importfähigen Daten (kein Modul mit Erlaubnis für Datenimport)
 FileSuccessfullyBuilt=Exportdatei erfolgreich erzeugt
-
-SelectImportDataSet=Wählen Sie den zu importierenden Datensatz...
-SelectImportFields=Wählen Sie die zu importierenden Felder oder ein vordefiniertes Importprofil
-SaveImportModel=Speichern Sie diese Importprofil für eine spätere Verwendung...
-ImportModelName=Name des Importprofils
-ImportModelSaved=Importprofil unter dem Namen <b>%s</b> gespeichert
-ImportableFields=Importfähige Felder
-ImportedFields=Importierte Felder
-DatasetToImport=Zu importierender Datensatz
-LibraryShort=Bibliothek
 SQLUsedForExport=SQL-Abfrage für Erstellung der Exportdatei genutzt
 LineId=ID der Zeile
 LineDescription=Beschreibung der Zeile
@@ -63,17 +66,12 @@ TypeOfLineServiceOrProduct=Art der Zeile (0=Produkt, 1=Service)
 FileWithDataToImport=Datei mit zu importierenden Daten
 FileToImport=Quelldatei für Import
 FileMustHaveOneOfFollowingFormat=Die Importdatei muss in einem der folgenden Formate vorliegen 
-ChooseFileToImport=Wählen Sie zu importierende Datei und klicken Sie anschließend auf das %s Symbol...
-FieldsInSourceFile=Felder in der Quelldatei
-FieldsInTargetDatabase=Zielfelder in der Systemdatenbank (* erforderlich)
-
-NotImportedFields=Quelldateifelder nicht importiert
-NoDiscardedFields=Keine Felder der Quelldatei verworfen
-FieldOrder=Feldreihenfolge
-FieldTitle=Feldbezeichnung
 DownloadEmptyExample=Leere Beispiel-Quelldatei herunterladen
 ChooseFormatOfFileToImport=Wählen Sie das Format der Importdatei durch einen Klick auf das %s Symbol...
+ChooseFileToImport=Wählen Sie zu importierende Datei und klicken Sie anschließend auf das %s Symbol...
 SourceFileFormat=Quelldateiformat
+FieldsInSourceFile=Felder in der Quelldatei
+FieldsInTargetDatabase=Zielfelder in der Systemdatenbank (* erforderlich)
 Field=Feld
 NoFields=Keine Felder
 MoveField=Bewege Feld Spaltennummer %s
@@ -104,6 +102,7 @@ TooMuchErrors=Es gibt noch <b>%s</b> weitere, fehlerhafte Zeilen. Die Ausgabe wu
 TooMuchWarnings=Es gibt noch <b>%s</b> weitere Zeilen mit Warnungen. Die Ausgabe wurde beschränkt.
 EmptyLine=Leerzeile (verworfen)
 CorrectErrorBeforeRunningImport=Beheben Sie zuerst alle Fehler bevor Sie den endgültigen Import starten.
+FileWasImported=Datei wurde mit der Nummer <b>%s</b> importiert.
 YouCanUseImportIdToFindRecord=Sie können alle importierten Einträge in Ihrer Datenbank finden, indem Sie nach dem Feld <b>import_key='%s'</b> filtern.
 NbOfLinesOK=Anzahl der Zeilen ohne Fehler und Warnungen: <b>%s</b>.
 NbOfLinesImported=Anzahl der erfolgreich importierten Zeilen: <b>%s</b>.
@@ -116,6 +115,7 @@ SourceRequired=Datenwert erforderlich
 SourceExample=Beispiel möglicher Datenwerte
 CSVFormatDesc=<b>Comma Separated Value</b> Format (.csv). <br> Dies ist ein Textdatei-Format, bei dem einzelne Spalten durch ein Trennzeichen [ %s ] getrennt sind. Wird innerhalb eines Feldes das Trennzeichen gefunden, wird der Wert des entsprechenden Feldes über ein Rundungszeichen [ %s ] gerundet. Das Escape-Zeichen für die Rundung ist [ %s ].
 
+InterventionCardsAndInterventionLines=Service-Karten und Servicetext
 // START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
 // Reference language: en_US -> de_DE
 FileWasImported=Datei wurde mit Nummer <b>%s</b> importiert.

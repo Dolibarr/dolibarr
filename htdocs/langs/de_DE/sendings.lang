@@ -74,3 +74,10 @@ LinkToTrackYourPackage=Link zu Ihrer Sendung nachverfolgen
 ShipmentCreationIsDoneFromOrder=Für den Augenblick ist die Schaffung einer neuen Sendung von der Bestellung Karte getan.
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstante EXPEDITION_ADDON_NUMBER nicht definiert
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 16:06:20).
+
+
+// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
+// Reference language: en_US -> de_DE
+StatusSendingProcessed=Verarbeitete
+StatusSendingProcessedShort=Verarbeitete
+// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:53).

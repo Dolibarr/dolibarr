@@ -26,14 +26,20 @@ DonationStatusPaid=Spende bezahlt
 DonationStatusPromiseNotValidatedShort=Entwurf
 DonationStatusPromiseValidatedShort=Freigegeben
 DonationStatusPaidShort=Bezahlt
-ValidPromise=Zusage freigeben
+ValidPromess=Zusage freigeben
 BuildDonationReceipt=Erzeuge Spendenbeleg
 DonationsModels=Spendenvorlagen
-Donations=Spenden
-ValidPromess=Zusage freigeben
+LastModifiedDonations=Letzten %s geänderten Spenden
+SearchADonation=Spende suchen
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
 // Reference language: en_US -> de_DE
 LastModifiedDonations=Zuletzt geändert %s Spenden
 SearchADonation=Suchen Sie eine Spende
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 16:05:57).
+
+
+// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
+// Reference language: en_US -> de_DE
+Donations=Spenden
+// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:46).
