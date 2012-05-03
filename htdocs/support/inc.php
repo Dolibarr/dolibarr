@@ -24,7 +24,7 @@
  *		\version    $Id: inc.php,v 1.32 2011/08/07 13:10:26 eldy Exp $
  */
 
-define('DOL_VERSION','3.1.1');	// Also defined in htdocs/master.inc.php
+define('DOL_VERSION','3.1.2');	// Also defined in htdocs/master.inc.php
 
 require_once('../core/class/translate.class.php');
 require_once('../lib/functions.lib.php');
