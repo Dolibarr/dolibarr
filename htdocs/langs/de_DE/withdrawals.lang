@@ -24,6 +24,7 @@ RequestStandingOrderTreated=Antrag auf Dauerauftrag behandelt
 CustomersStandingOrders=Daueraufträge (Kunden)
 CustomerStandingOrder=Dauerauftrag (Kunde)
 NbOfInvoiceToWithdraw=Nr. der abzubuchenden Rechnung
+NbOfInvoiceToWithdrawWithInfo=Anzahl der Rechnungen mit Abbuchungsanfragen für Kunden mit einem hinterlegten Bankkonto
 InvoiceWaitingWithdraw=Rechnung warten auf Abbuchung
 AmountToWithdraw=Abbuchungsbetrag
 WithdrawsRefused=Abbuchungen abgelehnt
@@ -32,21 +33,19 @@ ResponsibleUser=Verantwortlicher Benutzer
 WithdrawalsSetup=Abbuchungseinstellungen
 WithdrawStatistics=Abbuchungsstatistik
 WithdrawRejectStatistics=Statistik abgelehnter Abbuchungen
-LastWithdrawalReceipt=%s neuste Abbuchungsbelege
+LastWithdrawalReceipt=%s neueste Abbuchungsbelege
 MakeWithdrawRequest=Abbuchungsantrag stellen
 ThirdPartyBankCode=BLZ Partner
 ThirdPartyDeskCode=Schalter-Code Partner
 NoInvoiceCouldBeWithdrawed=Keine Rechnung erfolgreich abgebucht. Überprüfen Sie die Kontonummern der den Rechnungen zugewiesenen Partnern.
 ClassCredited=Als eingegangen markieren
 ClassCreditedConfirm=Möchten Sie diesen Abbuchungsbeleg wirklich als auf Ihrem Konto eingegangen markieren?
-
-StandingOrderToProcess=Zu bearbeiten
-StandingOrderProcessed=Bearbeitet
 TransData=Überweisungsdatum
 TransMetod=Überweisungsart
 Send=Senden
 Lines=Zeilen
 StandingOrderReject=Ablehnung ausstellen
+InvoiceRefused=Rechnung abgelehnt
 WithdrawalRefused=Abbuchungen abgelehnt
 WithdrawalRefusedConfirm=Möchten Sie wirklich eine Abbuchungsablehnung zu diesem Partner erstellen?
 RefusedData=Ablehnungsdatum
@@ -56,14 +55,15 @@ NoInvoiceRefused=Ablehnung nicht in Rechnung stellen
 InvoiceRefused=Ablehnung in Rechnung stellen
 Status=Status
 StatusUnknown=Unbekannt
-StatusWaiting=Wartestellung
+StatusWaiting=Wartend
+StatusTrans=Übertragen
 StatusCredited=Eingelöst
 StatusRefused=Abgelehnt
 StatusMotif0=Nicht spezifiziert
 StatusMotif1=Unzureichende Deckung
 StatusMotif2=Abbuchung angefochten
 StatusMotif3=Kein Abbuchungsauftrag
-StatusMotif4=Ablehnung durch Kontoinhaber
+StatusMotif4=Kundenanfrage
 StatusMotif5=Fehlerhafte Kontodaten
 StatusMotif6=Leeres Konto
 StatusMotif7=Gerichtsbescheid
@@ -71,12 +71,31 @@ StatusMotif8=Andere Gründe
 CreateAll=Alle abbuchen
 CreateGuichet=Nur Büro
 CreateBanque=Nur Bank
-OrderWaiting=Wartestellung
+OrderWaiting=Wartend
 NotifyTransmision=Abbuchungsüberweisung
 NotifyEmision=Abbuchungsemission
 NotifyCredit=Abbuchungsgutschrift
 NumeroNationalEmetter=Nat. Überweisernummer
+PleaseSelectCustomerBankBANToWithdraw=Wählen Sie das Kundenkonto für die Abbuchung
+WithBankUsingRIB=Bankkonten mit RIB Nutzung
+WithBankUsingBANBIC=Bankkonten mit IBAN/BIC/SWIFT Nutzung
+BankToReceiveWithdraw=Bankkonto für Abbuchungen
+CreditDate=Am
+WithdrawalFileNotCapable=Abbuchungsformular für Ihr Land konnte nicht erstellt werden.
+ShowWithdraw=Zeige Abbuchung
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Wenn eine Rechnung mindestens eine noch zu bearbeitende Verbuchung vorweist, kann diese nicht als bezahlt markiert werden.
+DoStandingOrdersBeforePayments=Dies erlaubt Ihnen, einen Dauerauftrag anzulegen.
 
+### Notifications 
+InfoCreditSubject=Zahlung des Dauerauftrags %s 
+InfoCreditMessage=Der Dauerauftrag %s wurde von der Bank gebucht<br>Zahlungsdaten: %s
+InfoTransSubject=Übertragung des Dauerauftrags %s 
+InfoTransMessage=Der Dauerauftrag %s wurde von %s %s übertragen.<br><br>
+InfoTransData=Betrag: %s<br>Verwendungszweck: %s<br>Datum: %s
+InfoFoot=Dies ist eine automatisierte Nachricht von Dolibarr
+InfoRejectSubject=Dauerauftrag abgelehnt
+InfoRejectMessage=Hallo,<br><br>der Dauerauftrag zur Rechnung %s der Firma %s, über den Betrag von %s wurde abgelehnt.<br><br>--<br>%$
+ModeWarning=Echtzeit-Modus wurde nicht aktiviert, wir stoppen nach der Simulation.
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
 // Reference language: en_US -> de_DE
@@ -101,3 +120,10 @@ InfoRejectSubject=Dauerauftrag abgelehnt
 InfoRejectMessage=Hallo, <br><br> standig die Reihenfolge der Rechnung %s im Zusammenhang mit den Unternehmen %s, mit einem Betrag von %s wurde von der Bank abgelehnt worden. <br><br> - <br> % $
 ModeWarning=Option für die Echtzeit-Modus nicht eingestellt wurde, haben wir nach dieser Simulation zu stoppen
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 16:04:01).
+
+
+// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
+// Reference language: en_US -> de_DE
+StandingOrderToProcess=Zur Verarbeitung
+StandingOrderProcessed=Verarbeitete
+// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:09).

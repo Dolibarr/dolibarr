@@ -20,10 +20,11 @@ FeesKilometersOrAmout=Kilometergeld oder Spesenbetrag
 DeleteTrip=Reise löschen
 ConfirmDeleteTrip=Möchten Sie diese Reise wirklich löschen?
 TF_OTHER=Andere
-TF_LUNCH=Mittagessen
+TF_LUNCH=Essen
 TF_TRIP=Reise
 ListTripsAndExpenses=Liste der Reisen und Spesen
 TripsAndExpensesStatistics=Reise- und Spesenstatistiken
+ExpensesArea=Spesenübersicht
 
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).

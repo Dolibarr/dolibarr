@@ -24,8 +24,9 @@ ValidateProp=Angebot freigeben
 AddProp=Angebot hinzufügen
 ConfirmDeleteProp=Möchten Sie dieses Angebot wirklich löschen?
 ConfirmValidateProp=Möchten Sie dieses Angebots wirklich freigeben?
-LastPropals=%s zuletzt bearbeitete Angebote
-LastClosedProposals=%s zuletzt abgeschlossene Angebote
+LastPropals=Die letzten %s bearbeiteten Angebote
+LastClosedProposals=Die letzten %s abgeschlossenen Angebote
+LastModifiedProposals=Die letzen %s bearbeiteten Angebote
 AllPropals=Alle Angebote
 LastProposals=Letzte Angebote
 SearchAProposal=Angebot suchen
@@ -34,14 +35,14 @@ NumberOfProposalsByMonth=Anzahl pro Monat
 AmountOfProposalsByMonthHT=Betrag pro Monat (nach Steuern)
 NbOfProposals=Zahl der Angebote
 ShowPropal=Zeige Angebot
-PropalsDraft=Entwurf
+PropalsDraft=Entwürfe
 PropalsOpened=Offen
 PropalsNotBilled=Geschlossen, nicht verrechnet
-PropalStatusDraft=Entwurf (freizugeben)
+PropalStatusDraft=Entwurf (ist freizugeben)
 PropalStatusValidated=Freigegeben (Angebot ist offen)
 PropalStatusOpened=Freigegeben (Angebot ist offen)
 PropalStatusClosed=Geschlossen
-PropalStatusSigned=Unterzeichnet (auf Rechnung)
+PropalStatusSigned=Unterzeichnet (ist zu verrechnen)
 PropalStatusNotSigned=Nicht unterzeichnet (geschlossen)
 PropalStatusBilled=Verrechnet
 PropalStatusDraftShort=Entwurf
@@ -56,43 +57,52 @@ PropalsToBill=Unterzeichnete Angebote zur Verrechnung
 ListOfProposals=Liste der Angebote
 ActionsOnPropal=Maßnahmen zum Angebot
 NoOpenedPropals=Keine offenen Angebote
-NoOtherOpenedPropals=Keine offenen Angebote Anderer
-RefProposal=Angebots Nr.
+NoOtherOpenedPropals=Keine offene Angebote Dritter
+RefProposal=Angebots-Nr.
 SendPropalByMail=Angebot per E-Mail senden
-FileNotUploaded=Datei nicht hochgeladen
-FileUploaded=Datei erfolgreich hochgeladen
+FileNotUploaded=Datei wurde nicht hochgeladen
+FileUploaded=Datei wurde erfolgreich hochgeladen
 AssociatedDocuments=Dokumente mit Bezug zum Angebot:
 ErrorCantOpenDir=Verzeichnis kann nicht geöffnet werden
-DateEndPropal=Ablauf der Bindefrist
+DatePropal=Angebotsdatum
+DateEndPropal=Gültig bis
 DateEndPropalShort=Ablaufdatum
-ValidityDuration=Bindefrist
-CloseAs=Schließen mit dem Status
+ValidityDuration=Gültigkeitsdauer
+CloseAs=Schließen mit Status
 ClassifyBilled=Verrechnet
 BuildBill=Erzeuge Rechnung
-RelatedBill=Verknüpte Rechnung
-RelatedBills=Verknüpfte Rechnungen
 ErrorPropalNotFound=Angebot %s nicht gefunden
-Estimate=Geschätzt :
+Estimate=Geschätzt:
 EstimateShort=Schätzung
 OtherPropals=Andere Angebote
-CopyPropalFrom=Erstelle neues Angebot durch Duplikation
-CreateEmptyPropal=Erstelle leeres Angebot oder aus der Produkt-/Dienstleistungsliste
-DefaultProposalDurationValidity=Standardmäßige Bindefrist (Tage)
+CopyPropalFrom=Erstelle neues Angebot durch Kopieren eines vorliegenden Angebots
+CreateEmptyPropal=Erstelle leeres Angebot oder aus der Liste der Produkte/Dienstleistungen
+DefaultProposalDurationValidity=Standardmäßige Gültigkeitsdatuer (Tage)
 UseCustomerContactAsPropalRecipientIfExist=Falls vorhanden die Adresse des Partnerkontakts statt der Partneradresse verwenden
 ClonePropal=Angebot duplizieren
 ConfirmClonePropal=Möchten Sie das Angebot <b>%s</b> wirklich duplizieren?
-DocModelAzurDescription=Eine vollständige Angebotsvorlage (Logo, ...)
-DocModelJauneDescription=Angebotsvorlage Jaune
-ProposalShort=Angebot
-LastModifiedProposals=%s zuletzt bearbeitete Angebote
-DatePropal=Datum des Angebots
 ProposalsAndProposalsLines=Angebote und Positionen
 ProposalLine=Angebotsposition
-TypeContact_propal_internal_SALESREPFOLL=Angebotsnachverfolgung durch Vertreter
-TypeContact_propal_external_BILLING=Kontakt für Kundenrechnungen
-TypeContact_propal_external_CUSTOMER=Angebots-Nachverfolgung durch Partnerkontakt
-DocModelRoigDescription=Eine Angebotsvorlage mit spanischem...
+AvailabilityPeriod=Verfügbarkeitszeitraum
+SetAvailability=Verfügbarkeitszeitraum definieren
+AfterOrder=nach Bestellung
 
+##### Availability #####
+AvailabilityTypeAV_NOW=Sofort
+AvailabilityTypeAV_1W=7 Tage
+AvailabilityTypeAV_2W=14 Tage
+AvailabilityTypeAV_3W=3 Wochen
+AvailabilityTypeAV_1M=1 Monat
+
+##### Types de contacts #####
+TypeContact_propal_internal_SALESREPFOLL=Vertreter für Angebot
+TypeContact_propal_external_BILLING=Kontakt für Kundenrechnungen
+TypeContact_propal_external_CUSTOMER=Partnerkontakt für Angebot
+
+# Document models
+DocModelAzurDescription=Eine vollständige Angebotsvorlage (Logo, uwm.)
+DocModelJauneDescription=Angebotsvorlage <Jaune>
+ProspectionArea=Angebot
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
 // Reference language: en_US -> de_DE
@@ -107,3 +117,9 @@ AvailabilityTypeAV_2W=2 Wochen
 AvailabilityTypeAV_3W=3 Wochen
 AvailabilityTypeAV_1M=1 Monat
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 16:05:59).
+
+
+// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
+// Reference language: en_US -> de_DE
+ProposalShort=Vorschlag
+// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:46).

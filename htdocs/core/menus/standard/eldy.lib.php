@@ -557,8 +557,8 @@ function print_end_menu_entry()
  */
 function print_end_menu_array()
 {
-	print '</div>';
     print '</ul>';
+    print '</div>';
 	print "\n";
 }
 

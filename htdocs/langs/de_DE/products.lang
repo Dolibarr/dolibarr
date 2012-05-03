@@ -112,66 +112,52 @@ CategoryFilter=Kategoriefilter
 ProductToAddSearch=Suche hinzuzufügendes Produkt
 AddDel=Hinzufügen/Löschen
 Quantity=Stückzahl
-NoMatchFound=Keine Treffer gefunden
-ProductAssociationList=Liste der verknüpften Produkte/Services: Name des Produkts/des Service (Stückzahl)
+NoMatchFound=Kein Eintrag gefunden
+ProductAssociationList=Liste der verknüpften Produkte/Leistungen: Name des Produkts/der Leistung (Stückzahl)
 ErrorAssociationIsFatherOfThis=Eines der ausgewählten Produkte ist Elternteil des aktuellen Produkts
-DeleteProduct=Produkt/Service löschen
-ConfirmDeleteProduct=Möchten Sie dieses Produkt/Service wirklich löschen?
-ProductDeleted=Produkt/Service "%s" aus der Datenbank gelöscht.
-DeletePicture=Bild löschen
+DeleteProduct=Produkt/Leistung löschen
+ConfirmDeleteProduct=Möchten Sie dieses Produkt/Leistung wirklich löschen?
+ProductDeleted=Produkt/Leistung "%s" aus der Datenbank gelöscht.
+DeletePicture=Ein Bild löschen
 ConfirmDeletePicture=Möchten Sie dieses Bild wirklich löschen?
-ExportDataset_produit_1=Produkte und Services
+ExportDataset_produit_1=Produkte
+ExportDataset_service_1=Leistungen
+ImportDataset_produit_1=Produkte
+ImportDataset_service_1=Leistungen
 DeleteProductLine=Produktlinie löschen
 ConfirmDeleteProductLine=Möchten Sie diese Produktlinie wirklich löschen?
-NoProductMatching=Kein Produkt/Service entspricht Ihren Suchkriterien
-MatchingProducts=Passende Produkte/Services
+NoProductMatching=Kein Produkt/Leistung entspricht Ihren Suchkriterien
+MatchingProducts=Passende Produkte/Leistungen
 NoStockForThisProduct=Kein Warenbestand für dieses Produkt
 NoStock=Kein Warenbestand
-Restock=Bestandserinnerung
-ProductSpecial=Special
+Restock=Lager auffüllen
+ProductSpecial=Spezial
 QtyMin=Mindestabnahme
-PriceQty=Preis für Mindestabnahme
-PriceQtyMin=Gesamtpreis Mindestabnahme
+PriceQty=Preis für diese Menge
+PriceQtyMin=Preis Mindestmenge
 NoPriceDefinedForThisSupplier=Einkaufskonditionen für diesen Hersteller noch nicht definiert
 NoSupplierPriceDefinedForThisProduct=Einkaufskonditionen für dieses Produkt noch nicht definiert
 RecordedProducts=Erfasste Produkte
-RecordedProductsAndServices=Erfasste Produkte/Services
+RecordedProductsAndServices=Erfasste Produkte/Leistungen
 GenerateThumb=Erzeuge Vorschaubild
 ProductCanvasAbility=Verwende spezielle "canvas" Add-Ons
-ServiceNb=Service #%s
-ListProductByPopularity=Liste der Produkte/Services nach Beliebtheit
-Finished=Eigenerzeugung
+ServiceNb=Leistung #%s
+ListProductServiceByPopularity=Liste der Produkte/Leistungen nach Beliebtheit
+ListProductByPopularity=Liste der Produkte nach Beliebtheit
+ListServiceByPopularity=Liste der Leistungen nach Beliebtheit
+Finished=Eigenproduktion
 RowMaterial=Rohmaterial
-
-ProductRef=Artikel Nr.
-ProductLabel=Produktbezeichnung
-MinPrice=Preisuntergrenze
-CantBeLessThanMinPrice=Der aktuelle Verkaufspreis unterschreitet die Preisuntergrenze dieses Produkts (%s ohne MwSt.)
-ExportDataset_service_1=Services
-CloneProduct=Produkt/Service duplizieren
+CloneProduct=Produkt/Leistung duplizieren
 ConfirmCloneProduct=Möchten Sie <b>%s</b> wirklich duplizieren?
-CloneContentProduct=Allgemeine Informationen des Produkts/Services duplizieren
+CloneContentProduct=Allgemeine Informationen des Produkts/Leistungen duplizieren
 ClonePricesProduct=Allgemeine Informationen und Preise duplizieren
-
-ProductAccountancyBuyCode=Kontierungsschlüssel (Einkauf)
-ProductAccountancySellCode=Kontierungsschlüssel (verkaufen)
-SellingPriceHT=Verkaufspreis (netto)
-SellingPriceTTC=Verkaufspreis (brutto)
-ListProductServiceByPopularity=Liste der Produkte/Services nach Beliebtheit
-ListServiceByPopularity=Liste der Services nach Beliebtheit
 ProductIsUsed=Produkt in Verwendung
-NewRefForClone=Artikel Nr. des neuen Produkts/Services
+NewRefForClone=Artikel-Nr. des neuen Produkts/Leistungen
 CustomerPrices=Kundenpreise
 SuppliersPrices=Lieferantenpreise
-
-Sell=Verkaufe
-Buy=Kaufe
-OnBuy=Gekaufte
-ProductStatusOnBuy=Verfügbar
-ProductStatusNotOnBuy=Veraltet
-ProductStatusOnBuyShort=Verfügbar
-ProductStatusNotOnBuyShort=Veraltet
-
+CustomCode=Interner Code
+CountryOrigin=Urspungsland
+HiddenIntoCombo=In ausgewählten Listen nicht anzeigen
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
 // Reference language: en_US -> de_DE
@@ -183,3 +169,23 @@ CustomCode=Customs Code
 CountryOrigin=Origin Land
 HiddenIntoCombo=Versteckt in Auswahllisten
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:56).
+
+
+// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
+// Reference language: en_US -> de_DE
+ProductRef=Product Ref.
+ProductLabel=Produkt-Label
+ProductAccountancyBuyCode=Buchhaltung Code (kaufen)
+ProductAccountancySellCode=Rechnungswesen-Code (zu verkaufen)
+Sell=Vertrieb
+Buy=Käufe
+OnBuy=Für Kauf
+ProductStatusOnBuy=Für Kauf
+ProductStatusNotOnBuy=Nicht zum Kauf
+ProductStatusOnBuyShort=Für Kauf
+ProductStatusNotOnBuyShort=Nicht zum Kauf
+SellingPriceHT=Verkaufspreis (ohne Steuern)
+SellingPriceTTC=Verkaufspreis (inkl. MwSt.)
+MinPrice=Minim. Verkaufspreis
+CantBeLessThanMinPrice=Der Verkaufspreis kann nicht niedriger sein als Minimum für dieses Produkt (%s ohne MwSt.) erlaubt. Diese Meldung kann auch angezeigt, wenn Sie einen Rabatt geben zu wichtig.
+// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:08).

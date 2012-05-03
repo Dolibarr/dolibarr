@@ -67,35 +67,30 @@ DateStartReal=Effektiver Beginn
 DateStartRealShort=Beginn eff.
 DateEndReal=Effektives Ende
 DateEndRealShort=Ende eff.
-NbOfServices=Anzahl der Services
-CloseService=Service schließen
-ServicesNomberShort= %s Service(s)
-RunningServices=Laufende Services
-BoardRunningServices=Abgelaufene, aktive Services
-ServiceStatus=Service-Status
+NbOfServices=Anzahl der Leistungen
+CloseService=Leistung schließen
+ServicesNomberShort= %s Leistung(en)
+RunningServices=Laufende Leistungen
+BoardRunningServices=Abgelaufene, aktive Leistungen
+ServiceStatus=Leistungs-Status
 DraftContracts=Vertragsentwürfe
-CloseRefusedBecauseOneServiceActive=Schließen nicht möglich, es existieren noch aktive Services
+CloseRefusedBecauseOneServiceActive=Schließen nicht möglich, es existieren noch aktive Leistungen
 CloseAllContracts=Alle Verträge schließen
+DeleteContractLine=Vertragsposition löschen
+ConfirmDeleteContractLine=Möchten Sie diese Vertragsposition wirklich löschen?
 MoveToAnotherContract=In einen anderen Vertrag verschieben
 ConfirmMoveToAnotherContract=Haben Sie einen neuen Vertrag für das Verschieben gewählt und möchten Sie diesen Vorgang jetzt durchführen.
-ConfirmMoveToAnotherContractQuestion=Bitte wählen Sie einen bestehenden Vertrag (desselben Partners) für die Verschiebung des Services:
+ConfirmMoveToAnotherContractQuestion=Bitte wählen Sie einen bestehenden Vertrag (desselben Partners) für die Verschiebung der Leistungen:
+PaymentRenewContractId=Erneuere Vertragsposition (Nummer %s)
+ExpiredSince=Abgelaufen seit
+RelatedContracts=Verknüpfte Verträge
+##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Vertragsunterzeichnung durch Vertreter
 TypeContact_contrat_internal_SALESREPFOLL=Vertragsnachverfolgung durch Vertreter
 TypeContact_contrat_external_BILLING=Rechnungskontakt des Kunden
 TypeContact_contrat_external_CUSTOMER=Nachverfolgung durch Kundenkontakt
 TypeContact_contrat_external_SALESREPSIGN=Vertragsunterzeichnung durch Kundenkontakt
-
-ServiceStatusNotLate=Läuft (nicht abgelaufen)
-ServiceStatusNotLateShort=Läuft
-ServiceStatusLateShort=Abgelaufen
-ListOfInactiveServices=Liste inaktiver Services
-ListOfExpiredServices=Liste abgelaufener Services
-ListOfClosedServices=Liste geschlossener Services
-DeleteContractLine=Lösche Vertragsposition
-ConfirmDeleteContractLine=Möchten Sie diese Vertragsposition wirklich löschen?
-PaymentRenewContractId=Erneuere Vertragsposition (Nummer %s)
-ExpiredSince=Abgelaufen seit
-RelatedContracts=Verknüpfte Verträge
+Error_CONTRACT_ADDON_NotDefined=Die Konstante CONTRACT_ADDON ist nicht definiert
 
 // START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
 // Reference language: en_US -> de_DE
@@ -107,3 +102,14 @@ Error_CONTRACT_ADDON_NotDefined=Constant CONTRACT_ADDON nicht definiert
 // Reference language: en_US -> de_DE
 NoExpiredServices=Keine abgelaufen aktiven Dienste
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:42).
+
+
+// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
+// Reference language: en_US -> de_DE
+ServiceStatusNotLate=Laufen, nicht abgelaufen
+ServiceStatusNotLateShort=Nicht abgelaufen
+ServiceStatusLateShort=Abgelaufen
+ListOfInactiveServices=Liste der nicht aktiven Dienste
+ListOfExpiredServices=Liste der aktiven Dienste abgelaufen
+ListOfClosedServices=Liste der geschlossenen Dienstleistungen
+// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:01).

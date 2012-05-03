@@ -148,6 +148,11 @@ $tmpval=$tmppart[1]+$tmppart[2]+$tmppart[3];
 if ($tmpval < 340) $colortextmain='FFFFFF';
 else $colortextmain='101010';
 
+$usecss3=true;
+if ($conf->browser->name == 'ie' && round($conf->browser->version,2) < 10) $usecss3=false;
+elseif ($conf->browser->name == 'iceweasel') $usecss3=false;
+elseif ($conf->browser->name == 'epiphany') $usecss3=false;
+
 print '/*'."\n";
 print 'colred='.$colred.' colgreen='.$colgreen.' colblue='.$colblue."\n";
 print 'isred='.$isred.' isgreen='.$isgreen.' isblue='.$isblue."\n";
@@ -155,12 +160,9 @@ print 'colorbacklineimpair1='.$colorbacklineimpair1."\n";
 print 'colorbacklineimpair2='.$colorbacklineimpair2."\n";
 print 'colorbacklinepair1='.$colorbacklinepair1."\n";
 print 'colorbacklinepair2='.$colorbacklinepair2."\n";
+print 'usecss3='.$usecss3."\n";
 print '*/'."\n";
 
-$usecss3=true;
-if ($conf->browser->name == 'ie' && round($conf->browser->version,2) < 10) $usecss3=false;
-elseif ($conf->browser->name == 'iceweasel') $usecss3=false;
-elseif ($conf->browser->name == 'epiphany') $usecss3=false;
 ?>
 
 /* ============================================================================== */
@@ -372,7 +374,9 @@ div#tmenu_tooltip {
 	background: rgb(<?php echo $colorback1 ?>);
 	/* background: #305582; *//* 2C68A3 */
 <?php
-    } ?>
+    }
+?>
+	margin-bottom: 10px;
 }
 
 div.tmenudiv {
@@ -494,24 +498,31 @@ div.tmenuleft
 div.tmenucenter
 {
 	padding-top: 2px;
-	padding-right: 5px;
+	padding-left: 0px;
+	padding-right: 0px;
     height: <?php print $heightmenu; ?>px;
+    width: 100%;
+}
+.mainmenuaspan
+{
+	padding-right: 4px;
 }
 
 
 div.mainmenu {
 	position : relative;
-	color: white;
 	background-repeat:no-repeat;
 	background-position:center top;
 	height: <?php echo ($heightmenu-19); ?>px;
 	margin-left: 0px;
+	min-width: 40px;
 }
 
 <?php if (empty($conf->browser->phone)) { ?>
 
 div.mainmenu.home{
 	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/home.png',1) ?>);
+	background-position-x: middle;
 }
 
 div.mainmenu.accountancy {
@@ -679,7 +690,10 @@ form#login {
 	text-shadow: 1px 1px 1px #FFF;
 }
 .login_table {
-	padding:12px;
+	padding-left:8px;
+	padding-right:8px;
+	padding-top:22px;
+	padding-bottom:18px;
 	width: 540px;
 	border: 1px solid #C0C0C0;
 	background-color: #E0E0E0;
@@ -688,7 +702,7 @@ form#login {
     -webkit-box-shadow: 4px 4px 4px #CCC;
     box-shadow: 4px 4px 4px #CCC;
 
-	border-radius: 12px;
+	border-radius: 8px;
 	border:solid 1px rgba(168,168,168,.4);
 	border-top:solid 1px f8f8f8;
 	background-color: #f8f8f8;
@@ -697,6 +711,9 @@ form#login {
 	background-image: -webkit-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
 	background-image: -ms-linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
 	background-image: linear-gradient(top, rgba(250,250,250,.6) 0%, rgba(192,192,192,.3) 100%);
+}
+table.login_table tr td table.none tr td {
+	padding: 2px;
 }
 #img_securitycode {
 	border: 1px solid #DDDDDD;
@@ -1361,7 +1378,7 @@ span.butAction, span.butActionDelete {
 #undertopmenu {
 	/*	background-image: url("<?php echo dol_buildpath($path.'/theme/eldy/img/gradient.gif',1) ?>"); */
 	background-repeat: repeat-x;
-	margin-top: 12px;
+	margin-top: 0px;
 }
 
 

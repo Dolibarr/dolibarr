@@ -164,8 +164,8 @@ function print_end_menu_entry_auguria()
  */
 function print_end_menu_array_auguria()
 {
-	print '</div>';
 	print '</ul>';
+    print '</div>';
 	print "\n";
 }
 

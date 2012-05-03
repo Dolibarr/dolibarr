@@ -23,7 +23,8 @@ AddSupplierPrice=Lieferantenpreis anlegen
 ChangeSupplierPrice=Lieferantenpreis ändern
 ErrorQtyTooLowForThisSupplier=Bestellmenge für diesen Lieferanten zu gering oder fehlender Lieferantenpreis für dieses Produkt
 ErrorSupplierCountryIsNotDefined=Zu diesem Lieferant ist kein Land definiert. Bitte korrigieren Sie dies zuerst.
-ProductHasAlreadyReferenceInThisSupplier=Für dieses Produkt existiert bereits ein Lieferantenpreis vom gewählten Anbieter
+ProductHasAlreadyReferenceInThisSupplier=Für dieses Produkt existiert bereits bei diesem  Lieferanten
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=Für dieses Produkt existiert bereits ein Lieferantenpreis vom gewählten Anbieter: %s
 NoRecordedSuppliers=Keine Lieferanten erfasst
 SupplierPayment=Lieferantenzahlung
 SuppliersArea=Lieferantenübersicht
@@ -31,21 +32,16 @@ RefSupplierShort=Kurzbezeichnung Lieferant
 ExportDataset_fournisseur_1=Lieferantenrechnungen und Positionen
 ExportDataset_fournisseur_2=Lieferantenrechnungen und Zahlungen
 ApproveThisOrder=Bestellung bestätigen
-ConfirmApproveThisOrder=Möchten Sie diese Bestellung wirklich bestätigen?
+ConfirmApproveThisOrder=Möchten Sie diese Bestellung wirklich bestätigen <b>%s</b> ?
 DenyingThisOrder=Bestellung ablehnen
-ConfirmDenyingThisOrder=Möchten Sie diese Bestellung wirklich ablehnen?
-ConfirmCancelThisOrder=Möchten Sie diese Bestellung wirklich verwerfen?
+ConfirmDenyingThisOrder=Möchten Sie diese Bestellung wirklich ablehnen <b>%s</b> ?
+ConfirmCancelThisOrder=Möchten Sie diese Bestellung wirklich verwerfen <b>%s</b> ?
 AddCustomerOrder=Erzeuge Kundenbestellung
-AddCustomerInvoice=Erzeuge Kundenrechnung
+AddCustomerInvoice=Kundenrechnung erstellen
 AddSupplierOrder=Erzeuge Lieferantenbestellung
-AddSupplierInvoice=Erzeuge Lieferantenrechnung
+AddSupplierInvoice=Lieferantenrechnung erstellen
 ListOfSupplierProductForSupplier=Produkt- und Preisliste für Anbieter <b>%s</b>
-
 NoneOrBatchFileNeverRan=Keiner oder Batch-Job <b>%s</b> wurde nie ausgeführt
-
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=Für dieses Produkt existiert bereits ein Lieferantenpreis vom gewählten Anbieter: %s
-
-
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
 // Reference language: en_US -> de_DE
