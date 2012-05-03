@@ -377,6 +377,13 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
                     $tmparray=explode(',',$tmps);
                     if (! in_array($objectid,$tmparray)) accessforbidden();
                 }
+                else
+                {
+                	$sql = "SELECT dbt.".$dbt_select;
+                	$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+                	$sql.= " WHERE dbt.".$dbt_select." = ".$objectid;
+                	$sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
+                }
             }
             else if (! in_array($feature,$nocheck))	// By default we check with link to third party
             {
