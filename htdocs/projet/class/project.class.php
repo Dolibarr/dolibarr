@@ -240,8 +240,12 @@ class Project extends CommonObject
         $sql = "SELECT rowid, ref, title, description, public, datec";
         $sql.= ", tms, dateo, datee, fk_soc, fk_user_creat, fk_statut, note_private, note_public";
         $sql.= " FROM " . MAIN_DB_PREFIX . "projet";
-        if ($ref) $sql.= " WHERE ref='" . $ref . "'";
-        else $sql.= " WHERE rowid=" . $id;
+        if ($ref)
+        {
+        	$sql.= " WHERE ref='".$ref."'";
+        	$sql.= " AND entity IN (".getEntity('project').")";
+        }
+        else $sql.= " WHERE rowid=".$id;
 
         dol_syslog(get_class($this)."::fetch sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -813,8 +817,6 @@ class Project extends CommonObject
      */
     function getProjectsAuthorizedForUser($user, $mode=0, $list=0, $socid=0)
     {
-        global $conf;
-
         $projects = array();
         $temp = array();
 
@@ -825,7 +827,7 @@ class Project extends CommonObject
             $sql.= ", " . MAIN_DB_PREFIX . "element_contact as ec";
             $sql.= ", " . MAIN_DB_PREFIX . "c_type_contact as ctc";
         }
-        $sql.= " WHERE p.entity = " . $conf->entity;
+        $sql.= " WHERE p.entity IN (".getEntity('project').")";
         // Internal users must see project he is contact to even if project linked to a third party he can't see.
         //if ($socid || ! $user->rights->societe->client->voir)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
         if ($socid > 0) $sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = " . $socid . ")";
