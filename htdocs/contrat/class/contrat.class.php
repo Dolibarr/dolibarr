@@ -324,7 +324,11 @@ class Contrat extends CommonObject
 		$sql.= " fk_commercial_signature, fk_commercial_suivi,";
 		$sql.= " note as note_private, note_public, extraparams";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contrat";
-		if ($ref) $sql.= " WHERE ref='".$ref."'";
+		if ($ref)
+		{
+			$sql.= " WHERE ref='".$ref."'";
+			$sql.= " AND entity IN (".getEntity('contract').")";
+		}
 		else $sql.= " WHERE rowid=".$id;
 
 		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
@@ -622,13 +626,14 @@ class Contrat extends CommonObject
 		// Insert contract
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, date_contrat,";
 		$sql.= " fk_commercial_signature, fk_commercial_suivi, fk_projet,";
-		$sql.= " ref)";
+		$sql.= " ref, entity)";
 		$sql.= " VALUES (".$this->db->idate(mktime()).",".$this->socid.",".$user->id;
 		$sql.= ",".$this->db->idate($this->date_contrat);
 		$sql.= ",".($this->commercial_signature_id>0?$this->commercial_signature_id:"NULL");
 		$sql.= ",".($this->commercial_suivi_id>0?$this->commercial_suivi_id:"NULL");
 		$sql.= ",".($this->fk_projet>0?$this->fk_projet:"NULL");
-		$sql .= ", " . (dol_strlen($this->ref)<=0 ? "null" : "'".$this->ref."'");
+		$sql.= ", ".(dol_strlen($this->ref)<=0 ? "null" : "'".$this->ref."'");
+		$sql.= ", ".$conf->entity;
 		$sql.= ")";
 		$resql=$this->db->query($sql);
 		if ($resql)
