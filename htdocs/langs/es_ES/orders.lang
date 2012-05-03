@@ -3,6 +3,7 @@ CHARSET=UTF-8
 OrdersArea=Área pedidos de clientes
 SuppliersOrdersArea=Área pedidos a proveedores
 OrderCard=Ficha pedido
+OrderId=Id pedido
 Order=Pedido
 Orders=Pedidos
 OrderLine=Línea de pedido
@@ -29,6 +30,7 @@ StatusOrderDraftShort=Borrador
 StatusOrderValidatedShort=Validado
 StatusOrderOnProcessShort=Pdte. Recibir
 StatusOrderSentShort=Expedición en curso
+StatusOrderSent=Envío en curso
 StatusOrderProcessedShort=Procesado
 StatusOrderToBillShort=A facturar
 StatusOrderApprovedShort=Aprobado
@@ -108,6 +110,7 @@ PaymentOrderRef=Pago pedido %s
 CloneOrder=Clonar pedido
 ConfirmCloneOrder=¿Está seguro de querer clonar este pedido <b>%s</b>?
 DispatchSupplierOrder=Recepción del pedido a proveedor %s
+DateDeliveryPlanned=Fecha prevista de entrega
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Responsable seguimiento pedido cliente
 TypeContact_commande_internal_SHIPPING=Responsable envío pedido cliente
@@ -119,10 +122,12 @@ TypeContact_order_supplier_internal_SHIPPING=Responsable recepción pedido a pro
 TypeContact_order_supplier_external_BILLING=Contacto proveedor facturación pedido
 TypeContact_order_supplier_external_SHIPPING=Contacto proveedor entrega pedido
 TypeContact_order_supplier_external_CUSTOMER=Contacto proveedor seguimiento pedido
+
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constante COMMANDE_SUPPLIER_ADDON no definida
 Error_COMMANDE_ADDON_NotDefined=Constante COMMANDE_ADDON no definida
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Error en la carga del archivo módulo '%s'
 Error_FailedToLoad_COMMANDE_ADDON_File=Error en la carga del archivo módulo '%s'
+
 # Sources
 OrderSource0=Presupuesto
 OrderSource1=Internet
@@ -134,6 +139,7 @@ OrderSource6=Revistas
 QtyOrdered=Cant. pedida
 AddDeliveryCostLine=Añadir una línea de gastos de portes indicando el peso del pedido
 SetDemandReason=Indicar origen del pedido
+
 # Document models
 PDFEinsteinDescription=Modelo de pedido completo (logo...)
 PDFEdisonDescription=Modelo de pedido simple

@@ -15,7 +15,7 @@ For developers:
 - Can add a link on title field of added dictionnary.
 
 
-***** ChangeLog for 3.2 compared to 3.1 *****
+***** ChangeLog for 3.2.0 compared to 3.1.2 *****
 WARNING: PHP lower than 5.x are no more supported.
 WARNING: Because of a major datastructure change onto supplier prices tables, be aware
 to make a backup of your database before making upgrade.
@@ -107,6 +107,20 @@ For developers:
 - Qual: task #216 : Move /lib into /core/lib directory
 - Qual: task #217 : Move core files into core directory (login, menus, triggers, boxes, modules)
 WARNING: To reduce technic debt, all functions dolibarr_xxx were renamed int dol_xxx.
+
+
+
+***** ChangeLog for 3.1.2 compared to 3.1.1 *****
+
+- Fix: Can clone a proposal
+- Fix: Add member ID in substitution method
+- Fix: Duplicate end tag and missing form parts
+- Fix: Support companies with no prof id.
+- Fix: Sanitize data
+- Fix: Bug #318
+- Fix: Bug #369
+- Fix: More bugs
+
 
 
 ***** ChangeLog for 3.1.1 compared to 3.1.0 *****
