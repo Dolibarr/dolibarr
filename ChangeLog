@@ -2,6 +2,18 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 3.1.2 compared to 3.1.1 *****
+
+- Fix: Can clone a proposal
+- Fix: Add member ID in substitution method
+- Fix: Duplicate end tag and missing form parts
+- Fix: Support companies with no prof id.
+- Fix: Sanitize data
+- Fix: Bug #318
+- Fix: Bug #369
+- Fix: More bugs
+
+
 
 ***** ChangeLog for 3.1.1 compared to 3.1.0 *****
 
