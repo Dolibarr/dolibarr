@@ -94,6 +94,7 @@ $hookmanager->initHooks(array('invoicecard'));
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
+
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->facture->creer)
 {
@@ -248,7 +249,6 @@ else if ($action == 'setmode' && $user->rights->facture->creer)
     $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
-
 else if ($action == 'setinvoicedate' && $user->rights->facture->creer)
 {
     $object->fetch($id);
@@ -257,7 +257,14 @@ else if ($action == 'setinvoicedate' && $user->rights->facture->creer)
     $result=$object->update($user);
     if ($result < 0) dol_print_error($db,$object->error);
 }
-
+else if ($action == 'setpaymentterm' && $user->rights->facture->creer)
+{
+    $object->fetch($id);
+    $object->date_lim_reglement=dol_mktime(12,0,0,$_POST['paymenttermmonth'],$_POST['paymenttermday'],$_POST['paymenttermyear']);
+    if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement=$object->date;
+    $result=$object->update($user);
+    if ($result < 0) dol_print_error($db,$object->error);
+}
 else if ($action == 'setconditions' && $user->rights->facture->creer)
 {
     $object->fetch($id);
