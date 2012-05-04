@@ -1555,8 +1555,10 @@ else
                 }
                 else
                 {
+                    $forceall=1;	// For suppliers, we always show all types
                     print $form->select_type_of_lines($object->lines[$i]->product_type,'type',1);
-                    if ($conf->product->enabled && $conf->service->enabled) print '<br>';
+                    if ($forceall || ($conf->product->enabled && $conf->service->enabled)
+                    || (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
                 }
 
                 // Description - Editor wysiwyg

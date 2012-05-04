@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville   <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur    <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo  <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin          <regis@dolibarr.fr>
  *
@@ -108,12 +108,13 @@ if ($viewstatut <> '')
 	}
 	if ($viewstatut == -2)	// To process
 	{
-		$sql .= ' AND c.fk_statut IN (1,2,3) AND c.facture = 0';
+		//$sql.= ' AND c.fk_statut IN (1,2,3) AND c.facture = 0';
+		$sql.= " AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))";    // If status is 2 and facture=1, it must be selected
 	}
 }
 if ($ordermonth > 0)
 {
-	$sql.= " AND date_format(c.date_valid, '%Y-%m') = '".$orderyear."-".$ordermonth."'";
+	$sql.= " AND date_format(c.date_valid, '%Y-%m') = '".$orderyear."-".$ordermonth."'";    // TODO do not use date_format but a between
 }
 if ($orderyear > 0)
 {
@@ -178,7 +179,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans('RefCustomerOrder'),'liste.php','c.ref_client','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('OrderDate'),'liste.php','c.date_commande','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('DeliveryDate'),'liste.php','c.date_livraison','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Status'),'liste.php','c.fk_statut','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Status'),'liste.php','c.fk_statut','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'align="right"',$sortfield,$sortorder);
 	print '</tr>';
 	// Lignes des champs de filtre
 	print '<form method="get" action="liste.php">';
