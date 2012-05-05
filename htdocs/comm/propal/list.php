@@ -193,14 +193,16 @@ if ($viewstatut <> '')
 }
 if ($month > 0)
 {
-	if ($year > 0)
-	$sql.= " AND date_format(p.datep, '%Y-%m') = '".$year."-".$month."'";
-	else
-	$sql.= " AND date_format(p.datep, '%m') = '".$month."'";
+    if ($year > 0 && empty($day))
+    $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
+    else if ($year > 0 && ! empty($day))
+    $sql.= " AND p.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
+    else
+    $sql.= " AND date_format(p.datep, '%m') = '".$month."'";
 }
 else if ($year > 0)
 {
-	$sql.= " AND date_format(p.datep, '%Y') = '".$year."'";
+	$sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
 if ($search_user > 0)
 {
@@ -235,6 +237,7 @@ if ($result)
 
 	$i = 0;
 	print '<table class="liste" width="100%">';
+
 	// If the user can view prospects other than his'
 	if ($user->rights->societe->client->voir || $socid)
 	{

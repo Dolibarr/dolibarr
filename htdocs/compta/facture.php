@@ -3231,6 +3231,7 @@ else
         $pageprev = $page - 1;
         $pagenext = $page + 1;
 
+        $search_user = GETPOST('search_user','int');
         $day	= GETPOST('day','int');
         $month	= GETPOST('month','int');
         $year	= GETPOST('year','int');
@@ -3249,6 +3250,11 @@ else
         $sql.= ', '.MAIN_DB_PREFIX.'facture as f';
         if (! $sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
         else $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as fd ON fd.fk_facture = f.rowid';
+        if ($search_user > 0)
+        {
+            $sql.=", ".MAIN_DB_PREFIX."element_contact as c";
+            $sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
+        }
         $sql.= ' WHERE f.fk_soc = s.rowid';
         $sql.= " AND f.entity = ".$conf->entity;
         if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -3296,6 +3302,10 @@ else
         {
             $sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
         }
+        if ($search_user > 0)
+        {
+            $sql.= " AND c.fk_c_type_contact = tc.rowid AND tc.element='propal' AND tc.source='internal' AND c.element_id = f.rowid AND c.fk_socpeople = ".$search_user;
+        }
         if (! $sall)
         {
             $sql.= ' GROUP BY f.rowid, f.facnumber, f.type, f.increment, f.total, f.total_ttc,';
@@ -3332,8 +3342,23 @@ else
             print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->nom:''),$page,'facture.php',$param,$sortfield,$sortorder,'',$num);
 
             $i = 0;
-            print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+            print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
             print '<table class="liste" width="100%">';
+
+            // If the user can view prospects other than his'
+            if ($user->rights->societe->client->voir || $socid)
+            {
+                $moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
+                $moreforfilter.=$form->select_dolusers($search_user,'search_user',1);
+            }
+            if ($moreforfilter)
+            {
+                print '<tr class="liste_titre">';
+                print '<td class="liste_titre" colspan="9">';
+                print $moreforfilter;
+                print '</td></tr>';
+            }
+
             print '<tr class="liste_titre">';
             print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','',$param,'',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'f.datef','',$param,'align="center"',$sortfield,$sortorder);
