@@ -1,107 +1,93 @@
-# Dolibarr language file - it_IT - withdrawals "bonifico periodico" o "disposizione permanente di bonifico", se è una domiciliazione di bollette è meglio "RID".
-CHARSET=UTF-8
-StandingOrdersArea			       =Sezione ordini permanenti 
-CustomersStandingOrdersArea		       =Sezione ordini permanenti clienti
-StandingOrders				       =Ordini permanenti 
-StandingOrder				       =Ordine permanente 
-NewStandingOrder			       =Nuovo ordine permanente 
-Withdrawals				       =Prelievi 
-Withdrawal				       =Prelievo 
-WithdrawalsReceipts			       =Ricevute prelievi
-WithdrawalReceipt			       =Ricevuta prelievo
-WithdrawalReceiptShort			       =Ricevuta 
-LastWithdrawalReceipts			       =Ultimo %s ricevute dei prelievi 
-WithdrawedBills				       =Fatture delle domiciliazioni
-WithdrawalsLines			       =Linee dei prelievi
-RequestStandingOrderToTreat		       =Richiesta di ordini permanenti da trattare
-RequestStandingOrderTreated		       =Richiesta di ordini permanenti trattati 
-CustomersStandingOrders			       =Ordini permanenti clienti  
-CustomerStandingOrder			       =Ordine permanente cliente 
-
-// Date 2009-01-18 19:41:54
-// START - Lines generated via parser
-// Reference language: en_US
-NbOfInvoiceToWithdraw=N di fatture da prelevare 
-InvoiceWaitingWithdraw=Fattura di attesa di prelievo
-AmountToWithdraw=Importo da prelevare
-WithdrawsRefused=Prelievo rifiutato
-NoInvoiceToWithdraw=Nessuna fattura clienti in modalità di pagamento prelievo è in attesa. Vai alla scheda fattura prelievi e fai una richiesta.
-ResponsibleUser=Utente responsabile
-WithdrawalsSetup=Impostazione prelievi
-WithdrawStatistics=Statistiche prelievi
-WithdrawRejectStatistics=Statistiche prelievi respinti
-LastWithdrawalReceipt=Ultime %s ricevute prelievo
-MakeWithdrawRequest=Effettuare una richiesta di prelievo
-ThirdPartyBankCode=Codice bancario di terze parti
-ThirdPartyDeskCode=Codice ufficio di terze parti
-NoInvoiceCouldBeWithdrawed=Non ci sono fatture riscuotibili con prelievo. Verificare che sulle fatture sia riportato il corretto codice IBAN.
-ClassCredited=Classifica accreditata
-ClassCreditedConfirm=Sei sicuro di voler classificare questa ricevuta di prelievo come accreditata sul vostro conto bancario?
-// Date 2009-01-18 19:41:54
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
-// Reference language: en_US
-StandingOrderToProcess=Per elaborare
-StandingOrderProcessed=Re
-TransData=Data di trasmissione
-TransMetod=Metodo di trasmissione
-Send=Inviare
-Lines=Lines
-StandingOrderReject=Emettere un rifiuto
-WithdrawalRefused=Prelievi Refuseds
-WithdrawalRefusedConfirm=Sei sicuro di voler entrare in un rifiuto di ritiro per la società
-RefusedData=Data del rifiuto
-RefusedReason=Motivo del rifiuto
-RefusedInvoicing=Il rifiuto di fatturazione
-NoInvoiceRefused=Non caricare il rigetto
-InvoiceRefused=Caricare il rifiuto al cliente
-Status=Stato
-StatusUnknown=Sconosciuto
-StatusWaiting=Attesa
-StatusCredited=Accreditato
-StatusRefused=Refused
-StatusMotif0=Imprecisato
-StatusMotif1=Fornitura insuffisante
-StatusMotif2=Tirage conteste
-StatusMotif3=Nessun ordine di sospensione
-StatusMotif4=Ordine Cliente
-StatusMotif5=RIB inexploitable
-StatusMotif6=Conto senza equilibrio
-StatusMotif7=La decisione giudiziaria
-StatusMotif8=Altri motivi
-CreateAll=Ritirare tutte le
-CreateGuichet=Solo per ufficio
-CreateBanque=Solo banca
-OrderWaiting=In attesa di trattamento
-NotifyTransmision=Ritiro di trasmissione
-NotifyEmision=Ritiro delle emissioni
-NotifyCredit=Ritiro di credito
-NumeroNationalEmetter=Numero nazionale del trasmettitore
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:35:04).
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+# Dolibarr language file - it_IT - withdrawals 
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
 // Reference language: en_US -> it_IT
-NbOfInvoiceToWithdrawWithInfo=Numero di fattura con richiesta di ritirare i clienti aver definito informazioni bancarie
-StatusTrans=Trasmesse
-PleaseSelectCustomerBankBANToWithdraw=Selezionare le informazioni su account cliente banca per ritirare
-WithBankUsingRIB=Per i conti correnti bancari utilizzando RIB
-WithBankUsingBANBIC=Per i conti correnti bancari utilizzando IBAN / BIC / SWIFT
-BankToReceiveWithdraw=Conto corrente bancario per ricevere ritira
-CreditDate=Di credito
-WithdrawalFileNotCapable=In grado di generare file di ricevuta di ritiro per il vostro paese
-ShowWithdraw=Mostra Prelevare
-IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Tuttavia, se fattura non ha almeno un versamento ritiro Ancora da elaborare, non sarà impostato come pagato per consentire di gestire ritiro prima.
-DoStandingOrdersBeforePayments=Questo schede consente di richiedere un ordine permanente. Una volta che sarà finito, è possibile digitare il pagamento per chiudere la fattura.
-InfoCreditSubject=Il pagamento della %s ordine permanente da parte della banca
-InfoCreditMessage=Il %s ordine permanente è stato pagato dalla banca <br> Dati di pagamento: %s
-InfoTransSubject=Trasmissione di %s ordine permanente a banca
-InfoTransMessage=Il %s ordine permanente è stato transmited alla banca da %s %s. <br><br>
-InfoTransData=Importo: %s <br> Metode: %s <br> Data: %s
-InfoFoot=Questo è un messaggio automatico inviato da Dolibarr
-InfoRejectSubject=Ordine permanente rifiutato
-InfoRejectMessage=Ciao, <br><br> l&#39;ordine di standig %s fattura relativa alla %s società, con un importo di %s è stata rifiutata dalla banca. <br><br> - <br> % $
-ModeWarning=Opzione per la modalità reale non è stato impostato, ci fermiamo dopo questa simulazione
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:42).
+CHARSET=UTF-8
+AmountToWithdraw				=Importo da prelevare
+BankToReceiveWithdraw				=Conto corrente bancario per il domiciliazione
+ClassCredited					=Classifica come accreditata
+ClassCreditedConfirm				=Vuoi davvero classificare questa ricevuta di domiciliazione come accreditata sul vostro conto bancario?
+CreateAll					=Ritira tutto
+CreateBanque					=Solo banca
+CreateGuichet					=Solo ufficio
+CreditDate					=Data di accredito
+CustomersStandingOrdersArea			=Area ordini permanenti clienti
+CustomersStandingOrders				=Ordini permanenti clienti  
+CustomerStandingOrder				=Ordine permanente cliente 
+DoStandingOrdersBeforePayments			=Questa scheda consente di richiedere un ordine permanente. Una volta finito, è possibile inserire il pagamento per chiudere la fattura.
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed	=Tuttavia, se per la fattura ci sono ancora pagamenti da elaborare, non sarà impostata come pagata per consentire prima la gestione dei domiciliazioni.
+InfoCreditMessage				=La banca ha pagato l'ordine permanente %s.<br/>Dati di pagamento: %s
+InfoCreditSubject				=Il pagamento dell'ordine permanente %s da parte della banca
+InfoFoot					=Questo è un messaggio automatico inviato da Dolibarr
+InfoRejectMessage				=<br/><br/>L&#39;ordine permanente %s per la fattura relativa alla società %s , con un importo di %s è stato rifiutato dalla banca.<br/><br/>-<br/>% $
+InfoRejectSubject				=Ordine permanente rifiutato
+InfoTransData					=Importo: %s <br> Metodo: %s <br> Data: %s
+InfoTransMessage				=L'ordine permanente %s è stato trasmesso alla banca da %s %s.<br/><br/>
+InfoTransSubject				=Trasmissione dell'ordine permanente %s alla banca
+InvoiceRefused					=Fattura rifiutata
+InvoiceWaitingWithdraw				=Fattura in attesa di domiciliazione
+LastWithdrawalReceipts				=Ultime %s ricevute di domiciliazione 
+LastWithdrawalReceipti				=Ultime %s ricevute di domiciliazione
+Lines						=Righe
+MakeWithdrawRequest				=Effettuare una richiesta di domiciliazione
+ModeWarning					=Non è stata impostata la modalità reale, ci fermiamo dopo questa simulazione
+NbOfInvoiceToWithdraw				=Numero di fattura da prelevare
+NbOfInvoiceToWithdrawWithInfo			=Numero di fattura da prelevare per i clienti con informazioni bancarie definite
+NewStandingOrder			 	=Nuovo ordine permanente
+NoInvoiceCouldBeWithdrawed			=Non ci sono fatture riscuotibili con domiciliazione. Verificare che sulle fatture sia riportato il corretto codice IBAN.
+NoInvoiceRefused				=Non ricaricare il rifiuto
+NoInvoiceToWithdraw				=Non ci sono fatture attive in attesa con modalità di pagamento "domiciliazione".
+NotifyCredit					=Credito
+NotifyEmision					=Emissione domiciliazione
+NotifyTransmision				=Trasmissione domiciliazione
+NumeroNationalEmetter				=Numero nazionale dell'inviante
+OrderWaiting					=In attesa di esecuzione
+PleaseSelectCustomerBankBANToWithdraw		=Selezionare le informazioni del conto bancario per bonificare
+RefusedData					=Data del rifiuto
+RefusedInvoicing				=Fatturazione rifiutata
+RefusedReason					=Motivo del rifiuto
+RequestStandingOrderToTreat			=Richiesta ordini permanenti da trattare
+RequestStandingOrderTreated			=Richiesta ordini permanenti trattati 
+ResponsibleUser					=Utente responsabile
+Send						=Invia
+ShowWithdraw					=Mostra domiciliazione
+StandingOrder					=Ordine permanente 
+StandingOrderProcessed				=Processato
+StandingOrderReject				=Invia rifiuto
+StandingOrdersArea				=Area ordini permanenti 
+StandingOrders					=Ordini permanenti 
+StandingOrderToProcess				=Da processare
+StatusCredited					=Accreditato
+StatusMotif0					=Imprecisato
+StatusMotif1					=Disponibilità insufficiente
+StatusMotif2					=Bonifico contestato
+StatusMotif3					=Nessun ordine
+StatusMotif4					=Ordine del cliente
+StatusMotif5					=IBAN non valido
+StatusMotif6					=Conto in rosso
+StatusMotif7					=Decisione giudiziaria
+StatusMotif8					=Altri motivi
+StatusRefused					=Rifiutato
+Status						=Stato
+StatusTrans					=Trasmesso
+StatusUnknown					=Sconosciuto
+StatusWaiting					=In attesa
+ThirdPartyBankCode				=Codice bancario di soggetti terzi
+ThirdPartyDeskCode				=Codice ufficio di soggetti terzi
+TransData					=Data di trasmissione
+TransMetod					=Metodo di trasmissione
+WithBankUsingBANBIC				=Per conti bancari che utilizzano IBAN/BIC/SWIFT
+WithBankUsingRIB				=Per i conti correnti bancari che utilizzano RIB
+WithdrawalFileNotCapable			=Impossibile generare file di ricevuta per il vostro paese
+Withdrawal					=Bonifico
+WithdrawalReceipt				=Ricevuta domiciliazione
+WithdrawalReceiptShort				=Ricevuta 
+WithdrawalRefusedConfirm			=Vuoi davvero inserire un rifiuto per la società?
+WithdrawalRefused				=Bonifici rifiutati
+WithdrawalsLines				=Righe dei domiciliazioni
+Withdrawals					=Bonifici
+WithdrawalsReceipts				=Ricevute domiciliazioni
+WithdrawalsSetup				=Impostazione domiciliazioni
+WithdrawedBills					=Fatture delle domiciliazioni
+WithdrawRejectStatistics			=Statistiche domiciliazioni respinti
+WithdrawsRefused				=Bonifico rifiutato
+WithdrawStatistics				=Statistiche domiciliazioni

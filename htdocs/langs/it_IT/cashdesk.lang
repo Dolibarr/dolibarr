@@ -1,53 +1,41 @@
-/*
- * Language code: it_IT
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-06-26 15:51:22
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+# Dolibarr language file - it_IT - cashdesk 
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
 // Reference language: en_US -> it_IT
-CHARSET=UTF-8
-CashDeskMenu=Punto di vendita
-CashDesk=Punto di vendita
-CashDesks=Punti vendita
-CashDeskBank=Conto corrente bancario
-CashDeskBankCash=Conto corrente bancario (cassa)
-CashDeskBankCB=Conto corrente bancario (scheda)
-CashDeskBankCheque=Conto corrente bancario (check)
-CashDeskWarehouse=Magazzino
-CashDeskProducts=Prodotti
-CashDeskStock=Stock
-CashDeskOn=su
-CashDeskThirdParty=Terza parte
-ShoppingCart=Carrello della spesa
-NewSell=Vendita nuovo
-BackOffice=Back office
-AddThisArticle=Aggiungi questo articolo
-RestartSelling=Tornare in vendita
-SellFinished=Vendi finito
-PrintTicket=Stampa biglietto
-NoResults=Nessun risultato
-NoProductFound=Nessun articolo trovato
-ProductFound=prodotto trovato
-ProductsFound=prodotti trovati
-NoArticle=Nessun articolo
-Identification=Identificazione
-Article=Articolo
-Difference=Differenza
-TotalTicket=Totale del biglietto
-NoVAT=L&#39;IVA non per questo in vendita
-Change=Eccesso ricevuto
-CalTip=Clicca per visualizzare il calendario
-CashDeskSetupStock=Vi chiediamo di diminuire sulla creazione di stock di magazzino fattura, ma per questo non è stato definito <br> Cambia modulo di configurazione stock, o scegliere un magazzino
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:14).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
-// Reference language: en_US -> it_IT
-CashdeskShowServices=Vendita di servizi
-BankToPay=Carica Account
-ShowCompany=Mostra società
-ShowStock=Mostra warehouse
-DeleteArticle=Fare clic per rimuovere questo articolo
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:33:34).
+CHARSET					=UTF-8
+AddThisArticle				=Aggiungi questo articolo
+Article					=Articolo
+BackOffice				=Backoffice
+BankToPay				=Usa conto
+CalTip					=Clicca per visualizzare il calendario
+CashDeskBankCash			=Conto corrente bancario (cassa)
+CashDeskBankCB				=Conto corrente bancario (carta di cred.)
+CashDeskBankCheque			=Conto corrente bancario (assegno)
+CashDeskBank				=Conto corrente bancario
+CashDeskMenu				=Punto vendita
+CashDeskOn				=Su
+CashDeskProducts			=Prodotti
+CashDesk				=Punto vendita
+CashDeskSetupStock			=Vuoi scaricare il magazzino alla creazione della fattura, ma per questo prodotto le scorte non sono state impostate.<br/>Configura le scorte o scegli un magazzino.
+CashdeskShowServices			=Servizi in vendita
+CashDesks				=Punti vendita
+CashDeskStock				=Scorta
+CashDeskThirdParty			=Terza parte
+CashDeskWarehouse			=Magazzino
+Change					=Resto
+DeleteArticle				=Clicca per rimuovere l'articolo
+Difference				=Differenza
+Identification				=Identificazione
+NewSell					=Nuova vendita
+NoArticle				=Nessun articolo
+NoProductFound				=Nessun articolo trovato
+NoResults				=Nessun risultato
+NoVAT					=L'IVA non si applica alla vendita
+PrintTicket				=Stampa biglietto
+ProductFound				=Prodotto trovato
+ProductsFound				=Prodotti trovati
+RestartSelling				=Rimetti in vendita
+SellFinished				=Vendita conclusa
+ShoppingCart				=Carrello
+ShowCompany				=Mostra società
+ShowStock				=Mostra magazzino
+TotalTicket				=Totale del biglietto

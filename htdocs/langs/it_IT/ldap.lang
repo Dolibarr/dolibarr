@@ -1,36 +1,32 @@
 # Dolibarr language file - it_IT - ldap   
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
+// Reference language: en_US -> it_IT
 CHARSET=UTF-8
-DomainPassword                            =Password per dominio 
-YouMustChangePassNextLogon		  =La password per l'utente <b>%s </ b> sul dominio <b>%s </ b> deve essere cambiata. 
-UserMustChangePassNextLogon		  =L'utente deve cambiare la password del dominio %s 
-LdapUacf_NORMAL_ACCOUNT			  =Account utente 
-LdapUacf_DONT_EXPIRE_PASSWORD		  =Nessuna scadenza password 
-LdapUacf_ACCOUNTDISABLE			  =Account disabilitato nel dominio %s 
-LDAPInformationsForThisContact		  =Informazioni nel database LDAP per questo contatto 
-LDAPInformationsForThisUser		  =Informazioni nel database LDAP per questo utente 
-LDAPInformationsForThisGroup		  =Informazioni nel database LDAP per questo gruppo 
-LDAPInformationsForThisMember		  =Informazioni nel database LDAP per questo membro 
-LDAPAttribute				  =Attributo LDAP 
-LDAPAttributes				  =Attributi LDAP
-LDAPCard				  =Scheda LDAP
-LDAPRecordNotFound			  =Il record non è stato trovato nella banca dati LDAP 
-LDAPUsers				  =Gli utenti nel database LDAP 
-LDAPGroups				  =Gruppi in database LDAP 
-LDAPFieldStatus				  =Stato 
-LDAPFieldFirstSubscriptionDate		  =Prima data di sottoscrizione 
-LDAPFieldFirstSubscriptionAmount	  =Importo della prima sottoscrizione  
-LDAPFieldLastSubscriptionDate		  =Data ultima sottoscrizione  
-LDAPFieldLastSubscriptionAmount		  =Importo ultima sottoscrizione  
-SynchronizeDolibarr2Ldap		  =Sincronizzazione utente (Dolibarr -> LDAP) 
-UserSynchronized			  =Utente sincronizzato 
-ForceSynchronize			  =Forza la sincronizzazione Dolibarr -> LDAP 
-ErrorFailedToReadLDAP			  =Impossibile leggere database LDAP. Controlla la configurazione del modulo di installazione LDAP.
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-CHARSET=UTF-8
-GroupSynchronized=Gruppo sincronizzato
-MemberSynchronized=Membro sincronizzato
-ContactSynchronized=Contatto sincronizzato
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+ContactSynchronized			=Contatto sincronizzato
+DomainPassword                          =Password del dominio 
+ErrorFailedToReadLDAP			=Impossibile leggere database LDAP. Controlla la configurazione del modulo di installazione LDAP.
+ForceSynchronize			=Forza la sincronizzazione Dolibarr -> LDAP 
+GroupSynchronized			=Gruppo sincronizzato
+LDAPAttribute				=Attributo LDAP 
+LDAPAttributes				=Attributi LDAP
+LDAPCard				=Scheda LDAP
+LDAPFieldFirstSubscriptionAmount	=Importo della prima sottoscrizione  
+LDAPFieldFirstSubscriptionDate		=Prima data di sottoscrizione 
+LDAPFieldLastSubscriptionAmount		=Importo ultima sottoscrizione  
+LDAPFieldLastSubscriptionDate		=Data ultima sottoscrizione  
+LDAPFieldStatus				=Stato 
+LDAPGroups				=Gruppi in LDAP 
+LDAPInformationsForThisContact		=Informazioni nel database LDAP per questo contatto 
+LDAPInformationsForThisGroup		=Informazioni nel database LDAP per questo gruppo 
+LDAPInformationsForThisMember		=Informazioni nel database LDAP per questo membro 
+LDAPInformationsForThisUser		=Informazioni nel database LDAP per questo utente 
+LDAPRecordNotFound			=Il record non è stato trovato in LDAP 
+LdapUacf_ACCOUNTDISABLE			=Account disabilitato nel dominio %s 
+LdapUacf_DONT_EXPIRE_PASSWORD		=Nessuna scadenza password 
+LdapUacf_NORMAL_ACCOUNT			=Account utente 
+LDAPUsers				=Utenti nel database LDAP 
+MemberSynchronized			=Membro sincronizzato
+SynchronizeDolibarr2Ldap		=Sincronizzazione Dolibarr -> LDAP 
+UserMustChangePassNextLogon		=L'utente deve cambiare password per il dominio %s 
+UserSynchronized			=Utente sincronizzato 
+YouMustChangePassNextLogon		=La password per l'utente <b>%s</ b> sul dominio <b>%s</ b> deve essere cambiata. 

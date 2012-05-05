@@ -1,140 +1,120 @@
-# Dolibarr language file - it_IT - errors          
-CHARSET=UTF-8
-ErrorLoginAlreadyExists			    =Login %s già esistente
-ErrorGroupAlreadyExists			    =Gruppo %s già esistente
-ErrorDuplicateTrigger				   =Un trigger file con class name '<b> %s </b>' è presente più volte. Rimuovi file trigger duplicati dalla directory '<b> %s </b>'.
-ErrorFailToDeleteFile				   =Impossibile rimuovere il file '<b> %s </b>'.
-ErrorFailToCreateFile				   =Impossibile creare il file '<b> %s </b>'.
-ErrorFailToRenameDir				   =Impossibile rinominare la directory '<b> %s </b>' in '<b> %s </b>'.
-ErrorFailToCreateDir				   =Impossibile creare la directory '<b> %s </b>'.
-ErrorThisContactIsAlreadyDefinedAsThisType	   =Questo contatto è già stato definito come contatto per questo tipo.
-ErrorCashAccountAcceptsOnlyCashMoney		   =Questo conto corrente è un conto di cassa che accetta solo pagamenti in contanti.
-ErrorFromToAccountsMustDiffers			   =Conti bancari di origine e di destinazione devono essere differenti.
-ErrorBadThirdPartyName				   =Valore non valido per il nome della terza parte
-ErrorBadCustomerCodeSyntax			   =Sintassi errata per il codice cliente
-ErrorCustomerCodeRequired			   =Codice cliente necessario
-ErrorCustomerCodeAlreadyUsed			   =Codice cliente già utilizzato
-ErrorPrefixRequired				   =Prefisso necessario
-ErrorBadSupplierCodeSyntax			   =Sintassi errata per il codice fornitore
-ErrorSupplierCodeRequired			   =Il codice fornitore è un dato necessario
-ErrorSupplierCodeAlreadyUsed			   =Codice fornitore già utilizzato
-ErrorBadParameters				   =Parametri errati
-ErrorFailedToWriteInDir				   =Impossibile scrivere nella directory %s
-ErrorFoundBadEmailInFile			   =Trovata sintassi errata e-mail nelle righe %s del file (ad esempio, alla linea %s con e-mail = %s)
-UserCannotBeDelete				   =L'utente non può essere eliminato. Forse è associato ad alcuni elementi di Dolibarr.
-ErrorFieldsRequired				   =Alcuni campi obbligatori non sono stati riempiti.
-ErrorFailedToCreateDir				   =Impossibile creare una directory. Verifica che l'utente del server Web abbia i permessi per scrivere documenti nella directory  Dolibarr. Se il parametro <b> safe_mode </b> è abilitato in PHP, verificare che i file php Dolibarr appartengano all'utente del server web (o gruppo).
-ErrorNoMailDefinedForThisUser			   =Nessun messaggio definito per questo utente
-ErrorFeatureNeedJavascript			   =Questa funzione necessita di javascript per essere attivata. Modificare questa impostazione nel menu Impostazioni -> layout di visualizzazione.
-ErrorTopMenuMustHaveAParentWithId0		   =Un menu di tipo 'Top' non può avere un menu principale. Metti 0 menu genitori o scegliere un menu di tipo 'sinistra'.
-ErrorLeftMenuMustHaveAParentId			   =Un menu di tipo 'sub-menu' deve avere di un id genitore .
-ErrorFileNotFound				   =File non trovato (percorso errato o autorizzazioni insufficienti per l'accesso)
-ErrorFunctionNotAvailableInPHP			   =L'estensione <b> %s </b> è necessaria per questa funzione, ma non è disponibile in questa versione / configurazione di PHP.
-ErrorDirAlreadyExists				   =Una directory con questo nome esiste già.
-WarningAllowUrlFopenMustBeOn			   =Il parametro <b> allow_url_fopen </b> deve essere impostato su <b> on </b> nel file <b> php.ini </b> per avere questo modulo di lavoro completamente funzionante. È necessario modificare questo file manualmente.
-ErrorFieldCanNotContainSpecialCharacters	   =Campo <b> %s </b> non può contenere caratteri speciali.
-
-
-// Date 2009-01-18 19:41:54
-// START - Lines generated via parser
-// Reference language: en_US
-ErrorFailToDeleteDir=Impossibile eliminare directory <b>'%s'.</b>
-ErrorFailedToDeleteJoinedFiles=Impossibile eliminare file collegati. Rimuovere i collegamenti file prima di rimuovere.
-ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Trovato sintassi email errata nelle righe %s del file (ad esempio linea con l'e-mail %s = %s)
-ErrorUserCannotBeDelete=L'utente non può essere eliminato. Probabilmente è necessario al funzionamento di Dolibarr.
-WarningBuildScriptNotRunned=<b>Lo script %s</b> per costruire il grafico non è stato eseguito, o non ci sono dati da visualizzare.
-WarningBookmarkAlreadyExists=Un segnalibro con questo titolo o questo link (URL) è già esistente.
-WarningPassIsEmpty=Attenzione, non risulta assegnata la password del database. Si tratta di un buco di sicurezza. Si dovrebbe aggiungere una password per il database e cambiare il conf.php file per riflettere il cambiamento.
-ErrorNoAccountancyModuleLoaded=Modulo contabilità non attivato
-ErrorExportDuplicateProfil=Questo nome di profilo esiste già l'esportazione.
-ErrorLDAPSetupNotComplete=la configurazione per l'uso di LDAP non è completa.
-ErrorLDAPMakeManualTest=Un file Ldif è stato generato nella directory %s. Prova a caricare manualmente dalla riga di comando per avere maggiori informazioni sugli errori.
-ErrorCantSaveADoneUserWithZeroPercentage=Impossibile salvare un azione con "stato non iniziato" se il campo "da fare" non è vuoto.
-ErrorBillRefAlreadyExists=Rif. utilizzato per la creazione esiste già.
-ErrorPleaseTypeBankTransactionReportName=Indicare il nome del report della transazione bancaria (o AAAAMM Formato AAAAMMGG)
-ErrorRecordHasChildren=Impossibile eliminare i record in quanto ha altri record dipendenti.
-// Date 2009-01-18 19:41:54
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-CHARSET=UTF-8
-MenuManager=Gestore menu
-ErrorUrlNotValid=L'indirizzo del sito Internet non è corretto
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
-// Reference language: en_US
-Error=Errore
-Errors=Errori
-ErrorBadEMail=EMail %s è sbagliato
-ErrorBadUrl=Url %s è sbagliato
-ErrorRecordNotFound=Record non trovato.
-ErrorDirNotFound=Directory <b>%s</b> non trovato (via Bad, permessi errati o accesso negato da openbasedir PHP safe_mode o parametri)
-ErrorFileAlreadyExists=Un file con questo nome esiste già.
-ErrorPartialFile=Il file non completamente ricevuto dal server.
-ErrorNoTmpDir=Temporary directy %s non esiste.
-ErrorUploadBlockedByAddon=Carica bloccata da un plugin / PHP Apache.
-ErrorFileSizeTooLarge=La dimensione del file è troppo grande.
-WarningSafeModeOnCheckExecDir=Attenzione, il PHP è l'opzione <b>safe_mode</b> su così comando deve essere conservato all'interno di una directory dichiarata dal parametro <b>safe_mode_exec_dir</b> php.
-ErrorRefAlreadyExists=Rif. utilizzati per la creazione esiste già.
-WarningConfFileMustBeReadOnly=Attenzione, il file di configurazione <b>(htdocs / conf / conf.php)</b> può essere sovrascritto dal server web. Questo è un grave buco di sicurezza. Modificare le autorizzazioni per file di essere in modalità di sola lettura per l'utente del sistema operativo utilizzato dal server web. Se si utilizza Windows e il formato FAT per il disco, dovete sapere che questo sistema fascicolo non consentono di aggiungere le autorizzazioni sul file, quindi non può essere completamente sicuro.
-ErrorModuleRequireJavascript=Javascript non deve essere disattivato per avere questa caratteristica di lavoro. Per abilitare / disabilitare Javascript, andare al menù Home-> Setup-> Schermo.
-ErrorPasswordsMustMatch=Entrambe le password digitata deve corrispondere a vicenda
-ErrorWrongValueForField=Valore errato per <b>%s</b> numero del campo (valore <b>'%s'</b> non corrisponde <b>%s</b> regola regex)
-ErrorsOnXLines=Errori sul fonte <b>%s</b> linee
-WarningsOnXLines=Avvertenze sui fonte <b>%s</b> linee
-ErrorFileIsInfectedWithAVirus=Il programma antivirus non è stato in grado di convalidare il file (file potrebbe essere infettato da un virus)
-ErrorSpecialCharNotAllowedForField=I caratteri speciali non sono ammessi per il campo "%s"
-WarningNoDocumentModelActivated=Nessun modello, per la generazione di documenti, è stato attivato. Un modello sarà scelto per impostazione predefinita finché non si verifica la configurazione del modulo.
-ErrorDatabaseParameterWrong=parametro di configurazione database <b>'%s'</b> ha un valore non compatibile da utilizzare Dolibarr (deve avere un valore <b>'%s').</b>
-ErrorNumRefModel=Esiste un riferimento nel database (%s) e non è compatibile con questa regola di numerazione. Rimuovere o rinominare record di riferimento per attivare questo modulo.
-ErrorQtyTooLowForThisSupplier=Quantità troppo basso per un fornitore o nessun prezzo definito su questo prodotto per questo fornitore
-ErrorFailToRenameFile=Impossibile rinominare il file <b>&#39;%s&#39;</b> in <b>&#39;%s&#39;.</b>
-ErrorBadValueForParameter=Valore errato &#39;%s&#39; per il parametro non corretto &#39;%s&#39;
-ErrorBadImageFormat=File di immagine non ha un formato supportato
-ErrorContactEMail=Un errore tecnico si è verificato. Si prega di contattare l&#39;amministratore di seguito <b>%s</b> email it <b>%s</b> fornire il codice di errore nel tuo messaggio, o meglio ancora con l&#39;aggiunta di una copia dello schermo di questa pagina.
-ErrorFieldValueNotIn=Valore errato per <b>%s</b> numero del campo <b>(&#39;%s&#39;</b> valore non è un valore disponibile in <b>%s %s</b> campo della tabella)
-ErrorModuleSetupNotComplete=Installazione del modulo sembra essere incompleti. Vai su Setup - Moduli per il completamento.
-ErrorBadMask=Errore su maschera
-ErrorBadMaskFailedToLocatePosOfSequence=Errore, maschera senza numero di sequenza
-ErrorBadMaskBadRazMonth=Errore, valore di reset male
-ErrorSelectAtLeastOne=Errore. Selezionare almeno una voce.
-ErrorProductWithRefNotExist=Prodotto con <i>&#39;%s&#39;</i> di riferimento non esistono
-ErrorFailedToSendPassword=Impossibile inviare la password 
-ErrorPasswordDiffers=Le password immesse sono diverse, si prega di digitarle nuovamente. 
-ErrorForbidden=Accesso vietato. <br> Si tenta di accedere a una pagina, o particolare sezione  senza essere in una sessione autenticata o non consentita per l'utente. 
-ErrorForbidden2=L'autorizzazione all'accesso per questi dati può essere impostata dal tuo amministratore di Dolibarr dal menu %s -> %s. 
-ErrorForbidden3=Sembra che Dolibarr non venga utilizzato attraverso una sessione autenticata. Dai un'occhiata alla documentazione di installazione Dolibarr sapere come gestire le autenticazioni (htaccess, mod_auth o altri ...). 
-ErrorNoImagickReadimage=Imagick_readimage funzione non è stato trovato in PHP. L'anteprima non può essere disponibile. Gli amministratori possono disattivare questa scheda dal menu Impostazioni - Schermo. 
-ErrorRecordAlreadyExists=Il record esiste già 
-ErrorCantReadFile=Impossibile leggere il file '%s' 
-ErrorCantReadDir=Impossibile leggere la directory '%s' 
-ErrorFailedToFindEntity=Impossibile leggere entità '%s' (non trovata)
-ErrorBadLoginPassword=Valore non valido per il login o password 
-ErrorLoginDisabled=Il tuo account à stato disabilitato 
-ErrorFailedToRunExternalCommand=Impossibile eseguire comando esterno. Controlla che sia disponibile ed eseguibile dal vostro server PHP. Se la modalità <b> safe_mode </ b> è abilitata in PHP, verificare che il comando sia all'interno di una directory definita dal parametro <b> safe_mode_exec_dir </ b>. 
-ErrorFailedToChangePassword=Impossibile cambiare la password 
-ErrorLoginDoesNotExists=Utente con accesso <b> %s </ b> non esiste
-ErrorLoginHasNoEmail=Questo utente non ha alcun indirizzo email. Processo interrotto. 
-ErrorBadValueForCode=Valore del codice errato. Riprova con un nuovo valore ... 
-ErrorFileIsInfectedWith=Questo file è stato infettato da %s
-WarningInstallDirExists=Attenzione, la directory di installazione ( %s) esiste ancora. Questo à un grave buco di sicurezza. Si dovrebbe rimuovere non appena possibile. 
-WarningUntilDirRemoved=Questo avviso rimarrà attivo fino a quando questa directory è presente (disponibile solo per gli utenti admin).  
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+# Dolibarr language file - it_IT - errors        
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
 // Reference language: en_US -> it_IT
-ErrorFailToCopyFile=Impossibile copiare il file <b>'%s'</b> in <b>'%s'.</b>
-ErrorBadDateFormat='%s' Value ha un formato della data sbagliata
-ErrorSizeTooLongForIntType=Dimensioni troppo lungo per il tipo int (%s massima cifre)
-ErrorSizeTooLongForVarcharType=Dimensioni troppo lungo per il tipo string (%s caratteri al massimo)
-ErrorFieldRefNotIn=Valore errato per <b>%s</b> numero del campo <b>('%s'</b> valore non è un ref <b>%s</b> esistente)
-ErrorDeleteNotPossibleLineIsConsolidated=Cancellare non è possibile perché record è collegato ad un transation banca che è conciliato
-ErrorProdIdAlreadyExist=%s viene assegnato a un altro terzo
-ErrorFailedToLoadRSSFile=Non riesce a ottenere feed RSS. Provare ad aggiungere MAIN_SIMPLEXMLLOAD_DEBUG costante se i messaggi di errore non fornisce informazioni sufficienti.
-ErrorBothFieldCantBeNegative=%s campi e %s non può essere sia negativo
-ErrorWebServerUserHasNotPermission=Account utente <b>%s</b> utilizzato per eseguire server web non ha il permesso per quella
-ErrorNoActivatedBarcode=Nessun tipo di codice a barre attivato
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:51).
+CHARSET						=UTF-8
+ErrorBadCustomerCodeSyntax			=Sintassi errata per il codice cliente
+ErrorBadDateFormat				=Il valore '%s' ha un formato della data sbagliato
+ErrorBadEMail					=L'indirizzo email %s è sbagliato
+ErrorBadImageFormat				=Formato del file immagine non supportato
+ErrorBadLoginPassword				=Errore: Username o password non corretti
+ErrorBadMaskBadRazMonth				=Errore, valore di reset non valido
+ErrorBadMask					=Errore sulla maschera
+ErrorBadMaskFailedToLocatePosOfSequence		=Errore, maschera senza numero di sequenza
+ErrorBadParameters				=Parametri errati
+ErrorBadSupplierCodeSyntax			=Sintassi del codice fornitore errata
+ErrorBadThirdPartyName				=Valore non valido per il nome del soggetto terzo
+ErrorBadUrl					=L'URL %s è sbagliato
+ErrorBadValueForCode				=Valore del codice errato. Riprova con un nuovo valore... 
+ErrorBadValueForParameter			=Valore errato &#39;%s&#39; per il parametro &#39;%s&#39;
+ErrorBillRefAlreadyExists			=Il rif. utilizzato per la creazione esiste già.
+ErrorBothFieldCantBeNegative			=I campi %s e %s non possono essere entrambi negativi
+ErrorCantReadDir				=Impossibile leggere nella directory <b>%s</b>
+ErrorCantReadFile				=Impossibile leggere il file <b>%s</b> 
+ErrorCantSaveADoneUserWithZeroPercentage	=Impossibile salvare un'azione con "stato non iniziato" se il campo "da fare" non è vuoto.
+ErrorCashAccountAcceptsOnlyCashMoney		=Questo conto corrente è un conto di cassa che accetta solo pagamenti in contanti.
+ErrorContactEMail				=Si è verificato un errore tecnico. Si prega di contattare l'amministratore all'indirizzo <b>%s</b> <b>%s</b> indicando il codice di errore nel messaggio, o, meglio ancora, allegando uno screenshot della schermata attuale.
+ErrorCustomerCodeAlreadyUsed			=Codice cliente già utilizzato
+ErrorCustomerCodeRequired			=Codice cliente necessario
+ErrorDatabaseParameterWrong			=Il parametro di configurazione database <b>'%s'</b> ha un valore non compatibile con il funzionamento di Dolibarr (deve avere un valore <b>'%s').</b>
+ErrorDeleteNotPossibleLineIsConsolidated	=Impossibile cancellare il record perché è collegato ad una transazione bancaria conciliata
+ErrorDirAlreadyExists				=Una directory con questo nome esiste già.
+ErrorDirNotFound				=Directory <b>%s</b> non trovata (permessi errati o accesso negato da openbasedir, PHP safe_mode o altri parametri)
+ErrorDuplicateTrigger				=Un trigger file con class name '<b> %s </b>' è presente più volte. Rimuovi dalla directory <b>%s</b> i file trigger duplicati.
+Error						=Errore
+ErrorExportDuplicateProfil			=Questo nome di profilo esiste già nell'esportazione.
+ErrorFailedToChangePassword			=Impossibile cambiare la password
+ErrorFailedToCreateDir				=Creazione directory impossibile. Verifica che l'utente del server Web abbia i permessi per scrivere nella directory Dolibarr. Se il parametro <b>safe_mode</b> è abilitato in PHP, verificare che i file php di Dolibarr appartengano all'utente o gruppo del server web (per esempio www-data).
+ErrorFailedToDeleteJoinedFiles			=Impossibile eliminare i file collegati. Rimuovere i collegamenti ai file prima di eliminare.
+ErrorFailedToFindEntity				=Impossibile leggere l'entità '%s' (non trovata)
+ErrorFailedToLoadRSSFile			=Impossibile ottenere feed RSS. Prova ad ativare il debug con MAIN_SIMPLEXMLLOAD_DEBUG, se i messaggi di errore non forniscono informazioni sufficienti.
+ErrorFailedToRunExternalCommand			=Impossibile eseguire il comando esterno. Controlla che sia disponibile ed eseguibile dal server PHP. Se la modalità <b>safe_mode</ b> è abilitata in PHP, verificare che il comando sia all'interno di una directory definita dal parametro <b>safe_mode_exec_dir</ b>. 
+ErrorFailedToSendPassword			=Impossibile inviare la password
+ErrorFailedToWriteInDir				=Impossibile scrivere nella directory %s
+ErrorFailToCopyFile				=Impossibile copiare il file <b>%s</b> in <b>%s</b>
+ErrorFailToCreateDir				=Impossibile creare la directory <b>%s</b>
+ErrorFailToCreateFile				=Impossibile creare il file <b>%s</b>
+ErrorFailToDeleteDir				=Impossibile eliminare la directory <b>%s</b>
+ErrorFailToDeleteFile				=Impossibile rimuovere il file <b>%s</b>
+ErrorFailToRenameDir				=Impossibile rinominare la directory <b>%s</b> in <b>%s</b>
+ErrorFailToRenameFile				=Impossibile rinominare il file <b>%s</b> in <b>%s</b>
+ErrorFeatureNeedJavascript			=Questa funzione necessita di javascript per essere attivata. Modificare questa impostazione nel menu Impostazioni - layout di visualizzazione.
+ErrorFieldCanNotContainSpecialCharacters	=Il campo <b>%s</b> non può contenere caratteri speciali.
+ErrorFieldRefNotIn				=Valore errato nel campo numero <b>%s</b> (il valore <b>%s</b>non è un riferimento <b>%s</b> esistente)
+ErrorFieldsRequired				=Alcuni campi obbligatori non sono stati riempiti.
+ErrorFieldValueNotIn				=Valore errato nel campo numero <b>%s</b>(il valore <b>%s</b> non è un valore disponibile nel campo<b>%s</b> campo della tabella <b>%s</b>)
+ErrorFileAlreadyExists				=Un file con questo nome esiste già.
+ErrorFileIsInfectedWithAVirus			=Il programma antivirus non è stato in grado di convalidare il file (il file potrebbe essere infetto)
+ErrorFileIsInfectedWith				=Questo file è stato infettato da %s
+ErrorFileNotFound				=File non trovato (percorso errato o autorizzazioni insufficienti per l'accesso)
+ErrorFileSizeTooLarge				=La dimensione del file è troppo grande.
+ErrorForbidden2					=L'autorizzazione all'accesso per questi dati può essere impostata dall'amministratore di Dolibarr tramite il menu %s - %s. 
+ErrorForbidden3					=Sembra che Dolibarr non venga utilizzato tramite una sessione autenticata. Dai un'occhiata alla documentazione di installazione Dolibarr per sapere come gestire le autenticazioni (htaccess, mod_auth o altri...). 
+ErrorForbidden					=Accesso vietato.<br/>Si tenta di accedere a una pagina o a un'area senza autenticazione o con diritti insufficienti 
+ErrorFoundBadEmailInFile			=Sintassi email errata nelle righe %s del file (ad esempio, alla riga %s con email = %s)
+ErrorFromToAccountsMustDiffers			=I conti bancari di origine e destinazione devono essere diversi.
+ErrorFunctionNotAvailableInPHP			=Per questa funzione occorre l'estensione <b>%s</b>, ma non è disponibile in questa versione/configurazione di PHP.
+ErrorGroupAlreadyExists				=Il gruppo %s esiste già
+ErrorLDAPMakeManualTest				=Un file Ldif è stato generato nella directory %s. Prova a caricarlo dalla riga di comando per avere maggiori informazioni sugli errori.
+ErrorLDAPSetupNotComplete			=La configurazione per l'uso di LDAP è incompleta
+ErrorLeftMenuMustHaveAParentId			=Un menu di tipo 'sub-menu' deve avere un id genitore
+ErrorLoginAlreadyExists				=Login %s già esistente
+ErrorLoginDisabled				=L'account è stato disabilitato 
+ErrorLoginDoesNotExists				=Utente con accesso <b>%s</b> inesistente
+ErrorLoginHasNoEmail				=Questo utente non ha alcun indirizzo email. Processo interrotto. 
+ErrorModuleRequireJavascript			=Per questa funzionalità Javascript deve essere attivo. Per abilitare/disabilitare Javascript, vai su <b>Home - Impostazioni - Schermo</b>
+ErrorModuleSetupNotComplete			=L'installazione del modulo pare incompleta. Vai su <b>Impostazioni - Moduli</b> per completarla.
+ErrorNoAccountancyModuleLoaded			=Modulo contabilità disattivato
+ErrorNoActivatedBarcode				=Nessun tipo di codice a barre attivato
+ErrorNoImagickReadimage				=La funzione Imagick_readimage non è stata trovato nel PHP. L'anteprima non è disponibile. Gli amministratori possono disattivare questa scheda dal menu <b>Impostazioni - Schermo</b> 
+ErrorNoMailDefinedForThisUser			=Nessun messaggio impostato per questo utente
+ErrorNoTmpDir					=La directory temporanea %s non esiste.
+ErrorNumRefModel				=Esiste un riferimento nel database (%s) e non è compatibile con questa regola di numerazione. Rimuovere o rinominare il record per attivare questo modulo.
+ErrorPartialFile				=File non completamente ricevuto dal server.
+ErrorPasswordDiffers				=Le password immesse sono diverse, digitarle nuovamente. 
+ErrorPasswordsMustMatch				=Le due password digitate devono essere identiche
+ErrorPleaseTypeBankTransactionReportName	=Indicare il nome del report della transazione bancaria (Nel formato AAAAMM o AAAAMMGG)
+ErrorPrefixRequired				=È richiesto il prefisso
+ErrorProdIdAlreadyExist				=%s è già assegnato
+ErrorProductWithRefNotExist			=Il prodotto con riferimento %s non esiste
+ErrorQtyTooLowForThisSupplier			=Quantità troppa bassa per questo fornitore o nessun prezzo definito sul prodotto per questo fornitore
+ErrorRecordAlreadyExists			=Il record esiste già 
+ErrorRecordHasChildren				=Impossibile eliminare i record da cui dipendono altri record
+ErrorRecordNotFound				=Record non trovato
+ErrorRefAlreadyExists				=Il riferimento utilizzato esiste già.
+ErrorSelectAtLeastOne				=Errore. Selezionare almeno una voce.
+Errors						=Errori
+ErrorSizeTooLongForIntType			=Numero troppo lungo (massimo %s cifre)
+ErrorSizeTooLongForVarcharType			=Stringa troppo lunga (%s caratteri al massimo)
+ErrorsOnXLines					=Errori in <b>%s</b> righe del sorgente
+ErrorSpecialCharNotAllowedForField		=I caratteri speciali non sono ammessi per il campo <b>%s</b>
+ErrorSupplierCodeAlreadyUsed			=Codice fornitore già utilizzato
+ErrorSupplierCodeRequired			=Il codice fornitore è un dato necessario
+ErrorThisContactIsAlreadyDefinedAsThisType	=Questo contatto è già stato definito per questo tipo.
+ErrorTopMenuMustHaveAParentWithId0		=Un menu di tipo "Top" non può avere un menu principale. Metti 0 menu genitori o scegli un menu di tipo "Left".
+ErrorUploadBlockedByAddon			=Upload bloccato da un plugin di Apache/PHP
+ErrorUrlNotValid				=L'indirizzo del sito è errato
+ErrorUserCannotBeDelete				=L'utente non può essere eliminato. Probabilmente è necessario al funzionamento di Dolibarr.
+ErrorWebServerUserHasNotPermission		=L'account utente <b>%s</b> utilizzato per eseguire il server web non ha i permessi necessari
+ErrorWrongValueForField				=Valore errato nel campo numero <b>%s</b> (il valore <b>'%s'</b>non corrisponde alla regex <b>%s</b>)
+MenuManager					=Gestore dei menu
+UserCannotBeDelete				=L'utente non può essere eliminato. Forse è associato ad alcuni elementi di Dolibarr.
+WarningAllowUrlFopenMustBeOn			=Il parametro <b>allow_url_fopen</b> deve essere impostato su <b>on</b> nel file <b>php.ini</b> perché questo modulo funzioni correttamente. È necessario modificare questo file manualmente.
+WarningBookmarkAlreadyExists			=Un segnalibro per questo link (URL) o con lo stesso titolo esiste già.
+WarningBuildScriptNotRunned			=Lo script <b>%s</b> per disegnare il grafico non è stato eseguito, o non ci sono dati da visualizzare.
+WarningConfFileMustBeReadOnly			=Attenzione, il file di configurazione <b>htdocs/conf/conf.php</b> è scrivibile dal server web. Questa è una grave falla di sicurezza! Impostare il file in sola lettura per l'utente utilizzato dal server web. Se si utilizza Windows e il formato FAT per il disco, dovete sapere che tale filesystem non consente la gestione delle autorizzazioni sui file, quindi non può essere completamente sicuro.
+WarningInstallDirExists				=Attenzione, la directory di installazione <b>%s</b> esiste ancora. Questa è una grave falla di sicurezza! Rimuoverla al più presto! 
+WarningNoDocumentModelActivated			=Nessun modello per la generazione di documenti attivato. Finché non si verifica la configurazione del modulo, verrà usato un modello predefinito.
+WarningPassIsEmpty				=Attenzione, il database è accessibile senza password. Questa è una grave falla di sicurezza! Si dovrebbe aggiungere una password per il database e cambiare il file <b>conf.php</b> di conseguenza.
+WarningSafeModeOnCheckExecDir			=Attenzione, quando l'opzione <b>safe_mode</b> del PHP è attiva, il comando deve essere contenuto in una directory dichiarata dal parametro <b>safe_mode_exec_dir</b>.
+WarningsOnXLines				=Warning su <b>%s</b> righe del sorgente
+WarningUntilDirRemoved				=Questo avviso sarà visualizzato fino a quando questa directory è presente (disponibile solo per gli utenti admin). 

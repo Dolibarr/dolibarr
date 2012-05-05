@@ -1,18 +1,11 @@
-/*
- * Language code: it_IT
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-06-26 15:51:22
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+# Dolibarr language file - it_IT - withdrawals 
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
 // Reference language: en_US -> it_IT
 CHARSET=UTF-8
-WorkflowSetup=Flusso di lavoro del modulo di configurazione
-WorkflowDesc=Questo modulo è desinged di modificare il comportamento di azioni automatiche in applicazione. Per impostazione predefinita, il flusso di lavoro è aperto (cosa fate in modo che volete). Si può abilitare azioni automatiche che sono interessanti in
-ThereIsNoWorkflowToModify=Non vi è alcun flusso di lavoro è possibile modificare per il modulo è stato attivato.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Creare un ordine cliente automaticamente dopo una proposta commerciale è firmato
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Creare una fattura cliente automaticamente dopo una proposta commerciale è firmato
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Creare una fattura cliente automaticamente dopo un contratto è convalidato
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Creare una fattura cliente automaticamente dopo un ordine del cliente è chiuso
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:43).
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE				=Creare automaticamente una fattura attiva alla convalida del contratto
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE					=Creare automaticamente una fattura attiva alla chiusura dell'ordine cliente
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE					=Creare automaticamente una fattura attiva alla firma di una proposta commerciale
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER					=Creare automaticamente un ordine cliente alla firma di una proposta commerciale
+ThereIsNoWorkflowToModify						=Non vi è alcun flusso di lavoro modificabile per il modulo.
+WorkflowDesc								=Questo modulo è progettato per impostare le azioni automatiche dell'applicazione. Per impostazione predefinita, il flusso di lavoro è aperto (puoi adattarlo alle tue esigenze). Puoi scegliere quali azioni automatiche abilitare.
+WorkflowSetup								=Impostazioni flusso di lavoro

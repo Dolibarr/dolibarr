@@ -1,107 +1,74 @@
 # Dolibarr language file - it_IT - boxes 
-CHARSET=UTF-8
-BoxLastRssInfos                          =Rss informazioni 
-BoxLastProducts				 =Ultimi prodotti / servizi
-BoxLastProductsInContract		 =Ultimi prodotti / servizi contrattati
-BoxLastSupplierBills			 =Ultime fatture fornitore
-BoxLastCustomerBills			 =Ultime fatture cliente
-BoxOldestUnpaidCustomerBills		 =Fatture clienti più vecchie non pagate
-BoxOldestUnpaidSupplierBills		 =Fatture fornitori più vecchie non pagate
-BoxLastProposals			 =Ultime proposte commerciali
-BoxLastProspects			 =Ultimi potenziali clienti 
-BoxLastCustomers			 =Ultimi clienti
-BoxLastCustomerOrders			 =Ultimi ordini dei clienti
-BoxLastSuppliers			 =Ultimi fornitori
-BoxLastBooks				 =Ultimi libri
-BoxLastActions				 =Ultime azioni
-BoxCurrentAccounts			 =Saldi conti correnti 
-BoxSalesTurnover			 =Fatturato
-BoxTotalUnpaidCustomerBills		 =Totale fatture cliente non pagate
-BoxTotalUnpaidSuppliersBills		 =Totale fatture fornitore non pagate
-BoxTitleLastBooks			 =Ultimo %s libri registrati
-BoxTitleNbOfCustomers			 =Numero di clienti
-BoxTitleLastRssInfos			 =Ultime %s notizie da %s
-BoxTitleLastProducts			 =Ultime %s modifiche prodotti / servizi
-BoxTitleLastCustomerOrders		 =Ultimi %s modifiche ordini dei clienti
-BoxTitleLastSuppliers			 =Ultimi %s fornitori registrati
-BoxTitleLastCustomers			 =Ultimi %s clienti registrati
-BoxTitleLastCustomersOrProspects	 =Ultimi %s clienti o potenziali clienti registrati
-BoxTitleLastPropals			 =Ultime %s proposte registrate
-BoxTitleLastCustomerBills		 =Ultime %s fatture clienti
-BoxTitleLastSupplierBills		 =Ultime %s fatture fornitori
-BoxTitleLastProspects			 =Ultime %s potenziali clienti registrati
-BoxTitleLastProductsInContract		 =Ultimi %s prodotti / servizi contrattati
-BoxTitleOldestUnpaidCustomerBills	 =Le %s più vecchie fatture clienti non pagate
-BoxTitleOldestUnpaidSupplierBills	 =Le %s più vecchie fatture fornitori non pagate
-BoxTitleCurrentAccounts			 =Saldi dei conti correnti 
-BoxTitleSalesTurnover			 =Fatturato
-BoxTitleTotalUnpaidCustomerBills	 =Fatture clienti non pagate
-BoxTitleTotalUnpaidSuppliersBills	 =Fatture fornitori non pagate
-BoxMyLastBookmarks			 =I miei ultimi %s segnalibri
-FailedToRefreshDataInfoNotUpToDate	 =Impossibile aggiornare flusso RSS. Ultimo aggiornamento con successo in data: %s
-NoRecordedBookmarks			 =Nessun segnalibro definito. Fare clic <a href="%s"> qui </a> per aggiungere segnalibri.
-NoRecordedCustomers			 =Nessun cliente registrato
-BoxTitleLastActionsToDo			 =Ultime %s azioni da fare
-NoActionsToDo				 =Nessuna azione da fare
-NoRecordedOrders			 =Nessun ordine registrato del cliente
-NoRecordedProposals			 =Nessuna proposta registrata
-NoRecordedInvoices			 =Nessuna fattura clienti registrata 
-NoUnpaidCustomerBills			 =Nessuna fattura clienti non pagata
-NoRecordedSupplierInvoices		 =Nessuna fattura fornitori registrata
-NoUnpaidSupplierBills			 =Nessuna fattura fornitori non pagata
-BoxSalesTurnover			 =Fatturato
-
-
-// Date 2009-01-18 19:41:54
-// START - Lines generated via parser
-// Reference language: en_US
-NoRecordedBookmarks=No bookmarks defined. Click <a href=Nessun segnalibro definito. Fai clic <a href="%s">qui</a> per aggiungere segnalibri.
-// Date 2009-01-18 19:41:54
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-CHARSET=UTF-8
-LastRefreshDate=Ultima data di aggiornamento
-NoRecordedProducts=N. prodotti / servizi registrati
-NoRecordedProspects=N. prospetti registrati
-NoContractedProducts=N. prodotti / servizi appaltati
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
-// Reference language: en_US
-BoxLastContracts=ultimi contratti
-BoxTitleLastContracts=Ultimo %s contratti
-NoModifiedSupplierBills=Nessun fornitore ha registrato le fatture
-NoRecordedContracts=N. contratti registrati
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:34:42).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
 // Reference language: en_US -> it_IT
-BoxTitleLastModifiedSuppliers=%s Ultima modifica fornitori
-BoxTitleLastModifiedCustomers=%s Ultima modifica clienti
-BoxTitleLastModifiedProspects=%s Ultima modifica le prospettive di
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:36).
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
-// Reference language: en_US -> it_IT
-BoxLastContacts=Derniers contatti / indirizzi
-BoxLastMembers=Ultimi membri
-BoxTitleLastModifiedMembers=%s ultima modifica membri
-BoxTitleLastModifiedContacts=%s Ultima modifica contatti / indirizzi
-ClickToAdd=Clicca qui per aggiungere.
-NoRecordedContacts=Nessun contatto registrato
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:10).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
-// Reference language: en_US -> it_IT
-BoxOldestExpiredServices=Vecchi servizi attivi scaduti
-BoxLastExpiredServices=%s ultimi antichi contatti con i servizi attivi scaduti
-BoxTitleLastModifiedDonations=%s Ultima modifica donazioni
-BoxTitleLastModifiedExpenses=Ultima modifica %s spese
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:46).
+CHARSET					=UTF-8
+BoxCurrentAccounts			=Saldo conti correnti 
+BoxLastActions				=Ultime azioni
+BoxLastBooks				=Ultimi libri
+BoxLastContacts				=Ultimi contatti/indirizzi
+BoxLastContracts			=Ultimi contratti
+BoxLastCustomerBills			=Ultime fatture attive
+BoxLastCustomerOrders			=Ultimi ordini dei clienti
+BoxLastCustomers			=Ultimi clienti
+BoxLastExpiredServices			=Ultimi %s più vecchi contatti con servizi scaduti attivi
+BoxLastMembers				=Ultimi membri
+BoxLastProductsInContract		=Ultimi prodotti/servizi contrattati
+BoxLastProducts				=Ultimi prodotti/servizi
+BoxLastProposals			=Ultime proposte commerciali
+BoxLastProspects			=Ultimi potenziali clienti 
+BoxLastRssInfos                         =Informazioni RSS 
+BoxLastSupplierBills			=Ultime fatture fornitore
+BoxLastSuppliers			=Ultimi fornitori
+BoxMyLastBookmarks			=Ultimi %s segnalibri
+BoxOldestExpiredServices		=Servizi scaduti attivi più vecchi
+BoxOldestUnpaidCustomerBills		=Fatture attive non pagate più vecchie
+BoxOldestUnpaidSupplierBills		=Fatture fornitori non pagate più vecchie
+BoxSalesTurnover			=Fatturato
+BoxTitleCurrentAccounts			=Saldo conti correnti 
+BoxTitleLastActionsToDo			=Ultime %s azioni da fare
+BoxTitleLastBooks			=Ultimi %s libri registrati
+BoxTitleLastContracts			=Ultimi %s contratti
+BoxTitleLastCustomerBills		=Ultime %s fatture attive
+BoxTitleLastCustomerOrders		=Ultimi %s ordini dei clienti modificati
+BoxTitleLastCustomersOrProspects	=Ultimi %s clienti o potenziali clienti registrati
+BoxTitleLastCustomers			=Ultimi %s clienti registrati
+BoxTitleLastModifiedContacts		=Ultimi %s contatti/indirizzi registrati
+BoxTitleLastModifiedCustomers		=Ultima %s clienti modificati
+BoxTitleLastModifiedDonations		=Ultime %s donazioni modificate
+BoxTitleLastModifiedExpenses		=Ultime %s spese modificate
+BoxTitleLastModifiedMembers		=Ultimi %s membri modificati
+BoxTitleLastModifiedProspects		=Ultimi %s potenziali clienti modificati
+BoxTitleLastModifiedSuppliers		=Ultimi %s fornitori modificati
+BoxTitleLastProductsInContract		=Ultimi %s prodotti/servizi a contratto
+BoxTitleLastProducts			=Ultimi %s prodotti/servizi modificati
+BoxTitleLastPropals			=Ultime %s proposte registrate
+BoxTitleLastProspects			=Ultimi %s potenziali clienti registrati
+BoxTitleLastRssInfos			=Ultime %s notizie da %s
+BoxTitleLastSupplierBills		=Ultime %s fatture fornitori
+BoxTitleLastSuppliers			=Ultimi %s fornitori registrati
+BoxTitleNbOfCustomers			=Numero clienti
+BoxTitleOldestUnpaidCustomerBills	=Le %s fatture attive non pagate più vecchie
+BoxTitleOldestUnpaidSupplierBills	=Le %s fatture fornitori non pagate più vecchie
+BoxTitleSalesTurnover			=Fatturato
+BoxTitleTotalUnpaidCustomerBills	=Fatture attive non pagate
+BoxTitleTotalUnpaidSuppliersBills	=Fatture fornitore non pagate
+BoxTotalUnpaidCustomerBills		=Totale fatture attive non pagate
+BoxTotalUnpaidSuppliersBills		=Totale fatture fornitore non pagate
+ClickToAdd				=Clicca qui per aggiungere
+FailedToRefreshDataInfoNotUpToDate	=Impossibile aggiornare il feed RSS. Ultimo aggiornamento riuscito: %s
+LastRefreshDate				=Data dell'ultimo aggiornamento
+NoActionsToDo				=Nessuna azione da fare
+NoContractedProducts			=Nessun prodotto/servizio a contratto
+NoModifiedSupplierBills			=Nessuna fattura fornitore registrata
+NoRecordedBookmarks			=Nessun segnalibro salvato. Clicca <a href="%s"> qui </a> per aggiungere nuovi segnalibri.
+NoRecordedContacts			=Nessun contatto registrato
+NoRecordedContracts			=Nessun contratto registrato
+NoRecordedCustomers			=Nessun cliente registrato
+NoRecordedInvoices			=Nessuna fattura attiva registrata 
+NoRecordedOrders			=Nessun ordine cliente registrato
+NoRecordedProducts			=Nessun prodotto/servizio registrato
+NoRecordedProposals			=Nessuna proposta registrata
+NoRecordedProspects			=Nessun potenziale cliente registrato
+NoRecordedSupplierInvoices		=Nessuna fattura fornitore registrata
+NoUnpaidCustomerBills			=Nessuna fattura attiva non pagata
+NoUnpaidSupplierBills			=Nessuna fattura fornitore non pagata
