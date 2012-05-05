@@ -79,7 +79,7 @@ if (GETPOST("button_removefilter_x"))
  * view
  */
 
-$htmlother=new FormOther($db);
+$formother=new FormOther($db);
 $thirdpartystatic=new Societe($db);
 
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -157,14 +157,14 @@ if ($result)
 	if ($conf->categorie->enabled)
 	{
 	 	$moreforfilter.=$langs->trans('Categories'). ': ';
-		$moreforfilter.=$htmlother->select_categories(2,$search_categ,'search_categ');
+		$moreforfilter.=$formother->select_categories(2,$search_categ,'search_categ');
 	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
 	}
  	// If the user can view prospects other than his'
  	if ($user->rights->societe->client->voir || $socid)
  	{
 	 	$moreforfilter.=$langs->trans('SalesRepresentatives'). ': ';
-		$moreforfilter.=$htmlother->select_salesrepresentatives($search_sale,'search_sale',$user);
+		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
  	}
  	if ($moreforfilter)
 	{
