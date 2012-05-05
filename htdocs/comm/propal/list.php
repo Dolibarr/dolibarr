@@ -34,10 +34,6 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formpropal.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php');
-require_once(DOL_DOCUMENT_ROOT."/core/modules/propale/modules_propale.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/propal.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
 
 $langs->load('companies');
@@ -227,9 +223,14 @@ if ($result)
 		 $soc->fetch($socid);
 	}
 
-	$param='&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut;
-	if ($month) $param.='&amp;month='.$month;
-	if ($year) $param.='&amp;year='.$year;
+	$param='&socid='.$socid.'&viewstatut='.$viewstatut;
+	if ($month) $param.='&month='.$month;
+	if ($year)  $param.='&year='.$year;
+    if ($search_ref)     $param.='&search_ref=' .$search_ref;
+    if ($search_refcustomer) $param.='&search_ref=' .$search_refcustomer;
+    if ($search_societe) $param.='&search_societe=' .$search_societe;
+	if ($search_user > 0)    $param.='&search_user='.$search_user;
+    if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
 	print_barre_liste($langs->trans('ListOfProposals').' '.($socid?'- '.$soc->nom:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
 
 	// Lignes des champs de filtre

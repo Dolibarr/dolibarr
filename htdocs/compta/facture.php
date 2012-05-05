@@ -7,7 +7,7 @@
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
-**
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -3335,11 +3335,15 @@ else
                 $soc->fetch($socid);
             }
 
-            $param='&amp;socid='.$socid;
-            if ($month) $param.='&amp;month='.$month;
-            if ($year)  $param.='&amp;year=' .$year;
-
-            print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->nom:''),$page,'facture.php',$param,$sortfield,$sortorder,'',$num);
+            $param='&socid='.$socid;
+            if ($month) $param.='&month='.$month;
+            if ($year)  $param.='&year=' .$year;
+            if ($search_ref)      $param.='&search_ref=' .$search_ref;
+            if ($search_societe)  $param.='&search_societe=' .$search_societe;
+            if ($search_user > 0) $param.='&search_user=' .$search_user;
+            if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
+            if ($search_montant_ttc) $param.='&search_montant_ttc='.$search_montant_ttc;
+            print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->nom:''),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
 
             $i = 0;
             print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -3362,7 +3366,7 @@ else
             print '<tr class="liste_titre">';
             print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','',$param,'',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'f.datef','',$param,'align="center"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("DateDue"),$_SERVER['PHP_SELF'],"f.date_lim_reglement","&amp;socid=$socid","",'align="center"',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("DateDue"),$_SERVER['PHP_SELF'],"f.date_lim_reglement",'',$param,'align="center"',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans('Company'),$_SERVER['PHP_SELF'],'s.nom','',$param,'',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans('AmountHT'),$_SERVER['PHP_SELF'],'f.total','',$param,'align="right"',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans('AmountTTC'),$_SERVER['PHP_SELF'],'f.total_ttc','',$param,'align="right"',$sortfield,$sortorder);
