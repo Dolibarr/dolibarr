@@ -1,110 +1,94 @@
-# Dolibarr language file - it_IT - categories   	
-CHARSET=UTF-8
-Category					=Categoria
-Categories                  =Categorie
-Rubrique=Categoria
-Rubriques=Categorie
-categories					=categorie
-TheCategorie					=La categoria
-In						=In
+# Dolibarr language file - it_IT - categories 
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
+// Reference language: en_US -> it_IT
+CHARSET						=UTF-8
 AddIn						=Aggiungi a
-modify						=modificare
-Classify					=Classifica
-CategoriesArea					=Sezione categorie
-ProductsCategoriesArea				=Sezione categorie prodotti / servizi
-SuppliersCategoriesArea				=Sezione categorie fornitori 
-CustomersCategoriesArea				=Sezione categorie clienti
-ThirdPartyCategoriesArea			=Sezione categorie terzi
-MainCats					=Principali categorie
-SubCats						=Sub-categorie
-CatStatistics					=Statistiche
-CatList						=Elenco delle categorie
+AddProductToCat					=Inserire il prodotto in una categoria?
 AllCats						=Tutte le categorie
-ViewCat						=Visualizza categoria
-NewCat						=Aggiungi categoria
-NewCategory					=Nuova categoria
-ModifCat					=Modifica categoria
+AssignedToCustomer				=Assegnato ad un cliente
+AssignedToTheCustomer				=Assegnato al cliente
 CatCreated					=Categoria creata
-CreateCat					=Crea categoria
-CreateThisCat					=Crea questa categoria
-ValidateFields					=Convalidare i campi
-NoSubCat					=Nessuna sottocategoria.
-SubCatOf					=Sottocategoria
-FoundCats					=Trovate le categorie
-FoundCatsForName				=Categorie trovate per il nome:
-FoundSubCatsIn					=Sottocategorie trovato nella categoria
-ErrSameCatSelected				=Hai selezionato la stessa categoria più volte
-ErrForgotCat					=Hai dimenticato di scegliere la categoria
-ErrForgotField					=Hai dimenticato di indicare i campi
-ErrCatAlreadyExists				=Questo nome è già utilizzato
-AddProductToCat					=Aggiungi questo prodotto a una categoria?
-ImpossibleAddCat				=Impossibile aggiungere la categoria
-ImpossibleAssociateCategory			=Impossibile associare la categoria di
-WasAddedSuccessfully				=<b> %s </b> è stata aggiunta con successo.
-ObjectAlreadyLinkedToCategory			=L'elemento è già legato a questa categoria.
+CatCusList					=Elenco delle categorie per i clienti/clienti potenziali 
+CategId						=Id categoria 
+CategoriesArea					=Area categorie
+categories					=Categorie
+CategoriesTree					=Gerarchia delle categorie
+Category					=Categoria
+CategoryContents				=Contenuti categoria
+CategoryExistsAtSameLevel			=Questa categoria esiste già allo stesso livello
 CategorySuccessfullyCreated			=La categoria %s è stata aggiunta con successo.
-ProductIsInCategories				=Questo Prodotto / servizio si trova nelle seguenti categorie
-SupplierIsInCategories				=Questo Fornitore si trova nelle seguenti categorie
+CatList						=Elenco delle categorie
+CatMemberList					=Elenco delle categorie per i membri
+CatProdList					=Elenco delle categorie per i prodotti
+CatStatistics					=Statistiche
+CatSupList					=Elenco delle categorie per i fornitori
+Classify					=Classifica
+ClassifyInCategory				=Classificare nella categoria
+CompanyHasNoCategory				=Questa società non è in alcuna categoria
 CompanyIsInCustomersCategories			=Questa società si trova nelle seguenti categorie di clienti
 CompanyIsInSuppliersCategories			=Questa società si trova nelle seguenti categorie di fornitori
-ProductHasNoCategory				=Questo prodotto / servizio non è in alcun categorie
-SupplierHasNoCategory				=Questo fornitore non è in alcuna categoria
-CompanyHasNoCategory				=Questa società non è in alcuna categoria
-ClassifyInCategory				=Classificare nella categoria
-NoneCategory					=Nessuna
-CategoryExistsAtSameLevel			=Questa categoria esiste già allo stesso livello
-ReturnInProduct					=Torna alla scheda prodotto / servizio
-ReturnInSupplier				=Torna alla scheda fornitore
-ReturnInCompany					=Torna alla scheda cliente / potenziale cliente 
-ContentsVisibleByAll				=Il contenuto sarà visibile da tutti i
-ContentsVisibleByAllShort			=Indice visibile da tutti i
-ContentsNotVisibleByAllShort			=Contenuto non è visibile da tutti i
-CategoriesTree					=Albero categorie
-DeleteCategory					=Elimina categoria
-ConfirmDeleteCategory				=Sei sicuro di voler eliminare questa categoria?
-RemoveFromCategory				=Rimuovi collegamento con la categoria
-RemoveFromCategoryConfirm			=Sei sicuro di voler rimuovere legame tra l'operazione e la categoria?
-NoCategoriesDefined				=Nessuna categoria definita
-SuppliersCategoryShort				=Categoria fornitori
-CustomersCategoryShort				=Categoria clienti
-ProductsCategoryShort				=Categorie prodotti
-SuppliersCategoriesShort			=Categorie fornitori
+ConfirmDeleteCategory				=Vuoi davvero eliminare questa categoria?
+ContentsNotVisibleByAllShort			=Contenuti non visibili a tutti
+ContentsVisibleByAll				=I contenuti saranno visibili a tutti gli utenti
+ContentsVisibleByAllShort			=Contenuti visibili a tutti
+CreateCat					=Crea categoria
+CreateThisCat					=Crea questa categoria
+CustomersCategoriesArea				=Area categorie di clienti
 CustomersCategoriesShort			=Categorie clienti
-CustomersProspectsCategoriesShort   =Categorie clienti
-ProductsCategoriesShort				=Categorie prodotti 
-ThisCategoryHasNoProduct			=Questa categoria non contiene alcun prodotto.
-ThisCategoryHasNoSupplier			=Questa categoria non contiene alcun fornitore.
-ThisCategoryHasNoCustomer			=Questa categoria non contiene alcun cliente.
-
-// Date 2009-01-18 19:41:54
-// START - Lines generated via parser
-// Reference language: en_US
-AssignedToCustomer=Assegnato ad un cliente
-AssignedToTheCustomer=Assegnato al cliente
-InternalCategory=Categoria interna
-CategoryContents=Contenuto categoria
-CategId=Id categoria 
-// Date 2009-01-18 19:41:54
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-CHARSET=UTF-8
-NoCategoryYet=Nessuna categoria di questo tipo esiste ancora
-CatSupList=Elenco delle categorie fornitore
-CatCusList=Elenco delle categorie dei clienti / prospetti 
-CatProdList=Elenco delle categorie dei prodotti
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
-// Reference language: en_US
-MembersCategoriesArea=Membri categorie area
-MemberIsInCategories=Questo membro è di proprietà seguenti categorie di soci
-MemberHasNoCategory=Questo membro non è in alcun categorie
-MembersCategoryShort=Membri categoria
-MembersCategoriesShort=Membri categorie
-ThisCategoryHasNoMember=Questa categoria non contiene alcun membro.
-CatMemberList=Elenco dei membri categorie
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:32).
+CustomersCategoryShort				=Categoria clienti
+CustomersProspectsCategoriesShort   		=Categorie clienti potenziali
+DeleteCategory					=Elimina categoria
+ErrCatAlreadyExists				=La categoria esiste già
+ErrForgotCat					=Hai dimenticato di scegliere la categoria
+ErrForgotField					=Hai dimenticato di indicare i campi
+ErrSameCatSelected				=Hai selezionato la stessa categoria più volte
+FoundCatsForName				=Categorie trovate per il nome:
+FoundCats					=Categorie trovate
+FoundSubCatsIn					=Sottocategorie trovate nella categoria
+ImpossibleAddCat				=Impossibile aggiungere la categoria
+ImpossibleAssociateCategory			=Impossibile associare la categoria a
+In						=In
+InternalCategory				=Categoria interna
+MainCats					=Categorie principali
+MemberHasNoCategory				=Questo membro non è in alcuna categoria
+MemberIsInCategories				=Questo membro appartiene alle seguenti categorie
+MembersCategoriesArea				=Area categorie membri
+MembersCategoriesShort				=Categorie membri
+MembersCategoryShort				=Categoria membri
+ModifCat					=Modifica categoria
+modify						=modifica
+NewCat						=Aggiungi categoria
+NewCategory					=Nuova categoria
+NoCategoriesDefined				=Nessuna categoria definita
+NoCategoryYet					=Non esiste alcuna categoria di questo tipo
+NoneCategory					=Nessuna
+NoSubCat					=Nessuna sottocategoria
+ObjectAlreadyLinkedToCategory			=L'elemento appartiene già questa categoria.
+ProductHasNoCategory				=Il prodotto/servizio non apaprtiene ad alcuna categoria
+ProductIsInCategories				=Il Prodotto/servizio appartiene alle seguenti categorie
+ProductsCategoriesArea				=Area categorie prodotti/servizi
+ProductsCategoriesShort				=Categorie dei prodotti/servizi
+ProductsCategoryShort				=Categorie prodotti
+RemoveFromCategoryConfirm			=Sei sicuro di voler rimuovere il legame tra l'operazione e la categoria?
+RemoveFromCategory				=Rimuovi collegamento con la categoria
+ReturnInCompany					=Torna alla scheda cliente 
+ReturnInProduct					=Torna alla scheda prodotto/servizio
+ReturnInSupplier				=Torna alla scheda fornitore
+Rubrique					=Categoria
+Rubriques					=Categorie
+SubCatOf					=Sottocategoria
+SubCats						=Sub-categorie
+SupplierHasNoCategory				=Questo fornitore non appartiene ad alcuna categoria
+SupplierIsInCategories				=Questo Fornitore appartiene alle seguenti categorie
+SuppliersCategoriesArea				=Area categorie fornitori
+SuppliersCategoriesShort			=Categorie fornitori
+SuppliersCategoryShort				=Categoria fornitori
+TheCategorie					=La categoria
+ThirdPartyCategoriesArea			=Area categorie terzi
+ThisCategoryHasNoCustomer			=Questa categoria non contiene alcun cliente
+ThisCategoryHasNoMember				=Questa categoria non contiene alcun membro
+ThisCategoryHasNoProduct			=Questa categoria non contiene alcun prodotto
+ThisCategoryHasNoSupplier			=Questa categoria non contiene alcun fornitore
+ValidateFields					=Convalidare i campi
+ViewCat						=Visualizza categoria
+WasAddedSuccessfully				=<b> %s </b> aggiunta con successo

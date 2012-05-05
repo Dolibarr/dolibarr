@@ -1,13 +1,7 @@
-/*
- * Language code: it_IT
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-13 20:49:18
- */
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-CHARSET=UTF-8
-Bookm=Segnalibri
-NewBookmark=Nuovo segnalibro
-AddThisPageToBookmarks=Aggiungi questa pagina ai preferiti
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+# Dolibarr language file - it_IT - bookmarks 
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
+// Reference language: en_US -> it_IT
+CHARSET				=UTF-8
+AddThisPageToBookmarks		=Aggiungi segnalibro per questa pagina
+Bookm				=Segnalibri
+NewBookmark			=Nuovo segnalibro

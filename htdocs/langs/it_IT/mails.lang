@@ -1,144 +1,113 @@
 # Dolibarr language file - it_IT - mails                     
-CHARSET=UTF-8
-Mailing							     =Mailing 
-EMailing						     =E-mailing 
-Mailings						     =EMailing 
-EMailings						     =EMailing 
-MailCard						     =Scheda e-mail 
-MailTargets						     =Obiettivi 
-MailRecipients						     =Destinatari 
-MailRecipient						     =Destinatario 
-MailTitle						     =Titolo 
-MailFrom						     =Mittente 
-MailErrorsTo						     =Errori a
-MailReply						     =Rispondi a 
-MailTo							     =Destinatario (i) 
-MailCC							     =Copia in (CC)
-MailCCC							     =Copia cache di (CCC)
-MailTopic						     =Oggetto EMail  
-MailText						     =Messaggio 
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
+// Reference language: en_US -> it_IT
+CHARSET							     =UTF-8
+AddNewNotification					     =Attivare una nuova richiesta di notifica 
+AddRecipients						     =Aggiungi destinatari 
+AllEMailings						     =Tutti i eMailings
+ANotificationsWillBeSent				     =Verrà inviata una notifica via email 
+ApproveMailing						     =Approva invio
+BadEMail						     =Valore non valido
+CloneContent						     =Clona messaggio
+CloneEMailing						     =Clona invio
+CloneReceivers						     =Clona destinatari
+CommonSubstitutions					     =Sostituzioni comuni  
+ConfirmCloneEMailing					     =Sei sicuro di voler clonare questo invio?
+ConfirmDeleteMailing					     =Sei sicuro di voler eliminare questo invio? 
+ConfirmResetMailing					     =Attenzione, riavviando l'invio <b>%s</b> verrà ripetuto l'invio massivo di questa email. Vuoi davvero farlo?
+ConfirmSendingEmailing					     =Sei sicuro di voler effettuare l'invio massivo di email?<br/>L'invio massivo di email è limitato a <b>%s</b> destinatari per sessione per motivi di sicurezza. 
+ConfirmValidMailing					     =Sei sicuro di voler convalidare questo invio?
+CreateMailing						     =Crea invio
+DateLastSend						     =Data ultima spedizione
+DateSending						     =Data di spedizione
+DeleteAMailing						     =Eliminare un invio
+DeleteMailing						     =Elimina invio
+DeliveryReceipt						     =Ricevuta di consegna 
+EditMailing						     =Modifica invio
+EMailing						     =Invio email
+EMailings						     =Invii email
+EMailTestSubstitutionReplacedByGenericValues		     =Quando si utilizza la modalità di prova le variabili vengono sostituite con valori generici 
+ErrorMailRecipientIsEmpty				     =L'indirizzo del destinatario è vuoto
+IdRecord						     =ID record
+LastMailings						     =Ultimi %s invii
+LimitSendingEmailing					     =Gli invii online sono limitati per motivi di sicurezza e timeout a <b>%s</b> destinatari per sessione.
+LineInFile						     =Riga %s nel file 
+ListOfActiveNotifications				     =Elenco delle notifiche attive
+ListOfEMailings						     =Elenco degli invii
+ListOfNotificationsDone					     =Elenco delle notifiche spedite per email
+MailCard						     =Scheda email
+MailCCC							     =Copia carbone cache (CCC)
+MailCC							     =Copia carbone (CC)
+MailErrorsTo						     =Errors to
 MailFile						     =Allegati 
-MailMessage						     =EMail corpo 
-ShowEMailing						     =Visualizza mailings 
-ListOfEMailings						     =Elenco dei mailings 
-NewMailing						     =Nuovo mailing 
-EditMailing						     =Modifica mailing 
-DeleteMailing						     =Elimina mailing
-DeleteAMailing						     =Eliminare una mailing
-PreviewMailing						     =Anteprima mailing 
-PrepareMailing						     =Preparare mailing 
-CreateMailing						     =Crea mailing 
+MailFrom						     =Mittente
+MailingAddFile						     =Allega questo file 
+MailingArea						     =Sezione Invii di massa 
 MailingDesc						     =Questa pagina ti permette un invio di massa (mailing) di email a un gruppo di persone. 
-MailingResult						     =Risultato dell'invio mailing  
-TestMailing						     =Prova mailing 
-ValidMailing						     =Convalida mailing  
-ApproveMailing						     =Approva mailing
-MailingStatusDraft					     =Bozza 
-MailingStatusValidated					     =Convalidata
-MailingStatusApproved					     =Approvata 
-MailingStatusSent					     =Inviato 
-MailingStatusSentPartialy				     =Inviati parzialmente 
-MailingStatusSentCompletely				     =Inviati completamente 
+Mailing							     =Invio di massa
+MailingModuleDescContactCompanies			     =Contatti di soggetti terzi (clienti, clienti potenziali, fornitori)
+MailingModuleDescContactsByCompanyCategory		     =Contatti di soggetti terzi (per categoria)
+MailingModuleDescContactsByFunction			     =Contatti di soggetti terzi (per posizione/funzione)
+MailingModuleDescContactsCategories			     =Contatti di tutti i soggetti terzi (per categoria)
+MailingModuleDescDolibarrContractsLinesExpired		     =Soggetti terzi con contratti scaduti
+MailingModuleDescDolibarrUsers				     =Tutti gli utenti Dolibarr con indirizzi email
+MailingModuleDescEmailsFromFile				     =Email da un file (email;nome;cognome)
+MailingModuleDescFundationMembers			     =Membri fondazione con indirizzi email
+MailingModuleDescMembersCategories			     =Membri della Fondazione (per categoria)
+MailingNeedCommand2					     =Puoi inviare comunque online aggiungendo il parametro MAILING_LIMIT_SENDBYWEB impostato al valore massimo corrispondente al numero di email che si desidera inviare durante una sessione. 
+MailingNeedCommand					     =Per motivi di sicurezza, l'invio in massa di messaggi di posta elettronica può essere eseguito solo da riga di comando. Chiedi al tuo amministratore di lanciare il seguente comando per inviare il messaggio di posta elettronica a tutti i destinatari: 
+MailingResult						     =Risultato dell'invio massivo
+Mailings						     =Invii di massa
+MailingStatusApproved					     =Approvato
+MailingStatusDraft					     =Bozza
 MailingStatusError					     =Errore 
 MailingStatusNotSent					     =Non inviato 
-MailSuccessfulySent					     =E-mail inviata con successo (da %sa %s) 
-ErrorMailRecipientIsEmpty				     =E-mail destinatario è vuoto 
-WarningNoEMailsAdded					     =Non sono state aggiunte email da inviare.
-ConfirmValidMailing					     =Sei sicuro di voler convalidare questo mailing? 
-ConfirmDeleteMailing					     =Sei sicuro di voler eliminare questo mailing? 
-NbOfRecipients						     =Numero di destinatari 
-NbOfUniqueEMails					     =Numero e-mail uniche
-NbOfEMails						     =Numero di e-mail 
-TotalNbOfDistinctRecipients				     =Numero di destinatari separati
-NoTargetYet						     =Nessun destinatario ancora definito (Vai alla scheda 'destinatari') 
-AddRecipients						     =Aggiungi destinatari 
-RemoveRecipient						     =Rimuovi destinatario 
-CommonSubstitutions					     =Sostituzioni comuni  
-YouCanAddYourOwnPredefindedListHere			     =Per creare le liste di email predefinite leggi  htdocs/core/modules/mail/README. 
-EMailTestSubstitutionReplacedByGenericValues		     =Quando si utilizza modalità di prova, le variabili vengono sostituite con valori generici 
-MailingAddFile						     =Allega questo file 
-NoAttachedFiles						     =Nessun file allegato
-							     
-# Libelle des modules de liste de destinataires mailing	     
-MailingModuleDescContactCompanies			     =Contatti di terzi (potenziali clienti, clienti, fornitori...)
-MailingModuleDescDolibarrUsers				     =Tutti gli utenti Dolibarr con indirizzo di posta elettronica 
-MailingModuleDescFundationMembers			     =Membri fondazione con le email 
-MailingModuleDescEmailsFromFile				     =Email da un file (email;name;surname)
-							     
-LineInFile						     =Linea %s nel file 
-RecipientSelectionModules				     =Modulo di selezione di destinatari
+MailingStatusRead					     =Da leggere
+MailingStatusSentCompletely				     =Inviato completamente 
+MailingStatusSent					     =Inviato 
+MailingStatusSentPartialy				     =Inviato parzialmente 
+MailingStatusValidated					     =Convalidato
+MailMessage						     =Corpo del messaggio 
+MailNoChangePossible					     =I destinatari convalidati non possono essere modificati 
+MailRecipient						     =Destinatario
+MailRecipients						     =Destinatari
+MailReply						     =Rispondi a
 MailSelectedRecipients					     =Destinatari selezionati
-MailingArea						     =Sezione Mailings 
-LastMailings						     =Ultime %s emailings 
-TargetsStatistics					     =Statische obiettivi
+MailSuccessfulySent					     =Email inviata con successo (da %s a %s) 
+MailTargets						     =Obiettivi
+MailText						     =Testo 
+MailTitle						     =Titolo
+MailTo							     =Destinatario(i) 
+MailTopic						     =Titolo  
 NbOfCompaniesContacts					     =Numero contatti di società 
-MailNoChangePossible					     =Destinatari convalidato per e-mail non può essere modificato 
-SearchAMailing						     =Cerca mailing 
-SendMailing						     =Invia mailing 
-SendMail						     =Invia una e-mail 
-SentBy							     =Inviato da 
-MailingNeedCommand					     =Per motivi di sicurezza, l'invio in massa di messaggi di posta elettronica può essere eseguita solo da riga di comando. Chiedi al tuo amministratore di lanciare il seguente comando per inviare il messaggio di posta elettronica a tutti i destinatari: 
-MailingNeedCommand2					     =Puoi inviare comunque in linea con l'aggiunta del parametro MAILING_LIMIT_SENDBYWEB con il valore massimo del numero di email che si desidera inviare dalla sessione. 
-ConfirmSendingEmailing					     =Sei sicuro di voler effettuare l'invio in massa di email? <br> On line l'invio di email in massa è limitato per motivi di sicurezza a <b> %s </ b> destinatari per sessione. 
-TargetsReset						     =Cancella elenco 
-ToClearAllRecipientsClickHere				     =Per cancellare l'elenco destinatari per questo messaggio di posta elettronica, fare clic su pulsante 
-ToAddRecipientsChooseHere				     =Per aggiungere i destinatari, scegliere in questi elenchi 
-NbOfEMailingsReceived					     =Numero di emailings ricevute 
-IdRecord						     =ID registrato 
-DeliveryReceipt						     =Ricevuta di consegna 
-							     
-# Module Notifications					     
-Notifications						     =Notifiche 
-NoNotificationsWillBeSent				     =E-mail di notifica non sono previste per questo evento o società 
-ANotificationsWillBeSent				     =Una notifica sarà inviata per e-mail 
-SomeNotificationsWillBeSent				     =%s notifiche saranno inviate via e-mail 
-AddNewNotification					     =Attivare una nuova richiesta di notifica 
-ListOfActiveNotifications				     =Elenchi tutte le richieste di notifica attive
-
-
-// Date 2009-01-18 19:41:54
-// START - Lines generated via parser
-// Reference language: en_US
-MailingModuleDescContactsCategories=Contatti di tutte le terze parti (per categoria)
-// Date 2009-01-18 19:41:54
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-CHARSET=UTF-8
-AllEMailings=Tutti i eMailings
-ResetMailing=Reset mailing
-ConfirmResetMailing=Attenzione, resettando <b>emailing %s,</b> si permette di fare un nuovo invio di massa di questa e-mail. Sei sicuro che questo è ciò che si desidera fare?
-BadEMail=Valore non valido per la posta elettronica
-CloneEMailing=Clona mailing
-ConfirmCloneEMailing=Sei sicuro di voler clonare questo mailing?
-CloneContent=Clona messaggio
-CloneReceivers=Clona destinatari
-DateLastSend=Data ultimo invio
-MailingModuleDescDolibarrContractsLinesExpired=Terze parti con il contratto scaduto
-YouCanUseCommaSeparatorForSeveralRecipients=È possibile utilizzare il separatore <b>virgola(,)</b> per specificare più destinatari.
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
-// Reference language: en_US
-DateSending=Data di invio
-SentTo=Inviata a <b>%s</b>
-LimitSendingEmailing=On line l'invio di emailings sono limitati per motivi di sicurezza e timeout <b>%s</b> ai destinatari mediante l'invio di sessione.
-ListOfNotificationsDone=Lista tutte le notifiche e-mail inviate
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:30).
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
-// Reference language: en_US -> it_IT
-MailingModuleDescContactsByCompanyCategory=Contatti di soggetti terzi (da terza categoria parti)
-MailingModuleDescMembersCategories=Membri della Fondazione (per categorie)
-MailingModuleDescContactsByFunction=Contatti di soggetti terzi (da posizione / funzione)
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:47).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
-// Reference language: en_US -> it_IT
-MailingStatusRead=Leggere
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:43).
+NbOfEMailingsReceived					     =Numero di invii ricevuti
+NbOfEMails						     =Numero di email
+NbOfRecipients						     =Numero di destinatari 
+NbOfUniqueEMails					     =Numero email uniche
+NewMailing						     =Nuovo invio di massa 
+NoAttachedFiles						     =Nessun file allegato
+NoNotificationsWillBeSent				     =Non sono previste notifiche per questo evento o società 
+NoTargetYet						     =Nessun destinatario ancora definito (Vai alla scheda 'destinatari') 
+Notifications						     =Notifiche
+PrepareMailing						     =Preparare invio di massa 
+PreviewMailing						     =Anteprima invio di massa
+RecipientSelectionModules				     =Modulo di selezione destinatari
+RemoveRecipient						     =Rimuovi destinatario 
+ResetMailing						     =Reset mailing
+SearchAMailing						     =Cerca invio 
+SendMailing						     =Invia email massiva 
+SendMail						     =Invia una email
+SentBy							     =Inviato da
+SentTo							     =Inviata a <b>%s</b>
+ShowEMailing						     =Visualizza invii di massa 
+SomeNotificationsWillBeSent				     =%s notifiche saranno inviate via email 
+TargetsReset						     =Cancella elenco
+TargetsStatistics					     =Statische obiettivi
+TestMailing						     =Test invio
+ToAddRecipientsChooseHere				     =Per aggiungere i destinatari, scegliere da questi elenchi 
+ToClearAllRecipientsClickHere				     =Per cancellare l'elenco destinatari per questa email, cliccare sul pulsante 
+TotalNbOfDistinctRecipients				     =Numero di singoli destinatari
+ValidMailing						     =Convalida invio 
+WarningNoEMailsAdded					     =Non sono state aggiunte email da inviare.
+YouCanAddYourOwnPredefindedListHere			     =Per creare le liste di email predefinite leggi htdocs/core/modules/mail/README. 
+YouCanUseCommaSeparatorForSeveralRecipients		     =Utilizzare il separatore <b>virgola</b>(,) per specificare più destinatari.

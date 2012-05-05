@@ -1,68 +1,56 @@
-# Dolibarr language file - it_IT - ecm         	
-CHARSET=UTF-8
-MenuECM					       =Documenti
-DocsMine				       =I miei documenti
-DocsGenerated				       =Generata documenti
-DocsElements				       =Elementi documenti
-DocsThirdParties			       =Documenti di terzi
-DocsContracts				       =Documenti contratti
-DocsProposals				       =Documenti proposte
-DocsOrders				       =Documenti ordini
-DocsInvoices				       =Documenti fatture
-ECMNbOfDocs				       =Numero di documenti nella directory
-ECMNbOfDocsSmall			       =N. doc.
-ECMSection				       =Sezione
-ECMSectionManual			       =Sezione manuale
-ECMSectionAuto				       =Sezione Automatico
-ECMSections				       =Sezioni
-ECMRoot					       =Root
-ECMNewSection				       =Nuova sezione
-ECMAddSection				       =Aggiungi sezione
-ECMNewSection				       =Nuova sezione
-ECMNewDocument				       =Nuovo documento
-ECMCreationDate				       =Data di creazione
-ECMCreationUser				       =Creatore
-ECMArea					       =Sezione ECM
-ECMAreaDesc				       =L'ECM (Electronic Content Management) permette di salvare, condividere e ricercare rapidamente tutti i tipi di documenti in Dolibarr.
-ECMAreaDesc2				       =* Le directory sono riempite automaticamente quando si aggiungono dei documenti dalla scheda di un elemento. <br> * L'aggiunta manuale può essere utilizzata per salvare i documenti non legati ad un particolare elemento.
-ECMSectionWasRemoved			       =<b> La sezione %s </ b> è stata eliminata.
-ECMDocumentsSection			       =Sezione documenti
-ECMSearchByKeywords			       =Ricerca per parole chiave
-ECMSearchByEntity			       =Ricerca per oggetto
-ECMSectionOfDocuments			       =Sezione dei documenti
-ECMTypeManual				       =Manuale
-ECMTypeAuto				       =Automatico
-ECMDocsByThirdParties			       =Documenti legati a terzi
-ECMDocsByProposals			       =Documenti collegati alle proposte
-ECMDocsByOrders				       =Documenti collegati agli ordini clienti
-ECMDocsByContracts			       =Documenti collegati ai contratti
-ECMDocsByInvoices			       =Documenti collegati alle fatture clienti
-ECMDocsByProducts			       =Documenti legati ai prodotti
-ECMManualOrg				       =Directory manuale
-ECMAutoOrg				       =Directory Automatica
-ECMNoDirecotyYet			       =Nessuna directory creata
-ShowECMSection				       =Visualizza la directory
-DeleteSection				       =Rimuovere la directory
-ConfirmDeleteSection			       =Confermare che si desidera eliminare la directory <b> %s </ b>?
-ECMDirectoryForFiles			       =Directory relativa ai files
-CannotRemoveDirectoryContainsFiles	       =Impossibile rimovere perché contiene alcuni file
-
-
-// Date 2009-01-18 19:41:54
-// START - Lines generated via parser
-// Reference language: en_US
-ECMSectionsManual=Sezione manuale
-ECMSectionsAuto=sezione automatico
-ECMNbOfFilesInDir=Numero di file nella directory
-ECMNbOfSubDir=Numero di sub-directory
-ECMNbOfFilesInSubDir=N. di files in sotto-directory
-ECMFileManager=File manager
-ECMSelectASection=Seleziona una directory dall'albero sulla sinistra ...
-// Date 2009-01-18 19:41:54
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-CHARSET=UTF-8
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+# Dolibarr language file - it_IT - ecm        
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
+// Reference language: en_US -> it_IT
+CHARSET						=UTF-8
+CannotRemoveDirectoryContainsFiles		=Directory non vuota: eliminazione impossibile!
+ConfirmDeleteSection				=Vuoi davvero eliminare la directory <b>%s</b>?
+DeleteSection				       	=Eliminare la directory
+DocsContracts					=Documenti contratti
+DocsElements					=Elementi documenti
+DocsGenerated				       	=Documenti generati
+DocsInvoices				       	=Documenti fatture
+DocsMine				       	=I miei documenti
+DocsOrders				       	=Documenti ordini
+DocsProposals				       	=Documenti proposte
+DocsThirdParties			       	=Documenti soggetti terzi
+ECMAddSection				       	=Aggiungi sezione
+ECMAreaDesc2				   	=* Le directory vengono riempite automaticamente quando si aggiungono dei documenti dalla scheda di un elemento.<br/>* Per salvare documenti non legati ad un elemento si può usare l'aggiunta manuale.
+ECMAreaDesc				       	=L'ECM (Electronic Content Management) permette di salvare, condividere e ricercare rapidamente tutti i tipi di documento in Dolibarr.
+ECMArea						=ECM
+ECMAutoOrg					=Directory automatica
+ECMCreationDate					=Data di creazione
+ECMCreationUser					=Creatore
+ECMDirectoryForFiles				=Directory dei file
+ECMDocsByContracts				=Documenti collegati ai contratti
+ECMDocsByInvoices				=Documenti collegati alle fatture attive
+ECMDocsByOrders					=Documenti collegati agli ordini clienti
+ECMDocsByProducts				=Documenti collegati ai prodotti
+ECMDocsByProposals				=Documenti collegati alle proposte
+ECMDocsByThirdParties				=Documenti a soggetti terzi
+ECMDocumentsSection				=Directory documenti
+ECMFileManager					=Filemanager
+ECMManualOrg					=Directory manuale
+ECMNbOfDocs					=Numero di documenti nella directory
+ECMNbOfDocsSmall				=N° doc.
+ECMNbOfFilesInDir				=Numero di file nella directory
+ECMNbOfFilesInSubDir				=Numero di file nella sottodirectory
+ECMNbOfSubDir					=Numero di sottodirectory
+ECMNewDocument					=Nuovo documento
+ECMNewSection					=Nuova sezione
+ECMNoDirecotyYet				=Nessuna directory creata
+ECMRoot						=Root
+ECMSearchByEntity				=Ricerca per oggetto
+ECMSearchByKeywords				=Ricerca per parole chiave
+ECMSectionAuto					=Directory automatica
+ECMSectionManual				=Directory manuale
+ECMSectionOfDocuments				=Directory dei documenti
+ECMSectionsAuto					=Gerarchia automatica
+ECMSection					=Directory
+ECMSectionsManual				=Gerarchia manuale
+ECMSections					=Directory
+ECMSectionWasRemoved				=La directory<b>%s</b> è stata eliminata.
+ECMSelectASection				=Seleziona una directory dall'albero sulla sinistra ...
+ECMTypeAuto					=Automatico
+ECMTypeManual					=Manuale
+MenuECM						=Documenti
+ShowECMSection					=Visualizza la directory
