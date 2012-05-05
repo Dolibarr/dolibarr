@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
- * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2001-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
+ * Copyright (C) 2007-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,13 @@
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
+// For MultiCompany module
+$entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : 1);
+if (is_int($entity))
+{
+	define("DOLENTITY", $entity);
+}
+
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
@@ -40,7 +48,7 @@ $langs->load("members");
 $langs->load("companies");
 $langs->load("other");
 
-$rowid=$_GET["id"];
+$id=GETPOST('id','int');
 $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
 
@@ -62,7 +70,7 @@ llxHeaderVierge($langs->trans("MemberCard"));
 
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label('member');
-if ($rowid > 0)
+if ($id > 0)
 {
 	$res=$object->fetch($id,$ref);
 	if ($res < 0) { dol_print_error($db,$object->error); exit; }
