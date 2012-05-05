@@ -1846,8 +1846,11 @@ abstract class CommonObject
 
         $this->db->begin();
 
+        $fieldstatus="fk_statut";
+        if ($elementTable == 'user') $fieldstatus="statut";
+
         $sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
-        $sql.= " SET fk_statut = ".$status;
+        $sql.= " SET ".$fieldstatus." = ".$status;
         $sql.= " WHERE rowid=".$elementId;
 
         dol_syslog(get_class($this)."::setStatut sql=".$sql, LOG_DEBUG);
