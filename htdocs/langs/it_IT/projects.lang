@@ -1,118 +1,98 @@
 # Dolibarr language file - it_IT - projects 
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
+// Reference language: en_US -> it_IT
 CHARSET=UTF-8
-Project					    =Progetto 
-Projects				    =Progetti 
-Myprojects				    =I miei progetti 
-ProjectsArea				    =Sezione progetti 
-NewProject				    =Nuovo progetto 
-AddProject				    =Aggiungi un progetto 
-DeleteAProject				    =Elimina un progetto 
-OfficerProject				    =Responsabile del progetto 
-ConfirmDeleteAProject			    =Sei sicuro di voler eliminare questo progetto? 
-LastProjects				    =Ultimi %s progetti 
-AllProjects				    =Tutti i progetti 
-ShowProject				    =Visualizza progetto 
-SetProject				    =Imposta progetto 
-NoProject				    =Nessun progetto definito 
-NbOpenTasks				    =Numeri attività aperte
-MyTasks					    =Le mie attività 
-Tasks					    =Attività
-Task					    =Attività 
-NewTask					    =Nuova attività 
-AddDuration				    =Aggiungi durata 
-Activity				    =Attività 
-MyActivity				    =La mia attività 
-DurationEffective			    =Durata effettiva 
-ListProposalsAssociatedProject		    =Elenco delle proposte commerciali associate al progetto 
-ListOrdersAssociatedProject		    =Elenco degli ordini associati al progetto 
-ListInvoicesAssociatedProject		    =Elenco delle fatture associate al progetto
-DocumentModelBaleine			    =Modello di rapporto di progetto completo (logo, etc..)
-
-// Date 2009-01-18 19:41:54
-// START - Lines generated via parser
-// Reference language: en_US
-SharedProject=Progetto condiviso
-DeleteATask=Eliminazione di un compito
-ConfirmDeleteATask=Sei sicuro di voler eliminare questo compito?
-ProjectsList=Elenco dei progetti
-NbOfProjects=Numero dei progetti
-TimeSpent=Tempo trascorso
-RefTask=Rif. attività
-LabelTask=Etichetta compito
-NewTimeSpent=Nuovo tempo trascorso
-MyTimeSpent=Il mio tempo trascorso
-AddTask=Aggiungi compito
-Activities=Compiti / attività
-MyActivities=I miei compiti / attività
-MyProjects=I miei progetti
-Time=Tempo
-ListSupplierOrdersAssociatedProject=Elenco degli ordini fornitori associati al progetto
+ActionsOnProject				=Azioni sul progetto
+Activities					=Compiti/attività
+Activity					=Attività
+ActivityOnProjectThisMonth			=Attività sul progetto questo mese
+ActivityOnProjectThisWeek			=Attività sul progetto questa settimana
+ActivityOnProjectThisYear			=Attività sul progetto nell'anno in corso
+AddDuration					=Aggiungi durata 
+AddProject					=Aggiungi progetto 
+AddTask						=Aggiungi compito
+AffectedTo					=Interessato da
+AllProjects					=Tutti i progetti
+CantRemoveProject				=Questo progetto non può essere rimosso: altri oggetti (fatture, ordini, ecc...) vi fanno riferimento. Vedi scheda riferimenti.
+ChildOfTask					=Figlio del progetto/attività
+CloseAProject					=Chiudi progetto
+ConfirmCloseAProject				=Vuoi davvero chiudere il progetto?
+ConfirmDeleteAProject				=Vuoi davvero eliminare il progetto? 
+ConfirmDeleteATask				=Vuoi davvero eliminare il compito?
+ConfirmDeleteATimeSpent				=Vuoi davvero cancellare questo tempo?
+ConfirmReOpenAProject				=Vuoi davvero riaprire il progetto?
+ConfirmValidateProject				=Vuoi davvero convalidare il progetto?
+DeleteAProject					=Elimina un progetto
+DeleteATask					=Cancella un compito
+DeleteATimeSpent				=Cancella il tempo trascorso
+DocumentModelBaleine				=Modello per il report di progetto completo (logo, etc..)
+DoNotShowMyTasksOnly				=Vedi anche compiti che non mi riguardano
+DurationEffective				=Durata effettiva
+ErrorTimeSpentIsEmpty				=Tempo trascorso vuoto
+IfNeedToUseOhterObjectKeepEmpty	=Se alcuni oggetti (fattura, ordine, ...), appartenente ad un altro di terze parti, deve essere collegato al progetto di creare, mantenere questo vuoto di avere il progetto di essere multi terzi.
+LabelTask					=Etichetta compito
+LastProjects					=Ultimi %s progetti 
+LinkedToAnotherCompany				=Collegato a un soggetto terzo
+ListActionsAssociatedProject			=Elenco delle azioni associate al progetto
+ListContractAssociatedProject			=Elenco dei contratti associati al progetto
+ListFichinterAssociatedProject			=Elenco degli interventi legati al progetto
+ListInvoicesAssociatedProject			=Elenco delle fatture associate al progetto
+ListOrdersAssociatedProject			=Elenco degli ordini associati al progetto 
+ListPredefinedInvoicesAssociatedProject		=Elenco delle fatture clienti predefinite associate al progetto
+ListProposalsAssociatedProject		    =Elenco delle proposte commerciali associate al progetto
 ListSupplierInvoicesAssociatedProject=Elenco delle fatture fornitori associate al progetto
-ListContractAssociatedProject=Elenco dei contratti associati al progetto
-ActivityOnProjectThisWeek=Attività sul progetto di questa settimana
-ActivityOnProjectThisMonth=Attività sul progetto di questo mese
-ActivityOnProjectThisYear=Attività sul progetto nell'anno in corso
-ChildOfTask=Figlio del progetto / attività
-NotOwnerOfProject=Non proprietario di questo progetto privato
-AffectedTo=Interessato a
-// Date 2009-01-18 19:41:54
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-CHARSET=UTF-8
-ListPredefinedInvoicesAssociatedProject=Elenco delle fatture clienti predefinite associate con il progetto
-CantRemoveProject=Questo progetto non può essere rimosso in quanto è di riferimento per alcuni altri oggetti (fatture, ordini o altri). Vedi scheda referers.
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
-// Reference language: en_US
-PrivateProject=Contatti di progetto
-MyProjectsDesc=Questa visione è limitata a progetti che state per un contatto (qualunque sia il tipo).
-ProjectsPublicDesc=Questo punto di vista presenta tutti i progetti sono autorizzati a leggere.
-ProjectsDesc=Questo punto di vista presenta tutti i progetti (le autorizzazioni utente si concede l'autorizzazione per visualizzare tutto).
-MyTasksDesc=Questa visione è limitata a progetti o attività che sono per un contatto (qualunque sia il tipo).
-TasksPublicDesc=Questo punto di vista presenta tutti i progetti e le attività sono permesso di leggere.
-TasksDesc=Questo punto di vista presenta tutti i progetti e le attività (le autorizzazioni utente si concede l'autorizzazione per visualizzare tutto).
-Progress=Progressi
-ListFichinterAssociatedProject=Elenco degli interventi legati al progetto
+ListSupplierOrdersAssociatedProject=Elenco degli ordini fornitori associati al progetto
 ListTripAssociatedProject=Elenco dei viaggi e delle spese associate al progetto
-ListActionsAssociatedProject=Elenco delle azioni associate al progetto
-ValidateProject=Valida projet
-ConfirmValidateProject=Sei sicuro di voler convalidare questo progetto?
-CloseAProject=Chiusura del progetto
-ConfirmCloseAProject=Sei sicuro di voler chiudere questo progetto?
-ReOpenAProject=Apri progetto
-ConfirmReOpenAProject=Sei sicuro di voler riaprire questo progetto?
-ProjectContact=Progetto contatti
-ActionsOnProject=Azioni sul progetto
-YouAreNotContactOfProject=Lei non è un contatto di questo progetto privato
-DeleteATimeSpent=Elimina il tempo trascorso
-ConfirmDeleteATimeSpent=Sei sicuro di voler cancellare questo tempo?
-DoNotShowMyTasksOnly=Vedi anche compiti io non sono interessato a
-ShowMyTasksOnly=Visualizza solo compiti sono affetto da
-TaskRessourceLinks=Risorse
-ProjectsDedicatedToThisThirdParty=I progetti dedicati a questo terzo
+MyActivities=I miei compiti / attività
+MyActivity				    =La mia attività 
+MyProjectsDesc=Questa visione è limitata a progetti che state per un contatto (qualunque sia il tipo).
+Myprojects				    =I miei progetti 
+MyProjects=I miei progetti
+MyTasksDesc=Questa visione è limitata a progetti o attività che sono per un contatto (qualunque sia il tipo).
+MyTasks					    =Le mie attività 
+MyTimeSpent=Il mio tempo trascorso
+NbOfProjects=Numero dei progetti
+NbOpenTasks				    =Numeri attività aperte
+NewProject				    =Nuovo progetto 
+NewTask					    =Nuova attività 
+NewTimeSpent=Nuovo tempo trascorso
+NoProject				    =Nessun progetto definito 
 NoTasks=Le funzioni di questo progetto
-LinkedToAnotherCompany=Collegato a una terza parte
-TypeContact_project_internal_PROJECTLEADER=Capo progetto
+NotOwnerOfProject=Non proprietario di questo progetto privato
+OfficerProject				    =Responsabile del progetto 
+PrivateProject=Contatti di progetto
+Progress=Progressi
+ProjectContact=Progetto contatti
+Project					    =Progetto 
+ProjectsArea				    =Sezione progetti 
+ProjectsDedicatedToThisThirdParty=I progetti dedicati a questo terzo
+ProjectsDesc=Questo punto di vista presenta tutti i progetti (le autorizzazioni utente si concede l'autorizzazione per visualizzare tutto).
+ProjectsList=Elenco dei progetti
+Projects				    =Progetti 
+ProjectsPublicDesc=Questo punto di vista presenta tutti i progetti sono autorizzati a leggere.
+RefTask=Rif. attività
+ReOpenAProject=Apri progetto
+SetProject				    =Imposta progetto 
+SharedProject=Progetto condiviso
+ShowMyTasksOnly=Visualizza solo compiti sono affetto da
+ShowProject				    =Visualizza progetto 
+Task					    =Attività 
+TaskIsNotAffectedToYou=Compito non è assegnato a voi
+TaskRessourceLinks=Risorse
+Tasks					    =Attività
+TasksDesc=Questo punto di vista presenta tutti i progetti e le attività (le autorizzazioni utente si concede l'autorizzazione per visualizzare tutto).
+TasksPublicDesc=Questo punto di vista presenta tutti i progetti e le attività sono permesso di leggere.
+ThisWillAlsoRemoveTasks=Questa azione anche eliminare tutte le attività del progetto (compiti <b>%s</b> al momento) e tutti gli ingressi del tempo trascorso.
+TimeSpent=Tempo trascorso
+TimesSpent=Il tempo trascorso
+Time=Tempo
+TypeContact_project_external_CONTRIBUTOR=Contributore
 TypeContact_project_external_PROJECTLEADER=Capo progetto
 TypeContact_project_internal_CONTRIBUTOR=Contributore
-TypeContact_project_external_CONTRIBUTOR=Contributore
-TypeContact_project_task_internal_TASKEXECUTIVE=Compito dell'esecutivo
+TypeContact_project_internal_PROJECTLEADER=Capo progetto
+TypeContact_project_task_external_CONTRIBUTOR=Contributore
 TypeContact_project_task_external_TASKEXECUTIVE=Compito dell'esecutivo
 TypeContact_project_task_internal_CONTRIBUTOR=Contributore
-TypeContact_project_task_external_CONTRIBUTOR=Contributore
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:44).
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
-// Reference language: en_US -> it_IT
-TimesSpent=Il tempo trascorso
-TaskIsNotAffectedToYou=Compito non è assegnato a voi
-ErrorTimeSpentIsEmpty=Il tempo trascorso è vuoto
-ThisWillAlsoRemoveTasks=Questa azione anche eliminare tutte le attività del progetto (compiti <b>%s</b> al momento) e tutti gli ingressi del tempo trascorso.
-IfNeedToUseOhterObjectKeepEmpty=Se alcuni oggetti (fattura, ordine, ...), appartenente ad un altro di terze parti, deve essere collegato al progetto di creare, mantenere questo vuoto di avere il progetto di essere multi terzi.
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:28).
+TypeContact_project_task_internal_TASKEXECUTIVE=Compito dell'esecutivo
+ValidateProject=Valida projet
+YouAreNotContactOfProject=Lei non è un contatto di questo progetto privato

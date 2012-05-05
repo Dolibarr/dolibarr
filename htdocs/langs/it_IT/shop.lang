@@ -1,11 +1,13 @@
 # Dolibarr language file - it_IT - shop
-CHARSET=UTF-8
-Shop				       =Negozio 
-ShopWeb				       =Negozio on-line
-LastOrders			       =Ultimi ordini 
-OnStandBy			       =In stand-by 
-TreatmentInProgress		       =Trattamento in corso 
-LastCustomers			       =Ultimo clienti 
-OSCommerceShop			       =Negozio OsCommerce
-OSCommerce			       =OsCommerce 
-AddProd				       =Vendita online
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
+// Reference language: en_US -> it_IT
+CHARSET				=UTF-8
+AddProd				=Vendita online
+LastCustomers			=Ultimi clienti 
+LastOrders			=Ultimi ordini 
+OnStandBy			=In standby 
+OSCommerce			=OSCommerce 
+OSCommerceShop			=Negozio OSCommerce
+Shop				=Negozio 
+ShopWeb				=Negozio online
+TreatmentInProgress		=Trattamento in corso 

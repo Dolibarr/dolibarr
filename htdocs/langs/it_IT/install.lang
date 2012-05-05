@@ -1,250 +1,208 @@
-# Dolibarr language file - it_IT - install                           
-CHARSET=UTF-8
-InstallEasy							     =Abbiamo cercato di rendere l' installazione di Dolibarr più semplice possibile. Basta seguire le istruzioni passo per passo. 
-MiscellanousChecks						     =Verificare prerequisiti  
-DolibarrWelcome							     =Benvenuti in Dolibarr 
-ConfFileExists							     =<b> File di configurazione %s </b> esiste. 
-ConfFileDoesNotExists						     =<b> File di configurazione %s </b> non esiste! 
-ConfFileDoesNotExistsAndCouldNotBeCreated			     =<b> File di configurazione %s </b> non esiste e non può essere creato! 
-ConfFileCouldBeCreated						     =<b> File di configurazione %s </b> può essere creato. 
-ConfFileIsNotWritable						     =<b> File di configurazione %s </b> non è scrivibile. Controllare le autorizzazioni. Per la prima installazione, il server web deve essere in grado di scrivere in questo file durante il processo di configurazione ( "chmod 666" per esempio su come il sistema operativo Unix). 
-ConfFileIsWritable						     =<b> File di configurazione %s </b> è scrivibile. 
-PHPSupportSessions						     =Questo PHP supporta le sessioni. 
-PHPSupportPOSTGETOk						     =Questo PHP supporta le variabili GET e POST. 
-PHPSupportPOSTGETKo						     =E' possibile che l'installazione corrente di PHP non supporti variabili POST e / o GET. Controlla il parametro <b> variables_order </b> in php.ini. 
-PHPSupportGD							     =PHP con supporto grafico GD.
-PHPMemoryOK							     =PHP max sessione di memoria è impostata a <b> %s </b>. Questo dovrebbe essere sufficiente. 
-PHPMemoryTooLow							     =PHP max sessione di memoria è impostata a <b> %s </b> byte. Questo dovrebbe essere troppo basso. Cambia il tuo php.ini <b> </b> per impostare il parametro <b> memory_limit </b> ad almeno <b> %s </b> byte. 
-Recheck								     =Fare clic qui per rieffettuare i controlli
-ErrorPHPDoesNotSupportSessions					     =La tua installazione di PHP non supporta le sessioni. Questa funzione è necessaria per usare Dolibarr. Controlla la tue impostazioni di PHP. 
-ErrorDirDoesNotExists						     =La directory %s non esiste. 
-ErrorGoBackAndCorrectParameters					     =Vai indietro e correggi i parametri sbagliati. 
-ErrorWrongValueForParameter					     =Potresti aver digitato un valore errato per il parametro ' %s'. 
-ErrorFailedToCreateDatabase					     =Impossibile creare il database ' %s'. 
-ErrorFailedToConnectToDatabase					     =Impossibile collegarsi al database ' %s'. 
-ErrorPHPVersionTooLow						     =Versione PHP troppo vecchia. E' obbligatoria la versione %s . 
-ErrorConnectedButDatabaseNotFound				     =Connessione al server avvenuta con successo, ma il database '%s' non è stato trovato. 
-ErrorDatabaseAlreadyExists					     =Database '%s' esiste già. 
-IfDatabaseNotExistsGoBackAndUncheckCreate			     =Se il database non esiste, tornare indietro e verificare l'opzione "Crea database". 
-IfDatabaseExistsGoBackAndCheckCreate				     =Se il database esiste già, tornare indietro e deselezionare l'opzione "Crea database".
-PHPVersion							     =Versione PHP 
-YouCanContinue							     =È possibile continuare ... 
-PleaseBePatient							     =Vi preghiamo di essere pazienti ... 
-License								     =Licenza di utilizzo
-ConfigurationFile						     =File di configurazione 
-WebPagesDirectory						     =Directory in cui le pagine web vengono memorizzate
-DocumentsDirectory						     =Directory per memorizzare e caricare documenti generati 
-URLRoot								     =URL Root 
-DolibarrDatabase						     =Dolibarr Database 
-DatabaseChoice							     =Scelta Database 
-DatabaseType							     =Tipo di database 
-DriverType							     =Tipo driver  
-Server								     =Server 
-ServerAddressDescription					     =Nome o l'indirizzo IP del server di database, di solito 'localhost' quando database server è ospitato sullo stesso server del server web 
-ServerPortDescription						     =Porta del server database. Tenere vuoto se sconosciuta. 
-DatabaseServer							     =Server del database
-DatabaseName							     =Nome del database 
-Login								     =Accesso 
-AdminLogin							     =Login per amministratore del database. Tenere vuoto se ci si collega in forma anonima 
-Password							     =Password 
-PasswordAgain							     =Conferma la tua password una seconda volta 
-AdminPassword							     =Password per amministratore del database. Tenere vuoto se si collega in forma anonima 
-CreateDatabase							     =Crea database 
-CreateUser							     =Crea utente 
-DatabaseSuperUserAccess						     =Database - Superuser accesso 
-CheckToCreateDatabase						     =Barrare se il database non esiste e deve essere creato. <br> In questo caso, è necessario compilare il login / password per l'account di root in fondo a questa pagina. 
-CheckToCreateUser						     =Barrare se l'utente non esiste e deve essere creato. <br> In questo caso, è necessario compilare il login / password per l'account di root in fondo a questa pagina. 
-Experimental							     =(sperimentale, non operativo) 
-DatabaseRootLoginDescription					     =Login utente con permesso di creare nuovi database o nuovi utenti, inutile se il database e il database di accesso è già esistente (come quando si è ospitato da un provider di web hosting). 
-KeepEmptyIfNoPassword						     =Lasciare vuoto se l'utente non ha alcuna password (da evitare per motivi di sicurezza) 
-SaveConfigurationFile						     =Salva il file 
-ConfigurationSaving						     =Salvataggio di file di configurazione 
-ServerConnection						     =Connessione server 
-DatabaseConnection						     =Connessione al database 
-DatabaseCreation						     =Creazione del database 
-UserCreation							     =Creazione utente 
-CreateDatabaseObjects						     =Creazione degli oggetti del database 
-ReferenceDataLoading						     =Carico dei dati di riferimento
-TablesAndPrimaryKeysCreation					     =Creazione tabelle e chiavi primarie
-CreateTableAndPrimaryKey					     =Creazione tabella %s 
-CreateOtherKeysForTable						     =Creazione vincoli e indici per la tabella %s 
-OtherKeysCreation						     =Creazione vincoli e indici
-FunctionsCreation						     =Creazione funzioni
-AdminAccountCreation						     =Creazione accesso amministratore
-PleaseTypePassword						     =Si prega di digitare una password, le password vuote non sono ammesse! 
-PleaseTypeALogin						     =Si prega di inserire un nome utente per il login! 
-PasswordsMismatch						     =Le password digitate sono diverse, si prega di riprovare! 
-SetupEnd							     =Fine del setup 
-SystemIsInstalled						     =L'installazione è stata completata. 
-SystemIsUpgraded						     =Dolibarr è stato aggiornato con successo. 
-YouNeedToPersonalizeSetup					     =È necessario configurare Dolibarr per soddisfare le vostre esigenze (aspetto, caratteristiche, ...). Per effettuare questa operazione, segui il link qui sotto: 
-AdminLoginCreatedSuccessfuly					     =Amministratore Dolibarr '<b> %s </b>' creato con successo. 
-GoToSetupArea							     =Vai alla pagina impostazioni
-Examples							     =Esempi 
-WithNoSlashAtTheEnd						     =Senza la barra "/" alla fine 
-LoginAlreadyExists						     =Esiste già 
-DolibarrAdminLogin						     =Nome amministratore Dolibarr
-AdminLoginAlreadyExists						     =Dolibarr account amministratore '<b> %s </b>' esiste già. 
-WarningRemoveInstallDir						     =Attenzione, per motivi di sicurezza, una volta che l'installazione o l'aggiornamento è completo, si dovrebbe rimuovere la directory <b> install <b> directory o rinominare a <b> install.lock </b>, al fine di evitare il suo uso malevolo. 
-ThisPHPDoesNotSupportTypeBase					     =Quest installazione di PHP non supporta l'accesso a database di tipo %s 
-FunctionNotAvailableInThisPHP					     =Non disponibile su questa installazione di PHP 
-MigrateScript							     =Script di migrazione
-ChoosedMigrateScript						     =Scegli script di migrazione
-DataMigration							     =Migrazione dei dati 
-DatabaseMigration						     =Migrazione della struttura del database
-ProcessMigrateScript						     =Elaborazione dello script 
-ChooseYourSetupMode						     =Scegliete la vostra modalità di impostazione e fate clic su "Start" ... 
-FreshInstall							     =Nuova installazione 
-FreshInstallDesc						     =Usare questo modo, se questa è la tua prima installazione. In caso contrario, questa modalità può riparare una precedente installazione incompleta, ma, se si desidera aggiornare la propria versione, scegliere "Aggiorna". 
-Upgrade								     =Upgrade 
-UpgradeDesc							     =Usare questo modo se si devono sostituire le vecchie installazioni Dolibarr con i file da una versione più recente. Ciò aggiornerà il database e dati. 
-Start								     =Inizio 
-InstallNotAllowed						     =L'installazione non è possibile a causa dei permessi del file <b> conf.php </b>
-NotAvailable							     =Non disponibile 
-YouMustCreateWithPermission					     =È necessario creare il file %s e impostare i permessi di scrittura per server web durante il processo di installazione. 
-CorrectProblemAndReloadPage					     =Si prega di correggere il problema e premere F5 per ricaricare pagina. 
-AlreadyDone							     =Già migrate 
-DatabaseVersion							     =Versione database 
-ServerVersion							     =Versione server di database 
-YouMustCreateItAndAllowServerToWrite				     =È necessario creare questa directory e dare al server web i permessi di scrivere sulla stessa. 
-CharsetChoice							     =Set di caratteri scelto 
-CharacterSetClient						     =Set di caratteri utilizzati per generare codice HTML delle pagine web 
-CharacterSetClientComment					     =Scegli il set di caratteri per la visualizzazione Web. <br/> Il set proposto di default è quello usato dal database. 
-CollationConnection						     =Ordinamento caratteri
-CollationConnectionComment					     =Scegli la codifica per definire l'ordinamento caratteri nel database. Questo parametro è chiamato 'collation' nel linguaggio dei database. <br/> Questo parametro non può essere definito se database esiste già. 
-CharacterSetDatabase						     =Set di caratteri per il database 
-CharacterSetDatabaseComment					     =Scegli il set di caratteri voluto per la creazione di database. <br/> Questo parametro non può essere definito se database esiste già. 
-YouAskDatabaseCreationSoDolibarrNeedToConnect			     =Si chiede di creare database <b> %s </b>, ma per questo, Dolibarr necessità di collegarsi al server <b> %s </b> super utente con <b> %s </b> autorizzazioni. 
-YouAskLoginCreationSoDolibarrNeedToConnect			     =Si chiede di creare database di accesso <b> %s </b>, ma per questo, Dolibarr necessità di collegarsi al server <b> %s </b> super utente con <b> %s </b> autorizzazioni. 
-BecauseConnectionFailedParametersMayBeWrong			     =Connessione fallita, nome utente e password possono essere errati.
-OrphelinsPaymentsDetectedByMethod				     =Pagamenti orfani sono stati rilevati con il metodo %s 
-RemoveItManuallyAndPressF5ToContinue				     =Rimuovere manualmente e premere F5 per continuare. 
-KeepDefaultValuesWamp=È possibile utilizzare la procedura guidata di impostazione DoliWamp, usando valori proposti qui che sono già ottimizzati. Cambiare solo se si conosce esattamente quello che fate.
-KeepDefaultValuesMamp=È possibile utilizzare la procedura guidata di impostazione DoliMamp, usando valori proposti qui che sono già ottimizzati. Cambiare solo se si conosce esattamente quello che fate.
-FieldRenamed							     =Campo rinominato 
-
-#########
-# upgrade
-#########
-MigrationOrder							     =Migrazione dei dati per gli ordini clienti
-MigrationSupplierOrder						     =Migrazione dei dati per gli ordini fornitori
-MigrationProposal						     =Migrazione dei dati per le proposte commerciali 
-MigrationInvoice						     =Migrazione dei dati per le fatture dei clienti
-MigrationContract						     =Migrazione dei dati per i contratti 
-MigrationSuccessfullUpdate					     =Upgrade con successo 
-MigrationUpdateFailed						     =Processo di aggiornamento fallito
-
-# Payments Update
-MigrationPaymentsUpdate						     =Migrazione dei dati di pagamento  
-MigrationPaymentsNumberToUpdate					     =%s pagamento(i) da migrare 
-MigrationProcessPaymentUpdate					     =Aggiornamento della migrazione dei pagamento(i) %s 
-MigrationPaymentsNothingToUpdate				     =Niente da aggiornare
-MigrationPaymentsNothingUpdatable				     =Nessun pagamento aggiornabile
-
-# Contracts Update
-MigrationContractsUpdate					     =Migrazione dei dati dei contratt
-MigrationContractsNumberToUpdate				     =%s contratto(i) da aggiornare 
-MigrationContractsLineCreation					     =Migrazione del contratto ref %s 
-MigrationContractsNothingToUpdate				     =Non ci sono più cose da fare 
-MigrationContractsFieldDontExist				     =Vincolo di campo non più esistente. Niente da fare. 
-
+# Dolibarr language file - it_IT- install
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
+// Reference language: en_US -> it_IT
+CHARSET							=UTF-8
+ActivateModule						=Attiva modulo %s
+AdminAccountCreation					=Creazione accesso amministratore
+AdminLoginAlreadyExists					=L'account amministratore <b> %s </b> esiste già. 
+AdminLoginCreatedSuccessfuly				=Account amministratore <b> %s </b> creato con successo. 
+AdminLogin						=Login per amministratore del database. Da lasciare vuoto se ci si collega in forma anonima 
+AdminPassword						=Password per amministratore del database. Da lasciare vuoto se ci si collega in forma anonima 
+AlreadyDone						=Già migrate 
+BecauseConnectionFailedParametersMayBeWrong		=Connessione fallita, nome utente e password possono essere errati.
+CharacterSetClientComment				=Scegli il set di caratteri per la visualizzazione Web.<br/>Il set predefinito è quello usato dal database. 
+CharacterSetClient					=Set di caratteri utilizzati per generare il codice HTML delle pagine web 
+CharacterSetDatabaseComment				=Scegli il set di caratteri da usare per la creazione di database.<br/>Questo parametro non può essere definito se il database esiste già. 
+CharacterSetDatabase					=Set di caratteri per il database
+CharsetChoice						=Set di caratteri scelto
+CheckThatDatabasenameIsCorrect				=Controllare che il nome del database sia corretto (<b>%s</b>)
+CheckToCreateDatabase					=Seleziona questa opzione se il database non esiste e deve essere creato.<br>Sarà necessario indicare login e password dell'account di root in fondo a questa pagina.
+CheckToCreateUser					=Seleziona questa opzione se l'utente non esiste e deve essere creato.<br/>In questo caso, è necessario indicare login e password dell'account di root in fondo a questa pagina. 
+CheckToForceHttps					=Seleziona questa opzione per forzare le connessioni sicure (HTTPS).<br/>L'host dev'essere configurato per usare un certificato SSL.
+ChoosedMigrateScript					=Scegli script di migrazione
+ChooseYourSetupMode					=Scegli la modalità di impostazione e clicca "start"
+CollationConnectionComment				=Scegli la codifica per definire l'ordinamento caratteri nel database (Collation).<br/>Questo parametro non può essere definito se il database esiste già. 
+CollationConnection					=Ordinamento caratteri (Collation)
+ConfFileCouldBeCreated					=Il file <b>%s</b> può essere creato. 
+ConfFileDoesNotExistsAndCouldNotBeCreated		=Il file di configurazione <b>%s</b> non esiste e non può essere creato!
+ConfFileDoesNotExists					=Il file di configurazione <b>%s</b> non esiste!
+ConfFileExists						=Il file di configurazione <b>%s</b> esiste. 
+ConfFileIsNotWritable					=Il file di configurazione <b>%s</b> non è scrivibile. Controllare le autorizzazioni. Durante la prima installazione, il server web deve essere in grado di scrivere in questo file durante il processo di configurazione (usa, per esempio il comando "chmod 666" per renderlo scrivibile da tutti gli utenti su sistemi operativi Unix e simili). 
+ConfFileIsWritable					=Il file di configurazione <b>%s</b> è scrivibile. 
+ConfFileReload						=Ricarica tutte le informazioni dal file di configurazione
+ConfigurationFile					=File di configurazione 
+ConfigurationSaving					=Salvataggio del file di configurazione 
 # Contracts Empty Dates Update
-MigrationContractsEmptyDatesUpdate				     =Migrazione contratti con date vuote
-MigrationContractsEmptyDatesUpdateSuccess			     =Migrazione contratti con date vuote effettuata con successo 
-MigrationContractsEmptyDatesNothingToUpdate			     =Nessuna data di contratto vuota da migrare 
-MigrationContractsEmptyCreationDatesNothingToUpdate		     =Nessuna data di creazione del contratto vuota da migrare 
-
-# Contracts Invalid Dates Update
-MigrationContractsInvalidDatesUpdate				     =Migrazioni dei contratti con date errate 
-MigrationContractsInvalidDateFix				     =Migrazione del contratto %s (Data contratto = %s, data di inizio del servizio min. = %s) 
-MigrationContractsInvalidDatesNumber				     =%s contratti migrati
-MigrationContractsInvalidDatesNothingToUpdate			     =Non ci sono contratti con date con errate da migrare
-
 # Contracts Incoherent Dates Update
-MigrationContractsIncoherentCreationDateUpdate			     =Migrazioni contratti con data incoerente
-MigrationContractsIncoherentCreationDateUpdateSuccess		     =Migrazioni contratti con data incoerente effettuata con successo
-MigrationContractsIncoherentCreationDateNothingToUpdate		     =Nessun contratto con data incoerente da migrare
-
-# Reopening Contracts
-MigrationReopeningContracts					     =Apri contratto chiuso per errore 
-MigrationReopenThisContract					     =Contratto da riaprire %s 
-MigrationReopenedContractsNumber				     = %s contratti modificati 
-MigrationReopeningContractsNothingToUpdate			     =Nessun contratto chiuso da aprire 
-
-# Migration transfert
-MigrationBankTransfertsUpdate					     =Aggiorna i legami tra banca e di una operazione di trasferimento bancario 
-MigrationBankTransfertsNothingToUpdate				     =Tutti i link sono aggiornati 
-
-# Migration delivery
-MigrationShipmentOrderMatching					     =Migrazione ordini di spedizione 
-MigrationDeliveryOrderMatching					     =Migrazione ordini di spedizione 
-MigrationDeliveryDetail						     =Migrazione dettagli ordini di spedizione 
-
-
-// Date 2009-01-18 19:41:54
-// START - Lines generated via parser
-// Reference language: en_US
-PHPSupportUTF8=Questo supporto PHP UTF8 funzioni.
-ErrorPHPDoesNotSupportGD=La tua installazione di PHP non supporta la funzione grafica GD. Nessun grafico sarà disponibile.
-ErrorPHPDoesNotSupportUTF8=La tua installazione di PHP non supporta la codifica UTF8 funzioni. Dolibarr non può funzionare correttamente. Risolvere questo problema prima di installare Dolibarr.
-IfLoginDoesNotExistsCheckCreateUser=Se il login non esiste ancora, è necessario verificare l'opzione "Crea utente"
-ErrorConnection=Server <b>" %s",</b> nome del database <b>" %s",</b> di accesso <b>" %s",</b> o la password di database può essere sbagliato o PHP versione client può essere troppo vecchio rispetto alla versione del database.
-MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Correggere contratto %s (data del contratto = %s, data di inizio del servizio min = %s)
-// Date 2009-01-18 19:41:54
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-GoToDolibarr=Vai alla Dolibarr
-MigrationNotFinished=La versione del vostro database non è stata aggiornata completamente, rieseguire il processo di aggiornamento.
-GoToUpgradePage=Vai alla pagina di aggiornamento
-InstallChoiceRecommanded=Raccomandata la scelta di installare la <b>versione %s</b> al posto dell'attuale <b>versione %s</b>
-InstallChoiceSuggested=<b>Installare scelta suggerita da installer.</b>
-MigrationStockDetail=Aggiornamento del valore delle scorte di prodotti
-MigrationMenusDetail=Aggiornamento dinamico menu tabelle
-MigrationDeliveryAddress=Aggiornamento indirizzo di consegna in spedizioni
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
-// Reference language: en_US
-ForceHttps=Forzare connessioni sicure (HTTPS)
-CheckToForceHttps=Seleziona questa opzione per forzare le connessioni sicure (HTTPS). <br> Ciò richiede che il server Web è configurato con un certificato SSL.
-DirectoryRecommendation=E 'raccomandato di utilizzare una directory al di fuori della directory delle tue pagine web.
-KeepDefaultValuesDeb=Si utilizza la configurazione guidata Dolibarr da un pacchetto Debian o Ubuntu, per cui i valori proposti qui sono già ottimizzati. Solo la password del proprietario del database per creare deve essere completata. Modificare i parametri di altri solo se sai quello che fai.
-CheckThatDatabasenameIsCorrect=Controllare che il nome del database <b>"%s"</b> è corretta.
-IfAlreadyExistsCheckOption=Se questo nome sia corretto e che la base non esiste ancora, è necessario verificare l'opzione "CREATE DATABASE".
-OpenBaseDir=PHP openbasedir parametro
-YouAskToCreateDatabaseSoRootRequired=Hai selezionato la casella "CREATE DATABASE". Per questo, è necessario fornire nome utente / password di superuser (parte inferiore del modulo).
-YouAskToCreateDatabaseUserSoRootRequired=Hai selezionato la casella "Crea il proprietario del database". Per questo, è necessario fornire nome utente / password di superuser (parte inferiore del modulo).
-NextStepMightLastALongTime=passaggio di corrente può durare diversi minuti. Vi preghiamo di attendere la schermata successiva è mostrata completamente prima di continuare.
-MigrationCustomerOrderShipping=Migrare spedizione per la conservazione degli ordini dei clienti
-MigrationShippingDelivery=stoccaggio di aggiornamento di spedizione
-MigrationShippingDelivery2=stoccaggio di aggiornamento di spedizione 2
-MigrationFixData=Fix per i dati denormalizzati
-MigrationRelationshipTables=la migrazione dei dati per le tabelle rapporto (%s)
-MigrationProjectTaskActors=la migrazione dei dati per llx_projet_task_actors tavolo
-MigrationProjectUserResp=fk_user_resp migrazione dei dati per settore di llx_projet llx_element_contact
-MigrationProjectTaskTime=Aggiornare il tempo trascorso in secondi
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:35:36).
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
-// Reference language: en_US -> it_IT
-ConfFileReload=Ricarica tutte le informazioni dal file di configurazione.
-WarningPHPVersionTooLow=PHP troppo vecchia versione. %s versione o più è previsto. Questa versione dovrebbe consentire l&#39;installazione ma non è supportato.
-KeepDefaultValuesProxmox=È possibile utilizzare la procedura guidata di installazione Dolibarr da un apparecchio Proxmox virtuale, in modo da valori proposti qui sono già ottimizzati. Cambiarle solo se sai quello che fai.
-MigrateIsDoneStepByStep=La versione di destinazione (%s) ha un gap di varie versioni, in modo da procedura guidata di installazione tornerà a suggerire la migrazione prossima volta questo sarà finito.
-MigrationFinished=Migrazione finito
-LastStepDesc=<strong>Ultimo passo:</strong> definire qui login e password si prevede di utilizzare per la connessione al software. Non fanno perdere questa in quanto è il conto per permettere di amministrare tutti gli altri.
-MigrationActioncommElement=Aggiornare i dati sulle azioni
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:45).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
-// Reference language: en_US -> it_IT
-DatabasePrefix=Prefisso delle tabelle del database
-ActivateModule=Attiva %s modulo
-MigrationPaymentMode=Migrazione dei dati per la modalità di pagamento
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:42).
+# Contracts Invalid Dates Update
+# Contracts Update
+CorrectProblemAndReloadPage				=Correggi il problema e ricaricare la pagina premendo F5. 
+CreateDatabase						=Crea database
+CreateDatabaseObjects					=Creazione degli oggetti del database 
+CreateOtherKeysForTable					=Creazione vincoli e indici per la tabella %s 
+CreateTableAndPrimaryKey				=Creazione della tabella %s 
+CreateUser						=Crea utente 
+DatabaseChoice						=Scelta Database 
+DatabaseConnection					=Connessione al database 
+DatabaseCreation					=Creazione del database 
+DatabaseMigration					=Migrazione della struttura del database
+DatabaseName						=Nome del database 
+DatabasePrefix						=Prefisso delle tabelle del database
+DatabaseRootLoginDescription				=Login utente con permesso di creare nuovi database o nuovi utenti. Non è necessario se il database esiste già. 
+DatabaseServer						=Database server
+DatabaseSuperUserAccess					=Accesso superutente al database 
+DatabaseType						=Tipo di database
+DatabaseVersion						=Versione database
+DataMigration						=Migrazione dei dati
+DirectoryRecommendation					=Si raccomanda l'utilizzo di una directory al di fuori della directory delle pagine web.
+DocumentsDirectory					=Directory per memorizzare e caricare documenti generati
+DolibarrAdminLogin					=Login dell'amministratore di Dolibarr
+DolibarrDatabase					=Database Dolibarr
+DolibarrWelcome						=Benvenuti in Dolibarr 
+DriverType						=Tipo di driver  
+ErrorConnectedButDatabaseNotFound			=Connessione al server avvenuta con successo, ma il database <b>%s</b> non è stato trovato. 
+ErrorConnection						=Server <b>%s</b>, nome del database <b>%s</b>, login <b>%s</b> o la password del database può essere sbagliata o la versione di PHP è troppo vecchia rispetto alla versione del database.
+ErrorDatabaseAlreadyExists			     	=Il database <b>%s</b> esiste già. 
+ErrorDirDoesNotExists					=La directory <b>%s</b> non esiste. 
+ErrorFailedToConnectToDatabase				=Impossibile collegarsi al database <b>%s</b>. 
+ErrorFailedToCreateDatabase				=Impossibile creare il database <b>%s</b>. 
+ErrorGoBackAndCorrectParameters				=Torna indietro e correggi i parametri sbagliati. 
+ErrorPHPDoesNotSupportGD				=La tua installazione di PHP non supporta la funzione grafica GD. Non sarà disponibile alcun grafico.
+ErrorPHPDoesNotSupportSessions				=La tua installazione di PHP non supporta le sessioni. Dolibarr non può funzionare senza. Risolvere questo problema prima di installare Dolibarr.
+ErrorPHPDoesNotSupportUTF8				=L'installazione di PHP non supporta funzioni UTF-8. Dolibarr non può funzionare correttamente.Risolvere questo problema prima di installare Dolibarr.
+ErrorPHPVersionTooLow					=Versione PHP troppo vecchia. E' obbligatoria la versione %s o superiori. 
+ErrorWrongValueForParameter				=Potresti aver digitato un valore errato per il parametro <b>%s</b>. 
+Examples						=Esempi
+Experimental						=(Sperimentale)
+FieldRenamed						=Campo rinominato 
+ForceHttps						=Forzare connessioni sicure (HTTPS)
+FreshInstallDesc					=Seleziona questa opzione se è una prima installazione. In caso contrario, questa modalità può riparare una precedente installazione incompleta. Se invece si desidera aggiornare la versione installata, scegliere "Aggiorna". 
+FreshInstall						=Nuova installazione
+FunctionNotAvailableInThisPHP				=Non disponibile su questa installazione di PHP 
+FunctionsCreation					=Creazione funzioni
+GoToDolibarr						=Vai a Dolibarr
+GoToSetupArea						=Vai alla pagina impostazioni
+GoToUpgradePage						=Vai alla pagina di aggiornamento
+IfAlreadyExistsCheckOption				=Se il nome è esatto e il database non esiste ancora, seleziona l'opzione "Crea database".
+IfDatabaseExistsGoBackAndCheckCreate			=Se il database esiste già, torna indietro e deseleziona l'opzione "Crea database".
+IfDatabaseNotExistsGoBackAndUncheckCreate		=Se il database non esiste, torna indietro e seleziona l'opzione "Crea database". 
+IfLoginDoesNotExistsCheckCreateUser			=Se il login non esiste ancora, è necessario selezionare l'opzione "Crea utente"
+InstallChoiceRecommanded				=Si raccomanda di installare la versione <b>%s</b> al posto dell'attuale <b>%s</b>
+InstallChoiceSuggested					=<b>Scelta suggerita dall'installer</b>.
+InstallEasy						=Abbiamo cercato di semplificare al massimo l' installazione di Dolibarr. Basta seguire le istruzioni passo per passo.
+InstallNotAllowed					=Impossibile completare l'installazione a causa dei permessi del file <b>conf.php</b>
+KeepDefaultValuesDeb					=Si sta utilizzando la configurazione guidata di un pacchetto (Debian, Ubuntu o simili), quindi i valori proposti sono già ottimizzati. Basta inserire la password per la creazione del database. Modifica gli altri parametri solo se sai quello che fai.
+KeepDefaultValuesMamp					=Si sta utilizzando la configurazione guidata DoliMamp, quindi i valori proposti sono già ottimizzati. Modifica i parametri solo se sai quello che fai.
+KeepDefaultValuesProxmox				=Si sta utilizzando la configurazione guidata di una virtual appliance Proxmox, quindi i valori proposti sono già ottimizzati. Modifica i parametri solo se sai quello che fai.
+KeepDefaultValuesWamp					=Si sta utilizzando la configurazione guidata DoliWamp, quindi i valori proposti sono già ottimizzati. Modifica i parametri solo se sai quello che fai.
+KeepEmptyIfNoPassword					=Lasciare vuoto se l'utente non ha alcuna password (da evitare per motivi di sicurezza) 
+LastStepDesc						=<strong>Ultimo passo:</strong> Indicare qui login e password che si prevede di utilizzare per la connessione al software. Non dimenticare questi dati perché è l'unico account in grado di amminsitrare tutti gli altri.
+License							=Licenza d'uso
+Login							=Login 
+LoginAlreadyExists					=Esiste già 
+MigrateIsDoneStepByStep					=La versione richiesta (%s) è più avanti di varie versioni, quindi la procedura guidata suggerirà uns nuova migrazione una volta finita questa.
+MigrateScript						=Script di migrazione
+MigrationActioncommElement				=Aggiornare i dati sulle azioni
+MigrationBankTransfertsNothingToUpdate			=Tutti i link sono aggiornati 
+MigrationBankTransfertsUpdate				=Aggiorna i collegamenti tra una transazione bancaria e un bonifico 
+MigrationContract					=Migrazione dei dati per i contratti 
+MigrationContractsEmptyCreationDatesNothingToUpdate	=Nessuna data di creazione contratto da correggere 
+MigrationContractsEmptyDatesNothingToUpdate		=Nessuna data di contratto vuota da correggere 
+MigrationContractsEmptyDatesUpdate			=Correzione contratti con date vuote
+MigrationContractsEmptyDatesUpdateSuccess		=Correzione contratti con date vuote effettuata con successo 
+MigrationContractsFieldDontExist			=Il campo fk_facture non esiste più. Niente da fare. 
+MigrationContractsIncoherentCreationDateNothingToUpdate	=Nessun contratto con data incoerente da correggere
+MigrationContractsIncoherentCreationDateUpdate		=Correzione contratti con data incoerente
+MigrationContractsIncoherentCreationDateUpdateSuccess	=Correzione contratti con data incoerente effettuata con successo
+MigrationContractsInvalidDateFix			=Correggere contratto %s (data del contratto = %s, data di inizio del servizio min = %s)
+MigrationContractsInvalidDatesNothingToUpdate		=Non ci sono contratti con date con errate da correggere
+MigrationContractsInvalidDatesNumber			=%s contratti modificati
+MigrationContractsInvalidDatesUpdate			=Correzione dei contratti con date errate 
+MigrationContractsLineCreation				=Crea riga per il contratto con riferimento %s 
+MigrationContractsNothingToUpdate			=Non ci sono più cose da fare 
+MigrationContractsNumberToUpdate			=%s contratto(i) da aggiornare 
+MigrationContractsUpdate				=Aggiornamento dei dati dei contratti
+MigrationCustomerOrderShipping				=Migrare la spedizione per l'arhiviazione degli ordini dei clienti
+MigrationDeliveryAddress				=Aggiornamento indirizzo di consegna per le spedizioni
+MigrationDeliveryDetail					=Aggiornamento spedizioni 
+MigrationDeliveryOrderMatching				=Aggiornamento ordini di spedizione 
+MigrationFinished					=Migrazione completata
+MigrationFixData					=Fix per i dati denormalizzati
+MigrationInvoice					=Migrazione dei dati della fatturazione attiva
+MigrationMenusDetail					=Aggiornamento dinamico dei menu
+MigrationNotFinished					=La versione del vostro database non è stata aggiornata completamente, eseguire nuovamente l'aggiornamento.
+MigrationOrder						=Migrazione dei dati per gli ordini dei clienti
+MigrationPaymentMode					=Migrazione dei dati delle modalità di pagamento
+MigrationPaymentsNothingToUpdate			=Niente da aggiornare
+MigrationPaymentsNothingUpdatable			=Nessun pagamento aggiornabile
+MigrationPaymentsNumberToUpdate				=%s pagamento(i) da aggiornare 
+MigrationPaymentsUpdate					=Correzione dei dati di pagamento  
+MigrationProcessPaymentUpdate				=Aggiorna pagamento(i) %s 
+MigrationProjectTaskActors				=Migrazione dei dati della tabella llx_projet_task_actors
+MigrationProjectTaskTime				=Aggiorna tempo trascorso in secondi
+MigrationProjectUserResp				=Migrazione dei dati del campo fk_user_resp da llx_projet a llx_element_contact
+MigrationProposal					=Migrazione dei dati delle proposte commerciali 
+MigrationRelationshipTables				=Migrazione dei dati delle tabelle di relazione (%s)
+MigrationReopenedContractsNumber			=%s contratti modificati
+MigrationReopeningContracts				=Apri contratto chiuso per errore 
+MigrationReopeningContractsNothingToUpdate		=Nessun contratto chiuso da aprire 
+MigrationReopenThisContract				=Riapri contratto %s 
+MigrationShipmentOrderMatching				=Migrazione ordini di spedizione 
+MigrationShippingDelivery2				=Aggiornamento spedizione 2
+MigrationShippingDelivery				=Aggiornamento spedizione
+MigrationStockDetail					=Aggiornamento delle scorte dei prodotti
+MigrationSuccessfullUpdate				=Aggiornamento completato con successo 
+MigrationSupplierOrder					=Migrazione dei dati degli ordini fornitori
+MigrationUpdateFailed					=Aggiornamento fallito
+MiscellanousChecks					=Verificare prerequisiti  
+NextStepMightLastALongTime				=Il passaggio in corso può richiedere diverso tempo. Attendi il caricamento completo della schermata successiva prima di continuare.
+NotAvailable						=Non disponibile
+OpenBaseDir						=Parametro <b>openbasedir</b>
+OrphelinsPaymentsDetectedByMethod			=Pagamenti orfani sono stati rilevati con il metodo %s 
+OtherKeysCreation					=Creazione vincoli e indici
+PasswordAgain						=Conferma la password una seconda volta 
+Password						=Password 
+PasswordsMismatch					=Le password digitate sono diverse, si prega di riprovare! 
+PHPMemoryOK						=La memoria massima per la sessione è fissata dal PHP a <b>%s</b>. Dovrebbe essere sufficiente. 
+PHPMemoryTooLow						=La memoria massima per la sessione è fissata dal PHP a <b>%s</b> byte. Cambia il file <b>php.ini</b> per impostare il parametro <b>memory_limit</b> ad almeno <b>%s</b> byte. 
+PHPSupportGD						=PHP con supporto grafico GD.
+PHPSupportPOSTGETKo					=È possibile che l'installazione di PHP non supporti le variabili POST e/o GET. Controlla il parametro <b>variables_order</b> nel file <b>php.ini</b>. 
+PHPSupportPOSTGETOk					=PHP supporta le variabili GET e POST. 
+PHPSupportSessions					=PHP supporta le sessioni. 
+PHPSupportUTF8						=PHP supporta le funzioni UTF-8.
+PHPVersion						=Versione PHP
+PleaseBePatient						=Attendere prego... 
+PleaseTypeALogin					=Inserire un nome utente per il login! 
+PleaseTypePassword					=Digitare una password. Le password vuote non sono ammesse! 
+ProcessMigrateScript					=Elaborazione dello script 
+Recheck							=Clicca qui per ripetere i controlli
+ReferenceDataLoading					=Caricamento dei dati di riferimento
+RemoveItManuallyAndPressF5ToContinue			=Rimuovere manualmente e premere F5 per continuare. 
+SaveConfigurationFile					=Salva file 
+ServerAddressDescription				=Nome o indirizzo IP del database server. Quando il database è ospitato sullo stesso server del web, utilizzare <b>localhost</b>.
+ServerConnection					=Connessione al server 
+ServerPortDescription					=Porta. Lasciare vuoto se sconosciuta. 
+Server							=Server 
+ServerVersion						=Versione del server 
+SetupEnd						=Fine della configurazione 
+Start							=Inizio
+SystemIsInstalled					=Installazione completata. 
+SystemIsUpgraded					=Dolibarr è stato aggiornato con successo. 
+TablesAndPrimaryKeysCreation				=Creazione tabelle e chiavi primarie
+ThisPHPDoesNotSupportTypeBase				=Questa installazione di PHP non supporta l'accesso a database di tipo %s 
+UpgradeDesc						=Usare questo metodo per sostituire una vecchia installazione Dolibarr con una versione più recente. Ciò aggiornerà il database e i dati. 
+Upgrade							=Aggiornamento
+URLRoot							=URL Root 
+UserCreation						=Creazione utente 
+WarningPHPVersionTooLow					=Versione del PHP troppo vecchia. È necessaria la versione %s o successive. Questa versione potrebbe consentire l'installazione, ma non è supportata.
+WarningRemoveInstallDir					=Attenzione, per motivi di sicurezza, una volta completata l'installazione o l'aggiornamento, rimuovere la directory <b>install</b> o rinominarla <b>install.lock</b>, al fine di evitarne un uso malevolo. 
+WebPagesDirectory					=Directory in cui vengono memorizzate le pagine web
+WithNoSlashAtTheEnd					=Senza la barra "/" alla fine 
+YouAskDatabaseCreationSoDolibarrNeedToConnect		=È richiesta la creazione del database <b>%s</b>. Perciò Dolibarr necessita di collegarsi al server <b>%s</b> come superutente con <b>%s</b> autorizzazioni. 
+YouAskLoginCreationSoDolibarrNeedToConnect		=È richiesta la creazione dell'utenza <b>%s</b>. Perciò Dolibarr necessita di collegarsi al server <b>%s</b> come superutente con <b>%s</b> autorizzazioni. 
+YouAskToCreateDatabaseSoRootRequired			=Hai selezionato la casella "Crea database". Perciò è necessario inserire nome utente/password del superuser in fondo alla pagina.
+YouAskToCreateDatabaseUserSoRootRequired		=Hai selezionato la casella "Crea il proprietario del database". Perciò è necessario inserire nome utente/password del superuser in fondo alla pagina.
+YouCanContinue						=È possibile continuare ... 
+YouMustCreateItAndAllowServerToWrite			=È necessario creare questa directory e dare al server web i permessi di scrittura sulla stessa. 
+YouMustCreateWithPermission				=È necessario creare il file %s e dare al server web i permessi di scrittura durante il processo di installazione. 
+YouNeedToPersonalizeSetup				=Dolibarr deve essere configurato per soddisfare le vostre necessità (aspetto, caratteristiche, ecc...). Per effettuare questa operazione, segui il link qui sotto: 

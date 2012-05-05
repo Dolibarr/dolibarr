@@ -1,129 +1,116 @@
-# Dolibarr language file - it_IT - exports         
-CHARSET=UTF-8
-ExportsArea					   =Sezione esportazioni
-ImportArea					   =Sezione importazioni
-NewExport					   =Nuova esportazione 
-NewImport					   =Nuova importazione 
+# Dolibarr language file - it_IT - errors        
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
+// Reference language: en_US -> it_IT
+CHARSET						   =UTF-8
+AvailableFormats				   =Formati disponibili 
+ChooseExportFormat				   =Scegli il formato di esportazione 
+ChooseFieldsOrdersAndTitle			   =Scegli l'ordine dei campi
+ChooseFileToImport				   =Scegli il file da importare e poi clicca sull'icona %s
+ChooseFormatOfFileToImport			   =Scegliete il formato di file da utilizzare per l'importazione cliccando sull'icona %s
+CorrectErrorBeforeRunningImport			   =È necessario correggere tutti gli errori prima di eseguire l'importazione definitiva.
+CSVFormatDesc					   =Formato <b>Comma Separated Value</b> (.Csv).<br/>File di testo dove i campi sono separati dal separatore [%s]. Se il separatore è situato all'interno di un contenuto del campo, il campo è circondato dal carattere di contenimento [%s]. Il carattere di escape per il carattere di contenimento è [%s].
+DataCodeIDSourceIsInsertedInto			   =L'id della riga superiore trovato dal codice verrà inserito nel campo seguente:
+DataComeFromFileFieldNb				   =Il valore da inserire deriva dal numero del campo <b>%s</b> nel file di origine.
+DataComeFromIdFoundFromCodeId			   =Il codice che viene da <b>%s</b> campo del numero di file sorgente verrà utilizzato per trovare l'ID di oggetto principale da utilizzare (quindi il codice dal file sorgente deve esiste in <b>%s</b> Dizionario). Si noti che se si sa id, è possibile utilizzarlo anche in file di origine, invece di codice. Import dovrebbe funzionare in entrambi i casi.
+DataComeFromIdFoundFromRef=Valore che viene dal numero <b>%s</b> campo di file sorgente sarà utilizzato per trovare id del genitore oggetto da utilizzare (Così il <b>%s</b> Objet che ha il ref. Dal file sorgente deve esiste in Dolibarr).
+DataComeFromNoWhere=Valore da inserire viene dal nulla nel file di origine.
+DataIDSourceIsInsertedInto=L'id del genitore oggetto trovato utilizzando i dati in file di origine, sarà inserito nel campo seguente:
+DataIsInsertedInto=I dati provenienti dal file sorgente sarà inserito nel campo seguente:
+DataLoadedWithId=Tutti i dati saranno caricati con l'id di importazione di seguito: <b>%s</b>
+Dataset						   =Dataset 
+DatasetToExport					   = Dati da esportare
+DatasetToImport=Dataset da importare
+DoNotImportFirstLine=Non importare prima riga del file sorgente
+DownloadEmptyExample=Download esempio di fonte file vuoto
+EmptyLine=riga vuota (verrà scartato)
+ErrorImportDuplicateProfil=Impossibile salvare il profilo di importazione con questo nome. Un profilo esistente già esiste con questo nome.
+ErrorMissingMandatoryValue=I dati obbligatori è vuoto <b>%s</b> file sorgente in campo per.
+ExampleAnyCodeOrIdFoundIntoDictionnary=Qualsiasi codice (o id) hanno trovato in <b>%s</b> Dizionario
+ExampleAnyRefFoundIntoElement=Qualsiasi ref trovati per <b>%s</b> elementi
+ExampleOfImportFile=Example_of_import_file
 ExportableDatas					   =Dati esportabili
-ImportableDatas					   =Dati importabili 
-SelectExportDataSet				   =Scegli di dati che si desidera esportare ... 
-SelectExportFields				   =Scegli i campi che si desidera esportare, o selezionare un profilo predefinito di esportazione 
-SaveExportModel					   =Salvare il profilo di esportazione, se si ha intenzione di riutilizzare in un secondo momento ... 
-ExportModelName					   =Nome del profilo esportazione 
-ExportModelSaved				   =Profilo esportazione salvato con il nome <b> %s </b>. 
 ExportableFields				   = Campi esportabili 
 ExportedFields					   =Campi esportati  
-DatasetToExport					   = Dati da esportare
-Dataset						   =Dataset 
-ChooseFieldsOrdersAndTitle			   =Scegli campi per ... 
+ExportModelName					   =Nome del profilo esportazione 
+ExportModelSaved				   =Profilo esportazione salvato con il nome <b> %s </b>. 
+ExportsArea					   =Sezione esportazioni
+Field=Campo
+FieldNeedSource=Questo si sente nel database i dati da richiedere un file di origine
+FieldOrder=Campo ordine
+FieldsInSourceFile=Campi nel file sorgente
+FieldsInTargetDatabase=Campi del database applicazione
 FieldsOrder					   =Ordine campi  
+FieldSource=Fonte campo
+FieldsTarget=settori mirati
 FieldsTitle					   =Titolo campi 
-ChooseExportFormat				   =Scegli il formato di esportazione 
-NowClickToGenerateToBuildExportFile		   =Ora, fare clic su "Genera" per generare il file di esportazione ... 
-AvailableFormats				   =Formati disponibili 
-LibraryUsed					   =Libreria usata 
-LibraryVersion					   =Versione libreria
-Step						   =Passaggio 
-FormatedImport					   =Importazione assistita 
-FormatedImportDesc1				   =Questa sezione consente di importare dati personalizzati, utilizzando un assistente per aiutarti nel processo anche senza conoscenze tecniche. 
-FormatedImportDesc2				   =Il primo passo è quello di scegliere un tipo di dati da importare, quindi il file da caricare, quindi di scegliere quali campi si desidera caricare. 
-FormatedExport					   =Esportazione assistita 
+FieldTarget=campo mirati
+FieldTitle=Campi titolo
+FileMustHaveOneOfFollowingFormat=File da importare deve avere uno dei seguenti formati
+FileSuccessfullyBuilt				   =Esporta file generati
+FileToImport=File da importare
+FileWasImported=Il file è stato importato con <b>%s</b> numerici.
+FileWithDataToImport=File con i dati da importare
 FormatedExportDesc1				   =Questa sezione consente di esportare i dati personalizzati, utilizzando un assistente per aiutarti nel processo anche senza conoscenze tecniche. 
 FormatedExportDesc2				   =Il primo passo è quello di scegliere un set di dati predefiniti, quindi di scegliere quali campi si desidera esportare nel file, e con quale ordine. 
 FormatedExportDesc3				   =Quando i dati di esportazione sono selezionati, è possibile definire il formato di file di output. 
-Sheet						   =Foglio
-NoImportableData				   =Nessuna importazione dati (nessun modulo con le definizioni dei dati per consentire le importazioni) 
-FileSuccessfullyBuilt				   =Esporta file generati
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-CHARSET=UTF-8
-SelectImportDataSet=Scegli di dati che si desidera importare ...
-SelectImportFields=Scegli i campi che si desidera importare o selezionare un profilo predefinito di importazione
-SaveImportModel=Salva il profilo di importazione, se si prevede di riutilizzare in un secondo momento ...
+FormatedExport					   =Esportazione assistita 
+FormatedImportDesc1				   =Questa sezione consente di importare dati personalizzati, utilizzando un assistente per aiutarti nel processo anche senza conoscenze tecniche. 
+FormatedImportDesc2				   =Il primo passo è quello di scegliere un tipo di dati da importare, quindi il file da caricare, quindi di scegliere quali campi si desidera caricare. 
+FormatedImport					   =Importazione assistita 
+ImportableDatas					   =Dati importabili 
+ImportableFields=Campi importabili
+ImportArea					   =Sezione importazioni
+ImportedFields=Campi importati
 ImportModelName=Nome del profilo di importazione
 ImportModelSaved=Profilo importazione salvato con il <b>nome %s.</b>
-ImportableFields=Campi importabili
-ImportedFields=Campi importati
-DatasetToImport=Dataset da importare
+ImportSummary=Importa setup sintesi
+InformationOnSourceFile=Informazioni sui file di origine
+InformationOnTargetTables=Informazioni sui campi di destinazione
 LibraryShort=Libreria
-SQLUsedForExport=Comando SQL utilizzato per costruire file di esportazione
-LineId=Linea Id
+LibraryUsed					   =Libreria usata 
+LibraryVersion					   =Versione libreria
 LineDescription=Linea Descrizione
-LineUnitPrice=Linea prezzo unitario
-LineVATRate=Linea percentuale IVA
+LineId=Linea Id
 LineQty=Linea quantità
 LineTotalHT=Linea importo al netto delle imposte
 LineTotalTTC=Linea importo totale (IVA inclusa)
 LineTotalVAT=Linea mporto IVA
-TypeOfLineServiceOrProduct=Linea tipo (0 = prodotto, servizio = 1)
-FileWithDataToImport=File con i dati da importare
-FileToImport=File da importare
-FileMustHaveOneOfFollowingFormat=File da importare deve avere uno dei seguenti formati
-ChooseFileToImport=Scegliere il file da importare e poi clicca sull'icona %s ...
-FieldsInSourceFile=Campi nel file sorgente
-FieldsInTargetDatabase=Campi del database applicazione
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
-// Reference language: en_US
-NotImportedFields=Campi di fonte non file importato
-NoDiscardedFields=N. campi in file di origine vengono scartate
-FieldOrder=Campo ordine
-FieldTitle=Campi titolo
-DownloadEmptyExample=Download esempio di fonte file vuoto
-ChooseFormatOfFileToImport=Scegliete il formato di file da utilizzare come formato di importazione di file cliccando su %s picto per selezionarla ...
-SourceFileFormat=Fonte formato di file
-Field=Campo
-NoFields=N. campi
+LineUnitPrice=Linea prezzo unitario
+LineVATRate=Linea percentuale IVA
 MoveField=Spostare campo %s numero di colonna
-ExampleOfImportFile=Example_of_import_file
-SaveImportProfile=Salva questo profilo di importazione
-ErrorImportDuplicateProfil=Impossibile salvare il profilo di importazione con questo nome. Un profilo esistente già esiste con questo nome.
-ImportSummary=Importa setup sintesi
-TablesTarget=tavoli mirati
-FieldsTarget=settori mirati
-TableTarget=tabella mirata
-FieldTarget=campo mirati
-FieldSource=Fonte campo
-DoNotImportFirstLine=Non importare prima riga del file sorgente
+NbOfLinesImported=Numero di linee importati con successo: <b>%s.</b>
+NbOfLinesOK=Numero di linee senza errori e senza avvertenze: <b>%s.</b>
 NbOfSourceLines=Numero di linee nel file sorgente
-NowClickToTestTheImport=Verificare i parametri di importazione che avete definito. Se sono corretti, fare clic sul pulsante <b>"%s"</b> per lanciare una simulazione del processo di importazione (i dati non saranno modificate nel database, è solo una simulazione per il momento) ...
-RunSimulateImportFile=Lanciare la simulazione di importazione
-FieldNeedSource=Questo si sente nel database i dati da richiedere un file di origine
-SomeMandatoryFieldHaveNoSource=Alcuni campi obbligatori non hanno origine dai dati del file
-InformationOnSourceFile=Informazioni sui file di origine
-InformationOnTargetTables=Informazioni sui campi di destinazione
-SelectAtLeastOneField=Switch campo almeno una fonte, nella colonna dei campi da esportare
-SelectFormat=Scegliere questo formato di file di importazione
-RunImportFile=Lancio l'importazione di file
+NewExport					   =Nuova esportazione 
+NewImport					   =Nuova importazione 
+NoDiscardedFields=N. campi in file di origine vengono scartate
+NoFields=N. campi
+NoImportableData				   =Nessuna importazione dati (nessun modulo con le definizioni dei dati per consentire le importazioni) 
+NotImportedFields=Campi di fonte non file importato
+NowClickToGenerateToBuildExportFile		   =Ora, fare clic su "Genera" per generare il file di esportazione ... 
 NowClickToRunTheImport=Controllare risultato della simulazione di importazione. Se tutto è ok, avviare l'importazione definitiva.
-DataLoadedWithId=Tutti i dati saranno caricati con l'id di importazione di seguito: <b>%s</b>
-ErrorMissingMandatoryValue=I dati obbligatori è vuoto <b>%s</b> file sorgente in campo per.
+NowClickToTestTheImport=Verificare i parametri di importazione che avete definito. Se sono corretti, fare clic sul pulsante <b>"%s"</b> per lanciare una simulazione del processo di importazione (i dati non saranno modificate nel database, è solo una simulazione per il momento) ...
+RunImportFile=Lancio l'importazione di file
+RunSimulateImportFile=Lanciare la simulazione di importazione
+SaveExportModel					   =Salvare il profilo di esportazione, se si ha intenzione di riutilizzare in un secondo momento ... 
+SaveImportModel=Salva il profilo di importazione, se si prevede di riutilizzare in un secondo momento ...
+SaveImportProfile=Salva questo profilo di importazione
+SelectAtLeastOneField=Switch campo almeno una fonte, nella colonna dei campi da esportare
+SelectExportDataSet				   =Scegli di dati che si desidera esportare ... 
+SelectExportFields				   =Scegli i campi che si desidera esportare, o selezionare un profilo predefinito di esportazione 
+SelectFormat=Scegliere questo formato di file di importazione
+SelectImportDataSet=Scegli di dati che si desidera importare ...
+SelectImportFields=Scegli i campi che si desidera importare o selezionare un profilo predefinito di importazione
+Sheet						   =Foglio
+SomeMandatoryFieldHaveNoSource=Alcuni campi obbligatori non hanno origine dai dati del file
+SourceExample=Esempio di possibile valore di dati
+SourceFileFormat=Fonte formato di file
+SourceRequired=valore dei dati è obbligatorio
+SQLUsedForExport=Comando SQL utilizzato per costruire file di esportazione
+Step						   =Passaggio 
+TablesTarget=tavoli mirati
+TableTarget=tabella mirata
 TooMuchErrors=C'è ancora <b>%s</b> linee di altra fonte di errori ma la produzione è stata limitata.
 TooMuchWarnings=C'è ancora <b>%s</b> linee altra fonte con avvisi di uscita, ma è stato limitato.
-EmptyLine=riga vuota (verrà scartato)
-CorrectErrorBeforeRunningImport=È necessario innanzitutto correggere tutti gli errori prima di eseguire l'importazione definitiva.
+TypeOfLineServiceOrProduct=Linea tipo (0 = prodotto, servizio = 1)
 YouCanUseImportIdToFindRecord=Potete trovare tutti i record importati nel database filtrando il <b>import_key</b> campo <b>= '%s'.</b>
-NbOfLinesOK=Numero di linee senza errori e senza avvertenze: <b>%s.</b>
-NbOfLinesImported=Numero di linee importati con successo: <b>%s.</b>
-DataComeFromNoWhere=Valore da inserire viene dal nulla nel file di origine.
-DataComeFromFileFieldNb=Valore da inserire viene dal numero <b>%s</b> campo nel file di origine.
-DataComeFromIdFoundFromRef=Valore che viene dal numero <b>%s</b> campo di file sorgente sarà utilizzato per trovare id del genitore oggetto da utilizzare (Così il <b>%s</b> Objet che ha il ref. Dal file sorgente deve esiste in Dolibarr).
-DataIsInsertedInto=I dati provenienti dal file sorgente sarà inserito nel campo seguente:
-DataIDSourceIsInsertedInto=L'id del genitore oggetto trovato utilizzando i dati in file di origine, sarà inserito nel campo seguente:
-SourceRequired=valore dei dati è obbligatorio
-SourceExample=Esempio di possibile valore di dati
-CSVFormatDesc=<b>Comma Separated Value</b> formato di file (. Csv). <br> Questo è un formato di file di testo dove i campi sono separati dal separatore [%s]. Se il separatore è situato all'interno di un contenuto del campo, il campo è circondato da rotonde carattere [%s]. carattere di escape per escape carattere rotondo è [%s].
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:34:13).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
-// Reference language: en_US -> it_IT
-FileWasImported=Il file è stato importato con <b>%s</b> numerici.
-DataComeFromIdFoundFromCodeId=Il codice che viene da <b>%s</b> campo del numero di file sorgente verrà utilizzato per trovare l'ID di oggetto principale da utilizzare (quindi il codice dal file sorgente deve esiste in <b>%s</b> Dizionario). Si noti che se si sa id, è possibile utilizzarlo anche in file di origine, invece di codice. Import dovrebbe funzionare in entrambi i casi.
-DataCodeIDSourceIsInsertedInto=L'id della linea parentale trovato dal codice, verrà inserito nel campo seguente:
-ExampleAnyRefFoundIntoElement=Qualsiasi ref trovati per <b>%s</b> elementi
-ExampleAnyCodeOrIdFoundIntoDictionnary=Qualsiasi codice (o id) hanno trovato in <b>%s</b> Dizionario
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:57).

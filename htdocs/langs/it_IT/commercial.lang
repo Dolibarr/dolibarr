@@ -1,102 +1,88 @@
-# Dolibarr language file - it_IT - commercial     
-CHARSET=UTF-8
-Commercial					  =Commerciale
-CommercialArea					  =Sezione commerciale
-CommercialCard					  =Scheda commerciale
-CustomerArea					  =Sezione clienti
-Customer					  =Cliente
-Customers					  =Clienti
-Prospect					  =Potenziale cliente
-Prospects					  =Potenziali clienti 
-DeleteAction					  =Elimina una azione / compito
-NewAction					  =Nuova azione / compito
-AddAction					  =Aggiungi azione / compito
-AddAnAction					  =Aggiungi un azione / compito
-ConfirmDeleteAction				  =Sei sicuro di voler eliminare questo compito?
-CardAction					  =Scheda Azione
-PercentDone					  =Percentuale fatto
-ActionOnCompany					  =Compito su società
-ActionOnContact					  =Compito di contatto
-TaskRDV						  =Riunioni
-TaskRDVWith					  =Incontro con %s
-ShowTask					  =Visualizza compito
-ShowAction					  =Visualizza azione
-ActionsReport					  =Prospetto azioni
-SalesRepresentative				  =Rappresentante di vendita
-SalesRepresentatives				  =Rappresentanti di vendita
-SalesRepresentativeFollowUp			  =Rappresentante di vendita (di follow-up)
-SalesRepresentativeSignature			  =Rappresentante di vendita (firma)
-CommercialInterlocutor				  =Interlocutore commerciale
-ErrorWrongCode					  =Codice sbagliato
-NoSalesRepresentativeAffected			  =Nessuna particolare rappresentante di vendita interessato
-ShowCustomer					  =Visualizza cliente
-ShowProspect					  =Visualizza potenziale cliente 
-ListOfProspects					  =Elenco dei potenziali clienti 
-ListOfCustomers					  =Elenco dei clienti
-LastDoneTasks					  =Ultimi %s compiti svolti
-LastRecordedTasks				  =Ultimo compiti registrati
-LastActionsToDo					  =Ultimo %s azioni più vecchie non completate
-DoneAndToDoActionsFor				  =Azioni fatte o da fare per %s
-DoneAndToDoActions				  =Azioni fatte o da fare
-DoneActions					  =Azioni fatte
-DoneActionsFor					  =Azioni fatte per %s
-ToDoActions					  =Azioni da fare
-ToDoActionsFor					  =Azioni da fare per %s
-SendPropalRef					  =Invia preventivo %s
-SendOrderRef					  =Invia per %s
-NoRecordedProspects				  =Nessun potenziale cliente registrato
-StatusActionToDo				  =Da fare
-StatusActionDone				  =Fatto
-MyActionsAsked					  =Azioni che ho registrato
-MyActionsToDo					  =Azioni che devo fare
-MyActionsDone					  =Azioni fatte da me
-StatusActionInProcess				  =In corso
-TasksHistoryForThisContact			  =Azioni per questo contatto
-LastProspectDoNotContact			  =Non contattare
-LastProspectNeverContacted			  =Mai contattato
-LastProspectToContact				  =Da contattare
-LastProspectContactInProcess			  =Contatti in corso
-LastProspectContactDone				  =Contatto effettuato
-DateActionPlanned				  =Data prevista per l'azione
-DateActionDone					  =Data azione compiuta
-ActionAskedBy					  =Azione richiesta da
-ActionAffectedTo				  =Azione interessata a
-ActionDoneBy					  =Azione da fare
-ActionUserAsk					  =Registrata da
-ErrorStatusCantBeZeroIfStarted			  =Se il campo 'fatto in <b> Data </b>' è riempito e l'azione è stata avviata (o finita), il campo '<b> Stato </b>' non può essere 0%%.
-ActionAC_TEL					  =Telefonata
-ActionAC_FAX					  =Invio fax
-ActionAC_PROP					  =Invia proposta
-ActionAC_EMAIL					  =Invia e-mail
-ActionAC_RDV					  =Riunione
-ActionAC_FAC					  =Invia fatturazione
-ActionAC_REL					  =Invia la fatturazione (richiamo)
-ActionAC_CLO					  =Chiudere
-ActionAC_EMAILING				  =Invia e-mail di massa
-ActionAC_COM					  =Per inviare via e-mail
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:42:54).
-// Reference language: en_US
-CHARSET=UTF-8
-AddActionRendezVous=Aggiungi un appuntamento
-Rendez-Vous=Appuntantamenti
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:42:54).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
-// Reference language: en_US
-ActionAC_SUP_ORD=Inviare ordine fornitore tramite e-mail
-ActionAC_SUP_INV=Inviare fattura fornitore tramite e-mail
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:34:02).
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+# Dolibarr language file - it_IT - commercial 
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
 // Reference language: en_US -> it_IT
-StatusNotApplicable=Non applicabile
-ActionAC_SHIP=Invia spedizione per posta
-ActionAC_OTH=Altro
-StatusProsp=Prospettiva dello stato
-DraftPropals=Progetti di proposte commerciali
-SearchPropal=Cerca una proposta commerciale
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:15).
+CHARSET						=UTF-8
+ActionAC_CLO					=Chiudere
+ActionAC_COM					=Per inviare via email
+ActionAC_EMAILING				=Invia email di massa
+ActionAC_EMAIL					=Invia email
+ActionAC_FAC					=Invia fattura
+ActionAC_FAX					=Invia fax
+ActionAC_OTH					=Altro
+ActionAC_PROP					=Invia proposta
+ActionAC_RDV					=Riunione
+ActionAC_REL					=Invia la fattura (promemoria)
+ActionAC_SHIP					=Invia spedizione per posta
+ActionAC_SUP_INV				=Invia fattura fornitore tramite email
+ActionAC_SUP_ORD				=Invia ordine fornitore tramite email
+ActionAC_TEL					=Telefonata
+ActionAffectedTo				=Azione riguardante
+ActionAskedBy					=Azione richiesta da
+ActionDoneBy					=Azione da fare
+ActionOnCompany					=Azione per la società
+ActionOnContact					=Azione al contatto
+ActionsReport					=Prospetto azioni
+ActionUserAsk					=Riferita da
+AddAction					=Aggiungi azione/compito
+AddActionRendezVous				=Aggiungi un appuntamento
+AddAnAction					=Aggiungi un'azione/compito
+CardAction					=Scheda Azione/compito
+CommercialArea					=Area commerciale
+CommercialCard					=Scheda commerciale
+Commercial					=Commerciale
+CommercialInterlocutor				=Interlocutore commerciale
+ConfirmDeleteAction				=Vuoi davvero eliminare questa azione?
+CustomerArea					=Sezione clienti
+Customer					=Cliente
+Customers					=Clienti
+DateActionDone					=Data compimento azione
+DateActionPlanned				=Data prevista per l'azione
+DeleteAction					=Elimina un'azione/compito
+DoneActions					=Azioni fatte
+DoneActionsFor					=Azioni fatte per %s
+DoneAndToDoActions				=Azioni fatte o da fare
+DoneAndToDoActionsFor				=Azioni fatte o da fare per %s
+DraftPropals					=Bozze di proposte commerciali
+ErrorStatusCantBeZeroIfStarted			=Se il campo "fatto in <b>Data</b>" contiene qualcosa e l'azione è stata avviata (o finita), il campo "<b>Stato</b>" non può essere 0%%.
+ErrorWrongCode					=Codice sbagliato
+LastActionsToDo					=Ultime %s azioni più vecchie da fare
+LastDoneTasks					=Ultime %s azioni portate a termine
+LastProspectContactDone				=Ultimo contatto effettuato
+LastProspectContactInProcess			=Contatti in corso
+LastProspectDoNotContact			=Non contattare
+LastProspectNeverContacted			=Mai contattato
+LastProspectToContact				=Da contattare
+LastRecordedTasks				=Ultime azioni registrate
+ListOfCustomers					=Elenco dei clienti
+ListOfProspects					=Elenco dei clienti potenziali
+MyActionsAsked					=Azioni registrate da me
+MyActionsDone					=Azioni fatte da me
+MyActionsToDo					=Azioni che devo fare
+NewAction					=Nuova azione/compito
+NoRecordedProspects				=Nessun cliente potenziale registrato
+NoSalesRepresentativeAffected			=Nessun venditore interessato
+PercentDone					=Percentuale di completamento
+Prospect					=Cliente potenziale
+Prospects					=Clienti potenziali 
+Rendez-Vous					=Appuntantamenti
+SalesRepresentativeFollowUp			=Venditore (di follow-up)
+SalesRepresentative				=Venditore
+SalesRepresentativeSignature			=Venditore (firma)
+SalesRepresentatives				=Venditori
+SearchPropal					=Cerca una proposta commerciale
+SendOrderRef					=Invia per %s
+SendPropalRef					=Invia preventivo %s
+ShowAction					=Visualizza azione
+ShowCustomer					=Visualizza cliente
+ShowProspect					=Visualizza cliente potenziale 
+ShowTask					=Visualizza compito
+StatusActionDone				=Fatto
+StatusActionInProcess				=In corso
+StatusActionToDo				=Da fare
+StatusNotApplicable				=Non applicabile
+StatusProsp					=Stato del cliente potenziale
+TaskRDV						=Riunioni
+TaskRDVWith					=Incontro con %s
+TasksHistoryForThisContact			=Storico del contatto
+ToDoActions					=Azioni da fare
+ToDoActionsFor					=Azioni da fare per %s

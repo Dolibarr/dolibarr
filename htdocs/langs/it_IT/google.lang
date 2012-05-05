@@ -1,5 +1,7 @@
 # Dolibarr language file - it_IT- google
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
+// Reference language: en_US -> it_IT
 CHARSET=UTF-8
-GoogleSetup=Impostazioni Google tools integration
-GoogleSetupHelp=Aiuto per definire i parameteri che si possono trovare nel Google embedded helper url %s
-GoogleAgendaNb=Agenda nb %s 
+GoogleAgendaNb				=Agenda numero %s 
+GoogleSetupHelp				=Aiuto per definire i parametri che si possono trovare nel Google embedded helper url %s
+GoogleSetup				=Impostazioni per l'integrazione degli strumenti Google
