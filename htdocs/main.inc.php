@@ -744,7 +744,7 @@ else
     define('ROWS_9',8);
 }
 
-$heightforframes=48;
+$heightforframes=52;
 
 // Switch to another entity
 if (! empty($conf->multicompany->enabled) && GETPOST('action') == 'switchentity')
