@@ -25,8 +25,7 @@
 
 
 /**
- *	\class 		HookManager
- *	\brief 		Class to manage hooks
+ *	Class to manage hooks
  */
 class HookManager
 {
@@ -54,7 +53,6 @@ class HookManager
 
 	/**
 	 *	Init array this->hooks with instantiated action controlers.
-	 *
 	 *  First, a hook is declared by a module by adding a constant MAIN_MODULE_MYMODULENAME_HOOKS
 	 *  with value 'nameofcontext1:nameofcontext2:...' into $this->const of module descriptor file.
 	 *  This make conf->hooks_modules loaded with an entry ('modulename'=>array(nameofcontext1,nameofcontext2,...))
