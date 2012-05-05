@@ -3252,7 +3252,7 @@ else
         else $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as fd ON fd.fk_facture = f.rowid';
         if ($search_user > 0)
         {
-            $sql.=", ".MAIN_DB_PREFIX."element_contact as c";
+            $sql.=", ".MAIN_DB_PREFIX."element_contact as ec";
             $sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
         }
         $sql.= ' WHERE f.fk_soc = s.rowid';
@@ -3304,7 +3304,7 @@ else
         }
         if ($search_user > 0)
         {
-            $sql.= " AND c.fk_c_type_contact = tc.rowid AND tc.element='propal' AND tc.source='internal' AND c.element_id = f.rowid AND c.fk_socpeople = ".$search_user;
+            $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='propal' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".$search_user;
         }
         if (! $sall)
         {
