@@ -85,10 +85,10 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->s
 {
 	if ($object->fetch($id) >= 0 )
 	{
-		$result=$projecstatict->fetch($object->fk_projet);
-		if (! empty($projecstatic->socid))
+		$result=$projectstatic->fetch($object->fk_projet);
+		if (! empty($projectstatic->socid))
 		{
-			$projecstatic->societe->fetch($projecstatic->socid);
+			$projectstatic->societe->fetch($projectstatic->socid);
 		}
 
 		if ($object->delete($user) > 0)
