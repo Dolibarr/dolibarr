@@ -235,7 +235,7 @@ Discount=Discount
 Discounts=Discounts
 AddDiscount=Create discount
 AddRelativeDiscount=Create relative discount
-EditRelativeDiscount=Edit relative discount
+EditRelativelDiscount=Edit relatvie discount
 AddGlobalDiscount=Create absolute discount
 EditGlobalDiscounts=Edit absolute discounts
 AddCreditNote=Create credit note
@@ -297,6 +297,13 @@ PaymentConditionShort60D=60 days
 PaymentCondition60D=60 days
 PaymentConditionShort60DENDMONTH=60 days end of month
 PaymentCondition60DENDMONTH=60 days end of month
+PaymentConditionShortPT_DELIVERY=Delivery
+PaymentConditionPT_DELIVERY=On delivery
+PaymentConditionShortPT_ORDER=On order
+PaymentConditionPT_ORDER=On order
+PaymentConditionShortPT_5050=50-50
+PaymentConditionPT_5050=50%% in advance, 50%% on delivery
+
 # PaymentType
 PaymentTypeVIR=Bank deposit
 PaymentTypeShortVIR=Bank deposit
