@@ -2309,6 +2309,30 @@ else
             print $form->showrefnav($object,'ref','',1,'facnumber','ref',$morehtmlref);
             print '</td></tr>';
 
+    		// Ref customer
+            print '<tr><td width="20%">';
+            print '<table class="nobordernopadding" width="100%"><tr><td>';
+            print $langs->trans('RefCustomer');
+            print '</td>';
+            if ($action != 'refclient' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+            print '</tr></table>';
+            print '</td>';
+            print '<td colspan="5">';
+           	if ($user->rights->facture->creer && $action == 'refclient')
+			{
+				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="action" value="set_ref_client">';
+				print '<input type="text" class="flat" size="20" name="ref_client" value="'.$object->ref_client.'">';
+				print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+				print '</form>';
+			}
+			else
+			{
+				print $object->ref_client;
+			}
+			print '</td></tr>';
+
             // Third party
             print '<tr><td>';
             print '<table class="nobordernopadding" width="100%">';
