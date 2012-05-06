@@ -1112,7 +1112,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
         unset($_POST['qty']);
         unset($_POST['type']);
         unset($_POST['idprod']);
-        unset($_POST['remmise_percent']);
+        unset($_POST['remise_percent']);
         unset($_POST['dp_desc']);
         unset($_POST['np_desc']);
         unset($_POST['np_price']);
