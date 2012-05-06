@@ -809,8 +809,8 @@ class DoliDBMysql
 		{
 			// We try again for compatibility with Mysql < 4.1.1
 			$sql = 'CREATE DATABASE '.$database;
-			$ret=$this->query($sql);
 			dol_syslog($sql,LOG_DEBUG);
+			$ret=$this->query($sql);
 		}
 		return $ret;
 	}
