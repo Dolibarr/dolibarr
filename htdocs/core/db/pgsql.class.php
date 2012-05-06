@@ -40,7 +40,7 @@ class DoliDBPgsql
     //! Database label
 	static $label='PostgreSQL';      // Label of manager
 	//! Charset
-	var $forcecharset='latin1';      // Can't be static as it may be forced with a dynamic value
+	var $forcecharset='UTF8';      // Can't be static as it may be forced with a dynamic value
 	//! Version min database
 	static $versionmin=array(8,4,0);	// Version min database
 
@@ -111,6 +111,7 @@ class DoliDBPgsql
 		// Essai connexion serveur
 		//print "$host, $user, $pass, $name, $port";
 		$this->db = $this->connect($host, $user, $pass, $name, $port);
+
 		if ($this->db)
 		{
 			$this->connected = 1;
@@ -374,12 +375,13 @@ class DoliDBPgsql
 		$name = str_replace(array("\\", "'"), array("\\\\", "\\'"), $name);
 		$port = str_replace(array("\\", "'"), array("\\\\", "\\'"), $port);
 
-		//if (! $name) $name="postgres";
+		if (! $name) $name="postgres";    // When try to connect using admin user
 
 		// try first Unix domain socket (local)
 		if ((! $host || $host == "" || $host == "localhost" || $host == "127.0.0.1") && ! defined('NOLOCALSOCKETPGCONNECT'))
 		{
-			$con_string = "dbname='".$name."' user='".$login."' password='".$passwd."'";
+			$con_string = "dbname='".$name."' user='".$login."' password='".$passwd."'";    // $name may be empty
+			//print "$con_string";exit;
 			$this->db = pg_connect($con_string);
 		}
 
@@ -978,10 +980,15 @@ class DoliDBPgsql
 	 */
 	function DDLCreateDb($database,$charset='',$collation='',$owner='')
 	{
-		if (empty($charset))   $charset=$this->forcecharset;
+	    if (empty($charset))   $charset=$this->forcecharset;
 		if (empty($collation)) $collation=$this->forcecollate;
 
-		$ret=$this->query('CREATE DATABASE '.$database.' OWNER '.$owner.' ENCODING \''.$charset.'\'');
+		// Test charset match LC_TYPE (pgsql error otherwise)
+		//print $charset.' '.setlocale(LC_CTYPE,'0'); exit;
+
+		$sql='CREATE DATABASE '.$database.' OWNER '.$owner.' ENCODING \''.$charset.'\'';
+		dol_syslog($sql,LOG_DEBUG);
+		$ret=$this->query($sql);
 		return $ret;
 	}
 
