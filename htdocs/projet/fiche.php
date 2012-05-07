@@ -80,7 +80,7 @@ if (GETPOST("cancel") && ! empty($backtopage))
 
 //if cancel and come from clone then delete the cloned project
 if (GETPOST("cancel") && (GETPOST("comefromclone")==1))
-{	
+{
 	$project = new Project($db);
     $project->fetch($id);
     $result=$project->delete($user);
@@ -200,7 +200,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
         $result=$project->update($user);
 
         $id=$project->id;  // On retourne sur la fiche projet
-        
+
         if (GETPOST("reportdate") && ($project->date_start!=$old_start_date))
         {
         	$result=$project->shiftTaskDate($old_start_date);
@@ -303,25 +303,11 @@ if ($action == 'confirm_clone' && $user->rights->projet->creer && GETPOST('confi
 	$idtoclone=$id;
 	$project = new Project($db);
     $project->fetch($idtoclone);
-    $result=$project->createFromClone($idtoclone,true,true,true,true);
-    if ($result <= 0)
-    {
-        $mesg='<div class="error">'.$project->error.'</div>';
-    }
-    else
-    {
-    	$id=$result;
-    	$action='edit';
-    	$comefromclone=true;
-    }
-}
-
-if ($action == 'confirm_clone' && $user->rights->projet->creer && GETPOST('confirm') == 'yes')
-{
-	$idtoclone=$id;
-	$project = new Project($db);
-    $project->fetch($idtoclone);
-    $result=$project->createFromClone($idtoclone,true,true,true,true);
+    $clone_contacts=GETPOST('clone_contacts')?1:0;
+    $clone_tasks=GETPOST('clone_tasks')?1:0;
+    $clone_files=GETPOST('clone_files')?1:0;
+    $clone_notes=GETPOST('clone_notes')?1:0;
+    $result=$project->createFromClone($idtoclone,$clone_contacts,$clone_tasks,$clone_files,$clone_notes);
     if ($result <= 0)
     {
         $mesg='<div class="error">'.$project->error.'</div>';
@@ -372,7 +358,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     {
         require_once(DOL_DOCUMENT_ROOT ."/core/modules/project/".$conf->global->PROJECT_ADDON.".php");
         $modProject = new $obj;
-        $defaultref = $modProject->getNextValue($soc,$project);      
+        $defaultref = $modProject->getNextValue($soc,$project);
     }
 
     if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
@@ -482,10 +468,17 @@ else
     // Clone confirmation
     if ($action == 'clone')
     {
-        $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$project->id,$langs->trans("CloneProject"),$langs->trans("ConfirmCloneProject"),"confirm_clone",'','',1);
-        if ($ret == 'html') print '<br>';
+        $formquestion=array(
+    		'text' => $langs->trans("ConfirmClone"),
+            array('type' => 'checkbox', 'name' => 'clone_contacts','label' => $langs->trans("CloneContacts"), 'value' => true),
+            array('type' => 'checkbox', 'name' => 'clone_tasks',   'label' => $langs->trans("CloneTasks"), 'value' => true),
+            array('type' => 'checkbox', 'name' => 'clone_notes',   'label' => $langs->trans("CloneNotes"), 'value' => true),
+            array('type' => 'checkbox', 'name' => 'clone_files',   'label' => $langs->trans("CloneFiles"), 'value' => false)
+        );
+
+        print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$project->id, $langs->trans("CloneProject"), $langs->trans("ConfirmCloneProject"), "confirm_clone", $formquestion, '', 1, 240);
     }
-    
+
     if ($action == 'edit' && $userWrite > 0)
     {
         print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -522,7 +515,7 @@ else
         print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
         print $form->select_date($project->date_start,'project');
         print '<input type="checkbox" name="reportdate" value="yes" ';
-        if ($comefromclone){print ' checked="checked" ';} 
+        if ($comefromclone){print ' checked="checked" ';}
 		print '/>'. $langs->trans("ProjectReportDate");
         print '</td></tr>';
 
@@ -542,7 +535,7 @@ else
         print '<div align="center"><br>';
         print '<input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'"> &nbsp; ';
         print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
-        
+
         print '</form>';
     }
     else
@@ -580,7 +573,7 @@ else
 
         // Date start
         print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-        print dol_print_date($project->date_start,'day'); 
+        print dol_print_date($project->date_start,'day');
         print '</td></tr>';
 
         // Date end
@@ -656,7 +649,7 @@ else
                 print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ReOpen').'</a>';
             }
         }
-        
+
         // Clone
         if ($user->rights->projet->creer)
         {
