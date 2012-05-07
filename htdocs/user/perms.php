@@ -46,7 +46,7 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
 	$canreaduser=($user->admin || ($user->rights->user->user->lire && $user->rights->user->user_advance->readperms));
 	$caneditselfperms=($user->id == $id && $user->rights->user->self_advance->writeperms);
-	$caneditperms = (($caneditperms || $caneditselfperms) ? 0 : 1);
+	$caneditperms = (($caneditperms || $caneditselfperms) ? 1 : 0);
 }
 
 // Security check
