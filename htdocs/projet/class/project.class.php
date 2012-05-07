@@ -883,20 +883,23 @@ class Project extends CommonObject
         return $projects;
     }
 
-     /**	Load an object from its id and create a new one in database
-	 *
-	 *	@param	int		$fromid     	Id of object to clone
-	 *	@param	bool	$clone_contact	clone contact of project
-	 *	@param	bool	$clone_task		clone task of project
-	 *	@param	bool	$clone_file		clone file of project
-	 *	@param	bool	$clone_note		clone note of project
-	 * 	@return	int						New id of clone
-	 */
-	function createFromClone($fromid,$clone_contact=false,$clone_task=true,$clone_file=true,$clone_note=true)
+     /**
+      * Load an object from its id and create a new one in database
+	  *
+	  *	@param	int		$fromid     	Id of object to clone
+	  *	@param	bool	$clone_contact	clone contact of project
+	  *	@param	bool	$clone_task		clone task of project
+	  *	@param	bool	$clone_file		clone file of project
+      *	@param	bool	$clone_note		clone note of project
+	  * @return	int						New id of clone
+	  */
+	function createFromClone($fromid,$clone_contact=false,$clone_task=true,$clone_file=false,$clone_note=true)
 	{
 		global $user,$langs,$conf;
 
 		$error=0;
+
+		dol_syslog("createFromClone clone_contact=".$clone_contact." clone_task=".$clone_task." clone_file=".$clone_file." clone_note=".$clone_note);
 
 		$now = dol_mktime(0,0,0,idate('m',dol_now()),idate('d',dol_now()),idate('Y',dol_now()));
 
@@ -908,30 +911,18 @@ class Project extends CommonObject
 		$clone_project->fetch($fromid);
 
 		$orign_dt_start=$clone_project->date_start;
-
-
 		$orign_project_ref=$clone_project->ref;
 
 		$clone_project->id=0;
         $clone_project->date_start = $now;
         if (!(empty($clone_project->date_end)))
         {
-        	//Calculate new project end date ragarding difference between original project start date and new start date (now)
-        	$datetime_start = new DateTime();
-    		$datetime_start->setTimestamp($orign_dt_start);
-			$datetime_now = new DateTime();
-			$datetime_now->setTimestamp($now);
-			$diff_dt = $datetime_start->diff($datetime_now);
-
-        	$datetime_end = new DateTime();
-        	$datetime_end->setTimestamp($clone_project->date_end);
-        	$datetime_end->add($diff_dt);
-        	$clone_project->date_end = $datetime_end->getTimestamp();
+        	$clone_project->date_end = $clone_project->date_end + ($now - $orign_dt_start);
         }
 
         $clone_project->datec = $now;
 
-        if (!$clone_note)
+        if (! $clone_note)
         {
         	    $clone_project->note_private='';
     			$clone_project->note_public='';
@@ -1139,11 +1130,12 @@ class Project extends CommonObject
 	}
 
 
-	 /**	Shift project task date from current date to delta
-	 *
-	 *	@param	timestamp		$old_project_dt_start	old project start date
-	 * 	@return	int					1 if OK or < 0 if KO
-	 */
+	 /**
+	  *    Shift project task date from current date to delta
+	  *
+	  *    @param	timestamp		$old_project_dt_start	old project start date
+	  *    @return	int				1 if OK or < 0 if KO
+	  */
 	function shiftTaskDate($old_project_dt_start)
 	{
 		global $user,$langs,$conf;
@@ -1155,11 +1147,6 @@ class Project extends CommonObject
 		// Security check
 		$socid=0;
 		if ($user->societe_id > 0) $socid = $user->societe_id;
-
-		//convert timestamp to datetime
-		$old_project_dt_st = new DateTime();
-		$old_project_dt_st->setTimestamp($old_project_dt_start);
-		$old_project_dt_st->setTime(0,0,0); //Use 00:00:00 as time to be sure to not have side
 
 		$tasksarray=$taskstatic->getTasksArray(0, 0, $this->id, $socid, 0);
 
@@ -1183,39 +1170,13 @@ class Project extends CommonObject
 	    	//Calcultate new task start date with difference between old proj start date and origin task start date
 	    	if (!empty($tasktoshiftdate->date_start))
 	    	{
-	    		dol_syslog(get_class($this)."::shiftTaskDate to_update", LOG_DEBUG);
-		    	$orign_task_datetime_start = new DateTime();
-	    		$orign_task_datetime_start->setTimestamp($tasktoshiftdate->date_start);
-	    		$orign_task_datetime_start->setTime(0,0,0); //Use 00:00:00 as time to be sure to not have side effect
-				$diff_dt_st = $old_project_dt_st->diff($orign_task_datetime_start);
-
-				//Project new start date
-				$datetime_start = new DateTime();
-				$datetime_start->setTimestamp($this->date_start);
-				$datetime_start->setTime(0,0,0); //Use 00:00:00 as time to be sure to not have side
-
-        		//New task start date
-				$datetime_start->add($diff_dt_st);
-				$task->date_start			= $datetime_start->getTimestamp();
+				$task->date_start			= $this->date_start + ($tasktoshiftdate->date_start - $old_project_dt_st);
 	    	}
 
 	    	//Calcultate new task end date with difference between origin proj end date and origin task end date
 	    	if (!empty($tasktoshiftdate->date_end))
 	    	{
-        		$orign_task_datetime_end = new DateTime();
-	    		$orign_task_datetime_end->setTimestamp($tasktoshiftdate->date_end);
-	    		$orign_task_datetime_end->setTime(0,0,0); //Use 00:00:00 as hour to be sure to not have side effect
-
-				$diff_dt_end = $old_project_dt_st->diff($orign_task_datetime_end);
-
-				//Project new start date
-				$datetime_end = new DateTime();
-				$datetime_end->setTimestamp($this->date_start);
-				$datetime_end->setTime(0,0,0); //Use 00:00:00 as time to be sure to not have side
-
-        		//New task start date
-				$datetime_end->add($diff_dt_end);
-				$task->date_end			= $datetime_end->getTimestamp();
+				$task->date_end		    	= $this->date_start + ($tasktoshiftdate->date_end - $old_project_dt_st);
 	    	}
 
 			if ($to_update)
