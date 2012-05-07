@@ -161,6 +161,17 @@ if ($id > 0 || ! empty($ref))
 		print $form->showrefnav($object,'ref','',1,'facnumber','ref',$morehtmlref);
 		print '</td></tr>';
 
+		// Ref customer
+		print '<tr><td width="20%">';
+        print '<table class="nobordernopadding" width="100%"><tr><td>';
+        print $langs->trans('RefCustomer');
+        print '</td>';
+        print '</tr></table>';
+        print '</td>';
+        print '<td colspan="5">';
+        print $object->ref_client;
+		print '</td></tr>';
+
 		// Customer
 		print "<tr><td>".$langs->trans("Company")."</td>";
 		print '<td colspan="3">'.$object->client->getNomUrl(1,'compta').'</td></tr>';

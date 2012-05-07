@@ -294,6 +294,12 @@ PaymentConditionShort60D=60 jours
 PaymentCondition60D=Règlement à 60 jours
 PaymentConditionShort60DENDMONTH=60 jours fin de mois
 PaymentCondition60DENDMONTH=Règlement à 60 jours fin de mois
+PaymentConditionShortPT_DELIVERY=A livraison
+PaymentConditionPT_DELIVERY=Règlement à la livraison
+PaymentConditionShortPT_ORDER=A commande
+PaymentConditionPT_ORDER=A réception de commande
+PaymentConditionShortPT_5050=50/50
+PaymentConditionPT_5050=Règlement 50%% d'avance, 50%% à la livraison
 # PaymentType
 PaymentTypeVIR=Virement bancaire
 PaymentTypeShortVIR=Virement

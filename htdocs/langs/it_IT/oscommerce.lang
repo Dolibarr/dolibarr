@@ -1,19 +1,12 @@
 # Dolibarr language file - it_IT - oscommerce
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
+// Reference language: en_US -> it_IT
 CHARSET=UTF-8
-OSCommerce=OS Commerce
-OSCommerceSetup=Impostazioni modulo OS Commerce
-OSCommerceSetupSaved=Impostazioni OS Commerce salvate
-OSCOmmerceServer=OS Commerce server host/ip
-OSCOmmerceDatabaseName=Nome database OS Commerce
-OSCOmmerceUser=Utente database OS Commerce
-
-
-// Date 2009-01-18 19:41:54
-// START - Lines generated via parser
-// Reference language: en_US
-OSCommerceServer=OS Commerce Server host / ip
-OSCommerceDatabaseName=Nome database OS Commerce
-OSCommercePrefix=Prefisso tabelle db OS Commerce 
-OSCommerceUser=Utente database OS Commerce
-// Date 2009-01-18 19:41:54
-// STOP - Lines generated via parser
+OSCommerceDatabaseName			=Nome database OS Commerce
+OSCOmmerceDatabaseName			=Nome database OS Commerce
+OSCommerce				=OS Commerce
+OSCommercePrefix			=Prefisso tabelle database OS Commerce 
+OSCommerceServer			=Host/IP del server OS Commerce
+OSCommerceSetup				=Impostazioni modulo OS Commerce
+OSCommerceSetupSaved			=Impostazioni OS Commerce salvate
+OSCOmmerceUser				=Utente database OS Commerce

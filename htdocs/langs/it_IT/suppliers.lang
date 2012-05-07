@@ -1,63 +1,42 @@
 # Dolibarr language file - it_IT - suppliers     
-CHARSET=UTF-8
-Suppliers					 =Fornitori 
-Supplier					 =Fornitore 
-AddSupplier					 =Aggiungi fornitore 
-SupplierRemoved					 =Fornitore rimosso 
-SuppliersInvoice				 =Fattura Fornitore
-SuppliersInvoices				 =Fatture fornitori 
-NewSupplier					 =Nuovo fornitore 
-History						 =Storico
-ListOfSuppliers					 =Elenco fornitori 
-ShowSupplier					 =Visualizza fornitore 
-OrderDate					 =Data ordine
-BuyingPrice					 =Prezzo di acquisto 
-AddSupplierPrice				 =Aggiungi prezzo fornitore  
-ChangeSupplierPrice				 =Cambia prezzo fornitore  
-ErrorQtyTooLowForThisSupplier			 =Quantità troppo bassa per questo fornitore o il prezzo non definito su questo prodotto per questo fornitore 
-ErrorSupplierCountryIsNotDefined		 =Nazione fornitore non definita. Correggere per proseguire. 
-ProductHasAlreadyReferenceInThisSupplier	 =Questo prodotto ha già un riferimento con questo fornitore 
-NoRecordedSuppliers				 =Non presenti fornitori registrati 
-SupplierPayment					 =Pagamento fornitore
-SuppliersArea					 =Sezione fornitori 
-RefSupplierShort				 =Rif. fornitore 
-ExportDataset_fournisseur_1			 =Fatture fornitori e linee di fattura
-ExportDataset_fournisseur_2			 =Fatture fornitori e pagamenti 
-ApproveThisOrder				 =Approva questo ordine 
-ConfirmApproveThisOrder				 =Sei sicuro di voler approvare questo ordine? 
-DenyingThisOrder				 =Rifiuta questo ordine 
-ConfirmDenyingThisOrder				 =Sei sicuro di voler rifiutare questo ordine? 
-ConfirmCancelThisOrder				 =Sei sicuro di voler annullare questo ordine? 
-AddCustomerOrder				 =Crea ordine cliente
-AddCustomerInvoice				 =Crea fattura cliente 
-AddSupplierOrder				 =Crea ordine fornitore 
-AddSupplierInvoice				 =Crea fattura fornitore
-
-
-// Date 2009-01-18 19:41:54
-// START - Lines generated via parser
-// Reference language: en_US
-ListOfSupplierProductForSupplier=Elenco dei prodotti e dei prezzi per fornitore <b>%s</b>
-// Date 2009-01-18 19:41:54
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-CHARSET=UTF-8
-NoneOrBatchFileNeverRan=Nessuno o batch file <b>%s</b> non eseguito di recente
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
-// Reference language: en_US
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=Il fornitore di riferimento è già associato a un riferimento: %s
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:33:08).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
 // Reference language: en_US -> it_IT
-BuyingPriceMin=Prezzo minimo di acquisto
-BuyingPriceMinShort=Min prezzo d'acquisto
-Availability=Disponibilità
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:55).
+CHARSET=UTF-8
+AddCustomerInvoice				=Crea fattura attiva 
+AddCustomerOrder				=Crea ordine cliente
+AddSupplier					=Aggiungi fornitore
+AddSupplierInvoice				=Crea fattura fornitore
+AddSupplierOrder				=Crea ordine fornitore
+AddSupplierPrice				=Aggiungi prezzo fornitore
+ApproveThisOrder				=Approva l'ordine
+Availability					=Disponibilità
+BuyingPriceMin					=Prezzo d'acquisto minimo
+BuyingPriceMinShort				=Prezzo acq min
+BuyingPrice					=Prezzo di acquisto 
+ChangeSupplierPrice				=Cambia prezzo fornitore  
+ConfirmApproveThisOrder				=Vuoi davvero approvare l'ordine? 
+ConfirmCancelThisOrder				=Vuoi davvero annullare l'ordine? 
+ConfirmDenyingThisOrder				=Vuoi davvero rifiutare l'ordine? 
+DenyingThisOrder				=Rifiuta l'ordine
+ErrorQtyTooLowForThisSupplier			=Quantità troppo bassa per questo fornitore o prezzo del prodotto non definito per questo fornitore 
+ErrorSupplierCountryIsNotDefined		=Nazione fornitore non definita. Correggere per proseguire.
+ExportDataset_fournisseur_1			=Fatture fornitore e linee di fattura
+ExportDataset_fournisseur_2			=Fatture fornitore e pagamenti 
+History						=Storico
+ListOfSupplierProductForSupplier		=Elenco prodotti e prezzi per il fornitore <b>%s</b>
+ListOfSuppliers					=Elenco fornitori
+NewSupplier					=Nuovo fornitore
+NoneOrBatchFileNeverRan				=Nessuno batch file o <b>%s</b> non eseguito di recente
+NoRecordedSuppliers				=Non ci sono fornitori registrati 
+OrderDate					=Data ordine
+ProductHasAlreadyReferenceInThisSupplier	=Questo prodotto ha già un riferimento con questo fornitore 
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=Il fornitore di riferimento è già associato a un prodotto: %s
+RefSupplierShort				=Rif. fornitore
+ShowSupplier					=Visualizza fornitore
+Supplier					=Fornitore
+SupplierPayment					=Pagamento fornitore
+SupplierRemoved					=Fornitore rimosso
+SuppliersArea					=Area fornitori
+Suppliers					=Fornitori
+SuppliersInvoice				=Fattura Fornitore
+SuppliersInvoices				=Fatture fornitori

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville   <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur    <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo  <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin          <regis@dolibarr.fr>
  *
@@ -42,6 +42,7 @@ $sref_client=GETPOST('sref_client','alpha');
 $snom=GETPOST('snom','alpha');
 $sall=GETPOST('sall');
 $socid=GETPOST('socid','int');
+$search_user=GETPOST('search_user','int');
 
 // Security check
 $id = (GETPOST('orderid')?GETPOST('orderid'):GETPOST('id','int'));
@@ -80,6 +81,11 @@ $sql.= ' c.date_valid, c.date_commande, c.date_livraison, c.fk_statut, c.facture
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= ', '.MAIN_DB_PREFIX.'commande as c';
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if ($search_user > 0)
+{
+    $sql.=", ".MAIN_DB_PREFIX."element_contact as ec";
+    $sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
+}
 $sql.= ' WHERE c.fk_soc = s.rowid';
 $sql.= ' AND c.entity = '.$conf->entity;
 if ($socid)	$sql.= ' AND s.rowid = '.$socid;
@@ -108,24 +114,35 @@ if ($viewstatut <> '')
 	}
 	if ($viewstatut == -2)	// To process
 	{
-		$sql .= ' AND c.fk_statut IN (1,2,3) AND c.facture = 0';
+		//$sql.= ' AND c.fk_statut IN (1,2,3) AND c.facture = 0';
+		$sql.= " AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))";    // If status is 2 and facture=1, it must be selected
 	}
 }
 if ($ordermonth > 0)
 {
-	$sql.= " AND date_format(c.date_valid, '%Y-%m') = '".$orderyear."-".$ordermonth."'";
+    if ($orderyear > 0 && empty($day))
+    $sql.= " AND c.date_valid BETWEEN '".$db->idate(dol_get_first_day($orderyear,$ordermonth,false))."' AND '".$db->idate(dol_get_last_day($orderyear,$ordermonth,false))."'";
+    else if ($orderyear > 0 && ! empty($day))
+    $sql.= " AND c.date_valid BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $ordermonth, $day, $orderyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $ordermonth, $day, $orderyear))."'";
+    else
+    $sql.= " AND date_format(c.date_valid, '%m') = '".$ordermonth."'";
 }
-if ($orderyear > 0)
+else if ($orderyear > 0)
 {
-	$sql.= " AND date_format(c.date_valid, '%Y') = '".$orderyear."'";
+    $sql.= " AND c.date_valid BETWEEN '".$db->idate(dol_get_first_day($orderyear,1,false))."' AND '".$db->idate(dol_get_last_day($orderyear,12,false))."'";
 }
 if ($deliverymonth > 0)
 {
-	$sql.= " AND date_format(c.date_livraison, '%Y-%m') = '".$deliveryyear."-".$deliverymonth."'";
+    if ($deliveryyear > 0 && empty($day))
+    $sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_get_first_day($deliveryyear,$deliverymonth,false))."' AND '".$db->idate(dol_get_last_day($deliveryyear,$deliverymonth,false))."'";
+    else if ($deliveryyear > 0 && ! empty($day))
+    $sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $deliverymonth, $day, $deliveryyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $deliverymonth, $day, $deliveryyear))."'";
+    else
+    $sql.= " AND date_format(c.date_livraison, '%m') = '".$deliverymonth."'";
 }
-if ($deliveryyear > 0)
+else if ($deliveryyear > 0)
 {
-	$sql.= " AND date_format(c.date_livraison, '%Y') = '".$deliveryyear."'";
+    $sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_get_first_day($deliveryyear,1,false))."' AND '".$db->idate(dol_get_last_day($deliveryyear,12,false))."'";
 }
 if (!empty($snom))
 {
@@ -135,12 +152,16 @@ if (!empty($sref_client))
 {
 	$sql.= ' AND c.ref_client LIKE \'%'.$db->escape($sref_client).'%\'';
 }
+if ($search_user > 0)
+{
+    $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
+}
 
 $sql.= ' ORDER BY '.$sortfield.' '.$sortorder;
 $sql.= $db->plimit($limit + 1,$offset);
 
+//print $sql;
 $resql = $db->query($sql);
-
 if ($resql)
 {
 	if ($socid)
@@ -168,20 +189,45 @@ if ($resql)
 	if ($viewstatut == -2)
 	$title.=' - '.$langs->trans('StatusOrderToProcessShort');
 
+	$param='&socid='.$socid.'&viewstatut='.$viewstatut;
+	if ($month) $param.='&month='.$month;
+	if ($year)  $param.='&year='.$year;
+	if ($sref)  $param.='&sref='.$sref;
+	if ($snom)  $param.='&snom='.$snom;
+	if ($sref_client)  $param.='&sref_client='.$sref_client;
+	if ($search_user > 0) $param.='&search_user='.$search_user;
+
 	$num = $db->num_rows($resql);
-	print_barre_liste($title, $page, 'liste.php','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,$sortfield,$sortorder,'',$num);
+	print_barre_liste($title, $page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
 	$i = 0;
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans('Ref'),'liste.php','c.ref','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'width="25%"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Company'),'liste.php','s.nom','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('RefCustomerOrder'),'liste.php','c.ref_client','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('OrderDate'),'liste.php','c.date_commande','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('DeliveryDate'),'liste.php','c.date_livraison','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Status'),'liste.php','c.fk_statut','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'align="center"',$sortfield,$sortorder);
-	print '</tr>';
+
 	// Lignes des champs de filtre
-	print '<form method="get" action="liste.php">';
+	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+
+	print '<table class="noborder" width="100%">';
+
+	// If the user can view prospects other than his'
+	if ($user->rights->societe->client->voir || $socid)
+	{
+	    $moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
+	    $moreforfilter.=$form->select_dolusers($search_user,'search_user',1);
+	}
+	if ($moreforfilter)
+	{
+	    print '<tr class="liste_titre">';
+	    print '<td class="liste_titre" colspan="9">';
+	    print $moreforfilter;
+	    print '</td></tr>';
+	}
+
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'c.ref','',$param,'width="25%"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('RefCustomerOrder'),$_SERVER["PHP_SELF"],'c.ref_client','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('OrderDate'),$_SERVER["PHP_SELF"],'c.date_commande','',$param, 'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('DeliveryDate'),$_SERVER["PHP_SELF"],'c.date_livraison','',$param, 'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'c.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
+	print '</tr>';
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
 	print '<input class="flat" size="10" type="text" name="sref" value="'.$sref.'">';
@@ -194,7 +240,7 @@ if ($resql)
 	print '</td><td align="right" class="liste_titre">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td></tr>';
-	print '</form>';
+
 	$var=True;
 	$generic_commande = new Commande($db);
 	while ($i < min($num,$limit))
@@ -267,6 +313,9 @@ if ($resql)
 		$i++;
 	}
 	print '</table>';
+
+	print '</form>';
+
 	$db->free($resql);
 }
 else
@@ -274,7 +323,7 @@ else
 	print dol_print_error($db);
 }
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

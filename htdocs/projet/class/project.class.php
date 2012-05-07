@@ -52,7 +52,7 @@ class Project extends CommonObject
     /**
      *  Constructor
      *
-     *  @param      DoliDB		$DB      Database handler
+     *  @param      DoliDB		$db      Database handler
      */
     function __construct($db)
     {
@@ -240,8 +240,12 @@ class Project extends CommonObject
         $sql = "SELECT rowid, ref, title, description, public, datec";
         $sql.= ", tms, dateo, datee, fk_soc, fk_user_creat, fk_statut, note_private, note_public";
         $sql.= " FROM " . MAIN_DB_PREFIX . "projet";
-        if ($ref) $sql.= " WHERE ref='" . $ref . "'";
-        else $sql.= " WHERE rowid=" . $id;
+        if ($ref)
+        {
+        	$sql.= " WHERE ref='".$ref."'";
+        	$sql.= " AND entity IN (".getEntity('project').")";
+        }
+        else $sql.= " WHERE rowid=".$id;
 
         dol_syslog(get_class($this)."::fetch sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -813,8 +817,6 @@ class Project extends CommonObject
      */
     function getProjectsAuthorizedForUser($user, $mode=0, $list=0, $socid=0)
     {
-        global $conf;
-
         $projects = array();
         $temp = array();
 
@@ -825,7 +827,7 @@ class Project extends CommonObject
             $sql.= ", " . MAIN_DB_PREFIX . "element_contact as ec";
             $sql.= ", " . MAIN_DB_PREFIX . "c_type_contact as ctc";
         }
-        $sql.= " WHERE p.entity = " . $conf->entity;
+        $sql.= " WHERE p.entity IN (".getEntity('project').")";
         // Internal users must see project he is contact to even if project linked to a third party he can't see.
         //if ($socid || ! $user->rights->societe->client->voir)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
         if ($socid > 0) $sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = " . $socid . ")";
@@ -880,12 +882,11 @@ class Project extends CommonObject
 
         return $projects;
     }
-    
+
      /**	Load an object from its id and create a new one in database
 	 *
 	 *	@param	int		$fromid     	Id of object to clone
 	 *	@param	bool	$clone_contact	clone contact of project
-	 *	@param	bool	$clone_ref		clone ref of project
 	 *	@param	bool	$clone_task		clone task of project
 	 *	@param	bool	$clone_file		clone file of project
 	 *	@param	bool	$clone_note		clone note of project
@@ -896,7 +897,7 @@ class Project extends CommonObject
 		global $user,$langs,$conf;
 
 		$error=0;
-		
+
 		$now = dol_mktime(0,0,0,idate('m',dol_now()),idate('d',dol_now()),idate('Y',dol_now()));
 
 		$clone_project=new Project($this->db);
@@ -905,12 +906,12 @@ class Project extends CommonObject
 
 		// Load source object
 		$clone_project->fetch($fromid);
-		
+
 		$orign_dt_start=$clone_project->date_start;
-	   
-		
+
+
 		$orign_project_ref=$clone_project->ref;
-		
+
 		$clone_project->id=0;
         $clone_project->date_start = $now;
         if (!(empty($clone_project->date_end)))
@@ -921,13 +922,13 @@ class Project extends CommonObject
 			$datetime_now = new DateTime();
 			$datetime_now->setTimestamp($now);
 			$diff_dt = $datetime_start->diff($datetime_now);
-			
+
         	$datetime_end = new DateTime();
         	$datetime_end->setTimestamp($clone_project->date_end);
         	$datetime_end->add($diff_dt);
-        	$clone_project->date_end = $datetime_end->getTimestamp();	
+        	$clone_project->date_end = $datetime_end->getTimestamp();
         }
-        
+
         $clone_project->datec = $now;
 
         if (!$clone_note)
@@ -935,20 +936,20 @@ class Project extends CommonObject
         	    $clone_project->note_private='';
     			$clone_project->note_public='';
         }
-		
+
 		//Generate next ref
 		$defaultref='';
     	$obj = empty($conf->global->PROJECT_ADDON)?'mod_project_simple':$conf->global->PROJECT_ADDON;
     	if (! empty($conf->global->PROJECT_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/project/".$conf->global->PROJECT_ADDON.".php"))
     	{
-    		
+
         	require_once(DOL_DOCUMENT_ROOT ."/core/modules/project/".$conf->global->PROJECT_ADDON.".php");
         	$modProject = new $obj;
         	$defaultref = $modProject->getNextValue($clone_project->societe->id,$clone_project);
     	}
-		
+
     	if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
-    	
+
 		$clone_project->ref=$defaultref;
 
 		// Create clone
@@ -964,10 +965,10 @@ class Project extends CommonObject
 		if (! $error)
 		{
 			$this->db->commit();
-			
+
 			//Get the new project id
 			$clone_project_id=$clone_project->id;
-			
+
 			//Note Update
 			if (!$clone_note)
        		{
@@ -988,7 +989,7 @@ class Project extends CommonObject
 				{
 					$this->db->commit();
 				}
-				
+
 				$this->db->begin();
 				$res=$clone_project->update_note(dol_html_entity_decode($clone_project->note_private, ENT_QUOTES));
 				if ($res < 0)
@@ -1002,17 +1003,17 @@ class Project extends CommonObject
 					$this->db->commit();
 				}
         	}
-			
+
 			//Duplicate contact
 			if ($clone_contact)
-			{	
+			{
 				$origin_project = new Project($this->db);
 				$origin_project->fetch($fromid);
-				
+
 				foreach(array('internal','external') as $source)
 				{
 					$tab = $origin_project->liste_contact(-1,$source);
-					
+
 					foreach ($tab as $contacttoadd)
 					{
 						$clone_project->add_contact($contacttoadd['id'], $contacttoadd['code'], $contacttoadd['source']);
@@ -1023,7 +1024,7 @@ class Project extends CommonObject
 							$error++;
 						}
 						else
-						{ 
+						{
 							if ($clone_project->error!='')
 							{
 								$this->error.=$clone_project->error;
@@ -1033,15 +1034,15 @@ class Project extends CommonObject
 					}
 				}
 			}
-			
+
 			//Duplicate file
 			if ($clone_file)
-			{	
+			{
 				require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-				
+
 				$clone_project_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($defaultref);
 				$ori_project_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($orign_project_ref);
-				
+
 				if (dol_mkdir($clone_project_dir) >= 0)
 				{
 					$filearray=dol_dir_list($ori_project_dir,"files",0,'','\.meta$','',SORT_ASC,1);
@@ -1061,18 +1062,18 @@ class Project extends CommonObject
 					$error++;
 				}
 			}
-			
+
 			//Duplicate task
 			if ($clone_task)
-			{	
+			{
 				$taskstatic = new Task($this->db);
-				
+
 				// Security check
 				$socid=0;
 				if ($user->societe_id > 0) $socid = $user->societe_id;
-				
+
 				$tasksarray=$taskstatic->getTasksArray(0, 0, $fromid, $socid, 0);
-			
+
 				//manage new parent clone task id
 				$tab_conv_child_parent=array();
 
@@ -1088,7 +1089,7 @@ class Project extends CommonObject
 				    {
 				    	$new_task_id=$result_clone;
 				    	$taskstatic->fetch($tasktoclone->id);
-				    	
+
 				    	//manage new parent clone task id
 				    	// if the current task has child we store the original task id and the equivalent clone task id
 						if (($taskstatic->hasChildren()) && !array_key_exists($tasktoclone->id,$tab_conv_child_parent))
@@ -1096,11 +1097,11 @@ class Project extends CommonObject
 							$tab_conv_child_parent[$tasktoclone->id] =  $new_task_id;
 						}
 				    }
-					
+
 			    }
-			    
+
 			    //Parse all clone node to be sure to update new parent
-			    $tasksarray=$taskstatic->getTasksArray(0, 0, $clone_project_id, $socid, 0);	    
+			    $tasksarray=$taskstatic->getTasksArray(0, 0, $clone_project_id, $socid, 0);
 			    foreach ($tasksarray as $task_cloned)
 			    {
 			    	$taskstatic->fetch($task_cloned->id);
@@ -1116,9 +1117,9 @@ class Project extends CommonObject
 				    }
 			    }
 			}
-			
-			
-			
+
+
+
 			if (! $error)
 			{
 				return $clone_project_id;
@@ -1128,7 +1129,7 @@ class Project extends CommonObject
 				dol_syslog(get_class($this)."::createFromClone nbError: ".$error." error : " . $this->error, LOG_ERR);
 				return -1;
 			}
-			
+
 		}
 		else
 		{
@@ -1136,8 +1137,8 @@ class Project extends CommonObject
 			return -1;
 		}
 	}
-	
-	
+
+
 	 /**	Shift project task date from current date to delta
 	 *
 	 *	@param	timestamp		$old_project_dt_start	old project start date
@@ -1148,18 +1149,18 @@ class Project extends CommonObject
 		global $user,$langs,$conf;
 
 		$error=0;
-		
+
 		$taskstatic = new Task($this->db);
-				
+
 		// Security check
 		$socid=0;
 		if ($user->societe_id > 0) $socid = $user->societe_id;
-		
+
 		//convert timestamp to datetime
 		$old_project_dt_st = new DateTime();
 		$old_project_dt_st->setTimestamp($old_project_dt_start);
 		$old_project_dt_st->setTime(0,0,0); //Use 00:00:00 as time to be sure to not have side
-		
+
 		$tasksarray=$taskstatic->getTasksArray(0, 0, $this->id, $socid, 0);
 
 	    foreach ($tasksarray as $tasktoshiftdate)
@@ -1181,37 +1182,37 @@ class Project extends CommonObject
 
 	    	//Calcultate new task start date with difference between old proj start date and origin task start date
 	    	if (!empty($tasktoshiftdate->date_start))
-	    	{	    		
+	    	{
 	    		dol_syslog(get_class($this)."::shiftTaskDate to_update", LOG_DEBUG);
 		    	$orign_task_datetime_start = new DateTime();
 	    		$orign_task_datetime_start->setTimestamp($tasktoshiftdate->date_start);
 	    		$orign_task_datetime_start->setTime(0,0,0); //Use 00:00:00 as time to be sure to not have side effect
 				$diff_dt_st = $old_project_dt_st->diff($orign_task_datetime_start);
-				
+
 				//Project new start date
 				$datetime_start = new DateTime();
 				$datetime_start->setTimestamp($this->date_start);
 				$datetime_start->setTime(0,0,0); //Use 00:00:00 as time to be sure to not have side
-				
+
         		//New task start date
 				$datetime_start->add($diff_dt_st);
 				$task->date_start			= $datetime_start->getTimestamp();
 	    	}
-	    	
+
 	    	//Calcultate new task end date with difference between origin proj end date and origin task end date
 	    	if (!empty($tasktoshiftdate->date_end))
 	    	{
         		$orign_task_datetime_end = new DateTime();
 	    		$orign_task_datetime_end->setTimestamp($tasktoshiftdate->date_end);
 	    		$orign_task_datetime_end->setTime(0,0,0); //Use 00:00:00 as hour to be sure to not have side effect
-	    		
+
 				$diff_dt_end = $old_project_dt_st->diff($orign_task_datetime_end);
-				
+
 				//Project new start date
 				$datetime_end = new DateTime();
 				$datetime_end->setTimestamp($this->date_start);
 				$datetime_end->setTime(0,0,0); //Use 00:00:00 as time to be sure to not have side
-				
+
         		//New task start date
 				$datetime_end->add($diff_dt_end);
 				$task->date_end			= $datetime_end->getTimestamp();
@@ -1229,10 +1230,10 @@ class Project extends CommonObject
 	    }
 	    if ($error!=0)
 	    {
-	    	return -1;	
+	    	return -1;
 	    }
 	    return $result;
-	} 
+	}
 
 }
 

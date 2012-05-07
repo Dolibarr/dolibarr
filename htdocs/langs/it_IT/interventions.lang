@@ -1,58 +1,41 @@
-# Dolibarr language file - it_IT - interventions    
-CHARSET=UTF-8
-Intervention					    =Intervento 
-Interventions					    =Interventi 
-InterventionCard				    =Scheda intervento 
-NewIntervention					    =Nuovo intervento 
-AddIntervention					    =Aggiungi intervento 
-ListOfInterventions				    =Elenco degli interventi 
-EditIntervention				    =Modifica intervento 
-LastInterventions				    =Ultimi %s interventi 
-AllInterventions				    =Tutti gli interventi 
-CreateDraftIntervention				    =Crea bozza 
-CustomerDoesNotHavePrefix			    =Il Cliente non dispone di un prefisso 
-InterventionContact				    =Contatto per l'intervento 
-DeleteIntervention				    =Elimina intervento 
-ValidateIntervention				    =Convalida intervento 
-DeleteInterventionLine				    =Elimina linea di intervento 
-ConfirmDeleteIntervention			    =Sei sicuro di voler eliminare questo intervento? 
-ConfirmValidateIntervention			    =Sei sicuro di voler convalidare questo intervento? 
-ConfirmDeleteInterventionLine			    =Sei sicuro di voler cancellare questa linea di intervento? 
-NameAndSignatureOfInternalContact		    =Nome e firma del partecipante: 
-NameAndSignatureOfExternalContact		    =Nome e firma del cliente: 
-##### Types de contacts #####			    
-TypeContact_fichinter_internal_INTERREPFOLL	    =Rappresentante follow-up di intervento 
-TypeContact_fichinter_internal_INTERVENING	    =Intervento effettuato da
-TypeContact_fichinter_external_BILLING		    =Contatto fatturazione con i clienti 
-TypeContact_fichinter_external_CUSTOMER		    =In seguito a contatto con i clienti 
-# Modele numérotation				    
-ArcticNumRefModelDesc1				    =Modello generico di numerazione 
-ArcticNumRefModelError				    =Impossibile attivare 
-PacificNumRefModelDesc1				    =Ritorna un numero ritorno con formato %syymm-nnnn dove yy è l'anno, mm è il mese e nnnn è una sequenza senza pausa e che non ritorna a 0 
-PacificNumRefModelError				    =Un modello numerazione d'intervento che inizia con $syymm è già esistente e non è compatibile con questo modello di sequenza. Rimuovere o rinominare per attivare questo modulo.
-
-
-// Date 2009-01-18 19:41:54
-// START - Lines generated via parser
-// Reference language: en_US
-ConfirmModifyIntervention=Sei sicuro di voler modificare questo intervento?
-DocumentModelStandard=Modello documento standard per gli interventi
-// Date 2009-01-18 19:41:54
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-CHARSET=UTF-8
-ModifyIntervention=Modificare intervento
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-FreeLegalTextOnInterventions=Testo libero su interventi 
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
+# Dolibarr language file - it_IT- interventions
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
 // Reference language: en_US -> it_IT
-ActionsOnFicheInter=Azioni di intervento
-ClassifyBilled=Classificare &quot;Fatturato&quot;
-StatusInterInvoiced=Fatturato
-RelatedInterventions=Interventi relativi
-ShowIntervention=Mostra intervento
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:22:05).
+CHARSET						=UTF-8
+ActionsOnFicheInter				=Azioni di intervento
+AddIntervention					=Aggiungi intervento 
+AllInterventions				=Tutti gli interventi 
+ArcticNumRefModelDesc1				=Modello generico di numerazione 
+ArcticNumRefModelError				=Impossibile attivare 
+ClassifyBilled					=Classifica come "Fatturato"
+ConfirmDeleteInterventionLine			=Vuoi davvero cancellare questa riga di intervento? 
+ConfirmDeleteIntervention			=Vuoi davvero eliminare questo intervento? 
+ConfirmModifyIntervention			=Vuoi davvero modificare questo intervento?
+ConfirmValidateIntervention			=Vuoi davvero convalidare questo intervento? 
+CreateDraftIntervention				=Crea bozza 
+CustomerDoesNotHavePrefix			=Il Cliente non dispone di un prefisso 
+DeleteIntervention				=Elimina intervento 
+DeleteInterventionLine				=Elimina riga di intervento 
+DocumentModelStandard				=Modello documento standard per gli interventi
+EditIntervention				=Modifica intervento 
+FreeLegalTextOnInterventions			=Testo libero sugli interventi
+InterventionCard				=Scheda intervento 
+InterventionContact				=Contatto per l'intervento 
+Intervention					=Intervento 
+Interventions					=Interventi 
+LastInterventions				=Ultimi %s interventi 
+ListOfInterventions				=Elenco degli interventi 
+ModifyIntervention				=Modificare intervento
+NameAndSignatureOfExternalContact		=Nome e firma del cliente: 
+NameAndSignatureOfInternalContact		=Nome e firma del partecipante: 
+NewIntervention					=Nuovo intervento 
+PacificNumRefModelDesc1				=Restituisce un numero nel formato %syymm-nnnn dove yy è l'anno, mm è il mese e nnnn è una sequenza senza pausa e che non ritorna a 0 
+PacificNumRefModelError				=Un modello di numerazione degli interventi che inizia con $syymm è già esistente e non è compatibile con questo modello di sequenza. Rimuovere o rinominare per attivare questo modulo.
+RelatedInterventions				=Interventi correlati
+ShowIntervention				=Mostra intervento
+StatusInterInvoiced				=Fatturato
+TypeContact_fichinter_external_BILLING		=Contatto di fatturazione del cliente 
+TypeContact_fichinter_external_CUSTOMER		=Contatto di follow-up del cliente
+TypeContact_fichinter_internal_INTERREPFOLL	=Responsabile follow-up per l'intervento 
+TypeContact_fichinter_internal_INTERVENING	=Intervento effettuato da
+ValidateIntervention				=Convalida intervento

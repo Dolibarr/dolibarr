@@ -34,8 +34,7 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
 
 
 /**
- *  \class      pdf_oursin
- *  \brief      Classe permettant de generer les factures au modele oursin
+ *  Classe permettant de generer les factures au modele oursin
  */
 class pdf_oursin extends ModelePDFFactures
 {
@@ -392,7 +391,7 @@ class pdf_oursin extends ModelePDFFactures
 
 				$invoice->fetch($obj->fk_facture_source);
 
-				$pdf->SetXY($tab3_posx, $tab3_top+$y );
+				$pdf->SetXY($tab3_posx, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, dol_print_date($obj->datef,'day',false,$outputlangs,true), 0, 'L', 0);
 				$pdf->SetXY($tab3_posx+21, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, price($obj->amount_ttc), 0, 'L', 0);
@@ -401,7 +400,7 @@ class pdf_oursin extends ModelePDFFactures
 				$pdf->SetXY($tab3_posx+58, $tab3_top+$y);
 				$pdf->MultiCell(20, 3, $invoice->ref, 0, 'L', 0);
 
-				$pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3 );
+				$pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3);
 
 				$i++;
 			}
@@ -429,7 +428,7 @@ class pdf_oursin extends ModelePDFFactures
                 $y+=3;
                 $row = $this->db->fetch_object($resql);
 
-                $pdf->SetXY($tab3_posx, $tab3_top+$y );
+                $pdf->SetXY($tab3_posx, $tab3_top+$y);
                 $pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row->date),'day',false,$outputlangs,true), 0, 'L', 0);
                 $pdf->SetXY($tab3_posx+21, $tab3_top+$y);
                 $pdf->MultiCell(20, 3, price($row->amount), 0, 'L', 0);
@@ -440,7 +439,7 @@ class pdf_oursin extends ModelePDFFactures
                 $pdf->SetXY($tab3_posx+58, $tab3_top+$y);
                 $pdf->MultiCell(30, 3, $row->num, 0, 'L', 0);
 
-                $pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3 );
+                $pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3);
 
                 $i++;
             }

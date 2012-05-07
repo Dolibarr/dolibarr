@@ -482,14 +482,14 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	    $pdf->SetFont('','', $default_font_size - 1);
 
 	    // If France, show VAT mention if not applicable
-	    if ($this->emetteur->pays_code == 'FR' && $this->franchise == 1)
+	    /*if ($this->emetteur->pays_code == 'FR' && $this->franchise == 1)
 	    {
 	        $pdf->SetFont('','B', $default_font_size - 2);
 	        $pdf->SetXY($this->marge_gauche, $posy);
 	        $pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
 
 	        $posy=$pdf->GetY()+4;
-	    }
+	    }*/
 
 	    // Show payments conditions
 	    if ($object->cond_reglement_code || $object->cond_reglement)
