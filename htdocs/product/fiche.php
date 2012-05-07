@@ -92,7 +92,7 @@ if (empty($reshook))
     {
         $object->fetch($id);
     	$result = $object->setValueFrom('fk_product_type', $_POST['fk_product_type']);
-    	Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+    	Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
     	exit;
     }
 
@@ -101,7 +101,7 @@ if (empty($reshook))
     {
     	$object->fetch($id);
     	$result = $object->setValueFrom('fk_barcode_type', $_POST['fk_barcode_type']);
-    	Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+    	Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
     	exit;
     }
 
@@ -111,7 +111,7 @@ if (empty($reshook))
     	$object->fetch($id);
     	//Todo: ajout verification de la validite du code barre en fonction du type
     	$result = $object->setValueFrom('barcode', $_POST['barcode']);
-    	Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+    	Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
     	exit;
     }
 
@@ -227,7 +227,7 @@ if (empty($reshook))
 
             if ($id > 0)
             {
-                Header("Location: fiche.php?id=".$id);
+                Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
                 exit;
             }
             else
@@ -374,7 +374,7 @@ if (empty($reshook))
 
         if ( ($object->type == 0 && $user->rights->produit->supprimer)	|| ($object->type == 1 && $user->rights->service->supprimer) )
         {
-            $result = $object->delete($id);
+            $result = $object->delete($object->id);
         }
 
         if ($result > 0)
@@ -677,7 +677,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
         $object = new Product($db);
         $object->fetch($id, $ref);                   // For use with "pure canvas" (canvas that contains templates only)
     }
-   	$objcanvas->assign_values($action, $id, $ref);	// Set value for templates
+   	$objcanvas->assign_values($action, $object->id, $ref);	// Set value for templates
     $objcanvas->display_canvas($action);				// Show template
 }
 else
@@ -1277,7 +1277,7 @@ if ($action == 'clone' || $conf->use_javascript_ajax)
     array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true)
     );
     // Paiement incomplet. On demande si motif = escompte ou autre
-    $form->form_confirm($_SERVER["PHP_SELF"].'?id='.$id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestion,'yes','action-clone',230,600);
+    $form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestion,'yes','action-clone',230,600);
 }
 
 
@@ -1293,7 +1293,7 @@ if ($action == '' || $action == 'view')
 {
     if ($user->rights->produit->creer || $user->rights->service->creer)
     {
-        if ($object->no_button_edit <> 1) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$id.'">'.$langs->trans("Modify").'</a>';
+        if ($object->no_button_edit <> 1) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a>';
 
         if ($object->no_button_copy <> 1)
         {
@@ -1303,12 +1303,12 @@ if ($action == '' || $action == 'view')
             }
             else
             {
-                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$id.'">'.$langs->trans("ToClone").'</a>';
+                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
             }
         }
     }
 
-    $object_is_used = $object->isObjectUsed($id);
+    $object_is_used = $object->isObjectUsed($object->id);
     if (($object->type == 0 && $user->rights->produit->supprimer)
     || ($object->type == 1 && $user->rights->service->supprimer))
     {
@@ -1320,7 +1320,7 @@ if ($action == '' || $action == 'view')
             }
             else
             {
-                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$id.'">'.$langs->trans("Delete").'</a>';
+                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a>';
             }
         }
         else
@@ -1391,7 +1391,7 @@ if ($id && ($action == '' || $action == 'view') && $object->status)
                 {
                     $objp = $db->fetch_object($result);
                     $var=!$var;
-                    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'">';
+                    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                     print '<input type="hidden" name="action" value="addinpropal">';
                     print "<tr ".$bc[$var].">";
@@ -1429,7 +1429,7 @@ if ($id && ($action == '' || $action == 'view') && $object->status)
 
             $var=true;
             $otherprop = $propal->liste_array(1,1,1);
-            print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'">';
+            print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" width="100%">';
             if (is_array($otherprop) && count($otherprop))
@@ -1508,7 +1508,7 @@ if ($id && ($action == '' || $action == 'view') && $object->status)
                 {
                     $objc = $db->fetch_object($result);
                     $var=!$var;
-                    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'">';
+                    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                     print '<input type="hidden" name="action" value="addincommande">';
                     print "<tr ".$bc[$var].">";
@@ -1547,7 +1547,7 @@ if ($id && ($action == '' || $action == 'view') && $object->status)
 
             $var=true;
             $othercom = $commande->liste_array(1, $user);
-            print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'">';
+            print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" width="100%">';
             if (is_array($othercom) && count($othercom))
@@ -1622,7 +1622,7 @@ if ($id && ($action == '' || $action == 'view') && $object->status)
                 {
                     $objp = $db->fetch_object($result);
                     $var=!$var;
-                    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'">';
+                    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                     print '<input type="hidden" name="action" value="addinfacture">';
                     print "<tr $bc[$var]>";
@@ -1687,7 +1687,7 @@ if ($id && ($action == '' || $action == 'view') && $object->status)
                         $objp = $db->fetch_object($result);
 
                         $var=!$var;
-                        print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'">';
+                        print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
                         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                         print '<input type="hidden" name="action" value="addinfacture">';
                         print "<tr ".$bc[$var].">";

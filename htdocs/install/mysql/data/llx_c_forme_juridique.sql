@@ -7,6 +7,7 @@
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2012 	   Sebastian Neuwert    <sebastian.neuwert@modula71.de>
+-- Copyright (C) 2012 	   Tommaso Basilici    <t.basilici@19.coop>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -135,18 +136,25 @@ INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VA
 INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('304',3,'Società per azioni s.p.a.',0,1);
 INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('305',3,'Società a responsabilità limitata s.r.l.',0,1);
 INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('306',3,'Società in accomandita per azioni s.a.p.a.',0,1);
-INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('307',3,'Società cooperativa',0,1);
+INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('307',3,'Società cooperativa a r.l.',0,1);
 INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('308',3,'Società consortile',0,1);
 INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('309',3,'Società europea',0,1);
 INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('310',3,'Società cooperativa europea',0,1);
 INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('311',3,'Società unipersonale',0,1);
 INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('312',3,'Società di professionisti',0,1);
 INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('313',3,'Società di fatto',0,1);
-INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('314',3,'Società occulta',0,1);
+--INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('314',3,'Società occulta',0,1);
 INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('315',3,'Società apparente',0,1);
 INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('316',3,'Impresa individuale ',0,1);
 INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('317',3,'Impresa coniugale',0,1);
 INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('318',3,'Impresa familiare',0,1);
+INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('319',3,'Consorzio cooperativo',0,1);
+INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('320',3,'Società cooperativa sociale',0,1);
+INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('321',3,'Società cooperativa di consumo',0,1);
+INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('322',3,'Società cooperativa agricola',0,1);
+INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('323',3,'A.T.I. Associazione temporanea di imprese',0,1);
+INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('324',3,'R.T.I. Raggruppamento temporaneo di imprese',0,1);
+INSERT INTO llx_c_forme_juridique (code,fk_pays,libelle,isvatexempted,active) VALUES ('325',3,'Studio associato',0,1);
 
 -- Switzerland
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '600', 'Raison Individuelle');

@@ -9,10 +9,14 @@ For users:
 - New: Can export supplier orders.
 - New: First feature to install external plugins from gui. 
 - New: Monaco is like France for default vat calculation
+- New: Can list elements (invoices, orders or proposals on a particular
+  user contact). This allow to view a "basket" of its elements.
+- New: Enhance default style.
 
 For developers:
-- A module can overwrite templates parts.
-- Can add a link on title field of added dictionnary.
+- New: A module can overwrite templates parts.
+- New: Can add a link on title field of added dictionnary.
+- New: Uniformize code.
 
 
 ***** ChangeLog for 3.2.0 compared to 3.1.2 *****

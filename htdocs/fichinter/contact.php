@@ -53,7 +53,8 @@ if ($action == 'addcontact' && $user->rights->ficheinter->creer)
 {
     if ($result > 0 && $id > 0)
     {
-  		$result = $object->add_contact(GETPOST('contactid','int'), GETPOST('type','int'), GETPOST('source','alpha'));
+    	$contactid = (GETPOST('userid','int') ? GETPOST('userid','int') : GETPOST('contactid','int'));
+  		$result = $object->add_contact($contactid, GETPOST('type','int'), GETPOST('source','alpha'));
     }
 
 	if ($result >= 0)

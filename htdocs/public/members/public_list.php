@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2001-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
+ * Copyright (C) 2004-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,13 @@
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+
+// For MultiCompany module
+$entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : 1);
+if (is_int($entity))
+{
+	define("DOLENTITY", $entity);
+}
 
 require("../../main.inc.php");
 
@@ -96,7 +104,8 @@ llxHeaderVierge($langs->trans("ListOfValidatedPublicMembers"));
 
 $sql = "SELECT rowid, prenom, nom, societe, cp, ville, email, naiss, photo";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent";
-$sql.= " WHERE statut = 1";
+$sql.= " WHERE entity = ".$entity;
+$sql.= " AND statut = 1";
 $sql.= " AND public = 1";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);

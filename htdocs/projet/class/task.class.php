@@ -64,7 +64,7 @@ class Task extends CommonObject
     /**
      *  Constructor
      *
-     *  @param      DoliDB		$DB      Database handler
+     *  @param      DoliDB		$db      Database handler
      */
     function __construct($db)
     {
@@ -305,7 +305,7 @@ class Task extends CommonObject
      */
     function delete($user, $notrigger=0)
     {
-        
+
         global $conf, $langs;
 
         $error=0;
@@ -935,7 +935,7 @@ class Task extends CommonObject
             return 1;
         }
     }
-    
+
      /**	Load an object from its id and create a new one in database
 	 *
 	 *	@param	int		$fromid     			Id of object to clone
@@ -943,7 +943,6 @@ class Task extends CommonObject
 	 *  @param	int		$parent_task_id			Id of task to attach clone task
 	 *  @param	bool	$clone_change_dt		recalculate date of task regarding new project start date
 	 *	@param	bool	$clone_affectation		clone affectation of project
-	 *	@param	bool	$clone_task				clone task of project
 	 *	@param	bool	$clone_time				clone time of project
 	 *	@param	bool	$clone_file				clone file of project
 	 *  @param	bool	$clone_note				clone note of project
@@ -955,9 +954,9 @@ class Task extends CommonObject
 		global $user,$langs,$conf;
 
 		$error=0;
-		
+
 		$now=dol_now();
-		
+
 		$datec = dol_mktime(0,0,0,idate('m',$now),idate('d',$now),idate('Y',$now));
 
 		$clone_task=new Task($this->db);
@@ -966,24 +965,24 @@ class Task extends CommonObject
 
 		// Load source object
 		$clone_task->fetch($fromid);
-		
+
 		$ori_project_id					= $clone_task->fk_project;
-		
+
 		$clone_task->id					= 0;
         $clone_task->fk_project			= $project_id;
         $clone_task->fk_task_parent		= $parent_task_id;
         $clone_task->date_c				= $datec;
-        
+
         //Manage Task Date
         if ($clone_change_dt)
         {
         	$projectstatic=new Project($this->db);
         	$projectstatic->fetch($ori_project_id);
-        	
+
         	//Origin project strat date
         	$orign_project_dt_start = new DateTime();
 	    	$orign_project_dt_start->setTimestamp($projectstatic->date_start);
-	    	
+
 	    	//Calcultate new task start date with difference between origin proj start date and origin task start date
 	    	if (!empty($clone_task->date_start))
 	    	{
@@ -991,16 +990,16 @@ class Task extends CommonObject
 	    		$orign_task_datetime_start->setTimestamp($clone_task->date_start);
 	    		$orign_task_datetime_start->setTime(0,0,0); //Use 00:00:00 as hour to be sure to not have side effect
 				$diff_dt_st = $orign_project_dt_start->diff($orign_task_datetime_start);
-				
+
 				//cloned project start date
         		$datetime_start = new DateTime();
         		$datetime_start->setTimestamp($now);
-        		
+
         		//New task start date
 				$datetime_start->add($diff_dt_st);
 				$clone_task->date_start			= $datetime_start->getTimestamp();
 	    	}
-	    	
+
 	    	//Calcultate new task end date with difference between origin proj end date and origin task end date
 	    	if (!empty($clone_task->date_end))
 	    	{
@@ -1008,18 +1007,18 @@ class Task extends CommonObject
 	    		$orign_task_datetime_end->setTimestamp($clone_task->date_end);
 	    		$orign_task_datetime_end->setTime(0,0,0); //Use 00:00:00 as hour to be sure to not have side effect
 				$diff_dt_end = $orign_project_dt_start->diff($orign_task_datetime_end);
-				
+
 				//cloned project start date
         		$datetime_end = new DateTime();
         		$datetime_end->setTimestamp($now);
-        		
+
         		//New task start date
 				$datetime_end->add($diff_dt_end);
 				$clone_task->date_end			= $datetime_end->getTimestamp();
 	    	}
-	    	
+
         }
-	
+
 		if (!$clone_prog)
         {
         	    $clone_task->progress=0;
@@ -1039,9 +1038,9 @@ class Task extends CommonObject
 		if (! $error)
 		{
 			$this->db->commit();
-			
+
 			$clone_task_id=$clone_task->id;
-			     		
+
        		//Note Update
 			if (!$clone_note)
        		{
@@ -1062,7 +1061,7 @@ class Task extends CommonObject
 				{
 					$this->db->commit();
 				}
-				
+
 				$this->db->begin();
 				$res=$clone_task->update_note(dol_html_entity_decode($clone_task->note_private, ENT_QUOTES));
 				if ($res < 0)
@@ -1076,30 +1075,30 @@ class Task extends CommonObject
 					$this->db->commit();
 				}
         	}
-       		
+
 			//Duplicate file
 			if ($clone_file)
-			{	
+			{
 				require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-				
+
 				//retreive project origin ref to know folder to copy
 				$projectstatic=new Project($this->db);
 	        	$projectstatic->fetch($ori_project_id);
 	        	$ori_project_ref=$projectstatic->ref;
-	        	
+
 	        	if ($ori_project_id!=$project_id)
 	        	{
 	        		$projectstatic->fetch($project_id);
 	        		$clone_project_ref=$projectstatic->ref;
-	        	} 
+	        	}
 	        	else
 	        	{
 	        		$clone_project_ref=$ori_project_ref;
 	        	}
-				
+
 				$clone_task_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($clone_project_ref). "/" . dol_sanitizeFileName($clone_task_id);
 				$ori_task_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($ori_project_ref). "/" . dol_sanitizeFileName($fromid);
-				
+
 				$filearray=dol_dir_list($ori_task_dir,"files",0,'','\.meta$','',SORT_ASC,1);
 				foreach($filearray as $key => $file)
 				{
@@ -1108,25 +1107,25 @@ class Task extends CommonObject
 						if (dol_mkdir($clone_task_dir) < 0)
 						{
 							$this->error.=$langs->trans('ErrorInternalErrorDetected').':dol_mkdir';
-							$error++;							
+							$error++;
 						}
 					}
-					
+
 					$rescopy = dol_copy($ori_task_dir . '/' . $file['name'], $clone_task_dir . '/' . $file['name'],0,1);
 					if (is_numeric($rescopy) && $rescopy < 0)
 					{
 						$this->error.=$langs->trans("ErrorFailToCopyFile",$ori_task_dir . '/' . $file['name'],$clone_task_dir . '/' . $file['name']);
 						$error++;
 					}
-				}		
+				}
 			}
-			
+
 			// clone affectation
 			if ($clone_affectation)
 			{
 				$origin_task = new Task($this->db);
 				$origin_task->fetch($fromid);
-				
+
 				foreach(array('internal','external') as $source)
 				{
 					$tab = $origin_task->liste_contact(-1,$source);
@@ -1153,12 +1152,12 @@ class Task extends CommonObject
 					}
 				}
 			}
-			
+
 			if($clone_time)
 			{
 				//TODO clone time of affectation
 			}
-			
+
 			if (! $error)
 			{
 				return $clone_task_id;

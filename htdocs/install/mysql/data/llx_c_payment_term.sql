@@ -5,6 +5,7 @@
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
+-- Copyright (C) 2012 	   Tommaso Basilici       <t.basilici@19.coop>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -26,8 +27,11 @@
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
-insert into llx_c_payment_term(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (1,'RECEP',       1,1, 'A réception','Réception de facture',0,0);
+insert into llx_c_payment_term(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (1,'RECEP',       1,1, 'A réception de facture','Réception de facture',0,0);
 insert into llx_c_payment_term(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (2,'30D',         2,1, '30 jours','Réglement à 30 jours',0,30);
 insert into llx_c_payment_term(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (3,'30DENDMONTH', 3,1, '30 jours fin de mois','Réglement à 30 jours fin de mois',1,30);
 insert into llx_c_payment_term(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (4,'60D',         4,1, '60 jours','Réglement à 60 jours',0,60);
 insert into llx_c_payment_term(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (5,'60DENDMONTH', 5,1, '60 jours fin de mois','Réglement à 60 jours fin de mois',1,60);
+insert into llx_c_payment_term(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (6,'PT_ORDER',    6,1, 'A réception de commande','A réception de commande',0,0);
+insert into llx_c_payment_term(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (7,'PT_DELIVERY', 7,1, 'Livraison','Règlement à la livraison',0,0);
+insert into llx_c_payment_term(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (8,'PT_5050',     8,1, '50 et 50','Règlement 50% à la commande, 50% à la livraison',1,60);

@@ -1,13 +1,6 @@
-/*
- * Language code: it_IT
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:32:31
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+# Dolibarr language file - it_IT - externalsite        
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
 // Reference language: en_US -> it_IT
 CHARSET=UTF-8
-ExternalSiteSetup=Setup collegamento a sito esterno
-ExternalSiteURL=URL del sito esterno
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:33:28).
+ExternalSiteSetup		=Impostazioni collegamento a sito esterno
+ExternalSiteURL			=URL del sito esterno
