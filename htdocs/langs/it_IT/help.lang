@@ -1,36 +1,29 @@
-/*
- * Language code: it_IT
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-13 20:49:18
- */
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-CHARSET=UTF-8
-CommunitySupport=Forum / Wiki di supporto
-EMailSupport=E-mail assistenza
-RemoteControlSupport=Assistenza On-line 
-OtherSupport=Altre forme di assistenza
-ToSeeListOfAvailableRessources=Per contattare / vedere le risorse disponibili:
-ClickHere=Clicca qui
-HelpCenter=Centro assistenza
-DolibarrHelpCenter=Centro di assistenza e supporto Dolibarr
-ToGoBackToDolibarr=In caso contrario, fare clic <a href="%s">qui per utilizzare Dolibarr</a>
-TypeOfSupport=Tipi di assistenza
-TypeSupportCommunauty=Comunità (gratuito)
-TypeSupportCommercial=Commerciale
-TypeOfHelp=Tipo di aiuto
-NeedHelpCenter=Hai bisogno di aiuto o sostegno?
-Efficiency=Efficienza
-TypeHelpOnly=Solo aiuto
-TypeHelpDev=Guida per lo sviluppo
-TypeHelpDevForm=Aiuto per lo Sviluppo e la Formazione
-ToGetHelpGoOnSparkAngels1=Alcune aziende possono fornire un veloce (a volte immediata) e una più efficiente supporto online prendendo il controllo del computer. Tali aiuti possono essere trovati sul sito <b>web %s:</b>
-ToGetHelpGoOnSparkAngels3=È inoltre possibile accedere alla lista di tutti i servizi a disposizione per Dolibarr, per questo, fate clic sul pulsante
-ToGetHelpGoOnSparkAngels2=Può accadere che alcune aziend non siano disponibili al momento della ricerca, nel caso usate il filtro "tutte le disponibilità". Sarete in grado di inviare più richieste.
-BackToHelpCenter=In caso contrario, fare clic qui per andare <a href="%s">indietro alla home page Centro assistenza.</a>
-LinkToGoldMember=È possibile chiamare uno dei servizi preselezionati da Dolibarr per la propria lingua ( %s) cliccando sul relativo Widget (stato e prezzo massimo vengono aggiornati automaticamente):
-PossibleLanguages=Lingue supportate
-MakeADonation=Aiuto il progetto Dolibarr, effettua una donazione
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
+# Dolibarr language file - it_IT- help
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
+// Reference language: en_US -> it_IT
+CHARSET				=UTF-8
+BackToHelpCenter		=In caso contrario, clicca <a href="%s">qui</a> per tornare al centro assistenza e supporto.
+ClickHere			=Clicca qui
+CommunitySupport		=Forum/Wiki di supporto
+DolibarrHelpCenter		=Centro assistenza e supporto Dolibarr
+Efficiency			=Efficienza
+EMailSupport			=Email assistenza
+HelpCenter			=Centro assistenza
+LinkToGoldMember		=È possibile chiamare uno dei servizi preselezionati da Dolibarr per la propria lingua ( %s) cliccando sul relativo Widget (stato e prezzo massimo vengono aggiornati automaticamente):
+MakeADonation			=Aiuta il progetto Dolibarr, Fai una donazione
+NeedHelpCenter			=Hai bisogno di aiuto o supporto?
+OtherSupport			=Altre forme di assistenza
+PossibleLanguages		=Lingue supportate
+RemoteControlSupport		=Assistenza online 
+ToGetHelpGoOnSparkAngels1	=Alcune aziende possono fornire un supporto online più veloce (a volte immediato) prendendo il controllo del computer. Tali aiuti possono essere trovati sul sito <b>web %s:</b>
+ToGetHelpGoOnSparkAngels2	=Può accadere che alcune aziende non siano disponibili al momento della ricerca. Usa il filtro "tutte le disponibilità" per poter inviare più richieste.
+ToGetHelpGoOnSparkAngels3	=È inoltre possibile accedere alla lista di tutti i servizi di supporto per Dolibarr. Clicca sul pulsante. 
+ToGoBackToDolibarr		=Clicca <a href="%s">qui</a> per tornare ad usare Dolibarr
+ToSeeListOfAvailableRessources	=Per contattare/vedere le risorse disponibili:
+TypeHelpDevForm			=Aiuto per lo Sviluppo e la Formazione
+TypeHelpDev			=Guida per lo sviluppo
+TypeHelpOnly			=Solo aiuto
+TypeOfHelp			=Tipo di aiuto
+TypeOfSupport			=Tipi di assistenza
+TypeSupportCommercial		=Commerciale
+TypeSupportCommunauty		=Comunità (gratuito)

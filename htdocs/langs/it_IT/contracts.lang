@@ -1,122 +1,94 @@
-# Dolibarr language file - it_IT - contracts      
+# Dolibarr language file - it_IT - contracts        
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
+// Reference language: en_US -> it_IT
 CHARSET=UTF-8
-ContractsArea					  =Sezione contratti per servizi
-ListOfContracts					  =Elenco dei contratti
-LastContracts					  =Ultimi %s contratti modificati
+ActivateService					  =Attiva il servizio
+AddContract					  =Aggiungi contratto
 AllContracts					  =Tutti i contratti
+BoardNotActivatedServices			  =Servizi da attivare con contratti convalidati
+BoardRunningServices				  =Servizi scaduti attivi
+CloseAContract					  =Chiudere un contratto
+CloseAllContracts				  =Chiudere tutti i contratti
+CloseRefusedBecauseOneServiceActive		  =Il contratto non può essere chiuso in quanto vi è almeno un servizio attivo
+CloseService					  =Chiudere il servizio
+ConfirmActivateService				  =Vuoi davvero attivare questo servizio in data <b>%s</b>?
+ConfirmCloseContract				  =Questo chiuderà tutti i servizi (attivi o no). Vuoi davvero chiudere questo contratto?
+ConfirmCloseService				  =Vuoi davvero chiudere questo servizio in data <b>%s</b>?
+ConfirmDeleteAContract				  =Vuoi davvero eliminare questo contratto e tutti i suoi servizi?
+ConfirmDeleteContractLine			  =Vuoi davvero cancellare questa riga di contratto?
+ConfirmMoveToAnotherContract			  =Confermi di voler passare questo servizio al nuovo contratto scelto?
+ConfirmMoveToAnotherContractQuestion		  =Scegli un contratto esistente (dello stesso soggetto terzo) in cui spostare il servizio.
+ConfirmValidateContract				  =Vuoi davvero convalidare questo contratto?
 ContractCard					  =Scheda contratto
-ContractStatus					  =Stato contratto
-ContractStatusNotRunning			  =Non è in esecuzione
-ContractStatusRunning				  =In corso
-ContractStatusDraft				  =Bozza
-ContractStatusValidated				  =Convalidato
+Contract					  =Contratto
+ContractEndDate					  =Data di fine
+ContractsArea					  =Area contratti
+Contracts					  =Contratti
+ContractStartDate				  =Data di inizio
 ContractStatusClosed				  =Chiuso
-ServiceStatusInitial				  =Non è in esecuzione
-ServiceStatusRunning				  =In corso
-ServiceStatusLate				  =Esecuzione, scaduto
-ServiceStatusClosed				  =Chiuso
-ServicesLegend					  =Servizi leggenda
-Contracts					  =Contratti per servizi
-Contract					  =Contratto per servizi
-MenuServices					  =Servizi
+ContractStatusDraft				  =Bozza
+ContractStatusNotRunning			  =Non in corso
+ContractStatusRunning				  =In corso
+ContractStatus					  =Stato contratto
+ContractStatusValidated				  =Convalidato
+DateContract					  =Data contratto
+DateEndPlanned					  =Data di fine prevista
+DateEndPlannedShort				  =Fine prevista
+DateEndReal					  =Data di fine reale
+DateEndRealShort				  =Fine reale
+DateServiceActivate				  =Data di attivazione del servizio
+DateServiceEnd					  =Data di fine del servizio
+DateServiceStart				  =Data di inizio del servizio
+DateServiceUnactivate				  =Data di disattivazione servizio
+DateStartPlanned				  =Data di inizio prevista
+DateStartPlannedShort				  =Inizio previsto
+DateStartReal					  =Data di inizio reale
+DateStartRealShort				  =Inizio reale
+DeleteAContract					  =Eliminazione di un contratto
+DeleteContractLine				  =Eliminazione di una riga di contratto
+DraftContracts					  =Bozze contratti
+EditServiceLine					  =Modifica riga del servizio
+Error_CONTRACT_ADDON_NotDefined			  =costante CONTRACT_ADDON non definita
+ExpiredSince					  =Scaduto il
+LastActivatedServices				  =Ultimi %s servizi attivati
+LastContracts					  =Ultimi % contratti
+LastModifiedServices				  =Ultimi %s servizi modificati 
+ListOfClosedServices				  =Elenco dei servizi chiusi
+ListOfContracts					  =Elenco dei contratti
+ListOfExpiredServices				  =Elenco dei servizi scaduti attivi
+ListOfInactiveServices				  =Elenco dei servizi non attivi
+ListOfRunningContractsLines			  =Elenco delle righe di contratto in esecuzione
+ListOfRunningServices				  =Elenco dei servizi in esecuzione
+ListOfServices					  =Elenco dei servizi
+MenuClosedServices				  =Servizi chiusi
+MenuExpiredServices				  =Servizi scaduti
 MenuInactiveServices				  =Servizi non attivi
 MenuRunningServices				  =Servizi in esecuzione
-MenuExpiredServices				  = Servizi scaduti
-MenuClosedServices				  =Servizi chiusi
+MenuServices					  =Servizi
+MoveToAnotherContract				  =Sposta in un altro contratto
+NbOfServices					  =Numero dei servizi
 NewContract					  =Nuovo contratto
-AddContract					  =Aggiungi contratto
-SearchAContract					  =Ricerca di un contratto
-DeleteAContract					  =Eliminazione di un contratto
-CloseAContract					  =Chiudere un contratto
-ConfirmDeleteAContract				  =Sei sicuro di voler eliminare questo contratto e tutti i suoi servizi?
-ConfirmValidateContract				  =Sei sicuro di voler convalidare questo contratto?
-ConfirmCloseContract				  =Questo chiuderà tutti i servizi (attivi o no). Sei sicuro di voler chiudere questo contratto?
-ConfirmCloseService				  =Sei sicuro di voler chiudere questo servizio con la data <b>%s </b>?
-ValidateAContract				  =Convalidare un contratto
-ActivateService					  =Attiva il servizio
-ConfirmActivateService				  =Sei sicuro di voler attivare questo servizio con la data di <b>%s </b>?
-DateContract					  =Data contratto
-DateServiceActivate				  =Data di attivazione del servizio
-DateServiceUnactivate				  =Data di disattivazione servizio
-DateServiceStart				  =Data di inizio del servizio
-DateServiceEnd					  =Data di fine del servizio
-ShowContract					  =Visualizza contratto
-ListOfServices					  =Elenco dei servizi
-ListOfRunningContractsLines			  =Elenco delle linee di esecuzione del contratto
-ListOfRunningServices				  =Elenco dei servizi in esecuzione
+NoContracts					  =Nessun contratto
+NoExpiredServices				  =Non ci sono servizi scaduti attivi
 NotActivatedServices				  =Servizi non attivati (con contratti convalidati)
-BoardNotActivatedServices			  =Servizi da attivare con contratti convalidati
-LastContracts					  =Ultimi % contratti
-LastActivatedServices				  =Ultimi %s servizi attivati
-LastModifiedServices				  =Ultimi %s servizi modificati 
-EditServiceLine					  =Modifica linea del servizio
-ContractStartDate				  =Data di inizio
-ContractEndDate					  =Data di fine
-DateStartPlanned				  =Data di inizio pianificata
-DateStartPlannedShort				  =Data di inizio pianificata
-DateEndPlanned					  =Data di fine pianificata
-DateEndPlannedShort				  =Data di fine pianificata
-DateStartReal					  =Data reale di inizio
-DateStartRealShort				  =Data reale di inizio
-DateEndReal					  =Data reale di fine
-DateEndRealShort				  =Data reale di fine
-NbOfServices					  =Numeri dei servizi
-CloseService					  =Chiudere il servizio
-ServicesNomberShort				  =servizio %s (s)
+PaymentRenewContractId				  =Rinnova riga di contratto (numero %s)
+RelatedContracts				  =Contratti relativi
 RunningServices					  =Servizi in esecuzione
-BoardRunningServices				  =Servizi attivi scaduti
+SearchAContract					  =Ricerca di un contratto
+ServicesLegend					  =Legenda servizi
+ServicesNomberShort				  =servizio/i %s
+ServiceStatusClosed				  =Chiuso
+ServiceStatusInitial				  =Non è in esecuzione
+ServiceStatusLate				  =Attivo, scaduto
+ServiceStatusLateShort				  =Scaduto
+ServiceStatusNotLate				  =Attivo, non scaduto
+ServiceStatusNotLateShort			  =Non scaduto
+ServiceStatusRunning				  =In corso
 ServiceStatus					  =Stato di servizio
-DraftContracts					  =Bozze contratti
-CloseRefusedBecauseOneServiceActive		  =Il contratto non può essere chiuso in quanto vi è almeno un servizio aperto su di esso
-CloseAllContracts				  =Chiudere tutti i contratti
-##### Types de contacts #####			  =
-TypeContact_contrat_internal_SALESREPSIGN	  =Rappresentante di vendita firma contratto
-TypeContact_contrat_internal_SALESREPFOLL	  =Rappresentante di vendita a seguito di contratto
-TypeContact_contrat_external_BILLING		  =Fatturazione contatto con i clienti
-TypeContact_contrat_external_CUSTOMER		  =In seguito a contatto con i clienti
-TypeContact_contrat_external_SALESREPSIGN	  =Firma del contratto di contatto con i clienti
-
-
-// Date 2009-01-18 19:41:54
-// START - Lines generated via parser
-// Reference language: en_US
-NoContracts=N. contratti
-MoveToAnotherContract=Sposta in un altro contratto di servizio.
-ConfirmMoveToAnotherContract=Confermi di voler passare questo servizio nel nuovo contratto scelto?
-ConfirmMoveToAnotherContractQuestion=Scegli un contratto esistente (della stessa parte terza), in cui si desidera spostare il servizio.
-// Date 2009-01-18 19:41:54
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-CHARSET=UTF-8
-ServiceStatusNotLate=Attivo, non scaduto
-ServiceStatusNotLateShort=Non scaduto
-ServiceStatusLateShort=Scaduto
-ListOfInactiveServices=Elenco dei servizi non attivi
-ListOfExpiredServices=Elenco dei servizi attivi scaduti
-ListOfClosedServices=Elenco dei servizi chiusi
-DeleteContractLine=Eliminazione di un contratto di linea
-ConfirmDeleteContractLine=Sei sicuro di voler cancellare questa linea di contratto?
-PaymentRenewContractId=Rinnovo contratto di linea (numero %s)
-ExpiredSince=Data di scadenza
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
-// Reference language: en_US
-RelatedContracts=relativi contratti
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:46).
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
-// Reference language: en_US -> it_IT
-Error_CONTRACT_ADDON_NotDefined=CONTRACT_ADDON costante non definita
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:20).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
-// Reference language: en_US -> it_IT
-NoExpiredServices=Non ci sono servizi attivi scaduti
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:43).
+ShowContract					  =Visualizza contratto
+TypeContact_contrat_external_BILLING		  =Contatto di fatturazione
+TypeContact_contrat_external_CUSTOMER		  =Contatto di follow-up
+TypeContact_contrat_external_SALESREPSIGN	  =Contatto per la firma dei contratti
+TypeContact_contrat_internal_SALESREPFOLL	  =Contatto interno per i rapporti successivi alla firma
+TypeContact_contrat_internal_SALESREPSIGN	  =Contatto interno per la firma del contratto
+ValidateAContract				  =Convalidare un contratto

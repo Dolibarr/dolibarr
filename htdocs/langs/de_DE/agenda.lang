@@ -16,6 +16,7 @@ DoneBy=Erldedigt von
 Events=Veranstaltungen
 ListOfActions=Veranstaltungsliste
 Location=Ort
+EventOnFullDay=Ganztägig
 SearchAnAction=Suche Maßnahme / Aufgabe
 MenuToDoActions=Alle unvollständigen Maßnahmen
 MenuDoneActions=Alle abgeschlossenen Maßnahmen
@@ -27,16 +28,28 @@ ActionsToDoBy=Maßnahmen zugewiesen an
 ActionsDoneBy=Maßnahmen erledigt von
 AllMyActions=Alle meine Maßnahmen / Aufgaben
 AllActions=Alle Maßnahmen / Aufgaben
-ViewList=Liste anzeigen
-ViewCal=Kalender anzeigen
+ViewList=Listenansicht
+ViewCal=Kalenderansicht
+ViewDay=Tagesansicht
+ViewWeek=Wochenansicht
 ViewWithPredefinedFilters=Ansicht mit vordefinierten Filtern
 AutoActions=Automatische Befüllung der Tagesordnung
 AgendaAutoActionDesc=Definieren Sie hier Maßnahmen zur automatischen Übernahme in die Agenda. Ist nichts aktviert (Standard), umfasst die Agenda nur manuell eingetragene Maßnahmen.
 AgendaSetupOtherDesc=Diese Seite ermöglicht die Konfiguration anderer Parameter des Tagesordnungsmoduls.
+AgendaExtSitesDesc=Diese Seite erlaubt Ihnen externe Kalender zu konfigurieren.
 ActionsEvents=Veranstaltungen zur automatischen Übernahme in die Agenda
 PropalValidatedInDolibarr=Angebot freigegeben
 InvoiceValidatedInDolibarr=Rechnung freigegeben
-OrderValidatedInDolibarr=Bestellung freigegeben
+InvoiceBackToDraftInDolibarr=Rechnung %s in den Entwurf Status zurücksetzen
+OrderValidatedInDolibarr=Bestellung %s freigegeben
+InterventionValidatedInDolibarr=Service %s freigegeben
+ProposalSentByEMail=Angebot %s per E-Mail versendet
+OrderSentByEMail=Kundenbestellung %s per E-Mail versendet
+InvoiceSentByEMail=Kundenrechnung %s per E-Mail versendet
+SupplierOrderSentByEMail=Lieferantenbestellung %s per E-Mail versendet
+SupplierInvoiceSentByEMail=Lieferantenrechnung %s per E-Mail versendet
+ShippingSentByEMail=Lieferschein %s per E-Mail versendet
+InterventionSentByEMail=Service %s per E-Mail versendet
 NewCompanyToDolibarr=Partner erstellt
 DateActionPlannedStart=Geplantes Startdatum
 DateActionPlannedEnd=Geplantes Enddatum
@@ -51,7 +64,15 @@ AgendaUrlOptions4=<b>logint=%s</b> begrenzt die Ausgabe auf von Benutzer <b>%s</
 AgendaUrlOptions5=<b>logind=%s</b> begrenzt die Ausgabe auf von Benutzer <b>%s</b> erledigte Maßnahmen.
 AgendaShowBirthdayEvents=Zeige Geburtstage
 AgendaHideBirthdayEvents=Geburtstage ausblenden
-InterventionValidatedInDolibarr=Eingriff %s freigegeben
+ExtSites=Externe Kalender
+
+# External Sites ical
+ExtSites=Externe Kalender
+ExtSitesEnableThisTool=Zeige externe Kalender in der Agenda
+ExtSitesNbOfAgenda=Anzahl der Kalender
+AgendaExtNb=Kalender Anzahl %s
+ExtSiteUrlAgenda=URL Adresse um .ical Datei zu erreichen
+ExtSiteNoLabel=Keine Beschreibung
 
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).

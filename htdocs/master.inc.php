@@ -135,6 +135,10 @@ if (! defined('NOREQUIREDB'))
 	{
 		$conf->entity = GETPOST("entity",'int');
 	}
+	else if (defined('DOLENTITY') && is_int(DOLENTITY))				// For public page with MultiCompany module
+	{
+		$conf->entity = DOLENTITY;
+	}
 
 	//print "Will work with data into entity instance number '".$conf->entity."'";
 

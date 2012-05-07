@@ -518,7 +518,8 @@ if (! $error && $db->connected && $action == "set")
         if (! $error && (isset($_POST["db_create_database"]) && $_POST["db_create_database"] == "on"))
         {
             dolibarr_install_syslog("etape1: Create database : ".$dolibarr_main_db_name, LOG_DEBUG);
-            $db=getDoliDBInstance($conf->db->type,$conf->db->host,$userroot,$passroot,'',$conf->db->port);
+            $newdb=getDoliDBInstance($conf->db->type,$conf->db->host,$userroot,$passroot,'',$conf->db->port);
+            //print 'eee'.$conf->db->type." ".$conf->db->host." ".$userroot." ".$passroot." ".$conf->db->port." ".$db->connected." ".$newdb->forcecharset;exit;
 
             if ($db->connected)
             {
@@ -545,6 +546,7 @@ if (! $error && $db->connected && $action == "set")
                     // Affiche aide diagnostique
                     print '<tr><td colspan="2"><br>';
                     print $langs->trans("ErrorFailedToCreateDatabase",$dolibarr_main_db_name).'<br>';
+                    print $db->lasterror().'<br>';
                     print $langs->trans("IfDatabaseExistsGoBackAndCheckCreate");
                     print '<br>';
                     print '</td></tr>';
@@ -575,7 +577,7 @@ if (! $error && $db->connected && $action == "set")
         }   // Fin si "creation database"
 
 
-        // We testOn test maintenant l'acces par le user base dolibarr
+        // We test access with dolibarr database user (not admin)
         if (! $error)
         {
             dolibarr_install_syslog("etape1: connexion de type=".$conf->db->type." sur host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name, LOG_DEBUG);

@@ -1,50 +1,30 @@
-# Dolibarr language file - it_IT - donations     	
-CHARSET=UTF-8
-Donation					 =Donazione
-Donationss					 =Donazioni
-Donor						 =Donatore
-Donors						 =I donatori
-AddDonation					 =Aggiungi una donazione
-NewDonation					 =Nuova donazione
-DonationPromise					 =Promessa di dono
-PromisesNotValid				 =Promesse non convalidate
-PromisesValid					 =romesse onvalidate
-DonationsPaid					 =Donazioni pagate
-DonationsReceived				 =Donazioni ricevute
-PublicDonation					 =Donazione Pubblica
-DonationsNumber					 =Numero donazione
-DonationsArea					 =Sezione donazioni
-DonationStatusPromiseNotValidated		 =Promessa di donazione non convalidata
-DonationStatusPromiseValidated			 =Promessa di donazione convalidata
-DonationStatusPaid				 =Donazione ricevuta
-DonationStatusPromiseNotValidatedShort		 =Promessa di don non conv.
-DonationStatusPromiseValidatedShort		 =Convalidato
-DonationStatusPaidShort			 =Ricevuto
-ValidPromise					 =Promessa convalidata
-BuildDonationReceipt				 =Genera ricevuta donazione
-DonationsModels					 =Modelli di documento per ricevute donazione
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-CHARSET=UTF-8
-Donations=Donazioni
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
-// Reference language: en_US
-ValidPromess=Valida promessa
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:52).
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+# Dolibarr language file - it_IT - contracts        
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
 // Reference language: en_US -> it_IT
-LastModifiedDonations=%s Ultima modifica donazioni
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:23).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
-// Reference language: en_US -> it_IT
-SearchADonation=Cerca una donazione
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:33:44).
+CHARSET						=UTF-8
+AddDonation					=Aggiungi una donazione
+BuildDonationReceipt				=Genera ricevuta donazione
+Donation					=Donazione
+DonationPromise					=Donazione promessa
+DonationsArea					=Area donazioni
+Donations					=Donazioni
+DonationsModels					=Modelli per ricevute donazione
+DonationsNumber					=Numero donazione
+DonationsPaid					=Donazioni versate
+DonationsReceived				=Donazioni ricevute
+Donationss					=Donazioni
+DonationStatusPaid				=Donazione ricevuta
+DonationStatusPaidShort			 	=Ricevuta
+DonationStatusPromiseNotValidated		=Promessa di donazione non convalidata
+DonationStatusPromiseNotValidatedShort		=Promessa non conv.
+DonationStatusPromiseValidated			=Promessa di donazione convalidata
+DonationStatusPromiseValidatedShort		=Promessa convalidata
+Donor						=Donatore
+Donors						=Donatori
+LastModifiedDonations				=Ultime %s donazioni modificate
+NewDonation					=Nuova donazione
+PromisesNotValid				=Promesse non convalidate
+PromisesValid					=Promesse convalidate
+PublicDonation					=Donazione Pubblica
+SearchADonation					=Cerca una donazione
+ValidPromess					=Convalida una promessa

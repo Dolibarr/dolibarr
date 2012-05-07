@@ -1,182 +1,151 @@
-# Dolibarr language file - it_IT - compta        
-CHARSET=UTF-8
-Accountancy					 =Contabilità
+# Dolibarr language file - it_IT - compta 
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
+// Reference language: en_US -> it_IT
+CHARSET						 =UTF-8
 AccountancyCard					 =Scheda contabilità 
-Treasury					 =Tesoreria
-MenuFinancial					 =Finanziario
-OptionMode					 =Opzione per la gestione contabile
-OptionModeTrue					 =Opzione entrate-uscite
-OptionModeVirtual				 =Opzione crediti-debiti
-OptionModeTrueDesc				 =In questo caso, il fatturato è calcolato sulla base dei pagamenti (data di pagamenti). <br>La validità dei dati è garantita solo se vendono registrati manualmente e puntalmente tutti i pagamenti fatti e ricevuti.
-OptionModeVirtualDesc				 =In questo contesto, il fatturato è calcolato sulle fatture (data di convalida).<br> Alla data di scadenza le fatture verranno calcolate automaticamente in attivo o passivo, sia che siano state pagate o no.
-FeatureIsSupportedInInOutModeOnly		 =Caratteristica disponibile solo in modalità contabile CREDITI-DEBITI (vedi configurazione modulo Contabilità )
-Param						 =Configurazione
-AccountsGeneral					 =Conti generali
-Account						 =Conto
-Accounts					 =Conti
-BillsForSuppliers				 =Fatture per i fornitori
-Income						 =Entrate
-Outcome						 =Uscite
-Profit						 =Utile
-Balance						 =Saldo
-Debit						 =Addebito
-Credit						 =Credito
-Withdrawal					 =Prelievo
-Withdrawals					 =Prelievi
-AmountHTVATRealReceived				 =Totale riscosso
-AmountHTVATRealPaid				 =Totale pagato
-VATToPay					 =IVA da pagare
-VATReceived					 =IVA incassata
-VATToCollect					 =IVA da riscuotere
-VATSummary					 =Riepilogo IVA
-VATPaid					 =IVA pagata
-VATCollected					 =IVA riscossa
-ToPay						 =Da pagare
-ToGet						 =Da riscuotere
-TaxAndDividendsArea				 =Sezione imposte, contributi sociali e dividendi
-SocialContribution				 =Contributo sociale
-SocialContributions				 =Contributi sociali
-MenuTaxAndDividends				 =Imposte e dividendi
-MenuSocialContributions				 =Contributi sociali
-MenuNewSocialContribution			 =Nuovo contributo
-NewSocialContribution				 =Nuovo contributo sociale
-ContributionsToPay				 =Contributi da pagare
-AccountancyTreasuryArea				 =Sezione contabilità / tesoreria
-AccountancySetup				 =Configurazione contabilità
-NewPayment					 =Nuovo pagamento
-Payments					 =Pagamenti
-ListPayment					 =Elenco dei pagamenti
-ListOfPayments					 =Elenco dei pagamenti
-ListOfCustomerPayments				 =Elenco dei pagamenti dei clienti
-ListOfSupplierPayments				 =Elenco dei pagamenti fornitore
-DatePayment					 =Data di pagamento
-NewVATPayment					 =Nuovo pagamento IVA
-VATPayment					 =Pagamento IVA 
-VATPayments					 =Pagamenti IVA
-TotalToPay					 =Totale da pagare
-TotalVATReceived				 =Totale IVA riscossa
-CustomerAccountancyCode				 =Codice contabilità cliente
-SupplierAccountancyCode				 =Codice contabilità fornitore
-AlreadyPaid					 =Già pagato
-AccountNumberShort				 =Numero di conto
-AccountNumber					 =Numero di conto
-NewAccount					 =Nuovo conto
-SalesTurnover					 =Fatturato
-ByThirdParties					 =Per terzi
-ByUserAuthorOfInvoice				 =Per autore fattura
+Accountancy					 =Contabilità
 AccountancyExport				 =Esportazione contabilità
-ErrorWrongAccountancyCodeForCompany		 =Codice contabilità errato per %s
-SuppliersProductsSellSalesTurnover		 =Fatturato generato dalle vendite di prodotti dei fornitori.
-CheckReceipt					 =Piazzamento assegno
+AccountancySetup				 =Configurazione contabilità
+AccountancyTreasuryArea				 =Area contabilità/tesoreria
+Account						 =Conto
+AccountNumber					 =Numero di conto
+AccountNumberShort				 =Num. conto
+Accounts					 =Conti
+AccountsGeneral					 =Conti generali
+AddRemind					 =Invia importo disponibile
+AlreadyPaid					 =Già pagato
+AmountHTVATRealPaid				 =Totale pagato
+AmountHTVATRealReceived				 =Totale riscosso
+AmountToBeCharged				 =Importo totale da pagare:
+AnnualByCompaniesDueDebtMode			 =Bilancio delle entrate e delle spese, dettaglio per soggetti terzi, in modalità <b>%sCrediti-Debiti%s</b> detta <b>contabilità d'impegno </b>.
+AnnualByCompaniesInputOutputMode		 =Bilancio delle entrate e delle spese, dettaglio per soggetti terzi, in modalità <b>%sEntrate-Uscite%s</b> detta <b>contabilità di cassa </b>.
+AnnualSummaryDueDebtMode			 =Bilancio delle entrate e delle spese, sintesi annuale, in modalità <b>%sCrediti-Debiti%s</b> detta<b> contabilità d'impegno</b>.
+AnnualSummaryInputOutputMode			 =Bilancio delle entrate e delle spese, sintesi annuale, in modalità <b>%sEntrate-Uscite%s </b>  detta <b> contabilità di cassa </b>.
+Balance						 =Saldo
+BillsForSuppliers				 =Fatture per i fornitori
+ByThirdParties					 =Per soggetti terzi
+ByUserAuthorOfInvoice				 =Per autore fattura
+CheckReceipt					 =Ricevuta di versamento assegno
 CheckReceiptShort				 =Ricevuta assegno
-NewCheckReceipt					 =Nuovo assegno
+CodeNotDef					 =Non definito
+Compta						 =Contabilità
+ConfirmDeleteSocialContribution			 =Vuoi davvero eliminare questo contributo?
+ConfirmPaySocialContribution			 =Vuoi davvero classificare questo contributo come pagato?
+ContributionsToPay				 =Contributi da pagare
+Credit						 =Credito
+CustomerAccountancyCode				 =Codice contabile cliente
+DateChequeReceived				 =Data di ricezione assegno
+DatePayment					 =Data di pagamento
+Debit						 =Debito
+DeleteSocialContribution			 =Eliminazione di un contributo sociale
+DepositsAreIncluded				 =- Ricevute di deposito incluse
+DepositsAreNotIncluded				 =- Ricevute di deposito non incluse
+DescPurchasesJournal				 =Storico acquisti
+DescSellsJournal				 =Storico vendite
+Dispatched					 =Inviati
+Dispatch					 =Invio
+ErrorWrongAccountancyCodeForCompany		 =Codice contabile errato per %s
+ExportDataset_tax_1				 =Contributi e pagamenti
+FeatureIsSupportedInInOutModeOnly		 =Caratteristica disponibile solo in modalità contabile CREDITI-DEBITI (vedi <b>Impostazioni modulo contabilità</b>)
+Income						 =Entrate
+InvoiceRef					 =Rif. fattura
+InvoiceStats					 =Statistiche fatture/ricevute
+ListOfCustomerPayments				 =Elenco dei pagamenti dei clienti
+ListOfPayments					 =Elenco dei pagamenti
+ListOfSupplierPayments				 =Elenco dei pagamenti fornitore
+ListPayment					 =Elenco dei pagamenti
+LT2CustomerES					 =IRPF clienti (Spagna)
+LT2PaidES					 =IRPF pagato (Spagna)
+LT2PaymentES					 =Pagamento IRPF (Spagna)
+LT2PaymentsES					 =Pagamenti IRPF (Spagna)
+LT2ReportByCustomersInInputOutputModeES		 =IRPF soggetti terzi(Spagna)
+LT2SummaryES					 =Saldo IRPF (Spagna)
+LT2SupplierES					 =IRPF fornitori (Spagna)
+MenuFinancial					 =Finanziario
+MenuNewSocialContribution			 =Nuovo contributo
+MenuSocialContributions				 =Contributi
+MenuTaxAndDividends				 =Imposte e dividendi
+NbOfCheques					 =Numero di assegni
+NewAccount					 =Nuovo conto
 NewCheckDeposit					 =Nuovo deposito
 NewCheckDepositOn				 =Nuovo deposito sul conto: %s
+NewCheckReceipt					 =Nuovo assegno
+newLT2PaymentES					 =Nuovo pagamento IRPF (Spagna)
+NewPayment					 =Nuovo pagamento
+NewSocialContribution				 =Nuovo contributo
+NewVATPayment					 =Nuovo pagamento IVA
+NotUsedForGoods					 =Non utilizzati per le merci
 NoWaitingChecks					 =Nessun assegno in attesa di deposito.
-DateChequeReceived				 =Data di ricezione assegno
-NbOfCheques					 =Numero di assegni
+OptionMode					 =Opzione per la gestione contabile
+OptionModeTrueDesc				 =In questo caso, il fatturato è calcolato sulla base dei pagamenti (data di pagamento).<br/>La validità dei dati è garantita solo se tutti i pagamenti effettuati e ricevuti vengono registrati manualmente e puntualmente.
+OptionModeTrue					 =Opzione entrate-uscite
+OptionModeVirtualDesc				 =In modalità il fatturato è calcolato sulle fatture (data di convalida).<br/>Alla data di scadenza le fatture verranno calcolate automaticamente in attivo o passivo, che siano state pagate o meno.
+OptionModeVirtual				 =Opzione crediti-debiti
+OptionVatInfoModuleComptabilite			 =Nota: Per i prodotti è più corretto usare la data di consegna.
+OrderStats					 =Statistiche sugli ordini
+Outcome						 =Uscite
+Param						 =Configurazione
+PaymentCustomerInvoice				 =Pagamento fattura attiva
+PaymentsNotLinkedToInvoice			 =I pagamenti non legati ad una fattura, quindi non legati ad alcun soggetto terzo
+PaymentsNotLinkedToUser				 =Pagamenti non legati ad alcun utente
+PaymentSocialContribution			 =Pagamento contributi
+Payments					 =Pagamenti
+PaymentSupplierInvoice				 =Pagamento fattura fornitori
+PaymentVat					 =Pagamento IVA
 PaySocialContribution				 =Versare un contributo sociale
-ConfirmPaySocialContribution			 =Sei sicuro di voler classificare questo contributo sociale come pagato?
-DeleteSocialContribution			 =Eliminazione di un contributo sociale
-ConfirmDeleteSocialContribution			 =Sei sicuro di voler eliminare questo contributo sociale?
-ExportDataset_tax_1				 =I contributi sociali e pagamenti
-AnnualSummaryDueDebtMode			 	 =Bilancio delle entrate e delle spese, sintesi annuale, in modalità <b>%sCrediti-Debiti%s</b>  detta <b> contabilità d'impegno</b>.
-AnnualSummaryInputOutputMode			 =Bilancio delle entrate e delle spese, sintesi annuale, in modalità <b>%sEntrate-Uscite%s </b>  detta <b> contabilità di cassa </b>.
-AnnualByCompaniesDueDebtMode			 =Bilancio delle entrate e delle spese, dettaglio per terzi , in modalità <b>%sCrediti-Debiti%s</b> detta <b> contabilità d'impegno </b>.
-AnnualByCompaniesInputOutputMode		 =Bilancio delle entrate e delle spese, dettaglio per terzi , in modalità <b>%sEntrate-Uscite%s</b> detta <b> contabilità di cassa </b>.
-SeeReportInInputOutputMode			 =Vedere il rapporto <b>%sEntrate-Uscite%s</b> detto <b> contabilità di cassa </b> per un calcolo sui pagamenti effettivemente realizzati
-SeeReportInDueDebtMode				 =Vedere il rapporto <b>%sCrediti-Debiti%s</b>  detto <b> contabilità d'impegno </b> per un calcolo sulle fatture emesse
-RulesResultDue					 =- Gli importi indicati sono tutti tasse incluse <br> - Comprendono le fatture in sospeso, IVA e spese pagati o meno. <br> - Si basa sulla data di convalida delle fatture e l'IVA e la data di scadenza per le spese.
-RulesResultInOut				 =- Gli importi indicati sono tutti tasse incluse <br> - Essi comprendono i pagamenti effettivamente effettuati delle fatture, le spese e l'IVA. <br> - Si basa sulle date di pagamento delle fatture, le spese e l'IVA. <br>
-RulesCADue					 =- Comprende i clienti 'dovuta se le fatture sono pagati o meno. <br> - Si basa sulla convalida della data di tali fatture. <br>
-RulesCAIn					 =- Esso comprende tutti i pagamenti delle fatture ricevuti effettivamente dai clienti. <br> - Si basa sulla data di pagamento di tali fatture <br>
-VATReportByCustomersInInputOutputMode		 =Report sull'IVA riscossa dai clienti e pagata in modalità entrate/uscite (IVA sulle riscossioni)
-VATReportByCustomersInDueDebtMode		 =Report sull'IVA riscossa dai clienti e pagata in modalità crediti/debiti (IVA a debito)
-VATReportByQuartersInInputOutputMode		 =Report trimestrale sull'IVA riscossa dai clienti e pagata in modalità entrate/uscite (IVA sulle riscossioni)
-VATReportByQuartersInDueDebtMode		 =Report trimestrale sull'IVA riscossa dai clienti e pagata in modalità crediti/debiti (IVA a debito)
-VATReportBuildWithOptionDefinedInModule          =Gli importi mostrati sono calcolati secondo le regole stabili nelle impostazioni del modulo Tasse e contributi.
-TaxModuleSetupToModifyRules                      =Vai alle <a href="%s">impostazioni del modulo</a> per modificare le regole di calcolo
-SeeVATReportInInputOutputMode			 =Vedere il rapporto <b>%sTVA encaissement%s </b> per la modalità di calcolo standard
-SeeVATReportInDueDebtMode			 =Vedere il rapporto <b>%sTVA sur addebito%s </b> per la modalità di calcolo crediti/debiti
-RulesVATIn					 =- Per i servizi, il rapporto include l'IVA effettivamente riscossa o da riscuotere se basata sul debito/credito. <br> - Per i beni materiali, include l'IVA basandosi sulla data di convalida della fattura.
-RulesVATDue					 =- Per i servizi, il rapporto include l'IVA effettivamente riscossa o da riscuotere se basata sul debito/credito. <br> - Per i beni materiali, include l'IVA basandosi sulla data di convalida della fattura.
-OptionVatInfoModuleComptabilite			 =Osservazione: Per i prodotti sarebbe più giusto usare la data di consegna.
 PercentOfInvoice				 =%%/fattura
-Compta					 =Contabilità
-Warehouse				=Magazzino
-
-
-// Date 2009-01-18 19:41:54
-// START - Lines generated via parser
-// Reference language: en_US
-ReportInOut=Reddito / Esito
-PaymentsNotLinkedToInvoice=I pagamenti non legati ad una fattura, quindi non legati ad alcuna parte terza
-PaymentsNotLinkedToUser=I pagamenti non legati ad alcun utente
-PaymentCustomerInvoice=Pagamento fattura clienti
-PaymentSupplierInvoice=Pagamento fattura ornitori
-PaymentSocialContribution=Pagamento contributo sociale
-PaymentVat=Pagamento IVA
-ShowVatPayment=Visualizza pagamento IVA
-Dispatch=Spedizione
-Dispatched=Spediti
-ToDispatch=Da spedire
-// Date 2009-01-18 19:41:54
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-CHARSET=UTF-8
-ReportTurnover=Fatturato
-NotUsedForGoods=Non utilizzati per le merci
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
-// Reference language: en_US
-SocialContributionsPayments=Contributi sociali pagamenti
-ThirdPartyMustBeEditAsCustomer=terzo deve essere definito come un cliente
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:34:01).
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
-// Reference language: en_US -> it_IT
-SellsJournal=Vendita Journal
-PurchasesJournal=Acquisti Gazzetta
-DescSellsJournal=Vendita Journal
-DescPurchasesJournal=Acquisti Gazzetta
-InvoiceRef=Rif fattura.
-CodeNotDef=Non definito
-AddRemind=Spedizione importo disponibile
-RemainToDivide=Rimanere alla spedizione:
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:20).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> it_IT
-RemainingAmountPayment=Pagamento saldo:
-AmountToBeCharged=Importo totale da pagare:
-ProposalStats=Statistiche sulle proposte
-OrderStats=Le statistiche sugli ordini
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:59:30).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
-// Reference language: en_US -> it_IT
-LT2SummaryES=IRPF Balance
-LT2PaidES=IRPF pagamento
-LT2CustomerES=IRPF vendite
-LT2SupplierES=IRPF acquisti
-newLT2PaymentES=New IRPF pagamento
-LT2PaymentES=IRPF pagamento
-LT2PaymentsES=IRPF pagamenti
-DepositsAreNotIncluded=- Fatture di deposito sono né incluse
-DepositsAreIncluded=- Fatture di deposito sono inclusi
-LT2ReportByCustomersInInputOutputModeES=Relazione di terze parti IRPF
-RulesVATInServices=- Per i servizi, il rapporto include le norme IVA effettivamente ricevuti o rilasciati sulla base della data di pagamento. <br> - Per i beni materiali, comprende le fatture IVA sulla base della data della fattura.
-RulesVATInProducts=- Per i beni materiali, comprende le fatture IVA sulla base della data della fattura.
-RulesVATDueServices=- Per i servizi, il rapporto include fatture IVA dovuta, retribuiti o meno, in base alla data fattura.
-RulesVATDueProducts=- Per i beni materiali, comprende le fatture IVA, in base alla data fattura.
-InvoiceStats=Statistiche sulle bollette
-WarningDepositsNotIncluded=Depositi fatture non sono inclusi in questa versione con questo modulo contabile.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:39).
+Profit						 =Utile
+ProposalStats					 =Statistiche proposte commerciali
+PurchasesJournal				 =Storico acquisti
+RemainingAmountPayment				 =Pagamento a saldo:
+RemainToDivide					 =Ancora da inviare:
+ReportInOut					 =Entrate/Uscite
+ReportTurnover					 =Fatturato
+RulesCADue					 =- Comprende le fatture del cliente, che siano state pagate o meno.<br/>- Si basa sulla data di tali fatture.<br/>
+RulesCAIn					 =- Comprende le fatture effettivamente pagate dai clienti.<br/>- Si basa sulla data dei pagamenti.<br/>
+RulesResultDue					 =- Gli importi indicati sono tutti tasse incluse<br/>- Comprendono le fatture in sospeso, l'IVA e le spese, che siano state pagate o meno.<br/>- Si basa sulla data di convalida delle fatture e dell'IVA e sulla data di scadenza per le spese.
+RulesResultInOut				 =- Gli importi indicati sono tutti tasse incluse<br/> - Comprendono i pagamenti effettivi delle fatture, le spese e l'IVA. <br> - Si basa sulle date di pagamento delle fatture, delle spese e dell'IVA. <br>
+RulesVATDue					 =- Per i servizi, il report include l'IVA effettivamente riscossa o da riscuotere se basata sul debito/credito.<br/>- Per i beni materiali l'IVA è inclusa basandosi sulla data di convalida della fattura.
+RulesVATDueProducts				 =- Per i beni materiali, comprende l'IVA fatturata, in base alla data di fatturazione.
+RulesVATDueServices				 =- Per i servizi, comprende l'iva fatturata, pagata o meno, in base alla data di fatturazione.
+RulesVATIn					 =- Per i servizi, il report include l'IVA effettivamente riscossa o da riscuotere se basata sul debito/credito.<br/>- Per i beni materiali, include l'IVA basandosi sulla data di convalida della fattura.
+RulesVATInProducts				 =- Per i beni materiali, comprende l'IVA fatturata sulla base della data di fatturazione.
+RulesVATInServices				 =- Per i servizi, il rapporto include i pagamenti IVA effettivamente ricevuti o effettuati sulla base della data di pagamento.<br/>- Per i beni materiali, comprende l'IVA fatturata sulla base della data di fatturazione.
+SalesTurnover					 =Fatturato
+SeeReportInDueDebtMode				 =Vedi il report <b>%sCrediti-Debiti%s</b> detto <b>contabilità d'impegno</b> per un calcolo sulle fatture emesse
+SeeReportInInputOutputMode			 =Vedi il report <b>%sEntrate-Uscite%s</b> detto <b>contabilità di cassa</b> per un calcolo sui pagamenti effettuati
+SeeVATReportInDueDebtMode			 =Vedi il report <b>%sIVA a debito%s</b> per la modalità di calcolo crediti/debiti
+SeeVATReportInInputOutputMode			 =Vedi il report <b>%sIVA pagata%s</b> per la modalità di calcolo standard
+SellsJournal					 =Storico vendite
+ShowVatPayment					 =Visualizza pagamento IVA
+SocialContribution				 =Contributo
+SocialContributions				 =Contributi
+SocialContributionsPayments			 =Pagamenti contributi
+SupplierAccountancyCode				 =Codice contabile fornitore
+SuppliersProductsSellSalesTurnover		 =Fatturato generato dalle vendite di prodotti dei fornitori.
+TaxAndDividendsArea				 =Area imposte, contributi e dividendi
+TaxModuleSetupToModifyRules                      =Vai alle <a href="%s">Impostazioni del modulo</a> per modificare le regole di calcolo
+ThirdPartyMustBeEditAsCustomer			 =Il soggetto terzo deve essere definito come cliente
+ToDispatch					 =Da inviare
+ToGet						 =Da riscuotere
+ToPay						 =Da pagare
+TotalToPay					 =Totale da pagare
+TotalVATReceived				 =Totale IVA incassata
+Treasury					 =Tesoreria
+VATCollected					 =IVA incassata
+VATPaid					 	 =IVA pagata
+VATPayment					 =Pagamento IVA 
+VATPayments					 =Pagamenti IVA
+VATReceived					 =IVA incassata
+VATReportBuildWithOptionDefinedInModule          =Gli importi mostrati sono calcolati secondo le regole stabilite nelle impostazioni del modulo tasse e contributi.
+VATReportByCustomersInDueDebtMode		 =Report sull'IVA riscossa dai clienti e pagata in modalità crediti/debiti (IVA a debito)
+VATReportByCustomersInInputOutputMode		 =Report sull'IVA riscossa dai clienti e pagata in modalità entrate/uscite (IVA sulle riscossioni)
+VATReportByQuartersInDueDebtMode		 =Report trimestrale sull'IVA riscossa dai clienti e pagata in modalità crediti/debiti (IVA a debito)
+VATReportByQuartersInInputOutputMode		 =Report trimestrale sull'IVA riscossa dai clienti e pagata in modalità entrate/uscite (IVA sulle riscossioni)
+VATSummary					 =Riepilogo IVA
+VATToCollect					 =IVA da riscuotere
+VATToPay					 =IVA da pagare
+Warehouse					 =Magazzino
+WarningDepositsNotIncluded			 =Le ricevute di deposito non sono incluse in questa versione del modulo contabilità.
+Withdrawal					 =Prelievo
+Withdrawals					 =Prelievi

@@ -24,6 +24,7 @@ BillsForSuppliers=Lieferantenrechnungen
 Income=Einnahmen
 Outcome=Ausgaben
 ReportInOut=Einnahmen/Ausgaben
+ReportTurnover=Umsatz
 PaymentsNotLinkedToInvoice=Zahlungen mit keiner Rechnung und damit auch keinem Partner verbunden
 PaymentsNotLinkedToUser=Zahlungen mit keinem Benutzer verbunden
 Profit=Gewinn
@@ -66,10 +67,12 @@ DatePayment=Zahlungsdatum
 NewVATPayment=Neue MwSt.-Zahlung
 VATPayment=MwSt.-Zahlung
 VATPayments=MwSt-Zahlungen
+SocialContributionsPayments=Sozialbeitragszahlungen
 ShowVatPayment=Zeige MwSt. Zahlung
 TotalToPay=Zu zahlender Gesamtbetrag
 TotalVATReceived=Summe vereinnahmte MwSt.
 CustomerAccountancyCode=Kontierungscode Kunde
+SupplierAccountancyCode=Kontierungscode Lieferant
 AlreadyPaid=Bereits bezahlt
 AccountNumberShort=Kontonummer
 AccountNumber=Kontonummer
@@ -93,9 +96,6 @@ ConfirmPaySocialContribution=Möchten Sie diesen Sozialbeitrag wirklich als beza
 DeleteSocialContribution=Sozialbeitrag löschen
 ConfirmDeleteSocialContribution=Möchten Sie diesen Sozialbeitrag wirklich löschen?
 ExportDataset_tax_1=Sozialbeiträge und Zahlungen
-
-//Steuerregeln fehlende Übersetzungen
-
 AnnualSummaryDueDebtMode=Die Jahresbilanz der Einnahmen/Ausgaben im Modus<b>%sForderungen-Verbindlichkeiten%s</b> meldet <b>Kameralistik</b>.
 AnnualSummaryInputOutputMode=Die Jahresbilanz der Einnahmen/Ausgaben im Modus <b>%sEinkünfte-Ausgaben%s</b> meldet <b>Ist-Besteuerung</b>.
 AnnualByCompaniesDueDebtMode=Die Einnahmen/Ausgaben-Bilanz nach Partnern im Modus <b>%sForderungen-Verbindlichkeiten%s</b> meldet <b>Kameralistik</b>.
@@ -106,29 +106,40 @@ RulesResultDue=- Die angezeigten Beträge verstehen sich inkl. aller Steuern.<br
 RulesResultInOut=- Die angezeigten Beträge verstehen sich inkl. aller Steuern.<br>- Das Ergebnis beinhaltet nur tatsächlich bezahlte Rechnungen, Ausgaben und MwSt. <br>- Es gilt das Zahlungsdatum der Rechnungen, Ausgaben und MwSt.<br>
 RulesCADue=- Beinhaltet die fälligen Kundenrechnungen, unabhängig von ihrem Zahlungsstatus. <br>- Es gilt das Freigabedatum der Rechnungen. <br>
 RulesCAIn=- Beinhaltet alle tatsächlich erfolgten Zahlungen von Kunden.<br>- Es gilt das Zahlungsdatum der Rechnungen.<br>
+DepositsAreNotIncluded=- Noch sind Anzahlungsrechnungen inbegriffen
+DepositsAreIncluded=- Anzahlungsrechnungen sind inbegriffen
+LT2ReportByCustomersInInputOutputModeES=Bericht von Partner IRPF
 VATReportByCustomersInInputOutputMode=Bericht zur vereinnahmten und bezahlten MwSt. nach Kunden (Steuerbeleg)
 VATReportByCustomersInDueDebtMode=Bericht zur vereinnahmten und bezahlten MwSt. nach Kunden (Steuersatz)
 VATReportByQuartersInInputOutputMode=Quartalsbericht zur vereinnahmten und bezahlten MwSt. (Steuerbeleg)
 VATReportByQuartersInDueDebtMode=Quartalsbericht zur vereinnahmten und bezahlten MwSt.(Steuersatz)
 SeeVATReportInInputOutputMode=Siehe <b>%sMwSt.-Einnahmen%s</b>-Bericht für eine standardmäßige Berechnung
 SeeVATReportInDueDebtMode=Siehe <b>%sdynamischen MwSt.%s</b>-Bericht für eine Berechnung mit dynamischer Option
-RulesVATIn=- Für Services beinhaltet der Steuerbericht alle vereinnahmten oder bezahlten Steuern nach Zahlungsdatum. Für Warenlieferungen gilt das Rechnungsdatum.
-RulesVATDue=- Für Services beinhaltet der Steuerbericht alle fälligen Rechnungen, bezahlt oder nicht, in Abhängigkeit des Leistungsdatums. Für Warenlieferungen gilt das Rechnungsdatum.
+RulesVATInServices=- Für Services beinhaltet der Steuerbericht alle vereinnahmten oder bezahlten Steuern nach Zahlungsdatum. Für Warenlieferungen gilt das Rechnungsdatum.
+RulesVATInProducts=- Für Sachanlagen beinhaltet der Bericht alle Mehrwertsteuerrechnungen auf Basis des Rechnungsdatums.
+RulesVATDueServices=- Für Services beinhaltet der Steuerbericht alle fälligen Rechnungen, bezahlt oder nicht, in Abhängigkeit des Leistungsdatums. Für Warenlieferungen gilt das Rechnungsdatum.
+RulesVATDueProducts=- Für Sachanlagen beinhaltet der Bericht alle fälligen Rechnungen, bezahlt oder nicht, in Abhängigkeit des Leistungsdatums. Für Warenlieferungen gilt das Rechnungsdatum.
 OptionVatInfoModuleComptabilite=Achtung: Für Vermögenswerte sollte hier das Zustelldatum eingegeben werden.
 PercentOfInvoice=%%/Rechnung
+NotUsedForGoods=Nicht für Waren
+ProposalStats=Angebote Statistik
+OrderStats=Bestellungen Statistik
+InvoiceStats=Rechnungen Statistik 
 Dispatch=Versenden
 Dispatched=Versendet
 ToDispatch=Zu versenden
-ReportTurnover=Umsatz
-NotUsedForGoods=Nicht für Waren
-
-OptionModeTrueDesc=In diesem Modus erfolgt die Umsatzberechnung über Zahlungseingänge (Zahlungsdatum).<br>Die Gültigkeit der Daten ist nur bei der Überprüfung der Zu- und Abgänge auf den Konten durch Rechnungen gewährleistet.
-SupplierAccountancyCode=Kontierungscode Lieferant
-
-TaxModuleSetupToModifyRules=Die Einstellungen zur Berechnung finden Sie in den entsprechenden <a href="%s">Modul-Einstellungen</a>
-VATReportBuildWithOptionDefinedInModule=Ausgewiesenen Beträge sind hier anhand von Regeln Tax Modul Setup definiert.
-SocialContributionsPayments=Sozialbeitragszahlungen
 ThirdPartyMustBeEditAsCustomer=Partner muss als Kunde definiert werden
+SellsJournal=Verkaufsjournal
+PurchasesJournal=Einkaufsjournal
+DescSellsJournal=Verkaufsjournal 
+DescPurchasesJournal=Einkaufsjournal
+InvoiceRef=Rechnungs-Nr.
+CodeNotDef=Nicht definiert
+AddRemind=Verfügbare Menge zum Versenden
+RemainToDivide= Noch zu Versenden :
+WarningDepositsNotIncluded=Abschlagsrechnungen werden in dieser Version des Rechnungswesens nicht berücksichtigt.
+SearchATripAndExpense=Spesen/Reise suchen
+
 
 // START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
 // Reference language: en_US -> de_DE
@@ -166,3 +177,11 @@ AddRemind=Versand zur Verfügung stehende Betrag
 RemainToDivide=Bleiben Sie bis zum Versand:
 WarningDepositsNotIncluded=Einlagen Rechnungen werden in dieser Version nicht mit diesem Modul Rechnungswesen inklusive.
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:36).
+
+
+// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
+// Reference language: en_US -> de_DE
+TaxModuleSetupToModifyRules=Zum <a href="%s">Setup-Modul</a> , um Regeln für die Berechnung ändern
+OptionModeTrueDesc=In diesem Zusammenhang wird der Umsatz über Zahlungen (Datum der Zahlungen) berechnet. \ NDie Gültigkeit der Figuren ist nur gewährleistet, wenn die Buchführung durch den Eingang / Ausgang auf den Konten über Rechnungen geprüft wird.
+VATReportBuildWithOptionDefinedInModule=Hier ausgewiesenen Beträge werden unter Verwendung von Regeln UST Modul Setup definiert.
+// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:27:56).
