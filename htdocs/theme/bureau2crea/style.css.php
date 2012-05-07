@@ -2315,7 +2315,7 @@ form.listactionsfilter input[type="submit"] {
 /* ============================================================================== */
 
 div.scroll2 {
-	width: 582px !important;
+	width: <?php print isset($_SESSION['dol_screenwidth'])?max($_SESSION['dol_screenwidth']-830,450):'450'; ?>px !important;
 }
 
 
