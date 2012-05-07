@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 
 $id=GETPOST('id','int');
-$ref=GETPOST('ref');
+$ref=GETPOST('ref','alpha');
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
@@ -185,7 +185,7 @@ if (count($tasksarray)>0)
 		$tasks[$taskcursor]['task_milestone']=0;
 		$tasks[$taskcursor]['task_percent_complete']=$val->progress;
 		//$tasks[$taskcursor]['task_name']=$task->getNomUrl(1);
-		$tasks[$taskcursor]['task_name']=$val->label;
+		$tasks[$taskcursor]['task_name']=dol_escape_js($val->label);
 		$tasks[$taskcursor]['task_start_date']=$val->date_start;
 		$tasks[$taskcursor]['task_end_date']=$val->date_end;
 		$tasks[$taskcursor]['task_color']='b4d1ea';
