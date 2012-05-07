@@ -31,8 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
 
 
 /**
- *	\class      ModelePDFDeliveryOrder
- *	\brief      Classe mere des modeles de bon de livraison
+ *	Classe mere des modeles de bon de livraison
  */
 abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 {
@@ -151,7 +150,7 @@ abstract class ModeleNumRefDeliveryOrder
  *
  *	@param	DoliDB		$db  			objet base de donnee
  *	@param	Object		$object			object delivery
- *	@param	string		$model			force le modele a utiliser ('' to not force)
+ *	@param	string		$modele			force le modele a utiliser ('' to not force)
  *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
  *  @return int         				0 if KO, 1 if OK
  */

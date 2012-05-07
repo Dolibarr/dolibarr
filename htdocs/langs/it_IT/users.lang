@@ -1,139 +1,117 @@
 # Dolibarr language file - it_IT - users    
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
 CHARSET=UTF-8
-UserCard				    =Scheda utente
-ContactCard				    =Scheda contatto 
-GroupCard				    =Scheda gruppo
-NoContactCard				    =Scheda non presente tra i contatti
-Permission				    =Autorizzazione 
-Permissions				    =Autorizzazioni 
-EditPassword				    =Modifica la password 
-SendNewPassword				    =Invia nuova password 
-ReinitPassword				    =Genera nuova password 
-PasswordChangedTo			    =Password cambiata a: %s 
-SubjectNewPassword			    =La tua nuova password per Dolibarr 
-AvailableRights				    =Autorizzazioni disponibili
-OwnedRights				    =Autorizzazioni proprie
-GroupRights				    =Autorizzazioni del gruppo 
-UserRights				    =Permessi utente 
-UserGUISetup				    =Impostazione interfaccia Utente
-DisableUser				    =Disattiva 
-DisableAUser				    =Disattiva un utente 
-DeleteUser				    =Elimina 
-DeleteAUser				    =Elimina un utente 
-DisableGroup				    =Disattiva 
-DisableAGroup				    =Disattiva un gruppo 
-EnableAUser				    =Attiva un utente 
-EnableAGroup				    =Attiva un gruppo 
-DeleteGroup				    =Elimina 
-DeleteAGroup				    =Elimina un gruppo 
-ConfirmDisableUser			    =Sei sicuro di voler disattivare  l'utente <b>%s </b>? 
-ConfirmDisableGroup			    =Sei sicuro di voler disattivare il gruppo <b> %s </b>? 
-ConfirmDeleteUser			    =Sei sicuro di voler eliminare  l'utente <b>%s </b>? 
-ConfirmDeleteGroup			    =Sei sicuro di voler eliminare il gruppo <b> %s </b>? 
-ConfirmEnableUser			    =Sei sicuro di voler attivare l'utente <b>%s </b>? 
-ConfirmEnableGroup			    =Sei sicuro di voler attivare il gruppo <b> %s </b>? 
-ConfirmReinitPassword			    =Sei sicuro di voler generare una nuova password per l'utente <b> %s </b>? 
-ConfirmSendNewPassword			    =Sei sicuro di voler generare e inviare una nuova password per l'utente <b> %s </b>? 
-NewUser					    =Nuovo utente 
-CreateUser				    =Crea utente 
-SearchAGroup				    =Cerca un gruppo 
-SearchAUser				    =Cerca un utente 
-LoginNotDefined				    =Login non è definito. 
-NameNotDefined				    =Nome non è definito. 
-ListOfUsers				    =Elenco degli utenti 
-Administrator				    =Amministratore 
-DefaultRights				    =Autorizzazioni predefinite 
-DefaultRightsDesc			    =Definire qui autorizzazioni predefinite che vengono automaticamente concesse a un nuovo utente creato. 
-DolibarrUsers				    =Utenti Dolibarr
-LastName				    =Cognome 
-FirstName				    =Nome proprio
-ListOfGroups				    =Elenco dei gruppi 
-NewGroup				    =Nuovo gruppo 
-CreateGroup				    =Crea gruppo 
-RemoveFromGroup				    =Rimuovi dal gruppo 
-PasswordChangedAndSentTo		    =Cambiata la password ed inviata a <b> %s </b>. 
-PasswordChangeRequestSent		    =Richiesta di cambiare la password per <b> %s </b> e inviare a <b> %s </b>. 
-MenuUsersAndGroups			    =Utenti e gruppi 
-LastGroupsCreated			    =Ultimi %s gruppi creati
-LastUsersCreated			    =Ultimi %s utenti creati 
-ShowGroup				    =Visualizza gruppo 
-ShowUser				    =Visualizza utente 
-NonAffectedUsers			    =Gli utenti non interessati 
-UserModified				    =Utente modificati con successo 
-GroupModified				    =Gruppo modificati con successo 
-PhotoFile				    =File Immagine 
-UserWithDolibarrAccess			    =Utente con accesso Dolibarr 
-ListOfUsersInGroup			    =Elenco di utenti in questo gruppo 
-ListOfGroupsForUser			    =Elenco dei gruppi per questo utente 
-UsersToAdd				    =Utenti da aggiungere a questo gruppo 
-GroupsToAdd				    =Gruppi da aggiungere a questo utente 
-NoLogin					    =No accesso 
-CreateDolibarrLogin			    =Crea accesso a Dolibarr
-LoginAccountDisable			    =Account disattivato, inserire un nuovo login per attivare. 
-LoginAccountDisableInDolibarr		    =Account disattivato in Dolibarr. 
-LoginAccountDisableInLdap		    =Account disattivato nel dominio ldap. 
-UsePersonalValue			    =Usa valore personalizzato
-GuiLanguage				    =Lingua di interfaccia 
-InternalUser				    =Utente interno 
-MyInformations				    =I miei dati 
-ExportDataset_user_1			    =Dolibarr utenti e proprietà 
-DomainUser				    =Utente di dominio %s 
-Reactivate				    =Riattiva 
-CreateInternalUserDesc			    =Questo modulo permette di creare un utente interno per la vostra Azienda / Fondazione. Per creare un utente esterno (clienti, fornitori, ...), utilizzare il pulsante 'Crea utente Dolibarr' nella scheda terzi. 
-InternalExternalDesc			    =Un utente <b> interno </b> è un utente che fa parte della vostra Azienda / Fondazione. <br> Un utente <b> esterno </b> è un cliente, fornitore o altro. <br> <br> In entrambi i casi, le autorizzazioni definiscono i diritti su Dolibarr. Un utente esterno può avere un diverso gestore di menu utente (vedi Home - Setup - Display). 
-PermissionInheritedFromAGroup		    =Autorizzazioni ereditate dall'appartenenza al gruppo. 
-IdPhoneCaller				    =Id telefono del chiamante 
-UserLogged				    =Utente %s collegato 
-NewUserCreated				    =Utente %s creato 
-NewUserPassword				    =La modifica della password per %s 
-EventUserModified			    =Utente %s modificato 
-UserDisabled				    =Utente %s disattivato
-UserEnabled				    =Utente %s attivato 
-UserDeleted				    =Utente %s rimosso 
-NewGroupCreated				    =Gruppo %s creato
-GroupModified				    =Gruppo %s modificato
-GroupDeleted				    =Gruppo %s rimosso
-
-
-// Date 2009-01-18 19:41:54
-// START - Lines generated via parser
-// Reference language: en_US
-ConfirmCreateContact=Sei sicuro di voler creare un account Dolibarr per questo contatto?
-LoginToCreate=Accedi per creare
-// Date 2009-01-18 19:41:54
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-CHARSET=UTF-8
-SuperAdministrator=Super Administrator
-SuperAdministratorDesc=Con tutti i diritti di amministratore
-LinkToCompanyContact=Link al contatto del terzo
-LinkedToDolibarrMember=Link al membro
-LinkedToDolibarrUser=Link all'utente Dolibarr
-LinkedToDolibarrThirdParty=Link al terzo
-CreateDolibarrThirdParty=Crea un terzo
-ConfirmCreateLogin=Sei sicuro di voler creare un account per questo membro Dolibarr?
-ConfirmCreateThirdParty=Sei sicuro di voler creare un terzo da questo utente?
-NameToCreate=Nome di terzi da creare
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
-// Reference language: en_US
-Inherited=Ereditato
-YourRole=Il tuo ruolo
-YourQuotaOfUsersIsReached=La tua quota di utenti attivi è raggiunto!
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:33).
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
-// Reference language: en_US -> it_IT
-AdministratorDesc=Entità dell&#39;amministratore
-UserWillBeInternalUser=Utente creato sarà un utente interno (in quanto non collegata a un particolare partito terzo)
-UserWillBeExternalUser=Utente creato sarà un utente esterno (perché legato ad un particolare partito terzo)
-UserLogoff=%s logout dell&#39;utente
-NbOfUsers=Nb di utenti
-DontDowngradeSuperAdmin=Solo un superadmin può declassare un superadmin
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:38).
+Administrator					=Amministratore 
+AdministratorDesc				=L'amministratore
+AvailableRights					=Autorizzazioni disponibili
+ConfirmCreateContact				=Vuoi davvero creare un account Dolibarr per questo contatto?
+ConfirmCreateLogin				=Vuoi davvero creare l'account?
+ConfirmCreateThirdParty				=Vuoi davvero creare un soggetto terzo per questo utente?
+ConfirmDeleteGroup				=Vuoi davvero eliminare il gruppo <b>%s</b>? 
+ConfirmDeleteUser				=Vuoi davvero eliminare  l'utente <b>%s</b>? 
+ConfirmDisableGroup				=Vuoi davvero disattivare il gruppo <b>%s</b>? 
+ConfirmDisableUser				=Vuoi davvero disattivare  l'utente <b>%s</b>? 
+ConfirmEnableGroup				=Vuoi davvero attivare il gruppo <b>%s</b>? 
+ConfirmEnableUser				=Vuoi davvero attivare l'utente <b>%s</b>? 
+ConfirmReinitPassword				=Vuoi davvero generare una nuova password per l'utente <b>%s</b>? 
+ConfirmSendNewPassword				=Vuoi davvero generare una nuova password per l'utente <b>%s</b> e inviargliela? 
+ContactCard					=Scheda contatto
+CreateDolibarrLogin				=Crea accesso a Dolibarr
+CreateDolibarrThirdParty			=Crea soggetto terzo
+CreateGroup					=Crea gruppo
+CreateInternalUserDesc				=Questo modulo permette di creare un utente interno per la vostra Azienda/Fondazione. Per creare un utente esterno (cliente, fornitore, ...), utilizzare il pulsante "Crea utente" nella scheda soggetti terzi. 
+CreateUser					=Crea utente 
+DefaultRights					=Autorizzazioni predefinite 
+DefaultRightsDesc				=Definire qui le autorizzazioni predefinite per i nuovi utenti. 
+DeleteAGroup					=Elimina un gruppo
+DeleteAUser					=Elimina un utente
+DeleteGroup					=Elimina 
+DeleteUser					=Elimina 
+DisableAGroup					=Disattiva un gruppo 
+DisableAUser					=Disattiva un utente 
+DisableGroup					=Disattiva 
+DisableUser					=Disattiva 
+DolibarrUsers					=Utenti Dolibarr
+DomainUser					=Utente di dominio %s
+DontDowngradeSuperAdmin				=Solo un superadmin può declassare un superadmin
+EditPassword					=Modifica la password 
+EnableAGroup					=Attiva un gruppo 
+EnableAUser					=Attiva un utente 
+EventUserModified				=Utente %s modificato 
+ExportDataset_user_1				=Utenti e proprietà di Dolibarr
+FirstName					=Nome
+GroupCard					=Scheda gruppo
+GroupDeleted					=Gruppo %s rimosso
+GroupModified					=Gruppo modificato con successo 
+GroupModified					=Gruppo %s modificato
+GroupRights					=Autorizzazioni del gruppo 
+GroupsToAdd					=Gruppi da aggiungere a questo utente 
+GuiLanguage					=Lingua dell'interfaccia 
+IdPhoneCaller					=Id telefonico del chiamante
+Inherited					=Ereditato
+InternalExternalDesc				=Un utente <b>interno</b> è un utente che fa parte della vostra Azienda/Fondazione.<br/>Un utente <b>esterno</b> è un cliente, un fornitore o altro.<br/><br/>In entrambi i casi, le autorizzazioni definiscono i diritti all'interno di Dolibarr. Ad un utente esterno si può assegnare un gestore dei menu diverso (vedi Home - Impostazioni - Visualizzazione). 
+InternalUser					=Utente interno 
+LastGroupsCreated				=Ultimi %s gruppi creati
+LastName					=Cognome 
+LastUsersCreated				=Ultimi %s utenti creati 
+LinkedToDolibarrMember				=Link al membro
+LinkedToDolibarrThirdParty			=Link al soggetto terzo
+LinkedToDolibarrUser				=Link all'utente Dolibarr
+LinkToCompanyContact				=Link al contatto del soggetto terzo
+ListOfGroups					=Elenco gruppi
+ListOfGroupsForUser				=Elenco gruppi per questo utente 
+ListOfUsers					=Elenco utenti 
+ListOfUsersInGroup				=Elenco utenti in questo gruppo 
+LoginAccountDisable				=Account disattivato, inserisci un nuovo login per attivarlo. 
+LoginAccountDisableInDolibarr		    	=Account disattivato in Dolibarr
+LoginAccountDisableInLdap			=Account disattivato nel dominio ldap
+LoginNotDefined					=Login non definito
+LoginToCreate					=Accedi per creare
+MenuUsersAndGroups				=Utenti e gruppi
+MyInformations					=I miei dati
+NameNotDefined					=Non è stato inserito il nome
+NameToCreate					=Nome del soggetto terzo da creare
+NbOfUsers					=Numero di utenti
+NewGroupCreated					=Gruppo %s creato
+NewGroup					=Nuovo gruppo 
+NewUserCreated					=Utente %s creato 
+NewUser						=Nuovo utente 
+NewUserPassword					=Cambio password per %s
+NoContactCard					=Scheda non presente tra i contatti
+NoLogin						=Senza accesso 
+NonAffectedUsers				=Utenti non interessati 
+OwnedRights					=Autorizzazioni concesse
+PasswordChangedAndSentTo			=Password cambiata ed inviata a <b>%s</b> 
+PasswordChangedTo				=Password cambiata a: %s 
+PasswordChangeRequestSent			=Richiesta di cambio password per <b>%s</b> da inviare a <b>%s</b>. 
+Permission					=Autorizzazione
+PermissionInheritedFromAGroup			=Autorizzazioni ereditate dall'appartenenza al gruppo. 
+Permissions					=Autorizzazioni 
+PhotoFile					=File Immagine 
+Reactivate					=Riattiva 
+ReinitPassword					=Genera nuova password 
+RemoveFromGroup					=Rimuovi dal gruppo 
+SearchAGroup					=Cerca gruppo 
+SearchAUser					=Cerca utente 
+SendNewPassword					=Invia nuova password 
+ShowGroup					=Visualizza gruppo 
+ShowUser					=Visualizza utente 
+SubjectNewPassword				=Nuova password per Dolibarr 
+SuperAdministratorDesc				=Con tutti i diritti di amministrazione
+SuperAdministrator				=Superadmin
+UsePersonalValue				=Usa valore personalizzato
+UserCard					=Scheda utente
+UserDeleted					=Utente %s rimosso 
+UserDisabled					=Utente %s disattivato
+UserEnabled					=Utente %s attivato 
+UserGUISetup					=Impostazioni interfaccia grafica
+UserLogged					=Utente %s collegato
+UserLogoff					=Logout dell&#39;utente %s
+UserModified					=Utente modificato con successo
+UserRights					=Autorizzazioni utente
+UsersToAdd					=Utenti da aggiungere al gruppo 
+UserWillBeExternalUser				=L'utente sarà un utente esterno (perché collegato ad un soggetto terzo)
+UserWillBeInternalUser				=L'utente sarà un utente interno (in quanto non collegato a un soggetto terzo)
+UserWithDolibarrAccess				=Utente con accesso Dolibarr 
+YourQuotaOfUsersIsReached			=Hai raggiunto la tua quota di utenti attivi!
+YourRole					=Il tuo ruolo

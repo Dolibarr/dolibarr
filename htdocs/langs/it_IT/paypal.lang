@@ -1,36 +1,19 @@
-/*
- * Language code: it_IT
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-06-26 15:51:22
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+# Dolibarr language file - it_IT - paypal
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
 // Reference language: en_US -> it_IT
 CHARSET=UTF-8
-PaypalSetup=PayPal modulo di configurazione
-PaypalDesc=Questo modulo pagine offrono per consentire il versamento su <a href="http://www.paypal.com" target="_blank">PayPal</a> da parte dei clienti. Questo può essere usato per un pagamento o gratuito per un pagamento su un particolare oggetto Dolibarr (fattura, ordine, ...)
-PaypalOrCBDoPayment=Paga con carta di credito o Paypal
-PaypalDoPayment=Paga con Paypal
-PaypalCBDoPayment=Paga con carta di credito
-PAYPAL_API_SANDBOX=Modalità di test / sandbox
-PAYPAL_API_USER=API nome utente
-PAYPAL_API_PASSWORD=API password
-PAYPAL_API_SIGNATURE=API firma
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offerta di pagamento &quot;integrale&quot; (Carta di credito Paypal +) o &quot;Paypal&quot; solo
-PAYPAL_CSS_URL=Url Optionnal del foglio di stile CSS alla pagina di pagamento
-ThisIsTransactionId=Questo è id di transazione: <b>%s</b>
-PAYPAL_ADD_PAYMENT_URL=Aggiungere l&#39;url di pagamento Paypal quando si invia un documento per posta
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:51:26).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> it_IT
-PAYPAL_IPN_MAIL_ADDRESS=Indirizzo e-mail per la notifica immediata del pagamento (IPN)
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:49:26).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
-// Reference language: en_US -> it_IT
-YouAreCurrentlyInSandboxMode=Attualmente sei nella modalità &quot;sandbox&quot;
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:42).
+PAYPAL_ADD_PAYMENT_URL				=Aggiungere l'URL di pagamento Paypal quando si invia un documento per posta
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY		=Offerta di pagamento completo (Carta di credito + Paypal) o solo Paypal
+PAYPAL_API_PASSWORD				=Password API
+PAYPAL_API_SANDBOX				=Modalità di test/sandbox
+PAYPAL_API_SIGNATURE				=Firma API
+PAYPAL_API_USER					=Nome utente API
+PaypalCBDoPayment				=Paga con carta di credito
+PAYPAL_CSS_URL					=URL del foglio di stile CSS per la pagina di pagamento (opzionala)
+PaypalDesc					=Questo modulo pagine offrono per consentire il versamento su <a href="http://www.paypal.com" target="_blank">PayPal</a> da parte dei clienti. Questo può essere usato per un pagamento o gratuito per un pagamento su un particolare oggetto Dolibarr (fattura, ordine, ...)
+PaypalDoPayment					=Paga con Paypal
+PAYPAL_IPN_MAIL_ADDRESS				=Indirizzo email per la notifica immediata del pagamento (IPN)
+PaypalOrCBDoPayment				=Paga con carta di credito o Paypal
+PaypalSetup					=Impostazioni Paypal
+ThisIsTransactionId				=L'id di transazione è: <b>%s</b>
+YouAreCurrentlyInSandboxMode			=Attualmente sei in modalità sandbox

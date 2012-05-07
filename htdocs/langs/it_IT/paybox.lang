@@ -1,59 +1,37 @@
-/*
- * Language code: it_IT
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-13 20:49:18
- */
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
+# Dolibarr language file - it_IT - paybox
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
+// Reference language: en_US -> it_IT
 CHARSET=UTF-8
-PayBoxSetup=Paybox modulo configurazione
-PayBoxDesc=Questo modulo offre pagine per consentire il pagamento di <a href="http://www.paybox.com" target="_blank">Paybox</a> da parte dei clienti. Questo può essere usato gratuitamente per un pagamento o un pagamento su un particolare oggetto Dolibarr (fattura, ordine, ...)
-FollowingUrlAreAvailableToMakePayments=In seguito sono disponibili gli URL di una pagina di offrire a un cliente per effettuare un pagamento sul Dolibarr oggetti
-PaymentForm=Forma di pagamento
-WelcomeOnPaymentPage=Benvenuti sul nostro servizio di pagamento online
-ThisScreenAllowsYouToPay=Questa schermata consente di effettuare un pagamento online su %s.
-ThisIsInformationOnPayment=Si tratta di informazioni a pagamento per fare
-ToComplete=Per completare
-YourEMail=E-mail per la conferma del pagamento
-Creditor=Creditore
-PaymentCode=Pagamento codice
-PayBoxDoPayment=Vai a pagamento
-YouWillBeRedirectedOnPayBox=Verrai reindirizzato su garantiti Paybox pagina per inserire le informazioni della carta di credito si
-PleaseBePatient=Vi preghiamo di essere paziente
-Continue=Successivo
-ToOfferALinkForOnlinePaymentOnOrder=URL di offrire un pagamento on-line %s interfaccia utente per un ordine
-ToOfferALinkForOnlinePaymentOnInvoice=URL di offrire un pagamento on-line %s interfaccia utente per una fattura
-ToOfferALinkForOnlinePaymentOnContractLine=URL di offrire un pagamento on-line %s interfaccia utente per un contratto di linea
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL di offrire un pagamento on-line %s interfaccia utente per un importo
-YouCanAddTagOnUrl=È inoltre possibile aggiungere <b>tag di</b> parametro <b>&</b> url <b>= <i>valore</i></b> di uno qualsiasi di questi URL (richiesto solo per il pagamento gratuito) per aggiungere il tuo commento pagamento tag.
-SetupPayBoxToHavePaymentCreatedAutomatically=Imposta il tuo Paybox con <b>url %s</b> per il pagamento sono creati automaticamente quando convalidati dal Paybox.
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
-// Reference language: en_US
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL di offrire una interfaccia online %s pagamento utente per un abbonamento membro
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
-// Reference language: en_US -> it_IT
-YourPaymentHasBeenRecorded=Questa pagina conferma che il pagamento è stato registrato. Grazie.
-YourPaymentHasNotBeenRecorded=Tu pagamento non è stato registrato e transazione è stata annullata. Grazie.
-AccountParameter=Conto di parametri
-UsageParameter=Uso dei parametri
-InformationToFindParameters=Aiutare a trovare le tue informazioni account %s
-PAYBOX_CGI_URL_V2=URL del modulo Paybox CGI per il pagamento
-VendorName=Nome del venditore
-CSSUrlForPaymentForm=Foglio di stile CSS url per il modulo di pagamento
-MessageOK=Messaggio sulla pagina di pagamento convalidate ritorno
-MessageKO=Messaggio sulla pagina di pagamento annullato ritorno
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:53:05).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
-// Reference language: en_US -> it_IT
-ToOfferALinkForOnlinePayment=URL per il pagamento %s
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:43).
+AccountParameter						=Dati account
+Continue							=Successivo
+Creditor							=Creditore
+CSSUrlForPaymentForm						=URL del foglio di stile CSS per il modulo di pagamento
+FollowingUrlAreAvailableToMakePayments				=Puoi utilizzare i seguenti indirizzi per permettere ai clienti di effettuare pagamenti su Dolibarr
+InformationToFindParameters					=Aiuto per trovare informazioni sul tuo account %s
+MessageKO							=Messaggio sulla pagina di pagamento annullato
+MessageOK							=Messaggio sulla pagina di pagamento convalidato
+PAYBOX_CGI_URL_V2						=URL del modulo CGI di Paybox per il pagamento
+PayBoxDesc							=Questo modulo offre pagine per consentire il pagamento attraverso <a href="http://www.paybox.com" target="_blank">Paybox</a> da parte dei clienti. Può essere usato per un pagamento qualsiasi o per il pagamento di specifici oggetti Dolibarr (fattura, ordine, ...)
+PayBoxDoPayment							=Vai al pagamento
+PayBoxSetup							=Impostazioni modulo Paybox
+PaymentCode							=Codice pagamento
+PaymentForm							=Forma di pagamento
+PleaseBePatient							=Attendere prego...
+SetupPayBoxToHavePaymentCreatedAutomatically			=Imposta il tuo Paybox con <b>url %s</b> perché venga automaticamente creato un pagamento alla convalida di Paybox.
+ThisIsInformationOnPayment					=Informazioni sul pagamento da effettuare
+ThisScreenAllowsYouToPay					=Questa schermata consente di effettuare un pagamento online su %s.
+ToComplete							=Per completare
+ToOfferALinkForOnlinePaymentOnContractLine			=URL per il pagamento %s di una riga di contratto
+ToOfferALinkForOnlinePaymentOnFreeAmount			=URL per il pagamento %s di un importo
+ToOfferALinkForOnlinePaymentOnInvoice				=URL per il pagamento %s di una fattura
+ToOfferALinkForOnlinePaymentOnMemberSubscription		=URL per il pagamento %s dell'adesione di un membro
+ToOfferALinkForOnlinePaymentOnOrder				=URL per il pagamento %s di un ordine
+ToOfferALinkForOnlinePayment					=URL per il pagamento %s
+UsageParameter							=Parametri d'uso
+VendorName							=Nome del venditore
+WelcomeOnPaymentPage						=Benvenuti sul nostro servizio di pagamento online
+YouCanAddTagOnUrl						=Puoi anche aggiungere a qualunque di questi url il parametro <b>&tag=<i>value</i></b> (richiesto solo per il pagamento gratuito) per aggiungere una tag con un tuo commento.
+YourEMail							=Email per la conferma del pagamento
+YourPaymentHasBeenRecorded					=Il pagamento è stato registrato. Grazie.
+YourPaymentHasNotBeenRecorded					=Il pagamento non è stato registrato e la transazione è stata annullata. Grazie.
+YouWillBeRedirectedOnPayBox					=Verrai reindirizzato alla pagina sicura di Paybox per inserire le informazioni della carta di credito.

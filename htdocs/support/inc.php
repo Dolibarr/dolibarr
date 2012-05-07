@@ -77,9 +77,9 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
 	$result=include_once($conffile);	// Load conf file
 	if ($result)
 	{
-		
+
 		if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
-		
+
 		// Clean parameters
 		$dolibarr_main_data_root        =isset($dolibarr_main_data_root)?trim($dolibarr_main_data_root):'';
 		$dolibarr_main_url_root         =isset($dolibarr_main_url_root)?trim($dolibarr_main_url_root):'';
@@ -93,7 +93,7 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
 		if (! empty($dolibarr_main_data_root)     && ! preg_match('/^[\\/]+$/',$dolibarr_main_data_root))     $dolibarr_main_data_root=preg_replace('/[\\/]+$/','',$dolibarr_main_data_root);
 		if (! empty($dolibarr_main_document_root_alt)	&& ! preg_match('/^[\\/]+$/',$dolibarr_main_document_root_alt))	$dolibarr_main_document_root_alt=preg_replace('/[\\/]+$/','',$dolibarr_main_document_root_alt);
 		if (! empty($dolibarr_main_url_root_alt)		&& ! preg_match('/^[\\/]+$/',$dolibarr_main_url_root_alt))		$dolibarr_main_url_root_alt=preg_replace('/[\\/]+$/','',$dolibarr_main_url_root_alt);
-		
+
 		// Create conf object
 		if (! empty($dolibarr_main_document_root))
 		{
@@ -139,12 +139,17 @@ $suburi = strstr($uri, '/');       // $suburi contains url without domain
 if ($suburi == '/') $suburi = '';   // If $suburi is /, it is now ''
 define('DOL_URL_ROOT', $suburi);    // URL relative root ('', '/dolibarr', ...)
 
+if (empty($character_set_client)) $character_set_client="UTF-8";
+$conf->file->character_set_client=strtoupper($character_set_client);
+if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set=($conf->db->type=='mysql'?'latin1':'');		// Old installation
+$conf->db->character_set=$dolibarr_main_db_character_set;
+if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation=($conf->db->type=='mysql'?'latin1_swedish_ci':'');  // Old installation
+$conf->db->dolibarr_main_db_collation=$dolibarr_main_db_collation;
+if (empty($dolibarr_main_db_encryption)) $dolibarr_main_db_encryption=0;
+$conf->db->dolibarr_main_db_encryption = $dolibarr_main_db_encryption;
+if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey='';
+$conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 
-if (empty($conf->file->character_set_client))       $conf->file->character_set_client="UTF-8";
-if (empty($conf->db->character_set)) 				$conf->db->character_set='utf8';
-if (empty($conf->db->dolibarr_main_db_collation))   $conf->db->dolibarr_main_db_collation='utf8_general_ci';
-if (empty($conf->db->dolibarr_main_db_encryption))  $conf->db->dolibarr_main_db_encryption=0;
-if (empty($conf->db->dolibarr_main_db_cryptkey))    $conf->db->dolibarr_main_db_cryptkey='';
 if (empty($conf->db->user)) $conf->db->user='';
 
 
@@ -185,7 +190,7 @@ function conf($dolibarr_main_document_root)
 	$conf->db->user = trim($dolibarr_main_db_user);
 	$conf->db->pass = trim($dolibarr_main_db_pass);
 
-	if (empty($conf->db->dolibarr_main_db_collation)) $conf->db->dolibarr_main_db_collation='latin1_swedish_ci';
+	if (empty($conf->db->dolibarr_main_db_collation)) $conf->db->dolibarr_main_db_collation='utf8_general_ci';
 
 	return 1;
 }

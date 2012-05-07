@@ -1,96 +1,76 @@
 # Dolibarr language file - it_IT - agenda 
-CHARSET=UTF-8
-Actions                               =Azioni
-ActionsArea 			      =Sezione azioni (eventi e compiti)
-Agenda 				      =Ordine del giorno
-Agendas 			      =Ordini del giorno
-Calendar 			      =Calendario
-Calendars 			      =Calendari
-AffectedTo 			      =Azione assegnata a
-DoneBy 				      =Realizzato da
-Events 				      =Eventi
-SearchAnAction 			      =Cerca un'azione / compito
-MenuToDoActions 		      =Tutte le azioni incomplete
-MenuDoneActions 		      =Tutte le azioni archiviate
-MenuToDoMyActions 		      =Le mie azioni incomplete 
-MenuDoneMyActions 		      =Le mie azioni completate
-ListOfEvents 			      =Elenco degli eventi Dolibarr
-ActionsAskedBy 			      =Azioni richieste da
-ActionsToDoBy 			      =Azioni assegnate a
-ActionsDoneBy 			      =Azioni fatte da
-AllMyActions 			      =Tutte le mie azioni / compiti
-AllActions 			      =Tutte le azioni / compiti
-ViewList 			      =Visualizza l'elenco
-ViewCal 			      =Visualizza il calendario
-ViewWithPredefinedFilters 	      =Vedere con i filtri predefiniti
-AutoActions 			      =Riempimento automatico di ordine del giorno
-AgendaAutoActionDesc 		      =Definire qui gli eventi per cui si desidera che Dolibarr crei automaticamente una azione nel giorno. Se non è selezionata (impostazione predefinita), le azioni saranno aggiunte esclusivamente in maniera manuale.
-AgendaSetupOtherDesc 		      =Questa pagina consente di configurare gli altri parametri del modulo di ordine del giorno.
-ActionsEvents 			      =Eventi per i quali creare un azione
-PropalValidatedInDolibarr 	      =Proposta convalidata
-InvoiceValidatedInDolibarr 	      =Fattura convalidata
-OrderValidatedInDolibarr 	      =Ordine convalidato
-NewCompanyToDolibarr 		      =Creato da parte di terzi
-DateActionPlannedStart 		      =Pianificato per data di inizio
-DateActionPlannedEnd 		      =Pianificato per data di fine
-DateActionDoneStart 		      =Data effettiva di inizio
-DateActionDoneEnd 		      =Data effettiva di fine
-DateActionStart 		      =Data di inizio
-DateActionEnd 			      =Data di fine
-
-// Date 2009-01-18 19:41:54
-// START - Lines generated via parser
-// Reference language: en_US
-ListOfActions=Lista degli eventi
-Location=Località
-AgendaUrlOptions1=È inoltre possibile aggiungere seguenti parametri di filtro in uscita:
-AgendaUrlOptions2=<b>login=<b>login = %s</b> per limitare la produzione di azioni create da, o che coinvolgono <b>utente %s.</b>
-AgendaUrlOptions3=<b>logina=<b>logina = %s</b> per limitare la produzione di azioni create da <b>utente %s.</b>
-AgendaUrlOptions4=<b>logint=<b>logint = %s</b> per limitare la produzione di azioni <b>compromesso %s</b> utente.
-AgendaUrlOptions5=<b>logind=<b>logind = %s</b> per limitare la produzione di azioni fatte da <b>utente %s.</b>
-AgendaShowBirthdayEvents=Visualizza i compleanni dei contatti
-AgendaHideBirthdayEvents=Nascondi i compleanni dei contatti
-// Date 2009-01-18 19:41:54
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
-// Reference language: en_US
-InterventionValidatedInDolibarr=%s intervento convalidato
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:44).
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
 // Reference language: en_US -> it_IT
-EventOnFullDay=Evento in giornata
-ViewDay=Vista Giorno
-ViewWeek=Settimana vista
-AgendaExtSitesDesc=Questa pagina consente di configurare calendari esterni.
-InvoiceBackToDraftInDolibarr=%s fattura tornare allo stato di progetto
-ProposalSentByEMail=%s proposta commerciale inviata per email
-OrderSentByEMail=Cliente %s ordine inviata per email
-InvoiceSentByEMail=Cliente %s fattura inviata per email
-SupplierOrderSentByEMail=Fornitore %s ordine inviata per email
-SupplierInvoiceSentByEMail=Fornitore %s fattura inviata per email
-ShippingSentByEMail=%s spedizione inviata per email
-ExtSites=Calendari esterni
-ExtSites=Calendari esterni
-ExtSitesEnableThisTool=come calendari esterni in agenda
-ExtSitesNbOfAgenda=Numero di calendari
-AgendaExtNb=Calendario nb %s
-ExtSiteUrlAgenda=URL per accedere. ICal file
-ExtSiteNoLabel=Nessuna descrizione
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:04).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
-// Reference language: en_US -> it_IT
-LocalAgenda=Calendario locale
-MyEvents=I miei eventi
-OtherEvents=Altri eventi
-OrderApprovedInDolibarr=%s ordine approvato
-OrderBackToDraftInDolibarr=%s Ordine tornare allo stato di progetto
-OrderCanceledInDolibarr=%s ordine annullato
-InterventionSentByEMail=%s intervento inviati via email
-ExportCal=Export calendario
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:33:46).
+CHARSET				=UTF-8
+ActionsArea			=Sezione azioni (eventi e compiti)
+ActionsAskedBy			=Azioni richieste da
+Actions				=Azioni
+ActionsDoneBy			=Azioni fatte da
+ActionsEvents			=Eventi per i quali creare un'azione
+ActionsToDoBy			=Azioni assegnate a
+AffectedTo			=Azione assegnata a
+AgendaAutoActionDesc		=Definire qui gli eventi che devono essere creati automaticamente da Dolibarr. Se non è selezionato nulla (impostazione predefinita), le azioni saranno aggiunte solo manualmente.
+AgendaExtNb			=Calendario numero %s
+AgendaExtSitesDesc		=Questa pagina consente di configurare i calendari esterni.
+AgendaHideBirthdayEvents	=Nascondi i compleanni dei contatti
+Agenda 				=Ordine del giorno
+AgendaSetupOtherDesc 		=Questa pagina consente di configurare gli altri parametri del modulo ordine del giorno.
+AgendaShowBirthdayEvents	=Visualizza i compleanni dei contatti
+Agendas 			=Ordini del giorno
+AgendaUrlOptions1		=È inoltre possibile aggiungere i seguenti parametri ai filtri di output:
+AgendaUrlOptions2		=<b>login = %s</b> per limitare l'output alle azioni create da, o che coinvolgono <b>l'utente %s.</b>
+AgendaUrlOptions3		=<b>logina = %s</b> per limitare l'output alle azioni create dall'<b>utente %s</b>.
+AgendaUrlOptions4		=<b>logint = %s</b> per limitare l'output alle azioni modificate dall'<b>utente %s</b>.
+AgendaUrlOptions5		=<b>logind = %s</b> per limitare l'output alle azioni fatte dall'<b>utente %s</b>.
+AllActions 			=Tutte i compiti/azioni
+AllMyActions 			=Tutte i miei compiti/azioni
+AutoActions 			=Riempimento automatico
+Calendar 			=Calendario
+Calendars 			=Calendari
+DateActionDoneEnd 		=Data effettiva di fine
+DateActionDoneStart 		=Data effettiva di inizio
+DateActionEnd 			=Data di fine
+DateActionPlannedEnd 		=Data di fine prevista
+DateActionPlannedStart 		=Data di inizio prevista
+DateActionStart 		=Data di inizio
+DoneBy 				=Fatto da
+EventOnFullDay			=Dura tutto il giorno
+Events 				=Eventi
+ExportCal			=Esporta calendario
+ExtSiteNoLabel			=Nessuna descrizione
+ExtSites			=Calendari esterni
+ExtSitesEnableThisTool		=Mostra i calendari esterni nell'ordine del giorno
+ExtSitesNbOfAgenda		=Numero di calendari
+ExtSiteUrlAgenda		=URL per accedere al file ICal
+InterventionSentByEMail		=Intervento %s inviato via email
+InterventionValidatedInDolibarr	=Intervento %s convalidato
+InvoiceBackToDraftInDolibarr	=Fattura %s riportata allo stato di bozza
+InvoiceSentByEMail		=Fattura attiva %s inviata per email
+InvoiceValidatedInDolibarr 	=Fattura convalidata
+ListOfActions			=Lista delle azioni
+ListOfEvents 			=Lista degli eventi
+LocalAgenda			=Calendario locale
+Location			=Luogo
+MenuDoneActions 		=Tutte le azioni passate
+MenuDoneMyActions 		=Le mie azioni passate
+MenuToDoActions 		=Tutte le azioni incomplete
+MenuToDoMyActions 		=Le mie azioni incomplete 
+MyEvents			=I miei eventi
+NewCompanyToDolibarr 		=Terza parte aggiunta a Dolibarr
+OrderApprovedInDolibarr		=Ordine %s approvato
+OrderBackToDraftInDolibarr	=Ordine %s riportato allo stato di bozza
+OrderCanceledInDolibarr		=ordine %s annullato
+OrderSentByEMail		=Cliente %s ordine inviata per email
+OrderValidatedInDolibarr	=Ordine convalidato
+OtherEvents			=Altri eventi
+PropalValidatedInDolibarr	=Proposta convalidata
+ProposalSentByEMail		=%s proposta commerciale inviata per email
+SearchAnAction			=Cerca un compito/azione
+ShippingSentByEMail		=%s spedizione inviata per email
+SupplierInvoiceSentByEMail	=Fornitore %s fattura inviata per email
+SupplierOrderSentByEMail	=Fornitore %s ordine inviata per email
+ViewCal				=Vista mensile
+ViewDay				=Vista giornaliera
+ViewList			=Vista elenco
+ViewWeek			=Vista settimanale
+ViewWithPredefinedFilters	=Vista con filtri predefiniti

@@ -27,8 +27,7 @@ require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 
 
 /**
- *	\class RemiseCheque
- *	\brief Classe permettant la gestion des remises de cheque
+ *	Classe permettant la gestion des remises de cheque
  */
 class RemiseCheque extends CommonObject
 {
@@ -119,7 +118,7 @@ class RemiseCheque extends CommonObject
 	 *  @param	array	$toRemise		array with cheques to remise
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function create($user, $account_id, $limit=40, $toRemise)
+	function create($user, $account_id, $limit, $toRemise)
 	{
 		global $conf;
 

@@ -1,37 +1,24 @@
 # Dolibarr language file - it_IT - trips    
-CHARSET=UTF-8
-Trip					    =Viaggio 
-Trips					    =Viaggi 
-TripsAndExpenses			    =Viaggi e spese 
-TripCard				    =Scheda viaggio 
-AddTrip					    =Aggiungi viaggio 
-ListOfTrips				    =Elenco dei viaggi 
-ListOfFees				    =Elenco delle tariffe 
-NewTrip					    =Nuovo viaggio 
-CompanyVisited				    =Società / Fondazione visitata 
-Kilometers				    =Chilometri 
-FeesKilometersOrAmout			    =Tariffa kilometrica o importo
-DeleteTrip				    =Elimina viaggio 
-ConfirmDeleteTrip			    =Sei sicuro di voler eliminare questo viaggio? 
-TF_OTHER				    =Altro 
-TF_LUNCH				    =Pranzo 
-TF_TRIP					    =Viaggio
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-ListTripsAndExpenses=Elenco dei viaggi e delle spese
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
-// Reference language: en_US
-TripsAndExpensesStatistics=Viaggi e statistiche spese
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:34:13).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
 // Reference language: en_US -> it_IT
-ExpensesArea=Viaggi e area spese
-SearchATripAndExpense=Cerca un viaggio e le spese
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:32:48).
+CHARSET=UTF-8
+AddTrip				=Aggiungi viaggio 
+CompanyVisited			=Società/Fondazione visitata 
+ConfirmDeleteTrip		=Sei sicuro di voler eliminare questo viaggio? 
+DeleteTrip			=Elimina viaggio 
+ExpensesArea			=Area viaggi e spese
+FeesKilometersOrAmout		=Tariffa kilometrica o importo
+Kilometers			=kilometri
+ListOfFees			=Elenco delle tariffe
+ListOfTrips			=Elenco dei viaggi
+ListTripsAndExpenses		=Elenco dei viaggi e delle spese
+NewTrip				=Nuovo viaggio 
+SearchATripAndExpense		=Cerca un viaggio e le spese
+TF_LUNCH			=Pranzo 
+TF_OTHER			=Altro 
+TF_TRIP				=Viaggio
+TripCard			=Scheda viaggio 
+TripsAndExpensesStatistics	=Statistiche viaggi e spese
+TripsAndExpenses		=Viaggi e spese 
+Trips				=Viaggi 
+Trip				=Viaggio 

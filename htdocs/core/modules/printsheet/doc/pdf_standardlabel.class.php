@@ -260,13 +260,14 @@ class pdf_standardlabel
 	/**
 	 * Print dot line
 	 *
-	 * @param PDF	&$pdf				PDF
-	 * @param int	$x1					X1
-	 * @param int	$y1					Y1
-	 * @param int	$x2					X2
-	 * @param int	$y2					Y2
-	 * @param int	$epaisseur			Epaisseur
-	 * @param int	$nbPointilles		Nb pointilles
+	 * @param	PDF		&$pdf				PDF
+	 * @param 	int		$x1					X1
+	 * @param 	int		$y1					Y1
+	 * @param 	int		$x2					X2
+	 * @param 	int		$y2					Y2
+	 * @param 	int		$epaisseur			Epaisseur
+	 * @param 	int		$nbPointilles		Nb pointilles
+	 * @return	void
 	 */
 	function _Pointille(&$pdf,$x1=0,$y1=0,$x2=210,$y2=297,$epaisseur=1,$nbPointilles=15)
 	{

@@ -85,8 +85,19 @@ if ($id > 0 || ! empty($ref))
         print '<table class="border" width="100%">';
         $rowspan=3;
 
-        // Reference
+        // Ref
         print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="5">'.$object->ref.'</td></tr>';
+
+        // Ref customer
+        print '<tr><td width="20%">';
+        print '<table class="nobordernopadding" width="100%"><tr><td>';
+        print $langs->trans('RefCustomer');
+        print '</td>';
+        print '</tr></table>';
+        print '</td>';
+        print '<td colspan="5">';
+        print $object->ref_client;
+        print '</td></tr>';
 
         // Societe
         print '<tr><td>'.$langs->trans("Company").'</td>';

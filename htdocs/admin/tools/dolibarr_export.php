@@ -341,13 +341,13 @@ echo $file;
 
 // Define compressions array
 $compression=array(
-	'none' => array('function' => '',         'id' => 'radio_compression_none', 'label' => $langs->trans("None")),
-//	'zip'  => array('function' => 'zip_open', 'id' => 'radio_compression_zip',  'label' => $langs->trans("Zip")),		Not open source
-	'gz'   => array('function' => 'gzopen',   'id' => 'radio_compression_gzip', 'label' => $langs->trans("Gzip")),
+	'none' => array('function' => '',       'id' => 'radio_compression_none', 'label' => $langs->trans("None")),
+	'gz'   => array('function' => 'gzopen', 'id' => 'radio_compression_gzip', 'label' => $langs->trans("Gzip")),
 );
 if ($label == 'MySQL')
 {
-	$compression['bz']=array('function' => 'bzopen',  'id' => 'radio_compression_bzip', 'label' => $langs->trans("Bzip2"));
+//	$compression['zip']= array('function' => 'dol_compress', 'id' => 'radio_compression_zip',  'label' => $langs->trans("FormatZip"));		// Not open source format. Must implement dol_compress function
+    $compression['bz'] = array('function' => 'bzopen',       'id' => 'radio_compression_bzip', 'label' => $langs->trans("Bzip2"));
 }
 
 

@@ -1,48 +1,31 @@
 # Dolibarr language file - it_IT - deliveries
-CHARSET=UTF-8
-Delivery=Consegna
-Deliveries=Consegne
-DeliveryCard=Scheda consegna
-DeliveryOrder=Ordine di consegna
-DeliveryOrders=Ordini di consegna
-DeliveryDate=Data di consegna
-CreateDeliveryOrder=Genera ordine di consegna
-SetDeliveryDate=Imposta la data di spedizione
-ValidateDeliveryReceipt=Convalida la ricevuta di consegna
-ValidateDeliveryReceiptConfirm=Sei sicuro di voler convalidare questa ricevuta di consegna?
-
-# merou PDF model						   
-NameAndSignature				=Nome e firma : 
-ToAndDate 						=A___________________________________ il ____/_____/__________
-GoodStatusDeclaration 			=Dichiaro di aver ricevuto le merci di cui sopra in buone condizioni,
-Deliverer						=Chi consegna : 
-Date 							=Data : 
-Sender							=Mittente
-Recipient						=Destinatario
-ICOMM							=N° Part. IVA : 
-APE								=Iscr. trib. : 
-SIRET							=R.E.A. : 
-
-// Date 2009-01-18 19:41:54
-// START - Lines generated via parser
-// Reference language: en_US
-DeliveryDateShort=Data consegna
-QtyDelivered=Quantità consegnata
-DeliveryMethod=Metodo di consegna
-TrackingNumber=Numero di tracking
-// Date 2009-01-18 19:41:54
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-CHARSET=UTF-8
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
+# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
 // Reference language: en_US -> it_IT
-DeleteDeliveryReceipt=Eliminare ricevuta di consegna
-DeleteDeliveryReceiptConfirm=Sei sicuro di voler cancellare <b>%s</b> ricevuta di consegna?
-DeliveryNotValidated=Consegna non convalidato
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:21).
+CHARSET							=UTF-8
+APE							=Iscr. trib.: 
+CreateDeliveryOrder					=Genera ordine di consegna
+Date 							=Data: 
+DeleteDeliveryReceiptConfirm				=Sei sicuro di voler cancellare la ricevuta di consegna <b>%s</b>?
+DeleteDeliveryReceipt					=Eliminare ricevuta di consegna
+Deliverer						=Chi consegna: 
+Deliveries						=Consegne
+DeliveryCard						=Scheda consegna
+Delivery						=Consegna
+DeliveryDate						=Data di consegna
+DeliveryDateShort					=Data consegna
+DeliveryMethod						=Metodo di consegna
+DeliveryNotValidated					=Consegna non convalidata
+DeliveryOrder						=Ordine di consegna
+DeliveryOrders						=Ordini di consegna
+GoodStatusDeclaration 					=Dichiaro di aver ricevuto le merci di cui sopra in buone condizioni,
+ICOMM							=N° P. IVA : 
+NameAndSignature					=Nome e firma: 
+QtyDelivered						=Quantità consegnata
+Recipient						=Destinatario
+Sender							=Mittente
+SetDeliveryDate						=Imposta la data di spedizione
+SIRET							=R.E.A.: 
+ToAndDate 						=A___________________________________ il ____/_____/__________
+TrackingNumber						=Numero di tracking
+ValidateDeliveryReceiptConfirm				=Vuoi davvero convalidare questa ricevuta di consegna?
+ValidateDeliveryReceipt					=Convalida la ricevuta di consegna

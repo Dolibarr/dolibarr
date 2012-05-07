@@ -7,7 +7,7 @@
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
-**
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -1112,7 +1112,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
         unset($_POST['qty']);
         unset($_POST['type']);
         unset($_POST['idprod']);
-        unset($_POST['remmise_percent']);
+        unset($_POST['remise_percent']);
         unset($_POST['dp_desc']);
         unset($_POST['np_desc']);
         unset($_POST['np_price']);
@@ -2309,6 +2309,30 @@ else
             print $form->showrefnav($object,'ref','',1,'facnumber','ref',$morehtmlref);
             print '</td></tr>';
 
+    		// Ref customer
+            print '<tr><td width="20%">';
+            print '<table class="nobordernopadding" width="100%"><tr><td>';
+            print $langs->trans('RefCustomer');
+            print '</td>';
+            if ($action != 'refclient' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+            print '</tr></table>';
+            print '</td>';
+            print '<td colspan="5">';
+           	if ($user->rights->facture->creer && $action == 'refclient')
+			{
+				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="action" value="set_ref_client">';
+				print '<input type="text" class="flat" size="20" name="ref_client" value="'.$object->ref_client.'">';
+				print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+				print '</form>';
+			}
+			else
+			{
+				print $object->ref_client;
+			}
+			print '</td></tr>';
+
             // Third party
             print '<tr><td>';
             print '<table class="nobordernopadding" width="100%">';
@@ -3231,6 +3255,7 @@ else
         $pageprev = $page - 1;
         $pagenext = $page + 1;
 
+        $search_user = GETPOST('search_user','int');
         $day	= GETPOST('day','int');
         $month	= GETPOST('month','int');
         $year	= GETPOST('year','int');
@@ -3249,6 +3274,11 @@ else
         $sql.= ', '.MAIN_DB_PREFIX.'facture as f';
         if (! $sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
         else $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as fd ON fd.fk_facture = f.rowid';
+        if ($search_user > 0)
+        {
+            $sql.=", ".MAIN_DB_PREFIX."element_contact as ec";
+            $sql.=", ".MAIN_DB_PREFIX."c_type_contact as tc";
+        }
         $sql.= ' WHERE f.fk_soc = s.rowid';
         $sql.= " AND f.entity = ".$conf->entity;
         if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -3296,6 +3326,10 @@ else
         {
             $sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
         }
+        if ($search_user > 0)
+        {
+            $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='propal' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".$search_user;
+        }
         if (! $sall)
         {
             $sql.= ' GROUP BY f.rowid, f.facnumber, f.type, f.increment, f.total, f.total_ttc,';
@@ -3325,19 +3359,38 @@ else
                 $soc->fetch($socid);
             }
 
-            $param='&amp;socid='.$socid;
-            if ($month) $param.='&amp;month='.$month;
-            if ($year)  $param.='&amp;year=' .$year;
-
-            print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->nom:''),$page,'facture.php',$param,$sortfield,$sortorder,'',$num);
+            $param='&socid='.$socid;
+            if ($month) $param.='&month='.$month;
+            if ($year)  $param.='&year=' .$year;
+            if ($search_ref)      $param.='&search_ref=' .$search_ref;
+            if ($search_societe)  $param.='&search_societe=' .$search_societe;
+            if ($search_user > 0) $param.='&search_user=' .$search_user;
+            if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
+            if ($search_montant_ttc) $param.='&search_montant_ttc='.$search_montant_ttc;
+            print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->nom:''),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
 
             $i = 0;
-            print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+            print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
             print '<table class="liste" width="100%">';
+
+            // If the user can view prospects other than his'
+            if ($user->rights->societe->client->voir || $socid)
+            {
+                $moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
+                $moreforfilter.=$form->select_dolusers($search_user,'search_user',1);
+            }
+            if ($moreforfilter)
+            {
+                print '<tr class="liste_titre">';
+                print '<td class="liste_titre" colspan="9">';
+                print $moreforfilter;
+                print '</td></tr>';
+            }
+
             print '<tr class="liste_titre">';
             print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','',$param,'',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'f.datef','',$param,'align="center"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("DateDue"),$_SERVER['PHP_SELF'],"f.date_lim_reglement","&amp;socid=$socid","",'align="center"',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("DateDue"),$_SERVER['PHP_SELF'],"f.date_lim_reglement",'',$param,'align="center"',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans('Company'),$_SERVER['PHP_SELF'],'s.nom','',$param,'',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans('AmountHT'),$_SERVER['PHP_SELF'],'f.total','',$param,'align="right"',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans('AmountTTC'),$_SERVER['PHP_SELF'],'f.total_ttc','',$param,'align="right"',$sortfield,$sortorder);
