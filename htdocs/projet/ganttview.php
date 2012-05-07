@@ -185,7 +185,7 @@ if (count($tasksarray)>0)
 		$tasks[$taskcursor]['task_milestone']=0;
 		$tasks[$taskcursor]['task_percent_complete']=$val->progress;
 		//$tasks[$taskcursor]['task_name']=$task->getNomUrl(1);
-		$tasks[$taskcursor]['task_name']=dol_escape_js($val->label);
+		$tasks[$taskcursor]['task_name']=$val->label;
 		$tasks[$taskcursor]['task_start_date']=$val->date_start;
 		$tasks[$taskcursor]['task_end_date']=$val->date_end;
 		$tasks[$taskcursor]['task_color']='b4d1ea';
