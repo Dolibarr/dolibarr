@@ -255,7 +255,7 @@ if ($type == 'directory')
 
 }
 
-if ((! isset($mode) || $mode != 'noajax') && ! empty($conf->global->MAIN_ECM_TRY_JS))
+if ((! isset($mode) || $mode != 'noajax') && empty($conf->global->MAIN_ECM_DISABLE_JS))
 {
     // Enable jquery handlers on new generated HTML objects
     print "\n".'<script type="text/javascript">'."\n";

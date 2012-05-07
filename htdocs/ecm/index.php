@@ -303,7 +303,7 @@ if ($action == 'refreshmanual')
 //print "xx".$_SESSION["dol_screenheight"];
 $maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 500)?($_SESSION["dol_screenheight"]-166):660;
 $morejs=array();
-if (! empty($conf->global->MAIN_ECM_TRY_JS)) $morejs=array("/filemanager/includes/jqueryFileTree/jqueryFileTree.js");    // TODO Move lib into includes
+if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $morejs=array("/filemanager/includes/jqueryFileTree/jqueryFileTree.js");    // TODO Move lib into includes
 $moreheadcss="
 <!-- dol_screenheight=".$_SESSION["dol_screenheight"]." -->
 <style type=\"text/css\">
@@ -586,7 +586,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	print '</td>';
 	print '</tr>';
 
-    if (! empty($conf->global->MAIN_ECM_TRY_JS))
+    if (empty($conf->global->MAIN_ECM_DISABLE_JS))
     {
         print '<tr><td colspan="6" style="padding-left: 20px">';
 
@@ -851,11 +851,8 @@ else
 // Start right panel
 
 
-//if (empty($conf->global->MAIN_ECM_TRY_JS))
-//{
-    $mode='noajax';
-    include_once(DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php');
-//}
+$mode='noajax';
+include_once(DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php');
 
 
 // End right panel
@@ -877,7 +874,7 @@ else
 
 
 // To attach new file
-if (! empty($conf->global->MAIN_ECM_TRY_JS) || ! empty($section))
+if (empty($conf->global->MAIN_ECM_DISABLE_JS) || ! empty($section))
 {
     $formfile=new FormFile($db);
 	$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/index.php', 'none', 0, ($section?$section:-1), $user->rights->ecm->upload, 48);

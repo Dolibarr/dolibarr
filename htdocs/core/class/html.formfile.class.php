@@ -608,7 +608,7 @@ class FormFile
                 // Delete or view link
                 print '<td align="right">';
                 if ($useinecm)     print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view().'</a> &nbsp; ';
-                if ($permtodelete) print '<a href="'.(($useinecm && ! empty($conf->global->MAIN_ECM_TRY_JS))?'#':$url.'?id='.$object->id.'&action=delete&urlfile='.urlencode($file['name']).$param).'" class="deletefilelink" rel="'.urlencode($file['name']).'">'.img_delete().'</a>';
+                if ($permtodelete) print '<a href="'.(($useinecm && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?id='.$object->id.'&action=delete&urlfile='.urlencode($file['name']).$param).'" class="deletefilelink" rel="'.urlencode($file['name']).'">'.img_delete().'</a>';
                 else print '&nbsp;';
                 print "</td>";
                 print "</tr>\n";
