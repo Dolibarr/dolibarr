@@ -2254,7 +2254,10 @@ class Form
 			             	if ($inputarray.length>0) {
 			             		$.each($inputarray, function() {
 			             			var inputname = this;
-			             			var inputvalue = $("#" + this).val();
+			             			var more = \'\';
+			             			if ($("#" + this).attr("type") == \'checkbox\') { more = \':checked\'; }
+			             			var inputvalue = $("#" + this + more).val();
+			             			if (typeof inputvalue == \'undefined\') { inputvalue=\'\'; }
 			             			options += \'&\' + inputname + \'=\' + inputvalue;
 			             		});
 			             		//alert(options);
