@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
 
 $id=GETPOST('id','int');
-$ref=GETPOST('ref');
+$ref=GETPOST('ref','alpha');
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
@@ -228,7 +228,8 @@ if (count($tasksarray)>0)
 
 	if (! empty($conf->use_javascript_ajax))
 	{
-		print '<div id="tabs" style="border: 1px solid #ACACAC;">'."\n";
+	    //var_dump($_SESSION);
+		print '<div id="tabs" class="ganttcontainer" style="border: 1px solid #ACACAC;">'."\n";
 		include_once(DOL_DOCUMENT_ROOT.'/projet/ganttchart.php');
 		print '</div>'."\n";
 	}

@@ -957,7 +957,7 @@ class Task extends CommonObject
 
 		$now=dol_now();
 
-		$datec = dol_mktime(0,0,0,idate('m',$now),idate('d',$now),idate('Y',$now));
+		$datec = $now;
 
 		$clone_task=new Task($this->db);
 
@@ -980,41 +980,18 @@ class Task extends CommonObject
         	$projectstatic->fetch($ori_project_id);
 
         	//Origin project strat date
-        	$orign_project_dt_start = new DateTime();
-	    	$orign_project_dt_start->setTimestamp($projectstatic->date_start);
+	    	$orign_project_dt_start = $projectstatic->date_start;
 
 	    	//Calcultate new task start date with difference between origin proj start date and origin task start date
 	    	if (!empty($clone_task->date_start))
 	    	{
-		    	$orign_task_datetime_start = new DateTime();
-	    		$orign_task_datetime_start->setTimestamp($clone_task->date_start);
-	    		$orign_task_datetime_start->setTime(0,0,0); //Use 00:00:00 as hour to be sure to not have side effect
-				$diff_dt_st = $orign_project_dt_start->diff($orign_task_datetime_start);
-
-				//cloned project start date
-        		$datetime_start = new DateTime();
-        		$datetime_start->setTimestamp($now);
-
-        		//New task start date
-				$datetime_start->add($diff_dt_st);
-				$clone_task->date_start			= $datetime_start->getTimestamp();
+				$clone_task->date_start			= $now + $clone_task->date_start - $orign_project_dt_start;
 	    	}
 
 	    	//Calcultate new task end date with difference between origin proj end date and origin task end date
 	    	if (!empty($clone_task->date_end))
 	    	{
-        		$orign_task_datetime_end = new DateTime();
-	    		$orign_task_datetime_end->setTimestamp($clone_task->date_end);
-	    		$orign_task_datetime_end->setTime(0,0,0); //Use 00:00:00 as hour to be sure to not have side effect
-				$diff_dt_end = $orign_project_dt_start->diff($orign_task_datetime_end);
-
-				//cloned project start date
-        		$datetime_end = new DateTime();
-        		$datetime_end->setTimestamp($now);
-
-        		//New task start date
-				$datetime_end->add($diff_dt_end);
-				$clone_task->date_end			= $datetime_end->getTimestamp();
+				$clone_task->date_end			= $now + $clone_task->date_end - $orign_project_dt_start;
 	    	}
 
         }
