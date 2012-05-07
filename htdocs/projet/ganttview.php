@@ -228,7 +228,8 @@ if (count($tasksarray)>0)
 
 	if (! empty($conf->use_javascript_ajax))
 	{
-		print '<div id="tabs" style="border: 1px solid #ACACAC;">'."\n";
+	    //var_dump($_SESSION);
+		print '<div id="tabs" class="ganttcontainer" style="border: 1px solid #ACACAC;">'."\n";
 		include_once(DOL_DOCUMENT_ROOT.'/projet/ganttchart.php');
 		print '</div>'."\n";
 	}
