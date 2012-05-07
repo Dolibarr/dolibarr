@@ -214,9 +214,9 @@ textarea:disabled {
     -moz-border-radius:0px 5px 0px 5px;
 	-webkit-border-radius:0px 5px 0px 5px;
 	border-radius:0px 5px 0px 5px;
-    -moz-box-shadow: 4px 4px 4px #CCC;
-    -webkit-box-shadow: 4px 4px 4px #CCC;
-    box-shadow: 4px 4px 4px #CCC;
+    -moz-box-shadow: 2px 2px 3px #CCC;
+    -webkit-box-shadow: 2px 2px 3px #CCC;
+    box-shadow: 2px 2px 3px #CCC;
 }
 .button:focus  {
     font-family: <?php print $fontlist ?>;
@@ -1234,9 +1234,9 @@ span.tabspan {
     -moz-border-radius:0px 5px 0px 5px;
 	-webkit-border-radius:0px 5px 0px 5px;
 	border-radius:0px 5px 0px 5px;
-    -moz-box-shadow: 4px 4px 4px #CCC;
-    -webkit-box-shadow: 4px 4px 4px #CCC;
-    box-shadow: 4px 4px 4px #CCC;
+    -moz-box-shadow: 2px 2px 3px #CCC;
+    -webkit-box-shadow: 2px 2px 3px #CCC;
+    box-shadow: 2px 2px 3px #CCC;
 }
 
 .butAction:hover   {
