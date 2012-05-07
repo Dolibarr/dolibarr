@@ -75,7 +75,7 @@
 
 <?php if ($conf->service->enabled && $dateSelector) { ?>
 <tr <?php echo $bcnd[$var]; ?>>
-	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="10"' : ' colspan="9s"'); ?>>
+	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="10"' : ' colspan="9"'); ?>>
 	<?php
 	echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
 	echo $form->select_date('','date_start',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addproduct");
