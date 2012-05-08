@@ -518,6 +518,7 @@ function print_start_menu_array()
  * Output start menu entry
  *
  * @param	string	$idsel		Text
+ * @param	string	$classname	String to add a css class
  * @return	void
  */
 function print_start_menu_entry($idsel,$classname)
