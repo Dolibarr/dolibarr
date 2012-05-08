@@ -163,6 +163,13 @@ if (($_GET["id"] || $_GET["ref"]) && $action != 'edit')
 
 	if ($account->type == 0 || $account->type == 1)
 	{
+	    // Country
+	    print '<tr><td valign="top">'.$langs->trans("BankAccountCountry").'</td><td colspan="3">';
+	    $img=picto_from_langcode($account->country_code);
+	    print $img?$img.' ':'';
+	    print getCountry($account->getCountryCode(),0,$db);
+	    print "</td></tr>\n";
+
 		print '<tr><td valign="top">'.$langs->trans("BankName").'</td>';
 		print '<td colspan="3">'.$account->bank.'</td></tr>';
 
@@ -207,13 +214,6 @@ if (($_GET["id"] || $_GET["ref"]) && $action != 'edit')
 
 		print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
 		print nl2br($account->domiciliation);
-		print "</td></tr>\n";
-
-		// Country
-		print '<tr><td valign="top">'.$langs->trans("BankAccountCountry").'</td><td colspan="3">';
-		$img=picto_from_langcode($account->country_code);
-		print $img?$img.' ':'';
-		print getCountry($account->getCountryCode(),0,$db);
 		print "</td></tr>\n";
 
 		print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td><td colspan="3">';
