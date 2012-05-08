@@ -1790,6 +1790,7 @@ class Product extends CommonObject
 				$sql.= ", ref_fourn";
 				$sql.= ", quantity";
 				$sql.= ", fk_user";
+				$sql.= ", tva_tx";
 				$sql.= ") VALUES (";
 				$sql.= "'".$this->db->idate($now)."'";
 				$sql.= ", ".$conf->entity;
@@ -1798,6 +1799,7 @@ class Product extends CommonObject
 				$sql.= ", '".$ref_fourn."'";
 				$sql.= ", ".$quantity;
 				$sql.= ", ".$user->id;
+				$sql.= ", 0";
 				$sql.= ")";
 
 				dol_syslog(get_class($this)."add_fournisseur sql=".$sql);
