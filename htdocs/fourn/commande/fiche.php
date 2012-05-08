@@ -156,7 +156,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
             $qty = $_POST['qty'] ? $_POST['qty'] : $_POST['pqty'];
 
             $productsupplier = new ProductFournisseur($db);
-            $idprod=$productsupplier->get_buyprice($_POST['idprodfournprice'], $qty);
+            $idprod=$productsupplier->get_buyprice($_POST['idprodfournprice'], $qty);    // Just to see if a price exists for the quantity. Not used to found vat
 
             if ($idprod > 0)
             {
@@ -172,7 +172,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 
                 $remise_percent = $_POST["remise_percent"] ? $_POST["remise_percent"] : $_POST["p_remise_percent"];
 
-                $tva_tx	= get_default_tva($object->thirdparty,$mysoc,$productsupplier->id);
+                $tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, $_POST['idprodfournprice']);
                 $type = $productsupplier->type;
 
                 // Local Taxes
