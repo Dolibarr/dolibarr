@@ -26,10 +26,13 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 
 $langs->load("admin");
 $langs->load("users");
 $langs->load("other");
+
+$action=GETPOST('action');
 
 if (!$user->admin) accessforbidden();
 
@@ -38,7 +41,7 @@ if (!$user->admin) accessforbidden();
  * Actions
  */
 
-if ($_GET["action"] == 'add')
+if ($action == 'add')
 {
     $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=1";
     $sql.= " WHERE id = ".$_GET["pid"];
@@ -46,7 +49,7 @@ if ($_GET["action"] == 'add')
     $db->query($sql);
 }
 
-if ($_GET["action"] == 'remove')
+if ($action == 'remove')
 {
     $sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=0";
     $sql.= " WHERE id = ".$_GET["pid"];
@@ -79,37 +82,13 @@ $db->begin();
 
 // Charge les modules soumis a permissions
 $modules = array();
-$modulesdir = array();
-
-foreach ($conf->file->dol_document_root as $type => $dirroot)
-{
-    $modulesdir[] = $dirroot . "/core/modules/";
-
-    if ($type == 'alt')
-    {
-        $handle=@opendir($dirroot);
-        if (is_resource($handle))
-        {
-            while (($file = readdir($handle))!==false)
-            {
-                if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-                {
-                    if (is_dir($dirroot . '/' . $file . '/core/modules/'))
-                    {
-                        $modulesdir[] = $dirroot . '/' . $file . '/core/modules/';
-                    }
-                }
-            }
-            closedir($handle);
-        }
-    }
-}
+$modulesdir = dolGetModulesDirs();
 
 foreach ($modulesdir as $dir)
 {
     // Load modules attributes in arrays (name, numero, orders) from dir directory
     //print $dir."\n<br>";
-    $handle=@opendir($dir);
+    $handle=@opendir(dol_osencode($dir));
     if (is_resource($handle))
     {
         while (($file = readdir($handle))!==false)
@@ -162,7 +141,7 @@ if ($result)
     $i		= 0;
     $var	= True;
     $oldmod	= "";
-    
+
     while ($i < $num)
     {
         $obj = $db->fetch_object($result);
@@ -179,16 +158,16 @@ if ($result)
         foreach($modules[$obj->module]->rights as $key => $val)
         {
         	$rights_class=$objMod->rights_class;
-        	if ($val[4] == $obj->perms && (empty($val[5]) || $val[5] == $obj->subperms)) 
+        	if ($val[4] == $obj->perms && (empty($val[5]) || $val[5] == $obj->subperms))
         	{
         		$found=true;
         		break;
         	}
         }
-		if (! $found) 
+		if (! $found)
 		{
 			$i++;
-			continue;	
+			continue;
 		}
 
         // Break found, it's a new module to catch

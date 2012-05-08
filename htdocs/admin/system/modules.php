@@ -23,13 +23,13 @@
  */
 
 require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 
 $langs->load("admin");
 $langs->load("install");
 $langs->load("other");
 
-if (!$user->admin)
-accessforbidden();
+if (!$user->admin) accessforbidden();
 
 
 /*
@@ -46,36 +46,12 @@ print "<br>\n";
 $modules = array();
 $modules_names = array();
 $modules_files = array();
-
-// Search modules dirs
-$modulesdir = array();
-foreach ($conf->file->dol_document_root as $type => $dirroot)
-{
-    $modulesdir[$dirroot . '/core/modules/'] = $dirroot . '/core/modules/';
-
-    $handle=@opendir($dirroot);
-    if (is_resource($handle))
-    {
-        while (($file = readdir($handle))!==false)
-        {
-            if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-            {
-                if (is_dir($dirroot . '/' . $file . '/core/modules/'))
-                {
-                    $modulesdir[$dirroot . '/' . $file . '/core/modules/'] = $dirroot . '/' . $file . '/core/modules/';
-                }
-            }
-        }
-        closedir($handle);
-    }
-}
-//var_dump($modulesdir);
-
+$modulesdir = dolGetModulesDirs();
 
 // Load list of modules
 foreach($modulesdir as $dir)
 {
-	$handle=@opendir($dir);
+	$handle=@opendir(dol_osencode($dir));
     if (is_resource($handle))
     {
     	while (($file = readdir($handle))!==false)
