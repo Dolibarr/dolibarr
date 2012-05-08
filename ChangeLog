@@ -11,6 +11,8 @@ For users:
 - New: Monaco is like France for default vat calculation
 - New: Can list elements (invoices, orders or proposals on a particular
   user contact). This allow to view a "basket" of its elements.
+- New: Add bank account on payment list of invoice card.
+- New: Cloning project allow to clones task, notes, files, contacts. 
 - New: Enhance default style.
 
 For developers:
