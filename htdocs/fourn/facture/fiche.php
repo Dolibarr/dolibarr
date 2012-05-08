@@ -459,7 +459,7 @@ elseif ($action == 'addline')
     if ($_POST['idprodfournprice'])	// > 0 or -1
     {
         $product=new Product($db);
-        $idprod=$product->get_buyprice($_POST['idprodfournprice'], $_POST['qty']);
+        $idprod=$product->get_buyprice($_POST['idprodfournprice'], $_POST['qty']);    // Just to see if a price exists for the quantity. Not used to found vat
 
         if ($idprod > 0)
         {
@@ -469,7 +469,7 @@ elseif ($action == 'addline')
             // $label = '['.$product->ref.'] - '. $product->libelle;
             $label = $product->description;
 
-            $tvatx=get_default_tva($object->thirdparty,$mysoc,$product->id);
+            $tvatx=get_default_tva($object->thirdparty, $mysoc, $product->id, $_POST['idprodfournprice']);
 
             $localtax1tx= get_localtax($tvatx, 1, $mysoc);
             $localtax2tx= get_localtax($tvatx, 2, $mysoc);
