@@ -205,7 +205,8 @@ elseif($action == 'deletepaiement')
     {
         $paiementfourn = new PaiementFourn($db);
         $paiementfourn->fetch($_GET['paiement_id']);
-        $paiementfourn->delete();
+        $result=$paiementfourn->delete();
+        if ($result < 0) $mesg='<div class="error">'.$paiementfourn->error.'</div>';
     }
 }
 
