@@ -1477,7 +1477,7 @@ table.noborder tr {
 	border-left-width: 1px;
 	border-left-color: #BBBBBB;
 	border-left-style: solid;
-	height: 18px;
+	height: 20px;
 }
 
 table.noborder th, table.noborder td {
