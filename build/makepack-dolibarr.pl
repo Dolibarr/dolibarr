@@ -166,7 +166,7 @@ $atleastonerpm=0;
 foreach my $target (keys %CHOOSEDTARGET) {
 	if ($target =~ /RPM/i)
 	{
-		if ($atleastonerpm && ! $ENV{"DESTI"})
+		if ($atleastonerpm && ($DESTI eq "$SOURCE/build"))
 		{
 			print "Error: You asked creation of several rpms. Because all rpm have same name, you must defined an environment variable DESTI to tell packager where it can create subdirs for each generated package.\n";
 			exit;
