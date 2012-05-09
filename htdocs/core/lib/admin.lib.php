@@ -1105,7 +1105,7 @@ function form_constantes($tableau)
                 }
                 else
                 {
-                    print '<input type="text" class="flat" size="48" name="constvalue" value="'.$obj->value.'">';
+                    print '<input type="text" class="flat" size="48" name="constvalue" value="'.dol_escape_htmltag($obj->value).'">';
                     print '</td><td>';
                     print '<input type="hidden" name="consttype" value="chaine">';
                 }
