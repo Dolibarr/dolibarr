@@ -1506,7 +1506,7 @@ if ($rowid && $action != 'edit')
 		}
 
 	    // Action SPIP
-	    if ($conf->global->ADHERENT_USE_SPIP)
+	    if ($conf->mailmanspip->enabled && $conf->global->ADHERENT_USE_SPIP)
 	    {
 	        $isinspip=$object->is_in_spip();
 	        if ($isinspip == 1)
