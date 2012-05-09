@@ -31,16 +31,6 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
 $langs->load("members");
 $langs->load("companies");
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
-if ($page == -1) { $page = 0 ; }
-$offset = $conf->liste_limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-if (! $sortorder) {  $sortorder="ASC"; }
-if (! $sortfield) {  $sortfield="d.nom"; }
-
 $action=GETPOST("action");
 $filter=GETPOST("filter");
 $statut=GETPOST("statut");
@@ -53,6 +43,16 @@ $type=GETPOST("type");
 $search_email=GETPOST("search_email");
 $search_categ=GETPOST("search_categ");
 $sall=GETPOST("sall");
+
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $conf->liste_limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (! $sortorder) { $sortorder=($filter=='outofdate'?"ASC":"DESC"); }
+if (! $sortfield) { $sortfield=($filter=='outofdate'?"d.datefin":"d.nom"); }
 
 if (GETPOST("button_removefilter"))
 {
@@ -333,12 +333,16 @@ if ($resql)
 		print '<td align="center">';
 		if ($user->rights->adherent->creer)
 		{
-			print "<a href=\"fiche.php?rowid=$objp->rowid&action=edit&return=liste.php\">".img_edit()."</a>";
+			print "<a href=\"fiche.php?rowid=".$objp->rowid."&action=edit&backtopage=1\">".img_edit()."</a>";
 		}
 		print '&nbsp;';
-		if ($user->rights->adherent->supprimer)
+		if ($user->rights->adherent->supprimer && $objp->statut == -1)
 		{
-			print "<a href=\"fiche.php?rowid=$objp->rowid&action=resign&return=liste.php\">".img_picto($langs->trans("Resiliate"),'disable.png')."</a>";
+			print "<a href=\"fiche.php?rowid=".$objp->rowid."&action=delete&backtopage=1\">".img_picto($langs->trans("Delete"),'disable.png')."</a>";
+		}
+		if ($user->rights->adherent->supprimer && $objp->statut == 1)
+		{
+			print "<a href=\"fiche.php?rowid=".$objp->rowid."&action=resign&backtopage=1\">".img_picto($langs->trans("Resiliate"),'disable.png')."</a>";
 		}
 		print "</td>";
 

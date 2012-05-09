@@ -14,6 +14,7 @@ For users:
 - New: Add bank account on payment list of invoice card.
 - New: Cloning project allow to clones task, notes, files, contacts. 
 - New: Enhance default style.
+- New: Can edit and resiliate member status from list.
 
 For developers:
 - New: A module can overwrite templates parts.
