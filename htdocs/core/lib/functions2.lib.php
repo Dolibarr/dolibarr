@@ -28,9 +28,10 @@
 /**
  * Return list of modules directories
  *
- * @return		array		Array of directories that can contains module descriptors
+ * @param	string	$subdir		Sub directory (Example: '/mailings')
+ * @return	array				Array of directories that can contains module descriptors
  */
-function dolGetModulesDirs()
+function dolGetModulesDirs($subdir='')
 {
     global $conf;
 
@@ -39,7 +40,7 @@ function dolGetModulesDirs()
     foreach ($conf->file->dol_document_root as $type => $dirroot)
     {
         // Default core/modules dir
-        $modulesdir[$dirroot . '/core/modules/'] = $dirroot . '/core/modules/';
+        $modulesdir[$dirroot . '/core/modules'.$subdir.'/'] = $dirroot . '/core/modules'.$subdir.'/';
 
         // Scan dir from external modules
         $handle=@opendir($dirroot);
@@ -49,9 +50,9 @@ function dolGetModulesDirs()
             {
                 if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
                 {
-                    if (is_dir($dirroot . '/' . $file . '/core/modules/'))
+                    if (is_dir($dirroot . '/' . $file . '/core/modules'.$subdir.'/'))
                     {
-                        $modulesdir[$dirroot . '/' . $file . '/core/modules/'] = $dirroot . '/' . $file . '/core/modules/';
+                        $modulesdir[$dirroot . '/' . $file . '/core/modules'.$subdir.'/'] = $dirroot . '/' . $file . '/core/modules'.$subdir.'/';
                     }
                 }
             }

@@ -24,6 +24,7 @@
  */
 
 require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/core/modules/mailings/modules_mailings.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/emailing.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
@@ -54,30 +55,8 @@ $search_prenom=GETPOST("search_prenom");
 $search_email=GETPOST("search_email");
 
 // Search modules dirs
-$modulesdir = array();
-foreach ($conf->file->dol_document_root as $type => $dirroot)
-{
-    $modulesdir[$dirroot . '/core/modules/mailings/'] = $dirroot . '/core/modules/mailings/';
+$modulesdir = dolGetModulesDirs('/mailings');
 
-    $handle=@opendir($dirroot);
-    if (is_resource($handle))
-    {
-        while (($file = readdir($handle))!==false)
-        {
-            if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-            {
-                if (is_dir($dirroot . '/' . $file . '/core/modules/mailings/'))
-                {
-                    $modulesdir[$dirroot . '/' . $file . '/core/modules/mailings/'] = $dirroot . '/' . $file . '/core/modules/mailings/';
-                }
-            }
-        }
-        closedir($handle);
-    }
-}
-//var_dump($modulesdir);
-
-$dirmod=DOL_DOCUMENT_ROOT."/core/modules/mailings";
 
 
 /*
@@ -134,10 +113,7 @@ if ($action == 'add')
 if ($action == 'clear')
 {
 	// Chargement de la classe
-	$file = $dirmod."/modules_mailings.php";
 	$classname = "MailingTargets";
-	require_once($file);
-
 	$obj = new $classname($db);
 	$obj->clear_target($id);
 
@@ -152,10 +128,7 @@ if ($action == 'delete')
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		$file = $dirmod."/modules_mailings.php";
 		$classname = "MailingTargets";
-		require_once($file);
-
 		$obj = new $classname($db);
 		$obj->update_nb($id);
 	}
