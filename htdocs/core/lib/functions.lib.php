@@ -2683,9 +2683,8 @@ function get_localtax($tva, $local, $societe_acheteuse="")
 {
     global $db, $conf, $mysoc;
 
-    // TODO Can we uncomment this ?
-    //if ($local == 1 && empty($conf->global->FACTURE_LOCAL_TAX1_OPTION)) return;
-    //if ($local == 2 && empty($conf->global->FACTURE_LOCAL_TAX2_OPTION)) return;
+    if ($local == 1 && ! $mysoc->localtax1_assuj) return 0;
+    if ($local == 2 && ! $mysoc->localtax2_assuj) return 0;
 
     $code_pays=$mysoc->pays_code;
 
