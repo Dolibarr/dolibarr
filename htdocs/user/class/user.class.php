@@ -1448,7 +1448,7 @@ class User extends CommonObject
             '',
             0,
             $msgishtml
-		);
+        );
 
 		if ($mailfile->sendfile())
 		{

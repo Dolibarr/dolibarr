@@ -230,9 +230,9 @@ textarea:disabled {
     -moz-border-radius:0px 5px 0px 5px;
 	-webkit-border-radius:0px 5px 0px 5px;
 	border-radius:0px 5px 0px 5px;
-    -moz-box-shadow: 4px 4px 4px #CCC;
-    -webkit-box-shadow: 4px 4px 4px #CCC;
-    box-shadow: 4px 4px 4px #CCC;
+    -moz-box-shadow: 2px 2px 3px #CCC;
+    -webkit-box-shadow: 2px 2px 3px #CCC;
+    box-shadow: 2px 2px 3px #CCC;
 }
 .button:focus  {
     font-family: <?php print $fontlist ?>;
@@ -1327,9 +1327,9 @@ span.tabspan {
     -moz-border-radius:0px 5px 0px 5px;
 	-webkit-border-radius:0px 5px 0px 5px;
 	border-radius:0px 5px 0px 5px;
-    -moz-box-shadow: 4px 4px 4px #CCC;
-    -webkit-box-shadow: 4px 4px 4px #CCC;
-    box-shadow: 4px 4px 4px #CCC;
+    -moz-box-shadow: 2px 2px 3px #CCC;
+    -webkit-box-shadow: 2px 2px 3px #CCC;
+    box-shadow: 2px 2px 3px #CCC;
 }
 
 .butAction:hover   {
@@ -1477,7 +1477,7 @@ table.noborder tr {
 	border-left-width: 1px;
 	border-left-color: #BBBBBB;
 	border-left-style: solid;
-	height: 18px;
+	height: 20px;
 }
 
 table.noborder th, table.noborder td {
@@ -2382,7 +2382,7 @@ a.cke_dialog_ui_button
 /* ============================================================================== */
 
 div.scroll2 {
-	width: 582px !important;
+	width: <?php print isset($_SESSION['dol_screenwidth'])?max($_SESSION['dol_screenwidth']-830,450):'450'; ?>px !important;
 }
 
 

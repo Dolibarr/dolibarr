@@ -94,6 +94,7 @@ $hookmanager->initHooks(array('invoicecard'));
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
+
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->facture->creer)
 {
@@ -248,7 +249,6 @@ else if ($action == 'setmode' && $user->rights->facture->creer)
     $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
-
 else if ($action == 'setinvoicedate' && $user->rights->facture->creer)
 {
     $object->fetch($id);
@@ -257,7 +257,14 @@ else if ($action == 'setinvoicedate' && $user->rights->facture->creer)
     $result=$object->update($user);
     if ($result < 0) dol_print_error($db,$object->error);
 }
-
+else if ($action == 'setpaymentterm' && $user->rights->facture->creer)
+{
+    $object->fetch($id);
+    $object->date_lim_reglement=dol_mktime(12,0,0,$_POST['paymenttermmonth'],$_POST['paymenttermday'],$_POST['paymenttermyear']);
+    if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement=$object->date;
+    $result=$object->update($user);
+    if ($result < 0) dol_print_error($db,$object->error);
+}
 else if ($action == 'setconditions' && $user->rights->facture->creer)
 {
     $object->fetch($id);
@@ -1577,6 +1584,7 @@ llxHeader('',$langs->trans('Bill'),'EN:Customers_Invoices|FR:Factures_Clients|ES
 $form = new Form($db);
 $htmlother = new FormOther($db);
 $formfile = new FormFile($db);
+$bankaccountstatic=new Account($db);
 $now=dol_now();
 
 
@@ -2513,8 +2521,9 @@ else
              * List of payments
              */
 
-            $nbrows=8;
+            $nbrows=8; $nbcols=2;
             if ($conf->projet->enabled) $nbrows++;
+            if ($conf->banque->enabled) $nbcols++;
 
             //Local taxes
             if ($mysoc->pays_code=='ES')
@@ -2531,6 +2540,7 @@ else
             print '<tr class="liste_titre">';
             print '<td>'.($object->type == 2 ? $langs->trans("PaymentsBack") : $langs->trans('Payments')).'</td>';
             print '<td>'.$langs->trans('Type').'</td>';
+            if ($conf->banque->enabled) print '<td align="right">'.$langs->trans('BankAccount').'</td>';
             print '<td align="right">'.$langs->trans('Amount').'</td>';
             print '<td width="18">&nbsp;</td>';
             print '</tr>';
@@ -2538,12 +2548,15 @@ else
             $var=true;
 
             // Payments already done (from payment on this invoice)
-            $sql = 'SELECT p.datep as dp, p.num_paiement, p.rowid,';
+            $sql = 'SELECT p.datep as dp, p.num_paiement, p.rowid, p.fk_bank,';
             $sql.= ' c.code as payment_code, c.libelle as payment_label,';
-            $sql.= ' pf.amount';
-            $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement_facture as pf';
+            $sql.= ' pf.amount,';
+            $sql.= ' ba.rowid as baid, ba.ref, ba.label';
+            $sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'paiement as p';
+            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
+            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
             $sql.= ' WHERE pf.fk_facture = '.$object->id.' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
-            $sql.= ' ORDER BY dp, tms';
+            $sql.= ' ORDER BY p.datep, p.tms';
 
             $result = $db->query($sql);
             if ($result)
@@ -2553,19 +2566,35 @@ else
 
                 if ($object->type != 2)
                 {
-                    while ($i < $num)
+                    if ($num > 0)
                     {
-                        $objp = $db->fetch_object($result);
-                        $var=!$var;
-                        print '<tr '.$bc[$var].'><td>';
-                        print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' ';
-                        print dol_print_date($db->jdate($objp->dp),'day').'</a></td>';
-                        $label=($langs->trans("PaymentType".$objp->payment_code)!=("PaymentType".$objp->payment_code))?$langs->trans("PaymentType".$objp->payment_code):$objp->payment_label;
-                        print '<td>'.$label.' '.$objp->num_paiement.'</td>';
-                        print '<td align="right">'.price($objp->amount).'</td>';
-                        print '<td>&nbsp;</td>';
-                        print '</tr>';
-                        $i++;
+                        while ($i < $num)
+                        {
+                            $objp = $db->fetch_object($result);
+                            $var=!$var;
+                            print '<tr '.$bc[$var].'><td>';
+                            print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' ';
+                            print dol_print_date($db->jdate($objp->dp),'day').'</a></td>';
+                            $label=($langs->trans("PaymentType".$objp->payment_code)!=("PaymentType".$objp->payment_code))?$langs->trans("PaymentType".$objp->payment_code):$objp->payment_label;
+                            print '<td>'.$label.' '.$objp->num_paiement.'</td>';
+                            if ($conf->banque->enabled)
+                            {
+                                $bankaccountstatic->id=$objp->baid;
+                                $bankaccountstatic->ref=$objp->ref;
+                                $bankaccountstatic->label=$objp->ref;
+                                print '<td align="right">';
+                                print $bankaccountstatic->getNomUrl(1,'transactions');
+                                print '</td>';
+                            }
+                            print '<td align="right">'.price($objp->amount).'</td>';
+                            print '<td>&nbsp;</td>';
+                            print '</tr>';
+                            $i++;
+                        }
+                    }
+                    else
+                    {
+                        print '<tr '.$bc[$var].'><td colspan="'.$nbcols.'">'.$langs->trans("None").'</td><td></td><td></td></tr>';
                     }
                 }
                 $db->free($result);
@@ -2578,7 +2607,7 @@ else
             if ($object->type != 2)
             {
                 // Total already paid
-                print '<tr><td colspan="2" align="right">';
+                print '<tr><td colspan="'.$nbcols.'" align="right">';
                 if ($object->type != 3) print $langs->trans('AlreadyPaidNoCreditNotesNoDeposits');
                 else print $langs->trans('AlreadyPaid');
                 print ' :</td><td align="right">'.price($totalpaye).'</td><td>&nbsp;</td></tr>';
@@ -2602,7 +2631,7 @@ else
                     {
                         $obj = $db->fetch_object($resql);
                         $invoice->fetch($obj->fk_facture_source);
-                        print '<tr><td colspan="2" align="right">';
+                        print '<tr><td colspan="'.$nbcols.'" align="right">';
                         if ($invoice->type == 2) print $langs->trans("CreditNote").' ';
                         if ($invoice->type == 3) print $langs->trans("Deposit").' ';
                         print $invoice->getNomUrl(0);
@@ -2624,7 +2653,7 @@ else
                 // Paye partiellement 'escompte'
                 if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'discount_vat')
                 {
-                    print '<tr><td colspan="2" align="right" nowrap="1">';
+                    print '<tr><td colspan="'.$nbcols.'" align="right" nowrap="1">';
                     print $form->textwithpicto($langs->trans("Escompte").':',$langs->trans("HelpEscompte"),-1);
                     print '</td><td align="right">'.price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
                     $resteapayeraffiche=0;
@@ -2632,7 +2661,7 @@ else
                 // Paye partiellement ou Abandon 'badcustomer'
                 if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'badcustomer')
                 {
-                    print '<tr><td colspan="2" align="right" nowrap="1">';
+                    print '<tr><td colspan="'.$nbcols.'" align="right" nowrap="1">';
                     print $form->textwithpicto($langs->trans("Abandoned").':',$langs->trans("HelpAbandonBadCustomer"),-1);
                     print '</td><td align="right">'.price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
                     //$resteapayeraffiche=0;
@@ -2640,7 +2669,7 @@ else
                 // Paye partiellement ou Abandon 'product_returned'
                 if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'product_returned')
                 {
-                    print '<tr><td colspan="2" align="right" nowrap="1">';
+                    print '<tr><td colspan="'.$nbcols.'" align="right" nowrap="1">';
                     print $form->textwithpicto($langs->trans("ProductReturned").':',$langs->trans("HelpAbandonProductReturned"),-1);
                     print '</td><td align="right">'.price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
                     $resteapayeraffiche=0;
@@ -2648,7 +2677,7 @@ else
                 // Paye partiellement ou Abandon 'abandon'
                 if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'abandon')
                 {
-                    print '<tr><td colspan="2" align="right" nowrap="1">';
+                    print '<tr><td colspan="'.$nbcols.'" align="right" nowrap="1">';
                     $text=$langs->trans("HelpAbandonOther");
                     if ($object->close_note) $text.='<br><br><b>'.$langs->trans("Reason").'</b>:'.$object->close_note;
                     print $form->textwithpicto($langs->trans("Abandoned").':',$text,-1);
@@ -2657,10 +2686,10 @@ else
                 }
 
                 // Billed
-                print '<tr><td colspan="2" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($object->total_ttc).'</td><td>&nbsp;</td></tr>';
+                print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($object->total_ttc).'</td><td>&nbsp;</td></tr>';
 
                 // Remainder to pay
-                print '<tr><td colspan="2" align="right">';
+                print '<tr><td colspan="'.$nbcols.'" align="right">';
                 if ($resteapayeraffiche >= 0) print $langs->trans('RemainderToPay');
                 else print $langs->trans('ExcessReceived');
                 print ' :</td>';
@@ -2670,7 +2699,7 @@ else
             else
             {
                 // Sold credit note
-                print '<tr><td colspan="2" align="right">'.$langs->trans('TotalTTC').' :</td>';
+                print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans('TotalTTC').' :</td>';
                 print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price(abs($object->total_ttc)).'</b></td><td>&nbsp;</td></tr>';
             }
 

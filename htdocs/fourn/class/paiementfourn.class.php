@@ -143,7 +143,7 @@ class PaiementFourn extends Paiement
 		if ($this->total <> 0) // On accepte les montants negatifs
 		{
 			$now=dol_now();
-			
+
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn (';
 			$sql.= 'datec, datep, amount, fk_paiement, num_paiement, note, fk_user_author, fk_bank)';
 			$sql.= ' VALUES ('.$this->db->idate($now).',';
@@ -257,7 +257,7 @@ class PaiementFourn extends Paiement
 		{
 			if (count($billsarray))
 			{
-				$this->error='Impossible de supprimer un paiement portant sur au moins une facture a l\'etat paye';
+				$this->error='Can\'t delete a payment shared by at least one invoice with status payed';
 				$this->db->rollback();
 				return -1;
 			}
@@ -285,11 +285,13 @@ class PaiementFourn extends Paiement
 		// Efface la ligne de paiement (dans paiement_facture et paiement)
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn';
 		$sql.= ' WHERE fk_paiementfourn = '.$this->id;
+		dol_syslog("sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiementfourn';
 			$sql.= ' WHERE rowid = '.$this->id;
+		    dol_syslog("sql=".$sql);
 			$result = $this->db->query($sql);
 			if (! $result)
 			{

@@ -223,7 +223,7 @@ if (($action == 'send' || $action == 'sendhtml') && ! $_POST['addfile'] && ! $_P
             $deliveryreceipt,
             $msgishtml,
             $errors_to
-		);
+        );
 
 		$result=$mailfile->sendfile();
 

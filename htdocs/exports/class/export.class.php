@@ -50,11 +50,11 @@ class Export
 	/**
 	 *    Constructor
 	 *
-	 *    @param  	DoliDB		$DB		Database handler
+	 *    @param  	DoliDB		$db		Database handler
 	 */
-	function Export($DB)
+	function Export($db)
 	{
-		$this->db=$DB;
+		$this->db=$db;
 	}
 
 
@@ -75,34 +75,14 @@ class Export
         $i=0;
 
         // Define list of modules directories into modulesdir
-        foreach ($conf->file->dol_document_root as $type => $dirroot)
-		{
-			$modulesdir[] = $dirroot . "/core/modules/";
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 
-			if ($type == 'alt')
-			{
-				$handle=@opendir($dirroot);
-				if (is_resource($handle))
-				{
-					while (($file = readdir($handle))!==false)
-					{
-					    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-					    {
-					    	if (is_dir($dirroot . '/' . $file . '/core/modules/'))
-					    	{
-					    		$modulesdir[] = $dirroot . '/' . $file . '/core/modules/';
-					    	}
-					    }
-					}
-					closedir($handle);
-				}
-			}
-		}
+        $modulesdir = dolGetModulesDirs();
 
 		foreach($modulesdir as $dir)
 		{
 			// Search available exports
-			$handle=@opendir($dir);
+			$handle=@opendir(dol_osencode($dir));
 			if (is_resource($handle))
 			{
                 // Search module files

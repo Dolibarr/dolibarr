@@ -198,14 +198,15 @@ elseif ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
 }
 
 // Delete payment
-elseif($action == 'deletepaiement')
+elseif ($action == 'deletepaiement')
 {
     $object->fetch($id);
     if ($object->statut == 1 && $object->paye == 0 && $user->societe_id == 0)
     {
         $paiementfourn = new PaiementFourn($db);
-        $paiementfourn->fetch($_GET['paiement_id']);
-        $paiementfourn->delete();
+        $paiementfourn->fetch(GETPOST('paiement_id'));
+        $result=$paiementfourn->delete();
+        if ($result < 0) $mesg='<div class="error">'.$paiementfourn->error.'</div>';
     }
 }
 
@@ -458,7 +459,7 @@ elseif ($action == 'addline')
     if ($_POST['idprodfournprice'])	// > 0 or -1
     {
         $product=new Product($db);
-        $idprod=$product->get_buyprice($_POST['idprodfournprice'], $_POST['qty']);
+        $idprod=$product->get_buyprice($_POST['idprodfournprice'], $_POST['qty']);    // Just to see if a price exists for the quantity. Not used to found vat
 
         if ($idprod > 0)
         {
@@ -468,7 +469,7 @@ elseif ($action == 'addline')
             // $label = '['.$product->ref.'] - '. $product->libelle;
             $label = $product->description;
 
-            $tvatx=get_default_tva($object->thirdparty,$mysoc,$product->id);
+            $tvatx=get_default_tva($object->thirdparty, $mysoc, $product->id, $_POST['idprodfournprice']);
 
             $localtax1tx= get_localtax($tvatx, 1, $mysoc);
             $localtax2tx= get_localtax($tvatx, 2, $mysoc);
@@ -899,6 +900,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 
 $form = new Form($db);
 $formfile = new FormFile($db);
+$bankaccountstatic=new Account($db);
 
 llxHeader('','','');
 
@@ -1258,9 +1260,7 @@ else
             if ($ret == 'html') print '<br>';
         }
 
-        /*
-         * Confirmation de la suppression de la facture fournisseur
-        */
+        // Confirmation de la suppression de la facture fournisseur
         if ($action == 'delete')
         {
             $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete', '', 0, 1);
@@ -1268,9 +1268,9 @@ else
         }
 
 
-        /*
-         *   Facture
-        */
+        /**
+         * 	Invoice
+         */
         print '<table class="border" width="100%">';
 
         // Ref
@@ -1334,9 +1334,10 @@ else
 
         /*
          * List of payments
-        */
-        $nbrows=7;
+         */
+        $nbrows=7; $nbcols=2;
         if ($conf->projet->enabled) $nbrows++;
+        if ($conf->banque->enabled) $nbcols++;
 
         // Local taxes
         if ($mysoc->country_code=='ES')
@@ -1347,14 +1348,17 @@ else
 
         print '<td rowspan="'.$nbrows.'" valign="top">';
 
-        // TODO move to DAO class
-        $sql  = 'SELECT datep as dp, pf.amount,';
-        $sql .= ' c.libelle as paiement_type, p.num_paiement, p.rowid';
-        $sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
-        $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
-        $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_paiementfourn = p.rowid';
-        $sql .= ' WHERE pf.fk_facturefourn = '.$object->id;
-        $sql .= ' ORDER BY dp DESC';
+        $sql = 'SELECT p.datep as dp, p.num_paiement, p.rowid, p.fk_bank,';
+        $sql.= ' c.libelle as paiement_type,';
+        $sql.= ' pf.amount,';
+        $sql.= ' ba.rowid as baid, ba.ref, ba.label';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_paiementfourn = p.rowid';
+        $sql.= ' WHERE pf.fk_facturefourn = '.$object->id;
+        $sql.= ' ORDER BY p.datep, p.tms';
 
         $result = $db->query($sql);
         if ($result)
@@ -1365,41 +1369,58 @@ else
             print '<tr class="liste_titre">';
             print '<td>'.$langs->trans('Payments').'</td>';
             print '<td>'.$langs->trans('Type').'</td>';
+            if ($conf->banque->enabled) print '<td align="right">'.$langs->trans('BankAccount').'</td>';
             print '<td align="right">'.$langs->trans('Amount').'</td>';
             print '<td width="18">&nbsp;</td>';
             print '</tr>';
 
-            $var=True;
-            while ($i < $num)
+            $var=true;
+            if ($num > 0)
             {
-                $objp = $db->fetch_object($result);
-                $var=!$var;
-                print '<tr '.$bc[$var].'>';
-                print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.dol_print_date($db->jdate($objp->dp),'day')."</a></td>\n";
-                print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
-                print '<td align="right">'.price($objp->amount).'</td>';
-                print '<td align="center">';
-                if ($object->statut == 1 && $object->paye == 0 && $user->societe_id == 0)
+                while ($i < $num)
                 {
-                    print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deletepaiement&amp;paiement_id='.$objp->rowid.'">';
-                    print img_delete();
-                    print '</a>';
+                    $objp = $db->fetch_object($result);
+                    $var=!$var;
+                    print '<tr '.$bc[$var].'>';
+                    print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.dol_print_date($db->jdate($objp->dp),'day')."</a></td>\n";
+                    print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
+                    if ($conf->banque->enabled)
+                    {
+                        $bankaccountstatic->id=$objp->baid;
+                        $bankaccountstatic->ref=$objp->ref;
+                        $bankaccountstatic->label=$objp->ref;
+                        print '<td align="right">';
+                        print $bankaccountstatic->getNomUrl(1,'transactions');
+                        print '</td>';
+                    }
+                    print '<td align="right">'.price($objp->amount).'</td>';
+                    print '<td align="center">';
+                    if ($object->statut == 1 && $object->paye == 0 && $user->societe_id == 0)
+                    {
+                        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletepaiement&paiement_id='.$objp->rowid.'">';
+                        print img_delete();
+                        print '</a>';
+                    }
+                    print '</td>';
+                    print '</tr>';
+                    $totalpaye += $objp->amount;
+                    $i++;
                 }
-                print '</td>';
-                print '</tr>';
-                $totalpaye += $objp->amount;
-                $i++;
+            }
+            else
+            {
+                 print '<tr '.$bc[$var].'><td colspan="'.$nbcols.'">'.$langs->trans("None").'</td><td></td><td></td></tr>';
             }
 
             if ($object->paye == 0)
             {
-                print '<tr><td colspan="2" align="right">'.$langs->trans('AlreadyPaid').' :</td><td align="right"><b>'.price($totalpaye).'</b></td></tr>';
-                print '<tr><td colspan="2" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($object->total_ttc).'</td></tr>';
+                print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans('AlreadyPaid').' :</td><td align="right"><b>'.price($totalpaye).'</b></td><td></td></tr>';
+                print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($object->total_ttc).'</td><td></td></tr>';
 
                 $resteapayer = $object->total_ttc - $totalpaye;
 
-                print '<tr><td colspan="2" align="right">'.$langs->trans('RemainderToPay').' :</td>';
-                print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($resteapayer).'</b></td></tr>';
+                print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans('RemainderToPay').' :</td>';
+                print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($resteapayer).'</b></td><td></td></tr>';
             }
             print '</table>';
             $db->free($result);
@@ -1420,7 +1441,7 @@ else
         // Due date
         print '<tr><td>'.$form->editfieldkey("DateMaxPayment",'date_lim_reglement',$object->date_echeance,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker').'</td><td colspan="3">';
         print $form->editfieldval("DateMaxPayment",'date_lim_reglement',$object->date_echeance,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker');
-        if ((empty($action) || $action == 'view') && $object->statut < 2 && $object->date_echeance && $object->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_warning($langs->trans('Late'));
+        if ($action != 'editdate_li_reglement' && $object->statut < 2 && $object->date_echeance && $object->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_warning($langs->trans('Late'));
         print '</td>';
 
         // Status

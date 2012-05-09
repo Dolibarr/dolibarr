@@ -777,13 +777,15 @@ if (! function_exists("llxHeader"))
      * @param	string	$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
      * @return	void
      */
-    function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
-    {
-        top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
-        top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring);
-        left_menu('', $help_url, '', '', 1, $title);
-        main_area($title);
-    }
+	function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
+	{
+		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
+		top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring);
+		if (empty($conf->global->MAIN_HIDE_LEFT_MENU)) {
+			left_menu('', $help_url, '', '', 1, $title);
+		}
+		main_area($title);
+	}
 }
 
 
@@ -1172,11 +1174,10 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
     /*
      * Top menu
-    */
+     */
     $top_menu=empty($conf->browser->phone)?$conf->top_menu:$conf->smart_menu;
     if (GETPOST('menu')) $top_menu=GETPOST('menu'); // menu=eldy_backoffice.php
 
-    // Load the top menu manager
     // Load the top menu manager (only if not already done)
     if (! class_exists('MenuTop'))
     {

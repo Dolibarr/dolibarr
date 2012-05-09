@@ -67,12 +67,12 @@ class Import
         $var=true;
         $i=0;
 
-		//$dir=DOL_DOCUMENT_ROOT."/core/modules";
-		foreach($conf->file->dol_document_root as $dirroot)
-		{
-			$dir = $dirroot.'/core/modules';
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
+        $modulesdir = dolGetModulesDirs();
 
-			// Search available exports
+        // Load list of modules
+        foreach($modulesdir as $dir)
+        {
 			$handle=@opendir(dol_osencode($dir));
 			if (! is_resource($handle)) continue;
 

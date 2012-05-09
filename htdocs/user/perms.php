@@ -26,6 +26,7 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/usergroups.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 
 $langs->load("users");
 $langs->load("admin");
@@ -46,7 +47,7 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
 	$canreaduser=($user->admin || ($user->rights->user->user->lire && $user->rights->user->user_advance->readperms));
 	$caneditselfperms=($user->id == $id && $user->rights->user->self_advance->writeperms);
-	$caneditperms = (($caneditperms || $caneditselfperms) ? 0 : 1);
+	$caneditperms = (($caneditperms || $caneditselfperms) ? 1 : 0);
 }
 
 // Security check
@@ -122,35 +123,11 @@ $db->begin();
 
 // Search all modules with permission and reload permissions def.
 $modules = array();
-$modulesdir = array();
-
-foreach ($conf->file->dol_document_root as $type => $dirroot)
-{
-	$modulesdir[] = $dirroot . "/core/modules/";
-
-	if ($type == 'alt')
-	{
-		$handle=@opendir($dirroot);
-		if (is_resource($handle))
-		{
-			while (($file = readdir($handle))!==false)
-			{
-			    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-			    {
-			    	if (is_dir($dirroot . '/' . $file . '/core/modules/'))
-			    	{
-			    		$modulesdir[] = $dirroot . '/' . $file . '/core/modules/';
-			    	}
-			    }
-			}
-			closedir($handle);
-		}
-	}
-}
+$modulesdir = dolGetModulesDirs();
 
 foreach($modulesdir as $dir)
 {
-	$handle=@opendir($dir);
+	$handle=@opendir(dol_osencode($dir));
     if (is_resource($handle))
     {
     	while (($file = readdir($handle))!==false)
