@@ -27,6 +27,13 @@
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
+// For MultiCompany module
+$entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+if (is_int($entity))
+{
+	define("DOLENTITY", $entity);
+}
+
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypalfunctions.lib.php");
@@ -112,6 +119,11 @@ if (! empty($SECUREKEY))
 {
     $urlok.='securekey='.urlencode($SECUREKEY).'&';
     $urlko.='securekey='.urlencode($SECUREKEY).'&';
+}
+if (! empty($entity))
+{
+	$urlok.='entity='.urlencode($entity).'&';
+	$urlko.='entity='.urlencode($entity).'&';
 }
 $urlok=preg_replace('/&$/','',$urlok);  // Remove last &
 $urlko=preg_replace('/&$/','',$urlko);  // Remove last &
@@ -255,6 +267,7 @@ print '<input type="hidden" name="action" value="dopayment">'."\n";
 print '<input type="hidden" name="tag" value="'.GETPOST("tag",'alpha').'">'."\n";
 print '<input type="hidden" name="suffix" value="'.GETPOST("suffix",'alpha').'">'."\n";
 print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
+print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print "\n";
 print '<!-- Form to send a Paypal payment -->'."\n";
 print '<!-- PAYPAL_API_SANDBOX = '.$conf->global->PAYPAL_API_SANDBOX.' -->'."\n";
