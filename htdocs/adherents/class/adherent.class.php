@@ -185,12 +185,12 @@ class Adherent extends CommonObject
 	function makeSubstitution($text)
 	{
 		global $langs;
-		
+
 		$birthday = dol_print_date($this->naiss,'day');
-		
+
 		$msgishtml = 0;
 		if (dol_textishtml($text,1)) $msgishtml = 1;
-		
+
 		$infos='';
 		if ($this->civilite_id) $infos.= $langs->transnoentities("UserTitle").": ".$this->getCivilityLabel(1)."\n";
 		$infos.= $langs->transnoentities("id").": ".$this->id."\n";
@@ -207,7 +207,7 @@ class Adherent extends CommonObject
 		$infos.= $langs->transnoentities("Birthday").": ".$birthday."\n";
 		$infos.= $langs->transnoentities("Photo").": ".$this->photo."\n";
 		$infos.= $langs->transnoentities("Public").": ".yn($this->public);
-		
+
 		// Substitutions
 		$substitutionarray=array(
 				'%DOL_MAIN_URL_ROOT%'=>DOL_MAIN_URL_ROOT,
@@ -236,9 +236,9 @@ class Adherent extends CommonObject
 				'%VILLE%'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
 				'%PAYS%'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
 		);
-		
+
 		complete_substitutions_array($substitutionarray, $langs);
-		
+
 		return make_substitutions($text,$substitutionarray);
 	}
 
@@ -705,6 +705,10 @@ class Adherent extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_member WHERE fk_member = ".$rowid;
+            dol_syslog(get_class($this)."::delete sql=".$sql);
+            $resql=$this->db->query($sql);
+
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE fk_adherent = ".$rowid;
             dol_syslog(get_class($this)."::delete sql=".$sql);
             $resql=$this->db->query($sql);
