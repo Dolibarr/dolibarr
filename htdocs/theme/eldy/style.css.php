@@ -215,7 +215,12 @@ select.flat, form.flat select {
 input:disabled {
 	background:#ddd;
 }
-input:-webkit-autofill { background-color: #FCFEFA !important; background-image:none !important; }
+input:-webkit-autofill {
+	background-color: #FCFEFA !important; background-image:none !important;
+}
+input.liste_titre {
+	box-shadow: none !important;
+}
 
 textarea:disabled {
 	background:#ddd;
