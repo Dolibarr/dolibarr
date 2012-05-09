@@ -7,7 +7,8 @@
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2012 	   Sebastian Neuwert    <sebastian.neuwert@modula71.de>
--- Copyright (C) 2012 	   Tommaso Basilici    <t.basilici@19.coop>
+-- Copyright (C) 2012 	   Tommaso Basilici     <t.basilici@19.coop>
+-- Copyright (C) 2012	   Ricardo Schluter     <info@ripasch.nl>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -186,6 +187,20 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1004','S
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1005','Société Unipersonnelle à Responsabilité Limitée (SUARL)');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1006','Groupement d''intérêt économique (GEI)');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1007','Groupe de sociétés');
+
+-- The Netherlands
+INSERT INTO llx_c_forme_juridique (fk_pays,code,libelle,isvatexempted,active,module) VALUES (17,1701,'Eenmanszaak',0,1,NULL);
+INSERT INTO llx_c_forme_juridique (fk_pays,code,libelle,isvatexempted,active,module) VALUES (17,1702,'Maatschap',0,1,NULL);
+INSERT INTO llx_c_forme_juridique (fk_pays,code,libelle,isvatexempted,active,module) VALUES (17,1703,'Vennootschap onder firma',0,1,NULL);
+INSERT INTO llx_c_forme_juridique (fk_pays,code,libelle,isvatexempted,active,module) VALUES (17,1704,'Commanditaire vennootschap',0,1,NULL);
+INSERT INTO llx_c_forme_juridique (fk_pays,code,libelle,isvatexempted,active,module) VALUES (17,1705,'Besloten vennootschap (BV)',0,1,NULL);
+INSERT INTO llx_c_forme_juridique (fk_pays,code,libelle,isvatexempted,active,module) VALUES (17,1706,'Naamloze Vennootschap (NV)',0,1,NULL);
+INSERT INTO llx_c_forme_juridique (fk_pays,code,libelle,isvatexempted,active,module) VALUES (17,1707,'Vereniging',0,1,NULL);
+INSERT INTO llx_c_forme_juridique (fk_pays,code,libelle,isvatexempted,active,module) VALUES (17,1708,'Stichting',0,1,NULL);
+INSERT INTO llx_c_forme_juridique (fk_pays,code,libelle,isvatexempted,active,module) VALUES (17,1709,'Coöperatie met beperkte aansprakelijkheid (BA)',0,1,NULL);
+INSERT INTO llx_c_forme_juridique (fk_pays,code,libelle,isvatexempted,active,module) VALUES (17,1710,'Coöperatie met uitgesloten aansprakelijkheid (UA)',0,1,NULL);
+INSERT INTO llx_c_forme_juridique (fk_pays,code,libelle,isvatexempted,active,module) VALUES (17,1711,'Coöperatie met wettelijke aansprakelijkheid (WA)',0,1,NULL);
+INSERT INTO llx_c_forme_juridique (fk_pays,code,libelle,isvatexempted,active,module) VALUES (17,1712,'Onderlinge waarborgmaatschappij',0,1,NULL);
 
 -- Spain
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (4, '401', 'Empresario Individual', 1);

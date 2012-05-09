@@ -7,6 +7,7 @@
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2012 	   Sebastian Neuwert    <sebastian.neuwert@modula71.de>
+-- Copyright (C) 2012	   Ricardo Schluter     <info@ripasch.nl>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -422,6 +423,20 @@ insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('WV', 1101, '', 0, 'WEST VIRGINIA', 'West Virginia', 1);
 insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('WI', 1101, '', 0, 'WISCONSIN', 'Wisconsin', 1);
 insert into llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) values ('WY', 1101, '', 0, 'WYOMING', 'Wyoming', 1);
+
+-- Provincies van het Koninkrijk der Nederlanden (id country=17)
+INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom,active) VALUES ('GR',1701,NULL,NULL,NULL,'Groningen',1);
+INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom,active) VALUES ('FR',1701,NULL,NULL,NULL,'Friesland',1);
+INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom,active) VALUES ('DR',1701,NULL,NULL,NULL,'Drenthe',1);
+INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom,active) VALUES ('OV',1701,NULL,NULL,NULL,'Overijssel',1);
+INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom,active) VALUES ('GD',1701,NULL,NULL,NULL,'Gelderland',1);
+INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom,active) VALUES ('FL',1701,NULL,NULL,NULL,'Flevoland',1);
+INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom,active) VALUES ('UT',1701,NULL,NULL,NULL,'Utrecht',1);
+INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom,active) VALUES ('NH',1701,NULL,NULL,NULL,'Noord-Holland',1);
+INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom,active) VALUES ('ZH',1701,NULL,NULL,NULL,'Zuid-Holland',1);
+INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom,active) VALUES ('ZL',1701,NULL,NULL,NULL,'Zeeland',1);
+INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom,active) VALUES ('NB',1701,NULL,NULL,NULL,'Noord-Brabant',1);
+INSERT INTO llx_c_departements ( code_departement,fk_region,cheflieu,tncc,ncc,nom,active) VALUES ('LB',1701,NULL,NULL,NULL,'Limburg',1);
 
 -- San Salvador (id country=86)
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('SS', 8601, NULL, NULL, NULL, 'San Salvador', 1);
