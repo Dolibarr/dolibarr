@@ -144,7 +144,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
     function add_to_target($mailing_id, $cibles)
     {
     	global $conf;
-    	
+
     	$this->db->begin();
 
         // Insert emailing targest from array into database
@@ -155,7 +155,9 @@ class MailingTargets    // This can't be abstract as it is used for some method
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_cibles";
             $sql .= " (fk_mailing,";
             $sql .= " fk_contact,";
-            $sql .= " nom, prenom, email, other, source_url, source_id, tag, source_type)";
+            $sql .= " nom, prenom, email, other, source_url, source_id,";
+            if (! empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE)) $sql .= " tag,";
+            $sql.= " source_type)";
             $sql .= " VALUES (".$mailing_id.",";
             $sql .= (empty($cibles[$i]['fk_contact']) ? '0' : "'".$cibles[$i]['fk_contact']."'") .",";
             $sql .= "'".$this->db->escape($cibles[$i]['name'])."',";
@@ -164,10 +166,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
             $sql .= "'".$this->db->escape($cibles[$i]['other'])."',";
             $sql .= "'".$this->db->escape($cibles[$i]['source_url'])."',";
             $sql .= "'".$this->db->escape($cibles[$i]['source_id'])."',";
-            if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE==1)
-            {
-            	$sql .= "'".$this->db->escape(md5($cibles[$i]['email'].';'.$cibles[$i]['name'].';'.$mailing_id.';'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY))."',";
-            }
+            if (! empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE)) $sql .= "'".$this->db->escape(md5($cibles[$i]['email'].';'.$cibles[$i]['name'].';'.$mailing_id.';'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY))."',";
             $sql .= "'".$this->db->escape($cibles[$i]['source_type'])."')";
             $result=$this->db->query($sql);
             if ($result)
