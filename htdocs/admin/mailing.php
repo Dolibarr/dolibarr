@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
- * Copyright (C) 2005-2011 Laurent Destailleur  	<eldy@users.sourceforge.org>
+ * Copyright (C) 2005-2012 Laurent Destailleur  	<eldy@users.sourceforge.org>
  * Copyright (C) 2011-2012 Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,16 +25,16 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
 
 $langs->load("admin");
 $langs->load("mails");
 
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
 
-   
+
 
 /*
  * Actions
@@ -63,15 +63,11 @@ if ($action == 'setvalue' && $user->admin)
 		$res=dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE",0,'chaine',0,'',$conf->entity);
 		if (! $res > 0) $error++;
 	}
-	
+
 	//Create temporary encryption key if nedded
 	if (($conf->global->MAILING_EMAIL_UNSUBSCRIBE==1) && (empty($checkread_key)))
 	{
-		$chars = "abcdef(ghijklmnopqrstuvwxyz;!ABCDEFGH,IJKLMNOPQRSTUVWXYZ01_23456789";
-	    mt_srand(10000000*(double)microtime());
-	    for ($i = 0, $str = '', $lc = strlen($chars)-1; $i < 30; $i++) {
-	        $checkread_key .= $chars[mt_rand(0, $lc)];
-	    }
+	    $checkread_key=getRandomPassword(true);
 	}
 	$res=dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE_KEY",$checkread_key,'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
