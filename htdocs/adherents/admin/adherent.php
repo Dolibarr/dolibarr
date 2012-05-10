@@ -50,7 +50,7 @@ $action = GETPOST('action','alpha');
 if ($action == 'update' || $action == 'add')
 {
 	$constname=GETPOST('constname','alpha');
-	$constvalue=(GETPOST('constvalue_'.$constname,'alpha') ? GETPOST('constvalue_'.$constname,'alpha') : GETPOST('constvalue','alpha'));
+	$constvalue=(GETPOST('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname) : GETPOST('constvalue'));
 
 	if (($constname=='ADHERENT_CARD_TYPE' || $constname=='ADHERENT_ETIQUETTE_TYPE') && $constvalue == -1) $constvalue='';
 	if ($constname=='ADHERENT_LOGIN_NOT_REQUIRED') // Invert choice
@@ -60,7 +60,7 @@ if ($action == 'update' || $action == 'add')
 	}
 
 	$consttype=GETPOST('consttype','alpha');
-	$constnote=GETPOST('constnote','alpha');
+	$constnote=GETPOST('constnote');
 	$res=dolibarr_set_const($db,$constname,$constvalue,$type[$consttype],0,$constnote,$conf->entity);
 
 	if (! $res > 0) $error++;
@@ -78,7 +78,7 @@ if ($action == 'update' || $action == 'add')
 // Action activation d'un sous module du module adherent
 if ($action == 'set')
 {
-    $result=dolibarr_set_const($db, GETPOST('name','alpha'),GETPOST('value','alpha'),'',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, GETPOST('name','alpha'),GETPOST('value'),'',0,'',$conf->entity);
     if ($result < 0)
     {
         print $db->error();

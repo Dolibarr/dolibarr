@@ -2,9 +2,9 @@
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
- * Copyright (C) 2005		Marc Barilley		<marc@ocebo.fr>
- * Copyright (C) 2005-2012	Regis Houssin		<regis@dolibarr.fr>
- * Copyright (C) 2010-2011	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2005		Marc Barilley			<marc@ocebo.fr>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2010-2012	Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -205,7 +205,8 @@ elseif($action == 'deletepaiement')
     {
         $paiementfourn = new PaiementFourn($db);
         $paiementfourn->fetch($_GET['paiement_id']);
-        $paiementfourn->delete();
+        $result=$paiementfourn->delete();
+        if ($result < 0) $mesg='<div class="error">'.$paiementfourn->error.'</div>';
     }
 }
 
@@ -412,7 +413,7 @@ elseif ($action == 'update_line')
             $pu=$_POST['puttc'];
             $price_base_type='TTC';
         }
-
+        
         if ($_POST['idprod'])
         {
             $prod = new Product($db);
@@ -421,21 +422,17 @@ elseif ($action == 'update_line')
             if (trim($_POST['desc']) != trim($label)) $label=$_POST['desc'];
 
             $type = $prod->type;
-            $localtax1tx = $prod->localtax1_tx;
-            $localtax2tx = $prod->localtax2_tx;
         }
         else
         {
-            if ($object->socid)
-            {
-                $societe=new Societe($db);
-                $societe->fetch($object->socid);
-            }
+            
             $label = $_POST['desc'];
             $type = $_POST["type"]?$_POST["type"]:0;
-            $localtax1tx= get_localtax($_POST['tauxtva'], 1, $mysoc);
-            $localtax2tx= get_localtax($_POST['tauxtva'], 2, $mysoc);
+
         }
+        
+        $localtax1tx= get_localtax($_POST['tauxtva'], 1, $object->thirdparty);
+        $localtax2tx= get_localtax($_POST['tauxtva'], 2, $object->thirdparty);
 
         $result=$object->updateline($_GET['lineid'], $label, $pu, $_POST['tauxtva'], $localtax1tx, $localtax2tx, $_POST['qty'], $_POST['idprod'], $price_base_type, 0, $type);
         if ($result >= 0)
@@ -458,7 +455,7 @@ elseif ($action == 'addline')
     if ($_POST['idprodfournprice'])	// > 0 or -1
     {
         $product=new Product($db);
-        $idprod=$product->get_buyprice($_POST['idprodfournprice'], $_POST['qty']);
+        $idprod=$product->get_buyprice($_POST['idprodfournprice'], $_POST['qty']);    // Just to see if a price exists for the quantity. Not used to found vat
 
         if ($idprod > 0)
         {
@@ -468,10 +465,10 @@ elseif ($action == 'addline')
             // $label = '['.$product->ref.'] - '. $product->libelle;
             $label = $product->description;
 
-            $tvatx=get_default_tva($object->thirdparty,$mysoc,$product->id);
+            $tvatx=get_default_tva($object->thirdparty, $mysoc, $product->id, $_POST['idprodfournprice']);
 
-            $localtax1tx= get_localtax($tvatx, 1, $mysoc);
-            $localtax2tx= get_localtax($tvatx, 2, $mysoc);
+            $localtax1tx= get_localtax($tvatx, 1, $object->thirdparty);
+            $localtax2tx= get_localtax($tvatx, 2, $object->thirdparty);
 
             $type = $product->type;
 
@@ -488,8 +485,8 @@ elseif ($action == 'addline')
     else
     {
         $tauxtva = price2num($_POST['tauxtva']);
-        $localtax1tx= get_localtax($tauxtva, 1, $mysoc);
-        $localtax2tx= get_localtax($tauxtva, 2, $mysoc);
+        $localtax1tx= get_localtax($tauxtva, 1, $object->thirdparty);
+        $localtax2tx= get_localtax($tauxtva, 2, $object->thirdparty);
 
         if (! $_POST['dp_desc'])
         {

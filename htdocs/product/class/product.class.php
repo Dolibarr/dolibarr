@@ -807,12 +807,12 @@ class Product extends CommonObject
 	{
 		$result = 0;
 		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity,";
-		$sql.= " pfp.fk_product, pfp.ref_fourn, pfp.fk_soc";
+		$sql.= " pfp.fk_product, pfp.ref_fourn, pfp.fk_soc, pfp.tva_tx";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		$sql.= " WHERE pfp.rowid = ".$prodfournprice;
-		$sql.= " AND pfp.quantity <= ".$qty;
+		if ($qty) $sql.= " AND pfp.quantity <= ".$qty;
 
-		dol_syslog(get_class($this)."get_buyprice sql=".$sql);
+		dol_syslog(get_class($this)."::get_buyprice sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -821,15 +821,16 @@ class Product extends CommonObject
 			{
 				$this->buyprice = $obj->price;                      // \deprecated
 				$this->fourn_pu = $obj->price / $obj->quantity;     // Prix unitaire du produit pour le fournisseur $fourn_id
-				$this->ref_fourn = $obj->ref_fourn;
+				$this->ref_fourn = $obj->ref_fourn;                 // Ref supplier
+				$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
 				$result=$obj->fk_product;
 				return $result;
 			}
 			else
 			{
 				// On refait le meme select sur la ref et l'id du produit
-				$sql = "SELECT pfp.price as price, pfp.quantity as quantity, pfp.fk_soc,";
-				$sql.= " pfp.fk_product, pfp.ref_fourn";
+				$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.fk_soc,";
+				$sql.= " pfp.fk_product, pfp.ref_fourn, pfp.tva_tx";
 				$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 				$sql.= " WHERE pfp.ref_fourn = '".$fourn_ref."'";
 				$sql.= " AND pfp.fk_product = ".$product_id;
@@ -837,7 +838,7 @@ class Product extends CommonObject
 				$sql.= " ORDER BY pfp.quantity DESC";
 				$sql.= " LIMIT 1";
 
-				dol_syslog(get_class($this)."get_buyprice sql=".$sql);
+				dol_syslog(get_class($this)."::get_buyprice sql=".$sql);
 				$resql = $this->db->query($sql);
 				if ($resql)
 				{
@@ -846,7 +847,8 @@ class Product extends CommonObject
 					{
 						$this->buyprice = $obj->price;                      // \deprecated
 						$this->fourn_pu = $obj->price / $obj->quantity;     // Prix unitaire du produit pour le fournisseur $fourn_id
-						$this->ref_fourn = $obj->ref_fourn;
+						$this->ref_fourn = $obj->ref_fourn;                 // Ref supplier
+						$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
 						$result=$obj->fk_product;
 						return $result;
 					}
@@ -858,7 +860,7 @@ class Product extends CommonObject
 				else
 				{
 					$this->error=$this->db->error();
-					dol_syslog("Product:get_buyprice ".$this->error, LOG_ERR);
+					dol_syslog(get_class($this)."::get_buyprice ".$this->error, LOG_ERR);
 					return -3;
 				}
 			}
@@ -866,7 +868,7 @@ class Product extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("Product:get_buyprice ".$this->error, LOG_ERR);
+			dol_syslog(get_class($this)."::get_buyprice ".$this->error, LOG_ERR);
 			return -2;
 		}
 	}
@@ -1790,6 +1792,7 @@ class Product extends CommonObject
 				$sql.= ", ref_fourn";
 				$sql.= ", quantity";
 				$sql.= ", fk_user";
+				$sql.= ", tva_tx";
 				$sql.= ") VALUES (";
 				$sql.= "'".$this->db->idate($now)."'";
 				$sql.= ", ".$conf->entity;
@@ -1798,6 +1801,7 @@ class Product extends CommonObject
 				$sql.= ", '".$ref_fourn."'";
 				$sql.= ", ".$quantity;
 				$sql.= ", ".$user->id;
+				$sql.= ", 0";
 				$sql.= ")";
 
 				dol_syslog(get_class($this)."add_fournisseur sql=".$sql);

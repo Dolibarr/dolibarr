@@ -2682,9 +2682,8 @@ function get_localtax($tva, $local, $societe_acheteuse="")
 {
     global $db, $conf, $mysoc;
 
-    // TODO Can we uncomment this ?
-    //if ($local == 1 && empty($conf->global->FACTURE_LOCAL_TAX1_OPTION)) return;
-    //if ($local == 2 && empty($conf->global->FACTURE_LOCAL_TAX2_OPTION)) return;
+    if ($local == 1 && ! $mysoc->localtax1_assuj) return 0;
+    if ($local == 2 && ! $mysoc->localtax2_assuj) return 0;
 
     $code_pays=$mysoc->pays_code;
 
@@ -2716,12 +2715,13 @@ function get_localtax($tva, $local, $societe_acheteuse="")
  *	Return vat rate of a product in a particular selling country or default country
  *  vat if product is unknown
  *
- *  @param	int		$idprod          Id of product or 0 if not a predefined product
- *  @param  string	$countrycode     Country code (FR, US, IT, ...)
- *  @return int				         <0 if KO, Vat rate if OK
+ *  @param	int			$idprod          	Id of product or 0 if not a predefined product
+ *  @param  Societe		$thirdparty_seller  Thirdparty with a ->country_code defined (FR, US, IT, ...)
+ *	@param	int			$idprodfournprice	Id product_fournisseur_price (for supplier order/invoice)
+ *  @return int					         	<0 if KO, Vat rate if OK
  *	TODO May be this should be better as a method of product class
  */
-function get_product_vat_for_country($idprod, $countrycode)
+function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice=0)
 {
     global $db,$mysoc;
 
@@ -2734,9 +2734,17 @@ function get_product_vat_for_country($idprod, $countrycode)
         $product=new Product($db);
         $result=$product->fetch($idprod);
 
-        if ($mysoc->pays_code == $countrycode) // If selling country is ours
+        if ($mysoc->pays_code == $thirdparty_seller->country_code) // If selling country is ours
         {
-            $ret=$product->tva_tx;    // Default vat of product we defined
+            if ($idprodfournprice > 0)     // We want vat for product for a supplier order or invoice
+            {
+                $product->get_buyprice($idprodfournprice,0,0,0);
+                $ret=$product->vatrate_supplier;
+            }
+            else
+            {
+                $ret=$product->tva_tx;    // Default vat of product we defined
+            }
             $found=1;
         }
         else
@@ -2752,7 +2760,7 @@ function get_product_vat_for_country($idprod, $countrycode)
         // If vat of product for the country not found or not defined, we return higher vat of country.
         $sql.="SELECT taux as vat_rate";
         $sql.=" FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-        $sql.=" WHERE t.active=1 AND t.fk_pays = p.rowid AND p.code='".$countrycode."'";
+        $sql.=" WHERE t.active=1 AND t.fk_pays = p.rowid AND p.code='".$thirdparty_seller->country_code."'";
         $sql.=" ORDER BY t.taux DESC, t.recuperableonly ASC";
         $sql.=$db->plimit(1);
 
@@ -2806,16 +2814,17 @@ function get_product_localtax_for_country($idprod, $local, $countrycode)
  *	@param	Societe		$societe_vendeuse    	Objet societe vendeuse
  *	@param  Societe		$societe_acheteuse   	Objet societe acheteuse
  *	@param  int			$idprod					Id product
+ *	@param	int			$idprodfournprice		Id product_fournisseur_price (for supplier order/invoice)
  *	@return float         				      	Taux de tva a appliquer, -1 si ne peut etre determine
  */
-function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
+function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0, $idprodfournprice=0)
 {
     global $conf;
 
     if (!is_object($societe_vendeuse)) return -1;
     if (!is_object($societe_acheteuse)) return -1;
 
-    dol_syslog("get_default_tva: seller use vat=".$societe_vendeuse->tva_assuj.", seller country=".$societe_vendeuse->pays_code.", seller in cee=".$societe_vendeuse->isInEEC().", buyer country=".$societe_acheteuse->pays_code.", buyer in cee=".$societe_acheteuse->isInEEC().", idprod=".$idprod.", SERVICE_ARE_ECOMMERCE_200238EC=".$conf->global->SERVICES_ARE_ECOMMERCE_200238EC);
+    dol_syslog("get_default_tva: seller use vat=".$societe_vendeuse->tva_assuj.", seller country=".$societe_vendeuse->pays_code.", seller in cee=".$societe_vendeuse->isInEEC().", buyer country=".$societe_acheteuse->pays_code.", buyer in cee=".$societe_acheteuse->isInEEC().", idprod=".$idprod.", idprodfournprice=".$idprodfournprice.", SERVICE_ARE_ECOMMERCE_200238EC=".$conf->global->SERVICES_ARE_ECOMMERCE_200238EC);
 
     // Si vendeur non assujeti a TVA (tva_assuj vaut 0/1 ou franchise/reel)
     if (is_numeric($societe_vendeuse->tva_assuj) && ! $societe_vendeuse->tva_assuj)
@@ -2836,7 +2845,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
     if ($societe_vendeuse->country_code == $societe_acheteuse->country_code) // Warning ->country_code not always defined
     {
         //print 'VATRULE 3';
-        return get_product_vat_for_country($idprod,$societe_vendeuse->country_code);
+        return get_product_vat_for_country($idprod,$societe_vendeuse,$idprodfournprice);
     }
 
     // Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
@@ -2855,7 +2864,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
         else
         {
             //print 'VATRULE 5';
-            return get_product_vat_for_country($idprod,$societe_vendeuse->country_code);
+            return get_product_vat_for_country($idprod,$societe_vendeuse,$idprodfournprice);
         }
     }
 
@@ -2867,7 +2876,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0)
         if (! $societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC() && ! $societe_acheteuse->isACompany())
         {
             //print 'VATRULE 6';
-            return get_product_vat_for_country($idprod,$societe_acheteuse->country_code);
+            return get_product_vat_for_country($idprod,$societe_acheteuse,$idprodfournprice);
         }
     }
 

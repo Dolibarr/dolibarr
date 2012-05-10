@@ -819,8 +819,8 @@ if ($action == 'edit')
 
     $res=$object->fetch($rowid);
     if ($res < 0) { dol_print_error($db,$object->error); exit; }
-    //$res=$object->fetch_optionals($object->id,$extralabels);
-    //if ($res < 0) { dol_print_error($db); exit; }
+    $res=$object->fetch_optionals($object->id,$extralabels);
+    if ($res < 0) { dol_print_error($db); exit; }
 
 	$adht = new AdherentType($db);
     $adht->fetch($object->typeid);
@@ -1052,7 +1052,6 @@ if ($rowid && $action != 'edit')
 	/*                                                                            */
 	/* ************************************************************************** */
 
-    //$object = new Adherent($db);
     $res=$object->fetch($rowid);
     if ($res < 0) { dol_print_error($db,$object->error); exit; }
     $res=$object->fetch_optionals($object->id,$extralabels);
@@ -1506,7 +1505,7 @@ if ($rowid && $action != 'edit')
 		}
 
 	    // Action SPIP
-	    if ($conf->global->ADHERENT_USE_SPIP)
+	    if ($conf->mailmanspip->enabled && $conf->global->ADHERENT_USE_SPIP)
 	    {
 	        $isinspip=$object->is_in_spip();
 	        if ($isinspip == 1)
