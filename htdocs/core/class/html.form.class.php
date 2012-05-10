@@ -2207,7 +2207,7 @@ class Form
                         $more.=$input['value'];
                         $more.='</td></tr>'."\n";
                     }
-                    array_push($inputarray,$input['name']);
+                    if ($input['type'] != 'hidden') array_push($inputarray,$input['name']);
                 }
             }
             $more.='</table>'."\n";
@@ -2228,6 +2228,18 @@ class Form
             }
             $pageyes=$page.'&action='.$action.'&confirm=yes';
             $pageno=($useajax == 2?$page.'&confirm=no':'');
+            // Add hidden fields
+            if (is_array($formquestion))
+            {
+                foreach ($formquestion as $key => $input)
+                {
+                    if ($input['type'] == 'hidden')
+                    {
+                        $pageyes.='&'.$input['name'].'='.urlencode($input['value']);
+                        $pageno.=($useajax == 2?$page.'&'.$input['name'].'='.urlencode($input['value']):'');
+                    }
+                }
+            }
 
             // New code using jQuery only
             $formconfirm.= '<div id="'.$dialogconfirm.'" title="'.dol_escape_htmltag($title).'" style="display: none;">';
@@ -2237,7 +2249,7 @@ class Form
             $formconfirm.= '<script type="text/javascript">
             $(function() {
                 var choice=\'ko\';
-                var	$inputarray='.json_encode($inputarray).';
+                var $inputarray='.json_encode($inputarray).';
                 var button=\''.$button.'\';
             	var dialogconfirm=\''.$dialogconfirm.'\';
 
@@ -2296,10 +2308,10 @@ class Form
 
             $formconfirm.= '<table width="100%" class="valid">'."\n";
 
-            // Ligne titre
+            // Line title
             $formconfirm.= '<tr class="validtitre"><td class="validtitre" colspan="3">'.img_picto('','recent').' '.$title.'</td></tr>'."\n";
 
-            // Ligne formulaire
+            // Line form fields
             if ($more)
             {
                 $formconfirm.='<tr class="valid"><td class="valid" colspan="3">'."\n";
@@ -2307,7 +2319,7 @@ class Form
                 $formconfirm.='</td></tr>'."\n";
             }
 
-            // Ligne message
+            // Line with question
             $formconfirm.= '<tr class="valid">';
             $formconfirm.= '<td class="valid">'.$question.'</td>';
             $formconfirm.= '<td class="valid">';
@@ -2319,6 +2331,7 @@ class Form
 
             $formconfirm.= '</table>'."\n";
 
+            // Add hidden fields
             if (is_array($formquestion))
             {
                 foreach ($formquestion as $key => $input)

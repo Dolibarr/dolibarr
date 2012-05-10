@@ -481,7 +481,6 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 
         //print "sql".$value."-".pg_escape_string($value)."-".$sql;exit;
         //print "xx".$db->escape($value);
-        //print $sql;exit;
         dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
         $resql=$db->query($sql);
     }
@@ -1038,7 +1037,7 @@ function form_constantes($tableau)
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="rowid" value="'.$obj->rowid.'">';
             print '<input type="hidden" name="constname" value="'.$const.'">';
-            print '<input type="hidden" name="constnote" value="'.nl2br($obj->note).'">';
+            print '<input type="hidden" name="constnote" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
 
             print $langs->trans("Desc".$const) != ("Desc".$const) ? $langs->trans("Desc".$const) : ($obj->note?$obj->note:$const);
 
@@ -1106,7 +1105,7 @@ function form_constantes($tableau)
                 }
                 else
                 {
-                    print '<input type="text" class="flat" size="48" name="constvalue" value="'.$obj->value.'">';
+                    print '<input type="text" class="flat" size="48" name="constvalue" value="'.dol_escape_htmltag($obj->value).'">';
                     print '</td><td>';
                     print '<input type="hidden" name="consttype" value="chaine">';
                 }
