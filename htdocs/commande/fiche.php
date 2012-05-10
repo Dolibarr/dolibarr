@@ -58,11 +58,17 @@ $confirm = GETPOST('confirm');
 $lineid  = GETPOST('lineid');
 $mesg    = GETPOST('mesg');
 
-$object = new Commande($db);
-
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'commande',$id,'');
+
+$object = new Commande($db);
+
+// Load object
+if ($id > 0 || ! empty($ref))
+{
+	$ret=$object->fetch($id, $ref);
+}
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
