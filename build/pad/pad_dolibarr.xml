@@ -6,26 +6,26 @@
 		<MASTER_PAD_INFO>Portable Application Description, or PAD for short, is a data set that is used by shareware authors to disseminate information to anyone interested in their software products. To find out more go to http://pad.asp-software.org</MASTER_PAD_INFO>
 	</MASTER_PAD_VERSION_INFO>
 	<Company_Info>
-		<Company_Name>Dolibarr team</Company_Name>
-		<Address_1>11 rue raymond Queneau</Address_1>
+		<Company_Name>NLTechno</Company_Name>
+		<Address_1>11 Rue raymond Queneau</Address_1>
 		<Address_2 />
 		<City_Town>Rueil Malmaison</City_Town>
 		<State_Province />
 		<Zip_Postal_Code>92500</Zip_Postal_Code>
 		<Country>FRANCE</Country>
-		<Company_WebSite_URL>http://www.dolibarr.org</Company_WebSite_URL>
+		<Company_WebSite_URL>http://www.nltechno.com</Company_WebSite_URL>
 		<Contact_Info>
-			<Author_First_Name>Dolibarr team</Author_First_Name>
-			<Author_Last_Name>Dolibarr team</Author_Last_Name>
-			<Author_Email>dolibarr-dev@nongnu.org</Author_Email>
-			<Contact_First_Name>Dolibarr team</Contact_First_Name>
-			<Contact_Last_Name>Dolibarr team</Contact_Last_Name>
-			<Contact_Email>dolibarr-dev@nongnu.org</Contact_Email>
+			<Author_First_Name>NLTechno</Author_First_Name>
+			<Author_Last_Name>NLTechno</Author_Last_Name>
+			<Author_Email>dolibarr@nltechno.com</Author_Email>
+			<Contact_First_Name>NLTechno</Contact_First_Name>
+			<Contact_Last_Name>NLTechno</Contact_Last_Name>
+			<Contact_Email>dolibarr@nltechno.com</Contact_Email>
 		</Contact_Info>
 		<Support_Info>
-			<Sales_Email>dolibarr-dev@nongnu.org</Sales_Email>
-			<Support_Email>dolibarr-dev@nongnu.org</Support_Email>
-			<General_Email>dolibarr-dev@nongnu.org</General_Email>
+			<Sales_Email>dolibarr@nltechno.com</Sales_Email>
+			<Support_Email>dolibarr@nltechno.com</Support_Email>
+			<General_Email>dolibarr@nltechno.com</General_Email>
 			<Sales_Phone />
 			<Support_Phone />
 			<General_Phone />
@@ -34,10 +34,10 @@
 	</Company_Info>
 	<Program_Info>
 		<Program_Name>Dolibarr</Program_Name>
-		<Program_Version>3.1.0</Program_Version>
-		<Program_Release_Month>07</Program_Release_Month>
-		<Program_Release_Day>09</Program_Release_Day>
-		<Program_Release_Year>2011</Program_Release_Year>
+		<Program_Version>3.2.0</Program_Version>
+		<Program_Release_Month>05</Program_Release_Month>
+		<Program_Release_Day>10</Program_Release_Day>
+		<Program_Release_Year>2012</Program_Release_Year>
 		<Program_Cost_Dollars />
 		<Program_Cost_Other_Code />
 		<Program_Cost_Other />
@@ -46,14 +46,14 @@
 		<Program_Install_Support>No Install Support</Program_Install_Support>
 		<Program_OS_Support>Linux,Mac OS X,Mac Other,Unix,Win2000,Win7 x32,Win7 x64,Win98,WinOther,WinServer,WinVista,WinVista x64,WinXP,Other</Program_OS_Support>
 		<Program_Language>English,Arabic,Catalan,Chinese,Danish,Dutch,Finnish,French,German,Greek,Icelandic,Italian,Norwegian,Polish,Portuguese,Romanian,Russian,Slovenian,Spanish,Swedish,Turkish</Program_Language>
-		<Program_Change_Info>Increase performances, Setup process is easier, Reduce number of clicks required to use software</Program_Change_Info>
+		<Program_Change_Info>http://www.dolibarr.org</Program_Change_Info>
 		<Program_Specific_Category>Business</Program_Specific_Category>
 		<Program_Category_Class>Business::Accounting &amp; Finance</Program_Category_Class>
 		<Program_System_Requirements>None</Program_System_Requirements>
 		<File_Info>
-			<File_Size_Bytes>18037439</File_Size_Bytes>
-			<File_Size_K>18037</File_Size_K>
-			<File_Size_MB>18.03</File_Size_MB>
+			<File_Size_Bytes>9359175</File_Size_Bytes>
+			<File_Size_K>9139</File_Size_K>
+			<File_Size_MB>8.93</File_Size_MB>
 		</File_Info>
 		<Expire_Info>
 			<Has_Expire_Info>N</Has_Expire_Info>
@@ -73,9 +73,13 @@
 			<Char_Desc_250>Dolibarr ERP &amp; CRM, the easy to use open source software to manage your activity (invoices, customers, suppliers, contracts, agenda, emailings...) and any other things a small or mid-sized business or a foundation needs to follow.</Char_Desc_250>
 			<Char_Desc_450>Dolibarr ERP &amp; CRM is a software built by modules addition (you enable only features you need), to manage small or medium companies, freelancers or foundations. We can say Dolibarr is an ERP or CRM. Dolibarr is also available with an auto-installer for Windows users with no technical knowledge to install Dolibarr and all its prerequisites (Apache, Mysql, PHP) with just one auto-exe file. See DoliWamp software for this.</Char_Desc_450>
 			<Char_Desc_2000>Dolibarr ERP &amp; CRM is a software built by modules addition (you enable only features you need), to manage small or mid-sized businesses, freelancers or foundations. We can say Dolibarr is an ERP or CRM (or both depending on activated modules). It's an OpenSource project base on a WAMP, MAMP or LAMP server (Apache, Mysql, PHP for all Operating Systems). Dolibarr differs from other ERP or CRM softwares (like OpenAguila, OpenBravo, OpenERP, Neogia, Compiere, etc) because everything was made to be more simple:
+
 Simple to install
+
 Simple to use
+
 Simple to develop 
+
 Note that Dolibarr is also available with an auto-installer for Windows or Ubuntu users with no technical knowledge to install Dolibarr and all its prerequisites (Apache, Mysql, PHP) with just one auto-exe file. This version is called DoliWamp (for Windows) or DoliBuntu (for Ubuntu/Debian).</Char_Desc_2000>
 		</English>
 		<French>
@@ -85,9 +89,13 @@ Note that Dolibarr is also available with an auto-installer for Windows or Ubunt
 			<Char_Desc_250>Dolibarr ERP &amp; CRM, le logiciel simple et OpenSource pour gérer votre activité (factures, devis, facturation, commandes, compta, trésorerie, stocks, produits, agenda, comptes bancaires, associations)</Char_Desc_250>
 			<Char_Desc_450>Dolibarr ERP/CRM est un logiciel modulaire (on n'active que les fonctions que l'on désire) de gestions de TPE/PME, d'indépendants, d'entrepreneurs ou d'associations. En terme plus techniques, c'est un ERP et CRM. C'est un projet OpenSource qui s'exécute au sein d'un serveur Web et peut donc être accessible depuis n'importe quel lieu disposant d'une connexion Internet (Projet basé sur un serveur WAMP, MAMP ou LAMP: Apache, MySQL, PHP).</Char_Desc_450>
 			<Char_Desc_2000>Dolibarr ERP/CRM est un logiciel modulaire (on n'active que les fonctions que l'on désire) de gestions de TPE/PME, d'indépendants, d'entrepreneurs ou d'associations. En terme plus techniques, c'est un ERP et CRM. C'est un projet OpenSource qui s'exécute au sein d'un serveur Web et peut donc être accessible depuis n'importe quel lieu disposant d'une connexion Internet (Projet basé sur un serveur WAMP, MAMP ou LAMP: Apache, MySQL, PHP). Dolibarr vient compléter les offres déjà nombreuses de logiciels de cette catégorie (comme OpenBravo, OpenERP, SugarCRM, Neogia, Compiere, etc.) mais se démarque par le fait qu'ici tout est fait pour offrir de la simplicité (règle des 3 S):
+
 Simple pour l'installation (avec au choix des installeurs clé en main pour ceux qui ignorent comment installer un serveur Web, ou une installation manuelle)
+
 Simple pour l'utilisation (fonctions modulaires pour ne pas surcharger les menus, informations claires à la saisie)
+
 Simple pour le développement (pas de frameworks lourds). 
+
 Dolibarr intègre en effet sa propre architecture (design patterns) permettant à tout développeur d'être tout de suite opérationnel sans connaissances particulières autre que le PHP. </Char_Desc_2000>
 		</French>
 		<Italian>
@@ -118,6 +126,11 @@ Dolibarr intègre en effet sa propre architecture (design patterns) permettant �
 		<Distribution_Permissions>GNU GPL</Distribution_Permissions>
 		<EULA>GNU GPL</EULA>
 	</Permissions>
+	<ASP>
+		<ASP_FORM>Y</ASP_FORM>
+		<ASP_Member>N</ASP_Member>
+		<ASP_Member_Number />
+	</ASP>
 	<Affiliates>
 		<Affiliates_FORM>Y</Affiliates_FORM>
 		<Affiliates_VERSION>1.4</Affiliates_VERSION>
@@ -224,9 +237,4 @@ Dolibarr intègre en effet sa propre architecture (design patterns) permettant �
 		<Affiliates_Yaskifo_Product_ID />
 		<Affiliates_Yaskifo_Maximum_Commission_Rate />
 	</Affiliates>
-	<ASP>
-		<ASP_FORM>Y</ASP_FORM>
-		<ASP_Member>N</ASP_Member>
-		<ASP_Member_Number />
-	</ASP>
 </XML_DIZ_INFO>
