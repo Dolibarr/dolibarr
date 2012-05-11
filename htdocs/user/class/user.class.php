@@ -1579,6 +1579,8 @@ class User extends CommonObject
 		{
 			if (! $error && ! $notrigger)
 			{
+			    $this->newgroupid=$group;
+
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
@@ -1635,6 +1637,8 @@ class User extends CommonObject
 		{
 			if (! $error && ! $notrigger)
 			{
+			    $this->oldgroupid=$group;
+
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);

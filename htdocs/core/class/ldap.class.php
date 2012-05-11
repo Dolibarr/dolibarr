@@ -508,7 +508,7 @@ class Ldap
 	 *
 	 *  @param	string		$dn			DN entry key
 	 *  @param  string		$info		Attributes array
-	 *  @param  User		$user		Objet user that delete
+	 *  @param  User		$user		Objet user that update
 	 * 	@param	string		$olddn		Old DN entry key (before update)
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
