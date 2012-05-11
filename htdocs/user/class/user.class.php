@@ -1579,6 +1579,8 @@ class User extends CommonObject
 		{
 			if (! $error && ! $notrigger)
 			{
+			    $this->newgroupid=$group;
+
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
@@ -1635,6 +1637,8 @@ class User extends CommonObject
 		{
 			if (! $error && ! $notrigger)
 			{
+			    $this->oldgroupid=$group;
+
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
@@ -1885,8 +1889,10 @@ class User extends CommonObject
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
 
-		$this->nom='DOLIBARR';
-		$this->prenom='SPECIMEN';
+		$this->nom='DOLIBARR';        // deprecated
+		$this->prenom='SPECIMEN';     // deprecated
+		$this->lastname='DOLIBARR';
+		$this->firstname='SPECIMEN';
 		$this->note='This is a note';
 		$this->email='email@specimen.com';
 		$this->office_phone='0999999999';

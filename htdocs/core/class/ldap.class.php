@@ -207,7 +207,7 @@ class Ldap
 				$this->connection = ldap_connect($host,$this->serverPort);
 			}
 
-			if ($this->connection)
+			if (is_resource($this->connection))
 			{
 				$this->setVersion();
 
@@ -274,9 +274,9 @@ class Ldap
 		}
 		else
 		{
-			$this->error='Failed to connect to LDAP';
+			$this->error='Failed to connect to LDAP'.($this->error?': '.$this->error:'');
 			$return=-1;
-			dol_syslog("Ldap::connect_bind return=".$return, LOG_WARNING);
+			dol_syslog("Ldap::connect_bind return=".$return.' - '.$this->error, LOG_WARNING);
 		}
 		return $return;
 	}
@@ -508,7 +508,7 @@ class Ldap
 	 *
 	 *  @param	string		$dn			DN entry key
 	 *  @param  string		$info		Attributes array
-	 *  @param  User		$user		Objet user that delete
+	 *  @param  User		$user		Objet user that update
 	 * 	@param	string		$olddn		Old DN entry key (before update)
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
