@@ -19,6 +19,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+define('NOTOKENRENEWAL',1); // Disables token renewal
+
 require('../../../../main.inc.php');
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN"
