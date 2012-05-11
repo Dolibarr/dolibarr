@@ -207,7 +207,7 @@ class Ldap
 				$this->connection = ldap_connect($host,$this->serverPort);
 			}
 
-			if ($this->connection)
+			if (is_resource($this->connection))
 			{
 				$this->setVersion();
 
@@ -274,9 +274,9 @@ class Ldap
 		}
 		else
 		{
-			$this->error='Failed to connect to LDAP';
+			$this->error='Failed to connect to LDAP'.($this->error?': '.$this->error:'');
 			$return=-1;
-			dol_syslog("Ldap::connect_bind return=".$return, LOG_WARNING);
+			dol_syslog("Ldap::connect_bind return=".$return.' - '.$this->error, LOG_WARNING);
 		}
 		return $return;
 	}

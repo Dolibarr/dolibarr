@@ -85,8 +85,8 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 		{
 			dol_syslog("functions_ldap::check_user_password_ldap Server:".join(',',$ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType);
 			dol_syslog("functions_ldap::check_user_password_ldap uid/samacountname=".$ldapuserattr.", dn=".$ldapdn.", Admin:".$ldap->searchUser.", Pass:".$ldap->searchPassword);
-			print "DEBUG: Server:".join(',',$ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType."\n";
-			print "DEBUG: uid/samacountname=".$ldapuserattr.", dn=".$ldapdn.", Admin:".$ldap->searchUser.", Pass:".$ldap->searchPassword."\n";
+			print "DEBUG: Server:".join(',',$ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType."<br>\n";
+			print "DEBUG: uid/samacountname=".$ldapuserattr.", dn=".$ldapdn.", Admin:".$ldap->searchUser.", Pass:".$ldap->searchPassword."<br>\n";
 		}
 
 		$resultFetchLdapUser=0;
@@ -104,7 +104,7 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 		if ($ldapadminlogin)
 		{
 			$result=$ldap->connect_bind();
-			if ($result)
+			if ($result > 0)
 			{
 				$resultFetchLdapUser = $ldap->fetch($usertotest,$userSearchFilter);
 				//dol_syslog('functions_ldap::check_user_password_ldap resultFetchLdapUser='.$resultFetchLdapUser);
@@ -118,6 +118,10 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 					$_SESSION["dol_loginmesg"]=$langs->trans("YouMustChangePassNextLogon",$usertotest,$ldap->domainFQDN);
 					return '';
 				}
+			}
+			else
+			{
+			     if ($ldapdebug) print "DEBUG: ".$ldap->error."<br>\n";
 			}
 			$ldap->close();
 		}
@@ -191,11 +195,11 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
              ** 53 - Account inactive (manually locked out by administrator)
              */
             dol_syslog("functions_ldap::check_user_password_ldap Authentification ko failed to connect to LDAP for '".$usertotest."'");
-		    if ($this->connection)    // If connection ok but bind ko
+            if (is_resource($ldap->connection))    // If connection ok but bind ko
 		    {
-                $this->ldapErrorCode = ldap_errno($this->connection);
-                $this->ldapErrorText = ldap_error($this->connection);
-                dol_syslog("unctions_ldap::check_user_password_ldap ".$this->ldapErrorText);
+                $ldap->ldapErrorCode = ldap_errno($ldap->connection);
+                $ldap->ldapErrorText = ldap_error($ldap->connection);
+                dol_syslog("functions_ldap::check_user_password_ldap ".$ldap->ldapErrorText);
 		    }
 			sleep(1);
 			$langs->load('main');
