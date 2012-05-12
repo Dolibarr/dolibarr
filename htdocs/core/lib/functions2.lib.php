@@ -138,6 +138,7 @@ function dol_print_object_info($object)
 {
     global $langs,$db;
     $langs->load("other");
+    $langs->load("admin");
 
     $deltadateforuser=((int) $_SESSION['dol_tz'] + (int) $_SESSION['dol_dst']);
     //$deltadateforcompany=((int) $_SESSION['dol_tz'] + (int) $_SESSION['dol_dst']);
