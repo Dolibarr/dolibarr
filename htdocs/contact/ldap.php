@@ -32,6 +32,8 @@ $langs->load("companies");
 $langs->load("ldap");
 $langs->load("admin");
 
+$action=GETPOST('action');
+
 // Security check
 $contactid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
@@ -45,7 +47,7 @@ $contact->fetch($_GET["id"], $user);
  * Actions
  */
 
-if ($_GET["action"] == 'dolibarr2ldap')
+if ($action == 'dolibarr2ldap')
 {
 	$message="";
 
@@ -133,7 +135,7 @@ print '</table>';
 print '</div>';
 
 
-if ($message) { print $message; }
+dol_htmloutput_mesg($message);
 
 
 /*
