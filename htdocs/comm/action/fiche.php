@@ -741,7 +741,7 @@ if ($id)
 
 		// Contact
 		print '<td>'.$langs->trans("Contact").'</td><td width="30%">';
-		print $form->selectarray("contactid",  $act->societe->contact_array(), $act->contact->id, 1);
+		print $form->selectarray("contactid", (empty($act->societe->id)?array():$act->societe->contact_array()), $act->contact->id, 1);
 		print '</td></tr>';
 
 		// Project
