@@ -411,7 +411,7 @@ class Ldap
 	{
 		global $conf;
 
-		dol_syslog("Ldap::add dn=".$dn." info=".join(',',$info));
+		dol_syslog(get_class($this)."::add dn=".$dn." info=".join(',',$info));
 
 		// Check parameters
 		if (! $this->connection)
@@ -439,13 +439,14 @@ class Ldap
 
 		if ($result)
 		{
-			dol_syslog("Ldap::add successfull", LOG_DEBUG);
+			dol_syslog(get_class($this)."::add successfull", LOG_DEBUG);
 			return 1;
 		}
 		else
 		{
 			$this->error=@ldap_error($this->connection);
-			dol_syslog("Ldap::add failed: ".$this->error, LOG_ERR);
+			$this->errno=@ldap_errno($this->connection);
+			dol_syslog(get_class($this)."::add failed: ".$this->errno." ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

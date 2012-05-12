@@ -131,7 +131,7 @@ class Contact extends CommonObject
 		$sql.= "'".$this->db->idate($now)."',";
 		if ($this->socid > 0) $sql.= " ".$this->socid.",";
 		else $sql.= "null,";
-		$sql.= "'".$this->db->escape($this->name)."',";
+		$sql.= "'".$this->db->escape($this->lastname)."',";
         $sql.= "'".$this->db->escape($this->firstname)."',";
 		$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null").",";
 		$sql.= " ".$this->priv.",";
@@ -330,7 +330,7 @@ class Contact extends CommonObject
 
 		// Fields
 		if ($this->fullname && $conf->global->LDAP_CONTACT_FIELD_FULLNAME) $info[$conf->global->LDAP_CONTACT_FIELD_FULLNAME] = $this->fullname;
-		if ($this->name && $conf->global->LDAP_CONTACT_FIELD_NAME) $info[$conf->global->LDAP_CONTACT_FIELD_NAME] = $this->name;
+		if ($this->lastname && $conf->global->LDAP_CONTACT_FIELD_NAME) $info[$conf->global->LDAP_CONTACT_FIELD_NAME] = $this->lastname;
 		if ($this->firstname && $conf->global->LDAP_CONTACT_FIELD_FIRSTNAME) $info[$conf->global->LDAP_CONTACT_FIELD_FIRSTNAME] = $this->firstname;
 
 		if ($this->poste) $info["title"] = $this->poste;
