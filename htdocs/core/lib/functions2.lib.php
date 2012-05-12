@@ -91,6 +91,7 @@ function dol_print_file($langs,$filename,$searchalt=0)
 
 /**
  *	Show informations on an object
+ *  TODO Move this into html.formother
  *
  *	@param	Object	$object			Objet to show
  *	@return	void
@@ -99,6 +100,9 @@ function dol_print_object_info($object)
 {
     global $langs,$db;
     $langs->load("other");
+
+    $deltadateforuser=((int) $_SESSION['dol_tz'] + (int) $_SESSION['dol_dst']);
+    //$deltadateforcompany=((int) $_SESSION['dol_tz'] + (int) $_SESSION['dol_dst']);
 
     // Import key
     if (isset($object->import_key))
@@ -123,7 +127,11 @@ function dol_print_object_info($object)
 
     // Date
     if (isset($object->date_creation))
-    print $langs->trans("DateCreation")." : " . dol_print_date($object->date_creation,"dayhourtext") . '<br>';
+    {
+        print $langs->trans("DateCreation")." : " . dol_print_date($object->date_creation,"dayhourtext");
+        if ($deltadateforuser) print ' &nbsp;'.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_creation+($deltadateforuser*3600),"dayhourtext").' &nbsp;'.$langs->trans("ClientHour");
+        print '<br>';
+    }
 
     // User change
     if (isset($object->user_modification))
@@ -144,7 +152,11 @@ function dol_print_object_info($object)
 
     // Date
     if (isset($object->date_modification))
-    print $langs->trans("DateLastModification")." : " . dol_print_date($object->date_modification,"dayhourtext") . '<br>';
+    {
+        print $langs->trans("DateLastModification")." : " . dol_print_date($object->date_modification,"dayhourtext");
+        if ($deltadateforuser) print ' &nbsp;'.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_modification+($deltadateforuser*3600),"dayhourtext").' &nbsp;'.$langs->trans("ClientHour");
+        print '<br>';
+    }
 
     // User validation
     if (isset($object->user_validation))
@@ -165,7 +177,36 @@ function dol_print_object_info($object)
 
     // Date
     if (isset($object->date_validation))
-    print $langs->trans("DateValidation")." : " . dol_print_date($object->date_validation,"dayhourtext") . '<br>';
+    {
+        print $langs->trans("DateValidation")." : " . dol_print_date($object->date_validation,"dayhourtext");
+        if ($deltadateforuser) print ' &nbsp;'.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_validation+($deltadateforuser*3600),"dayhourtext").' &nbsp;'.$langs->trans("ClientHour");
+        print '<br>';
+    }
+
+    // User approve
+    if (isset($object->user_approve))
+    {
+        print $langs->trans("ApprovedBy")." : ";
+        if (is_object($object->user_approve))
+        {
+            print $object->user_approve->getNomUrl(1);
+        }
+        else
+        {
+            $userstatic=new User($db);
+            $userstatic->fetch($object->user_approve);
+            print $userstatic->getNomUrl(1);
+        }
+        print '<br>';
+    }
+
+    // Date approve
+    if (isset($object->date_approve))
+    {
+        print $langs->trans("DateApprove")." : " . dol_print_date($object->date_approve,"dayhourtext");
+        if ($deltadateforuser) print ' &nbsp;'.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve+($deltadateforuser*3600),"dayhourtext").' &nbsp;'.$langs->trans("ClientHour");
+        print '<br>';
+    }
 
     // User close
     if (isset($object->user_cloture))
@@ -186,7 +227,11 @@ function dol_print_object_info($object)
 
     // Date
     if (isset($object->date_cloture))
-    print $langs->trans("DateClosing")." : " . dol_print_date($object->date_cloture,"dayhourtext") . '<br>';
+    {
+        print $langs->trans("DateClosing")." : " . dol_print_date($object->date_cloture,"dayhourtext");
+        if ($deltadateforuser) print ' &nbsp;'.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_cloture+($deltadateforuser*3600),"dayhourtext").' &nbsp;'.$langs->trans("ClientHour");
+        print '<br>';
+    }
 
     // User conciliate
     if (isset($object->user_rappro))
@@ -207,11 +252,19 @@ function dol_print_object_info($object)
 
     // Date
     if (isset($object->date_rappro))
-    print $langs->trans("DateConciliating")." : " . dol_print_date($object->date_rappro,"dayhourtext") . '<br>';
+    {
+        print $langs->trans("DateConciliating")." : " . dol_print_date($object->date_rappro,"dayhourtext");
+        if ($deltadateforuser) print ' &nbsp;'.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_rappro+($deltadateforuser*3600),"dayhourtext").' &nbsp;'.$langs->trans("ClientHour");
+        print '<br>';
+    }
 
     //Date send
     if (isset($object->date_envoi))
-    print $langs->trans("DateLastSend")." : " . dol_print_date($object->date_envoi,"dayhourtext") . '<br>';
+    {
+        print $langs->trans("DateLastSend")." : " . dol_print_date($object->date_envoi,"dayhourtext");
+        if ($deltadateforuser) print ' &nbsp;'.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_envoi+($deltadateforuser*3600),"dayhourtext").' &nbsp;'.$langs->trans("ClientHour");
+        print '<br>';
+    }
 }
 
 /**
