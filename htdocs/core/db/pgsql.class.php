@@ -277,7 +277,8 @@ class DoliDBPgsql
                 // ALTER TABLE llx_tablechild ADD CONSTRAINT fk_tablechild_fk_fieldparent FOREIGN KEY (fk_fieldparent) REFERENCES llx_tableparent (rowid)
                 if (preg_match('/ALTER\s+TABLE\s+(.*)\s*ADD CONSTRAINT\s+(.*)\s*FOREIGN\s+KEY\s*(.*)$/i',$line,$reg))
                 {
-                     $line.=" DEFERRABLE INITIALLY IMMEDIATE";
+                    $line=preg_replace('/;$/','',$line);
+                    $line.=" DEFERRABLE INITIALLY IMMEDIATE;";
                 }
 
                 // alter table add [unique] [index] (field1, field2 ...)
