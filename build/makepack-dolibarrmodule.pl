@@ -77,12 +77,13 @@ for (0..@ARGV-1) {
 }
 $SOURCE="$DIR/..";
 $DESTI="$SOURCE/build";
-if ($ENV{"DESTI"}) { $DESTI = $ENV{"DESTI"}; }		# Force output dir if env DESTI is defined
+if ($ENV{"DESTIMODULES"}) { $DESTI = $ENV{"DESTIMODULES"}; }		# Force output dir if env DESTIMODULES is defined
+$NEWDESTI=$DESTI;
 
 
 print "Makepack for modules version $VERSION\n";
 print "Source directory: $SOURCE\n";
-print "Target directory: $DESTI\n";
+print "Target directory: $NEWDESTI\n";
 
 
 # Ask and set version $MAJOR and $MINOR
