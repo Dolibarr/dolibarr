@@ -296,8 +296,6 @@ div.tmenu {
     margin: 5px 0px 10px 0px;
     font-size: 13px;
     background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_mainNav.jpg' ?>);
-    background-repeat: no-repeat;
-    background-color: #996644;
     height: 22px;
     border-bottom: 2px solid #842F00;
 <?php } ?>
@@ -454,12 +452,14 @@ li.tmenu span, li.tmenusel span {
 	margin: 0px 10px 0px 10px;
     }
 
+li.tmenu {
+    }
 .tmenuimage {
-	margin: 0 !important;
-	padding: 0 !important;
+margin: 0 !important;
+padding: 0 !important;
 }
 
-li.tmenu a, li.tmenusel a {
+li.tmenu a {
 	position: relative;
 	display: block;
     height: 22px;
@@ -469,36 +469,53 @@ li.tmenu a, li.tmenusel a {
     color: #FFF;
     font-weight: normal;
     float: <?php print $left; ?>;
-}
+    }
 
 li.tmenu a:hover {
 	color: #FFFFFF;
     background-color: #D45416;
-}
+    }
 
-li.tmenu a.tmenusel, li.tmenu a.tmenusel:hover, li.tmenusel a.tmenusel, li.tmenusel a.tmenusel:hover {
+li.tmenu a.tmenusel,
+li.tmenu a.tmenusel:hover {
 	color: #842F00;
     font-weight: bold;
     background-color: #FFF;
-    font-weight: normal;
-}
+    }
 
-li.tmenu .tmenusel, li.tmenusel .tmenusel {
+li.tmenu .tmenusel {
     background: #FFFFFF;
-}
+	}
+
 
 li.tmenusel {
     background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenusel_btnD.jpg' ?>);
     background-position: right;
-}
+    }
+
+li.tmenusel a.tmenusel {
+	position: relative;
+	display: block;
+    width: 100%;
+    height: 22px;
+    background-image : url(<?php echo DOL_URL_ROOT.'/theme/bureau2crea/img/bg_tmenusel_btnG.jpg' ?>);
+    background-position: left;
+	background-repeat: no-repeat;
+    font-size: 12px;
+    font-family: Geneva, Verdana, sans-serif;
+    line-height: 25px;
+    color: #303030;
+    font-weight: normal;
+    float: left;
+    }
 
 li.tmenusel a:hover {
 	color: #474747;
-}
+    }
 
 li.tmenu a.tmenudisabled {
 	color: #CCC;
-}
+    }
 
 /* --- end nav --- */
 
