@@ -744,6 +744,7 @@ class Contact extends CommonObject
 		else
 		{
 			$this->db->rollback();
+			dol_syslog("Error ".$this->error,LOG_ERR);
 			return -1;
 		}
 	}
