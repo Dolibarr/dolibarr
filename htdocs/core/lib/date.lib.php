@@ -77,7 +77,7 @@ function getServerTimeZoneString()
  * Return server timezone int.
  * If $conf->global->MAIN_NEW_DATE is set, we use new behaviour: All convertions take care of dayling saving time.
  *
- * @param	string	$refgmtdate		Reference date for timezone (timezone differs on winter and summer)
+ * @param	string	$refgmtdate		Reference period for timezone (timezone differs on winter and summer. May be 'now', 'winter' or 'summer')
  * @return 	int						An offset in hour (+1 for Europe/Paris on winter and +2 for Europe/Paris on summer)
  */
 function getServerTimeZoneInt($refgmtdate='now')
@@ -92,8 +92,17 @@ function getServerTimeZoneInt($refgmtdate='now')
     }
     else
     {
-        // Method 2 (does not include daylight)
-        $tmp=dol_mktime(0,0,0,1,1,1970);
+        // Method 2 (does not include daylight, not supported by adodb)
+        if ($refgmtdate == 'now')
+        {
+            $gmtnow=dol_now('gmt');
+            $monthnow=dol_print_date($gmtnow,'%m'); $daynow=dol_print_date($gmtnow,'%d');
+            if (dol_stringtotime($_SESSION['dol_dst_first']) <= $gmtnow && $gmtnow < dol_stringtotime($_SESSION['dol_dst_second'])) $daylight=1;
+            else $daylight=0;
+            $tmp=dol_mktime(0,0,0,$monthnow,$daynow,1970,false,0)-dol_mktime(0,0,0,$monthnow,$daynow,1970,true,0)-($daylight*3600);
+        }
+        else if ($refgmtdate == 'summer') $tmp=-1;    // TODO
+        else $tmp=dol_mktime(0,0,0,1,1,1970);
     }
     $tz=($tmp<0?1:-1)*abs($tmp/3600);
     return $tz;
