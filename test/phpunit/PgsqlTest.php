@@ -129,36 +129,36 @@ class PgsqlTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-        $sql="ALTER TABLE llx_table RENAME TO llx_table_new";
+        $sql="ALTER TABLE llx_table RENAME TO llx_table_new;";
         $result=DoliDBPgsql::convertSQLFromMysql($sql);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, "ALTER TABLE llx_table RENAME TO llx_table_new");
+        $this->assertEquals($result, "ALTER TABLE llx_table RENAME TO llx_table_new;");
 
-        $sql="ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol";
+        $sql="ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;";
         $result=DoliDBPgsql::convertSQLFromMysql($sql);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, "ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0'");
+        $this->assertEquals($result, "ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0';");
 
-        $sql="ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60)";
+        $sql="ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);";
         $result=DoliDBPgsql::convertSQLFromMysql($sql);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, "-- ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60) replaced by --\nALTER TABLE llx_table RENAME COLUMN oldname TO newname");
+        $this->assertEquals($result, "-- ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60); replaced by --\nALTER TABLE llx_table RENAME COLUMN oldname TO newname");
 
-        $sql="ALTER TABLE llx_table DROP COLUMN oldname";
+        $sql="ALTER TABLE llx_table DROP COLUMN oldname;";
         $result=DoliDBPgsql::convertSQLFromMysql($sql);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, $sql);
 
-        $sql="ALTER TABLE llx_table MODIFY name varchar(60)";
+        $sql="ALTER TABLE llx_table MODIFY name varchar(60);";
         $result=DoliDBPgsql::convertSQLFromMysql($sql);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result, "-- ALTER TABLE llx_table MODIFY name varchar(60) replaced by --\nALTER TABLE llx_table ALTER COLUMN name TYPE varchar(60)");
+        $this->assertEquals($result, "-- ALTER TABLE llx_table MODIFY name varchar(60); replaced by --\nALTER TABLE llx_table ALTER COLUMN name TYPE varchar(60);");
 
         // Create a constraint
 		$sql='ALTER TABLE llx_tablechild ADD CONSTRAINT fk_tablechild_fk_fieldparent FOREIGN KEY (fk_fieldparent) REFERENCES llx_tableparent (rowid)';
 		$result=DoliDBPgsql::convertSQLFromMysql($sql);
         print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result, $sql.' DEFERRABLE INITIALLY IMMEDIATE');
+    	$this->assertEquals($result, $sql.' DEFERRABLE INITIALLY IMMEDIATE;');
 
     	return $result;
     }
