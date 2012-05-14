@@ -383,6 +383,7 @@ if (! defined('NOLOGIN'))
             {
                 $dol_authmode=$conf->authmode;	// This properties is defined only when logged to say what mode was successfully used
                 $dol_tz=$_POST["tz"];
+                $dol_tz_string=$_POST["tz_string"];
                 $dol_dst=0;
                 if (isset($_POST["dst_first"]) && isset($_POST["dst_second"]))
                 {
@@ -536,6 +537,7 @@ if (! defined('NOLOGIN'))
         $_SESSION["dol_login"]=$user->login;
         $_SESSION["dol_authmode"]=isset($dol_authmode)?$dol_authmode:'';
         $_SESSION["dol_tz"]=isset($dol_tz)?$dol_tz:'';
+        $_SESSION["dol_tz_string"]=isset($dol_tz_string)?$dol_tz_string:'';
         $_SESSION["dol_dst"]=isset($dol_dst)?$dol_dst:'';
         $_SESSION["dol_dst_observed"]=isset($dol_dst_observed)?$dol_dst_observed:'';
         $_SESSION["dol_dst_first"]=isset($dol_dst_first)?$dol_dst_first:'';

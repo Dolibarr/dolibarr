@@ -63,6 +63,7 @@ $(document).ready(function () {
 <input type="hidden" name="loginfunction" value="loginfunction" />
 <!-- Add fields to send local user information -->
 <input type="hidden" name="tz" id="tz" value="" />
+<input type="hidden" name="tz_string" id="tz_string" value="" />
 <input type="hidden" name="dst_observed" id="dst_observed" value="" />
 <input type="hidden" name="dst_first" id="dst_first" value="" />
 <input type="hidden" name="dst_second" id="dst_second" value="" />
