@@ -293,6 +293,12 @@ PaymentConditionShort60D=60 días
 PaymentCondition60D=Pago a los 60 días
 PaymentConditionShort60DENDMONTH=60 días a fin de mes
 PaymentCondition60DENDMONTH=Pago a los 60 días a fin de mes
+PaymentConditionShortPT_DELIVERY=En la entrega
+PaymentConditionPT_DELIVERY=Pago en la entrega
+PaymentConditionShortPT_ORDER=En el pedido
+PaymentConditionPT_ORDER=A la recepción del pedido
+PaymentConditionShortPT_5050=50/50
+PaymentConditionPT_5050=Pago 50%% por adelantado, 50%% en la entrega
 # PaymentType
 PaymentTypeVIR=Transferencia bancaria
 PaymentTypeShortVIR=Transferencia
