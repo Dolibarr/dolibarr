@@ -267,6 +267,6 @@ if (! defined('NOREQUIRETRAN'))
 if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
 
 // We force feature to help debug
-$conf->global->MAIN_JS_ON_PAYMENT=1;
+//$conf->global->MAIN_JS_ON_PAYMENT=0;    // We disable this. See bug #402 on doliforge
 
 ?>

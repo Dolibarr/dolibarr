@@ -322,9 +322,9 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
         $this->assertEquals(7261,$result);
 
-        $result=dol_mktime(2,0,0,1,1,1970,0);                // 1970-01-01 02:00:00 in local area Europe/Paris -> 3600 GMT
+        $result=dol_mktime(2,0,0,1,1,1970,0);                // 1970-01-01 02:00:00 = 7200 in local area Europe/Paris = 3600 GMT
         print __METHOD__." result=".$result."\n";
-        $tz=getServerTimeZoneInt('1970-01-01 02:00:00');    // +1 in Europe/Paris at this time (this time is winter)
+        $tz=getServerTimeZoneInt('winter');                  // +1 in Europe/Paris at this time (this time is winter)
         $this->assertEquals(7200-($tz*3600),$result);        // Should be 7200 if we are at greenwich winter
     }
 
@@ -337,8 +337,8 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
     {
         $now=dol_now('gmt');
         $nowtzserver=dol_now('tzserver');
-        print __METHOD__."getServerTimeZoneInt=".(getServerTimeZoneInt()*3600)."\n";
-        $this->assertEquals(getServerTimeZoneInt()*3600,($nowtzserver-$now));
+        print __METHOD__."getServerTimeZoneInt=".(getServerTimeZoneInt('now')*3600)."\n";
+        $this->assertEquals(getServerTimeZoneInt('now')*3600,($nowtzserver-$now));
     }
 
     /**

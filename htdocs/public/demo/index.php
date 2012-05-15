@@ -77,14 +77,14 @@ $demoprofiles[]=array('default'=>'0', 'key'=>'profdemomed', 'lang'=>'cabinetmed@
 
 $alwayscheckedmodules=array('barcode','bookmark','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
 $alwaysuncheckedmodules=array('paybox','paypal','google','scanner','workflow');  // Module we never want
-$alwayshiddencheckedmodules=array('accounting','barcode','bookmark','clicktodial','comptabilite','document','domain','externalrss','externalsite','fckeditor','geoipmaxmind','gravatar','label','ldap','mailmanspip','notification',
-                                'syslog','user','webservices',
+$alwayshiddencheckedmodules=array('accounting','barcode','bookmark','clicktodial','comptabilite','document','domain','externalrss','externalsite','fckeditor','geoipmaxmind','gravatar','label','ldap',
+								'mailmanspip','notification','syslog','user','webservices',
                                 // Extended modules
                                 'memcached','numberwords','zipautofillfr');
 $alwayshiddenuncheckedmodules=array('boutique','ftp',
                                 // Extended modules
-                                'awstats','bittorrent','cabinetmed','concatpdf','filemanager','mantis','monitoring','nltechno','ovh','phenix','phpsysinfo','postnuke','skincoloreditor','submiteverywhere',
-                                'survey','thomsonphonebook','voyage','webcalendar','webmail');
+                                'awstats','bittorrent','cabinetmed','cmcic','concatpdf','dolicloud','filemanager','mantis','monitoring','moretemplates','nltechno','numberingpack','openstreetmap',
+                                'ovh','phenix','phpsysinfo','pibarcode','postnuke','skincoloreditor','submiteverywhere','survey','thomsonphonebook','topten','tvacerfa','voyage','webcalendar','webmail');
 
 // Search modules
 $dirlist=$conf->file->dol_document_root;

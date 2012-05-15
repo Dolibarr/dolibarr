@@ -1261,7 +1261,7 @@ padding: 0px;
 }
 
 .boxhandle {
-	margin: 1px 4px 0px 0px;
+	margin: 1px 1px 0px 0px;
 }
 
 .notopnoleft {

@@ -1007,7 +1007,7 @@ function dol_now($mode='gmt')
     else if ($mode == 'tzserver')		// Time for now with PHP server timezone added
     {
         require_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
-        $tzsecond=getServerTimeZoneInt();    // Contains tz+dayling saving time
+        $tzsecond=getServerTimeZoneInt('now');    // Contains tz+dayling saving time
         $ret=dol_now('gmt')+($tzsecond*3600);
     }
     /*else if ($mode == 'tzref')				// Time for now with parent company timezone is added

@@ -231,7 +231,7 @@ class DoliDBPgsql
     			}
 
     			// We remove end of requests "AFTER fieldxxx"
-    			$line=preg_replace('/AFTER [a-z0-9_]+/i','',$line);
+    			$line=preg_replace('/\sAFTER [a-z0-9_]+/i','',$line);
 
     			// We remove start of requests "ALTER TABLE tablexxx" if this is a DROP INDEX
     			$line=preg_replace('/ALTER TABLE [a-z0-9_]+ DROP INDEX/i','DROP INDEX',$line);
@@ -258,7 +258,7 @@ class DoliDBPgsql
                 }
 
                 // alter table add primary key (field1, field2 ...) -> We remove the primary key name not accepted by PostGreSQL
-    			// ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY pk_dolibarr_modules (numero, entity);
+    			// ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY pk_dolibarr_modules (numero, entity)
     			if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+PRIMARY\s+KEY\s*(.*)\s*\((.*)$/i',$line,$reg))
     			{
     				$line = "-- ".$line." replaced by --\n";
@@ -266,14 +266,22 @@ class DoliDBPgsql
     			}
 
                 // Translate order to drop foreign keys
-                // ALTER TABLE llx_dolibarr_modules DROP FOREIGN KEY fk_xxx;
+                // ALTER TABLE llx_dolibarr_modules DROP FOREIGN KEY fk_xxx
                 if (preg_match('/ALTER\s+TABLE\s*(.*)\s*DROP\s+FOREIGN\s+KEY\s*(.*)$/i',$line,$reg))
                 {
                     $line = "-- ".$line." replaced by --\n";
                     $line.= "ALTER TABLE ".$reg[1]." DROP CONSTRAINT ".$reg[2];
                 }
 
-    			// alter table add [unique] [index] (field1, field2 ...)
+                // Translate order to add foreign keys
+                // ALTER TABLE llx_tablechild ADD CONSTRAINT fk_tablechild_fk_fieldparent FOREIGN KEY (fk_fieldparent) REFERENCES llx_tableparent (rowid)
+                if (preg_match('/ALTER\s+TABLE\s+(.*)\s*ADD CONSTRAINT\s+(.*)\s*FOREIGN\s+KEY\s*(.*)$/i',$line,$reg))
+                {
+                    $line=preg_replace('/;$/','',$line);
+                    $line.=" DEFERRABLE INITIALLY IMMEDIATE;";
+                }
+
+                // alter table add [unique] [index] (field1, field2 ...)
     			// ALTER TABLE llx_accountingaccount ADD INDEX idx_accountingaccount_fk_pcg_version (fk_pcg_version)
     			if (preg_match('/ALTER\s+TABLE\s*(.*)\s*ADD\s+(UNIQUE INDEX|INDEX|UNIQUE)\s+(.*)\s*\(([\w,\s]+)\)/i',$line,$reg))
     			{

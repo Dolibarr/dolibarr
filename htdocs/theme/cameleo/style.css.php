@@ -357,7 +357,7 @@ ul.tmenu {	/* t r b l */
     margin: 0px 0px 0px 6px;
 	list-style: none;
 }
-li.tmenu {
+li.tmenu, li.tmenusel {
 	text-align: center;
 	vertical-align: top;
 	float: <?php print $left; ?>;

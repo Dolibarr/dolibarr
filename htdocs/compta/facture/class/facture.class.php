@@ -1519,7 +1519,7 @@ class Facture extends CommonObject
         $now=dol_now();
 
         $error=0;
-        dol_syslog(get_class($this).'::validate force_number='.$force_number,' idwarehouse='.$idwarehouse, LOG_WARNING);
+        dol_syslog(get_class($this).'::validate force_number='.$force_number.', idwarehouse='.$idwarehouse, LOG_WARNING);
 
 	    // Check parameters
         if (! $this->brouillon)

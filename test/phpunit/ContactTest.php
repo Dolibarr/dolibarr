@@ -181,6 +181,8 @@ class ContactTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+		$localobject->oldcopy=dol_clone($localobject);
+
 		$localobject->note='New note after update';
 		//$localobject->note_public='New note public after update';
 		$localobject->lastname='New name';
@@ -304,7 +306,7 @@ class ContactTest extends PHPUnit_Framework_TestCase
 		$localobject=new Contact($this->savdb);
     	$result=$localobject->fetch($id);
 
-    	$result=$localobject->delete($id);
+    	$result=$localobject->delete(0);
 		print __METHOD__." id=".$id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 

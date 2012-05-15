@@ -157,10 +157,16 @@ $txt =$langs->trans("OSTZ").' (variable system TZ): '.($_ENV["TZ"]?$_ENV["TZ"]:$
 $txt.=$langs->trans("PHPTZ").' (php.ini date.timezone): '.(ini_get("date.timezone")?ini_get("date.timezone"):$langs->trans("NotDefined")).''."\n"; // date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentTimeZone").'</td><td>';	// Timezone server PHP
-$a=getServerTimeZoneString();
-$a.=' '.(getServerTimeZoneInt()>=0?'+':'').getServerTimeZoneInt();
-$a.=' ('.(getServerTimeZoneInt()>=0?'+':'').(getServerTimeZoneInt()*3600).')';
-print $form->textwithtooltip($a,$txt,2,1,img_info(''));
+$a=getServerTimeZoneInt('now');
+$b=getServerTimeZoneInt('winter');
+$c=getServerTimeZoneInt('summer');
+$daylight=(is_numeric($c) && is_numeric($b))?round($c-$b):'unknown';
+//print $a." ".$b." ".$c." ".$daylight;
+$val=($a>=0?'+':'').$a;
+$val.=' ('.($a==='unknown'?'unknown':($a>=0?'+':'').($a*3600)).')';
+$val.=' &nbsp; &nbsp; &nbsp; '.getServerTimeZoneString().' '.($b>=0?'+':'').$b.' ('.($b>=0?'+':'').($b*3600).')';
+$val.=' &nbsp; &nbsp; &nbsp; '.$langs->trans("DaylingSavingTime").': '.($daylight==='unknown'?'unknown':yn($daylight));
+print $form->textwithtooltip($val,$txt,2,1,img_info(''));
 print '</td></tr>'."\n";	// value defined in http://fr3.php.net/manual/en/timezones.europe.php
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">&nbsp; => '.$langs->trans("CurrentHour").'</td><td>'.dol_print_date(dol_now(),'dayhour','tzserver').'</td></tr>'."\n";

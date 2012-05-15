@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
@@ -159,13 +159,13 @@ if (empty($reshook))
             $error++; $errors[]=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label"));
             $action = 'create';
         }
-        
+
         if (! $error)
         {
             $id =  $object->create($user);
             if ($id <= 0)
             {
-                $error++; $errors[]=($object->error?array($object->error):$object->errors);
+                $error++; $errors=array_merge($errors,($object->error?array($object->error):$object->errors));
                 $action = 'create';
             }
         }
@@ -199,7 +199,7 @@ if (empty($reshook))
         }
         else
         {
-            $error=$object->error; $errors[]=$object->errors;
+            $error=$object->error; $errors=$object->errors;
         }
     }
 
@@ -355,7 +355,7 @@ else
             print_fiche_titre($title);
 
             // Affiche les erreurs
-            dol_htmloutput_errors($error,$errors);
+            dol_htmloutput_errors(is_numeric($error)?'':$error,$errors);
 
             if ($conf->use_javascript_ajax)
             {
@@ -689,7 +689,7 @@ else
         }
     }
 
-    if (! empty($id) && $action != 'edit')
+    if (! empty($id) && $action != 'edit' && $action != 'create')
     {
         $objsoc = new Societe($db);
 
