@@ -620,7 +620,7 @@ ByYear=Per any
 ByMonth=Per mes
 ByDay=Per dia
 BySalesRepresentative=Per comercial
-
+LinkedToSpecificUsers=Enllaçat a un contacte d'usuari particular
 
 # Week day
 Monday=Dilluns
