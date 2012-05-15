@@ -160,6 +160,14 @@ if (! empty($_POST['removedfile']) || ! empty($_POST['removedfilehtml']))
 }
 
 /*
+ * Cancel
+ */
+if (($action == 'send' || $action == 'sendhtml') && $_POST['cancel'])
+{
+    $message='';
+}
+
+/*
  * Send mail
  */
 if (($action == 'send' || $action == 'sendhtml') && ! $_POST['addfile'] && ! $_POST['addfilehtml'] && ! $_POST["removedfile"] && ! $_POST['cancel'])
