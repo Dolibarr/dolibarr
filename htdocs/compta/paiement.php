@@ -75,7 +75,7 @@ if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm=='ye
         if (substr($key,0,7) == 'amount_')
         {
             $cursorfacid = substr($key,7);
-            $amounts[$cursorfacid] = price2num($_POST[$key]);
+            $amounts[$cursorfacid] = price2num(trim($_POST[$key]));
             $totalpaiement = $totalpaiement + $amounts[$cursorfacid];
             $tmpfacture=new Facture($db);
             $tmpfacture->fetch($cursorfacid);
