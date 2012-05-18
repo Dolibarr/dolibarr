@@ -785,7 +785,7 @@ class Project extends CommonObject
                 $nblinks = 0;
                 while ($nblinks < $num)
                 {
-                    if (preg_match('/PROJECT/', $userRole[$nblinks]['code']) && $user->id == $userRole[$nblinks]['id'])
+                    if (preg_match('/PROJECT/', $userRole[$nblinks]['code']) && $user->contact_id == $userRole[$nblinks]['id'])
                     {
                         if ($mode == 'read'   && $user->rights->projet->lire)      $userAccess++;
                         if ($mode == 'write'  && $user->rights->projet->creer)     $userAccess++;
@@ -838,14 +838,14 @@ class Project extends CommonObject
             //$sql.= " OR p.fk_user_creat = ".$user->id;
             $sql.= " OR ( ctc.rowid = ec.fk_c_type_contact";
             $sql.= " AND ctc.element = '" . $this->element . "'";
-            $sql.= " AND ec.fk_socpeople = " . $user->id . " ) )";
+            $sql.= " AND ec.fk_socpeople = " . $user->contact_id . " ) )";
         }
         if ($mode == 1)
         {
             $sql.= " AND ec.element_id = p.rowid";
             $sql.= " AND ctc.rowid = ec.fk_c_type_contact";
             $sql.= " AND ctc.element = '" . $this->element . "'";
-            $sql.= " AND ec.fk_socpeople = " . $user->id;
+            $sql.= " AND ec.fk_socpeople = " . $user->contact_id;
         }
         if ($mode == 2)
         {
