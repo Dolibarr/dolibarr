@@ -1905,7 +1905,7 @@ else
 			print '</td>';
 
 			print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
-			if ($objp->fk_statut == 1 && $objp->dfv < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+			if ($objp->fk_statut == 1 && $db->jdate($objp->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 			print '</td>';
 
 			print '<td width="16" align="right" class="nobordernopadding">';
