@@ -48,3 +48,12 @@ DELETE FROM llx_boxes where box_id NOT IN (SELECT rowid FROM llx_boxes_def);
 -- VPGSQL8.2 DELETE FROM llx_boxes_def as T1 WHERE rowid NOT IN (SELECT min(rowid) FROM llx_boxes_def GROUP BY file, entity, note)
 
 
+-- Requests to clean old tables or fields
+
+-- DROP TABLE llx_c_methode_commande_fournisseur;
+-- DROP TABLE llx_c_source;
+-- DROP TABLE llx_cond_reglement;
+-- DROP TABLE llx_expedition_methode;
+-- DROP TABLE llx_product_fournisseur;
+-- ALTER TABLE llx_product_fournisseur_price DROP COLUMN fk_product_fournisseur;
+

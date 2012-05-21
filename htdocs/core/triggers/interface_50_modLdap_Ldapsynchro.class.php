@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  *  \brief      Fichier de gestion des triggers LDAP
  */
 require_once (DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
+require_once (DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php");
 
 
 /**
@@ -209,6 +210,82 @@ class InterfaceLdapsynchro
 				}
 				return $result;
     		}
+        }
+        elseif ($action == 'USER_SETINGROUP')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
+            {
+                $ldap=new Ldap();
+                $ldap->connect_bind();
+
+                // Must edit $object->newgroupid
+                $usergroup=new UserGroup($this->db);
+                if ($object->newgroupid > 0)
+                {
+                    $usergroup->fetch($object->newgroupid);
+
+                    $oldinfo=$usergroup->_load_ldap_info();
+                    $olddn=$usergroup->_load_ldap_dn($oldinfo);
+
+                    // Verify if entry exist
+                    $container=$usergroup->_load_ldap_dn($oldinfo,1);
+                    $search = "(".$usergroup->_load_ldap_dn($oldinfo,2).")";
+                    $records=$ldap->search($container,$search);
+                    if (count($records) && $records['count'] == 0)
+                    {
+                        $olddn = '';
+                    }
+
+                    $info=$usergroup->_load_ldap_info();    // Contains all members, included the new one (insert already done before trigger call)
+                    $dn=$usergroup->_load_ldap_dn($info);
+
+                    $result=$ldap->update($dn,$info,$user,$olddn);
+                    if ($result < 0)
+                    {
+                        $this->error="ErrorLDAP ".$ldap->error;
+                    }
+                }
+                return $result;
+            }
+        }
+        elseif ($action == 'USER_REMOVEFROMGROUP')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
+            {
+                $ldap=new Ldap();
+                $ldap->connect_bind();
+
+                // Must edit $object->newgroupid
+                $usergroup=new UserGroup($this->db);
+                if ($object->oldgroupid > 0)
+                {
+                    $usergroup->fetch($object->oldgroupid);
+
+                    $oldinfo=$usergroup->_load_ldap_info();
+                    $olddn=$usergroup->_load_ldap_dn($oldinfo);
+
+                    // Verify if entry exist
+                    $container=$usergroup->_load_ldap_dn($oldinfo,1);
+                    $search = "(".$usergroup->_load_ldap_dn($oldinfo,2).")";
+                    $records=$ldap->search($container,$search);
+                    if (count($records) && $records['count'] == 0)
+                    {
+                        $olddn = '';
+                    }
+
+                    $info=$usergroup->_load_ldap_info();    // Contains all members, included the new one (insert already done before trigger call)
+                    $dn=$usergroup->_load_ldap_dn($info);
+
+                    $result=$ldap->update($dn,$info,$user,$olddn);
+                    if ($result < 0)
+                    {
+                        $this->error="ErrorLDAP ".$ldap->error;
+                    }
+                }
+                return $result;
+            }
         }
 
 		// Groupes

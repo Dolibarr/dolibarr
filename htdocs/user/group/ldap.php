@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -179,7 +179,7 @@ if ($result > 0)
 	//var_dump($records);
 
 	// Affichage arbre
-	if (count($records) && (! isset($records['count']) || $records['count'] > 0))
+	if (count($records) && $records != false && (! isset($records['count']) || $records['count'] > 0))
 	{
 		if (! is_array($records))
 		{

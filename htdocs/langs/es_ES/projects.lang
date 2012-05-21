@@ -1,4 +1,4 @@
-# Dolibarr language file - es_ES - projects 
+# Dolibarr language file - es_ES - projects
 CHARSET=UTF-8
 Project=Proyecto
 Projects=Proyectos
@@ -85,6 +85,14 @@ TaskIsNotAffectedToYou=Tarea que no le afecta
 ErrorTimeSpentIsEmpty=No se ha establecido el tiempo consumido
 ThisWillAlsoRemoveTasks=Esta operación también destruirá las tareas del proyecto (<b>%s</b> tareas) y sus tiempos dedicados.
 IfNeedToUseOhterObjectKeepEmpty=Si los elementos (factura, pedido, ...) pertenecen a un tercero que no és el seleccionado, debiendo estos estar ligados al proyecto a crear, déjelo vacío para permitir el proyecto a multi-terceros.
+CloneProject=Clonar el proyecto
+CloneTasks=Clonar las tareas
+CloneContacts=Clonar los contactos
+CloneNotes=Clonar las notas
+CloneFiles=Clonar los archivos adjuntos
+ConfirmCloneProject=¿Está seguro de querer clonar este proyecto?
+ProjectReportDate=Cambiar las fechas de las tareas en función de la fecha de inicio del proyecto
+ErrorShiftTaskDate=Se ha producido un error en el cambio de las fechas de las tareas
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Jefe de proyecto
 TypeContact_project_external_PROJECTLEADER=Jefe de proyecto
@@ -94,5 +102,5 @@ TypeContact_project_task_internal_TASKEXECUTIVE=Responsable
 TypeContact_project_task_external_TASKEXECUTIVE=Responsable
 TypeContact_project_task_internal_CONTRIBUTOR=Participante
 TypeContact_project_task_external_CONTRIBUTOR=Participante
-# Documents models #
+# Documents models
 DocumentModelBaleine=Modelo de informe de proyecto completo (logo...)

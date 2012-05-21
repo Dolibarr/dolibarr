@@ -293,6 +293,12 @@ PaymentConditionShort60D=60 dies
 PaymentCondition60D=Pagament als 60 dies
 PaymentConditionShort60DENDMONTH=60 dies a fi de mes
 PaymentCondition60DENDMONTH=Pagament als 60 dies a fi de mes
+PaymentConditionShortPT_DELIVERY=Al lliurament
+PaymentConditionPT_DELIVERY=Pagament al lliurament
+PaymentConditionShortPT_ORDER=Comanda
+PaymentConditionPT_ORDER=A la recepció de la comanda
+PaymentConditionShortPT_5050=50/50
+PaymentConditionPT_5050=Pagament 50%% per avançat, 50%% al lliurament
 # PaymentType
 PaymentTypeVIR=Transferència bancària
 PaymentTypeShortVIR=Transferència

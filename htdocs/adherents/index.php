@@ -266,7 +266,7 @@ else
  */
 $max=5;
 
-$sql = "SELECT a.rowid, a.statut, a.nom, a.prenom,";
+$sql = "SELECT a.rowid, a.statut, a.nom as lastname, a.prenom as firstname,";
 $sql.= " datefin as date_end_subscription,";
 $sql.= " c.rowid as cid, c.tms as datem, c.datec as datec, c.dateadh as date_start, c.datef as date_end, c.cotisation";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."cotisation as c";

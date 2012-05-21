@@ -48,7 +48,7 @@ if ($action == 'setvalue' && $user->admin)
 
 	$db->begin();
 	if (! dolibarr_set_const($db, 'LDAP_SERVER_TYPE',GETPOST("type"),'chaine',0,'',$conf->entity)) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_SERVER_PROTOCOLVERSION',GETPOST("version"),'chaine',0,'',$conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_SERVER_PROTOCOLVERSION',GETPOST("LDAP_SERVER_PROTOCOLVERSION"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_SERVER_HOST',GETPOST("host"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_SERVER_HOST_SLAVE',GETPOST("slave"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_SERVER_PORT',GETPOST("port"),'chaine',0,'',$conf->entity)) $error++;
@@ -169,7 +169,7 @@ print '<tr '.$bc[$var].'><td>'.$langs->trans("Version").'</td><td>';
 $arraylist=array();
 $arraylist['3']='Version 3';
 $arraylist['2']='Version 2';
-print $form->selectarray('version',$arraylist,$conf->global->LDAP_SERVER_PROTOCOLVERSION);
+print $form->selectarray('LDAP_SERVER_PROTOCOLVERSION',$arraylist,$conf->global->LDAP_SERVER_PROTOCOLVERSION);
 print '</td><td>'.$langs->trans("LDAPServerProtocolVersion").'</td></tr>';
 
 // Serveur primaire

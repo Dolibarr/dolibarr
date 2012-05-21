@@ -1007,7 +1007,7 @@ function dol_now($mode='gmt')
     else if ($mode == 'tzserver')		// Time for now with PHP server timezone added
     {
         require_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
-        $tzsecond=getServerTimeZoneInt();    // Contains tz+dayling saving time
+        $tzsecond=getServerTimeZoneInt('now');    // Contains tz+dayling saving time
         $ret=dol_now('gmt')+($tzsecond*3600);
     }
     /*else if ($mode == 'tzref')				// Time for now with parent company timezone is added
@@ -1293,7 +1293,7 @@ function dol_print_address($address, $htmlid, $mode, $id)
     if ($address)
     {
         print nl2br($address);
-        $showmap=0;
+        $showgmap=$showomap=0;
         if ($mode=='thirdparty' && $conf->google->enabled && $conf->global->GOOGLE_ENABLE_GMAPS) $showgmap=1;
         if ($mode=='contact' && $conf->google->enabled && $conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS) $showgmap=1;
         if ($mode=='member' && $conf->google->enabled && $conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS) $showgmap=1;
@@ -3935,16 +3935,16 @@ function printCommonFooter($zone='private')
     {
         print "\n";
         print '<script type="text/javascript">'."\n";
-            print '  var _gaq = _gaq || [];'."\n";
-            print '  _gaq.push([\'_setAccount\', \''.$conf->global->MAIN_GOOGLE_AN_ID.'\']);'."\n";
-            print '  _gaq.push([\'_trackPageview\']);'."\n";
-            print ''."\n";
+        print '  var _gaq = _gaq || [];'."\n";
+        print '  _gaq.push([\'_setAccount\', \''.$conf->global->MAIN_GOOGLE_AN_ID.'\']);'."\n";
+        print '  _gaq.push([\'_trackPageview\']);'."\n";
+        print ''."\n";
         print '  (function() {'."\n";
-            print '    var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true;'."\n";
-            print '    ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\';'."\n";
-            print '    var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);'."\n";
-            print '  })();'."\n";
-            print '</script>'."\n";
+        print '    var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true;'."\n";
+        print '    ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\';'."\n";
+        print '    var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);'."\n";
+        print '  })();'."\n";
+        print '</script>'."\n";
     }
 
     // End of tuning

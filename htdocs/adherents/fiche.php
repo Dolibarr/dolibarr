@@ -897,7 +897,7 @@ if ($action == 'edit')
 	print '<input type="hidden" name="action" value="update" />';
 	print '<input type="hidden" name="rowid" value="'.$rowid.'" />';
 	print '<input type="hidden" name="statut" value="'.$object->statut.'" />';
-	print '<input type="hidden" name="backtopage" value="'.((! empty($backtopage) && $backtopage != '1') ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
+	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
 	print '<table class="border" width="100%">';
 
@@ -1206,7 +1206,7 @@ if ($rowid && $action != 'edit')
         // Cree un tableau formulaire
 		$formquestion=array();
 		if ($object->email) $formquestion[]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?'true':'false'));
-		if ($backtopage)    $formquestion[]=array('type' => 'hidden', 'name' => 'backtopage', 'value' => ((! empty($backtopage) && $backtopage != '1') ? $backtopage : $_SERVER["HTTP_REFERER"]));
+		if ($backtopage)    $formquestion[]=array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
 		$ret=$form->form_confirm("fiche.php?rowid=".$rowid,$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion);
         if ($ret == 'html') print '<br>';
     }
@@ -1215,7 +1215,7 @@ if ($rowid && $action != 'edit')
     if ($action == 'delete')
     {
 		$formquestion=array();
-		if ($backtopage) $formquestion[]=array('type' => 'hidden', 'name' => 'backtopage', 'value' => ((! empty($backtopage) && $backtopage != '1') ? $backtopage : $_SERVER["HTTP_REFERER"]));
+		if ($backtopage) $formquestion[]=array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
         $ret=$form->form_confirm("fiche.php?rowid=".$rowid,$langs->trans("DeleteMember"),$langs->trans("ConfirmDeleteMember"),"confirm_delete",$formquestion,0,1);
         if ($ret == 'html') print '<br>';
     }
