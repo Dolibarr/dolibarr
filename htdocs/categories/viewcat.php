@@ -84,7 +84,7 @@ $form = new Form($db);
 
 llxHeader("","",$langs->trans("Categories"));
 
-if ($mesg) print $mesg.'<br>';
+dol_htmloutput_mesg($mesg);
 
 if ($type == 0) $title=$langs->trans("ProductsCategoryShort");
 elseif ($type == 1) $title=$langs->trans("SuppliersCategoryShort");
