@@ -127,10 +127,26 @@ if ($action == 'delete')
 	$sql="DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles where rowid=".$id;
 	$resql=$db->query($sql);
 	if ($resql)
-	{
-		$classname = "MailingTargets";
-		$obj = new $classname($db);
-		$obj->update_nb($id);
+	{   //on récurpére l'id du mailing
+		$id = GETPOST('id','int'); 
+
+		if (!empty($id))
+		{
+			$file = $dirmod."/modules_mailings.php";
+			$classname = "MailingTargets";
+			require_once($file);
+			
+			$obj = new $classname($db);
+			$obj->update_nb($id);
+			
+			Header("Location: cibles.php?id=".$id);
+			exit;
+		}
+		else
+		{
+			Header("Location: liste.php");
+			exit;
+		}
 	}
 	else
 	{
