@@ -90,7 +90,7 @@ function llxHeaderVierge($title, $head="", $disablejs=0, $disablehead=0, $arrayo
 {
     global $user, $conf, $langs, $mysoc;
     top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
-    print '<body id="mainbody">';
+    print '<body id="mainbody" class="publicnewmemberform" style="margin-top: 10px;">';
 
     // Print logo
     $urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
@@ -337,12 +337,15 @@ $extrafields->fetch_name_optionals_label('member');    // fetch optionals attrib
 
 llxHeaderVierge($langs->trans("NewSubscription"));
 
+
 print_titre($langs->trans("NewSubscription"));
 
 if (! empty($conf->global->MEMBER_NEWFORM_TEXT)) print $langs->trans($conf->global->MEMBER_NEWFORM_TEXT)."<br>\n";
 else print $langs->trans("NewSubscriptionDesc",$conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";
 
 dol_htmloutput_errors($errmsg);
+
+print '<div align="center">';
 
 print '<br>'.$langs->trans("FieldsWithAreMandatory",'*').'<br>';
 //print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
@@ -563,10 +566,10 @@ if (! empty($backtopage))
 }
 print '</center>';
 
-print "<br></form>\n";
+print "<br></div></form>\n";
 print '</div>';
 
-
+print
 llxFooterVierge();
 
 $db->close();
