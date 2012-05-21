@@ -402,6 +402,7 @@ elseif ($action == 'update_line')
     if ($_REQUEST['etat'] == '1' && ! $_REQUEST['cancel']) // si on valide la modification
     {
         $object->fetch($id);
+        $object->fetch_thirdparty();
 
         if ($_POST['puht'])
         {
