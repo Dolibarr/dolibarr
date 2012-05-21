@@ -52,13 +52,15 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
     require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
     $tmparray=getCountry(GETPOST('country_id','int'),'all',$db,$langs,0);
+    if (! empty($tmparray['id']))
+    {
+        $mysoc->country_id   =$tmparray['id'];
+        $mysoc->country_code =$tmparray['code'];
+        $mysoc->country_label=$tmparray['label'];
 
-    $mysoc->country_id=GETPOST('country_id','int');
-    $mysoc->country_code =$tmparray['code'];
-    $mysoc->country_label=$tmparray['label'];
-
-    $s=$mysoc->country_id.':'.$mysoc->country_code.':'.$mysoc->country_label;
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS", $s,'chaine',0,'',$conf->entity);
+        $s=$mysoc->country_id.':'.$mysoc->country_code.':'.$mysoc->country_label;
+        dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS", $s,'chaine',0,'',$conf->entity);
+    }
 
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",$_POST["nom"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADRESSE",$_POST["address"],'chaine',0,'',$conf->entity);
