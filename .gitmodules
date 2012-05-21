@@ -51,7 +51,7 @@
 	url = git+ssh://hregis@doliforge.org/gitroot/hosting/hosting.git
 [submodule "htdocs/custom/ventilation"]
         path = htdocs/custom/ventilation
-        url = git+ssh://hregis@doliforge.org/gitroot/ventilation/ventilation.git
+        url = gitolite@doliforge.org:ventilation/ventilation.git
 [submodule "htdocs/custom/book"]
         path = htdocs/custom/book
         url = gitolite@doliforge.org:book/book.git
