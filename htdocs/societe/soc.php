@@ -198,15 +198,18 @@ if (empty($reshook))
                 $action = ($action=='add'?'create':'edit');
             }
 
+            // Check for duplicate prof id
         	for ($i = 1; $i < 3; $i++)
         	{
-    			$slabel="idprof".$i;
-        		if (($_POST[$slabel] && $object->id_prof_verifiable($i)))
+        	    $slabel="idprof".$i;
+    			$_POST[$slabel]=trim($_POST[$slabel]);
+        	    $vallabel=$_POST[$slabel];
+        		if ($vallabel && $object->id_prof_verifiable($i))
 				{
-					if($object->id_prof_exists($i,$_POST["$slabel"],$object->id))
+					if($object->id_prof_exists($i,$vallabel,$object->id))
 					{
 						$langs->load("errors");
-                		$error++; $errors[] = $langs->transcountry('ProfId'.$i, $object->country_code)." ".$langs->trans("ErrorProdIdAlreadyExist", $_POST[$slabel]);
+                		$error++; $errors[] = $langs->transcountry('ProfId'.$i, $object->country_code)." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel);
                 		$action = ($action=='add'?'create':'edit');
 					}
 				}
