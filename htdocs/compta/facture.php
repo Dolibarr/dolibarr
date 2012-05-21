@@ -70,18 +70,9 @@ $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_montant_ttc=GETPOST('search_montant_ttc','alpha');
 
 //PDF
-if ($conf->global->MAIN_FEATURES_LEVEL > 1)
-{
-	$hidedetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS)?0:1;
-	$hidedesc 	 = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC)?0:1;
-	$hideref 	 = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF)?0:1;
-}
-else
-{
-	$hidedetails= GETPOST('hidedetails');
-	$hidedesc 	= GETPOST('hidedesc');
-	$hideref 	= GETPOST('hideref');
-}
+$hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
+$hidedesc 	 = (GETPOST('hidedesc','int') ? GETPOST('hidedesc','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ?  1 : 0));
+$hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
 // Security check
 $fieldid = (! empty($ref)?'facnumber':'rowid');
