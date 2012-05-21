@@ -46,6 +46,20 @@ $id			= (GETPOST('facid','int') ? GETPOST('facid','int') : GETPOST('id','int'));
 $action		= GETPOST("action");
 $confirm	= GETPOST("confirm");
 
+//PDF
+if ($conf->global->MAIN_FEATURES_LEVEL > 1)
+{
+	$hidedetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS)?0:1;
+	$hidedesc 	 = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC)?0:1;
+	$hideref 	 = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF)?0:1;
+}
+else
+{
+	$hidedetails= GETPOST('hidedetails');
+	$hidedesc 	= GETPOST('hidedesc');
+	$hideref 	= GETPOST('hideref');
+}
+
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
@@ -1922,7 +1936,7 @@ else
                     $outputlangs->setDefaultLang($newlang);
                 }
 
-                $result=supplier_invoice_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+                $result=supplier_invoice_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
                 if ($result <= 0)
                 {
                     dol_print_error($db,$result);
