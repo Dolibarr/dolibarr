@@ -50,6 +50,20 @@ $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm','alpha');
 $mesg		= GETPOST('msg','alpha');
 
+//PDF
+if ($conf->global->MAIN_FEATURES_LEVEL > 1)
+{
+	$hidedetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS)?0:1;
+	$hidedesc 	 = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC)?0:1;
+	$hideref 	 = empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF)?0:1;
+}
+else
+{
+	$hidedetails= GETPOST('hidedetails');
+	$hidedesc 	= GETPOST('hidedesc');
+	$hideref 	= GETPOST('hideref');
+}
+
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
@@ -1253,7 +1267,7 @@ else if ($id > 0 || ! empty($ref))
                 $outputlangs->setDefaultLang($newlang);
             }
 
-            $result=fichinter_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+            $result=fichinter_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
             if ($result <= 0)
             {
                 dol_print_error($db,$result);
