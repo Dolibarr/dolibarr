@@ -579,7 +579,8 @@ class Categorie
 			$cats = array ();
 			while ($rec = $this->db->fetch_array($res))
 			{
-				$cat = new Categorie($this->db, $rec['fk_categorie_fille']);
+				$cat = new self($this->db);
+				$cat->fetch($rec['fk_categorie_fille']);
 				$cats[] = $cat;
 			}
 			return $cats;
@@ -826,9 +827,10 @@ class Categorie
 		if ($res)
 		{
 			$cats = array ();
-			while ($record = $this->db->fetch_array($res))
+			while ($rec = $this->db->fetch_array($res))
 			{
-				$cat = new Categorie($this->db, $record['rowid']);
+				$cat = new self($this->db);
+				$cat->fetch($rec['rowid']);
 				$cats[$record['rowid']] = $cat;
 			}
 			return $cats;
@@ -1059,9 +1061,11 @@ class Categorie
 
 		if ($res)
 		{
-			while ($cat = $this->db->fetch_array($res))
+			while ($rec = $this->db->fetch_array($res))
 			{
-				$meres[] = new Categorie($this->db, $cat['fk_categorie_mere']);
+				$cat = new self($this->db);
+				$cat->fetch($rec['fk_categorie_mere']);
+				$meres[] = $cat;
 			}
 			return $meres;
 		}
@@ -1125,9 +1129,11 @@ class Categorie
 		$res = $this->db->query($sql);
 		if ($res)
 		{
-			while ($cat = $this->db->fetch_array($res))
+			while ($rec = $this->db->fetch_array($res))
 			{
-				$cats[] = new Categorie($this->db, $cat['fk_categorie']);
+				$cat = new self($this->db);
+				$cat->fetch($rec['fk_categorie']);
+				$cats[] = $cat;
 			}
 
 			return $cats;
@@ -1174,9 +1180,11 @@ class Categorie
 		$res  = $this->db->query($sql);
 		if ($res)
 		{
-			while ($id = $this->db->fetch_array($res))
+			while ($rec = $this->db->fetch_array($res))
 			{
-				$cats[] = new Categorie($this->db, $id['rowid']);
+				$cat = new self($this->db);
+				$cat->fetch($rec['rowid']);
+				$cats[] = $cat;
 			}
 
 			return $cats;
