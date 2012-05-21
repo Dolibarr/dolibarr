@@ -218,7 +218,7 @@ if ($action == 'edit')	// Edit
     	//Details
     	$var=!$var;
     	print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDetailsOnPDF").'</td><td>';
-    	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_REF',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS:0,1);
+    	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS:0,1);
     	print '</td></tr>';
     }
 
