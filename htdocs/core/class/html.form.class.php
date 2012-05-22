@@ -2903,8 +2903,9 @@ class Form
     function load_cache_vatrates($country_code)
     {
     	global $langs;
-
-    	if (count($this->cache_vatrates)) return 0;    // Cache deja charge
+    	
+    	$num = count($this->cache_vatrates);
+    	if ($num > 0) return $num;    // Cache deja charge
 
     	$sql  = "SELECT DISTINCT t.taux, t.recuperableonly";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";

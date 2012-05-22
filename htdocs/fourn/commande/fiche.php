@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This	program	is free	software; you can redistribute it and/or modify
@@ -54,9 +54,12 @@ $confirm		= GETPOST('confirm','alpha');
 $comclientid 	= GETPOST('comid','int');
 $socid			= GETPOST('socid','int');
 $projectid		= GETPOST('projectid','int');
-$hidedetails	= GETPOST('hidedetails','alpha');
-$hidedesc		= GETPOST('hidedesc','alpha');
-$hideref		= GETPOST('hideref','alpha');
+
+//PDF
+$hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
+$hidedesc 	 = (GETPOST('hidedesc','int') ? GETPOST('hidedesc','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ?  1 : 0));
+$hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;

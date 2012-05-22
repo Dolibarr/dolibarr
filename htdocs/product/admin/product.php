@@ -131,7 +131,7 @@ llxHeader('',$title);
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($title,$linkback,'setup');
 
-$head = product_admin_prepare_head(null, $tab);
+$head = product_admin_prepare_head();
 dol_fiche_head($head, 'general', $tab, 0, 'product');
 
 $form=new Form($db);
