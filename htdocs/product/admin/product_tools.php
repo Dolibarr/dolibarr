@@ -61,7 +61,7 @@ if ($action == 'convert')
 			$i = 0;
 			while ($i < $num)
 			{
-				$obj = $db->fetch_object($result);
+				$obj = $db->fetch_object($resql);
 				
 				$object = new Product($db);
 				$object->fetch($obj->rowid);
