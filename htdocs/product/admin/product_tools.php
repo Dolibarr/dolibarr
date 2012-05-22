@@ -61,24 +61,27 @@ if ($action == 'convert')
 			$i = 0;
 			while ($i < $num)
 			{
-				$obj = $db->fetch_object($result);
+				$obj = $db->fetch_object($resql);
 				
 				$object = new Product($db);
-				$object->fetch($obj->rowid);
 				
-				if ($price_base_type == 'TTC')
+				$ret=$object->fetch($obj->rowid);		
+				if ($ret)
 				{
-					$newprice=price2num($object->price_ttc,'MU');
+					if ($price_base_type == 'TTC')
+					{
+						$newprice=price2num($object->price_ttc,'MU');
+					}
+					else
+					{
+						$newprice=price2num($object->price,'MU');
+					}
+					
+					$newvat=str_replace('*','',$newvatrate);
+					
+					$ret=$object->updatePrice($object->id, $newprice, $price_base_type, $user, $newvat);
+					if ($ret < 0) $error++;
 				}
-				else
-				{
-					$newprice=price2num($object->price,'MU');
-				}
-				
-				$newvat=str_replace('*','',$newvatrate);
-				
-				$ret=$object->updatePrice($object->id, $newprice, $price_base_type, $user, $newvat);
-				if ($ret < 0) $error++;
 				
 				$i++;
 			}
