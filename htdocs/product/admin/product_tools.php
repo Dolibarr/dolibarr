@@ -45,8 +45,6 @@ if ($action == 'convert')
 {
 	$error=0;
 	
-	$object = new Product($db);
-	
 	$db->begin();
 	
 	$sql = 'SELECT rowid';
@@ -65,6 +63,7 @@ if ($action == 'convert')
 			{
 				$obj = $db->fetch_object($result);
 				
+				$object = new Product($db);
 				$object->fetch($obj->rowid);
 				
 				if ($price_base_type == 'TTC')
