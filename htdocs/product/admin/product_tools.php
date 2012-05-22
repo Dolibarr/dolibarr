@@ -70,7 +70,7 @@ if ($action == 'convert')
 				{
 					if ($price_base_type == 'TTC')
 					{
-						$newprice=price2num($object->price_ttc,'MU');
+						$newprice=price2num($object->price_ttc,'2');
 					}
 					else
 					{
