@@ -139,35 +139,42 @@ function product_prepare_head($object, $user)
 *  Return array head with list of tabs to view object informations.
 *
 *  @param	Object	$object		Product
-*  @param	string	$tab		Tab id
 *  @return	array   	        head array with tabs
 */
-function product_admin_prepare_head($object, $tab)
+function product_admin_prepare_head($object=null)
 {
-    global $langs, $conf, $user;
-
-    $h = 0;
-    $head = array();
-
-    $head[$h][0] = DOL_URL_ROOT."/product/admin/product.php";
-    $head[$h][1] = $tab;
-    $head[$h][2] = 'general';
-    $h++;
-
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'product_admin');
-
-    $head[$h][0] = DOL_URL_ROOT.'/product/admin/product_extrafields.php';
-    $head[$h][1] = $langs->trans("ExtraFields");
-    $head[$h][2] = 'attributes';
-    $h++;
-
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'product_admin','remove');
-
-    return $head;
+	global $langs, $conf, $user;
+	
+	$h = 0;
+	$head = array();
+	
+	$head[$h][0] = DOL_URL_ROOT."/product/admin/product.php";
+	$head[$h][1] = $langs->trans('Parameters');
+	$head[$h][2] = 'general';
+	$h++;
+	
+	if ($conf->global->MAIN_FEATURES_LEVEL > 1)
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_tools.php';
+		$head[$h][1] = $langs->trans("Tools");
+		$head[$h][2] = 'tools';
+		$h++;
+	}
+	
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'product_admin');
+	
+	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFields");
+	$head[$h][2] = 'attributes';
+	$h++;
+	
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'product_admin','remove');
+	
+	return $head;
 }
 
 

@@ -82,7 +82,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($title,$linkback,'setup');
 
 
-$head = product_admin_prepare_head(null, $tab);
+$head = product_admin_prepare_head();
 
 dol_fiche_head($head, 'attributes', $tab, 0, 'product');
 
