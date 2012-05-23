@@ -66,8 +66,11 @@ class User extends CommonObject
 
 	var $datec;
 	var $datem;
+
 	//! If this is defined, it is an external user
 	var $societe_id;
+	var $contact_id;
+
 	var $fk_member;
 
 	var $webcal_login;
