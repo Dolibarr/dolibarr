@@ -791,12 +791,13 @@ class Project extends CommonObject
                         if ($mode == 'write'  && $user->rights->projet->creer)     $userAccess++;
                         if ($mode == 'delete' && $user->rights->projet->supprimer) $userAccess++;
                     }
-                    if ($source == 'external' && preg_match('/PROJECT/', $userRole[$nblinks]['code']) && $user->contact_id == $userRole[$nblinks]['id'])
+                    // Permission are supported on users only. To have an external thirdparty contact to see a project, its user must allowed to contacts of projects.
+                    /*if ($source == 'external' && preg_match('/PROJECT/', $userRole[$nblinks]['code']) && $user->contact_id == $userRole[$nblinks]['id'])
                     {
                         if ($mode == 'read'   && $user->rights->projet->lire)      $userAccess++;
                         if ($mode == 'write'  && $user->rights->projet->creer)     $userAccess++;
                         if ($mode == 'delete' && $user->rights->projet->supprimer) $userAccess++;
-                    }
+                    }*/
                     $nblinks++;
                 }
             }
@@ -840,18 +841,24 @@ class Project extends CommonObject
 
         if ($mode == 0)
         {
-            $sql.= " AND ec.element_id = p.rowid AND ( p.public = 1";
+            $sql.= " AND ec.element_id = p.rowid";
+            $sql.= " AND ( p.public = 1";
             //$sql.= " OR p.fk_user_creat = ".$user->id;
             $sql.= " OR ( ctc.rowid = ec.fk_c_type_contact";
             $sql.= " AND ctc.element = '" . $this->element . "'";
-            $sql.= " AND ec.fk_socpeople = " . $user->contact_id . " ) )";
+            $sql.= " AND ( (ctc.source = 'internal' AND ec.fk_socpeople = ".$user->id.")";
+            //$sql.= " OR (ctc.source = 'external' AND ec.fk_socpeople = ".($user->contact_id?$user->contact_id:0).")"; // Permission are supported on users only. To have an external thirdparty contact to see a project, its user must allowed to contacts of projects.
+            $sql.= " )";
+            $sql.= " ))";
         }
         if ($mode == 1)
         {
             $sql.= " AND ec.element_id = p.rowid";
             $sql.= " AND ctc.rowid = ec.fk_c_type_contact";
             $sql.= " AND ctc.element = '" . $this->element . "'";
-            $sql.= " AND ec.fk_socpeople = " . $user->contact_id;
+            $sql.= " AND ( (ctc.source = 'internal' AND ec.fk_socpeople = ".$user->id.")";
+            //$sql.= " OR (ctc.source = 'external' AND ec.fk_socpeople = ".($user->contact_id?$user->contact_id:0).")"; // Permission are supported on users only. To have an external thirdparty contact to see a project, its user must allowed to contacts of projects.
+            $sql.= " )";
         }
         if ($mode == 2)
         {

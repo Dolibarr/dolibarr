@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2010 Regis Houssin       <regis@dolibarr.fr>
+ * Copyright (C) 2012 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,14 +32,21 @@ $langs->load("projects");
 $langs->load("companies");
 
 $id = GETPOST('id','int');
-$ref= GETPOST('ref');
+$ref= GETPOST('ref','alpha');
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
+$project = new Project($db);
+if ($ref)
+{
+    $project->fetch(0,$ref);
+    $id=$project->id;
+}
+
 // Security check
 $socid=0;
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->societe_id > 0) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $id);
 
 
@@ -49,9 +57,7 @@ $result = restrictedArea($user, 'projet', $id);
 // Add new contact
 if ($_POST["action"] == 'addcontact' && $user->rights->projet->creer)
 {
-
 	$result = 0;
-	$project = new Project($db);
 	$result = $project->fetch($id);
 
     if ($result > 0 && $id > 0)
@@ -81,7 +87,6 @@ if ($_POST["action"] == 'addcontact' && $user->rights->projet->creer)
 // bascule du statut d'un contact
 if ($_GET["action"] == 'swapstatut' && $user->rights->projet->creer)
 {
-	$project = new Project($db);
 	if ($project->fetch($id))
 	{
 	    $result=$project->swapContactStatus(GETPOST('ligne'));
@@ -95,7 +100,6 @@ if ($_GET["action"] == 'swapstatut' && $user->rights->projet->creer)
 // Efface un contact
 if ($_GET["action"] == 'deleteline' && $user->rights->projet->creer)
 {
-	$project = new Project($db);
 	$project->fetch($id);
 	$result = $project->delete_contact($_GET["lineid"]);
 
@@ -133,8 +137,6 @@ dol_htmloutput_mesg($mesg);
 
 if ($id > 0 || ! empty($ref))
 {
-	$project = new Project($db);
-
 	if ( $project->fetch($id,$ref) > 0)
 	{
 		if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
@@ -211,14 +213,14 @@ if ($id > 0 || ! empty($ref))
 
 			$var = false;
 
-			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
+			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="addcontact">';
 			print '<input type="hidden" name="source" value="internal">';
-			print '<input type="hidden" name="id" value="'.$id.'">';
+			print '<input type="hidden" name="id" value="'.$project->id.'">';
 
 			// Ligne ajout pour contact interne
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 
 			print '<td nowrap="nowrap">';
 			print img_object('','user').' '.$langs->trans("Users");
