@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
@@ -30,8 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 
 
 /**
- *	\class      FactureRec
- *	\brief      Classe de gestion des factures recurrentes/Modeles
+ *	Classe de gestion des factures recurrentes/Modeles
  */
 class FactureRec extends Facture
 {
@@ -147,20 +146,20 @@ class FactureRec extends Facture
 				for ($i = 0; $i < $num; $i++)
 				{
 					$result_insert = $this->addline(
-    					$this->id,
-    					$facsrc->lines[$i]->desc,
-    					$facsrc->lines[$i]->subprice,
-    					$facsrc->lines[$i]->qty,
-    					$facsrc->lines[$i]->tva_tx,
-    					$facsrc->lines[$i]->fk_product,
-    					$facsrc->lines[$i]->remise_percent,
-	                    'HT',
-	                    0,
-	                    '',
-	                    0,
-    					$facsrc->lines[$i]->product_type,
-    					$facsrc->lines[$i]->rang,
-    					$facsrc->lines[$i]->special_code
+                        $this->id,
+                        $facsrc->lines[$i]->desc,
+                        $facsrc->lines[$i]->subprice,
+                        $facsrc->lines[$i]->qty,
+                        $facsrc->lines[$i]->tva_tx,
+                        $facsrc->lines[$i]->fk_product,
+                        $facsrc->lines[$i]->remise_percent,
+                        'HT',
+                        0,
+                        '',
+                        0,
+                        $facsrc->lines[$i]->product_type,
+                        $facsrc->lines[$i]->rang,
+                        $facsrc->lines[$i]->special_code
 					);
 
 					if ($result_insert < 0)

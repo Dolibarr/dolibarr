@@ -45,52 +45,52 @@ $object=new Mailing($db);
 
 // Tableau des substitutions possibles
 $substitutionarray=array(
-		'__ID__' => 'IdRecord',
-		'__EMAIL__' => 'EMail',
-		'__LASTNAME__' => 'Lastname',
-		'__FIRSTNAME__' => 'Firstname',
-		'__MAILTOEMAIL__' => 'MailtoEmail',
-		'__OTHER1__' => 'Other1',
-		'__OTHER2__' => 'Other2',
-		'__OTHER3__' => 'Other3',
-		'__OTHER4__' => 'Other4',
-		'__OTHER5__' => 'Other5',
-		'__SIGNATURE__' => 'Signature',
-		'__PERSONALIZED__' => 'Personalized'
+    '__ID__' => 'IdRecord',
+    '__EMAIL__' => 'EMail',
+    '__LASTNAME__' => 'Lastname',
+    '__FIRSTNAME__' => 'Firstname',
+    '__MAILTOEMAIL__' => 'MailtoEmail',
+    '__OTHER1__' => 'Other1',
+    '__OTHER2__' => 'Other2',
+    '__OTHER3__' => 'Other3',
+    '__OTHER4__' => 'Other4',
+    '__OTHER5__' => 'Other5',
+    '__SIGNATURE__' => 'Signature',
+    '__PERSONALIZED__' => 'Personalized'
 );
 if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE)
 {
 	$substitutionarray=array_merge(
-			$substitutionarray,
-			array(
-					'__CHECK_READ__' => 'CheckMail',
-					'__UNSUSCRIBE__' => 'Unsubscribe'
-			)
+        $substitutionarray,
+        array(
+            '__CHECK_READ__' => 'CheckMail',
+            '__UNSUSCRIBE__' => 'Unsubscribe'
+        )
 	);
 }
 
 $substitutionarrayfortest=array(
-		'__ID__' => 'TESTIdRecord',
-		'__EMAIL__' => 'TESTEMail',
-		'__LASTNAME__' => 'TESTLastname',
-		'__FIRSTNAME__' => 'TESTFirstname',
-		'__MAILTOEMAIL__' => 'TESTMailtoEmail',
-		'__OTHER1__' => 'TESTOther1',
-		'__OTHER2__' => 'TESTOther2',
-		'__OTHER3__' => 'TESTOther3',
-		'__OTHER4__' => 'TESTOther4',
-		'__OTHER5__' => 'TESTOther5',
-		'__SIGNATURE__' => 'TESTSignature',
-		'__PERSONALIZED__' => 'TESTPersonalized'
+    '__ID__' => 'TESTIdRecord',
+    '__EMAIL__' => 'TESTEMail',
+    '__LASTNAME__' => 'TESTLastname',
+    '__FIRSTNAME__' => 'TESTFirstname',
+    '__MAILTOEMAIL__' => 'TESTMailtoEmail',
+    '__OTHER1__' => 'TESTOther1',
+    '__OTHER2__' => 'TESTOther2',
+    '__OTHER3__' => 'TESTOther3',
+    '__OTHER4__' => 'TESTOther4',
+    '__OTHER5__' => 'TESTOther5',
+    '__SIGNATURE__' => 'TESTSignature',
+    '__PERSONALIZED__' => 'TESTPersonalized'
 );
 if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE)
 {
     $substitutionarrayfortest=array_merge(
-    		$substitutionarrayfortest,
-    		array(
-    				'__CHECK_READ__' => 'TESTCheckMail',
-    				'__UNSUSCRIBE__' => 'TESTUnsubscribe'
-    		)
+        $substitutionarrayfortest,
+        array(
+            '__CHECK_READ__' => 'TESTCheckMail',
+            '__UNSUSCRIBE__' => 'TESTUnsubscribe'
+        )
     );
 }
 
