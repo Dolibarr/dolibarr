@@ -331,10 +331,16 @@ if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
 
 if ($modulepart == 'barcode')
 {
-    $generator=$_GET["generator"];
-    $code=$_GET["code"];
-    $encoding=$_GET["encoding"];
-    $readable=$_GET["readable"]?$_GET["readable"]:"Y";
+    $generator=GETPOST("generator","alpha");
+    $code=GETPOST("code");
+    $encoding=GETPOST("encoding","alpha");
+    $readable=GETPOST("readable")?GETPOST("readable","alpha"):"Y";
+
+    if (empty($generator) || empty($encoding))
+    {
+        dol_print_error(0,'Error, parameter "generator" or "encoding" not defined');
+        exit;
+    }
 
     $dirbarcode=array_merge(array("/core/modules/barcode/"),$conf->modules_parts['barcode']);
 
