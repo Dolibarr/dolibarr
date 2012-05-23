@@ -44,14 +44,14 @@ $price_base_type=GETPOST('price_base_type');
 if ($action == 'convert')
 {
 	$error=0;
-	
+
 	$db->begin();
-	
+
 	$sql = 'SELECT rowid';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'product';
 	$sql.= ' WHERE entity IN ('.getEntity('product',1).')';
 	$sql.= ' AND tva_tx = "'.$oldvatrate.'"';
-	
+
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -62,30 +62,30 @@ if ($action == 'convert')
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				
+
 				$object = new Product($db);
-				
-				$ret=$object->fetch($obj->rowid);		
+
+				$ret=$object->fetch($obj->rowid);
 				if ($ret)
 				{
 					if ($price_base_type == 'TTC')
 					{
-						$newprice=price2num($object->price_ttc,'2');
+						$newprice=price2num($object->price_ttc,'MU');    // Second param must be MU (we want a unit price so 'MT'. If unit price was on 4 decimal, we must keep 4 decimals)
 					}
 					else
 					{
-						$newprice=price2num($object->price,'MU');
+						$newprice=price2num($object->price,'MU');    // Second param must be MU (we want a unit price so 'MT'. If unit price was on 4 decimal, we must keep 4 decimals)
 					}
-					
+
 					$newvat=str_replace('*','',$newvatrate);
-					
+
 					$ret=$object->updatePrice($object->id, $newprice, $price_base_type, $user, $newvat);
 					if ($ret < 0) $error++;
 				}
-				
+
 				$i++;
 			}
-			
+
 			if (! $error)
 			{
 				$db->commit();
