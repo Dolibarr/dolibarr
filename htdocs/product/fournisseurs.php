@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
@@ -92,7 +92,7 @@ if ($action == 'updateprice' && $_POST["cancel"] <> $langs->trans("Cancel"))
     $ref_fourn=GETPOST("ref_fourn");
     if (empty($ref_fourn)) $ref_fourn=GETPOST("search_ref_fourn");
     $quantity=GETPOST("qty");
-    $tva_tx=GETPOST('tva_tx','alpha');
+    $tva_tx=price2num(GETPOST('tva_tx','alpha'));
 
 	if (empty($quantity))
 	{
@@ -282,7 +282,7 @@ if ($id || $ref)
 					$events=array();
 					$events[]=array('method' => 'getVatRates', 'url' => dol_buildpath('/core/ajax/vatrates.php',1), 'htmlname' => 'tva_tx', 'params' => array());
 					print $form->select_company(GETPOST("id_fourn"),'id_fourn','fournisseur=1',1,0,0,$events);
-					
+
 					if (is_object($hookmanager))
 					{
 						$parameters=array('filtre'=>"fournisseur=1",'html_name'=>'id_fourn','selected'=>GETPOST("id_fourn"),'showempty'=>1,'prod_id'=>$product->id);
@@ -299,14 +299,17 @@ if ($id || $ref)
 				}
 				else
 				{
-					print '<input class="flat" name="ref_fourn" size="12" value="'.($_POST["ref_fourn"]?$_POST["ref_fourn"]:'').'">';
+					print '<input class="flat" name="ref_fourn" size="12" value="'.(GETPOST("ref_fourn")?GETPOST("ref_fourn"):'').'">';
 				}
 				print '</td>';
 				print '</tr>';
-				
+
 				// Vat rate
 				print '<tr><td class="fieldrequired">'.$langs->trans("VATRate").'</td>';
-				print '<td colspan="3">'.$form->load_tva('tva_tx',$product->tva_tx,$supplier,$mysoc).'</td></tr>';
+				print '<td colspan="3">';
+				//print $form->load_tva('tva_tx',$product->tva_tx,$supplier,$mysoc);    // Do not use list here as it may be any vat rates for any country
+				print '<input type="text" class="flat" size="5" name="tva_tx" value="'.vatrate(GETPOST("tva_tx")?GETPOST("tva_tx"):$product->tva_tx).'">';
+				print '</td></tr>';
 
 				// Availability
 				if (! empty($conf->global->FOURN_PRODUCT_AVAILABILITY))
@@ -332,7 +335,7 @@ if ($id || $ref)
 					print '<input class="flat" name="qty" size="5" value="'.$quantity.'">';
 				}
 				print '</td>';
-				
+
 				// Price qty min
 				print '<td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
 				print '<td><input class="flat" name="price" size="8" value="'.($_POST["price"]?$_POST["price"]:(isset($product->fourn_price)?price($product->fourn_price):'')).'">';
@@ -420,7 +423,7 @@ if ($id || $ref)
 						print '<td align="right">';
 						print $productfourn->fourn_qty;
 						print '</td>';
-						
+
 						// VAT rate
 						print '<td align="right">';
 						print vatrate($productfourn->fourn_tva_tx,true);
