@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2005-2011	Laurent Destailleur		<eldy@uers.sourceforge.net>
+ * Copyright (C) 2005-2012	Laurent Destailleur		<eldy@uers.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -112,9 +112,9 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
 		else
 		{
 			$mesg=$object->error;
-			$action='';
 		}
 	}
+    $action='';
 }
 
 // Action send emailing for everybody
@@ -800,12 +800,12 @@ else
 				array('type' => 'checkbox', 'name' => 'clone_receivers', 'label' => $langs->trans("CloneReceivers").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true)
 				);
 				// Paiement incomplet. On demande si motif = escompte ou autre
-				$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneEMailing'),$langs->trans('ConfirmCloneEMailing',$object->ref),'confirm_clone',$formquestion,'yes');
+				$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneEMailing'),$langs->trans('ConfirmCloneEMailing',$object->ref),'confirm_clone',$formquestion,'yes',2,240);
 				print '<br>';
 			}
 
 
-			if ($mesg) print $mesg;
+			dol_htmloutput_mesg($mesg);
 
 
 			/*
@@ -952,8 +952,10 @@ else
 			 * Mailing en mode edition
 			 */
 
-			if ($mesg) print $mesg."<br>";
-			if ($message) print $message."<br>";
+		    $mesgs=array();
+		    if ($mesg)    $mesgs[]=$mesg;
+		    if ($message) $message[]=$message;
+			dol_htmloutput_mesg('',$mesgs);
 
 			print '<table class="border" width="100%">';
 
