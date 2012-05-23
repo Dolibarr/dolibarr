@@ -129,8 +129,8 @@ if ($action == 'add' && $user->rights->projet->creer)
         $project->description     = GETPOST('description','alpha');
         $project->public          = GETPOST('public','alpha');
         $project->datec=dol_now();
-        $project->date_start=dol_mktime(12,0,0,GETPOST('projectmonth','int'),GETPOST('projectday','int'),GETPOST('projectyear','int'));
-        $project->date_end=dol_mktime(12,0,0,GETPOST('projectendmonth','int'),GETPOST('projectendday','int'),GETPOST('projectendyear','int'));
+        $project->date_start=dol_mktime(0,0,0,GETPOST('projectmonth','int'),GETPOST('projectday','int'),GETPOST('projectyear','int'));
+        $project->date_end=dol_mktime(0,0,0,GETPOST('projectendmonth','int'),GETPOST('projectendday','int'),GETPOST('projectendyear','int'));
 
         $result = $project->create($user);
         if ($result > 0)
