@@ -43,6 +43,13 @@ if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $acti
 $mine = GETPOST('mode')=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
+$project = new Project($db);
+if ($ref)
+{
+    $project->fetch(0,$ref);
+    $id=$project->id;
+}
+
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
@@ -81,8 +88,6 @@ if ($action == 'add' && $user->rights->projet->creer)
         $error=0;
 
         $db->begin();
-
-        $project = new Project($db);
 
         $project->ref             = $_POST["ref"];
         $project->title           = $_POST["title"];
@@ -150,8 +155,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
     }
     if (! $error)
     {
-        $project = new Project($db);
-        $project->fetch($_POST["id"]);
+        $project->fetch($id);
 
         $project->ref          = $_POST["ref"];
         $project->title        = $_POST["title"];
@@ -174,7 +178,6 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 // Build doc
 if ($action == 'builddoc' && $user->rights->projet->creer)
 {
-    $project = new Project($db);
     $project->fetch($id);
     if (GETPOST('model'))
     {
@@ -202,7 +205,6 @@ if ($action == 'builddoc' && $user->rights->projet->creer)
 
 if ($action == 'confirm_validate' && GETPOST('confirm') == 'yes')
 {
-    $project = new Project($db);
     $project->fetch($id);
 
     $result = $project->setValid($user);
@@ -214,7 +216,6 @@ if ($action == 'confirm_validate' && GETPOST('confirm') == 'yes')
 
 if ($action == 'confirm_close' && GETPOST('confirm') == 'yes')
 {
-    $project = new Project($db);
     $project->fetch($id);
     $result = $project->setClose($user);
     if ($result <= 0)
@@ -225,7 +226,6 @@ if ($action == 'confirm_close' && GETPOST('confirm') == 'yes')
 
 if ($action == 'confirm_reopen' && GETPOST('confirm') == 'yes')
 {
-    $project = new Project($db);
     $project->fetch($id);
     $result = $project->setValid($user);
     if ($result <= 0)
@@ -236,7 +236,6 @@ if ($action == 'confirm_reopen' && GETPOST('confirm') == 'yes')
 
 if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights->projet->supprimer)
 {
-    $project = new Project($db);
     $project->fetch($id);
     $result=$project->delete($user);
     if ($result > 0)

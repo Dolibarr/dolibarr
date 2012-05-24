@@ -150,26 +150,29 @@ if ($action == 'add' && $user->rights->ecm->setup)
 }
 
 // Remove file
-if ($action == 'confirm_deletefile' && GETPOST('confirm') == 'yes')
+if ($action == 'confirm_deletefile')
 {
-	$result=$ecmdir->fetch($section);
-	if (! $result > 0)
-	{
-		dol_print_error($db,$ecmdir->error);
-		exit;
-	}
-	$relativepath=$ecmdir->getRelativePath();
-	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
-	$file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+    if (GETPOST('confirm') == 'yes')
+    {
+    	$result=$ecmdir->fetch($section);
+    	if (! $result > 0)
+    	{
+    		dol_print_error($db,$ecmdir->error);
+    		exit;
+    	}
+    	$relativepath=$ecmdir->getRelativePath();
+    	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
+    	$file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 
-	$result=dol_delete_file($file);
+    	$result=dol_delete_file($file);
 
-	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+    	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
 
-	$result=$ecmdir->changeNbOfFiles('-');
-	$action='file_manager';
+    	$result=$ecmdir->changeNbOfFiles('-');
 
-	clearstatcache();
+    	clearstatcache();
+    }
+   	$action='file_manager';
 }
 
 // Remove directory

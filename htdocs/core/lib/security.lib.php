@@ -373,7 +373,7 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
                 {
                     include_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
                     $projectstatic=new Project($db);
-                    $tmps=$projectstatic->getProjectsAuthorizedForUser($user,0,1,$user->societe_id);
+                    $tmps=$projectstatic->getProjectsAuthorizedForUser($user,0,1,0);
                     $tmparray=explode(',',$tmps);
                     if (! in_array($objectid,$tmparray)) accessforbidden();
                 }
