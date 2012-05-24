@@ -1095,7 +1095,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
     if ($conf->use_javascript_ajax)
     {
-        if ($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)
+        if (! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))
         {
             print '<script type="text/javascript">
 				jQuery(document).ready(function () {

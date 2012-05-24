@@ -558,7 +558,7 @@ class Menubase
                 if ($menu['enabled'])
                 {
                     $enabled = verifCond($menu['enabled']);
-                    if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_ACCORDION && preg_match('/^\$leftmenu/',$menu['enabled'])) $enabled=1;
+                    if ($conf->use_javascript_ajax && ! empty($conf->global->MAIN_MENU_USE_JQUERY_ACCORDION) && preg_match('/^\$leftmenu/',$menu['enabled'])) $enabled=1;
                     //print "verifCond rowid=".$menu['rowid']." ".$menu['enabled'].":".$enabled."<br>\n";
                 }
 
