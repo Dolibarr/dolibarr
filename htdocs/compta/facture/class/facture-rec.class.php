@@ -145,7 +145,7 @@ class FactureRec extends Facture
 				$num=count($facsrc->lines);
 				for ($i = 0; $i < $num; $i++)
 				{
-					$result_insert = $this->addline(
+                    $result_insert = $this->addline(
                         $this->id,
                         $facsrc->lines[$i]->desc,
                         $facsrc->lines[$i]->subprice,
@@ -160,7 +160,7 @@ class FactureRec extends Facture
                         $facsrc->lines[$i]->product_type,
                         $facsrc->lines[$i]->rang,
                         $facsrc->lines[$i]->special_code
-					);
+                    );
 
 					if ($result_insert < 0)
 					{
