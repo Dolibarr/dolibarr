@@ -449,7 +449,6 @@ function dol_escape_htmltag($stringtoescape,$keepb=0)
  *  this, use logging to files instead of syslog (see setup of module).
  *  Note: If SYSLOG_FILE_NO_ERROR defined, we never output any error message when writing to log fails.
  *  Note: You can get log message into html sources by adding parameter &logtohtml=1 (constant MAIN_LOGTOHTML must be set)
- *
  *  This function works only if syslog module is enabled.
  * 	This must not use any call to other function calling dol_syslog (avoid infinite loop).
  *
