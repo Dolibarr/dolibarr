@@ -171,7 +171,7 @@ if ($object->id)
 
     // Affiche formulaire upload
    	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/product/document.php?id='.$object->id,'',0,0,($user->rights->produit->creer||$user->rights->service->creer));
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/product/document.php?id='.$object->id,'',0,0,($user->rights->produit->creer||$user->rights->service->creer),50,$object);
 
 
 	// List of document

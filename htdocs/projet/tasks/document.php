@@ -264,7 +264,7 @@ if ($object->id > 0)
 
 	// Affiche formulaire upload
 	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.($withproject?'&withproject=1':''),'',0,0,$user->rights->projet->creer);
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.($withproject?'&withproject=1':''),'',0,0,$user->rights->projet->creer,50,$object);
 
 
 	// List of document

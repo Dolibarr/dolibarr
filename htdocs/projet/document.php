@@ -190,7 +190,7 @@ if ($id > 0 || ! empty($ref))
 
 	// Affiche formulaire upload
 	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/projet/document.php?id='.$project->id,'',0,0,($userWrite>0));
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/projet/document.php?id='.$project->id,'',0,0,($userWrite>0),50,$object);
 
 
 	// List of document

@@ -839,7 +839,7 @@ class FormFile
 					// Load existing files:
 					// TODO do not delete
 					if (1 == 2) {
-						$.getJSON($("#fileupload form").prop("action"), { fk_element: "'.$object->id.'", element: "'.$object->element.'"}, function (files) {
+						$.getJSON($("#fileupload form").prop("action"), { fk_element: "'.$object->id.'", element: "'.$object->element.'", element_ref: "'.$object->ref.'"}, function (files) {
 							var fu = $("#fileupload").data("fileupload");
 							fu._adjustMaxNumberOfFiles(-files.length);
 							fu._renderDownload(files)
@@ -867,6 +867,7 @@ class FormFile
         print '<form action="'.DOL_URL_ROOT.'/core/ajax/fileupload.php" method="POST" enctype="multipart/form-data">';
         print '<input type="hidden" name="fk_element" value="'.$object->id.'">';
         print '<input type="hidden" name="element" value="'.$object->element.'">';
+        print '<input type="hidden" name="element_ref" value="'.$object->ref.'">';
         print '<div class="fileupload-buttonbar">';
         print '<input type="hidden" name="protocol" value="http">';
         print '<label class="fileinput-button">';
