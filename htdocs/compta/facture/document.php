@@ -191,7 +191,7 @@ if ($id > 0 || ! empty($ref))
 
 		// Affiche formulaire upload
 		$formfile=new FormFile($db);
-		$formfile->form_attach_new_file(DOL_URL_ROOT.'/compta/facture/document.php?facid='.$object->id,'',0,0,$user->rights->facture->creer);
+		$formfile->form_attach_new_file(DOL_URL_ROOT.'/compta/facture/document.php?facid='.$object->id,'',0,0,$user->rights->facture->creer,50,$object);
 
 
 		// List of document

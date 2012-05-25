@@ -156,7 +156,7 @@ if ($contrat->id)
 
     // Affiche formulaire upload
    	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/contrat/document.php?id='.$contrat->id,'',0,0,$user->rights->contrat->creer);
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/contrat/document.php?id='.$contrat->id,'',0,0,$user->rights->contrat->creer,50,$object);
 
 
 	// List of document

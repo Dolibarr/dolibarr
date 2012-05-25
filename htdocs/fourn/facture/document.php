@@ -230,7 +230,7 @@ if ($facid > 0)
 
         // Affiche formulaire upload
         $formfile=new FormFile($db);
-        $formfile->form_attach_new_file(DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$object->id,'',0,0,$user->rights->fournisseur->facture->creer);
+        $formfile->form_attach_new_file(DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$object->id,'',0,0,$user->rights->fournisseur->facture->creer,50,$object);
 
 
         // List of document
