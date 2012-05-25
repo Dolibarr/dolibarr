@@ -3,6 +3,7 @@
 -- Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
 -- Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -45,6 +46,12 @@ create table llx_facturedet
   date_start          datetime   DEFAULT NULL,			-- date debut si service
   date_end            datetime   DEFAULT NULL,			-- date fin si service
   info_bits		      integer    DEFAULT 0,				-- TVA NPR ou non
+  
+  fk_fournprice     int(11)      DEFAULT NULL,       -- référence prix fournisseur
+  pa_ht             double(24,8) DEFAULT 0,          -- prix d'achat HT
+  marge_tx          double(6,3)  DEFAULT 0,          -- taux de marge (marge sur prix d'achat)
+  marque_tx         double(6,3)  DEFAULT 0,          -- taux de marque (marge sur prix de vente)
+
   fk_code_ventilation integer    DEFAULT 0 NOT NULL,
   fk_export_compta    integer    DEFAULT 0 NOT NULL,
   special_code        integer UNSIGNED DEFAULT 0,		-- code pour les lignes speciales
