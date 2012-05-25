@@ -46,10 +46,8 @@ if ($conf->commande->enabled) 	$langs->load("orders");
 if ($conf->propal->enabled)   	$langs->load("propal");
 if ($conf->ficheinter->enabled)	$langs->load("interventions");
 
-$projectid='';
-$ref='';
-if (isset($_GET["id"]))  { $projectid=$_GET["id"]; }
-if (isset($_GET["ref"])) { $ref=$_GET["ref"]; }
+$projectid=GETPOST('id');
+$ref=GETPOST('ref');
 if ($projectid == '' && $ref == '')
 {
 	dol_print_error('','Bad parameter');
@@ -58,6 +56,13 @@ if ($projectid == '' && $ref == '')
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
+
+$project = new Project($db);
+if ($ref)
+{
+    $project->fetch(0,$ref);
+    $projectid=$project->id;
+}
 
 // Security check
 $socid=0;

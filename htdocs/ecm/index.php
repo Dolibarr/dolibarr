@@ -150,26 +150,29 @@ if ($action == 'add' && $user->rights->ecm->setup)
 }
 
 // Remove file
-if ($action == 'confirm_deletefile' && GETPOST('confirm') == 'yes')
+if ($action == 'confirm_deletefile')
 {
-	$result=$ecmdir->fetch($section);
-	if (! $result > 0)
-	{
-		dol_print_error($db,$ecmdir->error);
-		exit;
-	}
-	$relativepath=$ecmdir->getRelativePath();
-	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
-	$file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+    if (GETPOST('confirm') == 'yes')
+    {
+    	$result=$ecmdir->fetch($section);
+    	if (! $result > 0)
+    	{
+    		dol_print_error($db,$ecmdir->error);
+    		exit;
+    	}
+    	$relativepath=$ecmdir->getRelativePath();
+    	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
+    	$file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 
-	$result=dol_delete_file($file);
+    	$result=dol_delete_file($file);
 
-	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+    	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
 
-	$result=$ecmdir->changeNbOfFiles('-');
-	$action='file_manager';
+    	$result=$ecmdir->changeNbOfFiles('-');
 
-	clearstatcache();
+    	clearstatcache();
+    }
+   	$action='file_manager';
 }
 
 // Remove directory
@@ -315,7 +318,7 @@ $moreheadcss="
         _width:     700px; /* min-width for IE6 */
     }
 </style>";
-$moreheadjs="
+$moreheadjs=empty($conf->use_javascript_ajax)?"":"
 <script type=\"text/javascript\">
     jQuery(document).ready(function () {
         jQuery('#containerlayout').layout({
@@ -381,19 +384,15 @@ if ($action == 'delete')
 dol_htmloutput_mesg($mesg);
 
 
+if (! empty($conf->use_javascript_ajax)) $classviewhide='hidden';
+else $classviewhide='visible';
+
 // Start container of all panels
-if ($conf->use_javascript_ajax)
-{
 ?>
-	<div id="containerlayout"> <!-- begin div id="containerlayout" -->
-	<div id="ecm-layout-north" class="toolbar">
+<div id="containerlayout"> <!-- begin div id="containerlayout" -->
+<div id="ecm-layout-north" class="toolbar">
 <?php
-}
-else
-{
-    print '<table class="border" width="100%">';
-    print '<tr><td colspan="2" style="background: #FFFFFF" style="height: 34px !important">';
-}
+
 // Start top panel, toolbar
 print '<div class="toolbarbutton">';
 
@@ -416,21 +415,12 @@ print '</a>';
 
 print '</div>';
 // End top panel, toolbar
-if ($conf->use_javascript_ajax)
-{
-?>
-	</div>
-    <div id="ecm-layout-west" class="hidden">
-<?php
-}
-else
-{
-    print '</td></tr>';
-    print '<tr>';
-    print '<td width="40%" valign="top" style="background: #FFFFFF" rowspan="2">';
-}
-// Start left area
 
+?>
+</div>
+<div id="ecm-layout-west" class="<?php echo $classviewhide; ?>">
+<?php
+// Start left area
 
 
 // Confirmation de la suppression d'une ligne categorie
@@ -453,7 +443,6 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	print '</td></tr>';
 
     $showonrightsize='';
-
 
     // Auto section
 	if (count($sectionauto))
@@ -586,15 +575,14 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	print '</td>';
 	print '</tr>';
 
-    if (empty($conf->global->MAIN_ECM_DISABLE_JS))
+    if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))
     {
         print '<tr><td colspan="6" style="padding-left: 20px">';
 
     	// Show filemanager tree
 	    print '<div id="filetree" class="ecmfiletree">';
-	    print '</div>';
 
-	    print '</td></tr>';
+	    print '</div>';
 
 	    $openeddir='/';
         ?>
@@ -642,7 +630,9 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	    </script>
 	    <?php
 
-	    print $form->formconfirm('eeeee', $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 'deletefile');
+	    if ($action == 'deletefile') print $form->formconfirm('eeeee', $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 'deletefile');
+
+	    print '</td></tr>';
     }
     else
     {
@@ -834,20 +824,12 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 
 // End left banner
-if ($conf->use_javascript_ajax)
-{
 ?>
-    </div>
-    <div id="ecm-layout-center" class="hidden">
-    <div class="pane-in ecm-in-layout-center">
-    <div id="ecmfileview" class="ecmfileview">
-
+</div>
+<div id="ecm-layout-center" class="<?php echo $classviewhide; ?>">
+<div class="pane-in ecm-in-layout-center">
+<div id="ecmfileview" class="ecmfileview">
 <?php
-}
-else
-{
-    print '</td><td valign="top" style="background: #FFFFFF">';
-}
 // Start right panel
 
 
@@ -856,20 +838,11 @@ include_once(DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php');
 
 
 // End right panel
-if ($conf->use_javascript_ajax)
-{
 ?>
-	</div>
-    </div>
-    <div class="pane-in ecm-in-layout-south layout-padding valignmiddle">
+</div>
+</div>
+<div class="pane-in ecm-in-layout-south layout-padding valignmiddle">
 <?php
-}
-else
-{
-    print '</td></tr>';
-    print '<tr height="22">';
-    print '<td>';
-}
 // Start Add new file area
 
 
@@ -884,21 +857,12 @@ else print '&nbsp;';
 
 
 // End Add new file area
-if ($conf->use_javascript_ajax)
-{
 ?>
-    </div>
-    </div>
-	</div> <!-- end div id="containerlayout" -->
+</div>
+</div>
+</div> <!-- end div id="containerlayout" -->
 <?php
-}
-else
-{
-    print '</td></tr>';
-    print '</table>';
-}
 // End of page
-
 
 
 llxFooter();

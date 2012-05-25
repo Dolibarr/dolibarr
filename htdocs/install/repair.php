@@ -211,12 +211,21 @@ foreach($listofmodulesextra as $tablename => $elementtype)
         $i=0;
         while($obj=$db->fetch_object($resql))
         {
-            $fieldname = isset($obj->Key)?$obj->Key:$obj->attname;
-            $fieldtype = isset($obj->Type)?$obj->Type:'varchar';
+            $fieldname=$fieldtype='';
+            if (preg_match('/mysql/',$db->type))
+            {
+                $fieldname=$obj->Field;
+                $fieldtype=$obj->Type;
+            }
+            else
+            {
+                $fieldname = isset($obj->Key)?$obj->Key:$obj->attname;
+                $fieldtype = isset($obj->Type)?$obj->Type:'varchar';
+            }
 
             if (empty($fieldname)) continue;
             if (in_array($fieldname,array('rowid','tms','fk_object','import_key'))) continue;
-            $arrayoffieldsfound[$fieldname]=$fieldtype;
+            $arrayoffieldsfound[$fieldname]=array('type'=>$fieldtype);
         }
 
         // If it does not match, we create fields
@@ -225,14 +234,16 @@ foreach($listofmodulesextra as $tablename => $elementtype)
             if (! in_array($code,array_keys($arrayoffieldsfound)))
             {
                 print 'Found field '.$code.' declared into '.MAIN_DB_PREFIX.'extrafields table but not found into desc of table '.$tableextra." -> ";
+                $type=$extrafields->attribute_type[$code]; $value=$extrafields->attribute_size[$code]; $attribute=''; $default=''; $extra=''; $null='null';
                 $field_desc=array(
-                	'type'=>'varchar',
-                	'value'=>'',
-                	'attribute'=>'',
-                	'default'=>'',
-                	'extra'=>'',
-                	'null'=>'null'
+                	'type'=>$type,
+                	'value'=>$value,
+                	'attribute'=>$attribute,
+                	'default'=>$default,
+                	'extra'=>$extra,
+                	'null'=>$null
                 );
+                //var_dump($field_desc);exit;
 
                 $result=$db->DDLAddField($tableextra,$code,$field_desc,"");
                 if ($result < 0)

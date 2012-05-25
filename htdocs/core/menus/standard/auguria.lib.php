@@ -270,7 +270,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
             {
                 if (($alt%2==0))
                 {
-                	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_ACCORDION)
+                	if ($conf->use_javascript_ajax && ! empty($conf->global->MAIN_MENU_USE_JQUERY_ACCORDION))
                 	{
                 		print '<div class="blockvmenupair">'."\n";
                 	}
