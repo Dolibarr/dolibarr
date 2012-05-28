@@ -144,6 +144,18 @@ else
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportUTF8")."<br>\n";
 }
 
+// Check if mb_convert_encoding supported (used by getCurrencySymbol)
+/*if (! function_exists("mb_convert_encoding"))
+{
+	$langs->load("errors");
+	print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportUTF8")."<br>\n";
+	// $checksok=0;		// If image ko, just warning. So check must still be 1 (otherwise no way to install)
+}
+else
+{
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportUTF8")."<br>\n";
+}*/
+
 
 // Check memory
 $memrequiredorig='32M';
