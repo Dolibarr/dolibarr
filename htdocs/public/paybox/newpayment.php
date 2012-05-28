@@ -672,7 +672,10 @@ if (GETPOST("source") == 'membersubscription' && $valid)
 	// Debitor
 	$var=!$var;
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Member");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$member->getFullName($langs).'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>';
+	if ($member->morphy == 'mor' && ! empty($member->societe)) print $member->societe;
+	else print $member->getFullName($langs);
+	print '</b>';
 
 	// Object
 	$var=!$var;
