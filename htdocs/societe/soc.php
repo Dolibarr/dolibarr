@@ -102,7 +102,11 @@ if (empty($reshook))
     {
         require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 
-        if ($action == 'update') $object->fetch($socid);
+        if ($action == 'update')
+        {
+        	$ret=$object->fetch($socid);
+        	$object->oldcopy=dol_clone($object);
+        }
 		else $object->canvas=$canvas;
 
         if (GETPOST("private") == 1)
@@ -316,8 +320,6 @@ if (empty($reshook))
                     Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
                     exit;
                 }
-
-                $object->oldcopy=dol_clone($object);
 
                 // To not set code if third party is not concerned. But if it had values, we keep them.
                 if (empty($object->client) && empty($object->oldcopy->code_client))          $object->code_client='';
