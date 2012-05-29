@@ -876,7 +876,6 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 /**
  *	Return an array with locale date info.
  *  PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
- *
  *  WARNING: This function always use PHP server timezone to return locale informations.
  *  Usage must be avoid.
  *
@@ -3995,18 +3994,6 @@ function printCommonFooter($zone='private')
 }
 
 /**
- * Convert unicode
- *
- * @param	string	$unicode	Unicode
- * @param	string	$encoding	Encoding type
- * @return	string				Unicode converted
- */
-function unichr($unicode , $encoding = 'UTF-8')
-{
-	return mb_convert_encoding("&#{$unicode};", $encoding, 'HTML-ENTITIES');
-}
-
-/**
  *	Convert an array with RGB value into hex RGB value
  *
  *  @param	array	$arraycolor			Array
@@ -4035,11 +4022,11 @@ function getCurrencySymbol($currency_code)
 
 	$form->load_cache_currencies();
 
-	if (is_array($form->cache_currencies[$currency_code]['unicode']) && ! empty($form->cache_currencies[$currency_code]['unicode']))
+	if (function_exists("mb_convert_encoding") && is_array($form->cache_currencies[$currency_code]['unicode']) && ! empty($form->cache_currencies[$currency_code]['unicode']))
 	{
 		foreach($form->cache_currencies[$currency_code]['unicode'] as $unicode)
 		{
-			$currency_sign.= unichr($unicode);
+			$currency_sign .= mb_convert_encoding("&#{$unicode};", "UTF-8", 'HTML-ENTITIES');
 		}
 	}
 	else

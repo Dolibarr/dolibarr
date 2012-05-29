@@ -60,13 +60,13 @@ $substitutionarray=array(
 );
 if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE)
 {
-	$substitutionarray=array_merge(
+    $substitutionarray=array_merge(
         $substitutionarray,
         array(
             '__CHECK_READ__' => 'CheckMail',
             '__UNSUSCRIBE__' => 'Unsubscribe'
         )
-	);
+    );
 }
 
 $substitutionarrayfortest=array(

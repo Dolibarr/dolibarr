@@ -349,7 +349,7 @@ class Facture extends CommonObject
                             $this->lines[$i]->fk_code_ventilation,
                             $this->lines[$i]->info_bits,
                             $this->lines[$i]->fk_remise_except,
-        					'HT',
+                            'HT',
                             0,
                             $this->lines[$i]->product_type,
                             $this->lines[$i]->rang,
@@ -2898,7 +2898,7 @@ class Facture extends CommonObject
                 if ($row[0] == 0)
                 {
                 	$now=dol_now();
-                	
+
                     $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'prelevement_facture_demande';
                     $sql .= ' (fk_facture, amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib)';
                     $sql .= ' VALUES ('.$this->id;
