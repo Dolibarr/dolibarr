@@ -43,8 +43,9 @@ error_reporting(E_ALL | E_STRICT);
 //print_r($_GET);
 //print 'upload_dir='.GETPOST('upload_dir');
 
-$fk_element = GETPOST('fk_element');
-$element = GETPOST('element');
+$fk_element = GETPOST('fk_element','int');
+$element = GETPOST('element','alpha');
+$element_ref=GETPOST('element_ref','alpha');
 
 
 /**
@@ -56,6 +57,7 @@ class UploadHandler
     private $_options;
     private $_fk_element;
     private $_element;
+    private $_element_ref;
 
 
     /**
@@ -64,19 +66,21 @@ class UploadHandler
      * @param array		$options		Options array
      * @param int		$fk_element		fk_element
      * @param string	$element		element
+     * @param string	$element_ref	element ref
      */
-    function __construct($options=null,$fk_element=null,$element=null)
+    function __construct($options=null,$fk_element=null,$element=null,$element_ref=null)
     {
 
     	global $conf;
 
     	$this->_fk_element=$fk_element;
     	$this->_element=$element;
+    	$this->_element_ref=$element_ref;
 
         $this->_options = array(
             'script_url' => $_SERVER['PHP_SELF'],
-            'upload_dir' => $conf->$element->dir_output . '/' . $fk_element . '/',
-            'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$fk_element.'/',
+            'upload_dir' => $conf->$element->dir_output . '/' . $element_ref . '/',
+            'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$element_ref.'/',
             'param_name' => 'files',
             // The php.ini settings upload_max_filesize and post_max_size
             // take precedence over the following max_file_size setting:
@@ -96,8 +100,8 @@ class UploadHandler
                 ),
                 */
                 'thumbs' => array(
-                    'upload_dir' => $conf->$element->dir_output . '/' . $fk_element . '/thumbs/',
-                    'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$fk_element.'/thumbs/'
+                    'upload_dir' => $conf->$element->dir_output . '/' . $element_ref . '/thumbs/',
+                    'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$element_ref.'/thumbs/'
                 )
             )
         );
@@ -380,7 +384,7 @@ class UploadHandler
  * View
  */
 
-$upload_handler = new UploadHandler(null,$fk_element,$element);
+$upload_handler = new UploadHandler(null,$fk_element,$element,$element_ref);
 
 header('Pragma: no-cache');
 header('Cache-Control: private, no-cache');
