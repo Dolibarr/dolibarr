@@ -1810,7 +1810,7 @@ class Propal extends CommonObject
                             {
                                 dol_delete_preview($this);
 
-                                if (!dol_delete_file($file))
+                                if (! dol_delete_file($file,0,0,0,$this)) // For triggers
                                 {
                                     $this->error='ErrorFailToDeleteFile';
                                     $this->db->rollback();

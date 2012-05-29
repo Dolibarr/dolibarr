@@ -136,6 +136,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
 else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->propale->supprimer)
 {
 	$object->fetch($id);
+	$object->fetch_thirdparty();
 	$result=$object->delete($user);
 	if ($result > 0)
 	{

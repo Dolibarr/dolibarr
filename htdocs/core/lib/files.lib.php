@@ -596,16 +596,25 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		if (! empty($conf->global->MAIN_UMASK)) @chmod($file_name_osencoded, octdec($conf->global->MAIN_UMASK));
 		dol_syslog("Files.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$file_name." - Umask=".$conf->global->MAIN_UMASK, LOG_DEBUG);
 
-		if (! $notrigger && is_object($object))
+		if (! $notrigger)
 		{
-			$object->src_file=$dest_file;
-
-			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-			$interface=new Interfaces($db);
-			$result=$interface->run_triggers('FILE_UPLOAD',$object,$user,$langs,$conf);
-			if ($result < 0) { $error++; $errors=$interface->errors; }
-			// Fin appel triggers
+			if (is_object($object))
+			{
+				$object->src_file=$dest_file;
+				
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				$interface=new Interfaces($db);
+				$result=$interface->run_triggers('FILE_UPLOAD',$object,$user,$langs,$conf);
+				if ($result < 0) {
+					$error++; $errors=$interface->errors;
+				}
+				// Fin appel triggers
+			}
+			else
+			{
+				dol_syslog("Files.lib::dol_move_uploaded_file Object not find", LOG_WARNING);
+			}
 		}
 
 		return 1;	// Success

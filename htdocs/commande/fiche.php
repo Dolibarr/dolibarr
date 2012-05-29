@@ -134,6 +134,7 @@ else if ($action == 'confirm_delete' && $confirm == 'yes')
     if ($user->rights->commande->supprimer)
     {
         $object->fetch($id);
+        $object->fetch_thirdparty();
         $result=$object->delete($user);
         if ($result > 0)
         {
