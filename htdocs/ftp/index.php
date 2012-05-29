@@ -161,6 +161,8 @@ if ($_REQUEST['action'] == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes'
 
 	if ($conn_id && $ok && ! $mesg)
 	{
+	    $langs->load("other");
+
 		// Remote file
 		$filename=$file;
 		$remotefile=$section.(preg_match('@[\\\/]$@',$section)?'':'/').$file;
@@ -208,6 +210,8 @@ if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("De
 		{
 			if ($const["check"])	// Is checkbox checked
 			{
+			    $langs->load("other");
+
 				// Remote file
 				$file=$const["file"];
 				$section=$const["section"];
