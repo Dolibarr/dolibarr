@@ -1166,6 +1166,7 @@ class Facture extends CommonObject
     function delete($rowid=0, $notrigger=0)
     {
         global $user,$langs,$conf;
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
         if (! $rowid) $rowid=$this->id;
 
@@ -1236,6 +1237,34 @@ class Facture extends CommonObject
                 $resql=$this->db->query($sql);
                 if ($resql)
                 {
+                	// On efface le repertoire de pdf provisoire
+                	$ref = dol_sanitizeFileName($this->ref);
+                	if ($conf->facture->dir_output)
+                	{
+                		$dir = $conf->facture->dir_output . "/" . $ref;
+                		$file = $conf->facture->dir_output . "/" . $ref . "/" . $ref . ".pdf";
+                		if (file_exists($file))	// We must delete all files before deleting directory
+                		{
+                			$ret=dol_delete_preview($this);
+
+                			if (! dol_delete_file($file,0,0,0,$this)) // For triggers
+                			{
+                				$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+                				$this->db->rollback();
+                				return 0;
+                			}
+                		}
+                		if (file_exists($dir))
+                		{
+                			if (! dol_delete_dir_recursive($dir)) // For remove dir and meta
+                			{
+                				$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+                				$this->db->rollback();
+                				return 0;
+                			}
+                		}
+                	}
+                	
                     $this->db->commit();
                     return 1;
                 }

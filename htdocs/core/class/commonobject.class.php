@@ -545,7 +545,7 @@ abstract class CommonObject
         $this->thirdparty = $thirdparty;
 
         // Use first price level if level not defined for third party
-        if ($conf->global->PRODUIT_MULTIPRICES && empty($this->thirdparty->price_level))
+        if (! empty($conf->global->PRODUIT_MULTIPRICES) && empty($this->thirdparty->price_level))
         {
             $this->client->price_level=1; // deprecated
             $this->thirdparty->price_level=1;
