@@ -1309,21 +1309,3 @@ TestGeoIPResult=Test einer Umwandlung IP -> Land
 ProjectsNumberingModules=Projektnumerierungsmodul
 ProjectsSetup=Projekteinstellungenmodul
 ProjectsModelModule=Projektvorlagenmodul
-
-
-
-####????#### not in US - no more required in 3.2 ?
-MAIN_NOT_INSTALLED=Setup wird ausgeführt
-MAIN_FEATURES_LEVEL=Level der freigeschaltenen Funktionen(0=nur stable, 1=stable+experimentell, 2=stable+experimentell+Entwicklung)
-InvoiceValidateDateUsed=Verwendetes Rechnungsdatum
-ListOfEntities=Liste der Entitäten
-AddEntity=Entität hinzufügen
-EditEntity=Entität bearbeiten
-ModulesJob=Geschäfttypenmodule
-ConfigFileIsInReadOnly=Die Konfigurationsdatei conf.php kann nur gelesen werden, bitte überprüfen Sie die Berechtigungen.
-OfficialWikiFr=Französisches Wikiei mit Maxmind IP to Country Übersetzung. <br> Beispiel: / usr / local / share / GeoIP / GeoIP.dat
-NumberWordsSetup=NumberWords Moduleinstellungen
-DescNumberWords=Dieses Modul bietet Funktionen zur Konvertierung von Zahlen und Beträgen in formatierte Zeichenketten. Es ersetzt auch die folgende Zeichenfolgen __TOTAL_TTC_WORDS__, __TOTAL_HT_WORDS__ oder __TOTAL_VAT_WORDS__ durch 'Bruttosumme', 'Nettosumme' oder 'Steuersumme' in allen verwendeten Texten (freier Text auf Rechnungen, ...)
-FCKeditorForUsers=WYSIWIG Erstellung/Bearbeitung der Benutzerinformationen und Notizen
-FCKeditorForMembers=WYSIWIG Erstellung/Bearbeitung von Mitgliederinformationen und Notizen
-FCKeditorForProductDetailsPerso=WYSIWIG Erstellung/Bearbeitung von personalisierten Produktinformationen für alle Dokumente (Angebote, Bestellungen, Rechnungen, etc. ..)
