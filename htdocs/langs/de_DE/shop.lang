@@ -1,17 +1,18 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-11 17:09:12
- */
-
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 Shop=Shop
-ShopWeb=Webshop
+ShopWeb=Internetshop
 LastOrders=Letzte Bestellungen
-OnStandBy=Im Standby-Modus
-TreatmentInProgress=Abwicklung in Arbeit
+OnStandBy=Im Warte-Modus
+TreatmentInProgress=In Bearbeitung
 LastCustomers=Letzte Kunden
 OSCommerceShop=OsCommerce Shop
 OSCommerce=OSCommerce
-AddProd=Produkt hinzuf�gen
+AddProd=Produkt hinzufügen

@@ -1,17 +1,20 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-11 16:10:12
- */
-
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 CountryFR=Frankreich
 CountryBE=Belgien
 CountryIT=Italien
 CountryES=Spanien
 CountryDE=Deutschland
+CountryCH=Schweiz
 CountryGB=Großbritannien
+CountryIE=Irland
 CountryCN=China
 CountryTN=Tunesien
 CountryUS=Vereinigte Staaten
@@ -256,7 +259,6 @@ CivilityMME=Frau
 CivilityMR=Herr
 CivilityMLE=Frau
 CivilityMTRE=Professor
-CivilityDR=Doktor
 
 ##### Currencies #####
 Currencyeuros=Euro
@@ -274,10 +276,10 @@ CurrencyGBP=Britisches Pfund
 CurrencySingGBP=Britisches Pfund
 CurrencyINR=Indische Rupien
 CurrencySingINR=Indische Rupie
-CurrencyMAD=Dirham
-CurrencySingMAD=Dirham
-CurrencyMGA=Ariary
-CurrencySingMGA=Ariary
+CurrencyMAD=marokkanische Dirham
+CurrencySingMAD=marokkanische Dirham
+CurrencyMGA=Madagassisches Ariary
+CurrencySingMGA=Madagassisches Ariary
 CurrencyMUR=Mauritius Rupien
 CurrencySingMUR=Mauritius Rupie
 CurrencyNOK=Norwegische Kronen 
@@ -286,12 +288,17 @@ CurrencyTND=Tunesischer Dinar
 CurrencySingTND=Tunesische Dinar
 CurrencyUSD=US Dollar
 CurrencySingUSD=US Dollar
+CurrencyUAH=Ukrainisches Hryvnia 
+CurrencySingUAH=Ukrainisches Hryvnia 
 CurrencyXAF=CFA Franc BEAC
 CurrencySingXAF=CFA Franc BEAC
 CurrencyXOF=CFA Francs BCEAO
 CurrencySingXOF=CFA Franc BCEAO
 CurrencyXPF=CFP Francs
 CurrencySingXPF=CFP Franc
+
+CurrencyCentSingEUR=Cent
+CurrencyThousandthSingTND=Tausendstel
 
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
@@ -301,31 +308,3 @@ DemandReasonTypeSRC_CAMP_PHO=Telefonaktion
 DemandReasonTypeSRC_CAMP_FAX=Fax Kampagne
 DemandReasonTypeSRC_COMM=Kaufmännischer Ansprechpartner
 DemandReasonTypeSRC_SHOP=Shop-Kontakt
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> de_DE
-CurrencySingUAH=Hryvnia
-DemandReasonTypeSRC_INTE=Internet
-DemandReasonTypeSRC_CAMP_MAIL=Mailing-Kampagne
-DemandReasonTypeSRC_CAMP_EMAIL=Emailing Kampagne
-DemandReasonTypeSRC_CAMP_PHO=Telefon-Kampagne
-DemandReasonTypeSRC_CAMP_FAX=Fax Kampagne
-DemandReasonTypeSRC_COMM=Kaufmännischer Ansprechpartner
-DemandReasonTypeSRC_SHOP=Shop Kontakt
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 07:42:29).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
-CountryCH=Schweiz
-CountryIE=Irland
-CurrencyUAH=Hryvnia
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:39).
-
-
-// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
-// Reference language: en_US -> de_DE
-CurrencyCentSingEUR=Cent
-CurrencyThousandthSingTND=Tausendstel
-// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:27:58).

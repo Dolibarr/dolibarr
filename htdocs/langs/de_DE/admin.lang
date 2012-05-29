@@ -1,11 +1,12 @@
-/*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-13 13:09:12
- */
-
+/*  
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 Version=Version
 VersionProgram=Programmversion
 VersionLastInstall=Version der Erstinstallation
@@ -13,7 +14,7 @@ VersionLastUpgrade=Version der letzten Aktualisierung
 VersionExperimental=Experimentell
 VersionDevelopment=Entwicklung
 VersionUnknown=Unbekannt
-VersioSessionSaveHandlernRecommanded=Empfohlen
+VersionRecommanded=Empfohlene
 SessionId=Sitzungs ID
 SessionSaveHandler=Handler für Sitzungsspeicherung
 SessionSavePath=Pfad für Sitzungsdatenspeicherung
@@ -25,6 +26,7 @@ ConfirmLockNewSessions=Möchten Sie wirklich alle Sitzungen bis auf Ihre eigene 
 UnlockNewSessions=Sperrung neuer Sitzungen aufheben
 YourSession=Ihre Sitzung
 Sessions=Sitzungen
+WebUserGroup=WebServer Benutzer/Gruppen
 NoSessionFound=Ihre PHP -Konfiguration scheint keine Liste aktiver Sitzungen zuzulassen. Eventuell ist die Speicherung im Verzeichnis (<b>%s</b>) aktiviert und fehlerhafte Dateizugriffsberechtigungen blockieren den Zugriff (z.B. open_basedir-Beschränkungen).
 HTMLCharset=Zeichensatz für die generierten HTML-Seiten
 DBStoringCharset=Zeichensatz der Datenbank-Speicherung
@@ -163,6 +165,7 @@ FileNameToGenerate=Name der zu erstellenden Datei
 CommandsToDisableForeignKeysForImport=Befehl zur Deaktivierung der Fremdschlüsselüberprüfung
 ExportCompatibility=Kompatibilität der erzeugten Exportdatei
 MySqlExportParameters=MySQL-Exportparameter
+PostgreSqlExportParameters=PostgreSQL Export-Parameter
 UseTransactionnalMode=Transaktionsmodus verwenden
 FullPathToMysqldumpCommand=Vollständiger Pfad zum mysqldump-Befehl
 FullPathToPostgreSQLdumpCommand=Vollständiger Pfad zum pg_dump-Befehl
@@ -172,6 +175,7 @@ AddDropTable=DROP TABLE Befehl hinzufügen
 Datas=Daten
 NameColumn=Name der Spalten
 ExtendedInsert=Erweiterte INSERTS
+NoLockBeforeInsert=Keine Sperrebefehle für INSERT
 DelayedInsert=Verzögerte INSERTS
 EncodeBinariesInHexa=Hexadezimal-Verschlüsselung für Binärdateien
 IgnoreDuplicateRecords=Datensatzduplikate ignorieren (INSERT IGNORE)
@@ -218,6 +222,7 @@ OfficialWebSiteFr=Französische Website
 OfficialWiki=Dolibarr Wiki
 OfficialDemo=Dolibarr Offizielle Demo
 OfficialMarketPlace=Offizieller Marktplatz für Module/Erweiterungen
+OfficialWebHostingService=Offizielle Web-Hosting-Service (Cloud Hosting)
 ForDocumentationSeeWiki=Für Benutzer-und Entwickler-Dokumentation (DOC, ...), FAQs <br> Werfen Sie einen Blick auf die Dolibarr Wiki: <br> <a href="%s" target="_blank"><b> %s</b></a>
 ForAnswersSeeForum=Für alle anderen Fragen / Hilfe, können Sie die Dolibarr Forum: <br> <a href="%s" target="_blank"><b> %s</b></a>
 HelpCenterDesc1=In diesem Bereich können Sie sich ein Hilfe-Support-Service auf Dolibarr.
@@ -314,6 +319,14 @@ SmsTestMessage=Test Nachricht von __PHONEFROM__ zu __PHONETO__
 ModuleMustBeEnabledFirst=Modul <b>%s</b> muss erst aktiviert werden bevor diese Funktion verfügbar ist.
 SecurityToken=Schlüssel um die URLs zu entschlüsseln
 NoSmsEngine=Kein SMS Sende Manager verfügbar. SMS Sende Manager sind nicht installiert (weil diese von externen Lieferanten abhängig sind) aber Sie können welche auf http://www.dolistore.com finden.
+PDF=PDF
+PDFDesc=Sie können jede globale Optionen im Zusammenhang mit der PDF-Erzeugung einstellen
+PDFAddressForging=Regeln zum Formen der Adresse-Boxen
+HideAnyVATInformationOnPDF=Unterdrücken aller MwSt.-Informationen auf dem generierten PDF
+UrlGenerationParameters=Parameter zum Sichern von URLs
+SecurityTokenIsUnique=Verwenden Sie einen eindeutigen Sicherheitsschlüssel für jede URL
+EnterRefToBuildUrl=Geben Sie eine Referenz für das Objekt %s ein
+GetSecuredUrl=Holen der berechneten URL
 
 # Modules
 Module0Name=Benutzer und Gruppen
@@ -370,6 +383,8 @@ Module85Name=Banken und Geld
 Module85Desc=Verwaltung von Bank- oder Bargeldkonten
 Module100Name=Externe Website
 Module100Desc=Erlaubt die Einbindung einer externen Website in die Menüs von dolibarr und die Anzeige der Seite innerhalb eines Frames
+Module105Name=Mailman und Sip
+Module105Desc=Mailman oder Spip Schnittstelle für die Mitgliedsmodul
 Module200Name=LDAP
 Module200Desc=LDAP-Verzeichnissynchronisation
 Module210Name=PostNuke
@@ -681,63 +696,68 @@ LocalTax2IsNotUsedExampleES=In Spanien sind sie bussines nicht der Steuer unterl
 LabelUsedByDefault=Standardmäßig verwendete Bezeichnung falls keine Übersetzung vorhanden ist
 LabelOnDocuments=Bezeichnung auf Dokumenten
 NbOfDays=Anzahl der Tage
-
-### SNE BIS HIER ###
-
 AtEndOfMonth=Am Ende des Monats
 Offset=Wertsprung
 AlwaysActive=Immer aktiv
 UpdateRequired=Ihr System erfordert eine Aktualisierung. Um diese nun durchzuführen klicken Sie bitte auf <a href="%s">Jetzt aktualisieren</a>.
 Upgrade=Aktualisierung
+MenuUpgrade=Aktualisierung/Erweiterung
 AddExtensionThemeModuleOrOther=Erweiterung hinzufügen (Oberflächen, Module, ...)
 WebServer=Webserver
 DocumentRootServer=Dokumenten-Stammordner des Webservers
 DataRootServer=Daten-Verzeichnis
 IP=IP
 Port=Port
-VirtualServerName=Virtual Server Name
+VirtualServerName=Name des Virtual-Server
 AllParameters=Alle Parameter
 OS=OS
-Php=Php
+Php=PHP
 PhpEnv=Env
 PhpModules=Module
-PhpConf=Conf
-PhpWebLink=Php Web-Link
+PhpConf=Config
+PhpWebLink=PHP Web-Link
 Pear=Pear
 PearPackages=Pear Packages
 Database=Datenbank
-DatabaseName=Datenbankname
-DatabasePort=Datenbank-Port
+DatabaseServer=Datenbankserver
+DatabaseName=Name der Datenbank
+DatabasePort=Port für Datenbank
+DatabaseUser=DB Benutzername
+DatabasePassword=DB Passwort
 DatabaseConfiguration=Datenbankeinstellungen
 Tables=Tabellen
 TableName=Tabellenname
 TableLineFormat=Zeilenformat
 NbOfRecord=Anzahl der Einträge
-Constraints=Constraints
-ConstraintsType=Constraint-Typ
-ConstraintsToShowOrNotEntry=Constraint zeigen oder nicht - Menü-Eintrag
-AllMustBeOk=Alle erfordern eine Überprüfung
-Host=Host
-DriverType=Driver Typ
+Constraints=Zwangsbedingungen
+ConstraintsType=Typ für Zwangsbedingungen
+ConstraintsToShowOrNotEntry=Zwangsbedingungen zeigen oder nicht - Menü-Eintrag
+AllMustBeOk=Alle dies muss überprüft werden
+Host=Server
+DriverType=Treiber Typ
 SummarySystem=Zusammenfassung der Systeminformationen
-SummaryConst=Liste aller Systemeinstellungen
+SummaryConst=Liste aller Systemeinstellungen von Dolibarr
 SystemUpdate=Systemaktualisierung
 SystemSuccessfulyUpdate=Das System wurde erfolgreich aktualisiert
 MenuCompanySetup=Firma/Stiftung
 MenuNewUser=Neuer Benutzer
-MenuTopManager=Top-Menü-Verwaltung
-MenuLeftManager=Linkes-Menü-Verwaltung
-DefaultMenuTopManager=Top-Menü-Verwaltung
-DefaultMenuLeftManager=Linkes-Menü-Verwaltung
-Skin=Oberfläche
-DefaultSkin=Standardoberfläche
+MenuTopManager=Verwaltung Top-Menü 
+MenuLeftManager=Verwaltung des Menüs links
+MenuSmartphoneManager=Smartphone Menüverwaltung
+DefaultMenuTopManager=Top-Menüverwaltung
+DefaultMenuLeftManager=Verwaltung linkes Menü
+DefaultMenuManager=Standard Menü-Verwaltung
+DefaultMenuSmartphoneManager=Smartphone Menü-Verwaltung
+Skin=Oberfläche Layout
+DefaultSkin=Standardlayout für Oberfläche
 MaxSizeList=Maximale Listenlänge
 DefaultMaxSizeList=Maximale Listenlänge (Standard)
 MessageOfDay=Nachricht des Tages
 MessageLogin=Nachricht auf der Anmeldeseite
 PermanentLeftSearchForm=Ständiges Suchfeld auf der linken Seite
-DefaultLanguage=Standardsprache (Sprachcode)
+DefaultLanguage=Standardsprache der Anwendung (Sprachcode)
 EnableMultilangInterface=Mehrsprachigkeit aktivieren
+EnableShowLogo=Logo über dem linken Menü anzeigen
 SystemSuccessfulyUpdated=Das System wurde erfolgreich aktualisiert
 CompanyInfo=Firmen-/Stiftungsinformationen
 CompanyIds=Firmen-/Stiftungs-IDs
@@ -746,7 +766,7 @@ CompanyAddress=Firmenadresse
 CompanyZip=Postleitzahl
 CompanyTown=Stadt
 CompanyCountry=Land
-CompanyCurrency=Firmenwährung
+CompanyCurrency=Hauptwährung
 DoNotShow=Nicht anzeigen
 DoNotSuggestPaymentMode=Nicht vorschlagen
 NoActiveBankAccountDefined=Keine aktiven Finanzkonten definiert
@@ -756,28 +776,33 @@ ShowBugTrackLink=Zeige Link 'Fehler melden'
 ShowWorkBoard=Zeige 'Aufgabenübersicht' auf der Startseite
 Alerts=Benachrichtigungen
 Delays=Verspätungen
-DelayBeforeWarning=Benachrichtigungsverzögerung
-DelaysBeforeWarning=Benachrichtigungsverzögerungen
-DelaysOfToleranceBeforeWarning=Verspätungstoleranz vor Benachrichtigungen
+DelayBeforeWarning=Frist bis zur Benachrichtigung
+DelaysBeforeWarning=Fristen bis zur Benachrichtigung
+DelaysOfToleranceBeforeWarning=Toleranz für die Frist vor Benachrichtigungen
 DelaysOfToleranceDesc=Hier können Sie die Verspätungstoleranz einstellen, bevor eine Benachrichtigung auf dem Bildschirm für jedes verspätete Element mit dem Symbol %s ausgegeben wird.
 DelaysOfToleranceActionsToDo=Verzögerungstoleranz (in Tagen) vor Benachrichtigung über die noch nicht erledigte, geplante Maßnahme
 DelaysOfToleranceOrdersToProcess=Verzögerungstoleranz (in Tagen) vor  Benachrichtigung noch nicht bearbeitete Aufträge
+DelaysOfToleranceSuppliersOrdersToProcess=Verzögerungstoleranz (in Tagen), bevor Alarm für nicht bearbeteitet Lieferanten-Bestellungen aktiviert wird
 DelaysOfTolerancePropalsToClose=Verzögerungstoleranz (in Tagen) vor  Benachrichtigung über abzuschließende Angebote
 DelaysOfTolerancePropalsToBill=Verzögerungstoleranz (in Tagen) vor Benachrichtigung über nicht in Rechnung gestellte Angebote
 DelaysOfToleranceNotActivatedServices=Verzögerungstoleranz (in Tagen) vor  Benachrichtigung über zu aktivierende Leistungen
 DelaysOfToleranceRunningServices=Verzögerungstoleranz (in Tagen) vor Benachrichtigung zu überfälligen Leistungen
 DelaysOfToleranceSupplierBillsToPay=Verzögerungstoleranz (in Tagen) vor Benachrichtigung über unbezahlte Lieferantenrechnungen
+DelaysOfToleranceCustomerBillsUnpaid=Verzögerungstoleranz (in Tagen) vor Benachrichtigung über unbezahlte Kundenrechnungen
 DelaysOfToleranceTransactionsToConciliate=Verzögerungstoleranz (in Tagen) vor Benachrichtigung über Bankkontenabgleich
+DelaysOfToleranceMembers=Verzögerungstoleranz (in Tagen) vor Benachrichtigung über verspätete Mitgliedsbeiträge
 DelaysOfToleranceChequesToDeposit=Verzögerungstoleranz (in Tagen) vor der Benachrichtigung über einzulösende Schecks
 SetupDescription1=Alle Parameter in der Einstellungsübersicht erlauben Ihnen die Konfiguration des Systems vor Inbetriebnahme.
 SetupDescription2=Die 2 wichtigsten Schritte zur Einrichtung finden Sie in den ersten beiden Zeilen des Einstellungen-Menüs auf der linken Seite. Dies sind die 'Unternehmen/Stiftung'- und die 'Moduleinstellungen'-Menüpunkte:
 SetupDescription3=Die Einstellungen unter <b>Firma/Stiftung</b> werden für die Anzeige im System und die länderspezifische Anpassung dessen Verhaltens zwingend benötigt.
 SetupDescription4=Die <b>Moduleinstellungen</b> sind erforderlich, da dolibarr nicht als simples ERP/CRM-System, sondern als Kombination einer Vielzahl mehr oder weniger unabhängiger Module fungiert. Ein Großteil der Navigationselemente erscheint erst nach Aktivierung der entsprechenden Module.
+SetupDescription5=Andere Einträge verwalten optionale Parameter.
 EventsSetup=Protokollierungseinstellungen
 LogEvents=Protokollierte Ereignisse
 Audit=Protokoll
 ListEvents=Liste aller protokollierten Ereignisse
 ListOfSecurityEvents=Liste der sicherheitsrelevanten Ereignisse
+SecurityEventsPurged=Security-Ereignisse gelöscht
 LogEventDesc=Hier können Sie die Protokollierungseinstellungen für sicherheitsrelevante Ereignisse anpassen. Administratoren können die entsprechenden Inhalte unter <b>Systemwerkzeuge-Protokoll</b> einsehen. Achtung: Diese Funktion kann zu erhöhtem Datenaufkommen in der Datenbank führen.
 AreaForAdminOnly=Diese Funktionen stehen ausschließlich <b>Administratoren</b> zur Verfügung. Administrationsfunktionen und -hilfe werden in dolibarr durch die folgenden Symbole dargestellt:
 SystemInfoDesc=Verschiedene systemrelevante, technische Informationen - Lesemodus und nur für Administratoren sichtbar.
@@ -805,18 +830,66 @@ MAIN_MAX_DECIMALS_UNIT=Dezimalstellen max. für Stückpreise
 MAIN_MAX_DECIMALS_TOT=Dezimalstellen max. für Gesamtsummen
 MAIN_MAX_DECIMALS_SHOWN=Dezimalstellen max. für auf dem Bildschirm angezeigte Preise (Fügen Sie <b>...</b> nach dieser Nummer ein, wenn Sie <b>...</b> sehen wollen, falls ein Bildschirmpreis abgeschnitten wurde.
 MAIN_DISABLE_PDF_COMPRESSION=PDF-Komprimierung für erzeugte PDF-Dokumente verwenden
+MAIN_ROUNDING_RULE_TOT=Rundungseinstellung (für Länder in denen die Rundung nicht auf Basis 10 errechnet wird - selten)
+UnitPriceOfProduct=Nettostückpreis
+TotalPriceAfterRounding=Gesamtpreis (Netto/MwSt./Brutto) gerundet
 ParameterActiveForNextInputOnly=Die Einstellungen werden erst bei der nächsten Eingabe wirksam
 NoEventOrNoAuditSetup=Keine sicherheitsrelevanten Protokollereignisse. Überprüfen Sie die Aktivierung dieser Funktionen unter 'Einstellunge-Sicherheit-Protokoll'.
 NoEventFoundWithCriteria=Kein sicherheitsrelevantes Protokollereignis zu Ihren Suchkriterien gefunden
 SeeLocalSendMailSetup=Lokale sendmail-Einstellungen anzeigen
+BackupDesc=Um eine vollständige Systemsicherung durchzuführen müssen Sie:
+BackupDesc2=* Eine Sicherung des Dokumentenverzeichnisses (<b>%s</b>), das alle hochgeladenen und erzeugte Dateien beinhaltet, erzeugen (z.B. als zip-Archiv).
+BackupDesc3=* Eine Sicherung der Datenbank über Dump-Befehl anlegen. Hierzu steht Ihnen der folgende Assistent zur Verfügung.
+BackupDescX=Bewahren Sie die archivierten Verzeichnisse an einem sicheren Ort auf.
+BackupDescY=Bewahren Sie den Datenbank-Dump an einem sicheren Ort auf.
+RestoreDesc=Um eine Systemsicherung wiederherzustellen, müssen Sie:
+RestoreDesc2=* Eine erstellte Archivdatei (z.B. ein zip-Archiv) Ihres Dokumentenordners in eine neue dolibarr-Installation oder das derzeitige Dokumentenverzeichnis (<b>%s</b>) entpacken
+RestoreDesc3=* Die Datenbanksicherung aus dem Dump in eine neue dolibarr-Installation oder das bestehende System zurückspielen. Achtung: Nach Beendigung dieses Vorganges müssen Sie sich mit dem Benutzernamen/Passwort-Paar zum Zeitpunkt der Sicherung am System anmelden. Zur Wiederherstellung der Datenbank steht Ihnen der folgende Assistent zur Verfügung:
+ForcedToByAModule=Diese Regel wird <b>%s</b> durch ein aktiviertes Modul aufgezwungen
+PreviousDumpFiles=Vorige Datenbanksicherungen
+WeekStartOnDay=Wochenstart
+RunningUpdateProcessMayBeRequired=Eine Systemaktualisierung scheint erforderlich (Programmversion %s unterscheidet sich von Datenbankversion %s)
+YouMustRunCommandFromCommandLineAfterLoginToUser=Diesen Befehl müssen Sie auf der Kommandozeile (nach Login auf der Shell mit Benutzer <b>%s</b>) ausführen.
+YourPHPDoesNotHaveSSLSupport=Ihre PHP-Konfiguration unterstützt keine SSL-Verschlüsselung
+DownloadMoreSkins=Weitere Oberflächen (Skins) herunterladen
+SimpleNumRefModelDesc=Liefere eine Nummer im Format %syymm-nnnn zurück, wobei YY für das Jahr, MM für das Monat und nnnn für eine 4-stellige, nicht unterbrochene Zahlensequenz steht
+ShowProfIdInAddress=Zeige professionnal ID mit Adressen auf Dokumente
+TranslationUncomplete=Teilweise Übersetzung
+SomeTranslationAreUncomplete=Für einige Sprachen, teilweise übersetzt werden oder Fehler enthält. Wenn Sie etwas entdecken, können Sie <b>beheben. Lang</b> Textdateien in das Verzeichnis <b>htdocs / langs</b> und legt sie auf dem Forum bei <a href="http://www.dolibarr.org/forum" target="_blank">http://www.dolibarr.org</a> .
+MenuUseLayout=Machen Sie vertikales Menü hidable (Option Javascript muss nicht deaktiviert werden)
+MAIN_DISABLE_METEO=Deaktivieren meteo Blick
+TestLoginToAPI=Testen Sie sich anmelden, um API
+ProxyDesc=Einige Features von Dolibarr müssen einen Internet-Zugang zu Arbeit haben. Definieren Sie hier Parameter für diese. Wenn die Dolibarr Server hinter einem Proxy-Server, erzählt jene Parameter Dolibarr wie man Internet über ihn zugreifen.
+ExternalAccess=Externer Zugriff
+MAIN_PROXY_USE=Verwenden Sie einen Proxy-Server (sonst direkten Zugang zum Internet)
+MAIN_PROXY_HOST=Name / Anschrift des Proxy-Servers
+MAIN_PROXY_PORT=Port of Proxy-Server
+MAIN_PROXY_USER=Passwort an, um den Proxy-Server verwenden
+MAIN_PROXY_PASS=Kennwort ein, um den Proxy-Server verwenden
+DefineHereComplementaryAttributes=Definieren Sie hier allen Attributen, nicht bereits standardmäßig vorhanden, und dass Sie für %s unterstützt werden.
+ExtraFields=Ergänzende Attribute
+ExtraFieldHasWrongValue=Attribut %s einen falschen Wert hat.
+AlphaNumOnlyCharsAndNoSpace=nur alphanumericals Zeichen ohne Leerzeichen
+SendingMailSetup=Einrichten von Sendungen per E-Mail
+SendmailOptionNotComplete=Achtung, auf einigen Linux-Systemen, E-Mails von Ihrem E-Mail zu senden, sendmail Ausführung Setup muss conatins Option-ba (Parameter mail.force_extra_parameters in Ihre php.ini-Datei). Wenn einige Empfänger niemals E-Mails erhalten, versuchen, diese Parameter mit PHP mail.force_extra_parameters =-ba) zu bearbeiten.
+PathToDocuments=Dokumentenpfad
+PathDirectory=Verzeichnispfad
+SendmailOptionMayHurtBuggedMTA=Feature-Mails mit der Methode &quot;PHP mail direkt&quot; senden generiert eine Mail-Nachricht, die nicht korrekt möglicherweise von einigen Mail-Servern empfangen analysiert werden. Ergebnis ist, dass manche Mails nicht von Menschen, die von thoose abgehört Plattformen gehostet gelesen werden. Es ist bei einigen Internet-Providern (Ex: Orange in Frankreich). Dies ist nicht ein Problem in Dolibarr noch in PHP aber auf empfangende Mail-Server. Sie können jedoch hinzuzufügen MAIN_FIX_FOR_BUGGED_MTA Option auf 1 in die Setup - andere zu Dolibarr ändern, um dies zu vermeiden. Sie können jedoch Probleme mit anderen Servern, dass die Achtung streng dem SMTP-Standard zu erleben. Die andere Lösung (empfohlen) ist es, die Methode &quot;SMTP-Socket-Bibliothek&quot;, die keine Nachteile hat benutzen.
+TranslationSetup=Configuration de la traduction
+TranslationDesc=Wahl der Sprache auf dem Bildschirm sichtbar verändert werden kann: <br> * Weltweit aus dem Menü <strong>Start - Einstellungen - Anzeige</strong> <br> * Für die Benutzer nur von <strong>Benutzer-Registerkarte Anzeige</strong> von Benutzer-Karte (klicken Sie auf Login-Bildschirm auf der Oberseite).
+##### Module password generation
 PasswordGenerationStandard=Generiere ein Passwort nach dem internen Systemalgorithmus: 8 Zeichen, Zahlen und Kleinbuchstaben.
 PasswordGenerationNone=Keine automatische Passworterstellung vorschlagen. Passwort muss manuell eingegeben werden.
+##### Users setup #####
 UserGroupSetup=Benutzer- und Gruppeneinstellunen
 GeneratePassword=Passwort erstellen
 RuleForGeneratedPasswords=Regel für automatisch erstellte Passwörter
 DoNotSuggest=Kein Passwort vorschlagen
 EncryptedPasswordInDatabase=Damit die Verschlüsselung der Passwörter in der Datenbank
 DisableForgetPasswordLinkOnLogonPage='Passwort vergessen'-Link nicht auf der Anmeldeseite anzeigen
+UsersSetup=Benutzermoduleinstellungen
+UserMailRequired=Für das Erstellen eines neuen Benutzers ist dessen E-Mail-Adresse erforderlich
+##### Company setup #####
 CompanySetup=Unternehmenseinstellungen
 CompanyCodeChecker=Modul für Partner-Code-Erstellung (Kunden oder Lieferanten)
 AccountCodeManager=Modul für Kontierungs-Code-Erstellung (Kunden oder Lieferanten)
@@ -825,6 +898,13 @@ ModuleCompanyCodePanicum=Generiert einen leeren Kontierungscode.
 ModuleCompanyCodeDigitaria=Kontierungscode hängt vom Partnercode ab. Der Code setzt sich aus dem Buchstaben 'C' und den ersten 5 Stellen des Partnercodes zusammen.
 UseNotifications=Benachrichtigungen verwenden
 NotificationsDesc=E-Mail-Benachrichtigungsfunktionen erlauben Ihnen den stillschweigenden Versand automatischer Benachrichtigungen zu Systemereignissen an dafür eingerichtete Partner (Kunden oder Lieferanten).
+ModelModules=Dokumentvorlagenmodul
+DocumentModelOdt=Erstellen von Dokumentvorlagen im OpenDocuments-Format (.odt-Dateien für OpenOffice, KOffice, TextEdit, ...)
+WatermarkOnDraft=Wasserzeichen auf Entwurf
+CompanyIdProfChecker=Berufs-Identifikation einzigartige
+MustBeUnique=Eindeutig sein müssen?
+Miscellanous=Verschiedenes
+##### Webcal setup #####
 WebCalSetup=Webkalender-Verbindungseinstellungen
 WebCalSyncro=Termine an Webkalender übertragen
 WebCalAllways=Immer, ohne Rückfrage
@@ -848,6 +928,7 @@ WebCalAddEventOnStatusBill=Kalendereintrag bei Rechnungsstatusänderung
 WebCalAddEventOnStatusMember=Kalendereintrag bei Mitgliedsstatusänderung
 WebCalUrlForVCalExport=Ein Eportlink für das Format <b>%s</b> findet sich unter folgendem Link: %s
 WebCalCheckWebcalSetup=Bitte überprüfen Sie die Einstellungen des Webkalendermoduls
+##### Invoices #####
 BillsSetup=Rechnungsmoduleinstellungen
 BillsDate=Rechnungsdaten
 BillsNumberingModule=Rechnungs- und Gutschriftsnumerierungsmodul
@@ -864,11 +945,10 @@ SuggestPaymentByRIBOnAccount=Zahlung per Lastschrift vorschlagen
 SuggestPaymentByChequeToAddress=Zahlung per Scheck vorschlagen
 FreeLegalTextOnInvoices=Freier Rechtstext für Rechnungen
 WatermarkOnDraftInvoices=Wasserzeichen auf Rechnungsentwürfen (alle, falls leer)
+##### Proposals #####
 PropalSetup=Angebotsmoduleinstellungen
 CreateForm=Formular erstellen
 NumberOfProductLines=Anzahl der Produktlinien
-PathToDocuments=Dokumentenpfad
-PathDirectory=Verzeichnispfad
 ProposalsNumberingModules=Angebotsnumerierungs-Module
 ProposalsPDFModules=PDF-Anbebotsmodule
 ClassifiedInvoiced=Als verrechnet markieren
@@ -879,6 +959,7 @@ AddDeliveryAddressAbility=Lieferfähigkeitsdatum hinzufügen
 UseOptionLineIfNoQuantity=Produkt-/Servicezeilen mit Nullmenge zulässig
 FreeLegalTextOnProposal=Freier Rechtstext für Angebote
 WatermarkOnDraftProposal=Wasserzeichen für Angebotsentwürfe (alle, falls leer)
+##### Orders #####
 OrdersSetup=Bestellverwaltungseinstellungen
 OrdersNumberingModules=Bestellnumerierungs-Module
 OrdersModelModule=Bestellvorlagenmodule
@@ -886,17 +967,28 @@ HideTreadedOrders=Ausblenden von bearbeiteten oder abgebrochenen Angebote in der
 ValidOrderAfterPropalClosed=Zur Freigabe der Bestellung nach Schließung des Angebots (überspringt vorläufige Bestellung)
 FreeLegalTextOnOrders=Freier Rechtstext auf Bestellungen
 WatermarkOnDraftOrders=Wasserzeichen zu den Entwürfen von Aufträgen (alle, wenn leer)
+##### Clicktodial #####
+ClickToDialSetup=Click-to-Dial Moduleinstellungen
+ClickToDialUrlDesc=Definieren Sie hier die URL, die bei einem Klick auf das Telefonsymbol aufgerufen werden soll. In dieser URL können Sie Tags verwenden<br><b>%%1$s</b> wird durch die Telefonnummer des Angerufenen ersetzt<br><b>%%2$s</b> wird durch die Telefonnummer des Anrufers (Ihre) ersetzt<br><b>%%3$s</b> wird durch Ihren Benutzernamen für Click-to-Dial ersetzt (siehe Benutzerdatenblatt)<br><b>%%4$s</b> wird durch Ihr Click-to-Dial-Passwort ersetzt (siehe Benutzerdatenblatt).
+##### Bookmark4u #####
+Bookmark4uSetup=Bookmark4u Moduleinstellungen
+##### Interventions #####
+InterventionsSetup=Servicemoduleinstellungen
+FreeLegalTextOnInterventions=Freier Rechtstext für Services
 FicheinterNumberingModules=Intervention Nummerierung Module
 TemplatePDFInterventions=Intervention Karte Dokumenten Modelle
 WatermarkOnDraftInterventionCards=Wasserzeichen auf Intervention Karte Dokumente (alle, wenn leer)
-ClickToDialSetup=Click-to-Dial-Moduleinstellungen
-ClickToDialUrlDesc=Definieren Sie hier die URL, die bei einem Klick auf das Telefonsymbol aufgerufen werden soll. In dieser URL können Sie Tags verwenden<br><b>%%1$s</b> wird durch die Telefonnummer des Angerufenen ersetzt<br><b>%%2$s</b> wird durch die Telefonnummer des Anrufers (Ihre) ersetzt<br><b>%%3$s</b> wird durch Ihren Benutzernamen für Click-to-Dial ersetzt (siehe Benutzerdatenblatt)<br><b>%%4$s</b> wird durch Ihr Click-to-Dial-Passwort ersetzt (siehe Benutzerdatenblatt).
-Bookmark4uSetup=Bookmark4u Moduleinstellungen
-InterventionsSetup=Servicemoduleinstellungen
+##### Contracts ####
+ContractsSetup=Verträge Modul Setup
+ContractsNumberingModules=Verträge Nummerierung Module
+##### Members #####
+MembersSetup=Mitglieder-Modul Setup
 MemberMainOptions=Haupteinstellungen
 AddSubscriptionIntoAccount=Bei Einrichtung eines neuen Abonnements automatisch Zahlungserstellung im Bankmodul vorschlagen
+AdherentLoginRequired=Verwalten Sie eine Anmeldung für jedes Mitglied
 AdherentMailRequired=Für das Anlegen eines neuen Mitglieds ist eine E-Mail-Adresse erforderlich
 MemberSendInformationByMailByDefault=Das Kontrollkästchen für den automatischen Mail-Bestätigungsversand an Mitglieder (bei Freigabe oder neuem Abonnement) ist standardmäßig aktiviert
+##### LDAP setup #####
 LDAPSetup=LDAP-Einstellungen
 LDAPGlobalParameters=Globale LDAP-Parameter
 LDAPUsersSynchro=Benutzer
@@ -1010,6 +1102,8 @@ LDAPFieldCountry=Land
 LDAPFieldCountryExample=Beispiel: land
 LDAPFieldDescription=Beschreibung
 LDAPFieldDescriptionExample=Beispiel : Beschreibung
+LDAPFieldGroupMembers=Gruppenmitglieder
+LDAPFieldGroupMembersExample=Beispiel: uniqueMember
 LDAPFieldBirthdate=Geburtsdatum
 LDAPFieldBirthdateExample=Beispiel : geburtsdatum
 LDAPFieldCompany= Firma
@@ -1026,14 +1120,20 @@ LDAPDescGroups=Auf dieser Seite definieren Sie die LDAP-Attribute im LDAP-Baum f
 LDAPDescMembers=Auf dieser Seite definieren Sie die LDAP-Attribute im LDAP-Baum für jeden Datensatz zu dolibarr-Mitgliedern.
 LDAPDescValues=Die Beispielwerte für <b>OpenLDAP</b> verfügen über folgende Muster: <b>core.schema, cosine.schema, inetorgperson.schema</b>. Wenn Sie diese Werte für OpenLDAP verwenden möchten, passen Sie bitte die LDAP-Konfigurationsdateu <b>slapd.conf</b> entsprechend an, damit all diese Muster geladen werden.
 ForANonAnonymousAccess=Für einen authentifizierten Zugang (z.B. für Schreibzugriff)
+##### Products #####
 ProductSetup=Produktmoduleinstellungen
+ServiceSetup=Dienstleistungen Modul Setup
+ProductServiceSetup=Produkte und Services Module Setup
 NumberOfProductShowInSelect=Max. Anzahl der Produkte in Mehrfachauswahllisten (0=kein Limit)
 ConfirmDeleteProductLineAbility=Bestätigung für die Entfernung von Produktzeilen in Formularen
 ModifyProductDescAbility=Produktbeschreibungen in Formularen individuell anpassbar
 ViewProductDescInFormAbility=Anzeige dr Produktbeschreibungen in Formularen (andernfalls als Popup-Tooltip)
+ViewProductDescInThirdpartyLanguageAbility=Visualisierung von Produkten Beschreibungen in der Sprache thirdparty
+UseSearchToSelectProduct=Suchfeld statt Listenansicht für die Produktauswahl verwenden
 UseEcoTaxeAbility=Umweltabgaben unterstüzten
 SetDefaultBarcodeTypeProducts=Standard-Barcode-Typ für Produkte
 SetDefaultBarcodeTypeThirdParties=Standard-Barcode-Typ für Partner
+##### Syslog #####
 SyslogSetup=Protokollierungsmodul-Einstellungen
 SyslogOutput=Protokollausgabe
 SyslogSyslog=Protokoll
@@ -1041,8 +1141,12 @@ SyslogFacility=Einrichtung
 SyslogLevel=Level
 SyslogSimpleFile=Datei
 SyslogFilename=Dateiname und-pfad
+YouCanUseDOL_DATA_ROOT=Sie können DOL_DATA_ROOT/dolibarr.log als Protokolldatei in Ihrem Dokumentenverzeichnis verwenden. Bei Bedarf können Sie auch den Pfad der Datei anpassen.
 ErrorUnknownSyslogConstant=Konstante %s ist nicht als Protkoll-Konstante definiert
+##### Donations #####
 DonationsSetup=Spendenmoduleinstellungen
+DonationsReceiptModel=Vorlage für Spendenquittungen
+##### Barcode #####
 BarcodeSetup=Barcode-Einstellungen
 PaperFormatModule=Papierformatmodul
 BarcodeEncodeModule=Barcode-Erstellungsmodul
@@ -1056,33 +1160,44 @@ BarcodeDescUPC=Barcode vom Typ UPC
 BarcodeDescISBN=Barcode vom Typ ISBN
 BarcodeDescC39=Barcode vom Typ C39
 BarcodeDescC128=Barcode vom Typ C128
+##### Prelevements #####
 WithdrawalsSetup=Abbuchungseinstellungen
+##### ExternalRSS #####
 ExternalRSSSetup=Externe RSS-Einbindungseinstellungen
 NewRSS=Neuer RSS-Feed
+##### Mailing #####
 MailingSetup=E-Mail-Kampagnenmodul-Einstellungen
 MailingEMailFrom=E-Mail-Absender (für ausgehende Mails) des E-Mail-Moduls
+MailingEMailError=Antwort-E-Mail-Adresse für unzustellbare E-Mails
+##### Notification #####
 NotificationSetup=Benachrichtigungsmoduleinstellungen
 NotificationEMailFrom=E-Mail-Absender (für ausgehende Mails) des Benachrichtigungsmoduls
+ListOfAvailableNotifications=Liste der verfügbaren Meldungen (Diese Liste ist abhängig von aktivierten Module)
+##### Sendings #####
 SendingsSetup=Versandmoduleinstellungen
 SendingsReceiptModel=Versandbelegsvorlage
+SendingsNumberingModules=Sendungen Nummerierung Module
 SendingsAbility=Lieferscheine für Kundensendungen unterstützen
 NoNeedForDeliveryReceipts=In den meisten Fällen werden Lieferschein sowohl als Versand- (für die Zusammenstellung der Sendung), als auch als Zustellsscheine (vom Kunden zu unterschreiben) verwendet. Ensprechend sind Empfangsbelege meist eine doppelte und daher nicht verwendete Option.
-FreeLegalTextOnDeliveryReceipts=Freier Rechtstext auf Empfangsbelegen
+FreeLegalTextOnShippings=Freier Text auf Frachtkosten
+##### Deliveries #####
 DeliveryOrderNumberingModules=Zustellscheinnumerierungs-Module
 DeliveryOrderModel=Zustellscheinnumerierung
 DeliveriesOrderAbility=Unterstütze Zustellscheine für Produkte
+FreeLegalTextOnDeliveryReceipts=Freier Rechtstext auf Empfangsbelegen
+##### FCKeditor #####
+AdvancedEditor=Erweiterter Editor
 ActivateFCKeditor=FCKEditor aktivieren für:
-FCKeditorForUsers=WYSIWIG Erstellung/Bearbeitung der Benutzerinformationen und Notizen
 FCKeditorForCompany=WYSIWIG Erstellung/Bearbeitung der Partnerinformationen und Notizen
 FCKeditorForProduct=WYSIWIG Erstellung/Bearbeitung von Produkt-/Serviceinformationen und Notizen
-FCKeditorForMembers=WYSIWIG Erstellung/Bearbeitung von Mitgliederinformationen und Notizen
 FCKeditorForProductDetails=WYSIWIG Erstellung/Bearbeitung der Produktdetails für alle Dokumente (Angebote, Bestellungen, Rechnungen, etc. ..) <br>Achtung: Diese Option kann bei der Erstellung von PDF-Dokumenten zu Fehlern führen und ist deshalb nicht empfohlen.
-FCKeditorForProductDetailsPerso=WYSIWIG Erstellung/Bearbeitung von personalisierten Produktinformationen für alle Dokumente (Angebote, Bestellungen, Rechnungen, etc. ..)
 FCKeditorForMailing=WYSIWIG Erstellung/Bearbeitung von E-Mails
+##### OSCommerce 1 #####
 OSCommerceErrorConnectOkButWrongDatabase=Datenbank-Verbindung erfolgreich, es scheint sich allerdings nicht um eine OSCommerce-Datenbank zu handeln (Key %s nicht gefunden in der Tabelle %s).
 OSCommerceTestOk=Verbindung zum Server '%s' für Datenbank '%s' mit Benutzer '%s' erfolgreich.
 OSCommerceTestKo1=Verbindung zum Server '%s' erfolgreich, aber Datenbank '%s' konnte nicht erreicht werden.
 OSCommerceTestKo2=Verbindung zum Server '%s' mit dem Benutzer '%s' fehlgeschlagen.
+##### Mantis #####
 MantisSetup=Mantis-Einstellungen
 MantisURL=URL für Mantis Zugang
 MantisServer=Hostserver der Mantis-Datenbank
@@ -1093,16 +1208,20 @@ MantisTestOk=Verbindung zum Server '%s' für Datenbank  '%s' mit Benutzer '%s' e
 MantisTestKo1=Verbindung zum Server '%s' erfolgreich, aber Datenbank '%s' konnte nicht erreicht werden.
 MantisTestKo2=Verbindung zum Server '%s' mit Benutzer '%s' fehlgeschlagen.
 MantisErrorConnectOkButWrongDatabase=Verbindung zur Datenbank erfolgreich, es scheint sich jedoch nicht um eine Mantis-Datenbank zu handeln.
+##### Stock #####
 StockSetup=Lagermoduleinstellungen
 UserWarehouse=Persönliche Benutzerlagerstände verwenden
+##### Menu #####
 MenuDeleted=Menü gelöscht
 TreeMenu=Baumansicht
+Menus=Menüs
 TreeMenuPersonalized=Personalisierte Baumansicht
 NewMenu=Neues Menü
 MenuConf=Menüeinstellungen
 Menu=Menüauswahl
 MenuHandler=Menü-Handler
 MenuModule=Quellmodul
+HideUnauthorizedMenu=Hide unbefugte Menüs (grau)
 DetailId=Menü ID
 DetailMenuHandler=Menü-Handler für die Anzeige des neuen Menüs
 DetailMenuModule=Modulname falls Menüeintrag aus einem Modul stimmt
@@ -1111,6 +1230,7 @@ DetailTitre=Menübezeichner oder Bezeichnungs-Code für Übersetzung
 DetailMainmenu=Gruppe der Zugehörigkeit (veraltet)
 DetailUrl=Ziel-URL für Menüeintrag (Absolute URL oder externer Link mit http://)
 DetailLeftmenu=Zustand anzeigen oder nicht (veraltet)
+DetailEnabled=Einstellungen für die Anzeige der Einträge
 DetailRight=Zustand für die Anzeige nicht-authorisierter, grauer Menüs
 DetailLangs=Sprachdateiname für Bezeichnungsübersetzung
 DetailUser=Intern/Extern/Alle
@@ -1121,298 +1241,89 @@ DeleteMenu=Menüeintrag löschen
 ConfirmDeleteMenu=Möchten Sie diesen Menüeintrag <b>%s</b> wirklich löschen?
 DeleteLine=Zeile löschen
 ConfirmDeleteLine=Möchten Sie diese Zeile wirklich löschen?
+##### Tax #####
 TaxSetup=Steuer-, Sozialbeitrags- und Dividendenmodul-Einstellungen
 OptionVatMode=MwSt. fällig
 OptionVATDefault=Standard
 OptionVATDebitOption=MwSt.Last-Option
-AgendaSetup=Agenda-Moduleinstellungen
-PasswordTogetVCalExport=Passwort für den VCal-Export
-ClickToDialDesc=Dieses Modul fügt ein Symbols nach Telefonnummern ein, bei dessen der Server unter der unten definierten URL aufgerufen wird. Diese Funktion können Sie dazu verwenden, ein Callcenter-System innerhalb dolibarrs aufzurufen, das eine Telefonnummer z.B. über ein SIP-System, für Sie wählt.
-CashDeskSetup=Kassenmoduleinstellungen
-CashDeskThirdPartyForSell=Standardpartner für Kassenverkäufe (erforderlich)
-CashDeskBankAccountForSell=Standard-Bargeldkonto für Kassenverkäufe (erforderlich)
-CashDeskIdWareHouse=Standard-Warenlager für Kassenverkauf (optional)
-
-
-
-
-
-
-
-
-
-
-
-DictionnarySendingMethods=Versandarten
-SetupDescription5=Andere Einträge verwalten optionale Parameter.
-BackupDesc=Um eine vollständige Systemsicherung durchzuführen müssen Sie:
-BackupDesc2=* Eine Sicherung des Dokumentenverzeichnisses (<b>%s</b>), das alle hochgeladenen und erzeugte Dateien beinhaltet, erzeugen (z.B. als zip-Archiv).
-BackupDesc3=* Eine Sicherung der Datenbank über Dump-Befehl anlegen. Hierzu steht Ihnen der folgende Assistent zur Verfügung.
-BackupDescX=Bewahren Sie die archivierten Verzeichnisse an einem sicheren Ort auf.
-BackupDescY=Bewahren Sie den Datenbank-Dump an einem sicheren Ort auf.
-RestoreDesc=Um eine Systemsicherung wiederherzustellen, müssen Sie:
-RestoreDesc2=* Eine erstellte Archivdatei (z.B. ein zip-Archiv) Ihres Dokumentenordners in eine neue dolibarr-Installation oder das derzeitige Dokumentenverzeichnis (<b>%s</b>) entpacken
-RestoreDesc3=* Die Datenbanksicherung aus dem Dump in eine neue dolibarr-Installation oder das bestehende System zurückspielen. Achtung: Nach Beendigung dieses Vorganges müssen Sie sich mit dem Benutzernamen/Passwort-Paar zum Zeitpunkt der Sicherung am System anmelden. Zur Wiederherstellung der Datenbank steht Ihnen der folgende Assistent zur Verfügung:
-ForcedToByAModule=Diese Regel wird <b>%s</b> durch ein aktiviertes Modul aufgezwungen
-YouCanUseDOL_DATA_ROOT=Sie können DOL_DATA_ROOT/dolibarr.log als Protokolldatei in Ihrem Dokumentenverzeichnis verwenden. Bei Bedarf können Sie auch den Pfad der Datei anpassen.
-Menus=Menüs
-DetailEnabled=Einstellungen für die Anzeige der Einträge
+OptionVatDefaultDesc=Mehrwertsteuerschuld entsteht: <br>- Bei Lieferung/Zahlung für Waren<br>- Bei Zahlung für Dienstleistungen
+OptionVatDebitOptionDesc=Mehrwertsteuerschuld entsteht: <br>- Bei Lieferung/Zahlung für Waren<br>- Bei Rechnungslegung (Lastschrift) für Dienstleistungen
 SummaryOfVatExigibilityUsedByDefault=Standardmäßiger Zeitpunkt der MwSt.-Fälligkeit in Abhängigkeit der derzeit gewählten Option:
 OnDelivery=Bei Lieferung
 OnPayment=Bei Zahlung
 OnInvoice=Bei Rechnungslegung
 SupposedToBePaymentDate=Zahlungsdatum in Verwendung falls Lieferdatum unbekannt
+SupposedToBeInvoiceDate=Rechnungsdatum verwendet
 Buy=Kaufen
 Sell=Verkaufen
-InvoiceValidateDateUsed=Verwendetes Rechnungsdatum
+InvoiceDateUsed=Rechnungsdatum verwendet
 YourCompanyDoesNotUseVAT=Für Ihr Unternehmen wurde keine MwSt.-Verwendung definiert (Übersicht-Einstellungen-Unternehmen/Stiftung), entsprechend stehen in der Konfiguration keine MwSt.-Optionen zur Verfügung.
+AccountancyCode=Rechnungswesen-Code
+##### Agenda #####
+AgendaSetup=Agenda-Moduleinstellungen
+PasswordTogetVCalExport=Passwort für den VCal-Export
+PastDelayVCalExport=Keine Termine exportieren die älter sind als
+##### ClickToDial #####
+ClickToDialDesc=Dieses Modul fügt ein Symbols nach Telefonnummern ein, bei dessen der Server unter der unten definierten URL aufgerufen wird. Diese Funktion können Sie dazu verwenden, ein Callcenter-System innerhalb dolibarrs aufzurufen, das eine Telefonnummer z.B. über ein SIP-System, für Sie wählt.
+##### Point Of Sales (CashDesk) #####
+CashDesk=Point of Sales
+CashDeskSetup=Kassenmoduleinstellungen
+CashDeskThirdPartyForSell=Standardpartner für Kassenverkäufe (erforderlich)
+CashDeskBankAccountForSell=Standard-Bargeldkonto für Kassenverkäufe (erforderlich)
+CashDeskBankAccountForCheque=Finanzkonto für Scheckeinlösungen
+CashDeskBankAccountForCB=Finanzkonto für die Einlösung von Bargeldzahlungen via Kreditkarte
+CashDeskIdWareHouse=Standard-Warenlager für Kassenverkauf (optional)
+##### Bookmark #####
 BookmarkSetup=Lesezeichenmoduleinstellungen
 BookmarkDesc=Dieses Modul ermöglicht die Verwaltung von Lesezeichen. Außerdem können Sie hiermit Verknüpfungen zu internen und externen Seiten im linken Menü anlegen.
 NbOfBoomarkToShow=Maximale Anzeigeanzahl Lesezeichen im linken Menü
+##### WebServices #####
 WebServicesSetup=Webservices-Moduleinstellungen
 WebServicesDesc=Über Aktivierung dieses Moduls können Sie dolibarr zur Anbindung an externe Webservices konfigurieren
 WSDLCanBeDownloadedHere=Die WSDL-Datei der verfügbaren Webservices können Sie hier herunterladen
 EndPointIs=SOAP-Clients müssen Ihre Anfragen an den dolibarr-Endpoint unter der folgenden Url stellen
+##### Bank #####
 BankSetupModule=Bankmoduleinstellungen
 FreeLegalTextOnChequeReceipts=Freier Rechtstext für Scheckbelege
+BankOrderShow=Anzeige Reihenfolge der Bankkonten für Länder mit &quot;detaillierten Bank-Nummer&quot;
+BankOrderGlobal=General
+BankOrderGlobalDesc=Allgemeine Anzeige-Reihenfolge
+BankOrderES=Spanisch
+BankOrderESDesc=Spanisch Anzeigereihenfolge
+##### MailmanSpip #####
+MailmanSpipSetup=Mailman und Spip Modul-Setup
+##### Multicompany #####
 MultiCompanySetup=Multi-Company-Moduleinstellungen
-
- 
-
-DelaysOfToleranceCustomerBillsUnpaid=Verzögerungstoleranz (in Tagen) vor Benachrichtigung über unbezahlte Kundenrechnungen
-UseSearchToSelectProduct=Suchfeld statt Listenansicht für die Produktauswahl verwenden
-
-
-
-
-PreviewNotAvailable=Vorschau nicht verfügbar
-
-
-
-InstrucToEncodePass=Um das Passwort in der Konfigurationsdatei <b>conf.php</b> zu verschlüsseln, ersetzen Sie die Zeile <br><b>$dolibarr_main_db_pass="..."</b><br>durch<br><b>$dolibarr_main_db_pass="crypted:%s"</b>
-InstrucToClearPass=Um das Passwort unverschlüsselt (Klartext) in der Konfigurationsdatei <b>conf.php</b> zu speichern, ersetzen Sie die Zeile<br><b>$dolibarr_main_db_pass="crypted:..."</b><br>durch<br><b>$dolibarr_main_db_pass="%s"</b>
-ProtectAndEncryptPdfFiles=PDF-Dokumentschutz aktivieren (Die Aktivierung ist nicht empfohlen, weil dadurch die Stapelerzeugung von PDFs nicht mehr funktioniert)
-
-
-
-
-
-
-
-
-
-
-
-Permission536=Versteckte Leistungen einsehen/verwalten
-Permission2411=Maßnahmen (Termine oder Aufgaben) Anderer einsehen
-Permission2412=Maßnahmen (Termine oder Aufgaben) Anderer erstellen/bearbeiten
-Permission2413=Maßnahmen (Termine oder Aufgaben) Anderer löschen
-
-LocalTax1ManagementES=RE Management
-LocalTax1IsUsedDescES=Die RE Rate standardmäßig beim Erstellen Aussichten, Rechnungen, Bestellungen etc. folgen die aktive Standard-Regel: <br> Wenn te Käufer ist nicht unterworfen RE, RE standardmäßig = 0 ist. Ende der Regel. <br> Ist der Käufer unterzogen, um dann die RE RE standardmäßig. Ende der Regel. <br>
-LocalTax1IsNotUsedDescES=Standardmäßig werden die vorgeschlagenen RE 0 ist. Ende der Regel.
-LocalTax1IsUsedExampleES=In Spanien sind sie Profis unterliegen bestimmten Abschnitten der spanischen IAE.
-LocalTax1IsNotUsedExampleES=In Spanien sind sie professionelle und Gesellschaften und vorbehaltlich bestimmter Abschnitte der spanischen IAE.
-LocalTax2ManagementES=IRPF Management
-LocalTax2IsUsedDescES=Die RE Rate standardmäßig beim Erstellen Aussichten, Rechnungen, Bestellungen etc. folgen die aktive Standard-Regel: <br> Ist der Verkäufer nicht zu IRPF ausgesetzt, dann durch IRPF default = 0. Ende der Regel. <br> Ist der Verkäufer zur IRPF dann der Einkommenssteuer unterworfen standardmäßig. Ende der Regel. <br>
-LocalTax2IsNotUsedDescES=Standardmäßig werden die vorgeschlagenen IRPF 0 ist. Ende der Regel.
-LocalTax2IsUsedExampleES=In Spanien, Freiberufler und unabhängigen Fachleuten, die ihre Dienstleistungen und Unternehmen, die das Steuersystem von Modulen gewählt haben.
-LocalTax2IsNotUsedExampleES=In Spanien sind sie bussines nicht der Steuer unterliegen System von Modulen.
-MenuUpgrade=Aktualisierung/Erweiterung
-DatabaseServer=Datenbankserver
-DatabaseUser=Datenbankbenutzer
-DatabasePassword=Datenbankpasswort
-EnableShowLogo=Logo über dem linken Menüs anzeigen
-DelaysOfToleranceMembers=Verzögerungstoleranz (in Tagen) vor Benachrichtigung über verspätete Mitgliedsbeiträge
-MAIN_ROUNDING_RULE_TOT=Rundungseinstellung (für Länder in denen die Rundung nicht auf Basis 10 errechnet wird - selten)
-UnitPriceOfProduct=Nettostückpreis
-TotalPriceAfterRounding=Gesamtpreis (Netto/MwSt./Brutto) gerundet
-PreviousDumpFiles=Vorige Datenbanksicherungen
-WeekStartOnDay=Wochenstart
-RunningUpdateProcessMayBeRequired=Eine Systemaktualisierung scheint erforderlich (Programmversion %s unterscheidet sich von Datenbankversion %s)
-YouMustRunCommandFromCommandLineAfterLoginToUser=Diesen Befehl müssen Sie auf der Kommandozeile (nach Login auf der Shell mit Benutzer <b>%s</b>) ausführen.
-YourPHPDoesNotHaveSSLSupport=Ihre PHP-Konfiguration unterstützt keine SSL-Verschlüsselung
-DownloadMoreSkins=Weitere Oberflächen (Skins) herunterladen
-SimpleNumRefModelDesc=Liefere eine Nummer im Format %syymm-nnnn zurück, wobei YY für das Jahr, MM für das Monat und nnnn für eine 4-stellige, nicht unterbrochene Zahlensequenz steht
-ListOfEntities=Liste der Entitäten
-AddEntity=Entität hinzufügen
-EditEntity=Entität bearbeiten
-UsersSetup=Benutzermoduleinstellungen
-UserMailRequired=Für das Erstellen eines neuen Benutzers ist dessen E-Mail-Adresse erforderlich
-ModelModules=Dokumentvorlagenmodul
-DocumentModelOdt=Erstellen von Dokumentvorlagen im OpenDocuments-Format (.odt-Dateien für OpenOffice, KOffice, TextEdit, ...)
-WatermarkOnDraft=Wasserzeichen auf Entwurf
-LDAPFieldGroupMembers=Gruppenmitglieder
-LDAPFieldGroupMembersExample=Beispiel: uniqueMember
-DonationsReceiptModel=Vorlage für Spendenquittungen
-MailingEMailError=Antwort-E-Mail-Adresse für unzustellbare E-Mails
-OptionVatDefaultDesc=Mehrwertsteuerschuld entsteht: <br>- Bei Lieferung/Zahlung für Waren<br>- Bei Zahlung für Dienstleistungen
-OptionVatDebitOptionDesc=Mehrwertsteuerschuld entsteht: <br>- Bei Lieferung/Zahlung für Waren<br>- Bei Rechnungslegung (Lastschrift) für Dienstleistungen
-PastDelayVCalExport=Keine Termine exportieren die älter sind als
-CashDesk=Point of Sales
-CashDeskBankAccountForCheque=Finanzkonto für Scheckeinlösungen
-CashDeskBankAccountForCB=Finanzkonto für die Einlösung von Bargeldzahlungen via Kreditkarte
+##### Suppliers #####
 SuppliersSetup=Lieferantenmoduleinstellungen
 SuppliersCommandModel=Vollständige Vorlage für Lieferantenbestellungen (Logo, ...)
+SuppliersInvoiceModel=Vollständige Vorlage der Lieferantenrechnung (logo. ..)
+##### GeoIPMaxmind #####
 GeoIPMaxmindSetup=GeoIP-Maxmind Moduleinstellungen
 PathToGeoIPMaxmindCountryDataFile=Pfad zur Datei mit Maxmind IP to Country Übersetzung. <br> Beispiel: / usr / local / share / GeoIP / GeoIP.dat
 NoteOnPathLocation=Bitte beachten Sie, dass Ihre IP-Länder-Datei in einem von PHP lesbaren Verzeichnis liegen muss (Überprüfen Sie Ihre PHP open_basedir-Einstellungen und die Dateisystem-Berechtigungen).
 YouCanDownloadFreeDatFileTo=Eine <b>kostenlose Demo-Version</b> der Maxmind-GeoIP Datei finden Sie hier: %s
 YouCanDownloadAdvancedDatFileTo=Eine <b>vollständigere Version mit Updates</b> der Maxmind-GeoIP Datei können Sie hier herunterladen: %s
 TestGeoIPResult=Test einer Umwandlung IP -> Land
-ProjectsNumberingModules=Projektnumerierungsmodul
-ProjectsSetup=Projekteinstellungenmodul
-ProjectsModelModule=Projektvorlagenmodul
-
-
-
-
-FreeLegalTextOnInterventions=Freier Rechtstext für Services
-ModulesJob=Geschäfttypenmodule
-ConfigFileIsInReadOnly=Die Konfigurationsdatei conf.php kann nur gelesen werden, bitte überprüfen Sie die Berechtigungen.
-OfficialWikiFr=Französisches Wikiei mit Maxmind IP to Country Übersetzung. <br> Beispiel: / usr / local / share / GeoIP / GeoIP.dat
-NoteOnPathLocation=Bitte beachten Sie, dass Ihre IP-Länder-Datei in einem von PHP lesbaren Verzeichnis liegen muss (Überprüfen Sie Ihre PHP open_basedir-Einstellungen und die Dateisystem-Berechtigungen).
-YouCanDownloadFreeDatFileTo=Eine <b>kostenlose Demo-Version</b> der Maxmind-GeoIP Datei finden Sie hier: %s
-YouCanDownloadAdvancedDatFileTo=Eine <b>vollständigere Version mit Updates</b> der Maxmind-GeoIP Datei können Sie hier herunterladen: %s
-TestGeoIPResult=Test einer Umwandlung IP -> Land
-##### NumberWords #####
-NumberWordsSetup=NumberWords Moduleinstellungen
-DescNumberWords=Dieses Modul bietet Funktionen zur Konvertierung von Zahlen und Beträgen in formatierte Zeichenketten. Es ersetzt auch die folgende Zeichenfolgen __TOTAL_TTC_WORDS__, __TOTAL_HT_WORDS__ oder __TOTAL_VAT_WORDS__ durch 'Bruttosumme', 'Nettosumme' oder 'Steuersumme' in allen verwendeten Texten (freier Text auf Rechnungen, ...)
 ##### Projects #####
 ProjectsNumberingModules=Projektnumerierungsmodul
 ProjectsSetup=Projekteinstellungenmodul
 ProjectsModelModule=Projektvorlagenmodul
 
+
+
+####????#### not in US - no more required in 3.2 ?
 MAIN_NOT_INSTALLED=Setup wird ausgeführt
 MAIN_FEATURES_LEVEL=Level der freigeschaltenen Funktionen(0=nur stable, 1=stable+experimentell, 2=stable+experimentell+Entwicklung)
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
-WebUserGroup=Web-Server-Benutzer / Gruppe
-ActivityStateToSelectCompany=Fügen Sie einen Filter-Option zum Anzeigen / Verbergen Dritte diese die derzeit in Aktivität oder aufgehört hat es
-SearchFilter=Suchfilter Optionen
-NumberOfKeyToSearch=Nbr der Zeichen, die Suche auslösen: %s
-ClientOffsetWithGreenwich=Client / Browser Versatzbreite Greenwich (Sekunden)
-DaylingSavingTime=Sommerzeit (Benutzer)
-RunCommandSummaryToLaunch=Backup kann mit dem folgenden Befehl gestartet werden
-ImportPostgreSqlDesc=Um eine Backup-Datei importieren, müssen Sie pg_restore Befehl von der Kommandozeile aus nutzen:
-ImportPostgreSqlCommand=%s %s mybackupfile.sql
-FullPathToPostgreSQLdumpCommand=Der vollständige Pfad zum Befehl pg_dump
-NoLockBeforeInsert=Keine Sperre um Befehle INSERT
-CurrentMenuHandler=Aktuelle Menü-Handler
-CurrentSmartphoneMenuHandler=Aktuelle Smartphone-Menü-Handler
-MAIN_MAIL_ERRORS_TO=Absender E-Mail für Fehler erneut E-Mails geschickt genutzt
-MAIN_DISABLE_ALL_SMS=Deaktivieren Sie alle SMS-Sendungen (für Testzwecke oder Demos)
-MAIN_SMS_SENDMODE=Methode zu verwenden, um SMS zu versenden
-MAIN_MAIL_SMS_FROM=Standard Absender Telefonnummer für SMS-Versand
-FollowingSubstitutionKeysCanBeUsed=<br> Um zu wissen, wie Sie Ihre odt Dokumentenvorlagen erstellen, vor dem Speichern in diesen Verzeichnissen, lesen Wiki-Dokumentation:
-FullListOnOnlineDocumentation=http://wiki.dolibarr.org/index.php/Create_an_ODT_document_template
-DescWeather=Die folgenden Bilder wird am Armaturenbrett angezeigt, wenn die Anzahl der Aktionen spät erreichen folgende Werte:
-KeyForWebServicesAccess=Schlüssel zu Web Services (Parameter &quot;dolibarrkey&quot; in Webservices) verwenden
-TestSubmitForm=Eingangstest Form
-ThisForceAlsoTheme=Über dieses Menü-Manager wird auch sein eigenes Thema, was die Wahlfreiheit der Nutzer ist. Auch in diesem Menü-Manager für Smartphones spezialisiert hat nicht funktioniert auf allen Smartphones. Verwenden Sie ein anderes Menü-Manager, wenn Sie Probleme bei Ihnen zu erleben.
-ThemeDir=Skins-Verzeichnis
-ConnectionTimeout=Connexion-Timeout
-ResponseTimeout=Antwortverzugszeit
-SmsTestMessage=Testnachricht vom __ bis __ PHONEFROM__ PHONETO__
-ModuleMustBeEnabledFirst=Modul <b>%s</b> müssen zuerst bevor Sie diese Funktion aktiviert werden.
-SecurityToken=Schlüssel zum sicheren URLs
-NoSmsEngine=Kein SMS-Absender-Manager zur Verfügung. SMS-Absender-Manager werden nicht mit Standard-Distribution installiert ist (weil sie auf einem externen Lieferanten abhängig), aber Sie können einige auf http://www.dolistore.com finden
-PDF=PDF
-PDFDesc=Sie können jede globale Optionen im Zusammenhang mit der PDF-Erzeugung
-PDFAddressForging=Regeln zur Adresse Boxen schmieden
-HideAnyVATInformationOnPDF=Hide alle Informationen im Zusammenhang mit der Mehrwertsteuer auf generierten PDF
-UrlGenerationParameters=Parameter zu sichern URLs
-SecurityTokenIsUnique=Verwenden Sie einen eindeutigen SecureKey Parameter für jede URL
-EnterRefToBuildUrl=Geben Sie für Referenz-Objekt %s
-GetSecuredUrl=Holen Sie berechnet URL
-Module105Name=Mailman und Sip
-Module105Desc=Mailman oder Spip Schnittstelle für die Mitglied-Modul
-Module50000Name=PayBox
-Module50000Desc=Modul zur Online-Zahlung per Kreditkarte Seite bieten mit Paybox
-Module50200Name=Paypal
-Module50200Desc=Modul zur Online-Zahlung per Kreditkarte Seite bieten mit Paypal
-Permission154=Kreditkarten / Quittungen verweigern, Daueraufträge
-Permission165=Löschen Verträge
-Permission173=Löschen Reisen
-PermissionAdvanced251=Lesen Sie andere Benutzer
-PermissionAdvanced253=Erstellen / Ändern von internen / externen Benutzern und Berechtigungen
-Permission341=Lesen Sie eigene Berechtigungen
-Permission342=Erstellen / Ändern seiner eigenen Benutzer-Informationen
-Permission343=Ändern sein eigenes Passwort
-Permission344=Ändern Sie eigene Berechtigungen
-Permission351=Lesen Sie Gruppen
-Permission352=Lesen Sie Gruppen Berechtigungen
-Permission353=Erstellen / Ändern von Gruppen
-Permission354=Löschen oder Deaktivieren von Gruppen
-Permission358=Export-Benutzer
-Permission703=Löschen Spenden
-Permission1235=Senden Sie Lieferantenrechnungen per E-Mail
-Permission2502=Download-Dokumente
-Permission2503=Senden oder Löschen von Dokumenten
-Permission50001=Verwenden Sie Point of Sales
-Permission50201=Lesen Transaktionen
-Permission50202=Import-Transaktionen
-DictionnaryAvailability=Lieferverzug
-DictionnaryOrderMethods=Bestellmöglichkeiten
-DictionnarySource=Herkunft der Vorschläge / Bestellungen
-MenuSmartphoneManager=Smartphone Menü-Manager
-DefaultMenuManager=Standard-Menü-Manager
-DefaultMenuSmartphoneManager=Smartphone Menü-Manager
-DelaysOfToleranceSuppliersOrdersToProcess=Verzögerung Toleranz (in Tagen), bevor Alarm auf Lieferanten Bestellungen noch nicht bearbeitet
-SecurityEventsPurged=Security-Ereignisse gelöscht
-ShowProfIdInAddress=Zeige professionnal ID mit Adressen auf Dokumente
-TranslationUncomplete=Teilweise Übersetzung
-SomeTranslationAreUncomplete=Für einige Sprachen, teilweise übersetzt werden oder Fehler enthält. Wenn Sie etwas entdecken, können Sie <b>beheben. Lang</b> Textdateien in das Verzeichnis <b>htdocs / langs</b> und legt sie auf dem Forum bei <a href="http://www.dolibarr.org/forum" target="_blank">http://www.dolibarr.org</a> .
-MenuUseLayout=Machen Sie vertikales Menü hidable (Option Javascript muss nicht deaktiviert werden)
-MAIN_DISABLE_METEO=Deaktivieren meteo Blick
-TestLoginToAPI=Testen Sie sich anmelden, um API
-ProxyDesc=Einige Features von Dolibarr müssen einen Internet-Zugang zu Arbeit haben. Definieren Sie hier Parameter für diese. Wenn die Dolibarr Server hinter einem Proxy-Server, erzählt jene Parameter Dolibarr wie man Internet über ihn zugreifen.
-ExternalAccess=Externer Zugriff
-MAIN_PROXY_USE=Verwenden Sie einen Proxy-Server (sonst direkten Zugang zum Internet)
-MAIN_PROXY_HOST=Name / Anschrift des Proxy-Servers
-MAIN_PROXY_PORT=Port of Proxy-Server
-MAIN_PROXY_USER=Passwort an, um den Proxy-Server verwenden
-MAIN_PROXY_PASS=Kennwort ein, um den Proxy-Server verwenden
-DefineHereComplementaryAttributes=Definieren Sie hier allen Attributen, nicht bereits standardmäßig vorhanden, und dass Sie für %s unterstützt werden.
-ExtraFields=Ergänzende Attribute
-ExtraFieldHasWrongValue=Attribut %s einen falschen Wert hat.
-SendingMailSetup=Einrichten von Sendungen per E-Mail
-SendmailOptionNotComplete=Achtung, auf einigen Linux-Systemen, E-Mails von Ihrem E-Mail zu senden, sendmail Ausführung Setup muss conatins Option-ba (Parameter mail.force_extra_parameters in Ihre php.ini-Datei). Wenn einige Empfänger niemals E-Mails erhalten, versuchen, diese Parameter mit PHP mail.force_extra_parameters =-ba) zu bearbeiten.
-SendmailOptionMayHurtBuggedMTA=Feature-Mails mit der Methode &quot;PHP mail direkt&quot; senden generiert eine Mail-Nachricht, die nicht korrekt möglicherweise von einigen Mail-Servern empfangen analysiert werden. Ergebnis ist, dass manche Mails nicht von Menschen, die von thoose abgehört Plattformen gehostet gelesen werden. Es ist bei einigen Internet-Providern (Ex: Orange in Frankreich). Dies ist nicht ein Problem in Dolibarr noch in PHP aber auf empfangende Mail-Server. Sie können jedoch hinzuzufügen MAIN_FIX_FOR_BUGGED_MTA Option auf 1 in die Setup - andere zu Dolibarr ändern, um dies zu vermeiden. Sie können jedoch Probleme mit anderen Servern, dass die Achtung streng dem SMTP-Standard zu erleben. Die andere Lösung (empfohlen) ist es, die Methode &quot;SMTP-Socket-Bibliothek&quot;, die keine Nachteile hat benutzen.
-CompanyIdProfChecker=Berufs-Identifikation einzigartige
-MustBeUnique=Eindeutig sein müssen?
-Miscellanous=Verschiedenes
-ContractsSetup=Verträge Modul Setup
-ContractsNumberingModules=Verträge Nummerierung Module
-MembersSetup=Mitglieder-Modul Setup
-AdherentLoginRequired=Verwalten Sie eine Anmeldung für jedes Mitglied
-ServiceSetup=Dienstleistungen Modul Setup
-ProductServiceSetup=Produkte und Services Module Setup
-ViewProductDescInThirdpartyLanguageAbility=Visualisierung von Produkten Beschreibungen in der Sprache thirdparty
-ListOfAvailableNotifications=Liste der verfügbaren Meldungen (Diese Liste ist abhängig von aktivierten Module)
-SendingsNumberingModules=Sendungen Nummerierung Module
-FreeLegalTextOnShippings=Freier Text auf Frachtkosten
-AdvancedEditor=Erweiterter Editor
-HideUnauthorizedMenu=Hide unbefugte Menüs (grau)
-SupposedToBeInvoiceDate=Rechnungsdatum verwendet
-InvoiceDateUsed=Rechnungsdatum verwendet
-AccountancyCode=Rechnungswesen-Code
-BankOrderShow=Anzeige Reihenfolge der Bankkonten für Länder mit &quot;detaillierten Bank-Nummer&quot;
-BankOrderGlobal=General
-BankOrderGlobalDesc=Allgemeine Anzeige-Reihenfolge
-BankOrderES=Spanisch
-BankOrderESDesc=Spanisch Anzeigereihenfolge
-MailmanSpipSetup=Mailman und Spip Modul-Setup
-SuppliersInvoiceModel=Vollständige Vorlage der Lieferantenrechnung (logo. ..)
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:05:18).
-
-
-// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
-// Reference language: en_US -> de_DE
-VersionRecommanded=Empfohlene
-PostgreSqlExportParameters=PostgreSQL Export-Parameter
-OfficialWebHostingService=Offizielle Web-Hosting-Service (Cloud Hosting)
-AlphaNumOnlyCharsAndNoSpace=nur alphanumericals Zeichen ohne Leerzeichen
-TranslationSetup=Configuration de la traduction
-TranslationDesc=Wahl der Sprache auf dem Bildschirm sichtbar verändert werden kann: <br> * Weltweit aus dem Menü <strong>Start - Einstellungen - Anzeige</strong> <br> * Für die Benutzer nur von <strong>Benutzer-Registerkarte Anzeige</strong> von Benutzer-Karte (klicken Sie auf Login-Bildschirm auf der Oberseite).
-// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:38).
+InvoiceValidateDateUsed=Verwendetes Rechnungsdatum
+ListOfEntities=Liste der Entitäten
+AddEntity=Entität hinzufügen
+EditEntity=Entität bearbeiten
+ModulesJob=Geschäfttypenmodule
+ConfigFileIsInReadOnly=Die Konfigurationsdatei conf.php kann nur gelesen werden, bitte überprüfen Sie die Berechtigungen.
+OfficialWikiFr=Französisches Wikiei mit Maxmind IP to Country Übersetzung. <br> Beispiel: / usr / local / share / GeoIP / GeoIP.dat
+NumberWordsSetup=NumberWords Moduleinstellungen
+DescNumberWords=Dieses Modul bietet Funktionen zur Konvertierung von Zahlen und Beträgen in formatierte Zeichenketten. Es ersetzt auch die folgende Zeichenfolgen __TOTAL_TTC_WORDS__, __TOTAL_HT_WORDS__ oder __TOTAL_VAT_WORDS__ durch 'Bruttosumme', 'Nettosumme' oder 'Steuersumme' in allen verwendeten Texten (freier Text auf Rechnungen, ...)
+FCKeditorForUsers=WYSIWIG Erstellung/Bearbeitung der Benutzerinformationen und Notizen
+FCKeditorForMembers=WYSIWIG Erstellung/Bearbeitung von Mitgliederinformationen und Notizen
+FCKeditorForProductDetailsPerso=WYSIWIG Erstellung/Bearbeitung von personalisierten Produktinformationen für alle Dokumente (Angebote, Bestellungen, Rechnungen, etc. ..)

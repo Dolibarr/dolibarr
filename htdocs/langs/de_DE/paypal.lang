@@ -1,37 +1,29 @@
 /*
- * Language code: de_DE
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-10-10 02:45:33
- */
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> de_DE
 CHARSET=UTF-8
-PaypalSetup=PayPal-Modul Setup
-PaypalDesc=Dieses Modul bieten Seiten, die Zahlung ermöglichen <a href="http://www.paypal.com" target="_blank">PayPal</a> von Kunden. Dies kann für eine kostenlose Zahlung oder eine Zahlung zu einem bestimmten Dolibarr Objekt verwendet werden (Rechnung, Bestellung, ...)
-PaypalOrCBDoPayment=Bezahlen Sie mit Kreditkarte oder Paypal
-PaypalDoPayment=Bezahlen Sie mit Paypal
-PaypalCBDoPayment=Bezahlen mit Kreditkarte
-PAYPAL_CSS_URL=Optionnal URL der CSS-Stylesheet auf Zahlung Seite
-ThisIsTransactionId=Dies ist id Geschäftsart: <b>%s</b>
-PAYPAL_ADD_PAYMENT_URL=Fügen Sie die URL der Paypal Zahlung, wenn Sie ein Dokument per E-Mail senden
-PAYPAL_IPN_MAIL_ADDRESS=E-Mail-Adresse für die sofortige Benachrichtigung der Zahlung (IPN)
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:42:13).
 
+PaypalSetup=PayPal Moduleinstellungen
+PaypalDesc=Dieses Modul ermöglicht es Zahlungen von Kunden per <a href="http://www.paypal.com" target="_blank">PayPal</a> zu tätigen.
+PaypalOrCBDoPayment=Zahlen Sie mit Kreditkarte oder Paypal?
+PaypalDoPayment=Zahlen mit Paypal
+PaypalCBDoPayment=Zahlen mit Kreditkarte
+PAYPAL_API_SANDBOX=Testmoduds/Sandbox
+PAYPAL_API_USER=Paypal Benutzername
+PAYPAL_API_PASSWORD=Paypal Passwort
+PAYPAL_API_SIGNATURE=Paypal Signatur
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Bieten Sie Zahlungen "integral" (Kreditkarte + Paypal) an, oder nur per "Paypal"?
+PAYPAL_CSS_URL=Optionale CSS-Layoutdatei auf der Zahlungsseite
+ThisIsTransactionId=Die Transaktions ID lautet: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Fügen Sie die Webadresse für Paypal Zahlungen hinzu, wenn Sie ein Dokument per E-Mail versenden.
+PAYPAL_IPN_MAIL_ADDRESS=E-Mail Adresse für sofortige Benachrichtigung der Zahlungen (IPN)
+PredefinedMailContentLink=Sie können unten auf den sicheren Link klicken, um Ihre Zahlung mit PayPal \n\n %s \n\n zu tätigen
+YouAreCurrentlyInSandboxMode=Sie befinden sich im &quot;Sandbox&quot;-Modus
 
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
-PAYPAL_API_SANDBOX=Test-Modus / Sandkasten
-PAYPAL_API_USER=API-Benutzername
-PAYPAL_API_PASSWORD=API-Passwort
-PAYPAL_API_SIGNATURE=API-Signatur
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Bieten Zahlung &quot;integral&quot; (Kreditkarte + Paypal) oder &quot;Paypal&quot; nur
-YouAreCurrentlyInSandboxMode=Sie befinden sich in der &quot;Sandbox&quot;-Modus
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:42).
-
-
-// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
-// Reference language: en_US -> de_DE
-PredefinedMailContentLink=Sie können auf der sicheren Link unten klicken, um Ihre Zahlung durch PayPal \n\n %s \n\n machen
-// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:00).
+# no more required?
+PredefinedMailContentSendOrderWithPaypalLink=Sie finden hier Ihre Bestellung __ORDERREF__\n\nSie können auf den nachfolgenden Sicherheits-Link klicken um Ihre Bezahlung per PayPal vorzunehmen.\n\n%s\n\nBeste Grüße\n\n
+PredefinedMailContentSendInvoiceWithPaypalLink=Sie finden hier Ihre Rechnung __FACREF__\n\nSie können auf den nachfolgenden Sicherheits-Link klicken um Ihre Bezahlung per PayPal vorzunehmen.\n\n%s\n\nBeste Grüße\n\n
