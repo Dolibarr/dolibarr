@@ -1,22 +1,27 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-12 00:09:12
- */
-
-
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 Accountancy=Rechnungswesen
 AccountancyCard=Rechnungswesenkarte
 Treasury=Vermögensverwaltung
 MenuFinancial=Rechnungswesen
+TaxModuleSetupToModifyRules=Hier können Sie die <a href="%s">Einstellungen</a> für die Berechnungen vornehmen
 OptionMode=Buchhaltungsoptionen
 OptionModeTrue=Option Eingang-Ausgang
 OptionModeVirtual=Option Soll-Haben
+OptionModeTrueDesc=Der Umsatz wird über die Zahlungen (Datum der Zahlungen) berechnet. \nDie Aussagekraft der Zahlen ist nur gewährleistet, wenn die Pflege der Konten (Ein-/Ausgang) nachhaltig korrekt ist.
 OptionModeVirtualDesc=In dieser Option berechnet sich der Umsatz über Zahlungen (Zahlungsdatum).<br> Die Gültigkeit der Zahlen ist nur bei Überprüfung der Zu- und Abgänge auf den Konten über Rechnungen gewährleistet.
 FeatureIsSupportedInInOutModeOnly=Dieses Feautre ist nur in der Soll-Haben-Option verfügbar (siehe Konfiguration des Rechnungswesen-Moduls)
+VATReportBuildWithOptionDefinedInModule=Die hier ausgewiesenen Beträge werden unter Verwendung der USt.-Regeln definiert.
 Param=Einstellungen
+RemainingAmountPayment=Noch zu leistende Zahlung:
+AmountToBeCharged=Zu zahlender Gesamtbetrag:
 AccountsGeneral=Konten
 Account=Konto
 Accounts=Konten
@@ -39,7 +44,11 @@ VATToPay=Zu zahlende MwSt.
 VATReceived=Eingehobene MwSt.
 VATToCollect=Einzuhebende MwSt.
 VATSummary=MwSt. Zahllast
+LT2SummaryES=EKSt. Übersicht
 VATPaid=Bezahlte MwSt.
+LT2PaidES=EKSt. gezahlt
+LT2CustomerES=EKSt. Verkauf
+LT2SupplierES=EKSt. Einkauf
 VATCollected=Eingehobene MwSt.
 ToPay=Zu zahlen
 ToGet=Zu erhalten
@@ -64,7 +73,10 @@ ListOfPayments=Liste der Zahlungen
 ListOfCustomerPayments=Liste der Kundenzahlungen
 ListOfSupplierPayments=Liste der Lieferantenzahlungen
 DatePayment=Zahlungsdatum
-NewVATPayment=Neue MwSt.-Zahlung
+NewVATPayment=Neue MwSt. Zahlung
+newLT2PaymentES=Neue EKSt. Zahlung
+LT2PaymentES=EKSt. Zahlung
+LT2PaymentsES=EKSt. Zahlungen
 VATPayment=MwSt.-Zahlung
 VATPayments=MwSt-Zahlungen
 SocialContributionsPayments=Sozialbeitragszahlungen
@@ -108,7 +120,7 @@ RulesCADue=- Beinhaltet die fälligen Kundenrechnungen, unabhängig von ihrem Za
 RulesCAIn=- Beinhaltet alle tatsächlich erfolgten Zahlungen von Kunden.<br>- Es gilt das Zahlungsdatum der Rechnungen.<br>
 DepositsAreNotIncluded=- Noch sind Anzahlungsrechnungen inbegriffen
 DepositsAreIncluded=- Anzahlungsrechnungen sind inbegriffen
-LT2ReportByCustomersInInputOutputModeES=Bericht von Partner IRPF
+LT2ReportByCustomersInInputOutputModeES=Bericht von Partner EKSt.
 VATReportByCustomersInInputOutputMode=Bericht zur vereinnahmten und bezahlten MwSt. nach Kunden (Steuerbeleg)
 VATReportByCustomersInDueDebtMode=Bericht zur vereinnahmten und bezahlten MwSt. nach Kunden (Steuersatz)
 VATReportByQuartersInInputOutputMode=Quartalsbericht zur vereinnahmten und bezahlten MwSt. (Steuerbeleg)
@@ -138,50 +150,3 @@ CodeNotDef=Nicht definiert
 AddRemind=Verfügbare Menge zum Versenden
 RemainToDivide= Noch zu Versenden :
 WarningDepositsNotIncluded=Abschlagsrechnungen werden in dieser Version des Rechnungswesens nicht berücksichtigt.
-SearchATripAndExpense=Spesen/Reise suchen
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> de_DE
-RemainingAmountPayment=Leistende Zahlung übrig:
-AmountToBeCharged=Gesamtbetrag zu zahlen:
-ProposalStats=Statistik über die Vorschläge
-OrderStats=Statistiken über Bestellungen
-InvoiceStats=Statistik auf Rechnungen
-SellsJournal=Vertrieb Journal
-PurchasesJournal=Käufe Journal
-DescSellsJournal=Vertrieb Journal
-DescPurchasesJournal=Käufe Journal
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:39:50).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
-LT2SummaryES=IRPF Bilanz
-LT2PaidES=IRPF Paid
-LT2CustomerES=IRPF Umsatz
-LT2SupplierES=IRPF Käufe
-newLT2PaymentES=New IRPF Zahlung
-LT2PaymentES=IRPF Zahlung
-LT2PaymentsES=IRPF Zahlungen
-DepositsAreNotIncluded=- Kaution Rechnungen werden noch von
-DepositsAreIncluded=- Kaution Rechnungen enthalten sind
-LT2ReportByCustomersInInputOutputModeES=Bericht von Dritten IRPF
-RulesVATInServices=- Für Leistungen, enthält der Bericht die Mehrwertsteuer Vorschriften tatsächlich erhalten oder auf der Grundlage der zum Zeitpunkt der Zahlung erteilt. <br> - Für Sachwerte, enthält es die Rechnungen mit ausgewiesener Mehrwertsteuer auf der Grundlage der nach Rechnungsdatum.
-RulesVATInProducts=- Für Sachwerte, enthält es die Rechnungen mit ausgewiesener Mehrwertsteuer auf der Grundlage der nach Rechnungsdatum.
-RulesVATDueServices=- Für Leistungen, enthält der Bericht Rechnungen mit ausgewiesener Mehrwertsteuer fällig, bezahlt oder nicht, basierend auf dem Rechnungsdatum.
-RulesVATDueProducts=- Für Sachwerte, enthält es die Rechnungen mit ausgewiesener Mehrwertsteuer, am Tag der Rechnungsstellung basiert.
-InvoiceRef=Invoice ref.
-CodeNotDef=Nicht definiert
-AddRemind=Versand zur Verfügung stehende Betrag
-RemainToDivide=Bleiben Sie bis zum Versand:
-WarningDepositsNotIncluded=Einlagen Rechnungen werden in dieser Version nicht mit diesem Modul Rechnungswesen inklusive.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:36).
-
-
-// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
-// Reference language: en_US -> de_DE
-TaxModuleSetupToModifyRules=Zum <a href="%s">Setup-Modul</a> , um Regeln für die Berechnung ändern
-OptionModeTrueDesc=In diesem Zusammenhang wird der Umsatz über Zahlungen (Datum der Zahlungen) berechnet. \ NDie Gültigkeit der Figuren ist nur gewährleistet, wenn die Buchführung durch den Eingang / Ausgang auf den Konten über Rechnungen geprüft wird.
-VATReportBuildWithOptionDefinedInModule=Hier ausgewiesenen Beträge werden unter Verwendung von Regeln UST Modul Setup definiert.
-// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:27:56).

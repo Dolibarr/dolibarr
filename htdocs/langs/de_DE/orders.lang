@@ -1,18 +1,21 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-10 00:11:12
- */
-
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 OrdersArea=Kundenbestellungsübersicht
 SuppliersOrdersArea=Lieferantenbestellungsübersicht
 OrderCard=Bestell-Karte
 Order=Bestellung
 Orders=Bestellungen
+OrderLine=Bestellservice
 OrderFollow=Follow-up
 OrderDate=Bestelldatum
+OrderToProcess=Auftrag zur Bearbeitung
 NewOrder=Neue Bestellung
 ToOrder=Erzeuge Bestellung
 MakeOrder=Erzeuge Bestellung
@@ -32,6 +35,7 @@ StatusOrderCanceledShort=Storniert
 StatusOrderDraftShort=Entwurf
 StatusOrderValidatedShort=Freigegeben
 StatusOrderSentShort=In Bearbeitung
+StatusOrderSent=Versand in Bearbeitung
 StatusOrderOnProcessShort=In Arbeit
 StatusOrderProcessedShort=Bearbeitet
 StatusOrderToBillShort=Zu verrechnen
@@ -50,6 +54,7 @@ StatusOrderApproved=Genehmigt
 StatusOrderRefused=Abgelehnt
 StatusOrderReceivedPartially=Teilweise erhalten
 StatusOrderReceivedAll=Komplett erhalten
+ShippingExist=Eine Sendung ist vorhanden
 DraftOrWaitingApproved=Entwurf oder genehmigt, noch nicht bestellt
 DraftOrWaitingShipped=Entwurf oder bestätigt, noch nicht versandt
 MenuOrdersToBill=Bestellverrechnung
@@ -62,6 +67,7 @@ CreateOrder=Erzeuge Bestellung
 RefuseOrder=Bestellung ablehnen
 ApproveOrder=Bestellung bestätigen
 ValidateOrder=Bestellung freigeben
+UnvalidateOrder=Unbestätigte Bestellung
 DeleteOrder=Bestellung löschen
 CancelOrder=Bestellung verwerfen
 AddOrder=Bestellung hinzufügen
@@ -86,6 +92,7 @@ ConfirmCloseOrder=Möchten Sie diese Bestellung wirklich schließen? Nach ihrer 
 ConfirmCloseOrderIfSending=Möchten Sie diese Bestellung wirklich schließen? Tun Sie dies erst nachdem alle Versandvorgäng abgeschlossen wurden.
 ConfirmDeleteOrder=Möchten Sie diese Bestellung wirklich löschen?
 ConfirmValidateOrder=Möchten Sie diese Bestellung wirklich unter dem Namen <b>%s</b> freigeben?
+ConfirmUnvalidateOrder=Sind Sie sicher, die den Auftrag <b>%s</b> wieder in ein Angebot umzuwandeln?
 ConfirmCancelOrder=Möchten Sie diese Bestellung wirklich verwerfen?
 ConfirmMakeOrder=Hiermit bestätigen Sie, diese Bestellung am <b>%s</b> persönlich angelegt zu haben.
 GenerateBill=Erzeuge Rechnung
@@ -141,31 +148,10 @@ AddDeliveryCostLine=Fügen Sie eine Versandkostenzeile zur Erfassung des Bestell
 # Documents models
 PDFEinsteinDescription=Eine vollständige Bestellvorlage (Logo, uwm.)
 PDFEdisonDescription=Eine einfache Bestellungsvorlage
+
 # Orders modes
-OrderByMail=Mail
+OrderByMail=Post
 OrderByFax=Fax
 OrderByEMail=E-Mail
 OrderByWWW=Online
 OrderByPhone=Telefon
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
-SuppliersOrdersToProcess=Lieferanten Bestellungen zu verarbeiten
-StatusOrderSentShort=Im Prozess
-ShippingExist=Eine Sendung besteht
-UnvalidateOrder=Unvalidate Bestellung
-ConfirmUnvalidateOrder=Sind Sie sicher, die Sie bestellen möchten <b>%s</b> zu Draft-Status wieder her?
-OrderByMail=Post
-OrderByFax=Faxen
-OrderByEMail=EMail
-OrderByWWW=Online
-OrderByPhone=Telefon
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:48).
-
-
-// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
-// Reference language: en_US -> de_DE
-OrderLine=Bestellen Sie Online
-OrderToProcess=Zur Bearbeitung
-StatusOrderSent=Der Versand in Prozess
-// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:04).

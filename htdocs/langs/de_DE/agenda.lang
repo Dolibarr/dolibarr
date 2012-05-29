@@ -1,19 +1,24 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-11 00:10:12
- */
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 Actions=Aktionen
 ActionsArea=Bereich Maßnahmen (Veranstaltungen und Aufgaben)
 Agenda=Agenda
 Agendas=Tagesordnungen
 Calendar=Kalender
 Calendars=Kalender
+LocalAgenda=Lokaler Kalender
 AffectedTo=Zugewiesen an
 DoneBy=Erldedigt von
 Events=Veranstaltungen
+MyEvents=Meine Veranstaltungen
+OtherEvents=Weitere Veranstaltungen
 ListOfActions=Veranstaltungsliste
 Location=Ort
 EventOnFullDay=Ganztägig
@@ -42,6 +47,9 @@ PropalValidatedInDolibarr=Angebot freigegeben
 InvoiceValidatedInDolibarr=Rechnung freigegeben
 InvoiceBackToDraftInDolibarr=Rechnung %s in den Entwurf Status zurücksetzen
 OrderValidatedInDolibarr=Bestellung %s freigegeben
+OrderApprovedInDolibarr=Bestellen %s genehmigt
+OrderBackToDraftInDolibarr=Bestellen %s zurück nach Draft-Status
+OrderCanceledInDolibarr=Auftrag storniert %s
 InterventionValidatedInDolibarr=Service %s freigegeben
 ProposalSentByEMail=Angebot %s per E-Mail versendet
 OrderSentByEMail=Kundenbestellung %s per E-Mail versendet
@@ -64,42 +72,12 @@ AgendaUrlOptions4=<b>logint=%s</b> begrenzt die Ausgabe auf von Benutzer <b>%s</
 AgendaUrlOptions5=<b>logind=%s</b> begrenzt die Ausgabe auf von Benutzer <b>%s</b> erledigte Maßnahmen.
 AgendaShowBirthdayEvents=Zeige Geburtstage
 AgendaHideBirthdayEvents=Geburtstage ausblenden
-ExtSites=Externe Kalender
 
 # External Sites ical
-ExtSites=Externe Kalender
+ExportCal=Export Kalender
+ExtSites=Importieren von externen Kalendern
 ExtSitesEnableThisTool=Zeige externe Kalender in der Agenda
 ExtSitesNbOfAgenda=Anzahl der Kalender
 AgendaExtNb=Kalender Anzahl %s
 ExtSiteUrlAgenda=URL Adresse um .ical Datei zu erreichen
 ExtSiteNoLabel=Keine Beschreibung
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
-LocalAgenda=Lokalen Kalender
-MyEvents=Meine Veranstaltungen
-OtherEvents=Weitere Veranstaltungen
-EventOnFullDay=Event am ganzen Tag
-ViewDay=Tagesansicht
-ViewWeek=Wochenansicht
-AgendaExtSitesDesc=Auf dieser Seite können zu externen Kalendern erklären, ihre Veranstaltungen in Dolibarr Tagesordnung sehen.
-InvoiceBackToDraftInDolibarr=Invoice %s zurück zum Entwurf für ein Statut
-OrderApprovedInDolibarr=Bestellen %s genehmigt
-OrderBackToDraftInDolibarr=Bestellen %s zurück nach Draft-Status
-OrderCanceledInDolibarr=Auftrag storniert %s
-ProposalSentByEMail=Kommerzielle Vorschlag %s per E-Mail
-OrderSentByEMail=Verkauf im Kundenauftrag %s per E-Mail
-InvoiceSentByEMail=Kunden Rechnung %s per E-Mail
-SupplierOrderSentByEMail=Lieferant %s um per E-Mail
-SupplierInvoiceSentByEMail=Lieferantenrechnung %s per E-Mail
-ShippingSentByEMail=Liefer %s per E-Mail
-InterventionSentByEMail=Intervention %s per E-Mail
-ExportCal=Export Kalender
-ExtSites=Importieren Sie externe Kalender
-ExtSitesEnableThisTool=Zeigen Sie externe Kalender in Agenda
-ExtSitesNbOfAgenda=Anzahl der Kalender
-AgendaExtNb=Kalender nb %s
-ExtSiteUrlAgenda=URL zu. ICal-Datei zugreifen
-ExtSiteNoLabel=Keine Beschreibung
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:06:05).

@@ -1,11 +1,12 @@
 ﻿/*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-12 17:09:12
- */
-
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 ContractsArea=Vertragsübersicht
 ListOfContracts=Liste der Verträge
 LastContracts=%s zuletzt geänderte Verträge
@@ -19,7 +20,10 @@ ContractStatusValidated=Freigegeben
 ContractStatusClosed=Geschlossen
 ServiceStatusInitial=Nicht ausgeführt
 ServiceStatusRunning=Läuft
+ServiceStatusNotLate=Läuft (noch nicht abgelaufen)
+ServiceStatusNotLateShort=Nicht abgelaufen
 ServiceStatusLate=Läuft (abgelaufen)
+ServiceStatusLateShort=Abgelaufen
 ServiceStatusClosed=Geschlossen
 ServicesLegend=Services Legende
 Contracts=Verträge
@@ -49,6 +53,9 @@ DateServiceStart=Service-Beginndatum
 DateServiceEnd=Service-Enddatum
 ShowContract=Zeige Vertrag
 ListOfServices=Liste der Services
+ListOfInactiveServices=Liste der nicht aktiven Services
+ListOfExpiredServices=Liste der abgelaufenen, aktiven Services
+ListOfClosedServices=Liste der geschlossenen Services
 ListOfRunningContractsLines=Liste der aktiven Vertragspositionen
 ListOfRunningServices=Liste aktiver Services
 NotActivatedServices=Inaktive Services (in freigegebenen Verträgen)
@@ -84,6 +91,7 @@ ConfirmMoveToAnotherContractQuestion=Bitte wählen Sie einen bestehenden Vertrag
 PaymentRenewContractId=Erneuere Vertragsposition (Nummer %s)
 ExpiredSince=Abgelaufen seit
 RelatedContracts=Verknüpfte Verträge
+NoExpiredServices=Keine abgelaufen aktiven Dienste
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Vertragsunterzeichnung durch Vertreter
 TypeContact_contrat_internal_SALESREPFOLL=Vertragsnachverfolgung durch Vertreter
@@ -91,25 +99,3 @@ TypeContact_contrat_external_BILLING=Rechnungskontakt des Kunden
 TypeContact_contrat_external_CUSTOMER=Nachverfolgung durch Kundenkontakt
 TypeContact_contrat_external_SALESREPSIGN=Vertragsunterzeichnung durch Kundenkontakt
 Error_CONTRACT_ADDON_NotDefined=Die Konstante CONTRACT_ADDON ist nicht definiert
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> de_DE
-Error_CONTRACT_ADDON_NotDefined=Constant CONTRACT_ADDON nicht definiert
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:05:39).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
-NoExpiredServices=Keine abgelaufen aktiven Dienste
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:42).
-
-
-// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
-// Reference language: en_US -> de_DE
-ServiceStatusNotLate=Laufen, nicht abgelaufen
-ServiceStatusNotLateShort=Nicht abgelaufen
-ServiceStatusLateShort=Abgelaufen
-ListOfInactiveServices=Liste der nicht aktiven Dienste
-ListOfExpiredServices=Liste der aktiven Dienste abgelaufen
-ListOfClosedServices=Liste der geschlossenen Dienstleistungen
-// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:01).

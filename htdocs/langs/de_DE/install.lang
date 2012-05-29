@@ -1,11 +1,12 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-15 19:59:12
- */
-
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 InstallEasy=Wir haben uns bemüht, die Installation von dolibarr so einfach wie möglich zu gestalten. Folgen Sie einfach Schritt für Schritt den Anweisungen auf dem Bildschirm.
 MiscellanousChecks=Systemvoraussetzungen prüfen
 DolibarrWelcome=Willkommen bei dolibarr
@@ -38,6 +39,7 @@ ErrorConnectedButDatabaseNotFound=Die Verbindung zum Server wurde erfolgreich he
 ErrorDatabaseAlreadyExists=Eine Datenbank mit dem Namen '%s' exisitiert bereits.
 IfDatabaseNotExistsGoBackAndUncheckCreate=Sollte die Datenbank noch nicht existieren, gehen Sie bitte zurück und aktivieren Sie das Kontrollkästchen "Datenbank erstellen".
 IfDatabaseExistsGoBackAndCheckCreate=Sollte die Datebank bereits existieren, gehen Sie bitte zurück und deaktivieren Sie das Kontrollkästchen "Datenbank erstellen".
+WarningBrowserTooOld=Sie verwenden eine zu alte Version des Browsers. Installieren Sie die aktuelle Version  Ihres Browser (Empfehlung: Firefox, Chrome oder Opera).
 PHPVersion=PHP-Version
 YouCanContinue=Sie können mit der Installation fortfahren
 PleaseBePatient=Bitte haben Sie ein wenig Geduld ...
@@ -57,6 +59,7 @@ ServerAddressDescription=Name oder IP-Adresse des Datenbankservers, in der Regel
 ServerPortDescription=Datenbankserver-Port. Lassen Sie dieses Feld im Zweifel leer.
 DatabaseServer=Datenbankserver
 DatabaseName=Name der Datenbank
+DatabasePrefix=Präfix für die Tabellen der Datenbank
 Login=Anmeldung
 AdminLogin=Login für Dolibarr Datenbank-Administrator.
 Password=Passwort
@@ -106,7 +109,7 @@ WarningRemoveInstallDir=Aus Sicherheitsgründen sollten Sie nach abgeschlossenem
 ThisPHPDoesNotSupportTypeBase=Ihr PHP-System unterstützt keinen Zugriff auf Datenbanken des Typs %s
 FunctionNotAvailableInThisPHP=Diese Funktion steht in Ihrer PHP-Version nicht zur Verfügung.
 MigrateScript=Migrationsskript
-ChoosedMigrateMigrationsskript auswählen
+ChoosedMigrateScript=Migrationsskript auswählen
 DataMigration=Datenmigration
 DatabaseMigration=Struktur der Datenbankmigration
 ProcessMigrateScript=Script-Verarbeitung
@@ -155,8 +158,9 @@ NextStepMightLastALongTime=Der aktuelle Vorgang kann mehrere Minuten dauern. Hol
 MigrationCustomerOrderShipping=Kundenbestellungsversand aktualisieren
 MigrationShippingDelivery=Aktualisiere die Speicherung von Lieferungen (Versandart?)
 MigrationShippingDelivery2=Aktualisiere die Speicherung von Lieferungen 2 (Versandart 2?)
-MigrationFinished=Migration beendet
+MigrationFinished=Migration abgeschlossen
 LastStepDesc=<strong>Letzter Schritt</strong>: Legen Sie Ihr Logo und das Passwort fest, welches Sie für dolibarr verwenden möchten. Verlieren Sie diese Administrator-Passwort nicht, da es der "Generalschlüssel" ist.
+ActivateModule=Aktivieren von Modul %s
 
 #########
 # upgrade
@@ -237,30 +241,6 @@ MigrationProjectTaskTime=Aktualisiere aufgewandte Zeit (in Sekunden)
 
 # Migration Acctioncom
 MigrationActioncommElement=Aktualisiere die Maßnahmen
-MigrationActioncommElement=Aktualisiere die Maßnahmen
 
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> de_DE
-ConfFileReload=Seite neu laden alle Informationen aus der Konfigurationsdatei.
-WarningPHPVersionTooLow=PHP-Version zu alt ist. Version %s oder mehr erwartet. Diese Version sollte es installieren, aber wird nicht unterstützt.
-ChoosedMigrateScript=Wählen Sie Migrationsskript
-KeepDefaultValuesProxmox=Sie verwenden die Dolibarr Setup-Assistenten von einem Proxmox Virtual Appliance, so vorgeschlagenen Werte hier sind bereits optimiert. Ändern Sie sie nur, wenn Sie wissen was Sie tun.
-MigrateIsDoneStepByStep=Die gezielte Version (%s) hat eine Lücke von mehreren Versionen, so Installationsassistent wird wieder zum nächsten Migration legen nahe, einmal diese fertig sein wird.
-MigrationFinished=Migration abgeschlossen
-LastStepDesc=<strong>Letzter Schritt:</strong> Legen Sie hier Benutzernamen und Passwort, die Sie verwenden möchten, um Software zu verbinden. Verlieren Sie ihn nicht, wie es das Konto für alle anderen zu verwalten ist.
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 09:41:08).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
-DatabasePrefix=Datenbank-Präfix-Tabelle
-ActivateModule=Aktivieren Modul %s
-MigrationActioncommElement=Aktualisieren Sie Daten über die Maßnahmen
-MigrationPaymentMode=Daten-Migration für die Zahlung Modus
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:40).
-
-
-// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
-// Reference language: en_US -> de_DE
-WarningBrowserTooOld=Eine zu alte Version des Browsers. Upgrades in Ihrem Browser auf eine aktuelle Version von Firefox, Chrome oder Opera ist sehr empfehlenswert.
-// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:27:59).
+# Migration payment mode
+MigrationPaymentMode=Migration der Daten für die Zahlungsart

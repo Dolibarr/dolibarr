@@ -1,11 +1,12 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-16 11:09:12
- */
-
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 MembersArea=Mitgliederübersicht
 PublicMembersArea=Öffentliche Mitgliederübersicht
 MemberCard=Mitgliedskarte
@@ -116,16 +117,16 @@ ConfirmValidateMember=Möchten Sie dieses Mitglied wirklich freigeben?
 FollowingLinksArePublic=Die folgenden Links sind öffentlich zugängliche Seiten und als solche nicht durch die Zugriffskontrolle des Systems geschützt. Es handelt sich dabei zudem um unformatierte Seiten, die beispielsweise eine Liste aller in der Datenbank eingetragenen Mitglieder anzeigen.
 PublicMemberList=Liste öffentlicher Mitglieder
 BlankSubscriptionForm=Leeres Abonnementformular
-BlankSubscriptionFormDesc=Dolibarr Deutschland beitet ihnen eine öffentliche URL an
-EnablePublicSubscriptionForm=Freigabe des öffentlichen Abo-Formulars
+BlankSubscriptionFormDesc=Dolibarr Deutschland beitet ihnen eine öffentliche URL an für den externen Besucher an. Falls Sie ein Online-Zahlungsmittel aktiviert haben, werden die notwendigen Unterlagen automatisch zur Verfügung gestellt.
+EnablePublicSubscriptionForm=Aktivieren Sie die Freigabe des öffentlichen Abo-Formulars
 MemberPublicLinks=Öffentliche Links/Seiten
 ExportDataset_member_1=Mitglieder und Abonnements
 ImportDataset_member_1=Mitglieder
 LastMembers=%s neueste Mitglieder
 LastMembersModified=%s zuletzt bearbeitete Mitglieder
+LastSubscriptionsModified=Zuletzt geändert %s Abonnements
 AttributeName=Attributname
 FieldEdition=Ausgabe des Feldes %s
-AlphaNumOnlyCharsAndNoSpace=ausschließlich alphanumerische Zeichen (ohne Leerzeichen)
 String=Zeichenkette
 Text=Text
 Int=Integer
@@ -198,48 +199,8 @@ MEMBER_NEWFORM_PAYONLINE=Gehen Sie zu integrierten Bezahlseite
 Associations=Vereine
 Collectivités=Organisationen
 Particuliers=Privatpersonen
-Entreprises=Firmen
+Entreprises=Unternehmen
 DOLIBARRFOUNDATION_PAYMENT_FORM=Um Ihre Beitragszahlung mit einer Banküberweisung auszuführen, gehen Sie zur Seite: <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a>.<br>Um mittels Kreditkarte zu zahlen, klicken Sie auf den Button am Seitenende.<br> 
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
-MembersWithSubscriptionToReceive=Mitglieder mit Abonnement erhalten
-NewSubscriptionDesc=Dieses Formular können Sie Ihr Abonnement als neues Mitglied der Stiftung aufzunehmen. Wenn Sie Ihr Abonnement erneuern (falls bereits Mitglied) wollen, kontaktieren Sie bitte Stiftungsrat statt per E-Mail %s.
-BlankSubscriptionFormDesc=Dolibarr können Ihnen eine öffentliche URL für den externen Besuchern zu verlangen, an die Stiftung zu abonnieren. Wenn ein Online-Zahlungssystem-Modul aktiviert ist, wird ein Erlagschein auch automatisch zur Verfügung gestellt werden.
-EnablePublicSubscriptionForm=Aktivieren Sie den öffentlichen Auto-Abo-Formular
-ImportDataset_member_1=Mitglieder
-LastSubscriptionsModified=Zuletzt geändert %s Abonnements
-GlobalConfigUsedIfNotDefined=Text in Foundation-Modul Setup definiert wird verwendet, wenn hier nicht näher definiert werden
-MayBeOverwrited=Dieser Text kann von Wert für Mitglieds-Typ definiert überschrieben werden
-DocForOneMemberCards=Generieren Sie Visitenkarten für einen bestimmten Teil (Format für die Ausgabe tatsächlich Setup: <b>%s)</b>
-SubscriptionPayment=Abonnement Zahlung
-LastSubscriptionDate=Letzter Termin Abonnement
-LastSubscriptionAmount=Letzte Zeichnungssumme
-MembersStatisticsByCountries=Mitglieder Statistik nach Ländern
-MembersStatisticsByState=Mitglieder Statistiken, die von Staat / Provinz
-MembersStatisticsByTowne=Mitglieder Statistik nach Stadt
-NbOfMembers=Anzahl der Mitglieder
-NoValidatedMemberYet=Keine Mitglieder gefunden validiert
-MembersByCountryDesc=Dieser Bildschirm zeigt Ihnen Statistiken über Mitglieder nach Ländern. Grafik hängt jedoch von Google Online-Grafik-Service und ist nur verfügbar, wenn eine Internet-Verbindung funktioniert.
-MembersByStateDesc=Dieser Bildschirm zeigt Ihnen Statistiken zu Mitgliedern, die von Staat / Provinz / Kanton.
-MembersByTownDesc=Dieser Bildschirm zeigt Ihnen Statistiken zu Mitgliedern, die von der Stadt.
-MembersStatisticsDesc=Wählen Sie Statistiken, die Sie lesen möchten ...
-MenuMembersStats=Statistik
-LastMemberDate=Letztes Mitglied Datum
-Nature=Natur
-Public=Informationen sind öffentlich
-Exports=Ausfuhr
-NewMemberbyWeb=Neues Mitglied aufgenommen. Wartet auf die Genehmigung
-NewMemberForm=New member Form
-SubscriptionsStatistics=Statistiken über Abonnements
-NbOfSubscriptions=Anzahl der Abonnements
-AmountOfSubscriptions=Anzahl der Abonnements
-TurnoverOrBudget=Umsatz (für ein Unternehmen) oder Budget (für eine Stiftung)
-DefaultAmount=Standard Höhe von Abonnements
-CanEditAmount=Besucher können wählen / bearbeiten Höhe der Subskription
-MEMBER_NEWFORM_PAYONLINE=Springen Sie auf integrierte Online-Payment-Seite
-Associations=Stiftungen
-Collectivités=Organisationen
-Particuliers=Persönlich
-Entreprises=Die Unternehmen
-DOLIBARRFOUNDATION_PAYMENT_FORM=Um Ihr Abonnement Zahlung mit einer Banküberweisung machen, siehe Seite <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Zum Bezahlen mit einer Kreditkarte oder Paypal, auf Button am Ende dieser Seite klicken. <br>
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:05:32).
+
+#### no more used?
+AlphaNumOnlyCharsAndNoSpace=ausschließlich alphanumerische Zeichen (ohne Leerzeichen)
