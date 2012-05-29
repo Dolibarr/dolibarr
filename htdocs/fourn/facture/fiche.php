@@ -414,7 +414,7 @@ elseif ($action == 'update_line')
             $pu=$_POST['puttc'];
             $price_base_type='TTC';
         }
-        
+
         if ($_POST['idprod'])
         {
             $prod = new Product($db);
@@ -426,12 +426,12 @@ elseif ($action == 'update_line')
         }
         else
         {
-            
+
             $label = $_POST['desc'];
             $type = $_POST["type"]?$_POST["type"]:0;
 
         }
-        
+
         $localtax1tx= get_localtax($_POST['tauxtva'], 1, $object->thirdparty);
         $localtax2tx= get_localtax($_POST['tauxtva'], 2, $object->thirdparty);
 
@@ -823,9 +823,9 @@ elseif ($action == 'remove_file')
     if ($object->fetch($id))
     {
         $upload_dir =	$conf->fournisseur->facture->dir_output . "/";
-        $file =	$upload_dir	. '/' .	$_GET['file'];
+        $file =	$upload_dir	. '/' .	GETPOST('file');
         dol_delete_file($file);
-        $mesg	= '<div	class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+        $mesg	= '<div	class="ok">'.$langs->trans("FileWasRemoved",GETPOST('file')).'</div>';
     }
 }
 

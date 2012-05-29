@@ -154,6 +154,7 @@ if ($action == 'confirm_deletefile')
 {
     if (GETPOST('confirm') == 'yes')
     {
+        $langs->load("other");
     	$result=$ecmdir->fetch($section);
     	if (! $result > 0)
     	{
@@ -166,7 +167,7 @@ if ($action == 'confirm_deletefile')
 
     	$result=dol_delete_file($file);
 
-    	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+    	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
 
     	$result=$ecmdir->changeNbOfFiles('-');
 
