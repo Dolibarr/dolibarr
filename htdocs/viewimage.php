@@ -372,15 +372,15 @@ else					// Open and return file
 
     // Output files on browser
     dol_syslog("viewimage.php return file $original_file content-type=$type");
-    $original_file_osencoded=dol_osencode($original_file);
 
-    // This test if file exists should be useless. We keep it to find bug more easily
-    if (! dol_is_file($original_file_osencoded))
+    // This test is to avoid error images when image is not available (for example thumbs).
+    if (! dol_is_file($original_file))
     {
-        $error='Error: File '.$_GET["file"].' does not exists or filesystems permissions are not allowed';
+        $original_file=DOL_DOCUMENT_ROOT.'/theme/common/nophoto.jpg';
+        /*$error='Error: File '.$_GET["file"].' does not exists or filesystems permissions are not allowed';
         dol_print_error(0,$error);
         print $error;
-        exit;
+        exit;*/
     }
 
     // Les drois sont ok et fichier trouve
@@ -395,6 +395,7 @@ else					// Open and return file
         header('Content-type: image/png');
     }
 
+    $original_file_osencoded=dol_osencode($original_file);
     readfile($original_file_osencoded);
 }
 
