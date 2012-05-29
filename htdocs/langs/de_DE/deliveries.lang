@@ -1,11 +1,12 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-11 00:11:12
- */
-
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 Delivery=Lieferung
 Deliveries=Lieferungen
 DeliveryCard=Lieferkarte
@@ -26,8 +27,8 @@ DeliveryNotValidated=Lieferung nicht validiert
 # merou PDF model
 NameAndSignature=Name und Unterschrift:
 ToAndDate=An___________________________________ am ____/_____/__________
-GoodStatusDeclaration=Haben die oben genannten Waren in einwandfreiem Zustand erhalten,
-Deliverer=Lieferant :
+GoodStatusDeclaration=Wir haben die oben genannten Waren in einwandfreiem Zustand erhalten,
+Deliverer=Lieferant:
 Sender=Absender
 Recipient=Empfänger
 

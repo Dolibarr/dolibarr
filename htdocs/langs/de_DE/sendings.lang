@@ -1,14 +1,16 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-12 09:09:12
- */
-
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 RefSending=Versand Nr.
 Sending=Sendung
 Sendings=Sendungen
+Shipments=Lieferungen
 Receivings=Warenerhalt
 SendingsArea=Versandübersicht
 ListOfSendings=Versandliste
@@ -49,35 +51,27 @@ GenericTransport=Generischer Transport
 Enlevement=Vom Kunden erhalten
 DocumentModelSimple=Einfache Dokumentvorlage
 WarningNoQtyLeftToSend=Achtung, keine Produkte für den Versand
-
-StatsOnShipmentsOnlyValidated=Versandstatistik (nur freigegebene)
-SendingMethodCATCH=Abholung durch Kunden
-SendingMethodTRANS=Spedition
-SendingMethodCOLSUI=Expressversand
-DocumentModelSirocco=Einfache Dokumentvorlage Scirocco für die Lieferungscheine
-DocumentModelTyphon=Vollständig Dokumentvorlage für die Lieferungscheine (Logo, ...)
-
-Shipments=Sendungen
+StatsOnShipmentsOnlyValidated=Versandstatistik (nur Freigegebene)
 StatusSendingCanceled=Storniert
 StatusSendingCanceledShort=Storno
 DocumentModelMerou=Merou A5-Modell
 DateDeliveryPlanned=Geplantes Zustellungsdatum
-DateReceived=Datum des Warenerhalts
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
-SendShippingByEMail=Senden Sie Versand per EMail
-SendShippingRef=Senden Sendung %s
-ActionsOnShipping=Events auf Sendung
-LinkToTrackYourPackage=Link zu Ihrer Sendung nachverfolgen
-ShipmentCreationIsDoneFromOrder=Für den Augenblick ist die Schaffung einer neuen Sendung von der Bestellung Karte getan.
-Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstante EXPEDITION_ADDON_NUMBER nicht definiert
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:06:20).
-
-
-// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
-// Reference language: en_US -> de_DE
+DateReceived=Datum der Zustellung
+SendShippingByEMail=Verand per E-Mail
+SendShippingRef=Senden Lieferung %s
+ActionsOnShipping=Anmerkungen zur Sendung
+LinkToTrackYourPackage=Link zur Sendungsnachverfolgung
+ShipmentCreationIsDoneFromOrder=Aktuell ist die Erstellung der neuen Sendung über die Bestellkarte erfolgt.
 StatusSendingProcessed=Verarbeitete
-StatusSendingProcessedShort=Verarbeitete
-// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:53).
+StatusSendingProcessedShort=Fertig
+
+# Sending methods
+SendingMethodCATCH=Abholung durch Kunden
+SendingMethodTRANS=Spedition
+SendingMethodCOLSUI=Expressversand
+
+# ModelDocument
+DocumentModelSirocco=Einfache Dokumentvorlage für die Lieferungscheine
+DocumentModelTyphon=Vollständig Dokumentvorlage für die Lieferungscheine (Logo, ...)
+
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstante EXPEDITION_ADDON_NUMBER nicht definiert

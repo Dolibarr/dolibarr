@@ -1,33 +1,32 @@
 /*
- * Language code: de_DE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:03:27
- */
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
 CHARSET=UTF-8
-CashDeskMenu=Verkaufsstelle
-CashDesk=Verkaufsstelle
-CashDesks=Point of Sales
+
+CashDeskMenu=POS Kasse
+CashDesk=Kasse
+CashDesks=Kassen
 CashDeskBank=Bankkonto
-CashDeskBankCash=Bankverbindung (cash)
-CashDeskBankCB=Bankkonto (Karte)
-CashDeskBankCheque=Bankkonto (Scheck)
+CashDeskBankCash=Bankkonto (Bargeld)
+CashDeskBankCB=Bankkonto (Kartenzahlung)
+CashDeskBankCheque=Bankkonto(Scheckzahlung)
 CashDeskWarehouse=Lagerhaus
 CashdeskShowServices=Verkauf von Dienstleistungen
 CashDeskProducts=Produkte
 CashDeskStock=Lager
-CashDeskOn=auf
+CashDeskOn=An
 CashDeskThirdParty=Dritter
 ShoppingCart=Einkaufswagen
-NewSell=Neu Verkaufen
-BackOffice=Back-Office
-AddThisArticle=Fügen Sie diesen Artikel
-RestartSelling=Gehen Sie zurück auf verkaufen
-SellFinished=Verkaufen fertig
-PrintTicket=Print Ticket
+NewSell=Neu zu verkaufen
+BackOffice=Abrechnungsstelle
+AddThisArticle=Hinzufügen dieses Artikels
+RestartSelling=zurück zum Verkauf
+SellFinished=Verkauf abgeschlossen
+PrintTicket=Kassenbon drucken
 NoResults=Keine Ergebnisse
 NoProductFound=Kein Artikel gefunden
 ProductFound=Produkt gefunden
@@ -35,14 +34,13 @@ ProductsFound=Produkte gefunden
 NoArticle=Kein Artikel
 Identification=Identifikation
 Article=Artikel
-Difference=Unterschied
-TotalTicket=Insgesamt Ticket
-NoVAT=Keine Mehrwertsteuer für diesen Verkauf
-Change=Überschüssiges erhalten
-CalTip=Klicken Sie auf den Kalender
-CashDeskSetupStock=Du fragst, eine Bestandsaufnahme auf der Rechnung die Schöpfung, sondern für diese Lager zu verringern ist, wurde nicht definiert <br> Ändern Lager Modul Setup, oder wählen Sie eine Lagerhalle
+Difference=Differenz
+TotalTicket=Gesamtanzahl Ticket
+NoVAT=Keine Mehrwertsteuer bei diesem Verkauf
+Change=Überschüss erhalten
+CalTip=Klicken um den Kalender anzuzeigen
+CashDeskSetupStock=Das bei der Rechnungserstellung der Bestand gemindet wird ist nicht definiert. Ändern Sie die Einstellungen oder wechseln Sie das Lager.
 BankToPay=Kundenkonto
 ShowCompany=Zeige Unternehmen
 ShowStock=Zeige Lager
-DeleteArticle=Klicken Sie, um diesen Artikel zu entfernen
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:05:40).
+DeleteArticle=Klicken, um diesen Artikel zu entfernen

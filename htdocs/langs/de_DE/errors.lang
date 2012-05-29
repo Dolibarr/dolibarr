@@ -1,13 +1,24 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-14 10:09:12
- */
-
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
+MenuManager=Menü Verwaltung
+
+# Errors
+Error=Fehler
+Errors=Fehler
+ErrorBadEMail=E-Mail %s ist nicht korrekt
+ErrorBadUrl=URL %s ist nicht korrekt
 ErrorLoginAlreadyExists=Login %s existiert bereits.
 ErrorGroupAlreadyExists=Gruppe %s existiert bereits.
+ErrorRecordNotFound=Eintrag wurde nicht gefunden.
+ErrorFailToCopyFile=Konnte die Datei <b>'%s'</b> nicht nach <b>'%s'</b> kopieren.
+ErrorFailToRenameFile=Konnte die Datei <b>'%s'</b> nicht in <b>'%s'</b> umzubenennen.
 ErrorFailToDeleteFile=Fehler beim Löschen der Datei '<b>%s</b>'.
 ErrorFailToCreateFile=Fehler beim Erstellen der Datei '<b>%s</b>'.
 ErrorFailToRenameDir=Fehler beim Umbenennen des Verzeichnisses '<b>%s</b>' in '<b>%s</b>'.
@@ -27,8 +38,9 @@ ErrorBadSupplierCodeSyntax=Die eingegebene Lieferanten Nr. ist unzulässig.
 ErrorSupplierCodeRequired=Lieferanten-Nr. erforderlich
 ErrorSupplierCodeAlreadyUsed=Diese Lieferanten Nr. ist bereits vergeben.
 ErrorBadParameters=Ungültige Werte
-ErrorBadValueForParameter=Falscher Wert '%s' bei falschem Parameter '%s'
-ErrorBadImageFormat=Image file has not a supported format
+ErrorBadValueForParameter=Falscher Wert '%s' für falsche Parameter '%s'
+ErrorBadImageFormat=Imagedatei hat nicht ein unterstütztes Dateiformat
+ErrorBadDateFormat=Eintrag '%s' hat falsche Datumsformat
 ErrorFailedToWriteInDir=Fehler beim Schreiben in das Verzeichnis %s
 ErrorFoundBadEmailInFile=Ungültige E-Mail-Adresse in %s Zeilen der Datei gefunden (z.B. Zeile %s mit E-Mail=%s)
 ErrorUserCannotBeDelete=Dieser Benutzer kann nicht gelöscht werden. Eventuell ist er noch mit einem Partner verknüpft.
@@ -47,12 +59,9 @@ ErrorPartialFile=Die Datei wurde nicht vollständig zum Server übertragen.
 ErrorNoTmpDir=Das temporäre Verzeichnis %s existiert nicht.
 ErrorUploadBlockedByAddon=Der Upload wurde durch ein PHP Apache-Plugin blockiert.
 ErrorFileSizeTooLarge=Die Größe der gewählten Datei übersteigt den zulässigen Maximalwert.
+ErrorSizeTooLongForIntType=Die Größe überschreitet das Maximum für den Typ 'int' (%s Ziffern maximal)
+ErrorSizeTooLongForVarcharType=Die Größe überschreitet das Maximum für den Typ 'string' (%s Zeichen maximal)
 ErrorFieldCanNotContainSpecialCharacters=Das Feld <b>%s</b> darf keine Sonderzeichen enthalten.
-WarningSafeModeOnCheckExecDir=Achtung: Der PHP-Option <b>safe_mode</b> ist aktiviert, entsprechend müssen Befehle in einem mit <b>safe_mode_exec_dir</b> gekennzeichneten Verzeichnis ausgeführt werden.
-WarningAllowUrlFopenMustBeOn=Der Parameter <b>allow_url_fopen</b> muss in der php.ini-Datei auf <b>ON</b> stehen, damit dieses Modul funktioniert. Bitte passen Sie die Datei manuell an.
-WarningBuildScriptNotRunned=Das Skript <b>%s</b> wurde noch nicht zur Grafikerstellung ausgeführt oder es existieren keine anzuzeigenden Daten.
-WarningBookmarkAlreadyExists=Ein Lesezeichen mit diesem Titel oder Ziel (URL) existiert bereits.
-WarningPassIsEmpty=Warnung: Derzeit ist kein Datenbankpasswort gesetzt. Dies ist eine Sicherheitslücke. Konfigurieren Sie ehestmöglich ein Passwort für den Datenbankzugriff und passen Sie Ihre conf.php entsprechend an.
 ErrorNoAccountancyModuleLoaded=Kein Buchhaltungsmodul aktiviert
 ErrorExportDuplicateProfil=Dieses Exportprofil existiert bereits.
 ErrorLDAPSetupNotComplete=Der LDAP-Abgleich für dieses System ist nicht vollständig eingerichtet.
@@ -61,17 +70,15 @@ ErrorCantSaveADoneUserWithZeroPercentage=Maßnahmen können nicht mit Status "Ni
 ErrorRefAlreadyExists=Die Nr. für den Erstellungsvorgang ist bereits vergeben
 ErrorPleaseTypeBankTransactionReportName=Bitte geben Sie den Bankbeleg zu dieser Transaktion ein (Format MMYYYY oder TTMMYYYY)
 ErrorRecordHasChildren=Kann diesen Eintrag nicht löschen da er noch über Kindelemente verfügt.
-WarningConfFileMustBeReadOnly=Achtung: Die Konfigurationsdatei (<b>htdocs/conf/conf.php</b>) kann von Ihrem Webserver überschrieben werden. Dies ist eine ernstzunehmende Sicherheitslücke. Ändern Sie den Zugriff schnellstmöglich auf reinen Lesezugriff. Wenn Sie Windows und das FAT-Format für Ihre Festplatte nutzen, seien Sie sich bitte bewusst dass dieses Format keine individuellen Dateiberechtigungen unterstützt und so auch nicht völlig sicher ist,
 ErrorModuleRequireJavascript=Diese Funktion erfordert aktiviertes JavaScript. Aktivieren/deaktivieren können Sie Javascript im Menü Übersicht(Home)-> Einstellungen->Anzeige.
 ErrorPasswordsMustMatch=Die eingegebenen Passwörter müssen identisch sein.
 ErrorContactEMail=Ein technischer Fehler ist aufgetreten. Bitte kontaktieren Sie Ihren Administrator unter der folgenden E-Mail-Adresse <b>%s</b> und fügen Sie den Fehlercode <b>%s</b> in Ihrer Nachricht ein, oder (noch besser) fügen Sie einen Screenshot dieser Seite als Anhang bei.
 ErrorWrongValueForField=Falscher Wert für Feld Nr. <b>%s</b> (Wert '<b>%s</b>' passt nicht zur Regex-Regel <b>%s</b>)
 ErrorFieldValueNotIn=Nicht korrekter Wert für das Feld-Nummer <b>%s</b> (Wert: '<b>%s</b>' ist kein verfügbarer Wert im Feld <b>%s</b> der Tabelle <b>%s</b>
+ErrorFieldRefNotIn=Falscher Wert für Feldnummer <b>%s</b> (für den Wert <b>'%s'</b> besteht keine <b>%s</b> Referenz)
 ErrorsOnXLines=Fehler in <b>%s</b> Quellzeilen
-WarningsOnXLines=Warnhinweise in <b>%s</b> Quellzeilen
 ErrorFileIsInfectedWithAVirus=Der Virenschutz konnte diese Datei nicht freigeben (eventuell ist diese mit einem Virus infiziert)
 ErrorSpecialCharNotAllowedForField=Sonderzeichen sind im Feld '%s' nicht erlaubt
-WarningNoDocumentModelActivated=Für das Erstellen von Dokumenten ist keine Vorlage gewählt. Eine Vorlage wird standardmäßig ausgewählt, bis Sie die Moduleinstellungen angepasst haben.
 ErrorDatabaseParameterWrong=Der Datenbankeinstellungs-Parameter '<b>%s</b>' weist einen mit dem System inkompatiblen Wert auf (erfordert den Wert '<b>%s</b>').
 ErrorNumRefModel=Es besteht ein Bezug zur Datenbank (%s) der mit dieser Numerierungsfolge nicht kompatibel ist. Entfernen Sie den Eintrag oder benennen Sie den Verweis um, um dieses Modul zu aktivieren.
 ErrorQtyTooLowForThisSupplier=Die gewählte Menge liegt unterhalb der Mindestbestellmenge für diesen Lieferanten oder es wurde kein Lieferantenpreis zu diesem Anbieter eingetragen.
@@ -82,7 +89,9 @@ ErrorBadMaskBadRazMonth=Fehler, falscher Reset-Wert
 ErrorSelectAtLeastOne=Fehler. Wählen Sie mindestens einen Eintrag.
 ErrorProductWithRefNotExist=Produkt mit der Nummer '<i>%s</i>' nicht gefunden
 ErrorDeleteNotPossibleLineIsConsolidated=Löschen nicht möglich, da der Datensatz mit einer Banktransaktion verbunden ist.
+ErrorProdIdAlreadyExist=%s wird an einen Dritten übertragen
 ErrorFailedToSendPassword=Fehler beim Zusenden des Passworts
+ErrorFailedToLoadRSSFile=RSS-Feeds welche Fehler erhalten. Versuchen Sie die Konstante 'MAIN_SIMPLEXMLLOAD_DEBUG' hinzufügen, wenn die Fehlermeldungen nicht genügend Informationen enthält.
 ErrorPasswordDiffers=Passwörter stimmen nicht überein, bitte erneut eingeben.
 ErrorForbidden=Kein Zugriff. <br>Für einen Zugriff zu diese Seite oder Funktion müssen Sie über eine Sitzung authentifiziert zu sein und über die entsprechenden Benutzerberechtigungen verfügen.
 ErrorForbidden2=Die Zugriffsberechtigungen für diese Anmeldung kann Ihr Administrator unter %s->%s einstellen.
@@ -99,43 +108,18 @@ ErrorFailedToChangePassword=Passwortänderung fehlgeschlagen
 ErrorLoginDoesNotExists=Benutzer mit Anmeldung <b>%s</b> konnte nicht gefunden werden.
 ErrorLoginHasNoEmail=Dieser Benutzer hat keine E-Mail-Adresse. Prozess abgebrochen.
 ErrorBadValueForCode=Unzulässiger Code-Wert. Versuchen Sie es mit einem anderen Wert erneut...
-ErrorFileIsInfectedWith=Diese Datei ist mit %s infiziert
-WarningInstallDirExists=Achtung: Das Installationsverzeichnis (%s) existiert noch. Dies ist eine ernsthafte Sicherheitslücke und sie sollten das Verzeichnis so rasch als möglich entfernen.
-WarningUntilDirRemoved=Diese Warnung bleibt so lange aktiv, wie dieses Verzeichnis existiert (nur für Administratoren).
+ErrorBothFieldCantBeNegative=Die Felder %s und %s können nicht gleichzeitig negativ sein
+ErrorWebServerUserHasNotPermission=Der Benutzerkonto <b>%s</b> wurde verwendet um auf dem Webserver etwas auszuführen, hat aber keine Rechte dafür.
+ErrorNoActivatedBarcode=Kein Barcode aktiviert
 
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
-ErrorFailToCopyFile=Konnte die Datei <b>'%s'</b> in <b>'%s'</b> zu kopieren.
-ErrorFailToRenameFile=Konnte die Datei <b>'%s'</b> in <b>'%s'</b> umzubenennen.
-ErrorBadValueForParameter=Falscher Wert &quot;%s 'für falsche Parameter' %s '
-ErrorBadImageFormat=Image-Datei hat nicht ein unterstütztes Format
-ErrorBadDateFormat=Value '%s' hat falsche Datumsformat
-ErrorSizeTooLongForIntType=Größe zu lang für Typ int (%s Ziffern maximal)
-ErrorSizeTooLongForVarcharType=Größe zu lang für Typ string (%s Zeichen maximal)
-ErrorFieldValueNotIn=Falscher Wert für Feldnummer <b>%s</b> (Wert <b>'%s'</b> ist kein Wert verfügbar in Feld <b>%s</b> der Tabelle <b>%s)</b>
-ErrorFieldRefNotIn=Falscher Wert für Feldnummer <b>%s</b> (Wert <b>'%s'</b> ist kein <b>%s</b> bestehenden ref)
-ErrorModuleSetupNotComplete=Aufbau-Modul sucht, um sein unvollständig. Gehen Sie auf Setup - Module in Anspruch nehmen.
-ErrorBadMask=Fehler auf der Maske
-ErrorBadMaskFailedToLocatePosOfSequence=Fehler, Maske ohne die laufende Nummer
-ErrorBadMaskBadRazMonth=Fehler, schlechte Reset-Wert
-ErrorSelectAtLeastOne=Fehler. Wählen Sie mindestens einen Eintrag.
-ErrorProductWithRefNotExist=Produkt mit Verweis <i>'%s'</i> gibt es nicht
-ErrorDeleteNotPossibleLineIsConsolidated=Löschen nicht möglich, weil Rekord an eine Bank, die sich versöhnt transation verknüpft ist
-ErrorProdIdAlreadyExist=%s wird ein weiteres Drittel zugewiesen
-ErrorFailedToLoadRSSFile=Fails die RSS-Feeds erhalten. Versuchen Sie, konstant MAIN_SIMPLEXMLLOAD_DEBUG hinzufügen, wenn Fehlermeldungen nicht genügend Informationen.
-ErrorBothFieldCantBeNegative=Felder %s und %s kann nicht gleichzeitig negativ
-ErrorWebServerUserHasNotPermission=Benutzerkonto <b>%s</b> verwendet, um Web-Server auszuführen hat keine Genehmigung für das
-ErrorNoActivatedBarcode=Kein Barcode-Typ aktiviert
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:04:08).
-
-
-// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
-// Reference language: en_US -> de_DE
-MenuManager=Menü-Manager
-Error=Fehler
-Errors=Fehler
-ErrorBadEMail=EMail %s ist falsch
-ErrorBadUrl=URL %s ist falsch
-ErrorRecordNotFound=Record wurde nicht gefunden.
-WarningLockFileDoesNotExists=Warnung, wenn Setup abgeschlossen ist, müssen Sie deaktivieren, Installation / Migration-Tools, indem Sie eine Datei in das Verzeichnis <b>install.lock %s.</b> Fehlende Diese Datei ist eine Sicherheitslücke.
-// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:10).
+# Warnings
+WarningSafeModeOnCheckExecDir=Achtung: Der PHP-Option <b>safe_mode</b> ist aktiviert, entsprechend müssen Befehle in einem mit <b>safe_mode_exec_dir</b> gekennzeichneten Verzeichnis ausgeführt werden.
+WarningAllowUrlFopenMustBeOn=Der Parameter <b>allow_url_fopen</b> muss in der php.ini-Datei auf <b>ON</b> stehen, damit dieses Modul funktioniert. Bitte passen Sie die Datei manuell an.
+WarningBuildScriptNotRunned=Das Skript <b>%s</b> wurde noch nicht zur Grafikerstellung ausgeführt oder es existieren keine anzuzeigenden Daten.
+WarningBookmarkAlreadyExists=Ein Lesezeichen mit diesem Titel oder Ziel (URL) existiert bereits.
+WarningPassIsEmpty=Warnung: Derzeit ist kein Datenbankpasswort gesetzt. Dies ist eine Sicherheitslücke. Konfigurieren Sie ehestmöglich ein Passwort für den Datenbankzugriff und passen Sie Ihre conf.php entsprechend an.
+WarningConfFileMustBeReadOnly=Achtung: Die Konfigurationsdatei (<b>htdocs/conf/conf.php</b>) kann von Ihrem Webserver überschrieben werden. Dies ist eine ernstzunehmende Sicherheitslücke. Ändern Sie den Zugriff schnellstmöglich auf reinen Lesezugriff. Wenn Sie Windows und das FAT-Format für Ihre Festplatte nutzen, seien Sie sich bitte bewusst dass dieses Format keine individuellen Dateiberechtigungen unterstützt und so auch nicht völlig sicher ist,
+WarningsOnXLines=Warnhinweise in <b>%s</b> Quellzeilen
+WarningNoDocumentModelActivated=Für das Erstellen von Dokumenten ist keine Vorlage gewählt. Eine Vorlage wird standardmäßig ausgewählt, bis Sie die Moduleinstellungen angepasst haben.
+WarningLockFileDoesNotExists=Warnung, wenn Setup abgeschlossen ist, müssen Sie die Installations- und Migration-Tools deaktivieren. Dazu fügen Sie die Datei <b>install.lock</b> dem Verzeichnis <b> %s</b> hinzu. Das fehlend dieser Datei stelle eine Sicherheitslücke dar.
+WarningUntilDirRemoved=Diese Warnung bleibt so lange bestehen, bis die Sicherheitslücke geschlossen wurde (nur für Administratoren sichtbar).

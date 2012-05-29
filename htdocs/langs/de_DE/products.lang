@@ -1,11 +1,14 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-11 18:09:12
- */
-
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
+ProductRef=Produktreferenz
+ProductLabel=Produkt-Beschriftung
 ProductServiceCard=Produkt-/Services-Karte
 Products=Produkte
 Services=Services
@@ -18,6 +21,8 @@ NewProduct=Neues Produkt
 NewService=Neuer Service
 ProductCode=Produkt-Code
 ServiceCode=Service-Code
+ProductAccountancyBuyCode=Buchhaltung - Aufwandskonto
+ProductAccountancySellCode=Buchhaltung - Erlöskonto
 ProductOrService=Produkt oder Service
 ProductsAndServices=Produkte und Services
 ProductsOrServices=Produkte oder Services
@@ -47,18 +52,29 @@ Stock=Warenbestand
 Stocks=Warenbestände
 Movement=Lagerbewegung
 Movements=Lagerbewegungen
-OnSell=Verfügbar
-NotOnSell=Aufgelassen
+Sell=Verkauf
+Buy=Einkauf
+OnSell=Zu Verkaufen
+OnBuy=zum Einkaufen
+NotOnSell=Nicht für den Verkauf
 ProductStatusOnSell=Verfügbar
-ProductStatusNotOnSell=Aufgelassen
+ProductStatusNotOnSell=Nicht verfügbar
 ProductStatusOnSellShort=Verfügbar
-ProductStatusNotOnSellShort=Aufgelassen
+ProductStatusNotOnSellShort=Nicht verkaufen
+ProductStatusOnBuy=Für den Einkauf
+ProductStatusNotOnBuy=Nicht für den Einkauf
+ProductStatusOnBuyShort=Zum Einkauf
+ProductStatusNotOnBuyShort=Nicht einkaufen
 UpdatePrice=Aktualisiere Preis
 AppliedPricesFrom=Preise angewandt von
 SellingPrice=Verkaufspreis
+SellingPriceHT=Verkaufspreis (ohne Steuern)
+SellingPriceTTC=Verkaufspreis (inkl. MwSt.)
 PublicPrice=Öffentlicher Preis
 CurrentPrice=Aktueller Preis
 NewPrice=Neuer Preis
+MinPrice=Mindestverkaufspreis
+CantBeLessThanMinPrice=Der Verkaufspreis darf den Mindestpreis für dieses Produkt (%s ohne MwSt.) nicht unterschreiten. Diese Meldung kann auch angezeigt, wenn Sie einen zu hohen Rabatt geben.
 ContractStatus=Vertragsstatus
 ContractStatusClosed=Geschlossen
 ContractStatusRunning=In Arbeit
@@ -115,15 +131,15 @@ Quantity=Stückzahl
 NoMatchFound=Kein Eintrag gefunden
 ProductAssociationList=Liste der verknüpften Produkte/Leistungen: Name des Produkts/der Leistung (Stückzahl)
 ErrorAssociationIsFatherOfThis=Eines der ausgewählten Produkte ist Elternteil des aktuellen Produkts
-DeleteProduct=Produkt/Leistung löschen
+DeleteProduct=Produkt/Dienstleistung löschen
 ConfirmDeleteProduct=Möchten Sie dieses Produkt/Leistung wirklich löschen?
-ProductDeleted=Produkt/Leistung "%s" aus der Datenbank gelöscht.
+ProductDeleted=Produkt/Dienstleistung "%s" aus der Datenbank gelöscht.
 DeletePicture=Ein Bild löschen
 ConfirmDeletePicture=Möchten Sie dieses Bild wirklich löschen?
 ExportDataset_produit_1=Produkte
-ExportDataset_service_1=Leistungen
+ExportDataset_service_1=Dienstleistungen
 ImportDataset_produit_1=Produkte
-ImportDataset_service_1=Leistungen
+ImportDataset_service_1=Dienstleistungen
 DeleteProductLine=Produktlinie löschen
 ConfirmDeleteProductLine=Möchten Sie diese Produktlinie wirklich löschen?
 NoProductMatching=Kein Produkt/Leistung entspricht Ihren Suchkriterien
@@ -158,34 +174,5 @@ SuppliersPrices=Lieferantenpreise
 CustomCode=Interner Code
 CountryOrigin=Urspungsland
 HiddenIntoCombo=In ausgewählten Listen nicht anzeigen
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
 ParentProductsNumber=Anzahl der übergeordnete Produkt
 ProductParentList=Liste der Produkte / Dienstleistungen mit diesem Produkt als ein Bestandteil
-ImportDataset_produit_1=Produkte
-ImportDataset_service_1=Dienstleistungen
-CustomCode=Customs Code
-CountryOrigin=Origin Land
-HiddenIntoCombo=Versteckt in Auswahllisten
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:56).
-
-
-// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
-// Reference language: en_US -> de_DE
-ProductRef=Product Ref.
-ProductLabel=Produkt-Label
-ProductAccountancyBuyCode=Buchhaltung Code (kaufen)
-ProductAccountancySellCode=Rechnungswesen-Code (zu verkaufen)
-Sell=Vertrieb
-Buy=Käufe
-OnBuy=Für Kauf
-ProductStatusOnBuy=Für Kauf
-ProductStatusNotOnBuy=Nicht zum Kauf
-ProductStatusOnBuyShort=Für Kauf
-ProductStatusNotOnBuyShort=Nicht zum Kauf
-SellingPriceHT=Verkaufspreis (ohne Steuern)
-SellingPriceTTC=Verkaufspreis (inkl. MwSt.)
-MinPrice=Minim. Verkaufspreis
-CantBeLessThanMinPrice=Der Verkaufspreis kann nicht niedriger sein als Minimum für dieses Produkt (%s ohne MwSt.) erlaubt. Diese Meldung kann auch angezeigt, wenn Sie einen Rabatt geben zu wichtig.
-// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:08).

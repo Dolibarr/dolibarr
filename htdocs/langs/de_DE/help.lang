@@ -1,11 +1,12 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2009-08-13 20:42:36
- */
-
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 CommunitySupport=Forum/Wiki-Unterstützung
 EMailSupport=E-Mail-Unterstützung
 RemoteControlSupport=Fernwartungs-Support
@@ -31,9 +32,4 @@ BackToHelpCenter=Klicken Sie hier um zur <a href="%s">Hilfeseite</a> zurückzuke
 LinkToGoldMember=Sie können einen, vom System für Ihre Sprache (%s) automatisch ausgewählten, Trainer über einen Klick auf sein Widget kontaktieren (Status und Maximalpreis aktualisieren sich automatisch):
 PossibleLanguages=Unterstützte Sprachen
 MakeADonation=Unterstützen Sie das Projekt über eine Spende
-
-
-// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
-// Reference language: en_US -> de_DE
-SubscribeToFoundation=Hilfe Dolibarr Projekt, abonnieren Sie den Grundstein
-// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:54).
+SubscribeToFoundation=Helfen auch Sie dem Dolibarr Projekt und unterstützen uns mit einer Abo-Spende.
