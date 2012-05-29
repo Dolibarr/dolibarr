@@ -2302,7 +2302,7 @@ class Commande extends CommonObject
         		{
         			dol_delete_preview($this);
 
-        			if (!dol_delete_file($file))
+        			if (! dol_delete_file($file,0,0,0,$this)) // For triggers
         			{
         				$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
         				$this->db->rollback();
@@ -2311,7 +2311,7 @@ class Commande extends CommonObject
         		}
         		if (file_exists($dir))
         		{
-        			if (!dol_delete_dir($dir))
+        			if (! dol_delete_dir($dir))
         			{
         				$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
         				$this->db->rollback();
