@@ -604,10 +604,11 @@ else if ($action == 'remove_file' && $user->rights->fournisseur->commande->creer
 
     if ($object->fetch($id))
     {
+        $langs->load("other");
         $upload_dir =	$conf->fournisseur->commande->dir_output . "/";
-        $file =	$upload_dir	. '/' .	$_GET['file'];
+        $file =	$upload_dir	. '/' .	GETPOST('file');
         dol_delete_file($file);
-        $mesg	= '<div	class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+        $mesg	= '<div	class="ok">'.$langs->trans("FileWasRemoved",GETPOST('file')).'</div>';
     }
 }
 

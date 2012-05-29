@@ -504,9 +504,11 @@ class FormFile
 
                 if ($delallowed)
                 {
-                    $out.= '<td align="right"><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath);
-                    $out.= ($param?'&amp;'.$param:'');
-                    $out.= '&amp;urlsource='.urlencode($urlsource);
+                    $out.= '<td align="right">';
+                    //$out.= '<a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath);
+                    $out.= '<a href="'.$urlsource.'&action=remove_file&modulepart='.$modulepart.'&file='.urlencode($relativepath);
+                    $out.= ($param?'&'.$param:'');
+                    $out.= '&urlsource='.urlencode($urlsource);
                     $out.= '">'.img_delete().'</a></td>';
                 }
 

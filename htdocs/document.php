@@ -483,7 +483,7 @@ if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
 	exit;
 }
 
-
+/*
 if ($action == 'remove_file')	// Remove a file
 {
 	clearstatcache();
@@ -508,7 +508,7 @@ if ($action == 'remove_file')	// Remove a file
 	return;
 }
 else						// Open and return file
-{
+{*/
 	clearstatcache();
 
 	$filename = basename($original_file);
@@ -540,6 +540,6 @@ else						// Open and return file
 	//flush();
 
 	readfile($original_file_osencoded);
-}
+//}
 
 ?>
