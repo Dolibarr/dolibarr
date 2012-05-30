@@ -67,7 +67,7 @@ if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
 	{
 		$dir = $conf->prelevement->dir_output.'/receipts';
 
-		if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $dir . "/" . $_FILES['userfile']['name'],1) > 0)
+		if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $dir . "/" . stripslashes($_FILES['userfile']['name']),1) > 0)
 		{
 			$dt = dol_mktime(12,0,0,GETPOST('remonth','int'),GETPOST('reday','int'),GETPOST('reyear','int'));
 
