@@ -1,10 +1,12 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-16 12:42:36
- */
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 PayBoxSetup=PayBox-Moduleinstellungen
 PayBoxDesc=Dieses Modul erlaubt die Annahme von Zahlungen über <a href="http://www.paybox.com" target="_blank">Paybox</a>. Sie können damit Zahlungen zu Objekten innerhalb des Systems (Rechnungen, Bestellungen, ...) erfassen.
 FollowingUrlAreAvailableToMakePayments=Für Kundenzahlungen stehen Ihnen die folgenden URLs zur Verfügung:
@@ -20,6 +22,7 @@ PayBoxDoPayment=Jetzt bezahlen
 YouWillBeRedirectedOnPayBox=Zur Eingabe Ihrer Kreditkartendaten werden Sie an eine sichere Bezahlseite weitergeleitet.
 PleaseBePatient=Bitte haben Sie ein wenig Geduld...
 Continue=Fortfahren
+ToOfferALinkForOnlinePayment=URL für %s Zahlung
 ToOfferALinkForOnlinePaymentOnOrder=URL um Ihren Kunden eine %s Online-Bezahlseite für Bestellungen anzubieten
 ToOfferALinkForOnlinePaymentOnInvoice=URL um Ihren Kunden eine %s Online-Bezahlseite für Rechnungen anzubieten
 ToOfferALinkForOnlinePaymentOnContractLine=URL um Ihren Kunden eine %s Online-Bezahlseite für Vertragspositionen anzubieten
@@ -37,23 +40,3 @@ VendorName=Name des Anbieters
 CSSUrlForPaymentForm=CSS-Datei für das Zahlungsmodul
 MessageOK=Nachrichtenseite für bestätigte Zahlung
 MessageKO=Nachrichtenseite für abgebrochene Zahlung
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> de_DE
-UsageParameter=Aufruf-Parameter
-InformationToFindParameters=Helfen Sie mit Ihrer %s Kontoinformationen finden
-PAYBOX_CGI_URL_V2=URL von Paybox CGI-Modul für die Zahlung
-VendorName=Name des Herstellers
-CSSUrlForPaymentForm=CSS-Stylesheet-URL für Zahlschein
-MessageOK=Nachricht auf validierten Zahlung zurück Seite
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:10:44).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
-ToOfferALinkForOnlinePayment=URL für %s Zahlung
-YourPaymentHasBeenRecorded=Diese Seite wird bestätigt, dass Ihre Zahlung aufgezeichnet wurde. Danke.
-YourPaymentHasNotBeenRecorded=Sie Zahlung wurde nicht aufgezeichnet und Transaktion wurde abgebrochen. Danke.
-AccountParameter=Konto-Parameter
-MessageKO=Nachricht auf Zahlung storniert Rückkehr Seite
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:45).

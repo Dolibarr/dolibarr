@@ -43,11 +43,11 @@ if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $acti
 $mine = GETPOST('mode')=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
-$project = new Project($db);
+$object = new Project($db);
 if ($ref)
 {
-    $project->fetch(0,$ref);
-    $id=$project->id;
+    $object->fetch(0,$ref);
+    $id=$object->id;
 }
 
 // Security check
@@ -89,31 +89,31 @@ if ($action == 'add' && $user->rights->projet->creer)
 
         $db->begin();
 
-        $project->ref             = $_POST["ref"];
-        $project->title           = $_POST["title"];
-        $project->socid           = $_POST["socid"];
-        $project->description     = $_POST["description"];
-        $project->public          = $_POST["public"];
-        $project->datec=dol_now();
-        $project->dateo=dol_mktime(12,0,0,$_POST['projectmonth'],$_POST['projectday'],$_POST['projectyear']);
-        $project->datee=dol_mktime(12,0,0,$_POST['projectendmonth'],$_POST['projectendday'],$_POST['projectendyear']);
+        $object->ref             = GETPOST('ref','alpha');
+        $object->title           = GETPOST('title','alpha');
+        $object->socid           = GETPOST('socid','int');
+        $object->description     = GETPOST('description','alpha');
+        $object->public          = GETPOST('public','alpha');
+        $object->datec=dol_now();
+        $object->date_start=dol_mktime(0,0,0,GETPOST('projectmonth','int'),GETPOST('projectday','int'),GETPOST('projectyear','int'));
+        $object->date_end=dol_mktime(0,0,0,GETPOST('projectendmonth','int'),GETPOST('projectendday','int'),GETPOST('projectendyear','int'));
 
-        $result = $project->create($user);
+        $result = $object->create($user);
         if ($result > 0)
         {
             // Add myself as project leader
-            $result = $project->add_contact($user->id, 'PROJECTLEADER', 'internal');
+            $result = $object->add_contact($user->id, 'PROJECTLEADER', 'internal');
             if ($result < 0)
             {
                 $langs->load("errors");
-                $mesg='<div class="error">'.$langs->trans($project->error).'</div>';
+                $mesg='<div class="error">'.$langs->trans($object->error).'</div>';
                 $error++;
             }
         }
         else
         {
             $langs->load("errors");
-            $mesg='<div class="error">'.$langs->trans($project->error).'</div>';
+            $mesg='<div class="error">'.$langs->trans($object->error).'</div>';
             $error++;
         }
 
@@ -121,7 +121,7 @@ if ($action == 'add' && $user->rights->projet->creer)
         {
             $db->commit();
 
-            Header("Location:fiche.php?id=".$project->id);
+            Header("Location:fiche.php?id=".$object->id);
             exit;
         }
         else
@@ -155,17 +155,19 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
     }
     if (! $error)
     {
-        $project->fetch($id);
+        $object->fetch($id);
 
-        $project->ref          = $_POST["ref"];
-        $project->title        = $_POST["title"];
-        $project->socid        = $_POST["socid"];
-        $project->description  = $_POST["description"];
-        $project->public       = $_POST["public"];
-        $project->date_start   = empty($_POST["project"])?'':dol_mktime(12,0,0,$_POST['projectmonth'],$_POST['projectday'],$_POST['projectyear']);
-        $project->date_end     = empty($_POST["projectend"])?'':dol_mktime(12,0,0,$_POST['projectendmonth'],$_POST['projectendday'],$_POST['projectendyear']);
+		$old_start_date = $object->date_start;
 
-        $result=$project->update($user);
+        $object->ref             = GETPOST('ref','alpha');
+        $object->title           = GETPOST('title','alpha');
+        $object->socid           = GETPOST('socid','int');
+        $object->description     = GETPOST('description','alpha');
+        $object->public          = GETPOST('public','alpha');
+        $object->date_start   = empty($_POST["project"])?'':dol_mktime(0,0,0,GETPOST('projectmonth'),GETPOST('projectday'),GETPOST('projectyear'));
+        $object->date_end     = empty($_POST["projectend"])?'':dol_mktime(0,0,0,GETPOST('projectendmonth'),GETPOST('projectendday'),GETPOST('projectendyear'));
+
+        $result=$object->update($user);
 
         $id=$project->id;  // On retourne sur la fiche projet
     }
@@ -178,10 +180,10 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 // Build doc
 if ($action == 'builddoc' && $user->rights->projet->creer)
 {
-    $project->fetch($id);
+    $object->fetch($id);
     if (GETPOST('model'))
     {
-        $project->setDocModel($user, GETPOST('model'));
+        $object->setDocModel($user, GETPOST('model'));
     }
 
     $outputlangs = $langs;
@@ -190,7 +192,7 @@ if ($action == 'builddoc' && $user->rights->projet->creer)
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang(GETPOST('lang_id'));
     }
-    $result=project_pdf_create($db, $project, $project->modelpdf, $outputlangs);
+    $result=project_pdf_create($db, $object, $object->modelpdf, $outputlangs);
     if ($result <= 0)
     {
         dol_print_error($db,$result);
@@ -198,46 +200,61 @@ if ($action == 'builddoc' && $user->rights->projet->creer)
     }
     else
     {
-        Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$project->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+        Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
         exit;
+    }
+}
+
+// Delete file in doc form
+if ($action == 'remove_file' && $user->rights->projet->creer)
+{
+    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+
+    if ($object->fetch($id))
+    {
+        $langs->load("other");
+        $upload_dir =	$conf->projet->dir_output . "/";
+        $file =	$upload_dir	. '/' .	GETPOST('file');
+        dol_delete_file($file);
+        $mesg	= '<div	class="ok">'.$langs->trans("FileWasRemoved",GETPOST('file')).'</div>';
     }
 }
 
 if ($action == 'confirm_validate' && GETPOST('confirm') == 'yes')
 {
-    $project->fetch($id);
+    $object->fetch($id);
 
-    $result = $project->setValid($user);
+    $result = $object->setValid($user);
     if ($result <= 0)
     {
-        $mesg='<div class="error">'.$project->error.'</div>';
+        $mesg='<div class="error">'.$object->error.'</div>';
     }
 }
 
 if ($action == 'confirm_close' && GETPOST('confirm') == 'yes')
 {
-    $project->fetch($id);
-    $result = $project->setClose($user);
+    $object->fetch($id);
+    $result = $object->setClose($user);
     if ($result <= 0)
     {
-        $mesg='<div class="error">'.$project->error.'</div>';
+        $mesg='<div class="error">'.$object->error.'</div>';
     }
 }
 
 if ($action == 'confirm_reopen' && GETPOST('confirm') == 'yes')
 {
-    $project->fetch($id);
-    $result = $project->setValid($user);
+    $object->fetch($id);
+    $result = $object->setValid($user);
     if ($result <= 0)
     {
-        $mesg='<div class="error">'.$project->error.'</div>';
+        $mesg='<div class="error">'.$object->error.'</div>';
     }
 }
 
 if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights->projet->supprimer)
 {
-    $project->fetch($id);
-    $result=$project->delete($user);
+    $object->fetch($id);
+    $result=$object->delete($user);
     if ($result > 0)
     {
         Header("Location: index.php");
@@ -245,7 +262,7 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights-
     }
     else
     {
-        dol_syslog($project->error,LOG_DEBUG);
+        dol_syslog($object->error,LOG_DEBUG);
         $mesg='<div class="error">'.$langs->trans("CantRemoveProject").'</div>';
     }
 }
@@ -280,15 +297,13 @@ if ($action == 'create' && $user->rights->projet->creer)
 
     print '<table class="border" width="100%">';
 
-    $project = new Project($db);
-
     $defaultref='';
     $obj = empty($conf->global->PROJECT_ADDON)?'mod_project_simple':$conf->global->PROJECT_ADDON;
     if (! empty($conf->global->PROJECT_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/project/".$conf->global->PROJECT_ADDON.".php"))
     {
         require_once(DOL_DOCUMENT_ROOT ."/core/modules/project/".$conf->global->PROJECT_ADDON.".php");
         $modProject = new $obj;
-        $defaultref = $modProject->getNextValue($soc,$project);
+        $defaultref = $modProject->getNextValue($soc,$object);
     }
 
     if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
@@ -309,7 +324,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     // Public
     print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
     $array=array(0 => $langs->trans("PrivateProject"),1 => $langs->trans("SharedProject"));
-    print $form->selectarray('public',$array,$project->public);
+    print $form->selectarray('public',$array,$object->public);
     print '</td></tr>';
 
     // Date start
@@ -350,37 +365,36 @@ else
 
     dol_htmloutput_mesg($mesg);
 
-    $project = new Project($db);
-    $project->fetch($id,$ref);
+    $object->fetch($id,$ref);
 
-    if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
+    if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
 
     // To verify role of users
-    $userAccess = $project->restrictedProjectArea($user,'read');
-    $userWrite  = $project->restrictedProjectArea($user,'write');
-    $userDelete = $project->restrictedProjectArea($user,'delete');
+    $userAccess = $object->restrictedProjectArea($user,'read');
+    $userWrite  = $object->restrictedProjectArea($user,'write');
+    $userDelete = $object->restrictedProjectArea($user,'delete');
     //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
 
-    $head=project_prepare_head($project);
-    dol_fiche_head($head, 'project', $langs->trans("Project"),0,($project->public?'projectpub':'project'));
+    $head=project_prepare_head($object);
+    dol_fiche_head($head, 'project', $langs->trans("Project"),0,($object->public?'projectpub':'project'));
 
     // Confirmation validation
     if ($action == 'validate')
     {
-        $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$project->id, $langs->trans('ValidateProject'), $langs->trans('ConfirmValidateProject'), 'confirm_validate','',0,1);
+        $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateProject'), $langs->trans('ConfirmValidateProject'), 'confirm_validate','',0,1);
         if ($ret == 'html') print '<br>';
     }
     // Confirmation close
     if ($action == 'close')
     {
-        $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$project->id,$langs->trans("CloseAProject"),$langs->trans("ConfirmCloseAProject"),"confirm_close",'','',1);
+        $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("CloseAProject"),$langs->trans("ConfirmCloseAProject"),"confirm_close",'','',1);
         if ($ret == 'html') print '<br>';
     }
     // Confirmation reopen
     if ($action == 'reopen')
     {
-        $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$project->id,$langs->trans("ReOpenAProject"),$langs->trans("ConfirmReOpenAProject"),"confirm_reopen",'','',1);
+        $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("ReOpenAProject"),$langs->trans("ConfirmReOpenAProject"),"confirm_reopen",'','',1);
         if ($ret == 'html') print '<br>';
     }
     // Confirmation delete
@@ -388,13 +402,12 @@ else
     {
         $text=$langs->trans("ConfirmDeleteAProject");
         $task=new Task($db);
-        $taskarray=$task->getTasksArray(0,0,$project->id,0,0);
+        $taskarray=$task->getTasksArray(0,0,$object->id,0,0);
         $nboftask=count($taskarray);
         if ($nboftask) $text.='<br>'.img_warning().' '.$langs->trans("ThisWillAlsoRemoveTasks",$nboftask);
-        $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$project->id,$langs->trans("DeleteAProject"),$text,"confirm_delete",'','',1);
+        $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteAProject"),$text,"confirm_delete",'','',1);
         if ($ret == 'html') print '<br>';
     }
-
 
     if ($action == 'edit' && $userWrite > 0)
     {
@@ -407,11 +420,11 @@ else
 
         // Ref
         print '<tr><td width="30%">'.$langs->trans("Ref").'</td>';
-        print '<td><input size="12" name="ref" value="'.$project->ref.'"></td></tr>';
+        print '<td><input size="12" name="ref" value="'.$object->ref.'"></td></tr>';
 
         // Label
         print '<tr><td>'.$langs->trans("Label").'</td>';
-        print '<td><input size="30" name="title" value="'.$project->title.'"></td></tr>';
+        print '<td><input size="30" name="title" value="'.$object->title.'"></td></tr>';
 
         // Customer
         print '<tr><td>'.$langs->trans("Company").'</td><td>';
@@ -423,11 +436,11 @@ else
         // Visibility
         print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
         $array=array(0 => $langs->trans("PrivateProject"),1 => $langs->trans("SharedProject"));
-        print $form->selectarray('public',$array,$project->public);
+        print $form->selectarray('public',$array,$object->public);
         print '</td></tr>';
 
         // Statut
-        print '<tr><td>'.$langs->trans("Status").'</td><td>'.$project->getLibStatut(4).'</td></tr>';
+        print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
         // Date start
         print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
@@ -436,13 +449,13 @@ else
 
         // Date end
         print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-        print $form->select_date($project->date_end?$project->date_end:-1,'projectend');
+        print $form->select_date($object->date_end?$object->date_end:-1,'projectend');
         print '</td></tr>';
 
         // Description
         print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
         print '<td>';
-        print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'">'.$project->description.'</textarea>';
+        print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'">'.$object->description.'</textarea>';
         print '</td></tr>';
 
         print '</table>';
@@ -462,43 +475,43 @@ else
         // Define a complementary filter for search of next/prev ref.
         if (! $user->rights->projet->all->lire)
         {
-            $projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,0);
-            $project->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+            $objectsListId = $object->getProjectsAuthorizedForUser($user,$mine,0);
+            $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
         }
-        print $form->showrefnav($project,'ref','',1,'ref','ref');
+        print $form->showrefnav($object,'ref','',1,'ref','ref');
         print '</td></tr>';
 
         // Label
-        print '<tr><td>'.$langs->trans("Label").'</td><td>'.$project->title.'</td></tr>';
+        print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
         // Third party
         print '<tr><td>'.$langs->trans("Company").'</td><td>';
-        if ($project->societe->id > 0) print $project->societe->getNomUrl(1);
+        if ($object->societe->id > 0) print $object->societe->getNomUrl(1);
         else print'&nbsp;';
         print '</td></tr>';
 
         // Visibility
         print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-        if ($project->public) print $langs->trans('SharedProject');
+        if ($object->public) print $langs->trans('SharedProject');
         else print $langs->trans('PrivateProject');
         print '</td></tr>';
 
         // Statut
-        print '<tr><td>'.$langs->trans("Status").'</td><td>'.$project->getLibStatut(4).'</td></tr>';
+        print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
         // Date start
         print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-        print dol_print_date($project->date_start,'day');
+        print dol_print_date($object->date_start,'day');
         print '</td></tr>';
 
         // Date end
         print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-        print dol_print_date($project->date_end,'day');
+        print dol_print_date($object->date_end,'day');
         print '</td></tr>';
 
         // Description
         print '<td valign="top">'.$langs->trans("Description").'</td><td>';
-        print nl2br($project->description);
+        print nl2br($object->description);
         print '</td></tr>';
 
         print '</table>';
@@ -518,7 +531,7 @@ else
         {
             if ($userWrite > 0)
             {
-                print '<a class="butAction" href="fiche.php?id='.$project->id.'&action=validate">'.$langs->trans("Valid").'</a>';
+                print '<a class="butAction" href="fiche.php?id='.$object->id.'&action=validate">'.$langs->trans("Valid").'</a>';
             }
             else
             {
@@ -527,11 +540,11 @@ else
         }
 
         // Modify
-        if ($project->statut != 2 && $user->rights->projet->creer)
+        if ($object->statut != 2 && $user->rights->projet->creer)
         {
             if ($userWrite > 0)
             {
-                print '<a class="butAction" href="fiche.php?id='.$project->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+                print '<a class="butAction" href="fiche.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
             }
             else
             {
@@ -540,11 +553,11 @@ else
         }
 
         // Close
-        if ($project->statut == 1 && $user->rights->projet->creer)
+        if ($object->statut == 1 && $user->rights->projet->creer)
         {
             if ($userWrite > 0)
             {
-                print '<a class="butAction" href="fiche.php?id='.$project->id.'&amp;action=close">'.$langs->trans("Close").'</a>';
+                print '<a class="butAction" href="fiche.php?id='.$object->id.'&amp;action=close">'.$langs->trans("Close").'</a>';
             }
             else
             {
@@ -553,11 +566,11 @@ else
         }
 
         // Reopen
-        if ($project->statut == 2 && $user->rights->projet->creer)
+        if ($object->statut == 2 && $user->rights->projet->creer)
         {
             if ($userWrite > 0)
             {
-                print '<a class="butAction" href="fiche.php?id='.$project->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+                print '<a class="butAction" href="fiche.php?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
             }
             else
             {
@@ -570,7 +583,7 @@ else
         {
             if ($userDelete > 0)
             {
-                print '<a class="butActionDelete" href="fiche.php?id='.$project->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+                print '<a class="butActionDelete" href="fiche.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
             }
             else
             {
@@ -591,22 +604,22 @@ else
         /*
          * Documents generes
          */
-        $filename=dol_sanitizeFileName($project->ref);
-        $filedir=$conf->projet->dir_output . "/" . dol_sanitizeFileName($project->ref);
-        $urlsource=$_SERVER["PHP_SELF"]."?id=".$project->id;
+        $filename=dol_sanitizeFileName($object->ref);
+        $filedir=$conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
+        $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
         $genallowed=($user->rights->projet->lire && $userAccess > 0);
         $delallowed=($user->rights->projet->creer && $userWrite > 0);
 
         $var=true;
 
-        $somethingshown=$formfile->show_documents('project',$filename,$filedir,$urlsource,$genallowed,$delallowed,$project->modelpdf);
+        $somethingshown=$formfile->show_documents('project',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 
         print '</td><td valign="top" width="50%">';
 
         // List of actions on element
         include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
         $formactions=new FormActions($db);
-        $somethingshown=$formactions->showactions($project,'project',$socid);
+        $somethingshown=$formactions->showactions($object,'project',$socid);
 
         print '</td></tr></table>';
     }

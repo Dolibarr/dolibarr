@@ -1,14 +1,22 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-12 18:09:12
- */
-
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 Project=Projekt
 Projects=Projekte
 SharedProject=Jeder
+PrivateProject=Kontakte zum Projekt
+MyProjectsDesc=Hier können Sie nur die Projekte einsehen, bei welchen Sie als Kontakt hinzugefügt sind.
+ProjectsPublicDesc=Ihnen werden alle Projekte angezeigt bei welchen Sie über Leserechte verfügen.
+ProjectsDesc=Es werden alle Projekte angezeigt (Ihre Benutzerberechtigungen berechtigt Sie alles zu sehen).
+MyTasksDesc=Diese Ansicht ist für Sie beschränkt auf Projekte oder Aufgaben bei welchen Sie als Ansprechpartner eingetragen sind.
+TasksPublicDesc=Diese Ansicht ist beschränkt auf Projekt und Aufgaben bei welchen Sie über Leserechte verfügen.
+TasksDesc=Diese Ansicht zeigt alle Projekte und Aufgaben (Ihre Benutzerberechtigungen berechtigt Sie alles zu sehen).
 Myprojects=Meine Projekte
 ProjectsArea=Projektübersicht
 NewProject=Neues Projekt
@@ -95,25 +103,3 @@ TypeContact_project_task_internal_CONTRIBUTOR=Mitwirkender
 TypeContact_project_task_external_CONTRIBUTOR=Mitwirkender
 # Documents models
 DocumentModelBaleine=Eine vollständige Projektberichtsvorlage (Logo, uwm.)
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
-TimesSpent=Die Zeit,
-TaskIsNotAffectedToYou=Aufgabe für Sie nicht zugeordnet
-ErrorTimeSpentIsEmpty=Verbrachte Zeit ist leer
-ThisWillAlsoRemoveTasks=Diese Aktion löscht ebenfalls sämtliche Aufgaben des Projekts <b>(%s</b> Aufgaben im Moment) und alle Eingänge Zeit damit verbracht.
-IfNeedToUseOhterObjectKeepEmpty=Wenn einige Objekte (Rechnung, Bestellung, ...), Zugehörigkeit zu einer anderen dritten Partei, um das Projekt zu erstellen, verknüpft werden müssen, bewahren Sie diese leer, um das Projekt als Multi Dritte haben.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:06:18).
-
-
-// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
-// Reference language: en_US -> de_DE
-PrivateProject=Kontakte des Projekts
-MyProjectsDesc=Diese Ansicht wird auf Projekte Kontakt Sie sind für (was auch immer ist die Art) beschränkt.
-ProjectsPublicDesc=Diese Ansicht zeigt alle Projekte, die Sie erlaubt zu lesen sind.
-ProjectsDesc=Diese Ansicht zeigt alle Projekte (Ihre Benutzerberechtigungen dir die Berechtigung, alles zu sehen).
-MyTasksDesc=Diese Ansicht wird auf Projekte oder Aufgaben Sie sind ein Ansprechpartner für (was auch immer ist die Art) beschränkt.
-TasksPublicDesc=Diese Ansicht zeigt alle Projekte und Aufgaben, die Sie erlaubt zu lesen sind.
-TasksDesc=Diese Ansicht zeigt alle Projekte und Aufgaben (Ihre Benutzerberechtigungen dir die Berechtigung, alles zu sehen).
-// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:53).

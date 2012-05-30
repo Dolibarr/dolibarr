@@ -64,7 +64,7 @@ $object = new Societe($db);
 if ($id > 0 || ! empty($ref))
 {
 	$result = $object->fetch($id, $ref);
-	
+
 	$upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id ;
 	$courrier_dir = $conf->societe->multidir_output[$object->entity] . "/courrier/" . get_exdir($object->id);
 }
@@ -74,6 +74,8 @@ if ($id > 0 || ! empty($ref))
  * Actions
  */
 
+// TODO Use an include to mutualize this code for action sendit and confirm_deletefile
+
 // Post file
 if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
@@ -81,19 +83,18 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	{
 		if (dol_mkdir($upload_dir) >= 0)
 		{
-			$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0,0,$_FILES['userfile']['error']);
+			$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . stripslashes($_FILES['userfile']['name']),0,0,$_FILES['userfile']['error']);
 			if (is_numeric($resupload) && $resupload > 0)
 			{
-			    if (image_format_supported($upload_dir . "/" . $_FILES['userfile']['name']) == 1)
-			    {
-	                // Create small thumbs for company (Ratio is near 16/9)
-	                // Used on logon for example
-	                $imgThumbSmall = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthsmall, $maxheightsmall, '_small', $quality, "thumbs");
-
-	                // Create mini thumbs for company (Ratio is near 16/9)
-	                // Used on menu or for setup page for example
-	                $imgThumbMini = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
-			    }
+	            if (image_format_supported($upload_dir . "/" . $_FILES['userfile']['name']) == 1)
+                {
+                    // Create small thumbs for image (Ratio is near 16/9)
+                    // Used on logon for example
+                    $imgThumbSmall = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthsmall, $maxheightsmall, '_small', $quality, "thumbs");
+                    // Create mini thumbs for image (Ratio is near 16/9)
+                    // Used on menu or for setup page for example
+                    $imgThumbMini = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
+                }
 				$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
 			}
 			else
@@ -121,9 +122,9 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 {
 	if ($object->id)
 	{
-		$file = $upload_dir . "/" . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+		$file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 		dol_delete_file($file,0,0,0,$object);
-		$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+		$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
 	}
 }
 
@@ -144,12 +145,12 @@ if ($object->id)
 	 */
 	if ($conf->notification->enabled) $langs->load("mails");
 	$head = societe_prepare_head($object);
-	
+
 	$form=new Form($db);
-	
+
 	dol_fiche_head($head, 'document', $langs->trans("ThirdParty"),0,'company');
-	
-	
+
+
 	// Construit liste des fichiers
 	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
@@ -157,22 +158,22 @@ if ($object->id)
 	{
 		$totalsize+=$file['size'];
 	}
-	
-	
+
+
 	print '<table class="border"width="100%">';
-	
+
 	// Ref
 	print '<tr><td width="30%">'.$langs->trans("ThirdPartyName").'</td>';
 	print '<td colspan="3">';
 	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
 	print '</td></tr>';
-	
+
 	// Prefix
 	if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 	{
 		print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 	}
-	
+
 	if ($object->client)
 	{
 		print '<tr><td>';
@@ -181,7 +182,7 @@ if ($object->id)
 		if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
 		print '</td></tr>';
 	}
-	
+
 	if ($object->fournisseur)
 	{
 		print '<tr><td>';
@@ -190,19 +191,19 @@ if ($object->id)
 		if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
 		print '</td></tr>';
 	}
-	
+
 	// Nbre fichiers
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-	
+
 	//Total taille
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
-	
+
 	print '</table>';
-	
+
 	print '</div>';
-	
+
 	dol_htmloutput_mesg($mesg,$mesgs);
-	
+
 	/*
 	 * Confirmation suppression fichier
 	*/
@@ -211,16 +212,16 @@ if ($object->id)
 		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
 		if ($ret == 'html') print '<br>';
 	}
-	
+
 	$formfile=new FormFile($db);
-	
+
 	// Show upload form
 	$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?id='.$object->id,'',0,0,$user->rights->societe->creer,50,$object);
-	
+
 	// List of document
 	$param='&socid='.$object->id;
 	$formfile->list_of_documents($filearray,$object,'societe',$param);
-	
+
 	print "<br><br>";
 }
 else

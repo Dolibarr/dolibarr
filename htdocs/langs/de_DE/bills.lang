@@ -1,20 +1,35 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-11 20:58:12
- */
-
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 Bill=Rechnung
 Bills=Rechnungen
 BillsCustomers=Kundenrechnungen
+BillsCustomer=Kundenrechnung
 BillsSuppliers=Lieferantenrechnungen
+BillsCustomersUnpaid=Unbezahlte Rechnungen des Kunden
+BillsCustomersUnpaidForCompany=Unbezahlte Rechnungen für Kunden %s
+BillsSuppliersUnpaid=Unbezahlte Rechnungen des Lieferanten
+BillsSuppliersUnpaidForCompany=Unbezahlte Rechnungen des Lieferanten %s
+BillsUnpaid=Unbezahlt
+BillsLate=Verspätete Zahlungen
 BillsStatistics=Statistik Kundenrechnungen
 BillsStatisticsSuppliers=Statistik Lieferantenrechnungen
+DisabledBecauseNotErasable=Deaktiviert, da nicht gelöscht werden konnte
 InvoiceStandard=Standardrechnung
 InvoiceStandardAsk=Standardrechnung
 InvoiceStandardDesc=Dies ist das Standard-Rechnungsformat
+InvoiceDeposit=Anzahlungsrechnung
+InvoiceDepositAsk=Anzahlungsrechnung
+InvoiceDepositDesc=Diese Art der Rechnung erfolgt, wenn eine Anzahlung getätigt wurde.
+InvoiceProForma=Proforma-Rechnung
+InvoiceProFormaAsk=Proforma-Rechnung
+InvoiceProFormaDesc=Die <b>Proforma-Rechnung</b> ist das Abbild einer echten Rechnung, hat aber keinen buchhalterischen Wert.
 InvoiceReplacement=Ersatzrechnung
 InvoiceReplacementAsk=Ersatzrechnung für Rechnung
 InvoiceReplacementDesc=<b>Ersatzrechnungen</b> dienen dem Storno und vollständigen Ersatz einer Rechnung ohne bereits erfolgtem Zahlungseingang. <br><br> Hinweis: Rechnungen mit Zahlungseingang können nicht ersetzt werden. Falls noch nicht geschlossen, werden ersetzte Rechnungen automatisch als 'Aufgegeben geschlossen' markiert.
@@ -135,6 +150,7 @@ SuppliersDraftInvoices=Entwürfe Lieferantenrechnungen
 Unpaid=Unbezahlte
 ConfirmDeleteBill=Möchten Sie diese Rechnung wirklich löschen?
 ConfirmValidateBill=Möchten Sie die Rechnung Nr. <b>%s</b> wirklich freigeben?
+ConfirmUnvalidateBill=Sind Sie sicher, dass Sie die Rechnung <b>%s</b> wieder in den Entwurfstatus ändern möchten?
 ConfirmClassifyPaidBill=Sind Sie sicher, dass Sie ändern möchten <b>Rechnung %s,</b> um den Status bezahlt?
 ConfirmCancelBill=Möchten Sie die Rechnung <b>%s</b> wirklich stornieren?
 ConfirmCancelBillQuestion=Warum wollen Sie klassifizieren diese Rechnung "aufgegeben"?
@@ -157,10 +173,11 @@ ConfirmClassifyAbandonReasonOtherDesc=Wählen Sie diese Option in allen anderen 
 ConfirmCustomerPayment=Bestätigen Sie diesen Zahlungseingang für <b>%s</b>, %s?
 ConfirmValidatePayment=Sind Sie sicher, dass Sie, um diese Zahlung? Keine Änderung kann erfolgen, wenn paiement ist validiert.
 ValidateBill=Rechnung freigeben
+UnvalidateBill=Ungültige Rechnung
 NumberOfBills=Anzahl der Rechnungen
-NumberOfBillsByMonth=Anzahl der Rechnungen pro Monat
+NumberOfBillsByMonth=Anzahl Rechnungen pro Monat
 AmountOfBills=Anzahl der Rechnungen
-AmountOfBillsByMonth=Anzahl der Rechnungen/Monat
+AmountOfBillsByMonthHT=Anzahl der Rechnungen pro Monat (nach Steuern)
 ShowSocialContribution=Zeige Sozialbeitrag
 ShowBill=Zeige Rechnung
 ShowInvoice=Zeige Rechnung
@@ -177,7 +194,6 @@ RemainderToTake=Einzuhebender Restbetrag
 AmountExpected=Höhe der Forderung
 ExcessReceived=Erhaltener Überschuss
 EscompteOffered=Rabatt angeboten (Skonto)
-CreateDraft=Erstelle Entwurf
 SendBillRef=Sende Rechnung %s
 SendReminderBillRef=Rechnung senden %s (Zahlungserinnerung)
 StandingOrders=Daueraufträge
@@ -224,7 +240,11 @@ Reductions=Ermäßigungen
 ReductionsShort=Ermäßigungen
 Discount=Rabatt
 Discounts=Rabatte
-AddDiscount=Absoluten Rabatt erstellen
+AddDiscount=Rabattregel hinzufügen
+AddRelativeDiscount=Jeweiligen Rabatt erstellen
+EditRelativeDiscount=Relativen Rabatt bearbeiten
+AddGlobalDiscount=Rabattregel hinzufügen
+EditGlobalDiscounts=Absolute Rabatte bearbeiten
 AddCreditNote=Gutschrift erstellen
 ShowDiscount=Zeige Rabatt
 RelativeDiscount=Relativer Rabatt
@@ -238,11 +258,9 @@ DiscountFromDeposit=Die Zahlungen aus Anzahlung Rechnung %s
 AbsoluteDiscountUse=Diese Art von Krediten verwendet werden kann auf der Rechnung vor der Validierung
 CreditNoteDepositUse=Rechnung muss validiert werden, um mit diesem König von Krediten
 NewGlobalDiscount=Neue Rabattregel
-NewRelativeDiscount=Neue relative Rabatt
+NewRelativeDiscount=Neuer relativer Rabatt
 NoteReason=Anmerkung/Begründung
 ReasonDiscount=Rabattgrund
-AddDiscount=Rabattregel hinzufügen
-AddGlobalDiscount=Rabattregel hinzufügen
 DiscountOfferedBy=Rabatt angeboten von
 DiscountStillRemaining=Noch verbleibender Rabatt
 DiscountAlreadyCounted=Rabatt bereits berücksichtigt
@@ -376,40 +394,3 @@ PDFOursinDescription=Rechnung Modell oursin. Eine vollständige Rechnung Modell 
 # NumRef Modules
 TerreNumRefModelDesc1=Zurück NUMERO mit Format %syymm-nnnn für Standardrechnungen und syymm%-nnnn für Gutschriften, wo ist JJ Jahr, MM Monat und nnnn ist eine Folge ohne Pause und keine Rückkehr auf 0
 TerreNumRefModelError=Eine Rechnung, beginnend mit $ syymm existiert bereits und ist nicht kompatibel mit diesem Modell der Reihe. Entfernen oder umbenennen, um dieses Modul.
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
-BillsCustomer=Der Rechnung des Kunden
-BillsSuppliersUnpaidForCompany=Unbezahlte Rechnungen des Lieferanten für %s
-BillsLate=Verspätete Zahlungen
-DisabledBecauseNotErasable=Deaktiviert, da können nicht gelöscht werden
-ConfirmUnvalidateBill=Sind Sie sicher, dass Sie <b>%s</b> Rechnung zu Draft-Status ändern?
-UnvalidateBill=Unvalidate Rechnung
-NumberOfBillsByMonth=Nb von Rechnungen pro Monat
-AmountOfBillsByMonthHT=Anzahl der Rechnungen pro Monat (nach Steuern)
-AddRelativeDiscount=Erstellen relativen Rabatt
-EditRelativelDiscount=Bearbeiten relatvie Rabatt
-EditGlobalDiscounts=Bearbeiten absolute Rabatte
-AddCreditNote=Erstellen Gutschrift
-InvoiceNotChecked=Keine Rechnung ausgewählt
-ShowUnpaidAll=Alle unbezahlten Rechnungen
-ClosePaidInvoicesAutomatically=Klassifizieren &quot;Bezahlt&quot; alle Standard-oder den Ersatz Rechnungen entierely bezahlt.
-AllCompletelyPayedInvoiceWillBeClosed=Alle Rechnungen bleiben ohne zu bezahlen wird automatisch auf den Status &quot;Bezahlt&quot; geschlossen werden.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:04:14).
-
-
-// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
-// Reference language: en_US -> de_DE
-BillsCustomersUnpaid=Unbezahlte Rechnungen des Kunden
-BillsCustomersUnpaidForCompany=Unbezahlte Rechnungen für Kunden %s
-BillsSuppliersUnpaid=Unbezahlte Rechnungen des Lieferanten
-BillsUnpaid=Unbezahlt
-InvoiceDeposit=Anzahlungsrechnung
-InvoiceDepositAsk=Anzahlungsrechnung
-InvoiceDepositDesc=Diese Art der Rechnung erfolgt, wenn eine Anzahlung eingegangen ist.
-InvoiceProForma=Proforma-Rechnung
-InvoiceProFormaAsk=Proforma-Rechnung
-InvoiceProFormaDesc=<b>Proforma-Rechnung</b> ist ein Bild von einer wahren Rechnung, hat aber keine Buchhaltung Wert.
-EditRelativeDiscount=Bearbeiten relativen Rabatt
-// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:15).

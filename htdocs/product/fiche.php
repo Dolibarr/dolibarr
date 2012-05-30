@@ -286,7 +286,7 @@ if (empty($reshook))
                 {
                     if ($object->update($object->id, $user) > 0)
                     {
-                        $action = '';
+                        $action = 'view';
                     }
                     else
                     {

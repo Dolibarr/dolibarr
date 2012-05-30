@@ -95,7 +95,7 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 
 	if (dol_mkdir($upload_dir) >= 0)
 	{
-		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0);
+		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . stripslashes($_FILES['userfile']['name']),0);
 		if (is_numeric($resupload) && $resupload > 0)
 		{
 			//$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
@@ -161,6 +161,8 @@ if ($_REQUEST['action'] == 'confirm_deletefile' && $_REQUEST['confirm'] == 'yes'
 
 	if ($conn_id && $ok && ! $mesg)
 	{
+	    $langs->load("other");
+
 		// Remote file
 		$filename=$file;
 		$remotefile=$section.(preg_match('@[\\\/]$@',$section)?'':'/').$file;
@@ -208,6 +210,8 @@ if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("De
 		{
 			if ($const["check"])	// Is checkbox checked
 			{
+			    $langs->load("other");
+
 				// Remote file
 				$file=$const["file"];
 				$section=$const["section"];

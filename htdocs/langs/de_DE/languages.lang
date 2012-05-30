@@ -1,27 +1,39 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-12 10:23:11
- */
-
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 Language_ar_AR=Arabisch
+Language_ar_SA=Arabisch
 Language_ca_ES=Katalanisch
 Language_da_DA=Dänisch
+Language_da_DK=Dänisch
 Language_de_DE=Deutsch
 Language_de_AT=Deutsch (Österreich)
+Language_el_GR=Griechisch
 Language_en_AU=Englisch (Australien)
 Language_en_GB=Englisch (Großbritannien)
 Language_en_IN=Englisch (Indien)
+Language_en_NZ=Englisch (Neuseeland)
 Language_en_US=Englisch (USA)
 Language_es_ES=Spanisch
 Language_es_AR=Spanisch (Argentinien)
+Language_es_HN=Spanisch (Honduras)
+Language_es_MX=Spanisch (Mexiko)
+Language_es_PR=Spanisch (Puerto Rico)
+Language_et_EE=Estnisch
+Language_fa_IR=Persisch
 Language_fi_FI=Fins
 Language_fr_BE=Französisch (Belgien)
 Language_fr_CA=Französisch (Kanada)
 Language_fr_CH=Französisch (Schweiz)
 Language_fr_FR=Französisch
+Language_he_IL=Hebräisch
+Language_hu_HU=Ungarisch
 Language_is_IS=Isländisch
 Language_it_IT=Italienisch
 Language_ja_JP=Japanisch
@@ -33,32 +45,10 @@ Language_pt_BR=Portugiesisch (Brasilien)
 Language_pt_PT=Portugiesisch (Portugal)
 Language_ro_RO=Rumänisch
 Language_ru_RU=Russisch
+Language_ru_UA=Russisch (Ukraine)
 Language_tr_TR=Türkisch
 Language_sl_SI=Slowenisch
 Language_sv_SV=Schwedisch
 Language_sv_SE=Schwedisch
 Language_zh_CN=Chinesisch
 Language_is_IS=Isländisch
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
-Language_ar_SA=Arabisch
-Language_da_DK=Dänisch
-Language_el_GR=Griechisch
-Language_en_NZ=Englisch (Neuseeland)
-Language_es_HN=Spanisch (Honduras)
-Language_es_MX=Spanisch (Mexiko)
-Language_es_PR=Spanisch (Puerto Rico)
-Language_fa_IR=Persisch
-Language_hu_HU=Ungarisch
-Language_ru_UA=Russisch (Ukraine)
-Language_sv_SE=Schwedisch
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:05:21).
-
-
-// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
-// Reference language: en_US -> de_DE
-Language_et_EE=Estnisch
-Language_he_IL=Hebräisch
-// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:39).

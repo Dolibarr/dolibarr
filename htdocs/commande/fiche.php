@@ -134,6 +134,7 @@ else if ($action == 'confirm_delete' && $confirm == 'yes')
     if ($user->rights->commande->supprimer)
     {
         $object->fetch($id);
+        $object->fetch_thirdparty();
         $result=$object->delete($user);
         if ($result > 0)
         {
@@ -471,11 +472,11 @@ else if ($action == 'setconditions' && $user->rights->commande->creer)
     $object->fetch($id);
     $result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
     if ($result < 0)
-    { 
+    {
     	dol_print_error($db,$object->error);
     }
     else
-	{  
+	{
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
         {
         	// Define output language
@@ -491,7 +492,7 @@ else if ($action == 'setconditions' && $user->rights->commande->creer)
             $ret=$object->fetch($id);    // Reload to get new records
             commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
         }
-    } 
+    }
 }
 
 else if ($action == 'setremisepercent' && $user->rights->commande->creer)
@@ -1023,10 +1024,11 @@ else if ($action == 'remove_file')
     {
         require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
+        $langs->load("other");
         $upload_dir = $conf->commande->dir_output;
-        $file = $upload_dir . '/' . $_GET['file'];
+        $file = $upload_dir . '/' . GETPOST('file');
         dol_delete_file($file);
-        $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+        $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('file')).'</div>';
     }
 }
 

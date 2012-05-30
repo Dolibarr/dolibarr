@@ -73,11 +73,9 @@ $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 // Upload file
 if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-
 	if (dol_mkdir($upload_dir) >= 0)
 	{
-		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0,0,$_FILES['userfile']['error']);
+		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . stripslashes($_FILES['userfile']['name']),0,0,$_FILES['userfile']['error']);
 		if (is_numeric($resupload) && $resupload > 0)
 		{
 		    $result=$ecmdir->changeNbOfFiles('+');
@@ -110,12 +108,13 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 // Remove file
 if (GETPOST('action') == 'confirm_deletefile' && GETPOST('confirm') == 'yes')
 {
-  $file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-  $result=dol_delete_file($file);
+    $langs->load("other");
+    $file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+    $result=dol_delete_file($file);
 
-  $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+    $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
 
-  $result=$ecmdir->changeNbOfFiles('-');
+    $result=$ecmdir->changeNbOfFiles('-');
 }
 
 // Remove dir

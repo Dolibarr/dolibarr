@@ -150,6 +150,7 @@ else if ($action == 'reopen' && $user->rights->facture->creer)
 else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->supprimer)
 {
 	$result = $object->fetch($id);
+	$object->fetch_thirdparty();
 	$result = $object->delete();
 	if ($result > 0)
 	{

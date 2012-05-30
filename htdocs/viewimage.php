@@ -53,7 +53,7 @@ $original_file=GETPOST("file");
 $modulepart=GETPOST('modulepart','alpha');
 $urlsource=GETPOST("urlsource");
 $entity=GETPOST('entity','int');
-
+if ($entity == '') $entity=1;    // For backward compatibility
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
@@ -212,6 +212,12 @@ if ($modulepart)
         if ($user->rights->tax->charges->lire) $accessallowed=1;
         $original_file=$conf->tax->dir_output.'/'.$original_file;
     }
+    // Wrapping for products or services
+    elseif ($modulepart == 'actions')
+    {
+        if ($user->rights->agenda->myactions->read) $accessallowed=1;
+        $original_file=$conf->agenda->dir_output.'/'.$original_file;
+    }
     // Wrapping for categories
     elseif ($modulepart == 'category')
     {
@@ -366,15 +372,15 @@ else					// Open and return file
 
     // Output files on browser
     dol_syslog("viewimage.php return file $original_file content-type=$type");
-    $original_file_osencoded=dol_osencode($original_file);
 
-    // This test if file exists should be useless. We keep it to find bug more easily
-    if (! dol_is_file($original_file_osencoded))
+    // This test is to avoid error images when image is not available (for example thumbs).
+    if (! dol_is_file($original_file))
     {
-        $error='Error: File '.$_GET["file"].' does not exists or filesystems permissions are not allowed';
+        $original_file=DOL_DOCUMENT_ROOT.'/theme/common/nophoto.jpg';
+        /*$error='Error: File '.$_GET["file"].' does not exists or filesystems permissions are not allowed';
         dol_print_error(0,$error);
         print $error;
-        exit;
+        exit;*/
     }
 
     // Les drois sont ok et fichier trouve
@@ -389,6 +395,7 @@ else					// Open and return file
         header('Content-type: image/png');
     }
 
+    $original_file_osencoded=dol_osencode($original_file);
     readfile($original_file_osencoded);
 }
 

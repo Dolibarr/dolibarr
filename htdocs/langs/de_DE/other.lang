@@ -1,20 +1,51 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-12 21:09:12
- */
-
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 SecurityCode=Sicherheitsschlüssel
 Calendar=Kalender
 AddTrip=Reise hinzufügen
 Tools=Werkzeuge
+ToolsDesc=Dieser Bereich ist bestimmt für die Gruppe "Verschiedenes" und nicht in andern Menüeintraägen verfügbar. <br><br> Diese Tools können Sie über das Menü auf dieser Seite erreichen.
 Birthday=Geburtstag
 BirthdayDate=Geburtstag
 DateToBirth=Geburtstdatum
+BirthdayAlertOn=Geburtstagserinnerung EIN
+BirthdayAlertOff=Geburtstagserinnerung AUS
 Notify_FICHINTER_VALIDATE=Eingriff freigegeben
 Notify_BILL_VALIDATE=Rechnung freigegeben
+Notify_ORDER_SUPPLIER_APPROVE=Lieferantenbestellung freigegeben
+Notify_ORDER_SUPPLIER_REFUSE=Lieferantenbestellung abgelehnt
+Notify_ORDER_VALIDATE=Kundenbestellung freigegeben
+Notify_PROPAL_VALIDATE=Angebot freigegeben
+Notify_WITHDRAW_TRANSMIT=Transaktion zurückziehen
+Notify_WITHDRAW_CREDIT=Kreditkarten Rücknahme
+Notify_WITHDRAW_EMIT=Ausgabe aussetzen
+Notify_ORDER_SENTBYMAIL=Kundenbestellung mit E-Mail versendet
+Notify_COMPANY_CREATE=Durch Dritte erstellt
+Notify_PROPAL_SENTBYMAIL=Angebot mit E-Mail gesendet
+Notify_ORDER_SENTBYMAIL=Bestellung mit E-Mail versendet
+Notify_BILL_PAYED=Kundenrechnung bezahlt
+Notify_BILL_CANCEL=Kundenrechnung storniert
+Notify_BILL_SENTBYMAIL=Kundenrechnung per E-Mail zugestellt
+Notify_ORDER_SUPPLIER_VALIDATE=Lieferantenbestellung bestätigt
+Notify_ORDER_SUPPLIER_SENTBYMAIL=Lieferantenbestellung per E-Mail zugestellt
+Notify_BILL_SUPPLIER_VALIDATE=Lieferantenrechnung bestätigen
+Notify_BILL_SUPPLIER_PAYED=Lieferantenrechnung bezahlt
+Notify_BILL_SUPPLIER_SENTBYMAIL=Lieferantenrechnung mit E-Mail versendet
+Notify_CONTRACT_VALIDATE=Vertrag gültig
+Notify_FICHEINTER_VALIDATE=Eingriff freigegeben
+Notify_SHIPPING_VALIDATE=Versand freigegeben
+Notify_SHIPPING_SENTBYMAIL=Versanddaten mit E-Mail versendet
+Notify_MEMBER_VALIDATE=Mitglied bestätigt
+Notify_MEMBER_SUBSCRIPTION=Mitglied hat unterzeichnet
+Notify_MEMBER_RESILIATE=Mitglied auflösen
+Notify_MEMBER_DELETE=Mitglied gelöscht
 NbOfAttachedFiles=Anzahl der angehängten Dateien/okumente
 TotalSizeOfAttachedFiles=Gesamtgröße der angehängten Dateien/Dokumente
 MaxSize=Maximalgröße
@@ -22,10 +53,17 @@ AttachANewFile=Neue Datei/Dokument anhängen
 LinkedObject=Verknüpftes Objekt
 Miscellanous=Verschiedenes
 NbOfActiveNotifications=Anzahl aktiver Benachrichtigungen
+PredefinedMailTest=Dies ist ein Test-Mail.\n Die beiden Zeilen sind durch eine Zeilenschaltung getrennt.
+PredefinedMailTestHtml=Dies ist ein (HTML)-<b>Test</b> Mail (das Wort Test muss in Fettschrift erscheinen). <br> Die beiden Zeilen sollteb durch eine Zeilenschaltung getrennt sein.
 PredefinedMailContentSendInvoice=Bitte entnehmen Sie dem Anhang die Rechnung __FACREF__\n\n__PERSONALIZED__Mit freundlichen Grüßen\n\n__SIGNATURE__
 PredefinedMailContentSendInvoiceReminder=Bedauerlicherweise scheint die Rechnung __FACREF__ bislang unbeglichen. Als Erinnerung übersenden wir Ihnen diese nochmals im Anhang\n\n__PERSONALIZED__Mit freundlichen Grüßen\n\n__SIGNATURE__
 PredefinedMailContentSendProposal=Bitte entnehmen Sie dem Anhang unser Angebot __PROPREF__ \n\n__PERSONALIZED__Mit freundlichen Grüßen\n\n__SIGNATURE__
 PredefinedMailContentSendOrder=Bitte entnehmen Sie dem Anhang die Bestellung __ORDERREF__ \n\n__PERSONALIZED__Mit freundlichen Grüßen\n\n__SIGNATURE__
+PredefinedMailContentSendSupplierOrder=Hier finden Sie unser Bestellformular __ORDERREF__ \n\n__PERSONALIZED__Mit freundlichen Grüßen\n\n__SIGNATURE__
+PredefinedMailContentSendSupplierInvoice=Anbei erhalten Sie die Rechnung __ FACREF__ \n\n__PERSONALIZED__Mit freundlichen Grüßen\n\n__SIGNATURE__
+PredefinedMailContentSendShipping=Als Anlage erhalten Sie unsere Versandkosten __ SHIPPINGREF__ \n\n__PERSONALIZED__Mit freundlichen Grüßen\n\n__SIGNATURE__
+PredefinedMailContentSendFichInter=Anbei finden Sie die Intervention __ FICHINTERREF__ \n\n__PERSONALIZED__Mit freundlichen Grüßen\n_n__SIGNATURE__
+DemoDesc=Bei Dolibarr handelt es sich um ein kompaktes ERP/CRM-System, bestehend aus einzelnen Modulen. Da eine Demo aller Module kaum eine praxisnahe Anwendung darstellt, stehen Ihnen unterschiedliche Demo-Profile zur Verfügung.
 ChooseYourDemoProfil=Bitte wählen Sie das Demo-Profil das Ihrem Berufsfeld am ehesten entspricht
 DemoFundation=Verwalten Sie die Mitglieder einer Stiftung
 DemoFundation2=Verwalten Sie die Mitglieder und Bankkonten einer Stiftung
@@ -86,7 +124,7 @@ SizeUnitm=m
 SizeUnitdm=dm
 SizeUnitcm=cm
 SizeUnitmm=mm
-SizeUnitinch=Inch
+SizeUnitinch=Zoll
 SizeUnitfoot=Fuß
 BugTracker=Fehlerverfolgung (Bug-Tracker)
 SendNewPasswordDesc=Über dieses Formular können Sie sich ein neues Passwort zusenden lassen.<br>Die Änderungen an Ihrem Passwort werden erst wirksam, wenn Sie auf den im Mail enthaltenen Bestätigungslink klicken. <br> Überprüfen Sie den Posteingang Ihrer E-Mail-Anwendung.
@@ -154,6 +192,7 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink=Verwenden Sie eine externe http-URL 
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Bitte wählen Sie, ob sich ein geklickter Link in einem neuen oder demselben Fenster öffnet
 BookmarksManagement=Lesezeichen verwalten
 ListOfBookmarks=Liste der Lesezeichen
+
 ##### Calendar common #####
 AddCalendarEntry=Neuer Eintrag im Kalender %s
 NewCompanyToDolibarr=Partner %s hinzugefügt 
@@ -173,6 +212,10 @@ MemberValidatedInDolibarr=Mitglied %s freigegeben
 MemberResiliatedInDolibarr=Mitglied %s aufgehoben
 MemberDeletedInDolibarr=Mitglied %s gelöscht
 MemberSubscriptionAddedInDolibarr=Abonnement für Mitglied %s hinzugefügt
+ShipmentValidatedInDolibarr=Versand %s in Dolibarr geprüft
+
+##### Export #####
+Export=Export
 ExportsArea=Exportübersicht
 AvailableFormats=Verfügbare Formate
 LibraryUsed=Verwendete Bibliothek
@@ -182,103 +225,5 @@ NoExportableData=Keine exportfähigen Daten (keine Module mit exportfähigen Dat
 ToExport=Export
 NewExport=Neuer Export
 
-BirthdayAlertOn=Geburtstagserinnerung EIN
-BirthdayAlertOff=Geburtstagserinnerung AUS
-Notify_ORDER_SUPPLIER_APPROVE=Lieferantenbestellung freigegeben
-Notify_ORDER_SUPPLIER_REFUSE=Lieferantenbestellung abgelehnt
-DemoDesc=Bei Dolibarr handelt es sich um ein kompaktes ERP/CRM-System, bestehend aus einzelnen Modulen. Da eine Demo aller Module kaum eine praxisnahe Anwendung darstellt, stehen Ihnen unterschiedliche Demo-Profile zur Verfügung.
-SendNewPasswordDesc=Über dieses Formular können Sie sich ein neues Passwort zusenden lassen.<br>Die Änderungen an Ihrem Passwort werden erst wirksam, wenn Sie auf den im Mail enthaltenen Bestätigungslink klicken. <br> Überprüfen Sie den Posteingang Ihrer E-Mail-Anwendung.
-EMailTextInterventionValidated=Eingriff %s freigegeben
-EMailTextInvoiceValidated=Rechnung %s freigegeben
-ImportedWithSet=Import Datensatz
-DolibarrNotification=Automatische Benachrichtigung
-
-Notify_ORDER_VALIDATE=Kundenbestellung freigegeben
-Notify_PROPAL_VALIDATE=Angebot freigegeben
-PredefinedMailTest=Dies ist ein Test-Mail.\n Die beiden Zeilen sind durch eine Zeilenschaltung getrennt.
-PredefinedMailTestHtml=Dies ist ein (HTML)-<b>Test</b> Mail (das Wort Test muss in Fettschrift erscheinen). <br> Die beiden Zeilen sollteb durch eine Zeilenschaltung getrennt sein.
-CalculatedWeight=Errechnetes Gewicht
-CalculatedVolume=Errechnetes Volumen
-Length=Länge
-LengthUnitm=m
-LengthUnitdm=dm
-LengthUnitcm=cm
-LengthUnitmm=mm
-Surface=Oberfläche
-SurfaceUnitm2=m²
-SurfaceUnitdm2=dm²
-SurfaceUnitcm2=cm²
-SurfaceUnitmm2=mm²
-NumberOfUnitsProposals=Anzahl der Produkte/Services in Angeboten der letzten 12 Monate
-EMailTextProposalValidated=Angebot %s wurde freigegeben.
-EMailTextOrderValidated=Bestellung %s wurde freigegeben.
-ResizeDesc=Bitte geben Sie eine neue Breite <b>oder</b> Höhe ein. Das Verhältnis wird während des Zuschneidens erhalten...
-NewLength=Neue Breite
-NewHeight=Neue Höhe
-NewSizeAfterCropping=Neue Größe nach dem Zuschneiden
-DefineNewAreaToPick=Definieren Sie einen neuen Bereich innerhalb des Bildes (Klicken Sie mit der linken Maustaste auf das Bild und halten Sie bis zur gegenüberligenden Ecke)
-CurrentInformationOnImage=Dieses Werzeug hilft Ihnen beim Skalieren und Zuschneiden von Bildern. Diese Informationen existieren derzeit zur Bilddatei
-YouReceiveMailBecauseOfNotification=Sie erhalten diese Nachricht, weil Ihre E-Mail-Adresse zur Liste der zu benachrichtigenden Kontakte für %s von %s hinzugefügt wurde.
-YouReceiveMailBecauseOfNotification2=Sie erhalten dieses Mail aufgrund folgender Benachrichtigung:
+##### External sites #####
 ExternalSites=Externe Seiten
-
-PredefinedMailContentSendSupplierOrder=Hier finden Sie unser Bestellformular __ORDERREF__ \n\n__PERSONALIZED__Mit freundlichen Grüßen\n\n__SIGNATURE__
-WeightUnitpound=Pfund
-VolumeUnitounce=Unze
-VolumeUnitlitre=Liter
-VolumeUnitgallon=Gallone
-SizeUnitinch=Zoll
-SizeUnitfoot=Fuß
-ImageEditor=Bildbearbeitung
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> de_DE
-ToolsDesc=Dieser Bereich ist zur Gruppe diverse Werkzeuge nicht verfügbar in andere Menüeinträge gewidmet. <br><br> Diese Tools können aus dem Menü auf der Seite zu erreichen.
-Notify_WITHDRAW_TRANSMIT=Transmission Rückzug
-Notify_WITHDRAW_CREDIT=Kreditkarten Rückzug
-Notify_WITHDRAW_EMIT=Isue Rückzug
-Notify_ORDER_SENTBYMAIL=Kunden bestellen per Post geschickt
-Notify_COMPANY_CREATE=Dritter erstellt
-Notify_PROPAL_SENTBYMAIL=Gewerbliche Vorschlag per Post
-Notify_ORDER_SENTBYMAIL=Envío pedido por e-mail
-Notify_BILL_SUPPLIER_PAYED=Lieferantenrechnung bezahlt
-Notify_BILL_SUPPLIER_SENTBYMAIL=Lieferant Rechnung per Post geschickt
-Notify_CONTRACT_VALIDATE=Contract validiert
-Notify_FICHEINTER_VALIDATE=Intervention validiert
-Notify_SHIPPING_VALIDATE=Liefer-validierte
-Notify_SHIPPING_SENTBYMAIL=Versand per Post
-Notify_MEMBER_VALIDATE=Mitglied validiert
-Notify_MEMBER_SUBSCRIPTION=Mitglied gezeichneten
-Notify_MEMBER_RESILIATE=Mitglied resiliated
-Notify_MEMBER_DELETE=Mitglied gelöscht
-Right=Recht
-ThisIsListOfModules=Dies ist eine Liste der Module, die von dieser Demo-Profil (nur gängigsten Module sind in dieser Demo) vorgewählt. Bearbeiten, um eine personalisierte Demo haben und klicken Sie auf &quot;Start&quot;.
-ClickHere=Klicken Sie hier
-UseAdvancedPerms=Verwenden Sie die erweiterten Berechtigungen einiger Module
-FileFormat=Dateiformat
-SelectAColor=Wählen Sie eine Farbe
-AddFiles=Dateien hinzufügen
-StartUpload=Upload starten
-CancelUpload=Hochladen abbrechen
-FileIsTooBig=Dateien zu groß
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 03:02:54).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
-Notify_BILL_PAYED=Kunden Rechnung bezahlt
-Notify_BILL_CANCEL=Kunden Rechnung storniert
-Notify_BILL_SENTBYMAIL=Kunden Rechnung per Post zugesandt
-Notify_ORDER_SUPPLIER_VALIDATE=Lieferant Bestellung validiert
-Notify_ORDER_SUPPLIER_SENTBYMAIL=Lieferant Bestellung per Post zugesandt
-Notify_BILL_SUPPLIER_VALIDATE=Lieferantenrechnung validiert
-PredefinedMailContentSendSupplierInvoice=Hier finden Sie die Rechnung __ FACREF__ \n\n__PERSONALIZED__Mit freundlichen Grüßen\n\n__SIGNATURE__
-PredefinedMailContentSendShipping=Hier finden Sie die Versandkosten __ SHIPPINGREF__ \n\n__PERSONALIZED__Mit freundlichen Grüßen\n\n__SIGNATURE__
-PredefinedMailContentSendFichInter=Sie finden hier die Intervention __ FICHINTERREF__ \n\n__PERSONALIZED__Mit freundlichen Grüßen\n_n__SIGNATURE__
-Top=Top-
-Bottom=Boden
-Left=Links
-BookmarksManagement=Lesezeichen-Verwaltung
-ShipmentValidatedInDolibarr=Versand %s in Dolibarr validiert
-Export=Exportieren
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:31).

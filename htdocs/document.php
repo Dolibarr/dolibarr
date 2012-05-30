@@ -483,7 +483,7 @@ if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
 	exit;
 }
 
-
+// TODO Remove this. Some part of code still use it.
 if ($action == 'remove_file')	// Remove a file
 {
 	clearstatcache();

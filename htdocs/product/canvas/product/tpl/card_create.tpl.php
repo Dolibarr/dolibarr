@@ -21,7 +21,9 @@
 
 <?php print_fiche_titre($this->control->tpl['title']); ?>
 
-<?php dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']); ?>
+<?php dol_htmloutput_errors((is_numeric($object->error)?'':$object->error),$object->errors); ?>
+
+<?php dol_htmloutput_errors($GLOBALS['mesg'],$GLOBALS['mesgs']); ?>
 
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">

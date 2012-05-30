@@ -1,11 +1,12 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-12 10:09:12
- */
-
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 Intervention=Eingriff
 Interventions=Eingriffe
 InterventionCard=Eingriffskarte
@@ -13,6 +14,7 @@ NewIntervention=Neuer Eingriff
 AddIntervention=Eingriffsstelle hinzufügen
 ListOfInterventions=Liste der Eingriffe
 EditIntervention=Eingriff bearbeiten
+ActionsOnFicheInter=Aktionen zum Eingriff
 LastInterventions=Letzte %s Eingriffe
 AllInterventions=Alle Eingriffe
 CreateDraftIntervention=Eingriffsentwurf 
@@ -20,6 +22,7 @@ CustomerDoesNotHavePrefix=Kunde hat kein Präfix
 InterventionContact=Kontakt für Eingriffe
 DeleteIntervention=Eingriff löschen
 ValidateIntervention=Eingriff freigeben
+ModifyIntervention=Geänderte Eingriff
 DeleteInterventionLine=Eingriffszeile löschen
 ConfirmDeleteIntervention=Möchten Sie diesen Eingriff wirklich löschen?
 ConfirmValidateIntervention=Möchten Sie diesen Eingriff wirklich freigeben?
@@ -28,22 +31,17 @@ ConfirmDeleteInterventionLine=Möchten Sie diese Eingriffszeile wirklich lösche
 NameAndSignatureOfInternalContact=Name und Unterschrift des internen Kontakts:
 NameAndSignatureOfExternalContact=Name und Unterschrift des Kunden:
 DocumentModelStandard=Standard-Dokumentvorlage für Eingriffe
+ClassifyBilled=Eingegordnet "Angekündigt"
+StatusInterInvoiced=Angekündigt
+RelatedInterventions=Verbundene Eingriffe
+ShowIntervention=Zeige Eingriffe
+##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Eingriffsnachverfolgung durch Vertreter
 TypeContact_fichinter_internal_INTERVENING=Eingriff läuft
 TypeContact_fichinter_external_BILLING=Rechnungskontakt Kunde
 TypeContact_fichinter_external_CUSTOMER=Kundenkontakt-Nachverfolgung
+# Modele numérotation
 ArcticNumRefModelDesc1=Generisches Nummernmodell
 ArcticNumRefModelError=Fehler beim aktivieren
 PacificNumRefModelDesc1=Liefere Nummer im Format %syymm-nnnn zurück, wobei yy das Jahr, mm das Monat und nnnn eine Zahlensequenz ohne Nullwert oder Leerzeichen ist
 PacificNumRefModelError=Eine Interventionskarte beginnend mit $syymm existiert bereits und ist nicht mir dieser Numerierungssequenz kompatibel. Bitte löschen oder umbenennen.
-ModifyIntervention=Eingriff
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> de_DE
-ActionsOnFicheInter=Aktionen auf Intervention
-ClassifyBilled=Classify &quot;Billed&quot;
-StatusInterInvoiced=Billed
-RelatedInterventions=Zusammenhängende Eingriffe
-ShowIntervention=Zeige Intervention
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:18:56).

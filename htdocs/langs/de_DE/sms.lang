@@ -1,62 +1,60 @@
 /*
- * Language code: de_DE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:03:27
- */
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
 CHARSET=UTF-8
-Sms=Sms
-SmsSetup=SMS-Setup
-SmsDesc=Diese Seite ermöglicht es Ihnen, globals Optionen auf SMS-Funktionen definieren
-SmsCard=SMS-Karte
-AllSms=Alle SMS campains
+
+Sms=SMS
+SmsSetup=SMS Einstellungen
+SmsDesc=Auf diese Seite haben Sie die Möglichkeit globale Einstellungen der SMS-Funktionen vorzunehmen
+SmsCard=SMS Karte
+AllSms=Alle SMS Aktionen
 SmsTargets=Ziele
-SmsRecipients=Ziele
-SmsRecipient=Ziel
-SmsTitle=Beschreibung
+SmsRecipients=Empfänger
+SmsRecipient=Empfänger
+SmsTitle=Titel
 SmsFrom=Absender
 SmsTo=Ziel
-SmsTopic=Thema des SMS
+SmsTopic=SMS Thema
 SmsText=Nachricht
-SmsMessage=SMS-Nachricht
-ShowSms=Zeige Sms
-ListOfSms=Liste SMS campains
-NewSms=Neuer SMS-Kampagne
-EditSms=Bearbeiten Sms
-ResetSms=Neuen sendenden
-DeleteSms=SMS löschen Kampagne
-DeleteASms=Entfernen Sie eine Sms Kampagne
-PreviewSms=Previuw Sms
-PrepareSms=Bereiten Sie Sms
+SmsMessage=SMS Nachricht
+ShowSms=SMS Anzeigen
+ListOfSms=Liste der SMS Aktionen
+NewSms=Neue SMS Aktion
+EditSms=SMS bearbeiten
+ResetSms=Erneut senden
+DeleteSms=SMS Aktion löschen
+DeleteASms=Entfernen Sie eine SMS Aktion
+PreviewSms=SMS Vorschau
+PrepareSms=SMS vorbeiten 
 CreateSms=SMS erstellen
-SmsResult=Ergebnis der SMS-Versand
-TestSms=Test-SMS
-ValidSms=Bestätigen Sms
-ApproveSms=Genehmigen Sms
+SmsResult=Ergebnis des SMS Versands
+TestSms=Test SMS
+ValidSms=SMS bestätigen
+ApproveSms=SMS genehmigen
 SmsStatusDraft=Entwurf
-SmsStatusValidated=Validierte
+SmsStatusValidated=Bestätigen
 SmsStatusApproved=Genehmigt
-SmsStatusSent=Sent
-SmsStatusSentPartialy=Gesendet teilweise
-SmsStatusSentCompletely=Gesendet vollständig
+SmsStatusSent=Gesendet
+SmsStatusSentPartialy=Teileweise gesendet
+SmsStatusSentCompletely=Vollständig gesendet
 SmsStatusError=Fehler
 SmsStatusNotSent=Nicht gesendet
-SmsSuccessfulySent=Sms richtig geschickt werden (von %s zu %s)
-ErrorSmsRecipientIsEmpty=Anzahl der Target ist leer
-WarningNoSmsAdded=Keine neuen Rufnummer an, um Target-Liste hinzufügen
-ConfirmValidSms=Können Sie bestätigen, Validierung dieser Kampagne?
-ConfirmResetMailing=Achtung, wenn Sie eine Sms von reinit Kampagne <b>%s</b> machen, wird es Ihnen ermöglichen, einen Massenversand von es ein zweites Mal machen. Ist es wirklich, was du tun WAN?
-ConfirmDeleteMailing=Bestätigen Sie das Entfernen der Kampagne?
+SmsSuccessfulySent=SMS korekkte gesendet (von %s an %s)
+ErrorSmsRecipientIsEmpty=Anzahl der Empfänger ist leer
+WarningNoSmsAdded=Keine neuen Rufnummern zum hinzufügen an die Empfängerliste gefunden
+ConfirmValidSms=Bestätigen Sie die Freigabe dieser Aktion?
+ConfirmResetMailing=Achtung, wenn Sie die SMS-Kampanie <b>%s</b> wieder aktivieren, müssen Sie bestätigen dass der Versand zum zweiten möglich ist. Möchten Sie das wirklich bestätigen?
+ConfirmDeleteMailing=Bestätigen Sie das Entfernen der Aktion?
 NbOfRecipients=Anzahl der Ziele
-NbOfUniqueSms=Nb dof einzigartig Telefonnummern
-NbOfSms=Nbre von phon Zahlen
+NbOfUniqueSms=Anzahl der eindeutigen Rufnummern
+NbOfSms=Anzahl der Rufnummern
 ThisIsATestMessage=Dies ist eine Testnachricht
-SendSms=Senden Sie eine SMS
-SmsInfoCharRemain=Nb der verbleibenden Zeichen
-SmsInfoNumero=(Dh internationale Format: 33899701761)
-DelayBeforeSending=Verzögerung vor dem Senden (Minuten)
-SmsNoPossibleRecipientFound=Kein Ziel zur Verfügung. Überprüfen Sie Setup von Ihrem SMS-Anbieter.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:04:30).
+SendSms=SMS senden
+SmsInfoCharRemain=Anzahl der verbleibenden Zeichen
+SmsInfoNumero=(Format der Rufnummer: ++33899701761)
+DelayBeforeSending=Warten vor dem Senden (in Minuten)
+SmsNoPossibleRecipientFound=Keine möglichen Empfänger gefunden. Prüfen Sie die Einstellungen Ihres SMS Anbieters.

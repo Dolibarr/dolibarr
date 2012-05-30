@@ -94,7 +94,7 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 
 	if (dol_mkdir($upload_dir) >= 0)
 	{
-		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0, 0, $_FILES['userfile']['error']);
+		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . stripslashes($_FILES['userfile']['name']),0, 0, $_FILES['userfile']['error']);
 		if (is_numeric($resupload) && $resupload > 0)
 		{
 			//$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
@@ -154,6 +154,7 @@ if ($action == 'confirm_deletefile')
 {
     if (GETPOST('confirm') == 'yes')
     {
+        $langs->load("other");
     	$result=$ecmdir->fetch($section);
     	if (! $result > 0)
     	{
@@ -166,7 +167,7 @@ if ($action == 'confirm_deletefile')
 
     	$result=dol_delete_file($file);
 
-    	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+    	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
 
     	$result=$ecmdir->changeNbOfFiles('-');
 

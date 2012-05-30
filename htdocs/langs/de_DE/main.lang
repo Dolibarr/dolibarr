@@ -1,22 +1,27 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-12 18:09:12
- */
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 DIRECTION=ltr
 SeparatorDecimal=,
 SeparatorThousand=.
 FormatDateShort=%d/%m/%Y
 FormatDateShortJava=dd/MM/yyyy
-FormatHourShort=%H:%M
+FormatDateShortJQuery=dd/MM/yy
+FormatHourShort=%I:%M %p
+FormatHourShortDuration=%H:%M
 FormatDateTextShort=%d %b %Y
 FormatDateText=%d %B %Y
 FormatDateHourShort=%d/%m/%Y %H:%M
 FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
 DatabaseConnection=Datenbankverbindung
+NoError=Es ist kein Fehler
 Error=Fehler
 ErrorFieldRequired=Feld '%s' ist erforderlich
 ErrorFieldFormat=Der Wert in Feld '%s' ist ungültig
@@ -51,6 +56,7 @@ ErrorNoSocialContributionForSellerCountry=Für das Verkäuferland '%s' wurde kei
 ErrorFailedToSaveFile=Fehler beim Speichern der Datei.
 ErrorOnlyPngJpgSupported=Fehler: Es werden nur Dateien im Format .jpg oder .png unterstützt.
 ErrorImageFormatNotSupported=Ihre PHP-Konfiguration unterstützt keine Konvertierungsfunktionen für dieses Bildformat.
+SeeAlso=Siehe auch %s
 BackgroundColorByDefault=Standard-Hintergrundfarbe
 FileWasNotUploaded=Ein Dateianhang wurde gewählt aber noch nicht hochgeladen. Klicken Sie auf "Datei anhängen" um den Vorgang zu starten.
 NbOfEntries=Anzahl der Einträge
@@ -135,7 +141,8 @@ Of=von
 CopyOf=Duplikat von
 Show=Zeige
 ShowCardHere=Zeige Karte
-Search=Suche
+Search=Suchen
+SearchOf=Suche nach
 Valid=Gültig
 Approve=Genehmigen
 ReOpen=Wiedereröffnen
@@ -299,6 +306,8 @@ IncludedVAT=inkl. MwSt.
 HT=Netto
 TTC=Brutto
 VAT=MwSt.
+LT1ES=RE
+LT2ES=IRPF
 VATRate=Steuersatz
 Average=Durchschnitt
 Sum=Summe
@@ -327,7 +336,10 @@ ActionRunningShort=Begonnen
 ActionDoneShort=Abgeschlossen
 CompanyFoundation=Firma/Stiftung
 ContactsForCompany=Ansprechpartner/Adressen dieses Partners 
+ContactsAddressesForCompany=Ansprechpartner / Adressen zu dieser Firma
+AddressesForCompany=Adressen für den Partner
 ActionsOnCompany=Maßnahmen zu diesem Partner
+ActionsOnMember=Aktionen zu diesem Mitglied
 NActions= %s Maßnahmen
 NActionsLate= %s verspätete Maßnahmen
 Filter=Filter
@@ -592,7 +604,7 @@ Hidden=Versteckt
 Resources=Ressourcen
 Source=Quelle
 Prefix=Präfix
-Befor=Davor
+Before=Davor
 After=Danach
 IPAddress=IP Adresse
 Frequency=Frequenz
@@ -602,6 +614,17 @@ AttributeCode=Attribut Code
 OptionalFieldsSetup=Zusätzliche Attributeinstellungen
 URLPhoto=URL für Foto/Bild
 SetLinkToThirdParty=Link zu einem Partner
+CreateDraft=Angebot erstellen
+ClickToEdit=Klicken zum Bearbeiten
+ObjectDeleted=Objekt %s gelöscht
+ByCountry=Nach Land
+ByTown=Nach Ort
+ByDate=Nach Datum
+ByMonthYear=Von Monat / Jahr
+ByYear=Bis zum Jahresende
+ByMonth=nach Monat
+ByDay=Bei Tag
+BySalesRepresentative=Durch Vertriebsmitarbeiter
 
 # Week day
 Monday=Montag
@@ -632,70 +655,3 @@ ShortThursday=Do
 ShortFriday=Fr
 ShortSaturday=Sa
 ShortSunday=So
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
-FormatDateShortJQuery=dd/mm/yy
-AddLink=Link hinzufügen
-Of=von
-SearchOf=Suche
-AmountByMonth=Betrag pro Monat
-DatePayment=Datum der Zahlung
-TeraBytes=Terabyte
-Tb=Tb
-LT1ES=RE
-LT2ES=IRPF
-OtherStatistics=Andere Statistiken
-ActionNotApplicable=Nicht anwendbar
-ActionsOnMember=Veranstaltungen über dieses Mitglied
-JanuaryMin=Jan
-FebruaryMin=Februar
-MarchMin=Mar
-AprilMin=April
-MayMin=Mai
-JuneMin=Juni
-JulyMin=Juli
-AugustMin=August
-SeptemberMin=September
-OctoberMin=Oktober
-NovemberMin=November
-DecemberMin=Dezember
-CoreErrorTitle=Systemfehler
-CoreErrorMessage=Leider ist ein Fehler aufgetreten. Überprüfen Sie die Protokolle oder kontaktieren Sie Ihren Systemadministrator.
-Before=Vor
-After=Nach
-IPAddress=IP-Adresse
-Frequency=Frequenz
-IM=Instant Messaging
-URLPhoto=URL von Foto / Logo
-SetLinkToThirdParty=Link zu einem anderen Dritten
-CreateDraft=Erstellen Entwurf
-ClickToEdit=Klicken Sie zum Bearbeiten
-ObjectDeleted=Object %s gelöscht
-ByCountry=Nach Land
-ByTown=Durch die Stadt
-ByDate=Nach Datum
-ByMonthYear=Von Monat / Jahr
-ByYear=Bis zum Jahresende
-ByMonth=nach Monat
-ByDay=Bei Tag
-BySalesRepresentative=Durch die Vertriebsmitarbeiter
-MondayMin=Mo
-TuesdayMin=Tu
-WednesdayMin=Wir
-ThursdayMin=Th
-FridayMin=Fr
-SaturdayMin=Sa
-SundayMin=Su
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:05:57).
-
-
-// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
-// Reference language: en_US -> de_DE
-FormatHourShortDuration=%H:%M
-NoError=Es ist kein Fehler
-SeeAlso=Siehe auch %s
-ContactsAddressesForCompany=Ansprechpartner / Adressen für diesen Dritten
-AddressesForCompany=Adressen für diesen Dritten
-// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:46).
