@@ -127,6 +127,7 @@ Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON no def
 Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON no definida
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Error en la càrrega de l'arxiu mòdul '%s'
 Error_FailedToLoad_COMMANDE_ADDON_File=Error en la càrrega de l'arxiu mòdul '%s'
+Error_OrderNotChecked=No s'han seleccionat comandes a facturar
 
 # Sources
 OrderSource0=Pressupost
