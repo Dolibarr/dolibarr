@@ -22,6 +22,10 @@
 <?php
 print_fiche_titre($this->control->tpl['title']);
 
+dol_htmloutput_errors((is_numeric($object->error)?'':$object->error),$object->errors);
+
+dol_htmloutput_errors((is_numeric($GLOBALS['error'])?'':$GLOBALS['error']),$GLOBALS['errors']);
+
 dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
 
 echo $this->control->tpl['ajax_selectcountry']; ?>
@@ -40,7 +44,7 @@ echo $this->control->tpl['ajax_selectcountry']; ?>
 
 <tr>
 	<td width="15%" class="fieldrequired"><?php echo $langs->trans("Lastname").' / '.$langs->trans("Label"); ?></td>
-	<td><input name="name" type="text" size="30" maxlength="80" value="<?php echo $this->control->tpl['name']; ?>"></td>
+	<td><input name="lastname" type="text" size="30" maxlength="80" value="<?php echo $this->control->tpl['name']; ?>"></td>
 	<td width="20%"><?php echo $langs->trans("Firstname"); ?></td>
 	<td width="25%"><input name="firstname" type="text" size="30" maxlength="80" value="<?php echo $this->control->tpl['firstname']; ?>"></td>
 </tr>

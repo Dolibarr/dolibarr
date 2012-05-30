@@ -13,29 +13,30 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
+
+$object=$GLOBALS['object'];
 ?>
 
 <!-- BEGIN PHP TEMPLATE -->
-<?php echo $this->control->tpl['showhead']; ?>
+<?php echo $langs->trans("Product"); ?>
 
-<?php dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']); ?>
+<?php dol_htmloutput_errors($object->error,$object->errors); ?>
 
 <table class="border allwidth">
 
 <tr>
 <td width="15%"><?php echo $langs->trans("Ref"); ?></td>
-<td colspan="2"><?php echo $this->control->tpl['showrefnav']; ?></td>
+<td colspan="2"><?php echo $object->ref; ?></td>
 </tr>
 
 <tr>
 <td><?php echo $langs->trans("Label") ?></td>
-<td><?php echo $this->control->tpl['label']; ?></td>
+<td><?php echo $object->label; ?></td>
 
-<?php if ($this->control->tpl['photos']) { ?>
-<td valign="middle" align="center" width="30%" rowspan="<?php echo $this->control->tpl['nblignes']; ?>">
-<?php echo $this->control->tpl['photos']; ?>
+<?php if ($object->photos) { ?>
+<td valign="middle" align="center" width="30%" rowspan="<?php echo $object->nblignes; ?>">
+<?php echo $object->photos; ?>
 </td>
 <?php } ?>
 
@@ -43,51 +44,49 @@
 
 <tr>
 <td><?php echo $langs->trans("Status").' ('.$langs->trans("Sell").')'; ?></td>
-<td><?php echo $this->control->tpl['status']; ?></td>
+<td><?php echo $object->status; ?></td>
 </tr>
 
 <tr>
 <td><?php echo $langs->trans("Status").' ('.$langs->trans("Buy").')'; ?></td>
-<td><?php echo $this->control->tpl['status_buy']; ?></td>
+<td><?php echo $object->status_buy; ?></td>
 </tr>
 
 <tr>
 <td valign="top"><?php echo $langs->trans("Description"); ?></td>
-<td colspan="2"><?php echo $this->control->tpl['description']; ?></td>
+<td colspan="2"><?php echo $object->description; ?></td>
 </tr>
 
 <tr>
 <td><?php echo $langs->trans("Nature"); ?></td>
-<td colspan="2"><?php echo $this->control->tpl['finished']; ?></td>
+<td colspan="2"><?php echo $object->finished; ?></td>
 </tr>
 
 <tr>
 <td><?php echo $langs->trans("Weight"); ?></td>
-<td colspan="2"><?php echo $this->control->tpl['weight']; ?></td>
+<td colspan="2"><?php echo $object->weight; ?></td>
 </tr>
 
 <tr>
 <td><?php echo $langs->trans("Length"); ?></td>
-<td colspan="2"><?php echo $this->control->tpl['length']; ?></td>
+<td colspan="2"><?php echo $object->length; ?></td>
 </tr>
 
 <tr>
 <td><?php echo $langs->trans("Surface"); ?></td>
-<td colspan="2"><?php echo $this->control->tpl['surface']; ?></td>
+<td colspan="2"><?php echo $object->surface; ?></td>
 </tr>
 
 <tr>
 <td><?php echo $langs->trans("Volume"); ?></td>
-<td colspan="2"><?php echo $this->control->tpl['volume']; ?></td>
+<td colspan="2"><?php echo $object->volume; ?></td>
 </tr>
 
 <tr>
 <td valign="top"><?php echo $langs->trans("Note"); ?></td>
-<td colspan="2"><?php echo $this->control->tpl['note']; ?></td>
+<td colspan="2"><?php echo $object->note; ?></td>
 </tr>
 
 </table>
-
-<?php echo $this->control->tpl['showend']; ?>
 
 <!-- END PHP TEMPLATE -->
