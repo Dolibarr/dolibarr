@@ -141,7 +141,7 @@ class Categorie
 			$this->error.=" : ".$langs->trans("CategoryExistsAtSameLevel");
 			return -4;
 		}
-		
+
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label, description,";
@@ -187,7 +187,7 @@ class Categorie
 				$result=$interface->run_triggers('CATEGORY_CREATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
-				
+
 				$this->db->commit();
 				return $id;
 			}
@@ -579,7 +579,8 @@ class Categorie
 			$cats = array ();
 			while ($rec = $this->db->fetch_array($res))
 			{
-				$cat = new Categorie($this->db, $rec['fk_categorie_fille']);
+				$cat = new Categorie($this->db);
+				$cat->fetch($rec['fk_categorie_fille']);
 				$cats[] = $cat;
 			}
 			return $cats;
@@ -826,9 +827,10 @@ class Categorie
 		if ($res)
 		{
 			$cats = array ();
-			while ($record = $this->db->fetch_array($res))
+			while ($rec = $this->db->fetch_array($res))
 			{
-				$cat = new Categorie($this->db, $record['rowid']);
+				$cat = new Categorie($this->db);
+				$cat->fetch($rec['rowid']);
 				$cats[$record['rowid']] = $cat;
 			}
 			return $cats;
@@ -1059,9 +1061,11 @@ class Categorie
 
 		if ($res)
 		{
-			while ($cat = $this->db->fetch_array($res))
+			while ($rec = $this->db->fetch_array($res))
 			{
-				$meres[] = new Categorie($this->db, $cat['fk_categorie_mere']);
+				$cat = new Categorie($this->db);
+				$cat->fetch($rec['fk_categorie_mere']);
+				$meres[] = $cat;
 			}
 			return $meres;
 		}
@@ -1125,9 +1129,11 @@ class Categorie
 		$res = $this->db->query($sql);
 		if ($res)
 		{
-			while ($cat = $this->db->fetch_array($res))
+			while ($rec = $this->db->fetch_array($res))
 			{
-				$cats[] = new Categorie($this->db, $cat['fk_categorie']);
+				$cat = new Categorie($this->db);
+				$cat->fetch($rec['fk_categorie']);
+				$cats[] = $cat;
 			}
 
 			return $cats;
@@ -1174,9 +1180,11 @@ class Categorie
 		$res  = $this->db->query($sql);
 		if ($res)
 		{
-			while ($id = $this->db->fetch_array($res))
+			while ($rec = $this->db->fetch_array($res))
 			{
-				$cats[] = new Categorie($this->db, $id['rowid']);
+				$cat = new Categorie($this->db);
+				$cat->fetch($rec['rowid']);
+				$cats[] = $cat;
 			}
 
 			return $cats;
@@ -1282,7 +1290,7 @@ class Categorie
 	function liste_photos($dir,$nbmax=0)
 	{
 		include_once(DOL_DOCUMENT_ROOT ."/core/lib/files.lib.php");
-		
+
 		$nbphoto=0;
 		$tabobj=array();
 

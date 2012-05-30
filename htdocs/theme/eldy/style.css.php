@@ -215,7 +215,12 @@ select.flat, form.flat select {
 input:disabled {
 	background:#ddd;
 }
-input:-webkit-autofill { background-color: #FCFEFA !important; background-image:none !important; }
+input:-webkit-autofill {
+	background-color: #FCFEFA !important; background-image:none !important;
+}
+input.liste_titre {
+	box-shadow: none !important;
+}
 
 textarea:disabled {
 	background:#ddd;
@@ -1477,7 +1482,7 @@ table.noborder tr {
 	border-left-width: 1px;
 	border-left-color: #BBBBBB;
 	border-left-style: solid;
-	height: 18px;
+	height: 20px;
 }
 
 table.noborder th, table.noborder td {
@@ -2382,7 +2387,7 @@ a.cke_dialog_ui_button
 /* ============================================================================== */
 
 div.scroll2 {
-	width: 582px !important;
+	width: <?php print isset($_SESSION['dol_screenwidth'])?max($_SESSION['dol_screenwidth']-830,450):'450'; ?>px !important;
 }
 
 

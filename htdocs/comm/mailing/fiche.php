@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2005-2011	Laurent Destailleur		<eldy@uers.sourceforge.net>
+ * Copyright (C) 2005-2012	Laurent Destailleur		<eldy@uers.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,52 +45,52 @@ $object=new Mailing($db);
 
 // Tableau des substitutions possibles
 $substitutionarray=array(
-		'__ID__' => 'IdRecord',
-		'__EMAIL__' => 'EMail',
-		'__LASTNAME__' => 'Lastname',
-		'__FIRSTNAME__' => 'Firstname',
-		'__MAILTOEMAIL__' => 'MailtoEmail',
-		'__OTHER1__' => 'Other1',
-		'__OTHER2__' => 'Other2',
-		'__OTHER3__' => 'Other3',
-		'__OTHER4__' => 'Other4',
-		'__OTHER5__' => 'Other5',
-		'__SIGNATURE__' => 'Signature',
-		'__PERSONALIZED__' => 'Personalized'
+    '__ID__' => 'IdRecord',
+    '__EMAIL__' => 'EMail',
+    '__LASTNAME__' => 'Lastname',
+    '__FIRSTNAME__' => 'Firstname',
+    '__MAILTOEMAIL__' => 'MailtoEmail',
+    '__OTHER1__' => 'Other1',
+    '__OTHER2__' => 'Other2',
+    '__OTHER3__' => 'Other3',
+    '__OTHER4__' => 'Other4',
+    '__OTHER5__' => 'Other5',
+    '__SIGNATURE__' => 'Signature',
+    '__PERSONALIZED__' => 'Personalized'
 );
 if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE)
 {
-	$substitutionarray=array_merge(
-			$substitutionarray,
-			array(
-					'__CHECK_READ__' => 'CheckMail',
-					'__UNSUSCRIBE__' => 'Unsubscribe'
-			)
-	);
+    $substitutionarray=array_merge(
+        $substitutionarray,
+        array(
+            '__CHECK_READ__' => 'CheckMail',
+            '__UNSUSCRIBE__' => 'Unsubscribe'
+        )
+    );
 }
 
 $substitutionarrayfortest=array(
-		'__ID__' => 'TESTIdRecord',
-		'__EMAIL__' => 'TESTEMail',
-		'__LASTNAME__' => 'TESTLastname',
-		'__FIRSTNAME__' => 'TESTFirstname',
-		'__MAILTOEMAIL__' => 'TESTMailtoEmail',
-		'__OTHER1__' => 'TESTOther1',
-		'__OTHER2__' => 'TESTOther2',
-		'__OTHER3__' => 'TESTOther3',
-		'__OTHER4__' => 'TESTOther4',
-		'__OTHER5__' => 'TESTOther5',
-		'__SIGNATURE__' => 'TESTSignature',
-		'__PERSONALIZED__' => 'TESTPersonalized'
+    '__ID__' => 'TESTIdRecord',
+    '__EMAIL__' => 'TESTEMail',
+    '__LASTNAME__' => 'TESTLastname',
+    '__FIRSTNAME__' => 'TESTFirstname',
+    '__MAILTOEMAIL__' => 'TESTMailtoEmail',
+    '__OTHER1__' => 'TESTOther1',
+    '__OTHER2__' => 'TESTOther2',
+    '__OTHER3__' => 'TESTOther3',
+    '__OTHER4__' => 'TESTOther4',
+    '__OTHER5__' => 'TESTOther5',
+    '__SIGNATURE__' => 'TESTSignature',
+    '__PERSONALIZED__' => 'TESTPersonalized'
 );
 if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE)
 {
     $substitutionarrayfortest=array_merge(
-    		$substitutionarrayfortest,
-    		array(
-    				'__CHECK_READ__' => 'TESTCheckMail',
-    				'__UNSUSCRIBE__' => 'TESTUnsubscribe'
-    		)
+        $substitutionarrayfortest,
+        array(
+            '__CHECK_READ__' => 'TESTCheckMail',
+            '__UNSUSCRIBE__' => 'TESTUnsubscribe'
+        )
     );
 }
 
@@ -112,9 +112,9 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
 		else
 		{
 			$mesg=$object->error;
-			$action='';
 		}
 	}
+    $action='';
 }
 
 // Action send emailing for everybody
@@ -684,14 +684,12 @@ else
 			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("ValidMailing"),$langs->trans("ConfirmValidMailing"),"confirm_valid",'','',1);
 			if ($ret == 'html') print '<br>';
 		}
-
 		// Confirm reset
 		else if ($action == 'reset')
 		{
 			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("ResetMailing"),$langs->trans("ConfirmResetMailing",$object->ref),"confirm_reset",'','',2);
 			if ($ret == 'html') print '<br>';
 		}
-
 		// Confirm delete
 		else if ($action == 'delete')
 		{
@@ -699,7 +697,8 @@ else
 			if ($ret == 'html') print '<br>';
 		}
 
-		else if ($action != 'edit')
+
+		if ($action != 'edit')
 		{
 			/*
 			 * Mailing en mode visu
@@ -750,12 +749,12 @@ else
 
 			// From
 			print '<tr><td>'.$form->editfieldkey("MailFrom",'email_from',$object->email_from,$object,$user->rights->mailing->creer && $object->statut < 3,'string').'</td><td colspan="3">';
-			print $form->editfieldval("MailFrom",'email_from',$object->email_from,$object,$user->rights->mailing->creer && $object->statut < 3,'string');
+			print $form->editfieldval("MailFrom",'email_from',$object->email_from,$object,$user->rights->mailing->creer && $object->statut < 3,'email');
 			print '</td></tr>';
 
 			// Errors to
 			print '<tr><td>'.$form->editfieldkey("MailErrorsTo",'email_errorsto',$object->email_errorsto,$object,$user->rights->mailing->creer && $object->statut < 3,'string').'</td><td colspan="3">';
-			print $form->editfieldval("MailErrorsTo",'email_errorsto',$object->email_errorsto,$object,$user->rights->mailing->creer && $object->statut < 3,'string');
+			print $form->editfieldval("MailErrorsTo",'email_errorsto',$object->email_errorsto,$object,$user->rights->mailing->creer && $object->statut < 3,'email');
 			print '</td></tr>';
 
 			// Status
@@ -766,7 +765,7 @@ else
 			print $langs->trans("TotalNbOfDistinctRecipients");
 			print '</td><td colspan="3">';
 			$nbemail = ($object->nbemail?$object->nbemail:img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>');
-			if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && is_numeric($nbemail) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
+			if ($object->statut != 3 && !empty($conf->global->MAILING_LIMIT_SENDBYWEB) && is_numeric($nbemail) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
 			{
 				if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0)
 				{
@@ -801,12 +800,12 @@ else
 				array('type' => 'checkbox', 'name' => 'clone_receivers', 'label' => $langs->trans("CloneReceivers").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true)
 				);
 				// Paiement incomplet. On demande si motif = escompte ou autre
-				$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneEMailing'),$langs->trans('ConfirmCloneEMailing',$object->ref),'confirm_clone',$formquestion,'yes');
+				$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneEMailing'),$langs->trans('ConfirmCloneEMailing',$object->ref),'confirm_clone',$formquestion,'yes',2,240);
 				print '<br>';
 			}
 
 
-			if ($mesg) print $mesg;
+			dol_htmloutput_mesg($mesg);
 
 
 			/*
@@ -953,14 +952,20 @@ else
 			 * Mailing en mode edition
 			 */
 
-			if ($mesg) print $mesg."<br>";
-			if ($message) print $message."<br>";
+		    $mesgs=array();
+		    if ($mesg)    $mesgs[]=$mesg;
+		    if ($message) $message[]=$message;
+			dol_htmloutput_mesg('',$mesgs);
 
 			print '<table class="border" width="100%">';
 
+			// Ref
 			print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">'.$object->id.'</td></tr>';
+			// Topic
 			print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
+			// From
 			print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from,0,0,0,0,1).'</td></tr>';
+			// To
 			print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto,0,0,0,0,1).'</td></tr>';
 
 			// Status

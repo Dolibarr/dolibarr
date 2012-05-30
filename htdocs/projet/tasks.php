@@ -42,11 +42,17 @@ $mode = GETPOST('mode', 'alpha');
 $mine = ($mode == 'mine' ? 1 : 0);
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
+$object = new Project($db);
+if ($ref)
+{
+    $object->fetch(0,$ref);
+    $id=$object->id;
+}
+
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
-//$result = restrictedArea($user, 'projet', $projectid);
-if (!$user->rights->projet->lire) accessforbidden();
+$result = restrictedArea($user, 'projet', $id);
 
 $progress=GETPOST('progress', 'int');
 $label=GETPOST('label', 'alpha');
@@ -54,7 +60,6 @@ $description=GETPOST('description', 'alpha');
 
 $userAccess=0;
 
-$object = new Project($db);
 
 
 /*

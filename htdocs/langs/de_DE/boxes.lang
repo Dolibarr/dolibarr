@@ -1,11 +1,12 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-10 00:11:12
- */
-
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 BoxLastRssInfos=RSS-Informationen
 BoxLastProducts=%s zuletzt bearbeitete Produkte/Services
 BoxLastProductsInContract=%s zuletzt verkaufte Produkte/Services
@@ -18,6 +19,8 @@ BoxLastCustomerOrders=Zuletzt bearbeitete Kundenaufträge
 BoxLastSuppliers=Zuletzt bearbeitete Lieferanten
 BoxLastBooks=Zuletzt bearbeitete Konten
 BoxLastActions=Zuletzt bearbeitete Maßnahmen
+BoxLastContacts=Letzte Kontakte/Adressen
+BoxLastMembers=Letzte Mitglieder
 BoxCurrentAccounts=Aktueller Saldo
 BoxSalesTurnover=Umsatz
 BoxTitleLastBooks=Letzte %s aufgezeichnet Bücher
@@ -32,24 +35,27 @@ BoxTitleLastPropals=%s zuletzt erfasste Angebote
 BoxTitleLastCustomerBills=%s zuletzt erfasste Kundenrechnungen
 BoxTitleLastSupplierBills=%s zuletzt erfasste Lieferantenrechnungen
 BoxTitleLastProspects=%s zuletzt erfasste Leads
+BoxTitleLastModifiedMembers=Zuletzt geänderte %s Mitglieder
 BoxTitleCurrentAccounts=Finanzkonten-Übersicht
 BoxTitleSalesTurnover=Umsatz
 BoxMyLastBookmarks=Meine %s letzten Lesezeichen
+BoxOldestExpiredServices=Die ältesten abgelaufenen aktiven Dienste
+BoxLastExpiredServices=Letzte %s ältesten aktive Kontakte mit abgelaufenem Diensten
 FailedToRefreshDataInfoNotUpToDate=Fehler beim RSS-Abruf. Letzte erfolgreiche Aktualisierung: %s
 NoRecordedBookmarks=Keine Lesezeichen gesetzt. Klicken Sie <a href="%s">hier</a>, um ein Lesezeichen zu setzen.
+ClickToAdd=Hir klicken um hinzuzufügen.
 NoRecordedCustomers=Keine erfassten Kunden
+NoRecordedContacts=Keine erfassten Kontakte
 BoxTitleLastActionsToDo=%s letzte Maßnahmen zur Erledigung
 NoActionsToDo=Keine Maßnahmen gesetzt
 NoRecordedOrders=Keine erfassten Kundenaufträge
 NoRecordedProposals=Keine erfassten Angebote
 NoRecordedInvoices=Keine erfassten Kundenrechnungen
 NoRecordedSupplierInvoices=Keine erfassten Lieferantenrechnungen
-
 LastRefreshDate=Letztes Aktualisierungsdatum
 NoRecordedProducts=Keine erfassten Produkte/Services
 NoRecordedProspects=Keine erfassten Leads
 NoContractedProducts=Keine Produkte/Services in Auftrag
-
 BoxOldestUnpaidCustomerBills=Älteste offene Kundenrechnungen
 BoxOldestUnpaidSupplierBills=Älteste offene Lieferantenrechnungen
 BoxTotalUnpaidCustomerBills=Summe offener Kundenrechnungen (OP Gesamt)
@@ -58,32 +64,16 @@ BoxTitleOldestUnpaidCustomerBills=Älteste %s offene Kundenrechnungen
 BoxTitleOldestUnpaidSupplierBills=Älteste %s offene  Lieferantenrechnungen
 BoxTitleTotalUnpaidCustomerBills=Summe offener Kundenrechnungen (OP)
 BoxTitleTotalUnpaidSuppliersBills=offene Lieferantenrechnungen
+BoxTitleLastModifiedContacts=Zuletzt geändert %s Kontakte/Adressen
 NoUnpaidCustomerBills=Keine offenen Kundenrechnungen
 NoUnpaidSupplierBills=Keine offenen Lieferantenrechnungen
-
-
 BoxLastContracts=Zuletzt abgeschlossene Verträge
 BoxTitleLastProductsInContract=%s zuletzt in Verträgen erfasste Produkte/Services
 BoxTitleLastContracts=%s zuletzt bearbeitete Verträge
+BoxTitleLastModifiedDonations=Zuletzt geändert %s Spenden
+BoxTitleLastModifiedExpenses=Zuletzt geändert %s Aufwendungen
 NoModifiedSupplierBills=Keine bearbeiteten Lieferantenrechnungen
 NoRecordedContracts=Keine Verträge erfasst
-
-
 BoxTitleLastModifiedSuppliers=%s zuletzt bearbeitete Lieferanten
 BoxTitleLastModifiedCustomers=%s zuletzt bearbeitete Kunden
 BoxTitleLastModifiedProspects=%s zuletzt bearbeitete Leads
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
-BoxLastContacts=Letzte Kontakte / Adressen
-BoxLastMembers=Letzte Mitglieder
-BoxTitleLastModifiedMembers=Zuletzt geändert %s Mitglieder
-BoxTitleLastModifiedContacts=Zuletzt geändert %s Kontakte / Adressen
-BoxOldestExpiredServices=Die ältesten aktiven Dienste abgelaufen
-BoxLastExpiredServices=Letzte %s älteste aktive Kontakte mit abgelaufenem Dienstleistungen
-BoxTitleLastModifiedDonations=Zuletzt geändert %s Spenden
-BoxTitleLastModifiedExpenses=Zuletzt geändert %s Aufwendungen
-ClickToAdd=Klicken Sie hier, um hinzuzufügen.
-NoRecordedContacts=Keine aufgenommenen Kontakte
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:52).

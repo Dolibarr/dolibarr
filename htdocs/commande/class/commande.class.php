@@ -682,7 +682,7 @@ class Commande extends CommonObject
                         $this->lines[$i]->remise_percent,
                         $this->lines[$i]->info_bits,
                         $this->lines[$i]->fk_remise_except,
-    					'HT',
+                        'HT',
                         0,
                         $this->lines[$i]->date_start,
                         $this->lines[$i]->date_end,
@@ -2122,11 +2122,11 @@ class Commande extends CommonObject
      *  @param		int				$skip_update_total	Skip update of total
      *  @return   	int              					< 0 if KO, > 0 if OK
      */
-    function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0)
+    function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0)
     {
         global $conf;
 
-        dol_syslog("CustomerOrder::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, $price_base_type, $info_bits, $date_start, $date_end, $type");
+        dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, $price_base_type, $info_bits, $date_start, $date_end, $type");
         include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 
         if ($this->brouillon)
@@ -2224,13 +2224,13 @@ class Commande extends CommonObject
             {
                 $this->error=$this->db->error();
                 $this->db->rollback();
-                dol_syslog("CustomerOrder::UpdateLine Error=".$this->error, LOG_ERR);
+                dol_syslog(get_class($this)."::updateline Error=".$this->error, LOG_ERR);
                 return -1;
             }
         }
         else
         {
-            $this->error="CustomerOrder::Updateline Order status makes operation forbidden";
+            $this->error=get_class($this)."::updateline Order status makes operation forbidden";
             return -2;
         }
     }
@@ -2268,7 +2268,7 @@ class Commande extends CommonObject
         {
         	// Delete order details
         	$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE fk_commande = ".$this->id;
-        	dol_syslog("Commande::delete sql=".$sql);
+        	dol_syslog(get_class($this)."::delete sql=".$sql);
         	if (! $this->db->query($sql) )
         	{
         		dol_syslog(get_class($this)."::delete error", LOG_ERR);
@@ -2302,7 +2302,7 @@ class Commande extends CommonObject
         		{
         			dol_delete_preview($this);
 
-        			if (!dol_delete_file($file))
+        			if (! dol_delete_file($file,0,0,0,$this)) // For triggers
         			{
         				$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
         				$this->db->rollback();
@@ -2311,7 +2311,7 @@ class Commande extends CommonObject
         		}
         		if (file_exists($dir))
         		{
-        			if (!dol_delete_dir($dir))
+        			if (! dol_delete_dir($dir))
         			{
         				$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
         				$this->db->rollback();

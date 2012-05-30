@@ -23,7 +23,7 @@
 
 //if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
 //if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
@@ -43,8 +43,8 @@ error_reporting(E_ALL | E_STRICT);
 //print_r($_GET);
 //print 'upload_dir='.GETPOST('upload_dir');
 
-$fk_element = GETPOST('fk_element');
-$element = GETPOST('element');
+$fk_element = GETPOST('fk_element','int');
+$element = GETPOST('element','alpha');
 
 
 /**
@@ -56,6 +56,7 @@ class UploadHandler
     private $_options;
     private $_fk_element;
     private $_element;
+    private $_element_ref;
 
 
     /**
@@ -64,19 +65,47 @@ class UploadHandler
      * @param array		$options		Options array
      * @param int		$fk_element		fk_element
      * @param string	$element		element
+     * @param string	$element_ref	element ref
      */
     function __construct($options=null,$fk_element=null,$element=null)
     {
 
-    	global $conf;
+    	global $db, $conf;
+    	global $object;
 
     	$this->_fk_element=$fk_element;
     	$this->_element=$element;
+    	
+    	$pathname=$filename=$element;
+    	if (preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
+    	{
+    		$pathname = $regs[1];
+    		$filename = $regs[2];
+    	}
+    	
+    	// For compatibility
+    	if ($element == 'propal')   {
+    		$pathname = 'comm/propal'; $filename = 'propal';
+    	}
+    	if ($element == 'commande')    {
+    		$pathname = $filename = 'commande';
+    	}
+    	if ($element == 'facture') {
+    		$pathname = 'compta/facture'; $filename = 'facture';
+    	}
+    	
+    	dol_include_once('/'.$pathname.'/class/'.$filename.'.class.php');
+    	
+    	$classname = ucfirst($filename);
+    	$object = new $classname($db);
+    	
+    	$object->fetch($fk_element);
+    	$object->fetch_thirdparty();
 
         $this->_options = array(
             'script_url' => $_SERVER['PHP_SELF'],
-            'upload_dir' => $conf->$element->dir_output . '/' . $fk_element . '/',
-            'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$fk_element.'/',
+            'upload_dir' => $conf->$element->dir_output . '/' . $object->ref . '/',
+            'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$object->ref.'/',
             'param_name' => 'files',
             // The php.ini settings upload_max_filesize and post_max_size
             // take precedence over the following max_file_size setting:
@@ -96,8 +125,8 @@ class UploadHandler
                 ),
                 */
                 'thumbs' => array(
-                    'upload_dir' => $conf->$element->dir_output . '/' . $fk_element . '/thumbs/',
-                    'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$fk_element.'/thumbs/'
+                    'upload_dir' => $conf->$element->dir_output . '/' . $object->ref . '/thumbs/',
+                    'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$object->ref.'/thumbs/'
                 )
             )
         );
@@ -251,8 +280,7 @@ class UploadHandler
                         FILE_APPEND
                     );
                 } else {
-                    // FIXME problem with trigger
-                	dol_move_uploaded_file($uploaded_file, $file_path, 1, 0, 0, 1);
+                	dol_move_uploaded_file($uploaded_file, $file_path, 1);
                 }
             } else {
                 // Non-multipart uploads (PUT method support)

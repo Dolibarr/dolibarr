@@ -39,6 +39,7 @@ $type	= GETPOST('type');
 $mesg	= GETPOST('mesg');
 
 $removecat = GETPOST('removecat','int');
+$catMere=GETPOST('catMere','int');
 
 $dbtablename = '';
 
@@ -121,7 +122,7 @@ if ($removecat > 0)
 }
 
 // Add object into a category
-if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
+if ($catMere > 0)
 {
 	if ($type==0 && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
@@ -150,7 +151,7 @@ if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 		$elementtype = 'member';
 	}
 	$cat = new Categorie($db);
-	$result=$cat->fetch($_REQUEST["catMere"]);
+	$result=$cat->fetch($catMere);
 
 	$result=$cat->add_type($object,$elementtype);
 	if ($result >= 0)
@@ -162,7 +163,6 @@ if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 		if ($cat->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') $mesg='<div class="error">'.$langs->trans("ObjectAlreadyLinkedToCategory").'</div>';
 		else $mesg=$langs->trans("Error").' '.$cat->error;
 	}
-
 }
 
 

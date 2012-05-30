@@ -322,7 +322,7 @@ abstract class CommonObject
 
         $tab=array();
 
-        $sql = "SELECT ec.rowid, ec.statut, ec.fk_socpeople as id";
+        $sql = "SELECT ec.rowid, ec.statut, ec.fk_socpeople as id";    // This field contains id of llx_socpeople or id of llx_user
         if ($source == 'internal') $sql.=", '-1' as socid";
         if ($source == 'external' || $source == 'thirdparty') $sql.=", t.fk_soc as socid";
         $sql.= ", t.civilite as civility, t.name as lastname, t.firstname, t.email";
@@ -545,7 +545,7 @@ abstract class CommonObject
         $this->thirdparty = $thirdparty;
 
         // Use first price level if level not defined for third party
-        if ($conf->global->PRODUIT_MULTIPRICES && empty($this->thirdparty->price_level))
+        if (! empty($conf->global->PRODUIT_MULTIPRICES) && empty($this->thirdparty->price_level))
         {
             $this->client->price_level=1; // deprecated
             $this->thirdparty->price_level=1;

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
@@ -128,9 +128,9 @@ foreach ($modulesdir as $dir)
 		        	{
 		        		$mesg="Error: Module ".$modName." was found twice: Into ".$modNameLoaded[$modName]." and ".$dir.". You probably have an old file on your disk.<br>";
 		                dol_syslog($mesg, LOG_ERR);
-						continue;		        		
+						continue;
 		        	}
-		        	
+
 		            try
 		            {
 		                $res=include_once($dir.$file);
@@ -248,7 +248,7 @@ $categidx=4;
 dol_fiche_head($head, $tagmode, $langs->trans("Modules"));
 
 
-if ($mesg) print '<div class="error">'.$mesg.'</div>';
+dol_htmloutput_errors($mesg);
 
 
 if ($mode != 4)
@@ -336,7 +336,7 @@ if ($mode != 4)
             $var=!$var;
 
             //print "\n<!-- Module ".$objMod->numero." ".$objMod->getName()." found into ".$dirmod[$key]." -->\n";
-            print '<tr height="18" '.$bc[$var].">\n";
+            print '<tr '.$bc[$var].">\n";
 
             // Picto
             print '  <td valign="top" width="14" align="center">';
@@ -373,7 +373,7 @@ if ($mode != 4)
             {
                 $disableSetup = 0;
 
-                print "<td align=\"center\" valign=\"top\">";
+                print "<td align=\"center\" valign=\"middle\">";
 
             	// Module actif
                 if (! empty($objMod->always_enabled) || (($conf->global->MAIN_MODULE_MULTICOMPANY && $objMod->core_enabled) && ($user->entity || $conf->entity!=1)))
@@ -434,7 +434,7 @@ if ($mode != 4)
             }
             else
             {
-                print "<td align=\"center\" valign=\"top\">";
+                print "<td align=\"center\" valign=\"middle\">";
 
                 if (! empty($objMod->always_enabled))
                 {

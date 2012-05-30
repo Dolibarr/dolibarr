@@ -185,7 +185,7 @@ class DoliDBMysql
      *  @param     string	$type	Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
      *  @return    string   		SQL request line converted
      */
-	function convertSQLFromMysql($line,$type='ddl')
+	static function convertSQLFromMysql($line,$type='ddl')
 	{
 		return $line;
 	}

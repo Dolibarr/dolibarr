@@ -73,10 +73,10 @@ class Fichinter extends CommonObject
 		// List of language codes for status
 		$this->statuts[0]='Draft';
 		$this->statuts[1]='Validated';
-		$this->statuts[2]='Invoiced';
+		$this->statuts[2]='StatusInterInvoiced';
 		$this->statuts_short[0]='Draft';
 		$this->statuts_short[1]='Validated';
-		$this->statuts_short[2]='Invoiced';
+		$this->statuts_short[2]='StatusInterInvoiced';
 	}
 
 
@@ -426,25 +426,25 @@ class Fichinter extends CommonObject
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts_short[$statut]);
 			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts_short[$statut]);
-			if ($statut==2) return img_picto($langs->trans('StatusInterInvoiced'),'statut6').' '.$langs->trans('StatusOrderProcessed');
+			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts_short[$statut]);
 		}
 		if ($mode == 3)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
 			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
-			if ($statut==2) return img_picto($langs->trans('StatusInterInvoiced'),'statut6');
+			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
 		}
 		if ($mode == 4)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts_short[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut==1) return img_picto($langs->trans($this->statuts_short[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==2) return img_picto($langs->trans('StatusInterInvoiced'),'statut6').' '.$langs->trans('StatusInterInvoiced');
+			if ($statut==2) return img_picto($langs->trans($this->statuts_short[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 5)
 		{
 			if ($statut==0) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
 			if ($statut==1) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
-			if ($statut==2) return $langs->trans('StatusInterInvoiced').' '.img_picto($langs->trans('StatusInterInvoiced'),'statut6');
+			if ($statut==2) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
 		}
 	}
 

@@ -181,8 +181,8 @@ if (in_array('date',$filter))
 	if (empty($sqlwhere)) $sqlwhere=' WHERE ';
 	else $sqlwhere.=" AND";
 	$sqlwhere.= " f.fk_statut > 0";
-	$sqlwhere.= " AND f.datef >= ".$db->idate($dateafterdate);
-	$sqlwhere.= " AND f.datef <= ".$db->idate($datebeforedate);
+	$sqlwhere.= " AND f.datef >= '".$db->idate($dateafterdate)."'";
+	$sqlwhere.= " AND f.datef <= '".$db->idate($datebeforedate)."'";
 	$sqlorder = " ORDER BY f.datef ASC";
 }
 if (in_array('nopayment',$filter))
@@ -202,8 +202,8 @@ if (in_array('payments',$filter))
 	$sqlwhere.= " f.fk_statut > 0";
 	$sqlwhere.= " AND f.rowid = pf.fk_facture";
 	$sqlwhere.= " AND pf.fk_paiement = p.rowid";
-	$sqlwhere.= " AND p.datep >= ".$db->idate($paymentdateafter);
-	$sqlwhere.= " AND p.datep <= ".$db->idate($paymentdatebefore);
+	$sqlwhere.= " AND p.datep >= '".$db->idate($paymentdateafter)."'";
+	$sqlwhere.= " AND p.datep <= '".$db->idate($paymentdatebefore)."'";
 	$sqlorder = " ORDER BY p.datep ASC";
 }
 if (in_array('nodeposit',$filter))

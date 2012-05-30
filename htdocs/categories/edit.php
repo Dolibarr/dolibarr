@@ -108,7 +108,9 @@ print_fiche_titre($langs->trans("ModifCat"));
 dol_htmloutput_errors($mesg);
 
 
-$categorie = new Categorie($db, $id);
+$object = new Categorie($db);
+$object->fetch($id);
+
 $form = new Form($db);
 
 print '<table class="notopnoleft" border="0" width="100%">';
@@ -119,7 +121,7 @@ print "\n";
 print '<form method="post" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
-print '<input type="hidden" name="id" value="'.$categorie->id.'">';
+print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 
 print '<table class="border" width="100%">';
@@ -127,7 +129,7 @@ print '<table class="border" width="100%">';
 // Ref
 print '<tr><td class="fieldrequired">';
 print $langs->trans("Ref").'</td>';
-print '<td><input type="text" size="25" id="nom" name ="nom" value="'.$categorie->label.'" />';
+print '<td><input type="text" size="25" id="nom" name ="nom" value="'.$object->label.'" />';
 print '</tr>';
 
 // Description
@@ -135,13 +137,13 @@ print '<tr>';
 print '<td width="25%">'.$langs->trans("Description").'</td>';
 print '<td>';
 require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-$doleditor=new DolEditor('description',$categorie->description,'',200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,ROWS_6,50);
+$doleditor=new DolEditor('description',$object->description,'',200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,ROWS_6,50);
 $doleditor->Create();
 print '</td></tr>';
 
 // Parent category
 print '<tr><td>'.$langs->trans("In").'</td><td>';
-print $form->select_all_categories($type,$categorie->id_mere,'catMere',64,$categorie->id);
+print $form->select_all_categories($type,$object->id_mere,'catMere',64,$object->id);
 print '</td></tr>';
 
 print '</table>';
@@ -154,7 +156,7 @@ print '</form>';
 
 print '</td></tr></table>';
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>

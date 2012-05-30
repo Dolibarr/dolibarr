@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,13 @@ $ref= GETPOST('ref');
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
+$project = new Project($db);
+if ($ref)
+{
+    $project->fetch(0,$ref);
+    $id=$project->id;
+}
+
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
@@ -47,7 +55,6 @@ $result = restrictedArea($user, 'projet', $id);
 
 if ($action == 'update_public' && $user->rights->projet->creer)
 {
-	$project = new Project($db);
 	$project->fetch($_GET['id']);
 
 	$db->begin();
@@ -66,7 +73,6 @@ if ($action == 'update_public' && $user->rights->projet->creer)
 
 if ($action == 'update_private' && $user->rights->projet->creer)
 {
-	$project = new Project($db);
 	$project->fetch($_GET['id']);
 
 	$db->begin();
@@ -99,8 +105,7 @@ $now=dol_now();
 
 if ($id > 0 || ! empty($ref))
 {
-	if ($mesg) print $mesg;
-
+	dol_htmloutput_mesg($mesg);
 
 	if ($project->fetch($id, $ref))
 	{

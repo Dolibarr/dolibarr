@@ -1,11 +1,12 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-12 12:09:12
- */
-
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 MenuECM=Dokumente
 DocsMine=Meine Dokumente
 DocsGenerated=Erstellte Dokumente
@@ -42,6 +43,7 @@ ECMSearchByEntity=Suche nach Objekt
 ECMSectionOfDocuments=Dokumentenverzeichnisse
 ECMTypeManual=Manuell
 ECMTypeAuto=Automatisch
+ECMDocsBySocialContributions=Mit Sozialabgaben verbundene Dokumente
 ECMDocsByThirdParties=Mit Partnern verknüpfte Dokumente
 ECMDocsByProposals=Mit Angeboten verknüpfte Dokumente
 ECMDocsByOrders=Mit Kundenaufträgen verknüpfte Dokumente
@@ -56,9 +58,3 @@ ECMDirectoryForFiles=Relatives Verzeichnis für Dateien
 CannotRemoveDirectoryContainsFiles=Entfernen des Verzeichnisses nicht möglich, da es noch Dateien enthält
 ECMFileManager=Dateiverwaltung
 ECMSelectASection=Wählen Sie ein Verzeichnis aus der Baumansicht auf der linken Seite...
-
-
-// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
-// Reference language: en_US -> de_DE
-ECMDocsBySocialContributions=Documents to Sozialabgaben verbunden
-// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:27:58).

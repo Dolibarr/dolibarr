@@ -76,7 +76,7 @@ if (GETPOST('sendit','alpha') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 
 	if (dol_mkdir($upload_dir) >= 0)
 	{
-		$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0,0,$_FILES['userfile']['error']);
+		$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0,0,$_FILES['userfile']['error']);
 		if (is_numeric($resupload) && $resupload > 0)
 		{
 		    if (image_format_supported($upload_dir . "/" . $_FILES['userfile']['name']) == 1)
@@ -172,7 +172,7 @@ if ($object->id)
 
     // Affiche formulaire upload
    	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/fichinter/document.php?id='.$object->id,'',0,0,$user->rights->ficheinter->creer);
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/fichinter/document.php?id='.$object->id,'',0,0,$user->rights->ficheinter->creer,50,$object);
 
 
 	// List of document

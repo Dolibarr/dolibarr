@@ -5,7 +5,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
- * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2012 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -69,6 +69,11 @@ $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_montant_ttc=GETPOST('search_montant_ttc','alpha');
 
+//PDF
+$hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
+$hidedesc 	 = (GETPOST('hidedesc','int') ? GETPOST('hidedesc','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ?  1 : 0));
+$hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+
 // Security check
 $fieldid = (! empty($ref)?'facnumber':'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
@@ -80,6 +85,12 @@ $NBLINES=4;
 $usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
 
 $object=new Facture($db);
+
+// Load object
+if ($id > 0 || ! empty($ref))
+{
+	$ret=$object->fetch($id, $ref);
+}
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
@@ -145,6 +156,7 @@ else if ($action == 'reopen' && $user->rights->facture->creer)
 else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->supprimer)
 {
 	$result = $object->fetch($id);
+	$object->fetch_thirdparty();
 	$result = $object->delete();
 	if ($result > 0)
 	{
@@ -179,7 +191,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 		{
 			$ret=$object->fetch($id);    // Reload to get new records
-			$result=facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+			$result=facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 		}
 		if ($result >= 0)
 		{
@@ -368,7 +380,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
             {
                 $ret=$object->fetch($id);    // Reload to get new records
-                facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+                facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
             }
         }
         else
@@ -445,7 +457,7 @@ else if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_
 	        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 	        {
                 $ret=$object->fetch($id);    // Reload to get new records
-	            facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+	            facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 	        }
 	    }
     }
@@ -1114,7 +1126,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
         {
             $ret=$object->fetch($id);    // Reload to get new records
-            facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+            facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
         }
         unset($_POST['qty']);
         unset($_POST['type']);
@@ -1216,7 +1228,7 @@ else if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['sa
         if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
         {
             $ret=$object->fetch($id);    // Reload to get new records
-            facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+            facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
         }
     }
 }
@@ -1244,7 +1256,7 @@ else if ($action == 'up' && $user->rights->facture->creer)
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($newlang);
     }
-    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 
     Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id.'#'.$_GET['rowid']);
     exit;
@@ -1266,7 +1278,7 @@ else if ($action == 'down' && $user->rights->facture->creer)
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($newlang);
     }
-    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 
     Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id.'#'.$_GET['rowid']);
     exit;
@@ -1500,7 +1512,7 @@ else if ($action == 'builddoc')	// En get ou en post
         $outputlangs = new Translate("",$conf);
         $outputlangs->setDefaultLang($newlang);
     }
-    $result=facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+    $result=facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
     if ($result <= 0)
     {
         dol_print_error($db,$result);
@@ -1584,6 +1596,7 @@ llxHeader('',$langs->trans('Bill'),'EN:Customers_Invoices|FR:Factures_Clients|ES
 $form = new Form($db);
 $htmlother = new FormOther($db);
 $formfile = new FormFile($db);
+$bankaccountstatic=new Account($db);
 $now=dol_now();
 
 
@@ -2520,8 +2533,9 @@ else
              * List of payments
              */
 
-            $nbrows=8;
+            $nbrows=8; $nbcols=2;
             if ($conf->projet->enabled) $nbrows++;
+            if ($conf->banque->enabled) $nbcols++;
 
             //Local taxes
             if ($mysoc->pays_code=='ES')
@@ -2538,6 +2552,7 @@ else
             print '<tr class="liste_titre">';
             print '<td>'.($object->type == 2 ? $langs->trans("PaymentsBack") : $langs->trans('Payments')).'</td>';
             print '<td>'.$langs->trans('Type').'</td>';
+            if ($conf->banque->enabled) print '<td align="right">'.$langs->trans('BankAccount').'</td>';
             print '<td align="right">'.$langs->trans('Amount').'</td>';
             print '<td width="18">&nbsp;</td>';
             print '</tr>';
@@ -2545,12 +2560,15 @@ else
             $var=true;
 
             // Payments already done (from payment on this invoice)
-            $sql = 'SELECT p.datep as dp, p.num_paiement, p.rowid,';
+            $sql = 'SELECT p.datep as dp, p.num_paiement, p.rowid, p.fk_bank,';
             $sql.= ' c.code as payment_code, c.libelle as payment_label,';
-            $sql.= ' pf.amount';
-            $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement_facture as pf';
+            $sql.= ' pf.amount,';
+            $sql.= ' ba.rowid as baid, ba.ref, ba.label';
+            $sql.= ' FROM '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'paiement as p';
+            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
+            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
             $sql.= ' WHERE pf.fk_facture = '.$object->id.' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
-            $sql.= ' ORDER BY dp, tms';
+            $sql.= ' ORDER BY p.datep, p.tms';
 
             $result = $db->query($sql);
             if ($result)
@@ -2560,19 +2578,35 @@ else
 
                 if ($object->type != 2)
                 {
-                    while ($i < $num)
+                    if ($num > 0)
                     {
-                        $objp = $db->fetch_object($result);
-                        $var=!$var;
-                        print '<tr '.$bc[$var].'><td>';
-                        print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' ';
-                        print dol_print_date($db->jdate($objp->dp),'day').'</a></td>';
-                        $label=($langs->trans("PaymentType".$objp->payment_code)!=("PaymentType".$objp->payment_code))?$langs->trans("PaymentType".$objp->payment_code):$objp->payment_label;
-                        print '<td>'.$label.' '.$objp->num_paiement.'</td>';
-                        print '<td align="right">'.price($objp->amount).'</td>';
-                        print '<td>&nbsp;</td>';
-                        print '</tr>';
-                        $i++;
+                        while ($i < $num)
+                        {
+                            $objp = $db->fetch_object($result);
+                            $var=!$var;
+                            print '<tr '.$bc[$var].'><td>';
+                            print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' ';
+                            print dol_print_date($db->jdate($objp->dp),'day').'</a></td>';
+                            $label=($langs->trans("PaymentType".$objp->payment_code)!=("PaymentType".$objp->payment_code))?$langs->trans("PaymentType".$objp->payment_code):$objp->payment_label;
+                            print '<td>'.$label.' '.$objp->num_paiement.'</td>';
+                            if ($conf->banque->enabled)
+                            {
+                                $bankaccountstatic->id=$objp->baid;
+                                $bankaccountstatic->ref=$objp->ref;
+                                $bankaccountstatic->label=$objp->ref;
+                                print '<td align="right">';
+                                print $bankaccountstatic->getNomUrl(1,'transactions');
+                                print '</td>';
+                            }
+                            print '<td align="right">'.price($objp->amount).'</td>';
+                            print '<td>&nbsp;</td>';
+                            print '</tr>';
+                            $i++;
+                        }
+                    }
+                    else
+                    {
+                        print '<tr '.$bc[$var].'><td colspan="'.$nbcols.'">'.$langs->trans("None").'</td><td></td><td></td></tr>';
                     }
                 }
                 $db->free($result);
@@ -2585,7 +2619,7 @@ else
             if ($object->type != 2)
             {
                 // Total already paid
-                print '<tr><td colspan="2" align="right">';
+                print '<tr><td colspan="'.$nbcols.'" align="right">';
                 if ($object->type != 3) print $langs->trans('AlreadyPaidNoCreditNotesNoDeposits');
                 else print $langs->trans('AlreadyPaid');
                 print ' :</td><td align="right">'.price($totalpaye).'</td><td>&nbsp;</td></tr>';
@@ -2609,7 +2643,7 @@ else
                     {
                         $obj = $db->fetch_object($resql);
                         $invoice->fetch($obj->fk_facture_source);
-                        print '<tr><td colspan="2" align="right">';
+                        print '<tr><td colspan="'.$nbcols.'" align="right">';
                         if ($invoice->type == 2) print $langs->trans("CreditNote").' ';
                         if ($invoice->type == 3) print $langs->trans("Deposit").' ';
                         print $invoice->getNomUrl(0);
@@ -2631,7 +2665,7 @@ else
                 // Paye partiellement 'escompte'
                 if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'discount_vat')
                 {
-                    print '<tr><td colspan="2" align="right" nowrap="1">';
+                    print '<tr><td colspan="'.$nbcols.'" align="right" nowrap="1">';
                     print $form->textwithpicto($langs->trans("Escompte").':',$langs->trans("HelpEscompte"),-1);
                     print '</td><td align="right">'.price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
                     $resteapayeraffiche=0;
@@ -2639,7 +2673,7 @@ else
                 // Paye partiellement ou Abandon 'badcustomer'
                 if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'badcustomer')
                 {
-                    print '<tr><td colspan="2" align="right" nowrap="1">';
+                    print '<tr><td colspan="'.$nbcols.'" align="right" nowrap="1">';
                     print $form->textwithpicto($langs->trans("Abandoned").':',$langs->trans("HelpAbandonBadCustomer"),-1);
                     print '</td><td align="right">'.price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
                     //$resteapayeraffiche=0;
@@ -2647,7 +2681,7 @@ else
                 // Paye partiellement ou Abandon 'product_returned'
                 if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'product_returned')
                 {
-                    print '<tr><td colspan="2" align="right" nowrap="1">';
+                    print '<tr><td colspan="'.$nbcols.'" align="right" nowrap="1">';
                     print $form->textwithpicto($langs->trans("ProductReturned").':',$langs->trans("HelpAbandonProductReturned"),-1);
                     print '</td><td align="right">'.price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
                     $resteapayeraffiche=0;
@@ -2655,7 +2689,7 @@ else
                 // Paye partiellement ou Abandon 'abandon'
                 if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'abandon')
                 {
-                    print '<tr><td colspan="2" align="right" nowrap="1">';
+                    print '<tr><td colspan="'.$nbcols.'" align="right" nowrap="1">';
                     $text=$langs->trans("HelpAbandonOther");
                     if ($object->close_note) $text.='<br><br><b>'.$langs->trans("Reason").'</b>:'.$object->close_note;
                     print $form->textwithpicto($langs->trans("Abandoned").':',$text,-1);
@@ -2664,10 +2698,10 @@ else
                 }
 
                 // Billed
-                print '<tr><td colspan="2" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($object->total_ttc).'</td><td>&nbsp;</td></tr>';
+                print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($object->total_ttc).'</td><td>&nbsp;</td></tr>';
 
                 // Remainder to pay
-                print '<tr><td colspan="2" align="right">';
+                print '<tr><td colspan="'.$nbcols.'" align="right">';
                 if ($resteapayeraffiche >= 0) print $langs->trans('RemainderToPay');
                 else print $langs->trans('ExcessReceived');
                 print ' :</td>';
@@ -2677,7 +2711,7 @@ else
             else
             {
                 // Sold credit note
-                print '<tr><td colspan="2" align="right">'.$langs->trans('TotalTTC').' :</td>';
+                print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans('TotalTTC').' :</td>';
                 print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price(abs($object->total_ttc)).'</b></td><td>&nbsp;</td></tr>';
             }
 
@@ -3182,7 +3216,7 @@ else
                         $outputlangs->setDefaultLang($newlang);
                     }
 
-                    $result=facture_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+                    $result=facture_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
                     if ($result <= 0)
                     {
                         dol_print_error($db,$result);

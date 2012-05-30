@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  *
  * This	program	is free	software; you can redistribute it and/or modify
@@ -54,9 +54,12 @@ $confirm		= GETPOST('confirm','alpha');
 $comclientid 	= GETPOST('comid','int');
 $socid			= GETPOST('socid','int');
 $projectid		= GETPOST('projectid','int');
-$hidedetails	= GETPOST('hidedetails','alpha');
-$hidedesc		= GETPOST('hidedesc','alpha');
-$hideref		= GETPOST('hideref','alpha');
+
+//PDF
+$hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
+$hidedesc 	 = (GETPOST('hidedesc','int') ? GETPOST('hidedesc','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ?  1 : 0));
+$hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -178,7 +181,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
             $qty = $_POST['qty'] ? $_POST['qty'] : $_POST['pqty'];
 
             $productsupplier = new ProductFournisseur($db);
-            $idprod=$productsupplier->get_buyprice($_POST['idprodfournprice'], $qty);
+            $idprod=$productsupplier->get_buyprice($_POST['idprodfournprice'], $qty);    // Just to see if a price exists for the quantity. Not used to found vat
 
             if ($idprod > 0)
             {
@@ -194,12 +197,12 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 
                 $remise_percent = $_POST["remise_percent"] ? $_POST["remise_percent"] : $_POST["p_remise_percent"];
 
-                $tva_tx	= get_default_tva($object->thirdparty,$mysoc,$productsupplier->id);
+                $tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, $_POST['idprodfournprice']);
                 $type = $productsupplier->type;
 
                 // Local Taxes
-                $localtax1_tx= get_localtax($tva_tx, 1, $mysoc);
-                $localtax2_tx= get_localtax($tva_tx, 2, $mysoc);
+                $localtax1_tx= get_localtax($tva_tx, 1, $object->thirdparty);
+                $localtax2_tx= get_localtax($tva_tx, 2, $object->thirdparty);
 
                 $result=$object->addline(
                     $desc,
@@ -601,10 +604,11 @@ else if ($action == 'remove_file' && $user->rights->fournisseur->commande->creer
 
     if ($object->fetch($id))
     {
+        $langs->load("other");
         $upload_dir =	$conf->fournisseur->commande->dir_output . "/";
-        $file =	$upload_dir	. '/' .	$_GET['file'];
+        $file =	$upload_dir	. '/' .	GETPOST('file');
         dol_delete_file($file);
-        $mesg	= '<div	class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+        $mesg	= '<div	class="ok">'.$langs->trans("FileWasRemoved",GETPOST('file')).'</div>';
     }
 }
 

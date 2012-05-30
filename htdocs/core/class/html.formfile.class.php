@@ -504,9 +504,11 @@ class FormFile
 
                 if ($delallowed)
                 {
-                    $out.= '<td align="right"><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath);
-                    $out.= ($param?'&amp;'.$param:'');
-                    $out.= '&amp;urlsource='.urlencode($urlsource);
+                    $out.= '<td align="right">';
+                    //$out.= '<a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath);
+                    $out.= '<a href="'.$urlsource.'&action=remove_file&modulepart='.$modulepart.'&file='.urlencode($relativepath);
+                    $out.= ($param?'&'.$param:'');
+                    $out.= '&urlsource='.urlencode($urlsource);
                     $out.= '">'.img_delete().'</a></td>';
                 }
 
@@ -608,7 +610,7 @@ class FormFile
                 // Delete or view link
                 print '<td align="right">';
                 if ($useinecm)     print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view().'</a> &nbsp; ';
-                if ($permtodelete) print '<a href="'.(($useinecm && ! empty($conf->global->MAIN_ECM_TRY_JS))?'#':$url.'?id='.$object->id.'&action=delete&urlfile='.urlencode($file['name']).$param).'" class="deletefilelink" rel="'.urlencode($file['name']).'">'.img_delete().'</a>';
+                if ($permtodelete) print '<a href="'.(($useinecm && !empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?id='.$object->id.'&action=delete&urlfile='.urlencode($file['name']).$param).'" class="deletefilelink" rel="'.urlencode($file['name']).'">'.img_delete().'</a>';
                 else print '&nbsp;';
                 print "</td>";
                 print "</tr>\n";
@@ -802,103 +804,12 @@ class FormFile
         $upload_max_filesize		= $mul_upload_max_filesize * (int) $upload_max_filesize;
         // Max file size
         $max_file_size 				= (($post_max_size < $upload_max_filesize) ? $post_max_size : $upload_max_filesize);
-
-        print '<script type="text/javascript">
-				$(function () {
-					\'use strict\';
-
-					var max_file_size = \''.$max_file_size.'\';
-
-					// Initialize the jQuery File Upload widget:
-					$("#fileupload").fileupload({
-						maxFileSize: max_file_size,
-						done: function (e, data) {
-							$.ajax(data).success(function () {
-								location.href=\''.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].'\';
-							});
-						},
-						destroy: function (e, data) {
-							var that = $(this).data("fileupload");
-							if ( confirm("Delete this file ?") == true ) {
-								if (data.url) {
-									$.ajax(data).success(function () {
-											that._adjustMaxNumberOfFiles(1);
-						                    $(this).fadeOut(function () {
-						                    	$(this).remove();
-						                    });
-						                });
-						        } else {
-						        	data.context.fadeOut(function () {
-						        		$(this).remove();
-						            });
-						        }
-							}
-						}
-					});
-
-					// Load existing files:
-					// TODO do not delete
-					if (1 == 2) {
-						$.getJSON($("#fileupload form").prop("action"), { fk_element: "'.$object->id.'", element: "'.$object->element.'"}, function (files) {
-							var fu = $("#fileupload").data("fileupload");
-							fu._adjustMaxNumberOfFiles(-files.length);
-							fu._renderDownload(files)
-								.appendTo($("#fileupload .files"))
-								.fadeIn(function () {
-									// Fix for IE7 and lower:
-									$(this).show();
-								});
-						});
-					}
-
-					// Open download dialogs via iframes,
-					// to prevent aborting current uploads:
-					$("#fileupload .files a:not([target^=_blank])").live("click", function (e) {
-						e.preventDefault();
-						$(\'<iframe style="display:none;"></iframe>\')
-							.prop("src", this.href)
-							.appendTo("body");
-					});
-
-				});
-				</script>';
-
-        print '<div id="fileupload">';
-        print '<form action="'.DOL_URL_ROOT.'/core/ajax/fileupload.php" method="POST" enctype="multipart/form-data">';
-        print '<input type="hidden" name="fk_element" value="'.$object->id.'">';
-        print '<input type="hidden" name="element" value="'.$object->element.'">';
-        print '<div class="fileupload-buttonbar">';
-        print '<input type="hidden" name="protocol" value="http">';
-        print '<label class="fileinput-button">';
-        print '<span>'.$langs->trans('AddFiles').'</span>';
-        print '<input type="file" name="files[]" multiple>';
-        print '</label>';
-        print '<button type="submit" class="start">'.$langs->trans('StartUpload').'</button>';
-        print '<button type="reset" class="cancel">'.$langs->trans('CancelUpload').'</button>';
-        print '</div></form>';
-
-        print '</div><!-- end div fileupload -->';
-
-        print '<div id="fileupload-view">';
-        print '<div class="fileupload-content">';
-
-        print '<table width="100%" class="files">';
-        /*print '<tr>';
-         print '<td>'.$langs->trans("Documents2").'</td>';
-         print '<td>'.$langs->trans("Preview").'</td>';
-         print '<td align="right">'.$langs->trans("Size").'</td>';
-         print '<td colspan="3"></td>';
-         print '</tr>';*/
-        print '</table>';
-
-        // We remove this because there is already individual bars.
-        //print '<div class="fileupload-progressbar"></div>';
-
-        print '</div><!-- end div fileupload-content -->';
-        print '</div><!-- end div fileupload-view -->';
+        
+        // Include main
+        include(DOL_DOCUMENT_ROOT.'/core/tpl/ajax/fileupload_main.tpl.php');
 
         // Include template
-        include(DOL_DOCUMENT_ROOT.'/core/tpl/ajaxfileupload.tpl.php');
+        include(DOL_DOCUMENT_ROOT.'/core/tpl/ajax/fileupload_view.tpl.php');
 
     }
 

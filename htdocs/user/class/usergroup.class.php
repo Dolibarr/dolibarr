@@ -23,7 +23,7 @@
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
-if ($conf->ldap->enabled) require_once (DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
+if (! empty($conf->ldap->enabled)) require_once (DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
 
 
 /**
@@ -53,11 +53,11 @@ class UserGroup extends CommonObject
 	/**
      *    Constructor de la classe
      *
-     *    @param   DoliDb  $DB     Database handler
+     *    @param   DoliDb  $db     Database handler
 	 */
-	function UserGroup($DB)
+	function UserGroup($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 
 		return 0;
 	}
@@ -683,19 +683,18 @@ class UserGroup extends CommonObject
 		if ($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS)
 		{
 			$valueofldapfield=array();
-			foreach($this->members as $key=>$val)
+			foreach($this->members as $key=>$val)    // This is array of users for group into dolibarr database.
 			{
 				$muser=new User($this->db);
-				$muser->fetch($val);
-
-				$ldapuserid=$muser->login;
-				// TODO ldapuserid should depends on value $conf->global->LDAP_KEY_USERS;
+				$muser->fetch($val->id);
+                if ($conf->global->LDAP_KEY_USERS == 'cn') $ldapuserid=$muser->getFullName($langs);
+                elseif ($conf->global->LDAP_KEY_USERS == 'sn') $ldapuserid=$muser->lastname;
+                elseif ($conf->global->LDAP_KEY_USERS == 'uid') $ldapuserid=$muser->login;
 
 				$valueofldapfield[] = $conf->global->LDAP_KEY_USERS.'='.$ldapuserid.','.$conf->global->LDAP_USER_DN;
 			}
 			$info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = (!empty($valueofldapfield)?$valueofldapfield:'');
 		}
-
 		return $info;
 	}
 

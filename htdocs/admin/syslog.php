@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
@@ -178,14 +178,14 @@ $var=true;
 
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="140"><input '.$bc[$var].' type="checkbox" name="SYSLOG_FILE_ON" '.$option.' value="1" '.($syslog_file_on?' checked="checked"':'').'> '.$langs->trans("SyslogSimpleFile").'</td>';
-print '<td width="250" nowrap="nowrap">'.$langs->trans("SyslogFilename").': <input type="text" class="flat" name="filename" '.$option.' size="60" value="'.$defaultsyslogfile.'">';
+print '<td nowrap="nowrap">'.$langs->trans("SyslogFilename").': <input type="text" class="flat" name="filename" '.$option.' size="60" value="'.$defaultsyslogfile.'">';
 print '</td>';
 print "<td align=\"left\">".$form->textwithpicto('',$langs->trans("YouCanUseDOL_DATA_ROOT"));
 print '</td></tr>';
 
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="140"><input '.$bc[$var].' type="checkbox" name="SYSLOG_SYSLOG_ON" '.$option.' value="1" '.($syslog_syslog_on?' checked="checked"':'').'> '.$langs->trans("SyslogSyslog").'</td>';
-print '<td width="250" nowrap="nowrap">'.$langs->trans("SyslogFacility").': <input type="text" class="flat" name="facility" '.$option.' value="'.$defaultsyslogfacility.'">';
+print '<td nowrap="nowrap">'.$langs->trans("SyslogFacility").': <input type="text" class="flat" name="facility" '.$option.' value="'.$defaultsyslogfacility.'">';
 print '</td>';
 print "<td align=\"left\">".$form->textwithpicto('','Only LOG_USER supported on Windows');
 print '</td></tr>';
@@ -202,7 +202,7 @@ try
         if (! class_exists('FirePHP')) print ' disabled="disabled"';
         else print ($syslog_firephp_on?' checked="checked"':"");
         print '> '.$langs->trans("FirePHP").'</td>';
-        print '<td width="250" nowrap="nowrap">';
+        print '<td nowrap="nowrap">';
         print '</td>';
         print "<td align=\"left\">".$form->textwithpicto('','FirePHP must be installed onto PHP and FirePHP plugin for Firefox must also be installed');
         print '</td></tr>';
@@ -232,7 +232,7 @@ print '<td align="right"><input type="submit" class="button" '.$option.' value="
 print "</tr>\n";
 $var=true;
 $var=!$var;
-print '<tr '.$bc[$var].'><td width=\"140\">'.$langs->trans("SyslogLevel").'</td>';
+print '<tr '.$bc[$var].'><td width="140">'.$langs->trans("SyslogLevel").'</td>';
 print '<td colspan="2"><select class="flat" name="level" '.$option.'>';
 print '<option value="'.LOG_EMERG.'" '.($conf->global->SYSLOG_LEVEL==LOG_EMERG?'SELECTED':'').'>LOG_EMERG ('.LOG_EMERG.')</option>';
 print '<option value="'.LOG_ALERT.'" '.($conf->global->SYSLOG_LEVEL==LOG_ALERT?'SELECTED':'').'>LOG_ALERT ('.LOG_ALERT.')</option>';

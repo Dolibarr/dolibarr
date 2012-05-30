@@ -90,7 +90,7 @@ function llxHeaderVierge($title, $head="", $disablejs=0, $disablehead=0, $arrayo
 {
     global $user, $conf, $langs, $mysoc;
     top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
-    print '<body id="mainbody">';
+    print '<body id="mainbody" class="publicnewmemberform" style="margin-top: 10px;">';
 
     // Print logo
     $urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
@@ -274,12 +274,18 @@ if ($action == 'add')
                     $urlback=DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=membernewform&source=membersubscription&ref='.$adh->ref;
                     if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
                     if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
+                    if (! empty($entity)) $urlback.='&entity='.$entity;
                 }
                 else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paypal')
                 {
                     $urlback=DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?from=membernewform&source=membersubscription&ref='.$adh->ref;
                     if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
                     if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
+                    if (! empty($conf->global->PAYPAL_SECURITY_TOKEN) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+                    {
+                    	$urlback.='&securekey='.dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2);
+                    }
+                    if (! empty($entity)) $urlback.='&entity='.$entity;
                 }
                 else
                 {
@@ -331,12 +337,15 @@ $extrafields->fetch_name_optionals_label('member');    // fetch optionals attrib
 
 llxHeaderVierge($langs->trans("NewSubscription"));
 
+
 print_titre($langs->trans("NewSubscription"));
 
 if (! empty($conf->global->MEMBER_NEWFORM_TEXT)) print $langs->trans($conf->global->MEMBER_NEWFORM_TEXT)."<br>\n";
 else print $langs->trans("NewSubscriptionDesc",$conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";
 
 dol_htmloutput_errors($errmsg);
+
+print '<div align="center">';
 
 print '<br>'.$langs->trans("FieldsWithAreMandatory",'*').'<br>';
 //print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
@@ -368,7 +377,7 @@ jQuery(document).ready(function () {
 // Print form
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'."\n";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" / >';
-print '<input type="hidden" name="entity" value"'.$entity.'" />';
+print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print '<input type="hidden" name="action" value="add" />';
 
 print '<div id="divsubscribe">';
@@ -557,10 +566,10 @@ if (! empty($backtopage))
 }
 print '</center>';
 
-print "<br></form>\n";
+print "<br></div></form>\n";
 print '</div>';
 
-
+print
 llxFooterVierge();
 
 $db->close();

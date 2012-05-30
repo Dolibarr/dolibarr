@@ -148,13 +148,14 @@ if (! dol_is_dir($upload_dir))
 print '<!-- TYPE='.$type.' -->'."\n";
 print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
+$param='';
 
 // Dir
 if ($type == 'directory')
 {
     $formfile=new FormFile($db);
 
-    $param=($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'');
+    $param.=($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'');
     $maxlengthname=40;
 
     // Right area
@@ -242,12 +243,11 @@ if ($type == 'directory')
     }
     else    // Manual area
     {
-
         $relativepath=$ecmdir->getRelativePath();
         $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
         $filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','\.meta$','^temp$','^CVS$'),$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
-        $param.='&section='.$section;
+        if ($section) $param.='&section='.$section;
         $textifempty=($section?$langs->trans("NoFileFound"):($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection")));
 
         $formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload,1,$textifempty,$maxlengthname);
@@ -255,14 +255,24 @@ if ($type == 'directory')
 
 }
 
-if ((! isset($mode) || $mode != 'noajax') && ! empty($conf->global->MAIN_ECM_TRY_JS))
+if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))
 {
-    // Enable jquery handlers on new generated HTML objects
-    print "\n".'<script type="text/javascript">'."\n";
-    print 'jQuery(".deletefilelink").click(function(e) { jQuery("#dialog-confirm-deletefile").dialog("open"); return false; });'."\n";
-    print '</script>'."\n";
+    if ($section)
+    {
+        require_once(DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php');
+        $form = new Form($db);
+        $formquestion=array('urlfile'=>array('type'=>'hidden','value'=>'','name'=>'urlfile'));
+        print $form->formconfirm(DOL_URL_ROOT.'/ecm/index.php'.($param?'?':'').(preg_replace('/^&/','',$param)),$langs->trans("DeleteFile"),$langs->trans("ConfirmDeleteFile"),'confirm_deletefile',$formquestion,"no",'deletefile');
 
-    if (is_object($db)) $db->close();
+        // Enable jquery handlers on new generated HTML objects
+        print '<script type="text/javascript">'."\n";
+        print 'jQuery(document).ready(function() {'."\n";
+        print 'jQuery(".deletefilelink").click(function(e) { jQuery("#urlfile").val(jQuery(this).attr("rel")); jQuery("#dialog-confirm-deletefile").dialog("open"); return false; });'."\n";
+        print '});'."\n";
+        print '</script>'."\n";
+    }
 }
 
+// Close db if mode is not noajax
+if ((! isset($mode) || $mode != 'noajax') && is_object($db)) $db->close();
 ?>

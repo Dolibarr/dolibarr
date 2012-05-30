@@ -383,6 +383,7 @@ if (! defined('NOLOGIN'))
             {
                 $dol_authmode=$conf->authmode;	// This properties is defined only when logged to say what mode was successfully used
                 $dol_tz=$_POST["tz"];
+                $dol_tz_string=$_POST["tz_string"];
                 $dol_dst=0;
                 if (isset($_POST["dst_first"]) && isset($_POST["dst_second"]))
                 {
@@ -536,6 +537,7 @@ if (! defined('NOLOGIN'))
         $_SESSION["dol_login"]=$user->login;
         $_SESSION["dol_authmode"]=isset($dol_authmode)?$dol_authmode:'';
         $_SESSION["dol_tz"]=isset($dol_tz)?$dol_tz:'';
+        $_SESSION["dol_tz_string"]=isset($dol_tz_string)?$dol_tz_string:'';
         $_SESSION["dol_dst"]=isset($dol_dst)?$dol_dst:'';
         $_SESSION["dol_dst_observed"]=isset($dol_dst_observed)?$dol_dst_observed:'';
         $_SESSION["dol_dst_first"]=isset($dol_dst_first)?$dol_dst_first:'';
@@ -865,7 +867,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             //print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/lightbox/css/jquery.lightbox-0.5.css" media="screen" />'."\n";       // Lightbox
             if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD))     // jQuery fileupload
             {
-                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/jquery.fileupload-ui.css" />'."\n";
+            	//print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/css/bootstrap.min.css" />'."\n";
+                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/css/jquery.fileupload-ui.css" />'."\n";
             }
             if (! empty($conf->global->MAIN_USE_JQUERY_DATATABLES))     // jQuery datatables
             {
@@ -985,10 +988,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             // jQuery File Upload
             if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD))
             {
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/jquery.tmpl.min.js"></script>'."\n";
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/jquery.iframe-transport.js"></script>'."\n";
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/jquery.fileupload.js"></script>'."\n";
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/jquery.fileupload-ui.js"></script>'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/template/tmpl.min.js"></script>'."\n";
+                //print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/js/bootstrap.min.js"></script>'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/js/jquery.iframe-transport.js"></script>'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/js/jquery.fileupload.js"></script>'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/js/jquery.fileupload-ui.js"></script>'."\n";
             }
             // jQuery DataTables
             if (! empty($conf->global->MAIN_USE_JQUERY_DATATABLES))
@@ -1093,7 +1097,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
     if ($conf->use_javascript_ajax)
     {
-        if ($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)
+        if (! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))
         {
             print '<script type="text/javascript">
 				jQuery(document).ready(function () {

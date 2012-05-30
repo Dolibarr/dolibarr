@@ -25,6 +25,7 @@
 include_once("./inc.php");
 if (file_exists($conffile)) include_once($conffile);
 require_once($dolibarr_main_document_root."/core/lib/admin.lib.php");
+require_once($dolibarr_main_document_root."/core/class/extrafields.class.php");
 
 
 $grant_query='';
@@ -189,6 +190,78 @@ if ($ok)
     }
 }
 
+
+// Search list of fields declared and list of fields created into databases and create fields missing
+$extrafields=new ExtraFields($db);
+$listofmodulesextra=array('societe'=>'company','adherent'=>'member','product'=>'product');
+foreach($listofmodulesextra as $tablename => $elementtype)
+{
+    // Get list of fields
+    $tableextra=MAIN_DB_PREFIX.$tablename.'_extrafields';
+
+    // Define $arrayoffieldsdesc
+    $arrayoffieldsdesc=$extrafields->fetch_name_optionals_label($elementtype);
+
+    // Define $arrayoffieldsfound
+    $arrayoffieldsfound=array();
+    $resql=$db->DDLDescTable($tableextra);
+    if ($resql)
+    {
+        print '<tr><td>Check availability of extra field for '.$tableextra."<br>\n";
+        $i=0;
+        while($obj=$db->fetch_object($resql))
+        {
+            $fieldname=$fieldtype='';
+            if (preg_match('/mysql/',$db->type))
+            {
+                $fieldname=$obj->Field;
+                $fieldtype=$obj->Type;
+            }
+            else
+            {
+                $fieldname = isset($obj->Key)?$obj->Key:$obj->attname;
+                $fieldtype = isset($obj->Type)?$obj->Type:'varchar';
+            }
+
+            if (empty($fieldname)) continue;
+            if (in_array($fieldname,array('rowid','tms','fk_object','import_key'))) continue;
+            $arrayoffieldsfound[$fieldname]=array('type'=>$fieldtype);
+        }
+
+        // If it does not match, we create fields
+        foreach($arrayoffieldsdesc as $code => $label)
+        {
+            if (! in_array($code,array_keys($arrayoffieldsfound)))
+            {
+                print 'Found field '.$code.' declared into '.MAIN_DB_PREFIX.'extrafields table but not found into desc of table '.$tableextra." -> ";
+                $type=$extrafields->attribute_type[$code]; $value=$extrafields->attribute_size[$code]; $attribute=''; $default=''; $extra=''; $null='null';
+                $field_desc=array(
+                	'type'=>$type,
+                	'value'=>$value,
+                	'attribute'=>$attribute,
+                	'default'=>$default,
+                	'extra'=>$extra,
+                	'null'=>$null
+                );
+                //var_dump($field_desc);exit;
+
+                $result=$db->DDLAddField($tableextra,$code,$field_desc,"");
+                if ($result < 0)
+                {
+                    print "KO ".$db->lasterror."<br>\n";
+                }
+                else
+                {
+                    print "OK<br>\n";
+                }
+            }
+        }
+
+        print "</td><td>&nbsp;</td></tr>\n";
+    }
+}
+
+
 // Run purge of directory
 if (GETPOST('purge'))
 {
@@ -198,7 +271,7 @@ if (GETPOST('purge'))
     foreach ($listmodulepart as $modulepart)
     {
         $filearray=array();
-        $upload_dir = $conf->$modulepart->dir_output;
+        $upload_dir = isset($conf->$modulepart->dir_output)?$conf->$modulepart->dir_output:'';
         if ($modulepart == 'company') $upload_dir = $conf->societe->dir_output; // TODO change for multicompany sharing
         if ($modulepart == 'invoice') $upload_dir = $conf->facture->dir_output;
         if ($modulepart == 'invoice_supplier') $upload_dir = $conf->fournisseur->facture->dir_output;

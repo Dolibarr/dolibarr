@@ -1,15 +1,17 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaner.sat
- * Generation date 2010-11-16 13:09:12
- */
-
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
-Mailing=
+
+Mailing=E-Mail
 EMailing=E-Mail-Kampagne
 Mailings=E-Mail-Kampagnen
 EMailings=E-Mail-Kampagne
+AllEMailings=Alle E-Mail-Kampagnen
 MailCard=E-Mail-Kampagnenkarte
 MailTargets=Ziele
 MailRecipients=Empfänger
@@ -29,6 +31,7 @@ ShowEMailing=Zeige E-Mail-Kampagne
 ListOfEMailings=Liste der E-Mail-Kampagnen
 NewMailing=Neue E-Mail-Kampagne
 EditMailing=E-Mail-Kampagne bearbeiten
+ResetMailing=E-Mail erneut senden
 DeleteMailing=E-Mail-Kampagne löschen
 DeleteAMailing=Löschen einer E-Mail-Kampagne
 PreviewMailing=E-Mail-Kampagnen-Vorschau
@@ -48,9 +51,13 @@ MailingStatusSentCompletely=Vollständig gesendet
 MailingStatusError=Fehler beim Versand
 MailingStatusNotSent=Nicht gesendet
 MailSuccessfulySent=E-Mail-Kampagne erfolgreich versandt (von %s an %s)
+MailUnsubcribe=Abmelden
+Unsuscribe=Abmelden
+MailingStatusNotContact=Nicht mehr kontaktieren
 ErrorMailRecipientIsEmpty=Das Empfängerfeld ist leer
 WarningNoEMailsAdded=Keine neuen E-Mail-Adressen für das Hinzufügen zur Empfängerliste.
 ConfirmValidMailing=Möchten Sie diese E-Mail-Kampagne wirklich freigeben?
+ConfirmResetMailing=Achtung, wenn Sie diese E-Mail Kampangne (<b>%s</b>), können Sie diese Aktion nochmals versenden. Sind Sie sicher, das ist tun möchten?
 ConfirmDeleteMailing=Möchten Sie diese E-Mail-Kampagne wirklich löschen?
 NbOfRecipients=Anzahl der Empfänger
 NbOfUniqueEMails=Zahl der einzigartigen E-Mail-Adressen
@@ -72,6 +79,9 @@ CloneReceivers=Empfängerliste duplizieren
 DateLastSend=Datum des letzten Versands
 DateSending=Versanddatum
 SentTo=Versandt an <b>%s</b>
+MailingStatusRead=Lesen
+CheckRead=Lesebestätigung
+YourMailUnsubcribeOK=Die E-Mail-Adresse <b>%s</b> ist korrekt aus der Mailing-Liste ausgetragen.
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Kontakte aller Partner (Kunden, Leads, Lieferanten, ...)
@@ -83,7 +93,6 @@ MailingModuleDescDolibarrContractsLinesExpired=Partner mit abgelaufenen Vertrags
 MailingModuleDescContactsByCompanyCategory=Kontakt über Partner (durch Kategorie)
 MailingModuleDescMembersCategories=Mitglieder der Stiftung (durch Kategorie)
 MailingModuleDescContactsByFunction=Kontakt über Partner (durch Position/Funktion)
-
 
 LineInFile=Zeile %s in der Datei
 RecipientSelectionModules=Definiert Empfängerauswahlen
@@ -117,25 +126,3 @@ SomeNotificationsWillBeSent=%s Benachrichtigungen werden per E-Mail versandt
 AddNewNotification=Aktivieren Sie eine neue E-Mail-Benachrichtigungsanfrage
 ListOfActiveNotifications=Liste aller aktiven E-Mail Benachrichtigungen
 ListOfNotificationsDone=Liste aller versandten E-Mail Benachrichtigungen
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
-MailingStatusRead=Lesen
-MailingModuleDescContactsByCompanyCategory=Kontakte Dritter (durch Dritte Kategorie)
-MailingModuleDescMembersCategories=Mitglieder der Stiftung (nach Kategorien)
-MailingModuleDescContactsByFunction=Kontakte von Dritten (von Position / Funktion)
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:03:43).
-
-
-// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
-// Reference language: en_US -> de_DE
-AllEMailings=Alle Mailings
-ResetMailing=E-Mail erneut senden
-MailUnsubcribe=Abmelden
-Unsuscribe=Abmelden
-MailingStatusNotContact=Sie nicht mehr kontaktieren
-ConfirmResetMailing=Achtung, nach erneuter Initialisierung per E-Mail <b>%s,</b> können Sie einen Massenversand von dieser E-Mail ein weiteres Mal zu machen. Sind Sie sicher, das ist, was du tun willst?
-CheckRead=Lesebestätigung
-YourMailUnsubcribeOK=Die E-Mail <b>%s</b> korrekt von Mailing-Liste abmelden
-// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:03).

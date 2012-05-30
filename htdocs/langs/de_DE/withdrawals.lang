@@ -1,16 +1,19 @@
 /*
- * Language code: de_DE
- * Manually translated by eCleaners.at
- * Generation date 2010-11-12 13:09:12
- */
-
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27
+*/
 
 CHARSET=UTF-8
+
 StandingOrdersArea=Dauerauftragsübersicht
 CustomersStandingOrdersArea=Dauerauftragsübersicht (Kunden)
 StandingOrders=Daueraufträge
 StandingOrder=Dauerauftrag
 NewStandingOrder=Neuer Dauerauftrag
+StandingOrderToProcess=Zu bearbeiten
+StandingOrderProcessed=Bearbeitet
 Withdrawals=Abbuchungen
 Withdrawal=Abbuchung
 WithdrawalsReceipts=Abbuchungsbelege
@@ -77,8 +80,8 @@ NotifyEmision=Abbuchungsemission
 NotifyCredit=Abbuchungsgutschrift
 NumeroNationalEmetter=Nat. Überweisernummer
 PleaseSelectCustomerBankBANToWithdraw=Wählen Sie das Kundenkonto für die Abbuchung
-WithBankUsingRIB=Bankkonten mit RIB Nutzung
-WithBankUsingBANBIC=Bankkonten mit IBAN/BIC/SWIFT Nutzung
+WithBankUsingRIB=Bankkonten mit RIB 
+WithBankUsingBANBIC=Bankkonten mit IBAN/BIC/SWIFT
 BankToReceiveWithdraw=Bankkonto für Abbuchungen
 CreditDate=Am
 WithdrawalFileNotCapable=Abbuchungsformular für Ihr Land konnte nicht erstellt werden.
@@ -96,34 +99,3 @@ InfoFoot=Dies ist eine automatisierte Nachricht von Dolibarr
 InfoRejectSubject=Dauerauftrag abgelehnt
 InfoRejectMessage=Hallo,<br><br>der Dauerauftrag zur Rechnung %s der Firma %s, über den Betrag von %s wurde abgelehnt.<br><br>--<br>%$
 ModeWarning=Echtzeit-Modus wurde nicht aktiviert, wir stoppen nach der Simulation.
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
-NbOfInvoiceToWithdrawWithInfo=Nb Rechnungsdatum mit Rücktritt Anfrage für Kunden mit Bankkonto-Informationen definiert
-StatusTrans=Übertragen
-PleaseSelectCustomerBankBANToWithdraw=Wählen Sie Informationen über Kunden Bankkonto, sich zurückzuziehen
-WithBankUsingRIB=Für Bankkonten mit RIB
-WithBankUsingBANBIC=Für Bankkonten mit IBAN / BIC / SWIFT
-BankToReceiveWithdraw=Bankkonto, auf zurückzieht erhalten
-CreditDate=Kredit auf
-WithdrawalFileNotCapable=Kann Rückzug Erhalt Datei für Ihr Land zu generieren
-ShowWithdraw=Show abziehen
-IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Wenn jedoch Rechnung hat mindestens einen Rückzug Zahlung noch nicht verarbeitet, es wird nicht festgelegt, wie bezahlt, damit zum Rücktritt vor zu verwalten.
-DoStandingOrdersBeforePayments=Diese Registerkarten können Sie für einen Dauerauftrag zu beantragen. Sobald es fertig sein wird, können Sie den Zahlungen, die Rechnung zu schließen.
-InfoCreditSubject=Die Zahlung der Dauerauftrag %s von der Bank
-InfoCreditMessage=Der Dauerauftrag %s wurde von der Bank bezahlt worden <br> Daten der Zahlung: %s
-InfoTransSubject=Die Übertragung von Dauerauftrag %s zu Bank
-InfoTransMessage=Der Dauerauftrag %s hat zu Bank wurde durch %s %s transmited. <br><br>
-InfoTransData=Betrag: %s <br> Metode: %s <br> Datum: %s
-InfoFoot=Dies ist eine automatische Nachricht per Dolibarr geschickt
-InfoRejectSubject=Dauerauftrag abgelehnt
-InfoRejectMessage=Hallo, <br><br> standig die Reihenfolge der Rechnung %s im Zusammenhang mit den Unternehmen %s, mit einem Betrag von %s wurde von der Bank abgelehnt worden. <br><br> - <br> % $
-ModeWarning=Option für die Echtzeit-Modus nicht eingestellt wurde, haben wir nach dieser Simulation zu stoppen
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:04:01).
-
-
-// START - Lines generated via autotranslator.php tool (2012-05-02 17:27:54).
-// Reference language: en_US -> de_DE
-StandingOrderToProcess=Zur Verarbeitung
-StandingOrderProcessed=Verarbeitete
-// STOP - Lines generated via autotranslator.php tool (2012-05-02 17:28:09).

@@ -268,11 +268,6 @@ ALTER TABLE llx_actioncomm DROP COLUMN fk_supplier_order;
 ALTER TABLE llx_actioncomm DROP COLUMN fk_supplier_invoice;
 ALTER TABLE llx_actioncomm DROP COLUMN fk_commande;
 ALTER TABLE llx_product_stock DROP COLUMN location;
--- DROP TABLE llx_c_methode_commande_fournisseur;
--- DROP TABLE llx_c_source;
--- DROP TABLE llx_cond_reglement;
--- DROP TABLE llx_expedition_methode;
--- DROP TABLE llx_product_fournisseur;
 
 ALTER TABLE llx_adherent_extrafields ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_product_extrafields  ADD COLUMN import_key varchar(14);
@@ -457,3 +452,5 @@ ALTER TABLE llx_facture_fourn ADD COLUMN extraparams varchar(255) AFTER import_k
 ALTER TABLE llx_boxes ADD COLUMN maxline integer NULL;
 
 ALTER TABLE llx_commande_fournisseur ADD COLUMN date_livraison date NULL;
+
+ALTER TABLE llx_product_fournisseur_price MODIFY fk_product_fournisseur integer DEFAULT 0;

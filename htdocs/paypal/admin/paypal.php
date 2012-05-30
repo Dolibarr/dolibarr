@@ -68,7 +68,7 @@ if ($action == 'setvalue' && $user->admin)
     if (! $result > 0) $error++;
     $result=dolibarr_set_const($db, "PAYPAL_MESSAGE_KO",GETPOST('PAYPAL_MESSAGE_KO','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
-	
+
 	if (! $error)
   	{
   		$db->commit();
@@ -368,7 +368,7 @@ if ($conf->adherent->enabled)
 print "<br>";
 print info_admin($langs->trans("YouCanAddTagOnUrl"));
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

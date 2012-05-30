@@ -457,7 +457,7 @@ if ($id > 0)
 				}
 				print '</td><td align="right" width="80">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				print '<td align="right" width="120">'.price($objp->total_ht).'</td>';
-				print '<td align="right" nowrap="nowrap">'.$propal_static->LibStatut($objp->fk_statut,5).'</td></tr>';
+				print '<td align="right" width="100" nowrap="nowrap">'.$propal_static->LibStatut($objp->fk_statut,5).'</td></tr>';
 				$var=!$var;
 				$i++;
 			}
@@ -624,9 +624,9 @@ if ($id > 0)
 
 				print "<tr ".$bc[$var].">";
 				print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/fichinter/fiche.php?id='.$objp->id.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref.'</a></td>'."\n";
-                //print '<td align="right">'.dol_print_date($db->jdate($objp->startdate)).'</td>'."\n";
-				print '<td align="right">'.convertSecondToTime($objp->duration).'</td>'."\n";
-				print '<td align="right">'.$fichinter_static->getLibStatut(3).'</td>'."\n";
+                //print '<td align="right" width="80">'.dol_print_date($db->jdate($objp->startdate)).'</td>'."\n";
+				print '<td align="right" width="120">'.convertSecondToTime($objp->duration).'</td>'."\n";
+				print '<td align="right" width="100">'.$fichinter_static->getLibStatut(5).'</td>'."\n";
 				print '</tr>';
 				$var=!$var;
 				$i++;
@@ -692,15 +692,15 @@ if ($id > 0)
 				print '</td>';
 				if ($objp->df > 0)
 				{
-					print "<td align=\"right\">".dol_print_date($db->jdate($objp->df),'day')."</td>\n";
+					print '<td align="right" width="80">'.dol_print_date($db->jdate($objp->df),'day').'</td>';
 				}
 				else
 				{
-					print "<td align=\"right\"><b>!!!</b></td>\n";
+					print '<td align="right"><b>!!!</b></td>';
 				}
-				print "<td align=\"right\">".price($objp->total_ttc)."</td>\n";
+				print '<td align="right" width="120">'.price($objp->total_ttc).'</td>';
 
-				print '<td align="right" nowrap="nowrap">'.($facturestatic->LibStatut($objp->paye,$objp->statut,5,$objp->am))."</td>\n";
+				print '<td align="right" nowrap="nowrap" width="100" >'.($facturestatic->LibStatut($objp->paye,$objp->statut,5,$objp->am)).'</td>';
 				print "</tr>\n";
 				$i++;
 			}

@@ -518,6 +518,7 @@ function print_start_menu_array()
  * Output start menu entry
  *
  * @param	string	$idsel		Text
+ * @param	string	$classname	String to add a css class
  * @return	void
  */
 function print_start_menu_entry($idsel,$classname)
@@ -943,6 +944,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 $langs->load("orders");
                 if ($conf->facture->enabled) $newmenu->add("/commande/liste.php?leftmenu=orders&amp;viewstatut=3", $langs->trans("MenuOrdersToBill"), 0, $user->rights->commande->lire, '', $mainmenu, 'orders');
                 //                  if ($leftmenu=="orders") $newmenu->add("/commande/", $langs->trans("StatusOrderToBill"), 1, $user->rights->commande->lire);
+                if ($conf->global->MAIN_FEATURES_LEVEL > 1)
+     				if ($leftmenu=="orders") $newmenu->add("/commande/customer.php", $langs->trans("GenerateBill"), 1, $user->rights->commande->lire);
             }
 
             // Donations

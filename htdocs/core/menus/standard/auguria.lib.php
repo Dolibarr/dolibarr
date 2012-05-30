@@ -124,6 +124,7 @@ function print_start_menu_array_auguria()
  * Output start menu entry
  *
  * @param	string	$idsel		Text
+ * @param	string	$classname	String to add a css class
  * @return	void
  */
 function print_start_menu_entry_auguria($idsel,$classname)
@@ -269,7 +270,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
             {
                 if (($alt%2==0))
                 {
-                	if ($conf->use_javascript_ajax && $conf->global->MAIN_MENU_USE_JQUERY_ACCORDION)
+                	if ($conf->use_javascript_ajax && ! empty($conf->global->MAIN_MENU_USE_JQUERY_ACCORDION))
                 	{
                 		print '<div class="blockvmenupair">'."\n";
                 	}

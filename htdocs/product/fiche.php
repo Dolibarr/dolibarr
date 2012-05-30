@@ -286,7 +286,7 @@ if (empty($reshook))
                 {
                     if ($object->update($object->id, $user) > 0)
                     {
-                        $action = '';
+                        $action = 'view';
                     }
                     else
                     {
@@ -300,6 +300,7 @@ if (empty($reshook))
                     $mesg = $langs->trans("ErrorProductBadRefOrLabel");
                 }
             }
+
         }
     }
 
@@ -542,8 +543,8 @@ if (empty($reshook))
             $localtax2_tx, // localtax2
             $prod->id,
             $_POST["remise_percent"],
-			'',
-			'', //Todo: voir si fk_remise_except est encore valable car n'apparait plus dans les propales
+            '',
+            '', // TODO voir si fk_remise_except est encore valable car n'apparait plus dans les propales
             $price_base_type,
             $pu_ttc
         );
@@ -624,11 +625,11 @@ if (empty($reshook))
             $localtax2_tx,
             $prod->id,
             $_POST["remise_percent"],
-   		    '',
-   		    '',
-   		    '',
-   		    '',
-  		    '',
+            '',
+            '',
+            '',
+            '',
+            '',
             $price_base_type,
             $pu_ttc
         );
@@ -664,7 +665,6 @@ llxHeader('',$langs->trans("CardProduct".$_GET["type"]),$helpurl);
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);
-$object=new Product($db);
 
 
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
@@ -672,12 +672,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     // -----------------------------------------
     // When used with CANVAS
     // -----------------------------------------
-    if (! $objcanvas->hasActions() && ($id || $ref))
+    if (empty($object->error) && ($id || $ref))
     {
         $object = new Product($db);
-        $object->fetch($id, $ref);                   // For use with "pure canvas" (canvas that contains templates only)
+        $object->fetch($id, $ref);
     }
-   	$objcanvas->assign_values($action, $object->id, $ref);	// Set value for templates
+    $objcanvas->assign_values($action, $object->id, $ref);	// Set value for templates
     $objcanvas->display_canvas($action);				// Show template
 }
 else

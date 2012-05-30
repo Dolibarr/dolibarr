@@ -65,8 +65,8 @@ class ActionsCardIndividual extends ActionsCardCommon
         $out='';
 
         if ($action == 'view')      $out.= $langs->trans("Individual");
-        if ($action == 'edit')      $out.= $langs->trans("EditIndividual");
-        if ($action == 'create')    $out.= $langs->trans("NewIndividual");
+        if ($action == 'edit')      $out.= $langs->trans("EditCompany");
+        if ($action == 'create')    $out.= $langs->trans("NewCompany");
 
         return $out;
     }
@@ -105,7 +105,7 @@ class ActionsCardIndividual extends ActionsCardCommon
 
 		parent::assign_values($action);
 
-		$this->tpl['title'] = $this->getTitle($action);
+        $this->tpl['title'] = load_fiche_titre($this->getTitle($action));
 
 		if ($action == 'create' || $action == 'edit')
 		{

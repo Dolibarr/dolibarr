@@ -77,7 +77,7 @@ function getServerTimeZoneString()
  * Return server timezone int.
  * If $conf->global->MAIN_NEW_DATE is set, we use new behaviour: All convertions take care of dayling saving time.
  *
- * @param	string	$refgmtdate		Reference date for timezone (timezone differs on winter and summer)
+ * @param	string	$refgmtdate		Reference period for timezone (timezone differs on winter and summer. May be 'now', 'winter' or 'summer')
  * @return 	int						An offset in hour (+1 for Europe/Paris on winter and +2 for Europe/Paris on summer)
  */
 function getServerTimeZoneInt($refgmtdate='now')
@@ -86,16 +86,39 @@ function getServerTimeZoneInt($refgmtdate='now')
     if (class_exists('DateTime') && ! empty($conf->global->MAIN_NEW_DATE))
     {
         // Method 1 (include daylight)
+        $gmtnow=dol_now('gmt'); $yearref=dol_print_date($gmtnow,'%Y'); $monthref=dol_print_date($gmtnow,'%m'); $dayref=dol_print_date($gmtnow,'%d');
+        if ($refgmtdate == 'now') $newrefgmtdate=$yearref.'-'.$monthref.'-'.$dayref;
+        elseif ($refgmtdate == 'summer') $newrefgmtdate=$yearref.'-05-15';
+        else $newrefgmtdate=$yearref.'-01-01';
         $localtz = new DateTimeZone(getServerTimeZoneString());
-        $localdt = new DateTime($refgmtdate, $localtz);
+        $localdt = new DateTime($newrefgmtdate, $localtz);
         $tmp=-1*$localtz->getOffset($localdt);
+        //print $refgmtdate.'='.$tmp;
     }
     else
     {
-        // Method 2 (does not include daylight)
-        $tmp=dol_mktime(0,0,0,1,1,1970);
+        // Method 2 (does not include daylight, not supported by adodb)
+        if ($refgmtdate == 'now')
+        {
+            // We don't know server timezone string, so we don't know location, so we can't guess daylight. We assume we use same than client. Fix is to use MAIN_NEW_DATE.
+            $gmtnow=dol_now('gmt'); $yearref=dol_print_date($gmtnow,'%Y'); $monthref=dol_print_date($gmtnow,'%m'); $dayref=dol_print_date($gmtnow,'%d');
+            if (dol_stringtotime($_SESSION['dol_dst_first']) <= $gmtnow && $gmtnow < dol_stringtotime($_SESSION['dol_dst_second'])) $daylight=1;
+            else $daylight=0;
+            $tmp=dol_mktime(0,0,0,$monthref,$dayref,$yearref,false,0)-dol_mktime(0,0,0,$monthref,$dayref,$yearref,true,0)-($daylight*3600);
+            return 'unknown';
+        }
+        elseif ($refgmtdate == 'summer')
+        {
+            // We don't know server timezone string, so we don't know location, so we can't guess daylight. We assume we use same than client. Fix is to use MAIN_NEW_DATE.
+            $gmtnow=dol_now('gmt'); $yearref=dol_print_date($gmtnow,'%Y'); $monthref='08'; $dayref='01';
+            if (dol_stringtotime($_SESSION['dol_dst_first']) <= dol_stringtotime($yearref.'-'.$monthref.'-'.$dayref) && dol_stringtotime($yearref.'-'.$monthref.'-'.$dayref) < dol_stringtotime($_SESSION['dol_dst_second'])) $daylight=1;
+            else $daylight=0;
+            $tmp=dol_mktime(0,0,0,$monthref,$dayref,$yearref,false,0)-dol_mktime(0,0,0,$monthref,$dayref,$yearref,true,0)-($daylight*3600);
+            return 'unknown';
+        }
+        else $tmp=dol_mktime(0,0,0,1,1,1970);
     }
-    $tz=($tmp<0?1:-1)*abs($tmp/3600);
+    $tz=round(($tmp<0?1:-1)*abs($tmp/3600));
     return $tz;
 }
 
@@ -619,21 +642,21 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
                 date("m", $date_paques),
                 date("d", $date_paques) + 38,
                 date("Y", $date_paques)
-			);
+            );
 			$jour_ascension = date("d", $date_ascension);
 			$mois_ascension = date("m", $date_ascension);
 			if($jour_ascension == $jour && $mois_ascension == $mois) $ferie=true;
 			//Ascension
 
 			// Calcul de Pentecote (11 jours apres Paques)
-			$date_pentecote = mktime(
+            $date_pentecote = mktime(
                 date("H", $date_ascension),
                 date("i", $date_ascension),
                 date("s", $date_ascension),
                 date("m", $date_ascension),
                 date("d", $date_ascension) + 11,
                 date("Y", $date_ascension)
-			);
+            );
 			$jour_pentecote = date("d", $date_pentecote);
 			$mois_pentecote = date("m", $date_pentecote);
 			if($jour_pentecote == $jour && $mois_pentecote == $mois) $ferie=true;

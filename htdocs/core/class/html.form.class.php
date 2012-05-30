@@ -2146,7 +2146,8 @@ class Form
 
         $more='';
         $formconfirm='';
-        $inputarray=array();
+        $inputok=array();
+        $inputko=array();
 
         if (is_array($formquestion) && count($formquestion) > 0)
         {
@@ -2207,13 +2208,16 @@ class Form
                         $more.=$input['value'];
                         $more.='</td></tr>'."\n";
                     }
-                    array_push($inputarray,$input['name']);
+                    else if ($input['type'] == 'hidden')
+                    {
+                        $more.='<input type="hidden" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$input['value'].'">';
+                    }
                 }
             }
             $more.='</table>'."\n";
         }
 
-        $formconfirm.= "\n<!-- begin form_confirm -->\n";
+        $formconfirm.= "\n<!-- begin form_confirm page=".$page." -->\n";
 
         if ($useajax && $conf->use_javascript_ajax)
         {
@@ -2228,6 +2232,15 @@ class Form
             }
             $pageyes=$page.'&action='.$action.'&confirm=yes';
             $pageno=($useajax == 2?$page.'&confirm=no':'');
+            // Add input fields into list of fields to read during submit (inputok and inputko)
+            if (is_array($formquestion))
+            {
+                foreach ($formquestion as $key => $input)
+                {
+                    array_push($inputok,$input['name']);
+                    if ($input['inputko'] == 1) array_push($inputko,$input['name']);
+                }
+            }
 
             // New code using jQuery only
             $formconfirm.= '<div id="'.$dialogconfirm.'" title="'.dol_escape_htmltag($title).'" style="display: none;">';
@@ -2235,13 +2248,15 @@ class Form
             $formconfirm.= img_help('','').' '.$question;
             $formconfirm.= '</div>'."\n";
             $formconfirm.= '<script type="text/javascript">
-            $(function() {
-                var choice=\'ko\';
-                var	$inputarray='.json_encode($inputarray).';
-                var button=\''.$button.'\';
-            	var dialogconfirm=\''.$dialogconfirm.'\';
+            var choice=\'ko\';
+            var inputok='.json_encode($inputok).';
+            var inputko='.json_encode($inputko).';
+			var pageyes=\''.dol_escape_js($pageyes?$pageyes:'').'\';
+			var pageno=\''.dol_escape_js($pageno?$pageno:'').'\';
 
-			    $( "#" + dialogconfirm ).dialog({
+			/* Warning: This function is loaded once and not overwritten if loaded by another ajax page */
+            $(function() {
+			    $( "#'.$dialogconfirm.'" ).dialog({
 			        autoOpen: '.($autoOpen?'true':'false').',
 			        resizable: false,
 			        height:'.$height.',
@@ -2249,23 +2264,37 @@ class Form
 			        modal: true,
 			        closeOnEscape: false,
 			        close: function(event, ui) {
-			             if (choice == \'ok\') {
+            			if (choice == \'ok\') {
 			             	var options="";
-			             	if ($inputarray.length>0) {
-			             		$.each($inputarray, function() {
-			             			var inputname = this;
-			             			var more = \'\';
+			             	if (inputok.length>0) {
+			             		$.each(inputok, function() {
+			             			var inputname = this; var more = \'\';
 			             			if ($("#" + this).attr("type") == \'checkbox\') { more = \':checked\'; }
 			             			var inputvalue = $("#" + this + more).val();
 			             			if (typeof inputvalue == \'undefined\') { inputvalue=\'\'; }
 			             			options += \'&\' + inputname + \'=\' + inputvalue;
 			             		});
-			             		//alert(options);
 			             	}
-			             	location.href=\''.$pageyes.'\' + options;
-			             }
-                         '.($pageno?'if (choice == \'ko\') location.href=\''.$pageno.'\';':'').'
-		              },
+			             	var urljump=pageyes + (pageyes.indexOf(\'?\')<0?\'?\':\'\') + options;
+			             	//alert(urljump);
+            				if (pageyes.length > 0) { location.href=urljump; }
+        				}
+			            if (choice == \'ko\') {
+			             	var options="";
+			             	if (inputko.length>0) {
+			             		$.each(inputko, function() {
+			             			var inputname = this; var more = \'\';
+			             			if ($("#" + this).attr("type") == \'checkbox\') { more = \':checked\'; }
+			             			var inputvalue = $("#" + this + more).val();
+			             			if (typeof inputvalue == \'undefined\') { inputvalue=\'\'; }
+			             			options += \'&\' + inputname + \'=\' + inputvalue;
+			             		});
+			             	}
+			             	var urljump=pageno + (pageno.indexOf(\'?\')<0?\'?\':\'\') + options;
+			             	//alert(urljump);
+            				if (pageno.length > 0) { location.href=urljump; }
+			            }
+			        },
 			        buttons: {
 			            \''.dol_escape_js($langs->transnoentities("Yes")).'\': function() {
 			                choice=\'ok\';
@@ -2277,12 +2306,6 @@ class Form
 			            }
 			        }
 			    });
-
-			    if (button.length > 0) {
-			    	$( "#" + button ).click(function() {
-			    		$("#" + dialogconfirm ).dialog(\'open\');
-			    	});
-			    }
 			});
 			</script>';
 
@@ -2296,10 +2319,10 @@ class Form
 
             $formconfirm.= '<table width="100%" class="valid">'."\n";
 
-            // Ligne titre
+            // Line title
             $formconfirm.= '<tr class="validtitre"><td class="validtitre" colspan="3">'.img_picto('','recent').' '.$title.'</td></tr>'."\n";
 
-            // Ligne formulaire
+            // Line form fields
             if ($more)
             {
                 $formconfirm.='<tr class="valid"><td class="valid" colspan="3">'."\n";
@@ -2307,7 +2330,7 @@ class Form
                 $formconfirm.='</td></tr>'."\n";
             }
 
-            // Ligne message
+            // Line with question
             $formconfirm.= '<tr class="valid">';
             $formconfirm.= '<td class="valid">'.$question.'</td>';
             $formconfirm.= '<td class="valid">';
@@ -2318,14 +2341,6 @@ class Form
             $formconfirm.= '</tr>'."\n";
 
             $formconfirm.= '</table>'."\n";
-
-            if (is_array($formquestion))
-            {
-                foreach ($formquestion as $key => $input)
-                {
-                    if ($input['type'] == 'hidden') $formconfirm.= '<input type="hidden" name="'.$input['name'].'" value="'.$input['value'].'">';
-                }
-            }
 
             $formconfirm.= "</form>\n";
             $formconfirm.= '<br>';
@@ -2891,7 +2906,8 @@ class Form
     {
     	global $langs;
 
-    	if (count($this->cache_vatrates)) return 0;    // Cache deja charge
+    	$num = count($this->cache_vatrates);
+    	if ($num > 0) return $num;    // Cache deja charge
 
     	$sql  = "SELECT DISTINCT t.taux, t.recuperableonly";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";

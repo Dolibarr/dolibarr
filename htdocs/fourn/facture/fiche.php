@@ -2,9 +2,9 @@
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
- * Copyright (C) 2005		Marc Barilley		<marc@ocebo.fr>
- * Copyright (C) 2005-2012	Regis Houssin		<regis@dolibarr.fr>
- * Copyright (C) 2010-2011	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2005		Marc Barilley			<marc@ocebo.fr>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2010-2012	Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,11 @@ $mesg='';
 $id			= (GETPOST('facid','int') ? GETPOST('facid','int') : GETPOST('id','int'));
 $action		= GETPOST("action");
 $confirm	= GETPOST("confirm");
+
+//PDF
+$hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
+$hidedesc 	 = (GETPOST('hidedesc','int') ? GETPOST('hidedesc','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ?  1 : 0));
+$hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -198,14 +203,15 @@ elseif ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
 }
 
 // Delete payment
-elseif($action == 'deletepaiement')
+elseif ($action == 'deletepaiement')
 {
     $object->fetch($id);
     if ($object->statut == 1 && $object->paye == 0 && $user->societe_id == 0)
     {
         $paiementfourn = new PaiementFourn($db);
-        $paiementfourn->fetch($_GET['paiement_id']);
-        $paiementfourn->delete();
+        $paiementfourn->fetch(GETPOST('paiement_id'));
+        $result=$paiementfourn->delete();
+        if ($result < 0) $mesg='<div class="error">'.$paiementfourn->error.'</div>';
     }
 }
 
@@ -401,6 +407,7 @@ elseif ($action == 'update_line')
     if ($_REQUEST['etat'] == '1' && ! $_REQUEST['cancel']) // si on valide la modification
     {
         $object->fetch($id);
+        $object->fetch_thirdparty();
 
         if ($_POST['puht'])
         {
@@ -421,21 +428,17 @@ elseif ($action == 'update_line')
             if (trim($_POST['desc']) != trim($label)) $label=$_POST['desc'];
 
             $type = $prod->type;
-            $localtax1tx = $prod->localtax1_tx;
-            $localtax2tx = $prod->localtax2_tx;
         }
         else
         {
-            if ($object->socid)
-            {
-                $societe=new Societe($db);
-                $societe->fetch($object->socid);
-            }
+
             $label = $_POST['desc'];
             $type = $_POST["type"]?$_POST["type"]:0;
-            $localtax1tx= get_localtax($_POST['tauxtva'], 1, $mysoc);
-            $localtax2tx= get_localtax($_POST['tauxtva'], 2, $mysoc);
+
         }
+
+        $localtax1tx= get_localtax($_POST['tauxtva'], 1, $object->thirdparty);
+        $localtax2tx= get_localtax($_POST['tauxtva'], 2, $object->thirdparty);
 
         $result=$object->updateline($_GET['lineid'], $label, $pu, $_POST['tauxtva'], $localtax1tx, $localtax2tx, $_POST['qty'], $_POST['idprod'], $price_base_type, 0, $type);
         if ($result >= 0)
@@ -458,7 +461,7 @@ elseif ($action == 'addline')
     if ($_POST['idprodfournprice'])	// > 0 or -1
     {
         $product=new Product($db);
-        $idprod=$product->get_buyprice($_POST['idprodfournprice'], $_POST['qty']);
+        $idprod=$product->get_buyprice($_POST['idprodfournprice'], $_POST['qty']);    // Just to see if a price exists for the quantity. Not used to found vat
 
         if ($idprod > 0)
         {
@@ -468,10 +471,10 @@ elseif ($action == 'addline')
             // $label = '['.$product->ref.'] - '. $product->libelle;
             $label = $product->description;
 
-            $tvatx=get_default_tva($object->thirdparty,$mysoc,$product->id);
+            $tvatx=get_default_tva($object->thirdparty, $mysoc, $product->id, $_POST['idprodfournprice']);
 
-            $localtax1tx= get_localtax($tvatx, 1, $mysoc);
-            $localtax2tx= get_localtax($tvatx, 2, $mysoc);
+            $localtax1tx= get_localtax($tvatx, 1, $object->thirdparty);
+            $localtax2tx= get_localtax($tvatx, 2, $object->thirdparty);
 
             $type = $product->type;
 
@@ -488,8 +491,8 @@ elseif ($action == 'addline')
     else
     {
         $tauxtva = price2num($_POST['tauxtva']);
-        $localtax1tx= get_localtax($tauxtva, 1, $mysoc);
-        $localtax2tx= get_localtax($tauxtva, 2, $mysoc);
+        $localtax1tx= get_localtax($tauxtva, 1, $object->thirdparty);
+        $localtax2tx= get_localtax($tauxtva, 2, $object->thirdparty);
 
         if (! $_POST['dp_desc'])
         {
@@ -825,9 +828,9 @@ elseif ($action == 'remove_file')
     if ($object->fetch($id))
     {
         $upload_dir =	$conf->fournisseur->facture->dir_output . "/";
-        $file =	$upload_dir	. '/' .	$_GET['file'];
+        $file =	$upload_dir	. '/' .	GETPOST('file');
         dol_delete_file($file);
-        $mesg	= '<div	class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+        $mesg	= '<div	class="ok">'.$langs->trans("FileWasRemoved",GETPOST('file')).'</div>';
     }
 }
 
@@ -899,6 +902,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 
 $form = new Form($db);
 $formfile = new FormFile($db);
+$bankaccountstatic=new Account($db);
 
 llxHeader('','','');
 
@@ -1258,9 +1262,7 @@ else
             if ($ret == 'html') print '<br>';
         }
 
-        /*
-         * Confirmation de la suppression de la facture fournisseur
-        */
+        // Confirmation de la suppression de la facture fournisseur
         if ($action == 'delete')
         {
             $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete', '', 0, 1);
@@ -1268,9 +1270,9 @@ else
         }
 
 
-        /*
-         *   Facture
-        */
+        /**
+         * 	Invoice
+         */
         print '<table class="border" width="100%">';
 
         // Ref
@@ -1334,9 +1336,10 @@ else
 
         /*
          * List of payments
-        */
-        $nbrows=7;
+         */
+        $nbrows=7; $nbcols=2;
         if ($conf->projet->enabled) $nbrows++;
+        if ($conf->banque->enabled) $nbcols++;
 
         // Local taxes
         if ($mysoc->country_code=='ES')
@@ -1347,14 +1350,17 @@ else
 
         print '<td rowspan="'.$nbrows.'" valign="top">';
 
-        // TODO move to DAO class
-        $sql  = 'SELECT datep as dp, pf.amount,';
-        $sql .= ' c.libelle as paiement_type, p.num_paiement, p.rowid';
-        $sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
-        $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
-        $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_paiementfourn = p.rowid';
-        $sql .= ' WHERE pf.fk_facturefourn = '.$object->id;
-        $sql .= ' ORDER BY dp DESC';
+        $sql = 'SELECT p.datep as dp, p.num_paiement, p.rowid, p.fk_bank,';
+        $sql.= ' c.libelle as paiement_type,';
+        $sql.= ' pf.amount,';
+        $sql.= ' ba.rowid as baid, ba.ref, ba.label';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_paiementfourn = p.rowid';
+        $sql.= ' WHERE pf.fk_facturefourn = '.$object->id;
+        $sql.= ' ORDER BY p.datep, p.tms';
 
         $result = $db->query($sql);
         if ($result)
@@ -1365,41 +1371,58 @@ else
             print '<tr class="liste_titre">';
             print '<td>'.$langs->trans('Payments').'</td>';
             print '<td>'.$langs->trans('Type').'</td>';
+            if ($conf->banque->enabled) print '<td align="right">'.$langs->trans('BankAccount').'</td>';
             print '<td align="right">'.$langs->trans('Amount').'</td>';
             print '<td width="18">&nbsp;</td>';
             print '</tr>';
 
-            $var=True;
-            while ($i < $num)
+            $var=true;
+            if ($num > 0)
             {
-                $objp = $db->fetch_object($result);
-                $var=!$var;
-                print '<tr '.$bc[$var].'>';
-                print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.dol_print_date($db->jdate($objp->dp),'day')."</a></td>\n";
-                print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
-                print '<td align="right">'.price($objp->amount).'</td>';
-                print '<td align="center">';
-                if ($object->statut == 1 && $object->paye == 0 && $user->societe_id == 0)
+                while ($i < $num)
                 {
-                    print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deletepaiement&amp;paiement_id='.$objp->rowid.'">';
-                    print img_delete();
-                    print '</a>';
+                    $objp = $db->fetch_object($result);
+                    $var=!$var;
+                    print '<tr '.$bc[$var].'>';
+                    print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.dol_print_date($db->jdate($objp->dp),'day')."</a></td>\n";
+                    print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
+                    if ($conf->banque->enabled)
+                    {
+                        $bankaccountstatic->id=$objp->baid;
+                        $bankaccountstatic->ref=$objp->ref;
+                        $bankaccountstatic->label=$objp->ref;
+                        print '<td align="right">';
+                        print $bankaccountstatic->getNomUrl(1,'transactions');
+                        print '</td>';
+                    }
+                    print '<td align="right">'.price($objp->amount).'</td>';
+                    print '<td align="center">';
+                    if ($object->statut == 1 && $object->paye == 0 && $user->societe_id == 0)
+                    {
+                        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletepaiement&paiement_id='.$objp->rowid.'">';
+                        print img_delete();
+                        print '</a>';
+                    }
+                    print '</td>';
+                    print '</tr>';
+                    $totalpaye += $objp->amount;
+                    $i++;
                 }
-                print '</td>';
-                print '</tr>';
-                $totalpaye += $objp->amount;
-                $i++;
+            }
+            else
+            {
+                 print '<tr '.$bc[$var].'><td colspan="'.$nbcols.'">'.$langs->trans("None").'</td><td></td><td></td></tr>';
             }
 
             if ($object->paye == 0)
             {
-                print '<tr><td colspan="2" align="right">'.$langs->trans('AlreadyPaid').' :</td><td align="right"><b>'.price($totalpaye).'</b></td></tr>';
-                print '<tr><td colspan="2" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($object->total_ttc).'</td></tr>';
+                print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans('AlreadyPaid').' :</td><td align="right"><b>'.price($totalpaye).'</b></td><td></td></tr>';
+                print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($object->total_ttc).'</td><td></td></tr>';
 
                 $resteapayer = $object->total_ttc - $totalpaye;
 
-                print '<tr><td colspan="2" align="right">'.$langs->trans('RemainderToPay').' :</td>';
-                print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($resteapayer).'</b></td></tr>';
+                print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans('RemainderToPay').' :</td>';
+                print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($resteapayer).'</b></td><td></td></tr>';
             }
             print '</table>';
             $db->free($result);
@@ -1420,7 +1443,7 @@ else
         // Due date
         print '<tr><td>'.$form->editfieldkey("DateMaxPayment",'date_lim_reglement',$object->date_echeance,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker').'</td><td colspan="3">';
         print $form->editfieldval("DateMaxPayment",'date_lim_reglement',$object->date_echeance,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker');
-        if ((empty($action) || $action == 'view') && $object->statut < 2 && $object->date_echeance && $object->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_warning($langs->trans('Late'));
+        if ($action != 'editdate_li_reglement' && $object->statut < 2 && $object->date_echeance && $object->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_warning($langs->trans('Late'));
         print '</td>';
 
         // Status
@@ -1904,7 +1927,7 @@ else
                     $outputlangs->setDefaultLang($newlang);
                 }
 
-                $result=supplier_invoice_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, GETPOST('hidedetails'), GETPOST('hidedesc'), GETPOST('hideref'), $hookmanager);
+                $result=supplier_invoice_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
                 if ($result <= 0)
                 {
                     dol_print_error($db,$result);

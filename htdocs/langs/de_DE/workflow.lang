@@ -1,18 +1,16 @@
 /*
- * Language code: de_DE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:03:27
- */
+* Language code: de_DE
+* Manually translated by modula71.de
+* Generation date 2012-05-23
+* QA release date 2012-05-27 
+*/
 
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
 CHARSET=UTF-8
-WorkflowSetup=Workflow-Modul Setup
-WorkflowDesc=Dieses Modul wird desinged um das Verhalten der automatischen Aktionen in Anwendung zu modifizieren. Standardmäßig ist die Workflow geöffnet (Sie machen, was um Sie möchten). Sie können automatische Aktionen, die Sie interessant sind in. aktiviert
-ThereIsNoWorkflowToModify=Es gibt keine Workflow-Modul Sie für Sie aktiviert haben ändern können.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Erstellen Sie einen Kundenauftrag automatisch nach ein kommerzieller Vorschlag wird unterzeichnet
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Erstellen Sie eine Kundenrechnung automatisch nach ein kommerzieller Vorschlag wird unterzeichnet
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Erstellen Sie eine Kundenrechnung automatisch nach Abschluss des Vertrages wird validiert
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Erstellen Sie eine Kundenrechnung automatisch nach ein Kundenauftrag geschlossen
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:04:16).
+
+WorkflowSetup=Workflow Moduleinstellungen
+WorkflowDesc=Dieses Modul wurde entwickelt um das Verhalten von automatisierten Vorgängen  anzupassen. Standardmäßig ist der Workflow frei (Sie können alles in Ihrer Reihenfolge erledigen). Sie können automatische Vorgänge aktivieren, falls Sie es wünschen.
+ThereIsNoWorkflowToModify=Es gibt keine Vorgänge für das aktivierte Modul die Sie ändern können. 
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Erstelle eine automatische Kundenbestellung, nachdem ein Angebot unterzeichnet wurde
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Erstelle eine automatische Kundenrechnung, nachdem ein Angebot unterzeichnet wurde
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Erstselle eine automatische Kundenrechnung, nachdem ein Vertrag freigegeben wurde
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Erstselle eine automatische Kundenrechnung, nachdem eine Kundenbestellung geschlossen wurde

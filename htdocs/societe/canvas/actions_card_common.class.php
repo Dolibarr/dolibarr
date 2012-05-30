@@ -384,6 +384,7 @@ abstract class ActionsCardCommon
         }
 
         $this->tpl['error'] = get_htmloutput_errors($this->object->error,$this->object->errors);
+        if (is_array($GLOBALS['errors'])) $this->tpl['error'] = get_htmloutput_mesg('',$GLOBALS['errors'],'error');
 
         if ($action == 'create')
         {

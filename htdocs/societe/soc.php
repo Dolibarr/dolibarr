@@ -102,7 +102,11 @@ if (empty($reshook))
     {
         require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 
-        if ($action == 'update') $object->fetch($socid);
+        if ($action == 'update')
+        {
+        	$ret=$object->fetch($socid);
+        	$object->oldcopy=dol_clone($object);
+        }
 		else $object->canvas=$canvas;
 
         if (GETPOST("private") == 1)
@@ -198,15 +202,18 @@ if (empty($reshook))
                 $action = ($action=='add'?'create':'edit');
             }
 
+            // Check for duplicate prof id
         	for ($i = 1; $i < 3; $i++)
         	{
-    			$slabel="idprof".$i;
-        		if (($_POST[$slabel] && $object->id_prof_verifiable($i)))
+        	    $slabel="idprof".$i;
+    			$_POST[$slabel]=trim($_POST[$slabel]);
+        	    $vallabel=$_POST[$slabel];
+        		if ($vallabel && $object->id_prof_verifiable($i))
 				{
-					if($object->id_prof_exists($i,$_POST["$slabel"],$object->id))
+					if($object->id_prof_exists($i,$vallabel,$object->id))
 					{
 						$langs->load("errors");
-                		$error++; $errors[] = $langs->transcountry('ProfId'.$i, $object->country_code)." ".$langs->trans("ErrorProdIdAlreadyExist", $_POST[$slabel]);
+                		$error++; $errors[] = $langs->transcountry('ProfId'.$i, $object->country_code)." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel);
                 		$action = ($action=='add'?'create':'edit');
 					}
 				}
@@ -313,8 +320,6 @@ if (empty($reshook))
                     Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
                     exit;
                 }
-
-                $object->oldcopy=dol_clone($object);
 
                 // To not set code if third party is not concerned. But if it had values, we keep them.
                 if (empty($object->client) && empty($object->oldcopy->code_client))          $object->code_client='';
@@ -473,10 +478,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     // -----------------------------------------
     // When used with CANVAS
     // -----------------------------------------
-    if (! $objcanvas->hasActions() && $socid)
+    if (empty($object->error) && $socid)
  	{
 	     $object = new Societe($db);
-	     $object->fetch($socid);                // For use with "pure canvas" (canvas that contains templates only)
+	     $object->fetch($socid);
  	}
    	$objcanvas->assign_values($action, $socid);	// Set value for templates
     $objcanvas->display_canvas($action);		// Show template

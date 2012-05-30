@@ -35,6 +35,13 @@ $ref=GETPOST('ref','alpha');
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
+$object = new Project($db);
+if ($ref)
+{
+    $object->fetch(0,$ref);
+    $id=$object->id;
+}
+
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
@@ -228,7 +235,8 @@ if (count($tasksarray)>0)
 
 	if (! empty($conf->use_javascript_ajax))
 	{
-		print '<div id="tabs" style="border: 1px solid #ACACAC;">'."\n";
+	    //var_dump($_SESSION);
+		print '<div id="tabs" class="ganttcontainer" style="border: 1px solid #ACACAC;">'."\n";
 		include_once(DOL_DOCUMENT_ROOT.'/projet/ganttchart.php');
 		print '</div>'."\n";
 	}

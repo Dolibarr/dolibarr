@@ -67,7 +67,7 @@ if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
 	{
 		$dir = $conf->prelevement->dir_output.'/receipts';
 
-		if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $dir . "/" . $_FILES['userfile']['name'],1) > 0)
+		if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $dir . "/" . dol_unescapefile($_FILES['userfile']['name']),1) > 0)
 		{
 			$dt = dol_mktime(12,0,0,GETPOST('remonth','int'),GETPOST('reday','int'),GETPOST('reyear','int'));
 
@@ -149,7 +149,7 @@ if ($id)
 		print '<tr><td width="20%">'.$langs->trans('Status').'</td>';
 		print '<td>'.$bon->getLibStatut(1).'</td>';
 		print '</tr>';
-		
+
 		if($bon->date_trans <> 0)
 		{
 			$muser = new User($db);

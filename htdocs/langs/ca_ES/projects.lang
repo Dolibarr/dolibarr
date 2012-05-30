@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - projects 
+# Dolibarr language file - ca_ES - projects
 CHARSET=UTF-8
 Project=Projecte
 Projects=Projectes
@@ -85,6 +85,14 @@ TaskIsNotAffectedToYou=Tasca que no l'afecta
 ErrorTimeSpentIsEmpty=No s'ha establert el temps consumit
 ThisWillAlsoRemoveTasks=Aquesta operació també destruirà les tasques del projecte (<b>%s</b> tasques) i els seus temps dedicats.
 IfNeedToUseOhterObjectKeepEmpty=Si els elements (factura, comanda, ...) pertanyen a un tercer que no és el seleccionat, havent aquests estar lligats al projecte a crear, deixeu buit per permetre el projecte a multi-tercers.
+CloneProject=Clonar el projecte
+CloneTasks=Clonar les tasques
+CloneContacts=Clonar els contactes
+CloneNotes=Clonar les notes
+CloneFiles=Clonar els arxius adjunts
+ConfirmCloneProject=Esteu segur que voleu clonar aquest projecte?
+ProjectReportDate=Canviar les dates de les tasques en funció de la data d'inici del projecte
+ErrorShiftTaskDate=S'ha produït un error en el canvi de les dates de les tasques
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Cap de projecte
 TypeContact_project_external_PROJECTLEADER=Cap de projecte
@@ -94,5 +102,5 @@ TypeContact_project_task_internal_TASKEXECUTIVE=Responsable
 TypeContact_project_task_external_TASKEXECUTIVE=Responsable
 TypeContact_project_task_internal_CONTRIBUTOR=Participant
 TypeContact_project_task_external_CONTRIBUTOR=Participant
-# Documents models #
+# Documents models
 DocumentModelBaleine=Model d'informe de projecte complet (logo...)

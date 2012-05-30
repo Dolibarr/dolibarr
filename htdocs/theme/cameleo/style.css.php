@@ -357,7 +357,7 @@ ul.tmenu {	/* t r b l */
     margin: 0px 0px 0px 6px;
 	list-style: none;
 }
-li.tmenu {
+li.tmenu, li.tmenusel {
 	text-align: center;
 	vertical-align: top;
 	float: <?php print $left; ?>;
@@ -2171,7 +2171,7 @@ div.table-val-border-col {
 /* ============================================================================== */
 
 div.scroll2 {
-	width: 582px !important;
+	width: <?php print isset($_SESSION['dol_screenwidth'])?max($_SESSION['dol_screenwidth']-830,450):'450'; ?>px !important;
 }
 
 

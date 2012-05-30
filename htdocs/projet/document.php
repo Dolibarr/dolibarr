@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin <regis@dolibarr.fr>
+/* Copyright (C) 2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,7 @@ require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/images.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 
 $langs->load('projects');
@@ -35,6 +37,14 @@ $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 $id = GETPOST('id','int');
 $ref= GETPOST('ref');
+
+$project = new Project($db);
+if (! $project->fetch($id,$ref) > 0)
+{
+	dol_print_error($db);
+	exit;
+}
+else $id=$project->id;
 
 // Security check
 $socid=0;
@@ -52,12 +62,6 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
-$project = new Project($db);
-if (! $project->fetch($id,$ref) > 0)
-{
-	dol_print_error($db);
-	exit;
-}
 
 
 /*
@@ -67,15 +71,22 @@ if (! $project->fetch($id,$ref) > 0)
 // Envoi fichier
 if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-
 	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($project->ref);
 
 	if (dol_mkdir($upload_dir) >= 0)
 	{
-		$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0,0,$_FILES['userfile']['error']);
+		$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0,0,$_FILES['userfile']['error']);
 		if (is_numeric($resupload) && $resupload > 0)
 		{
+            if (image_format_supported($upload_dir . "/" . $_FILES['userfile']['name']) == 1)
+            {
+                // Create small thumbs for image (Ratio is near 16/9)
+                // Used on logon for example
+                $imgThumbSmall = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthsmall, $maxheightsmall, '_small', $quality, "thumbs");
+                // Create mini thumbs for image (Ratio is near 16/9)
+                // Used on menu or for setup page for example
+                $imgThumbMini = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
+            }
 			$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
 		}
 		else
@@ -100,10 +111,11 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 // Delete
 if ($action == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->rights->projet->supprimer)
 {
+    $langs->load("other");
 	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($project->ref);
-	$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 	dol_delete_file($file);
-	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
 }
 
 
@@ -190,7 +202,7 @@ if ($id > 0 || ! empty($ref))
 
 	// Affiche formulaire upload
 	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/projet/document.php?id='.$project->id,'',0,0,($userWrite>0));
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/projet/document.php?id='.$project->id,'',0,0,($userWrite>0),50,$object);
 
 
 	// List of document
