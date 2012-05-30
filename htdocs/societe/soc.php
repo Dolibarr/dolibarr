@@ -478,10 +478,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     // -----------------------------------------
     // When used with CANVAS
     // -----------------------------------------
-    if (! $objcanvas->hasActions() && $socid)
+    if (empty($object->error) && $socid)
  	{
 	     $object = new Societe($db);
-	     $object->fetch($socid);                // For use with "pure canvas" (canvas that contains templates only)
+	     $object->fetch($socid);
  	}
    	$objcanvas->assign_values($action, $socid);	// Set value for templates
     $objcanvas->display_canvas($action);		// Show template

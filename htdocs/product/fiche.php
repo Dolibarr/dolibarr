@@ -286,7 +286,8 @@ if (empty($reshook))
                 {
                     if ($object->update($object->id, $user) > 0)
                     {
-                        $action = '';
+                        Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
+                        exit;
                     }
                     else
                     {
@@ -300,6 +301,7 @@ if (empty($reshook))
                     $mesg = $langs->trans("ErrorProductBadRefOrLabel");
                 }
             }
+
         }
     }
 
@@ -664,7 +666,6 @@ llxHeader('',$langs->trans("CardProduct".$_GET["type"]),$helpurl);
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);
-$object=new Product($db);
 
 
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
@@ -672,12 +673,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     // -----------------------------------------
     // When used with CANVAS
     // -----------------------------------------
-    if (! $objcanvas->hasActions() && ($id || $ref))
+    if (empty($object->error) && ($id || $ref))
     {
         $object = new Product($db);
-        $object->fetch($id, $ref);                   // For use with "pure canvas" (canvas that contains templates only)
+        $object->fetch($id, $ref);
     }
-   	$objcanvas->assign_values($action, $object->id, $ref);	// Set value for templates
+    $objcanvas->assign_values($action, $object->id, $ref);	// Set value for templates
     $objcanvas->display_canvas($action);				// Show template
 }
 else
