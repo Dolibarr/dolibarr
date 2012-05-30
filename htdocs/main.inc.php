@@ -867,7 +867,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             //print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/lightbox/css/jquery.lightbox-0.5.css" media="screen" />'."\n";       // Lightbox
             if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD))     // jQuery fileupload
             {
-            	//print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/css/bootstrap.min.css" />'."\n";
                 print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/css/jquery.fileupload-ui.css" />'."\n";
             }
             if (! empty($conf->global->MAIN_USE_JQUERY_DATATABLES))     // jQuery datatables
@@ -989,10 +988,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD))
             {
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/template/tmpl.min.js"></script>'."\n";
-                //print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/js/bootstrap.min.js"></script>'."\n";
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/js/jquery.iframe-transport.js"></script>'."\n";
+                //print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/js/jquery.iframe-transport.js"></script>'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/js/jquery.fileupload.js"></script>'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/js/jquery.fileupload-fp.js"></script>'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/js/jquery.fileupload-ui.js"></script>'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/js/jquery.fileupload-jui.js"></script>'."\n";
             }
             // jQuery DataTables
             if (! empty($conf->global->MAIN_USE_JQUERY_DATATABLES))
