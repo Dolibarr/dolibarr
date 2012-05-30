@@ -53,7 +53,7 @@ $original_file=GETPOST("file");
 $modulepart=GETPOST('modulepart','alpha');
 $urlsource=GETPOST("urlsource");
 $entity=GETPOST('entity','int');
-
+if ($entity == '') $entity=1;    // For backward compatibility
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
@@ -211,6 +211,12 @@ if ($modulepart)
     {
         if ($user->rights->tax->charges->lire) $accessallowed=1;
         $original_file=$conf->tax->dir_output.'/'.$original_file;
+    }
+    // Wrapping for products or services
+    elseif ($modulepart == 'actions')
+    {
+        if ($user->rights->agenda->myactions->read) $accessallowed=1;
+        $original_file=$conf->agenda->dir_output.'/'.$original_file;
     }
     // Wrapping for categories
     elseif ($modulepart == 'category')
