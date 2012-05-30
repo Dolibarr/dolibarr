@@ -488,16 +488,14 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 }
 
 /**
- *	Unescape a file submitted by upload. PHP escape char " and only char " into $FILES with %22
- *  This is a bug because when file contains %22, it is not escape, so there is no way to retrieve original value.
- *  So best solution is to keep " as %22 into uploaded filename.
+ *	Unescape a file submitted by upload. PHP escape char " (%22) and char ' (%27) into $FILES
+ *	Before= Capture d\'écran.doc  After= Capture d'écran.doc
  *
  *	@param	string	$filename		Filename
  */
 function dol_unescapefile($filename)
 {
-    //return stripslashes($filename);    // FIXME
-    return $filename;
+    return stripslashes($filename);
 }
 
 /**
