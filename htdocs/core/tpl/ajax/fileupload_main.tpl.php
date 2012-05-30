@@ -39,16 +39,38 @@ window.locale = {
 $(function () {
 	'use strict';
 
-	var max_file_size = '<?php echo $max_file_size; ?>';
-
 	// Initialize the jQuery File Upload widget:
 	$('#fileupload').fileupload();
 
 	// Options
 	$('#fileupload').fileupload('option', {
-		maxFileSize: max_file_size
+		maxFileSize: '<?php echo $max_file_size; ?>'
 	});
 
+	// Events
+	$('#fileupload')
+		.bind('fileuploaddestroy', function (e, data) {
+			var that = $(this).data("fileupload");
+			if ( confirm("Delete this file ?") == true ) {
+				if (data.url) {
+					$.ajax(data).success(function () {
+							that._adjustMaxNumberOfFiles(1);
+		                    $(this).fadeOut(function () {
+		                    	$(this).remove();
+		                    });
+		                });
+		        } else {
+		        	data.context.fadeOut(function () {
+		        		$(this).remove();
+		            });
+		        }
+			}
+		})
+		.bind('fileuploadcompleted', function (e, data) {
+			$.ajax(data).success(function () {
+				location.href='<?php echo $_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"]; ?>';
+			});
+		});
 });
 </script>
 <!-- END TEMPLATE FILE UPLOAD MAIN -->
