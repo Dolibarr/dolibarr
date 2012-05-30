@@ -95,7 +95,7 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 
 	if (dol_mkdir($upload_dir) >= 0)
 	{
-		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . stripslashes($_FILES['userfile']['name']),0);
+		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0);
 		if (is_numeric($resupload) && $resupload > 0)
 		{
 			//$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
