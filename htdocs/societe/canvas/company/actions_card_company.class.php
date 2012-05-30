@@ -105,9 +105,9 @@ class ActionsCardCompany extends ActionsCardCommon
 
 		parent::assign_values($action);
 
-		$this->tpl['title']		= $this->getTitle($action);
+        $this->tpl['title'] = load_fiche_titre($this->getTitle($action));
 
-		$this->tpl['profid1'] 	= $this->object->idprof1;
+        $this->tpl['profid1'] 	= $this->object->idprof1;
 		$this->tpl['profid2'] 	= $this->object->idprof2;
 		$this->tpl['profid3'] 	= $this->object->idprof3;
 		$this->tpl['profid4'] 	= $this->object->idprof4;

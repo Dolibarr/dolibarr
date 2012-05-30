@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin <regis@dolibarr.fr>
+/* Copyright (C) 2010      Regis Houssin       <regis@dolibarr.fr>
+ * Copyright (C) 2010-2012 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +23,9 @@ $contact = $GLOBALS['objcanvas']->control->object;
 
 <!-- BEGIN PHP TEMPLATE CARD_EDIT.TPL.PHP COMPANY -->
 
-<?php
-print_fiche_titre($this->control->tpl['title']);
+<?php echo $this->control->tpl['title']; ?>
 
-dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
-?>
+<?php echo $this->control->tpl['error']; ?>
 
 <?php echo $this->control->tpl['ajax_selectcountry']; ?>
 <?php if ($this->control->tpl['js_checkVatPopup']) echo $this->control->tpl['js_checkVatPopup']; ?>
