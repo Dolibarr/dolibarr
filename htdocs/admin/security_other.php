@@ -46,7 +46,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
     $result=dol_mkdir($upload_dir);	// Create dir if not exists
     if ($result >= 0)
     {
-        $resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],1,0,$_FILES['userfile']['error']);
+        $resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . stripslashes($_FILES['userfile']['name']),1,0,$_FILES['userfile']['error']);
 
         if (is_numeric($resupload) && $resupload > 0)
         {
