@@ -53,11 +53,24 @@ class Canvas
 	{
 		$this->db = $db;
 
-		$this->actiontype = $actiontype;
-        if ($this->actiontype == 'add')    $this->actiontype='create';
-		if ($this->actiontype == 'update') $this->actiontype='edit';
-		if (empty($this->actiontype) || $this->actiontype == 'delete' || $this->actiontype == 'create_user') $this->actiontype='view';
+		$this->actiontype = $this->_cleanaction($actiontype);
 	}
+
+	/**
+	 * Return action code cleaned
+	 *
+	 * @param	string	$action		Action type ('create', 'view', 'edit', 'list', 'add', 'update')
+	 * @return 	string				Cleaned action type ('create', 'view', 'edit', 'list')
+	 */
+	private function _cleanaction($action)
+	{
+	    $newaction = $action;
+	    if ($newaction == 'add')    $newaction='create';
+	    if ($newaction == 'update') $newaction='edit';
+	    if (empty($newaction) || $newaction == 'delete' || $newaction == 'create_user') $newaction='view';
+	    return $newaction;
+	}
+
 
 	/**
 	 * 	Initialize properties: ->targetmodule, ->canvas, ->card, ->dirmodule, ->template_dir
@@ -126,13 +139,13 @@ class Canvas
      *	Return the template to display canvas (if it exists)
 	 *
 	 *	@param	string	$action		Action code
-     *	@return		int		0=Canvas template file does not exist, 1=Canvas template file exists
+     *	@return	int		0=Canvas template file does not exist, 1=Canvas template file exists
      */
     function displayCanvasExists($action)
     {
         if (empty($this->template_dir)) return 0;
 
-        if (file_exists($this->template_dir.($this->card?$this->card.'_':'').$this->actiontype.'.tpl.php')) return 1;
+        if (file_exists($this->template_dir.($this->card?$this->card.'_':'').$this->_cleanaction($action).'.tpl.php')) return 1;
         else return 0;
     }
 
@@ -148,7 +161,7 @@ class Canvas
 		global $db, $conf, $langs, $user, $canvas;
 		global $form, $formfile;
 
-		include($this->template_dir.($this->card?$this->card.'_':'').$this->actiontype.'.tpl.php');        // Include native PHP template
+		include($this->template_dir.($this->card?$this->card.'_':'').$this->_cleanaction($action).'.tpl.php');        // Include native PHP template
 	}
 
 

@@ -286,8 +286,7 @@ if (empty($reshook))
                 {
                     if ($object->update($object->id, $user) > 0)
                     {
-                        Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
-                        exit;
+                        $action = 'view';
                     }
                     else
                     {

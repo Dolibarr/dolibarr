@@ -24,7 +24,7 @@ $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSe
 
 <?php print_fiche_titre($langs->trans("Product")); ?>
 
-<?php dol_htmloutput_errors($object->error,$object->errors); ?>
+<?php dol_htmloutput_errors((is_numeric($object->error)?'':$object->error),$object->errors); ?>
 
 <?php dol_htmloutput_errors($GLOBALS['mesg'],$GLOBALS['mesgs']); ?>
 
