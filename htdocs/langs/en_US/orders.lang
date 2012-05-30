@@ -127,6 +127,8 @@ Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON not de
 Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON not defined
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Failed to load module file '%s'
 Error_FailedToLoad_COMMANDE_ADDON_File=Failed to load module file '%s'
+Error_OrderNotChecked=No orders to invoice selected
+
 
 # Sources
 OrderSource0=Commercial proposal

@@ -128,6 +128,7 @@ Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constante COMMANDE_SUPPLIER_ADDON non d
 Error_COMMANDE_ADDON_NotDefined=Constante COMMANDE_ADDON non définie
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Échec chargement du fichier module '%s'
 Error_FailedToLoad_COMMANDE_ADDON_File=Échec chargement du fichier module '%s'
+Error_OrderNotChecked=Pas de commandes pour facturer sélectionnés
 
 # Sources
 OrderSource0=Proposition commerciale
