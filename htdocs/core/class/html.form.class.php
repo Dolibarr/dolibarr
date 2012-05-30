@@ -2251,8 +2251,8 @@ class Form
             var choice=\'ko\';
             var inputok='.json_encode($inputok).';
             var inputko='.json_encode($inputko).';
-			var pageyes=\''.($pageyes?$pageyes:'').'\';
-			var pageno=\''.($pageno?$pageno:'').'\';
+			var pageyes=\''.dol_escape_js($pageyes?$pageyes:'').'\';
+			var pageno=\''.dol_escape_js($pageno?$pageno:'').'\';
 
 			/* Warning: This function is loaded once and not overwritten if loaded by another ajax page */
             $(function() {

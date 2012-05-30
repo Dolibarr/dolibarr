@@ -488,11 +488,22 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 }
 
 /**
+ *	Unescape a file submitted by upload. PHP escape char " (%22) and char ' (%27) into $FILES
+ *	Before= Capture d\'écran.doc  After= Capture d'écran.doc
+ *
+ *	@param	string	$filename		Filename
+ */
+function dol_unescapefile($filename)
+{
+    return stripslashes($filename);
+}
+
+/**
  *	Move an uploaded file after some controls.
  * 	If there is errors (virus found, antivir in error, bad filename), file is not moved.
  *
  *	@param	string	$src_file			Source full path filename ($_FILES['field']['tmp_name'])
- *	@param	string	$dest_file			Target full path filename
+ *	@param	string	$dest_file			Target full path filename  ($_FILES['field']['name'])
  * 	@param	int		$allowoverwrite		1=Overwrite target file if it already exists
  * 	@param	int		$disablevirusscan	1=Disable virus scan
  * 	@param	string	$uploaderrorcode	Value of upload error code ($_FILES['field']['error'])
@@ -603,7 +614,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			if (is_object($object))
 			{
 				$object->src_file=$dest_file;
-				
+
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($db);

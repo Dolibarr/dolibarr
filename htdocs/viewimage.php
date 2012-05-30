@@ -118,6 +118,12 @@ if ($modulepart)
         $accessallowed=1;
         $original_file=$conf->adherent->dir_output.'/'.$original_file;
     }
+    // Wrapping for members photos
+    elseif ($modulepart == 'member')
+    {
+        $accessallowed=1;
+        $original_file=$conf->adherent->dir_output.'/'.$original_file;
+    }
     // Wrapping pour les images des societes
     elseif ($modulepart == 'societe')
     {

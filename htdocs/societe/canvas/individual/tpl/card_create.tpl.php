@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010-2011 Regis Houssin <regis@dolibarr.fr>
+/* Copyright (C) 2010-2011 Regis Houssin       <regis@dolibarr.fr>
+ * Copyright (C) 2010-2012 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +20,9 @@
 
 <!-- BEGIN PHP TEMPLATE CARD_CREATE.TPL.PHP INDIVIDUAL -->
 
-<?php
-print_fiche_titre($this->control->tpl['title']);
+<?php echo $this->control->tpl['title']; ?>
 
-dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
-?>
+<?php echo $this->control->tpl['error']; ?>
 
 <?php if ($conf->use_javascript_ajax) { ?>
 <?php echo $this->control->tpl['ajax_selecttype']; ?>
