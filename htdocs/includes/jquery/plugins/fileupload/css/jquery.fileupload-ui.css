@@ -1,0 +1,117 @@
+@charset 'UTF-8';
+/*
+ * jQuery File Upload UI Plugin CSS 6.3
+ * https://github.com/blueimp/jQuery-File-Upload
+ *
+ * Copyright 2010, Sebastian Tschan
+ * https://blueimp.net
+ *
+ * Licensed under the MIT license:
+ * http://www.opensource.org/licenses/MIT
+ */
+
+.fileinput-button {
+  position: relative;
+  overflow: hidden;
+  float: left;
+  margin-right: 5px;
+}
+.fileinput-button input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  border: solid transparent;
+  border-width: 0 0 100px 200px;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  -moz-transform: translate(-300px, 0) scale(4);
+  direction: ltr;
+  cursor: pointer;
+}
+.fileupload-buttonbar .ui-button,
+.fileupload-buttonbar .toggle {
+  margin-bottom: 5px;
+}
+.files .progress {
+  width: 200px;
+}
+.files .progress,
+.fileupload-buttonbar .progress {
+  height: 20px;
+}
+.files .ui-progressbar-value,
+.fileupload-buttonbar .ui-progressbar-value {
+  background: url(../img/progressbar.gif);
+}
+.fileupload-buttonbar .fade,
+.files .fade {
+  display: none;
+}
+.fileupload-loading {
+  position: absolute;
+  left: 50%;
+  width: 128px;
+  height: 128px;
+  background: url(../img/loading.gif) center no-repeat;
+  display: none;
+}
+.fileupload-processing .fileupload-loading {
+  display: block;
+}
+
+/* Fix for IE 6: */
+*html .fileinput-button {
+  margin-right: -2px;
+}
+*html .fileinput-button .ui-button-text {
+  line-height: 24px;
+}
+*html .fileupload-buttonbar .ui-button {
+  margin-left: 3px;
+}
+
+/* Fix for IE 7: */
+*+html .fileinput-button {
+  margin-right: 1px;
+}
+*+html .fileinput-button .ui-button-text {
+  line-height: 24px;
+}
+*+html .fileupload-buttonbar .ui-button {
+  margin-left: 3px;
+}
+
+@media (max-width: 480px) {
+  .files .preview * {
+    width: 40px;
+  }
+  .files .name * {
+    width: 80px;
+    display: inline-block;
+    word-wrap: break-word;
+  }
+  .files .progress {
+    width: 20px;
+  }
+  .files .delete {
+    width: 60px;
+  }
+}
+
+/* Fix for Webkit (Safari, Chrome) */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  .fileinput-button {
+    margin-top: 2px;
+  }
+}
+
+.span5 {
+  width: 400px;
+  float: left;
+}
+.span7 {
+  width: 560px ;
+  float: left;
+}
+
