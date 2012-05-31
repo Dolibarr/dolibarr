@@ -38,6 +38,13 @@ $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 $id = GETPOST('id','int');
 $ref= GETPOST('ref');
 
+$mesg='';
+if (isset($_SESSION['DolMessage']))
+{
+	$mesg=$_SESSION['DolMessage'];
+	unset($_SESSION['DolMessage']);
+}
+
 $project = new Project($db);
 if (! $project->fetch($id,$ref) > 0)
 {
@@ -115,7 +122,9 @@ if ($action == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->right
 	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($project->ref);
 	$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 	dol_delete_file($file);
-	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
+	$_SESSION['DolMessage'] = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
+    Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+    exit;
 }
 
 
