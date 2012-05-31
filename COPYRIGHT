@@ -21,8 +21,8 @@ PHPExcel		  1.7.6		LGPL 2.1					Yes				Read/Write XLS files, read ODS files
 TCPDF             5.9.098	LGPL 3.0					Yes				PDF generation
 
 JS libraries:
-jQuery            1.7.1		GPL and MIT Licence			Yes				JS library
-jQuery UI         1.8.17	GPL and MIT Licence			Yes				JS library plugin UI
+jQuery            1.7.2		GPL and MIT Licence			Yes				JS library
+jQuery UI         1.8.20	GPL and MIT Licence			Yes				JS library plugin UI
 jQuery Colorpicker 1.1	    MIT Licence					Yes				JS library for color picker for a defined list of colors
 jQuery DataTable  1.8.1     BSD							Yes				JS library for tables output
 jQuery Flot       0.7		MIT Licence					Yes				JS library to build graph
