@@ -495,7 +495,10 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
  */
 function dol_unescapefile($filename)
 {
-    return stripslashes($filename);
+	// Remove path information and dots around the filename, to prevent uploading
+	// into different directories or replacing hidden system files.
+	// Also remove control characters and spaces (\x00..\x20) around the filename:
+	return trim(basename(stripslashes($filename)), ".\x00..\x20");
 }
 
 /**
