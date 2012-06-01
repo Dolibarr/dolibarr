@@ -31,9 +31,9 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/images.lib.php");
  */
 class FileUpload
 {
-	protected $_options;
-	protected $_fk_element;
-	protected $_element;
+	protected $options;
+	protected $fk_element;
+	protected $element;
 	
 	/**
 	 * Constructor
@@ -47,8 +47,8 @@ class FileUpload
 		global $db, $conf;
 		global $object;
 		
-		$this->_fk_element=$fk_element;
-		$this->_element=$element;
+		$this->fk_element=$fk_element;
+		$this->element=$element;
 		
 		$pathname=$filename=$element;
 		if (preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
@@ -76,7 +76,7 @@ class FileUpload
 		$object->fetch($fk_element);
 		$object->fetch_thirdparty();
 		
-		$this->_options = array(
+		$this->options = array(
 				'script_url' => $_SERVER['PHP_SELF'],
 				'upload_dir' => $conf->$element->dir_output . '/' . $object->ref . '/',
 				'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$object->ref.'/',
@@ -120,7 +120,7 @@ class FileUpload
 				)
 		);
 		if ($options) {
-			$this->_options = array_replace_recursive($this->_options, $options);
+			$this->options = array_replace_recursive($this->options, $options);
 		}
 	}
 	
@@ -144,9 +144,9 @@ class FileUpload
 	 * @param unknown_type $file
 	 */
 	protected function set_file_delete_url($file) {
-		$file->delete_url = $this->_options['script_url']
-			.'?file='.rawurlencode($file->name).'&fk_element='.$this->_fk_element.'&element='.$this->_element;
-		$file->delete_type = $this->_options['delete_type'];
+		$file->delete_url = $this->options['script_url']
+			.'?file='.rawurlencode($file->name).'&fk_element='.$this->fk_element.'&element='.$this->element;
+		$file->delete_type = $this->options['delete_type'];
 		if ($file->delete_type !== 'DELETE') {
 			$file->delete_url .= '&_method=DELETE';
 		}
@@ -160,15 +160,15 @@ class FileUpload
      */
     protected function get_file_object($file_name)
     {
-        $file_path = $this->_options['upload_dir'].$file_name;
+        $file_path = $this->options['upload_dir'].$file_name;
         if (is_file($file_path) && $file_name[0] !== '.')
         {
             $file = new stdClass();
             $file->name = $file_name;
             $file->mime = dol_mimetype($file_name,'',2);
             $file->size = filesize($file_path);
-            $file->url = $this->_options['upload_url'].rawurlencode($file->name);
-            foreach($this->_options['image_versions'] as $version => $options) {
+            $file->url = $this->options['upload_url'].rawurlencode($file->name);
+            foreach($this->options['image_versions'] as $version => $options) {
                 if (is_file($options['upload_dir'].$file_name)) {
                     $tmp=explode('.',$file->name);
                     $file->{$version.'_url'} = $options['upload_url'].rawurlencode($tmp[0].'_mini.'.$tmp[1]);
@@ -187,7 +187,7 @@ class FileUpload
      */
     protected function get_file_objects()
     {
-        return array_values(array_filter(array_map(array($this, 'get_file_object'), scandir($this->_options['upload_dir']))));
+        return array_values(array_filter(array_map(array($this, 'get_file_object'), scandir($this->options['upload_dir']))));
     }
 
     /**
@@ -201,7 +201,7 @@ class FileUpload
     {
         global $maxwidthmini, $maxheightmini;
         
-        $file_path = $this->_options['upload_dir'].$file_name;
+        $file_path = $this->options['upload_dir'].$file_name;
         $new_file_path = $options['upload_dir'].$file_name;
 
         if (dol_mkdir($options['upload_dir']) >= 0)
@@ -242,7 +242,7 @@ class FileUpload
         	$file->error = 'missingFileName';
         	return false;
         }
-        if (!preg_match($this->_options['accept_file_types'], $file->name)) {
+        if (!preg_match($this->options['accept_file_types'], $file->name)) {
             $file->error = 'acceptFileTypes';
             return false;
         }
@@ -251,33 +251,33 @@ class FileUpload
         } else {
             $file_size = $_SERVER['CONTENT_LENGTH'];
         }
-        if ($this->_options['max_file_size'] && (
-                $file_size > $this->_options['max_file_size'] ||
-                $file->size > $this->_options['max_file_size'])
+        if ($this->options['max_file_size'] && (
+                $file_size > $this->options['max_file_size'] ||
+                $file->size > $this->options['max_file_size'])
             ) {
             $file->error = 'maxFileSize';
             return false;
         }
-        if ($this->_options['min_file_size'] &&
-            $file_size < $this->_options['min_file_size']) {
+        if ($this->options['min_file_size'] &&
+            $file_size < $this->options['min_file_size']) {
             $file->error = 'minFileSize';
             return false;
         }
-        if (is_int($this->_options['max_number_of_files']) && (
-                count($this->get_file_objects()) >= $this->_options['max_number_of_files'])
+        if (is_int($this->options['max_number_of_files']) && (
+                count($this->get_file_objects()) >= $this->options['max_number_of_files'])
             ) {
             $file->error = 'maxNumberOfFiles';
             return false;
         }
         list($img_width, $img_height) = @getimagesize($uploaded_file);
         if (is_int($img_width)) {
-            if ($this->_options['max_width'] && $img_width > $this->_options['max_width'] ||
-                    $this->_options['max_height'] && $img_height > $this->_options['max_height']) {
+            if ($this->options['max_width'] && $img_width > $this->options['max_width'] ||
+                    $this->options['max_height'] && $img_height > $this->options['max_height']) {
                 $file->error = 'maxResolution';
                 return false;
             }
-            if ($this->_options['min_width'] && $img_width < $this->_options['min_width'] ||
-                    $this->_options['min_height'] && $img_height < $this->_options['min_height']) {
+            if ($this->options['min_width'] && $img_width < $this->options['min_width'] ||
+                    $this->options['min_height'] && $img_height < $this->options['min_height']) {
                 $file->error = 'minResolution';
                 return false;
             }
@@ -327,8 +327,8 @@ class FileUpload
     			preg_match('/^image\/(gif|jpe?g|png)/', $type, $matches)) {
     		$file_name .= '.'.$matches[1];
     	}
-    	if ($this->_options['discard_aborted_uploads']) {
-    		while(is_file($this->_options['upload_dir'].$file_name)) {
+    	if ($this->options['discard_aborted_uploads']) {
+    		while(is_file($this->options['upload_dir'].$file_name)) {
     			$file_name = $this->upcount_name($file_name);
     		}
     	}
@@ -397,10 +397,10 @@ class FileUpload
         $file->mime = dol_mimetype($file->name,'',2);
         $file->size = intval($size);
         $file->type = $type;
-        if ($this->validate($uploaded_file, $file, $error, $index) && dol_mkdir($this->_options['upload_dir']) >= 0) {
+        if ($this->validate($uploaded_file, $file, $error, $index) && dol_mkdir($this->options['upload_dir']) >= 0) {
         	$this->handle_form_data($file, $index);
-        	$file_path = $this->_options['upload_dir'].$file->name;
-        	$append_file = !$this->_options['discard_aborted_uploads'] && is_file($file_path) && $file->size > filesize($file_path);
+        	$file_path = $this->options['upload_dir'].$file->name;
+        	$append_file = !$this->options['discard_aborted_uploads'] && is_file($file_path) && $file->size > filesize($file_path);
         	clearstatcache();
         	if ($uploaded_file && is_uploaded_file($uploaded_file)) {
         		// multipart/formdata uploads (POST method uploads)
@@ -423,8 +423,8 @@ class FileUpload
         	}
         	$file_size = filesize($file_path);
         	if ($file_size === $file->size) {
-        		$file->url = $this->_options['upload_url'].rawurlencode($file->name);
-        		foreach($this->_options['image_versions'] as $version => $options)
+        		$file->url = $this->options['upload_url'].rawurlencode($file->name);
+        		foreach($this->options['image_versions'] as $version => $options)
         		{
         			if ($this->create_scaled_image($file->name, $options))
         			{
@@ -432,7 +432,7 @@ class FileUpload
         				$file->{$version.'_url'} = $options['upload_url'].rawurlencode($tmp[0].'_mini.'.$tmp[1]);
         			}
         		}
-        	} else if ($this->_options['discard_aborted_uploads']) {
+        	} else if ($this->options['discard_aborted_uploads']) {
         		unlink($file_path);
         		$file->error = 'abort';
         	}
@@ -470,8 +470,8 @@ class FileUpload
     	if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
     		return $this->delete();
     	}
-        $upload = isset($_FILES[$this->_options['param_name']]) ?
-            $_FILES[$this->_options['param_name']] : null;
+        $upload = isset($_FILES[$this->options['param_name']]) ?
+            $_FILES[$this->options['param_name']] : null;
         $info = array();
         if ($upload && is_array($upload['tmp_name'])) {
         	// param_name is an array identifier like "files[]",
@@ -529,10 +529,10 @@ class FileUpload
     {
         $file_name = isset($_REQUEST['file']) ?
             basename(stripslashes($_REQUEST['file'])) : null;
-        $file_path = $this->_options['upload_dir'].$file_name;
+        $file_path = $this->options['upload_dir'].$file_name;
         $success = is_file($file_path) && $file_name[0] !== '.' && unlink($file_path);
         if ($success) {
-            foreach($this->_options['image_versions'] as $version => $options) {
+            foreach($this->options['image_versions'] as $version => $options) {
                 $file = $options['upload_dir'].$file_name;
                 if (is_file($file)) {
                     unlink($file);
