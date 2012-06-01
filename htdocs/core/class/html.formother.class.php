@@ -306,6 +306,11 @@ class FormOther
             $sql_usr.= " WHERE u2.entity IN (0,".$conf->entity.")";
             $sql_usr.= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->societe_id;
         }
+        // Allow at least to search themselves
+        $sql_usr .= " UNION ";
+        $sql_usr.= "SELECT u3.rowid, u3.name as name, u3.firstname, u3.login";
+        $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u3, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql_usr.= " WHERE u3.rowid = sc.fk_user AND sc.fk_user=".$user->id;
         $sql_usr.= " ORDER BY name ASC";
         //print $sql_usr;exit;
 
