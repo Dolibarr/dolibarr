@@ -621,6 +621,8 @@ ByMonth=Por mes
 ByDay=Por día
 BySalesRepresentative=Por comercial
 LinkedToSpecificUsers=Enlazado a un contacto de usuario particular
+DeleteAFile=Eliminación de archivo
+ConfirmDeleteAFile=Confirma la eliminación del archivo
 
 # Week day
 Monday=Lunes
