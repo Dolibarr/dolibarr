@@ -96,7 +96,7 @@ if ($result)
 	$interventionstatic=new Fichinter($db);
 
 	$urlparam="&amp;socid=$socid";
-	print_barre_liste($langs->trans("ListOfInterventions"), $page, "index.php",$urlparam,$sortfield,$sortorder,'',$num);
+	print_barre_liste($langs->trans("ListOfInterventions"), $page, "list.php",$urlparam,$sortfield,$sortorder,'',$num);
 
 	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print '<table class="noborder" width="100%">';
