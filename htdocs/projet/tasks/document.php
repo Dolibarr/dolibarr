@@ -44,6 +44,13 @@ $ref= GETPOST('ref','alpha');
 $withproject=GETPOST('withproject','int');
 $project_ref = GETPOST('project_ref','alpha');
 
+$mesg='';
+if (isset($_SESSION['DolMessage']))
+{
+	$mesg=$_SESSION['DolMessage'];
+	unset($_SESSION['DolMessage']);
+}
+
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
@@ -112,7 +119,9 @@ if ($action=='delete')
     $langs->load("other");
 	$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 	dol_delete_file($file);
-	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
+	$_SESSION['DolMessage'] = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
+    Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+    exit;
 }
 
 // Retreive First Task ID of Project if withprojet is on to allow project prev next to work

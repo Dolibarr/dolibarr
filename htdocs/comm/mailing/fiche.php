@@ -816,7 +816,7 @@ else
 			{
 				print "\n\n<div class=\"tabsAction\">\n";
 
-				if ($object->statut == 0 && $user->rights->mailing->creer)
+				if (($object->statut == 0 || $object->statut == 1) && $user->rights->mailing->creer)
 				{
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("EditMailing").'</a>';
 				}
