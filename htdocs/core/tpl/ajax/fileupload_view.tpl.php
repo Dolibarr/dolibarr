@@ -40,22 +40,18 @@
 			<i class="icon-ban-circle icon-white"></i>
 			<span><?php echo $langs->trans('CancelUpload'); ?></span>
 		</button>
-		<!--
 		<button type="button" class="btn btn-danger delete">
 			<i class="icon-trash icon-white"></i>
 			<span><?php echo $langs->trans('Delete'); ?></span>
 		</button>
 		<input type="checkbox" class="toggle">
-		-->
 	</div>
 	<!-- The global progress information -->
 	<div class="span5 fileupload-progress fade">
 		<!-- The global progress bar -->
-		<!--
 		<div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
 			<div class="bar" style="width:0%;"></div>
 		</div>
-		-->
 		<!-- The extended global progress information -->
 		<div class="progress-extended">&nbsp;</div>
 	</div>
