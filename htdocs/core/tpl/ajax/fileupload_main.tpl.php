@@ -44,11 +44,6 @@ $(function () {
 	// Initialize the jQuery File Upload widget:
 	$('#fileupload').fileupload();
 
-	// Options
-	$('#fileupload').fileupload('option', {
-		maxFileSize: max_file_size
-	});
-
 });
 </script>
 <!-- END TEMPLATE FILE UPLOAD MAIN -->
