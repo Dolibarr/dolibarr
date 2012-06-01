@@ -3263,7 +3263,7 @@ else
         if ($userid)
         {
             if ($userid == -1) $sql.=' AND f.fk_user_author IS NULL';
-            else $sql.=' AND f.fk_user_author = '.$user->id;
+            else $sql.=' AND f.fk_user_author = '.$userid;
         }
         if ($_GET['filtre'])
         {
