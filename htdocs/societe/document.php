@@ -33,12 +33,18 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 $langs->load("companies");
 $langs->load('other');
 
-$mesg='';
 
 $action=GETPOST('action');
 $confirm=GETPOST('confirm');
 $id=(GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id','int'));
 $ref = GETPOST('ref', 'alpha');
+
+$mesg='';
+if (isset($_SESSION['DolMessage']))
+{
+	$mesg=$_SESSION['DolMessage'];
+	unset($_SESSION['DolMessage']);
+}
 
 // Security check
 if ($user->societe_id > 0)
@@ -83,7 +89,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	{
 		if (dol_mkdir($upload_dir) >= 0)
 		{
-			$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . stripslashes($_FILES['userfile']['name']),0,0,$_FILES['userfile']['error']);
+			$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0,0,$_FILES['userfile']['error']);
 			if (is_numeric($resupload) && $resupload > 0)
 			{
 	            if (image_format_supported($upload_dir . "/" . $_FILES['userfile']['name']) == 1)
@@ -123,8 +129,11 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 	if ($object->id)
 	{
 		$file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+
 		dol_delete_file($file,0,0,0,$object);
-		$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
+		$_SESSION['DolMessage'] = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
+    	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+    	exit;
 	}
 }
 
@@ -206,10 +215,10 @@ if ($object->id)
 
 	/*
 	 * Confirmation suppression fichier
-	*/
+	 */
 	if ($action == 'delete')
 	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
 		if ($ret == 'html') print '<br>';
 	}
 

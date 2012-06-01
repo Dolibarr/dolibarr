@@ -41,6 +41,13 @@ $langs->load('deliveries');
 $langs->load('products');
 $langs->load('stocks');
 
+$mesg='';
+if (isset($_SESSION['DolMessage']))
+{
+	$mesg=$_SESSION['DolMessage'];
+	unset($_SESSION['DolMessage']);
+}
+
 // Security check
 $id=empty($_GET['id']) ? 0 : intVal($_GET['id']);
 $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
@@ -79,7 +86,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 
 	if (dol_mkdir($upload_dir) >= 0)
 	{
-		$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . stripslashes($_FILES['userfile']['name']),0,0,$_FILES['userfile']['error']);
+		$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0,0,$_FILES['userfile']['error']);
 		if (is_numeric($resupload) && $resupload > 0)
 		{
 		    if (image_format_supported($upload_dir . "/" . $_FILES['userfile']['name']) == 1)
@@ -119,7 +126,9 @@ if ($action=='delete')
 	$upload_dir = $conf->fournisseur->dir_output . "/commande/" . dol_sanitizeFileName($commande->ref);
 	$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 	dol_delete_file($file);
-	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
+	$_SESSION['DolMessage'] = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
+    Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+    exit;
 }
 
 
