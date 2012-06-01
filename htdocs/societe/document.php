@@ -33,18 +33,12 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 $langs->load("companies");
 $langs->load('other');
 
+$mesg='';
 
 $action=GETPOST('action');
 $confirm=GETPOST('confirm');
 $id=(GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id','int'));
 $ref = GETPOST('ref', 'alpha');
-
-$mesg='';
-if (isset($_SESSION['DolMessage']))
-{
-	$mesg=$_SESSION['DolMessage'];
-	unset($_SESSION['DolMessage']);
-}
 
 // Security check
 if ($user->societe_id > 0)
@@ -131,9 +125,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 		$file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 
 		dol_delete_file($file,0,0,0,$object);
-		$_SESSION['DolMessage'] = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
-    	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-    	exit;
+		$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
 	}
 }
 

@@ -39,13 +39,7 @@ $langs->load('other');
 $id=GETPOST('id','int');
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
-
-$mesg='';
-if (isset($_SESSION['DolMessage']))
-{
-	$mesg=$_SESSION['DolMessage'];
-	unset($_SESSION['DolMessage']);
-}
+$mesg = "";
 
 // Security check
 if ($user->societe_id > 0)
@@ -120,9 +114,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
     $langs->load("other");
 	$file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 	dol_delete_file($file);
-	$_SESSION['DolMessage'] = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
-    Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
-    exit;
+	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
 }
 
 
