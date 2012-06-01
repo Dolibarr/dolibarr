@@ -155,7 +155,7 @@ if ($id > 0 || ! empty($ref))
 
 	if ($action == 'delete')
 	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"]."&urlfile=".$_GET['urlfile'],$langs->trans("DeleteAFile"),$langs->trans("ConfirmDeleteAFile"),"confirm_delete",'','',1);
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"]."&urlfile=".urlencode(GETPOST("urlfile")),$langs->trans("DeleteAFile"),$langs->trans("ConfirmDeleteAFile"),"confirm_delete",'','',1);
 		if ($ret == 'html') print '<br>';
 	}
 
