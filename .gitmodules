@@ -100,3 +100,6 @@
 [submodule "htdocs/custom/composition"]
 	path = htdocs/custom/composition
 	url = gitolite@doliforge.org:composition/composition.git
+[submodule "htdocs/custom/formbuilder"]
+	path = htdocs/custom/formbuilder
+	url = gitolite@doliforge.org:formbuilder/formbuilder.git
