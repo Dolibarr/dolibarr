@@ -696,10 +696,10 @@ form#login {
 	text-shadow: 1px 1px 1px #FFF;
 }
 .login_table {
-	padding-left:8px;
-	padding-right:8px;
-	padding-top:22px;
-	padding-bottom:18px;
+	padding-left:6px;
+	padding-right:6px;
+	padding-top:14px;
+	padding-bottom:12px;
 	width: 540px;
 	border: 1px solid #C0C0C0;
 	background-color: #E0E0E0;
