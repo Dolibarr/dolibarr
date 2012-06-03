@@ -35,3 +35,18 @@ ALTER TABLE llx_commande_fournisseur CHANGE COLUMN date_cloture date_approve dat
 ALTER TABLE llx_commande_fournisseur CHANGE COLUMN fk_user_cloture fk_user_approve integer;
 
 ALTER TABLE llx_mailing MODIFY COLUMN body mediumtext;
+
+alter table llx_propaldet add column fk_fournprice int(11) after info_bits;
+alter table llx_propaldet add column pa_ht double(24,8) after fk_fournprice;
+alter table llx_propaldet add column marge_tx double(6,3) after pa_ht;
+alter table llx_propaldet add column marque_tx double(6,3) after marge_tx;
+
+alter table llx_commandedet add column fk_fournprice int(11) after info_bits;
+alter table llx_commandedet add column pa_ht double(24,8) after fk_fournprice;
+alter table llx_commandedet add column marge_tx double(6,3) after pa_ht;
+alter table llx_commandedet add column marque_tx double(6,3) after marge_tx;
+
+alter table llx_facturedet add column fk_fournprice int(11) after info_bits;
+alter table llx_facturedet add column pa_ht double(24,8) after fk_fournprice;
+alter table llx_facturedet add column marge_tx double(6,3) after pa_ht;
+alter table llx_facturedet add column marque_tx double(6,3) after marge_tx;
