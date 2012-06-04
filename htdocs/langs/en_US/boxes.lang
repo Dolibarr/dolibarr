@@ -70,3 +70,7 @@ NoRecordedProducts=No recorded products/services
 NoRecordedProspects=No recorded prospects
 NoContractedProducts=No products/services contracted
 NoRecordedContracts=No recorded contracts
+# Latest supplier orders
+BoxLatestSupplierOrders=Latest supplier orders
+BoxTitleLatestSupplierOrders=%s latest supplier orders
+NoSupplierOrder=No recorded supplier order
