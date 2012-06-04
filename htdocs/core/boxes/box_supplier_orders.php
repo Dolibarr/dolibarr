@@ -94,22 +94,25 @@ class box_supplier_orders extends ModeleBoxes
                 {
                     $objp = $db->fetch_object($result);
                     $datem=$db->jdate($objp->tms);
+                    
+                    $urlo = DOL_URL_ROOT."/fourn/commande/fiche.php?id=".$objp->rowid;
+                    $urls = DOL_URL_ROOT."/fourn/fiche.php?socid=".$objp->socid;
 
                     $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
-                    'url' => DOL_URL_ROOT."/fourn/commande/fiche.php?id=".$objp->rowid);
+                    'url' => $urlo);
 
                     $this->info_box_contents[$i][1] = array('td' => 'align="left"',
                     'text' => $objp->ref,
-                    'url' => DOL_URL_ROOT."/fourn/commande/fiche.php?id=".$objp->rowid);
+                    'url' => $urlo);
 
                     $this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
                     'logo' => 'company',
-                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+                    'url' => $urls);
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
+                    $this->info_box_contents[$i][3] = array('td' => 'align="left"',
                     'text' => $objp->nom,
-                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+                    'url' => $urls);
 
                     $this->info_box_contents[$i][4] = array('td' => 'align="right"',
                     'text' => dol_print_date($datem,'day'),
