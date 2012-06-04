@@ -53,13 +53,14 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
         // Forcing parameter setting magic_quotes_gpc and cleaning parameters
         // (Otherwise he would have for each position, condition
         // Reading stripslashes variable according to state get_magic_quotes_gpc).
-        // Off mode (recommended, you just do $db->escape when an insert / update.
+        // Off mode recommended (just do $db->escape for insert / update).
         function stripslashes_deep($value)
         {
             return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
         }
         $_GET     = array_map('stripslashes_deep', $_GET);
         $_POST    = array_map('stripslashes_deep', $_POST);
+        $_FILES   = array_map('stripslashes_deep', $_FILES);
         //$_COOKIE  = array_map('stripslashes_deep', $_COOKIE); // Useless because a cookie should never be outputed on screen nor used into sql
         @set_magic_quotes_runtime(0);
     }
@@ -855,7 +856,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             //print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/lightbox/css/jquery.lightbox-0.5.css" media="screen" />'."\n";       // Lightbox
             if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD))     // jQuery fileupload
             {
-                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/css/jquery.fileupload-ui.css" />'."\n";
+                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/jquery.fileupload-ui.css" />'."\n";
             }
             if (! empty($conf->global->MAIN_USE_JQUERY_DATATABLES))     // jQuery datatables
             {
@@ -975,12 +976,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             // jQuery File Upload
             if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD))
             {
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/template/tmpl.min.js"></script>'."\n";
-                //print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/js/jquery.iframe-transport.js"></script>'."\n";
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/js/jquery.fileupload.js"></script>'."\n";
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/js/jquery.fileupload-fp.js"></script>'."\n";
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/js/jquery.fileupload-ui.js"></script>'."\n";
-                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/js/jquery.fileupload-jui.js"></script>'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/jquery.tmpl.min.js"></script>'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/jquery.iframe-transport.js"></script>'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/jquery.fileupload.js"></script>'."\n";
+                print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/jquery.fileupload-ui.js"></script>'."\n";
             }
             // jQuery DataTables
             if (! empty($conf->global->MAIN_USE_JQUERY_DATATABLES))

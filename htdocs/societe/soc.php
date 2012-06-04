@@ -80,7 +80,7 @@ $hookmanager->initHooks(array('thirdpartycard'));
 
 $parameters=array('id'=>$socid, 'objcanvas'=>$objcanvas);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-$error=$hookmanager->error; $errors=$hookmanager->errors;
+$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
 
 if (empty($reshook))
 {

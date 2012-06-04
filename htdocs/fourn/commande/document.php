@@ -41,13 +41,6 @@ $langs->load('deliveries');
 $langs->load('products');
 $langs->load('stocks');
 
-$mesg='';
-if (isset($_SESSION['DolMessage']))
-{
-	$mesg=$_SESSION['DolMessage'];
-	unset($_SESSION['DolMessage']);
-}
-
 // Security check
 $id=empty($_GET['id']) ? 0 : intVal($_GET['id']);
 $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
@@ -126,9 +119,7 @@ if ($action=='delete')
 	$upload_dir = $conf->fournisseur->dir_output . "/commande/" . dol_sanitizeFileName($commande->ref);
 	$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 	dol_delete_file($file);
-	$_SESSION['DolMessage'] = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
-    Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
-    exit;
+	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
 }
 
 
