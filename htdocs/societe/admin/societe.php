@@ -280,7 +280,7 @@ foreach ($dirsociete as $dirroot)
     				$disabled = false;
     				if (! empty($conf->multicompany->enabled) && (is_object($mc) && ! empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true);
     				print '<td align="center">';
-    				if (! $disabled) print '<a href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&amp;value='.$file.'">';
+    				if (! $disabled) print '<a href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&value='.$file.'">';
     				print img_picto($langs->trans("Disabled"),'switch_off');
     				if (! $disabled) print '</a>';
     				print '</td>';
@@ -354,7 +354,7 @@ foreach ($dirsociete as $dirroot)
     			}
     			else
     			{
-    				print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setcodecompta&amp;value='.$file.'">';
+    				print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setcodecompta&value='.$file.'">';
     				print img_picto($langs->trans("Disabled"),'switch_off');
     				print '</a></td>';
     			}
@@ -452,7 +452,7 @@ foreach ($dirsociete as $dirroot)
 						print "<td align=\"center\">\n";
 						//if ($conf->global->COMPANY_ADDON_PDF != "$name")
 						//{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'">';
 							print img_picto($langs->trans("Enabled"),'switch_on');
 							print '</a>';
 						//}
@@ -473,7 +473,7 @@ foreach ($dirsociete as $dirroot)
 						else
 						{
 							print "<td align=\"center\">\n";
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&scandir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 							print "</td>";
 						}
 					}
@@ -562,13 +562,13 @@ while ($i < $nbofloop)
 
 	if ($verif)
 	{
-		print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofid&amp;value='.($i+1).'&amp;status=0">';
+		print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofid&value='.($i+1).'&status=0">';
 		print img_picto($langs->trans("Activated"),'switch_on');
 		print '</a></td>';
 	}
 	else
 	{
-		print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofid&amp;value='.($i+1).'&amp;status=1">';
+		print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setprofid&value='.($i+1).'&status=1">';
 		print img_picto($langs->trans("Disabled"),'switch_off');
 		print '</a></td>';
 	}

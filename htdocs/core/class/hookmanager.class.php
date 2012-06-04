@@ -30,6 +30,8 @@
 class HookManager
 {
 	var $db;
+	var $error;
+	var $errors=array();
 
     // Context hookmanager was created for ('thirdpartycard', 'thirdpartydao', ...)
     var $contextarray=array();
@@ -146,7 +148,7 @@ class HookManager
                         $resaction+=$actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
                         if ($resaction < 0 || ! empty($actionclassinstance->error) || (! empty($actionclassinstance->errors) && count($actionclassinstance->errors) > 0))
                         {
-                            $this->error=$actionclassinstance->error; $this->errors=$actionclassinstance->errors;
+                            $this->error=$actionclassinstance->error; $this->errors=array_merge($this->errors, (array) $actionclassinstance->errors);
                             if ($method == 'doActions')
                             {
                                 if ($action=='add')    $action='create';    // TODO this change must be inside the doActions
