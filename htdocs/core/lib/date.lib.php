@@ -106,7 +106,8 @@ function getServerTimeZoneInt($refgmtdate='now')
             else $daylight=0;
             $tmp=dol_mktime(0,0,0,$monthref,$dayref,$yearref,false,0)-dol_mktime(0,0,0,$monthref,$dayref,$yearref,true,0)-($daylight*3600);
             if (ini_get("date.timezone")=='UTC') return 0;
-            return 'unknown';
+            return $tmp;           // For compatibility result
+            //return 'unknown';    // For true result
         }
         elseif ($refgmtdate == 'summer')
         {
@@ -116,7 +117,8 @@ function getServerTimeZoneInt($refgmtdate='now')
             else $daylight=0;
             $tmp=dol_mktime(0,0,0,$monthref,$dayref,$yearref,false,0)-dol_mktime(0,0,0,$monthref,$dayref,$yearref,true,0)-($daylight*3600);
             if (ini_get("date.timezone")=='UTC') return 0;
-            return 'unknown';
+            return $tmp;           // For compatibility result
+            //return 'unknown';    // For true result
         }
         else $tmp=dol_mktime(0,0,0,1,1,1970);
     }
