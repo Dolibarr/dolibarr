@@ -83,7 +83,7 @@ function getServerTimeZoneString()
 function getServerTimeZoneInt($refgmtdate='now')
 {
     global $conf;
-    if (class_exists('DateTime') && ! empty($conf->global->MAIN_NEW_DATE))
+    if (method_exists('DateTimeZone','getOffset') && ! empty($conf->global->MAIN_NEW_DATE))
     {
         // Method 1 (include daylight)
         $gmtnow=dol_now('gmt'); $yearref=dol_print_date($gmtnow,'%Y'); $monthref=dol_print_date($gmtnow,'%m'); $dayref=dol_print_date($gmtnow,'%d');
