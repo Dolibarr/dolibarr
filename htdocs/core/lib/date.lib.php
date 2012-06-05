@@ -105,6 +105,7 @@ function getServerTimeZoneInt($refgmtdate='now')
             if (dol_stringtotime($_SESSION['dol_dst_first']) <= $gmtnow && $gmtnow < dol_stringtotime($_SESSION['dol_dst_second'])) $daylight=1;
             else $daylight=0;
             $tmp=dol_mktime(0,0,0,$monthref,$dayref,$yearref,false,0)-dol_mktime(0,0,0,$monthref,$dayref,$yearref,true,0)-($daylight*3600);
+            if (ini_get("date.timezone")=='UTC') return 0;
             return 'unknown';
         }
         elseif ($refgmtdate == 'summer')
@@ -114,6 +115,7 @@ function getServerTimeZoneInt($refgmtdate='now')
             if (dol_stringtotime($_SESSION['dol_dst_first']) <= dol_stringtotime($yearref.'-'.$monthref.'-'.$dayref) && dol_stringtotime($yearref.'-'.$monthref.'-'.$dayref) < dol_stringtotime($_SESSION['dol_dst_second'])) $daylight=1;
             else $daylight=0;
             $tmp=dol_mktime(0,0,0,$monthref,$dayref,$yearref,false,0)-dol_mktime(0,0,0,$monthref,$dayref,$yearref,true,0)-($daylight*3600);
+            if (ini_get("date.timezone")=='UTC') return 0;
             return 'unknown';
         }
         else $tmp=dol_mktime(0,0,0,1,1,1970);
