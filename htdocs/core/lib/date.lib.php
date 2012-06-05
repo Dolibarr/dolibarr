@@ -106,7 +106,7 @@ function getServerTimeZoneInt($refgmtdate='now')
             if (dol_stringtotime($_SESSION['dol_dst_first']) <= $gmtnow && $gmtnow < dol_stringtotime($_SESSION['dol_dst_second'])) $daylight=1;
             else $daylight=0;
             $tmp=dol_mktime(0,0,0,$monthref,$dayref,$yearref,false,0)-dol_mktime(0,0,0,$monthref,$dayref,$yearref,true,0)-($daylight*3600);
-            //return 'unknown';    // For true result (commented for compatibility result)
+            return 'unknown';    // For true result
         }
         elseif ($refgmtdate == 'summer')
         {
@@ -116,7 +116,7 @@ function getServerTimeZoneInt($refgmtdate='now')
             if (dol_stringtotime($_SESSION['dol_dst_first']) <= dol_stringtotime($yearref.'-'.$monthref.'-'.$dayref) && dol_stringtotime($yearref.'-'.$monthref.'-'.$dayref) < dol_stringtotime($_SESSION['dol_dst_second'])) $daylight=1;
             else $daylight=0;
             $tmp=dol_mktime(0,0,0,$monthref,$dayref,$yearref,false,0)-dol_mktime(0,0,0,$monthref,$dayref,$yearref,true,0)-($daylight*3600);
-            //return 'unknown';    // For true result (commented for compatibility result)
+            return 'unknown';    // For true result
         }
         else $tmp=dol_mktime(0,0,0,1,1,1970);
     }
