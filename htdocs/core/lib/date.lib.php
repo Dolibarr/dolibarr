@@ -100,25 +100,23 @@ function getServerTimeZoneInt($refgmtdate='now')
         // Method 2 (does not include daylight, not supported by adodb)
         if ($refgmtdate == 'now')
         {
+            if (ini_get("date.timezone")=='UTC') return 0;
             // We don't know server timezone string, so we don't know location, so we can't guess daylight. We assume we use same than client. Fix is to use MAIN_NEW_DATE.
             $gmtnow=dol_now('gmt'); $yearref=dol_print_date($gmtnow,'%Y'); $monthref=dol_print_date($gmtnow,'%m'); $dayref=dol_print_date($gmtnow,'%d');
             if (dol_stringtotime($_SESSION['dol_dst_first']) <= $gmtnow && $gmtnow < dol_stringtotime($_SESSION['dol_dst_second'])) $daylight=1;
             else $daylight=0;
             $tmp=dol_mktime(0,0,0,$monthref,$dayref,$yearref,false,0)-dol_mktime(0,0,0,$monthref,$dayref,$yearref,true,0)-($daylight*3600);
-            if (ini_get("date.timezone")=='UTC') return 0;
-            return $tmp;           // For compatibility result
-            //return 'unknown';    // For true result
+            //return 'unknown';    // For true result (commented for compatibility result)
         }
         elseif ($refgmtdate == 'summer')
         {
+            if (ini_get("date.timezone")=='UTC') return 0;
             // We don't know server timezone string, so we don't know location, so we can't guess daylight. We assume we use same than client. Fix is to use MAIN_NEW_DATE.
             $gmtnow=dol_now('gmt'); $yearref=dol_print_date($gmtnow,'%Y'); $monthref='08'; $dayref='01';
             if (dol_stringtotime($_SESSION['dol_dst_first']) <= dol_stringtotime($yearref.'-'.$monthref.'-'.$dayref) && dol_stringtotime($yearref.'-'.$monthref.'-'.$dayref) < dol_stringtotime($_SESSION['dol_dst_second'])) $daylight=1;
             else $daylight=0;
             $tmp=dol_mktime(0,0,0,$monthref,$dayref,$yearref,false,0)-dol_mktime(0,0,0,$monthref,$dayref,$yearref,true,0)-($daylight*3600);
-            if (ini_get("date.timezone")=='UTC') return 0;
-            return $tmp;           // For compatibility result
-            //return 'unknown';    // For true result
+            //return 'unknown';    // For true result (commented for compatibility result)
         }
         else $tmp=dol_mktime(0,0,0,1,1,1970);
     }
