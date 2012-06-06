@@ -87,8 +87,15 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 			}
 			else if (! empty($ext_element))
 			{
-				dol_include_once('/'.$ext_element.'/class/actions_'.$ext_element.'.class.php');
-				$classname = 'Actions'.ucfirst($ext_element);
+				$module = $subelement = $ext_element;
+				if (preg_match('/^([^_]+)_([^_]+)/i',$ext_element,$regs))
+				{
+					$module = $regs[1];
+					$subelement = $regs[2];
+				}
+				
+				dol_include_once('/'.$module.'/class/actions_'.$subelement.'.class.php');
+				$classname = 'Actions'.ucfirst($subelement);
 				$object = new $classname($db);
 				$ret = $object->$methodname();
 				if ($ret > 0) echo json_encode($object->$cachename);
