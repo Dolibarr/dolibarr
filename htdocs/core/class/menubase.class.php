@@ -107,22 +107,22 @@ class Menubase
         // an insert with a forced id.
         if (in_array($this->db->type,array('pgsql')))
         {
-			$sql = "SELECT MAX(rowid) as maxrowid FROM ".MAIN_DB_PREFIX."menu";
-        	$resqlrowid=$this->db->query($sql);
-        	if ($resqlrowid)
-        	{
-        		$obj=$this->db->fetch_object($resqlrowid);
-        		$maxrowid=$obj->maxrowid;
+          $sql = "SELECT MAX(rowid) as maxrowid FROM ".MAIN_DB_PREFIX."menu";
+          $resqlrowid=$this->db->query($sql);
+          if ($resqlrowid)
+          {
+               $obj=$this->db->fetch_object($resqlrowid);
+               $maxrowid=$obj->maxrowid;
 
-                        // Max rowid can be empty if there is no record yet
-                        if(empty($maxrowid)) $maxrowid=1;
+               // Max rowid can be empty if there is no record yet
+               if(empty($maxrowid)) $maxrowid=1;
 
-                        $sql = "SELECT setval('".MAIN_DB_PREFIX."menu_rowid_seq', ".($maxrowid).")";
-                        //print $sql; exit;
-	        	$resqlrowidset=$this->db->query($sql);
-	     		if (! $resqlrowidset) dol_print_error($this->db);
-        	}
-        	else dol_print_error($this->db);
+               $sql = "SELECT setval('".MAIN_DB_PREFIX."menu_rowid_seq', ".($maxrowid).")";
+               //print $sql; exit;
+               $resqlrowidset=$this->db->query($sql);
+               if (! $resqlrowidset) dol_print_error($this->db);
+          }
+          else dol_print_error($this->db);
         }
 
         // Insert request
