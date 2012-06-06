@@ -26,8 +26,7 @@ require_once(DOL_DOCUMENT_ROOT."/exports/class/export.class.php");
 
 $langs->load("exports");
 
-if (! $user->societe_id == 0)
-  accessforbidden();
+if (! $user->rights->export->lire) accessforbidden();
 
 
 
@@ -131,7 +130,7 @@ if (count($export->array_export_code))
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("NewExport").'</a>';
+		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("NewExport").'</a>';
 	}
 	/*
    	print '<center><form action="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export"><input type="submit" class="button" value="'.$langs->trans("NewExport").'"';
