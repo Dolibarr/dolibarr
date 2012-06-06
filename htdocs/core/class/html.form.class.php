@@ -2223,6 +2223,7 @@ class Form
         {
             $autoOpen=true;
             $dialogconfirm='dialog-confirm';
+            $button='';
             if (! is_int($useajax))
             {
                 $button=$useajax;
@@ -2256,7 +2257,7 @@ class Form
 
 			/* Warning: This function is loaded once and not overwritten if loaded by another ajax page */
             $(function() {
-			    $( "#'.$dialogconfirm.'" ).dialog({
+            	$( "#'.$dialogconfirm.'" ).dialog({
 			        autoOpen: '.($autoOpen?'true':'false').',
 			        resizable: false,
 			        height:'.$height.',
@@ -2306,6 +2307,13 @@ class Form
 			            }
 			        }
 			    });
+
+				var button=\''.$button.'\';
+	            if (button.length > 0) {
+			    	$( "#" + button ).click(function() {
+			    		$("#'.$dialogconfirm.'").dialog(\'open\');
+			    	});
+			    }
 			});
 			</script>';
 
