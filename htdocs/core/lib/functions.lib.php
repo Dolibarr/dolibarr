@@ -960,7 +960,7 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
         if ($second< 0 || $second > 60) return '';
     }
 
-    if (class_exists('DateTime') && ! empty($conf->global->MAIN_NEW_DATE))
+    if (method_exists('DateTime','getTimestamp') && ! empty($conf->global->MAIN_NEW_DATE))
     {
         if (empty($gm)) $localtz = new DateTimeZone(date_default_timezone_get());
         else $localtz = new DateTimeZone('UTC');

@@ -403,18 +403,19 @@ class EcmDirectory // extends CommonObject
 	 *  @param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 	 *  @param	string	$option			Sur quoi pointe le lien
 	 *  @param	int		$max			Max length
+	 *  @param	string	$morehtml		Add more param on a link
 	 *  @return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$max=0)
+	function getNomUrl($withpicto=0,$option='',$max=0,$more='')
 	{
 		global $langs;
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$this->id.'">';
-		if ($option == 'index') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true">';
-		if ($option == 'indexexpanded') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=false">';
-		if ($option == 'indexnotexpanded') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$this->id.'"'.($more?' '.$more:'').'>';
+		if ($option == 'index') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true"'.($more?' '.$more:'').'>';
+		if ($option == 'indexexpanded') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=false"'.($more?' '.$more:'').'>';
+		if ($option == 'indexnotexpanded') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true"'.($more?' '.$more:'').'>';
 		$lienfin='</a>';
 
 		//$picto=DOL_URL_ROOT.'/theme/common/treemenu/folder.gif';

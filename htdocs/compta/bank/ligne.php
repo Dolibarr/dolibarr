@@ -75,7 +75,7 @@ if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->ban
     }
 }
 
-if ($action == 'class')
+if ($user->rights->banque->modifier && $action == 'class')
 {
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".$rowid." AND fk_categ = ".$_POST["cat1"];
     if (! $db->query($sql))
@@ -90,7 +90,7 @@ if ($action == 'class')
     }
 }
 
-if ($action == "update")
+if ($user->rights->banque->modifier && $action == "update")
 {
 	$error=0;
 
@@ -584,8 +584,11 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="class">';
 print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Rubriques").'</td><td colspan="2">';
-print '<select class="flat" name="cat1">'.$options.'</select>&nbsp;';
-print '<input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+if ($user->rights->banque->modifier)
+{
+    print '<select class="flat" name="cat1">'.$options.'</select>&nbsp;';
+    print '<input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+}
 print "</tr>";
 print "</form>";
 

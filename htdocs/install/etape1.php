@@ -519,11 +519,11 @@ if (! $error && $db->connected && $action == "set")
         {
             dolibarr_install_syslog("etape1: Create database : ".$dolibarr_main_db_name, LOG_DEBUG);
             $newdb=getDoliDBInstance($conf->db->type,$conf->db->host,$userroot,$passroot,'',$conf->db->port);
-            //print 'eee'.$conf->db->type." ".$conf->db->host." ".$userroot." ".$passroot." ".$conf->db->port." ".$db->connected." ".$newdb->forcecharset;exit;
+            //print 'eee'.$conf->db->type." ".$conf->db->host." ".$userroot." ".$passroot." ".$conf->db->port." ".$newdb->connected." ".$newdb->forcecharset;exit;
 
-            if ($db->connected)
+            if ($newdb->connected)
             {
-                $result=$db->DDLCreateDb($dolibarr_main_db_name, $dolibarr_main_db_character_set, $dolibarr_main_db_collation, $dolibarr_main_db_user);
+                $result=$newdb->DDLCreateDb($dolibarr_main_db_name, $dolibarr_main_db_character_set, $dolibarr_main_db_collation, $dolibarr_main_db_user);
 
                 if ($result)
                 {
@@ -533,8 +533,8 @@ if (! $error && $db->connected && $action == "set")
                     print '</td>';
                     print "<td>".$langs->trans("OK")."</td></tr>";
 
-                    $check1=$db->getDefaultCharacterSetDatabase();
-                    $check2=$db->getDefaultCollationDatabase();
+                    $check1=$newdb->getDefaultCharacterSetDatabase();
+                    $check2=$newdb->getDefaultCollationDatabase();
                     dolibarr_install_syslog('etape1: Note that default server was charset='.$check1.' collation='.$check2, LOG_DEBUG);
 
                     // If values differs, we save conf file again
@@ -546,15 +546,15 @@ if (! $error && $db->connected && $action == "set")
                     // Affiche aide diagnostique
                     print '<tr><td colspan="2"><br>';
                     print $langs->trans("ErrorFailedToCreateDatabase",$dolibarr_main_db_name).'<br>';
-                    print $db->lasterror().'<br>';
+                    print $newdb->lasterror().'<br>';
                     print $langs->trans("IfDatabaseExistsGoBackAndCheckCreate");
                     print '<br>';
                     print '</td></tr>';
 
-                    dolibarr_install_syslog('etape1: Failed to create database '.$dolibarr_main_db_name.' '.$db->lasterrno().' '.$db->lasterror(), LOG_ERR);
+                    dolibarr_install_syslog('etape1: Failed to create database '.$dolibarr_main_db_name.' '.$newdb->lasterrno().' '.$newdb->lasterror(), LOG_ERR);
                     $error++;
                 }
-                $db->close();
+                $newdb->close();
             }
             else {
                 print '<tr><td>';
