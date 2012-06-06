@@ -114,7 +114,11 @@ class Menubase
         		$obj=$this->db->fetch_object($resqlrowid);
         		$maxrowid=$obj->maxrowid;
 
-        		$sql = "SELECT setval('".MAIN_DB_PREFIX."menu_rowid_seq', ".($maxrowid).")";
+                        // Max rowid can be empty if there is no record yet
+                        if(empty($maxrowid)) $maxrowid=1;
+
+                        $sql = "SELECT setval('".MAIN_DB_PREFIX."menu_rowid_seq', ".($maxrowid).")";
+                        //print $sql; exit;
 	        	$resqlrowidset=$this->db->query($sql);
 	     		if (! $resqlrowidset) dol_print_error($this->db);
         	}
