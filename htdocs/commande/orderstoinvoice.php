@@ -49,14 +49,9 @@ if (! $user->rights->facture->creer)
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
 if (! $sortfield) $sortfield='c.rowid';
 if (! $sortorder) $sortorder='DESC';
-$limit = $conf->liste_limit;
+
 $date_start=dol_mktime(0,0,0,$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);	// Date for local PHP server
 $date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
 $date_starty=dol_mktime(0,0,0,$_REQUEST["date_start_delymonth"],$_REQUEST["date_start_delyday"],$_REQUEST["date_start_delyyear"]);	// Date for local PHP server
@@ -202,14 +197,12 @@ if (($action == 'create' || $action == 'add') && ! $mesg )
 							$sql.= ", '".$object->element."'";
 							$sql.= ")";
 
-							dol_syslog(get_class($this)."::add_object_linked sql=".$sql, LOG_DEBUG);
 							if ($db->query($sql))
 							{
 								$db->commit();
 							}
 							else
 							{
-
 								$db->rollback();
 							}
 						}
@@ -528,7 +521,6 @@ else
 		$sql.= ' AND c.ref_client LIKE \'%'.$db->escape($sref_client).'%\'';
 	}
 	$sql.= ' ORDER BY '.$sortfield.' '.$sortorder;
-	$sql.= $db->plimit($limit + 1,$offset);
 	$resql = $db->query($sql);
 
 	if ($resql)
@@ -545,7 +537,7 @@ else
 		}
 		$title.=' - '.$langs->trans('StatusOrderToBillShort');
 		$num = $db->num_rows($resql);
-		print_barre_liste($title, $_GET['page'], 'liste.php','&amp;socid='.$socid,$sortfield,$sortorder,'',$num);
+		print_fiche_titre($title);
 		$i = 0;
 		$period=$html->select_date($date_start,'date_start',0,0,1,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,1,'',1,0,1);
 		$periodely=$html->select_date($date_starty,'date_start_dely',0,0,1,'',1,0,1).' - '.$html->select_date($date_endy,'date_end_dely',0,0,1,'',1,0,1);
@@ -604,7 +596,7 @@ else
 		$var=True;
 		$generic_commande = new Commande($db);
 
-		while ($i < min($num,$limit))
+		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
 			$var=!$var;
