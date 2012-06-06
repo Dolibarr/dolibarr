@@ -719,29 +719,35 @@ function activateModule($value,$withdeps=1)
 
     if (! $ret && $withdeps)
     {
-        if (is_array($objMod->depends) && !empty($objMod->depends))
+        if (is_array($objMod->depends) && ! empty($objMod->depends))
         {
             // Activation des modules dont le module depend
             $num = count($objMod->depends);
             for ($i = 0; $i < $num; $i++)
             {
-                if (file_exists(DOL_DOCUMENT_ROOT."/core/modules/".$objMod->depends[$i].".class.php"))
-                {
-                    activateModule($objMod->depends[$i]);
-                }
+            	foreach ($modulesdir as $dir)
+            	{
+            		if (file_exists($dir.$objMod->depends[$i].".class.php"))
+            		{
+            			activateModule($objMod->depends[$i]);
+            		}
+            	}
             }
         }
 
-        if (isset($objMod->conflictwith) && is_array($objMod->conflictwith))
+        if (is_array($objMod->conflictwith) && ! empty($objMod->conflictwith))
         {
             // Desactivation des modules qui entrent en conflit
             $num = count($objMod->conflictwith);
             for ($i = 0; $i < $num; $i++)
             {
-                if (file_exists(DOL_DOCUMENT_ROOT."/core/modules/".$objMod->conflictwith[$i].".class.php"))
-                {
-                    unActivateModule($objMod->conflictwith[$i],0);
-                }
+            	foreach ($modulesdir as $dir)
+            	{
+            		if (file_exists($dir.$objMod->conflictwith[$i].".class.php"))
+            		{
+            			unActivateModule($objMod->conflictwith[$i],0);
+            		}
+            	}
             }
         }
     }
