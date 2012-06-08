@@ -44,6 +44,8 @@ $(function () {
 
 	// Options
 	$('#fileupload').fileupload('option', {
+		// Enable iframe cross-domain access via redirect option
+		reidrect: window.location.href.replace(/\/[^\/]*$/,'<?php echo DOL_URL_ROOT; ?>/includes/jquery/plugins/fileupload/cors/result.html?%s'),
 		maxFileSize: '<?php echo $max_file_size; ?>'
 	});
 
