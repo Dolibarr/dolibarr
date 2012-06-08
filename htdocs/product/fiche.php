@@ -338,6 +338,8 @@ if (empty($reshook))
                     }
                     else
                     {
+                        $id=$originalId;
+
                         if ($object->error == 'ErrorProductAlreadyExists')
                         {
                             $db->rollback();
@@ -353,6 +355,7 @@ if (empty($reshook))
                         else
                         {
                             $db->rollback();
+                            $mesg=$object->error;
                             dol_print_error($db,$object->error);
                         }
                     }
@@ -1032,17 +1035,12 @@ else
         // Fiche en mode visu
         else
         {
+            dol_htmloutput_mesg($mesg);
+
             $head=product_prepare_head($object, $user);
             $titre=$langs->trans("CardProduct".$object->type);
             $picto=($object->type==1?'service':'product');
             dol_fiche_head($head, 'card', $titre, 0, $picto);
-
-            // Confirm delete product
-            if ($action == 'delete' || $conf->use_javascript_ajax)
-            {
-                $ret=$form->form_confirm("fiche.php?id=".$object->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,"action-delete");
-                if ($ret == 'html') print '<br>';
-            }
 
             $showphoto=$object->is_photo_available($conf->product->multidir_output[$object->entity]);
             $showbarcode=$conf->barcode->enabled && $user->rights->barcode->lire;
@@ -1266,19 +1264,26 @@ else
 }
 
 
-// Clone confirmation
-if ($action == 'clone' || $conf->use_javascript_ajax)
-{
-    // Create an array for form
-    $formquestion=array(
-		'text' => $langs->trans("ConfirmClone"),
+// Define confirmation messages
+$formquestionclone=array(
+	'text' => $langs->trans("ConfirmClone"),
     array('type' => 'text', 'name' => 'clone_ref','label' => $langs->trans("NewRefForClone"), 'value' => $langs->trans("CopyOf").' '.$object->ref, 'size'=>24),
     array('type' => 'checkbox', 'name' => 'clone_content','label' => $langs->trans("CloneContentProduct"), 'value' => 1),
     array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true)
-    );
-    // Paiement incomplet. On demande si motif = escompte ou autre
-    $form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestion,'yes','action-clone',230,600);
+);
+
+// Confirm delete product
+if ($action == 'delete' && empty($conf->use_javascript_ajax))
+{
+    print $form->formconfirm("fiche.php?id=".$object->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,"action-delete");
 }
+
+// Clone confirmation
+if ($action == 'clone' && empty($conf->use_javascript_ajax))
+{
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestionclone,'yes','action-clone',230,600);
+}
+
 
 
 /* ************************************************************************** */
@@ -1300,6 +1305,7 @@ if ($action == '' || $action == 'view')
             if ($conf->use_javascript_ajax)
             {
                 print '<span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span>'."\n";
+                print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestionclone,'yes','action-clone',230,600);
             }
             else
             {
@@ -1317,6 +1323,7 @@ if ($action == '' || $action == 'view')
             if ($conf->use_javascript_ajax)
             {
                 print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
+                print $form->formconfirm("fiche.php?id=".$object->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,"action-delete");
             }
             else
             {
