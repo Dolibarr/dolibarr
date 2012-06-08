@@ -138,6 +138,8 @@ class Societe extends CommonObject
     var $logo;
     var $logo_small;
     var $logo_mini;
+    
+    var $oldcopy;
 
     /**
      *    Constructor
