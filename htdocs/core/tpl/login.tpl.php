@@ -189,7 +189,7 @@ if ($forgetpasslink || $helpcenterlink) {
 if (! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))
 {
 ?>
-	<div align="center">
+	<div align="center"><br>
 		<script type="text/javascript"><!--
 			google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
 			google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
