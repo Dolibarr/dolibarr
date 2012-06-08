@@ -91,6 +91,9 @@ class Commande extends CommonObject
     var $origin;
     var $origin_id;
     var $linked_objects=array();
+    
+    // To avoid warning
+    var $propale_ref;
 
     var $user_author_id;
 
@@ -1232,13 +1235,11 @@ class Commande extends CommonObject
         $sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
         $sql.= ', ca.code as availability_code';
         $sql.= ', dr.code as demand_reason_code';
-        $sql.= ', el.fk_source';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON (c.fk_cond_reglement = cr.rowid)';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON (c.fk_mode_reglement = p.id)';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON (c.fk_availability = ca.rowid)';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON (c.fk_demand_reason = ca.rowid)';
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = c.rowid AND el.targettype = '".$this->element."'";
         $sql.= " WHERE c.entity = ".$conf->entity;
         if ($id)   	  $sql.= " AND c.rowid=".$id;
         if ($ref)     $sql.= " AND c.ref='".$this->db->escape($ref)."'";
@@ -1252,45 +1253,44 @@ class Commande extends CommonObject
             $obj = $this->db->fetch_object($result);
             if ($obj)
             {
-                $this->id                     = $obj->rowid;
-                $this->ref                    = $obj->ref;
-                $this->ref_client             = $obj->ref_client;
-                $this->ref_ext				  = $obj->ref_ext;
-                $this->ref_int				  = $obj->ref_int;
-                $this->socid                  = $obj->fk_soc;
-                $this->statut                 = $obj->fk_statut;
-                $this->user_author_id         = $obj->fk_user_author;
-                $this->total_ht               = $obj->total_ht;
-                $this->total_tva              = $obj->total_tva;
-                $this->total_localtax1		  = $obj->total_localtax1;
-                $this->total_localtax2		  = $obj->total_localtax2;
-                $this->total_ttc              = $obj->total_ttc;
-                $this->date                   = $this->db->jdate($obj->date_commande);
-                $this->date_commande          = $this->db->jdate($obj->date_commande);
-                $this->remise                 = $obj->remise;
-                $this->remise_percent         = $obj->remise_percent;
-                $this->remise_absolue         = $obj->remise_absolue;
-                $this->source                 = $obj->source;
-                $this->facturee               = $obj->facturee;
-                $this->note                   = $obj->note_private;	// deprecated
-                $this->note_private           = $obj->note_private;
-                $this->note_public            = $obj->note_public;
-                $this->fk_project             = $obj->fk_projet;
-                $this->modelpdf               = $obj->model_pdf;
-                $this->mode_reglement_id      = $obj->fk_mode_reglement;
-                $this->mode_reglement_code    = $obj->mode_reglement_code;
-                $this->mode_reglement         = $obj->mode_reglement_libelle;
-                $this->cond_reglement_id      = $obj->fk_cond_reglement;
-                $this->cond_reglement_code    = $obj->cond_reglement_code;
-                $this->cond_reglement         = $obj->cond_reglement_libelle;
-                $this->cond_reglement_doc     = $obj->cond_reglement_libelle_doc;
-                $this->availability_id		  = $obj->fk_availability;
-                $this->availability_code      = $obj->availability_code;
-                $this->demand_reason_id		  = $obj->fk_demand_reason;
-                $this->demand_reason_code     = $obj->demand_reason_code;
-                $this->date_livraison         = $this->db->jdate($obj->date_livraison);
-                $this->fk_delivery_address    = $obj->fk_adresse_livraison;
-                $this->propale_id             = $obj->fk_source;
+                $this->id						= $obj->rowid;
+                $this->ref						= $obj->ref;
+                $this->ref_client				= $obj->ref_client;
+                $this->ref_ext					= $obj->ref_ext;
+                $this->ref_int					= $obj->ref_int;
+                $this->socid					= $obj->fk_soc;
+                $this->statut					= $obj->fk_statut;
+                $this->user_author_id			= $obj->fk_user_author;
+                $this->total_ht					= $obj->total_ht;
+                $this->total_tva				= $obj->total_tva;
+                $this->total_localtax1			= $obj->total_localtax1;
+                $this->total_localtax2			= $obj->total_localtax2;
+                $this->total_ttc				= $obj->total_ttc;
+                $this->date						= $this->db->jdate($obj->date_commande);
+                $this->date_commande			= $this->db->jdate($obj->date_commande);
+                $this->remise					= $obj->remise;
+                $this->remise_percent			= $obj->remise_percent;
+                $this->remise_absolue			= $obj->remise_absolue;
+                $this->source					= $obj->source;
+                $this->facturee					= $obj->facturee;
+                $this->note						= $obj->note_private;	// deprecated
+                $this->note_private				= $obj->note_private;
+                $this->note_public				= $obj->note_public;
+                $this->fk_project				= $obj->fk_projet;
+                $this->modelpdf					= $obj->model_pdf;
+                $this->mode_reglement_id		= $obj->fk_mode_reglement;
+                $this->mode_reglement_code		= $obj->mode_reglement_code;
+                $this->mode_reglement			= $obj->mode_reglement_libelle;
+                $this->cond_reglement_id		= $obj->fk_cond_reglement;
+                $this->cond_reglement_code		= $obj->cond_reglement_code;
+                $this->cond_reglement			= $obj->cond_reglement_libelle;
+                $this->cond_reglement_doc		= $obj->cond_reglement_libelle_doc;
+                $this->availability_id			= $obj->fk_availability;
+                $this->availability_code		= $obj->availability_code;
+                $this->demand_reason_id			= $obj->fk_demand_reason;
+                $this->demand_reason_code		= $obj->demand_reason_code;
+                $this->date_livraison			= $this->db->jdate($obj->date_livraison);
+                $this->fk_delivery_address		= $obj->fk_adresse_livraison;		  
 
                 $this->extraparams			  = (array) json_decode($obj->extraparams, true);
 
@@ -1299,22 +1299,6 @@ class Commande extends CommonObject
                 if ($this->statut == 0) $this->brouillon = 1;
 
                 $this->db->free();
-
-                if ($this->propale_id)
-                {
-                    $sqlp = "SELECT ref";
-                    $sqlp.= " FROM ".MAIN_DB_PREFIX."propal";
-                    $sqlp.= " WHERE rowid = ".$this->propale_id;
-
-                    $resqlprop = $this->db->query($sqlp);
-
-                    if ($resqlprop)
-                    {
-                        $objp = $this->db->fetch_object($resqlprop);
-                        $this->propale_ref = $objp->ref;
-                        $this->db->free($resqlprop);
-                    }
-                }
 
                 /*
                  * Lines

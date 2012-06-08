@@ -1092,10 +1092,10 @@ class Product extends CommonObject
 				$this->db->free($resql);
 
 				// multilangs
-				if ($conf->global->MAIN_MULTILANGS) $this->getMultiLangs();
+				if (! empty($conf->global->MAIN_MULTILANGS)) $this->getMultiLangs();
 
 				// Load multiprices array
-				if ($conf->global->PRODUIT_MULTIPRICES)
+				if (! empty($conf->global->PRODUIT_MULTIPRICES))
 				{
 					for ($i=1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 					{
