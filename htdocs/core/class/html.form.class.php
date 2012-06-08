@@ -2249,12 +2249,6 @@ class Form
             $formconfirm.= img_help('','').' '.$question;
             $formconfirm.= '</div>'."\n";
             $formconfirm.= '<script type="text/javascript">
-            var choice=\'ko\';
-            var inputok='.json_encode($inputok).';
-            var inputko='.json_encode($inputko).';
-			var pageyes=\''.dol_escape_js($pageyes?$pageyes:'').'\';
-			var pageno=\''.dol_escape_js($pageno?$pageno:'').'\';
-
 			/* Warning: This function is loaded once and not overwritten if loaded by another ajax page */
             $(function() {
             	$( "#'.$dialogconfirm.'" ).dialog({
@@ -2267,6 +2261,8 @@ class Form
 			        close: function(event, ui) {
             			if (choice == \'ok\') {
 			             	var options="";
+			             	var inputok='.json_encode($inputok).';
+			             	var pageyes=\''.dol_escape_js($pageyes?$pageyes:'').'\';
 			             	if (inputok.length>0) {
 			             		$.each(inputok, function() {
 			             			var inputname = this; var more = \'\';
@@ -2282,6 +2278,8 @@ class Form
         				}
 			            if (choice == \'ko\') {
 			             	var options="";
+			             	var inputko='.json_encode($inputko).';
+			             	var pageno=\''.dol_escape_js($pageno?$pageno:'').'\';
 			             	if (inputko.length>0) {
 			             		$.each(inputko, function() {
 			             			var inputname = this; var more = \'\';
