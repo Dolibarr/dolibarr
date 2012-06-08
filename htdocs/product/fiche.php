@@ -354,7 +354,7 @@ if (empty($reshook))
                         else
                         {
                             $db->rollback();
-                            dol_print_error($object->db);
+                            dol_print_error($db,$object->error);
                         }
                     }
                 }
@@ -362,7 +362,7 @@ if (empty($reshook))
             else
             {
                 $db->rollback();
-                dol_print_error($object->db);
+                dol_print_error($db,$object->error);
             }
         }
     }
