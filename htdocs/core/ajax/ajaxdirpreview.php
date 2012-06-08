@@ -93,34 +93,12 @@ if (preg_match('/\.\./',$upload_dir) || preg_match('/[<>|]/',$upload_dir))
 }
 
 
-
 /*
  * Action
  */
 
-/*
- if ($action == 'remove_file')   // Remove a file
-{
-clearstatcache();
+// None
 
-dol_syslog(__FILE__." remove $original_file $urlsource", LOG_DEBUG);
-
-// This test should be useless. We keep it to find bug more easily
-if (! file_exists($original_file_osencoded))
-{
-dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$_GET["file"]));
-exit;
-}
-
-dol_delete_file($original_file);
-
-dol_syslog(__FILE__." back to ".urldecode($urlsource), LOG_DEBUG);
-
-header("Location: ".urldecode($urlsource));
-
-return;
-}
-*/
 
 
 /*
@@ -260,6 +238,7 @@ if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
     if ($section)
     {
         require_once(DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php');
+        $useglobalvars=1;
         $form = new Form($db);
         $formquestion=array('urlfile'=>array('type'=>'hidden','value'=>'','name'=>'urlfile'));
         print $form->formconfirm(DOL_URL_ROOT.'/ecm/index.php'.($param?'?':'').(preg_replace('/^&/','',$param)),$langs->trans("DeleteFile"),$langs->trans("ConfirmDeleteFile"),'confirm_deletefile',$formquestion,"no",'deletefile');
