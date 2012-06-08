@@ -138,6 +138,8 @@ class Product extends CommonObject
 
 	//! Contains detail of stock of product into each warehouse
 	var $stock_warehouse=array();
+	
+	var $oldcopy;
 
 
 	/**
