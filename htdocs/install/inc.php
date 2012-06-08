@@ -24,7 +24,7 @@
  *	\brief      File that define environment for support pages
  */
 
-define('DOL_VERSION','3.2.0-beta');	// Also defined in htdocs/master.inc.php (Ex: x.y.z-alpha, x.y.z)
+define('DOL_VERSION','3.2.1-alpha');	// Also defined in htdocs/master.inc.php (Ex: x.y.z-alpha, x.y.z)
 
 // Define DOL_DOCUMENT_ROOT an ADODB_PATH used for install/upgrade process
 if (! defined('DOL_DOCUMENT_ROOT'))	    define('DOL_DOCUMENT_ROOT', '..');
