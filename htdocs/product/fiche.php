@@ -304,6 +304,7 @@ if (empty($reshook))
     }
 
     // Action clone object
+    if ($action == 'confirm_clone' && $confirm != 'yes') { $action=''; }
     if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->produit->creer || $user->rights->service->creer))
     {
         if (! GETPOST('clone_content') && ! GETPOST('clone_prices') )
@@ -370,6 +371,7 @@ if (empty($reshook))
     }
 
     // Delete a product
+    if ($action == 'confirm_delete' && $confirm != 'yes') { $action=''; }
     if ($action == 'confirm_delete' && $confirm == 'yes')
     {
         $object = new Product($db);
