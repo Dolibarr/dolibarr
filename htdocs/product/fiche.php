@@ -250,6 +250,8 @@ if (empty($reshook))
         {
             if ($object->fetch($id,$ref))
             {
+            	$object->oldcopy=dol_clone($object);
+            	
                 $object->ref                = $ref;
                 $object->libelle            = $_POST["libelle"];
                 $object->description        = dol_htmlcleanlastbr($_POST["desc"]);
