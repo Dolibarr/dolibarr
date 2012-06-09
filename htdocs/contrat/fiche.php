@@ -428,6 +428,7 @@ else if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->contr
 else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->contrat->supprimer)
 {
 	$object->fetch($id);
+	$object->fetch_thirdparty();
 	$result=$object->delete($user,$langs,$conf);
 	if ($result >= 0)
 	{
