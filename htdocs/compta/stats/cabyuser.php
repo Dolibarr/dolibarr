@@ -271,7 +271,7 @@ if (count($amount))
         }
         else
         {
-            if ($key > 0) print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?userid='.$key.'">';
+            if ($key > 0) print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?userid='.$key.'">';
             else print '<a href="#">';
         }
         print price($amount[$key]);

@@ -184,7 +184,7 @@ if ($action == 'setdoc')
     $sql_del.= " WHERE nom = '".$db->escape($value)."'";
     $sql_del.= " AND type = '".$type."'";
     $sql_del.= " AND entity = ".$conf->entity;
-    dol_syslog("facture.php ".$sql_del);
+    dol_syslog("Delete from model table ".$sql_del);
     $result1=$db->query($sql_del);
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
@@ -192,7 +192,7 @@ if ($action == 'setdoc')
     $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
     $sql.= (! empty($scandir)?"'".$scandir."'":"null");
     $sql.= ")";
-    dol_syslog("facture.php ".$sql);
+    dol_syslog("Insert into model table ".$sql);
     $result2=$db->query($sql);
     if ($result1 && $result2)
     {
@@ -200,7 +200,7 @@ if ($action == 'setdoc')
     }
     else
     {
-        dol_syslog("facture.php ".$db->lasterror(), LOG_ERR);
+        dol_syslog("Error ".$db->lasterror(), LOG_ERR);
         $db->rollback();
     }
 }
