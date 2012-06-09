@@ -35,8 +35,18 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 $langs->load("other");
 $langs->load("products");
 
-if (!$user->rights->contrat->lire)
-	accessforbidden();
+
+$action		= GETPOST('action','alpha');
+$confirm	= GETPOST('confirm','alpha');
+$id			= GETPOST('id','int');
+$ref		= GETPOST('ref','alpha');
+
+$mesg='';
+if (isset($_SESSION['DolMessage']))
+{
+	$mesg=$_SESSION['DolMessage'];
+	unset($_SESSION['DolMessage']);
+}
 
 // Security check
 if ($user->societe_id > 0)
@@ -45,6 +55,7 @@ if ($user->societe_id > 0)
 	$action='';
 	$socid = $user->societe_id;
 }
+$result = restrictedArea($user, 'contrat', $id);
 
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
@@ -58,10 +69,14 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
 
-$contrat = new Contrat($db);
-$contrat->fetch($_GET["id"]);
+$object = new Contrat($db);
+$object->fetch($id, $ref);
+if ($object->id > 0)
+{
+	$object->fetch_thirdparty();
+}
 
-$upload_dir = $conf->contrat->dir_output.'/'.dol_sanitizeFileName($contrat->ref);
+$upload_dir = $conf->contrat->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart='contract';
 
 
@@ -105,6 +120,21 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	}
 }
 
+// Delete
+if ($action == 'confirm_deletefile' && $confirm == 'yes')
+{
+	if ($object->id)
+	{
+		$langs->load("other");
+
+		$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+		$ret=dol_delete_file($file,0,0,0,$object);
+		$_SESSION['DolMessage'] = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
+		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+		exit;
+	}
+}
+
 
 /*
  *
@@ -115,24 +145,9 @@ $form = new Form($db);
 llxHeader("","",$langs->trans("CardProduct".$product->type));
 
 
-if ($contrat->id)
+if ($object->id)
 {
-    $soc = new Societe($db);
-    $soc->fetch($contrat->societe->id);
-
-	if ( $error_msg )
-	{
-		echo '<div class="error">'.$error_msg.'</div><br>';
-	}
-
-	if ($_GET["action"] == 'delete')
-	{
-		$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-		$result=dol_delete_file($file);
-		//if ($result >= 0) $mesg=$langs->trans("FileWasRemoced");
-	}
-
-	$head=contract_prepare_head($contrat, $user);
+	$head=contract_prepare_head($object, $user);
 
 	dol_fiche_head($head, 'documents', $langs->trans("Contract"), 0, 'contract');
 
@@ -149,27 +164,38 @@ if ($contrat->id)
     print '<table class="border" width="100%">';
 
     // Reference
-	print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">'.$contrat->ref.'</td></tr>';
+	print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">'.$object->ref.'</td></tr>';
 
     // Societe
     print '<tr><td>'.$langs->trans("Customer").'</td>';
-    print '<td colspan="3">'.$soc->getNomUrl(1).'</td></tr>';
+    print '<td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
     print '</table>';
 
     print '</div>';
+    
+    dol_htmloutput_mesg($mesg,$mesgs);
+    
+    /*
+     * Confirmation suppression fichier
+     */
+    if ($action == 'delete')
+    {
+    	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$id.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+    	if ($ret == 'html') print '<br>';
+    }
 
 
     // Affiche formulaire upload
    	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/contrat/document.php?id='.$contrat->id,'',0,0,$user->rights->contrat->creer,50,$object);
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/contrat/document.php?id='.$object->id,'',0,0,$user->rights->contrat->creer,50,$object);
 
 
 	// List of document
-	$param='&id='.$contrat->id;
-	$formfile->list_of_documents($filearray,$contrat,'contract',$param);
+	$param='&id='.$object->id;
+	$formfile->list_of_documents($filearray,$object,'contract',$param);
 
 }
 else

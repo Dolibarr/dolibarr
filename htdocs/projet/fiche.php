@@ -43,19 +43,18 @@ if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $acti
 $mine = GETPOST('mode')=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
-$object = new Project($db);
-if ($ref)
-{
-    $object->fetch(0,$ref);
-    $id=$object->id;
-}
 
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $id);
 
-
+$object = new Project($db);
+$object->fetch($id,$ref);
+if ($object->id > 0)
+{
+	$object->fetch_thirdparty();
+}
 
 
 /*
@@ -155,7 +154,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
     }
     if (! $error)
     {
-        $object->fetch($id);
+        $object->oldcopy = dol_clone($object);
 
 		$old_start_date = $object->date_start;
 
@@ -169,7 +168,6 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 
         $result=$object->update($user);
 
-        $id=$project->id;  // On retourne sur la fiche projet
     }
     else
     {
@@ -180,7 +178,6 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 // Build doc
 if ($action == 'builddoc' && $user->rights->projet->creer)
 {
-    $object->fetch($id);
     if (GETPOST('model'))
     {
         $object->setDocModel($user, GETPOST('model'));
@@ -210,7 +207,7 @@ if ($action == 'remove_file' && $user->rights->projet->creer)
 {
     require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
-    if ($object->fetch($id))
+    if ($object->id > 0)
     {
         $langs->load("other");
         $upload_dir =	$conf->projet->dir_output . "/";
@@ -222,8 +219,6 @@ if ($action == 'remove_file' && $user->rights->projet->creer)
 
 if ($action == 'confirm_validate' && GETPOST('confirm') == 'yes')
 {
-    $object->fetch($id);
-
     $result = $object->setValid($user);
     if ($result <= 0)
     {
@@ -233,7 +228,6 @@ if ($action == 'confirm_validate' && GETPOST('confirm') == 'yes')
 
 if ($action == 'confirm_close' && GETPOST('confirm') == 'yes')
 {
-    $object->fetch($id);
     $result = $object->setClose($user);
     if ($result <= 0)
     {
@@ -243,7 +237,6 @@ if ($action == 'confirm_close' && GETPOST('confirm') == 'yes')
 
 if ($action == 'confirm_reopen' && GETPOST('confirm') == 'yes')
 {
-    $object->fetch($id);
     $result = $object->setValid($user);
     if ($result <= 0)
     {
@@ -364,8 +357,6 @@ else
      */
 
     dol_htmloutput_mesg($mesg);
-
-    $object->fetch($id,$ref);
 
     if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
 

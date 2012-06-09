@@ -61,13 +61,16 @@ class FileUpload
 		if ($element == 'propal') {
 			$pathname = 'comm/propal'; $filename = 'propal';
 		}
-		if ($element == 'commande') {
+		elseif ($element == 'commande') {
 			$pathname = $filename = 'commande';
 		}
-		if ($element == 'facture') {
+		elseif ($element == 'facture') {
 			$pathname = 'compta/facture'; $filename = 'facture';
 		}
-		
+		elseif ($element == 'project') {
+			$element = $pathname = 'projet'; $filename = 'project';
+		}
+
 		dol_include_once('/'.$pathname.'/class/'.$filename.'.class.php');
 		
 		$classname = ucfirst($filename);

@@ -32,11 +32,12 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 $langs->load('projects');
 $langs->load('other');
 
-$action=GETPOST('action');
-$mine = $_REQUEST['mode']=='mine' ? 1 : 0;
+$action		= GETPOST('action','alpha');
+$confirm	= GETPOST('confirm','alpha');
+$id			= GETPOST('id','int');
+$ref		= GETPOST('ref','alpha');
+$mine 		= (GETPOST('mode','alpha') == 'mine' ? 1 : 0);
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
-$id = GETPOST('id','int');
-$ref= GETPOST('ref');
 
 $mesg='';
 if (isset($_SESSION['DolMessage']))
@@ -45,18 +46,17 @@ if (isset($_SESSION['DolMessage']))
 	unset($_SESSION['DolMessage']);
 }
 
-$project = new Project($db);
-if (! $project->fetch($id,$ref) > 0)
-{
-	dol_print_error($db);
-	exit;
-}
-else $id=$project->id;
-
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
 $result=restrictedArea($user,'projet',$id,'');
+
+$object = new Project($db);
+$object->fetch($id,$ref);
+if ($object->id > 0)
+{
+	$object->fetch_thirdparty();
+}
 
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
@@ -78,7 +78,7 @@ if (! $sortfield) $sortfield="name";
 // Envoi fichier
 if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($project->ref);
+	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
 
 	if (dol_mkdir($upload_dir) >= 0)
 	{
@@ -116,14 +116,14 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 }
 
 // Delete
-if ($action == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->rights->projet->supprimer)
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->projet->supprimer)
 {
     $langs->load("other");
-	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($project->ref);
+	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
 	$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-	dol_delete_file($file);
+	dol_delete_file($file,0,0,0,$object);
 	$_SESSION['DolMessage'] = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
-    Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+    Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
     exit;
 }
 
@@ -136,23 +136,20 @@ llxHeader('',$langs->trans('Project'),'EN:Customers_Orders|FR:Commandes_Clients|
 
 $form = new Form($db);
 
-if ($id > 0 || ! empty($ref))
+if ($object->id > 0)
 {
-	$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref);
+	$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
-	$company = new Societe($db);
-	$company->fetch($project->socid);
-
-	if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
+	if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
 
     // To verify role of users
-    //$userAccess = $project->restrictedProjectArea($user,'read');
-    $userWrite  = $project->restrictedProjectArea($user,'write');
-    //$userDelete = $project->restrictedProjectArea($user,'delete');
+    //$userAccess = $object->restrictedProjectArea($user,'read');
+    $userWrite  = $object->restrictedProjectArea($user,'write');
+    //$userDelete = $object->restrictedProjectArea($user,'delete');
     //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
-	$head = project_prepare_head($project);
-	dol_fiche_head($head, 'document', $langs->trans("Project"), 0, ($project->public?'projectpub':'project'));
+	$head = project_prepare_head($object);
+	dol_fiche_head($head, 'document', $langs->trans("Project"), 0, ($object->public?'projectpub':'project'));
 
 	// Files list constructor
 	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
@@ -164,7 +161,7 @@ if ($id > 0 || ! empty($ref))
 
 	if ($action == 'delete')
 	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"]."&urlfile=".urlencode(GETPOST("urlfile")),$langs->trans("DeleteAFile"),$langs->trans("ConfirmDeleteAFile"),"confirm_delete",'','',1);
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&urlfile=".urlencode(GETPOST("urlfile")),$langs->trans("DeleteAFile"),$langs->trans("ConfirmDeleteAFile"),"confirm_delete",'','',1);
 		if ($ret == 'html') print '<br>';
 	}
 
@@ -175,29 +172,29 @@ if ($id > 0 || ! empty($ref))
 	// Define a complementary filter for search of next/prev ref.
     if (! $user->rights->projet->all->lire)
     {
-        $projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,0);
-        $project->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+        $projectsListId = $object->getProjectsAuthorizedForUser($user,$mine,0);
+        $object->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
     }
-	print $form->showrefnav($project,'ref','',1,'ref','ref');
+	print $form->showrefnav($object,'ref','',1,'ref','ref');
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$project->title.'</td></tr>';
+	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
 	// Company
 	print '<tr><td>'.$langs->trans("Company").'</td><td>';
-	if (! empty($project->societe->id)) print $project->societe->getNomUrl(1);
+	if (! empty($object->societe->id)) print $object->societe->getNomUrl(1);
 	else print '&nbsp;';
 	print '</td></tr>';
 
 	// Visibility
 	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-	if ($project->public) print $langs->trans('SharedProject');
+	if ($object->public) print $langs->trans('SharedProject');
 	else print $langs->trans('PrivateProject');
 	print '</td></tr>';
 
 	// Statut
-	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$project->getLibStatut(4).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
 	// Files infos
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
@@ -211,12 +208,12 @@ if ($id > 0 || ! empty($ref))
 
 	// Affiche formulaire upload
 	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/projet/document.php?id='.$project->id,'',0,0,($userWrite>0),50,$object);
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/projet/document.php?id='.$object->id,'',0,0,($userWrite>0),50,$object);
 
 
 	// List of document
-	$param='&id='.$project->id;
-	$formfile->list_of_documents($filearray,$project,'projet',$param,0,'',($userWrite>0));
+	$param='&id='.$object->id;
+	$formfile->list_of_documents($filearray,$object,'projet',$param,0,'',($userWrite>0));
 
 }
 else

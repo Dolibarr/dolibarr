@@ -790,16 +790,40 @@ class Contrat extends CommonObject
 				$error++;
 			}
 		}
-
+		
 		if (! $error)
 		{
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('CONTRACT_DELETE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			if ($result < 0) {
+				$error++; $this->errors=$interface->errors;
+			}
 			// Fin appel triggers
+		}
+		
+		if (! $error)
+		{
+			// We remove directory
+			$ref = dol_sanitizeFileName($this->ref);
+			if ($conf->contrat->dir_output)
+			{
+				$dir = $conf->contrat->dir_output . "/" . $ref;
+				if (file_exists($dir))
+				{
+					$res=@dol_delete_dir_recursive($dir);
+					if (! $res)
+					{
+						$this->error='ErrorFailToDeleteDir';
+						$error++;
+					}
+				}
+			}
+		}
 
+		if (! $error)
+		{
 			$this->db->commit();
 			return 1;
 		}
