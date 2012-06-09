@@ -86,7 +86,9 @@ foreach($modules as $const => $desc)
 
 if (GETPOST('save','alpha'))
 {
-    dolibarr_set_const($db, "FCKEDITOR_TEST", GETPOST('formtestfield','alpha'),'chaine',0,'',$conf->entity);
+    $res=dolibarr_set_const($db, "FCKEDITOR_TEST", GETPOST('formtestfield'),'chaine',0,'',$conf->entity);
+
+    if ($res > 0) $mesg=$langs->trans("RecordModifiedSuccessfully");
 }
 
 
@@ -103,56 +105,64 @@ print '<br>';
 
 $var=true;
 
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td colspan="2">'.$langs->trans("ActivateFCKeditor").'</td>';
-print '<td align="center" width="100">'.$langs->trans("Action").'</td>';
-print "</tr>\n";
-
-// Modules
-foreach($modules as $const => $desc)
+if (empty($conf->use_javascript_ajax))
 {
-    // Si condition non remplie, on ne propose pas l'option
-    if (! $conditions[$const]) continue;
-
-    $var=!$var;
-    print "<tr ".$bc[$var].">";
-    print '<td width="16">'.img_object("",$picto[$const]).'</td>';
-    print '<td>'.$langs->trans($desc).'</td>';
-    print '<td align="center" width="100">';
-    $constante = 'FCKEDITOR_ENABLE_'.$const;
-    $value = $conf->global->$constante;
-    if($value == 0)
-    {
-        print '<a href="fckeditor.php?action=activate_'.strtolower($const).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-    }
-    else if($value == 1)
-    {
-        print '<a href="fckeditor.php?action=disable_'.strtolower($const).'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
-    }
-
-    print "</td>";
-    print '</tr>';
+    dol_htmloutput_errors('',array($langs->trans("NotAvailable"),$langs->trans("JavascriptDisabled")),1);
 }
+else
+{
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="2">'.$langs->trans("ActivateFCKeditor").'</td>';
+    print '<td align="center" width="100">'.$langs->trans("Action").'</td>';
+    print "</tr>\n";
 
-print '</table>'."\n";
+    // Modules
+    foreach($modules as $const => $desc)
+    {
+        // Si condition non remplie, on ne propose pas l'option
+        if (! $conditions[$const]) continue;
 
+        $var=!$var;
+        print "<tr ".$bc[$var].">";
+        print '<td width="16">'.img_object("",$picto[$const]).'</td>';
+        print '<td>'.$langs->trans($desc).'</td>';
+        print '<td align="center" width="100">';
+        $constante = 'FCKEDITOR_ENABLE_'.$const;
+        $value = $conf->global->$constante;
+        if($value == 0)
+        {
+            print '<a href="fckeditor.php?action=activate_'.strtolower($const).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+        }
+        else if($value == 1)
+        {
+            print '<a href="fckeditor.php?action=disable_'.strtolower($const).'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+        }
 
-print '<br>'."\n";
-print_fiche_titre($langs->trans("TestSubmitForm"),'','');
-print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-$uselocalbrowser=true;
-$editor=new DolEditor('formtestfield',isset($conf->global->FCKEDITOR_TEST)?$conf->global->FCKEDITOR_TEST:'Test','',200,'dolibarr_notes','In', true, $uselocalbrowser);
-$editor->Create();
-print '<center><br><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"></center>'."\n";
-print '</form>'."\n";
+        print "</td>";
+        print '</tr>';
+    }
 
-/*
- print '<!-- Result -->';
- print $_POST["formtestfield"];
- print '<!-- Result -->';
- print $conf->global->FCKEDITOR_TEST;
- */
+    print '</table>'."\n";
+
+    dol_htmloutput_mesg($mesg);
+
+    print '<br>'."\n";
+    print_fiche_titre($langs->trans("TestSubmitForm"),'','');
+    print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    $uselocalbrowser=true;
+    $editor=new DolEditor('formtestfield',isset($conf->global->FCKEDITOR_TEST)?$conf->global->FCKEDITOR_TEST:'Test','',200,'dolibarr_notes','In', true, $uselocalbrowser);
+    $editor->Create();
+    print '<center><br><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"></center>'."\n";
+    print '</form>'."\n";
+
+    /*
+     print '<!-- Result -->';
+     print $_POST["formtestfield"];
+     print '<!-- Result -->';
+     print $conf->global->FCKEDITOR_TEST;
+     */
+}
 
 $db->close();
 
