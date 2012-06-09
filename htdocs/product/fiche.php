@@ -251,7 +251,7 @@ if (empty($reshook))
             if ($object->fetch($id,$ref))
             {
             	$object->oldcopy=dol_clone($object);
-            	
+
                 $object->ref                = $ref;
                 $object->libelle            = $_POST["libelle"];
                 $object->description        = dol_htmlcleanlastbr($_POST["desc"]);
@@ -745,7 +745,7 @@ else
         print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
 
         require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-        $doleditor=new DolEditor('desc',$_POST["desc"],'',160,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,4,90);
+        $doleditor=new DolEditor('desc',$_POST["desc"],'',160,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,4,90);
         $doleditor->Create();
 
         print "</td></tr>";
@@ -821,7 +821,7 @@ else
         // Note (private, no output on invoices, propales...)
         print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
         require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-        $doleditor=new DolEditor('note',$_POST["note"],'',180,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,8,70);
+        $doleditor=new DolEditor('note',$_POST["note"],'',180,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,8,70);
         $doleditor->Create();
 
         print "</td></tr>";
@@ -932,7 +932,7 @@ else
             // Description (used in invoice, propal...)
             print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
             require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-            $doleditor=new DolEditor('desc',$object->description,'',160,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,4,90);
+            $doleditor=new DolEditor('desc',$object->description,'',160,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,4,90);
             $doleditor->Create();
             print "</td></tr>";
             print "\n";
@@ -1024,7 +1024,7 @@ else
             // Note
             print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="2">';
             require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-            $doleditor=new DolEditor('note',$object->note,'',200,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,8,70);
+            $doleditor=new DolEditor('note',$object->note,'',200,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,8,70);
             $doleditor->Create();
             print "</td></tr>";
             print '</table>';
