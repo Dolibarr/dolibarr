@@ -25,6 +25,20 @@
 	<?php echo img_help('','').' '.$question; ?>
 </div>
 <script type="text/javascript">
+
+/*
+ * Warning: function is loaded once and not overwritten if loaded by another ajax page.
+ * So if we need inputok/ko and pageyes/no to be different according to ajax calls (to have several confirm box loaded
+ * from different ajax parts of page, we must place such variables outside of function. For this $useglobalvars must be set to 1.
+ */
+
+<?php if (! empty($useglobalvars)) { ?>
+var inputok=<?php echo json_encode($inputok); ?>;
+var inputko=<?php echo json_encode($inputko); ?>;
+var pageyes='<?php echo dol_escape_js($pageyes?$pageyes:''); ?>';
+var pageno='<?php echo dol_escape_js($pageno?$pageno:''); ?>';
+<?php } ?>
+
 $(function() {
 	$( "#<?php echo $dialogconfirm; ?>" ).dialog({
         autoOpen: <?php echo ($autoOpen ? 'true' : 'false'); ?>,
@@ -36,8 +50,10 @@ $(function() {
         buttons: {
             '<?php echo dol_escape_js($langs->transnoentities("Yes")); ?>': function() {
             	var options="";
-             	var inputok = <?php echo json_encode($inputok); ?>;
+                <?php if (empty($useglobalvars)) { ?>
+            	var inputok = <?php echo json_encode($inputok); ?>;
              	var pageyes = '<?php echo dol_escape_js($pageyes?$pageyes:''); ?>';
+                <?php } ?>
              	if (inputok.length>0) {
              		$.each(inputok, function(i, inputname) {
              			var more = '';
@@ -54,8 +70,10 @@ $(function() {
             },
             '<?php echo dol_escape_js($langs->transnoentities("No")); ?>': function() {
             	var options = '';
+                <?php if (empty($useglobalvars)) { ?>
              	var inputko = <?php echo json_encode($inputko); ?>;
              	var pageno='<?php echo dol_escape_js($pageno?$pageno:''); ?>';
+                <?php } ?>
              	if (inputko.length>0) {
              		$.each(inputko, function(i, inputname) {
              			var more = '';
