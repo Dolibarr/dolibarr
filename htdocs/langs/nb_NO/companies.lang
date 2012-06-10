@@ -1,6 +1,5 @@
 # Dolibarr language file - no_NB - companies
 CHARSET=UTF-8
-ErrorBadEMail=E-post %s er feil
 ErrorCompanyNameAlreadyExists=Firmanavnet %s finnes allerede. Velg et annet!
 ErrorPrefixAlreadyExists=Prefix %s finnes allered. Velg et annet!
 ErrorSetACountryFirst=Angi land først

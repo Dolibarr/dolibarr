@@ -1347,8 +1347,8 @@ class Adherent extends CommonObject
 
 
     /**
-     *  Fonction qui ajoute l'adherent au abonnements automatiques
-     *  mailing-list, spip, etc.
+     *  Fonction qui ajoute l'adherent au abonnements automatiques mailing-list, spip, etc.
+     *  TODO Move this into member creation trigger (trigger of mailmanspip module)
      *
      *  @return		int		<0 if KO, >0 if OK
      */
@@ -1356,12 +1356,15 @@ class Adherent extends CommonObject
     {
         global $conf;
 
+        include_once(DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php');
+        $mailmanspip=new MailmanSpip($db);
+
         $err=0;
 
         // mailman
         if (! empty($conf->global->ADHERENT_USE_MAILMAN))
         {
-            $result=$this->add_to_mailman();
+            $result=$mailmanspip->add_to_mailman($this);
             if ($result < 0)
             {
                 $err+=1;
@@ -1371,7 +1374,7 @@ class Adherent extends CommonObject
         // spip
         if ($conf->global->ADHERENT_USE_SPIP && $conf->mailmanspip->enabled)
         {
-            $result=$this->add_to_spip();
+            $result=$mailmanspip->add_to_spip($this);
             if ($result < 0)
             {
                 $err+=1;
@@ -1390,8 +1393,8 @@ class Adherent extends CommonObject
 
 
     /**
-     *  Fonction qui supprime l'adherent des abonnements automatiques
-     *  mailing-list, spip, etc.
+     *  Fonction qui supprime l'adherent des abonnements automatiques mailing-list, spip, etc.
+     *  TODO Move this into member deletion trigger (trigger of mailmanspip module)
      *
      *  @return     int     <0 if KO, >0 if OK
      */
@@ -1399,11 +1402,15 @@ class Adherent extends CommonObject
     {
         global $conf;
 
+        include_once(DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php');
+        $mailmanspip=new MailmanSpip($db);
+
         $err=0;
+
         // mailman
         if (! empty($conf->global->ADHERENT_USE_MAILMAN))
         {
-            $result=$this->del_to_mailman();
+            $result=$mailmanspip->del_to_mailman($this);
             if ($result < 0)
             {
                 $err+=1;
@@ -1412,7 +1419,7 @@ class Adherent extends CommonObject
 
         if ($conf->global->ADHERENT_USE_SPIP && $conf->mailmanspip->enabled)
         {
-            $result=$this->del_to_spip();
+            $result=$mailmanspip->del_to_spip($this);
             if ($result < 0)
             {
                 $err+=1;
@@ -1429,281 +1436,6 @@ class Adherent extends CommonObject
         }
     }
 
-
-    /**
-     *  Fonction qui donne les droits redacteurs dans spip
-     *
-     *  @return		int		=0 if KO, >0 if OK
-     */
-    function add_to_spip()
-    {
-        dol_syslog(get_class($this)."::add_to_spip");
-
-        if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
-        defined('ADHERENT_SPIP_SERVEUR') && ADHERENT_SPIP_SERVEUR != '' &&
-        defined('ADHERENT_SPIP_USER') && ADHERENT_SPIP_USER != '' &&
-        defined('ADHERENT_SPIP_PASS') && ADHERENT_SPIP_PASS != '' &&
-        defined('ADHERENT_SPIP_DB') && ADHERENT_SPIP_DB != ''
-        )
-        {
-            require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
-            $mdpass=dol_hash($this->pass);
-            $htpass=crypt($this->pass,makesalt());
-            $query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".$this->firstname." ".$this->lastname."\",\"".$this->email."\",\"".$this->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
-
-            $mydb=getDoliDBInstance('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB,ADHERENT_SPIP_PORT);
-
-            if (! $mydb->ok)
-            {
-                $this->error=$mydb->lasterror();
-                return 0;
-            }
-
-            $result = $mydb->query($query);
-            if ($result)
-            {
-                $mydb->close();
-                return 1;
-            }
-            else
-            {
-                $this->error=$mydb->lasterror();
-                return 0;
-            }
-        }
-    }
-
-    /**
-     *  Fonction qui enleve les droits redacteurs dans spip
-     *
-     *  @return		int		=0 if KO, >0 if OK
-     */
-    function del_to_spip()
-    {
-        if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
-        defined('ADHERENT_SPIP_SERVEUR') && ADHERENT_SPIP_SERVEUR != '' &&
-        defined('ADHERENT_SPIP_USER') && ADHERENT_SPIP_USER != '' &&
-        defined('ADHERENT_SPIP_PASS') && ADHERENT_SPIP_PASS != '' &&
-        defined('ADHERENT_SPIP_DB') && ADHERENT_SPIP_DB != ''
-        )
-        {
-            $query = "DELETE FROM spip_auteurs WHERE login='".$this->login."'";
-
-            $mydb=getDoliDBInstance('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB,ADHERENT_SPIP_PORT);
-
-            $result = $mydb->query($query);
-            if ($result)
-            {
-                $mydb->close();
-                return 1;
-            }
-            else
-            {
-                $this->error=$mydb->error();
-                return 0;
-            }
-        }
-    }
-
-    /**
-     *  Fonction qui dit si cet utilisateur est un redacteur existant dans spip
-     *
-     *  @return     int     1=exists, 0=does not exists, -1=error
-     */
-    function is_in_spip()
-    {
-        if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
-        defined('ADHERENT_SPIP_SERVEUR') && ADHERENT_SPIP_SERVEUR != '' &&
-        defined('ADHERENT_SPIP_USER') && ADHERENT_SPIP_USER != '' &&
-        defined('ADHERENT_SPIP_PASS') && ADHERENT_SPIP_PASS != '' &&
-        defined('ADHERENT_SPIP_DB') && ADHERENT_SPIP_DB != '')
-        {
-            $query = "SELECT login FROM spip_auteurs WHERE login='".$this->login."'";
-
-            $mydb=getDoliDBInstance('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB,ADHERENT_SPIP_PORT);
-
-            if ($mydb->ok)
-            {
-                $result = $mydb->query($query);
-
-                if ($result)
-                {
-                    if ($mydb->num_rows($result))
-                    {
-                        // nous avons au moins une reponse
-                        $mydb->close($result);
-                        return 1;
-                    }
-                    else
-                    {
-                        // nous n'avons pas de reponse => n'existe pas
-                        $mydb->close($result);
-                        return 0;
-                    }
-                }
-                else
-                {
-                    $this->error=$mydb->error();
-                    return -1;
-                }
-            }
-            else
-            {
-                $this->error="Echec de connexion avec les identifiants ".ADHERENT_SPIP_SERVEUR." ".ADHERENT_SPIP_USER." ".ADHERENT_SPIP_PASS." ".ADHERENT_SPIP_DB;
-                return -1;
-            }
-        }
-    }
-
-    /**
-     *  Subscribe an email to all mailing-lists
-     *
-     *  @param	array	$listes    	To force mailing-list (string separated with ,)
-     *  @return	int		  			<=0 if KO, >0 if OK
-     */
-    function add_to_mailman($listes='')
-    {
-        global $conf,$langs,$user;
-
-        dol_syslog(get_class($this)."::add_to_mailman");
-
-        if (! function_exists("curl_init"))
-        {
-            $langs->load("errors");
-            $this->error=$langs->trans("ErrorFunctionNotAvailableInPHP","curl_init");
-            return -1;
-        }
-
-        if (! empty($conf->global->ADHERENT_MAILMAN_URL))
-        {
-            if ($listes == '' && ! empty($conf->global->ADHERENT_MAILMAN_LISTS))
-            {
-                $lists=explode(',',$conf->global->ADHERENT_MAILMAN_LISTS);
-            }
-            else
-            {
-                $lists=explode(',',$listes);
-            }
-            foreach ($lists as $list)
-            {
-                // on remplace dans l'url le nom de la liste ainsi
-                // que l'email et le mot de passe
-                $patterns = array (
-				'/%LISTE%/',
-				'/%EMAIL%/',
-				'/%PASSWORD%/',
-				'/%MAILMAN_ADMINPW%/'
-				);
-				$replace = array (
-				$list,
-				$this->email,
-				$this->pass,
-				$conf->global->ADHERENT_MAILMAN_ADMINPW
-				);
-				$curl_url = preg_replace($patterns, $replace, $conf->global->ADHERENT_MAILMAN_URL);
-
-                dol_syslog("Call URL to subscribe : ".$curl_url);
-				$ch = curl_init();
-				curl_setopt($ch, CURLOPT_URL,"$curl_url");
-				//curl_setopt($ch, CURLOPT_URL,"http://www.j1b.org/");
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-				curl_setopt($ch, CURLOPT_FAILONERROR, 1);
-				@curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-				curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-				//curl_setopt($ch, CURLOPT_POST, 0);
-				//curl_setopt($ch, CURLOPT_POSTFIELDS, "a=3&b=5");
-				//--- Start buffering
-				$result=curl_exec($ch);
-				dol_syslog($result);
-				//--- End buffering and clean output
-				if (curl_error($ch) > 0)
-				{
-				    // error
-				    return -2;
-				}
-				curl_close($ch);
-
-            }
-            return 1;
-        }
-        else
-        {
-            $this->error="ADHERENT_MAILMAN_URL not defined";
-            return -1;
-        }
-    }
-
-    /**
-     *  Unsubscribe an email from all mailing-lists
-     *  Used when a user is resiliated
-     *
-     *  @param	array	$listes     To force mailing-list (string separated with ,)
-     *  @return int         		<=0 if KO, >0 if OK
-     */
-    function del_to_mailman($listes='')
-    {
-        global $conf,$langs,$user;
-
-        if (! empty($conf->global->ADHERENT_MAILMAN_UNSUB_URL))
-        {
-            if ($listes=='' && ! empty($conf->global->ADHERENT_MAILMAN_LISTS))
-            {
-                $lists=explode(',',$conf->global->ADHERENT_MAILMAN_LISTS);
-            }
-            else
-            {
-                $lists=explode(',',$listes);
-            }
-            foreach ($lists as $list)
-            {
-                // on remplace dans l'url le nom de la liste ainsi
-                // que l'email et le mot de passe
-                $patterns = array (
-				'/%LISTE%/',
-				'/%EMAIL%/',
-				'/%PASSWORD%/',
-				'/%MAILMAN_ADMINPW%/'
-				);
-				$replace = array (
-				trim($list),
-				$this->email,
-				$this->pass,
-				$conf->global->ADHERENT_MAILMAN_ADMINPW
-				);
-				$curl_url = preg_replace($patterns, $replace, $conf->global->ADHERENT_MAILMAN_UNSUB_URL);
-
-                dol_syslog("Call URL to unsubscribe : ".$curl_url);
-				$ch = curl_init();
-				curl_setopt($ch, CURLOPT_URL,"$curl_url");
-				//curl_setopt($ch, CURLOPT_URL,"http://www.j1b.org/");
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-				curl_setopt($ch, CURLOPT_FAILONERROR, 1);
-				@curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-				curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-				//curl_setopt($ch, CURLOPT_POST, 0);
-				//curl_setopt($ch, CURLOPT_POSTFIELDS, "a=3&b=5");
-				//--- Start buffering
-				$result=curl_exec($ch);
-				dol_syslog($result);
-				//--- End buffering and clean output
-				$rescode=curl_error($ch);
-				if ($rescode > 0)
-				{
-				    dol_syslog("Error using CURL : ".$rescode, LOG_ERR);
-				    // error
-				    return -2;
-				}
-				curl_close($ch);
-
-            }
-            return 1;
-        }
-        else
-        {
-            $this->error="ADHERENT_MAILMAN_UNSUB_URL not defined";
-            return -1;
-        }
-    }
 
     /**
      *    Return label of a civility of a contact
@@ -1790,10 +1522,10 @@ class Adherent extends CommonObject
     }
 
     /**
-     *    	Retourne le libelle du statut d'un adherent (brouillon, valide, resilie)
+     *  Retourne le libelle du statut d'un adherent (brouillon, valide, resilie)
      *
-     *    	@param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-     *    	@return string				Label
+     *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @return string				Label
      */
     function getLibStatut($mode=0)
     {
@@ -1801,13 +1533,13 @@ class Adherent extends CommonObject
     }
 
     /**
-     *    	Renvoi le libelle d'un statut donne
+     *  Renvoi le libelle d'un statut donne
      *
-     *    	@param	int			$statut      			Id statut
-     *		@param	int			$need_subscription		1 si type adherent avec cotisation, 0 sinon
-     *		@param	timestamp	$date_end_subscription	Date fin adhesion
-     *    	@param  int			$mode        			0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-     *    	@return string      						Label
+     *  @param	int			$statut      			Id statut
+     *	@param	int			$need_subscription		1 si type adherent avec cotisation, 0 sinon
+     *	@param	timestamp	$date_end_subscription	Date fin adhesion
+     *  @param  int			$mode        			0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+     *  @return string      						Label
      */
     function LibStatut($statut,$need_subscription,$date_end_subscription,$mode=0)
     {

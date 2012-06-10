@@ -1,0 +1,8 @@
+# Dolibarr language file - fr_FR - mailmanspip
+CHARSET=UTF-8
+TestSubscribe=Pour tester l'inscription aux listes mailman
+TestUnSubscribe=Pour tester la désincritpion aux listes mailman
+MailmanCreationSuccess=Appel de l'url de création dans mailman avec succès
+MailmanCreationSuccess=Appel de l'url de suppression de mailman avec succès
+SynchroMailManEnabled=Une alimentation de Mailman sera réalisée
+SynchroSpipEnabled=Une alimentation de Spip sera réalisée 

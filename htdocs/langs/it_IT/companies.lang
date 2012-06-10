@@ -86,7 +86,6 @@ DolibarrLogin					=Dolibarr login
 EditCompany					=Modifica società
 EditContact					=Modifica contatto/indirizzo
 EditDeliveryAddress				=Modifica indirizzo di consegna
-ErrorBadEMail					=L'email %s è sbagliata
 ErrorCompanyNameAlreadyExists			=Il nome %s esiste già. Scegline un altro.
 ErrorPrefixAlreadyExists			=Prefisso %s già esistente. Scegline un altro.
 ErrorSetACountryFirst				=Impostare prima il paese

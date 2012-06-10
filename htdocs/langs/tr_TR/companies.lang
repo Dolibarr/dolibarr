@@ -8,7 +8,6 @@
 // START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 // Reference language: en_US
 CHARSET=UTF-8
-ErrorBadEMail=Yanlış EPosta: %s
 ErrorBadUrl=Yanlış Url: %s
 ErrorCompanyNameAlreadyExists=Zaten Firma adı% var. Başka bir tane seçin.
 ErrorPrefixAlreadyExists=Önek% s zaten var. Başka bir tane seçin.

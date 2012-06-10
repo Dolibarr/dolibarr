@@ -9,7 +9,6 @@
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
-ErrorBadEMail=EMail %s on väärä
 ErrorCompanyNameAlreadyExists=Yrityksen nimi %s on jo olemassa. Valitse toinen.
 ErrorPrefixAlreadyExists=Etunumero %s on jo olemassa. Valitse toinen.
 ErrorSetACountryFirst=Aseta ensin maa

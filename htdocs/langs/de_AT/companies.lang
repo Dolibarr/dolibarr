@@ -6,7 +6,6 @@
 
 
 CHARSET=UTF-8
-ErrorBadEMail=Email-Adresse %s ist ungültig
 ErrorCompanyNameAlreadyExists=Firmenname %s bereits vorhanden. Bitte wählen Sie einen anderen.
 ErrorPrefixAlreadyExists=Präfix %s bereits vorhanden. Bitte wählen Sie einen anderen.
 ErrorSetACountryFirst=Wählen sie zuerst das Land
