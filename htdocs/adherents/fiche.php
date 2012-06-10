@@ -330,6 +330,24 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
     			}
             }
 
+            // Rajoute l'utilisateur dans les divers abonnements (mailman, spip, etc...)
+            if (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid))
+            {
+                if ($object->oldcopy->email != $object->email)    // If email has changed we delete mailman subscription for old email
+                {
+                    if ($object->oldcopy->del_to_abo() < 0)
+                    {
+                        // error
+                        $errmsgs[]= $langs->trans("FailedToCleanMailmanList").': '.$object->error."<br>\n";
+                    }
+                }
+                if ($object->add_to_abo() < 0)    // We add subscription if new email or new type (new type may means more mailing-list to subscribe)
+                {
+                    // error
+                    $errmsgs[]= $langs->trans("FailedToAddToMailmanList").': '.$object->error."<br>\n";
+                }
+            }
+
 			$rowid=$object->id;
 			$action='';
 
@@ -552,7 +570,7 @@ if ($user->rights->adherent->creer && $action == 'confirm_valid' && $confirm == 
 	    if ($object->add_to_abo() < 0)
 	    {
 	        // error
-	        $errmsg.= $langs->trans("FaildToAddToMailmanList").': '.$object->error."<br>\n";
+	        $errmsg.= $langs->trans("ErrorFailedToAddToMailmanList").': '.$object->error."<br>\n";
 	    }
 	}
 	else
