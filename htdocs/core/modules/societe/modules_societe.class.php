@@ -364,15 +364,15 @@ abstract class ModeleAccountancyCode
  *	Create a document for third party
  *
  *	@param	DoliDB		$db  			Database handler
- *	@param  int			$id				Id of third party to use
+ *	@param  Societe		$object			Object of third party to use
  *	@param	string		$message		Message
  *	@param	string		$modele			Force model to use ('' to not force). model can be a model name or a template file.
  *	@param	Translate	$outputlangs	Object lang to use for translation
  *	@return int        					<0 if KO, >0 if OK
  */
-function thirdparty_doc_create($db, $id, $message, $modele, $outputlangs)
+function thirdparty_doc_create($db, &$object, $message, $modele, $outputlangs)
 {
-    global $conf,$langs;
+    global $conf,$langs,$user;
     $langs->load("bills");
 
     $dir = DOL_DOCUMENT_ROOT . "/core/modules/societe/doc";
@@ -413,9 +413,19 @@ function thirdparty_doc_create($db, $id, $message, $modele, $outputlangs)
         // We save charset_output to restore it because write_file can change it if needed for
         // output format that does not support UTF8.
         $sav_charset_output=$outputlangs->charset_output;
-        if ($obj->write_file($id, $outputlangs, $srctemplatepath) > 0)
+        if ($obj->write_file($object, $outputlangs, $srctemplatepath) > 0)
         {
             $outputlangs->charset_output=$sav_charset_output;
+            
+            // Appel des triggers
+            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            $interface=new Interfaces($db);
+            $result=$interface->run_triggers('COMPANY_BUILDDOC',$object,$user,$langs,$conf);
+            if ($result < 0) {
+            	$error++; $this->errors=$interface->errors;
+            }
+            // Fin appel triggers
+            
             return 1;
         }
         else
