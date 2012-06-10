@@ -160,7 +160,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	 * 	@param	string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *	@return	int         					1 if OK, <=0 if KO
 	 */
-	function write_file($object,$outputlangs,$srctemplatepath)
+	function write_file(&$object,$outputlangs,$srctemplatepath)
 	{
 		global $user,$langs,$conf,$mysoc;
 
@@ -181,19 +181,6 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 		if ($conf->societe->multidir_output[$object->entity])
 		{
-			// If $object is id instead of object
-			if (! is_object($object))
-			{
-				$id = $object;
-				$object = new Societe($this->db);
-				$result=$object->fetch($id);
-				if ($result < 0)
-				{
-					dol_print_error($this->db,$object->error);
-					return -1;
-				}
-			}
-
 			$dir = $conf->societe->multidir_output[$object->entity];
 			$objectref = dol_sanitizeFileName($object->id);
 			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
@@ -214,7 +201,9 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				$newfiletmp=preg_replace('/\.odt/i','',$newfile);
 				$newfiletmp=preg_replace('/template_/i','',$newfiletmp);
 				$newfiletmp=preg_replace('/modele_/i','',$newfiletmp);
-				$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
+				$filename=$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
+				$file=$dir.'/'.$filename;
+				$object->builddoc_filename=$filename; // For triggers
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;
 				//print "file=".$file;
