@@ -403,7 +403,7 @@ class EcmDirectory // extends CommonObject
 	 *  @param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 	 *  @param	string	$option			Sur quoi pointe le lien
 	 *  @param	int		$max			Max length
-	 *  @param	string	$morehtml		Add more param on a link
+	 *  @param	string	$more			Add more param on a link
 	 *  @return	string					Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0,$option='',$max=0,$more='')
