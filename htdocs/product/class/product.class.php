@@ -138,6 +138,8 @@ class Product extends CommonObject
 
 	//! Contains detail of stock of product into each warehouse
 	var $stock_warehouse=array();
+	
+	var $oldcopy;
 
 
 	/**
@@ -253,7 +255,7 @@ class Product extends CommonObject
 		    return -2;
 		}
 
-		dol_syslog(get_class($this)."::Create ref=".$this->ref." price=".$this->price." price_ttc=".$this->price_ttc." tva_tx=".$this->tva_tx." price_base_type=".$this->price_base_type." Category : ".$this->catid, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create ref=".$this->ref." price=".$this->price." price_ttc=".$this->price_ttc." tva_tx=".$this->tva_tx." price_base_type=".$this->price_base_type." Category : ".$this->catid, LOG_DEBUG);
 
         $now=dol_now();
 
@@ -322,7 +324,7 @@ class Product extends CommonObject
 						$result = $this->_log_price($user);
 						if ($result > 0)
 						{
-							if ( $this->update($id, $user, true) > 0)
+							if ($this->update($id, $user, true) > 0)
 							{
 								if ($this->catid > 0)
 								{
@@ -359,7 +361,7 @@ class Product extends CommonObject
 			{
 				// Product already exists with this ref
 				$langs->load("products");
-				$this->error = $langs->transnoentitiesnoconv("ErrorProductAlreadyExists",$this->ref);
+				$this->error = "ErrorProductAlreadyExists";
 			}
 		}
 		else
@@ -403,6 +405,8 @@ class Product extends CommonObject
 		global $langs, $conf;
 
 		$error=0;
+		
+		$this->db->begin();
 
 		// Verification parametres
 		if (! $this->libelle) $this->libelle = 'MISSING LABEL';
@@ -504,8 +508,36 @@ class Product extends CommonObject
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 			}
-
-			return 1;
+			
+			if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref != $this->ref))
+			{
+				// We remove directory
+				if ($conf->product->dir_output)
+				{
+					$olddir = $conf->product->dir_output . "/" . dol_sanitizeFileName($this->oldcopy->ref);
+					$newdir = $conf->product->dir_output . "/" . dol_sanitizeFileName($this->ref);
+					if (file_exists($olddir))
+					{
+						$res=@dol_move($olddir, $newdir);
+						if (! $res)
+						{
+							$this->error='ErrorFailToMoveDir';
+							$error++;
+						}
+					}
+				}
+			}
+			
+			if (! $error)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				return -$error;
+			}
 		}
 		else
 		{
@@ -572,22 +604,6 @@ class Product extends CommonObject
 				    }
 				}
 
-                // TODO Remove this. It can already be addressed by previous triggers
-                if (! $error)
-                {
-                	// Actions on extra fields (by external module or standard code)
-                    include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
-                    $hookmanager=new HookManager($this->db);
-                    $hookmanager->initHooks(array('productdao'));
-                    $parameters=array(); $action='delete';
-                    $reshook=$hookmanager->executeHooks('deleteProduct',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-                    if (! empty($hookmanager->error))
-                    {
-                        $error++;
-                        $this->error=$hookmanager->error;
-                    }
-                }
-
                 // Delete product
                 if (! $error)
                 {
@@ -602,16 +618,35 @@ class Product extends CommonObject
     				    dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
     				}
                 }
+                
+                if (! $error)
+                {
+                	// We remove directory
+                	$ref = dol_sanitizeFileName($this->ref);
+                	if ($conf->product->dir_output)
+                	{
+                		$dir = $conf->product->dir_output . "/" . $ref;
+                		if (file_exists($dir))
+                		{
+                			$res=@dol_delete_dir_recursive($dir);
+                			if (! $res)
+                			{
+                				$this->error='ErrorFailToDeleteDir';
+                				$error++;
+                			}
+                		}
+                	}
+                }
 
-				if ($error)
+				if (! $error)
 				{
-				    $this->db->rollback();
-					return -$error;
+					$this->db->commit();
+					return 1;
 				}
 				else
 				{
-				    $this->db->commit();
-					return 1;
+					$this->db->rollback();
+					return -$error;
 				}
 			}
 			else
@@ -1092,10 +1127,10 @@ class Product extends CommonObject
 				$this->db->free($resql);
 
 				// multilangs
-				if ($conf->global->MAIN_MULTILANGS) $this->getMultiLangs();
+				if (! empty($conf->global->MAIN_MULTILANGS)) $this->getMultiLangs();
 
 				// Load multiprices array
-				if ($conf->global->PRODUIT_MULTIPRICES)
+				if (! empty($conf->global->PRODUIT_MULTIPRICES))
 				{
 					for ($i=1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 					{
@@ -1901,7 +1936,7 @@ class Product extends CommonObject
 	function clone_fournisseurs($fromId, $toId)
 	{
 		$this->db->begin();
-		
+
 		$now=dol_now();
 
 		// les fournisseurs

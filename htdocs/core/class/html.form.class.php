@@ -2143,6 +2143,7 @@ class Form
     function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=170, $width=500)
     {
         global $langs,$conf;
+        global $useglobalvars;
 
         $more='';
         $formconfirm='';
@@ -2217,8 +2218,6 @@ class Form
             $more.='</table>'."\n";
         }
 
-        $formconfirm.= "\n<!-- begin form_confirm page=".$page." -->\n";
-
         if ($useajax && $conf->use_javascript_ajax)
         {
             $autoOpen=true;
@@ -2243,82 +2242,13 @@ class Form
                 }
             }
 
-            // New code using jQuery only
-            $formconfirm.= '<div id="'.$dialogconfirm.'" title="'.dol_escape_htmltag($title).'" style="display: none;">';
-            if (! empty($more)) $formconfirm.= '<p>'.$more.'</p>';
-            $formconfirm.= img_help('','').' '.$question;
-            $formconfirm.= '</div>'."\n";
-            $formconfirm.= '<script type="text/javascript">
-			/* Warning: This function is loaded once and not overwritten if loaded by another ajax page */
-            $(function() {
-            	$( "#'.$dialogconfirm.'" ).dialog({
-			        autoOpen: '.($autoOpen?'true':'false').',
-			        resizable: false,
-			        height:'.$height.',
-			        width:'.$width.',
-			        modal: true,
-			        closeOnEscape: false,
-			        close: function(event, ui) {
-            			if (choice == \'ok\') {
-			             	var options="";
-			             	var inputok='.json_encode($inputok).';
-			             	var pageyes=\''.dol_escape_js($pageyes?$pageyes:'').'\';
-			             	if (inputok.length>0) {
-			             		$.each(inputok, function() {
-			             			var inputname = this; var more = \'\';
-			             			if ($("#" + this).attr("type") == \'checkbox\') { more = \':checked\'; }
-			             			var inputvalue = $("#" + this + more).val();
-			             			if (typeof inputvalue == \'undefined\') { inputvalue=\'\'; }
-			             			options += \'&\' + inputname + \'=\' + inputvalue;
-			             		});
-			             	}
-			             	var urljump=pageyes + (pageyes.indexOf(\'?\')<0?\'?\':\'\') + options;
-			             	//alert(urljump);
-            				if (pageyes.length > 0) { location.href=urljump; }
-        				}
-			            if (choice == \'ko\') {
-			             	var options="";
-			             	var inputko='.json_encode($inputko).';
-			             	var pageno=\''.dol_escape_js($pageno?$pageno:'').'\';
-			             	if (inputko.length>0) {
-			             		$.each(inputko, function() {
-			             			var inputname = this; var more = \'\';
-			             			if ($("#" + this).attr("type") == \'checkbox\') { more = \':checked\'; }
-			             			var inputvalue = $("#" + this + more).val();
-			             			if (typeof inputvalue == \'undefined\') { inputvalue=\'\'; }
-			             			options += \'&\' + inputname + \'=\' + inputvalue;
-			             		});
-			             	}
-			             	var urljump=pageno + (pageno.indexOf(\'?\')<0?\'?\':\'\') + options;
-			             	//alert(urljump);
-            				if (pageno.length > 0) { location.href=urljump; }
-			            }
-			        },
-			        buttons: {
-			            \''.dol_escape_js($langs->transnoentities("Yes")).'\': function() {
-			                choice=\'ok\';
-			                $(this).dialog(\'close\');
-			            },
-			            \''.dol_escape_js($langs->transnoentities("No")).'\': function() {
-			            	choice=\'ko\';
-			                $(this).dialog(\'close\');
-			            }
-			        }
-			    });
-
-				var button=\''.$button.'\';
-	            if (button.length > 0) {
-			    	$( "#" + button ).click(function() {
-			    		$("#'.$dialogconfirm.'").dialog(\'open\');
-			    	});
-			    }
-			});
-			</script>';
-
-            $formconfirm.= "\n";
+            // Show JQuery confirm box. Note that global var $useglobalvars is used inside this template
+            include(DOL_DOCUMENT_ROOT.'/core/tpl/ajax/formconfirm.tpl.php');
         }
         else
         {
+        	$formconfirm.= "\n<!-- begin form_confirm page=".$page." -->\n";
+
             $formconfirm.= '<form method="POST" action="'.$page.'" class="notoptoleftroright">'."\n";
             $formconfirm.= '<input type="hidden" name="action" value="'.$action.'">';
             $formconfirm.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
@@ -2350,9 +2280,10 @@ class Form
 
             $formconfirm.= "</form>\n";
             $formconfirm.= '<br>';
+
+            $formconfirm.= "<!-- end form_confirm -->\n";
         }
 
-        $formconfirm.= "<!-- end form_confirm -->\n";
         return $formconfirm;
     }
 
