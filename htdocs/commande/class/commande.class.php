@@ -2294,7 +2294,7 @@ class Commande extends CommonObject
         		}
         		if (file_exists($dir))
         		{
-        			if (! dol_delete_dir($dir))
+        			if (! dol_delete_dir_recursive($dir))
         			{
         				$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
         				$this->db->rollback();

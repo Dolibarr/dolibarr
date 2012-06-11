@@ -356,6 +356,7 @@ else if ($action == 'confirm_deleteproductline' && $confirm == 'yes' && $user->r
 else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fournisseur->commande->valider)
 {
     $object->fetch($id);
+    $object->fetch_thirdparty();
 
     $object->date_commande=dol_now();
     $result = $object->valid($user);
@@ -452,6 +453,7 @@ else if ($action == 'confirm_commande' && $confirm	== 'yes' &&	$user->rights->fo
 else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisseur->commande->supprimer)
 {
     $object->fetch($id);
+    $object->fetch_thirdparty();
     $result=$object->delete($user);
     if ($result > 0)
     {
@@ -547,7 +549,9 @@ else if ($action == 'builddoc' && $user->rights->fournisseur->commande->creer)	/
     // Build document
 
     // Sauvegarde le dernier module	choisi pour	generer	un document
-    $object->fetch($_REQUEST['id']);
+    $object->fetch($id);
+    $object->fetch_thirdparty();
+    
     if ($_REQUEST['model'])
     {
         $object->setDocModel($user, $_REQUEST['model']);
@@ -579,10 +583,12 @@ else if ($action == 'remove_file' && $user->rights->fournisseur->commande->creer
 
     if ($object->fetch($id))
     {
+    	$object->fetch_thirdparty();
+    	
         $langs->load("other");
-        $upload_dir =	$conf->fournisseur->commande->dir_output . "/";
+        $upload_dir =	$conf->fournisseur->commande->dir_output;
         $file =	$upload_dir	. '/' .	GETPOST('file');
-        dol_delete_file($file);
+        dol_delete_file($file,0,0,0,$object);
         $mesg	= '<div	class="ok">'.$langs->trans("FileWasRemoved",GETPOST('file')).'</div>';
     }
 }
