@@ -1,6 +1,5 @@
 # Dolibarr language file - nl_BE - companies
 CHARSET=UTF-8
-ErrorBadEMail=EMail %s is verkeerd
 ErrorCompanyNameAlreadyExists=Bedrijfsnaam %s bestaat reeds. Kies een andere naam.
 ErrorPrefixAlreadyExists=Prefix %s bestaat reeds. Kies een ander prefix.
 ErrorSetACountryFirst=Kies het land eerst

@@ -69,7 +69,7 @@ if ($result)
 	$num_lignes = $db->num_rows($result);
 	$i = 0;
 
-	print_barre_liste("Lignes de facture � ventiler",$page,"liste.php","",$sortfield,$sortorder,'',$num_lignes);
+	print_barre_liste($langs->trans("InvoiceLinesToDispatch",$page,"liste.php","",$sortfield,$sortorder,'',$num_lignes);
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Invoice").'</td>';

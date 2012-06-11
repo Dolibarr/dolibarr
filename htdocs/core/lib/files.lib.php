@@ -488,10 +488,11 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 }
 
 /**
- *	Unescape a file submitted by upload. PHP escape char " (%22) and char ' (%27) into $FILES
- *	Before= Capture d\'écran.doc  After= Capture d'écran.doc
+ *	Unescape a file submitted by upload.
+ *  PHP escape char " (%22) or char ' (%27) into $FILES.
  *
  *	@param	string	$filename		Filename
+ *	@return	string					Filename sanitized
  */
 function dol_unescapefile($filename)
 {

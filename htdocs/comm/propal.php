@@ -957,6 +957,23 @@ else if ($action == 'builddoc' && $user->rights->propale->creer)
 	}
 }
 
+// Remove file in doc form
+else if ($action == 'remove_file')
+{
+	if ($object->fetch($id))
+	{
+		require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+
+		$object->fetch_thirdparty();
+
+		$langs->load("other");
+		$upload_dir = $conf->propal->dir_output;
+		$file = $upload_dir . '/' . GETPOST('file');
+		dol_delete_file($file,0,0,0,$object);
+		$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('file')).'</div>';
+	}
+}
+
 // Set project
 else if ($action == 'classin' && $user->rights->propale->creer)
 {

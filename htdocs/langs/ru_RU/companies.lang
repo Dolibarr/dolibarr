@@ -9,7 +9,6 @@
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
-ErrorBadEMail=EMail %s неверен
 ErrorCompanyNameAlreadyExists=Название компании %s уже существует. Выберите другое.
 ErrorPrefixAlreadyExists=Префикс %s уже существует. Выберите другой.
 ErrorSetACountryFirst=Сначала установите страну

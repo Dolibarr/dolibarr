@@ -208,9 +208,9 @@ if ($user->societe_id == 0)
     DOL_URL_ROOT.'/adherents/liste.php?statut=1&mainmenu=members',
     DOL_URL_ROOT.'/product/liste.php?type=0&mainmenu=products',
     DOL_URL_ROOT.'/product/liste.php?type=1&mainmenu=products',
-    DOL_URL_ROOT.'/comm/propal.php?mainmenu=commercial',
+    DOL_URL_ROOT.'/comm/propal/list.php?mainmenu=commercial',
     DOL_URL_ROOT.'/commande/liste.php?mainmenu=commercial',
-    DOL_URL_ROOT.'/compta/facture.php?mainmenu=accountancy',
+    DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=accountancy',
     DOL_URL_ROOT.'/contrat/liste.php');
     // Translation lang files
     $langfile=array("bills",

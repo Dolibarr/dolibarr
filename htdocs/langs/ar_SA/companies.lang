@@ -9,7 +9,6 @@
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
-ErrorBadEMail=البريد الإلكتروني ل ٪ من الخطأ
 ErrorCompanyNameAlreadyExists=اسم الشركة ل ٪ موجود بالفعل. اختيار آخر.
 ErrorPrefixAlreadyExists=بادئة ٪ ق موجود بالفعل. اختيار آخر.
 ErrorSetACountryFirst=المجموعة الأولى في البلد

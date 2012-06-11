@@ -70,7 +70,6 @@ if ($action == 'create')
 		$action=GETPOST('action');
 		$origin=GETPOST('origin');
 		$originid=GETPOST('originid');
-		//header('facture.php?orders_to_invoice='.$selected.'&socid='.$socid.'&action='.$action.'&origin='.$origin.'&originid='.$originid);
 	}
 }
 $now=dol_now();

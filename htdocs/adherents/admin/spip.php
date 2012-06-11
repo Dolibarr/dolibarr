@@ -124,8 +124,11 @@ dol_htmloutput_mesg($mesg);
 $var=!$var;
 if ($conf->global->ADHERENT_USE_SPIP)
 {
-    $lien=img_picto($langs->trans("Active"),'tick').' ';
-    $lien.='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_SPIP">'.$langs->trans("Disable").'</a>';
+    //$lien=img_picto($langs->trans("Active"),'tick').' ';
+    $lien='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_SPIP">';
+    //$lien.=$langs->trans("Disable");
+    $lien.=img_picto($langs->trans("Activated"),'switch_on');
+    $lien.='</a>';
     // Edition des varibales globales
     $constantes=array(
     	'ADHERENT_SPIP_SERVEUR',
@@ -140,9 +143,11 @@ if ($conf->global->ADHERENT_USE_SPIP)
 }
 else
 {
-    $lien='<a href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_SPIP">'.$langs->trans("Activate").'</a>';
+    $lien='<a href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_SPIP">';
+    //$lien.=$langs->trans("Activate");
+    $lien.=img_picto($langs->trans("Disabled"),'switch_off');
+    $lien.='</a>';
     print_fiche_titre("SPIP - CMS",$lien,'');
-    print "<hr>\n";
 }
 
 

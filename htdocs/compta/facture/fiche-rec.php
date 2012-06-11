@@ -541,7 +541,7 @@ else
 						}
 						else
 						{
-							print '<td align="right"><a href="facture.php?filtre=paye:0,fk_statut:1">'.$langs->trans("Validated").'</a></td>';
+							print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/list.php?filtre=paye:0,fk_statut:1">'.$langs->trans("Validated").'</a></td>';
 						}
 					}
 					else
