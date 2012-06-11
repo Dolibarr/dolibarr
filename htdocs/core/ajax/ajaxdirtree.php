@@ -19,7 +19,6 @@
  *      \file       htdocs/core/ajax/ajaxdirtree.php
  *      \ingroup    ecm
  *      \brief      This script returns content of a directory for filetree
- *      \version    $Id: ajaxFileTree.php,v 1.8 2011/07/06 17:03:41 eldy Exp $
  */
 
 
@@ -105,6 +104,8 @@ if( file_exists($fullpathselecteddir) )
     		// All dirs
     		foreach( $files as $file )    // $file can be '.', '..', or 'My dir' or 'My file'
     		{
+    		    if ($file == 'temp') continue;
+
     	        $nbofsubdir=0;
     	        $nboffilesinsubdir=0;
 

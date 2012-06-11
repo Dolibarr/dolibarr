@@ -253,7 +253,7 @@ class Product extends CommonObject
 		    return -2;
 		}
 
-		dol_syslog(get_class($this)."::Create ref=".$this->ref." price=".$this->price." price_ttc=".$this->price_ttc." tva_tx=".$this->tva_tx." price_base_type=".$this->price_base_type." Category : ".$this->catid, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create ref=".$this->ref." price=".$this->price." price_ttc=".$this->price_ttc." tva_tx=".$this->tva_tx." price_base_type=".$this->price_base_type." Category : ".$this->catid, LOG_DEBUG);
 
         $now=dol_now();
 
@@ -359,7 +359,7 @@ class Product extends CommonObject
 			{
 				// Product already exists with this ref
 				$langs->load("products");
-				$this->error = $langs->transnoentitiesnoconv("ErrorProductAlreadyExists",$this->ref);
+				$this->error = "ErrorProductAlreadyExists";
 			}
 		}
 		else
@@ -1092,10 +1092,10 @@ class Product extends CommonObject
 				$this->db->free($resql);
 
 				// multilangs
-				if ($conf->global->MAIN_MULTILANGS) $this->getMultiLangs();
+				if (! empty($conf->global->MAIN_MULTILANGS)) $this->getMultiLangs();
 
 				// Load multiprices array
-				if ($conf->global->PRODUIT_MULTIPRICES)
+				if (! empty($conf->global->PRODUIT_MULTIPRICES))
 				{
 					for ($i=1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 					{

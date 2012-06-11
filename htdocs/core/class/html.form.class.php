@@ -2219,6 +2219,7 @@ class Form
         {
             $autoOpen=true;
             $dialogconfirm='dialog-confirm';
+            $button='';
             if (! is_int($useajax))
             {
                 $button=$useajax;
