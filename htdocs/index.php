@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
- * Copyright (C) 2011   	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011-2012 	Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -338,7 +338,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
     $board->load_board($user,"opened");
     $board->warning_delay=$conf->propal->cloture->warning_delay/60/60/24;
     $board->label=$langs->trans("PropalsToClose");
-    $board->url=DOL_URL_ROOT.'/comm/propal.php?viewstatut=1';
+    $board->url=DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=1';
     $board->img=img_object($langs->trans("Propals"),"propal");
     $rowspan++;
     $dashboardlines[]=$board;
@@ -354,7 +354,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
     $board->load_board($user,"signed");
     $board->warning_delay=$conf->propal->facturation->warning_delay/60/60/24;
     $board->label=$langs->trans("PropalsToBill");
-    $board->url=DOL_URL_ROOT.'/comm/propal.php?viewstatut=2';
+    $board->url=DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=2';
     $board->img=img_object($langs->trans("Propals"),"propal");
     $rowspan++;
     $dashboardlines[]=$board;
