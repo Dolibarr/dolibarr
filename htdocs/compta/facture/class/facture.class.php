@@ -711,9 +711,10 @@ class Facture extends CommonObject
      *      @param  string	$option          Where point the link
      *      @param  int		$max             Maxlength of ref
      *      @param  int		$short           1=Return just URL
+     *      @param  string  $moretitle       Add more text to title tooltip
      *      @return string 			         String with URL
      */
-    function getNomUrl($withpicto=0,$option='',$max=0,$short=0)
+    function getNomUrl($withpicto=0,$option='',$max=0,$short=0,$moretitle='')
     {
         global $langs;
 
@@ -724,9 +725,6 @@ class Facture extends CommonObject
 
         if ($short) return $url;
 
-        $linkstart='<a href="'.$url.'">';
-        $linkend='</a>';
-
         $picto='bill';
         if ($this->type == 1) $picto.='r';	// Replacement invoice
         if ($this->type == 2) $picto.='a';	// Credit note
@@ -736,8 +734,13 @@ class Facture extends CommonObject
         if ($this->type == 1) $label=$langs->transnoentitiesnoconv("ShowInvoiceReplace").': '.$this->ref;
         if ($this->type == 2) $label=$langs->transnoentitiesnoconv("ShowInvoiceAvoir").': '.$this->ref;
         if ($this->type == 3) $label=$langs->transnoentitiesnoconv("ShowInvoiceDeposit").': '.$this->ref;
+        if ($moretitle) $label.=' - '.$moretitle;
 
-        if ($withpicto) $result.=($linkstart.img_object($label,$picto).$linkend);
+        //$linkstart='<a href="'.$url.'" title="'.dol_escape_htmltag($label).'">';
+        $linkstart='<a href="'.$url.'">';
+        $linkend='</a>';
+
+        if ($withpicto) $result.=($linkstart.img_object(($max?dol_trunc($label,$max):$label),$picto).$linkend);
         if ($withpicto && $withpicto != 2) $result.=' ';
         if ($withpicto != 2) $result.=$linkstart.($max?dol_trunc($this->ref,$max):$this->ref).$linkend;
         return $result;

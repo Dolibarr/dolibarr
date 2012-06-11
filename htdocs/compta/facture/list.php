@@ -23,7 +23,7 @@
  */
 
 /**
- *	\file       htdocs/compta/facture.php
+ *	\file       htdocs/compta/facture/list.php
  *	\ingroup    facture
  *	\brief      Page to create/see an invoice
  */
@@ -131,7 +131,7 @@ if (! $sall) $sql = 'SELECT';
 else $sql = 'SELECT DISTINCT';
 $sql.= ' f.rowid as facid, f.facnumber, f.type, f.increment, f.total, f.total_ttc,';
 $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
-$sql.= ' f.paye as paye, f.fk_statut,';
+$sql.= ' f.paye as paye, f.fk_statut, f.note,';
 $sql.= ' s.nom, s.rowid as socid';
 if (! $sall) $sql.= ', SUM(pf.amount) as am';   // To be able to sort on status
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
@@ -307,12 +307,13 @@ if ($resql)
             $facturestatic->id=$objp->facid;
             $facturestatic->ref=$objp->facnumber;
             $facturestatic->type=$objp->type;
+            $notetoshow=dol_string_nohtmltag(($user->societe_id>0?$objp->note_public:$objp->note),1);
             $paiement = $facturestatic->getSommePaiement();
 
             print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 
             print '<td class="nobordernopadding" nowrap="nowrap">';
-            print $facturestatic->getNomUrl(1);
+            print $facturestatic->getNomUrl(1,'',200,0,$notetoshow);
             print $objp->increment;
             print '</td>';
 
@@ -322,7 +323,8 @@ if ($resql)
             $urlsource=$_SERVER['PHP_SELF'].'?facid='.$objp->facid;
             $formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','',1,'',1);
             print '</td>';
-            print '</tr></table>';
+            print '</tr>';
+            print '</table>';
 
             print "</td>\n";
 
