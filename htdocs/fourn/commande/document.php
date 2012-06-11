@@ -41,6 +41,11 @@ $langs->load('deliveries');
 $langs->load('products');
 $langs->load('stocks');
 
+$id = GETPOST('id','int');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action','alpha');
+$confirm = GETPOST('confirm','alpha');
+
 $mesg='';
 if (isset($_SESSION['DolMessage']))
 {
@@ -49,8 +54,6 @@ if (isset($_SESSION['DolMessage']))
 }
 
 // Security check
-$id=empty($_GET['id']) ? 0 : intVal($_GET['id']);
-$action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande_fournisseur', $id,'');
 
@@ -66,14 +69,15 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
 
-$commande = new CommandeFournisseur($db);
-if ($commande->fetch($_GET['id'],$_GET['ref']) < 0)
+$object = new CommandeFournisseur($db);
+if ($object->fetch($id,$ref) < 0)
 {
 	dol_print_error($db);
 	exit;
 }
 
-
+$upload_dir = $conf->fournisseur->dir_output.'/commande/'.dol_sanitizeFileName($object->ref);
+$object->fetch_thirdparty();
 
 /*
  * Actions
@@ -82,8 +86,6 @@ if ($commande->fetch($_GET['id'],$_GET['ref']) < 0)
 // Envoi fichier
 if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	$upload_dir = $conf->fournisseur->dir_output . "/commande/" . dol_sanitizeFileName($commande->ref);
-
 	if (dol_mkdir($upload_dir) >= 0)
 	{
 		$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0,0,$_FILES['userfile']['error']);
@@ -119,16 +121,18 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	}
 }
 
-// Delete
-if ($action=='delete')
+else if ($action == 'confirm_deletefile' && $confirm == 'yes')
 {
-    $langs->load("other");
-	$upload_dir = $conf->fournisseur->dir_output . "/commande/" . dol_sanitizeFileName($commande->ref);
-	$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-	dol_delete_file($file);
-	$_SESSION['DolMessage'] = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
-    Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
-    exit;
+	if ($object->id > 0)
+	{
+		$langs->load("other");
+
+		$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+		dol_delete_file($file,0,0,0,$object);
+		$_SESSION['DolMessage'] = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
+		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+		exit;
+	}
 }
 
 
@@ -138,21 +142,14 @@ if ($action=='delete')
 
 $form =	new	Form($db);
 
-$id = $_GET['id'];
-$ref= $_GET['ref'];
-if ($id > 0 || ! empty($ref))
+if ($object->id > 0)
 {
 	llxHeader();
 
-	$upload_dir = $conf->fournisseur->dir_output.'/commande/'.dol_sanitizeFileName($commande->ref);
-
-	$soc = new Societe($db);
-	$soc->fetch($commande->socid);
-
 	$author = new User($db);
-	$author->fetch($commande->user_author_id);
+	$author->fetch($object->user_author_id);
 
-	$head = ordersupplier_prepare_head($commande);
+	$head = ordersupplier_prepare_head($object);
 
 	dol_fiche_head($head, 'documents', $langs->trans('SupplierOrder'), 0, 'order');
 
@@ -171,35 +168,35 @@ if ($id > 0 || ! empty($ref))
 	// Ref
 	print '<tr><td width="35%">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="2">';
-	print $form->showrefnav($commande,'ref','',1,'ref','ref');
+	print $form->showrefnav($object,'ref','',1,'ref','ref');
 	print '</td>';
 	print '</tr>';
 
 	// Fournisseur
 	print '<tr><td>'.$langs->trans("Supplier")."</td>";
-	print '<td colspan="2">'.$soc->getNomUrl(1,'supplier').'</td>';
+	print '<td colspan="2">'.$object->thirdparty->getNomUrl(1,'supplier').'</td>';
 	print '</tr>';
 
 	// Statut
 	print '<tr>';
 	print '<td>'.$langs->trans("Status").'</td>';
 	print '<td colspan="2">';
-	print $commande->getLibStatut(4);
+	print $object->getLibStatut(4);
 	print "</td></tr>";
 
 	// Date
-	if ($commande->methode_commande_id > 0)
+	if ($object->methode_commande_id > 0)
 	{
 		print '<tr><td>'.$langs->trans("Date").'</td><td colspan="2">';
-		if ($commande->date_commande)
+		if ($object->date_commande)
 		{
-			print dol_print_date($commande->date_commande,"dayhourtext")."\n";
+			print dol_print_date($object->date_commande,"dayhourtext")."\n";
 		}
 		print "</td></tr>";
 
-		if ($commande->methode_commande)
+		if ($object->methode_commande)
 		{
-			print '<tr><td>'.$langs->trans("Method").'</td><td colspan="2">'.$commande->methode_commande.'</td></tr>';
+			print '<tr><td>'.$langs->trans("Method").'</td><td colspan="2">'.$object->methode_commande.'</td></tr>';
 		}
 	}
 
@@ -213,25 +210,33 @@ if ($id > 0 || ! empty($ref))
 	print "</table>\n";
 
 	print "</div>\n";
-
-	if ($mesg) { print $mesg."<br>"; }
-
+	
+	dol_htmloutput_mesg($mesg,$mesgs);
+	
+	/*
+	 * Confirmation suppression fichier
+	*/
+	if ($action == 'delete')
+	{
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+		if ($ret == 'html') print '<br>';
+	}
 
 	// Affiche formulaire upload
 	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/fourn/commande/document.php?id='.$commande->id,'',0,0,$user->rights->fournisseur->commande->creer,50,$object);
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/fourn/commande/document.php?id='.$object->id,'',0,0,$user->rights->fournisseur->commande->creer,50,$object);
 
 
 	// List of document
-	$param='&id='.$commande->id;
-	$formfile->list_of_documents($filearray,$commande,'commande_fournisseur',$param);
+	$param='&id='.$object->id;
+	$formfile->list_of_documents($filearray,$object,'commande_fournisseur',$param);
 }
 else
 {
 	Header('Location: index.php');
 }
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>

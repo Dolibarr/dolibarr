@@ -41,6 +41,14 @@ $langs->load("interventions");
 $id = GETPOST('id','int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action','alpha');
+$confirm = GETPOST('confirm','alpha');
+
+$mesg='';
+if (isset($_SESSION['DolMessage']))
+{
+	$mesg=$_SESSION['DolMessage'];
+	unset($_SESSION['DolMessage']);
+}
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -110,6 +118,22 @@ if (GETPOST('sendit','alpha') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	}
 }
 
+// Delete
+else if ($action == 'confirm_deletefile' && $confirm == 'yes')
+{
+	if ($object->id > 0)
+	{
+		$langs->load("other");
+		$object->fetch_thirdparty();
+
+		$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+		dol_delete_file($file,0,0,0,$object);
+		$_SESSION['DolMessage'] = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
+		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+		exit;
+	}
+}
+
 
 /*
  * View
@@ -123,21 +147,6 @@ llxHeader("","",$langs->trans("InterventionCard"));
 if ($object->id)
 {
 	$object->fetch_thirdparty();
-
-    $soc = new Societe($db);
-    $soc->fetch($object->societe->id);
-
-	if ( $error_msg )
-	{
-		echo '<div class="error">'.$error_msg.'</div><br>';
-	}
-
-	if ($action == 'delete')
-	{
-		$file = $upload_dir . '/' . GETPOST('urlfile','alpha');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-		$result=dol_delete_file($file);
-		//if ($result >= 0) $mesg=$langs->trans("FileWasRemoced");
-	}
 
 	$head=fichinter_prepare_head($object, $user);
 
@@ -168,7 +177,17 @@ if ($object->id)
     print '</table>';
 
     print '</div>';
-
+    
+    dol_htmloutput_mesg($mesg,$mesgs);
+    
+    /*
+     * Confirmation suppression fichier
+     */
+    if ($action == 'delete')
+    {
+    	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+    	if ($ret == 'html') print '<br>';
+    }
 
     // Affiche formulaire upload
    	$formfile=new FormFile($db);
@@ -176,7 +195,7 @@ if ($object->id)
 
 
 	// List of document
-	//$param='&id='.$object->id;
+	$param='&id='.$object->id;
 	$formfile->list_of_documents($filearray,$object,'ficheinter',$param);
 
 }

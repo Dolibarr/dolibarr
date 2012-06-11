@@ -396,7 +396,19 @@ class InterfaceDemo
         }
 
 		// Interventions
-	    elseif ($action == 'FICHEINTER_VALIDATE')
+		elseif ($action == 'FICHEINTER_CREATE')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        elseif ($action == 'FICHEINTER_MODIFY')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        elseif ($action == 'FICHEINTER_VALIDATE')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+	    elseif ($action == 'FICHEINTER_DELETE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }

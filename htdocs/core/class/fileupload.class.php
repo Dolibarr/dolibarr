@@ -58,21 +58,36 @@ class FileUpload
 
 		// For compatibility
 		if ($element == 'propal') {
-			$pathname = 'comm/propal'; $filename = 'propal';
-		}
-		elseif ($element == 'commande') {
-			$pathname = $filename = 'commande';
+			$pathname = 'comm/propal';
+			$dir_output=$conf->$element->dir_output;
 		}
 		elseif ($element == 'facture') {
-			$pathname = 'compta/facture'; $filename = 'facture';
+			$pathname = 'compta/facture';
+			$dir_output=$conf->$element->dir_output;
 		}
 		elseif ($element == 'project') {
-			$element = $pathname = 'projet'; $filename = 'project';
+			$element = $pathname = 'projet';
+			$dir_output=$conf->$element->dir_output;
+		}
+		elseif ($element == 'fichinter') {
+			$element='ficheinter';
+			$dir_output=$conf->$element->dir_output;
+		}
+		elseif ($element == 'order_supplier') {
+			$pathname = 'fourn'; $filename='fournisseur.commande';
+			$dir_output=$conf->fournisseur->commande->dir_output;
+		} else {
+			$dir_output=$conf->$element->dir_output;
 		}
 
 		dol_include_once('/'.$pathname.'/class/'.$filename.'.class.php');
 
 		$classname = ucfirst($filename);
+		
+		if ($element == 'order_supplier') {
+			$classname = 'CommandeFournisseur';
+		}
+		
 		$object = new $classname($db);
 
 		$object->fetch($fk_element);
@@ -80,7 +95,7 @@ class FileUpload
 
 		$this->options = array(
 				'script_url' => $_SERVER['PHP_SELF'],
-				'upload_dir' => $conf->$element->dir_output . '/' . $object->ref . '/',
+				'upload_dir' => $dir_output . '/' . $object->ref . '/',
 				'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$object->ref.'/',
 				'param_name' => 'files',
 				// Set the following option to 'POST', if your server does not support
@@ -114,7 +129,7 @@ class FileUpload
 		),
 		*/
 						'thumbnail' => array(
-								'upload_dir' => $conf->$element->dir_output . '/' . $object->ref . '/thumbs/',
+								'upload_dir' => $dir_output . '/' . $object->ref . '/thumbs/',
 								'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$object->ref.'/thumbs/',
 								'max_width' => 80,
 								'max_height' => 80
