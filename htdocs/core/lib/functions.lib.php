@@ -3076,7 +3076,7 @@ function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
     $temp = preg_replace($pattern,"",$temp);
 
     // Supprime aussi les retours
-    if ($removelinefeed) $temp=str_replace("\n"," ",$temp);
+    if ($removelinefeed) $temp=str_replace(array("\r\n","\r","\n")," ",$temp);
 
     // et les espaces doubles
     while(strpos($temp,"  "))
