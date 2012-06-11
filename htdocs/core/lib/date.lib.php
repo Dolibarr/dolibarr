@@ -261,16 +261,23 @@ function convertSecondToTime($iSecond,$format='all',$lengthOfDay=86400,$lengthOf
                     if ($sWeek >= 2) $weekTranslate = $langs->trans("DurationWeeks");
                     $sTime.=$sWeek.' '.$weekTranslate.' ';
                 }
-                if ($sDay>0)
+/*                if ($sDay>0)
                 {
                     $dayTranslate = $langs->trans("Day");
                     if ($sDay > 1) $dayTranslate = $langs->trans("Days");
                     $sTime.=$sDay.' '.$dayTranslate.' ';
                 }
+*/
             }
 		}
+		if ($sDay>0)
+		{
+			$dayTranslate = $langs->trans("Day");
+			if ($sDay > 1) $dayTranslate = $langs->trans("Days");
+			$sTime.=$sDay.' '.$dayTranslate.' ';
+		}
 
-		if ($sDay) $sTime.=$sDay.' '.$dayTranslate.' ';
+//		if ($sDay) $sTime.=$sDay.' '.$dayTranslate.' ';
 		if ($iSecond || empty($sDay))
 		{
 			$sTime.= dol_print_date($iSecond,'hourduration',true);
