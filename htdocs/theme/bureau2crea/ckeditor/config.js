@@ -77,6 +77,6 @@ CKEDITOR.editorConfig = function( config )
 	    ['Bold','Italic','Underline','Strike','Subscript','Superscript','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-	    ['SpecialChar']
+	    ['Link','Unlink','SpecialChar']
 	];
 };

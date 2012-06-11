@@ -15,6 +15,11 @@ For users:
 - New: Cloning project allow to clones task, notes, files, contacts. 
 - New: Enhance default style.
 - New: Can edit and resiliate member status from list.
+- New: Can insert links into elements lines. Also reported into PDF.
+- New: When a member is validated, we can subscribe to mailing-lists
+  according to its type.
+- Fix: No images into product description lines as PDF generation does
+  not work with this.
 
 For developers:
 - New: A module can overwrite templates parts.

@@ -170,7 +170,7 @@ if ($_REQUEST["facid"] > 0 || $_REQUEST["ref"])
 		// Third party
         print '<tr><td>'.$langs->trans('Company').'</td>';
         print '<td colspan="5">'.$soc->getNomUrl(1,'compta');
-        print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/compta/facture.php?socid='.$object->socid.'">'.$langs->trans('OtherBills').'</a>)</td>';
+        print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->socid.'">'.$langs->trans('OtherBills').'</a>)</td>';
         print '</tr>';
 
         // Type

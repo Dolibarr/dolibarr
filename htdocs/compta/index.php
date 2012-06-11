@@ -58,7 +58,7 @@ if ($user->societe_id > 0)
 if (isset($_GET["action"]) && $_GET["action"] == 'add_bookmark')
 {
 	$now=dol_now();
-	
+
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE fk_soc = ".$socid." AND fk_user=".$user->id;
 	if (! $db->query($sql) )
 	{
@@ -110,7 +110,7 @@ $max=3;
  */
 if ($conf->facture->enabled && $user->rights->facture->lire)
 {
-	print '<form method="post" action="'.DOL_URL_ROOT.'/compta/facture.php">';
+	print '<form method="post" action="'.DOL_URL_ROOT.'/compta/facture/list.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder" width="100%">';
 	print "<tr class=\"liste_titre\">";

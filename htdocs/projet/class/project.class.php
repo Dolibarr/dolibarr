@@ -48,6 +48,7 @@ class Project extends CommonObject
     var $note_public;
     var $statuts_short;
     var $statuts;
+    var $oldcopy;
 
     /**
      *  Constructor
@@ -207,6 +208,25 @@ class Project extends CommonObject
                     }
                     // End call triggers
                 }
+                
+                if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref != $this->ref))
+                {
+                	// We remove directory
+                	if ($conf->projet->dir_output)
+                	{
+                		$olddir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($this->oldcopy->ref);
+                		$newdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($this->ref);
+                		if (file_exists($olddir))
+                		{
+                			$res=@dol_move($olddir, $newdir);
+                			if (! $res)
+                			{
+                				$this->error='ErrorFailToMoveDir';
+                				$error++;
+                			}
+                		}
+                	}
+                }
 
                 $result = 1;
             }
@@ -240,12 +260,15 @@ class Project extends CommonObject
         $sql = "SELECT rowid, ref, title, description, public, datec";
         $sql.= ", tms, dateo, datee, fk_soc, fk_user_creat, fk_statut, note_private, note_public";
         $sql.= " FROM " . MAIN_DB_PREFIX . "projet";
-        if ($ref)
+        if (! empty($id))
+        {
+        	$sql.= " WHERE rowid=".$id;
+        }
+        else if (! empty($ref))
         {
         	$sql.= " WHERE ref='".$ref."'";
         	$sql.= " AND entity IN (".getEntity('project').")";
         }
-        else $sql.= " WHERE rowid=".$id;
 
         dol_syslog(get_class($this)."::fetch sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);

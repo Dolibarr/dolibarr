@@ -379,7 +379,7 @@ print $langs->trans("ECMAreaDesc2")."<br>";
 print "<br>\n";
 
 // Confirm remove file
-if ($action == 'delete')
+if ($action == 'delete' && empty($conf->use_javascript_ajax))
 {
 	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
 	if ($ret == 'html') print '<br>';

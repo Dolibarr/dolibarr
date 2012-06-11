@@ -330,6 +330,24 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
     			}
             }
 
+            // Rajoute l'utilisateur dans les divers abonnements (mailman, spip, etc...)
+            if (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid))
+            {
+                if ($object->oldcopy->email != $object->email)    // If email has changed we delete mailman subscription for old email
+                {
+                    if ($object->oldcopy->del_to_abo() < 0)
+                    {
+                        // error
+                        $errmsgs[]= $langs->trans("FailedToCleanMailmanList").': '.$object->error."<br>\n";
+                    }
+                }
+                if ($object->add_to_abo() < 0)    // We add subscription if new email or new type (new type may means more mailing-list to subscribe)
+                {
+                    // error
+                    $errmsgs[]= $langs->trans("FailedToAddToMailmanList").': '.$object->error."<br>\n";
+                }
+            }
+
 			$rowid=$object->id;
 			$action='';
 
@@ -552,7 +570,7 @@ if ($user->rights->adherent->creer && $action == 'confirm_valid' && $confirm == 
 	    if ($object->add_to_abo() < 0)
 	    {
 	        // error
-	        $errmsg.= $langs->trans("FaildToAddToMailmanList").': '.$object->error."<br>\n";
+	        $errmsg.= $langs->trans("ErrorFailedToAddToMailmanList").': '.$object->error."<br>\n";
 	    }
 	}
 	else
@@ -604,6 +622,7 @@ if ($user->rights->adherent->supprimer && $action == 'confirm_resign')
     }
 }
 
+// SPIP Management
 if ($user->rights->adherent->supprimer && $action == 'confirm_del_spip' && $confirm == 'yes')
 {
 	if (! count($object->errors))
@@ -1167,16 +1186,16 @@ if ($rowid && $action != 'edit')
 
         // Cree un tableau formulaire
         $formquestion=array();
-		if ($object->email) $formquestion[0]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label,  'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?true:false));
-        $ret=$form->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion,1);
-        if ($ret == 'html') print '<br>';
+		if ($object->email) $formquestion[]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label,  'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?true:false));
+		if ($conf->global->ADHERENT_USE_MAILMAN) { $langs->load("mailmanspip"); $formquestion[]=array('type'=>'other','label'=>$langs->transnoentitiesnoconv("SynchroMailManEnabled"),'value'=>''); }
+		if ($conf->global->ADHERENT_USE_SPIP)    { $langs->load("mailmanspip"); $formquestion[]=array('type'=>'other','label'=>$langs->transnoentitiesnoconv("SynchroSpipEnabled"),'value'=>''); }
+		print $form->formconfirm("fiche.php?rowid=".$rowid,$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion,1);
     }
 
     // Confirm send card by mail
     if ($action == 'sendinfo')
     {
-        $ret=$form->form_confirm("fiche.php?rowid=$rowid",$langs->trans("SendCardByMail"),$langs->trans("ConfirmSendCardByMail",$object->email),"confirm_sendinfo",'',0,1);
-        if ($ret == 'html') print '<br>';
+        print $form->formconfirm("fiche.php?rowid=".$rowid,$langs->trans("SendCardByMail"),$langs->trans("ConfirmSendCardByMail",$object->email),"confirm_sendinfo",'',0,1);
     }
 
     // Confirm resiliate
@@ -1536,7 +1555,10 @@ if ($rowid && $action != 'edit')
 	    // Action SPIP
 	    if ($conf->mailmanspip->enabled && $conf->global->ADHERENT_USE_SPIP)
 	    {
-	        $isinspip=$object->is_in_spip();
+            include_once(DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php');
+            $mailmanspip=new MailmanSpip($db);
+
+            $isinspip=$mailmanspip->is_in_spip($object);
 	        if ($isinspip == 1)
 	        {
 	            print "<a class=\"butAction\" href=\"fiche.php?rowid=$object->id&action=del_spip\">".$langs->trans("DeleteIntoSpip")."</a>\n";

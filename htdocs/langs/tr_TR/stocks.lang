@@ -1,102 +1,102 @@
-/*
+﻿/*
  * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-03-15 19:05:26
+ * Manually generated
+ * Generation date 2012-02-06 23:50:00
  */
 
 
-// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+// START - Lines generated manually (2012-02-06 23:50:00).
 // Reference language: en_US
 CHARSET=UTF-8
 WarehouseCard=Depo kartı
 Warehouse=Depo
 NewWarehouse=Yeni depo / Stok alanı
 MenuNewWarehouse=Yeni depo
-WarehouseOpened=Depo açıldı
+WarehouseOpened=Depo açık
 WarehouseClosed=Depo kapalı
-WarehouseSource=Kaynak deposu
+WarehouseSource=Kaynak depo
 WarehouseTarget=Hedef depo
-ValidateSending=Sil gönderme
-CancelSending=Iptal gönderme
-DeleteSending=Sil gönderme
+ValidateSending=Gönderim sil 
+CancelSending=Gönderim iptal et
+DeleteSending= Gönderim sil 
 Stock=Stok
-Stocks=Stokları
+Stocks=Stoklar
 Movement=Hareket
-Movements=Hareketleri
+Movements=Hareketler
 ErrorWarehouseRefRequired=Depo referans adı gereklidir
 ErrorWarehouseLabelRequired=Depo etiketi gereklidir
 CorrectStock=Doğru stok
-ListOfWarehouses=Depolar listesi
+ListOfWarehouses=Depo listesi
 ListOfStockMovements=Stok hareketleri listesi
-StocksArea=Hisse senedi alan
-Location=Yer
-LocationSummary=Kısa adı yer
-NumberOfProducts=Ürünlerin toplam sayısı
+StocksArea=Stok alanı
+Location=Konum
+LocationSummary=Kısa konum adı
+NumberOfProducts=Toplam ürün sayısı
 LastMovement=Son hareket
 LastMovements=Son hareketler
 Units=Birimler
 Unit=Birim
 StockCorrection=Doğru stok
-StockMovement=Transfer
-StockMovements=Stock transfer
-NumberOfUnit=Sayı birimlerinin
-TotalStock=Stock Toplam
+StockMovement=Aktarma
+StockMovements=Stok aktarımı
+NumberOfUnit=Birim sayısı
+TotalStock=Stok toplamı 
 StockTooLow=Stok çok düşük
-EnhancedValue=Fiyat
+EnhancedValue=Değer
 PMPValue=Ağırlıklı ortalama fiyat
-PMPValueShort=WAP
+PMPValueShort=AOF
 EnhancedValueOfWarehouses=Depolar değeri
-UserWarehouseAutoCreate=Otomatik olarak bir kullanıcı oluştururken bir stok oluşturma
-QtyDispatched=Miktar gönderdi
-OrderDispatch=Stok sevketme
-RuleForStockManagementDecrease=Stok yönetimi azaltmak için Kural
-RuleForStockManagementIncrease=Stok yönetimi artış Kural
-DeStockOnBill=Faturaların gerçek stokları azaltın / kredi notları doğrulama
-DeStockOnValidateOrder=Emir notları doğrulama
-DeStockOnShipment=Gönderi doğrulama gerçek stokları azaltın (önerilir)
+UserWarehouseAutoCreate=Bir kullanıcı oluştururken otomatik olarak bir stok oluşturma
+QtyDispatched=Sevkedilen miktar 
+OrderDispatch=Stok sevkiyatı
+RuleForStockManagementDecrease=Azaltma için stok yönetimi kuralı
+RuleForStockManagementIncrease=Arttırma için stok yönetimi kuralı 
+DeStockOnBill=Müşteri faturaların/senetlerinin doğrulanması üzerine gerçek stokları azalt
+DeStockOnValidateOrder=Müşteri siparişlerinin doğrulanması üzerine gerçek stokları azalt
+DeStockOnShipment=Sevkiyat doğrulaması üzerine gerçek stokları azalt
 ReStockOnBill=Faturaların gerçek hisse arttır / kredi notları doğrulama
-ReStockOnValidateOrder=Emir notları doğrulama
-StockDiffPhysicTeoric=Nedenle fark stok fiziksel ve teorik için
-StockLimitShort=Limit
-StockLimit=Için borsa sınırı uyarıları
+ReStockOnValidateOrder=Tedarikçi siparişlerinin onanması üzerine gerçek stokları arttır
+StockDiffPhysicTeoric=Fiziksel ve teorik stok arasındaki stok farkı
+StockLimitShort=Sınır
+StockLimit=Uyarılacak stok sınırı
 PhysicalStock=Mevcut stok
 RealStock=Gerçek Stok
-TheoreticalStock=Therocial stok
+TheoreticalStock=Teorik stok
 VirtualStock=Sanal stok
-MininumStock=Minimum stok
-StockUp=Stok
-MininumStockShort=Stok dk
-StockUpShort=Stok
-IdWarehouse=Id depo
-DescWareHouse=Açıklamasına depo
-LieuWareHouse=Localisation depo
+MininumStock=Enaz stok
+StockUp=Stok arttır
+MininumStockShort=Stok azalt
+StockUpShort=Stok arttır
+IdWarehouse=Depo No
+DescWareHouse=Depo açıklaması
+LieuWareHouse=Depo konumlandırma
 WarehousesAndProducts=Depolar ve ürünler
-AverageUnitPricePMPShort=Ortalama giriş fiyat
-AverageUnitPricePMP=Ortalama giriş fiyat
-EstimatedStockValueShort=Stokunun Tahmini değeri
-EstimatedStockValue=Stokunun Tahmini değeri
+AverageUnitPricePMPShort= Ağırlıklı ortalama giriş fiyatı 
+AverageUnitPricePMP= Ağırlıklı ortalama giriş fiyatı 
+EstimatedStockValueShort=Stok giriş değeri 
+EstimatedStockValue= Stok giriş değeri 
 // STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
 
 // START - Lines generated via autotranslator.php tool (2011-10-09 14:02:24).
 // Reference language: en_US -> tr_TR
-WarehouseEdit=Değiştir depo
-ReStockOnDispatchOrder=Tedarikçi siparişi aldıktan sonra, el depolar içine sevk gerçek stokları artırın
-OrderStatusNotReadyToDispatch=Sipariş henüz veya daha fazla stok depolarda ürün sevk sağlayan bir durum var.
-NoPredefinedProductToDispatch=Bu nesne için önceden tanımlanmış ürünler yok. Yani stokta sevk hiçbir gereklidir.
-DispatchVerb=Sevk
+WarehouseEdit=Depo düzenle
+ReStockOnDispatchOrder=Tedarikçi siparişi aldıktan sonra, elle yapılan sevk üzerine gerçek stokları artırın
+OrderStatusNotReadyToDispatch=Sipariş henüz yoksa veya stok deposundan gönderime izin veren bir durum varsa.
+NoPredefinedProductToDispatch=Bu nesne için önceden tanımlanmış ürünlenyok. Yani stoktan sevk gerekli değildir.
+DispatchVerb=Dağıtım
 SellPriceMin=Satış Birim Fiyatı
-EstimatedStockValueSellShort=Satmak için değer
-EstimatedStockValueSell=Satmak için değer
+EstimatedStockValueSellShort=Satış değeri
+EstimatedStockValueSell=Satış değeri
 DeleteAWarehouse=Bir depo sil
-ConfirmDeleteWarehouse=Depo <b>%s</b> silmek istediğiniz emin misiniz ?
+ConfirmDeleteWarehouse=<b>%s</b> Deposunu silmek istediğiniz emin misiniz ?
 PersonalStock=Kişisel stok %s
-ThisWarehouseIsPersonalStock=Bu depo %s %s kişisel stok temsil eder
+ThisWarehouseIsPersonalStock=Bu depo %s %s kişisel stoğu temsil eder
 // STOP - Lines generated via autotranslator.php tool (2011-10-09 14:03:11).
 
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
 // Reference language: en_US -> tr_TR
-SelectWarehouseForStockDecrease=Stok azalması için kullanmak üzere depo seçin
+SelectWarehouseForStockDecrease=Stok azaltılması için kullanmak üzere depo seçin
 SelectWarehouseForStockIncrease=Stok artışı için kullanılacak depo seçin
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 17:36:00).

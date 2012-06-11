@@ -11,7 +11,6 @@
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
-ErrorBadEMail=E-Mail %s er forkert
 ErrorCompanyNameAlreadyExists=Firmanavn %s eksisterer allerede. Vælg en anden.
 ErrorPrefixAlreadyExists=Prefix %s eksisterer allerede. Vælg en anden.
 ErrorSetACountryFirst=Indstil land første

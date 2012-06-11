@@ -1232,13 +1232,11 @@ class Commande extends CommonObject
         $sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
         $sql.= ', ca.code as availability_code';
         $sql.= ', dr.code as demand_reason_code';
-        $sql.= ', el.fk_source';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON (c.fk_cond_reglement = cr.rowid)';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON (c.fk_mode_reglement = p.id)';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON (c.fk_availability = ca.rowid)';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON (c.fk_demand_reason = ca.rowid)';
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = c.rowid AND el.targettype = '".$this->element."'";
         $sql.= " WHERE c.entity = ".$conf->entity;
         if ($id)   	  $sql.= " AND c.rowid=".$id;
         if ($ref)     $sql.= " AND c.ref='".$this->db->escape($ref)."'";
@@ -1290,7 +1288,6 @@ class Commande extends CommonObject
                 $this->demand_reason_code     = $obj->demand_reason_code;
                 $this->date_livraison         = $this->db->jdate($obj->date_livraison);
                 $this->fk_delivery_address    = $obj->fk_adresse_livraison;
-                $this->propale_id             = $obj->fk_source;
 
                 $this->extraparams			  = (array) json_decode($obj->extraparams, true);
 
@@ -1299,22 +1296,6 @@ class Commande extends CommonObject
                 if ($this->statut == 0) $this->brouillon = 1;
 
                 $this->db->free();
-
-                if ($this->propale_id)
-                {
-                    $sqlp = "SELECT ref";
-                    $sqlp.= " FROM ".MAIN_DB_PREFIX."propal";
-                    $sqlp.= " WHERE rowid = ".$this->propale_id;
-
-                    $resqlprop = $this->db->query($sqlp);
-
-                    if ($resqlprop)
-                    {
-                        $objp = $this->db->fetch_object($resqlprop);
-                        $this->propale_ref = $objp->ref;
-                        $this->db->free($resqlprop);
-                    }
-                }
 
                 /*
                  * Lines

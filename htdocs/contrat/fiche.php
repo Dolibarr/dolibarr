@@ -415,20 +415,21 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->contrat->creer)
 {
     $object->fetch($id);
-    $result = $object->validate($user,$langs,$conf);
+    $result = $object->validate($user);
 }
 
 // Close all lines
 else if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->contrat->creer)
 {
     $object->fetch($id);
-    $result = $object->cloture($user,$langs,$conf);
+    $result = $object->cloture($user);
 }
 
 else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->contrat->supprimer)
 {
 	$object->fetch($id);
-	$result=$object->delete($user,$langs,$conf);
+	$object->fetch_thirdparty();
+	$result=$object->delete($user);
 	if ($result >= 0)
 	{
 		Header("Location: index.php");
