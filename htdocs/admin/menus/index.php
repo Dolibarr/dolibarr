@@ -32,12 +32,13 @@ $langs->load("admin");
 
 if (! $user->admin) accessforbidden();
 
-$dirstandard = array("/core/menus/standard");
-$dirsmartphone = array("/core/menus/smartphone");
-foreach($conf->menus_modules as $dir)
+$dirstandard = array();
+$dirsmartphone = array();
+$dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
+foreach($dirmenus as $dirmenu)
 {
-    $dirstandard[]=$dir.'standard';
-    $dirsmartphone[]=$dir.'standard';
+    $dirstandard[]=$dirmenus.'standard';
+    $dirsmartphone[]=$dirmenus.'smartphone';
 }
 
 $mesg=$_GET["mesg"];

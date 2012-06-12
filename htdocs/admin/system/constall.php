@@ -178,6 +178,7 @@ foreach($configfileparameters as $key)
 			else if ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/',${$newkey})) print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
 			else if ($newkey == 'dolibarr_main_url_root_alt' && preg_match('/__auto__/',${$newkey})) print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT_ALT');
 			else print ${$newkey};
+			if ($newkey == 'dolibarr_main_url_root' && $newkey != DOL_MAIN_URL_ROOT) print ' (currently used by autodetect: '.DOL_MAIN_URL_ROOT.')';
 			print "</td>";
 		}
 		print "</tr>\n";
@@ -242,7 +243,8 @@ if ($resql)
 
 print '</table>';
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

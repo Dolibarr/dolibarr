@@ -25,7 +25,10 @@ $force_install_dolibarrlogin='admin';
 $force_install_nophpinfo='1';
 $force_install_lockinstall='444';
 
-// Value to overwrite path to use shared libraries/fonts instead of embedded one
+// Value to overwrite path to use shared libraries/fonts instead of embedded one.
+// If we enable/disable libraries declaration during install, we must also check they are 
+// not removed from package (see in rules file),
+// declared into dependencies (see in control file)
 $force_dolibarr_lib_ADODB_PATH='/usr/share/php/adodb';
 //$force_dolibarr_lib_FPDI_PATH='/usr/share/php/fpdi';
 $force_dolibarr_lib_GEOIP_PATH='';
@@ -36,7 +39,7 @@ $force_dolibarr_lib_TCPDF_PATH='';
 $force_dolibarr_js_CKEDITOR='/javascript/ckeditor';
 $force_dolibarr_js_JQUERY='/javascript/jquery';
 $force_dolibarr_js_JQUERY_UI='/javascript/jquery-ui';
-//$force_dolibarr_js_JQUERY_FLOT='/javascript/flot';
+$force_dolibarr_js_JQUERY_FLOT='/javascript/flot';
 $force_dolibarr_font_DOL_DEFAULT_TTF_BOLD='/usr/share/fonts/truetype/ttf-dejavu/DejaVuSans-Bold.ttf';
 
 ?>

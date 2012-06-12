@@ -52,17 +52,12 @@ class Conf
 	public $smart_menu;
 
 	public $modules					= array();	// List of activated modules
-	public $modules_parts			= array('triggers'=>array(),'login'=>array(),'substitutions'=>array(),'menus'=>array(),'theme'=>array(),'tpl'=>array(),'barcode'=>array(),'models'=>array());	// List of modules parts
+	public $modules_parts			= array('js'=>array(),'triggers'=>array(),'login'=>array(),'substitutions'=>array(),'menus'=>array(),'theme'=>array(),'tpl'=>array(),'barcode'=>array(),'models'=>array());	// List of modules parts
 
-	// TODO Remove all thoose tabs with one generic
-	public $triggers_modules		= array();
-	public $login_modules			= array();
-	public $substitutions_modules	= array();
-	public $menus_modules			= array();
-	public $barcode_modules			= array();
-	public $sms_engine_modules		= array();
-	public $css_modules				= array();
+	// TODO Remove thoose arrays with generic module_parts
 	public $tabs_modules			= array();
+	public $sms_engine_modules		= array();
+	// TODO Remove thoose arrays with generic module_parts
 	public $hooks_modules			= array();
 	public $societe_modules	        = array();
 
@@ -183,15 +178,15 @@ class Conf
 						{
 							$modulename = strtolower($reg[1]);
 							$partname = strtolower($reg[2]);
-							$varname = $partname.'_modules';  // TODO deprecated
-							if (! isset($this->$varname) || ! is_array($this->$varname)) { $this->$varname = array(); } // TODO deprecated
+							//$varname = $partname.'_modules';  // TODO deprecated
+							//if (! isset($this->$varname) || ! is_array($this->$varname)) { $this->$varname = array(); } // TODO deprecated
 							if (! isset($this->modules_parts[$partname]) || ! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
 							$arrValue = json_decode($value,true);
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
 							else if (in_array($partname,array('login','menus','substitutions','triggers','tpl','theme'))) $value = '/'.$modulename.'/core/'.$partname.'/';
 							else if (in_array($partname,array('models'))) $value = '/'.$modulename.'/';
 							else if ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';
-							$this->$varname = array_merge($this->$varname, array($modulename => $value));  // TODO deprecated
+							//$this->$varname = array_merge($this->$varname, array($modulename => $value));  // TODO deprecated
 							$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value));
 						}
                         // If this is a module constant (must be at end)

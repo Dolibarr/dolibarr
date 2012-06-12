@@ -70,3 +70,7 @@ NoRecordedProducts=Pas de produit/service enregistré
 NoRecordedProspects=Pas de prospect enregistré
 NoContractedProducts=Pas de produit/service contracté
 NoRecordedContracts=Pas de contrat enregistré
+# Dernières commandes fournisseur
+BoxLatestSupplierOrders=Dernières commandes fournisseur
+BoxTitleLatestSupplierOrders=Les %s dernières commandes fournisseur enregistrées
+NoSupplierOrder=Pas de commandes fournisseur enregistrées
