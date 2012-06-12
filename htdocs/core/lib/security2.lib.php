@@ -61,51 +61,49 @@ function checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmod
 	$login = '';
 
 	// Validation of login/pass/entity with a third party login module method
-	if (! empty($conf->login_modules) && is_array($conf->login_modules))
-	{
-    	foreach($conf->login_modules as $reldir)
-    	{
-    	    $dir=dol_buildpath($reldir,0);
+	$dirlogin=array_merge(array("/core/login"),(array) $conf->modules_parts['login']);
+	foreach($dirlogin as $reldir)
+   	{
+   	    $dir=dol_buildpath($reldir,0);
 
-    	    $newdir=dol_osencode($dir);
+   	    $newdir=dol_osencode($dir);
 
-    		// Check if directory exists
-    		if (! is_dir($newdir)) continue;
+   		// Check if directory exists
+   		if (! is_dir($newdir)) continue;
 
-    		$handle=opendir($newdir);
-    		if (is_resource($handle))
-    		{
-    			while (($file = readdir($handle))!==false)
-    			{
-    				if (is_readable($dir.'/'.$file) && preg_match('/^functions_([^_]+)\.php/',$file,$reg))
-    				{
-    					$authfile = $dir.'/'.$file;
-    					$mode = $reg[1];
+   		$handle=opendir($newdir);
+   		if (is_resource($handle))
+   		{
+   			while (($file = readdir($handle))!==false)
+   			{
+   				if (is_readable($dir.'/'.$file) && preg_match('/^functions_([^_]+)\.php/',$file,$reg))
+   				{
+   					$authfile = $dir.'/'.$file;
+   					$mode = $reg[1];
 
-    					$result=include_once($authfile);
-    					if ($result)
-    					{
-    						// Call function to check user/password
-    						$function='check_user_password_'.$mode;
-    						$login=call_user_func($function,$usertotest,$passwordtotest,$entitytotest);
-    						if ($login)
-    						{
-            					$conf->authmode=$mode;	// This properties is defined only when logged to say what mode was successfully used
-    						}
-    					}
-    					else
-    					{
-    						dol_syslog("Authentification ko - failed to load file '".$authfile."'",LOG_ERR);
-    						sleep(1);    // To slow brut force cracking
-    						$langs->load('main');
-    						$langs->load('other');
-    						$_SESSION["dol_loginmesg"]=$langs->trans("ErrorFailedToLoadLoginFileForMode",$mode);
-    					}
-    				}
-    			}
-    		    closedir($handle);
-    		}
-    	}
+   					$result=include_once($authfile);
+   					if ($result)
+   					{
+   						// Call function to check user/password
+   						$function='check_user_password_'.$mode;
+   						$login=call_user_func($function,$usertotest,$passwordtotest,$entitytotest);
+   						if ($login)
+   						{
+           					$conf->authmode=$mode;	// This properties is defined only when logged to say what mode was successfully used
+   						}
+   					}
+   					else
+   					{
+   						dol_syslog("Authentification ko - failed to load file '".$authfile."'",LOG_ERR);
+   						sleep(1);    // To slow brut force cracking
+   						$langs->load('main');
+   						$langs->load('other');
+   						$_SESSION["dol_loginmesg"]=$langs->trans("ErrorFailedToLoadLoginFileForMode",$mode);
+   					}
+   				}
+   			}
+   		    closedir($handle);
+  		}
 	}
 
 	// Validation of login/pass/entity with standard modules

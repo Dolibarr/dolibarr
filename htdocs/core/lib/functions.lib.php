@@ -3370,7 +3370,7 @@ function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='
     require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 
     // Check if there is external substitution to do asked by plugins
-    $dirsubstitutions=array_merge(array(),$conf->modules_parts['substitutions']);
+    $dirsubstitutions=array_merge(array(),(array) $conf->modules_parts['substitutions']);
 
     foreach($dirsubstitutions as $reldir)
     {
