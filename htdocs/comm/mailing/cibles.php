@@ -57,6 +57,8 @@ $search_email=GETPOST("search_email");
 // Search modules dirs
 $modulesdir = dolGetModulesDirs('/mailings');
 
+$object = new Mailing($db);
+
 
 
 /*
@@ -97,7 +99,7 @@ if ($action == 'add')
 
 	if ($result > 0)
 	{
-		Header("Location: cibles.php?id=".$id);
+		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
 	}
 	if ($result == 0)
@@ -117,14 +119,14 @@ if ($action == 'clear')
 	$obj = new $classname($db);
 	$obj->clear_target($id);
 
-	Header("Location: cibles.php?id=".$id);
+	Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 	exit;
 }
 
 if ($action == 'delete')
 {
 	// Ici, rowid indique le destinataire et id le mailing
-	$sql="DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles where rowid=".$id;
+	$sql="DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid=".$id;
 	$resql=$db->query($sql);
 	if ($resql)
 	{   //on récurpére l'id du mailing
@@ -139,7 +141,7 @@ if ($action == 'delete')
 			$obj = new $classname($db);
 			$obj->update_nb($id);
 			
-			Header("Location: cibles.php?id=".$id);
+			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 			exit;
 		}
 		else
@@ -171,11 +173,9 @@ llxHeader('',$langs->trans("Mailing"),'EN:Module_EMailing|FR:Module_Mailing|ES:M
 
 $form = new Form($db);
 
-$mil = new Mailing($db);
-
-if ($mil->fetch($id) >= 0)
+if ($object->fetch($id) >= 0)
 {
-	$head = emailing_prepare_head($mil);
+	$head = emailing_prepare_head($object);
 
 	dol_fiche_head($head, 'targets', $langs->trans("Mailing"), 0, 'email');
 
@@ -184,25 +184,25 @@ if ($mil->fetch($id) >= 0)
 
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="3">';
-	print $form->showrefnav($mil,'id');
+	print $form->showrefnav($object,'id');
 	print '</td></tr>';
 
-	print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$mil->titre.'</td></tr>';
+	print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
 
-	print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($mil->email_from,0,0,0,0,1).'</td></tr>';
+	print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from,0,0,0,0,1).'</td></tr>';
 
 	// Errors to
-	print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($mil->email_errorsto,0,0,0,0,1);
+	print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto,0,0,0,0,1);
 	print '</td></tr>';
 
 	// Status
-	print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$mil->getLibStatut(4).'</td></tr>';
+	print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 
 	// Nb of distinct emails
 	print '<tr><td width="25%">';
 	print $langs->trans("TotalNbOfDistinctRecipients");
 	print '</td><td colspan="3">';
-	$nbemail = ($mil->nbemail?$mil->nbemail:'0');
+	$nbemail = ($object->nbemail?$object->nbemail:'0');
 	if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
 	{
 		$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
@@ -223,7 +223,7 @@ if ($mil->fetch($id) >= 0)
 	$var=!$var;
 
 	// Show email selectors
-	if ($mil->statut == 0 && $user->rights->mailing->creer)
+	if ($object->statut == 0 && $user->rights->mailing->creer)
 	{
 		print_fiche_titre($langs->trans("ToAddRecipientsChooseHere"),($user->admin?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"),1):''),'');
 
@@ -293,9 +293,9 @@ if ($mil->fetch($id) >= 0)
 					$var = !$var;
 					print '<tr '.$bc[$var].'>';
 
-					if ($mil->statut == 0)
+					if ($object->statut == 0)
 					{
-						print '<form name="'.$modulename.'" action="cibles.php?action=add&rowid='.$mil->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
+						print '<form name="'.$modulename.'" action="cibles.php?action=add&rowid='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
 						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					}
 
@@ -328,7 +328,7 @@ if ($mil->fetch($id) >= 0)
 					print '</td>';
 
 					print '<td align="right">';
-					if ($mil->statut == 0)
+					if ($object->statut == 0)
 					{
 						print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 					}
@@ -339,7 +339,7 @@ if ($mil->fetch($id) >= 0)
 					}
 					print '</td>';
 
-					if ($mil->statut == 0) print '</form>';
+					if ($object->statut == 0) print '</form>';
 
 					print "</tr>\n";
 				}
@@ -349,7 +349,7 @@ if ($mil->fetch($id) >= 0)
 		print '</table>';
 		print '<br>';
 
-		print '<form action="cibles.php?action=clear&rowid='.$mil->id.'" method="POST">';
+		print '<form action="'.$_SERVER['PHP_SELF'].'?action=clear&rowid='.$object->id.'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print_titre($langs->trans("ToClearAllRecipientsClickHere"));
 		print '<table class="noborder" width="100%">';
@@ -365,15 +365,15 @@ if ($mil->fetch($id) >= 0)
 
 	// List of selected targets
 	print "\n<!-- Liste destinataires selectionnes -->\n";
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="id" value="'.$mil->id.'">';
+	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 	$sql  = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email, mc.other, mc.statut, mc.date_envoi, mc.source_url, mc.source_id, mc.source_type";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
-	$sql .= " WHERE mc.fk_mailing=".$mil->id;
+	$sql .= " WHERE mc.fk_mailing=".$object->id;
 	if ($search_nom)    $sql.= " AND mc.nom    LIKE '%".$db->escape($search_nom)."%'";
 	if ($search_prenom) $sql.= " AND mc.prenom LIKE '%".$db->escape($search_prenom)."%'";
 	if ($search_email)  $sql.= " AND mc.email  LIKE '%".$db->escape($search_email)."%'";
@@ -385,12 +385,12 @@ if ($mil->fetch($id) >= 0)
 	{
 		$num = $db->num_rows($resql);
 
-		$parm = "&amp;id=".$mil->id;
+		$parm = "&amp;id=".$object->id;
 		if ($search_nom)    $parm.= "&amp;search_nom=".urlencode($search_nom);
 		if ($search_prenom) $parm.= "&amp;search_prenom=".urlencode($search_prenom);
 		if ($search_email)  $parm.= "&amp;search_email=".urlencode($search_email);
 
-		print_barre_liste($langs->trans("MailSelectedRecipients"),$page,$_SERVER["PHP_SELF"],$parm,$sortfield,$sortorder,"",$num,$mil->nbemail,'');
+		print_barre_liste($langs->trans("MailSelectedRecipients"),$page,$_SERVER["PHP_SELF"],$parm,$sortfield,$sortorder,"",$num,$object->nbemail,'');
 
 		if ($page)			$parm.= "&amp;page=".$page;
 		print '<table class="noborder" width="100%">';
@@ -402,7 +402,7 @@ if ($mil->fetch($id) >= 0)
 		print_liste_field_titre($langs->trans("Source"),$_SERVER["PHP_SELF"],"",$parm,"",'align="center"',$sortfield,$sortorder);
 
 		// Date sendinf
-		if ($mil->statut < 2)
+		if ($object->statut < 2)
 		{
 			print '<td class="liste_titre">&nbsp;</td>';
 		}
@@ -498,7 +498,7 @@ if ($mil->fetch($id) >= 0)
 					print '<td align="center">&nbsp;</td>';
 					print '<td align="right" nowrap="nowrap">'.$langs->trans("MailingStatusNotSent");
 					if ($user->rights->mailing->creer) {
-						print '<a href="cibles.php?action=delete&rowid='.$obj->rowid.$parm.'">'.img_delete($langs->trans("RemoveRecipient"));
+						print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$obj->rowid.$parm.'">'.img_delete($langs->trans("RemoveRecipient"));
 					}
 					print '</td>';
 				}
