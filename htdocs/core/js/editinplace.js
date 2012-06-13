@@ -80,7 +80,13 @@ $(document).ready(function() {
 		indicator	: indicatorInPlace,
 		ckeditor	: {
 			customConfig: ckeditorConfig,
-			toolbar: $('#ckeditor_toolbar').val()
+			toolbar: $('#ckeditor_toolbar').val(),
+			filebrowserBrowseUrl : ckeditorFilebrowserBrowseUrl,
+			filebrowserImageBrowseUrl : ckeditorFilebrowserImageBrowseUrl,
+			filebrowserWindowWidth : '900',
+            filebrowserWindowHeight : '500',
+            filebrowserImageWindowWidth : '900',
+            filebrowserImageWindowHeight : '500'
 		},
 		submitdata	: function(result, settings) {
 			return getParameters(this, 'ckeditor');

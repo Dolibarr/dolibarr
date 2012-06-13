@@ -46,6 +46,7 @@ create table llx_mailing
   fk_user_creat		integer,                             -- user creator
   fk_user_valid		integer,                             -- user validator
   fk_user_appro		integer,                             -- not used
+  extraparams		varchar(255),						 -- for stock other parameters with json format
   joined_file1		varchar(255),
   joined_file2		varchar(255),
   joined_file3		varchar(255),

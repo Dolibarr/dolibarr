@@ -57,6 +57,8 @@ class Mailing extends CommonObject
 
 	var $date_creat;
 	var $date_valid;
+	
+	var $extraparams=array();
 
 
 	/**
@@ -64,7 +66,7 @@ class Mailing extends CommonObject
      *
      *  @param      DoliDb		$db      Database handler
 	 */
-	function Mailing($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 
@@ -176,14 +178,15 @@ class Mailing extends CommonObject
 	function fetch($rowid)
 	{
 		$sql = "SELECT m.rowid, m.titre, m.sujet, m.body, m.bgcolor, m.bgimage";
-		$sql .= ", m.email_from, m.email_replyto, m.email_errorsto";
-		$sql .= ", m.statut, m.nbemail";
-		$sql .= ", m.fk_user_creat, m.fk_user_valid";
-		$sql .= ", m.date_creat";
-		$sql .= ", m.date_valid";
-		$sql .= ", m.date_envoi";
-		$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
-		$sql .= " WHERE m.rowid = ".$rowid;
+		$sql.= ", m.email_from, m.email_replyto, m.email_errorsto";
+		$sql.= ", m.statut, m.nbemail";
+		$sql.= ", m.fk_user_creat, m.fk_user_valid";
+		$sql.= ", m.date_creat";
+		$sql.= ", m.date_valid";
+		$sql.= ", m.date_envoi";
+		$sql.= ", m.extraparams";
+		$sql.= " FROM ".MAIN_DB_PREFIX."mailing as m";
+		$sql.= " WHERE m.rowid = ".$rowid;
 
 		dol_syslog(get_class($this)."::fetch sql=".$sql);
 		$result=$this->db->query($sql);
@@ -193,26 +196,28 @@ class Mailing extends CommonObject
 			{
 				$obj = $this->db->fetch_object($result);
 
-				$this->id                 = $obj->rowid;
-				$this->ref                = $obj->rowid;
-				$this->statut             = $obj->statut;
-				$this->nbemail            = $obj->nbemail;
-				$this->titre              = $obj->titre;
-				$this->sujet              = $obj->sujet;
-				$this->body               = $obj->body;
-				$this->bgcolor            = $obj->bgcolor;
-				$this->bgimage            = $obj->bgimage;
+				$this->id				= $obj->rowid;
+				$this->ref				= $obj->rowid;
+				$this->statut			= $obj->statut;
+				$this->nbemail			= $obj->nbemail;
+				$this->titre			= $obj->titre;
+				$this->sujet			= $obj->sujet;
+				$this->body				= $obj->body;
+				$this->bgcolor			= $obj->bgcolor;
+				$this->bgimage			= $obj->bgimage;
 
-				$this->email_from         = $obj->email_from;
-				$this->email_replyto      = $obj->email_replyto;
-				$this->email_errorsto     = $obj->email_errorsto;
+				$this->email_from		= $obj->email_from;
+				$this->email_replyto	= $obj->email_replyto;
+				$this->email_errorsto	= $obj->email_errorsto;
 
-				$this->user_creat         = $obj->fk_user_creat;
-				$this->user_valid         = $obj->fk_user_valid;
+				$this->user_creat		= $obj->fk_user_creat;
+				$this->user_valid		= $obj->fk_user_valid;
 
-				$this->date_creat         = $this->db->jdate($obj->date_creat);
-				$this->date_valid         = $this->db->jdate($obj->date_valid);
-				$this->date_envoi         = $this->db->jdate($obj->date_envoi);
+				$this->date_creat		= $this->db->jdate($obj->date_creat);
+				$this->date_valid		= $this->db->jdate($obj->date_valid);
+				$this->date_envoi		= $this->db->jdate($obj->date_envoi);
+				
+				$this->extraparams		= (array) json_decode($obj->extraparams, true);
 
 				return 1;
 			}
