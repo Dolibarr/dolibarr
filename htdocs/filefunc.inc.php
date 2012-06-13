@@ -78,7 +78,6 @@ if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not do
 	header("Location: install/index.php");
 	exit;
 }
-
 // Disable php display errors
 if (! empty($dolibarr_main_prod)) ini_set('display_errors','Off');
 
@@ -149,7 +148,7 @@ $concatpath='';
 foreach($paths as $tmppath)
 {
     if ($tmppath) $concatpath.='/'.$tmppath;
-    //print $real_$dolibarr_main_document_root.'-'.realpath($pathroot.$concatpath).'<br>';
+    //print $_SERVER["SCRIPT_NAME"].'-'.$pathroot.'-'.$concatpath.'-'.$real_dolibarr_main_document_root.'-'.realpath($pathroot.$concatpath).'<br>';
     if ($real_dolibarr_main_document_root == @realpath($pathroot.$concatpath))    // @ avoid warning when safe_mode is on.
     {
         $tmp3=$concatpath;
@@ -157,7 +156,9 @@ foreach($paths as $tmppath)
         $found=1;
         break;
     }
+    //else print "Not found yet for concatpath=".$concatpath."<br>\n";
 }
+
 if (! $found)	// If autodetect fails (Ie: when using apache alias that point outside default DOCUMENT_ROOT.
 {
 	$tmp=$dolibarr_main_url_root;

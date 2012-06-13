@@ -42,8 +42,8 @@ if ($user->societe_id > 0) accessforbidden();
 llxHeader('','Ventilation');
 
 /*
-* Lignes de factures
-*/
+ * Lignes de factures
+ */
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -69,7 +69,7 @@ if ($result)
 	$num_lignes = $db->num_rows($result);
 	$i = 0;
 
-	print_barre_liste($langs->trans("InvoiceLinesToDispatch",$page,"liste.php","",$sortfield,$sortorder,'',$num_lignes);
+	print_barre_liste($langs->trans("InvoiceLinesToDispatch"),$page,"liste.php","",$sortfield,$sortorder,'',$num_lignes);
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Invoice").'</td>';
@@ -124,7 +124,7 @@ else
 {
 	print $db->error();
 }
-$db->close();
 
 llxFooter();
+$db->close();
 ?>

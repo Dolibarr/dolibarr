@@ -310,7 +310,7 @@ if (! defined('NOLOGIN'))
     $authmode=explode(',',$dolibarr_main_authentication);
 
     // No authentication mode
-    if (! count($authmode) && empty($conf->login_modules))
+    if (! count($authmode))
     {
         $langs->load('main');
         dol_print_error('',$langs->trans("ErrorConfigParameterNotDefined",'dolibarr_main_authentication'));
@@ -893,16 +893,14 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         //print 'themepath='.$themepath.' themeparam='.$themeparam;exit;
         print '<link rel="stylesheet" type="text/css" title="default" href="'.$themepath.$themeparam.'">'."\n";
         // CSS forced by modules (relative url starting with /)
-        if (is_array($conf->css_modules))
+        $dircss=(array) $conf->modules_parts['css'];
+        foreach($dircss as $key => $cssfile)
         {
-            foreach($conf->css_modules as $key => $cssfile)
-            {
-                // cssfile is an absolute path
-                print '<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
-                // We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters, so browser cache is not used.
-                if (!preg_match('/\.css$/i',$cssfile)) print $themeparam;
-                print '"><!-- Added by module '.$key. '-->'."\n";
-            }
+            // cssfile is a relative path
+            print '<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
+            // We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters, so browser cache is not used.
+            if (!preg_match('/\.css$/i',$cssfile)) print $themeparam;
+            print '"><!-- Added by module '.$key. '-->'."\n";
         }
         // CSS forced by page in top_htmlhead call (relative url starting with /)
         if (is_array($arrayofcss))
@@ -980,7 +978,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 print 'var cancelInPlace = \''.$langs->trans('Cancel').'\';'."\n";
                 print 'var submitInPlace = \''.$langs->trans('Ok').'\';'."\n";
                 print 'var indicatorInPlace = \'<img src="'.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'">\';'."\n";
-                print 'var ckeditorConfig = \''.dol_buildpath('/theme/'.$conf->theme.'/ckeditor/config.js',1).'\';'."\n";
                 print '</script>'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/editinplace.js"></script>'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ckeditor.js"></script>'."\n";
@@ -1021,7 +1018,12 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 }
                 else
                 {
-                    print '<script type="text/javascript">var CKEDITOR_BASEPATH = \''.DOL_URL_ROOT.'/includes/ckeditor/\';</script>'."\n";
+                    print '<script type="text/javascript">';
+                    print 'var CKEDITOR_BASEPATH = \''.DOL_URL_ROOT.'/includes/ckeditor/\';'."\n";
+                    print 'var ckeditorConfig = \''.dol_buildpath('/theme/'.$conf->theme.'/ckeditor/config.js',1).'\';'."\n";
+                    print 'var ckeditorFilebrowserBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
+                    print 'var ckeditorFilebrowserImageBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Type=Image&Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
+                    print '</script>'."\n";
                     print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/ckeditor/ckeditor_basic.js"></script>'."\n";
                 }
             }
@@ -1033,7 +1035,14 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             // Add datepicker default options
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/datepicker.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
 
-            // Output module javascript
+            // JS forced by modules (relative url starting with /)
+            $dirjs=(array) $conf->modules_parts['js'];
+            foreach($dirjs as $key => $jsfile)
+            {
+            	// jsfile is a relative path
+            	print '<script type="text/javascript" src="'.dol_buildpath($jsfile,1).'"></script><!-- Added by module '.$key. '-->'."\n";
+            }            
+            // JS forced by page in top_htmlhead (relative url starting with /)
             if (is_array($arrayofjs))
             {
                 print '<!-- Includes JS specific to page -->'."\n";
@@ -1189,7 +1198,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     if (! class_exists('MenuTop'))
     {
         $menufound=0;
-        $dirmenus=array_merge(array("/core/menus/"),$conf->modules_parts['menus']);
+        $dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
         foreach($dirmenus as $dirmenu)
         {
             $menufound=dol_include_once($dirmenu."standard/".$top_menu);
@@ -1395,7 +1404,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     if (! class_exists('MenuLeft'))
     {
         $menufound=0;
-        $dirmenus=array_merge(array("/core/menus/"),$conf->modules_parts['menus']);
+        $dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
         foreach($dirmenus as $dirmenu)
         {
             $menufound=dol_include_once($dirmenu."standard/".$left_menu);

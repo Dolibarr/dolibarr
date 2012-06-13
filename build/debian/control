@@ -13,7 +13,7 @@ Depends: libapache2-mod-php5 | libapache2-mod-php5filter | php5-cgi | php5-fpm |
 	libphp-adodb,
     libnusoap-php,
     libphp-pclzip,
-    libjs-jquery, libjs-jquery-ui, ckeditor,
+    libjs-jquery, libjs-jquery-ui, libjs-flot, ckeditor,
     ttf-dejavu-core,
     xdg-utils,
     mysql-server,

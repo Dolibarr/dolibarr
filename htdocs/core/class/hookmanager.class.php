@@ -70,14 +70,14 @@ class HookManager
 		global $conf;
 
 		// Test if there is hooks to manage
-        if (! is_array($conf->hooks_modules) || empty($conf->hooks_modules)) return;
+        if (! is_array($conf->modules_parts['hooks']) || empty($conf->modules_parts['hooks'])) return;
 
         // For backward compatibility
 		if (! is_array($arraycontext)) $arraycontext=array($arraycontext);
 
 		$this->contextarray=array_unique(array_merge($arraycontext,$this->contextarray));    // All contexts are concatenated
 
-		foreach($conf->hooks_modules as $module => $hooks)
+		foreach($conf->modules_parts['hooks'] as $module => $hooks)
 		{
 			if ($conf->$module->enabled)
 			{

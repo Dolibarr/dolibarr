@@ -346,6 +346,8 @@ class CommandeFournisseur extends Commande
 
             if (! $error)
             {
+            	$this->oldref='';
+            	
                 // Rename directory if dir was a temporary ref
                 if (preg_match('/^[\(]?PROV/i', $this->ref))
                 {
@@ -361,6 +363,8 @@ class CommandeFournisseur extends Commande
 
                         if (@rename($dirsource, $dirdest))
                         {
+                        	$this->oldref = $oldref;
+                        	
                             dol_syslog("Rename ok");
                             // Suppression ancien fichier PDF dans nouveau rep
                             dol_delete_file($dirdest.'/'.$oldref.'.*');
@@ -1267,6 +1271,7 @@ class CommandeFournisseur extends Commande
     function delete($user='')
     {
         global $langs,$conf;
+        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
         $error = 0;
 
@@ -1292,25 +1297,60 @@ class CommandeFournisseur extends Commande
         {
             $error++;
         }
-
-        if ($error == 0)
+        
+        if (! $error)
         {
-            // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('ORDER_SUPPLIER_DELETE',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // Fin appel triggers
-
-            dol_syslog(get_class($this)."::delete : Success");
-            $this->db->commit();
-            return 1;
+        	// Appel des triggers
+        	include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+        	$interface=new Interfaces($this->db);
+        	$result=$interface->run_triggers('ORDER_SUPPLIER_DELETE',$this,$user,$langs,$conf);
+        	if ($result < 0) {
+        		$error++; $this->errors=$interface->errors;
+        	}
+        	// Fin appel triggers
         }
-        else
+        
+        if (! $error)
         {
-            $this->db->rollback();
-            return -1;
+        	// We remove directory
+        	$ref = dol_sanitizeFileName($this->ref);
+        	if ($conf->fournisseur->commande->dir_output)
+        	{
+        		$dir = $conf->fournisseur->commande->dir_output . "/" . $ref ;
+        		$file = $dir . "/" . $ref . ".pdf";
+        		if (file_exists($file))
+        		{
+        			if (! dol_delete_file($file,0,0,0,$this)) // For triggers
+        			{
+        				$this->error='ErrorFailToDeleteFile';
+        				$error++;
+        			}
+        		}
+        		if (file_exists($dir))
+        		{
+        			$res=@dol_delete_dir_recursive($dir);
+        			if (! $res)
+        			{
+        				$this->error='ErrorFailToDeleteDir';
+        				$error++;
+        			}
+        		}
+        	}
         }
+        
+		if (! $error)
+		{
+			dol_syslog(get_class($this)."::delete $this->id by $user->id", LOG_DEBUG);
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+			$this->db->rollback();
+			return -$error;
+		}
     }
 
     /**

@@ -156,6 +156,15 @@ class Fichinter extends CommonObject
 		$result=$this->db->query($sql);
 		if ($result)
 		{
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('FICHEINTER_CREATE',$this,$user,$langs,$conf);
+			if ($result < 0) {
+				$error++; $this->errors=$interface->errors;
+			}
+			// Fin appel triggers
+			
 			$this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."fichinter");
 			$this->db->commit();
 			return $this->id;
@@ -193,6 +202,15 @@ class Fichinter extends CommonObject
 		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('FICHEINTER_MODIFY',$this,$user,$langs,$conf);
+			if ($result < 0) {
+				$error++; $this->errors=$interface->errors;
+			}
+			// Fin appel triggers
+			
 			$this->db->commit();
 			return 1;
 		}
@@ -631,7 +649,7 @@ class Fichinter extends CommonObject
 					{
 						dol_delete_preview($this);
 
-						if (!dol_delete_file($file))
+						if (! dol_delete_file($file,0,0,0,$this)) // For triggers
 						{
 							$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
 							return 0;
@@ -639,13 +657,22 @@ class Fichinter extends CommonObject
 					}
 					if (file_exists($dir))
 					{
-						if (!dol_delete_dir($dir))
+						if (! dol_delete_dir_recursive($dir))
 						{
 							$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
 							return 0;
 						}
 					}
 				}
+				
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('FICHEINTER_DELETE',$this,$user,$langs,$conf);
+				if ($result < 0) {
+					$error++; $this->errors=$interface->errors;
+				}
+				// Fin appel triggers
 
 				$this->db->commit();
 				return 1;

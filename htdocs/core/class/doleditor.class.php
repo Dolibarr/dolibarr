@@ -176,7 +176,7 @@ class DolEditor
                             /* should be editor=CKEDITOR.replace but what if serveral editors ? */
                             CKEDITOR.replace(\''.$this->htmlname.'\',
             					{
-            						customConfig : \''.dol_buildpath('/theme/'.$conf->theme.'/ckeditor/config.js',1).'\',
+            						customConfig : ckeditorConfig,
             						toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
             						width: '.($this->width ? '\''.$this->width.'\'' : '\'\'').',
@@ -201,8 +201,8 @@ class DolEditor
             	{
                     $out.= ','."\n";
                     // To use filemanager with old fckeditor (GPL)
-                    $out.= '    filebrowserBrowseUrl : \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\',';
-                    $out.= '    filebrowserImageBrowseUrl : \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Type=Image&Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\',';
+                    $out.= '    filebrowserBrowseUrl : ckeditorFilebrowserBrowseUrl,';
+                    $out.= '    filebrowserImageBrowseUrl : ckeditorFilebrowserImageBrowseUrl,';
                     //$out.= '    filebrowserUploadUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/upload.php?Type=File\',';
                     //$out.= '    filebrowserImageUploadUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/upload.php?Type=Image\',';
                     $out.= "\n";
