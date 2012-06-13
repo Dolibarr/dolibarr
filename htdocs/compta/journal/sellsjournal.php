@@ -26,6 +26,7 @@ require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/report.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/societe/class/client.class.php");
 
 
 $langs->load("companies");
@@ -38,26 +39,22 @@ if ($user->societe_id > 0)
 	accessforbidden();
 }
 
+/*
+ * Actions
+ */
 
-/*******************************************************************
-* ACTIONS
-*
-* Put here all code to do according to value of "action" parameter
-********************************************************************/
+// None
 
 
-/***************************************************
-* PAGE
-*
-* Put here all code to build page
-****************************************************/
 
-llxHeader('','','');
+/*
+ * View
+ */
 
 $form=new Form($db);
 
-// Put here content of your page
-// ...
+llxHeader('',$langs->trans("SellsJournal"),'');
+
 
 $year_current = strftime("%Y",dol_now());
 $pastmonth = strftime("%m",dol_now()) - 1;
@@ -87,7 +84,9 @@ $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_PAYS);
 $idpays = $p[0];
 
 $sql = "SELECT f.rowid, f.facnumber, f.type, f.datef, f.ref_client , fd.product_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.total_ttc,";
-$sql.= " p.accountancy_code_sell, s.code_compta , ct.accountancy_code";
+$sql.= " s.rowid as socid, s.nom as name, s.code_compta, s.client,";
+$sql.= " p.rowid as pid, p.ref as pref, p.accountancy_code_sell,";
+$sql.= " ct.accountancy_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."facturedet fd";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product p ON p.rowid = fd.fk_product";
 $sql.= " JOIN ".MAIN_DB_PREFIX."facture f ON f.rowid = fd.fk_facture";
@@ -95,7 +94,7 @@ $sql.= " JOIN ".MAIN_DB_PREFIX."societe s ON s.rowid = f.fk_soc";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ct ON fd.tva_tx = ct.taux AND ct.fk_pays = '".$idpays."'";
 $sql.= " WHERE f.fk_statut > 0 AND f.entity = ".$conf->entity;
 if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
-$sql .= " order by f.rowid";
+$sql.= " ORDER BY f.rowid";
 
 $result = $db->query($sql);
 if ($result)
@@ -104,6 +103,7 @@ if ($result)
 	$tabht = array();
 	$tabtva = array();
 	$tabttc = array();
+	$tabcompany = array();
 
 	$num = $db->num_rows($result);
    	$i=0;
@@ -130,7 +130,7 @@ if ($result)
    		$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc;
    		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht;
    		$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
-
+   		$tabcompany[$obj->rowid]=array('id'=>$obj->socid,'name'=>$obj->name,'client'=>$obj->client);
    		$i++;
    	}
 }
@@ -157,6 +157,7 @@ $var=true;
 $r='';
 
 $invoicestatic=new Facture($db);
+$companystatic=new Client($db);
 
 foreach ($tabfac as $key => $val)
 {
@@ -171,7 +172,13 @@ foreach ($tabfac as $key => $val)
 	print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 	foreach ($tabttc[$key] as $k => $mt)
 	{
-		print "<td>".$k."</td><td>".$langs->trans("ThirdParty")."</td><td align='right'>".($mt>=0?price($mt):'')."</td><td align='right'>".($mt<0?price(-$mt):'')."</td>";
+    	$companystatic->id=$tabcompany[$key]['id'];
+    	$companystatic->name=$tabcompany[$key]['name'];
+    	$companystatic->client=$tabcompany[$key]['client'];
+    	print "<td>".$k;
+		print "</td><td>".$langs->trans("ThirdParty");
+		print ' ('.$companystatic->getNomUrl(0,'customer',16).')';
+		print "</td><td align='right'>".($mt>=0?price($mt):'')."</td><td align='right'>".($mt<0?price(-$mt):'')."</td>";
 	}
 	print "</tr>";
 	// product
@@ -183,7 +190,8 @@ foreach ($tabfac as $key => $val)
 			//print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
 			print "<td>".$val["date"]."</td>";
 			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-			print "<td>".$k."</td><td>".$langs->trans("Products")."</td><td align='right'>".($mt<0?price(-$mt):'')."</td><td align='right'>".($mt>=0?price($mt):'')."</td></tr>";
+			print "<td>".$k;
+			print "</td><td>".$langs->trans("Products")."</td><td align='right'>".($mt<0?price(-$mt):'')."</td><td align='right'>".($mt>=0?price($mt):'')."</td></tr>";
 		}
 	}
 	// vat
@@ -196,7 +204,8 @@ foreach ($tabfac as $key => $val)
     		//print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
     		print "<td>".$val["date"]."</td>";
     		print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-    		print "<td>".$k."</td><td>".$langs->trans("VAT")."</td><td align='right'>".($mt<0?price(-$mt):'')."</td><td align='right'>".($mt>=0?price($mt):'')."</td></tr>";
+    		print "<td>".$k;
+    		print "</td><td>".$langs->trans("VAT")."</td><td align='right'>".($mt<0?price(-$mt):'')."</td><td align='right'>".($mt>=0?price($mt):'')."</td></tr>";
 	    }
 	}
 

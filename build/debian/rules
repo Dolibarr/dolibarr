@@ -93,7 +93,7 @@ clean:
 	# clean from all embedded libraries (we use package dependencies instead)
 	rm -fr htdocs/includes/adodbtime
 	rm -fr htdocs/includes/ckeditor
-	rm -fr htdocs/includes/fpdfi
+#	rm -fr htdocs/includes/fpdfi
 	rm -fr htdocs/includes/fonts
 	rm -fr htdocs/includes/geoip
 	rm -fr htdocs/includes/nusoap

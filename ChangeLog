@@ -18,6 +18,7 @@ For users:
 - New: Can insert links into elements lines. Also reported into PDF.
 - New: When a member is validated, we can subscribe to mailing-lists
   according to its type.
+- New: Add link to third party into sells and purchase journal.
 - Fix: No images into product description lines as PDF generation does
   not work with this.
 
