@@ -26,6 +26,7 @@ require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/report.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php");
 
 $langs->load("companies");
 $langs->load("other");
@@ -38,20 +39,16 @@ if ($user->societe_id > 0)
 }
 
 
-/*******************************************************************
- * ACTIONS
- *
- * Put here all code to do according to value of "action" parameter
- ********************************************************************/
+/*
+ * Actions
+ */
+
+// None
 
 
-
-
-/***************************************************
- * PAGE
- *
- * Put here all code to build page
- ****************************************************/
+/*
+ * View
+ */
 
 llxHeader('','','');
 
@@ -86,7 +83,9 @@ $idpays = $p[0];
 
 $sql = "SELECT f.rowid, f.facnumber, f.type, f.datef, f.libelle,";
 $sql.= " fd.total_ttc, fd.tva_tx, fd.total_ht, fd.tva as total_tva, fd.product_type,";
-$sql.= " s.code_compta_fournisseur, p.accountancy_code_buy , ct.accountancy_code";
+$sql.= " s.rowid as socid, s.nom as name, s.code_compta_fournisseur,";
+$sql.= " p.rowid as pid, p.ref as ref, p.accountancy_code_buy,";
+$sql.= " ct.accountancy_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn_det fd";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ct ON fd.tva_tx = ct.taux AND ct.fk_pays = '".$idpays."'";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product p ON p.rowid = fd.fk_product";
@@ -107,6 +106,7 @@ if ($result)
 	$tabht = array();
 	$tabtva = array();
 	$tabttc = array();
+	$tabcompany = array();
 
 	$i=0;
 	while ($i < $num)
@@ -129,6 +129,7 @@ if ($result)
 		$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc;
 		$tabht[$obj->rowid][$compta_prod] += $obj->total_ht;
 		$tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
+		$tabcompany[$obj->rowid]=array('id'=>$obj->socid,'name'=>$obj->name);
 
 		$i++;
 	}
@@ -154,6 +155,7 @@ $var=true;
 $r='';
 
 $invoicestatic=new FactureFournisseur($db);
+$companystatic=new Fournisseur($db);
 
 foreach ($tabfac as $key => $val)
 {
@@ -197,15 +199,21 @@ foreach ($tabfac as $key => $val)
 	//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
 	print "<td>".$val["date"]."</td>";
 	print "<td>".$invoicestatic->getNomUrl(1)."</td>";
-	
+
 	foreach ($tabttc[$key] as $k => $mt)
 	{
-	    print "<td>".$k."</td><td>".$langs->trans("ThirdParty")."</td>";
+    	$companystatic->id=$tabcompany[$key]['id'];
+    	$companystatic->name=$tabcompany[$key]['name'];
+
+    	print "<td>".$k;
+	    print "</td><td>".$langs->trans("ThirdParty");
+		print ' ('.$companystatic->getNomUrl(0,'supplier',16).')';
+	    print "</td>";
 	    print '<td align="right">'.($mt<0?-price(-$mt):'')."</td>";
 	    print '<td align="right">'.($mt>=0?price($mt):'')."</td>";
 	}
 	print "</tr>";
-		
+
 	$var = !$var;
 }
 
