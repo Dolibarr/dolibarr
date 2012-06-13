@@ -30,6 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
 
 $langs->load("mails");
 
@@ -41,10 +42,17 @@ $confirm=GETPOST('confirm','alpha');
 $message = '';
 
 $object=new Mailing($db);
+$result=$object->fetch($id);
 
+$extrafields = new ExtraFields($db);
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+$hookmanager=new HookManager($db);
+$hookmanager->initHooks(array('mailingcard'));
 
 // Tableau des substitutions possibles
-$substitutionarray=array(
+$object->substitutionarray=array(
     '__ID__' => 'IdRecord',
     '__EMAIL__' => 'EMail',
     '__LASTNAME__' => 'Lastname',
@@ -60,8 +68,8 @@ $substitutionarray=array(
 );
 if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE)
 {
-    $substitutionarray=array_merge(
-        $substitutionarray,
+    $object->substitutionarray=array_merge(
+        $object->substitutionarray,
         array(
             '__CHECK_READ__' => 'CheckMail',
             '__UNSUSCRIBE__' => 'Unsubscribe'
@@ -69,7 +77,7 @@ if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE)
     );
 }
 
-$substitutionarrayfortest=array(
+$object->substitutionarrayfortest=array(
     '__ID__' => 'TESTIdRecord',
     '__EMAIL__' => 'TESTEMail',
     '__LASTNAME__' => 'TESTLastname',
@@ -85,14 +93,21 @@ $substitutionarrayfortest=array(
 );
 if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE)
 {
-    $substitutionarrayfortest=array_merge(
-        $substitutionarrayfortest,
+    $object->substitutionarrayfortest=array_merge(
+        $object->substitutionarrayfortest,
         array(
             '__CHECK_READ__' => 'TESTCheckMail',
             '__UNSUSCRIBE__' => 'TESTUnsubscribe'
         )
     );
 }
+
+/*
+ * Actions
+ */
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes')
@@ -103,7 +118,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
 	}
 	else
 	{
-		$result=$object->createFromClone($id,$_REQUEST["clone_content"],$_REQUEST["clone_receivers"]);
+		$result=$object->createFromClone($object->id,$_REQUEST["clone_content"],$_REQUEST["clone_receivers"]);
 		if ($result > 0)
 		{
 			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -125,7 +140,7 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 		// Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
 		// on affiche donc juste un message
 		$message='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
-		$message.='<br><textarea cols="70" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$id.'</textarea>';
+		$message.='<br><textarea cols="70" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>';
 		$message.='<br><br><div class="warning">'.$langs->trans("MailingNeedCommand2").'</div>';
 		$action='';
 	}
@@ -136,8 +151,6 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 	}
 	else
 	{
-		$result=$object->fetch($id);
-
 		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
 
 		if ($object->statut == 0)
@@ -358,8 +371,6 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 // Action send test emailing
 if ($action == 'send' && empty($_POST["cancel"]))
 {
-	$result=$object->fetch($id);
-
 	$error=0;
 
 	$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
@@ -378,8 +389,8 @@ if ($action == 'send' && empty($_POST["cancel"]))
 		if (preg_match('/[\s\t]*<html>/i',$message)) $msgishtml=1;
 
 		// Pratique les substitutions sur le sujet et message
-		$object->sujet=make_substitutions($object->sujet,$substitutionarrayfortest,$langs);
-		$object->body=make_substitutions($object->body,$substitutionarrayfortest,$langs);
+		$object->sujet=make_substitutions($object->sujet,$object->substitutionarrayfortest,$langs);
+		$object->body=make_substitutions($object->body,$object->substitutionarrayfortest,$langs);
 
 		$arr_file = array();
 		$arr_mime = array();
@@ -453,8 +464,6 @@ if ($action == 'add')
 // Action update description of emailing
 if ($action == 'settitre' || $action == 'setemail_from' || $actino == 'setreplyto' || $action == 'setemail_errorsto')
 {
-	$object->fetch($id);
-
 	$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
 
 	if ($action == 'settitre')					$object->titre          = trim(GETPOST('titre','alpha'));
@@ -484,8 +493,6 @@ if ($action == 'settitre' || $action == 'setemail_from' || $actino == 'setreplyt
  */
 if (! empty($_POST['addfile']))
 {
-	$object->fetch($id);
-
 	$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
 
 	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
@@ -499,8 +506,6 @@ if (! empty($_POST['addfile']))
 // Action update emailing
 if (! empty($_POST["removedfile"]))
 {
-	$object->fetch($id);
-
 	$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
 
 	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
@@ -514,8 +519,6 @@ if (! empty($_POST["removedfile"]))
 if ($action == 'update' && empty($_POST["removedfile"]) && empty($_POST["cancel"]))
 {
 	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-
-	$object->fetch($id);
 
 	$isupload=0;
 
@@ -551,7 +554,7 @@ if ($action == 'update' && empty($_POST["removedfile"]) && empty($_POST["cancel"
 // Action confirmation validation
 if ($action == 'confirm_valid' && $confirm == 'yes')
 {
-	if ($object->fetch($id) >= 0)
+	if ($object->id > 0)
 	{
 		$object->valid($user);
 
@@ -567,7 +570,7 @@ if ($action == 'confirm_valid' && $confirm == 'yes')
 // Resend
 if ($action == 'confirm_reset' && $confirm == 'yes')
 {
-	if ($object->fetch($id) >= 0)
+	if ($object->id > 0)
 	{
 		$db->begin();
 
@@ -598,8 +601,6 @@ if ($action == 'confirm_reset' && $confirm == 'yes')
 // Action confirmation suppression
 if ($action == 'confirm_delete' && $confirm == 'yes')
 {
-	$object->fetch($id);
-
 	if ($object->delete($object->id))
 	{
 		Header("Location: liste.php");
@@ -617,6 +618,9 @@ if (! empty($_POST["cancel"]))
 /*
  * View
  */
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('mailing');
 
 $help_url='EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing';
 llxHeader('',$langs->trans("Mailing"),$help_url);
@@ -639,6 +643,21 @@ if ($action == 'create')
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value="'.$_POST['titre'].'"></td></tr>';
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
 	print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td><input class="flat" name="errorsto" size="40" value="'.(!empty($conf->global->MAILING_EMAIL_ERRORSTO)?$conf->global->MAILING_EMAIL_ERRORSTO:$conf->global->MAIN_MAIL_ERRORS_TO).'"></td></tr>';
+	
+	// Other attributes
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		foreach($extrafields->attribute_label as $key=>$label)
+		{
+			$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+			print '<tr><td>'.$label.'</td><td colspan="3">';
+			print $extrafields->showInputField($key,$value);
+			print '</td></tr>'."\n";
+		}
+	}
+	
 	print '</table>';
 	print '</br><br>';
 
@@ -649,7 +668,7 @@ if ($action == 'create')
 	print '</td></tr>';
 	print '<tr><td width="25%" class="fieldrequired" valign="top">'.$langs->trans("MailMessage").'<br>';
 	print '<br><i>'.$langs->trans("CommonSubstitutions").':<br>';
-	foreach($substitutionarray as $key => $val)
+	foreach($object->substitutionarray as $key => $val)
 	{
 		print $key.' = '.$langs->trans($val).'<br>';
 	}
@@ -668,7 +687,7 @@ if ($action == 'create')
 }
 else
 {
-	if ($object->fetch($id) >= 0)
+	if ($object->id > 0)
 	{
 		$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
 
@@ -784,6 +803,20 @@ else
 				print $nbemail;
 			}
 			print '</td></tr>';
+			
+			// Other attributes
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+			if (empty($reshook) && ! empty($extrafields->attribute_label))
+			{
+				foreach($extrafields->attribute_label as $key=>$label)
+				{
+					$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+					print '<tr><td>'.$label.'</td><td colspan="3">';
+					print $extrafields->showInputField($key,$value);
+					print "</td></tr>\n";
+				}
+			}
 
 			print '</table>';
 
@@ -894,7 +927,7 @@ else
 				$formmail->withcancel=1;
 				$formmail->withdeliveryreceipt=0;
 				// Tableau des substitutions
-				$formmail->substit=$substitutionarrayfortest;
+				$formmail->substit=$object->substitutionarrayfortest;
 				// Tableau des parametres complementaires du post
 				$formmail->param["action"]="send";
 				$formmail->param["models"]="body";
@@ -986,6 +1019,20 @@ else
 				print $nbemail;
 			}
 			print '</td></tr>';
+			
+			// Other attributes
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+			if (empty($reshook) && ! empty($extrafields->attribute_label))
+			{
+				foreach($extrafields->attribute_label as $key=>$label)
+				{
+					$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+					print '<tr><td>'.$label.'</td><td colspan="3">';
+					print $extrafields->showInputField($key,$value);
+					print "</td></tr>\n";
+				}
+			}
 
 			print '</table>';
 			print "</div>";
@@ -1049,21 +1096,10 @@ else
 			// Message
 			print '<tr><td width="25%" valign="top">'.$langs->trans("MailMessage").'<br>';
 			print '<br><i>'.$langs->trans("CommonSubstitutions").':<br>';
-			print '__ID__ = '.$langs->trans("IdRecord").'<br>';
-			print '__EMAIL__ = '.$langs->trans("EMail").'<br>';
-            if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE)
-            {
-    			print '__CHECK_READ__ = '.$langs->trans("CheckRead").'<br>';
-	    		print '__UNSUSCRIBE__ = '.$langs->trans("MailUnsubcribe").'<br>';
-            }
-            print '__MAILTOEMAIL__ = '.$langs->trans("MailtoEMail").'<br>';
-			print '__LASTNAME__ = '.$langs->trans("Lastname").'<br>';
-			print '__FIRSTNAME__ = '.$langs->trans("Firstname").'<br>';
-			print '__OTHER1__ = '.$langs->trans("Other").'1<br>';
-			print '__OTHER2__ = '.$langs->trans("Other").'2<br>';
-			print '__OTHER3__ = '.$langs->trans("Other").'3<br>';
-			print '__OTHER4__ = '.$langs->trans("Other").'4<br>';
-			print '__OTHER5__ = '.$langs->trans("Other").'5<br>';
+			foreach($object->substitutionarray as $key => $val)
+			{
+				print $key.' = '.$langs->trans($val).'<br>';
+			}
 			print '</i></td>';
 			print '<td colspan="3">';
 			// Editeur wysiwyg

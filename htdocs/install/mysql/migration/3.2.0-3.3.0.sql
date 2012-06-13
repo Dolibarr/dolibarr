@@ -35,3 +35,4 @@ ALTER TABLE llx_commande_fournisseur CHANGE COLUMN date_cloture date_approve dat
 ALTER TABLE llx_commande_fournisseur CHANGE COLUMN fk_user_cloture fk_user_approve integer;
 
 ALTER TABLE llx_mailing MODIFY COLUMN body mediumtext;
+ALTER TABLE llx_mailing ADD COLUMN extraparams varchar(255);
