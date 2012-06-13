@@ -39,6 +39,7 @@ if (! $user->rights->mailing->lire || $user->societe_id > 0) accessforbidden();
 $id=(GETPOST('mailid','int') ? GETPOST('mailid','int') : GETPOST('id','int'));
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
+$urlfrom=GETPOST('urlfrom');
 $message = '';
 
 $object=new Mailing($db);
@@ -389,8 +390,8 @@ if ($action == 'send' && empty($_POST["cancel"]))
 		if (preg_match('/[\s\t]*<html>/i',$message)) $msgishtml=1;
 
 		// Pratique les substitutions sur le sujet et message
-		$object->sujet=make_substitutions($object->sujet,$object->substitutionarrayfortest,$langs);
-		$object->body=make_substitutions($object->body,$object->substitutionarrayfortest,$langs);
+		$object->sujet=make_substitutions($object->sujet,$object->substitutionarrayfortest);
+		$object->body=make_substitutions($object->body,$object->substitutionarrayfortest);
 
 		$arr_file = array();
 		$arr_mime = array();
@@ -603,7 +604,8 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 {
 	if ($object->delete($object->id))
 	{
-		Header("Location: liste.php");
+		$url= (! empty($urlfrom) ? $urlfrom : 'liste.php');
+		Header("Location: ".$url);
 		exit;
 	}
 }
@@ -756,7 +758,7 @@ else
 
 			print '<table class="border" width="100%">';
 
-			print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
+			print '<tr><td width="15%">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="3">';
 			print $form->showrefnav($object,'id');
 			print '</td></tr>';
@@ -777,10 +779,10 @@ else
 			print '</td></tr>';
 
 			// Status
-			print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
+			print '<tr><td width="15%">'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 
 			// Nb of distinct emails
-			print '<tr><td width="25%">';
+			print '<tr><td width="15%">';
 			print $langs->trans("TotalNbOfDistinctRecipients");
 			print '</td><td colspan="3">';
 			$nbemail = ($object->nbemail?$object->nbemail:img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>');
@@ -855,8 +857,15 @@ else
 				}
 
 				//print '<a class="butAction" href="fiche.php?action=test&amp;id='.$object->id.'">'.$langs->trans("PreviewMailing").'</a>';
-
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=test&amp;id='.$object->id.'">'.$langs->trans("TestMailing").'</a>';
+				
+				if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->send)
+				{
+					print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("TestMailing").'</a>';
+				}
+				else
+				{
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=test&amp;id='.$object->id.'">'.$langs->trans("TestMailing").'</a>';
+				}
 
 				if ($object->statut == 0)
 				{
@@ -876,7 +885,7 @@ else
 
 				if (($object->statut == 1 || $object->statut == 2) && $object->nbemail > 0 && $user->rights->mailing->valider)
 				{
-					if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
+					if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->send))
 					{
 						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("SendMailing").'</a>';
 					}
@@ -893,12 +902,19 @@ else
 
 				if (($object->statut == 2 || $object->statut == 3) && $user->rights->mailing->valider)
 				{
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=reset&amp;id='.$object->id.'">'.$langs->trans("ResetMailing").'</a>';
+					if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->send)
+					{
+						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("ResetMailing").'</a>';
+					}
+					else
+					{
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=reset&amp;id='.$object->id.'">'.$langs->trans("ResetMailing").'</a>';
+					}
 				}
 
 				if (($object->statut <= 1 && $user->rights->mailing->creer) || $user->rights->mailing->supprimer)
 				{
-					print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("DeleteMailing").'</a>';
+					print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&amp;id='.$object->id.(! empty($urlfrom) ? '&urlfrom='.$urlfrom : '').'">'.$langs->trans("DeleteMailing").'</a>';
 				}
 
 				print '<br><br></div>';
@@ -944,7 +960,7 @@ else
 			print '<table class="border" width="100%">';
 
 			// Subject
-			print '<tr><td width="25%">'.$langs->trans("MailTopic").'</td><td colspan="3">'.$object->sujet.'</td></tr>';
+			print '<tr><td width="15%">'.$langs->trans("MailTopic").'</td><td colspan="3">'.$object->sujet.'</td></tr>';
 
 			// Joined files
 			print '<tr><td>'.$langs->trans("MailFile").'</td><td colspan="3">';
@@ -965,7 +981,7 @@ else
 			print '</td></tr>';
 
             // Background color
-            /*print '<tr><td width="25%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
+            /*print '<tr><td width="15%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
             $htmlother->select_color($object->bgcolor,'bgcolor','edit_mailing',0);
             print '</td></tr>';*/
 

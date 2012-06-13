@@ -123,7 +123,7 @@ print '<input size="32" type="text" name="MAILING_EMAIL_ERRORSTO" value="'.$conf
 if (!empty($conf->global->MAILING_EMAIL_ERRORSTO) && ! isValidEmail($conf->global->MAILING_EMAIL_ERRORSTO)) print ' '.img_warning($langs->trans("BadEMail"));
 print '</td></tr>';
 
-
+// TODO the precedent values are deleted after turn on this switch 
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("ActivateCheckRead").'</td><td>';
