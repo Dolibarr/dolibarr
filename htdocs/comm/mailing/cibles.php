@@ -223,7 +223,7 @@ if ($mil->fetch($id) >= 0)
 	$var=!$var;
 
 	// Show email selectors
-	if ($mil->statut == 0)
+	if ($mil->statut == 0 && $user->rights->mailing->creer)
 	{
 		print_fiche_titre($langs->trans("ToAddRecipientsChooseHere"),($user->admin?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"),1):''),'');
 
@@ -374,9 +374,9 @@ if ($mil->fetch($id) >= 0)
 	$sql  = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email, mc.other, mc.statut, mc.date_envoi, mc.source_url, mc.source_id, mc.source_type";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 	$sql .= " WHERE mc.fk_mailing=".$mil->id;
-	if ($search_nom)    $sql.= " AND mc.nom    like '%".$db->escape($search_nom)."%'";
-	if ($search_prenom) $sql.= " AND mc.prenom like '%".$db->escape($search_prenom)."%'";
-	if ($search_email)  $sql.= " AND mc.email  like '%".$db->escape($search_email)."%'";
+	if ($search_nom)    $sql.= " AND mc.nom    LIKE '%".$db->escape($search_nom)."%'";
+	if ($search_prenom) $sql.= " AND mc.prenom LIKE '%".$db->escape($search_prenom)."%'";
+	if ($search_email)  $sql.= " AND mc.email  LIKE '%".$db->escape($search_email)."%'";
 	$sql .= $db->order($sortfield,$sortorder);
 	$sql .= $db->plimit($conf->liste_limit+1, $offset);
 
@@ -496,14 +496,18 @@ if ($mil->fetch($id) >= 0)
 				if ($obj->statut == 0)
 				{
 					print '<td align="center">&nbsp;</td>';
-					print '<td align="right" nowrap="nowrap">'.$langs->trans("MailingStatusNotSent").' <a href="cibles.php?action=delete&rowid='.$obj->rowid.$parm.'">'.img_delete($langs->trans("RemoveRecipient")).'</td>';
+					print '<td align="right" nowrap="nowrap">'.$langs->trans("MailingStatusNotSent");
+					if ($user->rights->mailing->creer) {
+						print '<a href="cibles.php?action=delete&rowid='.$obj->rowid.$parm.'">'.img_delete($langs->trans("RemoveRecipient"));
+					}
+					print '</td>';
 				}
 				else
 				{
 					print '<td align="center">'.$obj->date_envoi.'</td>';
 					print '<td align="right" nowrap="nowrap">';
 					if ($obj->statut==-1) print $langs->trans("MailingStatusError").' '.img_error();
-					if ($obj->statut==1) print $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut6');
+					if ($obj->statut==1) print $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut4');
 					if ($obj->statut==2) print $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut6');
 					if ($obj->statut==3) print $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut8');
 					print '</td>';
