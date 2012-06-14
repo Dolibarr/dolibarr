@@ -126,7 +126,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->facture->
 	}
 }
 
-if ($action == 'setnum' && ! empty($_POST['num_paiement']))
+if ($action == 'setnum_paiement' && ! empty($_POST['num_paiement']))
 {
 	$object->fetch($id);
     $res = $object->update_num($_POST['num_paiement']);
@@ -140,7 +140,7 @@ if ($action == 'setnum' && ! empty($_POST['num_paiement']))
 	}
 }
 
-if ($action == 'setdate' && ! empty($_POST['datepday']))
+if ($action == 'setdatep' && ! empty($_POST['datepday']))
 {
 	$object->fetch($id);
     $datepaye = dol_mktime(12, 0, 0, $_POST['datepmonth'], $_POST['datepday'], $_POST['datepyear']);
