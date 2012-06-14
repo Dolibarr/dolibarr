@@ -247,7 +247,7 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         $after=dol_nboflines_bis($input,0);
         $this->assertEquals($after,3);
 
-        $input="A string<br>with a é, &, < and >.\nThird line";
+        $input="A string<br>with a é, &, < and >.<br>Third line";
         $after=dol_nboflines_bis($input,0);
         $this->assertEquals($after,3);
 
