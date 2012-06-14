@@ -73,6 +73,15 @@ if ($resql)
 			$msgishtml=-1;  // Unknown by default
 			if (preg_match('/[\s\t]*<html>/i',$message)) $msgishtml=1;
 			
+			// Set statut 9 (in progress) to avoid duplication
+			$sql="UPDATE ".MAIN_DB_PREFIX."mailing";
+			$sql.=" SET statut=9 WHERE rowid=".$id;
+			$resql3=$db->query($sql);
+			if (! $resql3)
+			{
+				dol_print_error($db);
+			}
+			
 			$nbok=0; $nbko=0;
 			
 			// On choisit les mails non deja envoyes pour ce mailing (statut=0)
