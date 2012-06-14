@@ -151,6 +151,41 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('533.21.1',$tmp['browserversion']);
     }
 
+
+    /**
+     * testDolTextIsHtml
+     *
+     * @return void
+     */
+    public function testDolTextIsHtml()
+    {
+        // True
+        $input='<html>xxx</html>';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='<body>xxx</body>';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='xxx <b>yyy</b> zzz';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='xxx<br>';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='text with <div>some div</div>';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='text with HTML &nbsp; entities';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+
+        // False
+        $input='xxx < br>';
+        $after=dol_textishtml($input);
+        $this->assertFalse($after);
+    }
+
+
     /**
      * testDolHtmlCleanLastBr
      *
@@ -200,38 +235,25 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         return true;
     }
 
-    /**
-     * testDolTextIsHtml
-     *
-     * @return void
-     */
-    public function testDolTextIsHtml()
-    {
-        // True
-        $input='<html>xxx</html>';
-        $after=dol_textishtml($input);
-        $this->assertTrue($after);
-        $input='<body>xxx</body>';
-        $after=dol_textishtml($input);
-        $this->assertTrue($after);
-        $input='xxx <b>yyy</b> zzz';
-        $after=dol_textishtml($input);
-        $this->assertTrue($after);
-        $input='xxx<br>';
-        $after=dol_textishtml($input);
-        $this->assertTrue($after);
-        $input='text with <div>some div</div>';
-        $after=dol_textishtml($input);
-        $this->assertTrue($after);
-        $input='text with HTML &nbsp; entities';
-        $after=dol_textishtml($input);
-        $this->assertTrue($after);
 
-        // False
-        $input='xxx < br>';
-        $after=dol_textishtml($input);
-        $this->assertFalse($after);
+    /**
+     * testDolNbOfLinesBis
+     *
+     * @return boolean
+     */
+    public function testDolNbOfLinesBis()
+    {
+        $input="A string\nwith a é, &, < and >.\nThird line";
+        $after=dol_nboflines_bis($input,0);
+        $this->assertEquals($after,3);
+
+        $input="A string<br>with a é, &, < and >.\nThird line";
+        $after=dol_nboflines_bis($input,0);
+        $this->assertEquals($after,3);
+
+        return true;
     }
+
 
     /**
      * testDolTextIsHtml
