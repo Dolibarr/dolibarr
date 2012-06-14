@@ -1368,6 +1368,12 @@ span.tabspan {
     box-shadow: 4px 4px 4px #CCC;
 }
 
+<?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) { ?>
+.butActionRefused {
+	display: none;
+}
+<?php } ?>
+
 span.butAction, span.butActionDelete {
 	cursor: pointer;
 }

@@ -144,6 +144,12 @@ td.formdocbutton {padding-top:6px;}
 		color-stop(0, rgba(0,0,0,.3))
 	);
 	}
+	
+<?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) { ?>
+.butActionRefused {
+	display: none;
+}
+<?php } ?>
 
 .tabsAction {margin-top:12px !important; text-align:center;}
 .menu_titre img{padding-bottom:2px;}
