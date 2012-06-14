@@ -3262,9 +3262,10 @@ function dol_nboflines_bis($text,$maxlinesize=0,$charset='UTF-8')
     if (dol_textishtml($text)) $repTable = array("\t" => " ", "\n" => " ", "\r" => " ", "\0" => " ", "\x0B" => " ");
 
     $text = strtr($text, $repTable);
-    if ($charset == 'UTF-8') { $pattern = '/(<[^>]+>)/Uu'; }	// /U is to have UNGREEDY regex to limit to one html tag. /u is for UTF8 support
-    else $pattern = '/(<[^>]+>)/U';								// /U is to have UNGREEDY regex to limit to one html tag.
+    if ($charset == 'UTF-8') { $pattern = '/(<br[^>]*>)/Uu'; }	// /U is to have UNGREEDY regex to limit to one html tag. /u is for UTF8 support
+    else $pattern = '/(<br[^>]*>)/U';							// /U is to have UNGREEDY regex to limit to one html tag.
     $a = preg_split($pattern, $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+
     $nblines = floor((count($a)+1)/2);
     // count possible auto line breaks
     if($maxlinesize)
