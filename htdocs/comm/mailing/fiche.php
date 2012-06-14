@@ -717,7 +717,7 @@ else
 		// Confirm delete
 		else if ($action == 'delete')
 		{
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteAMailing"),$langs->trans("ConfirmDeleteMailing"),"confirm_delete",'','',1);
+			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id.(! empty($urlfrom) ? '&urlfrom='.urlencode($urlfrom) : ''),$langs->trans("DeleteAMailing"),$langs->trans("ConfirmDeleteMailing"),"confirm_delete",'','',1);
 			if ($ret == 'html') print '<br>';
 		}
 
