@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,41 +19,87 @@
  *		\file 		htdocs/admin/tools/dolibarr_export.php
  *		\ingroup	core
  *		\brief      Page to export database
- *		\version    $Id: dolibarr_export.php,v 1.40 2011/08/03 00:45:43 eldy Exp $
  */
 
 require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
-include_once $dolibarr_main_document_root."/lib/databases/".$conf->db->type.".lib.php";
 
 $langs->load("admin");
 
-if (! $user->admin)
-accessforbidden();
+$action=GETPOST('action');
+
+$sortfield = GETPOST("sortfield");
+$sortorder = GETPOST("sortorder");
+$page = GETPOST("page");
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="date";
+if ($page < 0) { $page = 0; }
+$limit = $conf->liste_limit;
+$offset = $limit * $page;
+
+if (! $user->admin) accessforbidden();
 
 
-$html=new Form($db);
-$formfile = new FormFile($db);
+
+/*
+ * Actions
+ */
+
+if ($action == 'delete')
+{
+    dol_delete_file($conf->admin->dir_output.'/backup/'.GETPOST('urlfile'),1);
+    $action='';
+}
 
 
 /*
  * View
  */
 
-llxHeader('','','EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad');
+$form=new Form($db);
+$formfile = new FormFile($db);
+
+$label=$db->label;
+
+$help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
+llxHeader('','',$help_url);
 
 ?>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript">
 jQuery(document).ready(function() {
-	jQuery("#mysql_options").hide();
-	jQuery("#postgresql_options").hide();
 
+	function hideoptions () {
+		jQuery("#mysql_options").hide();
+		jQuery("#mysql_options_nobin").hide();
+		jQuery("#postgresql_options").hide();
+	}
+
+	hideoptions();
 	jQuery("#radio_dump_mysql").click(function() {
+		hideoptions();
 		jQuery("#mysql_options").show();
 	});
+	jQuery("#radio_dump_mysql_nobin").click(function() {
+		hideoptions();
+		jQuery("#mysql_options_nobin").show();
+	});
 	jQuery("#radio_dump_postgresql").click(function() {
+		hideoptions();
 		jQuery("#postgresql_options").show();
 	});
+	jQuery("#select_sql_compat").click(function() {
+		if (jQuery("#select_sql_compat").val() == 'POSTGRESQL')
+		{
+			jQuery("#checkbox_dump_disable-add-locks").attr('checked',true);
+		};
+	});
+
+	<?php
+	    if ($label == 'MySQL')      print 'jQuery("#radio_dump_mysql").click();';
+	    if ($label == 'PostgreSQL') print 'jQuery("#radio_dump_postgresql").click();';
+	?>
 });
 </script>
 <?php
@@ -81,7 +127,7 @@ if ($_GET["msg"])
 	name="token" value="<?php echo $_SESSION['newtoken']; ?>" /> <input
 	type="hidden" name="export_type" value="server" />
 
-<fieldset id="fieldsetexport"><!-- LDR -->
+<fieldset id="fieldsetexport">
 <?php print '<legend>'.$langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b></legend>'; ?>
 <table>
 	<tr>
@@ -90,15 +136,19 @@ if ($_GET["msg"])
 		<div id="div_container_exportoptions">
 		<fieldset id="exportoptions"><legend><?php echo $langs->trans("ExportMethod"); ?></legend>
 		<?php
-		if ($db->label == 'MySQL')
+		if ($label == 'MySQL')
 		{
 			?>
 			<div class="formelementrow"><input type="radio" name="what" value="mysql" id="radio_dump_mysql" />
 			<label for="radio_dump_mysql">MySQL	Dump (mysqldump)</label>
 			</div>
+			<br>
+			<div class="formelementrow"><input type="radio" name="what" value="mysqlnobin" id="radio_dump_mysql_nobin" />
+			<label for="radio_dump_mysql">MySQL	Dump (php) <?php print img_warning('Backup can\'t be guaranted with this method. Prefer previous one'); ?></label>
+			</div>
 			<?php
 		}
-		else if ($db->label == 'PostgreSQL')
+		else if ($label == 'PostgreSQL')
 		{
 			?>
 			<div class="formelementrow"><input type="radio" name="what"	value="postgresql" id="radio_dump_postgresql" />
@@ -108,7 +158,7 @@ if ($_GET["msg"])
 		}
 		else
 		{
-			print 'No method available with database '.$db->label;
+			print 'No method available with database '.$label;
 		}
 		?>
 		</fieldset>
@@ -120,7 +170,7 @@ if ($_GET["msg"])
 
 		<div id="div_container_sub_exportoptions">
 		<?php
-		if ($db->label == 'MySQL')
+		if ($label == 'MySQL')
 		{
 			?> <!--  Fieldset mysqldump -->
 			<fieldset id="mysql_options"><legend><?php echo $langs->trans("MySqlExportParameters"); ?></legend>
@@ -181,12 +231,16 @@ if ($_GET["msg"])
 				id="checkbox_sql_data" checked="checked" /> <label for="checkbox_sql_data">
 				<?php echo $langs->trans("Datas"); ?></label> </legend> <input
 				type="checkbox" name="showcolumns" value="yes"
-				id="checkbox_dump_showcolumns" /> <label
+				id="checkbox_dump_showcolumns" checked="checked" /> <label
 				for="checkbox_dump_showcolumns"> <?php echo $langs->trans("NameColumn"); ?></label><br>
 
 			<input type="checkbox" name="extended_ins" value="yes"
-				id="checkbox_dump_extended_ins" /> <label
+				id="checkbox_dump_extended_ins" checked="checked" /> <label
 				for="checkbox_dump_extended_ins"> <?php echo $langs->trans("ExtendedInsert"); ?></label><br>
+
+			<input type="checkbox" name="disable-add-locks" value="no"
+				id="checkbox_dump_disable-add-locks" /> <label
+				for="checkbox_dump_disable-add-locks"> <?php echo $langs->trans("NoLockBeforeInsert"); ?></label><br>
 
 			<input type="checkbox" name="delayed" value="yes"
 				id="checkbox_dump_delayed" /> <label for="checkbox_dump_delayed"> <?php echo $langs->trans("DelayedInsert"); ?></label><br>
@@ -198,12 +252,16 @@ if ($_GET["msg"])
 				id="checkbox_hexforbinary" checked="checked" /> <label
 				for="checkbox_hexforbinary"> <?php echo $langs->trans("EncodeBinariesInHexa"); ?></label><br>
 
+			<input type="checkbox" name="charset_utf8" value="yes"
+				id="checkbox_charset_utf8" checked="checked" disabled="disabled" /> <label
+				for="checkbox_charset_utf8"> <?php echo $langs->trans("UTF8"); ?></label><br>
+
 			</fieldset>
 			</fieldset>
 		<?php
 		}
 
-		if ($db->label == 'PostgreSQL')
+		if ($label == 'PostgreSQL')
 		{
 			?> <!--  Fieldset pg_dump -->
 			<fieldset id="postgresql_options"><legend><?php echo $langs->trans("PostgreSqlExportParameters"); ?></legend>
@@ -244,7 +302,7 @@ if ($_GET["msg"])
 				id="checkbox_sql_data" checked="checked" /> <label for="checkbox_sql_data">
 				<?php echo $langs->trans("Datas"); ?></label> </legend> <input
 				type="checkbox" name="showcolumns" value="yes"
-				id="checkbox_dump_showcolumns" /> <label
+				id="checkbox_dump_showcolumns" checked="checked" /> <label
 				for="checkbox_dump_showcolumns"> <?php echo $langs->trans("NameColumn"); ?></label><br>
 
 			</fieldset>
@@ -267,8 +325,8 @@ if ($_GET["msg"])
 	id="filename_template"
 	value="<?php
 $prefix='dump';
-if ($db->label == 'MySQL') $prefix='mysqldump';
-if ($db->label == 'PostgreSQL') $prefix='pg_dump';
+if ($label == 'MySQL')      $prefix='mysqldump';
+if ($label == 'PostgreSQL') $prefix='pg_dump';
 $file=$prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M").'.sql';
 echo $file;
 ?>" /> <br>
@@ -278,13 +336,13 @@ echo $file;
 
 // Define compressions array
 $compression=array(
-	'none' => array('function' => '',         'id' => 'radio_compression_none', 'label' => $langs->trans("None")),
-//	'zip'  => array('function' => 'zip_open', 'id' => 'radio_compression_zip',  'label' => $langs->trans("Zip")),		Not open source
-	'gz'   => array('function' => 'gzopen',   'id' => 'radio_compression_gzip', 'label' => $langs->trans("Gzip")),
+	'none' => array('function' => '',       'id' => 'radio_compression_none', 'label' => $langs->trans("None")),
+	'gz'   => array('function' => 'gzopen', 'id' => 'radio_compression_gzip', 'label' => $langs->trans("Gzip")),
 );
-if ($db->label == 'MySQL')
+if ($label == 'MySQL')
 {
-	$compression['bz']=array('function' => 'bzopen',  'id' => 'radio_compression_bzip', 'label' => $langs->trans("Bzip2"));
+//	$compression['zip']= array('function' => 'dol_compress', 'id' => 'radio_compression_zip',  'label' => $langs->trans("FormatZip"));		// Not open source format. Must implement dol_compress function
+    $compression['bz'] = array('function' => 'bzopen',       'id' => 'radio_compression_bzip', 'label' => $langs->trans("Bzip2"));
 }
 
 
@@ -298,12 +356,12 @@ foreach($compression as $key => $val)
 {
 	if (! $val['function'] || function_exists($val['function']))	// Enabled export format
 	{
-		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" checked="true">';
+		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" checked="checked">';
 		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
 	}
 	else	// Disabled export format
 	{
-		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled="true">';
+		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled="disabled">';
 		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
 		print ' ('.$langs->trans("NotAvailable").')';
 	}
@@ -316,20 +374,22 @@ print "\n";
 ?></fieldset>
 
 
-<center><input type="submit" class="button"
+<div align="center"><input type="submit" class="button"
 	value="<?php echo $langs->trans("GenerateBackup") ?>" id="buttonGo" /><br>
 <br>
-</center>
+</div>
 
 
 </form>
 
 <?php
 
-$result=$formfile->show_documents('systemtools','backup',$conf->admin->dir_output.'/backup',$_SERVER['PHP_SELF'],0,1,'',1,0,0,54,0,'',$langs->trans("PreviousDumpFiles"));
-//if ($result) print '<br><br>';
+$filearray=dol_dir_list($conf->admin->dir_output.'/backup','files',0,'','',$sortfield,(strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC),1);
+$result=$formfile->list_of_documents($filearray,null,'systemtools','',1,'backup/',1,0,$langs->trans("NoBackupFileAvailable"),0,$langs->trans("PreviousDumpFiles"));
+print '<br>';
+
+
+llxFooter();
 
 $db->close();
-
-llxFooter('$Date: 2011/08/03 00:45:43 $ - $Revision: 1.40 $');
 ?>
