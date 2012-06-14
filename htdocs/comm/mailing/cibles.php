@@ -133,22 +133,12 @@ if ($action == 'delete')
 	{
 		if (!empty($id))
 		{
-			foreach ($modulesdir as $dir)
-			{
-				$file = $modulesdir."/modules_mailings.php";
-				
-				if (file_exists($file))
-				{
-					$classname = "MailingTargets";
-					require_once($file);
-						
-					$obj = new $classname($db);
-					$obj->update_nb($id);
-						
-					Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-					exit;
-				}
-			}
+			$classname = "MailingTargets";
+			$obj = new $classname($db);
+			$obj->update_nb($id);
+			
+			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+			exit;
 		}
 		else
 		{
