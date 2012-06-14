@@ -48,7 +48,8 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="email";
 
-$id=GETPOST('rowid')?GETPOST('rowid'):GETPOST('id','int');
+$id=GETPOST('id','int');
+$rowid=GETPOST('rowid','int');
 $action=GETPOST("action");
 $search_nom=GETPOST("search_nom");
 $search_prenom=GETPOST("search_prenom");
@@ -126,23 +127,28 @@ if ($action == 'clear')
 if ($action == 'delete')
 {
 	// Ici, rowid indique le destinataire et id le mailing
-	$sql="DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid=".$id;
+	$sql="DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid=".$rowid;
 	$resql=$db->query($sql);
 	if ($resql)
-	{   //on récurpére l'id du mailing
-		$id = GETPOST('id','int'); 
-
+	{
 		if (!empty($id))
 		{
-			$file = $dirmod."/modules_mailings.php";
-			$classname = "MailingTargets";
-			require_once($file);
-			
-			$obj = new $classname($db);
-			$obj->update_nb($id);
-			
-			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-			exit;
+			foreach ($modulesdir as $dir)
+			{
+				$file = $modulesdir."/modules_mailings.php";
+				
+				if (file_exists($file))
+				{
+					$classname = "MailingTargets";
+					require_once($file);
+						
+					$obj = new $classname($db);
+					$obj->update_nb($id);
+						
+					Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+					exit;
+				}
+			}
 		}
 		else
 		{
@@ -295,7 +301,7 @@ if ($object->fetch($id) >= 0)
 
 					if ($object->statut == 0)
 					{
-						print '<form name="'.$modulename.'" action="cibles.php?action=add&rowid='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
+						print '<form name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
 						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					}
 
