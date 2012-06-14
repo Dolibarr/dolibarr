@@ -37,8 +37,8 @@ $dirsmartphone = array();
 $dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
 foreach($dirmenus as $dirmenu)
 {
-    $dirstandard[]=$dirmenus.'standard';
-    $dirsmartphone[]=$dirmenus.'smartphone';
+    $dirstandard[]=$dirmenu.'standard';
+    $dirsmartphone[]=$dirmenu.'smartphone';
 }
 
 $mesg=$_GET["mesg"];
