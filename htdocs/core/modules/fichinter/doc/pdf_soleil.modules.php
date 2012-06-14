@@ -227,7 +227,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				$pdf->line($this->marge_gauche, $nexY, $this->page_largeur-$this->marge_droite, $nexY);
 
-				$pdf->MultiCell(0, 3, '');		// Set interline to 3. Then writeMultiCell must use 3 also.
+				$pdf->MultiCell(0, 2, '');		// Set interline to 3. Then writeMultiCell must use 3 also.
 
 				$nblines = count($object->lines);
 
@@ -244,14 +244,27 @@ class pdf_soleil extends ModelePDFFicheinter
 						$pdf->SetFont('','B', $default_font_size - 1);
 						$pdf->SetXY($this->marge_gauche, $curY);
 						$txt=dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true)." - ".$outputlangs->transnoentities("Duration")." : ".convertSecondToTime($objectligne->duration),1,$outputlangs->charset_output);
+
+						$curYold=$nexYold=$nexY;
 						$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $curY, $txt, 0, 1, 0);
 						$curY = $pdf->GetY();
-						$pdf->SetFont('','', $default_font_size - 1);
+						$nexY+=3;
 
-						$pdf->SetXY($this->marge_gauche, $curY + 3);
+                        $pdf->SetFont('','', $default_font_size - 1);
+
+						$pdf->SetXY($this->marge_gauche, $nexY);
 						$desc = dol_htmlentitiesbr($objectligne->desc,1);
-						$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $curY + 3, $desc, 0, 1, 0);
-						$nexY+=dol_nboflines_bis($objectligne->desc,52,$outputlangs->charset_output)*3;
+
+						$curYold = $pdf->GetY();
+						$nexYold = $curYold;
+
+						$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $curY, $desc, 0, 1, 0);
+
+						$stringheight=$pdf->getStringHeight('A', $txt);
+						$curY = $pdf->GetY();
+
+						$nexY+=(dol_nboflines_bis($objectligne->desc,0,$outputlangs->charset_output)*$stringheight);
+                        //print $curYold."-".$nexYold." +".dol_nboflines_bis($objectligne->desc,52,$outputlangs->charset_output)."*".$stringheight."= ".$curY."-".$nexY."<br>";
 
 						$nexY+=2;    // Passe espace entre les lignes
 

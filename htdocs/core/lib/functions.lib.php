@@ -3249,7 +3249,7 @@ function dol_nboflines($s,$maxchar=0)
 
 
 /**
- *	Return nb of lines of a formated text with \n and <br>
+ *	Return nb of lines of a formated text with \n and <br> (we can't have both \n and br)
  *
  *	@param	string	$text      		Text
  *	@param	int		$maxlinesize  	Largeur de ligne en caracteres (ou 0 si pas de limite - defaut)
@@ -3258,8 +3258,9 @@ function dol_nboflines($s,$maxchar=0)
  */
 function dol_nboflines_bis($text,$maxlinesize=0,$charset='UTF-8')
 {
-    //print $text;
     $repTable = array("\t" => " ", "\n" => "<br>", "\r" => " ", "\0" => " ", "\x0B" => " ");
+    if (dol_textishtml($text)) $repTable = array("\t" => " ", "\n" => " ", "\r" => " ", "\0" => " ", "\x0B" => " ");
+
     $text = strtr($text, $repTable);
     if ($charset == 'UTF-8') { $pattern = '/(<[^>]+>)/Uu'; }	// /U is to have UNGREEDY regex to limit to one html tag. /u is for UTF8 support
     else $pattern = '/(<[^>]+>)/U';								// /U is to have UNGREEDY regex to limit to one html tag.
