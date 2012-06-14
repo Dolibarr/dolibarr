@@ -58,6 +58,7 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",   $_POST["main_size_liste_limit"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", $_POST["main_disable_javascript"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_USE_PREVIEW_TABS",   $_POST["main_use_preview_tabs"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED", $_POST["MAIN_BUTTON_HIDE_UNAUTHORIZED"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_START_WEEK",         $_POST["MAIN_START_WEEK"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SHOW_LOGO",          $_POST["MAIN_SHOW_LOGO"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION",          $_POST["MAIN_FIRSTNAME_NAME_POSITION"],'chaine',0,'',$conf->entity);
@@ -205,6 +206,14 @@ if ($action == 'edit')	// Edit
 	$array=array(0=>$langs->trans("Firstname").' '.$langs->trans("Lastname"),1=>$langs->trans("Lastname").' '.$langs->trans("Firstname"));
     print $form->selectarray('MAIN_FIRSTNAME_NAME_POSITION',$array,(isset($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?$conf->global->MAIN_FIRSTNAME_NAME_POSITION:0));
     print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
+	
+	// Hide unauthorized button
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ButtonHideUnauthorized").'</td><td>';
+	print $form->selectyesno('MAIN_BUTTON_HIDE_UNAUTHORIZED',isset($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)?$conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED:0,1);
+	print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
@@ -357,6 +366,12 @@ else	// Show
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
+	
+	// Hide unauthorized button
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ButtonHideUnauthorized").'</td><td colspan="2">';
+	print yn($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED,1);
+	print '</td></tr>';
 
     // Link to help center
     $var=!$var;
