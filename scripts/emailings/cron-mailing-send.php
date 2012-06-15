@@ -47,7 +47,7 @@ $error = 0;
 $sql = "SELECT m.rowid, m.titre, m.sujet, m.body,";
 $sql.= " m.email_from, m.email_replyto, m.email_errorsto";
 $sql.= " FROM ".MAIN_DB_PREFIX."mailing as m";
-$sql.= " WHERE m.statut IN (1,2)";
+$sql.= " WHERE m.statut = 1";
 
 $resql=$db->query($sql);
 if ($resql)
