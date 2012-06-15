@@ -416,6 +416,7 @@ function clean_url($url,$http=1)
 
         return $CleanUrl;
     }
+    else return $url;
 }
 
 /**
