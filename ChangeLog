@@ -21,6 +21,7 @@ For users:
 - New: Add link to third party into sells and purchase journal.
 - New: Suggest a method to generate a backup file for user with no access
   to mysqldump binary.
+- New: Can correct stock of a warehouse from warehouse card.
 - Fix: No images into product description lines as PDF generation does
   not work with this.
 

@@ -243,11 +243,18 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
      */
     public function testDolNbOfLinesBis()
     {
-        $input="A string\nwith a é, &, < and >.\nThird line";
+        // This is not a html string so nb of lines depends on \n
+        $input="A string\nwith a é, &, < and > and bold tag.\nThird line";
         $after=dol_nboflines_bis($input,0);
         $this->assertEquals($after,3);
 
-        $input="A string<br>with a é, &, < and >.<br>Third line";
+        // This is a html string so nb of lines depends on <br>
+        $input="A string\nwith a é, &, < and > and <b>bold</b> tag.\nThird line";
+        $after=dol_nboflines_bis($input,0);
+        $this->assertEquals($after,1);
+
+        // This is a html string so nb of lines depends on <br>
+        $input="A string<br>with a é, &, < and > and <b>bold</b> tag.<br>Third line";
         $after=dol_nboflines_bis($input,0);
         $this->assertEquals($after,3);
 

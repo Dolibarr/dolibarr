@@ -36,11 +36,12 @@ $langs->load("orders");
 $langs->load("bills");
 $langs->load("stocks");
 
+$action=GETPOST("action");
+$cancel=GETPOST('cancel');
+
 // Security check
-if (isset($_GET["id"]) || isset($_GET["ref"]))
-{
-	$id = isset($_GET["id"])?$_GET["id"]:(isset($_GET["ref"])?$_GET["ref"]:'');
-}
+$id = GETPOST('id')?GETPOST('id'):GETPOST('ref');
+$ref = GETPOST('ref');
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit&stock',$id,'product','','',$fieldid);
@@ -52,8 +53,10 @@ $mesg = '';
  *	Actions
  */
 
+if ($cancel) $action='';
+
 // Set stock limit
-if ($_POST['action'] == 'setstocklimit')
+if ($action == 'setstocklimit')
 {
     $product = new Product($db);
     $result=$product->fetch($_POST['id']);
@@ -69,12 +72,12 @@ if ($_POST['action'] == 'setstocklimit')
 }
 
 // Correct stock
-if ($_POST["action"] == "correct_stock" && ! $_POST["cancel"])
+if ($action == "correct_stock" && ! $_POST["cancel"])
 {
-	if (is_numeric($_POST["nbpiece"]))
+	if (is_numeric($_POST["nbpiece"]) && $id)
 	{
 		$product = new Product($db);
-		$result=$product->fetch($_GET["id"]);
+		$result=$product->fetch($id);
 
 		$result=$product->correct_stock(
     		$user,
@@ -87,21 +90,21 @@ if ($_POST["action"] == "correct_stock" && ! $_POST["cancel"])
 
 		if ($result > 0)
 		{
-			header("Location: product.php?id=".$product->id);
+            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$product->id);
 			exit;
 		}
 	}
 }
 
 // Transfer stock from a warehouse to another warehouse
-if ($_POST["action"] == "transfert_stock" && ! $_POST["cancel"])
+if ($action == "transfert_stock" && ! $_POST["cancel"])
 {
 	if ($_POST["id_entrepot_source"] <> $_POST["id_entrepot_destination"])
 	{
-		if (is_numeric($_POST["nbpiece"]))
+		if (is_numeric($_POST["nbpiece"]) && $id)
 		{
 			$product = new Product($db);
-			$result=$product->fetch($_GET["id"]);
+			$result=$product->fetch($id);
 
 			$db->begin();
 
@@ -321,10 +324,10 @@ if ($_GET["id"] || $_GET["ref"])
 	/*
 	 * Correct stock
 	 */
-	if ($_GET["action"] == "correction")
+	if ($action == "correction")
 	{
 		print_titre($langs->trans("StockCorrection"));
-		print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
+		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'" method="post">'."\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="correct_stock">';
 		print '<table class="border" width="100%">';
@@ -356,16 +359,15 @@ if ($_GET["id"] || $_GET["ref"])
 		print '<center><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
 		print '</form>';
-
 	}
 
 	/*
 	 * Transfer of units
 	 */
-	if ($_GET["action"] == "transfert")
+	if ($action == "transfert")
 	{
 		print_titre($langs->trans("Transfer"));
-		print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
+		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'" method="post">'."\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="transfert_stock">';
 		print '<table class="border" width="100%">';
@@ -394,7 +396,6 @@ if ($_GET["id"] || $_GET["ref"])
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
 
 		print '</form>';
-
 	}
 
 	/*
@@ -430,21 +431,23 @@ else
 /*                                                                            */
 /* ************************************************************************** */
 
-print "<div class=\"tabsAction\">\n";
 
-//if (empty($_GET["action"]))
-//{
+if (empty($action) && $product->id)
+{
+    print "<div class=\"tabsAction\">\n";
+
     if ($user->rights->stock->creer)
     {
-        print '<a class="butAction" href="product.php?id='.$product->id.'&amp;action=correction">'.$langs->trans("StockCorrection").'</a>';
+        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'&amp;action=correction">'.$langs->trans("StockCorrection").'</a>';
     }
 
     if ($user->rights->stock->mouvement->creer)
 	{
-		print '<a class="butAction" href="product.php?id='.$product->id.'&amp;action=transfert">'.$langs->trans("StockMovement").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'&amp;action=transfert">'.$langs->trans("StockMovement").'</a>';
 	}
-//}
-print '</div>';
+
+	print '</div>';
+}
 
 
 

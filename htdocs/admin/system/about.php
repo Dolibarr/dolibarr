@@ -90,7 +90,7 @@ print '</li>';
 print '</ul>';
 
 
-print $langs->trans("HelpCenter");
+print $langs->trans("HelpCenter").':';
 print '<ul>';
 print '<li>';
 //print $langs->trans("SeeWikiPage",'http://wiki.dolibarr.org/index.php/List_of_OpenSource_Software_companies_and_freelancers');
@@ -98,7 +98,7 @@ print '<a target="_blank" href="'.DOL_URL_ROOT.'/support/index.php">'.$langs->tr
 print '</li>';
 print '</ul>';
 
-print $langs->trans("Foundation").':<br>';
+print $langs->trans("Foundation").':';
 
 print '<ul>';
 $url='http://wiki.dolibarr.org/index.php/Subscribe';
@@ -108,7 +108,7 @@ print '<li><a href="'.$url.'" target="_blank">'.$langs->trans("SubscribeToFounda
 print '</ul>';
 
 
-print $langs->trans("OfficialWebHostingService");
+print $langs->trans("OfficialWebHostingService").':';
 $url='http://www.dolicloud.com'; $title='DoliCloud';
 print '<ul>';
 print '<li>';
