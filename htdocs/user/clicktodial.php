@@ -34,11 +34,12 @@ $id=GETPOST('id','int');
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $_GET["id"])	// A user can always read its own card
+if ($user->id == $id)	// A user can always read its own card
 {
 	$feature2='';
 }
-$result = restrictedArea($user, 'user', $_GET["id"], '', $feature2);
+$result = restrictedArea($user, $feature, $id, '&user', $feature2);
+
 
 /*
  * Actions
