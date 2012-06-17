@@ -173,9 +173,10 @@ class Import
 	 *  @param      string	$model              Name of import engine ('csv', ...)
 	 *  @param      string	$headerlinefields   Array of values for first line of example file
 	 *  @param      string	$contentlinevalues	Array of values for content line of example file
+	 *  @param		string	$datatoimport		Dataset to import
 	 *  @return		string						<0 if KO, >0 if OK
 	 */
-	function build_example_file($model, $headerlinefields, $contentlinevalues)
+	function build_example_file($model, $headerlinefields, $contentlinevalues,$datatoimport)
 	{
 		global $conf,$langs;
 
@@ -188,7 +189,7 @@ class Import
 		$file = "import_".$model.".modules.php";
 		$classname = "Import".$model;
 		require_once($dir.$file);
-		$objmodel = new $classname($this->db);
+		$objmodel = new $classname($this->db,$datatoimport);
 
 		$outputlangs=$langs;	// Lang for output
 		$s='';
