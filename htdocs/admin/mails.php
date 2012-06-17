@@ -751,6 +751,7 @@ else
 		$formmail->withcancel=1;
 		$formmail->withdeliveryreceipt=1;
 		$formmail->withfckeditor=1;
+		$formmail->ckeditortoolbar='dolibarr_mailings';
 		// Tableau des substitutions
 		$formmail->substit=$substitutionarrayfortest;
 		// Tableau des parametres complementaires du post
