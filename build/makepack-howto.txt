@@ -8,7 +8,7 @@ This files describe steps made by Dolibarr packaging team to make a
 beta version of Dolibarr, step by step.
 
 - Check all files are commited.
-- Update version/info in / directory (README*.txt, ChangeLog...)
+- Update version/info in /ChangeLog
 - Update version number with x.x.x   in build/doxygen/dolibarr-doxygen.doxyfile
 - Update version number with x.x.x   in build/perl/virtualmin/dolibarr.pl
 - Update version number with x.x.x-y in build/makepack-dolibarr.pl
@@ -34,7 +34,7 @@ This files describe steps made by Dolibarr packaging team to make a
 complete release of Dolibarr, step by step.
 
 - Check all files are commited.
-- Update version/info in / directory (README*.txt, ChangeLog...)
+- Update version/info in /ChangeLog
 - Update version number with x.x.x-y in build/makepack-dolibarr.pl
 - Update version number with x.x.x-y in build/exe/doliwamp/doliwamp.iss
 - Update version number with x.x.x-y in htdocs/filefunc.inc.php
