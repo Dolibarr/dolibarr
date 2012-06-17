@@ -21,12 +21,6 @@
  *      \brief      Show example of import file
  */
 
-// This is to make Dolibarr working with Plesk
-set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
-
-$datatoimport=isset($_GET["datatoimport"])? $_GET["datatoimport"] : (isset($_POST["datatoimport"])?$_POST["datatoimport"]:'');
-$format=isset($_GET["format"])? $_GET["format"] : (isset($_POST["format"])?$_POST["format"]:'');
-
 // This file is a wrapper, so empty header
 function llxHeader() { print '<html><title>Build an import example file</title><body>'; }
 // This file is a wrapper, so empty footer
@@ -36,6 +30,9 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/imports/class/import.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.php');
+
+$datatoimport=GETPOST('datatoimport');
+$format=GETPOST('format');
 
 $langs->load("exports");
 
@@ -86,6 +83,6 @@ foreach($fieldstarget as $code=>$label)
 //var_dump($headerlinefields);
 //var_dump($contentlinevalues);
 
-print $objimport->build_example_file($format,$headerlinefields,$contentlinevalues);
+print $objimport->build_example_file($format,$headerlinefields,$contentlinevalues,$datatoimport);
 
 ?>
