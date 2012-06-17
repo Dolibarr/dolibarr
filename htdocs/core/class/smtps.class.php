@@ -166,6 +166,16 @@ class SMTPs
 	var $_smtpsBoundary = null;
 
 	/**
+	 * Related Boundary
+	 */
+	var $_smtpsRelatedBoundary = null;
+
+	/**
+	 * Alternative Boundary
+	 */
+	var $_smtpsAlternativeBoundary = null;
+
+	/**
 	 * Determines the method inwhich the message are to be sent.
 	 * - 'sockets' [0] - conect via network to SMTP server - default
 	 * - 'pipe     [1] - use UNIX path to EXE
@@ -1202,12 +1212,21 @@ class SMTPs
 			 * TODO  Investigate "nested" boundary message parts
 			*/
 			//$content = 'Content-Type: multipart/related; boundary="' . $this->_getBoundary() . '"'   . "\r\n";
-			$content = 'Content-Type: multipart/mixed; boundary="' . $this->_getBoundary() . '"'   . "\r\n";
+			$content = 'Content-Type: multipart/mixed; boundary="' . $this->_getBoundary('mixed') . '"'   . "\r\n";
 
 			//                     . "\r\n"
 			//                     . 'This is a multi-part message in MIME format.' . "\r\n";
 			$content .= "Content-Transfer-Encoding: 8bit\r\n";
 			$content .= "\r\n";
+
+			$content .= "--" . $this->_getBoundary('mixed') . "\r\n";
+
+			if (key_exists('image', $this->_msgContent))
+			{
+				$content.= 'Content-Type: multipart/alternative; boundary="'.$this->_getBoundary('alternative').'"' . "\r\n";
+				$content .= "\r\n";
+				$content .= "--" . $this->_getBoundary('alternative') . "\r\n";
+			}
 
 			// Loop through message content array
 			foreach ($this->_msgContent as $type => $_content )
@@ -1217,7 +1236,7 @@ class SMTPs
 					// loop through all attachments
 					foreach ( $_content as $_file => $_data )
 					{
-						$content .= "--" . $this->_getBoundary() . "\r\n"
+						$content .= "--" . $this->_getBoundary('mixed') . "\r\n"
 						.  'Content-Disposition: attachment; filename="' . $_data['fileName'] . '"' . "\r\n"
 						.  'Content-Type: ' . $_data['mimeType'] . '; name="' . $_data['fileName'] . '"' . "\r\n"
 						.  'Content-Transfer-Encoding: base64' . "\r\n"
@@ -1235,7 +1254,7 @@ class SMTPs
 					// loop through all images
 					foreach ( $_content as $_image => $_data )
 					{
-						$content .= "--" . $this->_getBoundary() . "\r\n";
+						$content .= "--" . $this->_getBoundary('related') . "\r\n";  // always related for an inline image
 
 						$content .= 'Content-Type: ' . $_data['mimeType'] . '; name="' . $_data['imageName'] . '"' . "\r\n"
 						.  'Content-Transfer-Encoding: base64' . "\r\n"
@@ -1248,11 +1267,25 @@ class SMTPs
 						$content .= "\r\n"
 						. $_data['data'] . "\r\n";
 					}
+
+					// always end related and end alternative after inline images
+					$content.= "--" . $this->_getBoundary('related') . "--" . "\r\n";
+					$content.= "\r\n" . "--" . $this->_getBoundary('alternative') . "--" . "\r\n";
+					$content.= "\r\n";
 				}
 				else
 				{
-					$content .= "--" . $this->_getBoundary() . "\r\n"
-					. 'Content-Type: ' . $_content['mimeType'] . '; '
+					if (key_exists('image', $this->_msgContent))
+					{
+						$content.= "Content-Type: text/plain; charset=" . $this->getCharSet() . "\r\n";
+						$content.= "\r\n" . strip_tags($_content['data']) . "\r\n"; // Add plain text message
+						$content.= "--" . $this->_getBoundary('alternative') . "\r\n";
+						$content.= 'Content-Type: multipart/related; boundary="' . $this->_getBoundary('related') . '"' . "\r\n";
+						$content.= "\r\n";
+						$content.= "--" . $this->_getBoundary('related') . "\r\n";
+					}
+
+					$content .= 'Content-Type: ' . $_content['mimeType'] . '; '
 					//                             . 'charset="' . $this->getCharSet() . '"';
 					. 'charset=' . $this->getCharSet() . '';
 
@@ -1273,7 +1306,7 @@ class SMTPs
 
 			// Close message boundries
 			//            $content .= "\r\n--" . $this->_getBoundary() . '--' . "\r\n" ;
-			$content .= "--" . $this->_getBoundary() . '--' . "\r\n" ;
+			$content .= "--" . $this->_getBoundary('mixed') . '--' . "\r\n" ;
 		}
 
 		return $content;
@@ -1457,6 +1490,8 @@ class SMTPs
 	function _setBoundary()
 	{
 		$this->_smtpsBoundary = "multipart_x." . time() . ".x_boundary";
+		$this->_smtpsRelatedBoundary = 'mul_'.dol_hash(uniqid("dolibarr2"));
+		$this->_smtpsAlternativeBoundary = 'mul_'.dol_hash(uniqid("dolibarr3"));
 	}
 
 	/**
@@ -1464,9 +1499,11 @@ class SMTPs
 	 *
 	 * @return string $_smtpsBoundary MIME message Boundary
 	 */
-	function _getBoundary()
+	function _getBoundary($type='mixed')
 	{
-		return $this->_smtpsBoundary;
+		if ($type == 'mixed') return $this->_smtpsBoundary;
+		else if ($type == 'related') return $this->_smtpsRelatedBoundary;
+		else if ($type == 'alternative') return $this->_smtpsAlternativeBoundary;
 	}
 
 	/**
