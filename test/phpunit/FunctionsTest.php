@@ -357,6 +357,37 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(7200-($tz*3600),$result);        // Should be 7200 if we are at greenwich winter
     }
 
+
+    /**
+     * testDolEscapeJs
+     *
+     * @return	void
+     */
+    public function testDolEscapeJs()
+    {
+        $input="x&<b>#</b>,\"'";    // " will be converted into '
+        $result=dol_escape_js($input);
+        $this->assertEquals("x&<b>#<\/b>,\'\'",$result);
+    }
+
+
+    /**
+    * testDolEscapeHtmlTag
+    *
+    * @return	void
+    */
+    public function testDolEscapeHtmlTag()
+    {
+        $input='x&<b>#</b>,"';    // & and " are converted into html entities, <b> are removed
+        $result=dol_escape_htmltag($input);
+        $this->assertEquals('x&amp;#,&quot;',$result);
+
+        $input='x&<b>#</b>,"';    // & and " are converted into html entities, <b> are not removed
+        $result=dol_escape_htmltag($input,1);
+        $this->assertEquals('x&amp;&lt;b&gt;#&lt;/b&gt;,&quot;',$result);
+    }
+
+
     /**
      * testDolNow
      *

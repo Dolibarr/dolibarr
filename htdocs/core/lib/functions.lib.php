@@ -436,8 +436,8 @@ function dol_escape_htmltag($stringtoescape,$keepb=0)
 {
     // escape quotes and backslashes, newlines, etc.
     $tmp=dol_html_entity_decode($stringtoescape,ENT_COMPAT,'UTF-8');
-    if ($keepb) $tmp=strtr($tmp, array('"'=>'',"\r"=>'\\r',"\n"=>'\\n'));
-    else $tmp=strtr($tmp, array('"'=>'',"\r"=>'\\r',"\n"=>'\\n',"<b>"=>'','</b>'=>''));
+    if ($keepb) $tmp=strtr($tmp, array("\r"=>'\\r',"\n"=>'\\n'));
+    else $tmp=strtr($tmp, array("\r"=>'\\r',"\n"=>'\\n',"<b>"=>'','</b>'=>''));
     return dol_htmlentities($tmp,ENT_COMPAT,'UTF-8');
 }
 

@@ -384,9 +384,13 @@ if (! empty($force_install_message))
 	<tr class="hidesqlite">
 		<td class="label" valign="top"><b><?php echo $langs->trans("Password"); ?></b>
 		</td>
-		<td class="label" valign="top"><input type="password" id="db_pass"
+		<td class="label" valign="top"><input type="text" id="db_pass" autocomplete="off"
 			name="db_pass"
-			value="<?php print (! empty($dolibarr_main_db_pass))?$dolibarr_main_db_pass:$force_install_databasepass; ?>"></td>
+			value="<?php
+			$autofill=((! empty($dolibarr_main_db_pass))?$dolibarr_main_db_pass:$force_install_databasepass);
+			if ($dolibarr_main_prod) $autofill='';
+			print dol_escape_htmltag($autofill);
+			?>"></td>
 		<td class="comment"><?php echo $langs->trans("AdminPassword"); ?></td>
 	</tr>
 
@@ -433,9 +437,13 @@ if (! empty($force_install_message))
 	<tr class="hidesqlite">
 		<td class="label" valign="top"><?php echo $langs->trans("Password"); ?>
 		</td>
-		<td class="label" valign="top"><input type="password"
+		<td class="label" valign="top"><input type="text" autocomplete="off"
 			id="db_pass_root" name="db_pass_root" class="needroot"
-			value="<?php print (! empty($db_pass_root))?$db_pass_root:$force_install_databaserootpass; ?>"></td>
+			value="<?php
+			$autofill=((! empty($db_pass_root))?$db_pass_root:$force_install_databaserootpass);
+			if ($dolibarr_main_prod) $autofill='';
+			print dol_escape_htmltag($autofill);
+			?>"></td>
 		<td class="comment"><?php echo $langs->trans("KeepEmptyIfNoPassword"); ?>
 		</td>
 	</tr>
