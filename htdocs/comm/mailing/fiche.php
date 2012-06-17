@@ -369,7 +369,7 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 			dol_syslog($db->error());
 			dol_print_error($db);
 		}
-		
+
 		$action = '';
 	}
 }
@@ -561,7 +561,7 @@ if ($action == 'confirm_valid' && $confirm == 'yes')
 	if ($object->id > 0)
 	{
 		$object->valid($user);
-		
+
 		$_SESSION['DolMessage']='<div class="ok">'.$langs->trans("MailingSuccessfullyValidated").'</div>';
 
 		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -650,7 +650,7 @@ if ($action == 'create')
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value="'.$_POST['titre'].'"></td></tr>';
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
 	print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td><input class="flat" name="errorsto" size="40" value="'.(!empty($conf->global->MAILING_EMAIL_ERRORSTO)?$conf->global->MAILING_EMAIL_ERRORSTO:$conf->global->MAIN_MAIL_ERRORS_TO).'"></td></tr>';
-	
+
 	// Other attributes
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -664,7 +664,7 @@ if ($action == 'create')
 			print '</td></tr>'."\n";
 		}
 	}
-	
+
 	print '</table>';
 	print '</br><br>';
 
@@ -773,12 +773,12 @@ else
 
 			// From
 			print '<tr><td>'.$form->editfieldkey("MailFrom",'email_from',$object->email_from,$object,$user->rights->mailing->creer && $object->statut < 3,'string').'</td><td colspan="3">';
-			print $form->editfieldval("MailFrom",'email_from',$object->email_from,$object,$user->rights->mailing->creer && $object->statut < 3,'email');
+			print $form->editfieldval("MailFrom",'email_from',$object->email_from,$object,$user->rights->mailing->creer && $object->statut < 3,'string');
 			print '</td></tr>';
 
 			// Errors to
 			print '<tr><td>'.$form->editfieldkey("MailErrorsTo",'email_errorsto',$object->email_errorsto,$object,$user->rights->mailing->creer && $object->statut < 3,'string').'</td><td colspan="3">';
-			print $form->editfieldval("MailErrorsTo",'email_errorsto',$object->email_errorsto,$object,$user->rights->mailing->creer && $object->statut < 3,'email');
+			print $form->editfieldval("MailErrorsTo",'email_errorsto',$object->email_errorsto,$object,$user->rights->mailing->creer && $object->statut < 3,'string');
 			print '</td></tr>';
 
 			// Status
@@ -808,7 +808,7 @@ else
 				print $nbemail;
 			}
 			print '</td></tr>';
-			
+
 			// Other attributes
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -860,7 +860,7 @@ else
 				}
 
 				//print '<a class="butAction" href="fiche.php?action=test&amp;id='.$object->id.'">'.$langs->trans("PreviewMailing").'</a>';
-				
+
 				if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->send)
 				{
 					print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("TestMailing").'</a>';
@@ -1042,7 +1042,7 @@ else
 				print $nbemail;
 			}
 			print '</td></tr>';
-			
+
 			// Other attributes
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
