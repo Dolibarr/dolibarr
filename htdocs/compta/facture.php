@@ -2609,7 +2609,7 @@ else if ($id > 0 || ! empty($ref))
                             $bankaccountstatic->ref=$objp->ref;
                             $bankaccountstatic->label=$objp->ref;
                             print '<td align="right">';
-                            print $bankaccountstatic->getNomUrl(1,'transactions');
+                            if ($bankaccountstatic->id) print $bankaccountstatic->getNomUrl(1,'transactions');
                             print '</td>';
                         }
                         print '<td align="right">'.price($objp->amount).'</td>';

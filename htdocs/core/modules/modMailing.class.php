@@ -74,30 +74,59 @@ class modMailing extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'mailing';
-
-		$this->rights[1][0] = 221; // id de la permission
-		$this->rights[1][1] = 'Consulter les mailings'; // libelle de la permission
-		$this->rights[1][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[1][3] = 1; // La permission est-elle une permission par defaut
-		$this->rights[1][4] = 'lire';
-
-		$this->rights[2][0] = 222;
-		$this->rights[2][1] = 'Creer/modifier les mailings (sujet, destinataires...)';
-		$this->rights[2][2] = 'w';
-		$this->rights[2][3] = 0;
-		$this->rights[2][4] = 'creer';
-
-		$this->rights[3][0] = 223;
-		$this->rights[3][1] = 'Valider les mailings (permet leur envoi)';
-		$this->rights[3][2] = 'w';
-		$this->rights[3][3] = 0;
-		$this->rights[3][4] = 'valider';
-
-		$this->rights[4][0] = 229;
-		$this->rights[4][1] = 'Supprimer les mailings)';
-		$this->rights[4][2] = 'd';
-		$this->rights[4][3] = 0;
-		$this->rights[4][4] = 'supprimer';
+		$r=0;
+		
+		$r++;
+		$this->rights[$r][0] = 221; // id de la permission
+		$this->rights[$r][1] = 'Consulter les mailings'; // libelle de la permission
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[$r][4] = 'lire';
+		
+		$r++;
+		$this->rights[$r][0] = 222;
+		$this->rights[$r][1] = 'Creer/modifier les mailings (sujet, destinataires...)';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'creer';
+		
+		$r++;
+		$this->rights[$r][0] = 223;
+		$this->rights[$r][1] = 'Valider les mailings (permet leur envoi)';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'valider';
+		
+		$r++;
+		$this->rights[$r][0] = 229;
+		$this->rights[$r][1] = 'Supprimer les mailings';
+		$this->rights[$r][2] = 'd';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'supprimer';
+		
+		$r++;
+		$this->rights[$r][0] = 237;
+		$this->rights[$r][1] = 'View recipients and info';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'mailing_advance';		// Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][5] = 'recipient';
+		
+		$r++;
+		$this->rights[$r][0] = 238;
+		$this->rights[$r][1] = 'Manually send mailings';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'mailing_advance';		// Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][5] = 'send';
+		
+		$r++;
+		$this->rights[$r][0] = 239;
+		$this->rights[$r][1] = 'Delete mailings after validation and/or sent';
+		$this->rights[$r][2] = 'd';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'mailing_advance';		// Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][5] = 'delete';
 
 	}
 

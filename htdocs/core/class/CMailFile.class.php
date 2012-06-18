@@ -664,16 +664,13 @@ class CMailFile
 
 		$out='';
 
+		$out.= "--" . $this->mixed_boundary . $this->eol;
+
 		if ($this->atleastoneimage)
 		{
-			$out.= "--" . $this->mixed_boundary . $this->eol;
 			$out.= "Content-Type: multipart/alternative; boundary=\"".$this->alternative_boundary."\"".$this->eol;
 			$out.= $this->eol;
 			$out.= "--" . $this->alternative_boundary . $this->eol;
-		}
-		else
-		{
-			$out.= "--" . $this->mixed_boundary . $this->eol;
 		}
 
 		if ($this->msgishtml)

@@ -597,6 +597,8 @@ class FormMail
             }
             else
             {
+            	if (! isset($this->ckeditortoolbar)) $this->ckeditortoolbar = 'dolibarr_notes';
+
                 if(! empty($conf->global->MAIL_USE_SIGN) && $this->fromid > 0)
                 {
                     $fuser=new User($this->db);
@@ -609,7 +611,7 @@ class FormMail
 
                 // Editor wysiwyg
                 require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-                $doleditor=new DolEditor('message',$defaultmessage,'',280,'dolibarr_notes','In',true,false,$this->withfckeditor,8,72);
+                $doleditor=new DolEditor('message',$defaultmessage,'',280,$this->ckeditortoolbar,'In',true,true,$this->withfckeditor,8,72);
                 $out.= $doleditor->Create(1);
             }
             $out.= "</td></tr>\n";

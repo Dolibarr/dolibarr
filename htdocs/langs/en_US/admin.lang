@@ -327,6 +327,7 @@ UrlGenerationParameters=Parameters to secure URLs
 SecurityTokenIsUnique=Use a unique securekey parameter for each URL
 EnterRefToBuildUrl=Enter reference for object %s
 GetSecuredUrl=Get calculated URL
+ButtonHideUnauthorized=Hide buttons unauthorized (instead of seeing gray)
 
 # Modules
 Module0Name=Users & groups
@@ -553,11 +554,9 @@ Permission221=Read emailings
 Permission222=Create/modify emailings (topic, recipients...)
 Permission223=Validate emailings (allows sending)
 Permission229=Delete emailings
-Permission231=Define mode of payment
-Permission232=Create/modify supplier invoices
-Permission233=Validate supplier invoices
-Permission234=Delete supplier invoices
-Permission236=Export supplier invoices
+Permission237=View recipients and info
+Permission238=Manually send mailings
+Permission239=Delete mailings after validation or sent
 Permission241=Read categories
 Permission242=Create/modify categories
 Permission243=Delete categories

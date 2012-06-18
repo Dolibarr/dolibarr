@@ -34,12 +34,19 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
 
 $langs->load("mails");
 
-if (! $user->rights->mailing->lire || $user->societe_id > 0) accessforbidden();
+if (! $user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->societe_id > 0)) accessforbidden();
 
 $id=(GETPOST('mailid','int') ? GETPOST('mailid','int') : GETPOST('id','int'));
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
-$message = '';
+$urlfrom=GETPOST('urlfrom');
+
+$mesg='';
+if (isset($_SESSION['DolMessage']))
+{
+	$mesg=$_SESSION['DolMessage'];
+	unset($_SESSION['DolMessage']);
+}
 
 $object=new Mailing($db);
 $result=$object->fetch($id);
@@ -139,14 +146,14 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 	{
 		// Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
 		// on affiche donc juste un message
-		$message='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
-		$message.='<br><textarea cols="70" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>';
-		$message.='<br><br><div class="warning">'.$langs->trans("MailingNeedCommand2").'</div>';
+		$mesg='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
+		$mesg.='<br><textarea cols="70" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>';
+		$mesg.='<br><br><div class="warning">'.$langs->trans("MailingNeedCommand2").'</div>';
 		$action='';
 	}
 	else if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
 	{
-		$message='<div class="warning">'.$langs->trans("NotEnoughPermissions").'</div>';
+		$mesg='<div class="warning">'.$langs->trans("NotEnoughPermissions").'</div>';
 		$action='';
 	}
 	else
@@ -362,9 +369,8 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 			dol_syslog($db->error());
 			dol_print_error($db);
 		}
-		$message='';
-		$action = '';
 
+		$action = '';
 	}
 }
 
@@ -378,7 +384,7 @@ if ($action == 'send' && empty($_POST["cancel"]))
 	$object->sendto = $_POST["sendto"];
 	if (! $object->sendto)
 	{
-		$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("MailTo")).'</div>';
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("MailTo")).'</div>';
 		$error++;
 	}
 
@@ -386,11 +392,11 @@ if ($action == 'send' && empty($_POST["cancel"]))
 	{
 		// Le message est-il en html
 		$msgishtml=-1;	// Inconnu par defaut
-		if (preg_match('/[\s\t]*<html>/i',$message)) $msgishtml=1;
+		if (preg_match('/[\s\t]*<html>/i',$object->body)) $msgishtml=1;
 
 		// Pratique les substitutions sur le sujet et message
-		$object->sujet=make_substitutions($object->sujet,$object->substitutionarrayfortest,$langs);
-		$object->body=make_substitutions($object->body,$object->substitutionarrayfortest,$langs);
+		$object->sujet=make_substitutions($object->sujet,$object->substitutionarrayfortest);
+		$object->body=make_substitutions($object->body,$object->substitutionarrayfortest);
 
 		$arr_file = array();
 		$arr_mime = array();
@@ -418,11 +424,11 @@ if ($action == 'send' && empty($_POST["cancel"]))
 		$result=$mailfile->sendfile();
 		if ($result)
 		{
-			$message='<div class="ok">'.$langs->trans("MailSuccessfulySent",$mailfile->getValidAddress($object->email_from,2),$mailfile->getValidAddress($object->sendto,2)).'</div>';
+			$mesg='<div class="ok">'.$langs->trans("MailSuccessfulySent",$mailfile->getValidAddress($object->email_from,2),$mailfile->getValidAddress($object->sendto,2)).'</div>';
 		}
 		else
 		{
-			$message='<div class="error">'.$langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result.'</div>';
+			$mesg='<div class="error">'.$langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result.'</div>';
 		}
 
 		$action='';
@@ -432,8 +438,6 @@ if ($action == 'send' && empty($_POST["cancel"]))
 // Action add emailing
 if ($action == 'add')
 {
-	$message='';
-
 	$object->email_from     = trim($_POST["from"]);
 	$object->email_replyto  = trim($_POST["replyto"]);
 	$object->email_errorsto = trim($_POST["errorsto"]);
@@ -443,21 +447,21 @@ if ($action == 'add')
 	$object->bgcolor        = trim($_POST["bgcolor"]);
 	$object->bgimage        = trim($_POST["bgimage"]);
 
-	if (! $object->titre) $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailTitle"));
-	if (! $object->sujet) $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailTopic"));
-	if (! $object->body)  $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailBody"));
+	if (! $object->titre) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailTitle"));
+	if (! $object->sujet) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailTopic"));
+	if (! $object->body)  $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailBody"));
 
-	if (! $message)
+	if (! $mesg)
 	{
 		if ($object->create($user) >= 0)
 		{
 			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		}
-		$message=$object->error;
+		$mesg=$object->error;
 	}
 
-	$message='<div class="error">'.$message.'</div>';
+	$mesg='<div class="error">'.$mesg.'</div>';
 	$action="create";
 }
 
@@ -471,20 +475,20 @@ if ($action == 'settitre' || $action == 'setemail_from' || $actino == 'setreplyt
 	else if ($action == 'setemail_replyto')		$object->email_replyto  = trim(GETPOST('email_replyto','alpha'));
 	else if ($action == 'setemail_errorsto')	$object->email_errorsto = trim(GETPOST('email_errorsto','alpha'));
 
-	else if ($action == 'settitre' && empty($object->titre))		$message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTitle"));
-	else if ($action == 'setfrom' && empty($object->email_from))	$message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailFrom"));
+	else if ($action == 'settitre' && empty($object->titre))		$mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTitle"));
+	else if ($action == 'setfrom' && empty($object->email_from))	$mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailFrom"));
 
-	if (! $message)
+	if (! $mesg)
 	{
 		if ($object->update($user) >= 0)
 		{
 			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		}
-		$message=$object->error;
+		$mesg=$object->error;
 	}
 
-	$message='<div class="error">'.$message.'</div>';
+	$mesg='<div class="error">'.$mesg.'</div>';
 	$action="";
 }
 
@@ -503,7 +507,7 @@ if (! empty($_POST['addfile']))
 	$action="edit";
 }
 
-// Action update emailing
+// Action remove file
 if (! empty($_POST["removedfile"]))
 {
 	$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
@@ -529,20 +533,20 @@ if ($action == 'update' && empty($_POST["removedfile"]) && empty($_POST["cancel"
 		$object->bgcolor        = trim($_POST["bgcolor"]);
 		$object->bgimage        = trim($_POST["bgimage"]);
 
-		if (! $object->sujet) $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailTopic"));
-		if (! $object->body)  $message.=($message?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailBody"));
+		if (! $object->sujet) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailTopic"));
+		if (! $object->body)  $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailBody"));
 
-		if (! $message)
+		if (! $mesg)
 		{
 			if ($object->update($user) >= 0)
 			{
 				Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
 			}
-			$message=$object->error;
+			$mesg=$object->error;
 		}
 
-		$message='<div class="error">'.$message.'</div>';
+		$mesg='<div class="error">'.$mesg.'</div>';
 		$action="edit";
 	}
 	else
@@ -557,6 +561,8 @@ if ($action == 'confirm_valid' && $confirm == 'yes')
 	if ($object->id > 0)
 	{
 		$object->valid($user);
+
+		$_SESSION['DolMessage']='<div class="ok">'.$langs->trans("MailingSuccessfullyValidated").'</div>';
 
 		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
@@ -603,7 +609,8 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 {
 	if ($object->delete($object->id))
 	{
-		Header("Location: liste.php");
+		$url= (! empty($urlfrom) ? $urlfrom : 'liste.php');
+		Header("Location: ".$url);
 		exit;
 	}
 }
@@ -637,13 +644,13 @@ if ($action == 'create')
 
 	print_fiche_titre($langs->trans("NewMailing"));
 
-	dol_htmloutput_mesg($message);
+	dol_htmloutput_mesg($mesg);
 
 	print '<table class="border" width="100%">';
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value="'.$_POST['titre'].'"></td></tr>';
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
 	print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td><input class="flat" name="errorsto" size="40" value="'.(!empty($conf->global->MAILING_EMAIL_ERRORSTO)?$conf->global->MAILING_EMAIL_ERRORSTO:$conf->global->MAIN_MAIL_ERRORS_TO).'"></td></tr>';
-	
+
 	// Other attributes
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -657,7 +664,7 @@ if ($action == 'create')
 			print '</td></tr>'."\n";
 		}
 	}
-	
+
 	print '</table>';
 	print '</br><br>';
 
@@ -695,8 +702,6 @@ else
 
 		dol_fiche_head($head, 'card', $langs->trans("Mailing"), 0, 'email');
 
-		dol_htmloutput_mesg($message);
-
 		// Confirmation de la validation du mailing
 		if ($action == 'valid')
 		{
@@ -712,7 +717,7 @@ else
 		// Confirm delete
 		else if ($action == 'delete')
 		{
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteAMailing"),$langs->trans("ConfirmDeleteMailing"),"confirm_delete",'','',1);
+			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id.(! empty($urlfrom) ? '&urlfrom='.urlencode($urlfrom) : ''),$langs->trans("DeleteAMailing"),$langs->trans("ConfirmDeleteMailing"),"confirm_delete",'','',1);
 			if ($ret == 'html') print '<br>';
 		}
 
@@ -756,7 +761,7 @@ else
 
 			print '<table class="border" width="100%">';
 
-			print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
+			print '<tr><td width="15%">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="3">';
 			print $form->showrefnav($object,'id');
 			print '</td></tr>';
@@ -768,19 +773,19 @@ else
 
 			// From
 			print '<tr><td>'.$form->editfieldkey("MailFrom",'email_from',$object->email_from,$object,$user->rights->mailing->creer && $object->statut < 3,'string').'</td><td colspan="3">';
-			print $form->editfieldval("MailFrom",'email_from',$object->email_from,$object,$user->rights->mailing->creer && $object->statut < 3,'email');
+			print $form->editfieldval("MailFrom",'email_from',$object->email_from,$object,$user->rights->mailing->creer && $object->statut < 3,'string');
 			print '</td></tr>';
 
 			// Errors to
 			print '<tr><td>'.$form->editfieldkey("MailErrorsTo",'email_errorsto',$object->email_errorsto,$object,$user->rights->mailing->creer && $object->statut < 3,'string').'</td><td colspan="3">';
-			print $form->editfieldval("MailErrorsTo",'email_errorsto',$object->email_errorsto,$object,$user->rights->mailing->creer && $object->statut < 3,'email');
+			print $form->editfieldval("MailErrorsTo",'email_errorsto',$object->email_errorsto,$object,$user->rights->mailing->creer && $object->statut < 3,'string');
 			print '</td></tr>';
 
 			// Status
-			print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
+			print '<tr><td width="15%">'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 
 			// Nb of distinct emails
-			print '<tr><td width="25%">';
+			print '<tr><td width="15%">';
 			print $langs->trans("TotalNbOfDistinctRecipients");
 			print '</td><td colspan="3">';
 			$nbemail = ($object->nbemail?$object->nbemail:img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>');
@@ -803,7 +808,7 @@ else
 				print $nbemail;
 			}
 			print '</td></tr>';
-			
+
 			// Other attributes
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -856,7 +861,14 @@ else
 
 				//print '<a class="butAction" href="fiche.php?action=test&amp;id='.$object->id.'">'.$langs->trans("PreviewMailing").'</a>';
 
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=test&amp;id='.$object->id.'">'.$langs->trans("TestMailing").'</a>';
+				if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->send)
+				{
+					print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("TestMailing").'</a>';
+				}
+				else
+				{
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=test&amp;id='.$object->id.'">'.$langs->trans("TestMailing").'</a>';
+				}
 
 				if ($object->statut == 0)
 				{
@@ -876,7 +888,7 @@ else
 
 				if (($object->statut == 1 || $object->statut == 2) && $object->nbemail > 0 && $user->rights->mailing->valider)
 				{
-					if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
+					if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->send))
 					{
 						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("SendMailing").'</a>';
 					}
@@ -893,12 +905,26 @@ else
 
 				if (($object->statut == 2 || $object->statut == 3) && $user->rights->mailing->valider)
 				{
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=reset&amp;id='.$object->id.'">'.$langs->trans("ResetMailing").'</a>';
+					if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->send)
+					{
+						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("ResetMailing").'</a>';
+					}
+					else
+					{
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=reset&amp;id='.$object->id.'">'.$langs->trans("ResetMailing").'</a>';
+					}
 				}
 
 				if (($object->statut <= 1 && $user->rights->mailing->creer) || $user->rights->mailing->supprimer)
 				{
-					print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("DeleteMailing").'</a>';
+					if ($object->statut > 0 && (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->delete))
+					{
+						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("DeleteMailing").'</a>';
+					}
+					else
+					{
+						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&amp;id='.$object->id.(! empty($urlfrom) ? '&urlfrom='.$urlfrom : '').'">'.$langs->trans("DeleteMailing").'</a>';
+					}
 				}
 
 				print '<br><br></div>';
@@ -944,7 +970,7 @@ else
 			print '<table class="border" width="100%">';
 
 			// Subject
-			print '<tr><td width="25%">'.$langs->trans("MailTopic").'</td><td colspan="3">'.$object->sujet.'</td></tr>';
+			print '<tr><td width="15%">'.$langs->trans("MailTopic").'</td><td colspan="3">'.$object->sujet.'</td></tr>';
 
 			// Joined files
 			print '<tr><td>'.$langs->trans("MailFile").'</td><td colspan="3">';
@@ -965,7 +991,7 @@ else
 			print '</td></tr>';
 
             // Background color
-            /*print '<tr><td width="25%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
+            /*print '<tr><td width="15%">'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
             $htmlother->select_color($object->bgcolor,'bgcolor','edit_mailing',0);
             print '</td></tr>';*/
 
@@ -985,10 +1011,7 @@ else
 			 * Mailing en mode edition
 			 */
 
-		    $mesgs=array();
-		    if ($mesg)    $mesgs[]=$mesg;
-		    if ($message) $message[]=$message;
-			dol_htmloutput_mesg('',$mesgs);
+			dol_htmloutput_mesg($mesg);
 
 			print '<table class="border" width="100%">';
 
@@ -1019,7 +1042,7 @@ else
 				print $nbemail;
 			}
 			print '</td></tr>';
-			
+
 			// Other attributes
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook

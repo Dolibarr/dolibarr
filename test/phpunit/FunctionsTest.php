@@ -151,6 +151,41 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('533.21.1',$tmp['browserversion']);
     }
 
+
+    /**
+     * testDolTextIsHtml
+     *
+     * @return void
+     */
+    public function testDolTextIsHtml()
+    {
+        // True
+        $input='<html>xxx</html>';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='<body>xxx</body>';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='xxx <b>yyy</b> zzz';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='xxx<br>';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='text with <div>some div</div>';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='text with HTML &nbsp; entities';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+
+        // False
+        $input='xxx < br>';
+        $after=dol_textishtml($input);
+        $this->assertFalse($after);
+    }
+
+
     /**
      * testDolHtmlCleanLastBr
      *
@@ -200,38 +235,32 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         return true;
     }
 
-    /**
-     * testDolTextIsHtml
-     *
-     * @return void
-     */
-    public function testDolTextIsHtml()
-    {
-        // True
-        $input='<html>xxx</html>';
-        $after=dol_textishtml($input);
-        $this->assertTrue($after);
-        $input='<body>xxx</body>';
-        $after=dol_textishtml($input);
-        $this->assertTrue($after);
-        $input='xxx <b>yyy</b> zzz';
-        $after=dol_textishtml($input);
-        $this->assertTrue($after);
-        $input='xxx<br>';
-        $after=dol_textishtml($input);
-        $this->assertTrue($after);
-        $input='text with <div>some div</div>';
-        $after=dol_textishtml($input);
-        $this->assertTrue($after);
-        $input='text with HTML &nbsp; entities';
-        $after=dol_textishtml($input);
-        $this->assertTrue($after);
 
-        // False
-        $input='xxx < br>';
-        $after=dol_textishtml($input);
-        $this->assertFalse($after);
+    /**
+     * testDolNbOfLinesBis
+     *
+     * @return boolean
+     */
+    public function testDolNbOfLinesBis()
+    {
+        // This is not a html string so nb of lines depends on \n
+        $input="A string\nwith a é, &, < and > and bold tag.\nThird line";
+        $after=dol_nboflines_bis($input,0);
+        $this->assertEquals($after,3);
+
+        // This is a html string so nb of lines depends on <br>
+        $input="A string\nwith a é, &, < and > and <b>bold</b> tag.\nThird line";
+        $after=dol_nboflines_bis($input,0);
+        $this->assertEquals($after,1);
+
+        // This is a html string so nb of lines depends on <br>
+        $input="A string<br>with a é, &, < and > and <b>bold</b> tag.<br>Third line";
+        $after=dol_nboflines_bis($input,0);
+        $this->assertEquals($after,3);
+
+        return true;
     }
+
 
     /**
      * testDolTextIsHtml
@@ -327,6 +356,37 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         $tz=getServerTimeZoneInt('winter');                  // +1 in Europe/Paris at this time (this time is winter)
         $this->assertEquals(7200-($tz*3600),$result);        // Should be 7200 if we are at greenwich winter
     }
+
+
+    /**
+     * testDolEscapeJs
+     *
+     * @return	void
+     */
+    public function testDolEscapeJs()
+    {
+        $input="x&<b>#</b>,\"'";    // " will be converted into '
+        $result=dol_escape_js($input);
+        $this->assertEquals("x&<b>#<\/b>,\'\'",$result);
+    }
+
+
+    /**
+    * testDolEscapeHtmlTag
+    *
+    * @return	void
+    */
+    public function testDolEscapeHtmlTag()
+    {
+        $input='x&<b>#</b>,"';    // & and " are converted into html entities, <b> are removed
+        $result=dol_escape_htmltag($input);
+        $this->assertEquals('x&amp;#,&quot;',$result);
+
+        $input='x&<b>#</b>,"';    // & and " are converted into html entities, <b> are not removed
+        $result=dol_escape_htmltag($input,1);
+        $this->assertEquals('x&amp;&lt;b&gt;#&lt;/b&gt;,&quot;',$result);
+    }
+
 
     /**
      * testDolNow

@@ -52,59 +52,13 @@ function dol_getwebuser($mode)
 function checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmode)
 {
 	global $conf,$langs;
-    global $dolauthmode;    // To return authentication finally used
+    //global $dolauthmode;    // To return authentication finally used
 
 	// Check parameetrs
 	if ($entitytotest == '') $entitytotest=1;
 
     dol_syslog("checkLoginPassEntity usertotest=".$usertotest." entitytotest=".$entitytotest." authmode=".join(',',$authmode));
 	$login = '';
-
-	// Validation of login/pass/entity with a third party login module method
-	$dirlogin=array_merge(array("/core/login"),(array) $conf->modules_parts['login']);
-	foreach($dirlogin as $reldir)
-   	{
-   	    $dir=dol_buildpath($reldir,0);
-
-   	    $newdir=dol_osencode($dir);
-
-   		// Check if directory exists
-   		if (! is_dir($newdir)) continue;
-
-   		$handle=opendir($newdir);
-   		if (is_resource($handle))
-   		{
-   			while (($file = readdir($handle))!==false)
-   			{
-   				if (is_readable($dir.'/'.$file) && preg_match('/^functions_([^_]+)\.php/',$file,$reg))
-   				{
-   					$authfile = $dir.'/'.$file;
-   					$mode = $reg[1];
-
-   					$result=include_once($authfile);
-   					if ($result)
-   					{
-   						// Call function to check user/password
-   						$function='check_user_password_'.$mode;
-   						$login=call_user_func($function,$usertotest,$passwordtotest,$entitytotest);
-   						if ($login)
-   						{
-           					$conf->authmode=$mode;	// This properties is defined only when logged to say what mode was successfully used
-   						}
-   					}
-   					else
-   					{
-   						dol_syslog("Authentification ko - failed to load file '".$authfile."'",LOG_ERR);
-   						sleep(1);    // To slow brut force cracking
-   						$langs->load('main');
-   						$langs->load('other');
-   						$_SESSION["dol_loginmesg"]=$langs->trans("ErrorFailedToLoadLoginFileForMode",$mode);
-   					}
-   				}
-   			}
-   		    closedir($handle);
-  		}
-	}
 
 	// Validation of login/pass/entity with standard modules
 	if (empty($login))
@@ -114,10 +68,24 @@ function checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmod
     	{
     		if ($test && $mode && ! $login)
     		{
+    		    // Validation of login/pass/entity for mode $mode
     		    $mode=trim($mode);
-    			$authfile=DOL_DOCUMENT_ROOT.'/core/login/functions_'.$mode.'.php';
-    			$result=include_once($authfile);
-    			if ($result)
+        		$authfile='functions_'.$mode.'.php';
+        		$fullauthfile='';
+
+    		    $dirlogin=array_merge(array("/core/login"),(array) $conf->modules_parts['login']);
+    		    foreach($dirlogin as $reldir)
+    		    {
+    		        $dir=dol_buildpath($reldir,0);
+    		        $newdir=dol_osencode($dir);
+
+    		        // Check if file found (do not use dol_is_file to avoid loading files.lib.php)
+    		        if (is_file($newdir.'/'.$authfile)) $fullauthfile=$newdir.'/'.$authfile;
+    		    }
+
+    		    $result=false;
+    		    if ($fullauthfile) $result=include_once($fullauthfile);
+    			if ($fullauthfile && $result)
     			{
     				// Call function to check user/password
     				$function='check_user_password_'.$mode;

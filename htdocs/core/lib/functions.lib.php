@@ -436,8 +436,8 @@ function dol_escape_htmltag($stringtoescape,$keepb=0)
 {
     // escape quotes and backslashes, newlines, etc.
     $tmp=dol_html_entity_decode($stringtoescape,ENT_COMPAT,'UTF-8');
-    if ($keepb) $tmp=strtr($tmp, array('"'=>'',"\r"=>'\\r',"\n"=>'\\n'));
-    else $tmp=strtr($tmp, array('"'=>'',"\r"=>'\\r',"\n"=>'\\n',"<b>"=>'','</b>'=>''));
+    if ($keepb) $tmp=strtr($tmp, array("\r"=>'\\r',"\n"=>'\\n'));
+    else $tmp=strtr($tmp, array("\r"=>'\\r',"\n"=>'\\n',"<b>"=>'','</b>'=>''));
     return dol_htmlentities($tmp,ENT_COMPAT,'UTF-8');
 }
 
@@ -3249,7 +3249,7 @@ function dol_nboflines($s,$maxchar=0)
 
 
 /**
- *	Return nb of lines of a formated text with \n and <br>
+ *	Return nb of lines of a formated text with \n and <br> (we can't have both \n and br)
  *
  *	@param	string	$text      		Text
  *	@param	int		$maxlinesize  	Largeur de ligne en caracteres (ou 0 si pas de limite - defaut)
@@ -3258,12 +3258,14 @@ function dol_nboflines($s,$maxchar=0)
  */
 function dol_nboflines_bis($text,$maxlinesize=0,$charset='UTF-8')
 {
-    //print $text;
     $repTable = array("\t" => " ", "\n" => "<br>", "\r" => " ", "\0" => " ", "\x0B" => " ");
+    if (dol_textishtml($text)) $repTable = array("\t" => " ", "\n" => " ", "\r" => " ", "\0" => " ", "\x0B" => " ");
+
     $text = strtr($text, $repTable);
-    if ($charset == 'UTF-8') { $pattern = '/(<[^>]+>)/Uu'; }	// /U is to have UNGREEDY regex to limit to one html tag. /u is for UTF8 support
-    else $pattern = '/(<[^>]+>)/U';								// /U is to have UNGREEDY regex to limit to one html tag.
+    if ($charset == 'UTF-8') { $pattern = '/(<br[^>]*>)/Uu'; }	// /U is to have UNGREEDY regex to limit to one html tag. /u is for UTF8 support
+    else $pattern = '/(<br[^>]*>)/U';							// /U is to have UNGREEDY regex to limit to one html tag.
     $a = preg_split($pattern, $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+
     $nblines = floor((count($a)+1)/2);
     // count possible auto line breaks
     if($maxlinesize)

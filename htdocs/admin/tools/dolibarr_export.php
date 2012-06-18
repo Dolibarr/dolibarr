@@ -142,16 +142,11 @@ if ($_GET["msg"])
 			<div class="formelementrow"><input type="radio" name="what" value="mysql" id="radio_dump_mysql" />
 			<label for="radio_dump_mysql">MySQL	Dump (mysqldump)</label>
 			</div>
-			<?php
-			if (! empty($conf->global->MAIN_FEATURES_LEVEL))
-			{
-			?>
 			<br>
 			<div class="formelementrow"><input type="radio" name="what" value="mysqlnobin" id="radio_dump_mysql_nobin" />
 			<label for="radio_dump_mysql">MySQL	Dump (php) <?php print img_warning('Backup can\'t be guaranted with this method. Prefer previous one'); ?></label>
 			</div>
 			<?php
-			}
 		}
 		else if ($label == 'PostgreSQL')
 		{

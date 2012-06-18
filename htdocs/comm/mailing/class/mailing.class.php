@@ -121,6 +121,8 @@ class Mailing extends CommonObject
 			}
 			else
 			{
+				$this->error=$this->db->lasterror();
+				dol_syslog("Mailing::Create ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}

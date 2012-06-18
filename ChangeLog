@@ -18,6 +18,10 @@ For users:
 - New: Can insert links into elements lines. Also reported into PDF.
 - New: When a member is validated, we can subscribe to mailing-lists
   according to its type.
+- New: Add link to third party into sells and purchase journal.
+- New: Suggest a method to generate a backup file for user with no access
+  to mysqldump binary.
+- New: Can correct stock of a warehouse from warehouse card.
 - Fix: No images into product description lines as PDF generation does
   not work with this.
 
@@ -93,6 +97,8 @@ For users:
 - Fix: Sanitize input parameters.
 - Fix: [ bug #368 ] Product list
 - Fix: [ bug #370 ] Filter in accountancy -> suppliers_bills
+- Fix: [ bug #399 ] Bad calculation of local taxes in update line products
+- Fix: [ bug #427 ] Bad links to wiki help in certains menus
 
 For developers:
 - New: Can add a left menu into an existing top menu or left menu.

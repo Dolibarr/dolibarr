@@ -29,7 +29,7 @@
  */
 function emailing_prepare_head($object)
 {
-	global $langs, $conf;
+	global $user, $langs, $conf;
 
 	$h = 0;
 	$head = array();
@@ -38,6 +38,10 @@ function emailing_prepare_head($object)
 	$head[$h][1] = $langs->trans("MailCard");
 	$head[$h][2] = 'card';
 	$h++;
+	
+	if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->recipient) {
+		return $head;
+	}
 
 	$head[$h][0] = DOL_URL_ROOT."/comm/mailing/cibles.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("MailRecipients");
