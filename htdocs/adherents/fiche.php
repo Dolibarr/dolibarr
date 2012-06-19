@@ -200,8 +200,13 @@ if ($action == 'confirm_sendinfo' && $confirm == 'yes')
 {
 	if ($object->email)
 	{
-		$result=$object->send_an_email($langs->transnoentitiesnoconv("ThisIsContentOfYourCard")."\n\n%INFOS%\n\n",$langs->transnoentitiesnoconv("CardContent"));
-		$mesg=$langs->trans("CardSent");
+        $from=$conf->email_from;
+        if ($conf->global->ADHERENT_MAIL_FROM) $from=$conf->global->ADHERENT_MAIL_FROM;
+
+        $result=$object->send_an_email($langs->transnoentitiesnoconv("ThisIsContentOfYourCard")."\n\n%INFOS%\n\n",$langs->transnoentitiesnoconv("CardContent"));
+
+        $langs->load("mails");
+        $mesg=$langs->trans("MailSuccessfulySent", $from, $object->email);
 	}
 }
 
@@ -1046,7 +1051,9 @@ if ($action == 'edit')
 
 if ($rowid && $action != 'edit')
 {
-	/* ************************************************************************** */
+	dol_htmloutput_mesg($mesg);
+
+    /* ************************************************************************** */
 	/*                                                                            */
 	/* Mode affichage                                                             */
 	/*                                                                            */

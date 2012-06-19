@@ -184,7 +184,7 @@ class Adherent extends CommonObject
      */
 	function makeSubstitution($text)
 	{
-		global $langs;
+		global $conf,$langs;
 
 		$birthday = dol_print_date($this->naiss,'day');
 
@@ -202,8 +202,11 @@ class Adherent extends CommonObject
 		$infos.= $langs->transnoentities("Town").": ".$this->town."\n";
 		$infos.= $langs->transnoentities("Country").": ".$this->country."\n";
 		$infos.= $langs->transnoentities("EMail").": ".$this->email."\n";
-		$infos.= $langs->transnoentities("Login").": ".$this->login."\n";
-		$infos.= $langs->transnoentities("Password").": ".$this->pass."\n";
+		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
+		{
+		    $infos.= $langs->transnoentities("Login").": ".$this->login."\n";
+		    $infos.= $langs->transnoentities("Password").": ".$this->pass."\n";
+		}
 		$infos.= $langs->transnoentities("Birthday").": ".$birthday."\n";
 		$infos.= $langs->transnoentities("Photo").": ".$this->photo."\n";
 		$infos.= $langs->transnoentities("Public").": ".yn($this->public);
