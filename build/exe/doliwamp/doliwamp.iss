@@ -16,9 +16,9 @@
 [Setup]
 ; ----- Change this -----
 AppName=DoliWamp
-; DoliWamp-x.x.x or DoliWamp-x.x.x-dev or DoliWamp-x.x.x-beta
+; DoliWamp-x.x.x or DoliWamp-x.x.x-alpha or DoliWamp-x.x.x-beta or DoliWamp-x.x.x-rc or DoliWamp-x.x.x
 AppVerName=DoliWamp-3.3.0-alpha
-; DoliWamp-x.x x or DoliWamp-x.x.x-dev or DoliWamp-x.x.x-beta
+; DoliWamp-x.x x or DoliWamp-x.x.x-alpha or DoliWamp-x.x.x-beta or DoliWamp-x.x.x-rc or DoliWamp-x.x.x
 OutputBaseFilename=DoliWamp-3.3.0-alpha
 ; Define full path from wich all relative path are defined
 ; You must modify this to put here your dolibarr root directory
