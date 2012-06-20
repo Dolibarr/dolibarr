@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -206,20 +206,24 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	$mysoc->note=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
 
     // We define pays_id, pays_code and country
-    $tmp=explode(':',$conf->global->MAIN_INFO_SOCIETE_PAYS);
-    $country_id=$tmp[0];
-    if (! empty($tmp[1]))   // If $conf->global->MAIN_INFO_SOCIETE_PAYS is "id:code:label"
+    if (! empty($conf->global->MAIN_INFO_SOCIETE_PAYS))
     {
-        $country_code=$tmp[1];
-        $country_label=$tmp[2];
+    	$tmp=explode(':',$conf->global->MAIN_INFO_SOCIETE_PAYS);
+    	$country_id=$tmp[0];
+    	if (! empty($tmp[1]))   // If $conf->global->MAIN_INFO_SOCIETE_PAYS is "id:code:label"
+    	{
+    		$country_code=$tmp[1];
+    		$country_label=$tmp[2];
+    	}
+    	else                    // For backward compatibility
+    	{
+    		dol_syslog("Your country setup use an old syntax. Reedit it in setup area.", LOG_WARNING);
+    		include_once(DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php');
+    		$country_code=getCountry($country_id,2,$db);  // This need a SQL request, but it's the old feature
+    		$country_label=getCountry($country_id,0,$db);  // This need a SQL request, but it's the old feature
+    	}
     }
-    else                    // For backward compatibility
-    {
-        dol_syslog("Your country setup use an old syntax. Reedit it in setup area.", LOG_WARNING);
-        include_once(DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php');
-        $country_code=getCountry($country_id,2,$db);  // This need a SQL request, but it's the old feature
-        $country_label=getCountry($country_id,0,$db);  // This need a SQL request, but it's the old feature
-    }
+
     $mysoc->pays_id=$country_id;		// TODO deprecated
     $mysoc->country_id=$country_id;
     $mysoc->pays_code=$country_code;	// TODO deprecated
