@@ -39,8 +39,9 @@ require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/cron/functions_cron.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/modules/facture/modules_facture.php");
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
 
 
 // Load main language strings
@@ -66,6 +67,7 @@ $diroutputpdf=$conf->facture->dir_output . '/temp';
 $newmodel='';		// To force a new model
 $newlangid='en_EN';	// To force a new lang id
 $filter=array();
+$regenerate='';
 $option='';
 
 foreach ($argv as $key => $value)
@@ -79,6 +81,16 @@ foreach ($argv as $key => $value)
 		$valarray=explode('=',$value);
 		$newlangid=$valarray[1];
 		print 'Use language '.$newlangid.".\n";
+	}
+
+	if (preg_match('/^regenerate=(.*)/i',$value,$reg))
+	{
+	    if (! in_array($reg[1],array('','0','no')))
+	    {
+		    $found=true;
+		    $regenerate=$reg[1];
+		    print 'Regeneration of PDF is requested with template '.$regenerate."\n";
+	    }
 	}
 
 	if ($value == 'filter=all')
@@ -269,11 +281,18 @@ if ( $resql=$db->query($sql) )
 						$outputlangs->setDefaultLang($newlangid);
 					}
 				}
-            	print "Build PDF for invoice ".$obj->facnumber." - Lang = ".$outputlangs->defaultlang."\n";
-				$result=facture_pdf_create($db, $fac, $newmodel?$newmodel:$fac->modelpdf, $outputlangs);
+				$filename=$conf->facture->dir_output.'/'.$fac->ref.'/'.$fac->ref.'.pdf';
+				if ($regenerate || ! dol_is_file($filename))
+				{
+            	    print "Build PDF for invoice ".$obj->facnumber." - Lang = ".$outputlangs->defaultlang."\n";
+    				$result=facture_pdf_create($db, $fac, $newmodel?$newmodel:$fac->modelpdf, $outputlangs);
+				}
+				else {
+				    print "PDF for invoice ".$obj->facnumber." already exists\n";
+				}
 
 				// Add file into files array
-				$files[] = $conf->facture->dir_output.'/'.$fac->ref.'/'.$fac->ref.'.pdf';
+				$files[] = $filename;
 			}
 
 			if ($result <= 0)
@@ -393,8 +412,9 @@ function usage()
     print "To exclude credit notes, use filter=nocreditnote\n";
     print "To exclude replacement invoices, use filter=noreplacement\n";
     print "To exclude deposit invoices, use filter=nodeposit\n";
+    print "To regenerate existing PDF, use regenerate=crabe\n";
     print "\n";
-	print "Example: ".$script_file." filter=payments 20080101 20081231 lang=fr_FR\n";
+	print "Example: ".$script_file." filter=payments 20080101 20081231 lang=fr_FR regenerate=yes\n";
 	print "Example: ".$script_file." filter=all lang=it_IT\n";
 	print "\n";
 	print "Note that some filters can be cumulated.\n";
