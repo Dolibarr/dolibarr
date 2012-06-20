@@ -155,11 +155,6 @@ if (! empty($conf->file->mailing_limit_sendbyweb))
 // If software has been locked. Only login $conf->global->MAIN_ONLY_LOGIN_ALLOWED is allowed.
 if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
 {
-	/*print '$_SERVER["GATEWAY_INTERFACE"]='.$_SERVER["GATEWAY_INTERFACE"].'<br>';
-	 print 'session_id()='.session_id().'<br>';
-	 print '$_SESSION["dol_login"]='.$_SESSION["dol_login"].'<br>';
-	 print '$conf->global->MAIN_ONLY_LOGIN_ALLOWED='.$conf->global->MAIN_ONLY_LOGIN_ALLOWED.'<br>';
-	 exit;*/
 	$ok=0;
 	if ((! session_id() || ! isset($_SESSION["dol_login"])) && ! isset($_POST["username"]) && ! empty($_SERVER["GATEWAY_INTERFACE"])) $ok=1;	// We let working pages if not logged and inside a web browser (login form, to allow login by admin)
 	elseif (isset($_POST["username"]) && $_POST["username"] == $conf->global->MAIN_ONLY_LOGIN_ALLOWED) $ok=1;				// We let working pages that is a login submission (login submit, to allow login by admin)
@@ -205,7 +200,8 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 	$mysoc->state_id=$conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT;
 	$mysoc->note=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
 
-    // We define pays_id, pays_code and country
+    // We define country_id, country_code and country
+	$country_id=$country_code=$country_label='';
     if (! empty($conf->global->MAIN_INFO_SOCIETE_PAYS))
     {
     	$tmp=explode(':',$conf->global->MAIN_INFO_SOCIETE_PAYS);
@@ -217,13 +213,12 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
     	}
     	else                    // For backward compatibility
     	{
-    		dol_syslog("Your country setup use an old syntax. Reedit it in setup area.", LOG_WARNING);
+    		dol_syslog("Your country setup use an old syntax. Reedit it using setup area.", LOG_WARNING);
     		include_once(DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php');
     		$country_code=getCountry($country_id,2,$db);  // This need a SQL request, but it's the old feature
     		$country_label=getCountry($country_id,0,$db);  // This need a SQL request, but it's the old feature
     	}
     }
-
     $mysoc->pays_id=$country_id;		// TODO deprecated
     $mysoc->country_id=$country_id;
     $mysoc->pays_code=$country_code;	// TODO deprecated
