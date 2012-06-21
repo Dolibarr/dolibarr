@@ -268,6 +268,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Received"),$_SERVER["PHP_SELF"],"am","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Rest"),$_SERVER["PHP_SELF"],"am","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye,am","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Merge"),$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
 	print "</tr>\n";
@@ -286,7 +287,7 @@ if ($resql)
 	print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'">';
 	print '</td><td class="liste_titre" align="right">';
 	print '<input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$search_montant_ttc.'">';
-	print '</td><td class="liste_titre" colspan="2" align="right">';
+	print '</td><td class="liste_titre" colspan="3" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
@@ -354,6 +355,10 @@ if ($resql)
 			print '<td align="right">'.price($objp->total_ht).'</td>';
 			print '<td align="right">'.price($objp->total_ttc).'</td>';
 			print '<td align="right">'.price($objp->am).'</td>';
+			if ($objp->am==0)
+			{	print '<td align="right"></td>'; }
+			else
+			{	print '<td align="right">'.price($objp->total_ttc-$objp->am).'</td>'; }
 
 			// Affiche statut de la facture
 			print '<td align="right" nowrap="nowrap">';
