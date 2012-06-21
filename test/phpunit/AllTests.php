@@ -123,6 +123,8 @@ class AllTests
         $suite->addTestSuite('UserTest');
 		require_once dirname(__FILE__).'/UserGroupTest.php';
         $suite->addTestSuite('UserGroupTest');
+        require_once dirname(__FILE__).'/BankAccountTest.php';
+        $suite->addTestSuite('BankAccountTest');
 		require_once dirname(__FILE__).'/CompanyBankAccountTest.php';
         $suite->addTestSuite('CompanyBankAccountTest');
         require_once dirname(__FILE__).'/ChargeSocialesTest.php';
