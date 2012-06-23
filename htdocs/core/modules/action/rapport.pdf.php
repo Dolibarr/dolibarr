@@ -215,7 +215,7 @@ class CommActionRapport
 				$y1 = $pdf->GetY();
 
 				$pdf->SetXY(60,$y);
-				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($obj->libelle),32), 0, 'L', 0);
+				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($outputlangs->transnoentities($obj->libelle)),32), 0, 'L', 0);
 				$y2 = $pdf->GetY();
 
 				$pdf->SetXY(106,$y);
