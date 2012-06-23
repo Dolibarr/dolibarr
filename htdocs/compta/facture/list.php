@@ -199,7 +199,7 @@ if (! $sall)
 {
     $sql.= ' GROUP BY f.rowid, f.facnumber, f.type, f.increment, f.total, f.total_ttc,';
     $sql.= ' f.datef, f.date_lim_reglement,';
-    $sql.= ' f.paye, f.fk_statut,';
+    $sql.= ' f.paye, f.fk_statut, f.note,';
     $sql.= ' s.nom, s.rowid';
 }
 else
