@@ -255,7 +255,7 @@ if ($mode != 4)
 {
     print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
     //print "<tr class=\"liste_titre\">\n";
-    print '<tr class="liste_total">'."\n";
+    print '<tr class="liste_titre">'."\n";
     //print "  <td>".$langs->trans("Family")."</td>\n";
     print "  <td colspan=\"2\">".$langs->trans("Module")."</td>\n";
     print "  <td>".$langs->trans("Description")."</td>\n";
