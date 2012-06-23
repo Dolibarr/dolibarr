@@ -27,7 +27,8 @@
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/commande/class/commande.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
+require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 
 $langs->load('orders');
 $langs->load('deliveries');
@@ -43,6 +44,7 @@ $snom=GETPOST('snom','alpha');
 $sall=GETPOST('sall');
 $socid=GETPOST('socid','int');
 $search_user=GETPOST('search_user','int');
+$search_sale=GETPOST('search_sale','int');
 
 // Security check
 $id = (GETPOST('orderid')?GETPOST('orderid'):GETPOST('id','int'));
@@ -63,6 +65,25 @@ $limit = $conf->liste_limit;
 $viewstatut=GETPOST('viewstatut');
 
 
+/*
+ * Actions
+ */
+
+// Do we click on purge search criteria ?
+if (GETPOST("button_removefilter_x"))
+{
+    $search_categ='';
+    $search_user='';
+    $search_sale='';
+    $search_ref='';
+    $search_refcustomer='';
+    $search_societe='';
+    $search_montant_ht='';
+    $year='';
+    $month='';
+}
+
+
 
 /*
  * View
@@ -71,6 +92,7 @@ $viewstatut=GETPOST('viewstatut');
 $now=dol_now();
 
 $form = new Form($db);
+$formother = new FormOther($db);
 $formfile = new FormFile($db);
 $companystatic = new Societe($db);
 
@@ -80,7 +102,8 @@ $sql = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.
 $sql.= ' c.date_valid, c.date_commande, c.date_livraison, c.fk_statut, c.facture as facturee';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= ', '.MAIN_DB_PREFIX.'commande as c';
-if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+// We'll need this table joined to the select in order to filter by sale
+if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 if ($search_user > 0)
 {
     $sql.=", ".MAIN_DB_PREFIX."element_contact as ec";
@@ -152,6 +175,7 @@ if (!empty($sref_client))
 {
 	$sql.= ' AND c.ref_client LIKE \'%'.$db->escape($sref_client).'%\'';
 }
+if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 if ($search_user > 0)
 {
     $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
@@ -190,12 +214,13 @@ if ($resql)
 	$title.=' - '.$langs->trans('StatusOrderToProcessShort');
 
 	$param='&socid='.$socid.'&viewstatut='.$viewstatut;
-	if ($month) $param.='&month='.$month;
-	if ($year)  $param.='&year='.$year;
-	if ($sref)  $param.='&sref='.$sref;
-	if ($snom)  $param.='&snom='.$snom;
-	if ($sref_client)  $param.='&sref_client='.$sref_client;
+	if ($month)           $param.='&month='.$month;
+	if ($year)            $param.='&year='.$year;
+	if ($sref)            $param.='&sref='.$sref;
+	if ($snom)            $param.='&snom='.$snom;
+	if ($sref_client)     $param.='&sref_client='.$sref_client;
 	if ($search_user > 0) $param.='&search_user='.$search_user;
+	if ($search_sale > 0) $param.='&search_sale='.$search_sale;
 
 	$num = $db->num_rows($resql);
 	print_barre_liste($title, $page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
@@ -206,6 +231,13 @@ if ($resql)
 
 	print '<table class="noborder" width="100%">';
 
+ 	// If the user can view prospects other than his'
+ 	if ($user->rights->societe->client->voir || $socid)
+ 	{
+	 	$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
+		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
+	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+ 	}
 	// If the user can view prospects other than his'
 	if ($user->rights->societe->client->voir || $socid)
 	{

@@ -24,6 +24,7 @@ TaskRDVWith=Meeting with %s
 ShowTask=Show task
 ShowAction=Show event
 ActionsReport=Events report
+ThirdPartiesOfSaleRepresentative=Thirdparties with sales representative
 SalesRepresentative=Sales representative
 SalesRepresentatives=Sales representatives
 SalesRepresentativeFollowUp=Sales representative (follow-up)

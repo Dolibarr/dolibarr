@@ -5,6 +5,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.3 compared to 3.2 *****
 For users:
+- New: Can filter list of proposal, order or invoice on sales representative.
 - New: Add supplier ref on supplier orders.
 - New: Can export supplier orders.
 - New: First feature to install external plugins from gui. 

@@ -51,6 +51,7 @@ $confirm=GETPOST('confirm','alpha');
 $lineid=GETPOST('lineid','int');
 
 $search_user=GETPOST('search_user','int');
+$search_sale=GETPOST('search_sale','int');
 $search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','alpha');
 $search_refcustomer=GETPOST('search_refcustomer','alpha');
 $search_societe=GETPOST('search_societe','alpha');
@@ -105,6 +106,7 @@ if (GETPOST("button_removefilter_x"))
 {
     $search_categ='';
     $search_user='';
+    $search_sale='';
     $search_ref='';
     $search_refcustomer='';
     $search_societe='';
@@ -152,7 +154,8 @@ $sql.= ' u.login';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
 if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid=pd.fk_propal';
 $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
-if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+// We'll need this table joined to the select in order to filter by sale
+if ($search_sale || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 if ($search_user > 0)
 {
     $sql.=", ".MAIN_DB_PREFIX."element_contact as c";
@@ -160,7 +163,6 @@ if ($search_user > 0)
 }
 $sql.= ' WHERE p.fk_soc = s.rowid';
 $sql.= ' AND p.entity = '.$conf->entity;
-
 if (! $user->rights->societe->client->voir && ! $socid) //restriction
 {
 	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -200,6 +202,7 @@ else if ($year > 0)
 {
 	$sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
+if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 if ($search_user > 0)
 {
     $sql.= " AND c.fk_c_type_contact = tc.rowid AND tc.element='propal' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".$search_user;
@@ -224,13 +227,14 @@ if ($result)
 	}
 
 	$param='&socid='.$socid.'&viewstatut='.$viewstatut;
-	if ($month) $param.='&month='.$month;
-	if ($year)  $param.='&year='.$year;
-    if ($search_ref)     $param.='&search_ref=' .$search_ref;
+	if ($month)              $param.='&month='.$month;
+	if ($year)               $param.='&year='.$year;
+    if ($search_ref)         $param.='&search_ref=' .$search_ref;
     if ($search_refcustomer) $param.='&search_ref=' .$search_refcustomer;
-    if ($search_societe) $param.='&search_societe=' .$search_societe;
+    if ($search_societe)     $param.='&search_societe=' .$search_societe;
 	if ($search_user > 0)    $param.='&search_user='.$search_user;
-    if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
+	if ($search_sale > 0)    $param.='&search_sale='.$search_sale;
+	if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
 	print_barre_liste($langs->trans('ListOfProposals').' '.($socid?'- '.$soc->nom:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
 
 	// Lignes des champs de filtre
@@ -239,6 +243,13 @@ if ($result)
 	$i = 0;
 	print '<table class="liste" width="100%">';
 
+ 	// If the user can view prospects other than his'
+ 	if ($user->rights->societe->client->voir || $socid)
+ 	{
+	 	$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
+		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
+	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+ 	}
 	// If the user can view prospects other than his'
 	if ($user->rights->societe->client->voir || $socid)
 	{
