@@ -31,7 +31,8 @@ if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
-if (! isset($mode) || $mode != 'noajax')
+
+if (! isset($mode) || $mode != 'noajax')    // For ajax call
 {
     require_once("../../main.inc.php");
     require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
@@ -54,7 +55,7 @@ if (! isset($mode) || $mode != 'noajax')
         exit;
     }
 }
-else
+else    // For no ajax call
 {
     $ecmdir = new EcmDirectory($db);
     $relativepath='';
@@ -124,11 +125,11 @@ if (! dol_is_dir($upload_dir))
 }
 
 print '<!-- TYPE='.$type.' -->'."\n";
-print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
+print '<!-- Page called with mode='.$mode.' url='.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
 $param='';
 
-// Dir
+// Dir scan
 if ($type == 'directory')
 {
     $formfile=new FormFile($db);
@@ -136,7 +137,7 @@ if ($type == 'directory')
     $param.=($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'');
     $maxlengthname=40;
 
-    // Right area
+    // Right area. If module is defined, we are in automatic ecm.
     if ($module == 'company')  // Auto area for suppliers invoices
     {
         $upload_dir = $conf->societe->dir_output; // TODO change for multicompany sharing

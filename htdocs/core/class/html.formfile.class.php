@@ -650,6 +650,8 @@ class FormFile
         global $bc;
         global $sortfield, $sortorder;
 
+        dol_syslog(get_class($this).'::list_of_autoecmfiles upload_dir='.$upload_dir.' modulepart='.$modulepart);
+
         // Affiche liste des documents existant
         if (empty($useinecm)) print_titre($langs->trans("AttachedFiles"));
         //else { $bc[true]=''; $bc[false]=''; };
@@ -666,7 +668,12 @@ class FormFile
         print '</tr>';
 
         // To show ref or specific information according to view to show (defined by $module)
-        if ($modulepart == 'invoice')
+        if ($modulepart == 'company')
+        {
+            include_once(DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php');
+            $object_instance=new Societe($this->db);
+        }
+        else if ($modulepart == 'invoice')
         {
             include_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
             $object_instance=new Facture($this->db);
@@ -718,6 +725,7 @@ class FormFile
                 $id=0; $ref=''; $label='';
 
                 // To show ref or specific information according to view to show (defined by $module)
+                if ($modulepart == 'company')          { preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=$reg[1]; }
                 if ($modulepart == 'invoice')          { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1]; }
                 if ($modulepart == 'invoice_supplier') { preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=$reg[1]; }
                 if ($modulepart == 'propal')           { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=$reg[1]; }
@@ -804,7 +812,7 @@ class FormFile
         $upload_max_filesize		= $mul_upload_max_filesize * (int) $upload_max_filesize;
         // Max file size
         $max_file_size 				= (($post_max_size < $upload_max_filesize) ? $post_max_size : $upload_max_filesize);
-        
+
         // Include main
         include(DOL_DOCUMENT_ROOT.'/core/tpl/ajax/fileupload_main.tpl.php');
 
