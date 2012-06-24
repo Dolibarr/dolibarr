@@ -607,8 +607,8 @@ class EcmDirectory // extends CommonObject
 	}
 
 	/**
-	 *	Calcule les proprietes fullpath, fullrelativename, fulllabel d'un repertoire
-	 *	du tableau this->cats et de toutes ces enfants.
+	 *	Define properties fullpath, fullrelativename, fulllabel of a directory of array this->cats and all its childs.
+	 *  Separator between directories is always '/', whatever is OS.
 	 *
 	 * 	@param	int		$id_categ		id_categ entry to update
 	 * 	@param	int		$protection		Deep counter to avoid infinite loop

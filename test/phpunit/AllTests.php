@@ -72,6 +72,8 @@ class AllTests
 		$suite->addTestSuite('ImagesLibTest');
 		require_once dirname(__FILE__).'/FunctionsTest.php';
 		$suite->addTestSuite('FunctionsTest');
+		require_once dirname(__FILE__).'/Functions2Test.php';
+		$suite->addTestSuite('Functions2Test');
 
         require_once dirname(__FILE__).'/SecurityTest.php';
         $suite->addTestSuite('SecurityTest');
