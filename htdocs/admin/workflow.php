@@ -88,14 +88,14 @@ $workflow=array(
 		)
 );
 
-if (! empty($conf->modules_parts['workflow'])) $workflow = array_merge($workflow, $conf->modules_parts['workflow']);
+if (! empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow'])) $workflow = array_merge($workflow, $conf->modules_parts['workflow']);
 
 foreach($workflow as $child => $parents)
 {
 	if ($conf->$child->enabled)
 	{
 		$langs->Load($child.'@'.$child);
-		
+
 		foreach($parents as $parent => $actions)
 		{
 			if ($conf->$parent->enabled)
