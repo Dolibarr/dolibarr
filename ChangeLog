@@ -27,6 +27,7 @@ For users:
   not work with this.
 
 For developers:
+- New: Add webservice for thirdparty creation and list.
 - New: A module can overwrite templates parts.
 - New: Can add a link on title field of added dictionnary.
 - New: Uniformize code.

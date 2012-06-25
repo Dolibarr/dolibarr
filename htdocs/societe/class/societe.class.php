@@ -138,7 +138,7 @@ class Societe extends CommonObject
     var $logo;
     var $logo_small;
     var $logo_mini;
-    
+
     var $oldcopy;
 
     /**
@@ -409,6 +409,8 @@ class Societe extends CommonObject
         $this->idprof2		= trim($this->idprof2);
         $this->idprof3		= trim($this->idprof3);
         $this->idprof4		= trim($this->idprof4);
+        $this->idprof5		= trim($this->idprof5);
+        $this->idprof6		= trim($this->idprof6);
         $this->prefix_comm	= trim($this->prefix_comm);
 
         $this->tva_assuj	= trim($this->tva_assuj);
@@ -442,6 +444,12 @@ class Societe extends CommonObject
             $this->error = $langs->trans("ErrorBadEMail",$this->email);
             return -1;
         }
+        if (! is_numeric($this->client) && ! is_numeric($this->fournisseur))
+        {
+            $langs->load("errors");
+            $this->error = $langs->trans("BadValueForParameterClientOrSupplier");
+            return -1;
+        }
 
         $this->db->begin();
 
@@ -469,10 +477,12 @@ class Societe extends CommonObject
             $sql .= ",email = ".($this->email?"'".$this->db->escape($this->email)."'":"null");
             $sql .= ",url = ".($this->url?"'".$this->db->escape($this->url)."'":"null");
 
-            $sql .= ",siren   = '". $this->db->escape($this->idprof1)   ."'";
-            $sql .= ",siret   = '". $this->db->escape($this->idprof2)   ."'";
-            $sql .= ",ape     = '". $this->db->escape($this->idprof3)     ."'";
+            $sql .= ",siren   = '". $this->db->escape($this->idprof1) ."'";
+            $sql .= ",siret   = '". $this->db->escape($this->idprof2) ."'";
+            $sql .= ",ape     = '". $this->db->escape($this->idprof3) ."'";
             $sql .= ",idprof4 = '". $this->db->escape($this->idprof4) ."'";
+            $sql .= ",idprof5 = '". $this->db->escape($this->idprof5) ."'";
+            $sql .= ",idprof6 = '". $this->db->escape($this->idprof6) ."'";
 
             $sql .= ",tva_assuj = ".($this->tva_assuj!=''?"'".$this->tva_assuj."'":"null");
             $sql .= ",tva_intra = '" . $this->db->escape($this->tva_intra) ."'";
@@ -627,7 +637,7 @@ class Societe extends CommonObject
         $sql .= ', s.price_level';
         $sql .= ', s.tms as date_update';
         $sql .= ', s.tel, s.fax, s.email, s.url, s.cp as zip, s.ville as town, s.note, s.client, s.fournisseur';
-        $sql .= ', s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4';
+        $sql .= ', s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6';
         $sql .= ', s.capital, s.tva_intra';
         $sql .= ', s.fk_typent as typent_id';
         $sql .= ', s.fk_effectif as effectif_id';
@@ -721,6 +731,8 @@ class Societe extends CommonObject
                 $this->idprof2		= $obj->idprof2;
                 $this->idprof3		= $obj->idprof3;
                 $this->idprof4		= $obj->idprof4;
+                $this->idprof5		= $obj->idprof5;
+                $this->idprof6		= $obj->idprof6;
 
                 $this->capital   = $obj->capital;
 
@@ -999,7 +1011,7 @@ class Societe extends CommonObject
         if ($this->id)
         {
             $this->db->begin();
-            
+
             $now=dol_now();
 
             // Positionne remise courante
@@ -2331,6 +2343,8 @@ class Societe extends CommonObject
         $this->idprof2='idprof2';
         $this->idprof3='idprof3';
         $this->idprof4='idprof4';
+        $this->idprof5='idprof5';
+        $this->idprof6='idprof6';
     }
 
 }
