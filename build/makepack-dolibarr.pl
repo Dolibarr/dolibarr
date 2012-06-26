@@ -24,7 +24,7 @@ $RPMSUBVERSION="auto";	# auto use value found into BUILD
 "RPM_OPENSUSE"=>"rpmbuild",
 "DEB"=>"dpkg",
 "APS"=>"zip",
-"EXEDOLIWAMP"=>"iscc.exe"
+"EXEDOLIWAMP"=>"ISCC.exe"
 );
 %ALTERNATEPATH=(
 "7z"=>"7-ZIP",

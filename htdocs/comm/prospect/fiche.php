@@ -41,6 +41,8 @@ $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
+$object = new Prospect($db);
+
 
 /*
  * Actions
@@ -55,9 +57,8 @@ if ($_GET["action"] == 'cstc')
 // set prospect level
 if ($_POST["action"] == 'setprospectlevel' && $user->rights->societe->creer)
 {
-	$societe = new Societe($db);
-	$societe->fetch($_GET["socid"]);
-	$societe->fk_prospectlevel=$_POST['prospect_level_id'];
+	$object->fetch($_GET["socid"]);
+	$object->fk_prospectlevel=$_POST['prospect_level_id'];
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_prospectlevel='".$_POST['prospect_level_id'];
 	$sql.= "' WHERE rowid='".$_GET["socid"]."'";
 	$result = $db->query($sql);
@@ -81,8 +82,7 @@ $formcompany=new FormCompany($db);
 if ($socid > 0)
 {
 	$actionstatic=new ActionComm($db);
-	$societe = new Prospect($db, $socid);
-	$result = $societe->fetch($socid);
+	$result = $object->fetch($socid);
 	if ($result < 0)
 	{
 		dol_print_error($db);
@@ -92,7 +92,7 @@ if ($socid > 0)
 	/*
 	 * Affichage onglets
 	 */
-	$head = societe_prepare_head($societe);
+	$head = societe_prepare_head($object);
 
 	dol_fiche_head($head, 'prospect', $langs->trans("ThirdParty"),0,'company');
 
@@ -101,51 +101,51 @@ if ($socid > 0)
 
 	print '<table class="border" width="100%">';
 	print '<tr><td width="25%">'.$langs->trans("ThirdPartyName").'</td><td colspan="3">';
-	$societe->next_prev_filter="te.client in (2,3)";
-	print $form->showrefnav($societe,'socid','',($user->societe_id?0:1),'rowid','nom','','');
+	$object->next_prev_filter="te.client in (2,3)";
+	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom','','');
 	print '</td></tr>';
 
 	// Address
 	print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">';
-	dol_print_address($societe->address,'gmap','thirdparty',$societe->id);
+	dol_print_address($object->address,'gmap','thirdparty',$object->id);
 	print "</td></tr>";
 
 	// Zip / Town
-	print '<tr><td nowrap="nowrap">'.$langs->trans('Zip').' / '.$langs->trans("Town").'</td><td colspan="3">'.$societe->cp.(($societe->cp && $societe->ville)?' / ':'').$societe->ville.'</td>';
+	print '<tr><td nowrap="nowrap">'.$langs->trans('Zip').' / '.$langs->trans("Town").'</td><td colspan="3">'.$object->zip.(($object->zip && $object->town)?' / ':'').$societe->town.'</td>';
 	print '</tr>';
 
 	// Country
 	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-	$img=picto_from_langcode($societe->country_code);
-	if ($societe->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$societe->country,$langs->trans("CountryIsInEEC"),1,0);
-	else print ($img?$img.' ':'').$societe->country;
+	$img=picto_from_langcode($object->country_code);
+	if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
+	else print ($img?$img.' ':'').$object->country;
 	print '</td></tr>';
 
 	// Phone
-	print '<tr><td>'.$langs->trans("Phone").'</td><td style="min-width: 25%;">'.dol_print_phone($societe->tel,$societe->country_code,0,$societe->id,'AC_TEL').'</td>';
-	print '<td>'.$langs->trans("Fax").'</td><td style="min-width: 25%;">'.dol_print_phone($societe->fax,$societe->country_code).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Phone").'</td><td style="min-width: 25%;">'.dol_print_phone($object->tel,$object->country_code,0,$object->id,'AC_TEL').'</td>';
+	print '<td>'.$langs->trans("Fax").'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->country_code).'</td></tr>';
 
 	// EMail
-	print '<td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($societe->email,0,$societe->id,'AC_EMAIL').'</td></tr>';
+	print '<td>'.$langs->trans('EMail').'</td><td colspan="3">'.dol_print_email($object->email,0,$object->id,'AC_EMAIL').'</td></tr>';
 
 	// Web
-	print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a></td></tr>";
+	print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$object->url\">$object->url</a></td></tr>";
 
 	// Level of prospect
 	print '<tr><td nowrap>';
 	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 	print $langs->trans('ProspectLevelShort');
 	print '<td>';
-	if (($_GET['action'] != 'editlevel') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;socid='.$societe->id.'">'.img_edit($langs->trans('SetLevel'),1).'</a></td>';
+	if (($_GET['action'] != 'editlevel') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetLevel'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($_GET['action'] == 'editlevel')
 	{
-		$formcompany->form_prospect_level($_SERVER['PHP_SELF'].'?socid='.$societe->id,$societe->fk_prospectlevel,'prospect_level_id',1);
+		$formcompany->form_prospect_level($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->fk_prospectlevel,'prospect_level_id',1);
 	}
 	else
 	{
-		print $societe->getLibLevel();
+		print $object->getLibLevel();
 		//$formcompany->form_prospect_level($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->mode_reglement,'none');
 	}
 	print "</td>";
@@ -160,22 +160,25 @@ if ($socid > 0)
 		print '<td><td align="right">';
 		if ($user->rights->societe->creer)
 		{
-			print '<a href="'.DOL_URL_ROOT.'/comm/multiprix.php?id='.$societe->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+			print '<a href="'.DOL_URL_ROOT.'/comm/multiprix.php?id='.$object->id.'">'.img_edit($langs->trans("Modify")).'</a>';
 		}
 		print '</td></tr></table>';
-		print '</td><td colspan="3">'.$societe->price_level."</td>";
+		print '</td><td colspan="3">'.$object->price_level."</td>";
 		print '</tr>';
 	}
 
 	// Status
-	print '<tr><td>'.$langs->trans("StatusProsp").'</td><td colspan="2">'.$societe->getLibProspStatut(4).'</td>';
+	print '<tr><td>'.$langs->trans("StatusProsp").'</td><td colspan="2">'.$object->getLibProspStatut(4).'</td>';
 	print '<td>';
-	if ($societe->stcomm_id != -1) print '<a href="fiche.php?socid='.$societe->id.'&amp;stcomm=-1&amp;action=cstc">'.img_action(0,-1).'</a>';
-	if ($societe->stcomm_id !=  0) print '<a href="fiche.php?socid='.$societe->id.'&amp;stcomm=0&amp;action=cstc">'.img_action(0,0).'</a>';
-	if ($societe->stcomm_id !=  1) print '<a href="fiche.php?socid='.$societe->id.'&amp;stcomm=1&amp;action=cstc">'.img_action(0,1).'</a>';
-	if ($societe->stcomm_id !=  2) print '<a href="fiche.php?socid='.$societe->id.'&amp;stcomm=2&amp;action=cstc">'.img_action(0,2).'</a>';
-	if ($societe->stcomm_id !=  3) print '<a href="fiche.php?socid='.$societe->id.'&amp;stcomm=3&amp;action=cstc">'.img_action(0,3).'</a>';
+	if ($object->stcomm_id != -1) print '<a href="fiche.php?socid='.$object->id.'&amp;stcomm=-1&amp;action=cstc">'.img_action(0,-1).'</a>';
+	if ($object->stcomm_id !=  0) print '<a href="fiche.php?socid='.$object->id.'&amp;stcomm=0&amp;action=cstc">'.img_action(0,0).'</a>';
+	if ($object->stcomm_id !=  1) print '<a href="fiche.php?socid='.$object->id.'&amp;stcomm=1&amp;action=cstc">'.img_action(0,1).'</a>';
+	if ($object->stcomm_id !=  2) print '<a href="fiche.php?socid='.$object->id.'&amp;stcomm=2&amp;action=cstc">'.img_action(0,2).'</a>';
+	if ($object->stcomm_id !=  3) print '<a href="fiche.php?socid='.$object->id.'&amp;stcomm=3&amp;action=cstc">'.img_action(0,3).'</a>';
 	print '</td></tr>';
+
+	// Sales representative
+	include(DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php');
 
     // Module Adherent
     if ($conf->adherent->enabled)
@@ -185,7 +188,7 @@ if ($socid > 0)
         print '<tr><td width="25%" valign="top">'.$langs->trans("LinkedToDolibarrMember").'</td>';
         print '<td colspan="3">';
         $adh=new Adherent($db);
-        $result=$adh->fetch('','',$societe->id);
+        $result=$adh->fetch('','',$object->id);
         if ($result > 0)
         {
             $adh->ref=$adh->getFullName($langs);
@@ -213,7 +216,7 @@ if ($socid > 0)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("Summary").'</td>';
-	print '<td align="right"><a href="'.DOL_URL_ROOT.'/comm/prospect/recap-prospect.php?socid='.$societe->id.'">'.$langs->trans("ShowProspectPreview").'</a></td></tr></table></td>';
+	print '<td align="right"><a href="'.DOL_URL_ROOT.'/comm/prospect/recap-prospect.php?socid='.$object->id.'">'.$langs->trans("ShowProspectPreview").'</a></td></tr></table></td>';
 	print '</tr>';
 	print '</table>';
 	print '<br>';
@@ -235,7 +238,7 @@ if ($socid > 0)
 		$sql.= " WHERE p.fk_soc = s.rowid";
 		$sql.= " AND p.fk_statut = c.id";
 		$sql.= " AND p.entity = ".$conf->entity;
-		$sql.= " AND s.rowid = ".$societe->id;
+		$sql.= " AND s.rowid = ".$object->id;
 		$sql.= " ORDER BY p.datep DESC";
 
 		$resql=$db->query($sql);
@@ -249,8 +252,8 @@ if ($socid > 0)
 			{
 		        print '<table class="noborder" width="100%">';
 			    print '<tr class="liste_titre">';
-    			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$societe->id.'">'.$langs->trans("AllPropals").' ('.$num.')</a></td>';
-    			print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$societe->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
+    			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$object->id.'">'.$langs->trans("AllPropals").' ('.$num.')</a></td>';
+    			print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
     			print '</tr></table></td>';
     			print '</tr>';
 			}
@@ -296,7 +299,7 @@ if ($socid > 0)
 
     if ($conf->propal->enabled && $user->rights->propale->creer)
     {
-        print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socid='.$societe->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
     }
 
     // Add action
@@ -304,7 +307,7 @@ if ($socid > 0)
     {
         if ($user->rights->agenda->myactions->create)
         {
-            print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddAction").'</a>';
+            print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAction").'</a>';
         }
         else
         {
@@ -321,7 +324,7 @@ if ($socid > 0)
     {
         print '<br>';
         // List of contacts
-        show_contacts($conf,$langs,$db,$societe,$_SERVER["PHP_SELF"].'?socid='.$societe->id);
+        show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
     }
 
     if (! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
@@ -329,10 +332,10 @@ if ($socid > 0)
         print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
 
         // List of todo actions
-        show_actions_todo($conf,$langs,$db,$societe);
+        show_actions_todo($conf,$langs,$db,$object);
 
         // List of done actions
-        show_actions_done($conf,$langs,$db,$societe);
+        show_actions_done($conf,$langs,$db,$object);
     }
 }
 

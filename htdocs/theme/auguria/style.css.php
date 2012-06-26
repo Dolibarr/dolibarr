@@ -1178,45 +1178,46 @@ border-left: 1px solid #000000;
 /* Main boxes */
 
 table.noborder {
-border-collapse: collapse;
-border-top-color: #FEFEFE;
+    border-collapse: collapse;
+    border-top-color: #FEFEFE;
 
-border-right-width: 1px;
-border-right-color: #BBBBBB;
-border-right-style: solid;
+    border-right-width: 1px;
+    border-right-color: #BBBBBB;
+    border-right-style: solid;
 
-border-left-width: 1px;
-border-left-color: #BBBBBB;
-border-left-style: solid;
+    border-left-width: 1px;
+    border-left-color: #BBBBBB;
+    border-left-style: solid;
 
-border-bottom-width: 1px;
-border-bottom-color: #BBBBBB;
-border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: #BBBBBB;
+    border-bottom-style: solid;
 
-margin-left: 1px;
-margin-right: 1px;
-margin-bottom: 2px;
-margin-top: 0px;
+    margin-left: 1px;
+    margin-right: 1px;
+    margin-bottom: 2px;
+    margin-top: 0px;
 
--moz-box-shadow: 4px 4px 4px #CCC;
--webkit-box-shadow: 4px 4px 4px #CCC;
-box-shadow: 4px 4px 4px #CCC;
+    -moz-box-shadow: 4px 4px 4px #CCC;
+    -webkit-box-shadow: 4px 4px 4px #CCC;
+    box-shadow: 4px 4px 4px #CCC;
 }
 
 table.noborder tr {
-border-top-color: #FEFEFE;
+    border-top-color: #FEFEFE;
 
-border-right-width: 1px;
-border-right-color: #BBBBBB;
-border-right-style: solid;
+    border-right-width: 1px;
+    border-right-color: #BBBBBB;
+    border-right-style: solid;
 
-border-left-width: 1px;
-border-left-color: #BBBBBB;
-border-left-style: solid;
+    border-left-width: 1px;
+    border-left-color: #BBBBBB;
+    border-left-style: solid;
+	height: 20px;
 }
 
 table.noborder td {
-padding: 1px 2px 2px 1px;			/* t r b l */
+	padding: 1px 2px 2px 1px;			/* t r b l */
 }
 
 table.nobordernopadding {

@@ -92,7 +92,12 @@ $server->wsdl->addComplexType(
         'ref' => array('name'=>'name','type'=>'xsd:string'),
         'ref_ext' => array('name'=>'ref_ext','type'=>'xsd:string'),
         'fk_user_author' => array('name'=>'fk_user_author','type'=>'xsd:string'),
-        'date' => array('name'=>'date','type'=>'xsd:date'),
+        'client' => array('name'=>'client','type'=>'xsd:string'),
+        'supplier' => array('name'=>'supplier','type'=>'xsd:string'),
+        'customer_code' => array('name'=>'customer_code','type'=>'xsd:string'),
+        'supplier_code' => array('name'=>'supplier_code','type'=>'xsd:string'),
+        'customer_code_accountancy' => array('name'=>'customer_code_accountancy','type'=>'xsd:string'),
+        'supplier_code_accountancy' => array('name'=>'supplier_code_accountancy','type'=>'xsd:string'),
         'date_creation' => array('name'=>'date_creation','type'=>'xsd:dateTime'),
         'date_modification' => array('name'=>'date_modification','type'=>'xsd:dateTime'),
         'note' => array('name'=>'note','type'=>'xsd:string'),
@@ -111,9 +116,53 @@ $server->wsdl->addComplexType(
     	'profid2' => array('name'=>'profid2','type'=>'xsd:string'),
     	'profid3' => array('name'=>'profid3','type'=>'xsd:string'),
     	'profid4' => array('name'=>'profid4','type'=>'xsd:string'),
-    	'prefix' => array('name'=>'prefix','type'=>'xsd:string'),
+    	'profid5' => array('name'=>'profid5','type'=>'xsd:string'),
+    	'profid6' => array('name'=>'profid6','type'=>'xsd:string'),
+        'capital' => array('name'=>'capital','type'=>'xsd:string'),
     	'vat_used' => array('name'=>'vat_used','type'=>'xsd:string'),
     	'vat_number' => array('name'=>'vat_number','type'=>'xsd:string')
+    )
+);
+
+// Define other specific objects
+$server->wsdl->addComplexType(
+    'filterthirdparty',
+    'complexType',
+    'struct',
+    'all',
+    '',
+    array(
+        //'limit' => array('name'=>'limit','type'=>'xsd:string'),
+        'client' => array('name'=>'client','type'=>'xsd:string'),
+        'supplier' => array('name'=>'supplier','type'=>'xsd:string')
+    )
+);
+
+$server->wsdl->addComplexType(
+    'ThirdPartiesArray',
+    'complexType',
+    'array',
+    '',
+    'SOAP-ENC:Array',
+    array(),
+    array(
+        array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:thirdparty[]')
+    ),
+    'tns:thirdparty'
+);
+$server->wsdl->addComplexType(
+    'ThirdPartiesArray2',
+    'complexType',
+    'array',
+    'sequence',
+    '',
+    array(
+        'thirdparty' => array(
+            'name' => 'thirdparty',
+            'type' => 'tns:thirdparty',
+            'minOccurs' => '0',
+            'maxOccurs' => 'unbounded'
+        )
     )
 );
 
@@ -133,12 +182,40 @@ $server->register(
     // Exit values
     array('result'=>'tns:result','thirdparty'=>'tns:thirdparty'),
     $ns,
-    $ns.'#getVersions',
+    $ns.'#getThirdParty',
     $styledoc,
     $styleuse,
-    'WS to get Versions'
+    'WS to get a thirdparty from its id, ref or ref_ext'
 );
 
+// Register WSDL
+$server->register(
+    'createThirdParty',
+    // Entry values
+    array('authentication'=>'tns:authentication','thirdparty'=>'tns:thirdparty'),
+    // Exit values
+    array('result'=>'tns:result','id'=>'xsd:string'),
+    $ns,
+    $ns.'#createThirdParty',
+    $styledoc,
+    $styleuse,
+    'WS to create a thirdparty'
+);
+
+
+// Register WSDL
+$server->register(
+    'getListOfThirdParties',
+    // Entry values
+    array('authentication'=>'tns:authentication','filterthirdparty'=>'tns:filterthirdparty'),
+    // Exit values
+    array('result'=>'tns:result','thirdparties'=>'tns:ThirdPartiesArray2'),
+    $ns,
+    $ns.'#getListOfThirdParties',
+    $styledoc,
+    $styleuse,
+    'WS to get list of thirdparties id and ref'
+);
 
 
 // Full methods code
@@ -179,7 +256,14 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 				    	'id' => $thirdparty->id,
 			   			'ref' => $thirdparty->name,
 			   			'ref_ext' => $thirdparty->ref_ext,
-			    		'fk_user_author' => $thirdparty->fk_user_author,
+			   			'status' => $thirdparty->status,
+			            'client' => $thirdparty->client,
+			            'supplier' => $thirdparty->fournisseur,
+				        'customer_code' => $thirdparty->code_client,
+			            'supplier_code' => $thirdparty->code_fournisseur,
+				        'customer_code_accountancy' => $thirdparty->code_compta,
+			            'supplier_code_accountancy' => $thirdparty->code_compta_fournisseur,
+			            'fk_user_author' => $thirdparty->fk_user_author,
 			    		'date_creation' => dol_print_date($thirdparty->datec,'dayhourrfc'),
 			    		'date_modification' => dol_print_date($thirdparty->date_update,'dayhourrfc'),
 			            'address' => $thirdparty->address,
@@ -197,8 +281,11 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 				        'profid2' => $thirdparty->idprof2,
 				        'profid3' => $thirdparty->idprof3,
 				        'profid4' => $thirdparty->idprof4,
-				        'prefix' => $thirdparty->prefix_comm,
-				        'vat_used' => $thirdparty->tva_assuj,
+				        'profid5' => $thirdparty->idprof5,
+				        'profid6' => $thirdparty->idprof6,
+			            'capital' => $thirdparty->capital,
+			   			'barcode' => $thirdparty->barcode,
+			            'vat_used' => $thirdparty->tva_assuj,
 				        'vat_number' => $thirdparty->tva_intra
 			    ));
 			}
@@ -221,6 +308,188 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 	}
 
 	return $objectresp;
+}
+
+
+
+/**
+ * Create a thirdparty
+ *
+ * @param	array		$authentication		Array of authentication information
+ * @param	Societe		$thirdparty		    Thirdparty
+ * @return	array							Array result
+ */
+function createThirdParty($authentication,$thirdparty)
+{
+    global $db,$conf,$langs;
+
+    $now=dol_now();
+
+    dol_syslog("Function: createThirdParty login=".$authentication['login']);
+
+    if ($authentication['entity']) $conf->entity=$authentication['entity'];
+
+    // Init and check authentication
+    $objectresp=array();
+    $errorcode='';$errorlabel='';
+    $error=0;
+    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    // Check parameters
+    if (empty($thirdparty['ref']))
+    {
+        $error++; $errorcode='KO'; $errorlabel="Name is mandatory.";
+    }
+
+
+    if (! $error)
+    {
+        include_once(DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php');
+
+        $newobject=new Societe($db);
+        $newobject->ref=$thirdparty['ref'];
+        $newobject->name=$thirdparty['ref'];
+        $newobject->ref_ext=$thirdparty['ref_ext'];
+        $newobject->status=$thirdparty['status'];
+        $newobject->client=$thirdparty['client'];
+        $newobject->fournisseur=$thirdparty['supplier'];
+        $newobject->code_client=$thirdparty['customer_code'];
+        $newobject->code_fournisseur=$thirdparty['supplier_code'];
+        $newobject->code_compta=$thirdparty['customer_code_accountancy'];
+        $newobject->code_compta_fournisseur=$thirdparty['supplier_code_accountancy'];
+        $newobject->date_creation=$now;
+        $newobject->note=$thirdparty['note'];
+        $newobject->address=$thirdparty['address'];
+        $newobject->zip=$thirdparty['zip'];
+        $newobject->town=$thirdparty['town'];
+
+        $newobject->country_id=$thirdparty['country_id'];
+        if ($thirdparty['country_code']) $newobject->country_id=getCountry($thirdparty['country_code'],3);
+        $newobject->province_id=$thirdparty['province_id'];
+        //if ($thirdparty['province_code']) $newobject->province_code=getCountry($thirdparty['province_code'],3);
+
+        $newobject->phone=$thirdparty['phone'];
+        $newobject->fax=$thirdparty['fax'];
+        $newobject->email=$thirdparty['email'];
+        $newobject->url=$thirdparty['url'];
+        $newobject->idprof1=$thirdparty['profid1'];
+        $newobject->idprof2=$thirdparty['profid2'];
+        $newobject->idprof3=$thirdparty['profid3'];
+        $newobject->idprof4=$thirdparty['profid4'];
+        $newobject->idprof5=$thirdparty['profid5'];
+        $newobject->idprof6=$thirdparty['profid6'];
+
+        $newobject->capital=$thirdparty['capital'];
+
+        $newobject->barcode=$thirdparty['barcode'];
+        $newobject->tva_assuj=$thirdparty['vat_used'];
+        $newobject->tva_intra=$thirdparty['vat_number'];
+
+        $newobject->canvas=$thirdparty['canvas'];
+
+        $db->begin();
+
+        $result=$newobject->create($fuser);
+        if ($result <= 0)
+        {
+            $error++;
+        }
+
+        if (! $error)
+        {
+            $db->commit();
+            $objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$newobject->id,'ref'=>$newobject->ref);
+        }
+        else
+        {
+            $db->rollback();
+            $error++;
+            $errorcode='KO';
+            $errorlabel=$newobject->error;
+        }
+    }
+
+    if ($error)
+    {
+        $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+    }
+
+    return $objectresp;
+}
+
+
+
+/**
+ * getListOfThirdParties
+ *
+ * @param	array		$authentication		Array of authentication information
+ * @param	array		$filterthirdparty	Filter fields
+ * @return	array							Array result
+ */
+function getListOfThirdParties($authentication,$filterthirdparty)
+{
+    global $db,$conf,$langs;
+
+    $now=dol_now();
+
+    dol_syslog("Function: getListOfThirdParties login=".$authentication['login']);
+
+    if ($authentication['entity']) $conf->entity=$authentication['entity'];
+
+    // Init and check authentication
+    $objectresp=array();
+    $arraythirdparties=array();
+    $errorcode='';$errorlabel='';
+    $error=0;
+    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    // Check parameters
+
+    if (! $error)
+    {
+        $sql ="SELECT rowid, nom as ref, ref_ext";
+        $sql.=" FROM ".MAIN_DB_PREFIX."societe";
+        $sql.=" WHERE entity=".$conf->entity;
+        foreach($filterthirdparty as $key => $val)
+        {
+            if ($key == 'client'   && $val != '')  $sql.=" AND client = ".$db->escape($val);
+            if ($key == 'supplier' && $val != '')  $sql.=" AND fournisseur = ".$db->escape($val);
+        }
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $num=$db->num_rows($resql);
+
+            $i=0;
+            while ($i < $num)
+            {
+                $obj=$db->fetch_object($resql);
+                $arraythirdparties[]=array('id'=>$obj->rowid,'ref'=>$obj->ref,'ref_ext'=>$obj->ref_ext);
+                $i++;
+            }
+        }
+        else
+        {
+            $error++;
+            $errorcode=$db->lasterrno();
+            $errorlabel=$db->lasterror();
+        }
+    }
+
+    if ($error)
+    {
+        $objectresp = array(
+            'result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel),
+            'thirdparties'=>$arraythirdparties
+        );
+    }
+    else
+    {
+        $objectresp = array(
+            'result'=>array('result_code' => 'OK', 'result_label' => ''),
+            'thirdparties'=>$arraythirdparties
+        );
+    }
+
+    return $objectresp;
 }
 
 

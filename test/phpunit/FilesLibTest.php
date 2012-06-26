@@ -114,6 +114,38 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
     	print __METHOD__."\n";
     }
 
+
+	/**
+     * testDolBasename
+     *
+     * @return	int
+     */
+    public function testDolBasename()
+    {
+    	global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+        $result=dol_basename('adir/afile');
+    	print __METHOD__." result=".$result."\n";
+		$this->assertEquals('afile',$result);
+
+		$result=dol_basename('adir/afile/');
+    	print __METHOD__." result=".$result."\n";
+		$this->assertEquals('afile',$result);
+
+		$result=dol_basename('adir/νεο');    // With cyrillic data. Here basename fails to return correct value
+    	print __METHOD__." result=".$result."\n";
+		$this->assertEquals('νεο',$result);
+
+		$result=dol_basename('adir/νεο/');    // With cyrillic data. Here basename fails to return correct value
+    	print __METHOD__." result=".$result."\n";
+		$this->assertEquals('νεο',$result);
+    }
+
+
    /**
     * testDolCountNbOfLine
     *

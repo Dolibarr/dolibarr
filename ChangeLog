@@ -5,6 +5,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.3 compared to 3.2 *****
 For users:
+- New: Can filter list of proposal, order or invoice on sales representative.
 - New: Add supplier ref on supplier orders.
 - New: Can export supplier orders.
 - New: First feature to install external plugins from gui. 
@@ -26,6 +27,7 @@ For users:
   not work with this.
 
 For developers:
+- New: Add webservice for thirdparty creation and list.
 - New: A module can overwrite templates parts.
 - New: Can add a link on title field of added dictionnary.
 - New: Uniformize code.
@@ -39,7 +41,7 @@ to make a backup of your database before making upgrade.
 For users:
 - New: Each user can remove/add its own boxes.
 - New: Add signature at end of predefined email text.
-- New: Can use personalized fields of products/services.
+- New: Can use personalized fields on products/services.
 - New: Can attach files on social contributions.
 - New: Show payments terms and conditions onto muscadet template.
 - New: Can open back a closed commercial proposal.
@@ -57,7 +59,7 @@ For users:
 - New: task #10606 : more comprehensive message error.
 - New: task #11278 : Option into point of sale module to add services in list.
 - New: task #11261 : Add an entry into menu called "New shipment".
-- New: [ task #187 ] Gerer les evenement recurrents dans les imports ical
+- New: [ task #187 ] Gerer les evenement recurrents dans les imports ical.
 - New: Make option MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT available by default.
 - New: Can build PDF in USLetter format or canada format (change paper size).
 - New: Can export into Excel 2007 format.
@@ -72,7 +74,7 @@ For users:
 - New: Reduce seriously size of packages.
 - New: Can define country code for import.
 - New: When invoice was generated from order, order date is visible on PDF, after order ref.
-- New: [ task #181 ] Hide password of click2dial in user card
+- New: [ task #181 ] Hide password of click2dial in user card.
 - New: Chart are faster to build
 - New: Value of data into charts are visible on mouse hover.
 - New: Import wizard can import contacts.

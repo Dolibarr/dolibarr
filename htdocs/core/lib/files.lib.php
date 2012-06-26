@@ -23,6 +23,17 @@
  *  \brief		Library for file managing functions
  */
 
+/**
+ * Make a basename working with all page code (default PHP basenamed fails with cyrillic).
+ * We supose dir separator for input is '/'.
+ *
+ * @param	string	$pathfile	String to find basename.
+ * @return	string				Basename of input
+ */
+function dol_basename($pathfile)
+{
+    return preg_replace('/^.*\/([^\/]+)$/','$1',rtrim($pathfile,'/'));
+}
 
 /**
  *  Scan a directory and return a list of files/directories.
