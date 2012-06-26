@@ -108,7 +108,7 @@ print '<tr '.$bc[false].'>';
 print '<td nowrap="nowrap">'.$langs->trans("User").'</td><td>'.$user->getNomUrl(0).'</td></tr>';
 print '<tr '.$bc[true].'>';
 print '<td nowrap="nowrap">'.$langs->trans("PreviousConnexion").'</td><td>';
-if ($user->datepreviouslogin) print dol_print_date($user->datepreviouslogin,"dayhour");
+if ($user->datepreviouslogin) print dol_print_date($user->datepreviouslogin,"dayhour",'tzuser');
 else print $langs->trans("Unknown");
 print '</td>';
 print "</tr>\n";
