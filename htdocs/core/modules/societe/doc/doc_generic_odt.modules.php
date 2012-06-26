@@ -311,6 +311,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			}
 		}
 
+		$this->error='UnknownError';
 		return -1;
 	}
 
