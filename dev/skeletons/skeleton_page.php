@@ -43,8 +43,8 @@ if (! $res && file_exists("../../../dolibarr/htdocs/main.inc.php")) $res=@includ
 if (! $res && file_exists("../../../../dolibarr/htdocs/main.inc.php")) $res=@include("../../../../dolibarr/htdocs/main.inc.php");   // Used on dev env only
 if (! $res && file_exists("../../../../../dolibarr/htdocs/main.inc.php")) $res=@include("../../../../../dolibarr/htdocs/main.inc.php");   // Used on dev env only
 if (! $res) die("Include of main fails");
-// Change this following line to use the correct relative path from htdocs (do not remove DOL_DOCUMENT_ROOT)
-require_once(DOL_DOCUMENT_ROOT."/skeleton/skeleton_class.class.php");
+// Change this following line to use the correct relative path from htdocs
+dol_include_once("/module/class/skeleton_class.class.php");
 
 // Load traductions files requiredby by page
 $langs->load("companies");
@@ -118,9 +118,55 @@ jQuery(document).ready(function() {
 </script>';
 
 
-
-// Example 2 : Adding jquery code
+// Example 2 : Adding links to objects
 $somethingshown=$myobject->showLinkedObjectBlock();
+
+
+// Example 3 : List of data
+if ($action == 'list')
+{
+    $sql = "SELECT";
+    $sql.= " t.field1,";
+    $sql.= " t.field2";
+    $sql.= " FROM ".MAIN_DB_PREFIX."skeleton as t";
+    $sql.= " WHERE field3 = 'xxx'";
+    $sql.= " ORDER BY field1 ASC";
+
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans('field1'),$_SERVER['PHP_SELF'],'t.field1','',$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('field2'),$_SERVER['PHP_SELF'],'t.field2','',$param,'',$sortfield,$sortorder);
+    print '</tr>';
+
+    dol_syslog($script_file." sql=".$sql, LOG_DEBUG);
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $num = $db->num_rows($resql);
+        $i = 0;
+        if ($num)
+        {
+            while ($i < $num)
+            {
+                $obj = $db->fetch_object($resql);
+                if ($obj)
+                {
+                    // You can use here results
+                    print '<tr><td>';
+                    print $obj->field1;
+                    print $obj->field2;
+                    print '</td></tr>';
+                }
+                $i++;
+            }
+        }
+    }
+    else
+    {
+        $error++;
+        dol_print_error($db);
+    }
+}
+
 
 
 // End of page
