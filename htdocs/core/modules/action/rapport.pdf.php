@@ -166,8 +166,8 @@ class CommActionRapport
 
 		$sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
 		$sql.= " a.id, a.datep as dp, a.datep2 as dp2,";
-		$sql.= " a.fk_contact, a.note, a.percent as percent,";
-		$sql.= " c.libelle,";
+		$sql.= " a.fk_contact, a.note, a.percent as percent, a.label,";
+		$sql.= " c.code, c.libelle,";
 		$sql.= " u.login";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
@@ -191,7 +191,10 @@ class CommActionRapport
 				$y = max($y, $pdf->GetY(), $y0, $y1, $y2, $y3);
 
 				// Calculate height of text
-				$text=dol_trunc(dol_htmlentitiesbr_decode($obj->note),150);
+				$text='';
+				if (! preg_match('/^'.preg_quote($obj->label).'/',$obj->note)) $text=$obj->label."\n";
+				$text.=$obj->note;
+				$text=dol_trunc(dol_htmlentitiesbr_decode($text),150);
 				//print 'd'.$text; exit;
 				$nboflines=dol_nboflines($text);
 				$heightlinemax=max(2*$height,$nboflines*$height);
@@ -215,7 +218,7 @@ class CommActionRapport
 				$y1 = $pdf->GetY();
 
 				$pdf->SetXY(60,$y);
-				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($obj->libelle),32), 0, 'L', 0);
+				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Action".$obj->code)),32), 0, 'L', 0);
 				$y2 = $pdf->GetY();
 
 				$pdf->SetXY(106,$y);

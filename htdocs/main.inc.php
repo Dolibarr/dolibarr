@@ -997,21 +997,15 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             if (! empty($conf->fckeditor->enabled) && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor'))
             {
                 print '<!-- Includes JS for CKEditor -->'."\n";
-                if (constant('JS_CKEDITOR'))
-                {
-                    print '<script type="text/javascript">var CKEDITOR_BASEPATH = \''.JS_CKEDITOR.'\';</script>'."\n";
-                    print '<script type="text/javascript" src="'.JS_CKEDITOR.'ckeditor_basic.js"></script>'."\n";
-                }
-                else
-                {
-                    print '<script type="text/javascript">';
-                    print 'var CKEDITOR_BASEPATH = \''.DOL_URL_ROOT.'/includes/ckeditor/\';'."\n";
-                    print 'var ckeditorConfig = \''.dol_buildpath('/theme/'.$conf->theme.'/ckeditor/config.js',1).'\';'."\n";
-                    print 'var ckeditorFilebrowserBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
-                    print 'var ckeditorFilebrowserImageBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Type=Image&Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
-                    print '</script>'."\n";
-                    print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/ckeditor/ckeditor_basic.js"></script>'."\n";
-                }
+                $pathckeditor=DOL_URL_ROOT.'/includes/ckeditor/';
+                if (constant('JS_CKEDITOR')) $pathckeditor=JS_CKEDITOR;    // To use external ckeditor js lib
+                print '<script type="text/javascript">';
+                print 'var CKEDITOR_BASEPATH = \''.$pathckeditor.'\';'."\n";
+                print 'var ckeditorConfig = \''.dol_buildpath('/theme/'.$conf->theme.'/ckeditor/config.js',1).'\';'."\n";
+                print 'var ckeditorFilebrowserBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
+                print 'var ckeditorFilebrowserImageBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Type=Image&Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
+                print '</script>'."\n";
+                print '<script type="text/javascript" src="'.$pathckeditor.'ckeditor_basic.js"></script>'."\n";
             }
 
             // Global js function
