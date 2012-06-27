@@ -52,7 +52,7 @@ CKEDITOR.editorConfig = function( config )
 	 	['Undo','Redo','-','Find','Replace'],
 	    ['Font','FontSize'],
 	 	['Bold','Italic','Underline','Strike','Subscript','Superscript','-','TextColor','RemoveFormat'],
-	 	['NumberedList','BulletedList','Outdent','Indent'],
+	 	['NumberedList','BulletedList','Outdent','Indent','CreateDiv'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	 	['Link','Unlink','Anchor','Image','Table','SpecialChar']
 	 ];
