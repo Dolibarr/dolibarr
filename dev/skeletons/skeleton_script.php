@@ -112,7 +112,7 @@ else print "Object with id ".$myobject->id." deleted\n";
 // An example of a direct SQL read without using the fetch method
 /*
 $sql = "SELECT field1, field2";
-$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
+$sql.= " FROM ".MAIN_DB_PREFIX."skeleton";
 $sql.= " WHERE field3 = 'xxx'";
 $sql.= " ORDER BY field1 ASC";
 
