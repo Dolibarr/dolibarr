@@ -62,11 +62,11 @@ if ($action == 'specimen')
 	$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 	foreach($dirmodels as $reldir)
 	{
-	    $file=dol_buildpath($reldir."core/modules/expedition/doc/pdf_".$modele.".modules.php",0);
+	    $file=dol_buildpath($reldir."core/modules/expedition/doc/pdf_expedition_".$modele.".modules.php",0);
 		if (file_exists($file))
 		{
 			$filefound=1;
-			$classname = "pdf_".$modele;
+			$classname = "pdf_expedition_".$modele;
 			break;
 		}
 	}
