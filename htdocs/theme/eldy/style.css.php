@@ -1812,7 +1812,7 @@ div.titre {
 	font-weight: bold;
 	color: rgb(<?php print $colortext; ?>);
 	text-decoration: none;
-	text-shadow: 2px 2px 4px #BFBFBF;
+	text-shadow: 1px 1px 2px #CFCFCF;
 }
 
 #dolpaymenttable { width: 600px; font-size: 13px; }

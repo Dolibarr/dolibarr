@@ -58,7 +58,7 @@ if (! isset($argv[1]))
 
 if ($db->type != 'mysql' && $db->type != 'mysqli')
 {
-	print "Error: This script works with mysql driver only\n";
+	print "Error: This script works with mysql or mysqli driver only\n";
 	exit;
 }
 
@@ -67,15 +67,10 @@ print 'Tablename='.$argv[1]."\n";
 print "Current dir is ".getcwd()."\n";
 
 
-
-//--------------------------------
-// Build skeleton_class.class.php
-//--------------------------------
-
-$table=$argv[1];
+// Define array with list of properties
 $property=array();
+$table=$argv[1];
 $foundprimary=0;
-
 $resql=$db->DDLDescTable($table);
 if ($resql)
 {
@@ -121,9 +116,32 @@ if ($resql)
 else
 {
 	print "Error: Failed to get description for table '".$table."'.\n";
+	return false;
 }
 //var_dump($property);
 
+// Define substitute select parameters
+$varpropselect="\n";
+$cleanparam='';
+$i=0;
+foreach($property as $key => $prop)
+{
+    $i++;
+    if ($prop['field'] != 'rowid')
+    {
+        $varpropselect.="\t\t\$sql.= \" ";
+        $varpropselect.="t.".$prop['field'];
+        if ($i < count($property)) $varpropselect.=",";
+        $varpropselect.="\";";
+        $varpropselect.="\n";
+    }
+}
+
+
+
+//--------------------------------
+// Build skeleton_class.class.php
+//--------------------------------
 
 // Define working variables
 $table=strtolower($table);
@@ -296,22 +314,7 @@ $targetcontent=preg_replace('/\$sql.= " field1=".\(isset\(\$this->field1\)\?"\'"
 $targetcontent=preg_replace('/\$sql.= " field2=".\(isset\(\$this->field2\)\?"\'".\$this->db->escape\(\$this->field2\)."\'":"null"\)."";/', '', $targetcontent);
 
 // Substitute select parameters
-$varprop="\n";
-$cleanparam='';
-$i=0;
-foreach($property as $key => $prop)
-{
-	$i++;
-	if ($prop['field'] != 'rowid')
-	{
-		$varprop.="\t\t\$sql.= \" ";
-		$varprop.="t.".$prop['field'];
-		if ($i < count($property)) $varprop.=",";
-		$varprop.="\";";
-		$varprop.="\n";
-	}
-}
-$targetcontent=preg_replace('/\$sql\.= " t\.field1,";/', $varprop, $targetcontent);
+$targetcontent=preg_replace('/\$sql\.= " t\.field1,";/', $varpropselect, $targetcontent);
 $targetcontent=preg_replace('/\$sql\.= " t\.field2";/', '', $targetcontent);
 
 // Substitute select set parameters
@@ -404,6 +407,54 @@ if ($fp)
 	print "File '".$outfile."' has been built in current directory.\n";
 }
 else $error++;
+
+
+
+//--------------------------------
+// Build skeleton_page.php
+//--------------------------------
+
+// Read skeleton_page.php file
+$skeletonfile=$path.'skeleton_page.php';
+$sourcecontent=file_get_contents($skeletonfile);
+if (! $sourcecontent)
+{
+    print "\n";
+    print "Error: Failed to read skeleton sample '".$skeletonfile."'\n";
+    print "Try to run script from skeletons directory.\n";
+    exit;
+}
+
+// Define output variables
+$outfile='out.'.$classmin.'_page.php';
+$targetcontent=$sourcecontent;
+
+// Substitute class name
+$targetcontent=preg_replace('/skeleton_class\.class\.php/', $classmin.'.class.php', $targetcontent);
+$targetcontent=preg_replace('/skeleton_script\.php/', $classmin.'_script.php', $targetcontent);
+$targetcontent=preg_replace('/\$element=\'skeleton\'/', '\$element=\''.$classmin.'\'', $targetcontent);
+$targetcontent=preg_replace('/\$table_element=\'skeleton\'/', '\$table_element=\''.$classmin.'\'', $targetcontent);
+$targetcontent=preg_replace('/Skeleton_Class/', $classname, $targetcontent);
+$targetcontent=preg_replace('/skeleton/', $classname, $targetcontent);
+
+// Substitute comments
+$targetcontent=preg_replace('/This file is an example to create a new class file/', 'Put here description of this class', $targetcontent);
+$targetcontent=preg_replace('/\s*\/\/\.\.\./', '', $targetcontent);
+$targetcontent=preg_replace('/Put here some comments/','Initialy built by build_class_from_table on '.strftime('%Y-%m-%d %H:%M',mktime()), $targetcontent);
+
+// Substitute table name
+$targetcontent=preg_replace('/MAIN_DB_PREFIX."mytable/', 'MAIN_DB_PREFIX."'.$tablenoprefix, $targetcontent);
+
+// Build file
+$fp=fopen($outfile,"w");
+if ($fp)
+{
+    fputs($fp, $targetcontent);
+    fclose($fp);
+    print "File '".$outfile."' has been built in current directory.\n";
+}
+else $error++;
+
 
 // -------------------- END OF BUILD_CLASS_FROM_TABLE SCRIPT --------------------
 

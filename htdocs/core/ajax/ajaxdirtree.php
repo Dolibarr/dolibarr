@@ -33,13 +33,14 @@ if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
 $res=@include("../../main.inc.php");
 include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
 include_once(DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php');
 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php');
 include_once(DOL_DOCUMENT_ROOT."/ecm/class/ecmdirectory.class.php");
 
 $openeddir = GETPOST('openeddir');
 $modulepart= GETPOST('modulepart');
-$selecteddir = urldecode(GETPOST('dir'));        // relative patch. We must keep the urldecode here because para comes from jqueyrFileTree that url encode it.
+$selecteddir = jsUnEscape(GETPOST('dir'));        // relative path. We must decode using same encoding function used by javascript: escape()
 if ($selecteddir != '/') $selecteddir = preg_replace('/\/$/','',$selecteddir);    // We removed last '/' except if it is '/'
 
 $langs->load("ecm");
@@ -89,7 +90,6 @@ foreach($sqltree as $keycursor => $val)
     }
 }
 
-//var_dump($sqltree);
 
 if( file_exists($fullpathselecteddir) )
 {
@@ -111,6 +111,7 @@ if( file_exists($fullpathselecteddir) )
 
     		    // Try to find key into $sqltree
     	        $val=array();
+
 		        foreach($sqltree as $key => $tmpval)
 		        {
     	            //print "-- ".$val['fullrelativename']." vs ".(($selecteddir != '/'?$selecteddir.'/':'').$file).'<br>';

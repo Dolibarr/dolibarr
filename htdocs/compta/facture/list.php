@@ -112,7 +112,19 @@ $now=dol_now();
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
-// None
+// Do we click on purge search criteria ?
+if (GETPOST("button_removefilter_x"))
+{
+    $search_categ='';
+    $search_user='';
+    $search_sale='';
+    $search_ref='';
+    $search_refcustomer='';
+    $search_societe='';
+    $search_montant_ht='';
+    $year='';
+    $month='';
+}
 
 
 /*
@@ -122,7 +134,7 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);   
 llxHeader('',$langs->trans('Bill'),'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
 
 $form = new Form($db);
-$htmlother = new FormOther($db);
+$formother = new FormOther($db);
 $formfile = new FormFile($db);
 $bankaccountstatic=new Account($db);
 $facturestatic=new Facture($db);
@@ -135,10 +147,11 @@ $sql.= ' f.paye as paye, f.fk_statut, f.note,';
 $sql.= ' s.nom, s.rowid as socid';
 if (! $sall) $sql.= ', SUM(pf.amount) as am';   // To be able to sort on status
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
-if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= ', '.MAIN_DB_PREFIX.'facture as f';
 if (! $sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
 else $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as fd ON fd.fk_facture = f.rowid';
+// We'll need this table joined to the select in order to filter by sale
+if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 if ($search_user > 0)
 {
     $sql.=", ".MAIN_DB_PREFIX."element_contact as ec";
@@ -191,6 +204,7 @@ else if ($year > 0)
 {
     $sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
+if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 if ($search_user > 0)
 {
     $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='facture' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".$search_user;
@@ -199,7 +213,7 @@ if (! $sall)
 {
     $sql.= ' GROUP BY f.rowid, f.facnumber, f.type, f.increment, f.total, f.total_ttc,';
     $sql.= ' f.datef, f.date_lim_reglement,';
-    $sql.= ' f.paye, f.fk_statut,';
+    $sql.= ' f.paye, f.fk_statut, f.note,';
     $sql.= ' s.nom, s.rowid';
 }
 else
@@ -225,11 +239,12 @@ if ($resql)
     }
 
     $param='&socid='.$socid;
-    if ($month) $param.='&month='.$month;
-    if ($year)  $param.='&year=' .$year;
-    if ($search_ref)      $param.='&search_ref=' .$search_ref;
-    if ($search_societe)  $param.='&search_societe=' .$search_societe;
-    if ($search_user > 0) $param.='&search_user=' .$search_user;
+    if ($month)              $param.='&month='.$month;
+    if ($year)               $param.='&year=' .$year;
+    if ($search_ref)         $param.='&search_ref=' .$search_ref;
+    if ($search_societe)     $param.='&search_societe=' .$search_societe;
+    if ($search_sale > 0)    $param.='&search_sale=' .$search_sale;
+    if ($search_user > 0)    $param.='&search_user=' .$search_user;
     if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
     if ($search_montant_ttc) $param.='&search_montant_ttc='.$search_montant_ttc;
     print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->nom:''),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
@@ -238,6 +253,13 @@ if ($resql)
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     print '<table class="liste" width="100%">';
 
+ 	// If the user can view prospects other than his'
+ 	if ($user->rights->societe->client->voir || $socid)
+ 	{
+	 	$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
+		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
+	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
+ 	}
     // If the user can view prospects other than his'
     if ($user->rights->societe->client->voir || $socid)
     {
@@ -272,7 +294,7 @@ if ($resql)
     print '<td class="liste_titre" align="center">';
     if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
     print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-    $htmlother->select_year($year?$year:-1,'year',1, 20, 5);
+    $formother->select_year($year?$year:-1,'year',1, 20, 5);
     print '</td>';
     print '<td class="liste_titre" align="left">&nbsp;</td>';
     print '<td class="liste_titre" align="left">';

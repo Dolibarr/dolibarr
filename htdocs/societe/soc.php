@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008	   Patrick Raguin       <patrick.raguin@auguria.net>
@@ -629,7 +629,7 @@ else
         $object->forme_juridique_code=$_POST['forme_juridique_code'];
         /* Show create form */
 
-        print_fiche_titre($langs->trans("NewCompany"));
+        print_fiche_titre($langs->trans("NewThirdParty"));
 
         if ($conf->use_javascript_ajax)
         {
@@ -760,6 +760,7 @@ else
             print '</td></tr>';
 
             // Category
+            /* This must be set into category tab, like for customer category
             if ($object->fournisseur)
             {
                 $load = $object->LoadSupplierCateg();
@@ -773,7 +774,7 @@ else
                         print '</td></tr>';
                     }
                 }
-            }
+            }*/
         }
 
         // Status
@@ -860,7 +861,7 @@ else
                 print "\n";
                 print '<script language="JavaScript" type="text/javascript">';
                 print "function CheckVAT(a) {\n";
-                print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,230);\n";
+                print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,300);\n";
                 print "}\n";
                 print '</script>';
                 print "\n";
@@ -1747,43 +1748,8 @@ else
             print '</td></tr>';
         }
 
-        // Commercial
-        print '<tr><td>';
-        print '<table width="100%" class="nobordernopadding"><tr><td>';
-        print $langs->trans('SalesRepresentatives');
-        print '<td><td align="right">';
-        if ($user->rights->societe->creer)
-        print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$object->id.'">'.img_edit().'</a>';
-        else
-        print '&nbsp;';
-        print '</td></tr></table>';
-        print '</td>';
-        print '<td colspan="3">';
-
-        $listsalesrepresentatives=$object->getSalesRepresentatives($user);
-        $nbofsalesrepresentative=count($listsalesrepresentatives);
-        if ($nbofsalesrepresentative > 3)   // We print only number
-        {
-            print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$object->id.'">';
-            print $nbofsalesrepresentative;
-            print '</a>';
-        }
-        else if ($nbofsalesrepresentative > 0)
-        {
-            $userstatic=new User($db);
-            $i=0;
-            foreach($listsalesrepresentatives as $val)
-            {
-                $userstatic->id=$val['id'];
-                $userstatic->lastname=$val['name'];
-                $userstatic->firstname=$val['firstname'];
-                print $userstatic->getNomUrl(1);
-                $i++;
-                if ($i < $nbofsalesrepresentative) print ', ';
-            }
-        }
-        else print $langs->trans("NoSalesRepresentativeAffected");
-        print '</td></tr>';
+        // Sales representative
+        include(DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php');
 
         // Module Adherent
         if ($conf->adherent->enabled)

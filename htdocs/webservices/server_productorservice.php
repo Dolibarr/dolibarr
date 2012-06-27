@@ -125,7 +125,7 @@ $server->wsdl->addComplexType(
     'all',
     '',
     array(
-//    	'limit' => array('name'=>'limit','type'=>'xsd:string'),
+        //'limit' => array('name'=>'limit','type'=>'xsd:string'),
 		'type' => array('name'=>'type','type'=>'xsd:string'),
 	    'status_tobuy' => array('name'=>'status_tobuy','type'=>'xsd:string'),
 	    'status_tosell' => array('name'=>'status_tosell','type'=>'xsd:string'),

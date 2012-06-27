@@ -257,7 +257,8 @@ if ($action == 'refreshmanual')
                 }
             }
             else
-            {
+           {
+                dol_syslog("Parent is root");
                 $fk_parent=0;   // Parent is root
             }
 
@@ -265,7 +266,7 @@ if ($action == 'refreshmanual')
             {
                 $ecmdirtmp=new EcmDirectory($db);
                 $ecmdirtmp->ref                = 'NOTUSEDYET';
-                $ecmdirtmp->label              = basename($dirdesc['fullname']);
+                $ecmdirtmp->label              = dol_basename($dirdesc['fullname']);
                 $ecmdirtmp->description        = '';
                 $ecmdirtmp->fk_parent          = $fk_parent;
 
@@ -283,6 +284,10 @@ if ($action == 'refreshmanual')
                     $sqltree[]=$newdirsql; // We complete fulltree for following loops
                     //var_dump($sqltree);
                     $adirwascreated=1;
+                }
+                else
+                {
+                    dol_syslog("Failed to create directory ".$ecmdirtmp->label, LOG_ERR);
                 }
             }
             else {
@@ -559,7 +564,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 	    function loadandshowpreview(filedirname,section)
 	    {
-	        //alert('filename='+filename);
+	        alert('filename='+filename);
 	        jQuery('#ecmfileview').empty();
 
 	        url='<?php echo dol_buildpath('/core/ajax/ajaxdirpreview.php',1); ?>?action=preview&module=ecm&section='+section+'&file='+urlencode(filedirname);
@@ -584,10 +589,12 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 		jQuery(document).ready( function() {
     	    jQuery('#filetree').fileTree({ root: '<?php print dol_escape_js($openeddir); ?>',
+    	    	// Called if we click on a file (not a dir)
             	script: '<?php echo DOL_URL_ROOT.'/core/ajax/ajaxdirtree.php?modulepart=ecm&openeddir='.urlencode($openeddir); ?>',
                 folderEvent: 'click',
                 multiFolder: false  },
-                function(file) {
+	            // Called if we click on a file (not a dir)
+            	function(file) {
                 	jQuery("#mesg").hide();
                     loadandshowpreview(file,0);
              	}
