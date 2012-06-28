@@ -243,7 +243,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 			if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS))
     		{
         		// Tel
-        		if ($targetcontact->tel) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($targetcontact->tel);
+        		if ($targetcontact->phone_pro) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($targetcontact->phone_pro);
         		// Fax
         		if ($targetcontact->fax) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($targetcontact->fax);
         		// EMail
