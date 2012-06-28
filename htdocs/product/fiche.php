@@ -126,7 +126,7 @@ if (empty($reshook))
         $action="";
     }
 
-    if ($action == 'setaccountancy_code_buy')
+    if ($action == 'setaccountancy_code_sell')
     {
         $object->fetch($id,$ref);
         $result = $object->setValueFrom('accountancy_code_sell', $_POST['accountancy_code_sell']);
