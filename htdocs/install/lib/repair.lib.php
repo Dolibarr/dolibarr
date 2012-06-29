@@ -40,6 +40,7 @@ function checkElementExist($id, $table)
 		if ($num > 0) return true;
 		else return false;
 	}
+	else return true; // for security
 }
 
 /**
@@ -55,6 +56,9 @@ function checkLinkedElements($sourcetype, $targettype)
 
 	$elements=array();
 	$deleted=0;
+
+	$sourcetable=$sourcetype;
+	$targettable=$targettype;
 
 	if ($sourcetype == 'shipping') $sourcetable = 'expedition';
 	else if ($targettype == 'shipping') $targettable = 'expedition';
