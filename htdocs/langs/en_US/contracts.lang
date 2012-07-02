@@ -39,6 +39,7 @@ ConfirmCloseService=Are you sure you want to close this service with date <b>%s<
 ValidateAContract=Validate a contract
 ActivateService=Activate service
 ConfirmActivateService=Are you sure you want to activate this service with date <b>%s</b> ?
+RefContract=Contract reference
 DateContract=Contract date
 DateServiceActivate=Service activation date
 DateServiceUnactivate=Service deactivation date
