@@ -57,6 +57,7 @@ SendShippingRef=Envoi bon d'expédition %s
 ActionsOnShipping=Événements sur l'expédition
 LinkToTrackYourPackage=Lien pour suivi de votre colis
 ShipmentCreationIsDoneFromOrder=Pour le moment, la création d'une nouvelle expédition se fait depuis la fiche commande.
+RelatedShippings=Expédition(s) associée(s)
 
 # Sending methods
 SendingMethodCATCH=Enlèvement par le client
