@@ -36,7 +36,7 @@
 	url = git+ssh://hregis@doliforge.org/gitroot/highcharts/highcharts.git
 [submodule "htdocs/custom/joomla"]
 	path = htdocs/custom/joomla
-	url = git+ssh://hregis@doliforge.org/gitroot/joomla/joomla.git
+	url = gitolite@doliforge.org:joomla/joomla.git
 [submodule "htdocs/custom/donation"]
 	path = htdocs/custom/donation
 	url = git+ssh://hregis@doliforge.org/gitroot/capnetworks/donate.git
