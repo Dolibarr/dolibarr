@@ -138,7 +138,9 @@ class Product extends CommonObject
 
 	//! Contains detail of stock of product into each warehouse
 	var $stock_warehouse=array();
-	
+
+	var $oldcopy;
+
 	var $oldcopy;
 
 
@@ -405,7 +407,9 @@ class Product extends CommonObject
 		global $langs, $conf;
 
 		$error=0;
-		
+
+		$this->db->begin();
+
 		$this->db->begin();
 
 		// Verification parametres
@@ -508,7 +512,7 @@ class Product extends CommonObject
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 			}
-			
+
 			if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref != $this->ref))
 			{
 				// We remove directory
@@ -527,7 +531,7 @@ class Product extends CommonObject
 					}
 				}
 			}
-			
+
 			if (! $error)
 			{
 				$this->db->commit();
@@ -618,7 +622,26 @@ class Product extends CommonObject
     				    dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
     				}
                 }
-                
+
+                if (! $error)
+                {
+                	// We remove directory
+                	$ref = dol_sanitizeFileName($this->ref);
+                	if ($conf->product->dir_output)
+                	{
+                		$dir = $conf->product->dir_output . "/" . $ref;
+                		if (file_exists($dir))
+                		{
+                			$res=@dol_delete_dir_recursive($dir);
+                			if (! $res)
+                			{
+                				$this->error='ErrorFailToDeleteDir';
+                				$error++;
+                			}
+                		}
+                	}
+                }
+
                 if (! $error)
                 {
                 	// We remove directory
@@ -2403,9 +2426,12 @@ class Product extends CommonObject
 	{
 		$this->stock_reel = 0;
 
-		$sql = "SELECT reel, fk_entrepot, pmp";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock";
-		$sql.= " WHERE fk_product = '".$this->id."'";
+		$sql = "SELECT ps.reel, ps.fk_entrepot, ps.pmp";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
+		$sql.= ", ".MAIN_DB_PREFIX."entrepot as w";
+		$sql.= " WHERE w.entity = (".getEntity('warehouse', 1).")";
+		$sql.= " AND w.rowid = ps.fk_entrepot";
+		$sql.= " AND ps.fk_product = ".$this->id;
 
 		dol_syslog(get_class($this)."::load_stock sql=".$sql);
 		$result = $this->db->query($sql);
