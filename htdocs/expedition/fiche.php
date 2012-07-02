@@ -872,9 +872,6 @@ else
             $soc = new Societe($db);
             $soc->fetch($object->socid);
 
-            // delivery link
-            $object->fetchObjectLinked($object->id,$object->element,-1,-1);
-
             $head=shipping_prepare_head($object);
             dol_fiche_head($head, 'shipping', $langs->trans("Sending"), 0, 'sending');
 
