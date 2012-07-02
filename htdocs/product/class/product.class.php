@@ -141,8 +141,6 @@ class Product extends CommonObject
 
 	var $oldcopy;
 
-	var $oldcopy;
-
 
 	/**
 	 *  Constructor
