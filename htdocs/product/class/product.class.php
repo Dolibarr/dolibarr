@@ -139,6 +139,8 @@ class Product extends CommonObject
 	//! Contains detail of stock of product into each warehouse
 	var $stock_warehouse=array();
 
+	var $oldcopy;
+
 
 	/**
 	 *  Constructor
@@ -404,6 +406,8 @@ class Product extends CommonObject
 
 		$error=0;
 
+		$this->db->begin();
+
 		// Verification parametres
 		if (! $this->libelle) $this->libelle = 'MISSING LABEL';
 
@@ -505,7 +509,35 @@ class Product extends CommonObject
 				// Fin appel triggers
 			}
 
-			return 1;
+			if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref != $this->ref))
+			{
+				// We remove directory
+				if ($conf->product->dir_output)
+				{
+					$olddir = $conf->product->dir_output . "/" . dol_sanitizeFileName($this->oldcopy->ref);
+					$newdir = $conf->product->dir_output . "/" . dol_sanitizeFileName($this->ref);
+					if (file_exists($olddir))
+					{
+						$res=@dol_move($olddir, $newdir);
+						if (! $res)
+						{
+							$this->error='ErrorFailToMoveDir';
+							$error++;
+						}
+					}
+				}
+			}
+
+			if (! $error)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				return -$error;
+			}
 		}
 		else
 		{
@@ -601,6 +633,25 @@ class Product extends CommonObject
     					$this->error = $this->db->lasterror();
     				    dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
     				}
+                }
+
+                if (! $error)
+                {
+                	// We remove directory
+                	$ref = dol_sanitizeFileName($this->ref);
+                	if ($conf->product->dir_output)
+                	{
+                		$dir = $conf->product->dir_output . "/" . $ref;
+                		if (file_exists($dir))
+                		{
+                			$res=@dol_delete_dir_recursive($dir);
+                			if (! $res)
+                			{
+                				$this->error='ErrorFailToDeleteDir';
+                				$error++;
+                			}
+                		}
+                	}
                 }
 
 				if ($error)
@@ -2368,9 +2419,12 @@ class Product extends CommonObject
 	{
 		$this->stock_reel = 0;
 
-		$sql = "SELECT reel, fk_entrepot, pmp";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock";
-		$sql.= " WHERE fk_product = '".$this->id."'";
+		$sql = "SELECT ps.reel, ps.fk_entrepot, ps.pmp";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
+		$sql.= ", ".MAIN_DB_PREFIX."entrepot as w";
+		$sql.= " WHERE w.entity = (".getEntity('warehouse', 1).")";
+		$sql.= " AND w.rowid = ps.fk_entrepot";
+		$sql.= " AND ps.fk_product = ".$this->id;
 
 		dol_syslog(get_class($this)."::load_stock sql=".$sql);
 		$result = $this->db->query($sql);
