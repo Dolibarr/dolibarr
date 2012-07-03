@@ -40,7 +40,7 @@ $mesg=isset($_GET["mesg"])?'<div class="ok">'.$_GET["mesg"].'</div>':'';
 $id = GETPOST('id','int');
 
 // Security check
-if (! $user->rights->adherent->lire) accessforbidden();
+$result=restrictedArea($user,'adherent',$id);
 
 $object = new Adherent($db);
 $result=$object->fetch($id);

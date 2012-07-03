@@ -155,6 +155,10 @@ MigrationShippingDelivery2=Actualización de los datos de expediciones 2
 MigrationFinished=Actualización terminada
 LastStepDesc=<strong>Último paso</strong>: Indique aquí la cuenta y la contraseña del primer usuario que usted utilizará para conectarse a la aplicación. No pierda estos identificadores, es la cuenta que permite administrar el resto.
 ActivateModule=Activación del módulo %s
+LinkedElementsInvalidDeleted=han sido eliminados <b>%s</b> enlaces inválidos
+NothingToDelete=No se han encontrado enlaces inválidos
+SourceType=Origen
+TargetType=Destino
 #########
 # upgrade
 MigrationFixData=Corrección de datos desnormalizados

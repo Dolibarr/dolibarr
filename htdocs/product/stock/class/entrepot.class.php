@@ -76,6 +76,8 @@ class Entrepot extends CommonObject
 	 */
 	function create($user)
 	{
+		global $conf;
+
 		// Si libelle non defini, erreur
 		if ($this->libelle == '')
 		{
@@ -87,8 +89,8 @@ class Entrepot extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (datec, fk_user_author, label)";
-		$sql .= " VALUES ('".$this->db->idate($now)."',".$user->id.",'".$this->db->escape($this->libelle)."')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (entity, datec, fk_user_author, label)";
+		$sql .= " VALUES (".$conf->entity.",'".$this->db->idate($now)."',".$user->id.",'".$this->db->escape($this->libelle)."')";
 
 		dol_syslog(get_class($this)."::create sql=".$sql);
 		$result=$this->db->query($sql);
@@ -99,7 +101,7 @@ class Entrepot extends CommonObject
 			{
 				$this->id = $id;
 
-				if ( $this->update($id, $user) > 0)
+				if ($this->update($id, $user) > 0)
 				{
 					$this->db->commit();
 					return $id;
@@ -184,7 +186,6 @@ class Entrepot extends CommonObject
 	 */
 	function delete($user)
 	{
-
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."stock_mouvement";
@@ -338,7 +339,8 @@ class Entrepot extends CommonObject
 
 		$sql = "SELECT rowid, label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."entrepot";
-		$sql.= " WHERE statut = ".$status;
+		$sql.= " WHERE entity IN (".getEntity('warehouse', 1).")";
+		$sql.= " AND statut = ".$status;
 
 		$result = $this->db->query($sql);
 		$i = 0;
@@ -363,13 +365,13 @@ class Entrepot extends CommonObject
 	 */
 	function nb_products()
 	{
-		global $conf,$user;
-
 		$ret=array();
 
 		$sql = "SELECT sum(ps.reel) as nb, sum(ps.reel * ps.pmp) as value";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
-		$sql .= " WHERE ps.fk_entrepot = ".$this->id." AND ps.fk_product=p.rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
+		$sql.= ", ".MAIN_DB_PREFIX."product as p";
+		$sql.= " WHERE ps.fk_entrepot = ".$this->id;
+		$sql.= " AND ps.fk_product = p.rowid";
 
 		//print $sql;
 		$result = $this->db->query($sql);
