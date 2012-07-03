@@ -103,3 +103,6 @@
 [submodule "htdocs/custom/formbuilder"]
 	path = htdocs/custom/formbuilder
 	url = gitolite@doliforge.org:formbuilder/formbuilder.git
+[submodule "htdocs/custom/catalog"]
+	path = htdocs/custom/catalog
+	url = gitolite@doliforge.org:catalog/Catalog.git
