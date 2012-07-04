@@ -36,8 +36,7 @@ $langs->load("other");
 $langs->load("paypal");
 $langs->load("paybox");
 
-if (!$user->admin)
-  accessforbidden();
+if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
 
@@ -122,6 +121,14 @@ if ($conf->use_javascript_ajax)
             });
     });';
     print '</script>';
+}
+
+// Test if php curl exist
+$curlversion=@curl_version();
+if (empty($curlversion))
+{
+	$langs->load("errors");
+	$mesg='<div class="error">'.$langs->trans("ErrorPhpCurlNotInstalled").'</div>';
 }
 
 dol_htmloutput_mesg($mesg);
