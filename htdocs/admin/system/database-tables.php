@@ -77,14 +77,14 @@ else
 		print '<td>'.$langs->trans("TableName").'</td>';
 		print '<td colspan="2">'.$langs->trans("Type").'</td>';
 		print '<td>'.$langs->trans("Format").'</td>';
-		print '<td>'.$langs->trans("NbOfRecord").'</td>';
-		print '<td>Avg_row_length</td>';
-		print '<td>Data_length</td>';
-		print '<td>Max_Data_length</td>';
-		print '<td>Index_length</td>';
-		print '<td>Increment</td>';
-		print '<td>Last check</td>';
-		print '<td>Collation</td>';
+		print '<td align="right">'.$langs->trans("NbOfRecord").'</td>';
+		print '<td align="right">Avg_row_length</td>';
+		print '<td align="right">Data_length</td>';
+		print '<td align="right">Max_Data_length</td>';
+		print '<td align="right">Index_length</td>';
+		print '<td align="right">Increment</td>';
+		print '<td align="right">Last check</td>';
+		print '<td align="right">Collation</td>';
 		print "</tr>\n";
 
 		$sql = "SHOW TABLE STATUS";
