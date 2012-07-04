@@ -112,6 +112,8 @@ class modSociete extends DolibarrModules
 		$r++;
         $this->boxes[$r][1] = "box_contacts.php";
         $r++;
+        $this->boxes[$r][1] = "box_activity.php";
+        $r++;
 
 		// Permissions
 		$this->rights = array();

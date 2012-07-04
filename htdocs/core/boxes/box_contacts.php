@@ -71,8 +71,10 @@ class box_contacts extends ModeleBoxes
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT sp.rowid, sp.name, sp.firstname, sp.civilite, sp.datec, sp.tms";
+			$sql = "SELECT sp.rowid, sp.name, sp.firstname, sp.civilite, sp.datec, sp.tms, sp.fk_soc,";
+			$sql.= " s.nom as socname";
 			$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
 			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE sp.entity IN (".getEntity('societe', 1).")";
 			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND sp.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -87,6 +89,7 @@ class box_contacts extends ModeleBoxes
 				$num = $db->num_rows($result);
 
 				$contactstatic=new Contact($db);
+				$societestatic=new Societe($db);
 
 				$i = 0;
 				while ($i < $num)
@@ -99,6 +102,9 @@ class box_contacts extends ModeleBoxes
                     $contactstatic->firstname=$objp->firstname;
                     $contactstatic->civilite_id=$objp->civilite;
 
+                    $societestatic->id=$objp->fk_soc;
+                    $societestatic->name=$objp->socname;
+
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
                     'url' => DOL_URL_ROOT."/contact/fiche.php?id=".$objp->rowid);
@@ -107,7 +113,15 @@ class box_contacts extends ModeleBoxes
                     'text' => $contactstatic->getFullName($langs,1),
                     'url' => DOL_URL_ROOT."/contact/fiche.php?id=".$objp->rowid);
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
+                    $this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
+    				'logo' => ($objp->fk_soc > 0?'company':''),
+    				'url' => ($objp->fk_soc > 0?DOL_URL_ROOT."/societe/soc.php?socid=".$objp->fk_soc:''));
+
+                    $this->info_box_contents[$i][3] = array('td' => 'align="left"',
+                    'text' => $societestatic->name,
+                    'url' => DOL_URL_ROOT."/societe/soc.php?socid=".$objp->fk_soc);
+
+					$this->info_box_contents[$i][4] = array('td' => 'align="right"',
 					'text' => dol_print_date($datem, "day"));
 
 					$i++;

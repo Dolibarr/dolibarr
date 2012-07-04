@@ -68,55 +68,57 @@ $(document).ready(function() {
 		$('#viewval_' + $(this).attr('id')).hide();
 		$('#editval_' + $(this).attr('id')).show().click();
 	});
-
-	$('.editval_ckeditor').editable(urlSaveInPlace, {
-		type		: 'ckeditor',
-		id			: 'field',
-		onblur		: 'ignore',
-		tooltip		: tooltipInPlace,
-		placeholder	: '&nbsp;',
-		cancel		: cancelInPlace,
-		submit		: submitInPlace,
-		indicator	: indicatorInPlace,
-		ckeditor	: {
-			customConfig: ckeditorConfig,
-			toolbar: $('#ckeditor_toolbar').val(),
-			filebrowserBrowseUrl : ckeditorFilebrowserBrowseUrl,
-			filebrowserImageBrowseUrl : ckeditorFilebrowserImageBrowseUrl,
-			filebrowserWindowWidth : '900',
-            filebrowserWindowHeight : '500',
-            filebrowserImageWindowWidth : '900',
-            filebrowserImageWindowHeight : '500'
-		},
-		submitdata	: function(result, settings) {
-			return getParameters(this, 'ckeditor');
-		},
-		callback	: function(result, settings) {
-			getResult(this, result);
-		},
-		onreset		: function(result, settings) {
-			getDefault(settings);
-		}
-	});
-	$('.editkey_ckeditor').hover(
-			function () {
-				$('#viewval_' + $(this).attr('id')).addClass("viewval_hover");
+	
+	if (typeof ckeditorConfig != 'undefined') {
+		$('.editval_ckeditor').editable(urlSaveInPlace, {
+			type		: 'ckeditor',
+			id			: 'field',
+			onblur		: 'ignore',
+			tooltip		: tooltipInPlace,
+			placeholder	: '&nbsp;',
+			cancel		: cancelInPlace,
+			submit		: submitInPlace,
+			indicator	: indicatorInPlace,
+			ckeditor	: {
+				customConfig: ckeditorConfig,
+				toolbar: $('#ckeditor_toolbar').val(),
+				filebrowserBrowseUrl : ckeditorFilebrowserBrowseUrl,
+				filebrowserImageBrowseUrl : ckeditorFilebrowserImageBrowseUrl,
+				filebrowserWindowWidth : '900',
+	            filebrowserWindowHeight : '500',
+	            filebrowserImageWindowWidth : '900',
+	            filebrowserImageWindowHeight : '500'
 			},
-			function () {
-				$('#viewval_' + $(this).attr('id')).removeClass("viewval_hover");
+			submitdata	: function(result, settings) {
+				return getParameters(this, 'ckeditor');
+			},
+			callback	: function(result, settings) {
+				getResult(this, result);
+			},
+			onreset		: function(result, settings) {
+				getDefault(settings);
 			}
-	);
-	$('.editkey_ckeditor').click(function() {
-		$( '#viewval_' + $(this).attr('id') ).click();
-	});
-	$('.viewval_ckeditor.active').click(function() {
-		$('#viewval_' + $(this).attr('id').substr(8)).hide();
-		$('#editval_' + $(this).attr('id').substr(8)).show().click();
-	});
-	$('.editkey_ckeditor').click(function() {
-		$('#viewval_' + $(this).attr('id')).hide();
-		$('#editval_' + $(this).attr('id')).show().click();
-	});
+		});
+		$('.editkey_ckeditor').hover(
+				function () {
+					$('#viewval_' + $(this).attr('id')).addClass("viewval_hover");
+				},
+				function () {
+					$('#viewval_' + $(this).attr('id')).removeClass("viewval_hover");
+				}
+		);
+		$('.editkey_ckeditor').click(function() {
+			$( '#viewval_' + $(this).attr('id') ).click();
+		});
+		$('.viewval_ckeditor.active').click(function() {
+			$('#viewval_' + $(this).attr('id').substr(8)).hide();
+			$('#editval_' + $(this).attr('id').substr(8)).show().click();
+		});
+		$('.editkey_ckeditor').click(function() {
+			$('#viewval_' + $(this).attr('id')).hide();
+			$('#editval_' + $(this).attr('id')).show().click();
+		});
+	}
 	
 	$('.editval_string').editable(urlSaveInPlace, {
 		type		: 'text',

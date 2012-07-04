@@ -36,3 +36,8 @@ ALTER TABLE llx_commande_fournisseur CHANGE COLUMN fk_user_cloture fk_user_appro
 
 ALTER TABLE llx_mailing MODIFY COLUMN body mediumtext;
 ALTER TABLE llx_mailing ADD COLUMN extraparams varchar(255);
+
+
+ALTER TABLE llx_product MODIFY ref                       varchar(128)  NOT NULL;
+ALTER TABLE llx_product MODIFY ref_ext                   varchar(128);
+

@@ -72,6 +72,8 @@ class AllTests
 		$suite->addTestSuite('ImagesLibTest');
 		require_once dirname(__FILE__).'/FunctionsTest.php';
 		$suite->addTestSuite('FunctionsTest');
+		require_once dirname(__FILE__).'/Functions2Test.php';
+		$suite->addTestSuite('Functions2Test');
 
         require_once dirname(__FILE__).'/SecurityTest.php';
         $suite->addTestSuite('SecurityTest');
@@ -123,6 +125,8 @@ class AllTests
         $suite->addTestSuite('UserTest');
 		require_once dirname(__FILE__).'/UserGroupTest.php';
         $suite->addTestSuite('UserGroupTest');
+        require_once dirname(__FILE__).'/BankAccountTest.php';
+        $suite->addTestSuite('BankAccountTest');
 		require_once dirname(__FILE__).'/CompanyBankAccountTest.php';
         $suite->addTestSuite('CompanyBankAccountTest');
         require_once dirname(__FILE__).'/ChargeSocialesTest.php';

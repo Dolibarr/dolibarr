@@ -1646,7 +1646,7 @@ abstract class CommonObject
 
         $sourceid = (! empty($sourceid) ? $sourceid : $this->id);
         $targetid = (! empty($targetid) ? $targetid : $this->id);
-        $sourcetype = (! empty($sourcetype) ? $sourcetype : (! empty($this->origin) ? $this->origin : $this->element));
+        $sourcetype = (! empty($sourcetype) ? $sourcetype : $this->element);
         $targettype = (! empty($targettype) ? $targettype : $this->element);
 
         // Links beetween objects are stored in this table
@@ -2283,6 +2283,9 @@ abstract class CommonObject
         if ($objecttype == 'member') {
             $classpath = 'adherents/class'; $module='adherent'; $subelement='adherent';
         }
+        if ($objecttype == 'cabinetmed_cons') {
+            $classpath = 'cabinetmed/class'; $module='cabinetmed'; $subelement='cabinetmedcons';
+        }
 
         //print "objecttype=".$objecttype." module=".$module." subelement=".$subelement;
 
@@ -2294,13 +2297,15 @@ abstract class CommonObject
             $classfile = 'fournisseur.commande'; $classname='CommandeFournisseur';
         }
 
-        if ($conf->$module->enabled)
+        if (! empty($conf->$module->enabled))
         {
-            dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
-
-            $object = new $classname($this->db);
-            $ret=$object->fetch($objectid);
-            if ($ret > 0) return $object->getNomUrl($withpicto,$option);
+            $res=dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
+            if ($res)
+            {
+                $object = new $classname($this->db);
+                $ret=$object->fetch($objectid);
+                if ($ret > 0) return $object->getNomUrl($withpicto,$option);
+            }
         }
     }
 

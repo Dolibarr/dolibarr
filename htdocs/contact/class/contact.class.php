@@ -1013,7 +1013,7 @@ class Contact extends CommonObject
 		// Initialise parameters
 		$this->id=0;
 		$this->specimen=1;
-		$this->name = 'DOLIBARR';
+		$this->lastname = 'DOLIBARR';
 		$this->firstname = 'SPECIMEN';
 		$this->address = '61 jump street';
 		$this->zip = '75000';

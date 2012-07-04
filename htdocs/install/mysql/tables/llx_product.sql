@@ -22,10 +22,10 @@
 create table llx_product
 (
   rowid						integer AUTO_INCREMENT PRIMARY KEY,
-  ref                       varchar(32)  NOT NULL,
+  ref                       varchar(128)  NOT NULL,
   entity                    integer   DEFAULT 1 NOT NULL,   -- Multi company id
 
-  ref_ext                   varchar(32),                    -- reference into an external system (not used by dolibarr)
+  ref_ext                   varchar(128),                    -- reference into an external system (not used by dolibarr)
 
   datec						datetime,
   tms						timestamp,

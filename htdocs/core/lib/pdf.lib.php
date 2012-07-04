@@ -1417,6 +1417,18 @@ function pdf_getLinkedObjects($object,$outputlangs,$hookmanager=false)
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($objects[$i]->date,'day','',$outputlangs);
 			}
 		}
+		else if ($objecttype == 'contrat')
+		{
+			$outputlangs->load('contracts');
+			$num=count($objects);
+			for ($i=0;$i<$num;$i++)
+			{
+				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefContract");
+				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($objects[$i]->ref);
+				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DateContract");
+				$linkedobjects[$objecttype]['date_value'] = dol_print_date($objects[$i]->date_contrat,'day','',$outputlangs);
+			}
+		}
 	}
 
 	// For add external linked objects

@@ -159,7 +159,7 @@ if ($_GET["action"] == 'cstc')
  * View
  */
 
-$htmlother=new FormOther($db);
+$formother=new FormOther($db);
 
 $sql = "SELECT s.rowid, s.nom, s.ville, s.datec, s.datea, s.status as status,";
 $sql.= " st.libelle as stcomm, s.prefix_comm, s.fk_stcomm, s.fk_prospectlevel,";
@@ -271,14 +271,14 @@ if ($resql)
 	if ($conf->categorie->enabled)
 	{
 	 	$moreforfilter.=$langs->trans('Categories'). ': ';
-		$moreforfilter.=$htmlother->select_categories(2,$search_categ,'search_categ');
+		$moreforfilter.=$formother->select_categories(2,$search_categ,'search_categ');
 	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
 	}
  	// If the user can view prospects other than his'
  	if ($user->rights->societe->client->voir || $socid)
  	{
 	 	$moreforfilter.=$langs->trans('SalesRepresentatives'). ': ';
-		$moreforfilter.=$htmlother->select_salesrepresentatives($search_sale,'search_sale',$user);
+		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
  	}
  	if ($moreforfilter)
 	{
