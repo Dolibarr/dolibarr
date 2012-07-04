@@ -182,7 +182,9 @@ if (! $error)
             {
                 print '<div class="error">'.$db->error.'</div>';
                 if (! $db->connected) print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
+                //print '<a href="#" onClick="javascript: history.back();">';
                 print $langs->trans("ErrorGoBackAndCorrectParameters");
+                //print '</a>';
                 $error++;
             }
         }

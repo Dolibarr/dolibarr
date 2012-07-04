@@ -151,7 +151,7 @@ then
 fi
 #echo "mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile"
 #mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
-echo "mysql -P$port $base < $mydir/$dumpfile"
+echo "mysql -P$port -u$admin ***** $base < $mydir/$dumpfile"
 mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
 
 echo "Dolibarr data demo has been loaded."

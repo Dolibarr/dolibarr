@@ -411,13 +411,13 @@ if (! empty($force_install_message))
 	$force_install_databaserootlogin=preg_replace('/__SUPERUSERLOGIN__/','root',$force_install_databaserootlogin);
 	$force_install_databaserootpass=preg_replace('/__SUPERUSERPASSWORD__/','',$force_install_databaserootpass);
 	?>
-	<tr class="hidesqlite">
+	<tr class="hidesqlite hideroot">
 		<td colspan="3" class="label" align="center"><br>
 		<h3><?php echo $langs->trans("DatabaseSuperUserAccess"); ?></h3>
 		</td>
 	</tr>
 
-	<tr class="hidesqlite">
+	<tr class="hidesqlite hideroot">
 		<td class="label" valign="top"><?php echo $langs->trans("Login"); ?></td>
 		<td class="label" valign="top"><input type="text" id="db_user_root"
 			name="db_user_root" class="needroot"
@@ -434,7 +434,7 @@ if (! empty($force_install_message))
 
 	</tr>
 
-	<tr class="hidesqlite">
+	<tr class="hidesqlite hideroot">
 		<td class="label" valign="top"><?php echo $langs->trans("Password"); ?>
 		</td>
 		<td class="label" valign="top"><input type="text" autocomplete="off"
@@ -463,10 +463,12 @@ jQuery(document).ready(function() {
 		/*alert(jQuery("#db_create_database").attr("checked")); */
 		if (jQuery("#db_create_database").attr("checked") || jQuery("#db_create_user").attr("checked"))
 		{
+			jQuery(".hideroot").show();
 			jQuery(".needroot").removeAttr('disabled');
 		}
 		else
 		{
+			jQuery(".hideroot").hide();
 			jQuery(".needroot").attr('disabled','disabled');
 		}
 	}
@@ -549,9 +551,10 @@ function jscheckparam()
 }
 </script>
 
-	<?php
 
-	// $db->close();	Not database connexion yet
+<?php
 
-	pFooter($err,$setuplang,'jscheckparam');
-	?>
+// $db->close();	Not database connexion yet
+
+pFooter($err,$setuplang,'jscheckparam');
+?>
