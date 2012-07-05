@@ -209,12 +209,13 @@ class Societe extends CommonObject
 
         if ($result >= 0)
         {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, datea, fk_user_creat, canvas, status, ref_int, fk_stcomm)";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, datea, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm)";
             $sql.= " VALUES ('".$this->db->escape($this->name)."', ".$conf->entity.", '".$this->db->idate($now)."', '".$this->db->idate($now)."'";
             $sql.= ", ".($user->id > 0 ? "'".$user->id."'":"null");
             $sql.= ", ".($this->canvas ? "'".$this->canvas."'":"null");
             $sql.= ", ".$this->status;
             $sql.= ", ".($this->ref_int ? "'".$this->ref_int."'":"null");
+            $sql.= ", ".($this->ref_ext ? "'".$this->ref_ext."'":"null");
             $sql.= ", 0)";
 
             dol_syslog(get_class($this)."::create sql=".$sql);
@@ -388,6 +389,7 @@ class Societe extends CommonObject
         $this->id			= $id;
         $this->name=$this->name?trim($this->name):trim($this->nom);
         $this->nom=trim($this->nom);    // TODO obsolete
+        $this->ref_ext=trim($this->ref_ext);
         $this->address=$this->address?trim($this->address):trim($this->adresse);
         $this->adresse=$this->address;  // TODO obsolete
         $this->zip=$this->zip?trim($this->zip):trim($this->cp);
@@ -461,13 +463,14 @@ class Societe extends CommonObject
         {
             dol_syslog(get_class($this)."::Update verify ok");
 
-            $sql = "UPDATE ".MAIN_DB_PREFIX."societe";
-            $sql.= " SET nom = '" . $this->db->escape($this->name) ."'"; // Champ obligatoire
-            $sql.= ",datea = '".$this->db->idate($now)."'";
-            $sql.= ",address = '" . $this->db->escape($this->address) ."'";
+            $sql  = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
+            $sql .= "nom = '" . $this->db->escape($this->name) ."'"; // Required
+            $sql .= ",ref_ext = " .($this->ref_ext?"'".$this->db->escape($this->ref_ext) ."'":"null");
+            $sql .= ",datea = '".$this->db->idate($now)."'";
+            $sql .= ",address = '" . $this->db->escape($this->address) ."'";
 
-            $sql.= ",cp = ".($this->zip?"'".$this->zip."'":"null");
-            $sql.= ",ville = ".($this->town?"'".$this->db->escape($this->town)."'":"null");
+            $sql .= ",cp = ".($this->zip?"'".$this->zip."'":"null");
+            $sql .= ",ville = ".($this->town?"'".$this->db->escape($this->town)."'":"null");
 
             $sql .= ",fk_departement = '" . ($this->state_id?$this->state_id:'0') ."'";
             $sql .= ",fk_pays = '" . ($this->country_id?$this->country_id:'0') ."'";
