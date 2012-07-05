@@ -415,7 +415,7 @@ if ($id > 0)
 	/*
 	 * Last proposals
 	 */
-	if ($conf->propal->enabled && $user->rights->propale->lire)
+	if ($conf->propal->enabled && $user->rights->propal->lire)
 	{
 		$propal_static = new Propal($db);
 
@@ -442,7 +442,7 @@ if ($id > 0)
 		        print '<table class="noborder" width="100%">';
 
                 print '<tr class="liste_titre">';
-    			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$object->id.'">'.$langs->trans("AllPropals").' ('.$num.')</a></td>';
+    			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->id.'">'.$langs->trans("AllPropals").' ('.$num.')</a></td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
     			print '</tr></table></td>';
     			print '</tr>';
@@ -728,7 +728,7 @@ if ($id > 0)
 	 */
 	print '<div class="tabsAction">';
 
-	if ($conf->propal->enabled && $user->rights->propale->creer)
+	if ($conf->propal->enabled && $user->rights->propal->creer)
 	{
 		$langs->load("propal");
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
