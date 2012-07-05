@@ -201,7 +201,7 @@ Required= Requis
 Security= Sécurité
 Passwords= Mots de passe
 DoNotStoreClearPassword= Ne pas stocker de mot de passe en clair dans la base (Activation recommandée)
-MainDbPasswordFileConfEncrypted= Encrypter le mot de passe de la base dans le fichier conf.php (Activation recommandée)
+MainDbPasswordFileConfEncrypted= Chiffrer le mot de passe de la base dans le fichier conf.php (Activation recommandée)
 InstrucToEncodePass= Pour avoir le mot de passe de la base encodé dans le fichier de configuration <b>conf.php</b>, remplacer dans ce fichier la ligne<br><b>$dolibarr_main_db_pass="..."</b><br>par<br><b>$dolibarr_main_db_pass="crypted:%s"</b>
 InstrucToClearPass= Pour avoir le mot de passe de la base décodé (en clair) dans le fichier de configuration <b>conf.php</b>, remplacer dans ce fichier la ligne<br><b>$dolibarr_main_db_pass="crypted:..."</b><br>par<br><b>$dolibarr_main_db_pass="%s"</b>
 ProtectAndEncryptPdfFiles= Protection des pdf générés (Activation NON recommandée, rend inopérante la génération de PDF de masse)
