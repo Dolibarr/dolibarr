@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -222,23 +222,17 @@ else dol_print_error($db);
 /*
  * Last shipments
  */
-$clause = " WHERE ";
-
 $sql = "SELECT e.rowid, e.ref";
 $sql.= ", s.nom, s.rowid as socid";
 $sql.= ", c.ref as commande_ref, c.rowid as commande_id";
 $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.sourcetype in ('commande')";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'shipping' AND el.sourcetype IN ('commande')";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid AND el.sourcetype IN ('commande') AND el.targettype = 'shipping'";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
-if (!$user->rights->societe->client->voir && !$socid)
-{
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
-	$sql.= $clause." sc.fk_user = " .$user->id;
-	$clause = " AND ";
-}
-$sql.= $clause." e.fk_statut = 1";
-$sql.= " AND e.entity = ".$conf->entity;
+if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
+$sql.= " WHERE e.entity = ".$conf->entity;
+if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND sc.fk_user = " .$user->id;
+$sql.= " AND e.fk_statut = 1";
 if ($socid) $sql.= " AND c.fk_soc = ".$socid;
 $sql.= " ORDER BY e.date_delivery DESC";
 $sql.= $db->plimit(5, 0);
@@ -258,7 +252,7 @@ if ($resql)
 		{
 			$var=!$var;
 			$obj = $db->fetch_object($resql);
-			print "<tr $bc[$var]><td width=\"20%\"><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowSending"),"sending").' ';
+			print '<tr '.$bc[$var].'><td width="20%"><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowSending"),"sending").' ';
 			print $obj->ref.'</a></td>';
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
 			print '<td>';
@@ -280,8 +274,7 @@ else dol_print_error($db);
 
 print '</td></tr></table>';
 
-$db->close();
 
 llxFooter();
-
+$db->close();
 ?>

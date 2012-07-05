@@ -44,7 +44,7 @@ $id = GETPOST('id')?GETPOST('id'):GETPOST('ref');
 $ref = GETPOST('ref');
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit&stock',$id,'product','','',$fieldid);
+$result=restrictedArea($user,'produit&stock',$id,'product&product','','',$fieldid);
 
 $mesg = '';
 
@@ -217,6 +217,7 @@ if ($_GET["id"] || $_GET["ref"])
         print '</tr>';
 
         // Real stock
+        $product->load_stock();
 		print '<tr><td>'.$langs->trans("PhysicalStock").'</td>';
 		print '<td>'.$product->stock_reel;
 		if ($product->seuil_stock_alerte && ($product->stock_reel < $product->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockTooLow"));

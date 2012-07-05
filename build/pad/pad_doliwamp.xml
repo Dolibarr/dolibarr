@@ -94,8 +94,8 @@ DoliWamp is the auto-installer for Windows users with no technical knowledge to 
 	</Program_Descriptions>
 	<Web_Info>
 		<Application_URLs>
-			<Application_Info_URL>http://www.nltechno.com/pages/dolibarrwinbin.php</Application_Info_URL>
-			<Application_Order_URL>http://www.nltechno.com/pages/dolibarrwinbin.php</Application_Order_URL>
+			<Application_Info_URL>http://www.nltechno.com/doliwamp/</Application_Info_URL>
+			<Application_Order_URL>http://www.nltechno.com/doliwamp/</Application_Order_URL>
 			<Application_Screenshot_URL>http://www.dolibarr.org/images/dolibarr_screenshot1.png</Application_Screenshot_URL>
 			<Application_Icon_URL>http://www.dolibarr.org/images/dolibarr.gif</Application_Icon_URL>
 			<Application_XML_File_URL>http://www.dolibarr.org/files/pad_doliwamp.xml</Application_XML_File_URL>

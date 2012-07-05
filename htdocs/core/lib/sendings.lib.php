@@ -45,12 +45,17 @@ function shipping_prepare_head($object)
 	$head[$h][2] = 'shipping';
 	$h++;
 
-	if ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire && ! empty($object->linkedObjectsIds['delivery'][0]))
+	if ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->lire)
 	{
-		$head[$h][0] = DOL_URL_ROOT."/livraison/fiche.php?id=".$object->linkedObjectsIds['delivery'][0];
-		$head[$h][1] = $langs->trans("DeliveryCard");
-		$head[$h][2] = 'delivery';
-		$h++;
+		// delivery link
+		$object->fetchObjectLinked($object->id,$object->element);
+		if (! empty($object->linkedObjectsIds['delivery'][0]))
+		{
+			$head[$h][0] = DOL_URL_ROOT."/livraison/fiche.php?id=".$object->linkedObjectsIds['delivery'][0];
+			$head[$h][1] = $langs->trans("DeliveryCard");
+			$head[$h][2] = 'delivery';
+			$h++;
+		}
 	}
 
 	$head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".$object->id;

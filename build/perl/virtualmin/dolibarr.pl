@@ -30,7 +30,7 @@ return "Regis Houssin";
 # script_dolibarr_versions()
 sub script_dolibarr_versions
 {
-return ( "3.3.0", "3.2.0", "3.1.0", "3.0.1", "2.9.0" );
+return ( "3.3.0", "3.2.1", "3.1.1" );
 }
 
 sub script_dolibarr_category
@@ -41,13 +41,6 @@ return "Commerce";
 sub script_dolibarr_php_vers
 {
 return ( 5 );
-}
-
-sub script_dolibarr_php_vars
-{
-return ( [ 'memory_limit', '64M', '+' ],
-	[ 'upload_max_filesize', '10M', '+' ],
-	[ 'max_execution_time', '60', '+' ] );
 }
 
 sub script_dolibarr_php_modules
@@ -348,21 +341,32 @@ if ($opts->{'newdb'}) {
 return (1, "Dolibarr directory and tables deleted.");
 }
 
-# script_dolibarr_latest(version)
-# Returns a URL and regular expression or callback func to get the version
-sub script_dolibarr_latest
+# script_dolibarr_realversion(&domain, &opts)
+# Returns the real version number of some script install, or undef if unknown
+sub script_dolibarr_realversion
+{
+local ($d, $opts, $sinfo) = @_;
+local $lref = &read_file_lines("$opts->{'dir'}/filefunc.inc.php", 1);
+foreach my $l (@$lref) {
+		if ($l =~ /'DOL_VERSION','([0-9a-z\.\-]+)'/) {
+                return $1;
+                }
+        }
+return undef;
+}
+
+# script_dolibarr_check_latest(version)
+# Checks if some version is the latest for this project, and if not returns
+# a newer one. Otherwise returns undef.
+sub script_dolibarr_check_latest
 {
 local ($ver) = @_;
-if ($ver >= 3.0) {
-	return ( "http://sourceforge.net/projects/dolibarr/files/".
-		  "Dolibarr%20ERP-CRM",
-		  "(3\\.[0-9\\.]+)" );
-	}
-elsif ($ver >= 2.9) {
-	return ( "http://www.dolibarr.fr/files/stable/",
-		 "dolibarr\\-(2\\.[0-9\\.]+)" );
-	}
-return ( );
+local @vers = &osdn_package_versions("dolibarr",
+                $ver >= 3 ? "dolibarr\\-(3\\.[0-9\\.]+)\\.tgz" :
+                $ver >= 2.9 ? "dolibarr\\-(2\\.9\\.[0-9\\.]+)\\.tgz" :
+                              "dolibarr\\-(2\\.8\\.[0-9\\.]+)\\.tgz");
+return "Failed to find versions" if (!@vers);
+return $ver eq $vers[0] ? undef : $vers[0];
 }
 
 sub script_dolibarr_site

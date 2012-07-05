@@ -100,7 +100,7 @@ $chaine = preg_replace('/cellpadding="3" /i','cellpadding="1" cellspacing="1" ',
 $chaine = preg_replace('/class="h"/i','class="liste_titre"',$chaine);
 $chaine = preg_replace('/<th colspan="2">/i','<td>',$chaine);
 $chaine = preg_replace('/th>/i','td>',$chaine);
-// Titres
+// Titles
 $chaine = preg_replace('/<h1([^>]*)>/i','<div class="titre">',$chaine);
 $chaine = preg_replace('/<h2>/i','<div class="titre">',$chaine);
 $chaine = preg_replace('/<\/h1>/i','</div><br>',$chaine);
@@ -110,6 +110,8 @@ $chaine = preg_replace('/<td class="e">/i','<td class="impair">',$chaine);
 $chaine = preg_replace('/<td class="v">/i','<td class="pair">',$chaine);
 
 $chaine = preg_replace('/<div class="titre">Configuration<\/div><br>/i','',$chaine);
+// Add LF
+$chaine = preg_replace('/(pcntl_[a-z]+),/','$1, ',$chaine);
 
 if (isset($title))
 {

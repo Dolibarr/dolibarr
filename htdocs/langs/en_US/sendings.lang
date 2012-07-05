@@ -57,6 +57,7 @@ SendShippingRef=Send shipment %s
 ActionsOnShipping=Events on shipment
 LinkToTrackYourPackage=Link to track your package
 ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the order card.
+RelatedShippings=Related shippings
 
 # Sending methods
 SendingMethodCATCH=Catch by customer
