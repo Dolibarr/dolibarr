@@ -99,10 +99,10 @@ if (($conf->propal->enabled && $user->rights->propale->lire) ||
 }
 
 // Recherche Propal
-if ($conf->propal->enabled && $user->rights->propale->lire)
+if ($conf->propal->enabled && $user->rights->propal->lire)
 {
 	$var=false;
-	print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal.php">';
+	print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal/list.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAProposal").'</td></tr>';
@@ -137,7 +137,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 /*
  * Draft proposals
  */
-if ($conf->propal->enabled && $user->rights->propale->lire)
+if ($conf->propal->enabled && $user->rights->propal->lire)
 {
 	$sql = "SELECT p.rowid, p.ref, p.total_ht, s.rowid as socid, s.nom as name, s.client, s.canvas";
 	$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
@@ -189,7 +189,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 			}
 		}
 		print "</table><br>";
-		
+
 		$db->free($resql);
 	}
 	else
@@ -252,7 +252,7 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 			}
 		}
 		print "</table><br>";
-		
+
 		$db->free($resql);
 	}
 }
@@ -468,7 +468,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire && 0) // TODO A REFA
 /*
  * Opened proposals
  */
-if ($conf->propal->enabled && $user->rights->propale->lire)
+if ($conf->propal->enabled && $user->rights->propal->lire)
 {
 	$langs->load("propal");
 
