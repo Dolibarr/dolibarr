@@ -176,15 +176,12 @@ class Conf
 						{
 							$modulename = strtolower($reg[1]);
 							$partname = strtolower($reg[2]);
-							//$varname = $partname.'_modules';  // TODO deprecated
-							//if (! isset($this->$varname) || ! is_array($this->$varname)) { $this->$varname = array(); } // TODO deprecated
 							if (! isset($this->modules_parts[$partname]) || ! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
 							$arrValue = json_decode($value,true);
 							if (is_array($arrValue) && ! empty($arrValue)) $value = $arrValue;
 							else if (in_array($partname,array('login','menus','substitutions','triggers','tpl','theme'))) $value = '/'.$modulename.'/core/'.$partname.'/';
 							else if (in_array($partname,array('models'))) $value = '/'.$modulename.'/';
 							else if ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';
-							//$this->$varname = array_merge($this->$varname, array($modulename => $value));  // TODO deprecated
 							$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value));
 						}
                         // If this is a module constant (must be at end)
@@ -200,7 +197,7 @@ class Conf
 				}
 				$i++;
 			}
-			
+
 		    $db->free($resql);
 		}
 		//var_dump($this->modules);

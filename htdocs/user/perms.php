@@ -152,8 +152,8 @@ foreach($modulesdir as $dir)
     	            // Load all permissions
     	            if ($objMod->rights_class)
     	            {
-    	                $ret=$objMod->insert_permissions(0);
-
+    	            	$entity=((! empty($conf->multicompany->enabled) && ! empty($fuser->entity)) ? $fuser->entity : null);
+    	                $ret=$objMod->insert_permissions(0, $entity);
     	                $modules[$objMod->rights_class]=$objMod;
     	                //print "modules[".$objMod->rights_class."]=$objMod;";
     	            }
