@@ -130,11 +130,11 @@ if ($id > 0 || ! empty($ref))
 			$i = 0;
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
-			print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.rowid","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("DatePropal"),$_SERVER["PHP_SELF"],"p.datep","","&amp;id=".$_GET["id"],'align="center"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"p.total","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.fk_statut","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.rowid","","&amp;id=".$product->id,'',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$product->id,'',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("DatePropal"),$_SERVER["PHP_SELF"],"p.datep","","&amp;id=".$product->id,'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"p.total","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.fk_statut","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
 			print "</tr>\n";
 
 			$propalstatic=new Propal($db);
