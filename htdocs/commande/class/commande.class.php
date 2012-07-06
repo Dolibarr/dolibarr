@@ -92,9 +92,6 @@ class Commande extends CommonObject
     var $origin_id;
     var $linked_objects=array();
 
-    // To avoid warning
-    var $propale_ref;
-
     var $user_author_id;
 
     var $lines = array();
