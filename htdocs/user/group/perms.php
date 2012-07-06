@@ -126,7 +126,8 @@ if ($id)
                         // Load all permissions
                         if ($objMod->rights_class)
                         {
-                            $ret=$objMod->insert_permissions(0);
+                        	$entity=((! empty($conf->multicompany->enabled) && ! empty($fgroup->entity)) ? $fgroup->entity : null);
+                            $ret=$objMod->insert_permissions(0, $entity);
                             $modules[$objMod->rights_class]=$objMod;
                         }
                     }
@@ -146,9 +147,9 @@ if ($id)
     $sql.= " WHERE ugr.fk_id = r.id";
     if(! empty($conf->multicompany->enabled))
     {
-        if(empty($conf->multicompany->transverse_mode))
+        if (empty($conf->multicompany->transverse_mode))
         {
-        	$sql.= " AND r.entity = ".$conf->entity;
+        	$sql.= " AND r.entity = ".$fgroup->entity;
         }
         else
         {
@@ -224,12 +225,11 @@ if ($id)
     $sql = "SELECT r.id, r.libelle, r.module";
     $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
     $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
-    //$sql.= " AND r.entity = ".(empty($conf->multicompany->enabled) ? $conf->entity : $fgroup->entity);
     if(! empty($conf->multicompany->enabled))
     {
-        if(empty($conf->multicompany->transverse_mode))
+        if (empty($conf->multicompany->transverse_mode))
         {
-        	$sql.= " AND r.entity = ".$conf->entity;
+        	$sql.= " AND r.entity = ".$fgroup->entity;
         }
         else
         {
