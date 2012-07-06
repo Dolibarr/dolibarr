@@ -91,7 +91,7 @@ class Commande extends CommonObject
     var $origin;
     var $origin_id;
     var $linked_objects=array();
-    
+
     // To avoid warning
     var $propale_ref;
 
@@ -511,79 +511,79 @@ class Commande extends CommonObject
      * 	Cancel an order
      * 	If stock is decremented on order validation, we must reincrement it
      *
-     *	@param	User	$user			Object user
      *	@param	int		$idwarehouse	Id warehouse to use for stock change.
      *	@return	int						<0 if KO, >0 if OK
      */
-    function cancel($user, $idwarehouse=-1)
-    {
-        global $conf,$langs;
+	function cancel($idwarehouse=-1)
+	{
+		global $conf,$user,$langs;
 
-        $error=0;
+		$error=0;
 
-        if ($user->rights->commande->valider)
-        {
-            $this->db->begin();
+		$this->db->begin();
 
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande";
-            $sql.= " SET fk_statut = -1";
-            $sql.= " WHERE rowid = ".$this->id;
-            $sql.= " AND fk_statut = 1";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
+		$sql.= " SET fk_statut = -1";
+		$sql.= " WHERE rowid = ".$this->id;
+		$sql.= " AND fk_statut = 1";
 
-            dol_syslog("Commande::cancel sql=".$sql, LOG_DEBUG);
-            if ($this->db->query($sql))
-            {
-                // If stock is decremented on validate order, we must reincrement it
-                if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
-                {
-	                require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
-	                $langs->load("agenda");
+		dol_syslog("Commande::cancel sql=".$sql, LOG_DEBUG);
+		if ($this->db->query($sql))
+		{
+			// If stock is decremented on validate order, we must reincrement it
+			if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
+			{
+				require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+				$langs->load("agenda");
 
-	                $num=count($this->lines);
-	                for ($i = 0; $i < $num; $i++)
-	                {
-	                    if ($this->lines[$i]->fk_product > 0)
-	                    {
-	                        $mouvP = new MouvementStock($this->db);
-	                        // We increment stock of product (and sub-products)
-	                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderCanceledInDolibarr",$this->ref));
-	                        if ($result < 0) { $error++; }
-	                    }
-	                }
-                }
+				$num=count($this->lines);
+				for ($i = 0; $i < $num; $i++)
+				{
+					if ($this->lines[$i]->fk_product > 0)
+					{
+						$mouvP = new MouvementStock($this->db);
+						// We increment stock of product (and sub-products)
+						$result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderCanceledInDolibarr",$this->ref));
+						if ($result < 0) {
+							$error++;
+						}
+					}
+				}
+			}
 
-                if (! $error)
-                {
-                    // Appel des triggers
-                    include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-                    $interface=new Interfaces($this->db);
-                    $result=$interface->run_triggers('ORDER_CANCEL',$this,$user,$langs,$conf);
-                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                    // Fin appel triggers
-                }
+			if (! $error)
+			{
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('ORDER_CANCEL',$this,$user,$langs,$conf);
+				if ($result < 0) {
+					$error++; $this->errors=$interface->errors;
+				}
+				// Fin appel triggers
+			}
 
-                if (! $error)
-                {
-                    $this->statut=-1;
-                    $this->db->commit();
-                    return 1;
-                }
-                else
-                {
-                    $this->error=$mouvP->error;
-                    $this->db->rollback();
-                    return -1;
-                }
-            }
-            else
-            {
-                $this->error=$this->db->error();
-                $this->db->rollback();
-                dol_syslog($this->error, LOG_ERR);
-                return -1;
-            }
-        }
-    }
+			if (! $error)
+			{
+				$this->statut=-1;
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->error=$mouvP->error;
+				$this->db->rollback();
+				return -1;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			$this->db->rollback();
+			dol_syslog($this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
     /**
      *	Create order
