@@ -124,8 +124,7 @@ if ($conf->use_javascript_ajax)
 }
 
 // Test if php curl exist
-$curlversion=@curl_version();
-if (empty($curlversion))
+if (! function_exists('curl_version'))
 {
 	$langs->load("errors");
 	$mesg='<div class="error">'.$langs->trans("ErrorPhpCurlNotInstalled").'</div>';
