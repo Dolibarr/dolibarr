@@ -1,14 +1,14 @@
-/*
+﻿/*
  * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-03-15 19:05:26
+ * Manually generated
+ * Generation date 2012-07-03 23:50:00
  */
 
- 
-// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-// Reference language: en_US
+// START - Lines generated manually (2012-07-03 23:50:00).
+// Reference language: en_US – bookmarks
+
 CHARSET=UTF-8
-Bookm=Imleri
-NewBookmark=Yeni yer imi
-AddThisPageToBookmarks=Imleri Bu sayfayı ekle
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+Bookm=Yerimleri
+NewBookmark=Yeni yerimi
+AddThisPageToBookmarks=Bu sayfayı yerimlerine ekle
+
