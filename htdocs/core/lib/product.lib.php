@@ -271,7 +271,7 @@ function show_stats_for_company($product,$socid)
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?id='.$product->id.'">'.img_object('','bill').' '.$langs->trans("CustomersInvoices").'</a>';
+		print '<a href="facture.php?id='.$product->id.'">'.img_object('','bill').' '.$langs->trans("CustomersInvoices").'</a>';
 		print '</td><td align="right">';
 		print $product->stats_facture['customers'];
 		print '</td><td align="right">';

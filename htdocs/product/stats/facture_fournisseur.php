@@ -63,15 +63,10 @@ $supplierinvoicestatic=new FactureFournisseur($db);
 
 $form = new Form($db);
 
-if ($_GET["id"] || $_GET["ref"])
+if ($id > 0 || ! empty($ref))
 {
-    $product = new Product($db);
-    if ($_GET["ref"])
-    {
-    	$result = $product->fetch('',$_GET["ref"]);
-    	$_GET["id"]=$product->id;
-    }
-    if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
+	$product = new Product($db);
+	$result = $product->fetch($id, $ref);
 
     llxHeader("","",$langs->trans("CardProduct".$product->type));
 
@@ -143,12 +138,12 @@ if ($_GET["id"] || $_GET["ref"])
             print "<table class=\"noborder\" width=\"100%\">";
 
             print '<tr class="liste_titre">';
-            print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"s.rowid","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("DateInvoice"),$_SERVER["PHP_SELF"],"f.datef","","&amp;id=".$_GET["id"],'align="center"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total_ht","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"s.rowid","","&amp;id=".$product->id,'',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$product->id,'',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$product->id,'',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("DateInvoice"),$_SERVER["PHP_SELF"],"f.datef","","&amp;id=".$product->id,'align="center"',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total_ht","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
             print "</tr>\n";
 
             if ($num > 0)
@@ -191,7 +186,7 @@ else
     dol_print_error();
 }
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>

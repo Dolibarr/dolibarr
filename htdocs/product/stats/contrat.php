@@ -63,21 +63,15 @@ $staticcontratligne=new ContratLigne($db);
 
 $form = new Form($db);
 
-if ($_GET["id"] || $_GET["ref"])
+if ($id > 0 || ! empty($ref))
 {
 	$product = new Product($db);
-	if ($_GET["ref"])
-	{
-		$result = $product->fetch('',$_GET["ref"]);
-		$_GET["id"]=$product->id;
-	}
-	if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
+	$result = $product->fetch($id, $ref);
 
 	llxHeader("","",$langs->trans("CardProduct".$product->type));
 
 	if ($result > 0)
 	{
-
 		$head=product_prepare_head($product,$user);
 		$titre=$langs->trans("CardProduct".$product->type);
 		$picto=($product->type==1?'service':'product');
@@ -146,11 +140,11 @@ if ($_GET["id"] || $_GET["ref"])
 			print "<table class=\"noborder\" width=\"100%\">";
 
 			print '<tr class="liste_titre">';
-			print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"c.rowid","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"c.date_contrat","","&amp;id=".$_GET["id"],'align="center"',$sortfield,$sortorder);
-			//print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"c.amount","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"c.rowid","","&amp;id=".$product->id,'',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$product->id,'',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$product->id,'',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"c.date_contrat","","&amp;id=".$product->id,'align="center"',$sortfield,$sortorder);
+			//print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"c.amount","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
 			print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(0,3).'</td>';
 			print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(4,3).'</td>';
 			print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(5,3).'</td>';
@@ -199,7 +193,7 @@ else
 	dol_print_error();
 }
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>
