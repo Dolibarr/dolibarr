@@ -54,7 +54,7 @@ function checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmod
 	global $conf,$langs;
     //global $dolauthmode;    // To return authentication finally used
 
-	// Check parameetrs
+	// Check parameters
 	if ($entitytotest == '') $entitytotest=1;
 
     dol_syslog("checkLoginPassEntity usertotest=".$usertotest." entitytotest=".$entitytotest." authmode=".join(',',$authmode));

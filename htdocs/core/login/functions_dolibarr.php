@@ -36,8 +36,13 @@
 function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=1)
 {
 	global $db,$conf,$langs;
+	global $mc;
 
 	dol_syslog("functions_dolibarr::check_user_password_dolibarr usertotest=".$usertotest);
+
+	// Force master entity in transversal mode
+	$entity=$entitytotest;
+	if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)) $entity=1;
 
 	$login='';
 
@@ -48,10 +53,10 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 		$usernamecol = 'login';
 		$entitycol = 'entity';
 
-		$sql ='SELECT pass, pass_crypted';
+		$sql ='SELECT rowid, entity, pass, pass_crypted';
 		$sql.=' FROM '.$table;
 		$sql.=' WHERE '.$usernamecol." = '".$db->escape($usertotest)."'";
-		$sql.=' AND '.$entitycol." IN (0," . ($entitytotest ? $entitytotest : 1) . ")";
+		$sql.=' AND '.$entitycol." IN (0," . ($entity ? $entity : 1) . ")";
 
 		dol_syslog("functions_dolibarr::check_user_password_dolibarr sql=".$sql);
 		$resql=$db->query($sql);
@@ -90,6 +95,12 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 						$passok=true;
 						dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ok - found pass in database");
 					}
+				}
+
+				if ($passok && ! empty($obj->entity) && (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)))
+				{
+					$ret=$mc->checkRight($obj->rowid, $entitytotest);
+					if ($ret < 0) $passok=false;
 				}
 
 				// Password ok ?
