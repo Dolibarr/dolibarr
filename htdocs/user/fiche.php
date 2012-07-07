@@ -203,18 +203,22 @@ if ($action == 'add' && $canadduser)
         $edituser->note			= $_POST["note"];
         $edituser->ldap_sid		= $_POST["ldap_sid"];
         // If multicompany is off, admin users must all be on entity 0.
-        if($conf->multicompany->enabled)
+        if ($conf->multicompany->enabled)
         {
-        	if($conf->multicompany->transverse_mode || ! empty($_POST["superadmin"]))
+        	if (! empty($_POST["superadmin"]))
         	{
-        		$edituser->entity=0;
+        		$edituser->entity = 0;
+        	}
+        	else if ($conf->multicompany->transverse_mode)
+        	{
+        		$edituser->entity = 1; // all users in master entity
         	}
         	else
         	{
         		$edituser->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
         	}
         }
-        else if(! empty($_POST["admin"]))
+        else if (! empty($_POST["admin"]))
         {
         	$edituser->entity=0;
         }
@@ -317,11 +321,15 @@ if ($action == 'update' && ! $_POST["cancel"])
             $edituser->webcal_login	= $_POST["webcal_login"];
             $edituser->phenix_login	= $_POST["phenix_login"];
             $edituser->phenix_pass	= $_POST["phenix_pass"];
-            if($conf->multicompany->enabled)
+            if ($conf->multicompany->enabled)
             {
-            	if($conf->multicompany->transverse_mode || ! empty($_POST["superadmin"]))
+            	if (! empty($_POST["superadmin"]))
             	{
-            		$edituser->entity=0;
+            		$edituser->entity = 0;
+            	}
+            	else if ($conf->multicompany->transverse_mode)
+            	{
+            		$edituser->entity = 1; // all users in master entity
             	}
             	else
             	{
