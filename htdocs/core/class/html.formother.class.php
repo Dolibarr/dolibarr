@@ -462,7 +462,7 @@ class FormOther
      */
     function select_color($set_color='', $prefix='f_color', $form_name='objForm', $showcolorbox=1, $arrayofcolors='')
     {
-    	print selectColor($set_color, $prefix, $form_name, $showcolorbox, $arrayofcolors);
+    	print $this->selectColor($set_color, $prefix, $form_name, $showcolorbox, $arrayofcolors);
     }
 
     /**
