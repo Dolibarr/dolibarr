@@ -358,7 +358,7 @@ if (! defined('NOLOGIN'))
                 // Appel des triggers
                 include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
                 $interface=new Interfaces($db);
-                $result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,GETPOST('entity','int',2));
+                $result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,GETPOST('entity','int'));
                 if ($result < 0) {
                     $error++;
                 }
@@ -742,7 +742,7 @@ $heightforframes=48;
 // Switch to another entity
 if (! empty($conf->multicompany->enabled) && GETPOST('action') == 'switchentity')
 {
-    if ($mc->switchEntity(GETPOST('entity','int',2)) > 0)
+    if ($mc->switchEntity(GETPOST('entity','int')) > 0)
     {
         Header("Location: ".DOL_URL_ROOT.'/');
         exit;
