@@ -189,7 +189,7 @@ class Conf
 						{
 							$modulename=strtolower($reg[1]);
 							if ($modulename == 'propale') $modulename='propal';
-							$this->$modulename=(object) array();
+							if (! is_object($this->$modulename)) $this->$modulename=(object) array();
 							$this->$modulename->enabled=true;
 							$this->modules[]=$modulename;              // Add this module in list of enabled modules
 						}
