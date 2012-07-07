@@ -1996,7 +1996,7 @@ class User extends CommonObject
 		}
 		else
 		{
-			if ($all) $sql.= " WHERE entity = is not null";
+			if ($all) $sql.= " WHERE entity IS NOT NULL"; // all users except superadmin
 			else $sql.= " WHERE entity = ".$conf->entity;
 			if ($limitTo == 'active') $sql.= " AND statut = 1";
 		}

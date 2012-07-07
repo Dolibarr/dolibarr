@@ -51,7 +51,7 @@ $userid=GETPOST('user', 'int');
 // Security check
 $result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', 'user');
 
-if(! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->multicompany->transverse_mode)
+if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->multicompany->transverse_mode)
 {
     accessforbidden();
 }
@@ -83,7 +83,7 @@ if ($action == 'confirm_delete' && $confirm == "yes")
  */
 if ($action == 'add')
 {
-    if($caneditperms)
+    if ($caneditperms)
     {
         $message="";
         if (! $_POST["nom"])
@@ -96,8 +96,8 @@ if ($action == 'add')
 		{
 			$object->nom	= trim($_POST["nom"]);
 			$object->note	= trim($_POST["note"]);
-			
-			if($conf->multicompany->enabled && ! empty($conf->multicompany->transverse_mode)) $object->entity = 0;
+
+			if ($conf->multicompany->enabled && ! empty($conf->multicompany->transverse_mode)) $object->entity = 0;
 			else $object->entity = $_POST["entity"];
 
             $db->begin();
@@ -108,7 +108,7 @@ if ($action == 'add')
             {
                 $db->commit();
 
-                Header("Location: fiche.php?id=".$object->id);
+                Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
                 exit;
             }
             else
@@ -145,7 +145,7 @@ if ($action == 'adduser' || $action =='removeuser')
 
             if ($result > 0)
             {
-                header("Location: fiche.php?id=".$object->id);
+                header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
                 exit;
             }
             else
@@ -164,7 +164,7 @@ if ($action == 'adduser' || $action =='removeuser')
 
 if ($action == 'update')
 {
-    if($caneditperms)
+    if ($caneditperms)
     {
         $message="";
 
@@ -176,8 +176,8 @@ if ($action == 'update')
 
 		$object->nom	= trim($_POST["group"]);
 		$object->note	= dol_htmlcleanlastbr($_POST["note"]);
-		
-		if($conf->multicompany->enabled && !empty($conf->multicompany->transverse_mode)) $object->entity = 0;
+
+		if ($conf->multicompany->enabled && ! empty($conf->multicompany->transverse_mode)) $object->entity = 0;
 		else $object->entity = $_POST["entity"];
 
         $ret=$object->update();
@@ -504,7 +504,5 @@ else
 }
 
 llxFooter();
-
 $db->close();
-
 ?>
