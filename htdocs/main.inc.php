@@ -742,7 +742,7 @@ $heightforframes=48;
 // Switch to another entity
 if (! empty($conf->multicompany->enabled) && GETPOST('action') == 'switchentity')
 {
-    if ($mc->switchEntity(GETPOST('entity')) >= 0)
+    if ($mc->switchEntity(GETPOST('entity','int')) > 0)
     {
         Header("Location: ".DOL_URL_ROOT.'/');
         exit;
