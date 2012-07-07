@@ -202,7 +202,7 @@ class CommandeTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-    	$result=$localobject->cancel($user);
+    	$result=$localobject->cancel();
 
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);

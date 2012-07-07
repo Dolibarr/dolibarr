@@ -929,7 +929,7 @@ class Form
      *  @param	int		$force_entity	Possibility to force entity
      * 	@return	void
      */
-    function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='',$force_entity=0)
+    function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='',$force_entity=false)
     {
         print $this->select_dolusers($selected,$htmlname,$show_empty,$exclude,$disabled,$include,$enableonly,$force_entity);
     }
@@ -947,7 +947,7 @@ class Form
      *  @param	int		$force_entity	Possibility to force entity
      * 	@return	string					HTML select string
      */
-    function select_dolusers($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='',$force_entity=0)
+    function select_dolusers($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='',$force_entity=false)
     {
         global $conf,$user,$langs;
 
@@ -968,9 +968,9 @@ class Form
             $sql.= ", e.label";
         }
         $sql.= " FROM ".MAIN_DB_PREFIX ."user as u";
-        if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
+        if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
         {
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX ."entity as e on e.rowid=u.entity";
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX ."entity as e ON e.rowid=u.entity";
             if ($force_entity) $sql.= " WHERE u.entity IN (0,".$force_entity.")";
             else $sql.= " WHERE u.entity IS NOT NULL";
         }
@@ -1020,7 +1020,7 @@ class Form
                     }
                     $out.= $userstatic->getFullName($langs);
 
-                    if(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+                    if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
                     {
                         if ($obj->admin && ! $obj->entity) $out.=" (".$langs->trans("AllEntities").")";
                         else $out.=" (".$obj->label.")";
@@ -3756,14 +3756,14 @@ class Form
 
         // On recherche les groupes
         $sql = "SELECT ug.rowid, ug.nom ";
-        if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
+        if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
         {
             $sql.= ", e.label";
         }
         $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
-        if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
+        if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
         {
-            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entity as e on e.rowid=ug.entity";
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entity as e ON e.rowid=ug.entity";
             if ($force_entity) $sql.= " WHERE ug.entity IN (0,".$force_entity.")";
             else $sql.= " WHERE ug.entity IS NOT NULL";
         }
@@ -3801,7 +3801,7 @@ class Form
                     $out.= '>';
 
                     $out.= $obj->nom;
-                    if(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1)
+                    if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1)
                     {
                         $out.= " (".$obj->label.")";
                     }

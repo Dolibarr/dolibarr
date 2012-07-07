@@ -1809,15 +1809,43 @@ abstract class CommonObject
 	/**
 	 *	Delete all links between an object $this
 	 *
+	 *	@param	int		$sourceid		Object source id
+     *	@param  string	$sourcetype		Object source type
+     *	@param  int		$targetid		Object target id
+     *	@param  string	$targettype		Object target type
 	 *	@return     int	>0 if OK, <0 if KO
 	 */
-	function deleteObjectLinked()
+	function deleteObjectLinked($sourceid='', $sourcetype='', $targetid='', $targettype='')
 	{
+		$deletesource=false;
+		$deletetarget=false;
+
+		if (! empty($sourceid) && ! empty($sourcetype) && empty($targetid) && empty($targettype)) $deletesource=true;
+		else if (empty($sourceid) && empty($sourcetype) && ! empty($targetid) && ! empty($targettype)) $deletetarget=true;
+
+		$sourceid = (! empty($sourceid) ? $sourceid : $this->id);
+		$sourcetype = (! empty($sourcetype) ? $sourcetype : $this->element);
+		$targetid = (! empty($targetid) ? $targetid : $this->id);
+		$targettype = (! empty($targettype) ? $targettype : $this->element);
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_element";
 		$sql.= " WHERE";
-		$sql.= " (fk_source = ".$this->id." AND sourcetype = '".$this->element."')";
-		$sql.= " OR";
-		$sql.= " (fk_target = ".$this->id." AND targettype = '".$this->element."')";
+		if ($deletesource)
+		{
+			$sql.= " fk_source = ".$sourceid." AND sourcetype = '".$sourcetype."'";
+			$sql.= " AND fk_target = ".$this->id." AND targettype = '".$this->element."'";
+		}
+		else if ($deletetarget)
+		{
+			$sql.= " fk_target = ".$targetid." AND targettype = '".$targettype."'";
+			$sql.= " AND fk_source = ".$this->id." AND sourcetype = '".$this->element."'";
+		}
+		else
+		{
+			$sql.= " (fk_source = ".$this->id." AND sourcetype = '".$this->element."')";
+			$sql.= " OR";
+			$sql.= " (fk_target = ".$this->id." AND targettype = '".$this->element."')";
+		}
 
 		dol_syslog(get_class($this)."::deleteObjectLinked sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql))
@@ -2316,60 +2344,74 @@ abstract class CommonObject
      *  TODO Move this into html.class.php
      *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
      *
+     *	@param	HookManager		$hookmanager		Hook manager instance
      *  @return	void
      */
-    function showLinkedObjectBlock()
+    function showLinkedObjectBlock($hookmanager=false)
     {
         global $conf,$langs,$bc;
 
         $this->fetchObjectLinked();
 
-        $num = count($this->linkedObjects);
-
-        foreach($this->linkedObjects as $objecttype => $objects)
+        // Bypass the default method
+        if (! is_object($hookmanager))
         {
-            $tplpath = $element = $subelement = $objecttype;
-
-            if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
-            {
-                $element = $regs[1];
-                $subelement = $regs[2];
-                $tplpath = $element.'/'.$subelement;
-            }
-
-            // To work with non standard path
-            if ($objecttype == 'facture')          {
-                $tplpath = 'compta/'.$element;
-            }
-            else if ($objecttype == 'propal')           {
-                $tplpath = 'comm/'.$element;
-            }
-            else if ($objecttype == 'shipping')         {
-                $tplpath = 'expedition';
-            }
-            else if ($objecttype == 'delivery')         {
-                $tplpath = 'livraison';
-            }
-            else if ($objecttype == 'invoice_supplier') {
-                $tplpath = 'fourn/facture';
-            }
-            else if ($objecttype == 'order_supplier')   {
-                $tplpath = 'fourn/commande';
-            }
-
-            global $linkedObjectBlock;
-            $linkedObjectBlock = $objects;
-
-            // Output template part (modules that overwrite templates must declare this into descriptor)
-            $dirtpls=array_merge($conf->modules_parts['tpl'],array('/'.$tplpath.'/tpl'));
-            foreach($dirtpls as $reldir)
-            {
-                $res=@include(dol_buildpath($reldir.'/linkedobjectblock.tpl.php'));
-                if ($res) break;
-            }
+        	include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+        	$hookmanager=new HookManager($this->db);
         }
+        $hookmanager->initHooks(array('commonobject'));
+        $parameters=array();
+        $reshook=$hookmanager->executeHooks('showLinkedObjectBlock',$parameters,$this,$action);    // Note that $action and $object may have been modified by hook
 
-        return $num;
+        if (! $reshook)
+        {
+        	$num = count($this->linkedObjects);
+
+        	foreach($this->linkedObjects as $objecttype => $objects)
+        	{
+        		$tplpath = $element = $subelement = $objecttype;
+
+        		if (preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
+        		{
+        			$element = $regs[1];
+        			$subelement = $regs[2];
+        			$tplpath = $element.'/'.$subelement;
+        		}
+
+        		// To work with non standard path
+        		if ($objecttype == 'facture')          {
+        			$tplpath = 'compta/'.$element;
+        		}
+        		else if ($objecttype == 'propal')           {
+        			$tplpath = 'comm/'.$element;
+        		}
+        		else if ($objecttype == 'shipping')         {
+        			$tplpath = 'expedition';
+        		}
+        		else if ($objecttype == 'delivery')         {
+        			$tplpath = 'livraison';
+        		}
+        		else if ($objecttype == 'invoice_supplier') {
+        			$tplpath = 'fourn/facture';
+        		}
+        		else if ($objecttype == 'order_supplier')   {
+        			$tplpath = 'fourn/commande';
+        		}
+
+        		global $linkedObjectBlock;
+        		$linkedObjectBlock = $objects;
+
+        		// Output template part (modules that overwrite templates must declare this into descriptor)
+        		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/'.$tplpath.'/tpl'));
+        		foreach($dirtpls as $reldir)
+        		{
+        			$res=@include(dol_buildpath($reldir.'/linkedobjectblock.tpl.php'));
+        			if ($res) break;
+        		}
+        	}
+
+        	return $num;
+        }
     }
 
 

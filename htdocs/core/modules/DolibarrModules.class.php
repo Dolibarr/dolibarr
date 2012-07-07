@@ -879,21 +879,21 @@ abstract class DolibarrModules
      *  Insert permissions definitions related to the module into llx_rights_def
      *
      *  @param	int		$reinitadminperms   If 1, we also grant them to all admin users
+     *  @param	int		$force_entity		Force current entity
      *  @return int                 		Number of error (0 if OK)
      */
-    function insert_permissions($reinitadminperms=0)
+    function insert_permissions($reinitadminperms=0, $force_entity=null)
     {
         global $conf,$user;
 
         $err=0;
-
-        //print $this->rights_class." ".count($this->rights)."<br>";
+        $entity=(! empty($force_entity) ? $force_entity : $conf->entity);
 
         // Test if module is activated
         $sql_del = "SELECT ".$this->db->decrypt('value')." as value";
         $sql_del.= " FROM ".MAIN_DB_PREFIX."const";
         $sql_del.= " WHERE ".$this->db->decrypt('name')." = '".$this->const_name."'";
-        $sql_del.= " AND entity IN (0,".$conf->entity.")";
+        $sql_del.= " AND entity IN (0,".$entity.")";
 
         dol_syslog(get_class($this)."::insert_permissions sql=".$sql_del);
         $resql=$this->db->query($sql_del);
@@ -922,14 +922,14 @@ abstract class DolibarrModules
                             $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
                             $sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
                             $sql.= " VALUES ";
-                            $sql.= "(".$r_id.",".$conf->entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
+                            $sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
                         }
                         else
                         {
                             $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
                             $sql.= " (id, entity, libelle, module, type, bydefault, perms)";
                             $sql.= " VALUES ";
-                            $sql.= "(".$r_id.",".$conf->entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
+                            $sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
                         }
                     }
                     else
@@ -937,7 +937,7 @@ abstract class DolibarrModules
                         $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
                         $sql .= " (id, entity, libelle, module, type, bydefault)";
                         $sql .= " VALUES ";
-                        $sql .= "(".$r_id.",".$conf->entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
+                        $sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
                     }
 
                     dol_syslog(get_class($this)."::insert_permissions sql=".$sql, LOG_DEBUG);
@@ -959,7 +959,7 @@ abstract class DolibarrModules
                     if ($reinitadminperms)
                     {
                         include_once(DOL_DOCUMENT_ROOT.'/user/class/user.class.php');
-                        $sql="SELECT rowid from ".MAIN_DB_PREFIX."user where admin = 1";
+                        $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."user WHERE admin = 1";
                         dol_syslog(get_class($this)."::insert_permissions Search all admin users sql=".$sql);
                         $resqlseladmin=$this->db->query($sql,1);
                         if ($resqlseladmin)
