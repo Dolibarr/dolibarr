@@ -146,11 +146,14 @@ class UserGroup extends CommonObject
 		{
 			while ($obj = $this->db->fetch_object($result))
 			{
-				$newgroup=new UserGroup($this->db);
-				$newgroup->fetch($obj->rowid);
-				$newgroup->usergroup_entity = $obj->usergroup_entity;
+				if (! array_key_exists($obj->rowid, $ret))
+				{
+					$newgroup=new UserGroup($this->db);
+					$newgroup->fetch($obj->rowid);
+					$ret[$obj->rowid]=$newgroup;
+				}
 
-				$ret[]=$newgroup;
+				$ret[$obj->rowid]->usergroup_entity[]=$obj->usergroup_entity;
 			}
 
 			$this->db->free($result);
@@ -181,7 +184,7 @@ class UserGroup extends CommonObject
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as ug";
 		$sql.= " WHERE ug.fk_user = u.rowid";
 		$sql.= " AND ug.fk_usergroup = ".$this->id;
-		if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
+		if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
 		{
 			$sql.= " AND u.entity IS NOT NULL";
 		}
@@ -189,17 +192,21 @@ class UserGroup extends CommonObject
 		{
 			$sql.= " AND u.entity IN (0,".$conf->entity.")";
 		}
+
 		dol_syslog(get_class($this)."::listUsersForGroup sql=".$sql,LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
 			while ($obj = $this->db->fetch_object($result))
 			{
-				$newuser=new User($this->db);
-				$newuser->fetch($obj->rowid);
-				$newuser->usergroup_entity = $obj->usergroup_entity;
+				if (! array_key_exists($obj->rowid, $ret))
+				{
+					$newuser=new User($this->db);
+					$newuser->fetch($obj->rowid);
+					$ret[$obj->rowid]=$newuser;
+				}
 
-				$ret[]=$newuser;
+				$ret[$obj->rowid]->usergroup_entity[]=$obj->usergroup_entity;
 			}
 
 			$this->db->free($result);
