@@ -150,7 +150,7 @@ class User extends CommonObject
 		$sql.= " u.ref_int, u.ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
-		if(! empty($conf->multicompany->enabled) && $conf->entity == 1)
+		if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
 		{
 			$sql.= " WHERE u.entity IS NOT NULL";
 		}

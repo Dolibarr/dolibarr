@@ -1394,8 +1394,17 @@ else
                         print '</td>';
                         if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
                         {
-                            $mc->getInfo($group->usergroup_entity);
-                            print '<td class="valeur">'.$mc->label."</td>";
+                        	print '<td class="valeur">';
+                        	if (! empty($group->usergroup_entity))
+                        	{
+                        		$nb=0;
+                        		foreach($group->usergroup_entity as $group_entity)
+                        		{
+                        			$mc->getInfo($group_entity);
+                        			print ($nb > 0 ? ', ' : '').$mc->label;
+                        			$nb++;
+                        		}
+                        	}
                         }
                         print '<td align="right">';
                         if ($caneditgroup)

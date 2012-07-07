@@ -354,7 +354,7 @@ else
 
             if (! empty($object->members))
             {
-                if( !($conf->multicompany->enabled && $conf->multicompany->transverse_mode))
+                if (! ($conf->multicompany->enabled && $conf->multicompany->transverse_mode))
                 {
                     foreach($object->members as $useringroup)
                     {
@@ -404,7 +404,7 @@ else
             print '<td class="liste_titre">'.$langs->trans("Login").'</td>';
             print '<td class="liste_titre">'.$langs->trans("Lastname").'</td>';
             print '<td class="liste_titre">'.$langs->trans("Firstname").'</td>';
-			if(! empty($conf->multicompany->enabled) && $conf->entity == 1)
+			if (! empty($conf->multicompany->enabled) && $conf->entity == 1)
             {
             	print '<td class="liste_titre">'.$langs->trans("Entity").'</td>';
             }
@@ -428,10 +428,20 @@ else
             		print '</td>';
             		print '<td>'.$useringroup->lastname.'</td>';
             		print '<td>'.$useringroup->firstname.'</td>';
-            		if(! empty($conf->multicompany->enabled) && $conf->entity == 1)
+            		if (! empty($conf->multicompany->enabled) && $conf->entity == 1)
             		{
-            			$mc->getInfo($useringroup->usergroup_entity);
-            			print '<td class="valeur">'.$mc->label."</td>";
+            			print '<td class="valeur">';
+            			if (! empty($useringroup->usergroup_entity))
+            			{
+            				$nb=0;
+            				foreach($useringroup->usergroup_entity as $group_entity)
+            				{
+            					$mc->getInfo($group_entity);
+            					print ($nb > 0 ? ', ' : '').$mc->label;
+            					$nb++;
+            				}
+            			}
+            			print '</td>';
             		}
             		print '<td align="center">'.$useringroup->getLibStatut(3).'</td>';
             		print '<td align="right">';
