@@ -8,3 +8,4 @@ descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Create a customer invoice automatically a
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Create a customer invoice automatically after a contract is validated
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Create a customer invoice automatically after a customer order is closed
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify billed the original proposal along with a customer order
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify billed originals customer orders along with a customer invoice
