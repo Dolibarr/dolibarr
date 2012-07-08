@@ -381,7 +381,7 @@ else if ($action == 'add' && $user->rights->commande->creer)
 
 else if ($action == 'classifybilled' && $user->rights->commande->creer)
 {
-    $object->classer_facturee();
+    $ret=$object->classifyBilled();
 }
 
 // Positionne ref commande client
@@ -2116,7 +2116,7 @@ else
         		}
 
         		// Create bill and Classify billed
-        		if ($conf->facture->enabled && $object->statut > 0  && ! $object->facturee)
+        		if ($conf->facture->enabled && $object->statut > 0  && ! $object->billed)
         		{
         			if ($user->rights->facture->creer)
         			{

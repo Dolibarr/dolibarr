@@ -1560,18 +1560,29 @@ class Propal extends CommonObject
      *
      *	@return     int     	<0 si ko, >0 si ok
      */
-    function classer_facturee()
+    function classifyBilled()
     {
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'propal SET fk_statut = 4';
         $sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0 ;';
         if ($this->db->query($sql) )
         {
+        	$this->statut=4;
             return 1;
         }
         else
         {
             dol_print_error($this->db);
         }
+    }
+
+    /**
+     *	Class invoiced the Propal
+     *
+     *	@return     int     	<0 si ko, >0 si ok
+     */
+    function classer_facturee()
+    {
+    	return $this->classifyBilled();
     }
 
     /**
