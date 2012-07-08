@@ -181,7 +181,7 @@ if ($ok)
     foreach($filelist as $file)
     {
         print '<tr><td nowrap>';
-        print $langs->trans("ChoosedMigrateScript").'</td><td align="right">'.$file.'</td></tr>';
+        print $langs->trans("Script").'</td><td align="right">'.$file.'</td></tr>';
 
         $name = substr($file, 0, dol_strlen($file) - 4);
 
@@ -260,6 +260,10 @@ foreach($listofmodulesextra as $tablename => $elementtype)
         print "</td><td>&nbsp;</td></tr>\n";
     }
 }
+
+
+// Clean data into ecm_directories table
+clean_data_ecm_directories();
 
 
 // Check and clean linked elements
