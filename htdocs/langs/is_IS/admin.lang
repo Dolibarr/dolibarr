@@ -839,7 +839,6 @@ PathDirectory=Listinn
 ProposalsNumberingModules=Auglýsing tillögu tala mát
 ProposalsPDFModules=Auglýsing tillögu skjöl módel
 ClassifiedInvoiced=Flokkast innheimt
-ClassifiedInvoicedWithOrder=Flokka innheimt tillögu á sama tíma og röð
 HideTreadedPropal=Fela fengu auglýsing tillögur í skránni
 AddShippingDateAbility=Bæta við skipum dagsetningu getu
 AddDeliveryAddressAbility=Bæta við fæðingardag getu

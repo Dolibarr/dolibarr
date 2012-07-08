@@ -534,22 +534,23 @@ class FormFile
 
 
     /**
-     *      Show list of documents in a directory
+     *  Show list of documents in a directory
      *
-     *      @param	array	$filearray          Array of files loaded by dol_dir_list('files') function before calling this
-     * 		@param	Object	$object				Object on which document is linked to
-     * 		@param	string	$modulepart			Value for modulepart used by download or viewimage wrapper
-     * 		@param	string	$param				Parameters on sort links
-     * 		@param	int		$forcedownload		Force to open dialog box "Save As" when clicking on file
-     * 		@param	string	$relativepath		Relative path of docs (autodefined if not provided)
-     * 		@param	int		$permtodelete		Permission to delete
-     * 		@param	int		$useinecm			Change output for use in ecm module
-     * 		@param	string	$textifempty		Text to show if filearray is empty ('NoFileFound' if not defined)
-     *      @param  int		$maxlength          Maximum length of file name shown
-     *      @param	string	$title				Title before list
-     * 		@return	int							<0 if KO, nb of files shown if OK
+     *  @param	 array	$filearray          Array of files loaded by dol_dir_list('files') function before calling this
+     * 	@param	 Object	$object				Object on which document is linked to
+     * 	@param	 string	$modulepart			Value for modulepart used by download or viewimage wrapper
+     * 	@param	 string	$param				Parameters on sort links
+     * 	@param	 int	$forcedownload		Force to open dialog box "Save As" when clicking on file
+     * 	@param	 string	$relativepath		Relative path of docs (autodefined if not provided)
+     * 	@param	 int	$permtodelete		Permission to delete
+     * 	@param	 int	$useinecm			Change output for use in ecm module
+     * 	@param	 string	$textifempty		Text to show if filearray is empty ('NoFileFound' if not defined)
+     *  @param  int		$maxlength          Maximum length of file name shown
+     *  @param	 string	$title				Title before list
+     *  @param	 string $url				Full url to use for click links ('' = autodetect)
+     * 	@return	 int						<0 if KO, nb of files shown if OK
      */
-    function list_of_documents($filearray,$object,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$title='')
+    function list_of_documents($filearray,$object,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='')
     {
         global $user, $conf, $langs;
         global $bc;
@@ -557,14 +558,13 @@ class FormFile
 
         // Show list of existing files
         if (empty($useinecm)) print_titre($title?$title:$langs->trans("AttachedFiles"));
-        //else { $bc[true]=''; $bc[false]=''; };
-        $url=$_SERVER["PHP_SELF"];
+        if (empty($url)) $url=$_SERVER["PHP_SELF"];
         print '<table width="100%" class="'.($useinecm?'nobordernopadding':'liste').'">';
         print '<tr class="liste_titre">';
-        print_liste_field_titre($langs->trans("Documents2"),$_SERVER["PHP_SELF"],"name","",$param,'align="left"',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Size"),$_SERVER["PHP_SELF"],"size","",$param,'align="right"',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"date","",$param,'align="center"',$sortfield,$sortorder);
-        if (empty($useinecm)) print_liste_field_titre('',$_SERVER["PHP_SELF"],"","",$param,'align="center"');
+        print_liste_field_titre($langs->trans("Documents2"),$url,"name","",$param,'align="left"',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("Size"),$url,"size","",$param,'align="right"',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("Date"),$url,"date","",$param,'align="center"',$sortfield,$sortorder);
+        if (empty($useinecm)) print_liste_field_titre('',$url,"","",$param,'align="center"');
         print_liste_field_titre('','','');
         print '</tr>';
 
@@ -630,21 +630,22 @@ class FormFile
 
 
     /**
-     *      Show list of documents in a directory
+     *	Show list of documents in a directory
      *
-     *      @param	string	$upload_dir         Directory that was scanned
-     *      @param  array	$filearray          Array of files loaded by dol_dir_list function before calling this function
-     *      @param  string	$modulepart         Value for modulepart used by download wrapper
-     *      @param  string	$param              Parameters on sort links
-     *      @param  int		$forcedownload      Force to open dialog box "Save As" when clicking on file
-     *      @param  string	$relativepath       Relative path of docs (autodefined if not provided)
-     *      @param  int		$permtodelete       Permission to delete
-     *      @param  int		$useinecm           Change output for use in ecm module
-     *      @param  int		$textifempty        Text to show if filearray is empty
-     *      @param  int		$maxlength          Maximum length of file name shown
-     *      @return int                 		<0 if KO, nb of files shown if OK
+     *  @param	 string	$upload_dir         Directory that was scanned
+     *  @param  array	$filearray          Array of files loaded by dol_dir_list function before calling this function
+     *  @param  string	$modulepart         Value for modulepart used by download wrapper
+     *  @param  string	$param              Parameters on sort links
+     *  @param  int		$forcedownload      Force to open dialog box "Save As" when clicking on file
+     *  @param  string	$relativepath       Relative path of docs (autodefined if not provided)
+     *  @param  int		$permtodelete       Permission to delete
+     *  @param  int		$useinecm           Change output for use in ecm module
+     *  @param  int		$textifempty        Text to show if filearray is empty
+     *  @param  int		$maxlength          Maximum length of file name shown
+     *  @param	 string $url				Full url to use for click links ('' = autodetect)
+     *  @return int                 		<0 if KO, nb of files shown if OK
      */
-    function list_of_autoecmfiles($upload_dir,$filearray,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0)
+    function list_of_autoecmfiles($upload_dir,$filearray,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$url='')
     {
         global $user, $conf, $langs;
         global $bc;
@@ -652,18 +653,17 @@ class FormFile
 
         dol_syslog(get_class($this).'::list_of_autoecmfiles upload_dir='.$upload_dir.' modulepart='.$modulepart);
 
-        // Affiche liste des documents existant
+        // Show list of documents
         if (empty($useinecm)) print_titre($langs->trans("AttachedFiles"));
-        //else { $bc[true]=''; $bc[false]=''; };
-        $url=$_SERVER["PHP_SELF"];
+        if (empty($url)) $url=$_SERVER["PHP_SELF"];
         print '<table width="100%" class="nobordernopadding">';
         print '<tr class="liste_titre">';
         $sortref="fullname";
         if ($modulepart == 'invoice_supplier') $sortref='';    // No sort for supplier invoices as path name is not
-        print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],$sortref,"",$param,'align="left"',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Documents2"),$_SERVER["PHP_SELF"],"name","",$param,'align="left"',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Size"),$_SERVER["PHP_SELF"],"size","",$param,'align="right"',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"date","",$param,'align="center"',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("Ref"),$url,$sortref,"",$param,'align="left"',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("Documents2"),$url,"name","",$param,'align="left"',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("Size"),$url,"size","",$param,'align="right"',$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("Date"),$url,"date","",$param,'align="center"',$sortfield,$sortorder);
         print_liste_field_titre('','','');
         print '</tr>';
 

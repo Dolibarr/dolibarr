@@ -680,7 +680,6 @@ PathDirectory=Katalog
 ProposalsNumberingModules=Commercial wniosku numeracji modules
 ProposalsPDFModules=Commercial wniosku dokumenty modeli
 ClassifiedInvoiced=Sklasyfikowany zafakturowana
-ClassifiedInvoicedWithOrder=Klasyfikacja zafakturowana wniosku w tym samym czasie, zamówienia
 HideTreadedPropal=Ukryj leczonych propozycji w wykazie
 AddShippingDateAbility=Dodaj datę wysyłki zdolność
 AddDeliveryAddressAbility=Dodaj datę dostawy zdolność

@@ -678,7 +678,6 @@ PathDirectory=Каталог
 ProposalsNumberingModules=Коммерческие предложения нумерации модулей
 ProposalsPDFModules=Коммерческие предложения документы моделей
 ClassifiedInvoiced=Доска счета
-ClassifiedInvoicedWithOrder=Классификация счетов предложения и в то же время порядка
 HideTreadedPropal=Скрыть рассматриваются коммерческие предложения в списке
 AddShippingDateAbility=Добавить судоходства дата способность
 AddDeliveryAddressAbility=Добавить дату доставки способность

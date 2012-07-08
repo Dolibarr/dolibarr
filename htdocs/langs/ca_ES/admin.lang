@@ -961,7 +961,6 @@ PathDirectory=Catàleg
 ProposalsNumberingModules=Mòduls de numeració de pressupostos
 ProposalsPDFModules=Models de documents de pressupostos
 ClassifiedInvoiced=Classificar facturat
-ClassifiedInvoicedWithOrder=Classificar com facturat el pressupost al mateix temps que la comanda
 HideTreadedPropal=Amaga els pressupostos processats del llistat
 AddShippingDateAbility=Possibilitat de determinar una data de lliurament
 AddDeliveryAddressAbility=Possibilitat de seleccionar una adreça d'enviament

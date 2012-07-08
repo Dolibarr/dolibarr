@@ -564,7 +564,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 	    function loadandshowpreview(filedirname,section)
 	    {
-	        alert('filename='+filename);
+	        //alert('filedirname='+filedirname);
 	        jQuery('#ecmfileview').empty();
 
 	        url='<?php echo dol_buildpath('/core/ajax/ajaxdirpreview.php',1); ?>?action=preview&module=ecm&section='+section+'&file='+urlencode(filedirname);

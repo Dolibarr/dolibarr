@@ -845,7 +845,6 @@ PathDirectory=Directory
 ProposalsNumberingModules=Kommersiella förslag numrering moduler
 ProposalsPDFModules=Kommersiella förslag dokument modeller
 ClassifiedInvoiced=Sekretessbelagda fakturerade
-ClassifiedInvoicedWithOrder=Klassificera faktureras förslag samtidigt som beslutet
 HideTreadedPropal=Dölj de behandlade kommersiella förslagen i listan
 AddShippingDateAbility=Lägg leveransdatum förmåga
 AddDeliveryAddressAbility=Lägg förmåga leveranstid

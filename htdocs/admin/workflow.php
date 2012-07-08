@@ -78,8 +78,12 @@ clearstatcache();
 
 $workflowcodes=array();
 $workflow=array(
+		'propal' => array(
+				'order' => array('WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL')
+		),
 		'order' => array(
 				'propal' => array('WORKFLOW_PROPAL_AUTOCREATE_ORDER')
+				,'invoice' => array('WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER')
 		),
 		'invoice' => array (
 				'order' => array('WORKFLOW_ORDER_AUTOCREATE_INVOICE')
@@ -102,7 +106,7 @@ foreach($workflow as $child => $parents)
 			{
 				foreach($actions as $action)
 				{
-					$workflowcodes[$action] = $action;
+					$workflowcodes[$child][] = $action;
 				}
 			}
 		}
@@ -111,33 +115,36 @@ foreach($workflow as $child => $parents)
 
 if (count($workflowcodes) > 0)
 {
-    foreach($workflowcodes as $code)
+    foreach($workflowcodes as $key => $actions)
     {
-    	$var = !$var;
-    	print "<tr ".$bc[$var].">\n";
-    	print "<td>".$langs->trans('desc'.$code)."</td>\n";
-    	print '<td align="center">';
-    	if ($conf->use_javascript_ajax)
+    	foreach($actions as $action)
     	{
-    		print ajax_constantonoff($code);
-    	}
-    	else
-    	{
-    		if (! empty($conf->global->$code))
+    		$var = !$var;
+    		print "<tr ".$bc[$var].">\n";
+    		print "<td>".img_object('', $key).$langs->trans('desc'.$action)."</td>\n";
+    		print '<td align="center">';
+    		if ($conf->use_javascript_ajax)
     		{
-    			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del'.$code.'">';
-    			print img_picto($langs->trans("Activated"),'switch_on');
-    			print '</a>';
+    			print ajax_constantonoff($action);
     		}
     		else
     		{
-    			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set'.$code.'">';
-    			print img_picto($langs->trans("Disabled"),'switch_off');
-    			print '</a>';
+    			if (! empty($conf->global->$action))
+    			{
+    				print '<a href="'.$_SERVER['PHP_SELF'].'?action=del'.$action.'">';
+    				print img_picto($langs->trans("Activated"),'switch_on');
+    				print '</a>';
+    			}
+    			else
+    			{
+    				print '<a href="'.$_SERVER['PHP_SELF'].'?action=set'.$action.'">';
+    				print img_picto($langs->trans("Disabled"),'switch_off');
+    				print '</a>';
+    			}
     		}
+    		print '</td>';
+    		print '</tr>';
     	}
-    	print '</td>';
-    	print '</tr>';
     }
 }
 else
