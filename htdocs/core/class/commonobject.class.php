@@ -1640,6 +1640,8 @@ abstract class CommonObject
 
         $justsource=false;
         $justtarget=false;
+        $withtargettype=false;
+        $withsourcetype=false;
 
         if (! empty($sourceid) && ! empty($sourcetype) && empty($targetid))
         {
@@ -1649,7 +1651,7 @@ abstract class CommonObject
         if (! empty($targetid) && ! empty($targettype) && empty($sourceid))
         {
         	$justtarget=true;
-        	if (! empty($sourcetype)) $withsourcetype;
+        	if (! empty($sourcetype)) $withsourcetype=true;
         }
 
         $sourceid = (! empty($sourceid) ? $sourceid : $this->id);
