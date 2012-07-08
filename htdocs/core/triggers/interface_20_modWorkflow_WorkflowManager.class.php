@@ -148,7 +148,7 @@ class InterfaceWorkflowManager
         	}
         }
 
-        // Order classify billed proposal
+        // Invoice classify billed order
         if ($action == 'BILL_PAYED')
         {
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
