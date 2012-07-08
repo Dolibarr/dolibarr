@@ -920,7 +920,6 @@ PathDirectory = Mapa
 ProposalsNumberingModules = Moduli za številčenje komercialnih ponudb
 ProposalsPDFModules = Modeli obrazcev komercialnih ponudb
 ClassifiedInvoiced = Označi kot zaračunano
-ClassifiedInvoicedWithOrder = Označi zaračunano ponudbo obenem kot naročilo
 HideTreadedPropal = Skrij obravnavano komercialno ponudbo na seznamu
 AddShippingDateAbility = Dodaj možen datum pošiljanja
 AddDeliveryAddressAbility = Dodaj možen datum dobave

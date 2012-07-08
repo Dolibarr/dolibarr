@@ -734,7 +734,6 @@ PathDirectory=Catálogo
 ProposalsNumberingModules=Módulos de numeração de Orçamentos
 ProposalsPDFModules=Modelos de documentos de Orçamentos
 ClassifiedInvoiced=Clasificar facturado
-ClassifiedInvoicedWithOrder=Clasificar como facturado o orçamento à mismo tiempo que o pedido
 HideTreadedPropal=Ocultar os Orçamentos procesados do listado
 AddShippingDateAbility=possibilidade de determinar uma data de entregas
 AddDeliveryAddressAbility=possibilidade de seleccionar uma direcção de envío

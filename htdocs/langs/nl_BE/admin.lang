@@ -673,7 +673,6 @@ PathDirectory=Bedrijvengids
 ProposalsNumberingModules=Nummering van commerciële voorstellen
 ProposalsPDFModules=Model commerciële voorstellen
 ClassifiedInvoiced=Gerubriceerde gefactureerd
-ClassifiedInvoicedWithOrder=Classifiseer het gefactureerd voorstel op hetzelfde tijdstip als de bestelling
 HideTreadedPropal=Verberg de behandelde commerciële voorstellen in de lijst
 AddShippingDateAbility=Toevoegen verzendkosten datum vermogen
 AddDeliveryAddressAbility=Toevoegen leveringsdatum vermogen

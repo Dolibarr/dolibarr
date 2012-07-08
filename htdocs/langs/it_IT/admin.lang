@@ -89,7 +89,6 @@ CashDeskSetup								   =Impostazioni modulo punto vendita
 CashDeskThirdPartyForSell						   =Terzo generico da utilizzare per le vendite
 ChooseABarCode								   =Nessun generatore definito
 ClassifiedInvoiced							   =Classifica fatturate
-ClassifiedInvoicedWithOrder						   =Classifica proposte fatturate all'ordine
 ##### ClickToDial #####							   
 ClickToDialDesc								   =Questo modulo aggiunge una icona accanto ai numeri telefonici dei contatti in Dolibarr.<br/> Cliccando sull'icona si attiva il collegamento al server che effettuerà le chiamate telefoniche.
 ClickToDialSetup							   =Impostazioni modulo ClickToDial (telefonate con un clic)

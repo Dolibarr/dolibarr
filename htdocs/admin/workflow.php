@@ -78,6 +78,9 @@ clearstatcache();
 
 $workflowcodes=array();
 $workflow=array(
+		'propal' => array(
+				'order' => array('WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL')
+		),
 		'order' => array(
 				'propal' => array('WORKFLOW_PROPAL_AUTOCREATE_ORDER')
 		),

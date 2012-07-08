@@ -14,7 +14,6 @@ WebCalAddEventOnStatusPropal=Add calendar event on quotations status change
 PropalSetup=Quotations module setup
 ProposalsNumberingModules=Quotations numbering modules
 ProposalsPDFModules=Quotations documents models
-ClassifiedInvoicedWithOrder=Classify invoiced quotations at the same time as the order
 HideTreadedPropal=Hide the treated quotations in the list
 FreeLegalTextOnProposal=Free text on quotations
 WatermarkOnDraftProposal=Watermark on draft quotations (any if empty)

@@ -952,7 +952,6 @@ NumberOfProductLines=Anzahl der Produktlinien
 ProposalsNumberingModules=Angebotsnumerierungs-Module
 ProposalsPDFModules=PDF-Anbebotsmodule
 ClassifiedInvoiced=Als verrechnet markieren
-ClassifiedInvoicedWithOrder=Als zum Zeitpunkt der Bestellung verrechnet markieren
 HideTreadedPropal=Ausblenden der behandelten Angebote in der Liste
 AddShippingDateAbility=Versandfähigkeitsdatum hinzufügen
 AddDeliveryAddressAbility=Lieferfähigkeitsdatum hinzufügen

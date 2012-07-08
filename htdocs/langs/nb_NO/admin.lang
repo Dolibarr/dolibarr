@@ -682,7 +682,6 @@ PathDirectory=Mappe
 ProposalsNumberingModules=Nummereringsmodul for tilbud
 ProposalsPDFModules=Tilbudsmaler
 ClassifiedInvoiced=Klassifiser fakturert
-ClassifiedInvoicedWithOrder=Klassifsiser tilbudet fakturert samtidig som ordren
 HideTreadedPropal=Skjul behandlede tilbud i listen
 AddShippingDateAbility=Legg til felt for forsendelsesdato
 AddDeliveryAddressAbility=Legg til felt for leveringsdato
