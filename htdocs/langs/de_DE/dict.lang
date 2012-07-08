@@ -257,8 +257,9 @@ CountryMF=Saint Martin
 ##### Civilities #####
 CivilityMME=Frau
 CivilityMR=Herr
-CivilityMLE=Frau
+CivilityMLE=Fräulein
 CivilityMTRE=Professor
+CivilityDR=Doktor
 
 ##### Currencies #####
 Currencyeuros=Euro
