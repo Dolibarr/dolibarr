@@ -1640,9 +1640,19 @@ abstract class CommonObject
 
         $justsource=false;
         $justtarget=false;
+        $withtargettype=false;
+        $withsourcetype=false;
 
-        if (! empty($sourceid) && ! empty($sourcetype) && empty($targetid) && empty($targettype)) $justsource=true;
-        if (empty($sourceid) && empty($sourcetype) && ! empty($targetid) && ! empty($targettype)) $justtarget=true;
+        if (! empty($sourceid) && ! empty($sourcetype) && empty($targetid))
+        {
+        	$justsource=true;
+        	if (! empty($targettype)) $withtargettype=true;
+        }
+        if (! empty($targetid) && ! empty($targettype) && empty($sourceid))
+        {
+        	$justtarget=true;
+        	if (! empty($sourcetype)) $withsourcetype=true;
+        }
 
         $sourceid = (! empty($sourceid) ? $sourceid : $this->id);
         $targetid = (! empty($targetid) ? $targetid : $this->id);
@@ -1655,8 +1665,16 @@ abstract class CommonObject
         $sql.= " WHERE ";
         if ($justsource || $justtarget)
         {
-            if ($justsource) $sql.= "fk_source = '".$sourceid."' AND sourcetype = '".$sourcetype."'";
-            if ($justtarget) $sql.= "fk_target = '".$targetid."' AND targettype = '".$targettype."'";
+            if ($justsource)
+            {
+            	$sql.= "fk_source = '".$sourceid."' AND sourcetype = '".$sourcetype."'";
+            	if ($withtargettype) $sql.= " AND targettype = '".$targettype."'";
+            }
+            else if ($justtarget)
+            {
+            	$sql.= "fk_target = '".$targetid."' AND targettype = '".$targettype."'";
+            	if ($withsourcetype) $sql.= "AND sourcetype = '".$sourcetype."'";
+            }
         }
         else
         {
