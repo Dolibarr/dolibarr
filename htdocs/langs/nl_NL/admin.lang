@@ -894,7 +894,6 @@ PathDirectory = Map
 ProposalsNumberingModules = Offertenummeringmodules
 ProposalsPDFModules = Offertedocumentsjablonen
 ClassifiedInvoiced = Geclassificeerde factuur
-ClassifiedInvoicedWithOrder = Classificeer gefactureerde offerte tegelijk met de opdracht
 HideTreadedPropal = Verberg de behandelde offertes in de lijst
 AddShippingDateAbility = Voeg mogelijke verzenddatum toe
 AddDeliveryAddressAbility = Voeg mogelijke leverdatum toe

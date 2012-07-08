@@ -821,7 +821,6 @@ PathDirectory=Dizin
 ProposalsNumberingModules=Ticari teklif numaralandırma modülü
 ProposalsPDFModules=Ticari teklif belge modelleri
 ClassifiedInvoiced=Sınıflandırılmış faturalar
-ClassifiedInvoicedWithOrder=Faturalanmış teklif aynı anda sıraya göre
 HideTreadedPropal=İşlenmiş ticari teklifleri Listede gizle
 AddShippingDateAbility=Nakliye tarih yeteneği ekle
 AddDeliveryAddressAbility=Teslim tarihi yeteneği ekle

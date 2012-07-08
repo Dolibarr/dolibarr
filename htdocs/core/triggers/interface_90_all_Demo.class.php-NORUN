@@ -236,6 +236,10 @@ class InterfaceDemo
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
+        elseif ($action == 'ORDER_CLASSIFY_BILLED')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
         elseif ($action == 'LINEORDER_INSERT')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);

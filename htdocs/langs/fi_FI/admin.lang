@@ -676,7 +676,6 @@ PathDirectory=Directory
 ProposalsNumberingModules=Kaupalliset ehdotus numerointiin modules
 ProposalsPDFModules=Kaupalliset ehdotus asiakirjojen malleja
 ClassifiedInvoiced=Turvaluokitellut laskutetaan
-ClassifiedInvoicedWithOrder=Luokittele laskutetaan ehdotuksen yhtä aikaa, jotta
 HideTreadedPropal=Piilota käsitelty kaupallisten ehdotuksia luetteloon
 AddShippingDateAbility=Lisää meriliikenneyhtiön päivämäärä kyky
 AddDeliveryAddressAbility=Lisää toimituspäivää kyky

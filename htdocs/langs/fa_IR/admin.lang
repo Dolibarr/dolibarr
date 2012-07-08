@@ -768,7 +768,6 @@ PathDirectory=دليل
 ProposalsNumberingModules=اقتراح نماذج تجارية الترقيم
 ProposalsPDFModules=اقتراح نماذج الوثائق التجارية
 ClassifiedInvoiced=صنف في الفاتورة
-ClassifiedInvoicedWithOrder=تصنيف فواتير الاقتراح في الوقت الذي أمر
 HideTreadedPropal=إخفاء تعامل تجاري المقترحات الواردة في قائمة
 AddShippingDateAbility=إضافة قدرة الشحن والتاريخ
 AddDeliveryAddressAbility=إضافة قدرة تاريخ التسليم

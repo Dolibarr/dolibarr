@@ -939,7 +939,6 @@ NumberOfProductLines=A termék vonalak száma
 ProposalsNumberingModules=Üzleti ajánlat számozási modulok
 ProposalsPDFModules=Üzleti ajánlat dokumentumok modellek
 ClassifiedInvoiced=Minősített számlázott
-ClassifiedInvoicedWithOrder=Osztályozza számlázott javaslat időben, mint a megrendelés
 HideTreadedPropal=Elrejtése a kezelt üzleti ajánlatot a listán
 AddShippingDateAbility=Add szállítási határidő képessége
 AddDeliveryAddressAbility=Add szállítási határidő képessége

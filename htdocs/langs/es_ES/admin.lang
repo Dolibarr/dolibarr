@@ -959,7 +959,6 @@ NumberOfProductLines=Numero de líneas de productos
 ProposalsNumberingModules=Módulos de numeración de presupuestos
 ProposalsPDFModules=Modelos de documentos de presupuestos
 ClassifiedInvoiced=Clasificar facturado
-ClassifiedInvoicedWithOrder=Clasificar como facturado el presupuesto al mismo tiempo que el pedido
 HideTreadedPropal=Ocultar los presupuestos procesados del listado
 AddShippingDateAbility=Posibilidad de determinar una fecha de entrega
 AddDeliveryAddressAbility=Posibilidad de seleccionar una dirección de envío

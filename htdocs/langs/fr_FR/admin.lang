@@ -959,7 +959,6 @@ NumberOfProductLines= Nombre de lignes produits
 ProposalsNumberingModules= Modèles de numérotation des propositions commerciales
 ProposalsPDFModules= Modèles de documents de propositions commerciales
 ClassifiedInvoiced= Classer facturée
-ClassifiedInvoicedWithOrder= Classer la propale facturée en même temps que la commande
 HideTreadedPropal= Cacher les propositions commerciales traitées de la liste
 AddShippingDateAbility= Possibilité de déterminer une date de livraison
 AddDeliveryAddressAbility= Possibilité de sélectionner une adresse de livraison

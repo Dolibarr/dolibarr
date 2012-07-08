@@ -2067,32 +2067,46 @@ class Commande extends CommonObject
 	 */
 	function classifyBilled()
 	{
-		global $conf;
+		global $conf, $user, $langs;
+
+		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET facture = 1';
-		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0 ;';
+		$sql.= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
+
+		dol_syslog(get_class($this)."::classifyBilled sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
-			if (! empty($conf->global->PROPALE_CLASSIFIED_INVOICED_WITH_ORDER))
-			{
-				$this->fetchObjectLinked('','propal',$this->id,$this->element);
-				if (! empty($this->linkedObjects))
-				{
-					foreach($this->linkedObjects['propal'] as $element)
-					{
-						$element->classifyBilled();
-					}
-				}
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('ORDER_CLASSIFY_BILLED',$this,$user,$langs,$conf);
+			if ($result < 0) {
+				$error++; $this->errors=$interface->errors;
 			}
+			// Fin appel triggers
 
-			$this->facturee=1; // deprecated
-			$this->billed=1;
+			if (! $error)
+			{
+				$this->facturee=1; // deprecated
+				$this->billed=1;
 
-			return 1;
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dol_syslog(get_class($this)."::classifyBilled ".$this->error, LOG_ERR);
+				$this->db->rollback();
+				return -2;
+			}
 		}
 		else
 		{
-			dol_print_error($this->db);
+			$this->error=$this->db->error();
+            dol_syslog(get_class($this)."::classifyBilled Error ".$this->error, LOG_ERR);
+            $this->db->rollback();
 			return -1;
 		}
 	}

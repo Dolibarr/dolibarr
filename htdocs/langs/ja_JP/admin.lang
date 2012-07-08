@@ -939,7 +939,6 @@ NumberOfProductLines=製品ラインの数
 ProposalsNumberingModules=商業的な提案番号モジュール
 ProposalsPDFModules=商業的な提案文書のモデル
 ClassifiedInvoiced=請求分類
-ClassifiedInvoicedWithOrder=オーダーと同時に請求書の提案を分類する
 HideTreadedPropal=リスト内で処理された商用の提案を隠す
 AddShippingDateAbility=発送日の能力を追加します。
 AddDeliveryAddressAbility=配達日の能力を追加します。

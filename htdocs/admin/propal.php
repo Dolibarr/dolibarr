@@ -161,21 +161,6 @@ if ($action == 'setdefaultduration')
     }
 }
 
-if ($action == 'setclassifiedinvoiced')
-{
-	$res = dolibarr_set_const($db, "PROPALE_CLASSIFIED_INVOICED_WITH_ORDER",$value,'chaine',0,'',$conf->entity);
-	if (! $res > 0) $error++;
-
- 	if (! $error)
-    {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-    }
-}
-
 /*if ($action == 'setusecustomercontactasrecipient')
 {
 	dolibarr_set_const($db, "PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT",$_POST["value"],'chaine',0,'',$conf->entity);
@@ -544,22 +529,6 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print "</td></tr>\n";
 print '</form>';
 */
-
-if ($conf->commande->enabled)
-{
-	$var=!$var;
-	print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print "<input type=\"hidden\" name=\"action\" value=\"setclassifiedinvoiced\">";
-	print "<tr ".$bc[$var].">";
-	print '<td>'.$langs->trans("ClassifiedInvoicedWithOrder").'</td>';
-	print '<td width="60" align="center">';
-	print $form->selectyesno('value',$conf->global->PROPALE_CLASSIFIED_INVOICED_WITH_ORDER,1);
-	print "</td>";
-	print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-	print '</tr>';
-	print '</form>';
-}
 
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';

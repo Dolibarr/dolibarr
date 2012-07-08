@@ -680,7 +680,6 @@ PathDirectory=Directory
 ProposalsNumberingModules=Kommercielle forslag nummerressourcer moduler
 ProposalsPDFModules=Kommercielle forslag dokumenter modeller
 ClassifiedInvoiced=Klassificerede faktureret
-ClassifiedInvoicedWithOrder=Klassificere faktureret forslag på samme tid som den rækkefølge
 HideTreadedPropal=Skjul det behandlede kommercielle forslag på listen
 AddShippingDateAbility=Tilføj shipping dato evne
 AddDeliveryAddressAbility=Tilføj leveringsdato evne

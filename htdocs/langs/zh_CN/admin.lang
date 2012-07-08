@@ -836,7 +836,6 @@ PathDirectory=目录
 ProposalsNumberingModules=商业建议编号模块
 ProposalsPDFModules=商业模式的建议文件
 ClassifiedInvoiced=发票分类
-ClassifiedInvoicedWithOrder=发票分类在同一时间为顺序的建议
 HideTreadedPropal=隐藏在对待商业的建议名单
 AddShippingDateAbility=添加出货日期的能力
 AddDeliveryAddressAbility=添加交付日期的能力
