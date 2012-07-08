@@ -38,7 +38,7 @@ if ($user->id == $id)	// A user can always read its own card
 {
 	$feature2='';
 }
-$result = restrictedArea($user, $feature, $id, '&user', $feature2);
+$result = restrictedArea($user, 'user', $id, '&user', $feature2);
 
 
 /*

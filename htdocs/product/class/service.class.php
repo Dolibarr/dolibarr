@@ -66,7 +66,7 @@ class Service extends CommonObject
 
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-		$sql.= ' WHERE p.entity IN ('.getEntity($this->element, 1).')';
+		$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
 		$sql.= " AND p.fk_product_type = 1";
 
 		$resql=$this->db->query($sql);

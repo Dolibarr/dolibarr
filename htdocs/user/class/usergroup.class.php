@@ -470,8 +470,11 @@ class UserGroup extends CommonObject
 
 				if ($perms)
 				{
+					if (! is_object($this->rights)) $this->rights = (object) array(); // For avoid error
+					if (! is_object($this->rights->$module)) $this->rights->$module = (object) array();
 					if ($subperms)
 					{
+						if (! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = (object) array();
 						$this->rights->$module->$perms->$subperms = 1;
 					}
 					else

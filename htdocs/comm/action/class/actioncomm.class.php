@@ -86,6 +86,13 @@ class ActionComm extends CommonObject
     function ActionComm($db)
     {
         $this->db = $db;
+
+        $this->author = (object) array();
+        $this->usermod = (object) array();
+        $this->usertodo = (object) array();
+        $this->userdone = (object) array();
+        $this->societe = (object) array();
+        $this->contact = (object) array();
     }
 
     /**

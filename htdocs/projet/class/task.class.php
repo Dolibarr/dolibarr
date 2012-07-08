@@ -552,19 +552,20 @@ class Task extends CommonObject
 
                 if (! $error)
                 {
-                    $tasks[$i]->id           = $obj->taskid;
-                    $tasks[$i]->ref          = $obj->taskid;
-                    $tasks[$i]->fk_project   = $obj->projectid;
-                    $tasks[$i]->projectref   = $obj->ref;
-                    $tasks[$i]->projectlabel = $obj->plabel;
-                    $tasks[$i]->label        = $obj->label;
-                    $tasks[$i]->description  = $obj->description;
-                    $tasks[$i]->fk_parent    = $obj->fk_task_parent;
-                    $tasks[$i]->duration     = $obj->duration_effective;
-                    $tasks[$i]->progress     = $obj->progress;
-                    $tasks[$i]->public       = $obj->public;
-                    $tasks[$i]->date_start   = $this->db->jdate($obj->date_start);
-                    $tasks[$i]->date_end     = $this->db->jdate($obj->date_end);
+                	$tasks[$i]					= (object) array();
+                    $tasks[$i]->id				= $obj->taskid;
+                    $tasks[$i]->ref				= $obj->taskid;
+                    $tasks[$i]->fk_project		= $obj->projectid;
+                    $tasks[$i]->projectref		= $obj->ref;
+                    $tasks[$i]->projectlabel	= $obj->plabel;
+                    $tasks[$i]->label			= $obj->label;
+                    $tasks[$i]->description		= $obj->description;
+                    $tasks[$i]->fk_parent		= $obj->fk_task_parent;
+                    $tasks[$i]->duration		= $obj->duration_effective;
+                    $tasks[$i]->progress		= $obj->progress;
+                    $tasks[$i]->public			= $obj->public;
+                    $tasks[$i]->date_start		= $this->db->jdate($obj->date_start);
+                    $tasks[$i]->date_end		= $this->db->jdate($obj->date_end);
                 }
 
                 $i++;

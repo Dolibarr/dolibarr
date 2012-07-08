@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
  * Zone recherche produit/service
  */
 $rowspan=2;
-if ($conf->barcode->enabled) $rowspan++;
+if (! empty($conf->barcode->enabled)) $rowspan++;
 print '<form method="post" action="'.DOL_URL_ROOT.'/product/liste.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<table class="noborder" width="100%">';
@@ -83,7 +83,7 @@ print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';
 print "<tr $bc[0]><td>";
 print $langs->trans("Ref").':</td><td><input class="flat" type="text" size="14" name="sref"></td>';
 print '<td rowspan="'.$rowspan.'"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
-if ($conf->barcode->enabled)
+if (! empty($conf->barcode->enabled))
 {
 	print "<tr $bc[0]><td>";
 	print $langs->trans("BarCode").':</td><td><input class="flat" type="text" size="14" name="sbarcode"></td>';
