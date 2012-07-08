@@ -123,7 +123,7 @@ function product_prepare_head($object, $user)
 
 
 	// More tabs from canvas
-	if (is_array($object->onglets))
+	if (isset($object->onglets) && is_array($object->onglets))
 	{
 		foreach ($object->onglets as $onglet)
 		{
