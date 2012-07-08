@@ -294,19 +294,25 @@ class ActionComm extends CommonObject
                 $this->note					= $obj->note;
                 $this->percentage			= $obj->percentage;
 
+                $this->author				= (object) array();
                 $this->author->id			= $obj->fk_user_author;
                 $this->author->firstname	= $obj->firstname;
                 $this->author->lastname		= $obj->lastname;
+                $this->usermod				= (object) array();
                 $this->usermod->id			= $obj->fk_user_mod;
 
+                $this->usertodo				= (object) array();
                 $this->usertodo->id			= $obj->fk_user_action;
+                $this->userdone				= (object) array();
                 $this->userdone->id			= $obj->fk_user_done;
                 $this->priority				= $obj->priority;
                 $this->fulldayevent			= $obj->fulldayevent;
                 $this->location				= $obj->location;
 
                 $this->socid				= $obj->fk_soc;	// To have fetch_thirdparty method working
+                $this->societe				= (object) array();
                 $this->societe->id			= $obj->fk_soc;
+                $this->contact				= (object) array();
                 $this->contact->id			= $obj->fk_contact;
                 $this->fk_project			= $obj->fk_project;
 
