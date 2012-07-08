@@ -1673,7 +1673,7 @@ abstract class CommonObject
             else if ($justtarget)
             {
             	$sql.= "fk_target = '".$targetid."' AND targettype = '".$targettype."'";
-            	if ($withsourcetype) $sql.= "AND sourcetype = '".$sourcetype."'";
+            	if ($withsourcetype) $sql.= " AND sourcetype = '".$sourcetype."'";
             }
         }
         else

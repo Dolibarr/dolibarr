@@ -83,6 +83,7 @@ $workflow=array(
 		),
 		'order' => array(
 				'propal' => array('WORKFLOW_PROPAL_AUTOCREATE_ORDER')
+				,'invoice' => array('WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER')
 		),
 		'invoice' => array (
 				'order' => array('WORKFLOW_ORDER_AUTOCREATE_INVOICE')
