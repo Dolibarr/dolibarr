@@ -72,6 +72,8 @@ if ($modulepart == 'ecm')
  * View
  */
 
+top_httphead();
+
 $userstatic=new User($db);
 $form=new Form($db);
 $ecmdirstatic = new EcmDirectory($db);

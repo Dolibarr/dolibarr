@@ -39,7 +39,7 @@ if (! isset($mode) || $mode != 'noajax')    // For ajax call
     require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
     require_once(DOL_DOCUMENT_ROOT."/ecm/class/ecmdirectory.class.php");
 
-    $action=GETPOST("action");
+	$action=GETPOST("action");
     $file=urldecode(GETPOST('file'));
     $section=GETPOST("section");
     $module=GETPOST("module");
@@ -108,9 +108,11 @@ if (preg_match('/\.\./',$upload_dir) || preg_match('/[<>|]/',$upload_dir))
 
 if (! isset($mode) || $mode != 'noajax')
 {
-    // Ajout directives pour resoudre bug IE
+	// Ajout directives pour resoudre bug IE
     header('Cache-Control: Public, must-revalidate');
     header('Pragma: public');
+	
+    top_httphead();
 }
 
 $type='directory';
