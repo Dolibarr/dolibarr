@@ -86,7 +86,7 @@ class Address
 		if ($result >= 0)
 		{
 			$now=dol_now();
-			
+
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_address (label, fk_soc, name, datec, fk_user_creat) ";
 			$sql .= " VALUES ('".$this->db->escape($this->label)."', '".$socid."', '".$this->db->escape($this->name)."', ".$this->db->idate($now).", '".$user->id."')";
 
@@ -188,7 +188,7 @@ class Address
 		if ($result >= 0)
 		{
 			dol_syslog(get_class($this)."::Update verify ok");
-			
+
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe_address";
@@ -203,7 +203,7 @@ class Address
 			$sql.= ", fax = ".($this->fax?"'".$this->db->escape($this->fax)."'":"null");
 			if ($user) $sql .= ",fk_user_modif = '".$user->id."'";
 			$sql .= " WHERE fk_soc = '" . $socid ."' AND rowid = '" . $id ."'";
-			
+
 			dol_syslog(get_class($this)."::Update sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -216,7 +216,7 @@ class Address
 			{
 				if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
-				
+
 					$this->error=$langs->trans("ErrorDuplicateField",$this->name);
 					$result=-1;
 				}
@@ -302,7 +302,7 @@ class Address
 						$line->phone			= $objp->tel;
 						$line->fax				= $objp->fax;
 						$line->note				= $objp->note;
-						
+
 						// deprecated
 						$line->cp				= $line->zip;
 						$line->ville			= $line->town;
@@ -381,14 +381,14 @@ class Address
 				$this->phone			= $obj->tel;
 				$this->fax				= $obj->fax;
 				$this->note				= $obj->note;
-				
+
 				// deprecated
-				$line->cp				= $line->zip;
-				$line->ville			= $line->town;
-				$line->pays_id			= $line->country_id;
-				$line->pays_code		= $line->country_code;
-				$line->pays				= $line->country;
-				$line->tel				= $line->phone;
+				$this->cp				= $this->zip;
+				$this->ville			= $this->town;
+				$this->pays_id			= $this->country_id;
+				$this->pays_code		= $this->country_code;
+				$this->pays				= $this->country;
+				$this->tel				= $this->phone;
 
 				$result = 1;
 			}
@@ -435,7 +435,7 @@ class Address
 			print $this->db->error() . '<br>' . $sql;
 		}
 	}
-	
+
 	/**
 	 *  Return name of address with link (and eventually picto)
 	 *	Use $this->id, $this->label, $this->socid
@@ -447,12 +447,12 @@ class Address
 	function getNomUrl($withpicto=0,$option='')
 	{
 		global $langs;
-	
+
 		$result='';
-	
+
 		$lien = '<a href="'.DOL_URL_ROOT.'/comm/address.php?id='.$this->id.'&socid='.$this->socid.'">';
 		$lienfin='</a>';
-	
+
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowAddress").': '.$this->label,'address').$lienfin.' ');
 		$result.=$lien.$this->label.$lienfin;
 		return $result;

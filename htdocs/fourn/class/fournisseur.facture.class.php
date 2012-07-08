@@ -405,27 +405,29 @@ class FactureFournisseur extends Facture
                 while ($i < $num_rows)
                 {
                     $obj = $this->db->fetch_object($resql_rows);
-                    $this->lines[$i]->rowid            = $obj->rowid;
-                    $this->lines[$i]->description      = $obj->description;
-                    $this->lines[$i]->ref              = $obj->product_ref;       // TODO deprecated
-                    $this->lines[$i]->product_ref      = $obj->product_ref;       // Internal reference
-                    //$this->lines[$i]->ref_fourn        = $obj->ref_fourn;       // Reference fournisseur du produit
-                    $this->lines[$i]->libelle          = $obj->label;           // Label du produit
-                    $this->lines[$i]->product_desc     = $obj->product_desc;    // Description du produit
-                    $this->lines[$i]->pu_ht            = $obj->pu_ht;
-                    $this->lines[$i]->pu_ttc           = $obj->pu_ttc;
-                    $this->lines[$i]->tva_tx           = $obj->tva_tx;
-                    $this->lines[$i]->localtax1_tx     = $obj->localtax1_tx;
-                    $this->lines[$i]->localtax2_tx     = $obj->localtax2_tx;
-                    $this->lines[$i]->qty              = $obj->qty;
-                    $this->lines[$i]->tva              = $obj->tva;
-                    $this->lines[$i]->total_ht         = $obj->total_ht;
-                    $this->lines[$i]->total_tva        = $obj->total_tva;
-                    $this->lines[$i]->total_localtax1  = $obj->total_localtax1;
-                    $this->lines[$i]->total_localtax2  = $obj->total_localtax2;
-                    $this->lines[$i]->total_ttc        = $obj->total_ttc;
-                    $this->lines[$i]->fk_product       = $obj->fk_product;
-                    $this->lines[$i]->product_type     = $obj->product_type;
+
+                    $this->lines[$i]					= (object) array();
+                    $this->lines[$i]->rowid				= $obj->rowid;
+                    $this->lines[$i]->description		= $obj->description;
+                    $this->lines[$i]->ref				= $obj->product_ref;       // TODO deprecated
+                    $this->lines[$i]->product_ref		= $obj->product_ref;       // Internal reference
+                    //$this->lines[$i]->ref_fourn		= $obj->ref_fourn;       // Reference fournisseur du produit
+                    $this->lines[$i]->libelle			= $obj->label;           // Label du produit
+                    $this->lines[$i]->product_desc		= $obj->product_desc;    // Description du produit
+                    $this->lines[$i]->pu_ht				= $obj->pu_ht;
+                    $this->lines[$i]->pu_ttc			= $obj->pu_ttc;
+                    $this->lines[$i]->tva_tx			= $obj->tva_tx;
+                    $this->lines[$i]->localtax1_tx		= $obj->localtax1_tx;
+                    $this->lines[$i]->localtax2_tx		= $obj->localtax2_tx;
+                    $this->lines[$i]->qty				= $obj->qty;
+                    $this->lines[$i]->tva				= $obj->tva;
+                    $this->lines[$i]->total_ht			= $obj->total_ht;
+                    $this->lines[$i]->total_tva			= $obj->total_tva;
+                    $this->lines[$i]->total_localtax1	= $obj->total_localtax1;
+                    $this->lines[$i]->total_localtax2	= $obj->total_localtax2;
+                    $this->lines[$i]->total_ttc			= $obj->total_ttc;
+                    $this->lines[$i]->fk_product		= $obj->fk_product;
+                    $this->lines[$i]->product_type		= $obj->product_type;
 
                     $i++;
                 }
