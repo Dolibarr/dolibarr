@@ -57,7 +57,7 @@ if ($id > 0 || ! empty($ref))
  * Actions
  */
 
-if ($_FILES['userfile']['size'] > 0 && $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
+if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	if ($object->id) $result = $object->add_photo($dir, $_FILES['userfile']);
 }
@@ -82,7 +82,7 @@ $form = new Form($db);
 if ($object->id)
 {
 	llxHeader("","",$langs->trans("CardProduct".$object->type));
-	
+
 	/*
 	 *  En mode visu
 	*/
@@ -90,56 +90,56 @@ if ($object->id)
 	$titre=$langs->trans("CardProduct".$object->type);
 	$picto=($object->type==1?'service':'product');
 	dol_fiche_head($head, 'photos', $titre, 0, $picto);
-	
+
 	/*
 	 * Confirmation de la suppression de photo
 	*/
-	if ($_GET['action'] == 'delete')
+	if ($action == 'delete')
 	{
 		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&file='.$_GET["file"], $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
 		if ($ret == 'html') print '<br>';
 	}
-	
+
 	print($mesg);
-	
+
 	print '<table class="border" width="100%">';
-	
+
 	// Reference
 	print '<tr>';
 	print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
 	print $form->showrefnav($object,'ref','',1,'ref');
 	print '</td>';
 	print '</tr>';
-	
+
 	// Libelle
 	print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$object->libelle.'</td>';
 	print '</tr>';
-	
+
 	// Status (to sell)
 	print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
 	print $object->getLibStatut(2,0);
 	print '</td></tr>';
-	
+
 	// Status (to buy)
 	print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td>';
 	print $object->getLibStatut(2,1);
 	print '</td></tr>';
-	
+
 	print "</table>\n";
-	
+
 	print "</div>\n";
-	
-	
-	
+
+
+
 	/* ************************************************************************** */
 	/*                                                                            */
 	/* Barre d'action                                                             */
 	/*                                                                            */
 	/* ************************************************************************** */
-	
+
 	print "\n<div class=\"tabsAction\">\n";
-	
-	if ($_GET["action"] != 'ajout_photo' && ($user->rights->produit->creer || $user->rights->service->creer))
+
+	if ($action != 'ajout_photo' && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
 		if (! empty($conf->global->MAIN_UPLOAD_DOC))
 		{
@@ -152,9 +152,9 @@ if ($object->id)
 			print $langs->trans("AddPhoto").'</a>';
 		}
 	}
-	
+
 	print "\n</div>\n";
-	
+
 	/*
 	 * Add a photo
 	*/
@@ -164,18 +164,18 @@ if ($object->id)
 		$formfile=new FormFile($db);
 		$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans("AddPhoto"),1);
 	}
-	
+
 	// Affiche photos
 	if ($action != 'ajout_photo')
 	{
 		$nbphoto=0;
 		$nbbyrow=5;
-	
+
 		$maxWidth = 160;
 		$maxHeight = 120;
-	
+
 		print $object->show_photos($dir,1,1000,$nbbyrow,1,1);
-	
+
 		if ($object->nbphoto < 1)
 		{
 			print '<br>';

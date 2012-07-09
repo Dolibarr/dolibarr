@@ -178,7 +178,7 @@ function show_array_actions_to_do($max=5)
 	include_once(DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php');
 	include_once(DOL_DOCUMENT_ROOT.'/societe/class/client.class.php');
 
-	$sql = "SELECT a.id, a.label, a.datep as dp, a.fk_user_author, a.percent,";
+	$sql = "SELECT a.id, a.label, a.datep as dp, a.datep2 as dp2, a.fk_user_author, a.percent,";
 	$sql.= " c.code, c.libelle,";
 	$sql.= " s.nom as sname, s.rowid, s.client";
 	$sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c,";
@@ -226,13 +226,13 @@ function show_array_actions_to_do($max=5)
 
             print '<td>';
             if ($obj->rowid > 0)
-                {
-                    $customerstatic->id=$obj->rowid;
-                    $customerstatic->name=$obj->sname;
-                    $customerstatic->client=$obj->client;
-                    print $customerstatic->getNomUrl(1,'',16);
-                }
-                print '</td>';
+            {
+            	$customerstatic->id=$obj->rowid;
+            	$customerstatic->name=$obj->sname;
+            	$customerstatic->client=$obj->client;
+            	print $customerstatic->getNomUrl(1,'',16);
+            }
+            print '</td>';
 
             $datep=$db->jdate($obj->dp);
             $datep2=$db->jdate($obj->dp2);

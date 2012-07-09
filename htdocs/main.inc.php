@@ -1569,6 +1569,10 @@ function main_area($title='')
  */
 function getHelpParamFor($helppagename,$langs)
 {
+	$helpbaseurl='';
+	$helppage='';
+	$mode='';
+
     if (preg_match('/^http/i',$helppagename))
     {
         // If complete URL

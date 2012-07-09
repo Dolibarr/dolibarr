@@ -44,7 +44,7 @@ $confirm=GETPOST('confirm','alpha');
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit|service',$fielvalue,'product&product','','',$fieldtype);
+$result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
 
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
@@ -72,7 +72,7 @@ $modulepart='produit';
  * Action envoie fichier
  */
 
-if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
+if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	if (dol_mkdir($upload_dir) >= 0)
 	{
@@ -121,9 +121,8 @@ llxHeader("","",$langs->trans("CardProduct".$object->type));
 
 if ($object->id)
 {
-	if ( $error_msg )
-	{
-		echo '<div class="error">'.$error_msg.'</div><br>';
+	if (! empty($mesg)) {
+		dol_htmloutput_mesg($mesg);
 	}
 
 	if ($action=='delete')

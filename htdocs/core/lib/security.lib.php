@@ -115,14 +115,12 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
     if ($dbt_select != 'rowid') $objectid = "'".$objectid."'";
 
     // More features to check
-    if (! empty($features)) {
-    	$features = explode("&", $features);
-    }
+    $features = explode("&", $features);
 
     // More parameters
-    if (! empty($dbtablename)) {
-    	list($dbtablename, $sharedelement) = explode('&', $dbtablename);
-    }
+    $params = explode('&', $dbtablename);
+    $dbtablename=(! empty($params[0]) ? $params[0] : '');
+    $sharedelement=(! empty($params[1]) ? $params[1] : '');
 
     // Check read permission from module
     // TODO Replace "feature" param into caller by first level of permission

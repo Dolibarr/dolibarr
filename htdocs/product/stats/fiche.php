@@ -40,10 +40,12 @@ $mode	= (GETPOST('mode') ? GETPOST('mode') : 'byunit');
 $error	= 0;
 $mesg	= '';
 
+$socid='';
+if (! empty($user->societe_id)) $socid=$user->societe_id;
+
 // Security check
 $fieldvalue = (! empty($id) ? $id : $ref);
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
-if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
 
 

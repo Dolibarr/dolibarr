@@ -1991,11 +1991,15 @@ class Product extends CommonObject
 		{
 			if (is_array($desc_pere))	// If this parent desc is an array, this is an array of childs
 			{
-				if($multiply)
+				$id=(! empty($desc_pere[0]) ? $desc_pere[0] :'');
+				$nb=(! empty($desc_pere[1]) ? $desc_pere[1] :'');
+				$type=(! empty($desc_pere[2]) ? $desc_pere[2] :'');
+
+				if ($multiply)
 				{
 					//print "XXX ".$desc_pere[1]." multiply=".$multiply;
 					$img="";
-					$this->fetch($desc_pere[0]);
+					$this->fetch($id);
 					$this->load_stock();
 					if ($this->stock_warehouse[1]->real < $this->seuil_stock_alerte)
 					{
@@ -2007,13 +2011,13 @@ class Product extends CommonObject
                                 </a> (".$desc_pere[1].")</td><td align=\"center\"> ".($desc_pere[1]*$multiply)."</td><td>&nbsp</td><td>&nbsp</td>
                                 <td align=\"center\">".$this->stock_entrepot[1]." ".$img."</td></tr>",
 								$desc_pere[0],							// Id product
-*/								'id'=>$desc_pere[0],					// Id product
-								'nb'=>$desc_pere[1],					// Nb of units that compose parent product
-								'nb_total'=>$desc_pere[1]*$multiply,	// Nb of units for all nb of product
+*/								'id'=>$id,					// Id product
+								'nb'=>$nb,					// Nb of units that compose parent product
+								'nb_total'=>$nb*$multiply,	// Nb of units for all nb of product
 								'stock'=>$this->stock_warehouse[1]->real,		// Stock
 								'stock_alert'=>$this->seuil_stock_alerte,	// Stock alert
 								'fullpath' => $compl_path.$nom_pere,	// Label
-								'type'=>$desc_pere[2]					// Nb of units that compose parent product
+								'type'=>$type					// Nb of units that compose parent product
 								);
 				}
 				else
@@ -2023,13 +2027,13 @@ class Product extends CommonObject
 					$this->res[]= array(
 /*					$compl_path.$nom_pere." (".$desc_pere[1].")",
 					$desc_pere[0],							// Id product
-*/					'id'=>$desc_pere[0],					// Id product
-					'nb'=>$desc_pere[1],					// Nb of units that compose parent product
-					'nb_total'=>$desc_pere[1],				// Nb of units for all nb of product
+*/					'id'=>$id,					// Id product
+					'nb'=>$nb,					// Nb of units that compose parent product
+					'nb_total'=>$nb,				// Nb of units for all nb of product
 					'stock'=>$this->stock_warehouse[1]->real,		// Stock
 					'stock_alert'=>$this->seuil_stock_alerte,	// Stock alert
 					'fullpath' => $compl_path.$nom_pere,	// Label
-					'type'=>$desc_pere[2]					// Nb of units that compose parent product
+					'type'=>$type					// Nb of units that compose parent product
 					);
 				}
 			}

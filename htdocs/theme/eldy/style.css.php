@@ -143,7 +143,9 @@ $fontsizesmaller     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty(
 
 // Set text color to black or white
 $tmppart=explode(',',$colorback1);
-$tmpval=$tmppart[1]+$tmppart[2]+$tmppart[3];
+$tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '');
+$tmpval+=(! empty($tmppart[2]) ? $tmppart[2] : '');
+$tmpval+=(! empty($tmppart[3]) ? $tmppart[3] : '');
 //print $tmpval;
 if ($tmpval < 340) $colortextmain='FFFFFF';
 else $colortextmain='101010';
