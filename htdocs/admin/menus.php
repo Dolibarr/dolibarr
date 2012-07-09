@@ -37,7 +37,7 @@ $langs->load("users");
 $langs->load("other");
 
 // Security check
-if (!$user->admin) accessforbidden();
+if (! $user->admin) accessforbidden();
 
 $dirstandard = array();
 $dirsmartphone = array();
@@ -47,6 +47,9 @@ foreach($dirmenus as $dirmenu)
     $dirstandard[]=$dirmenu.'standard';
     $dirsmartphone[]=$dirmenu.'smartphone';
 }
+
+$error=0;
+$errmsgs=array();
 
 
 // Cette page peut etre longue. On augmente le delai autorise.
@@ -80,7 +83,6 @@ if ($action == 'update' && empty($_POST["cancel"]))
 	if (isset($_POST["MAIN_MENUFRONT_SMARTPHONE"])) $listofmenuhandler[preg_replace('/((_back|_front)office)?\.php/i','',$_POST["MAIN_MENUFRONT_SMARTPHONE"])]=1;
 
 	// Initialize menu handlers
-	$error=0; $errmsgs=array();
 	foreach ($listofmenuhandler as $key => $val)
 	{
 		// Load sql init_menu_handler.sql file
@@ -154,7 +156,7 @@ print $langs->trans("MenusDesc")."<br>\n";
 print "<br>\n";
 
 
-if (isset($_GET["action"]) && $_GET["action"] == 'edit')
+if ($action == 'edit')
 {
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -240,8 +242,8 @@ else
 	print '<td>';
 	$filelib=preg_replace('/.php$/i','',(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED));
 	print $filelib;
-	if (preg_match('/smartphone/',$conf->global->MAIN_MENU_SMARTPHONE_FORCED)
-	|| (empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) && preg_match('/smartphone/',$conf->global->MAIN_MENU_SMARTPHONE)))
+	if (! empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) && preg_match('/smartphone/', $conf->global->MAIN_MENU_SMARTPHONE_FORCED)
+	|| (empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) && ! empty($conf->global->MAIN_MENU_SMARTPHONE) && preg_match('/smartphone/',$conf->global->MAIN_MENU_SMARTPHONE)))
 	{
 		print ' '.img_warning($langs->transnoentitiesnoconv("ThisForceAlsoTheme"));
 	}
@@ -249,8 +251,8 @@ else
 	print '<td>';
 	$filelib=preg_replace('/.php$/i','',(empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)?$conf->global->MAIN_MENUFRONT_SMARTPHONE:$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED));
 	print $filelib;
-	if (preg_match('/smartphone/',$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)
-	|| (empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED) && preg_match('/smartphone/',$conf->global->MAIN_MENUFRONT_SMARTPHONE)))
+	if (! empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED) && preg_match('/smartphone/',$conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED)
+	|| (empty($conf->global->MAIN_MENUFRONT_SMARTPHONE_FORCED) && ! empty($conf->global->MAIN_MENU_SMARTPHONE) && preg_match('/smartphone/',$conf->global->MAIN_MENUFRONT_SMARTPHONE)))
 	{
 		print ' '.img_warning($langs->transnoentitiesnoconv("ThisForceAlsoTheme"));
 	}
@@ -266,7 +268,7 @@ print '</div>';
 dol_htmloutput_errors('',$errmsgs);
 
 
-if (! isset($_GET["action"]) || $_GET["action"] != 'edit')
+if ($action != 'edit')
 {
 	print '<div class="tabsAction">';
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';

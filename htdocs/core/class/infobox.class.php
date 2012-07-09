@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,11 +93,11 @@ class InfoBox
                         $box=new $boxname($db,$obj->note);
 
                         // box properties
-                        $box->rowid=$obj->rowid;
-                        $box->id=$obj->box_id;
-                        $box->position=$obj->position;
-                        $box->box_order=$obj->box_order;
-                        $box->fk_user=$obj->fk_user;
+                        $box->rowid		= (! empty($obj->rowid) ? $obj->rowid : '');
+                        $box->id		= (! empty($obj->box_id) ? $obj->box_id : '');
+                        $box->position	= (! empty($obj->position) ? $obj->position : '');
+                        $box->box_order	= (! empty($obj->box_order) ? $obj->box_order : '');
+                        $box->fk_user	= (! empty($obj->fk_user) ? $obj->fk_user : '');
                         $box->sourcefile=$relsourcefile;
                         if ($mode == 'activated' && (! $user->id || ! $user->conf->$confuserzone))
                         {
@@ -108,11 +108,11 @@ class InfoBox
                             }
                         }
                         // box_def properties
-                        $box->box_id=$obj->box_id;
-                        $box->note=$obj->note;
+                        $box->box_id	= (! empty($obj->box_id) ? $obj->box_id : '');
+                        $box->note		= (! empty($obj->note) ? $obj->note : '');
 
                         $enabled=true;
-                        if ($box->depends && count($box->depends) > 0)
+                        if (isset($box->depends) && count($box->depends) > 0)
                         {
                             foreach($box->depends as $module)
                             {

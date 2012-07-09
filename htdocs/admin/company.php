@@ -326,7 +326,7 @@ if ($action == 'edit' || $action == 'updateedit')
     print '</td></tr>'."\n";
 
     // Barcode
-    if ($conf->barcode->enabled)
+    if (! empty($conf->barcode->enabled))
     {
         $var=!$var;
         print '<tr '.$bc[$var].'><td>'.$langs->trans("Gencod").'</td><td>';
@@ -340,7 +340,7 @@ if ($action == 'edit' || $action == 'updateedit')
     print '<table width="100%" class="nocellnopadd"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
     print '<input type="file" class="flat" name="logo" size="50">';
     print '</td><td valign="middle" align="right">';
-    if ($mysoc->logo_mini)
+    if (! empty($mysoc->logo_mini))
     {
         print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
         if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
@@ -359,7 +359,7 @@ if ($action == 'edit' || $action == 'updateedit')
     // Note
     $var=!$var;
     print '<tr '.$bc[$var].'><td valign="top">'.$langs->trans("Note").'</td><td>';
-    print '<textarea class="flat" name="note" cols="80" rows="'.ROWS_5.'">'.$conf->global->MAIN_INFO_SOCIETE_NOTE.'</textarea></td></tr>';
+    print '<textarea class="flat" name="note" cols="80" rows="'.ROWS_5.'">'.(! empty($conf->global->MAIN_INFO_SOCIETE_NOTE) ? $conf->global->MAIN_INFO_SOCIETE_NOTE : '').'</textarea></td></tr>';
     print '</td></tr>';
 
     print '</table>';
@@ -396,9 +396,9 @@ if ($action == 'edit' || $action == 'updateedit')
     {
         $var=!$var;
         print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId1",$mysoc->country_code).'</td><td>';
-        if ($mysoc->country_code)
+        if (! empty($mysoc->country_code))
         {
-            print '<input name="siren" size="20" value="' . $conf->global->MAIN_INFO_SIREN . '">';
+            print '<input name="siren" size="20" value="' . (! empty($conf->global->MAIN_INFO_SIREN) ? $conf->global->MAIN_INFO_SIREN : '') . '">';
         }
         else
         {
@@ -412,9 +412,9 @@ if ($action == 'edit' || $action == 'updateedit')
     {
         $var=!$var;
         print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId2",$mysoc->country_code).'</td><td>';
-        if ($mysoc->country_code)
+        if (! empty($mysoc->country_code))
         {
-            print '<input name="siret" size="20" value="' . $conf->global->MAIN_INFO_SIRET . '">';
+            print '<input name="siret" size="20" value="' . (! empty($conf->global->MAIN_INFO_SIRET) ? $conf->global->MAIN_INFO_SIRET : '' ) . '">';
         }
         else
         {
@@ -428,9 +428,9 @@ if ($action == 'edit' || $action == 'updateedit')
     {
         $var=!$var;
         print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId3",$mysoc->country_code).'</td><td>';
-        if ($mysoc->country_code)
+        if (! empty($mysoc->country_code))
         {
-            print '<input name="ape" size="20" value="' . $conf->global->MAIN_INFO_APE . '">';
+            print '<input name="ape" size="20" value="' . (! empty($conf->global->MAIN_INFO_APE) ? $conf->global->MAIN_INFO_APE : '') . '">';
         }
         else
         {
@@ -444,9 +444,9 @@ if ($action == 'edit' || $action == 'updateedit')
     {
         $var=!$var;
         print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId4",$mysoc->country_code).'</td><td>';
-        if ($mysoc->country_code)
+        if (! empty($mysoc->country_code))
         {
-            print '<input name="rcs" size="20" value="' . $conf->global->MAIN_INFO_RCS . '">';
+            print '<input name="rcs" size="20" value="' . (! empty($conf->global->MAIN_INFO_RCS) ? $conf->global->MAIN_INFO_RCS : '') . '">';
         }
         else
         {
@@ -460,9 +460,9 @@ if ($action == 'edit' || $action == 'updateedit')
     {
         $var=!$var;
         print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId5",$mysoc->country_code).'</td><td>';
-        if ($mysoc->country_code)
+        if (! empty($mysoc->country_code))
         {
-            print '<input name="MAIN_INFO_PROFID5" size="20" value="' . $conf->global->MAIN_INFO_PROFID5 . '">';
+            print '<input name="MAIN_INFO_PROFID5" size="20" value="' . (! empty($conf->global->MAIN_INFO_PROFID5) ? $conf->global->MAIN_INFO_PROFID5 : '') . '">';
         }
         else
         {
@@ -476,9 +476,9 @@ if ($action == 'edit' || $action == 'updateedit')
     {
         $var=!$var;
         print '<tr '.$bc[$var].'><td width="35%">'.$langs->transcountry("ProfId6",$mysoc->country_code).'</td><td>';
-        if ($mysoc->country_code)
+        if (! empty($mysoc->country_code))
         {
-            print '<input name="MAIN_INFO_PROFID6" size="20" value="' . $conf->global->MAIN_INFO_PROFID6 . '">';
+            print '<input name="MAIN_INFO_PROFID6" size="20" value="' . (! empty($conf->global->MAIN_INFO_PROFID6) ? $conf->global->MAIN_INFO_PROFID6 : '') . '">';
         }
         else
         {
@@ -490,7 +490,7 @@ if ($action == 'edit' || $action == 'updateedit')
     // TVA Intra
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("VATIntra").'</td><td>';
-    print '<input name="tva" size="20" value="' . $conf->global->MAIN_INFO_TVAINTRA . '">';
+    print '<input name="tva" size="20" value="' . (! empty($conf->global->MAIN_INFO_TVAINTRA) ? $conf->global->MAIN_INFO_TVAINTRA : '') . '">';
     print '</td></tr>';
 
     print '</table>';
