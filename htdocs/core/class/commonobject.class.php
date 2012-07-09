@@ -36,6 +36,11 @@ abstract class CommonObject
     public $errors;
     public $canvas;                // Contains canvas name if it is
 
+    public $lastname;
+    public $firstname;
+    public $name;
+    public $nom;
+    public $civility_id;
 
     // No constructor as it is an abstract class
 
@@ -66,7 +71,7 @@ abstract class CommonObject
         }
 
         // If order not defined, we use the setup
-        if ($nameorder < 0) $nameorder=(! $conf->global->MAIN_FIRSTNAME_NAME_POSITION);
+        if ($nameorder < 0) $nameorder=(empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION));
 
         if ($nameorder)
         {
