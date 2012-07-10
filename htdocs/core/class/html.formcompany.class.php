@@ -271,9 +271,8 @@ class FormCompany
 					$i++;
 				}
 			}
-			$noselect.=$out;
-			if (!empty($htmlname)) $out.= '</select>';
-			if (!empty($htmlname) && $user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+			if (! empty($htmlname)) $out.= '</select>';
+			if (! empty($htmlname) && $user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		}
 		else
 		{

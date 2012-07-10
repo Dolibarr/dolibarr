@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010      Regis Houssin		<regis@dolibarr.fr>
+/* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2012	Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,7 +159,11 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 {
     global $conf,$langs,$bc;
 
-	$dirthemes=array_merge(array($conf->global->MAIN_FORCETHEMEDIR.'/theme'),(array) $conf->modules_parts['themes']);
+    $forcethemedir=(! empty($conf->global->MAIN_FORCETHEMEDIR) ? $conf->global->MAIN_FORCETHEMEDIR : '');
+    $dirthemes=array($forcethemedir.'/theme');
+    if (! empty($conf->modules_parts['themes'])) {
+    	$dirthemes=array_merge(array($forcethemedir.'/theme'),(array) $conf->modules_parts['themes']);
+    }
 
     $selected_theme=$conf->global->MAIN_THEME;
     if (! empty($fuser)) $selected_theme=$fuser->conf->MAIN_THEME;
@@ -206,7 +210,12 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     {
 	    print '<tr '.$bc[$var].'>';
 	    print '<td>'.$langs->trans("ThemeDir").'</td>';
-	    print '<td'.($foruserprofile?' colspan="3"':'').'>'.$dirtheme.'</td>';
+	    print '<td>';
+	    foreach($dirthemes as $dirtheme)
+	    {
+	    	echo '"'.$dirtheme.'" ';
+	    }
+	    print '</td>';
 	    print '</tr>';
     }
 
@@ -214,14 +223,14 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     print '<tr '.$bc[$var].'><td colspan="'.$colspan.'">';
 
     print '<table class="nobordernopadding" width="100%">';
-    
+
     $i=0;
-    
+
     foreach($dirthemes as $dir)
     {
     	$dirtheme=dol_buildpath($dir,0);
     	$urltheme=dol_buildpath($dir,1);
-    	
+
     	if (is_dir($dirtheme))
     	{
     		$handle=opendir($dirtheme);
@@ -234,12 +243,12 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     				{
     					// Disable not stable themes
     					//if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/bureau2crea/i',$subdir)) continue;
-    						
+
     					if ($i % $thumbsbyrow == 0)
     					{
     						print '<tr '.$bc[$var].'>';
     					}
-    						
+
     					print '<td align="center">';
     					$file=$dirtheme."/".$subdir."/thumb.png";
     					$url=$urltheme."/".$subdir."/thumb.png";
@@ -260,16 +269,16 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     						print '<input '.($edit?'':'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" name="main_theme" value="'.$subdir.'"> '.$subdir;
     					}
     					print '</td></tr></table></td>';
-    						
+
     					$i++;
-    						
+
     					if ($i % $thumbsbyrow == 0) print '</tr>';
     				}
     			}
     		}
     	}
     }
-    
+
     if ($i % $thumbsbyrow != 0)
     {
         while ($i % $thumbsbyrow != 0)

@@ -35,10 +35,12 @@ $langs->load("products");
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 
+$socid='';
+if (! empty($user->societe_id)) $socid=$user->societe_id;
+
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
-if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
 
 $mesg = '';

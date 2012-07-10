@@ -821,12 +821,12 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
         // This part of code should not be used.
         dol_syslog("Functions.lib::dol_print_date function call with deprecated value of time in page ".$_SERVER["PHP_SELF"], LOG_WARNING);
         // Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' or 'YYYYMMDDHHMMSS'
-        $syear = $reg[1];
-        $smonth = $reg[2];
-        $sday = $reg[3];
-        $shour = $reg[4];
-        $smin = $reg[5];
-        $ssec = $reg[6];
+        $syear	= (! empty($reg[1]) ? $reg[1] : '');
+        $smonth	= (! empty($reg[2]) ? $reg[2] : '');
+        $sday	= (! empty($reg[3]) ? $reg[3] : '');
+        $shour	= (! empty($reg[4]) ? $reg[4] : '');
+        $smin	= (! empty($reg[5]) ? $reg[5] : '');
+        $ssec	= (! empty($reg[6]) ? $reg[6] : '');
 
         $time=dol_mktime($shour,$smin,$ssec,$smonth,$sday,$syear,true);
         $ret=adodb_strftime($format,$time+$offsettz+$offsetdst,$to_gmt);
@@ -966,7 +966,7 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
         else $localtz = new DateTimeZone('UTC');
         $dt = new DateTime(null,$localtz);
         $dt->setDate($year,$month,$day);
-        $dt->setTime($hour,$minute,$second);
+        $dt->setTime((int) $hour, (int) $minute, (int) $second);
         $date=$dt->getTimestamp();
     }
     else
@@ -3852,7 +3852,7 @@ function picto_from_langcode($codelang)
  */
 function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode='add')
 {
-	if (is_array($conf->tabs_modules[$type]))
+	if (isset($conf->tabs_modules[$type]) && is_array($conf->tabs_modules[$type]))
 	{
 		foreach ($conf->tabs_modules[$type] as $value)
 		{

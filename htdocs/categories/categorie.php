@@ -58,20 +58,20 @@ if ($id || $ref)
 		$dbtablename = 'product';
 		$fieldid = isset($ref)?'ref':'rowid';
 	}
-	if ($type == 1) {
+	elseif ($type == 1) {
 		$elementtype = 'fournisseur';
 		$objecttype = 'societe&categorie';
 		$objectid = isset($id)?$id:(isset($socid)?$socid:'');
 		$fieldid = 'rowid';
 	}
-	if ($type == 2) {
+	elseif ($type == 2) {
 		$elementtype = 'societe';
 		$objecttype = 'societe&categorie';
 		$objectid = isset($id)?$id:(isset($socid)?$socid:'');
 		$dbtablename = '&societe';
 		$fieldid = 'rowid';
 	}
-	if ($type == 3) {
+	elseif ($type == 3) {
 		$elementtype = 'member';
 		$objecttype = 'adherent&categorie';
 		$objectid = isset($id)?$id:(isset($ref)?$ref:'');

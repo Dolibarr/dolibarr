@@ -668,7 +668,7 @@ $helpurl='';
 if (GETPOST("type") == '0') $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 if (GETPOST("type") == '1')	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 
-llxHeader('',$langs->trans("CardProduct".$_GET["type"]),$helpurl);
+llxHeader('',$langs->trans("CardProduct".GETPOST("type")),$helpurl);
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);
@@ -1047,7 +1047,7 @@ else
             dol_fiche_head($head, 'card', $titre, 0, $picto);
 
             $showphoto=$object->is_photo_available($conf->product->multidir_output[$object->entity]);
-            $showbarcode=$conf->barcode->enabled && $user->rights->barcode->lire;
+            $showbarcode=(! empty($conf->barcode->enabled) && $user->rights->barcode->lire);
 
             // En mode visu
             print '<table class="border" width="100%"><tr>';
@@ -1137,13 +1137,13 @@ else
             }
 
             // Accountancy sell code
-            print '<tr><td>'.$form->editfieldkey("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer).'</td><td colspan="2">';
-            print $form->editfieldval("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer);
+            print '<tr><td>'.$form->editfieldkey("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer,'string').'</td><td colspan="2">';
+            print $form->editfieldval("ProductAccountancySellCode",'accountancy_code_sell',$object->accountancy_code_sell,$object,$user->rights->produit->creer||$user->rights->service->creer,'string');
             print '</td></tr>';
 
             // Accountancy buy code
-            print '<tr><td>'.$form->editfieldkey("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer).'</td><td colspan="2">';
-            print $form->editfieldval("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer);
+            print '<tr><td>'.$form->editfieldkey("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer,'string').'</td><td colspan="2">';
+            print $form->editfieldval("ProductAccountancyBuyCode",'accountancy_code_buy',$object->accountancy_code_buy,$object,$user->rights->produit->creer||$user->rights->service->creer,'string');
             print '</td></tr>';
 
             // Status (to sell)
@@ -1179,7 +1179,7 @@ else
                 {
                     $dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
                 }
-                print $langs->trans($dur[$object->duration_unit])."&nbsp;";
+                print (! empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
 
                 print '</td></tr>';
             }
@@ -1302,11 +1302,11 @@ if ($action == '' || $action == 'view')
 {
     if ($user->rights->produit->creer || $user->rights->service->creer)
     {
-        if ($object->no_button_edit <> 1) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a>';
+        if (isset($object->no_button_edit) && $object->no_button_edit <> 1) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a>';
 
-        if ($object->no_button_copy <> 1)
+        if (isset($object->no_button_copy) && $object->no_button_copy <> 1)
         {
-            if ($conf->use_javascript_ajax)
+            if (! empty($conf->use_javascript_ajax))
             {
                 print '<span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span>'."\n";
                 print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestionclone,'yes','action-clone',230,600);
@@ -1322,9 +1322,9 @@ if ($action == '' || $action == 'view')
     if (($object->type == 0 && $user->rights->produit->supprimer)
     || ($object->type == 1 && $user->rights->service->supprimer))
     {
-        if (! $object_is_used && $object->no_button_delete <> 1)
+        if (! $object_is_used && isset($object->no_button_delete) && $object->no_button_delete <> 1)
         {
-            if ($conf->use_javascript_ajax)
+            if (! empty($conf->use_javascript_ajax))
             {
                 print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
                 print $form->formconfirm("fiche.php?id=".$object->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,"action-delete");
@@ -1357,7 +1357,7 @@ if ($id && ($action == '' || $action == 'view') && $object->status)
     print '<table width="100%" class="noborder">';
 
     // Propals
-    if($conf->propal->enabled && $user->rights->propale->creer)
+    if (! empty($conf->propal->enabled) && $user->rights->propale->creer)
     {
         $propal = new Propal($db);
 
@@ -1413,7 +1413,7 @@ if ($id && ($action == '' || $action == 'view') && $object->status)
                     print '<td><input type="hidden" name="propalid" value="'.$objp->propalid.'">';
                     print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
                     print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
-                    print " ".$object->stock_proposition;
+                    if (isset($object->stock_proposition)) print " ".$object->stock_proposition;
                     print '</td><td align="right">';
                     print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
                     print '</td>';
@@ -1474,7 +1474,7 @@ if ($id && ($action == '' || $action == 'view') && $object->status)
     }
 
     // Commande
-    if($conf->commande->enabled && $user->rights->commande->creer)
+    if (! empty($conf->commande->enabled) && $user->rights->commande->creer)
     {
         $commande = new Commande($db);
 
@@ -1530,7 +1530,7 @@ if ($id && ($action == '' || $action == 'view') && $object->status)
                     print '<td><input type="hidden" name="commandeid" value="'.$objc->commandeid.'">';
                     print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
                     print '<input type="text" class="flat" name="remise_percent" size="1" value="0">%';
-                    print " ".$object->stock_proposition;
+                    if (isset($object->stock_proposition)) print " ".$object->stock_proposition;
                     print '</td><td align="right">';
                     print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
                     print '</td>';
@@ -1592,7 +1592,7 @@ if ($id && ($action == '' || $action == 'view') && $object->status)
     }
 
     // Factures
-    if ($conf->facture->enabled && $user->rights->facture->creer)
+    if (! empty($conf->facture->enabled) && $user->rights->facture->creer)
     {
         print '<tr class="liste_titre"><td width="50%" class="liste_titre">';
         print $langs->trans("AddToMyBills").'</td>';
@@ -1743,6 +1743,6 @@ if ($id && ($action == '' || $action == 'view') && $object->status)
 }
 
 
-$db->close();
 llxFooter();
+$db->close();
 ?>

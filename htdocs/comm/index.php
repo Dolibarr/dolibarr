@@ -31,15 +31,13 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/agenda.lib.php");
 if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 if ($conf->propal->enabled)  require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
 
-if (!$user->rights->societe->lire)
-accessforbidden();
+if (! $user->rights->societe->lire) accessforbidden();
 
 $langs->load("commercial");
 
 // Securite acces client
-$socid='';
-if ($_GET["socid"]) { $socid=$_GET["socid"]; }
-if ($user->societe_id > 0)
+$socid=GETPOST('socid','int');
+if (isset($user->societe_id) && $user->societe_id > 0)
 {
 	$action = '';
 	$socid = $user->societe_id;
@@ -180,7 +178,7 @@ if ($conf->propal->enabled && $user->rights->propal->lire)
 				print '</td>';
 				print '<td align="right" nowrap="nowrap">'.price($obj->total_ht).'</td></tr>';
 				$i++;
-				$total += $obj->price;
+				$total += $obj->total_ht;
 			}
 			if ($total>0)
 			{
@@ -282,7 +280,7 @@ if ($conf->societe->enabled && $user->rights->societe->lire)
 {
 	$langs->load("boxes");
 
-	$sql = "SELECT s.rowid, s.nom as name, s.client, s.datec,s.tms";
+	$sql = "SELECT s.rowid, s.nom as name, s.client, s.datec, s.tms, s.canvas";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.client IN (1, 2, 3)";

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2009-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,9 @@ foreach($dirmenus as $dirmenu)
     $dirsmartphone[]=$dirmenu.'smartphone';
 }
 
-$mesg=$_GET["mesg"];
+$action=GETPOST('action','alpha');
+$confirm=GETPOST('confirm','alpha');
+$mesg=GETPOST('mesg');
 
 $menu_handler_top=$conf->global->MAIN_MENU_STANDARD;
 $menu_handler_smartphone=$conf->global->MAIN_MENU_SMARTPHONE;
@@ -52,15 +54,15 @@ $menu_handler_smartphone=preg_replace('/_frontoffice.php/i','',$menu_handler_sma
 
 $menu_handler=$menu_handler_top;
 
-if ($_REQUEST["handler_origine"]) $menu_handler=$_REQUEST["handler_origine"];
-if ($_REQUEST["menu_handler"])    $menu_handler=$_REQUEST["menu_handler"];
+if (isset($_REQUEST["handler_origine"])) $menu_handler=$_REQUEST["handler_origine"];
+if (isset($_REQUEST["menu_handler"]))    $menu_handler=$_REQUEST["menu_handler"];
 
 
 /*
 * Actions
 */
 
-if (isset($_GET["action"]) && ($_GET["action"] == 'up'))
+if ($action == 'up')
 {
 	$current=array();
 	$previous=array();
@@ -116,7 +118,7 @@ if (isset($_GET["action"]) && ($_GET["action"] == 'up'))
 	$db->query($sql);
 }
 
-if (isset($_GET["action"]) && $_GET["action"] == 'down')
+elseif ($action == 'down')
 {
 	$current=array();
 	$next=array();
@@ -172,7 +174,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'down')
 	$db->query($sql);
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
+elseif ($action == 'confirm_delete' && $confirm == 'yes')
 {
 	$db->begin();
 
@@ -191,7 +193,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 		$db->rollback();
 
 		$reload = 0;
-		$_GET["action"]='';
+		$action='';
 	}
 }
 
@@ -237,7 +239,7 @@ print "<br>\n";
 
 
 // Confirmation for remove menu entry
-if ($_GET["action"] == 'delete')
+if ($action == 'delete')
 {
 	$sql = "SELECT m.titre";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
@@ -341,8 +343,8 @@ else
 	print '<div class="error">'.$langs->trans("ErrorFeatureNeedJavascript").'</div>';
 }
 
-$db->close();
-
 print '<br>';
 
 llxFooter();
+$db->close();
+?>

@@ -33,9 +33,11 @@ $langs->load("contracts");
 $langs->load("bills");
 $langs->load("banks");
 
-if (!$user->admin) accessforbidden();
+if (! $user->admin) accessforbidden();
 
-if ( (isset($_POST["action"]) && $_POST["action"] == 'update'))
+$action=GETPOST('action','alpha');
+
+if ($action == 'update')
 {
     //Conversion des jours en secondes
     if ($_POST["ActionsToDo"]) dolibarr_set_const($db, "MAIN_DELAY_ACTIONS_TODO",$_POST["ActionsToDo"],'chaine',0,'',$conf->entity);
@@ -71,7 +73,7 @@ $form = new Form($db);
 $countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
 
 
-if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
+if ($action == 'edit')
 {
     print '<form method="post" action="delais.php" name="form_index">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -82,7 +84,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td width="120px">'.$langs->trans("Value").'</td></tr>';
 
     //
-    if ($conf->agenda->enabled)
+    if (! empty($conf->agenda->enabled))
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
@@ -90,7 +92,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
         print '<td>'.$langs->trans("DelaysOfToleranceActionsToDo").'</td><td>';
         print '<input size="5" name="ActionsToDo" value="'. ($conf->global->MAIN_DELAY_ACTIONS_TODO+0) . '"> ' . $langs->trans("days") . '</td></tr>';
     }
-    if ($conf->commande->enabled)
+    if (! empty($conf->commande->enabled))
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
@@ -98,7 +100,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
         print '<td>'.$langs->trans("DelaysOfToleranceOrdersToProcess").'</td><td>';
         print '<input size="5" name="OrdersToProcess" value="'. ($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS+0) . '"> ' . $langs->trans("days") . '</td></tr>';
     }
-    if ($conf->fournisseur->enabled)
+    if (! empty($conf->fournisseur->enabled))
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
@@ -106,7 +108,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
         print '<td>'.$langs->trans("DelaysOfToleranceSuppliersOrdersToProcess").'</td><td>';
         print '<input size="5" name="SuppliersOrdersToProcess" value="'. ($conf->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS+0) . '"> ' . $langs->trans("days") . '</td></tr>';
     }
-    if ($conf->propal->enabled)
+    if (! empty($conf->propal->enabled))
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
@@ -114,7 +116,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
         print '<td>'.$langs->trans("DelaysOfTolerancePropalsToClose").'</td><td>';
         print '<input size="5" name="PropalsToClose" value="'. ($conf->global->MAIN_DELAY_PROPALS_TO_CLOSE+0) . '"> ' . $langs->trans("days") . '</td></tr>';
     }
-    if ($conf->propal->enabled)
+    if (! empty($conf->propal->enabled))
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
@@ -122,7 +124,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
         print '<td>'.$langs->trans("DelaysOfTolerancePropalsToBill").'</td><td>';
         print '<input size="5" name="PropalsToBill" value="'. ($conf->global->MAIN_DELAY_PROPALS_TO_BILL+0) . '"> ' . $langs->trans("days") . '</td></tr>';
     }
-    if ($conf->service->enabled)
+    if (! empty($conf->service->enabled))
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
@@ -130,7 +132,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
         print '<td>'.$langs->trans("DelaysOfToleranceNotActivatedServices").'</td><td>';
         print '<input size="5" name="BoardNotActivatedServices" value="'. ($conf->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES+0) . '"> ' . $langs->trans("days") . '</td></tr>';
     }
-    if ($conf->service->enabled)
+    if (! empty($conf->service->enabled))
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
@@ -138,7 +140,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
         print '<td>'.$langs->trans("DelaysOfToleranceRunningServices").'</td><td>';
         print '<input size="5" name="BoardRunningServices" value="'. ($conf->global->MAIN_DELAY_RUNNING_SERVICES +0). '"> ' . $langs->trans("days") . '</td></tr>';
     }
-    if ($conf->facture->enabled)
+    if (! empty($conf->facture->enabled))
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
@@ -146,7 +148,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
         print '<td>'.$langs->trans("DelaysOfToleranceCustomerBillsUnpaid").'</td><td>';
         print '<input size="5" name="CustomerBillsUnpaid" value="'. ($conf->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED+0) . '"> ' . $langs->trans("days") . '</td></tr>';
     }
-    if ($conf->fournisseur->enabled)
+    if (! empty($conf->fournisseur->enabled))
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
@@ -154,7 +156,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
         print '<td>'.$langs->trans("DelaysOfToleranceSupplierBillsToPay").'</td><td>';
         print '<input size="5" name="SupplierBillsToPay" value="'. ($conf->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY+0) . '"> ' . $langs->trans("days") . '</td></tr>';
     }
-    if ($conf->banque->enabled)
+    if (! empty($conf->banque->enabled))
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
@@ -167,7 +169,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
         print '<td>'.$langs->trans("DelaysOfToleranceChequesToDeposit").'</td><td>';
         print '<input size="5" name="ChequesToDeposit" value="'. ($conf->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT+0) . '"> ' . $langs->trans("days") . '</td></tr>';
     }
-    if ($conf->adherent->enabled)
+    if (! empty($conf->adherent->enabled))
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
@@ -186,7 +188,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
-	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td>' .$form->selectyesno('MAIN_DISABLE_METEO',$conf->global->MAIN_DISABLE_METEO,1) . '</td></tr>';
+	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td>' .$form->selectyesno('MAIN_DISABLE_METEO',(isset($conf->global->MAIN_DISABLE_METEO)?1:0),1) . '</td></tr>';
 
 	print '</table>';
 
@@ -209,14 +211,14 @@ else
 
     $var=!$var;
 
-    if ($conf->agenda->enabled)
+    if (! empty($conf->agenda->enabled))
     {
         print '<tr '.$bc[$var].'>';
         print '<td width="20px">'.img_object('','action').'</td>';
         print '<td>'.$langs->trans("DelaysOfToleranceActionsToDo").'</td><td>' . ($conf->global->MAIN_DELAY_ACTIONS_TODO+0) . ' ' . $langs->trans("days") . '</td></tr>';
     }
 
-    if ($conf->commande->enabled)
+    if (! empty($conf->commande->enabled))
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
@@ -224,7 +226,7 @@ else
         print '<td>'.$langs->trans("DelaysOfToleranceOrdersToProcess").'</td><td>' . ($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS+0) . ' ' . $langs->trans("days") . '</td></tr>';
     }
 
-    if ($conf->fournisseur->enabled)
+    if (! empty($conf->fournisseur->enabled))
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
@@ -232,7 +234,7 @@ else
         print '<td>'.$langs->trans("DelaysOfToleranceSuppliersOrdersToProcess").'</td><td>' . ($conf->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS+0) . ' ' . $langs->trans("days") . '</td></tr>';
     }
 
-    if ($conf->propal->enabled)
+    if (! empty($conf->propal->enabled))
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
@@ -240,7 +242,7 @@ else
         print '<td>'.$langs->trans("DelaysOfTolerancePropalsToClose").'</td><td>' . ($conf->global->MAIN_DELAY_PROPALS_TO_CLOSE+0). ' ' . $langs->trans("days") . '</td></tr>';
     }
 
-    if ($conf->propal->enabled)
+    if (! empty($conf->propal->enabled))
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
@@ -248,7 +250,7 @@ else
         print '<td>'.$langs->trans("DelaysOfTolerancePropalsToBill").'</td><td>' . ($conf->global->MAIN_DELAY_PROPALS_TO_BILL+0) . ' ' . $langs->trans("days") . '</td></tr>';
     }
 
-    if ($conf->service->enabled)
+    if (! empty($conf->service->enabled))
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
@@ -256,7 +258,7 @@ else
         print '<td>'.$langs->trans("DelaysOfToleranceNotActivatedServices").'</td><td>' . ($conf->global->MAIN_DELAY_NOT_ACTIVATED_SERVICES+0) . ' ' . $langs->trans("days") . '</td></tr>';
     }
 
-    if ($conf->service->enabled)
+    if (! empty($conf->service->enabled))
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
@@ -264,7 +266,7 @@ else
         print '<td>'.$langs->trans("DelaysOfToleranceRunningServices").'</td><td>' . ($conf->global->MAIN_DELAY_RUNNING_SERVICES+0). ' ' . $langs->trans("days") . '</td></tr>';
     }
 
-    if ($conf->facture->enabled)
+    if (! empty($conf->facture->enabled))
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
@@ -272,7 +274,7 @@ else
         print '<td>'.$langs->trans("DelaysOfToleranceCustomerBillsUnpaid").'</td><td>' . ($conf->global->MAIN_DELAY_CUSTOMER_BILLS_UNPAYED+0) . ' ' . $langs->trans("days") . '</td></tr>';
     }
 
-    if ($conf->fournisseur->enabled)
+    if (! empty($conf->fournisseur->enabled))
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
@@ -280,7 +282,7 @@ else
         print '<td>'.$langs->trans("DelaysOfToleranceSupplierBillsToPay").'</td><td>' . ($conf->global->MAIN_DELAY_SUPPLIER_BILLS_TO_PAY+0) . ' ' . $langs->trans("days") . '</td></tr>';
     }
 
-    if ($conf->banque->enabled)
+    if (! empty($conf->banque->enabled))
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
@@ -293,7 +295,7 @@ else
         print '<td>'.$langs->trans("DelaysOfToleranceChequesToDeposit").'</td><td>' . ($conf->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT+0) . ' ' . $langs->trans("days") . '</td></tr>';
     }
 
-    if ($conf->adherent->enabled)
+    if (! empty($conf->adherent->enabled))
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
@@ -368,7 +370,7 @@ print '</tr>';
 
 print '</table>';
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>

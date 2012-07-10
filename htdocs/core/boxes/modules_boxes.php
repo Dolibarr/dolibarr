@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,15 @@ class ModeleBoxes    // Can't be abtract as it is instanciated to build "empty" 
 	var $db;
 	var $error='';
 	var $max=5;
+
+	var $rowid;
+	var $id;
+	var $position;
+	var $box_order;
+	var $fk_user;
+	var $sourcefile;
+	var $box_id;
+	var $note;
 
 
 	/**

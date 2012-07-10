@@ -53,10 +53,6 @@ if (! defined('LOG_DEBUG'))
     }
 }
 
-// Force PHP error_reporting setup (Dolibarr may report warning without this)
-error_reporting(E_ALL & ~(E_STRICT|E_NOTICE|E_DEPRECATED));
-//error_reporting(E_ALL | E_STRICT);
-
 // End of common declaration part
 if (defined('DOL_INC_FOR_VERSION_ERROR')) return;
 
@@ -78,6 +74,17 @@ if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not do
 	header("Location: install/index.php");
 	exit;
 }
+
+// Force PHP error_reporting setup (Dolibarr may report warning without this)
+if (! empty($dolibarr_strict_mode))
+{
+	error_reporting(E_ALL | E_STRICT);
+}
+else
+{
+	error_reporting(E_ALL & ~(E_STRICT|E_NOTICE|E_DEPRECATED));
+}
+
 // Disable php display errors
 if (! empty($dolibarr_main_prod)) ini_set('display_errors','Off');
 
