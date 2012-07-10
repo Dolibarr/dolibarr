@@ -19,7 +19,7 @@
 ?>
 
 <!-- BEGIN PHP TEMPLATE FOR JQUERY -->
-<?php if (count($object->lines) > 1 && $_GET['action'] != 'editline') { ?>
+<?php if (count($object->lines) > 1 && GETPOST('action') != 'editline') { ?>
 <script>
 $(document).ready(function(){
 	$(".imgup").hide();

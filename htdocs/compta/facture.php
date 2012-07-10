@@ -38,8 +38,8 @@ require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
-if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
-if ($conf->projet->enabled)
+if (! empty($conf->commande->enabled)) require_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
+if (! empty($conf->projet->enabled))
 {
 	require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
 	require_once(DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php');
@@ -51,6 +51,9 @@ $langs->load('bills');
 $langs->load('companies');
 $langs->load('products');
 $langs->load('main');
+
+$mesg='';
+$errors=array();
 
 if (GETPOST('mesg','int',1) && isset($_SESSION['message'])) $mesg=$_SESSION['message'];
 
@@ -82,7 +85,7 @@ $result = restrictedArea($user, 'facture', $id,'','','fk_soc',$fieldid);
 // Nombre de ligne pour choix de produit/service predefinis
 $NBLINES=4;
 
-$usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
+$usehm=(! empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:0);
 
 $object=new Facture($db);
 
@@ -1286,7 +1289,7 @@ else if ($action == 'down' && $user->rights->facture->creer)
 /*
  * Add file in email form
  */
-if ($_POST['addfile'])
+if (GETPOST('addfile'))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
@@ -2372,7 +2375,7 @@ else if ($id > 0 || ! empty($ref))
         print '<table class="nobordernopadding" width="100%">';
         print '<tr><td>'.$langs->trans('Company').'</td>';
         print '</td><td colspan="5">';
-        if ($conf->global->FACTURE_CHANGE_THIRDPARTY && $action != 'editthirdparty' && $object->brouillon && $user->rights->facture->creer)
+        if (! empty($conf->global->FACTURE_CHANGE_THIRDPARTY) && $action != 'editthirdparty' && $object->brouillon && $user->rights->facture->creer)
         print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'),1).'</a></td>';
         print '</tr></table>';
         print '</td><td colspan="5">';
@@ -3017,7 +3020,7 @@ else if ($id > 0 || ! empty($ref))
                     }
                 }
 
-                if ($conf->global->FACTURE_SHOW_SEND_REMINDER)	// For backward compatibility
+                if (! empty($conf->global->FACTURE_SHOW_SEND_REMINDER))	// For backward compatibility
                 {
                     if (($object->statut == 1 || $object->statut == 2) && $resteapayer > 0)
                     {
