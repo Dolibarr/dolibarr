@@ -271,6 +271,18 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2801,'WA' ,'',1,'','Western Australia');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2801,'NT' ,'',1,'','Northern Territory');
 
+-- Provinces Canada (id country=14)
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (1401,'ON','',1,'','Ontario');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (1401,'QC','',1,'','Quebec');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (1401,'NS','',1,'','Nova Scotia');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (1401,'NB','',1,'','New Brunswick');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (1401,'MB','',1,'','Manitoba');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (1401,'BC','',1,'','British Columbia');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (1401,'PE','',1,'','Prince Edward Island');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (1401,'SK','',1,'','Saskatchewan');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (1401,'AB','',1,'','Alberta');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (1401,'NL','',1,'','Newfoundland and Labrador');
+
 -- Provinces Spain (id country=4)
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('01', 419, '', 19, 'PAIS VASCO', 'País Vasco', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('02', 404, '', 4, 'ALBACETE', 'Albacete', 1);

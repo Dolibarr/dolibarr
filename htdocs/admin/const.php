@@ -74,7 +74,7 @@ if (! empty($consts) && $update == $langs->trans("Modify"))
 {
 	foreach($consts as $const)
 	{
-		if ($const["check"])
+		if (! empty($const["check"]))
 		{
 			if (dolibarr_set_const($db, $const["name"],$const["value"],$const["type"],1,$const["note"],$const["entity"]) < 0)
 			{
@@ -89,7 +89,7 @@ if (! empty($consts) && $delete == $langs->trans("Delete"))
 {
 	foreach($consts as $const)
 	{
-		if ($const["check"])	// Is checkbox checked
+		if (! empty($const["check"]))	// Is checkbox checked
 		{
 			if (dolibarr_del_const($db, $const["rowid"], -1) < 0)
 			{

@@ -640,7 +640,7 @@ class pdf_azur extends ModelePDFPropales
 		$this->atleastoneratenotnull=0;
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
-			$tvaisnull=((! empty($this->tva) && count($this->tva) == 1 && $this->tva['0.000'] == (float) 0) ? true : false);
+			$tvaisnull=((! empty($this->tva) && count($this->tva) == 1 && is_float($this->tva['0.000'])) ? true : false);
 			if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_ISNULL) && $tvaisnull)
 			{
 				// Nothing to do
