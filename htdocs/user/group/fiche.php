@@ -428,7 +428,7 @@ else
             		print '</td>';
             		print '<td>'.$useringroup->lastname.'</td>';
             		print '<td>'.$useringroup->firstname.'</td>';
-            		if (! empty($conf->multicompany->enabled) && $conf->entity == 1)
+            		if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
             		{
             			print '<td class="valeur">';
             			if (! empty($useringroup->usergroup_entity))
@@ -438,6 +438,9 @@ else
             				{
             					$mc->getInfo($group_entity);
             					print ($nb > 0 ? ', ' : '').$mc->label;
+            					print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removeuser&amp;user='.$useringroup->id.'&amp;entity='.$group_entity.'">';
+            					print img_delete($langs->trans("RemoveFromGroup"));
+            					print '</a>';
             					$nb++;
             				}
             			}
@@ -445,10 +448,11 @@ else
             		}
             		print '<td align="center">'.$useringroup->getLibStatut(3).'</td>';
             		print '<td align="right">';
-            		if ($user->admin)
+            		if (! empty($user->admin) && empty($conf->multicompany->enabled))
             		{
-            			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removeuser&amp;user='.$useringroup->id.'&amp;entity='.$useringroup->usergroup_entity.'">';
+            			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removeuser&amp;user='.$useringroup->id.'">';
             			print img_delete($langs->trans("RemoveFromGroup"));
+            			print '</a>';
             		}
             		else
             		{
