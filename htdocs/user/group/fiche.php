@@ -426,7 +426,7 @@ else
             		print '</td>';
             		print '<td>'.$useringroup->lastname.'</td>';
             		print '<td>'.$useringroup->firstname.'</td>';
-            		if (! empty($conf->multicompany->enabled) && $conf->entity == 1)
+            		if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
             		{
             			print '<td class="valeur">';
             			if (! empty($useringroup->usergroup_entity))
