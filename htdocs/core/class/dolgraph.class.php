@@ -88,7 +88,7 @@ class DolGraph
         global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 
         // To use old feature
-        if ($conf->global->MAIN_GRAPH_LIBRARY == 'artichow')
+        if (isset($conf->global->MAIN_GRAPH_LIBRARY) && $conf->global->MAIN_GRAPH_LIBRARY == 'artichow')
         {
             $this->_library='artichow';
 
@@ -850,7 +850,7 @@ class DolGraph
             $this->_stringtoshow.='{ ';
             if (! isset($this->type[$i]) || $this->type[$i] == 'bars') $this->_stringtoshow.='bars: { show: true, align: "'.($i==$firstlot?'center':'left').'", barWidth: 0.5 }, ';
             if (isset($this->type[$i]) && $this->type[$i] == 'lines')  $this->_stringtoshow.='lines: { show: true, fill: false }, ';
-            $this->_stringtoshow.='color: "#'.$color.'", label: "'.dol_escape_js($this->Legend[$i]).'", data: d'.$i.' }';
+            $this->_stringtoshow.='color: "#'.$color.'", label: "'.(isset($this->Legend[$i]) ? dol_escape_js($this->Legend[$i]) : '').'", data: d'.$i.' }';
             $i++;
         }
         $this->_stringtoshow.="\n".' ], { series: { stack: stack, lines: { fill: false, steps: steps }, bars: { barWidth: 0.6 } }'."\n";

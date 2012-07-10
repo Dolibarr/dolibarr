@@ -376,10 +376,10 @@ if ($mode != 4)
                 print "<td align=\"center\" valign=\"middle\">";
 
             	// Module actif
-                if (! empty($objMod->always_enabled) || (($conf->global->MAIN_MODULE_MULTICOMPANY && $objMod->core_enabled) && ($user->entity || $conf->entity!=1)))
+                if (! empty($objMod->always_enabled) || ((! empty($conf->multicompany->enabled) && $objMod->core_enabled) && ($user->entity || $conf->entity!=1)))
                 {
                 	print $langs->trans("Required");
-                	if ($conf->global->MAIN_MODULE_MULTICOMPANY && $user->entity) $disableSetup++;
+                	if (! empty($conf->multicompany->enabled) && $user->entity) $disableSetup++;
                 	print '</td>'."\n";
                 }
                 else

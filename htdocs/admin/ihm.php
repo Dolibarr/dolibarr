@@ -208,7 +208,7 @@ if ($action == 'edit')	// Edit
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
-	
+
 	// Hide unauthorized button
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ButtonHideUnauthorized").'</td><td>';
@@ -238,7 +238,7 @@ if ($action == 'edit')	// Edit
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageLogin").'</td><td colspan="2">';
 	// Editeur wysiwyg
 	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-	$doleditor=new DolEditor('main_home',$conf->global->MAIN_HOME,'',142,'dolibarr_notes','In',false,true,true,ROWS_4,90);
+	$doleditor=new DolEditor('main_home',(isset($conf->global->MAIN_HOME)?$conf->global->MAIN_HOME:''),'',142,'dolibarr_notes','In',false,true,true,ROWS_4,90);
 	$doleditor->Create();
 	print '</td></tr>'."\n";
 
@@ -246,7 +246,7 @@ if ($action == 'edit')	// Edit
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
 	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-	$doleditor=new DolEditor('main_motd',$conf->global->MAIN_MOTD,'',142,'dolibarr_notes','In',false,true,true,ROWS_4,90);
+	$doleditor=new DolEditor('main_motd',(isset($conf->global->MAIN_MOTD)?$conf->global->MAIN_MOTD:''),'',142,'dolibarr_notes','In',false,true,true,ROWS_4,90);
 	$doleditor->Create();
 	print '</td></tr>'."\n";
 
@@ -366,35 +366,37 @@ else	// Show
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
-	
+
 	// Hide unauthorized button
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ButtonHideUnauthorized").'</td><td colspan="2">';
-	print yn($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED,1);
+	print yn((isset($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)?$conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED:0),1);
 	print '</td></tr>';
 
     // Link to help center
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelpCenter").'</td><td colspan="2">';
-    print yn($conf->global->MAIN_HELPCENTER_DISABLELINK,1);
+    print yn((isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0),1);
     print '</td></tr>';
 
     // Link to wiki help
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelp",img_picto('',DOL_URL_ROOT.'/theme/'.$conf->theme.'/img//helpdoc.png','',1)).'</td><td colspan="2">';
-    print yn($conf->global->MAIN_HELP_DISABLELINK,1);
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelp",img_picto('',DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/helpdoc.png','',1)).'</td><td colspan="2">';
+    print yn((isset($conf->global->MAIN_HELP_DISABLELINK)?$conf->global->MAIN_HELP_DISABLELINK:0),1);
     print '</td></tr>';
 
     // Message login
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageLogin").'</td><td colspan="2">';
-    print dol_htmlcleanlastbr($conf->global->MAIN_HOME);
+    if (isset($conf->global->MAIN_HOME)) print dol_htmlcleanlastbr($conf->global->MAIN_HOME);
+    else print '&nbsp;';
     print '</td></tr>'."\n";
 
     // Message of the day
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
-    print dol_htmlcleanlastbr($conf->global->MAIN_MOTD);
+    if (isset($conf->global->MAIN_MOTD)) print dol_htmlcleanlastbr($conf->global->MAIN_MOTD);
+    else print '&nbsp;';
     print '</td></tr>'."\n";
 
     /*
@@ -415,7 +417,6 @@ else	// Show
 }
 
 
-$db->close();
-
 llxFooter();
+$db->close();
 ?>

@@ -776,7 +776,7 @@ class Categorie
 		// Process all childs on several levels of this category
 		$protection++;
 		if ($protection > 10) return;	// On ne traite pas plus de 10 niveaux de profondeurs
-		if (! is_array($this->cats[$id_categ]['id_children'])) return;
+		if (empty($this->cats[$id_categ]['id_children'])) return;
 		foreach($this->cats[$id_categ]['id_children'] as $key => $idchild)
 		{
 			// Protection when a category has itself as a child (should not happen)

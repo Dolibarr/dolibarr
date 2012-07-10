@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,10 +29,11 @@ include_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 
 $langs->load("admin");
 
-if (!$user->admin) accessforbidden();
+if (! $user->admin) accessforbidden();
 
 $rowid = GETPOST('rowid','int');
-$action = GETPOST('action');
+$action = GETPOST('action','alpha');
+$errmesg='';
 
 // Definition des positions possibles pour les boites
 $pos_array = array(0);                             // Positions possibles pour une boite (0,1,2,...)
@@ -396,7 +397,7 @@ foreach($boxactivated as $key => $box)
 	print '<tr '.$bc[$var].'>';
 	print '<td>'.img_object("",$logo).' '.$box->boxlabel.'</td>';
 	print '<td>' . ($box->note?$box->note:'&nbsp;') . '</td>';
-	print '<td align="center">' . $pos_name[$box->position] . '</td>';
+	print '<td align="center">' . (isset($pos_name[$box->position])?$pos_name[$box->position]:'') . '</td>';
 	$hasnext=($key < (count($boxactivated)-1));
 	$hasprevious=($key != 0);
 	print '<td align="center">'.($key+1).'</td>';

@@ -293,7 +293,7 @@ class ProductFournisseur extends Product
         global $conf;
 
         $sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
-        $sql.= " pfp.rowid as product_fourn_pri_id, pfp.ref_fourn,";
+        $sql.= " pfp.rowid as product_fourn_pri_id, pfp.ref_fourn, pfp.fk_product as product_fourn_id,";
         $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.tva_tx, pfp.fk_availability";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= ", ".MAIN_DB_PREFIX."societe as s";

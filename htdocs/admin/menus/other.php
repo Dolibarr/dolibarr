@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2010-2012 Regis Houssin  <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,33 +28,35 @@ $langs->load("users");
 $langs->load("admin");
 $langs->load("other");
 
-if (!$user->admin) accessforbidden();
+if (! $user->admin) accessforbidden();
+
+$action=GETPOST('action','alpha');
 
 
 /*
  * Actions
  */
 
-if ($_GET["action"] == 'activate_hidemenu')
+if ($action == 'activate_hidemenu')
 {
 	dolibarr_set_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED", '1','chaine',0,'',$conf->entity);
 	Header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
 }
-else if ($_GET["action"] == 'disable_hidemenu')
+else if ($action == 'disable_hidemenu')
 {
 	dolibarr_del_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED",$conf->entity);
 	Header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
 }
 
-if ($_GET["action"] == 'activate_layoutmenu')
+if ($action == 'activate_layoutmenu')
 {
 	dolibarr_set_const($db, "MAIN_MENU_USE_JQUERY_LAYOUT", '1','chaine',0,'',$conf->entity);
 	Header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
 }
-else if ($_GET["action"] == 'disable_layoutmenu')
+else if ($action == 'disable_layoutmenu')
 {
 	dolibarr_del_const($db, "MAIN_MENU_USE_JQUERY_LAYOUT",$conf->entity);
 	Header("Location: ".$_SERVER["PHP_SELF"]);
@@ -106,11 +108,11 @@ $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td colspan="3">'.$langs->trans("HideUnauthorizedMenu").'</td>';
 print '<td align="center">';
-if ($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED == 0)
+if (empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED))
 {
 	print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_hidemenu">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 }
-if($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED == 1)
+else
 {
 	print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_hidemenu">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
 }
@@ -118,17 +120,17 @@ print "</td>";
 print '</tr>';
 
 // Use a flip-hide menu
-if ($conf->global->MAIN_FEATURES_LEVEL > 0)
+if (isset($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL > 0)
 {
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
 	print '<td colspan="3">'.$langs->trans("MenuUseLayout").'</td>';
 	print '<td align="center">';
-	if ($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT == 0)
+	if (empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))
 	{
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_layoutmenu">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 	}
-	if($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT == 1)
+	else
 	{
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_layoutmenu">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
 	}
@@ -138,7 +140,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 
 print '</table>';
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>

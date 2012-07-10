@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
@@ -35,23 +35,21 @@ require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 $langs->load("bills");
 $langs->load("products");
 
+$id=GETPOST('id','int');
+$ref=GETPOST('ref','alpha');
+$action=GETPOST('action','alpha');
+$confirm=GETPOST('confirm','alpha');
+$cancel=GETPOST('cancel','alpha');
+$key=GETPOST('key');
+$catMere=GETPOST('catMere');
+
 // Security check
-if (isset($_GET["id"]) || isset($_GET["ref"]))
-{
-	$id = isset($_GET["id"])?$_GET["id"]:(isset($_GET["ref"])?$_GET["ref"]:'');
-}
-$fieldid = isset($_GET["ref"])?'ref':'rowid';
-if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
+if (! empty($user->societe_id)) $socid=$user->societe_id;
+$fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
+$fieldtype = (! empty($ref) ? 'ref' : 'rowid');
+$result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
 
 $mesg = '';
-
-$id=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
-$ref=isset($_GET["ref"])?$_GET["ref"]:$_POST["ref"];
-$key=isset($_GET["key"])?$_GET["key"]:$_POST["key"];
-$catMere=isset($_GET["catMere"])?$_GET["catMere"]:$_POST["catMere"];
-$action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
-$cancel=isset($_GET["cancel"])?$_GET["cancel"]:$_POST["cancel"];
 
 $product = new Product($db);
 $productid=0;

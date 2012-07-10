@@ -75,7 +75,12 @@ print "</table></form><br>";
 /*
  * Statistics area
  */
-$third = array();
+$third = array(
+		'customer' => 0,
+		'prospect' => 0,
+		'supplier' => 0,
+		'other' =>0
+);
 $total=0;
 
 $sql = "SELECT s.rowid, s.client, s.fournisseur";
@@ -92,10 +97,10 @@ if ($result)
     while ($objp = $db->fetch_object($result))
     {
         $found=0;
-        if ($conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS) && ($objp->client == 1 || $objp->client == 3)) { $found=1; $third['customer']++; }
-        if ($conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS) && ($objp->client == 2 || $objp->client == 3)) { $found=1; $third['prospect']++; }
-        if ($conf->fournisseur->enabled && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS) && $objp->fournisseur) { $found=1; $third['supplier']++; }
-        if ($conf->societe->enabled && $objp->client == 0 && $objp->fournisseur == 0) { $found=1; $third['other']++; }
+        if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS) && ($objp->client == 1 || $objp->client == 3)) { $found=1; $third['customer']++; }
+        if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS) && ($objp->client == 2 || $objp->client == 3)) { $found=1; $third['prospect']++; }
+        if (! empty($conf->fournisseur->enabled) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS) && $objp->fournisseur) { $found=1; $third['supplier']++; }
+        if (! empty($conf->societe->enabled) && $objp->client == 0 && $objp->fournisseur == 0) { $found=1; $third['other']++; }
         if ($found) $total++;
     }
 }
@@ -103,7 +108,7 @@ else dol_print_error($db);
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
-if ($conf->use_javascript_ajax && ((round($third['prospect'])?1:0)+(round($third['customer'])?1:0)+(round($third['supplier'])?1:0)+(round($third['other'])?1:0) >= 2))
+if (! empty($conf->use_javascript_ajax) && ((round($third['prospect'])?1:0)+(round($third['customer'])?1:0)+(round($third['supplier'])?1:0)+(round($third['other'])?1:0) >= 2))
 {
     print '<tr><td align="center">';
     $dataseries=array();
