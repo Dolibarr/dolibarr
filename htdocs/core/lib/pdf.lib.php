@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
- * Copyright (C) 2010-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
@@ -90,7 +90,7 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	//$metric=$arrayformat['unit'];
 
 	// Protection et encryption du pdf
-	if ($conf->global->PDF_SECURITY_ENCRYPTION)
+	if (! empty($conf->global->PDF_SECURITY_ENCRYPTION))
 	{
 		/* Permission supported by TCPDF
 		 - print : Print the document;
@@ -211,8 +211,8 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 	if ($mode == 'target' && ! is_object($targetcompany)) return -1;
 	if ($mode == 'delivery' && ! is_object($deliverycompany)) return -1;
 
-	if ($sourcecompany->state_id && empty($sourcecompany->departement)) $sourcecompany->departement=getState($sourcecompany->state_id);
-	if ($targetcompany->state_id && empty($targetcompany->departement)) $targetcompany->departement=getState($targetcompany->state_id);
+	if (! empty($sourcecompany->state_id) && empty($sourcecompany->departement)) $sourcecompany->departement=getState($sourcecompany->state_id);
+	if (! empty($targetcompany->state_id) && empty($targetcompany->departement)) $targetcompany->departement=getState($targetcompany->state_id);
 
 	if ($mode == 'source')
 	{
@@ -659,7 +659,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	$nbofline=dol_nboflines_bis($line,0,$outputlangs->charset_output);
 	//print 'nbofline='.$nbofline; exit;
 	//print 'e'.$line.'t'.dol_nboflines($line);exit;
-	$posy=$marge_basse + ($nbofline*3) + ($line1?3:0) + ($line2?3:0) + ($line3?3:0) + ($line4?3:0);
+	$posy=$marge_basse + ($nbofline*3) + (! empty($line1)?3:0) + (! empty($line2)?3:0) + (! empty($line3)?3:0) + (! empty($line4)?3:0);
 
 	if ($line)	// Free text
 	{
@@ -674,7 +674,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	$pdf->line($marge_gauche, $page_hauteur-$posy, 200, $page_hauteur-$posy);
 	$posy--;
 
-	if ($line1)
+	if (! empty($line1))
 	{
 		$pdf->SetFont('','B',7);
 		$pdf->SetXY($marge_gauche,-$posy);
@@ -683,7 +683,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 		$pdf->SetFont('','',7);
 	}
 
-	if ($line2)
+	if (! empty($line2))
 	{
 		$pdf->SetFont('','B',7);
 		$pdf->SetXY($marge_gauche,-$posy);
@@ -692,13 +692,13 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 		$pdf->SetFont('','',7);
 	}
 
-	if ($line3)
+	if (! empty($line3))
 	{
 		$pdf->SetXY($marge_gauche,-$posy);
 		$pdf->MultiCell(200, 2, $line3, 0, 'C', 0);
 	}
 
-	if ($line4)
+	if (! empty($line4))
 	{
 		$posy-=3;
 		$pdf->SetXY($marge_gauche,-$posy);
@@ -807,11 +807,11 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 {
 	global $db, $conf, $langs;
 
-	$idprod=$object->lines[$i]->fk_product;
-	$label=$object->lines[$i]->label; if (empty($label))  $label=$object->lines[$i]->libelle;
-	$desc=$object->lines[$i]->desc; if (empty($desc))   $desc=$object->lines[$i]->description;
-	$ref_supplier=$object->lines[$i]->ref_supplier; if (empty($ref_supplier))   $ref_supplier=$object->lines[$i]->ref_fourn;    // TODO Not yet saved for supplier invoices, only supplier orders
-	$note=$object->lines[$i]->note;
+	$idprod=(! empty($object->lines[$i]->fk_product)?$object->lines[$i]->fk_product:false);
+	$label=(! empty($object->lines[$i]->label)?$object->lines[$i]->label:(! empty($object->lines[$i]->libelle)?$object->lines[$i]->libelle:''));
+	$desc=(! empty($object->lines[$i]->desc)?$object->lines[$i]->desc:(! empty($object->lines[$i]->description)?$object->lines[$i]->description:''));
+	$ref_supplier=(! empty($object->lines[$i]->ref_supplier)?$object->lines[$i]->ref_supplier:(! empty($object->lines[$i]->ref_fourn)?$object->lines[$i]->ref_fourn:''));    // TODO Not yet saved for supplier invoices, only supplier orders
+	$note=(! empty($object->lines[$i]->note)?$object->lines[$i]->note:'');
 
 	if ($issupplierline) $prodser = new ProductFournisseur($db);
 	else $prodser = new Product($db);
@@ -874,7 +874,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		{
 			$prefix_prodserv = "";
 			$ref_prodserv = "";
-			if ($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS)   // In standard mode, we do not show this
+			if (! empty($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS))   // In standard mode, we do not show this
 			{
 				if ($prodser->isservice())
 				{
@@ -898,7 +898,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		}
 	}
 
-	if ($object->lines[$i]->date_start || $object->lines[$i]->date_end)
+	if (! empty($object->lines[$i]->date_start) || ! empty($object->lines[$i]->date_end))
 	{
 		$format='day';
 		// Show duration if exists

@@ -865,7 +865,7 @@ function dol_meta_create($object)
 			{
 				//Pour les articles
 				$meta .= "ITEM_" . $i . "_QUANTITY=\"" . $object->lines[$i]->qty . "\"
-				ITEM_" . $i . "_UNIT_PRICE=\"" . $object->lines[$i]->price . "\"
+				ITEM_" . $i . "_UNIT_PRICE=\"" . $object->lines[$i]->total_ht . "\"
 				ITEM_" . $i . "_TVA=\"" .$object->lines[$i]->tva_tx . "\"
 				ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($object->lines[$i]->desc)) . "\"
 				";
