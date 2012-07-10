@@ -49,7 +49,7 @@ function user_prepare_head($object)
     $head[$h][2] = 'user';
     $h++;
 
-	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
+	if (! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_SYNCHRO_ACTIVE))
 	{
 		$langs->load("ldap");
 	    $head[$h][0] = DOL_URL_ROOT.'/user/ldap.php?id='.$object->id;
@@ -71,7 +71,7 @@ function user_prepare_head($object)
     $head[$h][2] = 'guisetup';
     $h++;
 
-    if ($conf->clicktodial->enabled)
+    if (! empty($conf->clicktodial->enabled))
     {
         $head[$h][0] = DOL_URL_ROOT.'/user/clicktodial.php?id='.$object->id;
         $head[$h][1] = $langs->trans("ClickToDial");
@@ -85,7 +85,7 @@ function user_prepare_head($object)
     // $this->tabs = array('entity:-tabname:Title:@mymodule:conditiontoshow:/mymodule/mypage.php?id=__ID__');   to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'user');
 
-    if (! $user->societe_id)
+    if (! empty($user->societe_id))
     {
     	$head[$h][0] = DOL_URL_ROOT.'/user/note.php?id='.$object->id;
     	$head[$h][1] = $langs->trans("Note");
@@ -120,7 +120,7 @@ function group_prepare_head($object)
     $head[$h][2] = 'group';
     $h++;
 
-	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
+	if (! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_SYNCHRO_ACTIVE))
 	{
 		$langs->load("ldap");
 	    $head[$h][0] = DOL_URL_ROOT.'/user/group/ldap.php?id='.$object->id;
@@ -166,7 +166,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     }
 
     $selected_theme=$conf->global->MAIN_THEME;
-    if (! empty($fuser)) $selected_theme=$fuser->conf->MAIN_THEME;
+    if (! empty($fuser->conf->MAIN_THEME)) $selected_theme=$fuser->conf->MAIN_THEME;
 
     $colspan=2;
     if ($foruserprofile) $colspan=4;

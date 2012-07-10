@@ -32,26 +32,28 @@ require_once(DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/images.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/usergroups.lib.php");
-if ($conf->ldap->enabled) require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
-if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
+if (! empty($conf->ldap->enabled)) require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
+if (! empty($conf->adherent->enabled)) require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
 if (! empty($conf->multicompany->enabled)) dol_include_once("/multicompany/class/actions_multicompany.class.php");
 
 $id			= GETPOST('id','int');
-$action		= GETPOST("action");
+$action		= GETPOST('action','alpha');
+$confirm	= GETPOST('confirm','alpha');
+$subaction	= GETPOST('subaction','alpha');
 $group		= GETPOST("group","int",3);
-$confirm	= GETPOST("confirm");
+$message='';
 
 // Define value to know what current user can do on users
-$canadduser=($user->admin || $user->rights->user->user->creer);
-$canreaduser=($user->admin || $user->rights->user->user->lire);
-$canedituser=($user->admin || $user->rights->user->user->creer);
-$candisableuser=($user->admin || $user->rights->user->user->supprimer);
+$canadduser=(! empty($user->admin) || $user->rights->user->user->creer);
+$canreaduser=(! empty($user->admin) || $user->rights->user->user->lire);
+$canedituser=(! empty($user->admin) || $user->rights->user->user->creer);
+$candisableuser=(! empty($user->admin) || $user->rights->user->user->supprimer);
 $canreadgroup=$canreaduser;
 $caneditgroup=$canedituser;
 if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
-    $canreadgroup=($user->admin || $user->rights->user->group_advance->read);
-    $caneditgroup=($user->admin || $user->rights->user->group_advance->write);
+    $canreadgroup=(! empty($user->admin) || $user->rights->user->group_advance->read);
+    $caneditgroup=(! empty($user->admin) || $user->rights->user->group_advance->write);
 }
 // Define value to know what current user can do on properties of edited user
 if ($id)
@@ -87,14 +89,14 @@ $form = new Form($db);
 /**
  * Actions
  */
-if ($_GET["subaction"] == 'addrights' && $canedituser)
+if ($subaction == 'addrights' && $canedituser)
 {
     $edituser = new User($db);
     $edituser->fetch($id);
     $edituser->addrights($_GET["rights"]);
 }
 
-if ($_GET["subaction"] == 'delrights' && $canedituser)
+if ($subaction == 'delrights' && $canedituser)
 {
     $edituser = new User($db);
     $edituser->fetch($id);
@@ -116,8 +118,6 @@ if ($action == 'confirm_enable' && $confirm == "yes" && $candisableuser)
 {
     if ($id <> $user->id)
     {
-        $message='';
-
         $edituser = new User($db);
         $edituser->fetch($id);
 
@@ -162,7 +162,6 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $candisableuser)
 // Action ajout user
 if ($action == 'add' && $canadduser)
 {
-    $message="";
     if (! $_POST["nom"])
     {
         $message='<div class="error">'.$langs->trans("NameNotDefined").'</div>';
@@ -286,8 +285,6 @@ if ($action == 'update' && ! $_POST["cancel"])
 
     if ($caneditfield)	// Case we can edit all field
     {
-        $message="";
-
         if (! $_POST["nom"])
         {
             $message='<div class="error">'.$langs->trans("NameNotDefined").'</div>';
@@ -539,7 +536,9 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print "<br>";
     print "<br>";
 
-    if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
+    dol_htmloutput_errors($message);
+
+    if (! empty($conf->ldap->enabled) && (isset($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr'))
     {
         /*
          * Affiche formulaire d'ajout d'un compte depuis LDAP
@@ -589,40 +588,35 @@ if (($action == 'create') || ($action == 'adduserldap'))
         {
             $message='<div class="error">'.$ldap->error.'</div>';
         }
-    }
 
-    dol_htmloutput_errors($message);
-
-    if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
-    {
         // Si la liste des users est rempli, on affiche la liste deroulante
         if (is_array($liste))
         {
-            print "\n\n<!-- Form liste LDAP debut -->\n";
+        	print "\n\n<!-- Form liste LDAP debut -->\n";
 
-            print '<form name="add_user_ldap" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<table width="100%" class="border"><tr>';
-            print '<td width="160">';
-            print $langs->trans("LDAPUsers");
-            print '</td>';
-            print '<td>';
-            print '<input type="hidden" name="action" value="adduserldap">';
-            print $form->selectarray('users', $liste, '', 1);
-            print '</td><td align="center">';
-            print '<input type="submit" class="button" value="'.$langs->trans('Get').'">';
-            print '</td></tr></table>';
-            print '</form>';
+        	print '<form name="add_user_ldap" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+        	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        	print '<table width="100%" class="border"><tr>';
+        	print '<td width="160">';
+        	print $langs->trans("LDAPUsers");
+        	print '</td>';
+        	print '<td>';
+        	print '<input type="hidden" name="action" value="adduserldap">';
+        	print $form->selectarray('users', $liste, '', 1);
+        	print '</td><td align="center">';
+        	print '<input type="submit" class="button" value="'.$langs->trans('Get').'">';
+        	print '</td></tr></table>';
+        	print '</form>';
 
-            print "\n<!-- Form liste LDAP fin -->\n\n";
-            print '<br>';
+        	print "\n<!-- Form liste LDAP fin -->\n\n";
+        	print '<br>';
         }
     }
 
-    print '<form action="fiche.php" method="post" name="createuser">';
+    print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST" name="createuser">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
-    if ($ldap_sid) print '<input type="hidden" name="ldap_sid" value="'.$ldap_sid.'">';
+    if (! empty($ldap_sid)) print '<input type="hidden" name="ldap_sid" value="'.$ldap_sid.'">';
     print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 
     print '<table class="border" width="100%">';
@@ -632,52 +626,52 @@ if (($action == 'create') || ($action == 'adduserldap'))
     // Nom
     print '<td valign="top" width="160"><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td>';
     print '<td>';
-    if ($ldap_nom)
+    if (! empty($ldap_nom))
     {
         print '<input type="hidden" name="nom" value="'.$ldap_nom.'">';
         print $ldap_nom;
     }
     else
     {
-        print '<input size="30" type="text" name="nom" value="'.$_POST["nom"].'">';
+        print '<input size="30" type="text" name="nom" value="'.GETPOST('nom').'">';
     }
     print '</td></tr>';
 
     // Prenom
     print '<tr><td valign="top">'.$langs->trans("Firstname").'</td>';
     print '<td>';
-    if ($ldap_prenom)
+    if (! empty($ldap_prenom))
     {
         print '<input type="hidden" name="prenom" value="'.$ldap_prenom.'">';
         print $ldap_prenom;
     }
     else
     {
-        print '<input size="30" type="text" name="prenom" value="'.$_POST["prenom"].'">';
+        print '<input size="30" type="text" name="prenom" value="'.GETPOST('prenom').'">';
     }
     print '</td></tr>';
 
     // Login
     print '<tr><td valign="top"><span class="fieldrequired">'.$langs->trans("Login").'</span></td>';
     print '<td>';
-    if ($ldap_login)
+    if (! empty($ldap_login))
     {
         print '<input type="hidden" name="login" value="'.$ldap_login.'">';
         print $ldap_login;
     }
-    elseif ($ldap_loginsmb)
+    elseif (! empty($ldap_loginsmb))
     {
         print '<input type="hidden" name="login" value="'.$ldap_loginsmb.'">';
         print $ldap_loginsmb;
     }
     else
     {
-        print '<input size="20" maxsize="24" type="text" name="login" value="'.$_POST["login"].'">';
+        print '<input size="20" maxsize="24" type="text" name="login" value="'.GETPOST('login').'">';
     }
     print '</td></tr>';
 
     $generated_password='';
-    if (! $ldap_sid)    // ldap_sid is for activedirectory
+    if (empty($ldap_sid))    // ldap_sid is for activedirectory
     {
         require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
         $generated_password=getRandomPassword('');
@@ -687,13 +681,13 @@ if (($action == 'create') || ($action == 'adduserldap'))
     // Mot de passe
     print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
     print '<td>';
-    if ($ldap_sid)
+    if (! empty($ldap_sid))
     {
         print 'Mot de passe du domaine';
     }
     else
     {
-        if ($ldap_pass)
+        if (! empty($ldap_pass))
         {
             print '<input type="hidden" name="password" value="'.$ldap_pass.'">';
             print preg_replace('/./i','*',$ldap_pass);
@@ -707,15 +701,15 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '</td></tr>';
 
     // Administrateur
-    if ($user->admin)
+    if (! empty($user->admin))
     {
         print '<tr><td valign="top">'.$langs->trans("Administrator").'</td>';
         print '<td>';
-        print $form->selectyesno('admin',$_POST["admin"],1);
+        print $form->selectyesno('admin',GETPOST('admin'),1);
 
         if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->multicompany->transverse_mode))
         {
-            if ($conf->use_javascript_ajax)
+            if (! empty($conf->use_javascript_ajax))
             {
                 print '<script type="text/javascript">
 							$(function() {
@@ -774,63 +768,63 @@ if (($action == 'create') || ($action == 'adduserldap'))
     // Tel
     print '<tr><td valign="top">'.$langs->trans("PhonePro").'</td>';
     print '<td>';
-    if ($ldap_phone)
+    if (! empty($ldap_phone))
     {
         print '<input type="hidden" name="office_phone" value="'.$ldap_phone.'">';
         print $ldap_phone;
     }
     else
     {
-        print '<input size="20" type="text" name="office_phone" value="'.$_POST["office_phone"].'">';
+        print '<input size="20" type="text" name="office_phone" value="'.GETPOST('office_phone').'">';
     }
     print '</td></tr>';
 
     // Tel portable
     print '<tr><td valign="top">'.$langs->trans("PhoneMobile").'</td>';
     print '<td>';
-    if ($ldap_mobile)
+    if (! empty($ldap_mobile))
     {
         print '<input type="hidden" name="user_mobile" value="'.$ldap_mobile.'">';
         print $ldap_mobile;
     }
     else
     {
-        print '<input size="20" type="text" name="user_mobile" value="'.$_POST["user_mobile"].'">';
+        print '<input size="20" type="text" name="user_mobile" value="'.GETPOST('user_mobile').'">';
     }
     print '</td></tr>';
 
     // Fax
     print '<tr><td valign="top">'.$langs->trans("Fax").'</td>';
     print '<td>';
-    if ($ldap_fax)
+    if (! empty($ldap_fax))
     {
         print '<input type="hidden" name="office_fax" value="'.$ldap_fax.'">';
         print $ldap_fax;
     }
     else
     {
-        print '<input size="20" type="text" name="office_fax" value="'.$_POST["office_fax"].'">';
+        print '<input size="20" type="text" name="office_fax" value="'.GETPOST('office_fax').'">';
     }
     print '</td></tr>';
 
     // EMail
-    print '<tr><td valign="top"'.($conf->global->USER_MAIL_REQUIRED?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
+    print '<tr><td valign="top"'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
     print '<td>';
-    if ($ldap_mail)
+    if (! empty($ldap_mail))
     {
         print '<input type="hidden" name="email" value="'.$ldap_mail.'">';
         print $ldap_mail;
     }
     else
     {
-        print '<input size="40" type="text" name="email" value="'.$_POST["email"].'">';
+        print '<input size="40" type="text" name="email" value="'.GETPOST('email').'">';
     }
     print '</td></tr>';
 
     // Signature
     print '<tr><td valign="top">'.$langs->trans("Signature").'</td>';
     print '<td>';
-    print '<textarea rows="'.ROWS_5.'" cols="90" name="signature">'.$_POST["signature"].'</textarea>';
+    print '<textarea rows="'.ROWS_5.'" cols="90" name="signature">'.GETPOST('signature').'</textarea>';
     print '</td></tr>';
 
     // Note
@@ -845,14 +839,16 @@ if (($action == 'create') || ($action == 'adduserldap'))
     // Autres caracteristiques issus des autres modules
 
     // Module Webcalendar
-    if ($conf->webcalendar->enabled)
+    // TODO external module
+    if (! empty($conf->webcalendar->enabled))
     {
         print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
         print '<td><input size="30" type="text" name="webcal_login" value="'.$_POST["webcal_login"].'"></td></tr>';
     }
 
     // Module Phenix
-    if ($conf->phenix->enabled)
+    // TODO external module
+    if (! empty($conf->phenix->enabled))
     {
         print "<tr>".'<td valign="top">'.$langs->trans("LoginPenix").'</td>';
         print '<td><input size="30" type="text" name="phenix_login" value="'.$_POST["phenix_login"].'"></td></tr>';
@@ -880,7 +876,7 @@ else
 
         // Connexion ldap
         // pour recuperer passDoNotExpire et userChangePassNextLogon
-        if ($conf->ldap->enabled && $fuser->ldap_sid)
+        if (! empty($conf->ldap->enabled) && ! empty($fuser->ldap_sid))
         {
             $ldap = new Ldap();
             $result=$ldap->connect_bind();
@@ -991,10 +987,10 @@ else
             print '</tr>'."\n";
 
             $rowspan=14;
-            if ($conf->societe->enabled) $rowspan++;
-            if ($conf->adherent->enabled) $rowspan++;
-            if ($conf->webcalendar->enabled) $rowspan++;
-            if ($conf->phenix->enabled) $rowspan+=2;
+            if (! empty($conf->societe->enabled)) $rowspan++;
+            if (! empty($conf->adherent->enabled)) $rowspan++;
+            if (! empty($conf->webcalendar->enabled)) $rowspan++;	// TODO external module
+            if (! empty($conf->phenix->enabled)) $rowspan+=2;		// TODO external module
 
             // Lastname
             print '<tr><td valign="top">'.$langs->trans("Lastname").'</td>';
@@ -1014,7 +1010,7 @@ else
 
             // Login
             print '<tr><td valign="top">'.$langs->trans("Login").'</td>';
-            if ($fuser->ldap_sid && $fuser->statut==0)
+            if (! empty($fuser->ldap_sid) && $fuser->statut==0)
             {
                 print '<td class="error">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
             }
@@ -1026,7 +1022,7 @@ else
 
             // Password
             print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
-            if ($fuser->ldap_sid)
+            if (! empty($fuser->ldap_sid))
             {
                 if ($passDoNotExpire)
                 {
@@ -1147,7 +1143,7 @@ else
             print "</tr>\n";
 
 
-            if (preg_match('/myopenid/',$conf->authmode))
+            if (isset($conf->authmode) && preg_match('/myopenid/',$conf->authmode))
             {
                 print '<tr><td valign="top">'.$langs->trans("url_openid").'</td>';
                 print '<td>'.$fuser->openid.'</td>';
@@ -1156,7 +1152,8 @@ else
             // Autres caracteristiques issus des autres modules
 
             // Module Webcalendar
-            if ($conf->webcalendar->enabled)
+            // TODO external module
+            if (! empty($conf->webcalendar->enabled))
             {
                 $langs->load("other");
                 print '<tr><td valign="top">'.$langs->trans("LoginWebcal").'</td>';
@@ -1165,7 +1162,8 @@ else
             }
 
             // Module Phenix
-            if ($conf->phenix->enabled)
+            // TODO external module
+            if (! empty($conf->phenix->enabled))
             {
                 $langs->load("other");
                 print '<tr><td valign="top">'.$langs->trans("LoginPhenix").'</td>';
@@ -1177,11 +1175,11 @@ else
             }
 
             // Company / Contact
-            if ($conf->societe->enabled)
+            if (! empty($conf->societe->enabled))
             {
                 print '<tr><td valign="top">'.$langs->trans("LinkToCompanyContact").'</td>';
                 print '<td>';
-                if ($fuser->societe_id > 0)
+                if (isset($fuser->societe_id) && $fuser->societe_id > 0)
                 {
                     $societe = new Societe($db);
                     $societe->fetch($fuser->societe_id);
@@ -1191,7 +1189,7 @@ else
                 {
                     print $langs->trans("ThisUserIsNot");
                 }
-                if ($fuser->contact_id)
+                if (! empty($fuser->contact_id))
                 {
                     $contact = new Contact($db);
                     $contact->fetch($fuser->contact_id);
@@ -1204,7 +1202,7 @@ else
             }
 
             // Module Adherent
-            if ($conf->adherent->enabled)
+            if (! empty($conf->adherent->enabled))
             {
                 $langs->load("members");
                 print '<tr><td valign="top">'.$langs->trans("LinkedToDolibarrMember").'</td>';
@@ -1429,14 +1427,12 @@ else
             }
         }
 
-
         /*
          * Fiche en mode edition
          */
 
         if ($action == 'edit' && ($canedituser || ($user->id == $fuser->id)))
         {
-
             print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$fuser->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="update">';
@@ -1445,10 +1441,10 @@ else
 
             $rowspan=12;
 
-            if ($conf->societe->enabled) $rowspan++;
-            if ($conf->adherent->enabled) $rowspan++;
-            if ($conf->webcalendar->enabled) $rowspan++;
-            if ($conf->phenix->enabled) $rowspan+=2;
+            if (! empty($conf->societe->enabled)) $rowspan++;
+            if (! empty($conf->adherent->enabled)) $rowspan++;
+            if (! empty($conf->webcalendar->enabled)) $rowspan++;	// TODO external module
+            if (! empty($conf->phenix->enabled)) $rowspan+=2;		// TODO external module
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
             print '<td colspan="2">';
@@ -1650,7 +1646,7 @@ else
             // Tel pro
             print "<tr>".'<td valign="top">'.$langs->trans("PhonePro").'</td>';
             print '<td>';
-            if ($caneditfield  && !$fuser->ldap_sid)
+            if ($caneditfield  && empty($fuser->ldap_sid))
             {
                 print '<input size="20" type="text" name="office_phone" class="flat" value="'.$fuser->office_phone.'">';
             }
@@ -1664,7 +1660,7 @@ else
             // Tel mobile
             print "<tr>".'<td valign="top">'.$langs->trans("PhoneMobile").'</td>';
             print '<td>';
-            if ($caneditfield && !$fuser->ldap_sid)
+            if ($caneditfield && empty($fuser->ldap_sid))
             {
                 print '<input size="20" type="text" name="user_mobile" class="flat" value="'.$fuser->user_mobile.'">';
             }
@@ -1678,7 +1674,7 @@ else
             // Fax
             print "<tr>".'<td valign="top">'.$langs->trans("Fax").'</td>';
             print '<td>';
-            if ($caneditfield  && !$fuser->ldap_sid)
+            if ($caneditfield  && empty($fuser->ldap_sid))
             {
                 print '<input size="20" type="text" name="office_fax" class="flat" value="'.$fuser->office_fax.'">';
             }
@@ -1690,9 +1686,9 @@ else
             print '</td></tr>';
 
             // EMail
-            print "<tr>".'<td valign="top"'.($conf->global->USER_MAIL_REQUIRED?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
+            print "<tr>".'<td valign="top"'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
             print '<td>';
-            if ($caneditfield  && !$fuser->ldap_sid)
+            if ($caneditfield  && empty($fuser->ldap_sid))
             {
                 print '<input size="40" type="text" name="email" class="flat" value="'.$fuser->email.'">';
             }
@@ -1710,7 +1706,7 @@ else
             print '</td></tr>';
 
             // openid
-            if (preg_match('/myopenid/',$conf->authmode))
+            if (isset($conf->authmode) && preg_match('/myopenid/',$conf->authmode))
             {
                 print "<tr>".'<td valign="top">'.$langs->trans("url_openid").'</td>';
                 print '<td>';
@@ -1735,7 +1731,8 @@ else
             // Autres caracteristiques issus des autres modules
 
             // Module Webcalendar
-            if ($conf->webcalendar->enabled)
+            // TODO external module
+            if (! empty($conf->webcalendar->enabled))
             {
                 $langs->load("other");
                 print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
@@ -1746,7 +1743,8 @@ else
             }
 
             // Module Phenix
-            if ($conf->phenix->enabled)
+            // TODO external module
+            if (! empty($conf->phenix->enabled))
             {
                 $langs->load("other");
                 print "<tr>".'<td valign="top">'.$langs->trans("LoginPhenix").'</td>';
@@ -1762,7 +1760,7 @@ else
             }
 
             // Company / Contact
-            if ($conf->societe->enabled)
+            if (! empty($conf->societe->enabled))
             {
                 print '<tr><td width="25%" valign="top">'.$langs->trans("LinkToCompanyContact").'</td>';
                 print '<td>';
@@ -1787,7 +1785,7 @@ else
             }
 
             // Module Adherent
-            if ($conf->adherent->enabled)
+            if (! empty($conf->adherent->enabled))
             {
                 $langs->load("members");
                 print '<tr><td width="25%" valign="top">'.$langs->trans("LinkedToDolibarrMember").'</td>';
@@ -1820,12 +1818,11 @@ else
             print '</div>';
         }
 
-        $ldap->close;
+		if (! empty($conf->ldap->enabled) && ! empty($fuser->ldap_sid)) $ldap->close;
     }
 }
 
-$db->close();
 
 llxFooter();
-
+$db->close();
 ?>
