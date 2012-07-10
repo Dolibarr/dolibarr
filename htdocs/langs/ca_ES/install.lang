@@ -155,7 +155,11 @@ MigrationShippingDelivery2=Actualització de les dades expedicions 2
 MigrationFinished=Acabada l'actualització
 LastStepDesc=<strong>Últim pas</strong>: Indiqueu aquí el compte i la contrasenya del primer usuari que fareu servir per connectar-se a l'aplicació. No perdi aquests identificadors, és el compte que permet administrar la resta.
 ActivateModule=Activació del mòdul %s
-#########=
+LinkedElementsInvalidDeleted=han estat eliminats <b>%s</b> enllaços invàlids
+NothingToDelete=No s'ha trobat enllaços invàlids
+SourceType=Origen
+TargetType=Destí
+#########
 # upgrade=
 MigrationFixData=Correcció de dades desnormalitzades
 MigrationOrder=Migració de dades de les comandes clients
