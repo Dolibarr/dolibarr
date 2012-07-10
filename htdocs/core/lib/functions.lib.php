@@ -1295,12 +1295,12 @@ function dol_print_address($address, $htmlid, $mode, $id)
     {
         print nl2br($address);
         $showgmap=$showomap=0;
-        if ($mode=='thirdparty' && $conf->google->enabled && $conf->global->GOOGLE_ENABLE_GMAPS) $showgmap=1;
-        if ($mode=='contact' && $conf->google->enabled && $conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS) $showgmap=1;
-        if ($mode=='member' && $conf->google->enabled && $conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS) $showgmap=1;
-        if ($mode=='thirdparty' && $conf->openstreetmap->enabled && $conf->global->OPENSTREETMAP_ENABLE_MAPS) $showomap=1;
-        if ($mode=='contact' && $conf->openstreetmap->enabled && $conf->global->OPENSTREETMAP_ENABLE_MAPS_CONTACTS) $showomap=1;
-        if ($mode=='member' && $conf->openstreetmap->enabled && $conf->global->OPENSTREETMAP_ENABLE_MAPS_MEMBERS) $showomap=1;
+        if ($mode=='thirdparty' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS)) $showgmap=1;
+        if ($mode=='contact' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS)) $showgmap=1;
+        if ($mode=='member' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS)) $showgmap=1;
+        if ($mode=='thirdparty' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS)) $showomap=1;
+        if ($mode=='contact' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_CONTACTS)) $showomap=1;
+        if ($mode=='member' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_MEMBERS)) $showomap=1;
 
         // TODO Add a hook here
         if ($showgmap)
