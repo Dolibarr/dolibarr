@@ -52,7 +52,7 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if (isset($user->societe_id) && $user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
 if ($user->id == $id && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->user->self_advance->readperms))	// A user can always read its own card if not advanced perms enabled, or if he has advanced perms
 {
@@ -276,19 +276,20 @@ if ($result)
     $num = $db->num_rows($result);
     $i = 0;
     $var = True;
+    $oldmod='';
 
     while ($i < $num)
     {
         $obj = $db->fetch_object($result);
 
         // Si la ligne correspond a un module qui n'existe plus (absent de includes/module), on l'ignore
-        if (! $modules[$obj->module])
+        if (empty($modules[$obj->module]))
         {
             $i++;
             continue;
         }
 
-        if ($oldmod <> $obj->module)
+        if (isset($obj->module) && ($oldmod <> $obj->module))
         {
             $oldmod = $obj->module;
             $var = !$var;
@@ -297,7 +298,7 @@ if ($result)
             $objMod=$modules[$obj->module];
             $picto=($objMod->picto?$objMod->picto:'generic');
 
-            if ($caneditperms && (! $objMod->rights_admin_allowed || ! $fuser->admin))
+            if ($caneditperms && (empty($objMod->rights_admin_allowed) || empty($fuser->admin)))
             {
                 // On affiche ligne pour modifier droits
                 print '<tr '. $bc[$var].'>';

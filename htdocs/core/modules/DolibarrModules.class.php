@@ -900,7 +900,7 @@ abstract class DolibarrModules
         if ($resql)
         {
             $obj=$this->db->fetch_object($resql);
-            if ($obj->value)
+            if (! empty($obj->value) && ! empty($this->rights))
             {
                 // Si module actif
                 foreach ($this->rights as $key => $value)

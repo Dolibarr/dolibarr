@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 
 $sall=GETPOST('sall','alpha');
+$search_user=GETPOST('search_user','alpha');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -69,7 +70,7 @@ $sql.= " u.ldap_sid, u.statut, u.entity,";
 $sql.= " s.nom, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
-if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->multicompany->transverse_mode || ($user->admin && ! $user->entity)))
+if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && (! empty($conf->multicompany->transverse_mode) || (! empty($user->admin) && empty($user->entity))))
 {
 	$sql.= " WHERE u.entity IS NOT NULL";
 }
@@ -78,9 +79,9 @@ else
 	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 }
 if (!empty($socid)) $sql.= " AND u.fk_societe = ".$socid;
-if ($_POST["search_user"])
+if ($search_user)
 {
-    $sql.= " AND (u.login like '%".$_POST["search_user"]."%' OR u.name like '%".$_POST["search_user"]."%' OR u.firstname like '%".$_POST["search_user"]."%')";
+    $sql.= " AND (u.login like '%".$search_user."%' OR u.name like '%".$search_user."%' OR u.firstname like '%".$search_user."%')";
 }
 if ($sall) $sql.= " AND (u.login like '%".$db->escape($sall)."%' OR u.name like '%".$db->escape($sall)."%' OR u.firstname like '%".$db->escape($sall)."%' OR u.email like '%".$db->escape($sall)."%' OR u.note like '%".$db->escape($sall)."%')";
 $sql.=$db->order($sortfield,$sortorder);

@@ -3690,7 +3690,7 @@ class Form
             }
             else
             {
-                if ($conf->gravatar->enabled && $email)
+                if (! empty($conf->gravatar->enabled) && $email)
                 {
                     global $dolibarr_main_url_root;
                     $ret.='<!-- Put link to gravatar -->';

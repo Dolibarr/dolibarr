@@ -258,7 +258,7 @@ if ($id)
             $obj = $db->fetch_object($result);
 
             // Si la ligne correspond a un module qui n'existe plus (absent de includes/module), on l'ignore
-            if (! $modules[$obj->module])
+            if (empty($modules[$obj->module]))
             {
                 $i++;
                 continue;

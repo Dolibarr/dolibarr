@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,7 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 $langs->load("users");
 
 $sall=GETPOST("sall");
+$search_group=GETPOST('search_group');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -66,7 +67,7 @@ else
 {
 	$sql.= " WHERE g.entity IN (0,".$conf->entity.")";
 }
-if ($_POST["search_group"])
+if ($search_group)
 {
     $sql .= " AND (g.nom LIKE '%".$db->escape($_POST["search_group"])."%' OR g.note LIKE '%".$db->escape($_POST["search_group"])."%')";
 }
@@ -124,8 +125,7 @@ else
     dol_print_error($db);
 }
 
-$db->close();
 
 llxFooter();
-
+$db->close();
 ?>
