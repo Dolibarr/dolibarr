@@ -4024,7 +4024,7 @@ function getCurrencySymbol($currency_code)
 
 	$form->load_cache_currencies();
 
-	if (function_exists("mb_convert_encoding") && is_array($form->cache_currencies[$currency_code]['unicode']) && ! empty($form->cache_currencies[$currency_code]['unicode']))
+	if (function_exists("mb_convert_encoding") && isset($form->cache_currencies[$currency_code]) && is_array($form->cache_currencies[$currency_code]['unicode']) && ! empty($form->cache_currencies[$currency_code]['unicode']))
 	{
 		foreach($form->cache_currencies[$currency_code]['unicode'] as $unicode)
 		{
