@@ -1313,15 +1313,15 @@ else
                 $usergroup=new UserGroup($db);
                 $groupslist = $usergroup->listGroupsForUser($fuser->id);
 
-                if (! empty($groupslist))
+                if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
                 {
-                    if( ! ($conf->multicompany->enabled && $conf->multicompany->transverse_mode))
-                    {
-                        foreach($groupslist as $groupforuser)
-                        {
-                            $exclude[]=$groupforuser->id;
-                        }
-                    }
+                	if (! empty($groupslist))
+                	{
+                		foreach($groupslist as $groupforuser)
+                		{
+                			$exclude[]=$groupforuser->id;
+                		}
+                	}
                 }
 
                 if ($caneditgroup)
@@ -1400,15 +1400,19 @@ else
                         		{
                         			$mc->getInfo($group_entity);
                         			print ($nb > 0 ? ', ' : '').$mc->label;
+                        			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$fuser->id.'&amp;action=removegroup&amp;group='.$group->id.'&amp;entity='.$group_entity.'">';
+                        			print img_delete($langs->trans("RemoveFromGroup"));
+                        			print '</a>';
                         			$nb++;
                         		}
                         	}
                         }
                         print '<td align="right">';
-                        if ($caneditgroup)
+                        if ($caneditgroup && empty($conf->multicompany->transverse_mode))
                         {
-                            print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$fuser->id.'&amp;action=removegroup&amp;group='.$group->id.'&amp;entity='.$group->usergroup_entity.'">';
+                            print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$fuser->id.'&amp;action=removegroup&amp;group='.$group->id.'">';
                             print img_delete($langs->trans("RemoveFromGroup"));
+                            print '</a>';
                         }
                         else
                         {
