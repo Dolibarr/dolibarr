@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2001-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/dons/class/don.class.php");
-if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
+if (! empty($conf->projet->enabled)) require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 
 $langs->load("companies");
 $langs->load("donations");
@@ -83,10 +84,10 @@ if (trim($search_name) != '')
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);
 
-$result = $db->query($sql);
-if ($result)
+$resql = $db->query($sql);
+if ($resql)
 {
-	$num = $db->num_rows($result);
+	$num = $db->num_rows($resql);
 	$i = 0;
 
 	$param="&statut=$statut&sortorder=$sortorder&sortfield=$sortfield";
@@ -110,7 +111,7 @@ if ($result)
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"d.societe","&page=$page&statut=$statut","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"d.nom","&page=$page&statut=$statut","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"d.datedon","&page=$page&statut=$statut","",'align="center"',$sortfield,$sortorder);
-	if ($conf->projet->enabled)
+	if (! empty($conf->projet->enabled))
 	{
 		$langs->load("projects");
 		print_liste_field_titre($langs->trans("Project"),$_SERVER["PHP_SELF"],"fk_don_projet","&page=$page&statut=$statut","","",$sortfield,$sortorder);
@@ -133,7 +134,7 @@ if ($result)
     print '<td class="liste_titre" align="left">';
     print '&nbsp;';
     print '</td>';
-    if ($conf->projet->enabled)
+    if (! empty($conf->projet->enabled))
     {
         print '<td class="liste_titre" align="right">';
         print '&nbsp;';

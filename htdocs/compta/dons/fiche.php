@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,14 +35,16 @@ $langs->load("companies");
 $langs->load("donations");
 $langs->load("bills");
 
-$id=GETPOST('rowid')?GETPOST('rowid'):GETPOST('id','int');
-$action=GETPOST('action');
+$id=GETPOST('rowid')?GETPOST('rowid','int'):GETPOST('id','int');
+$action=GETPOST('action','alpha');
+$cancel=GETPOST('cancel');
+$amount=GETPOST('amount');
 
 $mesg="";
 $mesgs=array();
 
 $don = new Don($db);
-$donation_date=dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+$donation_date=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 
 // Security check
 $result = restrictedArea($user, 'don', $id);
@@ -53,9 +56,9 @@ $result = restrictedArea($user, 'don', $id);
 
 if ($action == 'update')
 {
-	if (! empty($_POST['cancel']))
+	if (! empty($cancel))
 	{
-		Header("Location: fiche.php?rowid=".$_POST["rowid"]);
+		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
 	}
 
@@ -68,7 +71,7 @@ if ($action == 'update')
         $error++;
     }
 
-	if (! $_POST["amount"] > 0)
+	if (empty($amount))
 	{
 		$mesgs[]=$langs->trans("ErrorFieldRequired",$langs->trans("Amount"));
 		$action = "create";
@@ -77,8 +80,7 @@ if ($action == 'update')
 
 	if (! $error)
 	{
-		$don->id = $_POST["rowid"];
-		$don->fetch($_POST["rowid"]);
+		$don->fetch($id);
 
 		$don->prenom      = $_POST["prenom"];
 		$don->nom         = $_POST["nom"];
@@ -100,7 +102,7 @@ if ($action == 'update')
 
 		if ($don->update($user) > 0)
 		{
-			Header("Location: fiche.php?rowid=".$don->id);
+			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$don->id);
 			exit;
 		}
 	}
@@ -108,7 +110,7 @@ if ($action == 'update')
 
 if ($action == 'add')
 {
-	if (! empty($_POST['cancel']))
+	if (! empty($cancel))
 	{
 		Header("Location: index.php");
 		exit;
@@ -119,14 +121,14 @@ if ($action == 'add')
     if (empty($donation_date))
     {
         $mesgs[]=$langs->trans("ErrorFieldRequired",$langs->trans("Date"));
-        $_GET["action"] = "create";
+        $action = "create";
         $error++;
     }
 
-	if (! $_POST["amount"] > 0)
+	if (empty($amount))
 	{
 		$mesgs[]=$langs->trans("ErrorFieldRequired",$langs->trans("Amount"));
-		$_GET["action"] = "create";
+		$action = "create";
 		$error++;
 	}
 
@@ -160,48 +162,47 @@ if ($action == 'add')
 
 if ($action == 'delete')
 {
-	$don->delete($_GET["rowid"]);
+	$don->delete($id);
 	Header("Location: liste.php");
 	exit;
 }
 if ($action == 'commentaire')
 {
-	$don->fetch($_POST["rowid"]);
+	$don->fetch($id);
 	$don->update_note($_POST["commentaire"]);
-	$_GET["rowid"] = $_POST["rowid"];
 }
 if ($action == 'valid_promesse')
 {
-	if ($don->valid_promesse($_GET["rowid"], $user->id) >= 0)
+	if ($don->valid_promesse($id, $user->id) >= 0)
 	{
-		Header("Location: fiche.php?rowid=".$_GET["rowid"]);
+		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
 	}
     else $mesg=$don->error;
 }
 if ($action == 'set_cancel')
 {
-    if ($don->set_cancel($_GET["rowid"]) >= 0)
+    if ($don->set_cancel($id) >= 0)
     {
-        Header("Location: fiche.php?rowid=".$_GET["rowid"]);
+        Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
         exit;
     }
     else $mesg=$don->error;
 }
 if ($action == 'set_paid')
 {
-	if ($don->set_paye($_GET["rowid"], $modepaiement) >= 0)
+	if ($don->set_paye($id, $modepaiement) >= 0)
 	{
-		Header("Location: fiche.php?rowid=".$_GET["rowid"]);
+		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
 	}
     else $mesg=$don->error;
 }
 if ($action == 'set_encaisse')
 {
-	if ($don->set_encaisse($_GET["rowid"]) >= 0)
+	if ($don->set_encaisse($id) >= 0)
 	{
-        Header("Location: fiche.php?rowid=".$_GET["rowid"]);
+        Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
 	}
     else $mesg=$don->error;
@@ -213,7 +214,7 @@ if ($action == 'set_encaisse')
 if ($action == 'builddoc')
 {
 	$donation = new Don($db);
-	$donation->fetch($_GET['rowid']);
+	$donation->fetch($id);
 
 	if ($_REQUEST['model'])
 	{
@@ -238,7 +239,7 @@ if ($action == 'builddoc')
 	}
 	else
 	{
-		Header('Location: '.$_SERVER["PHP_SELF"].'?rowid='.$donation->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$donation->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
 		exit;
 	}
 }
@@ -332,12 +333,12 @@ if ($action == 'create')
 /*                                                              */
 /* ************************************************************ */
 
-if ($id && $_GET["action"] == 'edit')
+if (! empty($id) && $action == 'edit')
 {
 	$don->fetch($id);
 
 	$h=0;
-	$head[$h][0] = DOL_URL_ROOT."/compta/dons/fiche.php?rowid=".$_GET["rowid"];
+	$head[$h][0] = $_SERVER['PHP_SELF']."?id=".$don->id;
 	$head[$h][1] = $langs->trans("Card");
 	$hselected=$h;
 	$h++;
@@ -401,11 +402,11 @@ if ($id && $_GET["action"] == 'edit')
 	print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$don->getLibStatut(4).'</td></tr>';
 
     // Project
-    if ($conf->projet->enabled)
+    if (! empty($conf->projet->enabled))
     {
         $langs->load('projects');
         print '<tr><td>'.$langs->trans('Project').'</td><td>';
-        select_projects($soc->id, isset($_POST["projectid"])?$_POST["projectid"]:$don->fk_project, 'projectid');
+        select_projects(-1, (isset($_POST["projectid"])?$_POST["projectid"]:$don->fk_project), 'projectid');
         print '</td></tr>';
     }
 
@@ -425,12 +426,12 @@ if ($id && $_GET["action"] == 'edit')
 /* Fiche don en mode visu                                       */
 /*                                                              */
 /* ************************************************************ */
-if ($id && $action != 'edit')
+if (! empty($id) && $action != 'edit')
 {
 	$result=$don->fetch($id);
 
 	$h=0;
-	$head[$h][0] = DOL_URL_ROOT."/compta/dons/fiche.php?rowid=".$_GET["rowid"];
+	$head[$h][0] = $_SERVER['PHP_SELF']."?id=".$don->id;
 	$head[$h][1] = $langs->trans("Card");
 	$hselected=$h;
 	$h++;
@@ -565,8 +566,6 @@ if ($id && $action != 'edit')
 }
 
 
-
-$db->close();
-
 llxFooter();
+$db->close();
 ?>
