@@ -26,14 +26,14 @@
  *	\brief      File of class to manage suppliers orders
  */
 
+include_once(DOL_DOCUMENT_ROOT."/core/class/commonorder.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
 
 
 /**
  *	Class to manage predefined suppliers products
  */
-class CommandeFournisseur extends Commande
+class CommandeFournisseur extends CommonOrder
 {
     public $element='order_supplier';
     public $table_element='commande_fournisseur';
@@ -347,7 +347,7 @@ class CommandeFournisseur extends Commande
             if (! $error)
             {
             	$this->oldref='';
-            	
+
                 // Rename directory if dir was a temporary ref
                 if (preg_match('/^[\(]?PROV/i', $this->ref))
                 {
@@ -364,7 +364,7 @@ class CommandeFournisseur extends Commande
                         if (@rename($dirsource, $dirdest))
                         {
                         	$this->oldref = $oldref;
-                        	
+
                             dol_syslog("Rename ok");
                             // Suppression ancien fichier PDF dans nouveau rep
                             dol_delete_file($dirdest.'/'.$oldref.'.*');
@@ -1297,7 +1297,7 @@ class CommandeFournisseur extends Commande
         {
             $error++;
         }
-        
+
         if (! $error)
         {
         	// Appel des triggers
@@ -1309,7 +1309,7 @@ class CommandeFournisseur extends Commande
         	}
         	// Fin appel triggers
         }
-        
+
         if (! $error)
         {
         	// We remove directory
@@ -1337,7 +1337,7 @@ class CommandeFournisseur extends Commande
         		}
         	}
         }
-        
+
 		if (! $error)
 		{
 			dol_syslog(get_class($this)."::delete $this->id by $user->id", LOG_DEBUG);
@@ -1821,7 +1821,7 @@ class CommandeFournisseur extends Commande
 /**
  *  Classe de gestion des lignes de commande
  */
-class CommandeFournisseurLigne extends OrderLine
+class CommandeFournisseurLigne
 {
     // From llx_commandedet
     var $qty;

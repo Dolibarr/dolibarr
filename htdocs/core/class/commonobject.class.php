@@ -1501,23 +1501,27 @@ abstract class CommonObject
                 $this->total_ttc       += $obj->total_ttc;
 
                 // Define vatrates with totals for each line and for all lines
-                $vatrates[$this->vatrate][]=array(
-                	'total_ht'       =>$obj->total_ht,
-                	'total_tva'      =>$obj->total_tva,
-                	'total_ttc'      =>$obj->total_ttc,
-                	'total_localtax1'=>$obj->total_localtax1,
-                	'total_localtax2'=>$obj->total_localtax2
-                );
-                if (! isset($vatrates_alllines[$this->vatrate]['total_ht']))        $vatrates_alllines[$this->vatrate]['total_ht']=0;
-                if (! isset($vatrates_alllines[$this->vatrate]['total_tva']))       $vatrates_alllines[$this->vatrate]['total_tva']=0;
-                if (! isset($vatrates_alllines[$this->vatrate]['total_localtax1'])) $vatrates_alllines[$this->vatrate]['total_localtax1']=0;
-                if (! isset($vatrates_alllines[$this->vatrate]['total_localtax2'])) $vatrates_alllines[$this->vatrate]['total_localtax2']=0;
-                if (! isset($vatrates_alllines[$this->vatrate]['total_ttc']))       $vatrates_alllines[$this->vatrate]['total_ttc']=0;
-                $vatrates_alllines[$this->vatrate]['total_ht']       +=$obj->total_ht;
-                $vatrates_alllines[$this->vatrate]['total_tva']      +=$obj->total_tva;
-                $vatrates_alllines[$this->vatrate]['total_localtax1']+=$obj->total_localtax1;
-                $vatrates_alllines[$this->vatrate]['total_localtax2']+=$obj->total_localtax2;
-                $vatrates_alllines[$this->vatrate]['total_ttc']      +=$obj->total_ttc;
+                // TODO $vatrates and $vatrates_alllines not used ?
+                if (! empty($this->vatrate))
+                {
+                	$vatrates[$this->vatrate][]=array(
+                			'total_ht'       =>$obj->total_ht,
+                			'total_tva'      =>$obj->total_tva,
+                			'total_ttc'      =>$obj->total_ttc,
+                			'total_localtax1'=>$obj->total_localtax1,
+                			'total_localtax2'=>$obj->total_localtax2
+                	);
+                	if (! isset($vatrates_alllines[$this->vatrate]['total_ht']))        $vatrates_alllines[$this->vatrate]['total_ht']=0;
+                	if (! isset($vatrates_alllines[$this->vatrate]['total_tva']))       $vatrates_alllines[$this->vatrate]['total_tva']=0;
+                	if (! isset($vatrates_alllines[$this->vatrate]['total_localtax1'])) $vatrates_alllines[$this->vatrate]['total_localtax1']=0;
+                	if (! isset($vatrates_alllines[$this->vatrate]['total_localtax2'])) $vatrates_alllines[$this->vatrate]['total_localtax2']=0;
+                	if (! isset($vatrates_alllines[$this->vatrate]['total_ttc']))       $vatrates_alllines[$this->vatrate]['total_ttc']=0;
+                	$vatrates_alllines[$this->vatrate]['total_ht']       +=$obj->total_ht;
+                	$vatrates_alllines[$this->vatrate]['total_tva']      +=$obj->total_tva;
+                	$vatrates_alllines[$this->vatrate]['total_localtax1']+=$obj->total_localtax1;
+                	$vatrates_alllines[$this->vatrate]['total_localtax2']+=$obj->total_localtax2;
+                	$vatrates_alllines[$this->vatrate]['total_ttc']      +=$obj->total_ttc;
+                }
 
                 $i++;
             }

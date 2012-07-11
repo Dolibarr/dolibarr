@@ -25,7 +25,7 @@
  *  \ingroup    commande
  *  \brief      Fichier des classes de commandes
  */
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
+include_once(DOL_DOCUMENT_ROOT."/core/class/commonorder.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
 
@@ -33,7 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
  *  \class      Commande
  *  \brief      Class to manage customers orders
  */
-class Commande extends CommonObject
+class Commande extends CommonOrder
 {
     public $element='commande';
     public $table_element='commande';

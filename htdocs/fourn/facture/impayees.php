@@ -3,7 +3,7 @@
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
- * Copyright (C) 2012-2012  Vinicius Nogueira       <viniciusvgn@gmail.com>
+ * Copyright (C) 2012		Vinicius Nogueira       <viniciusvgn@gmail.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -104,9 +104,9 @@ if ($user->rights->fournisseur->facture->lire)
 	if (! $user->rights->societe->client->voir && ! $socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql .= " AND s.rowid = ".$socid;
 
-	if ($_GET["filtre"])
+	if (GETPOST('filtre'))
 	{
-		$filtrearr = explode(",", $_GET["filtre"]);
+		$filtrearr = explode(",", GETPOST('filtre'));
 		foreach ($filtrearr as $fil)
 		{
 			$filt = explode(":", $fil);
@@ -116,16 +116,16 @@ if ($user->rights->fournisseur->facture->lire)
 
 	if ($search_ref)
 	{
-		$sql .= " AND f.rowid like '%".$search_ref."%'";
+		$sql .= " AND f.rowid LIKE '%".$search_ref."%'";
 	}
 	if ($search_ref_supplier)
 	{
-		$sql .= " AND f.facnumber like '%".$search_ref_supplier."%'";
+		$sql .= " AND f.facnumber LIKE '%".$search_ref_supplier."%'";
 	}
 
 	if ($search_societe)
 	{
-		$sql .= " AND s.nom like '%".$search_societe."%'";
+		$sql .= " AND s.nom LIKE '%".$search_societe."%'";
 	}
 
 	if ($search_montant_ht)
@@ -138,9 +138,9 @@ if ($user->rights->fournisseur->facture->lire)
 		$sql .= " AND f.total_ttc = '".$search_montant_ttc."'";
 	}
 
-	if (dol_strlen($_POST["sf_ref"]) > 0)
+	if (dol_strlen(GETPOST('sf_re')) > 0)
 	{
-		$sql .= " AND f.facnumber like '%".$_POST["sf_ref"]."%'";
+		$sql .= " AND f.facnumber LIKE '%".GETPOST('sf_re')."%'";
 	}
 	$sql.= " GROUP BY f.facnumber, f.rowid, f.total_ht, f.total_ttc, f.datef, f.date_lim_reglement, f.paye, f.fk_statut, s.rowid, s.nom";
 
@@ -162,16 +162,16 @@ if ($user->rights->fournisseur->facture->lire)
 
 		$param ='';
 		if ($socid) $param.="&socid=".$socid;
-		
+
 		if ($search_ref)         	$param.='&amp;search_ref='.urlencode($search_ref);
 		if ($search_ref_supplier)	$param.='&amp;search_ref_supplier='.urlencode($search_ref_supplier);
 		if ($search_societe)     	$param.='&amp;search_societe='.urlencode($search_societe);
 		if ($search_montant_ht)  	$param.='&amp;search_montant_ht='.urlencode($search_montant_ht);
 		if ($search_montant_ttc) 	$param.='&amp;search_montant_ttc='.urlencode($search_montant_ttc);
-		
+
 		$param.=($option?"&option=".$option:"");
-		if ($late) $param.='&late='.urlencode($late);
-		$urlsource.=str_replace('&amp;','&',$param);
+		if (! empty($late)) $param.='&late='.urlencode($late);
+		$urlsource=str_replace('&amp;','&',$param);
 
 		$titre=($socid?$langs->trans("BillsSuppliersUnpaidForCompany",$soc->nom):$langs->trans("BillsSuppliersUnpaid"));
 

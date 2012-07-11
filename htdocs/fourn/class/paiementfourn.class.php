@@ -242,9 +242,10 @@ class PaiementFourn extends Paiement
 	 *	Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
 	 *	Si le paiement porte sur au moins une facture a "payee", on refuse
 	 *
+	 *	@param		int		$notrigger		No trigger
 	 *	@return     int     <0 si ko, >0 si ok
 	 */
-	function delete()
+	function delete($notrigger=0)
 	{
 		$bank_line_id = $this->bank_line;
 

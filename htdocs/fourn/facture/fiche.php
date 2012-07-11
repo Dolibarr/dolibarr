@@ -42,6 +42,7 @@ $langs->load('suppliers');
 $langs->load('companies');
 
 $mesg='';
+$errors=array();
 $id			= (GETPOST('facid','int') ? GETPOST('facid','int') : GETPOST('id','int'));
 $action		= GETPOST("action");
 $confirm	= GETPOST("confirm");
@@ -52,7 +53,8 @@ $hidedesc 	 = (GETPOST('hidedesc','int') ? GETPOST('hidedesc','int') : (! empty(
 $hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+$socid='';
+if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
@@ -404,7 +406,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
 // Modification d'une ligne
 elseif ($action == 'update_line')
 {
-    if ($_REQUEST['etat'] == '1' && ! $_REQUEST['cancel']) // si on valide la modification
+    if (GETPOST('etat') == '1' && ! GETPOST('cancel')) // si on valide la modification
     {
         $object->fetch($id);
         $object->fetch_thirdparty();
@@ -420,7 +422,7 @@ elseif ($action == 'update_line')
             $price_base_type='TTC';
         }
 
-        if ($_POST['idprod'])
+        if (GETPOST('idprod'))
         {
             $prod = new Product($db);
             $prod->fetch($_POST['idprod']);
@@ -440,7 +442,7 @@ elseif ($action == 'update_line')
         $localtax1tx= get_localtax($_POST['tauxtva'], 1, $object->thirdparty);
         $localtax2tx= get_localtax($_POST['tauxtva'], 2, $object->thirdparty);
 
-        $result=$object->updateline($_GET['lineid'], $label, $pu, $_POST['tauxtva'], $localtax1tx, $localtax2tx, $_POST['qty'], $_POST['idprod'], $price_base_type, 0, $type);
+        $result=$object->updateline(GETPOST('lineid'), $label, $pu, GETPOST('tauxtva'), $localtax1tx, $localtax2tx, GETPOST('qty'), GETPOST('idprod'), $price_base_type, 0, $type);
         if ($result >= 0)
         {
             unset($_POST['label']);
@@ -607,7 +609,7 @@ elseif ($action == 'reopen' && $user->rights->fournisseur->facture->creer)
 }
 
 // Add file in email form
-if ($_POST['addfile'])
+if (GETPOST('addfile'))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
@@ -1277,13 +1279,13 @@ else
 
         // Ref
         print '<tr><td nowrap="nowrap" width="20%">'.$langs->trans("Ref").'</td><td colspan="4">';
-        print $form->showrefnav($object,'id','',1,'rowid','ref',$morehtmlref);
+        print $form->showrefnav($object,'id','',1,'rowid','ref');
         print '</td>';
         print "</tr>\n";
 
         // Ref supplier
-        print '<tr><td>'.$form->editfieldkey("RefSupplier",'ref_supplier',$object->ref_supplier,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer)).'</td><td colspan="4">';
-        print $form->editfieldval("RefSupplier",'ref_supplier',$object->ref_supplier,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer));
+        print '<tr><td>'.$form->editfieldkey("RefSupplier",'facnumber',$object->ref_supplier,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer)).'</td><td colspan="4">';
+        print $form->editfieldval("RefSupplier",'facnumber',$object->ref_supplier,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer));
         print '</td></tr>';
 
         // Third party
@@ -1322,7 +1324,7 @@ else
             }
             print ')';
         }
-        if ($facidnext > 0)
+        if (isset($facidnext) && $facidnext > 0)
         {
             $facthatreplace=new FactureFournisseur($db);
             $facthatreplace->fetch($facidnext);
@@ -1548,11 +1550,21 @@ else
             }
 
             // Show product and description
-            $type=$object->lines[$i]->product_type?$object->lines[$i]->product_type:$object->lines[$i]->fk_product_type;
+            $type=(! empty($object->lines[$i]->product_type)?$object->lines[$i]->product_type:(! empty($object->lines[$i]->fk_product_type)?$object->lines[$i]->fk_product_type:0));
             // Try to enhance type detection using date_start and date_end for free lines where type
             // was not saved.
-            if (! empty($object->lines[$i]->date_start)) $type=1;
-            if (! empty($object->lines[$i]->date_end)) $type=1;
+            $date_start='';
+            $date_end='';
+            if (! empty($object->lines[$i]->date_start))
+            {
+            	$date_start=$object->lines[$i]->date_start;
+            	$type=1;
+            }
+            if (! empty($object->lines[$i]->date_end))
+            {
+            	$date_end=$object->lines[$i]->date_end;
+            	$type=1;
+            }
 
             $var=!$var;
 
@@ -1632,7 +1644,7 @@ else
                     print $form->textwithtooltip($text,$description,3,'','',$i);
 
                     // Show range
-                    print_date_range($object->lines[$i]->date_start,$object->lines[$i]->date_end);
+                    print_date_range($date_start,$date_end);
 
                     // Add description in form
                     if ($conf->global->PRODUIT_DESC_IN_FORM) print ($object->lines[$i]->description && $object->lines[$i]->description!=$product_static->libelle)?'<br>'.dol_htmlentitiesbr($object->lines[$i]->description):'';
@@ -1646,7 +1658,7 @@ else
                     print $text.' '.nl2br($object->lines[$i]->description);
 
                     // Show range
-                    print_date_range($object->lines[$i]->date_start,$object->lines[$i]->date_end);
+                    print_date_range($date_start,$date_end);
                 }
                 print '</td>';
 
@@ -1723,7 +1735,7 @@ else
 
             print '</td>';
             print '<td align="right">';
-            print $form->load_tva('tauxtva',($_POST["tauxtva"]?$_POST["tauxtva"]:-1),$societe,$mysoc);
+            print $form->load_tva('tauxtva',(GETPOST('tauxtva')?GETPOST('tauxtva'):-1),$societe,$mysoc);
             print '</td>';
             print '<td align="right">';
             print '<input size="4" name="amount" type="text">';
@@ -1740,7 +1752,7 @@ else
             print '</form>';
 
             // Ajout de produits/services predefinis
-            if ($conf->product->enabled || $conf->service->enabled)
+            if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
             {
                 print '<tr class="liste_titre">';
                 print '<td colspan="4">';
@@ -1766,11 +1778,11 @@ else
                 $var=! $var;
                 print '<tr '.$bc[$var].'>';
                 print '<td colspan="4">';
-                $form->select_produits_fournisseurs($object->socid,'','idprodfournprice','',$filtre);
+                $form->select_produits_fournisseurs($object->socid,'','idprodfournprice');
 
                 if (is_object($hookmanager))
 				{
-			        $parameters=array('filtre'=>$filtre,'htmlname'=>'idprodfournprice');
+			        $parameters=array('htmlname'=>'idprodfournprice');
 				    echo $hookmanager->executeHooks('formCreateProductSupplierOptions',$parameters,$object,$action);
 				}
 
@@ -1882,9 +1894,10 @@ else
                 $urlsource=$_SERVER['PHP_SELF'].'?id='.$object->id;
                 $genallowed=$user->rights->fournisseur->facture->creer;
                 $delallowed=$user->rights->fournisseur->facture->supprimer;
+                $modelpdf=(! empty($object->modelpdf)?$object->modelpdf:'');
 
                 print '<br>';
-                print $formfile->showdocuments('facture_fournisseur',$subdir,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,0,0,'','','',$societe->default_lang);
+                print $formfile->showdocuments('facture_fournisseur',$subdir,$filedir,$urlsource,$genallowed,$delallowed,$modelpdf,1,0,0,0,0,'','','',$societe->default_lang);
                 $somethingshown=$formfile->numoffiles;
 
                 /*

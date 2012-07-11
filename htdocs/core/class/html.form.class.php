@@ -274,7 +274,8 @@ class Form
             else if (preg_match('/^datepicker/',$inputType))
             {
                 $tmp=explode(':',$inputType);
-                $inputType=$tmp[0]; $inputOption=$tmp[1];
+                $inputType=$tmp[0];
+                if (! empty($tmp[1])) $inputOption=$tmp[1];
                 if (! empty($tmp[2])) $savemethod=$tmp[2];
 
                 $out.= '<input id="timestamp" type="hidden"/>'."\n"; // Use for timestamp format

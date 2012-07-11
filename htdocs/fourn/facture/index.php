@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,9 +112,9 @@ if ($socid)
 {
 	$sql .= " AND s.rowid = ".$socid;
 }
-if ($_GET["filtre"])
+if (GETPOST('filtre'))
 {
-	$filtrearr = explode(",", $_GET["filtre"]);
+	$filtrearr = explode(",", GETPOST('filtre'));
 	foreach ($filtrearr as $fil)
 	{
 		$filt = explode(":", $fil);
@@ -124,11 +124,11 @@ if ($_GET["filtre"])
 
 if (GETPOST("search_ref"))
 {
-	$sql .= " AND fac.rowid like '%".$db->escape(GETPOST("search_ref"))."%'";
+	$sql .= " AND fac.rowid LIKE '%".$db->escape(GETPOST("search_ref"))."%'";
 }
 if (GETPOST("search_ref_supplier"))
 {
-	$sql .= " AND fac.facnumber like '%".$db->escape(GETPOST("search_ref_supplier"))."%'";
+	$sql .= " AND fac.facnumber LIKE '%".$db->escape(GETPOST("search_ref_supplier"))."%'";
 }
 if ($month > 0)
 {
@@ -143,12 +143,12 @@ else if ($year > 0)
 }
 if (GETPOST("search_libelle"))
 {
-	$sql .= " AND fac.libelle like '%".$db->escape(GETPOST("search_libelle"))."%'";
+	$sql .= " AND fac.libelle LIKE '%".$db->escape(GETPOST("search_libelle"))."%'";
 }
 
 if (GETPOST("search_societe"))
 {
-	$sql .= " AND s.nom like '%".$db->escape(GETPOST("search_societe"))."%'";
+	$sql .= " AND s.nom LIKE '%".$db->escape(GETPOST("search_societe"))."%'";
 }
 
 if (GETPOST("search_montant_ht"))
@@ -268,7 +268,8 @@ if ($resql)
 		// Affiche statut de la facture
 		print '<td align="right" nowrap="nowrap">';
 		// TODO  le montant deja paye objp->am n'est pas definie
-		print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5,$objp->am);
+		//print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5,$objp->am);
+		print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5);
 		print '</td>';
 
 		print "</tr>\n";

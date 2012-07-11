@@ -1,8 +1,8 @@
 <?PHP
-/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2012-2012 Vinicius Nogueira    <viniciusvgn@gmail.com>
+/* Copyright (C) 2001-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2012		Vinicius Nogueira		<viniciusvgn@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 
 // Security check
-$orderid = isset($_GET["orderid"])?$_GET["orderid"]:'';
+$orderid = GETPOST('orderid');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande_fournisseur', $orderid,'');
 
@@ -40,7 +40,7 @@ $langs->load("orders");
 
 /*
  * 	View
-*/
+ */
 
 llxHeader('',$langs->trans("SuppliersOrdersArea"));
 
@@ -48,7 +48,7 @@ $commandestatic = new CommandeFournisseur($db);
 $userstatic=new User($db);
 $formfile = new FormFile($db);
 
-print_barre_liste($langs->trans("SuppliersOrdersArea"), $page, "index.php", "", $sortfield, $sortorder, '', $num);
+print_fiche_titre($langs->trans("SuppliersOrdersArea"));
 
 print '<table class="notopnoleftnoright" width="100%">';
 print '<tr valign="top"><td class="notopnoleft" width="30%">';
@@ -202,7 +202,7 @@ else
  * Draft orders
  */
 
-if ($conf->fournisseur->enabled)
+if (! empty($conf->fournisseur->enabled))
 {
     $sql = "SELECT c.rowid, c.ref, s.nom, s.rowid as socid";
     $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
@@ -211,7 +211,7 @@ if ($conf->fournisseur->enabled)
     $sql.= " WHERE c.fk_soc = s.rowid";
     $sql.= " AND c.entity = ".$conf->entity;
     $sql.= " AND c.fk_statut = 0";
-    if ($socid) $sql.= " AND c.fk_soc = ".$socid;
+    if (! empty($socid)) $sql.= " AND c.fk_soc = ".$socid;
     if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
     $resql=$db->query($sql);
@@ -307,7 +307,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX
 $sql.= " WHERE c.fk_soc = s.rowid";
 $sql.= " AND c.entity = ".$conf->entity;
 //$sql.= " AND c.fk_statut > 2";
-if ($socid) $sql .= " AND c.fk_soc = ".$socid;
+if (! empty($socid)) $sql .= " AND c.fk_soc = ".$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " ORDER BY c.tms DESC";
 $sql.= $db->plimit($max, 0);

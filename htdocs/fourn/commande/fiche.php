@@ -71,6 +71,7 @@ $hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('ordersuppliercard'));
 
 $mesg='';
+$errors=array();
 
 $object = new CommandeFournisseur($db);
 
@@ -576,7 +577,7 @@ else if ($action == 'builddoc' && $user->rights->fournisseur->commande->creer)	/
     // Sauvegarde le dernier module	choisi pour	generer	un document
     $object->fetch($id);
     $object->fetch_thirdparty();
-    
+
     if ($_REQUEST['model'])
     {
         $object->setDocModel($user, $_REQUEST['model']);
@@ -609,7 +610,7 @@ else if ($action == 'remove_file' && $user->rights->fournisseur->commande->creer
     if ($object->fetch($id))
     {
     	$object->fetch_thirdparty();
-    	
+
         $langs->load("other");
         $upload_dir =	$conf->fournisseur->commande->dir_output;
         $file =	$upload_dir	. '/' .	GETPOST('file');
@@ -659,7 +660,7 @@ else if ($action == 'create' && $user->rights->fournisseur->commande->creer)
 /*
  * Add file in email form
  */
-if ($_POST['addfile'])
+if (GETPOST('addfile'))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
@@ -675,7 +676,7 @@ if ($_POST['addfile'])
 /*
  * Remove file in email form
  */
-if (! empty($_POST['removedfile']))
+if (GETPOST('removedfile'))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
@@ -1261,11 +1262,21 @@ if ($id > 0 || ! empty($ref))
             $var=!$var;
 
             // Show product and description
-            $type=$line->product_type?$line->product_type:$line->fk_product_type;
+            $type=(! empty($line->product_type)?$line->product_type:(! empty($line->fk_product_type)?$line->fk_product_type:0));
             // Try to enhance type detection using date_start and date_end for free lines where type
             // was not saved.
-            if (! empty($line->date_start)) $type=1;
-            if (! empty($line->date_end)) $type=1;
+            $date_start='';
+            $date_end='';
+            if (! empty($line->date_start))
+            {
+            	$date_start=$line->date_start;
+            	$type=1;
+            }
+            if (! empty($line->date_end))
+            {
+            	$date_end=$line->date_end;
+            	$type=1;
+            }
 
             // Ligne en mode visu
             if ($action != 'editline' || $_GET['rowid'] != $line->id)
@@ -1286,7 +1297,7 @@ if ($id > 0 || ! empty($ref))
                     print $form->textwithtooltip($text,$description,3,'','',$i);
 
                     // Show range
-                    print_date_range($line->date_start,$line->date_end);
+                    print_date_range($date_start,$date_end);
 
                     // Add description in form
                     if ($conf->global->PRODUIT_DESC_IN_FORM) print ($line->description && $line->description!=$product_static->libelle)?'<br>'.dol_htmlentitiesbr($line->description):'';
@@ -1300,7 +1311,7 @@ if ($id > 0 || ! empty($ref))
                     print $text.' '.nl2br($line->description);
 
                     // Show range
-                    print_date_range($line->date_start,$line->date_end);
+                    print_date_range($date_start,$date_end);
                 }
 
                 print '</td>';
@@ -1361,7 +1372,7 @@ if ($id > 0 || ! empty($ref))
                     print $form->textwithtooltip($text,$description,3,'','',$i);
 
                     // Show range
-                    print_date_range($line->date_start,$line->date_end);
+                    print_date_range($date_start,$date_end);
                     print '<br>';
                 }
                 else
@@ -1427,23 +1438,23 @@ if ($id > 0 || ! empty($ref))
             require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
             $nbrows=ROWS_2;
             if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-            $doleditor=new DolEditor('dp_desc',$_POST["dp_desc"],'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+            $doleditor=new DolEditor('dp_desc',GETPOST('dp_desc'),'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
             $doleditor->Create();
 
             print '</td>';
             print '<td align="center">';
-            print $form->load_tva('tva_tx',($_POST["tva_tx"]?$_POST["tva_tx"]:-1),$soc,$mysoc);
+            print $form->load_tva('tva_tx',(GETPOST('tva_tx')?GETPOST('tva_tx'):-1),$soc,$mysoc);
             print '</td>';
-            print '<td align="right"><input type="text" name="pu" size="5" value="'.$_POST["pu"].'"></td>';
-            print '<td align="right"><input type="text" name="qty" value="'.($_POST["qty"]?$_POST["qty"]:'1').'" size="2"></td>';
-            print '<td align="right" nowrap="nowrap"><input type="text" name="remise_percent" size="1" value="'.($_POST["remise_percent"]?$_POST["remise_percent"]:$soc->remise_client).'">%</td>';
+            print '<td align="right"><input type="text" name="pu" size="5" value="'.GETPOST('pu').'"></td>';
+            print '<td align="right"><input type="text" name="qty" value="'.(GETPOST('qty')?GETPOST('qty'):'1').'" size="2"></td>';
+            print '<td align="right" nowrap="nowrap"><input type="text" name="remise_percent" size="1" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):$soc->remise_client).'">%</td>';
             print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
             print '</tr>';
 
             print '</form>';
 
             // Ajout de produits/services predefinis
-            if ($conf->product->enabled || $conf->service->enabled)
+            if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
             {
                 print '<tr class="liste_titre">';
                 print '<td colspan="3">';
@@ -1471,13 +1482,13 @@ if ($id > 0 || ! empty($ref))
                 print '<tr '.$bc[$var].'>';
                 print '<td colspan="3">';
 
-                $form->select_produits_fournisseurs($object->fourn_id,'','idprodfournprice','',$filtre);
+                $form->select_produits_fournisseurs($object->fourn_id,'','idprodfournprice');
 
-                if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
+                if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) print '<br>';
 
 				if (is_object($hookmanager))
 				{
-			        $parameters=array('filtre'=>$filtre,'htmlname'=>'idprodfournprice');
+			        $parameters=array('htmlname'=>'idprodfournprice');
 				    echo $hookmanager->executeHooks('formCreateProductSupplierOptions',$parameters,$object,$action);
 				}
 
@@ -1485,12 +1496,12 @@ if ($id > 0 || ! empty($ref))
                 require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
                 $nbrows=ROWS_2;
                 if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-                $doleditor=new DolEditor('np_desc',$_POST["np_desc"],'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+                $doleditor=new DolEditor('np_desc',GETPOST('np_desc'),'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
                 $doleditor->Create();
 
                 print '</td>';
-                print '<td align="right"><input type="text" size="2" name="pqty" value="'.($_POST["pqty"]?$_POST["pqty"]:'1').'"></td>';
-                print '<td align="right" nowrap="nowrap"><input type="text" size="1" name="p_remise_percent" value="'.($_POST["p_remise_percent"]?$_POST["p_remise_percent"]:$soc->remise_client).'">%</td>';
+                print '<td align="right"><input type="text" size="2" name="pqty" value="'.(GETPOST('pqty')?GETPOST('pqty'):'1').'"></td>';
+                print '<td align="right" nowrap="nowrap"><input type="text" size="1" name="p_remise_percent" value="'.(GETPOST('p_remise_percent')?GETPOST('p_remise_percent'):$soc->remise_client).'">%</td>';
                 print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
                 print '</tr>';
 

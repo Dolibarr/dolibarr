@@ -40,7 +40,7 @@ function facturefourn_prepare_head($object)
 	$head[$h][1] = $langs->trans('CardBill');
 	$head[$h][2] = 'card';
 	$h++;
-	
+
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/contact.php?facid='.$object->id;
@@ -54,7 +54,7 @@ function facturefourn_prepare_head($object)
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'supplier_invoice');
-    
+
     if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     {
     	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/note.php?facid='.$object->id;
@@ -98,7 +98,7 @@ function ordersupplier_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
+	if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
 	{
 		$langs->load("stocks");
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$object->id;
@@ -106,7 +106,7 @@ function ordersupplier_prepare_head($object)
 		$head[$h][2] = 'dispatch';
 		$h++;
 	}
-	
+
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/contact.php?id='.$object->id;
@@ -120,7 +120,7 @@ function ordersupplier_prepare_head($object)
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'supplier_order');
-    
+
     if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     {
     	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/note.php?id='.$object->id;

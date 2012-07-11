@@ -26,14 +26,14 @@
  *	\brief      File of class to manage suppliers invoices
  */
 
-include_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
+include_once(DOL_DOCUMENT_ROOT."/core/class/commoninvoice.class.php");
 
 
 /**
  *	\class      FactureFournisseur
  *	\brief      Class to manage suppliers invoices
  */
-class FactureFournisseur extends Facture
+class FactureFournisseur extends CommonInvoice
 {
     public $element='invoice_supplier';
     public $table_element='facture_fourn';
@@ -164,7 +164,7 @@ class FactureFournisseur extends Facture
 
 
             // Add object linked
-            if (! $error && $this->id && $this->origin && $this->origin_id)
+            if (! $error && $this->id && ! empty($this->origin) && ! empty($this->origin_id))
             {
                 $ret = $this->add_object_linked();
                 if (! $ret)
@@ -195,7 +195,7 @@ class FactureFournisseur extends Facture
                         $this->lines[$i]->qty,
                         $this->lines[$i]->fk_product,
                         'HT',
-                        $this->lines[$i]->info_bits,
+                        (! empty($this->lines[$i]->info_bits)?$this->lines[$i]->info_bits:''),
                         $this->lines[$i]->product_type
                     );
                 }
@@ -1363,7 +1363,7 @@ class FactureFournisseur extends Facture
         // Loop on each line of new invoice
         foreach($object->lines as $i => $line)
         {
-            if (($object->lines[$i]->info_bits & 0x02) == 0x02)	// We do not clone line of discounts
+            if (isset($object->lines[$i]->info_bits) && ($object->lines[$i]->info_bits & 0x02) == 0x02)	// We do not clone line of discounts
             {
                 unset($object->lines[$i]);
             }

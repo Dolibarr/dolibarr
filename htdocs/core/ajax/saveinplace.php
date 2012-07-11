@@ -78,8 +78,8 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 		$subelement = 'facture';
 	}
 
-	if ($user->rights->$element->creer || $user->rights->$element->write
-	|| (isset($subelement) && ($user->rights->$element->$subelement->creer || $user->rights->$element->$subelement->write))
+	if (! empty($user->rights->$element->creer) || ! empty($user->rights->$element->write)
+	|| (isset($subelement) && (! empty($user->rights->$element->$subelement->creer) || ! empty($user->rights->$element->$subelement->write)))
 	|| ($element == 'payment' && $user->rights->facture->paiement)
 	|| ($element == 'payment_supplier' && $user->rights->fournisseur->facture->creer))
 	{
@@ -117,7 +117,7 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 				{
 					$loadcache = $form->$loadcachename;
 					$value = $loadcache[$newvalue];
-					
+
 					if (! empty($form->$loadviewname))
 					{
 						$loadview = $form->$loadviewname;
@@ -138,7 +138,7 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 					$module = $regs[1];
 					$subelement = $regs[2];
 				}
-				
+
 				dol_include_once('/'.$module.'/class/actions_'.$subelement.'.class.php');
 				$classname = 'Actions'.ucfirst($subelement);
 				$object = new $classname($db);
@@ -147,7 +147,7 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 				{
 					$loadcache = $object->$loadcachename;
 					$value = $loadcache[$newvalue];
-					
+
 					if (! empty($object->$loadviewname))
 					{
 						$loadview = $object->$loadviewname;
@@ -164,7 +164,7 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 
 		if (! $error)
 		{
-			if (! is_object($object) || empty($savemethod)) $object = new GenericObject($db);
+			if ((isset($object) && ! is_object($object)) || empty($savemethod)) $object = new GenericObject($db);
 
 			// Specific for add_object_linked()
 			// TODO add a function for variable treatment
@@ -172,7 +172,7 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 			$object->ext_element = $ext_element;
 			$object->fk_element = $fk_element;
 			$object->element = $element;
-			
+
 			$ret=$object->$savemethodname($field, $newvalue, $table_element, $fk_element, $format);
 			if ($ret > 0)
 			{
