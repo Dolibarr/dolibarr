@@ -39,6 +39,7 @@ ConfirmCloseService=Esteu segur de voler tancar aquest servei?
 ValidateAContract=Validar un contracte
 ActivateService=Activar el servei
 ConfirmActivateService=Esteu segur de voler activar aquest servei en data %s?
+RefContract=Ref. contracte
 DateContract=Data contracte
 DateServiceActivate=Data activació del servei
 DateServiceUnactivate=Data desactivació del servei

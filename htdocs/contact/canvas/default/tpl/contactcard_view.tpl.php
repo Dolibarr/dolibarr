@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin <regis@dolibarr.fr>
+/* Copyright (C) 2010-2012 Regis Houssin <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@ $contact = $GLOBALS['objcanvas']->control->object;
 dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']);
 ?>
 
-<?php if ($this->control->tpl['action_create_user']) echo $this->control->tpl['action_create_user']; ?>
-<?php if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delete']; ?>
+<?php if (! empty($this->control->tpl['action_create_user'])) echo $this->control->tpl['action_create_user']; ?>
+<?php if (! empty($this->control->tpl['action_delete'])) echo $this->control->tpl['action_delete']; ?>
 
 <table class="border allwidth">
 

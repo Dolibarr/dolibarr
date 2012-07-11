@@ -30,10 +30,16 @@ $langs->load("admin");
 
 if (! $user->admin) accessforbidden();
 
-$action = GETPOST('action');
-$debug = GETPOST('debug');
+$rowid=GETPOST('rowid','int');
+$entity=GETPOST('entity','int');
+$action=GETPOST('action');
+$update=GETPOST('update');
+$delete=GETPOST('delete');
+$debug=GETPOST('debug');
+$consts=GETPOST('const');
 
 $typeconst=array('yesno','texte','chaine');
+$mesg='';
 
 
 /*
@@ -64,11 +70,11 @@ if ($action == 'add')
 	}
 }
 
-if (($_POST["const"] && isset($_POST["update"]) && $_POST["update"] == $langs->trans("Modify")))
+if (! empty($consts) && $update == $langs->trans("Modify"))
 {
-	foreach($_POST["const"] as $const)
+	foreach($consts as $const)
 	{
-		if ($const["check"])
+		if (! empty($const["check"]))
 		{
 			if (dolibarr_set_const($db, $const["name"],$const["value"],$const["type"],1,$const["note"],$const["entity"]) < 0)
 			{
@@ -79,11 +85,11 @@ if (($_POST["const"] && isset($_POST["update"]) && $_POST["update"] == $langs->t
 }
 
 // Delete several lines at once
-if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("Delete"))
+if (! empty($consts) && $delete == $langs->trans("Delete"))
 {
-	foreach($_POST["const"] as $const)
+	foreach($consts as $const)
 	{
-		if ($const["check"])	// Is checkbox checked
+		if (! empty($const["check"]))	// Is checkbox checked
 		{
 			if (dolibarr_del_const($db, $const["rowid"], -1) < 0)
 			{
@@ -96,7 +102,7 @@ if ($_POST["const"] && $_POST["delete"] && $_POST["delete"] == $langs->trans("De
 // Delete line from delete picto
 if ($action == 'delete')
 {
-	if (dolibarr_del_const($db, $_GET["rowid"], $_GET["entity"]) < 0)
+	if (dolibarr_del_const($db, $rowid, $entity) < 0)
 	{
 		dol_print_error($db);
 	}
@@ -136,7 +142,7 @@ print_fiche_titre($langs->trans("OtherSetup"),'','setup');
 print $langs->trans("ConstDesc")."<br>\n";
 print "<br>\n";
 
-if ($mesg) print $mesg;
+dol_htmloutput_mesg($mesg);
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

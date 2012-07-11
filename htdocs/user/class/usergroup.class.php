@@ -1,7 +1,7 @@
 <?php
 /* Copyright (c) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (c) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (c) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -437,7 +437,7 @@ class UserGroup extends CommonObject
 			return;
 		}
 
-		if ($this->all_permissions_are_loaded)
+		if (! empty($this->all_permissions_are_loaded))
 		{
 			// Si les permissions ont deja ete chargees, on quitte
 			return;

@@ -147,6 +147,9 @@ insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (
 -- Region US (id country=11)
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (1101, 11, 1101, '', 0, 'United-States', 1);
 
+-- Region Canada (id country=14)
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (1401, 14, 1401, '', 0, 'Canada', 1);
+
 -- Regions The Netherlands (id country=17)
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (1701, 17, 1701, '', 0,'Provincies van Nederland ', 1);
 

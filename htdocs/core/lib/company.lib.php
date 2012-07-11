@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
- * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2006-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2007		Patrick Raguin			<patrick.raguin@gmail.com>
+ * Copyright (C) 2010-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -909,11 +909,23 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             while ($i < $num)
             {
                 $obj = $db->fetch_object($resql);
-                $histo[$numaction]=array('type'=>'action','id'=>$obj->id,'datestart'=>$db->jdate($obj->dp),'date'=>$db->jdate($obj->dp2),'note'=>$obj->label,'percent'=>$obj->percent,
-				'acode'=>$obj->acode,'libelle'=>$obj->libelle,
-				'userid'=>$obj->user_id,'login'=>$obj->login,
-				'contact_id'=>$obj->fk_contact,'name'=>$obj->name,'firstname'=>$obj->firstname,
-				'fk_element'=>$obj->fk_element,'elementtype'=>$obj->elementtype);
+                $histo[$numaction]=array(
+                		'type'=>'action',
+                		'id'=>$obj->id,
+                		'datestart'=>$db->jdate($obj->dp),
+                		'date'=>$db->jdate($obj->dp2),
+                		'note'=>$obj->label,
+                		'percent'=>$obj->percent,
+                		'acode'=>$obj->acode,
+                		'libelle'=>$obj->libelle,
+                		'userid'=>$obj->user_id,
+                		'login'=>$obj->login,
+                		'contact_id'=>$obj->fk_contact,
+                		'name'=>$obj->name,
+                		'firstname'=>$obj->firstname,
+                		'fk_element'=>$obj->fk_element,
+                		'elementtype'=>$obj->elementtype
+                );
                 $numaction++;
                 $i++;
             }
@@ -924,7 +936,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         }
     }
 
-    if ($conf->mailing->enabled && ! empty($objcon->email))
+    if (! empty($conf->mailing->enabled) && ! empty($objcon->email))
     {
         $langs->load("mails");
 
@@ -949,10 +961,16 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             while ($i < $num)
             {
                 $obj = $db->fetch_object($resql);
-                $histo[$numaction]=array('type'=>'mailing','id'=>$obj->id,'date'=>$db->jdate($obj->da),'note'=>$obj->note,'percent'=>$obj->percentage,
-				'acode'=>$obj->acode,'libelle'=>$obj->libelle,
-				'userid'=>$obj->user_id,'login'=>$obj->login,
-				'contact_id'=>$obj->contact_id);
+                $histo[$numaction]=array(
+                		'type'=>'mailing',
+                		'id'=>$obj->id,
+                		'date'=>$db->jdate($obj->da),
+                		'note'=>$obj->note,
+                		'percent'=>$obj->percentage,
+                		'acode'=>$obj->acode,
+                		'userid'=>$obj->user_id,
+                		'login'=>$obj->login
+				);
                 $numaction++;
                 $i++;
             }
@@ -1018,7 +1036,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
 
             // Action
             $out.='<td>';
-            if ($histo[$key]['type']=='action')
+            if (isset($histo[$key]['type']) && $histo[$key]['type']=='action')
             {
                 $actionstatic->type_code=$histo[$key]['acode'];
                 $transcode=$langs->trans("Action".$histo[$key]['acode']);
@@ -1028,7 +1046,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
                 $actionstatic->id=$histo[$key]['id'];
                 $out.=$actionstatic->getNomUrl(1,40);
             }
-            if ($histo[$key]['type']=='mailing')
+            if (isset($histo[$key]['type']) && $histo[$key]['type']=='mailing')
             {
                 $out.='<a href="'.DOL_URL_ROOT.'/comm/mailing/fiche.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"),"email").' ';
                 $transcode=$langs->trans("Action".$histo[$key]['acode']);
@@ -1043,30 +1061,34 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
             // Objet lie
             // TODO uniformize
             $out.='<td>';
-            if ($histo[$key]['elementtype'] == 'propal' && $conf->propal->enabled)
+            if (isset($histo[$key]['elementtype']))
             {
-                $propalstatic->ref=$langs->trans("ProposalShort");
-                $propalstatic->id=$histo[$key]['fk_element'];
-                $out.=$propalstatic->getNomUrl(1);
-            }
-            elseif ($histo[$key]['elementtype'] == 'commande' && $conf->commande->enabled)
-            {
-                $orderstatic->ref=$langs->trans("Order");
-                $orderstatic->id=$histo[$key]['fk_element'];
-                $out.=$orderstatic->getNomUrl(1);
-            }
-            elseif ($histo[$key]['elementtype'] == 'facture' && $conf->facture->enabled)
-            {
-                $facturestatic->ref=$langs->trans("Invoice");
-                $facturestatic->id=$histo[$key]['fk_element'];
-                $facturestatic->type=$histo[$key]['ftype'];
-                $out.=$facturestatic->getNomUrl(1,'compta');
+            	if ($histo[$key]['elementtype'] == 'propal' && ! empty($conf->propal->enabled))
+            	{
+            		$propalstatic->ref=$langs->trans("ProposalShort");
+            		$propalstatic->id=$histo[$key]['fk_element'];
+            		$out.=$propalstatic->getNomUrl(1);
+            	}
+            	elseif ($histo[$key]['elementtype'] == 'commande' && ! empty($conf->commande->enabled))
+            	{
+            		$orderstatic->ref=$langs->trans("Order");
+            		$orderstatic->id=$histo[$key]['fk_element'];
+            		$out.=$orderstatic->getNomUrl(1);
+            	}
+            	elseif ($histo[$key]['elementtype'] == 'facture' && ! empty($conf->facture->enabled))
+            	{
+            		$facturestatic->ref=$langs->trans("Invoice");
+            		$facturestatic->id=$histo[$key]['fk_element'];
+            		$facturestatic->type=$histo[$key]['ftype'];
+            		$out.=$facturestatic->getNomUrl(1,'compta');
+            	}
+            	else $out.='&nbsp;';
             }
             else $out.='&nbsp;';
             $out.='</td>';
 
             // Contact pour cette action
-            if (! $objcon->id && $histo[$key]['contact_id'] > 0)
+            if (! empty($objcon->id) && isset($histo[$key]['contact_id']) && $histo[$key]['contact_id'] > 0)
             {
                 $contactstatic->name=$histo[$key]['name'];
                 $contactstatic->firstname=$histo[$key]['firstname'];

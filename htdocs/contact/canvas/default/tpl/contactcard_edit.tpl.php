@@ -40,7 +40,7 @@ echo $this->control->tpl['ajax_selectcountry'];
 <input type="hidden" name="contactid" value="<?php echo $this->control->tpl['id']; ?>">
 <input type="hidden" name="old_name" value="<?php echo $this->control->tpl['name']; ?>">
 <input type="hidden" name="old_firstname" value="<?php echo $this->control->tpl['firstname']; ?>">
-<?php if ($this->control->tpl['company_id']) { ?>
+<?php if (! empty($this->control->tpl['company_id'])) { ?>
 <input type="hidden" name="socid" value="<?php echo $this->control->tpl['company_id']; ?>">
 <?php } ?>
 

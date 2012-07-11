@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2012	Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2011		Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,15 +38,15 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 	/**
      *	Constructor
      *
-     *	@param	DoliDB	$DB				Handler acces base de donnees
+     *	@param	DoliDB	$db				Handler acces base de donnees
      *	@param	string	$dirmodule		Name of directory of module
      *	@param	string	$targetmodule	Name of directory of module where canvas is stored
      *	@param	string	$canvas			Name of canvas
      *	@param	string	$card			Name of tab (sub-canvas)
 	 */
-	function __construct($DB, $dirmodule, $targetmodule, $canvas, $card)
+	function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
 	{
-        $this->db               = $DB;
+        $this->db               = $db;
         $this->dirmodule		= $dirmodule;
         $this->targetmodule     = $targetmodule;
         $this->canvas           = $canvas;
@@ -86,7 +86,7 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 
 		$ret = $this->getObject($id);
 
-        parent::assign_values($action);
+        parent::assign_values($action, $id);
 
         $this->tpl['title'] = $this->getTitle($action);
         $this->tpl['error'] = $this->error;
@@ -102,7 +102,7 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 		    $this->tpl['showend']=dol_get_fiche_end();
 
         	$objsoc = new Societe($db);
-            $objsoc->fetch($this->object->fk_soc);
+            $objsoc->fetch($this->object->socid);
 
             $this->tpl['actionstodo']=show_actions_todo($conf,$langs,$db,$objsoc,$this->object,1);
 

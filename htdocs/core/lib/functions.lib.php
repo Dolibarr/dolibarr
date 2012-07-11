@@ -1177,19 +1177,22 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 
     if (! empty($addlink))
     {
-        if ($conf->clicktodial->enabled)
+        if (! empty($conf->clicktodial->enabled))
         {
             if (empty($user->clicktodial_loaded)) $user->fetch_clicktodial();
 
             if (empty($conf->global->CLICKTODIAL_URL)) $urlmask='ErrorClickToDialModuleNotConfigured';
             else $urlmask=$conf->global->CLICKTODIAL_URL;
+            $clicktodial_poste=(! empty($user->clicktodial_poste)?urlencode($user->clicktodial_poste):'');
+            $clicktodial_login=(! empty($user->clicktodial_login)?urlencode($user->clicktodial_login):'');
+            $clicktodial_password=(! empty($user->clicktodial_password)?urlencode($user->clicktodial_password):'');
             // This line is for backward compatibility
-            $url = sprintf($urlmask, urlencode($phone), urlencode($user->clicktodial_poste), urlencode($user->clicktodial_login), urlencode($user->clicktodial_password));
+            $url = sprintf($urlmask, urlencode($phone), $clicktodial_poste, $clicktodial_login, $clicktodial_password);
             // Thoose lines are for substitution
-            $substitarray=array('__PHONEFROM__'=>urlencode($user->clicktodial_poste),
+            $substitarray=array('__PHONEFROM__'=>$clicktodial_poste,
 			               		'__PHONETO__'=>urlencode($phone),
-						   		'__LOGIN__'=>urlencode($user->clicktodial_login),
-			               		'__PASS__'=>urlencode($user->clicktodial_password));
+						   		'__LOGIN__'=>$clicktodial_login,
+			               		'__PASS__'=>$clicktodial_password);
             $url = make_substitutions($url, $substitarray);
             $newphonesav=$newphone;
             $newphone ='<a href="'.$url.'"';
@@ -1292,12 +1295,12 @@ function dol_print_address($address, $htmlid, $mode, $id)
     {
         print nl2br($address);
         $showgmap=$showomap=0;
-        if ($mode=='thirdparty' && $conf->google->enabled && $conf->global->GOOGLE_ENABLE_GMAPS) $showgmap=1;
-        if ($mode=='contact' && $conf->google->enabled && $conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS) $showgmap=1;
-        if ($mode=='member' && $conf->google->enabled && $conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS) $showgmap=1;
-        if ($mode=='thirdparty' && $conf->openstreetmap->enabled && $conf->global->OPENSTREETMAP_ENABLE_MAPS) $showomap=1;
-        if ($mode=='contact' && $conf->openstreetmap->enabled && $conf->global->OPENSTREETMAP_ENABLE_MAPS_CONTACTS) $showomap=1;
-        if ($mode=='member' && $conf->openstreetmap->enabled && $conf->global->OPENSTREETMAP_ENABLE_MAPS_MEMBERS) $showomap=1;
+        if ($mode=='thirdparty' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS)) $showgmap=1;
+        if ($mode=='contact' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS)) $showgmap=1;
+        if ($mode=='member' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS)) $showgmap=1;
+        if ($mode=='thirdparty' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS)) $showomap=1;
+        if ($mode=='contact' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_CONTACTS)) $showomap=1;
+        if ($mode=='member' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_MEMBERS)) $showomap=1;
 
         // TODO Add a hook here
         if ($showgmap)
@@ -4024,7 +4027,7 @@ function getCurrencySymbol($currency_code)
 
 	$form->load_cache_currencies();
 
-	if (function_exists("mb_convert_encoding") && is_array($form->cache_currencies[$currency_code]['unicode']) && ! empty($form->cache_currencies[$currency_code]['unicode']))
+	if (function_exists("mb_convert_encoding") && isset($form->cache_currencies[$currency_code]) && is_array($form->cache_currencies[$currency_code]['unicode']) && ! empty($form->cache_currencies[$currency_code]['unicode']))
 	{
 		foreach($form->cache_currencies[$currency_code]['unicode'] as $unicode)
 		{

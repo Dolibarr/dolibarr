@@ -33,8 +33,7 @@ $langs->load("admin");
 $langs->load("members");
 $langs->load("users");
 
-if (!$user->admin)
-accessforbidden();
+if (! $user->admin) accessforbidden();
 
 /*
  * Action
@@ -115,11 +114,8 @@ else
 print '</td></tr>';
 
 print '</table>';
-print '<br>';
-
-$db->close();
-
-print '<br>';
+print '<br><br>';
 
 llxFooter();
+$db->close();
 ?>
