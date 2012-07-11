@@ -568,6 +568,6 @@ function createInvoice($authentication,$invoice)
 
 
 // Return the results.
-$server->service($HTTP_RAW_POST_DATA);
+$server->service((isset($HTTP_RAW_POST_DATA)?$HTTP_RAW_POST_DATA:''));
 
 ?>

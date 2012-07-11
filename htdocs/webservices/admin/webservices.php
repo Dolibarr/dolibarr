@@ -28,10 +28,10 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 
 $langs->load("admin");
 
-if (!$user->admin)
-  accessforbidden();
+if (! $user->admin) accessforbidden();
 
 $actionsave=GETPOST("save");
+$mesg='';
 
 // Sauvegardes parametres
 if ($actionsave)
@@ -69,26 +69,26 @@ print "<br>\n";
 
 print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print "<table class=\"noborder\" width=\"100%\">";
+print '<table class="noborder" width="100%">';
 
-print "<tr class=\"liste_titre\">";
+print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>";
 print "<td>".$langs->trans("Value")."</td>";
 //print "<td>".$langs->trans("Examples")."</td>";
 print "<td>&nbsp;</td>";
 print "</tr>";
 
-print "<tr class=\"impair\">";
-print '<td class="fieldrequired">'.$langs->trans("KeyForWebServicesAccess")."</td>";
-print "<td><input type=\"text\" class=\"flat\" name=\"WEBSERVICES_KEY\" value=\"". ($_POST["WEBSERVICES_KEY"]?$_POST["WEBSERVICES_KEY"]:$conf->global->WEBSERVICES_KEY) . "\" size=\"20\"></td>";
-print "<td>&nbsp;</td>";
-print "</tr>";
+print '<tr class="impair">';
+print '<td class="fieldrequired">'.$langs->trans("KeyForWebServicesAccess").'</td>';
+print '<td><input type="text" class="flat" name="WEBSERVICES_KEY" value="'. (GETPOST('WEBSERVICES_KEY')?GETPOST('WEBSERVICES_KEY'):(! empty($conf->global->WEBSERVICES_KEY)?$conf->global->WEBSERVICES_KEY:'')) . '" size="20"></td>';
+print '<td>&nbsp;</td>';
+print '</tr>';
 
 print '</table>';
 
 print '<br><center>';
-print "<input type=\"submit\" name=\"save\" class=\"button\" value=\"".$langs->trans("Save")."\">";
-print "</center>";
+print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';
+print '</center>';
 
 print '</form>';
 
