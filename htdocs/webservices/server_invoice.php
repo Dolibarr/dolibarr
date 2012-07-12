@@ -511,18 +511,26 @@ function createInvoice($authentication,$invoice)
         $newobject->statut=$invoice['status'];
         $newobject->fk_project=$invoice['project_id'];
         $newobject->date_creation=$now;
-        foreach($invoice['lines'] as $line)
+
+        // Trick because nusoap does not store data with same structure if there is one or several lines
+        $arrayoflines=array();
+        if (isset($invoice['lines']['line'][0])) $arrayoflines=$invoice['lines']['line'];
+        else $arrayoflines=$invoice['lines'];
+
+        foreach($arrayoflines as $key => $line)
         {
+            // $key can be 'line' or '0','1',...
             $newline=new FactureLigne($db);
             $newline->type=$line['type'];
             $newline->desc=$line['desc'];
             $newline->fk_product=$line['fk_product'];
             $newline->total_ht=$line['total_net'];
-            $newline->total_vat=$line['total_vat'];
+            $newline->total_tva=$line['total_vat'];
             $newline->total_ttc=$line['total'];
             $newline->vat=$line['vat_rate'];
             $newline->qty=$line['qty'];
             $newline->fk_product=$line['product_id'];
+            $newobject->lines[]=$newline;
         }
         //var_dump($newobject->date_lim_reglement); exit;
         //var_dump($invoice['lines'][0]['type']);
