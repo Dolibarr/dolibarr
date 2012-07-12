@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ $langs->load("propal");
 
 llxHeader();
 
-print_fiche_titre($langs->trans("ProposalsStatistics"), $mesg);
+print_fiche_titre($langs->trans("ProposalsStatistics"));
 
 $dir=$conf->propal->dir_temp;
 
@@ -159,6 +159,8 @@ for ($i = 1 ; $i < 13 ; $i++)
     $data[$i-1] = array(ucfirst(dol_substr(dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b"),0,3)), $res[$i]);
 }
 
+$fileurl_avg='';
+if (! isset($mode)) $mode=''; // TODO $mode not defined ?
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
     $filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
@@ -211,11 +213,12 @@ if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
 
 $h=0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT . '/commande/stats/index.php';
+$head[$h][0] = DOL_URL_ROOT . '/comm/propal/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
+$object=(object) array(); // TODO $object not defined ?
 complete_head_from_modules($conf,$langs,$object,$head,$h,'propal_stats');
 
 dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
@@ -261,7 +264,7 @@ $oldyear=0;
 foreach ($data as $val)
 {
     $year = $val['year'];
-    print $avg;
+    //print $avg; // TODO $avg not defined ?
     while ($oldyear > $year+1)
     {	// If we have empty year
         $oldyear--;

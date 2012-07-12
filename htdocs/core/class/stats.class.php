@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (c) 2008-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -176,7 +177,8 @@ abstract class Stats
 	 */
 	function _getNbByMonth($year, $sql)
 	{
-		$result = array();
+		$result=array();
+		$res=array();
 
 		dol_syslog(get_class($this)."::_getNbByMonth sql=".$sql);
 		$resql=$this->db->query($sql);
@@ -200,7 +202,7 @@ abstract class Stats
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
-			$res[$i] = $result[$i] + 0;
+			$res[$i] = (isset($result[$i])?$result[$i]:0);
 		}
 
 		$data = array();
@@ -225,7 +227,8 @@ abstract class Stats
 	 */
 	function _getAmountByMonth($year, $sql)
 	{
-		$result = array();
+		$result=array();
+		$res=array();
 
 		dol_syslog(get_class($this)."::_getAmountByMonth sql=".$sql);
 
@@ -247,7 +250,7 @@ abstract class Stats
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
-			$res[$i] = (int) round($result[$i]) + 0;
+			$res[$i] = (int) round((isset($result[$i])?$result[$i]:0));
 		}
 
 		$data = array();
@@ -271,7 +274,8 @@ abstract class Stats
 	 */
 	function _getAverageByMonth($year, $sql)
 	{
-		$result = array();
+		$result=array();
+		$res=array();
 
 		dol_syslog(get_class($this)."::_getAverageByMonth sql=".$sql);
 		$resql=$this->db->query($sql);
@@ -292,7 +296,7 @@ abstract class Stats
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
-			$res[$i] = $result[$i] + 0;
+			$res[$i] = (isset($result[$i])?$result[$i]:0);
 		}
 
 		return $res;
