@@ -1313,6 +1313,8 @@ class Facture extends CommonInvoice
         $sqltemp.= ' FROM '.MAIN_DB_PREFIX.'c_payment_term as c';
         if (is_numeric($cond_reglement)) $sqltemp.= " WHERE c.rowid=".$cond_reglement;
         else $sqltemp.= " WHERE c.code='".$this->db->escape($cond_reglement)."'";
+
+        dol_syslog(get_class($this).'::calculate_date_lim_reglement sql='.$sqltemp);
         $resqltemp=$this->db->query($sqltemp);
         if ($resqltemp)
         {

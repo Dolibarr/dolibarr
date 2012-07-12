@@ -25,6 +25,7 @@ set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 require_once("../master.inc.php");
 require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
+require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/ws.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
 
@@ -503,8 +504,8 @@ function createInvoice($authentication,$invoice)
         $newobject->socid=$invoice['thirdparty_id'];
         $newobject->type=$invoice['type'];
         $newobject->ref_ext=$invoice['ref_ext'];
-        $newobject->date=$invoice['date'];
-        $newobject->date_lim_reglement=$invoice['date_due'];
+        $newobject->date=dol_stringtotime($invoice['date'],'dayrfc');
+        $newobject->date_lim_reglement=dol_stringtotime($invoice['date_due'],'dayrfc');
         $newobject->note=$invoice['note'];
         $newobject->note_public=$invoice['note_public'];
         $newobject->statut=$invoice['status'];
@@ -523,7 +524,7 @@ function createInvoice($authentication,$invoice)
             $newline->qty=$line['qty'];
             $newline->fk_product=$line['product_id'];
         }
-        //var_dump($invoice['ref_ext']);
+        //var_dump($newobject->date_lim_reglement); exit;
         //var_dump($invoice['lines'][0]['type']);
 
         $db->begin();
