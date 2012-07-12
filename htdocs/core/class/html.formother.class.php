@@ -467,13 +467,31 @@ class FormOther
      */
     function select_color($set_color='', $prefix='f_color', $form_name='objForm', $showcolorbox=1, $arrayofcolors='')
     {
+    	print $this->selectColor($set_color, $prefix, $form_name, $showcolorbox, $arrayofcolors);
+    }
+
+    /**
+     *		Output a HTML code to select a color
+     *
+     *		@param	string		$set_color		Pre-selected color
+     *		@param	string		$prefix			Name of HTML field
+     *		@param	string		$form_name		Name of form
+     * 		@param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
+     * 		@param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
+     * 		@return	void
+     */
+    function selectColor($set_color='', $prefix='f_color', $form_name='objForm', $showcolorbox=1, $arrayofcolors='')
+    {
         global $langs;
+
+        $out='';
+
         if (! is_array($arrayofcolors) || count($arrayofcolors) < 1)
         {
             $langs->load("other");
-            print '<link rel="stylesheet" media="screen" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/css/jPicker-1.1.6.css" />';
-            print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/jpicker-1.1.6.js"></script>';
-            print '<script type="text/javascript">
+            $out.= '<link rel="stylesheet" media="screen" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/css/jPicker-1.1.6.css" />';
+            $out.= '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/jpicker-1.1.6.js"></script>';
+            $out.= '<script type="text/javascript">
              jQuery(document).ready(function(){
                 $(\'#colorpicker'.$prefix.'\').jPicker( {
                 window: {
@@ -510,13 +528,13 @@ class FormOther
                   }
 		        } ); });
              </script>';
-            print '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat" type="text" value="'.$set_color.'" />';
+            $out.= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat" type="text" value="'.$set_color.'" />';
         }
         else  // In most cases, this is not used. We used instead function with no specific list of colors
         {
-            print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.css" type="text/css" media="screen" />';
-            print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.js" type="text/javascript"></script>';
-            print '<script type="text/javascript">
+            $out.= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.css" type="text/css" media="screen" />';
+            $out.= '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.js" type="text/javascript"></script>';
+            $out.= '<script type="text/javascript">
              jQuery(document).ready(function(){
                  jQuery(\'#colorpicker'.$prefix.'\').colorpicker({
                      size: 14,
@@ -526,16 +544,18 @@ class FormOther
              });
              </script>';
 
-            print '<select id="colorpicker'.$prefix.'" class="flat" name="'.$prefix.'">';
+            $out.= '<select id="colorpicker'.$prefix.'" class="flat" name="'.$prefix.'">';
             //print '<option value="-1">&nbsp;</option>';
             foreach ($arrayofcolors as $val)
             {
-                print '<option value="'.$val.'"';
-                if ($set_color == $val) print ' selected="selected"';
-                print '>'.$val.'</option>';
+                $out.= '<option value="'.$val.'"';
+                if ($set_color == $val) $out.= ' selected="selected"';
+                $out.= '>'.$val.'</option>';
             }
-            print '</select>';
+            $out.= '</select>';
         }
+
+        return $out;
     }
 
     /**
