@@ -39,9 +39,9 @@ print '<tr><td valign="top" width="40%" class="notopnoleft">';
 
 
 /*
- /* Chiffre d'affaire
+ /* Chiffre d'affaires
  */
-//print_barre_liste("Chiffre d'affaire", $page, "ca.php");
+//print_barre_liste("Chiffre d'affaires", $page, "ca.php");
 
 print_titre($langs->trans('SalesTurnover'));
 
