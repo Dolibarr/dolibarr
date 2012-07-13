@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 /**
  *	    \file       htdocs/comm/action/rapport/index.php
  *      \ingroup    commercial
- *		\brief      Page with reports of actions $
+ *		\brief      Page with reports of actions
  */
 
 require("../../../main.inc.php");
@@ -29,6 +29,15 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/modules/action/rapport.pdf.php");
+
+$langs->load("commercial");
+
+$action=GETPOST('action','alpha');
+$month=GETPOST('month');
+$year=GETPOST('year');
+
+$mesg='';
+$mesgs=array();
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -44,15 +53,13 @@ $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'agenda', $socid, '', 'myactions');
 
-$langs->load("commercial");
-
 
 /*
  * Actions
  */
-if ($_GET["action"] == 'builddoc')
+if ($action == 'builddoc')
 {
-	$cat = new CommActionRapport($db, $_GET["month"], $_GET["year"]);
+	$cat = new CommActionRapport($db, $month, $year);
 	$result=$cat->write_file(GETPOST('id','int'));
 	if ($result < 0)
 	{
@@ -89,7 +96,7 @@ if ($resql)
 
 	print_barre_liste($langs->trans("Actions"), $page, "index.php",'',$sortfield,$sortorder,'',$num);
 
-	if ($mesg) print $mesg.'<br>';
+	dol_htmloutput_mesg($mesg,$mesgs);
 
 	$i = 0;
 	print '<table class="noborder" width="100%">';
