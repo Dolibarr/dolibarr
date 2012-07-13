@@ -33,9 +33,8 @@ $langs->load("propal");
 $langs->load("companies");
 
 // Security check
-$socid='';
-if ($_GET["socid"]) { $socid=$_GET["socid"]; }
-if ($user->societe_id > 0)
+$socid=GETPOST('socid','int');
+if (isset($user->societe_id) && $user->societe_id  > 0)
 {
 	$action = '';
 	$socid = $user->societe_id;
@@ -193,7 +192,7 @@ if ($conf->propal->enabled)
 				$companystatic->client=$obj->client;
 				$companystatic->canvas=$obj->canvas;
 				print '<td>'.$companystatic->getNomUrl(1,'customer',24).'</td>';
-				
+
 				print '</tr>';
 				$i++;
 			}
@@ -270,7 +269,7 @@ if ($resql)
 			$companystatic->client=$obj->client;
 			$companystatic->canvas=$obj->canvas;
 			print '<td>'.$companystatic->getNomUrl(1,'customer').'</td>';
-			
+
 			print '<td>'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
 			print '<td align="right">'.$propalstatic->LibStatut($obj->fk_statut,5).'</td>';
 			print '</tr>';
@@ -285,9 +284,11 @@ else dol_print_error($db);
 /*
  * Opened proposals
  */
-if ($conf->propal->enabled && $user->rights->propale->lire)
+if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 {
 	$langs->load("propal");
+
+	$now=dol_now();
 
 	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -339,7 +340,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 				print '</td></tr></table>';
 
 				print "</td>";
-				
+
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->socname;
 				$companystatic->client=$obj->client;

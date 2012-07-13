@@ -636,16 +636,16 @@ DelayBeforeWarning=قبل التحذير من التأخير
 DelaysBeforeWarning=محذرا من التأخير قبل
 DelaysOfToleranceBeforeWarning=محذرا من التأخير قبل التسامح
 DelaysOfToleranceDesc=تتيح لك هذه الشاشة لتحديد التأخير قبل السماح تنبيه يقال على الشاشة مع picto ٪ ق لكل عنصر في وقت متأخر.
-DelaysOfToleranceActionsToDo=تأخير التسامح (أيام) قبل اتخاذ إجراءات في حالة تأهب على المخطط لم تتحقق
-DelaysOfToleranceOrdersToProcess=تأخير التسامح (أيام) قبل تنبيه على أوامر لم
-DelaysOfTolerancePropalsToClose=التسامح التأخير (في يوم) في حالة تأهب على المقترحات المعروضة ليقفل
-DelaysOfTolerancePropalsToBill=تأخير التسامح (أيام) قبل تنبيه بشأن المقترحات لا توصف
-DelaysOfToleranceNotActivatedServices=تأخير التسامح (في يوم) في حالة تأهب قبل يوم والخدمات لتفعيل
-DelaysOfToleranceRunningServices=تأخير التسامح (في أيام) قبل انتهاء حالة التأهب على الخدمات
-DelaysOfToleranceSupplierBillsToPay=تأخير التسامح (في يوم) في حالة تأهب قبل الموردين على الفواتير غير المدفوعة
-DelaysOfToleranceCustomerBillsUnpaid=تأخير التسامح (في يوم) في حالة تأهب قبل العملاء على الفواتير غير المدفوعة
-DelaysOfToleranceTransactionsToConciliate=تأخير التسامح (في يوم) في حالة تأهب قبل يوم في انتظار التسوية المصرفية
-DelaysOfToleranceChequesToDeposit=تأخير التسامح (في يوم) في حالة تأهب قبل لإيداع الشيكات للقيام
+Delays_MAIN_DELAY_ACTIONS_TODO=تأخير التسامح (أيام) قبل اتخاذ إجراءات في حالة تأهب على المخطط لم تتحقق
+Delays_MAIN_DELAY_ORDERS_TO_PROCESS=تأخير التسامح (أيام) قبل تنبيه على أوامر لم
+Delays_MAIN_DELAY_PROPALS_TO_CLOSE=التسامح التأخير (في يوم) في حالة تأهب على المقترحات المعروضة ليقفل
+Delays_MAIN_DELAY_PROPALS_TO_BILL=تأخير التسامح (أيام) قبل تنبيه بشأن المقترحات لا توصف
+Delays_MAIN_DELAY_NOT_ACTIVATED_SERVICES=تأخير التسامح (في يوم) في حالة تأهب قبل يوم والخدمات لتفعيل
+Delays_MAIN_DELAY_RUNNING_SERVICES=تأخير التسامح (في أيام) قبل انتهاء حالة التأهب على الخدمات
+Delays_MAIN_DELAY_SUPPLIER_BILLS_TO_PAY=تأخير التسامح (في يوم) في حالة تأهب قبل الموردين على الفواتير غير المدفوعة
+Delays_MAIN_DELAY_CUSTOMER_BILLS_UNPAYED=تأخير التسامح (في يوم) في حالة تأهب قبل العملاء على الفواتير غير المدفوعة
+Delays_MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE=تأخير التسامح (في يوم) في حالة تأهب قبل يوم في انتظار التسوية المصرفية
+Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=تأخير التسامح (في يوم) في حالة تأهب قبل لإيداع الشيكات للقيام
 SetupDescription1=جميع البارامترات المتاحة في مجال الإعداد تسمح لك قبل البدء في الإعداد Dolibarr استخدامه.
 SetupDescription2=2 إن أهم الخطوات هي الإعداد 2 أول من غادر في إعداد القائمة ، وهذا يعني الشركة / المؤسسة صفحة إعداد صفحة إعداد وحدات :
 SetupDescription3=البارامترات في <b>إعداد</b> القائمة <b>--> الشركة / المؤسسة</b> المطلوب لأن مدخلات تستخدم المعلومات عن Dolibarr عرض وتعديل السلوك Dolibarr (على سبيل المثال لخصائص تتعلق بلدكم).
@@ -1056,7 +1056,7 @@ OnPayment=عن الدفع
 
 // START - Lines generated via autotranslator.php tool (2009-08-19 21:36:45).
 // Reference language: en_US
-DelaysOfToleranceMembers=تأخير التسامح (في يوم) في حالة تأهب قبل يوم تأخير رسوم العضوية
+Delays_MAIN_DELAY_MEMBERS=تأخير التسامح (في يوم) في حالة تأهب قبل يوم تأخير رسوم العضوية
 SetupDescription5=القيود الأخرى القائمة في إدارة اختياري البارامترات.
 // STOP - Lines generated via autotranslator.php tool (2009-08-19 21:36:45).
 
@@ -1252,7 +1252,7 @@ DictionnarySource=الأصل من مقترحات / أوامر
 MenuSmartphoneManager=الهاتف الذكي القائمة مدير
 DefaultMenuManager=معيار مدير القائمة
 DefaultMenuSmartphoneManager=الهاتف الذكي القائمة مدير
-DelaysOfToleranceSuppliersOrdersToProcess=التسامح التأخير (في أيام) قبل التنبيه على أوامر الموردين لم تتم معالجة حتى الآن
+Delays_MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS=التسامح التأخير (في أيام) قبل التنبيه على أوامر الموردين لم تتم معالجة حتى الآن
 SecurityEventsPurged=تطهير الاحداث الامنية
 ShowProfIdInAddress=إظهار رقم حرفي مع عناوين على وثائق
 TranslationUncomplete=ترجمة جزئية

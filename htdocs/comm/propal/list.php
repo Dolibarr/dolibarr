@@ -244,6 +244,8 @@ if ($result)
 	$i = 0;
 	print '<table class="liste" width="100%">';
 
+	$moreforfilter='';
+
  	// If the user can view prospects other than his'
  	if ($user->rights->societe->client->voir || $socid)
  	{
@@ -257,7 +259,7 @@ if ($result)
 	    $moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
 	    $moreforfilter.=$form->select_dolusers($search_user,'search_user',1);
 	}
-	if ($moreforfilter)
+	if (! empty($moreforfilter))
 	{
 	    print '<tr class="liste_titre">';
 	    print '<td class="liste_titre" colspan="9">';
@@ -306,11 +308,13 @@ if ($result)
 	print "</tr>\n";
 
 	$var=true;
+	$total=0;
+	$subtotal=0;
 
 	while ($i < min($num,$limit))
 	{
 		$objp = $db->fetch_object($result);
-		$now = time();
+		$now = dol_now();
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
 		print '<td nowrap="nowrap">';
@@ -394,8 +398,8 @@ if ($result)
 
 		print "</tr>\n";
 
-		$total = $total + $objp->total_ht;
-		$subtotal = $subtotal + $objp->total_ht;
+		$total += $objp->total_ht;
+		$subtotal += $objp->total_ht;
 
 		$i++;
 	}

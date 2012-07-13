@@ -50,7 +50,8 @@ $object = new Contact($db);
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($id);
-$canvas = $object->canvas?$object->canvas:GETPOST("canvas");
+$objcanvas=null;
+$canvas = (! empty($object->canvas)?$object->canvas:GETPOST("canvas"));
 if (! empty($canvas))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");

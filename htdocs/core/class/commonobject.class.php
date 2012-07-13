@@ -772,13 +772,13 @@ abstract class CommonObject
 
         $sql = "SELECT MAX(te.".$fieldid.")";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as te";
-        if ($this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && empty($user->rights->societe->client->voir))) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
+        if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && empty($user->rights->societe->client->voir))) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
         if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
         $sql.= " WHERE te.".$fieldid." < '".$this->db->escape($this->ref)."'";
         if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
         if (! empty($filter)) $sql.=" AND ".$filter;
-        if ($this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
-        if ($this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element, 1).')';
+        if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
+        if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element, 1).')';
 
         //print $sql."<br>";
         $result = $this->db->query($sql);
@@ -793,13 +793,13 @@ abstract class CommonObject
 
         $sql = "SELECT MIN(te.".$fieldid.")";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as te";
-        if ($this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
+        if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
         if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
         $sql.= " WHERE te.".$fieldid." > '".$this->db->escape($this->ref)."'";
         if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " AND sc.fk_user = " .$user->id;
         if (! empty($filter)) $sql.=" AND ".$filter;
-        if ($this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
-        if ($this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element, 1).')';
+        if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
+        if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element, 1).')';
         // Rem: Bug in some mysql version: SELECT MIN(rowid) FROM llx_socpeople WHERE rowid > 1 when one row in database with rowid=1, returns 1 instead of null
 
         //print $sql."<br>";
@@ -1501,23 +1501,27 @@ abstract class CommonObject
                 $this->total_ttc       += $obj->total_ttc;
 
                 // Define vatrates with totals for each line and for all lines
-                $vatrates[$this->vatrate][]=array(
-                	'total_ht'       =>$obj->total_ht,
-                	'total_tva'      =>$obj->total_tva,
-                	'total_ttc'      =>$obj->total_ttc,
-                	'total_localtax1'=>$obj->total_localtax1,
-                	'total_localtax2'=>$obj->total_localtax2
-                );
-                if (! isset($vatrates_alllines[$this->vatrate]['total_ht']))        $vatrates_alllines[$this->vatrate]['total_ht']=0;
-                if (! isset($vatrates_alllines[$this->vatrate]['total_tva']))       $vatrates_alllines[$this->vatrate]['total_tva']=0;
-                if (! isset($vatrates_alllines[$this->vatrate]['total_localtax1'])) $vatrates_alllines[$this->vatrate]['total_localtax1']=0;
-                if (! isset($vatrates_alllines[$this->vatrate]['total_localtax2'])) $vatrates_alllines[$this->vatrate]['total_localtax2']=0;
-                if (! isset($vatrates_alllines[$this->vatrate]['total_ttc']))       $vatrates_alllines[$this->vatrate]['total_ttc']=0;
-                $vatrates_alllines[$this->vatrate]['total_ht']       +=$obj->total_ht;
-                $vatrates_alllines[$this->vatrate]['total_tva']      +=$obj->total_tva;
-                $vatrates_alllines[$this->vatrate]['total_localtax1']+=$obj->total_localtax1;
-                $vatrates_alllines[$this->vatrate]['total_localtax2']+=$obj->total_localtax2;
-                $vatrates_alllines[$this->vatrate]['total_ttc']      +=$obj->total_ttc;
+                // TODO $vatrates and $vatrates_alllines not used ?
+                if (! empty($this->vatrate))
+                {
+                	$vatrates[$this->vatrate][]=array(
+                			'total_ht'       =>$obj->total_ht,
+                			'total_tva'      =>$obj->total_tva,
+                			'total_ttc'      =>$obj->total_ttc,
+                			'total_localtax1'=>$obj->total_localtax1,
+                			'total_localtax2'=>$obj->total_localtax2
+                	);
+                	if (! isset($vatrates_alllines[$this->vatrate]['total_ht']))        $vatrates_alllines[$this->vatrate]['total_ht']=0;
+                	if (! isset($vatrates_alllines[$this->vatrate]['total_tva']))       $vatrates_alllines[$this->vatrate]['total_tva']=0;
+                	if (! isset($vatrates_alllines[$this->vatrate]['total_localtax1'])) $vatrates_alllines[$this->vatrate]['total_localtax1']=0;
+                	if (! isset($vatrates_alllines[$this->vatrate]['total_localtax2'])) $vatrates_alllines[$this->vatrate]['total_localtax2']=0;
+                	if (! isset($vatrates_alllines[$this->vatrate]['total_ttc']))       $vatrates_alllines[$this->vatrate]['total_ttc']=0;
+                	$vatrates_alllines[$this->vatrate]['total_ht']       +=$obj->total_ht;
+                	$vatrates_alllines[$this->vatrate]['total_tva']      +=$obj->total_tva;
+                	$vatrates_alllines[$this->vatrate]['total_localtax1']+=$obj->total_localtax1;
+                	$vatrates_alllines[$this->vatrate]['total_localtax2']+=$obj->total_localtax2;
+                	$vatrates_alllines[$this->vatrate]['total_ttc']      +=$obj->total_ttc;
+                }
 
                 $i++;
             }

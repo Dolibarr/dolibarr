@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ $action = GETPOST('action','alpha');
 $confirm = GETPOST('confirm','alpha');
 
 $mesg='';
+$mesgs=array();
 if (isset($_SESSION['DolMessage']))
 {
 	$mesg=$_SESSION['DolMessage'];
@@ -84,7 +85,7 @@ $object->fetch_thirdparty();
  */
 
 // Envoi fichier
-if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
+if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	if (dol_mkdir($upload_dir) >= 0)
 	{
@@ -210,9 +211,9 @@ if ($object->id > 0)
 	print "</table>\n";
 
 	print "</div>\n";
-	
+
 	dol_htmloutput_mesg($mesg,$mesgs);
-	
+
 	/*
 	 * Confirmation suppression fichier
 	*/

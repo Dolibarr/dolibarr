@@ -262,7 +262,7 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 // Set default language (must be after the setValues of $conf)
 if (! defined('NOREQUIRETRAN'))
 {
-	$langs->setDefaultLang($conf->global->MAIN_LANG_DEFAULT);
+	$langs->setDefaultLang((! empty($conf->global->MAIN_LANG_DEFAULT)?$conf->global->MAIN_LANG_DEFAULT:''));
 }
 
 if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');

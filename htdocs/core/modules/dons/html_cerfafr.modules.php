@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2006	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +52,7 @@ class html_cerfafr extends ModeleDon
 
 	/**
 	 * 	Return if a module can be used or not
-	 *   
+	 *
 	 *  @return	boolean     true if module can be used
 	 */
 	function isEnabled()
@@ -62,7 +63,7 @@ class html_cerfafr extends ModeleDon
 
     /**
      *  Write the object to document file to disk
-     * 
+     *
      *	@param	Don			$don	        Donation object
      *  @param  Translate	$outputlangs    Lang object for output language
      *	@return	int             			>0 if OK, <0 if KO
@@ -72,6 +73,7 @@ class html_cerfafr extends ModeleDon
 		global $user,$conf,$langs,$mysoc;
 
 		$now=dol_now();
+		$id = (! is_object($don)?$don:'');
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 
@@ -81,18 +83,18 @@ class html_cerfafr extends ModeleDon
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
 
-        if ($conf->don->dir_output)
+        if (! empty($conf->don->dir_output))
         {
 			// Definition de l'objet $don (pour compatibilite ascendante)
         	if (! is_object($don))
         	{
-	            $id = $don;
 	            $don = new Don($this->db);
 	            $ret=$don->fetch($id);
+	            $id=$don->id;
 			}
 
 			// Definition de $dir et $file
-			if ($don->specimen)
+			if (! empty($don->specimen))
 			{
 				$dir = $conf->don->dir_output;
 				$file = $dir . "/SPECIMEN.html";
@@ -120,7 +122,7 @@ class html_cerfafr extends ModeleDon
 		        $form = implode('', file($donmodel));
 		        $form = str_replace('__REF__',$id,$form);
 		        $form = str_replace('__DATE__',dol_print_date($don->date,'day',false,$outputlangs),$form);
-		        $form = str_replace('__IP__',$user->ip,$form);
+		        //$form = str_replace('__IP__',$user->ip,$form); // TODO $user->ip not exist
 		        $form = str_replace('__AMOUNT__',$don->amount,$form);
 		        $form = str_replace('__CURRENCY__',$outputlangs->transnoentitiesnoconv("Currency".$conf->currency),$form);
 		        $form = str_replace('__CURRENCYCODE__',$conf->currency,$form);

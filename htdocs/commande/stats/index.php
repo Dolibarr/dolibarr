@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +72,7 @@ if ($mode == 'supplier')
     $dir=$conf->fournisseur->dir_output.'/commande/temp';
 }
 
-print_fiche_titre($title, $mesg);
+print_fiche_titre($title);
 
 dol_mkdir($dir);
 
@@ -221,10 +222,11 @@ if (! $mesg)
 $data = $stats->getAllByYear();
 $arrayyears=array();
 foreach($data as $val) {
-    $arrayyears[$val['year']]=$val['year'];
+	if (! empty($val['year'])) {
+		$arrayyears[$val['year']]=$val['year'];
+	}
 }
 if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
-
 
 $h=0;
 $head = array();
@@ -236,6 +238,7 @@ $h++;
 if ($mode == 'customer') $type='order_stats';
 if ($mode == 'supplier') $type='supplier_order_stats';
 
+$object=(object) array(); // TODO $object not defined ?
 complete_head_from_modules($conf,$langs,$object,$head,$h,$type);
 
 dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
@@ -280,24 +283,26 @@ print '</tr>';
 $oldyear=0;
 foreach ($data as $val)
 {
-    $year = $val['year'];
-    while ($year && $oldyear > $year+1)
-    {	// If we have empty year
-        $oldyear--;
-        print '<tr height="24">';
-        print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
-        print '<td align="right">0</td>';
-        print '<td align="right">0</td>';
-        print '<td align="right">0</td>';
-        print '</tr>';
-    }
-    print '<tr height="24">';
-    print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a></td>';
-    print '<td align="right">'.$val['nb'].'</td>';
-    print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
-    print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
-    print '</tr>';
-    $oldyear=$year;
+	$year = $val['year'];
+	while (! empty($year) && $oldyear > $year+1)
+	{ // If we have empty year
+	$oldyear--;
+	print '<tr height="24">';
+	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
+
+	print '<td align="right">0</td>';
+	print '<td align="right">0</td>';
+	print '<td align="right">0</td>';
+	print '</tr>';
+	}
+
+	print '<tr height="24">';
+	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a></td>';
+	print '<td align="right">'.$val['nb'].'</td>';
+	print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
+	print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
+	print '</tr>';
+	$oldyear=$year;
 }
 
 print '</table>';

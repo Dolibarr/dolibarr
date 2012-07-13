@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -75,6 +75,7 @@ $day=GETPOST("day","int")?GETPOST("day","int"):0;
 $actioncode=GETPOST("actioncode","alpha",3);
 $pid=GETPOST("projectid","int",3);
 $status=GETPOST("status");
+$type=GETPOST("type");
 $maxprint=(isset($_GET["maxprint"])?GETPOST("maxprint"):$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 
 if (GETPOST('viewcal'))  {
@@ -138,13 +139,13 @@ if (empty($conf->global->AGENDA_DISABLE_EXT) && $conf->global->AGENDA_EXT_NB > 0
     while($i < $conf->global->AGENDA_EXT_NB)
     {
         $i++;
-        $paramkey='AGENDA_EXT_SRC'.$i;
-        $url=$conf->global->$paramkey;
-        $paramkey='AGENDA_EXT_NAME'.$i;
-        $namecal = $conf->global->$paramkey;
-        $paramkey='AGENDA_EXT_COLOR'.$i;
-        $colorcal = $conf->global->$paramkey;
-        if ($url && $namecal) $listofextcals[]=array('src'=>$url,'name'=>$namecal,'color'=>$colorcal);
+        $source='AGENDA_EXT_SRC'.$i;
+        $name='AGENDA_EXT_NAME'.$i;
+        $color='AGENDA_EXT_COLOR'.$i;
+        if (! empty($conf->global->$source) && ! empty($conf->global->$name))
+        {
+        	$listofextcals[]=array('src'=>$conf->global->$source,'name'=>$conf->global->$name,'color'=>$conf->global->$color);
+        }
     }
 }
 
@@ -219,6 +220,7 @@ if ($status == 'done') $title=$langs->trans("DoneActions");
 if ($status == 'todo') $title=$langs->trans("ToDoActions");
 
 $param='';
+$region='';
 if ($status)  $param="&status=".$status;
 if ($filter)  $param.="&filter=".$filter;
 if ($filtera) $param.="&filtera=".$filtera;
@@ -228,7 +230,7 @@ if ($socid)   $param.="&socid=".$socid;
 if ($showbirthday) $param.="&showbirthday=1";
 if ($pid)     $param.="&projectid=".$pid;
 if ($actioncode) $param.="&actioncode=".$actioncode;
-if (GETPOST("type"))   $param.="&type=".GETPOST("type");
+if ($type)   $param.="&type=".$type;
 if ($action == 'show_day' || $action == 'show_week') $param.='&action='.$action;
 $param.="&maxprint=".$maxprint;
 
@@ -340,7 +342,7 @@ else
     $sql.= " AND datep2 > '".$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10))."')";
     $sql.= ')';
 }
-if ($_GET["type"]) $sql.= " AND ca.id = ".$_GET["type"];
+if ($type) $sql.= " AND ca.id = ".$type;
 if ($status == 'done') { $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))"; }
 if ($status == 'todo') { $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))"; }
 if ($filtera > 0 || $filtert > 0 || $filterd > 0)
@@ -538,7 +540,7 @@ if (count($listofextcals))
             $moreicalevents=array();
             foreach($icalevents as $icalevent)
             {
-                if (is_array($icalevent['RRULE'])) //repeatable event
+                if (isset($icalevent['RRULE']) && is_array($icalevent['RRULE'])) //repeatable event
                 {
                     //if ($event->date_start_in_calendar < $firstdaytoshow) $event->date_start_in_calendar=$firstdaytoshow;
                     //if ($event->date_end_in_calendar > $lastdaytoshow) $event->date_end_in_calendar=$lastdaytoshow;
@@ -645,7 +647,7 @@ if (count($listofextcals))
                 // Create a new object action
                 $event=new ActionComm($db);
                 $addevent = false;
-                if ($icalevent['DTSTART;VALUE=DATE']) // fullday event
+                if (isset($icalevent['DTSTART;VALUE=DATE'])) // fullday event
                 {
                     // For full day events, date are also GMT but they wont but converted using tz during output
                     $datestart=dol_stringtotime($icalevent['DTSTART;VALUE=DATE'],1);
@@ -1073,7 +1075,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                         if (! empty($event->societe->id) && ! empty($event->contact->id)) $length=round($length/2);
                         if (! empty($event->societe->id) && $event->societe->id > 0)
                         {
-                            if (! is_object($cachethirdparties[$event->societe->id]))
+                            if (! isset($cachethirdparties[$event->societe->id]) || ! is_object($cachethirdparties[$event->societe->id]))
                             {
                                 $thirdparty=new Societe($db);
                                 $thirdparty->fetch($event->societe->id);

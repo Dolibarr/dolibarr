@@ -17,13 +17,13 @@
  */
 
 $module = $object->element;
-$permission=(isset($permission)?$permission:$user->rights->$module->creer);    // If already defined by caller page
 
 // Special cases
 if ($module == 'propal')				{ $permission=$user->rights->propale->creer; }
 elseif ($module == 'fichinter')			{ $permission=$user->rights->ficheinter->creer; }
 elseif ($module == 'invoice_supplier')	{ $permission=$user->rights->fournisseur->facture->creer; }
 elseif ($module == 'order_supplier')	{ $permission=$user->rights->fournisseur->commande->creer; }
+elseif (! isset($permission))			{ $permission=$user->rights->$module->creer; } // If already defined by caller page
 
 $companystatic=new Societe($db);
 $contactstatic=new Contact($db);
@@ -54,7 +54,7 @@ $userstatic=new User($db);
 	<tr <?php echo $bc[$var]; ?>>
 		<td nowrap="nowrap"><?php echo img_object('','user').' '.$langs->trans("Users"); ?></td>
 		<td><?php echo $conf->global->MAIN_INFO_SOCIETE_NOM; ?></td>
-		<td><?php echo $form->select_users($user->id,'userid',0,$userAlreadySelected); ?></td>
+		<td><?php echo $form->select_users($user->id,'userid',0,(! empty($userAlreadySelected)?$userAlreadySelected:'')); ?></td>
 		<td><?php echo $formcompany->selectTypeContact($object, '', 'type','internal'); ?></td>
 		<td align="right" colspan="3" ><input type="submit" class="button" value="<?php echo $langs->trans("Add"); ?>"></td>
 	</tr>

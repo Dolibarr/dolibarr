@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +28,8 @@ require_once(DOL_DOCUMENT_ROOT."/compta/dons/class/don.class.php");
 
 $langs->load("donations");
 
-if (!$user->rights->don->lire) accessforbidden();
+// Security check
+$result = restrictedArea($user, 'don');
 
 $donation_static=new Don($db);
 
@@ -48,17 +50,19 @@ $donstatic=new Don($db);
 $help_url='EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Subvenciones';
 llxHeader('',$langs->trans("Donations"),$help_url);
 
+$nb=array();
+$somme=array();
+
 $sql = "SELECT count(d.rowid) as nb, sum(d.amount) as somme , d.fk_statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
 $sql.= " GROUP BY d.fk_statut";
 $sql.= " ORDER BY d.fk_statut";
 
 $result = $db->query($sql);
-
 if ($result)
 {
+	$i = 0;
     $num = $db->num_rows($result);
-    $i = 0;
     while ($i < $num)
     {
         $objp = $db->fetch_object($result);
@@ -107,17 +111,19 @@ print '<td align="right">'.$langs->trans("Total").'</td>';
 print '<td align="right">'.$langs->trans("Average").'</td>';
 print '</tr>';
 
+$total=0;
+$totalnb=0;
 $var=true;
 foreach ($listofstatus as $status)
 {
     $var=!$var;
     print "<tr ".$bc[$var].">";
     print '<td><a href="liste.php?statut='.$status.'">'.$donstatic->LibStatut($status,4).'</a></td>';
-    print '<td align="right">'.$nb[$status].'</td>';
-    print '<td align="right">'.($nb[$status]?price($somme[$status],'MT'):'&nbsp;').'</td>';
-    print '<td align="right">'.($nb[$status]?price(price2num($somme[$status]/$nb[$status],'MT')):'&nbsp;').'</td>';
-    $totalnb += $nb[$status];
-    $total += $somme[$status];
+    print '<td align="right">'.(! empty($nb[$status])?$nb[$status]:'&nbsp;').'</td>';
+    print '<td align="right">'.(! empty($nb[$status])?price($somme[$status],'MT'):'&nbsp;').'</td>';
+    print '<td align="right">'.(! empty($nb[$status])?price(price2num($somme[$status]/$nb[$status],'MT')):'&nbsp;').'</td>';
+    $totalnb += (! empty($nb[$status])?$nb[$status]:0);
+    $total += (! empty($somme[$status])?$somme[$status]:0);
     print "</tr>";
 }
 

@@ -207,19 +207,19 @@ function ajax_dialog($title,$message,$w=350,$h=150)
  */
 function ajax_combobox($htmlname, $event=array())
 {
-	$msg.= '<script type="text/javascript">
+	$msg = '<script type="text/javascript">
     $(function() {
     	$("#'.$htmlname.'").combobox({
     		selected : function(event,ui) {
     			var obj = '.json_encode($event).';
-    			$.each(obj, function(key,values) { 
+    			$.each(obj, function(key,values) {
     				if (values.method.length) {
     					getMethod(values);
     				}
 				});
 			}
 		});
-    	
+
 		function getMethod(obj) {
 			var id = $("#'.$htmlname.'").val();
 			var method = obj.method;

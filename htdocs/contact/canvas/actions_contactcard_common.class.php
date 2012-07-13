@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2011 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2010-2012 Regis Houssin  <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -227,9 +227,10 @@ abstract class ActionsContactCardCommon
      *  Set content of ->tpl array, to use into template
      *
      *  @param	string		&$action    Type of action
+     *  @param	int			$id			Id
      *  @return	string					HTML output
      */
-    function assign_values(&$action)
+    function assign_values(&$action, $id)
     {
         global $conf, $langs, $user, $canvas;
         global $form, $formcompany, $objsoc;
@@ -273,7 +274,7 @@ abstract class ActionsContactCardCommon
         	$this->tpl['select_civility'] = $formcompany->select_civility($this->object->civilite_id);
 
         	// Predefined with third party
-        	if ($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS))
+        	if ((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS))
         	{
         		if (dol_strlen(trim($this->object->address)) == 0) $this->tpl['address'] = $objsoc->address;
         		if (dol_strlen(trim($this->object->zip)) == 0) $this->object->zip = $objsoc->zip;

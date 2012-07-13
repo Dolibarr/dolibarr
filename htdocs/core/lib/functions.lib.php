@@ -733,7 +733,7 @@ function dol_format_address($object)
  *										"%d %b %Y",
  *										"%d/%m/%Y %H:%M",
  *										"%d/%m/%Y %H:%M:%S",
- *										"day", "daytext", "dayhour", "dayhourldap", "dayhourtext"
+ *										"day", "daytext", "dayhour", "dayhourldap", "dayhourtext", "dayrfc", "dayhourrfc"
  * 	@param	string		$tzoutput		true=output or 'gmt' => string is for Greenwich location
  * 										false or 'tzserver' => output string is for local PHP server TZ usage
  * 										'tzuser' => output string is for local browser TZ usage
@@ -1177,7 +1177,7 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 
     if (! empty($addlink))
     {
-        if (! empty($conf->clicktodial->enabled))
+        if (! empty($conf->clicktodial->enabled) && $addlink == 'AC_TEL')
         {
             if (empty($user->clicktodial_loaded)) $user->fetch_clicktodial();
 
@@ -1201,7 +1201,7 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
         }
 
         //if (($cid || $socid) && $conf->agenda->enabled && $user->rights->agenda->myactions->create)
-        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+        if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
         {
             $type='AC_TEL'; $link='';
             if ($addlink == 'AC_FAX') $type='AC_FAX';
@@ -1295,12 +1295,12 @@ function dol_print_address($address, $htmlid, $mode, $id)
     {
         print nl2br($address);
         $showgmap=$showomap=0;
-        if ($mode=='thirdparty' && $conf->google->enabled && $conf->global->GOOGLE_ENABLE_GMAPS) $showgmap=1;
-        if ($mode=='contact' && $conf->google->enabled && $conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS) $showgmap=1;
-        if ($mode=='member' && $conf->google->enabled && $conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS) $showgmap=1;
-        if ($mode=='thirdparty' && $conf->openstreetmap->enabled && $conf->global->OPENSTREETMAP_ENABLE_MAPS) $showomap=1;
-        if ($mode=='contact' && $conf->openstreetmap->enabled && $conf->global->OPENSTREETMAP_ENABLE_MAPS_CONTACTS) $showomap=1;
-        if ($mode=='member' && $conf->openstreetmap->enabled && $conf->global->OPENSTREETMAP_ENABLE_MAPS_MEMBERS) $showomap=1;
+        if ($mode=='thirdparty' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS)) $showgmap=1;
+        if ($mode=='contact' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_CONTACTS)) $showgmap=1;
+        if ($mode=='member' && ! empty($conf->google->enabled) && ! empty($conf->global->GOOGLE_ENABLE_GMAPS_MEMBERS)) $showgmap=1;
+        if ($mode=='thirdparty' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS)) $showomap=1;
+        if ($mode=='contact' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_CONTACTS)) $showomap=1;
+        if ($mode=='member' && ! empty($conf->openstreetmap->enabled) && ! empty($conf->global->OPENSTREETMAP_ENABLE_MAPS_MEMBERS)) $showomap=1;
 
         // TODO Add a hook here
         if ($showgmap)
@@ -2826,7 +2826,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0, $idpr
     if (!is_object($societe_vendeuse)) return -1;
     if (!is_object($societe_acheteuse)) return -1;
 
-    dol_syslog("get_default_tva: seller use vat=".$societe_vendeuse->tva_assuj.", seller country=".$societe_vendeuse->pays_code.", seller in cee=".$societe_vendeuse->isInEEC().", buyer country=".$societe_acheteuse->pays_code.", buyer in cee=".$societe_acheteuse->isInEEC().", idprod=".$idprod.", idprodfournprice=".$idprodfournprice.", SERVICE_ARE_ECOMMERCE_200238EC=".$conf->global->SERVICES_ARE_ECOMMERCE_200238EC);
+    dol_syslog("get_default_tva: seller use vat=".$societe_vendeuse->tva_assuj.", seller country=".$societe_vendeuse->pays_code.", seller in cee=".$societe_vendeuse->isInEEC().", buyer country=".$societe_acheteuse->pays_code.", buyer in cee=".$societe_acheteuse->isInEEC().", idprod=".$idprod.", idprodfournprice=".$idprodfournprice.", SERVICE_ARE_ECOMMERCE_200238EC=".(! empty($conf->global->SERVICES_ARE_ECOMMERCE_200238EC)?$conf->global->SERVICES_ARE_ECOMMERCE_200238EC:''));
 
     // Si vendeur non assujeti a TVA (tva_assuj vaut 0/1 ou franchise/reel)
     if (is_numeric($societe_vendeuse->tva_assuj) && ! $societe_vendeuse->tva_assuj)

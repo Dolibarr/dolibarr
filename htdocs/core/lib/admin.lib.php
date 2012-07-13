@@ -719,7 +719,7 @@ function activateModule($value,$withdeps=1)
 
     if (! $ret && $withdeps)
     {
-        if (is_array($objMod->depends) && ! empty($objMod->depends))
+        if (isset($objMod->depends) && is_array($objMod->depends) && ! empty($objMod->depends))
         {
             // Activation des modules dont le module depend
             $num = count($objMod->depends);
@@ -735,7 +735,7 @@ function activateModule($value,$withdeps=1)
             }
         }
 
-        if (is_array($objMod->conflictwith) && ! empty($objMod->conflictwith))
+        if (isset($objMod->conflictwith) && is_array($objMod->conflictwith) && ! empty($objMod->conflictwith))
         {
             // Desactivation des modules qui entrent en conflit
             $num = count($objMod->conflictwith);

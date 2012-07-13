@@ -25,6 +25,7 @@ set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 require_once("../master.inc.php");
 require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
+require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/ws.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
 
@@ -503,27 +504,35 @@ function createInvoice($authentication,$invoice)
         $newobject->socid=$invoice['thirdparty_id'];
         $newobject->type=$invoice['type'];
         $newobject->ref_ext=$invoice['ref_ext'];
-        $newobject->date=$invoice['date'];
-        $newobject->date_lim_reglement=$invoice['date_due'];
+        $newobject->date=dol_stringtotime($invoice['date'],'dayrfc');
+        $newobject->date_lim_reglement=dol_stringtotime($invoice['date_due'],'dayrfc');
         $newobject->note=$invoice['note'];
         $newobject->note_public=$invoice['note_public'];
         $newobject->statut=$invoice['status'];
         $newobject->fk_project=$invoice['project_id'];
         $newobject->date_creation=$now;
-        foreach($invoice['lines'] as $line)
+
+        // Trick because nusoap does not store data with same structure if there is one or several lines
+        $arrayoflines=array();
+        if (isset($invoice['lines']['line'][0])) $arrayoflines=$invoice['lines']['line'];
+        else $arrayoflines=$invoice['lines'];
+
+        foreach($arrayoflines as $key => $line)
         {
+            // $key can be 'line' or '0','1',...
             $newline=new FactureLigne($db);
             $newline->type=$line['type'];
             $newline->desc=$line['desc'];
             $newline->fk_product=$line['fk_product'];
             $newline->total_ht=$line['total_net'];
-            $newline->total_vat=$line['total_vat'];
+            $newline->total_tva=$line['total_vat'];
             $newline->total_ttc=$line['total'];
             $newline->vat=$line['vat_rate'];
             $newline->qty=$line['qty'];
             $newline->fk_product=$line['product_id'];
+            $newobject->lines[]=$newline;
         }
-        //var_dump($invoice['ref_ext']);
+        //var_dump($newobject->date_lim_reglement); exit;
         //var_dump($invoice['lines'][0]['type']);
 
         $db->begin();
@@ -568,6 +577,6 @@ function createInvoice($authentication,$invoice)
 
 
 // Return the results.
-$server->service($HTTP_RAW_POST_DATA);
+$server->service((isset($HTTP_RAW_POST_DATA)?$HTTP_RAW_POST_DATA:''));
 
 ?>

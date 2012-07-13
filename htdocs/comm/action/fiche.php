@@ -44,7 +44,9 @@ $langs->load("orders");
 $langs->load("agenda");
 
 $action=GETPOST('action','alpha');
+$cancel=GETPOST('cancel','alpha');
 $backtopage=GETPOST('backtopage','alpha');
+$contactid=GETPOST('contactid','int');
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -53,6 +55,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 //$result = restrictedArea($user, 'agenda', $id, 'actioncomm', 'actions', '', 'id');
 
 $error=GETPOST("error");
+$mesg='';
 
 $cactioncomm = new CActionComm($db);
 $actioncomm = new ActionComm($db);
@@ -73,12 +76,12 @@ if ($action == 'add_action')
         else $backtopage=DOL_URL_ROOT.'/comm/action/index.php';
     }
 
-    if ($_POST["contactid"])
+    if ($contactid)
 	{
-		$result=$contact->fetch($_POST["contactid"]);
+		$result=$contact->fetch($contactid);
 	}
 
-	if ($_POST['cancel'])
+	if ($cancel)
 	{
 		header("Location: ".$backtopage);
 		exit;
@@ -368,7 +371,7 @@ if ($action == 'create')
 		if ($result < 0) dol_print_error($db,$contact->error);
 	}
 
-    if ($conf->use_javascript_ajax)
+    if (! empty($conf->use_javascript_ajax))
     {
         print "\n".'<script type="text/javascript" language="javascript">';
         print 'jQuery(document).ready(function () {
@@ -483,7 +486,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
     // Location
-    print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.$act->location.'"></td></tr>';
+    print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.$actioncomm->location.'"></td></tr>';
 
 	print '</table>';
 
@@ -494,12 +497,12 @@ if ($action == 'create')
 	// Affected by
 	$var=false;
 	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
-	$form->select_users(GETPOST("affectedto")?GETPOST("affectedto"):($actioncomm->usertodo->id > 0 ? $actioncomm->usertodo : $user),'affectedto',1);
+	$form->select_users(GETPOST("affectedto")?GETPOST("affectedto"):(! empty($actioncomm->usertodo->id) && $actioncomm->usertodo->id > 0 ? $actioncomm->usertodo->id : $user->id),'affectedto',1);
 	print '</td></tr>';
 
 	// Realised by
 	print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
-	$form->select_users(GETPOST("doneby")?GETPOST("doneby"):($percent==100?$actioncomm->userdone:0),'doneby',1);
+	$form->select_users(GETPOST("doneby")?GETPOST("doneby"):(! empty($actioncomm->userdone->id) && $percent==100?$actioncomm->userdone->id:0),'doneby',1);
 	print '</td></tr>';
 
 	print '</table>';
@@ -530,16 +533,16 @@ if ($action == 'create')
 	}
 
 	// Project
-	if ($conf->projet->enabled)
+	if (! empty($conf->projet->enabled))
 	{
 		// Projet associe
 		$langs->load("project");
 
 		print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
-		$numproject=select_projects($societe->id,GETPOST("projectid")?GETPOST("projectid"):$projectid,'projectid');
+		$numproject=select_projects((! empty($societe->id)?$societe->id:0),GETPOST("projectid")?GETPOST("projectid"):'','projectid');
 		if ($numproject==0)
 		{
-			print ' &nbsp; <a href="../../projet/fiche.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").'</a>';
+			print ' &nbsp; <a href="'.DOL_DOCUMENT_ROOT.'/projet/fiche.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").'</a>';
 		}
 		print '</td></tr>';
 	}
@@ -551,7 +554,7 @@ if ($action == 'create')
 
 	// Priority
 	print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
-	print '<input type="text" name="priority" value="'.($_POST["priority"]?$_POST["priority"]:($actioncomm->priority?$actioncomm->priority:'')).'" size="5">';
+	print '<input type="text" name="priority" value="'.(GETPOST('priority')?GETPOST('priority'):($actioncomm->priority?$actioncomm->priority:'')).'" size="5">';
 	print '</td></tr>';
 
 	add_row_for_calendar_link();
@@ -559,7 +562,7 @@ if ($action == 'create')
     // Description
     print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
     require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-    $doleditor=new DolEditor('note',($_POST["note"]?$_POST["note"]:$actioncomm->note),'',280,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_7,90);
+    $doleditor=new DolEditor('note',(GETPOST('note')?GETPOST('note'):$actioncomm->note),'',280,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_7,90);
     $doleditor->Create();
     print '</td></tr>';
 
@@ -994,7 +997,8 @@ function add_row_for_calendar_link()
 	$nbtr=0;
 
 	// Lien avec calendrier si module active
-	if ($conf->webcalendar->enabled)
+	// TODO external module
+	if (! empty($conf->webcalendar->enabled))
 	{
 		if ($conf->global->PHPWEBCALENDAR_SYNCRO != 'never')
 		{
@@ -1026,7 +1030,8 @@ function add_row_for_calendar_link()
 		}
 	}
 
-	if ($conf->phenix->enabled)
+	// TODO external module
+	if (! empty($conf->phenix->enabled))
 	{
 		if ($conf->global->PHPPHENIX_SYNCRO != 'never')
 		{
