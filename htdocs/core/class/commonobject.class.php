@@ -1654,8 +1654,21 @@ abstract class CommonObject
         $sql.= " WHERE ";
         if ($justsource || $justtarget)
         {
+<<<<<<< OURS
             if ($justsource) $sql.= "fk_source = '".$sourceid."' AND sourcetype = '".$sourcetype."'";
             if ($justtarget) $sql.= "fk_target = '".$targetid."' AND targettype = '".$targettype."'";
+=======
+            if ($justsource)
+            {
+            	$sql.= "fk_source = '".$sourceid."' AND sourcetype = '".$sourcetype."'";
+            	if ($withtargettype) $sql.= " AND targettype = '".$targettype."'";
+            }
+            else if ($justtarget)
+            {
+            	$sql.= "fk_target = '".$targetid."' AND targettype = '".$targettype."'";
+            	if ($withsourcetype) $sql.= " AND sourcetype = '".$sourcetype."'";
+            }
+>>>>>>> THEIRS
         }
         else
         {

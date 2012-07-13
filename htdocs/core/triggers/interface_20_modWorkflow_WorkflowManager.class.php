@@ -130,6 +130,42 @@ class InterfaceWorkflowManager
             }
         }
 
+        // Order classify billed proposal
+        if ($action == 'ORDER_CLASSIFY_BILLED')
+        {
+        	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        	if (! empty($conf->propal->enabled) && ! empty($conf->global->WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL))
+        	{
+        		$object->fetchObjectLinked('','propal',$object->id,$object->element);
+				if (! empty($object->linkedObjects))
+				{
+					foreach($object->linkedObjects['propal'] as $element)
+					{
+						$ret=$element->classifyBilled();
+					}
+				}
+        		return $ret;
+        	}
+        }
+
+        // Order classify billed proposal
+        if ($action == 'BILL_PAYED')
+        {
+        	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        	if (! empty($conf->commande->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER))
+        	{
+        		$object->fetchObjectLinked('','commande',$object->id,$object->element);
+        		if (! empty($object->linkedObjects))
+        		{
+        			foreach($object->linkedObjects['commande'] as $element)
+        			{
+        				$ret=$element->classifyBilled();
+        			}
+        		}
+        		return $ret;
+        	}
+        }
+
         return 0;
     }
 
