@@ -1177,7 +1177,7 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 
     if (! empty($addlink))
     {
-        if (! empty($conf->clicktodial->enabled))
+        if (! empty($conf->clicktodial->enabled) && $addlink == 'AC_TEL')
         {
             if (empty($user->clicktodial_loaded)) $user->fetch_clicktodial();
 
@@ -1201,7 +1201,7 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
         }
 
         //if (($cid || $socid) && $conf->agenda->enabled && $user->rights->agenda->myactions->create)
-        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+        if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
         {
             $type='AC_TEL'; $link='';
             if ($addlink == 'AC_FAX') $type='AC_FAX';
