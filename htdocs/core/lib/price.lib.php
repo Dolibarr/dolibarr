@@ -94,14 +94,14 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocalta
 	//Local taxes
 	if ($txlocaltax1>0)
 	{
-		$result[14] = price2num(($tot_sans_remise * (1 + ( $txlocaltax1 / 100))) - $tot_sans_remise, 'MT');
-		$result[8]  = price2num($result[8] + $result[14], 'MT');
+		$result[14] = price2num(($result[6] * ( 1 + ( $txlocaltax1 / 100))) - $result[6], 'MT');
+		$result[8] = $result[8] + $result[14];
 
-		$result[9]  = price2num(($tot_avec_remise * (1 + ( $txlocaltax1 / 100))) - $tot_avec_remise, 'MT');
-		$result[2]  = price2num($result[2] + $result[9], 'MT');
+		$result[9] = price2num(($result[0] * ( 1 + ( $txlocaltax1 / 100))) - $result[0], 'MT');
+		$result[2] = $result[2] + $result[9];
 
-		$result[11] = price2num(($pu * (1 + ( $txlocaltax1 / 100))) - $pu, 'MT');
-		$result[5]  = price2num($result[5] + $result[11], 'MT');
+		$result[11] = price2num(($result[3] * ( 1 + ( $txlocaltax1 / 100))) - $pu, 'MT');
+		$result[5] = $result[5] + $result[11];
 	}
 	else
 	{
@@ -112,22 +112,22 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocalta
 
 	if ($txlocaltax2>0)
 	{
-		$result[15] = price2num(($tot_sans_remise * (1 + ( $txlocaltax2 / 100))) - $tot_sans_remise, 'MT');
-		$result[10] = price2num(($tot_avec_remise * (1 + ( $txlocaltax2 / 100))) - $tot_avec_remise, 'MT');
-		$result[12] = price2num(($pu * (1 + ( $txlocaltax2 / 100))) - $pu, 'MT');
+		$result[15] = price2num(($result[6] * ( 1 + ( $txlocaltax2 / 100))) - $result[6], 'MT');
+		$result[10] = price2num(($result[0] * ( 1 + ( $txlocaltax2 / 100))) - $result[0], 'MT');
+		$result[12] = price2num(($result[3] * ( 1 + ( $txlocaltax2 / 100))) - $pu, 'MT');
 
 		//If Country is Spain, localtax2 (IRPF) will be subtracted
-		if ($mysoc->country_code=='ES')
+		if ($mysoc->pays_code=='ES')
 		{
-			$result[8] = price2num($result[8] - $result[15], 'MT');
-			$result[2] = price2num($result[2] - $result[10], 'MT');
-			$result[5] = price2num($result[5] - $result[12], 'MU');
+			$result[8] = $result[8] - $result[15];
+			$result[2] = $result[2] - $result[10];
+			$result[5] = $result[5] - $result[12];
 		}
 		else
 		{
-			$result[8] = price2num($result[8] + $result[15], 'MT');
-			$result[2] = price2num($result[2] + $result[10], 'MT');
-			$result[5] = price2num($result[5] + $result[12], 'MU');
+			$result[8] = $result[8] + $result[15];
+			$result[2] = $result[2] + $result[10];
+			$result[5] = $result[5] + $result[12];
 		}
 	}
 	else
@@ -136,7 +136,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocalta
 		$result[10] = 0;
 		$result[12] = 0;
 	}
-
+	
 	// If rounding is not using base 10 (rare)
 	if (! empty($conf->global->MAIN_ROUNDING_RULE_TOT))
 	{
