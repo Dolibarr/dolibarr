@@ -72,7 +72,8 @@ if ($mode == 'search')
 	if ($modesearch == 'soc')
 	{
 		$sql = "SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s ";
-		$sql.= " WHERE s.nom like '%".$db->escape(strtolower($socname))."%'";
+		$sql.= " WHERE s.nom LIKE '%".$db->escape(strtolower($socname))."%'";
+		$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 	}
 
     $resql=$db->query($sql);
@@ -106,7 +107,8 @@ $sql.= " fac.total_ht, fac.total_ttc, fac.paye as paye, fac.fk_statut as fk_stat
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as fac";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE fac.fk_soc = s.rowid";
+$sql.= " WHERE fac.entity = ".$conf->entity;
+$sql.= " AND fac.fk_soc = s.rowid";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)
 {

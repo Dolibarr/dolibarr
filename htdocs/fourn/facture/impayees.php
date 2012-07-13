@@ -98,7 +98,8 @@ if ($user->rights->fournisseur->facture->lire)
 	if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= ",".MAIN_DB_PREFIX."facture_fourn as f";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf ON f.rowid=pf.fk_facturefourn ";
-	$sql.= " WHERE f.fk_soc = s.rowid";
+	$sql.= " WHERE f.entity = ".$conf->entity;
+	$sql.= " AND f.fk_soc = s.rowid";
 	$sql.= " AND f.paye = 0 AND f.fk_statut = 1";
 	if ($option == 'late') $sql.=" AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->fournisseur->warning_delay)."'";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
