@@ -57,6 +57,8 @@ SendShippingRef=Enviament d'expedició %s
 ActionsOnShipping=Events sobre l'expedició
 LinkToTrackYourPackage=Enllaç per al seguiment del seu paquet
 ShipmentCreationIsDoneFromOrder=De moment, la creació d'una nova expedició es realitza des de la fitxa de comanda.
+RelatedShippings=Expedició(ns) associades
+
 # Sending methods
 SendingMethodCATCH=Recollit pel client
 SendingMethodTRANS=Transportista
