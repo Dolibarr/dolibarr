@@ -61,6 +61,7 @@ class FormMail
     var $withfilereadonly;
     var $withdeliveryreceipt;
     var $withcancel;
+    var $withfckeditor;
 
     var $substit=array();
     var $param=array();
@@ -98,6 +99,7 @@ class FormMail
         $this->withfilereadonly=0;
         $this->withbodyreadonly=0;
         $this->withdeliveryreceiptreadonly=0;
+        $this->withfckeditor=0;
 
         return 1;
     }

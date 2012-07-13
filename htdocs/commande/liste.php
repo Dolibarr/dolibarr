@@ -79,8 +79,10 @@ if (GETPOST("button_removefilter_x"))
     $search_refcustomer='';
     $search_societe='';
     $search_montant_ht='';
-    $year='';
-    $month='';
+    $orderyear='';
+    $ordermonth='';
+    $deliverymonth='';
+    $deliveryyear='';
 }
 
 
@@ -214,8 +216,10 @@ if ($resql)
 	$title.=' - '.$langs->trans('StatusOrderToProcessShort');
 
 	$param='&socid='.$socid.'&viewstatut='.$viewstatut;
-	if ($month)           $param.='&month='.$month;
-	if ($year)            $param.='&year='.$year;
+	if ($ordermonth)      $param.='&ordermonth='.$ordermonth;
+	if ($orderyear)       $param.='&orderyear='.$orderyear;
+	if ($deliverymonth)   $param.='&deliverymonth='.$deliverymonth;
+	if ($deliveryyear)    $param.='&deliveryyear='.$deliveryyear;
 	if ($sref)            $param.='&sref='.$sref;
 	if ($snom)            $param.='&snom='.$snom;
 	if ($sref_client)     $param.='&sref_client='.$sref_client;
@@ -231,6 +235,8 @@ if ($resql)
 
 	print '<table class="noborder" width="100%">';
 
+	$moreforfilter='';
+
  	// If the user can view prospects other than his'
  	if ($user->rights->societe->client->voir || $socid)
  	{
@@ -244,7 +250,7 @@ if ($resql)
 	    $moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
 	    $moreforfilter.=$form->select_dolusers($search_user,'search_user',1);
 	}
-	if ($moreforfilter)
+	if (! empty($moreforfilter))
 	{
 	    print '<tr class="liste_titre">';
 	    print '<td class="liste_titre" colspan="9">';
@@ -273,7 +279,10 @@ if ($resql)
 	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td></tr>';
 
-	$var=True;
+	$var=true;
+	$total=0;
+	$subtotal=0;
+
 	$generic_commande = new Commande($db);
 	while ($i < min($num,$limit))
 	{
@@ -340,8 +349,8 @@ if ($resql)
 
 		print '</tr>';
 
-		$total = $total + $objp->price;
-		$subtotal = $subtotal + $objp->price;
+		$total+=$objp->total_ht;
+		$subtotal+=$objp->total_ht;
 		$i++;
 	}
 	print '</table>';

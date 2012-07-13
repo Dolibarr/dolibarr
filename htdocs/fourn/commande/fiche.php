@@ -693,7 +693,7 @@ if (GETPOST('removedfile'))
 /*
  * Send mail
  */
-if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_POST['cancel'])
+if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! GETPOST('cancel'))
 {
     $langs->load('mails');
 
@@ -1747,7 +1747,7 @@ if ($id > 0 || ! empty($ref))
             $formmail->withtosocid=$soc->id;
             $formmail->withtocc=1;
             $formmail->withtoccsocid=0;
-            $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
+            $formmail->withtoccc=(! empty($conf->global->MAIN_EMAIL_USECCC)?$conf->global->MAIN_EMAIL_USECCC:false);
             $formmail->withtocccsocid=0;
             $formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__');
             $formmail->withfile=2;

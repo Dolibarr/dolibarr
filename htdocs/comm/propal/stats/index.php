@@ -206,7 +206,9 @@ if (! $mesg)
 $data = $stats->getAllByYear();
 $arrayyears=array();
 foreach($data as $val) {
-    $arrayyears[$val['year']]=$val['year'];
+	if (! empty($val['year'])) {
+		$arrayyears[$val['year']]=$val['year'];
+	}
 }
 if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
 
@@ -265,7 +267,7 @@ foreach ($data as $val)
 {
     $year = $val['year'];
     //print $avg; // TODO $avg not defined ?
-    while ($oldyear > $year+1)
+    while (! empty($year) && $oldyear > $year+1)
     {	// If we have empty year
         $oldyear--;
         print '<tr height="24">';

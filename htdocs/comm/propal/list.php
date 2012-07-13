@@ -247,14 +247,14 @@ if ($result)
 	$moreforfilter='';
 
  	// If the user can view prospects other than his'
- 	if ($user->rights->societe->client->voir || $socid) // TODO same of the second !!
+ 	if ($user->rights->societe->client->voir || $socid)
  	{
 	 	$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
 		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user);
 	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
  	}
 	// If the user can view prospects other than his'
-	if ($user->rights->societe->client->voir || $socid) // TODO same of the first !!
+	if ($user->rights->societe->client->voir || $socid)
 	{
 	    $moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
 	    $moreforfilter.=$form->select_dolusers($search_user,'search_user',1);

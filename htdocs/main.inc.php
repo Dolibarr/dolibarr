@@ -274,7 +274,7 @@ if (! empty($conf->global->MAIN_SECURITY_CSRF))	// Check validity of token, only
     {
         if (($_POST['token'] != $_SESSION['token']))
         {
-            dol_syslog("Invalid token in ".$_SERVER['HTTP_REFERER'].", action=".$_POST['action'].", _POST['token']=".$_POST['token'].", _SESSION['token']=".$_SESSION['token'],LOG_WARNING);
+            dol_syslog("Invalid token in ".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action').", _POST['token']=".GETPOST('token').", _SESSION['token']=".$_SESSION['token'],LOG_WARNING);
             //print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
             unset($_POST);
         }
@@ -328,7 +328,7 @@ if (! defined('NOLOGIN'))
         include_once(DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php');
 
         // If in demo mode, we check we go to home page through the public/demo/index.php page
-        if ($dolibarr_main_demo && $_SERVER['PHP_SELF'] == DOL_URL_ROOT.'/index.php')  // We ask index page
+        if (! empty($dolibarr_main_demo) && $_SERVER['PHP_SELF'] == DOL_URL_ROOT.'/index.php')  // We ask index page
         {
             if (! preg_match('/public/',$_SERVER['HTTP_REFERER']))
             {
@@ -367,8 +367,8 @@ if (! defined('NOLOGIN'))
         }
 
         $usertotest		= (! empty($_COOKIE['login_dolibarr']) ? $_COOKIE['login_dolibarr'] : GETPOST("username","alpha",2));
-        $passwordtotest	= (! empty($_COOKIE['password_dolibarr']) ? $_COOKIE['password_dolibarr'] : $_POST["password"]);
-        $entitytotest	= (! empty($_POST["entity"]) ? $_POST["entity"] : 1);
+        $passwordtotest	= (! empty($_COOKIE['password_dolibarr']) ? $_COOKIE['password_dolibarr'] : GETPOST('password'));
+        $entitytotest	= (GETPOST('entity','int') ? GETPOST('entity','int') : 1);
 
         // Validation of login/pass/entity
         // If ok, the variable login will be returned
@@ -556,7 +556,7 @@ if (! defined('NOLOGIN'))
         // Call triggers
         include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
         $interface=new Interfaces($db);
-        $result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf,$_POST["entity"]);
+        $result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf,GETPOST('entity','int'));
         if ($result < 0) {
             $error++;
         }

@@ -94,10 +94,10 @@ function checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmod
     				{
     					$test=false;            // To stop once at first login success
     					$conf->authmode=$mode;	// This properties is defined only when logged to say what mode was successfully used
-    					$dol_tz=$_POST["tz"];
-    					$dol_dst=$_POST["dst"];
-    					$dol_screenwidth=$_POST["screenwidth"];
-    					$dol_screenheight=$_POST["screenheight"];
+    					$dol_tz=GETPOST('tz');
+    					$dol_dst=GETPOST('dst');
+    					$dol_screenwidth=GETPOST('screenwidth');
+    					$dol_screenheight=GETPOST('screenheight');
     				}
     			}
     			else
@@ -206,7 +206,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	// Execute hook getLoginPageOptions
 	// Should be an array with differents options in $hookmanager->resArray
-	$parameters=array('entity' => $_POST['entity']);
+	$parameters=array('entity' => GETPOST('entity','int'));
 	$hookmanager->executeHooks('getLoginPageOptions',$parameters);    // Note that $action and $object may have been modified by some hooks
 
 	// Login
@@ -276,10 +276,10 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	// Google AD
 	$main_google_ad_client = ((! empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && ! empty($conf->global->MAIN_GOOGLE_AD_SLOT))?1:0);
 
-	$dol_loginmesg = $_SESSION["dol_loginmesg"];
+	$dol_loginmesg = (! empty($_SESSION["dol_loginmesg"])?$_SESSION["dol_loginmesg"]:'');
 	$favicon=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/favicon.ico';
 	$jquerytheme = 'smoothness';
-	if (!empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
+	if (! empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
 
 
 	include($template_dir.'login.tpl.php');	// To use native PHP
