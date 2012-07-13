@@ -57,6 +57,8 @@ SendShippingRef=Envío expedición %s
 ActionsOnShipping=Eventos sobre la expedición
 LinkToTrackYourPackage=Enlace para el seguimento de su paquete
 ShipmentCreationIsDoneFromOrder=De momento, la creación de una nueva expedición se realiza desde la ficha de pedido.
+RelatedShippings=Expedición(es) asociada(s)
+
 # Sending methods
 SendingMethodCATCH=Recogido por el cliente
 SendingMethodTRANS=Transportista
