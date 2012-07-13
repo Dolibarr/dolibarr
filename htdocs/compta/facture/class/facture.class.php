@@ -198,6 +198,7 @@ class Facture extends CommonInvoice
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture (";
         $sql.= " facnumber";
         $sql.= ", entity";
+        $sql.= ", ref_ext";
         $sql.= ", type";
         $sql.= ", fk_soc";
         $sql.= ", datec";
@@ -213,6 +214,7 @@ class Facture extends CommonInvoice
         $sql.= " VALUES (";
         $sql.= "'(PROV)'";
         $sql.= ", ".$conf->entity;
+        $sql.= ", ".($this->ref_ext?"'".$this->db->escape($this->ref_ext)."'":"null");
         $sql.= ", '".$this->type."'";
         $sql.= ", '".$socid."'";
         $sql.= ", '".$this->db->idate($now)."'";
