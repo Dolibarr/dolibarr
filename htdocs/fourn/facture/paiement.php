@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2003-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Christophe Combelles  <ccomb@free.fr>
- * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
+/* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
+ * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -193,10 +194,10 @@ if ($action == 'create' || $action == 'add_paiement')
     $sql = 'SELECT s.nom, s.rowid as socid,';
     $sql.= ' f.rowid as ref, f.facnumber, f.amount, f.total_ttc as total';
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
-    $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f';
+    $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f';
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    $sql .= ' WHERE f.fk_soc = s.rowid';
-    $sql .= ' AND f.rowid = '.$facid;
+    $sql.= ' WHERE f.fk_soc = s.rowid';
+    $sql.= ' AND f.rowid = '.$facid;
     if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     $resql = $db->query($sql);
     if ($resql)
@@ -254,13 +255,14 @@ if ($action == 'create' || $action == 'add_paiement')
              * Autres factures impayees
              */
             $sql = 'SELECT f.rowid as facid,f.rowid as ref,f.facnumber,f.total_ttc, f.datef as df';
-            $sql .= ', sum(pf.amount) as am';
-            $sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
-            $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
-            $sql .= ' WHERE f.fk_soc = '.$facture->socid;
-            $sql .= ' AND f.paye = 0';
-            $sql .= ' AND f.fk_statut = 1';  // Statut=0 => non validee, Statut=2 => annulee
-            $sql .= ' GROUP BY f.rowid,f.facnumber,f.total_ttc,f.datef';
+            $sql.= ', sum(pf.amount) as am';
+            $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
+            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
+            $sql.= " WHERE f.entity = ".$conf->entity;
+            $sql.= ' AND f.fk_soc = '.$facture->socid;
+            $sql.= ' AND f.paye = 0';
+            $sql.= ' AND f.fk_statut = 1';  // Statut=0 => non validee, Statut=2 => annulee
+            $sql.= ' GROUP BY f.rowid,f.facnumber,f.total_ttc,f.datef';
             $resql = $db->query($sql);
             if ($resql)
             {
@@ -370,7 +372,7 @@ if (! $_GET['action'] && ! $_POST['action'])
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON s.rowid = f.fk_soc';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-    $sql.= ' WHERE 1=1';
+    $sql.= " WHERE f.entity = ".$conf->entity;
     if (!$user->rights->societe->client->voir) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($socid)
     {
