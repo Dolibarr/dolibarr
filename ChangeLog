@@ -31,6 +31,8 @@ For developers:
 - New: A module can overwrite templates parts.
 - New: Can add a link on title field of added dictionnary.
 - New: Uniformize code.
+- New: Add option WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER and 
+       WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER
 
 
 ***** ChangeLog for 3.2.0 compared to 3.1.2 *****
