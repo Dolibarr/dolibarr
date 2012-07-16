@@ -56,7 +56,7 @@ class MouvementStock
 	 *	@param		int		$price			Unit price HT of product
 	 *	@param		string	$label			Label of stock movement
 	 *	@param		string	$datem			Force date of movement
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						<0 if KO, 0 if fk_product is null, >0 if OK
 	 */
 	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='', $datem='')
 	{
@@ -65,6 +65,8 @@ class MouvementStock
 		$error = 0;
 		dol_syslog("MouvementStock::_create start userid=$user->id, fk_product=$fk_product, warehouse=$entrepot_id, qty=$qty, type=$type, price=$price label=$label");
 
+		if (empty($fk_product)) return 0;
+		
 		$now=(! empty($datem) ? $datem : dol_now());
 
 		$this->db->begin();
