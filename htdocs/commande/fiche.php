@@ -2118,12 +2118,12 @@ else
         		// Create bill and Classify billed
         		if ($conf->facture->enabled && $object->statut > 0  && ! $object->billed)
         		{
-        			if ($user->rights->facture->creer)
+        			if ($user->rights->facture->creer && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER))
         			{
         				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
         			}
 
-        			if ($user->rights->commande->creer && $object->statut > 2)
+        			if ($user->rights->commande->creer && $object->statut > 2 && empty($conf->global->WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER))
         			{
         				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
         			}

@@ -1042,7 +1042,7 @@ class Product extends CommonObject
 		// Check parameters
 		if (! $id && ! $ref && ! $ref_ext)
 		{
-			$this->error=$langs->trans('ErrorWrongParameters');
+			$this->error='ErrorWrongParameters';
 			dol_print_error(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
