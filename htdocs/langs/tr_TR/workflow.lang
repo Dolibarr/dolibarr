@@ -1,18 +1,15 @@
-/*
- * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-10-09 14:05:49
+﻿* Manually generated
+ * Generation date 2012-07-08 21:43:26
+
+// START - Lines manually generated (2012-07-08 21:43:26).
  */
+// Reference language: en_US -> TR – workflow
 
-
-// START - Lines generated via autotranslator.php tool (2011-10-09 14:05:49).
-// Reference language: en_US -> tr_TR
 CHARSET=UTF-8
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Bir sözleşme doğrulandıktan sonra otomatik olarak bir müşteri faturası oluşturun
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Bir müşteri sipariş kapatıldıktan sonra otomatik olarak bir müşteri faturası oluşturun
 WorkflowSetup=İş Akışı modülü kurulumu
-WorkflowDesc=Bu modül, uygulama otomatik eylemler davranışını değiştirmek için desinged. Varsayılan olarak, iş akışı (siz istediğiniz için bir şey yapmak) açıldı. In ilginç otomatik eylemler etkin
-ThereIsNoWorkflowToModify=Hiçbir iş akışı modülü aktif hale getirilmesi için değişiklik yoktur.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Ticari bir teklifi imzalandıktan sonra otomatik olarak bir müşteri sipariş oluşturma
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Ticari bir teklifi imzalandıktan sonra otomatik olarak bir müşteri faturası oluşturun
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:00:04).
+WorkflowDesc=Bu modül, uygulama içindeki otomatik eylemlerim davranışını değiştirmek için tasarlanmıştır. Varsayılan olarak, iş akışı açıktır (siz istediğiniz şeyi sırayla yaparsınız). İlginç bulduğunuz otomatik eylemleri etkinleştirebilirsiniz.
+ThereIsNoWorkflowToModify=Etkinleştirdiğiniz bu modül için değişitirilecek iş akışı yoktur.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Ticari bir teklif imzalandıktan sonra otomatik olarak bir müşteri siparişi oluştur
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Ticari bir teklif imzalandıktan sonra otomatik olarak bir müşteri faturası oluştur
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Bir sözleşme doğrulandıktan sonra otomatik olarak bir müşteri faturası oluştur
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Bir müşteri siparişi kapatıldıktan sonra otomatik olarak bir müşteri faturası oluştur

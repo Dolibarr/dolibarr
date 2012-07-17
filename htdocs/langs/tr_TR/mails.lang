@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Language code: tr_TR
  * Automatic generated via autotranslator.php tool
  * Generation date 2010-03-15 19:05:26
@@ -8,123 +8,120 @@
 // START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 // Reference language: en_US
 CHARSET=UTF-8
-Mailing=E-postayla gönderme
-EMailing=E-postayla gönderme
-Mailings=EMailings
-EMailings=EMailings
-AllEMailings=Tüm eMailings
-MailCard=Emailing kartı
+Mailing=Eposta
+EMailing=Eposta
+Mailings=Epostalar
+EMailings=Epostalar 
+AllEMailings=Tüm Epostalar 
+MailCard=Eposta kartı
 MailTargets=Hedefler
 MailRecipients=Alıcılar
 MailRecipient=Alıcı
-MailTitle=Title
-MailFrom=Gönderenin
+MailTitle=Açıklama
+MailFrom=Gönderen
 MailErrorsTo=Hatalar
 MailReply=Yanıtla
-MailTo=Alıcı (lar)
+MailTo=Alıcı(lar)
 MailCC=Kopyala
-MailCCC=Kopyalamak için Cached
-MailTopic=EPosta konu
+MailCCC=Önbelleğe kopyala
+MailTopic=EPosta konusu
 MailText=Mesaj
-MailFile=Ekli dosyaları
-MailMessage=EPosta vücut
-ShowEMailing=Show emailing
-ListOfEMailings=Emailings Listesi
-NewMailing=Yeni e-posta gönderme
-EditMailing=Değiştir e-posta gönderme
-ResetMailing=Yollayacağız emailing
-DeleteMailing=Sil emailing
-DeleteAMailing=Silmek bir e-posta gönderme
-PreviewMailing=Önizleme emailing
-PrepareMailing=Hazırlamak emailing
-CreateMailing=Emailing oluşturun
-MailingDesc=Bu sayfa kişilik bir grup emailings göndermesine izin verir.
-MailingResult=E-posta gönderme sonucu
-TestMailing=Test e-posta
-ValidMailing=Geçerli bir e-posta gönderme
-ApproveMailing=Onayla emailing
+MailFile=Ekli dosyalar
+MailMessage=EPosta gövdesi
+ShowEMailing=Eposta göster
+ListOfEMailings=Eposta Listesi
+NewMailing=Yeni Eposta
+EditMailing=Eposta düzenle
+ResetMailing=Yeniden Epostala
+DeleteMailing=Eposta sil
+DeleteAMailing=Bir Eposta sil
+PreviewMailing=Eposta önizle
+PrepareMailing=Eposta hazırla
+CreateMailing=Eposta oluştur
+MailingDesc=Bu sayfa bir grua Eposta göndermenizi sağlar.
+MailingResult=Eposta sonuçlarını gönderiyor
+TestMailing=Eposta testi
+ValidMailing=Geçerli Eposta
+ApproveMailing=Eposta onayla
 MailingStatusDraft=Taslak
-MailingStatusValidated=Validated
+MailingStatusValidated=Doğrulanmış
 MailingStatusApproved=Onaylanmış
 MailingStatusSent=Gönderildi
-MailingStatusSentPartialy=Gönderildi kısmen
-MailingStatusSentCompletely=Gönderildi tamamen
+MailingStatusSentPartialy=Kısmen gönderildi
+MailingStatusSentCompletely=Tamamen gönderildi
 MailingStatusError=Hata
-MailingStatusNotSent=Gönderdik
-MailSuccessfulySent=E-posta başarıyla gönderildi (den%% s)
-ErrorMailRecipientIsEmpty=E-posta alıcı boş
-WarningNoEMailsAdded=Yeni E-posta alıcının listesine eklemek için.
-ConfirmValidMailing=Size bu e-posta gönderme doğrulamak istediğinizden emin misiniz?
-ConfirmResetMailing=Uyarı, <b>s,</b> bir kitle bu e-postayı başka bir zaman gönderilmesini yapmanıza izin e-posta <b>göndererek%</b> reinitializing tarafından. Emin misin bu ne yapmak istersiniz?
-ConfirmDeleteMailing=Bunu emailling silmek istediğinizden emin misiniz?
+MailingStatusNotSent=Gönderilmedi
+MailSuccessfulySent=Eposta başarıyla gönderildi (%s ten %s e)
+ErrorMailRecipientIsEmpty=E-posta alıcısı boş
+WarningNoEMailsAdded=Alıcının listesine ekli yeni Eposta yok.
+ConfirmValidMailing=Bu Epostayı doğrulamak istediğinizden emin misiniz?
+ConfirmResetMailing=Uyarı, Bu <b>%s</b> Epostasını yeniden başlatarak, bu Epostanın toplu gönderiminin başka bir zaman yapılmasını sağlarsınız. Bunu yapmak istediğinizden emin misiniz?
+ConfirmDeleteMailing=Bu Epostayı silmek istediğinizden emin misiniz?
 NbOfRecipients=Numara alıcı
-NbOfUniqueEMails=Nb benzersiz e-posta
-NbOfEMails=Nb e-posta
-TotalNbOfDistinctRecipients=Sayı farklı alıcıların
-NoTargetYet=No alıcıları henüz tanımlı (sekme Alıcılar Doğum git)
-AddRecipients=Alıcılar Ekle
-RemoveRecipient=Kaldır alıcı
-CommonSubstitutions=Ortak ikamelerini
-YouCanAddYourOwnPredefindedListHere=, Htdocs görmek için e-posta seçici modülü oluşturmak için / / modules / postalar / README içerir.
-EMailTestSubstitutionReplacedByGenericValues=Kullanırken test modu, değiştirmelerin değişkenler genel değerleriyle değiştirilir
-MailingAddFile=Attach Bu dosyayı
-NoAttachedFiles=No ekli dosyaları
-BadEMail=EPosta için kötü değer
-CloneEMailing=Clone e-postayla gönderme
-ConfirmCloneEMailing=Size bu e-posta gönderme clone istediğinizden emin misiniz?
-CloneContent=Clone mesaj
-CloneReceivers=Cloner alıcıları
+NbOfUniqueEMails=Benzersiz e-posta sayısı
+NbOfEMails=Eposta sayısı
+TotalNbOfDistinctRecipients=Farklı alıcıların sayısı
+NoTargetYet=Henüz hiç bir alıcı tanımlanmadı (‘Alıcılar’ sekmesine gidin)
+AddRecipients=Alıcı ekle
+RemoveRecipient=Alıcı kaldır
+CommonSubstitutions=Ortak yedekler
+YouCanAddYourOwnPredefindedListHere=Eposta seçim modülünüzü oluşturmak için htdocs/core/modules/mailings/README dosyasına bakın.
+EMailTestSubstitutionReplacedByGenericValues=Test modunu kullanırken, yedek değişkenler genel değerleriyle değiştirilir
+MailingAddFile= Bu dosyayı ekle
+NoAttachedFiles=Ekli dosya yok
+BadEMail=EPosta için yanlış değer
+CloneEMailing=Epostayı klonla
+ConfirmCloneEMailing=Bu Eposta klonlamak istediğinizden emin misiniz?
+CloneContent=Mesajı klonla
+CloneReceivers=Alıcıları klonla
 DateLastSend=Son gönderme tarihi
-MailingModuleDescContactCompanies=Tüm üçüncü tarafların Rehber (müşteri, prospect, tedarikçi, ...)
-MailingModuleDescDolibarrUsers=E-postaları Tüm Dolibarr kullanıcılar
-MailingModuleDescFundationMembers=E-posta ile Vakfı üye
-MailingModuleDescEmailsFromFile=Bir metin dosyasını e-postalar (e-posta, isim, soyadı; yorum)
-MailingModuleDescContactsCategories=E-posta kategori () tarafından üçüncü partiler
-MailingModuleDescDolibarrContractsLinesExpired=Sözleşme süresi dolmuş hatları ile üçüncü kişiler
-LineInFile=Satır% s dosyası
-RecipientSelectionModules=Alıcıların seçimi için tanımlanmış kişi
-MailSelectedRecipients=Seçilen alıcılara
-MailingArea=EMailings alanı
-LastMailings=Son% s emailings
-TargetsStatistics=Hedefler istatistikleri
-NbOfCompaniesContacts=Şirketlerin Eşsiz rehber
-MailNoChangePossible=Alıcılar için değiştirilemez emailing onaylanmış
-SearchAMailing=Arama posta
-SendMailing=E-postayla gönder
-SendMail=E-posta gönder
-SentBy=Gönderilen
-MailingNeedCommand=Menkul nedenle, bir e-postayla gönderme sadece komut satırından yapılabilir. Yönetici tüm alıcılar için e-postayla gönderme göndermek için aşağıdaki komutu başlatmak için sor:
-MailingNeedCommand2=Bununla birlikte çevrimiçi oturum ile göndermek istediğiniz e-postaların maksimum sayıda değeri parametre MAILING_LIMIT_SENDBYWEB ekleyerek onları gönderebilirsiniz.
-ConfirmSendingEmailing=Size posta göndermek istediğinizden emin misiniz?
-LimitSendingEmailing=Hat emailings gönderilmesini güvenlik <b>ve%</b> için zaman aşımı nedeniyle sınırlı oturum göndererek alıcılar <b>var.</b>
-TargetsReset=Açık listesi
-ToClearAllRecipientsClickHere=Tıklayınız Bu e-posta göndererek için Alıcı listesini temizleyin
-ToAddRecipientsChooseHere=Listelerden seçerek alıcıları ekle
-NbOfEMailingsReceived=Kitle emailings aldı
-IdRecord=Kimliği Kayıt
-DeliveryReceipt=Teslim
-YouCanUseCommaSeparatorForSeveralRecipients=Birkaç alıcıları belirtmek için <b>virgül</b> ayırıcı kullanabilirsiniz.
-Notifications=Bildirimleri
-NoNotificationsWillBeSent=No e-posta bildirimleri bu olay ve şirket için planlanmaktadır
-ANotificationsWillBeSent=1 bildirimi e-posta ile gönderilecek
-SomeNotificationsWillBeSent=% bildirimleri e-posta ile gönderilecektir s
-AddNewNotification=Etkinleştirmek için yeni bir e-posta bildirimi talebi
-ListOfActiveNotifications=Liste tüm aktif e-posta bildirimi kişi
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-09 14:02:24).
-// Reference language: en_US -> tr_TR
 DateSending=Gönderme tarihi
-SentTo=<b>%s</b> için gönderilen
-MailingModuleDescContactsByCompanyCategory=Üçüncü şahısların Rehber (üçüncü şahıslara kategoriye göre)
-MailingModuleDescMembersCategories=Vakfı üyeleri (kategorilerine göre)
-MailingModuleDescContactsByFunction=Üçüncü şahısların Rehber (konumu / işlevi tarafından)
-ListOfNotificationsDone=Gönderilen tüm e-posta bildirimleri Listesi
-// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:02:56).
+SentTo=<b>%s</b> ye gönderilen
+MailingStatusRead=Okundu
+CheckRead=Okundu bilgisi
+YourMailUnsubcribeOK=<b>%s</b> Epostası postalama listesinden başarıyla çıkarıldı
+# Alıcılar listesi Libelle modülü
+MailingModuleDescContactCompanies=Tüm üçüncü partilerin kişileri (müşteri, aday, tedarikçi, ...)
+MailingModuleDescDolibarrUsers=Dolibarr kullanıcıları
+MailingModuleDescFundationMembers=Epostaları ile kurum üyeleri
+MailingModuleDescEmailsFromFile=Bir metin dosyası içinden Eposta (e-posta, soyadı, ilk adı, diğer)
+MailingModuleDescContactsCategories=Üçüncü partiler (kategoriye göre)
+MailingModuleDescDolibarrContractsLinesExpired=Süresi dolmuş sözleşme kalemleri ile üçüncü partiler
+MailingModuleDescContactsByCompanyCategory=Üçüncü parti kişileri (üçüncü parti kategorilerine göre)
+MailingModuleDescMembersCategories=Kurum üyeleri (kategoriye göre)
+MailingModuleDescContactsByFunction= Üçüncü parti kişileri (konumuna/görevine göre)
+LineInFile=Satır %s dosyası
+RecipientSelectionModules=Alıcıların seçimine göre tanımlanmış istekler
+MailSelectedRecipients=Seçilen alıcılar
+MailingArea=Eposta alanı
+LastMailings=Son %s eposta
+TargetsStatistics=Hedef istatistikleri
+NbOfCompaniesContacts=Şirketlerin benzersiz kişileri
+MailNoChangePossible=Doğrulanmış Epostaların alıcıları değiştirilemez
+SearchAMailing=Eposta ara
+SendMailing=E-posta gönder
+SendMail=E-posta gönder
+SentBy=Gönderen
+
+MailingNeedCommand=Güvenlik nedeni ile, Eposta gönderimi sadece komut satırından yapılmalıdır. Bütün posta alıcılarında eposta göndermek için yönetciden aşağıdaki komutu başlatmasını isteyin:
+MailingNeedCommand2= Bunula birlikte, oturum tarafından gönderilecek ençok Eposta sayılı MAILING_LIMIT_SENDBYWEB parametresini ekleyerek çevrim içi olarak gönderebilirsiniz. Bunu için Giriş-Kurulum-Diğer menüsüne gidin.
+ConfirmSendingEmailing=Epostayı komut satırı dışından ve web modundan göndermek istediğinizden emin misiniz?
+LimitSendingEmailing= Epostaların çevrimiçi gönderimi güvenlik ve süre aşımı nedenleriyle gönderme oturumu tarafından <b>%s</b> kadar alıcıyla sınırlandırılmıştır.
+TargetsReset=Listeyi temizle
+ToClearAllRecipientsClickHere=Bu e-posta Alıcı listesini temizlemek için burayı tıkla
+ToAddRecipientsChooseHere=Listeden seçerek alıcıları ekle
+NbOfEMailingsReceived=Alınan toplu Epostalar
+IdRecord=Kimlik kayıtı
+DeliveryReceipt=Teslim makbuzu
+YouCanUseCommaSeparatorForSeveralRecipients= Birçok alıcı belirtmek için <b>virgül</b> ayırıcısını kullanabilirsiniz.
+# Bildirimler modülü
+Notifications=Bildirimler
+NoNotificationsWillBeSent=Bu eylem ve firma için hiçbir Eposta bildirimi planlanmamış
+ANotificationsWillBeSent=Eposta ile 1 bildirim gönderilecektir
+SomeNotificationsWillBeSent=Epostayala %s bildirim gönderilecektir
+AddNewNotification=Yeni bir e-posta bildirimi isteği etkinleştir
+ListOfActiveNotifications=Tüm etkin Eposta bildirimi istekleri
+DateSending=Gönderme tarihi
+ListOfNotificationsDone=Gönderilen tüm e-posta bildirimleri listesi
 
 
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
-// Reference language: en_US -> tr_TR
-MailingStatusRead=Okumak
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:35:58).

@@ -1,54 +1,47 @@
-/*
+﻿/*
  * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-03-15 19:05:26
+ * Manually generated
+ * Generation date 2012-07-08 00:26:26
  */
 
-
-// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-// Reference language: en_US
+// START - Lines manually generated (2012-07-08 00:26:26).
+// Reference language: en_US -> TR – suppliers
 CHARSET=UTF-8
 Suppliers=Tedarikçiler
 Supplier=Tedarikçi
-AddSupplier=Tedarikçisi ekle
+AddSupplier=Bir tedarikçi ekle
 SupplierRemoved=Tedarikçi kaldırıldı
-SuppliersInvoice=Tedarikçiler fatura
-SuppliersInvoices=Tedarikçiler faturalar
-NewSupplier=Yeni ticaret
-History=Tarih
+SuppliersInvoice=Tedarikçi faturası
+SuppliersInvoices=Tedarikçi faturaları
+NewSupplier=Yeni tedarikçi
+History=Geçmiş
 ListOfSuppliers=Tedarikçiler listesi
-ShowSupplier=Show ticaret
-OrderDate=Sipariş Tarihi
-BuyingPrice=Fiyat Alış
-AddSupplierPrice=Ticaret Fiyatımız
-ChangeSupplierPrice=Değişim ticaret fiyat
-ErrorQtyTooLowForThisSupplier=Bu miktar çok tedarikçi veya fiyat bu ürün bu ticaret için tanımlanan düşük
-ErrorSupplierCountryIsNotDefined=Ülke bu ticaret için tanımlanmış değildir. Bu ilk düzeltin.
-ProductHasAlreadyReferenceInThisSupplier=Bu ürün zaten bu tedarikçi bir referans var
-NoRecordedSuppliers=No tedarikçiler kaydedildi
-SupplierPayment=Tedarikçi ödeme
+ShowSupplier=Tedarikçi göster
+OrderDate=Sipariş tarihi
+BuyingPrice=Alış fiyatı
+BuyingPriceMin=Enaz alış fiyatı
+BuyingPriceMinShort=Enaz alış fiyatı
+AddSupplierPrice=Tedarikçi fiyatı ekle
+ChangeSupplierPrice=Tedarikçi fiyatı değiştir
+ErrorQtyTooLowForThisSupplier=Miktar bu tedarikçi için çok az veya bu tedarikçi için bu ürüne bir fiyat tanımlanmamış
+ErrorSupplierCountryIsNotDefined=Bu tedarikçi için ülke tanımlanmamış. Önce bunu düzeltin.
+ProductHasAlreadyReferenceInThisSupplier=Bu ürünün zaten bu tedarikçide bir referansı var
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=Bu referanslı tedarikçi zaten bu referans ile ilişkili: %s
+NoRecordedSuppliers=Hiç tedarikçi kaydedilmedi
+SupplierPayment=Tedarikçi ödemesi
 SuppliersArea=Tedarikçiler alanı
 RefSupplierShort=Ref. tedarikçi
-ExportDataset_fournisseur_1=Tedarikçi faturaları listesi ve faturalar hattı
-ExportDataset_fournisseur_2=Tedarikçi fatura ve ödemeler
+Availability=Uygunluğu
+ExportDataset_fournisseur_1=Tedarikçi faturaları listesi ve fatura satırları
+ExportDataset_fournisseur_2=Tedarikçi faturaları ve ödemeleri
 ApproveThisOrder=Bu siparişi onayla
-ConfirmApproveThisOrder=Bunu sipariş onaylamak istediğinizden emin misiniz?
-DenyingThisOrder=Bu siparişi Denying
-ConfirmDenyingThisOrder=Sen bu düzenin inkar etmek istediğinizden emin misiniz?
-ConfirmCancelThisOrder=Sen bu siparişi iptal etmek istediğinizden emin misiniz?
-AddCustomerOrder=Müşteri siparişi yarat
-AddCustomerInvoice=Müşteri fatura oluşturma
-AddSupplierOrder=Ticaret düzeni oluşturun
-AddSupplierInvoice=Tedarikçi faturası oluşturun
-ListOfSupplierProductForSupplier=Ürünler ve fiyatlar tedarikçi listesi <b>için% s</b>
-NoneOrBatchFileNeverRan=Hiçbiri veya toplu <b>iş%</b> son koştu <b>değil</b>
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-09 13:54:25).
-// Reference language: en_US -> tr_TR
-BuyingPriceMin=Asgari alım fiyatı
-BuyingPriceMinShort=Min satın alma fiyatı
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=Bu referans tedarikçisi zaten bir referans ile ilişkili: %s
-Availability=Durumu
-// STOP - Lines generated via autotranslator.php tool (2011-10-09 13:54:29).
+ConfirmApproveThisOrder=<b>%s</b> siparişini onaylamak istediğinizden emin misiniz?
+DenyingThisOrder=Bu siparişi reddet
+ConfirmDenyingThisOrder=<b>%s</b> siparişini reddetmek istediğinizden emin misiniz?
+ConfirmCancelThisOrder=<b>%s</b> siparişini iptal etmek istediğinizden emin misiniz?
+AddCustomerOrder=Müşteri siparişi oluştur
+AddCustomerInvoice=Müşteri faturası oluştur
+AddSupplierOrder=Tedarikçi siparişi oluştur
+AddSupplierInvoice=Tedarikçi faturası oluştur
+ListOfSupplierProductForSupplier=Tedarikçi <b>%s</b> ye ait ürün ve fiyat listesi
+NoneOrBatchFileNeverRan=Hiçbiri veya toplu <b>%s</b> yürütülmedi

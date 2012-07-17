@@ -1,62 +1,60 @@
-/*
- * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-03-15 19:05:26
+﻿* Manually generated
+ * Generation date 2012-07-08 16:55:26
+
+
+// START - Lines manually generated (2012-07-08 16:55:26).
  */
+// Reference language: en_US -> TR – ecm
 
-
-// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-// Reference language: en_US
 CHARSET=UTF-8
 MenuECM=Belgeler
 DocsMine=Belgelerimi
-DocsGenerated=Oluşturulan belgeleri
-DocsElements=Elemanları belgeler
-DocsThirdParties=Belgeleri üçüncü şahıslara
-DocsContracts=Belgeler sözleşmeleri
-DocsProposals=Belgeleri teklifleri
-DocsOrders=Belgeleri siparişlerin
-DocsInvoices=Belgeler faturalar
-ECMNbOfDocs=Nb rehberinde belgelerin
-ECMNbOfDocsSmall=Nb DOC.
+DocsGenerated=Oluşturulan belgeler
+DocsElements=Belge öğeleri
+DocsThirdParties=Üçüncü parti belgeleri 
+DocsContracts=Sözleşme belgeleri
+DocsProposals=Tekli belgeleri
+DocsOrders=Sipariş belgeleri
+DocsInvoices=Fatura belgeleri
+ECMNbOfDocs=Dizindeki belge sayısı
+ECMNbOfDocsSmall=Belg. Sayısı
 ECMSection=Dizin
 ECMSectionManual=Manuel dizini
 ECMSectionAuto=Otomatik dizin
-ECMSectionsManual=Manuel ağacı
-ECMSectionsAuto=Otomatik ağacı
+ECMSectionsManual=Manuel ağaç
+ECMSectionsAuto=Otomatik ağaç
 ECMSections=Dizinler
-ECMRoot=Root
+ECMRoot=Kök
 ECMNewSection=Yeni dizin
-ECMAddSection=Manuel dizini ekle
-ECMNewSection=Yeni kılavuzu dizini
+ECMAddSection=Dizin ekle
 ECMNewDocument=Yeni belge
 ECMCreationDate=Oluşturma tarihi
-ECMNbOfFilesInDir=Numarası dosya dizinde
-ECMNbOfSubDir=Sayıda alt-dizinleri
-ECMNbOfFilesInSubDir=Nunber alt iles of dizinleri
-ECMCreationUser=Creator
+ECMNbOfFilesInDir=Dizindeki dosya sayısı
+ECMNbOfSubDir=Alt-dizin sayısı
+ECMNbOfFilesInSubDir=Alt dizilerdeki dosya sayısı
+ECMCreationUser=Oluşturan
 ECMArea=ECM alanı
-ECMAreaDesc=ECM (Elektronik İçerik Yönetimi) alanında size, paylaşmak ve arama Dolibarr belgeleri hızlı bir şekilde her türlü tasarruf sağlar.
-ECMAreaDesc2=* Otomatik dizinleri otomatik olarak bir elemanın karttan belgeleri ekleyerek doldurulur. <br> * Manuel dizinleri belgeleri belirli bir eleman bağlı değil kaydetmek için kullanılabilir.
-ECMSectionWasRemoved=<b>Dizini% s</b> silindi.
+ECMAreaDesc=ECM (Elektronik İçerik Yönetimi) alanı her çeşit Dolibarr belgesini çabukça saklamanızı, paylaşmanızı ve aramanızı sağlar.
+ECMAreaDesc2=* Otomatik dizinler, bir öğenin kartından belge eklenirken otomatikman doldurulur.<br> * Manuel dizinler, belirli bir öğeye bağlı olmayan belgelerin saklanması için kullanılabilir.
+ECMSectionWasRemoved=<b>%s</b>Dizini silindi.
 ECMDocumentsSection=Belge dizini
 ECMSearchByKeywords=Anahtar kelimelere göre ara
 ECMSearchByEntity=Nesneye göre ara
-ECMSectionOfDocuments=Belgelerin Dizinler
-ECMTypeManual=Kılavuzu
+ECMSectionOfDocuments=Belgelerin dizinleri
+ECMTypeManual=Manuel
 ECMTypeAuto=Otomatik
-ECMDocsByThirdParties=Belgeleri üçüncü kişilere bağlı
-ECMDocsByProposals=Belgeleri teklifleri ile bağlantılı
-ECMDocsByOrders=Belgeleri müşterilerine sipariş bağlantılı
-ECMDocsByContracts=Belgeler sözleşmelere bağlı
-ECMDocsByInvoices=Belgeler müşterilerinin faturalarının bağlı
-ECMDocsByProducts=Belgeler ürünlere bağlı
-ECMNoDirecotyYet=No dizine
-ShowECMSection=Show dizini
-DeleteSection=Kaldır dizini
-ConfirmDeleteSection=Size <b>dizini%</b> silmek istediğinizi onaylamak mi <b>var?</b>
-ECMDirectoryForFiles=Dosyalar için Bağıl listesi
-CannotRemoveDirectoryContainsFiles=Çünkü bazı dosyaları içerir mümkün değildir Kaldırıldı
+ECMDocsBySocialContributions=Sosyal güvenlik primleri ile bağlantılı belgeler
+ECMDocsByThirdParties=Üçüncü partiler ile bağlantılı belgeler
+ECMDocsByProposals=Teklifler ile bağlantılı belgeler
+ECMDocsByOrders=Müşteri siparişleri ile bağlantılı belgeler
+ECMDocsByContracts=Sözleşmeler ile bağlantılı Belgeler 
+ECMDocsByInvoices=Müşteri faturaları ile bağlantılı belgeler
+ECMDocsByProducts=Ürünlere bağlantılı belgeler
+ECMNoDirecotyYet=Hiçbir dizin oluşturulmadı
+ShowECMSection=Dizini göster
+DeleteSection=Dizini kaldır
+ConfirmDeleteSection=<b>%s</b> Dizinini silmek istediğinizi onaylayabilir misiniz?
+ECMDirectoryForFiles=Dosyalar için göreceli dizin
+CannotRemoveDirectoryContainsFiles=Kaldırılamıyor çünkü bazı dosyalar içeriyor
 ECMFileManager=Dosya yöneticisi
-ECMSelectASection=Seçin sol ağaç bir dizin ...
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+ECMSelectASection=Sol ağaçtan bir dizin seçin...
