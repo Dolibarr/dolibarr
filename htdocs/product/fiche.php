@@ -821,7 +821,7 @@ else
         // Note (private, no output on invoices, propales...)
         print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
         require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-        $doleditor=new DolEditor('note',$_POST["note"],'',180,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,8,70);
+        $doleditor=new DolEditor('note',$_POST["note"],'',180,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,8,70);
         $doleditor->Create();
 
         print "</td></tr>";
@@ -1024,7 +1024,7 @@ else
             // Note
             print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="2">';
             require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-            $doleditor=new DolEditor('note',$object->note,'',200,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,8,70);
+            $doleditor=new DolEditor('note',$object->note,'',200,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,8,70);
             $doleditor->Create();
             print "</td></tr>";
             print '</table>';
@@ -1302,9 +1302,9 @@ if ($action == '' || $action == 'view')
 {
     if ($user->rights->produit->creer || $user->rights->service->creer)
     {
-        if (isset($object->no_button_edit) && $object->no_button_edit <> 1) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a>';
+        if (! isset($object->no_button_edit) || $object->no_button_edit <> 1) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a>';
 
-        if (isset($object->no_button_copy) && $object->no_button_copy <> 1)
+        if (! isset($object->no_button_copy) || $object->no_button_copy <> 1)
         {
             if (! empty($conf->use_javascript_ajax))
             {
@@ -1317,8 +1317,8 @@ if ($action == '' || $action == 'view')
             }
         }
     }
-
     $object_is_used = $object->isObjectUsed($object->id);
+
     if (($object->type == 0 && $user->rights->produit->supprimer)
     || ($object->type == 1 && $user->rights->service->supprimer))
     {
