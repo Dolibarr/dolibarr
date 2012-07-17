@@ -2408,12 +2408,15 @@ abstract class CommonObject
         		// To work with non standard path
         		if ($objecttype == 'facture')          {
         			$tplpath = 'compta/'.$element;
+        			if (empty($conf->facture->enabled)) continue;	// Do not show if module disabled
         		}
         		else if ($objecttype == 'propal')           {
         			$tplpath = 'comm/'.$element;
+        			if (empty($conf->propal->enabled)) continue;	// Do not show if module disabled
         		}
         		else if ($objecttype == 'shipping')         {
         			$tplpath = 'expedition';
+        			if (empty($conf->expedition->enabled)) continue;	// Do not show if module disabled
         		}
         		else if ($objecttype == 'delivery')         {
         			$tplpath = 'livraison';
