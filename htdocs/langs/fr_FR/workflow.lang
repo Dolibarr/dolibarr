@@ -7,5 +7,5 @@ descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Créer une commande client automatiquement 
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Créer une facture client automatiquement à la signature d'une proposition commerciale
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Créer une facture client automatiquement à la validation d'un contrat
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Créer une facture client automatiquement à la cloture d'une commande client
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classer facturée la proposition commerciale d'origine en même temps que la commande
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classer facturée la ou les commandes clients d'origine en même temps que la facture
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classer facturée la proposition commerciale source quand la commande client dérivée est classée à payée
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classer facturée la ou les commandes clients source quand la facture client dérivée est classée à payée
