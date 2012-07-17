@@ -77,10 +77,10 @@ print "</tr>\n";
 clearstatcache();
 
 $workflowcodes=array(
-	'WORKFLOW_PROPAL_AUTOCREATE_ORDER'=>array('enabled'=>($conf->propal->enabled && $conf->commande->enabled),'child'=>'order','parent'=>'propal'),
-	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array('enabled'=>($conf->propal->enabled && $conf->commande->enabled),'child'=>'propal','parent'=>'order'),
-	'WORKFLOW_ORDER_AUTOCREATE_INVOICE'=>array('enabled'=>($conf->commande->enabled && $conf->facture->enabled),'child'=>'invoice','parent'=>'order'),
-	'WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER'=>array('enabled'=>($conf->facture->enabled && $conf->commande->enabled),'child'=>'order','parent'=>'invoice'),
+	'WORKFLOW_PROPAL_AUTOCREATE_ORDER'=>array('enabled'=>($conf->propal->enabled && $conf->commande->enabled), 'picto'=>'order'),
+	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array('enabled'=>($conf->propal->enabled && $conf->commande->enabled), 'picto'=>'order'),
+	'WORKFLOW_ORDER_AUTOCREATE_INVOICE'=>array('enabled'=>($conf->commande->enabled && $conf->facture->enabled), 'picto'=>'bill'),
+	'WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER'=>array('enabled'=>($conf->facture->enabled && $conf->commande->enabled), 'picto'=>'bill'),
 );
 
 if (! empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow'])) $workflow = array_merge($workflow, $conf->modules_parts['workflow']);
@@ -89,14 +89,14 @@ $nbqualified=0;
 
 foreach($workflowcodes as $key => $tmparray)
 {
-	$child=$tmparray['child'];
-	$parent=$tmparray['parent'];
-   	if (empty($conf->$child->enabled) || empty($conf->$parent->enabled)) continue;
+	$picto=$tmparray['picto'];
+	$enabled=$tmparray['enabled'];
+   	if (empty($enabled)) continue;
 
    	$nbqualified++;
 	$var = !$var;
    	print "<tr ".$bc[$var].">\n";
-   	print "<td>".img_object('', $tmparray['child']).$langs->trans('desc'.$key)."</td>\n";
+   	print "<td>".img_object('', $picto).$langs->trans('desc'.$key)."</td>\n";
    	print '<td align="center">';
    	if ($conf->use_javascript_ajax)
    	{
