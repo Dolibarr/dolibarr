@@ -56,6 +56,7 @@ CompanyHasNoCategory=Cette société n'est dans aucune catégorie en particulier
 MemberHasNoCategory=Cet adhérent n'est dans aucune catégorie en particulier
 ClassifyInCategory=Classer dans la catégorie
 NoneCategory=Aucune
+NotCategorized=Sans catégorie
 CategoryExistsAtSameLevel=Cette catégorie existe déjà pour cette référence
 ReturnInProduct=Retour sur la fiche produit/service
 ReturnInSupplier=Retour sur la fiche fournisseur

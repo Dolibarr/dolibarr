@@ -128,14 +128,10 @@ else
     $sql.= ' p.fk_product_type, p.tms as datem,';
     $sql.= ' p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte,';
     $sql.= ' MIN(pfp.unitprice) as minsellprice';
-    $sql.= ' FROM (';
-    // We'll need this table joined to the select in order to filter by categ
-    if ($search_categ) $sql.= MAIN_DB_PREFIX."categorie_product as cp, ";
-    $sql.= MAIN_DB_PREFIX.'product as p';
-    $sql.= ') ';
+    $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
+    if ($search_categ || $catid) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
     $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
-    if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
     if ($sall) $sql.= " AND (p.ref LIKE '%".$db->escape($sall)."%' OR p.label LIKE '%".$db->escape($sall)."%' OR p.description LIKE '%".$db->escape($sall)."%' OR p.note LIKE '%".$db->escape($sall)."%')";
     // if the type is not 1, we show all products (type = 0,2,3)
     if (dol_strlen($type))
@@ -148,9 +144,11 @@ else
     if ($snom)     $sql.= " AND p.label LIKE '%".$db->escape($snom)."%'";
     if (isset($tosell) && dol_strlen($tosell) > 0) $sql.= " AND p.tosell = ".$db->escape($tosell);
     if (isset($tobuy) && dol_strlen($tobuy) > 0)   $sql.= " AND p.tobuy = ".$db->escape($tobuy);
-    if (dol_strlen($canvas) > 0)                   $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
-    if ($catid)        $sql.= " AND cp.fk_categorie = ".$catid;
-    if ($search_categ) $sql.= " AND cp.fk_categorie = ".$search_categ;
+    if (dol_strlen($canvas) > 0)                    $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
+    if ($catid > 0)    $sql.= " AND cp.fk_categorie = ".$catid;
+    if ($catid == -2)  $sql.= " AND cp.fk_categorie IS NULL"; 
+    if ($search_categ > 0)   $sql.= " AND cp.fk_categorie = ".$search_categ;
+    if ($search_categ == -2) $sql.= " AND cp.fk_categorie IS NULL";
     if ($fourn_id > 0) $sql.= " AND pfp.fk_soc = ".$fourn_id;
     $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
     $sql.= " p.fk_product_type, p.tms,";
@@ -238,7 +236,7 @@ else
     		if ($conf->categorie->enabled)
     		{
     		 	$moreforfilter.=$langs->trans('Categories'). ': ';
-    			$moreforfilter.=$htmlother->select_categories(0,$search_categ,'search_categ');
+    			$moreforfilter.=$htmlother->select_categories(0,$search_categ,'search_categ',1);
     		 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
     		}
     	 	if ($moreforfilter)
