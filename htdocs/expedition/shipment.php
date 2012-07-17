@@ -152,7 +152,7 @@ if ($id > 0 || ! empty($ref))
 		 */
 		if ($action == 'cloture')
 		{
-			$ret=$form->form_confirm($_SERVER['PHP_SELF']."?id=".$id,$langs->trans("CloseOrder"),$langs->trans("ConfirmCloseOrder"),"confirm_cloture");
+			$ret=$form->form_confirm($_SERVER['PHP_SELF']."?id=".$id,$langs->trans("CloseShipment"),$langs->trans("ConfirmCloseShipment"),"confirm_cloture");
 			if ($ret == 'html') print '<br>';
 		}
 

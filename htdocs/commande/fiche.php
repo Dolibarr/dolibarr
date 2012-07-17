@@ -859,7 +859,7 @@ else if ($action == 'confirm_modif' && $user->rights->commande->creer)
 	}
 }
 
-else if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->commande->cloturer)
+else if ($action == 'confirm_shipped' && $confirm == 'yes' && $user->rights->commande->cloturer)
 {
     $result = $object->cloture($user);
     if ($result < 0) $mesgs=$object->errors;
@@ -1648,9 +1648,9 @@ else
         /*
          * Confirmation de la cloture
         */
-        if ($action == 'close')
+        if ($action == 'shipped')
         {
-        	$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('CloseOrder'), $langs->trans('ConfirmCloseOrder'), 'confirm_close', '', 0, 1);
+        	$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('CloseOrder'), $langs->trans('ConfirmCloseOrder'), 'confirm_shipped', '', 0, 1);
         }
 
         /*
@@ -2115,6 +2115,7 @@ else
         			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a>';
         		}
 
+
         		// Create bill and Classify billed
         		if ($conf->facture->enabled && $object->statut > 0  && ! $object->billed)
         		{
@@ -2122,17 +2123,16 @@ else
         			{
         				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
         			}
-
-        			if ($user->rights->commande->creer && $object->statut > 2 && empty($conf->global->WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER))
+        			if ($user->rights->commande->creer && $object->statut > 2 && empty($conf->global->WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER) && empty($conf->global->WORsKFLOW_BILL_ON_SHIPMENT))
         			{
         				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
         			}
         		}
 
-        		// Close
+        		// Set to shipped
         		if (($object->statut == 1 || $object->statut == 2) && $user->rights->commande->cloturer)
         		{
-        			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close">'.$langs->trans('Close').'</a>';
+        			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=shipped">'.$langs->trans('ClassifyShipped').'</a>';
         		}
 
         		// Clone

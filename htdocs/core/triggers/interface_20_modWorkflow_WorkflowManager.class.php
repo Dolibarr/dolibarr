@@ -152,6 +152,7 @@ class InterfaceWorkflowManager
         if ($action == 'BILL_PAYED')
         {
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+
         	if (! empty($conf->commande->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER))
         	{
         		$object->fetchObjectLinked('','commande',$object->id,$object->element);
