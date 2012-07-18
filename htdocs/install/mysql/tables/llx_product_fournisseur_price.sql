@@ -23,14 +23,16 @@ create table llx_product_fournisseur_price
   rowid						integer AUTO_INCREMENT PRIMARY KEY,
   entity					integer DEFAULT 1 NOT NULL,	   -- multi company id
   datec						datetime,
-  tms						timestamp,
-  fk_product				integer,
+  tms							timestamp,
+  fk_product			integer,
   fk_soc					integer,
-  ref_fourn					varchar(30),
-  fk_availability			integer,	   
+  ref_fourn				varchar(30),
+  fk_availability	integer,	   
   price						double(24,8) DEFAULT 0,
-  quantity					double,
-  unitprice					double(24,8) DEFAULT 0,
+  quantity				double,
+  unitprice				double(24,8) DEFAULT 0,
+	charges					double(24,8) DEFAULT 0,
+  unitcharges			double(24,8) DEFAULT 0,
   tva_tx					double(6,3) NOT NULL,
   fk_user					integer
 )ENGINE=innodb;
