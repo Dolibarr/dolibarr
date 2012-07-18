@@ -24,10 +24,10 @@
  *		\version    $Id:$
  */
 
-$res=@include("../../main.inc.php");					// For root directory
+$res=@include("../main.inc.php");					// For root directory
 
-require_once("../lib/marges.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/marges/lib/marges.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 
 $langs->load("admin");
 $langs->load("marges");
