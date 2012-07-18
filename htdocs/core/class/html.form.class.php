@@ -2690,7 +2690,7 @@ class Form
      *  @param	array	$event			Event options
      *    @return	void
      */
-    function form_thirdparty($page, $selected='', $htmlname='socid', $filter='',$showempty=0, $showtype=0, $forcecombo=0, $event=array()))
+    function form_thirdparty($page, $selected='', $htmlname='socid', $filter='',$showempty=0, $showtype=0, $forcecombo=0, $event=array())
     {
         global $langs;
 

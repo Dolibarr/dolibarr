@@ -2984,7 +2984,3 @@ abstract class CommonObject
 }
 
 ?>
-
-
-
-?>
