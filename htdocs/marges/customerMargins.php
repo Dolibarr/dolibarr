@@ -201,8 +201,8 @@ if ($result)
 		{
 			$objp = $db->fetch_object($result);
 
-			$marginRate = ($objp->buying_price != 0)?(100 * round($objp->marge / $objp->buying_price ,5)):0 ;
-			$markRate = ($objp->selling_price != 0)?(100 * round($objp->marge / $objp->selling_price ,5)):0 ;
+			$marginRate = ($objp->buying_price != 0)?(100 * round($objp->marge / $objp->buying_price ,5)):'' ;
+			$markRate = ($objp->selling_price != 0)?(100 * round($objp->marge / $objp->selling_price ,5)):'' ;
 
 			$var=!$var;
 
@@ -226,9 +226,9 @@ if ($result)
 			print "<td align=\"right\">".price($objp->buying_price)."</td>\n";
 			print "<td align=\"right\">".price($objp->marge)."</td>\n";
 			if ($conf->global->DISPLAY_MARGIN_RATES)
-				print "<td align=\"right\">".price($marginRate)."%</td>\n";
+				print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate)."%")."</td>\n";
 			if ($conf->global->DISPLAY_MARK_RATES)
-				print "<td align=\"right\">".price($markRate)."%</td>\n";
+				print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate)."%")."</td>\n";
 			print "</tr>\n";
 			$i++;
 			$cumul_achat += $objp->buying_price;
@@ -239,8 +239,8 @@ if ($result)
 	// affichage totaux marges
 	$var=!$var;
 	$totalMargin = $cumul_vente - $cumul_achat;
-	$marginRate = ($cumul_achat != 0)?(100 * round($totalMargin / $cumul_achat, 5)):0 ;
-	$markRate = ($cumul_vente != 0)?(100 * round($totalMargin / $cumul_vente, 5)):0 ;
+	$marginRate = ($cumul_achat != 0)?(100 * round($totalMargin / $cumul_achat, 5)):'' ;
+	$markRate = ($cumul_vente != 0)?(100 * round($totalMargin / $cumul_vente, 5)):'' ;
 	print '<tr '.$bc[$var].' style="border-top: 1px solid #ccc; font-weight: bold">';
 	if ($client)
     print '<td colspan=2>';
@@ -251,9 +251,9 @@ if ($result)
 	print "<td align=\"right\">".price($cumul_achat)."</td>\n";
 	print "<td align=\"right\">".price($totalMargin)."</td>\n";
 	if ($conf->global->DISPLAY_MARGIN_RATES)
-		print "<td align=\"right\">".price($marginRate)."%</td>\n";
+		print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate)."%")."</td>\n";
 	if ($conf->global->DISPLAY_MARK_RATES)
-		print "<td align=\"right\">".price($markRate)."%</td>\n";
+		print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate)."%")."</td>\n";
 	print "</tr>\n";
 
   print "</table>";
@@ -279,8 +279,8 @@ $(document).ready(function() {
   });
   
 	$("#totalMargin").html("<?php echo price($totalMargin); ?>");
-	$("#marginRate").html("<?php echo price($marginRate); ?>%");
-	$("#markRate").html("<?php echo price($markRate); ?>%");
+	$("#marginRate").html("<?php echo (($marginRate === '')?'n/a':price($marginRate)."%"); ?>");
+	$("#markRate").html("<?php echo (($markRate === '')?'n/a':price($markRate)."%"); ?>");
 
 });
 

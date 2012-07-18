@@ -255,7 +255,7 @@ llxFooter('$Date: 2011/08/08 16:07:47 $ - $Revision: 1.84 $');
 <script type="text/javascript">
 $(document).ready(function() {
 	$("#totalMargin").html("<?php echo price($totalMargin); ?>");
-	$("#marginRate").html("<?php echo price($marginRate); ?>%");
-	$("#markRate").html("<?php echo price($markRate); ?>%");
+	$("#marginRate").html("<?php echo (($marginRate === '')?'n/a':price($marginRate)."%"); ?>");
+	$("#markRate").html("<?php echo (($markRate === '')?'n/a':price($markRate)."%"); ?>");
 });
 </script>
