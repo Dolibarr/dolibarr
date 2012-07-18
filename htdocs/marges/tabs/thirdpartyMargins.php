@@ -22,15 +22,15 @@
  *	\version    $Id: facture.php,v 1.84 2011/08/08 16:07:47 eldy Exp $
  */
 
-require("../../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
 $langs->load("companies");
 $langs->load("bills");
 $langs->load("products");
-$langs->load("marges@marges");
+$langs->load("marges");
 																							 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
@@ -129,7 +129,7 @@ if ($socid > 0)
 
 		$sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";
 		$sql.= " f.facnumber, f.total as total_ht,";
-		$sql.= " sum(d.subprice * d.qty * (1 - d.remise_percent / 100)) as selling_price, sum(d.pa_ht * d.qty) as buying_price, sum(((d.subprice * (1 - d.remise_percent / 100)) - d.pa_ht) * d.qty) as marge," ;
+		$sql.= " sum(d.subprice * d.qty * (1 - d.remise_percent / 100)) as selling_price, sum(d.buy_price_ht * d.qty) as buying_price, sum(((d.subprice * (1 - d.remise_percent / 100)) - d.buy_price_ht) * d.qty) as marge," ;
 		$sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql.= ", ".MAIN_DB_PREFIX."facture as f";
@@ -193,9 +193,9 @@ if ($socid > 0)
 					print "<td align=\"right\">".price($objp->buying_price)."</td>\n";
 					print "<td align=\"right\">".price($objp->marge)."</td>\n";
 					if ($conf->global->DISPLAY_MARGIN_RATES)
-						print "<td align=\"right\">".(($marginRate == '')?'n/a':price($marginRate)."%")."</td>\n";
+						print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate)."%")."</td>\n";
 					if ($conf->global->DISPLAY_MARK_RATES)
-						print "<td align=\"right\">".(($markRate == '')?'n/a':price($markRate)."%")."</td>\n";
+						print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate)."%")."</td>\n";
 					print '<td align="right">'.$invoicestatic->LibStatut($objp->paye,$objp->statut,5).'</td>';
 					print "</tr>\n";
 					$i++;
@@ -215,9 +215,9 @@ if ($socid > 0)
 			print "<td align=\"right\">".price($cumul_achat)."</td>\n";
 			print "<td align=\"right\">".price($totalMargin)."</td>\n";
 			if ($conf->global->DISPLAY_MARGIN_RATES)
-				print "<td align=\"right\">".(($marginRate == '')?'n/a':price($marginRate)."%")."</td>\n";
+				print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate)."%")."</td>\n";
 			if ($conf->global->DISPLAY_MARK_RATES)
-				print "<td align=\"right\">".(($markRate == '')?'n/a':price($markRate)."%")."</td>\n";
+				print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate)."%")."</td>\n";
 			print '<td align="right">&nbsp;</td>';
 			print "</tr>\n";
 		}
