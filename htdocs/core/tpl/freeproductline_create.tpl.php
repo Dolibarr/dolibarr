@@ -23,7 +23,7 @@
  * $dateSelector
  * $this (invoice, order, ...)
  * $line defined
- */
+ */  
 ?>
 
 <!-- BEGIN PHP TEMPLATE freeproductline_create.tpl.php -->
@@ -100,7 +100,7 @@ if ($conf->marges->enabled) {
 
 
 <?php if ($conf->service->enabled && $dateSelector) { 
-if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER)
+if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 	$colspan = 10;
 else
 	$colspan = 9;

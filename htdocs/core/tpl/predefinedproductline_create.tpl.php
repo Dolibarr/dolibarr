@@ -109,7 +109,7 @@ if ($conf->marges->enabled) {
 </tr>
 
 <?php if ($conf->service->enabled && $dateSelector) {
-if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER)
+if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 	$colspan = 10;
 else
 	$colspan = 9;
