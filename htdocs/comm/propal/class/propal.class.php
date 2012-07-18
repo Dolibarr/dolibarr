@@ -1071,7 +1071,7 @@ class Propal extends CommonObject
                  * Lignes propales liees a un produit ou non
                 */
                 $sql = "SELECT d.rowid, d.fk_propal, d.fk_parent_line, d.description, d.price, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
-								$sql.= " d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.fk_product_fournisseur_price as fk_fournprice, d.buying_price_ht as pa_ht, d.special_code, d.rang, d.product_type,";
+								$sql.= " d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht, d.special_code, d.rang, d.product_type,";
                 $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label';
                 $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as d";
                 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
@@ -2375,7 +2375,7 @@ class Propal extends CommonObject
     {
         $sql = 'SELECT pt.rowid, pt.description, pt.fk_product, pt.fk_remise_except,';
         $sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
-        $sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.fk_product_fournisseur_price as fk_fournprice, pt.buying_price_ht as pa_ht, pt.special_code,';
+        $sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.fk_product_fournisseur_price as fk_fournprice, pt.buy_price_ht as pa_ht, pt.special_code,';
         $sql.= ' pt.date_start, pt.date_end, pt.product_type, pt.rang,';
         $sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
         $sql.= ' p.description as product_desc';
@@ -2519,7 +2519,7 @@ class PropaleLigne
     {
         $sql = 'SELECT pd.rowid, pd.fk_propal, pd.fk_parent_line, pd.fk_product, pd.description, pd.price, pd.qty, pd.tva_tx,';
         $sql.= ' pd.remise, pd.remise_percent, pd.fk_remise_except, pd.subprice,';
-        $sql.= ' pd.info_bits, pd.total_ht, pd.total_tva, pd.total_ttc, pd.fk_product_fournisseur_price as fk_fournprice, pd.buying_price_ht as pa_ht, pd.special_code, pd.rang,';
+        $sql.= ' pd.info_bits, pd.total_ht, pd.total_tva, pd.total_ttc, pd.fk_product_fournisseur_price as fk_fournprice, pd.buy_price_ht as pa_ht, pd.special_code, pd.rang,';
         $sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pd';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pd.fk_product = p.rowid';
@@ -2614,7 +2614,7 @@ class PropaleLigne
         $sql.= ' (fk_propal, fk_parent_line, description, fk_product, product_type, fk_remise_except, qty, tva_tx, localtax1_tx, localtax2_tx,';
         $sql.= ' subprice, remise_percent, ';
         $sql.= ' info_bits, ';
-        $sql.= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, special_code, rang, fk_product_fournisseur_price, buying_price_ht)';
+        $sql.= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, special_code, rang, fk_product_fournisseur_price, buy_price_ht)';
         $sql.= " VALUES (".$this->fk_propal.",";
         $sql.= " ".($this->fk_parent_line>0?"'".$this->fk_parent_line."'":"null").",";
         $sql.= " '".$this->db->escape($this->desc)."',";
@@ -2637,7 +2637,7 @@ class PropaleLigne
         $sql.= ' '.$this->rang.',';
 				if (isset($this->fk_fournprice)) $sql.= ' '.$this->fk_fournprice.',';
 				else $sql.= ' null,';
-				if (isset($this->pa_ht)) $sql.= ' '.price2num($this->pa_ht).',';
+				if (isset($this->pa_ht)) $sql.= ' '.price2num($this->pa_ht);
 				else $sql.= ' null';
         $sql.= ')';
 
@@ -2763,7 +2763,7 @@ class PropaleLigne
             $sql.= " , total_ttc=".price2num($this->total_ttc)."";
         }
 				$sql.= " , fk_product_fournisseur_price='".$this->fk_fournprice."'";
-				$sql.= " , buying_price_ht='".price2num($this->pa_ht)."'";
+				$sql.= " , buy_price_ht='".price2num($this->pa_ht)."'";
         $sql.= " , info_bits=".$this->info_bits;
         if (strlen($this->special_code)) $sql.= " , special_code=".$this->special_code;
         $sql.= " , fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
