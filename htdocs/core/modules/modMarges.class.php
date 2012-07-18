@@ -27,7 +27,7 @@
  *      \brief      Description and activation file for module MyModule
  *		\version	$Id: modMyModule.class.php,v 1.26 2008/12/15 18:27:00 eldy Exp $
  */
-include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
+include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
 
 
 /**     \class      modMyModule
@@ -64,7 +64,7 @@ class modMarges extends DolibarrModules
 		$this->special = 0;
 		// Name of png file (without png) used for this module.
 		// Png file must be in theme/yourtheme/img directory under name object_pictovalue.png. 
-		$this->picto='marges@marges';
+		$this->picto='marges';
 		
 		// Data directories to create when module is enabled.
 		$this->dirs = array();
@@ -75,14 +75,14 @@ class modMarges extends DolibarrModules
 		$this->style_sheet = '/custom/marges/css/marges.css';
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
-		$this->config_page_url = array("marges.php@marges");
+		$this->config_page_url = array("marges.php");
 		
 		// Dependencies
 		$this->depends = array("modPropale", "modProduct");		// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->phpmin = array(4,1);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3,1);	// Minimum version of Dolibarr required by module
-		$this->langfiles = array("marges@marges");
+		$this->langfiles = array("marges");
 		
 		// Constants
 		$this->const = array();			// List of particular constants to add when module is enabled
@@ -90,8 +90,8 @@ class modMarges extends DolibarrModules
 		
 		// New pages on tabs
 		$this->tabs = array(
-			'product:+marges:Marges:marges@marges:/marges/tabs/productMargins.php?id=__ID__',
-			'thirdparty:+marges:Marges:marges@marges:/marges/tabs/thirdpartyMargins.php?socid=__ID__',
+			'product:+marges:Marges:marges:/marges/tabs/productMargins.php?id=__ID__',
+			'thirdparty:+marges:Marges:marges:/marges/tabs/thirdpartyMargins.php?socid=__ID__',
 		); 
 		
 		
@@ -132,7 +132,7 @@ class modMarges extends DolibarrModules
     			'mainmenu'=>'margins',
     			'leftmenu'=>'1',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
     			'url'=>'/marges/index.php',
-    			'langs'=>'marges@marges',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+    			'langs'=>'marges',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
     			'position'=>100,
     			'enabled'=>'1',			// Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
     			'perms'=>'1',			// Use 'perms'=>'$user->rights->monmodule->level1->level2' if you want your menu with a permission rules
@@ -146,7 +146,7 @@ class modMarges extends DolibarrModules
     			'titre'=>'ProductMargins',
     			'mainmenu'=>'margins',
     			'url'=>'/marges/productMargins.php',
-    			'langs'=>'marges@marges',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+    			'langs'=>'marges',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
     			'position'=>100,
     			'enabled'=>'1',			// Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
     			'perms'=>'1',			// Use 'perms'=>'$user->rights->monmodule->level1->level2' if you want your menu with a permission rules
@@ -159,7 +159,7 @@ class modMarges extends DolibarrModules
     			'titre'=>'CustomerMargins',
     			'mainmenu'=>'margins',
     			'url'=>'/marges/customerMargins.php',
-    			'langs'=>'marges@marges',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+    			'langs'=>'marges',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
     			'position'=>200,
     			'enabled'=>'1',			// Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
     			'perms'=>'1',			// Use 'perms'=>'$user->rights->monmodule->level1->level2' if you want your menu with a permission rules
@@ -172,7 +172,7 @@ class modMarges extends DolibarrModules
     			'titre'=>'AgentMargins',
     			'mainmenu'=>'margins',
     			'url'=>'/marges/agentMargins.php',
-    			'langs'=>'marges@marges',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+    			'langs'=>'marges',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
     			'position'=>300,
     			'enabled'=>'1',			// Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
     			'perms'=>'1',			// Use 'perms'=>'$user->rights->monmodule->level1->level2' if you want your menu with a permission rules
@@ -220,7 +220,7 @@ class modMarges extends DolibarrModules
 	*/
 	function load_tables()
 	{
-		return $this->_load_tables('/marges/sql/');
+		//return $this->_load_tables('/marges/sql/');
 	}
 }
 
