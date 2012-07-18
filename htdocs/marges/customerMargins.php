@@ -22,16 +22,16 @@
  *	\version    $Id: facture.php,v 1.84 2011/08/08 16:07:47 eldy Exp $
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require("../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");   
-require_once(DOL_DOCUMENT_ROOT_ALT."/marges/lib/marges.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/marges/lib/marges.lib.php");
 
 $langs->load("companies");
 $langs->load("bills");
 $langs->load("products");
-$langs->load("marges@marges");
+$langs->load("marges");
 																							 
 // Security check
 $socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
@@ -142,7 +142,7 @@ print '</form>';
 $sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client, s.client,";
 $sql.= " f.facnumber, f.total as total_ht,";
 $sql.= " sum(d.subprice * d.qty * (1 - d.remise_percent / 100)) as selling_price,"; 
-$sql.= " sum(d.pa_ht * d.qty) as buying_price, sum(((d.subprice * (1 - d.remise_percent / 100)) - d.pa_ht) * d.qty) as marge," ;
+$sql.= " sum(d.buy_price_ht * d.qty) as buying_price, sum(((d.subprice * (1 - d.remise_percent / 100)) - d.buy_price_ht) * d.qty) as marge," ;
 $sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."facture as f";

@@ -57,17 +57,17 @@ function marges_prepare_head($user)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT_ALT."/marges/productMargins.php";
+	$head[$h][0] = DOL_URL_ROOT."/marges/productMargins.php";
 	$head[$h][1] = $langs->trans("ProductMargins");
 	$head[$h][2] = 'productMargins';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT_ALT."/marges/customerMargins.php";
+	$head[$h][0] = DOL_URL_ROOT."/marges/customerMargins.php";
 	$head[$h][1] = $langs->trans("CustomerMargins");
 	$head[$h][2] = 'customerMargins';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT_ALT."/marges/agentMargins.php";
+	$head[$h][0] = DOL_URL_ROOT."/marges/agentMargins.php";
 	$head[$h][1] = $langs->trans("AgentMargins");
 	$head[$h][2] = 'agentMargins';
 	$h++;
