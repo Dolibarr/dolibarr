@@ -92,7 +92,7 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 	else
 	  $paht_ret	= $paht;
 
-	require_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+	require_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
   // calcul pu_ht remisés
   $tabprice=calcul_price_total(1, $pvht, $remise_percent, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 'HT', $objp->info_bits);
   $pu_ht_remise = $tabprice[0];
