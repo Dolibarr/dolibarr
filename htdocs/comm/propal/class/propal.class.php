@@ -1111,8 +1111,10 @@ class Propal extends CommonObject
                         $line->total_localtax2	= $objp->total_localtax2;
                         $line->total_ttc        = $objp->total_ttc;
       									$line->fk_fournprice 		= $objp->fk_fournprice;
-						      			$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $line->fk_fournprice, $objp->pa_ht, $objp->marge_tx, $objp->marque_tx);
+						      			$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $line->fk_fournprice, $objp->pa_ht);
 						   			    $line->pa_ht 						= $marginInfos[0];
+						    				$line->marge_tx					= $marginInfos[1];
+						     				$line->marque_tx				= $marginInfos[2];
                         $line->special_code     = $objp->special_code;
                         $line->rang             = $objp->rang;
 
@@ -2410,8 +2412,10 @@ class Propal extends CommonObject
                 $this->lines[$i]->total_tva			= $obj->total_tva;
                 $this->lines[$i]->total_ttc			= $obj->total_ttc;
 				  			$this->lines[$i]->fk_fournprice = $obj->fk_fournprice;
-				  			$marginInfos = getMarginInfos($obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, $this->lines[$i]->fk_fournprice, $obj->pa_ht, $obj->marge_tx, $obj->marque_tx);
+				  			$marginInfos = getMarginInfos($obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, $this->lines[$i]->fk_fournprice, $obj->pa_ht);
 						    $this->lines[$i]->pa_ht = $marginInfos[0];
+								$this->lines[$i]->marge_tx			= $marginInfos[1];
+				 				$this->lines[$i]->marque_tx			= $marginInfos[2];
                 $this->lines[$i]->special_code		= $obj->special_code;
                 $this->lines[$i]->rang				= $obj->rang;
                 $this->lines[$i]->date_start		= $this->db->jdate($obj->date_start);
@@ -2463,6 +2467,8 @@ class PropaleLigne
 	
 		var $fk_fournprice;
 		var $pa_ht;
+		var $marge_tx;
+		var $marque_tx;
 
     var $special_code;	// Liste d'options non cumulabels:
     // 1: frais de port
@@ -2542,8 +2548,10 @@ class PropaleLigne
             $this->total_ttc		= $objp->total_ttc;
 
 						$this->fk_fournprice = $objp->fk_fournprice;
-						$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $this->fk_fournprice, $objp->pa_ht, $objp->marge_tx, $objp->marque_tx);
+						$marginInfos = getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $this->fk_fournprice, $objp->pa_ht);
 				    $this->pa_ht = $marginInfos[0];
+						$this->marge_tx			= $marginInfos[1];
+						$this->marque_tx			= $marginInfos[2];
             $this->special_code		= $objp->special_code;
             $this->rang				= $objp->rang;
 
