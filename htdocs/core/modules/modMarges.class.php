@@ -64,7 +64,7 @@ class modMarges extends DolibarrModules
 		$this->special = 0;
 		// Name of png file (without png) used for this module.
 		// Png file must be in theme/yourtheme/img directory under name object_pictovalue.png. 
-		$this->picto='marges';
+		$this->picto='marges@marges';
 		
 		// Data directories to create when module is enabled.
 		$this->dirs = array();
