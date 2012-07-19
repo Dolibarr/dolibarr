@@ -48,7 +48,7 @@ class box_contracts extends ModeleBoxes
     {
     	global $langs;
 
-    	$langs->load("contracts");
+    	$langs->load("boxes");
 
     	$this->boxlabel=$langs->transnoentitiesnoconv("BoxLastContracts");
     }
