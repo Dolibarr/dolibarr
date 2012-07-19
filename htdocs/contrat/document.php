@@ -34,7 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 
 $langs->load("other");
 $langs->load("products");
-
+$langs->load("contracts");
 
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm','alpha');
