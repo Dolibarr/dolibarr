@@ -2765,6 +2765,12 @@ else if ($id > 0 || ! empty($ref))
 
         print '</table>';
 
+				// Margin Infos
+				if ($conf->marges->enabled) {
+				  print '<br>';
+				  $object->displayMarginInfos($object->statut > 0);
+				}
+
         print '</td></tr>';
 
         // Date payment term
@@ -2843,12 +2849,6 @@ else if ($id > 0 || ! empty($ref))
         print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2" nowrap>'.price($object->total_tva).'</td>';
         print '<td>'.$langs->trans('Currency'.$conf->currency).'</td>';
 
-				// Margin Infos
-				if ($conf->marges->enabled) {
-				  print '<td valign="top" width="50%" rowspan="4">';
-				  $object->displayMarginInfos();
-				  print '</td>';
-				}
 				print '</tr>';
 
         // Amount Local Taxes
