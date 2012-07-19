@@ -51,6 +51,8 @@ $langs->load('bills');
 $langs->load('companies');
 $langs->load('products');
 $langs->load('main');
+if ($conf->marges->enabled)
+  $langs->load('marges');
 
 $mesg='';
 $errors=array();
@@ -863,7 +865,9 @@ else if ($action == 'add' && $user->rights->facture->creer)
                                     $lines[$i]->special_code,
                                     $object->origin,
                                     $lines[$i]->rowid,
-                                    $fk_parent_line
+                                    $fk_parent_line,
+		                                $lines[$i]->fk_fournprice,
+		                                $lines[$i]->pa_ht
                                 );
 
                                 if ($result > 0)
@@ -1072,6 +1076,13 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
         $localtax1_tx=get_localtax($tva_tx,1,$object->client);
         $localtax2_tx=get_localtax($tva_tx,2,$object->client);
 
+    		// ajout prix achat
+    		$fk_fournprice = $_POST['np_fournprice'];
+    		if ( ! empty($_POST['np_buying_price']) )
+    		  $pa_ht = $_POST['np_buying_price'];
+    		else
+    		  $pa_ht = null;
+    
         $info_bits=0;
         if ($tva_npr) $info_bits |= 0x01;
 
@@ -1107,7 +1118,9 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
                     0,
                     '',
                     0,
-                    GETPOST('fk_parent_line')
+                    GETPOST('fk_parent_line'),
+		          			$fk_fournprice,
+		          			$pa_ht
                 );
             }
         }
@@ -1138,6 +1151,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
         unset($_POST['np_desc']);
         unset($_POST['np_price']);
         unset($_POST['np_tva_tx']);
+				unset($_POST['np_buying_price']);
     }
     else
     {
@@ -1169,6 +1183,13 @@ else if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['sa
     $vat_rate=str_replace('*','',$vat_rate);
     $localtax1_rate=get_localtax($vat_rate,1,$object->client);
     $localtax2_rate=get_localtax($vat_rate,2,$object->client);
+
+  	// ajout prix d'achat
+  	$fk_fournprice = $_POST['fournprice'];
+  	if ( ! empty($_POST['buying_price']) )
+  	  $pa_ht = $_POST['buying_price'];
+  	else
+  	  $pa_ht = null;
 
     // Check parameters
     if (! GETPOST('productid') && GETPOST("type") < 0)
@@ -1214,7 +1235,10 @@ else if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['sa
             'HT',
             $info_bits,
             $type,
-            GETPOST('fk_parent_line')
+            GETPOST('fk_parent_line'),
+		    		0,
+		    		$fk_fournprice,
+		    		$pa_ht
         );
 
         // Define output language
@@ -1231,6 +1255,13 @@ else if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['sa
         {
             $ret=$object->fetch($id);    // Reload to get new records
             facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+
+						unset($_POST['qty']);
+						unset($_POST['type']);
+						unset($_POST['np_price']);
+						unset($_POST['dp_desc']);
+						unset($_POST['np_tva_tx']);
+						unset($_POST['np_buying_price']);
         }
     }
 }
@@ -2810,7 +2841,15 @@ else if ($id > 0 || ! empty($ref))
         print '<td align="right" colspan="2" nowrap>'.price($object->total_ht).'</td>';
         print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
         print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2" nowrap>'.price($object->total_tva).'</td>';
-        print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
+        print '<td>'.$langs->trans('Currency'.$conf->currency).'</td>';
+
+				// Margin Infos
+				if ($conf->marges->enabled) {
+				  print '<td valign="top" width="50%" rowspan="4">';
+				  $object->displayMarginInfos();
+				  print '</td>';
+				}
+				print '</tr>';
 
         // Amount Local Taxes
         if ($mysoc->pays_code=='ES')
