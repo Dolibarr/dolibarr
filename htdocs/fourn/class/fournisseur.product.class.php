@@ -3,6 +3,7 @@
  * Copyright (C) 2006-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis@dolibarr.fr>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,105 +137,135 @@ class ProductFournisseur extends Product
      *    @param  	float		$buyprice        	Purchase price for the quantity min
      *    @param  	User		$user            	Object user user made changes
      *    @param  	string		$price_base_type	HT or TTC
+     *    @param  	string		$charges			costs affering to product
      *    @param  	Societe		$fourn				Supplier
      *    @param  	int			$availability		Product availability
      *    @param	string		$ref_fourn			Supplier ref
      *    @param	float		$tva_tx				VAT rate
      *    @return	int								>0 if KO, >0 if OK
      */
-    function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx)
+    function update_buyprice($qty, $buyprice, $charges, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx)
     {
         global $conf,$mysoc;
 
         // Clean parameter
         $buyprice=price2num($buyprice);
+				$charges=price2num($charges);
         $qty=price2num($qty);
         if (empty($availability)) $availability=0;
 
-        $error=0;
+		 		$error=0;
+
+				if ($price_base_type == 'TTC')
+				{
+					$ttx = get_default_tva($fourn,$mysoc,$this->id);
+					$buyprice = $buyprice/(1+($ttx/100));
+				}
+				$unitBuyPrice = price2num($buyprice/$qty,'MU');
+				$unitCharges = price2num($charges/$qty,'MU');
+
+				$now=dol_now();
+
         $this->db->begin();
 
         if ($this->product_fourn_price_id)
         {
-        	// Supprime prix courant du fournisseur pour cette quantite
-        	$sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price";
-        	$sql.= " WHERE rowid = ".$this->product_fourn_price_id;
-        	$resql=$this->db->query($sql);
-        	if ($resql < 0) $error++;
+		  		$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
+					$sql.= " SET fk_user = " . $user->id." ,";
+					$sql.= " price = ".price2num($buyprice).",";
+					$sql.= " quantity = ".$qty.",";
+					$sql.= " charges = ".price2num($charges).",";
+					$sql.= " unitprice = ".$unitBuyPrice.",";
+					$sql.= " unitcharges = ".$unitCharges.",";
+					$sql.= " tva_tx = ".$tva_tx.",";
+					$sql.= " fk_availability = ".$availability.",";
+					$sql.= " entity = ".$conf->entity;
+		  		$sql .= " WHERE rowid = ".$this->product_fourn_price_id;
+		  
+		  		$resql = $this->db->query($sql) ;
+					if ($resql)
+					{
+						$this->db->commit();
+						return 0;
+					}
+					else
+					{
+						$this->error=$this->db->error()." sql=".$sql;
+						$this->db->rollback();
+						return -2;
+					}
         }
 
-        if (! $error)
-        {
-            if ($price_base_type == 'TTC')
-            {
-                //$ttx = get_default_tva($fourn,$mysoc,$this->id);
-                //$buyprice = $buyprice/(1+($ttx/100));
-                $buyprice = $buyprice/(1+($tva_tx/100));
-            }
-            $unitBuyPrice = price2num($buyprice/$qty,'MU');
-
-            $now=dol_now();
-
-            // Ajoute prix courant du fournisseur pour cette quantite
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price(";
-            $sql.= "datec, fk_product, fk_soc, ref_fourn, fk_user, price, quantity, unitprice, tva_tx, fk_availability, entity)";
-            $sql.= " values('".$this->db->idate($now)."',";
-            $sql.= " ".$this->id.",";
-            $sql.= " ".$fourn->id.",";
-            $sql.= " '".$this->db->escape($ref_fourn)."',";
-            $sql.= " ".$user->id.",";
-            $sql.= " ".price2num($buyprice).",";
-            $sql.= " ".$qty.",";
-            $sql.= " ".$unitBuyPrice.",";
-            $sql.= " ".$tva_tx.",";
-            $sql.= " ".$availability.",";
-            $sql.= $conf->entity;
-            $sql.=")";
-
-            dol_syslog(get_class($this)."::update_buyprice sql=".$sql);
-            if (! $this->db->query($sql))
-            {
-                $error++;
-            }
-
-            /*if (! $error)
-            {
-                // Ajoute modif dans table log
-                $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_log(";
-                $sql.= "datec, fk_product_fournisseur,fk_user,price,quantity)";
-                $sql.= "values('".$this->db->idate($now)."',";
-                $sql.= " ".$this->product_fourn_id.",";
-                $sql.= " ".$user->id.",";
-                $sql.= " ".price2num($buyprice).",";
-                $sql.= " ".$qty;
-                $sql.=")";
-
-                $resql=$this->db->query($sql);
-                if (! $resql)
-                {
-                    $error++;
-                }
-            }
-			*/
-
-            if (! $error)
-            {
-                $this->db->commit();
-                return 0;
-            }
-            else
-            {
-                $this->error=$this->db->error()." sql=".$sql;
-                $this->db->rollback();
-                return -2;
-            }
-        }
         else
         {
-            $this->error=$this->db->error()." sql=".$sql;
-            $this->db->rollback();
-            return -1;
-        }
+	        	// Supprime prix courant du fournisseur pour cette quantite
+	        	$sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price";
+	        	$sql.= " WHERE rowid = ".$this->product_fourn_price_id;
+	        	$resql=$this->db->query($sql);
+				 		if ($resql)
+			  		{
+
+		            // Ajoute prix courant du fournisseur pour cette quantite
+		            $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price(";
+		            $sql.= "datec, fk_product, fk_soc, ref_fourn, fk_user, price, quantity, unitprice, tva_tx, fk_availability, entity)";
+		            $sql.= " values('".$this->db->idate($now)."',";
+		            $sql.= " ".$this->id.",";
+		            $sql.= " ".$fourn->id.",";
+		            $sql.= " '".$this->db->escape($ref_fourn)."',";
+		            $sql.= " ".$user->id.",";
+		            $sql.= " ".price2num($buyprice).",";
+		            $sql.= " ".$qty.",";
+		            $sql.= " ".$unitBuyPrice.",";
+		            $sql.= " ".$tva_tx.",";
+		            $sql.= " ".$availability.",";
+		            $sql.= $conf->entity;
+		            $sql.=")";
+		
+		            dol_syslog(get_class($this)."::update_buyprice sql=".$sql);
+		            if (! $this->db->query($sql))
+		            {
+		                $error++;
+		            }
+		
+		            /*if (! $error)
+		            {
+		                // Ajoute modif dans table log
+		                $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_log(";
+		                $sql.= "datec, fk_product_fournisseur,fk_user,price,quantity)";
+		                $sql.= "values('".$this->db->idate($now)."',";
+		                $sql.= " ".$this->product_fourn_id.",";
+		                $sql.= " ".$user->id.",";
+		                $sql.= " ".price2num($buyprice).",";
+		                $sql.= " ".$qty;
+		                $sql.=")";
+		
+		                $resql=$this->db->query($sql);
+		                if (! $resql)
+		                {
+		                    $error++;
+		                }
+		            }
+					*/
+		
+		            if (! $error)
+		            {
+		                $this->db->commit();
+		                return 0;
+		            }
+		            else
+		            {
+		                $this->error=$this->db->error()." sql=".$sql;
+		                $this->db->rollback();
+		                return -2;
+		            }
+		        }
+		        else
+		        {
+		            $this->error=$this->db->error()." sql=".$sql;
+		            $this->db->rollback();
+		            return -1;
+		        }
+		    }
     }
 
     /**
@@ -246,7 +277,7 @@ class ProductFournisseur extends Product
     function fetch_product_fournisseur_price($rowid)
     {
         $sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.tva_tx, pfp.fk_availability,";
-        $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.fk_product";
+        $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.fk_product, pfp.charges, pfp.unitcharges";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " WHERE pfp.rowid = ".$rowid;
 
@@ -260,8 +291,10 @@ class ProductFournisseur extends Product
                 $this->product_fourn_price_id	= $rowid;
                 $this->fourn_ref				= $obj->ref_fourn;
                 $this->fourn_price				= $obj->price;
-                $this->fourn_qty				= $obj->quantity;
-                $this->fourn_unitprice			= $obj->unitprice;
+								$this->fourn_charges          = $obj->charges;
+								$this->fourn_qty              = $obj->quantity;
+								$this->fourn_unitprice        = $obj->unitprice;
+								$this->fourn_unitcharges      = $obj->unitcharges;
                 $this->tva_tx					= $obj->tva_tx;
                 $this->product_id				= $obj->fk_product;	// deprecated
                 $this->fk_product				= $obj->fk_product;
@@ -294,7 +327,7 @@ class ProductFournisseur extends Product
 
         $sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
         $sql.= " pfp.rowid as product_fourn_pri_id, pfp.ref_fourn, pfp.fk_product as product_fourn_id,";
-        $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.tva_tx, pfp.fk_availability";
+        $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.unitcharges";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= ", ".MAIN_DB_PREFIX."societe as s";
         $sql.= " WHERE pfp.entity IN (".getEntity('product', 1).")";
@@ -320,6 +353,8 @@ class ProductFournisseur extends Product
                 $prodfourn->fourn_price				= $record["price"];
                 $prodfourn->fourn_qty				= $record["quantity"];
                 $prodfourn->fourn_unitprice			= $record["unitprice"];
+								$prodfourn->fourn_charges          = $record["charges"];
+								$prodfourn->fourn_unitcharges      = $record["unitcharges"];
                 $prodfourn->fourn_tva_tx			= $record["tva_tx"];
                 $prodfourn->fourn_id				= $record["fourn_id"];
                 $prodfourn->fourn_name				= $record["supplier_name"];
@@ -374,7 +409,7 @@ class ProductFournisseur extends Product
 
         $sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id,";
         $sql.= " pfp.rowid as product_fourn_price_id, pfp.ref_fourn,";
-        $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.tva_tx";
+        $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.tva_tx, pfp.charges, pfp.unitcharges";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND pfp.fk_product = ".$prodid;
@@ -393,6 +428,8 @@ class ProductFournisseur extends Product
             $this->fourn_price				= $record["price"];
             $this->fourn_qty				= $record["quantity"];
             $this->fourn_unitprice			= $record["unitprice"];
+            $this->fourn_charges			= $record["charges"];
+            $this->fourn_unitcharges			= $record["unitcharges"];
             $this->fourn_tva_tx				= $record["tva_tx"];
             $this->fourn_id					= $record["fourn_id"];
             $this->fourn_name				= $record["supplier_name"];

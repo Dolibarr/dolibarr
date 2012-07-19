@@ -46,6 +46,8 @@ $langs->load('compta');
 $langs->load('bills');
 $langs->load('orders');
 $langs->load('products');
+if ($conf->marges->enabled)
+  $langs->load('marges');
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -788,6 +790,13 @@ else if ($action == "addline" && $user->rights->propale->creer)
 			$localtax2_tx=get_localtax($tva_tx,2,$object->client);
 		}
 
+		// ajout prix achat
+		$fk_fournprice = $_POST['np_fournprice'];
+		if ( ! empty($_POST['np_buying_price']) )
+		  $pa_ht = $_POST['np_buying_price'];
+		else
+		  $pa_ht = null;
+
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
 
@@ -814,7 +823,9 @@ else if ($action == "addline" && $user->rights->propale->creer)
     			$type,
     			-1,
     			0,
-    			$_POST['fk_parent_line']
+    			$_POST['fk_parent_line'],
+					$fk_fournprice,
+					$pa_ht
 			);
 
 			if ($result > 0)
@@ -841,6 +852,7 @@ else if ($action == "addline" && $user->rights->propale->creer)
 				unset($_POST['dp_desc']);
 				unset($_POST['np_tva_tx']);
 				unset($_POST['np_desc']);
+				unset($_POST['np_buying_price']);
 			}
 			else
 			{
@@ -869,11 +881,18 @@ else if ($action == 'updateligne' && $user->rights->propale->creer && $_POST["sa
 	$vat_rate=str_replace('*','',$vat_rate);
 	$localtax1_rate=get_localtax($vat_rate,1,$object->client);
 	$localtax2_rate=get_localtax($vat_rate,2,$object->client);
-    $up_ht=GETPOST('pu')?GETPOST('pu'):GETPOST('subprice');
+  $pu_ht=GETPOST('pu')?GETPOST('pu'):GETPOST('subprice');
 
-    // Define special_code for special lines
-    $special_code=0;
-    if (empty($_POST['qty'])) $special_code=3;
+	// ajout prix d'achat
+	$fk_fournprice = $_POST['fournprice'];
+	if ( ! empty($_POST['buying_price']) )
+	  $pa_ht = $_POST['buying_price'];
+	else
+	  $pa_ht = null;
+
+  // Define special_code for special lines
+  $special_code=0;
+  if (empty($_POST['qty'])) $special_code=3;
 
 	// On verifie que le prix minimum est respecte
 	$productid = $_POST['productid'] ;
@@ -884,7 +903,7 @@ else if ($action == 'updateligne' && $user->rights->propale->creer && $_POST["sa
 		$price_min = $product->price_min;
 		if ($conf->global->PRODUIT_MULTIPRICES && $object->client->price_level)	$price_min = $product->multiprices_min[$object->client->price_level];
 	}
-	if ($productid && $price_min && (price2num($up_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($price_min)))
+	if ($productid && $price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($price_min)))
 	{
 		$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->currency)).'</div>' ;
 	}
@@ -892,7 +911,7 @@ else if ($action == 'updateligne' && $user->rights->propale->creer && $_POST["sa
 	{
 		$result = $object->updateline(
     		$_POST['lineid'],
-    		$up_ht,
+    		$pu_ht,
     		$_POST['qty'],
     		$_POST['remise_percent'],
     		$vat_rate,
@@ -902,7 +921,10 @@ else if ($action == 'updateligne' && $user->rights->propale->creer && $_POST["sa
     		'HT',
     		$info_bits,
     		$special_code,
-    		$_POST['fk_parent_line']
+    		$_POST['fk_parent_line'],
+				0,
+				$fk_fournprice,
+				$pa_ht
 		);
 
 		// Define output language
@@ -917,8 +939,15 @@ else if ($action == 'updateligne' && $user->rights->propale->creer && $_POST["sa
 		}
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 		{
-            $ret=$object->fetch($id);    // Reload to get new records
+        $ret=$object->fetch($id);    // Reload to get new records
 		    propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+
+				unset($_POST['qty']);
+				unset($_POST['type']);
+				unset($_POST['np_price']);
+				unset($_POST['dp_desc']);
+				unset($_POST['np_tva_tx']);
+				unset($_POST['np_buying_price']);
 		}
 	}
 }
@@ -1527,10 +1556,18 @@ if (empty($reshook) && ! empty($extrafields->attribute_label))
     }
 }
 
-// Amount HT
+// Amount HT 
 print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
 print '<td align="right" nowrap><b>'.price($object->total_ht).'</b></td>';
-print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+print '<td>'.$langs->trans("Currency".$conf->currency).'</td>';
+
+// Margin Infos
+if ($conf->marges->enabled) {
+  print '<td valign="top" width="50%" rowspan="4">';
+  $object->displayMarginInfos();
+  print '</td>';
+}
+print '</tr>';
 
 // Amount VAT
 print '<tr><td height="10">'.$langs->trans('AmountVAT').'</td>';
@@ -1560,7 +1597,7 @@ print '<td align="right" nowrap>'.price($object->total_ttc).'</td>';
 print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 // Statut
-print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$object->getLibStatut(4).'</td></tr>';
+print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="2">'.$object->getLibStatut(4).'</td></tr>';
 
 print '</table><br>';
 
@@ -1607,7 +1644,7 @@ if ($object->statut == 0 && $user->rights->propale->creer)
 
 		// Add free products/services
 		$object->formAddFreeProduct(0,$mysoc,$soc,$hookmanager);
-
+														
 		// Add predefined products/services
 		if ($conf->product->enabled || $conf->service->enabled)
 		{

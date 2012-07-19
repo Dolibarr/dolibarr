@@ -49,6 +49,8 @@ $langs->load('bills');
 $langs->load('propal');
 $langs->load('deliveries');
 $langs->load('products');
+if ($conf->marges->enabled)
+  $langs->load('marges');
 
 $id      = (GETPOST('id','int')?GETPOST('id','int'):GETPOST("orderid"));
 $ref     = GETPOST('ref');
@@ -294,7 +296,9 @@ else if ($action == 'add' && $user->rights->commande->creer)
                         $product_type,
                         $lines[$i]->rang,
                         $lines[$i]->special_code,
-                        $fk_parent_line
+                        $fk_parent_line,
+		                    $lines[$i]->fk_fournprice,
+		                    $lines[$i]->pa_ht
                     );
 
                     if ($result < 0)
@@ -607,6 +611,13 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 
         $desc=dol_htmlcleanlastbr($desc);
 
+    		// ajout prix achat
+    		$fk_fournprice = $_POST['np_fournprice'];
+    		if ( ! empty($_POST['np_buying_price']) )
+    		  $pa_ht = $_POST['np_buying_price'];
+    		else
+    		  $pa_ht = null;
+    
         $info_bits=0;
         if ($tva_npr) $info_bits |= 0x01;
 
@@ -639,7 +650,9 @@ else if ($action == 'addline' && $user->rights->commande->creer)
                     $type,
                     -1,
                     '',
-                    $_POST['fk_parent_line']
+                    $_POST['fk_parent_line'],
+		          			$fk_fournprice,
+		          			$pa_ht
                 );
 
                 if ($result > 0)
@@ -668,6 +681,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
                     unset($_POST['np_desc']);
                     unset($_POST['np_price']);
                     unset($_POST['np_tva_tx']);
+            				unset($_POST['np_buying_price']);
                 }
                 else
                 {
@@ -701,6 +715,14 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['s
     $localtax1_rate=get_localtax($vat_rate,1,$object->client);
     $localtax2_rate=get_localtax($vat_rate,2,$object->client);
 
+
+  	// ajout prix d'achat
+  	$fk_fournprice = $_POST['fournprice'];
+  	if ( ! empty($_POST['buying_price']) )
+  	  $pa_ht = $_POST['buying_price'];
+  	else
+  	  $pa_ht = null;
+  
     // Check parameters
     if (empty($_POST['productid']) && $_POST["type"] < 0)
     {
@@ -749,7 +771,10 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['s
             $date_start,
             $date_end,
             $type,
-            $_POST['fk_parent_line']
+            $_POST['fk_parent_line'],
+		    		0,
+		    		$fk_fournprice,
+		    		$pa_ht
         );
 
         if ($result >= 0)
@@ -768,6 +793,12 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['s
             {
                 $ret=$object->fetch($object->id);    // Reload to get new records
                 commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+		        		unset($_POST['qty']);
+		        		unset($_POST['type']);
+		        		unset($_POST['np_price']);
+		        		unset($_POST['dp_desc']);
+		        		unset($_POST['np_tva_tx']);
+		        		unset($_POST['np_buying_price']);
             }
         }
         else
@@ -1955,7 +1986,15 @@ else
         // Total HT
         print '<tr><td>'.$langs->trans('AmountHT').'</td>';
         print '<td align="right"><b>'.price($object->total_ht).'</b></td>';
-        print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
+        print '<td>'.$langs->trans('Currency'.$conf->currency).'</td>';
+
+				// Margin Infos
+				if ($conf->marges->enabled) {
+				  print '<td valign="top" width="50%" rowspan="4">';
+				  $object->displayMarginInfos();
+				  print '</td>';
+				}
+				print '</tr>';
 
         // Total TVA
         print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right">'.price($object->total_tva).'</td>';
