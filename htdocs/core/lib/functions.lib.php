@@ -3331,7 +3331,8 @@ function dol_textishtml($msg,$option=0)
         elseif (preg_match('/<img/i',$msg))				return true;
         elseif (preg_match('/<i>/i',$msg))				return true;
         elseif (preg_match('/<b>/i',$msg))				return true;
-        elseif (preg_match('/&[A-Z0-9]{1,6};/i',$msg))	return true;
+        elseif (preg_match('/&[A-Z0-9]{1,6};/i',$msg))	return true;    // Html entities names (http://www.w3schools.com/tags/ref_entities.asp)
+        elseif (preg_match('/&#[0-9]{2,3};/i',$msg))	return true;    // Html entities numbers (http://www.w3schools.com/tags/ref_entities.asp)
         return false;
     }
 }
