@@ -2069,11 +2069,16 @@ class Commande extends CommonObject
         $sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0 ;';
         if ($this->db->query($sql) )
         {
-            if (($conf->global->PROPALE_CLASSIFIED_INVOICED_WITH_ORDER == 1) && $this->propale_id)
+            if (! empty($conf->propal->enabled) && ! empty($conf->global->PROPALE_CLASSIFIED_INVOICED_WITH_ORDER))
             {
-                $propal = new Propal($this->db);
-                $propal->fetch($this->propale_id);
-                $propal->classer_facturee();
+                $this->fetchObjectLinked('','propal',$this->id,$this->element);
+                if (! empty($this->linkedObjects))
+                {
+                    foreach($this->linkedObjects['propal'] as $element)
+                    {
+                        $ret=$element->classer_facturee();
+                    }
+                }
             }
             return 1;
         }
