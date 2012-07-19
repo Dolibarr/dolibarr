@@ -44,10 +44,9 @@ create table llx_propaldet
   date_end          datetime   DEFAULT NULL,         -- date fin si service
   info_bits		    integer      DEFAULT 0,          -- TVA NPR ou non
   
-  pa_ht             double(24,8) DEFAULT 0,          -- prix d'achat HT
-  marge_tx          double(6,3)  DEFAULT 0,          -- taux de marge (marge sur prix d'achat)
-  marque_tx         double(6,3)  DEFAULT 0,          -- taux de marque (marge sur prix de vente)
-
+  buy_price_ht      double(24,8) DEFAULT 0,          -- prix d'achat HT
+	fk_product_fournisseur_price     int(11)      DEFAULT NULL,       -- référence prix fournisseur
+	
   special_code      integer      DEFAULT 0,          -- code pour les lignes speciales
   rang              integer      DEFAULT 0           -- ordre affichage sur la propal
 )ENGINE=innodb;

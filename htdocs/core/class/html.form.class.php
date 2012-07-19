@@ -2683,9 +2683,14 @@ class Form
      *    @param	string	$page       Page
      *    @param    string	$selected   Id preselected
      *    @param    string	$htmlname	Name of HTML select
+     *  @param  string	$filter         Optionnal filters criteras
+     *	@param	int		$showempty		Add an empty field
+     * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
+     * 	@param	int		$forcecombo		Force to use combo box
+     *  @param	array	$event			Event options
      *    @return	void
      */
-    function form_thirdparty($page, $selected='', $htmlname='socid')
+    function form_thirdparty($page, $selected='', $htmlname='socid', $filter='',$showempty=0, $showtype=0, $forcecombo=0, $event=array())
     {
         global $langs;
 
@@ -2696,7 +2701,7 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            print $this->select_company($selected, $htmlname);
+            print $this->select_company($selected , $htmlname, $filter,$showempty, $showtype, $forcecombo, $event);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
