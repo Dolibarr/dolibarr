@@ -927,7 +927,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 {
                     $langs->load("bills");
                     $newmenu->add("/fourn/facture/index.php?leftmenu=suppliers_bills", $langs->trans("BillsSuppliers"),0,$user->rights->fournisseur->facture->lire, '', $mainmenu, 'suppliers_bills');
-                    if (isset($user->societe_id) && $user->societe_id == 0)
+                    if (! isset($user->societe_id) || $user->societe_id == 0)
                     {
                         $newmenu->add("/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"),1,$user->rights->fournisseur->facture->creer);
                     }
