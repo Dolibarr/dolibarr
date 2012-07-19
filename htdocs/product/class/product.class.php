@@ -277,6 +277,7 @@ class Product extends CommonObject
 				$sql.= "datec";
 				$sql.= ", entity";
 				$sql.= ", ref";
+				$sql.= ", ref_ext";
 				$sql.= ", price_min";
 				$sql.= ", price_min_ttc";
 				$sql.= ", label";
@@ -292,7 +293,8 @@ class Product extends CommonObject
 				$sql.= ") VALUES (";
 				$sql.= $this->db->idate($now);
 				$sql.= ", ".$conf->entity;
-				$sql.= ", '".$this->ref."'";
+				$sql.= ", '".$this->db->escape($this->ref)."'";
+				$sql.= ", ".($this->ref_ext?"'".$this->db->escape($this->ref_ext)."'":"null");
 				$sql.= ", ".price2num($price_min_ht);
 				$sql.= ", ".price2num($price_min_ttc);
 				$sql.= ", ".($this->libelle?"'".$this->db->escape($this->libelle)."'":"null");
