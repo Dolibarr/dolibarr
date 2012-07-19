@@ -326,7 +326,7 @@ class Product extends CommonObject
 						{
 							if ($this->update($id, $user, true) > 0)
 							{
-								if ($this->catid > 0)
+    							if ($this->catid > 0)
 								{
 									require_once(DOL_DOCUMENT_ROOT ."/categories/class/categorie.class.php");
 									$cat = new Categorie($this->db, $this->catid);
@@ -379,7 +379,6 @@ class Product extends CommonObject
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 		}
-
 		if (! $error)
 		{
 			$this->db->commit();
@@ -405,8 +404,6 @@ class Product extends CommonObject
 		global $langs, $conf;
 
 		$error=0;
-
-		$this->db->begin();
 
 		$this->db->begin();
 
