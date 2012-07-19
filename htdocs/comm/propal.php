@@ -1597,7 +1597,7 @@ print '<td align="right" nowrap>'.price($object->total_ttc).'</td>';
 print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 // Statut
-print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="3">'.$object->getLibStatut(4).'</td></tr>';
+print '<tr><td height="10">'.$langs->trans('Status').'</td><td align="left" colspan="2">'.$object->getLibStatut(4).'</td></tr>';
 
 print '</table><br>';
 
@@ -1644,7 +1644,7 @@ if ($object->statut == 0 && $user->rights->propale->creer)
 
 		// Add free products/services
 		$object->formAddFreeProduct(0,$mysoc,$soc,$hookmanager);
-
+														
 		// Add predefined products/services
 		if ($conf->product->enabled || $conf->service->enabled)
 		{
