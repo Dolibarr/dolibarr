@@ -165,7 +165,7 @@ if ($object->id > 0)
 	
 	print '<table class="border"width="100%">';
 	
-	$linkback='<a href="'.DOL_URL_ROOT.'/comm/propal/list.php'."?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder".'">'.$langs->trans("BackToList").'</a>';
+	$linkback='<a href="'.DOL_URL_ROOT.'/comm/propal.php'."?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder".'">'.$langs->trans("BackToList").'</a>';
 	
 	// Ref
 	print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
