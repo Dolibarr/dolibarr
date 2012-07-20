@@ -627,7 +627,6 @@ Port=Port
 VirtualServerName=Sanal sunucu adı
 AllParameters=Tüm parametreler
 OS=İşletim Sistemi
-Php=Php
 PhpEnv=Ortam
 PhpModules=Modüller
 PhpConf=Yapı

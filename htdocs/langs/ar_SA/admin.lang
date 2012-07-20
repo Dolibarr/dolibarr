@@ -574,7 +574,6 @@ Port=الميناء
 VirtualServerName=اسم الخادم الافتراضي
 AllParameters=جميع البارامترات
 OS=نظام التشغيل
-Php=Php
 PhpEnv=Env
 PhpModules=وحدات
 PhpConf=Conf
