@@ -1,4 +1,4 @@
-# Dolibarr language file - fr_FR - marges
+# Dolibarr language file - fr_FR - margins
 CHARSET=UTF-8
 
 Margin=Marge
@@ -12,7 +12,7 @@ DisplayMarginRates=Afficher les taux de marge
 DisplayMarkRates=Afficher les taux de marque
 InputPrice=Saisir un prix
 
-marges=Gestion des marges
+margin=Gestion des marges
 margesSetup=Paramétrage de la gestion des marges
 
 MarginDetails=Détails des marges réalisées

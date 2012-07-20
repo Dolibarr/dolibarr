@@ -38,7 +38,7 @@ require_once(DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php');
 require_once(DOL_DOCUMENT_ROOT."/core/modules/propale/modules_propale.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/propal.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
-if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
+if (! empty($conf->projet->enabled))   require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
 
 $langs->load('companies');
 $langs->load('propal');
@@ -46,8 +46,8 @@ $langs->load('compta');
 $langs->load('bills');
 $langs->load('orders');
 $langs->load('products');
-if ($conf->marges->enabled)
-  $langs->load('marges');
+if (! empty($conf->margin->enabled))
+  $langs->load('margins');
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -456,7 +456,7 @@ else if ($action == 'setstatut' && $user->rights->propale->cloturer)
 /*
  * Add file in email form
  */
-if ($_POST['addfile'])
+if (GETPOST('addfile'))
 {
 	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
@@ -1556,13 +1556,13 @@ if (empty($reshook) && ! empty($extrafields->attribute_label))
     }
 }
 
-// Amount HT 
+// Amount HT
 print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
 print '<td align="right" nowrap><b>'.price($object->total_ht).'</b></td>';
 print '<td>'.$langs->trans("Currency".$conf->currency).'</td>';
 
 // Margin Infos
-if ($conf->marges->enabled) {
+if (! empty($conf->margin->enabled)) {
   print '<td valign="top" width="50%" rowspan="4">';
   $object->displayMarginInfos();
   print '</td>';
@@ -1644,7 +1644,7 @@ if ($object->statut == 0 && $user->rights->propale->creer)
 
 		// Add free products/services
 		$object->formAddFreeProduct(0,$mysoc,$soc,$hookmanager);
-														
+
 		// Add predefined products/services
 		if ($conf->product->enabled || $conf->service->enabled)
 		{

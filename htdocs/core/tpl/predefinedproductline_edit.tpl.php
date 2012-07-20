@@ -84,7 +84,7 @@
 	<?php } ?>
 	</td>
 <?php
-if ($conf->marges->enabled) { 
+if (! empty($conf->margin->enabled)) { 
 ?>
 	<td align="right">
   <select id="fournprice" name="fournprice"></select>
@@ -112,7 +112,7 @@ if ($conf->marges->enabled) {
 </tr>
 <?php } ?></form>
 <?php
-if ($conf->marges->enabled) { 
+if (! empty($conf->margin->enabled)) { 
 ?>
 <script type="text/javascript">
 $(document).ready(function() {

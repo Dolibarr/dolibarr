@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+/* Copyright (C) 2012	Christophe Battarel	<christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,30 +16,26 @@
  */
 
 /**
- *	\file       htdocs/custom/marges/tabs/productMargins.php
- *	\ingroup    product marges
- *	\brief      Page des marges des factures clients pour un produit
- *	\version    $Id: facture.php,v 1.84 2011/08/08 16:07:47 eldy Exp $
+ *	\file       htdocs/margin/tabs/thirdpartyMargins.php
+ *	\ingroup    product margins
+ *	\brief      Page des marges des factures clients pour un tiers
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/product.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 
 $langs->load("companies");
 $langs->load("bills");
 $langs->load("products");
-$langs->load("marges");
-																							 
+$langs->load("margins");
+
 // Security check
-if (isset($_GET["id"]) || isset($_GET["ref"]))
-{
-	$id = isset($_GET["id"])?$_GET["id"]:(isset($_GET["ref"])?$_GET["ref"]:'');
-}
-$fieldid = isset($_GET["ref"])?'ref':'rowid';
-if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit|service',$id,'product','','',$fieldid);
+$socid = GETPOST('socid','int');
+if (! empty($user->societe_id)) $socid=$user->societe_id;
+$result = restrictedArea($user, 'societe','','');
+
 
 $mesg = '';
 
@@ -59,94 +55,90 @@ if (! $sortfield) $sortfield="f.datef";
  */
 
 $invoicestatic=new Facture($db);
+$form = new Form($db);
 
-$html = new Form($db);
+$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+llxHeader('',$langs->trans("ThirdParty").' - '.$langs->trans("Margins"),$help_url);
 
-
-if ($_GET["id"] || $_GET["ref"])
+if ($socid > 0)
 {
-	$product = new Product($db);
-	if ($_GET["ref"])
-	{
-		$result = $product->fetch('',$_GET["ref"]);
-		$_GET["id"]=$product->id;
-	}
-	if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
+    $societe = new Societe($db, $socid);
+    $societe->fetch($socid);
 
-	llxHeader("","",$langs->trans("CardProduct".$product->type));
+    /*
+     * Affichage onglets
+     */
 
-	/*
-	 *  En mode visu
-	 */
-	if ($result > 0)
-	{
-		$head=product_prepare_head($product, $user);
-		$titre=$langs->trans("CardProduct".$product->type);
-		$picto=($product->type==1?'service':'product');
-		dol_fiche_head($head, 'marges', $titre, 0, $picto);
+    $head = societe_prepare_head($societe);
 
-		print '<table class="border" width="100%">';
+    dol_fiche_head($head, 'marges', $langs->trans("ThirdParty"),0,'company');
 
-		// Reference
-		print '<tr>';
-		print '<td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $html->showrefnav($product,'ref','',1,'ref');
-		print '</td>';
-		print '</tr>';
+    print '<table class="border" width="100%">';
 
-		// Libelle
-		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td>';
-		print '</tr>';
+    print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
+    print '<td colspan="3">';
+    print $form->showrefnav($societe,'socid','',($user->societe_id?0:1),'rowid','nom');
+    print '</td></tr>';
 
-		// Status (to sell)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')'.'</td><td colspan="3">';
-		print $product->getLibStatut(2,0);
-		print '</td></tr>';
+    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
+    {
+        print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
+    }
 
-		// Status (to buy)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')'.'</td><td colspan="3">';
-		print $product->getLibStatut(2,1);
-		print '</td></tr>';
+    if ($societe->client)
+    {
+        print '<tr><td>';
+        print $langs->trans('CustomerCode').'</td><td colspan="3">';
+        print $societe->code_client;
+        if ($societe->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+        print '</td></tr>';
+    }
+
+    if ($societe->fournisseur)
+    {
+        print '<tr><td>';
+        print $langs->trans('SupplierCode').'</td><td colspan="3">';
+        print $societe->code_fournisseur;
+        if ($societe->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+        print '</td></tr>';
+    }
 
 		// Total Margin
 		print '<tr style="font-weight: bold"><td>'.$langs->trans("TotalMargin").'</td><td colspan="3">';
 		print '<span id="totalMargin"></span>'; // set by jquery (see below)
 		print '</td></tr>';
-		
+
 		// Margin Rate
 		if ($conf->global->DISPLAY_MARGIN_RATES) {
 			print '<tr style="font-weight: bold"><td>'.$langs->trans("MarginRate").'</td><td colspan="3">';
 			print '<span id="marginRate"></span>'; // set by jquery (see below)
 			print '</td></tr>';
 		}
-		
+
 		// Mark Rate
 		if ($conf->global->DISPLAY_MARK_RATES) {
 			print '<tr style="font-weight: bold"><td>'.$langs->trans("MarkRate").'</td><td colspan="3">';
 			print '<span id="markRate"></span>'; // set by jquery (see below)
 			print '</td></tr>';
 		}
-		
+
 		print "</table>";
 		print '</div>';
 
 
 		$sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";
 		$sql.= " f.facnumber, f.total as total_ht,";
-		$sql.= " (d.subprice * d.qty * (1 - d.remise_percent / 100)) as selling_price, (d.buy_price_ht * d.qty) as buying_price, d.qty, ((d.subprice - d.buy_price_ht) * d.qty) as marge," ;
+		$sql.= " sum(d.subprice * d.qty * (1 - d.remise_percent / 100)) as selling_price, sum(d.buy_price_ht * d.qty) as buying_price, sum(((d.subprice * (1 - d.remise_percent / 100)) - d.buy_price_ht) * d.qty) as marge," ;
 		$sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid";
-		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql.= ", ".MAIN_DB_PREFIX."facture as f";
 		$sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
-		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE f.fk_soc = s.rowid";
 		$sql.= " AND f.fk_statut > 0";
 		$sql.= " AND s.entity = ".$conf->entity;
 		$sql.= " AND d.fk_facture = f.rowid";
-		$sql.= " AND d.fk_product =".$product->id;
-		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-		if ($socid) $sql.= " AND f.fk_soc = $socid";
+		$sql.= " AND f.fk_soc = $socid";
+		$sql.= " GROUP BY f.rowid";
 		$sql.= " ORDER BY $sortfield $sortorder ";
 		$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
@@ -155,25 +147,22 @@ if ($_GET["id"] || $_GET["ref"])
 		{
 			$num = $db->num_rows($result);
 
-			print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num,0,'');
+			print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;socid=$societe->id",$sortfield,$sortorder,'',$num,0,'');
 
 			$i = 0;
 			print "<table class=\"noborder\" width=\"100%\">";
 
 			print '<tr class="liste_titre">';
-			print_liste_field_titre($langs->trans("Invoice"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("DateInvoice"),$_SERVER["PHP_SELF"],"f.datef","","&amp;id=".$_GET["id"],'align="center"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("SellingPrice"),$_SERVER["PHP_SELF"],"selling_price","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("BuyingPrice"),$_SERVER["PHP_SELF"],"buyng_price","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Qty"),$_SERVER["PHP_SELF"],"d.qty","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Margin"),$_SERVER["PHP_SELF"],"marge","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Invoice"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socid=".$_REQUEST["socid"],'',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("DateInvoice"),$_SERVER["PHP_SELF"],"f.datef","","&amp;socid=".$_REQUEST["socid"],'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("SellingPrice"),$_SERVER["PHP_SELF"],"selling_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("BuyingPrice"),$_SERVER["PHP_SELF"],"buyng_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Margin"),$_SERVER["PHP_SELF"],"marge","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
 			if ($conf->global->DISPLAY_MARGIN_RATES)
-				print_liste_field_titre($langs->trans("MarginRate"),$_SERVER["PHP_SELF"],"d.marge_tx","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
+				print_liste_field_titre($langs->trans("MarginRate"),$_SERVER["PHP_SELF"],"d.marge_tx","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
 			if ($conf->global->DISPLAY_MARK_RATES)
-				print_liste_field_titre($langs->trans("MarkRate"),$_SERVER["PHP_SELF"],"d.marque_tx","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
+				print_liste_field_titre($langs->trans("MarkRate"),$_SERVER["PHP_SELF"],"d.marque_tx","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
 			print "</tr>\n";
 
 			$cumul_achat = 0;
@@ -185,23 +174,22 @@ if ($_GET["id"] || $_GET["ref"])
 				while ($i < $num && $i < $conf->liste_limit)
 				{
 					$objp = $db->fetch_object($result);
-					$var=!$var;
 
 					$marginRate = ($objp->buying_price != 0)?(100 * round($objp->marge / $objp->buying_price ,5)):'' ;
 					$markRate = ($objp->selling_price != 0)?(100 * round($objp->marge / $objp->selling_price ,5)):'' ;
+
+					$var=!$var;
+
 					print "<tr $bc[$var]>";
 					print '<td>';
 					$invoicestatic->id=$objp->facid;
 					$invoicestatic->ref=$objp->facnumber;
 					print $invoicestatic->getNomUrl(1);
 					print "</td>\n";
-					print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
-					print "<td>".$objp->code_client."</td>\n";
 					print "<td align=\"center\">";
 					print dol_print_date($db->jdate($objp->datef),'day')."</td>";
 					print "<td align=\"right\">".price($objp->selling_price)."</td>\n";
 					print "<td align=\"right\">".price($objp->buying_price)."</td>\n";
-					print "<td align=\"right\">".price($objp->qty)."</td>\n";
 					print "<td align=\"right\">".price($objp->marge)."</td>\n";
 					if ($conf->global->DISPLAY_MARGIN_RATES)
 						print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate)."%")."</td>\n";
@@ -212,20 +200,18 @@ if ($_GET["id"] || $_GET["ref"])
 					$i++;
 					$cumul_achat += $objp->buying_price;
 					$cumul_vente += $objp->selling_price;
-					$cumul_qty += $objp->qty;
 				}
 			}
 
 			// affichage totaux marges
 			$var=!$var;
 			$totalMargin = $cumul_vente - $cumul_achat;
-			$marginRate = ($cumul_achat != 0)?(100 * round($totalMargin / $cumul_achat, 5)):'';
-			$markRate = ($cumul_vente != 0)?(100 * round($totalMargin / $cumul_vente ,5)):'';
+			$marginRate = ($cumul_achat != 0)?(100 * round($totalMargin / $cumul_achat, 5)):'' ;
+			$markRate = ($cumul_vente != 0)?(100 * round($totalMargin / $cumul_vente, 5)):'' ;
 			print '<tr '.$bc[$var].' style="border-top: 1px solid #ccc; font-weight: bold">';
-			print '<td colspan=4>'.$langs->trans('TotalMargin')."</td>";
+			print '<td colspan=2>'.$langs->trans('TotalMargin')."</td>";
 			print "<td align=\"right\">".price($cumul_vente)."</td>\n";
 			print "<td align=\"right\">".price($cumul_achat)."</td>\n";
-			print "<td align=\"right\">".price($cumul_qty)."</td>\n";
 			print "<td align=\"right\">".price($totalMargin)."</td>\n";
 			if ($conf->global->DISPLAY_MARGIN_RATES)
 				print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate)."%")."</td>\n";
@@ -241,16 +227,15 @@ if ($_GET["id"] || $_GET["ref"])
 		print "</table>";
 		print '<br>';
 		$db->free($result);
-	}
 }
 else
 {
 	dol_print_error();
 }
 
+
+llxFooter();
 $db->close();
-   
-llxFooter('$Date: 2011/08/08 16:07:47 $ - $Revision: 1.84 $');
 ?>
 <script type="text/javascript">
 $(document).ready(function() {

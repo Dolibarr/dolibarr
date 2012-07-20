@@ -2533,7 +2533,7 @@ abstract class CommonObject
 		print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
 		print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
 		print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
-    if ($conf->marges->enabled) { 
+    if (! empty($conf->margin->enabled)) { 
 	    if ($conf->global->MARGIN_TYPE == "1")
 				print '<td align="right" width="80">'.$langs->trans('BuyingPrice').'</td>';
 			else
@@ -2870,20 +2870,20 @@ abstract class CommonObject
           if ($conf->global->MARGIN_TYPE == "2" && $product->fourn_unitcharges > 0)
           	$line->pa_ht += $product->fourn_unitcharges;
       }                        
-      // si prix d'achat non renseigné et devrait l'être, alors prix achat = prix vente
+      // si prix d'achat non renseignï¿½ et devrait l'ï¿½tre, alors prix achat = prix vente
       if ((!isset($line->pa_ht) || $line->pa_ht == 0) && ($conf->global->ForceBuyingPriceIfNull == 1)) {
       	$line->pa_ht = $line->subprice * (1 - ($line->remise_percent / 100));   
       }
 
       // calcul des marges
       if(isset($line->fk_remise_except)) {    // remise
-        if ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '1') { // remise globale considérée comme produit
+        if ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '1') { // remise globale considï¿½rï¿½e comme produit
           $marginInfos['pa_products'] += ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);     
           $marginInfos['pv_products'] += $line->subprice * (1 - $line->remise_percent / 100);
 			    $marginInfos['pa_total'] +=  ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);     
 			    $marginInfos['pv_total'] +=  $line->subprice * (1 - $line->remise_percent / 100);
 				}
-        elseif ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '2') { // remise globale considérée comme service
+        elseif ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '2') { // remise globale considï¿½rï¿½e comme service
           $marginInfos['pa_services'] += ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);     
           $marginInfos['pv_services'] += $line->subprice * (1 - ($line->remise_percent / 100));
 			    $marginInfos['pa_total'] +=  ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);     

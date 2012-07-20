@@ -49,8 +49,8 @@ $langs->load('bills');
 $langs->load('propal');
 $langs->load('deliveries');
 $langs->load('products');
-if ($conf->marges->enabled)
-  $langs->load('marges');
+if (! empty($conf->margin->enabled))
+  $langs->load('margins');
 
 $id      = (GETPOST('id','int')?GETPOST('id','int'):GETPOST("orderid"));
 $ref     = GETPOST('ref');
@@ -1989,7 +1989,7 @@ else
         print '<td>'.$langs->trans('Currency'.$conf->currency).'</td>';
 
 				// Margin Infos
-				if ($conf->marges->enabled) {
+				if (! empty($conf->margin->enabled)) {
 				  print '<td valign="top" width="50%" rowspan="4">';
 				  $object->displayMarginInfos();
 				  print '</td>';

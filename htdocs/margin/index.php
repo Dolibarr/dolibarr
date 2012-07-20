@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+/* Copyright (C) 2012	Christophe Battarel	<christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  */
 
 /**
- *	\file       htdocs/custom/marges/index.php
- *	\ingroup    product marges
- *	\brief      Page d'index du module marges
+ *	\file       htdocs/margin/index.php
+ *	\ingroup    product margins
+ *	\brief      Page d'index du module margin
  */
 
 require("./productMargins.php");

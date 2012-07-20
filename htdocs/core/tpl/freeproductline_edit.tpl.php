@@ -75,7 +75,7 @@
 	</td>
 
 <?php
-if ($conf->marges->enabled) { 
+if (! empty($conf->margin->enabled)) { 
 ?>
 	<td align="right"><input type="text" size="5" name="buying_price" value="<?php echo price($line->pa_ht,0,'',0); ?>"></td>
 <?php

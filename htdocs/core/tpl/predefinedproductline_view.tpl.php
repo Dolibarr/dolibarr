@@ -54,7 +54,7 @@
 	<td>&nbsp;</td>
 	<?php } 
 
-  if ($conf->marges->enabled) { 
+  if (! empty($conf->margin->enabled)) { 
   ?>
   	<td align="right" nowrap="nowrap"><?php echo price($line->pa_ht); ?></td>
   	<?php if($conf->global->DISPLAY_MARGIN_RATES) {?>

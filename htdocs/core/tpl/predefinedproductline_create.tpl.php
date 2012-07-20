@@ -42,7 +42,7 @@
 	<td align="right"><?php echo $langs->trans('ReductionShort'); ?></td>
 <?php
 $colspan = 4;
-if ($conf->marges->enabled) { 
+if (! empty($conf->margin->enabled)) { 
 ?>
 	<td align="right"><?php echo $langs->trans('BuyingPrice'); ?></td>
 <?php
@@ -92,7 +92,7 @@ jQuery(document).ready(function() {
 	<td align="right" nowrap><input type="text" size="1" name="remise_percent" value="<?php echo $buyer->remise_client; ?>">%</td>
 <?php
 $colspan = 4;
-if ($conf->marges->enabled) { 
+if (! empty($conf->margin->enabled)) { 
 ?>
 	<td align="right">
   <select id="np_fournprice" name="np_fournprice" style="display: none;"></select>
@@ -113,7 +113,7 @@ if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 	$colspan = 10;
 else
 	$colspan = 9;
-if ($conf->marges->enabled) { 
+if (! empty($conf->margin->enabled)) { 
   if($conf->global->DISPLAY_MARGIN_RATES)
     $colspan++;
   if($conf->global->DISPLAY_MARK_RATES)
@@ -134,7 +134,7 @@ if ($conf->marges->enabled) {
 
 </form>
 <?php
-if ($conf->marges->enabled) { 
+if (! empty($conf->margin->enabled)) { 
 ?>
 <script type="text/javascript">
 $("#idprod").change(function() {     

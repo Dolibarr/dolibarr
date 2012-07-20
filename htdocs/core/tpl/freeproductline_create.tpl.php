@@ -35,7 +35,7 @@
 	<td align="right"><?php echo $langs->trans('ReductionShort'); ?></td>
 <?php
 $colspan = 4;
-if ($conf->marges->enabled) { 
+if (! empty($conf->margin->enabled)) { 
 ?>
 	<td align="right"><?php echo $langs->trans('BuyingPrice'); ?></td>
 <?php
@@ -85,7 +85,7 @@ if ($conf->marges->enabled) {
 	<td align="right" nowrap><input type="text" size="1" value="<?php echo $buyer->remise_client; ?>" name="remise_percent">%</td>
 <?php
 $colspan = 4;
-if ($conf->marges->enabled) { 
+if (! empty($conf->margin->enabled)) { 
 ?>
 	<td align="right"><input type="text" size="5" name="np_buying_price" value="<?php echo (isset($_POST["np_buying_price"])?$_POST["np_buying_price"]:''); ?>"></td>
 <?php
@@ -104,7 +104,7 @@ if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 	$colspan = 10;
 else
 	$colspan = 9;
-if ($conf->marges->enabled) { 
+if (! empty($conf->margin->enabled)) { 
   if($conf->global->DISPLAY_MARGIN_RATES)
     $colspan++;
   if($conf->global->DISPLAY_MARK_RATES)

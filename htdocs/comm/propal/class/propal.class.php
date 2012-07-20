@@ -32,8 +32,7 @@
 require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/contact/class/contact.class.php");
-
-require_once(DOL_DOCUMENT_ROOT ."/marges/lib/marges.lib.php");
+require_once(DOL_DOCUMENT_ROOT ."/margin/lib/margins.lib.php");
 
 /**
  *	\class      Propal
@@ -401,7 +400,7 @@ class Propal extends CommonObject
 						// infos marge
 						$this->line->fk_fournprice = $fk_fournprice;
 						$this->line->pa_ht = $pa_ht;
-			
+
             // Mise en option de la ligne
             //if ($conf->global->PROPALE_USE_OPTION_LINE && !$qty) $ligne->special_code=3;
             if (empty($qty) && empty($special_code)) $this->line->special_code=3;
@@ -536,7 +535,7 @@ class Propal extends CommonObject
 						// infos marge
 			      $this->line->fk_fournprice = $fk_fournprice;
 						$this->line->pa_ht = $pa_ht;
-			
+
             // TODO deprecated
             $this->line->price=$price;
             $this->line->remise=$remise;
@@ -2464,7 +2463,7 @@ class PropaleLigne
     var $fk_remise_except;
 
     var $rang = 0;
-	
+
 		var $fk_fournprice;
 		var $pa_ht;
 		var $marge_tx;
@@ -2597,13 +2596,13 @@ class PropaleLigne
         if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
 
 		    if (empty($this->pa_ht)) $this->pa_ht=0;
-		
-				// si prix d'achat non renseigné et utilisé pour calcul des marges alors prix achat = prix vente (idem pour remises)
+
+				// si prix d'achat non renseignï¿½ et utilisï¿½ pour calcul des marges alors prix achat = prix vente (idem pour remises)
 				if ($this->pa_ht == 0) {
 		      if ($this->subprice < 0 || ($conf->global->CalculateMarginsOnLinesWithoutBuyingPrice == 1))
 		        $this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);
 		    }
-		
+
         // Check parameters
         if ($this->product_type < 0) return -1;
 
@@ -2735,8 +2734,8 @@ class PropaleLigne
         if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
 
 		    if (empty($this->pa_ht)) $this->pa_ht=0;
-		
-				// si prix d'achat non renseigné et utilisé pour calcul des marges alors prix achat = prix vente (idem pour remises)
+
+				// si prix d'achat non renseignï¿½ et utilisï¿½ pour calcul des marges alors prix achat = prix vente (idem pour remises)
 				if ($this->pa_ht == 0) {
 		      if ($this->subprice < 0 || ($conf->global->CalculateMarginsOnLinesWithoutBuyingPrice == 1))
 		        $this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);

@@ -328,8 +328,8 @@ function ajax_constantonoff($code,$input=array(),$entity=false)
 		});
 	</script>';
 
-	$out.= '<span id="set_'.$code.'" class="linkobject '.($conf->global->$code?'hideobject':'').'">'.img_picto($langs->trans("Disabled"),'switch_off').'</span>';
-	$out.= '<span id="del_'.$code.'" class="linkobject '.($conf->global->$code?'':'hideobject').'">'.img_picto($langs->trans("Enabled"),'switch_on').'</span>';
+	$out.= '<span id="set_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'hideobject':'').'">'.img_picto($langs->trans("Disabled"),'switch_off').'</span>';
+	$out.= '<span id="del_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'':'hideobject').'">'.img_picto($langs->trans("Enabled"),'switch_on').'</span>';
 
 	return $out;
 }

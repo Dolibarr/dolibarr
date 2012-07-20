@@ -33,8 +33,7 @@
 include_once(DOL_DOCUMENT_ROOT."/core/class/commoninvoice.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/product/class/product.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/societe/class/client.class.php");
-
-require_once(DOL_DOCUMENT_ROOT ."/marges/lib/marges.lib.php");
+require_once(DOL_DOCUMENT_ROOT ."/margin/lib/margins.lib.php");
 
 
 /**
@@ -1888,7 +1887,7 @@ class Facture extends CommonInvoice
         $qty=price2num($qty);
         $pu_ht=price2num($pu_ht);
         $pu_ttc=price2num($pu_ttc);
-        $pa_ht=price2num($pa_ht);         
+        $pa_ht=price2num($pa_ht);
         $txtva=price2num($txtva);
         $txlocaltax1=price2num($txlocaltax1);
         $txlocaltax2=price2num($txlocaltax2);
@@ -3105,7 +3104,7 @@ class FactureLigne
     var $remise_percent;	// % de la remise ligne (example 20%)
     var $fk_remise_except;	// Link to line into llx_remise_except
     var $rang = 0;
-	
+
   	var $fk_fournprice;
   	var $pa_ht;
   	var $marge_tx;
@@ -3265,13 +3264,13 @@ class FactureLigne
 
 
 		    if (empty($this->pa_ht)) $this->pa_ht=0;
-		
-				// si prix d'achat non renseigné et utilisé pour calcul des marges alors prix achat = prix vente (idem pour remises)
+
+				// si prix d'achat non renseignï¿½ et utilisï¿½ pour calcul des marges alors prix achat = prix vente (idem pour remises)
 				if ($this->pa_ht == 0) {
 		      if ($this->subprice < 0 || ($conf->global->CalculateMarginsOnLinesWithoutBuyingPrice == 1))
 		        $this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);
 		    }
-		
+
         // Check parameters
         if ($this->product_type < 0) return -1;
 
@@ -3427,8 +3426,8 @@ class FactureLigne
         if ($this->product_type < 0) return -1;
 
 		    if (empty($this->pa_ht)) $this->pa_ht=0;
-		
-				// si prix d'achat non renseigné et utilisé pour calcul des marges alors prix achat = prix vente (idem pour remises)
+
+				// si prix d'achat non renseignï¿½ et utilisï¿½ pour calcul des marges alors prix achat = prix vente (idem pour remises)
 				if ($this->pa_ht == 0) {
 		      if ($this->subprice < 0 || ($conf->global->CalculateMarginsOnLinesWithoutBuyingPrice == 1))
 		        $this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);

@@ -51,8 +51,8 @@ $langs->load('bills');
 $langs->load('companies');
 $langs->load('products');
 $langs->load('main');
-if ($conf->marges->enabled)
-  $langs->load('marges');
+if (! empty($conf->margin->enabled))
+  $langs->load('margins');
 
 $mesg='';
 $errors=array();
@@ -2766,7 +2766,7 @@ else if ($id > 0 || ! empty($ref))
         print '</table>';
 
 				// Margin Infos
-				if ($conf->marges->enabled) {
+				if (! empty($conf->margin->enabled)) {
 				  print '<br>';
 				  $object->displayMarginInfos($object->statut > 0);
 				}
