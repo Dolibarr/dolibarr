@@ -793,17 +793,19 @@ class DoliDBMysqli
         if (empty($charset))   $charset=$this->forcecharset;
         if (empty($collation)) $collation=$this->forcecollate;
 
+        $database = mysqli_real_escape_string($this->db, $database);
+        $collation = mysqli_real_escape_string($this->db, $collation);
+
         // ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
-        $sql = 'CREATE DATABASE '.$database;
-        $sql.= ' DEFAULT CHARACTER SET '.$charset.' DEFAULT COLLATE '.$collation;
+        $sql = "CREATE DATABASE `$database` DEFAULT CHARACTER SET `$charset` DEFAULT COLLATE `$collation`";
 
         dol_syslog($sql,LOG_DEBUG);
-        $ret=$this->query($sql);
+        $ret = $this->query($sql);
         if (! $ret)
         {
             // We try again for compatibility with Mysql < 4.1.1
-            $sql = 'CREATE DATABASE '.$database;
-            $ret=$this->query($sql);
+            $sql = "CREATE DATABASE `$database`";
+            $ret = $this->query($sql);
             dol_syslog($sql,LOG_DEBUG);
         }
         return $ret;
