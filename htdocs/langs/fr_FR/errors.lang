@@ -112,6 +112,7 @@ ErrorFileRequired=Il faut un fichier de package Dolibarr
 ErrorPhpCurlNotInstalled=L'extension PHP CURL n'est pas installée, ceci est indispensable pour dialoguer avec Paypal.
 
 # Warnings
+WarningMandatorySetupNotComplete=Les informations de configuration obligatoire doivent être renseignées
 WarningSafeModeOnCheckExecDir=Attention, l'option PHP <b>safe_mode</b> est active, la commande doit dont être dans un répertoire déclaré dans le paramètre php <b>safe_mode_exec_dir</b>.
 WarningAllowUrlFopenMustBeOn=Attention, le paramètre <b>allow_url_fopen</b> doit être positionné à <b>on</b> dans le fichier <b>php.ini</b> pour que ce module soit pleinement opérationnel. Vous devez modifier ce fichier manuellement.
 WarningBuildScriptNotRunned=Le script <b>%s</b> n'a pas encore été lancé pour générer les graphiques ou il n'y a aucune donnée à afficher.

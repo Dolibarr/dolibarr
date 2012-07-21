@@ -654,8 +654,20 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 $newmenu->add("/admin/index.php?mainmenu=home&leftmenu=setup", $langs->trans("Setup"), 0, 1, '', $mainmenu, 'setup');
                 if ($leftmenu=="setup")
                 {
-                    $newmenu->add("/admin/company.php?mainmenu=home", $langs->trans("MenuCompanySetup"),1);
-                    $newmenu->add("/admin/modules.php?mainmenu=home", $langs->trans("Modules"),1);
+                	$warnpicto='';
+                	if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_PAYS))
+                	{
+                		$langs->load("errors");
+                		$warnpicto=img_warning($langs->trans("WarningMandatorySetupNotComplete"));
+                	}
+                    $newmenu->add("/admin/company.php?mainmenu=home", $langs->trans("MenuCompanySetup").' '.$warnpicto,1);
+                    $warnpicto='';
+                	if (count($conf->modules) <= 1)	// If only user module enabled
+                	{
+                		$langs->load("errors");
+                		$warnpicto=img_warning($langs->trans("WarningMandatorySetupNotComplete"));
+                	}
+                    $newmenu->add("/admin/modules.php?mainmenu=home", $langs->trans("Modules").' '.$warnpicto,1);
                     $newmenu->add("/admin/menus.php?mainmenu=home", $langs->trans("Menus"),1);
                     $newmenu->add("/admin/ihm.php?mainmenu=home", $langs->trans("GUISetup"),1);
                     if (! in_array($langs->defaultlang,array('en_US','en_GB','en_NZ','en_AU','fr_FR','fr_BE','es_ES','ca_ES')))

@@ -11,9 +11,9 @@ CreateDeliveryOrder=Gerar Ordem de Entrega
 QtyDelivered=Quant. Enviada
 SetDeliveryDate=Indicar a Data de Envio
 ValidateDeliveryReceipt=Confirmar a Nota de Entrega
-ValidateDeliveryReceiptConfirm=? Tem certeza de que deseja confirmar esta entrega?
+ValidateDeliveryReceiptConfirm=Tem certeza de que deseja confirmar esta entrega?
 DeleteDeliveryReceipt=Apagar Recibo de Entrega
-DeleteDeliveryReceiptConfirm=? Tem certeza de que deseja apagar o recibo de entrega?
+DeleteDeliveryReceiptConfirm=Tem certeza de que deseja apagar o recibo de entrega?
 DeliveryMethod=Método de Envio
 TrackingNumber=N� de Tracking
 

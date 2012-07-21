@@ -329,6 +329,8 @@ SecurityTokenIsUnique=Utiliser un paramètre securekey unique pour chaque URL ?
 EnterRefToBuildUrl=Entrez la référence pour l'objet %s
 GetSecuredUrl=Obtenir l'URL calculée
 ButtonHideUnauthorized=Cacher les boutons non autorisés (au lieu de les voir grisés)
+TotalNumberOfActivatedModules=Nombre total de modules fonctionnels activés: <b>%s</b>
+YouMustEnableOneModule=Vous devez activer au moins une fonctionnalité
 
 # Modules= undefined
 Module0Name= Utilisateurs & groupes

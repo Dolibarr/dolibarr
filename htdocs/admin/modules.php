@@ -187,15 +187,20 @@ asort($orders);
 //var_dump($categ);
 //var_dump($modules);
 
-// Affichage debut page
+// Start to show page
 
 if ($mode==0) { $tagmode = 'common';      print $langs->trans("ModulesDesc")."<br>\n"; }
 if ($mode==2) { $tagmode = 'other';       print $langs->trans("ModulesSpecialDesc")."<br>\n"; }
 if ($mode==1) { $tagmode = 'interfaces';  print $langs->trans("ModulesInterfaceDesc")."<br>\n"; }
 if ($mode==3) { $tagmode = 'functional';  print $langs->trans("ModulesJobDesc")."<br>\n"; }
 if ($mode==4) { $tagmode = 'marketplace'; print $langs->trans("ModulesMarketPlaceDesc")."<br>\n"; }
-print "<br>\n";
 
+$nbofactivatedmodules=count($conf->modules);
+print $langs->trans("TotalNumberOfActivatedModules",($nbofactivatedmodules-1));
+if ($nbofactivatedmodules <= 1) print ' '.img_warning($langs->trans("YouMustEnableOneModule"));
+print '<br>'."\n";
+
+print "<br>\n";
 
 $h = 0;
 

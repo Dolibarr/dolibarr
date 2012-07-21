@@ -5,6 +5,8 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.3 compared to 3.2 *****
 For users:
+- New: After first install, warning are visible onto mandatory setup not
+  configured. Show also total number of activated modules.
 - New: Can filter list of proposal, order or invoice on sales representative.
 - New: Add supplier ref on supplier orders.
 - New: Can export supplier orders.
@@ -24,7 +26,7 @@ For users:
   to mysqldump binary.
 - New: Can correct stock of a warehouse from warehouse card.
 - New: [ task #454 ] Add "No category" into filters on category.
-- New: Update language files (de, tr).
+- New: Update language files (de, tr, pt).
 - Fix: No images into product description lines as PDF generation does
   not work with this.
 
