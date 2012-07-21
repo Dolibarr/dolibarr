@@ -51,3 +51,4 @@ ECMDirectoryForFiles=Directorio relativo para archivos
 CannotRemoveDirectoryContainsFiles=No se puede eliminar porque contiene archivos
 ECMFileManager=Explorador de archivos
 ECMSelectASection=Seleccione un directorio en el árbol de la izquierda
+View=Ver
