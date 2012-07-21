@@ -623,6 +623,8 @@ BySalesRepresentative=Por comercial
 LinkedToSpecificUsers=Enlazado a un contacto de usuario particular
 DeleteAFile=Eliminación de archivo
 ConfirmDeleteAFile=Confirma la eliminación del archivo
+View=Ver
+Server=Servidor
 
 # Week day
 Monday=Lunes
