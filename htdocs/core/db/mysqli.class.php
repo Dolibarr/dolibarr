@@ -798,17 +798,18 @@ class DoliDBMysqli
 
         // ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
         $sql = "CREATE DATABASE `$database` DEFAULT CHARACTER SET `$charset` DEFAULT COLLATE `$collation`";
-
         $ret = $this->query($sql);
+        
+        dol_syslog($sql,LOG_DEBUG);
         
         if (! $ret)
         {
             // We try again for compatibility with Mysql < 4.1.1
             $sql = "CREATE DATABASE `$database`";
             $ret = $this->query($sql);
-        }
 
-        dol_syslog($sql,LOG_DEBUG);
+            dol_syslog($sql,LOG_DEBUG);
+        }
 
         return $ret;
     }
