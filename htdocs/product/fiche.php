@@ -667,7 +667,10 @@ $helpurl='';
 if (GETPOST("type") == '0') $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 if (GETPOST("type") == '1')	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 
-llxHeader('',$langs->trans("CardProduct".$_GET["type"]),$helpurl);
+if (isset($_GET['type'])) $title = $langs->trans('CardProduct'.$_GET['type']);
+else $title = $langs->trans('ProductServiceCard');
+
+llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);
@@ -694,6 +697,9 @@ else
     // -----------------------------------------
     if ($action == 'create' && ($user->rights->produit->creer || $user->rights->service->creer))
     {
+        //WYSIWYG Editor
+        require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+
         print '<form action="fiche.php" method="post">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="add">';
@@ -744,8 +750,7 @@ else
         // Description (used in invoice, propal...)
         print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
 
-        require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-        $doleditor=new DolEditor('desc',$_POST["desc"],'',160,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,4,90);
+        $doleditor = new DolEditor('desc', $_POST["desc"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 90);
         $doleditor->Create();
 
         print "</td></tr>";
@@ -820,8 +825,8 @@ else
 
         // Note (private, no output on invoices, propales...)
         print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
-        require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-        $doleditor=new DolEditor('note',$_POST["note"],'',180,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,8,70);
+    
+        $doleditor = new DolEditor('note', $_POST["note"], '', 180, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 8, 70);
         $doleditor->Create();
 
         print "</td></tr>";
@@ -877,6 +882,9 @@ else
         // Fiche en mode edition
         if ($action == 'edit' && ($user->rights->produit->creer || $user->rights->service->creer))
         {
+            //WYSIWYG Editor
+            require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+
             $type = $langs->trans('Product');
             if ($object->isservice()) $type = $langs->trans('Service');
             print_fiche_titre($langs->trans('Modify').' '.$type.' : '.$object->ref, "");
@@ -931,9 +939,10 @@ else
 
             // Description (used in invoice, propal...)
             print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
-            require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-            $doleditor=new DolEditor('desc',$object->description,'',160,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,4,90);
+            
+            $doleditor = new DolEditor('desc', $object->description, '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 90);
             $doleditor->Create();
+
             print "</td></tr>";
             print "\n";
 
@@ -1023,9 +1032,10 @@ else
 
             // Note
             print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="2">';
-            require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-            $doleditor=new DolEditor('note',$object->note,'',200,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,8,70);
+            
+            $doleditor = new DolEditor('note', $object->note, '', 200, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 8, 70);
             $doleditor->Create();
+
             print "</td></tr>";
             print '</table>';
 

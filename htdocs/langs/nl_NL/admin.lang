@@ -1321,8 +1321,8 @@ GetSecuredUrl=Get berekend URL
 // Reference language: en_US -> nl_NL
 WebUserGroup=Webserver gebruiker / groep
 NoLockBeforeInsert=Geen lock-opdrachten rond INSERT
-Module105Name=Mailman en Sip
-Module105Desc=Mailman of Spip-interface voor leden-module
+Module105Name=Mailman en SPIP
+Module105Desc=Mailman of SPIP-interface voor leden-module
 Permission50001=Gebruik Verkooppunten
 SecurityEventsPurged=Beveiliging gebeurtenissen verwijderd
 ExtraFieldHasWrongValue=Toe te schrijven %s heeft een verkeerde waarde.
@@ -1330,5 +1330,5 @@ SendmailOptionMayHurtBuggedMTA=Feature om e-mails met behulp van methode &quot;P
 ServiceSetup=Services module setup
 ProductServiceSetup=Producten en Diensten modules setup
 ViewProductDescInThirdpartyLanguageAbility=Visualisatie van producten die beschrijvingen in de thirdparty taal
-MailmanSpipSetup=Mailman en Spip module Setup
+MailmanSpipSetup=Mailman en SPIP module Setup
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 17:12:32).
