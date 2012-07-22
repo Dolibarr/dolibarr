@@ -504,7 +504,7 @@ ShowCustomerPreview=Ver historial cliente
 ShowSupplierPreview=Ver historial proveedor
 ShowProspectPreview=Ver historial cliente potencial
 ShowAccountancyPreview=Ver historial contable
-RefCustomer=Ref. client
+RefCustomer=Ref. cliente
 Currency=Divisa
 InfoAdmin=Información para los administradores
 Undo=Anular
@@ -623,6 +623,8 @@ BySalesRepresentative=Por comercial
 LinkedToSpecificUsers=Enlazado a un contacto de usuario particular
 DeleteAFile=Eliminación de archivo
 ConfirmDeleteAFile=Confirma la eliminación del archivo
+View=Ver
+Server=Servidor
 
 # Week day
 Monday=Lunes

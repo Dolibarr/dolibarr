@@ -75,7 +75,7 @@ print "<br>\n";
 
 // Php
 print '<table class="noborder" width="100%">';
-print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Php")."</td></tr>\n";
+print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("PHP")."</td></tr>\n";
 $phpversion=version_php();
 print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>".$phpversion."</td></tr>\n";
 print "<tr $bc[1]><td>".$langs->trans("PhpWebLink")."</td><td>".php_sapi_name()."</td></tr>\n";

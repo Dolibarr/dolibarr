@@ -503,7 +503,6 @@ Port=Порт
 VirtualServerName=Виртуальный сервер Имя
 AllParameters=Все параметры
 OS=OS
-Php=Php
 PhpEnv=Env
 PhpModules=Модули
 PhpConf=Conf

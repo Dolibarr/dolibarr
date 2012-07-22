@@ -1288,8 +1288,8 @@ UrlGenerationParameters=Parametri za zagotovitev URL
 SecurityTokenIsUnique=Uporabite edinstven parameter securekey za vsako URL
 EnterRefToBuildUrl=Vnesite sklic za predmet %s
 GetSecuredUrl=Get izračuna URL
-Module105Name=Mailman in Sip
-Module105Desc=Mailman ali Spip vmesnik za modul člana
+Module105Name=Mailman in SPIP
+Module105Desc=Mailman ali SPIP vmesnik za modul člana
 SecurityEventsPurged=Varnostni dogodki očistimo
 ExtraFieldHasWrongValue=Pripišejo %s ima napačno vrednost.
 SendmailOptionMayHurtBuggedMTA=Funkcija za pošiljanje pošte z uporabo metode &quot;PHP mail DIRECT&quot; bo ustvarila poštno sporočilo, ki ga ni mogoče pravilno razčleniti z nekaterimi, ki so prejemali poštnih strežnikov. Posledica tega je, da so nekatere pošte ne berejo ljudje, ki jih gosti thoose bugged platforme. To je veljalo za nekaj internetnih ponudnikov (npr.: Orange v Franciji). To ni problem v Dolibarr niti v PHP, ampak na prejemanje poštni strežnik. Lahko pa dodate možnost MAIN_FIX_FOR_BUGGED_MTA 1. v setup - drugo spremeniti Dolibarr, da bi se temu izognili. Vendar pa lahko pride do težav z drugimi strežniki, ki spoštujejo strogo standardni SMTP. Druga rešitev (priporočile) je uporaba metode &quot;SMTP socket knjižnice&quot;, ki nima slabosti.
@@ -1300,5 +1300,5 @@ ServiceSetup=Storitve modul nastavitev
 ProductServiceSetup=Izdelki in storitve moduli za nastavitev
 ViewProductDescInThirdpartyLanguageAbility=Vizualizacija Poimenovanja izdelkov v thirdparty jeziku
 AccountancyCode=Računovodstvo zakonik
-MailmanSpipSetup=Mailman in namestitveni modul Spip
+MailmanSpipSetup=Mailman in namestitveni modul SPIP
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 17:31:09).
