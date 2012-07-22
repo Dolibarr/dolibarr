@@ -34,6 +34,8 @@ require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 
 dol_syslog("Call Dolibarr webservices interfaces");
 
+$langs->load("main");
+
 // Enable and test if module web services is enabled
 if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
