@@ -938,7 +938,7 @@ if ($action == 'edit')
 	$morphys["phy"] = $langs->trans("Physical");
 	$morphys["mor"] = $langs->trans("Morale");
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Nature").'</span></td><td>';
-	print $form->selectarray("morphy",  $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy);
+	print $form->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy);
 	print "</td>";
     // Photo
     print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
@@ -958,7 +958,7 @@ if ($action == 'edit')
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Type").'</span></td><td>';
     if ($user->rights->adherent->creer)
     {
-        print $form->selectarray("typeid",  $adht->liste_array(), (isset($_POST["typeid"])?$_POST["typeid"]:$object->typeid));
+        print $form->selectarray("typeid", $adht->liste_array(), (isset($_POST["typeid"])?$_POST["typeid"]:$object->typeid));
     }
     else
     {

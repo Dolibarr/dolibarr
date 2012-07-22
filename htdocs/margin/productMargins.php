@@ -54,9 +54,9 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 if (!empty($_POST['startdatemonth']))
-  $startdate  = date('Y-m-d', dol_mktime(12, 0, 0, $_POST['startdatemonth'],  $_POST['startdateday'],  $_POST['startdateyear']));
+  $startdate  = date('Y-m-d', dol_mktime(12, 0, 0, $_POST['startdatemonth'], $_POST['startdateday'], $_POST['startdateyear']));
 if (!empty($_POST['enddatemonth']))
-  $enddate  = date('Y-m-d', dol_mktime(12, 0, 0, $_POST['enddatemonth'],  $_POST['enddateday'],  $_POST['enddateyear']));
+  $enddate  = date('Y-m-d', dol_mktime(12, 0, 0, $_POST['enddatemonth'], $_POST['enddateday'], $_POST['enddateyear']));
 
 /*
  * View
@@ -76,7 +76,7 @@ print_fiche_titre($text);
 // Show tabs
 $head=marges_prepare_head($user);
 $titre=$langs->trans("Margins");
-$picto='marges@marges';
+$picto='marges';
 dol_fiche_head($head, 'productMargins', $titre, 0, $picto);
 
 print '<form method="post" name="sel">';
@@ -89,7 +89,7 @@ if ($id > 0) {
 
   print '<tr><td width="20%">'.$langs->trans('ChooseProduct/Service').'</td>';
   print '<td colspan="4">';
-  print $form->select_produits($selected=$id,$htmlname='id',$filtertype='',$limit=20,$price_level=0,$status=1,$finished=2,$selected_input_value='',$hidelabel=1);
+  print $form->select_produits($selected=$id, $htmlname='id', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=1);
   print '</td></tr>';
 
   print '<tr><td width="20%">'.$langs->trans('AllProducts').'</td>';
@@ -101,7 +101,7 @@ if ($id > 0) {
 else {
   print '<tr><td width="20%">'.$langs->trans('ChooseProduct/Service').'</td>';
   print '<td colspan="4">';
-  print $form->select_produits($selected='',$htmlname='id',$filtertype='',$limit=20,$price_level=0,$status=1,$finished=2,$selected_input_value='',$hidelabel=1);
+  print $form->select_produits($selected='', $htmlname='id', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=1);
    print '</td></tr>';
   if (! $sortorder) $sortorder="ASC";
   if (! $sortfield) $sortfield="p.ref";
@@ -206,8 +206,8 @@ if ($result)
 		{
 			$objp = $db->fetch_object($result);
 
-			$marginRate = ($objp->buying_price != 0)?(100 * round($objp->marge / $objp->buying_price ,5)):'' ;
-			$markRate = ($objp->selling_price != 0)?(100 * round($objp->marge / $objp->selling_price ,5)):'' ;
+			$marginRate = ($objp->buying_price != 0)?(100 * round($objp->marge / $objp->buying_price, 5)):'' ;
+			$markRate = ($objp->selling_price != 0)?(100 * round($objp->marge / $objp->selling_price, 5)):'' ;
 
 			$var=!$var;
 
