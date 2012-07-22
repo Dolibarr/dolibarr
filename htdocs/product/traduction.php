@@ -157,6 +157,9 @@ print '</table>';
 
 if ($_GET["action"] == 'edit')
 {
+	//WYSIWYG Editor
+	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+
 	print '<form action="" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="vedit">';
@@ -168,14 +171,16 @@ if ($_GET["action"] == 'edit')
 		print '<table class="border" width="100%">';
 		print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$product->multilangs[$key]["libelle"].'"></td></tr>';
 		print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td>';
-		require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-		$doleditor=new DolEditor('desc-'.$key.'',$product->multilangs[$key]["description"],'',160,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,3,80);
+		
+		$doleditor = new DolEditor("desc-$key", $product->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
 		$doleditor->Create();
+
 		print '</td></tr>';
 		print '<tr><td valign="top" width="15%">'.$langs->trans('Note').'</td><td>';
-		require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-		$doleditor=new DolEditor('note-'.$key.'',$product->multilangs[$key]["note"],'',160,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,3,80);
+		
+		$doleditor = new DolEditor("note-$key", $product->multilangs[$key]["note"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
 		$doleditor->Create();
+
 		print '</td></tr>';
 		print '</tr>';
 		print '</table>';
@@ -232,6 +237,9 @@ print "\n</div>\n";
 
 if ($_GET["action"] == 'add' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
+	//WYSIWYG Editor
+	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+
 	print '<br>';
 	print '<form action="" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -244,14 +252,16 @@ if ($_GET["action"] == 'add' && ($user->rights->produit->creer || $user->rights-
 	print '</td></tr>';
 	print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
 	print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td>';
-	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-	$doleditor=new DolEditor('desc','','',160,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,3,80);
+	
+	$doleditor = new DolEditor('desc', '', '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
 	$doleditor->Create();
+
 	print '</td></tr>';
 	print '<tr><td valign="top" width="15%">'.$langs->trans('Note').'</td><td>';
-	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-	$doleditor=new DolEditor('note','','',160,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,3,80);
+	
+	$doleditor = new DolEditor('note', '', '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
 	$doleditor->Create();
+	
 	print '</td></tr>';
 	print '</tr>';
 	print '</table>';

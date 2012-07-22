@@ -631,7 +631,6 @@ Port=港口
 VirtualServerName=虚拟服务器名称
 AllParameters=所有参数
 OS=操作系统
-Php=腓
 PhpEnv=包膜
 PhpModules=模块
 PhpConf=机密档案

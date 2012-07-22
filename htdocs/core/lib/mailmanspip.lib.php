@@ -40,7 +40,7 @@ function mailmanspip_admin_prepare_head($object)
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/adherents/admin/spip.php';
-    $head[$h][1] = $langs->trans("Spip");
+    $head[$h][1] = $langs->trans("SPIP");
     $head[$h][2] = 'spip';
     $h++;
 

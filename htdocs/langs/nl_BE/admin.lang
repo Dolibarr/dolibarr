@@ -498,7 +498,6 @@ Port=Port
 VirtualServerName=Virtuele server naam
 AllParameters=Alle parameters
 OS=OS
-Php=Php
 PhpEnv=Env
 PhpModules=Modules
 PhpConf=Conf

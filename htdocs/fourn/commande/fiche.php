@@ -1346,6 +1346,9 @@ if ($id > 0 || ! empty($ref))
          */
         if ($object->statut == 0 && $user->rights->fournisseur->commande->creer && $action <> 'editline')
         {
+            //WYSIWYG Editor
+            require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+
             print '<tr class="liste_titre">';
             print '<td>';
             print '<a name="add"></a>'; // ancre
@@ -1372,11 +1375,9 @@ if ($id > 0 || ! empty($ref))
             if ($forceall || ($conf->product->enabled && $conf->service->enabled)
             || (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
 
-            // Editor wysiwyg
-            require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
             $nbrows=ROWS_2;
             if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-            $doleditor=new DolEditor('dp_desc',$_POST["dp_desc"],'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+            $doleditor = new DolEditor('dp_desc', $_POST["dp_desc"], '', 100, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, $nbrows, 70);
             $doleditor->Create();
 
             print '</td>';
@@ -1430,11 +1431,9 @@ if ($id > 0 || ! empty($ref))
 				    echo $hookmanager->executeHooks('formCreateProductSupplierOptions',$parameters,$object,$action);
 				}
 
-                // Editor wysiwyg
-                require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
                 $nbrows=ROWS_2;
                 if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-                $doleditor=new DolEditor('np_desc',$_POST["np_desc"],'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+                $doleditor = new DolEditor('np_desc', $_POST["np_desc"], '', 100, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, $nbrows, 70);
                 $doleditor->Create();
 
                 print '</td>';

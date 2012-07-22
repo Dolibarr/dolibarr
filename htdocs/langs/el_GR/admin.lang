@@ -530,7 +530,6 @@ Port=Θύρα
 VirtualServerName=Virtual server name
 AllParameters=Όλοι οι παράμετροι
 OS=Λ.Σ.
-Php=Php
 PhpEnv=Περ/λλον
 PhpModules=Αρθρώματα
 PhpConf=Conf

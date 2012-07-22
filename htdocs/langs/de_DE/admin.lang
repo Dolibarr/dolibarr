@@ -383,8 +383,8 @@ Module85Name=Banken und Geld
 Module85Desc=Verwaltung von Bank- oder Bargeldkonten
 Module100Name=Externe Website
 Module100Desc=Erlaubt die Einbindung einer externen Website in die Menüs von dolibarr und die Anzeige der Seite innerhalb eines Frames
-Module105Name=Mailman und Sip
-Module105Desc=Mailman oder Spip Schnittstelle für die Mitgliedsmodul
+Module105Name=Mailman und SPIP
+Module105Desc=Mailman oder SPIP Schnittstelle für die Mitgliedsmodul
 Module200Name=LDAP
 Module200Desc=LDAP-Verzeichnissynchronisation
 Module210Name=PostNuke
@@ -711,7 +711,6 @@ Port=Port
 VirtualServerName=Name des Virtual-Server
 AllParameters=Alle Parameter
 OS=OS
-Php=PHP
 PhpEnv=Env
 PhpModules=Module
 PhpConf=Config
@@ -1291,7 +1290,7 @@ BankOrderGlobalDesc=Allgemeine Anzeige-Reihenfolge
 BankOrderES=Spanisch
 BankOrderESDesc=Spanisch Anzeigereihenfolge
 ##### MailmanSpip #####
-MailmanSpipSetup=Mailman und Spip Modul-Setup
+MailmanSpipSetup=Mailman und SPIP Modul-Setup
 ##### Multicompany #####
 MultiCompanySetup=Multi-Company-Moduleinstellungen
 ##### Suppliers #####
