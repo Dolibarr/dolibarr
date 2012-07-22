@@ -164,26 +164,6 @@ AddFiles=Ajouter des fichiers
 StartUpload=Transférer
 CancelUpload=Annuler le transfert
 FileIsTooBig=Le fichier est trop volumineux
-
-##### Bookmark #####
-Bookmark=Marque-page
-Bookmarks=Marque-pages
-NewBookmark=Nouveau marque-page
-ShowBookmark=Afficher marque-page
-BookmarkThisPage=Marquer cette page dans ses favoris Dolibarr
-OpenANewWindow=Ouvrir une nouvelle fenêtre
-ReplaceWindow=Remplacer fenêtre courante
-BookmarkTargetNewWindowShort=Nouvelle fenêtre
-BookmarkTargetReplaceWindowShort=Fenêtre courante
-BookmarkTitle=Titre du marque-page
-UrlOrLink=URL
-BehaviourOnClick=Comportement sur clic de l'URL
-CreateBookmark=Créer marque-page
-SetHereATitleForLink=Saisir ici un titre pour le marque-page
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Saisir une URL http externe ou une URL Dolibarr relative
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choisir si le raccourci doit ouvrir la page dans une nouvelle fenêtre ou fenêtre courante
-BookmarksManagement=Gestion des marque-pages
-ListOfBookmarks=Liste des marque-pages
 ##### Calendar common #####
 AddCalendarEntry=Ajouter entrée dans le calendrier %s
 NewCompanyToDolibarr=Société %s ajoutée dans Dolibarr

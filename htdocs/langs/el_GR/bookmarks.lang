@@ -8,7 +8,23 @@
 // START - Lines generated via autotranslator.php tool (2011-06-26 15:35:22).
 // Reference language: en_US -> el_GR
 CHARSET=UTF-8
-Bookm=Σελιδοδείκτες
-NewBookmark=Νέος σελιδοδείκτης
 AddThisPageToBookmarks=Προσθέστε αυτή τη σελίδα στους σελιδοδείκτες
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:36:49).
+
+Bookmark=Σελιδοδείκτης
+Bookmarks=Σελιδοδείκτες
+NewBookmark=Νέος σελιδοδείκτης
+ShowBookmark=Εμφάνιση σελιδοδείκτη
+OpenANewWindow=Άνοιγμα νέου παραθύρου
+ReplaceWindow=Αντικατάσταση τρέχοντος παραθύρου
+BookmarkTargetNewWindowShort=Νέο παράθυρο
+BookmarkTargetReplaceWindowShort=Τρέχων παράθυρο
+BookmarkTitle=Τίτλος σελιδοδείκτη
+UrlOrLink=URL
+BehaviourOnClick=Behaviour when a URL is clicked
+CreateBookmark=Δημιουργία σελιδοδείκτη
+SetHereATitleForLink=Ορισμός τίτλου για τον σελιδοδείκτη
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external http URL or a relative Dolibarr URL
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if a page opened by link must appear on current or new window
+BookmarksManagement=Διαχείριση σελιδοδεικτών
+ListOfBookmarks=Λίστα σελιδοδεικτών

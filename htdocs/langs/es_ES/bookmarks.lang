@@ -1,5 +1,20 @@
 # Dolibarr language file - es_ES - marque pages 
-CHARSET= UTF-8
-Bookm= Marcadores
-NewBookmark= Nuevo Marcador
-AddThisPageToBookmarks= Añadir esta página en los marcadores
+CHARSET=UTF-8
+AddThisPageToBookmarks= Añadir esta página a los marcadores
+Bookmark=Marcador
+Bookmarks=Marcadores
+NewBookmark=Nuevo marcador
+ShowBookmark=Mostrar marcadores
+OpenANewWindow=Abrir una nueva ventana
+ReplaceWindow=Reemplazar la ventana actual
+BookmarkTargetNewWindowShort=Nueva ventana
+BookmarkTargetReplaceWindowShort=Ventana actual
+BookmarkTitle=Título del marcador
+UrlOrLink=URL
+BehaviourOnClick=Comportamiento al hacer clic en la URL
+CreateBookmark=Crear marcador
+SetHereATitleForLink=Indicar aquí un título para el marcador
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Indicar una URL http externa o una URL Dolibarr relativa
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Elegir si debe abrirse la página en una nueva ventana o en la actual
+BookmarksManagement=Gestión de marcadores
+ListOfBookmarks=Listado de marcadores
