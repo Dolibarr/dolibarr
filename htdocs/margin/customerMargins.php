@@ -70,7 +70,7 @@ print_fiche_titre($text);
 // Show tabs
 $head=marges_prepare_head($user);
 $titre=$langs->trans("Margins");
-$picto='marges@marges';
+$picto='marges';
 dol_fiche_head($head, 'customerMargins', $titre, 0, $picto);
 
 print '<form method="post" name="sel">';
