@@ -78,9 +78,9 @@ clearstatcache();
 
 $workflowcodes=array(
 	'WORKFLOW_PROPAL_AUTOCREATE_ORDER'=>array('enabled'=>($conf->propal->enabled && $conf->commande->enabled), 'picto'=>'order'),
-	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array('enabled'=>($conf->propal->enabled && $conf->commande->enabled), 'picto'=>'order'),
+	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array('enabled'=>($conf->propal->enabled && $conf->commande->enabled), 'picto'=>'order','warning'=>'WarningCloseAlways'),
 	'WORKFLOW_ORDER_AUTOCREATE_INVOICE'=>array('enabled'=>($conf->commande->enabled && $conf->facture->enabled), 'picto'=>'bill'),
-	'WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER'=>array('enabled'=>($conf->facture->enabled && $conf->commande->enabled), 'picto'=>'bill'),
+	'WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER'=>array('enabled'=>($conf->facture->enabled && $conf->commande->enabled), 'picto'=>'bill','warning'=>'WarningCloseAlways'),
 );
 
 if (! empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow'])) $workflow = array_merge($workflow, $conf->modules_parts['workflow']);
@@ -96,7 +96,13 @@ foreach($workflowcodes as $key => $tmparray)
    	$nbqualified++;
 	$var = !$var;
    	print "<tr ".$bc[$var].">\n";
-   	print "<td>".img_object('', $picto).$langs->trans('desc'.$key)."</td>\n";
+   	print "<td>".img_object('', $picto).$langs->trans('desc'.$key);
+   	if (! empty($tmparray['warning']))
+   	{
+   		$langs->load("errors");
+   		print ' '.img_warning($langs->transnoentitiesnoconv($tmparray['warning']));
+   	}
+   	print "</td>\n";
    	print '<td align="center">';
    	if ($conf->use_javascript_ajax)
    	{

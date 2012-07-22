@@ -264,7 +264,7 @@
             <date_creation xsi:type="xsd:dateTime">2012-01-01</date_creation>
             <date_validation xsi:type="xsd:dateTime">2012-01-01</date_validation>
             <date_modification xsi:type="xsd:dateTime">2012-01-01</date_modification>
-            <type xsi:type="xsd:int">1</type>
+            <type xsi:type="xsd:int">0</type>
             <total_net xsi:type="xsd:double">?</total_net>
             <total_vat xsi:type="xsd:double">?</total_vat>
             <total xsi:type="xsd:double">?</total>
