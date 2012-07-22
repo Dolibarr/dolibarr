@@ -3,5 +3,16 @@
 // Reference language: en_US -> it_IT
 CHARSET				=UTF-8
 AddThisPageToBookmarks		=Aggiungi segnalibro per questa pagina
-Bookm				=Segnalibri
-NewBookmark			=Nuovo segnalibro
+
+Bookmark					     =Segnalibro
+BookmarksManagement				     =Gestione segnalibri
+Bookmarks					     =Segnalibri
+BookmarkTargetNewWindowShort			     =Nuova finestra 
+BookmarkTargetReplaceWindowShort		     =Finestra corrente 
+BookmarkTitle					     =Titolo segnalibro
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark	     =Scegli se caricare la pagina del collegamento in questa finestra o in una nuova 
+CreateBookmark					     =Crea segnalibro
+ListOfBookmarks					     =Elenco segnalibri
+NewBookmark					     =Nuovo segnalibro
+ShowBookmark					     =Visualizza segnalibro
+UrlOrLink					     =URL o link

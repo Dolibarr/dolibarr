@@ -8,7 +8,23 @@
 // START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
 // Reference language: en_US
 CHARSET=UTF-8
-Bookm=Bogmærker
-NewBookmark=Nyt bogmærke
 AddThisPageToBookmarks=Tilføj denne side til bogmærker
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+
+Bookmark=Bookmark
+Bookmarks=Bogmærker
+NewBookmark=Nyt bogmærke
+ShowBookmark=Vis bogmærke
+OpenANewWindow=Åbn et nyt vindue
+ReplaceWindow=Erstat aktuelle vindue
+BookmarkTargetNewWindowShort=Nyt vindue
+BookmarkTargetReplaceWindowShort=Aktuelle vindue
+BookmarkTitle=Bogmærketitel
+UrlOrLink=URL
+BehaviourOnClick=Adfærd på klikker på URL
+CreateBookmark=Opret bogmærke
+SetHereATitleForLink=Set her en titel til bogmærke
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Brug en ekstern http URL eller en relativ Dolibarr URL
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Vælg om side åbnet ved linket skal stå på nuværende eller nyt vindue
+BookmarksManagement=Bogmærker forvaltning
+ListOfBookmarks=Liste over bogmærker

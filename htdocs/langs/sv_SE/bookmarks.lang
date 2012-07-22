@@ -4,16 +4,26 @@
  * Generation date 2011-10-10 02:45:33
  */
 
-
 // START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
 // Reference language: en_US -> sv_SE
 CHARSET=UTF-8
-NewBookmark=Nytt bokmärke
 AddThisPageToBookmarks=Lägg till sidan som bokmärken
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:05:10).
 
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
-// Reference language: en_US -> sv_SE
-Bookm=Bokmärken
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:21).
+Bookmark=Bokmärk
+Bookmarks=Bokmärken
+NewBookmark=Nytt bokmärke
+ShowBookmark=Visa bokmärke
+OpenANewWindow=Öppna ett nytt fönster
+ReplaceWindow=Ersätt aktuella fönstret
+BookmarkTargetNewWindowShort=Nytt fönster
+BookmarkTargetReplaceWindowShort=Nuvarande fönster
+BookmarkTitle=Bokmärk titel
+UrlOrLink=URL
+BehaviourOnClick=Beteende när en webbadress klickar på
+CreateBookmark=Skapa bokmärke
+SetHereATitleForLink=Ange en titel för bokmärket
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Använd en extern http URL eller en relativ Dolibarr URL
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Välj om en sida som öppnas genom länken skall finnas på nuvarande eller nya fönster
+BookmarksManagement=Bokmärken förvaltning
+ListOfBookmarks=Listan över bokmärken
