@@ -8,7 +8,23 @@
 // START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
 // Reference language: en_US
 CHARSET=UTF-8
-Bookm=Kirjanmerkit
-NewBookmark=Uusi kirjanmerkki
 AddThisPageToBookmarks=Lisää tämä sivu kirjanmerkkeihin
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+
+Bookmark=Lempparit
+Bookmarks=Kirjanmerkit
+NewBookmark=Uusi kirjanmerkki
+ShowBookmark=Näytä kirjanmerkki
+OpenANewWindow=Avaa uusi ikkuna
+ReplaceWindow=Korvaa nykyisen ikkunan
+BookmarkTargetNewWindowShort=Uusi ikkuna
+BookmarkTargetReplaceWindowShort=Nykyinen ikkuna
+BookmarkTitle=Kirjanmerkin nimi
+UrlOrLink=URL
+BehaviourOnClick=Käyttäytyminen klikkaa URL
+CreateBookmark=Luo kirjanmerkki
+SetHereATitleForLink=Aseta tässä otsikon kirjanmerkki
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Käytä ulkoista http URL tai suhteellisen Dolibarr URL
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Valitse jos sivu avattu yhteys on oltava nykyiseen tai uuteen ikkunaan
+BookmarksManagement=Kirjanmerkkien hallinta
+ListOfBookmarks=Luetteloosi

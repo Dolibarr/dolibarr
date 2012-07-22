@@ -8,7 +8,23 @@
 // START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
 // Reference language: en_US -> is_IS
 CHARSET=UTF-8
-Bookm=Bókamerki
-NewBookmark=Nýtt bókamerki
 AddThisPageToBookmarks=Bæta síðunni við bókamerki
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:03:51).
+
+Bookmark=Bookmark
+Bookmarks=Bókamerki
+NewBookmark=Nýtt bókamerki
+ShowBookmark=Sýna bókamerki
+OpenANewWindow=Opna nýjan glugga
+ReplaceWindow=Skipta um glugga
+BookmarkTargetNewWindowShort=Nýr gluggi
+BookmarkTargetReplaceWindowShort=Núverandi gluggi
+BookmarkTitle=Bókamerki titill
+UrlOrLink=URL
+BehaviourOnClick=Hegðun þegar slóðin er smellt
+CreateBookmark=Búa til bókamerki
+SetHereATitleForLink=Setja inn titil fyrir bókamerkið
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Notaðu utanáliggjandi http URL eða ættingja Dolibarr URL
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Veldu hvort á síðu opnar tengil á að birtast á núverandi eða nýr gluggi
+BookmarksManagement=Bókamerki stjórnun
+ListOfBookmarks=Listi yfir bókamerki

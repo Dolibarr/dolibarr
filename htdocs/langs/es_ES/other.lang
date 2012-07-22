@@ -164,25 +164,6 @@ AddFiles=Añadir archivos
 StartUpload=Transferir
 CancelUpload=Cancelar la transferencia
 FileIsTooBig=El archivo es demasiado grande
-##### Bookmark #####
-Bookmark=Marcador
-Bookmarks=Marcadores
-NewBookmark=Nuevo marcador
-ShowBookmark=Mostrar marcadores
-BookmarkThisPage=Añadir esta página a sus marcadores
-OpenANewWindow=Abrir una nueva ventana
-ReplaceWindow=Reemplazar la ventana actual
-BookmarkTargetNewWindowShort=Nueva ventana
-BookmarkTargetReplaceWindowShort=Ventana actual
-BookmarkTitle=Título del marcador
-UrlOrLink=URL
-BehaviourOnClick=Comportamiento al hacer clic en la URL
-CreateBookmark=Crear marcador
-SetHereATitleForLink=Indicar aquí un título para el marcador
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Indicar un URL http externo o un URL Dolibarr relativo
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Elegir si debe abrirse la página en una nueva ventana o en la actual
-BookmarksManagement=Gestión de marcadores
-ListOfBookmarks=Listado de marcadores
 ##### Calendar common #####
 AddCalendarEntry=Añadir entrada en el calendario
 NewCompanyToDolibarr=Empresa %s insertada en Dolibarr

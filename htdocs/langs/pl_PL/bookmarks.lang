@@ -8,7 +8,23 @@
 // START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
 // Reference language: en_US
 CHARSET=UTF-8
-Bookm=Zakładki
-NewBookmark=Nowa zakładka
 AddThisPageToBookmarks=Dodaj tę stronę do zakładek
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+
+Bookmark=Zakładka
+Bookmarks=Zakładki
+NewBookmark=Nowa zakładka
+ShowBookmark=Pokaż zakładki
+OpenANewWindow=Otwórz nowe okno
+ReplaceWindow=Wymień bieżącym oknie
+BookmarkTargetNewWindowShort=Nowe okno
+BookmarkTargetReplaceWindowShort=Aktualne okno
+BookmarkTitle=Bookmark tytuł
+UrlOrLink=URL
+BehaviourOnClick=Zachowanie na kliknąć na adres URL
+CreateBookmark=Utwórz zakładkę
+SetHereATitleForLink=Ustaw tutaj tytuł zakładki
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Użyj zewnętrznego adresu http lub względny URL Dolibarr
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Wybierz stronę, jeżeli otwarte przez związek musi znajdować się na obecnym lub nowym oknie
+BookmarksManagement=Zakładki zarządzania
+ListOfBookmarks=Lista zakładek

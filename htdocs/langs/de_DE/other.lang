@@ -173,26 +173,6 @@ StartUpload=Hochladen starten
 CancelUpload=Hochladen abbrechen
 FileIsTooBig=Dateien sind zu groß
 
-##### Bookmark #####
-Bookmark=Lesezeichen
-Bookmarks=Lesezeichen
-NewBookmark=Neues Lesezeichen
-ShowBookmark=Zeige Lesezeichen
-BookmarkThisPage=Für diese Seite Lesezeichen hinzufügen
-OpenANewWindow=Neues Fenster öffnen
-ReplaceWindow=Aktuelles Fenster ersetzen
-BookmarkTargetNewWindowShort=Neues Fenster
-BookmarkTargetReplaceWindowShort=Aktuelles Fenster
-BookmarkTitle=Titel des Lesezeichens
-UrlOrLink=URL oder Link
-BehaviourOnClick=Verhalten bei Klick auf den Link
-CreateBookmark=Erstelle Lesezeichen
-SetHereATitleForLink=Geben Sie hier einen Linktitel ein
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Verwenden Sie eine externe http-URL oder eine URL relativ zum Systempfad
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Bitte wählen Sie, ob sich ein geklickter Link in einem neuen oder demselben Fenster öffnet
-BookmarksManagement=Lesezeichen verwalten
-ListOfBookmarks=Liste der Lesezeichen
-
 ##### Calendar common #####
 AddCalendarEntry=Neuer Eintrag im Kalender %s
 NewCompanyToDolibarr=Partner %s hinzugefügt 
