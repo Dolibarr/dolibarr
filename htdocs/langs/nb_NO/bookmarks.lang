@@ -4,16 +4,28 @@
  * Generation date 2011-10-10 02:45:33
  */
 
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> nb_NO
 CHARSET=UTF-8
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:04:31).
-
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
 // Reference language: en_US -> nb_NO
-Bookm=Bokmerker
-NewBookmark=Nytt bokmerke
+
 AddThisPageToBookmarks=Legg denne siden til bokmerker
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 17:06:59).
+
+Bookmark=Bokmerke
+Bookmarks=Bokmerker
+NewBookmark=Legg til bokmerke
+ShowBookmark=Vis bokmerke
+OpenANewWindow=Åpne et nytt vindu
+ReplaceWindow=Erstatt gjeldende vindu
+BookmarkTargetNewWindowShort=Nytt vindu
+BookmarkTargetReplaceWindowShort=Gjeldende vindu
+BookmarkTitle=Bokmerketittel
+UrlOrLink=URL
+BehaviourOnClick=URL åpner på følgende måte
+CreateBookmark=Opprett bokmerke
+SetHereATitleForLink=Angi tittel for bokmerket
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Bruk en ekstern http URL eller en relativ Dolibarr URL
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Velg om siden skal åpnes i nytt vindu eller i samme vindu
+BookmarksManagement=Behandling av bokmerker
+ListOfBookmarks=Oversikt over bokmerker

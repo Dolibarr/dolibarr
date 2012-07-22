@@ -79,26 +79,6 @@ NewSizeAfterCropping=Νέο μέγεθος μετά το ψαλίδισμα
 ImageEditor=Επεξεργαστής εικόνας
 YouReceiveMailBecauseOfNotification2=Το γεγονός είναι το ακόλουθο:
 ClickHere=Πατήστε εδώ
-
-##### Bookmark #####
-Bookmark=Σελιδοδείκτης
-Bookmarks=Σελιδοδείκτες
-NewBookmark=Νέος σελιδοδείκτης
-ShowBookmark=Εμφάνιση σελιδοδείκτη
-BookmarkThisPage=Προσθήκη σελιδοδείκτη για την σελίδα
-OpenANewWindow=Άνοιγμα νέου παραθύρου
-ReplaceWindow=Αντικατάσταση τρέχοντος παραθύρου
-BookmarkTargetNewWindowShort=Νέο παράθυρο
-BookmarkTargetReplaceWindowShort=Τρέχων παράθυρο
-BookmarkTitle=Τίτλος σελιδοδείκτη
-UrlOrLink=URL
-BehaviourOnClick=Behaviour when a URL is clicked
-CreateBookmark=Δημιουργία σελιδοδείκτη
-SetHereATitleForLink=Ορισμός τίτλου για τον σελιδοδείκτη
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external http URL or a relative Dolibarr URL
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if a page opened by link must appear on current or new window
-BookmarksManagement=Διαχείριση σελιδοδεικτών
-ListOfBookmarks=Λίστα σελιδοδεικτών
 ##### Calendar common #####
 AddCalendarEntry=Προσθήκη εγγραφής στο ημερολόγιο %s
 NewCompanyToDolibarr=Η εταιρία %s προστέθηκε στο Dolibarr

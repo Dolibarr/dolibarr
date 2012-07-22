@@ -1,5 +1,21 @@
 # Dolibarr language file - en_US - marque pages = 
 CHARSET = UTF-8
-Bookm = Zaznamki
-NewBookmark = Nov zaznamek
 AddThisPageToBookmarks = Dodaj to stran med zaznamke
+
+Bookmark = Zaznamek
+Bookmarks = Zaznamki
+NewBookmark = Nov zaznamek
+ShowBookmark = Prikaži zaznamek
+OpenANewWindow = Odpri novo okno
+ReplaceWindow = Zamenjaj trenutno okno
+BookmarkTargetNewWindowShort = Novo okno
+BookmarkTargetReplaceWindowShort = Trenutno okno
+BookmarkTitle = Zaznamuj naslov
+UrlOrLink = URL
+BehaviourOnClick = Postopek po kliku na URL
+CreateBookmark = Kreiraj zaznamek
+SetHereATitleForLink = Nastavi naziv zaznamka
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Uporabi zunanji http URL ali odvisni Dolibarr URL
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Izberi, če se mora stran, odprta z linkom, prikazati v trenutnem ali novem oknu
+BookmarksManagement = Urejanje zaznamkov
+ListOfBookmarks = Seznam zaznamkov

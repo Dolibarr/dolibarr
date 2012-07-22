@@ -1,7 +1,21 @@
 # Dolibarr language file - pt_BR rev. 0.0 - marque pages
 CHARSET=UTF-8
-Bookm=Favoritos
-NewBookmark=Novo Favorito
 AddThisPageToBookmarks=Adicionar esta página aos Favoritos
 
-
+Bookmark=Favorito
+Bookmarks=Favoritos
+NewBookmark=Novo Favorito
+ShowBookmark=Mostrar Favoritos
+OpenANewWindow=Abrir uma Nova janela
+ReplaceWindow=Substituir a janela atual
+BookmarkTargetNewWindowShort=Nova janela
+BookmarkTargetReplaceWindowShort=Janela atual
+BookmarkTitle=Título do Favorito
+UrlOrLink=URL
+BehaviourOnClick=comportamento à fazer click na URL
+CreateBookmark=Criar Favoritos
+SetHereATitleForLink=Indicar aqui um título do Favorito
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Indicar um URL externo para o URL Dolibarr relativo
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=escolher sim deve abrise a página em uma Nova janela o na atual
+BookmarksManagement=Administração de Paineis
+ListOfBookmarks=Lista de Paineis
