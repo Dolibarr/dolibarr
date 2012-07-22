@@ -738,9 +738,9 @@ else
 				{
 					// Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
 					// on affiche donc juste un message
-				    $mesg.='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
-					$mesg.='<br><textarea cols="60" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>';
-					$mesg.='<br><br><div class="warning">'.$langs->trans("MailingNeedCommand2").'</div>';
+				    $mesgembedded.='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
+					$mesgembedded.='<br><textarea cols="60" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>';
+					$mesgembedded.='<br><br><div class="warning">'.$langs->trans("MailingNeedCommand2").'</div>';
 					$_GET["action"]='';
 				}
 				else
@@ -838,19 +838,17 @@ else
 				array('type' => 'checkbox', 'name' => 'clone_receivers', 'label' => $langs->trans("CloneReceivers").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true)
 				);
 				// Paiement incomplet. On demande si motif = escompte ou autre
-				$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneEMailing'),$langs->trans('ConfirmCloneEMailing',$object->ref),'confirm_clone',$formquestion,'yes',2,240);
-				print '<br>';
+				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneEMailing'),$langs->trans('ConfirmCloneEMailing',$object->ref),'confirm_clone',$formquestion,'yes',2,240);
 			}
 
 
 			dol_htmloutput_mesg($mesg);
 
-
 			/*
 			 * Boutons d'action
 			 */
 
-			if (GETPOST("cancel") || $confirm=='no' || $action == '' || in_array($action,array('valid','delete','sendall')))
+			if (GETPOST("cancel") || $confirm=='no' || $action == '' || in_array($action,array('valid','delete','sendall','clone')))
 			{
 				print "\n\n<div class=\"tabsAction\">\n";
 
@@ -929,6 +927,8 @@ else
 
 				print '<br><br></div>';
 			}
+
+			if (! empty($mesgembedded)) dol_htmloutput_mesg($mesgembedded,'','warning',1);
 
 			// Affichage formulaire de TEST
 			if ($action == 'test')
