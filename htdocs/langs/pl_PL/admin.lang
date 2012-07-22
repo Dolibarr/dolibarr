@@ -151,7 +151,7 @@ AutoDetectLang=Autodetect (język przeglądarki)
 FeatureDisabledInDemo=Funkcja niedostępna w demo
 Rights=Uprawnienia
 BoxesDesc=Boksy są obszarze ekranu pokazują, że informacja na niektórych stronach. Możesz wybierać między pokazano pole lub nie, wybierając cel stronie i klikając przycisk "Włącz", lub klikając pojemnik na śmieci, aby ją wyłączyć.
-OnlyActiveElementsAreShown=Only elements from <a href=Tylko elementy <a href="modules.php">aktywne moduły</a> są widoczne.
+OnlyActiveElementsAreShown=Only elements from <a href=Tylko elementy <a href="%s">aktywne moduły</a> są widoczne.
 ModulesDesc=Dolibarr modules określić funkcje, które jest włączone w oprogramowaniu. Niektóre moduły wymagają uprawnień należy przyznać użytkownikom, po włączeniu modułu.
 ModulesInterfaceDesc=W Dolibarr modules interfejs umożliwia dodawanie funkcji w zależności od zewnętrznego oprogramowania, systemów lub usług.
 ModulesSpecialDesc=Specjalne moduły są bardzo specyficzne i rzadko używane moduły.

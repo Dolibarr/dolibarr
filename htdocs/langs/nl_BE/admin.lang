@@ -163,7 +163,7 @@ No=Nee
 AutoDetectLang=Autodetect (browser taal)
 FeatureDisabledInDemo=Functie uitgeschakeld in de demo
 BoxesDesc=Boxes zijn kleine vakken met informatie die op bepaalde pagina's kunnen worden weergegeven. U kunt kiezen om deze te activeren of uit te schakelen.
-OnlyActiveElementsAreShown=Alleen objecten die verband houden met een <a href="modules.php"> module actief </ a> worden gepresenteerd.
+OnlyActiveElementsAreShown=Alleen objecten die verband houden met een <a href="%s"> module actief </ a> worden gepresenteerd.
 ModulesInterfaceDesc=De interface modules van Dolibarr laat u toe functies toe te voegen afhankelijk van externe software, systemen of diensten.
 ModulesSpecialDesc=Speciale modules zijn zeer specifiek of zelden gebruikte modules.
 ModulesJobDesc=Business modules bieden een eenvoudig voorgedefinieerde setup van Dolibarr voor een bepaald bedrijf.

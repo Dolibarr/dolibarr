@@ -149,7 +149,6 @@ AutoDetectLang=Automaattisesti (selaimen kieli)
 FeatureDisabledInDemo=Feature vammaisten demo
 Rights=Oikeudet
 BoxesDesc=Laatikot ovat kuvaruudun alueella, jotka osoittavat, pala tietoa joitakin sivuja. Voit valita, näytetäänkö ruutuun tai ei valitsemalla kohde sivun ja napsauttamalla "Ota käyttöön", tai klikkaamalla roskakoriin poistaa se.
-OnlyActiveElementsAreShown=Only elements from <a href=Vain osia <a href="modules.php">ansiosta moduulit</a> ovat osoittaneet.
 ModulesDesc=Dolibarr modules määritellä, mitkä toiminnot on käytössä ohjelmistoja. Jotkut moduulit vaatia oikeuksia sinulla on myönnettävä käyttäjille jälkeen mahdollistaa moduulin.
 ModulesInterfaceDesc=The Dolibarr moduulien ansiosta voit lisätä ominaisuuksia riippuen ohjelmistojen, järjestelmien tai palveluja.
 ModulesSpecialDesc=Erityispainos moduulit ovat hyvin erityinen tai harvoin käytetty moduuleita.

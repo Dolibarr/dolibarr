@@ -151,7 +151,6 @@ AutoDetectLang=Autodetect (browsersprog)
 FeatureDisabledInDemo=Funktionen slået fra i demo
 Rights=Tilladelser
 BoxesDesc=Kasserne er skærmen, der viser et stykke af oplysninger om nogle sider. Du kan vælge mellem at få vist feltet eller ikke ved at vælge målet side og klikke på 'Aktiver', eller ved at klikke på skraldespanden for at deaktivere den.
-OnlyActiveElementsAreShown=Only elements from <a href=Kun elementer fra <a href="modules.php">aktiveret moduler</a> vises.
 ModulesDesc=Dolibarr moduler definere, hvilke funktioner er aktiveret i softwaren. Nogle moduler kræver tilladelser skal du give brugere, efter at have aktiveret modul.
 ModulesInterfaceDesc=Den Dolibarr moduler interface giver dig mulighed for at tilføje funktioner, afhængigt af eksterne software, systemer eller tjenesteydelser.
 ModulesSpecialDesc=Special moduler er meget specifikke eller sjældent anvendte moduler.

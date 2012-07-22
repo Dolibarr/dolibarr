@@ -806,7 +806,7 @@ Offset									   =Scostamento
 OnceSetupFinishedCreateUsers						   =Attenzione, sei un utente amministratore Dolibarr. Le utenze amministrative vanno utilizzate per l'impostazione del sistema. Per un uso abituale di Dolibarr si raccomanda di non utilizzare un utente amministratore, ma crearne uno nuovo dal menu utenti e gruppi.
 OnDelivery								   =Alla consegna
 OnInvoice								   =Alla fatturazione
-OnlyActiveElementsAreShown						   =Vengono mostrati solo gli elementi relativi ai <a href="modules.php">moduli attivi</a> .
+OnlyActiveElementsAreShown						   =Vengono mostrati solo gli elementi relativi ai <a href="%s">moduli attivi</a> .
 OnPayment								   =Al pagamento
 OptionVatDebitOptionDesc						   =L'IVA è dovuta:<br/> - alla consegna/pagamento per i beni<br/>- alla fatturazione (a debito) per i servizi
 OptionVATDebitOption							   =Opzioni per i servizi a debito

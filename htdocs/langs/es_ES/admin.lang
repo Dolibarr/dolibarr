@@ -179,7 +179,7 @@ AutoDetectLang=Autodetección (navegador)
 FeatureDisabledInDemo=Opción deshabilitada en demo
 Rights=Permisos
 BoxesDesc=Los paneles son pequeñas zonas de información que se muestran en algunas páginas. Puede elegir activar o desactivar un panel haciendo clic en 'Activar', o haciendo click en el cubo de basura para desactivarlo. Solo se muestran los paneles relacionados con un <a href="modules.php">módulo</a> activo.
-OnlyActiveElementsAreShown=Sólo los elementos de <a href="modules.php">módulos activados</a> son mostrados
+OnlyActiveElementsAreShown=Sólo los elementos de <a href="%s">módulos activados</a> son mostrados
 ModulesDesc=Los módulos Dolibarr definen las funcionalidades disponibles en la aplicación. Algunos módulos requieren derechos que deberán indicarse a los usuarios para que puedan acceder a sus funcionalidades.
 ModulesInterfaceDesc=Los módulos de interfaz son módulos que permiten vincular a Dolibarr con sistemas, aplicaciones o servicios externos.
 ModulesSpecialDesc=Los módulos complementarios son módulos de uso muy específico o menos corriente que los módulos normales.

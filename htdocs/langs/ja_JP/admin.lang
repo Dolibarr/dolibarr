@@ -185,7 +185,7 @@ AutoDetectLang=自動検出（ブラウザの言語）
 FeatureDisabledInDemo=デモで機能を無効にする
 Rights=パーミッション
 BoxesDesc=ボックスには、いくつかのページの情報の一部を示す画面領域です。あなたは、ボックスを示すかどうか、ターゲット·ページを選択し、 &quot;アクティベート&quot;をクリックするか、それを無効にするには、ごみ箱をクリックして選ぶことができます。
-OnlyActiveElementsAreShown=から要素のみ<a href="modules.php">対応のモジュールが</a>表示されます。
+OnlyActiveElementsAreShown=から要素のみ<a href="%s">対応のモジュールが</a>表示されます。
 ModulesDesc=Dolibarrモジュールはソフトウェアで有効になっている機能を定義します。いくつかのモジュールは、モジュールを有効にした後、ユーザーに付与する必要がありますアクセス許可が必要です。モジュール/機能を有効にするには、列 &quot;ステータス&quot;のオン/オフボタンをクリックします。
 ModulesInterfaceDesc=Dolibarrモジュールインターフェイスでは、外部のソフトウェア、システムやサービスに応じて機能を追加することができます。
 ModulesSpecialDesc=特別なモジュールは、非常に特異的またはめったに使用しないモジュールです。

@@ -144,7 +144,6 @@ AutoDetectLang=Autodetecção (navegador)
 FeatureDisabledInDemo=Opção desabilitada em demo
 Rights=Permissões
 BoxesDesc=As caixas são zonas de informação reduzidas que se mostram em algumas páginas. Pode escolher ativar ou desativar uma caixa fazendo click em 'Ativar', ou fazendo click não ícone de reciclagem para desativar. Só se mostram as Caixas relacionadas com um <a href
-OnlyActiveElementsAreShown=Só os elementos de <a href
 ModulesDesc=Os módulos do ERP definem as Funcionalidades disponíveis na aplicação. Alguns módulos requerem direitos que deverão indicar-se nos Usuários para que possam acessar ás suas Funcionalidades.
 ModulesInterfaceDesc=Os módulos de interface são módulos que permitem vincular o ERP com sistemas, aplicações ou serviços externos.
 ModulesSpecialDesc=Os módulos especiais são módulos de uso específico ou menos corrente que os módulos normais.

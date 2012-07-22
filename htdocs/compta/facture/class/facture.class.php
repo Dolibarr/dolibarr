@@ -361,8 +361,8 @@ class Facture extends CommonInvoice
                             '',
                             0,
                             $fk_parent_line,
-														$this->lines[$i]->fk_fournprice,
-														$this->lines[$i]->pa_ht
+                            $this->lines[$i]->fk_fournprice,
+                            $this->lines[$i]->pa_ht
                         );
                         if ($result < 0)
                         {
@@ -1564,7 +1564,7 @@ class Facture extends CommonInvoice
         $now=dol_now();
 
         $error=0;
-        dol_syslog(get_class($this).'::validate force_number='.$force_number.', idwarehouse='.$idwarehouse, LOG_WARNING);
+        dol_syslog(get_class($this).'::validate user='.$user->id.', force_number='.$force_number.', idwarehouse='.$idwarehouse, LOG_WARNING);
 
 	    // Check parameters
         if (! $this->brouillon)
@@ -1865,9 +1865,11 @@ class Facture extends CommonInvoice
      *      @param		string		$origin				'order', ...
      *      @param		int			$origin_id			Id of origin object
      *      @param		int			$fk_parent_line		Id of parent line
+     * 		@param		int			$fk_fournprice		To calculate margin
+     * 		@param		int			$pa_ht				Buying price of line
      *    	@return    	int             				<0 if KO, Id of line if OK
      */
-    function addline($facid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht = 0)
+    function addline($facid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0)
     {
         dol_syslog(get_class($this)."::Addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type", LOG_DEBUG);
         include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
@@ -1974,9 +1976,9 @@ class Facture extends CommonInvoice
             $this->line->origin=$origin;
             $this->line->origin_id=$origin_id;
 
-						// infos marge
-						$this->line->fk_fournprice = $fk_fournprice;
-						$this->line->pa_ht = $pa_ht;
+			// infos marge
+			$this->line->fk_fournprice = $fk_fournprice;
+			$this->line->pa_ht = $pa_ht;
 
             // TODO Ne plus utiliser
             //$this->line->price=($this->type==2?-1:1)*abs($price);
@@ -2031,9 +2033,11 @@ class Facture extends CommonInvoice
      * 		@param		int			$type				Type of line (0=product, 1=service)
      * 		@param		int			$fk_parent_line		???
      * 		@param		int			$skip_update_total	???
+     * 		@param		int			$fk_fournprice		To calculate margin
+     * 		@param		int			$pa_ht				Buying price of line
      *      @return    	int             				< 0 if KO, > 0 if OK
      */
-    function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0,$price_base_type='HT', $info_bits=0, $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht = 0)
+    function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0)
     {
         include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 
@@ -2116,9 +2120,9 @@ class Facture extends CommonInvoice
             $this->line->fk_parent_line		= $fk_parent_line;
             $this->line->skip_update_total	= $skip_update_total;
 
-						// infos marge
-			      $this->line->fk_fournprice = $fk_fournprice;
-						$this->line->pa_ht = $pa_ht;
+			// infos marge
+			$this->line->fk_fournprice = $fk_fournprice;
+			$this->line->pa_ht = $pa_ht;
 
             // A ne plus utiliser
             //$this->line->price=$price;

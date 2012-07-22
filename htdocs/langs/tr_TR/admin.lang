@@ -168,7 +168,7 @@ AutoDetectLang=Otoalgıla (tarayıcı dili)
 FeatureDisabledInDemo=Demoda özellik devre dışıdır
 Rights=İzinler
 BoxesDesc=Kutular, bazı pencerelerde bilgi parçaları gösteren ekran alanlarıdır. Kutunun gösterilmesi ya da gösterilmemesi arasında seçim yapmak için hedef sayfayı seçerek ‘Etkinleştir’ e tıklayın veya çöpkutusuna tıklayarak devre dışı bırakın.
-OnlyActiveElementsAreShown=Yalnızca <ahref="modules.php">etkinleştirilmiş modüllerin</a> öğeleri gösterilmiştir.
+OnlyActiveElementsAreShown=Yalnızca <a href="%s">etkinleştirilmiş modüllerin</a> öğeleri gösterilmiştir.
 ModulesDesc=Dolibarr modülleri, yazılımda hangi özelliğin devreye alınacağını tanımlar. Modül devreye alındıktan sonra kullanıcıya bazı izinler vermeniz gerekir. Bir modül/özelliği devreye almak için “Durum” sütunundaki aç/kapa düğmesinde aça tıklayın.
 ModulesInterfaceDesc=Dolibarr modülleri arayüzü dış yazılım, sistem ya da hizmetlere bağlı olarak özellikler ekler.
 ModulesSpecialDesc=Özel modüller çok özel ya da seyrek kullanılan modüllerdir.

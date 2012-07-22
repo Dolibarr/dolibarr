@@ -173,7 +173,7 @@ AutoDetectLang=自动检测（浏览器的语言）
 FeatureDisabledInDemo=在演示功能禁用
 Rights=权限
 BoxesDesc=框屏幕区域，显示了在一些网页上的资料。您可以选择显示选择目标页，然后点击'的方块，或不激活'，或按一下垃圾桶中禁用它。
-OnlyActiveElementsAreShown=分子只有<a href="modules.php">启用的模块</a>显示。
+OnlyActiveElementsAreShown=分子只有<a href="%s">启用的模块</a>显示。
 ModulesDesc=Dolibarr模块定义哪些功能是在软件中启用。有些模块需要您必须授予权限给用户，在启用模块。
 ModulesInterfaceDesc=该Dolibarr模块接口允许你添加取决于外部软件，系统或服务功能。
 ModulesSpecialDesc=特别是非常具体的模块或很少使用的模块。

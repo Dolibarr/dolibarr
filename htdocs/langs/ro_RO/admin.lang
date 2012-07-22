@@ -149,7 +149,6 @@ AutoDetectLang=Autodetect (browser limbă)
 FeatureDisabledInDemo=Caracteristicã handicap în demo
 Rights=Permisiuni
 BoxesDesc=Cutii sunt ecran domeniu arată că o bucată de informaţii cu privire la unele pagini. Aveţi posibilitatea să alegeţi între afişarea pe cutie sau nu, prin selectarea ţintă pagină şi faceţi clic pe "Activaţi", sau făcând clic pe un coş de gunoi barat pentru al dezactiva.
-OnlyActiveElementsAreShown=Only elements from <a href=Numai de la elemente <a href="modules.php">activat modulele</a> sunt afişate.
 ModulesDesc=Dolibarr modulele care definesc funcţia este activată în software-ul. Unele module necesită permisiuni, trebuie să acorde pentru utilizatori, după care să permită modul.
 ModulesInterfaceDesc=De Dolibarr module de interfaţă vă permite să adăugaţi caracteristici externe, în funcţie de software, sisteme sau servicii.
 ModulesSpecialDesc=Special module sunt foarte specifice sau rareori folosite module.

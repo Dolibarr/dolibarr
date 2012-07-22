@@ -185,7 +185,7 @@ AutoDetectLang=Autodetect (böngésző nyelv)
 FeatureDisabledInDemo=Tiltva demo
 Rights=Engedélyek
 BoxesDesc=Dobozok képernyő terület mutatják, hogy az információ egy elemének egyes oldalakon. Választhat a bemutató dobozban, vagy nem célzott kiválasztásával oldalra és kattintson a &quot;Aktiválás&quot;, vagy kattintson a kukába kikapcsolni.
-OnlyActiveElementsAreShown=Csak az elemek <a href="modules.php">bekapcsolt modulok</a> jelennek meg.
+OnlyActiveElementsAreShown=Csak az elemek <a href="%s">bekapcsolt modulok</a> jelennek meg.
 ModulesDesc=Dolibarr modulok meghatározzák, mely funkció engedélyezve van a szoftverben. Néhány modul szükséges engedélyeket be kell nyújtani a felhasználók számára, lehetővé téve modul után. Kattints a gombra on / off oszlopban &quot;Állapot&quot;, hogy egy modul / funkciót.
 ModulesInterfaceDesc=A Dolibarr modulok interfész lehetővé teszi, hogy új funkciókat függően külső szoftverek, rendszerek és szolgáltatások.
 ModulesSpecialDesc=Speciális modulok nagyon egyedi vagy ritkán használt modulokat.

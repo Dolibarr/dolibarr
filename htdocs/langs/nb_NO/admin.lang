@@ -142,7 +142,7 @@ AutoDetectLang=Automatisk (nettleserspråk)
 FeatureDisabledInDemo=Funksjonen er slått av i demo
 Rights=Tillatelser
 BoxesDesc=Bokser er områder på skjermen som viser informasjon på ønskede sider. Du kan velge om boksen skal vises eller ikke ved å velge målside og klikke på 'Aktiver', eller ved å klikke på papirkurven for å slå den av.
-OnlyActiveElementsAreShown=Bare elementer fra <a href="modules.php">aktiverte moduler</a> vises.
+OnlyActiveElementsAreShown=Bare elementer fra <a href="%s">aktiverte moduler</a> vises.
 ModulesDesc=Dolibarrmodulene styrer hvilken funksjonalitet som er aktivert i programmet. Noen moduler krever at du tildeler brukerne tilgangsrettigheter etter at du har slått på modulen.
 ModulesInterfaceDesc=Modulgrensesnittet i Dolibarr lar deg legge til funksjoner som bruker eksterne programmer, systemer eller tjenester.
 ModulesSpecialDesc=Spesialmoduler er svært spesifikke moduler, eller moduler som sjelden blir sjelden brukt.

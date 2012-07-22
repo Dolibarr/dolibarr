@@ -185,7 +185,7 @@ AutoDetectLang=Autodetect (brauser keeles)
 FeatureDisabledInDemo=Feature blokeeritud demo
 Rights=Permissions
 BoxesDesc=Kastid on ekraani ala, mis näitavad osa teabest mõned leheküljed. Valida saab näidata kasti või mitte, valides sihtlehekülge ja klõpsake &quot;Activate&quot; või klõpsates prügikasti blokeerida.
-OnlyActiveElementsAreShown=Vaid elemente <a href="modules.php">toega mooduleid</a> näidatakse.
+OnlyActiveElementsAreShown=Vaid elemente <a href="%s">toega mooduleid</a> näidatakse.
 ModulesDesc=Dolibarr moodulid määratlevad mille funktsioon on lubatud tarkvara. Mõned moodulid nõuavad õigusi tuleb anda kasutajatele, pärast võimaldab moodul. Klõpsake nuppu sees / väljas veerus &quot;Staatus&quot;, mis võimaldab moodul / funktsiooni.
 ModulesInterfaceDesc=Dolibarr moodulite liides lubab teil lisada funktsioone sõltuvalt välis-tarkvara, süsteemide või teenuste.
 ModulesSpecialDesc=Spetsiaalseid mooduleid on väga spetsiifilised või harva kasutatavate moodulitega.

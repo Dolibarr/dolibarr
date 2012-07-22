@@ -497,7 +497,6 @@ function createInvoice($authentication,$invoice)
     $errorcode='';$errorlabel='';
     $error=0;
     $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
-    // Check parameters
 
     if (! $error)
     {

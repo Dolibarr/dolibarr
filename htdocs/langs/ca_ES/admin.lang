@@ -179,7 +179,7 @@ AutoDetectLang=Autodetecció (navegador)
 FeatureDisabledInDemo=Opció deshabilitada en demo
 Rights=Permisos
 BoxesDesc=Els panells són petites zones d'informació que hi ha en algunes pàgines. Pot triar activar o desactivar un panell fent clic a 'Activar', o fent click al cubell d'escombraries per desactivar. Només es mostren els panells relacionades amb un <a href="modules.php"> mòdul </a> actiu.
-OnlyActiveElementsAreShown=Només els elements de <a href="modules.php"> mòduls activats</a> són mostrats
+OnlyActiveElementsAreShown=Només els elements de <a href="%s"> mòduls activats</a> són mostrats
 ModulesDesc=Els mòduls Dolibarr defineixen les funcionalitats disponibles en l'aplicació. Alguns mòduls requereixen drets que hauran d'indicar als usuaris perquè puguin accedir a les seves funcionalitats.
 ModulesInterfaceDesc=Els mòduls de interface són mòduls que permeten vincular Dolibarr amb sistemes, aplicacions o serveis externs.
 ModulesSpecialDesc=Els mòduls complementaris són mòduls d'ús molt específic o menys corrent que els mòduls normals.
