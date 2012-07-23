@@ -62,7 +62,7 @@ if ($action == 'create')
 {
 	if (! is_array($selected))
 	{
-		$mesg='<div class="error">'.$langs->trans('Error_OrderNotChecked').'</div>';
+		$mesgs[]='<div class="error">'.$langs->trans('Error_OrderNotChecked').'</div>';
 	}
 	else
 	{
@@ -80,9 +80,9 @@ $htmlother = new FormOther($db);
 
 /*
  * Actions
-*/
+ */
 
-if (($action == 'create' || $action == 'add') && ! $mesg )
+if (($action == 'create' || $action == 'add') && empty($mesgs))
 {
 	require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 	require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
@@ -92,8 +92,10 @@ if (($action == 'create' || $action == 'add') && ! $mesg )
 	require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 	require_once(DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php');
 	require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
-	if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
-	if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php');
+	if (! empty($conf->projet->enabled)) {
+		require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
+		require_once(DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php');
+	}
 	$langs->load('bills');
 	$langs->load('products');
 	$langs->load('main');
@@ -117,7 +119,6 @@ if (($action == 'create' || $action == 'add') && ! $mesg )
 		$_POST['originid']=$orders_id[0];
 
 	}
-	if (GETPOST('mesg','int',1) && isset($_SESSION['message'])) $mesg=$_SESSION['message'];
 	$sall=isset($_GET['sall'])?trim($_GET['sall']):trim($_POST['sall']);
 	$projectid=isset($_GET['projectid'])?$_GET['projectid']:0;
 	$id				=(GETPOST('id')?GETPOST("id"):GETPOST("facid"));  // For backward compatibility
@@ -242,7 +243,7 @@ if (($action == 'create' || $action == 'add') && ! $mesg )
 										}
 										else
 										{
-											$mesg=$discount->error;
+											$mesgs[]=$discount->error;
 											$error++;
 											break;
 										}
@@ -310,7 +311,7 @@ if (($action == 'create' || $action == 'add') && ! $mesg )
 							}
 							else
 							{
-								$mesg=$srcobject->error;
+								$mesgs[]=$srcobject->error;
 								$error++;
 							}
 							$ii++;
@@ -318,7 +319,7 @@ if (($action == 'create' || $action == 'add') && ! $mesg )
 					}
 					else
 					{
-						$mesg=$object->error;
+						$mesgs[]=$object->error;
 						$error++;
 					}
 				}
@@ -338,7 +339,7 @@ if (($action == 'create' || $action == 'add') && ! $mesg )
 			$action='create';
 			$_GET["origin"]=$_POST["origin"];
 			$_GET["originid"]=$_POST["originid"];
-			if (! $mesg) $mesg='<div class="error">'.$object->error.'</div>';
+			$mesgs[]='<div class="error">'.$object->error.'</div>';
 		}
 	}
 
@@ -354,9 +355,10 @@ if (($action == 'create' || $action == 'add') && ! $mesg )
 	if ($action == 'create')
 	{
 		$facturestatic=new Facture($db);
+
 		llxHeader();
 		print_fiche_titre($langs->trans('NewBill'));
-		dol_htmloutput_mesg($mesg);
+
 		$soc = new Societe($db);
 		if ($socid) $res=$soc->fetch($socid);
 		if ($res)
@@ -473,7 +475,6 @@ if (($action == 'create' || $action == 'add') && ! $mesg )
 	print '<br><center><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></center>';
 	print "</form>\n";
 }
-
 
 //Mode liste
 else
@@ -669,8 +670,8 @@ else
 
 }
 
-$db->close();
-dol_htmloutput_mesg($mesg);
-llxFooter();
+dol_htmloutput_mesg($mesg,$mesgs);
 
+llxFooter();
+$db->close();
 ?>

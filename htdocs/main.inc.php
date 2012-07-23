@@ -725,7 +725,7 @@ $bcnd=array(0=>'class="impair nodrag nodrop"',1=>'class="pair nodrag nodrop"');
 $mesg=''; $mesgs=array();
 if (isset($_SESSION['dol_message']))
 {
-	$mesg=$_SESSION['dol_message'];
+	$mesgs[]=$_SESSION['dol_message'];
 	unset($_SESSION['dol_message']);
 }
 
