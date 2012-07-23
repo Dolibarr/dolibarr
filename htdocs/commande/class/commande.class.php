@@ -697,8 +697,8 @@ class Commande extends CommonOrder
                         $this->lines[$i]->rang,
                         $this->lines[$i]->special_code,
                         $fk_parent_line,
-												$this->lines[$i]->fk_fournprice,
-												$this->lines[$i]->pa_ht
+                        $this->lines[$i]->fk_fournprice,
+                        $this->lines[$i]->pa_ht
                     );
                     if ($result < 0)
                     {
@@ -996,6 +996,8 @@ class Commande extends CommonOrder
      *	@param      int				$rang             	Position of line
      *	@param		int				$special_code		Special code
      *	@param		int				$fk_parent_line		Parent line
+     *  @param		int				$fk_fournprice		Id supplier price
+     *  @param		int				$pa_ht				Buying price (without tax)
      *	@return     int             					>0 if OK, <0 if KO
      *
      *	@see        add_product
@@ -1005,7 +1007,7 @@ class Commande extends CommonOrder
      *	par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
      *	et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      */
-		function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht = 0)
+		function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0)
     {
         dol_syslog("Commande::addline commandeid=$commandeid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end, type=$type", LOG_DEBUG);
 
@@ -2151,9 +2153,11 @@ class Commande extends CommonOrder
      * 	@param		int				$type				Type of line (0=product, 1=service)
      *  @param		int				$fk_parent_line		Parent line id
      *  @param		int				$skip_update_total	Skip update of total
+     *  @param		int				$fk_fournprice		Id supplier price
+     *  @param		int				$pa_ht				Buying price (without tax)
      *  @return   	int              					< 0 if KO, > 0 if OK
      */
-		function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht = 0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0)
     {
         global $conf;
 

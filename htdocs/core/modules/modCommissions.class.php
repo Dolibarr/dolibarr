@@ -27,8 +27,7 @@ include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
 
 
 /**
- * 	\class      modCommissions
- * 	\brief      Description and activation class for module Commissions
+ * 	Class to describe modude Commisions
  */
 class modCommissions extends DolibarrModules
 {
@@ -37,7 +36,7 @@ class modCommissions extends DolibarrModules
      *
      * 	@param	DoliDB	$db		Database handler
      */
-	function modCommissions($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 
@@ -127,7 +126,7 @@ class modCommissions extends DolibarrModules
      *	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
      *	It also creates data directories.
      *
-     *	@return     int             1 if OK, 0 if KO
+	 *  @return     int             1 if OK, 0 if KO
      */
 	function init()
   	{
@@ -140,10 +139,10 @@ class modCommissions extends DolibarrModules
 
 	/**
 	 *	Function called when module is disabled.
-	 *	Remove from database constants, boxes and permissions from Dolibarr database.
-	 *	Data directories are not deleted.
-	 *
-	 *	@return     int             1 if OK, 0 if KO
+ 	 *  Remove from database constants, boxes and permissions from Dolibarr database.
+ 	 *	Data directories are not deleted.
+ 	 *
+	 *  @return     int             1 if OK, 0 if KO
  	 */
 	function remove()
 	{
@@ -154,14 +153,14 @@ class modCommissions extends DolibarrModules
 
 
 	/**
-	 * 	Create tables and keys required by module
+	 *	Create tables and keys required by module
 	 * 	Files mymodule.sql and mymodule.key.sql with create table and create keys
 	 * 	commands must be stored in directory /mymodule/sql/
-	 * 	This function is called by this->init.
+	 *	This function is called by this->init.
 	 *
-	 *	@return		int		<=0 if KO, >0 if OK
+	 * 	@return		int		<=0 if KO, >0 if OK
 	 */
-  	function load_tables()
+	function load_tables()
 	{
 		return;
 	}

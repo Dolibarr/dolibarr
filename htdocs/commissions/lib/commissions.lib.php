@@ -23,6 +23,7 @@
 
 /**
  *  Define head array for tabs of marges tools setup pages
+ *
  *  @return			Array of head
  */
 function commissions_admin_prepare_head()
