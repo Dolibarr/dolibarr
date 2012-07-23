@@ -102,7 +102,7 @@ print_fiche_titre($langs->trans("margesSetup"),$linkback,'setup');
 
 $head = marges_admin_prepare_head();
 
-dol_fiche_head($head, 'parameters', $langs->trans("marges"), 0, 'company');
+dol_fiche_head($head, 'parameters', $langs->trans("marges"), 0, 'marges');
 
 print "<br>";
 

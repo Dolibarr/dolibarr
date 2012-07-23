@@ -17,21 +17,19 @@
  */
 
 /**     \defgroup   mymodule     Module MyModule
- *      \brief      Example of a module descriptor.
- *					Such a file must be copied into htdocs/includes/module directory.
+ *      \brief      Module to manage commissions
  */
 
 /**
- *      \file       htdocs/includes/modules/modMyModule.class.php
- *      \ingroup    mymodule
- *      \brief      Description and activation file for module MyModule
- *		\version	$Id: modMyModule.class.php,v 1.26 2008/12/15 18:27:00 eldy Exp $
+ *      \file       htdocs/includes/modules/modCommissions.class.php
+ *      \ingroup    commissions
+ *      \brief      Description and activation file for module Commissions
  */
 include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
 
 
-/**     \class      modMyModule
- *      \brief      Description and activation class for module MyModule
+/**
+ * 	Class to describe modude Commisions
  */
 class modCommissions extends DolibarrModules
 {
@@ -56,16 +54,16 @@ class modCommissions extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = mb_ereg_replace('^mod','',get_class($this), "i");
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
-		$this->description = "Gestion des commissions";
+		$this->description = "Commissions management";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = '1.0';
+		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=other)
 		$this->special = 0;
 		// Name of png file (without png) used for this module.
 		// Png file must be in theme/yourtheme/img directory under name object_pictovalue.png.
-		$this->picto='commissions@commissions';
+		$this->picto='commissions';
 
 		// Data directories to create when module is enabled.
 		$this->dirs = array();

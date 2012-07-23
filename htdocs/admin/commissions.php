@@ -18,10 +18,9 @@
  */
 
 /**
- *      \file       /marges/admin/commissions.php
- *		\ingroup    marges
+ *      \file       /htdocs/admin/commissions.php
+ *		\ingroup    commissions
  *		\brief      Page to setup advanced commissions module
- *		\version    $Id:$
  */
 
 $res=@include("../main.inc.php");					// For root directory
@@ -39,7 +38,7 @@ accessforbidden();
 if ($conf->global->COMMISSION_BASE == "") {
   if ($conf->marges->enabled)
     $conf->global->COMMISSION_BASE = "MARGES";
-  else   
+  else
     $conf->global->COMMISSION_BASE = "CA";
 }
 
@@ -80,11 +79,12 @@ if (isset($_POST['serviceCommissionRate']))
     }
 }
 
+
 /*
  * View
  */
 
-llxHeader('',$langs->trans("commissionsSetup"));
+llxHeader('',$langs->trans("CommissionsSetup"));
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -93,7 +93,7 @@ print_fiche_titre($langs->trans("commissionsSetup"),$linkback,'setup');
 
 $head = commissions_admin_prepare_head($adh);
 
-dol_fiche_head($head, 'parameters', $langs->trans("commissions"), 0, 'company');
+dol_fiche_head($head, 'parameters', $langs->trans("Commissions"), 0, 'commissions');
 
 print "<br>";
 
@@ -123,7 +123,7 @@ print ' />';
 print $langs->trans("CommissionBasedOnCA");
 print '<br/>';
 print '<input type="radio" name="commissionBase" value="MARGES" ';
-if (!$conf->marges->enabled) 
+if (!$conf->marges->enabled)
   print 'disabled';
 elseif ($conf->global->COMMISSION_BASE == "MARGES")
   print 'checked';

@@ -25,8 +25,7 @@ include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
 
 
 /**
- * 	\class      modMargin
- * 	\brief      Description and activation class for module Margin
+ * 	Class to describe module Margin
  */
 class modMargin extends DolibarrModules
 {
