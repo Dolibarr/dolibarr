@@ -16,12 +16,12 @@
  */
 
 /**
- *      \file       /htdocs/admin/margin.php
+ *      \file       /htdocs/margin/admin/margin.php
  *		\ingroup    margin
  *		\brief      Page to setup margin module
  */
 
-include("../main.inc.php");
+include("../../main.inc.php");
 
 require_once(DOL_DOCUMENT_ROOT."/margin/lib/margins.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
@@ -121,7 +121,7 @@ $form = new Form($db);
 
 // GLOBAL DISCOUNT MANAGEMENT
 $var=!$var;
-print "<form method=\"post\" action=\"marges.php\">";
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"typemarges\">";
 print '<tr '.$bc[$var].'>';
@@ -219,7 +219,7 @@ print '</tr>';
 
 // GLOBAL DISCOUNT MANAGEMENT
 $var=!$var;
-print "<form method=\"post\" action=\"marges.php\">";
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"remises\">";
 print '<tr '.$bc[$var].'>';

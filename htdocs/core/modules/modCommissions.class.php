@@ -67,7 +67,7 @@ class modCommissions extends DolibarrModules
 		$this->dirs = array();
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
-		$this->config_page_url = array("commissions.php");
+		$this->config_page_url = array("commissions.php@commissions");
 
 		// Dependencies
 		$this->depends = array("modFacture", "modMargin");		// List of modules id that must be enabled if this module is enabled
@@ -77,7 +77,7 @@ class modCommissions extends DolibarrModules
 		$this->langfiles = array("commissions");
 
 		// Constants
-		$this->const = array();			// List of particular constants to add when module is enabled
+		$this->const = array(0=>array('COMMISSION_BASE',"chaine","TURNOVER",'Default commission base',0));			// List of particular constants to add when module is enabled
 
 		// New pages on tabs
 		$this->tabs = array();
@@ -106,15 +106,15 @@ class modCommissions extends DolibarrModules
 
 		// left menu entry
 		$this->menu[$r]=array(
-				'fk_menu'=>0,			// Put 0 if this is a top menu
-    			'type'=>'top',			// This is a Top menu entry
+				'fk_menu'=>'fk_mainmenu=accountancy',			// Put 0 if this is a top menu
+    			'type'=>'left',			// This is a Top menu entry
     			'titre'=>'Commissions',
-    			'mainmenu'=>'commissions',
-    			'leftmenu'=>'0',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+    			'mainmenu'=>'accountancy',
+    			'leftmenu'=>'commissions',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
     			'url'=>'/commissions/index.php',
-    			'langs'=>'commissions@commissions',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-    			'position'=>110,
-    			'enabled'=>'1',			// Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
+    			'langs'=>'commissions',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+    			'position'=>200,
+    			'enabled'=>'$conf->commissions->enabled',			// Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
     			'perms'=>'1',			// Use 'perms'=>'$user->rights->monmodule->level1->level2' if you want your menu with a permission rules
     			'target'=>'',
     			'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both

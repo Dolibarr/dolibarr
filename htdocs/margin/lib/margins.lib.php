@@ -32,7 +32,7 @@ function marges_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/margin.php";
+	$head[$h][0] = DOL_URL_ROOT."/margin/admin/margin.php";
 	$head[$h][1] = $langs->trans("Parameters");
 	$head[$h][2] = 'parameters';
 	$h++;

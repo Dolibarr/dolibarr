@@ -467,7 +467,7 @@ $moduletomainmenu=array('user'=>'','syslog'=>'','societe'=>'companies','projet'=
 	'barcode'=>'','fckeditor'=>'','categorie'=>'',
 );
 $mainmenuused='home';
-foreach($conf->modules as $key => $val)
+foreach($conf->modules as $val)
 {
 	$mainmenuused.=','.(isset($moduletomainmenu[$val])?$moduletomainmenu[$val]:$val);
 }
@@ -476,7 +476,7 @@ $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
 
 $generic=1;
 $divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','shop','agenda','ecm','bookmark','cashdesk','geoipmaxmind','gravatar','clicktodial','paypal','webservices');
-foreach($mainmenuusedarray as $key => $val)
+foreach($mainmenuusedarray as $val)
 {
 	if (empty($val) || in_array($val,$divalreadydefined)) continue;
 	//print "XXX".$val;
