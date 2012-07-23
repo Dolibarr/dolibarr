@@ -357,7 +357,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
         if (! $idwarehouse || $idwarehouse == -1)
         {
             $error++;
-            $errors[]=$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse"));
+            $mesgs[]=$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse"));
             $action='';
         }
     }
@@ -404,7 +404,7 @@ else if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_
         if (! $idwarehouse || $idwarehouse == -1)
         {
             $error++;
-            $errors[]=$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse"));
+            $mesgs[]=$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse"));
             $action='';
         }
     }
