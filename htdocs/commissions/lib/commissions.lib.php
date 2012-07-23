@@ -21,17 +21,17 @@
  *	\file			/marges/lib/commissions.lib.php
  *  \ingroup		marges
  *  \brief			Library for common commissions functions
- *  \version		$Id:$
  */
 
 /**
  *  Define head array for tabs of marges tools setup pages
+ *
  *  @return			Array of head
  */
 function commissions_admin_prepare_head()
 {
 	global $langs, $conf;
-	
+
 	$h = 0;
 	$head = array();
 
@@ -39,7 +39,7 @@ function commissions_admin_prepare_head()
 	$head[$h][1] = $langs->trans("Parameters");
 	$head[$h][2] = 'parameters';
 	$h++;
-    
+
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab

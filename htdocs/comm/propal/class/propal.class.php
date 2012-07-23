@@ -303,6 +303,8 @@ class Propal extends CommonObject
      *      @param      int			$rang               Position of line
      *      @param		int			$special_code		Special code
      *      @param		int			$fk_parent_line		Id of parent line
+     *      @param		int			$fk_fournprice		Id supplier price
+     *      @param		int			$pa_ht				Buying price without tax
      *    	@return    	int         	    			>0 if OK, <0 if KO
      *
      *    	@see       	add_product
@@ -456,13 +458,15 @@ class Propal extends CommonObject
      *	@param      int			$special_code      	Set special code ('' = we don't change it)
      *	@param      int			$fk_parent_line    	Id of line parent
      *  @param		int			$skip_update_total	Skip update total
+     *  @param		int			$fk_fournprice		Id supplier price
+     *  @param		int			$pa_ht				Buying price without tax
      *  @return     int     		        		0 if OK, <0 if KO
      */
-		function updateline($rowid, $pu, $qty, $remise_percent=0, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht = 0)
+	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0)
     {
         global $conf,$user,$langs;
 
-        dol_syslog("Propal::UpdateLine $rowid, $pu, $qty, $remise_percent, $txtva, $desc, $price_base_type, $info_bits");
+        dol_syslog(get_class($this)."::updateLine $rowid, $pu, $qty, $remise_percent, $txtva, $desc, $price_base_type, $info_bits");
         include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
 
         // Clean parameters
@@ -750,8 +754,8 @@ class Propal extends CommonObject
                             $this->lines[$i]->rang,
                             $this->lines[$i]->special_code,
                             $fk_parent_line,
-														$this->lines[$i]->fk_fournprice,
-														$this->lines[$i]->pa_ht
+                            $this->lines[$i]->fk_fournprice,
+                            $this->lines[$i]->pa_ht
                         );
 
                         if ($result < 0)

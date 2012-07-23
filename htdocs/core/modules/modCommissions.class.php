@@ -36,67 +36,68 @@ include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
 class modCommissions extends DolibarrModules
 {
     /**
-    *   \brief      Constructor. Define names, constants, directories, boxes, permissions
-    *   \param      DB      Database handler
-    */
-	function modCommissions($DB)
+     *   Constructor. Define names, constants, directories, boxes, permissions
+     *
+     *   @param		DoliDB		$db		Database handler
+     */
+	function modCommissions($db)
 	{
-		$this->db = $DB;
-		
+		$this->db = $db;
+
 		// Id for module (must be unique).
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
 		$this->numero = 60000;
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'Commissions';
-		
+
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
-		// It is used to group modules in module setup page 
-		$this->family = "financial";		
+		// It is used to group modules in module setup page
+		$this->family = "financial";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = mb_ereg_replace('^mod','',get_class($this), "i");
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Gestion des commissions";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = '1.0';    
+		$this->version = '1.0';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=other)
 		$this->special = 0;
 		// Name of png file (without png) used for this module.
-		// Png file must be in theme/yourtheme/img directory under name object_pictovalue.png. 
+		// Png file must be in theme/yourtheme/img directory under name object_pictovalue.png.
 		$this->picto='commissions@commissions';
-		
+
 		// Data directories to create when module is enabled.
 		$this->dirs = array();
 		//$this->dirs[0] = DOL_DATA_ROOT.'/Marges';
         //$this->dirs[1] = DOL_DATA_ROOT.'/mymodule/temp;
- 		
+
 		// Relative path to module style sheet if exists. Example: '/mymodule/mycss.css'.
 		$this->style_sheet = '/commissions/css/commissions.css';
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
 		$this->config_page_url = array("commissions.php");
-		
+
 		// Dependencies
 		$this->depends = array("modFacture", "modMarges");		// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->phpmin = array(4,1);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3,1);	// Minimum version of Dolibarr required by module
 		$this->langfiles = array("commissions");
-		
+
 		// Constants
 		$this->const = array();			// List of particular constants to add when module is enabled
-    //$this->const = array(    0=>array('MAIN_MODULE_MARGES_HOOKS', 'chaine', 'propalcard',    'Hooks list for displaying Marges data on entity lists', 0, 'current', 1)    );		
-		
+    //$this->const = array(    0=>array('MAIN_MODULE_MARGES_HOOKS', 'chaine', 'propalcard',    'Hooks list for displaying Marges data on entity lists', 0, 'current', 1)    );
+
 		// New pages on tabs
 		$this->tabs = array(
-		); 
-		
-		
+		);
+
+
 		// Boxes
-		$this->boxes = array();			// List of boxes 
+		$this->boxes = array();			// List of boxes
 		$r=0;
-		
+
 		// Add here list of php file(s) stored in includes/boxes that contains class to show a box.
 		// Example:
         //$this->boxes[$r][1] = "myboxa.php";
@@ -104,11 +105,11 @@ class modCommissions extends DolibarrModules
         //$this->boxes[$r][1] = "myboxb.php";
     	//$r++;
 
-		
+
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
 		$r=0;
-		
+
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
 		// $this->rights[$r][0] = 2000; 				// Permission id (must not be already used)
@@ -118,7 +119,7 @@ class modCommissions extends DolibarrModules
 		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		// $r++;
 
-		
+
 		// Main menu entries
 		$this->menu = array();			// List of menus to add
 		$r = 0;
@@ -141,25 +142,27 @@ class modCommissions extends DolibarrModules
  	}
 
 	/**
-     *		\brief      Function called when module is enabled.
-     *					The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-     *					It also creates data directories.
-	 *      \return     int             1 if OK, 0 if KO
+     *	Function called when module is enabled.
+     *	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+     *	It also creates data directories.
+     *
+	 *  @return     int             1 if OK, 0 if KO
      */
 	function init()
   	{
     	$sql = array();
-    
+
 		$result=$this->load_tables();
-	
+
     	return $this->_init($sql);
   	}
 
 	/**
-	 *		\brief		Function called when module is disabled.
- 	 *              	Remove from database constants, boxes and permissions from Dolibarr database.
- 	 *					Data directories are not deleted.
-	 *      \return     int             1 if OK, 0 if KO
+	 *	Function called when module is disabled.
+ 	 *  Remove from database constants, boxes and permissions from Dolibarr database.
+ 	 *	Data directories are not deleted.
+ 	 *
+	 *  @return     int             1 if OK, 0 if KO
  	 */
 	function remove()
 	{
@@ -168,14 +171,15 @@ class modCommissions extends DolibarrModules
     	return $this->_remove($sql);
   	}
 
-	
+
 	/**
-	*		\brief		Create tables and keys required by module
-	* 					Files mymodule.sql and mymodule.key.sql with create table and create keys
-	* 					commands must be stored in directory /mymodule/sql/
-	*					This function is called by this->init.
-	* 		\return		int		<=0 if KO, >0 if OK
-	*/
+	 *	Create tables and keys required by module
+	 * 	Files mymodule.sql and mymodule.key.sql with create table and create keys
+	 * 	commands must be stored in directory /mymodule/sql/
+	 *	This function is called by this->init.
+	 *
+	 * 	@return		int		<=0 if KO, >0 if OK
+	 */
 	function load_tables()
 	{
 		return;
