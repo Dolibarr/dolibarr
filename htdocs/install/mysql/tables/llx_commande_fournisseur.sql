@@ -57,7 +57,7 @@ create table llx_commande_fournisseur
   date_livraison		date 	  default NULL,
   fk_cond_reglement		integer,                       -- condition de reglement
   fk_mode_reglement		integer,                       -- mode de reglement
-  fk_methode_commande	integer default 0,			 -- should be named fk_input_method
+  fk_input_method	integer default 0,
   import_key			varchar(14),
   extraparams			varchar(255)					-- for stock other parameters with json format
   

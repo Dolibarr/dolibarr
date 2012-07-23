@@ -380,10 +380,9 @@ class DoliDBPgsql
 		if (! $name) $name="postgres";    // When try to connect using admin user
 
 		// try first Unix domain socket (local)
-		if ((! $host || $host == "" || $host == "localhost" || $host == "127.0.0.1") && ! defined('NOLOCALSOCKETPGCONNECT'))
+		if ((empty($host) || $host == "socket") && ! defined('NOLOCALSOCKETPGCONNECT'))
 		{
 			$con_string = "dbname='".$name."' user='".$login."' password='".$passwd."'";    // $name may be empty
-			//print "$con_string";exit;
 			$this->db = pg_connect($con_string);
 		}
 
