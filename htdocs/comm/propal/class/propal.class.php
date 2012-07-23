@@ -673,7 +673,7 @@ class Propal extends CommonObject
         $sql.= ", ref_client";
         $sql.= ", date_livraison";
         $sql.= ", fk_availability";
-        $sql.= ", fk_demand_reason";
+        $sql.= ", fk_input_reason";
         $sql.= ", fk_projet";
         $sql.= ", entity";
         $sql.= ") ";
@@ -978,7 +978,7 @@ class Propal extends CommonObject
         $sql.= ", p.fk_user_author, p.fk_user_valid, p.fk_user_cloture";
         $sql.= ", p.fk_adresse_livraison";
         $sql.= ", p.fk_availability";
-        $sql.= ", p.fk_demand_reason";
+        $sql.= ", p.fk_input_reason";
         $sql.= ", p.fk_cond_reglement";
         $sql.= ", p.fk_mode_reglement";
         $sql.= ", c.label as statut_label";
@@ -990,7 +990,7 @@ class Propal extends CommonObject
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON p.fk_availability = ca.rowid';
-        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON p.fk_demand_reason = dr.rowid';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON p.fk_input_reason = dr.rowid';
         $sql.= " WHERE p.fk_statut = c.id";
         $sql.= " AND p.entity = ".$conf->entity;
         if ($ref) $sql.= " AND p.ref='".$ref."'";
@@ -1037,7 +1037,7 @@ class Propal extends CommonObject
                 $this->availability_id      = $obj->fk_availability;
                 $this->availability_code    = $obj->availability_code;
                 $this->availability         = $obj->availability;
-                $this->demand_reason_id     = $obj->fk_demand_reason;
+                $this->demand_reason_id     = $obj->fk_input_reason;
                 $this->demand_reason_code   = $obj->demand_reason_code;
                 $this->demand_reason        = $obj->demand_reason;
                 $this->fk_delivery_address  = $obj->fk_adresse_livraison;	// TODO obsolete
@@ -1350,12 +1350,12 @@ class Propal extends CommonObject
         if ($user->rights->propale->creer)
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal ";
-            $sql.= " SET fk_demand_reason = '".$id."'";
+            $sql.= " SET fk_input_reason = '".$id."'";
             $sql.= " WHERE rowid = ".$this->id;
 
             if ($this->db->query($sql))
             {
-                $this->fk_demand_reason = $id;
+                $this->fk_input_reason = $id;
                 return 1;
             }
             else
@@ -1944,7 +1944,7 @@ class Propal extends CommonObject
         if ($this->statut >= 0)
         {
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
-            $sql .= ' SET fk_demand_reason = '.$demand_reason_id;
+            $sql .= ' SET fk_input_reason = '.$demand_reason_id;
             $sql .= ' WHERE rowid='.$this->id;
             if ( $this->db->query($sql) )
             {
