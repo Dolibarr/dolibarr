@@ -617,7 +617,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
     		  $pa_ht = $_POST['np_buying_price'];
     		else
     		  $pa_ht = null;
-    
+
         $info_bits=0;
         if ($tva_npr) $info_bits |= 0x01;
 
@@ -722,7 +722,7 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['s
   	  $pa_ht = $_POST['buying_price'];
   	else
   	  $pa_ht = null;
-  
+
     // Check parameters
     if (empty($_POST['productid']) && $_POST["type"] < 0)
     {
@@ -825,7 +825,7 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->co
         if (! $idwarehouse || $idwarehouse == -1)
         {
             $error++;
-            $errors[]=$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse"));
+            $mesgs[]='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")).'</div>';
             $action='';
         }
     }
@@ -861,7 +861,7 @@ else if ($action == 'confirm_modif' && $user->rights->commande->creer)
         if (! $idwarehouse || $idwarehouse == -1)
         {
             $error++;
-            $errors[]=$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse"));
+            $mesgs[]='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")).'</div>';
             $action='';
         }
     }
@@ -906,7 +906,7 @@ else if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->comm
         if (! $idwarehouse || $idwarehouse == -1)
         {
             $error++;
-            $errors[]=$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse"));
+            $mesgs[]='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")).'</div>';
             $action='';
         }
     }
@@ -1017,7 +1017,7 @@ else if ($action == 'remove_file')
 /*
  * Add file in email form
  */
-if ($_POST['addfile'])
+if (GETPOST('addfile'))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
@@ -1592,7 +1592,6 @@ else
     if ($object->id > 0)
     {
         dol_htmloutput_mesg($mesg,$mesgs);
-        dol_htmloutput_errors('',$errors);
 
         $product_static=new Product($db);
 
@@ -1929,10 +1928,10 @@ else
         print '<table class="nobordernopadding" width="100%"><tr><td>';
         print $langs->trans('Source');
         print '</td>';
-        if ($_GET['action'] != 'editdemandreason' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDemandReason'),1).'</a></td>';
+        if ($action != 'editdemandreason' && ! empty($object->brouillon)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDemandReason'),1).'</a></td>';
         print '</tr></table>';
         print '</td><td colspan="2">';
-        if ($_GET['action'] == 'editdemandreason')
+        if ($action == 'editdemandreason')
         {
         	$form->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'demand_reason_id',1);
         }
@@ -1947,7 +1946,7 @@ else
         print '</td></tr>';
 
         // Project
-        if ($conf->projet->enabled)
+        if (! empty($conf->projet->enabled))
         {
         	$langs->load('projects');
         	print '<tr><td height="10">';

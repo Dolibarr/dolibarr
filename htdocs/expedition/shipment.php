@@ -231,15 +231,7 @@ if ($id > 0 || ! empty($ref))
 		// Date
 		print '<tr><td>'.$langs->trans('Date').'</td>';
 		print '<td colspan="2">'.dol_print_date($commande->date,'daytext').'</td>';
-		print '<td width="50%">'.$langs->trans('Source').' : '.$commande->getLabelSource();
-		if ($commande->source == 0 && $conf->propal->enabled && $commande->propale_id)
-		{
-			// Si source = propal
-			$propal = new Propal($db);
-			$propal->fetch($commande->propale_id);
-			print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$propal->id.'">'.$propal->ref.'</a>';
-		}
-		print '</td>';
+		print '<td width="50%">'.$langs->trans('Source').' : '.$commande->getLabelSource().'</td>';
 		print '</tr>';
 
 		// Delivery date planned
@@ -276,7 +268,7 @@ if ($id > 0 || ! empty($ref))
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
 
-		if ($action != 'editconditions' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+		if ($action != 'editconditions' && ! empty($commande->brouillon)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editconditions')
@@ -294,7 +286,7 @@ if ($id > 0 || ! empty($ref))
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentMode');
 		print '</td>';
-		if ($actionº != 'editmode' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+		if ($action != 'editmode' && ! empty($commande->brouillon)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editmode')
@@ -394,7 +386,8 @@ if ($id > 0 || ! empty($ref))
 			print "</tr>\n";
 
 			$var=true;
-			$reste_a_livrer = array();
+			$toBeShipped=array();
+			$toBeShippedTotal=0;
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
@@ -412,25 +405,25 @@ if ($id > 0 || ! empty($ref))
 				// Product label
 				if ($objp->fk_product > 0)
 				{
-          // Define output language
-          if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
-			    {
-            $commande->fetch_thirdparty();
-      			$prod = new Product($db, $objp->fk_product);
-      			$outputlangs = $langs;
-            $newlang='';
-            if (empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-            if (empty($newlang)) $newlang=$commande->client->default_lang;
-            if (! empty($newlang))
-            {
-                $outputlangs = new Translate("",$conf);
-                $outputlangs->setDefaultLang($newlang);
-            }
+					// Define output language
+					if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
+					{
+						$commande->fetch_thirdparty();
+						$prod = new Product($db, $objp->fk_product);
+						$outputlangs = $langs;
+						$newlang='';
+						if (empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+						if (empty($newlang)) $newlang=$commande->client->default_lang;
+						if (! empty($newlang))
+						{
+							$outputlangs = new Translate("",$conf);
+							$outputlangs->setDefaultLang($newlang);
+						}
 
-            $label = (! empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $objp->product_label;
-          }
-          else
-            $label = $objp->product_label;
+						$label = (! empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $objp->product_label;
+					}
+					else
+						$label = $objp->product_label;
 
 					print '<td>';
 					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
@@ -475,17 +468,17 @@ if ($id > 0 || ! empty($ref))
 				$qtyProdCom=$objp->qty;
 				print '<td align="center">';
 				// Nb of sending products for this line of order
-				$quantite_livree = $commande->expeditions[$objp->rowid];
-				print $quantite_livree;
+				$qtyAlreadyShipped = (! empty($commande->expeditions[$objp->rowid])?$commande->expeditions[$objp->rowid]:0);
+				print $qtyAlreadyShipped;
 				print '</td>';
 
 				// Qty remains to ship
 				print '<td align="center">';
 				if ($type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 				{
-					$reste_a_livrer[$objp->fk_product] = $objp->qty - $quantite_livree;
-					$reste_a_livrer_total += $reste_a_livrer[$objp->fk_product];
-					print $reste_a_livrer[$objp->fk_product];
+					$toBeShipped[$objp->fk_product] = $objp->qty - $qtyAlreadyShipped;
+					$toBeShippedTotal += $toBeShipped[$objp->fk_product];
+					print $toBeShipped[$objp->fk_product];
 				}
 				else
 				{
@@ -503,7 +496,7 @@ if ($id > 0 || ! empty($ref))
 				{
 					print '<td align="center">';
 					print $product->stock_reel;
-					if ($product->stock_reel < $reste_a_livrer[$objp->fk_product])
+					if ($product->stock_reel < $toBeShipped[$objp->fk_product])
 					{
 						print ' '.img_warning($langs->trans("StockTooLow"));
 					}
@@ -580,7 +573,7 @@ if ($id > 0 || ! empty($ref))
 				if ($user->rights->expedition->creer)
 				{
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/fiche.php?action=create&amp;origin=commande&amp;object_id='.$id.'">'.$langs->trans("NewSending").'</a>';
-					if ($reste_a_livrer_total <= 0)
+					if ($toBeShippedTotal <= 0)
 					{
 						print ' '.img_warning($langs->trans("WarningNoQtyLeftToSend"));
 					}
@@ -625,7 +618,7 @@ if ($id > 0 || ! empty($ref))
 				}
 				print '<td align="center">';
 				print '<input type="submit" class="button" named="save" value="'.$langs->trans("NewSending").'">';
-				if ($reste_a_livrer_total <= 0)
+				if ($toBeShippedTotal <= 0)
 				{
 					print ' '.img_warning($langs->trans("WarningNoQtyLeftToSend"));
 				}

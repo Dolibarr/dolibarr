@@ -2533,7 +2533,7 @@ abstract class CommonObject
 		print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
 		print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
 		print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
-    if (! empty($conf->margin->enabled)) { 
+    if (! empty($conf->margin->enabled)) {
 	    if ($conf->global->MARGIN_TYPE == "1")
 				print '<td align="right" width="80">'.$langs->trans('BuyingPrice').'</td>';
 			else
@@ -2861,43 +2861,43 @@ abstract class CommonObject
       'total_margin' => 0,
       'total_margin_rate' => '',
       'total_mark_rate' => ''
-    );                                
-    foreach($this->lines as $line) {  
-      if (isset($line->fk_fournprice) && !$force_price) {       
+    );
+    foreach($this->lines as $line) {
+      if (isset($line->fk_fournprice) && !$force_price) {
         $product = new ProductFournisseur($this->db);
-        if ( $product->fetch_product_fournisseur_price($line->fk_fournprice))
+        if ($product->fetch_product_fournisseur_price($line->fk_fournprice))
           $line->pa_ht = $product->fourn_unitprice;
-          if ($conf->global->MARGIN_TYPE == "2" && $product->fourn_unitcharges > 0)
+          if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == "2" && $product->fourn_unitcharges > 0)
           	$line->pa_ht += $product->fourn_unitcharges;
-      }                        
-      // si prix d'achat non renseign� et devrait l'�tre, alors prix achat = prix vente
-      if ((!isset($line->pa_ht) || $line->pa_ht == 0) && ($conf->global->ForceBuyingPriceIfNull == 1)) {
-      	$line->pa_ht = $line->subprice * (1 - ($line->remise_percent / 100));   
+      }
+      // si prix d'achat non renseigné et devrait l'être, alors prix achat = prix vente
+      if ((!isset($line->pa_ht) || $line->pa_ht == 0) && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)) {
+      	$line->pa_ht = $line->subprice * (1 - ($line->remise_percent / 100));
       }
 
       // calcul des marges
-      if(isset($line->fk_remise_except)) {    // remise
-        if ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '1') { // remise globale consid�r�e comme produit
-          $marginInfos['pa_products'] += ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);     
+      if (isset($line->fk_remise_except) && isset($conf->global->MARGIN_METHODE_FOR_DISCOUNT)) {    // remise
+        if ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '1') { // remise globale considérée comme produit
+          $marginInfos['pa_products'] += ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);
           $marginInfos['pv_products'] += $line->subprice * (1 - $line->remise_percent / 100);
-			    $marginInfos['pa_total'] +=  ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);     
+			    $marginInfos['pa_total'] +=  ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);
 			    $marginInfos['pv_total'] +=  $line->subprice * (1 - $line->remise_percent / 100);
 				}
-        elseif ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '2') { // remise globale consid�r�e comme service
-          $marginInfos['pa_services'] += ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);     
+        elseif ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '2') { // remise globale considérée comme service
+          $marginInfos['pa_services'] += ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);
           $marginInfos['pv_services'] += $line->subprice * (1 - ($line->remise_percent / 100));
-			    $marginInfos['pa_total'] +=  ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);     
+			    $marginInfos['pa_total'] +=  ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);
 			    $marginInfos['pv_total'] +=  $line->subprice * (1 - $line->remise_percent / 100);
 				}
         elseif ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '3') { // remise globale prise en compte uniqt sur total
-          $marginInfos['pa_total'] += ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);     
+          $marginInfos['pa_total'] += ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);
           $marginInfos['pv_total'] += $line->subprice * (1 - ($line->remise_percent / 100));
 				}
 			}
-      else {      
-        $type=$line->product_type?$line->product_type:$line->fk_product_type;   
+      else {
+        $type=$line->product_type?$line->product_type:$line->fk_product_type;
         if ($type == 0) {  // product
-          $marginInfos['pa_products'] += $line->qty * $line->pa_ht;                
+          $marginInfos['pa_products'] += $line->qty * $line->pa_ht;
           $marginInfos['pv_products'] += $line->qty * $line->subprice * (1 - $line->remise_percent / 100);
 			    $marginInfos['pa_total'] +=  $line->qty * $line->pa_ht;
 			    $marginInfos['pv_total'] +=  $line->qty * $line->subprice * (1 - $line->remise_percent / 100);
@@ -2910,32 +2910,32 @@ abstract class CommonObject
         }
       }
     }
-    
+
     $marginInfos['margin_on_products'] = $marginInfos['pv_products'] - $marginInfos['pa_products'];
     if ($marginInfos['pa_products'] > 0)
       $marginInfos['margin_rate_products'] = 100 * round($marginInfos['margin_on_products'] / $marginInfos['pa_products'],5);
     if ($marginInfos['pv_products'] > 0)
       $marginInfos['mark_rate_products'] = 100 * round($marginInfos['margin_on_products'] / $marginInfos['pv_products'],5);
-    
+
     $marginInfos['margin_on_services'] = $marginInfos['pv_services'] - $marginInfos['pa_services'];
     if ($marginInfos['pa_services'] > 0)
       $marginInfos['margin_rate_services'] = 100 * round($marginInfos['margin_on_services'] / $marginInfos['pa_services'],5);
     if ($marginInfos['pv_services'] > 0)
       $marginInfos['mark_rate_services'] = 100 * round($marginInfos['margin_on_services'] / $marginInfos['pv_services'],5);
-    
+
 
     $marginInfos['total_margin'] = $marginInfos['pv_total'] - $marginInfos['pa_total'];
     if ($marginInfos['pa_total'] > 0)
       $marginInfos['total_margin_rate'] = 100 * round($marginInfos['total_margin'] / $marginInfos['pa_total'],5);
     if ($marginInfos['pv_total'] > 0)
       $marginInfos['total_mark_rate'] = 100 * round($marginInfos['total_margin'] / $marginInfos['pv_total'],5);
-                            
+
     return $marginInfos;
   }
 
   function displayMarginInfos($force_price=false) {
     global $langs, $conf;
-    $marginInfo = $this->getMarginInfos($force_price); 
+    $marginInfo = $this->getMarginInfos($force_price);
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td width="30%">'.$langs->trans('Margins').'</td>';

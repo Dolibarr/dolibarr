@@ -2082,13 +2082,12 @@ class Product extends CommonObject
 	function get_arbo_each_prod($multiply=1)
 	{
 		$this->res = array();
-		if (is_array($this -> sousprods))
+		if (isset($this->sousprods) && is_array($this->sousprods))
 		{
-			foreach($this -> sousprods as $nom_pere => $desc_pere)
+			foreach($this->sousprods as $nom_pere => $desc_pere)
 			{
 				if (is_array($desc_pere)) $this->fetch_prod_arbo($desc_pere,"",$multiply);
 			}
-			//			dol_sort($this->res,);
 		}
 		return $this->res;
 	}

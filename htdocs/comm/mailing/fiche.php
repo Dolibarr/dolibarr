@@ -41,13 +41,6 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $urlfrom=GETPOST('urlfrom');
 
-$mesg='';
-if (isset($_SESSION['DolMessage']))
-{
-	$mesg=$_SESSION['DolMessage'];
-	unset($_SESSION['DolMessage']);
-}
-
 $object=new Mailing($db);
 $result=$object->fetch($id);
 
@@ -562,7 +555,7 @@ if ($action == 'confirm_valid' && $confirm == 'yes')
 	{
 		$object->valid($user);
 
-		$_SESSION['DolMessage']='<div class="ok">'.$langs->trans("MailingSuccessfullyValidated").'</div>';
+		$_SESSION['dol_message']='<div class="ok">'.$langs->trans("MailingSuccessfullyValidated").'</div>';
 
 		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;

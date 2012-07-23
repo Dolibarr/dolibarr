@@ -63,6 +63,7 @@ $search_montant_ht=GETPOST('search_montant_ht','alpha');
 
 $sall=GETPOST("sall");
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
+$mesgs=array();
 $year=GETPOST("year");
 $month=GETPOST("month");
 
@@ -863,7 +864,7 @@ else if ($action == "addline" && $user->rights->propale->creer)
 }
 
 // Mise a jour d'une ligne dans la propale
-else if ($action == 'updateligne' && $user->rights->propale->creer && $_POST["save"] == $langs->trans("Save"))
+else if ($action == 'updateligne' && $user->rights->propale->creer && GETPOST('save') == $langs->trans("Save"))
 {
 	if (! $object->fetch($_POST["id"]) > 0)
 	{
@@ -1266,7 +1267,7 @@ print $formconfirm;
 
 print '<table class="border" width="100%">';
 
-$linkback='<a href="'.DOL_URL_ROOT.'/comm/propal/list.php?page='.$page.'&socid='.$socid.'&viewstatut='.$viewstatut.'&sortfield='.$sortfield.'&sortorder='.$sortorder.'">'.$langs->trans("BackToList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/comm/propal/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 // Ref
 print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">';
@@ -1278,7 +1279,7 @@ print '<tr><td>';
 print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
 print $langs->trans('RefCustomer').'</td><td align="left">';
 print '</td>';
-if ($action != 'refclient' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+if ($action != 'refclient' && ! empty($object->brouillon)) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
 print '</tr></table>';
 print '</td><td colspan="5">';
 if ($user->rights->propale->creer && $action == 'refclient')
@@ -1337,10 +1338,10 @@ print '<td>';
 print '<table class="nobordernopadding" width="100%"><tr><td>';
 print $langs->trans('Date');
 print '</td>';
-if ($action != 'editdate' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
+if ($action != 'editdate' && ! empty($object->brouillon)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
 print '</tr></table>';
 print '</td><td colspan="3">';
-if ($object->brouillon && $action == 'editdate')
+if (! empty($object->brouillon) && $action == 'editdate')
 {
 	print '<form name="editdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1368,10 +1369,10 @@ print '<td>';
 print '<table class="nobordernopadding" width="100%"><tr><td>';
 print $langs->trans('DateEndPropal');
 print '</td>';
-if ($action != 'editecheance' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editecheance&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+if ($action != 'editecheance' && ! empty($object->brouillon)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editecheance&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 print '</tr></table>';
 print '</td><td colspan="3">';
-if ($object->brouillon && $action == 'editecheance')
+if (! empty($object->brouillon) && $action == 'editecheance')
 {
 	print '<form name="editecheance" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1382,7 +1383,7 @@ if ($object->brouillon && $action == 'editecheance')
 }
 else
 {
-	if ($object->fin_validite)
+	if (! empty($object->fin_validite))
 	{
 		print dol_print_date($object->fin_validite,'daytext');
 		if ($object->statut == 1 && $object->fin_validite < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
@@ -1400,7 +1401,7 @@ print '<tr><td>';
 print '<table class="nobordernopadding" width="100%"><tr><td>';
 print $langs->trans('PaymentConditionsShort');
 print '</td>';
-if ($action != 'editconditions' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetConditions'),1).'</a></td>';
+if ($action != 'editconditions' && ! empty($object->brouillon)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetConditions'),1).'</a></td>';
 print '</tr></table>';
 print '</td><td colspan="3">';
 if ($action == 'editconditions')
@@ -1420,7 +1421,7 @@ print '<tr><td>';
 print '<table class="nobordernopadding" width="100%"><tr><td>';
 print $langs->trans('DeliveryDate');
 print '</td>';
-if ($action != 'editdate_livraison' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDeliveryDate'),1).'</a></td>';
+if ($action != 'editdate_livraison' && ! empty($object->brouillon)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDeliveryDate'),1).'</a></td>';
 print '</tr></table>';
 print '</td><td colspan="3">';
 if ($action == 'editdate_livraison')
@@ -1443,9 +1444,9 @@ print '</tr>';
 print '<tr><td>';
 print '<table class="nobordernopadding" width="100%"><tr><td>';
 print $langs->trans('AvailabilityPeriod');
-if ($conf->commande->enabled) print ' ('.$langs->trans('AfterOrder').')';
+if (! empty($conf->commande->enabled)) print ' ('.$langs->trans('AfterOrder').')';
 print '</td>';
-if ($action != 'editavailability' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editavailability&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetAvailability'),1).'</a></td>';
+if ($action != 'editavailability' && ! empty($object->brouillon)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editavailability&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetAvailability'),1).'</a></td>';
 print '</tr></table>';
 print '</td><td colspan="3">';
 if ($action == 'editavailability')
@@ -1465,7 +1466,7 @@ print '<tr><td>';
 print '<table class="nobordernopadding" width="100%"><tr><td>';
 print $langs->trans('Source');
 print '</td>';
-if ($action != 'editdemandreason' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDemandReason'),1).'</a></td>';
+if ($action != 'editdemandreason' && ! empty($object->brouillon)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDemandReason'),1).'</a></td>';
 print '</tr></table>';
 print '</td><td colspan="3">';
 //print $object->demand_reason_id;
@@ -1487,7 +1488,7 @@ print '<td width="25%">';
 print '<table class="nobordernopadding" width="100%"><tr><td>';
 print $langs->trans('PaymentMode');
 print '</td>';
-if ($action != 'editmode' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMode'),1).'</a></td>';
+if ($action != 'editmode' && ! empty($object->brouillon)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMode'),1).'</a></td>';
 print '</tr></table>';
 print '</td><td colspan="3">';
 if ($action == 'editmode')
@@ -1501,7 +1502,7 @@ else
 print '</td></tr>';
 
 // Project
-if ($conf->projet->enabled)
+if (! empty($conf->projet->enabled))
 {
 	$langs->load("projects");
 	print '<tr><td>';
@@ -1525,7 +1526,7 @@ if ($conf->projet->enabled)
 	else
 	{
 		print '</td></tr></table>';
-		if (!empty($object->fk_project))
+		if (! empty($object->fk_project))
 		{
 			print '<td colspan="3">';
 			$proj = new Project($db);
@@ -1732,7 +1733,7 @@ if ($action != 'presend')
 		}
 
         // Create an order
-        if ($conf->commande->enabled && $object->statut == 2 && $user->societe_id == 0)
+        if (! empty($conf->commande->enabled) && $object->statut == 2 && $user->societe_id == 0)
         {
             if ($user->rights->commande->creer)
             {
@@ -1763,9 +1764,9 @@ if ($action != 'presend')
 		}
 
 		// Clone
-		if ($object->type == 0 && $user->rights->propale->creer)
+		if ($user->rights->propale->creer)
 		{
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object=propal">'.$langs->trans("ToClone").'</a>';
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&amp;object='.$object->element.'">'.$langs->trans("ToClone").'</a>';
 		}
 
 		// Delete
