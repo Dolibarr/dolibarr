@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+/* Copyright (C) 2012	Christophe Battarel	<christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,28 +16,27 @@
  */
 
 /**
- *	\file       htdocs/custom/commissions/index.php
+ *	\file       htdocs/commissions/index.php
  *	\ingroup    commissions
  *	\brief      Page des commissions par agent commercial
- *	\version    $Id: facture.php,v 1.84 2011/08/08 16:07:47 eldy Exp $
  */
 
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");  
-if ($conf->marges->enabled) 
-  require_once(DOL_DOCUMENT_ROOT."/marges/lib/marges.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+if (! empty($conf->margin->enabled))
+	require_once(DOL_DOCUMENT_ROOT."/margin/lib/margins.lib.php");
 
 $langs->load("companies");
 $langs->load("bills");
 $langs->load("products");
-if ($conf->marges->enabled) 
-  $langs->load("marges");
 $langs->load("commissions");
-																							 
+if (! empty($conf->margin->enabled))
+	$langs->load("margins");
+
 // Security check
-$agentid = isset($_REQUEST["agentid"])?$_REQUEST["agentid"]:'';
+$agentid = GETPOST('agentid','int');
 
 $mesg = '';
 
@@ -57,7 +56,7 @@ if (!empty($_POST['enddatemonth']))
 /*
  * View
  */
-                                                              
+
 $userstatic = new User($db);
 $companystatic = new Societe($db);
 $invoicestatic=new Facture($db);
@@ -65,10 +64,10 @@ $invoicestatic=new Facture($db);
 $form = new Form($db);
 
 llxHeader('',$langs->trans("Commissions"));
-                                                               
+
 $text=$langs->trans("Commissions");
 print_fiche_titre($text);
-                                                               
+
 print '<form method="post" name="sel">';
 print '<table class="border" width="100%">';
 
@@ -78,7 +77,7 @@ if ($agentid > 0) {
       print '<td colspan="4">';
       print $form->select_dolusers($selected=$agentid,$htmlname='agentid',$show_empty=1,$exclude='',$disabled=0,$include='',$enableonly='');
       print '</td></tr>';
-      
+
       if (! $sortorder) $sortorder="ASC";
       if (! $sortfield) $sortfield="s.nom";
 }
@@ -91,7 +90,7 @@ else {
   if (! $sortfield) $sortfield="u.login";
 }
 
-// Date début
+// Date dï¿½but
 print '<td>'.$langs->trans('StartDate').'</td>';
 print '<td width="20%">';
 $form->select_date($startdate,'startdate','','',1,"sel",1,1);
@@ -181,25 +180,25 @@ if ($result)
 
   print '<br>';
 	print_barre_liste($langs->trans("CommissionDetails"),$page,$_SERVER["PHP_SELF"],"&amp;socid=$societe->id",$sortfield,$sortorder,'',$num,0,'');
-	
+
 	$i = 0;
 	print "<table class=\"noborder\" width=\"100%\">";
 
 	print '<tr class="liste_titre">';
-	if ($agentid > 0) 
+	if ($agentid > 0)
    	print_liste_field_titre($langs->trans("Customer"),$_SERVER["PHP_SELF"],"s.nom","","&amp;agentid=".$_REQUEST["agentid"],'align="center"',$sortfield,$sortorder);
   else
   	print_liste_field_titre($langs->trans("CommercialAgent"),$_SERVER["PHP_SELF"],"u.login","","&amp;agentid=".$_REQUEST["agentid"],'align="center"',$sortfield,$sortorder);
-  	
+
   // product commission
   if ($conf->global->COMMISSION_BASE == "MARGES")
 	  print_liste_field_titre($langs->trans("ProductMargin"),$_SERVER["PHP_SELF"],"productBase","","&amp;agentid=".$_REQUEST["agentid"],'align="right"',$sortfield,$sortorder);
   elseif ($conf->global->COMMISSION_BASE == "CA")
 	  print_liste_field_titre($langs->trans("ProductCA"),$_SERVER["PHP_SELF"],"productBase","","&amp;agentid=".$_REQUEST["agentid"],'align="right"',$sortfield,$sortorder);
-	
+
   print_liste_field_titre($langs->trans("CommissionRate"),$_SERVER["PHP_SELF"],"","","&amp;agentid=".$_REQUEST["agentid"],'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ProductCommission"),$_SERVER["PHP_SELF"],"","","&amp;agentid=".$_REQUEST["agentid"],'align="right"',$sortfield,$sortorder);
-	
+
   // service commission
   if ($conf->global->COMMISSION_BASE == "MARGES")
   	print_liste_field_titre($langs->trans("ServiceMargin"),$_SERVER["PHP_SELF"],"serviceBase","","&amp;agentid=".$_REQUEST["agentid"],'align="right"',$sortfield,$sortorder);
@@ -210,7 +209,7 @@ if ($result)
 	print_liste_field_titre($langs->trans("ServiceCommission"),$_SERVER["PHP_SELF"],"","","&amp;agentid=".$_REQUEST["agentid"],'align="right"',$sortfield,$sortorder);
 	// total commission
 	print_liste_field_titre($langs->trans("TotalCommission"),$_SERVER["PHP_SELF"],"","","&amp;agentid=".$_REQUEST["agentid"],'align="right"',$sortfield,$sortorder);
-	
+
 	print "</tr>\n";
 
 	$cumul_base_produit = 0;
@@ -222,7 +221,7 @@ if ($result)
 		$var=True;
 		while ($i < $num && $i < $conf->liste_limit)
 		{
-			$objp = $db->fetch_object($result);     
+			$objp = $db->fetch_object($result);
 
 			$var=!$var;
 
@@ -288,25 +287,23 @@ else
 }
 $db->free($result);
 
+
+llxFooter();
 $db->close();
-   
-llxFooter('$Date: 2011/08/08 16:07:47 $ - $Revision: 1.84 $');
 ?>
 <script type="text/javascript">
-
 $(document).ready(function() {
-  
-  $("#agentid").change(function() {    
+
+  $("#agentid").change(function() {
      $("div.fiche form").submit();
   });
-  
-  $("#selIncluded").change(function() {    
+
+  $("#selIncluded").change(function() {
      $("div.fiche form").submit();
   });
-  
+
 	$("#totalBase").html("<?php echo price($cumul_base_produit + $cumul_base_service); ?>");
 	$("#totalCommission").html("<?php echo price($cumul_commission_produit + $cumul_commission_service); ?>");
 
 });
-
 </script>

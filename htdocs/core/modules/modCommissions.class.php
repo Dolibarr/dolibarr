@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+/* Copyright (C) 2012	Christophe Battarel	<christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,14 +16,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   mymodule     Module MyModule
- *      \brief      Module to manage commissions
- */
-
 /**
- *      \file       htdocs/includes/modules/modCommissions.class.php
- *      \ingroup    commissions
- *      \brief      Description and activation file for module Commissions
+ * 	\defgroup   commissions     Module Commissions
+ * 	\brief      Example of a module descriptor.
+ * 	\file       htdocs/core/modules/modCommissions.class.php
+ * 	\ingroup    commissions
+ * 	\brief      Description and activation file for module Commissions
  */
 include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
 
@@ -34,11 +32,11 @@ include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
 class modCommissions extends DolibarrModules
 {
     /**
-     *   Constructor. Define names, constants, directories, boxes, permissions
+     * 	Constructor
      *
-     *   @param		DoliDB		$db		Database handler
+     * 	@param	DoliDB	$db		Database handler
      */
-	function modCommissions($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 
@@ -52,7 +50,7 @@ class modCommissions extends DolibarrModules
 		// It is used to group modules in module setup page
 		$this->family = "financial";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = mb_ereg_replace('^mod','',get_class($this), "i");
+		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Commissions management";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -67,42 +65,26 @@ class modCommissions extends DolibarrModules
 
 		// Data directories to create when module is enabled.
 		$this->dirs = array();
-		//$this->dirs[0] = DOL_DATA_ROOT.'/Marges';
-        //$this->dirs[1] = DOL_DATA_ROOT.'/mymodule/temp;
-
-		// Relative path to module style sheet if exists. Example: '/mymodule/mycss.css'.
-		$this->style_sheet = '/commissions/css/commissions.css';
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
 		$this->config_page_url = array("commissions.php");
 
 		// Dependencies
-		$this->depends = array("modFacture", "modMarges");		// List of modules id that must be enabled if this module is enabled
+		$this->depends = array("modFacture", "modMargin");		// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
-		$this->phpmin = array(4,1);					// Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(3,1);	// Minimum version of Dolibarr required by module
+		$this->phpmin = array(5,1);					// Minimum version of PHP required by module
+		$this->need_dolibarr_version = array(3,2);	// Minimum version of Dolibarr required by module
 		$this->langfiles = array("commissions");
 
 		// Constants
 		$this->const = array();			// List of particular constants to add when module is enabled
-    //$this->const = array(    0=>array('MAIN_MODULE_MARGES_HOOKS', 'chaine', 'propalcard',    'Hooks list for displaying Marges data on entity lists', 0, 'current', 1)    );
 
 		// New pages on tabs
-		$this->tabs = array(
-		);
-
+		$this->tabs = array();
 
 		// Boxes
 		$this->boxes = array();			// List of boxes
 		$r=0;
-
-		// Add here list of php file(s) stored in includes/boxes that contains class to show a box.
-		// Example:
-        //$this->boxes[$r][1] = "myboxa.php";
-    	//$r++;
-        //$this->boxes[$r][1] = "myboxb.php";
-    	//$r++;
-
 
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
@@ -122,8 +104,9 @@ class modCommissions extends DolibarrModules
 		$this->menu = array();			// List of menus to add
 		$r = 0;
 
-    // left menu entry
-    $this->menu[$r]=array(	'fk_menu'=>0,			// Put 0 if this is a top menu
+		// left menu entry
+		$this->menu[$r]=array(
+				'fk_menu'=>0,			// Put 0 if this is a top menu
     			'type'=>'top',			// This is a Top menu entry
     			'titre'=>'Commissions',
     			'mainmenu'=>'commissions',
@@ -135,8 +118,7 @@ class modCommissions extends DolibarrModules
     			'perms'=>'1',			// Use 'perms'=>'$user->rights->monmodule->level1->level2' if you want your menu with a permission rules
     			'target'=>'',
     			'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
-    $r++;
-
+		$r++;
  	}
 
 	/**
