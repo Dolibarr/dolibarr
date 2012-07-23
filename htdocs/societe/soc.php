@@ -84,20 +84,20 @@ $error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->e
 
 if (empty($reshook))
 {
-    if ($_POST["getcustomercode"])
+    if (GETPOST('getcustomercode'))
     {
         // We defined value code_client
         $_POST["code_client"]="Acompleter";
     }
 
-    if ($_POST["getsuppliercode"])
+    if (GETPOST('getsuppliercode'))
     {
         // We defined value code_fournisseur
         $_POST["code_fournisseur"]="Acompleter";
     }
 
     // Add new third party
-    if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
+    if ((! GETPOST('getcustomercode') && ! GETPOST('getsuppliercode'))
     && ($action == 'add' || $action == 'update') && $user->rights->societe->creer)
     {
         require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
@@ -1444,7 +1444,7 @@ else
         dol_htmloutput_errors($error,$errors);
 
         $showlogo=$object->logo;
-        $showbarcode=($conf->barcode->enabled && $user->rights->barcode->lire);
+        $showbarcode=(! empty($conf->barcode->enabled) && $user->rights->barcode->lire);
 
         print '<table class="border" width="100%">';
 
@@ -1467,9 +1467,9 @@ else
         // Logo+barcode
         $rowspan=4;
         if (! empty($conf->global->SOCIETE_USEPREFIX)) $rowspan++;
-        if ($object->client) $rowspan++;
-        if ($conf->fournisseur->enabled && $object->fournisseur && ! empty($user->rights->fournisseur->lire)) $rowspan++;
-        if ($conf->global->MAIN_MODULE_BARCODE) $rowspan++;
+        if (! empty($object->client)) $rowspan++;
+        if (! empty($conf->fournisseur->enabled) && $object->fournisseur && ! empty($user->rights->fournisseur->lire)) $rowspan++;
+        if (! empty($conf->global->MAIN_MODULE_BARCODE)) $rowspan++;
         if (empty($conf->global->SOCIETE_DISABLE_STATE)) $rowspan++;
         $htmllogobar='';
         if ($showlogo || $showbarcode)
@@ -1502,7 +1502,7 @@ else
         }
 
         // Supplier code
-        if ($conf->fournisseur->enabled && $object->fournisseur && ! empty($user->rights->fournisseur->lire))
+        if (! empty($conf->fournisseur->enabled) && $object->fournisseur && ! empty($user->rights->fournisseur->lire))
         {
             print '<tr><td>';
             print $langs->trans('SupplierCode').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
@@ -1514,7 +1514,7 @@ else
         }
 
         // Barcode
-        if ($conf->global->MAIN_MODULE_BARCODE)
+        if (! empty($conf->global->MAIN_MODULE_BARCODE))
         {
             print '<tr><td>';
             print $langs->trans('Gencod').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">'.$object->barcode;
