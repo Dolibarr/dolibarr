@@ -58,7 +58,7 @@ alter table llx_propaldet drop column pa_ht;
 alter table llx_propaldet drop column marge_tx;
 alter table llx_propaldet drop column marque_tx;
 
-ALTER TABLE llx_commande CHANGE fk_demand_reason fk_input_reason INT(11) NULL DEFAULT NULL
-ALTER TABLE llx_propal CHANGE fk_demand_reason fk_input_reason INT(11) NULL DEFAULT NULL
-ALTER TABLE llx_commande_fournisseur CHANGE fk_methode_commande fk_input_method INT(11) NULL DEFAULT '0'
+ALTER TABLE llx_commande CHANGE fk_demand_reason fk_input_reason INT(11) NULL DEFAULT NULL;
+ALTER TABLE llx_propal CHANGE fk_demand_reason fk_input_reason INT(11) NULL DEFAULT NULL;
+ALTER TABLE llx_commande_fournisseur CHANGE fk_methode_commande fk_input_method INT(11) NULL DEFAULT '0';
 
