@@ -87,7 +87,7 @@ if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE)
     		$substitutionarrayfortest,
     		array(
     				'__CHECK_READ__' => 'TESTCheckMail',
-    				'__UNSUSCRIBE__' => 'TESTCheckMail'
+    				'__UNSUSCRIBE__' => 'TESTUnsuscribe'
     		)
     );
 }
