@@ -193,6 +193,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
         	}
         }
 
+        dol_syslog(get_class($this)."::add_to_target: sql ".$sql,LOG_DEBUG);
         dol_syslog(get_class($this)."::add_to_target: mailing ".$j." targets added");
 
         //Update the status to show thirdparty mail that don't want to be contacted anymore'
