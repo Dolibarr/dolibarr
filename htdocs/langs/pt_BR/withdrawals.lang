@@ -17,7 +17,7 @@ RequestStandingOrderToTreat=Pedidos de Débitos Diretos a Tratar
 RequestStandingOrderTreated=Pedidos de Débitos Diretos Processados
 CustomersStandingOrders=Débitos Diretos de Clientes
 CustomerStandingOrder=Débito Direto de Cliente
-NbOfInvoiceToWithdraw=N� de Faturas Pendentes de Levantamento
+NbOfInvoiceToWithdraw=No de Faturas Pendentes de Levantamento
 InvoiceWaitingWithdraw=Faturas em Espera de Levantamento
 AmountToWithdraw=Quantidade a Levantar
 WithdrawsRefused=Débitos Diretos Rejeitados
@@ -32,6 +32,4 @@ ThirdPartyBankCode=Código Banco do Fornecedor
 ThirdPartyDeskCode=Código da Escritório do Fornecedor
 NoInvoiceCouldBeWithdrawed=Não há fatura de débito direto com sucesso. Verifique se a fatura da empresa tem um válido IBAN.
 ClassCredited=Classificar Acreditados
-ClassCreditedConfirm=? Tem certeza que quer classificar este débito direto como realizado sobre a sua conta bancaria?
-
-
+ClassCreditedConfirm=Tem certeza que quer classificar este débito direto como realizado sobre a sua conta bancaria?

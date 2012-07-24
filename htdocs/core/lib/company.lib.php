@@ -389,6 +389,7 @@ function getFormeJuridiqueLabel($code)
 function show_projects($conf,$langs,$db,$object,$backtopage='')
 {
     global $user;
+    global $bc;
 
     $i = -1 ;
 
@@ -517,13 +518,13 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
     print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
     print "<td>&nbsp;</td>";
-    if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+    if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
     {
         print '<td>&nbsp;</td>';
     }
     print "</tr>";
 
-    $sql = "SELECT p.rowid, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note ";
+    $sql = "SELECT p.rowid, p.name, p.firstname, p.fk_pays, p.poste, p.phone, p.fax, p.email, p.note ";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
     $sql .= " WHERE p.fk_soc = ".$object->id;
     $sql .= " ORDER by p.datec";
@@ -552,12 +553,14 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
             print '<td>'.$obj->poste.'</td>';
 
+            $country_code = getCountry($obj->fk_pays, 2);
+
             // Lien click to dial
             print '<td>';
-            print dol_print_phone($obj->phone,$obj->pays_code,$obj->rowid,$object->id,'AC_TEL');
+            print dol_print_phone($obj->phone,$country_code,$obj->rowid,$object->id,'AC_TEL');
             print '</td>';
             print '<td>';
-            print dol_print_phone($obj->fax,$obj->pays_code,$obj->rowid,$object->id,'AC_FAX');
+            print dol_print_phone($obj->fax,$country_code,$obj->rowid,$object->id,'AC_FAX');
             print '</td>';
             print '<td>';
             print dol_print_email($obj->email,$obj->rowid,$object->id,'AC_EMAIL');

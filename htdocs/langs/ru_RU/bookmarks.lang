@@ -8,7 +8,23 @@
 // START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
 // Reference language: en_US
 CHARSET=UTF-8
-Bookm=Закладки
-NewBookmark=Новая закладка
 AddThisPageToBookmarks=Добавить эту страницу в закладки
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+
+Bookmark=Закладка
+Bookmarks=Закладки
+NewBookmark=Новая закладка
+ShowBookmark=Показать закладки
+OpenANewWindow=Открыть в новом окне
+ReplaceWindow=Замените текущее окно
+BookmarkTargetNewWindowShort=Новое окно
+BookmarkTargetReplaceWindowShort=Текущее окно
+BookmarkTitle=Закладка титула
+UrlOrLink=URL
+BehaviourOnClick=Поведение на кнопку на URL
+CreateBookmark=Создать закладку
+SetHereATitleForLink=Установите здесь название для закладки
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Использование внешнего HTTP URL или относительный URL Dolibarr
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Выберите, если страница открыта ссылка должна появиться на текущем или новом окне
+BookmarksManagement=Управление закладками
+ListOfBookmarks=Список закладок

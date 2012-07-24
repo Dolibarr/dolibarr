@@ -30,7 +30,7 @@
  *  @param 	int		&$error				Number of errors
  *  @param  string	&$errorcode			Error string code
  *  @param  string	&$errorlabel		Error string label
- *  @return	User						Return user object identified by login/pass/entity into authentication array
+ *  @return User						Return user object identified by login/pass/entity into authentication array
  */
 function check_authentication($authentication,&$error,&$errorcode,&$errorlabel)
 {
@@ -70,10 +70,12 @@ function check_authentication($authentication,&$error,&$errorcode,&$errorlabel)
 			$error++;
 			$errorcode='ERROR_USER_DISABLED'; $errorlabel='This user has been locked or disabled';
 		}
-		
+
     	// Validation of login
 		if (! $error)
 		{
+			$fuser->getrights();	// Load permission of user
+
         	// Authentication mode
         	if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication='http,dolibarr';
         	// Authentication mode: forceuser

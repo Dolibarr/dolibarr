@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,7 +152,10 @@ if ($action == 'updateprice' && $_POST["cancel"] <> $langs->trans("Cancel"))
 			$supplier=new Fournisseur($db);
 			$result=$supplier->fetch($id_fourn);
 
-			$ret=$product->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx);
+      if (isset($_POST['ref_fourn_price_id']))
+        $product->fetch_product_fournisseur_price($_POST['ref_fourn_price_id']);
+
+			$ret=$product->update_buyprice($quantity, $_POST["price"], $_POST["charges"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx);
 			if ($ret < 0)
 			{
 				$error++;
@@ -267,7 +271,7 @@ if ($id || $ref)
 
 				print '<table class="border" width="100%">';
 
-				print '<tr><td class="fieldrequired">'.$langs->trans("Supplier").'</td><td colspan="3">';
+				print '<tr><td class="fieldrequired">'.$langs->trans("Supplier").'</td><td colspan="5">';
 				if ($_GET["rowid"])
 				{
 					$supplier=new Fournisseur($db);
@@ -292,7 +296,7 @@ if ($id || $ref)
 				print '</td></tr>';
 
 				// Ref supplier
-				print '<tr><td class="fieldrequired">'.$langs->trans("SupplierRef").'</td><td colspan="3">';
+				print '<tr><td class="fieldrequired">'.$langs->trans("SupplierRef").'</td><td colspan="5">';
 				if ($_GET["rowid"])
 				{
 					print $product->fourn_ref;
@@ -344,6 +348,10 @@ if ($id || $ref)
                 print '</td>';
 				print '</tr>';
 
+				print '<td>'.$langs->trans("Charges").'</td>';
+				print '<td><input class="flat" name="charges" size="8" value="'.($_POST["charges"]?$_POST["charges"]:price($product->fourn_charges)).'">';
+        print '</td>';
+
 				print '</table>';
 
 				print '<br><center><input class="button" type="submit" value="'.$langs->trans("Save").'">';
@@ -389,7 +397,9 @@ if ($id || $ref)
 				print_liste_field_titre($langs->trans("QtyMin"),$_SERVER["PHP_SELF"],"pfp.quantity","",$param,'align="right"',$sortfield,$sortorder);
 				print '<td class="liste_titre" align="right">'.$langs->trans("VATRate").'</td>';
 				print '<td class="liste_titre" align="right">'.$langs->trans("PriceQtyMinHT").'</td>';
+				print '<td align="right">'.$langs->trans("Charges").'</td>';
 				print_liste_field_titre($langs->trans("UnitPriceHT"),$_SERVER["PHP_SELF"],"pfp.unitprice","",$param,'align="right"',$sortfield,$sortorder);
+				print '<td align="right">'.$langs->trans("UnitCharges").'</td>';
 				print '<td class="liste_titre"></td>';
 				print "</tr>\n";
 
@@ -434,10 +444,20 @@ if ($id || $ref)
 						print $productfourn->fourn_price?price($productfourn->fourn_price):"";
 						print '</td>';
 
+						// Charges
+						print '<td align="right">';
+						print $productfourn->fourn_charges?price($productfourn->fourn_charges):"";
+						print '</td>';
+
 						// Unit price
 						print '<td align="right">';
 						print price($productfourn->fourn_unitprice);
 						//print $objp->unitprice? price($objp->unitprice) : ($objp->quantity?price($objp->price/$objp->quantity):"&nbsp;");
+						print '</td>';
+
+						// Unit Charges
+						print '<td align="right">';
+						print $productfourn->fourn_unitcharges?price($productfourn->fourn_unitcharges) : ($productfourn->fourn_qty?price($productfourn->fourn_charges/$productfourn->fourn_qty):"&nbsp;");
 						print '</td>';
 
 						// Modify-Remove

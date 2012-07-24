@@ -171,7 +171,7 @@ AutoDetectLang = Automatisch detecteren (taal van de browser)
 FeatureDisabledInDemo = Functionaliteit uitgeschakeld in de demonstratie
 Rights = Rechten
 BoxesDesc = Vakken zijn delen op het scherm die bepaalde informatie tonen op geselecteerde pagina's. U kunt vak in- of uitschakelen door de doelpagina te selecteren en op "activeren" te klikken of door op de prullenbak te klikken om het vak uit te schakelen.
-OnlyActiveElementsAreShown = Alleen elementen van ingeschakelde <a href="modules.php">modules</a> worden getoond.
+OnlyActiveElementsAreShown = Alleen elementen van ingeschakelde <a href="%s">modules</a> worden getoond.
 ModulesDesc = Dolibarr modules bepalen welke functionaliteit is ingeschakeld in de software. Voor enkele modules is het noodzakelijk, zodra de module is ingeschakeld, rechten te verlenen aan de gebruikers. Klik op de knop uit / aan in de kolom "Status" om een module / functionaliteit in of uit te schakelen.
 ModulesInterfaceDesc = De Dolibarr 'interface'-modules staan het u toe functionaliteit toe te voegen die afhankelijk is van externe software, systemen of diensten.
 ModulesSpecialDesc = Speciale modules zijn zeer specifieke of zelden gebruikte modules.

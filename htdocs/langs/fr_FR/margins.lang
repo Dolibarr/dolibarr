@@ -1,0 +1,45 @@
+# Dolibarr language file - fr_FR - margins
+CHARSET=UTF-8
+
+Margin=Marge
+Margins=Marges
+TotalMargin=Marge totale
+MarginOnProducts=Marge / Produits
+MarginOnServices=Marge / Services
+MarginRate=Taux de marge
+MarkRate=Taux de marque
+DisplayMarginRates=Afficher les taux de marge
+DisplayMarkRates=Afficher les taux de marque
+InputPrice=Saisir un prix
+
+margin=Gestion des marges
+margesSetup=Paramétrage de la gestion des marges
+
+MarginDetails=Détails des marges réalisées
+
+ProductMargins=Marges par produit
+CustomerMargins=Marges par client
+AgentMargins=Marges par commercial
+
+ProductService=Produit ou Service
+AllProducts=Tous les produits et services
+ChooseProduct/Service=Choisissez le produit ou le service
+CommercialAgent=Agent commercial
+
+StartDate=Date de début
+EndDate=Date de fin
+Launch=Démarrer
+
+ForceBuyingPriceIfNull=Forcer le prix d'achat si non renseigné
+ForceBuyingPriceIfNullDetails=Si "ON", la ligne sera prise en compte avec une marge nulle (on forcera le prix d'achat avec le prix de vente) , sinon ("OFF") la marge sera égale au prix de vente pour cette ligne (prix d'achat à zéro).
+MARGIN_METHODE_FOR_DISCOUNT=Méthode de gestion des remises globales
+UseDiscountAsProduct=Comme un produit
+UseDiscountAsService=Comme un service
+UseDiscountOnTotal=Sur le total
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Définit si une remise globale est prise en compte comme un produit, comme un service ou uniquement sur le total lors du calcul des marges.
+
+MARGIN_TYPE=Type de marge gérée
+MARGIN_TYPE_DETAILS=Marge brute : Prix de vente HT - Prix d'achat HT<br/>Marge nette : Prix de vente HT - Coût de revient
+
+BuyingCost=Coût de revient
+UnitCharges=Charge unitaire

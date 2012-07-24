@@ -41,3 +41,24 @@ ALTER TABLE llx_mailing ADD COLUMN extraparams varchar(255);
 ALTER TABLE llx_product MODIFY ref                       varchar(128)  NOT NULL;
 ALTER TABLE llx_product MODIFY ref_ext                   varchar(128);
 
+ALTER TABLE llx_product_fournisseur_price ADD charges DOUBLE( 24, 8 ) DEFAULT 0 AFTER unitprice;
+ALTER TABLE llx_product_fournisseur_price ADD unitcharges DOUBLE( 24, 8 ) DEFAULT 0 AFTER charges;
+
+alter table llx_commandedet add column fk_product_fournisseur_price int(11) after info_bits;
+alter table llx_commandedet add column buy_price_ht double(24,8) DEFAULT 0 after fk_product_fournisseur_price;
+alter table llx_commandedet drop column marge_tx;
+alter table llx_commandedet drop column marque_tx;
+
+alter table llx_facturedet add column fk_product_fournisseur_price int(11) after info_bits;
+alter table llx_facturedet add column buy_price_ht double(24,8) DEFAULT 0 after fk_product_fournisseur_price;
+
+alter table llx_propaldet add column fk_product_fournisseur_price int(11) after info_bits;
+alter table llx_propaldet add column buy_price_ht double(24,8) DEFAULT 0 after fk_product_fournisseur_price;
+alter table llx_propaldet drop column pa_ht;
+alter table llx_propaldet drop column marge_tx;
+alter table llx_propaldet drop column marque_tx;
+
+ALTER TABLE llx_commande CHANGE fk_demand_reason fk_input_reason INT(11) NULL DEFAULT NULL;
+ALTER TABLE llx_propal CHANGE fk_demand_reason fk_input_reason INT(11) NULL DEFAULT NULL;
+ALTER TABLE llx_commande_fournisseur CHANGE fk_methode_commande fk_input_method INT(11) NULL DEFAULT '0';
+

@@ -76,78 +76,58 @@ print "</tr>\n";
 
 clearstatcache();
 
-$workflowcodes=array();
-$workflow=array(
-		'propal' => array(
-				'order' => array('WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL')
-		),
-		'order' => array(
-				'propal' => array('WORKFLOW_PROPAL_AUTOCREATE_ORDER')
-				,'invoice' => array('WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER')
-		),
-		'invoice' => array (
-				'order' => array('WORKFLOW_ORDER_AUTOCREATE_INVOICE')
-				//,'contract' => array('WORKFLOW_CONTRACT_AUTOCREATE_INVOICE')
-				//, 'propal' => array('WORKFLOW_PROPAL_AUTOCREATE_INVOICE')
-		)
+$workflowcodes=array(
+	'WORKFLOW_PROPAL_AUTOCREATE_ORDER'=>array('enabled'=>($conf->propal->enabled && $conf->commande->enabled), 'picto'=>'order'),
+	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array('enabled'=>($conf->propal->enabled && $conf->commande->enabled), 'picto'=>'order','warning'=>'WarningCloseAlways'),
+	'WORKFLOW_ORDER_AUTOCREATE_INVOICE'=>array('enabled'=>($conf->commande->enabled && $conf->facture->enabled), 'picto'=>'bill'),
+	'WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER'=>array('enabled'=>($conf->facture->enabled && $conf->commande->enabled), 'picto'=>'bill','warning'=>'WarningCloseAlways'),
 );
 
 if (! empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow'])) $workflow = array_merge($workflow, $conf->modules_parts['workflow']);
 
-foreach($workflow as $child => $parents)
-{
-	if ($conf->$child->enabled)
-	{
-		$langs->Load($child.'@'.$child);
+$nbqualified=0;
 
-		foreach($parents as $parent => $actions)
-		{
-			if ($conf->$parent->enabled)
-			{
-				foreach($actions as $action)
-				{
-					$workflowcodes[$child][] = $action;
-				}
-			}
-		}
-	}
+foreach($workflowcodes as $key => $tmparray)
+{
+	$picto=$tmparray['picto'];
+	$enabled=$tmparray['enabled'];
+   	if (empty($enabled)) continue;
+
+   	$nbqualified++;
+	$var = !$var;
+   	print "<tr ".$bc[$var].">\n";
+   	print "<td>".img_object('', $picto).$langs->trans('desc'.$key);
+   	if (! empty($tmparray['warning']))
+   	{
+   		$langs->load("errors");
+   		print ' '.img_warning($langs->transnoentitiesnoconv($tmparray['warning']));
+   	}
+   	print "</td>\n";
+   	print '<td align="center">';
+   	if ($conf->use_javascript_ajax)
+   	{
+   		print ajax_constantonoff($key);
+   	}
+   	else
+   	{
+   		if (! empty($conf->global->$key))
+   		{
+   			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del'.$key.'">';
+  			print img_picto($langs->trans("Activated"),'switch_on');
+   			print '</a>';
+   		}
+   		else
+   		{
+   			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set'.$key.'">';
+  			print img_picto($langs->trans("Disabled"),'switch_off');
+   			print '</a>';
+   		}
+   	}
+   	print '</td>';
+   	print '</tr>';
 }
 
-if (count($workflowcodes) > 0)
-{
-    foreach($workflowcodes as $key => $actions)
-    {
-    	foreach($actions as $action)
-    	{
-    		$var = !$var;
-    		print "<tr ".$bc[$var].">\n";
-    		print "<td>".img_object('', $key).$langs->trans('desc'.$action)."</td>\n";
-    		print '<td align="center">';
-    		if ($conf->use_javascript_ajax)
-    		{
-    			print ajax_constantonoff($action);
-    		}
-    		else
-    		{
-    			if (! empty($conf->global->$action))
-    			{
-    				print '<a href="'.$_SERVER['PHP_SELF'].'?action=del'.$action.'">';
-    				print img_picto($langs->trans("Activated"),'switch_on');
-    				print '</a>';
-    			}
-    			else
-    			{
-    				print '<a href="'.$_SERVER['PHP_SELF'].'?action=set'.$action.'">';
-    				print img_picto($langs->trans("Disabled"),'switch_off');
-    				print '</a>';
-    			}
-    		}
-    		print '</td>';
-    		print '</tr>';
-    	}
-    }
-}
-else
+if ($nbqualified == 0)
 {
     print '<tr><td colspan="3">'.$langs->trans("ThereIsNoWorkflowToModify");
 }

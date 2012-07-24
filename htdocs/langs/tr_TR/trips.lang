@@ -1,41 +1,30 @@
-/*
- * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-03-15 19:05:26
+﻿* Manually generated
+ * Generation date 2012-07-08 17:42:26
+
+
+// START - Lines manually generated (2012-07-08 17:42:26).
  */
+// Reference language: en_US -> TR – trips
 
-
-// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-// Reference language: en_US
 CHARSET=UTF-8
-Trip=Gezinti
-Trips=Gezileri
-TripsAndExpenses=Geziler ve harcamalar
-TripCard=Trip kartı
-AddTrip=Trip ekle
+Trip=Gezi
+Trips=Geziler
+TripsAndExpenses=Geziler ve giderler
+TripCard=Gezi kartı
+AddTrip=Gezi ekle
 ListOfTrips=Gezi listesi
-ListOfFees=Ücretleri listesi
-NewTrip=Yeni trip
-CompanyVisited=Şirket / kuruluş ziyaret
+ListOfFees=Ücretler listesi
+NewTrip=Yeni gezi
+CompanyVisited=Ziyaret edilen firma/kuruluş
 Kilometers=Kilometre
-FeesKilometersOrAmout=Miktarı veya kilometre
-DeleteTrip=Sil trip
-ConfirmDeleteTrip=Sen bu yolculuğa silmek istediğinizden emin misiniz?
+FeesKilometersOrAmout=Tutar ya da kilometre
+DeleteTrip=Gezi sil
+ConfirmDeleteTrip=Bu geziyi silmek istediğinizden emin misiniz?
 TF_OTHER=Diğer
 TF_LUNCH=Öğle yemeği
-TF_TRIP=Gezinti
-ListTripsAndExpenses=Geziler ve harcamalar listesi
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-09 13:54:25).
-// Reference language: en_US -> tr_TR
-TripsAndExpensesStatistics=Gezi ve giderleri istatistikleri
+TF_TRIP=Gezi
+ListTripsAndExpenses=Geziler ve giderler listesi
+TripsAndExpensesStatistics=Gezi ve gider istatistikleri
 SearchATripAndExpense=Bir gezi ve gider ara
-// STOP - Lines generated via autotranslator.php tool (2011-10-09 13:54:39).
+ExpensesArea=Geziler ve giderler alanı
 
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
-// Reference language: en_US -> tr_TR
-ExpensesArea=Gezileri ve giderler alanı
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:36:02).

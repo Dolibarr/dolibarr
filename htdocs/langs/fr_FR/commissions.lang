@@ -1,0 +1,39 @@
+# Dolibarr language file - fr_FR - commissions
+CHARSET=UTF-8
+
+commissionsSetup=Paramétrage de la gestion des commissions
+
+ProductCommissionRate=Taux de commissionnement sur les produits
+ServiceCommissionRate=Taux de commissionnement sur les services
+
+ProductCommissionRateDetails=Taux utilisé pour calculer les commissions sur les ventes de produits
+ServiceCommissionRateDetails=Taux utilisé pour calculer les commissions sur les ventes de services
+
+CommissionDetails=Détail des commissions
+
+IncludeUnpayedInvoices=Inclure les factures non réglées
+TotalCommission=Total des commissions
+
+ProductMargin=Marge / produits
+ServiceMargin=Marge / services
+
+CommissionRate=Taux de commissionnement
+
+ProductCommission=Commission / produits
+ServiceCommission=Commission / services
+
+CommissionBase=Base de calcul des commissions
+CommissionBasedOnTurnover=Commissions calculées sur le CA
+CommissionBasedOnMargins=Commissions calculées sur les marges
+CommissionBaseDetails=Définit le mode de calcul des commissions
+CommissionBasedOnMarginsDetails=Le calcul basé sur les marges nécessite l'activation du module marges.
+
+TurnoverTotal = Chiffre d'affaire réalisé HT
+ProductTurnover=CA HT / produits
+ServiceTurnover=CA HT / services
+
+CommercialAgent=Agent commercial
+
+StartDate=Date de début
+EndDate=Date de fin
+Launch=Démarrer

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2011 Regis Houssin       <regis@dolibarr.fr>
  * Copyright (C) 2010-2011 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +52,18 @@
 	<td align="right"><?php echo dol_print_reduction($line->remise_percent,$langs); ?></td>
 	<?php } else { ?>
 	<td>&nbsp;</td>
-	<?php } ?>
+	<?php } 
+
+  if (! empty($conf->margin->enabled)) { 
+  ?>
+  	<td align="right" nowrap="nowrap"><?php echo price($line->pa_ht); ?></td>
+  	<?php if($conf->global->DISPLAY_MARGIN_RATES) {?>
+  	  <td align="right" nowrap="nowrap"><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx).'%'); ?></td>
+  	<?php 
+    }
+    if($conf->global->DISPLAY_MARK_RATES) {?>
+  	  <td align="right" nowrap="nowrap"><?php echo price($line->marque_tx).'%'; ?></td>
+  <?php } } ?>
 
 	<?php if ($line->special_code == 3)	{ ?>
 	<td align="right" nowrap="nowrap"><?php echo $langs->trans('Option'); ?></td>

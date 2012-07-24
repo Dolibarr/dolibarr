@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project name="Dolibarr" soapui-version="4.0.1" abortOnError="false" runType="SEQUENTIAL" resourceRoot="" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="WebServicesDolibarrOtherBinding" type="wsdl" bindingName="{http://www.dolibarr.org/ns/}WebServicesDolibarrOtherBinding" soapVersion="1_1" anonymous="optional" definition="http://localhostdolibarr/dolibarrnew/webservices/server_other.php?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhostdolibarr/dolibarrnew/webservices/server_other.php?wsdl"><con:part><con:url>http://localhostdolibarr/dolibarrnew/webservices/server_other.php?wsdl</con:url><con:content><![CDATA[<definitions targetNamespace="http://www.dolibarr.org/ns/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://www.dolibarr.org/ns/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+<con:soapui-project name="Dolibarr" soapui-version="3.6.1" abortOnError="false" runType="SEQUENTIAL" resourceRoot="" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="WebServicesDolibarrOtherBinding" type="wsdl" bindingName="{http://www.dolibarr.org/ns/}WebServicesDolibarrOtherBinding" soapVersion="1_1" anonymous="optional" definition="http://localhostdolibarr/dolibarrnew/webservices/server_other.php?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="http://localhostdolibarr/dolibarrnew/webservices/server_other.php?wsdl"><con:part><con:url>http://localhostdolibarr/dolibarrnew/webservices/server_other.php?wsdl</con:url><con:content><![CDATA[<definitions targetNamespace="http://www.dolibarr.org/ns/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://www.dolibarr.org/ns/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/">
   <types>
     <xsd:schema targetNamespace="http://www.dolibarr.org/ns/">
       <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
@@ -94,11 +94,12 @@
           <xsd:element name="id" type="xsd:string"/>
           <xsd:element name="type" type="xsd:int"/>
           <xsd:element name="desc" type="xsd:string"/>
+          <xsd:element name="vat_rate" type="xsd:double"/>
+          <xsd:element name="qty" type="xsd:double"/>
+          <xsd:element name="unitprice" type="xsd:double"/>
           <xsd:element name="total_net" type="xsd:double"/>
           <xsd:element name="total_vat" type="xsd:double"/>
           <xsd:element name="total" type="xsd:double"/>
-          <xsd:element name="vat_rate" type="xsd:double"/>
-          <xsd:element name="qty" type="xsd:double"/>
           <xsd:element name="date_start" type="xsd:date"/>
           <xsd:element name="date_end" type="xsd:date"/>
           <xsd:element name="product_id" type="xsd:int"/>
@@ -244,48 +245,54 @@
       <ns:createInvoice soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
          <authentication xsi:type="ns:authentication">
             <!--You may enter the following 5 items in any order-->
-            <dolibarrkey xsi:type="xsd:string">?</dolibarrkey>
+            <dolibarrkey xsi:type="xsd:string">dolibarrkey</dolibarrkey>
             <sourceapplication xsi:type="xsd:string">aaa</sourceapplication>
-            <login xsi:type="xsd:string">dmin</login>
+            <login xsi:type="xsd:string">admin</login>
             <password xsi:type="xsd:string">admin</password>
             <entity xsi:type="xsd:string"/>
          </authentication>
          <invoice xsi:type="ns:invoice">
             <!--You may enter the following 22 items in any order-->
+            <id xsi:type="xsd:string"></id>
+            <ref xsi:type="xsd:string"></ref>
             <ref_ext xsi:type="xsd:string">ref_ext</ref_ext>
             <thirdparty_id xsi:type="xsd:int">1</thirdparty_id>
-            <fk_user_author xsi:type="xsd:string">?</fk_user_author>
-            <fk_user_valid xsi:type="xsd:string">?</fk_user_valid>
+            <fk_user_author xsi:type="xsd:string"></fk_user_author>
+            <fk_user_valid xsi:type="xsd:string"></fk_user_valid>
             <date xsi:type="xsd:date">2010-01-01</date>
-            <date_due xsi:type="xsd:date"></date_due>
-            <type xsi:type="xsd:int">1</type>
+            <date_due xsi:type="xsd:date"/>
+            <date_creation xsi:type="xsd:dateTime">2012-01-01</date_creation>
+            <date_validation xsi:type="xsd:dateTime">2012-01-01</date_validation>
+            <date_modification xsi:type="xsd:dateTime">2012-01-01</date_modification>
+            <type xsi:type="xsd:int">0</type>
             <total_net xsi:type="xsd:double">?</total_net>
             <total_vat xsi:type="xsd:double">?</total_vat>
             <total xsi:type="xsd:double">?</total>
             <note xsi:type="xsd:string">note</note>
             <note_public xsi:type="xsd:string">note_public</note_public>
             <status xsi:type="xsd:int">1</status>
-            <close_code xsi:type="xsd:string"></close_code>
-            <close_note xsi:type="xsd:string"></close_note>
+            <close_code xsi:type="xsd:string"/>
+            <close_note xsi:type="xsd:string"/>
             <project_id xsi:type="xsd:string">0</project_id>
-            <lines xsi:type="ns:LinesArray2">
+	    <lines xsi:type="ns:LinesArray2">
                <!--Zero or more repetitions:-->
                <line xsi:type="ns:line">
-                  <!--You may enter the following 14 items in any order-->
+                  <!--You may enter the following 15 items in any order-->
                   <id xsi:type="xsd:string">?</id>
-                  <type xsi:type="xsd:int">1</type>
+                  <type xsi:type="xsd:int">0</type>
                   <desc xsi:type="xsd:string">aaa</desc>
-                  <total_net xsi:type="xsd:double">11.96</total_net>
-                  <total_vat xsi:type="xsd:double">1.96</total_vat>
-                  <total xsi:type="xsd:double">10</total>
                   <vat_rate xsi:type="xsd:double">19.6</vat_rate>
                   <qty xsi:type="xsd:double">1</qty>
-                  <date_start xsi:type="xsd:date">?</date_start>
-                  <date_end xsi:type="xsd:date">?</date_end>
-                  <product_id xsi:type="xsd:int">?</product_id>
-                  <product_ref xsi:type="xsd:string">?</product_ref>
-                  <product_label xsi:type="xsd:string">?</product_label>
-                  <product_desc xsi:type="xsd:string">?</product_desc>
+                  <unitprice xsi:type="xsd:double">10</unitprice>
+                  <total_net xsi:type="xsd:double">10</total_net>
+                  <total_vat xsi:type="xsd:double">1.96</total_vat>
+                  <total xsi:type="xsd:double">11.96</total>
+                  <date_start xsi:type="xsd:date"></date_start>
+                  <date_end xsi:type="xsd:date"></date_end>
+                  <product_id xsi:type="xsd:int"></product_id>
+                  <product_ref xsi:type="xsd:string"></product_ref>
+                  <product_label xsi:type="xsd:string"></product_label>
+                  <product_desc xsi:type="xsd:string"></product_desc>
                </line>
             </lines>
          </invoice>
@@ -327,25 +334,7 @@
             <close_note xsi:type="xsd:string">?</close_note>
             <project_id xsi:type="xsd:string">?</project_id>
             <lines xsi:type="ns:LinesArray2">
-               <!--Zero or more repetitions:-->
-               <line xsi:type="ns:line">
-                  <!--You may enter the following 14 items in any order-->
-                  <id xsi:type="xsd:string">?</id>
-                  <type xsi:type="xsd:int">?</type>
-                  <desc xsi:type="xsd:string">?</desc>
-                  <total_net xsi:type="xsd:double">?</total_net>
-                  <total_vat xsi:type="xsd:double">?</total_vat>
-                  <total xsi:type="xsd:double">?</total>
-                  <vat_rate xsi:type="xsd:double">?</vat_rate>
-                  <qty xsi:type="xsd:double">?</qty>
-                  <date_start xsi:type="xsd:date">?</date_start>
-                  <date_end xsi:type="xsd:date">?</date_end>
-                  <product_id xsi:type="xsd:int">?</product_id>
-                  <product_ref xsi:type="xsd:string">?</product_ref>
-                  <product_label xsi:type="xsd:string">?</product_label>
-                  <product_desc xsi:type="xsd:string">?</product_desc>
-               </line>
-            </lines>
+               </lines>
          </invoice>
       </ns:createInvoice>
    </soapenv:Body>
@@ -713,21 +702,34 @@
             <sourceapplication xsi:type="xsd:string">aaa</sourceapplication>
             <login xsi:type="xsd:string">admin</login>
             <password xsi:type="xsd:string">admin</password>
-            <entity xsi:type="xsd:string"></entity>
+            <entity xsi:type="xsd:string"/>
          </authentication>
          <product xsi:type="ns:product">
-            <!--You may enter the following 18 items in any order-->
+            <!--You may enter the following 24 items in any order-->
+            <id xsi:type="xsd:string">?</id>
             <ref xsi:type="xsd:string">PPP</ref>
-            <ref_ext xsi:type="xsd:string"></ref_ext>
+            <ref_ext xsi:type="xsd:string"/>
+            <type xsi:type="xsd:string">1</type>
             <label xsi:type="xsd:string">PPP Label</label>
             <description xsi:type="xsd:string">Description of PPP</description>
+            <date_creation xsi:type="xsd:dateTime">?</date_creation>
+            <date_modification xsi:type="xsd:dateTime">?</date_modification>
             <note xsi:type="xsd:string">xxxxx</note>
-            <tobuy xsi:type="xsd:string">1</tobuy>
-            <tosell xsi:type="xsd:string">0</tosell>
-            <type xsi:type="xsd:string">1</type>
+            <status_tobuy xsi:type="xsd:string">?</status_tobuy>
+            <status_tosell xsi:type="xsd:string">?</status_tosell>
             <barcode xsi:type="xsd:string">123456</barcode>
+            <barcode_type xsi:type="xsd:string">?</barcode_type>
+            <country_id xsi:type="xsd:string">?</country_id>
             <country_code xsi:type="xsd:string">FR</country_code>
+            <customcode xsi:type="xsd:string">?</customcode>
+            <price_net xsi:type="xsd:string">?</price_net>
+            <price xsi:type="xsd:string">?</price>
+            <price_base_type xsi:type="xsd:string">?</price_base_type>
             <stock_alert xsi:type="xsd:string">10</stock_alert>
+            <stock_real xsi:type="xsd:string">?</stock_real>
+            <stock_pmp xsi:type="xsd:string">?</stock_pmp>
+            <canvas xsi:type="xsd:string">?</canvas>
+            <import_key xsi:type="xsd:string">?</import_key>
          </product>
       </ns:createProductOrService>
    </soapenv:Body>
@@ -897,7 +899,12 @@
           <xsd:element name="ref" type="xsd:string"/>
           <xsd:element name="ref_ext" type="xsd:string"/>
           <xsd:element name="fk_user_author" type="xsd:string"/>
-          <xsd:element name="date" type="xsd:date"/>
+          <xsd:element name="client" type="xsd:string"/>
+          <xsd:element name="supplier" type="xsd:string"/>
+          <xsd:element name="customer_code" type="xsd:string"/>
+          <xsd:element name="supplier_code" type="xsd:string"/>
+          <xsd:element name="customer_code_accountancy" type="xsd:string"/>
+          <xsd:element name="supplier_code_accountancy" type="xsd:string"/>
           <xsd:element name="date_creation" type="xsd:dateTime"/>
           <xsd:element name="date_modification" type="xsd:dateTime"/>
           <xsd:element name="note" type="xsd:string"/>
@@ -916,10 +923,30 @@
           <xsd:element name="profid2" type="xsd:string"/>
           <xsd:element name="profid3" type="xsd:string"/>
           <xsd:element name="profid4" type="xsd:string"/>
-          <xsd:element name="prefix" type="xsd:string"/>
+          <xsd:element name="profid5" type="xsd:string"/>
+          <xsd:element name="profid6" type="xsd:string"/>
+          <xsd:element name="capital" type="xsd:string"/>
           <xsd:element name="vat_used" type="xsd:string"/>
           <xsd:element name="vat_number" type="xsd:string"/>
         </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="filterthirdparty">
+        <xsd:all>
+          <xsd:element name="client" type="xsd:string"/>
+          <xsd:element name="supplier" type="xsd:string"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:complexType name="ThirdPartiesArray">
+        <xsd:complexContent>
+          <xsd:restriction base="SOAP-ENC:Array">
+            <xsd:attribute ref="SOAP-ENC:arrayType" wsdl:arrayType="tns:thirdparty[]" xmlns:wsdl1="http://schemas.xmlsoap.org/wsdl/"/>
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:complexType name="ThirdPartiesArray2">
+        <xsd:sequence>
+          <xsd:element name="thirdparty" type="tns:thirdparty" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
       </xsd:complexType>
     </xsd:schema>
   </types>
@@ -933,17 +960,61 @@
     <part name="result" type="tns:result"/>
     <part name="thirdparty" type="tns:thirdparty"/>
   </message>
+  <message name="createThirdPartyRequest">
+    <part name="authentication" type="tns:authentication"/>
+    <part name="thirdparty" type="tns:thirdparty"/>
+  </message>
+  <message name="createThirdPartyResponse">
+    <part name="result" type="tns:result"/>
+    <part name="id" type="xsd:string"/>
+  </message>
+  <message name="getListOfThirdPartiesRequest">
+    <part name="authentication" type="tns:authentication"/>
+    <part name="filterthirdparty" type="tns:filterthirdparty"/>
+  </message>
+  <message name="getListOfThirdPartiesResponse">
+    <part name="result" type="tns:result"/>
+    <part name="thirdparties" type="tns:ThirdPartiesArray2"/>
+  </message>
   <portType name="WebServicesDolibarrThirdPartyPortType">
     <operation name="getThirdParty">
-      <documentation>WS to get Versions</documentation>
+      <documentation>WS to get a thirdparty from its id, ref or ref_ext</documentation>
       <input message="tns:getThirdPartyRequest"/>
       <output message="tns:getThirdPartyResponse"/>
+    </operation>
+    <operation name="createThirdParty">
+      <documentation>WS to create a thirdparty</documentation>
+      <input message="tns:createThirdPartyRequest"/>
+      <output message="tns:createThirdPartyResponse"/>
+    </operation>
+    <operation name="getListOfThirdParties">
+      <documentation>WS to get list of thirdparties id and ref</documentation>
+      <input message="tns:getListOfThirdPartiesRequest"/>
+      <output message="tns:getListOfThirdPartiesResponse"/>
     </operation>
   </portType>
   <binding name="WebServicesDolibarrThirdPartyBinding" type="tns:WebServicesDolibarrThirdPartyPortType">
     <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
     <operation name="getThirdParty">
-      <soap:operation soapAction="http://www.dolibarr.org/ns/#getVersions" style="rpc"/>
+      <soap:operation soapAction="http://www.dolibarr.org/ns/#getThirdParty" style="rpc"/>
+      <input>
+        <soap:body use="encoded" namespace="http://www.dolibarr.org/ns/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" namespace="http://www.dolibarr.org/ns/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="createThirdParty">
+      <soap:operation soapAction="http://www.dolibarr.org/ns/#createThirdParty" style="rpc"/>
+      <input>
+        <soap:body use="encoded" namespace="http://www.dolibarr.org/ns/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" namespace="http://www.dolibarr.org/ns/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="getListOfThirdParties">
+      <soap:operation soapAction="http://www.dolibarr.org/ns/#getListOfThirdParties" style="rpc"/>
       <input>
         <soap:body use="encoded" namespace="http://www.dolibarr.org/ns/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
@@ -957,7 +1028,7 @@
       <soap:address location="http://localhostdolibarr/webservices/server_thirdparty.php"/>
     </port>
   </service>
-</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhostdolibarr/webservices/server_thirdparty.php</con:endpoint></con:endpoints><con:operation isOneWay="false" action="http://www.dolibarr.org/ns/#getVersions" name="getThirdParty" bindingOperationName="getThirdParty" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhostdolibarr/webservices/server_thirdparty.php</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.dolibarr.org/ns/">
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>http://localhostdolibarr/webservices/server_thirdparty.php</con:endpoint></con:endpoints><con:operation isOneWay="false" action="http://www.dolibarr.org/ns/#getThirdParty" name="getThirdParty" bindingOperationName="getThirdParty" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhostdolibarr/webservices/server_thirdparty.php</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.dolibarr.org/ns/">
    <soapenv:Header/>
    <soapenv:Body>
       <ns:getThirdParty soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
@@ -974,4 +1045,73 @@
          <ref_ext xsi:type="xsd:string"></ref_ext>
       </ns:getThirdParty>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.dolibarr.org/ns/#getVersions"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/></con:soapui-project>
+</soapenv:Envelope>]]></con:request><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.dolibarr.org/ns/#getVersions"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation isOneWay="false" action="http://www.dolibarr.org/ns/#createThirdParty" name="createThirdParty" bindingOperationName="createThirdParty" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhostdolibarr/webservices/server_thirdparty.php</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.dolibarr.org/ns/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ns:createThirdParty soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <authentication xsi:type="ns:authentication">
+            <!--You may enter the following 5 items in any order-->
+            <dolibarrkey xsi:type="xsd:string">?</dolibarrkey>
+            <sourceapplication xsi:type="xsd:string">?</sourceapplication>
+            <login xsi:type="xsd:string">?</login>
+            <password xsi:type="xsd:string">?</password>
+            <entity xsi:type="xsd:string">?</entity>
+         </authentication>
+         <thirdparty xsi:type="ns:thirdparty">
+            <!--You may enter the following 33 items in any order-->
+            <id xsi:type="xsd:string">?</id>
+            <ref xsi:type="xsd:string">?</ref>
+            <ref_ext xsi:type="xsd:string">?</ref_ext>
+            <fk_user_author xsi:type="xsd:string">?</fk_user_author>
+            <client xsi:type="xsd:string">?</client>
+            <supplier xsi:type="xsd:string">?</supplier>
+            <customer_code xsi:type="xsd:string">?</customer_code>
+            <supplier_code xsi:type="xsd:string">?</supplier_code>
+            <customer_code_accountancy xsi:type="xsd:string">?</customer_code_accountancy>
+            <supplier_code_accountancy xsi:type="xsd:string">?</supplier_code_accountancy>
+            <date_creation xsi:type="xsd:dateTime">?</date_creation>
+            <date_modification xsi:type="xsd:dateTime">?</date_modification>
+            <note xsi:type="xsd:string">?</note>
+            <address xsi:type="xsd:string">?</address>
+            <zip xsi:type="xsd:string">?</zip>
+            <town xsi:type="xsd:string">?</town>
+            <province_id xsi:type="xsd:string">?</province_id>
+            <country_id xsi:type="xsd:string">?</country_id>
+            <country_code xsi:type="xsd:string">?</country_code>
+            <country xsi:type="xsd:string">?</country>
+            <phone xsi:type="xsd:string">?</phone>
+            <fax xsi:type="xsd:string">?</fax>
+            <email xsi:type="xsd:string">?</email>
+            <url xsi:type="xsd:string">?</url>
+            <profid1 xsi:type="xsd:string">?</profid1>
+            <profid2 xsi:type="xsd:string">?</profid2>
+            <profid3 xsi:type="xsd:string">?</profid3>
+            <profid4 xsi:type="xsd:string">?</profid4>
+            <profid5 xsi:type="xsd:string">?</profid5>
+            <profid6 xsi:type="xsd:string">?</profid6>
+            <capital xsi:type="xsd:string">?</capital>
+            <vat_used xsi:type="xsd:string">?</vat_used>
+            <vat_number xsi:type="xsd:string">?</vat_number>
+         </thirdparty>
+      </ns:createThirdParty>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.dolibarr.org/ns/#createThirdParty"/></con:call></con:operation><con:operation isOneWay="false" action="http://www.dolibarr.org/ns/#getListOfThirdParties" name="getListOfThirdParties" bindingOperationName="getListOfThirdParties" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhostdolibarr/webservices/server_thirdparty.php</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.dolibarr.org/ns/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ns:getListOfThirdParties soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+         <authentication xsi:type="ns:authentication">
+            <!--You may enter the following 5 items in any order-->
+            <dolibarrkey xsi:type="xsd:string">?</dolibarrkey>
+            <sourceapplication xsi:type="xsd:string">?</sourceapplication>
+            <login xsi:type="xsd:string">?</login>
+            <password xsi:type="xsd:string">?</password>
+            <entity xsi:type="xsd:string">?</entity>
+         </authentication>
+         <filterthirdparty xsi:type="ns:filterthirdparty">
+            <!--You may enter the following 2 items in any order-->
+            <client xsi:type="xsd:string">?</client>
+            <supplier xsi:type="xsd:string">?</supplier>
+         </filterthirdparty>
+      </ns:getListOfThirdParties>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.dolibarr.org/ns/#getListOfThirdParties"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/></con:soapui-project>

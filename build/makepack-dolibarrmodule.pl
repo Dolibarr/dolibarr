@@ -86,7 +86,7 @@ print "Source directory: $SOURCE\n";
 print "Target directory: $NEWDESTI\n";
 
 
-# Ask and set version $MAJOR and $MINOR
+# Ask and set version $MAJOR, $MINOR and $BUILD
 print "Enter value for version: ";
 $PROJVERSION=<STDIN>;
 chomp($PROJVERSION);
@@ -140,8 +140,8 @@ foreach my $PROJECT (@PROJECTLIST) {
 	}
 	
 	$FILENAME="$PROJECT";
-	$FILENAMETGZ="module_$PROJECT-$MAJOR.$MINOR";
-	$FILENAMEZIP="module_$PROJECT-$MAJOR.$MINOR";
+	$FILENAMETGZ="module_$PROJECT-$MAJOR.$MINOR".($BUILD ne ''?".$BUILD":"");
+	$FILENAMEZIP="module_$PROJECT-$MAJOR.$MINOR".($BUILD ne ''?".$BUILD":"");
 	if (-d "/usr/src/redhat") {
 	    # redhat
 	    $RPMDIR="/usr/src/redhat";
@@ -254,7 +254,7 @@ foreach my $PROJECT (@PROJECTLIST) {
 		
 				print "Create version file $BUILDROOT/$PROJECT/build/version-".$PROJECT.".txt with date ".$fulldate."\n";
 				$ret=`mkdir -p "$BUILDROOT/$PROJECT/build"`;
-				print VF "Version: ".$MAJOR.".".$MINOR."\n";
+				print VF "Version: ".$MAJOR.".".$MINOR.($BUILD ne ''?".$BUILD":"")."\n";
 				print VF "Build  : ".$fulldate."\n";
 				close VF;
 		    }

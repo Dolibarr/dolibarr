@@ -56,6 +56,7 @@ CompanyHasNoCategory=This company is not in any categories
 MemberHasNoCategory=This member is not in any categories
 ClassifyInCategory=Classify in category
 NoneCategory=None
+NotCategorized=Without category
 CategoryExistsAtSameLevel=This category already exists with this ref
 ReturnInProduct=Back to product/service card
 ReturnInSupplier=Back to supplier card

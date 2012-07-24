@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -60,12 +60,12 @@ if (! isset($_GET['htmlname'])) return;
 $htmlname = $_GET['htmlname'];
 $match = preg_grep('/('.$htmlname.'[0-9]+)/',array_keys($_GET));
 sort($match);
-$idprod = $match[0];
+$idprod = (! empty($match[0]) ? $match[0] : '');
 
 if (! isset($_GET[$htmlname]) && ! isset($_GET[$idprod])) return;
 
 // When used from jQuery, the search term is added as GET param "term".
-$searchkey=$_GET[$idprod];
+$searchkey=(! empty($_GET[$idprod])?$_GET[$idprod]:'');
 if (empty($searchkey)) $searchkey=$_GET[$htmlname];
 $outjson=isset($_GET['outjson'])?$_GET['outjson']:0;
 

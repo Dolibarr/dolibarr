@@ -44,6 +44,7 @@ MailingStatusSentCompletely=Envoyé complètement
 MailingStatusError=Erreur
 MailingStatusNotSent=Non envoyé
 MailSuccessfulySent=Mail correctement envoyé (de %s à %s)
+MailingSuccessfullyValidated=Mail validé
 MailUnsubcribe=Desinscription
 Unsuscribe=Desinscription
 MailingStatusNotContact=Ne plus contacter

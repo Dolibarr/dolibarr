@@ -179,7 +179,7 @@ AutoDetectLang= Détection auto (navigateur)
 FeatureDisabledInDemo= Fonction désactivée dans la démo
 Rights= Permissions
 BoxesDesc= Les boîtes sont des zones d'information réduites qui s'affichent sur certaines pages. Vous pouvez choisir ou non d'activer une boîte en sélectionnant la page cible et en cliquant sur 'Activer', ou en cliquant sur la poubelle pour la désactiver.
-OnlyActiveElementsAreShown= Seuls les éléments en rapport avec un <a href="modules.php">module actif</a> sont présentés.
+OnlyActiveElementsAreShown= Seuls les éléments en rapport avec un <a href="%s">module actif</a> sont présentés.
 ModulesDesc= Les modules Dolibarr définissent les fonctionnalités disponibles dans l'application. Certains modules nécessitent des droits qu'il vous faudra affecter aux utilisateurs pour qu'ils puissent accéder à leurs fonctionnalités. Cliquez sur le bouton on/off de la colonne "Etat" pour activer un module/fonctionnalité.
 ModulesInterfaceDesc= Les modules d'interfaces sont des modules qui permettent de lier Dolibarr à des systèmes, applications ou services externes.
 ModulesSpecialDesc= Les modules complémentaires sont des modules à usage très spécifique ou moins courant que les modules standards.
@@ -201,7 +201,7 @@ Required= Requis
 Security= Sécurité
 Passwords= Mots de passe
 DoNotStoreClearPassword= Ne pas stocker de mot de passe en clair dans la base (Activation recommandée)
-MainDbPasswordFileConfEncrypted= Encrypter le mot de passe de la base dans le fichier conf.php (Activation recommandée)
+MainDbPasswordFileConfEncrypted= Chiffrer le mot de passe de la base dans le fichier conf.php (Activation recommandée)
 InstrucToEncodePass= Pour avoir le mot de passe de la base encodé dans le fichier de configuration <b>conf.php</b>, remplacer dans ce fichier la ligne<br><b>$dolibarr_main_db_pass="..."</b><br>par<br><b>$dolibarr_main_db_pass="crypted:%s"</b>
 InstrucToClearPass= Pour avoir le mot de passe de la base décodé (en clair) dans le fichier de configuration <b>conf.php</b>, remplacer dans ce fichier la ligne<br><b>$dolibarr_main_db_pass="crypted:..."</b><br>par<br><b>$dolibarr_main_db_pass="%s"</b>
 ProtectAndEncryptPdfFiles= Protection des pdf générés (Activation NON recommandée, rend inopérante la génération de PDF de masse)
@@ -329,6 +329,8 @@ SecurityTokenIsUnique=Utiliser un paramètre securekey unique pour chaque URL ?
 EnterRefToBuildUrl=Entrez la référence pour l'objet %s
 GetSecuredUrl=Obtenir l'URL calculée
 ButtonHideUnauthorized=Cacher les boutons non autorisés (au lieu de les voir grisés)
+TotalNumberOfActivatedModules=Nombre total de modules fonctionnels activés: <b>%s</b>
+YouMustEnableOneModule=Vous devez activer au moins une fonctionnalité
 
 # Modules= undefined
 Module0Name= Utilisateurs & groupes

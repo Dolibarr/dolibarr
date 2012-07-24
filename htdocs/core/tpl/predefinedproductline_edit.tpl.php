@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2011 Regis Houssin       <regis@dolibarr.fr>
  * Copyright (C) 2010-2011 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,6 +83,16 @@
 		&nbsp;
 	<?php } ?>
 	</td>
+<?php
+if (! empty($conf->margin->enabled)) { 
+?>
+	<td align="right">
+  <select id="fournprice" name="fournprice"></select>
+  <input type="text" size="5" id="buying_price" name="buying_price" style="display: none;" value="<?php echo price($line->pa_ht,0,'',0); ?>">
+  </td>
+<?php
+}
+?>
 
 	<td align="center" colspan="5" valign="middle">
 		<input type="submit" class="button" name="save"	value="<?php echo $langs->trans("Save"); ?>"><br>
@@ -100,4 +111,55 @@
 	</td>
 </tr>
 <?php } ?></form>
+<?php
+if (! empty($conf->margin->enabled)) { 
+?>
+<script type="text/javascript">
+$(document).ready(function() {
+  $.post('<?php echo DOL_URL_ROOT; ?>/fourn/product/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product; ?>}, function(data) {      
+    if (data.length > 0) {
+      var options = '';
+      var trouve=false;
+      $(data).each(function() {
+        options += '<option value="'+this.id+'" price="'+this.price+'"';
+        <?php
+        if ($line->fk_fournprice > 0) {
+        ?>
+        if (this.id == <?php echo $line->fk_fournprice; ?>) {
+          options += ' selected';
+          $("#buying_price").val(this.price);
+          trouve = true;
+        }
+        <?php
+        }
+        ?>
+        options += '>'+this.label+'</option>';
+      });
+      options += '<option value=null'+(trouve?'':' selected')+'><?php echo $langs->trans("InputPrice"); ?></option>';
+      $("#fournprice").html(options);
+      if (trouve) {
+        $("#buying_price").hide();
+        $("#fournprice").show();
+      }
+      else {
+        $("#buying_price").show();
+      }
+      $("#fournprice").change(function() {
+        var selval = $(this).find('option:selected').attr("price");
+        if (selval) 
+          $("#buying_price").val(selval).hide();
+        else
+          $('#buying_price').show();
+      });
+    }
+    else {
+      $("#fournprice").hide();
+      $('#buying_price').show();
+    }
+  },
+  'json');
+});
+</script>
+<?php } ?>
 <!-- END PHP TEMPLATE predefinedproductline_edit.tpl.php -->
+

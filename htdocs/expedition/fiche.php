@@ -122,8 +122,9 @@ if ($action == 'add')
             {
                 $ent = "entl".$i;
                 $idl = "idl".$i;
-                $entrepot_id = GETPOST($ent,'int')?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
-
+                $entrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
+				if ($entrepot_id < 0) $entrepot_id='';
+                
                 $ret=$object->addline($entrepot_id,GETPOST($idl,'int'),GETPOST($qty,'int'));
                 if ($ret < 0)
                 {
@@ -779,20 +780,18 @@ if ($action == 'create')
                     print '<td align="left">';
                     if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
                     {
-                        // Show warehous
-                        if (GETPOST('entrepot_id','int'))
+                        // Show warehouse combo list
+                    	$ent = "entl".$indiceAsked;
+                    	$idl = "idl".$indiceAsked;
+                    	$tmpentrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
+                        print $formproduct->selectWarehouses($tmpentrepot_id,'entl'.$indiceAsked,'',1,0,$line->fk_product);
+                    	if ($tmpentrepot_id && $tmpentrepot_id == GETPOST('entrepot_id','int'))
                         {
-                            print $formproduct->selectWarehouses(GETPOST('entrepot_id','int'),'entl'.$indiceAsked,'',1,0,$line->fk_product);
                             //print $stock.' '.$quantityToBeDelivered;
-                            //if ($stock >= 0 && $stock < $quantityToBeDelivered)
                             if ($stock < $quantityToBeDelivered)
                             {
-                                print ' '.img_warning($langs->trans("StockTooLow"));
+                                print ' '.img_warning($langs->trans("StockTooLow"));	// Stock too low for entrepot_id but we may have change warehouse
                             }
-                        }
-                        else
-                        {
-                            print $formproduct->selectWarehouses('','entl'.$indiceAsked,'',1,0,$line->fk_product);
                         }
                     }
                     else
@@ -1289,8 +1288,8 @@ else
                 else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
             }
 
-            // Create bill and Classify billed
-            if ($conf->facture->enabled && $object->statut > 0  && ! $object->billed)
+            // Create bill and Close shipment
+            if ($conf->facture->enabled && $object->statut > 0)
             {
                 if ($user->rights->facture->creer)
                 {
@@ -1299,10 +1298,12 @@ else
                     //print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->origin.'&amp;originid='.$object->origin_id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
                 }
 
-                // TODO add alternative status
-                if ($user->rights->expedition->creer && $object->statut > 0)
+                if ($user->rights->expedition->creer && $object->statut > 0 && ! $object->billed)
                 {
-                    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+                	$label="Close";
+                	// Label here should be "Close" or "ClassifyBilled" if we decided to make bill on shipments instead of orders
+                	if (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) $label="ClassifyBilled";
+                    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans($label).'</a>';
                 }
             }
 

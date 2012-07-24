@@ -175,7 +175,7 @@ AutoDetectLang = Samozaznava (jezik iskalnika)
 FeatureDisabledInDemo = Funkcija onemogočena v demo različici
 Rights = Dovoljenja
 BoxesDesc = Polja so področja na zaslonu, ki prikazujejo krajše informacije na nekaterih straneh. Izberete lahko, ali naj se polja prikažejo ali ne, tako da izberete ciljno stran in kliknete 'Aktiviraj', ali kliknete na koš za onemogočenje.
-OnlyActiveElementsAreShown = Prikazani so samo elementi <a href="modules.php">omogočenih modulov </a>.
+OnlyActiveElementsAreShown = Prikazani so samo elementi <a href="%s">omogočenih modulov </a>.
 ModulesDesc = Dolibarr moduli določajo, katere funkcije programa so omogočene. Nekateri moduli zahtevajo, da po omogočanju modula dodelite dovoljenje uporabnikom. Kliknite gumb za vklop/izklop v koloni "Status" za omogočanje modula/funkcije.
 ModulesInterfaceDesc = Vmesnik za Dolibarr module omogoča dodajanje funkcij odvisno od zunanjih programov, sistemov ali storitev.
 ModulesSpecialDesc = Specialni moduli so zelo specifični ali redko uporabljani moduli.

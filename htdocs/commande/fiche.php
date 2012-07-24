@@ -49,6 +49,8 @@ $langs->load('bills');
 $langs->load('propal');
 $langs->load('deliveries');
 $langs->load('products');
+if (! empty($conf->margin->enabled))
+  $langs->load('margins');
 
 $id      = (GETPOST('id','int')?GETPOST('id','int'):GETPOST("orderid"));
 $ref     = GETPOST('ref');
@@ -294,7 +296,9 @@ else if ($action == 'add' && $user->rights->commande->creer)
                         $product_type,
                         $lines[$i]->rang,
                         $lines[$i]->special_code,
-                        $fk_parent_line
+                        $fk_parent_line,
+		                    $lines[$i]->fk_fournprice,
+		                    $lines[$i]->pa_ht
                     );
 
                     if ($result < 0)
@@ -607,6 +611,13 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 
         $desc=dol_htmlcleanlastbr($desc);
 
+    		// ajout prix achat
+    		$fk_fournprice = $_POST['np_fournprice'];
+    		if ( ! empty($_POST['np_buying_price']) )
+    		  $pa_ht = $_POST['np_buying_price'];
+    		else
+    		  $pa_ht = null;
+
         $info_bits=0;
         if ($tva_npr) $info_bits |= 0x01;
 
@@ -639,7 +650,9 @@ else if ($action == 'addline' && $user->rights->commande->creer)
                     $type,
                     -1,
                     '',
-                    $_POST['fk_parent_line']
+                    $_POST['fk_parent_line'],
+		          			$fk_fournprice,
+		          			$pa_ht
                 );
 
                 if ($result > 0)
@@ -668,6 +681,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
                     unset($_POST['np_desc']);
                     unset($_POST['np_price']);
                     unset($_POST['np_tva_tx']);
+            				unset($_POST['np_buying_price']);
                 }
                 else
                 {
@@ -700,6 +714,14 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['s
     $vat_rate=str_replace('*','',$vat_rate);
     $localtax1_rate=get_localtax($vat_rate,1,$object->client);
     $localtax2_rate=get_localtax($vat_rate,2,$object->client);
+
+
+  	// ajout prix d'achat
+  	$fk_fournprice = $_POST['fournprice'];
+  	if ( ! empty($_POST['buying_price']) )
+  	  $pa_ht = $_POST['buying_price'];
+  	else
+  	  $pa_ht = null;
 
     // Check parameters
     if (empty($_POST['productid']) && $_POST["type"] < 0)
@@ -749,7 +771,10 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['s
             $date_start,
             $date_end,
             $type,
-            $_POST['fk_parent_line']
+            $_POST['fk_parent_line'],
+		    		0,
+		    		$fk_fournprice,
+		    		$pa_ht
         );
 
         if ($result >= 0)
@@ -768,6 +793,12 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && $_POST['s
             {
                 $ret=$object->fetch($object->id);    // Reload to get new records
                 commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+		        		unset($_POST['qty']);
+		        		unset($_POST['type']);
+		        		unset($_POST['np_price']);
+		        		unset($_POST['dp_desc']);
+		        		unset($_POST['np_tva_tx']);
+		        		unset($_POST['np_buying_price']);
             }
         }
         else
@@ -794,7 +825,7 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->co
         if (! $idwarehouse || $idwarehouse == -1)
         {
             $error++;
-            $errors[]=$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse"));
+            $mesgs[]='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")).'</div>';
             $action='';
         }
     }
@@ -830,7 +861,7 @@ else if ($action == 'confirm_modif' && $user->rights->commande->creer)
         if (! $idwarehouse || $idwarehouse == -1)
         {
             $error++;
-            $errors[]=$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse"));
+            $mesgs[]='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")).'</div>';
             $action='';
         }
     }
@@ -859,7 +890,7 @@ else if ($action == 'confirm_modif' && $user->rights->commande->creer)
 	}
 }
 
-else if ($action == 'confirm_close' && $confirm == 'yes' && $user->rights->commande->cloturer)
+else if ($action == 'confirm_shipped' && $confirm == 'yes' && $user->rights->commande->cloturer)
 {
     $result = $object->cloture($user);
     if ($result < 0) $mesgs=$object->errors;
@@ -875,7 +906,7 @@ else if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->comm
         if (! $idwarehouse || $idwarehouse == -1)
         {
             $error++;
-            $errors[]=$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse"));
+            $mesgs[]='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")).'</div>';
             $action='';
         }
     }
@@ -986,7 +1017,7 @@ else if ($action == 'remove_file')
 /*
  * Add file in email form
  */
-if ($_POST['addfile'])
+if (GETPOST('addfile'))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
@@ -1561,7 +1592,6 @@ else
     if ($object->id > 0)
     {
         dol_htmloutput_mesg($mesg,$mesgs);
-        dol_htmloutput_errors('',$errors);
 
         $product_static=new Product($db);
 
@@ -1648,9 +1678,9 @@ else
         /*
          * Confirmation de la cloture
         */
-        if ($action == 'close')
+        if ($action == 'shipped')
         {
-        	$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('CloseOrder'), $langs->trans('ConfirmCloseOrder'), 'confirm_close', '', 0, 1);
+        	$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('CloseOrder'), $langs->trans('ConfirmCloseOrder'), 'confirm_shipped', '', 0, 1);
         }
 
         /*
@@ -1898,10 +1928,10 @@ else
         print '<table class="nobordernopadding" width="100%"><tr><td>';
         print $langs->trans('Source');
         print '</td>';
-        if ($_GET['action'] != 'editdemandreason' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDemandReason'),1).'</a></td>';
+        if ($action != 'editdemandreason' && ! empty($object->brouillon)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdemandreason&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDemandReason'),1).'</a></td>';
         print '</tr></table>';
         print '</td><td colspan="2">';
-        if ($_GET['action'] == 'editdemandreason')
+        if ($action == 'editdemandreason')
         {
         	$form->form_demand_reason($_SERVER['PHP_SELF'].'?id='.$object->id,$object->demand_reason_id,'demand_reason_id',1);
         }
@@ -1916,7 +1946,7 @@ else
         print '</td></tr>';
 
         // Project
-        if ($conf->projet->enabled)
+        if (! empty($conf->projet->enabled))
         {
         	$langs->load('projects');
         	print '<tr><td height="10">';
@@ -1955,7 +1985,15 @@ else
         // Total HT
         print '<tr><td>'.$langs->trans('AmountHT').'</td>';
         print '<td align="right"><b>'.price($object->total_ht).'</b></td>';
-        print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
+        print '<td>'.$langs->trans('Currency'.$conf->currency).'</td>';
+
+				// Margin Infos
+				if (! empty($conf->margin->enabled)) {
+				  print '<td valign="top" width="50%" rowspan="4">';
+				  $object->displayMarginInfos();
+				  print '</td>';
+				}
+				print '</tr>';
 
         // Total TVA
         print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right">'.price($object->total_tva).'</td>';
@@ -2115,24 +2153,24 @@ else
         			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a>';
         		}
 
+
         		// Create bill and Classify billed
         		if ($conf->facture->enabled && $object->statut > 0  && ! $object->billed)
         		{
-        			if ($user->rights->facture->creer)
+        			if ($user->rights->facture->creer && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER))
         			{
         				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
         			}
-
-        			if ($user->rights->commande->creer && $object->statut > 2)
+        			if ($user->rights->commande->creer && $object->statut > 2 && empty($conf->global->WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER) && empty($conf->global->WORsKFLOW_BILL_ON_SHIPMENT))
         			{
         				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
         			}
         		}
 
-        		// Close
+        		// Set to shipped
         		if (($object->statut == 1 || $object->statut == 2) && $user->rights->commande->cloturer)
         		{
-        			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close">'.$langs->trans('Close').'</a>';
+        			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=shipped">'.$langs->trans('ClassifyShipped').'</a>';
         		}
 
         		// Clone

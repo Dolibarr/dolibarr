@@ -277,6 +277,7 @@ class Product extends CommonObject
 				$sql.= "datec";
 				$sql.= ", entity";
 				$sql.= ", ref";
+				$sql.= ", ref_ext";
 				$sql.= ", price_min";
 				$sql.= ", price_min_ttc";
 				$sql.= ", label";
@@ -292,7 +293,8 @@ class Product extends CommonObject
 				$sql.= ") VALUES (";
 				$sql.= $this->db->idate($now);
 				$sql.= ", ".$conf->entity;
-				$sql.= ", '".$this->ref."'";
+				$sql.= ", '".$this->db->escape($this->ref)."'";
+				$sql.= ", ".($this->ref_ext?"'".$this->db->escape($this->ref_ext)."'":"null");
 				$sql.= ", ".price2num($price_min_ht);
 				$sql.= ", ".price2num($price_min_ttc);
 				$sql.= ", ".($this->libelle?"'".$this->db->escape($this->libelle)."'":"null");
@@ -698,7 +700,7 @@ class Product extends CommonObject
 				}
 				if (!$this->db->query($sql2)) return -1;
 			}
-			else
+			else if (isset($this->multilangs["$key"]))
 			{
 				if ($this->db->num_rows($result)) // si aucune ligne dans la base
 				{
@@ -1042,7 +1044,7 @@ class Product extends CommonObject
 		// Check parameters
 		if (! $id && ! $ref && ! $ref_ext)
 		{
-			$this->error=$langs->trans('ErrorWrongParameters');
+			$this->error='ErrorWrongParameters';
 			dol_print_error(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -2080,13 +2082,12 @@ class Product extends CommonObject
 	function get_arbo_each_prod($multiply=1)
 	{
 		$this->res = array();
-		if (is_array($this -> sousprods))
+		if (isset($this->sousprods) && is_array($this->sousprods))
 		{
-			foreach($this -> sousprods as $nom_pere => $desc_pere)
+			foreach($this->sousprods as $nom_pere => $desc_pere)
 			{
 				if (is_array($desc_pere)) $this->fetch_prod_arbo($desc_pere,"",$multiply);
 			}
-			//			dol_sort($this->res,);
 		}
 		return $this->res;
 	}

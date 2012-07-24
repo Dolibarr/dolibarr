@@ -64,12 +64,13 @@ $entitytolang=array(		// Translation code
 	);
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
-$datatoexport=isset($_GET["datatoexport"])? $_GET["datatoexport"] : (isset($_POST["datatoexport"])?$_POST["datatoexport"]:'');
-$action=isset($_GET["action"]) ? $_GET["action"] : (isset($_POST["action"])?$_POST["action"]:'');
-$step=isset($_GET["step"])? $_GET["step"] : (isset($_POST["step"])?$_POST["step"]:1);
-$export_name=isset($_POST["export_name"])? $_POST["export_name"] : '';
-$hexa=isset($_POST["hexa"])? $_POST["hexa"] : '';
-$exportmodelid=isset($_POST["exportmodelid"])? $_POST["exportmodelid"] : '';
+$datatoexport=GETPOST("datatoexport");
+$action=GETPOST("action");
+$step=GETPOST("step")?GETPOST("step"):1;
+$export_name=GETPOST("export_name");
+$hexa=GETPOST("hexa");
+$exportmodelid=GETPOST("exportmodelid");
+$field=GETPOST("field");
 
 $objexport=new Export($db);
 $objexport->load_arrays($user,$datatoexport);
@@ -87,12 +88,15 @@ $sqlusedforexport='';
 
 if ($action=='selectfield')
 {
-    if ($_GET["field"]=='all')
+	$fieldsarray=$objexport->array_export_fields[0];
+	$fieldsentitiesarray=$objexport->array_export_entities[0];
+    $fieldsdependenciesarray=$objexport->array_export_dependencies[0];
+
+    if ($field=='all')
     {
-		$fieldsarray=$objexport->array_export_fields[0];
 		foreach($fieldsarray as $key=>$val)
 		{
-			if (! empty($array_selected[$key])) continue;		// If already selected, select next
+			if (! empty($array_selected[$key])) continue;		// If already selected, check next
 			$array_selected[$key]=count($array_selected)+1;
 		    //print_r($array_selected);
 		    $_SESSION["export_selected_fields"]=$array_selected;
@@ -100,7 +104,13 @@ if ($action=='selectfield')
     }
     else
     {
-		$array_selected[$_GET["field"]]=count($array_selected)+1;
+        $array_selected[$field]=count($array_selected)+1;    // We tag the key $field as "selected"
+        // We check if there is a dependency
+        if (! empty($fieldsdependenciesarray[$fieldsentitiesarray[$field]]))
+        {
+    		// TODO Show warning "risk of duplicate record filtered"
+
+        }
 	    //print_r($array_selected);
 	    $_SESSION["export_selected_fields"]=$array_selected;
     }

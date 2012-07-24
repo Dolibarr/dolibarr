@@ -1,5 +1,6 @@
 # Dolibarr language file - pt_BR rev. 0.0 - companies
 CHARSET=UTF-8
+ErrorBadEMail=e-mail %s não está correto
 ErrorCompanyNameAlreadyExists=o Nome da emprea %s já existe. Indique outro.
 ErrorPrefixAlreadyExists=o Prefixooo %s já existe. Indique outro.
 ErrorSetACountryFirst=Defina em primeiro localização o país
@@ -34,7 +35,7 @@ Companies=Empresas
 CountryIsInEEC=País da Comunidadeee Económica Europeia
 ThirdParty=Fornecedor
 
-## Alterado o THirdParties em 19/04/2011 para Empresas pois � uma forma mais generica dos Thirs Parties
+## Alterado o THirdParties em 19/04/2011 para Empresas pois uma forma mais generica dos Thirs Parties
 #ThirdParties=Fornecedores
 ThirdParties=Empresas
 ThirdPartyAll=Fornecedores (Todos)
@@ -99,7 +100,7 @@ ProfId1BE=Núm da Ordem
 ProfId2BE=-
 ProfId3BE=-
 ProfId4BE=-
-ProfId1BR=CNPJ
+ProfId1BR=-
 ProfId2BR=IE (Inscricao Estadual)
 ProfId3BR=IM (Inscricao Municipal)
 ProfId4BR=CPF
@@ -125,9 +126,9 @@ ProfId1TN=RC
 ProfId2TN=Matrícula Fiscal
 ProfId3TN=Código na Alfandega
 ProfId4TN=CCC
-VATIntra=IVA Intracomunitário
-VATIntraShort=IVA Intracomunitário Mínimo
-VATIntraVeryShort=IVA Intracomunitário Nulo
+VATIntra=Cadastro Nacional Pessoa Juridica - CNPJ
+VATIntraShort=CNPJ
+VATIntraVeryShort=CNPJ
 VATIntraSyntaxIsValid=Sintaxe Válida
 VATIntraValueIsValid=Valor Válido
 ProspectCustomer=Cliente Potencial/Cliente
@@ -205,7 +206,7 @@ EditDeliveryAddress=Modificar Endereço de Envio
 ThisUserIsNot=Este usuário nem é um cliente potencial, nem um cliente, nem um fornecedor
 VATIntraCheck=Verificar
 VATIntraCheckDesc=o link <b>%s</b> permite consultar à serviço europeo de control de números de ICMS intracomunitario. Se requer acesso a internet para que o serviço funcione
-VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/lang.do?fromWhichPage
+VATIntraCheckURL=http://www.receita.fazenda.gov.br/pessoajuridica/cnpj/cnpjreva/cnpjreva_solicitacao.asp
 VATIntraCheckableOnEUSite=Verificar na web da Comisión Europea
 VATIntraManualCheck=pode também realizar uma verificação manual na web europea <a href
 ErrorVATCheckMS_UNAVAILABLE=Verificação Impossível. O serviço de verificação não é prestado pelo país membro (%s).

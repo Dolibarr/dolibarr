@@ -33,7 +33,7 @@ include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
 
 
 /**
- *	Classe de description et activation du module Commande
+ *	Class to describe module customer orders
  */
 class modCommande extends DolibarrModules
 {

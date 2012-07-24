@@ -8,7 +8,23 @@
 // START - Lines generated via autotranslator.php tool (2012-03-10 15:14:54).
 // Reference language: en_US -> he_IL
 CHARSET=UTF-8
-Bookm=הסימניות
-NewBookmark=ניו סימניה
 AddThisPageToBookmarks=הוסף דף זה לסימניות
 // STOP - Lines generated via autotranslator.php tool (2012-03-10 15:19:19).
+
+Bookmark=הפוך
+Bookmarks=הסימניות
+NewBookmark=ניו סימניה
+ShowBookmark=הצג סימניה
+OpenANewWindow=פתח חלון חדש
+ReplaceWindow=להחליף את החלון הנוכחי
+BookmarkTargetNewWindowShort=חלון חדש
+BookmarkTargetReplaceWindowShort=בחלון הנוכחי
+BookmarkTitle=הפוך כותרת
+UrlOrLink=כתובת האתר
+BehaviourOnClick=התנהגות כאשר כתובת האתר הלחיצה
+CreateBookmark=צור סימניה
+SetHereATitleForLink=הגדרת כותרת עבור הסימנייה
+UseAnExternalHttpLinkOrRelativeDolibarrLink=שימוש חיצוני http כתובת האתר או כתובת האתר Dolibarr יחסית
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=לבחור אם לפתוח קישור לדף חייב להופיע על החלון הנוכחי או החדש
+BookmarksManagement=סימניות וניהול
+ListOfBookmarks=רשימת הסימניות

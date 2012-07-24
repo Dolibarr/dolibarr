@@ -9,3 +9,16 @@
 // Reference language: en_US -> ru_UA
 CHARSET=UTF-8
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:04:51).
+
+Bookmark=Закладка
+Bookmarks=Закладки
+BookmarkTargetNewWindowShort=В новом окне
+BookmarkTargetReplaceWindowShort=Текущее окно
+BookmarkTitle=Закладка титул
+UrlOrLink=URL
+BehaviourOnClick=Поведение при нажатии URL
+CreateBookmark=Создать закладку
+SetHereATitleForLink=Установить название для закладки
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Используйте внешний HTTP URL или относительный URL Dolibarr
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Выберите, если страница открыта ссылка должна появиться на текущем или новом окне
+BookmarksManagement=Закладки управления

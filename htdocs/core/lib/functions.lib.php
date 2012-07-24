@@ -2069,9 +2069,9 @@ function info_admin($text,$infoonimgalt=0)
  *	Toutefois, il faut essayer de ne l'appeler qu'au sein de pages php, les classes devant
  *	renvoyer leur erreur par l'intermediaire de leur propriete "error".
  *
- *	@param	DoliDB	$db      	Database handler
+ *	@param	 DoliDB	$db      	Database handler
  *	@param  string	$error		String or array of errors strings to show
- *	@return	void
+ *	@return void
  *  @see    dol_htmloutput_errors
  */
 function dol_print_error($db='',$error='')
@@ -3331,7 +3331,8 @@ function dol_textishtml($msg,$option=0)
         elseif (preg_match('/<img/i',$msg))				return true;
         elseif (preg_match('/<i>/i',$msg))				return true;
         elseif (preg_match('/<b>/i',$msg))				return true;
-        elseif (preg_match('/&[A-Z0-9]{1,6};/i',$msg))	return true;
+        elseif (preg_match('/&[A-Z0-9]{1,6};/i',$msg))	return true;    // Html entities names (http://www.w3schools.com/tags/ref_entities.asp)
+        elseif (preg_match('/&#[0-9]{2,3};/i',$msg))	return true;    // Html entities numbers (http://www.w3schools.com/tags/ref_entities.asp)
         return false;
     }
 }

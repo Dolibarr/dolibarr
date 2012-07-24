@@ -32,6 +32,8 @@ require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
 
 dol_syslog("Call User webservices interfaces");
 
+$langs->load("main");
+
 // Enable and test if module web services is enabled
 if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {

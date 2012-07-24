@@ -9,8 +9,23 @@
 // START - Lines generated via autotranslator.php tool.
 // Reference language: en_US
 CHARSET=UTF-8
-Bookm=العناوين
-NewBookmark=إشارة مرجعية جديدة
 AddThisPageToBookmarks=أضف هذه الصفحة إلى المفضلة
+Bookmark=احفظ
+Bookmarks=العناوين
+NewBookmark=إشارة مرجعية جديدة
+ShowBookmark=وتظهر علامة
+OpenANewWindow=فتح نافذة جديدة
+ReplaceWindow=استبدال النافذة الحالية
+BookmarkTargetNewWindowShort=نافذة جديدة
+BookmarkTargetReplaceWindowShort=النافذة الحالية
+BookmarkTitle=احفظ العنوان
+UrlOrLink=العنوان
+BehaviourOnClick=السلوك على الضغط على العنوان
+CreateBookmark=إيجاد المرجعية
+SetHereATitleForLink=مجموعة هنا عنوان المرجعية
+UseAnExternalHttpLinkOrRelativeDolibarrLink=استخدام خارجي عنوان النص المتشعب أو قريب Dolibarr عنوان
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=إذا كان الاختيار قد فتحت صفحة ويجب أن تظهر على وصلة الحالية أو نافذة جديدة
+BookmarksManagement=إدارة العناوين
+ListOfBookmarks=قائمة العناوين
 // Date 2009-08-11 13:27:01
 // STOP - Lines generated via parser

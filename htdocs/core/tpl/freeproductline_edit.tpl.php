@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2011 Regis Houssin       <regis@dolibarr.fr>
  * Copyright (C) 2010-2012 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,6 +74,13 @@
 	<?php } ?>
 	</td>
 
+<?php
+if (! empty($conf->margin->enabled)) { 
+?>
+	<td align="right"><input type="text" size="5" name="buying_price" value="<?php echo price($line->pa_ht,0,'',0); ?>"></td>
+<?php
+}
+?>
 	<td align="center" colspan="5" valign="middle"><input type="submit" class="button" name="save" value="<?php echo $langs->trans("Save"); ?>">
 	<br><input type="submit" class="button" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>"></td>
 </tr>

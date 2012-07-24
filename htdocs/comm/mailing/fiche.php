@@ -41,13 +41,6 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $urlfrom=GETPOST('urlfrom');
 
-$mesg='';
-if (isset($_SESSION['DolMessage']))
-{
-	$mesg=$_SESSION['DolMessage'];
-	unset($_SESSION['DolMessage']);
-}
-
 $object=new Mailing($db);
 $result=$object->fetch($id);
 
@@ -79,7 +72,7 @@ if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE)
         $object->substitutionarray,
         array(
             '__CHECK_READ__' => 'CheckMail',
-            '__UNSUSCRIBE__' => 'Unsubscribe'
+            '__UNSUBSCRIBE__' => 'Unsubscribe'
         )
     );
 }
@@ -104,7 +97,7 @@ if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE)
         $object->substitutionarrayfortest,
         array(
             '__CHECK_READ__' => 'TESTCheckMail',
-            '__UNSUSCRIBE__' => 'TESTUnsubscribe'
+            '__UNSUBSCRIBE__' => 'TESTUnsubscribe'
         )
     );
 }
@@ -231,7 +224,7 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 							'__ID__' => $obj->source_id,
 							'__EMAIL__' => $obj->email,
 							'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
-							'__UNSUSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
+							'__UNSUBSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
 							'__MAILTOEMAIL__' => '<a href="mailto:'.$obj->email.'">'.$obj->email.'</a>',
 							'__LASTNAME__' => $obj->nom,
 							'__FIRSTNAME__' => $obj->prenom,
@@ -562,7 +555,7 @@ if ($action == 'confirm_valid' && $confirm == 'yes')
 	{
 		$object->valid($user);
 
-		$_SESSION['DolMessage']='<div class="ok">'.$langs->trans("MailingSuccessfullyValidated").'</div>';
+		$_SESSION['dol_message']='<div class="ok">'.$langs->trans("MailingSuccessfullyValidated").'</div>';
 
 		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
@@ -738,9 +731,9 @@ else
 				{
 					// Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
 					// on affiche donc juste un message
-				    $mesg.='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
-					$mesg.='<br><textarea cols="60" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>';
-					$mesg.='<br><br><div class="warning">'.$langs->trans("MailingNeedCommand2").'</div>';
+				    $mesgembedded.='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
+					$mesgembedded.='<br><textarea cols="60" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>';
+					$mesgembedded.='<br><br><div class="warning">'.$langs->trans("MailingNeedCommand2").'</div>';
 					$_GET["action"]='';
 				}
 				else
@@ -838,19 +831,17 @@ else
 				array('type' => 'checkbox', 'name' => 'clone_receivers', 'label' => $langs->trans("CloneReceivers").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true)
 				);
 				// Paiement incomplet. On demande si motif = escompte ou autre
-				$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneEMailing'),$langs->trans('ConfirmCloneEMailing',$object->ref),'confirm_clone',$formquestion,'yes',2,240);
-				print '<br>';
+				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneEMailing'),$langs->trans('ConfirmCloneEMailing',$object->ref),'confirm_clone',$formquestion,'yes',2,240);
 			}
 
 
 			dol_htmloutput_mesg($mesg);
 
-
 			/*
 			 * Boutons d'action
 			 */
 
-			if (GETPOST("cancel") || $confirm=='no' || $action == '' || in_array($action,array('valid','delete','sendall')))
+			if (GETPOST("cancel") || $confirm=='no' || $action == '' || in_array($action,array('valid','delete','sendall','clone')))
 			{
 				print "\n\n<div class=\"tabsAction\">\n";
 
@@ -929,6 +920,8 @@ else
 
 				print '<br><br></div>';
 			}
+
+			if (! empty($mesgembedded)) dol_htmloutput_mesg($mesgembedded,'','warning',1);
 
 			// Affichage formulaire de TEST
 			if ($action == 'test')

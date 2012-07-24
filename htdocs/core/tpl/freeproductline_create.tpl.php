@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2011 Regis Houssin       <regis@dolibarr.fr>
  * Copyright (C) 2010-2011 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
  * $dateSelector
  * $this (invoice, order, ...)
  * $line defined
- */
+ */  
 ?>
 
 <!-- BEGIN PHP TEMPLATE freeproductline_create.tpl.php -->
@@ -32,7 +33,19 @@
 	<td align="right"><?php echo $langs->trans('PriceUHT'); ?></td>
 	<td align="right"><?php echo $langs->trans('Qty'); ?></td>
 	<td align="right"><?php echo $langs->trans('ReductionShort'); ?></td>
-	<td colspan="4">&nbsp;</td>
+<?php
+$colspan = 4;
+if (! empty($conf->margin->enabled)) { 
+?>
+	<td align="right"><?php echo $langs->trans('BuyingPrice'); ?></td>
+<?php
+  if($conf->global->DISPLAY_MARGIN_RATES)
+    $colspan++;
+  if($conf->global->DISPLAY_MARK_RATES)
+    $colspan++;
+}
+?>
+	<td colspan="<?php echo $colspan; ?>">&nbsp;</td>
 </tr>
 
 <form name="addproduct" id="addproduct" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id; ?>#add" method="POST">
@@ -70,12 +83,36 @@
 	<td align="right"><input type="text" size="5" name="np_price" value="<?php echo (isset($_POST["np_price"])?$_POST["np_price"]:''); ?>"></td>
 	<td align="right"><input type="text" size="2" name="qty" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>"></td>
 	<td align="right" nowrap><input type="text" size="1" value="<?php echo $buyer->remise_client; ?>" name="remise_percent">%</td>
-	<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline"></td>
+<?php
+$colspan = 4;
+if (! empty($conf->margin->enabled)) { 
+?>
+	<td align="right"><input type="text" size="5" name="np_buying_price" value="<?php echo (isset($_POST["np_buying_price"])?$_POST["np_buying_price"]:''); ?>"></td>
+<?php
+  if($conf->global->DISPLAY_MARGIN_RATES)
+    $colspan++;
+  if($conf->global->DISPLAY_MARK_RATES)
+    $colspan++;
+}
+?>
+	<td align="center" valign="middle" colspan="<?php echo $colspan; ?>"><input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline"></td>
 </tr>
 
-<?php if ($conf->service->enabled && $dateSelector) { ?>
+
+<?php if ($conf->service->enabled && $dateSelector) { 
+if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
+	$colspan = 10;
+else
+	$colspan = 9;
+if (! empty($conf->margin->enabled)) { 
+  if($conf->global->DISPLAY_MARGIN_RATES)
+    $colspan++;
+  if($conf->global->DISPLAY_MARK_RATES)
+    $colspan++;
+}
+?>
 <tr <?php echo $bcnd[$var]; ?>>
-	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="10"' : ' colspan="9"'); ?>>
+	<td colspan="<?php echo $colspan; ?>">
 	<?php
 	echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
 	echo $form->select_date('','date_start',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addproduct");

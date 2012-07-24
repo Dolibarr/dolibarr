@@ -185,7 +185,7 @@ AutoDetectLang=Automatische Erkennung (Browser-Sprache)
 FeatureDisabledInDemo=Funktion in der Demoversion deaktiviert
 Rights=Berechtigungen
 BoxesDesc=Boxen sind auf einigen Seiten angezeigte Informationsbereiche. Sie können die Anzeige einer Box einstellen, indem Sie auf die Zielseite klicken und 'Aktivieren' wählen. Zum Ausblenden einer Box klicken Sie einfach auf den Papierkorb.
-OnlyActiveElementsAreShown=Nur Elemente aus <a href="modules.php">aktiven Module</a> werden angezeigt.
+OnlyActiveElementsAreShown=Nur Elemente aus <a href="%s">aktiven Module</a> werden angezeigt.
 ModulesDesc=Hier können Sie die verfügbaren Module und Funktionen auswählen. Einige Module benötigen nach ihrer Aktivierung das Setzen spezifischer Benutzerberechtigungen.
 ModulesInterfaceDesc=Die Schnittstellenmodule erlauben Ihnen das Einbinden weiterer Funktionen auf Basis externer Software, Systeme oder Services
 ModulesSpecialDesc=Spezialmodule sind für sehr spezifische Anwendungsfälle gedacht und oft nicht verwendet

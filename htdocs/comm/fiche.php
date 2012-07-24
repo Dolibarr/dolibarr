@@ -78,7 +78,7 @@ if ($action == 'setcustomeraccountancycode')
 	$result=$object->update($object->id,$user,1,1,0);
 	if ($result < 0)
 	{
-		$mesg=join(',',$object->errors);
+		$mesgs[]=join(',',$object->errors);
 	}
 	$action="";
 }
@@ -156,11 +156,6 @@ if ($id > 0)
 	if ($object->id <= 0)
 	{
 		dol_print_error($db,$object->error);
-	}
-
-	if ($errmesg)
-	{
-		print "<b>".$errmesg."</b><br>";
 	}
 
 	/*
@@ -821,6 +816,7 @@ else
 	dol_print_error($db,'Bad value for socid parameter');
 }
 
+dol_htmloutput_mesg('',$mesgs);
 
 // End of page
 llxFooter();

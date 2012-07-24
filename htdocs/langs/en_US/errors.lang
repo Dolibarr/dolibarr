@@ -111,6 +111,7 @@ ErrorFileRequired=It takes a package Dolibarr file
 ErrorPhpCurlNotInstalled=The PHP CURL is not installed, this is essential to talk with Paypal.
 
 # Warnings
+WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined
 WarningSafeModeOnCheckExecDir=Warning, PHP option <b>safe_mode</b> is on so command must be stored inside a directory declared by php parameter <b>safe_mode_exec_dir</b>.
 WarningAllowUrlFopenMustBeOn=Parameter <b>allow_url_fopen</b> must be set to <b>on</b> in filer <b>php.ini</b> for having this module working completely. You must modify this file manually.
 WarningBuildScriptNotRunned=Script <b>%s</b> was not yet ran to build graphics, or there is no data to show.
@@ -121,3 +122,4 @@ WarningsOnXLines=Warnings on <b>%s</b> source lines
 WarningNoDocumentModelActivated=No model, for document generation, has been activated. A model will be choosed by default until you check your module setup.
 WarningLockFileDoesNotExists=Warning, once setup is finished, you must disable install/migrate tools by adding a file <b>install.lock</b> into directory <b>%s</b>. Missing this file is a security hole. 
 WarningUntilDirRemoved=All security warnings (visible by admin users only) will remain active as long as the vulnerability is present (or that constant MAIN_REMOVE_INSTALL_WARNING is added in Setup->Other setup).
+WarningCloseAlways=Warning, closing is done even if amount differs between source and target elements. Enable this feature with caution.

@@ -174,7 +174,7 @@ AutoDetectLang=Autodetektera (webbläsare språk)
 FeatureDisabledInDemo=Funktion avstängd i demo
 Rights=Behörigheter
 BoxesDesc=Fälten är skärmytan som visar en bit av information om vissa sidor. Du kan välja mellan att visa rutan eller inte genom att välja målsidan och klicka på &quot;Aktivera&quot; eller genom att klicka på soptunnan till att stänga av den.
-OnlyActiveElementsAreShown=Endast delar av <a href="modules.php">aktiverade moduler</a> visas.
+OnlyActiveElementsAreShown=Endast delar av <a href="%s">aktiverade moduler</a> visas.
 ModulesDesc=Dolibarr moduler definiera vilka funktionen är aktiverad i programvaran. Vissa moduler kräver behörigheter som du skall ge till användare efter möjliggör modul.
 ModulesInterfaceDesc=Den Dolibarr moduler gränssnittet kan du lägga till funktioner beroende på yttre programvara, system eller tjänster.
 ModulesSpecialDesc=Särskilda moduler är mycket specifika eller sällan moduler.

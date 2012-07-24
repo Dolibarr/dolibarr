@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,8 @@ require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
 require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
-if ($conf->categorie->enabled) require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
+if (! empty($conf->categorie->enabled))
+	require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
 
 $langs->load("products");
 $langs->load("stocks");
@@ -43,6 +44,7 @@ $search_categ = GETPOST("search_categ",'int');
 $tosell = GETPOST("tosell");
 $tobuy = GETPOST("tobuy");
 $fourn_id = GETPOST("fourn_id",'int');
+$catid = GETPOST('catid','int');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -59,7 +61,8 @@ $limit = $conf->liste_limit;
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 //$object->getCanvas($id);
-$canvas = GETPOST("canvas");
+$canvas=GETPOST("canvas");
+$objcanvas='';
 if (! empty($canvas))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
@@ -85,12 +88,6 @@ if (isset($_POST["button_removefilter_x"]))
 	$search_categ=0;
 }
 
-if ($conf->categorie->enabled && GETPOST('catid'))
-{
-	$catid = GETPOST('catid','int');
-}
-
-
 
 /*
  * View
@@ -108,7 +105,7 @@ else
 {
 	$title=$langs->trans("ProductsAndServices");
 
-	if (isset($_GET["type"]))
+	if (isset($type))
 	{
 		if ($type==1)
 		{
@@ -128,14 +125,10 @@ else
     $sql.= ' p.fk_product_type, p.tms as datem,';
     $sql.= ' p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte,';
     $sql.= ' MIN(pfp.unitprice) as minsellprice';
-    $sql.= ' FROM (';
-    // We'll need this table joined to the select in order to filter by categ
-    if ($search_categ) $sql.= MAIN_DB_PREFIX."categorie_product as cp, ";
-    $sql.= MAIN_DB_PREFIX.'product as p';
-    $sql.= ') ';
+    $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
+    if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
     $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
-    if ($search_categ) $sql.= " AND p.rowid = cp.fk_product";	// Join for the needed table to filter by categ
     if ($sall) $sql.= " AND (p.ref LIKE '%".$db->escape($sall)."%' OR p.label LIKE '%".$db->escape($sall)."%' OR p.description LIKE '%".$db->escape($sall)."%' OR p.note LIKE '%".$db->escape($sall)."%')";
     // if the type is not 1, we show all products (type = 0,2,3)
     if (dol_strlen($type))
@@ -148,9 +141,11 @@ else
     if ($snom)     $sql.= " AND p.label LIKE '%".$db->escape($snom)."%'";
     if (isset($tosell) && dol_strlen($tosell) > 0) $sql.= " AND p.tosell = ".$db->escape($tosell);
     if (isset($tobuy) && dol_strlen($tobuy) > 0)   $sql.= " AND p.tobuy = ".$db->escape($tobuy);
-    if (dol_strlen($canvas) > 0)                   $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
-    if ($catid)        $sql.= " AND cp.fk_categorie = ".$catid;
-    if ($search_categ) $sql.= " AND cp.fk_categorie = ".$search_categ;
+    if (dol_strlen($canvas) > 0)                    $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
+    if ($catid > 0)    $sql.= " AND cp.fk_categorie = ".$catid;
+    if ($catid == -2)  $sql.= " AND cp.fk_categorie IS NULL";
+    if ($search_categ > 0)   $sql.= " AND cp.fk_categorie = ".$search_categ;
+    if ($search_categ == -2) $sql.= " AND cp.fk_categorie IS NULL";
     if ($fourn_id > 0) $sql.= " AND pfp.fk_soc = ".$fourn_id;
     $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
     $sql.= " p.fk_product_type, p.tms,";
@@ -175,13 +170,16 @@ else
     	}
 
     	$helpurl='';
-    	if (isset($_GET["type"]) && $_GET["type"] == 0)
+    	if (isset($type))
     	{
-    		$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-    	}
-    	if (isset($_GET["type"]) && $_GET["type"] == 1)
-    	{
-    		$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+    		if ($type == 0)
+    		{
+    			$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+    		}
+    		else if ($type == 1)
+    		{
+    			$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+    		}
     	}
 
     	llxHeader('',$title,$helpurl,'');
@@ -195,16 +193,16 @@ else
     	$param.=isset($type)?"&amp;type=".$type:"";
     	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
 
-    	if (isset($catid))
+    	if (! empty($catid))
     	{
     		print "<div id='ways'>";
-    		$c = new Categorie($db, $catid);
+    		$c = new Categorie($db);
     		$ways = $c->print_all_ways(' &gt; ','product/liste.php');
     		print " &gt; ".$ways[0]."<br>\n";
     		print "</div><br>";
     	}
 
-    	if (!empty($_GET["canvas"]) && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/actions_card_'.$_GET["canvas"].'.class.php'))
+    	if (! empty($canvas) && file_exists(DOL_DOCUMENT_ROOT.'/product/canvas/'.$canvas.'/actions_card_'.$canvas.'.class.php'))
     	{
     		$fieldlist = $object->field_list;
     		$datas = $object->list_datas;
@@ -213,14 +211,14 @@ else
     		$title_text = $title;
 
     		// Default templates directory
-    		$template_dir = DOL_DOCUMENT_ROOT . '/product/canvas/'.$_GET["canvas"].'/tpl/';
+    		$template_dir = DOL_DOCUMENT_ROOT . '/product/canvas/'.$canvas.'/tpl/';
     		// Check if a custom template is present
-    		if (file_exists(DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/tpl/product/'.$_GET["canvas"].'/list.tpl.php'))
+    		if (file_exists(DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/tpl/product/'.$canvas.'/list.tpl.php'))
     		{
-    			$template_dir = DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/tpl/product/'.$_GET["canvas"].'/';
+    			$template_dir = DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/tpl/product/'.$canvas.'/';
     		}
 
-    	   include($template_dir.'list.tpl.php');	// Include native PHP templates
+    		include($template_dir.'list.tpl.php');	// Include native PHP templates
     	}
     	else
     	{
@@ -235,10 +233,10 @@ else
 
     		// Filter on categories
     	 	$moreforfilter='';
-    		if ($conf->categorie->enabled)
+    		if (! empty($conf->categorie->enabled))
     		{
     		 	$moreforfilter.=$langs->trans('Categories'). ': ';
-    			$moreforfilter.=$htmlother->select_categories(0,$search_categ,'search_categ');
+    			$moreforfilter.=$htmlother->select_categories(0,$search_categ,'search_categ',1);
     		 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
     		}
     	 	if ($moreforfilter)
@@ -253,12 +251,12 @@ else
     		print "<tr class=\"liste_titre\">";
     		print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref",$param,"","",$sortfield,$sortorder);
     		print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "p.label",$param,"","",$sortfield,$sortorder);
-    		if ($conf->barcode->enabled) print_liste_field_titre($langs->trans("BarCode"), $_SERVER["PHP_SELF"], "p.barcode",$param,'','',$sortfield,$sortorder);
+    		if (! empty($conf->barcode->enabled)) print_liste_field_titre($langs->trans("BarCode"), $_SERVER["PHP_SELF"], "p.barcode",$param,'','',$sortfield,$sortorder);
     		print_liste_field_titre($langs->trans("DateModification"), $_SERVER["PHP_SELF"], "p.tms",$param,"",'align="center"',$sortfield,$sortorder);
-    		if ($conf->service->enabled && $type != 0) print_liste_field_titre($langs->trans("Duration"), $_SERVER["PHP_SELF"], "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
+    		if (! empty($conf->service->enabled) && $type != 0) print_liste_field_titre($langs->trans("Duration"), $_SERVER["PHP_SELF"], "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
     		if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("SellingPrice"), $_SERVER["PHP_SELF"], "p.price",$param,"",'align="right"',$sortfield,$sortorder);
     		print '<td class="liste_titre" align="right">'.$langs->trans("BuyingPriceMinShort").'</td>';
-    		if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("PhysicalStock").'</td>';
+    		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("PhysicalStock").'</td>';
     		print_liste_field_titre($langs->trans("Sell"), $_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("Buy"), $_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="right"',$sortfield,$sortorder);
     		print "</tr>\n";
@@ -271,7 +269,7 @@ else
     		print '<td class="liste_titre" align="left">';
     		print '<input class="flat" type="text" name="snom" size="12" value="'.$snom.'">';
     		print '</td>';
-    		if ($conf->barcode->enabled)
+    		if (! empty($conf->barcode->enabled))
     		{
     			print '<td class="liste_titre">';
     			print '<input class="flat" type="text" name="sbarcode" size="6" value="'.$sbarcode.'">';
@@ -282,7 +280,7 @@ else
     		print '</td>';
 
     		// Duration
-    		if ($conf->service->enabled && $type != 0)
+    		if (! empty($conf->service->enabled) && $type != 0)
     		{
     			print '<td class="liste_titre">';
     			print '&nbsp;';
@@ -303,7 +301,7 @@ else
     		print '</td>';
 
     		// Stock
-    		if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1)
+    		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1)
     		{
     			print '<td class="liste_titre">';
     			print '&nbsp;';
@@ -330,7 +328,7 @@ else
     			$objp = $db->fetch_object($resql);
 
     			// Multilangs
-    			if ($conf->global->MAIN_MULTILANGS) // si l'option est active
+    			if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
     			{
     				$sql = "SELECT label";
     				$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
@@ -342,7 +340,7 @@ else
     				if ($result)
     				{
     					$objtp = $db->fetch_object($result);
-    					if ($objtp->label != '') $objp->label = $objtp->label;
+    					if (! empty($objtp->label)) $objp->label = $objtp->label;
     				}
     			}
 
@@ -361,7 +359,7 @@ else
     			print '<td>'.dol_trunc($objp->label,40).'</td>';
 
     			// Barcode
-    			if ($conf->barcode->enabled)
+    			if (! empty($conf->barcode->enabled))
     			{
     				print '<td>'.$objp->barcode.'</td>';
     			}
@@ -370,7 +368,7 @@ else
     			print '<td align="center">'.dol_print_date($db->jdate($objp->datem),'day')."</td>\n";
 
     			// Duration
-    			if ($conf->service->enabled && $type != 0)
+    			if (! empty($conf->service->enabled) && $type != 0)
     			{
     				print '<td align="center">';
     				if (preg_match('/([0-9]+)y/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
@@ -408,7 +406,7 @@ else
                 print '</td>';
 
     			// Show stock
-    			if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1)
+    			if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1)
     			{
     				if ($objp->fk_product_type != 1)
     				{
@@ -437,7 +435,7 @@ else
 
     		if ($num > $conf->liste_limit)
     		{
-    			if ($sref || $snom || $sall || $sbarcode || $_POST["search"])
+    			if ($sref || $snom || $sall || $sbarcode || GETPOST('search'))
     			{
     				print_barre_liste('', $page, "liste.php", "&amp;sref=".$sref."&amp;snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy, $sortfield, $sortorder,'',$num);
     			}
@@ -460,7 +458,6 @@ else
 }
 
 
-$db->close();
-
 llxFooter();
+$db->close();
 ?>

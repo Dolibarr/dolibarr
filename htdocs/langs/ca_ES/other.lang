@@ -164,25 +164,6 @@ AddFiles=Afegir arxius
 StartUpload=Transferir
 CancelUpload=Cancel·lar transferència
 FileIsTooBig=L'arxiu és massa gran
-##### Bookmark #####
-Bookmark=Marcador
-Bookmarks=Marcadors
-NewBookmark=Nou marcador
-ShowBookmark=Mostrar marcadors
-BookmarkThisPage=Afegeix aquesta pàgina als seus marcadors
-OpenANewWindow=Obrir una nova finestra
-ReplaceWindow=Reemplaça la finestra actual
-BookmarkTargetNewWindowShort=Nova finestra
-BookmarkTargetReplaceWindowShort=Finestra actual
-BookmarkTitle=Títol del marcador
-UrlOrLink=URL
-BehaviourOnClick=Comportament al fer clic a la URL
-CreateBookmark=Crear marcador
-SetHereATitleForLink=Indiqueu aquí un títol del marcador
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Indicar una URL http externa o una URL Dolibarr relativa
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Triar si ha de obrir-se la pàgina en una nova finestra o en l'actual
-BookmarksManagement=Gestió de marcadors
-ListOfBookmarks=Llista de marcadors
 ##### Webcal #####
 LoginWebcal=Login Webcalendar
 ErrorWebcalLoginNotDefined=El login webcalendar associat al seu usuari Dolibarr <b>%s</b> no està definit

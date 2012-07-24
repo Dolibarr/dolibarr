@@ -8,6 +8,23 @@
 // START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
 // Reference language: en_US -> de_AT
 CHARSET=UTF-8
-NewBookmark=Neues Lesezeichen
 AddThisPageToBookmarks=Fügen Sie diese Seite zu Lesezeichen
 // STOP - Lines generated via autotranslator.php tool (2011-10-10 12:03:33).
+
+Bookmark=Lesezeichen
+Bookmarks=Lesezeichen
+NewBookmark=Neues Lesezeichen
+ShowBookmark=Zeige Lesezeichen
+OpenANewWindow=Neues Fenster öffnen
+ReplaceWindow=Aktuelles Fenster ersetzen
+BookmarkTargetNewWindowShort=Neues Fenster
+BookmarkTargetReplaceWindowShort=Aktuelles ersetzen
+BookmarkTitle=Titel des Lesezeichens
+UrlOrLink=URL oder Link
+BehaviourOnClick=Verhalten bei Klick auf den Link
+CreateBookmark=Erstelle Lesezeichen
+SetHereATitleForLink=Geben Sie hier einen Linktitel ein
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Verwenden Sie eine externe http-URL oder eine URL relativ zum Systempfad
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Bitte wählen Sie, ob sich ein geklickter Link in einem neuen oder demselben Fenster öffnet
+ListOfBookmarks=Liste der Lesezeichen
+BookmarksManagement=Bookmarks-Verwaltung

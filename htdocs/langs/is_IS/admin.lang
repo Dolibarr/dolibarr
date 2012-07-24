@@ -173,7 +173,7 @@ AutoDetectLang=Finna sjálfkrafa (vafrara tungumál)
 FeatureDisabledInDemo=Lögun fatlaður í kynningu
 Rights=Heimildir
 BoxesDesc=Hnefaleikar eru skjár svæði sem sýna brot af upplýsingum á sumum síðum. Þú getur valið á milli sýnir kassann eða ekki með því að velja að miða síðu og smella á 'Virkja', eða með því að smella á dustbin að gera það.
-OnlyActiveElementsAreShown=Aðeins atriði frá <a href="modules.php">virkt einingar</a> eru birtar.
+OnlyActiveElementsAreShown=Aðeins atriði frá <a href="%s">virkt einingar</a> eru birtar.
 ModulesDesc=Dolibarr mát tilgreina hvaða virkni er virkt í hugbúnaði. Sum mát þurfa leyfi þér að veita notendum eftir kleift mát.
 ModulesInterfaceDesc=The Dolibarr mát tengi gerir þér kleift að bæta við aðgerðir fer eftir utanaðkomandi hugbúnaði, kerfi eða þjónustu.
 ModulesSpecialDesc=Sérstakar einingar eru mjög sérstakur eða sjaldan notað mát.

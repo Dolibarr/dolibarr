@@ -241,14 +241,15 @@ class FormOther
     }
 
     /**
-     *  Return select list for categories (to use in form search selectors)
+     * Return select list for categories (to use in form search selectors)
      *
-     *	@param	int		$type			Type of categories (0=product, 1=suppliers, 2=customers, 3=members)
-     *  @param  string	$selected     	Preselected value
-     *  @param  string	$htmlname      	Name of combo list
-     *  @return string		        	Html combo list code
+     * @param	int		$type			Type of categories (0=product, 1=suppliers, 2=customers, 3=members)
+     * @param  string	$selected     	Preselected value
+     * @param  string	$htmlname      	Name of combo list
+     * @param	int		$nocateg		Show also an entry "Not categorized"
+     * @return string		        	Html combo list code
      */
-    function select_categories($type,$selected=0,$htmlname='search_categ')
+    function select_categories($type,$selected=0,$htmlname='search_categ',$nocateg=0)
     {
         global $langs;
         require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
@@ -259,8 +260,8 @@ class FormOther
 
         // Print a select with each of them
         $moreforfilter ='<select class="flat" name="'.$htmlname.'">';
-        $moreforfilter.='<option value="">&nbsp;</option>';
-
+        $moreforfilter.='<option value="">&nbsp;</option>';	// Should use -1 to say nothing
+        
         if (is_array($tab_categs))
         {
             foreach ($tab_categs as $categ)
@@ -269,6 +270,11 @@ class FormOther
                 if ($categ['id'] == $selected) $moreforfilter.=' selected="selected"';
                 $moreforfilter.='>'.dol_trunc($categ['fulllabel'],50,'middle').'</option>';
             }
+        }
+        if ($nocateg) 
+        {
+        	$langs->load("categories");
+        	$moreforfilter.='<option value="-2"'.($selected == -2 ? ' selected="selected"':'').'>- '.$langs->trans("NotCategorized").' -</option>';
         }
         $moreforfilter.='</select>';
 

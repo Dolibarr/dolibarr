@@ -151,6 +151,9 @@ if ($conf->fournisseur->enabled)
 print '<br>';
 
 
+print '<br>';
+print $langs->trans("OnlyActiveElementsAreShown", DOL_URL_ROOT.'/admin/modules.php');
+
 $db->close();
 
 llxFooter();

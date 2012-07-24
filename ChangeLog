@@ -5,24 +5,28 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.3 compared to 3.2 *****
 For users:
+- New: After first install, warning are visible onto mandatory setup not
+  configured. Show also total number of activated modules.
 - New: Can filter list of proposal, order or invoice on sales representative.
 - New: Add supplier ref on supplier orders.
 - New: Can export supplier orders.
-- New: First feature to install external plugins from gui. 
+- New: First change to install external plugins from gui (experimental). 
 - New: Monaco is like France for default vat calculation
-- New: Can list elements (invoices, orders or proposals on a particular
+- New: Can list elements (invoices, orders or proposals) on a particular
   user contact). This allow to view a "basket" of its elements.
 - New: Add bank account on payment list of invoice card.
 - New: Cloning project allow to clones task, notes, files, contacts. 
 - New: Enhance default style.
 - New: Can edit and resiliate member status from list.
-- New: Can insert links into elements lines. Also reported into PDF.
+- New: Can insert URL links into elements lines. Also reported into PDF.
 - New: When a member is validated, we can subscribe to mailing-lists
   according to its type.
 - New: Add link to third party into sells and purchase journal.
 - New: Suggest a method to generate a backup file for user with no access
   to mysqldump binary.
 - New: Can correct stock of a warehouse from warehouse card.
+- New: [ task #454 ] Add "No category" into filters on category.
+- New: Update language files (de, tr, pt).
 - Fix: No images into product description lines as PDF generation does
   not work with this.
 
@@ -31,6 +35,8 @@ For developers:
 - New: A module can overwrite templates parts.
 - New: Can add a link on title field of added dictionnary.
 - New: Uniformize code.
+- New: Add option WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER and 
+       WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER
 
 
 ***** ChangeLog for 3.2.0 compared to 3.1.2 *****

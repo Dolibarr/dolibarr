@@ -74,6 +74,14 @@ abstract class CommonDocGenerator
         {
             $mysoc->forme_juridique=getFormeJuridiqueLabel($mysoc->forme_juridique_code);
         }
+        if (empty($mysoc->country) && ! empty($mysoc->country_code))
+        {
+        	$mysoc->country=$outputlangs->transnoentitiesnoconv("Country".$mysoc->country_code);
+        }
+        if (empty($mysoc->state) && ! empty($mysoc->state_code))
+        {
+        	$mysoc->state=getState($mysoc->state_code,0);
+        }
 
         $logotouse=$conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
 
@@ -86,9 +94,11 @@ abstract class CommonDocGenerator
             'mycompany_address'=>$mysoc->address,
             'mycompany_zip'=>$mysoc->zip,
             'mycompany_town'=>$mysoc->town,
-            'mycompany_country'=>$outputlangs->transnoentitiesnoconv("Country".$mysoc->pays_code),
-            'mycompany_country_code'=>$mysoc->pays_code,
-            'mycompany_web'=>$mysoc->url,
+            'mycompany_country'=>$mysoc->country,
+            'mycompany_country_code'=>$mysoc->country_code,
+            'mycompany_state'=>$mysoc->state,
+            'mycompany_state_code'=>$mysoc->state_code,
+        	'mycompany_web'=>$mysoc->url,
             'mycompany_juridicalstatus'=>$mysoc->forme_juridique,
             'mycompany_capital'=>$mysoc->capital,
             'mycompany_barcode'=>$mysoc->barcode,
@@ -96,7 +106,9 @@ abstract class CommonDocGenerator
             'mycompany_idprof2'=>$mysoc->idprof2,
             'mycompany_idprof3'=>$mysoc->idprof3,
             'mycompany_idprof4'=>$mysoc->idprof4,
-            'mycompany_vatnumber'=>$mysoc->tva_intra,
+            'mycompany_idprof5'=>$mysoc->idprof5,
+            'mycompany_idprof6'=>$mysoc->idprof6,
+        	'mycompany_vatnumber'=>$mysoc->tva_intra,
             'mycompany_note'=>$mysoc->note
         );
     }
@@ -113,6 +125,15 @@ abstract class CommonDocGenerator
     {
         global $conf;
 
+        if (empty($object->country) && ! empty($object->country_code))
+        {
+        	$object->country=$outputlangs->transnoentitiesnoconv("Country".$object->country_code);
+        }
+        if (empty($mysoc->state) && ! empty($mysoc->state_code))
+        {
+        	$object->state=getState($object->state_code,0);
+        }
+
         return array(
             'company_name'=>$object->name,
             'company_email'=>$object->email,
@@ -121,9 +142,11 @@ abstract class CommonDocGenerator
             'company_address'=>$object->address,
             'company_zip'=>$object->zip,
             'company_town'=>$object->town,
-            'company_country_code'=>$object->country_code,
-            'company_country'=>$outputlangs->transnoentitiesnoconv("Country".$object->country_code),
-            'company_web'=>$object->url,
+            'company_country'=>$object->country,
+        	'company_country_code'=>$object->country_code,
+            'company_state'=>$object->state,
+        	'company_state_code'=>$object->state_code,
+        	'company_web'=>$object->url,
             'company_barcode'=>$object->barcode,
             'company_vatnumber'=>$object->tva_intra,
             'company_customercode'=>$object->code_client,
@@ -136,7 +159,9 @@ abstract class CommonDocGenerator
             'company_idprof2'=>$object->idprof2,
             'company_idprof3'=>$object->idprof3,
             'company_idprof4'=>$object->idprof4,
-            'company_note'=>$object->note
+            'company_idprof5'=>$object->idprof5,
+            'company_idprof6'=>$object->idprof6,
+        	'company_note'=>$object->note
         );
     }
 

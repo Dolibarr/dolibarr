@@ -112,7 +112,7 @@ DaylingSavingTime=Horario de verano (usuario)
 CurrentHour=Hora PHP (servidor)
 CompanyTZ=Zona Horaria empresa (sede central)
 CompanyHour=Hora empresa (sede central)
-CurrentSessionTimeOut=Time out sesión actual
+CurrentSessionTimeOut=Timeout sesión actual
 OSEnv=Entorno SO
 Box=Panel
 Boxes=Paneles
@@ -124,8 +124,8 @@ MenusEditorDesc=El editor de menús permite definir entradas personalizadas en l
 MenuForUsers=Menú para los usuarios
 LangFile=Archivo .lang
 System=Sistema
-SystemInfo=Info Sistema
-SystemTools=Utilidades Sistema
+SystemInfo=Info. sistema
+SystemTools=Utilidades sistema
 SystemToolsArea=Área utilidades del sistema
 SystemToolsAreaDesc=Esta área ofrece distintas funciones de administración. Utilice la menú para elegir la funcionalidad buscada.
 PurgeAreaDesc=Esta página le permite eliminar todos los archivos creados o guardados por Dolibarr (archivos temporales o todos los archivos del directorio <b>%s</b>). El uso de esta función no es necesaria. Se proporciona para los usuarios que albergan a Dolibarr en un servidor que no ofrece los permisos de eliminación de archivos salvaguardados por el servidor Web.
@@ -179,7 +179,7 @@ AutoDetectLang=Autodetección (navegador)
 FeatureDisabledInDemo=Opción deshabilitada en demo
 Rights=Permisos
 BoxesDesc=Los paneles son pequeñas zonas de información que se muestran en algunas páginas. Puede elegir activar o desactivar un panel haciendo clic en 'Activar', o haciendo click en el cubo de basura para desactivarlo. Solo se muestran los paneles relacionados con un <a href="modules.php">módulo</a> activo.
-OnlyActiveElementsAreShown=Sólo los elementos de <a href="modules.php">módulos activados</a> son mostrados
+OnlyActiveElementsAreShown=Sólo los elementos de <a href="%s">módulos activados</a> son mostrados
 ModulesDesc=Los módulos Dolibarr definen las funcionalidades disponibles en la aplicación. Algunos módulos requieren derechos que deberán indicarse a los usuarios para que puedan acceder a sus funcionalidades.
 ModulesInterfaceDesc=Los módulos de interfaz son módulos que permiten vincular a Dolibarr con sistemas, aplicaciones o servicios externos.
 ModulesSpecialDesc=Los módulos complementarios son módulos de uso muy específico o menos corriente que los módulos normales.
@@ -670,7 +670,7 @@ DictionnarySocialContributions=Tipos de cargas sociales
 DictionnaryVAT=Tasa de IVA (Impuesto sobre ventas en EEUU)
 DictionnaryPaymentConditions=Condiciones de pago
 DictionnaryPaymentModes=Modos de pago
-DictionnaryTypeContact=Tipos de contactos
+DictionnaryTypeContact=Tipos de contactos/direcciones
 DictionnaryEcotaxe=Baremos CEcoParticipación (DEEE)
 DictionnaryPaperFormat=Formatos papel
 DictionnaryFees=Tipo de desplazamientos y honorarios

@@ -1,70 +1,52 @@
-/*
+﻿/*
  * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-07-17 11:45:17
+ * Manually generated
+ * Generation date 2012-07-08 14:18:26
  */
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> tr_TR
+// START - Lines manually generated (2012-07-08 14:18:26).
+// Reference language: en_US -> TR – languages
 CHARSET=UTF-8
 Language_ar_AR=Arapça
+Language_ar_SA=Arapça
 Language_ca_ES=Katalanca
-Language_da_DA=Danimarkalı
-Language_de_DE=Alman
+Language_zh_CN=Çince
+Language_da_DA=Danimarkaca
+Language_da_DK=Danimarkaca
+Language_nl_BE=Hollandaca (Belçika)
+Language_nl_NL=Hollandaca (Hollanda)
 Language_en_AU=İngilizce (Avustralya)
-Language_en_GB=İngilizce (Birleşik Krallık)
 Language_en_IN=İngilizce (Hindistan)
+Language_en_NZ=İngilizce (Yeni Zelanda)
+Language_en_GB=İngilizce (Birleşik Krallık)
 Language_en_US=İngilizce (ABD)
-Language_es_ES=İspanyolca
-Language_es_AR=İspanyolca (Arjantin)
-Language_fi_FI=Fins
+Language_et_EE=Estonyaca
+Language_fi_FI=Fince
+Language_fr_FR=Fransızca
 Language_fr_BE=Fransızca (Belçika)
-Language_fr_CA=Fransızca (Kanada)
 Language_fr_CH=Fransızca (İsviçre)
-Language_fr_FR=Fransız
-Language_is_IS=İzlanda
+Language_fr_CA=Fransızca (Kanada)
+Language_de_DE=Almanca
+Language_de_AT=Almanca (Avusturya)
+Language_el_GR=Yunanca
+Language_he_IL=İsrailce
+Language_hu_HU=Macarca
+Language_is_IS=İzlandaca
 Language_it_IT=İtalyanca
 Language_ja_JP=Japonca
-Language_nb_NO=(Bokmål) Norveç
-Language_nl_BE=Hollandaca (Belçika)
-Language_nl_NL=Hollanda (Hollanda)
-Language_pl_PL=Polonya
-Language_pt_BR=Portekizce (Brezilya)
+Language_nb_NO=Norveçce (Bokmål)
+Language_fa_IR=Farsça
+Language_pl_PL=Polonyaca
 Language_pt_PT=Portekizce
-Language_ro_RO=Romanian
-Language_ru_RU=Rus
-Language_tr_TR=Türk
-Language_sl_SI=Sloven
-Language_sv_SV=İsveç
-Language_zh_CN=Çin
-Language_is_IS=İzlanda
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:31).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 11:19:16).
-// Reference language: en_US -> tr_TR
+Language_pt_BR=Portekizce (Brezilya)
+Language_ro_RO=Romence
+Language_ru_RU=Rusça
+Language_ru_UA=Rusça (Ukrayna)
+Language_sl_SI=Slovence
+Language_es_ES=İspanyolca
+Language_es_AR=İspanyolca (Arjantin)
 Language_es_HN=İspanyolca (Honduras)
 Language_es_MX=İspanyolca (Meksika)
 Language_es_PR=İspanyolca (Porto Riko)
-Language_fa_IR=Farsça
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:25:28).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 12:34:37).
-// Reference language: en_US -> tr_TR
-Language_de_AT=Almanca (Avusturya)
-Language_el_GR=Yunan
-Language_en_NZ=İngilizce (Yeni Zelanda)
-Language_hu_HU=Macar
-Language_ru_UA=Rus (Ukrayna)
-Language_sv_SE=İsveç
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:05:09).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 13:39:01).
-// Reference language: en_US -> tr_TR
-Language_ar_SA=Arapça
-Language_da_DK=Danimarkalı
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:56:15).
+Language_sv_SV=İsveçce
+Language_sv_SE=İsveçce
+Language_tr_TR=Türkçe

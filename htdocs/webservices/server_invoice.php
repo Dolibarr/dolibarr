@@ -34,6 +34,8 @@ require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 
 dol_syslog("Call Dolibarr webservices interfaces");
 
+$langs->load("main");
+
 // Enable and test if module web services is enabled
 if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
@@ -92,11 +94,12 @@ $server->wsdl->addComplexType(
         'id' => array('name'=>'id','type'=>'xsd:string'),
         'type' => array('name'=>'type','type'=>'xsd:int'),
         'desc' => array('name'=>'desc','type'=>'xsd:string'),
+        'vat_rate' => array('name'=>'vat_rate','type'=>'xsd:double'),
+        'qty' => array('name'=>'qty','type'=>'xsd:double'),
+        'unitprice' => array('name'=>'unitprice','type'=>'xsd:double'),
         'total_net' => array('name'=>'total_net','type'=>'xsd:double'),
     	'total_vat' => array('name'=>'total_vat','type'=>'xsd:double'),
     	'total' => array('name'=>'total','type'=>'xsd:double'),
-        'vat_rate' => array('name'=>'vat_rate','type'=>'xsd:double'),
-        'qty' => array('name'=>'qty','type'=>'xsd:double'),
         'date_start' => array('name'=>'date_start','type'=>'xsd:date'),
         'date_end' => array('name'=>'date_end','type'=>'xsd:date'),
         // From product
@@ -496,7 +499,6 @@ function createInvoice($authentication,$invoice)
     $errorcode='';$errorlabel='';
     $error=0;
     $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
-    // Check parameters
 
     if (! $error)
     {
@@ -505,7 +507,6 @@ function createInvoice($authentication,$invoice)
         $newobject->type=$invoice['type'];
         $newobject->ref_ext=$invoice['ref_ext'];
         $newobject->date=dol_stringtotime($invoice['date'],'dayrfc');
-        $newobject->date_lim_reglement=dol_stringtotime($invoice['date_due'],'dayrfc');
         $newobject->note=$invoice['note'];
         $newobject->note_public=$invoice['note_public'];
         $newobject->statut=$invoice['status'];
@@ -524,11 +525,12 @@ function createInvoice($authentication,$invoice)
             $newline->type=$line['type'];
             $newline->desc=$line['desc'];
             $newline->fk_product=$line['fk_product'];
+            $newline->tva_tx=$line['vat_rate'];
+            $newline->qty=$line['qty'];
+            $newline->subprice=$line['unitprice'];
             $newline->total_ht=$line['total_net'];
             $newline->total_tva=$line['total_vat'];
             $newline->total_ttc=$line['total'];
-            $newline->vat=$line['vat_rate'];
-            $newline->qty=$line['qty'];
             $newline->fk_product=$line['product_id'];
             $newobject->lines[]=$newline;
         }
@@ -537,7 +539,7 @@ function createInvoice($authentication,$invoice)
 
         $db->begin();
 
-        $result=$newobject->create($fuser,0,0);
+        $result=$newobject->create($fuser,0,dol_stringtotime($invoice['date_due'],'dayrfc'));
         if ($result < 0)
         {
             $error++;

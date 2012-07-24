@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2012 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +49,7 @@ function ajax_autocompleter($selected,$htmlname,$url,$option='',$minLength=2,$au
 					    if (this.value.length == 0)
 					    {
                             jQuery("#search_'.$htmlname.'").val("");
-                            jQuery("#'.$htmlname.'").val("");
+                            jQuery("#'.$htmlname.'").val("").trigger("change");
 					    }
                     });
     				jQuery("input#search_'.$htmlname.'").autocomplete({
@@ -57,7 +58,7 @@ function ajax_autocompleter($selected,$htmlname,$url,$option='',$minLength=2,$au
 								response( jQuery.map( data, function( item ) {
 									if (autoselect == 1 && data.length == 1) {
 										jQuery("#search_'.$htmlname.'").val(item.value);
-										jQuery("#'.$htmlname.'").val(item.key);
+										jQuery("#'.$htmlname.'").val(item.key).trigger("change");
 									}
 									var label = item.label.toString();
 									return { label: label, value: item.value, id: item.key}
@@ -67,7 +68,7 @@ function ajax_autocompleter($selected,$htmlname,$url,$option='',$minLength=2,$au
 						dataType: "json",
     					minLength: '.$minLength.',
     					select: function( event, ui ) {
-    						jQuery("#'.$htmlname.'").val(ui.item.id);
+    						jQuery("#'.$htmlname.'").val(ui.item.id).trigger("change");
     					}
 					}).data( "autocomplete" )._renderItem = function( ul, item ) {
 						return jQuery( "<li></li>" )
@@ -327,8 +328,8 @@ function ajax_constantonoff($code,$input=array(),$entity=false)
 		});
 	</script>';
 
-	$out.= '<span id="set_'.$code.'" class="linkobject '.($conf->global->$code?'hideobject':'').'">'.img_picto($langs->trans("Disabled"),'switch_off').'</span>';
-	$out.= '<span id="del_'.$code.'" class="linkobject '.($conf->global->$code?'':'hideobject').'">'.img_picto($langs->trans("Enabled"),'switch_on').'</span>';
+	$out.= '<span id="set_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'hideobject':'').'">'.img_picto($langs->trans("Disabled"),'switch_off').'</span>';
+	$out.= '<span id="del_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'':'hideobject').'">'.img_picto($langs->trans("Enabled"),'switch_on').'</span>';
 
 	return $out;
 }
