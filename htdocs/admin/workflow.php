@@ -77,34 +77,40 @@ print "</tr>\n";
 clearstatcache();
 
 $workflowcodes=array(
-	'WORKFLOW_PROPAL_AUTOCREATE_ORDER'=>array('enabled'=>($conf->propal->enabled && $conf->commande->enabled), 'picto'=>'order'),
-	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array('enabled'=>($conf->propal->enabled && $conf->commande->enabled), 'picto'=>'order','warning'=>'WarningCloseAlways'),
-	'WORKFLOW_ORDER_AUTOCREATE_INVOICE'=>array('enabled'=>($conf->commande->enabled && $conf->facture->enabled), 'picto'=>'bill'),
-	'WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER'=>array('enabled'=>($conf->facture->enabled && $conf->commande->enabled), 'picto'=>'bill','warning'=>'WarningCloseAlways'),
+	'WORKFLOW_PROPAL_AUTOCREATE_ORDER'=>array('enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order'),
+	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array('enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order','warning'=>'WarningCloseAlways'),
+	'WORKFLOW_ORDER_AUTOCREATE_INVOICE'=>array('enabled'=>'! empty($conf->commande->enabled) && ! empty($conf->facture->enabled)', 'picto'=>'bill'),
+	'WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER'=>array('enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'bill','warning'=>'WarningCloseAlways'),
 );
 
-if (! empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow'])) $workflow = array_merge($workflow, $conf->modules_parts['workflow']);
+if (! empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow']))
+{
+	foreach($conf->modules_parts['workflow'] as $workflow)
+	{
+		$workflowcodes = array_merge($workflowcodes, $workflow);
+	}
+}
 
 $nbqualified=0;
 
-foreach($workflowcodes as $key => $tmparray)
+foreach($workflowcodes as $key => $params)
 {
-	$picto=$tmparray['picto'];
-	$enabled=$tmparray['enabled'];
-   	if (empty($enabled)) continue;
+	$picto=$params['picto'];
+	$enabled=$params['enabled'];
+   	if (! verifCond($enabled)) continue;
 
    	$nbqualified++;
 	$var = !$var;
    	print "<tr ".$bc[$var].">\n";
    	print "<td>".img_object('', $picto).$langs->trans('desc'.$key);
-   	if (! empty($tmparray['warning']))
+   	if (! empty($params['warning']))
    	{
    		$langs->load("errors");
-   		print ' '.img_warning($langs->transnoentitiesnoconv($tmparray['warning']));
+   		print ' '.img_warning($langs->transnoentitiesnoconv($params['warning']));
    	}
    	print "</td>\n";
    	print '<td align="center">';
-   	if ($conf->use_javascript_ajax)
+   	if (! empty($conf->use_javascript_ajax))
    	{
    		print ajax_constantonoff($key);
    	}
