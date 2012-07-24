@@ -140,7 +140,7 @@ if ($resql)
 				'__ID__' => $obj->source_id,
 				'__EMAIL__' => $obj->email,
 				'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj->tag.'" width="0" height="0" style="width:0px;height:0px" border="0"/>',
-				'__UNSUSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
+				'__UNSUBSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj->tag.'&unsuscrib=1" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
 				'__LASTNAME__' => $obj->lastname,
 				'__FIRSTNAME__' => $obj->firstname,
 				'__OTHER1__' => $other1,
