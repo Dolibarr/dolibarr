@@ -158,7 +158,9 @@ class MailingTargets    // This can't be abstract as it is used for some method
         		$sql .= " (fk_mailing,";
         		$sql .= " fk_contact,";
         		$sql .= " nom, prenom, email, other, source_url, source_id,";
-        		if (! empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE)) $sql .= " tag,";
+        		if (! empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE)) {
+        			$sql .= " tag,";
+        		}
         		$sql.= " source_type)";
         		$sql .= " VALUES (".$mailing_id.",";
         		$sql .= (empty($cibles[$i]['fk_contact']) ? '0' : "'".$cibles[$i]['fk_contact']."'") .",";
@@ -168,7 +170,9 @@ class MailingTargets    // This can't be abstract as it is used for some method
         		$sql .= "'".$this->db->escape($cibles[$i]['other'])."',";
         		$sql .= "'".$this->db->escape($cibles[$i]['source_url'])."',";
         		$sql .= "'".$this->db->escape($cibles[$i]['source_id'])."',";
-        		if (! empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE)) $sql .= "'".$this->db->escape(md5($cibles[$i]['email'].';'.$cibles[$i]['name'].';'.$mailing_id.';'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY))."',";
+        		if (! empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE)) {
+        			$sql .= "'".$this->db->escape(md5($cibles[$i]['email'].';'.$cibles[$i]['name'].';'.$mailing_id.';'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY))."',";
+        		}
         		$sql .= "'".$this->db->escape($cibles[$i]['source_type'])."')";
         		$result=$this->db->query($sql);
         		if ($result)
@@ -189,6 +193,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
         	}
         }
 
+        dol_syslog(get_class($this)."::add_to_target: sql ".$sql,LOG_DEBUG);
         dol_syslog(get_class($this)."::add_to_target: mailing ".$j." targets added");
 
         //Update the status to show thirdparty mail that don't want to be contacted anymore'
