@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,29 +36,40 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service');
 
 
-$sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];
-$snom=isset($_GET["snom"])?$_GET["snom"]:$_POST["snom"];
-$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
-$type=isset($_GET["type"])?$_GET["type"]:$_POST["type"];
-$sref=trim($sref);
-$snom=trim($snom);
-$sall=trim($sall);
-$type=trim($type);
+$action=GETPOST('action','alpha');
+$sref=GETPOST("sref");
+$snom=GETPOST("snom");
+$sall=GETPOST("sall");
+$type=GETPOST("type","int");
+$sbarcode=GETPOST("sbarcode");
+$catid=GETPOST('catid','int');
+$toolowstock=GETPOST('toolowstock');
+$tosell = GETPOST("tosell");
+$tobuy = GETPOST("tobuy");
+$fourn_id = GETPOST("fourn_id",'int');
 
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
 if (! $sortfield) $sortfield="stock_physique";
 if (! $sortorder) $sortorder="ASC";
-$page = $_GET["page"];
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
-
-$catid=GETPOST('catid');
-$toolowstock=GETPOST('toolowstock');
 
 // Load sale and categ filters
 $search_sale = GETPOST("search_sale");
 $search_categ = GETPOST("search_categ");
+
+// Get object canvas (By default, this is not defined, so standard usage of dolibarr)
+//$object->getCanvas($id);
+$canvas=GETPOST("canvas");
+$objcanvas='';
+if (! empty($canvas))
+{
+	require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
+	$objcanvas = new Canvas($db,$action);
+	$objcanvas->getCanvas('product','list',$canvas);
+}
 
 if (! empty($_POST["button_removefilter_x"]))
 {
@@ -118,15 +129,15 @@ if (dol_strlen($type))
 if ($sref)     $sql.= " AND p.ref LIKE '%".$sref."%'";
 if ($sbarcode) $sql.= " AND p.barcode LIKE '%".$sbarcode."%'";
 if ($snom)     $sql.= " AND p.label LIKE '%".$db->escape($snom)."%'";
-if (isset($_GET["tosell"]) && dol_strlen($_GET["tosell"]) > 0)
+if (! empty($tosell))
 {
-	$sql.= " AND p.tosell = ".$_GET["tosell"];
+	$sql.= " AND p.tosell = ".$tosell;
 }
-if (isset($_GET["tobuy"]) && dol_strlen($_GET["tobuy"]) > 0)
+if (! empty($tobuy))
 {
-    $sql.= " AND p.tobuy = ".$_GET["tobuy"];
+    $sql.= " AND p.tobuy = ".$tobuy;
 }
-if (dol_strlen($canvas) > 0)
+if (! empty($canvas))
 {
     $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
 }
@@ -164,21 +175,10 @@ if ($resql)
 		exit;
 	}
 
-	if (isset($_GET["tosell"]) || isset($_POST["tosell"]))
-	{
-		$tosell = (isset($_GET["tosell"])?$_GET["tosell"]:$_POST["tosell"]);
-	}
-    if (isset($_GET["tobuy"]) || isset($_POST["tobuy"]))
-    {
-        $tobuy = (isset($_GET["tobuy"])?$_GET["tobuy"]:$_POST["tobuy"]);
-    }
-
-
-
 	$helpurl='';
 	$helpurl='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 
-	if (isset($_GET["type"]) || isset($_POST["type"]))
+	if (isset($type))
 	{
 		if ($type==1) { $texte = $langs->trans("Services"); }
 		else { $texte = $langs->trans("Products"); }
@@ -190,16 +190,16 @@ if ($resql)
 
 	llxHeader("",$title,$helpurl,$texte);
 
-	if ($sref || $snom || $sall || $_POST["search"])
+	if ($sref || $snom || $sall || GETPOST('search'))
 	{
-		print_barre_liste($texte, $page, "reassort.php", "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$_POST["tosell"]."&amp;tobuy=".$_POST["tobuy"], $sortfield, $sortorder,'',$num);
+		print_barre_liste($texte, $page, "reassort.php", "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy, $sortfield, $sortorder,'',$num);
 	}
 	else
 	{
 		print_barre_liste($texte, $page, "reassort.php", "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
 	}
 
-	if ($catid)
+	if (! empty($catid))
 	{
 		print "<div id='ways'>";
 		$c = new Categorie($db);
@@ -219,7 +219,7 @@ if ($resql)
 
 	// Filter on categories
  	$moreforfilter='';
-	if ($conf->categorie->enabled)
+	if (! empty($conf->categorie->enabled))
 	{
 	 	$moreforfilter.=$langs->trans('Categories'). ': ';
 		$moreforfilter.=$htmlother->select_categories(0,$search_categ,'search_categ');
@@ -258,7 +258,7 @@ if ($resql)
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
 	print '</td>';
-	if ($conf->service->enabled && $type == 1)
+	if (! empty($conf->service->enabled) && $type == 1)
 	{
 		print '<td class="liste_titre">';
 		print '&nbsp;';
@@ -282,7 +282,7 @@ if ($resql)
 		$objp = $db->fetch_object($resql);
 
 		// Multilangs
-		if ($conf->global->MAIN_MULTILANGS) // si l'option est active
+		if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
 		{
 			$sql = "SELECT label";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
@@ -294,7 +294,7 @@ if ($resql)
 			if ($result)
 			{
 				$objtp = $db->fetch_object($result);
-				if ($objtp->label != '') $objp->label = $objtp->label;
+				if (! empty($objtp->label)) $objp->label = $objtp->label;
 			}
 		}
 
@@ -308,7 +308,7 @@ if ($resql)
 		print '</td>';
 		print '<td>'.$objp->label.'</td>';
 
-		if ($conf->service->enabled && $type == 1)
+		if (! empty($conf->service->enabled) && $type == 1)
 		{
 			print '<td align="center">';
 			if (preg_match('/([0-9]+)y/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
@@ -335,7 +335,7 @@ if ($resql)
 
 	if ($num > $conf->liste_limit)
 	{
-		if ($sref || $snom || $sall || $_POST["search"])
+		if ($sref || $snom || $sall || GETPOST('search'))
 		{
 	  		print_barre_liste('', $page, "reassort.php", "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy, $sortfield, $sortorder,'',$num, 0, '');
 		}
@@ -354,7 +354,6 @@ else
 }
 
 
-$db->close();
-
 llxFooter();
+$db->close();
 ?>

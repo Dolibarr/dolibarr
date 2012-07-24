@@ -2055,7 +2055,7 @@ abstract class CommonObject
 
 		$error=0;
 
-        if (count($this->array_options) > 0)
+        if (! empty($this->array_options))
         {
             // Check parameters
             $langs->load('admin');

@@ -700,7 +700,7 @@ class Product extends CommonObject
 				}
 				if (!$this->db->query($sql2)) return -1;
 			}
-			else
+			else if (isset($this->multilangs["$key"]))
 			{
 				if ($this->db->num_rows($result)) // si aucune ligne dans la base
 				{
