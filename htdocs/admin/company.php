@@ -759,7 +759,7 @@ else
     // Forme juridique
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("JuridicalStatus").'</td><td>';
-    print getFormeJuridiqueLabel($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE,1);
+    print getFormeJuridiqueLabel($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE);
     print '</td></tr>';
 
     // ProfId1
