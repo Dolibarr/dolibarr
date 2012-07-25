@@ -160,7 +160,7 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fact
 	$result = $object->delete();
 	if ($result > 0)
 	{
-		Header('Location: '.$_SERVER["PHP_SELF"]);
+		Header('Location: '.DOL_URL_ROOT.'/compta/facture/list.php');
 		exit;
 	}
 	else
