@@ -173,6 +173,26 @@ AddFiles=Dosya ekle
 StartUpload=Yüklemeyi başlat
 CancelUpload=Yüklemeyi iptal et
 FileIsTooBig=Dosyalar çok büyük
+
+##### Bookmark #####
+Bookmark=Yerimi
+Bookmarks=Yerimleri
+NewBookmark=Yeni yerimi
+ShowBookmark=Yerimi göster
+BookmarkThisPage=Bu sayfayı yerimine ekle
+OpenANewWindow=Yeni bir pencere aç
+ReplaceWindow=Geçerli pencereyi değiştir
+BookmarkTargetNewWindowShort=Yeni pencere
+BookmarkTargetReplaceWindowShort=Geçerli pencere
+BookmarkTitle=Yerimi başlığı
+UrlOrLink=URL
+BehaviourOnClick=Bir URL tıklandığındaki davranış
+CreateBookmark=Yerimi oluştur
+SetHereATitleForLink=Yerimi için bir başlık ayarla
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Bir dış http URL ya da göreceli Dolibarr URL si kullan
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Bu sayfa bir bağlantı tarafından açıldığında geçerli sayda mı yoksa yeni pencerede mi görüneceğini seçin
+BookmarksManagement=Yerimleri yönetimi
+ListOfBookmarks=Yerimleri listesi
 ##### Calendar common #####
 AddCalendarEntry=% Takvimine giriş ekleyin
 NewCompanyToDolibarr=%s Firması Dolibarr’a eklenmiştir
@@ -202,7 +222,7 @@ LibraryVersion=Sürüm
 ExportableDatas=Dışaaktarılabilir veri
 NoExportableData=Dışaaktarılabilir veri yok (dışaaktarılabilir verili modül yok ya da izinler yok)
 ToExport= Dışaaktar 
-NewExport=Yeni Dışaaktarma
+NewExport=Yeni dışaaktarım
 ##### External sites #####
 ExternalSites=Dış siteler
 

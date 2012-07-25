@@ -1,136 +1,127 @@
-/*
+﻿/*
  * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-03-15 19:05:26
+ * Manually generated
+ * Generation date 2012-06-28 23:08:00
  */
 
 
-// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-// Reference language: en_US
+// START - Lines generated manually (2012-06-28 23:08:00).
+// Reference language: en_US - users 
+
 CHARSET=UTF-8
 UserCard=Kullanıcı kartı
-ContactCard=Kartvizit
-GroupCard=Grubu kartı
-NoContactCard=Kişileri arasında yok kartı
-Permission=Izni
+ContactCard=Kişi kartı
+GroupCard=Grup kartı
+NoContactCard=Kişiler arasında kart yok 
+Permission=İzin
 Permissions=İzinler
-EditPassword=Şifre değiştir
-SendNewPassword=Yeniden ve şifre göndermek
-ReinitPassword=Yeniden şifre
-PasswordChangedTo=Şifre değiştirildi:% s
-SubjectNewPassword=Dolibarr için yeni şifre
-AvailableRights=Mevcut izinleri
-OwnedRights=Owned izinleri
+EditPassword=Parola düzenle
+SendNewPassword=Yeniden parola oluştur ve gönder
+ReinitPassword=Yeniden parola oluştur
+PasswordChangedTo=Şifre buna değiştirildi: %s
+SubjectNewPassword=Dolibarr için yeni şifreniz
+AvailableRights=Varolan izinler
+OwnedRights=Sahip olunan izinler
 GroupRights=Grup izinleri
 UserRights=Kullanıcı izinleri
-UserGUISetup=Kullanıcı ekran kurulum
-DisableUser=Devre dışı bırakmak
-DisableAUser=Bir kullanıcı sakatlar
-DeleteUser=Silmek
-DeleteAUser=Silmek bir kullanıcı
-DisableGroup=Devre dışı bırakmak
-DisableAGroup=Devre dışı bir grup
-EnableAUser=Bir kullanıcı etkinleştirme
-EnableAGroup=Etkinleştirmek bir grup
-DeleteGroup=Silmek
-DeleteAGroup=Silmek bir grup
-ConfirmDisableUser=Devre dışı bırakmak <b>kullanıcı%</b> istediğinizden emin <b>misiniz?</b>
-ConfirmDisableGroup=Devre dışı bırakmak <b>grubu%</b> istediğinizden emin <b>misiniz?</b>
-ConfirmDeleteUser=Size <b>kullanıcı%</b> silmek istediğinizden emin <b>misiniz?</b>
-ConfirmDeleteGroup=Sen <b>grubu%</b> silmek istediğinizden emin <b>misiniz?</b>
-ConfirmEnableUser=Size <b>kullanıcı%</b> etkinleştirmek istediğiniz emin <b>misiniz?</b>
-ConfirmEnableGroup=Sen <b>grubu%</b> etkinleştirmek istediğiniz emin <b>misiniz?</b>
-ConfirmReinitPassword=<b>Size%</b> kullanıcı için yeni bir parola oluşturmak istediğiniz emin <b>misiniz?</b>
-ConfirmSendNewPassword=Size oluşturmak ve <b>kullanıcı%</b> yeni şifre göndermek istediğiniz emin <b>misiniz?</b>
+UserGUISetup=Kullanıcı ekranı kurulumu
+DisableUser=Engelle
+DisableAUser=Bir kullanıcıyı engelle
+DeleteUser=Sil
+DeleteAUser=Bir kullanıcı sil
+DisableGroup=Engelle
+DisableAGroup=Bir grup engelle
+EnableAUser=Bir kullanıcı etkinleştir
+EnableAGroup=Bir grup etkinleştir
+DeleteGroup=Sil
+DeleteAGroup=Bir grup sil
+ConfirmDisableUser=<b>%s</b> kullanıcısını engellemek istediğinizden emin misiniz?
+ConfirmDisableGroup=<b>%s</b> grubunu engellemek istediğinizden emin misiniz?
+ConfirmDeleteUser=<b>%s</b> kullanıcısını silmek istediğinizden emin misiniz?
+ConfirmDeleteGroup=<b>%s</b> grubunu silmek istediğinizden emin misiniz?
+ConfirmEnableUser=<b>%s</b> kullanıcısını etkinleştirmek istediğinizden emin misiniz?
+ConfirmEnableGroup=<b>%s</b> grubunu etkinleştirmek istediğinizden emin misiniz?
+ConfirmReinitPassword=<b>%s</b> kullanıcısı için yeni bir parola oluşturmak istediğiniz emin misiniz?
+ConfirmSendNewPassword=<b>%s</b> kullanıcısı için yeni bir parola oluşturmak ve göndermek istediğiniz emin misiniz?
 NewUser=Yeni kullanıcı
 CreateUser=Kullanıcı oluştur
-SearchAGroup=Arama bir grup
+SearchAGroup=Bir grup ara
 SearchAUser=Bir kullanıcı ara
 ErrorFailedToSendPassword=Parola gönderilemedi
 LoginNotDefined=Giriş tanımlı değil.
-NameNotDefined=Adı tanımlı değil.
+NameNotDefined=Ad tanımlı değil.
 ListOfUsers=Kullanıcı listesi
 Administrator=Yönetici
 SuperAdministrator=Süper Yönetici
-SuperAdministratorDesc=Yönetici tüm hakları ile
-DefaultRights=Varsayılan izinleri
-DefaultRightsDesc=Burada otomatik olarak <u>yeni oluşturulan</u> kullanıcıya verilen <u>varsayılan</u> izinleri tanımlayın (kullanıcı kartı var olan bir kullanıcının izni değiştirmek için) gidin.
-DolibarrUsers=Dolibarr kullanıcılar
-LastName=Ad
-FirstName=Ad
-ListOfGroups=Gruplarının listesi
+SuperAdministratorDesc=Yöneticinin tüm hakları
+DefaultRights=Varsayılan izinler
+DefaultRightsDesc= Burada, otomatik olarak  <u>yeni oluşturulan</u>kullanıcıya hak tanınan <u>varsayılan</u> izinler  tanımlayın (varolan kullanıcının izinlerini değiştirmek için kullanıcı kartına gidin).
+DolibarrUsers=Dolibarr kullanıcıları
+LastName=Soyadı
+FirstName=Adı
+ListOfGroups=Grupların listesi
 NewGroup=Yeni grup
 CreateGroup=Grup oluştur
 RemoveFromGroup=Gruptan kaldır
-PasswordChangedAndSentTo=Şifre değiştirildi <b>ve%</b> gönderilen <b>var.</b>
-PasswordChangeRequestSent=<b>Istek% gönderilen% s</b> için şifre değiştirmek için <b>var.</b>
+PasswordChangedAndSentTo=Şifre değiştirildi ve <b>%s</b> e gönderildi.
+PasswordChangeRequestSent=Parola değiştirildi ve <b>%s</b> e gönderildi.
 MenuUsersAndGroups=Kullanıcılar ve Gruplar
-LastGroupsCreated=Son% s gruplar oluşturdu
-LastUsersCreated=Son% s kullanıcılar oluşturulmuş
-ShowGroup=Show grubu
-ShowUser=Show kullanıcı
-NonAffectedUsers=Non etkilenen kullanıcılar
-UserModified=Kullanıcı başarılı olarak
+LastGroupsCreated=Son olarak %s grup oluşturuldu
+LastUsersCreated=Son olarak %s kullanıcı oluşturuldu
+ShowGroup=Grubu göster
+ShowUser=Kullanıcıyı göster
+NonAffectedUsers=Etkilenmemiş kullanıcılar
+UserModified=Kullanıcı başarıyla değiştirildi
 GroupModified=Grup başarıyla değiştirildi
 PhotoFile=Fotoğraf dosyası
-UserWithDolibarrAccess=Kullanıcı Dolibarr ile erişim
+UserWithDolibarrAccess=Dolibarr erişimli kullanıcı 
 ListOfUsersInGroup=Bu gruptaki kullanıcıların listesi
-ListOfGroupsForUser=Bu kullanıcı için grupları listesi
-UsersToAdd=Kullanıcıların bu gruba eklemek için
-GroupsToAdd=Gruplar bu kullanıcı eklemek için
-NoLogin=No giriş
-LinkToCompanyContact=Üçüncü Bağlantı / İletişim
-LinkedToDolibarrMember=Üye Bağlantı
-LinkedToDolibarrUser=Dolibarr Bağlantı kullanıcı
-LinkedToDolibarrThirdParty=Dolibarr Bağlantı üçüncü parti
-CreateDolibarrLogin=Bir kullanıcı oluşturma
-CreateDolibarrThirdParty=Üçüncü bir taraf oluşturma
-LoginAccountDisable=Hesap devre dışı, etkin hale getirmek için yeni bir giriş koymak.
-LoginAccountDisableInDolibarr=Dolibarr hesap devre dışı.
-LoginAccountDisableInLdap=Hesap etki alanında devre dışı.
-UsePersonalValue=Kullandığınızda kişisel değeri
+ListOfGroupsForUser=Bu kullanıcının gruplarının listesi
+UsersToAdd=Bu gruba eklenecek kullanıcılar
+GroupsToAdd=Bu kullanıcıya eklenecek gruplar 
+NoLogin=Giriş yok
+LinkToCompanyContact=Üçüncü Partiye/kişiye bağlantı
+LinkedToDolibarrMember=Üye bağlantısı
+LinkedToDolibarrUser=Dolibarr kullanıcısı bağlantısı 
+LinkedToDolibarrThirdParty=Dolibarr Üçüncü parti bağlantısı
+CreateDolibarrLogin=Bir kullanıcı oluştur
+CreateDolibarrThirdParty=Bir üçüncü parti oluştur
+LoginAccountDisable=Hesap engellendi, etkin hale getirmek için yeni bir giriş belirtin.
+LoginAccountDisableInDolibarr=Dolibarr’da hesap engelli.
+LoginAccountDisableInLdap=Etki alanında hesap engelli.
+UsePersonalValue=Kişisel değer kullanın
 GuiLanguage=Arayüz dili
-InternalUser=Dahili kullanıcı
-MyInformations=Benim veri
+InternalUser=İç kullanıcı
+MyInformations=Verilerim
 ExportDataset_user_1=Dolibarr kullanıcıları ve özellikleri
-DomainUser=Etki alanı kullanıcı% s
-Reactivate=Reactivate
-CreateInternalUserDesc=Bu formu bir kullanıcı şirket / kuruluş iç creat sağlar. (Müşteri, tedarikçi, ...), kullanma düğmesi Dolibarr kullanıcı oluştur üçüncü parti kartviziti bir dış kullanıcı creat için.
-InternalExternalDesc=Bir <b>dahili</b> kullanıcı Şirketinizin parçası olan bir kullanıcı / temelidir. <br> <b>Harici</b> bir kullanıcı bir müşteri, tedarikçi veya diğer bir. <br><br> Her iki durumda da, izinler Dolibarr, iç kullanıcı (Bkz: Ev - Kurulum - Ekran) farklı bir menü yöneticisi olabilir dış kullanıcı hakları tanımlar
-PermissionInheritedFromAGroup=Izin çünkü bir kullanıcı grubu miras verdi.
-IdPhoneCaller=Id arayan telefon
-UserLogged=Kullanıcı% s bağlı
-NewUserCreated=Kullanıcı% s oluşturuldu
-NewUserPassword=% S için şifre değiştirme
-EventUserModified=Kullanıcı% s olarak
-UserDisabled=Kullanıcı% engellilere s
-UserEnabled=Aktif kullanıcı% s
-UserDeleted=Kullanıcı% s kaldırıldı
-NewGroupCreated=Grubu% s oluşturuldu
-GroupModified=Grubu% s olarak
-GroupDeleted=Grubu% s kaldırıldı
-ConfirmCreateContact=Sen bu iletişim için bir Dolibarr hesabını oluştur istediğinizden emin misiniz?
-ConfirmCreateLogin=Bunu üyesi için Dolibarr hesabını oluştur istediğinizden emin misiniz?
-ConfirmCreateThirdParty=Bunu üye için bir üçüncü parti oluşturmak istediğinizden emin misiniz?
-LoginToCreate=Giriş oluşturmak için
-NameToCreate=Üçüncü Adı oluşturmak için
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+DomainUser=Etki alanı kullanıcısı %s
+Reactivate=Yeniden etkinleştir
+CreateInternalUserDesc= Bu form firmanıza/kuruluşunuza bir iç kullanıcı oluşturmanızı sağlar. Bir dış kullanıcı oluşturmak için (müşteri, tedarikçi,…) üçüncü parti kişi kartındaki 'Dolibarr kullanıcısı oluştur' düğmesini kullanın.
+InternalExternalDesc= Bir <b>iç</b> kullanıcı firmanızın/kuruluşunuzun bir parçasıdır. <br>Bir<b>dış</b> kullanıcı bir müşteri, tedarikçi veya bir başkasıdır.<br><br>Her iki durumda da, izinler Dolibarr’daki hakları tanımlar, aynı zamanda dış kullanıcı iç kullanıcıdan farklı bir menü yöeticisine sahiptir (Giriş->Kurulum->Görünüm’e bakın)
+PermissionInheritedFromAGroup= İzin hak tanındı çünkü bir kullanıcının grubundan intikal etti.
+IdPhoneCaller=Kimlik telefonu arayıcı
+UserLogged=Kullanıcı %s bağlı
+NewUserCreated=Kullanıcı %s oluşturuldu
+NewUserPassword=Parola %s olarak değiştirildi
+EventUserModified=Kullanıcı %s değiştirildi
+UserDisabled=Kullanıcı %s engellendi
+UserEnabled=Kullanıcı %s etkinleştirildi
+UserDeleted=Kullanıcı %s kaldırıldı
+NewGroupCreated=Grup %s oluşturuldu
+GroupModified=Grubu %s değiştirildi
+GroupDeleted=Grubu %s kaldırıldı
+ConfirmCreateContact=Bu kişi için bir Dolibarr hesabı oluşturmak istediğinizden emin misiniz?
+ConfirmCreateLogin=Bu üye için Dolibarr hesabı oluşturmak istediğinizden emin misiniz?
+ConfirmCreateThirdParty=Bu üye için bir üçüncü parti oluşturmak istediğinizden emin misiniz?
+LoginToCreate= Oluşturulacak giriş
+NameToCreate= Oluşturulacak Üçüncü Parti Adı 
+Inherited=Kalan
+UserWillBeInternalUser=Oluşturulacak kullanıcı bir iç kullanıcı olacaktır (çünkü belirli bir üçüncü parti ile bağlantılı değildir) 
+UserWillBeExternalUser=Oluşturulacak kullanıcı bir dış kullanıcı olacaktır (çünkü belirli bir üçüncü parti ile bağlantılıdır) 
+UserLogoff=Kullanıcı %s çıkış yaptı
+YourRole=Sizin rolünüz
+YourQuotaOfUsersIsReached=Aktif kullanıcı kotanıza ulaşıldı!
+AdministratorDesc=Yöneticinin varlığı
+NbOfUsers=Kullanıcıların sayısı
+DontDowngradeSuperAdmin=Yalnızca bir SuperAdmin, bir SuperAdmin’inin derecesini düşürebilir
 
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 11:19:16).
-// Reference language: en_US -> tr_TR
-Inherited=Miras
-UserWillBeInternalUser=Oluşturulan kullanıcı (belirli bir üçüncü parti ile bağlantılı değildir çünkü) bir dahili kullanıcı olacak
-UserWillBeExternalUser=(Belirli bir üçüncü parti ile bağlantılı çünkü) oluşturulan kullanıcı harici bir kullanıcı olacak
-UserLogoff=Kullanıcı %s çıkış
-YourRole=Sizin rolleri
-YourQuotaOfUsersIsReached=Aktif kullanıcı Kotanız!
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:27:22).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 13:39:01).
-// Reference language: en_US -> tr_TR
-AdministratorDesc=Yönetici varlık
-NbOfUsers=NB kullanıcıların
-DontDowngradeSuperAdmin=Sadece bir SuperAdmin downgrade bir SuperAdmin
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:40:35).

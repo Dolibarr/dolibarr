@@ -6,7 +6,7 @@
 
 
 // START - Lines generated manually (2012-02-06 23:50:00).
-// Reference language: en_US
+// Reference language: en_US - products
 CHARSET=UTF-8
 ProductRef=Ürün ref.
 ProductLabel=Ürün etiketi
@@ -181,4 +181,4 @@ NewRefForClone=Yeni ürün/hizmet ref.
 CustomCode=Özel kod
 CountryOrigin=Menşei ülke
 HiddenIntoCombo=Seçme listeleri içine gizle
-// STOP - Lines generated via autotranslator.php tool (2011-10-09 13:54:28).
+Nature=Niteliği

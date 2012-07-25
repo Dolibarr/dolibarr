@@ -1,12 +1,10 @@
-/*
- * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-03-15 19:05:26
+﻿* Manually generated
+ * Generation date 2012-07-08 20:16:26
+
+// START - Lines manually generated (2012-07-08 20:16:26).
  */
+// Reference language: en_US -> TR – interventions
 
-
-// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-// Reference language: en_US
 CHARSET=UTF-8
 Intervention=Müdahale
 Interventions=Müdahaleler
@@ -14,39 +12,35 @@ InterventionCard=Müdahale kartı
 NewIntervention=Yeni müdahale
 AddIntervention=Müdahale ekle
 ListOfInterventions=Müdahaleler listesi
-EditIntervention=Değiştir müdahale
-LastInterventions=Son% müdahaleler s
+EditIntervention=Müdahale düzenle
+ActionsOnFicheInter=Müdahale eylemleri
+LastInterventions=Son %s müdahale
 AllInterventions=Tüm müdahaleler
-CreateDraftIntervention=Taslak oluşturma
-CustomerDoesNotHavePrefix=Müşteri bir önek yok
-InterventionContact=Müdahale iletişim
-DeleteIntervention=Sil müdahale
-ValidateIntervention=Validate müdahale
-ModifyIntervention=Değiştirmek müdahale
-DeleteInterventionLine=Sil müdahale hattı
-ConfirmDeleteIntervention=Bunu müdahale silmek istediğinizden emin misiniz?
-ConfirmValidateIntervention=Bunu müdahale doğrulamak istediğinizden emin misiniz?
-ConfirmModifyIntervention=Bunu müdahale değiştirmek istediğinizden emin misiniz?
-ConfirmDeleteInterventionLine=Bunu müdahale satırı silmek istediğinizden emin misiniz?
-NameAndSignatureOfInternalContact=Adı ve müdahalede imza:
-NameAndSignatureOfExternalContact=Adı ve müşteri imzası:
+CreateDraftIntervention=Taslak oluştur
+CustomerDoesNotHavePrefix=Müşterinin bir öneki yok
+InterventionContact=Müdahale ilgilisi
+DeleteIntervention=Müdahale sil
+ValidateIntervention=Müdahale doğrula
+ModifyIntervention=Müdahale değiştir
+DeleteInterventionLine=Müdahale satırı sil
+ConfirmDeleteIntervention=Bu müdahaleyi silmek istediğinizden emin misiniz?
+ConfirmValidateIntervention=Bu müdahaleyi doğrulamak istediğinizden emin misiniz?
+ConfirmModifyIntervention=Bu müdahaleyi değiştirmek istediğinizden emin misiniz?
+ConfirmDeleteInterventionLine=Bu müdahale satırını silmek istediğinizden emin misiniz?
+NameAndSignatureOfInternalContact=Müdahilin adı ve imzası :
+NameAndSignatureOfExternalContact=Müşterinin adı ve imzası :
 DocumentModelStandard=Müdahaleler için standart belge modeli
-TypeContact_fichinter_internal_INTERREPFOLL=Temsilcisi aşağıdaki müdahale kadar
-TypeContact_fichinter_internal_INTERVENING=Müdahalede
-TypeContact_fichinter_external_BILLING=Fatura müşteri temas
-TypeContact_fichinter_external_CUSTOMER=Aşağıdaki müşteri UP
-ArcticNumRefModelDesc1=Generic numarası modeli
-ArcticNumRefModelError=Başarısız etkinleştirmek
-PacificNumRefModelDesc1=Format% syymm uyan numero-nnnn nereye yy yıl, mm ay ve nnnn hiçbir break ve 0 olursa dönüş ile bir dizi
-PacificNumRefModelError=Bir müdahale kart $ syymm başlayarak zaten var ve sıra bu model ile uyumlu değildir. Kaldırın ya da yeniden adlandırın bu modül etkinleştirin.
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-09 13:54:25).
-// Reference language: en_US -> tr_TR
-ActionsOnFicheInter=Aksiyonlar müdahale
-ClassifyBilled=&quot;Faturalı&quot; sınıflandırır
+ClassifyBilled='Faturalandırıldı' olarak sınıflandır
 StatusInterInvoiced=Faturalandırılmış
 RelatedInterventions=İlgili müdahaleler
 ShowIntervention=Müdahale göster
-// STOP - Lines generated via autotranslator.php tool (2011-10-09 13:54:28).
+##### Kişi türleri #####
+TypeContact_fichinter_internal_INTERREPFOLL=Müdahale izleme temsilcisi
+TypeContact_fichinter_internal_INTERVENING=Müdahalede
+TypeContact_fichinter_external_BILLING=Müşteri fatura ilgilisi
+TypeContact_fichinter_external_CUSTOMER=Müşteri izleme yetkilisi
+# Numaralandırma modeli
+ArcticNumRefModelDesc1=Genel numaralandırma modeli
+ArcticNumRefModelError=Etkinleştirme başarısız
+PacificNumRefModelDesc1=Sayıyı %syymm-nnnn olarak gösterir, yy: yıl, mm: ay ve nnnn: 0 olmayan bir sayı dizisidir
+PacificNumRefModelError=$syymm Başlayan bir müdahale kartı zaten var ve sıra bu dizi modeli ile uyumlu değildir. Modülü etkinleştirmek için kaldırın ya da yeniden adlandırın.

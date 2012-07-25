@@ -1,16 +1,16 @@
-/*
+﻿/*
  * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-10-09 14:05:49
+ * Manually translated
+ * Generation date 2012-07-05 22:52:49
  */
 
 
-// START - Lines generated via autotranslator.php tool (2011-10-09 14:05:49).
-// Reference language: en_US -> tr_TR
+// START - Lines generated manually (2012-07-05 22:52:49).
+// Reference language: en_US -> tr_TR _ cashdesk
 CHARSET=UTF-8
 CashDeskMenu=Satış Noktası
 CashDesk=Satış Noktası
-CashDesks=Satış Noktası
+CashDesks=Satış Noktaları
 CashDeskBank=Banka hesabı
 CashDeskBankCash=Banka hesabı (nakit)
 CashDeskBankCB=Banka hesabı (kart)
@@ -18,46 +18,30 @@ CashDeskBankCheque=Banka hesabı (çek)
 CashDeskWarehouse=Depo
 CashdeskShowServices=Satış hizmetleri
 CashDeskProducts=Ürünler
-// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:17:37).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 11:19:16).
-// Reference language: en_US -> tr_TR
-RestartSelling=Satmak üzerine geri dön
-SellFinished=Bitmiş Satış
-PrintTicket=Baskı bilet
-NoResults=Sonuç yok
-NoVAT=Bu satış için herhangi bir KDV
-Change=Aşırı aldı
-CalTip=Takvime görünüm için tıklayın
-CashDeskSetupStock=Bunun için fatura oluşturma ama depo stok azaltmak istiyoruz tanımlı değil. <br> Stok modülü kurulum, değiştirme veya bir depo seçin
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:49:01).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 12:34:37).
-// Reference language: en_US -> tr_TR
+CashDeskStock=Stok
+CashDeskOn=açık
+CashDeskThirdParty=Üçüncü parti
+ShoppingCart=Alışveriş sepeti
 NewSell=Yeni satış
 BackOffice=Arka ofis
-AddThisArticle=Bu makalede ekle
-NoProductFound=Bulunamadı makale
-ProductFound=ürün bulundu.
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:47:50).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 13:39:01).
-// Reference language: en_US -> tr_TR
-CashDeskStock=Hisse senedi
-CashDeskOn=üzerinde
-CashDeskThirdParty=Üçüncü şahıs
-ShoppingCart=Alışveriş sepeti
-ProductsFound=ürün bulundu
-NoArticle=Hiçbir makale
-Identification=Kimlik
-Article=Makale
+AddThisArticle=Bu maddeyi ekle
+RestartSelling=Satışa geri dön
+SellFinished=Satış bitti 
+PrintTicket=Fiş yazdır
+NoResults=Sonuç yok
+NoProductFound=Hiç madde bulunamadı
+ProductFound=ürün bulundu
+ProductsFound=ürünler bulundu
+NoArticle=Madde yok
+Identification=Kimlik saptama
+Article=Madde
 Difference=Fark
-TotalTicket=Toplam bilet
-BankToPay=Kredi kartı hesabı
-ShowCompany=Göster şirket
-ShowStock=Göster depo
-DeleteArticle=Bu makalede kaldırmak için tıklayın
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:47:42).
+TotalTicket=Toplam fiş
+NoVAT=Bu satış için herhangi bir KDV yok
+Change=Fazla alındı
+CalTip=Takvimi görmek için tıkla
+CashDeskSetupStock=Fatura oluştururken stok eksiltmeniz isteniyor, ancak bunun için depo tanımlanmamış<br>Stok modülü kurulumunu değiştirin veya bir depo seçin
+BankToPay=Açık hesap
+ShowCompany=Firma göster
+ShowStock=Depo göster
+DeleteArticle=Bu maddeyi kaldırmak için tıkla

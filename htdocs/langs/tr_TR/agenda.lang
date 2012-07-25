@@ -1,12 +1,12 @@
-/*
+﻿/*
  * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-03-15 19:05:26
+ * Manually generated
+ * Generation date 2012-24-06 23:50:00
  */
 
+// START - Lines generated manually (2012-24-06 23:50:00).
+// Reference language: en_US – agenda
 
-// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-// Reference language: en_US
 CHARSET=UTF-8
 Actions=Eylemler
 ActionsArea=Eylem alanı (Olaylar ve görevler)
@@ -15,74 +15,69 @@ Agendas=Gündemler
 Calendar=Takvim
 Calendars=Takvimler
 AffectedTo=Etkilenen
-DoneBy=Yapıldı
+DoneBy=Tarafından yapıldı
 Events=Etkinlikler
-ListOfActions=Liste olaylar
-Location=Yer
-SearchAnAction=Bir eylem Search / görev
+ListOfActions= Etkinlikler listesi
+Location=Konum
+SearchAnAction=Bir eylem/görev ara 
 MenuToDoActions=Tüm tamamlanmamış eylemler
-MenuDoneActions=Tüm sonlandırıldı eylemler
-MenuToDoMyActions=Eksik eylemler
-MenuDoneMyActions=My sona eylemler
-ListOfEvents=Dolibarr olaylar listesi
-ActionsAskedBy=Eylemler tarafından kaydedilen
-ActionsToDoBy=Eylemler etkilenen
-ActionsDoneBy=Eylemler tarafından yapılan
-AllMyActions=Tüm eylemler / görevleri
-AllActions=Her türlü eylem / görevleri
-ViewList=Profili listesi
-ViewCal=Takvim
-ViewWithPredefinedFilters=Profili önceden tanımlanmış filtreler ile
-AutoActions=Otomatik gündemi doldurma
-AgendaAutoActionDesc=Burada kendisi için Dolibarr otomatik gündeminde bir eylem oluşturmak istediğiniz olayları tanımlayın. Eğer hiçbir şey (varsayılan), sadece manuel eylemleri gündeme dahil edilecek kontrol edilir.
-AgendaSetupOtherDesc=Bu sayfayı yapılandırmak için gündeme modülü diğer parametreleri sağlar.
-ActionsEvents=Olaylar için hangi Dolibarr otomatik gündeminde bir hareket yaratacak
-PropalValidatedInDolibarr=Önerisi validated
-InvoiceValidatedInDolibarr=Fatura validated
-OrderValidatedInDolibarr=Sipariş validated
-NewCompanyToDolibarr=Üçüncü parti hazırlandı
+MenuDoneActions=Tüm sonlandırılan eylemler
+MenuToDoMyActions=Sonlandırılmayan eylemlerim
+MenuDoneMyActions=Sonlandırılan eylemlerim
+ListOfEvents=Dolibarr eylemleri listesi
+ActionsAskedBy=Eylemi bildiren 
+ActionsToDoBy=Eylemlerden etkilenen 
+ActionsDoneBy=Eylemleri yapan 
+AllMyActions=Tüm eylemlerim/görevlerim
+AllActions=Tüm eylemler/görevler
+ViewList=Liste görünümü
+ViewCal=Ay görünümü
+ViewWithPredefinedFilters=Öntanımlı süzgeçler ile görünüm
+AutoActions=Gündemin otomatik doldurulması
+AgendaAutoActionDesc=Burada Dolibarr'ın otomatik olarak gündemde oluşturmasını istediğiniz olayları tanımlayın. İşaretli bir şey yoksa (varsayılan olarak) sadece el ile girilen eylemler gündeme dahil edilecektir.
+AgendaSetupOtherDesc=Bu sayfa Dolibarr eylemlerinin dış bir takvime aktarılması için seçenekler sağlar. (thunderbird, google calendar, ...) 
+ActionsEvents=Dolibarr'ın otomatik olarak gündemde bir etkinlik oluşturacağı eylemler 
+PropalValidatedInDolibarr=%s Teklifi doğrulandı
+InvoiceValidatedInDolibarr=%s Faturası doğrulandı
+OrderValidatedInDolibarr=%s Siparişi doğrulandı
+NewCompanyToDolibarr=Üçüncü parti oluşturuldu
 DateActionPlannedStart=Planlanan başlangıç tarihi
 DateActionPlannedEnd=Planlanan bitiş tarihi
-DateActionDoneStart=Gerçek başlangıç tarihinden
+DateActionDoneStart=Gerçek başlangıç tarihi
 DateActionDoneEnd=Gerçek bitiş tarihi
 DateActionStart=Başlangıç tarihi
 DateActionEnd=Bitiş tarihi
-AgendaUrlOptions1=Ayrıca filtre çıkış parametreler aşağıdaki ekleyebilirsiniz:
-AgendaUrlOptions2=<b>login =%</b> eylemler tarafından oluşturulan veya <b>kullanıcı%</b> tarafından yapılması için etkilenen çıkışı kısıtlamak için <b>değil.</b>
-AgendaUrlOptions3=<b>logina =%%</b> eylemler kullanıcı tarafından oluşturulan çıktı kısıtlamak için <b>değil.</b>
-AgendaUrlOptions4=<b>logint =%</b> eylemleri kullanıcı <b>için%</b> etkilenen çıkışı kısıtlamak için <b>değil.</b>
-AgendaUrlOptions5=<b>logind =%</b> eylemler <b>kullanıcı%</b> tarafından yapılan çıktı kısıtlamak için <b>değil.</b>
-AgendaShowBirthdayEvents=Show doğum rehber
-AgendaHideBirthdayEvents=Sakla doğum rehber
-InvoiceBackToDraftInDolibarr=Fatura %s taslak durumuna geri dönün
-InterventionValidatedInDolibarr=Müdahale %s valide
-ProposalSentByEMail=Email ile gönderilen Ticari teklifi %s
-OrderSentByEMail=EMail tarafından gönderilen Müşteri sipariş %s
-InvoiceSentByEMail=Email ile gönderilen Müşteri fatura %s
-SupplierOrderSentByEMail=EMail tarafından gönderilen Tedarikçi amacıyla %s
-SupplierInvoiceSentByEMail=EMail tarafından gönderilen Tedarikçi fatura %s
-ShippingSentByEMail=Email ile gönderilen Denizcilik %s
-InterventionSentByEMail=Email ile gönderilen Müdahale %s
-ExtSites=Dış takvimler
-EventOnFullDay=Olay tam gün
-ViewDay=Gün görünümünde
+AgendaUrlOptions1=Süzgeç çıktısına ayrıca aşağıdaki parametreleri ekleyebilirsiniz:
+AgendaUrlOptions2=Eylem çıktılarını eylem, oluşturan, eylemden etkilenen ya da eylemi yapan kullanıcı <b>login=%s</b> sınırlayacak kullanıcı <b>%s</b>.
+AgendaUrlOptions3=Çıktıyı kullanıcı <b>%s</b> tarafından oluşturulan etkinliklerle sınırlamak için<b>logina=%s</b>.
+AgendaUrlOptions4=Çıktıyı kullanıcı <b>%s</b> tarafından etkilenen etkinliklerle sınırlamak için<b>logint=%s</b>.
+AgendaUrlOptions5= Çıktıyı kullanıcı<b>%s</b> tarafından yapılan etkinliklerle sınırlamak için<b>logind=%s</b>.
+AgendaShowBirthdayEvents=Kişilerin doğum günlerini göster
+AgendaHideBirthdayEvents=Kişilerin doğum günlerini gizle
+InvoiceBackToDraftInDolibarr=%s Faturasını taslak durumuna geri götür
+InterventionValidatedInDolibarr=%s Müdahalesi doğrulandı
+ProposalSentByEMail=%s Ticari teklifi Eposta ile gönderildi
+OrderSentByEMail=%s Müşteri siparişi Eposta ile gönderildi 
+InvoiceSentByEMail=%s Müşteri faturası Eposta ile gönderildi 
+SupplierOrderSentByEMail=%s Tedarikçi siparişi Eposta ile gönderildi 
+SupplierInvoiceSentByEMail=%s Tedarikçi faturası Eposta ile gönderildi 
+ShippingSentByEMail=%s Sevkiyatı Eposta ile gönderildi 
+InterventionSentByEMail=%s Müdahalesi Eposta ile gönderildi 
+ExtSites=Dış takvimleri içeaktar
+EventOnFullDay=Tam gün etkinliği 
+ViewDay=Gün görünümü
 ViewWeek=Hafta görünümü
-AgendaExtSitesDesc=Bu sayfa dış takvimler yapılandırmanıza olanak sağlar.
-ExtSitesEnableThisTool=gündeme nasıl dış takvimler
+AgendaExtSitesDesc=Bu sayfa takvimlerin dış kaynaklarında Dolibarr gündemindeki etkinliklerinin görünmesini sağlar.
+ExtSitesEnableThisTool=Dış takvimleri gündemde göster 
 ExtSitesNbOfAgenda=Takvimlerin sayısı
-AgendaExtNb=Takvim nb %s
-ExtSiteUrlAgenda=. Ical dosyaya erişmek için URL
+AgendaExtNb=Takvim sayısı %s
+ExtSiteUrlAgenda=.ical dosyasına erişmek için URL
 ExtSiteNoLabel=Tanımlama yok
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:57:37).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
-// Reference language: en_US -> tr_TR
 LocalAgenda=Yerel takvim
-MyEvents=Benim Event'lerim
-OtherEvents=Diğer olaylar
-OrderApprovedInDolibarr=Sipariş %s onayladı
-OrderBackToDraftInDolibarr=Sipariş %s taslak durumuna geri dönmek
-OrderCanceledInDolibarr=Sipariş %s iptal
-ExportCal=İhracat takvim
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:36:51).
+MyEvents=Etkinliklerim
+OtherEvents=Diğer etkinlikler
+OrderApprovedInDolibarr=%s Siparişi onayladı
+OrderBackToDraftInDolibarr=%s Siparişini taslak durumuna geri götür
+OrderCanceledInDolibarr=%s Siparişi iptal edildi
+ExportCal=Dışaaktarım takvimi
+

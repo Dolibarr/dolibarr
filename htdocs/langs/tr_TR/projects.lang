@@ -1,126 +1,105 @@
-/*
- * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-03-15 19:05:26
+﻿* Manually generated
+ * Generation date 2012-07-08 14:42:26
+
+
+// START - Lines manually generated (2012-07-08 14:42:26).
  */
+// Reference language: en_US -> TR – projects
 
-
-// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-// Reference language: en_US
 CHARSET=UTF-8
 Project=Proje
 Projects=Projeler
-SharedProject=Paylaşılan proje
-Myprojects=My projeler
+SharedProject=Herkes
+PrivateProject=Proje ilgilileri
+MyProjectsDesc=Bu görünüm ilgilisi olduğunuz projelerle sınırlıdır (türü ne olursa olsun).
+ProjectsPublicDesc=Bu görünüm okuma izininiz olan tüm projeleri içerir.
+ProjectsDesc=Bu görünüm tüm projeleri içerir (size verilen kullanıcı izinleri her şeyi görmenizi sağlar).
+MyTasksDesc=Bu görünüm ilgilisi olduğunuz projelerle ya da görevlerle sınırlıdır (türü ne olursa olsun).
+TasksPublicDesc=Bu görünüm okuma izininiz olan tüm projeleri ve görevleri içerir.
+TasksDesc=Bu görünüm tüm projeleri ve görevleri içerir (size verilen kullanıcı izinleri her şeyi görmenizi sağlar).
+Myprojects=Projelerim
 ProjectsArea=Projeler alanı
 NewProject=Yeni proje
-AddProject=Proje Ekle
-DeleteAProject=Silmek bir proje
-DeleteATask=Silmek bir görev
-ConfirmDeleteAProject=Sen bu projeyi silmek istediğinizden emin misiniz?
-ConfirmDeleteATask=Size bu görevi silmek istediğinizden emin misiniz?
-OfficerProject=Memur proje
-LastProjects=Son% s projeler
+AddProject=Proje ekle
+DeleteAProject=Bir proje sil
+DeleteATask=Bir görev sil
+ConfirmDeleteAProject=Bu projeyi silmek istediğinizden emin misiniz?
+ConfirmDeleteATask=Bu görevi silmek istediğinizden emin misiniz?
+OfficerProject=Proje sorumlusu
+LastProjects=Son %s proje
 AllProjects=Tüm projeler
 ProjectsList=Proje listesi
-ShowProject=Show proje
-SetProject=Set proje
-NoProject=Hiçbir proje tanımlı ya da ait
-NbOpenTasks=Nb açıldı görev
-NbOfProjects=Nb projeleri
-TimeSpent=Time Spent
-RefTask=Ref. görev
-LabelTask=Etiket görev
-NewTimeSpent=Yeni bir zaman geçirdim
-MyTimeSpent=My time geçirdi
-MyTasks=My görevleri
+ShowProject=Proje göster
+SetProject=Proje ayarla
+NoProject=Tanımlı ya da sahip olunan hiçbir proje yok
+NbOpenTasks=Açık görev sayısı
+NbOfProjects=Proje sayısı
+TimeSpent=Harcanan süre
+TimesSpent=Harcanan süre
+RefTask=Görev ref.
+LabelTask=Görev etiketi
+NewTimeSpent=Yeni harcanan süre
+MyTimeSpent=Harcadığım sürelerim
+MyTasks=Grevlerim
 Tasks=Görevler
 Task=Görev
 NewTask=Yeni görev
 AddTask=Görev ekle
-AddDuration=Süresi Ekle
+AddDuration=Süre ekle
 Activity=Etkinlik
-Activities=Görevleri / faaliyetleri
-MyActivity=My etkinliği
-MyActivities=My görevleri / faaliyetleri
-DurationEffective=Etkili süresi
-MyProjects=My projeler
-Time=Zaman
-ListProposalsAssociatedProject=Ticari teklifleri proje ile ilgili Listesi
-ListOrdersAssociatedProject=Müşteri siparişleri proje ile ilgili Listesi
-ListInvoicesAssociatedProject=Müşterilerin faturalarının proje ile ilgili Listesi
-ListPredefinedInvoicesAssociatedProject=Müşterilerin önceden tanımlanmış faturalar proje ile ilişkili Listesi
-ListSupplierOrdersAssociatedProject=Tedarikçilerin siparişleri proje ile ilgili Listesi
-ListSupplierInvoicesAssociatedProject=Tedarikçilerin faturaların proje ile ilgili Listesi
-ListContractAssociatedProject=Sözleşme proje ile ilişkili Listesi
-ActivityOnProjectThisWeek=Proje Faaliyet bu hafta
-ActivityOnProjectThisMonth=Proje Etkinlik bu ay
-ActivityOnProjectThisYear=Proje Etkinlik bu yıl
-ChildOfTaks=Proje Çocuk / görev
+Activities=Görevler/etkinlikler
+MyActivity=Etkinliğim
+MyActivities=Görevlerim/etkinlikler
+MyProjects=Projelerim
+DurationEffective=Etken süre
+Progress=İlerleme
+Time=Süre
+ListProposalsAssociatedProject=Proje ile ilgili ticari tekliflerin listesi
+ListOrdersAssociatedProject=Proje ile ilgili müşteri siparişleri listesi
+ListInvoicesAssociatedProject=Proje ile ilgili müşteri faturaları listesi
+ListPredefinedInvoicesAssociatedProject=Proje ile ilgili müşteri ön tanımlı faturalarının listesi
+ListSupplierOrdersAssociatedProject=Proje ile ilgili tedarikçi siparişlerinin listesi
+ListSupplierInvoicesAssociatedProject=Proje ile ilgili tedarikçi faturalarının listesi
+ListContractAssociatedProject=Proje ile ilgili sözleşmelerin listesi
+ListFichinterAssociatedProject=Proje ile ilgili müdahalelerin listesi
+ListTripAssociatedProject=Proje ile ilgili geziler ve giderlerin listesi
+ListActionsAssociatedProject=Proje ile ilgili eylemlerin listesi
+ActivityOnProjectThisWeek=Projede bu haftaki etkinlik
+ActivityOnProjectThisMonth=Projede bu ayki etkinlik
+ActivityOnProjectThisYear=Projede bu yılki etkinlik
+ChildOfTask=Alt proje /görev
 NotOwnerOfProject=Bu özel projenin sahibi değil
-AffectedTo=Etkilenen
-CantRemoveProject=Gibi diğer bazı nesneler tarafından (fatura, sipariş veya başvurulan Bu proje kaldırılamaz diğer). Işaret sekmesine bakın.
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-09 14:05:49).
-// Reference language: en_US -> tr_TR
-PrivateProject=Proje Baglantilar
-MyProjectsDesc=Bu görüş (türü ne olursa olsun) bir kişi projeler ile sınırlıdır.
-ProjectsPublicDesc=Bu görüş okumasına izin tüm projeler sunar.
-ProjectsDesc=Bu görüş, tüm projeler (kullanıcı izinleri her şeyi görmek için izin ver) sunar.
-MyTasksDesc=Bu görüş, projeler ya da görevler (türü ne olursa olsun) bir kişi ile sınırlı.
-TypeContact_project_external_PROJECTLEADER=Proje lideri
+AffectedTo=Ayrılan
+CantRemoveProject=Bu proje kaldırılamıyor çünkü Bazı diğer nesneler tarafından başvurulUYOR (fatura, sipariş veya diğerleri). Başvuru sekmesine bakın.
+ValidateProject=Proje doğrula
+ConfirmValidateProject=Bu projeyi doğrulamak  istediğinizden emin misiniz?
+CloseAProject=Proje kapat
+ConfirmCloseAProject=Bu projyie kapatmak istediğinizden emin misiniz?
+ReOpenAProject=Proje aç
+ConfirmReOpenAProject=Bu projeyi yeniden açmak istediğinizden emin misiniz?
+ProjectContact=Proje ilgilileri
+ActionsOnProject=Proje etkinlikleri
+YouAreNotContactOfProject=Bu özel projenin bir ilgilisi değilsiniz
+DeleteATimeSpent=Harcana süre sil
+ConfirmDeleteATimeSpent=Bu harcanan süreyi silmek istediğinizden emin misiniz?
+DoNotShowMyTasksOnly=Bana ayrılmamış görevlere de bakın
+ShowMyTasksOnly=Sadece bana ayrılan görevleri gözter
+TaskRessourceLinks=Kaynaklar
+ProjectsDedicatedToThisThirdParty=Bu üçüncü parti atanmış projeler
+NoTasks=Bu proje için hiçbir görev yok
+LinkedToAnotherCompany=Diğer üçüncü partiye bağlantılı
+TaskIsNotAffectedToYou=Görev size ayrılmamış
+ErrorTimeSpentIsEmpty=Harcanan süre boş
+ThisWillAlsoRemoveTasks=Bu eylem aynı zamanda projenin tüm görevlerini (şu andaki <b>%s</b> görevleri) ve tüm harcanan süre girişlernii siler .
+IfNeedToUseOhterObjectKeepEmpty=Eğer bazı nesneler başka bir üçüncü partiye aitse  (fatura, sipariş, ...), oluşturulması  için bu projeye bağlanmalıdır, projenin birden çok üçüncü partiye bağlı olması için bunu boş bırakın.
+##### Kişi türleri #####
+TypeContact_project_internal_PROJECTLEADER=Proje önderi
+TypeContact_project_external_PROJECTLEADER=Proje önderi
 TypeContact_project_internal_CONTRIBUTOR=Katılımcı
 TypeContact_project_external_CONTRIBUTOR=Katılımcı
 TypeContact_project_task_internal_TASKEXECUTIVE=Görev yöneticisi
 TypeContact_project_task_external_TASKEXECUTIVE=Görev yöneticisi
 TypeContact_project_task_internal_CONTRIBUTOR=Katılımcı
 TypeContact_project_task_external_CONTRIBUTOR=Katılımcı
-DocumentModelBaleine=Tam bir proje rapor modeli (logo. ..)
-// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:23:05).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 11:19:16).
-// Reference language: en_US -> tr_TR
-TasksDesc=Bu görüş, tüm projeler ve görevler (kullanıcı izinleri her şeyi görmek için izin ver) sunar.
-TimesSpent=Zaman geçirdim
-Progress=Ilerleme
-ListFichinterAssociatedProject=Proje ile ilgili müdahaleler listesi
-ListTripAssociatedProject=Proje ile ilgili gezileri ve giderleri Listesi
-ConfirmReOpenAProject=Bu proje yeniden açmak istediğiniz emin misiniz?
-ProjectContact=Proje rehber
-ActionsOnProject=Aksiyonlar proje üzerinde
-YouAreNotContactOfProject=Bu özel projenin bir kişi değildir
-TaskIsNotAffectedToYou=Görev size tahsis
-ErrorTimeSpentIsEmpty=Harcanan zaman boş
-ThisWillAlsoRemoveTasks=Bu eylem aynı zamanda projenin tüm görevler (şu <b>anda</b> %s görevler) ve harcanan zaman tüm girişleri siler .
-IfNeedToUseOhterObjectKeepEmpty=Eğer bazı nesnelerin (fatura, sipariş, ...), başka bir üçüncü tarafa ait, oluşturmak çok üçüncü şahıslara olan proje için bu boş tutmak projeye bağlı olmalıdır.
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:01:55).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 12:34:37).
-// Reference language: en_US -> tr_TR
-CloseAProject=Kapat proje
-ConfirmCloseAProject=Bu proje kapatmak için istediğiniz emin misiniz?
-ReOpenAProject=Açık proje
-DeleteATimeSpent=Sil zaman geçirdim
-ConfirmDeleteATimeSpent=Bu zaman geçirdim silmek istediğiniz emin misiniz?
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:54:05).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 13:39:01).
-// Reference language: en_US -> tr_TR
-TasksPublicDesc=Bu görüş, okumasına izin tüm projeler ve görevler sunmaktadır.
-ListActionsAssociatedProject=Proje ile ilgili olayların listesi
-ChildOfTask=Proje / görev Çocuk
-ValidateProject=Projet Doğrula
-ConfirmValidateProject=Bu proje doğrulamak için istediğiniz emin misiniz?
-DoNotShowMyTasksOnly=Ayrıca bakınız: bana tahsis edilmemiş görevler
-ShowMyTasksOnly=Sadece bana tahsis edilen görevleri
-TaskRessourceLinks=Ressources
-ProjectsDedicatedToThisThirdParty=Projeler bu üçüncü parti adanmış
-NoTasks=Bu proje için hiçbir görevleri
-LinkedToAnotherCompany=Bağlantılı diğer üçüncü taraf
-TypeContact_project_internal_PROJECTLEADER=Proje lideri
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:51:43).
+# Belge modelleri
+DocumentModelBaleine=Eksiksiz bir proje rapor modeli (logo. ..)

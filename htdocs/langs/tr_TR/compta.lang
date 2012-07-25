@@ -1,76 +1,87 @@
-/*
+﻿/*
  * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-03-15 19:05:26
+ * Manually generated
+ * Generation date 2012-07-07 10:30:00
  */
 
-
-// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-// Reference language: en_US
+// START - Lines generated manually (2012-07-07 10:30:00).
+// Reference language: en_US -> TR - compta 
 CHARSET=UTF-8
 Accountancy=Muhasebe
 AccountancyCard=Muhasebe kartı
-Treasury=Hazine
+Treasury=Maliye
 MenuFinancial=Finansal
-OptionMode=Muhasebe için Seçenek
-OptionModeTrue=Seçenek Giriş-Çıkış
-OptionModeVirtual=Kredi seçeneği-Otomatik Ödemeler
-OptionModeTrueDesc=Bu bağlamda, ciro ödemeler üzerinden ödemeler (tarih) hesaplanır. rakamlar \ n geçerliliği sadece kitap tutarak girişi üzerinden incelenip emin kullanılabilir / faturalar üzerinden hesaplar üzerinde çıktı.
-OptionModeVirtualDesc=Bu bağlamda, ciro faturalar geçerliliğinin (tarih) üzerinden hesaplanır. Ne zaman bu faturalar çıkacak, ya da değil, onlar ciro çıkış listelenen ödenmiştir.
-FeatureIsSupportedInInOutModeOnly=Özellik yalnızca KREDİ mevcuttur-borçları muhasebe modu () Muhasebe modülü yapılandırma bak
+TaxModuleSetupToModifyRules=Hesaplama kurallarını değiştirmek için <a href="%s">modül kurulumu</a> na git
+OptionMode=Muhasebe seçeneği
+OptionModeTrue=Gelir-Gider seçeneği
+OptionModeVirtual=Alacak-Borç seçeneği
+OptionModeTrueDesc=Bu bağlamda, ciro ödemeler üzerinden (ödeme tarihi) hesaplanır. \nRakamların geçerliliği, yalnızca; eğer kayıtların ilgili hesapların faturaları üzerinden girişleri/çıkışları irdelenmişse sağlanır.
+OptionModeVirtualDesc=Bu bağlamda, ciro faturalar üzerinden (doğrulama tarihi) hesaplanır.  Bu faturalar işlendiğinde, ödenmiş ya da ödenmemiş olmasına bakılmadan, ciro listesinde görüntülenir.
+FeatureIsSupportedInInOutModeOnly=Özellik yalnızca ALACAKLAR-BORÇLAR muhasebe modunda geçerlidir (Muhasebe modülü yapılandırmasına bak)
+VATReportBuildWithOptionDefinedInModule=Burada gösterilen tutarlar vergi modülü kurulumu tarafından tanımlanan kurallar kullanılarak hesaplanır.
 Param=Kurulum
-AccountsGeneral=Hesapları
+RemainingAmountPayment=Kalan ödeme tutarı:
+AmountToBeCharged=Ödenecek toplam tutar:
+AccountsGeneral=Hesaplar
 Account=Hesap
-Accounts=Hesapları
-BillsForSuppliers=Tedarikçiler için Bonosu
+Accounts=Hesaplar
+BillsForSuppliers=Tedarikçi faturaları
 Income=Gelir
 Outcome=Gider
-ReportInOut=Gelir / Gider
+ReportInOut=Gelir/Gider
 ReportTurnover=Ciro
-PaymentsNotLinkedToInvoice=Herhangi bir fatura ödemeleri, bu nedenle herhangi bir üçüncü taraf bağlı değilse bağlantılı değildir
-PaymentsNotLinkedToUser=Ödemeler herhangi bir kullanıcı bağlı değil
+PaymentsNotLinkedToInvoice=Herhangi bir faturaya bağlı olmayan ödemeler, herhangi bir üçüncü partiye de bağlı değildir
+PaymentsNotLinkedToUser=Herhangi bir kullanıcıya bağlı olmayan ödemeler
 Profit=Kar
-Balance=Denge
-Debit=Bankamatik
-Credit=Kredi
-Withdrawal=Çekilme
-Withdrawals=Para çekme
-AmountHTVATRealReceived=Net toplanan
-AmountHTVATRealPaid=Net ödeme
-VATToPay=KDV satıyor
-VATReceived=Alınan KDV
-VATToCollect=KDV alımları
-VATSummary=KDV Dengesi
+Balance=Bakiye
+Debit=Borç
+Credit=Alacak
+Withdrawal=Para çekme
+Withdrawals=Para çekmeler
+AmountHTVATRealReceived=Net alınan
+AmountHTVATRealPaid=Net ödenen
+VATToPay=KDV satışlar
+VATReceived=KDV alınan
+VATToCollect=KDV satınalımlar
+VATSummary=KDV bakiyesi
+LT2SummaryES=IRPF bakiyesi
 VATPaid=KDV ödenmiş
-VATCollected=KDV toplanan
-ToPay=Ödemek için
-ToGet=Geri almak için
-TaxAndDividendsArea=Vergi, sosyal katkılar ve temettüler alanı
-SocialContribution=Sosyal katkı
-SocialContributions=Sosyal katkıları
-MenuTaxAndDividends=Vergi ve temettü
-MenuSocialContributions=Sosyal katkıları
-MenuNewSocialContribution=Yeni katkı
-NewSocialContribution=Yeni toplumsal katkı
-ContributionsToPay=Prim ödeme
-AccountancyTreasuryArea=Muhasebe / Hazine alanı
-AccountancySetup=Muhasebe kurulum
+LT2PaidES=IRPF ödenmiş
+LT2CustomerES=IRPF satışlar
+LT2SupplierES=IRPF satınalımlar
+VATCollected=KDV alınan
+ToPay=Ödenecek
+ToGet=Geri alınacak
+TaxAndDividendsArea=Vergi, sosyal güvenlik primleri ve kar payları alanı
+SocialContribution=Sosyal güvenlik primi
+SocialContributions=Sosyal güvenlik primleri
+MenuTaxAndDividends=Vergiler ve kar payları
+MenuSocialContributions=Sosyal güvenlik primleri
+MenuNewSocialContribution=Yeni katkı payı
+NewSocialContribution=Yeni sosyal güvenlik primleri
+ContributionsToPay=Ödenecek primler
+AccountancyTreasuryArea=Muhasebe/Maliye alanı
+AccountancySetup=Muhasebe kurulumu
 NewPayment=Yeni ödeme
 Payments=Ödemeler
-PaymentCustomerInvoice=Müşteri fatura ödeme
-PaymentSupplierInvoice=Tedarikçi fatura ödeme
-PaymentSocialContribution=Sosyal prim ödeme
+PaymentCustomerInvoice=Müşteri fatura ödemesi
+PaymentSupplierInvoice=Tedarikçi fatura ödemesi
+PaymentSocialContribution=Sosyal güvenlik primi ödeme
 PaymentVat=KDV ödeme
-ListPayment=Ödeme listesi
-ListOfPayments=Ödeme listesi
+ListPayment=Ödemeler listesi
+ListOfPayments=Ödemeler listesi
 ListOfCustomerPayments=Müşteri ödemeleri listesi
 ListOfSupplierPayments=Tedarikçi ödemeleri listesi
 DatePayment=Ödeme tarihi
-NewVATPayment=Yeni KDV ödeme
-VATPayment=KDV Ödeme
-VATPayments=KDV Ödemeler
-ShowVatPayment=Show KDV ödeme
-TotalToPay=Toplam ödeme
+NewVATPayment=Yeni KDV ödemesi
+newLT2PaymentES=Yeni IRPF ödemesi
+LT2PaymentES=IRPF Ödemesi
+LT2PaymentsES=IRPF Ödemeleri
+VATPayment=KDV Ödemesi
+VATPayments=KDV Ödemeleri
+SocialContributionsPayments=Sosyal güvenlik primi ödemeleri
+ShowVatPayment=KDV ödemesi göster
+TotalToPay=Ödenecek toplam
 TotalVATReceived=Alınan toplam KDV
 CustomerAccountancyCode=Müşteri muhasebe kodu
 SupplierAccountancyCode=Tedarikçi muhasebe kodu
@@ -79,98 +90,63 @@ AccountNumberShort=Hesap numarası
 AccountNumber=Hesap numarası
 NewAccount=Yeni hesap
 SalesTurnover=Satış cirosu
-ByThirdParties=Bu üçüncü parti
-ByUserAuthorOfInvoice=Fatura yazar
-AccountancyExport=Muhasebe ihracat
-ErrorWrongAccountancyCodeForCompany=% Için kötü müşteri muhasebe code
-SuppliersProductsSellSalesTurnover=Tedarikçilerinin ürünlerinin satış tarafından üretilen ciro.
-CheckReceipt=Kontrol mevduat
-CheckReceiptShort=Kontrol mevduat
+ByThirdParties=Üçüncü partiye göre
+ByUserAuthorOfInvoice=Faturayı yazana göre
+AccountancyExport=Muhasebe dışaaktarımı
+ErrorWrongAccountancyCodeForCompany=%s için hatalı müşteri muhasebe kodu 
+SuppliersProductsSellSalesTurnover=Tedarikçi ürünlerinin satışından oluşan ciro.
+CheckReceipt=Çek hesabı
+CheckReceiptShort=Çek hesabı
 NewCheckReceipt=Yeni indirim
-NewCheckDeposit=Yeni bir çek ödemesi
-NewCheckDepositOn=Hesap ödeme için makbuz oluşturun:% s
-NoWaitingChecks=No çekleri ödeme için bekliyor.
-DateChequeReceived=Çek resepsiyon giriş tarihi
-NbOfCheques=Nb çeki
-PaySocialContribution=Bir sosyal katkı Öde
-ConfirmPaySocialContribution=Size ödenen bu sosyal katkı sınıflandırmak istediğinizden emin misiniz?
-DeleteSocialContribution=Silmek bir sosyal katkı
-ConfirmDeleteSocialContribution=Bunu sosyal katkı silmek istediğinizden emin misiniz?
-ExportDataset_tax_1=Sosyal katkılar ve ödemeler
-AnnualSummaryDueDebtMode=Denge gelir ve harcamaları, yıllık özeti, <b>mod% sClaims-Borçlar% s Taahhüt muhasebe</b> söyledi.
-AnnualSummaryInputOutputMode=Denge gelir ve harcamaları, yıllık özeti, <b>mod% sRevenues-Expensens% s nakit muhasebe</b> söyledi.
-AnnualByCompaniesDueDebtMode=Denge gelir ve giderleri, üçüncü şahıslar tarafından ayrıntı <b>modu% sClaims-Borçlar% s Taahhüt muhasebe</b> söyledi.
-AnnualByCompaniesInputOutputMode=Denge gelir ve giderleri, üçüncü şahıslar tarafından ayrıntı <b>modu% sRevenues-Giderleri% s nakit muhasebe</b> söyledi.
-SeeReportInInputOutputMode=<b>% SIncomes raporu-Giderleri% s</b> dedi bak gerçek ödeme yapılan bir hesaplama için <b>nakit muhasebe</b>
-SeeReportInDueDebtMode=<b>% SClaims raporu-Borçlar% s</b> dedi bak Kesilen faturaların bir hesaplama için <b>taahhüt muhasebe</b>
-RulesResultDue=- Tutarlar gösterilen tüm vergiler dahil olan vardır <br> - Bu olağanüstü fatura, gider ve KDV ya da değil ödenir içerir. <br> - Bu fatura ve KDV ve masraflar için son tarih üzerinde doğrulama tarihinden dayanmaktadır.
-RulesResultInOut=- Tutarlar gösterilen tüm vergiler dahil olan vardır <br> - Bu gerçek ödemeler fatura, gider ve KDV yapılan içerir. <br> - Bu faturaların ödeme tarihleri dayanan, giderleri ANF KDV. <br>
-RulesCADue=- Bu müşterilerin nedeniyle fatura ya da değil ödenir içerir. <br> - Bu, bu faturaların geçerlilik tarihinden dayanmaktadır. <br>
-RulesCAIn=- Bu faturaların müşteri alınan tüm etkili ödemeleri içerir. <br> - Bu, bu faturalar ödeme tarihinden dayanmaktadır <br>
-VATReportByCustomersInInputOutputMode=Rapor müşteri KDV toplanan ve (KDV makbuz ödenir)
-VATReportByCustomersInDueDebtMode=Rapor müşteri KDV toplanan ve (KDV oranı) ödenen
-VATReportByQuartersInInputOutputMode=KDV üç aylık rapor toplanan ve (KDV makbuz ödenir)
-VATReportByQuartersInDueDebtMode=KDV üç aylık rapor toplanan ve (KDV oranı) ödenen
-SeeVATReportInInputOutputMode=Bak <b>raporu% Svat encasement%</b> standart bir hesaplama için <b>s</b>
-SeeVATReportInDueDebtMode=<b>Raporu% akışı% Doğum Svat</b> Bkz akışı bir seçeneği ile bir hesaplama için <b>s</b>
-RulesVATIn=Hizmetler için rapor KDV düzenlemelerine aslında alınan veya ödeme tarihinden olarak yayınlanan içerir. <br> Maddi varlıklar - için, fatura doğrulama tarih bazında KDV fatura içerir.
-RulesVATDue=Hizmetler için rapor KDV faturalar nedeniyle ödenen veya değil, bu tasarının geçerliliğinin tarihine göre içerir. <br> Maddi varlıklar - için, KDV fatura, faturanın geçerliliğinin tarihine göre içerir.
-OptionVatInfoModuleComptabilite=Not: maddi varlıklar için, daha adil olmaya teslim tarihinden kullanmalısınız.
-PercentOfInvoice=%% / fatura
-NotUsedForGoods=Mal değil kullanılan
-Dispatch=Sevketme
-Dispatched=Sevk
-ToDispatch=Sevk için
-ThirdPartyMustBeEditAsCustomer=Üçüncü parti bir müşteri olarak tanımlanması gerekir
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 11:19:16).
-// Reference language: en_US -> tr_TR
-TaxModuleSetupToModifyRules=<a href="%s">Modülü kurulum</a> hesaplama için kuralları değiştirmek için
-VATReportBuildWithOptionDefinedInModule=Burada gösterilen tutarlar Vergi modülü kurulum tarafından tanımlı kurallar kullanılarak hesaplanır.
-DescSellsJournal=Satış Dergisi
-DescPurchasesJournal=Alımlar Dergisi
-InvoiceRef=Fatura ref.
-CodeNotDef=Tanımsız
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:12:12).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 12:34:37).
-// Reference language: en_US -> tr_TR
-AmountToBeCharged=Toplam ödeme miktarı:
-SocialContributionsPayments=Sosyal katkıları ödemeleri
-ProposalStats=Teklif İstatistikleri
-OrderStats=Sipariş İstatistikleri
-InvoiceStats=Faturalarında İstatistikleri
-SellsJournal=Satış Dergisi
-PurchasesJournal=Alımlar Dergisi
-AddRemind=Kullanılabilir miktar gönderimi
-RemainToDivide=Gönderme kalır:
-WarningDepositsNotIncluded=Mevduat faturalar bu muhasebe modülü ile bu sürümü dahil değildir.
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:58:52).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 13:39:01).
-// Reference language: en_US -> tr_TR
-RemainingAmountPayment=Tutar Kalan ödeme:
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:53:50).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
-// Reference language: en_US -> tr_TR
-LT2SummaryES=IRPF Dengesi
-LT2PaidES=IRPF Ücretli
-LT2CustomerES=IRPF satış
-LT2SupplierES=IRPF alımları
-newLT2PaymentES=Yeni IRPF ödeme
-LT2PaymentES=IRPF Ödeme
-LT2PaymentsES=IRPF Ödemeler
-DepositsAreNotIncluded=- Mevduat faturalar ne de dahildir
-DepositsAreIncluded=- Mevduat faturalar dahildir
+NewCheckDeposit=Yeni bir çek hesabı
+NewCheckDepositOn=Bu hesap için makbuz oluştur: %s
+NoWaitingChecks=Hesaba işlenmeyi bekleyen çek yok.
+DateChequeReceived=Çek giriş tarihi
+NbOfCheques=Çek sayısı
+PaySocialContribution=Bir sosyal güvenlik primi öde
+ConfirmPaySocialContribution=Bu sosyal güvenlik primini ödendi olarak sınıflandırmak istediğinizden emin misiniz?
+DeleteSocialContribution=Sosyal güvenlik primi sil
+ConfirmDeleteSocialContribution=Bu sosyal güvenlik primini silmek istediğinizden emin misiniz?
+ExportDataset_tax_1=Sosyal güvenlik primleri ve ödemeleri
+AnnualSummaryDueDebtMode=Gelir ve gider bilançosu, yıllık özet, <b>%sAlacaklar-Borçlar%s</b> söz konusu <b>Taahhüt hesabı</b> modu.
+AnnualSummaryInputOutputMode=Gelir ve gider bilançosu, yıllık özet, <b>%sGelirler-Giderler%s</b> söz konusu <b>kasa hesabı</b> modu.
+AnnualByCompaniesDueDebtMode=Gelir ve gider bilançosu, üçüncü şahıslara göre ayrıntılı, <b>%sAlacaklar-Borçlar%s</b> söz konusu <b>Taahhüt hesabı</b> modu.
+AnnualByCompaniesInputOutputMode=Gelir ve gider bilançosu, üçüncü şahıslara göre ayrıntılı, <b>%sGelirler-Giderler%s</b> söz konusu <b>kasa hesabı</b> modu.
+SeeReportInInputOutputMode=Yapılan gerçek ödemelerin hesaplanması için <b>%sGelirler-Giderler%s</b> söz konusu <b>kasa hesabı</b> raporuna bakın
+SeeReportInDueDebtMode=Verilen faturaların hesaplamaları için <b>%sAlacaklar-Borölar%s</b> söz konusu <b>taahhüt hesabı</b> raporuna bak
+RulesResultDue=- Gösterilen tutarlara tüm vergiler dahildir<br>- Ödenmemiş faturaları, giderleri ve KDV (ödenmiş ya da ödenmemiş) ni içerir.<br>- Faturaların ve KDV nin doğrulanma tarihleri ve giderlerin ödenme tarihleri baz alınır.
+RulesResultInOut=- Gösterilen tutarlar tüm vergileri içerir<br>- Faturalara, giderler ve KDV ne yapılan gerçek ödemeleri içerir.<br>- Faturaların, giderlerin ve KDV nin ödenme tarihleri baz alınır.
+RulesCADue=- Ödenmiş ya da ödenmemiş müşteri faturalarını içerir.<br> - Faturaların doğrulanma tarihleri tarihleri baz alınır. <br>
+RulesCAIn=- Müşterilerden alınan tüm geçerli fatura ödemelerini içerir.<br>- Bu faturaların ödenme tarihleri baz alınır<br>
+DepositsAreNotIncluded=- Teminat faturalarını içermez
+DepositsAreIncluded=- Teminat faturalarını içerir
 LT2ReportByCustomersInInputOutputModeES=Üçüncü parti IRPF Raporu
-RulesVATInServices=- Hizmetler için, raporun aslında ödeme tarihi esas alınan veya verilen KDV düzenlemeleri içermektedir. <br> - Maddi varlıkları için, fatura tarihi esas alınarak KDV fatura içerir.
-RulesVATInProducts=- Maddi varlıkları için, fatura tarihi esas alınarak KDV fatura içerir.
-RulesVATDueServices=- Hizmetler için rapor fatura tarihi esas nedeni, ücretli ya da KDV fatura içerir.
-RulesVATDueProducts=- Maddi varlıkları için, fatura tarihi esas KDV fatura içerir.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:35:54).
+VATReportByCustomersInInputOutputMode=Alınan ve ödenen müşteri KDV raporu (KDV makbuzu)
+VATReportByCustomersInDueDebtMode=Alınan ve ödenen müşteri KDV raporu (KDV oranı)
+VATReportByQuartersInInputOutputMode=Alınan ve ödenen müşteri KDV oranı raporu (KDV makbuzu)
+VATReportByQuartersInDueDebtMode=Alınan ve ödenen müşteri KDV oranı raporu (KDV oranı)
+SeeVATReportInInputOutputMode=Standart bir hesaplama için <b>%sKDV kapsamı%s</b> raporuna bak
+SeeVATReportInDueDebtMode=Akış seçenekli bir hesaplama için <b>%sKDV akışı%s</b> raporuna bak
+RulesVATIn=Hizmetler için, rapor ödeme tarihindeki alınan ya da yayınlanam KDV düzenlemelerini içerir.<br>- Maddi varlıklar için, fatura tarihi baz alınarak fatura KDV lerini içerir.
+RulesVATInProducts=- Maddi varlıklar için, fatura tarihi baz alınarak fatura KDV lerini içerir.
+RulesVATDueServices=- Hizmetler için, ödenmiş ya da ödenmemiş fatura tarihini baz alan rapor fatura KDV lerini içerir.
+RulesVATDueProducts=- Maddi varlıklar için, fatura tarihi baz alınarak fatura KDV lerini içerir.
+OptionVatInfoModuleComptabilite=Not: maddi varlıklar için, daha adil olması açısından teslim tarihi kullanılmalı.
+PercentOfInvoice=%%/fatura
+NotUsedForGoods=Ürünler için kullanılmaz
+ProposalStats=Teklif istatistikleri
+OrderStats=Sipariş istatistikleri
+InvoiceStats=Fatura İstatistikleri
+Dispatch=Sevketme
+Dispatched=Sevkedilmiş
+ToDispatch=Sevkedilecek
+ThirdPartyMustBeEditAsCustomer=Üçüncü parti bir müşteri olarak tanımlanmalıdır
+SellsJournal=Satış Günlüğü
+PurchasesJournal=Satınalma Günlüğü
+DescSellsJournal=Satış Günlüğü
+DescPurchasesJournal=Satınalma Günlüğü
+InvoiceRef=Fatura ref.
+CodeNotDef=Tanımlanmamış
+AddRemind=Sevkedilebilir miktar
+RemainToDivide=Gönderilmek üzere kalır:
+WarningDepositsNotIncluded=Teminat faturaları bu muhasebe modülü ile bu sürümde içerilmez.

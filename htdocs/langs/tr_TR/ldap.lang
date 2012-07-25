@@ -1,39 +1,37 @@
-/*
+﻿/*
  * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-03-15 19:05:26
+ * Manually generated
+ * Generation date 2012-07-24 00:13:26
  */
 
-
-// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-// Reference language: en_US
+// START - Lines generated manually (2012-07-24 00:13:26).
+// Reference language: en_US->tr_TR - ldap
 CHARSET=UTF-8
-DomainPassword=Şifre etki alanı için
-YouMustChangePassNextLogon=Şifre <b>Kullanıcı% s</b> değiştirilmesi gerekiyor <b>alanı% s.</b>
-UserMustChangePassNextLogon=Kullanım alanı% Doğum şifresini değiştirmek yapmalısınız
+DomainPassword=Etki alanı parolası
+YouMustChangePassNextLogon=<b>%s</b> Etki alanındaki <b>%s</b> kullanıcısının parolası değiştirilmelidir.
+UserMustChangePassNextLogon=Kullanıcı, %s etki alanındaki  parolasını değiştirmelidir
 LdapUacf_NORMAL_ACCOUNT=Kullanıcı hesabı
-LdapUacf_DONT_EXPIRE_PASSWORD=Şifre süresi asla
-LdapUacf_ACCOUNTDISABLE=Hesap etki% devre dışı s
-LDAPInformationsForThisContact=Bilgi LDAP veritabanında bu iletişim için
-LDAPInformationsForThisUser=Bilgi LDAP veritabanında bu kullanıcı için
-LDAPInformationsForThisGroup=Bilgi LDAP veritabanında bu grup için
-LDAPInformationsForThisMember=Bilgi LDAP veritabanında bu üye için
-LDAPAttribute=LDAP öznitelik
+LdapUacf_DONT_EXPIRE_PASSWORD=Parola süresi asla sona ermez
+LdapUacf_ACCOUNTDISABLE=Hesap, %s etki alanında engellidir
+LDAPInformationsForThisContact=Bu kişi için LDAP veritabanındaki bilgi
+LDAPInformationsForThisUser=Bu kullanıcı için LDAP veritabanındaki bilgi
+LDAPInformationsForThisGroup=Bu grup için LDAP veritabanındaki bilgi
+LDAPInformationsForThisMember=Bu üye için LDAP veritabanındaki bilgi
+LDAPAttribute=LDAP özniteliği
 LDAPAttributes=LDAP öznitelikleri
 LDAPCard=LDAP kartı
-LDAPRecordNotFound=Kaydetmez LDAP veritabanında bulunamadı
-LDAPUsers=LDAP kullanıcılar veritabanı
-LDAPGroups=LDAP Grup veritabanı
-LDAPFieldStatus=Konum
-LDAPFieldFirstSubscriptionDate=İlk abonelik Tarih
-LDAPFieldFirstSubscriptionAmount=Fist abonelik miktarı
-LDAPFieldLastSubscriptionDate=Son abonelik tarih
-LDAPFieldLastSubscriptionAmount=Son abonelik miktarı
-SynchronizeDolibarr2Ldap=Senkronize kullanıcı (Dolibarr -&gt; LDAP)
-UserSynchronized=Kullanıcı senkronize
-GroupSynchronized=Grup senkronize
-MemberSynchronized=Üye senkronize
-ContactSynchronized=İletişim senkronize
-ForceSynchronize=Kuvvet senkronizasyon Dolibarr -&gt; LDAP
-ErrorFailedToReadLDAP=LDAP veritabanında okunamadı. Kontrol LDAP modülü kurulum ve veritabanı erişilebilirlik.
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+LDAPRecordNotFound=Kayıt LDAP veritabanında bulunamadı
+LDAPUsers=LDAP veritabanındaki kullanıcılar 
+LDAPGroups=LDAP veritabanındaki fruplar
+LDAPFieldStatus=Durum
+LDAPFieldFirstSubscriptionDate=İlk abonelik tarihi
+LDAPFieldFirstSubscriptionAmount=İlk abonelik tutarı
+LDAPFieldLastSubscriptionDate=Son abonelik tarihi
+LDAPFieldLastSubscriptionAmount=Son abonelik tutarı
+SynchronizeDolibarr2Ldap=Senkronize kullanıcı (Dolibarr -> LDAP)
+UserSynchronized=Kullanıcı senkronize edildi
+GroupSynchronized=Grup senkronize edildi
+MemberSynchronized=Üye senkronize edildi
+ContactSynchronized=Kişi senkronize edildi
+ForceSynchronize=Dolibarr -> LDAP senkronizyona zorla
+ErrorFailedToReadLDAP=LDAP veritabanı okunamadı. LDAP modülü kurulumunu ve veritabanı erişilebilirliğini denetleyin.

@@ -1,59 +1,42 @@
-/*
+﻿/*
  * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-03-15 19:05:26
+ * Manually generated
+ * Generation date 2012-07-23 23:43:26
  */
 
-
-// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-// Reference language: en_US
+// START - Lines generated manually (2012-07-23 23:43:26).
+// Reference language: en_US->tr_TR - paybox
 CHARSET=UTF-8
 PayBoxSetup=PayBox modülü kurulumu
-PayBoxDesc=Bu modül teklif sayfaları müşterilerimiz tarafından <a href="http://www.paybox.com" target="_blank">Paybox</a> ödeme izin vermek. Bu ücretsiz ödeme için kullanılabilir veya belirli bir Dolibarr nesne üzerinde bir ödeme (fatura, sipariş, ...)
-FollowingUrlAreAvailableToMakePayments=Aşağıdaki URL bir müşteriye Dolibarr nesneler üzerinde bir ödeme yapmak için bir sayfa sunmak için kullanılabilir
+PayBoxDesc=Bu modül <a href="http://www.paybox.com" target="_blank">Paybox</a> üzerinden müşteriler tarafından ödeme yapılmasını sağlar. Bu bir ücretsiz ödeme veya belirli bir Dolibarr nesnesine (fatura, siparş,…) bir ödeme yapmak için kullanılabilir
+FollowingUrlAreAvailableToMakePayments=Aşağıdaki URL'ler bir müşteriye Dolibarr nesnelerine bir ödeme yapmak için bir sayfa sunmak için kullanılabilir
 PaymentForm=Ödeme Formu
-WelcomeOnPaymentPage=Online ödeme servisine hoşgeldiniz
-ThisScreenAllowsYouToPay=Bu ekran% s için bir online ödeme yapmak için izin
-ThisIsInformationOnPayment=Bu ödeme hakkında bilgi yapmaktır
-ToComplete=Tamamlamak için
-YourEMail=Ödeme için e-posta onayı
+WelcomeOnPaymentPage=Çevrimiçi ödeme hizmetimize hoşgeldiniz
+ThisScreenAllowsYouToPay=Bu ekran %s için çevrimiçi bir ödeme yapmanızı sağlar
+ThisIsInformationOnPayment=Bu yapılacak ödeme hakkında bilgidir
+ToComplete=Tamamlanacak
+YourEMail=Ödeme alındısı onayı için e-posta adresi
 Creditor=Alacaklı
 PaymentCode=Ödeme kodu
-PayBoxDoPayment=Ödeme git
-YouWillBeRedirectedOnPayBox=Güvenli Paybox sayfada giriş için kredi kartı bilgilerinizi yönlendirileceksiniz
+PayBoxDoPayment=Ödemeye git
+YouWillBeRedirectedOnPayBox=Kredi kartı bilgilerinizi girmek için güvenli Paybox sayfasına yönlendirileceksiniz
 PleaseBePatient=Lütfen sabırlı olun
 Continue=Sonraki
-ToOfferALinkForOnlinePaymentOnOrder=URL% sunmak için bir sipariş için online ödeme kullanıcı arabirimi var
-ToOfferALinkForOnlinePaymentOnInvoice=URL% sunmak için bir fatura için online ödeme kullanıcı arabirimi var
-ToOfferALinkForOnlinePaymentOnContractLine=URL% sunmak için bir sözleşme hattı için online ödeme kullanıcı arabirimi var
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL% sunan ücretsiz bir miktar için online ödeme kullanıcı arabirimi var
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL% sunmak için Üye abonelik için online ödeme kullanıcı arabirimi var
-YouCanAddTagOnUrl=De (tek ücretsiz ödeme için) ödeme Yorum etiketi eklemek için gerekli url parametresi <b>&amp; etiketi</b> herhangi bir bu URL için <b>= <i>değer</i></b> ekleyebilirsiniz.
-SetupPayBoxToHavePaymentCreatedAutomatically=Ayarlayın PayBox <b>url%</b> ile ödeme otomatik olarak paybox tarafından doğrulanmış oluşturduğunuz <b>var.</b>
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 12:34:37).
-// Reference language: en_US -> tr_TR
+ToOfferALinkForOnlinePayment=%s Ödemesi için URL
+ToOfferALinkForOnlinePaymentOnOrder=Bir müşteri siparişi için çevrimiçi %s ödemesi kullanıcı arayüzü sunan URL
+ToOfferALinkForOnlinePaymentOnInvoice=Bir müşteri faturası için çevrimiçi %s ödemesi kullanıcı arayüzü sunan URL
+ToOfferALinkForOnlinePaymentOnContractLine=Bir sözleşme satırı için çevrimiçi %s ödemesi kullanıcı arayüzü sunan URL
+ToOfferALinkForOnlinePaymentOnFreeAmount=Bir serbest ödeme için çevrimiçi %s ödemesi kullanıcı arayüzü sunan URL
+ToOfferALinkForOnlinePaymentOnMemberSubscription=Bir müşteri üye aboneliği çevrimiçi %s ödemesi kullanıcı arayüzü sunan URL
+YouCanAddTagOnUrl=Ayrıca; o URL'lerden herhangi birine <b>&tag=<i>value</i></b> url parametresini ekleyerek kendi ödeme açıklamanızın etiketini girebilirsiniz.
+SetupPayBoxToHavePaymentCreatedAutomatically=Paybox tarafından doğrulandığında ödemenin otomatik olarak oluşturulması için PayBox'ı <b>%s</b> url'si ile ayarlayın.
 YourPaymentHasBeenRecorded=Bu sayfa ödeme kaydedilmiş olduğunu onaylar. Teşekkür ederim.
-YourPaymentHasNotBeenRecorded=Ödeme kaydedilmiştir değil ve işlem iptal edildi. Teşekkür ederim.
+YourPaymentHasNotBeenRecorded=Ödemeniz kaydedimelmiştir  ve işlem iptal edilmiştir. Teşekkür ederiz.
 AccountParameter=Hesap parametreleri
 UsageParameter=Kullanım parametreleri
-InformationToFindParameters=%s hesap bilgileri bulmak için yardım
-PAYBOX_CGI_URL_V2=Ödeme için Paybox CGI modülü URL
+InformationToFindParameters=%s Hesap bilgilerinizi bulmanız için yardım
+PAYBOX_CGI_URL_V2=Ödeme için Paybox CGI modülü URL'si
 VendorName=Satıcının Adı
-CSSUrlForPaymentForm=Ödeme formu için CSS stil sayfasını url
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:14:07).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 13:39:01).
-// Reference language: en_US -> tr_TR
-MessageOK=Valide ödeme dönüş sayfasında Mesajı
-MessageKO=Iptal ödeme dönüş sayfasında Mesajı
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:58:39).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
-// Reference language: en_US -> tr_TR
-ToOfferALinkForOnlinePayment=%s ödeme için URL
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:35:58).
+CSSUrlForPaymentForm=Ödeme formu için CSS stil sayfası url'si
+MessageOK=Doğrulama sayfası mesajı
+MessageKO=İptal edilen ödeme sayfası mesajı

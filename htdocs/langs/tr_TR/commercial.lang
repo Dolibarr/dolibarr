@@ -1,114 +1,93 @@
-/*
+﻿/*
  * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-03-15 19:05:26
+ * Manually generated
+ * Generation date 2012-07-05 10:49:00
  */
 
+// START - Lines generated manually (2012-07-05 10:49:00).
+// Reference language: en_US ->TR – commercial
 
-// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-// Reference language: en_US
 CHARSET=UTF-8
 Commercial=Ticari
 CommercialArea=Ticari alan
-CommercialCard=Ticari Kart
-CustomerArea=Customers Area
+CommercialCard=Ticari kart
+CustomerArea=Müşteriler alanı
 Customer=Müşteri
 Customers=Müşteriler
-Prospect=Prospect
-Prospects=Prospects
-DeleteAction=Sil bir eylem / görev
-NewAction=Yeni bir eylem / görev
-AddAction=Eylem Ekle / görev
-AddAnAction=Bir eylem Ekle / görev
-AddActionRendezVous=Bir Rendezvous Görev ekle
-Rendez-Vous=Rendezvous
-ConfirmDeleteAction=Size bu görevi silmek istediğinizden emin misiniz?
+Prospect=Aday
+Prospects=Adaylar
+DeleteAction=Bir eylem/görev sil
+NewAction=Yeni eylem/görev
+AddAction=Eylem/görev ekle
+AddAnAction=Bir eylem/görev ekle
+AddActionRendezVous=Bir randevu eylemi ekle
+Rendez-Vous=Rendevu
+ConfirmDeleteAction=Bu eylemi/görevi silmek istediğinizden emin misiniz?
 CardAction=Eylem kartı
-PercentDone=Yüzde tamamlamak
-ActionOnCompany=Görev firma hakkında
-ActionOnContact=Görev İletişim
+PercentDone=Tamamlanma oranı
+ActionOnCompany=Firma için görev
+ActionOnContact=Kişi için görev
 TaskRDV=Toplantılar
-TaskRDVWith=% S ile Toplantı
-ShowTask=Show görev
-ShowAction=Show eylem
+TaskRDVWith=%s ile toplantı
+ShowTask=Görev göster
+ShowAction=Eylem göster
 ActionsReport=Eylem raporu
 SalesRepresentative=Satış temsilcisi
 SalesRepresentatives=Satış temsilcileri
-SalesRepresentativeFollowUp=Satış temsilcisi (takip)
-SalesRepresentativeSignature=Satış temsilcisi (imza)
+SalesRepresentativeFollowUp=Satış temsilcisi (takipçi)
+SalesRepresentativeSignature=Satış temsilcisi (imza yetkilisi)
 CommercialInterlocutor=Ticari muhatap
 ErrorWrongCode=Yanlış kod
-NoSalesRepresentativeAffected=Özel bir satış temsilcisi etkilenen
-ShowCustomer=Show müşteri
-ShowProspect=Show umudu
-ListOfProspects=Potansiyel Listesi
+NoSalesRepresentativeAffected=Etkilenen özel bir satış temsilcisi yok
+ShowCustomer=Müşteri göster
+ShowProspect=Aday göster
+ListOfProspects=Adaylar listesi
 ListOfCustomers=Müşteri listesi
-LastDoneTasks=Son% görevleri tamamlanmış s
-LastRecordedTasks=Son kaydedilen görevleri
-LastActionsToDo=Son% eski işlemler tamamlandığında değil
-DoneAndToDoActionsFor=Tamamlanmış ve% görevleri yapmak için s
-DoneAndToDoActions=Tamamlanmış ve görevleri yapmak için
+LastDoneTasks=Tamamlanan son %s görev
+LastRecordedTasks=Son kaydedilen görevler
+LastActionsToDo=Tamamlanan son %s en eski işlem
+DoneAndToDoActionsFor=%s için tamamlanan ve yapılacak eylemler
+DoneAndToDoActions=Tamamlanan ve yapılacak görevler
 DoneActions=Tamamlanan eylemler
-DoneActionsFor=% Için Tamamlanan eylemler var
+DoneActionsFor=%s için tamamlanan eylemler
 ToDoActions=Tamamlanmamış eylemler
-ToDoActionsFor=% Için eksik eylemler var
-SendPropalRef=Göndermek ticari önerisi% s
-SendOrderRef=Göndermek amacıyla% s
-StatusActionToDo=Yapmak için
-StatusActionDone=Tamamlamak
-MyActionsAsked=Ben kaydettik Eylemler
-MyActionsToDo=Ben yapmak zorunda Eylemler
-MyActionsDone=Eylemler bana etkilenen
-StatusActionInProcess=Süreçte
-TasksHistoryForThisContact=Bu iletişim Aksiyonlar
-LastProspectDoNotContact=Temas etmeyin
-LastProspectNeverContacted=Asla temas
-LastProspectToContact=Iletişim için
-LastProspectContactInProcess=Sürecinde İletişim
-LastProspectContactDone=İletişim done
-DateActionPlanned=Tarih eylem için planlanan
-DateActionDone=Tarih eylem yapıldı
-ActionAskedBy=Eylem tarafından sorulan
-ActionAffectedTo=Eyleme etkilenen
-ActionDoneBy=Eylem tarafından yapılan
-ActionUserAsk=Seslendiren
-ErrorStatusCantBeZeroIfStarted=Eğer alan <b>Tarih done</b> doldurulur, (veya) bitmiş, böylece alan <b>&#39;Durum&#39;</b> 0%% edilemez başlatılır eylem.
-ActionAC_TEL=Telefon
-ActionAC_FAX=Faks gönderme
-ActionAC_PROP=Öneri gönder
-ActionAC_EMAIL=Email
-ActionAC_RDV=Toplantılar
-ActionAC_FAC=Fatura gönder
-ActionAC_REL=Fatura (hatırlatma) Gönder
-ActionAC_CLO=Kapatmak
-ActionAC_EMAILING=Toplu e-posta gönder
-ActionAC_COM=Posta tarafindan gönder
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-09 14:05:49).
-// Reference language: en_US -> tr_TR
-SearchPropal=Ticari bir öneri ara
-// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:32:47).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 11:19:16).
-// Reference language: en_US -> tr_TR
-StatusProsp=Prospect durumu
-DraftPropals=Taslak ticari önerileri
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:26:28).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 12:34:37).
-// Reference language: en_US -> tr_TR
+ToDoActionsFor=%s için tamalanmamış eylemler
+SendPropalRef=%s ticari teklifini gönder 
+SendOrderRef=% siparişini gönder
 StatusNotApplicable=Uygulanamaz
-ActionAC_SHIP=Nakliye posta ile gönder
-ActionAC_SUP_ORD=Posta yoluyla tedarikçisi amacıyla gönder
-ActionAC_SUP_INV=Tedarikçi fatura posta ile gönderme
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:05:40).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 13:39:01).
-// Reference language: en_US -> tr_TR
+StatusActionToDo=Yapılacaklar
+StatusActionDone=Tamamla
+MyActionsAsked=Kayıt ettiğim eylemler
+MyActionsToDo=Yapacağım eylemler
+MyActionsDone=Beni etkileyen eylemler
+StatusActionInProcess=İşlemde
+TasksHistoryForThisContact=Bu kişi için eylemler
+LastProspectDoNotContact=Görüşülmeyecek
+LastProspectNeverContacted=Hiç görüşülmedi
+LastProspectToContact=İletişime geçilecek
+LastProspectContactInProcess=Kişi işlemde
+LastProspectContactDone=Görüşme yapıldı
+DateActionPlanned=Planlanan eylem tarihi
+DateActionDone=Eylemin yapıldığı tarih
+ActionAskedBy=Eylemi sunan
+ActionAffectedTo=Eylemdenn etkilenen
+ActionDoneBy=Eylemi yapan
+ActionUserAsk=Raporlayan
+ErrorStatusCantBeZeroIfStarted=Eğer <b>Yapıldığı tarih</b> alanı doluysa, eylem başlamıştır (veya bitmiştir),  bu durumda '<b>Durum</b>' alanı 0%% olamaz.
+ActionAC_TEL=Telefon
+ActionAC_FAX=Faks gönder
+ActionAC_PROP=Teklifi postayla gönder
+ActionAC_EMAIL=Eposta gönder
+ActionAC_RDV=Toplantılar
+ActionAC_FAC=Müşteri faturasını postayla gönder gönder
+ActionAC_REL=Müşteri faturasını postayla gönder (hatırlatma)
+ActionAC_CLO=Kapat
+ActionAC_EMAILING=Toplu e-posta gönder
+ActionAC_COM=Müşteri siparişini postayla gönder
+ActionAC_SHIP=Sevkiyatı postayla gönder
+ActionAC_SUP_ORD=Tedarikçi siparişini postayla gönder
+ActionAC_SUP_INV=Tedarikçi faturasını postayla gönder
 ActionAC_OTH=Diğer
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:56:22).
+StatusProsp=Aday durumu
+DraftPropals=Taslak ticari teklifler
+SearchPropal=Bir ticari teklif ara
