@@ -71,7 +71,7 @@ if ($socid > 0)
 
     $head = societe_prepare_head($societe);
 
-    dol_fiche_head($head, 'marges', $langs->trans("ThirdParty"),0,'company');
+    dol_fiche_head($head, 'margin', $langs->trans("ThirdParty"),0,'company');
 
     print '<table class="border" width="100%">';
 
@@ -109,14 +109,14 @@ if ($socid > 0)
 		print '</td></tr>';
 
 		// Margin Rate
-		if ($conf->global->DISPLAY_MARGIN_RATES) {
+		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
 			print '<tr style="font-weight: bold"><td>'.$langs->trans("MarginRate").'</td><td colspan="3">';
 			print '<span id="marginRate"></span>'; // set by jquery (see below)
 			print '</td></tr>';
 		}
 
 		// Mark Rate
-		if ($conf->global->DISPLAY_MARK_RATES) {
+		if (! empty($conf->global->DISPLAY_MARK_RATES)) {
 			print '<tr style="font-weight: bold"><td>'.$langs->trans("MarkRate").'</td><td colspan="3">';
 			print '<span id="markRate"></span>'; // set by jquery (see below)
 			print '</td></tr>';
@@ -158,9 +158,9 @@ if ($socid > 0)
 			print_liste_field_titre($langs->trans("SellingPrice"),$_SERVER["PHP_SELF"],"selling_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("BuyingPrice"),$_SERVER["PHP_SELF"],"buyng_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Margin"),$_SERVER["PHP_SELF"],"marge","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
-			if ($conf->global->DISPLAY_MARGIN_RATES)
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 				print_liste_field_titre($langs->trans("MarginRate"),$_SERVER["PHP_SELF"],"d.marge_tx","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
-			if ($conf->global->DISPLAY_MARK_RATES)
+			if (! empty($conf->global->DISPLAY_MARK_RATES))
 				print_liste_field_titre($langs->trans("MarkRate"),$_SERVER["PHP_SELF"],"d.marque_tx","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
 			print "</tr>\n";
@@ -175,8 +175,8 @@ if ($socid > 0)
 				{
 					$objp = $db->fetch_object($result);
 
-					$marginRate = ($objp->buying_price != 0)?(100 * round($objp->marge / $objp->buying_price ,5)):'' ;
-					$markRate = ($objp->selling_price != 0)?(100 * round($objp->marge / $objp->selling_price ,5)):'' ;
+					$marginRate = ($objp->buying_price != 0)?(100 * round($objp->marge / $objp->buying_price, 5)):'' ;
+					$markRate = ($objp->selling_price != 0)?(100 * round($objp->marge / $objp->selling_price, 5)):'' ;
 
 					$var=!$var;
 
@@ -191,9 +191,9 @@ if ($socid > 0)
 					print "<td align=\"right\">".price($objp->selling_price)."</td>\n";
 					print "<td align=\"right\">".price($objp->buying_price)."</td>\n";
 					print "<td align=\"right\">".price($objp->marge)."</td>\n";
-					if ($conf->global->DISPLAY_MARGIN_RATES)
+					if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 						print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate)."%")."</td>\n";
-					if ($conf->global->DISPLAY_MARK_RATES)
+					if (! empty($conf->global->DISPLAY_MARK_RATES))
 						print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate)."%")."</td>\n";
 					print '<td align="right">'.$invoicestatic->LibStatut($objp->paye,$objp->statut,5).'</td>';
 					print "</tr>\n";
@@ -213,9 +213,9 @@ if ($socid > 0)
 			print "<td align=\"right\">".price($cumul_vente)."</td>\n";
 			print "<td align=\"right\">".price($cumul_achat)."</td>\n";
 			print "<td align=\"right\">".price($totalMargin)."</td>\n";
-			if ($conf->global->DISPLAY_MARGIN_RATES)
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 				print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate)."%")."</td>\n";
-			if ($conf->global->DISPLAY_MARK_RATES)
+			if (! empty($conf->global->DISPLAY_MARK_RATES))
 				print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate)."%")."</td>\n";
 			print '<td align="right">&nbsp;</td>';
 			print "</tr>\n";

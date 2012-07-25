@@ -24,8 +24,7 @@
 
 
 /**
- *	\class 		Export
- *	\brief 		Class to manage exports
+ *	Class to manage exports
  */
 class Export
 {
@@ -36,7 +35,8 @@ class Export
 	var $array_export_label=array();            // Tableau de "libelle de lots"
 	var $array_export_sql=array();              // Tableau des "requetes sql"
 	var $array_export_fields=array();           // Tableau des listes de champ+libelle a exporter
-	//var $array_export_alias=array();            // Tableau des listes de champ+alias a exporter
+	var $array_export_entities=array();         // Tableau des listes de champ+alias a exporter
+	var $array_export_dependencies=array();     // array of list of entities that must take care of the DISTINCT if a field is added into export
 	var $array_export_special=array();          // Tableau des operations speciales sur champ
 
 	// To store export modules
@@ -162,6 +162,8 @@ class Export
 									$this->array_export_fields[$i]=$module->export_fields_array[$r];
 									// Tableau des entites a exporter (cle=champ, valeur=entite)
 									$this->array_export_entities[$i]=$module->export_entities_array[$r];
+									// Tableau des entites qui requiert abandon du DISTINCT (cle=entite, valeur=champ id child records)
+									$this->array_export_dependencies[$i]=$module->export_dependencies_array[$r];
 									// Tableau des operations speciales sur champ
 									$this->array_export_special[$i]=$module->export_special_array[$r];
 

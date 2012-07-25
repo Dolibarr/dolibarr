@@ -23,14 +23,14 @@ ProductCommission=Commission / produits
 ServiceCommission=Commission / services
 
 CommissionBase=Base de calcul des commissions
-CommissionBasedOnCA=Commissions calculées sur le CA
+CommissionBasedOnTurnover=Commissions calculées sur le CA
 CommissionBasedOnMargins=Commissions calculées sur les marges
 CommissionBaseDetails=Définit le mode de calcul des commissions
 CommissionBasedOnMarginsDetails=Le calcul basé sur les marges nécessite l'activation du module marges.
 
-CATotal = Chiffre d'affaire réalisé HT
-ProductCA=CA HT / produits
-ServiceCA=CA HT / services
+TurnoverTotal = Chiffre d'affaire réalisé HT
+ProductTurnover=CA HT / produits
+ServiceTurnover=CA HT / services
 
 CommercialAgent=Agent commercial
 

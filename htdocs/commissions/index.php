@@ -48,10 +48,12 @@ $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+$startdate=$enddate='';
+
 if (!empty($_POST['startdatemonth']))
-  $startdate  = date('Y-m-d', dol_mktime(12, 0, 0, $_POST['startdatemonth'],  $_POST['startdateday'],  $_POST['startdateyear']));
+  $startdate = date('Y-m-d', dol_mktime(12, 0, 0, $_POST['startdatemonth'],  $_POST['startdateday'],  $_POST['startdateyear']));
 if (!empty($_POST['enddatemonth']))
-  $enddate  = date('Y-m-d', dol_mktime(12, 0, 0, $_POST['enddatemonth'],  $_POST['enddateday'],  $_POST['enddateyear']));
+  $enddate = date('Y-m-d', dol_mktime(12, 0, 0, $_POST['enddatemonth'],  $_POST['enddateday'],  $_POST['enddateyear']));
 
 /*
  * View
@@ -90,7 +92,7 @@ else {
   if (! $sortfield) $sortfield="u.login";
 }
 
-// Date d�but
+// Start date
 print '<td>'.$langs->trans('StartDate').'</td>';
 print '<td width="20%">';
 $form->select_date($startdate,'startdate','','',1,"sel",1,1);
@@ -106,22 +108,22 @@ print '</td></tr>';
 // Include unpayed invoices
 print '<tr><td>'.$langs->trans("IncludeUnpayedInvoices").'</td><td colspan="4">';
 print '<input id="selIncluded" type="checkbox" name="unpayed" ';
-if ($_REQUEST['unpayed'] == 'on')
+if (GETPOST('unpayed') == 'on')
   print 'checked ';
 print '/>';
 print '</td></tr>';
 
 
 // Total Margin
-if ($conf->global->COMMISSION_BASE == "MARGES") {
-  print '<tr style="font-weight: bold"><td>'.$langs->trans("TotalMargin").'</td><td colspan="4">';
-  print '<span id="totalBase"></span>'; // set by jquery (see below)
-  print '</td></tr>';
+if ($conf->global->COMMISSION_BASE == "MARGIN") {
+	print '<tr style="font-weight: bold"><td>'.$langs->trans("TotalMargin").'</td><td colspan="4">';
+	print '<span id="totalBase"></span>'; // set by jquery (see below)
+	print '</td></tr>';
 }
-elseif ($conf->global->COMMISSION_BASE == "CA") {
-  print '<tr style="font-weight: bold"><td>'.$langs->trans("CATotal").'</td><td colspan="4">';
-  print '<span id="totalBase"></span>'; // set by jquery (see below)
-  print '</td></tr>';
+elseif ($conf->global->COMMISSION_BASE == "TURNOVER") {
+	print '<tr style="font-weight: bold"><td>'.$langs->trans("TurnoverTotal").'</td><td colspan="4">';
+	print '<span id="totalBase"></span>'; // set by jquery (see below)
+	print '</td></tr>';
 }
 
 // Total Commission
@@ -135,13 +137,13 @@ print '</form>';
 $sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client, s.client, sc.fk_user as agent,";
 $sql.= " u.login,";
 $sql.= " f.facnumber, f.total as total_ht,";
-if ($conf->global->COMMISSION_BASE == "MARGES") {
-  $sql.= " sum(case d.product_type when 1 then 0 else (((d.subprice * (1 - d.remise_percent / 100)) - d.buy_price_ht) * d.qty) end)  as productBase," ;
-  $sql.= " sum(case d.product_type when 1 then (((d.subprice * (1 - d.remise_percent / 100)) - d.buy_price_ht) * d.qty) else 0 end) as serviceBase," ;
+if ($conf->global->COMMISSION_BASE == "MARGIN") {
+	$sql.= " sum(case d.product_type when 1 then 0 else (((d.subprice * (1 - d.remise_percent / 100)) - d.buy_price_ht) * d.qty) end)  as productBase," ;
+	$sql.= " sum(case d.product_type when 1 then (((d.subprice * (1 - d.remise_percent / 100)) - d.buy_price_ht) * d.qty) else 0 end) as serviceBase," ;
 }
-elseif ($conf->global->COMMISSION_BASE == "CA") {
-  $sql.= " sum(case d.product_type when 1 then 0 else (((d.subprice * (1 - d.remise_percent / 100))) * d.qty) end)  as productBase," ;
-  $sql.= " sum(case d.product_type when 1 then (((d.subprice * (1 - d.remise_percent / 100))) * d.qty) else 0 end) as serviceBase," ;
+elseif ($conf->global->COMMISSION_BASE == "TURNOVER") {
+	$sql.= " sum(case d.product_type when 1 then 0 else (((d.subprice * (1 - d.remise_percent / 100))) * d.qty) end)  as productBase," ;
+	$sql.= " sum(case d.product_type when 1 then (((d.subprice * (1 - d.remise_percent / 100))) * d.qty) else 0 end) as serviceBase," ;
 }
 $sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -152,13 +154,13 @@ $sql.= ", ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE f.fk_soc = s.rowid";
 $sql.= " AND sc.fk_soc = f.fk_soc";
 $sql.= " AND sc.fk_user = u.rowid";
-if ($_REQUEST['unpayed'] == 'on')
+if (GETPOST('unpayed') == 'on')
   $sql.= " AND f.fk_statut > 0";
 else
   $sql.= " AND f.fk_statut > 1";
 $sql.= " AND s.entity = ".$conf->entity;
 $sql.= " AND d.fk_facture = f.rowid";
-if ($conf->global->COMMISSION_BASE == "MARGES")
+if ($conf->global->COMMISSION_BASE == "MARGIN")
   $sql.= " AND d.buy_price_ht IS NOT NULL AND d.buy_price_ht <> 0";
 if ($agentid > 0)
   $sql.= " AND sc.fk_user = $agentid";
@@ -178,37 +180,38 @@ if ($result)
 {
 	$num = $db->num_rows($result);
 
-  print '<br>';
-	print_barre_liste($langs->trans("CommissionDetails"),$page,$_SERVER["PHP_SELF"],"&amp;socid=$societe->id",$sortfield,$sortorder,'',$num,0,'');
+	print '<br>';
+	print_barre_liste($langs->trans("CommissionDetails"),$page,$_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',$num,0,'');
 
 	$i = 0;
 	print "<table class=\"noborder\" width=\"100%\">";
 
 	print '<tr class="liste_titre">';
 	if ($agentid > 0)
-   	print_liste_field_titre($langs->trans("Customer"),$_SERVER["PHP_SELF"],"s.nom","","&amp;agentid=".$_REQUEST["agentid"],'align="center"',$sortfield,$sortorder);
-  else
-  	print_liste_field_titre($langs->trans("CommercialAgent"),$_SERVER["PHP_SELF"],"u.login","","&amp;agentid=".$_REQUEST["agentid"],'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Customer"),$_SERVER["PHP_SELF"],"s.nom","","&amp;agentid=".$agentid,'align="center"',$sortfield,$sortorder);
+	else
+		print_liste_field_titre($langs->trans("CommercialAgent"),$_SERVER["PHP_SELF"],"u.login","","&amp;agentid=".$agentid,'align="center"',$sortfield,$sortorder);
 
-  // product commission
-  if ($conf->global->COMMISSION_BASE == "MARGES")
-	  print_liste_field_titre($langs->trans("ProductMargin"),$_SERVER["PHP_SELF"],"productBase","","&amp;agentid=".$_REQUEST["agentid"],'align="right"',$sortfield,$sortorder);
-  elseif ($conf->global->COMMISSION_BASE == "CA")
-	  print_liste_field_titre($langs->trans("ProductCA"),$_SERVER["PHP_SELF"],"productBase","","&amp;agentid=".$_REQUEST["agentid"],'align="right"',$sortfield,$sortorder);
+	// product commission
+	if ($conf->global->COMMISSION_BASE == "MARGIN")
+		print_liste_field_titre($langs->trans("ProductMargin"),$_SERVER["PHP_SELF"],"productBase","","&amp;agentid=".$agentid,'align="right"',$sortfield,$sortorder);
+	elseif ($conf->global->COMMISSION_BASE == "TURNOVER")
+		print_liste_field_titre($langs->trans("ProductTurnover"),$_SERVER["PHP_SELF"],"productBase","","&amp;agentid=".$agentid,'align="right"',$sortfield,$sortorder);
 
-  print_liste_field_titre($langs->trans("CommissionRate"),$_SERVER["PHP_SELF"],"","","&amp;agentid=".$_REQUEST["agentid"],'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("ProductCommission"),$_SERVER["PHP_SELF"],"","","&amp;agentid=".$_REQUEST["agentid"],'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("CommissionRate"),$_SERVER["PHP_SELF"],"","","&amp;agentid=".$agentid,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ProductCommission"),$_SERVER["PHP_SELF"],"","","&amp;agentid=".$agentid,'align="right"',$sortfield,$sortorder);
 
-  // service commission
-  if ($conf->global->COMMISSION_BASE == "MARGES")
-  	print_liste_field_titre($langs->trans("ServiceMargin"),$_SERVER["PHP_SELF"],"serviceBase","","&amp;agentid=".$_REQUEST["agentid"],'align="right"',$sortfield,$sortorder);
-  elseif ($conf->global->COMMISSION_BASE == "CA")
-  	print_liste_field_titre($langs->trans("ServiceCA"),$_SERVER["PHP_SELF"],"serviceBase","","&amp;agentid=".$_REQUEST["agentid"],'align="right"',$sortfield,$sortorder);
+	// service commission
+	if ($conf->global->COMMISSION_BASE == "MARGIN")
+		print_liste_field_titre($langs->trans("ServiceMargin"),$_SERVER["PHP_SELF"],"serviceBase","","&amp;agentid=".$agentid,'align="right"',$sortfield,$sortorder);
+	elseif ($conf->global->COMMISSION_BASE == "TURNOVER")
+		print_liste_field_titre($langs->trans("ServiceTurnover"),$_SERVER["PHP_SELF"],"serviceBase","","&amp;agentid=".$agentid,'align="right"',$sortfield,$sortorder);
 
-	print_liste_field_titre($langs->trans("CommissionRate"),$_SERVER["PHP_SELF"],"","","&amp;agentid=".$_REQUEST["agentid"],'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("ServiceCommission"),$_SERVER["PHP_SELF"],"","","&amp;agentid=".$_REQUEST["agentid"],'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("CommissionRate"),$_SERVER["PHP_SELF"],"","","&amp;agentid=".$agentid,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ServiceCommission"),$_SERVER["PHP_SELF"],"","","&amp;agentid=".$agentid,'align="right"',$sortfield,$sortorder);
+
 	// total commission
-	print_liste_field_titre($langs->trans("TotalCommission"),$_SERVER["PHP_SELF"],"","","&amp;agentid=".$_REQUEST["agentid"],'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("TotalCommission"),$_SERVER["PHP_SELF"],"","","&amp;agentid=".$agentid,'align="right"',$sortfield,$sortorder);
 
 	print "</tr>\n";
 
@@ -227,32 +230,39 @@ if ($result)
 
 			print "<tr $bc[$var]>";
 			if ($agentid > 0) {
-    		$companystatic->id=$objp->socid;
-    		$companystatic->nom=$objp->nom;
-    		$companystatic->client=$objp->client;
-        print "<td>".$companystatic->getNomUrl(1,'customer')."</td>\n";
-      }
-      else {
-  			$userstatic->id=$objp->agent;
-  			$userstatic->login=$objp->login;
-        print "<td>".$userstatic->getLoginUrl(1)."</td>\n";
-      }
-      // product commission
-      $productCommission = $conf->global->PRODUCT_COMMISSION_RATE * $objp->productBase / 100;
-			print "<td align=\"right\">".price($objp->productBase)."</td>\n";
-			print "<td align=\"right\">".price($conf->global->PRODUCT_COMMISSION_RATE)."</td>\n";
+				$companystatic->id=$objp->socid;
+				$companystatic->nom=$objp->nom;
+				$companystatic->client=$objp->client;
+				print "<td>".$companystatic->getNomUrl(1,'customer')."</td>\n";
+			}
+			else {
+				$userstatic->id=$objp->agent;
+				$userstatic->login=$objp->login;
+				print "<td>".$userstatic->getLoginUrl(1)."</td>\n";
+			}
+
+			// product commission
+			$productCommissionRate=(! empty($conf->global->PRODUCT_COMMISSION_RATE)?$conf->global->PRODUCT_COMMISSION_RATE:0);
+			$productBase=(! empty($objp->productBase)?$objp->productBase:0);
+			$productCommission = (! empty($productBase)?($productCommissionRate * $productBase / 100):0);
+			print "<td align=\"right\">".price($productBase)."</td>\n";
+			print "<td align=\"right\">".price($productCommissionRate)."</td>\n";
 			print "<td align=\"right\">".price($productCommission)."</td>\n";
-      // service commission
-      $serviceCommission = $conf->global->SERVICE_COMMISSION_RATE * $objp->serviceBase / 100;
-			print "<td align=\"right\">".price($objp->serviceBase)."</td>\n";
-			print "<td align=\"right\">".price($conf->global->SERVICE_COMMISSION_RATE)."</td>\n";
+
+			// service commission
+			$serviceCommissionRate=(! empty($conf->global->SERVICE_COMMISSION_RATE)?$conf->global->SERVICE_COMMISSION_RATE:0);
+			$serviceBase=(! empty($objp->serviceBase)?$objp->serviceBase:0);
+			$serviceCommission = (! empty($serviceBase)?($serviceCommissionRate * $serviceBase / 100):0);
+			print "<td align=\"right\">".price($serviceBase)."</td>\n";
+			print "<td align=\"right\">".price($serviceCommissionRate)."</td>\n";
 			print "<td align=\"right\">".price($serviceCommission)."</td>\n";
+
 			// total commission
 			print "<td align=\"right\">".price($productCommission + $serviceCommission)."</td>\n";
 			print "</tr>\n";
 			$i++;
-			$cumul_base_produit += $objp->productBase;
-			$cumul_base_service += $objp->serviceBase;
+			$cumul_base_produit += $productBase;
+			$cumul_base_service += $serviceBase;
 			$cumul_commission_produit += $productCommission;
 			$cumul_commission_service += $serviceCommission;
 		}
@@ -261,25 +271,25 @@ if ($result)
 	// affichage totaux commission
 	$var=!$var;
 	print '<tr '.$bc[$var].' style="border-top: 1px solid #ccc; font-weight: bold">';
-	if ($client)
-    print '<td colspan=2>';
-  else
-    print '<td>';
-  print $langs->trans('TotalCommission')."</td>";
-  // product commission
+	if (! empty($client))
+		print '<td colspan=2>';
+	else
+		print '<td>';
+	print $langs->trans('TotalCommission')."</td>";
+	// product commission
 	print "<td align=\"right\">".price($cumul_base_produit)."</td>\n";
-	print "<td align=\"right\">".price($conf->global->PRODUCT_COMMISSION_RATE)."</td>\n";
+	print "<td align=\"right\">".price((! empty($conf->global->PRODUCT_COMMISSION_RATE)?$conf->global->PRODUCT_COMMISSION_RATE:0))."</td>\n";
 	print "<td align=\"right\">".price($cumul_commission_produit)."</td>\n";
-  // service commission
+	// service commission
 	print "<td align=\"right\">".price($cumul_base_service)."</td>\n";
-	print "<td align=\"right\">".price($conf->global->SERVICE_COMMISSION_RATE)."</td>\n";
+	print "<td align=\"right\">".price((! empty($conf->global->SERVICE_COMMISSION_RATE)?$conf->global->SERVICE_COMMISSION_RATE:0))."</td>\n";
 	print "<td align=\"right\">".price($cumul_commission_service)."</td>\n";
 	// total commission
 	print "<td align=\"right\">".price($cumul_commission_produit + $cumul_commission_service)."</td>\n";
 
 	print "</tr>\n";
 
-  print "</table>";
+	print "</table>";
 }
 else
 {

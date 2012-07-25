@@ -2184,7 +2184,7 @@ class Form
                         $more.='<input type="checkbox" class="flat" id="'.$input['name'].'" name="'.$input['name'].'"';
                         if (! is_bool($input['value']) && $input['value'] != 'false') $more.=' checked="checked"';
                         if (is_bool($input['value']) && $input['value']) $more.=' checked="checked"';
-                        if ($input['disabled']) $more.=' disabled="disabled"';
+                        if (isset($input['disabled'])) $more.=' disabled="disabled"';
                         $more.=' /></td>';
                         $more.='<td valign="top" align="left">&nbsp;</td>';
                         $more.='</tr>'."\n";
@@ -3067,11 +3067,11 @@ class Form
         if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/',$set_time,$reg))
         {
             // Date format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS'
-            $syear = $reg[1];
-            $smonth = $reg[2];
-            $sday = $reg[3];
-            $shour = $reg[4];
-            $smin = $reg[5];
+            $syear	= (! empty($reg[1])?$reg[1]:'');
+            $smonth	= (! empty($reg[2])?$reg[2]:'');
+            $sday	= (! empty($reg[3])?$reg[3]:'');
+            $shour	= (! empty($reg[4])?$reg[4]:'');
+            $smin	= (! empty($reg[5])?$reg[5]:'');
         }
         elseif (strval($set_time) != '' && $set_time != -1)
         {

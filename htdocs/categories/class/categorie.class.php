@@ -1084,21 +1084,28 @@ class Categorie
 	 */
 	function get_all_ways ()
 	{
-		$ways = array ();
+		$ways = array();
 
-		foreach ($this->get_meres() as $mere)
+		$parents=$this->get_meres();
+		if (! empty($parents))
 		{
-			foreach ($mere->get_all_ways() as $way)
+			foreach ($parents as $parent)
 			{
-				$w   = $way;
-				$w[] = $this;
-
-				$ways[] = $w;
+				$allways=$parent->get_all_ways();
+				if (! empty($allways))
+				{
+					foreach ($allways as $way)
+					{
+						$w		= $way;
+						$w[]	= $this;
+						$ways[]	= $w;
+					}
+				}
 			}
-		}
 
-		if (count($ways) == 0)
-		$ways[0][0] = $this;
+			if (count($ways) == 0)
+				$ways[0][0] = $this;
+		}
 
 		return $ways;
 	}

@@ -59,13 +59,13 @@ class modMargin extends DolibarrModules
 		$this->special = 0;
 		// Name of png file (without png) used for this module.
 		// Png file must be in theme/yourtheme/img directory under name object_pictovalue.png.
-		$this->picto='marges';
+		$this->picto='margin';
 
 		// Data directories to create when module is enabled.
 		$this->dirs = array('/margin/temp');
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
-		$this->config_page_url = array("margin.php");
+		$this->config_page_url = array("margin.php@margin");
 
 		// Dependencies
 		$this->depends = array("modPropale", "modProduct");		// List of modules id that must be enabled if this module is enabled
@@ -98,61 +98,18 @@ class modMargin extends DolibarrModules
 
 		// left menu entry
 		$this->menu[$r]=array(
-				'fk_menu'=>0,			// Put 0 if this is a top menu
-    			'type'=>'top',			// This is a Top menu entry
+				'fk_menu'=>'fk_mainmenu=accountancy',			// Put 0 if this is a top menu
+    			'type'=>'left',			// This is a Top menu entry
     			'titre'=>'Margins',
-    			'mainmenu'=>'margins',
-    			'leftmenu'=>'1',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
+    			'mainmenu'=>'accountancy',
+    			'leftmenu'=>'margins',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
     			'url'=>'/margin/index.php',
     			'langs'=>'margins',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
     			'position'=>100,
-    			'enabled'=>'1',			// Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
+    			'enabled'=>'$conf->margin->enabled',			// Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
     			'perms'=>'1',			// Use 'perms'=>'$user->rights->monmodule->level1->level2' if you want your menu with a permission rules
     			'target'=>'',
     			'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
-		$r++;
-
-		// top menu entry
-		$this->menu[$r]=array(
-				'fk_menu'=>'r=0',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
-    			'type'=>'left',			// This is a Left menu entry
-    			'titre'=>'ProductMargins',
-    			'mainmenu'=>'margins',
-    			'url'=>'/margin/productMargins.php',
-    			'langs'=>'margins',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-    			'position'=>100,
-    			'enabled'=>'1',			// Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
-    			'perms'=>'1',			// Use 'perms'=>'$user->rights->monmodule->level1->level2' if you want your menu with a permission rules
-    			'target'=>'',
-    			'user'=>2);				// 0=Menu for internal users,1=external users, 2=both
-		$r++;
-
-		$this->menu[$r]=array(
-				'fk_menu'=>'r=0',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
-    			'type'=>'left',			// This is a Left menu entry
-    			'titre'=>'CustomerMargins',
-    			'mainmenu'=>'margins',
-    			'url'=>'/margin/customerMargins.php',
-    			'langs'=>'margins',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-    			'position'=>200,
-    			'enabled'=>'1',			// Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
-    			'perms'=>'1',			// Use 'perms'=>'$user->rights->monmodule->level1->level2' if you want your menu with a permission rules
-    			'target'=>'',
-    			'user'=>2);				// 0=Menu for internal users,1=external users, 2=both
-		$r++;
-
-		$this->menu[$r]=array(
-				'fk_menu'=>'r=0',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
-    			'type'=>'left',			// This is a Left menu entry
-    			'titre'=>'AgentMargins',
-    			'mainmenu'=>'margins',
-    			'url'=>'/margin/agentMargins.php',
-    			'langs'=>'margins',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-    			'position'=>300,
-    			'enabled'=>'1',			// Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
-    			'perms'=>'1',			// Use 'perms'=>'$user->rights->monmodule->level1->level2' if you want your menu with a permission rules
-    			'target'=>'',
-    			'user'=>2);				// 0=Menu for internal users,1=external users, 2=both
 		$r++;
 	}
 

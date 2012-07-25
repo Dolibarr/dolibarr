@@ -83,7 +83,7 @@ class modMyModule extends DolibarrModules
 		//							'models' => 0,                                   // Set this to 1 if module has its own models directory (core/modules/xxx)
 		//							'css' => '/mymodule/css/mymodule.css.php',       // Set this to relative path of css if module has its own css file
 		//							'hooks' => array('hookcontext1','hookcontext2')  // Set here all hooks context managed by module
-		//							'workflow' => array('order' => array('WORKFLOW_ORDER_AUTOCREATE_INVOICE')) // Set here all workflow context managed by module
+		//							'workflow' => array('WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2'=>array('enabled'=>'! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)', 'picto'=>'yourpicto@mymodule')) // Set here all workflow context managed by module
 		//                        );
 		$this->module_parts = array();
 

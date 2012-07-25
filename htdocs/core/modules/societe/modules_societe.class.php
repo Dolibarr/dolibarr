@@ -370,7 +370,7 @@ abstract class ModeleAccountancyCode
  *	@param	Translate	$outputlangs	Object lang to use for translation
  *	@return int        					<0 if KO, >0 if OK
  */
-function thirdparty_doc_create($db, &$object, $message, $modele, $outputlangs)
+function thirdparty_doc_create($db, $object, $message, $modele, $outputlangs)
 {
     global $conf,$langs,$user;
     $langs->load("bills");
@@ -416,7 +416,7 @@ function thirdparty_doc_create($db, &$object, $message, $modele, $outputlangs)
         if ($obj->write_file($object, $outputlangs, $srctemplatepath) > 0)
         {
             $outputlangs->charset_output=$sav_charset_output;
-            
+
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
             $interface=new Interfaces($db);
@@ -425,7 +425,7 @@ function thirdparty_doc_create($db, &$object, $message, $modele, $outputlangs)
             	$error++; $this->errors=$interface->errors;
             }
             // Fin appel triggers
-            
+
             return 1;
         }
         else

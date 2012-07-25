@@ -42,11 +42,15 @@ $mesg = '';
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="s.nom";
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+
+$startdate=$enddate='';
 
 if (!empty($_POST['startdatemonth']))
   $startdate  = date('Y-m-d', dol_mktime(12, 0, 0, $_POST['startdatemonth'],  $_POST['startdateday'],  $_POST['startdateyear']));
@@ -70,37 +74,35 @@ print_fiche_titre($text);
 // Show tabs
 $head=marges_prepare_head($user);
 $titre=$langs->trans("Margins");
-$picto='marges';
+$picto='margin';
 dol_fiche_head($head, 'customerMargins', $titre, 0, $picto);
 
 print '<form method="post" name="sel">';
 print '<table class="border" width="100%">';
 
-$client = null;
+$client = false;
 if ($socid > 0) {
 
-  $societe = new Societe($db, $socid);
-  $societe->fetch($socid);
+	$soc = new Societe($db, $socid);
+	$soc->fetch($socid);
 
-  if ($societe->client)
-  {
-      print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
-      print '<td colspan="4">';
-      $form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$socid,$socid,'socid', $filter='client=1',$showempty=1, $showtype=0, $forcecombo=1);
-      print '</td></tr>';
+	if ($soc->client)
+	{
+		print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
+		print '<td colspan="4">';
+		$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$socid,$socid,'socid','client=1',1,0,1);
+		print '</td></tr>';
 
-      $client = true;
-      if (! $sortorder) $sortorder="DESC";
-      if (! $sortfield) $sortfield="f.datef";
-  }
+		$client = true;
+		if (! $sortorder) $sortorder="DESC";
+		if (! $sortfield) $sortfield="f.datef";
+	}
 }
-if (!$client) {
-  print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
-  print '<td colspan="4">';
-  $form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$socid,null,'socid', $filter='client=1',$showempty=1, $showtype=0, $forcecombo=1);
-   print '</td></tr>';
-  if (! $sortorder) $sortorder="ASC";
-  if (! $sortfield) $sortfield="s.nom";
+else {
+	print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
+	print '<td colspan="4">';
+	$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$socid,null,'socid','client=1',1,0,1);
+	print '</td></tr>';
 }
 
 // Start date
@@ -122,14 +124,14 @@ print '<span id="totalMargin"></span>'; // set by jquery (see below)
 print '</td></tr>';
 
 // Margin Rate
-if ($conf->global->DISPLAY_MARGIN_RATES) {
+if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
 	print '<tr style="font-weight: bold"><td>'.$langs->trans("MarginRate").'</td><td colspan="4">';
 	print '<span id="marginRate"></span>'; // set by jquery (see below)
 	print '</td></tr>';
 }
 
 // Mark Rate
-if ($conf->global->DISPLAY_MARK_RATES) {
+if (! empty($conf->global->DISPLAY_MARK_RATES)) {
 	print '<tr style="font-weight: bold"><td>'.$langs->trans("MarkRate").'</td><td colspan="4">';
 	print '<span id="markRate"></span>'; // set by jquery (see below)
 	print '</td></tr>';
@@ -169,25 +171,25 @@ if ($result)
 	$num = $db->num_rows($result);
 
   print '<br>';
-	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;socid=$societe->id",$sortfield,$sortorder,'',$num,0,'');
+	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',$num,0,'');
 
 	$i = 0;
 	print "<table class=\"noborder\" width=\"100%\">";
 
 	print '<tr class="liste_titre">';
-	if ($client) {
-  	print_liste_field_titre($langs->trans("Invoice"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socid=".$_REQUEST["socid"],'',$sortfield,$sortorder);
-  	print_liste_field_titre($langs->trans("DateInvoice"),$_SERVER["PHP_SELF"],"f.datef","","&amp;socid=".$_REQUEST["socid"],'align="center"',$sortfield,$sortorder);
+	if (! empty($client)) {
+  	print_liste_field_titre($langs->trans("Invoice"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socid=".$socid,'',$sortfield,$sortorder);
+  	print_liste_field_titre($langs->trans("DateInvoice"),$_SERVER["PHP_SELF"],"f.datef","","&amp;socid=".$socid,'align="center"',$sortfield,$sortorder);
   }
   else
-  	print_liste_field_titre($langs->trans("Customer"),$_SERVER["PHP_SELF"],"s.nom","","&amp;socid=".$_REQUEST["socid"],'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("SellingPrice"),$_SERVER["PHP_SELF"],"selling_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("BuyingPrice"),$_SERVER["PHP_SELF"],"buyng_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Margin"),$_SERVER["PHP_SELF"],"marge","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
-	if ($conf->global->DISPLAY_MARGIN_RATES)
-		print_liste_field_titre($langs->trans("MarginRate"),$_SERVER["PHP_SELF"],"d.marge_tx","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
-	if ($conf->global->DISPLAY_MARK_RATES)
-		print_liste_field_titre($langs->trans("MarkRate"),$_SERVER["PHP_SELF"],"d.marque_tx","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
+  	print_liste_field_titre($langs->trans("Customer"),$_SERVER["PHP_SELF"],"s.nom","","&amp;socid=".$socid,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("SellingPrice"),$_SERVER["PHP_SELF"],"selling_price","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("BuyingPrice"),$_SERVER["PHP_SELF"],"buyng_price","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Margin"),$_SERVER["PHP_SELF"],"marge","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
+	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+		print_liste_field_titre($langs->trans("MarginRate"),$_SERVER["PHP_SELF"],"d.marge_tx","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
+	if (! empty($conf->global->DISPLAY_MARK_RATES))
+		print_liste_field_titre($langs->trans("MarkRate"),$_SERVER["PHP_SELF"],"d.marque_tx","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	$cumul_achat = 0;
@@ -200,8 +202,8 @@ if ($result)
 		{
 			$objp = $db->fetch_object($result);
 
-			$marginRate = ($objp->buying_price != 0)?(100 * round($objp->marge / $objp->buying_price ,5)):'' ;
-			$markRate = ($objp->selling_price != 0)?(100 * round($objp->marge / $objp->selling_price ,5)):'' ;
+			$marginRate = ($objp->buying_price != 0)?(100 * round($objp->marge / $objp->buying_price, 5)):'' ;
+			$markRate = ($objp->selling_price != 0)?(100 * round($objp->marge / $objp->selling_price, 5)):'' ;
 
 			$var=!$var;
 
@@ -224,9 +226,9 @@ if ($result)
 			print "<td align=\"right\">".price($objp->selling_price)."</td>\n";
 			print "<td align=\"right\">".price($objp->buying_price)."</td>\n";
 			print "<td align=\"right\">".price($objp->marge)."</td>\n";
-			if ($conf->global->DISPLAY_MARGIN_RATES)
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 				print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate)."%")."</td>\n";
-			if ($conf->global->DISPLAY_MARK_RATES)
+			if (! empty($conf->global->DISPLAY_MARK_RATES))
 				print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate)."%")."</td>\n";
 			print "</tr>\n";
 			$i++;
@@ -249,9 +251,9 @@ if ($result)
 	print "<td align=\"right\">".price($cumul_vente)."</td>\n";
 	print "<td align=\"right\">".price($cumul_achat)."</td>\n";
 	print "<td align=\"right\">".price($totalMargin)."</td>\n";
-	if ($conf->global->DISPLAY_MARGIN_RATES)
+	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 		print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate)."%")."</td>\n";
-	if ($conf->global->DISPLAY_MARK_RATES)
+	if (! empty($conf->global->DISPLAY_MARK_RATES))
 		print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate)."%")."</td>\n";
 	print "</tr>\n";
 

@@ -38,21 +38,17 @@ require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
-if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
-if ($conf->projet->enabled)
+if (! empty($conf->commande->enabled)) require_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
+if (! empty($conf->projet->enabled))
 {
 	require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
 	require_once(DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php');
 }
 
 $langs->load('bills');
-//print 'ee'.$langs->trans('BillsCustomer');exit;
-
 $langs->load('companies');
 $langs->load('products');
 $langs->load('main');
-
-if (GETPOST('mesg','int',1) && isset($_SESSION['message'])) $mesg=$_SESSION['message'];
 
 $sall=trim(GETPOST('sall'));
 $projectid=(GETPOST('projectid')?GETPOST('projectid','int'):0);
@@ -84,16 +80,19 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $search_user = GETPOST('search_user','int');
+$search_sale = GETPOST('search_sale','int');
 $day	= GETPOST('day','int');
 $month	= GETPOST('month','int');
 $year	= GETPOST('year','int');
+$filtre	= GETPOST('filtre');
 
 // Security check
 $fieldid = (! empty($ref)?'facnumber':'rowid');
-if ($user->societe_id) $socid=$user->societe_id;
+if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture', $id,'','','fk_soc',$fieldid);
 
-$usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
+// FIXME $usehm not used ?
+$usehm=(! empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:false);
 
 $object=new Facture($db);
 
@@ -166,12 +165,12 @@ if ($userid)
     if ($userid == -1) $sql.=' AND f.fk_user_author IS NULL';
     else $sql.=' AND f.fk_user_author = '.$userid;
 }
-if ($_GET['filtre'])
+if ($filtre)
 {
-    $filtrearr = explode(',', $_GET['filtre']);
-    foreach ($filtrearr as $fil)
+    $aFilter = explode(',', $filtre);
+    foreach ($aFilter as $filter)
     {
-        $filt = explode(':', $fil);
+        $filt = explode(':', $filter);
         $sql .= ' AND ' . trim($filt[0]) . ' = ' . trim($filt[1]);
     }
 }
@@ -254,6 +253,7 @@ if ($resql)
     print '<table class="liste" width="100%">';
 
  	// If the user can view prospects other than his'
+    $moreforfilter='';
  	if ($user->rights->societe->client->voir || $socid)
  	{
 	 	$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
@@ -314,6 +314,7 @@ if ($resql)
     {
         $var=True;
         $total=0;
+        $total_ttc=0;
         $totalrecu=0;
 
         while ($i < min($num,$limit))
