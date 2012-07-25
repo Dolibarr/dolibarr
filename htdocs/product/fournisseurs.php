@@ -155,7 +155,7 @@ if ($action == 'updateprice' && $_POST["cancel"] <> $langs->trans("Cancel"))
       if (isset($_POST['ref_fourn_price_id']))
         $product->fetch_product_fournisseur_price($_POST['ref_fourn_price_id']);
 
-			$ret=$product->update_buyprice($quantity, $_POST["price"], $_POST["charges"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx);
+			$ret=$product->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"]);
 			if ($ret < 0)
 			{
 				$error++;
@@ -348,9 +348,15 @@ if ($id || $ref)
                 print '</td>';
 				print '</tr>';
 
-				print '<td>'.$langs->trans("Charges").'</td>';
-				print '<td><input class="flat" name="charges" size="8" value="'.($_POST["charges"]?$_POST["charges"]:price($product->fourn_charges)).'">';
-        print '</td>';
+				// Charges ????
+				if (! empty($conf->global->PRODUCT_LOAD))
+				{
+					print '<tr>';
+					print '<td>'.$langs->trans("Charges").'</td>';
+					print '<td colspan="3"><input class="flat" name="charges" size="8" value="'.($_POST["charges"]?$_POST["charges"]:price($product->fourn_charges)).'">';
+	        		print '</td>';
+					print '</tr>';
+				}
 
 				print '</table>';
 
@@ -397,9 +403,11 @@ if ($id || $ref)
 				print_liste_field_titre($langs->trans("QtyMin"),$_SERVER["PHP_SELF"],"pfp.quantity","",$param,'align="right"',$sortfield,$sortorder);
 				print '<td class="liste_titre" align="right">'.$langs->trans("VATRate").'</td>';
 				print '<td class="liste_titre" align="right">'.$langs->trans("PriceQtyMinHT").'</td>';
-				print '<td align="right">'.$langs->trans("Charges").'</td>';
+				// Charges ????
+				if (! empty($conf->global->PRODUCT_LOAD)) print '<td align="right">'.$langs->trans("Charges").'</td>';
 				print_liste_field_titre($langs->trans("UnitPriceHT"),$_SERVER["PHP_SELF"],"pfp.unitprice","",$param,'align="right"',$sortfield,$sortorder);
-				print '<td align="right">'.$langs->trans("UnitCharges").'</td>';
+				// Charges ????
+				if (! empty($conf->global->PRODUCT_LOAD)) print '<td align="right">'.$langs->trans("UnitCharges").'</td>';
 				print '<td class="liste_titre"></td>';
 				print "</tr>\n";
 
@@ -444,10 +452,13 @@ if ($id || $ref)
 						print $productfourn->fourn_price?price($productfourn->fourn_price):"";
 						print '</td>';
 
-						// Charges
-						print '<td align="right">';
-						print $productfourn->fourn_charges?price($productfourn->fourn_charges):"";
-						print '</td>';
+						// Charges ????
+						if (! empty($conf->global->PRODUCT_LOAD))
+						{
+							print '<td align="right">';
+							print $productfourn->fourn_charges?price($productfourn->fourn_charges):"";
+							print '</td>';
+						}
 
 						// Unit price
 						print '<td align="right">';
@@ -455,10 +466,13 @@ if ($id || $ref)
 						//print $objp->unitprice? price($objp->unitprice) : ($objp->quantity?price($objp->price/$objp->quantity):"&nbsp;");
 						print '</td>';
 
-						// Unit Charges
-						print '<td align="right">';
-						print $productfourn->fourn_unitcharges?price($productfourn->fourn_unitcharges) : ($productfourn->fourn_qty?price($productfourn->fourn_charges/$productfourn->fourn_qty):"&nbsp;");
-						print '</td>';
+						// Unit Charges ???
+						if (! empty($conf->global->PRODUCT_LOAD))
+						{
+							print '<td align="right">';
+							print $productfourn->fourn_unitcharges?price($productfourn->fourn_unitcharges) : ($productfourn->fourn_qty?price($productfourn->fourn_charges/$productfourn->fourn_qty):"&nbsp;");
+							print '</td>';
+						}
 
 						// Modify-Remove
 						print '<td align="center">';
