@@ -30,26 +30,26 @@ $langs->load("contracts");
 $langs->load("products");
 $langs->load("companies");
 
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
+$sortfield=GETPOST('sortfield','alpha');
+$sortorder=GETPOST('sortorder','alpha');
+$page=GETPOST('page','int');
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-$search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
-$search_contract=isset($_GET["search_contract"])?$_GET["search_contract"]:$_POST["search_contract"];
-$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
-$statut=isset($_GET["statut"])?$_GET["statut"]:1;
-$socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
+$search_nom=GETPOST('search_nom');
+$search_contract=GETPOST('search_contract');
+$sall=GETPOST('sall');
+$statut=GETPOST('statut')?GETPOST('statut'):1;
+$socid=GETPOST('socid');
 
 if (! $sortfield) $sortfield="c.rowid";
 if (! $sortorder) $sortorder="DESC";
 
 // Security check
-$contratid = isset($_GET["id"])?$_GET["id"]:'';
+$id=GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'contrat', $contratid,'');
+$result = restrictedArea($user, 'contrat', $id);
 
 $staticcontrat=new Contrat($db);
 $staticcontratligne=new ContratLigne($db);
@@ -64,11 +64,11 @@ $now=dol_now();
 llxHeader();
 
 $sql = 'SELECT';
-$sql.= ' sum('.$db->ifsql("cd.statut=0",1,0).') as nb_initial,';
-$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= ".$db->idate($now).")",1,0).') as nb_running,';
-$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < ".$db->idate($now).")",1,0).') as nb_expired,';
-$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < ".$db->idate($now - $conf->contrat->services->expires->warning_delay).")",1,0).') as nb_late,';
-$sql.= ' sum('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
+$sql.= ' SUM('.$db->ifsql("cd.statut=0",1,0).') as nb_initial,';
+$sql.= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite >= ".$db->idate($now).")",1,0).') as nb_running,';
+$sql.= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < ".$db->idate($now).")",1,0).') as nb_expired,';
+$sql.= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < ".$db->idate($now - $conf->contrat->services->expires->warning_delay).")",1,0).') as nb_late,';
+$sql.= ' SUM('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
 $sql.= " c.rowid as cid, c.ref, c.datec, c.date_contrat, c.statut,";
 $sql.= " s.nom, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -79,9 +79,9 @@ $sql.= " WHERE c.fk_soc = s.rowid ";
 $sql.= " AND c.entity = ".$conf->entity;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($search_nom)      $sql.= " AND s.nom like '%".$db->escape($search_nom)."%'";
+if ($search_nom)      $sql.= " AND s.nom LIKE '%".$db->escape($search_nom)."%'";
 if ($search_contract) $sql.= " AND c.rowid = '".$db->escape($search_contract)."'";
-if ($sall)            $sql.= " AND (s.nom like '%".$db->escape($sall)."%' OR cd.label like '%".$db->escape($sall)."%' OR cd.description like '%".$db->escape($sall)."%')";
+if ($sall)            $sql.= " AND (s.nom LIKE '%".$db->escape($sall)."%' OR cd.label LIKE '%".$db->escape($sall)."%' OR cd.description LIKE '%".$db->escape($sall)."%')";
 $sql.= " GROUP BY c.rowid, c.ref, c.datec, c.date_contrat, c.statut,";
 $sql.= " s.nom, s.rowid";
 $sql.= " ORDER BY $sortfield $sortorder";
@@ -93,7 +93,7 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
-    print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
+    print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], '&search_contract='.$search_contract.'&search_nom='.$search_nom, $sortfield, $sortorder,'',$num);
 
     print '<table class="liste" width="100%">';
 
@@ -111,7 +111,7 @@ if ($resql)
     print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(5,3).'</td>';
     print "</tr>\n";
 
-    print '<form method="POST" action="liste.php">';
+    print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<tr class="liste_titre">';
     print '<td class="liste_titre">';
@@ -151,7 +151,6 @@ if ($resql)
     $db->free($resql);
 
     print "</table>";
-
 }
 else
 {
@@ -159,7 +158,6 @@ else
 }
 
 
-$db->close();
-
 llxFooter();
+$db->close();
 ?>

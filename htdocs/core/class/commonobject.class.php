@@ -42,6 +42,8 @@ abstract class CommonObject
     public $nom;
     public $civility_id;
 
+    public $array_options=array();
+
     // No constructor as it is an abstract class
 
 

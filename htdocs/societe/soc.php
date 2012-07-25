@@ -1696,7 +1696,7 @@ else
         {
             foreach($extrafields->attribute_label as $key=>$label)
             {
-                $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+                $value=(GETPOST('options_'.$key)?GETPOST('options_'.$key):(isset($object->array_options['options_'.$key])?$object->array_options['options_'.$key]:''));
                 print '<tr><td>'.$label.'</td><td colspan="3">';
                 print $extrafields->showOutputField($key,$value);
                 print "</td></tr>\n";

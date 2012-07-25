@@ -2760,11 +2760,11 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
     if (! $found)
     {
         // If vat of product for the country not found or not defined, we return higher vat of country.
-        $sql.="SELECT taux as vat_rate";
-        $sql.=" FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-        $sql.=" WHERE t.active=1 AND t.fk_pays = p.rowid AND p.code='".$thirdparty_seller->country_code."'";
-        $sql.=" ORDER BY t.taux DESC, t.recuperableonly ASC";
-        $sql.=$db->plimit(1);
+        $sql = "SELECT taux as vat_rate";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
+        $sql.= " WHERE t.active=1 AND t.fk_pays = p.rowid AND p.code='".$thirdparty_seller->country_code."'";
+        $sql.= " ORDER BY t.taux DESC, t.recuperableonly ASC";
+        $sql.= $db->plimit(1);
 
         $resql=$db->query($sql);
         if ($resql)
