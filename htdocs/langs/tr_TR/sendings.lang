@@ -8,7 +8,7 @@
 // START - Lines generated manually (2012-07-15 11:38:26).
 // Reference language: en_US - TR - sendings
 CHARSET=UTF-8
-RefSending=Sevkiyat ref.
+RefSending=Sevkiyat ilgi.
 Sending=Sevkiyat
 Sendings=Sevkiyatlar
 Shipments=Sevkiyatlar
@@ -40,7 +40,7 @@ StatusSendingCanceled=İptal edildi
 StatusSendingDraft=Taslak
 StatusSendingValidated=Doğrulanmış (sevkedilecek ürünler veya halihazırda sevkedilmişler)
 StatusSendingProcessed=İşlenmiş
-StatusSendingCanceledShort=Iptal edildi
+StatusSendingCanceledShort=İptal edildi
 StatusSendingDraftShort=Taslak
 StatusSendingValidatedShort=Doğrulanmış
 StatusSendingProcessedShort=İşlenmiş
@@ -69,7 +69,7 @@ RelatedShippings=İlgili sevkiyatlar
 
 # Sevkiyat yöntemleri
 SendingMethodCATCH=Müşteri tarafından alındı
-SendingMethodTRANS=Taşıyıcı
+SendingMethodTRANS=Nakliyeci
 SendingMethodCOLSUI=Colissimo
 
 # Belge Modeli

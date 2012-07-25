@@ -298,14 +298,13 @@ CurrencyXPF=CFP Frangı
 CurrencySingXPF=CFP Frangı
 CurrencyTRL=Türk Lirası
 CurrencySingTRL=Türk Lirası
-
 CurrencyCentSingEUR=cent
 CurrencyThousandthSingTND=thousandth
 
 #### Giriş nedenleri #####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Posta kampanyası
-DemandReasonTypeSRC_CAMP_EMAIL=E-postayla kampanyası
+DemandReasonTypeSRC_CAMP_EMAIL=E-posta kampanyası
 DemandReasonTypeSRC_CAMP_PHO=Telefon kampanyası
 DemandReasonTypeSRC_CAMP_FAX=Faks kampanyası
 DemandReasonTypeSRC_COMM=Ticari görüşme

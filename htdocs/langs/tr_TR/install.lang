@@ -9,17 +9,17 @@
 
 CHARSET=UTF-8
 InstallEasy=Sadece adım adım talimatları izleyin.
-MiscellanousChecks=Önkoşulların onay
+MiscellanousChecks=Önkoşulların onayı
 DolibarrWelcome=Dolibarr'a hoşgeldiniz
 ConfFileExists=Yapılandırma dosyası <b>%s</b> var.
-ConfFileDoesNotExists=Yapılandırma dosyası <b>%s</b>  yok
+ConfFileDoesNotExists=Yapılandırma dosyası <b>%s</b> yok
 ConfFileDoesNotExistsAndCouldNotBeCreated=Yapılandırma dosyası <b>%s</b> yoktur ve oluşturulamıyor!
-ConfFileCouldBeCreated=Yapılandırma dosyası  <b>%s</b> oluşturulabilir.
-ConfFileIsNotWritable=Yapılandırma dosyası <b>%s</b>  yazılabilir değil. Yetkileri kontrol edin. İlk yüklemede web sunucusuna yapılandırma işlemi sırasında bu dosyaya yazabilme hakkının verilmiş olması gerekir ( "örneğin, chmod 666, bir Unix işletim sistemindeki gibi).
+ConfFileCouldBeCreated=Yapılandırma dosyası <b>%s</b> oluşturulabilir.
+ConfFileIsNotWritable=Yapılandırma dosyası <b>%s</b> yazılabilir değil. Yetkileri kontrol edin. İlk yüklemede web sunucusuna yapılandırma işlemi sırasında bu dosyaya yazabilme hakkının verilmiş olması gerekir ( "örneğin, chmod 666, bir Unix işletim sistemindeki gibi).
 ConfFileIsWritable=Yapılandırma dosyası <b>%s</b>  yazılabilir.
 ConfFileReload=Bütün bilgileri yapılandırma dosyasından geri yükle.
 PHPSupportSessions=Bu PHP oturumları destekliyor.
-PHPSupportPOSTGETOk=Bu PHP GÖNDER ve AL  değişkenlerini destekliyor.
+PHPSupportPOSTGETOk=Bu PHP GÖNDER ve AL değişkenlerini destekliyor.
 PHPSupportPOSTGETKo=Bu PHP kurulumunun GÖNDER ve AL  değişkenlerini desteklememesi mümkündür. Php.ini içindeki <b>variables_order</b> parametresini kontrol edin.
 PHPSupportGD=Bu PHP GD grafik işlevlerini destekliyor.
 PHPSupportUTF8=Bu PHP UTF8 işlevlerini destekliyor.
@@ -29,34 +29,34 @@ Recheck=Daha belirleyici bir test için burayı tıklayın
 ErrorPHPDoesNotSupportSessions=PHP kurulumunuz oturumları desteklemiyor. Bu özellik Dolibarr 'ın çalışması için gereklidir. PHP kurulumunuzu kontrol edin.
 ErrorPHPDoesNotSupportGD=PHP kurulumunuz GD grafik işlevini desteklemiyor. Hiçbir grafik görüntülenemeyecektir.
 ErrorPHPDoesNotSupportUTF8=PHP kurulumunuz UTF8 işlevlerini desteklemiyor. Dolibarr düzgün çalışamaz. Dolibarr'ı yüklemeden önce bunu çözün.
-ErrorDirDoesNotExists= %s  Dizini yoktur.
+ErrorDirDoesNotExists=%s Dizini yoktur.
 ErrorGoBackAndCorrectParameters=Geri gidin ve yanlış parametreleri düzeltin.
 ErrorWrongValueForParameter=Parametresi '%s' için yanlış değer yazmış olabilirsiniz'.
 ErrorFailedToCreateDatabase=Veritabanı '%s' oluşturulamadı.
 ErrorFailedToConnectToDatabase=Veritabanı '%s' e bağlanılamadı.
-ErrorPHPVersionTooLow=PHP sürümü çok eski. Version %s gereklidir.
-WarningPHPVersionTooLow=PHP sürümü çok eski. Sürüm %s veya daha yükseği gerekiyor. Bu sürüm kuruluma izin verir, ancak desteklenmemektedir.
-ErrorConnectedButDatabaseNotFound=Sunucu bağlantı başarılı ama veritabanı '%s' bulunamadı.
+ErrorPHPVersionTooLow=PHP sürümü çok eski. %s Sürümü gereklidir.
+WarningPHPVersionTooLow=PHP sürümü çok eski. %s Sürümü ya da daha yükseği gerekiyor. Bu sürüm kuruluma izin verir, ancak desteklenmemektedir.
+ErrorConnectedButDatabaseNotFound=Sunucu bağlantısı başarılı ancak veritabanı '%s' bulunamadı.
 ErrorDatabaseAlreadyExists=Veritabanı '%s' zaten var.
-IfDatabaseNotExistsGoBackAndUncheckCreate=Eğer veritabanı yoksa, geri gidin ve  "Veritabanı oluştur" seçeneğini işaretleyin.
-IfDatabaseExistsGoBackAndCheckCreate=Eğer veritabanı zaten mevcutsa, geri gidin ve"Veritabanı oluştur" seçeneğindeki işareti kaldırın.
-WarningBrowserTooOld=Çok eski bir web tarayıcısı. Web tarayıcınızı Firefox, Chrome yada Opera 'nın son sürümüne yükseltmeniz son derece önerilir.
+IfDatabaseNotExistsGoBackAndUncheckCreate=Eğer veritabanı yoksa, geri gidin ve "Veritabanı oluştur" seçeneğini işaretleyin.
+IfDatabaseExistsGoBackAndCheckCreate=Eğer veritabanı zaten mevcutsa, geri gidin ve "Veritabanı oluştur" seçeneğindeki işareti kaldırın.
+WarningBrowserTooOld=Çok eski bir web tarayıcısı. Web tarayıcınızı Firefox, Chrome yada Opera 'nın enson sürümüne yükseltmeniz son derece önerilir.
 PHPVersion=PHP Sürümü
-YouCanContinue=Devam edebilirsiniz ...
-PleaseBePatient=Lütfen sabırlı olun ...
+YouCanContinue=Devam edebilirsiniz...
+PleaseBePatient=Lütfen sabırlı olun...
 License=Lisans kullanma
 ConfigurationFile=Yapılandırma dosyası
 WebPagesDirectory=Web sayfalarının saklandığı dizin
-DocumentsDirectory=Yüklenenleri ve oluşturulan belgelerin saklanacağı dizin 
+DocumentsDirectory=Yüklenenlerin ve oluşturulan belgelerin saklanacağı dizin 
 URLRoot=Kök URL
-ForceHttps=Zorla güvenli bağlantı (https)
-CheckToForceHttps=Bu seçeneği zorla güvenli bağlantılar için işaretleyin (https).<br> Bu web sunucusunun SSL sertifikası ile yapılandırılmış olmasını gerektirir.
+ForceHttps=Güvenli bağlantıya zorlama (https)
+CheckToForceHttps=Bu seçeneği güvenli bağlantıya zorlama için işaretleyin (https).<br>Bu web sunucusunun SSL sertifikası ile yapılandırılmış olmasını gerektirir.
 DolibarrDatabase=Dolibarr Veritabanı
 DatabaseChoice=Veritabanı seçimi
 DatabaseType=Veritabanı türü
 DriverType=Sürücü türü
 Server=Sunucu
-ServerAddressDescription=Veritabanı sunucusu adı yada ip si, veritabanı sunucusunun web tarayıcısı ile aynı sunucuda barındırıldığı durumlarda genellikle 'localhost' olur
+ServerAddressDescription=Veritabanı sunucusunun adı ya da ip’ si, veritabanı sunucusunun, web tarayıcısı ile aynı sunucuda barındırıldığı durumlarda genellikle 'localhost' olur
 ServerPortDescription=Veritabanı sunucusu bağlantı noktası. Eğer bilinmiyorsa boş tutun.
 DatabaseServer=Veritabanı sunucusu
 DatabaseName=Veritabanı adı
@@ -69,11 +69,11 @@ AdminPassword=Dolibarr veritabanı sahibi parolası.
 CreateDatabase=Veritabanı oluştur
 CreateUser=Kullanıcı oluştur
 DatabaseSuperUserAccess=Veritabanı sunucusu - süperkullanıcı erişimi
-CheckToCreateDatabase=Eğer veritabanı yoksa ve oluşturulması gerekiyorsa kutuyu işaretleyin. <br> Bu durumda, bu sayfanın altına süperkullanıcı hesabı için kullanıcı adı/parola girmelisiniz.
-CheckToCreateUser=Veritabanı sahibi yoksa ve oluşturulması gerekiyorsa kutuyu işaretleyin. <br> Bu durumda, kullanıcı adı ve parola seçmelisiniz ve bu sayfanın altına süperkullanıcı hesabı için kullanıcı adı/parola girmelisiniz. Bu kutu işaretlenmemiş ise, veritabanı sahibi ve parolaları vardır.
+CheckToCreateDatabase=Eğer veritabanı yoksa ve oluşturulması gerekiyorsa kutuyu işaretleyin.<br>Bu durumda, bu sayfanın altına süperkullanıcı hesabı için kullanıcı adı/parola girmelisiniz.
+CheckToCreateUser=Veritabanı sahibi yoksa ve oluşturulması gerekiyorsa kutuyu işaretleyin.<br>Bu durumda, kullanıcı adı ve parola seçmelisiniz ve bu sayfanın altına süperkullanıcı hesabı için kullanıcı adı/parola girmelisiniz. Bu kutu işaretlenmemiş ise, veritabanı sahibi ve parolaları vardır.
 Experimental=(deneysel)
 DatabaseRootLoginDescription=Yeni veritabanı ve yeni kullanıcı oluşturabilecek kullanıcı girişi, veritabanınız ve veritabanı girişiniz zaten varsa gereksizdir (sanki bir web sağlayıcı tarafından barındırılıyor gibi).
-KeepEmptyIfNoPassword=Eğer kullanıcı herhangi bir parolası yoksa boş bırakın (bundan kaçının)
+KeepEmptyIfNoPassword=Eğer kullanıcının herhangi bir parolası yoksa boş bırakın (bundan kaçının)
 SaveConfigurationFile=Değerleri saklayın
 ConfigurationSaving=Yapılandırma dosyasını saklama
 ServerConnection=Sunucu bağlantısı
@@ -83,14 +83,14 @@ UserCreation=Kullanıcı oluşturma
 CreateDatabaseObjects=Veritabanı nesneleri oluşturma
 ReferenceDataLoading=Referans veri yükleme
 TablesAndPrimaryKeysCreation=Tablolar ve birincil anahtarları oluşturma
-CreateTableAndPrimaryKey=%s Tablosunu olştur
+CreateTableAndPrimaryKey=%s Tablosunu oluştur
 CreateOtherKeysForTable=Yabancı tuşları ve tablo için dizin oluşturma %s
 OtherKeysCreation=Yabancı tuşları ve indeksleri oluşturma
 FunctionsCreation=İşlevler oluşturma
 AdminAccountCreation=Yönetici girişi oluşturma
 PleaseTypePassword=Lütfen bir parola yazın, boş parolaya izin verilmez!
 PleaseTypeALogin=Lütfen bir kullanıcı adı yazın!
-PasswordsMismatch=Şifreler farklıdır, lütfen yeniden deneyin !
+PasswordsMismatch=Parolalar farklıdır, lütfen yeniden deneyin!
 SetupEnd=Kurulum sonu
 SystemIsInstalled=Bu kurulum tamamlandı.
 SystemIsUpgraded=Dolibarr başarıyla yükseltildi.
@@ -101,13 +101,13 @@ GoToSetupArea=Dolibarr'a git (kurulum alanı)
 MigrationNotFinished=Veritabanı sürümü tamamen güncel değildir, bu nedenle yükseltme işlemini yeniden çalıştırmanız gerekir.
 GoToUpgradePage=Yükseltme sayfasına yeniden git
 Examples=Örnekler
-WithNoSlashAtTheEnd=Sonunda taksimolmadan "/" 
-DirectoryRecommendation=Web sayfalarınızın dizinin dışında bir dizin kullanmanız tönerilir.
+WithNoSlashAtTheEnd=Sonunda taksim olmadan "/" 
+DirectoryRecommendation=Web sayfalarınızın dizininin dışında bir dizin kullanmanız önerilir.
 LoginAlreadyExists=Zaten var
-DolibarrAdminLogin=Dolibarr admin girişi
+DolibarrAdminLogin=Dolibarr yönetici (admin) girişi
 AdminLoginAlreadyExists=Dolibarr yönetici hesabı '<b>%s</b>' zaten var.
-WarningRemoveInstallDir=Uyarı, güvenlik nedeniyle, kurulum veya yükseltme tamamlandığında, araçların yeniden kurulumunu önlemek için  <b>install.lock</b> adlı bir dosyayı kötü amaçlı kulanımları önlemek için Dolibarr belge dizinine eklemelisiniz.
-ThisPHPDoesNotSupportTypeBase=Bu PHP sistemi  %s türü veritabanı erişim arayüzünü desteklemez
+WarningRemoveInstallDir=Uyarı, güvenlik nedeniyle, kurulum veya yükseltme tamamlandığında, araçların yeniden kurulumunu önlemek için  <b>install.lock</b> adlı bir dosyayı kötü amaçlı kullanımları önlemek için Dolibarr belge dizinine eklemelisiniz.
+ThisPHPDoesNotSupportTypeBase=Bu PHP sistemi  %s türü veritabanı erişimi arayüzünü desteklemez
 FunctionNotAvailableInThisPHP=Bu PHP de geçerli değil
 MigrateScript=Komut dizisi taşıma
 ChoosedMigrateScript=Komut dizisi taşıma seç
@@ -118,11 +118,11 @@ ChooseYourSetupMode=Kurulum biçimini seçin ve "Başlat" ı tıklayın...
 FreshInstall=Yeni yükleme
 FreshInstallDesc=Eğer bu sizin ilk yüklemeniz ise bu biçimi kullanın. Eğer ilk değilse, bu biçim bir önceki eksik yüklemeyi onarır, ama eğer sürümünüzü yükseltmek istiyorsanız, "Yükseltme" biçimini seçin.
 Upgrade=Yükseltme
-UpgradeDesc=Eğer eski Dolibarr dosyalarını daha yeni bir sürümün dosyaları ile  değiştirdiyseniz bu biçimi kullanın. Bu, veritabanını ve veriyi yükseltecektir.
+UpgradeDesc=Eğer eski Dolibarr dosyalarını daha yeni bir sürümün dosyaları ile değiştirdiyseniz bu biçimi kullanın. Bu, veritabanını ve veriyi yükseltecektir.
 Start=Başlat
 InstallNotAllowed=Kuruluma <b>conf.php</b> izin vermiyor
 NotAvailable=Mevcut değil
-YouMustCreateWithPermission=%s Dosyasını oluşturmanız gerekir   ve kurulum sırasında web sunucusunda yazma izinlerini ayarlamak.
+YouMustCreateWithPermission=%s Dosyasını oluşturmanız ve kurulum sırasında web sunucusunda yazma izinlerini ayarlamanız gerekir.
 CorrectProblemAndReloadPage=Lütfen sorunu çözün ve sayfayı yeniden yüklemek için F5 tuşuna basın. 
 AlreadyDone=Zaten taşındı
 DatabaseVersion=Veritabanı sürümü
@@ -130,13 +130,13 @@ ServerVersion=Veritabanı sunucusu sürümü
 YouMustCreateItAndAllowServerToWrite=Bu dizini oluşturmanız ve web sunucusuna yazmak için vermeniz gerekir.
 CharsetChoice=Karakter seti seçimi
 CharacterSetClient=HTML web sayfalarında kullanılmak üzere oluşturulan karakter seti
-CharacterSetClientComment=Web görüntüsü için karakter seti seçin. <br/> Varsayılan önerilen karakter seti veritabanınızda olanlardan biridir.
+CharacterSetClientComment=Web görüntüsü için karakter seti seçin.<br/> Varsayılan önerilen karakter seti veritabanınızda olanlardan biridir.
 CollationConnection=Karakter sıralama düzeni
 CollationConnectionComment=Veritabanı tarafından kullanılan karakterlerin sıralam düzenini tanımlayan sayfa kodunu kullanın. Bu parametre bazı veritabanları tarafından 'harmanlama' olarak adlandırılır. <br/> Eğer veritabanı zaten varsa bu parametre tanımlanamaz.
 CharacterSetDatabase=Veritabanı için karakter seti
-CharacterSetDatabaseComment=Veritabanı oluşturmak istenen istenen karakter setini seçin. <br/> Eğer veritabanı zaten varsa bu parametre tanımlanamaz.
+CharacterSetDatabaseComment=Veritabanı oluşturmak istenen karakter setini seçin.<br/> Eğer veritabanı zaten varsa bu parametre tanımlanamaz.
 YouAskDatabaseCreationSoDolibarrNeedToConnect=<b>%s</b> veritabanını oluşturmanız istenebilir, bunun için, Dolibarr <b>%s</b> sunucusuna <b>%s</b> süper kullanıcı izniyle bağlanmak ister.
-YouAskLoginCreationSoDolibarrNeedToConnect=<b>%s</b> Veritabanı girişi oluşturmanız istenebilir, bunun için, Dolibarr <b>%s</b> sunucusuna <b>%s</b> süper kullanıcı izniyle bağlanmak ister.
+YouAskLoginCreationSoDolibarrNeedToConnect=<b>%s</b> Veritabanı girişi oluşturmanız istenebilir, bunun için, Dolibarr <b>%s</b> sunucusuna <b>%s</b> süperkullanıcı izniyle bağlanmak ister.
 BecauseConnectionFailedParametersMayBeWrong=Bağlantı yapılamazsa, sunucu ya da süper kullanıcı parametreleri yanlış olmalıdır.
 OrphelinsPaymentsDetectedByMethod=%s Yöntemi ile belirlenen sahipsiz ödemeler
 RemoveItManuallyAndPressF5ToContinue=El ile kaldırın ve devam etmek için F5 tuşuna basın.
@@ -153,95 +153,93 @@ MigrateIsDoneStepByStep=Hedeflenen sürümde (%s) çeşitli sürüm boşlukları
 CheckThatDatabasenameIsCorrect=Veritabanı adı "<b>%s</b>" nin doğruluğunu denetleyin.
 IfAlreadyExistsCheckOption=Eğer bu isim doğru ise ve veritabanı henüz mevcut değilse, "Veritabanı oluştur" seçeneğini işaretlemelisiniz.
 OpenBaseDir=PHP openbasedir parametresi
-YouAskToCreateDatabaseSoRootRequired="Veritabanı oluştur" kutusunu işaretlediniz. Bunun için süperkullanıcı kullanıcı adı/şifre girmeniz (formun altına) gerekir.
-YouAskToCreateDatabaseUserSoRootRequired="Veritabanı sahibi oluştur" kutusunu işaretlediniz. Bunun için süperkullanıcı kullanıcı adı/şifre girmeniz (formun altına) gerekir.
+YouAskToCreateDatabaseSoRootRequired="Veritabanı oluştur" kutusunu işaretlediniz. Bunun için süperkullanıcı kullanıcı adı/parola girmeniz (formun altına) gerekir.
+YouAskToCreateDatabaseUserSoRootRequired="Veritabanı sahibi oluştur" kutusunu işaretlediniz. Bunun için süperkullanıcı kullanıcı adı/parola girmeniz (formun altına) gerekir.
 NextStepMightLastALongTime=Geçerli birkaç dakika sürebilir. Lütfen devam etmeden önce sonraki ekranın tamamen görüntülenmesini bekleyin.
 MigrationCustomerOrderShipping=Müşteri siparişleri kaydı için nakliye taşıma
 MigrationShippingDelivery=Nakliyenin saklanması bitti
 MigrationShippingDelivery2=Nakliye 2 nin saklanması bitti
 MigrationFinished=Taşıma bitti
-LastStepDesc=<strong>Son adım</strong>: Burada yazılıma bağlanmayı düşündüğünüz kullanıcı adı ve parolayı tanımlayın . Herkesi yönetecek hesap olduğundan dolayı bu bilgileri kaybetmeyin.
-ActivateModule=%s Modülünü  etkinleştir
+LastStepDesc=<strong>Son adım</strong>: Burada yazılıma bağlanmayı düşündüğünüz kullanıcı adı ve parolayı tanımlayın. Herkesi yönetecek hesap olduğundan dolayı bu bilgileri kaybetmeyin.
+ActivateModule=%s Modülünü etkinleştir
 
 #########
-# upgrade
+# Yükseltme
 #########
 MigrationFixData=Standart dışı veri onarımı
 MigrationOrder=Müşteri siparişleri için veri taşıma
-MigrationSupplierOrder=Tedarikçilerin siparişleri için veri taşıma
+MigrationSupplierOrder=Tedarikçi siparişleri için veri taşıma
 MigrationProposal=Ticari teklifler için veri taşıma
-MigrationInvoice=Müşterilerin faturaları için veri taşıma
+MigrationInvoice=Müşteri faturaları için veri taşıma
 MigrationContract=Sözleşmeler için veri taşıma
-MigrationSuccessfullUpdate=Başarılı yükseltme
-MigrationUpdateFailed=Başarısız yükseltme işlemi
+MigrationSuccessfullUpdate=Yükseltme başarılı
+MigrationUpdateFailed=Yükseltme işlemi başarısız
 MigrationRelationshipTables=İlişki tabloları (%s) için veri taşıma
 
-# Payments Update
+# Ödeme güncelleme
 MigrationPaymentsUpdate=Ödeme verisi düzeltme
 MigrationPaymentsNumberToUpdate=Güncellenecek %s ödeme var
 MigrationProcessPaymentUpdate=%s Ödeme güncelle
 MigrationPaymentsNothingToUpdate=Daha fazla yapacak şey yok
 MigrationPaymentsNothingUpdatable=Düzeltilebilecek hiç ödeme yok
 
-# Contracts Update
+# Sözleşme güncelleme
 MigrationContractsUpdate=Sözleşme verisi düzeltme
 MigrationContractsNumberToUpdate=Güncellenecek %s sözleşme(ler) var
-MigrationContractsLineCreation=Sözleşme ref %s için özleşme satırı oluştur
+MigrationContractsLineCreation=Sözleşme ref %s için sözleşme satırı oluştur
 MigrationContractsNothingToUpdate=Daha fazla yapacak şey yok
 MigrationContractsFieldDontExist=fk_facture Alanı artık yok. Hiçbir şey yapmaya gerek yok.
 
-# Contracts Empty Dates Update
+# Boş sözleşme tarihi güncelleme
 MigrationContractsEmptyDatesUpdate=Boş sözleşme tarihi düzeltme
 MigrationContractsEmptyDatesUpdateSuccess=Boş sözleşme tarihi başarıyla düzeltildi
 MigrationContractsEmptyDatesNothingToUpdate=Düzeltilecek boş sözleşme tarihi yok
 MigrationContractsEmptyCreationDatesNothingToUpdate=Düzeltilecek sözleşme oluşturma tarihi yok
 
-# Contracts Invalid Dates Update
+# Geçersiz sözleşme tarihi günceleme
 MigrationContractsInvalidDatesUpdate=Sözleşme düzeltmede hatalı değer
 MigrationContractsInvalidDateFix=%s Sözleşmesini düzelt (Sözleşme Tarihi)
-MigrationContractsInvalidDatesNumber=%s  Sözleşme değiştirildi
-MigrationContractsInvalidDatesNothingToUpdate=Kötü değeri yok tarih düzeltmek için
-
-
-MigrationContractsIncoherentCreationDateUpdate=Sözleşme oluşturma tarihindeki hatalı değer düzeltme
+MigrationContractsInvalidDatesNumber=%s Sözleşme değiştirildi
+MigrationContractsInvalidDatesNothingToUpdate=Düzeltilecek hatalı tarih yok
+MigrationContractsIncoherentCreationDateUpdate=Sözleşme oluşturma tarihindeki hatalı değeri düzeltme
 MigrationContractsIncoherentCreationDateUpdateSuccess=Sözleşme oluşturma tarihindeki hatalı değer başarı ile düzeltildi
 MigrationContractsIncoherentCreationDateNothingToUpdate=Sözleşme oluşturma tarihinde düzeltilecek hatalı değer yok
 
-# Reopening Contracts
+# Sözleşmelerin yeniden açılması
 MigrationReopeningContracts=Açık sözleşme yanlışlıkla kapatıldı
-MigrationReopenThisContract=%s Sözleşmeni yeniden aç
-MigrationReopenedContractsNumber= %s sözleşme değiştirildi
+MigrationReopenThisContract=%s Sözleşmesini yeniden aç
+MigrationReopenedContractsNumber=%s Sözleşme değiştirildi
 MigrationReopeningContractsNothingToUpdate=Açılacak kapalı sözleşme yok
 
-# Migration transfer
-MigrationBankTransfertsUpdate=Banka işlemi ve banka havalesi arasında bağlantıları güncelle
+# Göç transferi
+MigrationBankTransfertsUpdate=Banka işlemi ve banka havalesi arasındaki bağlantıları güncelle
 MigrationBankTransfertsNothingToUpdate=Tüm bağlantılar güncel
 
-# Migration delivery
+# Teslimat göçü
 MigrationShipmentOrderMatching=Sevkiyat fişi güncelleme
 MigrationDeliveryOrderMatching=Teslim bilgisi güncelleme
 MigrationDeliveryDetail=Teslimat güncelleme
 
-# Migration stock
+# Stok göçü
 MigrationStockDetail=Ürünlerin stok değerini güncelle
 
-# Migration menus
+# Menü göçü
 MigrationMenusDetail=Dinamik menüler tablolarını güncelle
 
-# Migration delivery address
+# Teslim adresleri göçü
 MigrationDeliveryAddress=Yüklemelerde teslimat adresini güncelle
 
-# Migration project task actors
+# Proje görev oyuncuları göçü
 MigrationProjectTaskActors=llx_projet_task_actors table için veri taşıma tablosu
 
 # Migration project user resp
 MigrationProjectUserResp=Veri taşıma alanı fk_user_resp of llx_projet to llx_element_contact
 
-# Migration project task time
+# Proje görev süresi göçü
 MigrationProjectTaskTime=Saniyede olarak harcanan süreyi güncelle
 
-# Migration Acctioncom
+# Eylem göçü
 MigrationActioncommElement=Eylemlere ilişkin veri güncellemesi
 
-# Migration payment mode
+# Ödeme biçimi göçü
 MigrationPaymentMode=Ödeme biçimi için veri taşıma
