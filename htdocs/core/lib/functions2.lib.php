@@ -27,32 +27,32 @@
 /**
  * Same function than javascript unescape() function but in PHP.
  *
- * @param 	string	$sourcetodecode		String to decode
- * @return
+ * @param 	string	$source		String to decode
+ * @return	string				Unescaped string
  */
 function jsUnEscape($source)
 {
     $decodedStr = "";
     $pos = 0;
-    $len = strlen ($source);
+    $len = strlen($source);
     while ($pos < $len) {
-        $charAt = substr ($source, $pos, 1);
+        $charAt = substr($source, $pos, 1);
         if ($charAt == '%') {
             $pos++;
-            $charAt = substr ($source, $pos, 1);
+            $charAt = substr($source, $pos, 1);
             if ($charAt == 'u') {
                 // we got a unicode character
                 $pos++;
-                $unicodeHexVal = substr ($source, $pos, 4);
-                $unicode = hexdec ($unicodeHexVal);
+                $unicodeHexVal = substr($source, $pos, 4);
+                $unicode = hexdec($unicodeHexVal);
                 $entity = "&#". $unicode . ';';
-                $decodedStr .= utf8_encode ($entity);
+                $decodedStr .= utf8_encode($entity);
                 $pos += 4;
             }
             else {
                 // we have an escaped ascii character
-                $hexVal = substr ($source, $pos, 2);
-                $decodedStr .= chr (hexdec ($hexVal));
+                $hexVal = substr($source, $pos, 2);
+                $decodedStr .= chr(hexdec($hexVal));
                 $pos += 2;
             }
         } else {
