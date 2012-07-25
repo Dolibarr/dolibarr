@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2010	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -164,8 +165,6 @@ class CompanyBankAccount extends Account
                 $this->id			   = $obj->rowid;
                 $this->socid           = $obj->fk_soc;
                 $this->bank            = $obj->bank;
-                $this->courant         = $obj->courant;
-                $this->clos            = $obj->clos;
                 $this->code_banque     = $obj->code_banque;
                 $this->code_guichet    = $obj->code_guichet;
                 $this->number          = $obj->number;
