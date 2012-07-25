@@ -121,6 +121,10 @@
 
 	<rule ref="Generic.Strings.UnnecessaryStringConcat" />
 
+	<rule ref="Generic.Strings.UnnecessaryStringConcat.Found">
+        <severity>0</severity>
+	</rule>
+    
     <rule ref="Generic.VersionControl.SubversionProperties" />
 
 	<!-- Disallow usage of tab -->
