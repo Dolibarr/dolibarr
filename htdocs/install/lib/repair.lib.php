@@ -26,6 +26,7 @@
  *
  *  @param	int		$id			Element id
  *  @param	string	$table		Table of Element
+ *  @return	boolean				True if child exists
  */
 function checkElementExist($id, $table)
 {
@@ -111,7 +112,7 @@ function checkLinkedElements($sourcetype, $targettype)
 
 /**
  * Clean data into ecm_directories table
- * 
+ *
  * @return	void
  */
 function clean_data_ecm_directories()
@@ -135,7 +136,7 @@ function clean_data_ecm_directories()
 				$resqlupdate=$db->query($sqlupdate);
 				if (! $resqlupdate) dol_print_error($db,'Failed to update');
 			}
-	
+
 		}
 	}
 	else dol_print_error($db,'Failed to run request');
