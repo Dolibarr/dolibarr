@@ -27,6 +27,7 @@
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/usergroups.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
 
 $langs->load("users");
 $langs->load("admin");
@@ -91,42 +92,17 @@ if ($id)
     $title = $langs->trans("Group");
     dol_fiche_head($head, 'rights', $title, 0, 'group');
 
-
-    $db->begin();
-
     // Charge les modules soumis a permissions
     $modules = array();
-    $modulesdir = array();
+    $modulesdir = dolGetModulesDirs();
 
-	foreach ($conf->file->dol_document_root as $type => $dirroot)
-	{
-		$modulesdir[] = $dirroot . "/core/modules/";
-
-		if ($type == 'alt')
-		{
-			$handle=@opendir($dirroot);
-			if (is_resource($handle))
-			{
-				while (($file = readdir($handle))!==false)
-				{
-				    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-				    {
-				    	if (is_dir($dirroot . '/' . $file . '/core/modules/'))
-				    	{
-				    		$modulesdir[] = $dirroot . '/' . $file . '/core/modules/';
-				    	}
-				    }
-				}
-				closedir($handle);
-			}
-		}
-	}
+    $db->begin();
 
     foreach ($modulesdir as $dir)
     {
         // Load modules attributes in arrays (name, numero, orders) from dir directory
         //print $dir."\n<br>";
-        $handle=@opendir($dir);
+        $handle=@opendir(dol_osencode($dir));
         if (is_resource($handle))
         {
             while (($file = readdir($handle))!==false)
@@ -134,7 +110,7 @@ if ($id)
                 if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, dol_strlen($file) - 10) == '.class.php')
                 {
                     $modName = substr($file, 0, dol_strlen($file) - 10);
-                    
+
                     if ($modName)
                     {
                         include_once($dir."/".$file);
