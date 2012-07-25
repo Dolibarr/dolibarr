@@ -29,11 +29,11 @@ require_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/order.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/sendings.lib.php");
-if ($conf->product->enabled || $conf->service->enabled)  require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
-if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
-if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
-if ($conf->stock->enabled)    require_once(DOL_DOCUMENT_ROOT."/product/stock/class/entrepot.class.php");
+if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))  require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+if (! empty($conf->projet->enabled))   require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
+if (! empty($conf->propal->enabled))   require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
+if (! empty($conf->commande->enabled)) require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
+if (! empty($conf->stock->enabled))    require_once(DOL_DOCUMENT_ROOT."/product/stock/class/entrepot.class.php");
 
 $langs->load('orders');
 $langs->load("companies");
@@ -48,7 +48,7 @@ $action=GETPOST('action','alpha');
 
 // Security check
 $socid=0;
-if ($user->societe_id) $socid=$user->societe_id;
+if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result=restrictedArea($user,'commande',$id);
 
 
@@ -518,7 +518,7 @@ if ($id > 0 || ! empty($ref))
 					// Define a new tree with quantiies recalculated
 					$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
 					//var_dump($prods_arbo);
-					if(count($prods_arbo) > 0)
+					if (count($prods_arbo) > 0)
 					{
 						foreach($prods_arbo as $key => $value)
 						{
@@ -529,11 +529,11 @@ if ($id > 0 || ! empty($ref))
 							{
 								$img=img_warning($langs->trans("StockTooLow"));
 							}
-							print "<tr><td>&nbsp; &nbsp; &nbsp; ->
-                                <a href=\"".DOL_URL_ROOT."/product/fiche.php?id=".$value['id']."\">".$value['fullpath']."
-                                </a> (".$value['nb'].")</td><td align=\"center\"> ".$value['nb_total']."</td><td>&nbsp</td><td>&nbsp</td>
-                                <td align=\"center\">".$value['stock']." ".$img."</td></tr>";
-							print $value[0];
+							print '<tr><td>&nbsp; &nbsp; &nbsp; -> <a href="'.DOL_URL_ROOT."/product/fiche.php?id=".$value['id'].'">'.$value['fullpath'].'</a> ('.$value['nb'].')</td>';
+							print '<td align="center"> '.$value['nb_total'].'</td>';
+							print '<td>&nbsp</td>';
+							print '<td>&nbsp</td>';
+							print '<td align="center">'.$value['stock'].' '.$img.'</td></tr>'."\n";
 
 							print '</td></tr>'."\n";
 						}

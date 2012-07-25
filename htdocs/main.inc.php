@@ -722,7 +722,7 @@ $bcdd=array(0=>'class="impair drag drop"',1=>'class="pair drag drop"');
 $bcnd=array(0=>'class="impair nodrag nodrop"',1=>'class="pair nodrag nodrop"');
 
 // Define messages variables
-$mesg=''; $mesgs=array();
+$mesg=''; $mesgs=array(); $warning=''; $warnings=array(); $error=0; $errors=array();
 if (isset($_SESSION['dol_message']))
 {
 	$mesgs[]=$_SESSION['dol_message'];

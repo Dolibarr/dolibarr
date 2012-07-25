@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005      Regis Houssin         <regis@dolibarr.fr>
- * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
+/* Copyright (C) 2003-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2005		Simon TOSSER			<simon@kornog-computing.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ $modulepart='contract';
 /*
  * Action envoie fichier
  */
-if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
+if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	if (dol_mkdir($upload_dir) >= 0)
 	{
@@ -135,7 +135,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 
 $form = new Form($db);
 
-llxHeader("","",$langs->trans("CardProduct".$product->type));
+llxHeader();
 
 
 if ($object->id)
@@ -183,7 +183,7 @@ if ($object->id)
 
     // Affiche formulaire upload
    	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/contrat/document.php?id='.$object->id,'',0,0,$user->rights->contrat->creer,50,$object);
+	$formfile->form_attach_new_file($_SERVER['PHP_SELF'].'?id='.$object->id,'',0,0,$user->rights->contrat->creer,50,$object);
 
 
 	// List of document
@@ -196,7 +196,7 @@ else
 	print $langs->trans("UnkownError");
 }
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>

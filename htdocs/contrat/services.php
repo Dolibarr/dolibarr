@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,13 +47,22 @@ $filter=GETPOST("filter");
 $search_nom=GETPOST("search_nom");
 $search_contract=GETPOST("search_contract");
 $search_service=GETPOST("search_service");
-$statut=isset($_GET["statut"])?$_GET["statut"]:1;
+$statut=GETPOST('statut')?GETPOST('statut'):1;
 $socid=GETPOST('socid','int');
+
+$op1month=GETPOST('op1month');
+$op1day=GETPOST('op1day');
+$op1year=GETPOST('op1year');
+$filter_op1=GETPOST('filter_op1');
+$op2month=GETPOST('op2month');
+$op2day=GETPOST('op2day');
+$op2year=GETPOST('op2year');
+$filter_op2=GETPOST('filter_op2');
 
 // Security check
 $contratid = GETPOST('id','int');
-if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'contrat',$contratid,'');
+if (! empty($user->societe_id)) $socid=$user->societe_id;
+$result = restrictedArea($user, 'contrat',$contratid);
 
 
 $staticcontrat=new Contrat($db);
@@ -92,14 +101,14 @@ if ($mode == "0") $sql.= " AND cd.statut = 0";
 if ($mode == "4") $sql.= " AND cd.statut = 4";
 if ($mode == "5") $sql.= " AND cd.statut = 5";
 if ($filter == "expired") $sql.= " AND cd.date_fin_validite < '".$db->idate($now)."'";
-if ($search_nom)      $sql.= " AND s.nom like '%".$db->escape($search_nom)."%'";
+if ($search_nom)      $sql.= " AND s.nom LIKE '%".$db->escape($search_nom)."%'";
 if ($search_contract) $sql.= " AND c.rowid = '".$db->escape($search_contract)."'";
-if ($search_service)  $sql.= " AND (p.ref like '%".$db->escape($search_service)."%' OR p.description like '%".$db->escape($search_service)."%' OR cd.description LIKE '%".$db->escape($search_service)."%')";
+if ($search_service)  $sql.= " AND (p.ref LIKE '%".$db->escape($search_service)."%' OR p.description LIKE '%".$db->escape($search_service)."%' OR cd.description LIKE '%".$db->escape($search_service)."%')";
 if ($socid > 0)       $sql.= " AND s.rowid = ".$socid;
-$filter_date1=dol_mktime(0,0,0,$_REQUEST['op1month'],$_REQUEST['op1day'],$_REQUEST['op1year']);
-$filter_date2=dol_mktime(0,0,0,$_REQUEST['op2month'],$_REQUEST['op2day'],$_REQUEST['op2year']);
-if (! empty($_REQUEST['filter_op1']) && $_REQUEST['filter_op1'] != -1 && $filter_date1 != '') $sql.= " AND date_ouverture_prevue ".$_REQUEST['filter_op1']." ".$db->idate($filter_date1);
-if (! empty($_REQUEST['filter_op2']) && $_REQUEST['filter_op2'] != -1 && $filter_date2 != '') $sql.= " AND date_fin_validite ".$_REQUEST['filter_op2']." ".$db->idate($filter_date2);
+$filter_date1=dol_mktime(0,0,0,$op1month,$op1day,$op1year);
+$filter_date2=dol_mktime(0,0,0,$op2month,$op2day,$op2year);
+if (! empty($filter_op1) && $filter_op1 != -1 && $filter_date1 != '') $sql.= " AND date_ouverture_prevue ".$filter_op1." ".$db->idate($filter_date1);
+if (! empty($filter_op2) && $filter_op2 != -1 && $filter_date2 != '') $sql.= " AND date_fin_validite ".$filter_op2." ".$db->idate($filter_date2);
 $sql .= $db->order($sortfield,$sortorder);
 $sql .= $db->plimit($limit + 1, $offset);
 
@@ -117,10 +126,10 @@ if ($resql)
 	if ($search_service)  $param.='&amp;search_service='.urlencode($search_service);
 	if ($mode)            $param.='&amp;mode='.$mode;
 	if ($filter)          $param.='&amp;filter='.$filter;
-	if (! empty($_REQUEST['filter_op1']) && $_REQUEST['filter_op1'] != -1) $param.='&amp;filter_op1='.urlencode($_REQUEST['filter_op1']);
-	if (! empty($_REQUEST['filter_op2']) && $_REQUEST['filter_op2'] != -1) $param.='&amp;filter_op2='.urlencode($_REQUEST['filter_op2']);
-	if ($filter_date1 != '') $param.='&amp;op1day='.$_REQUEST['op1day'].'&amp;op1month='.$_REQUEST['op1month'].'&amp;op1year='.$_REQUEST['op1year'];
-	if ($filter_date2 != '') $param.='&amp;op2day='.$_REQUEST['op2day'].'&amp;op2month='.$_REQUEST['op2month'].'&amp;op2year='.$_REQUEST['op2year'];
+	if (! empty($filter_op1) && $filter_op1 != -1) $param.='&amp;filter_op1='.urlencode($filter_op1);
+	if (! empty($filter_op2) && $filter_op2 != -1) $param.='&amp;filter_op2='.urlencode($filter_op2);
+	if ($filter_date1 != '') $param.='&amp;op1day='.$op1day.'&amp;op1month='.$op1month.'&amp;op1year='.$op1year;
+	if ($filter_date2 != '') $param.='&amp;op2day='.$op2day.'&amp;op2month='.$op2month.'&amp;op2year='.$op2year;
 
 	$title=$langs->trans("ListOfServices");
 	if ($mode == "0") $title=$langs->trans("ListOfInactiveServices");	// Must use == "0"
@@ -163,16 +172,16 @@ if ($resql)
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
 	$arrayofoperators=array('<'=>'<','>'=>'>');
-	print $form->selectarray('filter_op1',$arrayofoperators,$_REQUEST['filter_op1'],1);
+	print $form->selectarray('filter_op1',$arrayofoperators,$filter_op1,1);
 	print ' ';
-	$filter_date1=dol_mktime(0,0,0,$_REQUEST['op1month'],$_REQUEST['op1day'],$_REQUEST['op1year']);
+	$filter_date1=dol_mktime(0,0,0,$op1month,$op1day,$op1year);
 	print $form->select_date($filter_date1,'op1',0,0,1);
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
 	$arrayofoperators=array('<'=>'<','>'=>'>');
-	print $form->selectarray('filter_op2',$arrayofoperators,$_REQUEST['filter_op2'],1);
+	print $form->selectarray('filter_op2',$arrayofoperators,$filter_op2,1);
 	print ' ';
-	$filter_date2=dol_mktime(0,0,0,$_REQUEST['op2month'],$_REQUEST['op2day'],$_REQUEST['op2year']);
+	$filter_date2=dol_mktime(0,0,0,$op2month,$op2day,$op2year);
 	print $form->select_date($filter_date2,'op2',0,0,1);
 	print '</td>';
 	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -204,7 +213,7 @@ if ($resql)
 			$productstatic->ref=$obj->pref;
 			print $productstatic->getNomUrl(1,'',20);
             print $obj->label?' - '.dol_trunc($obj->label,16):'';
-            if ($obj->description && $conf->global->PRODUIT_DESC_IN_LIST) print '<br>'.dol_nl2br($obj->description);
+            if (! empty($obj->description) && ! empty($conf->global->PRODUIT_DESC_IN_LIST)) print '<br>'.dol_nl2br($obj->description);
 		}
 		else
 		{
