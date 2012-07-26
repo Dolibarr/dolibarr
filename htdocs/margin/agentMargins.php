@@ -184,8 +184,8 @@ if ($result)
 		{
 			$objp = $db->fetch_object($result);
 
-			$marginRate = ($objp->buying_price != 0)?(100 * round($objp->marge / $objp->buying_price ,5)):'';
-			$markRate = ($objp->selling_price != 0)?(100 * round($objp->marge / $objp->selling_price ,5)):'';
+			$marginRate = ($objp->buying_price != 0)?(100 * round($objp->marge / $objp->buying_price, 5)):'';
+			$markRate = ($objp->selling_price != 0)?(100 * round($objp->marge / $objp->selling_price, 5)):'';
 
 			$var=!$var;
 

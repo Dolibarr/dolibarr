@@ -23,6 +23,7 @@
 
 /**
  *  Define head array for tabs of marges tools setup pages
+ *
  *  @return			Array of head
  */
 function marges_admin_prepare_head()
@@ -72,7 +73,20 @@ function marges_prepare_head($user)
 	return $head;
 }
 
-function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localtax2_tx, $fk_pa, $paht) {
+/**
+ * getMarginInfos
+ *
+ * @param 	float 	$pvht				Buying price with tax
+ * @param 	float	$remise_percent		Discount percent
+ * @param 	float	$tva_tx				Vat rate
+ * @param 	float	$localtax1_tx		Vat rate special 1
+ * @param 	float	$localtax2_tx		Vat rate special 2
+ * @param 	int		$fk_pa				???
+ * @param 	float	$paht				Buying price without tax
+ * @return	array						Array of margin info
+ */
+function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localtax2_tx, $fk_pa, $paht)
+{
   global $db, $conf;
 
   $marge_tx_ret='';

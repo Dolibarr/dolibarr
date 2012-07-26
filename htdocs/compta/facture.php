@@ -160,7 +160,7 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fact
 	$result = $object->delete();
 	if ($result > 0)
 	{
-		Header('Location: '.$_SERVER["PHP_SELF"]);
+		Header('Location: '.DOL_URL_ROOT.'/compta/facture/list.php');
 		exit;
 	}
 	else
@@ -861,8 +861,8 @@ else if ($action == 'add' && $user->rights->facture->creer)
                                     $object->origin,
                                     $lines[$i]->rowid,
                                     $fk_parent_line,
-		                                $lines[$i]->fk_fournprice,
-		                                $lines[$i]->pa_ht
+                                    $lines[$i]->fk_fournprice,
+                                    $lines[$i]->pa_ht
                                 );
 
                                 if ($result > 0)
@@ -1114,8 +1114,8 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
                     '',
                     0,
                     GETPOST('fk_parent_line'),
-		          			$fk_fournprice,
-		          			$pa_ht
+                    $fk_fournprice,
+                    $pa_ht
                 );
             }
         }
@@ -1231,9 +1231,9 @@ else if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['sa
             $info_bits,
             $type,
             GETPOST('fk_parent_line'),
-		    		0,
-		    		$fk_fournprice,
-		    		$pa_ht
+            0,
+            $fk_fournprice,
+            $pa_ht
         );
 
         // Define output language

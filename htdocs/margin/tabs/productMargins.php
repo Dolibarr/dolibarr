@@ -184,8 +184,8 @@ if ($id > 0 || ! empty($ref))
 					$objp = $db->fetch_object($result);
 					$var=!$var;
 
-					$marginRate = ($objp->buying_price != 0)?(100 * round($objp->marge / $objp->buying_price ,5)):'' ;
-					$markRate = ($objp->selling_price != 0)?(100 * round($objp->marge / $objp->selling_price ,5)):'' ;
+					$marginRate = ($objp->buying_price != 0)?(100 * round($objp->marge / $objp->buying_price, 5)):'' ;
+					$markRate = ($objp->selling_price != 0)?(100 * round($objp->marge / $objp->selling_price, 5)):'' ;
 					print "<tr $bc[$var]>";
 					print '<td>';
 					$invoicestatic->id=$objp->facid;
@@ -217,7 +217,7 @@ if ($id > 0 || ! empty($ref))
 			$var=!$var;
 			$totalMargin = $cumul_vente - $cumul_achat;
 			$marginRate = ($cumul_achat != 0)?(100 * round($totalMargin / $cumul_achat, 5)):'';
-			$markRate = ($cumul_vente != 0)?(100 * round($totalMargin / $cumul_vente ,5)):'';
+			$markRate = ($cumul_vente != 0)?(100 * round($totalMargin / $cumul_vente, 5)):'';
 			print '<tr '.$bc[$var].' style="border-top: 1px solid #ccc; font-weight: bold">';
 			print '<td colspan=4>'.$langs->trans('TotalMargin')."</td>";
 			print "<td align=\"right\">".price($cumul_vente)."</td>\n";

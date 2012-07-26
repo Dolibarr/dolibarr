@@ -160,7 +160,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	 * 	@param	string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *	@return	int         					1 if OK, <=0 if KO
 	 */
-	function write_file(&$object,$outputlangs,$srctemplatepath)
+	function write_file($object,$outputlangs,$srctemplatepath)
 	{
 		global $user,$langs,$conf,$mysoc;
 

@@ -825,8 +825,8 @@ else if ($action == "addline" && $user->rights->propale->creer)
     			-1,
     			0,
     			$_POST['fk_parent_line'],
-					$fk_fournprice,
-					$pa_ht
+    			$fk_fournprice,
+    			$pa_ht
 			);
 
 			if ($result > 0)
@@ -923,9 +923,9 @@ else if ($action == 'updateligne' && $user->rights->propale->creer && GETPOST('s
     		$info_bits,
     		$special_code,
     		$_POST['fk_parent_line'],
-				0,
-				$fk_fournprice,
-				$pa_ht
+    		0,
+    		$fk_fournprice,
+    		$pa_ht
 		);
 
 		// Define output language

@@ -137,75 +137,77 @@ class ProductFournisseur extends Product
      *    @param  	float		$buyprice        	Purchase price for the quantity min
      *    @param  	User		$user            	Object user user made changes
      *    @param  	string		$price_base_type	HT or TTC
-     *    @param  	string		$charges			costs affering to product
      *    @param  	Societe		$fourn				Supplier
      *    @param  	int			$availability		Product availability
      *    @param	string		$ref_fourn			Supplier ref
      *    @param	float		$tva_tx				VAT rate
+     *    @param  	string		$charges			costs affering to product
      *    @return	int								>0 if KO, >0 if OK
      */
-    function update_buyprice($qty, $buyprice, $charges, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx)
+    function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges=0)
     {
         global $conf,$mysoc;
 
         // Clean parameter
-        $buyprice=price2num($buyprice);
-				$charges=price2num($charges);
-        $qty=price2num($qty);
+        if (empty($qty)) $qty=0;
+        if (empty($buyprice)) $buyprice=0;
+        if (empty($charges)) $charges=0;
         if (empty($availability)) $availability=0;
+        $buyprice=price2num($buyprice);
+		$charges=price2num($charges);
+        $qty=price2num($qty);
 
-		 		$error=0;
+ 		$error=0;
 
-				if ($price_base_type == 'TTC')
-				{
-					$ttx = get_default_tva($fourn,$mysoc,$this->id);
-					$buyprice = $buyprice/(1+($ttx/100));
-				}
-				$unitBuyPrice = price2num($buyprice/$qty,'MU');
-				$unitCharges = price2num($charges/$qty,'MU');
+		if ($price_base_type == 'TTC')
+		{
+			$ttx = get_default_tva($fourn,$mysoc,$this->id);
+			$buyprice = $buyprice/(1+($ttx/100));
+		}
+		$unitBuyPrice = price2num($buyprice/$qty,'MU');
+		$unitCharges = price2num($charges/$qty,'MU');
 
-				$now=dol_now();
+		$now=dol_now();
 
         $this->db->begin();
 
         if ($this->product_fourn_price_id)
         {
-		  		$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
-					$sql.= " SET fk_user = " . $user->id." ,";
-					$sql.= " price = ".price2num($buyprice).",";
-					$sql.= " quantity = ".$qty.",";
-					$sql.= " charges = ".price2num($charges).",";
-					$sql.= " unitprice = ".$unitBuyPrice.",";
-					$sql.= " unitcharges = ".$unitCharges.",";
-					$sql.= " tva_tx = ".$tva_tx.",";
-					$sql.= " fk_availability = ".$availability.",";
-					$sql.= " entity = ".$conf->entity;
-		  		$sql .= " WHERE rowid = ".$this->product_fourn_price_id;
-		  
-		  		$resql = $this->db->query($sql) ;
-					if ($resql)
-					{
-						$this->db->commit();
-						return 0;
-					}
-					else
-					{
-						$this->error=$this->db->error()." sql=".$sql;
-						$this->db->rollback();
-						return -2;
-					}
+	  		$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
+			$sql.= " SET fk_user = " . $user->id." ,";
+			$sql.= " price = ".price2num($buyprice).",";
+			$sql.= " quantity = ".$qty.",";
+			$sql.= " unitprice = ".$unitBuyPrice.",";
+			$sql.= " unitcharges = ".$unitCharges.",";
+			$sql.= " tva_tx = ".$tva_tx.",";
+			$sql.= " fk_availability = ".$availability.",";
+			$sql.= " entity = ".$conf->entity.",";
+			$sql.= " charges = ".($charges != ''?price2num($charges):"null");
+			$sql.= " WHERE rowid = ".$this->product_fourn_price_id;
+
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$this->db->commit();
+				return 0;
+			}
+			else
+			{
+				$this->error=$this->db->error()." sql=".$sql;
+				$this->db->rollback();
+				return -2;
+			}
         }
 
         else
         {
-	        	// Supprime prix courant du fournisseur pour cette quantite
+	        	// Delete price for this quantity
 	        	$sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price";
 	        	$sql.= " WHERE rowid = ".$this->product_fourn_price_id;
 	        	$resql=$this->db->query($sql);
-				 		if ($resql)
-			  		{
-
-		            // Ajoute prix courant du fournisseur pour cette quantite
+				if ($resql)
+		  		{
+		            // Add price for this quantity to supplier
 		            $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price(";
 		            $sql.= "datec, fk_product, fk_soc, ref_fourn, fk_user, price, quantity, unitprice, tva_tx, fk_availability, entity)";
 		            $sql.= " values('".$this->db->idate($now)."',";
@@ -220,13 +222,13 @@ class ProductFournisseur extends Product
 		            $sql.= " ".$availability.",";
 		            $sql.= $conf->entity;
 		            $sql.=")";
-		
+
 		            dol_syslog(get_class($this)."::update_buyprice sql=".$sql);
 		            if (! $this->db->query($sql))
 		            {
 		                $error++;
 		            }
-		
+
 		            /*if (! $error)
 		            {
 		                // Ajoute modif dans table log
@@ -238,7 +240,7 @@ class ProductFournisseur extends Product
 		                $sql.= " ".price2num($buyprice).",";
 		                $sql.= " ".$qty;
 		                $sql.=")";
-		
+
 		                $resql=$this->db->query($sql);
 		                if (! $resql)
 		                {
@@ -246,7 +248,7 @@ class ProductFournisseur extends Product
 		                }
 		            }
 					*/
-		
+
 		            if (! $error)
 		            {
 		                $this->db->commit();

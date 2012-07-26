@@ -89,7 +89,7 @@
     <rule ref="Generic.Metrics.CyclomaticComplexity">
         <properties>
             <property name="complexity" value="80" />
-            <property name="absoluteComplexity" value="100" />
+            <property name="absoluteComplexity" value="200" />
         </properties>
     </rule>
     <rule ref="Generic.Metrics.NestingLevel">
@@ -121,6 +121,10 @@
 
 	<rule ref="Generic.Strings.UnnecessaryStringConcat" />
 
+	<rule ref="Generic.Strings.UnnecessaryStringConcat.Found">
+        <severity>0</severity>
+	</rule>
+    
     <rule ref="Generic.VersionControl.SubversionProperties" />
 
 	<!-- Disallow usage of tab -->
@@ -199,11 +203,15 @@
 	<rule ref="PEAR.NamingConventions.ValidClassName.Invalid">
         <severity>0</severity>
 	</rule>
+	
 	<rule ref="PEAR.NamingConventions.ValidClassName.StartWithCaptial">
         <severity>0</severity>
 	</rule>
 
 	<rule ref="PEAR.NamingConventions.ValidFunctionName" />
+	<rule ref="PEAR.NamingConventions.ValidFunctionName.FunctionNameInvalid">
+        <severity>0</severity>
+	</rule>
 	<rule ref="PEAR.NamingConventions.ValidFunctionName.FunctionNoCaptial">
         <severity>0</severity>
 	</rule>

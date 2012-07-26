@@ -1,244 +1,209 @@
-/*
+﻿/*
  * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-03-15 19:05:26
+ * Manually generated
+ * Generation date 2012-07-24 12:07:26
  */
 
-
-// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-// Reference language: en_US
+// START - Lines generated manually (2012-07-24 12:07:26).
+// Reference language: en_US->tr_TR - members
 CHARSET=UTF-8
-MembersArea=Üye Alanı
-PublicMembersArea=Kamu üye alanı
+MembersArea=Üye alanı
+PublicMembersArea=Genel üye alanı
 MemberCard=Üye kartı
 SubscriptionCard=Abonelik kartı
 Member=Üye
-Members=Üye
+Members=Üyeler
 MemberAccount=Üye girişi
-ShowMember=Show üye kartı
-UserNotLinkedToMember=Kullanıcının üye bağlı değil
-MembersTickets=Üye Bilet
-FundationMembers=Vakıf üye
+ShowMember=Üye kartı göster
+UserNotLinkedToMember=Kullanıcı herhangi bir üyeye bağlı değil
+MembersTickets=Üye Biletleri
+FundationMembers=Kurum üyeleri
 Attributs=Öznitelikleri
-ErrorMemberTypeNotDefined=Üye tipi tanımlanmamış
-ListOfPublicMembers=Kamu üyelerinin listesi
-ListOfValidatedPublicMembers=List of kamu doğrulanmış üye
-ErrorThisMemberIsNotPublic=Bu üye kamu değil
-ErrorMemberIsAlreadyLinkedToThisThirdParty=Başka bir üye <b>(ad:% giriş:% s)</b> zaten bir üçüncü <b>parti%</b> bağlantılı <b>değil.</b> Çünkü üçüncü parti sadece bir üyesi (ve tersi) bağlı olamaz bu bağlantıyı ilk kaldırın.
-ErrorUserPermissionAllowsToLinksToItselfOnly=Güvenlik nedeniyle, tüm kullanıcılar düzenlemek için senin olmayan bir kullanıcı için üye bağlantı yapabilmek için gerekli izinlerin atanması gerekir.
-ThisIsContentOfYourCard=Bu kartınızın bilgilerini olduğunu
-CardContent=Senin üye kartı içeriği
-SetLinkToUser=Bir kullanıcı Dolibarr Bağlantı
-SetLinkToThirdParty=Bir Dolibarr üçüncü Bağlantı
-MembersCards=Üye kartları baskı
-MembersList=Üye listesi
-MembersListToValid=Taslak üye listesi () doğrulanmış olması
+ErrorMemberTypeNotDefined=Üye türü tanımlanmamış
+ListOfPublicMembers=Genel üyelerinin listesi
+ListOfValidatedPublicMembers=Doğrulanmış genel üyelerin listesi
+ErrorThisMemberIsNotPublic=Bu üye genel değil
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Başka bir üye  (adı: <b>%s</b>, kullanıcı: <b>%s</b>) zaten bir üçüncü partiyle <b>%s</b> bağlantılı.Önce bu bağlantıyı kaldırın, çünkü bir üçüncü partı yalnızca bir üyeye bağlantılı olamaz (ya da tersi).
+ErrorUserPermissionAllowsToLinksToItselfOnly=Güvenlik nedeniyle, bir üyenin kendinizin dışında bir kullanıcıya bağlı olabilmesi için tüm kullanıcıları düzenleme iznine sahip olmanız gerekir.
+ThisIsContentOfYourCard=Bu kartınızın ayrıntılarıdır
+CardContent=Üye kartınızın içeriği
+SetLinkToUser=Bir Dolibarr kullanıcısına bağlantı
+SetLinkToThirdParty=Bir Dolibarr üçüncü partisine bağlantı
+MembersCards=Üye kartvizitleri
+MembersList=Üyelerin listesi
+(MembersListToValid=Taslak üye listesi (doğrulaacak)
 MembersListValid=Geçerli üye listesi
-MembersListUpToDate=Güncel abonelik ile geçerli üye listesi
-MembersListNotUpToDate=Tarih dışında abonelik ile geçerli üye listesi
-MembersListResiliated=Resiliated üye listesi
+MembersListUpToDate=Güncel abonelikleri ile geçerli üye listesi
+MembersListNotUpToDate=Abonelik tarihleri geçmiş geçerli üye listesi
+MembersListResiliated=Sonlandırılmış üyelikler listesi
 MembersListQualified=Nitelikli üye listesi
 MenuMembersToValidate=Taslak üye
 MenuMembersValidated=Doğrulanmış üye
-MenuMembersUpToDate=Güncel üyelerine
-MenuMembersNotUpToDate=Out tarihi üye
-MenuMembersResiliated=Resiliated üye
-DateAbonment=Abonelik Tarih
-DateSubscription=Abonelik Tarih
+MenuMembersUpToDate=Güncel üyeler
+MenuMembersNotUpToDate=Tarihi geçmiş üyeler
+MenuMembersResiliated=Sonlandırılmış Üyelikler
+MembersWithSubscriptionToReceive=Abonelik alacal üyeler
+DateAbonment=Abonelik tarihi
+DateSubscription=Abonelik tarihi
 DateNextSubscription=Sonraki abonelik
 DateEndSubscription=Abonelik bitiş tarihi
-EndSubscription=Sonunda abonelik
-SubscriptionId=Abonelik id
-MemberId=Member ID
+EndSubscription=Abonelik bitir
+SubscriptionId=Abonelik kimliği
+MemberId=Üye kimliği
 NewMember=Yeni üye
-NewType=Yeni üye tipi
-MemberType=Üyelik tipi
-MemberTypeId=Üyelik Türü Kimliği
-MemberTypeLabel=Üyelik tipi etiket
+NewType=Yeni üye türü
+MemberType=Üyelik türü
+MemberTypeId=Üyelik türü kimliği
+MemberTypeLabel=Üyelik türü etiketi
 MembersTypes=Üye türleri
 MembersAttributes=Üye öznitelikleri
-SearchAMember=Üye Arama
-MemberStatusDraft=Taslak (ihtiyaç) doğrulanmış olması
+SearchAMember=Bir üye ara
+MemberStatusDraft=Taslak (doğrulanması gerekir)
 MemberStatusDraftShort=Taslak
-MemberStatusActive=Onaylı (bekleyen abonelik)
-MemberStatusActiveShort=Validated
+MemberStatusActive=Onaylı (abonelik bekliyor)
+MemberStatusActiveShort=Doğrulanmış
 MemberStatusActiveLate=abonelik süresi doldu
 MemberStatusActiveLateShort=Süresi doldu
 MemberStatusPaid=Abonelik güncel
 MemberStatusPaidShort=Güncel
-MemberStatusResiliated=Resiliated üye
-MemberStatusResiliatedShort=Resiliated
-MembersStatusToValid=Taslak üye
-MembersStatusToValidShort=Taslak üye
+MemberStatusResiliated=Sonlandırılmış üyelik üye
+MemberStatusResiliatedShort=Sonlandırılmış
+MembersStatusToValid=Taslak üyeler
+MembersStatusToValidShort=Taslak üyeler
 MembersStatusValidated=Doğrulanmış üye
 MembersStatusPaid=Abonelik güncel
 MembersStatusPaidShort=Güncel
-MembersStatusNotPaid=Abonelik out of date
-MembersStatusNotPaidShort=Out of date
-MembersStatusResiliated=Resiliated üye
-MembersStatusResiliatedShort=Resiliated üye
-NewCotisation=Yeni katkı
-PaymentSubscription=Yeni prim ödeme
-EditMember=Değiştir Üye
-SubscriptionEndDate=Abonelik bitiş tarihini
-NewAttribute=Yeni özellik
-AttributeCode=Özellik kodu
-OptionalFieldsSetup=İsteğe bağlı alanlar kurulum
-MembersTypeSetup=Üye setup
+MembersStatusNotPaid=Abonelik tarihi geçmiş
+MembersStatusNotPaidShort=Tarihi geçmiş
+MembersStatusResiliated=Sonladırılmış üyelikler
+MembersStatusResiliatedShort=Sonlandırılmış üyelik
+NewCotisation=Yeni katkı payı
+PaymentSubscription=Yeni katkı payı ödeme
+EditMember=Üye düzenle
+SubscriptionEndDate=Abonelik bitiş tarihi
+MembersTypeSetup=Üye türü kurulumu
 NewSubscription=Yeni abonelik
+NewSubscriptionDesc=Bu form aboneliğinizi kuruma yeni bir üye olarak kaydetmenize olanak verir. Abonelik yenilemek istiyorsanız (Zaten üyeyseniz), kurum yönetimine %s epostası ile başvurun.
 Subscription=Abonelik
-Subscriptions=Abonelikleri
-SubscriptionLate=Geç
-SubscriptionNotReceived=Abonelik almadım
-SubscriptionLateShort=Geç
-SubscriptionNotReceivedShort=Hiç alınan
-ListOfSubscriptions=Abonelikleri Listesi
-SendCardByMail=Kart gönder
+Subscriptions=Abonelikler
+SubscriptionLate=Gecikmiş
+SubscriptionNotReceived=Abonelik hiç alınmadı
+SubscriptionLateShort=Gecikmiş
+SubscriptionNotReceivedShort=Hiç alınmadı
+ListOfSubscriptions=Abonelikler listesi
+SendCardByMail=Kartı Eposta ile gönder
 AddMember=Üye ekle
-MemberType=Üyelik tipi
-NoTypeDefinedGoToSetup=Hiçbir üye türleri tanımlanmıştır. Kurulum git - Üyeler türleri
-NewMemberType=Yeni üye tipi
-WelcomeEMail=Welcome e-posta
+MemberType=Üyelik türü
+NoTypeDefinedGoToSetup=Hiçbir üyelik türü tanımlanmamıştır. Kurulum  - Üye türlerine git
+NewMemberType=Yeni üye türü
+WelcomeEMail=Hoşgeldiniz e-postası
 SubscriptionRequired=Abonelik gerekli
-EditType=Değiştir Üye tipi
-DeleteType=Silmek
-VoteAllowed=Oy izin
+EditType=Üye türünü düzenle
+DeleteType=Sil
+VoteAllowed=Oylamaya izin verildi
 Physical=Fiziksel
 Moral=Ahlaki
 MorPhy=Ahlaki / Fiziksel
-Reenable=Yeniden etkinleştirin
-ResiliateMember=Resiliate Üye
-ConfirmResiliateMember=Bunu üye resiliate istediğinizden emin misiniz?
-DeleteMember=Delete Üye
-ConfirmDeleteMember=Bunu üye silmek isterseniz (Üye silinmesi tüm abonelikleri siler) emin misiniz?
-DeleteSubscription=Silmek bir abonelik
-ConfirmDeleteSubscription=Bunu abonelik silmek istediğinizden emin misiniz?
+Reenable=Yeniden etkinleştirilebilir
+ResiliateMember=Bir üyelik sonlandır
+ConfirmResiliateMember=Bu üyeliği sonlandırmak istediğinizden emin misiniz?
+DeleteMember=Üye sil
+ConfirmDeleteMember=Bu üyeyi silmek istediğinizden emin misiniz (Bir üyenin silinmesi tüm aboneliklerini silecektir)?
+DeleteSubscription=Bir abonelik sil
+ConfirmDeleteSubscription=Bu aboneliği silmek istediğinizden emin misiniz?
 Filehtpasswd=htpasswd dosyası
-ValidateMember=Validate Üye
-ConfirmValidateMember=Bunu üye doğrulamak istediğinizden emin misiniz?
-FollowingLinksArePublic=Aşağıdaki bağlantılar açık sayfaları herhangi bir Dolibarr izni ile korunmaktadır değildir. Onlar, sağlanan örnek olarak nasıl üye veritabanı listesini göstermek için sayfaları format değildir.
-PublicMemberList=Kamu üye listesi
-BlankSubscriptionForm=Abone Formu
-MemberPublicLinks=Kamu bağlantılar / sayfaları
-ExportDataset_member_1=Üyeleri ve abonelikleri
-LastMembers=Son% s üye
-LastMembersModified=Son% s üye olarak
-AttributeName=Özellik adı
-FieldEdition=% Alan baskı
-AlphaNumOnlyCharsAndNoSpace=boşluk olmadan sadece alphanumericals karakter
-String=String
+ValidateMember=Bir üye doğrula
+ConfirmValidateMember=Bu üyeliği doğrulamak istediğinizden emin misiniz?
+FollowingLinksArePublic=Aşağıdaki bağlantılar açık sayfalar olup herhangi bir Dolibarr izni ile korunmamaktadır. Onlar biçimlendirilmiş sayfalar olmayıp üye veritabanının nasıl listelendiğine örnek olarak verilmiştir.
+PublicMemberList=Genel üye listesi
+BlankSubscriptionForm=Genel oto-abonelik formu
+"BlankSubscriptionFormDesc=Dolibarr size dış ziyaretçilerin kurum üyeliği istemesine izin veren genel bir URL sağlar. Eğer bir çevrimiçi ödeme modülü etkinse ayrıca bir ödeme formu da otomatik olarak sağlanacaktır.
+"
+"EnablePublicSubscriptionForm=Genel oto-üyelik formunu etkinleştirin
+"
+MemberPublicLinks=Genel bağlantılar/sayfalar
+ExportDataset_member_1=Üyeler ve abonelikleri
+"ImportDataset_member_1=Üyeler
+"
+LastMembers=Son % s üye
+"LastMembersModified=Son değiştirilen % s üye olarak
+"
+LastSubscriptionsModified=Sondeğiştirilen  %s abonelik
+AttributeName=Öznitelik adı
+FieldEdition=%s Alanının düzenlenmesi
+String=Söz dizesi
 Text=Metin
 Int=Int
 Date=Tarih
 DateAndTime=Tarih ve saat
-PublicMemberCard=Üyelik kamu kartı
-MemberNotOrNoMoreExpectedToSubscribe=Üyelik abone beklenmiyor veya daha fazla
+PublicMemberCard=Genel üyelik kartı
+MemberNotOrNoMoreExpectedToSubscribe=Artık üyelik ya da abonelike beklenmiyor
 AddSubscription=Abonelik ekle
-ShowSubscription=Show abonelik
-MemberModifiedInDolibarr=Üye Dolibarr değiştirilemez
-SendAnEMailToMember=Üye bilgileri e-posta gönder
-DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=Üye autosubscription için e-posta konu
-DescADHERENT_AUTOREGISTER_MAIL=EPosta üye autosubscription için
-DescADHERENT_MAIL_VALID_SUBJECT=Üye doğrulama için e-posta konu
-DescADHERENT_MAIL_VALID=EPosta üye doğrulama için
-DescADHERENT_MAIL_COTIS_SUBJECT=Abonelik için e-posta konu
-DescADHERENT_MAIL_COTIS=E-posta aboneliği için
-DescADHERENT_MAIL_RESIL_SUBJECT=Üye resiliation için e-posta konu
-DescADHERENT_MAIL_RESIL=EPosta üye resiliation için
-DescADHERENT_MAIL_FROM=Gönderen EPosta otomatik e-postalar için
-DescADHERENT_ETIQUETTE_TYPE=Etiket biçimi
-DescADHERENT_CARD_HEADER_TEXT=Metin üye kartları üstüne basılı
-DescADHERENT_CARD_TEXT=Metin üye kartları basılır
-DescADHERENT_CARD_FOOTER_TEXT=Metin üye kartları alt yazdırılır
-ShowTypeCard=Show türü %s
-HTPasswordExport=htpassword dosya nesil
-NoThirdPartyAssociatedToMember=Üçüncü parti üyesi ilişkili
-ThirdPartyDolibarr=Dolibarr üçüncü parti
-MembersAndSubscriptions=Üyeleri ve Suscriptions
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-09 13:55:19).
-// Reference language: en_US -> tr_TR
-Public=Bilgileri ortak (yok = Özel)
-Exports=İhracat
-NewMemberbyWeb=Yeni üye eklendi. Onay bekliyor
-NewMemberForm=Yeni üye formu
-SubscriptionsStatistics=Abonelikleri İstatistikleri
-NbOfSubscriptions=Abonelik sayısı
-AmountOfSubscriptions=Abonelik Miktarı
-TurnoverOrBudget=Ciro (bir şirket) veya Bütçe (vakıf)
-DefaultAmount=Abonelik Standart miktarı
-CanEditAmount=Ziyaretçi kendi abonelik miktarını seçin / düzenleyebilirsiniz
-// STOP - Lines generated via autotranslator.php tool (2011-10-09 13:56:10).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-09 14:04:20).
-// Reference language: en_US -> tr_TR
-NewSubscriptionDesc=Bu form aboneliğinizi vakıf yeni bir üye olarak kaydetmenize olanak verir. (Zaten bir üye) abonelik yenilemek istiyorsanız, e-posta %s tarafından yerine vakıf yönetim kuruluyla irtibata geçiniz.
-BlankSubscriptionFormDesc=Dolibarr dış ziyaretçi vakıf abone olmak için sormak için izin vermenizi kamu URL sağlayabilir. Bir online ödeme modülü etkinse, bir ödeme formu de otomatik olarak sağlanır olacaktır.
-EnablePublicSubscriptionForm=Kamu oto-üyelik formunu etkinleştirin
-ImportDataset_member_1=Üye
-DescADHERENT_CARD_TYPE=Format kartları sayfa
-DescADHERENT_CARD_TEXT_RIGHT=Üye kartları üzerinde yazılı Metin (sağda hizalamak)
-DescADHERENT_MAILMAN_LISTS=Yeni üyelerin otomatik insription Listesi (ler) (virgül ile ayrılmış)
-GlobalConfigUsedIfNotDefined=Burada tanımlanan değilse Temel modülü kurulum tanımlanan metin olacak
-MayBeOverwrited=Bu metin üyenin türü için tanımlanan değeri ile overwrited olabilir
-MoreActions=Kayıt üzerinde Tamamlayıcı eylem
-// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:05:24).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-09 14:05:49).
-// Reference language: en_US -> tr_TR
-MoreActionInvoiceOnly=Herhangi bir ödeme ile bir fatura oluşturun.
-LinkToGeneratedPages=Vizit kartlar oluşturun
-LinkToGeneratedPagesDesc=Bu ekran, tüm üyeleri ya da belirli bir üye için kartvizit ile PDF dosyaları oluşturmanıza olanak sağlar.
-DocForAllMembersCards=Tüm üyeleri <b>(%s</b> Format çıkış aslında kurulum için) için kartvizit oluşturun
-DocForOneMemberCards=Kartvizit için belirli bir üye (çıkış aslında kurulum için Format: <b>%s</b>) oluşturun
-DocForLabels=Adres sayfa (çıkış aslında kurulum için Format: <b>%s</b>) oluşturun
-SubscriptionPayment=Abonelik ödeme
+ShowSubscription=Abonelik göster
+MemberModifiedInDolibarr=Üyelik Dolibarr'da değiştirilmiş
+SendAnEMailToMember=Üyelere bilgi e-postası gönder
+DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=Üye oto-abonelik Eposta konusu
+DescADHERENT_AUTOREGISTER_MAIL=Üye oto-aboneliği Epostası
+DescADHERENT_MAIL_VALID_SUBJECT=Üye doğrulama Epostası konusu
+DescADHERENT_MAIL_VALID=Üye doğrulama Epostası
+DescADHERENT_MAIL_COTIS_SUBJECT=AbonelikEpostası konusu
+DescADHERENT_MAIL_COTIS=Abonelik Epostası
+DescADHERENT_MAIL_RESIL_SUBJECT=Üyelik sonlandırma Epostası konusu
+DescADHERENT_MAIL_RESIL=Üyelik sonlandırma Epostası
+DescADHERENT_MAIL_FROM=Otomatik epostalar için Eposta gönderen
+DescADHERENT_ETIQUETTE_TYPE=Etiket sayfası biçimi
+DescADHERENT_CARD_TYPE=Kart sayfası biçimi
+DescADHERENT_CARD_HEADER_TEXT=Üyelik kartlarının en üstüne basılacak metin
+DescADHERENT_CARD_TEXT=Üyelik kartlarına basılacak metin (sola yanaşık)
+DescADHERENT_CARD_TEXT_RIGHT=Üyelik kartlarına basılacak metin (sağa yanaşık)
+DescADHERENT_CARD_FOOTER_TEXT=Üyelik kartlarının en altına basılacak metin
+DescADHERENT_MAILMAN_LISTS=Yeni üyelerin otomatik kayıt listesi (leri) (virgül ile ayrılmış)
+GlobalConfigUsedIfNotDefined=Tanımlanan metin yoksa kurum modülü kurulumunda tanımlanan metin kullanılacaktır
+MayBeOverwrited=Bu metin üyenin türü için tanımlanan değerin üzerine yazılabilir
+ShowTypeCard='%s' türünü göster
+HTPasswordExport=htpassword dosyası oluşturulması
+NoThirdPartyAssociatedToMember=Bu üye ile ilintili üçüncü parti yok
+ThirdPartyDolibarr=Dolibarr üçüncü partisi
+MembersAndSubscriptions=Üyeler ve abonelikler
+MoreActions=Kayıt üzerinde tamamlayıcı işlem
+MoreActionBankDirect=Hesap üzerinde doğrudan bir işlem kaydı oluşturun
+MoreActionBankViaInvoice=Hesaba bir fatura ve ödeme oluştur
+MoreActionInvoiceOnly=Ödeme yapılmamış bir fatura oluştur
+LinkToGeneratedPages=Ziyaret kartları oluştur
+LinkToGeneratedPagesDesc=Bu ekran, tüm üyelerinizin ya da belirli bir üyenizin kartvizitlerinin PDF dosyalarnı oluşturmanızı sağlar.
+DocForAllMembersCards=Bütün üyeler için kartvizit oluştur (Çıkış formatı için gerçek ayar : <b>%s</b>)
+DocForOneMemberCards=Belirli bir üye için kartvizit oluştur (Çıkış formatı için gerçek ayar : <b>%s</b>)
+DocForLabels=Adres çizelgeleri oluştur (Çıkış formatı için gerçek ayar : <b>%s</b>)
+SubscriptionPayment=Abonelik ödemesi
 LastSubscriptionDate=Son abonelik tarihi
-LastSubscriptionAmount=Son abonelik miktarı
-MembersStatisticsByCountries=Üyeler ülkeye göre istatistikleri
-// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:07:12).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 11:19:16).
-// Reference language: en_US -> tr_TR
-MoreActionBankDirect=Hesap üzerinde doğrudan işlem kaydı oluşturun
-MoreActionBankViaInvoice=Bir fatura ve ödeme hesap oluşturun
-MembersStatisticsByState=Üyeler devlet / il istatistikleri
-MembersStatisticsByTowne=Üyeler kasaba tarafından istatistikleri
+LastSubscriptionAmount=Son abonelik tutarı
+"MembersStatisticsByCountries=Ülkelere göre üyelik istatistikleri
+"
+MembersStatisticsByState=Eyalete/ile göre üyelik istatistikleri
+MembersStatisticsByTowne=İlçelere göre üyelik istatistikleri
 NbOfMembers=Üye sayısı
-Nature=Doğa
-MEMBER_NEWFORM_PAYONLINE=Entegre online ödeme sayfasında atla
-Associations=Temeller
-Collectivités=Organizasyonlar
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:22:09).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 12:32:33).
-// Reference language: en_US -> tr_TR
-MembersByCountryDesc=Bu ekran ülkeler tarafından üyelerine ilişkin istatistikleri gösteriyor. Grafik Ancak Google çevrimiçi grafik hizmeti bağlıdır ve bir internet bağlantısı çalışıyor olması durumunda kullanılabilir.
-MembersByStateDesc=Bu ekran devlet / il / kanton tarafından üyelerine ilişkin istatistikleri gösteriyor.
-MembersByTownDesc=Bu ekran kasaba ile üyelerine ilişkin istatistikleri gösteriyor.
-MembersStatisticsDesc=Okumak istediğiniz istatistikleri seçin ...
-MenuMembersStats=Istatistik
-LastMemberDate=Son üyesi tarihi
+NoValidatedMemberYet=Doğrulanmamış üye bulunmadı
+MembersByCountryDesc=Bu ekran ülkelere göre üyelik istatisklerini görüntüler. Grafik eğer internet hizmeti çalışıyor ise sadece  google çevrimiçi grafik hizmetince sağlanır.
+MembersByStateDesc=Bu ekran eyaletlere/illere/bölgelere göre üyelik istatiskleri görüntüler.
+MembersByTownDesc=Bu ekran ilçelere göre üyelik istatistikleri görüntüler.
+MembersStatisticsDesc=Görmek istediğiniz istatistikleri seçin...
+MenuMembersStats=İstatistikler
+LastMemberDate=Son üyelik tarihi
+Nature=Niteliği
+Public=Bilgiler geneldir
+Exports=Dışaaktarımlar
+NewMemberbyWeb=Yeni üye eklendi. Onay bekliyor
+NewMemberForm=Yeni üyelik formu
+SubscriptionsStatistics=Abonelik istatistikleri
+NbOfSubscriptions=Abonelik sayısı
+AmountOfSubscriptions=Abonelik tutarı
+TurnoverOrBudget=Ciro (bir firma için) veya Bütçe (bir kurum için)
+DefaultAmount=Varsayılan abonelik tutarı
+CanEditAmount=Ziyaretçi kendi abonelik tutarını seçebeilir/düzenleyebilir
+MEMBER_NEWFORM_PAYONLINE=Entegre çevrimiçi ödeme sayfasına atla
+Associations=Dernekler
+Collectivités=Kurumlar
 Particuliers=Kişisel
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:33:20).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 12:34:37).
-// Reference language: en_US -> tr_TR
-MembersWithSubscriptionToReceive=Üyeler aboneliği ile almak
-NoValidatedMemberYet=Hiçbir geçerliliği üyeleri bulundu
-Entreprises=Şirketler
-DOLIBARRFOUNDATION_PAYMENT_FORM=, Banka havalesi ile abonelik ödeme yapmak için, <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">sayfa</a> http://wiki.dolibarr.org/index.php/Subscribe . <br> Kredi Kartı veya Paypal ile ödeme yapmak için, bu sayfanın alt kısmında düğmesini tıklatın. <br>
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:35:12).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
-// Reference language: en_US -> tr_TR
-LastSubscriptionsModified=Son %s abonelikleri modifiye
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:36:40).
+Entreprises=Firmalar
+"DOLIBARRFOUNDATION_PAYMENT_FORM=Banka havalesi ile abonelik ödemesi yapmak için, <a target=""_blank"" href=""http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer"">http://wiki.dolibarr.org/index.php/Subscribe</a> sayfasına bakın . <br> Kredi Kartı veya Paypal ile ödeme yapmak için, bu sayfanın alt kısmındaki düğmeyi tıklatın. <br>
+"

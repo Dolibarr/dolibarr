@@ -56,7 +56,7 @@ $result = restrictedArea($user, 'projet', $id);
 
 $progress=GETPOST('progress', 'int');
 $label=GETPOST('label', 'alpha');
-$description=GETPOST('description', 'alpha');
+$description=GETPOST('description');
 
 $userAccess=0;
 
@@ -207,7 +207,7 @@ if ($id > 0 || ! empty($ref))
 
  	// Date start
     print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-    print dol_print_date($object->date_start,'day'); 
+    print dol_print_date($object->date_start,'day');
     print '</td></tr>';
 
     // Date end

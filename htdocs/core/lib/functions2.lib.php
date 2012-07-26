@@ -27,8 +27,8 @@
 /**
  * Same function than javascript unescape() function but in PHP.
  *
- * @param	string	$source		String to decode
- * @return						String decoded
+ * @param 	string	$source		String to decode
+ * @return	string				Unescaped string
  */
 function jsUnEscape($source)
 {
@@ -52,7 +52,7 @@ function jsUnEscape($source)
             else {
                 // we have an escaped ascii character
                 $hexVal = substr($source, $pos, 2);
-                $decodedStr .= chr(hexdec ($hexVal));
+                $decodedStr .= chr(hexdec($hexVal));
                 $pos += 2;
             }
         } else {

@@ -1497,7 +1497,8 @@ class SMTPs
 	/**
 	 * Retrieves the MIME message Boundary
 	 *
-	 * @return string $_smtpsBoundary MIME message Boundary
+	 * @param  string $type				Type of boundary
+	 * @return string $_smtpsBoundary 	MIME message Boundary
 	 */
 	function _getBoundary($type='mixed')
 	{

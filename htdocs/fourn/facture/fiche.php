@@ -160,10 +160,10 @@ elseif ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->fournis
 }
 
 // Set supplier ref
-elseif (($action == 'setref_supplier' || $action == 'set_ref_supplier') && $user->rights->fournisseur->facture->creer)
+elseif ($action == 'setfacnumber' && $user->rights->fournisseur->facture->creer)
 {
     $object->fetch($id);
-    $result=$object->set_ref_supplier($user, $_POST['ref_supplier']);
+    $result=$object->set_ref_supplier($user, GETPOST('facnumber'));
 }
 
 // Set label
@@ -1445,7 +1445,7 @@ else
         // Due date
         print '<tr><td>'.$form->editfieldkey("DateMaxPayment",'date_lim_reglement',$object->date_echeance,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker').'</td><td colspan="3">';
         print $form->editfieldval("DateMaxPayment",'date_lim_reglement',$object->date_echeance,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0),'datepicker');
-        if ($action != 'editdate_li_reglement' && $object->statut < 2 && $object->date_echeance && $object->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_warning($langs->trans('Late'));
+        if ($action != 'editdate_lim_reglement' && $object->statut < 2 && $object->date_echeance && $object->date_echeance < ($now - $conf->facture->fournisseur->warning_delay)) print img_warning($langs->trans('Late'));
         print '</td>';
 
         // Status
