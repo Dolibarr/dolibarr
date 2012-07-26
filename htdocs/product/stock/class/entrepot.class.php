@@ -70,6 +70,8 @@ class Entrepot extends CommonObject
 	 */
 	function create($user)
 	{
+		global $conf;
+
 		// Si libelle non defini, erreur
 		if ($this->libelle == '')
 		{
@@ -79,8 +81,8 @@ class Entrepot extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (datec, fk_user_author, label)";
-		$sql .= " VALUES (".$this->db->idate(mktime()).",".$user->id.",'".$this->db->escape($this->libelle)."')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (entity, datec, fk_user_author, label)";
+		$sql .= " VALUES (".$conf->entity.",'".$this->db->idate(mktime())."',".$user->id.",'".$this->db->escape($this->libelle)."')";
 
 		dol_syslog("Entrepot::create sql=".$sql);
 		$result=$this->db->query($sql);

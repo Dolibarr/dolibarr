@@ -2330,11 +2330,16 @@ class Product extends CommonObject
 	 */
 	function load_stock()
 	{
+		global $conf;
+
 		$this->stock_reel = 0;
 
-		$sql = "SELECT reel, fk_entrepot, pmp";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock";
-		$sql.= " WHERE fk_product = '".$this->id."'";
+		$sql = "SELECT ps.reel, ps.fk_entrepot, ps.pmp";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
+		$sql.= ", ".MAIN_DB_PREFIX."entrepot as w";
+		$sql.= " WHERE w.entity = ".$conf->entity;
+		$sql.= " AND w.rowid = ps.fk_entrepot";
+		$sql.= " AND ps.fk_product = ".$this->id;
 
 		dol_syslog("Product::load_stock sql=".$sql);
 		$result = $this->db->query($sql) ;
