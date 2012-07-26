@@ -1284,8 +1284,8 @@ else
         print "</tr>\n";
 
         // Ref supplier
-        print '<tr><td>'.$form->editfieldkey("RefSupplier",'facnumber',$object->ref_supplier,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer)).'</td><td colspan="4">';
-        print $form->editfieldval("RefSupplier",'facnumber',$object->ref_supplier,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer));
+        print '<tr><td>'.$form->editfieldkey("RefSupplier",'ref_supplier',$object->ref_supplier,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer)).'</td><td colspan="4">';
+        print $form->editfieldval("RefSupplier",'ref_supplier',$object->ref_supplier,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer));
         print '</td></tr>';
 
         // Third party
