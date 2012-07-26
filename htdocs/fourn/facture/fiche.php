@@ -160,10 +160,10 @@ elseif ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->fournis
 }
 
 // Set supplier ref
-elseif (($action == 'setref_supplier' || $action == 'set_ref_supplier') && $user->rights->fournisseur->facture->creer)
+elseif ($action == 'setfacnumber' && $user->rights->fournisseur->facture->creer)
 {
     $object->fetch($id);
-    $result=$object->set_ref_supplier($user, $_POST['ref_supplier']);
+    $result=$object->set_ref_supplier($user, GETPOST('facnumber'));
 }
 
 // Set label
@@ -1284,8 +1284,8 @@ else
         print "</tr>\n";
 
         // Ref supplier
-        print '<tr><td>'.$form->editfieldkey("RefSupplier",'ref_supplier',$object->ref_supplier,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer)).'</td><td colspan="4">';
-        print $form->editfieldval("RefSupplier",'ref_supplier',$object->ref_supplier,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer));
+        print '<tr><td>'.$form->editfieldkey("RefSupplier",'facnumber',$object->ref_supplier,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer)).'</td><td colspan="4">';
+        print $form->editfieldval("RefSupplier",'facnumber',$object->ref_supplier,$object,($object->statut<2 && $user->rights->fournisseur->facture->creer));
         print '</td></tr>';
 
         // Third party
