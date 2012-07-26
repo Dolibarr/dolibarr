@@ -2,6 +2,15 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 3.1.3 compared to 3.1.2 *****
+
+Fix: PgSQL - property must be set if success
+Fix: Provide a solution for backup when mysqldump is not available
+Fix: Bug #460 - Wrong entity assignment when creating a warehouse
+Fix: bug #405 - Late icon always displayed on comm/propal.php
+
+
+
 ***** ChangeLog for 3.1.2 compared to 3.1.1 *****
 
 - Fix: Can clone a proposal
