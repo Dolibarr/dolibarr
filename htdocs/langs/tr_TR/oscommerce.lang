@@ -1,18 +1,16 @@
-/*
+﻿/*
  * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-03-15 19:05:26
+ * Manually generated 
+ * Generation date 2012-07-23 22:30:26
  */
 
-
-// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-// Reference language: en_US
+// START - Lines generated manually (2012-07-23 22:30:26).
+// Reference language: en_US->tr_TR - oscommerce
 CHARSET=UTF-8
 OSCommerce=OS Commerce
 OSCommerceSetup=OS Ticaret modülü kurulumu
-OSCommerceSetupSaved=OS Ticaret kurulum kaydedilir
-OSCommerceServer=OS Commerce Server host / ip
-OSCommerceDatabaseName=OS Ticaret veritabanı adını
+OSCommerceSetupSaved=OS Ticaret kurulumu kaydedildi
+OSCommerceServer=OS Ticaret Sunucusu host/ip
+OSCommerceDatabaseName=OS Ticaret veritabanı adı
 OSCommercePrefix=OS Ticaret tablo öneki
-OSCommerceUser=OS Ticaret veritabanı giriş
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+OSCommerceUser=OS Ticaret veritabanı kullanıcı girişi

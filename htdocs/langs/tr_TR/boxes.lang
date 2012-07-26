@@ -1,101 +1,81 @@
-/*
+﻿/*
  * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-03-15 19:05:26
+ * Manually generated
+ * Generation date 2012-07-03 23:50:00
  */
 
+// START - Lines generated manually (2012-07-03 23:50:00).
+// Reference language: en_US – boxes
 
-// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-// Reference language: en_US
 CHARSET=UTF-8
-BoxLastRssInfos=Rss bilgileri
-BoxLastProducts=Son %s ürün / hizmet
-BoxLastProductsInContract=Son %s ürünleri sözleşmeli / hizmet
-BoxLastSupplierBills=Son tedarikçinin faturaları
-BoxLastCustomerBills=Son müşteri faturaları
-BoxOldestUnpaidCustomerBills=Eski ödenmemiş faturaların müşteri
-BoxOldestUnpaidSupplierBills=Eski ödenmemiş faturalar tedarikçinin
-BoxLastProposals=Son ticari öneriler
-BoxLastProspects=Son potansiyeller
-BoxLastCustomers=Son müşteriler
-BoxLastCustomerOrders=Son müşteri siparişleri
-BoxLastSuppliers=Son tedarikçiler
-BoxLastBooks=Son kitaplar
+BoxCurrentAccounts=Cari hesap bakiyesi
 BoxLastActions=Son eylemler
-BoxCurrentAccounts=Cari hesap dengesi
+BoxLastBooks=Son kayıtlar
+BoxLastContacts=Son kişileradresler
+BoxLastContracts=Son sözleşmeler
+BoxLastCustomerBills=Son müşteri faturaları
+BoxLastCustomerOrders=Son müşteri siparişleri
+BoxLastCustomers=Son müşteriler
+BoxLastExpiredServices=Etkinlik hizmet süresi dolmuş enson %s eski kişi
+BoxLastMembers=Son üyeler
+BoxLastProducts=Son %s ürün/hizmet
+BoxLastProductsInContract=Son %s sözleşmeli ürün/hizmet
+BoxLastProposals=Son ticari teklifler
+BoxLastProspects=Son adaylar
+BoxLastRssInfos=Rss bilgileri
+BoxLastSupplierBills=Son tedarikçi faturaları
+BoxLastSuppliers=Son değiştirilen tedarikçiler
+BoxMyLastBookmarks=En son %s yerimim
+BoxOldestExpiredServices=Süresi dolmuş en eski etkin hizmetler
+BoxOldestUnpaidCustomerBills=En eski ödenmemiş müşteri faturaları
+BoxOldestUnpaidSupplierBills=En eski ödenmemiş tedarikçi faturaları
 BoxSalesTurnover=Satış cirosu
-BoxTotalUnpaidCustomerBills=Toplam ödenmemiş faturaların müşteri
-BoxTotalUnpaidSuppliersBills=Toplam ödenmemiş faturalar tedarikçinin
-BoxTitleLastBooks=Son% s kaydedildi kitaplar
-BoxTitleNbOfCustomers=Nombre de istemci
-BoxTitleLastRssInfos=Son%% haberleri s
-BoxTitleLastProducts=Son% s olarak ürün / hizmet
-BoxTitleLastCustomerOrders=Son %s müşteri siparişleri
-BoxTitleLastSuppliers=Son kaydedilen %s tedarikçi
+BoxTitleCurrentAccounts=Cari hesap bakiyeleri
+BoxTitleLastActionsToDo=Son yapılan %s eylem
+BoxTitleLastBooks=Son yapılan %s kayıt
+BoxTitleLastContracts=Son %s sözleşme
+BoxTitleLastCustomerBills=Son %s müşteri faturası
+BoxTitleLastCustomerOrders=Son değiştirilen %s müşteri siparişi
 BoxTitleLastCustomers=Son kaydedilen %s müşteri
-BoxTitleLastCustomersOrProspects=Son kaydedilen %s müşteri veya potansiyel
-BoxTitleLastPropals=Son kaydedilen %s öneri
-BoxTitleLastCustomerBills=Son kaydedilen %s müşteri faturası
-BoxTitleLastSupplierBills=Son kaydedilen %s tedarikçinin faturası
-BoxTitleLastProspects=Son kaydedilen %s potansiyel
-BoxTitleLastProductsInContract=Bir sözleşmede son kaydedilen %s ürün/hizmet 
-BoxTitleOldestUnpaidCustomerBills=%s ödenmemiş müşteri faturası
-BoxTitleOldestUnpaidSupplierBills=%s ödenmemiş tedarikçi faturası
-BoxTitleCurrentAccounts=Cari %s dengeleri
+BoxTitleLastCustomersOrProspects=Son değiştirilen %s müşteri veya aday
+BoxTitleLastModifiedContacts=Son değiştirilmiş %s kişi/adres
+BoxTitleLastModifiedCustomers=Son değiştirilmiş %s müşteri
+BoxTitleLastModifiedDonations=Son değiştirilen %s bağış
+BoxTitleLastModifiedExpenses=Son değiştirilen %s gider
+BoxTitleLastModifiedMembers=Son değiştirilen %s üye
+BoxTitleLastModifiedProspects=Son değiştirilen %s aday
+BoxTitleLastModifiedSuppliers=Son değiştirilen %s tedarikçi
+BoxTitleLastProducts=Son değiştirilen % s ürün/hizmet
+BoxTitleLastProductsInContract=Bir sözleşmedeki son  %s ürün/hizmet 
+BoxTitleLastPropals=Son kaydedilen %s teklif
+BoxTitleLastProspects=Son kaydedilen %s aday
+BoxTitleLastRssInfos=%s ten en son %s haber
+BoxTitleLastSupplierBills=Son kaydedilen %s tedarikçi faturası
+BoxTitleLastSuppliers=Son kaydedilen %s tedarikçi
+BoxTitleNbOfCustomers=Müşteri sayısı
+BoxTitleOldestUnpaidCustomerBills=En eski ödenmemiş %s müşteri faturası
+BoxTitleOldestUnpaidSupplierBills=En eski ödenmemiş %s tedarikçi faturası
 BoxTitleSalesTurnover=Satış cirosu
-BoxTitleTotalUnpaidCustomerBills=Ücretsiz müşteri faturaları
-BoxTitleTotalUnpaidSuppliersBills=Ücretsiz tedarikçi faturaları
-BoxMyLastBookmarks=En son %s favori
+BoxTitleTotalUnpaidCustomerBills=Ödenmemiş müşteri faturaları
+BoxTitleTotalUnpaidSuppliersBills=Ödenmemiş tedarikçi faturaları
+BoxTotalUnpaidCustomerBills=Toplam ödenmemiş müşteri faturaları
+BoxTotalUnpaidSuppliersBills=Toplam ödenmemiş tedarikçi faturaları
+ClickToAdd=Eklemek için buraya tıklayın.
 FailedToRefreshDataInfoNotUpToDate=RSS akışı yenilemesi yapılamadı. Son başarılı yenileme tarihi: %s
 LastRefreshDate=Son yenileme tarihi
-NoRecordedBookmarks=Kayıtlı favori yok. <a href="%s">burada</a> yer imleri ekleyin.
-NoRecordedCustomers=Kayıtlı müşteri yok.
-NoModifiedSupplierBills=Değiştirilen Tedarikçi faturası yok
-BoxTitleLastActionsToDo=Son yapılan %s eylem
 NoActionsToDo=Yapılacak eylem yok
-NoRecordedOrders=Kayıtlı müşteri siparişi yok
-NoRecordedProposals=Kaydedilen öneri yok
+NoContractedProducts=Sözleşmeli ürün/hizmet yok
+NoModifiedSupplierBills=Değiştirilen tedarikçi faturası yok
+NoRecordedBookmarks=Tanımlanmış yerimi yok.
+NoRecordedContacts=Kayıtlı kişi yok
+NoRecordedContracts=Kayıtlı sözleşme yok
+NoRecordedCustomers=Kayıtlı müşteri yok
 NoRecordedInvoices=Kayıtlı müşteri faturası yok
+NoRecordedOrders=Kayıtlı müşteri siparişi yok
+NoRecordedProducts=Kayıtlı ürün/hizmet yok
+NoRecordedProposals=Kayıtlı teklif yok
+NoRecordedProspects=Kayıtlı aday yok
+NoRecordedSupplierInvoices=Kayıtlı tedarikçi faturası yok
 NoUnpaidCustomerBills=Ödenmemiş müşteri faturası yok
-NoRecordedSupplierInvoices=Kaydedilen tedarikçi faturası yok
 NoUnpaidSupplierBills=Ödenmemiş tedarikçi faturası yok
-NoRecordedProducts=Kayıtlı ürün / hizmet yok
-NoRecordedProspects=Kayıtlı potansiyel yok
-NoContractedProducts=Sözleşmeli ürün / hizmet yok
-BoxTitleLastModifiedProspects=Değiştirilen son %s potansiyel
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 
-
-// START - Lines generated via autotranslator.php tool (2011-10-09 14:05:49).
-// Reference language: en_US -> tr_TR
-BoxTitleLastModifiedExpenses=Son %s giderleri modifiye
-NoRecordedContracts=Kaydedilen sözleşmeleri yok
-// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:27:49).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 11:19:16).
-// Reference language: en_US -> tr_TR
-BoxTitleLastModifiedCustomers=Son %s müşterilerine modifiye
-BoxTitleLastModifiedMembers=Son %s değiştirilmiş üyeleri
-BoxTitleLastModifiedContacts=Son %s değiştirilmiş kişileri / adresleri
-ClickToAdd=Eklemek için buraya tıklayın.
-NoRecordedContacts=Kaydedilen temas yok
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:13:44).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 13:39:01).
-// Reference language: en_US -> tr_TR
-BoxLastContracts=Son sözleşmeleri
-BoxLastContacts=Son kişileri / adresleri
-BoxLastMembers=Son üyeler
-BoxTitleLastModifiedSuppliers=Son %s değiştirilmiş tedarikçileri
-BoxTitleLastContracts=Son %s sözleşmeleri
-BoxTitleLastModifiedDonations=Son %s bağış modifiye
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:54:27).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
-// Reference language: en_US -> tr_TR
-BoxOldestExpiredServices=Eski aktif süresi dolmuş hizmetleri
-BoxLastExpiredServices=Aktif süresi dolmuş hizmetleri ile Son %s eski rehber
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:36:01).

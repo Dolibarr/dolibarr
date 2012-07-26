@@ -1,12 +1,12 @@
-/*
+﻿/*
  * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-03-15 19:05:26
+ * Manually generated
+ * Generation date 2012-07-07 09:51:00
  */
 
 
-// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-// Reference language: en_US
+// START - Lines generated manually (2012-07-07 09:51:00).
+// Reference language: en_US -> TR - categories
 CHARSET=UTF-8
 Category=Kategori
 Categories=Kategoriler
@@ -14,99 +14,88 @@ Rubrique=Kategori
 Rubriques=Kategoriler
 categories=kategoriler
 TheCategorie=Kategori
-NoCategoryYet=Bu tür oluşturulan Kategori yok
-In=Içinde
-AddIn=Ekleyin
-modify=değiştirmek
+NoCategoryYet=Bu türde oluşturulan Kategori yok
+In=İçinde
+AddIn=Ekle
+modify=değiştir
 Classify=Sınıflandır
 CategoriesArea=Kategoriler alanı
-ProductsCategoriesArea=Ürünler / Hizmetler kategorileri alanı
-SuppliersCategoriesArea=Tedarikçilerin kategoriler alanı
-CustomersCategoriesArea=Müşteri kategoriler alanı
-ThirdPartyCategoriesArea=Üçüncü tarafların kategoriler alanı
+ProductsCategoriesArea=Ürün/Hizmet kategorileri alanı
+SuppliersCategoriesArea=Tedarikçi kategorileri alanı
+CustomersCategoriesArea=Müşteri kategorileri alanı
+ThirdPartyCategoriesArea=Üçüncü parti kategorileri alanı
+MembersCategoriesArea=Üye kategorileri alanı
 MainCats=Ana kategoriler
-SubCats=Alt
+SubCats=Alt kategoriler
 CatStatistics=İstatistikler
-CatList=Kategorilerin Listesi
+CatList=Kategori Listesi
 AllCats=Tüm kategoriler
-ViewCat=Kategorideki
+ViewCat=Kategori görüntüle
 NewCat=Kategori ekle
 NewCategory=Yeni kategori
-ModifCat=Değiştirmek kategori
-CatCreated=Kategori hazırlandı
-CreateCat=Kategori yarat
-CreateThisCat=Bu kategori yarat
-ValidateFields=Doğrulamak alanları
-NoSubCat=Hayır alt.
+ModifCat=Kategori değiştir
+CatCreated=Kategori oluşturuldu
+CreateCat=Kategori oluştur
+CreateThisCat=Bu kategoriyi oluştur
+ValidateFields=Doğrulama alanları
+NoSubCat=Alt kategori yok.
 SubCatOf=Alt kategori
-FoundCats=Bulundu kategoriler
-FoundCatsForName=Kategoriler ad bulundu:
-FoundSubCatsIn=Alt kategori bulundu
-ErrSameCatSelected=Birkaç kez aynı kategoride seçilen
-ErrForgotCat=Bu kategori seçmek unuttum
-ErrForgotField=Bu alanlar bilgilendirmek unuttum
+FoundCats=Kategoriler bulundu
+FoundCatsForName=Bu ad için kategoriler bulundu:
+FoundSubCatsIn=Kategori içinde alt kategoriler bulundu
+ErrSameCatSelected=Birkaç kez aynı kategoriyi seçtiniz
+ErrForgotCat=Kategori seçmeyi unuttunuz
+ErrForgotField=Alanlara bilgi girmeyi unuttunuz
 ErrCatAlreadyExists=Bu ad zaten kullanılıyor
-AddProductToCat=Bir kategoriye Bu ürün ekle?
-ImpossibleAddCat=Imkansız kategori eklemek
-ImpossibleAssociateCategory=Kategoriye ilişkilendirmek imkansız
-WasAddedSuccessfully=<b>% s</b> başarıyla eklendi.
-ObjectAlreadyLinkedToCategory=Eleman zaten bu kategoriye bağlıdır.
-CategorySuccessfullyCreated=Bu kategoride% s başarı ile eklendi.
-ProductIsInCategories=Ürün / hizmet sınıflandırması aşağıdaki sahibi
-SupplierIsInCategories=Üçüncü parti kategoriler tedarikçiler aşağıdaki sahibi
-CompanyIsInCustomersCategories=Bu üçüncü parti müşteri / potansiyel sınıflandırması aşağıdaki sahibi
-CompanyIsInSuppliersCategories=Bu üçüncü parti kategoriler tedarikçiler aşağıdaki sahibi
-ProductHasNoCategory=Bu ürün / hizmet herhangi bir kategoride değil
-SupplierHasNoCategory=Bu ticaret herhangi bir kategoride değil
-CompanyHasNoCategory=Firmanın herhangi bir kategoride değil
+AddProductToCat=Bu ürünü bir kategoriye mi ekleyeceksiniz?
+ImpossibleAddCat=Kategori eklemek olanaksız
+ImpossibleAssociateCategory=Kategoriyle ilişkilendirmek olanaksız 
+WasAddedSuccessfully=<b>%s</b> başarıyla eklendi.
+ObjectAlreadyLinkedToCategory=Öğe zaten bu kategoriye bağlıdır.
+CategorySuccessfullyCreated=Bu kategoriye %s başarı ile eklendi.
+ProductIsInCategories=Ürün/hizmet aşağıdaki kategorilere aittir
+SupplierIsInCategories=Üçüncü parti aşağıdaki tedarikçi kategorilerine aittir
+CompanyIsInCustomersCategories=Bu üçüncü parti aşağıdaki müşteri/aday kategorilerine aittir
+CompanyIsInSuppliersCategories=Bu üçüncü parti aşağıdaki tedarikçi kategorilerine aittir
+MemberIsInCategories=Bu üye, aşağıdaki üye kategorilerine aittir
+ProductHasNoCategory=Bu ürün/hizmet herhangi bir kategoride yoktur
+SupplierHasNoCategory=Bu tedarikçi herhangi bir kategoride yoktur
+CompanyHasNoCategory=Bu firma herhangi bir kategoride yoktur
+MemberHasNoCategory=Bu üye herhangi bir kategoride yoktur
 ClassifyInCategory=Kategoride Sınıflandır
 NoneCategory=Hiçbiri
-CategoryExistsAtSameLevel=Bu kategoride zaten bu Ref var
-ReturnInProduct=Geri ürün / hizmet kartı
-ReturnInSupplier=Ticaret kartı geri dön
-ReturnInCompany=Geri müşteriye / Prospect kartı
-ContentsVisibleByAll=Içeriği herkes tarafından görülebilir
-ContentsVisibleByAllShort=Içeriği herkes tarafından görülebilir
-ContentsNotVisibleByAllShort=Içeriği herkes tarafından görünür değil
-CategoriesTree=Kategoriler ağacı
-DeleteCategory=Kategori Sil
+CategoryExistsAtSameLevel=Bu kategori zaten bu ilgi ile var
+ReturnInProduct=Ürün/hizmet kartına geri dön
+ReturnInSupplier=Tedarikçi kartına geri dön
+ReturnInCompany=Müşteri/aday kartına geri dön
+ContentsVisibleByAll=İçerik herkes tarafından görülebilir
+ContentsVisibleByAllShort=Içerik herkes tarafından görülebilir
+ContentsNotVisibleByAllShort=İçerik herkes tarafından görülemez
+CategoriesTree=Kategori ağacı
+DeleteCategory=Kategori sil
 ConfirmDeleteCategory=Bu kategoriyi silmek istediğinizden emin misiniz?
-RemoveFromCategory=Kategoride ile Kaldır bağlantısını
-RemoveFromCategoryConfirm=Size işlem ve kategori arasındaki bağlantıyı kaldırmak istediğinizden emin misiniz?
+RemoveFromCategory=Kategori bağlantısını kaldır
+RemoveFromCategoryConfirm=İşlem ile kategori arasındaki bağlantıyı kaldırmak istediğinizden emin misiniz?
 NoCategoriesDefined=Tanımlı kategori yok
-SuppliersCategoryShort=Tedarikçiler kategori
-CustomersCategoryShort=Müşteriler kategori
+SuppliersCategoryShort=Tedarikçi kategorisi
+CustomersCategoryShort=Müşteri kategorisi
 ProductsCategoryShort=Ürün kategorisi
-SuppliersCategoriesShort=Tedarikçiler kategoriler
-CustomersCategoriesShort=Müşteriler kategoriler
-CustomersProspectsCategoriesShort=Custo. / prosp. kategoriler
+MembersCategoryShort=Üye kategorisi
+SuppliersCategoriesShort=Tedarikçi kategorileri
+CustomersCategoriesShort=Müşteri kategorileri
+CustomersProspectsCategoriesShort=Müşt./aday kategorileri
 ProductsCategoriesShort=Ürün kategorileri
-ThisCategoryHasNoProduct=Bu kategoride herhangi bir ürün içermez.
-ThisCategoryHasNoSupplier=Bu kategoride herhangi bir tedarikçi içermez.
-ThisCategoryHasNoCustomer=Bu kategoride herhangi bir müşteri içermez.
-AssignedToCustomer=Müşteri Assigned
-AssignedToTheCustomer=Müşteri Assigned
+MembersCategoriesShort=Üye kategorileri
+ThisCategoryHasNoProduct=Bu kategori herhangi bir ürün içermiyor.
+ThisCategoryHasNoSupplier=Bu kategori herhangi bir tedarikçi içermiyor.
+ThisCategoryHasNoCustomer=Bu kategori herhangi bir müşteri içermiyor.
+ThisCategoryHasNoMember=Bu kategori herhangi bir üye içermiyor.
+AssignedToCustomer=Bir müşteriye atanmış
+AssignedToTheCustomer=Müşteriye atanmış
 InternalCategory=İç kategori
 CategoryContents=Kategori içeriği
-CategId=Kategori id
-CatSupList=Tedarikçi kategoriler listesi
-CatCusList=Müşteri listesi / umudu kategoriler
+CategId=Kategori kimliği
+CatSupList=Tedarikçi kategorileri listesi
+CatCusList=Müşteri/aday kategorileri listesi  
 CatProdList=Ürün kategorileri Listesi
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-09 14:05:49).
-// Reference language: en_US -> tr_TR
-MembersCategoryShort=Üyeler Kategori
-MembersCategoriesShort=Üye kategoriler
-ThisCategoryHasNoMember=Bu kategori, herhangi bir üye içermez.
-CatMemberList=Üyeleri kategoriler Listesi
-// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:17:54).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 12:34:37).
-// Reference language: en_US -> tr_TR
-MembersCategoriesArea=Üye kategoriler alanı
-MemberIsInCategories=Bu üye, aşağıdaki üyelerden kategorilerinde sahibi
-MemberHasNoCategory=Bu üye, herhangi bir kategoride değil.
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:48:09).
+CatMemberList=Üye kategorileri Listesi

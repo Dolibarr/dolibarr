@@ -1,132 +1,107 @@
-/*
+﻿/*
  * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-03-15 19:05:26
+ * Manually generated
+ * Generation date 2012-07-05 10:49:00
  */
 
+// START - Lines generated manually (2012-07-05 10:49:00).
+// Reference language: en_US – propal
 
-// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-// Reference language: en_US
 CHARSET=UTF-8
-Proposals=Ticari öneriler
-Proposal=Ticari önerisi
-ProposalShort=Öneri
-ProposalsDraft=Taslak ticari öneriler
-ProposalDraft=Taslak ticari önerisi
-ProposalsOpened=Açılış ticari öneriler
-Prop=Ticari öneriler
-CommercialProposal=Ticari önerisi
-CommercialProposals=Ticari öneriler
-NewProp=Yeni ticari önerisi
-NewProposal=Yeni ticari önerisi
-NewPropal=Yeni öneri
-Prospect=Prospect
-ProspectList=Prospect listesi
-DeleteProp=Sil ticari önerisi
-ValidateProp=Validate ticari önerisi
-AddProp=Öneri ekle
-ConfirmDeleteProp=Bunu ticari öneriyi silmek istediğinizden emin misiniz?
-ConfirmValidateProp=Bunu ticari önerisini doğrulamak istediğinizden emin misiniz?
-LastPropals=Son% s önerileri
-LastClosedProposals=Son% s kapalı teklif
-LastModifiedProposals=Son% önerileri olarak s
-AllPropals=Tüm önerileri
-LastProposals=Son öneriler
-SearchAProposal=Bir öneri Arama
-ProposalsStatistics=Ticari öneriler istatistiklerine
-NumberOfProposalsByMonth=Numarasını aya göre
-AmountOfProposalsByMonthHT=Miktarı ayına göre (vergi net)
-NbOfProposals=Sayıda ticari öneriler
-ShowPropal=Show önerisi
-PropalsDraft=Taslaklar
-PropalsOpened=Açılış
-PropalsNotBilled=Kapalı değil gagalı
-PropalStatusDraft=Taslak (ihtiyaç doğrulama)
-PropalStatusValidated=Onaylı (teklif) açık
-PropalStatusOpened=Onaylı (teklif) açık
-PropalStatusClosed=Kapalı
-PropalStatusSigned=(Ihtiyaçlar fatura) olma
-PropalStatusNotSigned=Değil imzaladı (kapalı)
-PropalStatusBilled=Fatura
-PropalStatusDraftShort=Taslak
-PropalStatusValidatedShort=Validated
-PropalStatusOpenedShort=Açılış
-PropalStatusClosedShort=Kapalı
-PropalStatusSignedShort=Imzalı
-PropalStatusNotSignedShort=Değil imzaladı
-PropalStatusBilledShort=Fatura
-PropalsToClose=Ticari teklifleri yakın
-PropalsToBill=Tasarıyı imzaladı ticari öneriler
-ListOfProposals=Ticari öneriler listesi
-ActionsOnPropal=Önerisi üzerine Eylemler
-NoOpenedPropals=Ticari teklifler açıldı
-NoOtherOpenedPropals=Başka hiçbir ticari teklifler açıldı
-RefProposal=Ticari önerisi ref
-SendPropalByMail=Posta ticari önerisi gönder
-FileNotUploaded=Dosya yüklendiğinde değildi
-FileUploaded=Dosya başarıyla yüklenmedi
-AssociatedDocuments=Belgeleri teklifi ile ilişkili:
-ErrorCantOpenDir=Dizini açılamıyor
-DatePropal=Öneri Tarihi
-DateEndPropal=Tarih son geçerlilik
-DateEndPropalShort=Tarih sonu
-ValidityDuration=Geçerlilik süresi
-CloseAs=Durum yakın
-ClassifyBilled=Sınıflandırmak gagalı
-BuildBill=Build fatura
-RelatedBill=Ilgili fatura
-RelatedBills=Ilgili faturalar
-ErrorPropalNotFound=Propal% bulunamadı değil
-Estimate=Tahmini:
-EstimateShort=Tahmin
-OtherPropals=Diğer öneriler
-CopyPropalFrom=Mevcut öneri kopyalayarak ticari teklif oluşturma
-CreateEmptyPropal=Boş ticari teklifleri vierge veya ürün listesi Oluştur / hizmet
-DefaultProposalDurationValidity=Varsayılan ticari teklif geçerlilik süresi (gün olarak)
-UseCustomerContactAsPropalRecipientIfExist=Kullanım müşteri iletişim adresi yerine öneri olarak üçüncü adresi alıcı adresi tanımlı
-ClonePropal=Clone ticari önerisi
-ConfirmClonePropal=Bunu ticari <b>önerisi%</b> clone istediğinizden emin <b>misiniz?</b>
-ProposalsAndProposalsLines=Ticari önerisi ve hatları
-ProposalLine=Önerisi doğrultusunda
-DocModelAzurDescription=Tam bir öneri modeli (logo. ..)
-DocModelJauneDescription=Jaune modeli önerisi
-MarbreNumRefModelDesc=Format% syymm uyan numero-teklif nnnn nereye YY yılı, mm ay ve nnnn hiçbir break ve 0 olursa dönüş ile bir dizi
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-09 14:05:49).
-// Reference language: en_US -> tr_TR
+Proposals=Ticari teklifler
+Proposal=Ticari teklif
+ProposalShort=Teklif
+ProposalsDraft=Taslak ticari teklifler
+ProposalDraft=Taslak ticari teklif
+ProposalsOpened=Açık ticari teklifler
+Prop=Ticari teklifler
+CommercialProposal=Ticari teklif
+CommercialProposals=Ticari teklifler
 ProposalCard=Teklif kartı
-// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:31:56).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 11:19:16).
-// Reference language: en_US -> tr_TR
+NewProp=Yeni ticari teklif
+NewProposal=Yeni ticari teklif
+NewPropal=Yeni teklif
+Prospect=Aday
+ProspectList=Aday listesi
+DeleteProp=Ticari teklif sil
+ValidateProp=Ticari teklif doğrula
+AddProp=Teklif ekle
+ConfirmDeleteProp=Bu ticari teklifi silmek istediğinizden emin misiniz?
+ConfirmValidateProp=Bu ticari teklifi doğrulamak istediğinizden emin misiniz?
+LastPropals=Son %s teklif
+LastClosedProposals=Son %s kapalı teklif
+LastModifiedProposals=Son %s değiştirilen teklif 
+AllPropals=Tüm teklifler
+LastProposals=Son teklifler
+SearchAProposal=Bir teklif ara
+ProposalsStatistics=Ticari teklif istatistikleri
+NumberOfProposalsByMonth=Aylara göre sayısı
+AmountOfProposalsByMonthHT=Aylık tutar (vergi hariç)
+NbOfProposals=Ticari teklif sayısı
+ShowPropal=Teklif göster
+PropalsDraft=Taslaklar
+PropalsOpened=Açık
+PropalsNotBilled=Kapalı faturalandırılmamış
+PropalStatusDraft=Taslak (doğrulama gerektiriyor)
+PropalStatusValidated=Onaylı (teklif açık)
+PropalStatusOpened=Onaylı (teklif açık)
+PropalStatusClosed=Kapalı
+PropalStatusSigned=İmzalanmış(faturalandırılması gerekiyor)
+PropalStatusNotSigned=İmzalanmamış (kapalı)
+PropalStatusBilled=Faturalanmış
+PropalStatusDraftShort=Taslak
+PropalStatusValidatedShort=Doğrulanmış
+PropalStatusOpenedShort=Açık
+PropalStatusClosedShort=Kapalı
+PropalStatusSignedShort=İmzalı
+PropalStatusNotSignedShort=İmzalanmamış
+PropalStatusBilledShort=Faturalandırılmış
+PropalsToClose=Kapatılacak ticari teklifler
+PropalsToBill=Faturalandırılacak imzalı ticari teklifler
+ListOfProposals=Ticari teklif listesi
+ActionsOnPropal=Tekliler için yapılan eylemler
+NoOpenedPropals=Açık ticari teklif yok
+NoOtherOpenedPropals=Başka hiçbir açık ticari teklif yok
+RefProposal=Ticari teklif ilgisi
+SendPropalByMail=Ticari teklifi postayla gönder
+FileNotUploaded=Dosya yüklenemedi
+FileUploaded=Dosya başarıyla yüklendi
+AssociatedDocuments=Bu teklif ile ilişkili belgeler:
+ErrorCantOpenDir=Dizin açılamıyor
+DatePropal=Teklif tarihi
+DateEndPropal=Son geçerlilik tarihi
+DateEndPropalShort=Son tarih
+ValidityDuration=Geçerlilik süresi
+CloseAs=Kapalı durumda
+ClassifyBilled=Faturalandırılmış olarak sınıflandır
+BuildBill=Fatura oluştur
+ErrorPropalNotFound=%s Teklifi bulunamadı
+Estimate=Tahmin:
+EstimateShort=Tahmin
+OtherPropals=Diğer teklifler
+CopyPropalFrom=Varolan teklifi kopyalayarak ticari teklif oluşturma
+CreateEmptyPropal=Boş ticari teklif oluştur veya ürünler/hizmetler listesinden oluştur
+DefaultProposalDurationValidity=Varsayılan ticari teklif geçerlilik süresi (gün olarak)
+UseCustomerContactAsPropalRecipientIfExist=Teklif alıcısı olarak üçüncü parti yerine, eğer tanımlanmışsa, kişi adresini kullan
+ClonePropal=Ticari teklif kopyala
+ConfirmClonePropal=Bu ticari teklifi <b>%s</b> kopyalamak istediğinizden emin misiniz?
+ConfirmReOpenProp=Bu ticari teklifi <b>%s</b> yeniden açmak istediğinizden emin misiniz?
+ProposalsAndProposalsLines=Ticari teklif ve satırları
+ProposalLine=Teklif satırı
+AvailabilityPeriod=Kabul edilebilir gecikme
+SetAvailability=Kabul edilebilir gecikmeyi ayarla
+AfterOrder=Siparişten sonra
+##### Uygunluk #####
+AvailabilityTypeAV_NOW=Acil
 AvailabilityTypeAV_1W=1 hafta
 AvailabilityTypeAV_2W=2 hafta
 AvailabilityTypeAV_3W=3 hafta
 AvailabilityTypeAV_1M=1 ay
-TypeContact_propal_internal_SALESREPFOLL=Temsilci şu kadar öneri
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:23:47).
+##### Kişi türleri #####
+TypeContact_propal_internal_SALESREPFOLL=Teklif izleme temsilcisi
+TypeContact_propal_external_BILLING=Müşteri faturası ilgilisi
+TypeContact_propal_external_CUSTOMER=Müşteri teklif izleme ilgilisi
+# Document models
+DocModelAzurDescription=Tam bir teklif modeli (logo. ..)
+DocModelJauneDescription=Jaune modeli teklif
 
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 12:34:37).
-// Reference language: en_US -> tr_TR
-AvailabilityPeriod=Durumu gecikme
-SetAvailability=Set kullanılabilirlik gecikme
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:04:19).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 13:39:01).
-// Reference language: en_US -> tr_TR
-AfterOrder=siparişini verdikten sonra
-AvailabilityTypeAV_NOW=Acil
-TypeContact_propal_external_BILLING=Müşteri faturasında temas
-TypeContact_propal_external_CUSTOMER=Müşteri iletişim takibi teklifi
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 13:56:03).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:35:48).
-// Reference language: en_US -> tr_TR
-ConfirmReOpenProp=Eğer ticari teklifi <b>%s</b> geri açmak istediğinizden emin misiniz?
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:36:49).

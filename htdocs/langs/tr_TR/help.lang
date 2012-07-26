@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Language code: tr_TR
  * Automatic generated via autotranslator.php tool
  * Generation date 2010-03-15 19:05:26
@@ -8,29 +8,29 @@
 // START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
 // Reference language: en_US
 CHARSET=UTF-8
-CommunitySupport=Forum / Wiki destek
+CommunitySupport=Forum/Wiki destek
 EMailSupport=E-posta desteği
-RemoteControlSupport=Online gerçek zamanlı / uzaktan destek
+RemoteControlSupport=Çevrimiçi gerçek zamanlı/uzaktan destek
 OtherSupport=Diğer destek
-ToSeeListOfAvailableRessources=İletişim için / mevcut kaynaklara bakın:
-ClickHere=Tıklayın
+ToSeeListOfAvailableRessources=İletişim için/mevcut kaynaklara bakın:
+ClickHere=Burayı tıklayın
 HelpCenter=Yardım merkezi
 DolibarrHelpCenter=Dolibarr yardım ve destek merkezi
-ToGoBackToDolibarr=Aksi takdirde <a href="%s">burada Dolibarr kullanmak</a>
+ToGoBackToDolibarr=Aksi takdirde Dolibarr’ı kullanmak için<a href="%s">burayı tıklayın</a>
 TypeOfSupport=Destek Kaynağı
-TypeSupportCommunauty=Topluluk (ücretsiz)
+TypeSupportCommunauty=Genel (ücretsiz)
 TypeSupportCommercial=Ticari
 TypeOfHelp=Tür
-NeedHelpCenter=Need help veya destek?
+NeedHelpCenter=Yardım veya desteğe mi gereksiniminiz var?
 Efficiency=Verimlilik
-TypeHelpOnly=Yardımıyla sadece
-TypeHelpDev=Yardım + Geliştirme
-TypeHelpDevForm=Yardım + Geliştirme + Oluşumu
-ToGetHelpGoOnSparkAngels1=Bazı şirketler) ve bilgisayarınızın kontrolünü alarak daha etkin online destek hızlı (bazen hemen sağlayabilir. Bu tür <b>yardımcıları%</b> web <b>sitesi</b> bulunabilir:
-ToGetHelpGoOnSparkAngels3=Ayrıca Dolibarr için tüm antrenörler listesine tıklayarak için gidebilirsiniz
-ToGetHelpGoOnSparkAngels2=Bazen, kendi arama yapmak hiçbir şirketin şu anda mevcut, bu nedenle filtre değiştirmek olduğunu düşünüyorum &quot;&quot; için tüm yer bakmak için. Daha yollayacak edebilecektir.
-BackToHelpCenter=Aksi halde, burayı tıklayın <a href="%s">merkezi geri ana sayfa yardım etmek</a> gitmek.
-LinkToGoldMember=You) ve maksimum fiyat otomatik olarak güncellenir (durum onun Widget tıklayarak) bir koç Dolibarr tarafından Dil (% s önceden belirlenen bir arama yapabilirsiniz:
+TypeHelpOnly=Yalnızca yardım
+TypeHelpDev=Yardım+Geliştirme
+TypeHelpDevForm=Yardım+Geliştirme+Biçimlendirme
+ToGetHelpGoOnSparkAngels1=Bazı firmalar ve bilgisayarınızın kontrolünü alarak daha hızlı çevrimiçi destek verir (bazen anında). Bu tür yardımcılar <b>%s</b> web sitesinden bulunabilir:
+ToGetHelpGoOnSparkAngels3=Ayrıca Dolibarr’n tüm eğiticileri listesine bakabilirsiniz, bunun için burayı tıklayın
+ToGetHelpGoOnSparkAngels2=Bazen, arama yaptığınız sırada bir firma bulunmaz, bu nedenle süzgeçi “uygun olanların hepsi” değiştirerek aramayı düşünün.
+BackToHelpCenter=Aksi durumda yardım merkezine geri gitmek için <a href="%s">burayı </a>.
+LinkToGoldMember=Bo parçaçcığı (widget) tıklayarak Dolibar tarafından sizin için dilinizde önseçilen eğitmeni arayabilirsiniz (durumu ve ençok ücreti otomatikmen güncellenir):
 PossibleLanguages=Desteklenen diller
-MakeADonation=Yardım Dolibarr proje, bağış yapmak
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+MakeADonation= Dolibarr projesine bağış yapın
+SubscribeToFoundation=Dolibarr projesine yardım edin, vakıfa abone olun

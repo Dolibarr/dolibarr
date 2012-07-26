@@ -1,42 +1,32 @@
-/*
- * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-03-15 19:05:26
+﻿* Manually generated
+ * Generation date 2012-07-17 19:54:26
+
+// START - Lines manually generated (2012-07-17 19:54:26).
  */
-
-
-// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-// Reference language: en_US
+// Reference language: en_US -> TR – donations
 CHARSET=UTF-8
 Donation=Bağış
-Donations=Bağış
-Donor=Donör
-Donors=Bağış
-AddDonation=Bağış ekle
+Donations=Bağışlar
+Donor=Bağışçı
+Donors=Bağışçılar
+AddDonation=Bir bağış ekle
 NewDonation=Yeni bağış
-DonationPromise=Hediye söz
-PromisesNotValid=Değil söz validated
-PromisesValid=Validated söz
-DonationsPaid=Bağış ödenmiş
-DonationsReceived=Alınan bağış
-PublicDonation=Kamu bağış
+DonationPromise=Hibe sözü
+PromisesNotValid=Doğrulanmamış sözler
+PromisesValid=Doğrulanmış sözler
+DonationsPaid=Ödenen bağışlar
+DonationsReceived=Alınan bağışlar
+PublicDonation=Kamu bağışı
 DonationsNumber=Bağış sayısı
-DonationsArea=Bağış alan
-DonationStatusPromiseNotValidated=Taslak söz
-DonationStatusPromiseValidated=Validated söz
-DonationStatusPaid=Bağış aldı
+DonationsArea=Bağış alanı
+DonationStatusPromiseNotValidated=Söz taslağı
+DonationStatusPromiseValidated=Doğrulanmış söz
+DonationStatusPaid=Bağış alındı
 DonationStatusPromiseNotValidatedShort=Taslak
-DonationStatusPromiseValidatedShort=Validated
+DonationStatusPromiseValidatedShort=Doğrulanmış
 DonationStatusPaidShort=Alınan
-ValidPromise=Validate söz
-BuildDonationReceipt=Build makbuz
-DonationsModels=Bağış makbuzları için Belgeler modelleri
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-09 14:02:24).
-// Reference language: en_US -> tr_TR
-ValidPromess=Söz Doğrula
-LastModifiedDonations=Son %s bağış modifiye
+ValidPromess=Söz doğrula
+BuildDonationReceipt=Makbuz oluştur
+DonationsModels=Bağış makbuzları belge modelleri
+LastModifiedDonations=Düzenlenen son %s bağış
 SearchADonation=Bağış ara
-// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:02:49).

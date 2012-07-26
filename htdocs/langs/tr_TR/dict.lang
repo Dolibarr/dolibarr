@@ -1,12 +1,11 @@
-/*
+﻿/*
  * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-03-15 19:05:26
+ * Manually generated
+ * Generation date 2012-07-07 20:41:26
  */
 
-
-// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-// Reference language: en_US
+// START - Lines generated manually (2012-07-07 20:41:26).
+// Reference language: en_US -> TR - dict
 CHARSET=UTF-8
 CountryFR=Fransa
 CountryBE=Belçika
@@ -19,7 +18,7 @@ CountryIE=İrlanda
 CountryCN=Çin
 CountryTN=Tunus
 CountryUS=Amerika Birleşik Devletleri
-CountryMA=Morocco
+CountryMA=Fas
 CountryDZ=Cezayir
 CountryCA=Kanada
 CountryTG=Togo
@@ -28,7 +27,7 @@ CountryNL=Hollanda
 CountryHU=Macaristan
 CountryRU=Rusya
 CountrySE=İsveç
-CountryCI=Ivoiry Coast
+CountryCI=Fildişi Sahilleri
 CountrySN=Senegal
 CountryAR=Arjantin
 CountryCM=Kamerun
@@ -84,7 +83,7 @@ CountryCD=Kongo, Demokratik Cumhuriyeti
 CountryCK=Cook Adaları
 CountryCR=Kosta Rika
 CountryHR=Hırvatistan
-CountryCU=Cuba
+CountryCU=Küba
 CountryCY=Kıbrıs
 CountryCZ=Çek Cumhuriyeti
 CountryDK=Danimarka
@@ -118,16 +117,16 @@ CountryGT=Guatemala
 CountryGN=Gine
 CountryGW=Gine-Bissau
 CountryGY=Guyana
-CountryHT=Haïti
+CountryHT=Haiti
 CountryHM=Heard Adası ve McDonald
 CountryVA=Holy See (Vatikan Şehir Devleti)
 CountryHN=Honduras
 CountryHK=Hong Kong
-CountryIS=Icelande
+CountryIS=İzlanda
 CountryIN=Hindistan
 CountryID=Endonezya
-CountryIR=Iran
-CountryIQ=Iraq
+CountryIR=İran
+CountryIQ=Irak
 CountryIL=İsrail
 CountryJM=Jamaika
 CountryJP=Japonya
@@ -145,11 +144,11 @@ CountryLB=Lübnan
 CountryLS=Lesoto
 CountryLR=Liberya
 CountryLY=Libya
-CountryLI=Liechtenstein
+CountryLI=Lihtenştayn
 CountryLT=Litvanya
 CountryLU=Lüksemburg
 CountryMO=Macao
-CountryMK=Makedonya, eski Yugoslavya
+CountryMK=Makedonya
 CountryMG=Madagaskar
 CountryMW=Malavi
 CountryMY=Malezya
@@ -167,7 +166,7 @@ CountryMD=Moldavya
 CountryMN=Moğolistan
 CountryMS=Montserrat
 CountryMZ=Mozambik
-CountryMM=Birmania (Myanmar)
+CountryMM=Birmanya (Myanmar)
 CountryNA=Namibya
 CountryNR=Nauru
 CountryNP=Nepal
@@ -244,7 +243,7 @@ CountryVN=Viet Nam
 CountryVG=Virgin Adaları, İngiliz
 CountryVI=Virgin Adaları, ABD
 CountryWF=Wallis ve Futuna
-CountryEH=Batı Sahara
+CountryEH=Batı Sahra
 CountryYE=Yemen
 CountryZM=Zambiya
 CountryZW=Zimbabve
@@ -254,66 +253,59 @@ CountryJE=Jersey
 CountryME=Karadağ
 CountryBL=Saint Barthelemy
 CountryMF=Saint Martin
+
+##### Hitap #####
 CivilityMME=Bayan
 CivilityMR=Bay
 CivilityMLE=Ms
-CivilityMTRE=Amir
+CivilityMTRE=Müdür
+
+##### Para birimleri #####
 Currencyeuros=Euro
-CurrencyAUD=AU Dolar
-CurrencySingTRL=Türk Lirası
-CurrencySingAUD=AU Dollar
-CurrencyCAD=CAN Dolar
-CurrencySingCAD=CAN Dolar
+CurrencyAUD=AU Doları
+CurrencySingAUD=AU Doları
+CurrencyCAD=CAN Doları
+CurrencySingCAD=CAN Doları
 CurrencyCHF=İsviçre Frangı
 CurrencySingCHF=İsviçre Frangı
 CurrencyEUR=Euro
 CurrencySingEUR=Euro
 CurrencyFRF=Fransız Frangı
 CurrencySingFRF=Fransız Frangı
-CurrencyGBP=GB Pounds
-CurrencySingGBP=GB Pound
-CurrencyMAD=Dirhemi
-CurrencySingMAD=Dirhemi
+CurrencyGBP=GB Poundu
+CurrencySingGBP=GB Poundu
+CurrencyINR=Hint rupisi
+CurrencySingINR=Hint rupisi
+CurrencyMAD=Dirhem
+CurrencySingMAD=Dirhem
 CurrencyMGA=Ariary
 CurrencySingMGA=Ariary
-CurrencyMUR=Mauritius rupi
+CurrencyMUR=Mauritius rupisi
 CurrencySingMUR=Mauritius Rupisi
-CurrencyNOK=Norwegian Krones
+CurrencyNOK=Norveç Kronu
 CurrencySingNOK=Norveç Kronu
-CurrencyTND=Tunuslu dinar
-CurrencySingTND=Tunus Dinarı
+CurrencyTND=Tunus dinarı
+CurrencySingTND=Tunus dinarı
 CurrencyUSD=ABD Doları
 CurrencySingUSD=ABD Doları
+CurrencyUAH=Hryvnia
+CurrencySingUAH=Hryvnia
 CurrencyXAF=CFA Frangı BEAC
 CurrencySingXAF=CFA Frangı BEAC
 CurrencyXOF=CFA Frangı BCEAO
 CurrencySingXOF=CFA Frangı BCEAO
 CurrencyXPF=CFP Frangı
 CurrencySingXPF=CFP Frangı
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+CurrencyTRL=Türk Lirası
+CurrencySingTRL=Türk Lirası
+CurrencyCentSingEUR=cent
+CurrencyThousandthSingTND=thousandth
 
-
-// START - Lines generated via autotranslator.php tool (2011-10-09 14:05:49).
-// Reference language: en_US -> tr_TR
-CurrencyINR=Hint rupi
-CurrencySingINR=Hint rupisi
-CurrencyUAH=Grivnası
-CurrencySingUAH=Grivnası
+#### Giriş nedenleri #####
 DemandReasonTypeSRC_INTE=Internet
-DemandReasonTypeSRC_CAMP_MAIL=Posta kampanya
-// STOP - Lines generated via autotranslator.php tool (2011-10-09 14:18:22).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 11:19:16).
-// Reference language: en_US -> tr_TR
-DemandReasonTypeSRC_CAMP_EMAIL=Kampanya e-postayla gönderme
-DemandReasonTypeSRC_CAMP_PHO=Telefon kampanya
-DemandReasonTypeSRC_CAMP_FAX=Faks kampanya
-DemandReasonTypeSRC_COMM=Ticari temas
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:50:10).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 12:34:37).
-// Reference language: en_US -> tr_TR
-DemandReasonTypeSRC_SHOP=Dükkanı iletişim
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:48:18).
+DemandReasonTypeSRC_CAMP_MAIL=Posta kampanyası
+DemandReasonTypeSRC_CAMP_EMAIL=E-posta kampanyası
+DemandReasonTypeSRC_CAMP_PHO=Telefon kampanyası
+DemandReasonTypeSRC_CAMP_FAX=Faks kampanyası
+DemandReasonTypeSRC_COMM=Ticari görüşme
+DemandReasonTypeSRC_SHOP=İş yerinde görüşme

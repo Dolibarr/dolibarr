@@ -1,30 +1,14 @@
-/*
+﻿/*
  * Language code: tr_TR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-03-15 19:05:26
+ * Manually generated
+ * Generation date 2012-07-03 23:50:00
  */
 
- 
-// START - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
-// Reference language: en_US
-CHARSET=UTF-8
-AddThisPageToBookmarks=Imleri Bu sayfayı ekle
-// STOP - Lines generated via autotranslator.php tool (2010-03-15 19:05:26).
+// START - Lines generated manually (2012-07-03 23:50:00).
+// Reference language: en_US – bookmarks
 
-Bookmark=Yerimi
-Bookmarks=Yerimleri
+CHARSET=UTF-8
+Bookm=Yerimleri
 NewBookmark=Yeni yerimi
-ShowBookmark=Yerimi göster
-OpenANewWindow=Yeni bir pencere aç
-ReplaceWindow=Geçerli pencereyi değiştir
-BookmarkTargetNewWindowShort=Yeni pencere
-BookmarkTargetReplaceWindowShort=Geçerli pencere
-BookmarkTitle=Yerimi başlığı
-UrlOrLink=URL
-BehaviourOnClick=Bir URL tıklandığındaki davranış
-CreateBookmark=Yerimi oluştur
-SetHereATitleForLink=Yerimi için bir başlık ayarla
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Bir dış http URL ya da göreceli Dolibarr URL si kullan
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Bu sayfa bir bağlantı tarafından açıldığında geçerli sayda mı yoksa yeni pencerede mi görüneceğini seçin
-BookmarksManagement=Yerimleri yönetimi
-ListOfBookmarks=Yerimleri listesi
+AddThisPageToBookmarks=Bu sayfayı yerimlerine ekle
+
