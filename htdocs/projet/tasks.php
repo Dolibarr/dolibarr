@@ -56,7 +56,7 @@ $result = restrictedArea($user, 'projet', $id);
 
 $progress=GETPOST('progress', 'int');
 $label=GETPOST('label', 'alpha');
-$description=GETPOST('description', 'alpha');
+$description=GETPOST('description');
 
 $userAccess=0;
 
