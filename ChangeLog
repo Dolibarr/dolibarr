@@ -15,7 +15,7 @@ English Dolibarr ChangeLog
 
 
 
-***** ChangeLog for 3.2.0 compared to 3.1.2 *****
+***** ChangeLog for 3.2.0 compared to 3.1.3 *****
 WARNING: PHP lower than 5.x are no more supported.
 WARNING: Because of a major datastructure change onto supplier prices tables, be aware
 to make a backup of your database before making upgrade.
@@ -109,6 +109,15 @@ For developers:
 - Qual: task #216 : Move /lib into /core/lib directory
 - Qual: task #217 : Move core files into core directory (login, menus, triggers, boxes, modules)
 WARNING: To reduce technic debt, all functions dolibarr_xxx were renamed int dol_xxx.
+
+
+
+***** ChangeLog for 3.1.3 compared to 3.1.2 *****
+
+Fix: PgSQL - property must be set if success
+Fix: Provide a solution for backup when mysqldump is not available
+Fix: Bug #460 - Wrong entity assignment when creating a warehouse
+Fix: bug #405 - Late icon always displayed on comm/propal.php
 
 
 
