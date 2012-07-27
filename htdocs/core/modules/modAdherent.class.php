@@ -87,7 +87,7 @@ class modAdherent extends DolibarrModules
         $this->const[33] = array("ADHERENT_BANK_CATEGORIE","chaine","","ID de la catégorie banquaire des cotisations");
         $this->const[34] = array("ADHERENT_ETIQUETTE_TYPE","chaine","L7163","Type of address sheets");
         $this->const[35] = array("ADHERENT_ETIQUETTE_TEXT",'texte',"%FULLNAME%\n%ADDRESS%\n%ZIP% %TOWN%\n%COUNTRY%","Text to print on member address sheets");
-        
+
         // Boxes
         //-------
         $this->boxes = array();
@@ -191,6 +191,7 @@ class modAdherent extends DolibarrModules
         $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'adherent_extrafields as extra ON a.rowid = extra.fk_object';
         $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'cotisation as c ON c.fk_adherent = a.rowid';
         $this->export_sql_end[$r] .=' WHERE a.fk_adherent_type = ta.rowid';
+        $this->export_dependencies_array[$r]=array('subscription'=>'c.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 
         // Imports
         //--------

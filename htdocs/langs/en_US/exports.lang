@@ -112,3 +112,4 @@ SourceExample=Example of possible data value
 ExampleAnyRefFoundIntoElement=Any ref found for element <b>%s</b>
 ExampleAnyCodeOrIdFoundIntoDictionnary=Any code (or id) found into dictionnary <b>%s</b>
 CSVFormatDesc=<b>Comma Separated Value</b> file format (.csv).<br>This is a text file format where fields are separated by separator [ %s ]. If separator is found inside a field content, field is rounded by round character [ %s ]. Escape character to escape round character is [ %s ].
+ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate records (with this field added, all ligne will own its own id and will differ).

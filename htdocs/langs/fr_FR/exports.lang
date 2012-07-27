@@ -112,3 +112,4 @@ SourceExample=Exemple de donnée source possible
 ExampleAnyRefFoundIntoElement=Toute réf trouvée pour les éléments <b>%s</b>
 ExampleAnyCodeOrIdFoundIntoDictionnary=Tout code (ou id) trouvée dans le dictionnaire <b>%s</b>
 CSVFormatDesc=Fichier au format <b>Comma Separated Value</b> (.csv).<br>C'est un fichier au format texte dans lequel les champs sont séparés par le caractère [ %s ]. Si le séparateur est trouvé dans le contenu d'un champ, le champ doit être entouré du caractère [ %s ]. Le caractère d'échappement pour inclure un caractère de contour dans une donnée est [ %s ].
+ExportFieldAutomaticallyAdded=Le champ <b>%s</b> a été ajouté automatiquement car il évitera que des lignes identiques soient considérées comme des doublons (avec ce champ, aucune ligne ne sera identique mais aura un id propre).

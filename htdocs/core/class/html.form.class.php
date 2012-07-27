@@ -671,6 +671,7 @@ class Form
         $sql.= " FROM ".MAIN_DB_PREFIX ."societe as s";
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
+        if (! empty($user->societe_id)) $sql.= " AND s.rowid = ".$user->societe_id;
         if ($filter) $sql.= " AND ".$filter;
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
         $sql.= " ORDER BY nom ASC";
@@ -980,6 +981,7 @@ class Form
         {
             $sql.= " WHERE u.entity IN (0,".$conf->entity.")";
         }
+        if (! empty($user->societe_id)) $sql.= " AND u.fk_societe = ".$user->societe_id;
         if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN ('".$excludeUsers."')";
         if (is_array($include) && $includeUsers) $sql.= " AND u.rowid IN ('".$includeUsers."')";
         $sql.= " ORDER BY u.name ASC";
@@ -3259,7 +3261,7 @@ class Form
             // Generate the date part, depending on the use or not of the javascript calendar
             if (empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR == "eldy")
             {
-                $base=DOL_URL_ROOT.'/core/lib/';
+                $base=DOL_URL_ROOT.'/core/';
                 $reset_scripts .= 'resetDP(\''.$base.'\',\''.$prefix.'\',\''.$langs->trans("FormatDateShortJava").'\',\''.$langs->defaultlang.'\');';
             }
             else

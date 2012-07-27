@@ -78,7 +78,7 @@ if ($action == 'add_paiement')
         if (substr($key,0,7) == 'amount_')
         {
             $other_facid = substr($key,7);
-            $amounts[$other_facid] = $_POST[$key];
+            $amounts[$other_facid] = price2num(GETPOST($key));
             $total = $total + $amounts[$other_facid];
         }
     }
