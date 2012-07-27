@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -66,6 +66,7 @@ if ($user->id <> $id && ! $canreaduser) accessforbidden();
 /**
  * Actions
  */
+
 if ($action == 'addrights' && $caneditperms)
 {
     $edituser = new User($db);
@@ -96,11 +97,9 @@ if ($action == 'delrights' && $caneditperms)
 
 
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Visu et edition                                                            */
-/*                                                                            */
-/* ************************************************************************** */
+/**
+ *	View
+ */
 
 llxHeader('',$langs->trans("Permissions"));
 
@@ -110,9 +109,6 @@ $fuser = new User($db);
 $fuser->fetch($id);
 $fuser->getrights();
 
-/*
- * Affichage onglets
- */
 $head = user_prepare_head($fuser);
 
 $title = $langs->trans("User");
@@ -375,6 +371,8 @@ if ($result)
 else dol_print_error($db);
 print '</table>';
 
+
+dol_fiche_end();
 
 llxFooter();
 
