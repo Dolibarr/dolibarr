@@ -52,8 +52,9 @@ $search_code=GETPOST("search_code");
 $search_compta=GETPOST("search_compta");
 
 // Load sale and categ filters
-$search_sale = GETPOST("search_sale");
-$search_categ = GETPOST("search_categ");
+$search_sale  = GETPOST("search_sale");
+$search_categ = GETPOST("search_categ",'int');
+$catid        = GETPOST("catid",'int');
 
 /*
  * Actions
@@ -63,6 +64,7 @@ $search_categ = GETPOST("search_categ");
 if (GETPOST("button_removefilter_x"))
 {
     $search_categ='';
+    $catid='';
     $search_sale='';
     $socname="";
     $search_nom="";
@@ -89,34 +91,29 @@ $sql = "SELECT s.rowid, s.nom as name, s.client, s.ville, st.libelle as stcomm, 
 $sql.= " s.datec, s.datea, s.canvas";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
 if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
-// We'll need these fields in order to filter by categ
-if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_societe";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
-$sql.= " ".MAIN_DB_PREFIX."c_stcomm as st";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_societe"; // We need this table joined to the select in order to filter by categ
+$sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale || !$user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-// We'll need this table joined to the select in order to filter by categ
-if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
 $sql.= " WHERE s.fk_stcomm = st.id";
 $sql.= " AND s.client IN (1, 3)";
 $sql.= ' AND s.entity IN ('.getEntity('societe', 1).')';
 if (!$user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
-if ($search_categ) $sql.= " AND s.rowid = cs.fk_societe";	// Join for the needed table to filter by categ
+if ($catid > 0)          $sql.= " AND cs.fk_categorie = ".$catid;
+if ($catid == -2)        $sql.= " AND cs.fk_categorie IS NULL";
+if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$search_categ;
+if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_nom)   $sql.= " AND s.nom LIKE '%".$db->escape(strtolower($search_nom))."%'";
 if ($search_ville) $sql.= " AND s.ville LIKE '%".$db->escape(strtolower($search_ville))."%'";
 if ($search_code)  $sql.= " AND s.code_client LIKE '%".$db->escape(strtolower($search_code))."%'";
-if ($search_compta) $sql .= " AND s.code_compta LIKE '%".$db->escape($search_compta)."%'";
+if ($search_compta) $sql.= " AND s.code_compta LIKE '%".$db->escape($search_compta)."%'";
 // Insert sale filter
 if ($search_sale)
 {
 	$sql .= " AND sc.fk_user = ".$search_sale;
-}
-// Insert categ filter
-if ($search_categ)
-{
-	$sql .= " AND cs.fk_categorie = ".$search_categ;
 }
 if ($socname)
 {
@@ -157,7 +154,7 @@ if ($result)
 	if ($conf->categorie->enabled)
 	{
 	 	$moreforfilter.=$langs->trans('Categories'). ': ';
-		$moreforfilter.=$formother->select_categories(2,$search_categ,'search_categ');
+		$moreforfilter.=$formother->select_categories(2,$search_categ,'search_categ',1);
 	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
 	}
  	// If the user can view prospects other than his'

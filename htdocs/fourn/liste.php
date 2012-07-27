@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  *
@@ -37,6 +37,8 @@ $search_ville              = GETPOST("search_ville");
 $search_code_fournisseur   = GETPOST("search_code_fournisseur");
 $search_compta_fournisseur = GETPOST("search_compta_fournisseur");
 $search_datec              = GETPOST("search_datec");
+$search_categ              = GETPOST('search_categ','int');
+$catid                     = GETPOST("catid",'int');
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -53,8 +55,6 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="nom";
 
-// Load categ filters
-$search_categ = GETPOST('search_categ');
 
 
 /*
@@ -70,12 +70,12 @@ llxHeader('',$langs->trans("ThirdParty"),$help_url);
 $sql = "SELECT s.rowid as socid, s.nom, s.ville, s.datec, s.datea,  st.libelle as stcomm, s.prefix_comm, s.status as status, ";
 $sql.= "code_fournisseur, code_compta_fournisseur";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
-if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_fournisseur as cf";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cf ON s.rowid = cf.fk_societe"; // We need this table joined to the select in order to filter by categ
+$sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.fk_stcomm = st.id AND s.fournisseur = 1";
 $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
-if ($search_categ) $sql.= " AND s.rowid = cf.fk_societe";	// Join for the needed table to filter by categ
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql .= " AND s.rowid = ".$socid;
 if ($socname)
@@ -89,12 +89,10 @@ if ($search_ville) $sql .= " AND s.ville LIKE '%".$db->escape($search_ville)."%'
 if ($search_code_fournisseur)   $sql .= " AND s.code_fournisseur LIKE '%".$db->escape($search_code_fournisseur)."%'";
 if ($search_compta_fournisseur) $sql .= " AND s.code_compta_fournisseur LIKE '%".$db->escape($search_compta_fournisseur)."%'";
 if ($search_datec)   $sql .= " AND s.datec LIKE '%".$db->escape($search_datec)."%'";
-
-// Insert categ filter
-if ($search_categ)
-{
-	$sql .= " AND cf.fk_categorie = ".$db->escape($search_categ);
-}
+if ($catid > 0)          $sql.= " AND cf.fk_categorie = ".$catid;
+if ($catid == -2)        $sql.= " AND cf.fk_categorie IS NULL";
+if ($search_categ > 0)   $sql.= " AND cf.fk_categorie = ".$search_categ;
+if ($search_categ == -2) $sql.= " AND cf.fk_categorie IS NULL";
 // Count total nb of records
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -114,7 +112,7 @@ if ($resql)
 	$param = "&amp;search_nom=".$search_nom."&amp;search_code=".$search_code."&amp;search_ville=".$search_ville;
  	if ($search_categ != '') $param.='&amp;search_categ='.$search_categ;
 
-	print_barre_liste($langs->trans("ListOfSuppliers"), $page, "liste.php", $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
+	print_barre_liste($langs->trans("ListOfSuppliers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 
 	print '<form action="liste.php" method="GET">';
 	print '<table class="liste" width="100%">';
@@ -124,7 +122,7 @@ if ($resql)
 	if ($conf->categorie->enabled)
 	{
 		$moreforfilter.=$langs->trans('Categories'). ': ';
-		$moreforfilter.=$htmlother->select_categories(1,$search_categ,'search_categ');
+		$moreforfilter.=$htmlother->select_categories(1,$search_categ,'search_categ',1);
 		$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
 	}
 	if ($moreforfilter)
