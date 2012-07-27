@@ -383,8 +383,8 @@ Module85Name=Bancs i caixes
 Module85Desc=Gestió dels comptes financers de tipus comptes bancaris, postals o efectiu
 Module100Name=External site
 Module100Desc=Inclou qualsevol lloc web extern en els menús de Dolibarr, veient-lo en un frame
-Module105Name=Mailman i Sip
-Module105Desc=Interface amb Mailman o Spip per al mòdul Membres
+Module105Name=Mailman i SPIP
+Module105Desc=Interface amb Mailman o SPIP per al mòdul Membres
 Module200Name=LDAP
 Module200Desc=sincronització amb un anuari LDAP
 Module210Name=PostNuke
@@ -1301,7 +1301,7 @@ BankOrderGlobalDesc=Ordre de visualització general
 BankOrderES=Espanyol
 BankOrderESDesc=Ordre de visualització espanyol
 ##### MailmanSpip #####
-MailmanSpipSetup=Configuració del mòdul Mailman i Spip
+MailmanSpipSetup=Configuració del mòdul Mailman i SPIP
 ##### Multicompany #####
 MultiCompanySetup=Configuració del mòdul Multi-empresa
 ##### Suppliers #####
