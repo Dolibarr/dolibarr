@@ -145,7 +145,19 @@ print '</table><br>';
 
 if ($action == 'edit')
 {
-    print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<script type="text/javascript" language="javascript">
+	jQuery(document).ready(function() {
+		jQuery("#main_lang_default").change(function() {
+			jQuery("#check_MAIN_LANG_DEFAULT").attr(\'checked\', true);
+		});
+		jQuery("#main_size_liste_limit").keyup(function() {
+			if (jQuery("#main_size_liste_limit").val() == \'\') jQuery("#check_SIZE_LISTE_LIMIT").attr(\'checked\', false);
+			else jQuery("#check_SIZE_LISTE_LIMIT").attr(\'checked\', true);
+		});
+	});
+	</script>';
+
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
     print '<input type="hidden" name="id" value="'.$id.'">';
@@ -164,7 +176,7 @@ if ($action == 'edit')
     print $s?$s.' ':'';
     print ($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
     print '</td>';
-    print '<td align="left" nowrap="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_LANG_DEFAULT" type="checkbox" '.(! empty($fuser->conf->MAIN_LANG_DEFAULT)?" checked":"");
+    print '<td align="left" nowrap="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_LANG_DEFAULT" id="check_MAIN_LANG_DEFAULT" type="checkbox" '.(! empty($fuser->conf->MAIN_LANG_DEFAULT)?" checked":"");
     print ! empty($dolibarr_main_demo)?' disabled="disabled"':'';	// Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>';
@@ -175,10 +187,10 @@ if ($action == 'edit')
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.$conf->global->MAIN_SIZE_LISTE_LIMIT.'</td>';
-    print '<td align="left" nowrap="nowrap" width="20%"><input '.$bc[$var].' name="check_SIZE_LISTE_LIMIT" type="checkbox" '.(! empty($fuser->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"");
+    print '<td align="left" nowrap="nowrap" width="20%"><input '.$bc[$var].' name="check_SIZE_LISTE_LIMIT" id="check_SIZE_LISTE_LIMIT" type="checkbox" '.(! empty($fuser->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"");
     print ! empty($dolibarr_main_demo)?' disabled="disabled"':'';	// Disabled for demo
     print '> '.$langs->trans("UsePersonalValue").'</td>';
-    print '<td><input class="flat" name="main_size_liste_limit" size="4" value="' . (! empty($fuser->conf->SIZE_LISTE_LIMIT)?$fuser->conf->SIZE_LISTE_LIMIT:'') . '"></td></tr>';
+    print '<td><input class="flat" name="main_size_liste_limit" id="main_size_liste_limit" size="4" value="' . (! empty($fuser->conf->SIZE_LISTE_LIMIT)?$fuser->conf->SIZE_LISTE_LIMIT:'') . '"></td></tr>';
 
     print '</table><br>';
 
@@ -251,6 +263,7 @@ else
 
 }
 
+dol_fiche_end();
 
 llxFooter();
 $db->close();

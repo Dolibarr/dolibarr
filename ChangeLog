@@ -27,6 +27,7 @@ For users:
 - New: Can correct stock of a warehouse from warehouse card.
 - New: [ task #454 ] Add "No category" into filters on category.
 - New: Update language files (de, tr, pt).
+- New: Auto check box on page to edit interface options of user.
 - Fix: No images into product description lines as PDF generation does
   not work with this.
 
