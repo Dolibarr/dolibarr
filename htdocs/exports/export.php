@@ -104,12 +104,23 @@ if ($action=='selectfield')
     }
     else
     {
+        $warnings=array();
+
         $array_selected[$field]=count($array_selected)+1;    // We tag the key $field as "selected"
         // We check if there is a dependency
         if (! empty($fieldsdependenciesarray[$fieldsentitiesarray[$field]]))
         {
-    		// TODO Show warning "risk of duplicate record filtered"
-
+            $tmp=$fieldsdependenciesarray[$fieldsentitiesarray[$field]]; // $fieldsdependenciesarray=array('element'=>'fd.rowid') or array('element'=>array('fd.rowid','ab.rowid'))
+            if (is_array($tmp)) $listofdependencies=$tmp;
+            else $listofdependencies=array($tmp);
+            foreach($listofdependencies as $fieldid)
+            {
+                if (empty($array_selected[$fieldid]))
+                {
+                    $array_selected[$fieldid]=count($array_selected)+1;    // We tag the key $fieldid as "selected"
+                    $warnings[]=$langs->trans("ExportFieldAutomaticallyAdded",$langs->transnoentitiesnoconv($fieldsarray[$fieldid]));
+                }
+            }
         }
 	    //print_r($array_selected);
 	    $_SESSION["export_selected_fields"]=$array_selected;
@@ -373,6 +384,9 @@ if ($step == 2 && $datatoexport)
 
     print '</table>';
     print '<br>';
+
+
+    if ($warnings) dol_htmloutput_mesg('',$warnings,'warning');
 
     // Combo list of export models
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
