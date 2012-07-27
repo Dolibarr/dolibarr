@@ -393,7 +393,7 @@
 - soap_server: when getallheaders is used, massage header names
 - soap_server: use SOAPAction to determine operation when doc/lit service does not wrap parameters in an element with the method name (thanks Peter Hrastnik)
 - soap_transport_http: correctly handle multiple HTTP/1.1 100 responses for https (thanks Jan Slabon)
-- wsdl: fixed documentation for addComplexType (thanks Csintalan Ádám)
+- wsdl: fixed documentation for addComplexType (thanks Csintalan ÃdÃ¡m)
 - wsdl: serialize array data when maxOccurs = 'unbounded' OR maxOccurs > 1 (thanks Dominique Schreckling)
 - wsdl: when serializing a string == 'false' as a boolean, set the value to false
 - wsdl: when serializing a complexType, require the PHP value supplied to be an array
@@ -441,7 +441,7 @@
 - soapclient: initialize paramArrayStr to improve proxy generation
 - soap_parser: handle PHP5 soapclient's incorrect transmission of WSDL-described SOAP encoded arrays.
 - soap_server: don't assume _SERVER['HTTPS'] is set; try HTTP_SERVER_VARS['HTTPS'] if it is not
-- soap_server: "flatten out" the parameter array to call_user_func_array (thanks André Mamitzsch)
+- soap_server: "flatten out" the parameter array to call_user_func_array (thanks AndrÃ© Mamitzsch)
 - soap_server: make thrown exceptions conform to specs
 - wsdl: use serialize_val to serialize an array when the XSD type is soapenc:Array (JBoss/Axis does this)
 - wsdl: change formatting of serialized XML for the WSDL
