@@ -36,7 +36,6 @@ require_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/order.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php');
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php');
@@ -1024,7 +1023,7 @@ else if ($action == 'remove_file')
     if ($object->fetch($id))
     {
         require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-        
+
         $object->fetch_thirdparty();
 
         $langs->load("other");
@@ -1487,7 +1486,7 @@ if ($action == 'create' && $user->rights->commande->creer)
     // Template to use by default
     print '<tr><td>'.$langs->trans('Model').'</td>';
     print '<td colspan="2">';
-    
+
     $liste=ModelePDFCommandes::liste_modeles($db);
     print $form->selectarray('model',$liste,$conf->global->COMMANDE_ADDON_PDF);
     print "</td></tr>";
@@ -1496,7 +1495,7 @@ if ($action == 'create' && $user->rights->commande->creer)
     print '<tr>';
     print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
     print '<td valign="top" colspan="2">';
-    
+    require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
     $doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
     print $doleditor->Create(1);
     //print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
@@ -1508,7 +1507,7 @@ if ($action == 'create' && $user->rights->commande->creer)
         print '<tr>';
         print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
         print '<td valign="top" colspan="2">';
-        
+        require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
         $doleditor=new DolEditor('note', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
         print $doleditor->Create(1);
         //print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
