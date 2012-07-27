@@ -707,7 +707,6 @@ Port=נמל
 VirtualServerName=שרת וירטואלי שם
 AllParameters=כל הפרמטרים
 OS=מערכת ההפעלה
-Php=PHP
 PhpEnv=Env
 PhpModules=מודולים
 PhpConf=Conf

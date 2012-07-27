@@ -634,7 +634,6 @@ Port=Port
 VirtualServerName=Raunverulegur framreiðslumaður nafn
 AllParameters=Allir þættir
 OS=OS
-Php=Php
 PhpEnv=Env
 PhpModules=Modules
 PhpConf=Conf

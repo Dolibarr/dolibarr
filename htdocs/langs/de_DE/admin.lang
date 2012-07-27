@@ -711,7 +711,6 @@ Port=Port
 VirtualServerName=Name des Virtual-Server
 AllParameters=Alle Parameter
 OS=OS
-Php=PHP
 PhpEnv=Env
 PhpModules=Module
 PhpConf=Config

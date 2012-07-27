@@ -707,7 +707,6 @@ Port=Kikötő
 VirtualServerName=Virtuális szerver neve
 AllParameters=Minden paraméter
 OS=OS
-Php=Php
 PhpEnv=Env
 PhpModules=Modulok
 PhpConf=Conf
