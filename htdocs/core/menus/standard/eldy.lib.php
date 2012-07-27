@@ -1218,7 +1218,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 $langs->load("bills");
                 $newmenu->add("/fourn/facture/index.php?leftmenu=orders", $langs->trans("Bills"), 0, $user->rights->fournisseur->facture->lire, '', $mainmenu, 'orders');
 
-                if (isset($user->societe_id) && $user->societe_id == 0)
+                if (empty($user->societe_id))
                 {
                     $newmenu->add("/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"), 1, $user->rights->fournisseur->facture->creer);
                 }
@@ -1238,7 +1238,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
             {
                 $langs->load("categories");
                 $newmenu->add("/categories/index.php?leftmenu=cat&amp;type=1", $langs->trans("Categories"), 0, $user->rights->categorie->lire, '', $mainmenu, 'cat');
-                if (isset($user->societe_id) && $user->societe_id == 0)
+                if (empty($user->societe_id))
                 {
                     $newmenu->add("/categories/fiche.php?action=create&amp;type=1", $langs->trans("NewCategory"), 1, $user->rights->categorie->creer);
                 }
@@ -1342,7 +1342,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 {
                     $langs->load("categories");
                     $newmenu->add("/categories/index.php?leftmenu=cat&amp;type=3", $langs->trans("Categories"), 0, $user->rights->categorie->lire, '', $mainmenu, 'cat');
-                    if (isset($user->societe_id) && $user->societe_id == 0)
+                    if (empty($user->societe_id))
                     {
                         $newmenu->add("/categories/fiche.php?action=create&amp;type=3", $langs->trans("NewCategory"), 1, $user->rights->categorie->creer);
                     }
