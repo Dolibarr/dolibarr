@@ -299,10 +299,12 @@ if ($rowid && $action != 'edit')
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="border" width="100%">';
 
+    $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/cotisations.php">'.$langs->trans("BackToList").'</a>';
+
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 	print '<td class="valeur" colspan="3">';
-	print $form->showrefnav($subscription,'rowid','',1);
+	print $form->showrefnav($subscription, 'rowid', $linkback, 1);
 	print '</td></tr>';
 
     // Member

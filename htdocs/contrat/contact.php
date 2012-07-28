@@ -144,9 +144,11 @@ if ($id > 0 || ! empty($ref))
 		 */
 		print '<table class="border" width="100%">';
 
+		$linkback = '<a href="'.DOL_URL_ROOT.'/contrat/liste.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+
 		// Reference du contrat
 		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $object->ref;
+		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
 		print "</td></tr>";
 
 		// Customer

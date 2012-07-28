@@ -89,10 +89,12 @@ if ($id)
 
     print '<table class="border" width="100%">';
 
+    $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/liste.php">'.$langs->trans("BackToList").'</a>';
+
     // Reference
 	print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
 	print '<td colspan="3">';
-	print $form->showrefnav($object,'id');
+	print $form->showrefnav($object, 'id', $linkback);
 	print '</td>';
 	print '</tr>';
 
