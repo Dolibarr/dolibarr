@@ -583,6 +583,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     if (! empty($reg[3]) && preg_match('/^\+/',$reg[3])) $maskoffset=preg_replace('/^\+/','',$reg[3]);
 
     // Define $sqlwhere
+    $sqlwhere='';
 
     // If a restore to zero after a month is asked we check if there is already a value for this year.
     if (! empty($reg[2]) && preg_match('/^@/',$reg[2]))	$maskraz=preg_replace('/^@/','',$reg[2]);
@@ -617,7 +618,6 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         if (dol_strlen($reg[$posy]) == 4) $yearcomp=sprintf("%04d",date("Y",$date)+$yearoffset);
         if (dol_strlen($reg[$posy]) == 2) $yearcomp=sprintf("%02d",date("y",$date)+$yearoffset);
         if (dol_strlen($reg[$posy]) == 1) $yearcomp=substr(date("y",$date),2,1)+$yearoffset;
-        $sqlwhere='';
         if ($monthcomp > 1)	// Test with month is useless if monthcomp = 0 or 1 (0 is same as 1)
         {
             if (dol_strlen($reg[$posy]) == 4) $yearcomp1=sprintf("%04d",date("Y",$date)+$yearoffset+1);
@@ -720,7 +720,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     {
         $counter++;
 
-        if ($maskrefclient_maskcounter)
+        if (! empty($maskrefclient_maskcounter))
         {
             //print "maskrefclient_maskcounter=".$maskrefclient_maskcounter." maskwithnocode=".$maskwithnocode." maskrefclient=".$maskrefclient."\n<br>";
 

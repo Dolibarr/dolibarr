@@ -36,6 +36,7 @@ $socid = GETPOST("socid",'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe',$socid,'');
 
+$action				= GETPOST('action','alpha');
 $socname            = GETPOST("socname",'alpha');
 $stcomm             = GETPOST("stcomm",'int');
 $search_nom         = GETPOST("search_nom");
@@ -127,8 +128,6 @@ if ($resql)
 		{
 			$search_levels[] = '"'.preg_replace('[^A-Za-z0-9_-]', '', $obj->code).'"';
 		}
-
-		$i++;
 	}
 
 	// Implode the $search_levels array so that it can be use in a "IN (...)" where clause.
@@ -138,8 +137,8 @@ if ($resql)
 else dol_print_error($db);
 
 // Load sale and categ filters
-$search_sale = isset($_GET["search_sale"])?$_GET["search_sale"]:$_POST["search_sale"];
-$search_categ = isset($_GET["search_categ"])?$_GET["search_categ"]:$_POST["search_categ"];
+$search_sale = GETPOST('search_sale');
+$search_categ = GETPOST('search_categ');
 // If the user must only see his prospect, force searching by him
 if (!$user->rights->societe->client->voir && !$socid) $search_sale = $user->id;
 
@@ -149,7 +148,7 @@ $sts = array(-1,0,1,2,3);
 /*
  * Actions
  */
-if ($_GET["action"] == 'cstc')
+if ($action == 'cstc')
 {
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$_GET["pstcomm"];
 	$sql .= " WHERE rowid = ".$_GET["socid"];
@@ -290,7 +289,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("ProspectLevelShort"),$_SERVER["PHP_SELF"],"s.fk_prospectlevel","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("StatusProsp"),$_SERVER["PHP_SELF"],"s.fk_stcomm","",$param,'align="center"',$sortfield,$sortorder);
 	print '<td class="liste_titre">&nbsp;</td>';
-    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$params,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -417,7 +416,7 @@ else
 	dol_print_error($db);
 }
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>

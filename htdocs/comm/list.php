@@ -36,9 +36,9 @@ $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user,'societe',$socid,'');
 
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page=GETPOST('page','int');
 if ($page == -1) { $page = 0 ; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -115,12 +115,6 @@ if ($search_sale)
 {
 	$sql .= " AND sc.fk_user = ".$search_sale;
 }
-if ($socname)
-{
-	$sql.= " AND s.nom LIKE '%".$db->escape(strtolower($socname))."%'";
-	$sortfield = "s.nom";
-	$sortorder = "ASC";
-}
 
 // Count total nb of records
 $nbtotalofrecords = 0;
@@ -177,7 +171,7 @@ if ($result)
 	print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec","",$param,'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$params,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
