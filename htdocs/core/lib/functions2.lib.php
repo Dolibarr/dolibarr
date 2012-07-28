@@ -189,7 +189,7 @@ function dol_print_object_info($object)
 
     // Import key
     if (isset($object->import_key))
-    print $langs->trans("ImportedWithSet")." : " . $object->import_key . '<br>';
+    print $langs->trans("ImportedWithSet").': '.$object->import_key.'<br>';
 
     // User creation
     if (isset($object->user_creation))
