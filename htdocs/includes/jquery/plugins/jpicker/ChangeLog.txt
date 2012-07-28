@@ -1,4 +1,4 @@
-﻿Change Log
+Change Log
 ______________
 1.1.6
   Corrected bug preventing selections inside input values in some browsers - the onselectstart function no longer captures on input boxes.

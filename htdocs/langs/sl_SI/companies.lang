@@ -1,4 +1,4 @@
-﻿# Dolibarr language file - en_US - companies = 
+# Dolibarr language file - en_US - companies = 
 CHARSET = UTF-8
 ErrorCompanyNameAlreadyExists = Ime podjetja %s že obstaja. Izberite drugačno ime.
 ErrorPrefixAlreadyExists = Predpona %s že obstaja. Izberite drugačno predpono.

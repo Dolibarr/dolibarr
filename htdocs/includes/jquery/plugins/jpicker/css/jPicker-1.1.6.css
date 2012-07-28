@@ -1,4 +1,4 @@
-﻿.jPicker .Icon {
+.jPicker .Icon {
   display: inline-block;
   height: 16px; /* change this value if using a different sized color picker icon */
   position: relative; /* make this element an absolute positioning container */
