@@ -3460,37 +3460,39 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
  */
 function dol_htmloutput_events($mesgs=array(),$errors=array(),$warnings=array())
 {
-	if (isset($_SESSION['dol_events']))
-	{
-		if (is_array($mesgs) && isset($_SESSION['dol_events']['mesgs'])) {
+	// Show mesgs
+	if (is_array($mesgs) && ! empty($mesgs)) {
+		if (isset($_SESSION['dol_events']['mesgs'])) {
 			if (! is_array($_SESSION['dol_events']['mesgs'])) {
 				$_SESSION['dol_events']['mesgs']=array($_SESSION['dol_events']['mesgs']); // For backward compatibility
 			}
 			$mesgs = array_merge($mesgs, $_SESSION['dol_events']['mesgs']);
+			unset($_SESSION['dol_events']['mesgs']);
 		}
-		if (is_array($errors) && isset($_SESSION['dol_events']['errors'])) {
+		dol_htmloutput_mesg('',$mesgs);
+	}
+
+	// Show errors
+	if (is_array($errors) && ! empty($errors)) {
+		if (isset($_SESSION['dol_events']['errors'])) {
 			if (! is_array($_SESSION['dol_events']['errors'])) {
 				$_SESSION['dol_events']['errors']=array($_SESSION['dol_events']['errors']); // For backward compatibility
 			}
 			$errors = array_merge($errors, $_SESSION['dol_events']['errors']);
+			unset($_SESSION['dol_events']['errors']);
 		}
-		if (is_array($warnings) && isset($_SESSION['dol_events']['warnings'])) {
+		dol_htmloutput_mesg('',$errors, 'error');
+	}
+
+	// Show warnings
+	if (is_array($warnings) && ! empty($warnings)) {
+		if (isset($_SESSION['dol_events']['warnings'])) {
 			if (! is_array($_SESSION['dol_events']['warnings'])) {
 				$_SESSION['dol_events']['warnings']=array($_SESSION['dol_events']['warnings']); // For backward compatibility
 			}
 			$warnings = array_merge($warnings, $_SESSION['dol_events']['warnings']);
+			unset($_SESSION['dol_events']['warnings']);
 		}
-
-		unset($_SESSION['dol_events']);
-	}
-
-	if (is_array($mesgs) && ! empty($mesgs)) {
-		dol_htmloutput_mesg('',$mesgs);
-	}
-	if (is_array($errors) && ! empty($errors)) {
-		dol_htmloutput_mesg('',$errors, 'error');
-	}
-	if (is_array($warnings) && ! empty($warnings)) {
 		dol_htmloutput_mesg('',$warnings, 'warning');
 	}
 }
