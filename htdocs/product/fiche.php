@@ -144,7 +144,7 @@ if (empty($reshook))
     {
         $error=0;
 
-        if (GETPOST('libelle'))
+        if (! GETPOST('libelle'))
         {
             $mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Label')).'</div>';
             $action = "create";

@@ -118,6 +118,12 @@ INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, act
 -- Regions Switzerland (id country=6) 
 INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (601,  6, 601, '', 1, 'Cantons', 1); 
 
+-- Regions England (id_country=7)
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (701,  7, 701, '', 0, 'England', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (702,  7, 702, '', 0, 'Wales', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (703,  7, 703, '', 0, 'Scotland', 1);
+INSERT INTO llx_c_regions (rowid, fk_pays, code_region, cheflieu, tncc, nom, active) VALUES (704,  7, 704, '', 0, 'Northern Ireland', 1);
+
 -- Regions Tunisia (id country=10)
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1001,10,1001, '',0,'Ariana');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1002,10,1002, '',0,'Béja');
