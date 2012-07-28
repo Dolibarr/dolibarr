@@ -442,12 +442,14 @@ if (! empty($id) && $action != 'edit')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="border" width="100%">';
 
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/dons/liste.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+
     $nbrows=12;
     if ($conf->projet->enabled) $nbrows++;
 
 	// Ref
 	print "<tr>".'<td>'.$langs->trans("Ref").'</td><td colspan="2">';
-	print $form->showrefnav($don,'rowid','',1,'rowid','ref','');
+	print $form->showrefnav($don, 'rowid', $linkback, 1, 'rowid', 'ref', '');
 	print '</td>';
 	print '</tr>';
 
