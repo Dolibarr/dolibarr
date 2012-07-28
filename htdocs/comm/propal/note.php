@@ -66,7 +66,7 @@ else if ($action == 'setnote' && $user->rights->propale->creer)
 /* Affichage fiche                                                            */
 /******************************************************************************/
 
-llxHeader();
+llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
 
 $form = new Form($db);
 
