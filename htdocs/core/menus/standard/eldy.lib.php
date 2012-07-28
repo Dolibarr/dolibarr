@@ -680,7 +680,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                     $newmenu->add("/admin/limits.php?mainmenu=home", $langs->trans("MenuLimits"),1);
                     $newmenu->add("/admin/pdf.php?mainmenu=home", $langs->trans("PDF"),1);
                     $newmenu->add("/admin/mails.php?mainmenu=home", $langs->trans("Emails"),1);
-                    $newmenu->add("/admin/sms.php?mainmenu=home", $langs->trans("Sms"),1);
+                    $newmenu->add("/admin/sms.php?mainmenu=home", $langs->trans("SMS"),1);
                     $newmenu->add("/admin/dict.php?mainmenu=home", $langs->trans("DictionnarySetup"),1);
                     $newmenu->add("/admin/const.php?mainmenu=home", $langs->trans("OtherSetup"),1);
                 }
@@ -782,7 +782,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
             if ($conf->societe->enabled && $conf->fournisseur->enabled)
             {
                 $langs->load("suppliers");
-                $newmenu->add("/fourn/liste.php?leftmenu=suppliers", $langs->trans("ListSuppliersShort"), 1, $user->rights->societe->lire && $user->rights->fournisseur->lire, '', $mainmenu, 'suppliers');
+                $newmenu->add("/fourn/liste.php?leftmenu=suppliers", $langs->trans("ListSuppliersShort"), 1, $user->rights->fournisseur->lire, '', $mainmenu, 'suppliers');
 
                 if ($user->societe_id == 0)
                 {
@@ -1218,7 +1218,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 $langs->load("bills");
                 $newmenu->add("/fourn/facture/index.php?leftmenu=orders", $langs->trans("Bills"), 0, $user->rights->fournisseur->facture->lire, '', $mainmenu, 'orders');
 
-                if (isset($user->societe_id) && $user->societe_id == 0)
+                if (empty($user->societe_id))
                 {
                     $newmenu->add("/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"), 1, $user->rights->fournisseur->facture->creer);
                 }
@@ -1238,7 +1238,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
             {
                 $langs->load("categories");
                 $newmenu->add("/categories/index.php?leftmenu=cat&amp;type=1", $langs->trans("Categories"), 0, $user->rights->categorie->lire, '', $mainmenu, 'cat');
-                if (isset($user->societe_id) && $user->societe_id == 0)
+                if (empty($user->societe_id))
                 {
                     $newmenu->add("/categories/fiche.php?action=create&amp;type=1", $langs->trans("NewCategory"), 1, $user->rights->categorie->creer);
                 }
@@ -1342,7 +1342,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 {
                     $langs->load("categories");
                     $newmenu->add("/categories/index.php?leftmenu=cat&amp;type=3", $langs->trans("Categories"), 0, $user->rights->categorie->lire, '', $mainmenu, 'cat');
-                    if (isset($user->societe_id) && $user->societe_id == 0)
+                    if (empty($user->societe_id))
                     {
                         $newmenu->add("/categories/fiche.php?action=create&amp;type=3", $langs->trans("NewCategory"), 1, $user->rights->categorie->creer);
                     }

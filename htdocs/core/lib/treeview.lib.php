@@ -101,7 +101,8 @@ function tree_showpad(&$fulltree,$key,$silent=0)
 				if ($fulltree[$key2]['level'] > $pos)
 				{
 					$nbofdirinsub++;
-					$nbofdocinsub+=$fulltree[$key2]['cachenbofdoc'];
+					if (! empty($fulltree[$key2]['cachenbofdoc']))
+						$nbofdocinsub+=$fulltree[$key2]['cachenbofdoc'];
 				}
 				if ($fulltree[$key2]['level'] == $pos)
 				{

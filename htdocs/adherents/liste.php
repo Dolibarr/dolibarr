@@ -41,7 +41,8 @@ $search_prenom=GETPOST("search_prenom");
 $search_login=GETPOST("search_login");
 $type=GETPOST("type");
 $search_email=GETPOST("search_email");
-$search_categ=GETPOST("search_categ");
+$search_categ = GETPOST("search_categ",'int');
+$catid        = GETPOST("catid",'int');
 $sall=GETPOST("sall");
 
 $sortfield = GETPOST("sortfield",'alpha');
@@ -64,6 +65,7 @@ if (GETPOST("button_removefilter"))
 	$type="";
 	$search_email="";
 	$search_categ="";
+	$catid="";
 	$sall="";
 }
 
@@ -86,10 +88,14 @@ $sql = "SELECT d.rowid, d.login, d.nom as lastname, d.prenom as firstname, d.soc
 $sql.= " d.datefin,";
 $sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
 $sql.= " t.libelle as type, t.cotisation";
-$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_member as cf";
+$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d";
+if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_member as cm ON d.rowid = cm.fk_member"; // We need this table joined to the select in order to filter by categ
+$sql.= ", ".MAIN_DB_PREFIX."adherent_type as t";
 $sql.= " WHERE d.fk_adherent_type = t.rowid ";
-if ($search_categ) $sql.= " AND d.rowid = cf.fk_member";	// Join for the needed table to filter by categ
+if ($catid > 0)    $sql.= " AND cm.fk_categorie = ".$catid;
+if ($catid == -2)  $sql.= " AND cm.fk_categorie IS NULL";
+if ($search_categ > 0)   $sql.= " AND cm.fk_categorie = ".$search_categ;
+if ($search_categ == -2) $sql.= " AND cm.fk_categorie IS NULL";
 $sql.= " AND d.entity = ".$conf->entity;
 if ($sall)
 {
@@ -131,11 +137,6 @@ if ($filter == 'uptodate')
 if ($filter == 'outofdate')
 {
 	$sql.=" AND datefin < '".$db->idate($now)."'";
-}
-// Insert categ filter
-if ($search_categ)
-{
-	$sql.= " AND cf.fk_categorie = ".$db->escape($search_categ);
 }
 
 // Count total nb of records with no order and no limits
@@ -200,7 +201,7 @@ if ($resql)
 	if ($conf->categorie->enabled)
 	{
 		$moreforfilter.=$langs->trans('Categories'). ': ';
-		$moreforfilter.=$formother->select_categories(3,$search_categ,'search_categ');
+		$moreforfilter.=$formother->select_categories(3,$search_categ,'search_categ',1);
 		$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
 	}
 	if ($moreforfilter)

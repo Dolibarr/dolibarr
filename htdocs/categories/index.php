@@ -35,6 +35,8 @@ if (! $user->rights->categorie->lire) accessforbidden();
 
 $id=GETPOST('id','int');
 $type=(GETPOST('type') ? GETPOST('type') : 0);
+$catname=GETPOST('catname','alpha');
+$section=(GETPOST('section')?GETPOST('section'):0);
 
 
 /*
@@ -70,7 +72,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Search").'</td>';
 print '</tr>';
 print '<tr '.$bc[0].'><td>';
-print $langs->trans("Name").':</td><td><input class="flat" type="text" size="20" name="catname" value="' . $_POST['catname'] . '"/></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+print $langs->trans("Name").':</td><td><input class="flat" type="text" size="20" name="catname" value="' . $catname . '"/></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 /*
 // faire une rech dans une sous categorie uniquement
 print '<tr '.$bc[0].'><td>';
@@ -89,9 +91,9 @@ print '</td><td valign="top" width="70%">';
 /*
  * Categories found
  */
-if($_POST['catname'] || $id > 0)
+if ($catname || $id > 0)
 {
-	$cats = $categstatic->rechercher($id,$_POST['catname'],$type);
+	$cats = $categstatic->rechercher($id,$catname,$type);
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
@@ -126,15 +128,8 @@ $cate_arbo = $categstatic->get_full_arbo($type);
 // Define fulltree array
 $fulltree=$cate_arbo;
 
-
-
 print '<table class="liste" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td colspan="3">'.$langs->trans("Description").'</td></tr>';
-
-
-$section=isset($_GET["section"])?$_GET["section"]:$_POST['section'];
-if (! $section) $section=0;
-
 
 
 // ----- This section will show a tree from a fulltree array -----
@@ -212,9 +207,10 @@ foreach($fulltree as $key => $val)
 	$showline=0;
 
 	// If directory is son of expanded directory, we show line
-	if (in_array($val['id_mere'],$expandedsectionarray)) $showline=4;
+	if (isset($val['id_mere']) && in_array($val['id_mere'],$expandedsectionarray)) $showline=4;
 	// If directory is brother of selected directory, we show line
-	elseif ($val['id'] != $section && $val['id_mere'] == $ecmdirstatic->motherof[$section]) $showline=3;
+	// FIXME $ecmdirstatic not exist or not instantiate ?
+	//elseif (isset($val['id_mere']) && $val['id'] != $section && $val['id_mere'] == $ecmdirstatic->motherof[$section]) $showline=3;
 	// If directory is parent of selected directory or is selected directory, we show line
 	elseif (preg_match('/'.$val['fullpath'].'_/i',$fullpathselected.'_')) $showline=2;
 	// If we are level one we show line
@@ -243,7 +239,9 @@ foreach($fulltree as $key => $val)
 		print '<td valign="top">';
 		//print $val['fullpath']."(".$showline.")";
 		$n='2';
-		if ($b == 0 || ! in_array($val['id'],$expandedsectionarray)) $n='3';
+		// FIXME $b not define ?
+		//if ($b == 0 || ! in_array($val['id'],$expandedsectionarray)) $n='3';
+		if (! in_array($val['id'],$expandedsectionarray)) $n='3';
 		if (! in_array($val['id'],$expandedsectionarray)) $ref=img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/plustop'.$n.'.gif','',1);
 		else $ref=img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/minustop'.$n.'.gif','',1);
 		if ($option == 'indexexpanded') $lien = '<a href="'.$_SERVER["PHP_SELF"].'?section='.$val['id'].'&amp;type='.$type.'&amp;sectionexpand=false">';

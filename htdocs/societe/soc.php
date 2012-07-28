@@ -58,6 +58,7 @@ $extrafields = new ExtraFields($db);
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($socid);
 $canvas = $object->canvas?$object->canvas:GETPOST("canvas");
+$objcanvas='';
 if (! empty($canvas))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
@@ -113,67 +114,67 @@ if (empty($reshook))
         {
             $object->particulier       = GETPOST("private");
 
-            $object->name              = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?trim($_POST["prenom"].' '.$_POST["nom"]):trim($_POST["nom"].' '.$_POST["prenom"]);
-            $object->civilite_id       = $_POST["civilite_id"];
+            $object->name              = empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?GETPOST('prenom').' '.GETPOST('nom'):GETPOST('nom').' '.GETPOST('prenom');
+            $object->civilite_id       = GETPOST('civilite_id');
             // Add non official properties
-            $object->name_bis          = $_POST["nom"];
-            $object->firstname         = $_POST["prenom"];
+            $object->name_bis          = GETPOST('nom');
+            $object->firstname         = GETPOST('prenom');
         }
         else
         {
-            $object->name              = $_POST["nom"];
+            $object->name              = GETPOST('nom');
         }
-        $object->address               = $_POST["adresse"];
-        $object->zip                   = $_POST["zipcode"];
-        $object->town                  = $_POST["town"];
-        $object->country_id            = $_POST["country_id"];
-        $object->state_id              = $_POST["departement_id"];
-        $object->tel                   = $_POST["tel"];
-        $object->fax                   = $_POST["fax"];
-        $object->email                 = trim($_POST["email"]);
-        $object->url                   = trim($_POST["url"]);
-        $object->idprof1               = $_POST["idprof1"];
-        $object->idprof2               = $_POST["idprof2"];
-        $object->idprof3               = $_POST["idprof3"];
-        $object->idprof4               = $_POST["idprof4"];
-        $object->prefix_comm           = $_POST["prefix_comm"];
-        $object->code_client           = $_POST["code_client"];
-        $object->code_fournisseur      = $_POST["code_fournisseur"];
-        $object->capital               = $_POST["capital"];
-        $object->barcode               = $_POST["barcode"];
+        $object->address               = GETPOST('adresse');
+        $object->zip                   = GETPOST('zipcode');
+        $object->town                  = GETPOST('town');
+        $object->country_id            = GETPOST('country_id');
+        $object->state_id              = GETPOST('departement_id');
+        $object->tel                   = GETPOST('tel');
+        $object->fax                   = GETPOST('fax');
+        $object->email                 = GETPOST('email');
+        $object->url                   = GETPOST('url');
+        $object->idprof1               = GETPOST('idprof1');
+        $object->idprof2               = GETPOST('idprof2');
+        $object->idprof3               = GETPOST('idprof3');
+        $object->idprof4               = GETPOST('idprof4');
+        $object->prefix_comm           = GETPOST('prefix_comm');
+        $object->code_client           = GETPOST('code_client');
+        $object->code_fournisseur      = GETPOST('code_fournisseur');
+        $object->capital               = GETPOST('capital');
+        $object->barcode               = GETPOST('barcode');
 
-        $object->tva_intra             = $_POST["tva_intra"];
-        $object->tva_assuj             = $_POST["assujtva_value"];
-        $object->status                = $_POST["status"];
+        $object->tva_intra             = GETPOST('tva_intra');
+        $object->tva_assuj             = GETPOST('assujtva_value');
+        $object->status                = GETPOST('status');
 
         // Local Taxes
-        $object->localtax1_assuj       = $_POST["localtax1assuj_value"];
-        $object->localtax2_assuj       = $_POST["localtax2assuj_value"];
+        $object->localtax1_assuj       = GETPOST('localtax1assuj_value');
+        $object->localtax2_assuj       = GETPOST('localtax2assuj_value');
 
-        $object->forme_juridique_code  = $_POST["forme_juridique_code"];
-        $object->effectif_id           = $_POST["effectif_id"];
+        $object->forme_juridique_code  = GETPOST('forme_juridique_code');
+        $object->effectif_id           = GETPOST('effectif_id');
         if (GETPOST("private") == 1)
         {
             $object->typent_id         = 8; // TODO predict another method if the field "special" change of rowid
         }
         else
         {
-            $object->typent_id         = $_POST["typent_id"];
+            $object->typent_id         = GETPOST('typent_id');
         }
 
-        $object->client                = $_POST["client"];
-        $object->fournisseur           = $_POST["fournisseur"];
-        $object->fournisseur_categorie = $_POST["fournisseur_categorie"];
+        $object->client                = GETPOST('client');
+        $object->fournisseur           = GETPOST('fournisseur');
+        $object->fournisseur_categorie = GETPOST('fournisseur_categorie');
 
-        $object->commercial_id         = $_POST["commercial_id"];
-        $object->default_lang          = $_POST["default_lang"];
+        $object->commercial_id         = GETPOST('commercial_id');
+        $object->default_lang          = GETPOST('default_lang');
 
         // Get extra fields
         foreach($_POST as $key => $value)
         {
             if (preg_match("/^options_/",$key))
             {
-                $object->array_options[$key]=$_POST[$key];
+                $object->array_options[$key]=GETPOST($key);
             }
         }
 
@@ -546,49 +547,49 @@ else
         if ($conf->fournisseur->enabled && (GETPOST("type")=='f' || GETPOST("type")==''))  { $object->fournisseur=1; }
         if (GETPOST("private")==1) { $object->particulier=1; }
 
-        $object->name				= $_POST["nom"];
-        $object->firstname			= $_POST["prenom"];
+        $object->name				= GETPOST('nom');
+        $object->firstname			= GETPOST('prenom');
         $object->particulier		= GETPOST('private', 'int');
-        $object->prefix_comm		= $_POST["prefix_comm"];
-        $object->client				= $_POST["client"]?$_POST["client"]:$object->client;
-        $object->code_client		= $_POST["code_client"];
-        $object->fournisseur		= $_POST["fournisseur"]?$_POST["fournisseur"]:$object->fournisseur;
-        $object->code_fournisseur	= $_POST["code_fournisseur"];
-        $object->address			= $_POST["adresse"];
-        $object->zip				= $_POST["zipcode"];
-        $object->town				= $_POST["town"];
-        $object->state_id			= $_POST["departement_id"];
-        $object->tel				= $_POST["tel"];
-        $object->fax				= $_POST["fax"];
-        $object->email				= $_POST["email"];
-        $object->url				= $_POST["url"];
-        $object->capital			= $_POST["capital"];
-        $object->barcode			= $_POST["barcode"];
-        $object->idprof1			= $_POST["idprof1"];
-        $object->idprof2			= $_POST["idprof2"];
-        $object->idprof3			= $_POST["idprof3"];
-        $object->idprof4			= $_POST["idprof4"];
-        $object->typent_id			= $_POST["typent_id"];
-        $object->effectif_id		= $_POST["effectif_id"];
-        $object->civility_id		= $_POST["civilite_id"];
+        $object->prefix_comm		= GETPOST('prefix_comm');
+        $object->client				= GETPOST('client')?GETPOST('client'):$object->client;
+        $object->code_client		= GETPOST('code_client');
+        $object->fournisseur		= GETPOST('fournisseur')?GETPOST('fournisseur'):$object->fournisseur;
+        $object->code_fournisseur	= GETPOST('code_fournisseur');
+        $object->address			= GETPOST('adresse');
+        $object->zip				= GETPOST('zipcode');
+        $object->town				= GETPOST('town');
+        $object->state_id			= GETPOST('departement_id');
+        $object->tel				= GETPOST('tel');
+        $object->fax				= GETPOST('fax');
+        $object->email				= GETPOST('email');
+        $object->url				= GETPOST('url');
+        $object->capital			= GETPOST('capital');
+        $object->barcode			= GETPOST('barcode');
+        $object->idprof1			= GETPOST('idprof1');
+        $object->idprof2			= GETPOST('idprof2');
+        $object->idprof3			= GETPOST('idprof3');
+        $object->idprof4			= GETPOST('idprof4');
+        $object->typent_id			= GETPOST('typent_id');
+        $object->effectif_id		= GETPOST('effectif_id');
+        $object->civility_id		= GETPOST('civilite_id');
 
-        $object->tva_assuj			= $_POST["assujtva_value"];
-        $object->status				= $_POST["status"];
+        $object->tva_assuj			= GETPOST('assujtva_value');
+        $object->status				= GETPOST('status');
 
         //Local Taxes
-        $object->localtax1_assuj	= $_POST["localtax1assuj_value"];
-        $object->localtax2_assuj	= $_POST["localtax2assuj_value"];
+        $object->localtax1_assuj	= GETPOST('localtax1assuj_value');
+        $object->localtax2_assuj	= GETPOST('localtax2assuj_value');
 
-        $object->tva_intra			= $_POST["tva_intra"];
+        $object->tva_intra			= GETPOST('tva_intra');
 
-        $object->commercial_id		= $_POST["commercial_id"];
-        $object->default_lang		= $_POST["default_lang"];
+        $object->commercial_id		= GETPOST('commercial_id');
+        $object->default_lang		= GETPOST('default_lang');
 
-        $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
+        $object->logo = (isset($_FILES['photo'])?dol_sanitizeFileName($_FILES['photo']['name']):'');
 
         // Gestion du logo de la société
-        $dir     = $conf->societe->multidir_output[$object->entity]."/".$object->id."/logos";
-        $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
+        $dir     = $conf->societe->multidir_output[$conf->entity]."/".$object->id."/logos";
+        $file_OK = (isset($_FILES['photo'])?is_uploaded_file($_FILES['photo']['tmp_name']):false);
         if ($file_OK)
         {
             if (image_format_supported($_FILES['photo']['name']))
@@ -619,19 +620,19 @@ else
         }
 
         // We set country_id, country_code and country for the selected country
-        $object->country_id=$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
+        $object->country_id=GETPOST('country_id')?GETPOST('country_id'):$mysoc->country_id;
         if ($object->country_id)
         {
             $tmparray=getCountry($object->country_id,'all');
             $object->country_code=$tmparray['code'];
             $object->country=$tmparray['label'];
         }
-        $object->forme_juridique_code=$_POST['forme_juridique_code'];
+        $object->forme_juridique_code=GETPOST('forme_juridique_code');
         /* Show create form */
 
         print_fiche_titre($langs->trans("NewThirdParty"));
 
-        if ($conf->use_javascript_ajax)
+        if (! empty($conf->use_javascript_ajax))
         {
             print "\n".'<script type="text/javascript">';
             print '$(document).ready(function () {
@@ -741,7 +742,7 @@ else
 
         print '</td></tr>';
 
-        if ($conf->fournisseur->enabled && ! empty($user->rights->fournisseur->lire))
+        if (! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
         {
             // Supplier
             print '<tr>';
@@ -770,7 +771,7 @@ else
                     {
                         print '<tr>';
                         print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
-                        print $form->selectarray("fournisseur_categorie",$object->SupplierCategories,$_POST["fournisseur_categorie"],1);
+                        print $form->selectarray("fournisseur_categorie",$object->SupplierCategories,GETPOST('fournisseur_categorie'),1);
                         print '</td></tr>';
                     }
                 }
@@ -783,7 +784,7 @@ else
         print '</td></tr>';
 
         // Barcode
-        if ($conf->global->MAIN_MODULE_BARCODE)
+        if (! empty($conf->global->MAIN_MODULE_BARCODE))
         {
             print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="3"><input type="text" name="barcode" value="'.$object->barcode.'">';
             print '</td></tr>';
@@ -820,7 +821,7 @@ else
         print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$object->tel.'"></td>';
         print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$object->fax.'"></td></tr>';
 
-        print '<tr><td>'.$langs->trans('EMail').($conf->global->SOCIETE_MAIL_REQUIRED?'*':'').'</td><td><input type="text" name="email" size="32" value="'.$object->email.'"></td>';
+        print '<tr><td>'.$langs->trans('EMail').(! empty($conf->global->SOCIETE_MAIL_REQUIRED)?'*':'').'</td><td><input type="text" name="email" size="32" value="'.$object->email.'"></td>';
         print '<td>'.$langs->trans('Web').'</td><td><input type="text" name="url" size="32" value="'.$object->url.'"></td></tr>';
 
         // Prof ids
@@ -856,7 +857,7 @@ else
         {
             $s.=' ';
 
-            if ($conf->use_javascript_ajax)
+            if (! empty($conf->use_javascript_ajax))
             {
                 print "\n";
                 print '<script language="JavaScript" type="text/javascript">';
@@ -930,7 +931,7 @@ else
             }
         }
 
-        if ($conf->global->MAIN_MULTILANGS)
+        if (! empty($conf->global->MAIN_MULTILANGS))
         {
             print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">'."\n";
             print $formadmin->select_language(($object->default_lang?$object->default_lang:$conf->global->MAIN_LANG_DEFAULT),'default_lang',0,0,1);
@@ -955,7 +956,7 @@ else
         {
             foreach($extrafields->attribute_label as $key=>$label)
             {
-                $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+                $value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options["options_".$key])?$object->array_options["options_".$key]:''));
                 print '<tr><td>'.$label.'</td><td colspan="3">';
                 print $extrafields->showInputField($key,$value);
                 print '</td></tr>'."\n";
@@ -1038,42 +1039,42 @@ else
                 $prefixSupplierIsUsed = $modCodeFournisseur->verif_prefixIsUsed();
             }
 
-            if (! empty($_POST["nom"]))
+            if (GETPOST('nom'))
             {
                 // We overwrite with values if posted
-                $object->name					= $_POST["nom"];
-                $object->prefix_comm			= $_POST["prefix_comm"];
-                $object->client					= $_POST["client"];
-                $object->code_client			= $_POST["code_client"];
-                $object->fournisseur			= $_POST["fournisseur"];
-                $object->code_fournisseur		= $_POST["code_fournisseur"];
-                $object->address				= $_POST["adresse"];
-                $object->zip					= $_POST["zipcode"];
-                $object->town					= $_POST["town"];
-                $object->country_id				= $_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
-                $object->state_id				= $_POST["departement_id"];
-                $object->tel					= $_POST["tel"];
-                $object->fax					= $_POST["fax"];
-                $object->email					= $_POST["email"];
-                $object->url					= $_POST["url"];
-                $object->capital				= $_POST["capital"];
-                $object->idprof1				= $_POST["idprof1"];
-                $object->idprof2				= $_POST["idprof2"];
-                $object->idprof3				= $_POST["idprof3"];
-                $object->idprof4				= $_POST["idprof4"];
-                $object->typent_id				= $_POST["typent_id"];
-                $object->effectif_id			= $_POST["effectif_id"];
-                $object->barcode				= $_POST["barcode"];
-                $object->forme_juridique_code	= $_POST["forme_juridique_code"];
-                $object->default_lang			= $_POST["default_lang"];
+                $object->name					= GETPOST('nom');
+                $object->prefix_comm			= GETPOST('prefix_comm');
+                $object->client					= GETPOST('client');
+                $object->code_client			= GETPOST('code_client');
+                $object->fournisseur			= GETPOST('fournisseur');
+                $object->code_fournisseur		= GETPOST('code_fournisseur');
+                $object->address				= GETPOST('adresse');
+                $object->zip					= GETPOST('zipcode');
+                $object->town					= GETPOST('town');
+                $object->country_id				= GETPOST('country_id')?GETPOST('country_id'):$mysoc->country_id;
+                $object->state_id				= GETPOST('departement_id');
+                $object->tel					= GETPOST('tel');
+                $object->fax					= GETPOST('fax');
+                $object->email					= GETPOST('email');
+                $object->url					= GETPOST('url');
+                $object->capital				= GETPOST('capital');
+                $object->idprof1				= GETPOST('idprof1');
+                $object->idprof2				= GETPOST('idprof2');
+                $object->idprof3				= GETPOST('idprof3');
+                $object->idprof4				= GETPOST('idprof4');
+                $object->typent_id				= GETPOST('typent_id');
+                $object->effectif_id			= GETPOST('effectif_id');
+                $object->barcode				= GETPOST('barcode');
+                $object->forme_juridique_code	= GETPOST('forme_juridique_code');
+                $object->default_lang			= GETPOST('default_lang');
 
-                $object->tva_assuj				= $_POST["assujtva_value"];
-                $object->tva_intra				= $_POST["tva_intra"];
-                $object->status					= $_POST["status"];
+                $object->tva_assuj				= GETPOST('assujtva_value');
+                $object->tva_intra				= GETPOST('tva_intra');
+                $object->status					= GETPOST('status');
 
                 //Local Taxes
-                $object->localtax1_assuj		= $_POST["localtax1assuj_value"];
-                $object->localtax2_assuj		= $_POST["localtax2assuj_value"];
+                $object->localtax1_assuj		= GETPOST('localtax1assuj_value');
+                $object->localtax2_assuj		= GETPOST('localtax2assuj_value');
 
                 // We set country_id, and pays_code label of the chosen country
                 // TODO move to DAO class
