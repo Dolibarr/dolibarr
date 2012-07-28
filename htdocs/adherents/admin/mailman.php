@@ -178,7 +178,7 @@ if ($conf->global->ADHERENT_USE_MAILMAN)
         'ADHERENT_MAILMAN_LISTS'
     );
 
-    print_fiche_titre("Mailman mailing list system",$lien,'');
+    print_fiche_titre($langs->trans('MailmanTitle'), $lien,'');
 
     // JQuery activity
     print '<script type="text/javascript">
@@ -209,7 +209,7 @@ else
     //$lien.=img_$langs->trans("Activate")
     $lien.=img_picto($langs->trans("Disabled"),'switch_off');
     $lien.='</a>';
-    print_fiche_titre("Mailman mailing list system",$lien,'');
+    print_fiche_titre($langs->trans('MailmanTitle'), $lien,'');
 }
 
 dol_fiche_end();

@@ -387,8 +387,8 @@ Module85Name= Banques et caisses
 Module85Desc= Gestion des comptes financiers de type Comptes bancaires, postaux ou Caisses liquides
 Module100Name=External site
 Module100Desc=Ajoute un site Web externe dans les menus Dolibarr et l'affiche dans un frame Dolibarr
-Module105Name=Mailman and Spip
-Module105Desc=Interface vers Mailman ou Spip pour le module Adhérent
+Module105Name=Mailman and SPIP
+Module105Desc=Interface vers Mailman ou SPIP pour le module Adhérent
 Module200Name= LDAP
 Module200Desc= Synchronisation avec un annuaire LDAP
 Module210Name= PostNuke
@@ -719,7 +719,6 @@ Port= Port
 VirtualServerName= Nom du serveur virtuel
 AllParameters= Tous les paramètres
 OS= OS
-Php= Php
 PhpEnv= Env
 PhpModules= Modules
 PhpConf= Conf
@@ -1299,7 +1298,7 @@ BankOrderGlobalDesc=Ordre d'affichage général
 BankOrderES=Espagnol
 BankOrderESDesc=Ordre d'affichage Espagnol
 ##### MailmanSpip #####
-MailmanSpipSetup=Configuration du module Mailman et Spip
+MailmanSpipSetup=Configuration du module Mailman et SPIP
 ##### Multicompany #####
 MultiCompanySetup=Configuration du module Multi-société
 ##### Suppliers #####
