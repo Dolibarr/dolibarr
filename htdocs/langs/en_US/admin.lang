@@ -1165,6 +1165,8 @@ WithdrawalsSetup=Withdrawal module setup
 ##### ExternalRSS #####
 ExternalRSSSetup=External RSS imports setup
 NewRSS=New RSS Feed
+RSSUrl=RSS URL
+RSSUrlExample=An interesting RSS feed
 ##### Mailing #####
 MailingSetup=EMailing module setup
 MailingEMailFrom=Sender EMail (From) for emails sent by emailing module

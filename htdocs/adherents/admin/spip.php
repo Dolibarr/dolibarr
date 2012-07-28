@@ -147,7 +147,7 @@ else
     //$lien.=$langs->trans("Activate");
     $lien.=img_picto($langs->trans("Disabled"),'switch_off');
     $lien.='</a>';
-    print_fiche_titre("SPIP - CMS",$lien,'');
+    print_fiche_titre("SPIP CMS",$lien,'');
 }
 
 
