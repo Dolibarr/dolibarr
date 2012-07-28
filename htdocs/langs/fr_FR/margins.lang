@@ -39,8 +39,8 @@ UseDiscountOnTotal=Sur le total
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Définit si une remise globale est prise en compte comme un produit, comme un service ou uniquement sur le total lors du calcul des marges.
 
 MARGIN_TYPE=Type de marge gérée
-MargeBrute=Marge Brute
-MargeNette=Marge Nette
+MargeBrute=Marge brute
+MargeNette=Marge nette
 MARGIN_TYPE_DETAILS=Marge brute : Prix de vente HT - Prix d'achat HT<br/>Marge nette : Prix de vente HT - Coût de revient
 
 BuyingCost=Coût de revient
