@@ -95,7 +95,7 @@ if ($action == 'update_private' && $user->rights->projet->creer)
  */
 
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
-llxHeader("",$langs->trans("Tasks"),$help_url);
+llxHeader("",$langs->trans("Project"),$help_url);
 
 $form = new Form($db);
 $userstatic=new User($db);

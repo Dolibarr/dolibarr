@@ -101,7 +101,7 @@ else if ($action == 'setnote_private' && $user->rights->ficheinter->creer)
  * View
  */
 
-llxHeader();
+llxHeader('', $langs->trans("Task"));
 
 $form = new Form($db);
 $userstatic = new User($db);
