@@ -8,7 +8,7 @@ TaxModuleSetupToModifyRules=Ir a la <a href="%s">configuración del módulo</a> 
 OptionMode=Opción de gestión contable
 OptionModeTrue=Opción Ingresos-Gastos
 OptionModeVirtual=Opción Créditos-Deudas
-OptionModeTrueDesc=En este método, el balance se calcula sobre la base de las facturas pagadas.\nLa validez de las cifras no está garantizada pues la gestión de la contabilidad pasa rigurosamente las por entradas/salidas de las cuentas mediante las facturas.\nNota : en esta versión, Dolibarr utiliza la fecha de paso de la factura al estado ' Validada ' y no la fecha de paso al estado ' Pagada '.
+OptionModeTrueDesc=En este método, el balance se calcula sobre la base de las facturas pagadas.<br />La validez de las cifras no está garantizada pues la gestión de la contabilidad pasa rigurosamente las por entradas/salidas de las cuentas mediante las facturas.<br />Nota: en esta versión, Dolibarr utiliza la fecha de paso de la factura al estado 'Validada' y no la fecha de paso al estado 'Pagada'.
 OptionModeVirtualDesc=En este método, el balance se calcula sobre la base de las facturas validadas. Pagadas o no, aparecen en el resultado en cuanto sean dispuestas.
 FeatureIsSupportedInInOutModeOnly=Función disponible solamente en el modo cuentas CREDITOS-DEUDAS (Véase la configuración del módulo cuentas)
 VATReportBuildWithOptionDefinedInModule=Los importes obtenidos se calculan según la configuración del módulo Impuestos.
