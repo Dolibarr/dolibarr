@@ -156,7 +156,7 @@ if ($object->id > 0)
 	}
 
 
-	print '<table class="border"width="100%">';
+	print '<table class="border" width="100%">';
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/liste.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
