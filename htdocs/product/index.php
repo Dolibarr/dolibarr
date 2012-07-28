@@ -48,7 +48,7 @@ $transAreaType = $langs->trans("ProductsAndServicesArea");
 $helpurl='';
 if (! isset($_GET["type"]))
 {
-	$transAreaType = $langs->trans("ProductsArea");
+	$transAreaType = $langs->trans("ProductsAndServicesArea");
 	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
 if ((isset($_GET["type"]) && $_GET["type"] == 0) || empty($conf->service->enabled))

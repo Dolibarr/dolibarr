@@ -41,7 +41,7 @@ $action = GETPOST('action','alpha');
 if ($id)
 {
     // $user est le user qui edite, $id est l'id de l'utilisateur edite
-    $caneditfield=( (($user->id == $id) && $user->rights->user->self->creer)
+    $caneditfield=((($user->id == $id) && $user->rights->user->self->creer)
     || (($user->id != $id) && $user->rights->user->user->creer));
 }
 
@@ -147,12 +147,12 @@ if ($action == 'edit')
 {
 	print '<script type="text/javascript" language="javascript">
 	jQuery(document).ready(function() {
-		jQuery("#main_lang_default").change(function() {
-			jQuery("#check_MAIN_LANG_DEFAULT").attr(\'checked\', true);
+		$("#main_lang_default").change(function() {
+			$("#check_MAIN_LANG_DEFAULT").attr(\'checked\', true);
 		});
-		jQuery("#main_size_liste_limit").keyup(function() {
-			if (jQuery("#main_size_liste_limit").val() == \'\') jQuery("#check_SIZE_LISTE_LIMIT").attr(\'checked\', false);
-			else jQuery("#check_SIZE_LISTE_LIMIT").attr(\'checked\', true);
+		$("#main_size_liste_limit").keyup(function() {
+			if ($(this).val().length) $("#check_SIZE_LISTE_LIMIT").attr(\'checked\', true);
+			else $("#check_SIZE_LISTE_LIMIT").attr(\'checked\', false);
 		});
 	});
 	</script>';

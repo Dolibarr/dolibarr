@@ -174,11 +174,20 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     $thumbsbyrow=6;
     print '<table class="noborder" width="100%">';
 
+    $var=false;
+
     // Title
     if ($foruserprofile)
     {
     	print '<tr class="liste_titre"><th width="25%">'.$langs->trans("Parameter").'</th><th width="25%">'.$langs->trans("DefaultValue").'</th>';
     	print '<th colspan="2">&nbsp;</th>';
+	    print '</tr>';
+
+	    print '<tr '.$bc[$var].'>';
+	    print '<td>'.$langs->trans("DefaultSkin").'</td>';
+	    print '<td>'.$conf->global->MAIN_THEME.'</td>';
+	    print '<td align="left" nowrap="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($selected_theme?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+	    print '<td>&nbsp;</td>';
 	    print '</tr>';
     }
     else
@@ -192,31 +201,16 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     	print $langs->trans('DownloadMoreSkins');
     	print '</a>';
     	print '</th></tr>';
-    }
 
-    $var=false;
-
-    if ($foruserprofile)
-    {
-	    print '<tr '.$bc[$var].'>';
-	    print '<td>'.$langs->trans("DefaultSkin").'</td>';
-	    print '<td>'.$conf->global->MAIN_THEME.'</td>';
-	    print '<td align="left" nowrap="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($selected_theme?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
-	    print '<td>&nbsp;</td>';
-	    print '</tr>';
-    }
-
-    if (! $foruserprofile)
-    {
-	    print '<tr '.$bc[$var].'>';
-	    print '<td>'.$langs->trans("ThemeDir").'</td>';
-	    print '<td>';
-	    foreach($dirthemes as $dirtheme)
-	    {
-	    	echo '"'.$dirtheme.'" ';
-	    }
-	    print '</td>';
-	    print '</tr>';
+    	print '<tr '.$bc[$var].'>';
+    	print '<td>'.$langs->trans("ThemeDir").'</td>';
+    	print '<td>';
+    	foreach($dirthemes as $dirtheme)
+    	{
+    		echo '"'.$dirtheme.'" ';
+    	}
+    	print '</td>';
+    	print '</tr>';
     }
 
     $var=!$var;

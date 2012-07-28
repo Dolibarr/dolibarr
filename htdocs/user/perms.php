@@ -317,7 +317,7 @@ if ($result)
         print '</td>';
 
         // Permission and tick
-        if ($fuser->admin && $objMod->rights_admin_allowed)    // Permission own because admin
+        if (! empty($fuser->admin) && ! empty($objMod->rights_admin_allowed))    // Permission own because admin
         {
             if ($caneditperms)
             {

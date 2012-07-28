@@ -43,14 +43,14 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocalta
 
 	$result=array();
 
+	// We work to define prices using the price without tax
+	$tot_sans_remise = $pu * $qty;
+	$tot_avec_remise_ligne = $tot_sans_remise       * (1 - ($remise_percent_ligne / 100));
+	$tot_avec_remise       = $tot_avec_remise_ligne * (1 - ($remise_percent_global / 100));
+
 	//dol_syslog("price.lib::calcul_price_total $qty, $pu, $remise_percent_ligne, $txtva, $price_base_type $info_bits");
 	if ($price_base_type == 'HT')
 	{
-		// We work to define prices using the price without tax
-		$tot_sans_remise = $pu * $qty;
-		$tot_avec_remise_ligne = $tot_sans_remise       * (1 - ($remise_percent_ligne / 100));
-		$tot_avec_remise       = $tot_avec_remise_ligne * (1 - ($remise_percent_global / 100));
-
 		$result[6] = price2num($tot_sans_remise, 'MT');
 		$result[8] = price2num($tot_sans_remise * (1 + ( (($info_bits & 1)?0:$txtva) / 100)), 'MT');	// Selon TVA NPR ou non
 		$result8bis= price2num($tot_sans_remise * (1 + ( $txtva / 100)), 'MT');	// Si TVA consideree normale (non NPR)
@@ -69,11 +69,6 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocalta
 	}
 	else
 	{
-		// We work to define prices using the price with tax
-		$tot_sans_remise = $pu * $qty;
-		$tot_avec_remise_ligne = $tot_sans_remise       * (1 - ($remise_percent_ligne / 100));
-		$tot_avec_remise       = $tot_avec_remise_ligne * (1 - ($remise_percent_global / 100));
-
 		$result[8] = price2num($tot_sans_remise, 'MT');
 		$result[6] = price2num($tot_sans_remise / (1 + ((($info_bits & 1)?0:$txtva) / 100)), 'MT');	// Selon TVA NPR ou non
 		$result6bis= price2num($tot_sans_remise / (1 + ($txtva / 100)), 'MT');	// Si TVA consideree normale (non NPR)
