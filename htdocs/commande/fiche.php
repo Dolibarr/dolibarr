@@ -620,10 +620,10 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 
 		// ajout prix achat
 		$fk_fournprice = GETPOST('np_fournprice');
-		if (GETPOST('np_buying_price'))
-			$pa_ht = GETPOST('np_buying_price');
-		else
-			$pa_ht = null;
+		$pa_ht = GETPOST('np_buying_price');
+
+		if (!$fk_fournprice) $fk_fournprice = null;
+		if (!$pa_ht) $pa_ht = null;
 
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
