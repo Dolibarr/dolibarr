@@ -723,10 +723,22 @@ $bcnd=array(0=>'class="impair nodrag nodrop"',1=>'class="pair nodrag nodrop"');
 
 // Define messages variables
 $mesg=''; $mesgs=array(); $warning=''; $warnings=array(); $error=0; $errors=array();
-if (isset($_SESSION['dol_message']))
+
+// TODO For backward compatibility, see dol_htmloutput_events() in functions.lib.php
+if (isset($_SESSION['dol_events']))
 {
-	$mesgs[]=$_SESSION['dol_message'];
-	unset($_SESSION['dol_message']);
+	if (is_array($mesgs) && isset($_SESSION['dol_events']['mesgs'])) {
+		$mesgs = array_merge($mesgs, $_SESSION['dol_events']['mesgs']);
+	}
+	if (is_array($errors) && isset($_SESSION['dol_events']['errors'])) {
+		$errors = array_merge($errors, $_SESSION['dol_events']['errors']);
+		$mesgs = array_merge($mesgs, $_SESSION['dol_events']['errors']); // For backward compatibility
+	}
+	if (is_array($warnings) && isset($_SESSION['dol_events']['warnings'])) {
+		$warnings = array_merge($warnings, $_SESSION['dol_events']['warnings']);
+	}
+
+	unset($_SESSION['dol_events']);
 }
 
 // Constants used to defined number of lines in textarea

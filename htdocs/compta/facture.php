@@ -1437,14 +1437,14 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
                 if ($mailfile->error)
                 {
-                    $mesg='<div class="error">'.$mailfile->error.'</div>';
+                    $mesgs[]='<div class="error">'.$mailfile->error.'</div>';
                 }
                 else
                 {
                     $result=$mailfile->sendfile();
                     if ($result)
                     {
-                        $mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
+                        $mesgs[]=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
 
                         $error=0;
 
@@ -1471,7 +1471,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
                         {
                             // Redirect here
                             // This avoid sending mail twice if going out and then back to page
-                            $_SESSION['dol_message'] = $mesg;
+                            $_SESSION['dol_events']['mesgs'] = $mesgs;
                             Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id);
                             exit;
                         }

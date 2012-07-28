@@ -124,7 +124,7 @@ if ($action == 'add')
                 $idl = "idl".$i;
                 $entrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
 				if ($entrepot_id < 0) $entrepot_id='';
-                
+
                 $ret=$object->addline($entrepot_id,GETPOST($idl,'int'),GETPOST($qty,'int'));
                 if ($ret < 0)
                 {
@@ -437,7 +437,7 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
                     $result=$mailfile->sendfile();
                     if ($result)
                     {
-                        $_SESSION['mesg']=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
+                        $_SESSION['dol_events']['mesgs']=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
 
                         $error=0;
 

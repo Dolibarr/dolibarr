@@ -276,14 +276,14 @@ else if ($action == 'add' && $user->rights->propale->creer)
 	$object->socid=$socid;
 	$object->fetch_thirdparty();
 
-	$datep=dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-	$date_delivery=dol_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
+	$datep=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+	$date_delivery=dol_mktime(12, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
 
 	if (empty($datep))
 	{
-	    $error++;
-	    $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")).'</div>';
-	    header("Location: ".DOL_URL_ROOT.'/comm/addpropal.php?socid='.$socid.'&action=create&mesg='.urlencode($mesg));
+	    $errors[]=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date"));
+	    $_SESSION['dol_events']['errors']=$errors;
+	    header("Location: ".DOL_URL_ROOT.'/comm/addpropal.php?socid='.$socid.'&action=create');
 	    exit;
 	}
 
@@ -292,57 +292,57 @@ else if ($action == 'add' && $user->rights->propale->creer)
     	$db->begin();
 
     	// Si on a selectionne une propal a copier, on realise la copie
-    	if($_POST['createmode']=='copy' && $_POST['copie_propal'])
+    	if(GETPOST('createmode')=='copy' && GETPOST('copie_propal'))
     	{
-    		if ($object->fetch($_POST['copie_propal']) > 0)
+    		if ($object->fetch(GETPOST('copie_propal')) > 0)
     		{
-    			$object->ref       				= $_POST['ref'];
+    			$object->ref       				= GETPOST('ref');
     			$object->datep 					= $datep;
     			$object->date_livraison 		= $date_delivery;
-    			$object->availability_id 		= $_POST['availability_id'];
-    			$object->demand_reason_id       = $_POST['demand_reason_id'];
-    			$object->fk_delivery_address 	= $_POST['fk_address'];
-    			$object->duree_validite			= $_POST['duree_validite'];
-    			$object->cond_reglement_id 		= $_POST['cond_reglement_id'];
-    			$object->mode_reglement_id 		= $_POST['mode_reglement_id'];
-    			$object->remise_percent 		= $_POST['remise_percent'];
-    			$object->remise_absolue 		= $_POST['remise_absolue'];
-    			$object->socid    				= $_POST['socid'];
-    			$object->contactid 				= $_POST['contactidp'];
-    			$object->fk_project				= $_POST['projectid'];
-    			$object->modelpdf  				= $_POST['model'];
+    			$object->availability_id 		= GETPOST('availability_id');
+    			$object->demand_reason_id       = GETPOST('demand_reason_id');
+    			$object->fk_delivery_address 	= GETPOST('fk_address');
+    			$object->duree_validite			= GETPOST('duree_validite');
+    			$object->cond_reglement_id 		= GETPOST('cond_reglement_id');
+    			$object->mode_reglement_id 		= GETPOST('mode_reglement_id');
+    			$object->remise_percent 		= GETPOST('remise_percent');
+    			$object->remise_absolue 		= GETPOST('remise_absolue');
+    			$object->socid    				= GETPOST('socid');
+    			$object->contactid 				= GETPOST('contactidp');
+    			$object->fk_project				= GETPOST('projectid');
+    			$object->modelpdf  				= GETPOST('model');
     			$object->author    				= $user->id;			// deprecated
-    			$object->note      				= $_POST['note'];
+    			$object->note      				= GETPOST('note');
     			$object->statut    				= 0;
 
     			$id = $object->create_from($user);
     		}
     		else
     		{
-    			$mesg = '<div class="error">'.$langs->trans("ErrorFailedToCopyProposal",$_POST['copie_propal']).'</div>';
+    			$mesg = '<div class="error">'.$langs->trans("ErrorFailedToCopyProposal",GETPOST('copie_propal')).'</div>';
     		}
     	}
     	else
     	{
-    		$object->ref					= $_POST['ref'];
-    		$object->ref_client 			= $_POST['ref_client'];
+    		$object->ref					= GETPOST('ref');
+    		$object->ref_client 			= GETPOST('ref_client');
     		$object->datep 					= $datep;
     		$object->date_livraison 		= $date_delivery;
-    		$object->availability_id 		= $_POST['availability_id'];
-    		$object->demand_reason_id       = $_POST['demand_reason_id'];
-    		$object->fk_delivery_address 	= $_POST['fk_address'];
-    		$object->duree_validite 		= $_POST['duree_validite'];
-    		$object->cond_reglement_id 		= $_POST['cond_reglement_id'];
-    		$object->mode_reglement_id 		= $_POST['mode_reglement_id'];
+    		$object->availability_id 		= GETPOST('availability_id');
+    		$object->demand_reason_id       = GETPOST('demand_reason_id');
+    		$object->fk_delivery_address 	= GETPOST('fk_address');
+    		$object->duree_validite 		= GETPOST('duree_validite');
+    		$object->cond_reglement_id 		= GETPOST('cond_reglement_id');
+    		$object->mode_reglement_id 		= GETPOST('mode_reglement_id');
 
-    		$object->contactid  = $_POST['contactidp'];
-    		$object->fk_project = $_POST['projectid'];
-    		$object->modelpdf   = $_POST['model'];
+    		$object->contactid  = GETPOST('contactidp');
+    		$object->fk_project = GETPOST('projectid');
+    		$object->modelpdf   = GETPOST('model');
     		$object->author     = $user->id;		// deprecated
-    		$object->note       = $_POST['note'];
+    		$object->note       = GETPOST('note');
 
-    		$object->origin		= $_POST['origin'];
-    		$object->origin_id	= $_POST['originid'];
+    		$object->origin		= GETPOST('origin');
+    		$object->origin_id	= GETPOST('originid');
 
     		for ($i = 1 ; $i <= $conf->global->PRODUCT_SHOW_WHEN_CREATE; $i++)
     		{
@@ -363,9 +363,9 @@ else if ($action == 'add' && $user->rights->propale->creer)
     		$error=0;
 
     		// Insertion contact par defaut si defini
-    		if ($_POST["contactidp"])
+    		if (GETPOST('contactidp'))
     		{
-    			$result=$object->add_contact($_POST["contactidp"],'CUSTOMER','external');
+    			$result=$object->add_contact(GETPOST('contactidp'),'CUSTOMER','external');
 
     			if ($result > 0)
     			{

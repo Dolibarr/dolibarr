@@ -3448,6 +3448,43 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
     return $out;
 }
 
+/**
+ *	Print formated messages to output (Used to show messages on html output).
+ *
+ *	@param	array	$mesgs			Messages array
+ *	@param	array	$errors			Errors array
+ *  @param  array	$warnings       Warnings array
+ *  @return	void
+ *
+ *  @see    dol_htmloutput_mesg
+ */
+function dol_htmloutput_events($mesgs=array(),$errors=array(),$warnings=array())
+{
+	if (isset($_SESSION['dol_events']))
+	{
+		if (is_array($mesgs) && isset($_SESSION['dol_events']['mesgs'])) {
+			$mesgs = array_merge($mesgs, $_SESSION['dol_events']['mesgs']);
+		}
+		if (is_array($errors) && isset($_SESSION['dol_events']['errors'])) {
+			$errors = array_merge($errors, $_SESSION['dol_events']['errors']);
+		}
+		if (is_array($warnings) && isset($_SESSION['dol_events']['warnings'])) {
+			$warnings = array_merge($warnings, $_SESSION['dol_events']['warnings']);
+		}
+
+		unset($_SESSION['dol_events']);
+	}
+
+	if (is_array($mesgs) && ! empty($mesgs)) {
+		dol_htmloutput_mesg('',$mesgs);
+	}
+	if (is_array($errors) && ! empty($errors)) {
+		dol_htmloutput_mesg('',$errors, 'error');
+	}
+	if (is_array($warnings) && ! empty($warnings)) {
+		dol_htmloutput_mesg('',$warnings, 'warning');
+	}
+}
 
 /**
  *	Get formated messages to output (Used to show messages on html output).
@@ -3468,18 +3505,6 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
     $ret='';
     $out='';
     $divstart=$divend='';
-
-    // Use session mesg
-    if (isset($_SESSION['mesg']))
-    {
-    	$mesgstring=$_SESSION['mesg'];
-    	unset($_SESSION['mesg']);
-    }
-	if (isset($_SESSION['mesgarray']))
-    {
-    	$mesgarray=$_SESSION['mesgarray'];
-    	unset($_SESSION['mesgarray']);
-    }
 
     // If inline message with no format, we add it.
     if ((empty($conf->use_javascript_ajax) || ! empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) || $keepembedded) && ! preg_match('/<div class=".*">/i',$out))

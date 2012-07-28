@@ -112,7 +112,7 @@ if ($action=='delete')
     $langs->load("other");
 	$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 	dol_delete_file($file);
-	$_SESSION['dol_message'] = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
+	$_SESSION['dol_events']['mesgs'] = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
     Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
     exit;
 }
