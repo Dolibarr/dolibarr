@@ -5,7 +5,7 @@
  * Copyright (C) 2000-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +56,7 @@ class CMailFile
 	var $error='';
 
 	var $smtps;			// Contains SMTPs object (if this method is used)
+	var $phpmailer;		// Contains PHPMailer object (if this method is used)
 
 	//CSS
 	var $css;
@@ -245,6 +246,58 @@ class CMailFile
 			$smtps->setSubject($this->encodetorfc2822($subject));
 			$smtps->setTO($this->getValidAddress($to,0,1));
 			$smtps->setFrom($this->getValidAddress($from,0,1));
+
+			if (! empty($this->html))
+			{
+				if (!empty($css))
+				{
+					$this->css = $css;
+					$this->styleCSS = $this->buildCSS();
+				}
+				$msg = $this->html;
+				$msg = $this->checkIfHTML($msg);
+			}
+
+			if ($this->msgishtml) $smtps->setBodyContent($msg,'html');
+			else $smtps->setBodyContent($msg,'plain');
+
+			if ($this->atleastoneimage)
+			{
+				foreach ($this->images_encoded as $img)
+				{
+					$smtps->setImageInline($img['image_encoded'],$img['name'],$img['content_type'],$img['cid']);
+				}
+			}
+
+			if ($this->atleastonefile)
+			{
+				foreach ($filename_list as $i => $val)
+				{
+					$content=file_get_contents($filename_list[$i]);
+					$smtps->setAttachment($content,$mimefilename_list[$i],$mimetype_list[$i]);
+				}
+			}
+
+			$smtps->setCC($addr_cc);
+			$smtps->setBCC($addr_bcc);
+			$smtps->setErrorsTo($errors_to);
+			$smtps->setDeliveryReceipt($deliveryreceipt);
+
+			$this->smtps=$smtps;
+		}
+		// TODO not stable, in progress
+		else if ($conf->global->MAIN_MAIL_SENDMODE == 'phpmailer')
+		{
+			// Use PHPMailer library
+			// ------------------------------------------
+
+			require_once(DOL_DOCUMENT_ROOT."/includes/phpmailer/class.phpmailer.php");
+			$this->phpmailer = new PHPMailer();
+			$this->phpmailer->CharSet = $conf->file->character_set_client;
+
+			$this->phpmailer->Subject($this->encodetorfc2822($subject));
+			$this->phpmailer->setTO($this->getValidAddress($to,0,1));
+			$this->phpmailer->SetFrom($this->getValidAddress($from,0,1));
 
 			if (! empty($this->html))
 			{
