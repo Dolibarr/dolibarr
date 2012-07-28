@@ -1271,7 +1271,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/comm/propal/list.php'.(! empty($socid)?'?so
 
 // Ref
 print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">';
-print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','');
+print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
 print '</td></tr>';
 
 // Ref client
