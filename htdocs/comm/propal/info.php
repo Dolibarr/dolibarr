@@ -42,7 +42,7 @@ $result = restrictedArea($user, 'propale', $id, 'propal');
  *	View
  */
 
-llxHeader();
+llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
 
 $propal = new Propal($db);
 $propal->fetch($_GET["id"]);
