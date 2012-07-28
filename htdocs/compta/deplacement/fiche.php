@@ -255,6 +255,9 @@ $form = new Form($db);
 */
 if ($action == 'create')
 {
+    //WYSIWYG Editor
+    require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+
     print_fiche_titre($langs->trans("NewTrip"));
 
     dol_htmloutput_errors($mesg);
@@ -295,9 +298,10 @@ if ($action == 'create')
     print '<tr>';
     print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
     print '<td valign="top" colspan="2">';
-    require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-    $doleditor=new DolEditor('note_public',GETPOST('note_public','alpha'),600,200,'dolibarr_notes','In',false,true,true,ROWS_8,100);
+    
+    $doleditor = new DolEditor('note_public', GETPOST('note_public', 'alpha'), 600, 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
     print $doleditor->Create(1);
+
     print '</td></tr>';
 
     // Private note
@@ -306,9 +310,10 @@ if ($action == 'create')
         print '<tr>';
         print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
         print '<td valign="top" colspan="2">';
-        require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-        $doleditor=new DolEditor('note_private',GETPOST('note_private','alpha'),600,200,'dolibarr_notes','In',false,true,true,ROWS_8,100);
+        
+        $doleditor = new DolEditor('note_private', GETPOST('note_private', 'alpha'), 600, 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
         print $doleditor->Create(1);
+
         print '</td></tr>';
     }
 
@@ -332,6 +337,9 @@ else if ($id)
 
         if ($action == 'edit' && $user->rights->deplacement->creer)
         {
+            //WYSIWYG Editor
+            require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+
             $soc = new Societe($db);
             if ($object->socid)
             {
@@ -382,9 +390,10 @@ else if ($id)
             // Public note
             print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
             print '<td valign="top" colspan="3">';
-            require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-            $doleditor=new DolEditor('note_public',$object->note_public,600,200,'dolibarr_notes','In',false,true,true,ROWS_8,'100');
+
+            $doleditor = new DolEditor('note_public', $object->note_public, 600, 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '100');
             print $doleditor->Create(1);
+            
             print "</td></tr>";
 
             // Private note
@@ -392,9 +401,10 @@ else if ($id)
             {
                 print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
                 print '<td valign="top" colspan="3">';
-                require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-                $doleditor=new DolEditor('note_private',$object->note_private,600,200,'dolibarr_notes','In',false,true,true,ROWS_8,'100');
+
+                $doleditor = new DolEditor('note_private', $object->note_private, 600, 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '100');
                 print $doleditor->Create(1);
+
                 print "</td></tr>";
             }
 

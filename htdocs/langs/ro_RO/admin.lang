@@ -502,7 +502,6 @@ Port=Port
 VirtualServerName=Virtual server de nume
 AllParameters=Toţi parametrii
 OS=OS
-Php=Php
 PhpEnv=Env
 PhpModules=Module
 PhpConf=Conf.

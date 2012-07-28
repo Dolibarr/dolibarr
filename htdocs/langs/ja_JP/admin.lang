@@ -707,7 +707,6 @@ Port=ポート
 VirtualServerName=仮想サーバー名
 AllParameters=すべてのパラメータ
 OS=OS
-Php=PHP
 PhpEnv=ENV
 PhpModules=モジュール
 PhpConf=confに
