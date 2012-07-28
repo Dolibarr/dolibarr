@@ -1007,7 +1007,7 @@ class Commande extends CommonOrder
      *	par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
      *	et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      */
-		function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0)
+	function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0)
     {
         dol_syslog("Commande::addline commandeid=$commandeid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end, type=$type", LOG_DEBUG);
 
@@ -1027,7 +1027,7 @@ class Commande extends CommonOrder
         $qty=price2num($qty);
         $pu_ht=price2num($pu_ht);
         $pu_ttc=price2num($pu_ttc);
-    		$pa_ht=price2num($pa_ht);
+    	$pa_ht=price2num($pa_ht);
         $txtva = price2num($txtva);
         $txlocaltax1 = price2num($txlocaltax1);
         $txlocaltax2 = price2num($txlocaltax2);
@@ -1104,9 +1104,9 @@ class Commande extends CommonOrder
             $this->line->date_start=$date_start;
             $this->line->date_end=$date_end;
 
-						// infos marge
-						$this->line->fk_fournprice = $fk_fournprice;
-						$this->line->pa_ht = $pa_ht;
+			// infos marge
+			$this->line->fk_fournprice = $fk_fournprice;
+			$this->line->pa_ht = $pa_ht;
 
             // TODO Ne plus utiliser
             $this->line->price=$price;
@@ -2834,8 +2834,8 @@ class OrderLine
     var $subprice;      	// U.P. HT (example 100)
     var $remise_percent;	// % for line discount (example 20%)
     var $rang = 0;
-		var $fk_fournprice;
-		var $pa_ht;
+	var $fk_fournprice;
+	var $pa_ht;
     var $marge_tx;
     var $marque_tx;
     var $info_bits = 0;		// Bit 0: 	0 si TVA normal - 1 si TVA NPR
@@ -3087,92 +3087,91 @@ class OrderLine
 	 *	@param      int		$notrigger		1 = disable triggers
      *	@return		int		<0 si ko, >0 si ok
      */
-    function update($notrigger=0)
-    {
-        global $conf,$langs,$user;
+	function update($notrigger=0)
+	{
+		global $conf,$langs,$user;
 
 		$error=0;
 
-        // Clean parameters
-        if (empty($this->tva_tx)) $this->tva_tx=0;
-        if (empty($this->localtax1_tx)) $this->localtax1_tx=0;
-        if (empty($this->localtax2_tx)) $this->localtax2_tx=0;
-        if (empty($this->qty)) $this->qty=0;
-        if (empty($this->total_localtax1)) $this->total_localtax1=0;
-        if (empty($this->total_localtax2)) $this->total_localtax2=0;
-        if (empty($this->marque_tx)) $this->marque_tx=0;
-        if (empty($this->marge_tx)) $this->marge_tx=0;
-        if (empty($this->remise)) $this->remise=0;
-        if (empty($this->remise_percent)) $this->remise_percent=0;
-        if (empty($this->info_bits)) $this->info_bits=0;
-        if (empty($this->product_type)) $this->product_type=0;
-        if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
+		// Clean parameters
+		if (empty($this->tva_tx)) $this->tva_tx=0;
+		if (empty($this->localtax1_tx)) $this->localtax1_tx=0;
+		if (empty($this->localtax2_tx)) $this->localtax2_tx=0;
+		if (empty($this->qty)) $this->qty=0;
+		if (empty($this->total_localtax1)) $this->total_localtax1=0;
+		if (empty($this->total_localtax2)) $this->total_localtax2=0;
+		if (empty($this->marque_tx)) $this->marque_tx=0;
+		if (empty($this->marge_tx)) $this->marge_tx=0;
+		if (empty($this->remise)) $this->remise=0;
+		if (empty($this->remise_percent)) $this->remise_percent=0;
+		if (empty($this->info_bits)) $this->info_bits=0;
+		if (empty($this->product_type)) $this->product_type=0;
+		if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
+		if (empty($this->pa_ht)) $this->pa_ht=0;
 
-		    if (empty($this->pa_ht)) $this->pa_ht=0;
+		// si prix d'achat non renseigné et utilisé pour calcul des marges alors prix achat = prix vente (idem pour remises)
+		if ($this->pa_ht == 0) {
+			if ($this->subprice < 0 || ($conf->global->CalculateMarginsOnLinesWithoutBuyingPrice == 1))
+				$this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);
+		}
 
-				// si prix d'achat non renseign� et utilis� pour calcul des marges alors prix achat = prix vente (idem pour remises)
-				if ($this->pa_ht == 0) {
-		      if ($this->subprice < 0 || ($conf->global->CalculateMarginsOnLinesWithoutBuyingPrice == 1))
-		        $this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);
-		    }
+		$this->db->begin();
 
-        $this->db->begin();
+		// Mise a jour ligne en base
+		$sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET";
+		$sql.= " description='".$this->db->escape($this->desc)."'";
+		$sql.= " , tva_tx=".price2num($this->tva_tx);
+		$sql.= " , localtax1_tx=".price2num($this->localtax1_tx);
+		$sql.= " , localtax2_tx=".price2num($this->localtax2_tx);
+		$sql.= " , qty=".price2num($this->qty);
+		$sql.= " , subprice=".price2num($this->subprice)."";
+		$sql.= " , remise_percent=".price2num($this->remise_percent)."";
+		$sql.= " , price=".price2num($this->price)."";					// TODO A virer
+		$sql.= " , remise=".price2num($this->remise)."";				// TODO A virer
+		if (empty($this->skip_update_total))
+		{
+			$sql.= " , total_ht=".price2num($this->total_ht)."";
+			$sql.= " , total_tva=".price2num($this->total_tva)."";
+			$sql.= " , total_ttc=".price2num($this->total_ttc)."";
+		}
+		$sql.= " , fk_product_fournisseur_price=".(! empty($this->fk_fournprice)?$this->fk_fournprice:"null");
+		$sql.= " , buy_price_ht='".price2num($this->pa_ht)."'";
+		$sql.= " , total_localtax1=".price2num($this->total_localtax1);
+		$sql.= " , total_localtax2=".price2num($this->total_localtax2);
+		$sql.= " , info_bits=".$this->info_bits;
+		if ($this->date_start) { $sql.= " , date_start='".$this->db->idate($this->date_start)."'"; }
+		else { $sql.=' , date_start=null'; }
+		if ($this->date_end) { $sql.= " , date_end='".$this->db->idate($this->date_end)."'"; }
+		$sql.= " , product_type=".$this->product_type;
+		$sql.= " , fk_parent_line=".(! empty($this->fk_parent_line)?$this->fk_parent_line:"null");
+		if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
+		$sql.= " WHERE rowid = ".$this->rowid;
 
-        // Mise a jour ligne en base
-        $sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET";
-        $sql.= " description='".$this->db->escape($this->desc)."'";
-        $sql.= " , tva_tx=".price2num($this->tva_tx);
-        $sql.= " , localtax1_tx=".price2num($this->localtax1_tx);
-        $sql.= " , localtax2_tx=".price2num($this->localtax2_tx);
-        $sql.= " , qty=".price2num($this->qty);
-        $sql.= " , subprice=".price2num($this->subprice)."";
-        $sql.= " , remise_percent=".price2num($this->remise_percent)."";
-        $sql.= " , price=".price2num($this->price)."";					// TODO A virer
-        $sql.= " , remise=".price2num($this->remise)."";				// TODO A virer
-        if (empty($this->skip_update_total))
-        {
-            $sql.= " , total_ht=".price2num($this->total_ht)."";
-            $sql.= " , total_tva=".price2num($this->total_tva)."";
-            $sql.= " , total_ttc=".price2num($this->total_ttc)."";
-        }
-				$sql.= " , fk_product_fournisseur_price='".$this->fk_fournprice."'";
-				$sql.= " , buy_price_ht='".price2num($this->pa_ht)."'";
-        $sql.= " , total_localtax1=".price2num($this->total_localtax1);
-        $sql.= " , total_localtax2=".price2num($this->total_localtax2);
-        $sql.= " , info_bits=".$this->info_bits;
-        if ($this->date_start) { $sql.= " , date_start='".$this->db->idate($this->date_start)."'"; }
-        else { $sql.=' , date_start=null'; }
-        if ($this->date_end) { $sql.= " , date_end='".$this->db->idate($this->date_end)."'"; }
-        $sql.= " , product_type=".$this->product_type;
-        $sql.= " , fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
-        if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
-        $sql.= " WHERE rowid = ".$this->rowid;
+		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			if (! $notrigger)
+			{
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result = $interface->run_triggers('LINEORDER_UPDATE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+			}
 
-        dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if (! $notrigger)
-            {
-                // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-                $interface=new Interfaces($this->db);
-                $result = $interface->run_triggers('LINEORDER_UPDATE',$this,$user,$langs,$conf);
-                if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                // Fin appel triggers
-            }
-
-            $this->db->commit();
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::update Error ".$this->error, LOG_ERR);
-            $this->db->rollback();
-            return -2;
-        }
-    }
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dol_syslog(get_class($this)."::update Error ".$this->error, LOG_ERR);
+			$this->db->rollback();
+			return -2;
+		}
+	}
 
     /**
      *	Update totals of order into database

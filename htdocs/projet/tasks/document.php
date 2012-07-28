@@ -157,7 +157,7 @@ if ($id > 0 || ! empty($ref))
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans('Project'));
+llxHeader('',$langs->trans('Task'));
 
 if ($object->id > 0)
 {

@@ -36,12 +36,15 @@ $socid = GETPOST("socid",'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe',$socid,'');
 
+$action				= GETPOST('action','alpha');
 $socname            = GETPOST("socname",'alpha');
 $stcomm             = GETPOST("stcomm",'int');
 $search_nom         = GETPOST("search_nom");
 $search_ville       = GETPOST("search_ville");
 $search_departement = GETPOST("search_departement");
 $search_datec       = GETPOST("search_datec");
+$search_categ       = GETPOST("search_categ",'int');
+$catid              = GETPOST("catid",'int');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -125,8 +128,6 @@ if ($resql)
 		{
 			$search_levels[] = '"'.preg_replace('[^A-Za-z0-9_-]', '', $obj->code).'"';
 		}
-
-		$i++;
 	}
 
 	// Implode the $search_levels array so that it can be use in a "IN (...)" where clause.
@@ -136,8 +137,8 @@ if ($resql)
 else dol_print_error($db);
 
 // Load sale and categ filters
-$search_sale = isset($_GET["search_sale"])?$_GET["search_sale"]:$_POST["search_sale"];
-$search_categ = isset($_GET["search_categ"])?$_GET["search_categ"]:$_POST["search_categ"];
+$search_sale = GETPOST('search_sale');
+$search_categ = GETPOST('search_categ');
 // If the user must only see his prospect, force searching by him
 if (!$user->rights->societe->client->voir && !$socid) $search_sale = $user->id;
 
@@ -147,7 +148,7 @@ $sts = array(-1,0,1,2,3);
 /*
  * Actions
  */
-if ($_GET["action"] == 'cstc')
+if ($action == 'cstc')
 {
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$_GET["pstcomm"];
 	$sql .= " WHERE rowid = ".$_GET["socid"];
@@ -165,25 +166,22 @@ $sql = "SELECT s.rowid, s.nom, s.ville, s.datec, s.datea, s.status as status,";
 $sql.= " st.libelle as stcomm, s.prefix_comm, s.fk_stcomm, s.fk_prospectlevel,";
 $sql.= " d.nom as departement";
 // Updated by Matelli
-// We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
-if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
-// We'll need these fields in order to filter by categ
-if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_societe";
+if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 $sql .= " FROM ".MAIN_DB_PREFIX."c_stcomm as st";
-// We'll need this table joined to the select in order to filter by sale
-if ($search_sale || !$user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-// We'll need this table joined to the select in order to filter by categ
-if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
+if ($search_sale || !$user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d on (d.rowid = s.fk_departement)";
+if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_societe"; // We need this table joined to the select in order to filter by categ
 $sql.= " WHERE s.fk_stcomm = st.id";
 $sql.= " AND s.client IN (2, 3)";
 $sql.= ' AND s.entity IN ('.getEntity('societe', 1).')';
 if ($user->societe_id) $sql.= " AND s.rowid = " .$user->societe_id;
 if ($search_sale) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
-if ($search_categ) $sql.= " AND s.rowid = cs.fk_societe";	// Join for the needed table to filter by categ
 if (isset($stcomm) && $stcomm != '') $sql.= " AND s.fk_stcomm=".$stcomm;
-
+if ($catid > 0)          $sql.= " AND cs.fk_categorie = ".$catid;
+if ($catid == -2)        $sql.= " AND cs.fk_categorie IS NULL";
+if ($search_categ > 0)   $sql.= " AND cs.fk_categorie = ".$search_categ;
+if ($search_categ == -2) $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_nom)   $sql .= " AND s.nom LIKE '%".$db->escape(strtolower($search_nom))."%'";
 if ($search_ville) $sql .= " AND s.ville LIKE '%".$db->escape(strtolower($search_ville))."%'";
 if ($search_departement) $sql .= " AND d.nom LIKE '%".$db->escape(strtolower($search_departement))."%'";
@@ -197,11 +195,6 @@ if ($search_levels)
 if ($search_sale)
 {
 	$sql .= " AND sc.fk_user = ".$db->escape($search_sale);
-}
-// Insert categ filter
-if ($search_categ)
-{
-	$sql .= " AND cs.fk_categorie = ".$db->escape($search_categ);
 }
 if ($socname)
 {
@@ -271,7 +264,7 @@ if ($resql)
 	if ($conf->categorie->enabled)
 	{
 	 	$moreforfilter.=$langs->trans('Categories'). ': ';
-		$moreforfilter.=$formother->select_categories(2,$search_categ,'search_categ');
+		$moreforfilter.=$formother->select_categories(2,$search_categ,'search_categ',1);
 	 	$moreforfilter.=' &nbsp; &nbsp; &nbsp; ';
 	}
  	// If the user can view prospects other than his'
@@ -296,7 +289,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("ProspectLevelShort"),$_SERVER["PHP_SELF"],"s.fk_prospectlevel","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("StatusProsp"),$_SERVER["PHP_SELF"],"s.fk_stcomm","",$param,'align="center"',$sortfield,$sortorder);
 	print '<td class="liste_titre">&nbsp;</td>';
-    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$params,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"s.status","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -423,7 +416,7 @@ else
 	dol_print_error($db);
 }
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>

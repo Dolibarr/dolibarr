@@ -34,6 +34,12 @@ $type=GETPOST('type');
 $action=GETPOST('action');
 $confirm=GETPOST('confirm');
 
+$socid=GETPOST('socid','int');
+$nom=GETPOST('nom');
+$description=GETPOST('description');
+$visible=GETPOST('visible');
+$catMere=GETPOST('catMere');
+
 if ($id == "")
 {
 	dol_print_error('','Missing parameter id');
@@ -55,13 +61,13 @@ if ($action == 'update' && $user->rights->categorie->creer)
 	$categorie = new Categorie($db);
 	$result=$categorie->fetch($id);
 
-	$categorie->label          = $_POST["nom"];
-	$categorie->description    = $_POST["description"];
-	$categorie->socid          = ($_POST["socid"] ? $_POST["socid"] : 'null');
-	$categorie->visible        = $_POST["visible"];
+	$categorie->label          = $nom;
+	$categorie->description    = $description;
+	$categorie->socid          = ($socid ? $socid : 'null');
+	$categorie->visible        = $visible;
 
-	if($_POST['catMere'] != "-1")
-		$categorie->id_mere = $_POST['catMere'];
+	if ($catMere != "-1")
+		$categorie->id_mere = $catMere;
 	else
 		$categorie->id_mere = "";
 
@@ -76,7 +82,7 @@ if ($action == 'update' && $user->rights->categorie->creer)
 		$_GET["action"] = 'create';
 		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Description"));
 	}
-	if (! $categorie->error)
+	if (empty($categorie->error))
 	{
 		if ($categorie->update($user) > 0)
 		{

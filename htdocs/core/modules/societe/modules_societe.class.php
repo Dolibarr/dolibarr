@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -193,25 +193,25 @@ abstract class ModeleThirdPartyCode
         if ($type == 0)
         {
             $s.=$langs->trans("RequiredIfCustomer").': ';
-            if ($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED && !empty($this->code_null)) $s.='<strike>';
+            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
             $s.=yn(!$this->code_null,1,2);
-            if ($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED && !empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
+            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
             $s.='<br>';
         }
         if ($type == 1)
         {
             $s.=$langs->trans("RequiredIfSupplier").': ';
-            if ($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED && !empty($this->code_null)) $s.='<strike>';
+            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
             $s.=yn(!$this->code_null,1,2);
-            if ($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED && !empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
+            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
             $s.='<br>';
         }
         if ($type == -1)
         {
             $s.=$langs->trans("Required").': ';
-            if ($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED && !empty($this->code_null)) $s.='<strike>';
+            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='<strike>';
             $s.=yn(!$this->code_null,1,2);
-            if ($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED && !empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
+            if (! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && ! empty($this->code_null)) $s.='</strike> '.yn(1,1,2).' ('.$langs->trans("ForcedToByAModule",$langs->transnoentities("yes")).')';
             $s.='<br>';
         }
         $s.=$langs->trans("CanBeModifiedIfOk").': ';

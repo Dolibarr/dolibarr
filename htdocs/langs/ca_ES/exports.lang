@@ -112,3 +112,4 @@ SourceExample=Exemple de dades d'origen possibles
 ExampleAnyRefFoundIntoElement=Totes les referències trobades per als elements <b>%s</b>
 ExampleAnyCodeOrIdFoundIntoDictionnary=Tots els codis (o id) trobats en el diccionari <b>%s</b>
 CSVFormatDesc=Arxiu amb format <b>Valors separats per coma</b> (.csv).<br>És un fitxer amb format de text en què els camps són separats pel caràcter [ %s ]. Si el separador es troba en el contingut d'un camp, el camp ha d'estar tancat per el caràcter [ %s ]. El caràcter d'escapament per a incloure un caràcter d'entorn en una dada és [ %s ].
+ExportFieldAutomaticallyAdded=S'ha afegit automàticament el camp <b>%s</b>, ja que evitarà que línies idèntiques siguin considerades com duplicades (amb aquest camp, cada línia tindrà un id propi).

@@ -1,5 +1,5 @@
 # Dolibarr language file - es_ES - interventions
-CHARSET= UTF-8
+CHARSET=UTF-8
 Intervention=Intervención
 Interventions=Intervenciones
 InterventionCard=Ficha intervención
@@ -23,6 +23,7 @@ ConfirmModifyIntervention=¿Está seguro de querer modificar esta intervención?
 ConfirmDeleteInterventionLine=¿Está seguro de querer eliminar esta linea?
 NameAndSignatureOfInternalContact=Nombre y firma del participante:
 NameAndSignatureOfExternalContact=Nombre y firma del cliente:
+DocumentModelStandard=Documento modelo estándar para intervenciones
 InterventionCardsAndInterventionLines=Fichas y líneas de intervención
 InterId=Id intervención
 InterRef=Ref. intervención

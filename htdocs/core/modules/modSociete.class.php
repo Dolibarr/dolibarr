@@ -127,12 +127,46 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
 
+/*		$r++;
+		$this->rights[$r][0] = 241;
+		$this->rights[$r][1] = 'Read thirdparties customers';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'thirparty_customer_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][5] = 'read';
+
+		$r++;
+		$this->rights[$r][0] = 242;
+		$this->rights[$r][1] = 'Read thirdparties suppliers';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'thirdparty_supplier_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][5] = 'read';
+*/
+
 		$r++;
 		$this->rights[$r][0] = 122; // id de la permission
 		$this->rights[$r][1] = 'Creer modifier les societes'; // libelle de la permission
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
+
+/*		$r++;
+		 $this->rights[$r][0] = 251;
+		$this->rights[$r][1] = 'Create thirdparties customers';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'thirparty_customer_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][5] = 'read';
+
+		$r++;
+		$this->rights[$r][0] = 252;
+		$this->rights[$r][1] = 'Create thirdparties suppliers';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'thirdparty_supplier_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][5] = 'read';
+*/
 
 		$r++;
 		$this->rights[$r][0] = 125; // id de la permission

@@ -102,6 +102,9 @@ print "<br>\n";
 
 if ($action == 'edit')	// Edit
 {
+    //WYSIWYG Editor
+    require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
@@ -133,11 +136,9 @@ if ($action == 'edit')	// Edit
 
 	print '</table><br>'."\n";
 
-
     // Themes
     show_theme('',1);
     print '<br>';
-
 
     // Liste des zone de recherche permanantes supportees
     print '<table summary="search" class="noborder" width="100%">';
@@ -228,7 +229,7 @@ if ($action == 'edit')	// Edit
 	// Hide wiki link on login page
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelp",img_picto('',DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/helpdoc.png','',1)).'</td><td>';
-    print $form->selectyesno('MAIN_HELP_DISABLELINK',isset($conf->global->MAIN_HELP_DISABLELINK)?$conf->global->MAIN_HELP_DISABLELINK:0,1);
+    print $form->selectyesno('MAIN_HELP_DISABLELINK', isset($conf->global->MAIN_HELP_DISABLELINK)?$conf->global->MAIN_HELP_DISABLELINK:0,1);
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
@@ -236,18 +237,19 @@ if ($action == 'edit')	// Edit
     // Message on login page
 	$var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageLogin").'</td><td colspan="2">';
-	// Editeur wysiwyg
-	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-	$doleditor=new DolEditor('main_home',(isset($conf->global->MAIN_HOME)?$conf->global->MAIN_HOME:''),'',142,'dolibarr_notes','In',false,true,true,ROWS_4,90);
+	
+    $doleditor = new DolEditor('main_home', (isset($conf->global->MAIN_HOME)?$conf->global->MAIN_HOME:''), '', 142, 'dolibarr_notes', 'In', false, true, true, ROWS_4, 90);
 	$doleditor->Create();
+
 	print '</td></tr>'."\n";
 
 	// Message of the day on home page
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td colspan="2">';
-	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-	$doleditor=new DolEditor('main_motd',(isset($conf->global->MAIN_MOTD)?$conf->global->MAIN_MOTD:''),'',142,'dolibarr_notes','In',false,true,true,ROWS_4,90);
+	
+    $doleditor = new DolEditor('main_motd', (isset($conf->global->MAIN_MOTD)?$conf->global->MAIN_MOTD:''), '', 142, 'dolibarr_notes', 'In', false, true, true, ROWS_4, 90);
 	$doleditor->Create();
+
 	print '</td></tr>'."\n";
 
 	/*

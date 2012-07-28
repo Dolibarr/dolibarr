@@ -66,7 +66,7 @@ else if ($action == 'setnote' && $user->rights->propale->creer)
 /* Affichage fiche                                                            */
 /******************************************************************************/
 
-llxHeader();
+llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
 
 $form = new Form($db);
 
@@ -86,7 +86,7 @@ if ($id > 0 || ! empty($ref))
 
 			print '<table class="border" width="100%">';
 
-			$linkback="<a href=\"".DOL_URL_ROOT.'/comm/propal/list.php'."?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BackToList")."</a>";
+			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/propal/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans('BackToList').'</a>';
 
 			// Ref
 			print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';

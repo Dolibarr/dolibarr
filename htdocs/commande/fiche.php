@@ -618,13 +618,6 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 
 		$desc=dol_htmlcleanlastbr($desc);
 
-		// ajout prix achat
-		$fk_fournprice = GETPOST('np_fournprice');
-		if (GETPOST('np_buying_price'))
-			$pa_ht = GETPOST('np_buying_price');
-		else
-			$pa_ht = null;
-
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
 
@@ -639,27 +632,27 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 			{
 				// Insert line
 				$result = $object->addline(
-								$object->id,
-								$desc,
-								$pu_ht,
-								GETPOST('qty'),
-								$tva_tx,
-								$localtax1_tx,
-								$localtax2_tx,
-								GETPOST('idprod'),
-								GETPOST('remise_percent'),
-								$info_bits,
-								0,
-								$price_base_type,
-								$pu_ttc,
-								$date_start,
-								$date_end,
-								$type,
-								-1,
-								'',
-								GETPOST('fk_parent_line'),
-								$fk_fournprice,
-								$pa_ht
+						$object->id,
+						$desc,
+						$pu_ht,
+						GETPOST('qty'),
+						$tva_tx,
+						$localtax1_tx,
+						$localtax2_tx,
+						GETPOST('idprod'),
+						GETPOST('remise_percent'),
+						$info_bits,
+						0,
+						$price_base_type,
+						$pu_ttc,
+						$date_start,
+						$date_end,
+						$type,
+						-1,
+						'',
+						GETPOST('fk_parent_line'),
+						GETPOST('np_fournprice'),
+						GETPOST('np_buying_price')
 				);
 
 				if ($result > 0)
@@ -1280,6 +1273,9 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 	*********************************************************************/
 	if ($action == 'create' && $user->rights->commande->creer)
 	{
+		//WYSIWYG Editor
+		require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+
 		print_fiche_titre($langs->trans('CreateOrder'));
 
 		dol_htmloutput_mesg($mesg,$mesgs,'error');
@@ -1477,8 +1473,8 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 		print '<tr>';
 		print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
 		print '<td valign="top" colspan="2">';
-		require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-		$doleditor=new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+
+		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
 		print $doleditor->Create(1);
 		//print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
 		print '</td></tr>';
@@ -1489,7 +1485,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			print '<tr>';
 			print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
 			print '<td valign="top" colspan="2">';
-			require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+
 			$doleditor=new DolEditor('note', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
 			print $doleditor->Create(1);
 			//print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'</textarea>';

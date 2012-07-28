@@ -126,7 +126,9 @@ if (! empty($project_ref) && ! empty($withproject))
  * View
  */
 
-llxHeader("",$langs->trans("Task"));
+$langs->load('projects');
+
+llxHeader('', $langs->trans("Task"));
 
 $form = new Form($db);
 $formother = new FormOther($db);

@@ -5,7 +5,7 @@
  * Copyright (C) 2000-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -285,6 +285,7 @@ class CMailFile
 
 			$this->smtps=$smtps;
 		}
+		// TODO not stable, in progress
 		else if ($conf->global->MAIN_MAIL_SENDMODE == 'phpmailer')
 		{
 			// Use PHPMailer library

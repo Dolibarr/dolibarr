@@ -136,7 +136,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
  * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans('Proposal'),'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
 
 $form = new Form($db);
 

@@ -1092,20 +1092,17 @@ class Categorie
 			foreach ($parents as $parent)
 			{
 				$allways=$parent->get_all_ways();
-				if (! empty($allways))
+				foreach ($allways as $way)
 				{
-					foreach ($allways as $way)
-					{
-						$w		= $way;
-						$w[]	= $this;
-						$ways[]	= $w;
-					}
+					$w		= $way;
+					$w[]	= $this;
+					$ways[]	= $w;
 				}
 			}
-
-			if (count($ways) == 0)
-				$ways[0][0] = $this;
 		}
+
+		if (count($ways) == 0)
+			$ways[0][0] = $this;
 
 		return $ways;
 	}
