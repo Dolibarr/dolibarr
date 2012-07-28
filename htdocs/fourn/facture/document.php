@@ -168,11 +168,13 @@ if ($facid > 0)
         }
 
 
-        print '<table class="border"width="100%">';
+        print '<table class="border" width="100%">';
+
+        $linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
         // Ref
         print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">';
-        print $form->showrefnav($object,'facid','',1,'rowid','ref',$morehtmlref);
+        print $form->showrefnav($object, 'facid', $linkback, 1, 'rowid', 'ref', $morehtmlref);
         print '</td>';
         print "</tr>\n";
 

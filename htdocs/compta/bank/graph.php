@@ -742,6 +742,8 @@ if ($mesg) print $mesg.'<br>';
 
 print '<table class="border" width="100%">';
 
+$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
+
 // Ref
 print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
 print '<td colspan="3">';
@@ -753,7 +755,7 @@ if ($account)
 		if ($_GET["option"]!='all')
 		{
 			$morehtml='<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.'&option=all'.$moreparam.'">'.$langs->trans("ShowAllAccounts").'</a>';
-			print $form->showrefnav($acct,'ref','',1,'ref','ref','',$moreparam);
+			print $form->showrefnav($acct, 'ref', $linkback, 1, 'ref', 'ref', '', $moreparam);
 		}
 		else
 		{

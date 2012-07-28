@@ -157,9 +157,11 @@ if ($object->id)
 
     print '<table class="border" width="100%">';
 
+    $linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+
 	// Ref
 	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
-	print $form->showrefnav($object,'ref','',1,'ref','ref');
+	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 	print '</td></tr>';
 
 	// Societe

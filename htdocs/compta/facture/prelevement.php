@@ -140,6 +140,8 @@ if ($_REQUEST["facid"] > 0 || $_REQUEST["ref"])
          */
         print '<table class="border" width="100%">';
 
+        $linkback = '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+
         // Ref
         print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="5">';
         $morehtmlref='';
@@ -153,7 +155,7 @@ if ($_REQUEST["facid"] > 0 || $_REQUEST["ref"])
         {
             dol_print_error('',$discount->error);
         }
-        print $form->showrefnav($object,'ref','',1,'facnumber','ref',$morehtmlref);
+        print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
         print "</td></tr>";
 
 		// Ref customer

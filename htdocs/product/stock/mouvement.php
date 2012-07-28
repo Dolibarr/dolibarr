@@ -204,9 +204,11 @@ if ($resql)
 
         print '<table class="border" width="100%">';
 
+        $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/liste.php">'.$langs->trans("BackToList").'</a>';
+
         // Ref
         print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-        print $form->showrefnav($entrepot,'id','',1,'rowid','libelle');
+        print $form->showrefnav($entrepot, 'id', $linkback, 1, 'rowid', 'libelle');
         print '</td>';
 
         print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';

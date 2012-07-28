@@ -103,6 +103,8 @@ if ($id > 0 || ! empty($ref))
 
     print '<table class="border" width="100%">';
 
+    $linkback = '<a href="'.DOL_URL_ROOT.'/projet/liste.php">'.$langs->trans("BackToList").'</a>';
+
     // Ref
     print '<tr><td width="30%">';
     print $langs->trans("Ref");
@@ -110,7 +112,7 @@ if ($id > 0 || ! empty($ref))
     // Define a complementary filter for search of next/prev ref.
     $objectsListId = $object->getProjectsAuthorizedForUser($user,$mine,1);
     $object->next_prev_filter=" rowid in (".$objectsListId.")";
-    print $form->showrefnav($object,'ref','',1,'ref','ref','',$param);
+    print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '', $param);
     print '</td></tr>';
 
     print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';

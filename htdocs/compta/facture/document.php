@@ -163,7 +163,9 @@ if ($id > 0 || ! empty($ref))
 
 
 
-		print '<table class="border"width="100%">';
+		print '<table class="border" width="100%">';
+
+		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans('Ref').'</td>';
@@ -179,7 +181,7 @@ if ($id > 0 || ! empty($ref))
 		{
 			dol_print_error('',$discount->error);
 		}
-		print $form->showrefnav($object,'ref','',1,'facnumber','ref',$morehtmlref);
+		print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
 		print '</td></tr>';
 
 		// Ref customer

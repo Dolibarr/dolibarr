@@ -148,11 +148,13 @@ if ($objectid > 0)
 		dol_fiche_head($head, 'documents', $langs->trans("Action"),0,'action');
 
 		// Affichage fiche action en mode visu
-		print '<table class="border" width="100%"';
+		print '<table class="border" width="100%">';
+
+		$linkback = '<a href="'.DOL_URL_ROOT.'/comm/action/index.php">'.$langs->trans("BackToList").'</a>';
 
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $form->showrefnav($act,'id','',($user->societe_id?0:1),'id','ref','');
+		print $form->showrefnav($act, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '');
 		print '</td></tr>';
 
 		// Type

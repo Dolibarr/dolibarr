@@ -754,9 +754,11 @@ else
 
 			print '<table class="border" width="100%">';
 
+			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/liste.php">'.$langs->trans("BackToList").'</a>';
+
 			print '<tr><td width="15%">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="3">';
-			print $form->showrefnav($object,'id');
+			print $form->showrefnav($object,'id', $linkback);
 			print '</td></tr>';
 
 			// Description

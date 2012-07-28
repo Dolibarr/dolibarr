@@ -1461,7 +1461,7 @@ else
         // Name
         print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
         print '<td colspan="3">';
-        print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
+        print $form->showrefnav($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
         print '</td>';
         print '</tr>';
 

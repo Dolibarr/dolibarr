@@ -278,10 +278,12 @@ if ($result)
 
         print '<table class="border" width="100%">';
 
+        $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/search.php">'.$langs->trans("BackToList").'</a>';
+
         // Ref
         print '<tr><td width="20%">'.$langs->trans("Ref")."</td>";
         print '<td colspan="4">';
-        print $form->showrefnav($bankline,'rowid','',1,'rowid','rowid');
+        print $form->showrefnav($bankline, 'rowid', $linkback, 1, 'rowid', 'rowid');
         print '</td>';
         print '</tr>';
 

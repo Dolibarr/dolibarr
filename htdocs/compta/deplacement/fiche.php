@@ -434,9 +434,11 @@ else if ($id)
 
             print '<table class="border" width="100%">';
 
+            $linkback = '<a href="'.DOL_URL_ROOT.'/compta/deplacement/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+
             // Ref
             print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>';
-            print $form->showrefnav($object,'id','',1,'rowid','ref','');
+            print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
             print '</td></tr>';
 
             // Type
