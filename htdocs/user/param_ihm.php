@@ -41,7 +41,7 @@ $action = GETPOST('action','alpha');
 if ($id)
 {
     // $user est le user qui edite, $id est l'id de l'utilisateur edite
-    $caneditfield=( (($user->id == $id) && $user->rights->user->self->creer)
+    $caneditfield=((($user->id == $id) && $user->rights->user->self->creer)
     || (($user->id != $id) && $user->rights->user->user->creer));
 }
 
