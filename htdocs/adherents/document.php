@@ -155,12 +155,14 @@ if ($id > 0)
 		}
 
 
-		print '<table class="border"width="100%">';
+		print '<table class="border" width="100%">';
+
+		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/liste.php">'.$langs->trans("BackToList").'</a>';
 
         // Ref
         print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
         print '<td class="valeur">';
-        print $form->showrefnav($member,'rowid');
+        print $form->showrefnav($member, 'rowid', $linkback);
         print '</td></tr>';
 
         // Login

@@ -282,10 +282,12 @@ if ($rowid > 0)
 
 		print '<table class="border" width="100%">';
 
+		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/type.php">'.$langs->trans("BackToList").'</a>';
+
 		// Ref
 		print '<tr><td width="15%">'.$langs->trans("Ref").'</td>';
 		print '<td>';
-		print $form->showrefnav($adht,'rowid');
+		print $form->showrefnav($adht, 'rowid', $linkback);
 		print '</td></tr>';
 
 		// Label
