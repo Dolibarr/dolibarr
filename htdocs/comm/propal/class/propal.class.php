@@ -1845,7 +1845,9 @@ class Propal extends CommonObject
 
                                 if (! dol_delete_file($file,0,0,0,$this)) // For triggers
                                 {
-                                    $this->db->rollback();
+                                    $this->error='ErrorFailToDeleteFile';
+                                    $this->errors=array('ErrorFailToDeleteFile');
+                                	$this->db->rollback();
                                     return 0;
                                 }
                             }
@@ -1855,6 +1857,7 @@ class Propal extends CommonObject
                                 if (! $res)
                                 {
                                     $this->error='ErrorFailToDeleteDir';
+                                    $this->errors=array('ErrorFailToDeleteDir');
                                     $this->db->rollback();
                                     return 0;
                                 }

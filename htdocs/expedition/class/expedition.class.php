@@ -547,7 +547,10 @@ class Expedition extends CommonObject
 				$file = $dir . "/" . $expeditionref . ".pdf";
 				if (file_exists($file))
 				{
-					dol_delete_file($file);
+					if (!dol_delete_file($file))
+					{
+						$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+					}
 				}
 				if (file_exists($dir))
 				{

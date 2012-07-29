@@ -688,7 +688,6 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$objec
             if ($ok)
             {
             	dol_syslog("Removed file ".$filename, LOG_DEBUG);
-            	setEventMessage($langs->trans("FileWasRemoved", basename($filename)));
             	if (! $notrigger)
             	{
                     if (! is_object($object)) $object=(object) 'dummy';
@@ -705,7 +704,6 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$objec
             }
             else {
             	dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
-            	setEventMessage($langs->trans("ErrorFailToDeleteFile", basename($filename)), 'errors');
             }
         }
     }
@@ -715,11 +713,9 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$objec
         else $ok=unlink($file_osencoded);        // The unlink encapsulated by dolibarr
         if ($ok) {
         	dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
-        	setEventMessage($langs->trans("FileWasRemoved", basename($file_osencoded)));
         }
         else {
         	dol_syslog("Failed to remove file ".$file_osencoded, LOG_WARNING);
-        	setEventMessage($langs->trans("ErrorFailToDeleteFile", basename($file_osencoded)), 'errors');
         }
     }
     return $ok;
@@ -878,7 +874,7 @@ function dol_meta_create($object)
 			{
 				//Pour les articles
 				$meta .= "ITEM_" . $i . "_QUANTITY=\"" . $object->lines[$i]->qty . "\"
-				ITEM_" . $i . "_UNIT_PRICE=\"" . $object->lines[$i]->total_ht . "\"
+				ITEM_" . $i . "_TOTAL_HT=\"" . $object->lines[$i]->total_ht . "\"
 				ITEM_" . $i . "_TVA=\"" .$object->lines[$i]->tva_tx . "\"
 				ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($object->lines[$i]->desc)) . "\"
 				";
@@ -926,6 +922,7 @@ function dol_init_file_process($pathtoscan='')
 /**
  * Get and save an upload file (for example after submitting a new file a mail form).
  * All information used are in db, conf, langs, user and _FILES.
+ * Note: This function can be used only into a HTML page context.
  *
  * @param	string	$upload_dir				Directory to store upload files
  * @param	int		$allowoverwrite			1=Allow overwrite existing file

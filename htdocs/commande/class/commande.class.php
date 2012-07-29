@@ -2262,7 +2262,8 @@ class Commande extends CommonOrder
             }
             else
             {
-                $this->error=$this->db->error();
+                $this->error=$this->db->lasterror();
+        		$this->errors=array($this->db->lasterror());
                 $this->db->rollback();
                 dol_syslog(get_class($this)."::updateline Error=".$this->error, LOG_ERR);
                 return -1;
@@ -2271,6 +2272,7 @@ class Commande extends CommonOrder
         else
         {
             $this->error=get_class($this)."::updateline Order status makes operation forbidden";
+        	$this->errors=array('OrderStatusMakeOperationForbidden');
             return -2;
         }
     }

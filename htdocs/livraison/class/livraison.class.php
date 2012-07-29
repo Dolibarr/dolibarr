@@ -399,6 +399,7 @@ class Livraison extends CommonObject
 							{
 								if (! dol_delete_file($file))
 								{
+									$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
 									return 0;
 								}
 							}
