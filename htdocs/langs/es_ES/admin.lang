@@ -331,6 +331,7 @@ UrlGenerationParameters=Seguridad de las URLs
 SecurityTokenIsUnique=¿Usar un parámetro securekey único para cada URL?
 EnterRefToBuildUrl=Introduzca la referencia del objeto %s
 GetSecuredUrl=Obtener la URL calculada
+ButtonHideUnauthorized=Ocultar los botones de acciones no autorizadas en vez de mostrarlos deshabilitados
 # Modules= undefined=
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos

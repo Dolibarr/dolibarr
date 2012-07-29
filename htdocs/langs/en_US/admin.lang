@@ -327,7 +327,7 @@ UrlGenerationParameters=Parameters to secure URLs
 SecurityTokenIsUnique=Use a unique securekey parameter for each URL
 EnterRefToBuildUrl=Enter reference for object %s
 GetSecuredUrl=Get calculated URL
-ButtonHideUnauthorized=Hide buttons unauthorized (instead of seeing gray)
+ButtonHideUnauthorized=Hide buttons for unauthorized actions instead of showing disabled buttons
 
 # Modules
 Module0Name=Users & groups
