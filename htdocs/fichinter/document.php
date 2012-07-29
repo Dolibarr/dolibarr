@@ -120,7 +120,9 @@ else if ($action == 'confirm_deletefile' && $confirm == 'yes')
 		$object->fetch_thirdparty();
 
 		$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-		dol_delete_file($file,0,0,0,$object);
+		$ret=dol_delete_file($file,0,0,0,$object);
+		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
 		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
 		exit;
 	}

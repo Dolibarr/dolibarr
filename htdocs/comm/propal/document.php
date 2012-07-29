@@ -93,22 +93,22 @@ if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
                     // Used on menu or for setup page for example
                     $imgThumbMini = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
                 }
-			    $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+                setEventMessage($langs->trans("FileTransferComplete"));
 			}
 			else
 			{
 				$langs->load("errors");
 				if ($resupload < 0)	// Unknown error
 				{
-					$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+					setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
 				}
 				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
 				{
-					$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
+					setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
 				}
 				else	// Known error
 				{
-					$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
+					setEventMessage($langs->trans($resupload), 'errors');
 				}
 			}
 		}
@@ -124,7 +124,9 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 
         $upload_dir = $conf->propal->dir_output . "/" . dol_sanitizeFileName($object->ref);
     	$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-    	dol_delete_file($file,0,0,0,$object);
+    	$ret=dol_delete_file($file,0,0,0,$object);
+    	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+    	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
     	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
     	exit;
     }
@@ -186,11 +188,9 @@ if ($object->id > 0)
 
 	print '</div>';
 
-	dol_htmloutput_mesg($mesg,$mesgs);
-
 	/*
 	 * Confirmation suppression fichier
-	*/
+	 */
 	if ($action == 'delete')
 	{
 		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);

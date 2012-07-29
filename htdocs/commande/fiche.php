@@ -1004,7 +1004,10 @@ else if ($action == 'remove_file')
 		$langs->load("other");
 		$upload_dir = $conf->commande->dir_output;
 		$file = $upload_dir . '/' . GETPOST('file');
-		dol_delete_file($file,0,0,0,$object);
+		$ret=dol_delete_file($file,0,0,0,$object);
+		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+		$action='';
 	}
 }
 
