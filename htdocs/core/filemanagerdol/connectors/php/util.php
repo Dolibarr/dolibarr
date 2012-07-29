@@ -25,15 +25,20 @@
 function RemoveFromStart( $sourceString, $charToRemove )
 {
 	$sPattern = '|^' . $charToRemove . '+|' ;
-	return preg_replace( $sPattern, '', $sourceString );
+	return preg_replace($sPattern, '', $sourceString);
 }
 
-function RemoveFromEnd( $sourceString, $charToRemove )
+function RemoveFromEnd( $sourceString, $charToRemove)
 {
 	$sPattern = '|' . $charToRemove . '+$|' ;
-	return preg_replace( $sPattern, '', $sourceString );
+	return preg_replace($sPattern, '', $sourceString);
 }
 
+/**
+ * FindBadUtf8
+ *
+ * @param unknown_type $string		String
+ */
 function FindBadUtf8( $string )
 {
 	$regex =
@@ -57,6 +62,11 @@ function FindBadUtf8( $string )
 	return false;
 }
 
+/**
+ * ConvertToXmlAttribute
+ *
+ * @param unknown_type $value
+ */
 function ConvertToXmlAttribute( $value )
 {
 	if ( defined( 'PHP_OS' ) )
@@ -173,10 +183,9 @@ function DetectHtml( $filePath )
  * Currently this function validates only image files.
  * Returns false if file is invalid.
  *
- * @param string $filePath absolute path to file
- * @param string $extension file extension
- * @param integer $detectionLevel 0 = none, 1 = use getimagesize for images, 2 = use DetectHtml for images
- * @return boolean
+ * @param 	string 	$filePath 		Absolute path to file
+ * @param 	string 	$extension 		File extension
+ * @return 	boolean					True or false
  */
 function IsImageValid( $filePath, $extension )
 {
@@ -206,11 +215,11 @@ function IsImageValid( $filePath, $extension )
 		}
 	}
 
-	if ( !in_array( $extension, $imageCheckExtensions ) ) {
+	if (!in_array($extension, $imageCheckExtensions) ) {
 		return true;
 	}
 
-	if ( @getimagesize( $filePath ) === false ) {
+	if (@getimagesize($filePath) === false) {
 		return false ;
 	}
 

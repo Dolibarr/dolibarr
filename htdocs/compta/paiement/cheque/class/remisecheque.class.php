@@ -43,9 +43,9 @@ class RemiseCheque extends CommonObject
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	function RemiseCheque($DB)
+	function RemiseCheque($db)
 	{
 		$this->db = $DB;
 		$this->next_id = 0;
