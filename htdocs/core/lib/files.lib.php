@@ -1006,6 +1006,11 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
 		else $result=0;
 		if ($result >= 0)
 		{
+			if (empty($donotdeletefile))
+			{
+				$langs->load("other");
+				setEventMessage($langs->trans("FileWasRemoved",$filetodelete));
+			}
 			if (empty($donotupdatesession))
 			{
 				include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');

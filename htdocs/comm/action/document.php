@@ -40,8 +40,8 @@ $langs->load("commercial");
 $langs->load("other");
 $langs->load("bills");
 
-if (isset($_GET["error"])) $error=$_GET["error"];
 $objectid = GETPOST('id','int');
+$action=GETPOST('action','alpha');
 
 // Security check
 if ($user->societe_id > 0)
@@ -66,7 +66,7 @@ if (! $sortfield) $sortfield="name";
 /*
  * Action envoie fichier
  */
-if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
+if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	// Creation repertoire si n'existe pas
 	$upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($objectid);
@@ -109,11 +109,14 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 /*
  * Efface fichier
  */
-if ($_GET["action"] == 'delete')
+if ($action == 'delete')
 {
 	$upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($objectid);
 	$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-	dol_delete_file($file);
+	$ret=dol_delete_file($file);
+	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	$action='';
 }
 
 

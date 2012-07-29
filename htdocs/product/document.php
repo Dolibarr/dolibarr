@@ -128,7 +128,9 @@ if ($object->id)
 	if ($action=='delete')
 	{
 		$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-		$result=dol_delete_file($file);
+		$ret=dol_delete_file($file);
+		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
 	}
 
 	$head=product_prepare_head($object, $user);

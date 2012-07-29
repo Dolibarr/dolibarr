@@ -251,7 +251,9 @@ if ($action == 'remove_file' && $user->rights->projet->creer)
         $langs->load("other");
         $upload_dir =	$conf->projet->dir_output . "/";
         $file =	$upload_dir	. '/' .	GETPOST('file');
-        dol_delete_file($file);
+        $ret=dol_delete_file($file);
+        if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+        else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
     }
 }
 
