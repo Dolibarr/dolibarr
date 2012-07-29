@@ -98,6 +98,7 @@ clean:
 	rm -fr htdocs/includes/geoip
 	rm -fr htdocs/includes/nusoap
 	rm -fr htdocs/includes/odtphp/zip/pclzip
+    rm -fr htdocs/includes/phpmailer
 	rm -fr htdocs/includes/jquery/css
 	rm -fr htdocs/includes/jquery/js
 	rm -fr htdocs/includes/jquery/plugins/flot
