@@ -39,42 +39,11 @@ $upload_dir=$conf->admin->dir_temp;
  * Actions
  */
 
-if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
+if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
     require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
-    $result=dol_mkdir($upload_dir);	// Create dir if not exists
-    if ($result >= 0)
-    {
-        $resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),1,0,$_FILES['userfile']['error']);
-
-        if (is_numeric($resupload) && $resupload > 0)
-        {
-            setEventMessage($langs->trans("FileTransferComplete"));
-
-            include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
-            $formmail = new FormMail($db);
-            $formmail->add_attached_files($upload_dir . "/" . $_FILES['addedfile']['name'],$_FILES['addedfile']['name'],$_FILES['addedfile']['type']);
-        }
-        else
-        {
-            $langs->load("errors");
-            if ($resupload < 0)	// Unknown error
-            {
-                setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
-            }
-            else if (preg_match('/ErrorFileIsInfectedWithAVirus.(.*)/',$resupload,$reg))	// Files infected by a virus
-            {
-                $mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus");
-                $mesg.= '<br>'.$langs->trans("Information").': '.$langs->trans($reg[1]);
-                $mesg.= '</div>';
-            }
-            else	// Known error
-            {
-                setEventMessage($langs->trans($resupload), 'errors');
-            }
-        }
-    }
+    dol_add_file_process($upload_dir,0,0);
 }
 
 if ($_GET["action"] == 'activate_captcha')
