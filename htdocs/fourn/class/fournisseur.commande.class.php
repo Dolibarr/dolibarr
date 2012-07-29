@@ -1322,7 +1322,6 @@ class CommandeFournisseur extends CommonOrder
         		{
         			if (! dol_delete_file($file,0,0,0,$this)) // For triggers
         			{
-        				$this->error='ErrorFailToDeleteFile';
         				$error++;
         			}
         		}

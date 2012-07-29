@@ -495,7 +495,7 @@ if (! empty($_POST['addfile']))
 	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
     // Set tmp user directory
-    $mesg=dol_add_file_process($upload_dir,0,0);
+    dol_add_file_process($upload_dir,0,0);
 
 	$action="edit";
 }
@@ -507,7 +507,7 @@ if (! empty($_POST["removedfile"]))
 
 	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
-    $mesg=dol_remove_file_process($_POST['removedfile'],0);
+    dol_remove_file_process($_POST['removedfile'],0);
 
 	$action="edit";
 }

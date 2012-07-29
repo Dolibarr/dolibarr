@@ -167,8 +167,6 @@ if ($action == 'confirm_deletefile')
 
     	$result=dol_delete_file($file);
 
-    	$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('urlfile')).'</div>';
-
     	$result=$ecmdir->changeNbOfFiles('-');
 
     	clearstatcache();

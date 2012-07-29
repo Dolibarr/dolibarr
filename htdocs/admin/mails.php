@@ -148,10 +148,6 @@ if (! empty($_POST['removedfile']) || ! empty($_POST['removedfilehtml']))
 		$result = dol_delete_file($pathtodelete,1);
 		if ($result >= 0)
 		{
-            $langs->load("other");
-		    $message = '<div class="ok">'.$langs->trans("FileWasRemoved",$filetodelete).'</div>';
-			//print_r($_FILES);
-
 			include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
 			$formmail = new FormMail($db);
 			$formmail->remove_attached_files($keytodelete);

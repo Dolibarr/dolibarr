@@ -164,7 +164,7 @@ class Fichinter extends CommonObject
 				$error++; $this->errors=$interface->errors;
 			}
 			// Fin appel triggers
-			
+
 			$this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."fichinter");
 			$this->db->commit();
 			return $this->id;
@@ -210,7 +210,7 @@ class Fichinter extends CommonObject
 				$error++; $this->errors=$interface->errors;
 			}
 			// Fin appel triggers
-			
+
 			$this->db->commit();
 			return 1;
 		}
@@ -339,7 +339,7 @@ class Fichinter extends CommonObject
 		if ($this->statut != 1)
 		{
 			$this->db->begin();
-			
+
 			$now=dol_now();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
@@ -651,7 +651,6 @@ class Fichinter extends CommonObject
 
 						if (! dol_delete_file($file,0,0,0,$this)) // For triggers
 						{
-							$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
 							return 0;
 						}
 					}
@@ -664,7 +663,7 @@ class Fichinter extends CommonObject
 						}
 					}
 				}
-				
+
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);

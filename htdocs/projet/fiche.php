@@ -252,7 +252,6 @@ if ($action == 'remove_file' && $user->rights->projet->creer)
         $upload_dir =	$conf->projet->dir_output . "/";
         $file =	$upload_dir	. '/' .	GETPOST('file');
         dol_delete_file($file);
-        $mesg	= '<div	class="ok">'.$langs->trans("FileWasRemoved",GETPOST('file')).'</div>';
     }
 }
 

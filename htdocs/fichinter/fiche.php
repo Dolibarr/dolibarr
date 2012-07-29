@@ -213,7 +213,6 @@ else if ($action == 'remove_file')
 		$upload_dir = $conf->ficheinter->dir_output;
 		$file = $upload_dir . '/' . GETPOST('file');
 		dol_delete_file($file,0,0,0,$object);
-		$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('file')).'</div>';
 	}
 }
 
@@ -467,8 +466,7 @@ if (GETPOST('addfile','alpha'))
     $vardir=$conf->user->dir_output."/".$user->id;
     $upload_dir_tmp = $vardir.'/temp';
 
-    $mesg=dol_add_file_process($upload_dir_tmp,0,0);
-
+    dol_add_file_process($upload_dir_tmp,0,0);
     $action='presend';
 }
 
@@ -484,8 +482,7 @@ if (GETPOST('removedfile','alpha'))
     $upload_dir_tmp = $vardir.'/temp';
 
 	// TODO Delete only files that was uploaded from email form
-    $mesg=dol_remove_file_process(GETPOST('removedfile','alpha'),0);
-
+    dol_remove_file_process(GETPOST('removedfile','alpha'),0);
     $action='presend';
 }
 

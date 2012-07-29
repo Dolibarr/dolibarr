@@ -124,7 +124,6 @@ if ($action=='delete')
 
         $file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
         dol_delete_file($file);
-        $mesg = '<div class="ok">'.$langs->trans('FileWasRemoved',GETPOST('urlfile')).'</div>';
     }
 }
 

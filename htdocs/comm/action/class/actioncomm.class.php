@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,6 +43,7 @@ class ActionComm extends CommonObject
     var $type;
     var $label;
 
+    var $date;
     var $datec;			// Date creation record (datec)
     var $datem;			// Date modification record (tms)
     var $author;		// Object user that create action

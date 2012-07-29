@@ -463,7 +463,6 @@ if (empty($reshook))
     		$upload_dir = $conf->societe->dir_output;
     		$file = $upload_dir . '/' . GETPOST('file');
     		dol_delete_file($file,0,0,0,$object);
-    		$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('file')).'</div>';
     	}
     }
 }
