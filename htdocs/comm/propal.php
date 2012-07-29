@@ -264,12 +264,19 @@ else if ($action == 'add' && $user->rights->propale->creer)
 
 	$datep=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 	$date_delivery=dol_mktime(12, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
+	$duration=GETPOST('duree_validite');
 
 	if (empty($datep))
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")), 'errors');
 	    header("Location: ".DOL_URL_ROOT.'/comm/addpropal.php?socid='.$socid.'&action=create');
 	    exit;
+	}
+	if (empty($duration))
+	{
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("ValidityDuration")), 'errors');
+		header("Location: ".DOL_URL_ROOT.'/comm/addpropal.php?socid='.$socid.'&action=create');
+		exit;
 	}
 
 	if (! $error)
@@ -287,7 +294,7 @@ else if ($action == 'add' && $user->rights->propale->creer)
     			$object->availability_id 		= GETPOST('availability_id');
     			$object->demand_reason_id       = GETPOST('demand_reason_id');
     			$object->fk_delivery_address 	= GETPOST('fk_address');
-    			$object->duree_validite			= GETPOST('duree_validite');
+    			$object->duree_validite			= $duration;
     			$object->cond_reglement_id 		= GETPOST('cond_reglement_id');
     			$object->mode_reglement_id 		= GETPOST('mode_reglement_id');
     			$object->remise_percent 		= GETPOST('remise_percent');
