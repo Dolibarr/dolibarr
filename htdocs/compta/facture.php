@@ -1444,8 +1444,6 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
                     $result=$mailfile->sendfile();
                     if ($result)
                     {
-                        $mesgs[]=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
-
                         $error=0;
 
                         // Initialisation donnees
@@ -1471,7 +1469,8 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
                         {
                             // Redirect here
                             // This avoid sending mail twice if going out and then back to page
-                            $_SESSION['dol_events']['mesgs'] = $mesgs;
+                        	$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
+                        	setEventMessage($mesg);
                             Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id);
                             exit;
                         }

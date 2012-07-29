@@ -554,9 +554,7 @@ if ($action == 'confirm_valid' && $confirm == 'yes')
 	if ($object->id > 0)
 	{
 		$object->valid($user);
-
-		$_SESSION['dol_events']['mesgs']='<div class="ok">'.$langs->trans("MailingSuccessfullyValidated").'</div>';
-
+		setEventMessage($langs->trans("MailingSuccessfullyValidated"));
 		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	}

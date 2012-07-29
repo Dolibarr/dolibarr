@@ -3449,51 +3449,42 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
 }
 
 /**
+ *	Set event message in dol_events session
+ *
+ *	@param	string	$mesgstring		 Message
+ *  @param  string	$style           Which style to use ('mesgs', 'warnings', 'errors')
+ *  @return	void
+ *  @see	dol_htmloutput_events
+ */
+function setEventMessage($mesgstring, $style='mesgs')
+{
+	$_SESSION['dol_events'][$style][] = $mesgstring;
+}
+
+/**
  *	Print formated messages to output (Used to show messages on html output).
  *
- *	@param	array	$mesgs			Messages array
- *	@param	array	$errors			Errors array
- *  @param  array	$warnings       Warnings array
  *  @return	void
- *
  *  @see    dol_htmloutput_mesg
  */
-function dol_htmloutput_events($mesgs=array(),$errors=array(),$warnings=array())
+function dol_htmloutput_events()
 {
 	// Show mesgs
-	if (is_array($mesgs) && ! empty($mesgs)) {
-		if (isset($_SESSION['dol_events']['mesgs'])) {
-			if (! is_array($_SESSION['dol_events']['mesgs'])) {
-				$_SESSION['dol_events']['mesgs']=array($_SESSION['dol_events']['mesgs']); // For backward compatibility
-			}
-			$mesgs = array_merge($mesgs, $_SESSION['dol_events']['mesgs']);
-			unset($_SESSION['dol_events']['mesgs']);
-		}
-		dol_htmloutput_mesg('',$mesgs);
+	if (isset($_SESSION['dol_events']['mesgs'])) {
+		dol_htmloutput_mesg('', $_SESSION['dol_events']['mesgs']);
+		unset($_SESSION['dol_events']['mesgs']);
 	}
 
 	// Show errors
-	if (is_array($errors) && ! empty($errors)) {
-		if (isset($_SESSION['dol_events']['errors'])) {
-			if (! is_array($_SESSION['dol_events']['errors'])) {
-				$_SESSION['dol_events']['errors']=array($_SESSION['dol_events']['errors']); // For backward compatibility
-			}
-			$errors = array_merge($errors, $_SESSION['dol_events']['errors']);
-			unset($_SESSION['dol_events']['errors']);
-		}
-		dol_htmloutput_mesg('',$errors, 'error');
+	if (isset($_SESSION['dol_events']['errors'])) {
+		dol_htmloutput_mesg('', $_SESSION['dol_events']['errors'], 'error');
+		unset($_SESSION['dol_events']['errors']);
 	}
 
 	// Show warnings
-	if (is_array($warnings) && ! empty($warnings)) {
-		if (isset($_SESSION['dol_events']['warnings'])) {
-			if (! is_array($_SESSION['dol_events']['warnings'])) {
-				$_SESSION['dol_events']['warnings']=array($_SESSION['dol_events']['warnings']); // For backward compatibility
-			}
-			$warnings = array_merge($warnings, $_SESSION['dol_events']['warnings']);
-			unset($_SESSION['dol_events']['warnings']);
-		}
-		dol_htmloutput_mesg('',$warnings, 'warning');
+	if (isset($_SESSION['dol_events']['warnings'])) {
+		dol_htmloutput_mesg('', $_SESSION['dol_events']['warnings'], 'warning');
+		unset($_SESSION['dol_events']['warnings']);
 	}
 }
 

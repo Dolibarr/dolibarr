@@ -437,8 +437,6 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
                     $result=$mailfile->sendfile();
                     if ($result)
                     {
-                        $_SESSION['dol_events']['mesgs']=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
-
                         $error=0;
 
                         // Initialisation donnees
@@ -466,6 +464,8 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
                         {
                             // Redirect here
                             // This avoid sending mail twice if going out and then back to page
+                        	$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
+                            setEventMessage($mesg);
                             Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
                             exit;
                         }

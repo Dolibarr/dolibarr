@@ -722,24 +722,9 @@ $bcdd=array(0=>'class="impair drag drop"',1=>'class="pair drag drop"');
 $bcnd=array(0=>'class="impair nodrag nodrop"',1=>'class="pair nodrag nodrop"');
 
 // Define messages variables
-$mesg=''; $mesgs=array(); $warning=''; $warnings=array(); $error=0; $errors=array();
-
-// TODO For backward compatibility, see dol_htmloutput_events() in functions.lib.php
-if (isset($_SESSION['dol_events']))
-{
-	if (is_array($mesgs) && isset($_SESSION['dol_events']['mesgs'])) {
-		$mesgs = array_merge($mesgs, $_SESSION['dol_events']['mesgs']);
-	}
-	if (is_array($errors) && isset($_SESSION['dol_events']['errors'])) {
-		$errors = array_merge($errors, $_SESSION['dol_events']['errors']);
-		$mesgs = array_merge($mesgs, $_SESSION['dol_events']['errors']); // For backward compatibility
-	}
-	if (is_array($warnings) && isset($_SESSION['dol_events']['warnings'])) {
-		$warnings = array_merge($warnings, $_SESSION['dol_events']['warnings']);
-	}
-
-	unset($_SESSION['dol_events']);
-}
+$mesg=''; $warning=''; $error=0;
+// deprecated, see setEventMessage() and dol_htmloutput_events()
+$mesgs=array(); $warnings=array(); $errors=array();
 
 // Constants used to defined number of lines in textarea
 if (empty($conf->browser->firefox))
@@ -1669,6 +1654,9 @@ if (! function_exists("llxFooter"))
     function llxFooter($foot='')
     {
         global $conf, $langs, $dolibarr_auto_user, $micro_start_time;
+
+        // Global html output events ($mesgs, $errors, $warnings)
+        dol_htmloutput_events();
 
         // Core error message
         if (defined("MAIN_CORE_ERROR") && constant("MAIN_CORE_ERROR") == 1)

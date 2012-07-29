@@ -281,8 +281,7 @@ else if ($action == 'add' && $user->rights->propale->creer)
 
 	if (empty($datep))
 	{
-	    $errors[]=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date"));
-	    $_SESSION['dol_events']['errors']=$errors;
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")), 'errors');
 	    header("Location: ".DOL_URL_ROOT.'/comm/addpropal.php?socid='.$socid.'&action=create');
 	    exit;
 	}

@@ -343,9 +343,7 @@ if ($action == 'create')
 	print "</form>";
 }
 
-dol_htmloutput_events($mesgs,$errors,$warnings);
 
 llxFooter();
-
 $db->close();
 ?>
