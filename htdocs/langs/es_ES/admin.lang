@@ -1308,9 +1308,6 @@ BankOrderGlobal=General
 BankOrderGlobalDesc=Orden de visualización general
 BankOrderES=Español
 BankOrderESDesc=Orden de visualización español
-##### MailmanSpip #####
-MailmanSpipSetup=Configuración del módulo Mailman y SPIP
-MailmanTitle=Sistema de listas de correo Mailman
 ##### Multicompany #####
 MultiCompanySetup=Configuración del módulo Multi-empresa
 ##### Suppliers #####

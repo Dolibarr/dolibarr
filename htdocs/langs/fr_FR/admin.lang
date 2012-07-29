@@ -1301,8 +1301,6 @@ BankOrderGlobal=Général
 BankOrderGlobalDesc=Ordre d'affichage général
 BankOrderES=Espagnol
 BankOrderESDesc=Ordre d'affichage Espagnol
-##### MailmanSpip #####
-MailmanSpipSetup=Configuration du module Mailman et SPIP
 ##### Multicompany #####
 MultiCompanySetup=Configuration du module Multi-société
 ##### Suppliers #####

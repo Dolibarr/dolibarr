@@ -1045,7 +1045,7 @@ function form_constantes($tableau)
             print '<input type="hidden" name="constname" value="'.$const.'">';
             print '<input type="hidden" name="constnote" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
 
-            print $langs->trans("Desc".$const) != ("Desc".$const) ? $langs->trans("Desc".$const) : ($obj->note?$obj->note:$const);
+            print $langs->trans("Desc$const");
 
             if ($const=='ADHERENT_MAILMAN_URL')
             {
