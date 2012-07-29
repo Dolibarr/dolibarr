@@ -119,7 +119,7 @@ class RemiseCheque extends CommonObject
 	 *  @param	array	$toRemise		array with cheques to remise
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function create($user, $account_id, $limit=40, $toRemise)
+	function create($user, $account_id, $limit, $toRemise)
 	{
 		global $conf;
 
