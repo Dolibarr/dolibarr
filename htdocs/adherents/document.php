@@ -68,43 +68,11 @@ $upload_dir = $conf->adherent->dir_output . "/" . get_exdir($id,2,0,1) . '/' . $
  */
 
 // Envoie fichier
-if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
+if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
-	if (dol_mkdir($upload_dir) >= 0)
-	{
-		$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0,0,$_FILES['userfile']['error']);
-		if (is_numeric($resupload) && $resupload > 0)
-		{
-		    if (image_format_supported($upload_dir . "/" . $_FILES['userfile']['name']) == 1)
-            {
-                // Create small thumbs for image (Ratio is near 16/9)
-                // Used on logon for example
-                $imgThumbSmall = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthsmall, $maxheightsmall, '_small', $quality, "thumbs");
-                // Create mini thumbs for image (Ratio is near 16/9)
-                // Used on menu or for setup page for example
-                $imgThumbMini = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
-            }
-		    $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-		}
-		else
-		{
-			$langs->load("errors");
-			if ($resupload < 0)	// Unknown error
-			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-			}
-			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
-			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
-			}
-			else	// Known error
-			{
-				$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
-			}
-		}
-	}
+	dol_add_file_process($upload_dir,0,1,'userfile');
 }
 
 // Suppression fichier
@@ -139,7 +107,9 @@ if ($id > 0)
 		/*
 		 * Affichage onglets
 		 */
-		if ($conf->notification->enabled) $langs->load("mails");
+		if (! empty($conf->notification->enabled))
+			$langs->load("mails");
+
 		$head = member_prepare_head($member);
 
 		$form=new Form($db);
@@ -209,8 +179,6 @@ if ($id > 0)
 		print '</table>';
 
 		print '</div>';
-
-		dol_htmloutput_mesg($mesg,$mesgs);
 
 		/*
 		 * Confirmation suppression fichier

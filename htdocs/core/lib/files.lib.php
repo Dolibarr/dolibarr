@@ -927,27 +927,37 @@ function dol_init_file_process($pathtoscan='')
  * @param	string	$upload_dir				Directory to store upload files
  * @param	int		$allowoverwrite			1=Allow overwrite existing file
  * @param	int		$donotupdatesession		1=Do no edit _SESSION variable
+ * @param	string	$varfiles				_FILES var name
  * @return	void
  */
-function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=0)
+function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=0,$varfiles='addedfile')
 {
 	global $db,$user,$conf,$langs,$_FILES;
 
-	if (! empty($_FILES['addedfile']['tmp_name']))
+	if (! empty($_FILES[$varfiles]['tmp_name']))
 	{
 		if (dol_mkdir($upload_dir) >= 0)
 		{
-			$resupload = dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],$allowoverwrite,0, $_FILES['addedfile']['error']);
+			$resupload = dol_move_uploaded_file($_FILES[$varfiles]['tmp_name'], $upload_dir . "/" . $_FILES[$varfiles]['name'],$allowoverwrite,0, $_FILES[$varfiles]['error']);
 			if (is_numeric($resupload) && $resupload > 0)
 			{
-				setEventMessage($langs->trans("FileTransferComplete"));
-
 				if (empty($donotupdatesession))
 				{
 					include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
 					$formmail = new FormMail($db);
-					$formmail->add_attached_files($upload_dir . "/" . $_FILES['addedfile']['name'],$_FILES['addedfile']['name'],$_FILES['addedfile']['type']);
+					$formmail->add_attached_files($upload_dir . "/" . $_FILES[$varfiles]['name'],$_FILES[$varfiles]['name'],$_FILES[$varfiles]['type']);
 				}
+				else if (image_format_supported($upload_dir . "/" . $_FILES[$varfiles]['name']) == 1)
+				{
+					// Create small thumbs for image (Ratio is near 16/9)
+					// Used on logon for example
+					$imgThumbSmall = vignette($upload_dir . "/" . $_FILES[$varfiles]['name'], 160, 120, '_small', 50, "thumbs");
+					// Create mini thumbs for image (Ratio is near 16/9)
+					// Used on menu or for setup page for example
+					$imgThumbMini = vignette($upload_dir . "/" . $_FILES[$varfiles]['name'], 160, 120, '_mini', 50, "thumbs");
+				}
+
+				setEventMessage($langs->trans("FileTransferComplete"));
 			}
 			else
 			{
