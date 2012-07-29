@@ -89,7 +89,7 @@ function dol_hash($chain,$type=0)
  *
  *	@param	User	$user      	  	User to check
  *	@param  string	$features	    Features to check (in most cases, it's module name. Examples: 'societe', 'contact', 'produit|service', ...)
- *	@param  int		$objectid      	Object ID if we want to check permission on a particular record (optionnal)
+ *	@param  int		$objectid      	Object ID if we want to check a particular record (optionnal) is linked to a owned thirdparty (optionnal).
  *	@param  string	$dbtablename    'TableName&SharedElement' with Tablename is table where object is stored, SharedElement is key to define where to check entity. Not used if objectid is null (optionnal)
  *	@param  string	$feature2		Feature to check, second level of permission (optionnal)
  *  @param  string	$dbt_keyfield   Field name for socid foreign key if not fk_soc (optionnal)
