@@ -87,22 +87,22 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
                 // Used on menu or for setup page for example
                 $imgThumbMini = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
             }
-            $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+            setEventMessage($langs->trans("FileTransferComplete"));
         }
         else
         {
             $langs->load("errors");
             if ($resupload < 0)	// Unknown error
             {
-                $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+                setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
             }
             else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
             {
-                $mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
+                setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
             }
             else	// Known error
             {
-                $mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
+                setEventMessage($langs->trans($resupload), 'errors');
             }
         }
     }
@@ -120,11 +120,6 @@ llxHeader("",$langs->trans("SocialContribution"),$help_url);
 
 if ($object->id)
 {
-    if ( $error_msg )
-    {
-        echo '<div class="error">'.$error_msg.'</div><br>';
-    }
-
     if ($action == 'delete')
     {
         $file = $upload_dir . '/' . GETPOST("urlfile");	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).

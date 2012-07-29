@@ -68,7 +68,7 @@ $upload_dir = $conf->adherent->dir_output . "/" . get_exdir($id,2,0,1) . '/' . $
  */
 
 // Envoie fichier
-if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
+if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
@@ -86,22 +86,22 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
                 // Used on menu or for setup page for example
                 $imgThumbMini = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
             }
-		    $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+		    setEventMessage($langs->trans("FileTransferComplete"));
 		}
 		else
 		{
 			$langs->load("errors");
 			if ($resupload < 0)	// Unknown error
 			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+				setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
 			}
 			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
 			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
+				setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
 			}
 			else	// Known error
 			{
-				$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
+				setEventMessage($langs->trans($resupload), 'errors');
 			}
 		}
 	}
@@ -139,7 +139,9 @@ if ($id > 0)
 		/*
 		 * Affichage onglets
 		 */
-		if ($conf->notification->enabled) $langs->load("mails");
+		if (! empty($conf->notification->enabled))
+			$langs->load("mails");
+
 		$head = member_prepare_head($member);
 
 		$form=new Form($db);
@@ -209,8 +211,6 @@ if ($id > 0)
 		print '</table>';
 
 		print '</div>';
-
-		dol_htmloutput_mesg($mesg,$mesgs);
 
 		/*
 		 * Confirmation suppression fichier

@@ -88,25 +88,37 @@ if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
                 // Used on menu or for setup page for example
                 $imgThumbMini = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
             }
-		    $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+		    setEventMessage($langs->trans("FileTransferComplete"));
 		}
 		else
 		{
 			$langs->load("errors");
 			if ($resupload < 0)	// Unknown error
 			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+				setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
 			}
 			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
 			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
+				setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
 			}
 			else	// Known error
 			{
-				$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
+				setEventMessage($langs->trans($resupload), 'errors');
 			}
 		}
 	}
+}
+
+// Delete
+if ($action=='delete')
+{
+	$langs->load("other");
+	$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	$ret=dol_delete_file($file);
+	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+	exit;
 }
 
 
@@ -121,18 +133,6 @@ llxHeader("","",$langs->trans("CardProduct".$object->type));
 
 if ($object->id)
 {
-	if (! empty($mesg)) {
-		dol_htmloutput_mesg($mesg);
-	}
-
-	if ($action=='delete')
-	{
-		$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-		$ret=dol_delete_file($file);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-	}
-
 	$head=product_prepare_head($object, $user);
 	$titre=$langs->trans("CardProduct".$object->type);
 	$picto=($object->type==1?'service':'product');

@@ -88,22 +88,22 @@ if ($_POST['sendit'] && ! empty($conf->global->MAIN_UPLOAD_DOC))
                     // Used on menu or for setup page for example
                     $imgThumbMini = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
                 }
-                $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+                setEventMessage($langs->trans("FileTransferComplete"));
             }
             else
             {
                 $langs->load("errors");
                 if ($resupload < 0)	// Unknown error
                 {
-                    $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+                    setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
                 }
                 else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
                 {
-                    $mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
+                    setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
                 }
                 else	// Known error
                 {
-                    $mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
+                    setEventMessage($langs->trans($resupload), 'errors');
                 }
             }
         }
@@ -237,10 +237,6 @@ if ($facid > 0)
 
         print '</table>';
         print '</div>';
-
-
-        dol_htmloutput_mesg($mesg);
-
 
         // Affiche formulaire upload
         $formfile=new FormFile($db);

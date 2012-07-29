@@ -89,7 +89,7 @@ if (GETPOST('addfile') || GETPOST('addfilehtml'))
 		$resupload=dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'], 1, 0, $_FILES['addedfile']['error']);
 		if (is_numeric($resupload) && $resupload > 0)
 		{
-			$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+			setEventMessage($langs->trans("FileTransferComplete"));
 
 			include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
 			$formmail = new FormMail($db);
@@ -100,15 +100,15 @@ if (GETPOST('addfile') || GETPOST('addfilehtml'))
 			$langs->load("errors");
 			if ($resupload < 0)	// Unknown error
 			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+				setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
 			}
 			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
 			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
+				setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
 			}
 			else	// Known error
 			{
-				$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
+				setEventMessage($langs->trans($resupload), 'errors');
 			}
 		}
 	}

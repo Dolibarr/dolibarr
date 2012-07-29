@@ -50,7 +50,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 
         if (is_numeric($resupload) && $resupload > 0)
         {
-            $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+            setEventMessage($langs->trans("FileTransferComplete"));
 
             include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
             $formmail = new FormMail($db);
@@ -61,7 +61,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
             $langs->load("errors");
             if ($resupload < 0)	// Unknown error
             {
-                $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+                setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
             }
             else if (preg_match('/ErrorFileIsInfectedWithAVirus.(.*)/',$resupload,$reg))	// Files infected by a virus
             {
@@ -71,7 +71,7 @@ if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
             }
             else	// Known error
             {
-                $mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
+                setEventMessage($langs->trans($resupload), 'errors');
             }
         }
     }
