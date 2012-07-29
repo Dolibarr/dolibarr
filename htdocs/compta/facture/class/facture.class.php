@@ -2453,9 +2453,9 @@ class Facture extends CommonInvoice
     }
 
     /**
-     *	Charge les informations de l'onglet info dans l'objet facture
+     *	Load miscellaneous information for tab "Info"
      *
-     *	@param  int		$id		Id de la facture a charger
+     *	@param  int		$id		Id of object to load
      *	@return	void
      */
     function info($id)
