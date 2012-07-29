@@ -689,7 +689,7 @@ else if ($action == "addline" && $user->rights->propale->creer)
 {
 	$result=0;
 
-	if (empty($_POST['idprod']) && $_POST["type"] < 0)
+	if (empty($_POST['idprod']) && GETPOST('type') < 0)
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")).'</div>';
 		$result = -1 ;
@@ -700,9 +700,9 @@ else if ($action == "addline" && $user->rights->propale->creer)
 		$result = -1 ;
 	}
 
-	if ($result >= 0 && isset($_POST['qty']) && (($_POST['np_price']!='' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod']))
+	if ($result >= 0 && isset($_POST['qty']) && ((GETPOST('np_price')!='' && (GETPOST('np_desc') || GETPOST('dp_desc'))) || GETPOST('idprod')))
 	{
-		$ret=$object->fetch($_POST["id"]);
+		$ret=$object->fetch($id);
 		if ($ret < 0)
 		{
 			dol_print_error($db,$object->error);
@@ -710,15 +710,18 @@ else if ($action == "addline" && $user->rights->propale->creer)
 		}
 		$ret=$object->fetch_thirdparty();
 
+		$pu_ht=0;
+		$pu_ttc=0;
+		$price_min=0;
 		$price_base_type = 'HT';
 
 		// Ecrase $pu par celui du produit
 		// Ecrase $desc par celui du produit
 		// Ecrase $txtva par celui du produit
-		if ($_POST['idprod'])
+		if (GETPOST('idprod'))
 		{
 			$prod = new Product($db);
-			$prod->fetch($_POST['idprod']);
+			$prod->fetch(GETPOST('idprod'));
 
 			$tva_tx = get_default_tva($mysoc,$object->client,$prod->id);
 			$localtax1_tx= get_localtax($tva_tx, 1, $object->client);  //get_default_localtax($mysoc,$object->client,1,$prod->id);
@@ -775,32 +778,25 @@ else if ($action == "addline" && $user->rights->propale->creer)
 				$desc = $prod->description;
 			}
 
-			$desc.= ($desc && $_POST['np_desc']) ? ((dol_textishtml($desc) || dol_textishtml($_POST['np_desc']))?"<br />\n":"\n") : "";
-			$desc.= $_POST['np_desc'];
+			$desc.= ($desc && GETPOST('np_desc')) ? ((dol_textishtml($desc) || dol_textishtml(GETPOST('np_desc')))?"<br />\n":"\n") : "";
+			$desc.= GETPOST('np_desc');
 			$type = $prod->type;
 		}
 		else
 		{
-			$pu_ht=$_POST['np_price'];
-			$tva_tx=str_replace('*','',$_POST['np_tva_tx']);
-			$tva_npr=preg_match('/\*/',$_POST['np_tva_tx'])?1:0;
-			$desc=$_POST['dp_desc'];
-			$type=$_POST["type"];
+			$pu_ht=GETPOST('np_price');
+			$tva_tx=str_replace('*','',GETPOST('np_tva_tx'));
+			$tva_npr=preg_match('/\*/',GETPOST('np_tva_tx'))?1:0;
+			$desc=GETPOST('dp_desc');
+			$type=GETPOST('type');
 			$localtax1_tx=get_localtax($tva_tx,1,$object->client);
 			$localtax2_tx=get_localtax($tva_tx,2,$object->client);
 		}
 
-		// ajout prix achat
-		$fk_fournprice = $_POST['np_fournprice'];
-		if ( ! empty($_POST['np_buying_price']) )
-		  $pa_ht = $_POST['np_buying_price'];
-		else
-		  $pa_ht = null;
-
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
 
-		if ($price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($price_min)))
+		if (! empty($price_min) && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
 		{
 			$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->currency)).'</div>' ;
 		}
@@ -808,24 +804,24 @@ else if ($action == "addline" && $user->rights->propale->creer)
 		{
 			// Insert line
 			$result=$object->addline(
-    			$_POST["id"],
+    			$id,
     			$desc,
     			$pu_ht,
-    			$_POST['qty'],
+    			GETPOST('qty'),
     			$tva_tx,
     			$localtax1_tx,
     			$localtax2_tx,
-    			$_POST['idprod'],
-    			$_POST['remise_percent'],
+    			GETPOST('idprod'),
+    			GETPOST('remise_percent'),
     			$price_base_type,
     			$pu_ttc,
     			$info_bits,
     			$type,
     			-1,
     			0,
-    			$_POST['fk_parent_line'],
-    			$fk_fournprice,
-    			$pa_ht
+    			GETPOST('fk_parent_line'),
+    			GETPOST('np_fournprice'),
+    			GETPOST('np_buying_price')
 			);
 
 			if ($result > 0)

@@ -84,7 +84,7 @@
 	<?php } ?>
 	</td>
 <?php
-if (! empty($conf->margin->enabled)) { 
+if (! empty($conf->margin->enabled)) {
 ?>
 	<td align="right">
   <select id="fournprice" name="fournprice"></select>
@@ -112,11 +112,11 @@ if (! empty($conf->margin->enabled)) {
 </tr>
 <?php } ?></form>
 <?php
-if (! empty($conf->margin->enabled)) { 
+if (! empty($conf->margin->enabled)) {
 ?>
 <script type="text/javascript">
 $(document).ready(function() {
-  $.post('<?php echo DOL_URL_ROOT; ?>/fourn/product/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product; ?>}, function(data) {      
+  $.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product; ?>}, function(data) {
     if (data.length > 0) {
       var options = '';
       var trouve=false;
@@ -146,7 +146,7 @@ $(document).ready(function() {
       }
       $("#fournprice").change(function() {
         var selval = $(this).find('option:selected').attr("price");
-        if (selval) 
+        if (selval)
           $("#buying_price").val(selval).hide();
         else
           $('#buying_price').show();
