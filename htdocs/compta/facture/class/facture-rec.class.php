@@ -146,20 +146,20 @@ class FactureRec extends Facture
 				for ($i = 0; $i < $num; $i++)
 				{
 					$result_insert = $this->addline(
-    					$this->id,
-    					$facsrc->lines[$i]->desc,
-    					$facsrc->lines[$i]->subprice,
-    					$facsrc->lines[$i]->qty,
-    					$facsrc->lines[$i]->tva_tx,
-    					$facsrc->lines[$i]->fk_product,
-    					$facsrc->lines[$i]->remise_percent,
-	                    'HT',
-	                    0,
-	                    '',
-	                    0,
-    					$facsrc->lines[$i]->product_type,
-    					$facsrc->lines[$i]->rang,
-    					$facsrc->lines[$i]->special_code
+									$this->id,
+									$facsrc->lines[$i]->desc,
+									$facsrc->lines[$i]->subprice,
+									$facsrc->lines[$i]->qty,
+									$facsrc->lines[$i]->tva_tx,
+									$facsrc->lines[$i]->fk_product,
+									$facsrc->lines[$i]->remise_percent,
+									'HT',
+									0,
+									'',
+									0,
+									$facsrc->lines[$i]->product_type,
+									$facsrc->lines[$i]->rang,
+									$facsrc->lines[$i]->special_code
 					);
 
 					if ($result_insert < 0)

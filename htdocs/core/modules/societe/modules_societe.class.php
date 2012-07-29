@@ -364,7 +364,7 @@ abstract class ModeleAccountancyCode
  *	Create a document for third party
  *
  *	@param	DoliDB		$db  			Database handler
- *	@param  Societe		$object			Object of third party to use
+ *	@param  Societe		&$object			Object of third party to use
  *	@param	string		$message		Message
  *	@param	string		$modele			Force model to use ('' to not force). model can be a model name or a template file.
  *	@param	Translate	$outputlangs	Object lang to use for translation
@@ -416,7 +416,7 @@ function thirdparty_doc_create($db, &$object, $message, $modele, $outputlangs)
         if ($obj->write_file($object, $outputlangs, $srctemplatepath) > 0)
         {
             $outputlangs->charset_output=$sav_charset_output;
-            
+
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
             $interface=new Interfaces($db);
@@ -425,7 +425,7 @@ function thirdparty_doc_create($db, &$object, $message, $modele, $outputlangs)
             	$error++; $this->errors=$interface->errors;
             }
             // Fin appel triggers
-            
+
             return 1;
         }
         else

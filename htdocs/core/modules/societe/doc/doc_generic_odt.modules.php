@@ -155,7 +155,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param	Societe		$object				Object source to build document
+	 *	@param	Societe		&$object			Object source to build document
 	 *	@param	Translate	$outputlangs		Lang output object
 	 * 	@param	string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *	@return	int         					1 if OK, <=0 if KO

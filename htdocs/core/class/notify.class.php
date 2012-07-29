@@ -203,16 +203,16 @@ class Notify
 
                     $mailfile = new CMailFile(
                         $subject,
-	                    $sendto,
-	                    $replyto,
-	                    $message,
-	                    array($file),
-	                    array($mimefile),
-	                    array($filename[count($filename)-1]),
-	                    '',
-	                    '',
-	                    0,
-	                    $msgishtml
+                        $sendto,
+                        $replyto,
+                        $message,
+                        array($file),
+                        array($mimefile),
+                        array($filename[count($filename)-1]),
+                        '',
+                        '',
+                        0,
+                        $msgishtml
                     );
 
                     if ($mailfile->sendfile())

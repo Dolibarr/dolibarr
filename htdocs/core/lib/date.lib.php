@@ -644,7 +644,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
                 date("m", $date_paques),
                 date("d", $date_paques) + 38,
                 date("Y", $date_paques)
-			);
+            );
 			$jour_ascension = date("d", $date_ascension);
 			$mois_ascension = date("m", $date_ascension);
 			if($jour_ascension == $jour && $mois_ascension == $mois) $ferie=true;
@@ -652,12 +652,12 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 
 			// Calcul de Pentecote (11 jours apres Paques)
 			$date_pentecote = mktime(
-                date("H", $date_ascension),
-                date("i", $date_ascension),
-                date("s", $date_ascension),
-                date("m", $date_ascension),
-                date("d", $date_ascension) + 11,
-                date("Y", $date_ascension)
+							date("H", $date_ascension),
+							date("i", $date_ascension),
+							date("s", $date_ascension),
+							date("m", $date_ascension),
+							date("d", $date_ascension) + 11,
+							date("Y", $date_ascension)
 			);
 			$jour_pentecote = date("d", $date_pentecote);
 			$mois_pentecote = date("m", $date_pentecote);

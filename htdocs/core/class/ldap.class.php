@@ -1013,7 +1013,7 @@ class Ldap
 	 *	Required by Active Directory
 	 *
 	 *	@param	string		$hex			Hex value
-	 *	@return	string						Little endian		
+	 *	@return	string						Little endian
 	 */
 	function littleEndian($hex)
 	{
@@ -1028,7 +1028,7 @@ class Ldap
 	 *  Recupere le SID de l'utilisateur
 	 *	Required by Active Directory
 	 *
-	 * 	@param	string		$ldapuser		Login de l'utilisateur
+	 * 	@param	string		$ldapUser		Login de l'utilisateur
 	 * 	@return	string						Sid
 	 */
 	function getObjectSid($ldapUser)

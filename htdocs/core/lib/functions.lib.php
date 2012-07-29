@@ -373,13 +373,13 @@ function dol_string_unaccent($str)
     {
         $string = strtr(
             $str,
-			"\xC0\xC1\xC2\xC3\xC5\xC7
+            "\xC0\xC1\xC2\xC3\xC5\xC7
 	        \xC8\xC9\xCA\xCB\xCC\xCD\xCE\xCF\xD0\xD1
 	        \xD2\xD3\xD4\xD5\xD8\xD9\xDA\xDB\xDD
 	        \xE0\xE1\xE2\xE3\xE5\xE7\xE8\xE9\xEA\xEB
 	        \xEC\xED\xEE\xEF\xF0\xF1\xF2\xF3\xF4\xF5\xF8
 	        \xF9\xFA\xFB\xFD\xFF",
-			"AAAAAC
+            "AAAAAC
 	        EEEEIIIIDN
 	        OOOOOUUUY
 	        aaaaaceeee
@@ -449,7 +449,6 @@ function dol_escape_htmltag($stringtoescape,$keepb=0)
  *  this, use logging to files instead of syslog (see setup of module).
  *  Note: If SYSLOG_FILE_NO_ERROR defined, we never output any error message when writing to log fails.
  *  Note: You can get log message into html sources by adding parameter &logtohtml=1 (constant MAIN_LOGTOHTML must be set)
- *
  *  This function works only if syslog module is enabled.
  * 	This must not use any call to other function calling dol_syslog (avoid infinite loop).
  *
@@ -877,7 +876,6 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 /**
  *	Return an array with locale date info.
  *  PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
- *
  *  WARNING: This function always use PHP server timezone to return locale informations.
  *  Usage must be avoid.
  *

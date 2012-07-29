@@ -34,10 +34,10 @@ class FileUpload
 	protected $_options;
 	protected $_fk_element;
 	protected $_element;
-	
+
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param array		$options		Options array
 	 * @param int		$fk_element		fk_element
 	 * @param string	$element		element
@@ -46,17 +46,17 @@ class FileUpload
 	{
 		global $db, $conf;
 		global $object;
-		
+
 		$this->_fk_element=$fk_element;
 		$this->_element=$element;
-		
+
 		$pathname=$filename=$element;
 		if (preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
 		{
 			$pathname = $regs[1];
 			$filename = $regs[2];
 		}
-		
+
 		// For compatibility
 		if ($element == 'propal') {
 			$pathname = 'comm/propal';
@@ -82,18 +82,18 @@ class FileUpload
 		}
 
 		dol_include_once('/'.$pathname.'/class/'.$filename.'.class.php');
-		
+
 		$classname = ucfirst($filename);
-		
+
 		if ($element == 'order_supplier') {
 			$classname = 'CommandeFournisseur';
 		}
-		
+
 		$object = new $classname($db);
-		
+
 		$object->fetch($fk_element);
 		$object->fetch_thirdparty();
-		
+
 		$this->_options = array(
 				'script_url' => $_SERVER['PHP_SELF'],
 				'upload_dir' => $dir_output . '/' . $object->ref . '/',
@@ -141,11 +141,14 @@ class FileUpload
 			$this->_options = array_replace_recursive($this->_options, $options);
 		}
 	}
-	
+
 	/**
-	 * 
+	 *	getFullUrl
+	 *
+	 * 	@return	string	Full url
 	 */
-	protected function getFullUrl() {
+	protected function getFullUrl()
+	{
 		$https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
 		return
 		($https ? 'https://' : 'http://').
@@ -155,13 +158,15 @@ class FileUpload
 						$_SERVER['SERVER_PORT'] === 80 ? '' : ':'.$_SERVER['SERVER_PORT']))).
 						substr($_SERVER['SCRIPT_NAME'],0, strrpos($_SERVER['SCRIPT_NAME'], '/'));
 	}
-	
+
 	/**
 	 * Set delete url
-	 * 
-	 * @param unknown_type $file
+	 *
+	 * @param 	string	$file	File
+	 * @return	void
 	 */
-	protected function set_file_delete_url($file) {
+	protected function set_file_delete_url($file)
+	{
 		$file->delete_url = $this->_options['script_url']
 			.'?file='.rawurlencode($file->name).'&fk_element='.$this->_fk_element.'&element='.$this->_element;
 		$file->delete_type = $this->_options['delete_type'];
@@ -169,7 +174,7 @@ class FileUpload
 			$file->delete_url .= '&_method=DELETE';
 		}
 	}
-	
+
 	/**
 	 * Enter description here ...
      *
@@ -218,7 +223,7 @@ class FileUpload
     protected function create_scaled_image($file_name, $options)
     {
         global $maxwidthmini, $maxheightmini;
-        
+
         $file_path = $this->_options['upload_dir'].$file_name;
         $new_file_path = $options['upload_dir'].$file_name;
 
@@ -302,10 +307,10 @@ class FileUpload
         }
         return true;
     }
-    
+
     /**
      * Enter description here ...
-     * 
+     *
      * @param unknown_type $matches
      */
     protected function upcount_name_callback($matches) {
@@ -313,10 +318,10 @@ class FileUpload
     	$ext = isset($matches[2]) ? $matches[2] : '';
     	return ' ('.$index.')'.$ext;
     }
-    
+
     /**
      * Enter description here ...
-     * 
+     *
      * @param unknown_type $name
      */
     protected function upcount_name($name) {
@@ -327,13 +332,14 @@ class FileUpload
     			1
     	);
     }
-    
+
     /**
      * Enter description here ...
-     * 
-     * @param unknown_type $name
-     * @param unknown_type $type
-     * @param unknown_type $index
+     *
+     * @param	string		$name
+     * @param 	string		$type
+     * @param 	string		$index
+     * @return	string		Trimed string
      */
     protected function trim_file_name($name, $type, $index) {
     	// Remove path information and dots around the filename, to prevent uploading
@@ -352,20 +358,20 @@ class FileUpload
     	}
     	return $file_name;
     }
-    
+
     /**
      * Enter description here ...
-     * 
+     *
      * @param unknown_type $file
      * @param unknown_type $index
      */
     protected function handle_form_data($file, $index) {
     	// Handle form data, e.g. $_REQUEST['description'][$index]
     }
-    
+
     /**
      * Enter description here ...
-     * 
+     *
      * @param unknown_type $file_path
      */
     protected function orient_image($file_path) {

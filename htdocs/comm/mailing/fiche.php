@@ -60,11 +60,11 @@ $substitutionarray=array(
 if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE)
 {
 	$substitutionarray=array_merge(
-			$substitutionarray,
-			array(
-					'__CHECK_READ__' => 'CheckMail',
-					'__UNSUBSCRIBE__' => 'Unsubscribe'
-			)
+					$substitutionarray,
+					array(
+						'__CHECK_READ__' => 'CheckMail',
+						'__UNSUBSCRIBE__' => 'Unsubscribe'
+					)
 	);
 }
 
@@ -83,13 +83,13 @@ $substitutionarrayfortest=array(
 );
 if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE)
 {
-    $substitutionarrayfortest=array_merge(
-    		$substitutionarrayfortest,
-    		array(
-    				'__CHECK_READ__' => 'TESTCheckMail',
-    				'__UNSUBSCRIBE__' => 'TESTUnsubscribe'
-    		)
-    );
+	$substitutionarrayfortest=array_merge(
+					$substitutionarrayfortest,
+					array(
+    					'__CHECK_READ__' => 'TESTCheckMail',
+    					'__UNSUBSCRIBE__' => 'TESTUnsubscribe'
+    				)
+	);
 }
 
 // Action clone object

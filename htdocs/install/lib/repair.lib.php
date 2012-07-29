@@ -26,6 +26,7 @@
  *
  *  @param	int		$id			Element id
  *  @param	string	$table		Table of Element
+ *  @return	boolean				True if exists
  */
 function checkElementExist($id, $table)
 {

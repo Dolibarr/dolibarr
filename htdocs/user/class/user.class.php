@@ -595,7 +595,7 @@ class User extends CommonObject
 			}
 			$this->db->free($resql);
 		}
-		
+
 		// For backward compatibility
 		if (isset($this->rights->propale))
 		{
@@ -1454,7 +1454,7 @@ class User extends CommonObject
             '',
             0,
             $msgishtml
-		);
+        );
 
 		if ($mailfile->sendfile())
 		{

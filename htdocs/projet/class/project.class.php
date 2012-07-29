@@ -55,7 +55,7 @@ class Project extends CommonObject
     /**
      *  Constructor
      *
-     *  @param      DoliDB		$DB      Database handler
+     *  @param      DoliDB		$db      Database handler
      */
     function __construct($db)
     {
@@ -210,7 +210,7 @@ class Project extends CommonObject
                     }
                     // End call triggers
                 }
-                
+
                 if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref != $this->ref))
                 {
                 	// We remove directory

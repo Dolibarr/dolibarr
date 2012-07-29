@@ -490,6 +490,7 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
  *	Before= Capture d\'écran.doc  After= Capture d'écran.doc
  *
  *	@param	string	$filename		Filename
+ *  @return	string					Unescaped string
  */
 function dol_unescapefile($filename)
 {
