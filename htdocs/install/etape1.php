@@ -700,7 +700,7 @@ function write_main_file($mainfile,$main_dir)
     {
         clearstatcache();
         fputs($fp, '<?php'."\n");
-        fputs($fp, "# Wrapper to include main into htdocs\n");
+        fputs($fp, "// Wrapper to include main into htdocs\n");
         fputs($fp, "include_once('".$main_dir."/main.inc.php');\n");
         fputs($fp, '?>');
         fclose($fp);
@@ -722,7 +722,7 @@ function write_master_file($masterfile,$main_dir)
     {
         clearstatcache();
         fputs($fp, '<?php'."\n");
-        fputs($fp, "# Wrapper to include master into htdocs\n");
+        fputs($fp, "// Wrapper to include master into htdocs\n");
         fputs($fp, "include_once('".$main_dir."/master.inc.php');\n");
         fputs($fp, '?>');
         fclose($fp);

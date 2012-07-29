@@ -632,27 +632,27 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 			{
 				// Insert line
 				$result = $object->addline(
-						$object->id,
-						$desc,
-						$pu_ht,
-						GETPOST('qty'),
-						$tva_tx,
-						$localtax1_tx,
-						$localtax2_tx,
-						GETPOST('idprod'),
-						GETPOST('remise_percent'),
-						$info_bits,
-						0,
-						$price_base_type,
-						$pu_ttc,
-						$date_start,
-						$date_end,
-						$type,
-						-1,
-						'',
-						GETPOST('fk_parent_line'),
-						GETPOST('np_fournprice'),
-						GETPOST('np_buying_price')
+								$object->id,
+								$desc,
+								$pu_ht,
+								GETPOST('qty'),
+								$tva_tx,
+								$localtax1_tx,
+								$localtax2_tx,
+								GETPOST('idprod'),
+								GETPOST('remise_percent'),
+								$info_bits,
+								0,
+								$price_base_type,
+								$pu_ttc,
+								$date_start,
+								$date_end,
+								$type,
+								-1,
+								'',
+								GETPOST('fk_parent_line'),
+								GETPOST('np_fournprice'),
+								GETPOST('np_buying_price')
 				);
 
 				if ($result > 0)
