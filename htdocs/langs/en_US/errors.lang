@@ -108,7 +108,8 @@ ErrUnzipFails=Failed to unzip %s with ZipArchive
 ErrNoZipEngine=No engine to unzip %s file in this PHP
 ErrorFileMustBeADolibarrPackage=The file %s must be a Dolibarr zip package
 ErrorFileRequired=It takes a package Dolibarr file
-ErrorPhpCurlNotInstalled=The PHP CURL is not installed, this is essential to talk with Paypal.
+ErrorPhpCurlNotInstalled=The PHP CURL is not installed, this is essential to talk with Paypal
+ErrorFailedToAddToMailmanList=Failed to add record to Mailman list or Spip base
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined
