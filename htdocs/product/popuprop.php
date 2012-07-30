@@ -27,6 +27,9 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
 
+//Required to translate NbOfProposals
+$langs->load('propal');
+
 $type=GETPOST("type","int");
 
 // Security check
@@ -95,7 +98,7 @@ print "<tr class=\"liste_titre\">";
 print_liste_field_titre($langs->trans('Ref'), 'popuprop.php', 'p.ref', '', '', '', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans('Type'), 'popuprop.php', 'p.type', '', '', '', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans('Label'), 'popuprop.php', 'p.label', '', '', '', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans('NbProposals'), 'popuprop.php', 'c', '', '', 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans('NbOfProposals'), 'popuprop.php', 'c', '', '', 'align="right"', $sortfield, $sortorder);
 print "</tr>\n";
 
 $sql  = "SELECT p.rowid, p.label, p.ref, p.fk_product_type as type, count(*) as c";

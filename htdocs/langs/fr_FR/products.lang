@@ -156,7 +156,6 @@ ServiceNb=Service no %s
 ListProductServiceByPopularity=Liste des produits/services par popularité
 ListProductByPopularity=Liste des produits par popularité
 ListServiceByPopularity=Liste des services par popularité
-NbProposals=Nb. de proposition
 Finished=Produit manufacturé
 RowMaterial=Matière première
 CloneProduct=Cloner produit/service
