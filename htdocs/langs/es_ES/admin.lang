@@ -332,7 +332,7 @@ UrlGenerationParameters=Seguridad de las URLs
 SecurityTokenIsUnique=¿Usar un parámetro securekey único para cada URL?
 EnterRefToBuildUrl=Introduzca la referencia del objeto %s
 GetSecuredUrl=Obtener la URL calculada
-ButtonHideUnauthorized=Ocultar los botones de acciones no autorizadas en vez de mostrarlos deshabilitados
+ButtonHideUnauthorized=Ocultar los botones de acciones no autorizadas en vez de mostrarlos atenuados
 # Modules= undefined=
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos
@@ -450,7 +450,7 @@ Module50100Desc=Terminal Punto de Venta para la venta en mostrador
 Module50200Name=Paypal
 Module50200Desc=Módulo para proporcionar un pago en línea con tarjeta de crédito mediante Paypal
 Module59000Name=Márgenes
-Module59000Desc=Módulo para gestionar los márgenes de venta
+Module59000Desc=Módulo para gestionar los márgenes de beneficio
 Module60000Name=Comisiones
 Module60000Desc=Módulo para gestionar las comisiones de venta
 Permission11=Consultar facturas
