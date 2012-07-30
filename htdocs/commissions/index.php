@@ -77,7 +77,7 @@ if ($agentid > 0) {
 
       print '<tr><td width="20%">'.$langs->trans('CommercialAgent').'</td>';
       print '<td colspan="4">';
-      print $form->select_dolusers($selected=$agentid,$htmlname='agentid',$show_empty=1,$exclude='',$disabled=0,$include='',$enableonly='');
+      print $form->select_dolusers($agentid,'agentid',1,'',0,'','');
       print '</td></tr>';
 
       if (! $sortorder) $sortorder="ASC";
@@ -86,7 +86,7 @@ if ($agentid > 0) {
 else {
   print '<tr><td width="20%">'.$langs->trans('CommercialAgent').'</td>';
   print '<td colspan="4">';
-  print $form->select_dolusers($selected='',$htmlname='agentid',$show_empty=1,$exclude='',$disabled=0,$include='',$enableonly='');
+  print $form->select_dolusers('','agentid',1,'',0,'','');
    print '</td></tr>';
   if (! $sortorder) $sortorder="ASC";
   if (! $sortfield) $sortfield="u.login";
