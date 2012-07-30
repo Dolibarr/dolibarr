@@ -1,12 +1,17 @@
 # Dolibarr language file - en_US - mailmanspip
 CHARSET=UTF-8
-TestSubscribe=To test subscription to mailman lists
-TestUnSubscribe=To test unsubscribe from mailman lists
-MailmanCreationSuccess=Calling URL to create into mailman sit success
-MailmanDeletionSuccess=Calling URL to remove subscription from mailman with success
+MailmanSpipSetup=Mailman and SPIP module Setup
+MailmanTitle=Mailman mailing list system
+TestSubscribe=To test subscription to Mailman lists
+TestUnSubscribe=To test unsubscribe from Mailman lists
+MailmanCreationSuccess=Subscription test was executed succesfully
+MailmanDeletionSuccess=Unsubscription test was executed succesfully
 SynchroMailManEnabled=A Mailman update will be performed
 SynchroSpipEnabled=A Spip update will be performed
 DescADHERENT_MAILMAN_ADMINPW=Mailman administrator password
+DescADHERENT_MAILMAN_URL=URL for Mailman subscriptions
+DescADHERENT_MAILMAN_UNSUB_URL=URL for Mailman unsubscriptions
+DescADHERENT_MAILMAN_LISTS=List(s) for automatic inscription of new members (separated by a comma)
 DescADHERENT_SPIP_SERVEUR=SPIP Server
 DescADHERENT_SPIP_DB=SPIP database name
 DescADHERENT_SPIP_USER=SPIP database login
