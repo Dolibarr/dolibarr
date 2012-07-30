@@ -34,6 +34,9 @@ $langs->load("ecm");
 $langs->load("companies");
 $langs->load("other");
 
+$action=GETPOST('action','alpha');
+$confirm=GETPOST('confirm','alpha');
+
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -101,12 +104,12 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	{
 	    // Echec transfert (fichier depassant la limite ?)
 		$langs->load("errors");
-		$mesg = '<div class="error">'.$langs->trans("ErrorFailToCreateDir",$upload_dir).'</div>';
+		setEventMessage($langs->trans("ErrorFailToCreateDir",$upload_dir), 'errors');
 	}
 }
 
 // Remove file
-if (GETPOST('action') == 'confirm_deletefile' && GETPOST('confirm') == 'yes')
+if ($action == 'confirm_deletefile' && $confirm == 'yes')
 {
     $langs->load("other");
     $file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
@@ -118,7 +121,7 @@ if (GETPOST('action') == 'confirm_deletefile' && GETPOST('confirm') == 'yes')
 }
 
 // Remove dir
-if (GETPOST('action') == 'confirm_deletedir' && GETPOST('confirm') == 'yes')
+if ($action == 'confirm_deletedir' && $confirm == 'yes')
 {
 	// Fetch was already done
 	$result=$ecmdir->delete($user);
@@ -129,12 +132,12 @@ if (GETPOST('action') == 'confirm_deletedir' && GETPOST('confirm') == 'yes')
 	}
 	else
 	{
-		$mesg = '<div class="error">'.$langs->trans($ecmdir->error,$ecmdir->label).'</div>';
+		setEventMessage($langs->trans($ecmdir->error,$ecmdir->label), 'errors');
 	}
 }
 
 // Update description
-if (GETPOST('action') == 'update' && ! GETPOST('cancel'))
+if ($action == 'update' && ! GETPOST('cancel'))
 {
 	$error=0;
 
@@ -151,8 +154,7 @@ if (GETPOST('action') == 'update' && ! GETPOST('cancel'))
 	if ($result > 0)
 	{
 		// Try to rename file if changed
-		if ($oldlabel != $ecmdir->label
-			&& file_exists($olddir))
+		if ($oldlabel != $ecmdir->label	&& file_exists($olddir))
 		{
 			$newdir=$ecmdir->getRelativePath(1);		// return "xxx/zzz/" from ecm directory
 			$newdir=$conf->ecm->dir_output.'/'.$newdir;
@@ -161,7 +163,7 @@ if (GETPOST('action') == 'update' && ! GETPOST('cancel'))
 			if (! $result)
 			{
 				$langs->load('errors');
-				$mesg='<div class="error">'.$langs->trans('ErrorFailToRenameDir',$olddir,$newdir).'</div>';
+				setEventMessage($langs->trans('ErrorFailToRenameDir',$olddir,$newdir), 'errors');
 				$error++;
 			}
 		}
@@ -181,7 +183,7 @@ if (GETPOST('action') == 'update' && ! GETPOST('cancel'))
 	else
 	{
 		$db->rollback();
-		$mesg='<div class="error">'.$ecmdir->error.'</div>';
+		setEventMessage($ecmdir->error, 'errors');
 	}
 }
 
@@ -210,7 +212,7 @@ foreach($filearray as $key => $file)
 $head = ecm_prepare_head($ecmdir);
 dol_fiche_head($head, 'card', $langs->trans("ECMSectionManual"), '', 'dir');
 
-if ($_GET["action"] == 'edit')
+if ($action == 'edit')
 {
 	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -228,7 +230,7 @@ $i=0;
 while ($tmpecmdir && $result > 0)
 {
 	$tmpecmdir->ref=$tmpecmdir->label;
-	if ($i == 0 && $_GET["action"] == 'edit')
+	if ($i == 0 && $action == 'edit')
 	{
 		$s='<input type="text" name="label" size="40" maxlength="32" value="'.$tmpecmdir->label.'">';
 	}
@@ -249,7 +251,7 @@ print img_picto('','object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$l
 print $s;
 print '</td></tr>';
 print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-if ($_GET["action"] == 'edit')
+if ($action == 'edit')
 {
 	print '<textarea class="flat" name="description" cols="80">';
 	print $ecmdir->description;
@@ -274,7 +276,7 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>';
 print dol_print_size($totalsize);
 print '</td></tr>';
-if ($_GET["action"] == 'edit')
+if ($action == 'edit')
 {
 	print '<tr><td colspan="2" align="center">';
 	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
@@ -283,7 +285,7 @@ if ($_GET["action"] == 'edit')
 	print '</td></tr>';
 }
 print '</table>';
-if ($_GET["action"] == 'edit')
+if ($action == 'edit')
 {
 	print '</form>';
 }
@@ -292,7 +294,7 @@ print '</div>';
 
 
 // Actions buttons
-if ($_GET["action"] != 'edit' && $_GET['action'] != 'delete')
+if ($action != 'edit' && $action != 'delete')
 {
 	print '<div class="tabsAction">';
 
@@ -328,18 +330,15 @@ if ($_GET["action"] != 'edit' && $_GET['action'] != 'delete')
 	print '</div>';
 }
 
-if ($mesg) { print '<br>'.$mesg.'<br>'; }
-
-
 // Confirm remove file
-if ($_GET['action'] == 'delete')
+if ($action == 'delete')
 {
 	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"].'&amp;urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
 	if ($ret == 'html') print '<br>';
 }
 
 // Confirm remove file
-if ($_GET['action'] == 'delete_dir')
+if ($action == 'delete_dir')
 {
 	$relativepathwithoutslash=preg_replace('/[\/]$/','',$relativepath);
     $ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"], $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$relativepathwithoutslash), 'confirm_deletedir', '', 1, 1);
