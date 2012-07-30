@@ -75,6 +75,7 @@ FeatureNotYetAvailableShort=Disponible en una próxima versión
 FeatureNotYetAvailable=Funcionalidad aún no disponible en esta versión
 FeatureExperimental=Funcionalidad experimental. No es estable en esta versión
 FeatureDevelopment=Funcionalidad en desarrollo. No estable en esta versión
+FeaturesSupported=Funcionalidades soportadas
 Width=Largo
 Height=Alto
 Depth=Fondo

@@ -41,6 +41,7 @@ FeatureNotYetAvailableShort=Saatavana on seuraava versio
 FeatureNotYetAvailable=Ominaisuus ei ole vielä käytettävissä tässä versiossa
 FeatureExperimental=Kokeellinen ominaisuus. Ei vakaa tässä versiossa
 FeatureDevelopment=Kehittäminen ominaisuutta. Ei vakaa tässä versiossa
+FeaturesSupported=Ominaisuudet tuettava
 Width=Leveys
 Height=Korkeus
 Weight=Paino

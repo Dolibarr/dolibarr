@@ -1309,5 +1309,3 @@ YouMustRunCommandFromCommandLineAfterLoginToUser			   =È necessario eseguire qu
 YourCompanyDoesNotUseVAT						   =Società non soggetta all'IVA. Non ci sono parametri da impostare.
 YourPHPDoesNotHaveSSLSupport						   =Il PHP del server non supporta SSL
 YourSession								   =La sessione di
-
-FeaturesSupported				     =Funzionalità supportate 

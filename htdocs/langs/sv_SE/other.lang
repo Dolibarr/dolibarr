@@ -52,6 +52,7 @@ FeatureNotYetAvailableShort=Finns i en kommande version
 FeatureNotYetAvailable=Feature ännu inte tillgänglig i denna version
 FeatureExperimental=Experimentell funktion. Inte stabila i denna version
 FeatureDevelopment=Utveckling funktionen. Inte stabila i denna version
+FeaturesSupported=Funktioner som stöds
 Width=Bredd
 Height=Höjd
 Depth=Djup

@@ -76,6 +76,7 @@ FeatureNotYetAvailableShort=זמין בגירסה הבאה
 FeatureNotYetAvailable=התכונה עדיין לא זמינה בגרסה זו
 FeatureExperimental=תכונה ניסיונית. לא יציבה בגרסה זו
 FeatureDevelopment=פיתוח תכונה. לא יציבה בגרסה זו
+FeaturesSupported=התכונות הנתמכות
 Width=רוחב
 Height=גובה
 Depth=עומק

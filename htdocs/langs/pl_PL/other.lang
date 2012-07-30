@@ -45,6 +45,7 @@ FeatureNotYetAvailableShort=Dostępne w następnej wersji
 FeatureNotYetAvailable=Funkcja nie jest jeszcze dostępny w tej wersji
 FeatureExperimental=Eksperymentalna funkcja. Nie zmienił się w tej wersji
 FeatureDevelopment=Rozwój funkcji. Nie zmienił się w tej wersji
+FeaturesSupported=Funkcje obsługiwane
 Width=Szerokość
 Height=Wysokość
 Weight=Waga

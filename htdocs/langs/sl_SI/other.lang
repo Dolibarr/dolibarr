@@ -93,6 +93,7 @@ FeatureNotYetAvailableShort = Na voljo v naslednji različici
 FeatureNotYetAvailable = Funkcija še ni na voljo v tej različici
 FeatureExperimental = Poskusna funkcija. Ni stabilna v tej različici
 FeatureDevelopment = Razvojna funkcija. Ni stabilna v tej različici
+FeaturesSupported = Podprta funkcija
 Width = Širina
 Height = Višina
 Depth = Globina

@@ -47,6 +47,7 @@ FeatureNotYetAvailableShort=متاحة في الإصدار التالي
 FeatureNotYetAvailable=ميزة لم تتوفر بعد في هذه النسخة
 FeatureExperimental=ميزة تجريبية. غير مستقر في هذه النسخة
 FeatureDevelopment=تنمية الميزة. غير مستقر في هذه النسخة
+FeaturesSupported=المزايا
 Width=عرض
 Height=ارتفاع
 Weight=وزن
