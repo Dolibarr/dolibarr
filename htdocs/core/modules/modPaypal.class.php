@@ -37,7 +37,7 @@ class modPaypal extends DolibarrModules
      *
      *   @param      DoliDB		$db      Database handler
      */
-    function modPaypal($db)
+    function __construct($db)
     {
         $this->db = $db;
 

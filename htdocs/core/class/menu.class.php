@@ -33,7 +33,7 @@ class Menu
     /**
 	 *	Constructor
      */
-    function Menu()
+    function __construct()
     {
       	$this->liste = array();
     }

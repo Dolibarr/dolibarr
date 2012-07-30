@@ -42,7 +42,7 @@ class InterfaceActionsAuto
      *
      *   @param		DoliDB		$db      Database handler
      */
-    function InterfaceActionsAuto($db)
+    function __construct($db)
     {
         $this->db = $db;
 

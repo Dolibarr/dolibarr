@@ -58,7 +58,7 @@ class FactureFournisseurTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return FactureFournisseurTest
 	 */
-	function FactureFournisseurTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;

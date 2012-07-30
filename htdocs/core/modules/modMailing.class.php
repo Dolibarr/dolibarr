@@ -40,7 +40,7 @@ class modMailing extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modMailing($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 22;

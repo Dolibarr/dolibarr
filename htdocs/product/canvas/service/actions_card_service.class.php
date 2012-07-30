@@ -48,7 +48,7 @@ class ActionsCardService extends Product
      *    @param   string	$canvas         Name of canvas
      *    @param   string	$card           Name of tab (sub-canvas)
 	 */
-	function ActionsCardService($DB,$targetmodule,$canvas,$card)
+	function __construct($DB,$targetmodule,$canvas,$card)
 	{
 		$this->db 				= $DB;
 		$this->targetmodule     = $targetmodule;

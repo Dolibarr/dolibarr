@@ -117,7 +117,7 @@ class Adherent extends CommonObject
 	 *
 	 *	@param 		DoliDB		$db		Database handler
      */
-    function Adherent($db)
+    function __construct($db)
     {
         $this->db = $db;
         $this->statut = -1;

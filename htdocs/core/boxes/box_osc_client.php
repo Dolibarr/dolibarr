@@ -44,7 +44,7 @@ class box_osc_clients extends ModeleBoxes
     /**
      *  Constructor
      */
-    function box_osc_clients()
+    function __construct()
     {
         global $langs;
         $langs->load("boxes");

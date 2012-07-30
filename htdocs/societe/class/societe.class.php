@@ -147,7 +147,7 @@ class Societe extends CommonObject
      *
      *    @param	DoliDB		$db		Database handler
      */
-    public function Societe($db)
+    public function __construct($db)
     {
         global $conf;
 

@@ -40,7 +40,7 @@ class modClickToDial extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modClickToDial($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 58;

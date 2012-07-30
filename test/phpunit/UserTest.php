@@ -58,7 +58,7 @@ class UserTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return UserTest
 	 */
-	function UserTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;

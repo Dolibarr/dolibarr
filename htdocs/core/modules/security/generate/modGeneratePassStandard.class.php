@@ -48,7 +48,7 @@ class modGeneratePassStandard extends ModeleGenPassword
 	 *	@param		Translate	$langs		Handler de langue
 	 *	@param		User		$user		Handler du user connecte
 	 */
-	function modGeneratePassStandard($db, $conf, $langs, $user)
+	function __construct($db, $conf, $langs, $user)
 	{
 		$this->id = "standard";
 		$this->length = 8;

@@ -53,11 +53,11 @@ class PaymentTerm // extends CommonObject
     /**
      * 	Constructor
      *
-	 * 	@param	DoliDB		$DB			Database handler
+	 * 	@param	DoliDB		$db			Database handler
      */
-    function PaymentTerm($DB)
+    function __construct($db)
     {
-        $this->db = $DB;
+        $this->db = $db;
         return 1;
     }
 

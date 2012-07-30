@@ -87,7 +87,7 @@ class FactureFournisseur extends CommonInvoice
 	 *
 	 *  @param		DoliDB		$db      Database handler
      */
-    function FactureFournisseur($db)
+    function __construct($db)
     {
         $this->db = $db;
 

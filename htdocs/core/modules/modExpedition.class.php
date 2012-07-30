@@ -41,7 +41,7 @@ class modExpedition extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modExpedition($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 80;

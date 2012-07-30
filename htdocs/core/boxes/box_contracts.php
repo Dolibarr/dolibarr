@@ -44,7 +44,7 @@ class box_contracts extends ModeleBoxes
     /**
      *  Constructor
      */
-    function box_contracts()
+    function __construct()
     {
     	global $langs;
 

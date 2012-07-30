@@ -58,7 +58,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return UserGroupTest
 	 */
-	function UserGroupTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;

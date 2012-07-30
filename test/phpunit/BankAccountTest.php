@@ -60,7 +60,7 @@ class BankAccountTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return BankAccountTest
 	 */
-	function BankAccountTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;

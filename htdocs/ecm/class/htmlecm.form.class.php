@@ -38,7 +38,7 @@ class FormEcm
 	 *
 	 * 	@param	DoliDB	$db		Database handler
 	 */
-	function FormEcm($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 	}

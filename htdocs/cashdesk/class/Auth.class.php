@@ -34,12 +34,12 @@ class Auth
 	/**
 	 * Enter description here ...
 	 *
-	 * @param	DoliDB	$DB			Database handler
+	 * @param	DoliDB	$db			Database handler
 	 * @return	void
 	 */
-	function Auth($DB)
+	function __construct($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 		$this->reponse(null);
 	}
 

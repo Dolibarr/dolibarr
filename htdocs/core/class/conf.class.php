@@ -75,7 +75,7 @@ class Conf
 	 *
 	 * @return Conf
 	 */
-	function Conf()
+	function __construct()
 	{
 		// Avoid warnings when filling this->xxx
 		$this->file				= (object) array();
