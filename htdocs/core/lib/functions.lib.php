@@ -1969,7 +1969,7 @@ function img_up($alt = 'default', $selected = 0)
 
     if ($alt == 'default') $alt = $langs->trans('Up');
 
-    return img_picto($alt, ($selected ? '1downarrow_selected.png' : '1downarrow.png'), 'class="imgup"');
+    return img_picto($alt, ($selected ? '1uparrow_selected.png' : '1uparrow.png'), 'class="imgup"');
 }
 
 /**
