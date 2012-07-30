@@ -39,7 +39,7 @@ class BoutiqueClient
 	 *
 	 * 	@param		DoliDB	$db		Database handler
 	 */
-    function BoutiqueClient($db)
+    function __construct($db)
     {
         $this->db = $db;
     }

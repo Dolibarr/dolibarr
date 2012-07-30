@@ -60,7 +60,7 @@ class WebservicesTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return DateLibTest
 	 */
-	function WebservicesTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;

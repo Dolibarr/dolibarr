@@ -45,7 +45,7 @@ class box_members extends ModeleBoxes
 	/**
      *  Constructor
 	 */
-	function box_members()
+	function __construct()
 	{
 		global $langs;
 		$langs->load("boxes");

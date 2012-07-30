@@ -37,7 +37,7 @@ class modGeoIPMaxmind extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modGeoIPMaxmind($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 2900;

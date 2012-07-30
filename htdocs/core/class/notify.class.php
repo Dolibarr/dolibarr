@@ -47,7 +47,7 @@ class Notify
 	 *
 	 *	@param 		DoliDB		$db		Database handler
      */
-    function Notify($db)
+    function __construct($db)
     {
         $this->db = $db;
     }

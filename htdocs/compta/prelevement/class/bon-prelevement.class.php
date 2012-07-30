@@ -56,7 +56,7 @@ class BonPrelevement extends CommonObject
      *  @param		DoliDB		$db      	Database handler
      *  @param		string		$filename	Filename of withdraw receipt
      */
-    function BonPrelevement($db, $filename='')
+    function __construct($db, $filename='')
     {
         global $conf,$langs;
 

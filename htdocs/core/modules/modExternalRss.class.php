@@ -39,7 +39,7 @@ class modExternalRss extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modExternalRss($db)
+	function __construct($db)
 	{
 		global $conf;
 

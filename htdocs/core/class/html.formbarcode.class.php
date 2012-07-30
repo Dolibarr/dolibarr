@@ -37,7 +37,7 @@ class FormBarCode
      *
      *	@param	DoliDB		$db		Database handler
      */
-    function FormBarCode($db)
+    function __construct($db)
     {
         $this->db = $db;
         return 1;

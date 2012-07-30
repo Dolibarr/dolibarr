@@ -43,7 +43,7 @@ class DolCookie
 	 *
 	 *  @param      string		$key      Personnal key
 	 */
-	function DolCookie($key = '')
+	function __construct($key = '')
 	{
 		$this->myKey = $key;
 		$this->cookiearray = array();

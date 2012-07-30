@@ -44,7 +44,7 @@ class box_factures_fourn extends ModeleBoxes
 	/**
      *  Constructor
 	 */
-	function box_factures_fourn()
+	function __construct()
 	{
 		global $langs;
 		$langs->load("boxes");

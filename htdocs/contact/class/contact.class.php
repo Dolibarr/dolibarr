@@ -90,7 +90,7 @@ class Contact extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function Contact($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 	}

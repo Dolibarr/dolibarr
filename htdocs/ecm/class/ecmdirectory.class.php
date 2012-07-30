@@ -53,7 +53,7 @@ class EcmDirectory // extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function EcmDirectory($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		return 1;

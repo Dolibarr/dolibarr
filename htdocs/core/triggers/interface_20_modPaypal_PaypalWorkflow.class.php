@@ -34,7 +34,7 @@ class InterfacePaypalWorkflow
      *
      *   @param		DoliDB		$db      Database handler
      */
-    function InterfacePaypalWorkflow($db)
+    function __construct($db)
     {
         $this->db = $db;
 

@@ -41,7 +41,7 @@ class modComptabilite extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
     */
-	function modComptabilite($db)
+	function __construct($db)
 	{
 		global $conf;
 

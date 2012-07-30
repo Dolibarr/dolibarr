@@ -43,7 +43,7 @@ class modBanque extends DolibarrModules
 	 *
 	 *	@param	DoliDB	$db		Database handler
 	 */
-	function modBanque($db)
+	function __construct($db)
 	{
 		global $conf;
 

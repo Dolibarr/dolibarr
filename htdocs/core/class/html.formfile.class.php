@@ -40,7 +40,7 @@ class FormFile
 	 *
 	 *  @param		DoliDB		$db      Database handler
      */
-    function FormFile($db)
+    function __construct($db)
     {
         $this->db = $db;
         $this->numoffiles=0;

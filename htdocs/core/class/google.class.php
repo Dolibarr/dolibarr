@@ -38,7 +38,7 @@ class GoogleAPI
 	 * @param	string		$key		Google key
 	 * @return 	GoogleAPI
 	 */
-	function GoogleAPI($db,$key)
+	function __construct($db,$key)
 	{
 		$this->db=$db;
 		$this->key=$key;
