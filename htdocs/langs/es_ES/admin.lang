@@ -910,7 +910,7 @@ UsersSetup=Configuración del módulo usuarios
 UserMailRequired=E-Mail necesario para crear un usuario nuevo
 ##### Company setup #####
 CompanySetup=Configuración del módulo empresas
-CompanyCodeChecker=Módulo de generación e control de los códigos de terceros (clientes/proveedores)
+CompanyCodeChecker=Módulo de generación y control de los códigos de terceros (clientes/proveedores)
 AccountCodeManager=Módulo de generación de los códigos contables (clientes/proveedores)
 ModuleCompanyCodeAquarium=Devuelve un código contable compuesto de<br>%s seguido del código tercero de proveedor para el código contable de proveedor,<br>%s seguido del código tercero de cliente para el código contable de cliente.
 ModuleCompanyCodePanicum=Devuelve un código contable vacío.
