@@ -1045,9 +1045,9 @@ function form_constantes($tableau)
             print '<input type="hidden" name="constname" value="'.$const.'">';
             print '<input type="hidden" name="constnote" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
 
-            print $langs->trans("Desc".$const) != ("Desc".$const) ? $langs->trans("Desc".$const) : ($obj->note?$obj->note:$const);
+            print $langs->trans('Desc'.$const);
 
-            if ($const=='ADHERENT_MAILMAN_URL')
+            if ($const == 'ADHERENT_MAILMAN_URL')
             {
                 print '. '.$langs->trans("Example").': <a href="#" id="exampleclick1">'.img_down().'</a><br>';
                 //print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&subscribees=%EMAIL%&send_welcome_msg_to_this_batch=1';
@@ -1055,7 +1055,7 @@ function form_constantes($tableau)
                 print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members/add?subscribees_upload=%EMAIL%&amp;adminpw=%MAILMAN_ADMINPW%&amp;subscribe_or_invite=0&amp;send_welcome_msg_to_this_batch=0&amp;notification_to_list_owner=0';
                 print '</div>';
             }
-            if ($const=='ADHERENT_MAILMAN_UNSUB_URL')
+            if ($const == 'ADHERENT_MAILMAN_UNSUB_URL')
             {
                 print '. '.$langs->trans("Example").': <a href="#" id="exampleclick2">'.img_down().'</a><br>';
                 print '<div id="example2" class="hidden">';
@@ -1063,7 +1063,6 @@ function form_constantes($tableau)
                 print '</div>';
                 //print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members/remove?adminpw=%MAILMAN_ADMINPW%&unsubscribees=%EMAIL%';
             }
-
 
             print "</td>\n";
 

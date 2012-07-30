@@ -687,20 +687,20 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 
                 // System info
                 $newmenu->add("/admin/system/index.php?mainmenu=home&leftmenu=system", $langs->trans("SystemInfo"), 0, 1, '', $mainmenu, 'system');
-                if ($leftmenu=="system")
+                if ($leftmenu == 'system')
                 {
-                    $newmenu->add("/admin/system/dolibarr.php?mainmenu=home", $langs->trans("Dolibarr"),1);
-                    $newmenu->add("/admin/system/constall.php?mainmenu=home", $langs->trans("AllParameters"),2);
-                    $newmenu->add("/admin/system/modules.php?mainmenu=home", $langs->trans("Modules"),2);
-                    $newmenu->add("/admin/triggers.php?mainmenu=home", $langs->trans("Triggers"),2);
-                    $newmenu->add("/admin/system/about.php?mainmenu=home", $langs->trans("About"),2);
-                    $newmenu->add("/admin/system/os.php?mainmenu=home", $langs->trans("OS"),1);
-                    $newmenu->add("/admin/system/web.php?mainmenu=home", $langs->trans("WebServer"),1);
-                    $newmenu->add("/admin/system/phpinfo.php?mainmenu=home", $langs->trans("Php"),1);
-                    //if (function_exists('xdebug_is_enabled')) $newmenu->add("/admin/system/xdebug.php", $langs->trans("XDebug"),1);
-                    $newmenu->add("/admin/system/database.php?mainmenu=home", $langs->trans("Database"),1);
-                    $newmenu->add("/admin/system/database-tables.php?mainmenu=home", $langs->trans("Tables"),2);
-                    $newmenu->add("/admin/system/database-tables-contraintes.php?mainmenu=home", $langs->trans("Constraints"),2);
+                    $newmenu->add('/admin/system/dolibarr.php?mainmenu=home', $langs->trans('Dolibarr'), 1);
+                    $newmenu->add('/admin/system/constall.php?mainmenu=home', $langs->trans('AllParameters'), 2);
+                    $newmenu->add('/admin/system/modules.php?mainmenu=home', $langs->trans('Modules'), 2);
+                    $newmenu->add('/admin/triggers.php?mainmenu=home', $langs->trans('Triggers'), 2);
+                    $newmenu->add('/admin/system/about.php?mainmenu=home', $langs->trans('About'), 2);
+                    $newmenu->add('/admin/system/os.php?mainmenu=home', $langs->trans('OS'), 1);
+                    $newmenu->add('/admin/system/web.php?mainmenu=home', $langs->trans('WebServer'), 1);
+                    $newmenu->add('/admin/system/phpinfo.php?mainmenu=home', $langs->trans('PHP'), 1);
+                    //if (function_exists('xdebug_is_enabled')) $newmenu->add('/admin/system/xdebug.php', $langs->trans('XDebug'),1);
+                    $newmenu->add('/admin/system/database.php?mainmenu=home', $langs->trans('Database'), 1);
+                    $newmenu->add('/admin/system/database-tables.php?mainmenu=home', $langs->trans('Tables'), 2);
+                    $newmenu->add('/admin/system/database-tables-contraintes.php?mainmenu=home', $langs->trans('Constraints'), 2);
                 }
                 // System info
                 $newmenu->add("/admin/tools/index.php?mainmenu=home&leftmenu=admintools", $langs->trans("SystemTools"), 0, 1, '', $mainmenu, 'admintools');
