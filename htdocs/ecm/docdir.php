@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008      Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2012	Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,10 +39,12 @@ $langs->load("bills");
 $langs->load("contracts");
 $langs->load("categories");
 
-if (!$user->rights->ecm->setup) accessforbidden();
+if (! $user->rights->ecm->setup) accessforbidden();
 
 // Get parameters
-$socid = GETPOST("socid","int");
+$socid = GETPOST('socid','int');
+$action=GETPOST('action','alpha');
+$confirm=GETPOST('confirm','alpha');
 
 // Security check
 if ($user->societe_id > 0)
@@ -51,9 +53,9 @@ if ($user->societe_id > 0)
     $socid = $user->societe_id;
 }
 
-$section=$_GET["section"];
-if (! $section) $section='misc';
-$upload_dir = $conf->ecm->dir_output.'/'.$section;
+$section=$urlsection=GETPOST('section');
+if (empty($urlsection)) $urlsection='misc';
+$upload_dir = $conf->ecm->dir_output.'/'.$urlsection;
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -66,9 +68,9 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="label";
 
 $ecmdir = new EcmDirectory($db);
-if (! empty($_GET["section"]))
+if (! empty($section))
 {
-	$result=$ecmdir->fetch($_GET["section"]);
+	$result=$ecmdir->fetch($section);
 	if (! $result > 0)
 	{
 		dol_print_error($db,$ecmdir->error);
@@ -77,14 +79,12 @@ if (! empty($_GET["section"]))
 }
 
 
-/*******************************************************************
- * ACTIONS
- *
- * Put here all code to do according to value of "action" parameter
- ********************************************************************/
+/*
+ * Actions
+ */
 
 // Action ajout d'un produit ou service
-if ($_POST["action"] == 'add' && $user->rights->ecm->setup)
+if ($action == 'add' && $user->rights->ecm->setup)
 {
 	if (! empty($_POST["cancel"]))
 	{
@@ -100,8 +100,8 @@ if ($_POST["action"] == 'add' && $user->rights->ecm->setup)
 
 	if (! $ecmdir->label)
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
-		$_GET["action"] = "create";
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
+		$action = 'create';
 		$ok=false;
 	}
 
@@ -117,34 +117,32 @@ if ($_POST["action"] == 'add' && $user->rights->ecm->setup)
 		else
 		{
 			$langs->load("errors");
-			$mesg='<div class="error">'.$langs->trans($ecmdir->error).'</div>';
-			$_GET["action"] = "create";
+			setEventMessage($langs->trans($ecmdir->error), 'errors');
+			$action = 'create';
 		}
 	}
 }
 
 // Suppression fichier
-if ($_POST['action'] == 'confirm_deletesection' && $_POST['confirm'] == 'yes')
+if ($action == 'confirm_deletesection' && $confirm == 'yes')
 {
 	$result=$ecmdir->delete($user);
-	$mesg = '<div class="ok">'.$langs->trans("ECMSectionWasRemoved", $ecmdir->label).'</div>';
+	setEventMessage($langs->trans("ECMSectionWasRemoved", $ecmdir->label));
 }
 
 
 
 
-/*******************************************************************
- * PAGE
- *
- * Put here all code to do according to value of "action" parameter
- ********************************************************************/
+/*
+ * View
+ */
 
 llxHeader();
 
 $form=new Form($db);
 $formecm=new FormEcm($db);
 
-if ($_GET["action"] == 'create')
+if ($action == 'create')
 {
 	//***********************
 	// Create
@@ -155,7 +153,6 @@ if ($_GET["action"] == 'create')
 
 	$title=$langs->trans("ECMNewSection");
 	print_fiche_titre($title);
-	if ($mesg) { print $mesg."<br>"; }
 
 	print '<table class="border" width="100%">';
 
@@ -186,7 +183,7 @@ if ($_GET["action"] == 'create')
 }
 
 
-if (! $_GET["action"] || $_GET["action"] == 'delete_section')
+if (empty($action) || $action == 'delete_section')
 {
 	//***********************
 	// List
@@ -204,14 +201,11 @@ if (! $_GET["action"] || $_GET["action"] == 'delete_section')
 */
 
 	// Confirmation de la suppression d'une ligne categorie
-	if ($_GET['action'] == 'delete_section')
+	if ($action == 'delete_section')
 	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$_GET["section"], $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection');
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection');
 		if ($ret == 'html') print '<br>';
 	}
-
-	if ($mesg) { print $mesg."<br>"; }
-
 
 	// Construit fiche  rubrique
 
@@ -231,7 +225,6 @@ if (! $_GET["action"] || $_GET["action"] == 'delete_section')
 
 
 // End of page
-$db->close();
-
 llxFooter();
+$db->close();
 ?>

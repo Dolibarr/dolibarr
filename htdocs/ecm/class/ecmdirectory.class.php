@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2009 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -529,7 +529,7 @@ class EcmDirectory // extends CommonObject
 	{
 		global $conf;
 
-		if (empty($force) && $this->full_arbo_loaded)
+		if (empty($force) && ! empty($this->full_arbo_loaded))
 		{
 			return $this->cats;
 		}
@@ -561,7 +561,7 @@ class EcmDirectory // extends CommonObject
 			while ($obj = $this->db->fetch_object($resql))
 			{
 				$this->cats[$obj->rowid]['id'] = $obj->rowid;
-				$this->cats[$obj->rowid]['id_mere'] = $this->motherof[$obj->rowid];
+				$this->cats[$obj->rowid]['id_mere'] = (isset($this->motherof[$obj->rowid])?$this->motherof[$obj->rowid]:'');
 				$this->cats[$obj->rowid]['label'] = $obj->label;
 				$this->cats[$obj->rowid]['description'] = $obj->description;
 				$this->cats[$obj->rowid]['cachenbofdoc'] = $obj->cachenbofdoc;
@@ -617,7 +617,7 @@ class EcmDirectory // extends CommonObject
 	function build_path_from_id_categ($id_categ,$protection=0)
 	{
 		// Define fullpath
-		if (isset($this->cats[$id_categ]['id_mere']))
+		if (! empty($this->cats[$id_categ]['id_mere']))
 		{
 			$this->cats[$id_categ]['fullpath'] =$this->cats[$this->cats[$id_categ]['id_mere']]['fullpath'];
 			$this->cats[$id_categ]['fullpath'].='_'.$id_categ;
@@ -638,7 +638,7 @@ class EcmDirectory // extends CommonObject
 		// Traite ces enfants
 		$protection++;
 		if ($protection > 20) return;	// On ne traite pas plus de 20 niveaux
-		if (is_array($this->cats[$id_categ]['id_children']))
+		if (isset($this->cats[$id_categ]['id_children']) && is_array($this->cats[$id_categ]['id_children']))
 		{
 			foreach($this->cats[$id_categ]['id_children'] as $key => $val)
 			{

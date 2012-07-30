@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@
  *	\brief      Module to generate box of last products/services
  */
 
-include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
-include_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
+include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 
 /**
@@ -105,7 +105,8 @@ class box_produits extends ModeleBoxes
 						if ($resultd)
 						{
 							$objtp = $db->fetch_object($resultd);
-							if ($objtp->label != '') $objp->label = $objtp->label;
+							if (isset($objtp->label) && $objtp->label != '')
+								$objp->label = $objtp->label;
 						}
 					}
 

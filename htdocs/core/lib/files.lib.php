@@ -287,7 +287,7 @@ function dol_mimetype($file,$default='application/octet-stream',$mode=0)
 	if ($mode == 1)
 	{
 		$tmp=explode('/',$mime);
-		return $tmp[1];
+		return (! empty($tmp[1])?$tmp[1]:$tmp[0]);
 	}
 	if ($mode == 2)
 	{
