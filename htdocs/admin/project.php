@@ -216,7 +216,7 @@ foreach ($dirmodels as $reldir)
 						// Show example of numbering module
 						print '<td nowrap="nowrap">';
 						$tmp=$module->getExample();
-						if (preg_match('/^Error/',$tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; }
+						if (preg_match('/^Error/',$tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
 						elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
 						else print $tmp;
 						print '</td>'."\n";
