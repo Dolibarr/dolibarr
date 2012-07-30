@@ -63,17 +63,17 @@ ob_start();
 
 if ($_GET["what"] == 'conf')
 {
-	$title=$langs->trans("Setup");
+	$title = 'Setup';
 	phpinfo(INFO_CONFIGURATION);
 }
 elseif ($_GET["what"] == 'env')
 {
-	$title=$langs->trans("OSEnv");
+	$title = 'OSEnv';
 	phpinfo(INFO_ENVIRONMENT);
 }
 elseif ($_GET["what"] == 'modules')
 {
-	$title=$langs->trans("Modules");
+	$title = 'Modules';
 	phpinfo(INFO_MODULES);
 }
 else
@@ -85,37 +85,29 @@ $chaine = ob_get_contents();
 ob_end_clean();
 
 // Nettoie la sortie php pour inclusion dans une page deja existante
-$chaine = preg_replace('/background-color: #ffffff;/i','',$chaine);
-$chaine = preg_replace('/(.*)<style/i','<style',$chaine);
-$chaine = preg_replace('/<title>(.*)<body>/i','',$chaine);
-$chaine = preg_replace('/a:link \{([^\}]*)\}/i','',$chaine);
-$chaine = preg_replace('/a:hover \{([^\}]*)\}/i','',$chaine);
-$chaine = preg_replace('/td, th \{([^\}]*)\}/i','',$chaine);
-$chaine = preg_replace('/img \{([^\}]*)\}/i','',$chaine);
+$chaine = preg_replace('/^<!DOCTYPE(.*)<div class="center">/ims', '', $chaine);
+$chaine = preg_replace('/<\/div><\/body><\/html>$/im', '', $chaine);
 $chaine = preg_replace('/table(.*)important; \}/i','',$chaine);
-$chaine = preg_replace('/<hr \/>/i','',$chaine);
-$chaine = preg_replace('/<\/body><\/html>/i','',$chaine);
-$chaine = preg_replace('/body, td, th, h1, h2 \{font-family: sans-serif;\}/i','',$chaine);
-$chaine = preg_replace('/cellpadding="3" /i','cellpadding="1" cellspacing="1" ',$chaine);
-$chaine = preg_replace('/class="h"/i','class="liste_titre"',$chaine);
-$chaine = preg_replace('/<th colspan="2">/i','<td>',$chaine);
-$chaine = preg_replace('/th>/i','td>',$chaine);
+$chaine = str_replace('<hr />', '', $chaine);
+$chaine = str_replace('cellpadding="3" ', 'cellpadding="1" cellspacing="1" ', $chaine);
+$chaine = str_replace('class="h"','class="liste_titre"', $chaine);
+$chaine = str_replace('<th colspan="2">', '<td>', $chaine);
+$chaine = str_replace('th>', 'td>', $chaine);
 // Titles
 $chaine = preg_replace('/<h1([^>]*)>/i','<div class="titre">',$chaine);
-$chaine = preg_replace('/<h2>/i','<div class="titre">',$chaine);
-$chaine = preg_replace('/<\/h1>/i','</div><br>',$chaine);
-$chaine = preg_replace('/<\/h2>/i','</div>',$chaine);
+$chaine = str_replace('<h2>', '<div class="titre">', $chaine);
+$chaine = str_replace('</h1>', '</div><br>', $chaine);
+$chaine = str_replace('</h2>', '</div>', $chaine);
 
-$chaine = preg_replace('/<td class="e">/i','<td class="impair">',$chaine);
-$chaine = preg_replace('/<td class="v">/i','<td class="pair">',$chaine);
-
-$chaine = preg_replace('/<div class="titre">Configuration<\/div><br>/i','',$chaine);
+$chaine = str_replace('<td class="e">', '<td class="impair">', $chaine);
+$chaine = str_replace('<td class="v">', '<td class="pair">', $chaine);
+$chaine = str_replace('<div class="titre">Configuration</div><br>', '', $chaine);
 // Add LF
 $chaine = preg_replace('/(pcntl_[a-z]+),/','$1, ',$chaine);
 
 if (isset($title))
 {
-	print_fiche_titre($title,'','setup');
+	print_fiche_titre($langs->trans($title), '', 'setup');
 	print '<br>';
 }
 
