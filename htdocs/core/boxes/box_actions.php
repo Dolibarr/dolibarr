@@ -45,7 +45,7 @@ class box_actions extends ModeleBoxes
 	/**
 	 *  Constructor
 	 */
-	function box_actions()
+	function __construct()
 	{
 		global $langs;
 		$langs->load("boxes");

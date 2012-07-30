@@ -58,7 +58,7 @@ class CommandeTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return CommandeTest
 	 */
-	function CommandeTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;

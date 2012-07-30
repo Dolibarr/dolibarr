@@ -38,7 +38,7 @@ class FormAdmin
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function FormAdmin($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		return 1;

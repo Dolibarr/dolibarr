@@ -34,7 +34,7 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
  *	\class      pdf_expedition_merou
  *	\brief      Classe permettant de generer les borderaux envoi au modele Merou
  */
-Class pdf_expedition_merou extends ModelePdfExpedition
+class pdf_expedition_merou extends ModelePdfExpedition
 {
 	var $emetteur;	// Objet societe qui emet
 

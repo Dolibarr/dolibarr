@@ -77,7 +77,7 @@ class DoliDBPgsql
 	 *	@param	    int		$port		Port of database server
 	 *	@return	    int					1 if OK, 0 if not
 	 */
-	function DoliDBPgsql($type, $host, $user, $pass, $name='', $port=0)
+	function __construct($type, $host, $user, $pass, $name='', $port=0)
 	{
 		global $conf,$langs;
 

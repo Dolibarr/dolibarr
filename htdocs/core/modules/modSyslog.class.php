@@ -38,7 +38,7 @@ class modSyslog extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modSyslog($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 42;

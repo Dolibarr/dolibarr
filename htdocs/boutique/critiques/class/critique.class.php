@@ -37,7 +37,7 @@ class Critique
 	 *
 	 * @param	DoliDB		$db		Database handler
 	 */
-	function Critique($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 	}

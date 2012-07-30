@@ -36,13 +36,13 @@ class modDeplacement extends DolibarrModules
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param      DoliDB		$DB      Database handler
+	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modDeplacement($DB)
+	function __construct($db)
 	{
 		global $conf;
 
-		$this->db = $DB ;
+		$this->db = $db;
 		$this->numero = 75 ;
 
 		$this->family = "financial";

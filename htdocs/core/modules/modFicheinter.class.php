@@ -43,7 +43,7 @@ class modFicheinter extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
      */
-    function modFicheinter($db)
+    function __construct($db)
     {
         global $conf;
 

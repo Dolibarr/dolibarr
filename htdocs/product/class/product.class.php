@@ -147,7 +147,7 @@ class Product extends CommonObject
 	 *
 	 *  @param      DoliDB		$db      Database handler
 	 */
-	function Product($db)
+	function __construct($db)
 	{
 		global $langs;
 

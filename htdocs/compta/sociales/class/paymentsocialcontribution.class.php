@@ -54,7 +54,7 @@ class PaymentSocialContribution extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function PaymentSocialContribution($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 	}

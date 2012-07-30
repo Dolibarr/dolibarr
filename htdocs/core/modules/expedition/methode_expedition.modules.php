@@ -36,7 +36,7 @@ class ModeleShippingMethod
      *
      * @param	DoliDB		$db		Database handler
      */
-	function ModeleShippingMethod($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		$this->name = "NOT DEFINED";

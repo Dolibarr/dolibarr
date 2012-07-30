@@ -49,7 +49,7 @@ class Ctypent // extends CommonObject
      *
      *  @param      DoliDb		$db      Database handler
      */
-    function Ctypent($db)
+    function __construct($db)
     {
         $this->db = $db;
         return 1;

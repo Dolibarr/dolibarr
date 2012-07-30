@@ -61,7 +61,7 @@ class ExportTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return ExportTest
 	 */
-	function ExportTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;

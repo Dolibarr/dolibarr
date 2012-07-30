@@ -59,7 +59,7 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return CommandeFournisseurTest
 	 */
-	function CommandeFournisseurTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;

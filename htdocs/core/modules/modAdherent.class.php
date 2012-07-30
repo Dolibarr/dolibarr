@@ -40,7 +40,7 @@ class modAdherent extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
      */
-    function modAdherent($db)
+    function __construct($db)
     {
         $this->db = $db;
         $this->numero = 310;

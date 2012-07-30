@@ -40,7 +40,7 @@ class modFckeditor extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modFckeditor($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 2000;

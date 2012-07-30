@@ -146,7 +146,7 @@ class RssParser
      *
      *  @param		DoliDB		$db      Database handler
      */
-    public function RssParser($db)
+    public function __construct($db)
     {
         $this->db=$db;
     }

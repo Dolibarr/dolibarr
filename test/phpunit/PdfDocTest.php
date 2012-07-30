@@ -61,7 +61,7 @@ class PdfDocTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return PdfDocTest
 	 */
-	function PdfDocTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;

@@ -43,7 +43,7 @@ class modProduct extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modProduct($db)
+	function __construct($db)
 	{
 		global $conf;
 

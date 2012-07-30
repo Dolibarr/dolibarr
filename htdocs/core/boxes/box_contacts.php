@@ -46,7 +46,7 @@ class box_contacts extends ModeleBoxes
 	/**
      *  Constructor
 	 */
-	function box_contacts()
+	function __construct()
 	{
 		global $langs;
 		$langs->load("boxes");

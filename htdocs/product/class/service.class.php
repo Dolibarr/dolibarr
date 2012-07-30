@@ -47,7 +47,7 @@ class Service extends CommonObject
 	*
 	*  @param      DoliDB		$db      Database handler
 	*/
-	function Service($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 	}

@@ -1068,7 +1068,7 @@ class AccountLine extends CommonObject
      *
      *  @param	DoliDB	$db		Database handler
      */
-    function AccountLine($db)
+    function __construct($db)
     {
         $this->db = $db;
     }

@@ -58,7 +58,7 @@ class ContratTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return ContratTest
 	 */
-	function ContratTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;

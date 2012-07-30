@@ -38,7 +38,7 @@ class MenuSmart
      *
      *  @param      DoliDb		$db      Database handler
 	 */
-	function MenuSmart($db)
+	function __construct($db)
 	{
 		$this->db=$db;
 	}

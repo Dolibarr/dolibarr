@@ -36,11 +36,11 @@ class MouvementStock
     /**
 	 *  Constructor
 	 *
-	 *  @param      DoliDB		$DB      Database handler
+	 *  @param      DoliDB		$db      Database handler
      */
-	function MouvementStock($DB)
+	function __construct($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 	}
 
 	/**

@@ -46,7 +46,7 @@ class FormOther
      *
      *	@param	DoliDB		$db      Database handler
      */
-    function FormOther($db)
+    function __construct($db)
     {
         $this->db = $db;
 

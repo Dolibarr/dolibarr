@@ -38,7 +38,7 @@ class FormActions
 	 *
 	 *  @param		DoliDB		$db      Database handler
      */
-    function FormActions($db)
+    function __construct($db)
     {
         $this->db = $db;
         return 1;

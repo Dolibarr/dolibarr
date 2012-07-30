@@ -115,7 +115,7 @@ class Facture extends CommonInvoice
      *
 	 * 	@param	DoliDB		$db			Database handler
      */
-    function Facture($db)
+    function __construct($db)
     {
         $this->db = $db;
     }
@@ -3160,7 +3160,7 @@ class FactureLigne
      *
      *  @param	DoliDB		$db		Database handler
      */
-    function FactureLigne($db)
+    function __construct($db)
     {
         $this->db = $db;
     }

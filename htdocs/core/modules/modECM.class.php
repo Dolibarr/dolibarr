@@ -37,7 +37,7 @@ class modECM extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
     */
-	function modECM($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 

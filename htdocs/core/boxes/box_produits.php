@@ -47,7 +47,7 @@ class box_produits extends ModeleBoxes
 	/**
      *  Constructor
 	 */
-	function box_produits()
+	function __construct()
 	{
 		global $langs;
 		$langs->load("boxes");

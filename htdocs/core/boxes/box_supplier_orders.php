@@ -43,7 +43,7 @@ class box_supplier_orders extends ModeleBoxes
     /**
      *  Constructor
      */
-    function box_supplier_orders()
+    function __construct()
     {
         global $langs;
         $langs->load("boxes");

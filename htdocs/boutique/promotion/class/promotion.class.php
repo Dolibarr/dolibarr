@@ -43,7 +43,7 @@ class Promotion
 	 *
 	 * 	@param		DoliDB		$db		Database handler
 	 */
-	function Promotion($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 	}
