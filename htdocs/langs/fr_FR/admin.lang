@@ -1154,6 +1154,7 @@ SyslogSimpleFile= Fichier
 SyslogFilename= Nom et chemin du fichier
 YouCanUseDOL_DATA_ROOT= Vous pouvez utiliser DOL_DATA_ROOT/dolibarr.log pour un log dans le répertoire "documents" de Dolibarr. Vous pouvez néanmoins définir un chemin différent pour stocker ce fichier.
 ErrorUnknownSyslogConstant= La constante %s n'est pas une constante syslog connue
+OnlyWindowsLOG_USER=Windows ne supporte que LOG_USER
 ##### Donations #####
 DonationsSetup= Configuration du module Dons
 DonationsReceiptModel= Modèle de reçu de dons
