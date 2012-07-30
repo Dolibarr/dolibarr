@@ -60,7 +60,7 @@ class PgsqlTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return ContactTest
 	 */
-	function PgsqlTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;

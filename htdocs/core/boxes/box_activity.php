@@ -41,7 +41,7 @@ class box_activity extends ModeleBoxes
 	/**
 	 *	Constructor
 	 */
-	function box_activity()
+	function __construct()
 	{
 		global $langs;
 		$langs->load("boxes");

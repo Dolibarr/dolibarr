@@ -60,7 +60,7 @@ class CoreTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return CoreTest
 	 */
-	function CoreTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;

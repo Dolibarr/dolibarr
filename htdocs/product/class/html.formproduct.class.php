@@ -43,7 +43,7 @@ class FormProduct
 	 *
 	 *	@param	DoliDB	$db		Database handler
 	 */
-	function FormProduct($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 

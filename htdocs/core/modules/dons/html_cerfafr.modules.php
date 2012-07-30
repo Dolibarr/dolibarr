@@ -37,7 +37,7 @@ class html_cerfafr extends ModeleDon
      *
      *  @param      DoliDb		$db      Database handler
      */
-    function html_cerfafr($db)
+    function __construct($db)
     {
         global $conf,$langs;
 

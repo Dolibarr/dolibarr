@@ -65,7 +65,7 @@ class Fichinter extends CommonObject
 	 */
 	function __construct($db)
 	{
-		$this->db = $db ;
+		$this->db = $db;
 		$this->products = array();
 		$this->fk_project = 0;
 		$this->statut = 0;

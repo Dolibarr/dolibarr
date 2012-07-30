@@ -43,7 +43,7 @@ class BoutiqueCommande
      *
      * @param	DoliDB	$db		Database handler
      */
-    function BoutiqueCommande($db)
+    function __construct($db)
     {
         $this->db = $db;
 

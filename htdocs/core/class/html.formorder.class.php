@@ -38,7 +38,7 @@ class FormOrder
 	 *
 	 *	@param	DoliDB	$db		Database handler
 	 */
-	function FormOrder($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		return 1;

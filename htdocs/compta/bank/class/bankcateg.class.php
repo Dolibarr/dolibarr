@@ -46,11 +46,11 @@ class BankCateg // extends CommonObject
     /**
      *	Constructor
      *
-     *  @param		DoliDB		$DB      Database handler
+     *  @param		DoliDB		$db      Database handler
      */
-    function BankCateg($DB)
+    function __construct($db)
     {
-        $this->db = $DB;
+        $this->db = $db;
         return 1;
     }
 

@@ -55,7 +55,7 @@ class UserGroup extends CommonObject
      *
      *    @param   DoliDb  $db     Database handler
 	 */
-	function UserGroup($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 

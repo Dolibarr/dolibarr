@@ -35,6 +35,7 @@ require_once(DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php');
 $langs->load("admin");
 $langs->load("sendings");
 $langs->load("deliveries");
+$langs->load('other');
 
 if (!$user->admin) accessforbidden();
 

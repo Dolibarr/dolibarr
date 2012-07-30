@@ -38,7 +38,7 @@ class modFTP extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
     */
-	function modFTP($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 

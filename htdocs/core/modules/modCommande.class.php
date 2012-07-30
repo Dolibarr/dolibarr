@@ -43,7 +43,7 @@ class modCommande extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modCommande($db)
+	function __construct($db)
 	{
 		global $conf;
 

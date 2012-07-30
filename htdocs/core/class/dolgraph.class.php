@@ -82,7 +82,7 @@ class DolGraph
     /**
      * Constructor
      */
-    function DolGraph()
+    function __construct()
     {
         global $conf;
         global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;

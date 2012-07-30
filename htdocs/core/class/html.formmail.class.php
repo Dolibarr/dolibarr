@@ -74,7 +74,7 @@ class FormMail
      *
      *  @param	DoliDB	$db      Database handler
      */
-    function FormMail($db)
+    function __construct($db)
     {
         $this->db = $db;
 

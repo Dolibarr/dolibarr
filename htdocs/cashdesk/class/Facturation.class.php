@@ -72,7 +72,7 @@ class Facturation
     /**
      *	Constructor
      */
-    public function Facturation()
+    public function __construct()
     {
         $this->raz();
         $this->razPers();

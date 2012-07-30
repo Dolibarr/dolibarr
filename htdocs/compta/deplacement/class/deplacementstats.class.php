@@ -48,7 +48,7 @@ class DeplacementStats extends Stats
      * @param   int			$userid    Id user for filter
 	 * @return 	void
 	 */
-	function DeplacementStats($db, $socid=0, $userid=0)
+	function __construct($db, $socid=0, $userid=0)
 	{
 		global $conf;
 

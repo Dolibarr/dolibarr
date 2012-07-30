@@ -42,7 +42,7 @@ class modService extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modService($db)
+	function __construct($db)
 	{
 		global $conf;
 

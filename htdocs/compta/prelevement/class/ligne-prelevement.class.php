@@ -44,7 +44,7 @@ class LignePrelevement
 	 *  @param	DoliDb	$db			Database handler
 	 *  @param 	User	$user       Objet user
 	 */
-	function LignePrelevement($db, $user)
+	function __construct($db, $user)
 	{
 		global $conf,$langs;
 

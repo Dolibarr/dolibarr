@@ -38,7 +38,7 @@ class modMyModule extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modMyModule($db)
+	function __construct($db)
 	{
         global $langs,$conf;
 

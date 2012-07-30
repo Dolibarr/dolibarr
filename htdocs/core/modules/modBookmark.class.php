@@ -40,7 +40,7 @@ class modBookmark extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modBookmark($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 330;

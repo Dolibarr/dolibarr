@@ -47,7 +47,7 @@ class CActionComm
      *
      *  @param	DoliDB		$db		Database handler
      */
-    function CActionComm($db)
+    function __construct($db)
     {
         $this->db = $db;
     }

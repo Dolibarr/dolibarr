@@ -39,7 +39,7 @@ class Prospect extends Societe
      *
      *	@param	DoliDB	$db		Databas handler
      */
-    function Prospect($db)
+    function __construct($db)
     {
         global $config;
 

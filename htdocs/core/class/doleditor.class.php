@@ -61,7 +61,7 @@ class DolEditor
      *      @param  int		$rows                   Size of rows for textarea tool
 	 *      @param  int		$cols                   Size of cols for textarea tool
 	 */
-    function DolEditor($htmlname,$content,$width='',$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true,$okforextendededitor=true,$rows=0,$cols=0)
+    function __construct($htmlname,$content,$width='',$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true,$okforextendededitor=true,$rows=0,$cols=0)
     {
     	global $conf,$langs;
 

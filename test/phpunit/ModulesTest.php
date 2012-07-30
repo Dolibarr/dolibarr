@@ -57,7 +57,7 @@ class ModulesTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return BuildDocTest
 	 */
-	function ModulesTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;

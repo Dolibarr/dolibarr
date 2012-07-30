@@ -41,7 +41,7 @@ class InterfaceLogevents
      *
      *   @param		DoliDB		$db      Database handler
      */
-    function InterfaceLogevents($db)
+    function __construct($db)
     {
         $this->db = $db;
 

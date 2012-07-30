@@ -40,7 +40,7 @@ class modExternalSite extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
     */
-	function modExternalSite($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 

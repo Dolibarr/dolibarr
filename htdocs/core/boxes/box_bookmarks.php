@@ -41,7 +41,7 @@ class box_bookmarks extends ModeleBoxes
 	/**
      *  Constructor
 	 */
-	function box_bookmarks()
+	function __construct()
 	{
 		global $langs;
 		$langs->load("boxes");

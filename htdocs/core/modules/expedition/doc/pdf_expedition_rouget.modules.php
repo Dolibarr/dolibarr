@@ -33,7 +33,7 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
  *	\class      pdf_expedition_dorade
  *	\brief      Classe permettant de generer les borderaux envoi au modele Rouget
  */
-Class pdf_expedition_rouget extends ModelePdfExpedition
+class pdf_expedition_rouget extends ModelePdfExpedition
 {
 	var $emetteur;	// Objet societe qui emet
 

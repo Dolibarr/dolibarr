@@ -39,7 +39,7 @@ class FormCompany
 	 *
 	 *	@param	DoliDB	$db		Database handler
 	 */
-	function FormCompany($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 

@@ -45,7 +45,7 @@ class Import
 	 *
 	 *    @param  	DoliDB		$db		Database handler
 	 */
-	function Import($db)
+	function __construct($db)
 	{
 		$this->db=$db;
 	}

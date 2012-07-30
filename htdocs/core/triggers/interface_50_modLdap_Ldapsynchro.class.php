@@ -38,7 +38,7 @@ class InterfaceLdapsynchro
      *
      *   @param		DoliDB		$db      Database handler
      */
-    function InterfaceLdapsynchro($db)
+    function __construct($db)
     {
         $this->db = $db;
 
