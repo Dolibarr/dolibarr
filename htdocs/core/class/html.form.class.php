@@ -346,7 +346,7 @@ class Form
      *	@return	string							Code html du tooltip (texte+picto)
      *	@see	Use function textwithpicto if you can.
      */
-    function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$extracss='',$notabs=0,$incbefore='',$noencodehtmltext=0)
+    function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 0, $incbefore = '', $noencodehtmltext = 0)
     {
         global $conf;
 
@@ -402,18 +402,24 @@ class Form
      *  @param  int		$noencodehtmltext   Do not encode into html entity the htmltext
      * 	@return	string						HTML code of text, picto, tooltip
      */
-    function textwithpicto($text,$htmltext,$direction=1,$type='help',$extracss='',$noencodehtmltext=0)
+    function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0)
     {
         global $conf;
 
-        if ("$type" == "0") $type='info';	// For backward compatibility
+        $alt = '';
 
-        $alt='';
+        //For backwards compatibility
+        if ($type == '0') $type = 'info';
+        elseif ($type == '1') $type = 'help';
+
         // If info or help with no javascript, show only text
         if (empty($conf->use_javascript_ajax))
         {
             if ($type == 'info' || $type == 'help')	return $text;
-            else { $alt=$htmltext; $htmltext='';
+            else
+            {
+                $alt = $htmltext;
+                $htmltext = '';
             }
         }
         // If info or help with smartphone, show only text
@@ -421,15 +427,14 @@ class Form
         {
             if ($type == 'info' || $type == 'help') return $text;
         }
-        // Info or help
-        if ($type == 'info') 				$img=img_help(0,$alt);
-        if ($type == 'help' || $type ==1)	$img=img_help(1,$alt);
-        if ($type == 'superadmin') 			$img=img_picto($alt,"redstar");
-        if ($type == 'admin')				$img=img_picto($alt,"star");
-        // Warnings
-        if ($type == 'warning') 			$img=img_warning($alt);
+        
+        if ($type == 'info') $img = img_help(0, $alt);
+        elseif ($type == 'help') $img = img_help(1, $alt);
+        elseif ($type == 'superadmin') $img = img_picto($alt, 'redstar');
+        elseif ($type == 'admin') $img = img_picto($alt, 'star');
+        elseif ($type == 'warning') $img = img_warning($alt);
 
-        return $this->textwithtooltip($text,$htmltext,2,$direction,$img,$extracss,0,'',$noencodehtmltext);
+        return $this->textwithtooltip($text, $htmltext, 2, $direction, $img, $extracss, 0, '', $noencodehtmltext);
     }
 
     /**

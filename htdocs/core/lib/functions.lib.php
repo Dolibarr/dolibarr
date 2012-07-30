@@ -1739,11 +1739,13 @@ function img_action($alt, $numaction)
  *  @param  int		    $size       Taille de l'icone : 3 = 16x16px , 2 = 14x14px
  *  @return string      			Retourne tag img
  */
-function img_pdf($alt = "default",$size=3)
+function img_pdf($alt = 'default', $size = 3)
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Show");
-    return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/pdf'.$size.'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Show');
+
+    return img_picto($alt, 'pdf'.$size.'.png');
 }
 
 /**
@@ -1752,11 +1754,13 @@ function img_pdf($alt = "default",$size=3)
  *	@param	string	$alt        Texte sur le alt de l'image
  *	@return string      		Return tag img
  */
-function img_edit_add($alt = "default")
+function img_edit_add($alt = 'default')
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Add");
-    return img_picto($alt,'edit_add.png');
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Add');
+
+    return img_picto($alt, 'edit_add.png');
 }
 /**
  *	Show logo -
@@ -1764,11 +1768,13 @@ function img_edit_add($alt = "default")
  *	@param	string	$alt         Texte sur le alt de l'image
  *	@return string      Retourne tag img
  */
-function img_edit_remove($alt = "default")
+function img_edit_remove($alt = 'default')
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Remove");
-    return img_picto($alt,'edit_remove.png');
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Remove');
+
+    return img_picto($alt, 'edit_remove.png');
 }
 
 /**
@@ -1779,15 +1785,13 @@ function img_edit_remove($alt = "default")
  *	@param  string	$other		Add more attributes on img
  *	@return string      		Retourne tag img
  */
-function img_edit($alt = "default", $float=0, $other='')
+function img_edit($alt = 'default', $float = 0, $other = '')
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Modify");
-    $img='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/edit.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"';
-    if ($float) $img.=' style="float: right"';
-    if ($other) $img.=' '.$other;
-    $img.='>';
-    return $img;
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Modify');
+
+    return img_picto($alt, 'edit.png', ($float ? 'style="float: right"' : $other));
 }
 
 /**
@@ -1798,15 +1802,13 @@ function img_edit($alt = "default", $float=0, $other='')
  *	@param  string	$other		Add more attributes on img
  *	@return string      Retourne tag img
  */
-function img_view($alt = "default", $float=0, $other='')
+function img_view($alt = 'default', $float = 0, $other = '')
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("View");
-    $img='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/view.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"';
-    if ($float) $img.=' style="float: right"';
-    if ($other) $img.=' '.$other;
-    $img.='>';
-    return $img;
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('View');
+    
+    return img_picto($alt, 'view.png', ($float ? 'style="float: right"' : $other));
 }
 
 /**
@@ -1816,13 +1818,14 @@ function img_view($alt = "default", $float=0, $other='')
  *	@param  string	$other      Add more attributes on img
  *  @return string      		Retourne tag img
  */
-function img_delete($alt = "default", $other='')
+function img_delete($alt = 'default', $other = '')
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Delete");
-    return img_picto($alt,'delete.png',$other);
-}
+    global $conf, $langs;
 
+    if ($alt == 'default') $alt = $langs->trans('Delete');
+
+    return img_picto($alt, 'delete.png', $other);
+}
 
 /**
  *	Show help logo with cursor "?"
@@ -1853,11 +1856,13 @@ function img_help($usehelpcursor=1,$usealttitle=1)
  *	@param	string	$alt        Text to show on alt image
  *	@return string      		Return img tag
  */
-function img_info($alt = "default")
+function img_info($alt = 'default')
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Informations");
-    return img_picto($alt,'info.png');
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Informations');
+
+    return img_picto($alt, 'info.png');
 }
 
 /**
@@ -1867,70 +1872,58 @@ function img_info($alt = "default")
  *	@param  int		$float      If we must add style "float: right"
  *	@return string      		Return img tag
  */
-function img_warning($alt = "default",$float=0)
+function img_warning($alt = 'default', $float = 0)
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Warning");
-    return img_picto($alt,'warning.png',$float?'style="float: right"':'');
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Warning');
+
+    return img_picto($alt, 'warning.png', ($float ? 'style="float: right"' : ''));
 }
 
 /**
- *  Affiche logo error
+ *  Show logo error
  *
  *	@param	string	$alt        Text to show on alt image
  *	@return string      		Return img tag
  */
-function img_error($alt = "default")
+function img_error($alt = 'default')
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Error");
-    return img_picto($alt,'error.png');
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Error');
+
+    return img_picto($alt, 'error.png');
 }
 
 /**
- *	Affiche logo telephone
- *
- *	@param	string	$alt        Text to show on alt image
- *	@param  int		$option		Option
- *	@return string      		Return img tag
- */
-function img_phone($alt = "default",$option=0)
-{
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Call");
-    $img='call_out';
-    if ($option == 1) $img='call';
-    $img='object_commercial';
-    return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/'.$img.'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
-}
-
-
-/**
- *	Affiche logo suivant
+ *	Show logo next
  *
  *	@param	string	$alt        Text to show on alt image
  *	@return string      		Return img tag
  */
-function img_next($alt = "default")
+function img_next($alt = 'default')
 {
-    global $conf,$langs;
-    if ($alt=="default") {
-        $alt=$langs->trans("Next");
-    }
-    return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/next.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Next');
+
+    return img_picto($alt, 'next.png');
 }
 
 /**
- *	Affiche logo precedent
+ *	Show logo previus
  *
  *	@param	string	$alt        Text to show on alt image
  *	@return string      		Return img tag
  */
-function img_previous($alt = "default")
+function img_previous($alt = 'default')
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Previous");
-    return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/previous.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Previous');
+
+    return img_picto($alt, 'previous.png');
 }
 
 /**
@@ -1940,12 +1933,13 @@ function img_previous($alt = "default")
  *	@param  int		$selected   Selected
  *	@return string      		Return img tag
  */
-function img_down($alt = "default", $selected=0)
+function img_down($alt = 'default', $selected = 0)
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Down");
-    if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow_selected.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'" class="imgdown">';
-    else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'" class="imgdown">';
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Down');
+
+    return img_picto($alt, ($selected ? '1downarrow_selected.png' : '1downarrow.png'), 'class="imgdown"');
 }
 
 /**
@@ -1955,42 +1949,45 @@ function img_down($alt = "default", $selected=0)
  *	@param  int		$selected	Selected
  *	@return string      		Return img tag
  */
-function img_up($alt = "default", $selected=0)
+function img_up($alt = 'default', $selected = 0)
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Up");
-    if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow_selected.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'" class="imgup">';
-    else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'" class="imgup">';
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Up');
+
+    return img_picto($alt, ($selected ? '1downarrow_selected.png' : '1downarrow.png'), 'class="imgup"');
 }
 
 /**
- *	Affiche logo gauche
+ *	Show logo left arrow
  *
  *	@param	string	$alt        Text to show on alt image
  *	@param  int		$selected	Selected
  *	@return string      		Return img tag
  */
-function img_left($alt = "default", $selected=0)
+function img_left($alt = 'default', $selected = 0)
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Left");
-    if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1leftarrow_selected.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
-    else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1leftarrow.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Left');
+
+    return img_picto($alt, ($selected ? '1leftarrow_selected.png' : '1leftarrow.png'));
 }
 
 /**
- *	Affiche logo droite
+ *	Show logo right arrow
  *
  *	@param	string	$alt        Text to show on alt image
  *	@param  int		$selected	Selected
  *	@return string      		Return img tag
  */
-function img_right($alt = "default", $selected=0)
+function img_right($alt = 'default', $selected = 0)
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Right");
-    if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow_selected.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
-    else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Right');
+
+    return img_picto($alt, ($selected ? '1rightarrow_selected.png' : '1rightarrow.png'));
 }
 
 /**
@@ -2000,19 +1997,14 @@ function img_right($alt = "default", $selected=0)
  *	@param	string	$alt        Text to show on alt image
  *	@return string      		Return img tag
  */
-function img_allow($allow,$alt='default')
+function img_allow($allow, $alt = 'default')
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Active");
+    global $conf, $langs;
 
-    if ($allow == 1)
-    {
-        return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
-    }
-    else
-    {
-        return "-";
-    }
+    if ($alt == 'default') $alt = $langs->trans('Active');
+
+    if ($allow == 1) return img_picto($alt, 'tick.png');
+    else return '-';
 }
 
 
@@ -2025,7 +2017,7 @@ function img_allow($allow,$alt='default')
  */
 function img_mime($file,$alt='')
 {
-    require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     $mimetype=dol_mimetype($file,'',1);
     $mimeimg=dol_mimetype($file,'',2);
