@@ -101,7 +101,7 @@ $chaine = str_replace('</h2>', '</div>', $chaine);
 
 $chaine = str_replace('<td class="e">', '<td class="impair">', $chaine);
 $chaine = str_replace('<td class="v">', '<td class="pair">', $chaine);
-$chaine = str_replace('<div class="titre">Configuration<\/div><br>', '', $chaine);
+$chaine = str_replace('<div class="titre">Configuration</div><br>', '', $chaine);
 // Add LF
 $chaine = preg_replace('/(pcntl_[a-z]+),/','$1, ',$chaine);
 
