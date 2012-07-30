@@ -188,7 +188,7 @@ if ($action == "set")
                 fclose($fp);
 
                 $buffer=trim($buffer);
-                if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')	// For Mysql 5.5+, we must replace type=innodb
+                if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')	// For Mysql 5.5+, we must replace type=innodb with ENGINE=innodb
                 {
                     $buffer=preg_replace('/type=innodb/i','ENGINE=innodb',$buffer);
                 }

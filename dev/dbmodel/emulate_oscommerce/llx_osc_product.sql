@@ -22,6 +22,6 @@ CREATE TABLE llx_osc_product (
   fk_product int(11) NOT NULL default '0',
   PRIMARY KEY  (rowid),
   UNIQUE KEY fk_product (fk_product)
-) TYPE=InnoDB COMMENT='Table transition produit OSC - produit Dolibarr';
+) ENGINE=InnoDB COMMENT='Table transition produit OSC - produit Dolibarr';
 
 

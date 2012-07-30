@@ -32,7 +32,7 @@ if (!$user->admin) accessforbidden();
 
 if ($_GET["action"] == 'convert')
 {
-	$db->query("alter table ".$_GET["table"]." type=INNODB");
+	$db->query("alter table ".$_GET["table"]." ENGINE=INNODB");
 }
 
 
