@@ -1702,13 +1702,26 @@ function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
  *	@return     string      					Return img tag
  *  @see        #img_object, #img_picto
  */
-function img_picto_common($alt, $picto, $options='', $pictoisfullpath=0)
+function img_picto_common($alt, $picto, $options = '', $pictoisfullpath = 0)
 {
     global $conf;
-    if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
-    if ($pictoisfullpath) return '<img src="'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
-    if (! empty($conf->global->MAIN_MODULE_CAN_OVERWRITE_COMMONICONS) && file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/'.$picto)) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
-    return '<img src="'.DOL_URL_ROOT.'/theme/common/'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
+
+    if (! preg_match('/(\.png|\.gif)$/i', $picto)) $picto .= '.png';
+
+    if ($pictoisfullpath) $path = $picto;
+    else
+    {
+        $path = DOL_URL_ROOT.'/theme/common/'.$picto;
+    
+        if (! empty($conf->global->MAIN_MODULE_CAN_OVERWRITE_COMMONICONS))
+        {
+            $themepath = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/'.$picto;
+
+            if (file_exists($themepath)) return img_picto($alt, $themepath, $options, 1);
+        }
+    }
+
+    return img_picto($alt, $path, $options, 1);
 }
 
 /**
@@ -1720,16 +1733,18 @@ function img_picto_common($alt, $picto, $options='', $pictoisfullpath=0)
  */
 function img_action($alt, $numaction)
 {
-    global $conf,$langs;
-    if ($alt=="default")
+    global $conf, $langs;
+
+    if ($alt == 'default')
     {
-        if ($numaction == -1) $alt=$langs->transnoentitiesnoconv("ChangeDoNotContact");
-        if ($numaction == 0)  $alt=$langs->transnoentitiesnoconv("ChangeNeverContacted");
-        if ($numaction == 1)  $alt=$langs->transnoentitiesnoconv("ChangeToContact");
-        if ($numaction == 2)  $alt=$langs->transnoentitiesnoconv("ChangeContactInProcess");
-        if ($numaction == 3)  $alt=$langs->transnoentitiesnoconv("ChangeContactDone");
+        if ($numaction == -1) $alt = $langs->transnoentitiesnoconv('ChangeDoNotContact');
+        if ($numaction == 0) $alt = $langs->transnoentitiesnoconv('ChangeNeverContacted');
+        if ($numaction == 1) $alt = $langs->transnoentitiesnoconv('ChangeToContact');
+        if ($numaction == 2) $alt = $langs->transnoentitiesnoconv('ChangeContactInProcess');
+        if ($numaction == 3) $alt = $langs->transnoentitiesnoconv('ChangeContactDone');
     }
-    return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/stcomm'.$numaction.'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
+
+    return img_picto($alt, 'stcomm'.$numaction.'.png');
 }
 
 /**
@@ -1834,20 +1849,17 @@ function img_delete($alt = 'default', $other = '')
  * 	@param	string	$usealttitle		Text to use as alt title
  * 	@return string      				Retourne tag img
  */
-function img_help($usehelpcursor=1,$usealttitle=1)
+function img_help($usehelpcursor = 1, $usealttitle = 1)
 {
-    global $conf,$langs;
-    $s ='<img ';
-    if ($usehelpcursor) $s.='style="cursor: help;" ';
-    $s.='src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/info.png" border="0"';
+    global $conf, $langs;
+
     if ($usealttitle)
     {
-        if (is_string($usealttitle)) $s.=' alt="'.dol_escape_htmltag($usealttitle).'" title="'.dol_escape_htmltag($usealttitle).'"';
-        else $s.=' alt="'.$langs->trans("Info").'" title="'.$langs->trans("Info").'"';
+        if (is_string($usealttitle)) $alt = dol_escape_htmltag($usealttitle);
+        else $alt = $langs->trans("Info");
     }
-    else $s.=' alt=""';
-    $s.='>';
-    return $s;
+
+    return img_picto($usealttitle, 'info.png', ($usehelpcursor ? 'style="cursor: help"' : ''));
 }
 
 /**
@@ -2004,7 +2016,8 @@ function img_allow($allow, $alt = 'default')
     if ($alt == 'default') $alt = $langs->trans('Active');
 
     if ($allow == 1) return img_picto($alt, 'tick.png');
-    else return '-';
+    
+    return '-';
 }
 
 
@@ -2015,16 +2028,16 @@ function img_allow($allow, $alt = 'default')
  * 	@param	string	$alt		Alternate text to show on img mous hover
  *	@return string     			Return img tag
  */
-function img_mime($file,$alt='')
+function img_mime($file, $alt = '')
 {
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-    $mimetype=dol_mimetype($file,'',1);
-    $mimeimg=dol_mimetype($file,'',2);
+    $mimetype = dol_mimetype($file, '', 1);
+    $mimeimg = dol_mimetype($file, '', 2);
 
-    if (empty($alt)) $alt='Mime type: '.$mimetype;
+    if (empty($alt)) $alt = 'Mime type: '.$mimetype;
 
-    return '<img src="'.DOL_URL_ROOT.'/theme/common/mime/'.$mimeimg.'" border="0" alt="'.$alt.'" title="'.$alt.'">';
+    return img_picto_common($alt, 'mime/'.$mimeimg);
 }
 
 
@@ -2035,23 +2048,16 @@ function img_mime($file,$alt='')
  *	@param  string	$infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
  *	@return	string					String with info text
  */
-function info_admin($text,$infoonimgalt=0)
+function info_admin($text, $infoonimgalt = 0)
 {
-    global $conf,$langs;
-    $s='';
+    global $conf, $langs;
+
     if ($infoonimgalt)
     {
-        $s.=img_picto($text,'star');
+        return img_picto($text, 'star');
     }
-    else
-    {
-        $s.='<div class="info">';
-        $s.=img_picto($langs->trans("InfoAdmin"),'star');
-        $s.=' ';
-        $s.=$text;
-        $s.='</div>';
-    }
-    return $s;
+    
+    return '<div class="info">'.img_picto($langs->trans('InfoAdmin'), 'star').' '.$text.'</div>';
 }
 
 
@@ -2077,8 +2083,8 @@ function dol_print_error($db='',$error='')
     // Si erreur intervenue avant chargement langue
     if (! $langs)
     {
-        require_once(DOL_DOCUMENT_ROOT ."/core/class/translate.class.php");
-        $langs = new Translate("", $conf);
+        require_once DOL_DOCUMENT_ROOT .'/core/class/translate.class.php';
+        $langs = new Translate('', $conf);
         $langs->load("main");
     }
     $langs->load("main");
