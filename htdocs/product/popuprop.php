@@ -92,10 +92,10 @@ print_barre_liste($title, $page, "popuprop.php",$param,"","","",$num);
 print '<table class="noborder" width="100%">';
 
 print "<tr class=\"liste_titre\">";
-print_liste_field_titre($langs->trans("Ref"),"popuprop.php", "p.ref","","","",$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Type"),"popuprop.php", "p.type","","","",$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Label"),"popuprop.php", "p.label","","","",$sortfield,$sortorder);
-print_liste_field_titre("Nb. de proposition","popuprop.php", "c","","",'align="right"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans('Ref'), 'popuprop.php', 'p.ref', '', '', '', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans('Type'), 'popuprop.php', 'p.type', '', '', '', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans('Label'), 'popuprop.php', 'p.label', '', '', '', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans('NbProposals'), 'popuprop.php', 'c', '', '', 'align="right"', $sortfield, $sortorder);
 print "</tr>\n";
 
 $sql  = "SELECT p.rowid, p.label, p.ref, p.fk_product_type as type, count(*) as c";

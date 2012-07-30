@@ -55,7 +55,7 @@ if (!$user->rights->don->lire) accessforbidden();
 
 if ($conf->projet->enabled) $projectstatic=new Project($db);
 
-llxHeader('',$langs->trans("Donations"),'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Subvenciones');
+llxHeader('',$langs->trans("Donations"),'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones');
 
 $donationstatic=new Don($db);
 
