@@ -59,7 +59,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return SocieteTest
 	 */
-	function SocieteTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;

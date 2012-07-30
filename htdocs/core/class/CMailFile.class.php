@@ -98,7 +98,7 @@ class CMailFile
 	 *	@param 	string	$errors_to      		Email errors
 	 *	@param	string	$css			        Css option
 	 */
-	function CMailFile($subject,$to,$from,$msg,
+	function __construct($subject,$to,$from,$msg,
 	$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),
 	$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='',$css='')
 	{

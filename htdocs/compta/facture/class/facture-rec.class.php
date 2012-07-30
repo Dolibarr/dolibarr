@@ -68,11 +68,11 @@ class FactureRec extends Facture
 	/**
 	 *	Constructor
 	 *
-	 * 	@param		DoliDB		$DB		Database handler
+	 * 	@param		DoliDB		$db		Database handler
 	 */
-	function FactureRec($DB)
+	function __construct($db)
 	{
-		$this->db = $DB ;
+		$this->db = $db;
 	}
 
 	/**

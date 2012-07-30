@@ -60,7 +60,7 @@ class PaiementFourn extends Paiement
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function PaiementFourn($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 	}

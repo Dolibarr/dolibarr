@@ -46,7 +46,7 @@ class box_propales extends ModeleBoxes
     /**
      *  Constructor
      */
-    function box_propales()
+    function __construct()
     {
     	global $langs;
       $langs->load("boxes");

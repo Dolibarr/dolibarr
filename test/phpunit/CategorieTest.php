@@ -59,7 +59,7 @@ class CategorieTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return CategorieTest
 	 */
-	function CategorieTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;

@@ -52,7 +52,7 @@ class Export
 	 *
 	 *    @param  	DoliDB		$db		Database handler
 	 */
-	function Export($db)
+	function __construct($db)
 	{
 		$this->db=$db;
 	}

@@ -58,13 +58,13 @@ class Don extends CommonObject
     /**
      *  Constructor
      *
-     *  @param	DoliDB	$DB		Database handler
+     *  @param	DoliDB	$db 	Database handler
      */
-    function Don($DB)
+    function __construct($db)
     {
         global $langs;
 
-        $this->db = $DB ;
+        $this->db = $db;
         $this->modepaiementid = 0;
 
         $langs->load("donations");

@@ -50,7 +50,7 @@ class Cotisation extends CommonObject
 	 *
 	 *	@param 		DoliDB		$db		Database handler
 	 */
-	function Cotisation($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 	}

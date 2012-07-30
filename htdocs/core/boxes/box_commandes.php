@@ -45,7 +45,7 @@ class box_commandes extends ModeleBoxes
     /**
      *  Constructor
      */
-    function box_commandes()
+    function __construct()
     {
         global $langs;
         $langs->load("boxes");

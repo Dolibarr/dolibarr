@@ -40,7 +40,7 @@ class modDon  extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modDon($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 700;

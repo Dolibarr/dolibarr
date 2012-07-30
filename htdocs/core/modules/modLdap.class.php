@@ -38,7 +38,7 @@ class modLdap extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modLdap($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 200;

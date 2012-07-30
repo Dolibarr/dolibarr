@@ -58,7 +58,7 @@ class DateLibTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return DateLibTest
 	 */
-	function DateLibTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;

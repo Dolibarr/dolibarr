@@ -38,7 +38,7 @@ class Interfaces
      *
      *  @param		DoliDB		$db      Database handler
      */
-    function Interfaces($db)
+    function __construct($db)
     {
         $this->db = $db;
     }

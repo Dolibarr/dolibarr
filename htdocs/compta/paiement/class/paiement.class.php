@@ -58,9 +58,9 @@ class Paiement extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function Paiement($db)
+	function __construct($db)
 	{
-		$this->db = $db ;
+		$this->db = $db;
 	}
 
 	/**

@@ -41,7 +41,7 @@ class modContrat extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modContrat($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 54;

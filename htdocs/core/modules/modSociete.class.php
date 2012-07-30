@@ -42,7 +42,7 @@ class modSociete extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modSociete($db)
+	function __construct($db)
 	{
 		global $conf;
 

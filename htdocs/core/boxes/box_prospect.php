@@ -49,7 +49,7 @@ class box_prospect extends ModeleBoxes
      *
      *  @param	DoliDB	$db		Database handler
 	 */
-	function box_prospect($db)
+	function __construct($db)
 	{
 		global $langs;
 		$langs->load("boxes");

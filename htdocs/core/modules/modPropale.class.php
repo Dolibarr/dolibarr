@@ -43,7 +43,7 @@ class modPropale extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modPropale($db)
+	function __construct($db)
 	{
 		global $conf;
 

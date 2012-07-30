@@ -41,7 +41,7 @@ class modAccounting extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modAccounting($db)
+	function __construct($db)
 	{
 		global $conf;
 

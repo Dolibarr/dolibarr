@@ -58,7 +58,7 @@ class DiscountTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return DiscountTest
 	 */
-	function DiscountTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;

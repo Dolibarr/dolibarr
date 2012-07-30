@@ -86,7 +86,7 @@ class Expedition extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function Expedition($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		$this->lines = array();
@@ -1269,7 +1269,7 @@ class ExpeditionLigne
      *
      *  @param		DoliDB		$db      Database handler
      */
-	function ExpeditionLigne($db)
+	function __construct($db)
 	{
 		$this->db=$db;
 	}

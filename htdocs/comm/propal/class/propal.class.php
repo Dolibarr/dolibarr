@@ -122,7 +122,7 @@ class Propal extends CommonObject
      *	@param      int		$socid		Id third party
      *	@param      int		$propalid   Id proposal
      */
-    function Propal($db, $socid="", $propalid=0)
+    function __construct($db, $socid="", $propalid=0)
     {
         global $conf,$langs;
 
@@ -2510,7 +2510,7 @@ class PropaleLigne
      *
      * 	@param	DoliDB	$DB	Database handler
      */
-    function PropaleLigne($DB)
+    function __construct($DB)
     {
         $this->db= $DB;
     }

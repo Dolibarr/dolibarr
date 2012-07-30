@@ -44,7 +44,7 @@ class box_fournisseurs extends ModeleBoxes
     /**
      *  Constructor
      */
-    function box_fournisseurs()
+    function __construct()
     {
         global $langs;
         $langs->load("boxes");

@@ -45,7 +45,7 @@ class box_services_expired extends ModeleBoxes
     /**
      *  Constructor
      */
-    function box_services_expired()
+    function __construct()
     {
     	global $langs;
 

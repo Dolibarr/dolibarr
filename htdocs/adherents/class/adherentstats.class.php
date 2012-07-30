@@ -51,7 +51,7 @@ class AdherentStats extends Stats
      * 	@param   	int			$userid    	Id user for filter
 	 * 	@return 	AdherentStats
 	 */
-	function AdherentStats($db, $socid=0, $userid=0)
+	function __construct($db, $socid=0, $userid=0)
 	{
 		global $user, $conf;
 

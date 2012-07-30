@@ -41,7 +41,7 @@ class RejetPrelevement
 	 *  @param	DoliDb	$db			Database handler
 	 *  @param 	User	$user       Objet user
 	 */
-	function RejetPrelevement($db, $user)
+	function __construct($db, $user)
 	{
 		global $langs;
 

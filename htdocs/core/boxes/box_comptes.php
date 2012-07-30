@@ -46,7 +46,7 @@ class box_comptes extends ModeleBoxes
 	/**
 	 *  Constructor
 	 */
-	function box_comptes()
+	function __construct()
 	{
 		global $langs;
 		$langs->load("boxes");

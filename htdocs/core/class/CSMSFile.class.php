@@ -58,7 +58,7 @@ class CSMSFile
 	 *	@param 	int		$class				Class
 	 *	@return	int
 	 */
-	function CSMSFile($to,$from,$msg,$deliveryreceipt=0,$deferred=0,$priority=3,$class=1)
+	function __construct($to,$from,$msg,$deliveryreceipt=0,$deferred=0,$priority=3,$class=1)
 	{
 		global $conf;
 

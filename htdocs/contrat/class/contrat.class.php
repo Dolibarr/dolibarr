@@ -72,7 +72,7 @@ class Contrat extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function Contrat($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -1621,7 +1621,7 @@ class ContratLigne
      *
      *  @param      DoliDb		$db      Database handler
 	 */
-	function ContratLigne($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 	}

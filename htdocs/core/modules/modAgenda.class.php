@@ -41,7 +41,7 @@ class modAgenda extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modAgenda($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 2400;

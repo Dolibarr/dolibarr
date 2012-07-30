@@ -38,7 +38,7 @@ class modNotification extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modNotification($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 600;

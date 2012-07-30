@@ -40,7 +40,7 @@ class modFacture extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modFacture($db)
+	function __construct($db)
 	{
 		global $conf;
 

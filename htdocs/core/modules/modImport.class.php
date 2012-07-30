@@ -38,7 +38,7 @@ class modImport extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modImport($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 250;
