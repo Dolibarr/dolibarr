@@ -27,6 +27,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/dons/class/don.class.php");
 
 $langs->load("admin");
 $langs->load("donations");
+$langs->load('other');
 
 if (!$user->admin) accessforbidden();
 

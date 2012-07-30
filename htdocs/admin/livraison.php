@@ -34,6 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/livraison/class/livraison.class.php");
 $langs->load("admin");
 $langs->load("sendings");
 $langs->load("deliveries");
+$langs->load('other');
 
 if (!$user->admin) accessforbidden();
 

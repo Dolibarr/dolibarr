@@ -34,6 +34,7 @@ require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php');
 
 $langs->load("admin");
+$langs->load('other');
 
 if (!$user->admin)
 accessforbidden();
