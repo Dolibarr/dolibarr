@@ -315,7 +315,7 @@ if ($action == 'refreshmanual')
 //print "xx".$_SESSION["dol_screenheight"];
 $maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 500)?($_SESSION["dol_screenheight"]-166):660;
 $morejs=array();
-if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $morejs=array("/filemanager/includes/jqueryFileTree/jqueryFileTree.js");    // TODO Move lib into includes
+if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $morejs=array("/includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js");
 $moreheadcss="
 <!-- dol_screenheight=".$_SESSION["dol_screenheight"]." -->
 <style type=\"text/css\">

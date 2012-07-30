@@ -23,4 +23,4 @@ CREATE TABLE llx_osc_categories (
   PRIMARY KEY  (rowid),
   UNIQUE KEY dolicatid (dolicatid),
   UNIQUE KEY osccatid (osccatid)
-) TYPE=InnoDB COMMENT='Correspondance categorie Dolibarr categorie OSC';
+) ENGINE=InnoDB COMMENT='Correspondance categorie Dolibarr categorie OSC';

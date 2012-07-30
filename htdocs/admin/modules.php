@@ -111,7 +111,7 @@ foreach ($modulesdir as $dir)
 {
 	// Load modules attributes in arrays (name, numero, orders) from dir directory
 	//print $dir."\n<br>";
-	dol_syslog("Scan directory ".$dir." for modules");
+	dol_syslog("Scan directory ".$dir." for module descriptor files (modXXX.class.php)");
 	$handle=@opendir($dir);
 	if (is_resource($handle))
 	{
