@@ -1822,8 +1822,10 @@ function img_view($alt = 'default', $float = 0, $other = '')
     global $conf, $langs;
 
     if ($alt == 'default') $alt = $langs->trans('View');
+
+    $options = ($float ? 'style="float: right" ' : '').$other;
     
-    return img_picto($alt, 'view.png', ($float ? 'style="float: right"' : $other));
+    return img_picto($alt, 'view.png', $options);
 }
 
 /**
