@@ -1307,3 +1307,5 @@ TestGeoIPResult=Test einer Umwandlung IP -> Land
 ProjectsNumberingModules=Projektnumerierungsmodul
 ProjectsSetup=Projekteinstellungenmodul
 ProjectsModelModule=Projektvorlagenmodul
+
+FeaturesSupported=Unterstützte Funktionen

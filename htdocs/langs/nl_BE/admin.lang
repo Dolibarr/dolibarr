@@ -931,3 +931,5 @@ CashDeskSetup=Kassa module setup
 CashDeskThirdPartyForSell=Generieke derden te gebruiken voor verkoopt
 CashDeskBankAccountForSell=Cash-account te gebruiken voor verkoopt
 CashDeskIdWareHouse=Datawarehous van de gebruiker voor verkoopt
+
+FeaturesSupported=Functies ondersteund

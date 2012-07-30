@@ -1331,3 +1331,5 @@ ProductServiceSetup=Producten en Diensten modules setup
 ViewProductDescInThirdpartyLanguageAbility=Visualisatie van producten die beschrijvingen in de thirdparty taal
 MailmanSpipSetup=Mailman en SPIP module Setup
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 17:12:32).
+
+FeaturesSupported = Ondersteunde functies

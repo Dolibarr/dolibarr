@@ -1314,3 +1314,5 @@ TestGeoIPResult=Test of a conversion IP -> country
 ProjectsNumberingModules=Projects numbering module
 ProjectsSetup=Project module setup
 ProjectsModelModule=Project reports document model
+
+FeaturesSupported=Features supported

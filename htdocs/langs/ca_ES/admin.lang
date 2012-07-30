@@ -1327,3 +1327,5 @@ ProjectsModelModule=Model de document per a informes de projectes
 ExternalSiteSetup=Configuració de l'enllaç cap al lloc extern
 ##### Ecommerce #####
 EcommerceSiteSetup=Configuració del mòdul Ecommerce
+
+FeaturesSupported=Funcionalitats suportades

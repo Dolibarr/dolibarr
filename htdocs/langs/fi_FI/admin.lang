@@ -1298,3 +1298,5 @@ BankOrderESDesc=Espanjan näyttöjärjestys
 MailmanSpipSetup=Mailman ja spip moduulin asetukset
 SuppliersInvoiceModel=Täydellinen malli toimittajan laskun (logo. ..)
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 16:12:09).
+
+FeaturesSupported=Ominaisuudet tuettava

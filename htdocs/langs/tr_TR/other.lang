@@ -84,7 +84,6 @@ FeatureNotYetAvailableShort=Gelecek sürümde olacaktır
 FeatureNotYetAvailable=Özellik henüz bu sürümde yoktur 
 FeatureExperimental=Deneysel özellik. Bu sürümde kararlı durumda değildir 
 FeatureDevelopment=Gelişme özelliği. Bu sürümde kararlı durumda değildir 
-FeaturesSupported=Desteklenen özellikler
 Width=Genişlik 
 Height=Yükseklik 
 Depth=Derinlik 

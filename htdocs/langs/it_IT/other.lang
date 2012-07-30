@@ -64,7 +64,6 @@ FeatureDevelopment				     =Funzionalità in fase di sviluppo. Non stabile in qu
 FeatureExperimental				     =Funzinalità sperimentale. Non stabile in questa versione 
 FeatureNotYetAvailable				     =Funzionalità non ancora disponibile in questa versione 
 FeatureNotYetAvailableShorti			     =Disponibile in una prossima versione
-FeaturesSupported				     =Funzionalità supportate 
 FileFormat					     =Formato del file
 FileIsTooBig					     =File troppo grande
 FileWasRemoved					     =Il file è stato eliminato

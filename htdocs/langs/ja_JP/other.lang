@@ -51,7 +51,6 @@ FeatureNotYetAvailableShort=次のバージョンで利用可能
 FeatureNotYetAvailable=このバージョンではまだ利用できない機能
 FeatureExperimental=実験的な機能。このバージョンでは安定していない
 FeatureDevelopment=開発機能。このバージョンでは安定していない
-FeaturesSupported=機能がサポートされて
 Right=右
 CalculatedWeight=計算された重み
 CalculatedVolume=計算されたボリューム

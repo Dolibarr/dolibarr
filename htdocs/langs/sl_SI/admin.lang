@@ -1301,3 +1301,5 @@ ViewProductDescInThirdpartyLanguageAbility=Vizualizacija Poimenovanja izdelkov v
 AccountancyCode=Računovodstvo zakonik
 MailmanSpipSetup=Mailman in namestitveni modul SPIP
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 17:31:09).
+
+FeaturesSupported = Podprta funkcija
