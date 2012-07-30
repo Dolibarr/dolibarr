@@ -47,7 +47,7 @@ class RemiseCheque extends CommonObject
 	 */
 	function RemiseCheque($db)
 	{
-		$this->db = $DB;
+		$this->db = $db;
 		$this->next_id = 0;
 		$this->previous_id = 0;
 	}
