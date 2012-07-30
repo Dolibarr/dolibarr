@@ -2508,11 +2508,11 @@ class PropaleLigne
     /**
      * 	Class line Contructor
      *
-     * 	@param	DoliDB	$DB	Database handler
+     * 	@param	DoliDB	$db	Database handler
      */
-    function __construct($DB)
+    function __construct($db)
     {
-        $this->db= $DB;
+        $this->db= $db;
     }
 
     /**

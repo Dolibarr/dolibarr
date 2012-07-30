@@ -2867,11 +2867,11 @@ class OrderLine
     /**
      *      Constructor
      *
-     *      @param     DoliDB	$DB      handler d'acces base de donnee
+     *      @param     DoliDB	$db      handler d'acces base de donnee
      */
-    function __construct($DB)
+    function __construct($db)
     {
-        $this->db= $DB;
+        $this->db= $db;
     }
 
     /**
