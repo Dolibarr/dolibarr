@@ -40,7 +40,7 @@ class modLabel extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modLabel($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 60;

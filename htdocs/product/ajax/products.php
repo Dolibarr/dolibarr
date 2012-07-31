@@ -18,7 +18,7 @@
  */
 
 /**
- *       \file       htdocs/product/ajaxproducts.php
+ *       \file       htdocs/product/ajax/products.php
  *       \brief      File to return Ajax response on product list request
  */
 
@@ -30,12 +30,19 @@ if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
 if (empty($_GET['keysearch']) && ! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 
-require('../main.inc.php');
+require('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php');
 
 $langs->load("products");
 $langs->load("main");
 
+$htmlname=GETPOST('htmlname','alpha');
+$socid=GETPOST('socid','int');
+$type=GETPOST('type','int');
+$mode=GETPOST('mode','int');
+$status=((GETPOST('status','int') >= 0) ? GETPOST('status','int') : -1);
+$outjson=(GETPOST('outjson','int') ? GETPOST('outjson','int') : 0);
+$pricelevel=GETPOST('price_level','int');
 
 /*
  * View
@@ -55,32 +62,25 @@ top_httphead();
 dol_syslog(join(',',$_GET));
 //print_r($_GET);
 
-if (! isset($_GET['htmlname'])) return;
+if (empty($htmlname)) return;
 
-$htmlname = $_GET['htmlname'];
 $match = preg_grep('/('.$htmlname.'[0-9]+)/',array_keys($_GET));
 sort($match);
 $idprod = (! empty($match[0]) ? $match[0] : '');
 
-if (! isset($_GET[$htmlname]) && ! isset($_GET[$idprod])) return;
+if (! GETPOST($htmlname) && ! GETPOST($idprod)) return;
 
 // When used from jQuery, the search term is added as GET param "term".
-$searchkey=(! empty($_GET[$idprod])?$_GET[$idprod]:'');
-if (empty($searchkey)) $searchkey=$_GET[$htmlname];
-$outjson=isset($_GET['outjson'])?$_GET['outjson']:0;
-
-// Get list of product.
-$status=-1;
-if (isset($_GET['status'])) $status=$_GET['status'];
+$searchkey=(GETPOST($idprod)?GETPOST($idprod):(GETPOST($htmlname)?GETPOST($htmlname):''));
 
 $form = new Form($db);
-if (empty($_GET['mode']) || $_GET['mode'] == 1)
+if (empty($mode) || $mode == 1)
 {
-	$arrayresult=$form->select_produits_do("",$htmlname,$_GET["type"],"",$_GET["price_level"],$searchkey,$status,2,$outjson);
+	$arrayresult=$form->select_produits_do("",$htmlname,$type,"",$pricelevel,$searchkey,$status,2,$outjson);
 }
-if ($_GET['mode'] == 2)
+elseif ($mode == 2)
 {
-	$arrayresult=$form->select_produits_fournisseurs_do($_GET["socid"],"",$htmlname,$_GET["type"],"",$searchkey,$status,$outjson);
+	$arrayresult=$form->select_produits_fournisseurs_do($socid,"",$htmlname,$type,"",$searchkey,$status,$outjson);
 }
 
 $db->close();

@@ -65,7 +65,7 @@ class Fichinter extends CommonObject
 	 */
 	function __construct($db)
 	{
-		$this->db = $db ;
+		$this->db = $db;
 		$this->products = array();
 		$this->fk_project = 0;
 		$this->statut = 0;
@@ -164,7 +164,7 @@ class Fichinter extends CommonObject
 				$error++; $this->errors=$interface->errors;
 			}
 			// Fin appel triggers
-			
+
 			$this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."fichinter");
 			$this->db->commit();
 			return $this->id;
@@ -210,7 +210,7 @@ class Fichinter extends CommonObject
 				$error++; $this->errors=$interface->errors;
 			}
 			// Fin appel triggers
-			
+
 			$this->db->commit();
 			return 1;
 		}
@@ -339,7 +339,7 @@ class Fichinter extends CommonObject
 		if ($this->statut != 1)
 		{
 			$this->db->begin();
-			
+
 			$now=dol_now();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
@@ -664,7 +664,7 @@ class Fichinter extends CommonObject
 						}
 					}
 				}
-				
+
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);

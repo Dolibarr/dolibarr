@@ -58,7 +58,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return AdherentTest
 	 */
-	function AdherentTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;

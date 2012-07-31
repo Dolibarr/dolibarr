@@ -54,7 +54,7 @@ class Cpays // extends CommonObject
      *
      *  @param      DoliDb		$db      Database handler
      */
-    function Cpays($db)
+    function __construct($db)
     {
         $this->db = $db;
         return 1;

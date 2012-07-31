@@ -1323,8 +1323,7 @@ if (GETPOST('addfile'))
     $vardir=$conf->user->dir_output."/".$user->id;
     $upload_dir_tmp = $vardir.'/temp';
 
-    $mesgs[]=dol_add_file_process($upload_dir_tmp,0,0);
-
+    dol_add_file_process($upload_dir_tmp,0,0);
     $action='presend';
 }
 
@@ -1340,8 +1339,7 @@ if (! empty($_POST['removedfile']))
     $upload_dir_tmp = $vardir.'/temp';
 
 	// TODO Delete only files that was uploaded from email form
-    $mesgs[]=dol_remove_file_process($_POST['removedfile'],0);
-
+    dol_remove_file_process($_POST['removedfile'],0);
     $action='presend';
 }
 
@@ -1437,15 +1435,13 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
                 if ($mailfile->error)
                 {
-                    $mesg='<div class="error">'.$mailfile->error.'</div>';
+                    $mesgs[]='<div class="error">'.$mailfile->error.'</div>';
                 }
                 else
                 {
                     $result=$mailfile->sendfile();
                     if ($result)
                     {
-                        $mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
-
                         $error=0;
 
                         // Initialisation donnees
@@ -1471,7 +1467,8 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
                         {
                             // Redirect here
                             // This avoid sending mail twice if going out and then back to page
-                            $_SESSION['dol_message'] = $mesg;
+                        	$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
+                        	setEventMessage($mesg);
                             Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id);
                             exit;
                         }
@@ -1566,8 +1563,10 @@ else if ($action == 'remove_file')
 		$langs->load("other");
 		$upload_dir = $conf->facture->dir_output;
 		$file = $upload_dir . '/' . GETPOST('file');
-		dol_delete_file($file,0,0,0,$object);
-		$mesgs[] = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('file')).'</div>';
+		$ret=dol_delete_file($file,0,0,0,$object);
+		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+		$action='';
 	}
 }
 
@@ -2351,6 +2350,8 @@ else if ($id > 0 || ! empty($ref))
 
         print '<table class="border" width="100%">';
 
+        $linkback = '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+
         // Ref
         print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
         print '<td colspan="5">';
@@ -2365,7 +2366,7 @@ else if ($id > 0 || ! empty($ref))
         {
             dol_print_error('',$discount->error);
         }
-        print $form->showrefnav($object,'ref','',1,'facnumber','ref',$morehtmlref);
+        print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
         print '</td></tr>';
 
 		// Ref customer

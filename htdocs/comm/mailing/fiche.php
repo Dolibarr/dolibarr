@@ -495,7 +495,7 @@ if (! empty($_POST['addfile']))
 	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
     // Set tmp user directory
-    $mesg=dol_add_file_process($upload_dir,0,0);
+    dol_add_file_process($upload_dir,0,0);
 
 	$action="edit";
 }
@@ -507,7 +507,7 @@ if (! empty($_POST["removedfile"]))
 
 	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
-    $mesg=dol_remove_file_process($_POST['removedfile'],0);
+    dol_remove_file_process($_POST['removedfile'],0);
 
 	$action="edit";
 }
@@ -554,9 +554,7 @@ if ($action == 'confirm_valid' && $confirm == 'yes')
 	if ($object->id > 0)
 	{
 		$object->valid($user);
-
-		$_SESSION['dol_message']='<div class="ok">'.$langs->trans("MailingSuccessfullyValidated").'</div>';
-
+		setEventMessage($langs->trans("MailingSuccessfullyValidated"));
 		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	}
@@ -754,9 +752,11 @@ else
 
 			print '<table class="border" width="100%">';
 
+			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/liste.php">'.$langs->trans("BackToList").'</a>';
+
 			print '<tr><td width="15%">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="3">';
-			print $form->showrefnav($object,'id');
+			print $form->showrefnav($object,'id', $linkback);
 			print '</td></tr>';
 
 			// Description

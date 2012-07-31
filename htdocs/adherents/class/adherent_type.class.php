@@ -48,11 +48,11 @@ class AdherentType extends CommonObject
     /**
 	 *	Constructor
 	 *
-	 *	@param 		DoliDB		$DB		Database handler
+	 *	@param 		DoliDB		$db		Database handler
      */
-    function AdherentType($DB)
+    function __construct($db)
     {
-        $this->db = $DB ;
+        $this->db = $db;
         $this->statut = 1;
     }
 

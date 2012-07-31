@@ -37,7 +37,7 @@ class InterfaceNotification
      *
      *   @param		DoliDB		$db      Database handler
      */
-    function InterfaceNotification($db)
+    function __construct($db)
     {
         $this->db = $db;
 

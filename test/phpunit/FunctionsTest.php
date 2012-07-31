@@ -62,7 +62,7 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
      *
      * @return CoreTest
      */
-    function FunctionsTest()
+    function __construct()
     {
         //$this->sharedFixture
         global $conf,$user,$langs,$db;

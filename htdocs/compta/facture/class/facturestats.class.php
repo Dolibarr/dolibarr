@@ -51,7 +51,7 @@ class FactureStats extends Stats
      * 	@param	int			$userid    	Id user for filter
 	 * 	@return FactureStats
 	 */
-	function FactureStats($db, $socid, $mode, $userid=0)
+	function __construct($db, $socid, $mode, $userid=0)
 	{
 		global $conf;
 

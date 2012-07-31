@@ -249,9 +249,11 @@ else
 
 			print '<table class="border" width="100%">';
 
+			$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/liste.php">'.$langs->trans("BackToList").'</a>';
+
 			// Ref
 			print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-			print $form->showrefnav($object,'id','',1,'rowid','libelle');
+			print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'libelle');
 			print '</td>';
 
 			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$object->lieu.'</td></tr>';

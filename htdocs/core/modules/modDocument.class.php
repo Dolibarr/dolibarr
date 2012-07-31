@@ -41,7 +41,7 @@ class modDocument extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modDocument($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 51;

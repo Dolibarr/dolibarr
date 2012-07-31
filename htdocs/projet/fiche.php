@@ -251,8 +251,9 @@ if ($action == 'remove_file' && $user->rights->projet->creer)
         $langs->load("other");
         $upload_dir =	$conf->projet->dir_output . "/";
         $file =	$upload_dir	. '/' .	GETPOST('file');
-        dol_delete_file($file);
-        $mesg	= '<div	class="ok">'.$langs->trans("FileWasRemoved",GETPOST('file')).'</div>';
+        $ret=dol_delete_file($file);
+        if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+        else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
     }
 }
 
@@ -536,6 +537,8 @@ else
     {
         print '<table class="border" width="100%">';
 
+        $linkback = '<a href="'.DOL_URL_ROOT.'/projet/liste.php">'.$langs->trans("BackToList").'</a>';
+
         // Ref
         print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
         // Define a complementary filter for search of next/prev ref.
@@ -544,7 +547,7 @@ else
             $objectsListId = $object->getProjectsAuthorizedForUser($user,$mine,0);
             $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
         }
-        print $form->showrefnav($object,'ref','',1,'ref','ref');
+        print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
         print '</td></tr>';
 
         // Label

@@ -722,12 +722,9 @@ $bcdd=array(0=>'class="impair drag drop"',1=>'class="pair drag drop"');
 $bcnd=array(0=>'class="impair nodrag nodrop"',1=>'class="pair nodrag nodrop"');
 
 // Define messages variables
-$mesg=''; $mesgs=array(); $warning=''; $warnings=array(); $error=0; $errors=array();
-if (isset($_SESSION['dol_message']))
-{
-	$mesgs[]=$_SESSION['dol_message'];
-	unset($_SESSION['dol_message']);
-}
+$mesg=''; $warning=''; $error=0;
+// deprecated, see setEventMessage() and dol_htmloutput_events()
+$mesgs=array(); $warnings=array(); $errors=array();
 
 // Constants used to defined number of lines in textarea
 if (empty($conf->browser->firefox))
@@ -1657,6 +1654,9 @@ if (! function_exists("llxFooter"))
     function llxFooter($foot='')
     {
         global $conf, $langs, $dolibarr_auto_user, $micro_start_time;
+
+        // Global html output events ($mesgs, $errors, $warnings)
+        dol_htmloutput_events();
 
         // Core error message
         if (defined("MAIN_CORE_ERROR") && constant("MAIN_CORE_ERROR") == 1)

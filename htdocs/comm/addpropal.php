@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  *
@@ -28,21 +28,22 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php');
-if ($conf->projet->enabled)
-{
+if (! empty($conf->projet->enabled)) {
 	require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 	require_once(DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php');
 }
 
 $langs->load("propal");
-if ($conf->projet->enabled) $langs->load("projects");
+if (! empty($conf->projet->enabled))
+	$langs->load("projects");
 $langs->load("companies");
 $langs->load("bills");
 $langs->load("orders");
 $langs->load("deliveries");
 
-$action=GETPOST('action');
-$mesg=GETPOST('mesg');
+$action=GETPOST('action','alpha');
+$origin=GETPOST('origin','alpha');
+$originid=GETPOST('originid','int');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
@@ -66,8 +67,6 @@ llxHeader();
 print_fiche_titre($langs->trans("NewProp"));
 
 $form=new Form($db);
-
-dol_htmloutput_mesg($mesg);
 
 // Add new proposal
 if ($action == 'create')
@@ -117,16 +116,19 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	if (isset($_GET["origin"]) && $_GET["origin"] != 'project' && isset($_GET["originid"]))
+	if ($origin != 'project' && $originid)
 	{
-		print '<input type="hidden" name="origin" value="'.$_GET["origin"].'">';
-		print '<input type="hidden" name="originid" value="'.$_GET["originid"].'">';
+		print '<input type="hidden" name="origin" value="'.$origin.'">';
+		print '<input type="hidden" name="originid" value="'.$originid.'">';
 	}
 
 	print '<table class="border" width="100%">';
 
 	// Ref
-	print '<tr><td class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" value="'.$numpr.'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Ref").'</td>';
+	print '<td colspan="2">'.$numpr.'</td>';
+	print '<input type="hidden" name="ref" value="'.$numpr.'">';
+	print '</tr>';
 
 	// Ref customer
 	print '<tr><td>'.$langs->trans('RefCustomer').'</td><td colspan="2">';
@@ -141,7 +143,7 @@ if ($action == 'create')
 
 	// Contacts
 	print "<tr><td>".$langs->trans("DefaultContact")."</td><td colspan=\"2\">\n";
-	$form->select_contacts($soc->id,$setcontact,'contactidp',1);
+	$form->select_contacts($soc->id,'','contactidp',1);
 	print '</td></tr>';
 
 	// Ligne info remises tiers
@@ -175,12 +177,12 @@ if ($action == 'create')
 
 	// What trigger creation
     print '<tr><td>'.$langs->trans('Source').'</td><td>';
-    $form->select_demand_reason($object->demand_reason,'demand_reason_id',"SRC_PROP",1);
+    $form->select_demand_reason('','demand_reason_id',"SRC_PROP",1);
     print '</td></tr>';
 
 	// Delivery delay
     print '<tr><td>'.$langs->trans('AvailabilityPeriod').'</td><td colspan="2">';
-    $form->select_availability($object->availability,'availability_id','',1);
+    $form->select_availability('','availability_id','',1);
     print '</td></tr>';
 
 	// Delivery date (or manufacturing)
@@ -213,7 +215,7 @@ if ($action == 'create')
 	if ($conf->projet->enabled)
 	{
 		$projectid = 0;
-		if (isset($_GET["origin"]) && $_GET["origin"] == 'project') $projectid = ($_GET["originid"]?$_GET["originid"]:0);
+		if ($origin == 'project') $projectid = ($originid?$originid:0);
 
 		print '<tr>';
 		print '<td valign="top">'.$langs->trans("Project").'</td><td colspan="2">';
@@ -228,7 +230,7 @@ if ($action == 'create')
 	}
 
 	// Other attributes
-	$parameters=array('socid'=>$soc->id, 'colspan' => ' colspan="3"');
+	$parameters=array('colspan' => ' colspan="3"');
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
@@ -341,6 +343,7 @@ if ($action == 'create')
 	print "</form>";
 }
 
-$db->close();
+
 llxFooter();
+$db->close();
 ?>

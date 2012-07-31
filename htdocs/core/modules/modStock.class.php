@@ -40,7 +40,7 @@ class modStock extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modStock($db)
+	function __construct($db)
 	{
 		global $conf;
 

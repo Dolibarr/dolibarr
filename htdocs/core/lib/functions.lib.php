@@ -3448,6 +3448,45 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
     return $out;
 }
 
+/**
+ *	Set event message in dol_events session
+ *
+ *	@param	string	$mesgstring		 Message
+ *  @param  string	$style           Which style to use ('mesgs', 'warnings', 'errors')
+ *  @return	void
+ *  @see	dol_htmloutput_events
+ */
+function setEventMessage($mesgstring, $style='mesgs')
+{
+	$_SESSION['dol_events'][$style][] = $mesgstring;
+}
+
+/**
+ *	Print formated messages to output (Used to show messages on html output).
+ *
+ *  @return	void
+ *  @see    dol_htmloutput_mesg
+ */
+function dol_htmloutput_events()
+{
+	// Show mesgs
+	if (isset($_SESSION['dol_events']['mesgs'])) {
+		dol_htmloutput_mesg('', $_SESSION['dol_events']['mesgs']);
+		unset($_SESSION['dol_events']['mesgs']);
+	}
+
+	// Show errors
+	if (isset($_SESSION['dol_events']['errors'])) {
+		dol_htmloutput_mesg('', $_SESSION['dol_events']['errors'], 'error');
+		unset($_SESSION['dol_events']['errors']);
+	}
+
+	// Show warnings
+	if (isset($_SESSION['dol_events']['warnings'])) {
+		dol_htmloutput_mesg('', $_SESSION['dol_events']['warnings'], 'warning');
+		unset($_SESSION['dol_events']['warnings']);
+	}
+}
 
 /**
  *	Get formated messages to output (Used to show messages on html output).
@@ -3468,18 +3507,6 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
     $ret='';
     $out='';
     $divstart=$divend='';
-
-    // Use session mesg
-    if (isset($_SESSION['mesg']))
-    {
-    	$mesgstring=$_SESSION['mesg'];
-    	unset($_SESSION['mesg']);
-    }
-	if (isset($_SESSION['mesgarray']))
-    {
-    	$mesgarray=$_SESSION['mesgarray'];
-    	unset($_SESSION['mesgarray']);
-    }
 
     // If inline message with no format, we add it.
     if ((empty($conf->use_javascript_ajax) || ! empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) || $keepembedded) && ! preg_match('/<div class=".*">/i',$out))

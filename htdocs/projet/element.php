@@ -94,6 +94,8 @@ dol_fiche_head($head, 'element', $langs->trans("Project"),0,($project->public?'p
 
 print '<table class="border" width="100%">';
 
+$linkback = '<a href="'.DOL_URL_ROOT.'/projet/liste.php">'.$langs->trans("BackToList").'</a>';
+
 print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
 // Define a complementary filter for search of next/prev ref.
 if (! $user->rights->projet->all->lire)
@@ -101,7 +103,7 @@ if (! $user->rights->projet->all->lire)
     $projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,0);
     $project->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
 }
-print $form->showrefnav($project,'ref','',1,'ref','ref');
+print $form->showrefnav($project, 'ref', $linkback, 1, 'ref', 'ref');
 print '</td></tr>';
 
 print '<tr><td>'.$langs->trans("Label").'</td><td>'.$project->title.'</td></tr>';

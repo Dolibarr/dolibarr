@@ -36,7 +36,7 @@ class InterfaceWorkflowManager
      *
      *   @param		DoliDB		$db      Database handler
      */
-    function InterfaceWorkflowManager($db)
+    function __construct($db)
     {
         $this->db = $db;
 

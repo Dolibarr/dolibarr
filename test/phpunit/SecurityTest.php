@@ -70,7 +70,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return SecurityTest
 	 */
-	function SecurityTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;

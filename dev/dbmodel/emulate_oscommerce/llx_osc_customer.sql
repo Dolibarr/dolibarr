@@ -22,4 +22,4 @@ CREATE TABLE llx_osc_customer (
   fk_soc int(11) NOT NULL default '0',
   PRIMARY KEY  (rowid),
   UNIQUE KEY fk_soc (fk_soc)
-) TYPE=InnoDB COMMENT='Table transition client OSC - societe Dolibarr';
+) ENGINE=InnoDB COMMENT='Table transition client OSC - societe Dolibarr';

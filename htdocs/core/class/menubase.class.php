@@ -61,7 +61,7 @@ class Menubase
      *  @param     	string		$menu_handler	Menu handler
      *  @param     	string		$type			Type
      */
-    function Menubase($db,$menu_handler='',$type='')
+    function __construct($db,$menu_handler='',$type='')
     {
         $this->db = $db;
         $this->menu_handler = $menu_handler;

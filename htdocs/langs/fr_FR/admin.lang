@@ -447,6 +447,10 @@ Module50100Name= Point de vente
 Module50100Desc= Caisse enregistreuse de point de vente
 Module50200Name= Paypal
 Module50200Desc= Module permettant d'offrir en ligne une page de paiement par carte de crédit avec Paypal
+Module59000Name=Marges
+Module59000Desc=Module pour gérer les marges
+Module60000Name=Commissions
+Module60000Desc=Module pour gérer les commissions
 Permission11= Consulter les factures clients
 Permission12= Créer/modifier les factures clients
 Permission13= Dé-valider les factures clients
@@ -1150,6 +1154,7 @@ SyslogSimpleFile= Fichier
 SyslogFilename= Nom et chemin du fichier
 YouCanUseDOL_DATA_ROOT= Vous pouvez utiliser DOL_DATA_ROOT/dolibarr.log pour un log dans le répertoire "documents" de Dolibarr. Vous pouvez néanmoins définir un chemin différent pour stocker ce fichier.
 ErrorUnknownSyslogConstant= La constante %s n'est pas une constante syslog connue
+OnlyWindowsLOG_USER=Windows ne supporte que LOG_USER
 ##### Donations #####
 DonationsSetup= Configuration du module Dons
 DonationsReceiptModel= Modèle de reçu de dons
@@ -1297,8 +1302,6 @@ BankOrderGlobal=Général
 BankOrderGlobalDesc=Ordre d'affichage général
 BankOrderES=Espagnol
 BankOrderESDesc=Ordre d'affichage Espagnol
-##### MailmanSpip #####
-MailmanSpipSetup=Configuration du module Mailman et SPIP
 ##### Multicompany #####
 MultiCompanySetup=Configuration du module Multi-société
 ##### Suppliers #####

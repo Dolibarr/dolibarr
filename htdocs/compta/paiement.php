@@ -263,7 +263,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             			{
             				var code = $("#selectpaiementcode option:selected").val();
 
-            				if (code == \'CHQ\')
+                            if (code == \'CHQ\' || code == \'VIR\')
             				{
             					$(\'.fieldrequireddyn\').addClass(\'fieldrequired\');
             					if ($(\'#fieldchqemetteur\').val() == \'\')

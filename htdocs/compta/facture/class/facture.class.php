@@ -115,7 +115,7 @@ class Facture extends CommonInvoice
      *
 	 * 	@param	DoliDB		$db			Database handler
      */
-    function Facture($db)
+    function __construct($db)
     {
         $this->db = $db;
     }
@@ -2453,9 +2453,9 @@ class Facture extends CommonInvoice
     }
 
     /**
-     *	Charge les informations de l'onglet info dans l'objet facture
+     *	Load miscellaneous information for tab "Info"
      *
-     *	@param  int		$id		Id de la facture a charger
+     *	@param  int		$id		Id of object to load
      *	@return	void
      */
     function info($id)
@@ -3160,7 +3160,7 @@ class FactureLigne
      *
      *  @param	DoliDB		$db		Database handler
      */
-    function FactureLigne($db)
+    function __construct($db)
     {
         $this->db = $db;
     }

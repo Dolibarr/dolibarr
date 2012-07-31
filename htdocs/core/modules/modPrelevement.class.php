@@ -41,7 +41,7 @@ class modPrelevement extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modPrelevement($db)
+	function __construct($db)
 	{
 		global $conf;
 

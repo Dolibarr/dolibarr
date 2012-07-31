@@ -59,7 +59,7 @@ class PricesTest extends PHPUnit_Framework_TestCase
      *
      * @return CoreTest
      */
-    function PricesTest()
+    function __construct()
     {
         //$this->sharedFixture
         global $conf,$user,$langs,$db;

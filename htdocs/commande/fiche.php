@@ -632,27 +632,27 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 			{
 				// Insert line
 				$result = $object->addline(
-						$object->id,
-						$desc,
-						$pu_ht,
-						GETPOST('qty'),
-						$tva_tx,
-						$localtax1_tx,
-						$localtax2_tx,
-						GETPOST('idprod'),
-						GETPOST('remise_percent'),
-						$info_bits,
-						0,
-						$price_base_type,
-						$pu_ttc,
-						$date_start,
-						$date_end,
-						$type,
-						-1,
-						'',
-						GETPOST('fk_parent_line'),
-						GETPOST('np_fournprice'),
-						GETPOST('np_buying_price')
+								$object->id,
+								$desc,
+								$pu_ht,
+								GETPOST('qty'),
+								$tva_tx,
+								$localtax1_tx,
+								$localtax2_tx,
+								GETPOST('idprod'),
+								GETPOST('remise_percent'),
+								$info_bits,
+								0,
+								$price_base_type,
+								$pu_ttc,
+								$date_start,
+								$date_end,
+								$type,
+								-1,
+								'',
+								GETPOST('fk_parent_line'),
+								GETPOST('np_fournprice'),
+								GETPOST('np_buying_price')
 				);
 
 				if ($result > 0)
@@ -1004,8 +1004,10 @@ else if ($action == 'remove_file')
 		$langs->load("other");
 		$upload_dir = $conf->commande->dir_output;
 		$file = $upload_dir . '/' . GETPOST('file');
-		dol_delete_file($file,0,0,0,$object);
-		$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('file')).'</div>';
+		$ret=dol_delete_file($file,0,0,0,$object);
+		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+		$action='';
 	}
 }
 
@@ -1020,8 +1022,7 @@ if (GETPOST('addfile'))
 	$vardir=$conf->user->dir_output."/".$user->id;
 	$upload_dir_tmp = $vardir.'/temp';
 
-	$mesg=dol_add_file_process($upload_dir_tmp,0,0);
-
+	dol_add_file_process($upload_dir_tmp,0,0);
 	$action ='presend';
 }
 
@@ -1037,8 +1038,7 @@ if (GETPOST('removedfile'))
 	$upload_dir_tmp = $vardir.'/temp';
 
 	// TODO Delete only files that was uploaded from email form
-	$mesg=dol_remove_file_process(GETPOST('removedfile'),0);
-
+	dol_remove_file_process(GETPOST('removedfile'),0);
 	$action ='presend';
 }
 
@@ -1757,10 +1757,12 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 			print '<table class="border" width="100%">';
 
+			$linkback = '<a href="'.DOL_URL_ROOT.'/commande/liste.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+
 			// Ref
 			print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
 			print '<td colspan="3">';
-			print $form->showrefnav($object,'ref','',1,'ref','ref');
+			print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 			print '</td>';
 			print '</tr>';
 

@@ -50,7 +50,7 @@ class CommandeStats extends Stats
 	 * @param 	string	$mode	   Option
 	 * @param   int		$userid    Id user for filter
 	 */
-	function CommandeStats($db, $socid, $mode, $userid=0)
+	function __construct($db, $socid, $mode, $userid=0)
 	{
 		global $user, $conf;
 

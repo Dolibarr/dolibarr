@@ -41,7 +41,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function MailingTargets($db)
+	function __construct($db)
 	{
         $this->db = $db;
 	}

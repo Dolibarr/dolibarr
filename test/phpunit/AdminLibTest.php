@@ -58,7 +58,7 @@ class AdminLibTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return AdminLibTest
 	 */
-	function AdminLibTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;

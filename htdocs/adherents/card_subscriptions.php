@@ -486,10 +486,12 @@ if ($rowid)
     print '<input type="hidden" name="rowid" value="'.$object->id.'">';
     print '<table class="border" width="100%">';
 
+    $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/liste.php">'.$langs->trans("BackToList").'</a>';
+
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
     print '<td class="valeur" colspan="2">';
-    print $form->showrefnav($object,'rowid');
+    print $form->showrefnav($object, 'rowid', $linkback);
     print '</td></tr>';
 
     $showphoto='<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">'.$form->showphoto('memberphoto',$object).'</td>';

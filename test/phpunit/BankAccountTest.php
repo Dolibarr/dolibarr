@@ -60,7 +60,7 @@ class BankAccountTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return BankAccountTest
 	 */
-	function BankAccountTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -116,7 +116,7 @@ class BankAccountTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testContratCreate
+     * testBankAccountCreate
      *
      * @return	int
      */
@@ -140,12 +140,12 @@ class BankAccountTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testContratFetch
+     * testBankAccountFetch
      *
      * @param	int		$id		Id of contract
      * @return	int
      *
-     * @depends	testContratCreate
+     * @depends	testBankAccountCreate
      * The depends says test is run only if previous is ok
      */
     public function testBankAccountFetch($id)
@@ -166,12 +166,12 @@ class BankAccountTest extends PHPUnit_Framework_TestCase
     }
 
    /**
-     * testBankAccountFetch
+     * testBankAccountOther
      *
      * @param	Object	$localobject	Object contract
      * @return	int
      *
-     * @depends testBankAccountOther
+     * @depends testBankAccountFetch
      * The depends says test is run only if previous is ok
      */
     public function testBankAccountOther($localobject)
@@ -188,8 +188,8 @@ class BankAccountTest extends PHPUnit_Framework_TestCase
         */
 
         $localobject->info($localobject->id);
-        print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
-        $this->assertNotEquals($localobject->date_creation, '');
+        //print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
+        //$this->assertNotEquals($localobject->date_creation, '');
 
         return $localobject->id;
     }

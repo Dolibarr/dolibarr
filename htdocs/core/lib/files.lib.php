@@ -287,7 +287,7 @@ function dol_mimetype($file,$default='application/octet-stream',$mode=0)
 	if ($mode == 1)
 	{
 		$tmp=explode('/',$mime);
-		return $tmp[1];
+		return (! empty($tmp[1])?$tmp[1]:$tmp[0]);
 	}
 	if ($mode == 2)
 	{
@@ -671,6 +671,9 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$objec
 {
 	global $db, $conf, $user, $langs;
 
+	$langs->load("other");
+	$langs->load("errors");
+
 	$error=0;
 
     //print "x".$file." ".$disableglob;
@@ -684,7 +687,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$objec
             else $ok=unlink($filename);  // The unlink encapsulated by dolibarr
             if ($ok)
             {
-            	dol_syslog("Removed file ".$filename,LOG_DEBUG);
+            	dol_syslog("Removed file ".$filename, LOG_DEBUG);
             	if (! $notrigger)
             	{
                     if (! is_object($object)) $object=(object) 'dummy';
@@ -699,15 +702,21 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$objec
             		// Fin appel triggers
             	}
             }
-            else dol_syslog("Failed to remove file ".$filename,LOG_WARNING);
+            else {
+            	dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
+            }
         }
     }
     else
     {
         if ($nophperrors) $ok=@unlink($file_osencoded);        // The unlink encapsulated by dolibarr
         else $ok=unlink($file_osencoded);        // The unlink encapsulated by dolibarr
-        if ($ok) dol_syslog("Removed file ".$file_osencoded,LOG_DEBUG);
-        else dol_syslog("Failed to remove file ".$file_osencoded,LOG_WARNING);
+        if ($ok) {
+        	dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
+        }
+        else {
+        	dol_syslog("Failed to remove file ".$file_osencoded, LOG_WARNING);
+        }
     }
     return $ok;
 }
@@ -865,7 +874,7 @@ function dol_meta_create($object)
 			{
 				//Pour les articles
 				$meta .= "ITEM_" . $i . "_QUANTITY=\"" . $object->lines[$i]->qty . "\"
-				ITEM_" . $i . "_UNIT_PRICE=\"" . $object->lines[$i]->total_ht . "\"
+				ITEM_" . $i . "_TOTAL_HT=\"" . $object->lines[$i]->total_ht . "\"
 				ITEM_" . $i . "_TVA=\"" .$object->lines[$i]->tva_tx . "\"
 				ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($object->lines[$i]->desc)) . "\"
 				";
@@ -913,48 +922,57 @@ function dol_init_file_process($pathtoscan='')
 /**
  * Get and save an upload file (for example after submitting a new file a mail form).
  * All information used are in db, conf, langs, user and _FILES.
+ * Note: This function can be used only into a HTML page context.
  *
  * @param	string	$upload_dir				Directory to store upload files
  * @param	int		$allowoverwrite			1=Allow overwrite existing file
  * @param	int		$donotupdatesession		1=Do no edit _SESSION variable
- * @return	string							Message with result of upload and store.
+ * @param	string	$varfiles				_FILES var name
+ * @return	void
  */
-function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=0)
+function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=0,$varfiles='addedfile')
 {
 	global $db,$user,$conf,$langs,$_FILES;
 
-	$mesg='';
-
-	if (! empty($_FILES['addedfile']['tmp_name']))
+	if (! empty($_FILES[$varfiles]['tmp_name']))
 	{
 		if (dol_mkdir($upload_dir) >= 0)
 		{
-			$resupload = dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],$allowoverwrite,0, $_FILES['addedfile']['error']);
+			$resupload = dol_move_uploaded_file($_FILES[$varfiles]['tmp_name'], $upload_dir . "/" . $_FILES[$varfiles]['name'],$allowoverwrite,0, $_FILES[$varfiles]['error']);
 			if (is_numeric($resupload) && $resupload > 0)
 			{
-				$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-
 				if (empty($donotupdatesession))
 				{
 					include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
 					$formmail = new FormMail($db);
-					$formmail->add_attached_files($upload_dir . "/" . $_FILES['addedfile']['name'],$_FILES['addedfile']['name'],$_FILES['addedfile']['type']);
+					$formmail->add_attached_files($upload_dir . "/" . $_FILES[$varfiles]['name'],$_FILES[$varfiles]['name'],$_FILES[$varfiles]['type']);
 				}
+				else if (image_format_supported($upload_dir . "/" . $_FILES[$varfiles]['name']) == 1)
+				{
+					// Create small thumbs for image (Ratio is near 16/9)
+					// Used on logon for example
+					$imgThumbSmall = vignette($upload_dir . "/" . $_FILES[$varfiles]['name'], 160, 120, '_small', 50, "thumbs");
+					// Create mini thumbs for image (Ratio is near 16/9)
+					// Used on menu or for setup page for example
+					$imgThumbMini = vignette($upload_dir . "/" . $_FILES[$varfiles]['name'], 160, 120, '_mini', 50, "thumbs");
+				}
+
+				setEventMessage($langs->trans("FileTransferComplete"));
 			}
 			else
 			{
 				$langs->load("errors");
 				if ($resupload < 0)	// Unknown error
 				{
-					$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+					setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
 				}
 				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
 				{
-					$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
+					setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
 				}
 				else	// Known error
 				{
-					$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
+					setEventMessage($langs->trans($resupload), 'errors');
 				}
 			}
 		}
@@ -962,10 +980,8 @@ function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=
 	else
 	{
 		$langs->load("errors");
-		$mesg = '<div class="warning">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("File")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("File")), 'warnings');
 	}
-
-	return $mesg;
 }
 
 
@@ -976,13 +992,11 @@ function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=
  * @param	int		$filenb					File nb to delete
  * @param	int		$donotupdatesession		1=Do not edit _SESSION variable
  * @param   int		$donotdeletefile        1=Do not delete physically file
- * @return	string							Message with result of upload and store.
+ * @return	void
  */
 function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=0)
 {
 	global $db,$user,$conf,$langs,$_FILES;
-
-	$mesg='';
 
 	$keytodelete=$filenb;
 	$keytodelete--;
@@ -1004,9 +1018,8 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
 		{
 			if (empty($donotdeletefile))
 			{
-			    $langs->load("other");
-			    $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",$filetodelete).'</div>';
-    			//print_r($_FILES);
+				$langs->load("other");
+				setEventMessage($langs->trans("FileWasRemoved",$filetodelete));
 			}
 			if (empty($donotupdatesession))
 			{
@@ -1016,8 +1029,6 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
 			}
 		}
 	}
-
-	return $mesg;
 }
 
 /**

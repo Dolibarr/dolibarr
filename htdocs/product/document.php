@@ -74,39 +74,19 @@ $modulepart='produit';
 
 if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	if (dol_mkdir($upload_dir) >= 0)
-	{
-		$resupload=dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0,0,$_FILES['userfile']['error']);
-		if (is_numeric($resupload) && $resupload > 0)
-		{
-		    if (image_format_supported($upload_dir . "/" . $_FILES['userfile']['name']) == 1)
-            {
-                // Create small thumbs for image (Ratio is near 16/9)
-                // Used on logon for example
-                $imgThumbSmall = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthsmall, $maxheightsmall, '_small', $quality, "thumbs");
-                // Create mini thumbs for image (Ratio is near 16/9)
-                // Used on menu or for setup page for example
-                $imgThumbMini = vignette($upload_dir . "/" . $_FILES['userfile']['name'], $maxwidthmini, $maxheightmini, '_mini', $quality, "thumbs");
-            }
-		    $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-		}
-		else
-		{
-			$langs->load("errors");
-			if ($resupload < 0)	// Unknown error
-			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-			}
-			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
-			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
-			}
-			else	// Known error
-			{
-				$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
-			}
-		}
-	}
+	dol_add_file_process($upload_dir,0,1,'userfile');
+}
+
+// Delete
+if ($action=='delete')
+{
+	$langs->load("other");
+	$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	$ret=dol_delete_file($file);
+	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+	exit;
 }
 
 
@@ -121,17 +101,6 @@ llxHeader("","",$langs->trans("CardProduct".$object->type));
 
 if ($object->id)
 {
-	if (! empty($mesg)) {
-		dol_htmloutput_mesg($mesg);
-	}
-
-	if ($action=='delete')
-	{
-		$file = $upload_dir . '/' . $_GET['urlfile'];	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-		$result=dol_delete_file($file);
-		//if ($result >= 0) $mesg=$langs->trans("FileWasRemoced");
-	}
-
 	$head=product_prepare_head($object, $user);
 	$titre=$langs->trans("CardProduct".$object->type);
 	$picto=($object->type==1?'service':'product');

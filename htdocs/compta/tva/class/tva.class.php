@@ -55,11 +55,11 @@ class Tva extends CommonObject
     /**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$DB      Database handler
+	 *  @param		DoliDB		$db      Database handler
      */
-    function Tva($DB)
+    function __construct($db)
     {
-        $this->db = $DB;
+        $this->db = $db;
         return 1;
     }
 

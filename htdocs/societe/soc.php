@@ -462,8 +462,9 @@ if (empty($reshook))
     		$langs->load("other");
     		$upload_dir = $conf->societe->dir_output;
     		$file = $upload_dir . '/' . GETPOST('file');
-    		dol_delete_file($file,0,0,0,$object);
-    		$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('file')).'</div>';
+    		$ret=dol_delete_file($file,0,0,0,$object);
+    		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+    		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
     	}
     }
 }
@@ -1461,7 +1462,7 @@ else
         // Name
         print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
         print '<td colspan="3">';
-        print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom');
+        print $form->showrefnav($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
         print '</td>';
         print '</tr>';
 

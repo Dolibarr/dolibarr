@@ -86,7 +86,7 @@ class Expedition extends CommonObject
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function Expedition($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		$this->lines = array();
@@ -155,7 +155,7 @@ class Expedition extends CommonObject
 	function create($user)
 	{
 		global $conf, $langs;
-		
+
 		$now=dol_now();
 
 		require_once DOL_DOCUMENT_ROOT ."/product/stock/class/mouvementstock.class.php";
@@ -794,9 +794,8 @@ class Expedition extends CommonObject
 						$file = $conf->expedition->dir_output . "/" . $expref . "/" . $expref . ".pdf";
 						if (file_exists($file))
 						{
-							if (!dol_delete_file($file))
+							if (! dol_delete_file($file))
 							{
-								$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
 								return 0;
 							}
 						}
@@ -1270,7 +1269,7 @@ class ExpeditionLigne
      *
      *  @param		DoliDB		$db      Database handler
      */
-	function ExpeditionLigne($db)
+	function __construct($db)
 	{
 		$this->db=$db;
 	}

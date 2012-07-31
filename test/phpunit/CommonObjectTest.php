@@ -59,7 +59,7 @@ class CommonObjectTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return CommonObjectTest
 	 */
-	function CommonObjectTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;

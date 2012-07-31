@@ -39,7 +39,7 @@ class modUser extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modUser($db)
+	function __construct($db)
 	{
 		global $conf;
 

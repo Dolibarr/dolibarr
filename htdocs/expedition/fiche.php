@@ -124,7 +124,7 @@ if ($action == 'add')
                 $idl = "idl".$i;
                 $entrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
 				if ($entrepot_id < 0) $entrepot_id='';
-                
+
                 $ret=$object->addline($entrepot_id,GETPOST($idl,'int'),GETPOST($qty,'int'));
                 if ($ret < 0)
                 {
@@ -331,8 +331,7 @@ if (GETPOST('addfile','alpha'))
     $vardir=$conf->user->dir_output."/".$user->id;
     $upload_dir_tmp = $vardir.'/temp';
 
-    $mesg=dol_add_file_process($upload_dir_tmp,0,0);
-
+    dol_add_file_process($upload_dir_tmp,0,0);
     $action ='presend';
 }
 
@@ -348,8 +347,7 @@ if (GETPOST('removedfile','alpha'))
     $upload_dir_tmp = $vardir.'/temp';
 
     // TODO Delete only files that was uploaded from email form
-    $mesg=dol_remove_file_process(GETPOST('removedfile','int'),0);
-
+    dol_remove_file_process(GETPOST('removedfile','int'),0);
     $action ='presend';
 }
 
@@ -437,8 +435,6 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
                     $result=$mailfile->sendfile();
                     if ($result)
                     {
-                        $_SESSION['mesg']=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
-
                         $error=0;
 
                         // Initialisation donnees
@@ -466,6 +462,8 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
                         {
                             // Redirect here
                             // This avoid sending mail twice if going out and then back to page
+                        	$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
+                            setEventMessage($mesg);
                             Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
                             exit;
                         }
@@ -952,10 +950,12 @@ else
 
             print '<table class="border" width="100%">';
 
+            $linkback = '<a href="'.DOL_URL_ROOT.'/expedition/liste.php">'.$langs->trans("BackToList").'</a>';
+
             // Ref
             print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
             print '<td colspan="3">';
-            print $form->showrefnav($object,'ref','',1,'ref','ref');
+            print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
             print '</td></tr>';
 
             // Customer

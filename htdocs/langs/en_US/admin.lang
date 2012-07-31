@@ -327,7 +327,7 @@ UrlGenerationParameters=Parameters to secure URLs
 SecurityTokenIsUnique=Use a unique securekey parameter for each URL
 EnterRefToBuildUrl=Enter reference for object %s
 GetSecuredUrl=Get calculated URL
-ButtonHideUnauthorized=Hide buttons unauthorized (instead of seeing gray)
+ButtonHideUnauthorized=Hide buttons for unauthorized actions instead of showing disabled buttons
 
 # Modules
 Module0Name=Users & groups
@@ -446,6 +446,10 @@ Module50100Name=Point of sales
 Module50100Desc=Point of sales module
 Module50200Name= Paypal
 Module50200Desc= Module to offer an online payment page by credit card with Paypal
+Module59000Name=Margins
+Module59000Desc=Module to manage margins
+Module60000Name=Commissions
+Module60000Desc=Module to manage commissions
 Permission11=Read customer invoices
 Permission12=Create/modify customer invoices
 Permission13=Unvalidate customer invoices
@@ -1143,6 +1147,7 @@ SyslogSimpleFile=File
 SyslogFilename=File name and path
 YouCanUseDOL_DATA_ROOT=You can use DOL_DATA_ROOT/dolibarr.log for a log file in Dolibarr "documents" directory. You can set a different path to store this file.
 ErrorUnknownSyslogConstant=Constant %s is not a known Syslog constant
+OnlyWindowsLOG_USER=Windows only supports LOG_USER
 ##### Donations #####
 DonationsSetup=Donation module setup
 DonationsReceiptModel=Template of donation receipt
@@ -1165,6 +1170,8 @@ WithdrawalsSetup=Withdrawal module setup
 ##### ExternalRSS #####
 ExternalRSSSetup=External RSS imports setup
 NewRSS=New RSS Feed
+RSSUrl=RSS URL
+RSSUrlExample=An interesting RSS feed
 ##### Mailing #####
 MailingSetup=EMailing module setup
 MailingEMailFrom=Sender EMail (From) for emails sent by emailing module
@@ -1290,9 +1297,6 @@ BankOrderGlobal=General
 BankOrderGlobalDesc=General display order
 BankOrderES=Spanish
 BankOrderESDesc=Spanish display order
-##### MailmanSpip #####
-MailmanSpipSetup=Mailman and SPIP module Setup
-MailmanTitle=Mailman mailing list system
 ##### Multicompany #####
 MultiCompanySetup=Multi-company module setup
 ##### Suppliers #####

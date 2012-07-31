@@ -499,7 +499,9 @@ if ($action == 'remove_file')	// Remove a file
 		exit;
 	}
 
-	dol_delete_file($original_file);
+	$ret=dol_delete_file($original_file);
+	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
 
 	dol_syslog("document.php back to ".urldecode($urlsource), LOG_DEBUG);
 

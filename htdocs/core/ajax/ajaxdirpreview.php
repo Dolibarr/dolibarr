@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -54,7 +54,7 @@ if (! isset($mode) || $mode != 'noajax')    // For ajax call
     $pagenext = $page + 1;
     if (! $sortorder) $sortorder="ASC";
     if (! $sortfield) $sortfield="name";
-    
+
     $upload_dir = dirname(str_replace("../","/", $conf->ecm->dir_output.'/'.$file));
 
     $ecmdir = new EcmDirectory($db);
@@ -121,7 +121,7 @@ if (! isset($mode) || $mode != 'noajax')
 	// Ajout directives pour resoudre bug IE
     header('Cache-Control: Public, must-revalidate');
     header('Pragma: public');
-	
+
     top_httphead();
 }
 
@@ -137,7 +137,7 @@ if (! dol_is_dir($upload_dir))
 }
 
 print '<!-- TYPE='.$type.' -->'."\n";
-print '<!-- Page called with mode='.$mode.' url='.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
+print '<!-- Page called with mode='.(isset($mode)?$mode:'').' url='.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
 $param='';
 $param.=($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'');
@@ -252,7 +252,7 @@ if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
     if ($section)
     {
     	$param.=($param?'?':'').(preg_replace('/^&/','',$param));
-    	
+
         require_once(DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php');
         $useglobalvars=1;
         $form = new Form($db);

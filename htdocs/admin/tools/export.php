@@ -58,8 +58,11 @@ if ($file && ! $what)
 
 if ($action == 'delete')
 {
-    dol_delete_file($conf->admin->dir_output.'/backup/'.GETPOST('urlfile'),1);
-    $action='';
+	$file=$conf->admin->dir_output.'/backup/'.GETPOST('urlfile');
+	$ret=dol_delete_file($file, 1);
+	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	$action='';
 }
 
 

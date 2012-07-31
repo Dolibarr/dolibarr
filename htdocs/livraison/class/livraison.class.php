@@ -62,7 +62,7 @@ class Livraison extends CommonObject
 	 *
 	 * @param	DoliDB	$db		Database handler
 	 */
-	function Livraison($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		$this->lines = array();
@@ -397,7 +397,7 @@ class Livraison extends CommonObject
 							$file = $dir . "/" . $numref . ".pdf";
 							if (file_exists($file))
 							{
-								if (!dol_delete_file($file))
+								if (! dol_delete_file($file))
 								{
 									$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
 									return 0;
@@ -405,7 +405,7 @@ class Livraison extends CommonObject
 							}
 							if (file_exists($dir))
 							{
-								if (!dol_delete_dir($dir))
+								if (! dol_delete_dir($dir))
 								{
 									$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
 									return 0;
@@ -581,7 +581,6 @@ class Livraison extends CommonObject
 						{
 							if (!dol_delete_file($file))
 							{
-								$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
 								return 0;
 							}
 						}
@@ -901,7 +900,7 @@ class LivraisonLigne
 	 *
 	 *	@param	DoliDB	$db		Database handler
 	 */
-	function LivraisonLigne($db)
+	function __construct($db)
 	{
 		$this->db=$db;
 	}

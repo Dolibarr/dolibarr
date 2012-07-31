@@ -38,7 +38,7 @@ class modMailmanSpip extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function modMailmanSpip($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 105;

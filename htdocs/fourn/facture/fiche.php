@@ -617,8 +617,7 @@ if (GETPOST('addfile'))
     $vardir=$conf->user->dir_output."/".$user->id;
     $upload_dir_tmp = $vardir.'/temp';
 
-    $mesg=dol_add_file_process($upload_dir_tmp,0,0);
-
+    dol_add_file_process($upload_dir_tmp,0,0);
     $action='presend';
 }
 
@@ -632,8 +631,7 @@ if (! empty($_POST['removedfile']))
     $upload_dir_tmp = $vardir.'/temp';
 
 	// TODO Delete only files that was uploaded from email form
-    $mesg=dol_remove_file_process($_POST['removedfile'],0);
-
+    dol_remove_file_process($_POST['removedfile'],0);
     $action='presend';
 }
 
@@ -831,8 +829,9 @@ elseif ($action == 'remove_file')
     {
         $upload_dir =	$conf->fournisseur->facture->dir_output . "/";
         $file =	$upload_dir	. '/' .	GETPOST('file');
-        dol_delete_file($file);
-        $mesg	= '<div	class="ok">'.$langs->trans("FileWasRemoved",GETPOST('file')).'</div>';
+        $ret=dol_delete_file($file);
+        if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+        else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
     }
 }
 
@@ -1277,9 +1276,11 @@ else
          */
         print '<table class="border" width="100%">';
 
+        $linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+
         // Ref
         print '<tr><td nowrap="nowrap" width="20%">'.$langs->trans("Ref").'</td><td colspan="4">';
-        print $form->showrefnav($object,'id','',1,'rowid','ref');
+        print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref');
         print '</td>';
         print "</tr>\n";
 

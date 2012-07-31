@@ -60,7 +60,7 @@ class ImportTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return ImportTest
 	 */
-	function ImportTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;

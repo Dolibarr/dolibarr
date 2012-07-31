@@ -44,7 +44,7 @@ function SetXmlHeaders()
 	header('Pragma: no-cache');
 
 	// Set the response format.
-	header( 'Content-Type: text/xml; charset=utf-8' );
+	header('Content-Type: text/xml; charset=utf-8');
 }
 
 function CreateXmlHeader( $command, $resourceType, $currentFolder )
@@ -58,7 +58,7 @@ function CreateXmlHeader( $command, $resourceType, $currentFolder )
 	echo '<Connector command="' . $command . '" resourceType="' . $resourceType . '">' ;
 
 	// Add the current folder node.
-	echo '<CurrentFolder path="' . ConvertToXmlAttribute( $currentFolder ) . '" url="' . ConvertToXmlAttribute( GetUrlFromPath( $resourceType, $currentFolder, $command ) ) . '" />' ;
+	echo '<CurrentFolder path="' . ConvertToXmlAttribute($currentFolder) . '" url="' . ConvertToXmlAttribute(GetUrlFromPath($resourceType, $currentFolder, $command)) . '" />' ;
 
 	$GLOBALS['HeaderSent'] = true ;
 }
@@ -68,14 +68,21 @@ function CreateXmlFooter()
 	echo '</Connector>' ;
 }
 
-function SendError( $number, $text )
+/**
+ * SendError
+ *
+ * @param 	unknown_type $number	Number
+ * @param 	unknown_type $text		Text
+ * @return	void
+ */
+function SendError($number, $text)
 {
 	if ( $_GET['Command'] == 'FileUpload' )
-		SendUploadResults( $number, "", "", $text );
+		SendUploadResults($number, "", "", $text);
 
 	if ( isset( $GLOBALS['HeaderSent'] ) && $GLOBALS['HeaderSent'] )
 	{
-		SendErrorNode( $number, $text );
+		SendErrorNode($number, $text);
 		CreateXmlFooter();
 	}
 	else
@@ -87,17 +94,17 @@ function SendError( $number, $text )
 
 		echo '<Connector>' ;
 
-		SendErrorNode( $number, $text );
+		SendErrorNode($number, $text);
 
 		echo '</Connector>' ;
 	}
 	exit ;
 }
 
-function SendErrorNode(  $number, $text )
+function SendErrorNode($number, $text)
 {
 	if ($text)
-		echo '<Error number="' . $number . '" text="' . htmlspecialchars( $text ) . '" />' ;
+		echo '<Error number="' . $number . '" text="' . htmlspecialchars($text) . '" />' ;
 	else
 		echo '<Error number="' . $number . '" />' ;
 }

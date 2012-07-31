@@ -2262,7 +2262,8 @@ class Commande extends CommonOrder
             }
             else
             {
-                $this->error=$this->db->error();
+                $this->error=$this->db->lasterror();
+        		$this->errors=array($this->db->lasterror());
                 $this->db->rollback();
                 dol_syslog(get_class($this)."::updateline Error=".$this->error, LOG_ERR);
                 return -1;
@@ -2271,6 +2272,7 @@ class Commande extends CommonOrder
         else
         {
             $this->error=get_class($this)."::updateline Order status makes operation forbidden";
+        	$this->errors=array('OrderStatusMakeOperationForbidden');
             return -2;
         }
     }
@@ -2344,7 +2346,6 @@ class Commande extends CommonOrder
 
         			if (! dol_delete_file($file,0,0,0,$this)) // For triggers
         			{
-        				$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
         				$this->db->rollback();
         				return 0;
         			}
@@ -2866,11 +2867,11 @@ class OrderLine
     /**
      *      Constructor
      *
-     *      @param     DoliDB	$DB      handler d'acces base de donnee
+     *      @param     DoliDB	$db      handler d'acces base de donnee
      */
-    function OrderLine($DB)
+    function __construct($db)
     {
-        $this->db= $DB;
+        $this->db= $db;
     }
 
     /**

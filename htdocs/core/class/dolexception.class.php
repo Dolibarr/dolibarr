@@ -30,7 +30,7 @@ class DolException extends Exception
     /**
      * Constructor
      */
-    function DolException()
+    function __construct()
     {
     }
 }

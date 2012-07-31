@@ -129,7 +129,7 @@ class SimpleOpenID
     /**
      * Constructor
      */
-    function SimpleOpenID()
+    function __construct()
     {
         if (!function_exists('curl_exec'))
         {

@@ -43,11 +43,11 @@ class AccountancyAccount
     /**
      *  Constructor
      *
-     *  @param		DoliDB		$DB		Database handler
+     *  @param		DoliDB		$db		Database handler
      */
-    function AccountancyAccount($DB)
+    function __construct($db)
     {
-        $this->db = $DB;
+        $this->db = $db;
     }
 
 

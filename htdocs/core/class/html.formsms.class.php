@@ -64,7 +64,7 @@ class FormSms
      *
      *  @param		DoliDB		$db      Database handler
      */
-    function FormSms($db)
+    function __construct($db)
     {
         $this->db = $db;
 

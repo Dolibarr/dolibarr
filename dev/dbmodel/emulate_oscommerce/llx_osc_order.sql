@@ -22,4 +22,4 @@ CREATE TABLE llx_osc_order (
   fk_commande int(11) NOT NULL default '0',
   PRIMARY KEY  (rowid),
   UNIQUE KEY fk_commande (fk_commande)
-) TYPE=InnoDB COMMENT='Table transition commande OSC - commande Dolibarr';
+) ENGINE=InnoDB COMMENT='Table transition commande OSC - commande Dolibarr';

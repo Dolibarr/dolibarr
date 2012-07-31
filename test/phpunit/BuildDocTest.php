@@ -88,7 +88,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return BuildDocTest
 	 */
-	function BuildDocTest()
+	function __construct()
 	{
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -112,6 +112,8 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         if (! $conf->propal->enabled) { print __METHOD__." propal module not enabled\n"; die(); }
         if (! $conf->projet->enabled) { print __METHOD__." project module not enabled\n"; die(); }
         if (! $conf->expedition->enabled) { print __METHOD__." shipment module not enabled\n"; die(); }
+        if (! $conf->ficheinter->enabled) { print __METHOD__." intervention module not enabled\n"; die(); }
+        if (! $conf->deplacement->enabled) { print __METHOD__." trip module not enabled\n"; die(); }
 
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 

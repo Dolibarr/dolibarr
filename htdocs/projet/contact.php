@@ -156,7 +156,7 @@ if ($id > 0 || ! empty($ref))
 		 */
 		print '<table class="border" width="100%">';
 
-		//$linkback="<a href=\"".$_SERVER["PHP_SELF"]."?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BackToList")."</a>";
+		$linkback = '<a href="'.DOL_URL_ROOT.'/projet/liste.php">'.$langs->trans("BackToList").'</a>';
 
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
@@ -166,7 +166,7 @@ if ($id > 0 || ! empty($ref))
             $projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,0);
             $project->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
         }
-		print $form->showrefnav($project,'ref',$linkback,1,'ref','ref','');
+		print $form->showrefnav($project, 'ref', $linkback, 1, 'ref', 'ref', '');
 		print '</td></tr>';
 
 		// Label

@@ -45,7 +45,7 @@ class Bookmark
 	 *
 	 *  @param		DoliDB		$db      Database handler
      */
-    function Bookmark($db)
+    function __construct($db)
     {
         $this->db = $db;
     }

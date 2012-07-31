@@ -48,7 +48,7 @@ class ExtraFields
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function ExtraFields($db)
+	function __construct($db)
 	{
 		$this->db = $db;
 		$this->error = array();

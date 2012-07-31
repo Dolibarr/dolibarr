@@ -187,7 +187,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td width="140"><input '.$bc[$var].' type="checkbox" name="SYSLOG_SYSLOG_ON" '.$option.' value="1" '.($syslog_syslog_on?' checked="checked"':'').'> '.$langs->trans("SyslogSyslog").'</td>';
 print '<td nowrap="nowrap">'.$langs->trans("SyslogFacility").': <input type="text" class="flat" name="facility" '.$option.' value="'.$defaultsyslogfacility.'">';
 print '</td>';
-print "<td align=\"left\">".$form->textwithpicto('','Only LOG_USER supported on Windows');
+print "<td align=\"left\">".$form->textwithpicto('', $langs->trans('OnlyWindowsLOG_USER'));
 print '</td></tr>';
 
 try

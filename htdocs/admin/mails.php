@@ -83,40 +83,7 @@ if (GETPOST('addfile') || GETPOST('addfilehtml'))
 	// Set tmp user directory
 	$vardir=$conf->user->dir_output."/".$user->id;
 	$upload_dir = $vardir.'/temp';
-
-	if (dol_mkdir($upload_dir) >= 0)
-	{
-		$resupload=dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'], 1, 0, $_FILES['addedfile']['error']);
-		if (is_numeric($resupload) && $resupload > 0)
-		{
-			$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-
-			include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
-			$formmail = new FormMail($db);
-			$formmail->add_attached_files($upload_dir . "/" . $_FILES['addedfile']['name'],$_FILES['addedfile']['name'],$_FILES['addedfile']['type']);
-		}
-		else
-		{
-			$langs->load("errors");
-			if ($resupload < 0)	// Unknown error
-			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-			}
-			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
-			{
-				$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWithAVirus").'</div>';
-			}
-			else	// Known error
-			{
-				$mesg = '<div class="error">'.$langs->trans($resupload).'</div>';
-			}
-		}
-	}
-	else
-	{
-		$langs->load("errors");
-		$mesg = '<div class="error">'.$langs->trans("ErrorFailToCreateDir",$upload_dir).'</div>';
-	}
+	dol_add_file_process($upload_dir,0,0);
 
 	if ($_POST['addfile'])     $action='test';
 	if ($_POST['addfilehtml']) $action='testhtml';
@@ -148,9 +115,7 @@ if (! empty($_POST['removedfile']) || ! empty($_POST['removedfilehtml']))
 		$result = dol_delete_file($pathtodelete,1);
 		if ($result >= 0)
 		{
-            $langs->load("other");
-		    $message = '<div class="ok">'.$langs->trans("FileWasRemoved",$filetodelete).'</div>';
-			//print_r($_FILES);
+			setEventMessage($langs->trans("FileWasRemoved"), $filetodelete);
 
 			include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
 			$formmail = new FormMail($db);
