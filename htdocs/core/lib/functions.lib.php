@@ -1858,14 +1858,14 @@ function img_help($usehelpcursor = 1, $usealttitle = 1)
     if ($usealttitle)
     {
         if (is_string($usealttitle)) $alt = dol_escape_htmltag($usealttitle);
-        else $alt = $langs->trans("Info");
+        else $alt = $langs->trans('Info');
     }
 
     return img_picto($usealttitle, 'info.png', ($usehelpcursor ? 'style="cursor: help"' : ''));
 }
 
 /**
- *	Affiche logo info
+ *	Show info logo
  *
  *	@param	string	$alt        Text to show on alt image
  *	@return string      		Return img tag
@@ -1880,7 +1880,7 @@ function img_info($alt = 'default')
 }
 
 /**
- *	Show logo warning
+ *	Show warning logo
  *
  *	@param	string	$alt        Text to show on alt image
  *	@param  int		$float      If we must add style "float: right"
@@ -1896,7 +1896,7 @@ function img_warning($alt = 'default', $float = 0)
 }
 
 /**
- *  Show logo error
+ *  Show error logo
  *
  *	@param	string	$alt        Text to show on alt image
  *	@return string      		Return img tag
@@ -1911,7 +1911,7 @@ function img_error($alt = 'default')
 }
 
 /**
- *	Show logo next
+ *	Show next logo
  *
  *	@param	string	$alt        Text to show on alt image
  *	@return string      		Return img tag
@@ -1926,7 +1926,7 @@ function img_next($alt = 'default')
 }
 
 /**
- *	Show logo previus
+ *	Show previous logo
  *
  *	@param	string	$alt        Text to show on alt image
  *	@return string      		Return img tag
@@ -1941,7 +1941,7 @@ function img_previous($alt = 'default')
 }
 
 /**
- *	Show logo down arrow
+ *	Show down arrow logo
  *
  *	@param	string	$alt        Text to show on alt image
  *	@param  int		$selected   Selected
@@ -1957,7 +1957,7 @@ function img_down($alt = 'default', $selected = 0)
 }
 
 /**
- *	Show logo top arrow
+ *	Show top arrow logo
  *
  *	@param	string	$alt        Text to show on alt image
  *	@param  int		$selected	Selected
@@ -1973,7 +1973,7 @@ function img_up($alt = 'default', $selected = 0)
 }
 
 /**
- *	Show logo left arrow
+ *	Show left arrow logo
  *
  *	@param	string	$alt        Text to show on alt image
  *	@param  int		$selected	Selected
@@ -1989,7 +1989,7 @@ function img_left($alt = 'default', $selected = 0)
 }
 
 /**
- *	Show logo right arrow
+ *	Show right arrow logo
  *
  *	@param	string	$alt        Text to show on alt image
  *	@param  int		$selected	Selected
@@ -2005,7 +2005,7 @@ function img_right($alt = 'default', $selected = 0)
 }
 
 /**
- *	Affiche le logo tick si allow
+ *	Show tick logo if allowed
  *
  *	@param	string	$allow		Allow
  *	@param	string	$alt        Text to show on alt image
