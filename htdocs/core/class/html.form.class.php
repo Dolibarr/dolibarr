@@ -3791,7 +3791,7 @@ class Form
      * 	@param	int		$force_entity	Possibility to force entity
      *  @return	void
      */
-    function select_dolgroups($selected='',$htmlname='groupid',$show_empty=0,$exclude='',$disabled=0,$include='',$enableonly='',$force_entity='')
+    function select_dolgroups($selected='', $htmlname='groupid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity='')
     {
         global $conf,$user,$langs;
 

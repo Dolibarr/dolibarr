@@ -1317,7 +1317,7 @@ else
 
                 if (! empty($groupslist))
                 {
-                    if( ! ($conf->multicompany->enabled && $conf->multicompany->transverse_mode))
+                    if (! ($conf->multicompany->enabled && $conf->multicompany->transverse_mode))
                     {
                         foreach($groupslist as $groupforuser)
                         {
@@ -1335,7 +1335,7 @@ else
                     print '<table class="noborder" width="100%">'."\n";
                     print '<tr class="liste_titre"><th class="liste_titre" width="25%">'.$langs->trans("GroupsToAdd").'</th>'."\n";
                     print '<th>';
-                    print $form->select_dolgroups('','group',1,$exclude,0,'','',$fuser->entity);
+                    print $form->select_dolgroups('', 'group', 1, $exclude, 0, '', '', $fuser->entity);
                     print ' &nbsp; ';
                     // Multicompany
                     if (! empty($conf->multicompany->enabled))
