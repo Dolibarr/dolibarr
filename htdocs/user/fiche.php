@@ -1315,7 +1315,7 @@ else
 
                 if (! empty($groupslist))
                 {
-                    if (! ($conf->multicompany->enabled && $conf->multicompany->transverse_mode))
+                    if (! (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)))
                     {
                         foreach($groupslist as $groupforuser)
                         {
