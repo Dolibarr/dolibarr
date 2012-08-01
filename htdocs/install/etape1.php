@@ -337,6 +337,7 @@ if (! $error && $db->connected && $action == "set")
             $dir[4] = $main_data_dir."/propale";
             $dir[5] = $main_data_dir."/ficheinter";
             $dir[6] = $main_data_dir."/produit";
+            $dir[7] = $main_data_dir."/doctemplates";
 
             // Boucle sur chaque repertoire de dir[] pour les creer s'ils nexistent pas
             $num=count($dir);
@@ -371,6 +372,27 @@ if (! $error && $db->connected && $action == "set")
                 print '<font class="error">'.$langs->trans("Error").'</font>';
                 print "</td></tr>";
                 print '<tr><td colspan="2"><br>'.$langs->trans("CorrectProblemAndReloadPage",$_SERVER['PHP_SELF'].'?testget=ok').'</td></tr>';
+            }
+            else
+            {
+            	//ODT templates
+            	require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+            	$srcroot='./doctemplates';
+            	$destroot=$main_data_dir.'/doctemplates';
+            	$docs=array('thirdparties' => 'thirdparty', 'proposals' => 'proposal', 'orders' => 'order', 'invoices' => 'invoice');
+            	foreach($docs as $dir => $file)
+            	{
+            		$src=$srcroot.'/thirdparties/template_'.$file.'.odt';
+            		$dirodt=$destroot.'/'.$dir;
+            		$dest=$dirodt.'/template_'.$file.'.odt';
+
+            		dol_mkdir($dirodt);
+            		$result=dol_copy($src,$dest,0,0);
+            		if ($result < 0)
+            		{
+            			print '<tr><td colspan="2"><br>'.$langs->trans('ErrorFailToCopyFile',$src,$dest).'</td></tr>';
+            		}
+            	}
             }
         }
     }

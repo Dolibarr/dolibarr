@@ -350,15 +350,15 @@ else
             // On selectionne les users qui ne sont pas deja dans le groupe
             $exclude = array();
 
-            if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+            if (! empty($object->members))
             {
-            	if (! empty($object->members))
-            	{
-            		foreach($object->members as $useringroup)
-            		{
-            			$exclude[]=$useringroup->id;
-            		}
-            	}
+                if (! (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)))
+                {
+                    foreach($object->members as $useringroup)
+                    {
+                        $exclude[]=$useringroup->id;
+                    }
+                }
             }
 
             if ($caneditperms)

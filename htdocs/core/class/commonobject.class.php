@@ -2521,7 +2521,7 @@ abstract class CommonObject
 	 *	@param	HookManager	$hookmanager		Hookmanager
 	 *	@return	void
 	 */
-	function printObjectLines($action,$seller,$buyer,$selected=0,$dateSelector=0,$hookmanager=false)
+	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0, $hookmanager=false)
 	{
 		global $conf,$langs;
 
@@ -2535,16 +2535,16 @@ abstract class CommonObject
 		print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
 		print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
 		print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
-    if (! empty($conf->margin->enabled)) {
-	    if ($conf->global->MARGIN_TYPE == "1")
+		if (! empty($conf->margin->enabled)) {
+			if ($conf->global->MARGIN_TYPE == "1")
 				print '<td align="right" width="80">'.$langs->trans('BuyingPrice').'</td>';
 			else
 				print '<td align="right" width="80">'.$langs->trans('BuyingCost').'</td>';
-	    if($conf->global->DISPLAY_MARGIN_RATES)
-        print '<td align="right" width="50">'.$langs->trans('MarginRate').'</td>';
-	    if($conf->global->DISPLAY_MARK_RATES)
-        print '<td align="right" width="50">'.$langs->trans('MarkRate').'</td>';
-	  }
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+				print '<td align="right" width="50">'.$langs->trans('MarginRate').'</td>';
+			if (! empty($conf->global->DISPLAY_MARK_RATES))
+				print '<td align="right" width="50">'.$langs->trans('MarkRate').'</td>';
+		}
 		print '<td align="right" width="50">'.$langs->trans('TotalHTShort').'</td>';
 		print '<td width="10">&nbsp;</td>';
 		print '<td width="10">&nbsp;</td>';
@@ -2564,7 +2564,7 @@ abstract class CommonObject
 				if (empty($line->fk_parent_line))
 				{
 					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected);
-					$reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+					$reshook=$hookmanager->executeHooks('printObjectLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 				}
 			}
 			else
