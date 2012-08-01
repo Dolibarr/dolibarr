@@ -332,16 +332,22 @@ class modSociete extends DolibarrModules
 		// We disable this to prevent pb of modules not correctly disabled
 		//$this->remove($options);
 
-		require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+		//ODT template
+		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/thirdparties/template_thirdparty.odt';
 		$dirodt=DOL_DATA_ROOT.'/doctemplates/thirdparties';
-		dol_mkdir($dirodt);
-		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/thirdparties/template_thirdparty.odt'; $dest=$dirodt.'/template_thirdparty.odt';
-		$result=dol_copy($src,$dest,0,0);
-		if ($result < 0)
+		$dest=$dirodt.'/template_thirdparty.odt';
+
+		if (file_exists($src) && ! file_exists($dest))
 		{
-		    $langs->load("errors");
-		    $this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
-		    return 0;
+			require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+			dol_mkdir($dirodt);
+			$result=dol_copy($src,$dest,0,0);
+			if ($result < 0)
+			{
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+				return 0;
+			}
 		}
 
 		$sql = array();

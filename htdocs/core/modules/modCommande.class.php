@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2012      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -200,22 +200,27 @@ class modCommande extends DolibarrModules
 		$this->remove($options);
 
 		//ODT template
-		require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/orders/template_order.odt';
 		$dirodt=DOL_DATA_ROOT.'/doctemplates/orders';
-		dol_mkdir($dirodt);
-		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/orders/template_order.odt'; $dest=$dirodt.'/template_order.odt';
-		$result=dol_copy($src,$dest,0,0);
-		if ($result < 0)
+		$dest=$dirodt.'/template_order.odt';
+
+		if (file_exists($src) && ! file_exists($dest))
 		{
-		    $langs->load("errors");
-		    $this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
-		    return 0;
+			require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+			dol_mkdir($dirodt);
+			$result=dol_copy($src,$dest,0,0);
+			if ($result < 0)
+			{
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+				return 0;
+			}
 		}
 
 		$sql = array(
-		 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
-		 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','order',".$conf->entity.")"
-		 );
+				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
+				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','order',".$conf->entity.")"
+		);
 
 		 return $this->_init($sql,$options);
 	}
