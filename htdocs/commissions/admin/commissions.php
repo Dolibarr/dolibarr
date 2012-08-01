@@ -148,7 +148,7 @@ print '</tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'>';
 print '<td align="center" colspan="3">';
-print '<input type="submit" />';
+print '<input type="submit" class="button" />';
 print '</td>';
 print '</tr>';
 
