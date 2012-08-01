@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,7 @@ $socid=0;
 $id = GETPOST('id','int');
 $ref = GETPOST("ref");
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'propale', $id, 'propal');
+$result = restrictedArea($user, 'propal', $id);
 
 
 /*
