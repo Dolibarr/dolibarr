@@ -3010,7 +3010,7 @@ class Facture extends CommonInvoice
     {
         $sql = 'SELECT l.rowid, l.description, l.fk_product, l.product_type, l.qty, l.tva_tx,';
         $sql.= ' l.fk_remise_except,';
-        $sql.= ' l.remise_percent, l.subprice, l.info_bits, l.rang, l.special_code,';
+        $sql.= ' l.remise_percent, l.subprice, l.info_bits, l.rang, l.special_code, l.fk_parent_line,';
         $sql.= ' l.total_ht, l.total_tva, l.total_ttc, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht,';
         $sql.= ' l.date_start,';
         $sql.= ' l.date_end,';
@@ -3049,15 +3049,16 @@ class Facture extends CommonInvoice
                 $this->lines[$i]->total_ht			= $obj->total_ht;
                 $this->lines[$i]->total_tva			= $obj->total_tva;
                 $this->lines[$i]->total_ttc			= $obj->total_ttc;
+                $this->lines[$i]->fk_parent_line	= $obj->fk_parent_line;
                 $this->lines[$i]->special_code		= $obj->special_code;
                 $this->lines[$i]->rang				= $obj->rang;
                 $this->lines[$i]->date_start		= $this->db->jdate($obj->date_start);
                 $this->lines[$i]->date_end			= $this->db->jdate($obj->date_end);
-				  			$this->lines[$i]->fk_fournprice = $obj->fk_fournprice;
-				  			$marginInfos = getMarginInfos($obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, $this->lines[$i]->fk_fournprice, $obj->pa_ht);
-						    $this->lines[$i]->pa_ht = $marginInfos[0];
-								$this->lines[$i]->marge_tx			= $marginInfos[1];
-				 				$this->lines[$i]->marque_tx			= $marginInfos[2];
+				$this->lines[$i]->fk_fournprice		= $obj->fk_fournprice;
+				$marginInfos						= getMarginInfos($obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, $this->lines[$i]->fk_fournprice, $obj->pa_ht);
+				$this->lines[$i]->pa_ht				= $marginInfos[0];
+				$this->lines[$i]->marge_tx			= $marginInfos[1];
+				 $this->lines[$i]->marque_tx		= $marginInfos[2];
 
                 $i++;
             }
@@ -3266,14 +3267,13 @@ class FactureLigne
         if (empty($this->special_code)) $this->special_code=0;
         if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
 
+        if (empty($this->pa_ht)) $this->pa_ht=0;
 
-		    if (empty($this->pa_ht)) $this->pa_ht=0;
-
-				// si prix d'achat non renseign� et utilis� pour calcul des marges alors prix achat = prix vente (idem pour remises)
-				if ($this->pa_ht == 0) {
-		      if ($this->subprice < 0 || ($conf->global->CalculateMarginsOnLinesWithoutBuyingPrice == 1))
-		        $this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);
-		    }
+        // si prix d'achat non renseigne et utilise pour calcul des marges alors prix achat = prix vente (idem pour remises)
+        if ($this->pa_ht == 0) {
+        	if ($this->subprice < 0 || ($conf->global->CalculateMarginsOnLinesWithoutBuyingPrice == 1))
+        		$this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);
+        }
 
         // Check parameters
         if ($this->product_type < 0) return -1;
@@ -3294,27 +3294,19 @@ class FactureLigne
         $sql.= " ".price2num($this->tva_tx).",";
         $sql.= " ".price2num($this->localtax1_tx).",";
         $sql.= " ".price2num($this->localtax2_tx).",";
-        if ($this->fk_product) { $sql.= "'".$this->fk_product."',"; }
-        else { $sql.='null,'; }
+        $sql.= ' '.(! empty($this->fk_product)?$this->fk_product:"null").',';
         $sql.= " ".$this->product_type.",";
         $sql.= " ".price2num($this->remise_percent).",";
         $sql.= " ".price2num($this->subprice).",";
-        //$sql.= " ".price2num($this->price).",";
-        //$sql.= " ".($this->remise?price2num($this->remise):'0').",";	// Deprecated
-        if ($this->fk_remise_except) $sql.= $this->fk_remise_except.",";
-        else $sql.= 'null,';
-        if ($this->date_start) { $sql.= "'".$this->db->idate($this->date_start)."',"; }
-        else { $sql.='null,'; }
-        if ($this->date_end)   { $sql.= "'".$this->db->idate($this->date_end)."',"; }
-        else { $sql.='null,'; }
+        $sql.= ' '.(! empty($this->fk_remise_except)?$this->fk_remise_except:"null").',';
+        $sql.= " ".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null").",";
+        $sql.= " ".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null").",";
         $sql.= ' '.$this->fk_code_ventilation.',';
         $sql.= ' '.$this->fk_export_compta.',';
         $sql.= ' '.$this->rang.',';
         $sql.= ' '.$this->special_code.',';
-				if (isset($this->fk_fournprice)) $sql.= ' '.$this->fk_fournprice.',';
-				else $sql.= ' null,';
-				if (isset($this->pa_ht)) $sql.= ' '.price2num($this->pa_ht).',';
-				else $sql.= ' null,';
+        $sql.= ' '.(! empty($this->fk_fournprice)?$this->fk_fournprice:"null").',';
+        $sql.= ' '.price2num($this->pa_ht).',';
         $sql.= " '".$this->info_bits."',";
         $sql.= " ".price2num($this->total_ht).",";
 		$sql.= " ".price2num($this->total_tva).",";
@@ -3429,13 +3421,13 @@ class FactureLigne
         // Check parameters
         if ($this->product_type < 0) return -1;
 
-		    if (empty($this->pa_ht)) $this->pa_ht=0;
+        if (empty($this->pa_ht)) $this->pa_ht=0;
 
-				// si prix d'achat non renseign� et utilis� pour calcul des marges alors prix achat = prix vente (idem pour remises)
-				if ($this->pa_ht == 0) {
-		      if ($this->subprice < 0 || ($conf->global->CalculateMarginsOnLinesWithoutBuyingPrice == 1))
-		        $this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);
-		    }
+        // si prix d'achat non renseigne et utilise pour calcul des marges alors prix achat = prix vente (idem pour remises)
+        if ($this->pa_ht == 0) {
+        	if ($this->subprice < 0 || ($conf->global->CalculateMarginsOnLinesWithoutBuyingPrice == 1))
+        		$this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);
+        }
 
         $this->db->begin();
 
@@ -3452,10 +3444,8 @@ class FactureLigne
         $sql.= ",localtax1_tx=".price2num($this->localtax1_tx)."";
         $sql.= ",localtax2_tx=".price2num($this->localtax2_tx)."";
         $sql.= ",qty=".price2num($this->qty)."";
-        if ($this->date_start) { $sql.= ",date_start='".$this->db->idate($this->date_start)."'"; }
-        else { $sql.=',date_start=null'; }
-        if ($this->date_end) { $sql.= ",date_end='".$this->db->idate($this->date_end)."'"; }
-        else { $sql.=',date_end=null'; }
+        $sql.= ",date_start=".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null");
+        $sql.= ",date_end=".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
         $sql.= ",product_type=".$this->product_type;
         $sql.= ",info_bits='".$this->info_bits."'";
         if (empty($this->skip_update_total))
@@ -3464,8 +3454,8 @@ class FactureLigne
         	$sql.= ",total_tva=".price2num($this->total_tva)."";
         	$sql.= ",total_ttc=".price2num($this->total_ttc)."";
         }
-				$sql.= " , fk_product_fournisseur_price='".$this->fk_fournprice."'";
-				$sql.= " , buy_price_ht='".price2num($this->pa_ht)."'";
+		$sql.= " , fk_product_fournisseur_price='".$this->fk_fournprice."'";
+		$sql.= " , buy_price_ht='".price2num($this->pa_ht)."'";
         $sql.= ",total_localtax1=".price2num($this->total_localtax1)."";
         $sql.= ",total_localtax2=".price2num($this->total_localtax2)."";
         $sql.= ",fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
