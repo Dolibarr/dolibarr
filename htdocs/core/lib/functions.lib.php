@@ -226,12 +226,17 @@ function dol_getprefix()
  *  To link to a module file from a core file, then this function can be used
  *
  * 	@param	string	$relpath	Relative path to file (Ie: mydir/myfile, ../myfile, ...)
+ * 	@param	string	$classname	Class name
  *  @return int					false if include fails.
  */
-function dol_include_once($relpath)
+function dol_include_once($relpath, $classname='')
 {
     global $conf,$langs,$user,$mysoc;   // Other global var must be retreived with $GLOBALS['var']
-    return @include_once(dol_buildpath($relpath));
+    if (! empty($classname) && ! class_exists($classname)) {
+    	return @include dol_buildpath($relpath);
+    } else {
+    	return @include_once dol_buildpath($relpath);
+    }
 }
 
 
@@ -242,7 +247,7 @@ function dol_include_once($relpath)
  *  @param	int		$type		0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path)
  *  @return string				Full filsystem path (if mode=0), Full url path (if mode=1)
  */
-function dol_buildpath($path,$type=0)
+function dol_buildpath($path, $type=0)
 {
     if (empty($type))	// For a filesystem path
     {
@@ -270,7 +275,7 @@ function dol_buildpath($path,$type=0)
                 }
             }
         }
-        if ($type == 2)
+        else if ($type == 2)
         {
             $res = DOL_MAIN_URL_ROOT.$path;      // Standard value
             if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT)            // We check only if alternate feature is used
