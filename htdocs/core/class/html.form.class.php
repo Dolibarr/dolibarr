@@ -804,11 +804,12 @@ class Form
      *	@param	string	$limitto		Disable answers that are not id in this array list
      *	@param	string	$showfunction   Add function into label
      *	@param	string	$moreclass		Add more class to class style
+     *	@param	string	$showsoc	    Add company into label
      *	@return	int						<0 if KO, Nb of contact in list if OK
      */
-    function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='')
+    function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $showsoc=0)
     {
-    	print $this->selectcontacts($socid,$selected,$htmlname,$showempty,$exclude,$limitto,$showfunction, $moreclass);
+    	print $this->selectcontacts($socid,$selected,$htmlname,$showempty,$exclude,$limitto,$showfunction, $moreclass, $showsoc);
     	return $this->num;
     }
 
@@ -824,9 +825,10 @@ class Form
      *	@param	string	$showfunction   Add function into label
      *	@param	string	$moreclass		Add more class to class style
      *	@param	bool	$options_only	Return options only (for ajax treatment)
-     *	@return	int						<0 if KO, Nb of contact in list if OK
+     *	@param	string	$showsoc	    Add company into label
+     *	@return	 int						<0 if KO, Nb of contact in list if OK
      */
-    function selectcontacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $options_only=false)
+    function selectcontacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $options_only=false, $showsoc=0)
     {
         global $conf,$langs;
 
@@ -836,7 +838,13 @@ class Form
 
         // On recherche les societes
         $sql = "SELECT sp.rowid, sp.name as name, sp.firstname, sp.poste";
+        if ($showsoc > 0) {
+        	$sql.= " , s.nom as company";
+        }
         $sql.= " FROM ".MAIN_DB_PREFIX ."socpeople as sp";
+        if ($showsoc > 0) {
+        	$sql.= " LEFT OUTER JOIN  ".MAIN_DB_PREFIX ."societe as s ON s.rowid=sp.fk_soc ";
+        }
         $sql.= " WHERE sp.entity IN (".getEntity('societe', 1).")";
         if ($socid > 0) $sql.= " AND sp.fk_soc=".$socid;
         $sql.= " ORDER BY sp.name ASC";
@@ -877,6 +885,7 @@ class Form
                             $out.= ' selected="selected">';
                             $out.= $contactstatic->getFullName($langs);
                             if ($showfunction && $obj->poste) $out.= ' ('.$obj->poste.')';
+                            if (($showsoc > 0) && $obj->company) $out.= ' - ('.$obj->company.')';
                             $out.= '</option>';
                         }
                         else
@@ -886,6 +895,7 @@ class Form
                             $out.= '>';
                             $out.= $contactstatic->getFullName($langs);
                             if ($showfunction && $obj->poste) $out.= ' ('.$obj->poste.')';
+                            if (($showsoc > 0) && $obj->company) $out.= ' - ('.$obj->company.')';
                             $out.= '</option>';
                         }
                     }
@@ -895,6 +905,7 @@ class Form
                         {
                             $out.= $contactstatic->getFullName($langs);
                             if ($showfunction && $obj->poste) $out.= ' ('.$obj->poste.')';
+                            if (($showsoc > 0) && $obj->company) $out.= ' - ('.$obj->company.')';
                         }
                     }
                     $i++;
