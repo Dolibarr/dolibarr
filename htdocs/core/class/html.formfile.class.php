@@ -506,7 +506,7 @@ class FormFile
                 {
                     $out.= '<td align="right">';
                     //$out.= '<a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath);
-                    $out.= '<a href="'.$urlsource.'&action=remove_file&modulepart='.$modulepart.'&file='.urlencode($relativepath);
+                    $out.= '<a href="'.$urlsource.(strpos($urlsource,'?')?'&':'?').'action=remove_file&modulepart='.$modulepart.'&file='.urlencode($relativepath);
                     $out.= ($param?'&'.$param:'');
                     $out.= '&urlsource='.urlencode($urlsource);
                     $out.= '">'.img_delete().'</a></td>';
