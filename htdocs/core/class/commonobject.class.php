@@ -2340,11 +2340,14 @@ abstract class CommonObject
         if ($objecttype == 'member') {
             $classpath = 'adherents/class'; $module='adherent'; $subelement='adherent';
         }
+        if ($objecttype == 'contact') {
+        	$classpath = 'contact/class'; $module='societe'; $subelement='contact';
+        }
         if ($objecttype == 'cabinetmed_cons') {
             $classpath = 'cabinetmed/class'; $module='cabinetmed'; $subelement='cabinetmedcons';
         }
 
-        //print "objecttype=".$objecttype." module=".$module." subelement=".$subelement;
+        // print "objecttype=".$objecttype." module=".$module." subelement=".$subelement;
 
         $classfile = strtolower($subelement); $classname = ucfirst($subelement);
         if ($objecttype == 'invoice_supplier') {

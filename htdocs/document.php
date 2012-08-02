@@ -407,6 +407,12 @@ if ($modulepart)
         $accessallowed=1;
         $original_file=$conf->scanner->dir_temp.'/'.$user->id.'/'.$original_file;
     }
+    // Wrapping for event registration
+    else if ($modulepart == 'registration')
+    {
+    	$accessallowed=1;
+    	$original_file=$conf->event->dir_output.'/registration/'.$original_file;
+    }
 
 	// Generic wrapping
 	else
