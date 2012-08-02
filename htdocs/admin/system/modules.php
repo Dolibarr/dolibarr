@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2010-2011	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2010-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,8 @@ $langs->load("admin");
 $langs->load("install");
 $langs->load("other");
 
-if (!$user->admin) accessforbidden();
+if (! $user->admin)
+	accessforbidden();
 
 
 /*
@@ -123,12 +124,14 @@ foreach($sortorder as $numero=>$name)
 print '</table>';
 print '<br>';
 sort($rights_ids);
+$old='';
 foreach($rights_ids as $right_id)
 {
 	if ($old == $right_id)
-	print "Warning duplicate id on permission : ".$right_id."<br>";
+		print "Warning duplicate id on permission : ".$right_id."<br>";
 	$old = $right_id;
 }
 
 llxFooter();
+$db->close();
 ?>
