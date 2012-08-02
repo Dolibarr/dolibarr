@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2012	Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,13 +26,13 @@ include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
 
 $langs->load("admin");
 
-$action=GETPOST('action');
-$confirm=GETPOST('confirm');
+if (! $user->admin)
+	accessforbidden();
+
+$action=GETPOST('action','alpha');
+$confirm=GETPOST('confirm','alpha');
 $choice=GETPOST('choice');
 
-if (! $user->admin) accessforbidden();
-
-if ($_GET["msg"]) $message='<div class="error">'.$_GET["msg"].'</div>';
 
 // Define filelog to discard it from purge
 $filelog='';
@@ -94,7 +95,7 @@ if ($action=='purge' && ! preg_match('/^confirm/i',$choice) && ($choice != 'allf
 		}
 
 		// Update cachenbofdoc
-		if ($conf->ecm->enabled && $choice=='allfiles')
+		if (! empty($conf->ecm->enabled) && $choice=='allfiles')
 		{
 			require_once(DOL_DOCUMENT_ROOT."/ecm/class/ecmdirectory.class.php");
 			$ecmdirstatic = new EcmDirectory($db);
@@ -102,9 +103,9 @@ if ($action=='purge' && ! preg_match('/^confirm/i',$choice) && ($choice != 'allf
 		}
 	}
 
-	if ($count) $message=$langs->trans("PurgeNDirectoriesDeleted",$count);
-	else $message=$langs->trans("PurgeNothingToDelete");
-	$message='<div class="ok">'.$message.'</div>';
+	if ($count) $mesg=$langs->trans("PurgeNDirectoriesDeleted", $count);
+	else $mesg=$langs->trans("PurgeNothingToDelete");
+	setEventMessage($mesg);
 }
 
 
@@ -123,9 +124,8 @@ print '<br>';
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-
-print '<input type="hidden" name="action" value="purge">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="action" value="purge" />';
 
 print '<table class="border" width="100%">';
 
@@ -156,13 +156,6 @@ if ($choice != 'confirm_allfiles')
 
 print '</form>';
 
-
-if ($message)
-{
-	print '<br>'.$message.'<br>';
-	print "\n";
-}
-
 if (preg_match('/^confirm/i',$choice))
 {
 	print '<br>';
@@ -172,6 +165,5 @@ if (preg_match('/^confirm/i',$choice))
 
 
 llxFooter();
-
 $db->close();
 ?>

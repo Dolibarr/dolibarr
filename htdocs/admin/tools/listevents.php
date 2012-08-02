@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2004-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,11 @@
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/core/class/events.class.php');
 
-$action=GETPOST('action');
+if (! $user->admin)
+	accessforbidden();
 
-if (! $user->admin) accessforbidden();
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm','alpha');
 
 // Security check
 if ($user->societe_id > 0)
@@ -65,7 +67,7 @@ $search_ua   = GETPOST("search_ua");
 $now=dol_now();
 
 // Purge audit events
-if ($action == 'confirm_purge' && $_REQUEST['confirm'] == 'yes' && $user->admin)
+if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin)
 {
 	$error=0;
 
@@ -81,7 +83,7 @@ if ($action == 'confirm_purge' && $_REQUEST['confirm'] == 'yes' && $user->admin)
 	if (! $resql)
 	{
 		$error++;
-		$mesg='<div class="error">'.$db->lasterror().'</div>';
+		setEventMessage($db->lasterror(), 'errors');
 	}
 
 	// Add event purge
@@ -122,11 +124,11 @@ $sql.= " u.login";
 $sql.= " FROM ".MAIN_DB_PREFIX."events as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
 $sql.= " WHERE e.entity = ".$conf->entity;
-if ($search_code) { $usefilter++; $sql.=" AND e.type like '%".$search_code."%'"; }
-if ($search_ip)   { $usefilter++; $sql.=" AND e.ip like '%".$search_ip."%'"; }
-if ($search_user) { $usefilter++; $sql.=" AND u.login like '%".$search_user."%'"; }
-if ($search_desc) { $usefilter++; $sql.=" AND e.description like '%".$search_desc."%'"; }
-if ($search_ua)   { $usefilter++; $sql.=" AND e.user_agent like '%".$search_ua."%'"; }
+if ($search_code) { $usefilter++; $sql.=" AND e.type LIKE '%".$search_code."%'"; }
+if ($search_ip)   { $usefilter++; $sql.=" AND e.ip LIKE '%".$search_ip."%'"; }
+if ($search_user) { $usefilter++; $sql.=" AND u.login LIKE '%".$search_user."%'"; }
+if ($search_desc) { $usefilter++; $sql.=" AND e.description LIKE '%".$search_desc."%'"; }
+if ($search_ua)   { $usefilter++; $sql.=" AND e.user_agent LIKE '%".$search_ua."%'"; }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 //print $sql;
@@ -138,7 +140,7 @@ if ($result)
 
 	print_barre_liste($langs->trans("ListOfSecurityEvents"), $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',$num,0,'setup');
 
-	if ($_GET["action"] == 'purge')
+	if ($action == 'purge')
 	{
 		$formquestion=array();
 		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeAuditEvents'), $langs->trans('ConfirmPurgeAuditEvents'),'confirm_purge',$formquestion,'no',1);
@@ -188,7 +190,7 @@ if ($result)
 
 	$var=True;
 
-	while ($i < min($num,$conf->liste_limit))
+	while ($i < min($num, $conf->liste_limit))
 	{
 		$obj = $db->fetch_object($result);
 
@@ -259,7 +261,7 @@ else
 	dol_print_error($db);
 }
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>

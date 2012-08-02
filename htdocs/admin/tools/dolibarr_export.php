@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2012	Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,19 +29,19 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 
 $langs->load("admin");
 
-$action=GETPOST('action');
+$action=GETPOST('action','alpha');
 
-$sortfield = GETPOST("sortfield");
-$sortorder = GETPOST("sortorder");
-$page = GETPOST("page");
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="date";
 if ($page < 0) { $page = 0; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page;
 
-if (! $user->admin) accessforbidden();
-
+if (! $user->admin)
+	accessforbidden();
 
 
 /*
@@ -114,13 +115,6 @@ print $langs->trans("BackupDesc2",DOL_DATA_ROOT).'<br>';
 print $langs->trans("BackupDescX").'<br><br>';
 print $langs->trans("BackupDesc3",DOL_DATA_ROOT).'<br>';
 print $langs->trans("BackupDescY").'<br><br>';
-
-if ($_GET["msg"])
-{
-	print '<div class="error">'.$_GET["msg"].'</div>';
-	print '<br>';
-	print "\n";
-}
 
 
 ?>

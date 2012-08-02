@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2012	Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,11 @@ require("../../main.inc.php");
 $langs->load("admin");
 $langs->load("other");
 
-if (! $user->admin) accessforbidden();
+if (! $user->admin)
+	accessforbidden();
+
+$radio_dump=GETPOST('radio_dump');
+$showpass=GETPOST('showpass');
 
 
 /*
@@ -41,8 +46,8 @@ llxHeader('','',$help_url);
 ?>
 <script type="text/javascript">
 jQuery(document).ready(function() {
-	jQuery("#mysql_options").<?php echo GETPOST('radio_dump')=='mysql_options'?'show()':'hide()'; ?>;
-	jQuery("#postgresql_options").<?php echo GETPOST('radio_dump')=='postgresql_options'?'show()':'hide()'; ?>;
+	jQuery("#mysql_options").<?php echo $radio_dump=='mysql_options'?'show()':'hide()'; ?>;
+	jQuery("#postgresql_options").<?php echo $radio_dump=='postgresql_options'?'show()':'hide()'; ?>;
 
 	jQuery("#radio_dump_mysql").click(function() {
 		jQuery("#mysql_options").show();
@@ -79,7 +84,7 @@ print $langs->trans("RestoreDesc3",DOL_DATA_ROOT).'<br><br>';
     {
     ?>
     <div class="formelementrow">
-        <input type="radio" name="what" value="mysql" id="radio_dump_mysql"<?php echo ($_GET["radio_dump"]=='mysql_options'?' checked':''); ?> />
+        <input type="radio" name="what" value="mysql" id="radio_dump_mysql"<?php echo ($radio_dump=='mysql_options'?' checked':''); ?> />
         <label for="radio_dump_mysql">MySQL (mysql)</label>
     </div>
     <?php
@@ -88,7 +93,7 @@ print $langs->trans("RestoreDesc3",DOL_DATA_ROOT).'<br><br>';
     {
     ?>
     <div class="formelementrow">
-        <input type="radio" name="what" value="mysql" id="radio_dump_postgresql"<?php echo ($_GET["radio_dump"]=='postgresql_options'?' checked':''); ?> />
+        <input type="radio" name="what" value="mysql" id="radio_dump_postgresql"<?php echo ($radio_dump=='postgresql_options'?' checked':''); ?> />
         <label for="radio_dump_postgresql">PostgreSQL Restore (pg_restore)</label>
     </div>
     <?php
@@ -132,7 +137,7 @@ if ($label == 'MySQL')
 
 	echo $langs->trans("ImportMySqlDesc");
 	print '<br>';
-	print '<textarea rows="1" cols="120">'.$langs->trans("ImportMySqlCommand",$command,$_GET["showpass"]?$paramclear:$paramcrypted).'</textarea><br>';
+	print '<textarea rows="1" cols="120">'.$langs->trans("ImportMySqlCommand",$command,($showpass?$paramclear:$paramcrypted)).'</textarea><br>';
 
 	if (empty($_GET["showpass"]) && $dolibarr_main_db_pass) print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=1&amp;radio_dump=mysql_options">'.$langs->trans("UnHidePassword").'</a>';
 	//else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
@@ -168,7 +173,7 @@ else if ($label == 'PostgreSQL')
 
     echo $langs->trans("ImportPostgreSqlDesc");
     print '<br>';
-    print '<textarea rows="1" cols="120">'.$langs->trans("ImportPostgreSqlCommand",$command,$_GET["showpass"]?$paramclear:$paramcrypted).'</textarea><br>';
+    print '<textarea rows="1" cols="120">'.$langs->trans("ImportPostgreSqlCommand",$command,($showpass?$paramclear:$paramcrypted)).'</textarea><br>';
 
     //if (empty($_GET["showpass"]) && $dolibarr_main_db_pass) print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=1&amp;radio_dump=postgresql_options">'.$langs->trans("UnHidePassword").'</a>';
     //else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';

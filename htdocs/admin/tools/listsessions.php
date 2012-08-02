@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2004-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,11 @@ require_once(DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php');
 
 $langs->load("install");
 
-if (! $user->admin) accessforbidden();
+if (! $user->admin)
+	accessforbidden();
+
+$action=GETPOST('action', 'alpha');
+$confirm=GETPOST('confirm', 'alpha');
 
 // Security check
 if ($user->societe_id > 0)
@@ -56,13 +60,13 @@ if (! $sortfield) $sortfield="dateevent";
  */
 
 // Purge sessions
-if ($_REQUEST['action'] == 'confirm_purge' && $_REQUEST['confirm'] == 'yes' && $user->admin)
+if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin)
 {
 	$res=purgeSessions(session_id());
 }
 
 // Lock new sessions
-if ($_REQUEST['action'] == 'confirm_lock' && $_REQUEST['confirm'] == 'yes' && $user->admin)
+if ($action == 'confirm_lock' && $confirm == 'yes' && $user->admin)
 {
 	if (dolibarr_set_const($db, 'MAIN_ONLY_LOGIN_ALLOWED', $user->login, 'text',1,'Logon is restricted to a particular user', 0) < 0)
 	{
@@ -71,7 +75,7 @@ if ($_REQUEST['action'] == 'confirm_lock' && $_REQUEST['confirm'] == 'yes' && $u
 }
 
 // Unlock new sessions
-if ($_REQUEST['action'] == 'confirm_unlock' && $user->admin)
+if ($action == 'confirm_unlock' && $user->admin)
 {
 	if (dolibarr_del_const($db, 'MAIN_ONLY_LOGIN_ALLOWED', -1) < 0)
 	{
@@ -93,6 +97,7 @@ $userstatic=new User($db);
 $usefilter=0;
 
 $listofsessions=listOfSessions();
+$num=count($listofsessions);
 
 print_barre_liste($langs->trans("Sessions"), $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',$num,0,'setup');
 
@@ -105,13 +110,13 @@ print '<b>'.$langs->trans("SessionSavePath").'</b>: '.$savepath.'<br>';
 if ($openbasedir) print '<b>'.$langs->trans("OpenBaseDir").'</b>: '.$openbasedir.'<br>';
 print '<br>';
 
-if ($_GET["action"] == 'purge')
+if ($action == 'purge')
 {
 	$formquestion=array();
 	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeSessions'), $langs->trans('ConfirmPurgeSessions'),'confirm_purge',$formquestion,'no',2);
 	if ($ret == 'html') print '<br>';
 }
-if ($_GET["action"] == 'lock')
+else if ($action == 'lock')
 {
 	$formquestion=array();
 	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('LockNewSessions'), $langs->trans('ConfirmLockNewSessions',$user->login),'confirm_lock',$formquestion,'no',1);
@@ -206,7 +211,6 @@ print '</div>';
 
 print '<br>';
 
-$db->close();
-
 llxFooter();
+$db->close();
 ?>
