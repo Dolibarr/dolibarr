@@ -616,7 +616,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
     $out="\n".'<div class="tabs">'."\n";
 
     // Affichage titre
-    if ($title)
+    if (! empty($title))
     {
         $limittitle=30;
         $out.='<a class="tabTitle">';
@@ -627,7 +627,7 @@ function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $p
 
     // Define max of key (max may be higher than sizeof because of hole due to module disabling some tabs).
     $maxkey=-1;
-    if (is_array($links))
+    if (is_array($links) && ! empty($links))
     {
         $keys=array_keys($links);
         if (count($keys)) $maxkey=max($keys);
