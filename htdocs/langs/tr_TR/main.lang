@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Language code: tr_TR
  * Manually generated
  * Generation date 2012-07-04 21:40:00
@@ -9,18 +9,20 @@
 
 CHARSET=UTF-8
 DIRECTION=ltr
+FONTFORPDF=DejaVuSans
+FONTSIZEFORPDF=8
 SeparatorDecimal=.
 SeparatorThousand=,
 FormatDateShort=%d/%m/%Y
-FormatDateShortJava=dd/mm/yyyy
+FormatDateShortJava=dd/MM/yyyy
 FormatDateShortJQuery=dd/mm/yy
-FormatHourShort=%I:%M%p
+FormatHourShort=%H:%M
 FormatHourShortDuration=%H:%M
-FormatDateTextShort=%b%d%Y
-FormatDateText=%D%B%Y
-FormatDateHourShort=%d/%m/%Y %I:%M%p
-FormatDateHourTextShort=%b %d,%Y,%I:%M %p
-FormatDateHourText=%D %B %Y,%I:%M %p
+FormatDateTextShort=%d %b %Y
+FormatDateText=%d %B %Y
+FormatDateHourShort=%d/%m/%Y %H:%M
+FormatDateHourTextShort=%d %b %Y %H:%M
+FormatDateHourText=%d %B %Y %H:%M
 DatabaseConnection=Veritabanı bağlantısı
 NoError=Hata yok
 Error=Hata
@@ -364,8 +366,8 @@ Popularity=Popülerlik
 Categories=Kategoriler
 Category=Kategori
 By=Tarafından
-From=Kimden
-to=kadar
+From=Başlama
+to=Bitiş
 and=ve
 or=veya
 Other=Diğer
@@ -474,7 +476,7 @@ File=Dosya
 Files=Dosyalar
 NotAllowed=İzin verilmez
 ReadPermissionNotAllowed=Okuma izni yok
-AmountInCurrency=Para birimi tutarı %s
+AmountInCurrency=Para birimi: %s
 Example=Örnek
 Examples=Örnekler
 NoExample=Örnek yok
@@ -656,6 +658,3 @@ ShortThursday=Pe
 ShortFriday=Cu
 ShortSaturday=Ct
 ShortSunday=Pa
-FONTFORPDF=DejaVuSans
-FONTSIZEFORPDF=8
-WelcomeString=% <font class
