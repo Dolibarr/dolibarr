@@ -3863,24 +3863,34 @@ function dol_validElement($element)
  */
 function picto_from_langcode($codelang)
 {
-    $ret='';
+    global $langs;
+
     if (! empty($codelang))
     {
-        if ($codelang == 'auto') $ret=img_picto('',DOL_URL_ROOT.'/theme/common/flags/int.png','',1);
-        else {
-            //print $codelang;
-            $langtocountryflag=array('ar_AR'=>'','ca_ES'=>'catalonia','da_DA'=>'dk','fr_CA'=>'mq','sv_SV'=>'se');
-            $tmpcode='';
-            if (isset($langtocountryflag[$codelang])) $tmpcode=$langtocountryflag[$codelang];
-            else
-            {
-                $tmparray=explode('_',$codelang);
-                $tmpcode=empty($tmparray[1])?$tmparray[0]:$tmparray[1];
-            }
-            if ($tmpcode) $ret.=img_picto($codelang,DOL_URL_ROOT.'/theme/common/flags/'.strtolower($tmpcode).'.png','',1);
+        if ($codelang == 'auto')
+        {
+            return img_picto_common($langs->trans('AutoDetectLang'), 'flags/int.png');
         }
+
+        $langtocountryflag = array(
+            'ar_AR' => '',
+            'ca_ES' => 'catalonia',
+            'da_DA' => 'dk',
+            'fr_CA' => 'mq',
+            'sv_SV' => 'se'
+        );
+
+        if (isset($langtocountryflag[$codelang])) $tmpcode = $langtocountryflag[$codelang];
+        else
+        {
+            $tmparray = explode('_', $codelang);
+            $tmpcode = empty($tmparray[1]) ? $tmparray[0] : $tmparray[1];
+        }
+
+        if (isset($tmpcode)) return img_picto_common($codelang, 'flags/'.strtolower($tmpcode).'.png');
     }
-    return $ret;
+
+    return '';
 }
 
 /**
