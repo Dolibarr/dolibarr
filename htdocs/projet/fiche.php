@@ -518,7 +518,7 @@ else
     if ($action != "edit" )
     {
         // Validate
-        if ($project->statut == 0 && $user->rights->projet->creer)
+        if ($object->statut == 0 && $user->rights->projet->creer)
         {
             if ($userWrite > 0)
             {
