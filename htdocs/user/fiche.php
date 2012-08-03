@@ -1313,15 +1313,15 @@ else
                 $usergroup=new UserGroup($db);
                 $groupslist = $usergroup->listGroupsForUser($fuser->id);
 
-                if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+                if (! empty($groupslist))
                 {
-                	if (! empty($groupslist))
-                	{
-                		foreach($groupslist as $groupforuser)
-                		{
-                			$exclude[]=$groupforuser->id;
-                		}
-                	}
+                    if (! (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)))
+                    {
+                        foreach($groupslist as $groupforuser)
+                        {
+                            $exclude[]=$groupforuser->id;
+                        }
+                    }
                 }
 
                 if ($caneditgroup)
@@ -1333,7 +1333,7 @@ else
                     print '<table class="noborder" width="100%">'."\n";
                     print '<tr class="liste_titre"><th class="liste_titre" width="25%">'.$langs->trans("GroupsToAdd").'</th>'."\n";
                     print '<th>';
-                    print $form->select_dolgroups('','group',1,$exclude,0,'','',$fuser->entity);
+                    print $form->select_dolgroups('', 'group', 1, $exclude, 0, '', '', $fuser->entity);
                     print ' &nbsp; ';
                     // Multicompany
                     if (! empty($conf->multicompany->enabled))

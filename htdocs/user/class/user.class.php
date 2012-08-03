@@ -255,8 +255,8 @@ class User extends CommonObject
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
-					$p=$obj->param;
-					if ($p) $this->conf->$p = $obj->value;
+					$p=(! empty($obj->param)?$obj->param:'');
+					if (! empty($p)) $this->conf->$p = $obj->value;
 					$i++;
 				}
 				$this->db->free($resql);

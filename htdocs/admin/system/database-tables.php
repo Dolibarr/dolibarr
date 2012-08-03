@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+/* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,10 +28,13 @@ require("../../main.inc.php");
 
 $langs->load("admin");
 
-if (!$user->admin) accessforbidden();
+if (! $user->admin)
+	accessforbidden();
+
+$action=GETPOST('action','alpha');
 
 
-if ($_GET["action"] == 'convert')
+if ($action == 'convert')
 {
 	$db->query("alter table ".$_GET["table"]." ENGINE=INNODB");
 }
@@ -103,7 +107,7 @@ else
 
 				print '<td><a href="dbtable.php?table='.$obj->Name.'">'.$obj->Name.'</a></td>';
 				print '<td>'.$obj->Engine.'</td>';
-				if ($row[1] == "MyISAM")
+				if (isset($row[1]) && $row[1] == "MyISAM")
 				{
 					print '<td><a href="database-tables.php?action=convert&amp;table='.$row[0].'">'.$langs->trans("Convert").'</a></td>';
 				}
@@ -138,7 +142,9 @@ else
 		print '<td>Nb tuples modify</td>';
 		print '<td>Nb tuples delete</td>';
 		print "</tr>\n";
-		$sql = "select relname,seq_tup_read,idx_tup_fetch,n_tup_ins,n_tup_upd,n_tup_del from pg_stat_user_tables;";
+
+		$sql = "SELECT relname, seq_tup_read, idx_tup_fetch, n_tup_ins, n_tup_upd, n_tup_del";
+		$sql.= " FROM pg_stat_user_tables";
 
 		$resql = $db->query($sql);
 		if ($resql)
@@ -166,4 +172,5 @@ else
 }
 
 llxFooter();
+$db->close();
 ?>

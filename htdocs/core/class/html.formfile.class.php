@@ -506,7 +506,7 @@ class FormFile
                 {
                     $out.= '<td align="right">';
                     //$out.= '<a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath);
-                    $out.= '<a href="'.$urlsource.'&action=remove_file&modulepart='.$modulepart.'&file='.urlencode($relativepath);
+                    $out.= '<a href="'.$urlsource.(strpos($urlsource,'?')?'&':'?').'action=remove_file&modulepart='.$modulepart.'&file='.urlencode($relativepath);
                     $out.= ($param?'&'.$param:'');
                     $out.= '&urlsource='.urlencode($urlsource);
                     $out.= '">'.img_delete().'</a></td>';
@@ -611,7 +611,7 @@ class FormFile
                 // Delete or view link
                 print '<td align="right">';
                 if ($useinecm)     print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view().'</a> &nbsp; ';
-                if ($permtodelete) print '<a href="'.(($useinecm && !empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?id='.$object->id.'&action=delete&urlfile='.urlencode($file['name']).$param).'" class="deletefilelink" rel="'.urlencode($file['name']).'">'.img_delete().'</a>';
+                if ($permtodelete) print '<a href="'.(($useinecm && ! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?action=delete'.(isset($object->id)?'&id='.$object->id:'').'&urlfile='.urlencode($file['name']).$param).'" class="deletefilelink" rel="'.urlencode($file['name']).'">'.img_delete().'</a>';
                 else print '&nbsp;';
                 print "</td>";
                 print "</tr>\n";

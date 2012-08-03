@@ -27,8 +27,6 @@ require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/comm/propal/class/propal.class.php");
 
-if (!$user->rights->propale->lire) accessforbidden();
-
 $langs->load("propal");
 $langs->load("companies");
 
@@ -39,7 +37,7 @@ if (isset($user->societe_id) && $user->societe_id  > 0)
 	$action = '';
 	$socid = $user->societe_id;
 }
-
+$result = restrictedArea($user, 'propal');
 
 
 /*
@@ -65,7 +63,7 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
  */
 $var=false;
 print '<table class="noborder" width="100%">';
-print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal.php">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal/list.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchPropal").'</td></tr>';
 print '<tr '.$bc[$var].'><td>';

@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2007-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +30,8 @@ $langs->load("admin");
 $langs->load("install");
 $langs->load("other");
 
-if (!$user->admin)
-  accessforbidden();
+if (! $user->admin)
+	accessforbidden();
 
 
 /*
@@ -153,7 +154,7 @@ if (($thousand != ',' && $thousand != '.') || ($thousand != ' '))
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">&nbsp; => price(1234.56)</td><td>'.price(1234.56).'</td>';
 // Timezone
-$txt =$langs->trans("OSTZ").' (variable system TZ): '.($_ENV["TZ"]?$_ENV["TZ"]:$langs->trans("NotDefined")).'<br>'."\n";
+$txt =$langs->trans("OSTZ").' (variable system TZ): '.(! empty($_ENV["TZ"])?$_ENV["TZ"]:$langs->trans("NotDefined")).'<br>'."\n";
 $txt.=$langs->trans("PHPTZ").' (php.ini date.timezone): '.(ini_get("date.timezone")?ini_get("date.timezone"):$langs->trans("NotDefined")).''."\n"; // date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentTimeZone").'</td><td>';	// Timezone server PHP

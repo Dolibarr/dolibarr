@@ -9,7 +9,7 @@ ServiceCommissionRate=Taux de commissionnement sur les services
 ProductCommissionRateDetails=Taux utilisé pour calculer les commissions sur les ventes de produits
 ServiceCommissionRateDetails=Taux utilisé pour calculer les commissions sur les ventes de services
 
-Commissions=Comissions
+Commissions=Commissions
 CommissionDetails=Détail des commissions
 
 IncludeUnpayedInvoices=Inclure les factures non réglées

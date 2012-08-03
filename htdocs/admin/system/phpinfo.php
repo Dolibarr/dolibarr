@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +26,10 @@ require("../../main.inc.php");
 
 $langs->load("admin");
 
-if (!$user->admin)
-accessforbidden();
+if (! $user->admin)
+	accessforbidden();
+
+$what=GETPOST('what','alpha');
 
 
 /*
@@ -61,17 +64,17 @@ llxHeader();
 
 ob_start();
 
-if ($_GET["what"] == 'conf')
+if ($what == 'conf')
 {
 	$title = 'Setup';
 	phpinfo(INFO_CONFIGURATION);
 }
-elseif ($_GET["what"] == 'env')
+elseif ($what == 'env')
 {
 	$title = 'OSEnv';
 	phpinfo(INFO_ENVIRONMENT);
 }
-elseif ($_GET["what"] == 'modules')
+elseif ($what == 'modules')
 {
 	$title = 'Modules';
 	phpinfo(INFO_MODULES);
@@ -115,4 +118,5 @@ print "$chaine\n";	// Ne pas centrer la reponse php car certains tableau du bas 
 print "<br>\n";
 
 llxFooter();
+$db->close();
 ?>

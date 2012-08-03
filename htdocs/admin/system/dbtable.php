@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+/* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +28,10 @@ require("../../main.inc.php");
 
 $langs->load("admin");
 
+if (! $user->admin)
+	accessforbidden();
 
-if (!$user->admin) accessforbidden();
+$table=GETPOST('table','alpha');
 
 
 /*
@@ -38,22 +41,20 @@ if (!$user->admin) accessforbidden();
 llxHeader();
 
 
-print_fiche_titre($langs->trans("Table") . " ".$_GET["table"],'','setup');
+print_fiche_titre($langs->trans("Table") . " ".$table,'','setup');
 
 // Define request to get table description
 $base=0;
 if (preg_match('/mysql/i',$conf->db->type))
 {
-	$sql = "SHOW TABLE STATUS LIKE '".$_GET["table"]."'";
+	$sql = "SHOW TABLE STATUS LIKE '".$db->escape($table)."'";
 	$base=1;
 }
-
-if ($conf->db->type == 'pgsql')
+else if ($conf->db->type == 'pgsql')
 {
 	$sql = "SELECT conname,contype FROM pg_constraint";
 	$base=2;
 }
-
 
 if (! $base)
 {
@@ -61,8 +62,8 @@ if (! $base)
 }
 else
 {
-	$result = $db->query($sql);
-	if ($result)
+	$resql = $db->query($sql);
+	if ($resql)
 	{
 		$num = $db->num_rows($resql);
 		$var=True;
@@ -74,24 +75,24 @@ else
 		}
 	}
 
-
-	if ($base==1)
+	if ($base == 1)
 	{
-
-		$cons = explode(";",$row[14]);
-
-		foreach  ($cons as $cc)
+		$link=array();
+		$cons = explode(";", $row[14]);
+		if (! empty($cons))
 		{
-			$cx = preg_replace("/\)\sREFER/", "", $cc);
-			$cx = preg_replace("/\(`/", "", $cx);
-			$cx = preg_replace("/`\)/", "", $cx);
-			$cx = preg_replace("/`\s/", "", $cx);
+			foreach($cons as $cc)
+			{
+				$cx = preg_replace("/\)\sREFER/", "", $cc);
+				$cx = preg_replace("/\(`/", "", $cx);
+				$cx = preg_replace("/`\)/", "", $cx);
+				$cx = preg_replace("/`\s/", "", $cx);
 
-			$val = explode("`",$cx);
+				$val = explode("`",$cx);
 
-			$link[trim($val[0])][0] = $val[1];
-			$link[trim($val[0])][1] = $val[2];
-
+				$link[trim($val[0])][0] = (isset($val[1])?$val[1]:'');
+				$link[trim($val[0])][1] = (isset($val[2])?$val[2]:'');
+			}
 		}
 
 		//  var_dump($link);
@@ -100,26 +101,24 @@ else
 		print '<tr class="liste_titre"><td>'.$langs->trans("Fields").'</td><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Index").'</td>';
 		print '<td>'.$langs->trans("FieldsLinked").'</td></tr>';
 
-		$sql = "DESCRIBE ".$_GET["table"];
-		$result = $db->query($sql);
-		if ($result)
+		$sql = "DESCRIBE ".$table;
+		$resql = $db->query($sql);
+		if ($resql)
 		{
-			$num = $db->num_rows($result);
+			$num = $db->num_rows($resql);
 			$var=True;
 			$i=0;
 			while ($i < $num)
 			{
-				$row = $db->fetch_row($result);
+				$row = $db->fetch_row($resql);
 				$var=!$var;
 				print "<tr $bc[$var]>";
-
 
 				print "<td>$row[0]</td>";
 				print "<td>$row[1]</td>";
 				print "<td>$row[3]</td>";
-				print "<td>".$link[$row[0]][0].".";
-				print $link[$row[0]][1]."</td>";
-
+				print "<td>".(isset($link[$row[0]][0])?$link[$row[0]][0]:'').".";
+				print (isset($link[$row[0]][1])?$link[$row[0]][1]:'')."</td>";
 
 				print '</tr>';
 				$i++;
@@ -130,4 +129,5 @@ else
 }
 
 llxFooter();
+$db->close();
 ?>
