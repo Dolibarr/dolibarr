@@ -3865,7 +3865,7 @@ function picto_from_langcode($codelang)
 {
 	global $langs;
 
-	if (! empty($codelang))
+	if (!$codelang)
 	{
 		if ($codelang == 'auto')
 		{
@@ -3880,14 +3880,14 @@ function picto_from_langcode($codelang)
 			'sv_SV' => 'se'
 		);
 
-		if (isset($langtocountryflag[$codelang])) $tmpcode = $langtocountryflag[$codelang];
+		if (isset($langtocountryflag[$codelang])) $flagImage = $langtocountryflag[$codelang];
 		else
 		{
 			$tmparray = explode('_', $codelang);
-			$tmpcode = empty($tmparray[1]) ? $tmparray[0] : $tmparray[1];
+			$flagImage = empty($tmparray[1]) ? $tmparray[0] : $tmparray[1];
 		}
 
-		return img_picto_common($codelang, 'flags/'.strtolower($tmpcode).'.png');
+		return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png');
 	}
 
 	return '';
