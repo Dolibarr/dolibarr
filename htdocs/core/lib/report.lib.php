@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,9 @@ function report_header($nom,$variante,$period,$periodlink,$description,$builddat
 	$h=0;
 	$head[$h][0] = $_SERVER["PHP_SELF"];
 	$head[$h][1] = $langs->trans("Report");
-	dol_fiche_head($head, $hselected, $societe->nom);
+	$head[$h][2] = 'report';
+
+	dol_fiche_head($head, $hselected);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	foreach($moreparam as $key => $value)

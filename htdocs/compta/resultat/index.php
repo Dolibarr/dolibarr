@@ -40,13 +40,11 @@ else {
 // Security check
 $socid = GETPOST('socid','int');
 if ($user->societe_id > 0) $socid = $user->societe_id;
-if (!$user->rights->compta->resultat->lire && !$user->rights->accounting->comptarapport->lire)
-accessforbidden();
+if (! $user->rights->compta->resultat->lire && ! $user->rights->accounting->comptarapport->lire)
+	accessforbidden();
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
-$modecompta = $conf->global->COMPTA_MODE;
-if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta");
-
+$modecompta=(GETPOST("modecompta")?GETPOST("modecompta"):$conf->global->COMPTA_MODE);
 
 
 /*
@@ -56,6 +54,9 @@ if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta");
 llxHeader();
 
 $form=new Form($db);
+
+$nomlink='';
+$exportlink='';
 
 // Affiche en-tete du rapport
 if ($modecompta == 'CREANCES-DETTES')
@@ -125,7 +126,7 @@ if ($result)
 	while ($i < $num)
 	{
 		$row = $db->fetch_object($result);
-		$encaiss[$row->dm] = $row->amount_ht;
+		$encaiss[$row->dm] = (isset($row->amount_ht)?$row->amount_ht:0);
 		$encaiss_ttc[$row->dm] = $row->amount_ttc;
 		$i++;
 	}
@@ -159,7 +160,10 @@ if ($modecompta != 'CREANCES-DETTES')
 		{
 			$row = $db->fetch_object($result);
 
-			$encaiss[$row->dm] += $row->amount_ht;
+			if (! isset($encaiss[$row->dm])) $encaiss[$row->dm]=0;
+			$encaiss[$row->dm] += (isset($row->amount_ht)?$row->amount_ht:0);
+
+			if (! isset($encaiss_ttc[$row->dm])) $encaiss_ttc[$row->dm]=0;
 			$encaiss_ttc[$row->dm] += $row->amount_ttc;
 
 			$i++;
@@ -208,7 +212,10 @@ if ($result)
 	{
 		$row = $db->fetch_object($result);
 
-		$decaiss[$row->dm] = $row->amount_ht;
+		if (! isset($decaiss[$row->dm])) $decaiss[$row->dm]=0;
+		$decaiss[$row->dm] = (isset($row->amount_ht)?$row->amount_ht:0);
+
+		if (! isset($decaiss_ttc[$row->dm])) $decaiss_ttc[$row->dm]=0;
 		$decaiss_ttc[$row->dm] = $row->amount_ttc;
 
 		$i++;
@@ -246,7 +253,10 @@ if ($modecompta == 'CREANCES-DETTES')
 			while ($i < $num) {
 				$obj = $db->fetch_object($result);
 
+				if (! isset($decaiss[$obj->dm])) $decaiss[$obj->dm]=0;
 				$decaiss[$obj->dm] += $obj->amount;
+
+				if (! isset($decaiss_ttc[$obj->dm])) $decaiss_ttc[$obj->dm]=0;
 				$decaiss_ttc[$obj->dm] += $obj->amount;
 
 				$i++;
@@ -274,7 +284,10 @@ if ($modecompta == 'CREANCES-DETTES')
 			while ($i < $num) {
 				$obj = $db->fetch_object($result);
 
+				if (! isset($encaiss[$obj->dm])) $encaiss[$obj->dm]=0;
 				$encaiss[$obj->dm] += $obj->amount;
+
+				if (! isset($encaiss_ttc[$obj->dm])) $encaiss_ttc[$obj->dm]=0;
 				$encaiss_ttc[$obj->dm] += $obj->amount;
 
 				$i++;
@@ -302,7 +315,10 @@ else {
 			while ($i < $num) {
 				$obj = $db->fetch_object($result);
 
+				if (! isset($decaiss[$obj->dm])) $decaiss[$obj->dm]=0;
 				$decaiss[$obj->dm] += $obj->amount;
+
+				if (! isset($decaiss_ttc[$obj->dm])) $decaiss_ttc[$obj->dm]=0;
 				$decaiss_ttc[$obj->dm] += $obj->amount;
 
 				$i++;
@@ -328,7 +344,10 @@ else {
 			while ($i < $num) {
 				$obj = $db->fetch_object($result);
 
+				if (! isset($encaiss[$obj->dm])) $encaiss[$obj->dm]=0;
 				$encaiss[$obj->dm] += $obj->amount;
+
+				if (! isset($encaiss_ttc[$obj->dm])) $encaiss_ttc[$obj->dm]=0;
 				$encaiss_ttc[$obj->dm] += $obj->amount;
 
 				$i++;
@@ -346,7 +365,7 @@ $subtotal_ht = 0;
 $subtotal_ttc = 0;
 if ($modecompta == 'CREANCES-DETTES')
 {
-	$sql = "SELECT c.libelle as nom, date_format(cs.date_ech,'%Y-%m') as dm, sum(cs.amount) as amount_ht, sum(cs.amount) as amount_ttc";
+	$sql = "SELECT c.libelle as nom, date_format(cs.date_ech,'%Y-%m') as dm, sum(cs.amount) as amount";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
 	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql.= " WHERE cs.fk_type = c.id";
@@ -354,7 +373,7 @@ if ($modecompta == 'CREANCES-DETTES')
 }
 else
 {
-	$sql = "SELECT c.libelle as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount_ht, sum(p.amount) as amount_ttc";
+	$sql = "SELECT c.libelle as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
 	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql.= ", ".MAIN_DB_PREFIX."paiementcharge as p";
@@ -375,8 +394,11 @@ if ($result) {
 		while ($i < $num) {
 			$obj = $db->fetch_object($result);
 
-			$decaiss[$obj->dm] += $obj->amount_ht;
-			$decaiss_ttc[$obj->dm] += $obj->amount_ttc;
+			if (! isset($decaiss[$obj->dm])) $decaiss[$obj->dm]=0;
+			$decaiss[$obj->dm] += $obj->amount;
+
+			if (! isset($decaiss_ttc[$obj->dm])) $decaiss_ttc[$obj->dm]=0;
+			$decaiss_ttc[$obj->dm] += $obj->amount;
 
 			$i++;
 		}
@@ -393,7 +415,7 @@ $subtotal_ht = 0;
 $subtotal_ttc = 0;
 if ($modecompta == 'CREANCES-DETTES')
 {
-	$sql = "SELECT c.libelle as nom, date_format(cs.date_ech,'%Y-%m') as dm, sum(cs.amount) as amount_ht, sum(cs.amount) as amount_ttc";
+	$sql = "SELECT c.libelle as nom, date_format(cs.date_ech,'%Y-%m') as dm, sum(cs.amount) as amount";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
 	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql.= " WHERE cs.fk_type = c.id";
@@ -401,7 +423,7 @@ if ($modecompta == 'CREANCES-DETTES')
 }
 else
 {
-	$sql = "SELECT c.libelle as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount_ht, sum(p.amount) as amount_ttc";
+	$sql = "SELECT c.libelle as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
 	$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql.= ", ".MAIN_DB_PREFIX."paiementcharge as p";
@@ -422,8 +444,11 @@ if ($result) {
 		while ($i < $num) {
 			$obj = $db->fetch_object($result);
 
-			$decaiss[$obj->dm] += $obj->amount_ht;
-			$decaiss_ttc[$obj->dm] += $obj->amount_ttc;
+			if (! isset($decaiss[$obj->dm])) $decaiss[$obj->dm]=0;
+			$decaiss[$obj->dm] += $obj->amount;
+
+			if (! isset($decaiss_ttc[$obj->dm])) $decaiss_ttc[$obj->dm]=0;
+			$decaiss_ttc[$obj->dm] += $obj->amount;
 
 			$i++;
 		}
@@ -479,17 +504,19 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		$case = strftime("%Y-%m",dol_mktime(12,0,0,$mois_modulo,1,$annee_decalage));
 
 		print '<td align="right">&nbsp;';
-		if ($decaiss_ttc[$case] != 0)
+		if (isset($decaiss_ttc[$case]) && $decaiss_ttc[$case] != 0)
 		{
 			print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.'">'.price(price2num($decaiss_ttc[$case],'MT')).'</a>';
+			if (! isset($totsorties[$annee])) $totsorties[$annee]=0;
 			$totsorties[$annee]+=$decaiss_ttc[$case];
 		}
 		print "</td>";
 
 		print '<td align="right">&nbsp;';
-		if ($encaiss_ttc[$case] != 0)
+		if (isset($encaiss_ttc[$case]) && $encaiss_ttc[$case] != 0)
 		{
 			print '<a href="clientfourn.php?year='.$annee_decalage.'&month='.$mois_modulo.'">'.price(price2num($encaiss_ttc[$case],'MT')).'</a>';
+			if (! isset($totentrees[$annee])) $totentrees[$annee]=0;
 			$totentrees[$annee]+=$encaiss_ttc[$case];
 		}
 		print "</td>";
@@ -523,7 +550,9 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	print '<td align="right" colspan="2"> ';
 	if (isset($totentrees[$annee]) || isset($totsorties[$annee]))
 	{
-		print price(price2num($totentrees[$annee]-$totsorties[$annee],'MT')).'</td>';
+		$in=(isset($totentrees[$annee])?price2num($totentrees[$annee], 'MT'):0);
+		$out=(isset($totsorties[$annee])?price2num($totsorties[$annee],' MT'):0);
+		print price($in-$out).'</td>';
 		//  print '<td>&nbsp;</td>';
 	}
 }
@@ -533,6 +562,5 @@ print "</table>";
 
 
 llxFooter();
-
 $db->close();
 ?>

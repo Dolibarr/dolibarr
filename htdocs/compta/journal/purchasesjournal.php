@@ -33,6 +33,13 @@ $langs->load("companies");
 $langs->load("other");
 $langs->load("compta");
 
+$date_startmonth=GETPOST('date_startmonth');
+$date_startday=GETPOST('date_startday');
+$date_startyear=GETPOST('date_startyear');
+$date_endmonth=GETPOST('date_endmonth');
+$date_endday=GETPOST('date_endday');
+$date_endyear=GETPOST('date_endyear');
+
 // Protection if external user
 if ($user->societe_id > 0)
 	accessforbidden();
@@ -64,8 +71,8 @@ if ($pastmonth == 0)
 	$pastmonthyear--;
 }
 
-$date_start=dol_mktime(0,0,0,$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);
-$date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
+$date_start=dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
+$date_end=dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
@@ -73,7 +80,9 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 }
 
 $nom=$langs->trans("PurchasesJournal");
-//$nomlink=;
+$nomlink='';
+$periodlink='';
+$exportlink='';
 $builddate=time();
 $description=$langs->trans("DescPurchasesJournal");
 $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
