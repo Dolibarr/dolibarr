@@ -441,7 +441,7 @@ if (! empty($force_install_message))
 			id="db_pass_root" name="db_pass_root" class="needroot"
 			value="<?php
 			$autofill=((! empty($db_pass_root))?$db_pass_root:$force_install_databaserootpass);
-			if ($dolibarr_main_prod) $autofill='';
+			if (! empty($dolibarr_main_prod)) $autofill='';
 			print dol_escape_htmltag($autofill);
 			?>"></td>
 		<td class="comment"><?php echo $langs->trans("KeepEmptyIfNoPassword"); ?>
