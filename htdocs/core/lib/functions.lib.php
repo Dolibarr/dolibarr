@@ -3887,7 +3887,7 @@ function picto_from_langcode($codelang)
 			$tmpcode = empty($tmparray[1]) ? $tmparray[0] : $tmparray[1];
 		}
 
-		if (isset($tmpcode)) return img_picto_common($codelang, 'flags/'.strtolower($tmpcode).'.png');
+		if ($tmpcode) return img_picto_common($codelang, 'flags/'.strtolower($tmpcode).'.png');
 	}
 
 	return '';
