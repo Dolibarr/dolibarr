@@ -2049,6 +2049,25 @@ function img_mime($file, $alt = '')
 
 
 /**
+ *	Show phone logo.
+ *  Use img_picto instead.
+ *
+ *	@param	string	$alt        Text to show on alt image
+ *	@param  int		$option		Option
+ *	@return string      		Return img tag
+ *  @deprecated
+ */
+function img_phone($alt = "default",$option=0)
+{
+	global $conf,$langs;
+	if ($alt=="default") $alt=$langs->trans("Call");
+	$img='call_out';
+	if ($option == 1) $img='call';
+	return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/'.$img.'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
+}
+
+
+/**
  *	Show information for admin users
  *
  *	@param	string	$text			Text info
