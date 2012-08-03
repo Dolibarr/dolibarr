@@ -5,13 +5,19 @@ English Dolibarr ChangeLog
 
 
 ***** ChangeLog for 3.2.1 compared to 3.2.0 *****
-- Fix: Fix feature to autoclose proposal when order is closed.
+- Fix: Edit of projects.
+- Fix: Activation of modules does not fails if directory install was removed.
+- Fix: [ bug #444 ] Regression on auto-closing for proposals and orders.
 - Fix: Update translations (catalan, french, spanish, brazilian).
-- Fix: [ bug #445 ] Hex escaping in descriptions
+- Fix: [ bug #445 ] Hex escaping in descriptions.
 - Fix: error when validating shipment for non predefined products with a
   selected warehouse.
 - Fix: Bad local taxes if price base type is TTC for spanish local taxes.
-- Fix: Phone not saved when using web service
+- Fix: Phone not saved when using web service.
+- Fix: [ bug #464 ] Payment form should allow to add transmitter for bank transfers.
+- Fix: Allows to use a comma decimal separator in supplier invoices payments.
+- Fix: Translation for tr_TR, es_ES, pt_BR.
+- Fix: Products with no prices not visible.
 
 
 
