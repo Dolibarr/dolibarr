@@ -405,7 +405,7 @@ else
         print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="update">';
-        print '<input type="hidden" name="id" value="'.$project->id.'">';
+        print '<input type="hidden" name="id" value="'.$object->id.'">';
 
         print '<table class="border" width="100%">';
 
@@ -419,7 +419,7 @@ else
 
         // Customer
         print '<tr><td>'.$langs->trans("Company").'</td><td>';
-        $text=$form->select_company($project->societe->id,'socid','',1,1);
+        $text=$form->select_company($object->societe->id,'socid','',1,1);
         $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
         print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
         print '</td></tr>';
@@ -435,7 +435,7 @@ else
 
         // Date start
         print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-        print $form->select_date($project->date_start,'project');
+        print $form->select_date($object->date_start,'project');
         print '</td></tr>';
 
         // Date end
