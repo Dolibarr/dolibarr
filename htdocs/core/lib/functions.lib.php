@@ -4110,9 +4110,10 @@ function getCurrencySymbol($currency_code)
 if (! function_exists('getmypid'))
 {
     /**
-     * Return PID
+     * Return random PID
+     * Some web hosts disable this php function for security reasons
      *
-     * @return	void
+     * @return	int
      */
     function getmypid()
     {
