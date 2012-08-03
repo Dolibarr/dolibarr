@@ -362,6 +362,7 @@ if (! $error && $db->connected && $action == "set")
                     }
                 }
             }
+
             if ($error)
             {
                 print "<tr><td>".$langs->trans("ErrorDirDoesNotExists",$main_data_dir);
@@ -375,14 +376,14 @@ if (! $error && $db->connected && $action == "set")
             {
             	//ODT templates
             	require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
-            	$srcroot='./doctemplates';
+            	$srcroot=$main_dir.'/install/doctemplates';
             	$destroot=$main_data_dir.'/doctemplates';
             	$docs=array('thirdparties' => 'thirdparty', 'proposals' => 'proposal', 'orders' => 'order', 'invoices' => 'invoice');
-            	foreach($docs as $dir => $file)
+            	foreach($docs as $cursordir => $cursorfile)
             	{
-            		$src=$srcroot.'/thirdparties/template_'.$file.'.odt';
-            		$dirodt=$destroot.'/'.$dir;
-            		$dest=$dirodt.'/template_'.$file.'.odt';
+            		$src=$srcroot.'/'.$cursordir.'/template_'.$cursorfile.'.odt';
+            		$dirodt=$destroot.'/'.$cursordir;
+            		$dest=$dirodt.'/template_'.$cursorfile.'.odt';
 
             		dol_mkdir($dirodt);
             		$result=dol_copy($src,$dest,0,0);
