@@ -3865,32 +3865,27 @@ function picto_from_langcode($codelang)
 {
 	global $langs;
 
-	if (!$codelang)
+	if ($codelang == 'auto')
 	{
-		if ($codelang == 'auto')
-		{
-			return img_picto_common($langs->trans('AutoDetectLang'), 'flags/int.png');
-		}
-
-		$langtocountryflag = array(
-			'ar_AR' => '',
-			'ca_ES' => 'catalonia',
-			'da_DA' => 'dk',
-			'fr_CA' => 'mq',
-			'sv_SV' => 'se'
-		);
-
-		if (isset($langtocountryflag[$codelang])) $flagImage = $langtocountryflag[$codelang];
-		else
-		{
-			$tmparray = explode('_', $codelang);
-			$flagImage = empty($tmparray[1]) ? $tmparray[0] : $tmparray[1];
-		}
-
-		return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png');
+		return img_picto_common($langs->trans('AutoDetectLang'), 'flags/int.png');
 	}
 
-	return '';
+	$langtocountryflag = array(
+		'ar_AR' => '',
+		'ca_ES' => 'catalonia',
+		'da_DA' => 'dk',
+		'fr_CA' => 'mq',
+		'sv_SV' => 'se'
+	);
+
+	if (isset($langtocountryflag[$codelang])) $flagImage = $langtocountryflag[$codelang];
+	else
+	{
+		$tmparray = explode('_', $codelang);
+		$flagImage = empty($tmparray[1]) ? $tmparray[0] : $tmparray[1];
+	}
+
+	return img_picto_common($codelang, 'flags/'.strtolower($flagImage).'.png');
 }
 
 /**
