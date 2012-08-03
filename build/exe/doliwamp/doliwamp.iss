@@ -23,7 +23,7 @@ OutputBaseFilename=DoliWamp-3.3.0-alpha
 ; Define full path from wich all relative path are defined
 ; You must modify this to put here your dolibarr root directory
 ;SourceDir=C:\Documents and Settings\ldestail\git\dolibarr_old
-SourceDir=Z:\home\ldestail\git\dolibarr_old
+SourceDir=Z:\home\ldestail\git\dolibarr
 ; ----- End of change
 ;OutputManifestFile=build\doliwampbuild.log
 AppId=doliwamp
@@ -32,7 +32,7 @@ AppPublisherURL=http://www.nltechno.com
 AppSupportURL=http://www.dolibarr.org
 AppUpdatesURL=http://www.dolibarr.org
 AppComments=DoliWamp includes Dolibarr, Apache, PHP and Mysql softwares.
-AppCopyright=Copyright (C) 2008-2011 Laurent Destailleur, NLTechno
+AppCopyright=Copyright (C) 2008-2012 Laurent Destailleur, NLTechno
 DefaultDirName=c:\dolibarr
 DefaultGroupName=Dolibarr
 ;LicenseFile=COPYING

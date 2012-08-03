@@ -159,6 +159,7 @@ done >%{name}.lang
 %_datadir/dolibarr/htdocs/categories
 %_datadir/dolibarr/htdocs/comm
 %_datadir/dolibarr/htdocs/commande
+%_datadir/dolibarr/htdocs/commissions
 %_datadir/dolibarr/htdocs/compta
 %_datadir/dolibarr/htdocs/conf
 %_datadir/dolibarr/htdocs/contact
@@ -177,6 +178,8 @@ done >%{name}.lang
 %_datadir/dolibarr/htdocs/install
 %_datadir/dolibarr/htdocs/langs/HOWTO-Translation.txt
 %_datadir/dolibarr/htdocs/livraison
+%_datadir/dolibarr/htdocs/mailmanspip
+%_datadir/dolibarr/htdocs/margin
 %_datadir/dolibarr/htdocs/paybox
 %_datadir/dolibarr/htdocs/paypal
 %_datadir/dolibarr/htdocs/product
