@@ -2057,13 +2057,16 @@ function img_mime($file, $alt = '')
  *	@return string      		Return img tag
  *  @deprecated
  */
-function img_phone($alt = "default",$option=0)
+function img_phone($alt = 'default', $option = 0)
 {
 	global $conf,$langs;
-	if ($alt=="default") $alt=$langs->trans("Call");
-	$img='call_out';
-	if ($option == 1) $img='call';
-	return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/'.$img.'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
+
+	if ($alt == 'default') $alt = $langs->trans('Call');
+
+	if ($option == 1) $img = 'call';
+	else $img = 'call_out';
+
+	return img_picto($alt, $img);
 }
 
 
