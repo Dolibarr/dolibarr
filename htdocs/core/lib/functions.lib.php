@@ -2063,7 +2063,7 @@ function img_phone($alt = 'default', $option = 0)
 
 	if ($alt == 'default') $alt = $langs->trans('Call');
 
-    if ($option == 1) $img = 'call';
+	if ($option == 1) $img = 'call';
 	else $img = 'call_out';
 
 	return img_picto($alt, $img);
