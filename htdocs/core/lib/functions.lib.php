@@ -4097,17 +4097,4 @@ function getCurrencySymbol($currency_code)
 	return $currency_sign;
 }
 
-if (! function_exists('getmypid'))
-{
-    /**
-     * Return PID
-     *
-     * @return	void
-     */
-    function getmypid()
-    {
-        return rand(1,32768);
-    }
-}
-
 ?>
