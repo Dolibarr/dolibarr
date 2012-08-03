@@ -1707,13 +1707,26 @@ function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
  *	@return     string      					Return img tag
  *  @see        #img_object, #img_picto
  */
-function img_picto_common($alt, $picto, $options='', $pictoisfullpath=0)
+function img_picto_common($alt, $picto, $options = '', $pictoisfullpath = 0)
 {
     global $conf;
-    if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto.='.png';
-    if ($pictoisfullpath) return '<img src="'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
-    if (! empty($conf->global->MAIN_MODULE_CAN_OVERWRITE_COMMONICONS) && file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/'.$picto)) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
-    return '<img src="'.DOL_URL_ROOT.'/theme/common/'.$picto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
+
+    if (! preg_match('/(\.png|\.gif)$/i', $picto)) $picto .= '.png';
+
+    if ($pictoisfullpath) $path = $picto;
+    else
+    {
+        $path = DOL_URL_ROOT.'/theme/common/'.$picto;
+    
+        if (! empty($conf->global->MAIN_MODULE_CAN_OVERWRITE_COMMONICONS))
+        {
+            $themepath = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/'.$picto;
+
+            if (file_exists($themepath)) return img_picto($alt, $themepath, $options, 1);
+        }
+    }
+
+    return img_picto($alt, $path, $options, 1);
 }
 
 /**
@@ -1725,16 +1738,18 @@ function img_picto_common($alt, $picto, $options='', $pictoisfullpath=0)
  */
 function img_action($alt, $numaction)
 {
-    global $conf,$langs;
-    if ($alt=="default")
+    global $conf, $langs;
+
+    if ($alt == 'default')
     {
-        if ($numaction == -1) $alt=$langs->transnoentitiesnoconv("ChangeDoNotContact");
-        if ($numaction == 0)  $alt=$langs->transnoentitiesnoconv("ChangeNeverContacted");
-        if ($numaction == 1)  $alt=$langs->transnoentitiesnoconv("ChangeToContact");
-        if ($numaction == 2)  $alt=$langs->transnoentitiesnoconv("ChangeContactInProcess");
-        if ($numaction == 3)  $alt=$langs->transnoentitiesnoconv("ChangeContactDone");
+        if ($numaction == -1) $alt = $langs->transnoentitiesnoconv('ChangeDoNotContact');
+        if ($numaction == 0) $alt = $langs->transnoentitiesnoconv('ChangeNeverContacted');
+        if ($numaction == 1) $alt = $langs->transnoentitiesnoconv('ChangeToContact');
+        if ($numaction == 2) $alt = $langs->transnoentitiesnoconv('ChangeContactInProcess');
+        if ($numaction == 3) $alt = $langs->transnoentitiesnoconv('ChangeContactDone');
     }
-    return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/stcomm'.$numaction.'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
+
+    return img_picto($alt, 'stcomm'.$numaction.'.png');
 }
 
 /**
@@ -1744,11 +1759,13 @@ function img_action($alt, $numaction)
  *  @param  int		    $size       Taille de l'icone : 3 = 16x16px , 2 = 14x14px
  *  @return string      			Retourne tag img
  */
-function img_pdf($alt = "default",$size=3)
+function img_pdf($alt = 'default', $size = 3)
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Show");
-    return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/pdf'.$size.'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Show');
+
+    return img_picto($alt, 'pdf'.$size.'.png');
 }
 
 /**
@@ -1757,11 +1774,13 @@ function img_pdf($alt = "default",$size=3)
  *	@param	string	$alt        Texte sur le alt de l'image
  *	@return string      		Return tag img
  */
-function img_edit_add($alt = "default")
+function img_edit_add($alt = 'default')
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Add");
-    return img_picto($alt,'edit_add.png');
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Add');
+
+    return img_picto($alt, 'edit_add.png');
 }
 /**
  *	Show logo -
@@ -1769,11 +1788,13 @@ function img_edit_add($alt = "default")
  *	@param	string	$alt         Texte sur le alt de l'image
  *	@return string      Retourne tag img
  */
-function img_edit_remove($alt = "default")
+function img_edit_remove($alt = 'default')
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Remove");
-    return img_picto($alt,'edit_remove.png');
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Remove');
+
+    return img_picto($alt, 'edit_remove.png');
 }
 
 /**
@@ -1784,15 +1805,13 @@ function img_edit_remove($alt = "default")
  *	@param  string	$other		Add more attributes on img
  *	@return string      		Retourne tag img
  */
-function img_edit($alt = "default", $float=0, $other='')
+function img_edit($alt = 'default', $float = 0, $other = '')
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Modify");
-    $img='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/edit.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"';
-    if ($float) $img.=' style="float: right"';
-    if ($other) $img.=' '.$other;
-    $img.='>';
-    return $img;
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Modify');
+
+    return img_picto($alt, 'edit.png', ($float ? 'style="float: right"' : $other));
 }
 
 /**
@@ -1803,15 +1822,15 @@ function img_edit($alt = "default", $float=0, $other='')
  *	@param  string	$other		Add more attributes on img
  *	@return string      Retourne tag img
  */
-function img_view($alt = "default", $float=0, $other='')
+function img_view($alt = 'default', $float = 0, $other = '')
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("View");
-    $img='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/view.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"';
-    if ($float) $img.=' style="float: right"';
-    if ($other) $img.=' '.$other;
-    $img.='>';
-    return $img;
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('View');
+
+    $options = ($float ? 'style="float: right" ' : '').$other;
+    
+    return img_picto($alt, 'view.png', $options);
 }
 
 /**
@@ -1821,13 +1840,14 @@ function img_view($alt = "default", $float=0, $other='')
  *	@param  string	$other      Add more attributes on img
  *  @return string      		Retourne tag img
  */
-function img_delete($alt = "default", $other='')
+function img_delete($alt = 'default', $other = '')
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Delete");
-    return img_picto($alt,'delete.png',$other);
-}
+    global $conf, $langs;
 
+    if ($alt == 'default') $alt = $langs->trans('Delete');
+
+    return img_picto($alt, 'delete.png', $other);
+}
 
 /**
  *	Show help logo with cursor "?"
@@ -1836,188 +1856,175 @@ function img_delete($alt = "default", $other='')
  * 	@param	string	$usealttitle		Text to use as alt title
  * 	@return string      				Retourne tag img
  */
-function img_help($usehelpcursor=1,$usealttitle=1)
+function img_help($usehelpcursor = 1, $usealttitle = 1)
 {
-    global $conf,$langs;
-    $s ='<img ';
-    if ($usehelpcursor) $s.='style="cursor: help;" ';
-    $s.='src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/info.png" border="0"';
+    global $conf, $langs;
+
     if ($usealttitle)
     {
-        if (is_string($usealttitle)) $s.=' alt="'.dol_escape_htmltag($usealttitle).'" title="'.dol_escape_htmltag($usealttitle).'"';
-        else $s.=' alt="'.$langs->trans("Info").'" title="'.$langs->trans("Info").'"';
+        if (is_string($usealttitle)) $alt = dol_escape_htmltag($usealttitle);
+        else $alt = $langs->trans('Info');
     }
-    else $s.=' alt=""';
-    $s.='>';
-    return $s;
+
+    return img_picto($usealttitle, 'info.png', ($usehelpcursor ? 'style="cursor: help"' : ''));
 }
 
 /**
- *	Affiche logo info
+ *	Show info logo
  *
  *	@param	string	$alt        Text to show on alt image
  *	@return string      		Return img tag
  */
-function img_info($alt = "default")
+function img_info($alt = 'default')
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Informations");
-    return img_picto($alt,'info.png');
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Informations');
+
+    return img_picto($alt, 'info.png');
 }
 
 /**
- *	Show logo warning
+ *	Show warning logo
  *
  *	@param	string	$alt        Text to show on alt image
  *	@param  int		$float      If we must add style "float: right"
  *	@return string      		Return img tag
  */
-function img_warning($alt = "default",$float=0)
+function img_warning($alt = 'default', $float = 0)
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Warning");
-    return img_picto($alt,'warning.png',$float?'style="float: right"':'');
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Warning');
+
+    return img_picto($alt, 'warning.png', ($float ? 'style="float: right"' : ''));
 }
 
 /**
- *  Affiche logo error
+ *  Show error logo
  *
  *	@param	string	$alt        Text to show on alt image
  *	@return string      		Return img tag
  */
-function img_error($alt = "default")
+function img_error($alt = 'default')
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Error");
-    return img_picto($alt,'error.png');
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Error');
+
+    return img_picto($alt, 'error.png');
 }
 
 /**
- *	Affiche logo telephone
- *
- *	@param	string	$alt        Text to show on alt image
- *	@param  int		$option		Option
- *	@return string      		Return img tag
- */
-function img_phone($alt = "default",$option=0)
-{
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Call");
-    $img='call_out';
-    if ($option == 1) $img='call';
-    $img='object_commercial';
-    return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/'.$img.'.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
-}
-
-
-/**
- *	Affiche logo suivant
+ *	Show next logo
  *
  *	@param	string	$alt        Text to show on alt image
  *	@return string      		Return img tag
  */
-function img_next($alt = "default")
+function img_next($alt = 'default')
 {
-    global $conf,$langs;
-    if ($alt=="default") {
-        $alt=$langs->trans("Next");
-    }
-    return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/next.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Next');
+
+    return img_picto($alt, 'next.png');
 }
 
 /**
- *	Affiche logo precedent
+ *	Show previous logo
  *
  *	@param	string	$alt        Text to show on alt image
  *	@return string      		Return img tag
  */
-function img_previous($alt = "default")
+function img_previous($alt = 'default')
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Previous");
-    return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/previous.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Previous');
+
+    return img_picto($alt, 'previous.png');
 }
 
 /**
- *	Show logo down arrow
+ *	Show down arrow logo
  *
  *	@param	string	$alt        Text to show on alt image
  *	@param  int		$selected   Selected
  *	@return string      		Return img tag
  */
-function img_down($alt = "default", $selected=0)
+function img_down($alt = 'default', $selected = 0)
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Down");
-    if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow_selected.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'" class="imgdown">';
-    else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'" class="imgdown">';
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Down');
+
+    return img_picto($alt, ($selected ? '1downarrow_selected.png' : '1downarrow.png'), 'class="imgdown"');
 }
 
 /**
- *	Show logo top arrow
+ *	Show top arrow logo
  *
  *	@param	string	$alt        Text to show on alt image
  *	@param  int		$selected	Selected
  *	@return string      		Return img tag
  */
-function img_up($alt = "default", $selected=0)
+function img_up($alt = 'default', $selected = 0)
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Up");
-    if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow_selected.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'" class="imgup">';
-    else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'" class="imgup">';
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Up');
+
+    return img_picto($alt, ($selected ? '1uparrow_selected.png' : '1uparrow.png'), 'class="imgup"');
 }
 
 /**
- *	Affiche logo gauche
+ *	Show left arrow logo
  *
  *	@param	string	$alt        Text to show on alt image
  *	@param  int		$selected	Selected
  *	@return string      		Return img tag
  */
-function img_left($alt = "default", $selected=0)
+function img_left($alt = 'default', $selected = 0)
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Left");
-    if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1leftarrow_selected.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
-    else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1leftarrow.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Left');
+
+    return img_picto($alt, ($selected ? '1leftarrow_selected.png' : '1leftarrow.png'));
 }
 
 /**
- *	Affiche logo droite
+ *	Show right arrow logo
  *
  *	@param	string	$alt        Text to show on alt image
  *	@param  int		$selected	Selected
  *	@return string      		Return img tag
  */
-function img_right($alt = "default", $selected=0)
+function img_right($alt = 'default', $selected = 0)
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Right");
-    if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow_selected.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
-    else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
+    global $conf, $langs;
+
+    if ($alt == 'default') $alt = $langs->trans('Right');
+
+    return img_picto($alt, ($selected ? '1rightarrow_selected.png' : '1rightarrow.png'));
 }
 
 /**
- *	Affiche le logo tick si allow
+ *	Show tick logo if allowed
  *
  *	@param	string	$allow		Allow
  *	@param	string	$alt        Text to show on alt image
  *	@return string      		Return img tag
  */
-function img_allow($allow,$alt='default')
+function img_allow($allow, $alt = 'default')
 {
-    global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Active");
+    global $conf, $langs;
 
-    if ($allow == 1)
-    {
-        return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'">';
-    }
-    else
-    {
-        return "-";
-    }
+    if ($alt == 'default') $alt = $langs->trans('Active');
+
+    if ($allow == 1) return img_picto($alt, 'tick.png');
+    
+    return '-';
 }
 
 
@@ -2028,16 +2035,16 @@ function img_allow($allow,$alt='default')
  * 	@param	string	$alt		Alternate text to show on img mous hover
  *	@return string     			Return img tag
  */
-function img_mime($file,$alt='')
+function img_mime($file, $alt = '')
 {
-    require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-    $mimetype=dol_mimetype($file,'',1);
-    $mimeimg=dol_mimetype($file,'',2);
+    $mimetype = dol_mimetype($file, '', 1);
+    $mimeimg = dol_mimetype($file, '', 2);
 
-    if (empty($alt)) $alt='Mime type: '.$mimetype;
+    if (empty($alt)) $alt = 'Mime type: '.$mimetype;
 
-    return '<img src="'.DOL_URL_ROOT.'/theme/common/mime/'.$mimeimg.'" border="0" alt="'.$alt.'" title="'.$alt.'">';
+    return img_picto_common($alt, 'mime/'.$mimeimg);
 }
 
 
@@ -2048,23 +2055,16 @@ function img_mime($file,$alt='')
  *	@param  string	$infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
  *	@return	string					String with info text
  */
-function info_admin($text,$infoonimgalt=0)
+function info_admin($text, $infoonimgalt = 0)
 {
-    global $conf,$langs;
-    $s='';
+    global $conf, $langs;
+
     if ($infoonimgalt)
     {
-        $s.=img_picto($text,'star');
+        return img_picto($text, 'star');
     }
-    else
-    {
-        $s.='<div class="info">';
-        $s.=img_picto($langs->trans("InfoAdmin"),'star');
-        $s.=' ';
-        $s.=$text;
-        $s.='</div>';
-    }
-    return $s;
+    
+    return '<div class="info">'.img_picto($langs->trans('InfoAdmin'), 'star').' '.$text.'</div>';
 }
 
 
@@ -2090,8 +2090,8 @@ function dol_print_error($db='',$error='')
     // Si erreur intervenue avant chargement langue
     if (! $langs)
     {
-        require_once(DOL_DOCUMENT_ROOT ."/core/class/translate.class.php");
-        $langs = new Translate("", $conf);
+        require_once DOL_DOCUMENT_ROOT .'/core/class/translate.class.php';
+        $langs = new Translate('', $conf);
         $langs->load("main");
     }
     $langs->load("main");
