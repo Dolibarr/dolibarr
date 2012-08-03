@@ -361,7 +361,7 @@ $moreheadjs=empty($conf->use_javascript_ajax)?"":"
     });
 </script>";
 
-llxHeader($moreheadcss.$moreheadjs,$langs->trans("ECM"),'','','','',$morejs,'',0,0);
+llxHeader($moreheadcss.$moreheadjs,$langs->trans("ECMArea"),'','','','',$morejs,'',0,0);
 
 
 // Add sections to manage
