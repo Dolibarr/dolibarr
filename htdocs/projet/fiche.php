@@ -314,7 +314,7 @@ if ($action == 'confirm_clone' && $user->rights->projet->creer && GETPOST('confi
     }
     else
     {
-    	$object->id=$result;
+    	$object->fetch($result);	// Load new object
     	$action='edit';
     	$comefromclone=true;
     }
@@ -494,7 +494,9 @@ else
 
         // Customer
         print '<tr><td>'.$langs->trans("Company").'</td><td>';
-        print $form->select_company($object->societe->id,'socid','',1,1);
+        $text=$form->select_company($object->societe->id,'socid','',1,1);
+        $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
+        print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
         print '</td></tr>';
 
         // Visibility
