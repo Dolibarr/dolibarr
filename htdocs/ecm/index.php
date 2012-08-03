@@ -361,7 +361,7 @@ $moreheadjs=empty($conf->use_javascript_ajax)?"":"
     });
 </script>";
 
-llxHeader($moreheadcss.$moreheadjs,$langs->trans("ECM"),'','','','',$morejs,'',0,0);
+llxHeader($moreheadcss.$moreheadjs,$langs->trans("ECMArea"),'','','','',$morejs,'',0,0);
 
 
 // Add sections to manage
@@ -466,7 +466,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 		print img_picto_common('','treemenu/base.gif');
 		print '</td><td align="left">';
 		$txt=$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionsAuto").')';
-		print $form->textwithpicto($txt,$htmltooltip,1,0);
+		print $form->textwithpicto($txt, $htmltooltip, 1, 0);
 		print '</td>';
 		print '</tr></table>';
 		print '</td>';
@@ -512,7 +512,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 		    $htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionAuto").'<br>';
 		    $htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$langs->trans("ECMTypeAuto").'<br>';
 		    $htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['desc'];
-		    print $form->textwithpicto('',$htmltooltip,1,"info");
+		    print $form->textwithpicto('', $htmltooltip, 1, 'info');
 		    print '</div>';
 		    print '</li>';
 
@@ -534,7 +534,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	print img_picto_common('','treemenu/base.gif');
 	print '</td><td align="left">';
 	$txt=$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionsManual").')';
-	print $form->textwithpicto($txt,$htmltooltip,1,"info");
+	print $form->textwithpicto($txt, $htmltooltip, 1, 'info');
 	print '</td>';
 	print '</tr></table></td>';
 	print '<td align="right">';
@@ -745,7 +745,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
     			$htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.$val['cachenbofdoc'].'<br>';
     			if ($nbofsubdir) $htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInSubDir").'</b>: '.$nboffilesinsubdir;
     			else $htmltooltip.='<b>'.$langs->trans("ECMNbOfSubDir").'</b>: '.$nbofsubdir.'<br>';
-    			print $form->textwithpicto('',$htmltooltip,1,"info");
+    			print $form->textwithpicto('', $htmltooltip, 1, 'info');
     			print "</td>";
 
     			print '</tr></table>';
