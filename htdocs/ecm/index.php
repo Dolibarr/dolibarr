@@ -78,6 +78,8 @@ $form=new Form($db);
 $ecmdirstatic = new EcmDirectory($db);
 $userstatic = new User($db);
 
+$error=0;
+
 
 /*
  *	Actions
@@ -92,36 +94,45 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	else $relativepath=GETPOST('section_dir');
 	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 
-	if (dol_mkdir($upload_dir) >= 0)
+	if (empty($_FILES['userfile']['tmp_name']))
 	{
-		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0, 0, $_FILES['userfile']['error']);
-		if (is_numeric($resupload) && $resupload > 0)
+		$error++;
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("File")), 'errors');
+	}
+
+	if (! $error)
+	{
+		if (dol_mkdir($upload_dir) >= 0)
 		{
-			//$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-			//print_r($_FILES);
-			$result=$ecmdir->changeNbOfFiles('+');
+			$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0, 0, $_FILES['userfile']['error']);
+			if (is_numeric($resupload) && $resupload > 0)
+			{
+				//$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+				//print_r($_FILES);
+				$result=$ecmdir->changeNbOfFiles('+');
+			}
+			else
+			{
+				$langs->load("errors");
+				if ($resupload < 0)	// Unknown error
+				{
+					setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
+				}
+				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+				{
+					setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
+				}
+				else	// Known error
+				{
+					setEventMessage($langs->trans($resupload), 'errors');
+				}
+			}
 		}
 		else
 		{
 			$langs->load("errors");
-			if ($resupload < 0)	// Unknown error
-			{
-				setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
-			}
-			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
-			{
-				setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
-			}
-			else	// Known error
-			{
-				setEventMessage($langs->trans($resupload), 'errors');
-			}
+			$mesg = '<div class="error">'.$langs->trans("ErrorFailToCreateDir",$upload_dir).'</div>';
 		}
-	}
-	else
-	{
-		$langs->load("errors");
-		$mesg = '<div class="error">'.$langs->trans("ErrorFailToCreateDir",$upload_dir).'</div>';
 	}
 }
 
