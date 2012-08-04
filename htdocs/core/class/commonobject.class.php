@@ -2189,11 +2189,6 @@ abstract class CommonObject
     {
         $nb=0;
 
-        //if (empty($this->table_element_line)) dol_print_error('Call hasPredefinedProducts on a class with no table_element_line property');
-
-        //$sql ='SELECT COUNT(rowid) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
-        //$sql.='WHERE ...';
-        //var_dump($this->lines);
         foreach($this->lines as $key => $val)
         {
             $qualified=0;

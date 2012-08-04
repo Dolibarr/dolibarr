@@ -94,7 +94,7 @@ if ($resql)
 			if ($resql)
 			{
 				$num = $db->num_rows($resql);
-					
+
 				if ($num)
 				{
 					dol_syslog("nb of targets = ".$num, LOG_DEBUG);
@@ -116,12 +116,12 @@ if ($resql)
 					{
 						$res=1;
 						$now=dol_now();
-							
+
 						$obj2 = $db->fetch_object($resql);
-							
+
 						// sendto en RFC2822
 						$sendto = str_replace(',',' ',$obj2->firstname." ".$obj2->lastname) ." <".$obj2->email.">";
-							
+
 						// Make subtsitutions on topic and body
 						$other=explode(';',$obj2->other);
 						$other1=$other[0];
@@ -143,29 +143,29 @@ if ($resql)
 							'__OTHER4__' => $other4,
 							'__OTHER5__' => $other5
 						);
-							
+
 						complete_substitutions_array($substitutionarray,$langs);
 						$newsubject=make_substitutions($subject,$substitutionarray);
 						$newmessage=make_substitutions($message,$substitutionarray);
-							
+
 						$substitutionisok=true;
-							
+
 						// Fabrication du mail
 						$mail = new CMailFile(
-										$newsubject,
-										$sendto,
-										$from,
-										$newmessage,
-										array(),
-										array(),
-										array(),
-										'',
-										'',
-										0,
-										$msgishtml,
-										$errorsto
+							$newsubject,
+							$sendto,
+							$from,
+							$newmessage,
+							array(),
+							array(),
+							array(),
+							'',
+							'',
+							0,
+							$msgishtml,
+							$errorsto
 						);
-							
+
 						if ($mail->error)
 						{
 							$res=0;
@@ -175,13 +175,13 @@ if ($resql)
 							$mail->error='Some substitution failed';
 							$res=0;
 						}
-							
+
 						// Send Email
 						if ($res)
 						{
 							$res=$mail->sendfile();
 						}
-							
+
 						if ($res)
 						{
 							// Mail successful
@@ -237,15 +237,15 @@ if ($resql)
 								dol_print_error($db);
 							}
 						}
-							
+
 						$i++;
 					}
 				}
-					
+
 				// Loop finished, set global statut of mail
 				$statut=2;
 				if (! $nbko) $statut=3;
-					
+
 				$sql="UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$id;
 				dol_syslog("update global status sql=".$sql, LOG_DEBUG);
 				$resql2=$db->query($sql);

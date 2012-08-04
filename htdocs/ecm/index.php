@@ -78,6 +78,8 @@ $form=new Form($db);
 $ecmdirstatic = new EcmDirectory($db);
 $userstatic = new User($db);
 
+$error=0;
+
 
 /*
  *	Actions
@@ -92,36 +94,45 @@ if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	else $relativepath=GETPOST('section_dir');
 	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 
-	if (dol_mkdir($upload_dir) >= 0)
+	if (empty($_FILES['userfile']['tmp_name']))
 	{
-		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0, 0, $_FILES['userfile']['error']);
-		if (is_numeric($resupload) && $resupload > 0)
+		$error++;
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("File")), 'errors');
+	}
+
+	if (! $error)
+	{
+		if (dol_mkdir($upload_dir) >= 0)
 		{
-			//$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-			//print_r($_FILES);
-			$result=$ecmdir->changeNbOfFiles('+');
+			$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . dol_unescapefile($_FILES['userfile']['name']),0, 0, $_FILES['userfile']['error']);
+			if (is_numeric($resupload) && $resupload > 0)
+			{
+				//$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+				//print_r($_FILES);
+				$result=$ecmdir->changeNbOfFiles('+');
+			}
+			else
+			{
+				$langs->load("errors");
+				if ($resupload < 0)	// Unknown error
+				{
+					setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
+				}
+				else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
+				{
+					setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
+				}
+				else	// Known error
+				{
+					setEventMessage($langs->trans($resupload), 'errors');
+				}
+			}
 		}
 		else
 		{
 			$langs->load("errors");
-			if ($resupload < 0)	// Unknown error
-			{
-				setEventMessage($langs->trans("ErrorFileNotUploaded"), 'errors');
-			}
-			else if (preg_match('/ErrorFileIsInfectedWithAVirus/',$resupload))	// Files infected by a virus
-			{
-				setEventMessage($langs->trans("ErrorFileIsInfectedWithAVirus"), 'errors');
-			}
-			else	// Known error
-			{
-				setEventMessage($langs->trans($resupload), 'errors');
-			}
+			$mesg = '<div class="error">'.$langs->trans("ErrorFailToCreateDir",$upload_dir).'</div>';
 		}
-	}
-	else
-	{
-		$langs->load("errors");
-		$mesg = '<div class="error">'.$langs->trans("ErrorFailToCreateDir",$upload_dir).'</div>';
 	}
 }
 
@@ -361,7 +372,7 @@ $moreheadjs=empty($conf->use_javascript_ajax)?"":"
     });
 </script>";
 
-llxHeader($moreheadcss.$moreheadjs,$langs->trans("ECM"),'','','','',$morejs,'',0,0);
+llxHeader($moreheadcss.$moreheadjs,$langs->trans("ECMArea"),'','','','',$morejs,'',0,0);
 
 
 // Add sections to manage
@@ -466,7 +477,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 		print img_picto_common('','treemenu/base.gif');
 		print '</td><td align="left">';
 		$txt=$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionsAuto").')';
-		print $form->textwithpicto($txt,$htmltooltip,1,0);
+		print $form->textwithpicto($txt, $htmltooltip, 1, 0);
 		print '</td>';
 		print '</tr></table>';
 		print '</td>';
@@ -512,7 +523,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 		    $htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionAuto").'<br>';
 		    $htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$langs->trans("ECMTypeAuto").'<br>';
 		    $htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['desc'];
-		    print $form->textwithpicto('',$htmltooltip,1,"info");
+		    print $form->textwithpicto('', $htmltooltip, 1, 'info');
 		    print '</div>';
 		    print '</li>';
 
@@ -534,7 +545,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	print img_picto_common('','treemenu/base.gif');
 	print '</td><td align="left">';
 	$txt=$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionsManual").')';
-	print $form->textwithpicto($txt,$htmltooltip,1,"info");
+	print $form->textwithpicto($txt, $htmltooltip, 1, 'info');
 	print '</td>';
 	print '</tr></table></td>';
 	print '<td align="right">';
@@ -745,7 +756,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
     			$htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.$val['cachenbofdoc'].'<br>';
     			if ($nbofsubdir) $htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInSubDir").'</b>: '.$nboffilesinsubdir;
     			else $htmltooltip.='<b>'.$langs->trans("ECMNbOfSubDir").'</b>: '.$nbofsubdir.'<br>';
-    			print $form->textwithpicto('',$htmltooltip,1,"info");
+    			print $form->textwithpicto('', $htmltooltip, 1, 'info');
     			print "</td>";
 
     			print '</tr></table>';

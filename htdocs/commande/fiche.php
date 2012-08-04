@@ -288,27 +288,27 @@ else if ($action == 'add' && $user->rights->commande->creer)
 					}
 
 					$result = $object->addline(
-									$object_id,
-									$desc,
-									$lines[$i]->subprice,
-									$lines[$i]->qty,
-									$lines[$i]->tva_tx,
-									$lines[$i]->localtax1_tx,
-									$lines[$i]->localtax2_tx,
-									$lines[$i]->fk_product,
-									$lines[$i]->remise_percent,
-									$lines[$i]->info_bits,
-									$lines[$i]->fk_remise_except,
-									'HT',
-									0,
-									$datestart,
-									$dateend,
-									$product_type,
-									$lines[$i]->rang,
-									$lines[$i]->special_code,
-									$fk_parent_line,
-									$lines[$i]->fk_fournprice,
-									$lines[$i]->pa_ht
+						$object_id,
+						$desc,
+						$lines[$i]->subprice,
+						$lines[$i]->qty,
+						$lines[$i]->tva_tx,
+						$lines[$i]->localtax1_tx,
+						$lines[$i]->localtax2_tx,
+						$lines[$i]->fk_product,
+						$lines[$i]->remise_percent,
+						$lines[$i]->info_bits,
+						$lines[$i]->fk_remise_except,
+						'HT',
+						0,
+						$datestart,
+						$dateend,
+						$product_type,
+						$lines[$i]->rang,
+						$lines[$i]->special_code,
+						$fk_parent_line,
+						$lines[$i]->fk_fournprice,
+						$lines[$i]->pa_ht
 					);
 
 					if ($result < 0)
@@ -632,27 +632,27 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 			{
 				// Insert line
 				$result = $object->addline(
-								$object->id,
-								$desc,
-								$pu_ht,
-								GETPOST('qty'),
-								$tva_tx,
-								$localtax1_tx,
-								$localtax2_tx,
-								GETPOST('idprod'),
-								GETPOST('remise_percent'),
-								$info_bits,
-								0,
-								$price_base_type,
-								$pu_ttc,
-								$date_start,
-								$date_end,
-								$type,
-								-1,
-								'',
-								GETPOST('fk_parent_line'),
-								GETPOST('np_fournprice'),
-								GETPOST('np_buying_price')
+					$object->id,
+					$desc,
+					$pu_ht,
+					GETPOST('qty'),
+					$tva_tx,
+					$localtax1_tx,
+					$localtax2_tx,
+					GETPOST('idprod'),
+					GETPOST('remise_percent'),
+					$info_bits,
+					0,
+					$price_base_type,
+					$pu_ttc,
+					$date_start,
+					$date_end,
+					$type,
+					-1,
+					'',
+					GETPOST('fk_parent_line'),
+					GETPOST('np_fournprice'),
+					GETPOST('np_buying_price')
 				);
 
 				if ($result > 0)
@@ -753,23 +753,23 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 	if (! $error)
 	{
 		$result = $object->updateline(
-						GETPOST('lineid'),
-						$description,
-						$up_ht,
-						GETPOST('qty'),
-						GETPOST('remise_percent'),
-						$vat_rate,
-						$localtax1_rate,
-						$localtax2_rate,
-						'HT',
-						$info_bits,
-						$date_start,
-						$date_end,
-						$type,
-						GETPOST('fk_parent_line'),
-						0,
-						$fk_fournprice,
-						$pa_ht
+			GETPOST('lineid'),
+			$description,
+			$up_ht,
+			GETPOST('qty'),
+			GETPOST('remise_percent'),
+			$vat_rate,
+			$localtax1_rate,
+			$localtax2_rate,
+			'HT',
+			$info_bits,
+			$date_start,
+			$date_end,
+			$type,
+			GETPOST('fk_parent_line'),
+			0,
+			$fk_fournprice,
+			$pa_ht
 		);
 
 		if ($result >= 0)

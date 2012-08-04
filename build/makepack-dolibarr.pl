@@ -504,7 +504,7 @@ if ($nboftargetok) {
     		print "Launch RPM build (rpmbuild --clean -ba $BUILDROOT/${BUILDFIC})\n";
     		#$ret=`rpmbuild -vvvv --clean -ba $BUILDROOT/${BUILDFIC}`;
     		$ret=`rpmbuild --clean -ba $BUILDROOT/${BUILDFIC}`;
-    	
+
     		# Move to final dir
    		    print "Move $RPMDIR/RPMS/".$ARCH."/".$FILENAMETGZ2."-".$RPMSUBVERSION."*.".$ARCH.".rpm into $NEWDESTI/".$FILENAMETGZ2."-".$RPMSUBVERSION."*.".$ARCH.".rpm\n";
    		    #$cmd="mv \"$RPMDIR/RPMS/".$ARCH."/".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm\" \"$NEWDESTI/".$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm\"";

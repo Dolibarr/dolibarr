@@ -346,7 +346,7 @@ class Form
      *	@return	string							Code html du tooltip (texte+picto)
      *	@see	Use function textwithpicto if you can.
      */
-    function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$extracss='',$notabs=0,$incbefore='',$noencodehtmltext=0)
+    function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 0, $incbefore = '', $noencodehtmltext = 0)
     {
         global $conf;
 
@@ -402,18 +402,24 @@ class Form
      *  @param  int		$noencodehtmltext   Do not encode into html entity the htmltext
      * 	@return	string						HTML code of text, picto, tooltip
      */
-    function textwithpicto($text,$htmltext,$direction=1,$type='help',$extracss='',$noencodehtmltext=0)
+    function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0)
     {
         global $conf;
 
-        if ("$type" == "0") $type='info';	// For backward compatibility
+        $alt = '';
 
-        $alt='';
+        //For backwards compatibility
+        if ($type == '0') $type = 'info';
+        elseif ($type == '1') $type = 'help';
+
         // If info or help with no javascript, show only text
         if (empty($conf->use_javascript_ajax))
         {
             if ($type == 'info' || $type == 'help')	return $text;
-            else { $alt=$htmltext; $htmltext='';
+            else
+            {
+                $alt = $htmltext;
+                $htmltext = '';
             }
         }
         // If info or help with smartphone, show only text
@@ -421,15 +427,14 @@ class Form
         {
             if ($type == 'info' || $type == 'help') return $text;
         }
-        // Info or help
-        if ($type == 'info') 				$img=img_help(0,$alt);
-        if ($type == 'help' || $type ==1)	$img=img_help(1,$alt);
-        if ($type == 'superadmin') 			$img=img_picto($alt,"redstar");
-        if ($type == 'admin')				$img=img_picto($alt,"star");
-        // Warnings
-        if ($type == 'warning') 			$img=img_warning($alt);
+        
+        if ($type == 'info') $img = img_help(0, $alt);
+        elseif ($type == 'help') $img = img_help(1, $alt);
+        elseif ($type == 'superadmin') $img = img_picto($alt, 'redstar');
+        elseif ($type == 'admin') $img = img_picto($alt, 'star');
+        elseif ($type == 'warning') $img = img_warning($alt);
 
-        return $this->textwithtooltip($text,$htmltext,2,$direction,$img,$extracss,0,'',$noencodehtmltext);
+        return $this->textwithtooltip($text, $htmltext, 2, $direction, $img, $extracss, 0, '', $noencodehtmltext);
     }
 
     /**
@@ -804,11 +809,12 @@ class Form
      *	@param	string	$limitto		Disable answers that are not id in this array list
      *	@param	string	$showfunction   Add function into label
      *	@param	string	$moreclass		Add more class to class style
+     *	@param	string	$showsoc	    Add company into label
      *	@return	int						<0 if KO, Nb of contact in list if OK
      */
-    function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='')
+    function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $showsoc=0)
     {
-    	print $this->selectcontacts($socid,$selected,$htmlname,$showempty,$exclude,$limitto,$showfunction, $moreclass);
+    	print $this->selectcontacts($socid,$selected,$htmlname,$showempty,$exclude,$limitto,$showfunction, $moreclass, $showsoc);
     	return $this->num;
     }
 
@@ -824,9 +830,10 @@ class Form
      *	@param	string	$showfunction   Add function into label
      *	@param	string	$moreclass		Add more class to class style
      *	@param	bool	$options_only	Return options only (for ajax treatment)
-     *	@return	int						<0 if KO, Nb of contact in list if OK
+     *	@param	string	$showsoc	    Add company into label
+     *	@return	 int						<0 if KO, Nb of contact in list if OK
      */
-    function selectcontacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $options_only=false)
+    function selectcontacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $options_only=false, $showsoc=0)
     {
         global $conf,$langs;
 
@@ -836,7 +843,13 @@ class Form
 
         // On recherche les societes
         $sql = "SELECT sp.rowid, sp.name as name, sp.firstname, sp.poste";
+        if ($showsoc > 0) {
+        	$sql.= " , s.nom as company";
+        }
         $sql.= " FROM ".MAIN_DB_PREFIX ."socpeople as sp";
+        if ($showsoc > 0) {
+        	$sql.= " LEFT OUTER JOIN  ".MAIN_DB_PREFIX ."societe as s ON s.rowid=sp.fk_soc ";
+        }
         $sql.= " WHERE sp.entity IN (".getEntity('societe', 1).")";
         if ($socid > 0) $sql.= " AND sp.fk_soc=".$socid;
         $sql.= " ORDER BY sp.name ASC";
@@ -877,6 +890,7 @@ class Form
                             $out.= ' selected="selected">';
                             $out.= $contactstatic->getFullName($langs);
                             if ($showfunction && $obj->poste) $out.= ' ('.$obj->poste.')';
+                            if (($showsoc > 0) && $obj->company) $out.= ' - ('.$obj->company.')';
                             $out.= '</option>';
                         }
                         else
@@ -886,6 +900,7 @@ class Form
                             $out.= '>';
                             $out.= $contactstatic->getFullName($langs);
                             if ($showfunction && $obj->poste) $out.= ' ('.$obj->poste.')';
+                            if (($showsoc > 0) && $obj->company) $out.= ' - ('.$obj->company.')';
                             $out.= '</option>';
                         }
                     }
@@ -895,6 +910,7 @@ class Form
                         {
                             $out.= $contactstatic->getFullName($langs);
                             if ($showfunction && $obj->poste) $out.= ' ('.$obj->poste.')';
+                            if (($showsoc > 0) && $obj->company) $out.= ' - ('.$obj->company.')';
                         }
                     }
                     $i++;

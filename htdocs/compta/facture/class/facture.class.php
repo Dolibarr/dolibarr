@@ -1930,16 +1930,6 @@ class Facture extends CommonInvoice
                 $rangtouse = $rangmax + 1;
             }
 
-            // TODO A virer
-            // Anciens indicateurs: $price, $remise (a ne plus utiliser)
-            //$price = $pu;
-            //$remise = 0;
-            //if ($remise_percent > 0)
-            //{
-            //    $remise = round(($pu * $remise_percent / 100),2);
-            //    $price = ($pu - $remise);
-            //}
-
             $product_type=$type;
             if ($fk_product)
             {
@@ -1979,10 +1969,6 @@ class Facture extends CommonInvoice
 			// infos marge
 			$this->line->fk_fournprice = $fk_fournprice;
 			$this->line->pa_ht = $pa_ht;
-
-            // TODO Ne plus utiliser
-            //$this->line->price=($this->type==2?-1:1)*abs($price);
-            //$this->line->remise=($this->type==2?-1:1)*abs($remise);
 
             $result=$this->line->insert();
             if ($result > 0)
