@@ -1635,26 +1635,32 @@ function img_picto($alt, $picto, $options = '', $pictoisfullpath = false)
 {
 	global $conf;
 
-	// Clean parameters
-	if (! preg_match('/(\.png|\.gif)$/i', $picto) && ! preg_match('/^([^@]+)@([^@]+)$/i', $picto)) $picto .= '.png';
-
 	// Define fullpathpicto to use into src
-	if ($pictoisfullpath) $fullpathpicto = $picto;
+	if (! empty($pictoisfullpath)) {
+		// Clean parameters
+		if (! preg_match('/(\.png|\.gif)$/i',$picto))
+			$picto .= '.png';
+		$fullpathpicto = $picto;
+	}
 	else
 	{
 		// By default, we search into theme directory
 		$url = DOL_URL_ROOT;
 		$path = 'theme/'.$conf->theme;
-		if (! empty($conf->global->MAIN_FORCETHEMEDIR)) $path = preg_replace('/^\//', '', $conf->global->MAIN_FORCETHEMEDIR).'/'.$path;
+		if (! empty($conf->global->MAIN_FORCETHEMEDIR))
+			$path = preg_replace('/^\//', '', $conf->global->MAIN_FORCETHEMEDIR).'/'.$path;
 		// If we ask an image into module/img (not into a theme path)
 		if (preg_match('/^([^@]+)@([^@]+)$/i',$picto,$regs))
 		{
 			$picto = $regs[1];
 			$path = $regs[2];
 		}
-		if (! preg_match('/(\.png|\.gif)$/i',$picto)) $picto .= '.png';
+		// Clean parameters
+		if (! preg_match('/(\.png|\.gif)$/i',$picto))
+			$picto .= '.png';
 		// If img file not into standard path, we use alternate path
-		if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/'.$picto)) $url = DOL_URL_ROOT_ALT;
+		if (defined('DOL_URL_ROOT_ALT') && DOL_URL_ROOT_ALT && ! file_exists(DOL_DOCUMENT_ROOT.'/'.$path.'/img/'.$picto))
+			$url = DOL_URL_ROOT_ALT;
 
 		$fullpathpicto = $url.'/'.$path.'/img/'.$picto;
 	}
@@ -1675,8 +1681,6 @@ function img_picto($alt, $picto, $options = '', $pictoisfullpath = false)
  */
 function img_object($alt, $picto, $options = '', $pictoisfullpath = false)
 {
-	global $conf;
-
 	return img_picto($alt, 'object_'.$picto, $options, $pictoisfullpath);
 }
 
@@ -1700,7 +1704,7 @@ function img_picto_common($alt, $picto, $options = '', $pictoisfullpath = 0)
 	else
 	{
 		$path = DOL_URL_ROOT.'/theme/common/'.$picto;
-	
+
 		if (! empty($conf->global->MAIN_MODULE_CAN_OVERWRITE_COMMONICONS))
 		{
 			$themepath = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/'.$picto;
@@ -1812,7 +1816,7 @@ function img_view($alt = 'default', $float = 0, $other = '')
 	if ($alt == 'default') $alt = $langs->trans('View');
 
 	$options = ($float ? 'style="float: right" ' : '').$other;
-	
+
 	return img_picto($alt, 'view.png', $options);
 }
 
@@ -2006,7 +2010,7 @@ function img_allow($allow, $alt = 'default')
 	if ($alt == 'default') $alt = $langs->trans('Active');
 
 	if ($allow == 1) return img_picto($alt, 'tick.png');
-	
+
 	return '-';
 }
 
@@ -2068,7 +2072,7 @@ function info_admin($text, $infoonimgalt = 0)
 	{
 		return img_picto($text, 'star');
 	}
-	
+
 	return '<div class="info">'.img_picto($langs->trans('InfoAdmin'), 'star').' '.$text.'</div>';
 }
 
