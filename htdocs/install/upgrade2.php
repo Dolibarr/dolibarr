@@ -341,13 +341,16 @@ else
     $error++;
 }
 
+$ret=0;
+if ($error && isset($argv[1])) $ret=1;
+dol_syslog("Exit ".$ret);
 
 pFooter($error,$setuplang);
 
 if ($db->connected) $db->close();
 
 // Return code if ran from command line
-if ($error && isset($argv[1])) exit(1);
+if ($ret) exit($ret);
 
 
 
