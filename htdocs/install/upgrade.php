@@ -351,10 +351,14 @@ if (empty($actiondone))
     print '<div class="error">'.$langs->trans("ErrorWrongParameters").'</div>';
 }
 
+$ret=0;
+if (! $ok && isset($argv[1])) $ret=1;
+dol_syslog("Exit ".$ret);
+
 pFooter(! $ok && empty($_GET["ignoreerrors"]),$setuplang);
 
 if ($db->connected) $db->close();
 
 // Return code if ran from command line
-if (! $ok && isset($argv[1])) exit(1);
+if ($ret) exit($ret);
 ?>
