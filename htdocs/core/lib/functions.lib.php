@@ -1709,7 +1709,7 @@ function img_picto_common($alt, $picto, $options = '', $pictoisfullpath = 0)
 		{
 			$themepath = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/'.$picto;
 
-			if (file_exists($themepath)) return img_picto($alt, $themepath, $options, 1);
+			if (file_exists($themepath)) $path = $themepath;
 		}
 	}
 
