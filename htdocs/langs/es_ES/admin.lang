@@ -987,7 +987,7 @@ FreeLegalTextOnOrders=Texto libre en pedidos
 WatermarkOnDraftOrders=Marca de agua en pedidos borrador (en caso de estar vacío)
 ##### Clicktodial #####
 ClickToDialSetup=Configuración del módulo Click To Dial
-ClickToDialUrlDesc=Url de llamada haciendo click en el icono teléfono. <br>La 'url completa llamada será: URL?login=...&password=...&caller=...&called=telellamada
+ClickToDialUrlDesc=URL de llamada haciendo click en el icono teléfono. <br>La URL completa de llamada será: URL?login=...&password=...&caller=...&called=telellamada
 ##### Bookmark4u #####
 Bookmark4uSetup=Configuración del módulo Bookmark4u
 ##### Interventions #####
