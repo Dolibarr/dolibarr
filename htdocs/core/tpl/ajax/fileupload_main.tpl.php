@@ -42,13 +42,6 @@ $(function () {
 	// Initialize the jQuery File Upload widget:
 	$('#fileupload').fileupload();
 
-	// Options
-	$('#fileupload').fileupload('option', {
-		// Enable iframe cross-domain access via redirect option
-		redirect: window.location.href.replace(/\/[^\/]*$/,'<?php echo DOL_URL_ROOT; ?>/includes/jquery/plugins/fileupload/cors/result.html?%s'),
-		maxFileSize: '<?php echo $max_file_size; ?>'
-	});
-
 	// Events
 	$('#fileupload').fileupload({
 		completed: function (e, data) {
