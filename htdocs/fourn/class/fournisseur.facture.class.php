@@ -582,34 +582,73 @@ class FactureFournisseur extends Facture
         $this->db->begin();
 
         $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
-        dol_syslog("FactureFournisseur sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.$rowid;
-            dol_syslog("FactureFournisseur sql=".$sql, LOG_DEBUG);
+            dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
             $resql2 = $this->db->query($sql);
-            if (! $resql2) $error++;
+            if (! $resql2) {
+            	$error++;
+            }
+        }
+        else {
+        	$error++;
+        }
 
-            if (! $error)
-            {
-                $this->db->commit();
-                return 1;
-            }
-            else
-            {
-                $this->db->rollback();
-                $this->error=$this->db->lasterror();
-                dol_syslog("FactureFournisseur::delete ".$this->error, LOG_ERR);
-                return -1;
-            }
+        if (! $error)
+        {
+        	// Appel des triggers
+        	include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+        	$interface=new Interfaces($this->db);
+        	$result=$interface->run_triggers('INVOICE_SUPPLIER_DELETE',$this,$user,$langs,$conf);
+        	if ($result < 0) {
+        		$error++; $this->errors=$interface->errors;
+        	}
+        	// Fin appel triggers
+        }
+
+        if (! $error)
+        {
+        	// We remove directory
+        	if ($conf->fournisseur->facture->dir_output)
+        	{
+        		$ref = dol_sanitizeFileName($this->ref);
+        		$dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($this->id, 2).$ref;
+        		$file = $dir . "/" . $ref . ".pdf";
+        		if (file_exists($file))
+        		{
+        			if (! dol_delete_file($file,0,0,0,$this)) // For triggers
+        			{
+        				$this->error='ErrorFailToDeleteFile';
+        				$error++;
+        			}
+        		}
+        		if (file_exists($dir))
+        		{
+        			$res=@dol_delete_dir_recursive($dir);
+        			if (! $res)
+        			{
+        				$this->error='ErrorFailToDeleteDir';
+        				$error++;
+        			}
+        		}
+        	}
+        }
+
+        if (! $error)
+        {
+        	dol_syslog(get_class($this)."::delete $this->id by $user->id", LOG_DEBUG);
+        	$this->db->commit();
+        	return 1;
         }
         else
         {
-            $this->db->rollback();
-            $this->error=$this->db->lasterror();
-            dol_syslog("FactureFournisseur::delete ".$this->error, LOG_ERR);
-            return -1;
+        	$this->error=$this->db->lasterror();
+        	dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+        	$this->db->rollback();
+        	return -$error;
         }
     }
 

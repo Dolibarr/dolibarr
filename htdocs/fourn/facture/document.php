@@ -119,11 +119,12 @@ if ($action=='delete')
     if ($facture->fetch($facid))
     {
         $langs->load("other");
+        $facture->fetch_thirdparty();
         $ref=dol_sanitizeFileName($facture->ref);
         $upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($facture->id,2).$ref;
 
         $file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-        dol_delete_file($file);
+        dol_delete_file($file,0,0,0,$facture);
         $mesg = '<div class="ok">'.$langs->trans('FileWasRemoved',GETPOST('urlfile')).'</div>';
     }
 }
