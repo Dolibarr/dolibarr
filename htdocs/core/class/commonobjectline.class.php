@@ -16,17 +16,16 @@
  */
 
 /**
- *       \file       htdocs/core/class/commonobjectline.class.php
- *       \ingroup    core
- *       \brief      File of the superclass of classes of lines of business objects (invoice, contract, PROPAL, commands, etc. ...)
+ *	\file       htdocs/core/class/commonobjectline.class.php
+ *  \ingroup    core
+ *  \brief      File of the superclass of classes of lines of business objects (invoice, contract, PROPAL, commands, etc. ...)
  */
 
 
 /**
- *		\class 		CommonObjectLine
- *       \brief 		Superclass for class inheritance lines of business objects
+ *  Parent class for class inheritance lines of business objects
+ *  This class is useless for the moment so no inherit are done on it
  */
-
 abstract class CommonObjectLine
 {
 

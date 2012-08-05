@@ -29,8 +29,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/modules/cheque/pdf/modules_chequereceipts.
 
 
 /**
- *	\class      BordereauChequeBlochet
- *	\brief      Class of file to build cheque deposit receipts
+ *	Class of file to build cheque deposit receipts
  */
 class BordereauChequeBlochet extends ModeleChequeReceipts
 {

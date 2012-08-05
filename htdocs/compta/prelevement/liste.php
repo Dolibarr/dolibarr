@@ -24,8 +24,8 @@
  *      \brief      Page liste des prelevements
  */
 require("../bank/pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/ligne-prelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bonprelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/ligneprelevement.class.php");
 
 $langs->load("withdrawals");
 $langs->load("companies");
@@ -143,16 +143,16 @@ if ($result)
 
         print $ligne->LibStatut($obj->statut_ligne,2);
         print "&nbsp;";
-        
+
         print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid_ligne.'">';
         print substr('000000'.$obj->rowid_ligne, -6);
         print '</a></td>';
 
         print '<td>';
-        
+
         print $bon->LibStatut($obj->statut,2);
         print "&nbsp;";
-        
+
         print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
         print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">';

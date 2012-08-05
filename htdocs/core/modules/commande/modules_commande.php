@@ -34,8 +34,7 @@ require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
 
 
 /**
- *  \class      ModelePDFCommandes
- *  \brief      Classe mere des modeles de commandes
+ *	Classe mere des modeles de commandes
  */
 abstract class ModelePDFCommandes extends CommonDocGenerator
 {

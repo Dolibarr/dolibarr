@@ -23,14 +23,14 @@
 /**
  *	\file       htdocs/contrat/class/contrat.class.php
  *	\ingroup    contrat
- *	\brief      Fichier de la classe des contrats
+ *	\brief      File of class to manage contracts
  */
 
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 
+
 /**
- *	\class      Contrat
- *	\brief      Classe permettant la gestion des contrats
+ *	Class to manage contracts
  */
 class Contrat extends CommonObject
 {

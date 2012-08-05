@@ -427,7 +427,7 @@ class Form
         {
             if ($type == 'info' || $type == 'help') return $text;
         }
-        
+
         if ($type == 'info') $img = img_help(0, $alt);
         elseif ($type == 'help') $img = img_help(1, $alt);
         elseif ($type == 'superadmin') $img = img_picto($alt, 'redstar');
@@ -2837,28 +2837,6 @@ class Form
         return $out;
     }
 
-    /**
-     *  Output an HTML select vat rate
-     *
-     *  @param	string	$htmlname           Nom champ html
-     *  @param  float	$selectedrate       Forcage du taux tva pre-selectionne. Mettre '' pour aucun forcage.
-     *  @param  Societe	$societe_vendeuse   Object societe vendeuse
-     *  @param  Societe	$societe_acheteuse  Object societe acheteuse
-     *  @param  int		$idprod             Id product
-     *  @param  int		$info_bits          Miscellaneous information on line
-     *  @param  string	$type      			''=Unknown, 0=Product, 1=Service (Used if idprod not defined)
-     *  						            Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
-     *              						Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
-     *              						Si (vendeur et acheteur dans Communaute europeenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
-     *              						Si (vendeur et acheteur dans Communaute europeenne) et bien vendu autre que transport neuf alors la TVA par defaut=TVA du produit vendu. Fin de regle.
-     *              						Sinon la TVA proposee par defaut=0. Fin de regle.
-     *  @return	void
-     *  @deprecated
-     */
-    function select_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='')
-    {
-        print $this->load_tva($htmlname, $selectedrate, $societe_vendeuse, $societe_acheteuse, $idprod, $info_bits, $type);
-    }
 
     /**
      *	Load into the cache vat rates of a country

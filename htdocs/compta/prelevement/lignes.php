@@ -20,14 +20,15 @@
 
 /**
  *	\file       htdocs/compta/prelevement/lignes.php
- *	\brief      Prelevement
+ *  \ingroup    prelevement
+ *	\brief      Prelevement lines
  */
 
 require("../bank/pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/prelevement.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/ligne-prelevement.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/rejet-prelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bonprelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/ligneprelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/rejetprelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
 
 // Security check
@@ -76,7 +77,7 @@ if ($prev_id)
 		print '<tr><td width="20%">'.$langs->trans('Status').'</td>';
 		print '<td>'.$bon->getLibStatut(1).'</td>';
 		print '</tr>';
-		
+
 		if($bon->date_trans <> 0)
 		{
 			$muser = new User($db);
@@ -95,7 +96,7 @@ if ($prev_id)
 			print dol_print_date($bon->date_credit,'day');
 			print '</td></tr>';
 		}
-		
+
 		print '</table>';
 
 		print '</div>';
@@ -159,10 +160,10 @@ if ($result)
 		$obj = $db->fetch_object($result);
 
 		print "<tr $bc[$var]><td>";
-		
+
 		print $ligne->LibStatut($obj->statut,2);
 		print "&nbsp;";
-		
+
 		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
 		print substr('000000'.$obj->rowid, -6);
 		print '</a></td>';

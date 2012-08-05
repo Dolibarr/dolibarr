@@ -26,7 +26,7 @@
 require("../bank/pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/prelevement.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-require_once DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php";
+require_once DOL_DOCUMENT_ROOT."/compta/prelevement/class/bonprelevement.class.php";
 
 $langs->load("bills");
 $langs->load("categories");
@@ -49,7 +49,7 @@ if ($id > 0 || ! empty($ref))
 
 	if ($object->fetch($id) == 0)
     {
-		$head = prelevement_prepare_head($object);	
+		$head = prelevement_prepare_head($object);
 		dol_fiche_head($head, 'preview', 'Prelevement : '. $object->ref);
 
 		print '<table class="border" width="100%">';

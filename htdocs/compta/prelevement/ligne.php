@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  *
@@ -25,9 +25,9 @@
  */
 
 require("../bank/pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/ligne-prelevement.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/rejet-prelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bonprelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/ligneprelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/rejetprelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
 
 // Security check
@@ -110,11 +110,11 @@ if ($id)
 		print '<tr><td width="20%">'.$langs->trans("WithdrawalReceipt").'</td><td>';
 		print '<a href="fiche.php?id='.$lipre->bon_rowid.'">'.$lipre->bon_ref.'</a></td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec,'day').'</td></tr>';
-		print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($lipre->amount).'</td></tr>';		
+		print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($lipre->amount).'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Status").'</td><td>';
-		
+
 		print $lipre->LibStatut($lipre->statut,1).'</td></tr>';
-		
+
 		if ($lipre->statut == 3)
 		{
 			$rej = new RejetPrelevement($db, $user);
@@ -165,37 +165,37 @@ if ($id)
 
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("WithdrawalRefused").'</td></tr>';
-		
+
 		//Select yes/no
 		print '<tr><td class="valid">'.$langs->trans("WithdrawalRefusedConfirm").' '.$soc->nom.' ?</td>';
 		print '<td colspan="2" class="valid">';
 		print $form->selectyesno("confirm",1,0);
 		print '</td></tr>';
-		
+
 		//Date
 		print '<tr><td class="valid">'.$langs->trans("RefusedData").'</td>';
 		print '<td colspan="2" class="valid">';
 		print $form->select_date('','','','','',"confirm_rejet");
 		print '</td></tr>';
-		
+
 		//Reason
 		print '<tr><td class="valid">'.$langs->trans("RefusedReason").'</td>';
 		print '<td class="valid">';
 		print $form->selectarray("motif", $rej->motifs);
 		print '</td></tr>';
-			
+
 		//Facturer
 		print '<tr><td class="valid">'.$langs->trans("RefusedInvoicing").'</td>';
 		print '<td class="valid" colspan="2">';
 		print $form->selectarray("facturer", $rej->facturer);
 		print '</td></tr>';
 		print '</table><br>';
-		
+
 		//Confirm Button
 		print '<center><input type="submit" class="valid" value='.$langs->trans("Confirm").'><center>';
 		print '</form>';
 	}
-	
+
 	/* ************************************************************************** */
 	/*                                                                            */
 	/* Barre d'action                                                             */
@@ -210,7 +210,7 @@ if ($id)
 		{
 	  		print "<a class=\"butAction\" href=\"ligne.php?action=rejet&amp;id=$lipre->id\">".$langs->trans("StandingOrderReject")."</a>";
 		}
-		else 
+		else
 		{
 			print "<a class=\"butActionRefused\" href=\"#\">".$langs->trans("StandingOrderReject")."</a>";
 		}

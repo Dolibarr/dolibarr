@@ -17,8 +17,14 @@
  *
  */
 
+/**
+ * 		\file       htdocs/compta/prelevement/facturesrejets.php
+ *      \ingroup    prelevement
+ *		\brief      Invoice reject
+ */
+
 require("../bank/pre.inc.php");
-require_once DOL_DOCUMENT_ROOT."/compta/prelevement/class/rejet-prelevement.class.php";
+require_once DOL_DOCUMENT_ROOT."/compta/prelevement/class/rejetprelevement.class.php";
 require_once DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php";
 
 $langs->load("categories");

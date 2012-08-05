@@ -41,6 +41,10 @@ For developers:
 - New: Uniformize code.
 - New: Add option WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER and 
        WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER
+- New: removed deprecated methods
+       ldap::connect, formadmin::select_lang,
+       html::select_tva
+
 
 
 ***** ChangeLog for 3.2.0 compared to 3.1.3 *****

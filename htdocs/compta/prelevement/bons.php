@@ -25,7 +25,7 @@
  */
 
 require("../bank/pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bonprelevement.class.php");
 
 $langs->load("widthdrawals");
 $langs->load("categories");
@@ -98,10 +98,10 @@ if ($result)
       $var=!$var;
 
       print "<tr $bc[$var]><td>";
-      
+
       print $bon->LibStatut($obj->statut,2);
       print "&nbsp;";
-      
+
       print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
       print '<td align="center">'.dol_print_date($db->jdate($obj->datec),'day')."</td>\n";

@@ -19,7 +19,7 @@
  */
 
 /**
- *  \file       htdocs/compta/prelevement/class/ligne-prelevement.class.php
+ *  \file       htdocs/compta/prelevement/class/ligneprelevement.class.php
  *  \ingroup    prelevement
  *  \brief      Fichier de la classe des lignes de prelevements
  */

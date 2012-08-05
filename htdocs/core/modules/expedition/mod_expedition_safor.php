@@ -23,8 +23,8 @@
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/modules/expedition/modules_expedition.php");
 
-/**	    \class      mod_commande_safor
- *      \brief      Class to manage expedition numbering rules Safor
+/**
+ *	Class to manage expedition numbering rules Safor
  */
 class mod_expedition_safor extends ModelNumRefExpedition
 {

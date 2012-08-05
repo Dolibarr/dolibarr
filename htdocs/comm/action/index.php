@@ -526,7 +526,7 @@ if (count($listofextcals))
         $namecal = $extcal['name'];
         $colorcal = $extcal['color'];
         //print "url=".$url." namecal=".$namecal." colorcal=".$colorcal;
-        $ical=new ical();
+        $ical=new ICal();
         $ical->parse($url);
         // After this $ical->cal['VEVENT'] contains array of events, $ical->cal['DAYLIGHT'] contains daylight info, $ical->cal['STANDARD'] contains non daylight info, ...
         //var_dump($ical->cal); exit;
