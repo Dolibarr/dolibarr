@@ -547,6 +547,8 @@ if (! defined('NOLOGIN'))
         $_SESSION["dol_screenheight"]=isset($dol_screenheight)?$dol_screenheight:'';
         $_SESSION["dol_company"]=$conf->global->MAIN_INFO_SOCIETE_NOM;
         $_SESSION["dol_entity"]=$conf->entity;
+        if (GETPOST('dol_hide_topmenu')) $_SESSION['dol_hide_topmenu']=1;
+        if (GETPOST('dol_hide_leftmenu')) $_SESSION['dol_hide_leftmenu']=1;
         dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
 
         $db->begin();
@@ -788,8 +790,12 @@ if (! function_exists("llxHeader"))
 	function llxHeader($head = '', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
 	{
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);	// Show html headers
-		top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring);
-		if (empty($conf->global->MAIN_HIDE_LEFT_MENU)) {
+		if (empty($conf->global->MAIN_HIDE_TOP_MENU))
+		{
+			top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring);
+		}
+		if (empty($conf->global->MAIN_HIDE_LEFT_MENU))
+		{
 			left_menu('', $help_url, '', '', 1, $title);
 		}
 		main_area($title);
@@ -1217,104 +1223,107 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
     if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '<div class="ui-layout-north"> <!-- Begin top layout -->'."\n";
 
-    print '<div id="tmenu_tooltip" class="tmenu">'."\n";
-
-    // Show menu
-    $menutop = new MenuTop($db);
-    $menutop->atarget=$target;
-    $menutop->showmenu();      // This contains a \n
-
-    print "</div>\n";
-
-    // Link to login card
-    $loginhtmltext=''; $logintext='';
-    if ($user->societe_id)
+    if (empty($_SESSION['dol_hide_topmenu']))
     {
-        $thirdpartystatic=new Societe($db);
-        $thirdpartystatic->fetch($user->societe_id);
-        $companylink=' ('.$thirdpartystatic->getNomUrl('','').')';
-        $company=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
+	    print '<div id="tmenu_tooltip" class="tmenu">'."\n";
+
+	    // Show menu
+	    $menutop = new MenuTop($db);
+	    $menutop->atarget=$target;
+	    $menutop->showmenu();      // This contains a \n
+
+	    print "</div>\n";
+
+	    // Link to login card
+	    $loginhtmltext=''; $logintext='';
+	    if ($user->societe_id)
+	    {
+	        $thirdpartystatic=new Societe($db);
+	        $thirdpartystatic->fetch($user->societe_id);
+	        $companylink=' ('.$thirdpartystatic->getNomUrl('','').')';
+	        $company=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
+	    }
+	    $logintext='<div class="login"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'"';
+	    $logintext.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
+	    $logintext.='>'.$user->login.'</a>';
+	    if ($user->societe_id) $logintext.=$companylink;
+	    $logintext.='</div>';
+	    $loginhtmltext.='<u>'.$langs->trans("User").'</u>';
+	    $loginhtmltext.='<br><b>'.$langs->trans("Name").'</b>: '.$user->getFullName($langs);
+	    $loginhtmltext.='<br><b>'.$langs->trans("Login").'</b>: '.$user->login;
+	    $loginhtmltext.='<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin);
+	    $type=($user->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
+	    $loginhtmltext.='<br><b>'.$langs->trans("Type").'</b>: '.$type;
+	    $loginhtmltext.='<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
+	    $loginhtmltext.='<br>';
+	    $loginhtmltext.='<br><u>'.$langs->trans("Connection").'</u>';
+	    if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $loginhtmltext.='<br><b>'.$langs->trans("ConnectedOnMultiCompany").'</b>: '.$conf->entity.' (user entity '.$user->entity.')';
+	    $loginhtmltext.='<br><b>'.$langs->trans("ConnectedSince").'</b>: '.dol_print_date($user->datelastlogin,"dayhour");
+	    $loginhtmltext.='<br><b>'.$langs->trans("PreviousConnexion").'</b>: '.dol_print_date($user->datepreviouslogin,"dayhour");
+	    $loginhtmltext.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$_SESSION["dol_authmode"];
+	    $loginhtmltext.='<br><b>'.$langs->trans("CurrentTheme").'</b>: '.$conf->theme;
+	    $s=picto_from_langcode($langs->getDefaultLang());
+	    $loginhtmltext.='<br><b>'.$langs->trans("CurrentUserLanguage").'</b>: '.($s?$s.' ':'').$langs->getDefaultLang();
+	    $loginhtmltext.='<br><b>'.$langs->trans("Browser").'</b>: '.$conf->browser->name.($conf->browser->version?' '.$conf->browser->version:'').' ('.$_SERVER['HTTP_USER_AGENT'].')';
+	    if (! empty($conf->browser->phone)) $loginhtmltext.='<br><b>'.$langs->trans("Phone").'</b>: '.$conf->browser->phone;
+	    if (! empty($_SESSION["disablemodules"])) $loginhtmltext.='<br><b>'.$langs->trans("DisabledModules").'</b>: <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
+
+	    $appli='Dolibarr';
+	    if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
+
+	    // Link info
+	    $logouttext='';
+	    $logouthtmltext=$appli.' '.DOL_VERSION.'<br>';
+	    $logouthtmltext.=$langs->trans("Logout").'<br>';
+	    //$logouthtmltext.="<br>";
+	    if ($_SESSION["dol_authmode"] != 'forceuser'
+	    && $_SESSION["dol_authmode"] != 'http')
+	    {
+	        $logouttext.='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
+	        $logouttext.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
+	        $logouttext.='>';
+	        $logouttext.='<img class="login" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
+	        $logouttext.=' alt="'.dol_escape_htmltag($langs->trans("Logout")).'" title=""';
+	        $logouttext.='>';
+	        $logouttext.='</a>';
+	    }
+	    else
+	    {
+	        $logouttext.='<img class="login" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
+	        $logouttext.=' alt="'.dol_escape_htmltag($langs->trans("Logout")).'" title=""';
+	        $logouttext.='>';
+	    }
+
+	    print '<div class="login_block">'."\n";
+	    print '<table class="nobordernopadding" summary=""><tr>';
+
+	    $form=new Form($db);
+
+	    $toprightmenu.=$form->textwithtooltip('',$loginhtmltext,2,1,$logintext,'',1);
+
+	    // Execute hook printTopRightMenu (hooks should output string like '<td><div class="login"><a href="">mylink</a></div></td>')
+	    $parameters=array();
+	    $toprightmenu.=$hookmanager->executeHooks('printTopRightMenu',$parameters);    // Note that $action and $object may have been modified by some hooks
+
+	    // Logout link
+	    $toprightmenu.=$form->textwithtooltip('',$logouthtmltext,2,1,$logouttext,'',1);
+
+	    // Link to print main content area
+	    if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->browser->phone))
+	    {
+	        $qs=$_SERVER["QUERY_STRING"].($_SERVER["QUERY_STRING"]?'&':'').$morequerystring;
+	        $text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
+	        $text.='<img class="printer" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/printer.png"';
+	        $text.=' title="" alt="">';
+	        $text.='</a>';
+	        $toprightmenu.=$form->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'',1);
+	    }
+
+	    print $toprightmenu;
+
+	    print '</tr></table>'."\n";
+	    print "</div>\n";
     }
-    $logintext='<div class="login"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'"';
-    $logintext.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
-    $logintext.='>'.$user->login.'</a>';
-    if ($user->societe_id) $logintext.=$companylink;
-    $logintext.='</div>';
-    $loginhtmltext.='<u>'.$langs->trans("User").'</u>';
-    $loginhtmltext.='<br><b>'.$langs->trans("Name").'</b>: '.$user->getFullName($langs);
-    $loginhtmltext.='<br><b>'.$langs->trans("Login").'</b>: '.$user->login;
-    $loginhtmltext.='<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin);
-    $type=($user->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
-    $loginhtmltext.='<br><b>'.$langs->trans("Type").'</b>: '.$type;
-    $loginhtmltext.='<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
-    $loginhtmltext.='<br>';
-    $loginhtmltext.='<br><u>'.$langs->trans("Connection").'</u>';
-    if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $loginhtmltext.='<br><b>'.$langs->trans("ConnectedOnMultiCompany").'</b>: '.$conf->entity.' (user entity '.$user->entity.')';
-    $loginhtmltext.='<br><b>'.$langs->trans("ConnectedSince").'</b>: '.dol_print_date($user->datelastlogin,"dayhour");
-    $loginhtmltext.='<br><b>'.$langs->trans("PreviousConnexion").'</b>: '.dol_print_date($user->datepreviouslogin,"dayhour");
-    $loginhtmltext.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$_SESSION["dol_authmode"];
-    $loginhtmltext.='<br><b>'.$langs->trans("CurrentTheme").'</b>: '.$conf->theme;
-    $s=picto_from_langcode($langs->getDefaultLang());
-    $loginhtmltext.='<br><b>'.$langs->trans("CurrentUserLanguage").'</b>: '.($s?$s.' ':'').$langs->getDefaultLang();
-    $loginhtmltext.='<br><b>'.$langs->trans("Browser").'</b>: '.$conf->browser->name.($conf->browser->version?' '.$conf->browser->version:'').' ('.$_SERVER['HTTP_USER_AGENT'].')';
-    if (! empty($conf->browser->phone)) $loginhtmltext.='<br><b>'.$langs->trans("Phone").'</b>: '.$conf->browser->phone;
-    if (! empty($_SESSION["disablemodules"])) $loginhtmltext.='<br><b>'.$langs->trans("DisabledModules").'</b>: <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
-
-    $appli='Dolibarr';
-    if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
-
-    // Link info
-    $logouttext='';
-    $logouthtmltext=$appli.' '.DOL_VERSION.'<br>';
-    $logouthtmltext.=$langs->trans("Logout").'<br>';
-    //$logouthtmltext.="<br>";
-    if ($_SESSION["dol_authmode"] != 'forceuser'
-    && $_SESSION["dol_authmode"] != 'http')
-    {
-        $logouttext.='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
-        $logouttext.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
-        $logouttext.='>';
-        $logouttext.='<img class="login" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
-        $logouttext.=' alt="'.dol_escape_htmltag($langs->trans("Logout")).'" title=""';
-        $logouttext.='>';
-        $logouttext.='</a>';
-    }
-    else
-    {
-        $logouttext.='<img class="login" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
-        $logouttext.=' alt="'.dol_escape_htmltag($langs->trans("Logout")).'" title=""';
-        $logouttext.='>';
-    }
-
-    print '<div class="login_block">'."\n";
-    print '<table class="nobordernopadding" summary=""><tr>';
-
-    $form=new Form($db);
-
-    $toprightmenu.=$form->textwithtooltip('',$loginhtmltext,2,1,$logintext,'',1);
-
-    // Execute hook printTopRightMenu (hooks should output string like '<td><div class="login"><a href="">mylink</a></div></td>')
-    $parameters=array();
-    $toprightmenu.=$hookmanager->executeHooks('printTopRightMenu',$parameters);    // Note that $action and $object may have been modified by some hooks
-
-    // Logout link
-    $toprightmenu.=$form->textwithtooltip('',$logouthtmltext,2,1,$logouttext,'',1);
-
-    // Link to print main content area
-    if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->browser->phone))
-    {
-        $qs=$_SERVER["QUERY_STRING"].($_SERVER["QUERY_STRING"]?'&':'').$morequerystring;
-        $text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
-        $text.='<img class="printer" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/printer.png"';
-        $text.=' title="" alt="">';
-        $text.='</a>';
-        $toprightmenu.=$form->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'',1);
-    }
-
-    print $toprightmenu;
-
-    print '</tr></table>'."\n";
-    print "</div>\n";
 
     if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "</div><!-- End top layout -->\n";
 
@@ -1355,168 +1364,169 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	}
     $hookmanager->initHooks(array('searchform','leftblock'));
 
-    if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
-    else print '<td class="vmenu" valign="top">';
-
-    print "\n";
-
-    // Define $searchform
-    if (! empty($conf->societe->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_SOCIETE) && $user->rights->societe->lire)
+    if (empty($_SESSION['dol_hide_leftmenu']))
     {
-        $langs->load("companies");
-        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/societe.php', DOL_URL_ROOT.'/societe/societe.php', img_object('','company').' '.$langs->trans("ThirdParties"), 'soc', 'socname');
+	    if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
+	    else print '<td class="vmenu" valign="top">';
+
+	    print "\n";
+
+	    // Define $searchform
+	    if (! empty($conf->societe->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_SOCIETE) && $user->rights->societe->lire)
+	    {
+	        $langs->load("companies");
+	        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/societe.php', DOL_URL_ROOT.'/societe/societe.php', img_object('','company').' '.$langs->trans("ThirdParties"), 'soc', 'socname');
+	    }
+
+	    if (! empty($conf->societe->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_CONTACT) && $user->rights->societe->lire)
+	    {
+	        $langs->load("companies");
+	        $searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php', img_object('','contact').' '.$langs->trans("Contacts"), 'contact', 'contactname');
+	    }
+
+	    if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire))
+	    && ! empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE))
+	    {
+	        $langs->load("products");
+	        $searchform.=printSearchForm(DOL_URL_ROOT.'/product/liste.php', DOL_URL_ROOT.'/product/liste.php', img_object('','product').' '.$langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall');
+	    }
+
+	    if (! empty($conf->adherent->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_ADHERENT) && $user->rights->adherent->lire)
+	    {
+	        $langs->load("members");
+	        $searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/liste.php', DOL_URL_ROOT.'/adherents/liste.php', img_object('','user').' '.$langs->trans("Members"), 'member', 'sall');
+	    }
+
+	    // Execute hook printSearchForm
+	    $parameters=array();
+	    $searchform.=$hookmanager->executeHooks('printSearchForm',$parameters);    // Note that $action and $object may have been modified by some hooks
+
+	    // Define $bookmarks
+	    if ($conf->bookmark->enabled && $user->rights->bookmark->lire)
+	    {
+	        include_once (DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php');
+	        $langs->load("bookmarks");
+
+	        $bookmarks=printBookmarksList($db, $langs);
+	    }
+
+	    $left_menu=empty($conf->browser->phone)?$conf->top_menu:$conf->smart_menu;
+	    if (GETPOST('menu')) $left_menu=GETPOST('menu');     // menu=eldy_backoffice.php
+
+	    // Load the top menu manager (only if not already done)
+	    if (! class_exists('MenuLeft'))
+	    {
+	        $menufound=0;
+	        $dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
+	        foreach($dirmenus as $dirmenu)
+	        {
+	            $menufound=dol_include_once($dirmenu."standard/".$left_menu);
+	            if ($menufound) break;
+	        }
+	        if (! $menufound)	// If failed to include, we try with standard
+	        {
+	            $top_menu='eldy_backoffice.php';
+	            include_once(DOL_DOCUMENT_ROOT."/core/menus/standard/".$top_menu);
+	        }
+	    }
+
+	    // Left column
+	    print '<!-- Begin left menu - menu '.$left_menu.' -->'."\n";
+
+	    print '<div class="vmenu">'."\n";
+
+	    $menuleft=new MenuLeft($db,$menu_array_before,$menu_array_after);
+	    $menuleft->showmenu(); // output menu_array and menu found in database
+
+
+	    // Show other forms
+	    if ($searchform)
+	    {
+	        print "\n";
+	        print "<!-- Begin SearchForm -->\n";
+	        print '<div id="blockvmenusearch" class="blockvmenusearch">'."\n";
+	        print $searchform;
+	        print '</div>'."\n";
+	        print "<!-- End SearchForm -->\n";
+	    }
+
+	    // More search form
+	    if ($moresearchform)
+	    {
+	        print $moresearchform;
+	    }
+
+	    // Bookmarks
+	    if ($bookmarks)
+	    {
+	        print "\n";
+	        print "<!-- Begin Bookmarks -->\n";
+	        print '<div id="blockvmenubookmarks" class="blockvmenubookmarks">'."\n";
+	        print $bookmarks;
+	        print '</div>'."\n";
+	        print "<!-- End Bookmarks -->\n";
+	    }
+
+	    // Link to Dolibarr wiki pages
+	    if ($helppagename && empty($conf->global->MAIN_HELP_DISABLELINK))
+	    {
+	        $langs->load("help");
+
+	        $helpbaseurl='';
+	        $helppage='';
+	        $mode='';
+
+	        // Get helpbaseurl, helppage and mode from helppagename and langs
+	        $arrayres=getHelpParamFor($helppagename,$langs);
+	        $helpbaseurl=$arrayres['helpbaseurl'];
+	        $helppage=$arrayres['helppage'];
+	        $mode=$arrayres['mode'];
+
+	        // Link to help pages
+	        if ($helpbaseurl && $helppage)
+	        {
+	            print '<div id="blockvmenuhelp" class="blockvmenuhelp">';
+	            print '<a class="help" target="_blank" title="'.$langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage');
+	            if ($mode == 'wiki') print ' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage,'_',' ')).'&quot;';
+	            print '" href="';
+	            print sprintf($helpbaseurl,urlencode(html_entity_decode($helppage)));
+	            print '">';
+	            print img_picto('', 'helpdoc').' ';
+	            print $langs->trans($mode == 'wiki' ? 'OnlineHelp': 'Help');
+	            //if ($mode == 'wiki') print ' ('.dol_trunc(strtr($helppage,'_',' '),8).')';
+	            print '</a>';
+	            print '</div>';
+	        }
+	    }
+
+	    // Link to bugtrack
+	    if (! empty($conf->global->MAIN_SHOW_BUGTRACK_LINK))
+	    {
+	        $bugbaseurl='http://savannah.nongnu.org/bugs/?';
+	        $bugbaseurl.='func=additem&group=dolibarr&privacy=1&';
+	        $bugbaseurl.="&details=";
+	        $bugbaseurl.=urlencode("\n\n\n\n\n-------------\n");
+	        $bugbaseurl.=urlencode($langs->trans("Version").": ".DOL_VERSION."\n");
+	        $bugbaseurl.=urlencode($langs->trans("Server").": ".$_SERVER["SERVER_SOFTWARE"]."\n");
+	        $bugbaseurl.=urlencode($langs->trans("Url").": ".$_SERVER["REQUEST_URI"]."\n");
+	        print '<div class="help"><a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a></div>';
+	    }
+	    print "\n";
+
+	    print "</div>\n";
+	    print "<!-- End left menu -->\n";
+
+	    print "\n";
+
+	    // Execute hook printLeftBlock
+	    $parameters=array();
+	    $leftblock=$hookmanager->executeHooks('printLeftBlock',$parameters);    // Note that $action and $object may have been modified by some hooks
+	    print $leftblock;
+
+	    if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div> <!-- End left layout -->'."\n";
+	    else print '</td>';
     }
 
-    if (! empty($conf->societe->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_CONTACT) && $user->rights->societe->lire)
-    {
-        $langs->load("companies");
-        $searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php', img_object('','contact').' '.$langs->trans("Contacts"), 'contact', 'contactname');
-    }
-
-    if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire))
-    && ! empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE))
-    {
-        $langs->load("products");
-        $searchform.=printSearchForm(DOL_URL_ROOT.'/product/liste.php', DOL_URL_ROOT.'/product/liste.php', img_object('','product').' '.$langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall');
-    }
-
-    if (! empty($conf->adherent->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_ADHERENT) && $user->rights->adherent->lire)
-    {
-        $langs->load("members");
-        $searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/liste.php', DOL_URL_ROOT.'/adherents/liste.php', img_object('','user').' '.$langs->trans("Members"), 'member', 'sall');
-    }
-
-    // Execute hook printSearchForm
-    $parameters=array();
-    $searchform.=$hookmanager->executeHooks('printSearchForm',$parameters);    // Note that $action and $object may have been modified by some hooks
-
-    // Define $bookmarks
-    if ($conf->bookmark->enabled && $user->rights->bookmark->lire)
-    {
-        include_once (DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php');
-        $langs->load("bookmarks");
-
-        $bookmarks=printBookmarksList($db, $langs);
-    }
-
-    $left_menu=empty($conf->browser->phone)?$conf->top_menu:$conf->smart_menu;
-    if (GETPOST('menu')) $left_menu=GETPOST('menu');     // menu=eldy_backoffice.php
-
-    // Load the top menu manager (only if not already done)
-    if (! class_exists('MenuLeft'))
-    {
-        $menufound=0;
-        $dirmenus=array_merge(array("/core/menus/"),(array) $conf->modules_parts['menus']);
-        foreach($dirmenus as $dirmenu)
-        {
-            $menufound=dol_include_once($dirmenu."standard/".$left_menu);
-            if ($menufound) break;
-        }
-        if (! $menufound)	// If failed to include, we try with standard
-        {
-            $top_menu='eldy_backoffice.php';
-            include_once(DOL_DOCUMENT_ROOT."/core/menus/standard/".$top_menu);
-        }
-    }
-
-    // Left column
-    print '<!-- Begin left area - menu '.$left_menu.' -->'."\n";
-
-    print '<div class="vmenu">'."\n";
-
-    $menuleft=new MenuLeft($db,$menu_array_before,$menu_array_after);
-    $menuleft->showmenu(); // output menu_array and menu found in database
-
-
-    // Show other forms
-    if ($searchform)
-    {
-        print "\n";
-        print "<!-- Begin SearchForm -->\n";
-        print '<div id="blockvmenusearch" class="blockvmenusearch">'."\n";
-        print $searchform;
-        print '</div>'."\n";
-        print "<!-- End SearchForm -->\n";
-    }
-
-    // More search form
-    if ($moresearchform)
-    {
-        print $moresearchform;
-    }
-
-    // Bookmarks
-    if ($bookmarks)
-    {
-        print "\n";
-        print "<!-- Begin Bookmarks -->\n";
-        print '<div id="blockvmenubookmarks" class="blockvmenubookmarks">'."\n";
-        print $bookmarks;
-        print '</div>'."\n";
-        print "<!-- End Bookmarks -->\n";
-    }
-
-    // Link to Dolibarr wiki pages
-    if ($helppagename && empty($conf->global->MAIN_HELP_DISABLELINK))
-    {
-        $langs->load("help");
-
-        $helpbaseurl='';
-        $helppage='';
-        $mode='';
-
-        // Get helpbaseurl, helppage and mode from helppagename and langs
-        $arrayres=getHelpParamFor($helppagename,$langs);
-        $helpbaseurl=$arrayres['helpbaseurl'];
-        $helppage=$arrayres['helppage'];
-        $mode=$arrayres['mode'];
-
-        // Link to help pages
-        if ($helpbaseurl && $helppage)
-        {
-            print '<div id="blockvmenuhelp" class="blockvmenuhelp">';
-            print '<a class="help" target="_blank" title="'.$langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage');
-            if ($mode == 'wiki') print ' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage,'_',' ')).'&quot;';
-            print '" href="';
-            print sprintf($helpbaseurl,urlencode(html_entity_decode($helppage)));
-            print '">';
-            print img_picto('', 'helpdoc').' ';
-            print $langs->trans($mode == 'wiki' ? 'OnlineHelp': 'Help');
-            //if ($mode == 'wiki') print ' ('.dol_trunc(strtr($helppage,'_',' '),8).')';
-            print '</a>';
-            print '</div>';
-        }
-    }
-
-    // Link to bugtrack
-    if (! empty($conf->global->MAIN_SHOW_BUGTRACK_LINK))
-    {
-        $bugbaseurl='http://savannah.nongnu.org/bugs/?';
-        $bugbaseurl.='func=additem&group=dolibarr&privacy=1&';
-        $bugbaseurl.="&details=";
-        $bugbaseurl.=urlencode("\n\n\n\n\n-------------\n");
-        $bugbaseurl.=urlencode($langs->trans("Version").": ".DOL_VERSION."\n");
-        $bugbaseurl.=urlencode($langs->trans("Server").": ".$_SERVER["SERVER_SOFTWARE"]."\n");
-        $bugbaseurl.=urlencode($langs->trans("Url").": ".$_SERVER["REQUEST_URI"]."\n");
-        print '<div class="help"><a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a></div>';
-    }
-    print "\n";
-
-    print "</div>\n";
-    print "<!-- End left vertical menu -->\n";
-
-    print "\n";
-
-    // Execute hook printLeftBlock
-    $parameters=array();
-    $leftblock=$hookmanager->executeHooks('printLeftBlock',$parameters);    // Note that $action and $object may have been modified by some hooks
-    print $leftblock;
-
-    if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div> <!-- End left layout -->'."\n";
-    else print '</td>';
-
-    print "\n";
-    print '<!-- End of left area -->'."\n";
     print "\n";
     print '<!-- Begin right area -->'."\n";
 
