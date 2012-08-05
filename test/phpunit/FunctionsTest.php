@@ -389,6 +389,31 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
 
 
     /**
+     * testImgPicto
+     *
+     * @return	void
+     */
+    public function testImgPicto()
+    {
+        $s=img_picto('alt','user');
+        print __METHOD__." s=".$s."\n";
+        $this->assertContains('theme',$s,'testImgPicto1');
+
+    	$s=img_picto('alt','img.png','style="float: right"',0);
+        print __METHOD__." s=".$s."\n";
+        $this->assertContains('theme',$s,'testImgPicto2');
+        $this->assertContains('style="float: right"',$s,'testImgPicto2');
+
+        $s=img_picto('alt','/fullpath/img.png','',1);
+        print __METHOD__." s=".$s."\n";
+        $this->assertEquals($s,'<img src="/fullpath/img.png" border="0" alt="alt" title="alt">','testImgPicto3');
+
+        $s=img_picto('alt','/fullpath/img.png','',true);
+        print __METHOD__." s=".$s."\n";
+        $this->assertEquals($s,'<img src="/fullpath/img.png" border="0" alt="alt" title="alt">','testImgPicto3');
+    }
+
+    /**
      * testDolNow
      *
      * @return	void
@@ -397,7 +422,7 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
     {
         $now=dol_now('gmt');
         $nowtzserver=dol_now('tzserver');
-        print __METHOD__."getServerTimeZoneInt=".(getServerTimeZoneInt('now')*3600)."\n";
+        print __METHOD__." getServerTimeZoneInt=".(getServerTimeZoneInt('now')*3600)."\n";
         $this->assertEquals(getServerTimeZoneInt('now')*3600,($nowtzserver-$now));
     }
 
