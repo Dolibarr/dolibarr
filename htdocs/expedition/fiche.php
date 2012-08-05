@@ -214,6 +214,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->exped
 else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expedition->supprimer)
 {
     $object->fetch($id);
+    $object->fetch_thirdparty();
     $result = $object->delete();
     if ($result > 0)
     {
@@ -285,13 +286,9 @@ else if ($action == 'settrackingnumber' || $action == 'settrackingurl'
     $action="";
 }
 
-
-/*
- * Build doc
-*/
+// Build document
 else if ($action == 'builddoc')	// En get ou en post
 {
-
     // Sauvegarde le dernier modele choisi pour generer un document
     $shipment = new Expedition($db);
     $shipment->fetch($id);
@@ -318,6 +315,23 @@ else if ($action == 'builddoc')	// En get ou en post
         dol_print_error($db,$result);
         exit;
     }
+}
+
+// Delete file in doc form
+elseif ($action == 'remove_file')
+{
+	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+
+	$object = new Expedition($db);
+	if ($object->fetch($id))
+	{
+		$object->fetch_thirdparty();
+		$upload_dir =	$conf->expedition->dir_output . "/sending";
+		$file =	$upload_dir	. '/' .	GETPOST('file');
+		$ret=dol_delete_file($file,0,0,0,$object);
+		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	}
 }
 
 /*
