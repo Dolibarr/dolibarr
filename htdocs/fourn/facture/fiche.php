@@ -126,6 +126,7 @@ elseif ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourni
 elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisseur->facture->supprimer)
 {
     $object->fetch($id);
+    $object->fetch_thirdparty();
     $result=$object->delete($id);
     if ($result > 0)
     {
@@ -796,6 +797,7 @@ elseif ($action	== 'builddoc')
 {
     // Save modele used
     $object->fetch($id);
+    $object->fetch_thirdparty();
     if ($_REQUEST['model'])
     {
         $object->setDocModel($user, $_REQUEST['model']);
@@ -827,9 +829,10 @@ elseif ($action == 'remove_file')
 
     if ($object->fetch($id))
     {
+    	$object->fetch_thirdparty();
         $upload_dir =	$conf->fournisseur->facture->dir_output . "/";
         $file =	$upload_dir	. '/' .	GETPOST('file');
-        $ret=dol_delete_file($file);
+        $ret=dol_delete_file($file,0,0,0,$object);
         if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
         else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
     }

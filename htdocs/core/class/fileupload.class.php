@@ -76,6 +76,10 @@ class FileUpload
 		elseif ($element == 'order_supplier') {
 			$pathname = 'fourn'; $filename='fournisseur.commande';
 			$dir_output=$conf->fournisseur->commande->dir_output;
+		}
+		elseif ($element == 'invoice_supplier') {
+			$pathname = 'fourn'; $filename='fournisseur.facture';
+			$dir_output=$conf->fournisseur->facture->dir_output;
 		} else {
 			$dir_output=$conf->$element->dir_output;
 		}
@@ -83,20 +87,27 @@ class FileUpload
 		dol_include_once('/'.$pathname.'/class/'.$filename.'.class.php');
 
 		$classname = ucfirst($filename);
-		
+
 		if ($element == 'order_supplier') {
 			$classname = 'CommandeFournisseur';
+		} elseif ($element == 'invoice_supplier') {
+			$classname = 'FactureFournisseur';
 		}
-		
+
 		$object = new $classname($db);
 
 		$object->fetch($fk_element);
 		$object->fetch_thirdparty();
 
+		$object_ref = dol_sanitizeFileName($object->ref);
+		if ($element == 'invoice_supplier') {
+			$object_ref = get_exdir($object->id, 2) . $object_ref;
+		}
+
 		$this->options = array(
 				'script_url' => $_SERVER['PHP_SELF'],
-				'upload_dir' => $dir_output . '/' . $object->ref . '/',
-				'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$object->ref.'/',
+				'upload_dir' => $dir_output . '/' . $object_ref . '/',
+				'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$object_ref.'/',
 				'param_name' => 'files',
 				// Set the following option to 'POST', if your server does not support
 				// DELETE requests. This is a parameter sent to the client:
@@ -129,8 +140,8 @@ class FileUpload
 		),
 		*/
 						'thumbnail' => array(
-								'upload_dir' => $dir_output . '/' . $object->ref . '/thumbs/',
-								'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$object->ref.'/thumbs/',
+								'upload_dir' => $dir_output . '/' . $object_ref . '/thumbs/',
+								'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$object_ref.'/thumbs/',
 								'max_width' => 80,
 								'max_height' => 80
 						)
