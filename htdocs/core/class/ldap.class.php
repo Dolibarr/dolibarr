@@ -136,51 +136,6 @@ class Ldap
 	// Connection handling methods -------------------------------------------
 
 	/**
-	 * Connects to the server. Just creates a connection which is used
-	 * in all later access to the LDAP server. If it can't connect and bind
-	 * anonymously, it creates an error code of -1. Returns true if connected,
-	 * false if failed. Takes an array of possible servers - if one doesn't work,
-	 * it tries the next and so on.
-	 *
-	 * @return	void
-	 * @deprecated		Utiliser connect_bind a la place
-	 */
-	function connect()
-	{
-		foreach ($this->server as $key => $host)
-		{
-			if (preg_match('/^ldap/',$host))
-			{
-				$this->connection = ldap_connect($host);
-			}
-			else
-			{
-				$this->connection = ldap_connect($host,$this->serverPort);
-			}
-			if ($this->connection)
-			{
-				$this->setVersion();
-				if ($this->serverType == "activedirectory")
-				{
-					$this->setReferrals();
-					return true;
-				}
-				else
-				{
-					// Connected, now try binding anonymously
-					$this->result=@ldap_bind($this->connection);
-				}
-				return true;
-			}
-		}
-
-		$this->ldapErrorCode = -1;
-		$this->ldapErrorText = "Unable to connect to any server";
-		return false;
-	}
-
-
-	/**
 	 *	Connect and bind
 	 * 	Use this->server, this->serverPort, this->ldapProtocolVersion, this->serverType, this->searchUser, this->searchPassword
 	 * 	After return, this->connection and $this->bind are defined
