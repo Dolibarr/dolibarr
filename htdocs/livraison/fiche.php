@@ -40,6 +40,8 @@ $langs->load("sendings");
 $langs->load("bills");
 $langs->load('deliveries');
 
+$action=GETPOST('action', 'alpha');
+
 // Security check
 $id = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
@@ -133,6 +135,7 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && 
 {
 	$object = new Livraison($db);
 	$object->fetch($_GET["id"]);
+	$object->fetch_thirdparty();
 
 	$db->begin();
 	$result=$object->delete();
@@ -156,6 +159,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
 	$object = new Livraison($db);
 	$object->fetch($_REQUEST['id']);
+	$object->fetch_thirdparty();
 
 	if ($_REQUEST['model'])
 	{
@@ -181,6 +185,23 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 	{
 		dol_print_error($db,$result);
 		exit;
+	}
+}
+
+// Delete file in doc form
+elseif ($action == 'remove_file')
+{
+	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+
+	$object = new Livraison($db);
+	if ($object->fetch($id))
+	{
+		$object->fetch_thirdparty();
+		$upload_dir =	$conf->expedition->dir_output . "/receipt";
+		$file =	$upload_dir	. '/' .	GETPOST('file');
+		$ret=dol_delete_file($file,0,0,0,$object);
+		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
 	}
 }
 
@@ -321,7 +342,7 @@ if ($_GET["action"] == 'create')
               $outputlangs = new Translate("",$conf);
               $outputlangs->setDefaultLang($newlang);
           }
-  
+
           $label = (! empty($product->multilangs[$outputlangs->defaultlang]["libelle"])) ? $product->multilangs[$outputlangs->defaultlang]["libelle"] : $product->libelle;
         }
         else
@@ -551,7 +572,7 @@ else
 
           // Define output language
           if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
-			    { 
+			    {
             $delivery->fetch_thirdparty();
       			$outputlangs = $langs;
             $newlang='';
@@ -562,7 +583,7 @@ else
                 $outputlangs = new Translate("",$conf);
                 $outputlangs->setDefaultLang($newlang);
             }
-    
+
             $label = (! empty($product->multilangs[$outputlangs->defaultlang]["libelle"])) ? $product->multilangs[$outputlangs->defaultlang]["libelle"] : $delivery->lines[$i]->product_label;
           }
           else
