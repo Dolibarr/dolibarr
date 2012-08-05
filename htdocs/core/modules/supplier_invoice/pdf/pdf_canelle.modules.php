@@ -91,7 +91,10 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		$this->franchise=!$mysoc->tva_assuj;
 
-        if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
+		$this->emetteur=$mysoc;
+        if (! $this->emetteur->country_code) {
+        	$this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
+        }
 
         // Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
@@ -131,7 +134,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$outputlangs->load("products");
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-		
+
 		// Get source company
 		if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
 		$this->emetteur=$object->thirdparty;
