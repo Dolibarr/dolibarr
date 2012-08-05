@@ -1636,7 +1636,7 @@ function img_picto($alt, $picto, $options = '', $pictoisfullpath = false)
 	global $conf;
 
 	// Define fullpathpicto to use into src
-	if (! empty($pictoisfullpath)) {
+	if ($pictoisfullpath) {
 		// Clean parameters
 		if (! preg_match('/(\.png|\.gif)$/i',$picto))
 			$picto .= '.png';
@@ -1665,7 +1665,7 @@ function img_picto($alt, $picto, $options = '', $pictoisfullpath = false)
 		$fullpathpicto = $url.'/'.$path.'/img/'.$picto;
 	}
 
-	return '<img src="'.$fullpathpicto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.($options?' '.$options:'').'>';
+	return '<img src="'.$fullpathpicto.'" border="0" alt="'.dol_escape_htmltag($alt).'" title="'.dol_escape_htmltag($alt).'"'.(! empty($options)?' '.$options:'').'>';
 }
 
 /**

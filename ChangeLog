@@ -30,6 +30,7 @@ For users:
 - New: Update language files (de, tr, pt).
 - New: Auto check box on page to edit interface options of user.
 - New: Add great britain provinces.
+- New: Update libs/tools for DoliWamp.
 - Fix: No images into product description lines as PDF generation does
   not work with this.
 
