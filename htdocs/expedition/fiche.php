@@ -323,8 +323,7 @@ elseif ($action == 'remove_file')
 		$upload_dir =	$conf->expedition->dir_output . "/sending";
 		$file =	$upload_dir	. '/' .	GETPOST('file');
 		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+		$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved",GETPOST('file')).'</div>';
 	}
 }
 
