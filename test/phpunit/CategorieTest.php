@@ -131,7 +131,14 @@ class CategorieTest extends PHPUnit_Framework_TestCase
 		// We create a category
 		$localobject=new Categorie($this->savdb);
     	$localobject->initAsSpecimen();
-		$resultFirstCreate=$localobject->create($user);
+
+    	// Check it does not exist (return 0)
+    	$resultCheck=$localobject->already_exists();
+    	print __METHOD__." resultCheck=".$resultCheck."\n";
+    	$this->assertEquals(0, $resultCheck);
+
+    	// Create
+    	$resultFirstCreate=$localobject->create($user);
     	print __METHOD__." resultFirstCreate=".$resultFirstCreate."\n";
     	$this->assertGreaterThan(0, $resultFirstCreate);
 
@@ -139,6 +146,7 @@ class CategorieTest extends PHPUnit_Framework_TestCase
 		$localobject2=new Categorie($this->savdb);
     	$localobject2->initAsSpecimen();
 
+    	// Check it does exist (return 1)
     	$resultCheck=$localobject2->already_exists();
     	print __METHOD__." resultCheck=".$resultCheck."\n";
     	$this->assertGreaterThan(0, $resultCheck);

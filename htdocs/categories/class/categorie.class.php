@@ -139,11 +139,13 @@ class Categorie
 		{
 			$this->error=$langs->trans("ImpossibleAddCat");
 			$this->error.=" : ".$langs->trans("CategoryExistsAtSameLevel");
+			dol_syslog($this->error, LOG_ERR);
 			return -4;
 		}
 
 		$this->db->begin();
 
+		dol_syslog(get_class($this).'::create sql='.$sql);
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label, description,";
 		if ($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
 		{
@@ -163,7 +165,8 @@ class Categorie
 		//$sql.= ",".$this->parentId;
 		$sql.= ")";
 
-		$res  = $this->db->query($sql);
+		dol_syslog(get_class($this).'::create sql='.$sql);
+		$res = $this->db->query($sql);
 		if ($res)
 		{
 			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."categorie");
@@ -867,6 +870,8 @@ class Categorie
 
 	/**
 	 * 	Check if no category with same label already exists for this cat's parent or root and for this cat's type
+	 *  TODO For the moment, the unique key is on the type, label, entity. We must remove table llx_categorie_association
+     *  to replace with a field fk_parent. This will allow to extend unique key with the level.
 	 *
 	 * 	@return		boolean		1 if already exist, 0 otherwise, -1 if error
 	 */
@@ -887,17 +892,14 @@ class Categorie
 		}
 		else 										// mother_id undefined (so it's root)
 		{
-			/* We have to select any rowid from llx_categorie which which category's type and label
-			 * are equals to those of the calling category, AND which doesn't exist in categorie association
-			 * as children (rowid != fk_categorie_fille)
+			/* We have to select any rowid from llx_categorie that is not at root level
 			 */
 			$sql = "SELECT c.rowid";
 			$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c ";
-			$sql.= " JOIN ".MAIN_DB_PREFIX."categorie_association as ca";
-			$sql.= " ON c.rowid!=ca.fk_categorie_fille";
 			$sql.= " WHERE c.type=".$this->type;
 			$sql.= " AND c.label='".$this->db->escape($this->label)."'";
 			$sql.= " AND c.entity IN (".getEntity('category',1).")";
+			$sql.= " AND c.rowid NOT IN (SELECT ca.fk_categorie_fille FROM ".MAIN_DB_PREFIX."categorie_association as ca)";
 		}
 		dol_syslog(get_class($this)."::already_exists sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
