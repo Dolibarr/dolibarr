@@ -77,6 +77,10 @@ class FileUpload
 		elseif ($element == 'order_supplier') {
 			$pathname = 'fourn'; $filename='fournisseur.commande';
 			$dir_output=$conf->fournisseur->commande->dir_output;
+		}
+		elseif ($element == 'invoice_supplier') {
+			$pathname = 'fourn'; $filename='fournisseur.facture';
+			$dir_output=$conf->fournisseur->facture->dir_output;
 		} else {
 			$dir_output=$conf->$element->dir_output;
 		}
@@ -87,6 +91,8 @@ class FileUpload
 
 		if ($element == 'order_supplier') {
 			$classname = 'CommandeFournisseur';
+		} elseif ($element == 'invoice_supplier') {
+			$classname = 'FactureFournisseur';
 		}
 
 		$object = new $classname($db);
