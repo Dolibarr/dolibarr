@@ -154,7 +154,8 @@ abstract class ModeleNumRefDeliveryOrder
  */
 function delivery_order_pdf_create($db, $object, $model='', $outputlangs='')
 {
-	global $conf,$langs;
+	global $conf,$user,$langs;
+
 	$langs->load("deliveries");
 
 	$dir = "/core/modules/livraison/pdf/";
@@ -193,6 +194,16 @@ function delivery_order_pdf_create($db, $object, $model='', $outputlangs='')
 			// we delete preview files
         	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 			dol_delete_preview($object);
+
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('DELIVERY_BUILDDOC',$object,$user,$langs,$conf);
+			if ($result < 0) {
+				$error++; $this->errors=$interface->errors;
+			}
+			// Fin appel triggers
+
 			return 1;
 		}
 		else

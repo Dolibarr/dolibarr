@@ -288,9 +288,6 @@ class Livraison extends CommonObject
 
 				if ($this->statut == 0) $this->brouillon = 1;
 
-				$file = $conf->livraison->dir_output . "/" .get_exdir($livraison->id,2) . "/" . $this->id.".pdf";
-				$this->pdf_filename = $file;
-
 				/*
 				 * Lignes
 				 */
@@ -354,14 +351,14 @@ class Livraison extends CommonObject
 					$livref = substr($this->ref, 1, 4);
 					if ($livref == 'PROV')
 					{
-						$this->ref = $objMod->livraison_get_num($soc,$this);
+						$numref = $objMod->livraison_get_num($soc,$this);
 					}
 
 					// Tester si non deja au statut valide. Si oui, on arrete afin d'eviter
 					// de decrementer 2 fois le stock.
 					$sql = "SELECT ref";
 					$sql.= " FROM ".MAIN_DB_PREFIX."livraison";
-					$sql.= " WHERE ref = '".$this->ref."'";
+					$sql.= " WHERE ref = '".$numref."'";
 					$sql.= " AND fk_statut <> 0";
 					$sql.= " AND entity = ".$conf->entity;
 
@@ -376,7 +373,7 @@ class Livraison extends CommonObject
 					}
 
 					$sql = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
-					$sql.= " ref='".$this->db->escape($this->ref)."'";
+					$sql.= " ref='".$this->db->escape($numref)."'";
 					$sql.= ", fk_statut = 1";
 					$sql.= ", date_valid = ".$this->db->idate(mktime());
 					$sql.= ", fk_user_valid = ".$user->id;
@@ -386,26 +383,29 @@ class Livraison extends CommonObject
 					$resql=$this->db->query($sql);
 					if ($resql)
 					{
-						// On efface le repertoire de pdf provisoire
-						$numref = dol_sanitizeFileName($this->ref);
-						if ($conf->expedition->dir_output)
+
+						$this->oldref='';
+
+						// Rename directory if dir was a temporary ref
+						if (preg_match('/^[\(]?PROV/i', $this->ref))
 						{
-							$dir = $conf->livraison->dir_output . "/" . $numref ;
-							$file = $dir . "/" . $numref . ".pdf";
-							if (file_exists($file))
+							// On renomme repertoire ($this->ref = ancienne ref, $numfa = nouvelle ref)
+							// afin de ne pas perdre les fichiers attaches
+							$oldref = dol_sanitizeFileName($this->ref);
+							$newref = dol_sanitizeFileName($numref);
+							$dirsource = $conf->expedition->dir_output.'/receipt/'.$oldref;
+							$dirdest = $conf->expedition->dir_output.'/receipt/'.$newref;
+							if (file_exists($dirsource))
 							{
-								if (!dol_delete_file($file))
+								dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
+
+								if (@rename($dirsource, $dirdest))
 								{
-									$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
-									return 0;
-								}
-							}
-							if (file_exists($dir))
-							{
-								if (!dol_delete_dir($dir))
-								{
-									$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
-									return 0;
+									$this->oldref = $oldref;
+
+									dol_syslog("Rename ok");
+									// Suppression ancien fichier PDF dans nouveau rep
+									dol_delete_file($dirdest.'/'.$oldref.'.*');
 								}
 							}
 						}
@@ -547,6 +547,8 @@ class Livraison extends CommonObject
 	 */
 	function delete()
 	{
+		global $conf, $langs, $user;
+
         require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 		$this->db->begin();
 
@@ -564,16 +566,16 @@ class Livraison extends CommonObject
 			{
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."livraison";
 				$sql.= " WHERE rowid = ".$this->id;
-				if ( $this->db->query($sql) )
+				if ($this->db->query($sql))
 				{
 					$this->db->commit();
 
 					// On efface le repertoire de pdf provisoire
-					$livref = dol_sanitizeFileName($this->ref);
-					if ($conf->livraison->dir_output)
+					$ref = dol_sanitizeFileName($this->ref);
+					if (! empty($conf->expedition->dir_output))
 					{
-						$dir = $conf->livraison->dir_output . "/" . $livref ;
-						$file = $conf->livraison->dir_output . "/" . $livref . "/" . $livref . ".pdf";
+						$dir = $conf->expedition->dir_output . '/receipt/' . $ref ;
+						$file = $dir . '/' . $ref . '.pdf';
 						if (file_exists($file))
 						{
 							if (!dol_delete_file($file))
@@ -591,6 +593,15 @@ class Livraison extends CommonObject
 							}
 						}
 					}
+
+					// Call triggers
+					include_once(DOL_DOCUMENT_ROOT."/core/class/interfaces.class.php");
+					$interface=new Interfaces($this->db);
+					$result=$interface->run_triggers('DELIVERY_DELETE',$this,$user,$langs,$conf);
+					if ($result < 0) {
+						$error++; $this->errors=$interface->errors;
+					}
+					// End call triggers
 
 					return 1;
 				}

@@ -539,24 +539,28 @@ class Expedition extends CommonObject
 
 		if (! $error)
 		{
-			// On efface le repertoire de pdf provisoire
-			$expeditionref = dol_sanitizeFileName($this->ref);
-			if ($conf->expedition->dir_output)
+			$this->oldref='';
+
+			// Rename directory if dir was a temporary ref
+			if (preg_match('/^[\(]?PROV/i', $this->ref))
 			{
-				$dir = $conf->expedition->dir_output . "/" . $expeditionref;
-				$file = $dir . "/" . $expeditionref . ".pdf";
-				if (file_exists($file))
+				// On renomme repertoire ($this->ref = ancienne ref, $numfa = nouvelle ref)
+				// afin de ne pas perdre les fichiers attaches
+				$oldref = dol_sanitizeFileName($this->ref);
+				$newref = dol_sanitizeFileName($numref);
+				$dirsource = $conf->expedition->dir_output.'/sending/'.$oldref;
+				$dirdest = $conf->expedition->dir_output.'/sending/'.$newref;
+				if (file_exists($dirsource))
 				{
-					if (!dol_delete_file($file))
+					dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
+
+					if (@rename($dirsource, $dirdest))
 					{
-						$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
-					}
-				}
-				if (file_exists($dir))
-				{
-					if (!dol_delete_dir($dir))
-					{
-						$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+						$this->oldref = $oldref;
+
+						dol_syslog("Rename ok");
+						// Suppression ancien fichier PDF dans nouveau rep
+						dol_delete_file($dirdest.'/'.$oldref.'.*');
 					}
 				}
 			}
@@ -787,11 +791,11 @@ class Expedition extends CommonObject
 					$this->db->commit();
 
 					// On efface le repertoire de pdf provisoire
-					$expref = dol_sanitizeFileName($this->ref);
-					if ($conf->expedition->dir_output)
+					$ref = dol_sanitizeFileName($this->ref);
+					if (! empty($conf->expedition->dir_output))
 					{
-						$dir = $conf->expedition->dir_output . "/" . $expref ;
-						$file = $conf->expedition->dir_output . "/" . $expref . "/" . $expref . ".pdf";
+						$dir = $conf->expedition->dir_output . '/sending/' . $ref ;
+						$file = $dir . '/' . $ref . '.pdf';
 						if (file_exists($file))
 						{
 							if (!dol_delete_file($file))
