@@ -29,9 +29,8 @@
  */
  require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
 
- /**
- *  \class      ModelePdfExpedition
- *  \brief      Parent class of sending receipts models
+/**
+ *	Parent class of sending receipts models
  */
 abstract class ModelePdfExpedition extends CommonDocGenerator
 {
@@ -61,8 +60,7 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
 
 
 /**
- *  \class      ModelNumRefExpedition
- *  \brief      Classe mere des modeles de numerotation des references d expedition
+ *  Classe mere des modeles de numerotation des references d expedition
  */
 abstract class ModelNumRefExpedition
 {

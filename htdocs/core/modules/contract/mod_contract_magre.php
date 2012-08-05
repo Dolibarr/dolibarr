@@ -24,8 +24,8 @@
 
 require_once(DOL_DOCUMENT_ROOT ."/core/modules/contract/modules_contract.php");
 
-/**	    \class      mod_commande_magre
- *      \brief      Class to manage contract numbering rules Magre
+/**
+ *	Class to manage contract numbering rules Magre
  */
 class mod_contract_magre extends ModelNumRefContracts
 {

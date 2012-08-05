@@ -24,8 +24,8 @@
 
 require_once(DOL_DOCUMENT_ROOT ."/core/modules/expedition/modules_expedition.php");
 
-/**	    \class      mod_expedition_ribera
- *      \brief      Class to manage expedition numbering rules Ribera
+/**
+ *	Class to manage expedition numbering rules Ribera
  */
 class mod_expedition_ribera extends ModelNumRefExpedition
 {

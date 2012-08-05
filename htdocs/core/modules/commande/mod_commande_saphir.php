@@ -29,9 +29,8 @@ require_once(DOL_DOCUMENT_ROOT ."/core/modules/commande/modules_commande.php");
 
 
 /**
-	\class      mod_commande_saphir
-	\brief      Classe du modele de numerotation de reference de commande Saphir
-*/
+ *	Class to manage customer order numbering rules Saphir
+ */
 class mod_commande_saphir extends ModeleNumRefCommandes
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
