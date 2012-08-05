@@ -26,8 +26,8 @@
 
 require("../bank/pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/prelevement.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/rejet-prelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bonprelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/rejetprelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
 
 $langs->load("companies");
@@ -51,7 +51,7 @@ if ($prev_id)
 
   	if ($bon->fetch($prev_id) == 0)
     {
-    	$head = prelevement_prepare_head($bon);	
+    	$head = prelevement_prepare_head($bon);
       	dol_fiche_head($head, 'invoices', $langs->trans("WithdrawalReceipt"), '', 'payment');
 
       	print '<table class="border" width="100%">';
@@ -70,7 +70,7 @@ if ($prev_id)
 		print '<tr><td width="20%">'.$langs->trans('Status').'</td>';
 		print '<td>'.$bon->getLibStatut(1).'</td>';
 		print '</tr>';
-		
+
 		if($bon->date_trans <> 0)
 		{
 			$muser = new User($db);
@@ -89,7 +89,7 @@ if ($prev_id)
 			print dol_print_date($bon->date_credit,'day');
 			print '</td></tr>';
 		}
-		
+
       	print '</table>';
 
       	print '</div>';

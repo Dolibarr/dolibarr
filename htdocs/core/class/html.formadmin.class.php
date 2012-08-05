@@ -45,22 +45,6 @@ class FormAdmin
 	}
 
 	/**
-	 *    	Output list with available languages
-	 *
-	 *    	@param		string		$selected       Langue pre-selectionnee
-	 *    	@param  	string		$htmlname       Nom de la zone select
-	 *    	@param  	int			$showauto       Affiche choix auto
-	 * 		@param		int			$filter			Array of keys to exclude in list
-	 * 		@param		int			$showempty		Add empty value
-	 * 		@return		void
-	 *      @deprecated                 		Use select_language instead
-	 */
-	function select_lang($selected='',$htmlname='lang_id',$showauto=0,$filter=0,$showempty=0)
-	{
-		print $this->select_language($selected,$htmlname,$showauto,$filter,$showempty);
-	}
-
-	/**
 	 *    	Return html select list with available languages (key='en_US', value='United States' for example)
 	 *
 	 *    	@param      string		$selected       Langue pre-selectionnee

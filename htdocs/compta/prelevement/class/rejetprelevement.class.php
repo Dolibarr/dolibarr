@@ -19,15 +19,14 @@
  */
 
 /**
- *  \file       htdocs/compta/prelevement/class/rejet-prelevement.class.php
+ *  \file       htdocs/compta/prelevement/class/rejetprelevement.class.php
  *  \ingroup    prelevement
  *  \brief      File of class to manage standing orders rejects
  */
 
 
 /**
- \class 		RejetPrelevement
- \brief      Class to manage standing orders rejects
+ *	Class to manage standing orders rejects
  */
 class RejetPrelevement
 {
@@ -273,7 +272,7 @@ class RejetPrelevement
 	 *
 	 *    @return	void
 	 */
-	function _get_list_factures()
+	private function _get_list_factures()
 	{
 		global $conf;
 

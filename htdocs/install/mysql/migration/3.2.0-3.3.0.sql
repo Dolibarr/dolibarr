@@ -41,6 +41,7 @@ ALTER TABLE llx_mailing ADD COLUMN extraparams varchar(255);
 ALTER TABLE llx_product MODIFY ref                       varchar(128)  NOT NULL;
 ALTER TABLE llx_product MODIFY ref_ext                   varchar(128);
 
+ALTER TABLE llx_product_fournisseur_price DROP COLUMN fk_product_fournisseur;
 ALTER TABLE llx_product_fournisseur_price ADD charges DOUBLE( 24, 8 ) DEFAULT 0 AFTER unitprice;
 ALTER TABLE llx_product_fournisseur_price ADD unitcharges DOUBLE( 24, 8 ) DEFAULT 0 AFTER charges;
 

@@ -19,13 +19,14 @@
 
 /**
  *	\file       htdocs/compta/prelevement/fiche-stat.php
- *	\brief      Prelevement
+ *  \ingroup    prelevement
+ *	\brief      Prelevement statistics
  */
 
 require("../bank/pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/prelevement.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bon-prelevement.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/ligne-prelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bonprelevement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/ligneprelevement.class.php");
 
 // Security check
 if ($user->societe_id > 0) accessforbidden();
@@ -69,7 +70,7 @@ if ($prev_id)
 		print '<tr><td width="20%">'.$langs->trans('Status').'</td>';
 		print '<td>'.$bon->getLibStatut(1).'</td>';
 		print '</tr>';
-		
+
 		if($bon->date_trans <> 0)
 		{
 			$muser = new User($db);
@@ -88,7 +89,7 @@ if ($prev_id)
 			print dol_print_date($bon->date_credit,'day');
 			print '</td></tr>';
 		}
-		
+
 		print '</table>';
 
 		print '</div>';
@@ -104,7 +105,7 @@ if ($prev_id)
 	 *
 	 */
 	$ligne=new LignePrelevement($db,$user);
-	
+
 	$sql = "SELECT sum(pl.amount), pl.statut";
 	$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 	$sql.= " WHERE pl.fk_prelevement_bons = ".$prev_id;
@@ -128,7 +129,7 @@ if ($prev_id)
 			$row = $db->fetch_row($resql);
 
 			print "<tr $bc[$var]><td>";
-	
+
 			print $ligne->LibStatut($row[1],1);
 
 			print '</td><td align="right">';
