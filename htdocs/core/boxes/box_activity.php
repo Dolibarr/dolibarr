@@ -44,12 +44,13 @@ class box_activity extends ModeleBoxes
 	function __construct()
 	{
 		global $langs;
+
 		$langs->load("boxes");
 		$langs->load("bills");
 		$langs->load("projects");
-		$langs->trans("orders");
+		$langs->load("orders");
 
-		$this->boxlabel=$langs->transnoentitiesnoconv("BoxGlobalActivity");
+		$this->boxlabel = $langs->transnoentitiesnoconv("BoxGlobalActivity");
 	}
 
 	/**
