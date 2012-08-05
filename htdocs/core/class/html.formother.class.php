@@ -261,7 +261,7 @@ class FormOther
         // Print a select with each of them
         $moreforfilter ='<select class="flat" name="'.$htmlname.'">';
         $moreforfilter.='<option value="">&nbsp;</option>';	// Should use -1 to say nothing
-        
+
         if (is_array($tab_categs))
         {
             foreach ($tab_categs as $categ)
@@ -271,7 +271,7 @@ class FormOther
                 $moreforfilter.='>'.dol_trunc($categ['fulllabel'],50,'middle').'</option>';
             }
         }
-        if ($nocateg) 
+        if ($nocateg)
         {
         	$langs->load("categories");
         	$moreforfilter.='<option value="-2"'.($selected == -2 ? ' selected="selected"':'').'>- '.$langs->trans("NotCategorized").' -</option>';
@@ -829,26 +829,29 @@ class FormOther
             $selectboxlist=$form->selectarray('boxcombo', $arrayboxtoactivatelabel,'',1);
         }
 
-        print '<script type="text/javascript" language="javascript">
-        jQuery(document).ready(function() {
-        	jQuery("#boxcombo").change(function() {
-        	var boxid=jQuery("#boxcombo").val();
-        		if (boxid > 0) {
-            		var left_list = cleanSerialize(jQuery("#left").sortable("serialize"));
-            		var right_list = cleanSerialize(jQuery("#right").sortable("serialize"));
-            		var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
-    				jQuery.ajax({ url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\',
-    			        async:   false
-    		        });
-        			//jQuery.get(\''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\');
-        			window.location.search=\'mainmenu='.GETPOST("mainmenu").'&leftmenu='.GETPOST('leftmenu').'&action=addbox&boxid=\'+boxid;
-    				//window.location.href=\''.$_SERVER["PHP_SELF"].'\';
-                }
-        	});';
-        if (! count($arrayboxtoactivatelabel)) print 'jQuery("#boxcombo").hide();';
-        print  '
-    	});
-        </script>';
+        if (! empty($conf->use_javascript_ajax))
+        {
+	        print '<script type="text/javascript" language="javascript">
+	        jQuery(document).ready(function() {
+	        	jQuery("#boxcombo").change(function() {
+	        	var boxid=jQuery("#boxcombo").val();
+	        		if (boxid > 0) {
+	            		var left_list = cleanSerialize(jQuery("#left").sortable("serialize"));
+	            		var right_list = cleanSerialize(jQuery("#right").sortable("serialize"));
+	            		var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
+	    				jQuery.ajax({ url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\',
+	    			        async:   false
+	    		        });
+	        			//jQuery.get(\''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\');
+	        			window.location.search=\'mainmenu='.GETPOST("mainmenu").'&leftmenu='.GETPOST('leftmenu').'&action=addbox&boxid=\'+boxid;
+	    				//window.location.href=\''.$_SERVER["PHP_SELF"].'\';
+	                }
+	        	});';
+	        if (! count($arrayboxtoactivatelabel)) print 'jQuery("#boxcombo").hide();';
+	        print  '
+	    	});
+	        </script>';
+        }
 
         print load_fiche_titre((count($boxactivated)?$langs->trans("OtherInformationsBoxes"):''),$selectboxlist,'','','otherboxes');
 
