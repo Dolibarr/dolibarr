@@ -112,6 +112,7 @@ class User extends CommonObject
 		$this->all_permissions_are_loaded = 0;
 		$this->admin=0;
 
+		$this->conf				    = (object) array();
 		$this->rights				= (object) array();
 		$this->rights->user			= (object) array();
 		$this->rights->user->user	= (object) array();
@@ -530,16 +531,12 @@ class User extends CommonObject
 
 				if ($perms)
 				{
-					if (! is_object($this->rights->$module)) $this->rights->$module = (object) array();
-					if (! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = (object) array();
+					if (! isset($this->rights) || ! is_object($this->rights)) $this->rights = (object) array(); // For avoid error
+					if (! isset($this->rights->$module) || ! is_object($this->rights->$module)) $this->rights->$module = (object) array();
 					if ($subperms)
 					{
-						if (! isset($this->rights->$module) ||
-						(is_object($this->rights->$module) && ! isset($this->rights->$module->$perms)) ||
-						(is_object($this->rights->$module->$perms)) )
-						{
-							$this->rights->$module->$perms->$subperms = 1;
-						}
+						if (! isset($this->rights->$module->$perms) || ! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = (object) array();
+						$this->rights->$module->$perms->$subperms = 1;
 					}
 					else
 					{
@@ -581,8 +578,11 @@ class User extends CommonObject
 
 				if ($perms)
 				{
+					if (! isset($this->rights) || ! is_object($this->rights)) $this->rights = (object) array(); // For avoid error
+					if (! isset($this->rights->$module) || ! is_object($this->rights->$module)) $this->rights->$module = (object) array();
 					if ($subperms)
 					{
+						if (! isset($this->rights->$module->$perms) || ! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = (object) array();
 						$this->rights->$module->$perms->$subperms = 1;
 					}
 					else

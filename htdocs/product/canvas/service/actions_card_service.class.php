@@ -18,15 +18,15 @@
 /**
  *	\file       htdocs/product/canvas/service/actions_card_service.class.php
  *	\ingroup    service
- *	\brief      Fichier de la classe des services par defaut
+ *	\brief      File with class of actions for canvas service
  */
 include_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
 
+
 /**
- *	\class      ActionsCardService
- *	\brief      Class with controller methods for product canvas
+ *	Class with controller methods for product canvas
  */
-class ActionsCardService extends Product
+class ActionsCardService
 {
     var $targetmodule;
     var $canvas;

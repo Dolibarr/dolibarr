@@ -18,15 +18,15 @@
 /**
  *	\file       htdocs/product/canvas/product/actions_card_product.class.php
  *	\ingroup    produit
- *	\brief      Fichier de la classe des produits par defaut
+ *	\brief      File with class of actions for canvas product
  */
 include_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
 
+
 /**
- *	\class      ActionsCardProduct
- *	\brief      Class with controller methods for product canvas
+ *	Class with controller methods for product canvas
  */
-class ActionsCardProduct extends Product
+class ActionsCardProduct
 {
     var $targetmodule;
     var $canvas;
