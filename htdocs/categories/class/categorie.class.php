@@ -889,17 +889,14 @@ class Categorie
 		}
 		else 										// mother_id undefined (so it's root)
 		{
-			/* We have to select any rowid from llx_categorie which which category's type and label
-			 * are equals to those of the calling category, AND which doesn't exist in categorie association
-			 * as children (rowid != fk_categorie_fille)
+			/* We have to select any rowid from llx_categorie that is not at root level
 			 */
 			$sql = "SELECT c.rowid";
 			$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c ";
-			$sql.= " JOIN ".MAIN_DB_PREFIX."categorie_association as ca";
-			$sql.= " ON c.rowid!=ca.fk_categorie_fille";
 			$sql.= " WHERE c.type=".$this->type;
 			$sql.= " AND c.label='".$this->db->escape($this->label)."'";
 			$sql.= " AND c.entity IN (".getEntity('category',1).")";
+			$sql.= " AND c.rowid NOT IN (SELECT ca.fk_categorie_fille FROM ".MAIN_DB_PREFIX."categorie_association as ca)";
 		}
 		dol_syslog(get_class($this)."::already_exists sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
