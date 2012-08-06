@@ -26,9 +26,9 @@ For users:
 - New: Suggest a method to generate a backup file for user with no access
   to mysqldump binary.
 - New: Can correct stock of a warehouse from warehouse card.
-- New: task #185 : Can input amount when correcting stock to recalculate PMP.
-- New: [ task #454 ] Add "No category" into filters on category.
-- New: Update language files (de, tr, pt).
+- New: [ task #185 ]: Can input amount when correcting stock to recalculate PMP.
+- New: [ task #454 ]: Add "No category" into filters on category.
+- New: Update language files (de, tr, pt, ca_ES, es_ES).
 - New: Auto check box on page to edit interface options of user.
 - New: Add great britain provinces.
 - New: Update libs/tools/logo for DoliWamp.
