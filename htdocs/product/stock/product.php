@@ -75,7 +75,7 @@ if ($action == 'setstocklimit')
 if ($action == "correct_stock" && ! $_POST["cancel"])
 {
 	if ($_POST["price"] == '') $_POST["price"] = 0;
-	if (is_numeric($_POST["nbpiece"]) && $id)
+	if (is_numeric($_POST["nbpiece"]) && $id && is_numeric($_POST["price"]))
 	{
 		$product = new Product($db);
 		$result=$product->fetch($id);
