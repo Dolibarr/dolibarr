@@ -26,11 +26,12 @@ For users:
 - New: Suggest a method to generate a backup file for user with no access
   to mysqldump binary.
 - New: Can correct stock of a warehouse from warehouse card.
+- New: task #185 : Can input amount when correcting stock to recalculate PMP.
 - New: [ task #454 ] Add "No category" into filters on category.
 - New: Update language files (de, tr, pt).
 - New: Auto check box on page to edit interface options of user.
 - New: Add great britain provinces.
-- New: Update libs/tools for DoliWamp.
+- New: Update libs/tools/logo for DoliWamp.
 - Fix: No images into product description lines as PDF generation does
   not work with this.
 
