@@ -1726,6 +1726,7 @@ class Facture extends CommonObject
             	$this->ref = $num;
                 $this->facnumber=$num;
                 $this->statut=1;
+                $this->brouillon=0;
                 $this->date_validation=$now;
             }
 

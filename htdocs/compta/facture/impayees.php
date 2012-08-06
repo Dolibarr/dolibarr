@@ -313,7 +313,7 @@ if ($resql)
 
 			$var=!$var;
 
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 			$classname = "impayee";
 
 			print '<td nowrap="nowrap">';
@@ -378,6 +378,7 @@ if ($resql)
 		print '<td align="right"><b>'.price($total_ht).'</b></td>';
 		print '<td align="right"><b>'.price($total_ttc).'</b></td>';
 		print '<td align="right"><b>'.price($total_paid).'</b></td>';
+		print '<td align="center">&nbsp;</td>';
 		print '<td align="center">&nbsp;</td>';
 		print '<td align="center">&nbsp;</td>';
 		print "</tr>\n";
