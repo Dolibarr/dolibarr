@@ -74,6 +74,7 @@ if ($action == 'setstocklimit')
 // Correct stock
 if ($action == "correct_stock" && ! $_POST["cancel"])
 {
+	if ($_POST["price"] == '') $_POST["price"] = 0;
 	if (is_numeric($_POST["nbpiece"]) && $id)
 	{
 		$product = new Product($db);
@@ -85,7 +86,7 @@ if ($action == "correct_stock" && ! $_POST["cancel"])
     		$_POST["nbpiece"],
     		$_POST["mouvement"],
     		$_POST["label"],
-    		0
+    		$_POST["price"]
 		);		// We do not change value of stock for a correction
 
 		if ($result > 0)
@@ -350,9 +351,10 @@ if ($_GET["id"] || $_GET["ref"])
 		// Label
 		print '<tr>';
 		print '<td width="20%">'.$langs->trans("Label").'</td>';
-		print '<td colspan="4">';
+		print '<td colspan="2">';
 		print '<input type="text" name="label" size="40" value="">';
 		print '</td>';
+		print '<td width="20%">'.$langs->trans("UnitPurchaseValue").'</td><td width="20%"><input class="flat" name="price" size="10" value=""></td>';
 		print '</tr>';
 
 		print '</table>';
