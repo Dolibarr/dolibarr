@@ -33,6 +33,7 @@ StockCorrection=Correct stock
 StockMovement=Transfer
 StockMovements=Stock transfers
 NumberOfUnit=Number of units
+UnitPurchaseValue=Unit purchase price
 TotalStock=Total in stock
 StockTooLow=Stock too low
 EnhancedValue=Value
