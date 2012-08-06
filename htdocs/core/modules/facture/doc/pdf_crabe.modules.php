@@ -262,11 +262,16 @@ class pdf_crabe extends ModelePDFFactures
 				{
 					$curY = $nexY;
 
+					$pageposbefore=$pdf->getPage();
+						
 					// Description of product line
 					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 					$curX = $this->posxdesc-1;
 					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc,0,$hookmanager);
 
+					$pageposafter=$pdf->getPage();
+					$pdf->setPage($pageposbefore);
+					
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
 
@@ -324,6 +329,21 @@ class pdf_crabe extends ModelePDFFactures
 
 					$nexY+=2;    // Passe espace entre les lignes
 
+					// Detect if some page were added automatically and output _tableau for past pages
+					while ($pagenb < $pageposafter)
+					{
+					    if ($pagenb == 1)
+						{
+							$this->_tableau($pdf, $tab_top, $tab_height + 40, 0, $outputlangs);
+						}
+						else
+						{
+							$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, 0, $outputlangs);
+						}
+						$pagenb++;
+						$pdf->setPage($pagenb);
+					}
+					
 					// Cherche nombre de lignes a venir pour savoir si place suffisante
 					if ($i < ($nblignes - 1) && empty($hidedesc))	// If it's not last line
 					{

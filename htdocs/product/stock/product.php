@@ -74,8 +74,9 @@ if ($action == 'setstocklimit')
 // Correct stock
 if ($action == "correct_stock" && ! $_POST["cancel"])
 {
-	if ($_POST["price"] == '') $_POST["price"] = 0;
-	if (is_numeric($_POST["nbpiece"]) && $id && is_numeric($_POST["price"]))
+	//if ($_POST["price"] == '') $_POST["price"] = 0;
+	if (isset($_POST["price"])) $priceunit=price2num($_POST["price"]);
+	if (is_numeric($_POST["nbpiece"]) && $id)
 	{
 		$product = new Product($db);
 		$result=$product->fetch($id);
@@ -86,7 +87,7 @@ if ($action == "correct_stock" && ! $_POST["cancel"])
     		$_POST["nbpiece"],
     		$_POST["mouvement"],
     		$_POST["label"],
-    		$_POST["price"]
+    		$priceunit
 		);		// We do not change value of stock for a correction
 
 		if ($result > 0)
@@ -336,7 +337,7 @@ if ($_GET["id"] || $_GET["ref"])
 
 		// Warehouse
 		print '<tr>';
-		print '<td width="20%">'.$langs->trans("Warehouse").'</td>';
+		print '<td width="20%" class="fieldrequired">'.$langs->trans("Warehouse").'</td>';
 		print '<td width="20%">';
 		print $formproduct->selectWarehouses($_GET["dwid"],'id_entrepot','',1);
 		print '</td>';
@@ -345,7 +346,7 @@ if ($_GET["id"] || $_GET["ref"])
 		print '<option value="0">'.$langs->trans("Add").'</option>';
 		print '<option value="1">'.$langs->trans("Delete").'</option>';
 		print '</select></td>';
-		print '<td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input class="flat" name="nbpiece" size="10" value=""></td>';
+		print '<td width="20%" class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input class="flat" name="nbpiece" size="10" value=""></td>';
 		print '</tr>';
 
 		// Label
@@ -376,13 +377,13 @@ if ($_GET["id"] || $_GET["ref"])
 		print '<table class="border" width="100%">';
 
 		print '<tr>';
-		print '<td width="20%">'.$langs->trans("WarehouseSource").'</td><td width="20%">';
+		print '<td width="20%" class="fieldrequired">'.$langs->trans("WarehouseSource").'</td><td width="20%">';
 		print $formproduct->selectWarehouses($_GET["dwid"],'id_entrepot_source','',1);
 		print '</td>';
-		print '<td width="20%">'.$langs->trans("WarehouseTarget").'</td><td width="20%">';
+		print '<td width="20%" class="fieldrequired">'.$langs->trans("WarehouseTarget").'</td><td width="20%">';
 		print $formproduct->selectWarehouses('','id_entrepot_destination','',1);
 		print '</td>';
-		print '<td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input name="nbpiece" size="10" value=""></td>';
+		print '<td width="20%" class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input name="nbpiece" size="10" value=""></td>';
 		print '</tr>';
 
 		// Label
