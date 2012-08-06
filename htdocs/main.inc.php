@@ -1502,14 +1502,17 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    // Link to bugtrack
 	    if (! empty($conf->global->MAIN_SHOW_BUGTRACK_LINK))
 	    {
-	        $bugbaseurl='http://savannah.nongnu.org/bugs/?';
-	        $bugbaseurl.='func=additem&group=dolibarr&privacy=1&';
+	    	require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
+
+	        $bugbaseurl='https://doliforge.org/tracker/?';
+	        $bugbaseurl.='func=add&group_id=144&atid=246';
 	        $bugbaseurl.="&details=";
 	        $bugbaseurl.=urlencode("\n\n\n\n\n-------------\n");
 	        $bugbaseurl.=urlencode($langs->trans("Version").": ".DOL_VERSION."\n");
 	        $bugbaseurl.=urlencode($langs->trans("Server").": ".$_SERVER["SERVER_SOFTWARE"]."\n");
+	        $bugbaseurl.=urlencode($langs->trans("PHP").": ".version_php()."\n");
 	        $bugbaseurl.=urlencode($langs->trans("Url").": ".$_SERVER["REQUEST_URI"]."\n");
-	        print '<div class="help"><a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a></div>';
+	        print '<div id="blockvmenubugtracker" class="blockvmenuhelp"><a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a></div>';
 	    }
 	    print "\n";
 

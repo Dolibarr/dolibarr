@@ -28,15 +28,20 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 
 $langs->load("admin");
 
-if (! $user->admin) accessforbidden();
+if (! $user->admin)
+	accessforbidden();
 
 $rowid=GETPOST('rowid','int');
 $entity=GETPOST('entity','int');
-$action=GETPOST('action');
-$update=GETPOST('update');
-$delete=GETPOST('delete');
-$debug=GETPOST('debug');
+$action=GETPOST('action','alpha');
+$update=GETPOST('update','alpha');
+$delete=GETPOST('delete','alpha');
+$debug=GETPOST('debug','int');
 $consts=GETPOST('const');
+$constname=GETPOST('constname','alpha');
+$constvalue=GETPOST('constvalue');
+$constnote=GETPOST('constnote','alpha');
+$consttype=GETPOST('consttype','alpha');
 
 $typeconst=array('yesno','texte','chaine');
 $mesg='';
@@ -50,12 +55,12 @@ if ($action == 'add')
 {
 	$error=0;
 
-	if (empty($_POST["constname"]))
+	if (empty($constname))
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")).'</div>';
 		$error++;
 	}
-	if ($_POST["constvalue"]=='')
+	if ($constvalue == '')
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Value")).'</div>';
 		$error++;
@@ -63,7 +68,7 @@ if ($action == 'add')
 
 	if (! $error)
 	{
-		if (dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],1,isset($_POST["constnote"])?$_POST["constnote"]:'',$_POST["entity"]) < 0)
+		if (dolibarr_set_const($db, $constname, $constvalue, $typeconst[$consttype], 1, $constnote, $entity) < 0)
 		{
 			dol_print_error($db);
 		}
@@ -76,7 +81,7 @@ if (! empty($consts) && $update == $langs->trans("Modify"))
 	{
 		if (! empty($const["check"]))
 		{
-			if (dolibarr_set_const($db, $const["name"],$const["value"],$const["type"],1,$const["note"],$const["entity"]) < 0)
+			if (dolibarr_set_const($db, $const["name"], $const["value"], $const["type"], 1, $const["note"], $const["entity"]) < 0)
 			{
 				dol_print_error($db);
 			}
