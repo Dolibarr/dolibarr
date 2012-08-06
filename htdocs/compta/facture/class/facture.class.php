@@ -1736,6 +1736,7 @@ class Facture extends CommonInvoice
             	$this->ref = $num;
                 $this->facnumber=$num;
                 $this->statut=1;
+                $this->brouillon=0;
                 $this->date_validation=$now;
             }
 
