@@ -403,17 +403,17 @@ if ($id > 0 || ! empty($ref))
   		    print '</td>';
 
   		    // User
-			$user->id = $task_time->fk_user;
+			$userstatic = new User($task_time->fk_user);
 			print '<td>';
 			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
 			{
-				print $form->select_users($user->id,'userid_line');
+				print $form->select_users($userstatic->id,'userid_line');
 			}
 			else
 			{
-				$user->nom		= $task_time->name;
-				$user->prenom 	= $task_time->firstname;
-				print $user->getNomUrl(1);
+				$userstatic->nom		= $task_time->name;
+				$userstatic->prenom 	= $task_time->firstname;
+				print $userstatic->getNomUrl(1);
 			}
 		    print '</td>';
 
