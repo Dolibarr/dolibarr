@@ -160,8 +160,6 @@ else
   $sql.= " AND f.fk_statut > 1";
 $sql.= " AND s.entity = ".$conf->entity;
 $sql.= " AND d.fk_facture = f.rowid";
-if ($conf->global->COMMISSION_BASE == "MARGIN")
-  $sql.= " AND d.buy_price_ht IS NOT NULL AND d.buy_price_ht <> 0";
 if ($agentid > 0)
   $sql.= " AND sc.fk_user = $agentid";
 if (!empty($startdate))
