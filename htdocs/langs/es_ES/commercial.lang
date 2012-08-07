@@ -24,6 +24,7 @@ TaskRDVWith=Cita con %s
 ShowTask=Ver tarea
 ShowAction=Ver evento
 ActionsReport=Informe de eventos
+ThirdPartiesOfSaleRepresentative=Terceros cuyo representante de ventas es
 SalesRepresentative=Comercial
 SalesRepresentatives=Comerciales
 SalesRepresentativeFollowUp=Comercial (seguimiento)
