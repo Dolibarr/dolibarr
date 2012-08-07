@@ -48,8 +48,6 @@ $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit&stock',$id,'product&product','','',$fieldid);
 
-$mesg = '';
-
 
 /*
  *	Actions
@@ -65,9 +63,7 @@ if ($action == 'setstocklimit')
     $product->seuil_stock_alerte=$stocklimit;
     $result=$product->update($product->id,$user,1,0,1);
     if ($result < 0)
-    {
-        $mesg=join(',',$product->errors);
-    }
+    	setEventMessage($product->errors, 'errors');
     $action='';
 }
 
@@ -76,7 +72,7 @@ if ($action == "correct_stock" && ! $cancel)
 {
 	if (! (GETPOST("id_entrepot") > 0))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Warehouse")), 'errors');	
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Warehouse")), 'errors');
 		$error++;
 		$action='correction';
 	}
@@ -86,7 +82,7 @@ if ($action == "correct_stock" && ! $cancel)
 		$error++;
 		$action='correction';
 	}
-	
+
 	if (! $error)
 	{
 		$priceunit=price2num(GETPOST("price"));
@@ -94,7 +90,7 @@ if ($action == "correct_stock" && ! $cancel)
 		{
 			$product = new Product($db);
 			$result=$product->fetch($id);
-	
+
 			$result=$product->correct_stock(
 	    		$user,
 	    		GETPOST("id_entrepot"),
@@ -103,7 +99,7 @@ if ($action == "correct_stock" && ! $cancel)
 	    		GETPOST("label"),
 	    		$priceunit
 			);		// We do not change value of stock for a correction
-	
+
 			if ($result > 0)
 			{
 	            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$product->id);
@@ -128,7 +124,7 @@ if ($action == "transfert_stock" && ! $cancel)
 		$error++;
 		$action='transfert';
 	}
-	
+
 	if (! $error)
 	{
 		if (GETPOST("id_entrepot_source") <> GETPOST("id_entrepot_destination"))
@@ -137,18 +133,18 @@ if ($action == "transfert_stock" && ! $cancel)
 			{
 				$product = new Product($db);
 				$result=$product->fetch($id);
-	
+
 				$db->begin();
-	
+
 				$product->load_stock();	// Load array product->stock_warehouse
-	
+
 				// Define value of products moved
 				$pricesrc=0;
 				if (isset($product->stock_warehouse[GETPOST("id_entrepot_source")]->pmp)) $pricesrc=$product->stock_warehouse[GETPOST("id_entrepot_source")]->pmp;
 				$pricedest=$pricesrc;
-	
+
 				//print 'price src='.$pricesrc.', price dest='.$pricedest;exit;
-	
+
 				// Remove stock
 				$result1=$product->correct_stock(
 	    			$user,
@@ -158,7 +154,7 @@ if ($action == "transfert_stock" && ! $cancel)
 	    			GETPOST("label"),
 	    			$pricesrc
 				);
-	
+
 				// Add stock
 				$result2=$product->correct_stock(
 	    			$user,
@@ -168,7 +164,7 @@ if ($action == "transfert_stock" && ! $cancel)
 	    			GETPOST("label"),
 	    			$pricedest
 				);
-	
+
 				if ($result1 >= 0 && $result2 >= 0)
 				{
 					$db->commit();
@@ -177,7 +173,7 @@ if ($action == "transfert_stock" && ! $cancel)
 				}
 				else
 				{
-					$mesg=$product->error;
+					setEventMessage($product->error, 'errors');
 					$db->rollback();
 				}
 			}
@@ -210,9 +206,6 @@ if ($id > 0 || $ref)
 		dol_fiche_head($head, 'stock', $titre, 0, $picto);
 
 		$form = new Form($db);
-
-		if ($mesg) print($mesg);
-		dol_htmloutput_events();
 
 		print '<table class="border" width="100%">';
 
@@ -373,8 +366,8 @@ if ($id > 0 || $ref)
 				init_price();
 			});
 		});
-		</script>';		
-		
+		</script>';
+
 		print_titre($langs->trans("StockCorrection"));
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'" method="post">'."\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
