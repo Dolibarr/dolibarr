@@ -744,12 +744,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                     $newmenu->add("/societe/soc.php?action=create", $langs->trans("MenuNewThirdParty"),1);
                     if (! $conf->use_javascript_ajax) $newmenu->add("/societe/soc.php?action=create&amp;private=1",$langs->trans("MenuNewPrivateIndividual"),1);
                 }
-
-                // TODO Avoid doing dir scan
-                if(is_dir("societe/groupe"))
-                {
-                    $newmenu->add("/societe/groupe/index.php", $langs->trans("MenuSocGroup"),1);
-                }
             }
 
             // Prospects
