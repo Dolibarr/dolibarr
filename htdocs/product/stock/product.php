@@ -63,7 +63,7 @@ if ($action == 'setstocklimit')
     $product->seuil_stock_alerte=$stocklimit;
     $result=$product->update($product->id,$user,1,0,1);
     if ($result < 0)
-    	setEventMessage($product->errors, 'errors');
+    	setEventMessage($product->error, 'errors');
     $action='';
 }
 
