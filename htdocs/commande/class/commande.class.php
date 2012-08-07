@@ -280,7 +280,7 @@ class Commande extends CommonOrder
 
                         dol_syslog("Rename ok");
                         // Suppression ancien fichier PDF dans nouveau rep
-                        dol_delete_file($conf->commande->dir_output.'/'.$snum.'/'.$comref.'.*');
+                        dol_delete_file($conf->commande->dir_output.'/'.$snum.'/'.$comref.'*.*');
                     }
                 }
             }
