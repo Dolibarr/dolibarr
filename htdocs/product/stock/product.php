@@ -42,11 +42,11 @@ $cancel=GETPOST('cancel');
 // Security check
 $id = GETPOST('id')?GETPOST('id'):GETPOST('ref');
 $ref = GETPOST('ref');
+$stocklimit = GETPOST('stocklimit');
+$cancel = GETPOST('cancel');
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit&stock',$id,'product&product','','',$fieldid);
-
-$mesg = '';
 
 
 /*
@@ -59,94 +59,123 @@ if ($cancel) $action='';
 if ($action == 'setstocklimit')
 {
     $product = new Product($db);
-    $result=$product->fetch($_POST['id']);
-    $product->seuil_stock_alerte=$_POST["stocklimit"];
+    $result=$product->fetch($id);
+    $product->seuil_stock_alerte=$stocklimit;
     $result=$product->update($product->id,$user,1,0,1);
     if ($result < 0)
-    {
-        $mesg=join(',',$product->errors);
-    }
-    $POST["action"]="";
-    $id=$_POST["id"];
-    $_GET["id"]=$_POST["id"];
+    	setEventMessage($product->error, 'errors');
+    $action='';
 }
 
 // Correct stock
-if ($action == "correct_stock" && ! $_POST["cancel"])
+if ($action == "correct_stock" && ! $cancel)
 {
-	if (is_numeric($_POST["nbpiece"]) && $id)
+	if (! (GETPOST("id_entrepot") > 0))
 	{
-		$product = new Product($db);
-		$result=$product->fetch($id);
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Warehouse")), 'errors');
+		$error++;
+		$action='correction';
+	}
+	if (! GETPOST("nbpiece"))
+	{
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("NumberOfUnit")), 'errors');
+		$error++;
+		$action='correction';
+	}
 
-		$result=$product->correct_stock(
-    		$user,
-    		$_POST["id_entrepot"],
-    		$_POST["nbpiece"],
-    		$_POST["mouvement"],
-    		$_POST["label"],
-    		0
-		);		// We do not change value of stock for a correction
-
-		if ($result > 0)
+	if (! $error)
+	{
+		$priceunit=price2num(GETPOST("price"));
+		if (is_numeric(GETPOST("nbpiece")) && $id)
 		{
-            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$product->id);
-			exit;
+			$product = new Product($db);
+			$result=$product->fetch($id);
+
+			$result=$product->correct_stock(
+	    		$user,
+	    		GETPOST("id_entrepot"),
+	    		GETPOST("nbpiece"),
+	    		GETPOST("mouvement"),
+	    		GETPOST("label"),
+	    		$priceunit
+			);		// We do not change value of stock for a correction
+
+			if ($result > 0)
+			{
+	            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$product->id);
+				exit;
+			}
 		}
 	}
 }
 
 // Transfer stock from a warehouse to another warehouse
-if ($action == "transfert_stock" && ! $_POST["cancel"])
+if ($action == "transfert_stock" && ! $cancel)
 {
-	if ($_POST["id_entrepot_source"] <> $_POST["id_entrepot_destination"])
+	if (! (GETPOST("id_entrepot_source") > 0) || ! (GETPOST("id_entrepot_destination") > 0))
 	{
-		if (is_numeric($_POST["nbpiece"]) && $id)
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Warehouse")), 'errors');
+		$error++;
+		$action='transfert';
+	}
+	if (! GETPOST("nbpiece"))
+	{
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("NumberOfUnit")), 'errors');
+		$error++;
+		$action='transfert';
+	}
+
+	if (! $error)
+	{
+		if (GETPOST("id_entrepot_source") <> GETPOST("id_entrepot_destination"))
 		{
-			$product = new Product($db);
-			$result=$product->fetch($id);
-
-			$db->begin();
-
-			$product->load_stock();	// Load array product->stock_warehouse
-
-			// Define value of products moved
-			$pricesrc=0;
-			if (isset($product->stock_warehouse[$_POST["id_entrepot_source"]]->pmp)) $pricesrc=$product->stock_warehouse[$_POST["id_entrepot_source"]]->pmp;
-			$pricedest=$pricesrc;
-
-			//print 'price src='.$pricesrc.', price dest='.$pricedest;exit;
-
-			// Remove stock
-			$result1=$product->correct_stock(
-    			$user,
-    			$_POST["id_entrepot_source"],
-    			$_POST["nbpiece"],
-    			1,
-    			$_POST["label"],
-    			$pricesrc
-			);
-
-			// Add stock
-			$result2=$product->correct_stock(
-    			$user,
-    			$_POST["id_entrepot_destination"],
-    			$_POST["nbpiece"],
-    			0,
-    			$_POST["label"],
-    			$pricedest
-			);
-
-			if ($result1 >= 0 && $result2 >= 0)
+			if (is_numeric(GETPOST("nbpiece")) && $id)
 			{
-				$db->commit();
-                header("Location: product.php?id=".$product->id);
-				exit;
-			}
-			else
-			{
-				$mesg=$product->error;
-				$db->rollback();
+				$product = new Product($db);
+				$result=$product->fetch($id);
+
+				$db->begin();
+
+				$product->load_stock();	// Load array product->stock_warehouse
+
+				// Define value of products moved
+				$pricesrc=0;
+				if (isset($product->stock_warehouse[GETPOST("id_entrepot_source")]->pmp)) $pricesrc=$product->stock_warehouse[GETPOST("id_entrepot_source")]->pmp;
+				$pricedest=$pricesrc;
+
+				//print 'price src='.$pricesrc.', price dest='.$pricedest;exit;
+
+				// Remove stock
+				$result1=$product->correct_stock(
+	    			$user,
+	    			GETPOST("id_entrepot_source"),
+	    			GETPOST("nbpiece"),
+	    			1,
+	    			GETPOST("label"),
+	    			$pricesrc
+				);
+
+				// Add stock
+				$result2=$product->correct_stock(
+	    			$user,
+	    			GETPOST("id_entrepot_destination"),
+	    			GETPOST("nbpiece"),
+	    			0,
+	    			GETPOST("label"),
+	    			$pricedest
+				);
+
+				if ($result1 >= 0 && $result2 >= 0)
+				{
+					$db->commit();
+	                header("Location: product.php?id=".$product->id);
+					exit;
+				}
+				else
+				{
+					setEventMessage($product->error, 'errors');
+					$db->rollback();
+				}
 			}
 		}
 	}
@@ -160,11 +189,11 @@ if ($action == "transfert_stock" && ! $_POST["cancel"])
 $formproduct=new FormProduct($db);
 
 
-if ($_GET["id"] || $_GET["ref"])
+if ($id > 0 || $ref)
 {
 	$product = new Product($db);
-	if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
-	if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
+	if ($ref) $result = $product->fetch('',$ref);
+	if ($id > 0) $result = $product->fetch($id);
 
 	$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 	llxHeader("",$langs->trans("CardProduct".$product->type),$help_url);
@@ -177,8 +206,6 @@ if ($_GET["id"] || $_GET["ref"])
 		dol_fiche_head($head, 'stock', $titre, 0, $picto);
 
 		$form = new Form($db);
-
-		print($mesg);
 
 		print '<table class="border" width="100%">';
 
@@ -327,6 +354,20 @@ if ($_GET["id"] || $_GET["ref"])
 	 */
 	if ($action == "correction")
 	{
+		print '<script type="text/javascript" language="javascript">
+		jQuery(document).ready(function() {
+			function init_price()
+			{
+				if (jQuery("#mouvement").val() == \'0\') jQuery("#unitprice").removeAttr(\'disabled\');
+				else jQuery("#unitprice").attr(\'disabled\',\'disabled\');
+			}
+			init_price();
+			jQuery("#mouvement").change(function() {
+				init_price();
+			});
+		});
+		</script>';
+
 		print_titre($langs->trans("StockCorrection"));
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'" method="post">'."\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -335,24 +376,25 @@ if ($_GET["id"] || $_GET["ref"])
 
 		// Warehouse
 		print '<tr>';
-		print '<td width="20%">'.$langs->trans("Warehouse").'</td>';
+		print '<td width="20%" class="fieldrequired">'.$langs->trans("Warehouse").'</td>';
 		print '<td width="20%">';
-		print $formproduct->selectWarehouses($_GET["dwid"],'id_entrepot','',1);
+		print $formproduct->selectWarehouses(($_GET["dwid"]?$_GET["dwid"]:GETPOST('id_entrepot')),'id_entrepot','',1);
 		print '</td>';
 		print '<td width="20%">';
-		print '<select name="mouvement" class="flat">';
+		print '<select name="mouvement" id="mouvement" class="flat">';
 		print '<option value="0">'.$langs->trans("Add").'</option>';
 		print '<option value="1">'.$langs->trans("Delete").'</option>';
 		print '</select></td>';
-		print '<td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input class="flat" name="nbpiece" size="10" value=""></td>';
+		print '<td width="20%" class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input class="flat" name="nbpiece" id="nbpiece" size="10" value="'.GETPOST("nbpiece").'"></td>';
 		print '</tr>';
 
 		// Label
 		print '<tr>';
 		print '<td width="20%">'.$langs->trans("Label").'</td>';
-		print '<td colspan="4">';
-		print '<input type="text" name="label" size="40" value="">';
+		print '<td colspan="2">';
+		print '<input type="text" name="label" size="40" value="'.GETPOST("label").'">';
 		print '</td>';
+		print '<td width="20%">'.$langs->trans("UnitPurchaseValue").'</td><td width="20%"><input class="flat" name="price" id="unitprice" size="10" value="'.GETPOST("unitprice").'"></td>';
 		print '</tr>';
 
 		print '</table>';
@@ -374,20 +416,20 @@ if ($_GET["id"] || $_GET["ref"])
 		print '<table class="border" width="100%">';
 
 		print '<tr>';
-		print '<td width="20%">'.$langs->trans("WarehouseSource").'</td><td width="20%">';
-		print $formproduct->selectWarehouses($_GET["dwid"],'id_entrepot_source','',1);
+		print '<td width="20%" class="fieldrequired">'.$langs->trans("WarehouseSource").'</td><td width="20%">';
+		print $formproduct->selectWarehouses(($_GET["dwid"]?$_GET["dwid"]:GETPOST('id_entrepot_source')),'id_entrepot_source','',1);
 		print '</td>';
-		print '<td width="20%">'.$langs->trans("WarehouseTarget").'</td><td width="20%">';
-		print $formproduct->selectWarehouses('','id_entrepot_destination','',1);
+		print '<td width="20%" class="fieldrequired">'.$langs->trans("WarehouseTarget").'</td><td width="20%">';
+		print $formproduct->selectWarehouses(GETPOST('id_entrepot_destination'),'id_entrepot_destination','',1);
 		print '</td>';
-		print '<td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input name="nbpiece" size="10" value=""></td>';
+		print '<td width="20%" class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input name="nbpiece" size="10" value="'.GETPOST("nbpiece").'"></td>';
 		print '</tr>';
 
 		// Label
 		print '<tr>';
 		print '<td width="20%">'.$langs->trans("Label").'</td>';
 		print '<td colspan="5">';
-		print '<input type="text" name="label" size="40" value="">';
+		print '<input type="text" name="label" size="40" value="'.GETPOST("label").'">';
 		print '</td>';
 		print '</tr>';
 
@@ -533,9 +575,7 @@ print "</tr>";
 print "</table>";
 
 
+llxFooter();
 
 $db->close();
-
-
-llxFooter();
 ?>
