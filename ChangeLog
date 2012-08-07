@@ -5,6 +5,9 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.3 compared to 3.2 *****
 For users:
+- New: If field "signature" is filled into user table, text is added 
+  at end of predefined email texts. If option MAIL_DO_NOT_USE_SIGN is on, this
+  feautre is disabled.
 - New: Add link "Back to list" on all cards.
 - New: After first install, warning are visible onto mandatory setup not
   configured. Show also total number of activated modules.
