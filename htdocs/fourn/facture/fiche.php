@@ -466,6 +466,8 @@ elseif ($action == 'addline')
             // cas special pour lequel on a les meme reference que le fournisseur
             // $label = '['.$product->ref.'] - '. $product->libelle;
             $label = $product->description;
+            $label.= $product->description && $_POST['np_desc'] ? "\n" : "";
+            $label.= $_POST['np_desc'];
 
             $tvatx=get_default_tva($object->thirdparty, $mysoc, $product->id, $_POST['idprodfournprice']);
 
@@ -1746,12 +1748,19 @@ else
                 print '<td colspan="4">';
                 $form->select_produits_fournisseurs($object->socid,'','idprodfournprice','',$filtre);
 
+                if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) print '<br>';
+                
                 if (is_object($hookmanager))
 				{
 			        $parameters=array('filtre'=>$filtre,'htmlname'=>'idprodfournprice');
 				    echo $hookmanager->executeHooks('formCreateProductSupplierOptions',$parameters,$object,$action);
 				}
 
+				$nbrows=ROWS_2;
+				if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
+				$doleditor = new DolEditor('np_desc', GETPOST('np_desc'), '', 100, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, $nbrows, 70);
+				$doleditor->Create();
+								
                 print '</td>';
                 print '<td align="right"><input type="text" name="qty" value="1" size="1"></td>';
                 print '<td>&nbsp;</td>';
