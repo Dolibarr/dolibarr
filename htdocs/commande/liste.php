@@ -98,7 +98,8 @@ $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $companystatic = new Societe($db);
 
-llxHeader();
+$help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
+llxHeader('',$langs->trans("Orders"),$help_url);
 
 $sql = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
 $sql.= ' c.date_valid, c.date_commande, c.date_livraison, c.fk_statut, c.facture as facturee';
