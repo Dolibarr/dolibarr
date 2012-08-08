@@ -147,6 +147,9 @@ class pdf_expedition_merou extends ModelePdfExpedition
 			if (file_exists($dir))
 			{
                 $pdf=pdf_getInstance($this->format,'mm','l');
+                $heightforinfotot = 80;	// Height reserved to output the info and total part (value include bottom margin)
+                $heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
+                $pdf->SetAutoPageBreak(1,0);
 
 			    if (class_exists('TCPDF'))
                 {
@@ -174,7 +177,6 @@ class pdf_expedition_merou extends ModelePdfExpedition
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
-				$pdf->SetAutoPageBreak(1,0);
 
 				$pdf->SetFont('','', $default_font_size - 3);
 
@@ -284,9 +286,11 @@ class pdf_expedition_merou extends ModelePdfExpedition
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
 	 *   @param		Translate	$outputlangs	Langs object
+	 *   @param		int			$hidetop		Hide top bar of array
+	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0)
 	{
 		global $langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
