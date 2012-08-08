@@ -1406,7 +1406,7 @@ class Form
                 $outval='';
 
                 $opt = '<option value="'.$objp->idprodfournprice.'"';
-                if ($selected == $objp->idprodfournprice) $opt.= ' selected="selected"';
+                if ($selected && $selected == $objp->idprodfournprice) $opt.= ' selected="selected"';
                 if ($objp->fprice == '') $opt.=' disabled="disabled"';
                 $opt.= '>';
 

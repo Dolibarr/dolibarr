@@ -353,7 +353,7 @@ class CommandeFournisseur extends Commande
                         	
                             dol_syslog("Rename ok");
                             // Suppression ancien fichier PDF dans nouveau rep
-                            dol_delete_file($dirdest.'/'.$oldref.'.*');
+                            dol_delete_file($dirdest.'/'.$oldref.'*.*');
                         }
                     }
                 }

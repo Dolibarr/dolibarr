@@ -217,13 +217,13 @@ if ($id > 0 || ! empty($ref))
 				$db->free($resql);
 			}
 
-			$sql = "SELECT l.rowid, l.ref, l.fk_product, l.description, l.subprice, sum(l.qty) as qty";
-			$sql.= ", p.label";
+			$sql = "SELECT l.fk_product, l.subprice, SUM(l.qty) as qty,";
+			$sql.= " p.ref, p.label";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product=p.rowid";
 			$sql.= " WHERE l.fk_commande = ".$commande->id;
-			$sql.= " GROUP BY l.fk_product";
-			$sql.= " ORDER BY l.rowid";
+			$sql.= " GROUP BY p.ref, p.label, l.fk_product, l.subprice";	// Calculation of amount dispatched is done per fk_product so we must group by fk_product
+			$sql.= " ORDER BY p.ref, p.label";
 
 			$resql = $db->query($sql);
 			if ($resql)
@@ -260,7 +260,7 @@ if ($id > 0 || ! empty($ref))
 					{
 						$nbproduct++;
 
-						$remaintodispatch=($objp->qty - $products_dispatched[$objp->fk_product]);
+						$remaintodispatch=($objp->qty - $products_dispatched[$objp->fk_product]);	// Calculation of dispatched
 						if ($remaintodispatch < 0) $remaintodispatch=0;
 
 						$var=!$var;
@@ -268,7 +268,9 @@ if ($id > 0 || ! empty($ref))
 						print '<td>';
 						print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</a>';
 						print ' - '.$objp->label;
-						if ($objp->description) print '<br>'.nl2br($objp->description);
+						// To show detail cref and description value, we must make calculation by cref
+						//print ($objp->cref?' ('.$objp->cref.')':'');  
+						//if ($objp->description) print '<br>'.nl2br($objp->description);
 						print '<input name="product_'.$i.'" type="hidden" value="'.$objp->fk_product.'">';
 						print '<input name="pu_'.$i.'" type="hidden" value="'.$objp->subprice.'">';
 						print "</td>\n";
