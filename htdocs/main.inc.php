@@ -876,7 +876,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             else print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" />'."\n";    // JQuery
             print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/tiptip/tipTip.css" />'."\n";                           // Tooltip
             print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify-alt.min.css" />'."\n";          // JNotify
-            //print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/lightbox/css/jquery.lightbox-0.5.css" media="screen" />'."\n";       // Lightbox
             if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD))     // jQuery fileupload
             {
                 print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/css/jquery.fileupload-ui.css" />'."\n";
@@ -903,17 +902,22 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         if (! empty($_SESSION['dol_resetcache'])) $themeparam.='&amp;dol_resetcache='.$_SESSION['dol_resetcache'];
         //print 'themepath='.$themepath.' themeparam='.$themeparam;exit;
         print '<link rel="stylesheet" type="text/css" title="default" href="'.$themepath.$themeparam.'">'."\n";
+
         // CSS forced by modules (relative url starting with /)
         if (isset($conf->modules_parts['css']))
         {
-        	$dircss=(array) $conf->modules_parts['css'];
-        	foreach($dircss as $key => $cssfile)
+        	$arraycss=(array) $conf->modules_parts['css'];
+        	foreach($arraycss as $modcss => $filescss)
         	{
-        		// cssfile is a relative path
-        		print '<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
-        		// We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters, so browser cache is not used.
-        		if (!preg_match('/\.css$/i',$cssfile)) print $themeparam;
-        		print '"><!-- Added by module '.$key. '-->'."\n";
+        		$filescss=(array) $filescss;	// To be sure filecss is an array
+        		foreach($filescss as $cssfile)
+        		{
+	        		// cssfile is a relative path
+	        		print '<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
+	        		// We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters, so browser cache is not used.
+	        		if (!preg_match('/\.css$/i',$cssfile)) print $themeparam;
+	        		print '"><!-- Added by module '.$modcss. '-->'."\n";
+        		}
         	}
         }
         // CSS forced by page in top_htmlhead call (relative url starting with /)
@@ -948,7 +952,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             else print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui-latest.custom.min'.$ext.'"></script>'."\n";
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd_0_5'.$ext.'"></script>'."\n";
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tiptip/jquery.tipTip.min'.$ext.'"></script>'."\n";
-            //print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/lightbox/js/jquery.lightbox-0.5.min'.$ext.'"></script>'."\n";
             // jQuery Layout
             if (! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) || defined('REQUIRE_JQUERY_LAYOUT'))
             {
@@ -1044,12 +1047,19 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/datepicker.js.php?lang='.$langs->defaultlang.'"></script>'."\n";
 
             // JS forced by modules (relative url starting with /)
-            $dirjs=(array) $conf->modules_parts['js'];
-            foreach($dirjs as $key => $jsfile)
-            {
-            	// jsfile is a relative path
-            	print '<script type="text/javascript" src="'.dol_buildpath($jsfile,1).'"></script><!-- Added by module '.$key. '-->'."\n";
-            }
+            if (isset($conf->modules_parts['js']))		// $conf->modules_parts['js'] is array('module'=>array('file1','file2'))
+        	{
+        		$arrayjs=(array) $conf->modules_parts['js'];
+	            foreach($arrayjs as $modjs => $filesjs)
+	            {
+        			$filesjs=(array) $filesjs;	// To be sure filejs is an array
+		            foreach($filesjs as $jsfile)
+		            {
+	    	    		// jsfile is a relative path
+	        	    	print '<script type="text/javascript" src="'.dol_buildpath($jsfile,1).'"></script><!-- Added by module '.$modjs. '-->'."\n";
+		            }
+	            }
+        	}
             // JS forced by page in top_htmlhead (relative url starting with /)
             if (is_array($arrayofjs))
             {

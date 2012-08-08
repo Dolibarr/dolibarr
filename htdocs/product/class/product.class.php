@@ -2593,23 +2593,6 @@ class Product extends CommonObject
 		$pdirthumb = $pdir.'thumbs/';
 
 		$return ='<!-- Photo -->'."\n";
-        /*$return.="<script type=\"text/javascript\">
-        jQuery(function() {
-            jQuery('a.lightbox').lightBox({
-                overlayBgColor: '#888',
-                overlayOpacity: 0.6,
-                imageLoading: '".DOL_URL_ROOT."/theme/eldy/img/working.gif',
-                imageBtnClose: '".DOL_URL_ROOT."/theme/eldy/img/previous.png',
-                imageBtnPrev: '".DOL_URL_ROOT."/theme/eldy/img/1leftarrow.png',
-                imageBtnNext: '".DOL_URL_ROOT."/theme/eldy/img/1rightarrow.png',
-                containerResizeSpeed: 350,
-                txtImage: '".$langs->trans("Image")."',
-                txtOf: '".$langs->trans("on")."',
-                fixedNavigation:false
-            	});
-            });
-        </script>\n";
-        */
 		$nbphoto=0;
 
 		$dir_osencoded=dol_osencode($dir);
@@ -2647,7 +2630,7 @@ class Product extends CommonObject
     						if ($nbbyrow) $return.= '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
 
     						$return.= "\n";
-    						$return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" class="lightbox" target="_blank">';
+    						$return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" class="photo" target="_blank">';
 
     						// Show image (width height=$maxHeight)
     						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
