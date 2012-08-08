@@ -170,3 +170,5 @@ CustomCode=Customs code
 CountryOrigin=Origin country
 HiddenIntoCombo=Hidden into select lists
 Nature=Nature
+ProductCodeModel=Product code model
+ServiceCodeModel=Service code model
