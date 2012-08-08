@@ -237,18 +237,12 @@ foreach ($dirproduct as $dirroot)
     			}
     			else
     			{
-    				// @todo : What's that ?
-    				/*$disabled = false;
+    				$disabled = false;
     				if (! empty($conf->multicompany->enabled) && (is_object($mc) && ! empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true);
     				print '<td align="center">';
-    				if (! $disabled) print '<a href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&value='.$file.'">';
+    				if (! $disabled) print '<a href="'.$_SERVER['PHP_SELF'].'?action=setcodeproduct&value='.$file.'">';
     				print img_picto($langs->trans("Disabled"),'switch_off');
     				if (! $disabled) print '</a>';
-    				print '</td>';*/
-					print '<td align="center">';
-    				print '<a href="'.$_SERVER['PHP_SELF'].'?action=setcodeproduct&value='.$file.'">';
-    				print img_picto($langs->trans("Disabled"),'switch_off');
-    				print '</a>';
     				print '</td>';
     			}
 
