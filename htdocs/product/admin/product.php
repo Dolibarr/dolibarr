@@ -46,6 +46,47 @@ $value = GETPOST('value','alpha');
 /*
  * Actions
  */
+if ($action == 'setcodeproduct')
+{
+	if (dolibarr_set_const($db, "PRODUCT_CODEPRODUCT_ADDON",$value,'chaine',0,'',$conf->entity) > 0)
+	{
+		Header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+}
+
+// Define constants for submodules that contains parameters (forms with param1, param2, ... and value1, value2, ...)
+if ($action == 'setModuleOptions')
+{
+	$post_size=count($_POST);
+
+	$db->begin();
+
+	for($i=0;$i < $post_size;$i++)
+    {
+    	if (array_key_exists('param'.$i,$_POST))
+    	{
+    		$param=GETPOST("param".$i,'alpha');
+    		$value=GETPOST("value".$i,'alpha');
+    		if ($param) $res = dolibarr_set_const($db,$param,$value,'chaine',0,'',$conf->entity);
+	    	if (! $res > 0) $error++;
+    	}
+    }
+	if (! $error)
+    {
+        $db->commit();
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $db->rollback();
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	}
+}
 
 if ($action == 'nbprod')
 {
@@ -136,6 +177,102 @@ $head = product_admin_prepare_head();
 dol_fiche_head($head, 'general', $tab, 0, 'product');
 
 $form=new Form($db);
+
+/*
+ * Module to manage product / services code
+ */
+$dirproduct=array('/core/modules/product/');
+
+print_titre($langs->trans("ProductCodeChecker"));
+
+print '<table class="noborder" width="100%">'."\n";
+print '<tr class="liste_titre">'."\n";
+print '  <td>'.$langs->trans("Name").'</td>';
+print '  <td>'.$langs->trans("Description").'</td>';
+print '  <td>'.$langs->trans("Example").'</td>';
+print '  <td align="center" width="80">'.$langs->trans("Status").'</td>';
+print '  <td align="center" width="60">'.$langs->trans("Infos").'</td>';
+print "</tr>\n";
+
+$var = true;
+foreach ($dirproduct as $dirroot)
+{
+	$dir = dol_buildpath($dirroot,0);
+
+    $handle = @opendir($dir);
+    if (is_resource($handle))
+    {
+    	// Loop on each module find in opened directory
+    	while (($file = readdir($handle))!==false)
+    	{
+    		if (substr($file, 0, 16) == 'mod_codeproduct_' && substr($file, -3) == 'php')
+    		{
+    			$file = substr($file, 0, dol_strlen($file)-4);
+
+    			try {
+        			dol_include_once($dirroot.$file.".php");
+    			}
+    			catch(Exception $e)
+    			{
+    			    dol_syslog($e->getMessage(), LOG_ERR);
+    			}
+
+    			$modCodeProduct = new $file;
+
+    			// Show modules according to features level
+    			if ($modCodeProduct->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+    			if ($modCodeProduct->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+
+    			$var = !$var;
+    			print '<tr '.$bc[$var].'>'."\n";
+    			print '<td width="140">'.$modCodeProduct->nom.'</td>'."\n";
+    			print '<td>'.$modCodeProduct->info($langs).'</td>'."\n";
+    			print '<td nowrap="nowrap">'.$modCodeProduct->getExample($langs).'</td>'."\n";
+
+    			if ($conf->global->PRODUCT_CODEPRODUCT_ADDON == "$file")
+    			{
+    				print '<td align="center">'."\n";
+    				print img_picto($langs->trans("Activated"),'switch_on');
+    				print "</td>\n";
+    			}
+    			else
+    			{
+    				// @todo : What's that ?
+    				/*$disabled = false;
+    				if (! empty($conf->multicompany->enabled) && (is_object($mc) && ! empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true);
+    				print '<td align="center">';
+    				if (! $disabled) print '<a href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&value='.$file.'">';
+    				print img_picto($langs->trans("Disabled"),'switch_off');
+    				if (! $disabled) print '</a>';
+    				print '</td>';*/
+					print '<td align="center">';
+    				print '<a href="'.$_SERVER['PHP_SELF'].'?action=setcodeproduct&value='.$file.'">';
+    				print img_picto($langs->trans("Disabled"),'switch_off');
+    				print '</a>';
+    				print '</td>';
+    			}
+
+    			print '<td align="center">';
+    			$s=$modCodeProduct->getToolTip($langs,null,-1);
+    			print $form->textwithpicto('',$s,1);
+    			print '</td>';
+
+    			print '</tr>';
+    		}
+    	}
+    	closedir($handle);
+    }
+}
+print '</table>';
+
+/*
+ * Other conf
+ */
+
+print "<br>";
+
+print_titre($langs->trans("ProductOtherConf"));
+
 $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
