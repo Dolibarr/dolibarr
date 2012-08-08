@@ -52,7 +52,7 @@ class Conf
 	public $smart_menu;
 
 	public $modules					= array();	// List of activated modules
-	public $modules_parts			= array('js'=>array(),'triggers'=>array(),'login'=>array(),'substitutions'=>array(),'menus'=>array(),'theme'=>array(),'tpl'=>array(),'barcode'=>array(),'models'=>array(),'hooks'=>array());	// List of modules parts
+	public $modules_parts			= array('css'=>array(), 'js'=>array(),'triggers'=>array(),'login'=>array(),'substitutions'=>array(),'menus'=>array(),'theme'=>array(),'tpl'=>array(),'barcode'=>array(),'models'=>array(),'hooks'=>array());	// List of modules parts
 
 	// TODO Remove thoose arrays with generic module_parts
 	public $tabs_modules			= array();

@@ -126,6 +126,9 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 			if (file_exists($dir))
 			{
                 $pdf=pdf_getInstance($this->format);
+                $heightforinfotot = 80;	// Height reserved to output the info and total part (value include bottom margin)
+                $heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
+                $pdf->SetAutoPageBreak(1,0);
 
                 if (class_exists('TCPDF'))
                 {
@@ -154,7 +157,6 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
-				$pdf->SetAutoPageBreak(1,0);
 
 				// New page
 				$pdf->AddPage();
@@ -223,8 +225,15 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 
 					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
 
+					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
+					$pageposbefore=$pdf->getPage();
+
 					// Description de la ligne produit
 					pdf_writelinedesc($pdf,$object,$i,$outputlangs,150,3,$this->posxdesc,$curY,0,1);
+
+					$pageposafter=$pdf->getPage();
+					$pdf->setPage($pageposbefore);
+					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
@@ -274,9 +283,11 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
 	 *   @param		Translate	$outputlangs	Langs object
+	 *   @param		int			$hidetop		Hide top bar of array
+	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0)
 	{
 		global $conf;
 
@@ -385,7 +396,7 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 		}
 
 
-		$posx=100;
+		$posx=$this->page_largeur - 100 - $this->marge_droite;
 		$posy=$this->marge_haute;
 
 		$pdf->SetFont('','B', $default_font_size + 2);
@@ -467,7 +478,7 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 			$posx=$this->marge_gauche;
 			$posy=42;
 			$hautcadre=40;
-			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=118;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur - 80 - $this->marge_droite;
 
 			// Show sender frame
 			$pdf->SetTextColor(0,0,0);
@@ -516,7 +527,7 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 
 			// Show recipient
 			$posy=42;
-			$posx=100;
+			$posx=$this->page_largeur - 100 - $this->marge_droite;
 			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
 
 			// Show recipient frame

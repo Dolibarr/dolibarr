@@ -73,16 +73,17 @@ class modMyModule extends DolibarrModules
 		// for specific path of parts (eg: /mymodule/core/modules/barcode)
 		// for specific css file (eg: /mymodule/css/mymodule.css.php)
 		//$this->module_parts = array(
-		//                        	'triggers' => 0,                                 // Set this to 1 if module has its own trigger directory (core/triggers)
-		//							'login' => 0,                                    // Set this to 1 if module has its own login method directory (core/login)
-		//							'substitutions' => 0,                            // Set this to 1 if module has its own substitution function file (core/substitutions)
-		//							'menus' => 0,                                    // Set this to 1 if module has its own menus handler directory (core/menus)
-		//							'theme' => 0,                                    // Set this to 1 if module has its own theme directory (core/theme)
-		//                        	'tpl' => 0,                                      // Set this to 1 if module overwrite template dir (core/tpl)
-		//							'barcode' => 0,                                  // Set this to 1 if module has its own barcode directory (core/modules/barcode)
-		//							'models' => 0,                                   // Set this to 1 if module has its own models directory (core/modules/xxx)
-		//							'css' => '/mymodule/css/mymodule.css.php',       // Set this to relative path of css if module has its own css file
-		//							'hooks' => array('hookcontext1','hookcontext2')  // Set here all hooks context managed by module
+		//                        	'triggers' => 0,                                 	// Set this to 1 if module has its own trigger directory (core/triggers)
+		//							'login' => 0,                                    	// Set this to 1 if module has its own login method directory (core/login)
+		//							'substitutions' => 0,                            	// Set this to 1 if module has its own substitution function file (core/substitutions)
+		//							'menus' => 0,                                    	// Set this to 1 if module has its own menus handler directory (core/menus)
+		//							'theme' => 0,                                    	// Set this to 1 if module has its own theme directory (core/theme)
+		//                        	'tpl' => 0,                                      	// Set this to 1 if module overwrite template dir (core/tpl)
+		//							'barcode' => 0,                                  	// Set this to 1 if module has its own barcode directory (core/modules/barcode)
+		//							'models' => 0,                                   	// Set this to 1 if module has its own models directory (core/modules/xxx)
+		//							'css' => array('/mymodule/css/mymodule.css.php'),	// Set this to relative path of css file if module has its own css file
+	 	//							'js' => array('/mymodule/js/mymodule.js'),          // Set this to relative path of js file if module must load a js on all pages
+		//							'hooks' => array('hookcontext1','hookcontext2')  	// Set here all hooks context managed by module
 		//							'workflow' => array('WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2'=>array('enabled'=>'! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)', 'picto'=>'yourpicto@mymodule')) // Set here all workflow context managed by module
 		//                        );
 		$this->module_parts = array();

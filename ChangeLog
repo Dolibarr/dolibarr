@@ -5,6 +5,9 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.3 compared to 3.2 *****
 For users:
+- New: If field "signature" is filled into user table, text is added 
+  at end of predefined email texts. If option MAIL_DO_NOT_USE_SIGN is on, this
+  feautre is disabled.
 - New: Add link "Back to list" on all cards.
 - New: After first install, warning are visible onto mandatory setup not
   configured. Show also total number of activated modules.
@@ -42,7 +45,8 @@ For developers:
 - New: Can add a link on title field of added dictionnary.
 - New: Uniformize code.
 - New: Add option WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER and 
-       WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER
+       WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER.
+- New: A module can add several css and js.
 - New: removed deprecated methods
        ldap::connect, formadmin::select_lang,
        html::select_tva

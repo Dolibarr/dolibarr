@@ -105,7 +105,7 @@ class ActionsCardService
 		$this->tpl['description'] = nl2br($this->description);
 
 		// Statut
-		$this->tpl['status'] = $this->getLibStatut(2);
+		$this->tpl['status'] = $this->object->getLibStatut(2);
 
 		// Note
 		$this->tpl['note'] = nl2br($this->note);

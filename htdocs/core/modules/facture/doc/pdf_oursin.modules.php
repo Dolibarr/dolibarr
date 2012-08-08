@@ -166,6 +166,9 @@ class pdf_oursin extends ModelePDFFactures
 			if (file_exists($dir))
 			{
                 $pdf=pdf_getInstance($this->format);
+                $heightforinfotot = 80;	// Height reserved to output the info and total part (value include bottom margin)
+                $heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
+                $pdf->SetAutoPageBreak(1,0);
 
                 if (class_exists('TCPDF'))
                 {
@@ -191,8 +194,16 @@ class pdf_oursin extends ModelePDFFactures
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Invoice"));
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
-				$pdf->SetMargins(10, 10, 10);
-				$pdf->SetAutoPageBreak(1,0);
+				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
+
+				// Positionne $this->atleastonediscount si on a au moins une remise
+				for ($i = 0 ; $i < $nblignes ; $i++)
+				{
+					if ($object->lines[$i]->remise_percent)
+					{
+						$this->atleastonediscount++;
+					}
+				}
 
 				// New page
 				$pdf->AddPage();
@@ -204,7 +215,9 @@ class pdf_oursin extends ModelePDFFactures
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = $this->marges['h']+90;
+				$tab_top_newpage = $this->marges['h'];
 				$tab_height = 110;
+				$tab_height_newpage = 150;
 
 				$pdf->SetFillColor(220,220,220);
 				$pdf->SetFont('','', $default_font_size - 1);
@@ -220,20 +233,24 @@ class pdf_oursin extends ModelePDFFactures
 				{
 					$curY = $nexY;
 
+					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
+					$pageposbefore=$pdf->getPage();
+
 					// Description of product line
                     pdf_writelinedesc($pdf,$object,$i,$outputlangs,108,3,$this->posxdesc-1,$curY+1,$hideref,$hidedesc,0,$hookmanager);
+
+					$pageposafter=$pdf->getPage();
+					$pdf->setPage($pageposbefore);
+					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
 					$nexY = $pdf->GetY();
 
 					// TVA
 					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 					{
-						if ($this->franchise!=1)
-						{
-							$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails, $hookmanager);
-							$pdf->SetXY($this->marges['g']+118, $curY);
-							$pdf->MultiCell(12, 3, $vat_rate, 0, 'R');
-						}
+						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails, $hookmanager);
+						$pdf->SetXY($this->marges['g']+118, $curY);
+						$pdf->MultiCell(12, 3, $vat_rate, 0, 'R');
 					}
 
 					// Prix unitaire HT avant remise
@@ -258,7 +275,37 @@ class pdf_oursin extends ModelePDFFactures
 					$pdf->SetXY($this->marges['g']+168, $curY);
 					$pdf->MultiCell(21, 3, $total_excl_tax, 0, 'R', 0);
 
-
+					// Detect if some page were added automatically and output _tableau for past pages
+					while ($pagenb < $pageposafter)
+					{
+						if ($pagenb == 1)
+						{
+							$this->_tableau($pdf, $tab_top, $tab_height + 40, 0, $outputlangs, 0, 1);
+						}
+						else
+						{
+							$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, 0, $outputlangs, 1, 1);
+						}
+						$this->_pagefoot($pdf,$object,$outputlangs);
+						$pagenb++;
+						$pdf->setPage($pagenb);
+					}
+					/*if (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak)
+					{
+						if ($pagenb == 1)
+						{
+							$this->_tableau($pdf, $tab_top, $tab_height + 40, 0, $outputlangs, 0, 1);
+						}
+						else
+						{
+							$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, 0, $outputlangs, 1, 1);
+						}
+						$this->_pagefoot($pdf,$object,$outputlangs);
+						// New page
+						$pdf->AddPage();
+						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+						$pagenb++;
+					}*/
 					if (($nexY > 200 && $i < $nblignes - 1) || (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak))
 					{
 						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $object, $outputlangs);
@@ -266,17 +313,26 @@ class pdf_oursin extends ModelePDFFactures
 
 						// New page
 						$pdf->AddPage();
-				        if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 						$pagenb++;
 						$this->_pagehead($pdf, $object, 0, $outputlangs, $hookmanager);
 						$pdf->SetFont('','', $default_font_size - 1);
 						$pdf->MultiCell(0, 3, '');		// Set interline to 3
 						$pdf->SetTextColor(0,0,0);
 					}
-
 				}
-				$posy=$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $object, $outputlangs);
-				$bottomlasttab=$tab_top + $tab_height + 1;
+
+				// Show square
+				if ($pagenb == 1)
+				{
+					$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
+					$bottomlasttab=$tab_top + $tab_height + 1;
+				}
+				else
+				{
+					$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs, 1, 0);
+					$bottomlasttab=$tab_top + $tab_height + 1;
+				}
 
 				// Affiche zone infos
 				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
@@ -744,11 +800,12 @@ class pdf_oursin extends ModelePDFFactures
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
-	 *   @param		Object		$object			Object
 	 *   @param		Translate	$outputlangs	Langs object
+	 *   @param		int			$hidetop		Hide top bar of array
+	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $object, $outputlangs)
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0)
 	{
 		global $conf,$langs;
 		$langs->load("main");
@@ -775,16 +832,7 @@ class pdf_oursin extends ModelePDFFactures
         $pdf->SetXY($this->marges['g']+153,$tab_top + 1);
         $pdf->MultiCell(0, 4, $outputlangs->transnoentities("Qty"), 0, 'L');
 
-		$nblignes = count($object->lines);
-		$rem=0;
-		for ($i = 0 ; $i < $nblignes ; $i++)
-		{
-    		if ($object->lines[$i]->remise_percent)
-    		{
-    			$rem=1;
-    		}
-		}
-		if ($rem==1)
+		if ($this->atleastonediscount)
 		{
             $pdf->SetXY($this->marges['g']+165,$tab_top + 1);
             $pdf->MultiCell(0, 4, $outputlangs->transnoentities("%"), 0, 'L');
@@ -1018,7 +1066,7 @@ class pdf_oursin extends ModelePDFFactures
 	 *   	@param	PDF			&$pdf     			PDF
 	 * 		@param	Object		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
-	 *      @return	void
+	 *      @return	int								Return height of bottom margin including footer text
 	 */
 	function _pagefoot(&$pdf, $object, $outputlangs)
 	{

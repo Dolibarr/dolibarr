@@ -1282,6 +1282,7 @@ class FactureFournisseur extends CommonInvoice
     function initAsSpecimen()
     {
         global $langs,$conf;
+		include_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
 
         $now = dol_now();
 

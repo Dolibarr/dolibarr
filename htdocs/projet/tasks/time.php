@@ -170,6 +170,7 @@ if (! empty($project_ref) && ! empty($withproject))
 llxHeader("",$langs->trans("Task"));
 
 $form = new Form($db);
+$userstatic = new User($db);
 
 if ($id > 0 || ! empty($ref))
 {
@@ -403,17 +404,17 @@ if ($id > 0 || ! empty($ref))
   		    print '</td>';
 
   		    // User
-			$user->id = $task_time->fk_user;
 			print '<td>';
 			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
 			{
-				print $form->select_users($user->id,'userid_line');
+				print $form->select_users($task_time->fk_user,'userid_line');
 			}
 			else
 			{
-				$user->nom		= $task_time->name;
-				$user->prenom 	= $task_time->firstname;
-				print $user->getNomUrl(1);
+				$userstatic->id         = $task_time->fk_user;
+				$userstatic->nom		= $task_time->name;
+				$userstatic->prenom 	= $task_time->firstname;
+				print $userstatic->getNomUrl(1);
 			}
 		    print '</td>';
 

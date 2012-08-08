@@ -51,7 +51,7 @@ if ($action == 'updateMask')
 {
 	$maskconstproject=GETPOST('maskconstproject','alpha');
 	$maskproject=GETPOST('maskproject','alpha');
-	
+
 	if ($maskconstproject)  $res = dolibarr_set_const($db,$maskconstproject,$maskproject,'chaine',0,'',$conf->entity);
 
 	if (! $res > 0) $error++;
@@ -86,7 +86,7 @@ if ($action == 'specimen')
 			break;
 		}
 	}
-	
+
 	if ($filefound)
 	{
 		require_once($file);
@@ -207,7 +207,7 @@ foreach ($dirmodels as $reldir)
 					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
 					if ($module->isEnabled())
-					{						
+					{
 						$var=!$var;
 						print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
 						print $module->info();
@@ -339,10 +339,10 @@ foreach ($dirmodels as $reldir)
 					// Active
 					if (in_array($name, $def))
 					{
-						print "<td align=\"center\">\n";						
+						print "<td align=\"center\">\n";
 						print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 						print img_picto($langs->trans("Enabled"),'switch_on');
-						print '</a>';						
+						print '</a>';
 						print "</td>";
 					}
 					else
@@ -371,7 +371,7 @@ foreach ($dirmodels as $reldir)
 					$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 					$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
 					print '<td align="center">';
-					$link='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';
+					$link='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"),'project').'</a>';
 					print $form->textwithpicto(' &nbsp; &nbsp; '.$link,$htmltooltip,-1,0);
 					print '</td>';
 
