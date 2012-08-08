@@ -54,7 +54,7 @@ if ($action == 'updateMask')
 {
     $maskconstorder=GETPOST('maskconstorder','alpha');
     $maskorder=GETPOST('maskorder','alpha');
-    
+
     if ($maskconstorder)  $res = dolibarr_set_const($db,$maskconstorder,$maskorder,'chaine',0,'',$conf->entity);
 
     if (! $res > 0) $error++;
@@ -76,7 +76,7 @@ if ($action == 'specimen')  // For orders
     $commande = new CommandeFournisseur($db);
     $commande->initAsSpecimen();
     $commande->thirdparty=$specimenthirdparty;
-    
+
     // Search template files
     $file=''; $classname=''; $filefound=0;
     $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
@@ -90,13 +90,13 @@ if ($action == 'specimen')  // For orders
     		break;
     	}
     }
-    
+
     if ($filefound)
     {
     	require_once($file);
-    
-    	$module = new $classname($db);
-    
+
+    	$module = new $classname($db,$commande);
+
     	if ($module->write_file($commande,$langs) > 0)
     	{
     		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande_fournisseur&file=SPECIMEN.pdf");
@@ -122,7 +122,7 @@ if ($action == 'specimenfacture')   // For invoices
     $facture = new FactureFournisseur($db);
     $facture->initAsSpecimen();
     $facture->thirdparty=$specimenthirdparty;    // Define who should has build the invoice (so the supplier)
-    
+
 	// Search template files
     $file=''; $classname=''; $filefound=0;
     $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
@@ -136,13 +136,13 @@ if ($action == 'specimenfacture')   // For invoices
     		break;
     	}
     }
-    
+
     if ($filefound)
     {
     	require_once($file);
-    
-    	$module = new $classname($db);
-    
+
+    	$module = new $classname($db,$facture);
+
     	if ($module->write_file($facture,$langs) > 0)
     	{
     		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=facture_fournisseur&file=SPECIMEN.pdf");
@@ -165,7 +165,7 @@ if ($action == 'set')
 {
 	$label = GETPOST('label','alpha');
 	$scandir = GETPOST('scandir','alpha');
-	
+
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
     $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
     $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
@@ -197,7 +197,7 @@ if ($action == 'setdoc')
 {
 	$label = GETPOST('label','alpha');
 	$scandir = GETPOST('scandir','alpha');
-	
+
     $db->begin();
 
     if ($type == 'order_supplier' && dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
