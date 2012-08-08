@@ -1724,7 +1724,7 @@ class Facture extends CommonInvoice
 
                             dol_syslog("Rename ok");
                             // Suppression ancien fichier PDF dans nouveau rep
-                            dol_delete_file($conf->facture->dir_output.'/'.$snumfa.'/'.$facref.'.*');
+                            dol_delete_file($conf->facture->dir_output.'/'.$snumfa.'/'.$facref.'*.*');
                         }
                     }
                 }
