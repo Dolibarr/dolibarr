@@ -48,9 +48,9 @@ $result = restrictedArea($user, 'ecm','');
 $user->getrights('ecm');
 
 // Get parameters
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
-$action = isset($_GET["action"])?$_GET["action"]:$_POST['action'];
-$section=isset($_GET["section"])?$_GET["section"]:$_POST['section'];
+$socid = GETPOST('socid','int');
+$action = GETPOST('action','alpha');
+$section=GETPOST('section');
 if (! $section) $section=0;
 
 $upload_dir = $conf->ecm->dir_output.'/'.$section;
@@ -66,9 +66,9 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="label";
 
 $ecmdir = new EcmDirectory($db);
-if (! empty($_REQUEST["section"]))
+if (! empty($section))
 {
-	$result=$ecmdir->fetch($_REQUEST["section"]);
+	$result=$ecmdir->fetch($section);
 	if (! $result > 0)
 	{
 		dol_print_error($db,$ecmdir->error);
@@ -123,10 +123,8 @@ print_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("Search"));
 //print "<br>\n";
 print $langs->trans("FeatureNotYetAvailable").'.<br><br>';
 
-if ($mesg) { print $mesg."<br>"; }
-
 // Tool bar
-$head = ecm_prepare_head_fm($fac);
+$head = ecm_prepare_head_fm($ecmdir);
 //dol_fiche_head($head, 'search_form', '', 1);
 
 
@@ -210,7 +208,6 @@ print '</table>';
 print '<br>';
 
 // End of page
-$db->close();
-
 llxFooter();
+$db->close();
 ?>
