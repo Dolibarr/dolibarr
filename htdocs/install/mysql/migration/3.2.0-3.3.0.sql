@@ -16,6 +16,9 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 ALTER TABLE llx_societe ADD COLUMN idprof6 varchar(128) after idprof5;
+ALTER TABLE llx_societe DROP COLUMN fk_secteur;
+ALTER TABLE llx_societe DROP COLUMN description;
+ALTER TABLE llx_societe DROP COLUMN services;
 
 -- Monaco VAT Rates
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 271,  27,'19.6','0','VAT standard rate (France hors DOM-TOM)',1);
