@@ -170,3 +170,5 @@ CustomCode=Code douane
 CountryOrigin=Pays d'origine
 HiddenIntoCombo=Caché dans les listes
 Nature=Nature
+ProductCodeModel=Modèle de code produit
+ServiceCodeModel=Modèle de code service

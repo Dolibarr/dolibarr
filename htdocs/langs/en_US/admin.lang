@@ -277,6 +277,7 @@ GenericMaskCodes2=<b>{cccc}</b> the client code<br><b>{cccc000}</b> the client c
 GenericMaskCodes3=All other characters in the mask will remain intact.<br>Spaces are not allowed.<br>
 GenericMaskCodes4a=<u>Example on the 99th %s of the third party TheCompany done 2007-01-31:</u><br>
 GenericMaskCodes4b=<u>Example on third party created on 2007-03-01:</u><br>
+GenericMaskCodes4c=<u>Example on product created on 2007-03-01:</u><br>
 GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC0701-000099</b><br><b>{0000+100}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b>
 GenericNumRefModelDesc=Return a customizable number according to a defined mask. 
 ServerAvailableOnIPOrPort=Server is available at address <b>%s</b> on port <b>%s</b>
@@ -1137,6 +1138,8 @@ UseSearchToSelectProduct=Use a search form to choose a product (instead of using
 UseEcoTaxeAbility=Support Eco-Taxe (WEEE)
 SetDefaultBarcodeTypeProducts=Default barcode type to use for products
 SetDefaultBarcodeTypeThirdParties=Default barcode type to use for third parties
+ProductCodeChecker= Module for product code generation and checking (product or service)
+ProductOtherConf= Product / Service configuration
 ##### Syslog #####
 SyslogSetup=Logs module setup
 SyslogOutput=Logs outputs
