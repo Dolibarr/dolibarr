@@ -567,9 +567,9 @@ class EcmDirectory // extends CommonObject
 				$this->cats[$obj->rowid]['fk_user_c'] = $obj->fk_user_c;
 				$this->cats[$obj->rowid]['login_c'] = $obj->login_c;
 
-				if ($obj->rowid_fille)
+				if (! empty($obj->rowid_fille))
 				{
-					if (is_array($this->cats[$obj->rowid]['id_children']))
+					if (isset($this->cats[$obj->rowid]['id_children']) && is_array($this->cats[$obj->rowid]['id_children']))
 					{
 						$newelempos=count($this->cats[$obj->rowid]['id_children']);
 						//print "this->cats[$i]['id_children'] est deja un tableau de $newelem elements<br>";
