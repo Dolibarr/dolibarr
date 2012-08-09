@@ -20,6 +20,8 @@ ALTER TABLE llx_societe DROP COLUMN fk_secteur;
 ALTER TABLE llx_societe DROP COLUMN description;
 ALTER TABLE llx_societe DROP COLUMN services;
 
+ALTER TABLE llx_bank ADD COLUMN tms timestamp after datec;
+  
 -- Monaco VAT Rates
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 271,  27,'19.6','0','VAT standard rate (France hors DOM-TOM)',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 272,  27, '8.5','0','VAT standard rate (DOM sauf Guyane et Saint-Martin)',0);
