@@ -44,6 +44,7 @@ ErrorModuleRequirePHPVersion=Error, this module requires PHP version %s or highe
 ErrorModuleRequireDolibarrVersion=Error, this module requires Dolibarr version %s or higher
 ErrorDecimalLargerThanAreForbidden=Error, a precision higher than <b>%s</b> is not supported.
 DictionnarySetup=Dictionary setup
+Dictionnary=Dictionaries
 DisableJavascript=Disable JavaScript and Ajax functions
 ConfirmAjax=Use Ajax confirmation popups
 UseSearchToSelectCompany=Use autocompletion fields to choose third parties (instead of using a list box).<br><br>Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant SOCIETE_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
