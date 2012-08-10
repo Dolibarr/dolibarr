@@ -9,9 +9,11 @@
 // Reference language: en_US
 CHARSET=UTF-8
 DIRECTION=ltr
-#FONTFORPDF=chinese
+# msungstdlight or cid0ct are for traditionnal chinese (traditionnal does not render with ubuntu pdf reader) 
+# stsongstdlight or cid0cs are for simplified chinese
 FONTFORPDF=stsongstdlight
-#FONTSIZEFORPDF=9
+FONTSIZEFORPDF=9
+#FONTSIZEFORPDF=11
 SeparatorDecimal=.
 SeparatorThousand=None
 FormatDateShort=%d/%m/%Y
