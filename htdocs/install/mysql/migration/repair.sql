@@ -42,6 +42,9 @@ delete from llx_product_extrafields where fk_object not in (select rowid from ll
 --delete from llx_societe_commerciaux where fk_soc not in (select rowid from llx_societe);
 
 
+UPDATE llx_product SET canvas = NULL where canvas = 'default@product';
+
+
 DELETE FROM llx_boxes where box_id NOT IN (SELECT rowid FROM llx_boxes_def);
 
 -- VMYSQL4.1 DELETE T1 FROM llx_boxes_def as T1, llx_boxes_def as T2 where T1.entity = T2.entity AND T1.file = T2.file AND T1.note = T2.note and T1.rowid > T2.rowid
