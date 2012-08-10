@@ -49,7 +49,6 @@ create table llx_societe
   fax                      varchar(20),                         		-- fax number
   url                      varchar(255),                        		--
   email                    varchar(128),                        		--
-  fk_secteur               integer        DEFAULT 0,            		--
   fk_effectif              integer        DEFAULT 0,            		--
   fk_typent                integer        DEFAULT 0,            		--
   fk_forme_juridique       integer        DEFAULT 0,            		-- juridical status
@@ -62,10 +61,8 @@ create table llx_societe
   idprof6                  varchar(128),                         		-- IDProf6: nu for france
   tva_intra                varchar(20),                         		-- tva
   capital                  real,                                		-- capital de la societe
-  description              text,                                		--
   fk_stcomm                integer        DEFAULT 0 NOT NULL,      		-- commercial statut
   note                     text,                                		--
-  services                 tinyint        DEFAULT 0,            		--
   prefix_comm              varchar(5),                          		-- prefix commercial
   client                   tinyint        DEFAULT 0,            		-- client 0/1/2
   fournisseur              tinyint        DEFAULT 0,            		-- fournisseur 0/1

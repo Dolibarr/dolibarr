@@ -89,3 +89,7 @@ insert into llx_const (name, value, type, note, visible) values('SOCIETE_CODECOM
 --
 insert into llx_const (name, value, type, note, visible) values ('MAILING_EMAIL_FROM','dolibarr@domain.com','chaine','EMail emmetteur pour les envois d emailings',0);
 
+--
+-- Product
+--
+insert into llx_const (name, value, type, note, visible) values('PRODUCT_CODEPRODUCT_ADDON','mod_codeproduct_leopard','yesno','Module to control product codes',0);
