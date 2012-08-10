@@ -520,7 +520,6 @@ Permission146=Read providers
 Permission147=Read stats
 Permission151=Read standing orders
 Permission152=Create/modify a standing orders request
-Permission153=Read standing orders receipts
 Permission153=Transmission standing orders receipts
 Permission154=Credit/refuse standing orders receipts
 Permission161=Read contracts

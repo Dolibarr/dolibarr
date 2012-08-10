@@ -1237,10 +1237,6 @@ TestGeoIPResult = Test van een conversie IP -> land
 ProjectsNumberingModules = Projectennummeringsmodule
 ProjectsSetup = Projectenmoduleinstellingen
 ProjectsModelModule = Projectenrapportagedocumentsjabloon
-##### Externalsite ##### = 
-ExternalSiteSetup = Instellen van de link naar de externe website
-##### Ecommerce ##### = 
-EcommerceSiteSetup = E-commercemoduleinstellingen
 
 
 // START - Lines generated via autotranslator.php tool (2011-10-10 01:46:39).

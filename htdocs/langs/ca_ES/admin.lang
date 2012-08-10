@@ -1323,7 +1323,3 @@ TestGeoIPResult=Test de conversió IP -> País
 ProjectsNumberingModules=Mòdul de numeració per a les referències dels projectes
 ProjectsSetup=Configuració del mòdul Projectes
 ProjectsModelModule=Model de document per a informes de projectes
-##### Externalsite #####
-ExternalSiteSetup=Configuració de l'enllaç cap al lloc extern
-##### Ecommerce #####
-EcommerceSiteSetup=Configuració del mòdul Ecommerce

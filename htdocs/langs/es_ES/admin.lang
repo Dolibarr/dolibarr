@@ -1328,9 +1328,5 @@ TestGeoIPResult=Test de conversión IP -> País
 ProjectsNumberingModules=Módulo de numeración para las referencias de los proyectos
 ProjectsSetup=Configuración del módulo Proyectos
 ProjectsModelModule=Modelo de documento para informes de proyectos
-##### Externalsite #####
-ExternalSiteSetup=Configuración del enlace hacia el sitio externo
-##### Ecommerce #####
-EcommerceSiteSetup=Configuración del módulo e-commerce
 View=Ver
 Server=Servidor

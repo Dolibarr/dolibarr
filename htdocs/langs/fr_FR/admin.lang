@@ -523,7 +523,7 @@ Permission147= Consulter les stats
 Permission151= Consulter les prélèvements
 Permission152= Créer/modifier une demande de prélèvements
 Permission153= Emission des bons de prélèvements
-Permission154= Crediter/rejeter les bons de prélèvements
+Permission154= Créditer/rejeter les bons de prélèvements
 Permission161= Consulter les contrats de services
 Permission162= Créer/modifier les contrats de services
 Permission163= Activer les services d'un contrat
@@ -1180,6 +1180,8 @@ WithdrawalsSetup= Configuration du module prélèvement
 ##### ExternalRSS #####
 ExternalRSSSetup= Configuration des imports de flux RSS
 NewRSS= Syndication d'un nouveau flux RSS
+RSSUrl=Url RSS
+RSSUrlExample=Mon flux RSS
 ##### Mailing #####
 MailingSetup= Configuration du module EMailing
 MailingEMailFrom= Email émetteur (From) des mails envoyés par EMailing
@@ -1322,7 +1324,3 @@ TestGeoIPResult=Test de conversion IP -> Pays
 ProjectsNumberingModules=Modèles de numérotation des références projets
 ProjectsSetup=Configuration du module Projets
 ProjectsModelModule=Modèles de document de rapport projets
-##### Externalsite #####
-ExternalSiteSetup=Configuration du lien vers le site externe
-##### Ecommerce #####
-EcommerceSiteSetup=Configuration du module Ecommerce
