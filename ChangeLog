@@ -18,6 +18,9 @@ English Dolibarr ChangeLog
 - Fix: Allows to use a comma decimal separator in supplier invoices payments.
 - Fix: Translation for tr_TR, es_ES, pt_BR.
 - Fix: Products with no prices not visible.
+- Fix: Access to product card created with very old version of Dolibarr.
+- Fix: Delete temporary files after validating an invoice.
+- Fix: preview of supplier order and invoice template.
 
 
 
