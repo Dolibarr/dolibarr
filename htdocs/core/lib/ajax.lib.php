@@ -346,7 +346,7 @@ function ajax_combobox($htmlname, $event=array())
  * 	On/off button for constant
  *
  * 	@param	string	$code		Name of constant
- * 	@param	array	$input		Input element
+ * 	@param	array	$input		Input element (enable/disable or show/hide another element, set/del another constant)
  * 	@param	int		$entity		Entity to set
  * 	@return	void
  */
@@ -359,10 +359,11 @@ function ajax_constantonoff($code,$input=array(),$entity=false)
 	$out= '<script type="text/javascript">
 		$(function() {
 			var input = '.json_encode($input).';
+			var url = \''.DOL_URL_ROOT.'/core/ajax/constantonoff.php\';
 
 			// Set constant
 			$("#set_'.$code.'").click(function() {
-				$.get( "'.DOL_URL_ROOT.'/core/ajax/constantonoff.php", {
+				$.get( url, {
 					action: \'set\',
 					name: \''.$code.'\',
 					entity: \''.$entity.'\'
@@ -370,27 +371,41 @@ function ajax_constantonoff($code,$input=array(),$entity=false)
 				function() {
 					$("#set_'.$code.'").hide();
 					$("#del_'.$code.'").show();
-					// Enable another element
-					if (input.disabled && input.disabled.length > 0) {
-						$.each(input.disabled, function(key,value) {
-							$("#" + value).removeAttr("disabled");
-							if ($("#" + value).hasClass("butActionRefused") == true) {
-								$("#" + value).removeClass("butActionRefused");
-								$("#" + value).addClass("butAction");
-							}
-						});
-					// Show another element
-					} else if (input.showhide && input.showhide.length > 0) {
-						$.each(input.showhide, function(key,value) {
-							$("#" + value).show();
-						});
-					}
+					$.each(input, function(type, data) {
+						// Enable another element
+						if (type == "disabled") {
+							$.each(data, function(key, value) {
+								$("#" + value).removeAttr("disabled");
+								if ($("#" + value).hasClass("butActionRefused") == true) {
+									$("#" + value).removeClass("butActionRefused");
+									$("#" + value).addClass("butAction");
+								}
+							});
+						// Show another element
+						} else if (type == "showhide" || type == "show") {
+							$.each(data, function(key, value) {
+								$("#" + value).show();
+							});
+						// Set another constant
+						} else if (type == "set") {
+							$.each(data, function(key, value) {
+								$("#set_" + key).hide();
+								$("#del_" + key).show();
+								$.get( url, {
+									action: \'set\',
+									name: key,
+									value: value,
+									entity: \''.$entity.'\'
+								});
+							});
+						}
+					});
 				});
 			});
 
 			// Del constant
 			$("#del_'.$code.'").click(function() {
-				$.get( "'.DOL_URL_ROOT.'/core/ajax/constantonoff.php", {
+				$.get( url, {
 					action: \'del\',
 					name: \''.$code.'\',
 					entity: \''.$entity.'\'
@@ -398,21 +413,34 @@ function ajax_constantonoff($code,$input=array(),$entity=false)
 				function() {
 					$("#del_'.$code.'").hide();
 					$("#set_'.$code.'").show();
-					// Disable another element
-					if (input.disabled && input.disabled.length > 0) {
-						$.each(input.disabled, function(key,value) {
-							$("#" + value).attr("disabled", true);
-							if ($("#" + value).hasClass("butAction") == true) {
-								$("#" + value).removeClass("butAction");
-								$("#" + value).addClass("butActionRefused");
-							}
-						});
-					// Hide another element
-					} else if (input.showhide && input.showhide.length > 0) {
-						$.each(input.showhide, function(key,value) {
-							$("#" + value).hide();
-						});
-					}
+					$.each(input, function(type, data) {
+						// Disable another element
+						if (type == "disabled") {
+							$.each(data, function(key, value) {
+								$("#" + value).attr("disabled", true);
+								if ($("#" + value).hasClass("butAction") == true) {
+									$("#" + value).removeClass("butAction");
+									$("#" + value).addClass("butActionRefused");
+								}
+							});
+						// Hide another element
+						} else if (type == "showhide" || type == "hide") {
+							$.each(data, function(key, value) {
+								$("#" + value).hide();
+							});
+						// Delete another constant
+						} else if (type == "del") {
+							$.each(data, function(key, value) {
+								$("#del_" + value).hide();
+								$("#set_" + value).show();
+								$.get( url, {
+									action: \'del\',
+									name: value,
+									entity: \''.$entity.'\'
+								});
+							});
+						}
+					});
 				});
 			});
 		});
