@@ -277,7 +277,7 @@ function ajax_dialog($title,$message,$w=350,$h=150)
 	        modal: true,
 	        buttons: {
 	        	Ok: function() {
-					jQuery(this ).dialog(\'close\');
+					jQuery(this).dialog(\'close\');
 				}
 	        }
 	    });
@@ -360,92 +360,32 @@ function ajax_constantonoff($code,$input=array(),$entity=false)
 		$(function() {
 			var input = '.json_encode($input).';
 			var url = \''.DOL_URL_ROOT.'/core/ajax/constantonoff.php\';
+			var code = \''.$code.'\';
+			var entity = \''.$entity.'\';
+			var yesButton = "'.dol_escape_js($langs->transnoentities("Yes")).'";
+			var noButton = "'.dol_escape_js($langs->transnoentities("No")).'";
 
 			// Set constant
-			$("#set_'.$code.'").click(function() {
-				$.get( url, {
-					action: \'set\',
-					name: \''.$code.'\',
-					entity: \''.$entity.'\'
-				},
-				function() {
-					$("#set_'.$code.'").hide();
-					$("#del_'.$code.'").show();
-					$.each(input, function(type, data) {
-						// Enable another element
-						if (type == "disabled") {
-							$.each(data, function(key, value) {
-								$("#" + value).removeAttr("disabled");
-								if ($("#" + value).hasClass("butActionRefused") == true) {
-									$("#" + value).removeClass("butActionRefused");
-									$("#" + value).addClass("butAction");
-								}
-							});
-						// Show another element
-						} else if (type == "showhide" || type == "show") {
-							$.each(data, function(key, value) {
-								$("#" + value).show();
-							});
-						// Set another constant
-						} else if (type == "set") {
-							$.each(data, function(key, value) {
-								$("#set_" + key).hide();
-								$("#del_" + key).show();
-								$.get( url, {
-									action: \'set\',
-									name: key,
-									value: value,
-									entity: \''.$entity.'\'
-								});
-							});
-						}
-					});
-				});
+			$("#set_" + code).click(function() {
+				if (input.alert && input.alert.set) {
+					confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton);
+				} else {
+					setConstant(url, code, input, entity);
+				}
 			});
 
 			// Del constant
-			$("#del_'.$code.'").click(function() {
-				$.get( url, {
-					action: \'del\',
-					name: \''.$code.'\',
-					entity: \''.$entity.'\'
-				},
-				function() {
-					$("#del_'.$code.'").hide();
-					$("#set_'.$code.'").show();
-					$.each(input, function(type, data) {
-						// Disable another element
-						if (type == "disabled") {
-							$.each(data, function(key, value) {
-								$("#" + value).attr("disabled", true);
-								if ($("#" + value).hasClass("butAction") == true) {
-									$("#" + value).removeClass("butAction");
-									$("#" + value).addClass("butActionRefused");
-								}
-							});
-						// Hide another element
-						} else if (type == "showhide" || type == "hide") {
-							$.each(data, function(key, value) {
-								$("#" + value).hide();
-							});
-						// Delete another constant
-						} else if (type == "del") {
-							$.each(data, function(key, value) {
-								$("#del_" + value).hide();
-								$("#set_" + value).show();
-								$.get( url, {
-									action: \'del\',
-									name: value,
-									entity: \''.$entity.'\'
-								});
-							});
-						}
-					});
-				});
+			$("#del_" + code).click(function() {
+				if (input.alert && input.alert.del) {
+					confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton);
+				} else {
+					delConstant(url, code, input, entity);
+				}
 			});
 		});
 	</script>';
 
+	$out.= '<div id="confirm_'.$code.'" title="" style="display: none;"></div>';
 	$out.= '<span id="set_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'hideobject':'').'">'.img_picto($langs->trans("Disabled"),'switch_off').'</span>';
 	$out.= '<span id="del_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'':'hideobject').'">'.img_picto($langs->trans("Enabled"),'switch_on').'</span>';
 
