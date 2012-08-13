@@ -11,6 +11,7 @@ SynchroSpipEnabled=Une alimentation de Spip sera réalisée
 DescADHERENT_MAILMAN_ADMINPW=Mot de passe administrateur Mailman
 DescADHERENT_MAILMAN_URL=URL d'inscription aux listes Mailman
 DescADHERENT_MAILMAN_UNSUB_URL=URL de désinscription aux listes Mailman
+SPIPTitle=
 DescADHERENT_SPIP_SERVEUR=Serveur SPIP
 DescADHERENT_SPIP_DB=Nom base SPIP
 DescADHERENT_SPIP_USER=Login connexion base SPIP

@@ -12,6 +12,7 @@ SynchroSpipEnabled=Una actualización de Mailman será efectuada
 DescADHERENT_MAILMAN_ADMINPW=Contraseña de administrador Mailman
 DescADHERENT_MAILMAN_URL=URL para las suscripciones Mailman
 DescADHERENT_MAILMAN_UNSUB_URL=URL para las desuscripciones Mailman
+SPIPTitle=Sistema de gestión de contenidos SPIP
 DescADHERENT_SPIP_SERVEUR=Servidor SPIP
 DescADHERENT_SPIP_DB=Nombre de la base de datos de SPIP
 DescADHERENT_SPIP_USER=Usuario de la base de datos de SPIP
