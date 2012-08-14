@@ -149,7 +149,7 @@ if (! $mesg)
 }
 
 
-$res = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
+$data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
