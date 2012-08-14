@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (c) 2008-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,6 +86,42 @@ abstract class Stats
 		while($year <= $endyear)
 		{
 			$datay[$year] = $this->getAmountByMonth($year);
+			$year++;
+		}
+
+		$data = array();
+
+		for ($i = 0 ; $i < 12 ; $i++)
+		{
+			$data[$i][]=$datay[$endyear][$i][0];
+			$year=$startyear;
+			while($year <= $endyear)
+			{
+				$data[$i][]=$datay[$year][$i][1];
+				$year++;
+			}
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Return average of entity by month for several years
+	 *
+	 * @param	int		$endyear		Start year
+	 * @param	int		$startyear		End year
+	 * @return 	array					Array of values
+	 */
+	function getAverageByMonthWithPrevYear($endyear,$startyear)
+	{
+        if ($startyear > $endyear) return -1;
+
+        $datay=array();
+
+		$year=$startyear;
+		while($year <= $endyear)
+		{
+			$datay[$year] = $this->getAverageByMonth($year);
 			$year++;
 		}
 
@@ -295,7 +333,16 @@ abstract class Stats
 			$res[$i] = $result[$i] + 0;
 		}
 
-		return $res;
+		$data = array();
+
+		for ($i = 1 ; $i < 13 ; $i++)
+		{
+			$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b");
+			$month=dol_substr($month,0,3);
+			$data[$i-1] = array(ucfirst($month), $res[$i]);
+		}
+
+		return $data;
 	}
 }
 
