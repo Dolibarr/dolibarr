@@ -11,7 +11,7 @@ class OdfException extends Exception
  * @copyright  GPL License 2008 - Julien Pauli - Cyril PIERRE de GEYER - Anaska (http://www.anaska.com)
  * @copyright  GPL License 2010 - Laurent Destailleur - eldy@users.sourceforge.net
  * @license    http://www.gnu.org/copyleft/gpl.html  GPL License
- * @version 1.4
+ * @version 1.4.3 (last update 2012-07-29)
  */
 class Odf
 {
@@ -185,13 +185,43 @@ IMG;
 		 * Merge template variables
 		 * Called automatically for a save
 		 *
-         * @param  string	$type		'content' or 'styles'
+                 * @param  string	$type		'content' or 'styles'
 		 * @return void
 		 */
 		private function _parse($type='content')
 		{
-            if ($type == 'content')	$this->contentXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->contentXml);
-            if ($type == 'styles')	$this->stylesXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->stylesXml);
+                    // Conditionals substitution
+                    // Note: must be done before content substitution, else the variable will be replaced by its value and the conditional won't work anymore
+                    foreach($this->vars as $key => $value)
+                    {
+                        // If value is true (not 0 nor false nor null nor empty string)
+                        if($value)
+                        {
+                            // Remove the IF tag
+                            $this->contentXml = str_replace('[!-- IF '.$key.' --]', '', $this->contentXml);
+                            // Remove everything between the ELSE tag (if it exists) and the ENDIF tag
+                            $reg = '@(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
+                            $this->contentXml = preg_replace($reg, '', $this->contentXml);
+                        }
+                        // Else the value is false, then two cases: no ELSE and we're done, or there is at least one place where there is an ELSE clause, then we replace it
+                        else
+                        {
+                            // Find all conditional blocks for this variable: from IF to ELSE and to ENDIF
+                            $reg = '@\[!--\sIF\s' . $key . '\s--\](.*)(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
+                            preg_match_all($reg, $this->contentXml, $matches, PREG_SET_ORDER);
+                            foreach($matches as $match) { // For each match, if there is an ELSE clause, we replace the whole block by the value in the ELSE clause
+                                if (!empty($match[3])) $this->contentXml = str_replace($match[0], $match[3], $this->contentXml);
+                            }
+                            // Cleanup the other conditional blocks (all the others where there were no ELSE clause, we can just remove them altogether)
+                            $this->contentXml = preg_replace($reg, '', $this->contentXml);
+                        }
+                    }
+
+                    // Content (variable) substitution
+                    if ($type == 'content')	$this->contentXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->contentXml);
+                    // Styles substitution
+                    if ($type == 'styles')	$this->stylesXml = str_replace(array_keys($this->vars), array_values($this->vars), $this->stylesXml);
+
 		}
 
 		/**
