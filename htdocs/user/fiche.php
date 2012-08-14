@@ -123,7 +123,7 @@ if ($action == 'confirm_enable' && $confirm == "yes" && $candisableuser)
 
         if (!empty($conf->file->main_limit_users))
         {
-            $nb = $edituser->getNbOfUsers("active",1);
+            $nb = $edituser->getNbOfUsers("active");
             if ($nb >= $conf->file->main_limit_users)
             {
                 $message='<div class="error">'.$langs->trans("YourQuotaOfUsersIsReached").'</div>';
@@ -178,7 +178,7 @@ if ($action == 'add' && $canadduser)
 
     if (! empty($conf->file->main_limit_users)) // If option to limit users is set
     {
-        $nb = $edituser->getNbOfUsers("active",1);
+        $nb = $edituser->getNbOfUsers("active");
         if ($nb >= $conf->file->main_limit_users)
         {
             $message='<div class="error">'.$langs->trans("YourQuotaOfUsersIsReached").'</div>';
