@@ -39,7 +39,6 @@ For users:
 - Fix: No images into product description lines as PDF generation does
   not work with this.
 - New: [ task #326 ]: Add a numbering module to suggest automatically a product ref
-- Fix: [ bug #485 ]: Configurated amount for public auto-subscription form is not taken into account
 
 For developers:
 - New: Add webservice for thirdparty creation and list.
