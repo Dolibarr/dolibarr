@@ -222,12 +222,18 @@ function getCountry($id,$withcode='',$dbtouse=0,$outputlangs='',$entconv=1)
 {
     global $db,$langs;
 
+    // Check parameters
+    if (empty($id))
+    {
+    	if ($withcode === 'all') return array('id'=>'','code'=>'','label'=>'');
+    	else return '';
+    }
     if (! is_object($dbtouse)) $dbtouse=$db;
     if (! is_object($outputlangs)) $outputlangs=$langs;
 
     $sql = "SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."c_pays";
     if (is_numeric($id)) $sql.= " WHERE rowid=".$id;
-    else $sql.= " WHERE code='".$id."'";
+    else $sql.= " WHERE code='".$db->escape($id)."'";
 
     dol_syslog("Company.lib::getCountry sql=".$sql);
     $resql=$dbtouse->query($sql);
@@ -251,10 +257,11 @@ function getCountry($id,$withcode='',$dbtouse=0,$outputlangs='',$entconv=1)
         }
         else
         {
-            return "NotDefined";
+            return 'NotDefined';
         }
     }
     else dol_print_error($dbtouse,'');
+    return 'Error';
 }
 
 /**

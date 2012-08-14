@@ -401,8 +401,6 @@ Module5000Name = Multi-bedrijf
 Module5000Desc = Hiermee kunt meerdere bedrijven beheren in Dolibarr
 Module10000Name = PayBox
 Module10000Desc = Module die het mogelijk maakt een online betaalpagina van PayBox aan te maken voor CreditCard betalingen
-Module13452Name = SpeedFinder
-Module13452Desc = Zoekmachine, die gebruik maakt van AJAX technologie, om zeer snel een naam of een deel van een telefoonnummer te vinden
 Module50100Name = Verkooppunt
 Module50100Desc = Kassamodule
 Permission11 = Bekijk afnemersfacturen
@@ -612,9 +610,6 @@ Permission2413 = Wijzig acties (gebeurtenissen of taken) van anderen
 Permission2501 = Inzien van documenten
 Permission2502 = Uploaden of verwijderen van documenten
 Permission2515 = Instellen documentabonneelijsten
-Permission8555 = Met behulp van de module
-Permission8556 = Stel E-commerce websites in
-Permission8557 = Gegevens importeren
 DictionnaryCompanyType = Bedrijfssoorten
 DictionnaryCompanyJuridicalType = Juridische aard van de onderneming
 DictionnaryProspectLevel = Prospect potentiële niveau
@@ -1239,10 +1234,6 @@ TestGeoIPResult = Test van een conversie IP -> land
 ProjectsNumberingModules = Projectennummeringsmodule
 ProjectsSetup = Projectenmoduleinstellingen
 ProjectsModelModule = Projectenrapportagedocumentsjabloon
-##### Externalsite ##### = 
-ExternalSiteSetup = Instellen van de link naar de externe website
-##### Ecommerce ##### = 
-EcommerceSiteSetup = E-commercemoduleinstellingen
 
 
 // START - Lines generated via autotranslator.php tool (2011-10-10 01:46:39).

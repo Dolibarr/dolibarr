@@ -278,6 +278,7 @@ GenericMaskCodes2= <b>{cccc}</b> le code client sur n lettres<br><b>{cccc000}</b
 GenericMaskCodes3= Tout autre caractère dans le masque sera laissé inchangé.<br>Les espaces ne sont pas permis.<br>
 GenericMaskCodes4a= <u>Exemple sur la 99eme %s du tiers LaCompanie faite le 31/03/2007:</u><br>
 GenericMaskCodes4b= <u>Exemple sur un tiers créé le 31/03/2007:</u><br>
+GenericMaskCodes4c= <u>Exemple sur un produit/service créé le 31/03/2007:</u><br>
 GenericMaskCodes5= <b>ABC{yy}{mm}-{000000}</b> donnera <b>ABC0703-000099</b><br><b>{0000+100}-XXX/{dd}/YYY</b> donnera <b>0199-XXX/31/YYY</b>
 GenericNumRefModelDesc= Renvoie un numéro personnalisable selon un masque à définir.
 ServerAvailableOnIPOrPort= Serveur disponible à l'adresse <b>%s</b> sur le port <b>%s</b>
@@ -522,7 +523,7 @@ Permission147= Consulter les stats
 Permission151= Consulter les prélèvements
 Permission152= Créer/modifier une demande de prélèvements
 Permission153= Emission des bons de prélèvements
-Permission154= Crediter/rejeter les bons de prélèvements
+Permission154= Créditer/rejeter les bons de prélèvements
 Permission161= Consulter les contrats de services
 Permission162= Créer/modifier les contrats de services
 Permission163= Activer les services d'un contrat
@@ -657,9 +658,6 @@ Permission2501= Lire/Récupérer les documents
 Permission2502= Récupérer les documents
 Permission2503= Soumettre ou supprimer des documents
 Permission2515= Administrer les rubriques de documents
-Permission8555= Utilisation du module
-Permission8556= Définir les sites ecommerce
-Permission8557= Importer les données
 Permission50001=Utiliser Point de vente
 Permission50201= Consulter les transactions
 Permission50202= Importer les transactions
@@ -1144,6 +1142,8 @@ UseSearchToSelectProduct= Utiliser un formulaire de recherche pour le choix d'un
 UseEcoTaxeAbility= Prise en charge des éco-taxes (DEEE)
 SetDefaultBarcodeTypeProducts= Type de code-barres utilisé par défaut pour les produits
 SetDefaultBarcodeTypeThirdParties= Type de code-barres utilisé par défaut pour les tiers
+ProductCodeChecker= Modèle de numérotation des produits / services
+ProductOtherConf= Paramètres des produits / services
 ##### Syslog #####
 SyslogSetup= Configuration du module Logs et traces
 SyslogOutput= Sortie des log
@@ -1177,6 +1177,8 @@ WithdrawalsSetup= Configuration du module prélèvement
 ##### ExternalRSS #####
 ExternalRSSSetup= Configuration des imports de flux RSS
 NewRSS= Syndication d'un nouveau flux RSS
+RSSUrl=Url RSS
+RSSUrlExample=Mon flux RSS
 ##### Mailing #####
 MailingSetup= Configuration du module EMailing
 MailingEMailFrom= Email émetteur (From) des mails envoyés par EMailing
@@ -1319,7 +1321,3 @@ TestGeoIPResult=Test de conversion IP -> Pays
 ProjectsNumberingModules=Modèles de numérotation des références projets
 ProjectsSetup=Configuration du module Projets
 ProjectsModelModule=Modèles de document de rapport projets
-##### Externalsite #####
-ExternalSiteSetup=Configuration du lien vers le site externe
-##### Ecommerce #####
-EcommerceSiteSetup=Configuration du module Ecommerce

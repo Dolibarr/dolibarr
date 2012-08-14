@@ -165,6 +165,24 @@ abstract class CommonDocGenerator
         );
     }
 
+	/**
+	 * Rect pdf
+	 *
+	 * @param unknown_type $pdf
+	 * @param unknown_type $x
+	 * @param unknown_type $y
+	 * @param unknown_type $l
+	 * @param unknown_type $h
+	 * @param	int		$hidetop		Hide top
+	 * @param	int		$hidebottom		Hide bottom
+	 */
+    function printRect($pdf, $x, $y, $l, $h, $hidetop=0, $hidebottom=0)
+    {
+	    if (empty($hidetop)) $pdf->line($x, $y, $x+$l, $y);
+	    $pdf->line($x+$l, $y, $x+$l, $y+$h);
+	    if (empty($hidebottom)) $pdf->line($x+$l, $y+$h, $x, $y+$h);
+	    $pdf->line($x, $y+$h, $x, $y);
+    }
 }
 
 ?>

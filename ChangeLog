@@ -5,6 +5,9 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.3 compared to 3.2 *****
 For users:
+- New: If field "signature" is filled into user table, text is added 
+  at end of predefined email texts. If option MAIL_DO_NOT_USE_SIGN is on, this
+  feautre is disabled.
 - New: Add link "Back to list" on all cards.
 - New: After first install, warning are visible onto mandatory setup not
   configured. Show also total number of activated modules.
@@ -30,10 +33,12 @@ For users:
 - New: [ task #454 ]: Add "No category" into filters on category.
 - New: Update language files (de, tr, pt, ca_ES, es_ES).
 - New: Auto check box on page to edit interface options of user.
+- New: More surface control on stock correction page.
 - New: Add great britain provinces.
 - New: Update libs/tools/logo for DoliWamp.
 - Fix: No images into product description lines as PDF generation does
   not work with this.
+- New: [ task #326 ]: Add a numbering module to suggest automatically a product ref
 
 For developers:
 - New: Add webservice for thirdparty creation and list.
@@ -41,7 +46,8 @@ For developers:
 - New: Can add a link on title field of added dictionnary.
 - New: Uniformize code.
 - New: Add option WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER and 
-       WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER
+       WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER.
+- New: A module can add several css and js.
 - New: removed deprecated methods
        ldap::connect, formadmin::select_lang,
        html::select_tva

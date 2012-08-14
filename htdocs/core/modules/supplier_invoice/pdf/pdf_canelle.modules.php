@@ -175,6 +175,9 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$nblignes = count($object->lines);
 
                 $pdf=pdf_getInstance($this->format);
+                $heightforinfotot = 80;	// Height reserved to output the info and total part (value include bottom margin)
+                $heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
+                $pdf->SetAutoPageBreak(1,0);
 
                 if (class_exists('TCPDF'))
                 {
@@ -201,7 +204,6 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
-				$pdf->SetAutoPageBreak(1,0);
 
 			    // Positionne $this->atleastonediscount si on a au moins une remise
                 for ($i = 0 ; $i < $nblignes ; $i++)
@@ -257,12 +259,18 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				{
 					$curY = $nexY;
 
-                    $pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
-
-                    // Description of product line
                     $pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
+
+					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
+					$pageposbefore=$pdf->getPage();
+
+					// Description of product line
                     $curX = $this->posxdesc-1;
                     pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,0,0,1);
+
+					$pageposafter=$pdf->getPage();
+					$pdf->setPage($pageposbefore);
+					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
@@ -314,72 +322,50 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 					$nexY+=2;    // Passe espace entre les lignes
 
-					// Cherche nombre de lignes a venir pour savoir si place suffisante
-					if ($i < ($nblignes - 1) && empty($hidedesc))	// If it's not last line
-					{
-						//on recupere la description du produit suivant
-						$follow_descproduitservice = $object->lines[$i+1]->desc;
-						//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
-						$nblineFollowDesc = dol_nboflines_bis($follow_descproduitservice,52,$outputlangs->charset_output)*4;
-						// Et si on affiche dates de validite, on ajoute encore une ligne
-						if ($object->lines[$i]->date_start && $object->lines[$i]->date_end)
-						{
-							$nblineFollowDesc += 4;
-						}
-					}
-					else	// If it's last line
-					{
-						$nblineFollowDesc = 0;
-					}
-
-					// Test if a new page is required
-					if ($pagenb == 1)
-					{
-						$tab_top_in_current_page=$tab_top;
-						$tab_height_in_current_page=$tab_height;
-					}
-					else
-					{
-						$tab_top_in_current_page=$tab_top_newpage;
-						$tab_height_in_current_page=$tab_height_newpage;
-					}
-					if (($nexY+$nblineFollowDesc) > ($tab_top_in_current_page+$tab_height_in_current_page) && $i < ($nblignes - 1))
+					// Detect if some page were added automatically and output _tableau for past pages
+					while ($pagenb < $pageposafter)
 					{
 						if ($pagenb == 1)
 						{
-							$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
+							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 						}
 						else
 						{
-							$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
+							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 						}
-
-						$this->_pagefoot($pdf, $object, $outputlangs);
-
+						$this->_pagefoot($pdf,$object,$outputlangs);
+						$pagenb++;
+						$pdf->setPage($pagenb);
+						$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+					}
+					if (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak)
+					{
+						if ($pagenb == 1)
+						{
+							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
+						}
+						else
+						{
+							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
+						}
+						$this->_pagefoot($pdf,$object,$outputlangs);
 						// New page
 						$pdf->AddPage();
-				        if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 						$pagenb++;
-						$this->_pagehead($pdf, $object, 0, $outputlangs);
-						$pdf->SetFont('','', $default_font_size - 1);
-						$pdf->MultiCell(0, 3, '');		// Set interline to 3
-						$pdf->SetTextColor(0,0,0);
-
-						$nexY = $tab_top_newpage + 7;
 					}
-
 				}
 
 				// Show square
 				if ($pagenb == 1)
 				{
-					$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
-					$bottomlasttab=$tab_top + $tab_height + 1;
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot, 0, $outputlangs, 0, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
-					$bottomlasttab=$tab_top_newpage + $tab_height_newpage + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot, 0, $outputlangs, 1, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
 				}
 
 				// Affiche zone totaux
@@ -633,9 +619,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
 	 *   @param		Translate	$outputlangs	Langs object
+	 *   @param		int			$hidetop		Hide top bar of array
+	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0)
 	{
 		global $conf;
 

@@ -1424,7 +1424,7 @@ class Form
                 $outval='';
 
                 $opt = '<option value="'.$objp->idprodfournprice.'"';
-                if ($selected == $objp->idprodfournprice) $opt.= ' selected="selected"';
+                if ($selected && $selected == $objp->idprodfournprice) $opt.= ' selected="selected"';
                 if ($objp->fprice == '') $opt.=' disabled="disabled"';
                 $opt.= '>';
 
@@ -3708,30 +3708,6 @@ class Form
             }
         }
         else dol_print_error('','Call of showphoto with wrong parameters');
-
-        /* Disabled. lightbox seems to not work. I don't know why.
-         $ret.="\n<script type=\"text/javascript\">
-        jQuery(function() {
-        jQuery('.photologo').lightBox();
-        });
-        </script>\n";
-
-        $ret.="\n<script type=\"text/javascript\">
-        jQuery(function() {
-        jQuery('.photologo').lightBox({
-        overlayBgColor: '#FFF',
-        overlayOpacity: 0.6,
-        imageLoading: '".DOL_URL_ROOT."/includes/jquery/plugins/lightbox/images/lightbox-ico-loading.gif',
-        imageBtnClose: '".DOL_URL_ROOT."/includes/jquery/plugins/lightbox/images/lightbox-btn-close.gif',
-        imageBtnPrev: '".DOL_URL_ROOT."/includes/jquery/plugins/lightbox/images/lightbox-btn-prev.gif',
-        imageBtnNext: '".DOL_URL_ROOT."/includes/jquery/plugins/lightbox/images/lightbox-btn-next.gif',
-        containerResizeSpeed: 350,
-        txtImage: 'Imagem',
-        txtOf: 'de'
-        });
-        });
-        </script>\n";
-        */
 
         return $ret;
     }

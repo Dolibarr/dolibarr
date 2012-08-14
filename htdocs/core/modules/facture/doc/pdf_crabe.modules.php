@@ -178,6 +178,9 @@ class pdf_crabe extends ModelePDFFactures
 				$nblignes = count($object->lines);
 
                 $pdf=pdf_getInstance($this->format);
+				$heightforinfotot = 80;	// Height reserved to output the info and total part (value include bottom margin)
+				$heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
+                $pdf->SetAutoPageBreak(1,0);
 
                 if (class_exists('TCPDF'))
                 {
@@ -204,7 +207,6 @@ class pdf_crabe extends ModelePDFFactures
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
-				$pdf->SetAutoPageBreak(1,0);
 
 				// Positionne $this->atleastonediscount si on a au moins une remise
 				for ($i = 0 ; $i < $nblignes ; $i++)
@@ -225,7 +227,7 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 90;
-				$tab_top_newpage = 50;
+				$tab_top_newpage = 10;
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
@@ -262,8 +264,9 @@ class pdf_crabe extends ModelePDFFactures
 				{
 					$curY = $nexY;
 
+					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
-						
+
 					// Description of product line
 					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 					$curX = $this->posxdesc-1;
@@ -271,7 +274,8 @@ class pdf_crabe extends ModelePDFFactures
 
 					$pageposafter=$pdf->getPage();
 					$pdf->setPage($pageposbefore);
-					
+					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
 
@@ -332,84 +336,47 @@ class pdf_crabe extends ModelePDFFactures
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
 					{
-					    if ($pagenb == 1)
+						if ($pagenb == 1)
 						{
-							$this->_tableau($pdf, $tab_top, $tab_height + 40, 0, $outputlangs);
+							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 						}
 						else
 						{
-							$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, 0, $outputlangs);
+							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 						}
+						$this->_pagefoot($pdf,$object,$outputlangs);
 						$pagenb++;
 						$pdf->setPage($pagenb);
+						$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 					}
-					
-					// Cherche nombre de lignes a venir pour savoir si place suffisante
-					if ($i < ($nblignes - 1) && empty($hidedesc))	// If it's not last line
+					if (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak)
 					{
-						//on recupere la description du produit suivant
-						$follow_descproduitservice = $object->lines[$i+1]->desc;
-						//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
-						$nblineFollowDesc = dol_nboflines_bis($follow_descproduitservice,52,$outputlangs->charset_output)*4;
-						// Et si on affiche dates de validite, on ajoute encore une ligne
-						if ($object->lines[$i]->date_start && $object->lines[$i]->date_end)
+						if ($pagenb == 1)
 						{
-							$nblineFollowDesc += 4;
-						}
-					}
-					else	// If it's last line
-					{
-						$nblineFollowDesc = 0;
-					}
-
-					// Test if a new page is required
-					if ($pagenb == 1)
-					{
-						$tab_top_in_current_page=$tab_top;
-						$tab_height_in_current_page=$tab_height;
-					}
-					else
-					{
-						$tab_top_in_current_page=$tab_top_newpage;
-						$tab_height_in_current_page=$tab_height_newpage;
-					}
-					if ((($nexY+$nblineFollowDesc) > ($tab_top_in_current_page+$tab_height_in_current_page) && $i < ($nblignes - 1)) || (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak))
-					{
-					    if ($pagenb == 1)
-						{
-							$this->_tableau($pdf, $tab_top, $tab_height + 40, $nexY, $outputlangs);
+							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
 						}
 						else
 						{
-							$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
+							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 						}
-
 						$this->_pagefoot($pdf,$object,$outputlangs);
-
 						// New page
 						$pdf->AddPage();
-				        if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 						$pagenb++;
-						$this->_pagehead($pdf, $object, 0, $outputlangs, $hookmanager);
-						$pdf->SetFont('','', $default_font_size - 1);
-						$pdf->MultiCell(0, 3, '');		// Set interline to 3
-						$pdf->SetTextColor(0,0,0);
-
-						$nexY = $tab_top_newpage + 7;
 					}
-
 				}
 
 				// Show square
 				if ($pagenb == 1)
 				{
-					$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
-					$bottomlasttab=$tab_top + $tab_height + 1;
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot, 0, $outputlangs, 0, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
-					$bottomlasttab=$tab_top_newpage + $tab_height_newpage + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot, 0, $outputlangs, 1, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
 				}
 
 				// Affiche zone infos
@@ -962,11 +929,13 @@ class pdf_crabe extends ModelePDFFactures
 	 *   @param		PDF			&$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
-	 *   @param		int			$nexY			Y
+	 *   @param		int			$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
+	 *   @param		int			$hidetop		Hide top bar of array
+	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0)
 	{
 		global $conf;
 
@@ -975,51 +944,70 @@ class pdf_crabe extends ModelePDFFactures
 		// Amount in (at tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','', $default_font_size - 2);
-		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->currency));
-		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top-4);
-		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
+
+		if (empty($hidetop))
+		{
+			$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->currency));
+			$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top-4);
+			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
+		}
 
 		$pdf->SetDrawColor(128,128,128);
-
-		// Rect prend une longueur en 3eme param et 4eme param
-		$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height);
-		// line prend une position y en 2eme param et 4eme param
-		$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);
-
 		$pdf->SetFont('','', $default_font_size - 1);
 
-		$pdf->SetXY($this->posxdesc-1, $tab_top+1);
-		$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
+		// Output Rect
+		$this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
+
+		if (empty($hidetop))
+		{
+			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line prend une position y en 2eme param et 4eme param
+
+			$pdf->SetXY($this->posxdesc-1, $tab_top+1);
+			$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
+		}
 
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
 			$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
-			$pdf->SetXY($this->posxtva-3, $tab_top+1);
-			$pdf->MultiCell($this->posxup-$this->posxtva+3,2, $outputlangs->transnoentities("VAT"),'','C');
+			if (empty($hidetop))
+			{
+				$pdf->SetXY($this->posxtva-3, $tab_top+1);
+				$pdf->MultiCell($this->posxup-$this->posxtva+3,2, $outputlangs->transnoentities("VAT"),'','C');
+			}
 		}
 
 		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
-		$pdf->SetXY($this->posxup-1, $tab_top+1);
-		$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("PriceUHT"),'','C');
-
-		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
-		$pdf->SetXY($this->posxqty-1, $tab_top+1);
-		$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
-
-		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
-		if ($this->atleastonediscount)
+		if (empty($hidetop))
 		{
-			$pdf->SetXY($this->posxdiscount-1, $tab_top+1);
-			$pdf->MultiCell($this->postotalht-$this->posxdiscount+1,2, $outputlangs->transnoentities("ReductionShort"),'','C');
+			$pdf->SetXY($this->posxup-1, $tab_top+1);
+			$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("PriceUHT"),'','C');
 		}
 
+		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
+		if (empty($hidetop))
+		{
+			$pdf->SetXY($this->posxqty-1, $tab_top+1);
+			$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
+		}
+
+		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
+		if (empty($hidetop))
+		{
+			if ($this->atleastonediscount)
+			{
+				$pdf->SetXY($this->posxdiscount-1, $tab_top+1);
+				$pdf->MultiCell($this->postotalht-$this->posxdiscount+1,2, $outputlangs->transnoentities("ReductionShort"),'','C');
+			}
+		}
 		if ($this->atleastonediscount)
 		{
 			$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
 		}
-		$pdf->SetXY($this->postotalht-1, $tab_top+1);
-		$pdf->MultiCell(30,2, $outputlangs->transnoentities("TotalHT"),'','C');
-
+		if (empty($hidetop))
+		{
+			$pdf->SetXY($this->postotalht-1, $tab_top+1);
+			$pdf->MultiCell(30,2, $outputlangs->transnoentities("TotalHT"),'','C');
+		}
 	}
 
 	/**
@@ -1246,7 +1234,7 @@ class pdf_crabe extends ModelePDFFactures
 	 *   	@param	PDF			&$pdf     			PDF
 	 * 		@param	Object		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
-	 *      @return	void
+	 *      @return	int								Return height of bottom margin including footer text
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs)
 	{

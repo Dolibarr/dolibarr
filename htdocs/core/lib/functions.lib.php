@@ -3472,6 +3472,7 @@ function get_date_range($date_start,$date_end,$format = '',$outputlangs='')
  */
 function setEventMessage($mesgstring, $style='mesgs')
 {
+	if (! in_array($style,array('mesgs','warnings','errors'))) dol_print_error('','Bad parameter for setEventMessage');
 	$_SESSION['dol_events'][$style][] = $mesgstring;
 }
 

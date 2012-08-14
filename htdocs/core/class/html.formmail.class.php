@@ -601,12 +601,13 @@ class FormMail
             {
             	if (! isset($this->ckeditortoolbar)) $this->ckeditortoolbar = 'dolibarr_notes';
 
-                if(! empty($conf->global->MAIL_USE_SIGN) && $this->fromid > 0)
+                if (empty($conf->global->MAIL_DO_NOT_USE_SIGN) && $this->fromid > 0)
                 {
                     $fuser=new User($this->db);
                     $fuser->fetch($this->fromid);
 
-                    if(!empty($fuser->signature)) {
+                    if(! empty($fuser->signature)) 
+                    {
                         $defaultmessage.=dol_htmlentitiesbr_decode($fuser->signature);
                     }
                 }

@@ -21,6 +21,7 @@ create table llx_bank
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   datec           datetime,
+  tms             timestamp,
   datev           date,                      -- date de valeur
   dateo           date,                      -- date operation
   amount          double(24,8) NOT NULL default 0,

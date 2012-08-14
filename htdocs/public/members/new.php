@@ -3,6 +3,7 @@
  * Copyright (C) 2001-2002	Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2006-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2012		J. Fernando Lagrange 		<fernando@demo-tic.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -537,6 +538,10 @@ if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)
 {
     // $conf->global->MEMBER_NEWFORM_SHOWAMOUNT is an amount
     $amount=0;
+    if (! empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
+        $amount=$conf->global->MEMBER_NEWFORM_AMOUNT;
+    }
+
     if (! empty($conf->global->MEMBER_NEWFORM_PAYONLINE))
     {
         $amount=GETPOST('amount')?GETPOST('amount'):$conf->global->MEMBER_NEWFORM_AMOUNT;

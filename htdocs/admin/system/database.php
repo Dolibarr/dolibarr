@@ -95,10 +95,8 @@ else
 		if (preg_match('/mysql/i',$db->type))
 		{
 			$arraytest=array(
-//				"character_set_connection"=>'UTF-8',
-				'character_set_database'=>'dolibarr_main_db_character_set',
-//				'collation_connection'=>"UTF-8",
-				'collation_database'=>'dolibarr_main_db_collation'
+				'character_set_database'=>array('var'=>'dolibarr_main_db_character_set','valifempty'=>'utf8'),
+				'collation_database'=>array('var'=>'dolibarr_main_db_collation','valifempty'=>'utf8_general_ci')
 			);
 		}
 
@@ -118,7 +116,8 @@ else
 				foreach($arraytest as $key => $val)
 				{
 					if ($key != $row[0]) continue;
-					$text='Should be in line with value of param <b>'.$val.'</b> thas is <b>'.${$val}.'</b>';
+					$val2=${$val['var']};
+					$text='Should be in line with value of param <b>'.$val['var'].'</b> thas is <b>'.($val2?$val2:"'' (=".$val['valifempty'].")").'</b>';
 					$show=1;
 				}
 				if ($show==0) print $row[1];

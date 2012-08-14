@@ -696,11 +696,22 @@ else
     {
         //WYSIWYG Editor
         require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+		
+		// Load object modCodeProduct
+        $module=$conf->global->PRODUCT_CODEPRODUCT_ADDON;
+        if (! $module) dolibarr_error('',$langs->trans("ErrorModuleThirdPartyCodeInCompanyModuleNotDefined"));
+        if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php')
+        {
+            $module = substr($module, 0, dol_strlen($module)-4);
+        }
+        dol_include_once('/core/modules/product/'.$module.".php");
+        $modCodeProduct = new $module;
 
         print '<form action="fiche.php" method="post">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="add">';
         print '<input type="hidden" name="type" value="'.$type.'">'."\n";
+		if ($modCodeProduct->code_auto) print '<input type="hidden" name="code_auto" value="1">';
 
         if ($type==1) $title=$langs->trans("NewService");
         else $title=$langs->trans("NewProduct");
@@ -710,7 +721,8 @@ else
 
         print '<table class="border" width="100%">';
         print '<tr>';
-        print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="40" maxlength="32" value="'.$ref.'">';
+		if ($modCodeProduct->code_auto) $tmpcode=$modCodeProduct->getNextValue($object,$type);
+        print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="40" maxlength="32" value="'.$tmpcode.'">';
         if ($_error)
         {
             print $langs->trans("RefAlreadyExists");

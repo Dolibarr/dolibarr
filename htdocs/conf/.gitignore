@@ -3,3 +3,4 @@
 /conf.php.mysql
 /conf.php.pgsql
 /conf.php.sqlite
+/conf.php.utf8
