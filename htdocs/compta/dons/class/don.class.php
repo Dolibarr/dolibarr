@@ -352,7 +352,18 @@ class Don extends CommonObject
         $result = $this->db->query($sql);
         if ($result)
         {
-            return $this->db->last_insert_id(MAIN_DB_PREFIX."don");
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."don");
+
+            // Appel des triggers
+            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            $interface=new Interfaces($this->db);
+            $result=$interface->run_triggers('DON_CREATE',$this,$user,$langs,$conf);
+            if ($result < 0) {
+                    $error++; $this->errors=$interface->errors;
+            }
+            // Fin appel triggers
+
+            return $this->id;
         }
         else
         {

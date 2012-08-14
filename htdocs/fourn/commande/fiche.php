@@ -1186,6 +1186,10 @@ if ($id > 0 || ! empty($ref))
             print '</tr>';
         }
 
+        // Other attributes
+        $parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"');
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+
         // Ligne de	3 colonnes
         print '<tr><td>'.$langs->trans("AmountHT").'</td>';
         print '<td align="right"><b>'.price($object->total_ht).'</b></td>';
@@ -1382,6 +1386,12 @@ if ($id > 0 || ! empty($ref))
                     if ($conf->product->enabled && $conf->service->enabled) print '<br>';
                 }
 
+                if (is_object($hookmanager))
+                {
+                    $parameters=array('fk_parent_line'=>$line->fk_parent_line, 'line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i);
+                    echo $hookmanager->executeHooks('formEditProductOptions',$parameters,$object,$action);
+                }
+
                 // Description - Editor wysiwyg
                 require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
                 $nbrows=ROWS_2;
@@ -1437,6 +1447,12 @@ if ($id > 0 || ! empty($ref))
             print $form->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1,0,$forceall);
             if ($forceall || ($conf->product->enabled && $conf->service->enabled)
             || (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
+
+            if (is_object($hookmanager))
+            {
+                $parameters=array();
+                echo $hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
+            }
 
             $nbrows=ROWS_2;
             if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;

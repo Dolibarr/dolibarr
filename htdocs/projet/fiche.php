@@ -49,6 +49,11 @@ $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $id);
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+$hookmanager=new HookManager($db);
+$hookmanager->initHooks(array('projectcard'));
+
 $object = new Project($db);
 $object->fetch($id,$ref);
 if ($object->id > 0)
@@ -396,6 +401,10 @@ if ($action == 'create' && $user->rights->projet->creer)
     print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'">'.$_POST["description"].'</textarea>';
     print '</td></tr>';
 
+    // Other options
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+
     print '</table>';
 
     print '<br><center>';
@@ -527,6 +536,10 @@ else
         print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'">'.$object->description.'</textarea>';
         print '</td></tr>';
 
+        // Other options
+        $parameters=array();
+        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+
         print '</table>';
 
         print '<div align="center"><br>';
@@ -584,6 +597,10 @@ else
         print '<td valign="top">'.$langs->trans("Description").'</td><td>';
         print nl2br($object->description);
         print '</td></tr>';
+
+        // Other options
+        $parameters=array();
+        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
 
         print '</table>';
     }
