@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +74,7 @@ class CommandeStats extends Stats
 			$this->from = MAIN_DB_PREFIX.$object->table_element." as c";
 			$this->from.= ", ".MAIN_DB_PREFIX."societe as s";
 			$this->field='total_ht';
-			$this->where.= " c.fk_statut > 0";    // Not draft and not cancelled
+			$this->where.= " c.fk_statut > 2";    // Only approved & ordered
 		}
 		$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
 
