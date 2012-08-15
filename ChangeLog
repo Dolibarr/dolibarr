@@ -22,6 +22,7 @@ English Dolibarr ChangeLog
 - Fix: Delete temporary files after validating an invoice.
 - Fix: preview of supplier order and invoice template.
 - Fix: [ bug #485 ] Configurated amount for public auto-subscription form is not taken into account
+- Fix: Average amount graphs weren't comparing the previous year stats
 
 
 ***** ChangeLog for 3.2.0 compared to 3.1.3 *****
