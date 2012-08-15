@@ -433,8 +433,10 @@ foreach ($dirsociete as $dirroot)
     			$module = new $classname($db);
 
 				$modulequalified=1;
-				if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
-				if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
+				if (! empty($module->version)) {
+					if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
+					else if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
+				}
 
 				if ($modulequalified)
 				{
@@ -481,16 +483,16 @@ foreach ($dirsociete as $dirroot)
 					// Info
 					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
 					$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-					if ($modele->type == 'pdf')
+					if ($module->type == 'pdf')
 					{
 						$htmltooltip.='<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
 					}
 					$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-					$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraft").': '.yn($module->option_draft_watermark,1,1);
+					$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraft").': '.yn((! empty($module->option_draft_watermark)?$module->option_draft_watermark:''), 1, 1);
 
 
 					print '<td align="center" nowrap="nowrap">';
-					if ($modele->type == 'pdf')
+					if ($module->type == 'pdf')
 					{
 						$linkspec='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
 					}
@@ -547,16 +549,16 @@ while ($i < $nbofloop)
 	switch($i)
 	{
         case 0:
-        	$verif=(!$conf->global->SOCIETE_IDPROF1_UNIQUE?false:true);
+        	$verif=(empty($conf->global->SOCIETE_IDPROF1_UNIQUE)?false:true);
         	break;
         case 1:
-        	$verif=(!$conf->global->SOCIETE_IDPROF2_UNIQUE?false:true);
+        	$verif=(empty($conf->global->SOCIETE_IDPROF2_UNIQUE)?false:true);
         	break;
         case 2:
-        	$verif=(!$conf->global->SOCIETE_IDPROF3_UNIQUE?false:true);
+        	$verif=(empty($conf->global->SOCIETE_IDPROF3_UNIQUE)?false:true);
         	break;
         case 3:
-        	$verif=(!$conf->global->SOCIETE_IDPROF4_UNIQUE?false:true);
+        	$verif=(empty($conf->global->SOCIETE_IDPROF4_UNIQUE)?false:true);
         	break;
 	}
 

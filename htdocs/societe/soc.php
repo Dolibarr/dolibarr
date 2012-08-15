@@ -514,8 +514,7 @@ else
          */
 
         // Load object modCodeTiers
-        $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
-        if (! $module) dolibarr_error('',$langs->trans("ErrorModuleThirdPartyCodeInCompanyModuleNotDefined"));
+        $module=(! empty($conf->global->SOCIETE_CODECLIENT_ADDON)?$conf->global->SOCIETE_CODECLIENT_ADDON:'mod_codeclient_leopard');
         if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
         {
             $module = substr($module, 0, dol_strlen($module)-4);
@@ -1003,8 +1002,7 @@ else
 
 
             // Load object modCodeTiers
-            $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
-            if (! $module) dolibarr_error('',$langs->trans("ErrorModuleThirdPartyCodeInCompanyModuleNotDefined"));
+            $module=(! empty($conf->global->SOCIETE_CODECLIENT_ADDON)?$conf->global->SOCIETE_CODECLIENT_ADDON:'mod_codeclient_leopard');
             if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
             {
                 $module = substr($module, 0, dol_strlen($module)-4);

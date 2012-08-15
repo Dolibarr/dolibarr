@@ -75,6 +75,20 @@ class modSociete extends DolibarrModules
 		$this->const = array();
 		$r=0;
 
+		$this->const[$r][0] = "SOCIETE_CODECLIENT_ADDON";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mod_codeclient_leopard";
+		$this->const[$r][3] = 'Module to control third parties codes';
+		$this->const[$r][4] = 0;
+		$r++;
+
+		$this->const[$r][0] = "SOCIETE_CODECOMPTA_ADDON";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mod_codecompta_panicum";
+		$this->const[$r][3] = 'Module to control third parties codes';
+		$this->const[$r][4] = 0;
+		$r++;
+
 		$this->const[$r][0] = "SOCIETE_FISCAL_MONTH_START";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "0";
