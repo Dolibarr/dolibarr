@@ -425,8 +425,7 @@ abstract class ActionsCardCommon
 			}
 
             // Load object modCodeClient
-            $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
-            if (! $module) dolibarr_error('',$langs->trans("ErrorModuleThirdPartyCodeInCompanyModuleNotDefined"));
+            $module=(! empty($conf->global->SOCIETE_CODECLIENT_ADDON)?$conf->global->SOCIETE_CODECLIENT_ADDON:'mod_codeclient_leopard');
             if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
             {
                 $module = substr($module, 0, dol_strlen($module)-4);
@@ -437,7 +436,7 @@ abstract class ActionsCardCommon
                 $res=dol_include_once($dirroot.$module.".php");
                 if ($res) break;
             }
-            $modCodeClient = new $module;
+            $modCodeClient = new $module($db);
             $this->tpl['auto_customercode'] = $modCodeClient->code_auto;
             // We verified if the tag prefix is used
             if ($modCodeClient->code_auto) $this->tpl['prefix_customercode'] = $modCodeClient->verif_prefixIsUsed();

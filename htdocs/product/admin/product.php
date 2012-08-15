@@ -229,7 +229,7 @@ foreach ($dirproduct as $dirroot)
     			print '<td>'.$modCodeProduct->info($langs).'</td>'."\n";
     			print '<td nowrap="nowrap">'.$modCodeProduct->getExample($langs).'</td>'."\n";
 
-    			if ($conf->global->PRODUCT_CODEPRODUCT_ADDON == "$file")
+    			if (! empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) && $conf->global->PRODUCT_CODEPRODUCT_ADDON == $file)
     			{
     				print '<td align="center">'."\n";
     				print img_picto($langs->trans("Activated"),'switch_on');
@@ -295,7 +295,7 @@ print '</form>';
 
 
 // multiprix nombre de prix a proposer
-if($conf->global->PRODUIT_MULTIPRICES)
+if (! empty($conf->global->PRODUIT_MULTIPRICES))
 {
 	$var=!$var;
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
@@ -331,7 +331,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="usesearchtoselectproduct">';
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("UseSearchToSelectProduct").'</td>';
-if (! $conf->use_javascript_ajax)
+if (empty($conf->use_javascript_ajax))
 {
 	print '<td nowrap="nowrap" align="right" colspan="2">';
 	print $langs->trans("NotAvailableWhenAjaxDisabled");
@@ -392,7 +392,7 @@ if (! empty($conf->global->MAIN_MULTILANGS))
 	print '<tr '.$bc[$var].'>';
 	print '<td>'.$langs->trans("ViewProductDescInThirdpartyLanguageAbility").'</td>';
 	print '<td width="60" align="right">';
-	print $form->selectyesno("activate_viewProdTextsInThirdpartyLanguage",$conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE,1);
+	print $form->selectyesno("activate_viewProdTextsInThirdpartyLanguage", (! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)?$conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE:0), 1);
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print '</td>';
@@ -401,7 +401,7 @@ if (! empty($conf->global->MAIN_MULTILANGS))
 }
 
 
-if ($conf->global->PRODUCT_CANVAS_ABILITY)
+if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 {
 	// Add canvas feature
 	$dir = DOL_DOCUMENT_ROOT . "/product/canvas/";

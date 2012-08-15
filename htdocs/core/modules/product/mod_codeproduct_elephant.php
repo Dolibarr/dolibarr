@@ -69,10 +69,9 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	function info($langs)
 	{
 		global $conf, $mc;
+		global $form;
 
 		$langs->load("products");
-
-		$form = new Form($this->db);
 
 		$disabled = ((! empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? ' disabled="disabled"' : '');
 
@@ -91,7 +90,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 
 		// Parametrage du prefix customers
 		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("ProductCodeModel").'):</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.$conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT.'"'.$disabled.'>',$tooltip,1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.(! empty($conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT)?$conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT:'').'"'.$disabled.'>',$tooltip,1,1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"'.$disabled.'></td>';
 
@@ -99,7 +98,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 
 		// Parametrage du prefix suppliers
 		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("ServiceCodeModel").'):</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value2" value="'.$conf->global->PRODUCT_ELEPHANT_MASK_SERVICE.'"'.$disabled.'>',$tooltip,1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value2" value="'.(! empty($conf->global->PRODUCT_ELEPHANT_MASK_SERVICE)?$conf->global->PRODUCT_ELEPHANT_MASK_SERVICE:'').'"'.$disabled.'>',$tooltip,1,1).'</td>';
 		$texte.= '</tr>';
 
 		$texte.= '</table>';
@@ -166,9 +165,12 @@ class mod_codeproduct_elephant extends ModeleProductCode
 
 		// Get Mask value
 		$mask = '';
-		if ($type==0) $mask = $conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT;
-		if ($type==1) $mask = $conf->global->PRODUCT_ELEPHANT_MASK_SERVICE;
-		if (! $mask)
+		if ($type == 0 && ! empty($conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT))
+			$mask = $conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT;
+		else if ($type == 1 && ! empty($conf->global->PRODUCT_ELEPHANT_MASK_SERVICE))
+			$mask = $conf->global->PRODUCT_ELEPHANT_MASK_SERVICE;
+
+		if (empty($mask))
 		{
 			$this->error='NotConfigured';
 			return '';

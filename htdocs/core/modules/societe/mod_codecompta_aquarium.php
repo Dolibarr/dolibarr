@@ -60,10 +60,9 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	function info($langs)
 	{
 	    global $conf;
+	    global $form;
 
 		$langs->load("companies");
-
-		$form = new Form($this->db);
 
         $tooltip='';
 		$texte = '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -110,14 +109,14 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		$i = 0;
 		$this->db = $db;
 
-		dol_syslog("mod_codecompta_aquarium::get_code search code for type=".$type." company=".$societe->nom);
+		dol_syslog("mod_codecompta_aquarium::get_code search code for type=".$type." company=".(! empty($societe->nom)?$societe->nom:''));
 
 		// Regle gestion compte compta
 		$codetouse='';
 		if ($type == 'customer') $codetouse = $this->prefixcustomeraccountancycode;
 		if ($type == 'supplier') $codetouse = $this->prefixsupplieraccountancycode;
-		if ($type == 'customer') $codetouse.= ($societe->code_client?$societe->code_client:'CUSTCODE');
-		if ($type == 'supplier') $codetouse.= ($societe->code_fournisseur?$societe->code_fournisseur:'SUPPCODE');
+		if ($type == 'customer') $codetouse.= (! empty($societe->code_client)?$societe->code_client:'CUSTCODE');
+		if ($type == 'supplier') $codetouse.= (! empty($societe->code_fournisseur)?$societe->code_fournisseur:'SUPPCODE');
 		$codetouse=strtoupper(preg_replace('/([^a-z0-9])/i','',$codetouse));
 
 		$is_dispo = $this->verif($db, $codetouse, $societe, $type);
@@ -154,7 +153,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		if ($type == 'customer') $sql.= "code_compta";
 		if ($type == 'supplier') $sql.= "code_compta_fournisseur";
 		$sql.= " = '".$this->db->escape($code)."'";
-		if ($societe->id > 0) $sql.= " AND rowid <> ".$societe->id;
+		if (! empty($societe->id)) $sql.= " AND rowid <> ".$societe->id;
 
 		$resql=$db->query($sql);
 		if ($resql)

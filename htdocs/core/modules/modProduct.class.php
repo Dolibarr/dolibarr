@@ -77,6 +77,13 @@ class modProduct extends DolibarrModules
 		$this->const = array();
 		$r=0;
 
+		$this->const[$r][0] = "PRODUCT_CODEPRODUCT_ADDON";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mod_codeproduct_leopard";
+		$this->const[$r][3] = 'Module to control product codes';
+		$this->const[$r][4] = 0;
+		$r++;
+
 		$this->const[$r][0] = "MAIN_SEARCHFORM_PRODUITSERVICE";
 		$this->const[$r][1] = "yesno";
 		$this->const[$r][2] = "1";

@@ -69,10 +69,9 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	function info($langs)
 	{
 		global $conf, $mc;
+		global $form;
 
 		$langs->load("companies");
-
-		$form = new Form($this->db);
 
 		$disabled = ((! empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? ' disabled="disabled"' : '');
 

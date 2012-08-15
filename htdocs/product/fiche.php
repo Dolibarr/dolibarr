@@ -696,10 +696,9 @@ else
     {
         //WYSIWYG Editor
         require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-		
+
 		// Load object modCodeProduct
-        $module=$conf->global->PRODUCT_CODEPRODUCT_ADDON;
-        if (! $module) dolibarr_error('',$langs->trans("ErrorModuleThirdPartyCodeInCompanyModuleNotDefined"));
+        $module=(! empty($conf->global->PRODUCT_CODEPRODUCT_ADDON)?$conf->global->PRODUCT_CODEPRODUCT_ADDON:'mod_codeproduct_leopard');
         if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php')
         {
             $module = substr($module, 0, dol_strlen($module)-4);
@@ -711,7 +710,7 @@ else
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="add">';
         print '<input type="hidden" name="type" value="'.$type.'">'."\n";
-		if ($modCodeProduct->code_auto) print '<input type="hidden" name="code_auto" value="1">';
+		if (! empty($modCodeProduct->code_auto)) print '<input type="hidden" name="code_auto" value="1">';
 
         if ($type==1) $title=$langs->trans("NewService");
         else $title=$langs->trans("NewProduct");
@@ -721,7 +720,7 @@ else
 
         print '<table class="border" width="100%">';
         print '<tr>';
-		if ($modCodeProduct->code_auto) $tmpcode=$modCodeProduct->getNextValue($object,$type);
+		if (! empty($modCodeProduct->code_auto)) $tmpcode=$modCodeProduct->getNextValue($object,$type);
         print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="40" maxlength="32" value="'.$tmpcode.'">';
         if ($_error)
         {
@@ -948,7 +947,7 @@ else
 
             // Description (used in invoice, propal...)
             print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
-            
+
             $doleditor = new DolEditor('desc', $object->description, '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 90);
             $doleditor->Create();
 
@@ -1041,7 +1040,7 @@ else
 
             // Note
             print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="2">';
-            
+
             $doleditor = new DolEditor('note', $object->note, '', 200, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 8, 70);
             $doleditor->Create();
 

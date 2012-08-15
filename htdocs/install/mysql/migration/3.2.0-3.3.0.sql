@@ -43,8 +43,8 @@ ALTER TABLE llx_mailing MODIFY COLUMN body mediumtext;
 ALTER TABLE llx_mailing ADD COLUMN extraparams varchar(255);
 
 
-ALTER TABLE llx_product MODIFY ref                       varchar(128)  NOT NULL;
-ALTER TABLE llx_product MODIFY ref_ext                   varchar(128);
+ALTER TABLE llx_product MODIFY ref varchar(128)  NOT NULL;
+ALTER TABLE llx_product MODIFY ref_ext varchar(128);
 
 ALTER TABLE llx_product_fournisseur_price DROP COLUMN fk_product_fournisseur;
 ALTER TABLE llx_product_fournisseur_price ADD charges DOUBLE( 24, 8 ) DEFAULT 0 AFTER unitprice;
@@ -68,3 +68,4 @@ ALTER TABLE llx_commande CHANGE fk_demand_reason fk_input_reason INT(11) NULL DE
 ALTER TABLE llx_propal CHANGE fk_demand_reason fk_input_reason INT(11) NULL DEFAULT NULL;
 ALTER TABLE llx_commande_fournisseur CHANGE fk_methode_commande fk_input_method INT(11) NULL DEFAULT 0;
 
+INSERT INTO llx_const (name, value, type, note, visible) values ('PRODUCT_CODEPRODUCT_ADDON','mod_codeproduct_leopard','yesno','Module to control product codes',0);
