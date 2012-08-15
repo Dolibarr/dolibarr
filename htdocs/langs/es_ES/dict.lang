@@ -252,6 +252,7 @@ CivilityMME=Señora
 CivilityMR=Señor
 CivilityMLE=Señorita
 CivilityMTRE=Don
+CivilityDR=Doctor
 
 ##### Currencies #####
 Currencyeuros=Euros
@@ -304,3 +305,7 @@ DemandReasonTypeSRC_CAMP_PHO=Campaña telefónica
 DemandReasonTypeSRC_CAMP_FAX=Campaña fax
 DemandReasonTypeSRC_COMM=Contacto comercial
 DemandReasonTypeSRC_SHOP=Contacto tienda
+DemandReasonTypeSRC_WOM=Boca a boca
+DemandReasonTypeSRC_PARTNER=Socio
+DemandReasonTypeSRC_EMPLOYEE=Empleado
+DemandReasonTypeSRC_SPONSORSHIP=Patrocinador
