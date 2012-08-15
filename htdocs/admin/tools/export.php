@@ -373,6 +373,9 @@ $db->close();
  *	Author: David Walsh (http://davidwalsh.name/backup-mysql-database-php)
  *	Updated and enhanced by Stephen Larroque (lrq3000) and by the many commentators from the blog
  *
+ *	Note about foreign keys constraints: for Dolibarr, since there are a lot of constraints and when imported the tables will be inserted in the dumped order, not in constraints order, then we ABSOLUTELY need to use SET FOREIGN_KEY_CHECKS=0; when importing the sql dump.
+ *	Note2: db2SQL by Howard Yeend can be an alternative, by using SHOW FIELDS FROM and SHOW KEYS FROM we could generate a more precise dump (eg: by getting the type of the field and then precisely outputting the right formatting - in quotes, numeric or null - instead of trying to guess like we are doing now).
+ *
  *	@param	string	$outputfile		Output file name
  *	@param	string	$tables			Table name or '*' for all
  *	@return	int						<0 if KO, >0 if OK
@@ -419,16 +422,13 @@ function backup_tables($outputfile, $tables='*')
 -- ------------------------------------------------------
 -- Server version	".$db->db->server_info."
 
+SET FOREIGN_KEY_CHECKS=0;
+SET SQL_MODE=\"NO_AUTO_VALUE_ON_ZERO\";
+
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 ";
     fwrite($handle, $sqlhead);
 
@@ -438,19 +438,19 @@ function backup_tables($outputfile, $tables='*')
         // Saving the table structure
         fwrite($handle, "--\n-- Table structure for table `".$table."`\n--\n\n");
 
-        fwrite($handle,"DROP TABLE IF EXISTS `".$table."`;\n");
-        fwrite($handle,"/*!40101 SET @saved_cs_client     = @@character_set_client */;\n");
-        fwrite($handle,"/*!40101 SET character_set_client = utf8 */;\n");
+        //fwrite($handle,"DROP TABLE IF EXISTS `".$table."`;\n"); // Dropping table if exists prior to re create it
+        //fwrite($handle,"/*!40101 SET @saved_cs_client     = @@character_set_client */;\n");
+        //fwrite($handle,"/*!40101 SET character_set_client = utf8 */;\n");
         $resqldrop=$db->query('SHOW CREATE TABLE '.$table);
         $row2 = $db->fetch_row($resqldrop);
         fwrite($handle,$row2[1].";\n");
-        fwrite($handle,"/*!40101 SET character_set_client = @saved_cs_client */;\n\n");
+        //fwrite($handle,"/*!40101 SET character_set_client = @saved_cs_client */;\n\n");
 
 
         // Dumping the data (locking the table and disabling the keys check while doing the process)
         fwrite($handle, "--\n-- Dumping data for table `".$table."`\n--\n\n");
-        fwrite($handle, "LOCK TABLES `".$table."` WRITE;\n");
-        fwrite($handle, "/*!40000 ALTER TABLE `".$table."` DISABLE KEYS */;\n");
+        //fwrite($handle, "LOCK TABLES `".$table."` WRITE;\n"); // Lock the table before inserting data (when the data will be imported back)
+        fwrite($handle, "ALTER TABLE `".$table."` DISABLE KEYS;\n");
 
         $sql='SELECT * FROM '.$table;
         $result = $db->query($sql);
@@ -468,7 +468,7 @@ function backup_tables($outputfile, $tables='*')
                 } elseif(is_string($row[$j]) and $row[$j] == '') {
                     // if it's an empty string, we set it as an empty string
                     $row[$j] = "''";
-                } elseif(is_numeric($row[$j])) {
+                } elseif(is_numeric($row[$j]) and !strcmp($row[$j], $row[$j]+0) ) { // test if it's a numeric type and the numeric version ($nb+0) == string version (eg: if we have 01, it's probably not a number but rather a string, else it would not have any leading 0)
                     // if it's a number, we return it as-is
                     $row[$j] = $row[$j];
                 } else { // else for all other cases we escape the value and put quotes around
@@ -479,8 +479,8 @@ function backup_tables($outputfile, $tables='*')
             }
             fwrite($handle,implode(',', $row).");\n");
         }
-        fwrite($handle, "/*!40000 ALTER TABLE `".$table."` ENABLE KEYS */;\n"); // Enabling back the keys/index checking
-        fwrite($handle, "UNLOCK TABLES;\n"); // Unlocking the tables
+        fwrite($handle, "ALTER TABLE `".$table."` ENABLE KEYS;\n"); // Enabling back the keys/index checking
+        //fwrite($handle, "UNLOCK TABLES;\n"); // Unlocking the table
         fwrite($handle,"\n\n\n");
     }
 
@@ -506,15 +506,7 @@ function backup_tables($outputfile, $tables='*')
     // Write the footer (restore the previous database settings)
     $sqlfooter='';
     $sqlfooter.="
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+SET FOREIGN_KEY_CHECKS=1;
 
 -- Dump completed on ".date('Y-m-d G-i-s');
     fwrite($handle, $sqlfooter);
