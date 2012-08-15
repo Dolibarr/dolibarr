@@ -109,3 +109,6 @@
 [submodule "htdocs/custom/newsletter"]
 	path = htdocs/custom/newsletter
 	url = gitolite@doliforge.org:newsletter/newsletter.git
+[submodule "htdocs/custom/contratabonnement"]
+	path = htdocs/custom/contratabonnement
+	url = gitolite@doliforge.org:contratabonnement/contratabonnement.git
