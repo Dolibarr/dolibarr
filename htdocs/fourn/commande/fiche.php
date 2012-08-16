@@ -171,35 +171,35 @@ else if ($action == 'reopen' && $user->rights->fournisseur->commande->approuver)
 else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 {
     $langs->load('errors');
-    $result = 0;
+    $error = false;
 
     if ($_POST['pu'] < 0 && $_POST['qty'] < 0)
     {
-        $mesgs[]='<div class="error">'.$langs->trans("ErrorBothFieldCantBeNegative",$langs->transnoentitiesnoconv("UnitPriceHT"),$langs->transnoentitiesnoconv("Qty")).'</div>';
-        $result = -1 ;
+        setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPrice'), $langs->transnoentitiesnoconv('Qty')), 'errors');
+        $error = true;
     }
     if (empty($_POST['idprodfournprice']) && $_POST['type'] < 0)
     {
-        $mesgs[]='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")).'</div>';
-        $result = -1 ;
+        setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), 'errors');
+        $error = true;
     }
     if (empty($_POST['idprodfournprice']) && (! isset($_POST['pu']) || $_POST['pu']=='')) // Unit price can be 0 but not ''
     {
-        $mesgs[]='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPrice")).'</div>';
-        $result = -1 ;
+        setEventMessage($langs->trans($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPrice'))), 'errors');
+        $error = true;
     }
-    if (empty($_POST['idprodfournprice']) && empty($_POST["np_desc"]) && empty($_POST["dp_desc"]))
+    if (empty($_POST['idprodfournprice']) && empty($_POST['np_desc']) && empty($_POST['dp_desc']))
     {
-        $mesgs[]='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Description")).'</div>';
-        $result = -1 ;
+        setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), 'errors');
+        $error = true;
     }
-    if ((! isset($_POST['qty']) || $_POST['qty']==''))
+    if ((! isset($_POST['qty']) || $_POST['qty'] == ''))
     {
-        $mesgs[]='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv('Qty')).'</div>';
-        $result = -1 ;
+        setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), 'errors');
+        $error = true;
     }
 
-    if ($result >= 0 && (($_POST['qty'] || $_POST['pqty']) && (($_POST['pu'] && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprodfournprice'])))
+    if (!$error && (($_POST['qty'] || $_POST['pqty']) && (($_POST['pu'] && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprodfournprice'])))
     {
         if ($object->fetch($id) < 0) dol_print_error($db,$object->error);
         if ($object->fetch_thirdparty() < 0) dol_print_error($db,$object->error);
@@ -1815,8 +1815,6 @@ if ($id > 0 || ! empty($ref))
         dol_print_error($db);
     }
 }
-
-dol_htmloutput_mesg('', $mesgs);
 
 // End of page
 llxFooter();

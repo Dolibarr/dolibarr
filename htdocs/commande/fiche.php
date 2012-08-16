@@ -519,35 +519,35 @@ else if ($action == 'setnote' && $user->rights->commande->creer)
 else if ($action == 'addline' && $user->rights->commande->creer)
 {
 	$langs->load('errors');
-	$result = 0;
+	$error = false;
 
 	if ((GETPOST('np_price') < 0) && (GETPOST('qty') < 0))
     {
-        $mesgs[] = '<div class="error">'.$langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPrice'),$langs->transnoentitiesnoconv('Qty')).'</div>';
-        $result = -1 ;
+        setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPrice'), $langs->transnoentitiesnoconv('Qty')), 'errors');
+        $error = true;
     }
 	if (! GETPOST('idprod') && GETPOST('type') < 0)
 	{
-		$mesgs[] = '<div class="error">'.$langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')).'</div>';
-		$result = -1 ;
+		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), 'errors');
+        $error = true;
 	}
 	if (! GETPOST('idprod') && GETPOST('np_price') == '') // Unit price can be 0 but not ''
 	{
-		$mesgs[] = '<div class="error">'.$langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPrice')).'</div>';
-		$result = -1 ;
+		setEventMessage($langs->trans($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPrice'))), 'errors');
+        $error = true;
 	}
 	if (! GETPOST('qty') && GETPOST('qty') == '')
     {
-        $mesgs[] = '<div class="error">'.$langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')).'</div>';
-        $result = -1 ;
+        setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), 'errors');
+        $error = true;
     }
     if (! GETPOST('idprod') && (GETPOST('np_desc') == '') && (GETPOST('dp_desc') == ''))
     {
-        $mesgs[] = '<div class="error">'.$langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')).'</div>';
-        $result = -1 ;
+        setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), 'errors');
+        $error = true;
     }
 
-	if ($result >= 0 && GETPOST('qty') && ((GETPOST('np_price') != '' && (GETPOST('np_desc') || GETPOST('dp_desc'))) || GETPOST('idprod')))
+	if (!$error && GETPOST('qty') && ((GETPOST('np_price') != '' && (GETPOST('np_desc') || GETPOST('dp_desc'))) || GETPOST('idprod')))
 	{
 		// Clean parameters
 		$suffixe = GETPOST('idprod') ? '_predef' : '';
