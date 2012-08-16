@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,12 +55,12 @@ class ExportExcel extends ModeleExports
 	 */
 	function __construct($db)
 	{
-		global $conf;
+		global $conf, $langs;
 		$this->db = $db;
 
 		$this->id='excel';                  // Same value then xxx in file name export_xxx.modules.php
 		$this->label='Excel 95';             // Label of driver
-		$this->desc='<b>Excel</b> file format (.xls)<br>This is native Excel 95 format (BIFF5).';
+		$this->desc = $langs->trans('Excel95FormatDesc');
 		$this->extension='xls';             // Extension for generated file by this driver
         $this->picto='mime/xls';					// Picto
 		$this->version='1.30';             // Driver version
