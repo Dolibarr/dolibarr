@@ -112,3 +112,6 @@
 [submodule "htdocs/custom/contratabonnement"]
 	path = htdocs/custom/contratabonnement
 	url = gitolite@doliforge.org:contratabonnement/contratabonnement.git
+[submodule "htdocs/custom/ndfp"]
+	path = htdocs/custom/ndfp
+	url = gitolite@doliforge.org:ndfp/ndfp.git
