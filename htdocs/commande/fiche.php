@@ -702,7 +702,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 				}
 				else
 				{
-					$mesg='<div class="error">'.$object->error.'</div>';
+					setEventMessage($object->error, 'errors');
 				}
 			}
 		}
