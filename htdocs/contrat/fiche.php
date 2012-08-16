@@ -58,6 +58,11 @@ $result=restrictedArea($user,'contrat',$id);
 
 $usehm=(! empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:0);
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+$hookmanager=new HookManager($db);
+$hookmanager->initHooks(array('contractcard'));
+
 $object = new Contrat($db);
 
 
@@ -633,6 +638,10 @@ if ($action == 'create')
         print '</textarea></td></tr>';
     }
 
+    // Other attributes
+    $parameters=array('colspan' => ' colspan="3"');
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+
     print "</table>\n";
 
     print '<br><center><input type="submit" class="button" value="'.$langs->trans("Create").'"></center>';
@@ -778,6 +787,10 @@ else
             }
             print "</td></tr>";
         }
+
+        // Other attributes
+        $parameters=array('colspan' => ' colspan="3"');
+        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
         print "</table>";
 

@@ -49,6 +49,11 @@ $donation_date=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOS
 // Security check
 $result = restrictedArea($user, 'don', $id);
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+$hookmanager=new HookManager($db);
+$hookmanager->initHooks(array('doncard'));
+
 
 /*
  * Actions
@@ -321,6 +326,10 @@ if ($action == 'create')
         print "</td></tr>\n";
     }
 
+    // Other attributes
+    $parameters=array('colspan' => ' colspan="1"');
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$don,$action);    // Note that $action and $object may have been modified by hook
+
 	print "</table>\n";
 	print '<br><center><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
 	print "</form>\n";
@@ -410,6 +419,10 @@ if (! empty($id) && $action == 'edit')
         print '</td></tr>';
     }
 
+    // Other attributes
+    $parameters=array('colspan' => ' colspan="1"');
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$don,$action);    // Note that $action and $object may have been modified by hook
+
 	print "</table>\n";
 
 	print '<br><center><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
@@ -493,6 +506,10 @@ if (! empty($id) && $action != 'edit')
     {
         print "<tr>".'<td>'.$langs->trans("Project").'</td><td>'.$don->projet.'</td></tr>';
     }
+
+    // Other attributes
+    $parameters=array('colspan' => ' colspan="1"');
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$don,$action);    // Note that $action and $object may have been modified by hook
 
 	print "</table>\n";
 	print "</form>\n";

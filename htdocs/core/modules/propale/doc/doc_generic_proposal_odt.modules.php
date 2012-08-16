@@ -454,6 +454,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
                     foreach ($object->lines as $line)
                     {
                         $tmparray=$this->get_substitutionarray_lines($line,$outputlangs);
+                        complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
                         foreach($tmparray as $key => $val)
                         {
                              try
