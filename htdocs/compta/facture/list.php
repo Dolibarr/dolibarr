@@ -140,7 +140,7 @@ $facturestatic=new Facture($db);
 
 if (! $sall) $sql = 'SELECT';
 else $sql = 'SELECT DISTINCT';
-$sql.= ' f.rowid as facid, f.facnumber, f.type, f.increment, f.total, f.total_ttc,';
+$sql.= ' f.rowid as facid, f.facnumber, f.type, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc,';
 $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 $sql.= ' f.paye as paye, f.fk_statut, f.note,';
 $sql.= ' s.nom, s.rowid as socid';
@@ -280,6 +280,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("DateDue"),$_SERVER['PHP_SELF'],"f.date_lim_reglement",'',$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Company'),$_SERVER['PHP_SELF'],'s.nom','',$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('AmountHT'),$_SERVER['PHP_SELF'],'f.total','',$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('AmountVAT'),$_SERVER['PHP_SELF'],'f.tva','',$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('AmountTTC'),$_SERVER['PHP_SELF'],'f.total_ttc','',$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Received'),$_SERVER['PHP_SELF'],'am','',$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'fk_statut,paye,am','',$param,'align="right"',$sortfield,$sortorder);
@@ -297,23 +298,19 @@ if ($resql)
     $formother->select_year($year?$year:-1,'year',1, 20, 5);
     print '</td>';
     print '<td class="liste_titre" align="left">&nbsp;</td>';
-    print '<td class="liste_titre" align="left">';
-    print '<input class="flat" type="text" name="search_societe" value="'.$search_societe.'">';
-    print '</td><td class="liste_titre" align="right">';
-    print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'">';
-    print '</td><td class="liste_titre" align="right">';
-    print '<input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$search_montant_ttc.'">';
-    print '</td>';
-    print '<td class="liste_titre" align="right">';
-    print '&nbsp;';
-    print '</td>';
+    print '<td class="liste_titre" align="left"><input class="flat" type="text" name="search_societe" value="'.$search_societe.'"></td>';
+    print '<td class="liste_titre" align="right"><input class="flat" type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'"></td>';
+    print '<td class="liste_titre" align="right">&nbsp;</td>';
+    print '<td class="liste_titre" align="right"><input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$search_montant_ttc.'"></td>';
+    print '<td class="liste_titre" align="right">&nbsp;</td>';
     print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print "</td></tr>\n";
 
     if ($num > 0)
     {
         $var=True;
-        $total=0;
+        $total_ht=0;
+        $total_tva=0;
         $total_ttc=0;
         $totalrecu=0;
 
@@ -343,7 +340,7 @@ if ($resql)
             print '<td width="16" align="right" class="nobordernopadding">';
             $filename=dol_sanitizeFileName($objp->facnumber);
             $filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
-            $urlsource=$_SERVER['PHP_SELF'].'?facid='.$objp->facid;
+            $urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->facid;
             $formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','',1,'',1);
             print '</td>';
             print '</tr>';
@@ -371,11 +368,13 @@ if ($resql)
             print $thirdparty->getNomUrl(1,'customer');
             print '</td>';
 
-            print '<td align="right">'.price($objp->total).'</td>';
+            print '<td align="right">'.price($objp->total_ht).' '.getCurrencySymbol($conf->currency).'</td>';
 
-            print '<td align="right">'.price($objp->total_ttc).'</td>';
+            print '<td align="right">'.price($objp->total_tva).' '.getCurrencySymbol($conf->currency).'</td>';
 
-            print '<td align="right">'.price($paiement).'</td>';
+            print '<td align="right">'.price($objp->total_ttc).' '.getCurrencySymbol($conf->currency).'</td>';
+
+            print '<td align="right">'.price($paiement).' '.getCurrencySymbol($conf->currency).'</td>';
 
             // Affiche statut de la facture
             print '<td align="right" nowrap="nowrap">';
@@ -383,7 +382,8 @@ if ($resql)
             print "</td>";
             //print "<td>&nbsp;</td>";
             print "</tr>\n";
-            $total+=$objp->total;
+            $total_ht+=$objp->total_ht;
+            $total_tva+=$objp->total_tva;
             $total_ttc+=$objp->total_ttc;
             $totalrecu+=$paiement;
             $i++;
@@ -394,9 +394,10 @@ if ($resql)
             // Print total
             print '<tr class="liste_total">';
             print '<td class="liste_total" colspan="4" align="left">'.$langs->trans('Total').'</td>';
-            print '<td class="liste_total" align="right">'.price($total).'</td>';
-            print '<td class="liste_total" align="right">'.price($total_ttc).'</td>';
-            print '<td class="liste_total" align="right">'.price($totalrecu).'</td>';
+            print '<td class="liste_total" align="right">'.price($total_ht).' '.getCurrencySymbol($conf->currency).'</td>';
+            print '<td class="liste_total" align="right">'.price($total_tva).' '.getCurrencySymbol($conf->currency).'</td>';
+            print '<td class="liste_total" align="right">'.price($total_ttc).' '.getCurrencySymbol($conf->currency).'</td>';
+            print '<td class="liste_total" align="right">'.price($totalrecu).' '.getCurrencySymbol($conf->currency).'</td>';
             print '<td class="liste_total" align="center">&nbsp;</td>';
             print '</tr>';
         }
