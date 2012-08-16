@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2002-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,18 +73,21 @@ llxHeader();
 $sql = "SELECT";
 $sql.= " f.ref, f.rowid as fichid, f.fk_statut, f.description,";
 $sql.= " fd.description as descriptiondetail, fd.date as dp, fd.duree,";
-$sql.= " s.nom, s.rowid as socid";
+$sql.= " s.nom, s.rowid as socid, s.client";
 $sql.= " FROM (".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (! $user->rights->societe->client->voir && empty($socid))
+	$sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= ", ".MAIN_DB_PREFIX."fichinter as f)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as fd ON fd.fk_fichinter = f.rowid";
 $sql.= " WHERE f.fk_soc = s.rowid ";
 $sql.= " AND f.entity = ".$conf->entity;
-if ($search_ref)     $sql .= " AND f.ref like '%".$db->escape($search_ref)."%'";
-if ($search_company) $sql .= " AND s.nom like '%".$db->escape($search_company)."%'";
-if ($search_desc)    $sql .= " AND (f.description like '%".$db->escape($search_desc)."%' OR fd.description like '%".$db->escape($search_desc)."%')";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socid)	$sql.= " AND s.rowid = " . $socid;
+if ($search_ref)     $sql .= " AND f.ref LIKE '%".$db->escape($search_ref)."%'";
+if ($search_company) $sql .= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
+if ($search_desc)    $sql .= " AND (f.description LIKE '%".$db->escape($search_desc)."%' OR fd.description LIKE '%".$db->escape($search_desc)."%')";
+if (! $user->rights->societe->client->voir && empty($socid))
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid)
+	$sql.= " AND s.rowid = " . $socid;
 $sql.= " ORDER BY ".$sortfield." ".$sortorder;
 $sql.= $db->plimit($limit+1, $offset);
 
@@ -96,12 +99,12 @@ if ($result)
 	$interventionstatic=new Fichinter($db);
 
 	$urlparam="&amp;socid=$socid";
-	print_barre_liste($langs->trans("ListOfInterventions"), $page, "list.php",$urlparam,$sortfield,$sortorder,'',$num);
+	print_barre_liste($langs->trans("ListOfInterventions"), $page, $_SERVER['PHP_SELF'], $urlparam, $sortfield, $sortorder, '', $num);
 
 	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print '<table class="noborder" width="100%">';
 
-	print "<tr class=\"liste_titre\">";
+	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.ref","",$urlparam,'width="15%"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$urlparam,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Description"),$_SERVER["PHP_SELF"],"f.description","",$urlparam,'',$sortfield,$sortorder);
