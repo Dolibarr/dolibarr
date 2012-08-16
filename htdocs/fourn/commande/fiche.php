@@ -193,7 +193,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
         $mesgs[]='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Description")).'</div>';
         $result = -1 ;
     }
-    if ((empty($_POST['idprodfournprice']) && (! isset($_POST['qty']) || $_POST['qty']=='')) || (empty($_POST['idprodfournprice']) && (! isset($_POST['pqty']) || $_POST['qty'] == '')))
+    if ((! isset($_POST['qty']) || $_POST['qty']==''))
     {
         $mesgs[]='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv('Qty')).'</div>';
         $result = -1 ;
