@@ -374,7 +374,7 @@ if ($resql)
 
             print '<td align="right">'.price($objp->total_ttc).' '.getCurrencySymbol($conf->currency).'</td>';
 
-            print '<td align="right">'.price($paiement).' '.getCurrencySymbol($conf->currency).'</td>';
+            print '<td align="right">'.(! empty($paiement)?price($paiement).' '.getCurrencySymbol($conf->currency):'&nbsp;').'</td>';
 
             // Affiche statut de la facture
             print '<td align="right" nowrap="nowrap">';

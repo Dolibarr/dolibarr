@@ -355,11 +355,8 @@ if ($resql)
 			print '<td align="right">'.price($objp->total_ht).' '.getCurrencySymbol($conf->currency).'</td>';
 			print '<td align="right">'.price($objp->total_tva).' '.getCurrencySymbol($conf->currency).'</td>';
 			print '<td align="right">'.price($objp->total_ttc).' '.getCurrencySymbol($conf->currency).'</td>';
-			print '<td align="right">'.price($objp->am).'</td>';
-			if ($objp->am==0)
-			{	print '<td align="right"></td>'; }
-			else
-			{	print '<td align="right">'.price($objp->total_ttc-$objp->am).'</td>'; }
+			print '<td align="right">'.(! empty($objp->am)?price($objp->am).' '.getCurrencySymbol($conf->currency):'&nbsp;').'</td>';
+			print '<td align="right">'.(! empty($objp->am)?price($objp->total_ttc-$objp->am).' '.getCurrencySymbol($conf->currency):'&nbsp;').'</td>';
 
 			// Affiche statut de la facture
 			print '<td align="right" nowrap="nowrap">';
