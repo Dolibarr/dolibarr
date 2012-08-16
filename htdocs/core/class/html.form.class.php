@@ -2264,8 +2264,72 @@ class Form
                 }
             }
 
-            // Show JQuery confirm box. Note that global var $useglobalvars is used inside this template
-            include(DOL_DOCUMENT_ROOT.'/core/tpl/ajax/formconfirm.tpl.php');
+			// Show JQuery confirm box. Note that global var $useglobalvars is used inside this template
+            $formconfirm.= '<div id="'.$dialogconfirm.'" title="'.dol_escape_htmltag($title).'" style="display: none;">';
+            if (! empty($more)) {
+            	$formconfirm.= '<p>'.$more.'</p>';
+            }
+            $formconfirm.= img_help('','').' '.$question;
+            $formconfirm.= '</div>';
+
+            $formconfirm.= '<script type="text/javascript">';
+            $formconfirm.='
+            $(function() {
+            	$( "#'.$dialogconfirm.'" ).dialog({
+                    autoOpen: '.($autoOpen ? "true" : "false").',
+                    resizable: false,
+                    height: "'.$height.'",
+                    width: "'.$width.'",
+                    modal: true,
+                    closeOnEscape: false,
+                    buttons: {
+                        "'.dol_escape_js($langs->transnoentities("Yes")).'": function() {
+                        	var options="";
+                        	var inputok = '.json_encode($inputok).';
+                         	var pageyes = "'.dol_escape_js(! empty($pageyes)?$pageyes:'').'";
+                         	if (inputok.length>0) {
+                         		$.each(inputok, function(i, inputname) {
+                         			var more = "";
+                         			if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
+                         			var inputvalue = $("#" + inputname + more).val();
+                         			if (typeof inputvalue == "undefined") { inputvalue=""; }
+                         			options += "&" + inputname + "=" + inputvalue;
+                         		});
+                         	}
+                         	var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "") + options;
+                         	//alert(urljump);
+            				if (pageyes.length > 0) { location.href = urljump; }
+                            $(this).dialog("close");
+                        },
+                        "'.dol_escape_js($langs->transnoentities("No")).'": function() {
+                        	var options = "";
+                         	var inputko = '.json_encode($inputko).';
+                         	var pageno="'.dol_escape_js(! empty($pageno)?$pageno:'').'";
+                         	if (inputko.length>0) {
+                         		$.each(inputko, function(i, inputname) {
+                         			var more = "";
+                         			if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
+                         			var inputvalue = $("#" + inputname + more).val();
+                         			if (typeof inputvalue == "undefined") { inputvalue=""; }
+                         			options += "&" + inputname + "=" + inputvalue;
+                         		});
+                         	}
+                         	var urljump=pageno + (pageno.indexOf("?") < 0 ? "?" : "") + options;
+                         	//alert(urljump);
+            				if (pageno.length > 0) { location.href = urljump; }
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+
+            	var button = "'.$button.'";
+                if (button.length > 0) {
+                	$( "#" + button ).click(function() {
+                		$("#'.$dialogconfirm.'").dialog("open");
+                	});
+                }
+            });
+            </script>';
         }
         else
         {
