@@ -1011,7 +1011,7 @@ class CommandeFournisseur extends CommonOrder
      *	@param		int		$info_bits				More information
      *	@return     int             				<=0 if KO, >0 if OK
      */
-    function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $type=0, $info_bits=0)
+    function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $type=0, $info_bits=0, $notrigger=false)
     {
         global $langs,$mysoc;
 
@@ -1139,6 +1139,19 @@ class CommandeFournisseur extends CommonOrder
             //print $sql;
             if ($resql)
             {
+                $this->rowid = $this->db->last_insert_id(MAIN_DB_PREFIX.'commande_fournisseurdet');
+
+                if (! $notrigger)
+                {
+                    global $conf, $langs, $user;
+                    // Appel des triggers
+                    include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                    $interface=new Interfaces($this->db);
+                    $result=$interface->run_triggers('LINEORDER_SUPPLIER_CREATE',$this,$user,$langs,$conf);
+                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                    // Fin appel triggers
+                }
+
                 $this->update_price();
 
                 $this->db->commit();
@@ -1584,7 +1597,7 @@ class CommandeFournisseur extends CommonOrder
      *	@param		int		$type				Type of line (0=product, 1=service)
      *	@return    	int             			< 0 if error, > 0 if ok
      */
-    function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0)
+    function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $notrigger=false)
     {
         dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $type");
         include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
@@ -1660,6 +1673,19 @@ class CommandeFournisseur extends CommonOrder
             $result = $this->db->query($sql);
             if ($result > 0)
             {
+                $this->rowid = $rowid;
+
+                if (! $notrigger)
+                {
+                    global $conf, $langs, $user;
+                    // Appel des triggers
+                    include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                    $interface=new Interfaces($this->db);
+                    $result=$interface->run_triggers('LINEORDER_SUPPLIER_UPDATE',$this,$user,$langs,$conf);
+                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                    // Fin appel triggers
+                }
+
                 // Mise a jour info denormalisees au niveau facture
                 $this->update_price();
 

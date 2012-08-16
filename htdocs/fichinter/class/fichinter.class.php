@@ -156,6 +156,9 @@ class Fichinter extends CommonObject
 		$result=$this->db->query($sql);
 		if ($result)
 		{
+                        $this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."fichinter");
+                        $this->db->commit();
+
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 			$interface=new Interfaces($this->db);
@@ -165,8 +168,6 @@ class Fichinter extends CommonObject
 			}
 			// Fin appel triggers
 
-			$this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."fichinter");
-			$this->db->commit();
 			return $this->id;
 		}
 		else

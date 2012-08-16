@@ -1169,6 +1169,11 @@ if ($action == 'create')
             }
         }
     }
+
+    // Other options
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+
     // Bouton "Create Draft"
     print "</table>\n";
 
@@ -1510,6 +1515,10 @@ else
             print '</tr>';
         }
 
+        // Other options
+        $parameters=array();
+        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+
         print '</table><br>';
 
         if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
@@ -1600,6 +1609,12 @@ else
                     print $form->select_type_of_lines($object->lines[$i]->product_type,'type',1);
                     if ($forceall || ($conf->product->enabled && $conf->service->enabled)
                     || (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
+                }
+
+                if (is_object($hookmanager))
+                {
+                    $parameters=array('fk_parent_line'=>$line->fk_parent_line, 'line'=>$object->lines[$i],'var'=>$var,'num'=>$num,'i'=>$i);
+                    echo $hookmanager->executeHooks('formEditProductOptions',$parameters,$object,$action);
                 }
 
                 // Description - Editor wysiwyg
@@ -1731,6 +1746,12 @@ else
             print $form->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1,0,$forceall);
             if ($forceall || ($conf->product->enabled && $conf->service->enabled)
             || (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
+
+            if (is_object($hookmanager))
+            {
+                $parameters=array();
+                echo $hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
+            }
 
             // Editor wysiwyg
             require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");

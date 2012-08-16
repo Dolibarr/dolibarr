@@ -492,6 +492,10 @@ else
             }
             print '</tr>';
 
+            // Other attributes
+            $parameters=array('colspan' => ' colspan="3"');
+            $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+
             print "</table><br><br>";
 
 
@@ -672,6 +676,10 @@ else
             }
             else print $langs->trans("NoDolibarrAccess");
             print '</td></tr>';
+
+            // Other attributes
+            $parameters=array('colspan' => ' colspan="3"');
+            $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
             print '</table><br>';
 
@@ -857,6 +865,10 @@ else
         }
         else print $langs->trans("NoDolibarrAccess");
         print '</td></tr>';
+
+        // Other attributes
+        $parameters=array('colspan' => ' colspan="3"');
+        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
         print "</table>";
 

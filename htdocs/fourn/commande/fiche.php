@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under	the	terms of the GNU General Public	License	as published by
@@ -169,7 +170,36 @@ else if ($action == 'reopen' && $user->rights->fournisseur->commande->approuver)
  */
 else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 {
-    if (($_POST['qty'] || $_POST['pqty']) && (($_POST['pu'] && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprodfournprice']))
+    $langs->load('errors');
+    $error = false;
+
+    if ($_POST['pu'] < 0 && $_POST['qty'] < 0)
+    {
+        setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPrice'), $langs->transnoentitiesnoconv('Qty')), 'errors');
+        $error = true;
+    }
+    if (empty($_POST['idprodfournprice']) && $_POST['type'] < 0)
+    {
+        setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), 'errors');
+        $error = true;
+    }
+    if (empty($_POST['idprodfournprice']) && (! isset($_POST['pu']) || $_POST['pu']=='')) // Unit price can be 0 but not ''
+    {
+        setEventMessage($langs->trans($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPrice'))), 'errors');
+        $error = true;
+    }
+    if (empty($_POST['idprodfournprice']) && empty($_POST['np_desc']) && empty($_POST['dp_desc']))
+    {
+        setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), 'errors');
+        $error = true;
+    }
+    if ((! isset($_POST['qty']) || $_POST['qty'] == ''))
+    {
+        setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), 'errors');
+        $error = true;
+    }
+
+    if (!$error && (($_POST['qty'] || $_POST['pqty']) && (($_POST['pu'] && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprodfournprice'])))
     {
         if ($object->fetch($id) < 0) dol_print_error($db,$object->error);
         if ($object->fetch_thirdparty() < 0) dol_print_error($db,$object->error);
@@ -223,7 +253,6 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
             if ($idprod == -1)
             {
                 // Quantity too low
-                $langs->load("errors");
                 $mesg='<div class="error">'.$langs->trans("ErrorQtyTooLowForThisSupplier").'</div>';
             }
         }
@@ -288,9 +317,9 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
             unset($localtax1_tx);
             unset($localtax2_tx);
         }
-        else if (empty($mesg))
+        else
         {
-            $mesg='<div class="error">'.$object->error.'</div>';
+            $mesgs[] ='<div class="error">'.$object->error.'</div>';
         }
     }
 }
@@ -1186,6 +1215,10 @@ if ($id > 0 || ! empty($ref))
             print '</tr>';
         }
 
+        // Other attributes
+        $parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"');
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+
         // Ligne de	3 colonnes
         print '<tr><td>'.$langs->trans("AmountHT").'</td>';
         print '<td align="right"><b>'.price($object->total_ht).'</b></td>';
@@ -1382,6 +1415,12 @@ if ($id > 0 || ! empty($ref))
                     if ($conf->product->enabled && $conf->service->enabled) print '<br>';
                 }
 
+                if (is_object($hookmanager))
+                {
+                    $parameters=array('fk_parent_line'=>$line->fk_parent_line, 'line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i);
+                    echo $hookmanager->executeHooks('formEditProductOptions',$parameters,$object,$action);
+                }
+
                 // Description - Editor wysiwyg
                 require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
                 $nbrows=ROWS_2;
@@ -1437,6 +1476,12 @@ if ($id > 0 || ! empty($ref))
             print $form->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1,0,$forceall);
             if ($forceall || ($conf->product->enabled && $conf->service->enabled)
             || (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
+
+            if (is_object($hookmanager))
+            {
+                $parameters=array();
+                echo $hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
+            }
 
             $nbrows=ROWS_2;
             if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
@@ -1786,7 +1831,6 @@ if ($id > 0 || ! empty($ref))
         dol_print_error($db);
     }
 }
-
 
 // End of page
 llxFooter();

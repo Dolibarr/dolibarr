@@ -62,6 +62,11 @@ $actioncomm = new ActionComm($db);
 $contact = new Contact($db);
 //var_dump($_POST);
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+$hookmanager=new HookManager($db);
+$hookmanager->initHooks(array('actioncard'));
+
 
 /*
  * Action creation de l'action
@@ -566,6 +571,10 @@ if ($action == 'create')
     $doleditor->Create();
     print '</td></tr>';
 
+        // Other attributes
+        $parameters=array();
+        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$actioncomm,$action);    // Note that $action and $object may have been modified by hook
+
 	print '</table>';
 
 	print '<center><br>';
@@ -943,6 +952,10 @@ if ($id)
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
 		print dol_htmlentitiesbr($act->note);
 		print '</td></tr>';
+
+                // Other attributes
+                $parameters=array();
+                $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
 
 		print '</table>';
 	}

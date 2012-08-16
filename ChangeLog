@@ -39,6 +39,7 @@ For users:
 - Fix: No images into product description lines as PDF generation does
   not work with this.
 - New: [ task #326 ]: Add a numbering module to suggest automatically a product ref
+- Fix: Errors weren't being shown in customer's & supplier's orders
 
 For developers:
 - New: Add webservice for thirdparty creation and list.
