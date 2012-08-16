@@ -41,7 +41,7 @@
 	<?php
 	if (is_object($hookmanager))
 	{
-	    $parameters=array('fk_parent_line'=>$line->fk_parent_line);
+	    $parameters=array('line'=>$line,'fk_parent_line'=>$line->fk_parent_line,'var'=>$var,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer);
 	    echo $hookmanager->executeHooks('formEditProductOptions',$parameters,$this,$action);
 	}
 
@@ -75,7 +75,7 @@
 	</td>
 
 <?php
-if (! empty($conf->margin->enabled)) { 
+if (! empty($conf->margin->enabled)) {
 ?>
 	<td align="right"><input type="text" size="5" name="buying_price" value="<?php echo price($line->pa_ht,0,'',0); ?>"></td>
 <?php
