@@ -66,7 +66,13 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 										$("#'.$htmlname.'").val(item.key).trigger("change");
 									}
 									var label = item.label.toString();
-									return { label: label, value: item.value, id: item.key, disabled: item.disabled }
+									var update = {};
+									if (options.update) {
+										$.each(options.update, function(key, value) {
+											update[key] = item[value];
+										});
+									}
+									return { label: label, value: item.value, id: item.key, update: update, disabled: item.disabled }
 								}));
 							}, "json");
 						},
@@ -74,6 +80,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     					minLength: '.$minLength.',
     					select: function( event, ui ) {
     						$("#'.$htmlname.'").val(ui.item.id).trigger("change");
+    						// Disable an element
     						if (options.disabled) {
     							if (ui.item.disabled) {
     								$("#" + options.disabled).attr("disabled", "disabled");
@@ -83,6 +90,12 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     							} else {
     								$("#" + options.disabled).removeAttr("disabled");
     							}
+    						}
+    						// Update an element
+    						if (ui.item.update) {
+    							$.each(ui.item.update, function(key, value) {
+    								$("#" + key).val(value);
+    							});
     						}
     					}
 					}).data( "autocomplete" )._renderItem = function( ul, item ) {

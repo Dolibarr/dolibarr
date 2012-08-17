@@ -1424,6 +1424,7 @@ class Form
                 $outkey=$objp->idprodfournprice;
                 $outref=$objp->ref;
                 $outval='';
+                $outqty=1;
 
                 $opt = '<option value="'.$objp->idprodfournprice.'"';
                 if ($selected && $selected == $objp->idprodfournprice) $opt.= ' selected="selected"';
@@ -1451,6 +1452,7 @@ class Form
 
                     $opt.= price($objp->fprice).' '.$currencytext."/".$objp->quantity;
                     $outval.= price($objp->fprice).' '.$currencytextnoent."/".$objp->quantity;
+                    $outqty=$objp->quantity;
                     if ($objp->quantity == 1)
                     {
                         $opt.= strtolower($langs->trans("Unit"));
@@ -1488,7 +1490,7 @@ class Form
                 // "key" value of json key array is used by jQuery automatically as selected value
                 // "label" value of json key array is used by jQuery automatically as text for combo box
                 $outselect.=$opt;
-                array_push($outjson, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'disabled'=>(empty($objp->idprodfournprice)?true:false)));
+                array_push($outjson, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'qty'=>$outqty, 'disabled'=>(empty($objp->idprodfournprice)?true:false)));
 
                 $i++;
             }

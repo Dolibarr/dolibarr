@@ -1806,7 +1806,11 @@ else
                 print '<tr '.$bc[$var].'>';
                 print '<td colspan="4">';
 
-                $ajaxoptions=array('disabled' => 'addPredefinedProductButton', 'error' => $langs->trans("NoPriceDefinedForThisSupplier"));
+                $ajaxoptions=array(
+                		'update' => array('pqty' => 'qty'),
+                		'disabled' => 'addPredefinedProductButton',
+                		'error' => $langs->trans("NoPriceDefinedForThisSupplier")
+                );
                 $form->select_produits_fournisseurs($object->socid, '', 'idprodfournprice', '', '', $ajaxoptions);
 
                 if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) print '<br>';
@@ -1823,7 +1827,7 @@ else
 				$doleditor->Create();
 
                 print '</td>';
-                print '<td align="right"><input type="text" name="qty" value="1" size="1"></td>';
+                print '<td align="right"><input type="text" id="pqty" name="qty" value="1" size="1"></td>';
                 print '<td>&nbsp;</td>';
                 print '<td>&nbsp;</td>';
                 print '<td align="center" valign="middle" colspan="2"><input type="submit" id="addPredefinedProductButton" class="button" value="'.$langs->trans("Add").'"></td>';
