@@ -319,7 +319,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
         }
         else
         {
-            $mesgs[] ='<div class="error">'.$object->error.'</div>';
+            setEventMessage($object->error, 'errors');
         }
     }
 }

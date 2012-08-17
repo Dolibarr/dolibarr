@@ -28,26 +28,26 @@
  *	\brief      Page to create/see an invoice
  */
 
-require('../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php');
-require_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
-require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php');
-require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
-if (! empty($conf->commande->enabled)) require_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
-if (! empty($conf->projet->enabled))
-{
-	require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
-	require_once(DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php');
+require '../main.inc.php';
+require DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+require DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
+require DOL_DOCUMENT_ROOT . '/core/modules/facture/modules_facture.php';
+require DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
+require DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
+require DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+require DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+
+if (! empty($conf->commande->enabled)) {
+	require DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
+}
+if (! empty($conf->projet->enabled)) {
+	require DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+	require DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
 }
 
 $langs->load('bills');
-//print 'ee'.$langs->trans('BillsCustomer');exit;
-
 $langs->load('companies');
 $langs->load('products');
 $langs->load('main');
@@ -2374,7 +2374,7 @@ else if ($id > 0 || ! empty($ref))
         print '<table class="nobordernopadding" width="100%"><tr><td>';
         print $langs->trans('RefCustomer');
         print '</td>';
-        if ($action != 'refclient' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+        if ($action != 'refclient' && ! empty($object->brouillon)) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
         print '</tr></table>';
         print '</td>';
         print '<td colspan="5">';
@@ -2547,7 +2547,7 @@ else if ($id > 0 || ! empty($ref))
         print '<table class="nobordernopadding" width="100%"><tr><td>';
         print $langs->trans('Date');
         print '</td>';
-        if ($object->type != 2 && $action != 'editinvoicedate' && $object->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
+        if ($object->type != 2 && $action != 'editinvoicedate' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
         print '</tr></table>';
         print '</td><td colspan="3">';
 
@@ -2770,7 +2770,7 @@ else if ($id > 0 || ! empty($ref))
         print '<table class="nobordernopadding" width="100%"><tr><td>';
         print $langs->trans('DateMaxPayment');
         print '</td>';
-        if ($object->type != 2 && $action != 'editpaymentterm' && $object->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editpaymentterm&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
+        if ($object->type != 2 && $action != 'editpaymentterm' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editpaymentterm&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
         print '</tr></table>';
         print '</td><td colspan="3">';
         if ($object->type != 2)
@@ -2782,7 +2782,7 @@ else if ($id > 0 || ! empty($ref))
             else
             {
                 print dol_print_date($object->date_lim_reglement,'daytext');
-                if ($object->date_lim_reglement < ($now - $conf->facture->client->warning_delay) && ! $object->paye && $object->statut == 1 && ! $object->am) print img_warning($langs->trans('Late'));
+                if ($object->date_lim_reglement < ($now - $conf->facture->client->warning_delay) && ! $object->paye && $object->statut == 1 && ! isset($object->am)) print img_warning($langs->trans('Late'));
             }
         }
         else
@@ -2796,7 +2796,7 @@ else if ($id > 0 || ! empty($ref))
         print '<table class="nobordernopadding" width="100%"><tr><td>';
         print $langs->trans('PaymentConditionsShort');
         print '</td>';
-        if ($object->type != 2 && $action != 'editconditions' && $object->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+        if ($object->type != 2 && $action != 'editconditions' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
         print '</tr></table>';
         print '</td><td colspan="3">';
         if ($object->type != 2)
@@ -2821,7 +2821,7 @@ else if ($id > 0 || ! empty($ref))
         print '<table class="nobordernopadding" width="100%"><tr><td>';
         print $langs->trans('PaymentMode');
         print '</td>';
-        if ($action != 'editmode' && $object->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+        if ($action != 'editmode' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
         print '</tr></table>';
         print '</td><td colspan="3">';
         if ($action == 'editmode')
@@ -2868,7 +2868,7 @@ else if ($id > 0 || ! empty($ref))
         print '<td align="left" colspan="3">'.($object->getLibStatut(4,$totalpaye)).'</td></tr>';
 
         // Project
-        if ($conf->projet->enabled)
+        if (! empty($conf->projet->enabled))
         {
             $langs->load('projects');
             print '<tr>';
