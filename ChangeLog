@@ -40,6 +40,8 @@ For users:
   not work with this.
 - New: [ task #326 ]: Add a numbering module to suggest automatically a product ref
 - Fix: Errors weren't being shown in customer's & supplier's orders
+- New: Add conditional substitution IF/ELSEIF/ENDIF for ODT templates
+- New: Basic implementation of hooks and triggers for a lot (most) of core modules: action/calendar, trips and expenses, dons, vat payment, contact/society, contract, product lines, expedition, order supplier and order invoice (lines included), intervention card, project, tasks
 
 For developers:
 - New: Add webservice for thirdparty creation and list.
@@ -52,6 +54,7 @@ For developers:
 - New: removed deprecated methods
        ldap::connect, formadmin::select_lang,
        html::select_tva
+- New: Add custom substitution function for ODT product lines: mymodule_completesubstitutionarray_lines()
 
 
 
