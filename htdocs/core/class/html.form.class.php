@@ -1335,9 +1335,10 @@ class Form
      *	@param  string	$htmlname       Name of HTML Select
      *  @param	string	$filtertype     Filter on product type (''=nofilter, 0=product, 1=service)
      *	@param  string	$filtre			For a SQL filter
+     *	@param	array	$ajaxoptions	Options for ajax_autocompleter
      *	@return	void
      */
-    function select_produits_fournisseurs($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='')
+    function select_produits_fournisseurs($socid, $selected='', $htmlname='productid', $filtertype='', $filtre='', $ajaxoptions=array())
     {
         global $langs,$conf;
         global $price_level, $status, $finished;
@@ -1345,7 +1346,8 @@ class Form
         if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
         {
             // mode=2 means suppliers products
-            print ajax_autocompleter('', $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', ($socid > 0?'socid='.$socid.'&':'').'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
+            $urloption=($socid > 0?'socid='.$socid.'&':'').'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished;
+            print ajax_autocompleter('', $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
             print $langs->trans("RefOrLabel").' : <input type="text" size="16" name="search_'.$htmlname.'" id="search_'.$htmlname.'">';
             print '<br>';
         }
@@ -1486,10 +1488,7 @@ class Form
                 // "key" value of json key array is used by jQuery automatically as selected value
                 // "label" value of json key array is used by jQuery automatically as text for combo box
                 $outselect.=$opt;
-                // FIXME don't select with autocomplete
-                if (! empty($objp->idprodfournprice)) {
-                	array_push($outjson,array('key'=>$outkey,'value'=>$outref,'label'=>$outval));
-                }
+                array_push($outjson, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'disabled'=>(empty($objp->idprodfournprice)?true:false)));
 
                 $i++;
             }
