@@ -1425,7 +1425,7 @@ class Form
 
                 $opt = '<option value="'.$objp->idprodfournprice.'"';
                 if ($selected && $selected == $objp->idprodfournprice) $opt.= ' selected="selected"';
-                if ($objp->fprice == '') $opt.=' disabled="disabled"';
+                if (empty($objp->idprodfournprice)) $opt.=' disabled="disabled"';
                 $opt.= '>';
 
                 $objRef = $objp->ref;
@@ -1440,7 +1440,7 @@ class Form
                 $opt.=dol_trunc($objp->label,18).' - ';
                 $outval.=dol_trunc($label,18).' - ';
 
-                if ($objp->fprice != '') 	// Keep != ''
+                if (! empty($objp->idprodfournprice))
                 {
                     $currencytext=$langs->trans("Currency".$conf->currency);
                     $currencytextnoent=$langs->transnoentities("Currency".$conf->currency);
@@ -1486,7 +1486,10 @@ class Form
                 // "key" value of json key array is used by jQuery automatically as selected value
                 // "label" value of json key array is used by jQuery automatically as text for combo box
                 $outselect.=$opt;
-                array_push($outjson,array('key'=>$outkey,'value'=>$outref,'label'=>$outval));
+                // FIXME don't select with autocomplete
+                if (! empty($objp->idprodfournprice)) {
+                	array_push($outjson,array('key'=>$outkey,'value'=>$outref,'label'=>$outval));
+                }
 
                 $i++;
             }

@@ -1614,7 +1614,7 @@ else
                 if (is_object($hookmanager))
                 {
                     $parameters=array('fk_parent_line'=>$line->fk_parent_line, 'line'=>$object->lines[$i],'var'=>$var,'num'=>$num,'i'=>$i);
-                    echo $hookmanager->executeHooks('formEditProductOptions',$parameters,$object,$action);
+                    $reshook=$hookmanager->executeHooks('formEditProductOptions',$parameters,$object,$action);
                 }
 
                 // Description - Editor wysiwyg
@@ -1750,7 +1750,7 @@ else
             if (is_object($hookmanager))
             {
                 $parameters=array();
-                echo $hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
+                $reshook=$hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
             }
 
             // Editor wysiwyg
@@ -1812,7 +1812,7 @@ else
                 if (is_object($hookmanager))
 				{
 			        $parameters=array('htmlname'=>'idprodfournprice');
-				    echo $hookmanager->executeHooks('formCreateProductSupplierOptions',$parameters,$object,$action);
+				    $reshook=$hookmanager->executeHooks('formCreateProductSupplierOptions',$parameters,$object,$action);
 				}
 
 				$nbrows=ROWS_2;

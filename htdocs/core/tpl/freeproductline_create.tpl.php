@@ -62,7 +62,7 @@ if (! empty($conf->margin->enabled)) {
 	if (is_object($hookmanager))
 	{
 	    $parameters=array();
-	    echo $hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
+	    $reshook=$hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
 	}
 
 	// Editor wysiwyg

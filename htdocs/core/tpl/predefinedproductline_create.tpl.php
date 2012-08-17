@@ -77,7 +77,7 @@ jQuery(document).ready(function() {
 	if (is_object($hookmanager))
 	{
         $parameters=array('fk_parent_line'=>$_POST["fk_parent_line"]);
-	    echo $hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
+	    $reshook=$hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
 	}
 
 	// Editor wysiwyg
