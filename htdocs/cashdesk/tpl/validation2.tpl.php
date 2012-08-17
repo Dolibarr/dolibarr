@@ -31,7 +31,7 @@ $langs->load("main");
 		largeur = 600;
 		hauteur = 500
 		opt = 'width='+largeur+', height='+hauteur+', left='+(screen.width - largeur)/2+', top='+(screen.height-hauteur)/2+'';
-		window.open('validation_ticket.php?facid=<?php echo $_GET['facid']; ?>', 'Print ticket', opt);
+		window.open('validation_ticket.php?facid=<?php echo $_GET['facid']; ?>', '<?php echo $langs->trans('PrintTicket') ?>', opt);
 	}
 
 	popupTicket();
