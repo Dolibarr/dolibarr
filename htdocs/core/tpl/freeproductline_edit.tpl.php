@@ -42,7 +42,7 @@
 	if (is_object($hookmanager))
 	{
 	    $parameters=array('line'=>$line,'fk_parent_line'=>$line->fk_parent_line,'var'=>$var,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer);
-	    echo $hookmanager->executeHooks('formEditProductOptions',$parameters,$this,$action);
+	    $reshook=$hookmanager->executeHooks('formEditProductOptions',$parameters,$this,$action);
 	}
 
 	// editeur wysiwyg

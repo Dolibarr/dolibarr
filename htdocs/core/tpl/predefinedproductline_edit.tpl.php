@@ -52,7 +52,7 @@
 		{
 		    $fk_parent_line = ($_POST["fk_parent_line"] ? $_POST["fk_parent_line"] : $line->fk_parent_line);
 		    $parameters=array('line'=>$line,'fk_parent_line'=>$fk_parent_line,'var'=>$var,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer);
-		    echo $hookmanager->executeHooks('formEditProductOptions',$parameters,$this,$action);
+		    $reshook=$hookmanager->executeHooks('formEditProductOptions',$parameters,$this,$action);
 		}
 
 		// editeur wysiwyg

@@ -193,13 +193,14 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
         setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), 'errors');
         $error = true;
     }
-    if ((! isset($_POST['qty']) || $_POST['qty'] == ''))
+    if (empty($_POST['idprodfournprice']) && (! isset($_POST['qty']) || $_POST['qty'] == '')
+    || ! empty($_POST['idprodfournprice']) && (! isset($_POST['pqty']) || $_POST['pqty'] == ''))
     {
         setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), 'errors');
         $error = true;
     }
 
-    if (!$error && (($_POST['qty'] || $_POST['pqty']) && (($_POST['pu'] && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprodfournprice'])))
+    if (! $error && (($_POST['qty'] || $_POST['pqty']) && (($_POST['pu'] && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprodfournprice'])))
     {
         if ($object->fetch($id) < 0) dol_print_error($db,$object->error);
         if ($object->fetch_thirdparty() < 0) dol_print_error($db,$object->error);
@@ -1192,7 +1193,7 @@ if ($id > 0 || ! empty($ref))
             print '</td>';
 
         // Project
-        if ($conf->projet->enabled)
+        if (! empty($conf->projet->enabled))
         {
             $langs->load('projects');
             print '<tr><td height="10">';
@@ -1215,9 +1216,9 @@ if ($id > 0 || ! empty($ref))
             print '</tr>';
         }
 
-        // Other attributes
-        $parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"');
-	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		// Other attributes
+		$parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"');
+		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
         // Ligne de	3 colonnes
         print '<tr><td>'.$langs->trans("AmountHT").'</td>';
@@ -1418,7 +1419,7 @@ if ($id > 0 || ! empty($ref))
                 if (is_object($hookmanager))
                 {
                     $parameters=array('fk_parent_line'=>$line->fk_parent_line, 'line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i);
-                    echo $hookmanager->executeHooks('formEditProductOptions',$parameters,$object,$action);
+                    $reshook=$hookmanager->executeHooks('formEditProductOptions',$parameters,$object,$action);
                 }
 
                 // Description - Editor wysiwyg
@@ -1474,13 +1475,13 @@ if ($id > 0 || ! empty($ref))
 
             $forceall=1;
             print $form->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1,0,$forceall);
-            if ($forceall || ($conf->product->enabled && $conf->service->enabled)
+            if ($forceall || (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
             || (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
 
             if (is_object($hookmanager))
             {
                 $parameters=array();
-                echo $hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
+                $reshook=$hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
             }
 
             $nbrows=ROWS_2;
@@ -1536,7 +1537,7 @@ if ($id > 0 || ! empty($ref))
 				if (is_object($hookmanager))
 				{
 			        $parameters=array('htmlname'=>'idprodfournprice');
-				    echo $hookmanager->executeHooks('formCreateProductSupplierOptions',$parameters,$object,$action);
+				    $reshook=$hookmanager->executeHooks('formCreateProductSupplierOptions',$parameters,$object,$action);
 				}
 
                 $nbrows=ROWS_2;

@@ -291,7 +291,7 @@ if ($id || $ref)
 					if (is_object($hookmanager))
 					{
 						$parameters=array('filtre'=>"fournisseur=1",'html_name'=>'id_fourn','selected'=>GETPOST("id_fourn"),'showempty'=>1,'prod_id'=>$product->id);
-					    echo $hookmanager->executeHooks('formCreateThirdpartyOptions',$parameters,$object,$action);
+					    $reshook=$hookmanager->executeHooks('formCreateThirdpartyOptions',$parameters,$object,$action);
 					}
 				}
 				print '</td></tr>';
