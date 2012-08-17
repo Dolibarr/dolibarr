@@ -1,0 +1,19 @@
+# Dolibarr language file - ca_ES - mailmanspip
+CHARSET=UTF-8
+MailmanSpipSetup=Configuració del mòdul Mailman i SPIP
+MailmanTitle=Sistema de llistes de correu Mailman
+DescADHERENT_MAILMAN_LISTS=Llista (es) per a la subscripció automàtica dels nous membres (separats per comes)
+TestSubscribe=Per comprovar la subscripció a llistes Mailman
+TestUnSubscribe=Per comprovar la cancel·lació de subscripcions a llistes Mailman
+MailmanCreationSuccess=La prova de subscripció ha estat realitzada amb èxit
+MailmanDeletionSuccess=La prova de desubscripció ha estat realitzada amb èxit
+SynchroMailManEnabled=Una actualització de Mailman ha d'efectuar-se
+SynchroSpipEnabled=Una actualització de Mailman ha d'efectuar-se
+DescADHERENT_MAILMAN_ADMINPW=Contrasenya d'administrador Mailman
+DescADHERENT_MAILMAN_URL=URL per a les subscripcions Mailman
+DescADHERENT_MAILMAN_UNSUB_URL=URL per a les desubscripcions Mailman
+SPIPTitle=Sistema de gestió de continguts SPIP
+DescADHERENT_SPIP_SERVEUR=Servidor SPIP
+DescADHERENT_SPIP_DB=Nom de la base de dades d'SPIP
+DescADHERENT_SPIP_USER=Usuari de la base de dades d'SPIP
+DescADHERENT_SPIP_PASS=Contrasenya de la base de dades d'SPIP
