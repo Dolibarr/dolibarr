@@ -407,10 +407,10 @@ TypeContact_facture_internal_SALESREPFOLL=Reprezentant client urmărirea factura
 TypeContact_facture_external_BILLING=Clientul factura de contact
 TypeContact_facture_external_SHIPPING=Clientul de transport maritim de contact
 TypeContact_facture_external_SERVICE=Contactaţi serviciul clienţi
-TypeContact_facture_fourn_internal_SALESREPFOLL=Reprezentant furnizorul urmărirea factura
-TypeContact_facture_fourn_external_BILLING=A lua legatura cu furnizorul factură
-TypeContact_facture_fourn_external_SHIPPING=Furnizor de transport maritim de contact
-TypeContact_facture_fourn_external_SERVICE=Furnizor de servicii de contact
+TypeContact_invoice_supplier_internal_SALESREPFOLL=Reprezentant furnizorul urmărirea factura
+TypeContact_invoice_supplier_external_BILLING=A lua legatura cu furnizorul factură
+TypeContact_invoice_supplier_external_SHIPPING=Furnizor de transport maritim de contact
+TypeContact_invoice_supplier_external_SERVICE=Furnizor de servicii de contact
 PDFLinceDescription=Un model de factura complet, cu RE şi spaniolă IRPF
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:32).
 

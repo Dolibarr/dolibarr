@@ -409,10 +409,10 @@ TypeContact_facture_internal_SALESREPFOLL=Przedstawiciela w ślad za klienta fak
 TypeContact_facture_external_BILLING=kontakt faktury klienta
 TypeContact_facture_external_SHIPPING=kontakt koszty klientów
 TypeContact_facture_external_SERVICE=kontakt z działem obsługi klienta
-TypeContact_facture_fourn_internal_SALESREPFOLL=Przedstawiciela w ślad za faktury dostawcy
-TypeContact_facture_fourn_external_BILLING=kontakt fakturze dostawcy
-TypeContact_facture_fourn_external_SHIPPING=kontakt koszty dostawcy
-TypeContact_facture_fourn_external_SERVICE=Dostawca usługi kontakt
+TypeContact_invoice_supplier_internal_SALESREPFOLL=Przedstawiciela w ślad za faktury dostawcy
+TypeContact_invoice_supplier_external_BILLING=kontakt fakturze dostawcy
+TypeContact_invoice_supplier_external_SHIPPING=kontakt koszty dostawcy
+TypeContact_invoice_supplier_external_SERVICE=Dostawca usługi kontakt
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:21).
 
 
