@@ -297,7 +297,7 @@ CurrencySingXPF=Franco CFP
 CurrencyCentSingEUR=céntimo
 CurrencyThousandthSingTND=milésimo
 
-#### Input reasons #####
+#### Input reasons ####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Campaña correo
 DemandReasonTypeSRC_CAMP_EMAIL=Campaña E-Mailing
@@ -309,3 +309,24 @@ DemandReasonTypeSRC_WOM=Boca a boca
 DemandReasonTypeSRC_PARTNER=Socio
 DemandReasonTypeSRC_EMPLOYEE=Empleado
 DemandReasonTypeSRC_SPONSORSHIP=Patrocinador
+
+#### Paper formats ####
+PaperFormatEU4A0=Formato 4A0
+PaperFormatEU2A0=Formato 2A0
+PaperFormatEUA0=Formato A0
+PaperFormatEUA1=Formato A1
+PaperFormatEUA2=Formato A2
+PaperFormatEUA3=Formato A3
+PaperFormatEUA4=Formato A4
+PaperFormatEUA5=Formato A5
+PaperFormatEUA6=Formato A6
+PaperFormatUSLETTER=Formato carta EE. UU.
+PaperFormatUSLEGAL=Formato legal EE. UU.
+PaperFormatUSEXECUTIVE=Formato ejecutivo EE. UU.
+PaperFormatUSLEDGER=Formato tabloide
+PaperFormatCAP1=Formato canadiense P1
+PaperFormatCAP2=Formato canadiense P2
+PaperFormatCAP3=Formato canadiense P3
+PaperFormatCAP4=Formato canadiense P4
+PaperFormatCAP5=Formato canadiense P5
+PaperFormatCAP6=Formato canadiense P6

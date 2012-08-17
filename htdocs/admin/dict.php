@@ -338,18 +338,23 @@ if ($id == 11)
     $langs->load("propal");
     $langs->load("bills");
     $langs->load("interventions");
-    $elementList = array("commande"=>$langs->trans("Order"),
-    "order_supplier"=>$langs->trans("SupplierOrder"),
-    "contrat"=>$langs->trans("Contract"),
-    "project"=>$langs->trans("Project"),
-    "project_task"=>$langs->trans("Task"),
-    "propal"=>$langs->trans("Propal"),
-    "facture"=>$langs->trans("Bill"),
-    "facture_fourn"=>$langs->trans("SupplierBill"),
-    "fichinter"=>$langs->trans("InterventionCard"));
-    if (! empty($conf->global->MAIN_SUPPORT_CONTACT_TYPE_FOR_THIRDPARTIES)) $elementList["societe"]=$langs->trans("ThirdParty");
-    $sourceList = array("internal"=>$langs->trans("Internal"),
-    "external"=>$langs->trans("External"));
+    $elementList = array(
+        'commande'          => $langs->trans('Order'),
+        'invoice_supplier'  => $langs->trans('SupplierBill'),
+        'order_supplier'    => $langs->trans('SupplierOrder'),
+        'contrat'           => $langs->trans('Contract'),
+        'project'           => $langs->trans('Project'),
+        'project_task'      => $langs->trans('Task'),
+        'propal'            => $langs->trans('Proposal'),
+        'facture'           => $langs->trans('Bill'),
+        'facture_fourn'     => $langs->trans('SupplierBill'),
+        'fichinter'         => $langs->trans('InterventionCard')
+    );
+    if (! empty($conf->global->MAIN_SUPPORT_CONTACT_TYPE_FOR_THIRDPARTIES)) $elementList["societe"] = $langs->trans('ThirdParty');
+    $sourceList = array(
+        'internal' => $langs->trans('Internal'),
+        'external' => $langs->trans('External')
+    );
 }
 
 $msg='';
@@ -827,7 +832,15 @@ if ($id)
                         {
                             $showfield=1;
                             $valuetoshow=$obj->$fieldlist[$field];
-                            if ($valuetoshow=='all') {
+                            if ($value == 'element')
+                            {
+                                $valuetoshow = $elementList[$valuetoshow];
+                            }
+                            else if ($value == 'source')
+                            {
+                                $valuetoshow = $sourceList[$valuetoshow];
+                            }
+                            else if ($valuetoshow=='all') {
                                 $valuetoshow=$langs->trans('All');
                             }
                             else if ($fieldlist[$field]=='pays') {
@@ -909,6 +922,17 @@ if ($id)
                                 $langs->load("sendings");
                                 $key=$langs->trans("SendingMethod".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "SendingMethod".strtoupper($obj->code))?$key:$obj->$fieldlist[$field];
+                            }
+                            else if ($fieldlist[$field] == 'libelle' && $tabname[$_GET['id']]==MAIN_DB_PREFIX.'c_paper_format')
+                            {
+                                $key = $langs->trans('PaperFormat'.strtoupper($obj->code));
+                                $valuetoshow = ($obj->code && ($key != 'PaperFormat'.strtoupper($obj->code))) ? $key : $obj->$fieldlist[$field];
+                            }
+                            else if ($fieldlist[$field] == 'libelle' && $tabname[$_GET['id']] == MAIN_DB_PREFIX.'c_type_fees')
+                            {
+                                $langs->load('trips');
+                                $key = $langs->trans(strtoupper($obj->code));
+                                $valuetoshow = ($obj->code && ($key != strtoupper($obj->code))) ? $key : $obj->$fieldlist[$field];
                             }
                             else if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='pays_id') {
                                 $showfield=0;
