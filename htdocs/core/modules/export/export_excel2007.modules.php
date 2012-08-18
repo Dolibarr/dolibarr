@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,12 +56,12 @@ class ExportExcel2007 extends ExportExcel
 	 */
 	function __construct($db)
 	{
-		global $conf;
+		global $conf, $langs;
 		$this->db = $db;
 
 		$this->id='excel2007';                  // Same value then xxx in file name export_xxx.modules.php
 		$this->label='Excel 2007';               // Label of driver
-		$this->desc='<b>Excel</b> file format (.xlsx)<br>This is native Excel 2007 format (SpreadsheetML).';
+		$this->desc = $langs->trans('Excel2007FormatDesc');
 		$this->extension='xlsx';             // Extension for generated file by this driver
         $this->picto='mime/xls';			// Picto
 		$this->version='1.30';             // Driver version

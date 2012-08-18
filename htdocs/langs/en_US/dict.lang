@@ -252,6 +252,7 @@ CivilityMME=Mrs.
 CivilityMR=Mr.
 CivilityMLE=Ms.
 CivilityMTRE=Master
+CivilityDR=Doctor
 
 ##### Currencies #####
 Currencyeuros=Euros

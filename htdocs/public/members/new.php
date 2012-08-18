@@ -180,7 +180,7 @@ if ($action == 'add')
     if (! in_array(GETPOST('morphy'),array('mor','phy')))
     {
         $error+=1;
-        $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("MorPhy"))."<br>\n";
+        $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv('Nature'))."<br>\n";
     }
     if (empty($_POST["nom"]))
     {
@@ -407,7 +407,7 @@ $morphys["phy"] = $langs->trans("Physical");
 $morphys["mor"] = $langs->trans("Moral");
 if (empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY))
 {
-    print '<tr class="morphy"><td>'.$langs->trans("MorPhy").' <FONT COLOR="red">*</FONT></td><td>'."\n";
+    print '<tr class="morphy"><td>'.$langs->trans('Nature').' <FONT COLOR="red">*</FONT></td><td>'."\n";
     print $form->selectarray("morphy",  $morphys, GETPOST('morphy'), 1);
     print '</td></tr>'."\n";
 }
@@ -417,7 +417,7 @@ else
     print '<input type="hidden" id="morphy" name="morphy" value="'.$conf->global->MEMBER_NEWFORM_FORCEMORPHY.'">';
 }
 // Civility
-print '<tr><td>'.$langs->trans("Civility").'</td><td>';
+print '<tr><td>'.$langs->trans('UserTitle').'</td><td>';
 print $formcompany->select_civility(GETPOST('civilite_id'),'civilite_id').'</td></tr>'."\n";
 // Lastname
 print '<tr><td>'.$langs->trans("Lastname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="nom" size="40" value="'.dol_escape_htmltag(GETPOST('nom')).'"></td></tr>'."\n";
@@ -486,7 +486,7 @@ foreach($extrafields->attribute_label as $key=>$value)
 }
 // Comments
 print '<tr>';
-print '<td valign="top">'.$langs->trans("Comments").' :</td>';
+print '<td valign="top">'.$langs->trans("Comments").'</td>';
 print '<td valign="top"><textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_4.'">'.dol_escape_htmltag(GETPOST('comment')).'</textarea></td>';
 print '</tr>'."\n";
 

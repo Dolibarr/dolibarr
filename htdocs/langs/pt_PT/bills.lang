@@ -403,10 +403,10 @@ TypeContact_facture_internal_SALESREPFOLL=Representante fatura do cliente seguim
 TypeContact_facture_external_BILLING=contacto na factura do Cliente
 TypeContact_facture_external_SHIPPING=contato com o transporte do cliente
 TypeContact_facture_external_SERVICE=contactar o serviço ao cliente
-TypeContact_facture_fourn_internal_SALESREPFOLL=Representante fatura do fornecedor seguimento
-TypeContact_facture_fourn_external_BILLING=Fornecedor Contactar com factura
-TypeContact_facture_fourn_external_SHIPPING=Fornecedor Contactar com transporte
-TypeContact_facture_fourn_external_SERVICE=Fornecedor contactar o serviço de
+TypeContact_invoice_supplier_internal_SALESREPFOLL=Representante fatura do fornecedor seguimento
+TypeContact_invoice_supplier_external_BILLING=Fornecedor Contactar com factura
+TypeContact_invoice_supplier_external_SHIPPING=Fornecedor Contactar com transporte
+TypeContact_invoice_supplier_external_SERVICE=Fornecedor contactar o serviço de
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:28).
 
 
