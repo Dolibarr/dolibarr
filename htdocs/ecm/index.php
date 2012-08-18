@@ -775,7 +775,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
     	{
     		print '<li class="directory collapsed">';
     		print '<div class="ecmjqft">';
-    		print $langs->trans("ECMNoDirecotyYet");
+    		print $langs->trans("ECMNoDirectoryYet");
     		print '</div>';
    			print "</li>\n";
     	}

@@ -180,7 +180,7 @@ class mailing_pomme extends MailingTargets
                     			'firstname' => $obj->firstname,
                     			'other' =>
 					            ($langs->transnoentities("Login").'='.$obj->login).';'.
-//                                ($langs->transnoentities("Civility").'='.$obj->civilite).';'.
+//                                ($langs->transnoentities("UserTitle").'='.$obj->civilite).';'.
 					            ($langs->transnoentities("PhonePro").'='.$obj->office_phone),
                                 'source_url' => $this->url($obj->id),
                                 'source_id' => $obj->id,

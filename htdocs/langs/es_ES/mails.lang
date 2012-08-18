@@ -75,7 +75,8 @@ MailingStatusRead=Leido
 CheckRead=Confirmación de lectura
 YourMailUnsubcribeOK=El correo electrónico <b>%s</b> es correcta desuscribe.
 MailtoEMail=mailto email (hyperlink)
-ActivateCheckRead=Activar Confirmación de lectura y desuscribe option
+ActivateCheckRead=Activar confirmación de lectura y opción de desuscripción
+ActivateCheckReadKey=Clave usada para encriptar la URL de la confirmación de lectura y la función de desuscripción
 
 # Libelle des modules de liste de destinataires mailing=
 MailingModuleDescContactCompanies=Contactos de terceros (clientes potenciales, clientes, proveedores...)

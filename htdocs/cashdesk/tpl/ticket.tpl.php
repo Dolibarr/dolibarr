@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier    <jeremie.o@laposte.net>
  * Copyright (C) 2011      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2012      Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +19,7 @@
 include_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
 
 $langs->load("main");
+$langs->load('cashdesk');
 header("Content-type: text/html; charset=".$conf->file->character_set_client);
 
 $facid=GETPOST('facid','int');
@@ -27,7 +29,7 @@ $object->fetch($facid);
 ?>
 <html>
 <head>
-<title>Print ticket</title>
+<title><?php echo $langs->trans('PrintTicket') ?></title>
 
 <style type="text/css">
 body {

@@ -15,7 +15,7 @@ ValidateDeliveryReceiptConfirm=¿Está seguro de que desea validar esta entrega?
 DeleteDeliveryReceipt=Eliminar la nota de entrega
 DeleteDeliveryReceiptConfirm=¿Está seguro de querer eliminar esta nota de entrega?
 DeliveryMethod=Método de envío
-TrackingNumber=Nº de tracking
+TrackingNumber=Nº de seguimiento
 DeliveryNotValidated=Nota de recepción no validada
 # merou PDF model
 NameAndSignature=Nombre y firma :
