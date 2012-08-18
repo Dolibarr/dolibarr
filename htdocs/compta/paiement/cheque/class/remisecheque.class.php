@@ -513,6 +513,7 @@ class RemiseCheque extends CommonObject
 				$i = 0;
 				while ($objp = $this->db->fetch_object($result))
 				{
+					$docmodel->lines[$i] = (object) array();
 					$docmodel->lines[$i]->bank_chq = $objp->banque;
 					$docmodel->lines[$i]->emetteur_chq = $objp->emetteur;
 					$docmodel->lines[$i]->amount_chq = $objp->amount;

@@ -111,8 +111,6 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			}
 		}
 
-		$month = sprintf("%02d",$month);
-		$year = sprintf("%04d",$year);
 		$_file = $dir . "/bordereau-".$number.".pdf";
 
 		// Create PDF instance

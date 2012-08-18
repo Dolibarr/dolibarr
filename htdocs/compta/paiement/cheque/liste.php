@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2007-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,9 +61,9 @@ $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc,";
 $sql.= " ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE bc.fk_bank_account = ba.rowid";
 $sql.= " AND bc.entity = ".$conf->entity;
-if ($_GET["search_montant"])
+if (GETPOST('search_montant'))
 {
-	$sql.=" AND bc.amount=".price2num($_GET["search_montant"]);
+	$sql.=" AND bc.amount=".price2num(GETPOST('search_montant'));
 }
 $sql.= " ORDER BY $sortfield $sortorder";
 $sql.= $db->plimit($limit+1, $offset);
@@ -75,18 +75,19 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
+	$params='';
 
-	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, "liste.php",$paramlist,$sortfield,$sortorder,'',$num);
+	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, 'liste.php', $params, $sortfield, $sortorder, '', $num);
 
 	print '<form method="get" action="liste.php">';
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),"liste.php","bc.number","",$paramlist,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Date"),"liste.php","dp","",$paramlist,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Account"),"liste.php","ba.label","",$paramlist,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("NbOfCheques"),"liste.php","bc.nbcheque","",$paramlist,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Amount"),"liste.php","bc.amount","",$paramlist,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),"liste.php","bc.statut","",$paramlist,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"),"liste.php","bc.number","",$params,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Date"),"liste.php","dp","",$params,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Account"),"liste.php","ba.label","",$params,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("NbOfCheques"),"liste.php","bc.nbcheque","",$params,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Amount"),"liste.php","bc.amount","",$params,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),"liste.php","bc.statut","",$params,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
@@ -96,7 +97,7 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
-	print '<input class="fat" type="text" size="6" name="search_montant" value="'.$_GET["search_montant"].'">';
+	print '<input class="fat" type="text" size="6" name="search_montant" value="'.GETPOST('search_montant').'">';
 	print '</td>';
 	print '<td class="liste_titre" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
