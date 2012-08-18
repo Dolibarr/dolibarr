@@ -103,7 +103,7 @@ class mailing_contacts2 extends MailingTargets
                             'firstname' => $obj->firstname,
                             'other' =>
                                 ($langs->transnoentities("ThirdParty").'='.$obj->companyname).';'.
-                                ($langs->transnoentities("Civility").'='.($obj->civilite?$langs->transnoentities("Civility".$obj->civilite):'')),
+                                ($langs->transnoentities("UserTitle").'='.($obj->civilite?$langs->transnoentities("Civility".$obj->civilite):'')),
                             'source_url' => $this->url($obj->id),
                             'source_id' => $obj->id,
                             'source_type' => 'contact'

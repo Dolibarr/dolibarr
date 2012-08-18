@@ -68,24 +68,6 @@ $projectstatic = new Project($db);
  * Actions
  */
 
-// Envoi fichier
-if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
-{
-	dol_add_file_process($upload_dir,0,1,'userfile');
-}
-
-// Delete
-if ($action=='delete')
-{
-    $langs->load("other");
-	$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-	$ret=dol_delete_file($file);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-    Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
-    exit;
-}
-
 // Retreive First Task ID of Project if withprojet is on to allow project prev next to work
 if (! empty($project_ref) && ! empty($withproject))
 {
@@ -120,6 +102,25 @@ if ($id > 0 || ! empty($ref))
 		dol_print_error($db);
 	}
 }
+
+// Envoi fichier
+if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
+{
+	dol_add_file_process($upload_dir,0,1,'userfile');
+}
+
+// Delete
+if ($action=='delete')
+{
+    $langs->load("other");
+	$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	$ret=dol_delete_file($file);
+	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+    Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+    exit;
+}
+
 /*
  * View
  */

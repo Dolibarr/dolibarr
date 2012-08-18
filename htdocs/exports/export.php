@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,34 +35,56 @@ $langs->load("exports");
 //if (! $user->admin)
 //  accessforbidden();
 
-$entitytoicon=array(
-	'invoice'=>'bill','invoice_line'=>'bill',
-	'order'=>'order' ,'order_line'=>'order',
-	'propal'=>'propal', 'propal_line'=>'propal',
-	'intervention'=>'intervention' ,'inter_line'=>'intervention',
-	'member'=>'user' ,'member_type'=>'group','subscription'=>'payment',
-	'tax'=>'generic' ,'tax_type'=>'generic',
-	'account'=>'account',
-	'payment'=>'payment',
-	'product'=>'product','stock'=>'generic','warehouse'=>'stock',
-	'category'=>'category',
-	'other'=>'generic',
-	);
-$entitytolang=array(		// Translation code
-	'user'=>'User',
-	'company'=>'Company','contact'=>'Contact',
-	'invoice'=>'Bill','invoice_line'=>'InvoiceLine',
-	'order'=>'Order','order_line'=>'OrderLine',
-    'propal'=>'Proposal','propal_line'=>'ProposalLine',
-	'intervention'=>'Intervention' ,'inter_line'=>'InterLine',
-	'member'=>'Member','member_type'=>'MemberType','subscription'=>'Subscription',
-	'tax'=>'SocialContribution','tax_type'=>'DictionnarySocialContributions',
-	'account'=>'BankTransactions',
-	'payment'=>'Payment',
-	'product'=>'Product','stock'=>'Stock','warehouse'=>'Warehouse',
-	'category'=>'Category',
-	'other'=>'Other'
-	);
+$entitytoicon = array(
+	'invoice'      => 'bill',
+    'invoice_line' => 'bill',
+	'order'        => 'order',
+    'order_line'   => 'order',
+	'propal'       => 'propal',
+    'propal_line'  => 'propal',
+	'intervention' => 'intervention',
+    'inter_line'   => 'intervention',
+	'member'       => 'user',
+    'member_type'  => 'group',
+    'subscription' => 'payment',
+    'payment'      => 'payment',
+	'tax'          => 'generic',
+    'tax_type'     => 'generic',
+    'stock'        => 'generic',
+    'other'        => 'generic',
+	'account'      => 'account',
+	'product'      => 'product',
+    'warehouse'    => 'stock',
+	'category'     => 'category',
+);
+
+// Translation code
+$entitytolang = array(
+	'user'         => 'User',
+	'company'      => 'Company',
+    'contact'      => 'Contact',
+	'invoice'      => 'Bill',
+    'invoice_line' => 'InvoiceLine',
+	'order'        => 'Order',
+    'order_line'   => 'OrderLine',
+    'propal'       => 'Proposal',
+    'propal_line'  => 'ProposalLine',
+	'intervention' => 'Intervention',
+    'inter_line'   => 'InterLine',
+	'member'       => 'Member',
+    'member_type'  => 'MemberType',
+    'subscription' => 'Subscription',
+	'tax'          => 'SocialContribution',
+    'tax_type'     => 'DictionnarySocialContributions',
+	'account'      => 'BankTransactions',
+	'payment'      => 'Payment',
+	'product'      => 'Product',
+    'stock'        => 'Stock',
+    'warehouse'    => 'Warehouse',
+	'category'     => 'Category',
+	'other'        => 'Other',
+    'trip'         => 'TripsAndExpenses'
+);
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
 $datatoexport=GETPOST("datatoexport");

@@ -403,10 +403,10 @@ TypeContact_facture_internal_SALESREPFOLL=ممثل العميل متابعة ف�
 TypeContact_facture_external_BILLING=الزبون فاتورة الاتصال
 TypeContact_facture_external_SHIPPING=العملاء الشحن الاتصال
 TypeContact_facture_external_SERVICE=خدمة العملاء الاتصال
-TypeContact_facture_fourn_internal_SALESREPFOLL=ممثل المورد متابعة فاتورة
-TypeContact_facture_fourn_external_BILLING=المورد فاتورة الاتصال
-TypeContact_facture_fourn_external_SHIPPING=المورد الشحن الاتصال
-TypeContact_facture_fourn_external_SERVICE=المورد خدمة الاتصال
+TypeContact_invoice_supplier_internal_SALESREPFOLL=ممثل المورد متابعة فاتورة
+TypeContact_invoice_supplier_external_BILLING=المورد فاتورة الاتصال
+TypeContact_invoice_supplier_external_SHIPPING=المورد الشحن الاتصال
+TypeContact_invoice_supplier_external_SERVICE=المورد خدمة الاتصال
 PDFLinceDescription=نموذج الفاتورة كاملة مع الطاقة المتجددة الاسبانية وIRPF
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:33).
 

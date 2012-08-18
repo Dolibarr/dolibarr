@@ -30,48 +30,76 @@
  *  @param	string	$selected           Preselecte value
  *	@param	string	$htmlname           HTML name of input field
  *	@param	string	$url                Url for request: /chemin/fichier.php
- *  @param	string	$option				More parameters on URL request
+ *  @param	string	$urloption			More parameters on URL request
  *  @param	int		$minLength			Minimum number of chars to trigger that Ajax search
  *  @param	int		$autoselect			Automatic selection if just one value
+ *  @param	array	$ajaxoptions		Multiple options array
  *	@return string              		Script
  */
-function ajax_autocompleter($selected,$htmlname,$url,$option='',$minLength=2,$autoselect=0)
+function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLength=2, $autoselect=0, $ajaxoptions=array())
 {
     if (empty($minLength)) $minLength=1;
 
 	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.$selected.'" />';
 
 	$script.= '<script type="text/javascript">';
-	$script.= 'jQuery(document).ready(function() {
+	$script.= '$(document).ready(function() {
 					var autoselect = '.$autoselect.';
-					jQuery("input#search_'.$htmlname.'").blur(function() {
+					var options = '.json_encode($ajaxoptions).';
+					$("input#search_'.$htmlname.'").blur(function() {
     					//console.log(this.value.length);
 					    if (this.value.length == 0)
 					    {
-                            jQuery("#search_'.$htmlname.'").val("");
-                            jQuery("#'.$htmlname.'").val("").trigger("change");
+                            $("#search_'.$htmlname.'").val("");
+                            $("#'.$htmlname.'").val("").trigger("change");
+                            if (options.disabled) {
+    							$("#" + options.disabled).removeAttr("disabled");
+    						}
 					    }
                     });
-    				jQuery("input#search_'.$htmlname.'").autocomplete({
+    				$("input#search_'.$htmlname.'").autocomplete({
     					source: function( request, response ) {
-    						jQuery.get("'.$url.($option?'?'.$option:'').'", { '.$htmlname.': request.term }, function(data){
+    						$.get("'.$url.($urloption?'?'.$urloption:'').'", { '.$htmlname.': request.term }, function(data){
 								response( jQuery.map( data, function( item ) {
 									if (autoselect == 1 && data.length == 1) {
-										jQuery("#search_'.$htmlname.'").val(item.value);
-										jQuery("#'.$htmlname.'").val(item.key).trigger("change");
+										$("#search_'.$htmlname.'").val(item.value);
+										$("#'.$htmlname.'").val(item.key).trigger("change");
 									}
 									var label = item.label.toString();
-									return { label: label, value: item.value, id: item.key}
+									var update = {};
+									if (options.update) {
+										$.each(options.update, function(key, value) {
+											update[key] = item[value];
+										});
+									}
+									return { label: label, value: item.value, id: item.key, update: update, disabled: item.disabled }
 								}));
 							}, "json");
 						},
 						dataType: "json",
     					minLength: '.$minLength.',
     					select: function( event, ui ) {
-    						jQuery("#'.$htmlname.'").val(ui.item.id).trigger("change");
+    						$("#'.$htmlname.'").val(ui.item.id).trigger("change");
+    						// Disable an element
+    						if (options.disabled) {
+    							if (ui.item.disabled) {
+    								$("#" + options.disabled).attr("disabled", "disabled");
+    								if (options.error) {
+    									$.jnotify(options.error, "error", true);
+    								}
+    							} else {
+    								$("#" + options.disabled).removeAttr("disabled");
+    							}
+    						}
+    						// Update an element
+    						if (ui.item.update) {
+    							$.each(ui.item.update, function(key, value) {
+    								$("#" + key).val(value);
+    							});
+    						}
     					}
 					}).data( "autocomplete" )._renderItem = function( ul, item ) {
-						return jQuery( "<li></li>" )
+						return $( "<li></li>" )
 						.data( "item.autocomplete", item )
 						.append( \'<a href="#"><span class="tag">\' + item.label + "</span></a>" )
 						.appendTo(ul);

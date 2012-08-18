@@ -1805,10 +1805,16 @@ else
                 $var=! $var;
                 print '<tr '.$bc[$var].'>';
                 print '<td colspan="4">';
-                $form->select_produits_fournisseurs($object->socid,'','idprodfournprice');
+
+                $ajaxoptions=array(
+                		'update' => array('pqty' => 'qty'),
+                		'disabled' => 'addPredefinedProductButton',
+                		'error' => $langs->trans("NoPriceDefinedForThisSupplier")
+                );
+                $form->select_produits_fournisseurs($object->socid, '', 'idprodfournprice', '', '', $ajaxoptions);
 
                 if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) print '<br>';
-                
+
                 if (is_object($hookmanager))
 				{
 			        $parameters=array('htmlname'=>'idprodfournprice');
@@ -1819,12 +1825,12 @@ else
 				if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
 				$doleditor = new DolEditor('np_desc', GETPOST('np_desc'), '', 100, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, $nbrows, 70);
 				$doleditor->Create();
-								
+
                 print '</td>';
-                print '<td align="right"><input type="text" name="qty" value="1" size="1"></td>';
+                print '<td align="right"><input type="text" id="pqty" name="qty" value="1" size="1"></td>';
                 print '<td>&nbsp;</td>';
                 print '<td>&nbsp;</td>';
-                print '<td align="center" valign="middle" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+                print '<td align="center" valign="middle" colspan="2"><input type="submit" id="addPredefinedProductButton" class="button" value="'.$langs->trans("Add").'"></td>';
                 print '</tr>';
                 print '</form>';
             }

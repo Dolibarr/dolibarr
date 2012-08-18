@@ -267,7 +267,7 @@ if ($id > 0)
 	}
 
 	// TVA Intra
-	print '<tr><td nowrap>'.$langs->trans('VATIntraVeryShort').'</td><td colspan="3">';
+	print '<tr><td nowrap>'.$langs->trans('VATIntra').'</td><td colspan="3">';
 	print $object->tva_intra;
 	print '</td></tr>';
 

@@ -1530,7 +1530,12 @@ if ($id > 0 || ! empty($ref))
                 print '<tr '.$bc[$var].'>';
                 print '<td colspan="3">';
 
-                $form->select_produits_fournisseurs($object->fourn_id,'','idprodfournprice');
+                $ajaxoptions=array(
+                		'update' => array('pqty' => 'qty'),
+                		'disabled' => 'addPredefinedProductButton',
+                		'error' => $langs->trans("NoPriceDefinedForThisSupplier")
+                );
+                $form->select_produits_fournisseurs($object->fourn_id, '', 'idprodfournprice', '', '', $ajaxoptions);
 
                 if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) print '<br>';
 
@@ -1546,9 +1551,9 @@ if ($id > 0 || ! empty($ref))
                 $doleditor->Create();
 
                 print '</td>';
-                print '<td align="right"><input type="text" size="2" name="pqty" value="'.(GETPOST('pqty')?GETPOST('pqty'):'1').'"></td>';
+                print '<td align="right"><input type="text" size="2" id="pqty" name="pqty" value="'.(GETPOST('pqty')?GETPOST('pqty'):'1').'"></td>';
                 print '<td align="right" nowrap="nowrap"><input type="text" size="1" name="p_remise_percent" value="'.(GETPOST('p_remise_percent')?GETPOST('p_remise_percent'):$soc->remise_client).'">%</td>';
-                print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
+                print '<td align="center" colspan="4"><input type="submit" id="addPredefinedProductButton" class="button" value="'.$langs->trans('Add').'"></td>';
                 print '</tr>';
 
                 print '</form>';

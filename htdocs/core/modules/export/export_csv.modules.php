@@ -60,7 +60,7 @@ class ExportCsv extends ModeleExports
 		$this->enclosure='"';
 
 		$this->id='csv';                // Same value then xxx in file name export_xxx.modules.php
-		$this->label='Csv';             // Label of driver
+		$this->label = 'CSV';             // Label of driver
 		$this->desc=$langs->trans("CSVFormatDesc",$this->separator,$this->enclosure,$this->escape);
 		$this->extension='csv';         // Extension for generated file by this driver
 		$this->picto='mime/other';		// Picto

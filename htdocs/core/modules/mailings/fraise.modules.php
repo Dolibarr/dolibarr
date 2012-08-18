@@ -201,7 +201,7 @@ class mailing_fraise extends MailingTargets
                     			'firstname' => $obj->firstname,
                     			'other' =>
                                 ($langs->transnoentities("Login").'='.$obj->login).';'.
-                                ($langs->transnoentities("Civility").'='.($obj->civilite?$langs->transnoentities("Civility".$obj->civilite):'')).';'.
+                                ($langs->transnoentities("UserTitle").'='.($obj->civilite?$langs->transnoentities("Civility".$obj->civilite):'')).';'.
                                 ($langs->transnoentities("DateEnd").'='.dol_print_date($this->db->jdate($obj->datefin),'day')).';'.
                                 ($langs->transnoentities("Company").'='.$obj->societe),
                                 'source_url' => $this->url($obj->id),
