@@ -391,7 +391,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             if ($fieldnamekey == 'decalage') $fieldnamekey='Offset';
             if ($fieldnamekey == 'module')   $fieldnamekey='Module';
             if ($fieldnamekey == 'code') $fieldnamekey = 'Code';
-            
+
             $msg.=$langs->trans("ErrorFieldRequired",$langs->transnoentities($fieldnamekey)).'<br>';
         }
     }
@@ -711,14 +711,14 @@ if ($id)
         // Line to type new values
         print "<tr ".$bc[$var].">";
 
-        $obj='';
+        $obj = (object) array();
         // If data was already input, we define them in obj to populate input fields.
         if (GETPOST('actionadd'))
         {
             foreach ($fieldlist as $key=>$val)
             {
-                if (! empty($_POST[$val])) $obj->$val=$_POST[$val];
-
+                if (GETPOST($val))
+                	$obj->$val=GETPOST($val);
             }
         }
 
