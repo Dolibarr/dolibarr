@@ -3,6 +3,7 @@
  * Copyright (C) 2008-2010 Laurent Destailleur   <eldy@uers.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2011      Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,8 +59,6 @@ if (!empty($_SESSION["CASHDESK_ID_WAREHOUSE"]) && $conf->stock->enabled)
 $langs->load("cashdesk");
 $langs->load("main");
 
-$logout='<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png" title="'.dol_escape_htmltag($langs->trans("Logout")).'">';
-
 print '<div class="menu_bloc">';
 print '<ul class="menu">';
 // Link to new sell
@@ -68,7 +67,7 @@ print '<li class="menu_choix1"><a href="affIndex.php?menu=facturation&id=NOUV"><
 print '<li class="menu_choix2"><a href=".." target="backoffice"><span>'.$langs->trans("BackOffice").'</span></a></li>';
 // Disconnect
 print '<li class="menu_choix0">'.$langs->trans("User").': '.$_SESSION['prenom'].' '.$_SESSION['nom'];
-print ' <a href="deconnexion.php">'.$logout.'</a><br>';
+print ' <a href="deconnexion.php">'.img_picto($langs->trans('Logout'), 'logout.png').'</a><br>';
 print $langs->trans("CashDeskThirdParty").': '.$companyLink.'<br>';
 /*print $langs->trans("CashDeskBankCash").': '.$bankcashLink.'<br>';
 print $langs->trans("CashDeskBankCB").': '.$bankcbLink.'<br>';
