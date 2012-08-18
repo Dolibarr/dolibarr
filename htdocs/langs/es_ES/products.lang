@@ -169,3 +169,5 @@ SuppliersPrices=Precios proveedores
 CustomCode=Código aduanero
 CountryOrigin=País de origen
 HiddenIntoCombo=Oculto en las listas
+ProductCodeModel=Modelo de código de producto
+ServiceCodeModel=Modelo de código de servicio

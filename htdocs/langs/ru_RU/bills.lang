@@ -393,10 +393,10 @@ TypeContact_facture_internal_SALESREPFOLL=Четко отследить счет
 TypeContact_facture_external_BILLING=обратитесь в отдел счетов-фактур Покупателям
 TypeContact_facture_external_SHIPPING=обратитесь в службу доставки
 TypeContact_facture_external_SERVICE=обратитесь в клиентскую службу
-TypeContact_facture_fourn_internal_SALESREPFOLL=Четко отследить счет-фактуру поставщика
-TypeContact_facture_fourn_external_BILLING=обратитесь в отдел счетов-фактур Поставщика
-TypeContact_facture_fourn_external_SHIPPING=обратитесь в службу доставки Поставщика
-TypeContact_facture_fourn_external_SERVICE=обратитесь в клиентскую службу Поставщика
+TypeContact_invoice_supplier_internal_SALESREPFOLL=Четко отследить счет-фактуру поставщика
+TypeContact_invoice_supplier_external_BILLING=обратитесь в отдел счетов-фактур Поставщика
+TypeContact_invoice_supplier_external_SHIPPING=обратитесь в службу доставки Поставщика
+TypeContact_invoice_supplier_external_SERVICE=обратитесь в клиентскую службу Поставщика
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:38).
 // до сюда перевел
 

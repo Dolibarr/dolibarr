@@ -1,18 +1,19 @@
 <?php
 /* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 /**
@@ -51,12 +52,12 @@ class ExportTsv extends ModeleExports
      */
     function __construct($db)
     {
-        global $conf;
+        global $conf, $langs;
         $this->db = $db;
 
         $this->id='tsv';                // Same value then xxx in file name export_xxx.modules.php
-        $this->label='Tsv';             // Label of driver
-        $this->desc='<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by separator [tab].';
+        $this->label = 'TSV';             // Label of driver
+        $this->desc = $langs->trans('TsvFormatDesc');
         $this->extension='tsv';         // Extension for generated file by this driver
         $this->picto='mime/other';		// Picto
         $this->version='1.15';         // Driver version
