@@ -158,7 +158,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->banque->c
 
 if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->banque->cheque)
 {
-	$result = $object->fetch($_GET["id"]);
+	$result = $object->fetch($id);
 	$result = $object->validate($user);
 	if ($result >= 0)
 	{
@@ -185,7 +185,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->banque->c
 
 if ($action == 'builddoc' && $user->rights->banque->cheque)
 {
-	$result = $object->fetch($_GET["id"]);
+	$result = $object->fetch($id);
 
 	/*if ($_REQUEST['model'])
 	{
@@ -211,6 +211,22 @@ if ($action == 'builddoc' && $user->rights->banque->cheque)
 	{
 		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
 		exit;
+	}
+}
+
+// Remove file in doc form
+else if ($action == 'remove_file' && $user->rights->banque->cheque)
+{
+	if ($object->fetch($id) > 0)
+	{
+		require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+
+		$langs->load("other");
+
+		$file=$dir.get_exdir($object->number,2,1) . GETPOST('file');
+		$ret=dol_delete_file($file,0,0,0,$object);
+		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('file')));
+		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), 'errors');
 	}
 }
 
@@ -608,8 +624,12 @@ if ($action != 'new')
 {
 	if ($object->statut == 1)
 	{
-		$dirchequereceipts = $dir.get_exdir($object->number,2,1).$object->ref;
-		$formfile->show_documents("remisecheque",$object->ref,$dirchequereceipts,$_SERVER["PHP_SELF"].'?id='.$object->id,1,1);
+		$filename=dol_sanitizeFileName($object->ref);
+		$filedir=$dir.get_exdir($object->number,2,1) . dol_sanitizeFileName($object->ref);
+		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
+
+		$formfile->show_documents('remisecheque', $filename, $filedir, $urlsource, 1, 1);
+
 		print '<br>';
 	}
 }
