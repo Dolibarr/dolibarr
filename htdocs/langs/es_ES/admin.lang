@@ -334,7 +334,7 @@ SecurityTokenIsUnique=¿Usar un parámetro securekey único para cada URL?
 EnterRefToBuildUrl=Introduzca la referencia del objeto %s
 GetSecuredUrl=Obtener la URL calculada
 ButtonHideUnauthorized=Ocultar los botones de acciones no autorizadas en vez de mostrarlos atenuados
-# Modules= undefined=
+# Modules
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos
 Module1Name=Terceros
@@ -893,7 +893,7 @@ SendmailOptionMayHurtBuggedMTA=La funcionalidad de enviar correo electrónico a 
 TranslationSetup=Configuración traducción
 TranslationDesc=La elección del idioma mostrado en pantalla se modifica:<br>* A nivel global desde el menú <strong>Inicio - Configuración - Entorno</strong><br>* De manera específica al usuario desde la pestaña <strong>Interfaz usuario</strong> de su ficha de usuario (hacer clic en su login en la parte superior izquierda de la pantalla).
 TotalNumberOfActivatedModules=Número total de módulos activados: <b>%s</b>
-YouMustEnableOneModule=Debes por lo menos activar 1 módulo.
+YouMustEnableOneModule=Debe activar al menos 1 módulo.
 ##### Module password generation
 PasswordGenerationStandard=Devuelve una contraseña generada por el algoritmo interno Dolibarr: 8 caracteres, números y caracteres en minúsculas mezcladas.
 PasswordGenerationNone=No ofrece contraseñas. La contraseña se introduce manualmente.
