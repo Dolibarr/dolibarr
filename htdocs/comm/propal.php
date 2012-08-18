@@ -680,6 +680,24 @@ else if ($action == "addline" && $user->rights->propale->creer)
 				$price_base_type = $prod->price_base_type;
 			}
 
+			// Update if prices fields are defined
+			if (GETPOST('dp_price_ht') || GETPOST('dp_price_ttc'))
+			{
+				$price_ht=price2num(GETPOST('dp_price_ht'), 'MU');
+				$price_ttc=price2num(GETPOST('dp_price_ttc'), 'MU');
+
+				if ($price_base_type == 'TTC' && $price_ttc != $pu_ttc)
+				{
+					$pu_ttc = $price_ttc;
+					$pu_ht = price2num($price_ttc / (1 + ($prod->tva_tx / 100)),'MU');
+				}
+				else if ($price_base_type != 'TTC' && $price_ht != $pu_ht)
+				{
+					$pu_ht = $price_ht;
+					$pu_ttc = price2num($price_ht * (1 + ($prod->tva_tx / 100)),'MU');
+				}
+			}
+
 			// On reevalue prix selon taux tva car taux tva transaction peut etre different
 			// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
 			if ($tva_tx != $prod->tva_tx)
@@ -714,19 +732,23 @@ else if ($action == "addline" && $user->rights->propale->creer)
 				$desc = $prod->description;
 			}
 
-			$desc.= ($desc && GETPOST('np_desc')) ? ((dol_textishtml($desc) || dol_textishtml(GETPOST('np_desc')))?"<br />\n":"\n") : "";
-			$desc.= GETPOST('np_desc');
+			$desc.= ($desc && GETPOST('dp_desc')) ? ((dol_textishtml($desc) || dol_textishtml(GETPOST('dp_desc')))?"<br />\n":"\n") : "";
+			$desc.= GETPOST('dp_desc');
 			$type = $prod->type;
+			$fournprice=(GETPOST('dp_fournprice')?GETPOST('dp_fournprice'):'');
+			$buyingprice=(GETPOST('dp_buying_price')?GETPOST('dp_buying_price'):'');
 		}
 		else
 		{
 			$pu_ht=GETPOST('np_price');
 			$tva_tx=str_replace('*','',GETPOST('np_tva_tx'));
 			$tva_npr=preg_match('/\*/',GETPOST('np_tva_tx'))?1:0;
-			$desc=GETPOST('dp_desc');
+			$desc=GETPOST('np_desc');
 			$type=GETPOST('type');
 			$localtax1_tx=get_localtax($tva_tx,1,$object->client);
 			$localtax2_tx=get_localtax($tva_tx,2,$object->client);
+			$fournprice=(GETPOST('np_fournprice')?GETPOST('np_fournprice'):'');
+			$buyingprice=(GETPOST('np_buying_price')?GETPOST('np_buying_price'):'');
 		}
 
 		$info_bits=0;
@@ -757,8 +779,8 @@ else if ($action == "addline" && $user->rights->propale->creer)
     			-1,
     			0,
     			GETPOST('fk_parent_line'),
-    			GETPOST('np_fournprice'),
-    			GETPOST('np_buying_price')
+    			$fournprice,
+    			$buyingprice
 			);
 
 			if ($result > 0)
@@ -781,11 +803,17 @@ else if ($action == "addline" && $user->rights->propale->creer)
 
 				unset($_POST['qty']);
 				unset($_POST['type']);
+
 				unset($_POST['np_price']);
-				unset($_POST['dp_desc']);
 				unset($_POST['np_tva_tx']);
 				unset($_POST['np_desc']);
+				unset($_POST['np_fournprice']);
 				unset($_POST['np_buying_price']);
+
+				unset($_POST['dp_desc']);
+				unset($_POST['dp_price']);
+				unset($_POST['dp_fournprice']);
+				unset($_POST['dp_buying_price']);
 			}
 			else
 			{
@@ -914,8 +942,8 @@ else if ($action == 'remove_file' && $user->rights->propale->creer)
 		$upload_dir = $conf->propal->dir_output;
 		$file = $upload_dir . '/' . GETPOST('file');
 		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('file')));
+		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), 'errors');
 	}
 }
 

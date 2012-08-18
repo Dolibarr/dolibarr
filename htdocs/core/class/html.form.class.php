@@ -1080,15 +1080,16 @@ class Form
      *  @param		int			$finished				2=all, 1=finished, 0=raw material
      *  @param		string		$selected_input_value	Value of preselected input text (with ajax)
      *  @param		int			$hidelabel				Hide label
+     *  @param		array		$ajaxoptions			Options for ajax_autocompleter
      *  @return		void
      */
-    function select_produits($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$status=1,$finished=2,$selected_input_value='',$hidelabel=0)
+    function select_produits($selected='', $htmlname='productid', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=0, $ajaxoptions=array())
     {
         global $langs,$conf;
 
         $price_level = (! empty($price_level) ? $price_level : 0);
 
-        if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
+        if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
         {
             if ($selected && empty($selected_input_value))
             {
@@ -1098,7 +1099,8 @@ class Form
                 $selected_input_value=$product->ref;
             }
             // mode=1 means customers products
-            print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', 'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
+            $urloption='htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished;
+            print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
             if (! $hidelabel) print $langs->trans("RefOrLabel").' : ';
             print '<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'" />';
         }
@@ -1131,13 +1133,13 @@ class Form
         $sql = "SELECT ";
         $sql.= " p.rowid, p.label, p.ref, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.duration, p.stock";
         // Multilang : we add translation
-        if ($conf->global->MAIN_MULTILANGS)
+        if (! empty($conf->global->MAIN_MULTILANGS))
         {
             $sql.= ", pl.label as label_translated";
         }
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
         // Multilang : we add translation
-        if ($conf->global->MAIN_MULTILANGS)
+        if (! empty($conf->global->MAIN_MULTILANGS))
         {
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang='". $langs->getDefaultLang() ."'";
         }
@@ -1162,13 +1164,13 @@ class Form
             if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))   // Can use index
             {
                 $sql.=" AND (p.ref LIKE '".$filterkey."%' OR p.label LIKE '".$filterkey."%'";
-                if ($conf->global->MAIN_MULTILANGS) $sql.=" OR pl.label LIKE '".$filterkey."%'";
+                if (! empty($conf->global->MAIN_MULTILANGS)) $sql.=" OR pl.label LIKE '".$filterkey."%'";
                 $sql.=")";
             }
             else
             {
                 $sql.=" AND (p.ref LIKE '%".$filterkey."%' OR p.label LIKE '%".$filterkey."%'";
-                if ($conf->global->MAIN_MULTILANGS) $sql.=" OR pl.label LIKE '%".$filterkey."%'";
+                if (! empty($conf->global->MAIN_MULTILANGS)) $sql.=" OR pl.label LIKE '%".$filterkey."%'";
                 $sql.=")";
             }
         }
@@ -1194,6 +1196,9 @@ class Form
                 $outkey='';
                 $outval='';
                 $outref='';
+                $outprice_ht='';
+                $outprice_ttc='';
+                $outpricebasetype='';
 
                 $objp = $this->db->fetch_object($result);
 
@@ -1206,7 +1211,7 @@ class Form
 
                 $opt = '<option value="'.$objp->rowid.'"';
                 $opt.= ($objp->rowid == $selected)?' selected="selected"':'';
-                if ($conf->stock->enabled && $objp->fk_product_type == 0 && isset($objp->stock))
+                if (! empty($conf->stock->enabled) && $objp->fk_product_type == 0 && isset($objp->stock))
                 {
                     if ($objp->stock > 0)
                     {
@@ -1258,6 +1263,9 @@ class Form
                                 $opt.= price($objp2->price_ttc,1).' '.$currencytext.' '.$langs->trans("TTC");
                                 $outval.= price($objp2->price_ttc,1).' '.$currencytextnoent.' '.$langs->transnoentities("TTC");
                             }
+                            $outprice_ht=price($objp2->price);
+                            $outprice_ttc=price($objp2->price_ttc);
+                            $outpricebasetype=$objp2->price_base_type;
                         }
                     }
                     else
@@ -1279,9 +1287,12 @@ class Form
                         $opt.= price($objp->price_ttc,1).' '.$currencytext.' '.$langs->trans("TTC");
                         $outval.= price($objp->price_ttc,1).' '.$currencytextnoent.' '.$langs->transnoentities("TTC");
                     }
+                    $outprice_ht=price($objp->price);
+                    $outprice_ttc=price($objp->price_ttc);
+                    $outpricebasetype=$objp->price_base_type;
                 }
 
-                if ($conf->stock->enabled && isset($objp->stock) && $objp->fk_product_type == 0)
+                if (! empty($conf->stock->enabled) && isset($objp->stock) && $objp->fk_product_type == 0)
                 {
                     $opt.= ' - '.$langs->trans("Stock").':'.$objp->stock;
                     $outval.=' - '.$langs->transnoentities("Stock").':'.$objp->stock;
@@ -1309,7 +1320,7 @@ class Form
                 // "key" value of json key array is used by jQuery automatically as selected value
                 // "label" value of json key array is used by jQuery automatically as text for combo box
                 $outselect.=$opt;
-                array_push($outjson,array('key'=>$outkey,'value'=>$outref,'label'=>$outval));
+                array_push($outjson, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'price_ht'=>$outprice_ht, 'price_ttc'=>$outprice_ttc, 'pricebasetype'=>$outpricebasetype));
 
                 $i++;
             }
@@ -1343,7 +1354,7 @@ class Form
         global $langs,$conf;
         global $price_level, $status, $finished;
 
-        if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
+        if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
         {
             // mode=2 means suppliers products
             $urloption=($socid > 0?'socid='.$socid.'&':'').'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished;
@@ -2055,7 +2066,7 @@ class Form
                 print '<select id="select'.$htmlname.'" class="flat selectbankaccount" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
                 if ($useempty == 1 || ($useempty == 2 && $num > 1))
                 {
-                    print '<option value="'.$obj->rowid.'">&nbsp;</option>';
+                    print '<option value="-1">&nbsp;</option>';
                 }
 
                 while ($i < $num)

@@ -29,7 +29,7 @@
 <!-- BEGIN PHP TEMPLATE predefinedproductline_create.tpl.php -->
 
 <tr class="liste_titre nodrag nodrop">
-	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="4"' : ' colspan="3"'); ?>>
+	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="3"' : ' colspan="2"'); ?>>
 	<?php
 	echo $langs->trans("AddNewLine").' - ';
 	if ($conf->service->enabled)
@@ -38,6 +38,8 @@
 	echo $langs->trans('RecordedProducts');
 	?>
 	</td>
+	<td align="right"><?php echo $langs->trans('PriceUHT'); ?></td>
+	<td align="right"><?php echo $langs->trans('PriceUTTC'); ?></td>
 	<td align="right"><?php echo $langs->trans('Qty'); ?></td>
 	<td align="right"><?php echo $langs->trans('ReductionShort'); ?></td>
 <?php
@@ -63,16 +65,22 @@ if (! empty($conf->margin->enabled)) {
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery('#idprod').change(function() {
-		  jQuery('#np_desc').focus();
+		  jQuery('#dp_desc').focus();
 	});
 });
 </script>
 
 <tr <?php echo $bcnd[$var]; ?>>
-	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="4"' : ' colspan="3"'); ?>>
+	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="3"' : ' colspan="2"'); ?>>
 	<?php
 
-	$form->select_produits('','idprod','',$conf->product->limit_size,$buyer->price_level);
+	$ajaxoptions=array(
+			'update' => array(
+					'dp_price_ht' => 'price_ht',
+					'dp_price_ttc' => 'price_ttc'
+			)
+	);
+	$form->select_produits('', 'idprod', '', $conf->product->limit_size, $buyer->price_level, 1, 2, '', 0, $ajaxoptions);
 
 	if (is_object($hookmanager))
 	{
@@ -84,19 +92,21 @@ jQuery(document).ready(function() {
 	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
     $nbrows=ROWS_2;
     if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-    $doleditor=new DolEditor('np_desc',$_POST["np_desc"],'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+    $doleditor=new DolEditor('dp_desc',$_POST["dp_desc"],'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
 	$doleditor->Create();
 	?>
 	</td>
+	<td align="right"><input type="text" size="6" id="dp_price_ht" name="dp_price_ht" value="<?php echo (isset($_POST["dp_price_ht"])?$_POST["dp_price_ht"]:''); ?>"></td>
+	<td align="right"><input type="text" size="6" id="dp_price_ttc" name="dp_price_ttc" value="<?php echo (isset($_POST["dp_price_ttc"])?$_POST["dp_price_ttc"]:''); ?>"></td>
 	<td align="right"><input type="text" size="2" name="qty" value="1"></td>
-	<td align="right" nowrap><input type="text" size="1" name="remise_percent" value="<?php echo $buyer->remise_client; ?>">%</td>
+	<td align="right" nowrap="nowrap"><input type="text" size="1" name="remise_percent" value="<?php echo $buyer->remise_client; ?>">%</td>
 <?php
 $colspan = 4;
 if (! empty($conf->margin->enabled)) {
 ?>
 	<td align="right">
-  <select id="np_fournprice" name="np_fournprice" style="display: none;"></select>
-  <input type="text" size="5" id="np_buying_price" name="np_buying_price" value="<?php echo (isset($_POST["np_buying_price"])?$_POST["np_buying_price"]:''); ?>">
+  <select id="dp_fournprice" name="dp_fournprice" style="display: none;"></select>
+  <input type="text" size="5" id="dp_buying_price" name="dp_buying_price" value="<?php echo (isset($_POST["dp_buying_price"])?$_POST["dp_buying_price"]:''); ?>">
   </td>
 <?php
   if($conf->global->DISPLAY_MARGIN_RATES)
