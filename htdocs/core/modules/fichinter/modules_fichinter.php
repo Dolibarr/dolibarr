@@ -44,7 +44,7 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
      *  @param  string	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
-	function liste_modeles($db,$maxfilenamelength=0)
+	static function liste_modeles($db,$maxfilenamelength=0)
 	{
 		global $conf;
 
@@ -223,9 +223,6 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails=0, $
 			// We delete old preview
 			require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 			dol_delete_preview($object);
-
-			// Success in building document. We build meta file.
-			dol_meta_create($object);
 
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
