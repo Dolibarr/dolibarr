@@ -113,6 +113,7 @@ ErrorPhpCurlNotInstalled=La extensión PHP CURL no se encuentra instalada, es in
 ErrorFailedToAddToMailmanList=Ha ocurrido un error al intentar añadir un registro a la lista Mailman o base de datos SPIP
 
 # Warnings
+WarningMandatorySetupNotComplete=Los parámetros obligatorios de configuración no están todavía definidos
 WarningSafeModeOnCheckExecDir=Atención, está activada la opción PHP <b>safe_mode</b>, el comando deberá estar dentro de un directorio declarado dentro del parámetro php <b>safe_mode_exec_dir</b>.
 WarningAllowUrlFopenMustBeOn=El parámetro <b>allow_url_fopen</b> debe ser especificado a <b>on</b> en el archivo <b>php.ini</b> para disponer de este módulo completamente activo. Debe modificar este archivo manualmente
 WarningBuildScriptNotRunned=El script <b>%s</b> todavía no ha ejecutado la construcción de gráficos.
