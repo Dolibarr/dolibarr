@@ -69,7 +69,7 @@ class FormActions
             print '<script type="text/javascript">'."\n";
             print 'jQuery(document).ready(function () {'."\n";
             print 'jQuery("#select'.$htmlname.'").change(function() { select_status(document.'.$formname.'.status.value); });'."\n";
-            print 'jQuery("#val'.$htmlname.'").change(function()    { select_status(document.'.$formname.'.status.value); });'."\n";
+            print 'jQuery("#val'.$htmlname.'").change(function()    { select_status(jQuery("#val'.$htmlname.'").val()); });'."\n";
             print 'select_status(document.'.$formname.'.status.value);'."\n";
             print '});'."\n";
             print 'function select_status(mypercentage) {'."\n";
