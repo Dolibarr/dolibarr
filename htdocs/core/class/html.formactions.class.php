@@ -58,29 +58,51 @@ class FormActions
     {
         global $langs,$conf;
 
-        $listofstatus=array('-1'=>$langs->trans("ActionNotApplicable"),
-                            '0'=>$langs->trans("ActionRunningNotStarted"),
-                            '50'=>$langs->trans("ActionRunningShort"),
-                            '100'=>$langs->trans("ActionDoneShort"));
+        $listofstatus = array(
+            '-1' => $langs->trans("ActionNotApplicable"),
+            '0' => $langs->trans("ActionRunningNotStarted"),
+            '50' => $langs->trans("ActionRunningShort"),
+            '100' => $langs->trans("ActionDoneShort")
+        );
 
         if ($conf->use_javascript_ajax)
         {
             print "\n";
-            print '<script type="text/javascript">'."\n";
-            print 'jQuery(document).ready(function () {'."\n";
-            print 'jQuery("#select'.$htmlname.'").change(function() { select_status(document.'.$formname.'.status.value); });'."\n";
-            print 'jQuery("#val'.$htmlname.'").change(function()    { select_status(jQuery("#val'.$htmlname.'").val()); });'."\n";
-            print 'select_status(document.'.$formname.'.status.value);'."\n";
-            print '});'."\n";
-            print 'function select_status(mypercentage) {'."\n";
-            print 'document.'.$formname.'.percentageshown.value=(mypercentage>=0?mypercentage:\'\');'."\n";
-            print 'document.'.$formname.'.percentage.value=mypercentage;'."\n";
-            print 'if (mypercentage == -1) { document.'.$formname.'.percentageshown.disabled=true; jQuery(".hideifna").hide(); }'."\n";
-            print 'else if (mypercentage == 0) { document.'.$formname.'.percentageshown.disabled=true; jQuery(".hideifna").show();}'."\n";
-            print 'else if (mypercentage == 100) { document.'.$formname.'.percentageshown.disabled=true; jQuery(".hideifna").show();}'."\n";
-            print 'else { document.'.$formname.'.percentageshown.disabled=false; }'."\n";
-            print '}'."\n";
-            print '</script>'."\n";
+            print "<script type=\"text/javascript\">
+                var htmlname = '".$htmlname."';
+
+                jQuery(document).ready(function () {
+                    jQuery('#select'+htmlname).change(function() {
+                        select_status();
+                    });
+                    jQuery('#val'+htmlname).change(function() {
+                        select_status();
+                    });
+                    
+                    select_status();
+                });
+
+                function select_status() {
+                    mypercentage = jQuery('#val'+htmlname).val();
+                    jQuery('input[name=percentageshown]').val((mypercentage>=0?mypercentage:''));
+                    jQuery('input[name=percentage]').val(mypercentage);
+                    if (mypercentage == -1) {
+                        jQuery('input[name=percentageshown]').attr('disabled', 'disabled');
+                        jQuery('.hideifna').hide();
+                    }
+                    else if (mypercentage == 0) {
+                        jQuery('input[name=percentageshown]').attr('disabled', 'disabled');
+                        jQuery('.hideifna').show();
+                    }
+                    else if (mypercentage == 100) {
+                        jQuery('input[name=percentageshown]').attr('disabled', 'disabled');
+                        jQuery('.hideifna').show();
+                    }
+                    else {
+                        jQuery('input[name=percentageshown]').removeAttr('disabled');
+                    }
+                }
+                </script>\n";
             print '<select '.($canedit?'':'disabled="disabled" ').'name="status" id="select'.$htmlname.'" class="flat">';
             foreach($listofstatus as $key => $val)
             {
