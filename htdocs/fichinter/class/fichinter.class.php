@@ -87,7 +87,7 @@ class Fichinter extends CommonObject
 	 */
 	function create()
 	{
-		global $conf;
+		global $conf, $user, $langs;
 
 		dol_syslog(get_class($this)."::create ref=".$this->ref);
 
@@ -156,8 +156,8 @@ class Fichinter extends CommonObject
 		$result=$this->db->query($sql);
 		if ($result)
 		{
-                        $this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."fichinter");
-                        $this->db->commit();
+			$this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."fichinter");
+			$this->db->commit();
 
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
@@ -328,10 +328,9 @@ class Fichinter extends CommonObject
 	 *	Validate a intervention
 	 *
 	 *	@param		User		$user		User that validate
-	 *	@param		string		$outputdir	Output directory
 	 *	@return		int			<0 if KO, >0 if OK
 	 */
-	function setValid($user, $outputdir)
+	function setValid($user)
 	{
 		global $langs, $conf;
 

@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - mails
+# Dolibarr language file - ca_ES - mails 
 CHARSET=UTF-8
 Mailing=E-Mailing
 EMailing=E-Mailing
@@ -39,12 +39,13 @@ MailingStatusDraft=Esborrany
 MailingStatusValidated=Validat
 MailingStatusApproved=Aprovat
 MailingStatusSent=Enviat
-MailingStatusRead=Llegit
 MailingStatusSentPartialy=Enviat parcialment
 MailingStatusSentCompletely=Enviat completament
 MailingStatusError=Error
 MailingStatusNotSent=No enviat
 MailSuccessfulySent=E-mail enviat correctament (de %s a %s)
+MailUnsubcribe=Desubscriure
+Unsuscribe=Desubscriure
 ErrorMailRecipientIsEmpty=L'adreça del destinatari és buida
 WarningNoEMailsAdded=Cap nou e-mail a afegir a la llista destinataris.
 ConfirmValidMailing=Confirmeu la validació del E-Mailing?
@@ -70,6 +71,12 @@ CloneReceivers=Clonar destinataris
 DateLastSend=Data últim enviament
 DateSending=Data enviament
 SentTo=Enviat a <b>%s</b>
+MailingStatusRead=Llegit
+CheckRead=Confirmació de lectura
+YourMailUnsubcribeOK=El correu electrònic <b>%s</b>  és correcta desuscribe.
+MailtoEMail=mailto email (hyperlink)
+ActivateCheckRead=Activar confirmació de lectura i opció de Desubscripció
+ActivateCheckReadKey=Clau usada per xifrar la URL de la confirmació de lectura i la funció de desubscripció
 # Libelle des modules de liste de destinataires mailing==
 MailingModuleDescContactCompanies=Contactes de tercers (clients potencials, clients, proveïdors ...)
 MailingModuleDescDolibarrUsers=Usuaris de Dolibarr

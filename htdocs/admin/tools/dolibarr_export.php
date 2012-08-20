@@ -268,7 +268,7 @@ print $langs->trans("BackupDescY").'<br><br>';
 
                                 <div class="formelementrow"><input type="checkbox" name="nobin_disable_fk"
                                         value="yes" id="checkbox_disable_fk" checked="checked" /> <label
-                                        for="checkbox_disable_fk"> <?php echo $langs->trans("CommandsToDisableForeignKeysForImport"); ?><?php print img_warning('Mandatory if you want to be able to restore your sql dump later'); ?></label>
+                                        for="checkbox_disable_fk"> <?php echo $langs->trans("CommandsToDisableForeignKeysForImport"); ?> <?php print img_info('Mandatory if you want to be able to restore your sql dump later'); ?></label>
                                 </div>
                             </fieldset>
 

@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - interventions
+# Dolibarr language file - ca_ES - interventions 
 CHARSET=UTF-8
 Intervention=Intervenció
 Interventions=Intervencions
@@ -23,6 +23,7 @@ ConfirmModifyIntervention=Esteu segur de voler modificar aquesta intervenció?
 ConfirmDeleteInterventionLine=Esteu segur de voler eliminar aquesta línia?
 NameAndSignatureOfInternalContact=Nom i signatura del participant:
 NameAndSignatureOfExternalContact=Nom i signatura del client:
+DocumentModelStandard=Document model estàndard per a intervencions
 InterventionCardsAndInterventionLines=Fitxes i línies d'intervenció
 InterId=Id intervenció
 InterRef=Ref. intervenció
@@ -39,12 +40,12 @@ ClassifyBilled=Classificar "Facturado"
 StatusInterInvoiced=Facturado
 RelatedInterventions=Intervencions adjuntes
 ShowIntervention=Mostrar intervenció
-##### Types de contacts #####
+##### Types de contacts #####=undefined
 TypeContact_fichinter_internal_INTERREPFOLL=Responsable seguiment de la intervenció
 TypeContact_fichinter_internal_INTERVENING=Interventor
 TypeContact_fichinter_external_BILLING=Contacte client facturació intevenció
 TypeContact_fichinter_external_CUSTOMER=Contacte client seguiment intervenció
-# Modele numérotation
+# Modele numérotation=undefined
 ArcticNumRefModelDesc1=Model de numeració genèric
 ArcticNumRefModelError=Activació impossible
 PacificNumRefModelDesc1=Retorna el número amb el format %syymm-nnnn on yy és l'any, mm. el mes i nnnn un comptador seqüencial sense ruptura i sense quedar a 0

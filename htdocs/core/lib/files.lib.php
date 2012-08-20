@@ -790,16 +790,17 @@ function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0)
 function dol_delete_preview($object)
 {
 	global $langs,$conf;
-    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
     $element = $object->element;
-    $dir = $conf->$element->dir_output;
 
-    if ($object->element == 'order_supplier')   $dir = $conf->fournisseur->dir_output.'/commande';
-    elseif ($object->element == 'invoice_supplier') $dir = $conf->fournisseur->dir_output.'/facture';
-    elseif ($object->element == 'project')          $dir = $conf->projet->dir_output;
-    elseif ($object->element == 'shipping')         $dir = $conf->expedition->dir_output.'/sending';
-    elseif ($object->element == 'delivery')         $dir = $conf->expedition->dir_output.'/receipt';
+    if ($object->element == 'order_supplier')		$dir = $conf->fournisseur->dir_output.'/commande';
+    elseif ($object->element == 'invoice_supplier')	$dir = $conf->fournisseur->dir_output.'/facture';
+    elseif ($object->element == 'project')			$dir = $conf->projet->dir_output;
+    elseif ($object->element == 'shipping')			$dir = $conf->expedition->dir_output.'/sending';
+    elseif ($object->element == 'delivery')			$dir = $conf->expedition->dir_output.'/receipt';
+    elseif ($object->element == 'fichinter')		$dir = $conf->ficheinter->dir_output;
+    else
+    	$dir = $conf->$element->dir_output;
 
     if (empty($dir)) return 'ErrorObjectNoSupportedByFunction';
 
