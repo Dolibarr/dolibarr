@@ -232,8 +232,8 @@ function displayBox($selectedDate,$month,$year)
 
 		// Sur click dans calendrier, appelle fonction dpClickDay
 		echo "<TD class=\"".$dayclass."\"";
-		echo " onMouseOver=\"dpHighlightDay(".$mydate["year"].",".dol_print_date($thedate,"%m").",".$mydate["mday"].",tradMonths)\"";
-		echo " onClick=\"dpClickDay(".$mydate["year"].",".dol_print_date($thedate,"%m").",".$mydate["mday"].",'".$langs->trans("FormatDateShortJava")."')\"";
+		echo " onMouseOver=\"dpHighlightDay(".$mydate["year"].",parseInt('".dol_print_date($thedate,"%m")."',10),".$mydate["mday"].",tradMonths)\"";
+		echo " onClick=\"dpClickDay(".$mydate["year"].",parseInt('".dol_print_date($thedate,"%m")."',10),".$mydate["mday"].",'".$langs->trans("FormatDateShortJava")."')\"";
 		echo ">".sprintf("%02s",$mydate["mday"])."</TD>";
 		$cols++;
 
