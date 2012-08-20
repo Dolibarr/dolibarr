@@ -478,14 +478,14 @@ if ($action == 'create')
 	print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
 	print '<td>';
 	$percent=-1;
-	if (isset($_GET['percentage']) || isset($_POST['percentage']))
+	if (GETPOST('percentage'))
 	{
 		$percent=GETPOST('percentage');
 	}
 	else
 	{
 		if (GETPOST("afaire") == 1) $percent=0;
-		if (GETPOST("afaire") == 2) $percent=100;
+		else if (GETPOST("afaire") == 2) $percent=100;
 	}
 	print $htmlactions->form_select_status_action('formaction',$percent,1,'complete');
 	print '</td></tr>';

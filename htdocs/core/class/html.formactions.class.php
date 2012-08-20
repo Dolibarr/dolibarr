@@ -84,18 +84,22 @@ class FormActions
                 });
 
                 function select_status() {
-                    var selected = $('#select' + htmlname).val();
+                    var defaultvalue = $('#select' + htmlname).val();
                     var percentage = $('input[name=percentage]');
-                    percentage.val((selected>=0?selected:''));
-                    if (selected == -1) {
+                    var selected = '".(isset($selected)?$selected:'')."';
+                    var value = (selected>0?selected:(defaultvalue>=0?defaultvalue:''));
+
+                    percentage.val(value);
+
+                    if (defaultvalue == -1) {
                         percentage.attr('disabled', 'disabled');
                         $('.hideifna').hide();
                     }
-                    else if (selected == 0) {
+                    else if (defaultvalue == 0) {
                         percentage.attr('disabled', 'disabled');
                         $('.hideifna').show();
                     }
-                    else if (selected == 100) {
+                    else if (defaultvalue == 100) {
                         percentage.attr('disabled', 'disabled');
                         $('.hideifna').show();
                     }
@@ -108,13 +112,12 @@ class FormActions
             print '<select '.($canedit?'':'disabled="disabled" ').'name="status" id="select'.$htmlname.'" class="flat">';
             foreach($listofstatus as $key => $val)
             {
-                print '<option value="'.$key.'"'.($selected == $key?' selected="selected"':'').'>'.$val.'</option>';
+                print '<option value="'.$key.'"'.(($selected == $key) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected="selected"' : '').'>'.$val.'</option>';
             }
             print '</select>';
             if ($selected == 0 || $selected == 100) $canedit=0;
             print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled="disabled"').'>';
             print '<span class="hideifna">%</span>';
-            //print ' <input type="hidden" name="percentage" value="'.$selected.'">';
         }
         else
         {
