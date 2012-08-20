@@ -78,7 +78,7 @@ class FormActions
             print 'if (mypercentage == -1) { document.'.$formname.'.percentageshown.disabled=true; jQuery(".hideifna").hide(); }'."\n";
             print 'else if (mypercentage == 0) { document.'.$formname.'.percentageshown.disabled=true; jQuery(".hideifna").show();}'."\n";
             print 'else if (mypercentage == 100) { document.'.$formname.'.percentageshown.disabled=true; jQuery(".hideifna").show();}'."\n";
-            print 'else { document.'.$formname.'.percentageshown.disabled=false; }'."\n";
+            print 'else { document.'.$formname.'.percentageshown.disabled=false; jQuery(".hideifna").show();}'."\n";
             print '}'."\n";
             print '</script>'."\n";
             print '<select '.($canedit?'':'disabled="disabled" ').'name="status" id="select'.$htmlname.'" class="flat">';
