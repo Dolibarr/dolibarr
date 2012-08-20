@@ -744,11 +744,13 @@ if (! is_array($theme_datacolor)) $theme_datacolor=array(array(120,130,150), arr
 if (empty($action) || $action == 'show_month')      // View by month
 {
     $newparam=$param;   // newparam is for birthday links
+    $newparam=preg_replace('/showbirthday=/i','showbirthday_=',$newparam);	// To avoid replacement when replace day= is done
     $newparam=preg_replace('/action=show_month&?/i','',$newparam);
     $newparam=preg_replace('/action=show_week&?/i','',$newparam);
-    $newparam=preg_replace('/day=[0-9][0-9]&?/i','',$newparam);
-    $newparam=preg_replace('/month=[0-9][0-9]&?/i','',$newparam);
+    $newparam=preg_replace('/day=[0-9]+&?/i','',$newparam);
+    $newparam=preg_replace('/month=[0-9]+&?/i','',$newparam);
     $newparam=preg_replace('/year=[0-9]+&?/i','',$newparam);
+    $newparam=preg_replace('/showbirthday_=/i','showbirthday=',$newparam);	// Restore correct parameter
     echo '<table width="100%" class="nocellnopadd">';
     echo ' <tr class="liste_titre">';
     $i=0;
@@ -810,11 +812,13 @@ if (empty($action) || $action == 'show_month')      // View by month
 elseif ($action == 'show_week') // View by week
 {
     $newparam=$param;   // newparam is for birthday links
+    $newparam=preg_replace('/showbirthday=/i','showbirthday_=',$newparam);	// To avoid replacement when replace day= is done
     $newparam=preg_replace('/action=show_month&?/i','',$newparam);
     $newparam=preg_replace('/action=show_week&?/i','',$newparam);
-    $newparam=preg_replace('/day=[0-9][0-9]&?/i','',$newparam);
-    $newparam=preg_replace('/month=[0-9][0-9]&?/i','',$newparam);
+    $newparam=preg_replace('/day=[0-9]+&?/i','',$newparam);
+    $newparam=preg_replace('/month=[0-9]+&?/i','',$newparam);
     $newparam=preg_replace('/year=[0-9]+&?/i','',$newparam);
+    $newparam=preg_replace('/showbirthday_=/i','showbirthday=',$newparam);	// Restore correct parameter
     echo '<table width="100%" class="nocellnopadd">';
     echo ' <tr class="liste_titre">';
     $i=0;
@@ -866,9 +870,6 @@ else    // View by day
     $newparam=$param;   // newparam is for birthday links
     $newparam=preg_replace('/action=show_month&?/i','',$newparam);
     $newparam=preg_replace('/action=show_week&?/i','',$newparam);
-    $newparam=preg_replace('/day=[0-9][0-9]&?/i','',$newparam);
-    $newparam=preg_replace('/month=[0-9][0-9]&?/i','',$newparam);
-    $newparam=preg_replace('/year=[0-9]+&?/i','',$newparam);
     // Code to show just one day
     $style='cal_current_month';
     $today=0;
