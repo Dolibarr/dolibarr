@@ -65,42 +65,43 @@ class FormActions
             '100' => $langs->trans("ActionDoneShort")
         );
 
-        if ($conf->use_javascript_ajax)
+        if (! empty($conf->use_javascript_ajax))
         {
             print "\n";
             print "<script type=\"text/javascript\">
                 var htmlname = '".$htmlname."';
 
-                jQuery(document).ready(function () {
-                    jQuery('#select'+htmlname).change(function() {
-                        select_status();
-                    });
-                    jQuery('#val'+htmlname).change(function() {
-                        select_status();
-                    });
+                $(document).ready(function () {
+                	select_status();
 
-                    select_status();
+                    $('#select' + htmlname).change(function() {
+                        select_status();
+                    });
+                    // FIXME use another method for update combobox
+                    //$('#val' + htmlname).change(function() {
+                        //select_status();
+                    //});
                 });
 
                 function select_status() {
-                    mypercentage = jQuery('#val'+htmlname).val();
-                    jQuery('input[name=percentageshown]').val((mypercentage>=0?mypercentage:''));
-                    jQuery('input[name=percentage]').val(mypercentage);
-                    if (mypercentage == -1) {
-                        jQuery('input[name=percentageshown]').attr('disabled', 'disabled');
-                        jQuery('.hideifna').hide();
+                    var selected = $('#select' + htmlname).val();
+                    var percentage = $('input[name=percentage]');
+                    percentage.val((selected>=0?selected:''));
+                    if (selected == -1) {
+                        percentage.attr('disabled', 'disabled');
+                        $('.hideifna').hide();
                     }
-                    else if (mypercentage == 0) {
-                        jQuery('input[name=percentageshown]').attr('disabled', 'disabled');
-                        jQuery('.hideifna').show();
+                    else if (selected == 0) {
+                        percentage.attr('disabled', 'disabled');
+                        $('.hideifna').show();
                     }
-                    else if (mypercentage == 100) {
-                        jQuery('input[name=percentageshown]').attr('disabled', 'disabled');
-                        jQuery('.hideifna').show();
+                    else if (selected == 100) {
+                        percentage.attr('disabled', 'disabled');
+                        $('.hideifna').show();
                     }
                     else {
-                        jQuery('input[name=percentageshown]').removeAttr('disabled');
-                        jQuery('.hideifna').show();
+                        percentage.removeAttr('disabled');
+                        $('.hideifna').show();
                     }
                 }
                 </script>\n";
@@ -111,9 +112,9 @@ class FormActions
             }
             print '</select>';
             if ($selected == 0 || $selected == 100) $canedit=0;
-            print ' <input type="text" id="val'.$htmlname.'" name="percentageshown" class="flat hideifna" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled="disabled"').'>';
+            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled="disabled"').'>';
             print '<span class="hideifna">%</span>';
-            print ' <input type="hidden" name="percentage" value="'.$selected.'">';
+            //print ' <input type="hidden" name="percentage" value="'.$selected.'">';
         }
         else
         {
