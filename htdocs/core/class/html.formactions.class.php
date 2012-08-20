@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -65,54 +65,59 @@ class FormActions
             '100' => $langs->trans("ActionDoneShort")
         );
 
-        if ($conf->use_javascript_ajax)
+        if (! empty($conf->use_javascript_ajax))
         {
             print "\n";
             print "<script type=\"text/javascript\">
                 var htmlname = '".$htmlname."';
 
-                jQuery(document).ready(function () {
-                    jQuery('#select'+htmlname).change(function() {
+                $(document).ready(function () {
+                	select_status();
+
+                    $('#select' + htmlname).change(function() {
                         select_status();
                     });
-                    jQuery('#val'+htmlname).change(function() {
-                        select_status();
-                    });
-                    
-                    select_status();
+                    // FIXME use another method for update combobox
+                    //$('#val' + htmlname).change(function() {
+                        //select_status();
+                    //});
                 });
 
                 function select_status() {
-                    mypercentage = jQuery('#val'+htmlname).val();
-                    jQuery('input[name=percentageshown]').val((mypercentage>=0?mypercentage:''));
-                    jQuery('input[name=percentage]').val(mypercentage);
-                    if (mypercentage == -1) {
-                        jQuery('input[name=percentageshown]').attr('disabled', 'disabled');
-                        jQuery('.hideifna').hide();
+                    var defaultvalue = $('#select' + htmlname).val();
+                    var percentage = $('input[name=percentage]');
+                    var selected = '".(isset($selected)?$selected:'')."';
+                    var value = (selected>0?selected:(defaultvalue>=0?defaultvalue:''));
+
+                    percentage.val(value);
+
+                    if (defaultvalue == -1) {
+                        percentage.attr('disabled', 'disabled');
+                        $('.hideifna').hide();
                     }
-                    else if (mypercentage == 0) {
-                        jQuery('input[name=percentageshown]').attr('disabled', 'disabled');
-                        jQuery('.hideifna').show();
+                    else if (defaultvalue == 0) {
+                        percentage.attr('disabled', 'disabled');
+                        $('.hideifna').show();
                     }
-                    else if (mypercentage == 100) {
-                        jQuery('input[name=percentageshown]').attr('disabled', 'disabled');
-                        jQuery('.hideifna').show();
+                    else if (defaultvalue == 100) {
+                        percentage.attr('disabled', 'disabled');
+                        $('.hideifna').show();
                     }
                     else {
-                        jQuery('input[name=percentageshown]').removeAttr('disabled');
+                        percentage.removeAttr('disabled');
+                        $('.hideifna').show();
                     }
                 }
                 </script>\n";
             print '<select '.($canedit?'':'disabled="disabled" ').'name="status" id="select'.$htmlname.'" class="flat">';
             foreach($listofstatus as $key => $val)
             {
-                print '<option value="'.$key.'"'.($selected == $key?' selected="selected"':'').'>'.$val.'</option>';
+                print '<option value="'.$key.'"'.(($selected == $key) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected="selected"' : '').'>'.$val.'</option>';
             }
             print '</select>';
             if ($selected == 0 || $selected == 100) $canedit=0;
-            print ' <input type="text" id="val'.$htmlname.'" name="percentageshown" class="flat hideifna" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled="disabled"').'>';
+            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled="disabled"').'>';
             print '<span class="hideifna">%</span>';
-            print ' <input type="hidden" name="percentage" value="'.$selected.'">';
         }
         else
         {

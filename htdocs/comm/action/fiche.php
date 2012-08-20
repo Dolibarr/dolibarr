@@ -92,14 +92,14 @@ if ($action == 'add_action')
 		exit;
 	}
 
-    $fulldayevent=$_POST["fullday"];
+    $fulldayevent=GETPOST('fullday');
 
     // Clean parameters
 	$datep=dol_mktime($fulldayevent?'00':$_POST["aphour"], $fulldayevent?'00':$_POST["apmin"], 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
 	$datef=dol_mktime($fulldayevent?'23':$_POST["p2hour"], $fulldayevent?'59':$_POST["p2min"], $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
 
 	// Check parameters
-	if (! $datef && $_POST["percentage"] == 100)
+	if (! $datef && GETPOST('percentage') == 100)
 	{
 		$error++;
 		$action = 'create';
@@ -107,7 +107,7 @@ if ($action == 'add_action')
 	}
 
 	// Initialisation objet cactioncomm
-	if (! $_POST["actioncode"])
+	if (! GETPOST('actioncode'))
 	{
 		$error++;
 		$action = 'create';
@@ -115,14 +115,14 @@ if ($action == 'add_action')
 	}
 	else
 	{
-		$result=$cactioncomm->fetch($_POST["actioncode"]);
+		$result=$cactioncomm->fetch(GETPOST('actioncode'));
 	}
 
 	// Initialisation objet actioncomm
 	$actioncomm->type_id = $cactioncomm->id;
 	$actioncomm->type_code = $cactioncomm->code;
 	$actioncomm->priority = isset($_POST["priority"])?$_POST["priority"]:0;
-	$actioncomm->fulldayevent = $_POST["fullday"]?1:0;
+	$actioncomm->fulldayevent = (! empty($fulldayevent)?1:0);
 	$actioncomm->location = isset($_POST["location"])?$_POST["location"]:'';
 	$actioncomm->label = trim($_POST["label"]);
 	if (! $_POST["label"])
@@ -144,7 +144,7 @@ if ($action == 'add_action')
 	$actioncomm->datep = $datep;
 	$actioncomm->datef = $datef;
 	$actioncomm->percentage = isset($_POST["percentage"])?$_POST["percentage"]:0;
-	$actioncomm->duree=(($_POST["dureehour"] * 60) + $_POST["dureemin"]) * 60;
+	$actioncomm->duree=((GETPOST('dureehour') * 60) + GETPOST('dureemin')) * 60;
 
 	$usertodo=new User($db);
 	if ($_POST["affectedto"] > 0)
@@ -169,8 +169,9 @@ if ($action == 'add_action')
 	}
 
 	// Special for module webcal and phenix
-	if ($_POST["add_webcal"] == 'on' && $conf->webcalendar->enabled) $actioncomm->use_webcal=1;
-	if ($_POST["add_phenix"] == 'on' && $conf->phenix->enabled) $actioncomm->use_phenix=1;
+	// FIXME external modules
+	if (! empty($conf->webcalendar->enabled) && GETPOST('add_webcal') == 'on') $actioncomm->use_webcal=1;
+	if (! empty($conf->phenix->enabled) && GETPOST('add_phenix') == 'on') $actioncomm->use_phenix=1;
 
 	// Check parameters
 	if ($actioncomm->type_code == 'AC_RDV' && ($datep == '' || $datef == ''))
@@ -179,14 +180,14 @@ if ($action == 'add_action')
 		$action = 'create';
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")).'</div>';
 	}
-	if ($datea && $_POST["percentage"] == 0)
+	if (! empty($datea) && GETPOST('percentage') == 0)
 	{
 		$error++;
 		$action = 'create';
 		$mesg='<div class="error">'.$langs->trans("ErrorStatusCantBeZeroIfStarted").'</div>';
 	}
 
-	if (! $_POST["apyear"] && ! $_POST["adyear"])
+	if (! GETPOST('apyear') && ! GETPOST('adyear'))
 	{
 		$error++;
 		$action = 'create';
@@ -269,23 +270,27 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == 'yes')
  */
 if ($action == 'update')
 {
-	if (! $_POST["cancel"])
+	if (empty($cancel))
 	{
-        $fulldayevent=$_POST["fullday"];
+        $fulldayevent=GETPOST('fullday');
+        $aphour=GETPOST('aphour');
+        $apmin=GETPOST('apmin');
+        $p2hour=GETPOST('p2hour');
+        $p2min=GETPOST('p2min');
 
 	    // Clean parameters
-		if ($_POST["aphour"] == -1) $_POST["aphour"]='0';
-		if ($_POST["apmin"] == -1) $_POST["apmin"]='0';
-		if ($_POST["p2hour"] == -1) $_POST["p2hour"]='0';
-		if ($_POST["p2min"] == -1) $_POST["p2min"]='0';
+		if ($aphour == -1) $aphour='0';
+		if ($apmin == -1) $apmin='0';
+		if ($p2hour == -1) $p2hour='0';
+		if ($p2min == -1) $p2min='0';
 		//if ($_POST["adhour"] == -1) $_POST["adhour"]='0';
 		//if ($_POST["admin"] == -1) $_POST["admin"]='0';
 
 		$actioncomm = new Actioncomm($db);
 		$actioncomm->fetch($id);
 
-		$datep=dol_mktime($fulldayevent?'00':$_POST["aphour"], $fulldayevent?'00':$_POST["apmin"], 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
-		$datef=dol_mktime($fulldayevent?'23':$_POST["p2hour"], $fulldayevent?'59':$_POST["p2min"], $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
+		$datep=dol_mktime($fulldayevent?'00':$aphour, $fulldayevent?'00':$apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
+		$datef=dol_mktime($fulldayevent?'23':$p2hour, $fulldayevent?'59':$p2min, $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
 
 		$actioncomm->label       = $_POST["label"];
 		$actioncomm->datep       = $datep;
@@ -478,14 +483,14 @@ if ($action == 'create')
 	print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
 	print '<td>';
 	$percent=-1;
-	if (isset($_GET['percentage']) || isset($_POST['percentage']))
+	if (GETPOST('percentage'))
 	{
 		$percent=GETPOST('percentage');
 	}
 	else
 	{
 		if (GETPOST("afaire") == 1) $percent=0;
-		if (GETPOST("afaire") == 2) $percent=100;
+		else if (GETPOST("afaire") == 2) $percent=100;
 	}
 	print $htmlactions->form_select_status_action('formaction',$percent,1,'complete');
 	print '</td></tr>';
