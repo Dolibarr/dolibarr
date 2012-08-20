@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -58,39 +58,66 @@ class FormActions
     {
         global $langs,$conf;
 
-        $listofstatus=array('-1'=>$langs->trans("ActionNotApplicable"),
-                            '0'=>$langs->trans("ActionRunningNotStarted"),
-                            '50'=>$langs->trans("ActionRunningShort"),
-                            '100'=>$langs->trans("ActionDoneShort"));
+        $listofstatus = array(
+            '-1' => $langs->trans("ActionNotApplicable"),
+            '0' => $langs->trans("ActionRunningNotStarted"),
+            '50' => $langs->trans("ActionRunningShort"),
+            '100' => $langs->trans("ActionDoneShort")
+        );
 
-        if ($conf->use_javascript_ajax)
+        if (! empty($conf->use_javascript_ajax))
         {
             print "\n";
-            print '<script type="text/javascript">'."\n";
-            print 'jQuery(document).ready(function () {'."\n";
-            print 'jQuery("#select'.$htmlname.'").change(function() { select_status(document.'.$formname.'.status.value); });'."\n";
-            print 'jQuery("#val'.$htmlname.'").change(function()    { select_status(jQuery("#val'.$htmlname.'").val()); });'."\n";
-            print 'select_status(document.'.$formname.'.status.value);'."\n";
-            print '});'."\n";
-            print 'function select_status(mypercentage) {'."\n";
-            print 'document.'.$formname.'.percentageshown.value=(mypercentage>=0?mypercentage:\'\');'."\n";
-            print 'document.'.$formname.'.percentage.value=mypercentage;'."\n";
-            print 'if (mypercentage == -1) { document.'.$formname.'.percentageshown.disabled=true; jQuery(".hideifna").hide(); }'."\n";
-            print 'else if (mypercentage == 0) { document.'.$formname.'.percentageshown.disabled=true; jQuery(".hideifna").show();}'."\n";
-            print 'else if (mypercentage == 100) { document.'.$formname.'.percentageshown.disabled=true; jQuery(".hideifna").show();}'."\n";
-            print 'else { document.'.$formname.'.percentageshown.disabled=false; }'."\n";
-            print '}'."\n";
-            print '</script>'."\n";
+            print "<script type=\"text/javascript\">
+                var htmlname = '".$htmlname."';
+
+                $(document).ready(function () {
+                	select_status();
+
+                    $('#select' + htmlname).change(function() {
+                        select_status();
+                    });
+                    // FIXME use another method for update combobox
+                    //$('#val' + htmlname).change(function() {
+                        //select_status();
+                    //});
+                });
+
+                function select_status() {
+                    var defaultvalue = $('#select' + htmlname).val();
+                    var percentage = $('input[name=percentage]');
+                    var selected = '".(isset($selected)?$selected:'')."';
+                    var value = (selected>0?selected:(defaultvalue>=0?defaultvalue:''));
+
+                    percentage.val(value);
+
+                    if (defaultvalue == -1) {
+                        percentage.attr('disabled', 'disabled');
+                        $('.hideifna').hide();
+                    }
+                    else if (defaultvalue == 0) {
+                        percentage.attr('disabled', 'disabled');
+                        $('.hideifna').show();
+                    }
+                    else if (defaultvalue == 100) {
+                        percentage.attr('disabled', 'disabled');
+                        $('.hideifna').show();
+                    }
+                    else {
+                        percentage.removeAttr('disabled');
+                        $('.hideifna').show();
+                    }
+                }
+                </script>\n";
             print '<select '.($canedit?'':'disabled="disabled" ').'name="status" id="select'.$htmlname.'" class="flat">';
             foreach($listofstatus as $key => $val)
             {
-                print '<option value="'.$key.'"'.($selected == $key?' selected="selected"':'').'>'.$val.'</option>';
+                print '<option value="'.$key.'"'.(($selected == $key) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected="selected"' : '').'>'.$val.'</option>';
             }
             print '</select>';
             if ($selected == 0 || $selected == 100) $canedit=0;
-            print ' <input type="text" id="val'.$htmlname.'" name="percentageshown" class="flat hideifna" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled="disabled"').'>';
+            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled="disabled"').'>';
             print '<span class="hideifna">%</span>';
-            print ' <input type="hidden" name="percentage" value="'.$selected.'">';
         }
         else
         {
