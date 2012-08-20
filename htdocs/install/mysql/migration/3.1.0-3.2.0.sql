@@ -456,3 +456,5 @@ ALTER TABLE llx_product_fournisseur_price MODIFY fk_product_fournisseur integer 
 UPDATE llx_product SET canvas = NULL where canvas = 'default@product';
 UPDATE llx_product SET canvas = NULL where canvas = 'product@product';
 UPDATE llx_product SET canvas = NULL where canvas = 'service@product';
+
+DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'SOCIETE_CODECOMPTA_ADDON' AND __DECRYPT('value')__ = 'mod_codecompta_digitaria';
