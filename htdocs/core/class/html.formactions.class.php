@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2010-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -78,7 +78,7 @@ class FormActions
                     jQuery('#val'+htmlname).change(function() {
                         select_status();
                     });
-                    
+
                     select_status();
                 });
 
@@ -100,6 +100,7 @@ class FormActions
                     }
                     else {
                         jQuery('input[name=percentageshown]').removeAttr('disabled');
+                        jQuery('.hideifna').show();
                     }
                 }
                 </script>\n";
