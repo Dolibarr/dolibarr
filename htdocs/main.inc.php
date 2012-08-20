@@ -1289,19 +1289,15 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    if ($_SESSION["dol_authmode"] != 'forceuser'
 	    && $_SESSION["dol_authmode"] != 'http')
 	    {
-	        $logouttext.='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
-	        $logouttext.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
-	        $logouttext.='>';
-	        $logouttext.='<img class="login" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
-	        $logouttext.=' alt="'.dol_escape_htmltag($langs->trans("Logout")).'" title=""';
-	        $logouttext.='>';
-	        $logouttext.='</a>';
+	        $logouttext .='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
+	        $logouttext .=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
+	        $logouttext .='>';
+	        $logouttext .= img_picto($langs->trans('Logout'), 'logout.png', 'class="login"');
+	        $logouttext .='</a>';
 	    }
 	    else
 	    {
-	        $logouttext.='<img class="login" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
-	        $logouttext.=' alt="'.dol_escape_htmltag($langs->trans("Logout")).'" title=""';
-	        $logouttext.='>';
+	        $logouttext .= img_picto($langs->trans('Logout'), 'logout.png', 'class="login"');
 	    }
 
 	    print '<div class="login_block">'."\n";
@@ -1323,8 +1319,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    {
 	        $qs=$_SERVER["QUERY_STRING"].($_SERVER["QUERY_STRING"]?'&':'').$morequerystring;
 	        $text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
-	        $text.='<img class="printer" border="0" width="14" height="14" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/printer.png"';
-	        $text.=' title="" alt="">';
+	        $text.= img_picto('', 'printer.png', 'class="printer"');
 	        $text.='</a>';
 	        $toprightmenu.=$form->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'',1);
 	    }

@@ -86,7 +86,8 @@ class pdf_soleil extends ModelePDFFicheinter
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->code_pays) $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // By default, if not defined
+		if (empty($this->emetteur->country_code))
+			$this->emetteur->country_code = substr($langs->defaultlang,-2);    // By default, if not defined
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
@@ -271,6 +272,7 @@ class pdf_soleil extends ModelePDFFicheinter
 						$nexY+=2;    // Passe espace entre les lignes
 
 						// Detect if some page were added automatically and output _tableau for past pages
+						// FIXME $pageposafter not defined
 						while ($pagenb < $pageposafter)
 						{
 							if ($pagenb == 1)
@@ -553,7 +555,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
 			}
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
+			$carac_client=pdf_build_address($outputlangs, $this->emetteur, $object->client, (isset($object->contact)?$object->contact:''), $usecontact, 'target');
 
 			// Show recipient
 			$posy=42;

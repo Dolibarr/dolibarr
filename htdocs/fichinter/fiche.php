@@ -76,7 +76,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->fichein
     $object->fetch($id);
     $object->fetch_thirdparty();
 
-    $result = $object->setValid($user, $conf->fichinter->outputdir);
+    $result = $object->setValid($user);
     if ($result >= 0)
     {
         // Define output language
@@ -905,7 +905,7 @@ else if ($id > 0 || ! empty($ref))
 
     // Duration
     print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
-    print '<td>'.convertSecondToTime($object->duree,'all',$conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
+    print '<td>'.convertSecondToTime($object->duree, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
     print '</tr>';
 
     // Description (must be a textarea and not html must be allowed (used in list view)

@@ -42,21 +42,12 @@ $result = restrictedArea($user, 'ficheinter', $fichinterid,'fichinter');
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
-if ($page == -1) {
-	$page = 0;
-}
+if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="fd.date";
-if ($page == -1) { $page = 0 ; }
-
-$limit = $conf->liste_limit;
-$offset = $limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
 
 $search_ref=GETPOST('search_ref','alpha');
 $search_company=GETPOST('search_company','alpha');

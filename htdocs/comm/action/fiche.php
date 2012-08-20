@@ -715,7 +715,7 @@ if ($id)
 		print '</td></tr>';
 
 		// Status
-		print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
+		print '<tr><td nowrap="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
 		$percent=GETPOST("percentage")?GETPOST("percentage"):$act->percentage;
 		print $htmlactions->form_select_status_action('formaction',$percent,1);
 		print '</td></tr>';
@@ -865,7 +865,7 @@ if ($id)
 		print '</td></tr>';
 
 		// Status
-		print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="2">';
+		print '<tr><td nowrap="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="2">';
 		print $act->getLibStatut(4);
 		print '</td></tr>';
 

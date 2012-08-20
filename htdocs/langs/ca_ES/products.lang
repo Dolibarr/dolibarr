@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - products
+# Dolibarr language file - ca_ES - products 
 CHARSET=UTF-8
 ProductRef=Ref. producte
 ProductLabel=Etiqueta producte
@@ -169,3 +169,5 @@ SuppliersPrices=Preus proveïdors
 CustomCode=Codi duaner
 CountryOrigin=País d'origen
 HiddenIntoCombo=Ocult en les llistes
+ProductCodeModel=Model de codi de producte
+ServiceCodeModel=Model de codi de servei
