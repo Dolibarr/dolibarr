@@ -460,7 +460,7 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans("Title").'</td><td><input type="text" name="label" size="60" value="'.GETPOST('label').'"></td></tr>';
 
     // Full day
-    print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked="checked"':'').'></td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked="checked"':'').'></td></tr>';
 
 	// Date start
 	$datep=$actioncomm->datep;
@@ -483,7 +483,7 @@ if ($action == 'create')
 	print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
 	print '<td>';
 	$percent=-1;
-	if (GETPOST('percentage'))
+	if (isset($_GET['percentage']) || isset($_POST['percentage']))
 	{
 		$percent=GETPOST('percentage');
 	}
@@ -704,7 +704,7 @@ if ($id)
 		print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" size="50" value="'.$act->label.'"></td></tr>';
 
         // Full day event
-        print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($act->fulldayevent?' checked="checked"':'').'></td></tr>';
+        print '<tr><td class="fieldrequired">'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($act->fulldayevent?' checked="checked"':'').'></td></tr>';
 
 		// Date start
 		print '<tr><td nowrap="nowrap" class="fieldrequired">'.$langs->trans("DateActionStart").'</td><td colspan="3">';
