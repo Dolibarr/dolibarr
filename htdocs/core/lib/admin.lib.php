@@ -253,7 +253,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             dol_syslog('Admin.lib::run_sql Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
 
             // Replace for encrypt data
-            if (preg_match_all('/__ENCRYPT\(\'([^\,]+)\'\)__/i',$newsql,$reg))
+            if (preg_match_all('/__ENCRYPT\(\'([A-Za-z0-9_]+)\'\)__/i',$newsql,$reg))
             {
                 $num=count($reg[0]);
 
@@ -266,7 +266,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             }
 
             // Replace for decrypt data
-            if (preg_match_all('/__DECRYPT\(\'([^\,]+)\'\)__/i',$newsql,$reg))
+            if (preg_match_all('/__DECRYPT\(\'([A-Za-z0-9_]+)\'\)__/i',$newsql,$reg))
             {
                 $num=count($reg[0]);
 
@@ -1138,15 +1138,15 @@ function form_constantes($tableau)
 function addDocumentModel($name, $type, $label='', $description='')
 {
 	global $db, $conf;
-	
+
 	$db->begin();
-	
+
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
     $sql.= " VALUES ('".$db->escape($name)."','".$type."',".$conf->entity.", ";
     $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
     $sql.= (! empty($description)?"'".$db->escape($description)."'":"null");
     $sql.= ")";
-    
+
     dol_syslog("admin.lib::addDocumentModel sql=".$sql);
 	$resql=$db->query($sql);
 	if ($resql)
@@ -1172,9 +1172,9 @@ function addDocumentModel($name, $type, $label='', $description='')
 function delDocumentModel($name, $type)
 {
 	global $db, $conf;
-	
+
 	$db->begin();
-	
+
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
 	$sql.= " WHERE nom = '".$db->escape($name)."'";
 	$sql.= " AND type = '".$type."'";
