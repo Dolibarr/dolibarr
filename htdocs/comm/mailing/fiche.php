@@ -24,13 +24,13 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/emailing.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
-require_once(DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("mails");
 
@@ -492,7 +492,7 @@ if (! empty($_POST['addfile']))
 {
 	$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
 
-	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     // Set tmp user directory
     dol_add_file_process($upload_dir,0,0);
@@ -505,7 +505,7 @@ if (! empty($_POST["removedfile"]))
 {
 	$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
 
-	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     dol_remove_file_process($_POST['removedfile'],0);
 
@@ -515,7 +515,7 @@ if (! empty($_POST["removedfile"]))
 // Action update emailing
 if ($action == 'update' && empty($_POST["removedfile"]) && empty($_POST["cancel"]))
 {
-	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$isupload=0;
 
@@ -673,7 +673,7 @@ if ($action == 'create')
 	print '</i></td>';
 	print '<td>';
 	// Editeur wysiwyg
-	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor=new DolEditor('body',$_POST['body'],'',320,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,70);
 	$doleditor->Create();
 	print '</td></tr>';
@@ -1119,7 +1119,7 @@ else
 			print '</i></td>';
 			print '<td colspan="3">';
 			// Editeur wysiwyg
-			require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$doleditor=new DolEditor('body',$object->body,'',320,'dolibarr_mailings','',true,true,$conf->global->FCKEDITOR_ENABLE_MAILING,20,70);
 			$doleditor->Create();
 			print '</td></tr>';

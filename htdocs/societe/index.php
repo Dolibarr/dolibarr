@@ -24,7 +24,7 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php');
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 $langs->load("companies");
 

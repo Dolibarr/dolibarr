@@ -24,7 +24,7 @@
  *		\ingroup    societe
  *		\brief      File with parent class of submodules to manage numbering and document generation
  */
-require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 
 /**
@@ -405,7 +405,7 @@ function thirdparty_doc_create($db, $object, $message, $modele, $outputlangs)
     if (file_exists($dir.'/'.$file))
     {
         $classname = "doc_".$modele;
-        require_once($dir.'/'.$file);
+        require_once $dir.'/'.$file;
 
         $obj = new $classname($db);
         $obj->message = $message;

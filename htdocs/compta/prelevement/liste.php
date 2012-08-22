@@ -24,8 +24,8 @@
  *      \brief      Page liste des prelevements
  */
 require("../bank/pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bonprelevement.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/ligneprelevement.class.php");
+require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 
 $langs->load("withdrawals");
 $langs->load("companies");

@@ -25,9 +25,9 @@
  *  \brief      Fichier de la classe de gestion des expeditions
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
-if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
-if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+if ($conf->propal->enabled) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if ($conf->commande->enabled) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 
 /**
@@ -158,7 +158,7 @@ class Expedition extends CommonObject
 
 		$now=dol_now();
 
-		require_once DOL_DOCUMENT_ROOT ."/product/stock/class/mouvementstock.class.php";
+		require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
 		$error = 0;
 
 		// Clean parameters
@@ -437,7 +437,7 @@ class Expedition extends CommonObject
 	{
 		global $conf, $langs;
 
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		dol_syslog(get_class($this)."::valid");
 
@@ -498,7 +498,7 @@ class Expedition extends CommonObject
 		// If stock increment is done on sending (recommanded choice)
 		if (! $error && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 		{
-			require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 			$langs->load("agenda");
 
@@ -766,7 +766,7 @@ class Expedition extends CommonObject
 	function delete()
 	{
 		global $conf, $langs, $user;
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error=0;
 
@@ -1195,7 +1195,7 @@ class Expedition extends CommonObject
 			$url='';
 			if (file_exists(DOL_DOCUMENT_ROOT."/core/modules/expedition/methode_expedition_".strtolower($code).".modules.php") && ! empty($this->tracking_number))
 			{
-				require_once(DOL_DOCUMENT_ROOT."/core/modules/expedition/methode_expedition_".strtolower($code).".modules.php");
+				require_once DOL_DOCUMENT_ROOT."/core/modules/expedition/methode_expedition_".strtolower($code).'.modules.php';
 				$shipmethod = new $classname();
 				$url = $shipmethod->provider_url_status($this->tracking_number);
 			}

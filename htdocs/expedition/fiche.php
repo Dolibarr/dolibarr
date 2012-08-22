@@ -26,16 +26,16 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/product.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/sendings.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/modules/expedition/modules_expedition.php");
-if ($conf->product->enabled || $conf->service->enabled)  require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
-if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
-if ($conf->stock->enabled)    require_once(DOL_DOCUMENT_ROOT."/product/stock/class/entrepot.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
+if ($conf->product->enabled || $conf->service->enabled)  require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+if ($conf->propal->enabled)   require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if ($conf->commande->enabled) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if ($conf->stock->enabled)    require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 $langs->load("sendings");
 $langs->load("companies");
@@ -325,7 +325,7 @@ else if ($action == 'builddoc')	// En get ou en post
 // Delete file in doc form
 elseif ($action == 'remove_file')
 {
-	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$object = new Expedition($db);
 	if ($object->fetch($id))
@@ -344,7 +344,7 @@ elseif ($action == 'remove_file')
 */
 if (GETPOST('addfile','alpha'))
 {
-    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     // Set tmp user directory TODO Use a dedicated directory for temp mails files
     $vardir=$conf->user->dir_output."/".$user->id;
@@ -359,7 +359,7 @@ if (GETPOST('addfile','alpha'))
 */
 if (GETPOST('removedfile','alpha'))
 {
-    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     // Set tmp user directory
     $vardir=$conf->user->dir_output."/".$user->id;
@@ -443,7 +443,7 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
                 $mimetype = $attachedfiles['mimes'];
 
                 // Send mail
-                require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
+                require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
                 if ($mailfile->error)
                 {

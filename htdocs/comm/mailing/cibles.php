@@ -24,11 +24,11 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/modules/mailings/modules_mailings.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/emailing.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->load("mails");
 
@@ -85,7 +85,7 @@ if ($action == 'add')
 
 		if (file_exists($file))
 		{
-			require_once($file);
+			require_once $file;
 
 			// We fill $filtersarray. Using this variable is now deprecated.
 			// Kept for backward compatibility.
@@ -270,7 +270,7 @@ if ($object->fetch($id) >= 0)
 				// Chargement de la classe
 				$file = $dir.$modulename.".modules.php";
 				$classname = "mailing_".$modulename;
-				require_once($file);
+				require_once $file;
 
 				$obj = new $classname($db);
 

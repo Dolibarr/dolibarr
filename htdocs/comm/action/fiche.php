@@ -26,15 +26,15 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/agenda.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/action/class/cactioncomm.class.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formactions.class.php");
-require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load("companies");
 $langs->load("commercial");
@@ -571,7 +571,7 @@ if ($action == 'create')
 
     // Description
     print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-    require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor=new DolEditor('note',(GETPOST('note')?GETPOST('note'):$actioncomm->note),'',280,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_7,90);
     $doleditor->Create();
     print '</td></tr>';
@@ -791,7 +791,7 @@ if ($id)
         // Description
         print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
         // Editeur wysiwyg
-        require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
         $doleditor=new DolEditor('note',$act->note,'',240,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_5,90);
         $doleditor->Create();
         print '</td></tr>';

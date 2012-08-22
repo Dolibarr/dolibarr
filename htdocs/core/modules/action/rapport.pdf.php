@@ -24,9 +24,9 @@
  *	\brief      File to build PDF with events
  */
 
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
-require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 /**
  *	Classe permettant la generation des rapports d'actions

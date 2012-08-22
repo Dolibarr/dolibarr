@@ -47,7 +47,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']))
 {
 	if ($_GET['action'] == 'getrandompassword' && $user->admin)
 	{
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 	    $generic = $_GET['generic'];
 		echo getRandomPassword($generic);
 	}

@@ -27,8 +27,8 @@ define("NOLOGIN",1);		// This means this output page does not require to be logg
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/paybox/lib/paybox.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/paybox/lib/paybox.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 // Security check
 if (empty($conf->paybox->enabled)) accessforbidden('',1,1,1);

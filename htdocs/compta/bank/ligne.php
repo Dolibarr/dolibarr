@@ -26,7 +26,7 @@
  */
 
 require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("banks");
 $langs->load("compta");

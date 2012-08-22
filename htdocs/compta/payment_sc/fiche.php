@@ -26,11 +26,11 @@
  */
 
 require('../../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/chargesociales.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/paymentsocialcontribution.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
-require_once(DOL_DOCUMENT_ROOT."/core/modules/facture/modules_facture.php");
-if ($conf->banque->enabled) require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
+if ($conf->banque->enabled) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load('bills');
 $langs->load('banks');

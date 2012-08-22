@@ -30,7 +30,7 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('EVEN_IF_ONLY_LOGIN_ALLOWED'))  define('EVEN_IF_ONLY_LOGIN_ALLOWED','1');
 
-require_once("../main.inc.php");
+require_once '../main.inc.php';
 
 // This can happen only with a bookmark or forged url call.
 if (!empty($_SESSION["dol_authmode"]) && ($_SESSION["dol_authmode"] == 'forceuser'

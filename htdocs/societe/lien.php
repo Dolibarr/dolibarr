@@ -24,8 +24,8 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $langs->load("companies");
 $langs->load("customers");

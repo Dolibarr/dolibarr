@@ -77,7 +77,7 @@ function getStaticMember($class, $member)
  */
 function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
 {
-	require_once(DOL_DOCUMENT_ROOT ."/core/db/".$type.".class.php");
+	require_once DOL_DOCUMENT_ROOT ."/core/db/".$type.'.class.php';
 
 	$class='DoliDB'.ucfirst($type);
 	$dolidb=new $class($type, $host, $user, $pass, $name, $port);
@@ -1009,13 +1009,13 @@ function dol_now($mode='gmt')
 	if ($mode == 'gmt') $ret=time();	// Time for now at greenwich.
 	else if ($mode == 'tzserver')		// Time for now with PHP server timezone added
 	{
-		require_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$tzsecond=getServerTimeZoneInt('now');    // Contains tz+dayling saving time
 		$ret=dol_now('gmt')+($tzsecond*3600);
 	}
 	/*else if ($mode == 'tzref')				// Time for now with parent company timezone is added
 	{
-		require_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
 		$ret=dol_now('gmt')+($tzsecond*3600);
 	}*/
@@ -3389,7 +3389,7 @@ function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='
 {
 	global $conf,$user;
 
-	require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	// Check if there is external substitution to do asked by plugins
 	$dirsubstitutions=array_merge(array(),(array) $conf->modules_parts['substitutions']);
@@ -3409,7 +3409,7 @@ function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='
 				$module=$reg[1];
 
 				dol_syslog("Library functions_".$substitfile['name']." found into ".$dir);
-				require_once($dir.$substitfile['name']);
+				require_once $dir.$substitfile['name'];
 				$function_name=$module."_".$callfunc;
 				$function_name($substitutionarray,$outputlangs,$object,$parameters);
 			}

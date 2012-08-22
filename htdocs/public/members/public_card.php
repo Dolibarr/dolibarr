@@ -35,9 +35,9 @@ if (is_int($entity))
 }
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Security check
 if (empty($conf->adherent->enabled)) accessforbidden('',1,1,1);

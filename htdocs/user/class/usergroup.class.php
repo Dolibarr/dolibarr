@@ -22,7 +22,7 @@
  *	 \brief      File of class to manage user groups
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 if (! empty($conf->ldap->enabled)) require_once (DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
 
 

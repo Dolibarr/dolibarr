@@ -311,7 +311,7 @@ else if ($action == "setabsolutediscount" && $user->rights->facture->creer)
     }
     if (! empty($_POST["remise_id_for_payment"]))
     {
-        require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
+        require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
         $discount = new DiscountAbsolute($db);
         $discount->fetch($_POST["remise_id_for_payment"]);
 
@@ -1317,7 +1317,7 @@ else if ($action == 'down' && $user->rights->facture->creer)
  */
 if (GETPOST('addfile'))
 {
-    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     // Set tmp user directory
     $vardir=$conf->user->dir_output."/".$user->id;
@@ -1332,7 +1332,7 @@ if (GETPOST('addfile'))
  */
 if (! empty($_POST['removedfile']))
 {
-    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     // Set tmp user directory
     $vardir=$conf->user->dir_output."/".$user->id;
@@ -1431,7 +1431,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
                 $mimetype = $attachedfiles['mimes'];
 
                 // Send mail
-                require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
+                require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
                 if ($mailfile->error)
                 {
@@ -1556,7 +1556,7 @@ else if ($action == 'remove_file')
 {
 	if ($object->fetch($id))
 	{
-		require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$object->fetch_thirdparty();
 
@@ -2195,7 +2195,7 @@ else if ($id > 0 || ! empty($ref))
             $text=$langs->trans('ConfirmValidateBill',$numref);
             if ($conf->notification->enabled)
             {
-                require_once(DOL_DOCUMENT_ROOT ."/core/class/notify.class.php");
+                require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
                 $notify=new Notify($db);
                 $text.='<br>';
                 $text.=$notify->confirmMessage('NOTIFY_VAL_FAC',$object->socid);
@@ -2205,7 +2205,7 @@ else if ($id > 0 || ! empty($ref))
             if ($object->type != 3 && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $object->hasProductsOrServices(1))
             {
                 $langs->load("stocks");
-                require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
+                require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
                 $formproduct=new FormProduct($db);
                 $label=$object->type==2?$langs->trans("SelectWarehouseForStockIncrease"):$langs->trans("SelectWarehouseForStockDecrease");
                 $formquestion=array(
@@ -2229,7 +2229,7 @@ else if ($id > 0 || ! empty($ref))
             if ($object->type != 3 && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $object->hasProductsOrServices(1))
             {
                 $langs->load("stocks");
-                require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
+                require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
                 $formproduct=new FormProduct($db);
                 $label=$object->type==2?$langs->trans("SelectWarehouseForStockDecrease"):$langs->trans("SelectWarehouseForStockIncrease");
                 $formquestion=array(
@@ -2916,8 +2916,8 @@ else if ($id > 0 || ! empty($ref))
 
         if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
         {
-        	require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
-        	require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+        	require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+        	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
         	$formcompany= new FormCompany($db);
 
         	$blocname = 'contacts';

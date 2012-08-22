@@ -437,7 +437,7 @@ function getRandomPassword($generic=false)
 		$nomclass="modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
 		$nomfichier=$nomclass.".class.php";
 		//print DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomclass;
-		require_once(DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomfichier);
+		require_once DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomfichier;
 		$genhandler=new $nomclass($db,$conf,$langs,$user);
 		$generated_password=$genhandler->getNewGeneratedPassword();
 		unset($genhandler);

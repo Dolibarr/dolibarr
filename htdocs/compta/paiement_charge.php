@@ -22,9 +22,9 @@
  */
 
 require('../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/chargesociales.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/paymentsocialcontribution.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("bills");
 

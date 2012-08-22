@@ -21,8 +21,8 @@
  *       \brief      Home page of export tools
  */
 
-require_once("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/exports/class/export.class.php");
+require_once '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
 
 $langs->load("exports");
 

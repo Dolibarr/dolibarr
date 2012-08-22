@@ -22,7 +22,7 @@
  *      \brief      This file is a CRUD class file for Task (Create/Read/Update/Delete)
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
 /**
@@ -379,7 +379,7 @@ class Task extends CommonObject
 	            dol_syslog(get_class($this)."::delete dir=".$dir, LOG_DEBUG);
 	            if (file_exists($dir))
 	            {
-	            	require_once(DOL_DOCUMENT_ROOT . "/core/lib/files.lib.php");
+	            	require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 	                $res = @dol_delete_dir_recursive($dir);
 	                if (!$res)
 	                {
@@ -1057,7 +1057,7 @@ class Task extends CommonObject
 			//Duplicate file
 			if ($clone_file)
 			{
-				require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 				//retreive project origin ref to know folder to copy
 				$projectstatic=new Project($this->db);

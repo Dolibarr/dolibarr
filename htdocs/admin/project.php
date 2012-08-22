@@ -25,9 +25,9 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/projet/class/task.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
 $langs->load("admin");
 $langs->load("errors");
@@ -89,7 +89,7 @@ if ($action == 'specimen')
 
 	if ($filefound)
 	{
-		require_once($file);
+		require_once $file;
 
 		$module = new $classname($db);
 
@@ -198,7 +198,7 @@ foreach ($dirmodels as $reldir)
 					$file = $reg[1];
 					$classname = substr($file,4);
 
-					require_once(DOL_DOCUMENT_ROOT ."/core/modules/project/".$file.".php");
+					require_once DOL_DOCUMENT_ROOT ."/core/modules/project/".$file.'.php';
 
 					$module = new $file;
 
@@ -331,7 +331,7 @@ foreach ($dirmodels as $reldir)
 					$var=!$var;
 					print "<tr ".$bc[$var].">\n  <td>$name";
 					print "</td>\n  <td>\n";
-					require_once($dir.$file);
+					require_once $dir.$file;
 					$module = new $classname($db);
 					print $module->description;
 					print "</td>\n";

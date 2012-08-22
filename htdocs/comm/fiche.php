@@ -28,15 +28,15 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
-if ($conf->facture->enabled) require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
-if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
-if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
-if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
-if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
-if ($conf->ficheinter->enabled) require_once(DOL_DOCUMENT_ROOT."/fichinter/class/fichinter.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+if ($conf->facture->enabled) require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+if ($conf->propal->enabled) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if ($conf->commande->enabled) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if ($conf->contrat->enabled) require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+if ($conf->adherent->enabled) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+if ($conf->ficheinter->enabled) require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 
 $langs->load("companies");
 if ($conf->contrat->enabled)  $langs->load("contracts");

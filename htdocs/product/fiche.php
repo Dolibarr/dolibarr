@@ -28,15 +28,15 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/product.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
-if (! empty($conf->propal->enabled))   require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
-if (! empty($conf->facture->enabled))  require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
-if (! empty($conf->commande->enabled)) require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+if (! empty($conf->propal->enabled))   require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if (! empty($conf->facture->enabled))  require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 $langs->load("products");
 $langs->load("other");
@@ -62,7 +62,7 @@ $canvas = $object->canvas?$object->canvas:GETPOST("canvas");
 $objcanvas='';
 if (! empty($canvas))
 {
-    require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
     $objcanvas = new Canvas($db,$action);
     $objcanvas->getCanvas('product','card',$canvas);
 }
@@ -695,7 +695,7 @@ else
     if ($action == 'create' && ($user->rights->produit->creer || $user->rights->service->creer))
     {
         //WYSIWYG Editor
-        require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 		// Load object modCodeProduct
         $module=(! empty($conf->global->PRODUCT_CODEPRODUCT_ADDON)?$conf->global->PRODUCT_CODEPRODUCT_ADDON:'mod_codeproduct_leopard');
@@ -891,7 +891,7 @@ else
         if ($action == 'edit' && ($user->rights->produit->creer || $user->rights->service->creer))
         {
             //WYSIWYG Editor
-            require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+            require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
             $type = $langs->trans('Product');
             if ($object->isservice()) $type = $langs->trans('Service');
@@ -1120,7 +1120,7 @@ else
                 print '</td><td colspan="2">';
                 if ($action == 'editbarcodetype')
                 {
-                    require_once(DOL_DOCUMENT_ROOT."/core/class/html.formbarcode.class.php");
+                    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
                     $formbarcode = new FormBarCode($db);
                     $formbarcode->form_barcode_type($_SERVER['PHP_SELF'].'?id='.$object->id,$object->barcode_type,'barcodetype_id');
                 }

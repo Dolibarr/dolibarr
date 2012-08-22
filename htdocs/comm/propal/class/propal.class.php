@@ -29,10 +29,10 @@
  *	\brief      Fichier de la classe des propales
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/product/class/product.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/contact/class/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/margin/lib/margins.lib.php");
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT .'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT .'/margin/lib/margins.lib.php';
 
 /**
  *	\class      Propal
@@ -915,7 +915,7 @@ class Propal extends CommonObject
         $this->ref_client	= '';
 
         // Set ref
-        require_once(DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php");
+        require_once DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.'.php';
         $obj = $conf->global->PROPALE_ADDON;
         $modPropale = new $obj;
         $this->ref = $modPropale->getNextValue($objsoc,$this);
@@ -1797,7 +1797,7 @@ class Propal extends CommonObject
     function delete($user, $notrigger=0)
     {
         global $conf,$langs;
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         $error=0;
 
@@ -2305,7 +2305,7 @@ class Propal extends CommonObject
 
             // Chargement de la classe de numerotation
             $classname = $conf->global->PROPALE_ADDON;
-            require_once($dir.$file);
+            require_once $dir.$file;
 
             $obj = new $classname();
 

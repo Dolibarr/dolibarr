@@ -22,7 +22,7 @@
  *	\ingroup    facture
  *	\brief      File of class to manage payments of customers invoices
  */
-require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 
 /**     \class      Paiement
@@ -379,7 +379,7 @@ class Paiement extends CommonObject
 
         if ($conf->banque->enabled)
         {
-            require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
+            require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
             dol_syslog("$user->id,$mode,$label,$this->fk_account,$emetteur_nom,$emetteur_banque");
 

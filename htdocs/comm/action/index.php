@@ -26,12 +26,12 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/agenda.lib.php");
-if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
+if ($conf->projet->enabled) require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 
 if (! isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW=3;
 
@@ -519,7 +519,7 @@ if ($showbirthday)
 
 if (count($listofextcals))
 {
-    require_once(DOL_DOCUMENT_ROOT."/comm/action/class/ical.class.php");
+    require_once DOL_DOCUMENT_ROOT.'/comm/action/class/ical.class.php';
     foreach($listofextcals as $extcal)
     {
         $url=$extcal['src'];    // Example: https://www.google.com/calendar/ical/eldy10%40gmail.com/private-cde92aa7d7e0ef6110010a821a2aaeb/basic.ics

@@ -20,8 +20,8 @@
  *	\ingroup    expedition
  *	\brief      Library for expedition module
  */
-require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
 
 /**

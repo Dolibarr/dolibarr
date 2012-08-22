@@ -23,8 +23,8 @@
  *	\brief      Module de generation de l'affichage de la box factures impayees
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
-require_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 
 /**

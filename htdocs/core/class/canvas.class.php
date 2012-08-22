@@ -104,7 +104,7 @@ class Canvas
 		{
             // Include actions class (controller)
             $this->control_file=$controlclassfile;
-            require_once($controlclassfile);
+            require_once $controlclassfile;
 
             // Instantiate actions class (controller)
             $controlclassname = 'Actions'.ucfirst($this->card).ucfirst($this->canvas);

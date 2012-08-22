@@ -24,10 +24,10 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/tva/class/tva.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/chargesociales.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/paymentsocialcontribution.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->load("compta");
 $langs->load("bills");

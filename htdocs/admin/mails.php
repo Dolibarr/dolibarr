@@ -22,8 +22,8 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("companies");
 $langs->load("products");
@@ -78,7 +78,7 @@ if ($action == 'update' && empty($_POST["cancel"]))
  */
 if (GETPOST('addfile') || GETPOST('addfilehtml'))
 {
-	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	// Set tmp user directory
 	$vardir=$conf->user->dir_output."/".$user->id;
@@ -184,7 +184,7 @@ if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GE
 		$subject=make_substitutions($subject,$substitutionarrayfortest);
 		$body=make_substitutions($body,$substitutionarrayfortest);
 
-		require_once(DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
+		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
         $mailfile = new CMailFile(
             $subject,
             $sendto,

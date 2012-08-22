@@ -25,19 +25,19 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/fichinter/class/fichinter.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/modules/fichinter/modules_fichinter.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/fichinter.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if ($conf->projet->enabled)
 {
-    require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
-    require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 if (! empty($conf->global->FICHEINTER_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.".php"))
 {
-    require_once(DOL_DOCUMENT_ROOT ."/core/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.".php");
+    require_once DOL_DOCUMENT_ROOT ."/core/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.'.php';
 }
 
 $langs->load("companies");
@@ -210,7 +210,7 @@ else if ($action == 'remove_file')
 {
 	if ($object->fetch($id))
 	{
-		require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$object->fetch_thirdparty();
 
@@ -467,7 +467,7 @@ else if ($action == 'down' && $user->rights->ficheinter->creer)
  */
 if (GETPOST('addfile','alpha'))
 {
-    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     // Set tmp user directory TODO Use a dedicated directory for temp mails files
     $vardir=$conf->user->dir_output."/".$user->id;
@@ -482,7 +482,7 @@ if (GETPOST('addfile','alpha'))
  */
 if (GETPOST('removedfile','alpha'))
 {
-    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     // Set tmp user directory
     $vardir=$conf->user->dir_output."/".$user->id;
@@ -565,7 +565,7 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
                 $mimetype = $attachedfiles['mimes'];
 
                 // Envoi de la propal
-                require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
+                require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
                 if ($mailfile->error)
                 {
@@ -957,8 +957,8 @@ else if ($id > 0 || ! empty($ref))
 
     if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
     {
-    	require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
-    	require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+    	require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+    	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
     	$formcompany= new FormCompany($db);
 
     	$blocname = 'contacts';
@@ -1073,7 +1073,7 @@ else if ($id > 0 || ! empty($ref))
                 print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 
                 // Editeur wysiwyg
-                require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+                require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
                 $doleditor=new DolEditor('np_desc',$objp->description,'',164,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,70);
                 $doleditor->Create();
                 print '</td>';
@@ -1128,7 +1128,7 @@ else if ($id > 0 || ! empty($ref))
             print '<tr '.$bc[$var].">\n";
             print '<td>';
             // editeur wysiwyg
-            require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+            require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
             $doleditor=new DolEditor('np_desc',GETPOST('np_desc','alpha'),'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,70);
             $doleditor->Create();
             print '</td>';

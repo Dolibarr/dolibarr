@@ -24,7 +24,7 @@
  *  \brief      Fichier de la classe de gestion des entrepots
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
 /**

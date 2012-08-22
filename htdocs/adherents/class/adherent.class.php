@@ -26,10 +26,10 @@
  *	\brief      File of class to manage members of a foundation
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/class/cotisation.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 /**
@@ -513,7 +513,7 @@ class Adherent extends CommonObject
                 // Update information on linked user if it is an update
                 if ($this->user_id > 0 && ! $nosyncuser)
                 {
-                    require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
+                    require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
                     dol_syslog(get_class($this)."::update update linked user");
 
@@ -557,7 +557,7 @@ class Adherent extends CommonObject
                 // Update information on linked thirdparty if it is an update
                 if ($this->fk_soc > 0 && ! $nosyncthirdparty)
                 {
-                    require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+                    require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
                     dol_syslog(get_class($this)."::update update linked thirdparty");
 
@@ -792,7 +792,7 @@ class Adherent extends CommonObject
         // If new password not provided, we generate one
         if (! $password)
         {
-            require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
             $password=getRandomPassword('');
         }
 
@@ -825,7 +825,7 @@ class Adherent extends CommonObject
 
                 if ($this->user_id && ! $nosyncuser)
                 {
-                    require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
+                    require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
                     // This member is linked with a user, so we also update users informations
                     // if this is an update.
@@ -1510,7 +1510,7 @@ class Adherent extends CommonObject
         $ret='';
         if ($withcountry && $this->country_id && (empty($this->country_code) || empty($this->country)))
         {
-            require_once(DOL_DOCUMENT_ROOT ."/core/lib/company.lib.php");
+            require_once DOL_DOCUMENT_ROOT .'/core/lib/company.lib.php';
             $tmparray=getCountry($this->country_id,'all');
             $this->country_code=$tmparray['code'];
             $this->country     =$tmparray['label'];

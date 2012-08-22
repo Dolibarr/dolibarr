@@ -26,7 +26,7 @@
 
 // Just to define version DOL_VERSION
 if (! defined('DOL_INC_FOR_VERSION_ERROR')) define('DOL_INC_FOR_VERSION_ERROR','1');
-require_once('../filefunc.inc.php');
+require_once '../filefunc.inc.php';
 
 // Define DOL_DOCUMENT_ROOT and ADODB_PATH used for install/upgrade process
 if (! defined('DOL_DOCUMENT_ROOT'))	    define('DOL_DOCUMENT_ROOT', '..');
@@ -37,11 +37,11 @@ if (! defined('ADODB_PATH'))
     define('ADODB_PATH', $foundpath);
 }
 
-require_once(DOL_DOCUMENT_ROOT.'/core/class/translate.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
-require_once(ADODB_PATH.'adodb-time.inc.php');
+require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once ADODB_PATH.'adodb-time.inc.php';
 
 // Avoid warnings with strict mode E_STRICT
 $conf = new stdClass(); // instantiate $conf explicitely

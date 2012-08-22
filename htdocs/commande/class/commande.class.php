@@ -27,8 +27,8 @@
  *  \brief      Fichier des classes de commandes
  */
 include_once(DOL_DOCUMENT_ROOT."/core/class/commonorder.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/margin/lib/margins.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT .'/margin/lib/margins.lib.php';
 
 /**
  *  Class to manage customers orders
@@ -178,7 +178,7 @@ class Commande extends CommonOrder
     function valid($user, $idwarehouse=0)
     {
         global $conf,$langs;
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         $error=0;
 
@@ -239,7 +239,7 @@ class Commande extends CommonOrder
             // If stock is incremented on validate order, we must increment it
             if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
             {
-                require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+                require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
                 $langs->load("agenda");
 
                 // Loop on each line
@@ -353,7 +353,7 @@ class Commande extends CommonOrder
             // If stock is decremented on validate order, we must reincrement it
             if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
             {
-                require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+                require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
                 $langs->load("agenda");
 
                 $num=count($this->lines);
@@ -536,7 +536,7 @@ class Commande extends CommonOrder
 			// If stock is decremented on validate order, we must reincrement it
 			if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
 			{
-				require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$langs->load("agenda");
 
 				$num=count($this->lines);
@@ -2287,7 +2287,7 @@ class Commande extends CommonOrder
     function delete($user, $notrigger=0)
     {
         global $conf, $langs;
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         $error = 0;
 

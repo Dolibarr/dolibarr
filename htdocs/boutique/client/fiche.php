@@ -25,7 +25,7 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php');
+require_once DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php';
 include_once(DOL_DOCUMENT_ROOT.'/boutique/client/class/boutiqueclient.class.php');
 
 

@@ -528,7 +528,7 @@ abstract class CommonObject
      */
     function fetch_contact($contactid)
     {
-        require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
+        require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
         $contact = new Contact($this->db);
         $result=$contact->fetch($contactid);
         $this->contact = $contact;
@@ -2002,7 +2002,7 @@ abstract class CommonObject
         if (! is_array($optionsArray))
         {
             // optionsArray not already loaded, so we load it
-            require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
+            require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
             $extrafields = new ExtraFields($this->db);
             $optionsArray = $extrafields->fetch_name_optionals_label();
         }
@@ -2061,7 +2061,7 @@ abstract class CommonObject
         {
             // Check parameters
             $langs->load('admin');
-            require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
+            require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
             $extrafields = new ExtraFields($this->db);
             $optionsArray = $extrafields->fetch_name_optionals_label($this->elementType);
 
@@ -2841,7 +2841,7 @@ abstract class CommonObject
 
   function getMarginInfos($force_price=false) {
   	global $conf;
-    require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php');
+    require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
     $marginInfos = array(
       'pa_products' => 0,
       'pv_products' => 0,

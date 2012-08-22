@@ -23,8 +23,8 @@
 
 include("../../main.inc.php");
 
-require_once(DOL_DOCUMENT_ROOT."/margin/lib/margins.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $langs->load("admin");
 $langs->load("margins");

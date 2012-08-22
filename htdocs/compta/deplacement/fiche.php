@@ -24,13 +24,13 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/trip.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/deplacement/class/deplacement.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/lib/trip.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if ($conf->projet->enabled)
 {
-    require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
-    require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 $langs->load("trips");
@@ -261,7 +261,7 @@ $form = new Form($db);
 if ($action == 'create')
 {
     //WYSIWYG Editor
-    require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
     print_fiche_titre($langs->trans("NewTrip"));
 
@@ -347,7 +347,7 @@ else if ($id)
         if ($action == 'edit' && $user->rights->deplacement->creer)
         {
             //WYSIWYG Editor
-            require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+            require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
             $soc = new Societe($db);
             if ($object->socid)

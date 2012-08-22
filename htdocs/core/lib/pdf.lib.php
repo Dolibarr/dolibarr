@@ -81,9 +81,9 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
     	return "Error MAIN_USE_FPDF and MAIN_DISABLE_FPDI can't be set together";
 
 	// We use by default TCPDF
-	if (empty($conf->global->MAIN_USE_FPDF)) require_once(TCPDF_PATH.'tcpdf.php');
+	if (empty($conf->global->MAIN_USE_FPDF)) require_once TCPDF_PATH.'tcpdf.php';
 	// We need to instantiate fpdi object (instead of tcpdf) to use merging features. But we can disable it.
-	if (empty($conf->global->MAIN_DISABLE_FPDI)) require_once(FPDI_PATH.'fpdi.php');
+	if (empty($conf->global->MAIN_DISABLE_FPDI)) require_once FPDI_PATH.'fpdi.php';
 
 	//$arrayformat=pdf_getFormat();
 	//$format=array($arrayformat['width'],$arrayformat['height']);
@@ -105,7 +105,7 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 		 */
 		if (! empty($conf->global->MAIN_USE_FPDF))
 		{
-			require_once(FPDI_PATH.'fpdi_protection.php');
+			require_once FPDI_PATH.'fpdi_protection.php';
 			$pdf = new FPDI_Protection($pagetype,$metric,$format);
 			// For FPDF, we specify permission we want to open
 			$pdfrights = array('print');

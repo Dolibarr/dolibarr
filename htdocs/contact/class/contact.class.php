@@ -25,7 +25,7 @@
  *	\ingroup    societe
  *	\brief      File of contacts class
  */
-require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 
 /**
@@ -868,7 +868,7 @@ class Contact extends CommonObject
         $ret='';
         if ($withcountry && $this->country_id && (empty($this->country_code) || empty($this->country)))
         {
-            require_once(DOL_DOCUMENT_ROOT ."/core/lib/company.lib.php");
+            require_once DOL_DOCUMENT_ROOT .'/core/lib/company.lib.php';
             $tmparray=getCountry($this->country_id,'all');
             $this->country_code=$tmparray['code'];
             $this->country     =$tmparray['label'];

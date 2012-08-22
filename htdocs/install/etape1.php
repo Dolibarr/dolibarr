@@ -377,7 +377,7 @@ if (! $error && $db->connected && $action == "set")
             else
             {
             	//ODT templates
-            	require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+            	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
             	$srcroot=$main_dir.'/install/doctemplates';
             	$destroot=$main_data_dir.'/doctemplates';
             	$docs=array('thirdparties' => 'thirdparty', 'proposals' => 'proposal', 'orders' => 'order', 'invoices' => 'invoice');

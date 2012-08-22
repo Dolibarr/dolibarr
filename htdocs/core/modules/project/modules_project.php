@@ -22,7 +22,7 @@
  *      \brief      File that contain parent class for projects models
  *                  and parent class for projects numbering models
  */
-require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 
 /**
@@ -207,7 +207,7 @@ function project_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 	// Charge le modele
 	if ($filefound)
 	{
-		require_once($file);
+		require_once $file;
 
 		$obj = new $classname($db);
 
@@ -219,7 +219,7 @@ function project_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 			$outputlangs->charset_output=$sav_charset_output;
 
 			// we delete preview files
-        	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_delete_preview($object);
 
 			// Success in building document. We build meta file.

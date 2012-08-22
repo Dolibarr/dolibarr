@@ -24,9 +24,9 @@
  *	\brief      Fichier de la classe des factures recurentes
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/notify.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 
 /**

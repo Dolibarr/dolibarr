@@ -301,7 +301,7 @@ else
 				}
 				else
 				{
-                    require_once($dolibarr_main_document_root."/core/lib/admin.lib.php");
+                    require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
     				// $conf is already instancied inside inc.php
     				$conf->db->type = $dolibarr_main_db_type;

@@ -24,10 +24,10 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
-require_once DOL_DOCUMENT_ROOT."/core/lib/fourn.lib.php";
-require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $langs->load("facture");
 $langs->load("orders");

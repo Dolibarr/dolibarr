@@ -27,13 +27,13 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
-require_once(DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/images.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/usergroups.lib.php");
-if (! empty($conf->ldap->enabled)) require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
-if (! empty($conf->adherent->enabled)) require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
+if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 if (! empty($conf->multicompany->enabled)) dol_include_once("/multicompany/class/actions_multicompany.class.php");
 
 $id			= GETPOST('id','int');
@@ -281,7 +281,7 @@ if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield)
 
 if ($action == 'update' && ! $_POST["cancel"])
 {
-    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     if ($caneditfield)	// Case we can edit all field
     {
@@ -673,7 +673,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     $generated_password='';
     if (empty($ldap_sid))    // ldap_sid is for activedirectory
     {
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
         $generated_password=getRandomPassword('');
     }
     $password=$generated_password;
@@ -831,7 +831,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<tr><td valign="top">';
     print $langs->trans("Note");
     print '</td><td>';
-    require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor=new DolEditor('note','','',180,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_4,90);
     $doleditor->Create();
     print "</td></tr>\n";

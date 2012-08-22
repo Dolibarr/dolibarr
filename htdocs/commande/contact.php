@@ -25,11 +25,11 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/order.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $langs->load("orders");
 $langs->load("sendings");

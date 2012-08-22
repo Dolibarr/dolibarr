@@ -32,7 +32,7 @@ if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
 if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 
 
-require_once("../main.inc.php");
+require_once '../main.inc.php';
 
 // Define css type
 header('Content-type: text/javascript');

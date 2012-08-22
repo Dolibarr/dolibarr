@@ -155,7 +155,7 @@ analyse_sql_and_script($_POST,0);
 if (! empty($_SERVER['DOCUMENT_ROOT'])) set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 // Include the conf.php and functions.lib.php
-require_once("filefunc.inc.php");
+require_once 'filefunc.inc.php';
 
 // Init session. Name of session is specific to Dolibarr instance.
 $prefix=dol_getprefix();
@@ -174,7 +174,7 @@ if (ini_get('register_globals'))    // To solve bug in using $_SESSION
 
 // Init the 5 global objects
 // This include will set: $conf, $db, $langs, $user, $mysoc objects
-require_once("master.inc.php");
+require_once 'master.inc.php';
 
 // Activate end of page function
 register_shutdown_function('dol_shutdown');
@@ -232,9 +232,9 @@ if (! empty($conf->file->main_force_https))
 
 
 // Chargement des includes complementaires de presentation
-if (! defined('NOREQUIREMENU')) require_once(DOL_DOCUMENT_ROOT ."/core/class/menu.class.php");			// Need 10ko memory (11ko in 2.2)
-if (! defined('NOREQUIREHTML')) require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");	    // Need 660ko memory (800ko in 2.2)
-if (! defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once(DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php');	// Need 22ko memory
+if (! defined('NOREQUIREMENU')) require_once DOL_DOCUMENT_ROOT .'/core/class/menu.class.php';			// Need 10ko memory (11ko in 2.2)
+if (! defined('NOREQUIREHTML')) require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';	    // Need 660ko memory (800ko in 2.2)
+if (! defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';	// Need 22ko memory
 
 // If install or upgrade process not done or not completely finished, we call the install page.
 if (! empty($conf->global->MAIN_NOT_INSTALLED) || ! empty($conf->global->MAIN_NOT_UPGRADED))
@@ -248,7 +248,7 @@ if ((! empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_V
 || (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ! empty($conf->global->MAIN_VERSION_LAST_INSTALL) && ($conf->global->MAIN_VERSION_LAST_INSTALL != DOL_VERSION)))
 {
     $versiontocompare=empty($conf->global->MAIN_VERSION_LAST_UPGRADE)?$conf->global->MAIN_VERSION_LAST_INSTALL:$conf->global->MAIN_VERSION_LAST_UPGRADE;
-    require_once(DOL_DOCUMENT_ROOT ."/core/lib/admin.lib.php");
+    require_once DOL_DOCUMENT_ROOT .'/core/lib/admin.lib.php';
     $dolibarrversionlastupgrade=preg_split('/[.-]/',$versiontocompare);
     $dolibarrversionprogram=preg_split('/[.-]/',DOL_VERSION);
     $rescomp=versioncompare($dolibarrversionprogram,$dolibarrversionlastupgrade);
@@ -673,7 +673,7 @@ if (! defined('NOREQUIRETRAN'))
 // Use php template engine
 if (! empty($conf->global->MAIN_USE_TEMPLATE_ENGINE) && ! defined('NOTEMPLATEENGINE'))
 {
-	require_once(DOL_DOCUMENT_ROOT.'/includes/savant/Savant3.php');
+	require_once DOL_DOCUMENT_ROOT.'/includes/savant/Savant3.php';
 
 	$tpl = new Savant3();
 }
@@ -1507,7 +1507,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    // Link to bugtrack
 	    if (! empty($conf->global->MAIN_SHOW_BUGTRACK_LINK))
 	    {
-	    	require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
+	    	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 	        $bugbaseurl='https://doliforge.org/tracker/?';
 	        $bugbaseurl.='func=add&group_id=144&atid=246';

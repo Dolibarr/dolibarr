@@ -32,9 +32,9 @@
  */
 
 include_once(DOL_DOCUMENT_ROOT."/core/class/commoninvoice.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/product/class/product.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/societe/class/client.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/margin/lib/margins.lib.php");
+require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT .'/societe/class/client.class.php';
+require_once DOL_DOCUMENT_ROOT .'/margin/lib/margins.lib.php';
 
 
 /**
@@ -170,7 +170,7 @@ class Facture extends CommonInvoice
         // Create invoice from a predefined invoice
         if ($this->fac_rec > 0)
         {
-            require_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php');
+            require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
             $_facrec = new FactureRec($this->db);
             $result=$_facrec->fetch($this->fac_rec);
 
@@ -1181,7 +1181,7 @@ class Facture extends CommonInvoice
     function delete($rowid=0, $notrigger=0)
     {
         global $user,$langs,$conf;
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         if (! $rowid) $rowid=$this->id;
 
@@ -1560,7 +1560,7 @@ class Facture extends CommonInvoice
     function validate($user, $force_number='', $idwarehouse=0)
     {
         global $conf,$langs;
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         $now=dol_now();
 
@@ -1683,7 +1683,7 @@ class Facture extends CommonInvoice
                 // Si active on decremente le produit principal et ses composants a la validation de facture
                 if ($this->type != 3 && $result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
                 {
-                    require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+                    require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
                     $langs->load("agenda");
 
                     // Loop on each line
@@ -1802,7 +1802,7 @@ class Facture extends CommonInvoice
             // Si on decremente le produit principal et ses composants a la validation de facture, on réincrement
             if ($this->type != 3 && $result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
             {
-                require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+                require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
                 $langs->load("agenda");
 
                 $num=count($this->lines);
@@ -2336,7 +2336,7 @@ class Facture extends CommonInvoice
      */
     function getSumCreditNotesUsed()
     {
-        require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
+        require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
         $discountstatic=new DiscountAbsolute($this->db);
         $result=$discountstatic->getSumCreditNotesUsed($this);
@@ -2358,7 +2358,7 @@ class Facture extends CommonInvoice
      */
     function getSumDepositsUsed()
     {
-        require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
+        require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
         $discountstatic=new DiscountAbsolute($this->db);
         $result=$discountstatic->getSumDepositsUsed($this);

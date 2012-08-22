@@ -19,7 +19,7 @@
  * 	\file       	htdocs/ecm/class/htmlecm.form.class.php
  * 	\brief      	Fichier de la classe des fonctions predefinie de composants html
  */
-require_once(DOL_DOCUMENT_ROOT."/ecm/class/ecmdirectory.class.php");
+require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 
 /**

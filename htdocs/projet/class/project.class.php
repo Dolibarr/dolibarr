@@ -23,7 +23,7 @@
  * 		\ingroup    projet
  * 		\brief      Fichier de la classe de gestion des projets
  */
-require_once(DOL_DOCUMENT_ROOT . "/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 
 /**
  * 		\class      Project
@@ -427,7 +427,7 @@ class Project extends CommonObject
     function delete($user, $notrigger=0)
     {
         global $langs, $conf;
-        require_once(DOL_DOCUMENT_ROOT . "/core/lib/files.lib.php");
+        require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
         $error = 0;
 
@@ -972,7 +972,7 @@ class Project extends CommonObject
     	if (! empty($conf->global->PROJECT_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/project/".$conf->global->PROJECT_ADDON.".php"))
     	{
 
-        	require_once(DOL_DOCUMENT_ROOT ."/core/modules/project/".$conf->global->PROJECT_ADDON.".php");
+        	require_once DOL_DOCUMENT_ROOT ."/core/modules/project/".$conf->global->PROJECT_ADDON.'.php';
         	$modProject = new $obj;
         	$defaultref = $modProject->getNextValue($clone_project->societe->id,$clone_project);
     	}
@@ -1067,7 +1067,7 @@ class Project extends CommonObject
 			//Duplicate file
 			if ($clone_file)
 			{
-				require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 				$clone_project_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($defaultref);
 				$ori_project_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($orign_project_ref);

@@ -23,7 +23,7 @@
  *		\brief      Functions used by project module
  *      \ingroup    project
  */
-require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 
 /**
@@ -659,7 +659,7 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
 {
     global $langs,$conf,$user,$bc;
 
-    require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
+    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
     $projectstatic=new Project($db);
 

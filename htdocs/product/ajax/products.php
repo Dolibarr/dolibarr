@@ -31,7 +31,7 @@ if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
 if (empty($_GET['keysearch']) && ! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 
 require('../../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 $langs->load("products");
 $langs->load("main");

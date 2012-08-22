@@ -23,8 +23,8 @@
  */
 
 include("./inc.php");
-require_once($dolibarr_main_document_root."/core/class/conf.class.php");
-require_once($dolibarr_main_document_root."/core/lib/admin.lib.php");
+require_once $dolibarr_main_document_root.'/core/class/conf.class.php';
+require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
 $etape = 2;
 $ok = 0;

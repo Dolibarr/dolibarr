@@ -34,7 +34,7 @@
  */
 function print_auguria_menu($db,$atarget,$type_user)
 {
-	require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
+	require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 
 	global $user,$conf,$langs,$dolibarr_main_db_name;
 
@@ -242,7 +242,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after)
      */
     if ($mainmenu)
     {
-        require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 
         $tabMenu=array();
         $menuArbo = new Menubase($db,'auguria','left');

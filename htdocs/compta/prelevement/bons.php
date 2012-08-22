@@ -25,7 +25,7 @@
  */
 
 require("../bank/pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bonprelevement.class.php");
+require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 
 $langs->load("widthdrawals");
 $langs->load("categories");

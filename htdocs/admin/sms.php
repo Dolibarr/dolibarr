@@ -22,7 +22,7 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $langs->load("companies");
 $langs->load("products");
@@ -115,7 +115,7 @@ if ($action == 'send' && ! $_POST['cancel'])
         complete_substitutions_array($substitutionarrayfortest, $langs);
 	    $body=make_substitutions($body,$substitutionarrayfortest);
 
-		require_once(DOL_DOCUMENT_ROOT."/core/class/CSMSFile.class.php");
+		require_once DOL_DOCUMENT_ROOT.'/core/class/CSMSFile.class.php';
 
 		$smsfile = new CSMSFile($sendto, $smsfrom, $body, $deliveryreceipt, $deferred, $priority, $class);  // This define OvhSms->login, pass, session and account
 		$result=$smsfile->sendfile(); // This send SMS

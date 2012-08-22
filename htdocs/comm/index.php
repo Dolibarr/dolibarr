@@ -24,12 +24,12 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/societe/class/client.class.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/agenda.lib.php");
-if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
-if ($conf->propal->enabled)  require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
+if ($conf->contrat->enabled) require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+if ($conf->propal->enabled)  require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
 if (! $user->rights->societe->lire) accessforbidden();
 

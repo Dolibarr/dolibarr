@@ -25,8 +25,8 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formbarcode.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 
 $langs->load("admin");
 
@@ -132,7 +132,7 @@ foreach($dirbarcode as $reldir)
 						$filebis=$reg[1];
 
 						// Chargement de la classe de codage
-						require_once($newdir.$file);
+						require_once $newdir.$file;
 						$classname = "mod".ucfirst($filebis);
 						$module = new $classname($db);
 

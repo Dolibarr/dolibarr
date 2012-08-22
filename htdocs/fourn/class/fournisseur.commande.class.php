@@ -27,7 +27,7 @@
  */
 
 include_once(DOL_DOCUMENT_ROOT."/core/class/commonorder.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 
 /**
@@ -304,7 +304,7 @@ class CommandeFournisseur extends CommonOrder
     function valid($user,$idwarehouse=0)
     {
         global $langs,$conf;
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         $error=0;
 
@@ -450,7 +450,7 @@ class CommandeFournisseur extends CommonOrder
             // If stock is incremented on validate order, we must redecrement it
             if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)
             {
-                require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+                require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
                 $num=count($this->lines);
                 for ($i = 0; $i < $num; $i++)
@@ -621,7 +621,7 @@ class CommandeFournisseur extends CommonOrder
             {
                 // Definition du nom de modele de numerotation de commande fournisseur
                 $modName=$conf->global->COMMANDE_SUPPLIER_ADDON;
-                require_once($dir.'/'.$file);
+                require_once $dir.'/'.$file;
 
                 // Recuperation de la nouvelle reference
                 $objMod = new $modName($this->db);
@@ -662,7 +662,7 @@ class CommandeFournisseur extends CommonOrder
     function approve($user, $idwarehouse=0)
     {
         global $langs,$conf;
-		require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         $error=0;
 
@@ -701,7 +701,7 @@ class CommandeFournisseur extends CommonOrder
                 // If stock is incremented on validate order, we must increment it
                 if (! $error && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)
                 {
-                    require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+                    require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
                     $langs->load("agenda");
 
                     $cpt=count($this->lines);
@@ -1183,7 +1183,7 @@ class CommandeFournisseur extends CommonOrder
     {
         global $conf;
         $error = 0;
-        require_once DOL_DOCUMENT_ROOT ."/product/stock/class/mouvementstock.class.php";
+        require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
 
         // Check parameters
         if ($entrepot <= 0 || $qty <= 0)
@@ -1284,7 +1284,7 @@ class CommandeFournisseur extends CommonOrder
     function delete($user='')
     {
         global $langs,$conf;
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         $error = 0;
 

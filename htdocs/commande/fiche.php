@@ -30,17 +30,17 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formorder.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/modules/commande/modules_commande.php");
-require_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php');
-require_once(DOL_DOCUMENT_ROOT."/core/lib/order.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 if (! empty($conf->projet->enabled)) {
-	require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
-	require_once(DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php');
-	require_once(DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php');
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
 
 $langs->load('orders');
@@ -1016,7 +1016,7 @@ else if ($action == 'remove_file')
 {
 	if ($object->id > 0)
 	{
-		require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$langs->load("other");
 		$upload_dir = $conf->commande->dir_output;
@@ -1033,7 +1033,7 @@ else if ($action == 'remove_file')
 */
 if (GETPOST('addfile'))
 {
-	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	// Set tmp user directory TODO Use a dedicated directory for temp mails files
 	$vardir=$conf->user->dir_output."/".$user->id;
@@ -1048,7 +1048,7 @@ if (GETPOST('addfile'))
 */
 if (GETPOST('removedfile'))
 {
-	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	// Set tmp user directory
 	$vardir=$conf->user->dir_output."/".$user->id;
@@ -1129,7 +1129,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			$mimetype = $attachedfiles['mimes'];
 
 			// Send mail
-			require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
+			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
 			if ($mailfile->error)
 			{
@@ -1291,7 +1291,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 	if ($action == 'create' && $user->rights->commande->creer)
 	{
 		//WYSIWYG Editor
-		require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 		print_fiche_titre($langs->trans('CreateOrder'));
 
@@ -1656,7 +1656,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				$text=$langs->trans('ConfirmValidateOrder',$numref);
 				if ($conf->notification->enabled)
 				{
-					require_once(DOL_DOCUMENT_ROOT ."/core/class/notify.class.php");
+					require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
 					$notify=new Notify($db);
 					$text.='<br>';
 					$text.=$notify->confirmMessage('NOTIFY_VAL_ORDER',$object->socid);
@@ -1665,7 +1665,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
 				{
 					$langs->load("stocks");
-					require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
+					require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 					$formproduct=new FormProduct($db);
 					$formquestion=array(
 							//'text' => $langs->trans("ConfirmClone"),
@@ -1685,7 +1685,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
 				{
 					$langs->load("stocks");
-					require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
+					require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 					$formproduct=new FormProduct($db);
 					$formquestion=array(
 							//'text' => $langs->trans("ConfirmClone"),
@@ -1716,7 +1716,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
 				{
 					$langs->load("stocks");
-					require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
+					require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 					$formproduct=new FormProduct($db);
 					$formquestion=array(
 							//'text' => $langs->trans("ConfirmClone"),
@@ -2055,7 +2055,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 			if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 			{
-				require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 				$formcompany= new FormCompany($db);
 
 				$blocname = 'contacts';

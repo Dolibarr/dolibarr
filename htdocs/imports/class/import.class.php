@@ -67,7 +67,7 @@ class Import
         $var=true;
         $i=0;
 
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
         $modulesdir = dolGetModulesDirs();
 
         // Load list of modules
@@ -93,7 +93,7 @@ class Import
 				// Init load class
 				$file = $dir."/".$modulename.".class.php";
 				$classname = $modulename;
-				require_once($file);
+				require_once $file;
 				$module = new $classname($this->db);
 
 				if (is_array($module->import_code))
@@ -188,7 +188,7 @@ class Import
 		$dir = DOL_DOCUMENT_ROOT . "/core/modules/import/";
 		$file = "import_".$model.".modules.php";
 		$classname = "Import".$model;
-		require_once($dir.$file);
+		require_once $dir.$file;
 		$objmodel = new $classname($this->db,$datatoimport);
 
 		$outputlangs=$langs;	// Lang for output

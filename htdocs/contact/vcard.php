@@ -24,9 +24,9 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/vcard.class.php");
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
 
 
 $contact = new Contact($db);

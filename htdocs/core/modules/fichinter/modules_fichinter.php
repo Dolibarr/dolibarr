@@ -26,7 +26,7 @@
  *   			et la classe mere de numerotation des fiches interventions
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 
 /**
@@ -209,7 +209,7 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails=0, $
 	// Charge le modele
 	if ($filefound)
 	{
-		require_once($file);
+		require_once $file;
 
 		$obj = new $classname($db);
 
@@ -221,7 +221,7 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails=0, $
 			$outputlangs->charset_output=$sav_charset_output;
 
 			// We delete old preview
-			require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_delete_preview($object);
 
 			// Appel des triggers

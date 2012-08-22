@@ -21,7 +21,7 @@
  *      \author		Laurent Destailleur
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 
 /**
@@ -500,7 +500,7 @@ class localtax extends CommonObject
 				if ($conf->banque->enabled)
                 {
                     // Insertion dans llx_bank
-                    require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
+                    require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
                     $acc = new Account($this->db);
 					$result=$acc->fetch($this->accountid);

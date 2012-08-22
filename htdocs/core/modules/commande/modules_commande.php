@@ -28,9 +28,9 @@
  *  				et la classe mere de numerotation des commandes
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");	// requis car utilise par les classes qui heritent
-require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// requis car utilise par les classes qui heritent
+require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 
 /**
@@ -215,7 +215,7 @@ function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
 	// Charge le modele
 	if ($filefound)
 	{
-		require_once($file);
+		require_once $file;
 
 		$obj = new $classname($db);
 		//$obj->message = $message;
@@ -228,7 +228,7 @@ function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
 			$outputlangs->charset_output=$sav_charset_output;
 
 			// We delete old preview
-			require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_delete_preview($object);
 
 			// Success in building document. We build meta file.

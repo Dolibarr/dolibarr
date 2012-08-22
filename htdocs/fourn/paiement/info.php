@@ -23,8 +23,8 @@
  */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/fourn/class/paiementfourn.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
 $langs->load("bills");
 $langs->load("suppliers");

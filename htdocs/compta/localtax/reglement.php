@@ -22,7 +22,7 @@
  */
 
 require('../../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/compta/localtax/class/localtax.class.php");
+require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 
 $langs->load("compta");
 $langs->load("compta");

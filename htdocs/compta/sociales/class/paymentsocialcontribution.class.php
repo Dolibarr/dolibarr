@@ -22,7 +22,7 @@
  *		\brief      File of class to manage payment of social contributions
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
 /**     \class      PaymentSocialContribution
@@ -474,7 +474,7 @@ class PaymentSocialContribution extends CommonObject
 
         if ($conf->banque->enabled)
         {
-            require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
+            require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
             $acc = new Account($this->db);
             $acc->fetch($accountid);

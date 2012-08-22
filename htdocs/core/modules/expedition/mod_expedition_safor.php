@@ -21,7 +21,7 @@
  *  \ingroup    expedition
  *  \brief      File of class to manage shipments numbering rules Safor
  */
-require_once(DOL_DOCUMENT_ROOT ."/core/modules/expedition/modules_expedition.php");
+require_once DOL_DOCUMENT_ROOT .'/core/modules/expedition/modules_expedition.php';
 
 /**
  *	Class to manage expedition numbering rules Safor

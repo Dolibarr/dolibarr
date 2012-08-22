@@ -24,8 +24,8 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/contact.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 
 $langs->load("companies");
 $langs->load("other");

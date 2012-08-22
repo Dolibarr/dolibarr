@@ -26,8 +26,8 @@
  *	\brief      File of class to manage categories
  */
 
-require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php");
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 
 
 /**
@@ -1242,7 +1242,7 @@ class Categorie
 	 */
 	function add_photo($sdir, $file, $maxWidth = 160, $maxHeight = 120)
 	{
-		require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/";
 		$dir .= "photos/";
@@ -1277,7 +1277,7 @@ class Categorie
 	 */
 	function add_thumb($file, $maxWidth = 160, $maxHeight = 120)
 	{
-		require_once(DOL_DOCUMENT_ROOT ."/core/lib/images.lib.php");
+		require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';
 
 		if (file_exists($file))
 		{
@@ -1349,7 +1349,7 @@ class Categorie
 	 */
 	function delete_photo($file)
 	{
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	    $dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
 		$dirthumb = $dir.'/thumbs/'; // Chemin du dossier contenant la vignette

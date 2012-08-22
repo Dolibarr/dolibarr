@@ -27,7 +27,7 @@
  *				et la classe mere de numerotation des bons de livraisons
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 
 /**
@@ -210,7 +210,7 @@ function delivery_order_pdf_create($db, $object, $modele, $outputlangs='')
 	// Charge le modele
 	if ($filefound)
 	{
-		require_once($file);
+		require_once $file;
 
 		$obj = new $classname($db);
 
@@ -222,7 +222,7 @@ function delivery_order_pdf_create($db, $object, $modele, $outputlangs='')
 			$outputlangs->charset_output=$sav_charset_output;
 
 			// we delete preview files
-        	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_delete_preview($object);
 
 			// Appel des triggers

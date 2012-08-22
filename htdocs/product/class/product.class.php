@@ -25,7 +25,7 @@
  *	\ingroup    produit
  *	\brief      File of class to manage predefined products or services
  */
-require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 
 /**
@@ -330,7 +330,7 @@ class Product extends CommonObject
 							{
 								if ($this->catid > 0)
 								{
-									require_once(DOL_DOCUMENT_ROOT ."/categories/class/categorie.class.php");
+									require_once DOL_DOCUMENT_ROOT .'/categories/class/categorie.class.php';
 									$cat = new Categorie($this->db, $this->catid);
 									$cat->add_type($this,"product");
 								}
@@ -2379,7 +2379,7 @@ class Product extends CommonObject
 		{
 			$this->db->begin();
 
-			require_once(DOL_DOCUMENT_ROOT ."/product/stock/class/mouvementstock.class.php");
+			require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
 
 			$op[0] = "+".trim($nbpiece);
 			$op[1] = "-".trim($nbpiece);
@@ -2457,7 +2457,7 @@ class Product extends CommonObject
 	 */
 	function add_photo($sdir, $file, $maxWidth = 160, $maxHeight = 120)
 	{
-		require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/photos";
 
@@ -2489,7 +2489,7 @@ class Product extends CommonObject
 	 */
 	function add_thumb($file, $maxWidth = 160, $maxHeight = 120)
 	{
-		require_once(DOL_DOCUMENT_ROOT ."/core/lib/images.lib.php");
+		require_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';
 
 		$file_osencoded=dol_osencode($file);
 		if (file_exists($file_osencoded))
@@ -2780,7 +2780,7 @@ class Product extends CommonObject
 	 */
 	function delete_photo($file)
 	{
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         $dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
 		$dirthumb = $dir.'/thumbs/'; // Chemin du dossier contenant la vignette

@@ -26,8 +26,8 @@
  *  			et la classe mere de numerotation des propales
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");   // Requis car utilise dans les classes qui heritent
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Requis car utilise dans les classes qui heritent
 
 
 /**
@@ -211,7 +211,7 @@ function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 	// Charge le modele
 	if ($filefound)
 	{
-		require_once($file);
+		require_once $file;
 
 		$obj = new $classname($db);
 		//$obj->message = $message;
@@ -224,7 +224,7 @@ function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 			$outputlangs->charset_output=$sav_charset_output;
 
 			// We delete old preview
-			require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_delete_preview($object);
 
 			// Success in building document. We build meta file.

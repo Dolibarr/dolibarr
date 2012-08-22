@@ -58,7 +58,7 @@ abstract class ActionsCardCommon
 	        if (file_exists($modelclassfile))
 	        {
 	            // Include dataservice class (model)
-	            $ret = require_once($modelclassfile);
+	            $ret = require_once $modelclassfile;
 	            if ($ret)
 	            {
 	            	// Instantiate dataservice class (model)
@@ -111,7 +111,7 @@ abstract class ActionsCardCommon
         if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
         && ($action == 'add' || $action == 'update'))
         {
-            require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
             $error=0;
 
             if (GETPOST("private") == 1)
@@ -328,7 +328,7 @@ abstract class ActionsCardCommon
             }
             else
             {
-                require_once(DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php');
+                require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php';
 
                 $this->object->fetch_thirdparty();
 
@@ -577,7 +577,7 @@ abstract class ActionsCardCommon
 
             if ($conf->global->MAIN_MULTILANGS)
             {
-                require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
+                require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
                 //$s=picto_from_langcode($this->default_lang);
                 //print ($s?$s.' ':'');
                 $langs->load("languages");

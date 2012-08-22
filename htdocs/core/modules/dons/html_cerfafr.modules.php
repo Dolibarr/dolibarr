@@ -22,9 +22,9 @@
  * \ingroup    don
  * \brief      Formulaire de don
  */
-require_once(DOL_DOCUMENT_ROOT."/core/modules/dons/modules_don.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/dons/class/don.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/core/modules/dons/modules_don.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 
 /**

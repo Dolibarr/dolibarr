@@ -23,7 +23,7 @@
  * 	\ingroup    ficheinter
  * 	\brief      Fichier de la classe des gestion des fiches interventions
  */
-require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 
 /**
@@ -517,7 +517,7 @@ class Fichinter extends CommonObject
 			}
 
 			// Chargement de la classe de numerotation
-			require_once($dir.$file);
+			require_once $dir.$file;
 
 			$obj = new $classname();
 
@@ -601,7 +601,7 @@ class Fichinter extends CommonObject
 	function delete($user)
 	{
 		global $conf;
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error=0;
 

@@ -26,11 +26,11 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/contact.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $langs->load("companies");
 $langs->load("users");
@@ -54,7 +54,7 @@ $objcanvas=null;
 $canvas = (! empty($object->canvas)?$object->canvas:GETPOST("canvas"));
 if (! empty($canvas))
 {
-    require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
     $objcanvas = new Canvas($db, $action);
     $objcanvas->getCanvas('contact', 'contactcard', $canvas);
 }
@@ -712,7 +712,7 @@ else
             $generated_password='';
             if (! $ldap_sid) // TODO ldap_sid ?
             {
-                require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
+                require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
                 $generated_password=getRandomPassword('');
             }
             $password=$generated_password;

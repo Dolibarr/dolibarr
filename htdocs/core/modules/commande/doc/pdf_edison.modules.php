@@ -25,9 +25,9 @@
  *	\brief      Fichier de la classe permettant de generer les commandes au modele Edison
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/core/modules/commande/modules_commande.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
+require_once DOL_DOCUMENT_ROOT .'/core/modules/commande/modules_commande.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 /**
  *	Classe permettant de generer les commandes au modele Edison

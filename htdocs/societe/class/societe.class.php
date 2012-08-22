@@ -27,7 +27,7 @@
  *	\ingroup    societe
  *	\brief      File for third party class
  */
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
 /**
@@ -378,7 +378,7 @@ class Societe extends CommonObject
     function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0, $action='update')
     {
         global $langs,$conf;
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		$error=0;
 
@@ -842,7 +842,7 @@ class Societe extends CommonObject
     function delete($id)
     {
         global $user,$langs,$conf;
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $error = 0;
@@ -853,7 +853,7 @@ class Societe extends CommonObject
 		{
             $this->db->begin();
 
-            require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
+            require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
             $static_cat = new Categorie($this->db);
             $toute_categs = array();
 
@@ -1101,7 +1101,7 @@ class Societe extends CommonObject
 
         if ($this->id)
         {
-            require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
+            require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
             $discount = new DiscountAbsolute($this->db);
             $discount->fk_soc=$this->id;
@@ -1134,7 +1134,7 @@ class Societe extends CommonObject
      */
     function getAvailableDiscounts($user='',$filter='',$maxvalue=0)
     {
-        require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
+        require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
         $discountstatic=new DiscountAbsolute($this->db);
         $result=$discountstatic->getAvailableDiscounts($this,$user,$filter,$maxvalue);
@@ -1389,7 +1389,7 @@ class Societe extends CommonObject
         $ret='';
         if ($withcountry && $this->country_id && (empty($this->country_code) || empty($this->country)))
         {
-            require_once(DOL_DOCUMENT_ROOT ."/core/lib/company.lib.php");
+            require_once DOL_DOCUMENT_ROOT .'/core/lib/company.lib.php';
             $tmparray=getCountry($this->country_id,'all');
             $this->country_code=$tmparray['code'];
             $this->country     =$tmparray['label'];
@@ -1569,7 +1569,7 @@ class Societe extends CommonObject
     {
         global $langs;
 
-        require_once DOL_DOCUMENT_ROOT . "/societe/class/companybankaccount.class.php";
+        require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
 
         $bac = new CompanyBankAccount($this->db);
         $bac->fetch(0,$this->id);
@@ -1593,7 +1593,7 @@ class Societe extends CommonObject
      */
     function load_ban()
     {
-        require_once DOL_DOCUMENT_ROOT . "/societe/class/companybankaccount.class.php";
+        require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
 
         $bac = new CompanyBankAccount($this->db);
         $bac->fetch(0,$this->id);

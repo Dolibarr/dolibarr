@@ -230,7 +230,7 @@ class modFacture extends DolibarrModules
 
 		if (file_exists($src) && ! file_exists($dest))
 		{
-			require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
 			$result=dol_copy($src,$dest,0,0);
 			if ($result < 0)

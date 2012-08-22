@@ -22,7 +22,7 @@
  *      \ingroup    facture fournisseur
  *      \brief      File that contain parent class for supplier invoices models
  */
-require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 
 /**
@@ -129,7 +129,7 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs, $hided
 	// Charge le modele
 	if ($filefound)
 	{
-		require_once($file);
+		require_once $file;
 
 		$obj = new $classname($db,$object);
 
@@ -141,7 +141,7 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs, $hided
 			$outputlangs->charset_output=$sav_charset_output;
 
 			// we delete preview files
-        	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_delete_preview($object);
 
 			// Appel des triggers

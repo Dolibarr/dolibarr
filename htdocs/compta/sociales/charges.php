@@ -23,9 +23,9 @@
  */
 
 require('../../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/chargesociales.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formsocialcontrib.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/tax.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 
 $langs->load("compta");
 $langs->load("bills");

@@ -25,9 +25,9 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/bank.lib.php");
-require_once DOL_DOCUMENT_ROOT."/societe/class/companybankaccount.class.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 
 $langs->load("companies");
 $langs->load("banks");

@@ -37,9 +37,9 @@ if (is_int($entity))
 }
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypalfunctions.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 // Security check
 if (empty($conf->paypal->enabled)) accessforbidden('',1,1,1);

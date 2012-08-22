@@ -26,16 +26,16 @@
  */
 
 require ("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/price.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php');
-require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/modules/contract/modules_contract.php");
-if (! empty($conf->produit->enabled) || ! empty($conf->service->enabled))  require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-if (! empty($conf->propal->enabled))  require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
+if (! empty($conf->produit->enabled) || ! empty($conf->service->enabled))  require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+if (! empty($conf->propal->enabled))  require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if ($conf->projet->enabled) {
-	require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
-	require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 }
 
 $langs->load("contracts");
@@ -803,7 +803,7 @@ else
 
         if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
         {
-        	require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+        	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
         	$formcompany= new FormCompany($db);
 
         	$blocname = 'contacts';

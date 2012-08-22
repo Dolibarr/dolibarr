@@ -27,7 +27,7 @@
  *  \ingroup    expedition
  *  \brief      File of class to manage expedition numbering
  */
- require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
+ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 /**
  *	Parent class of sending receipts models
@@ -204,7 +204,7 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 	// Charge le modele
 	if ($filefound)
 	{
-	    require_once($file);
+	    require_once $file;
 
 		$obj = new $classname($db);
 
@@ -218,7 +218,7 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 			$outputlangs->charset_output=$sav_charset_output;
 
 			// we delete preview files
-        	//require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        	//require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			//dol_delete_preview($object);
 
 			// Appel des triggers

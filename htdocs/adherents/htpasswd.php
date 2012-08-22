@@ -25,7 +25,7 @@
  */
 
 require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
 // Security check
 if (! $user->rights->adherent->export) accessforbidden();

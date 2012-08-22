@@ -45,7 +45,7 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'companylogo') && ! de
 function llxHeader() { }
 
 require("./main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 
 $action=GETPOST('action','alpha');
