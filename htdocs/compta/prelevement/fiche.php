@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012 Juanjo Menent 		<jmenent@2byte.es>

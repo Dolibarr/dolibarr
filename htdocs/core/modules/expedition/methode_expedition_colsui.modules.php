@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2008 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2008 Bearstech - http://bearstech.com/
  *
