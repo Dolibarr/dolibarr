@@ -192,7 +192,7 @@ if ($action == 'setmethod' || $action== 'setmod')
 	$moduleid=GETPOST('moduleid','alpha');
 	$statut=GETPOST('statut','alpha');
 
-	require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/methode_expedition_$module.modules.php';
+	require_once DOL_DOCUMENT_ROOT."/core/modules/expedition/methode_expedition_$module.modules.php";
 
 	$classname = "methode_expedition_$module";
 	$expem = new $classname($db);
