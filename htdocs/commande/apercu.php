@@ -25,7 +25,7 @@
  *		\brief		Page de l'onglet apercu d'une commande
  */
 
-require("../main.inc.php");
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';

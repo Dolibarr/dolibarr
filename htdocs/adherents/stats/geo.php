@@ -21,7 +21,7 @@
  *		\brief      Page with geographical statistics on members
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 
 $graphwidth = 700;

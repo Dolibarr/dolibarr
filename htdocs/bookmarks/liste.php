@@ -21,7 +21,7 @@
  *       \ingroup    bookmark
  */
 
-require("../main.inc.php");
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
 

@@ -24,7 +24,7 @@
  * 	\brief      Page liste des bons de prelevements
  */
 
-require("../bank/pre.inc.php");
+require '../bank/pre.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 
 $langs->load("widthdrawals");

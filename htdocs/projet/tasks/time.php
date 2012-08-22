@@ -24,7 +24,7 @@
  *	\brief      Page to add new time spent on a task
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';

@@ -22,7 +22,7 @@
  *	\brief      Fiche d'information sur une fiche d'intervention
  */
 
-require("../main.inc.php");
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 

@@ -29,7 +29,7 @@
  *	\brief      	Page of commercial proposals card and list
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formpropal.class.php';

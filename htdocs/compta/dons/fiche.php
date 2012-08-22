@@ -23,7 +23,7 @@
  *		\brief      Page of donation card
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/dons/modules_don.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';

@@ -23,7 +23,7 @@
  *	\ingroup    cashdesk
  *	\brief      First page of point of sale module
  */
-require('../main.inc.php');
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 
 // Test if already logged

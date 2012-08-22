@@ -23,7 +23,7 @@
  *      \brief      Page of users
  */
 
-require("../main.inc.php");
+require '../main.inc.php';
 if(! empty($conf->multicompany->enabled)) dol_include_once("/multicompany/class/actions_multicompany.class.php");
 
 

@@ -25,7 +25,7 @@
  *	\brief      Page to add a new commercial proposal
  */
 
-require("../main.inc.php");
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php';
 if (! empty($conf->projet->enabled)) {

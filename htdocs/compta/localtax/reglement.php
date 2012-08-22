@@ -21,7 +21,7 @@
  *		\brief      List of IRPF payments
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 
 $langs->load("compta");

@@ -24,7 +24,7 @@
  *		\brief      Page to list all contacts
  */
 
-require("../main.inc.php");
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 $langs->load("companies");

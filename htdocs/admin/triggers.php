@@ -20,7 +20,7 @@
  *       \brief      Page to view triggers
  */
 
-require("../main.inc.php");
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 
 $langs->load("admin");

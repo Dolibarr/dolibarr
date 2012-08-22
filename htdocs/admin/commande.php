@@ -29,7 +29,7 @@
  *	\brief      Setup page of module Order
  */
 
-require("../main.inc.php");
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 

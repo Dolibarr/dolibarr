@@ -23,7 +23,7 @@
  * 		\brief      Page gestion commandes OSCommerce
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php';
 
 

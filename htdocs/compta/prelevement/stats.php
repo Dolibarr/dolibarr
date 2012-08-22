@@ -24,7 +24,7 @@
  *      \brief      Page de stats des prelevements
  */
 
-require("../bank/pre.inc.php");
+require '../bank/pre.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 
 $langs->load("withdrawals");

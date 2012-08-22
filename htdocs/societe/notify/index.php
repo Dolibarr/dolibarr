@@ -22,7 +22,7 @@
  * \brief      List of done notifications
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 $langs->load("companies");
 $langs->load("banks");
 

@@ -23,7 +23,7 @@
  *      \brief      Fiche apercu du bon de prelevement
  */
 
-require("../bank/pre.inc.php");
+require '../bank/pre.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';

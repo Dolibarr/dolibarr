@@ -23,7 +23,7 @@
  *		\brief      Tool to edit menus
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 

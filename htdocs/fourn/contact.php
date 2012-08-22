@@ -23,7 +23,7 @@
  *		\brief      Liste des contacts fournisseurs
  */
 
-require("../main.inc.php");
+require '../main.inc.php';
 
 $langs->load("companies");
 

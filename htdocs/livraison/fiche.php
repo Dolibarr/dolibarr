@@ -25,7 +25,7 @@
  *	\brief      Fiche descriptive d'un bon de livraison=reception
  */
 
-require("../main.inc.php");
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/livraison/modules_livraison.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';

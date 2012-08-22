@@ -24,7 +24,7 @@
  *		\brief      Page to create a new category
  */
 
-require("../main.inc.php");
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 $langs->load("categories");

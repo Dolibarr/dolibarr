@@ -22,7 +22,7 @@
  *  \brief      File to list all Dolibarr modules
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->load("admin");

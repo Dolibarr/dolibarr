@@ -23,7 +23,7 @@
  *     \brief      Page des stats expeditions
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
 $langs->load("sendings");

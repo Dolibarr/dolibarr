@@ -22,7 +22,7 @@
  *       \brief      Page for Click to dial datas
  */
 
-require("../main.inc.php");
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 
 $langs->load("users");

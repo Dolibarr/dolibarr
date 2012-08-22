@@ -23,7 +23,7 @@
  *      \brief      Page fiche ventilation
  */
 
-require('../../../main.inc.php');
+require '../../../main.inc.php';
 
 $mesg = '';
 

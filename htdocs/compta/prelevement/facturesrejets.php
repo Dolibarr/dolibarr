@@ -23,7 +23,7 @@
  *		\brief      Invoice reject
  */
 
-require("../bank/pre.inc.php");
+require '../bank/pre.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 

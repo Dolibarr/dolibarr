@@ -22,7 +22,7 @@
  * 		\brief      Page to import database
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 
 $langs->load("admin");
 $langs->load("other");

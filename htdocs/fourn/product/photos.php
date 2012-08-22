@@ -22,7 +22,7 @@
  *  \brief      Page de la fiche produit
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 $id = GETPOST('id', 'int');

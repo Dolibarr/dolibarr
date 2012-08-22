@@ -22,7 +22,7 @@
  *       \brief       Page reporting resultat
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 
 

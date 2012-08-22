@@ -25,7 +25,7 @@
 
 define('NOCSRFCHECK',1);	// This is login page. We must be able to go on it from another web site.
 
-require("./main.inc.php");
+require './main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 

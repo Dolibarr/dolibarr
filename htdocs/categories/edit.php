@@ -24,7 +24,7 @@
  *      \brief      Page d'edition de categorie produit
  */
 
-require("../main.inc.php");
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 
