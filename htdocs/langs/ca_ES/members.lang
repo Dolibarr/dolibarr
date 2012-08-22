@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - members
+# Dolibarr language file - ca_ES - members 
 CHARSET=UTF-8
 MembersArea=Àrea membres
 PublicMembersArea=Àrea pública dels membres
@@ -144,12 +144,12 @@ DescADHERENT_MAIL_RESIL_SUBJECT=Assumpte d'e-mail de baixa
 DescADHERENT_MAIL_RESIL=E-mail de baixa
 DescADHERENT_MAIL_FROM=E-mail emissor per als e-mails automàtics
 DescADHERENT_ETIQUETTE_TYPE=Format pàgines etiquetes
+DescADHERENT_ETIQUETTE_TEXT=Text a imprimir a la direcció de les etiquetes de cada membre
 DescADHERENT_CARD_TYPE=Format pàgines carnet de membre
 DescADHERENT_CARD_HEADER_TEXT=Text a imprimir en la part superior del carnet de membre
 DescADHERENT_CARD_TEXT=Text a imprimir en el carnet de membre (Alineat a la dreta)
 DescADHERENT_CARD_TEXT_RIGHT=Text a imprimir en el carnet de membre (Alineat a la dreta)
 DescADHERENT_CARD_FOOTER_TEXT=Text a imprimir a la part inferior del carnet de membre
-DescADHERENT_MAILMAN_LISTS=Llista(s) per a la inscripció automàtica dels nous membres (separats per comes)
 GlobalConfigUsedIfNotDefined=S'utilitzarà el text definit en la configuració del mòdul Membres si no es defineix aquí
 MayBeOverwrited=Aquest valor pot ser sobreescrit pel text definit en el tipus de membre
 ShowTypeCard=Veure tipus '%s'

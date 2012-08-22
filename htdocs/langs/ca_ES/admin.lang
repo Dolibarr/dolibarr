@@ -1,5 +1,6 @@
-# Dolibarr language file - ca_ES - admin
+# Dolibarr language file - ca_ES - admin 
 CHARSET=UTF-8
+Foundation=Fundació
 Version=Versió
 VersionProgram=Versió programa
 VersionLastInstall=Versió instal·lació inicial
@@ -61,7 +62,9 @@ PreviewNotAvailable=Vista prèvia no disponible
 ThemeCurrentlyActive=Tema actualment actiu
 CurrentTimeZone=Fus horari PHP (Servidor)
 Space=Àrea
+Table=Taula
 Fields=Camps
+Index=Índex
 Mask=Màscara
 NextValue=Pròxim valor
 NextValueForInvoices=Pròxim valor (factures)
@@ -128,6 +131,7 @@ SystemInfo=Info. sistema
 SystemTools=Utilitats sistema
 SystemToolsArea=Àrea utilitats del sistema
 SystemToolsAreaDesc=Aquesta àrea ofereix diverses funcions d'administració. Utilitzeu el menú per triar la funcionalitat cercada.
+Purge=Purgar
 PurgeAreaDesc=Aquesta pàgina li permet eliminar tots els arxius creats o guardats per Dolibarr (arxius temporals o tots els fitxers de la carpeta <b>%s</b>). L'ús d'aquesta funció no és necessària. Es dóna per als usuaris que alberguen Dolibarr en un servidor que no ofereix els permisos d'eliminació d'arxius salvaguardat pel servidor web.
 PurgeDeleteLogFile=Esborrar el fitxer log <b>%s</b> definit pel mòdul Syslog (no hi ha risc de pèrdua de dades)
 PurgeDeleteTemporaryFiles=Eliminar tots els arxius temporals (sense risc de pèrdua de dades)
@@ -156,6 +160,7 @@ ImportPostgreSqlDesc=Per a importar una còpia de seguretat, useu l'ordre pg_res
 ImportMySqlCommand=%s %s < elmeuarxiubackup.sql
 ImportPostgreSqlCommand=%s %s elmeuarxiubackup.sql
 FileNameToGenerate=Nom del fitxer a generar
+Compression=Compressió
 CommandsToDisableForeignKeysForImport=Comanda per desactivar les claus excloents a la importació
 ExportCompatibility=Compatibilitat de l'arxiu d'exportació generat
 MySqlExportParameters=Paràmetres de l'exportació MySql
@@ -169,8 +174,8 @@ AddDropTable=Afegir ordres DROP TABLE
 Datas=Dades
 NameColumn=Nom de les columnes
 ExtendedInsert=Instruccions INSERT esteses
-DelayedInsert=Insercions amb retard
 NoLockBeforeInsert=Sense intrucció LOCK abans del INSERT 
+DelayedInsert=Insercions amb retard
 EncodeBinariesInHexa=Codificar els camps binaris en hexacesimal
 IgnoreDuplicateRecords=Ignorar els errors de duplicació (INSERT IGNORE)
 Yes=Sí
@@ -328,7 +333,8 @@ UrlGenerationParameters=Seguretat de les URL
 SecurityTokenIsUnique=Fer servir un paràmetre securekey únic per a cada URL?
 EnterRefToBuildUrl=Introduïu la referència de l'objecte %s
 GetSecuredUrl=Obtenir la URL calculada
-# Modules
+ButtonHideUnauthorized=Amaga els botons d'accions no autoritzades en compte de mostrar-los atenuats
+# Modules= undefined==
 Module0Name=Usuaris y grups
 Module0Desc=Gestió d'usuaris i grups
 Module1Name=Tercers
@@ -433,6 +439,7 @@ Module2600Name=WebServices
 Module2600Desc=Activa els serveis de servidor web services de Dolibarr
 Module2700Name=Gravatar
 Module2700Desc=Utilitza el servei en línia de Gravatar (www.gravatar.com) per mostrar fotos dels usuaris/membres (que es troben en els seus missatges de correu electrònic). Necessita un accés a Internet
+Module2800Desc=Client FTP
 Module2900Name=GeoIPMaxmind
 Module2900Desc=Capacitats de conversió GeoIP Maxmind
 Module5000Name=Multi-empresa
@@ -655,7 +662,7 @@ Permission2501=Consultar/Recuperar documents
 Permission2502=Recuperar documents
 Permission2503=Enviar o eliminar documents
 Permission2515=Configuració carpetes de documents
-Permission50001=Utilitzar TPV
+Permission50101=Utilitzar TPV
 Permission50201=Consultar les transaccions
 Permission50202=Importar les transaccions
 DictionnaryCompanyType=Tipus d'empresa
@@ -724,6 +731,7 @@ PhpConf=Conf
 PhpWebLink=Enllaç Web-PHP
 Pear=Pear
 PearPackages=Paquets Pear
+Browser=Navegador
 Database=Base de dades
 DatabaseServer=Host de la base de dades
 DatabaseName=Nom de la base de dades
@@ -880,10 +888,12 @@ AlphaNumOnlyCharsAndNoSpace=només carateres alfanumèrics sense espais
 SendingMailSetup=Configuració de l'enviament per mail
 SendmailOptionNotComplete=Atenció, en alguns sistemes Linux, amb aquest mètode d'enviament, per poder enviar mails en nom seu, la configuració de sendmail ha de contenir l'opció <b>-ba</b> (paràmetre <b>mail.force_extra_parameters</b> a l'arxiu <b>php.ini</b>). Si alguns dels seus destinataris no reben els seus missatges, proveu de modificar aquest paràmetre PHP amb <b>mail.force_extra_parameters =-ba </b>.
 PathToDocuments=Rutes d'accés a documents
-PathDirectory=Directori
+PathDirectory=Catàleg
 SendmailOptionMayHurtBuggedMTA=La funcionalitat d'enviar correu electrònic a través del "correu directe PHP" genera una sol·licitud que pot ser mal interpretada per alguns servidors de correu. Això es tradueix en missatges de correu electrònic il·legibles per a les persones allotjades en aquestes plataformes. Aquest és el cas de clients en certs proveïdors de serveis d'Internet (Ex: Orange). Això no és un problema ni de Dolibarr ni de PHP, però sí del servidor de correu. No obstant això, podeu afegir l'opció MAIN_FIX_FOR_BUGGED_MTA amb valor 1 en configuració-varis per tractar que Dolibarr eviti l'error. Una altra solució (recomanada) és utilitzar el mètode d'enviament per SMTP que no té aquest inconvenient.
 TranslationSetup=Configuració traducció
 TranslationDesc=L'elecció de l'idioma mostrat en pantalla es modifica:<br>* A nivell global des del menú <strong>Inici - Configuració - Entorn</strong><br>* De manera específica a l'usuari des de la pestanya <strong>interface usuari</strong> de la seva fitxa d'usuari (fer clic al seu login a la part superior esquerra de la pantalla).
+TotalNumberOfActivatedModules=Nombre total de mòduls activats: <b>%s</b>
+YouMustEnableOneModule=Ha d'activar almenys 1 mòdul.
 ##### Module password generation
 PasswordGenerationStandard=Retorna una contrasenya generada per l'algoritme intern Dolibarr: 8 caràcters, números i caràcters en minúscules barrejades.
 PasswordGenerationNone=No ofereix contrasenyes. La contrasenya s'introdueix manualment.
@@ -956,8 +966,6 @@ WatermarkOnDraftInvoices=Marca d'aigua en les factures esborrany (en cas d'estar
 PropalSetup=Configuració del mòdul Pressupostos
 CreateForm=Creació formulari
 NumberOfProductLines=Nombre de línies de productes
-PathToDocuments=Rutes d'accés a documents
-PathDirectory=Catàleg
 ProposalsNumberingModules=Mòduls de numeració de pressupostos
 ProposalsPDFModules=Models de documents de pressupostos
 ClassifiedInvoiced=Classificar facturat
@@ -1131,7 +1139,7 @@ ForANonAnonymousAccess=Per un accés autentificat
 ##### Products/Services #####
 ProductSetup=Configuració del mòdul Productes
 ServiceSetup=Configuració del mòdul Serveis
-ProductServiceSetup= Configuración dels mòduls Productos i Serveis
+ProductServiceSetup=Configuración dels mòduls Productos i Serveis
 NumberOfProductShowInSelect=Nº de productes màx a les llistes (0= sense límit)
 ConfirmDeleteProductLineAbility=Confirmació d'eliminació d'una línia de producte en els formularis
 ModifyProductDescAbility=Personalització de les descripcions dels productes en els formularis
@@ -1141,6 +1149,8 @@ UseSearchToSelectProduct=Utilitzar un formulari de cerca per a la selecció d'un
 UseEcoTaxeAbility=Assumir ecotaxa (DEEE)
 SetDefaultBarcodeTypeProducts=Tipus de codi de barres utilitzat per defecte per als productes
 SetDefaultBarcodeTypeThirdParties=Tipus de codi de barres utilitzat per defecte per als tercers
+ProductCodeChecker=Mòdul per a la generació i comprovació del codi d'un producte o servei
+ProductOtherConf=Configuració de productes/serveis
 ##### Syslog #####
 SyslogSetup=Configuració del mòdul Syslog
 SyslogOutput=Sortida del log
@@ -1151,6 +1161,7 @@ SyslogSimpleFile=Arxiu
 SyslogFilename=Nom i ruta de l'arxiu
 YouCanUseDOL_DATA_ROOT=Podeu utilitzar DOL_DATA_ROOT/dolibarr.log per a un registre a la carpeta documents de Dolibarr. Tanmateix, pot establir una carpeta diferent per guardar aquest arxiu.
 ErrorUnknownSyslogConstant=La constant %s no és una constant syslog coneguda
+OnlyWindowsLOG_USER=Windows només suporta LOG_USER
 ##### Donations #####
 DonationsSetup=Configuració del mòdul subvencions
 DonationsReceiptModel=Model recepció de subvencions
@@ -1173,6 +1184,8 @@ WithdrawalsSetup=Configuració del mòdul domiciliacions
 ##### ExternalRSS #####
 ExternalRSSSetup=Configuració de les importacions del flux RSS
 NewRSS=Sindicació de un nou flux RSS
+RSSUrl=URL del RSS
+RSSUrlExample=Un flux RSS interessant
 ##### Mailing #####
 MailingSetup=Configuració del mòdul E-Mailing
 MailingEMailFrom=E-Mail emissor (From) dels correus enviats per E-Mailing
@@ -1196,12 +1209,9 @@ FreeLegalTextOnDeliveryReceipts=Text lliure a les notes de recepció
 ##### FCKeditor #####
 AdvancedEditor=Editor avançat
 ActivateFCKeditor=Activar editor avançat per a :
-FCKeditorForUsers=Creació/edició WYSIWIG de la descripció i notes dels usuaris
 FCKeditorForCompany=Creació/edició WYSIWIG de la descripció i notes dels tercers
 FCKeditorForProduct=Creació/edició WYSIWIG de la descripció i notes dels productes/serveis
-FCKeditorForMembers=Creació/edició WYSIWIG de la descripció i notes dels membres
 FCKeditorForProductDetails=Creació/edició WYSIWIG de les línies de detall dels productes (en comandes, pressupostos, factures, etc.)
-FCKeditorForProductDetailsPerso=Creació/edició WYSIWIG de les línies de detall en els productes personalitzades (en comandes, pressupostos, factures, etc.)<font class="warning">Advertència: L'ús per a aquest cas no és aconsellable ja que pot causar problemes en la gestió dels caràcters i el disseny dels arxius PDF generats.</font>
 FCKeditorForMailing=Creació/edició WYSIWIG dels E-Mails
 ##### OSCommerce 1 #####
 OSCommerceErrorConnectOkButWrongDatabase=La connexió s'ha establert, però la base de dades no sembla de OSCommerce.
@@ -1301,8 +1311,6 @@ BankOrderGlobal=General
 BankOrderGlobalDesc=Ordre de visualització general
 BankOrderES=Espanyol
 BankOrderESDesc=Ordre de visualització espanyol
-##### MailmanSpip #####
-MailmanSpipSetup=Configuració del mòdul Mailman i SPIP
 ##### Multicompany #####
 MultiCompanySetup=Configuració del mòdul Multi-empresa
 ##### Suppliers #####
@@ -1320,3 +1328,4 @@ TestGeoIPResult=Test de conversió IP -> País
 ProjectsNumberingModules=Mòdul de numeració per a les referències dels projectes
 ProjectsSetup=Configuració del mòdul Projectes
 ProjectsModelModule=Model de document per a informes de projectes
+Server=Servidor
