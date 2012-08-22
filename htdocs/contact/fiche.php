@@ -146,6 +146,7 @@ if (empty($reshook))
         $object->phone_mobile	= $_POST["phone_mobile"];
         $object->fax			= $_POST["fax"];
         $object->jabberid		= $_POST["jabberid"];
+		$object->no_email		= $_POST["no_email"];
         $object->priv			= $_POST["priv"];
         $object->note			= $_POST["note"];
 
@@ -237,6 +238,7 @@ if (empty($reshook))
             $object->phone_mobile	= $_POST["phone_mobile"];
             $object->fax			= $_POST["fax"];
             $object->jabberid		= $_POST["jabberid"];
+			$object->no_email		= $_POST["no_email"];
             $object->priv			= $_POST["priv"];
             $object->note			= $_POST["note"];
 
@@ -448,8 +450,9 @@ else
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->email)) == 0) $object->email = $objsoc->email;	// Predefined with third party
             print '<tr><td>'.$langs->trans("Email").'</td><td colspan="3"><input name="email" type="text" size="50" maxlength="80" value="'.(isset($_POST["email"])?$_POST["email"]:$object->email).'"></td></tr>';
 
-            // Instant message
-            print '<tr><td>'.$langs->trans("IM").'</td><td colspan="3"><input name="jabberid" type="text" size="50" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td></tr>';
+            // Instant message and no email
+            print '<tr><td>'.$langs->trans("IM").'</td><td><input name="jabberid" type="text" size="50" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td>';
+			print '<td>'.$langs->trans("No_Email").'</td><td>'.$form->selectyesno('no_email',(isset($_POST["no_email"])?$_POST["no_email"]:$object->no_email)).'</td></tr>';
 
             // Visibility
             print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
@@ -623,7 +626,8 @@ else
             print '</tr>';
 
             // Jabberid
-            print '<tr><td>Jabberid</td><td colspan="3"><input name="jabberid" type="text" size="40" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td></tr>';
+            print '<tr><td>Jabberid</td><td><input name="jabberid" type="text" size="40" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td>';
+			print '<td>'.$langs->trans("No_Email").'</td><td>'.$form->selectyesno('no_email',(isset($_POST["no_email"])?$_POST["no_email"]:$object->no_email)).'</td></tr>';
 
             // Visibility
             print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
@@ -815,8 +819,9 @@ else
         }
         print '</tr>';
 
-        // Instant message
-        print '<tr><td>'.$langs->trans("IM").'</td><td colspan="3">'.$object->jabberid.'</td></tr>';
+        // Instant message and no email
+        print '<tr><td>'.$langs->trans("IM").'</td><td>'.$object->jabberid.'</td>';
+        print '<td>'.$langs->trans("No_Email").'</td><td>'.$object->no_email.'</td></tr>';
 
         print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
         print $object->LibPubPriv($object->priv);
