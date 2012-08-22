@@ -62,7 +62,7 @@ abstract class DolibarrModules
      */
     function _init($array_sql, $options='')
     {
-        global $langs;
+        global $conf, $langs;
         $err=0;
 
         $this->db->begin();
@@ -112,6 +112,9 @@ abstract class DolibarrModules
                 {
                     $sql=$val;
                 }
+
+                // Add current entity id
+                $sql=str_replace('__ENTITY__', $conf->entity, $sql);
 
                 dol_syslog(get_class($this)."::_init ignoreerror=".$ignoreerror." sql=".$sql, LOG_DEBUG);
                 $result=$this->db->query($sql);
