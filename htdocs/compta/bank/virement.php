@@ -24,7 +24,7 @@
  *		\brief      Page de saisie d'un virement
  */
 
-require './pre.inc.php';
+require 'pre.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
 $langs->load("banks");

@@ -23,7 +23,7 @@
  *       \brief      Home page of bank module
  */
 
-require './pre.inc.php';
+require 'pre.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';

@@ -25,7 +25,7 @@
  *	\brief      Page to edit a bank transaction record
  */
 
-require './pre.inc.php';
+require 'pre.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("banks");
