@@ -2484,7 +2484,7 @@ abstract class CommonObject
      */
 	function formAddFreeProduct($dateSelector,$seller,$buyer,$hookmanager=false)
 	{
-		global $conf,$langs,$object;
+		global $conf,$user,$langs,$object;
 		global $form,$bcnd,$var;
 
 		// Output template part (modules that overwrite templates must declare this into descriptor)
@@ -2492,7 +2492,12 @@ abstract class CommonObject
 		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
 		foreach($dirtpls as $reldir)
 		{
-		    $res=@include(dol_buildpath($reldir.'/freeproductline_create.tpl.php'));
+			// for view errors
+			if ($conf->file->strict_mode) {
+				$res=include(dol_buildpath($reldir.'/freeproductline_create.tpl.php'));
+			} else {
+				$res=@include(dol_buildpath($reldir.'/freeproductline_create.tpl.php'));
+			}
 		    if ($res) break;
 		}
     }
@@ -2528,6 +2533,7 @@ abstract class CommonObject
 		print '<td>'.$langs->trans('Description').'</td>';
 		print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
 		print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
+		print '<td align="right" width="80">&nbsp;</td>';
 		print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
 		print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
 		if (! empty($conf->margin->enabled)) {
@@ -2637,9 +2643,8 @@ abstract class CommonObject
 				$product_static->type=$line->fk_product_type;
 				$product_static->id=$line->fk_product;
 				$product_static->ref=$line->ref;
-				$product_static->libelle=$label;
 				$text=$product_static->getNomUrl(1);
-				$text.= ' - '.$label;
+				$text.= ' - '.(! empty($line->label)?$line->label:$label);
 				$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
 
 				// Output template part (modules that overwrite templates must declare this into descriptor)

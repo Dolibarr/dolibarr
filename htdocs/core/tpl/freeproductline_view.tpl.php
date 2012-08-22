@@ -63,7 +63,14 @@
 			if (! empty($line->fk_parent_line)) echo img_picto('', 'rightarrow');
 			if ($type==1) $text = img_object($langs->trans('Service'),'service');
 			else $text = img_object($langs->trans('Product'),'product');
-			echo $text.' '.dol_htmlentitiesbr($line->description);
+
+			if (! empty($line->label)) {
+				$text.= ' <strong>'.$line->label.'</strong>';
+				echo $form->textwithtooltip($text,dol_htmlentitiesbr($line->description),3,'','',$i,0,($line->fk_parent_line?img_picto('', 'rightarrow'):''));
+			} else {
+				echo $text.' '.dol_htmlentitiesbr($line->description);
+			}
+
 			// Show range
 			print_date_range($line->date_start,$line->date_end);
 		}
@@ -74,6 +81,8 @@
 
 	<td align="right" nowrap="nowrap"><?php echo price($line->subprice); ?></td>
 
+	<td align="right" nowrap="nowrap">&nbsp;</td>
+
 	<td align="right" nowrap="nowrap">
 	<?php if ((($line->info_bits & 2) != 2) && $line->special_code != 3) echo $line->qty;
 		else echo '&nbsp;';	?>
@@ -83,14 +92,14 @@
 	<td align="right"><?php echo dol_print_reduction($line->remise_percent,$langs); ?></td>
 	<?php } else { ?>
 	<td>&nbsp;</td>
-	<?php } 
+	<?php }
 
-  if (! empty($conf->margin->enabled)) { 
+  if (! empty($conf->margin->enabled)) {
   ?>
   	<td align="right" nowrap="nowrap"><?php echo price($line->pa_ht); ?></td>
   	<?php if($conf->global->DISPLAY_MARGIN_RATES) {?>
   	  <td align="right" nowrap="nowrap"><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx).'%'); ?></td>
-  	<?php 
+  	<?php
     }
     if($conf->global->DISPLAY_MARK_RATES) {?>
   	  <td align="right" nowrap="nowrap"><?php echo price($line->marque_tx).'%'; ?></td>

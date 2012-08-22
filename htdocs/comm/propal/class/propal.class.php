@@ -309,7 +309,7 @@ class Propal extends CommonObject
      *
      *    	@see       	add_product
      */
-	function addline($propalid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht = 0)
+	function addline($propalid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht = 0, $label='')
     {
         global $conf;
 
@@ -380,6 +380,7 @@ class Propal extends CommonObject
             $this->line=new PropaleLigne($this->db);
 
             $this->line->fk_propal=$propalid;
+            $this->line->label=$label;
             $this->line->desc=$desc;
             $this->line->qty=$qty;
             $this->line->tva_tx=$txtva;
@@ -462,7 +463,7 @@ class Propal extends CommonObject
      *  @param		int			$pa_ht				Buying price without tax
      *  @return     int     		        		0 if OK, <0 if KO
      */
-	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0)
+	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='')
     {
         global $conf,$user,$langs;
 
@@ -519,6 +520,7 @@ class Propal extends CommonObject
             }
 
             $this->line->rowid				= $rowid;
+            $this->line->label				= $label;
             $this->line->desc				= $desc;
             $this->line->qty				= $qty;
             $this->line->tva_tx				= $txtva;
@@ -536,9 +538,9 @@ class Propal extends CommonObject
             $this->line->fk_parent_line		= $fk_parent_line;
             $this->line->skip_update_total	= $skip_update_total;
 
-						// infos marge
-			      $this->line->fk_fournprice = $fk_fournprice;
-						$this->line->pa_ht = $pa_ht;
+            // infos marge
+            $this->line->fk_fournprice = $fk_fournprice;
+            $this->line->pa_ht = $pa_ht;
 
             // TODO deprecated
             $this->line->price=$price;
@@ -737,26 +739,27 @@ class Propal extends CommonObject
                             $fk_parent_line = 0;
                         }
 
-                        $result = $this->addline(
-                            $this->id,
-                            $this->lines[$i]->desc,
-                            $this->lines[$i]->subprice,
-                            $this->lines[$i]->qty,
-                            $this->lines[$i]->tva_tx,
-                            $this->lines[$i]->localtax1_tx,
-                            $this->lines[$i]->localtax2_tx,
-                            $this->lines[$i]->fk_product,
-                            $this->lines[$i]->remise_percent,
-                            'HT',
-                            0,
-                            0,
-                            $this->lines[$i]->product_type,
-                            $this->lines[$i]->rang,
-                            $this->lines[$i]->special_code,
-                            $fk_parent_line,
-                            $this->lines[$i]->fk_fournprice,
-                            $this->lines[$i]->pa_ht
-                        );
+						$result = $this->addline(
+								$this->id,
+                        		$this->lines[$i]->label,
+								$this->lines[$i]->desc,
+								$this->lines[$i]->subprice,
+								$this->lines[$i]->qty,
+								$this->lines[$i]->tva_tx,
+								$this->lines[$i]->localtax1_tx,
+								$this->lines[$i]->localtax2_tx,
+								$this->lines[$i]->fk_product,
+								$this->lines[$i]->remise_percent,
+								'HT',
+								0,
+								0,
+								$this->lines[$i]->product_type,
+								$this->lines[$i]->rang,
+								$this->lines[$i]->special_code,
+								$fk_parent_line,
+								$this->lines[$i]->fk_fournprice,
+								$this->lines[$i]->pa_ht
+						);
 
                         if ($result < 0)
                         {
@@ -1073,7 +1076,7 @@ class Propal extends CommonObject
                 /*
                  * Lignes propales liees a un produit ou non
                  */
-                $sql = "SELECT d.rowid, d.fk_propal, d.fk_parent_line, d.description, d.price, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
+                $sql = "SELECT d.rowid, d.fk_propal, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
 				$sql.= " d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht, d.special_code, d.rang, d.product_type,";
                 $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label';
                 $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as d";
@@ -1097,6 +1100,7 @@ class Propal extends CommonObject
                         $line->fk_propal		= $objp->fk_propal;
                         $line->fk_parent_line	= $objp->fk_parent_line;
                         $line->product_type     = $objp->product_type;
+                        $line->label            = $objp->custom_label;
                         $line->desc             = $objp->description;  // Description ligne
                         $line->qty              = $objp->qty;
                         $line->tva_tx           = $objp->tva_tx;
@@ -2378,7 +2382,7 @@ class Propal extends CommonObject
      */
     function getLinesArray()
     {
-        $sql = 'SELECT pt.rowid, pt.description, pt.fk_product, pt.fk_remise_except,';
+        $sql = 'SELECT pt.rowid, pt.label as custom_label, pt.description, pt.fk_product, pt.fk_remise_except,';
         $sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
         $sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.fk_product_fournisseur_price as fk_fournprice, pt.buy_price_ht as pa_ht, pt.special_code, pt.localtax1_tx, pt.localtax2_tx,';
         $sql.= ' pt.date_start, pt.date_end, pt.product_type, pt.rang, pt.fk_parent_line,';
@@ -2402,6 +2406,7 @@ class Propal extends CommonObject
                 $this->lines[$i]					= (object) array();
                 $this->lines[$i]->id				= $obj->rowid; // for backward compatibility
                 $this->lines[$i]->rowid				= $obj->rowid;
+                $this->lines[$i]->label 			= $obj->custom_label;
                 $this->lines[$i]->description 		= $obj->description;
                 $this->lines[$i]->fk_product		= $obj->fk_product;
                 $this->lines[$i]->ref				= $obj->ref;
@@ -2525,11 +2530,11 @@ class PropaleLigne
      */
 	function fetch($rowid)
 	{
-		$sql = 'SELECT pd.rowid, pd.fk_propal, pd.fk_parent_line, pd.fk_product, pd.description, pd.price, pd.qty, pd.tva_tx,';
+		$sql = 'SELECT pd.rowid, pd.fk_propal, pd.fk_parent_line, pd.fk_product, pd.label as custom_label, pd.description, pd.price, pd.qty, pd.tva_tx,';
 		$sql.= ' pd.remise, pd.remise_percent, pd.fk_remise_except, pd.subprice,';
 		$sql.= ' pd.info_bits, pd.total_ht, pd.total_tva, pd.total_ttc, pd.fk_product_fournisseur_price as fk_fournprice, pd.buy_price_ht as pa_ht, pd.special_code, pd.rang,';
 		$sql.= ' pd.localtax1_tx, pd.localtax2_tx, pd.total_localtax1, pd.total_localtax2,';
-		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
+		$sql.= ' p.ref as product_ref, p.label as product_label, p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pd';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pd.fk_product = p.rowid';
 		$sql.= ' WHERE pd.rowid = '.$rowid;
@@ -2542,6 +2547,7 @@ class PropaleLigne
 			$this->rowid			= $objp->rowid;
 			$this->fk_propal		= $objp->fk_propal;
 			$this->fk_parent_line	= $objp->fk_parent_line;
+			$this->label			= $objp->custom_label;
 			$this->desc				= $objp->description;
 			$this->qty				= $objp->qty;
 			$this->price			= $objp->price;		// deprecated
@@ -2569,8 +2575,8 @@ class PropaleLigne
 
 			$this->ref				= $objp->product_ref;      // deprecated
 			$this->product_ref		= $objp->product_ref;
-			$this->libelle			= $objp->product_libelle;  // deprecated
-			$this->product_label	= $objp->product_libelle;
+			$this->libelle			= $objp->product_label;  // deprecated
+			$this->product_label	= $objp->product_label;
 			$this->product_desc		= $objp->product_desc;
 
 			$this->db->free($result);
@@ -2610,7 +2616,7 @@ class PropaleLigne
 
         if (empty($this->pa_ht)) $this->pa_ht=0;
 
-        // si prix d'achat non renseign� et utilis� pour calcul des marges alors prix achat = prix vente (idem pour remises)
+        // si prix d'achat non renseigne et utilise pour calcul des marges alors prix achat = prix vente (idem pour remises)
         if ($this->pa_ht == 0) {
         	if ($this->subprice < 0 || (isset($conf->global->CalculateMarginsOnLinesWithoutBuyingPrice) && $conf->global->CalculateMarginsOnLinesWithoutBuyingPrice == 1))
         		$this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);
@@ -2623,12 +2629,13 @@ class PropaleLigne
 
         // Insert line into database
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'propaldet';
-        $sql.= ' (fk_propal, fk_parent_line, description, fk_product, product_type, fk_remise_except, qty, tva_tx, localtax1_tx, localtax2_tx,';
+        $sql.= ' (fk_propal, fk_parent_line, label, description, fk_product, product_type, fk_remise_except, qty, tva_tx, localtax1_tx, localtax2_tx,';
         $sql.= ' subprice, remise_percent, ';
         $sql.= ' info_bits, ';
         $sql.= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_product_fournisseur_price, buy_price_ht, special_code, rang)';
         $sql.= " VALUES (".$this->fk_propal.",";
         $sql.= " ".($this->fk_parent_line>0?"'".$this->fk_parent_line."'":"null").",";
+        $sql.= " ".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
         $sql.= " '".$this->db->escape($this->desc)."',";
         $sql.= " ".($this->fk_product?"'".$this->fk_product."'":"null").",";
         $sql.= " '".$this->product_type."',";
@@ -2746,7 +2753,7 @@ class PropaleLigne
 
 		if (empty($this->pa_ht)) $this->pa_ht=0;
 
-		// si prix d'achat non renseign� et utilis� pour calcul des marges alors prix achat = prix vente (idem pour remises)
+		// si prix d'achat non renseigne et utilise pour calcul des marges alors prix achat = prix vente (idem pour remises)
 		if ($this->pa_ht == 0) {
 			if ($this->subprice < 0 || ($conf->global->CalculateMarginsOnLinesWithoutBuyingPrice == 1))
 				$this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);
@@ -2757,6 +2764,9 @@ class PropaleLigne
         // Mise a jour ligne en base
         $sql = "UPDATE ".MAIN_DB_PREFIX."propaldet SET";
         $sql.= " description='".$this->db->escape($this->desc)."'";
+        if (! empty($this->label)) {
+        	$sql.= " , label='".$this->db->escape($this->label)."'";
+        }
         $sql.= " , tva_tx='".price2num($this->tva_tx)."'";
         $sql.= " , localtax1_tx=".price2num($this->localtax1_tx);
         $sql.= " , localtax2_tx=".price2num($this->localtax2_tx);

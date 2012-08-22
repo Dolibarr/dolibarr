@@ -633,18 +633,25 @@ else if ($action == "setabsolutediscount" && $user->rights->propale->creer)
 //Ajout d'une ligne produit dans la propale
 else if ($action == "addline" && $user->rights->propale->creer)
 {
-	if (empty($_POST['idprod']) && GETPOST('type') < 0)
+	$idprod=GETPOST('idprod', 'int');
+	//var_dump($_POST);
+	if (empty($idprod) && GETPOST('type') < 0)
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
 		$error++;
 	}
-	if (empty($_POST['idprod']) && (! isset($_POST["np_price"]) || $_POST["np_price"]==''))	// Unit price can be 0 but not ''
+	if (empty($idprod) && (!(GETPOST('price_ht') >= 0) || GETPOST('price_ht') == ''))	// Unit price can be 0 but not ''
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
 		$error++;
 	}
+	if (empty($idprod) && ! GETPOST('product_desc'))
+	{
+		setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")), 'errors');
+		$error++;
+	}
 
-	if (! $error && isset($_POST['qty']) && ((GETPOST('np_price')!='' && (GETPOST('np_desc') || GETPOST('dp_desc'))) || GETPOST('idprod')))
+	if (! $error && (GETPOST('qty') >= 0) && (GETPOST('product_desc') || ! empty($idprod)))
 	{
 		$pu_ht=0;
 		$pu_ttc=0;
@@ -654,10 +661,10 @@ else if ($action == "addline" && $user->rights->propale->creer)
 		// Ecrase $pu par celui du produit
 		// Ecrase $desc par celui du produit
 		// Ecrase $txtva par celui du produit
-		if (GETPOST('idprod'))
+		if (! empty($idprod))
 		{
 			$prod = new Product($db);
-			$prod->fetch(GETPOST('idprod'));
+			$prod->fetch($idprod);
 
 			$tva_tx = get_default_tva($mysoc,$object->client,$prod->id);
 			$localtax1_tx= get_localtax($tva_tx, 1, $object->client);  //get_default_localtax($mysoc,$object->client,1,$prod->id);
@@ -681,10 +688,10 @@ else if ($action == "addline" && $user->rights->propale->creer)
 			}
 
 			// Update if prices fields are defined
-			if (GETPOST('dp_price_ht') || GETPOST('dp_price_ttc'))
+			if (GETPOST('update_price') && (GETPOST('price_ht') || GETPOST('price_ttc')))
 			{
-				$price_ht=price2num(GETPOST('dp_price_ht'), 'MU');
-				$price_ttc=price2num(GETPOST('dp_price_ttc'), 'MU');
+				$price_ht=price2num(GETPOST('price_ht'), 'MU');
+				$price_ttc=price2num(GETPOST('price_ttc'), 'MU');
 
 				if ($price_base_type == 'TTC' && $price_ttc != $pu_ttc)
 				{
@@ -712,43 +719,54 @@ else if ($action == "addline" && $user->rights->propale->creer)
 				}
 			}
 
-			// Define output language
-			if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
-			{
-				$outputlangs = $langs;
-				$newlang='';
-				if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-				if (empty($newlang)) $newlang=$object->client->default_lang;
-				if (! empty($newlang))
+			if (GETPOST('update_desc')) {
+
+				$desc = (GETPOST('product_desc')?GETPOST('product_desc'):'');
+
+			} else {
+
+				// Define output language
+				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
 				{
-					$outputlangs = new Translate("",$conf);
-					$outputlangs->setDefaultLang($newlang);
+					$outputlangs = $langs;
+					$newlang='';
+					if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
+					if (empty($newlang)) $newlang=$object->client->default_lang;
+					if (! empty($newlang))
+					{
+						$outputlangs = new Translate("",$conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
+
+					$desc = (! empty($prod->multilangs[$outputlangs->defaultlang]["description"])) ? $prod->multilangs[$outputlangs->defaultlang]["description"] : $prod->description;
+				}
+				else
+				{
+					$desc = $prod->description;
 				}
 
-				$desc = (! empty($prod->multilangs[$outputlangs->defaultlang]["description"])) ? $prod->multilangs[$outputlangs->defaultlang]["description"] : $prod->description;
-			}
-			else
-			{
-				$desc = $prod->description;
+				$desc.= ($desc && GETPOST('product_desc')) ? ((dol_textishtml($desc) || dol_textishtml(GETPOST('product_desc')))?"<br />\n":"\n") : "";
+				$desc.= GETPOST('product_desc');
 			}
 
-			$desc.= ($desc && GETPOST('dp_desc')) ? ((dol_textishtml($desc) || dol_textishtml(GETPOST('dp_desc')))?"<br />\n":"\n") : "";
-			$desc.= GETPOST('dp_desc');
+			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label'):'');
+
 			$type = $prod->type;
-			$fournprice=(GETPOST('dp_fournprice')?GETPOST('dp_fournprice'):'');
-			$buyingprice=(GETPOST('dp_buying_price')?GETPOST('dp_buying_price'):'');
+			$fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):'');
+			$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
 		}
 		else
 		{
-			$pu_ht=GETPOST('np_price');
-			$tva_tx=str_replace('*','',GETPOST('np_tva_tx'));
-			$tva_npr=preg_match('/\*/',GETPOST('np_tva_tx'))?1:0;
-			$desc=GETPOST('np_desc');
+			$pu_ht=GETPOST('price_ht');
+			$tva_tx=str_replace('*','',GETPOST('tva_tx'));
+			$tva_npr=preg_match('/\*/',GETPOST('tva_tx'))?1:0;
+			$label=(GETPOST('product_label')?GETPOST('product_label'):'');
+			$desc=GETPOST('product_desc');
 			$type=GETPOST('type');
 			$localtax1_tx=get_localtax($tva_tx,1,$object->client);
 			$localtax2_tx=get_localtax($tva_tx,2,$object->client);
-			$fournprice=(GETPOST('np_fournprice')?GETPOST('np_fournprice'):'');
-			$buyingprice=(GETPOST('np_buying_price')?GETPOST('np_buying_price'):'');
+			$fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):'');
+			$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
 		}
 
 		$info_bits=0;
@@ -756,31 +774,32 @@ else if ($action == "addline" && $user->rights->propale->creer)
 
 		if (! empty($price_min) && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
 		{
-			$mesg = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->currency));
+			$mesg = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').getCurrencySymbol($conf->currency));
 			setEventMessage($mesg, 'errors');
 		}
 		else
 		{
 			// Insert line
 			$result=$object->addline(
-    			$id,
-    			$desc,
-    			$pu_ht,
-    			GETPOST('qty'),
-    			$tva_tx,
-    			$localtax1_tx,
-    			$localtax2_tx,
-    			GETPOST('idprod'),
-    			GETPOST('remise_percent'),
-    			$price_base_type,
-    			$pu_ttc,
-    			$info_bits,
-    			$type,
-    			-1,
-    			0,
-    			GETPOST('fk_parent_line'),
-    			$fournprice,
-    			$buyingprice
+					$id,
+					$desc,
+					$pu_ht,
+					GETPOST('qty'),
+					$tva_tx,
+					$localtax1_tx,
+					$localtax2_tx,
+					$idprod,
+					GETPOST('remise_percent'),
+					$price_base_type,
+					$pu_ttc,
+					$info_bits,
+					$type,
+					-1,
+					0,
+					GETPOST('fk_parent_line'),
+					$fournprice,
+					$buyingprice,
+					$label
 			);
 
 			if ($result > 0)
@@ -803,17 +822,14 @@ else if ($action == "addline" && $user->rights->propale->creer)
 
 				unset($_POST['qty']);
 				unset($_POST['type']);
-
-				unset($_POST['np_price']);
-				unset($_POST['np_tva_tx']);
-				unset($_POST['np_desc']);
-				unset($_POST['np_fournprice']);
-				unset($_POST['np_buying_price']);
-
-				unset($_POST['dp_desc']);
-				unset($_POST['dp_price']);
-				unset($_POST['dp_fournprice']);
-				unset($_POST['dp_buying_price']);
+				unset($_POST['price_ht']);
+				unset($_POST['price_ttc']);
+				unset($_POST['tva_tx']);
+				unset($_POST['product_ref']);
+				unset($_POST['product_label']);
+				unset($_POST['product_desc']);
+				unset($_POST['fournprice']);
+				unset($_POST['buying_price']);
 			}
 			else
 			{
@@ -1562,24 +1578,15 @@ print '<table id="tablelines" class="noborder" width="100%">';
 $result = $object->getLinesArray();
 if (! empty($object->lines)) $object->printObjectLines($action,$mysoc,$soc,$lineid,0,$hookmanager);
 
-/*
- * Form to add new line
- */
+// Form to add new line
 if ($object->statut == 0 && $user->rights->propale->creer)
 {
 	if ($action != 'editline')
 	{
 		$var=true;
 
-		// Add free products/services
+		// Add free or predefined products/services
 		$object->formAddFreeProduct(0,$mysoc,$soc,$hookmanager);
-
-		// Add predefined products/services
-		if ($conf->product->enabled || $conf->service->enabled)
-		{
-			$var=!$var;
-			$object->formAddPredefinedProduct(0,$mysoc,$soc,$hookmanager);
-		}
 
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formAddObject',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook

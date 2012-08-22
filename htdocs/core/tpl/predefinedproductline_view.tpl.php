@@ -34,7 +34,7 @@
 	// Add description in form
 	if ($conf->global->PRODUIT_DESC_IN_FORM)
 	{
-		print ($line->description && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
+		print (! empty($line->description) && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
 	}
 	?>
 	</td>
@@ -42,6 +42,8 @@
 	<td align="right" nowrap="nowrap"><?php echo vatrate($line->tva_tx,'%',$line->info_bits); ?></td>
 
 	<td align="right" nowrap="nowrap"><?php echo price($line->subprice); ?></td>
+
+	<td align="right" nowrap="nowrap">&nbsp;</td>
 
 	<td align="right" nowrap="nowrap">
 	<?php if ((($line->info_bits & 2) != 2) && $line->special_code != 3) echo $line->qty;
@@ -52,18 +54,17 @@
 	<td align="right"><?php echo dol_print_reduction($line->remise_percent,$langs); ?></td>
 	<?php } else { ?>
 	<td>&nbsp;</td>
-	<?php } 
+	<?php }
 
-  if (! empty($conf->margin->enabled)) { 
-  ?>
+	if (! empty($conf->margin->enabled)) { ?>
   	<td align="right" nowrap="nowrap"><?php echo price($line->pa_ht); ?></td>
-  	<?php if($conf->global->DISPLAY_MARGIN_RATES) {?>
-  	  <td align="right" nowrap="nowrap"><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx).'%'); ?></td>
-  	<?php 
+  	<?php if ($conf->global->DISPLAY_MARGIN_RATES) {?>
+  	<td align="right" nowrap="nowrap"><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx).'%'); ?></td>
+  	<?php
     }
-    if($conf->global->DISPLAY_MARK_RATES) {?>
-  	  <td align="right" nowrap="nowrap"><?php echo price($line->marque_tx).'%'; ?></td>
-  <?php } } ?>
+    if ($conf->global->DISPLAY_MARK_RATES) { ?>
+  	<td align="right" nowrap="nowrap"><?php echo price($line->marque_tx).'%'; ?></td>
+	<?php } } ?>
 
 	<?php if ($line->special_code == 3)	{ ?>
 	<td align="right" nowrap="nowrap"><?php echo $langs->trans('Option'); ?></td>

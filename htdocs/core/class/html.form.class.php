@@ -340,7 +340,7 @@ class Form
      *	@param	int			$direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est apres
      *	@param	string		$img				Code img du picto (use img_xxx() function to get it)
      *	@param	string		$extracss			Add a CSS style to td tags
-     *	@param	int			$notabs				Do not include table and tr tags
+     *	@param	int			$notabs				1=Do not include table and tr tags, 2=use div, 3=use span
      *	@param	string		$incbefore			Include code before the text
      *	@param	int			$noencodehtmltext	Do not encode into html entity the htmltext
      *	@return	string							Code html du tooltip (texte+picto)
@@ -352,6 +352,10 @@ class Form
 
         if ($incbefore) $text = $incbefore.$text;
         if (! $htmltext) return $text;
+
+        $tag='td';
+        if ($notabs == 2) $tag='div';
+        if ($notabs == 3) $tag='span';
 
         // Sanitize tooltip
         $htmltext=str_replace("\\","\\\\",$htmltext);
@@ -365,7 +369,7 @@ class Form
         else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
 
         $s="";
-        if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr>';
+        if ($notabs < 2) $s.='<table class="nobordernopadding" summary=""><tr>';
         if ($direction > 0)
         {
             if ($text != '')
@@ -381,12 +385,12 @@ class Form
             if ($direction) $s.='<td'.$paramfortooltipimg.' valign="top" width="14">'.$img.'</td>';
             if ($text != '')
             {
-                $s.='<td'.$paramfortooltiptd.'>';
+                $s.='<'.$tag.$paramfortooltiptd.'>';
                 if ($direction) $s.='&nbsp;';
-                $s.=$text.'</td>';
+                $s.=$text.'</'.$tag.'>';
             }
         }
-        if (empty($notabs)) $s.='</tr></table>';
+        if ($notabs < 2) $s.='</tr></table>';
 
         return $s;
     }
@@ -543,7 +547,7 @@ class Form
         || (empty($conf->product->enabled) && empty($conf->service->enabled)))
         {
             if (empty($hidetext)) print $langs->trans("Type").': ';
-            print '<select class="flat" name="'.$htmlname.'">';
+            print '<select class="flat" id="select_'.$htmlname.'" name="'.$htmlname.'">';
             if ($showempty)
             {
                 print '<option value="-1"';
@@ -1079,7 +1083,7 @@ class Form
      *  @param		int			$status					-1=Return all products, 0=Products not on sell, 1=Products on sell
      *  @param		int			$finished				2=all, 1=finished, 0=raw material
      *  @param		string		$selected_input_value	Value of preselected input text (with ajax)
-     *  @param		int			$hidelabel				Hide label
+     *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
      *  @param		array		$ajaxoptions			Options for ajax_autocompleter
      *  @return		void
      */
@@ -1091,6 +1095,8 @@ class Form
 
         if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
         {
+        	$placeholder='';
+
             if ($selected && empty($selected_input_value))
             {
                 require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
@@ -1101,15 +1107,23 @@ class Form
             // mode=1 means customers products
             $urloption='htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished;
             print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
-            if (! $hidelabel) print $langs->trans("RefOrLabel").' : ';
-            print '<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'" />';
+            if (empty($hidelabel)) print $langs->trans("RefOrLabel").' : ';
+            else if ($hidelabel > 1) {
+            	if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $placeholder=' placeholder="'.$langs->trans("RefOrLabel").'"';
+            	else $placeholder=' title="'.$langs->trans("RefOrLabel").'"';
+            	if ($hidelabel == 2) {
+            		print img_picto($langs->trans("Search"), 'search');
+            	}
+            }
+            print '<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
+            if ($hidelabel == 3) {
+            	print img_picto($langs->trans("Search"), 'search');
+            }
         }
         else
         {
             $this->select_produits_do($selected,$htmlname,$filtertype,$limit,$price_level,'',$status,$finished,0);
         }
-
-        print '<br>';
     }
 
     /**
@@ -1131,7 +1145,7 @@ class Form
         global $langs,$conf,$user,$db;
 
         $sql = "SELECT ";
-        $sql.= " p.rowid, p.label, p.ref, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.duration, p.stock";
+        $sql.= " p.rowid, p.label, p.ref, p.description, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.duration, p.stock";
         // Multilang : we add translation
         if (! empty($conf->global->MAIN_MULTILANGS))
         {
@@ -1196,6 +1210,9 @@ class Form
                 $outkey='';
                 $outval='';
                 $outref='';
+                $outlabel='';
+                $outdesc='';
+                $outtype='';
                 $outprice_ht='';
                 $outprice_ttc='';
                 $outpricebasetype='';
@@ -1208,6 +1225,9 @@ class Form
 
                 $outkey=$objp->rowid;
                 $outref=$objp->ref;
+                $outlabel=$objp->label;
+                $outdesc=$objp->description;
+                $outtype=$objp->fk_product_type;
 
                 $opt = '<option value="'.$objp->rowid.'"';
                 $opt.= ($objp->rowid == $selected)?' selected="selected"':'';
@@ -1320,7 +1340,7 @@ class Form
                 // "key" value of json key array is used by jQuery automatically as selected value
                 // "label" value of json key array is used by jQuery automatically as text for combo box
                 $outselect.=$opt;
-                array_push($outjson, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'price_ht'=>$outprice_ht, 'price_ttc'=>$outprice_ttc, 'pricebasetype'=>$outpricebasetype));
+                array_push($outjson, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'label2'=>$outlabel, 'desc'=>$outdesc, 'type'=>$outtype, 'price_ht'=>$outprice_ht, 'price_ttc'=>$outprice_ttc, 'pricebasetype'=>$outpricebasetype));
 
                 $i++;
             }

@@ -520,7 +520,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 {
 	$langs->load('errors');
 	$error = false;
-
+var_dump($_POST); exit;
 	if ((GETPOST('np_price') < 0) && (GETPOST('qty') < 0))
     {
         setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPrice'), $langs->transnoentitiesnoconv('Qty')), 'errors');
@@ -2098,13 +2098,6 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 					$object->formAddFreeProduct(1,$mysoc,$soc,$hookmanager);
 
-					// Add predefined products/services
-					if ($conf->product->enabled || $conf->service->enabled)
-					{
-						$var=!$var;
-						$object->formAddPredefinedProduct(1,$mysoc,$soc,$hookmanager);
-					}
-
 					$parameters=array();
 					$reshook=$hookmanager->executeHooks('formAddObject',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 				}
@@ -2347,6 +2340,6 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 	}
 
 
-	llxFooter();
-	$db->close();
-	?>
+llxFooter();
+$db->close();
+?>

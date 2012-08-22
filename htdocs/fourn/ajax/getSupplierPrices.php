@@ -23,7 +23,7 @@
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
+//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
@@ -72,39 +72,46 @@ if (! empty($idprod))
 			{
 				$objp = $db->fetch_object($result);
 
-				$label = $objp->nom.' - '.$objp->ref_fourn.' - ';
+				$title = $objp->nom.' - '.$objp->ref_fourn.' - ';
+				$label = '';
 
 				if ($objp->quantity == 1)
 				{
-					$label.= price($objp->fprice);
-					$label.= $langs->trans("Currency".$conf->monnaie)."/";
+					$label.= price($objp->fprice).getCurrencySymbol($conf->currency)."/".strtolower($langs->trans("Unit"));
+
+					$title.= price($objp->fprice);
+					$title.= getCurrencySymbol($conf->currency)."/";
+
 					$price = $objp->fprice;
 				}
 
-				$label.= $objp->quantity.' ';
+				$title.= $objp->quantity.' ';
 
 				if ($objp->quantity == 1)
 				{
-					$label.= strtolower($langs->trans("Unit"));
+					$title.= strtolower($langs->trans("Unit"));
 				}
 				else
 				{
-					$label.= strtolower($langs->trans("Units"));
+					$title.= strtolower($langs->trans("Units"));
 				}
 				if ($objp->quantity > 1)
 				{
-					$label.=" - ";
-					$label.= price($objp->unitprice).$langs->trans("Currency".$conf->monnaie)."/".strtolower($langs->trans("Unit"));
+					$title.=" - ";
+					$title.= price($objp->unitprice).getCurrencySymbol($conf->currency)."/".strtolower($langs->trans("Unit"));
+
+					$label.= price($objp->unitprice).getCurrencySymbol($conf->currency)."/".strtolower($langs->trans("Unit"));
+
 					$price = $objp->unitprice;
 				}
 				if ($objp->unitcharges > 0 && ($conf->global->MARGIN_TYPE == "2")) {
-					$label.=" + ";
-					$label.= price($objp->unitcharges).$langs->trans("Currency".$conf->monnaie);
+					$title.=" + ";
+					$title.= price($objp->unitcharges).getCurrencySymbol($conf->currency);
 					$price += $objp->unitcharges;
 				}
 				if ($objp->duration) $label .= " - ".$objp->duration;
 
-				$prices[] = array("id" => $objp->idprodfournprice, "price" => price($price,0,'',0), "label" => $label);
+				$prices[] = array("id" => $objp->idprodfournprice, "price" => price($price,0,'',0), "label" => $label, "title" => $title);
 				$i++;
 			}
 

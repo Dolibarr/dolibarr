@@ -105,6 +105,7 @@ if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey='';
 if (empty($dolibarr_main_limit_users)) $dolibarr_main_limit_users=0;
 if (empty($dolibarr_mailing_limit_sendbyweb)) $dolibarr_mailing_limit_sendbyweb=0;
 if (empty($force_charset_do_notuse)) $force_charset_do_notuse='UTF-8';
+if (empty($dolibarr_strict_mode)) $dolibarr_strict_mode=0; // For debug in php strict mode
 if (empty($multicompany_transverse_mode)) $multicompany_transverse_mode=0;
 
 // Security: CSRF protection
