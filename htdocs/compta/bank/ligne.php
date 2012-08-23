@@ -222,7 +222,7 @@ if ($result)
 
 $var=false;
 
-$head = array(
+$tabs = array(
     array(
         DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$rowid,
         $langs->trans('Card')
@@ -233,7 +233,7 @@ $head = array(
     )
 );
 
-dol_fiche_head($head, 0, $langs->trans('LineRecord'), 0, 'account');
+dol_fiche_head($tabs, 0, $langs->trans('LineRecord'), 0, 'account');
 
 dol_htmloutput_mesg($mesg);
 
