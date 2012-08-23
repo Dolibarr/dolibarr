@@ -72,6 +72,7 @@ class Contact extends CommonObject
 	var $birthday;
 	var $default_lang;
     var $note;                  // Private note
+    var $no_email;				// 1=Don't send e-mail to this contact, 0=do
 
 	var $ref_facturation;       // Nb de reference facture pour lequel il est contact
 	var $ref_contrat;           // Nb de reference contrat pour lequel il est contact
@@ -250,6 +251,7 @@ class Contact extends CommonObject
 		$sql .= ", priv = '".$this->priv."'";
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$user->id."'":"null");
 		$sql .= ", default_lang=".($this->default_lang?"'".$this->default_lang."'":"null");
+		$sql .= ", no_email=".($this->no_email?"'".$this->no_email."'":"null");
 		$sql .= " WHERE rowid=".$id;
 
 		dol_syslog(get_class($this)."::update sql=".$sql,LOG_DEBUG);
@@ -468,7 +470,7 @@ class Contact extends CommonObject
 		$sql.= " c.fk_departement,";
 		$sql.= " c.birthday,";
 		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid,";
-		$sql.= " c.priv, c.note, c.default_lang, c.canvas,";
+		$sql.= " c.priv, c.note, c.default_lang, c.no_email, c.canvas,";
 		$sql.= " c.import_key,";
 		$sql.= " p.libelle as country, p.code as country_code,";
 		$sql.= " d.nom as state, d.code_departement as state_code,";
@@ -536,6 +538,7 @@ class Contact extends CommonObject
 				$this->birthday			= $this->db->jdate($obj->birthday);
 				$this->note				= $obj->note;
 				$this->default_lang		= $obj->default_lang;
+				$this->no_email			= $obj->no_email;
 				$this->user_id			= $obj->user_id;
 				$this->user_login		= $obj->user_login;
 				$this->canvas			= $obj->canvas;
