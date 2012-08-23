@@ -19,7 +19,7 @@
 /**
  *      \file       dev/examples/create_product.php
  *      \brief      This file is an example for a command line script
- *		\author		Put author name here
+ *		\author		Put author's name here
  *		\remarks	Put here some comments
  */
 
@@ -29,7 +29,7 @@ $path=dirname(__FILE__).'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Error: You ar usingr PH for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
     exit;
 }
 
@@ -64,7 +64,7 @@ require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 // Create instance of object
 $myproduct=new Product($db);
 
-// Définition des propriétés de l'instance product
+// Definition of product instance properties
 $myproduct->ref                = '1234';
 $myproduct->libelle            = 'libelle';
 $myproduct->price              = '10';
