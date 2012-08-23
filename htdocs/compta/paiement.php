@@ -227,6 +227,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		// Bouchon
 		if ($facture->type == 2)
 		{
+            $langs->load('other');
 			print $langs->trans("FeatureNotYetAvailable");
 			llxFooter();
 			exit;
