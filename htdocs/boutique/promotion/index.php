@@ -22,8 +22,8 @@
  * 		\brief      Page gestion promotions OSCommerce
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php');
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php';
 
 
 llxHeader();

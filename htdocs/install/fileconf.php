@@ -25,7 +25,7 @@
  *       \ingroup    install
  *       \brief      Ask all informations required to build Dolibarr htdocs/conf/conf.php file (will be wrote on disk on next page)
  */
-include_once("./inc.php");
+include_once 'inc.php';
 
 
 $err=0;
@@ -55,7 +55,7 @@ if (! isset($force_install_databaserootpass))	$force_install_databaserootpass=''
 $useforcedwizard=false;
 $forcedfile="./install.forced.php";
 if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
-if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once($forcedfile); }
+if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once $forcedfile; }
 
 dolibarr_install_syslog("Fileconf: Entering fileconf.php page");
 
@@ -281,7 +281,7 @@ if (! empty($force_install_message))
 		        {
 		            $type=$reg[1];
                     $class='DoliDB'.ucfirst($type);
-                    include_once($dir."/".$file);
+                    include_once $dir."/".$file;
 
                     if ($type == 'sqlite') continue;    // We hide sqlite because support can't be complete unti sqlit does not manage foreign key creation after table creation
 

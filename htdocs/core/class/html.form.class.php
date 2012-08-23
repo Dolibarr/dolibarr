@@ -177,7 +177,7 @@ class Form
                 else if (preg_match('/^ckeditor/',$typeofdata))
                 {
                     $tmp=explode(':',$typeofdata);
-                    require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+                    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
                     $doleditor=new DolEditor($htmlname, ($editvalue?$editvalue:$value), ($tmp[2]?$tmp[2]:''), ($tmp[3]?$tmp[3]:'100'), ($tmp[1]?$tmp[1]:'dolibarr_notes'), 'In', ($tmp[5]?$tmp[5]:0), true, true, ($tmp[6]?$tmp[6]:'20'), ($tmp[7]?$tmp[7]:'100'));
                     $ret.=$doleditor->Create(1);
                 }
@@ -870,7 +870,7 @@ class Form
             $i = 0;
             if ($num)
             {
-                include_once(DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php');
+                include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
                 $contactstatic=new Contact($this->db);
 
                 while ($i < $num)
@@ -1099,7 +1099,7 @@ class Form
 
             if ($selected && empty($selected_input_value))
             {
-                require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+                require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
                 $product = new Product($this->db);
                 $product->fetch($selected);
                 $selected_input_value=$product->ref;
@@ -2422,7 +2422,7 @@ class Form
     {
         global $langs;
 
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 
         $langs->load("project");
         if ($htmlname != "none")
@@ -2636,7 +2636,7 @@ class Form
         {
             if ($selected)
             {
-                require_once(DOL_DOCUMENT_ROOT ."/user/class/user.class.php");
+                require_once DOL_DOCUMENT_ROOT .'/user/class/user.class.php';
                 //$this->load_cache_contacts();
                 //print $this->cache_contacts[$selected];
                 $theuser=new User($this->db);
@@ -2782,7 +2782,7 @@ class Form
         {
             if ($selected)
             {
-                require_once(DOL_DOCUMENT_ROOT ."/contact/class/contact.class.php");
+                require_once DOL_DOCUMENT_ROOT .'/contact/class/contact.class.php';
                 //$this->load_cache_contacts();
                 //print $this->cache_contacts[$selected];
                 $contact=new Contact($this->db);
@@ -2827,7 +2827,7 @@ class Form
         {
             if ($selected)
             {
-                require_once(DOL_DOCUMENT_ROOT ."/societe/class/societe.class.php");
+                require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
                 $soc = new Societe($this->db);
                 $soc->fetch($selected);
                 print $soc->getNomUrl($langs);
@@ -3404,7 +3404,7 @@ class Form
     {
         if ($iSecond)
         {
-            require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
             $hourSelected = convertSecondToTime($iSecond,'hour');
             $minSelected = convertSecondToTime($iSecond,'min');

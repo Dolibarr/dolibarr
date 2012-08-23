@@ -23,9 +23,9 @@
  *      \brief      Fiche de notes sur un utilisateur Dolibarr
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/user/class/user.class.php');
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 $id = GETPOST('id','int');
 $action = GETPOST('action');
@@ -119,7 +119,7 @@ if ($id)
 		print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 		print "<input type=\"hidden\" name=\"id\" value=\"".$fuser->id."\">";
 	    // Editeur wysiwyg
-		require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$doleditor=new DolEditor('note',$fuser->note,'',280,'dolibarr_notes','In',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,80);
 		$doleditor->Create();
 	}

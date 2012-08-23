@@ -23,8 +23,8 @@
  *	\brief      Fichier contenant la classe du modele de generation code barre phpbarcode
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/modules/barcode/modules_barcode.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/barcode.lib.php");    // This is to include def like $genbarcode_loc and $font_loc
+require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/modules_barcode.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php';    // This is to include def like $genbarcode_loc and $font_loc
 
 
 /**		\class      modPhpbarcode

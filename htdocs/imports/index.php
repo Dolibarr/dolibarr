@@ -21,8 +21,8 @@
  *       \brief      Page accueil de la zone import
  */
 
-require_once("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/imports/class/import.class.php");
+require_once '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/imports/class/import.class.php';
 
 $langs->load("exports");
 
@@ -61,7 +61,7 @@ print '<td>'.$langs->trans("LibraryShort").'</td>';
 print '<td align="right">'.$langs->trans("LibraryVersion").'</td>';
 print '</tr>';
 
-include_once(DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.php');
+include_once DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.php';
 $model=new ModeleImports();
 $liste=$model->liste_modeles($db);
 

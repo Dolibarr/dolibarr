@@ -28,9 +28,9 @@
  *	\brief      Setup page of module Interventions
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php');
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 
 $langs->load("admin");
 $langs->load("errors");
@@ -125,7 +125,7 @@ if ($action == 'specimen')
 
 	if ($filefound)
 	{
-		require_once($file);
+		require_once $file;
 
 		$module = new $classname($db);
 
@@ -234,7 +234,7 @@ foreach ($dirmodels as $reldir)
 					$file = $reg[1];
 					$classname = substr($file,4);
 
-					require_once(DOL_DOCUMENT_ROOT ."/core/modules/fichinter/".$file.".php");
+					require_once DOL_DOCUMENT_ROOT ."/core/modules/fichinter/".$file.'.php';
 
 					$module = new $file;
 
@@ -356,7 +356,7 @@ foreach ($dirmodels as $reldir)
 		    		print '<tr '.$bc[$var].'><td>';
 		    		echo "$name";
 		    		print "</td><td>\n";
-		    		require_once($dir.$file);
+		    		require_once $dir.$file;
 		    		$module = new $classname($db);
 		    		print $module->description;
 		    		print '</td>';

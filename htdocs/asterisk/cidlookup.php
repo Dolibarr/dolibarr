@@ -30,7 +30,7 @@
 
 $phone = $_GET['phone'];
 
-include("../master.inc.php");
+include '../master.inc.php';
 
 
 // Check parameters

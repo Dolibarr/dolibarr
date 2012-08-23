@@ -136,10 +136,14 @@ PaymentNumberUpdateSucceeded=Payment number updated succesfully
 PaymentNumberUpdateFailed=Payment number could not be updated
 PaymentDateUpdateSucceeded=Payment date update succesfully
 PaymentDateUpdateFailed=Payment date could not be updated
+Transactions=Transactions
 BankTransactionLine=Bank transaction
 AllAccounts=All bank/cash accounts
 BackToAccount=Back to account
 ShowAllAccounts=Show for all accounts
 FutureTransaction=Transaction in futur. No way to conciliate.
 SelectChequeTransactionAndGenerate=Select/filter checks to include into the check deposit receipt and click on "Create".
-
+InputReceiptNumber=Choose the bank statement related with the conciliation. Use a sortable numeric value (such as, YYYYMM)
+EventualyAddCategory=Eventually, specify a category in which to classify the records
+ToConciliate=To conciliate?
+ThenCheckLinesAndConciliate=Then, check the lines present in the bank statement and click

@@ -27,7 +27,7 @@
  *      \brief      File descriptor or module Member
  */
 
-include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
+include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 /**
  *  Classe de description et activation du module Adherent
@@ -198,7 +198,7 @@ class modAdherent extends DolibarrModules
         $r=0;
 
         $now=dol_now();
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
         $r++;
         $this->import_code[$r]=$this->rights_class.'_'.$r;

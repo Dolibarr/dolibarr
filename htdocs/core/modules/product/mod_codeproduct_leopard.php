@@ -23,7 +23,7 @@
  *       \brief      Fichier de la classe des gestion leopard des codes produits
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/modules/product/modules_product.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php';
 
 
 /**

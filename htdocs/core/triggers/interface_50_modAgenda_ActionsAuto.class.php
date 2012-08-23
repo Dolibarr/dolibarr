@@ -552,15 +552,15 @@ class InterfaceActionsAuto
         {
 			$now=dol_now();
 
-            require_once(DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php');
-            require_once(DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php');
+            require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+            require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 			$contactforaction=new Contact($this->db);
             $societeforaction=new Societe($this->db);
             if ($object->sendtoid > 0) $contactforaction->fetch($object->sendtoid);
             if ($object->socid > 0)    $societeforaction->fetch($object->socid);
 
 			// Insertion action
-			require_once(DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php');
+			require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 			$actioncomm = new ActionComm($this->db);
 			$actioncomm->type_code   = $object->actiontypecode;
 			$actioncomm->label       = $object->actionmsg2;

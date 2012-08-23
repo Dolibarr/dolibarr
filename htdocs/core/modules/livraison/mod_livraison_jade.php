@@ -24,7 +24,7 @@
  *   \brief      Fichier contenant la classe du modele de numerotation de reference de bon de livraison Jade
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/core/modules/livraison/modules_livraison.php");
+require_once DOL_DOCUMENT_ROOT .'/core/modules/livraison/modules_livraison.php';
 
 
 /**

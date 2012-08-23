@@ -20,8 +20,8 @@
  *       \brief      Page to view triggers
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/interfaces.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 
 $langs->load("admin");
 
@@ -52,7 +52,7 @@ $template_dir = DOL_DOCUMENT_ROOT.'/core/tpl/';
 $interfaces = new Interfaces($db);
 $triggers = $interfaces->getTriggersList(0,'priority');
 
-include($template_dir.'triggers.tpl.php');
+include $template_dir.'triggers.tpl.php';
 
 llxFooter();
 

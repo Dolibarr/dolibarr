@@ -27,7 +27,7 @@
 
 define('DONOTLOADCONF',1);	// To avoid loading conf by file inc.php
 
-include("./inc.php");
+include 'inc.php';
 
 $action=GETPOST('action');
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
@@ -47,7 +47,7 @@ $main_dir=isset($_POST["main_dir"])?trim($_POST["main_dir"]):'';
 $useforcedwizard=false;
 $forcedfile="./install.forced.php";
 if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
-if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once($forcedfile); }
+if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once $forcedfile; }
 
 dolibarr_install_syslog("--- etape1: Entering etape1.php page");
 
@@ -123,7 +123,7 @@ if (! $main_data_dir) { $main_data_dir="$main_dir/documents"; }
 // Test database connexion
 if (! $error)
 {
-    $result=@include_once($main_dir."/core/db/".$_POST["db_type"].".class.php");
+    $result=@include_once $main_dir."/core/db/".$_POST["db_type"].'.class.php';
     if ($result)
     {
         // If we ask database or user creation we need to connect as root, so we need root login
@@ -377,7 +377,7 @@ if (! $error && $db->connected && $action == "set")
             else
             {
             	//ODT templates
-            	require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+            	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
             	$srcroot=$main_dir.'/install/doctemplates';
             	$destroot=$main_data_dir.'/doctemplates';
             	$docs=array('thirdparties' => 'thirdparty', 'proposals' => 'proposal', 'orders' => 'order', 'invoices' => 'invoice');
@@ -724,7 +724,7 @@ function write_main_file($mainfile,$main_dir)
         clearstatcache();
         fputs($fp, '<?php'."\n");
         fputs($fp, "// Wrapper to include main into htdocs\n");
-        fputs($fp, "include_once('".$main_dir."/main.inc.php');\n");
+        fputs($fp, "include_once '".$main_dir.'/main.inc.php');\n';
         fputs($fp, '?>');
         fclose($fp);
     }
@@ -746,7 +746,7 @@ function write_master_file($masterfile,$main_dir)
         clearstatcache();
         fputs($fp, '<?php'."\n");
         fputs($fp, "// Wrapper to include master into htdocs\n");
-        fputs($fp, "include_once('".$main_dir."/master.inc.php');\n");
+        fputs($fp, "include_once '".$main_dir.'/master.inc.php');\n';
         fputs($fp, '?>');
         fclose($fp);
     }
@@ -907,7 +907,7 @@ function write_conf_file($conffile)
 
 		if (file_exists("$conffile"))
 		{
-			include("$conffile");	// On force rechargement. Ne pas mettre include_once !
+			include $conffile;	// On force rechargement. Ne pas mettre include_once !
 			conf($dolibarr_main_document_root);
 
 			print "<tr><td>";

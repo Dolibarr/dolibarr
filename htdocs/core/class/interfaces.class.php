@@ -107,7 +107,7 @@ class Interfaces
                         }
                         else
                         {
-                            include_once($newdir.'/'.$file);
+                            include_once $newdir.'/'.$file;
                         }
 
                         // Check if trigger file is disabled by name
@@ -233,7 +233,7 @@ class Interfaces
                         }
                         else
                         {
-                            include_once($newdir.'/'.$file);
+                            include_once $newdir.'/'.$file;
                         }
 
                         $files[$i] = $file;

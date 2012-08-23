@@ -26,9 +26,9 @@
  *		\brief      Page to setup invoice module
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->load("admin");
 $langs->load("errors");
@@ -88,7 +88,7 @@ if ($action == 'specimen')
 
     if ($filefound)
     {
-    	require_once($file);
+    	require_once $file;
 
     	$module = new $classname($db);
 
@@ -347,7 +347,7 @@ foreach ($dirmodels as $reldir)
                     if (! class_exists($classname) && is_readable($dir.$filebis) && (preg_match('/mod_/',$filebis) || preg_match('/mod_/',$classname)) && substr($filebis, dol_strlen($filebis)-3, 3) == 'php')
                     {
                         // Chargement de la classe de numerotation
-                        require_once($dir.$filebis);
+                        require_once $dir.$filebis;
 
                         $module = new $classname($db);
 
@@ -515,7 +515,7 @@ foreach ($dirmodels as $reldir)
                     		$name = substr($file, 4, dol_strlen($file) -16);
 	                        $classname = substr($file, 0, dol_strlen($file) -12);
 
-	                        require_once($dir.'/'.$file);
+	                        require_once $dir.'/'.$file;
 	                        $module = new $classname($db);
 
 	                        $modulequalified=1;

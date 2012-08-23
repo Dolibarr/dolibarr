@@ -34,10 +34,10 @@ if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
 if (! isset($mode) || $mode != 'noajax')    // For ajax call
 {
-    require_once("../../main.inc.php");
-    require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
-    require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
-    require_once(DOL_DOCUMENT_ROOT."/ecm/class/ecmdirectory.class.php");
+    require_once '../../main.inc.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 	$action=GETPOST("action");
     $file=urldecode(GETPOST('file'));
@@ -253,7 +253,7 @@ if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
     {
     	$param.=($param?'?':'').(preg_replace('/^&/','',$param));
 
-        require_once(DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php');
+        require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
         $useglobalvars=1;
         $form = new Form($db);
         $formquestion=array('urlfile'=>array('type'=>'hidden','value'=>'','name'=>'urlfile'));

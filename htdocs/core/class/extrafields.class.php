@@ -464,7 +464,7 @@ class ExtraFields
         }
         else if ($type == 'text')
         {
-        	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+        	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
         	$doleditor=new DolEditor('options_'.$key,$value,'',200,'dolibarr_notes','In',false,false,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE,5,100);
         	$out=$doleditor->Create(1);
         }

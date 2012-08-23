@@ -21,8 +21,8 @@
  *       \ingroup    bookmark
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/bookmarks/class/bookmark.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
 
 $sortfield = GETPOST("sortfield",'alpha');
@@ -124,7 +124,7 @@ if ($resql)
             if (! $obj->title)
             {
                 // For compatibility with old Dolibarr bookmarks
-                require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+                require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
                 $societe=new Societe($db);
                 $societe->fetch($obj->rowid);
                 $obj->title=$societe->name;

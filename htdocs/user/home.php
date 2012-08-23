@@ -21,7 +21,7 @@
  *	\brief      Home page of users and groups management
  */
 
-require("../main.inc.php");
+require '../main.inc.php';
 
 if (! $user->rights->user->user->lire && ! $user->admin)
 {

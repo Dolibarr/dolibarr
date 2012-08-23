@@ -24,9 +24,9 @@
  *	\brief      Fiche d'information sur une proposition commerciale
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/propal.lib.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 
 $langs->load('propal');
 $langs->load('compta');
@@ -146,7 +146,7 @@ if ($id > 0 || ! empty($ref))
 
 			print '<br>';
 
-			include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
+			include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 			dol_fiche_end();
 		}

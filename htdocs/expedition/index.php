@@ -23,9 +23,9 @@
  *       \brief      Home page of shipping area.
  */
 
-require("../main.inc.php");
-require(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
-require(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
+require '../main.inc.php';
+require DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
 $langs->load("orders");
 $langs->load("sendings");

@@ -25,11 +25,11 @@
  *  \brief      Fichier de la classe de gestion des bons de livraison
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
-require_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
-if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
-if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+if ($conf->propal->enabled)   require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if ($conf->commande->enabled) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 
 /**
@@ -324,7 +324,7 @@ class Livraison extends CommonObject
 	function valid($user)
 	{
 		global $conf, $langs;
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		dol_syslog(get_class($this)."::valid begin");
 
@@ -440,7 +440,7 @@ class Livraison extends CommonObject
 		}
 
 		// Appel des triggers
-		include_once(DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php');
+		include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 		$interface = new Interfaces($this->db);
 		$result = $interface->run_triggers('DELIVERY_VALIDATE', $this, $user, $langs, $conf);
 		// Fin appel triggers
@@ -552,7 +552,7 @@ class Livraison extends CommonObject
 	{
 		global $conf, $langs, $user;
 
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		$this->db->begin();
 
 		$error=0;
@@ -597,7 +597,7 @@ class Livraison extends CommonObject
 					}
 
 					// Call triggers
-					include_once(DOL_DOCUMENT_ROOT."/core/class/interfaces.class.php");
+					include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 					$interface=new Interfaces($this->db);
 					$result=$interface->run_triggers('DELIVERY_DELETE',$this,$user,$langs,$conf);
 					if ($result < 0) {

@@ -22,7 +22,7 @@
  *		\brief      File to manage password generation according to standard rule
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/core/modules/security/generate/modules_genpassword.php");
+require_once DOL_DOCUMENT_ROOT .'/core/modules/security/generate/modules_genpassword.php';
 
 
 /**

@@ -21,7 +21,7 @@
  *	\ingroup    thirdparty
  *	\brief      File of Thirdparty card controller (default canvas)
  */
-include_once(DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php');
+include_once DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php';
 
 /**
  *	\class      ActionsCardCompany

@@ -24,7 +24,7 @@
  *      \brief      Liste des contacts
  */
 
-require("../main.inc.php");
+require '../main.inc.php';
 
 $langs->load("companies");
 

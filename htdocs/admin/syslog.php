@@ -23,8 +23,8 @@
  *	\brief      Setup page for logs module
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 if (!$user->admin) accessforbidden();
 
@@ -193,7 +193,7 @@ print '</td></tr>';
 try
 {
     set_include_path('/usr/share/php/');
-    $res=@include_once('FirePHPCore/FirePHP.class.php');
+    $res=@include_once 'FirePHPCore/FirePHP.class.php';
     restore_include_path();
     if ($res)
     {

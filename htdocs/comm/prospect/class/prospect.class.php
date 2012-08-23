@@ -22,7 +22,7 @@
  *		\ingroup    societe
  *		\brief      Fichier de la classe des prospects
  */
-include_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 
 /**

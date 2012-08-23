@@ -21,7 +21,7 @@
  *      \ingroup    notification
  *      \brief      File of class to manage notifications
  */
-require_once(DOL_DOCUMENT_ROOT ."/core/class/CMailFile.class.php");
+require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
 
 
 /**
@@ -162,7 +162,7 @@ class Notify
 
                 if (dol_strlen($sendto))
                 {
-                	include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+                	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
                 	$application=($conf->global->MAIN_APPLICATION_TITLE?$conf->global->MAIN_APPLICATION_TITLE:'Dolibarr ERP/CRM');
 
                 	$subject = '['.$application.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");

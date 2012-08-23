@@ -24,7 +24,7 @@
  *	\brief      Fichier contenant la classe du modele de numerotation de reference de commande fournisseur Orchidee
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/core/modules/supplier_order/modules_commandefournisseur.php");
+require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_order/modules_commandefournisseur.php';
 
 
 /**
@@ -111,7 +111,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
     {
 		global $db,$conf;
 
-		require_once(DOL_DOCUMENT_ROOT ."/core/lib/functions2.lib.php");
+		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
 		// On defini critere recherche compteur
 		$mask=$conf->global->COMMANDE_FOURNISSEUR_ORCHIDEE_MASK;

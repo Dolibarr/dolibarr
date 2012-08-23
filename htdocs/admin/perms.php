@@ -24,9 +24,9 @@
  *		\brief      Page d'administration/configuration des permissions par defaut
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->load("admin");
 $langs->load("users");
@@ -99,7 +99,7 @@ foreach ($modulesdir as $dir)
 
                 if ($modName)
                 {
-                	include_once($dir.$file);
+                	include_once $dir.$file;
     	            $objMod = new $modName($db);
 
     	            // Load all lang files of module

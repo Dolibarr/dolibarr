@@ -23,7 +23,7 @@
  *      \brief      Page ajout de categories bancaires
  */
 
-require("./pre.inc.php");
+require 'pre.inc.php';
 
 if (!$user->rights->banque->configurer)
   accessforbidden();

@@ -88,7 +88,7 @@ class DolEditor
         }
         if ($this->tool == 'fckeditor')
     	{
-        	require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
+        	require_once DOL_DOCUMENT_ROOT.'/includes/fckeditor/fckeditor.php';
 
     		$content=dol_htmlentitiesbr($content);	// If content is not HTML, we convert to HTML.
 

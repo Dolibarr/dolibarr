@@ -24,7 +24,7 @@
  *       \brief      Fichier de la classe des gestion lion des codes clients
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/modules/societe/modules_societe.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php';
 
 
 /**

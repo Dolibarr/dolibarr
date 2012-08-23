@@ -23,8 +23,8 @@
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
-require_once("../master.inc.php");
-require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
+require_once '../master.inc.php';
+require_once NUSOAP_PATH.'/nusoap.php';		// Include SOAP
 
 $WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php';
 //$WS_DOL_URL = 'http://localhost:8080/';	// If not a page, should end with /

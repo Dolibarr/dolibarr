@@ -22,7 +22,7 @@
  * 	\brief      Page liste des paiements a valider des factures clients
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 
 $langs->load("bills");
 

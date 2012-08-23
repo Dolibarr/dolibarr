@@ -24,8 +24,8 @@
  *		\ingroup    fournisseur, facture
  *		\brief      File of class to manage payments of suppliers invoices
  */
-require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 /**
  *	\class      PaiementFourn
@@ -202,7 +202,7 @@ class PaiementFourn extends Paiement
 				if (! $error)
 				{
 		            // Appel des triggers
-		            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+		            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 		            $interface=new Interfaces($this->db);
 		            $result=$interface->run_triggers('PAYMENT_SUPPLIER_CREATE',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }

@@ -23,8 +23,8 @@
  *	\ingroup    cashdesk
  *	\brief      First page of point of sale module
  */
-require('../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php');
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 
 // Test if already logged
 if ( $_SESSION['uid'] <= 0 )
@@ -64,14 +64,14 @@ print '<div class="conteneur_img_droite">'."\n";
 print '<h1 class="entete"><span>POINT OF SALE</span></h1>'."\n";
 
 print '<div class="menu_principal">'."\n";
-include_once('tpl/menu.tpl.php');
+include_once 'tpl/menu.tpl.php';
 print '</div>'."\n";
 
 print '<div class="contenu">'."\n";
-include_once('affContenu.php');
+include_once 'affContenu.php';
 print '</div>'."\n";
 
-include_once('affPied.php');
+include_once 'affPied.php';
 
 print '</div></div></div>'."\n";
 print '</body></html>'."\n";

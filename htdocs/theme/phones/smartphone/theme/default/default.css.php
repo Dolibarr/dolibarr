@@ -33,7 +33,7 @@ if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 
 session_cache_limiter(FALSE);
 
-require_once("../../../../../main.inc.php");
+require_once '../../../../../main.inc.php';
 
 // Define css type
 header('Content-type: text/css');

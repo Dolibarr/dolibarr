@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2003-2008 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
  *	\file       htdocs/core/modules/expedition/methode_expedition_enl.modules.php
  *	\ingroup    expedition
  */
-include_once "methode_expedition.modules.php";
+include_once 'methode_expedition.modules.php';
 
 
 /**

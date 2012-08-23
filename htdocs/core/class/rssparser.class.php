@@ -165,7 +165,7 @@ class RssParser
     {
         global $conf;
 
-        include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         $str='';    // This will contain content of feed
 

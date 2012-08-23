@@ -24,8 +24,8 @@
  */
 
 
-include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
-include_once(DOL_DOCUMENT_ROOT."/comm/prospect/class/prospect.class.php");
+include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
+include_once DOL_DOCUMENT_ROOT.'/comm/prospect/class/prospect.class.php';
 
 
 /**
@@ -71,7 +71,7 @@ class box_prospect extends ModeleBoxes
 
 		$this->max=$max;
 
-        include_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+        include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
         $thirdpartystatic=new Societe($db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedProspects",$max));

@@ -22,7 +22,7 @@
  *	\brief      File of class to offer a selector of emailing targets with Rule 'Peche'.
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
-require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 
 /**
@@ -120,7 +120,7 @@ class mailing_peche extends MailingTargets
 	{
 		global $conf,$langs,$_FILES;
 
-		require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		// For compatibility with Unix, MS-Dos or Macintosh
 		ini_set('auto_detect_line_endings', true);

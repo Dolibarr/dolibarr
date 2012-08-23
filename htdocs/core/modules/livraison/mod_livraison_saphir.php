@@ -23,7 +23,7 @@
  *	\ingroup    expedition
  *	\brief      Fichier contenant la classe du modele de numerotation de reference de livraison Saphir
  */
-require_once(DOL_DOCUMENT_ROOT ."/core/modules/livraison/modules_livraison.php");
+require_once DOL_DOCUMENT_ROOT .'/core/modules/livraison/modules_livraison.php';
 
 /**
  *	\class      mod_livraison_saphir
@@ -109,7 +109,7 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
     {
 		global $db,$conf;
 
-		require_once(DOL_DOCUMENT_ROOT ."/core/lib/functions2.lib.php");
+		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
 		// On defini critere recherche compteur
 		$mask=$conf->global->LIVRAISON_SAPHIR_MASK;

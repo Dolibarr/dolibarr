@@ -22,8 +22,8 @@
  *		\brief      Page to make a Dolibarr online upgrade
  */
 
-require("../../main.inc.php");
-include_once $dolibarr_main_document_root."/core/lib/files.lib.php";
+require '../../main.inc.php';
+include_once $dolibarr_main_document_root.'/core/lib/files.lib.php';
 
 $langs->load("admin");
 $langs->load("other");

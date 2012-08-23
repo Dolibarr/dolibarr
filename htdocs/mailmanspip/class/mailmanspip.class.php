@@ -26,9 +26,9 @@
  *	\brief      File of class to manage members of a foundation
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 /**
@@ -67,7 +67,7 @@ class MailmanSpip
         defined('ADHERENT_SPIP_DB') && ADHERENT_SPIP_DB != ''
         )
         {
-            require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
             $mdpass=dol_hash($object->pass);
             $htpass=crypt($object->pass,makesalt());
             $query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".$object->firstname." ".$object->lastname."\",\"".$object->email."\",\"".$object->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";

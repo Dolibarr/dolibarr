@@ -21,7 +21,7 @@
  *     \brief      Show page phpinfo
  */
 
-include_once("./inc.php");
+include_once 'inc.php';
 
 phpinfo();
 

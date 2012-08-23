@@ -23,9 +23,9 @@
  *       \brief      Fiche note commande
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/fourn.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 $langs->load("orders");
 $langs->load("suppliers");
@@ -144,7 +144,7 @@ if ($id > 0 || ! empty($ref))
         print '<br>';
 
         $colwidth=20;
-        include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
+        include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
         dol_fiche_end();
     }

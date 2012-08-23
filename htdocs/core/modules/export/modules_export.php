@@ -22,7 +22,7 @@
  *	\brief      File of parent class for export modules
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 
 /**
@@ -69,7 +69,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
     				$file = $dir."/export_".$moduleid.".modules.php";
     				$classname = "Export".ucfirst($moduleid);
 
-    				require_once($file);
+    				require_once $file;
     				$module = new $classname($db);
 
     				// Picto

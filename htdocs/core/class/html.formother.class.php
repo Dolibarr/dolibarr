@@ -252,7 +252,7 @@ class FormOther
     function select_categories($type,$selected=0,$htmlname='search_categ',$nocateg=0)
     {
         global $langs;
-        require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
+        require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
         // Load list of "categories"
         $static_categs = new Categorie($this->db);
@@ -355,7 +355,7 @@ class FormOther
     {
         global $user, $langs;
 
-        require_once(DOL_DOCUMENT_ROOT."/projet/class/task.class.php");
+        require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
         //print $modeproject.'-'.$modetask;
         $task=new Task($this->db);
@@ -651,7 +651,7 @@ class FormOther
     {
         global $langs;
 
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
         $montharray = monthArray($langs);	// Get array
 
@@ -780,7 +780,7 @@ class FormOther
         {
             if ($selected)
             {
-                require_once(DOL_DOCUMENT_ROOT ."/societe/class/address.class.php");
+                require_once DOL_DOCUMENT_ROOT .'/societe/class/address.class.php';
                 $address=new Address($this->db);
                 $result=$address->fetch_address($selected);
                 print '<a href='.DOL_URL_ROOT.'/comm/address.php?socid='.$address->socid.'&id='.$address->id.'&action=edit&origin='.$origin.'&originid='.$originid.'>'.$address->label.'</a>';
@@ -806,7 +806,7 @@ class FormOther
     {
         global $conf,$langs,$db;
 
-        include_once(DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 
         //$infobox=new InfoBox($db);
         $boxactivated=InfoBox::listboxes($db,'activated',$areacode,$user);

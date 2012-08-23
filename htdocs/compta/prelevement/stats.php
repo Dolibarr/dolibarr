@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
@@ -24,8 +24,8 @@
  *      \brief      Page de stats des prelevements
  */
 
-require("../bank/pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/ligneprelevement.class.php");
+require '../bank/pre.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 
 $langs->load("withdrawals");
 $langs->load("companies");
@@ -193,7 +193,7 @@ if ($resql)
 
 	$var=True;
 
-	require_once DOL_DOCUMENT_ROOT."/compta/prelevement/class/rejetprelevement.class.php";
+	require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
 	$Rejet = new RejetPrelevement($db, $user);
 
 	while ($i < $num)

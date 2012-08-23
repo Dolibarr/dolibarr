@@ -17,8 +17,8 @@
  *
  */
 
-require_once(DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 $langs->load("main");
 $langs->load("bills");

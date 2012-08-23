@@ -22,7 +22,7 @@
  *      \brief      Page des statistiques de dons
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 
 $langs->load("donations");
 

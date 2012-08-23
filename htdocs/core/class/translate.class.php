@@ -224,7 +224,7 @@ class Translate
 				{
 			        //dol_syslog('Translate::Load we will cache result into usecachekey '.$usecachekey);
 
-				    require_once(DOL_DOCUMENT_ROOT ."/core/lib/memory.lib.php");
+				    require_once DOL_DOCUMENT_ROOT .'/core/lib/memory.lib.php';
 					$tmparray=dol_getcache($usecachekey);
 					if (is_array($tmparray) && count($tmparray))
 					{
@@ -603,7 +603,7 @@ class Translate
 			$fonc='numberwords';
 			if (file_exists($newdir.'/functions_'.$fonc.'.lib.php'))
 			{
-				include_once($newdir.'/functions_'.$fonc.'.lib.php');
+				include_once $newdir.'/functions_'.$fonc.'.lib.php';
 				$newnumber=numberwords_getLabelFromNumber($this,$number,$isamount);
 				break;
 			}

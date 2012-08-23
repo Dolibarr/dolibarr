@@ -21,8 +21,8 @@
  *       \brief      Page to setup emails sending
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $langs->load("companies");
 $langs->load("products");
@@ -82,7 +82,7 @@ if ($action == 'send' && ! $_POST['cancel'])
     $errors_to  = GETPOST("errorstosms");
 
 	// Create form object
-	include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formsms.class.php');
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formsms.class.php';
 	$formsms = new FormSms($db);
 
 	if (! empty($formsms->error))
@@ -115,7 +115,7 @@ if ($action == 'send' && ! $_POST['cancel'])
         complete_substitutions_array($substitutionarrayfortest, $langs);
 	    $body=make_substitutions($body,$substitutionarrayfortest);
 
-		require_once(DOL_DOCUMENT_ROOT."/core/class/CSMSFile.class.php");
+		require_once DOL_DOCUMENT_ROOT.'/core/class/CSMSFile.class.php';
 
 		$smsfile = new CSMSFile($sendto, $smsfrom, $body, $deliveryreceipt, $deferred, $priority, $class);  // This define OvhSms->login, pass, session and account
 		$result=$smsfile->sendfile(); // This send SMS
@@ -295,7 +295,7 @@ else
 		// If we use SSL/TLS
 		if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS) && function_exists('openssl_open')) $server='ssl://'.$server;
 
-		include_once(DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
+		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mail = new CSMSFile('','','','');
 		$result=$mail->check_server_port($server,$port);
 		if ($result) print '<div class="ok">'.$langs->trans("ServerAvailableOnIPOrPort",$server,$port).'</div>';
@@ -315,7 +315,7 @@ else
 		print_titre($langs->trans("DoTestSend"));
 
 		// Cree l'objet formulaire mail
-		include_once(DOL_DOCUMENT_ROOT."/core/class/html.formsms.class.php");
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formsms.class.php';
 		$formsms = new FormSms($db);
         $formsms->fromtype='user';
         $formsms->fromid=$user->id;

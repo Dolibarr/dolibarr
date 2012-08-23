@@ -684,7 +684,7 @@ function activateModule($value,$withdeps=1)
     {
         if (file_exists($dir.$modFile))
         {
-            $found=@include_once($dir.$modFile);
+            $found=@include_once $dir.$modFile;
             if ($found) break;
         }
     }
@@ -803,7 +803,7 @@ function unActivateModule($value, $requiredby=1)
     {
         if (file_exists($dir.$modFile))
         {
-            $found=@include_once($dir.$modFile);
+            $found=@include_once $dir.$modFile;
             if ($found) break;
         }
     }
@@ -907,7 +907,7 @@ function complete_dictionnary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsq
 
                     if ($modName)
                     {
-                        include_once($dir.$file);
+                        include_once $dir.$file;
                         $objMod = new $modName($db);
 
                         if ($objMod->numero > 0)
@@ -1070,7 +1070,7 @@ function form_constantes($tableau)
             {
                 print '<td>';
                 // List of possible labels (defined into $_Avery_Labels variable set into format_cards.lib.php)
-                require_once(DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php');
+                require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
                 $arrayoflabels=array();
                 foreach(array_keys($_Avery_Labels) as $codecards)
                 {
@@ -1095,7 +1095,7 @@ function form_constantes($tableau)
                 }
                 else if (in_array($const,array('ADHERENT_AUTOREGISTER_MAIL','ADHERENT_MAIL_VALID','ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL')))
                 {
-                    require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+                    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
                     $doleditor=new DolEditor('constvalue_'.$const,$obj->value,'',160,'dolibarr_notes','',false,false,$conf->fckeditor->enabled,5,60);
                     $doleditor->Create();
 

@@ -34,12 +34,12 @@ if (is_int($entity))
 	define("DOLENTITY", $entity);
 }
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypalfunctions.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Security check
 if (empty($conf->paypal->enabled)) accessforbidden('',1,1,1);
@@ -387,7 +387,7 @@ if (GETPOST("source") == 'order' && $valid)
 	$found=true;
 	$langs->load("orders");
 
-	require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
+	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 	$order=new Commande($db);
 	$result=$order->fetch('',$ref);
@@ -494,7 +494,7 @@ if (GETPOST("source") == 'invoice' && $valid)
 	$found=true;
 	$langs->load("bills");
 
-	require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
+	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 	$invoice=new Facture($db);
 	$result=$invoice->fetch('',$ref);
@@ -600,7 +600,7 @@ if (GETPOST("source") == 'contractline' && $valid)
 	$found=true;
 	$langs->load("contracts");
 
-	require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
+	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
 	$contractline=new ContratLigne($db);
 	$result=$contractline->fetch('',$ref);
@@ -795,8 +795,8 @@ if (GETPOST("source") == 'membersubscription' && $valid)
 	$found=true;
 	$langs->load("members");
 
-	require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
-	require_once(DOL_DOCUMENT_ROOT."/adherents/class/cotisation.class.php");
+	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
 
 	$member=new Adherent($db);
 	$result=$member->fetch('',$ref);

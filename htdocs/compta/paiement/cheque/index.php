@@ -23,9 +23,9 @@
  *		\brief      Home page for cheque receipts
  */
 
-require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
+require 'pre.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("banks");
 

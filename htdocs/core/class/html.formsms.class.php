@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
 *
@@ -21,7 +21,7 @@
  *       \ingroup    core
  *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
  */
-require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");
+require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
 
 
 /**     

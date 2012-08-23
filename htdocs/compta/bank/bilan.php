@@ -22,7 +22,7 @@
  *		\brief      Page de bilan
  */
 
-require("./pre.inc.php");
+require 'pre.inc.php';
 
 if (!$user->rights->banque->lire)
   accessforbidden();

@@ -22,7 +22,7 @@
  *		\brief      Page des infos systeme de php
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 
 $langs->load("admin");
 

@@ -23,8 +23,8 @@
  *		\brief      Page gestion produits du module OsCommerce
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php');
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php';
 
 
 /*

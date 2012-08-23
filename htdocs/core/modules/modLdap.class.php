@@ -24,7 +24,7 @@
  *	\ingroup    ldap
  *	\brief		File to describe and activate Ldap module
  */
-include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
+include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
