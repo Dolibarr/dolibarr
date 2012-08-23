@@ -308,7 +308,7 @@ DemandReasonTypeSRC_SHOP=Contacto tienda
 DemandReasonTypeSRC_WOM=Boca a boca
 DemandReasonTypeSRC_PARTNER=Socio
 DemandReasonTypeSRC_EMPLOYEE=Empleado
-DemandReasonTypeSRC_SPONSORSHIP=Patrocinador
+DemandReasonTypeSRC_SPONSORING=Patrocinador
 
 #### Paper formats ####
 PaperFormatEU4A0=Formato 4A0
