@@ -347,7 +347,7 @@ if ($object->fetch($id) >= 0)
 		print '</table>';
 		print '<br>';
 
-		print '<form action="'.$_SERVER['PHP_SELF'].'?action=clear&rowid='.$object->id.'" method="POST">';
+		print '<form action="'.$_SERVER['PHP_SELF'].'?action=clear&id='.$object->id.'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print_titre($langs->trans("ToClearAllRecipientsClickHere"));
 		print '<table class="noborder" width="100%">';

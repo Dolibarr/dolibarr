@@ -221,19 +221,19 @@ if ($result)
 }
 
 $var=false;
-$h=0;
 
+$tabs = array(
+    array(
+        DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$rowid,
+        $langs->trans('Card')
+    ),
+    array(
+        DOL_URL_ROOT.'/compta/bank/info.php?rowid='.$rowid,
+        $langs->trans('Info')
+    )
+);
 
-$head[$h][0] = $_SERVER['PHP_SELF'].'?rowid='.$rowid;
-$head[$h][1] = $langs->trans('Card');
-$hselected=$h;
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/compta/bank/info.php?rowid='.$rowid;
-$head[$h][1] = $langs->trans("Info");
-$h++;
-
-dol_fiche_head($head, $hselected, $langs->trans('LineRecord'),0,'account');
+dol_fiche_head($tabs, 0, $langs->trans('LineRecord'), 0, 'account');
 
 dol_htmloutput_mesg($mesg);
 

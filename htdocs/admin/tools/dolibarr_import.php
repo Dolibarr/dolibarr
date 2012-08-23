@@ -116,7 +116,7 @@ if ($label == 'MySQL')
 {
 ?>
 	<fieldset id="mysql_options">
-    <legend>Import MySql</legend>
+    <legend><?php echo $langs->trans('RestoreMySQL') ?></legend>
 	<div class="formelementrow">
 	<?php
 	// Parameteres execution
