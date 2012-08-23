@@ -739,7 +739,7 @@ function hideMessage(fieldId,message) {
 	$.widget("ui.onDelayedKeyup", {
 	    _init : function() {
 	        var self = this;
-	        $(this.element).keyup(function() {
+	        $(this.element).bind('change keyup input', function() {
 	            if(typeof(window['inputTimeout']) != "undefined"){
 	                window.clearTimeout(inputTimeout);
 	            }  

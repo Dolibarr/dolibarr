@@ -43,22 +43,23 @@ top_httphead();
 //print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
 // Load original field value
-if (! empty($action) && (isset($pu_ht) || isset($pu_ttc)) && isset($tva_tx))
+if (! empty($action) && isset($tva_tx))
 {
 	$return=array();
+	$price='';
 
-	if ($action == 'get_ttc') {
+	if ($action == 'get_ttc' && isset($pu_ht) && $pu_ht != '') {
 
 		$price = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
 
 	}
-	else if ($action == 'get_ht') {
+	else if ($action == 'get_ht' && isset($pu_ttc) && $pu_ttc != '') {
 
 		$price = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
 
 	}
 
-	$return['price'] = price($price);
+	$return['price'] = (isset($price) && $price != '' ? price($price) : '');
 
 	echo json_encode($return);
 }

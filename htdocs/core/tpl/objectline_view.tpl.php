@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2010-2011 Regis Houssin       <regis@dolibarr.fr>
- * Copyright (C) 2010-2011 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+/* Copyright (C) 2010-2012	Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2010-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  */
 ?>
 
-<!-- BEGIN PHP TEMPLATE freeproductline_view.tpl.php -->
+<!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
 <tr <?php echo 'id="row-'.$line->id.'" '.$bcdd[$var]; ?>>
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 	<td align="center"><?php echo ($i+1); ?></td>
@@ -60,19 +60,35 @@
 		}
 		else
 		{
-			if (! empty($line->fk_parent_line)) echo img_picto('', 'rightarrow');
-			if ($type==1) $text = img_object($langs->trans('Service'),'service');
-			else $text = img_object($langs->trans('Product'),'product');
+			if ($line->fk_product > 0) {
 
-			if (! empty($line->label)) {
-				$text.= ' <strong>'.$line->label.'</strong>';
-				echo $form->textwithtooltip($text,dol_htmlentitiesbr($line->description),3,'','',$i,0,($line->fk_parent_line?img_picto('', 'rightarrow'):''));
+				echo $form->textwithtooltip($text,$description,3,'','',$i,0,($line->fk_parent_line?img_picto('', 'rightarrow'):''));
+
+				// Show range
+				print_date_range($line->date_start, $line->date_end);
+
+				// Add description in form
+				if ($conf->global->PRODUIT_DESC_IN_FORM)
+				{
+					print (! empty($line->description) && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
+				}
+
 			} else {
-				echo $text.' '.dol_htmlentitiesbr($line->description);
-			}
 
-			// Show range
-			print_date_range($line->date_start,$line->date_end);
+				if (! empty($line->fk_parent_line)) echo img_picto('', 'rightarrow');
+				if ($type==1) $text = img_object($langs->trans('Service'),'service');
+				else $text = img_object($langs->trans('Product'),'product');
+
+				if (! empty($line->label)) {
+					$text.= ' <strong>'.$line->label.'</strong>';
+					echo $form->textwithtooltip($text,dol_htmlentitiesbr($line->description),3,'','',$i,0,($line->fk_parent_line?img_picto('', 'rightarrow'):''));
+				} else {
+					echo $text.' '.dol_htmlentitiesbr($line->description);
+				}
+
+				// Show range
+				print_date_range($line->date_start,$line->date_end);
+			}
 		}
 		?>
 	</td>
@@ -148,4 +164,4 @@
 <?php } ?>
 
 </tr>
-<!-- END PHP TEMPLATE freeproductline_view.tpl.php -->
+<!-- END PHP TEMPLATE objectline_view.tpl.php -->

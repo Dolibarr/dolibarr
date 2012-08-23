@@ -1569,7 +1569,7 @@ if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
  * Lines
  */
 
-if ($conf->use_javascript_ajax && $object->statut == 0)
+if (! empty($conf->use_javascript_ajax) && $object->statut == 0)
 {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 }
@@ -1578,7 +1578,8 @@ print '<table id="tablelines" class="noborder" width="100%">';
 
 // Show object lines
 $result = $object->getLinesArray();
-if (! empty($object->lines)) $object->printObjectLines($action,$mysoc,$soc,$lineid,0,$hookmanager);
+if (! empty($object->lines))
+	$ret=$object->printObjectLines($action,$mysoc,$soc,$lineid,0,$hookmanager);
 
 // Form to add new line
 if ($object->statut == 0 && $user->rights->propale->creer)
@@ -1588,10 +1589,10 @@ if ($object->statut == 0 && $user->rights->propale->creer)
 		$var=true;
 
 		// Add free or predefined products/services
-		$object->formAddFreeProduct(0,$mysoc,$soc,$hookmanager);
+		$object->formAddObjectLine(0,$mysoc,$soc,$hookmanager);
 
 		$parameters=array();
-		$reshook=$hookmanager->executeHooks('formAddObject',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		$reshook=$hookmanager->executeHooks('formAddObjectLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	}
 }
 

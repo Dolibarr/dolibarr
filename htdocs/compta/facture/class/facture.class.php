@@ -3420,9 +3420,7 @@ class FactureLigne
         // Mise a jour ligne en base
         $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
         $sql.= " description='".$this->db->escape($this->desc)."'";
-        if (! empty($this->label)) {
-        	$sql.= " , label='".$this->db->escape($this->label)."'";
-        }
+        $sql.= ",label=".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null");
         $sql.= ",subprice=".price2num($this->subprice)."";
         $sql.= ",remise_percent=".price2num($this->remise_percent)."";
         if ($this->fk_remise_except) $sql.= ",fk_remise_except=".$this->fk_remise_except;

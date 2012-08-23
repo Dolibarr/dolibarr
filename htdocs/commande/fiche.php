@@ -552,9 +552,8 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 	if (! $error && (GETPOST('qty') >= 0) && (GETPOST('product_desc') || ! empty($idprod)))
 	{
 		// Clean parameters
-		$suffixe = (! empty($idprod) ? '_predef' : '');
-		$date_start=dol_mktime(0, 0, 0, GETPOST('date_start'.$suffixe.'month'), GETPOST('date_start'.$suffixe.'day'), GETPOST('date_start'.$suffixe.'year'));
-		$date_end=dol_mktime(0, 0, 0, GETPOST('date_end'.$suffixe.'month'), GETPOST('date_end'.$suffixe.'day'), GETPOST('date_end'.$suffixe.'year'));
+		$date_start=dol_mktime(0, 0, 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
+		$date_end=dol_mktime(0, 0, 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 		$price_base_type = 'HT';
 
 		// Ecrase $pu par celui du produit
@@ -754,10 +753,10 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 	// Clean parameters
 	$date_start='';
 	$date_end='';
-	$date_start=dol_mktime(0, 0, 0, GETPOST('date_start'.$suffixe.'month'), GETPOST('date_start'.$suffixe.'day'), GETPOST('date_start'.$suffixe.'year'));
-	$date_end=dol_mktime(0, 0, 0, GETPOST('date_end'.$suffixe.'month'), GETPOST('date_end'.$suffixe.'day'), GETPOST('date_end'.$suffixe.'year'));
-	$description=dol_htmlcleanlastbr(GETPOST('desc'));
-	$up_ht=GETPOST('pu')?GETPOST('pu'):GETPOST('subprice');
+	$date_start=dol_mktime(0, 0, 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
+	$date_end=dol_mktime(0, 0, 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
+	$description=dol_htmlcleanlastbr(GETPOST('product_desc'));
+	$pu_ht=GETPOST('price_ht');
 
 	// Define info_bits
 	$info_bits=0;
@@ -769,37 +768,37 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 	$localtax1_rate=get_localtax($vat_rate,1,$object->client);
 	$localtax2_rate=get_localtax($vat_rate,2,$object->client);
 
-
-	// ajout prix d'achat
-	$fk_fournprice = GETPOST('fournprice');
-	if (GETPOST('buying_price'))
-		$pa_ht = GETPOST('buying_price');
-	else
-		$pa_ht = null;
+	// Add buying price
+	$fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):'');
+	$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
 
 	// Check minimum price
-	if (GETPOST('productid'))
+	if (GETPOST('productid', 'int'))
 	{
-		$productid = GETPOST('productid');
+		$productid = GETPOST('productid', 'int');
 		$product = new Product($db);
 		$product->fetch($productid);
 		$type=$product->type;
 		$price_min = $product->price_min;
-		if ($conf->global->PRODUIT_MULTIPRICES && $object->client->price_level)	$price_min = $product->multiprices_min[$object->client->price_level];
+		if ($conf->global->PRODUIT_MULTIPRICES && $object->client->price_level)
+			$price_min = $product->multiprices_min[$object->client->price_level];
+
+		$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label'):'');
 
 		if ($price_min && (price2num($up_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
 		{
-			$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->currency)).'</div>' ;
+			setEventMessage($langs->trans("CantBeLessThanMinPrice", price2num($price_min,'MU')).getCurrencySymbol($conf->currency), 'errors');
 			$error++;
 		}
 	}
 	else
 	{
-		$type=GETPOST('type');
+		$type = GETPOST('type');
+		$label = (GETPOST('product_label') ? GETPOST('product_label'):'');
 
 		// Check parameters
 		if (GETPOST('type') < 0) {
-			$mesg = '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")).'</div>';
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")));
 			$error++;
 		}
 	}
@@ -809,7 +808,7 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 		$result = $object->updateline(
 			GETPOST('lineid'),
 			$description,
-			$up_ht,
+			$pu_ht,
 			GETPOST('qty'),
 			GETPOST('remise_percent'),
 			$vat_rate,
@@ -822,38 +821,46 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 			$type,
 			GETPOST('fk_parent_line'),
 			0,
-			$fk_fournprice,
-			$pa_ht
+			$fournprice,
+			$buyingprice,
+			$label
 		);
 
 		if ($result >= 0)
 		{
-			// Define output language
-			$outputlangs = $langs;
-			$newlang='';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-			if (! empty($newlang))
-			{
-				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($newlang);
-			}
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 			{
+				// Define output language
+				$outputlangs = $langs;
+				$newlang='';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+				if (! empty($newlang))
+				{
+					$outputlangs = new Translate("",$conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+
 				$ret=$object->fetch($object->id);    // Reload to get new records
 				commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
-				unset($_POST['qty']);
-				unset($_POST['type']);
-				unset($_POST['np_price']);
-				unset($_POST['dp_desc']);
-				unset($_POST['np_tva_tx']);
-				unset($_POST['np_buying_price']);
 			}
+
+			unset($_POST['qty']);
+			unset($_POST['type']);
+			unset($_POST['productid']);
+			unset($_POST['remise_percent']);
+			unset($_POST['price_ht']);
+			unset($_POST['price_ttc']);
+			unset($_POST['tva_tx']);
+			unset($_POST['product_ref']);
+			unset($_POST['product_label']);
+			unset($_POST['product_desc']);
+			unset($_POST['fournprice']);
+			unset($_POST['buying_price']);
 		}
 		else
 		{
-			dol_print_error($db,$object->error);
-			exit;
+			setEventMessage($object->error, 'errors');
 		}
 	}
 }
@@ -2114,7 +2121,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 			$numlines = count($object->lines);
 
-			if ($conf->use_javascript_ajax && $object->statut == 0)
+			if (! empty($conf->use_javascript_ajax) && $object->statut == 0)
 			{
 				include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 			}
@@ -2122,7 +2129,8 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			print '<table id="tablelines" class="noborder" width="100%">';
 
 			// Show object lines
-			if (! empty($object->lines)) $object->printObjectLines($action,$mysoc,$soc,$lineid,1,$hookmanager);
+			if (! empty($object->lines))
+				$ret=$object->printObjectLines($action,$mysoc,$soc,$lineid,1,$hookmanager);
 
 			/*
 			 * Form to add new line
@@ -2133,10 +2141,10 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				{
 					$var=true;
 
-					$object->formAddFreeProduct(1,$mysoc,$soc,$hookmanager);
+					$object->formAddObjectLine(1,$mysoc,$soc,$hookmanager);
 
 					$parameters=array();
-					$reshook=$hookmanager->executeHooks('formAddObject',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+					$reshook=$hookmanager->executeHooks('formAddObjectLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 				}
 			}
 			print '</table>';

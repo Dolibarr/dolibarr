@@ -982,9 +982,8 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
         $ret=$object->fetch_thirdparty();
 
         // Clean parameters
-        $suffixe = (! empty($idprod) ? '_predef' : '');
-        $date_start=dol_mktime(GETPOST('date_start'.$suffixe.'hour'), GETPOST('date_start'.$suffixe.'min'), GETPOST('date_start'.$suffixe.'sec'), GETPOST('date_start'.$suffixe.'month'), GETPOST('date_start'.$suffixe.'day'), GETPOST('date_start'.$suffixe.'year'));
-        $date_end=dol_mktime(GETPOST('date_end'.$suffixe.'hour'), GETPOST('date_end'.$suffixe.'min'), GETPOST('date_end'.$suffixe.'sec'), GETPOST('date_end'.$suffixe.'month'), GETPOST('date_end'.$suffixe.'day'), GETPOST('date_end'.$suffixe.'year'));
+        $date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
+        $date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
         $price_base_type = 'HT';
 
         // Ecrase $pu par celui du produit
@@ -1112,7 +1111,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
         $info_bits=0;
         if ($tva_npr) $info_bits |= 0x01;
 
-        if (! empty($price_min) && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($price_min)))
+        if (! empty($price_min) && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
         {
         	$mesg = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').getCurrencySymbol($conf->currency));
 			setEventMessage($mesg, 'errors');
@@ -1197,8 +1196,8 @@ else if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['sa
     // Clean parameters
     $date_start='';
     $date_end='';
-    $date_start=dol_mktime($_POST['date_start'.$suffixe.'hour'],$_POST['date_start'.$suffixe.'min'],$_POST['date_start'.$suffixe.'sec'],$_POST['date_start'.$suffixe.'month'],$_POST['date_start'.$suffixe.'day'],$_POST['date_start'.$suffixe.'year']);
-    $date_end=dol_mktime($_POST['date_end'.$suffixe.'hour'],$_POST['date_end'.$suffixe.'min'],$_POST['date_end'.$suffixe.'sec'],$_POST['date_end'.$suffixe.'month'],$_POST['date_end'.$suffixe.'day'],$_POST['date_end'.$suffixe.'year']);
+    $date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
+    $date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
     $description=dol_htmlcleanlastbr($_POST['desc']);
     $up_ht=GETPOST('pu')?GETPOST('pu'):GETPOST('subprice');
 
@@ -2970,7 +2969,7 @@ else if ($id > 0 || ! empty($ref))
          */
         $result = $object->getLinesArray();
 
-        if ($conf->use_javascript_ajax && $object->statut == 0)
+        if (! empty($conf->use_javascript_ajax) && $object->statut == 0)
         {
             include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
         }
@@ -2978,7 +2977,8 @@ else if ($id > 0 || ! empty($ref))
         print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
         // Show object lines
-        if (! empty($object->lines)) $object->printObjectLines($action,$mysoc,$soc,$lineid,1,$hookmanager);
+        if (! empty($object->lines))
+        	$ret=$object->printObjectLines($action,$mysoc,$soc,$lineid,1,$hookmanager);
 
         /*
          * Form to add new line
@@ -2987,10 +2987,10 @@ else if ($id > 0 || ! empty($ref))
         {
             $var=true;
 
-            $object->formAddFreeProduct(1,$mysoc,$soc,$hookmanager);
+            $object->formAddObjectLine(1,$mysoc,$soc,$hookmanager);
 
             $parameters=array();
-            $reshook=$hookmanager->executeHooks('formAddObject',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+            $reshook=$hookmanager->executeHooks('formAddObjectLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         }
 
         print "</table>\n";

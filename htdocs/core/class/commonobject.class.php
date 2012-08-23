@@ -2446,35 +2446,9 @@ abstract class CommonObject
 
 
     /**
-     *	Show add predefined products/services form
+     *	Show add free and predefined products/services form
      *  TODO Edit templates to use global variables and include them directly in controller call
      *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
-     *
-     *  @param  int	    		$dateSelector       1=Show also date range input fields
-     *  @param	Societe			$seller				Object thirdparty who sell
-     *  @param	Societe			$buyer				Object thirdparty who buy
-	 *	@param	HookManager		$hookmanager		Hook manager instance
-	 *	@return	void
-	 */
-	function formAddPredefinedProduct($dateSelector,$seller,$buyer,$hookmanager=false)
-	{
-		global $conf,$langs,$object;
-		global $form,$bcnd,$var;
-
-		// Output template part (modules that overwrite templates must declare this into descriptor)
-        // Use global variables + $dateSelector + $seller and $buyer
-		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
-		foreach($dirtpls as $reldir)
-		{
-		    $res=@include dol_buildpath($reldir.'/predefinedproductline_create.tpl.php');
-		    if ($res) break;
-		}
-    }
-
-    /**
-     *	Show add free products/services form
-     *  TODO Edit templates to use global variables and include them directly in controller call
-     *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
      *
      *  @param	int		        $dateSelector       1=Show also date range input fields
      *  @param	Societe			$seller				Object thirdparty who sell
@@ -2482,7 +2456,7 @@ abstract class CommonObject
      *	@param	HookManager		$hookmanager		Hook manager instance
      *	@return	void
      */
-	function formAddFreeProduct($dateSelector,$seller,$buyer,$hookmanager=false)
+	function formAddObjectLine($dateSelector,$seller,$buyer,$hookmanager=false)
 	{
 		global $conf,$user,$langs,$object;
 		global $form,$bcnd,$var;
@@ -2492,11 +2466,11 @@ abstract class CommonObject
 		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
 		foreach($dirtpls as $reldir)
 		{
-			// for view errors
-			if ($conf->file->strict_mode) {
-				$res=include dol_buildpath($reldir.'/freeproductline_create.tpl.php');
+			$tpl = dol_buildpath($reldir.'/objectline_add.tpl.php');
+			if (empty($conf->file->strict_mode)) {
+				$res=@include $tpl;
 			} else {
-				$res=@include dol_buildpath($reldir.'/freeproductline_create.tpl.php');
+				$res=include $tpl; // for debug
 			}
 		    if ($res) break;
 		}
@@ -2580,8 +2554,6 @@ abstract class CommonObject
 	/**
 	 *	Return HTML content of a detail line
 	 *	TODO Move this into an output class file (htmlline.class.php)
-	 *	If lines are into a template, title must also be into a template
-	 *	But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 *
 	 *	@param	string		$action				GET/POST action
 	 *	@param	array	    $line		       	Selected object line to output
@@ -2601,13 +2573,23 @@ abstract class CommonObject
 		global $form,$bc,$bcdd;
 
 		$element=$this->element;
+		$text='';
 
 		// Show product and description
-		$type=$line->product_type?$line->product_type:$line->fk_product_type;
-		// Try to enhance type detection using date_start and date_end for free lines where type
-		// was not saved.
-		if (! empty($line->date_start)) $type=1;
-		if (! empty($line->date_end)) $type=1;
+		$type=(! empty($line->product_type)?$line->product_type:$line->fk_product_type);
+		// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
+		if (! empty($line->date_start)) $type=1; // deprecated
+		if (! empty($line->date_end)) $type=1; // deprecated
+
+		if ($line->fk_product > 0)
+		{
+			$product_static = new Product($this->db);
+
+			$product_static->type=$line->fk_product_type;
+			$product_static->id=$line->fk_product;
+			$product_static->ref=$line->ref;
+			$text=$product_static->getNomUrl(1);
+		}
 
 		// Ligne en mode visu
 		if ($action != 'editline' || $selected != $line->id)
@@ -2615,13 +2597,11 @@ abstract class CommonObject
 			// Produit
 			if ($line->fk_product > 0)
 			{
-				$product_static = new Product($this->db);
-
 				// Define output language
 				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
 				{
 					$this->fetch_thirdparty();
-					$prod = new Product($this->db, $line->fk_product);
+					$prod = new Product($this->db);
 
 					$outputlangs = $langs;
 					$newlang='';
@@ -2640,59 +2620,46 @@ abstract class CommonObject
 					$label = $line->product_label;
 				}
 
-				$product_static->type=$line->fk_product_type;
-				$product_static->id=$line->fk_product;
-				$product_static->ref=$line->ref;
-				$text=$product_static->getNomUrl(1);
 				$text.= ' - '.(! empty($line->label)?$line->label:$label);
 				$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
-
-				// Output template part (modules that overwrite templates must declare this into descriptor)
-                // Use global variables + $dateSelector + $seller and $buyer
-        		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
-        		foreach($dirtpls as $reldir)
-        		{
-        		    $res=@include dol_buildpath($reldir.'/predefinedproductline_view.tpl.php');
-        		    if ($res) break;
-        		}
 			}
-			else
+
+			// Output template part (modules that overwrite templates must declare this into descriptor)
+			// Use global variables + $dateSelector + $seller and $buyer
+			$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+			foreach($dirtpls as $reldir)
 			{
-				// Output template part (modules that overwrite templates must declare this into descriptor)
-                // Use global variables + $dateSelector + $seller and $buyer
-        		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
-        		foreach($dirtpls as $reldir)
-        		{
-        		    $res=@include dol_buildpath($reldir.'/freeproductline_view.tpl.php');
-        		    if ($res) break;
-        		}
+				$tpl = dol_buildpath($reldir.'/objectline_view.tpl.php');
+				if (empty($conf->file->strict_mode)) {
+					$res=@include $tpl;
+				} else {
+					$res=include $tpl; // for debug
+				}
+				if ($res) break;
 			}
 		}
 
 		// Ligne en mode update
 		if ($this->statut == 0 && $action == 'editline' && $selected == $line->id)
 		{
-			if ($line->fk_product > 0)
+			$label = (! empty($line->label) ? $line->label : (($line->fk_product > 0) ? $line->product_label : ''));
+			if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $placeholder=' placeholder="'.$langs->trans("Label").'"';
+			else $placeholder=' title="'.$langs->trans("Label").'"';
+
+			$pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx/100)), 'MU');
+
+			// Output template part (modules that overwrite templates must declare this into descriptor)
+			// Use global variables + $dateSelector + $seller and $buyer
+			$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+			foreach($dirtpls as $reldir)
 			{
-				// Output template part (modules that overwrite templates must declare this into descriptor)
-                // Use global variables + $dateSelector + $seller and $buyer
-        		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
-        		foreach($dirtpls as $reldir)
-        		{
-        		    $res=@include dol_buildpath($reldir.'/predefinedproductline_edit.tpl.php');
-        		    if ($res) break;
-        		}
-			}
-			else
-			{
-				// Output template part (modules that overwrite templates must declare this into descriptor)
-                // Use global variables + $dateSelector + $seller and $buyer
-        		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
-        		foreach($dirtpls as $reldir)
-        		{
-        		    $res=@include dol_buildpath($reldir.'/freeproductline_edit.tpl.php');
-        		    if ($res) break;
-        		}
+				$tpl = dol_buildpath($reldir.'/objectline_edit.tpl.php');
+				if (empty($conf->file->strict_mode)) {
+					$res=@include $tpl;
+				} else {
+					$res=include $tpl; // for debug
+				}
+				if ($res) break;
 			}
 		}
 	}

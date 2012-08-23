@@ -235,10 +235,14 @@ $(document).ready(function() {
 				$('#add_service_text').show();
 				$('#service_duration_area').show();
 			}
-			//$('#add_product_area').show();
-			$('#addlinebutton').removeAttr('disabled');
+			//$('#add_product_area').show(); // TODO for add product card
+			if (($('#price_ht').val().length > 0) || ($('#price_ttc').val().length > 0)) {
+				$('#addlinebutton').removeAttr('disabled');
+			} else {
+				$('#addlinebutton').attr('disabled','disabled');
+			}
 		} else {
-			//$('#add_product_area').hide();
+			//$('#add_product_area').hide(); // TODO for add product card
 			$('#add_product_checkbox').removeAttr('checked');
 			$('#addlinebutton').attr('disabled','disabled');
 			$('#service_duration_area').hide();
@@ -348,6 +352,14 @@ $(document).ready(function() {
 			function(data) {
 				if (data && data.price.length > 0) {
 					$('#price_ttc').val(data.price);
+					if ($('#select_type').val() >= 0) {
+						$('#addlinebutton').removeAttr('disabled');
+					} else {
+						$('#addlinebutton').attr('disabled','disabled');
+					}
+				} else {
+					$('#price_ttc').val('');
+					$('#addlinebutton').attr('disabled','disabled');
 				}
 			}, 'json');
 		}
@@ -362,6 +374,14 @@ $(document).ready(function() {
 			function(data) {
 				if (data && data.price.length > 0) {
 					$('#price_ht').val(data.price);
+					if ($('#select_type').val() >= 0) {
+						$('#addlinebutton').removeAttr('disabled');
+					} else {
+						$('#addlinebutton').attr('disabled','disabled');
+					}
+				} else {
+					$('#price_ht').val('');
+					$('#addlinebutton').attr('disabled','disabled');
 				}
 			}, 'json');
 		}
