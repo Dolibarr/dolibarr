@@ -191,7 +191,7 @@ class mailing_contacts2 extends MailingTargets
         $sql.= " WHERE s.rowid = sp.fk_soc";
         $sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND sp.email != ''";    // Note that null != '' is false
-        $sql.= " AND sp.email = 0";
+        $sql.= " AND sp.no_email = 0";
         $sql.= " AND (sp.poste IS NOT NULL AND sp.poste != '')";
         $sql.= " GROUP BY sp.poste";
         $sql.= " ORDER BY sp.poste";
