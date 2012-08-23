@@ -305,7 +305,7 @@ if ($action == 'edit' || $action == 'updateedit')
     print '</td></tr>'."\n";
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("Tel").'</td><td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("Phone").'</td><td>';
     print '<input name="tel" value="'. $conf->global->MAIN_INFO_SOCIETE_TEL . '"></td></tr>';
     print '</td></tr>'."\n";
 
@@ -315,7 +315,7 @@ if ($action == 'edit' || $action == 'updateedit')
     print '</td></tr>'."\n";
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("Mail").'</td><td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("EMail").'</td><td>';
     print '<input name="mail" size="60" value="'. $conf->global->MAIN_INFO_SOCIETE_MAIL . '"></td></tr>';
     print '</td></tr>'."\n";
 
