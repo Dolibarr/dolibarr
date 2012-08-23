@@ -42,6 +42,7 @@ For users:
 - Fix: Errors weren't being shown in customer's & supplier's orders
 - New: Add conditional substitution IF/ELSEIF/ENDIF for ODT templates
 - New: Basic implementation of hooks and triggers for a lot (most) of core modules: action/calendar, trips and expenses, dons, vat payment, contact/society, contract, product lines, expedition, order supplier and order invoice (lines included), intervention card, project, tasks
+- Fix: [ bug #499 ]: Supplier order input method not translated
 
 For developers:
 - New: Add webservice for thirdparty creation and list.
