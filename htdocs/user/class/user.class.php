@@ -643,7 +643,7 @@ class User extends CommonObject
 		if ($result)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('USER_ENABLEDISABLE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -709,7 +709,7 @@ class User extends CommonObject
 		if ($result)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('USER_DELETE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -816,7 +816,7 @@ class User extends CommonObject
 					if (! $notrigger)
 					{
 						// Appel des triggers
-						include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+						include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 						$interface = new Interfaces($this->db);
 						$result = $interface->run_triggers('USER_CREATE',$this,$user,$langs,$conf);
 						if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -899,7 +899,7 @@ class User extends CommonObject
 			if ($resql)
 			{
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface = new Interfaces($this->db);
 				$result = $interface->run_triggers('USER_CREATE_FROM_CONTACT',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1181,7 +1181,7 @@ class User extends CommonObject
 			if (! $error && ! $notrigger)
 			{
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('USER_MODIFY',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1330,7 +1330,7 @@ class User extends CommonObject
 					if (! $error && ! $notrigger)
 					{
 						// Appel des triggers
-						include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+						include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 						$interface=new Interfaces($this->db);
 						$result=$interface->run_triggers('USER_NEW_PASSWORD',$this,$user,$langs,$conf);
 						if ($result < 0) $this->errors=$interface->errors;
@@ -1585,7 +1585,7 @@ class User extends CommonObject
 			    $this->newgroupid=$group;
 
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('USER_SETINGROUP',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1643,7 +1643,7 @@ class User extends CommonObject
 			    $this->oldgroupid=$group;
 
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('USER_REMOVEFROMGROUP',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }

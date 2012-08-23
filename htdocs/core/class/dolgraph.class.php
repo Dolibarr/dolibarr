@@ -113,7 +113,7 @@ class DolGraph
         $color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/graph-color.php';
         if (is_readable($color_file))
         {
-            include_once($color_file);
+            include_once $color_file;
             if (isset($theme_bordercolor)) $this->bordercolor = $theme_bordercolor;
             if (isset($theme_datacolor))   $this->datacolor   = $theme_datacolor;
             if (isset($theme_bgcolor))     $this->bgcolor     = $theme_bgcolor;
@@ -568,7 +568,7 @@ class DolGraph
         $classname='';
         if ($this->type[0] == 'bars')  $classname='BarPlot';    // Only first type of type is supported by artichow
         if ($this->type[0] == 'lines') $classname='LinePlot';
-        include_once(ARTICHOW_PATH.$classname.".class.php");
+        include_once ARTICHOW_PATH.$classname.'.class.php';
 
         // Definition de couleurs
         $bgcolor=new Color($this->bgcolor[0],$this->bgcolor[1],$this->bgcolor[2]);

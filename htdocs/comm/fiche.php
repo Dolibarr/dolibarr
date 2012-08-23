@@ -361,7 +361,7 @@ if ($id > 0)
 	}
 
 	// Sales representative
-	include(DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php');
+	include DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php';
 
     // Module Adherent
     if ($conf->adherent->enabled)

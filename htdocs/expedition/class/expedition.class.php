@@ -122,7 +122,7 @@ class Expedition extends CommonObject
 		// Chargement de la classe de numerotation
 		$classname = $conf->global->EXPEDITION_ADDON_NUMBER;
 
-		$result=include_once($dir.'/'.$file);
+		$result=include_once $dir.'/'.$file;
 		if ($result)
 		{
 			$obj = new $classname();
@@ -251,7 +251,7 @@ class Expedition extends CommonObject
 				if (! $error)
 				{
 					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT."/core/class/interfaces.class.php");
+					include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 					$interface=new Interfaces($this->db);
 					$result=$interface->run_triggers('SHIPPING_CREATE',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -576,7 +576,7 @@ class Expedition extends CommonObject
 		if (! $error)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT."/core/class/interfaces.class.php");
+			include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('SHIPPING_VALIDATE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -616,7 +616,7 @@ class Expedition extends CommonObject
 			if ($this->statut == 1)
 			{
 				// Expedition validee
-				include_once(DOL_DOCUMENT_ROOT."/livraison/class/livraison.class.php");
+				include_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
 				$delivery = new Livraison($this->db);
 				$result=$delivery->create_from_sending($user, $this->id);
 				if ($result > 0)
@@ -732,7 +732,7 @@ class Expedition extends CommonObject
 			if (! $notrigger)
 			{
 	            // Call triggers
-	            include_once(DOL_DOCUMENT_ROOT."/core/class/interfaces.class.php");
+	            include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 	            $interface=new Interfaces($this->db);
 	            $result=$interface->run_triggers('SHIPPING_MODIFY',$this,$user,$langs,$conf);
 	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -814,7 +814,7 @@ class Expedition extends CommonObject
 					}
 
 					// Call triggers
-		            include_once(DOL_DOCUMENT_ROOT."/core/class/interfaces.class.php");
+		            include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 		            $interface=new Interfaces($this->db);
 		            $result=$interface->run_triggers('SHIPPING_DELETE',$this,$user,$langs,$conf);
 		            if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -869,7 +869,7 @@ class Expedition extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 			$num = $this->db->num_rows($resql);
 			$i = 0;

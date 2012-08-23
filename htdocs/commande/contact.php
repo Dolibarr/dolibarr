@@ -210,7 +210,7 @@ if ($id > 0 || ! empty($ref))
 		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
 		foreach($dirtpls as $reldir)
 		{
-		    $res=@include(dol_buildpath($reldir.'/contacts.tpl.php'));
+		    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
 		    if ($res) break;
 		}
 	}

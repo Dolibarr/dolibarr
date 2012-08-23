@@ -50,7 +50,7 @@ if ($user->societe_id > 0) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $id);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('projectcard'));
 
@@ -718,7 +718,7 @@ else
         print '</td><td valign="top" width="50%">';
 
         // List of actions on element
-        include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
         $formactions=new FormActions($db);
         $somethingshown=$formactions->showactions($object,'project',$socid);
 

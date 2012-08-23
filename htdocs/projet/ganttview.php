@@ -239,7 +239,7 @@ if (count($tasksarray)>0)
 	{
 	    //var_dump($_SESSION);
 		print '<div id="tabs" class="ganttcontainer" style="border: 1px solid #ACACAC;">'."\n";
-		include_once(DOL_DOCUMENT_ROOT.'/projet/ganttchart.php');
+		include_once DOL_DOCUMENT_ROOT.'/projet/ganttchart.php';
 		print '</div>'."\n";
 	}
 	else

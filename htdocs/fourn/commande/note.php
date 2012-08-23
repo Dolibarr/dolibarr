@@ -144,7 +144,7 @@ if ($id > 0 || ! empty($ref))
         print '<br>';
 
         $colwidth=20;
-        include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
+        include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
         dol_fiche_end();
     }

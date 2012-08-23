@@ -27,7 +27,7 @@
  *      \brief      File descriptor or module Member
  */
 
-include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
+include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 /**
  *  Classe de description et activation du module Adherent

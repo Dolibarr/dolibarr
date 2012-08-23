@@ -31,12 +31,12 @@ if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
-$res=@include("../../main.inc.php");
-include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
-include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
-include_once(DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php');
-include_once(DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php');
-include_once(DOL_DOCUMENT_ROOT."/ecm/class/ecmdirectory.class.php");
+$res=@include '../../main.inc.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 $openeddir = GETPOST('openeddir');
 $modulepart= GETPOST('modulepart');

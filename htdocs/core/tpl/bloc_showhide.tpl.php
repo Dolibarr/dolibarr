@@ -54,7 +54,7 @@ $(document).ready(function() {
 
 <div id="<?php echo $blocname ?>_bloc" class="<?php echo ($hide ? 'hideobject' : 'nohideobject'); ?>">
 
-<?php include(DOL_DOCUMENT_ROOT.'/core/tpl/'.$blocname.'.tpl.php'); ?>
+<?php include DOL_DOCUMENT_ROOT.'/core/tpl/'.$blocname.'.tpl.php'; ?>
 
 </div>
 <br>

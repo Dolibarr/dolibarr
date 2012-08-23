@@ -42,7 +42,7 @@ function pdf_getFormat()
 
 	if (empty($conf->global->MAIN_PDF_FORMAT))
 	{
-		include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$pdfformat=dol_getDefaultFormat();
 	}
 	else $pdfformat=$conf->global->MAIN_PDF_FORMAT;
@@ -177,7 +177,7 @@ function pdf_getPDFFontSize($outputlangs)
 function pdf_getHeightForLogo($logo)
 {
     $height=22; $maxwidth=130;
-    include_once(DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php');
+    include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
     $tmp=dol_getImageSize($logo);
     if ($tmp['height'])
     {
@@ -1216,7 +1216,7 @@ function pdf_getlineqty_keeptoship($object,$i,$outputlangs,$hidedetails=0,$hookm
  */
 function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0,$hookmanager=false)
 {
-	include_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 	if ($object->lines[$i]->special_code != 3)
 	{

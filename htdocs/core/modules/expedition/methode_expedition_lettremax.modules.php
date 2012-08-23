@@ -20,7 +20,7 @@
  *	\ingroup    expedition
  */
 
-include_once "methode_expedition.modules.php";
+include_once 'methode_expedition.modules.php';
 
 
 /**

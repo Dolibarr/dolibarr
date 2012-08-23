@@ -105,7 +105,7 @@ class Skeleton_Class // extends CommonObject
 	            // want this action call a trigger.
 
 	            //// Call triggers
-	            //include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 	            //$interface=new Interfaces($this->db);
 	            //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
 	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -216,7 +216,7 @@ class Skeleton_Class // extends CommonObject
 	            // want this action call a trigger.
 
 	            //// Call triggers
-	            //include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 	            //$interface=new Interfaces($this->db);
 	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
 	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -265,7 +265,7 @@ class Skeleton_Class // extends CommonObject
 		        // want this action call a trigger.
 
 		        //// Call triggers
-		        //include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+		        //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 		        //$interface=new Interfaces($this->db);
 		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
 		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }

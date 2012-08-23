@@ -21,7 +21,7 @@
  *      \ingroup    margin
  *      \brief      Description and activation file for module Margin
  */
-include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
+include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**

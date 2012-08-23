@@ -22,7 +22,7 @@
  *      \brief      Create tables, primary keys, foreign keys, indexes and functions into database and then load reference data
  */
 
-include("./inc.php");
+include './inc.php';
 require_once $dolibarr_main_document_root.'/core/class/conf.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
@@ -56,7 +56,7 @@ if ($dolibarr_main_db_type == "mssql")  $choix=3;
 $useforcedwizard=false;
 $forcedfile="./install.forced.php";
 if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
-if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once($forcedfile); }
+if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once $forcedfile; }
 
 dolibarr_install_syslog("--- etape2: Entering etape2.php page");
 

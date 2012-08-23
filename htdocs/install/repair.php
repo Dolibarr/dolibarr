@@ -22,8 +22,8 @@
  *      \brief      Run repair script
  */
 
-include_once("./inc.php");
-if (file_exists($conffile)) include_once($conffile);
+include_once './inc.php';
+if (file_exists($conffile)) include_once $conffile;
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/class/extrafields.class.php';
 require_once 'lib/repair.lib.php';
@@ -315,37 +315,37 @@ if (GETPOST('purge'))
         // To show ref or specific information according to view to show (defined by $module)
         if ($modulepart == 'invoice')
         {
-            include_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
+            include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
             $object_instance=new Facture($db);
         }
         else if ($modulepart == 'invoice_supplier')
         {
-            include_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php');
+            include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
             $object_instance=new FactureFournisseur($db);
         }
         else if ($modulepart == 'propal')
         {
-            include_once(DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php');
+            include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
             $object_instance=new Propal($db);
         }
         else if ($modulepart == 'order')
         {
-            include_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
+            include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
             $object_instance=new Commande($db);
         }
         else if ($modulepart == 'order_supplier')
         {
-            include_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php');
+            include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
             $object_instance=new CommandeFournisseur($db);
         }
         else if ($modulepart == 'contract')
         {
-            include_once(DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php');
+            include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
             $object_instance=new Contrat($db);
         }
         else if ($modulepart == 'tax')
         {
-            include_once(DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php');
+            include_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
             $object_instance=new ChargeSociales($db);
         }
 

@@ -146,7 +146,7 @@ else
 </div>
 </div>
 
-<?php include('affPied.php'); ?></div>
+<?php include 'affPied.php'; ?></div>
 </div>
 </div>
 </body>

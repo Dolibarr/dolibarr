@@ -806,7 +806,7 @@ class FormOther
     {
         global $conf,$langs,$db;
 
-        include_once(DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 
         //$infobox=new InfoBox($db);
         $boxactivated=InfoBox::listboxes($db,'activated',$areacode,$user);

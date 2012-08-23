@@ -52,7 +52,7 @@ $template_dir = DOL_DOCUMENT_ROOT.'/core/tpl/';
 $interfaces = new Interfaces($db);
 $triggers = $interfaces->getTriggersList(0,'priority');
 
-include($template_dir.'triggers.tpl.php');
+include $template_dir.'triggers.tpl.php';
 
 llxFooter();
 

@@ -20,7 +20,7 @@
  * We set here login choices into session.
  */
 
-include('../main.inc.php');
+include '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/class/Auth.class.php';
 

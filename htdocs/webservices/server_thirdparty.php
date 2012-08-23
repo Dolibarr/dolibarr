@@ -345,7 +345,7 @@ function createThirdParty($authentication,$thirdparty)
 
     if (! $error)
     {
-        include_once(DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
         $newobject=new Societe($db);
         $newobject->ref=$thirdparty['ref'];

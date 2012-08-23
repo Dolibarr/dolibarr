@@ -63,7 +63,7 @@ print '<td>'.$langs->trans("LibraryShort").'</td>';
 print '<td align="right">'.$langs->trans("LibraryVersion").'</td>';
 print '</tr>';
 
-include_once(DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php');
+include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 $model=new ModeleExports();
 $liste=$model->liste_modeles($db);    // This is not a static method for exports because method load non static properties
 

@@ -70,7 +70,7 @@ if (! empty($canvas))
 $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', $objcanvas);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('thirdpartycard'));
 
@@ -522,7 +522,7 @@ else
         $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
         foreach ($dirsociete as $dirroot)
         {
-            $res=dol_include_once($dirroot.$module.".php");
+            $res=dol_include_once($dirroot.$module.'.php');
             if ($res) break;
         }
         $modCodeClient = new $module;
@@ -535,7 +535,7 @@ else
         $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
         foreach ($dirsociete as $dirroot)
         {
-            $res=dol_include_once($dirroot.$module.".php");
+            $res=dol_include_once($dirroot.$module.'.php');
             if ($res) break;
         }
         $modCodeFournisseur = new $module;
@@ -1010,7 +1010,7 @@ else
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
             foreach ($dirsociete as $dirroot)
             {
-                $res=dol_include_once($dirroot.$module.".php");
+                $res=dol_include_once($dirroot.$module.'.php');
                 if ($res) break;
             }
             $modCodeClient = new $module;
@@ -1028,7 +1028,7 @@ else
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
             foreach ($dirsociete as $dirroot)
             {
-                $res=dol_include_once($dirroot.$module.".php");
+                $res=dol_include_once($dirroot.$module.'.php');
                 if ($res) break;
             }
             $modCodeFournisseur = new $module;
@@ -1749,7 +1749,7 @@ else
         }
 
         // Sales representative
-        include(DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php');
+        include DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php';
 
         // Module Adherent
         if ($conf->adherent->enabled)

@@ -722,7 +722,7 @@ if ($rowid)
         // Link for paypal payment
         if ($conf->paypal->enabled)
         {
-            include_once(DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php');
+            include_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
             print showPaypalPaymentUrl('membersubscription',$object->ref);
         }
 

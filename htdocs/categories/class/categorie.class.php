@@ -185,7 +185,7 @@ class Categorie
 				}
 
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('CATEGORY_CREATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -283,7 +283,7 @@ class Categorie
 			$this->db->commit();
 
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('CATEGORY_MODIFY',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -388,7 +388,7 @@ class Categorie
 			else
 			{
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('CATEGORY_DELETE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; $this->error=join(',',$this->errors); }
@@ -1295,7 +1295,7 @@ class Categorie
 	 */
 	function liste_photos($dir,$nbmax=0)
 	{
-		include_once(DOL_DOCUMENT_ROOT ."/core/lib/files.lib.php");
+		include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
 
 		$nbphoto=0;
 		$tabobj=array();

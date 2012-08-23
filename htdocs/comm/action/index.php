@@ -738,7 +738,7 @@ $cachecontacts=array();
 $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/graph-color.php";
 if (is_readable($color_file))
 {
-    include_once($color_file);
+    include_once $color_file;
 }
 if (! is_array($theme_datacolor)) $theme_datacolor=array(array(120,130,150), array(200,160,180), array(190,190,220));
 

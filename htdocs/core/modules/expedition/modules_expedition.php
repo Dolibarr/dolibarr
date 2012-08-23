@@ -51,7 +51,7 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
 		$type='shipping';
 		$liste=array();
 
-		include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$liste=getListOfModels($db,$type,$maxfilenamelength);
 
 		return $liste;
@@ -222,7 +222,7 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 			//dol_delete_preview($object);
 
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('SHIPPING_BUILDDOC',$object,$user,$langs,$conf);
 			if ($result < 0) {

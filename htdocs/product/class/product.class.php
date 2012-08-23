@@ -375,7 +375,7 @@ class Product extends CommonObject
 		if (! $error && ! $notrigger)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('PRODUCT_CREATE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -486,7 +486,7 @@ class Product extends CommonObject
 			}
 
 			// Actions on extra fields (by external module or standard code)
-			include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager=new HookManager($this->db);
 			$hookmanager->initHooks(array('productdao'));
 			$parameters=array('id'=>$this->id);
@@ -504,7 +504,7 @@ class Product extends CommonObject
 			if (! $error && ! $notrigger)
 			{
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('PRODUCT_MODIFY',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -578,7 +578,7 @@ class Product extends CommonObject
 			    if (! $error)
 			    {
 			        // Appel des triggers
-			        include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			        $interface=new Interfaces($this->db);
 			        $result=$interface->run_triggers('PRODUCT_DELETE',$this,$user,$langs,$conf);
 			        if ($result < 0) {
@@ -1035,7 +1035,7 @@ class Product extends CommonObject
 	 */
 	function fetch($id='',$ref='',$ref_ext='')
 	{
-	    include_once(DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php');
+	    include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 		global $langs, $conf;
 
@@ -2542,7 +2542,7 @@ class Product extends CommonObject
 	 */
 	function is_photo_available($sdir)
 	{
-		include_once(DOL_DOCUMENT_ROOT ."/core/lib/files.lib.php");
+		include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
 
 		$pdir = get_exdir($this->id,2) . $this->id ."/photos/";
 		$dir = $sdir . '/'. $pdir;
@@ -2584,8 +2584,8 @@ class Product extends CommonObject
 	{
 		global $conf,$user,$langs;
 
-		include_once(DOL_DOCUMENT_ROOT ."/core/lib/files.lib.php");
-		include_once(DOL_DOCUMENT_ROOT ."/core/lib/images.lib.php");
+		include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
+		include_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';
 
 		$pdir = get_exdir($this->id,2) . $this->id ."/photos/";
 		$dir = $sdir . '/'. $pdir;
@@ -2727,7 +2727,7 @@ class Product extends CommonObject
 	 */
 	function liste_photos($dir,$nbmax=0)
 	{
-		include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$nbphoto=0;
 		$tabobj=array();

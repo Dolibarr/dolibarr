@@ -40,7 +40,7 @@ if (!empty($_SESSION["dol_authmode"]) && ($_SESSION["dol_authmode"] == 'forceuse
 }
 
 // Appel des triggers
-include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 $interface=new Interfaces($db);
 $result=$interface->run_triggers('USER_LOGOUT',$user,$user,$langs,$conf,$conf->entity);
 if ($result < 0) { $error++; }

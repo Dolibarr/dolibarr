@@ -426,7 +426,7 @@ if ($action == 'create')
 	// Modele PDF
 	print '<tr><td>'.$langs->trans('Model').'</td>';
 	print '<td>';
-	include_once(DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php');
+	include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 	$liste=ModelePDFFactures::liste_modeles($db);
 	print $html->selectarray('model',$liste,$conf->global->FACTURE_ADDON_PDF);
 	print "</td></tr>";

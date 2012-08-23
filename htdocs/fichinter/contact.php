@@ -148,7 +148,7 @@ if ($id > 0 || ! empty($ref))
 	print '<br>';
 
 	// Contacts lines
-	include(DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php');
+	include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
 }
 
 

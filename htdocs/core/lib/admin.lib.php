@@ -684,7 +684,7 @@ function activateModule($value,$withdeps=1)
     {
         if (file_exists($dir.$modFile))
         {
-            $found=@include_once($dir.$modFile);
+            $found=@include_once $dir.$modFile;
             if ($found) break;
         }
     }
@@ -803,7 +803,7 @@ function unActivateModule($value, $requiredby=1)
     {
         if (file_exists($dir.$modFile))
         {
-            $found=@include_once($dir.$modFile);
+            $found=@include_once $dir.$modFile;
             if ($found) break;
         }
     }
@@ -907,7 +907,7 @@ function complete_dictionnary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsq
 
                     if ($modName)
                     {
-                        include_once($dir.$file);
+                        include_once $dir.$file;
                         $objMod = new $modName($db);
 
                         if ($objMod->numero > 0)

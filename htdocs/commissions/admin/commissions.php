@@ -21,7 +21,7 @@
  *		\brief      Page to setup advanced commissions module
  */
 
-include("../../main.inc.php");
+include '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/commissions/lib/commissions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 

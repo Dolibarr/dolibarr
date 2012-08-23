@@ -162,7 +162,7 @@ class Adherent extends CommonObject
         $from=$conf->email_from;
         if ($conf->global->ADHERENT_MAIL_FROM) $from=$conf->global->ADHERENT_MAIL_FROM;
 
-        include_once(DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
+        include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
         $mailfile = new CMailFile($subjecttosend, $this->email, $from, $texttosend, $filename_list, $mimetype_list, $mimefilename_list, $addr_cc, $addr_bcc, $deliveryreceipt, $msgishtml);
         if ($mailfile->sendfile())
         {
@@ -345,7 +345,7 @@ class Adherent extends CommonObject
                 if (! $notrigger)
                 {
                     // Appel des triggers
-                    include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('MEMBER_CREATE',$this,$user,$langs,$conf);
                     if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -462,7 +462,7 @@ class Adherent extends CommonObject
 		    $nbrowsaffected+=$this->db->affected_rows($resql);
 
             // Actions on extra fields (by external module)
-            include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+            include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
             $hookmanager=new HookManager($this->db);
             $hookmanager->initHooks(array('memberdao'));
             $parameters=array('id'=>$this->id);
@@ -596,7 +596,7 @@ class Adherent extends CommonObject
                 if (! $error && ! $notrigger)
                 {
                     // Appel des triggers
-                    include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('MEMBER_MODIFY',$this,$user,$langs,$conf);
                     if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -729,7 +729,7 @@ class Adherent extends CommonObject
             			if ($this->db->affected_rows($resql))
             			{
             				// Appel des triggers
-            				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             				$interface=new Interfaces($this->db);
             				$result=$interface->run_triggers('MEMBER_DELETE',$this,$user,$langs,$conf);
             				if ($result < 0) {
@@ -852,7 +852,7 @@ class Adherent extends CommonObject
                 if (! $error && ! $notrigger)
                 {
                     // Appel des triggers
-                    include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('MEMBER_NEW_PASSWORD',$this,$user,$langs,$conf);
                     if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1227,7 +1227,7 @@ class Adherent extends CommonObject
                 $this->last_subscription_date_end=$datefin;
 
                 // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('MEMBER_SUBSCRIPTION',$this,$user,$langs,$conf);
                 if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1288,7 +1288,7 @@ class Adherent extends CommonObject
             $this->statut=1;
 
             // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('MEMBER_VALIDATE',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1338,7 +1338,7 @@ class Adherent extends CommonObject
             $this->statut=0;
 
             // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('MEMBER_RESILIATE',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1366,7 +1366,7 @@ class Adherent extends CommonObject
     {
         global $conf;
 
-        include_once(DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php');
+        include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
         $mailmanspip=new MailmanSpip($db);
 
         $err=0;
@@ -1412,7 +1412,7 @@ class Adherent extends CommonObject
     {
         global $conf;
 
-        include_once(DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php');
+        include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
         $mailmanspip=new MailmanSpip($db);
 
         $err=0;

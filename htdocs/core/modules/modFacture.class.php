@@ -26,7 +26,7 @@
  *		\ingroup    facture
  *		\brief      Fichier de la classe de description et activation du module Facture
  */
-include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
+include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**

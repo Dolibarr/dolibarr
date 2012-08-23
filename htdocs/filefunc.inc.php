@@ -68,7 +68,7 @@ $conffiletoshow = "htdocs/conf/conf.php";
 
 
 // Include configuration
-$result=@include_once($conffile);
+$result=@include_once $conffile;
 if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not done and we are in a web session
 {
 	header("Location: install/index.php");
@@ -228,7 +228,7 @@ if (! defined('DOL_DEFAULT_TTF_BOLD')) { define('DOL_DEFAULT_TTF_BOLD', (!isset(
  * Include functions
  */
 
-if (! defined('ADODB_DATE_VERSION')) include_once(ADODB_PATH.'adodb-time.inc.php');
+if (! defined('ADODB_DATE_VERSION')) include_once ADODB_PATH.'adodb-time.inc.php';
 
 if (! file_exists(DOL_DOCUMENT_ROOT ."/core/lib/functions.lib.php"))
 {
@@ -238,8 +238,8 @@ if (! file_exists(DOL_DOCUMENT_ROOT ."/core/lib/functions.lib.php"))
 }
 
 // Included by default
-include_once(DOL_DOCUMENT_ROOT ."/core/lib/functions.lib.php");
-include_once(DOL_DOCUMENT_ROOT ."/core/lib/security.lib.php");
+include_once DOL_DOCUMENT_ROOT .'/core/lib/functions.lib.php';
+include_once DOL_DOCUMENT_ROOT .'/core/lib/security.lib.php';
 //print memory_get_usage();
 
 // If password is encoded, we decode it

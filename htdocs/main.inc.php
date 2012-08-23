@@ -325,7 +325,7 @@ if (! defined('NOLOGIN'))
     if (! isset($_SESSION["dol_login"]))
     {
         // It is not already authenticated and it requests the login / password
-        include_once(DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
         // If in demo mode, we check we go to home page through the public/demo/index.php page
         if (! empty($dolibarr_main_demo) && $_SERVER['PHP_SELF'] == DOL_URL_ROOT.'/index.php')  // We ask index page
@@ -356,7 +356,7 @@ if (! defined('NOLOGIN'))
                 $test=false;
 
                 // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($db);
                 $result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,GETPOST('entity','int'));
                 if ($result < 0) {
@@ -388,7 +388,7 @@ if (! defined('NOLOGIN'))
                 $dol_dst=0;
                 if (isset($_POST["dst_first"]) && isset($_POST["dst_second"]))
                 {
-                    include_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
+                    include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
                     $datenow=dol_now();
                     $datefirst=dol_stringtotime($_POST["dst_first"]);
                     $datesecond=dol_stringtotime($_POST["dst_second"]);
@@ -413,7 +413,7 @@ if (! defined('NOLOGIN'))
                 $_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 
                 // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT."/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
                 $interface=new Interfaces($db);
                 $result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,GETPOST("username","alpha",2));
                 if ($result < 0) {
@@ -429,7 +429,7 @@ if (! defined('NOLOGIN'))
             // We show login page
             if (! is_object($langs)) // This can occurs when calling page with NOREQUIRETRAN defined
             {
-                include_once(DOL_DOCUMENT_ROOT."/core/class/translate.class.php");
+                include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
                 $langs=new Translate("",$conf);
             }
             dol_loginfunction($langs,$conf,$mysoc);
@@ -459,7 +459,7 @@ if (! defined('NOLOGIN'))
             }
 
             // Call triggers
-            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($db);
             $result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,$_POST["entity"]);
             if ($result < 0) {
@@ -501,7 +501,7 @@ if (! defined('NOLOGIN'))
             }
 
             // Call triggers
-            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($db);
             $result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,(isset($_POST["entity"])?$_POST["entity"]:0));
             if ($result < 0) {
@@ -517,7 +517,7 @@ if (! defined('NOLOGIN'))
             if (! empty($conf->global->MAIN_ACTIVATE_UPDATESESSIONTRIGGER))	// We do not execute such trigger at each page load by default
             {
                 // Call triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($db);
                 $result=$interface->run_triggers('USER_UPDATE_SESSION',$user,$user,$langs,$conf,$conf->entity);
                 if ($result < 0) {
@@ -556,7 +556,7 @@ if (! defined('NOLOGIN'))
         $user->update_last_login_date();
 
         // Call triggers
-        include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
         $interface=new Interfaces($db);
         $result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf,GETPOST('entity','int'));
         if ($result < 0) {
@@ -579,7 +579,7 @@ if (! defined('NOLOGIN'))
         // Create entity cookie, just used for login page
         if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_COOKIE_ENABLED) && isset($_POST["entity"]))
         {
-            include_once(DOL_DOCUMENT_ROOT."/core/class/cookie.class.php");
+            include_once DOL_DOCUMENT_ROOT.'/core/class/cookie.class.php';
 
             $entity = $_SESSION["dol_login"].'|'.$_POST["entity"];
 
@@ -596,7 +596,7 @@ if (! defined('NOLOGIN'))
 
         // Hooks on successfull login
         $action='';
-        include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
         $hookmanager=new HookManager($db);
         $hookmanager->initHooks(array('login'));
         $parameters=array('dol_authmode'=>$dol_authmode);
@@ -1111,7 +1111,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     // Instantiate hooks of thirdparty module only if not already define
     if (! is_object($hookmanager))
     {
-    	include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+    	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
     	$hookmanager=new HookManager($db);
     }
     $hookmanager->initHooks(array('toprightmenu'));
@@ -1225,7 +1225,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
         if (! $menufound)	// If failed to include, we try with standard
         {
             $top_menu='eldy_backoffice.php';
-            include_once(DOL_DOCUMENT_ROOT."/core/menus/standard/".$top_menu);
+            include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".$top_menu;
         }
     }
 
@@ -1364,7 +1364,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     // Instantiate hooks of thirdparty module
     if (! is_object($hookmanager))
     {
-    	include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+    	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
     	$hookmanager=new HookManager($db);
 	}
     $hookmanager->initHooks(array('searchform','leftblock'));
@@ -1431,7 +1431,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	        if (! $menufound)	// If failed to include, we try with standard
 	        {
 	            $top_menu='eldy_backoffice.php';
-	            include_once(DOL_DOCUMENT_ROOT."/core/menus/standard/".$top_menu);
+	            include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".$top_menu;
 	        }
 	    }
 

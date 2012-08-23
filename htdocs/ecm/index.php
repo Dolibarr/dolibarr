@@ -801,7 +801,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 
 $mode='noajax';
-include_once(DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php');
+include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 
 
 // End right panel

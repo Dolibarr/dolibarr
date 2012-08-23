@@ -76,7 +76,7 @@ $conffiletoshow = "htdocs/conf/conf.php";
 
 if (! defined('DONOTLOADCONF') && file_exists($conffile))
 {
-    $result=include_once($conffile);	// Load conf file
+    $result=include_once $conffile;	// Load conf file
     if ($result)
     {
 		if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
@@ -105,7 +105,7 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
         {
             if (! empty($dolibarr_main_document_root) && ! empty($dolibarr_main_db_type))
             {
-                $result=include_once($dolibarr_main_document_root . "/core/db/".$dolibarr_main_db_type.".class.php");
+                $result=include_once $dolibarr_main_document_root . "/core/db/".$dolibarr_main_db_type.'.class.php';
                 if (! $result)
                 {
                     $includeconferror='ErrorBadValueForDolibarrMainDBType';
@@ -256,7 +256,7 @@ function conf($dolibarr_main_document_root)
     global $dolibarr_main_db_pass;
     global $character_set_client;
 
-    $return=include_once($dolibarr_main_document_root."/core/class/conf.class.php");
+    $return=include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
     if (! $return) return -1;
 
     $conf=new Conf();

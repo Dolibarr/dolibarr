@@ -250,7 +250,7 @@ foreach ($dirsociete as $dirroot)
     			$file = substr($file, 0, dol_strlen($file)-4);
 
     			try {
-        			dol_include_once($dirroot.$file.".php");
+        			dol_include_once($dirroot.$file.'.php');
     			}
     			catch(Exception $e)
     			{
@@ -330,7 +330,7 @@ foreach ($dirsociete as $dirroot)
     			$file = substr($file, 0, dol_strlen($file)-4);
 
     		    try {
-        			dol_include_once($dirroot.$file.".php");
+        			dol_include_once($dirroot.$file.'.php');
     			}
     			catch(Exception $e)
     			{

@@ -244,7 +244,7 @@ class Societe extends CommonObject
                 if ($ret >= 0)
                 {
                     // Appel des triggers
-                    include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('COMPANY_CREATE',$this,$user,$langs,$conf);
                     if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -571,7 +571,7 @@ class Societe extends CommonObject
                 $this->AddFournisseurInCategory($this->fournisseur_categorie);
 
                 // Actions on extra fields (by external module or standard code)
-                include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+                include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
                 $hookmanager=new HookManager($this->db);
                 $hookmanager->initHooks(array('thirdpartydao'));
                 $parameters=array('socid'=>$this->id);
@@ -589,7 +589,7 @@ class Societe extends CommonObject
                 if (! $error && $call_trigger)
                 {
                     // Appel des triggers
-                    include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('COMPANY_MODIFY',$this,$user,$langs,$conf);
                     if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -925,7 +925,7 @@ class Societe extends CommonObject
             if (! $error)
             {
             	// Additionnal action by hooks
-                include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+                include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
                 $hookmanager=new HookManager($this->db);
                 $hookmanager->initHooks(array('thirdpartydao'));
                 $parameters=array(); $action='delete';
@@ -954,7 +954,7 @@ class Societe extends CommonObject
             if (! $error)
             {
                 // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('COMPANY_DELETE',$this,$user,$langs,$conf);
                 if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1629,7 +1629,7 @@ class Societe extends CommonObject
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
             foreach ($dirsociete as $dirroot)
             {
-                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.".php");
+                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php');
                 if ($res) break;
             }
             $var = $conf->global->SOCIETE_CODECLIENT_ADDON;
@@ -1658,7 +1658,7 @@ class Societe extends CommonObject
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
             foreach ($dirsociete as $dirroot)
             {
-                $res=dol_include_once($dirroot.$conf->global->SOCIETE_FOURNISSEUR_ADDON.".php");
+                $res=dol_include_once($dirroot.$conf->global->SOCIETE_FOURNISSEUR_ADDON.'.php');
                 if ($res) break;
             }
             $var = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
@@ -1684,7 +1684,7 @@ class Societe extends CommonObject
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
             foreach ($dirsociete as $dirroot)
             {
-                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.".php");
+                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php');
                 if ($res) break;
             }
 
@@ -1718,7 +1718,7 @@ class Societe extends CommonObject
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
             foreach ($dirsociete as $dirroot)
             {
-                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.".php");
+                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php');
                 if ($res) break;
             }
 
@@ -1756,7 +1756,7 @@ class Societe extends CommonObject
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
             foreach ($dirsociete as $dirroot)
             {
-                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.".php");
+                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php');
                 if ($res) break;
             }
 
@@ -1791,7 +1791,7 @@ class Societe extends CommonObject
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
             foreach ($dirsociete as $dirroot)
             {
-                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.".php");
+                $res=dol_include_once($dirroot.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php');
                 if ($res) break;
             }
 

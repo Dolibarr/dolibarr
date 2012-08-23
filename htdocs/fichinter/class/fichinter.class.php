@@ -160,7 +160,7 @@ class Fichinter extends CommonObject
 			$this->db->commit();
 
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('FICHEINTER_CREATE',$this,$user,$langs,$conf);
 			if ($result < 0) {
@@ -204,7 +204,7 @@ class Fichinter extends CommonObject
 		if ($this->db->query($sql))
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('FICHEINTER_MODIFY',$this,$user,$langs,$conf);
 			if ($result < 0) {
@@ -355,7 +355,7 @@ class Fichinter extends CommonObject
 			if ($resql)
 			{
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('FICHEINTER_VALIDATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -666,7 +666,7 @@ class Fichinter extends CommonObject
 				}
 
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('FICHEINTER_DELETE',$this,$user,$langs,$conf);
 				if ($result < 0) {

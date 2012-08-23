@@ -464,21 +464,21 @@ if ($object->fetch($id) >= 0)
                 {
                     if ($obj->source_type == 'member')
                     {
-                        include_once(DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php');
+                        include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
                         $m=new Adherent($db);
                         $m->id=$obj->source_id;
                         print $m->getNomUrl(2);
                     }
                     else if ($obj->source_type == 'user')
                     {
-                        include_once(DOL_DOCUMENT_ROOT.'/user/class/user.class.php');
+                        include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
                         $m=new User($db);
                         $m->id=$obj->source_id;
                         print $m->getNomUrl(2);
                     }
                     else if ($obj->source_type == 'thirdparty')
                     {
-                        include_once(DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php');
+                        include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
                         $m=new Societe($db);
                         $m->id=$obj->source_id;
                         print $m->getNomUrl(2);

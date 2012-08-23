@@ -433,7 +433,7 @@ abstract class ActionsCardCommon
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
             foreach ($dirsociete as $dirroot)
             {
-                $res=dol_include_once($dirroot.$module.".php");
+                $res=dol_include_once($dirroot.$module.'.php');
                 if ($res) break;
             }
             $modCodeClient = new $module;
@@ -470,7 +470,7 @@ abstract class ActionsCardCommon
                 $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
                 foreach ($dirsociete as $dirroot)
                 {
-                    $res=dol_include_once($dirroot.$module.".php");
+                    $res=dol_include_once($dirroot.$module.'.php');
                     if ($res) break;
                 }
             	$modCodeFournisseur = new $module;

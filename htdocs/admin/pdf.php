@@ -256,7 +256,7 @@ else	// Show
     $pdfformatlabel='';
     if (empty($conf->global->MAIN_PDF_FORMAT))
     {
-        include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
         $pdfformatlabel=dol_getDefaultFormat();
     }
     else $pdfformatlabel=$conf->global->MAIN_PDF_FORMAT;

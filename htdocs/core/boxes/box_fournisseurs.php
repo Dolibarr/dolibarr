@@ -22,7 +22,7 @@
  * \brief      Module to generate box of suppliers
  */
 
-include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
+include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
@@ -65,7 +65,7 @@ class box_fournisseurs extends ModeleBoxes
 
 		$this->max=$max;
 
-        include_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+        include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
         $thirdpartystatic=new Societe($db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedSuppliers",$max));

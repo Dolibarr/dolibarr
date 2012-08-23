@@ -117,7 +117,7 @@ if (! empty($_POST['removedfile']) || ! empty($_POST['removedfilehtml']))
 		{
 			setEventMessage($langs->trans("FileWasRemoved"), $filetodelete);
 
-			include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 			$formmail = new FormMail($db);
 			$formmail->remove_attached_files($keytodelete);
 		}
@@ -154,7 +154,7 @@ if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GE
 	$deliveryreceipt= $_POST["deliveryreceipt"];
 
 	// Create form object
-	include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
 
 	$attachedfiles=$formmail->get_attached_files();
@@ -644,7 +644,7 @@ else
 		// If we use SSL/TLS
 		if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS) && function_exists('openssl_open')) $server='ssl://'.$server;
 
-		include_once(DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
+		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mail = new CMailFile('','','','');
 		$result=$mail->check_server_port($server,$port);
 		if ($result) print '<div class="ok">'.$langs->trans("ServerAvailableOnIPOrPort",$server,$port).'</div>';
@@ -664,7 +664,7 @@ else
 		print_titre($langs->trans("DoTestSend"));
 
 		// Cree l'objet formulaire mail
-		include_once(DOL_DOCUMENT_ROOT."/core/class/html.formmail.class.php");
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->fromname = (isset($_POST['fromname'])?$_POST['fromname']:$conf->global->MAIN_MAIL_EMAIL_FROM);
 		$formmail->frommail = (isset($_POST['frommail'])?$_POST['frommail']:$conf->global->MAIN_MAIL_EMAIL_FROM);
@@ -709,7 +709,7 @@ else
 		print_titre($langs->trans("DoTestSendHTML"));
 
 		// Cree l'objet formulaire mail
-		include_once(DOL_DOCUMENT_ROOT."/core/class/html.formmail.class.php");
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->fromname = (isset($_POST['fromname'])?$_POST['fromname']:$conf->global->MAIN_MAIL_EMAIL_FROM);
 		$formmail->frommail = (isset($_POST['frommail'])?$_POST['frommail']:$conf->global->MAIN_MAIL_EMAIL_FROM);

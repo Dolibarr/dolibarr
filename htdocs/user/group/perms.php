@@ -113,7 +113,7 @@ if ($id)
 
                     if ($modName)
                     {
-                        include_once($dir."/".$file);
+                        include_once $dir."/".$file;
                         $objMod = new $modName($db);
                         // Load all lang files of module
                         if (isset($objMod->langfiles) && is_array($objMod->langfiles))

@@ -113,7 +113,7 @@ if ($id > 0 || ! empty($ref))
 
 	print '<br>';
 
-	include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
+	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	print '</div>';
 }

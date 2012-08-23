@@ -63,7 +63,7 @@ foreach($modulesdir as $dir)
 
     			if ($modName)
     			{
-    				include_once($dir.$file);
+    				include_once $dir.$file;
     				$objMod = new $modName($db);
 
     				$modules[$objMod->numero]=$objMod;

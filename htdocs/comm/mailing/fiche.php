@@ -47,7 +47,7 @@ $result=$object->fetch($id);
 $extrafields = new ExtraFields($db);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('mailingcard'));
 
@@ -929,7 +929,7 @@ else
 				print_titre($langs->trans("TestMailing"));
 
 				// Create l'objet formulaire mail
-				include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 				$formmail = new FormMail($db);
 				$formmail->fromname = $object->email_from;
 				$formmail->frommail = $object->email_from;

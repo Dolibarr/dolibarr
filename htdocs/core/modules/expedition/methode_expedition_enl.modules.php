@@ -19,7 +19,7 @@
  *	\file       htdocs/core/modules/expedition/methode_expedition_enl.modules.php
  *	\ingroup    expedition
  */
-include_once "methode_expedition.modules.php";
+include_once 'methode_expedition.modules.php';
 
 
 /**

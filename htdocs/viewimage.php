@@ -366,7 +366,7 @@ if ($modulepart == 'barcode')
         // Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php)
         if (! is_dir($newdir)) continue;
 
-        $result=@include_once($newdir.$generator.".modules.php");
+        $result=@include_once $newdir.$generator.'.modules.php';
         if ($result) break;
     }
 

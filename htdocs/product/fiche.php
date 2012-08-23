@@ -73,7 +73,7 @@ $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype,$objcanvas);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('productcard'));
 
@@ -703,7 +703,7 @@ else
         {
             $module = substr($module, 0, dol_strlen($module)-4);
         }
-        dol_include_once('/core/modules/product/'.$module.".php");
+        dol_include_once('/core/modules/product/'.$module.'.php');
         $modCodeProduct = new $module;
 
         print '<form action="fiche.php" method="post">';

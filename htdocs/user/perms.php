@@ -134,7 +134,7 @@ foreach($modulesdir as $dir)
 
     	        if ($modName)
     	        {
-    	            include_once($dir.$file);
+    	            include_once $dir.$file;
     	            $objMod = new $modName($db);
 
     	            // Load all lang files of module

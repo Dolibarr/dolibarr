@@ -99,7 +99,7 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && ! empty($con
     }
     else
     {
-        include_once(DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php');
+        include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
         $mailmanspip=new MailmanSpip($db);
 
         $object=new stdClass();

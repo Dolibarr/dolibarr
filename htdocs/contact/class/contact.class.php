@@ -168,7 +168,7 @@ class Contact extends CommonObject
             if (! $error)
             {
     			// Appel des triggers
-    			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+    			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     			$interface=new Interfaces($this->db);
     			$result=$interface->run_triggers('CONTACT_CREATE',$this,$user,$langs,$conf);
     			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -264,7 +264,7 @@ class Contact extends CommonObject
 			if (! $error && ! $notrigger)
 			{
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('CONTACT_MODIFY',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -725,7 +725,7 @@ class Contact extends CommonObject
 		if (! $error && ! $notrigger)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('CONTACT_DELETE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }

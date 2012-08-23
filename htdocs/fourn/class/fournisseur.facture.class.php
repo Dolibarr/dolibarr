@@ -26,7 +26,7 @@
  *	\brief      File of class to manage suppliers invoices
  */
 
-include_once(DOL_DOCUMENT_ROOT."/core/class/commoninvoice.class.php");
+include_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
 
 
 /**
@@ -205,7 +205,7 @@ class FactureFournisseur extends CommonInvoice
             if ($result > 0)
             {
                 // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('BILL_SUPPLIER_CREATE',$this,$user,$langs,$conf);
                 if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -537,7 +537,7 @@ class FactureFournisseur extends CommonInvoice
             if (! $notrigger)
             {
                 // Call triggers
-                //include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 //$interface=new Interfaces($this->db);
                 //$result=$interface->run_triggers('BILL_SUPPLIER_MODIFY',$this,$user,$langs,$conf);
                 //if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -602,7 +602,7 @@ class FactureFournisseur extends CommonInvoice
         if (! $error)
         {
         	// Appel des triggers
-        	include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+        	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
         	$interface=new Interfaces($this->db);
         	$result=$interface->run_triggers('INVOICE_SUPPLIER_DELETE',$this,$user,$langs,$conf);
         	if ($result < 0) {
@@ -709,7 +709,7 @@ class FactureFournisseur extends CommonInvoice
         if ($resql)
         {
             // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('BILL_SUPPLIER_PAYED',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -759,7 +759,7 @@ class FactureFournisseur extends CommonInvoice
         if ($resql)
         {
             // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('BILL_SUPPLIER_UNPAYED',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -858,7 +858,7 @@ class FactureFournisseur extends CommonInvoice
             if (! $error)
             {
                 // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('BILL_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
                 if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -979,7 +979,7 @@ class FactureFournisseur extends CommonInvoice
     function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0, $rang=-1, $notrigger=false)
     {
         dol_syslog(get_class($this)."::addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits,$price_base_type,$type", LOG_DEBUG);
-        include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
         // Clean parameters
         if (empty($remise_percent)) $remise_percent=0;
@@ -1022,7 +1022,7 @@ class FactureFournisseur extends CommonInvoice
                 {
                     global $conf, $langs, $user;
                     // Appel des triggers
-                    include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('LINEBILL_SUPPLIER_CREATE',$this,$user,$langs,$conf);
                     if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1067,7 +1067,7 @@ class FactureFournisseur extends CommonInvoice
     function updateline($id, $label, $pu, $vatrate, $txlocaltax1=0, $txlocaltax2=0, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0, $remise_percent=0, $notrigger=false)
     {
         dol_syslog(get_class($this)."::updateline $id,$label,$pu,$vatrate,$qty,$idproduct,$price_base_type,$info_bits,$type,$remise_percent", LOG_DEBUG);
-        include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
         $pu = price2num($pu);
         $qty  = price2num($qty);
@@ -1136,7 +1136,7 @@ class FactureFournisseur extends CommonInvoice
             {
                 global $conf, $langs, $user;
                 // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('LINEBILL_SUPPLIER_UPDATE',$this,$user,$langs,$conf);
                 if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1308,7 +1308,7 @@ class FactureFournisseur extends CommonInvoice
     function initAsSpecimen()
     {
         global $langs,$conf;
-		include_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
+		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
         $now = dol_now();
 

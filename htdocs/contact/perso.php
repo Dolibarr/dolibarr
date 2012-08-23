@@ -197,7 +197,7 @@ else
     print '<tr>';
     if (! empty($object->birthday))
     {
-        include_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
         print '<td>'.$langs->trans("DateToBirth").'</td><td colspan="3">'.dol_print_date($object->birthday,"day");
 

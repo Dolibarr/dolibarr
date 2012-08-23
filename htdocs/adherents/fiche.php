@@ -85,7 +85,7 @@ if ($rowid)
 }
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('membercard'));
 
@@ -1128,7 +1128,7 @@ if ($rowid && $action != 'edit')
 		if (empty($login))
 		{
 			// Full firstname and name separated with a dot : firstname.name
-			include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			$login=dol_buildlogin($object->lastname,$object->firstname);
 		}
 		if (empty($login)) $login=strtolower(substr($object->firstname, 0, 4)) . strtolower(substr($object->lastname, 0, 4));
@@ -1564,7 +1564,7 @@ if ($rowid && $action != 'edit')
 	    // Action SPIP
 	    if ($conf->mailmanspip->enabled && $conf->global->ADHERENT_USE_SPIP)
 	    {
-            include_once(DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php');
+            include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
             $mailmanspip=new MailmanSpip($db);
 
             $isinspip=$mailmanspip->is_in_spip($object);

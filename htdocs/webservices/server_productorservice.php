@@ -342,7 +342,7 @@ function createProductOrService($authentication,$product)
 
     if (! $error)
     {
-        include_once(DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
         $newobject=new Product($db);
         $newobject->ref=$product['ref'];

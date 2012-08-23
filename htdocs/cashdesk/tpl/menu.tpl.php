@@ -19,9 +19,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-include_once(DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php');
-include_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
-include_once(DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php');
+include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 if (!empty($_SESSION["CASHDESK_ID_THIRDPARTY"]))
 {

@@ -63,7 +63,7 @@ if (! empty($canvas))
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', '', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('contactcard'));
 
@@ -706,7 +706,7 @@ else
         if ($action == 'create_user')
         {
             // Full firstname and name separated with a dot : firstname.name
-            include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
+            include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
             $login=dol_buildlogin($object->nom,$object->prenom);
 
             $generated_password='';

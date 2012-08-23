@@ -218,7 +218,7 @@ if (! empty($conf->multicompany->enabled)  && empty($conf->global->MULTICOMPANY_
         $entityCookieName = 'DOLENTITYID_'.$prefix;
         if (isset($_COOKIE[$entityCookieName]))
         {
-            include_once(DOL_DOCUMENT_ROOT . "/core/class/cookie.class.php");
+            include_once DOL_DOCUMENT_ROOT . '/core/class/cookie.class.php';
             $lastuser = '';	$lastentity = '';
             $entityCookie = new DolCookie($conf->file->cookie_cryptkey);
             $cookieValue = $entityCookie->_getCookie($entityCookieName);
@@ -236,6 +236,6 @@ if (function_exists("imagecreatefrompng") && ! $disabled)
     $captcha_refresh = img_picto($langs->trans("Refresh"),'refresh','id="captcha_refresh_img"');
 }
 
-include($template_dir.'passwordforgotten.tpl.php');	// To use native PHP
+include $template_dir.'passwordforgotten.tpl.php';	// To use native PHP
 
 ?>

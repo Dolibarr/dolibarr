@@ -218,7 +218,7 @@ else
     			$template_dir = DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/tpl/product/'.$canvas.'/';
     		}
 
-    		include($template_dir.'list.tpl.php');	// Include native PHP templates
+    		include $template_dir.'list.tpl.php';	// Include native PHP templates
     	}
     	else
     	{

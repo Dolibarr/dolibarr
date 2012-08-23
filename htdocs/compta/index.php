@@ -500,7 +500,7 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 // Last donations
 if ($conf->don->enabled && $user->rights->societe->lire)
 {
-	include_once(DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php');
+	include_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
 
 	$langs->load("boxes");
     $donationstatic=new Don($db);
@@ -565,7 +565,7 @@ if ($conf->don->enabled && $user->rights->societe->lire)
 // Last trips and expenses
 if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 {
-    include_once(DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php');
+    include_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 
     $langs->load("boxes");
 

@@ -23,7 +23,7 @@
  *
  *  To include file, do this:
  *              $color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/graph-color.php';
- *              if (is_readable($color_file)) include_once($color_file);
+ *              if (is_readable($color_file)) include_once $color_file;
  */
 
 global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;

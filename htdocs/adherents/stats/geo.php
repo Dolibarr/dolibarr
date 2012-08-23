@@ -198,7 +198,7 @@ else
 if ($mode == 'memberbycountry')
 {
     $color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/graph-color.php';
-    if (is_readable($color_file)) include_once($color_file);
+    if (is_readable($color_file)) include_once $color_file;
 
     // Assume we've already included the proper headers so just call our script inline
     // More doc: https://developers.google.com/chart/interactive/docs/gallery/geomap?hl=fr-FR

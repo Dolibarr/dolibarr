@@ -24,7 +24,7 @@
  */
 
 require '../main.inc.php';
-if(! empty($conf->multicompany->enabled)) dol_include_once("/multicompany/class/actions_multicompany.class.php");
+if(! empty($conf->multicompany->enabled)) dol_include_once('/multicompany/class/actions_multicompany.class.php');
 
 
 if (! $user->rights->user->user->lire && ! $user->admin) accessforbidden();

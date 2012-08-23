@@ -133,7 +133,7 @@ foreach ($modulesdir as $dir)
 
 		            try
 		            {
-		                $res=include_once($dir.$file);
+		                $res=include_once $dir.$file;
 		                $objMod = new $modName($db);
 						$modNameLoaded[$modName]=$dir;
 

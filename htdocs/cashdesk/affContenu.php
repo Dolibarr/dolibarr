@@ -56,11 +56,11 @@ print '<div class="principal">';
 
 if ( $_GET['menu'] )
 {
-	include($_GET['menu'].'.php');
+	include $_GET['menu'].'.php';
 }
 else
 {
-	include('facturation.php');
+	include 'facturation.php';
 }
 
 print '</div>';

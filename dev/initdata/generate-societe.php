@@ -34,12 +34,12 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 // Recupere root dolibarr
 $path=preg_replace('/generate-societe.php/i','',$_SERVER["PHP_SELF"]);
 require ($path."../../htdocs/master.inc.php");
-include_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
-include_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
-include_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
-include_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-include_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
-include_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
+include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+include_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
 $villes = array("Auray","Baden","Vannes","Pirouville","Haguenau","Souffelweiersheim","Illkirch-Graffenstaden","Lauterbourg","Picauville","Sainte-Mère Eglise","Le Bono");
 $prenoms = array("Joe","Marc","Steve","Laurent","Nico","Isabelle","Dorothee","Saby","Brigitte","Karine","Jose-Anne","Celine","Virginie");
