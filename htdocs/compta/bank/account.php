@@ -211,7 +211,7 @@ if ($id > 0 || ! empty($ref))
 		$mode_search = 1;
 	}
 	
-	$sql = "SELECT count(*) as count";
+	$sql = "SELECT count(*) as total";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
 	$sql.= ", ".MAIN_DB_PREFIX."bank as b";
 	if ($mode_search)
@@ -229,7 +229,7 @@ if ($id > 0 || ! empty($ref))
 	if ($result)
 	{
 		$obj = $db->fetch_object($result);
-		$nbline = $obj->count;
+		$nbline = $obj->total;
 		$total_lines = $nbline;
 		
 		$db->free($result);
