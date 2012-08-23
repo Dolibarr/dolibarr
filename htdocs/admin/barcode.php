@@ -24,9 +24,9 @@
  *	\brief      Page to setup barcode module
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formbarcode.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 
 $langs->load("admin");
 
@@ -132,7 +132,7 @@ foreach($dirbarcode as $reldir)
 						$filebis=$reg[1];
 
 						// Chargement de la classe de codage
-						require_once($newdir.$file);
+						require_once $newdir.$file;
 						$classname = "mod".ucfirst($filebis);
 						$module = new $classname($db);
 
@@ -207,7 +207,7 @@ if ($resql)
 			    // Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php)
 			    if (! is_dir($newdir)) continue;
 
-				$result=@include_once($newdir.$obj->coder.".modules.php");
+				$result=@include_once $newdir.$obj->coder.'.modules.php';
 				if ($result) break;
 			}
 			if ($result)

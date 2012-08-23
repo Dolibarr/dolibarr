@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005 Simon TOSSER <simon@kornog-computing.com>
  *
@@ -23,7 +23,7 @@
  *      \brief      Page fiche ventilation
  */
 
-require('../../../main.inc.php');
+require '../../../main.inc.php';
 
 $mesg = '';
 

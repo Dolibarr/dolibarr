@@ -23,7 +23,7 @@
  *		\brief      File to load import files with CSV format
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/core/modules/import/modules_import.php");
+require_once DOL_DOCUMENT_ROOT .'/core/modules/import/modules_import.php';
 
 
 /**

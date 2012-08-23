@@ -22,7 +22,7 @@
  *       \brief      Home page for top menu tools
  */
 
-require("../main.inc.php");
+require '../main.inc.php';
 
 $langs->load("companies");
 $langs->load("other");

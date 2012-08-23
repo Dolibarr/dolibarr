@@ -187,7 +187,7 @@ abstract class CommonObject
             if (! $notrigger)
             {
                 // Call triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers(strtoupper($this->element).'_ADD_CONTACT',$this,$user,$langs,$conf);
                 if ($result < 0) {
@@ -263,7 +263,7 @@ abstract class CommonObject
             if (! $notrigger)
             {
                 // Call triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers(strtoupper($this->element).'_DELETE_CONTACT',$this,$user,$langs,$conf);
                 if ($result < 0) {
@@ -528,7 +528,7 @@ abstract class CommonObject
      */
     function fetch_contact($contactid)
     {
-        require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
+        require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
         $contact = new Contact($this->db);
         $result=$contact->fetch($contactid);
         $this->contact = $contact;
@@ -1454,7 +1454,7 @@ abstract class CommonObject
      */
     function update_price($exclspec=0,$roundingadjust=-1,$nodatabaseupdate=0)
     {
-        include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
         if ($roundingadjust < 0 && isset($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)) $roundingadjust=$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND;
         if ($roundingadjust < 0) $roundingadjust=0;
@@ -2002,7 +2002,7 @@ abstract class CommonObject
         if (! is_array($optionsArray))
         {
             // optionsArray not already loaded, so we load it
-            require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
+            require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
             $extrafields = new ExtraFields($this->db);
             $optionsArray = $extrafields->fetch_name_optionals_label();
         }
@@ -2061,7 +2061,7 @@ abstract class CommonObject
         {
             // Check parameters
             $langs->load('admin');
-            require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
+            require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
             $extrafields = new ExtraFields($this->db);
             $optionsArray = $extrafields->fetch_name_optionals_label($this->elementType);
 
@@ -2380,7 +2380,7 @@ abstract class CommonObject
         // Bypass the default method
         if (! is_object($hookmanager))
         {
-        	include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+        	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
         	$hookmanager=new HookManager($this->db);
         }
         $hookmanager->initHooks(array('commonobject'));
@@ -2432,7 +2432,7 @@ abstract class CommonObject
         		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/'.$tplpath.'/tpl'));
         		foreach($dirtpls as $reldir)
         		{
-        			$res=@include(dol_buildpath($reldir.'/linkedobjectblock.tpl.php'));
+        			$res=@include dol_buildpath($reldir.'/linkedobjectblock.tpl.php');
         			if ($res) break;
         		}
         	}
@@ -2466,7 +2466,7 @@ abstract class CommonObject
 		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
 		foreach($dirtpls as $reldir)
 		{
-		    $res=@include(dol_buildpath($reldir.'/predefinedproductline_create.tpl.php'));
+		    $res=@include dol_buildpath($reldir.'/predefinedproductline_create.tpl.php');
 		    if ($res) break;
 		}
     }
@@ -2492,7 +2492,7 @@ abstract class CommonObject
 		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
 		foreach($dirtpls as $reldir)
 		{
-		    $res=@include(dol_buildpath($reldir.'/freeproductline_create.tpl.php'));
+		    $res=@include dol_buildpath($reldir.'/freeproductline_create.tpl.php');
 		    if ($res) break;
 		}
     }
@@ -2647,7 +2647,7 @@ abstract class CommonObject
         		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
         		foreach($dirtpls as $reldir)
         		{
-        		    $res=@include(dol_buildpath($reldir.'/predefinedproductline_view.tpl.php'));
+        		    $res=@include dol_buildpath($reldir.'/predefinedproductline_view.tpl.php');
         		    if ($res) break;
         		}
 			}
@@ -2658,7 +2658,7 @@ abstract class CommonObject
         		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
         		foreach($dirtpls as $reldir)
         		{
-        		    $res=@include(dol_buildpath($reldir.'/freeproductline_view.tpl.php'));
+        		    $res=@include dol_buildpath($reldir.'/freeproductline_view.tpl.php');
         		    if ($res) break;
         		}
 			}
@@ -2674,7 +2674,7 @@ abstract class CommonObject
         		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
         		foreach($dirtpls as $reldir)
         		{
-        		    $res=@include(dol_buildpath($reldir.'/predefinedproductline_edit.tpl.php'));
+        		    $res=@include dol_buildpath($reldir.'/predefinedproductline_edit.tpl.php');
         		    if ($res) break;
         		}
 			}
@@ -2685,7 +2685,7 @@ abstract class CommonObject
         		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
         		foreach($dirtpls as $reldir)
         		{
-        		    $res=@include(dol_buildpath($reldir.'/freeproductline_edit.tpl.php'));
+        		    $res=@include dol_buildpath($reldir.'/freeproductline_edit.tpl.php');
         		    if ($res) break;
         		}
 			}
@@ -2832,7 +2832,7 @@ abstract class CommonObject
         $dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
         foreach($dirtpls as $reldir)
         {
-            $res=@include(dol_buildpath($reldir.'/originproductline.tpl.php'));
+            $res=@include dol_buildpath($reldir.'/originproductline.tpl.php');
             if ($res) break;
         }
     }
@@ -2841,7 +2841,7 @@ abstract class CommonObject
 
   function getMarginInfos($force_price=false) {
   	global $conf;
-    require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php');
+    require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
     $marginInfos = array(
       'pa_products' => 0,
       'pv_products' => 0,

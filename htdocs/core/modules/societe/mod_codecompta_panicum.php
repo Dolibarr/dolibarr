@@ -22,7 +22,7 @@
  *      \ingroup    societe
  *      \brief      File of class to manage accountancy code of thirdparties with Panicum rules
  */
-require_once(DOL_DOCUMENT_ROOT."/core/modules/societe/modules_societe.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php';
 
 
 /**

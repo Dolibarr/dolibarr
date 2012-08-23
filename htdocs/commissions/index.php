@@ -21,12 +21,12 @@
  *	\brief      Page des commissions par agent commercial
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (! empty($conf->margin->enabled))
-	require_once(DOL_DOCUMENT_ROOT."/margin/lib/margins.lib.php");
+	require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 
 $langs->load("companies");
 $langs->load("bills");

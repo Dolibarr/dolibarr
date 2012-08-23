@@ -24,8 +24,8 @@
  *		\brief      Page to create a new category
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 $langs->load("categories");
 
@@ -215,7 +215,7 @@ if ($user->rights->categorie->creer)
 
 		// Description
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-		require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$doleditor=new DolEditor('description',$description,'',200,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,ROWS_6,50);
 		$doleditor->Create();
 		print '</td></tr>';

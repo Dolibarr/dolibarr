@@ -24,7 +24,7 @@
  *	\brief      Page d'infos des tables de la base
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 
 $langs->load("admin");
 

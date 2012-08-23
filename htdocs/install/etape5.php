@@ -25,10 +25,10 @@
  *       \brief     Last page of upgrade or install process
  */
 
-include_once("./inc.php");
-if (file_exists($conffile)) include_once($conffile);
-require_once($dolibarr_main_document_root . "/core/lib/admin.lib.php");
-require_once($dolibarr_main_document_root . "/core/lib/security.lib.php"); // for dol_hash
+include_once 'inc.php';
+if (file_exists($conffile)) include_once $conffile;
+require_once $dolibarr_main_document_root . '/core/lib/admin.lib.php';
+require_once $dolibarr_main_document_root . '/core/lib/security.lib.php'; // for dol_hash
 
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
@@ -65,7 +65,7 @@ if (! isset($force_install_lockinstall))       $force_install_lockinstall='';
 $useforcedwizard=false;
 $forcedfile="./install.forced.php";
 if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
-if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once($forcedfile); }
+if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once $forcedfile; }
 
 dolibarr_install_syslog("--- etape5: Entering etape5.php page", LOG_INFO);
 
@@ -120,7 +120,7 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
     // If password is encoded, we decode it
     if (preg_match('/crypted:/i',$dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
     {
-        require_once($dolibarr_main_document_root."/core/lib/security.lib.php");
+        require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
         if (preg_match('/crypted:/i',$dolibarr_main_db_pass))
         {
             $dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
@@ -150,7 +150,7 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
         $modName='modUser';
         $file = $modName . ".class.php";
         dolibarr_install_syslog('install/etape5.php Load module user '.DOL_DOCUMENT_ROOT ."/core/modules/".$file, LOG_INFO);
-        include_once(DOL_DOCUMENT_ROOT ."/core/modules/".$file);
+        include_once DOL_DOCUMENT_ROOT ."/core/modules/".$file;
         $objMod = new $modName($db);
         $result=$objMod->init();
         if (! $result) print 'ERROR in activating module file='.$file;
@@ -160,7 +160,7 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
             $conf->setValues($db);
 
             // Create user
-            include_once(DOL_DOCUMENT_ROOT ."/user/class/user.class.php");
+            include_once DOL_DOCUMENT_ROOT .'/user/class/user.class.php';
 
             $createuser=new User($db);
             $createuser->id=0;

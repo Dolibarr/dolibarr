@@ -30,7 +30,7 @@ define('NOTOKENRENEWAL',1); // Disables token renewal
 // a web page that require security controls and
 // is a security hole if anybody can access without
 // being an authenticated user.
-require_once("../../../../main.inc.php");
+require_once '../../../../main.inc.php';
 $uri=preg_replace('/^http(s?):\/\//i','',$dolibarr_main_url_root);
 $pos = strstr($uri, '/');       // $pos contient alors url sans nom domaine
 if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''

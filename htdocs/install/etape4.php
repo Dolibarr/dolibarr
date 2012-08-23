@@ -25,9 +25,9 @@
  */
 
 
-include_once("./inc.php");
-require_once($dolibarr_main_document_root."/core/class/conf.class.php");
-require_once($dolibarr_main_document_root."/core/lib/admin.lib.php");
+include_once 'inc.php';
+require_once $dolibarr_main_document_root.'/core/class/conf.class.php';
+require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
@@ -40,7 +40,7 @@ $langs->load("install");
 $useforcedwizard=false;
 $forcedfile="./install.forced.php";
 if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
-if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once($forcedfile); }
+if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once $forcedfile; }
 
 dolibarr_install_syslog("--- etape4: Entering etape4.php page");
 

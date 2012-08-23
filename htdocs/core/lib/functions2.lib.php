@@ -179,7 +179,7 @@ function dol_print_object_info($object)
     $langs->load("other");
     $langs->load("admin");
 
-    include_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
+    include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
     $deltadateforserver=getServerTimeZoneInt('now');
     $deltadateforclient=((int) $_SESSION['dol_tz'] + (int) $_SESSION['dol_dst']);
@@ -1214,7 +1214,7 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
             // with the constant that contains list of directories to scan (COMPANY_ADDON_PDF_ODT_PATH, ...).
             if (! empty($obj->description))	// List of directories to scan is defined
             {
-                include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+                include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
                 $const=$obj->description;
                 $dirtoscan.=($dirtoscan?',':'').preg_replace('/[\r\n]+/',',',trim($conf->global->$const));

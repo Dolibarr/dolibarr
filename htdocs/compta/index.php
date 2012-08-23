@@ -23,13 +23,13 @@
  *	\brief      Main page of accountancy area
  */
 
-require('../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php');
-if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
-if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php');
-if ($conf->tax->enabled) require_once(DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php');
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+if ($conf->commande->enabled) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if ($conf->commande->enabled) require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+if ($conf->tax->enabled) require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 
 // L'espace compta/treso doit toujours etre actif car c'est un espace partage
 // par de nombreux modules (banque, facture, commande a facturer, etc...) independamment
@@ -500,7 +500,7 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 // Last donations
 if ($conf->don->enabled && $user->rights->societe->lire)
 {
-	include_once(DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php');
+	include_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
 
 	$langs->load("boxes");
     $donationstatic=new Don($db);
@@ -565,7 +565,7 @@ if ($conf->don->enabled && $user->rights->societe->lire)
 // Last trips and expenses
 if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 {
-    include_once(DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php');
+    include_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 
     $langs->load("boxes");
 

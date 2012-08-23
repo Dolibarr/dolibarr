@@ -23,9 +23,9 @@
  *       \brief      Onglet informations personnelles d'un contact
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/contact.lib.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 
 $langs->load("companies");
 $langs->load("other");
@@ -197,7 +197,7 @@ else
     print '<tr>';
     if (! empty($object->birthday))
     {
-        include_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
         print '<td>'.$langs->trans("DateToBirth").'</td><td colspan="3">'.dol_print_date($object->birthday,"day");
 

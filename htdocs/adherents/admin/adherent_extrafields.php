@@ -23,9 +23,9 @@
  *		\brief      Page to setup extra fields of members
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/member.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("members");
 $langs->load("admin");
@@ -52,7 +52,7 @@ if (!$user->admin) accessforbidden();
  * Actions
  */
 
-require(DOL_DOCUMENT_ROOT."/core/admin_extrafields.inc.php");
+require DOL_DOCUMENT_ROOT.'/core/admin_extrafields.inc.php';
 
 
 

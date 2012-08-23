@@ -24,11 +24,11 @@
  */
 
 require ("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
-require_once(DOL_DOCUMENT_ROOT."/projet/class/task.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -239,7 +239,7 @@ if (count($tasksarray)>0)
 	{
 	    //var_dump($_SESSION);
 		print '<div id="tabs" class="ganttcontainer" style="border: 1px solid #ACACAC;">'."\n";
-		include_once(DOL_DOCUMENT_ROOT.'/projet/ganttchart.php');
+		include_once DOL_DOCUMENT_ROOT.'/projet/ganttchart.php';
 		print '</div>'."\n";
 	}
 	else

@@ -24,20 +24,20 @@
  *	\ingroup    ficheinter
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/fichinter/class/fichinter.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/modules/fichinter/modules_fichinter.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/fichinter.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if ($conf->projet->enabled)
 {
-    require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
-    require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 if (! empty($conf->global->FICHEINTER_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.".php"))
 {
-    require_once(DOL_DOCUMENT_ROOT ."/core/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.".php");
+    require_once DOL_DOCUMENT_ROOT ."/core/modules/fichinter/mod_".$conf->global->FICHEINTER_ADDON.'.php';
 }
 
 $langs->load("companies");
@@ -60,7 +60,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('interventioncard'));
 
@@ -210,7 +210,7 @@ else if ($action == 'remove_file')
 {
 	if ($object->fetch($id))
 	{
-		require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$object->fetch_thirdparty();
 
@@ -467,7 +467,7 @@ else if ($action == 'down' && $user->rights->ficheinter->creer)
  */
 if (GETPOST('addfile','alpha'))
 {
-    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     // Set tmp user directory TODO Use a dedicated directory for temp mails files
     $vardir=$conf->user->dir_output."/".$user->id;
@@ -482,7 +482,7 @@ if (GETPOST('addfile','alpha'))
  */
 if (GETPOST('removedfile','alpha'))
 {
-    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     // Set tmp user directory
     $vardir=$conf->user->dir_output."/".$user->id;
@@ -556,7 +556,7 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
                 }
 
                 // Create form object
-                include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
+                include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
                 $formmail = new FormMail($db);
 
                 $attachedfiles=$formmail->get_attached_files();
@@ -565,7 +565,7 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
                 $mimetype = $attachedfiles['mimes'];
 
                 // Envoi de la propal
-                require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
+                require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
                 if ($mailfile->error)
                 {
@@ -589,7 +589,7 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
 						$object->elementtype	= $object->element;
 
                         // Appel des triggers
-                        include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                         $interface=new Interfaces($db);
                         $result=$interface->run_triggers('FICHEINTER_SENTBYMAIL',$object,$user,$langs,$conf);
                         if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -957,20 +957,20 @@ else if ($id > 0 || ! empty($ref))
 
     if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
     {
-    	require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
-    	require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+    	require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+    	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
     	$formcompany= new FormCompany($db);
 
     	$blocname = 'contacts';
     	$title = $langs->trans('ContactsAddresses');
-    	include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
+    	include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
     }
 
 	if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     {
     	$blocname = 'notes';
     	$title = $langs->trans('Notes');
-    	include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
+    	include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
     }
 
     /*
@@ -1073,7 +1073,7 @@ else if ($id > 0 || ! empty($ref))
                 print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 
                 // Editeur wysiwyg
-                require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+                require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
                 $doleditor=new DolEditor('np_desc',$objp->description,'',164,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,70);
                 $doleditor->Create();
                 print '</td>';
@@ -1128,7 +1128,7 @@ else if ($id > 0 || ! empty($ref))
             print '<tr '.$bc[$var].">\n";
             print '<td>';
             // editeur wysiwyg
-            require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+            require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
             $doleditor=new DolEditor('np_desc',GETPOST('np_desc','alpha'),'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,ROWS_2,70);
             $doleditor->Create();
             print '</td>';
@@ -1257,7 +1257,7 @@ else if ($id > 0 || ! empty($ref))
 
     	print '</td><td valign="top" width="50%">';
     	// List of actions on element
-    	include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
+    	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
     	$formactions=new FormActions($db);
     	$somethingshown=$formactions->showactions($object,'fichinter',$socid);
         print "</td><td>";
@@ -1272,7 +1272,7 @@ else if ($id > 0 || ! empty($ref))
     if ($action == 'presend')
     {
         $ref = dol_sanitizeFileName($object->ref);
-        include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
         $fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref);
         $file=$fileparams['fullname'];
 
@@ -1304,7 +1304,7 @@ else if ($id > 0 || ! empty($ref))
         print_titre($langs->trans('SendInterventionByMail'));
 
         // Create form object
-        include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
         $formmail = new FormMail($db);
         $formmail->fromtype = 'user';
         $formmail->fromid   = $user->id;

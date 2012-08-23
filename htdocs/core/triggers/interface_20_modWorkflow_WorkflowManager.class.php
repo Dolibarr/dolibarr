@@ -106,7 +106,7 @@ class InterfaceWorkflowManager
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             if (! empty($conf->commande->enabled) && ! empty($conf->global->WORKFLOW_PROPAL_AUTOCREATE_ORDER))
             {
-                include_once(DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php');
+                include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
                 $newobject = new Commande($this->db);
 
                 $ret=$newobject->createFromProposal($object);
@@ -121,7 +121,7 @@ class InterfaceWorkflowManager
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             if (! empty($conf->facture->enabled) && ! empty($conf->global->WORKFLOW_ORDER_AUTOCREATE_INVOICE))
             {
-                include_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
+                include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
                 $newobject = new Facture($this->db);
 
                 $ret=$newobject->createFromOrder($object);

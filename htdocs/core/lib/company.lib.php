@@ -431,7 +431,7 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
 
             if ($num > 0)
             {
-                require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
+                require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
                 $projectstatic = new Project($db);
 
@@ -620,7 +620,7 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 	global $user;
 	global $bc;
 
-	require_once(DOL_DOCUMENT_ROOT."/societe/class/address.class.php");
+	require_once DOL_DOCUMENT_ROOT.'/societe/class/address.class.php';
 
 	$addressstatic = new Address($db);
 	$num = $addressstatic->fetch_lines($object->id);
@@ -723,7 +723,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 
     if ($conf->agenda->enabled)
     {
-        require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
+        require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
         $actionstatic=new ActionComm($db);
         $userstatic=new User($db);
         $contactstatic = new Contact($db);
@@ -995,10 +995,10 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
 
     if ($conf->agenda->enabled || ($conf->mailing->enabled && ! empty($objcon->email)))
     {
-        require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
-        require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
-        require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
-        require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
+        require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+        require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+        require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+        require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
         $actionstatic=new ActionComm($db);
         $userstatic=new User($db);
         $contactstatic = new Contact($db);

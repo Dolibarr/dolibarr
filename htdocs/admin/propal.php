@@ -28,9 +28,9 @@
  *		\brief      Setup page for commercial proposal module
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
 $langs->load("admin");
 $langs->load("errors");
@@ -89,7 +89,7 @@ if ($action == 'specimen')
 
 	if ($filefound)
 	{
-		require_once($file);
+		require_once $file;
 
 		$module = new $classname($db);
 
@@ -257,7 +257,7 @@ foreach ($dirmodels as $reldir)
 				{
 					$file = substr($file, 0, dol_strlen($file)-4);
 
-					require_once($dir.$file.".php");
+					require_once $dir.$file.'.php';
 
 					$module = new $file;
 
@@ -399,7 +399,7 @@ foreach ($dirmodels as $reldir)
                     		$name = substr($file, 4, dol_strlen($file) -16);
 	                        $classname = substr($file, 0, dol_strlen($file) -12);
 
-	                        require_once($dir.'/'.$file);
+	                        require_once $dir.'/'.$file;
 	                        $module = new $classname($db);
 
 	                        $modulequalified=1;

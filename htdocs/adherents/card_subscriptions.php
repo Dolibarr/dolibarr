@@ -23,14 +23,14 @@
  *       \brief      Onglet d'ajout, edition, suppression des adhesions d'un adherent
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/member.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/class/cotisation.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("companies");
 $langs->load("bills");
@@ -281,7 +281,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
             // Insert into bank account directlty (if option choosed for) + link to llx_cotisation if option is 'bankdirect'
             if ($option == 'bankdirect' && $accountid)
             {
-                require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
+                require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
                 $acct=new Account($db);
                 $result=$acct->fetch($accountid);
@@ -322,8 +322,8 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
             // If option choosed, we create invoice
             if (($option == 'bankviainvoice' && $accountid) || $option == 'invoiceonly')
             {
-                require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
-                require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/paymentterm.class.php");
+                require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+                require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/paymentterm.class.php';
 
                 $invoice=new Facture($db);
                 $customer=new Societe($db);
@@ -374,9 +374,9 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                 // Add payment onto invoice
                 if ($option == 'bankviainvoice' && $accountid)
                 {
-                    require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
-                    require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
-                    require_once(DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php');
+                    require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+                    require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+                    require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
                     // Creation de la ligne paiement
                     $amounts[$invoice->id] = price2num($cotisation);
@@ -722,7 +722,7 @@ if ($rowid)
         // Link for paypal payment
         if ($conf->paypal->enabled)
         {
-            include_once(DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php');
+            include_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
             print showPaypalPaymentUrl('membersubscription',$object->ref);
         }
 

@@ -22,7 +22,7 @@
  *		\brief      Page to show all Dolibarr setup (config file and database constants)
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 
 $langs->load("admin");
 $langs->load("user");

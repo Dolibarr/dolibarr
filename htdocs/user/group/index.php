@@ -24,7 +24,7 @@
  *      \brief      Page of user groups
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 
 if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {

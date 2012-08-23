@@ -21,8 +21,8 @@
  *		\brief      Page to purge files (temporary or not)
  */
 
-require("../../main.inc.php");
-include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+require '../../main.inc.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("admin");
 
@@ -97,7 +97,7 @@ if ($action=='purge' && ! preg_match('/^confirm/i',$choice) && ($choice != 'allf
 		// Update cachenbofdoc
 		if (! empty($conf->ecm->enabled) && $choice=='allfiles')
 		{
-			require_once(DOL_DOCUMENT_ROOT."/ecm/class/ecmdirectory.class.php");
+			require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 			$ecmdirstatic = new EcmDirectory($db);
 			$result = $ecmdirstatic->refreshcachenboffile(1);
 		}

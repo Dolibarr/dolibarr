@@ -437,7 +437,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 
 
 	// Show personalized menus
-	require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
+	require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 
     $tabMenu=array();
 	$menuArbo = new Menubase($db,'eldy','top');
@@ -1357,7 +1357,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
         }
 
         // Add personalized menus and modules menus
-        require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 
         $tabMenu=array();
         $menuArbo = new Menubase($db,'eldy','left');

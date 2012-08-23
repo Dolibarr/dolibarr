@@ -23,8 +23,8 @@
  *  \brief      Page accueil des produits et services
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 $type=isset($_GET["type"])?$_GET["type"]:(isset($_POST["type"])?$_POST["type"]:'');
 if ($type =='' && !$user->rights->produit->lire) $type='1';	// Force global page on service page only

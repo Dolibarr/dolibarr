@@ -25,8 +25,8 @@
 
 // Set and init common variables
 // This include will set: config file variable $dolibarr_xxx, $conf, $langs and $mysoc objects
-require_once("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
+require_once '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 $langs->load("admin");
 $langs->load("cashdesk");
@@ -146,7 +146,7 @@ else
 </div>
 </div>
 
-<?php include('affPied.php'); ?></div>
+<?php include 'affPied.php'; ?></div>
 </div>
 </div>
 </body>

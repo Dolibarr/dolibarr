@@ -22,7 +22,7 @@
  *      \brief      This file is a CRUD class file for Task (Create/Read/Update/Delete)
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
 /**
@@ -128,7 +128,7 @@ class Task extends CommonObject
             if (! $notrigger)
             {
                 // Call triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('TASK_CREATE',$this,$user,$langs,$conf);
                 if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -269,7 +269,7 @@ class Task extends CommonObject
             if (! $notrigger)
             {
                 // Call triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('TASK_MODIFY',$this,$user,$langs,$conf);
                 if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -348,7 +348,7 @@ class Task extends CommonObject
             if (! $notrigger)
             {
                 // Call triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('TASK_DELETE',$this,$user,$langs,$conf);
                 if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -379,7 +379,7 @@ class Task extends CommonObject
 	            dol_syslog(get_class($this)."::delete dir=".$dir, LOG_DEBUG);
 	            if (file_exists($dir))
 	            {
-	            	require_once(DOL_DOCUMENT_ROOT . "/core/lib/files.lib.php");
+	            	require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 	                $res = @dol_delete_dir_recursive($dir);
 	                if (!$res)
 	                {
@@ -720,7 +720,7 @@ class Task extends CommonObject
             if (! $notrigger)
             {
                 // Call triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('TASK_TIMESPENT_CREATE',$this,$user,$langs,$conf);
                 if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -830,7 +830,7 @@ class Task extends CommonObject
             if (! $notrigger)
             {
                 // Call triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('TASK_TIMESPENT_MODIFY',$this,$user,$langs,$conf);
                 if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -892,7 +892,7 @@ class Task extends CommonObject
             if (! $notrigger)
             {
                 // Call triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('TASK_TIMESPENT_DELETE',$this,$user,$langs,$conf);
                 if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1057,7 +1057,7 @@ class Task extends CommonObject
 			//Duplicate file
 			if ($clone_file)
 			{
-				require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 				//retreive project origin ref to know folder to copy
 				$projectstatic=new Project($this->db);

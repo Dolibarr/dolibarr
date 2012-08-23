@@ -25,7 +25,7 @@
  * \brief      File that contains the numbering module rules Saphir
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/core/modules/propale/modules_propale.php");
+require_once DOL_DOCUMENT_ROOT .'/core/modules/propale/modules_propale.php';
 
 
 /**
@@ -111,7 +111,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 	{
 		global $db,$conf;
 
-		require_once(DOL_DOCUMENT_ROOT ."/core/lib/functions2.lib.php");
+		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
 		// On defini critere recherche compteur
 		$mask=$conf->global->PROPALE_SAPHIR_MASK;

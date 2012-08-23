@@ -27,7 +27,7 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
-include("../../main.inc.php");
+include '../../main.inc.php';
 
 $id = GETPOST('id','int');
 $element = GETPOST('element','alpha');

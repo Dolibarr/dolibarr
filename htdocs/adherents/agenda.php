@@ -26,11 +26,11 @@
  *  \brief      Page of members events
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/member.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
 $langs->load("companies");
 $langs->load("members");
@@ -72,8 +72,8 @@ $form = new Form($db);
  */
 if ($id)
 {
-	require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
-	require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 	$langs->load("companies");
 

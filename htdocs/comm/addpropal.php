@@ -25,12 +25,12 @@
  *	\brief      Page to add a new commercial proposal
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php');
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php';
 if (! empty($conf->projet->enabled)) {
-	require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
-	require_once(DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php');
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 }
 
 $langs->load("propal");
@@ -46,7 +46,7 @@ $origin=GETPOST('origin','alpha');
 $originid=GETPOST('originid','int');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('propalcard'));
 
@@ -87,7 +87,7 @@ if ($action == 'create')
 	{
 		if (! empty($conf->global->PROPALE_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php"))
 		{
-			require_once(DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php");
+			require_once DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.'.php';
 			$modPropale = new $obj;
 			$numpr = $modPropale->getNextValue($soc,$object);
 		}

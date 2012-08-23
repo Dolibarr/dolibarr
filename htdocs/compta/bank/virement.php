@@ -24,8 +24,8 @@
  *		\brief      Page de saisie d'un virement
  */
 
-require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/bank.lib.php");
+require 'pre.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
 $langs->load("banks");
 
@@ -69,7 +69,7 @@ if ($action == 'add')
 	}
 	if (! $error)
 	{
-		require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
+		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 		$accountfrom=new Account($db);
 		$accountfrom->fetch(GETPOST('account_from','int'));

@@ -22,7 +22,7 @@
  *	\ingroup    facture
  *	\brief      File containing class for numbering module Terre
  */
-require_once(DOL_DOCUMENT_ROOT ."/core/modules/facture/modules_facture.php");
+require_once DOL_DOCUMENT_ROOT .'/core/modules/facture/modules_facture.php';
 
 /**	    \class      mod_facture_terre
  *		\brief      Classe du modele de numerotation de reference de facture Terre

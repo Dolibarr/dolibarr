@@ -93,7 +93,7 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
   $marque_tx_ret='';
 
   if($fk_pa > 0) {
-  	require_once DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.product.class.php";
+  	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
   	$product = new ProductFournisseur($db);
   	if ($product->fetch_product_fournisseur_price($fk_pa)) {
   		$paht_ret = $product->fourn_unitprice;
@@ -106,7 +106,7 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
   else
   	$paht_ret	= $paht;
 
-  require_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
+  require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
   // calcul pu_ht remisés
   $tabprice=calcul_price_total(1, $pvht, $remise_percent, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 'HT');
   $pu_ht_remise = $tabprice[0];

@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2011 Regis Houssin  <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,7 @@
  *	\ingroup    expedition
  */
 
-include_once "methode_expedition.modules.php";
+include_once 'methode_expedition.modules.php';
 
 
 /**

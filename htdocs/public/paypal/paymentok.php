@@ -36,10 +36,10 @@ if (is_int($entity))
 	define("DOLENTITY", $entity);
 }
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypalfunctions.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 // Security check
 if (empty($conf->paypal->enabled)) accessforbidden('',1,1,1);
@@ -154,7 +154,7 @@ if ($PAYPALTOKEN)
             if (! empty($conf->global->PAYPAL_MESSAGE_OK)) print $conf->global->PAYPAL_MESSAGE_OK;
 
             // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($db);
             $result=$interface->run_triggers('PAYPAL_PAYMENT_OK',$object,$user,$langs,$conf);
             if ($result < 0) { $error++; $errors=$interface->errors; }

@@ -23,7 +23,7 @@
  *   \brief      Page accueil ventilation
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 
 $langs->load("compta");
 $langs->load("bills");

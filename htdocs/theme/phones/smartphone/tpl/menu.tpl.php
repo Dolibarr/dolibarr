@@ -20,7 +20,7 @@ top_httphead();
 <!DOCTYPE html>
 <html>
 <?php 
-require('header.tpl.php');
+require 'header.tpl.php';
 ?>
 <body>
 <script type="text/javascript">

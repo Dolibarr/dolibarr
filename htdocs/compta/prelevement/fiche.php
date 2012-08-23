@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012 Juanjo Menent 		<jmenent@2byte.es>
@@ -23,9 +23,9 @@
  *	\brief      Fiche prelevement
  */
 
-require("../bank/pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/prelevement.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bonprelevement.class.php");
+require '../bank/pre.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 
 if (!$user->rights->prelevement->bons->lire)
 accessforbidden();
@@ -58,7 +58,7 @@ if ( $action == 'confirm_credite' && GETPOST('confirm','alpha') == 'yes')
 
 if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
 {
-	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$bon = new BonPrelevement($db,"");
 	$bon->fetch($id);

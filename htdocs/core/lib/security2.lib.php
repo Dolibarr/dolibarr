@@ -84,7 +84,7 @@ function checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmod
     		    }
 
     		    $result=false;
-    		    if ($fullauthfile) $result=include_once($fullauthfile);
+    		    if ($fullauthfile) $result=include_once $fullauthfile;
     			if ($fullauthfile && $result)
     			{
     				// Call function to check user/password
@@ -133,7 +133,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	// Instantiate hooks of thirdparty module only if not already define
 	if (! is_object($hookmanager))
 	{
-		include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+		include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 		$hookmanager=new HookManager($db);
 	}
 	$hookmanager->initHooks(array('mainloginpage'));
@@ -282,7 +282,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if (! empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
 
 
-	include($template_dir.'login.tpl.php');	// To use native PHP
+	include $template_dir.'login.tpl.php';	// To use native PHP
 
 
 	$_SESSION["dol_loginmesg"] = '';
@@ -437,7 +437,7 @@ function getRandomPassword($generic=false)
 		$nomclass="modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
 		$nomfichier=$nomclass.".class.php";
 		//print DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomclass;
-		require_once(DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomfichier);
+		require_once DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomfichier;
 		$genhandler=new $nomclass($db,$conf,$langs,$user);
 		$generated_password=$genhandler->getNewGeneratedPassword();
 		unset($genhandler);

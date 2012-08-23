@@ -24,9 +24,9 @@
  *  \brief      Page fiche commande OSCommerce
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php');
-include_once(DOL_DOCUMENT_ROOT.'/boutique/commande/class/boutiquecommande.class.php');
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php';
+include_once DOL_DOCUMENT_ROOT.'/boutique/commande/class/boutiquecommande.class.php';
 
 $langs->load("products");
 

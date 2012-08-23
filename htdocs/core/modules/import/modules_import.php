@@ -22,7 +22,7 @@
  *	\ingroup    export
  *	\brief      File of parent class for import file readers
  */
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 
 /**
@@ -88,7 +88,7 @@ class ModeleImports
     				$file = $dir."/import_".$moduleid.".modules.php";
     				$classname = "Import".ucfirst($moduleid);
 
-    				require_once($file);
+    				require_once $file;
     				$module = new $classname($db,'');
 
     				// Picto

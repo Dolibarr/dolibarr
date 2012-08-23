@@ -75,7 +75,7 @@ class Export
         $i=0;
 
         // Define list of modules directories into modulesdir
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
         $modulesdir = dolGetModulesDirs();
 
@@ -103,7 +103,7 @@ class Export
 							// Chargement de la classe
 							$file = $dir.$modulename.".class.php";
 							$classname = $modulename;
-							require_once($file);
+							require_once $file;
 							$module = new $classname($this->db);
 
 							if (is_array($module->export_code))
@@ -250,7 +250,7 @@ class Export
 		$dir = DOL_DOCUMENT_ROOT . "/core/modules/export/";
 		$file = "export_".$model.".modules.php";
 		$classname = "Export".$model;
-		require_once($dir.$file);
+		require_once $dir.$file;
 		$objmodel = new $classname($this->db);
 
 		if ($sqlquery) $sql = $sqlquery;
@@ -439,7 +439,7 @@ class Export
 				// want this action call a trigger.
 
 				//// Call triggers
-				//include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				//$interface=new Interfaces($this->db);
 				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
 				//if ($result < 0) { $error++; $this->errors=$interface->errors; }

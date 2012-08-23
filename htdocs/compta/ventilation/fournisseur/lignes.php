@@ -22,7 +22,7 @@
  *   \brief      Page de detail des lignes de ventilation d'une facture
  */
 
-require('../../../main.inc.php');
+require '../../../main.inc.php';
 
 $langs->load("bills");
 

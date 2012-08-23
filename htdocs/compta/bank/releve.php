@@ -23,8 +23,8 @@
  *		\brief      Page d'affichage d'un releve
  */
 
-require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/bank.lib.php");
+require 'pre.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
 $action=GETPOST('action');
 

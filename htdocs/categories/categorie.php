@@ -26,8 +26,8 @@
  *  \brief      Page to show category tab
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 $langs->load("categories");
 $langs->load("products");
@@ -94,7 +94,7 @@ if ($removecat > 0)
 {
 	if ($type==0 && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
-		require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$object = new Product($db);
 		$result = $object->fetch($id, $ref);
 		$elementtype = 'product';
@@ -111,7 +111,7 @@ if ($removecat > 0)
 	}
 	if ($type == 3 && $user->rights->adherent->creer)
 	{
-		require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		$object = new Adherent($db);
 		$result = $object->fetch($objectid);
 	}
@@ -126,7 +126,7 @@ if ($catMere > 0)
 {
 	if ($type==0 && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
-		require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$object = new Product($db);
 		$result = $object->fetch($id, $ref);
 		$elementtype = 'product';
@@ -145,7 +145,7 @@ if ($catMere > 0)
 	}
 	if ($type==3 && $user->rights->adherent->creer)
 	{
-		require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		$object = new Adherent($db);
 		$result = $object->fetch($objectid);
 		$elementtype = 'member';
@@ -178,8 +178,8 @@ $form = new Form($db);
  */
 if ($socid)
 {
-	require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
-	require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 	$langs->load("companies");
 	if ($conf->notification->enabled) $langs->load("mails");
@@ -287,8 +287,8 @@ else if ($id || $ref)
 		/*
 		 * Fiche categorie de produit
 		 */
-		require_once(DOL_DOCUMENT_ROOT."/core/lib/product.lib.php");
-		require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 		// Produit
 		$product = new Product($db);
@@ -342,9 +342,9 @@ else if ($id || $ref)
 		/*
 		 * Fiche categorie d'adherent
 		 */
-		require_once(DOL_DOCUMENT_ROOT."/core/lib/member.lib.php");
-		require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
-		require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php");
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
 		// Produit
 		$member = new Adherent($db);

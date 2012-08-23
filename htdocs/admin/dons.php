@@ -21,9 +21,9 @@
  *		\ingroup    dons
  *		\brief      Page d'administration/configuration du module Dons
  */
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/dons/class/don.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
 
 $langs->load("admin");
 $langs->load("donations");
@@ -53,7 +53,7 @@ if ($action == 'specimen')
     if (file_exists($dir.$file))
     {
         $classname = $modele;
-        require_once($dir.$file);
+        require_once $dir.$file;
 
         $obj = new $classname($db);
 
@@ -200,7 +200,7 @@ if (is_resource($handle))
             $name = substr($file, 0, dol_strlen($file) -12);
             $classname = substr($file, 0, dol_strlen($file) -12);
 
-            require_once($dir.'/'.$file);
+            require_once $dir.'/'.$file;
             $module=new $classname($db);
 
             // Show modules according to features level

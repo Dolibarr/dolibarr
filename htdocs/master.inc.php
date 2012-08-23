@@ -31,14 +31,14 @@
  * 				This script reads the conf file, init $lang, $db and and empty $user
  */
 
-require_once("filefunc.inc.php");	// May have been already require by main.inc.php. But may not by scripts.
+require_once 'filefunc.inc.php';	// May have been already require by main.inc.php. But may not by scripts.
 
 
 /*
  * Create $conf object
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/conf.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
 
 $conf = new Conf();
 // Identifiant propres au serveur base de donnee
@@ -78,9 +78,9 @@ if (defined('TEST_DB_FORCE_TYPE')) $conf->db->type=constant('TEST_DB_FORCE_TYPE'
 $conf->multicompany->transverse_mode = empty($multicompany_transverse_mode)?'':$multicompany_transverse_mode;
 
 // Chargement des includes principaux de librairies communes
-if (! defined('NOREQUIREUSER')) require_once(DOL_DOCUMENT_ROOT ."/user/class/user.class.php");		// Need 500ko memory
-if (! defined('NOREQUIRETRAN')) require_once(DOL_DOCUMENT_ROOT ."/core/class/translate.class.php");
-if (! defined('NOREQUIRESOC'))  require_once(DOL_DOCUMENT_ROOT ."/societe/class/societe.class.php");
+if (! defined('NOREQUIREUSER')) require_once DOL_DOCUMENT_ROOT .'/user/class/user.class.php';		// Need 500ko memory
+if (! defined('NOREQUIRETRAN')) require_once DOL_DOCUMENT_ROOT .'/core/class/translate.class.php';
+if (! defined('NOREQUIRESOC'))  require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
 
 /*
  * Creation objet $langs (must be before all other code)
@@ -185,7 +185,7 @@ if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
  */
 if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
 {
-	require_once(DOL_DOCUMENT_ROOT ."/societe/class/societe.class.php");
+	require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
 	$mysoc=new Societe($db);
 
 	$mysoc->id=0;
@@ -214,7 +214,7 @@ if (! defined('NOREQUIREDB') && ! defined('NOREQUIRESOC'))
         else                    // For backward compatibility
         {
             dol_syslog("Your country setup use an old syntax. Reedit it using setup area.", LOG_WARNING);
-            include_once(DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php');
+            include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
             $country_code=getCountry($country_id,2,$db);  // This need a SQL request, but it's the old feature
             $country_label=getCountry($country_id,0,$db);  // This need a SQL request, but it's the old feature
         }

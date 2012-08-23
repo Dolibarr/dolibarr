@@ -21,7 +21,7 @@
  */
 
 
-require("../main.inc.php");
+require '../main.inc.php';
 
 
 $sortfield = GETPOST("sortfield",'alpha');

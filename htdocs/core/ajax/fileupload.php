@@ -33,8 +33,8 @@ if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't nee
 //if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is public (can be called outside logged session)
 
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/fileupload.class.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/fileupload.class.php';
 
 error_reporting(E_ALL | E_STRICT);
 

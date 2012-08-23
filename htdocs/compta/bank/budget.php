@@ -23,7 +23,7 @@
  *		\brief      Page de budget
  */
 
-require("./pre.inc.php");
+require 'pre.inc.php';
 
 $langs->load("categories");
 

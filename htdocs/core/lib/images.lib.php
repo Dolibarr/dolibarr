@@ -97,7 +97,7 @@ function dol_getImageSize($file)
  */
 function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x=0, $src_y=0)
 {
-	require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 	global $conf,$langs;
 
@@ -301,7 +301,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x=0, $s
  */
 function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $quality=50, $outdir='thumbs', $targetformat=0)
 {
-	require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 	global $conf,$langs;
 

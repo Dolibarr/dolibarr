@@ -23,7 +23,7 @@
  * \brief      Module de generation de l'affichage de la box propales
  */
 
-include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
+include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
@@ -66,7 +66,7 @@ class box_propales extends ModeleBoxes
 
     	$this->max=$max;
 
-    	include_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
+    	include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
       $propalstatic=new Propal($db);
 
       $this->info_box_head = array('text' => $langs->trans("BoxTitleLastPropals",$max));

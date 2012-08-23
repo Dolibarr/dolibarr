@@ -25,12 +25,12 @@
  *       \brief      Card of a contact
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/contact.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $langs->load("companies");
 $langs->load("users");
@@ -54,7 +54,7 @@ $objcanvas=null;
 $canvas = (! empty($object->canvas)?$object->canvas:GETPOST("canvas"));
 if (! empty($canvas))
 {
-    require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
     $objcanvas = new Canvas($db, $action);
     $objcanvas->getCanvas('contact', 'contactcard', $canvas);
 }
@@ -63,7 +63,7 @@ if (! empty($canvas))
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', '', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('contactcard'));
 
@@ -706,13 +706,13 @@ else
         if ($action == 'create_user')
         {
             // Full firstname and name separated with a dot : firstname.name
-            include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
+            include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
             $login=dol_buildlogin($object->nom,$object->prenom);
 
             $generated_password='';
             if (! $ldap_sid) // TODO ldap_sid ?
             {
-                require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
+                require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
                 $generated_password=getRandomPassword('');
             }
             $password=$generated_password;

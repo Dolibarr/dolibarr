@@ -35,7 +35,7 @@ function printBookmarksList($aDb, $aLangs)
 	$db = $aDb;
 	$langs = $aLangs;
 
-	require_once(DOL_DOCUMENT_ROOT."/bookmarks/class/bookmark.class.php");
+	require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 	if (! isset($conf->global->BOOKMARKS_SHOW_IN_MENU)) $conf->global->BOOKMARKS_SHOW_IN_MENU=5;
 
 	$bookm = new Bookmark($db);
