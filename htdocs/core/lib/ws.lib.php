@@ -48,7 +48,7 @@ function check_authentication($authentication,&$error,&$errorcode,&$errorlabel)
     if (! $error && ! empty($authentication['entity']) && ! is_numeric($authentication['entity']))
     {
         $error++;
-        $errorcode='BAD_PARAMETERS'; $errorlabel="Parameter entity must be empty (or filled with numeric id of instance if multicompany module is used).";
+        $errorcode='BAD_PARAMETERS'; $errorlabel="The entity parameter must be empty (or filled with numeric id of instance if multicompany module is used).";
     }
 
     if (! $error)
@@ -57,7 +57,7 @@ function check_authentication($authentication,&$error,&$errorcode,&$errorlabel)
         if ($result < 0)
         {
             $error++;
-            $errorcode='ERROR_FETCH_USER'; $errorlabel='A technical error occurs during fetch of user';
+            $errorcode='ERROR_FETCH_USER'; $errorlabel='A technical error occurred during fetch of user';
         }
         else if ($result == 0)
         {
