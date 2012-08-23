@@ -223,7 +223,7 @@ class MouvementStock
 		if ($movestock && ! $error)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
 
 			$this->product_id = $fk_product;

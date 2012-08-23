@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -23,7 +23,7 @@
  *
  *  To include file, do this:
  *              $color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/graph-color.php';
- *              if (is_readable($color_file)) include_once($color_file);
+ *              if (is_readable($color_file)) include_once $color_file;
  */
 
 global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;

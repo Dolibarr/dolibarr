@@ -27,7 +27,7 @@
  *  \ingroup    expedition
  *  \brief      File of class to manage expedition numbering
  */
- require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
+ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 /**
  *	Parent class of sending receipts models
@@ -51,7 +51,7 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
 		$type='shipping';
 		$liste=array();
 
-		include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$liste=getListOfModels($db,$type,$maxfilenamelength);
 
 		return $liste;
@@ -204,7 +204,7 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 	// Charge le modele
 	if ($filefound)
 	{
-	    require_once($file);
+	    require_once $file;
 
 		$obj = new $classname($db);
 
@@ -218,11 +218,11 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 			$outputlangs->charset_output=$sav_charset_output;
 
 			// we delete preview files
-        	//require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        	//require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			//dol_delete_preview($object);
 
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('SHIPPING_BUILDDOC',$object,$user,$langs,$conf);
 			if ($result < 0) {

@@ -24,7 +24,7 @@
  *	\ingroup    banque
  *	\brief      File of class to manage bank accounts
  */
-require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 
 /**
@@ -549,7 +549,7 @@ class Account extends CommonObject
         $this->country_id = ($this->country_id?$this->country_id:$this->fk_pays);
 
         // Chargement librairie pour acces fonction controle RIB
-        require_once(DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php');
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
         dol_syslog(get_class($this)."::update_bban $this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban");
 
@@ -962,7 +962,7 @@ class Account extends CommonObject
         // If this class is linked to a third party
         if (! empty($this->socid))
         {
-            require_once(DOL_DOCUMENT_ROOT ."/societe/class/societe.class.php");
+            require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
             $company=new Societe($this->db);
             $result=$company->fetch($this->socid);
             if (! empty($company->country_code)) return $company->country_code;

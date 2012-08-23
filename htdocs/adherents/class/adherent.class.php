@@ -26,10 +26,10 @@
  *	\brief      File of class to manage members of a foundation
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/class/cotisation.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 /**
@@ -162,7 +162,7 @@ class Adherent extends CommonObject
         $from=$conf->email_from;
         if ($conf->global->ADHERENT_MAIL_FROM) $from=$conf->global->ADHERENT_MAIL_FROM;
 
-        include_once(DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
+        include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
         $mailfile = new CMailFile($subjecttosend, $this->email, $from, $texttosend, $filename_list, $mimetype_list, $mimefilename_list, $addr_cc, $addr_bcc, $deliveryreceipt, $msgishtml);
         if ($mailfile->sendfile())
         {
@@ -345,7 +345,7 @@ class Adherent extends CommonObject
                 if (! $notrigger)
                 {
                     // Appel des triggers
-                    include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('MEMBER_CREATE',$this,$user,$langs,$conf);
                     if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -462,7 +462,7 @@ class Adherent extends CommonObject
 		    $nbrowsaffected+=$this->db->affected_rows($resql);
 
             // Actions on extra fields (by external module)
-            include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+            include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
             $hookmanager=new HookManager($this->db);
             $hookmanager->initHooks(array('memberdao'));
             $parameters=array('id'=>$this->id);
@@ -513,7 +513,7 @@ class Adherent extends CommonObject
                 // Update information on linked user if it is an update
                 if ($this->user_id > 0 && ! $nosyncuser)
                 {
-                    require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
+                    require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
                     dol_syslog(get_class($this)."::update update linked user");
 
@@ -557,7 +557,7 @@ class Adherent extends CommonObject
                 // Update information on linked thirdparty if it is an update
                 if ($this->fk_soc > 0 && ! $nosyncthirdparty)
                 {
-                    require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+                    require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
                     dol_syslog(get_class($this)."::update update linked thirdparty");
 
@@ -596,7 +596,7 @@ class Adherent extends CommonObject
                 if (! $error && ! $notrigger)
                 {
                     // Appel des triggers
-                    include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('MEMBER_MODIFY',$this,$user,$langs,$conf);
                     if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -729,7 +729,7 @@ class Adherent extends CommonObject
             			if ($this->db->affected_rows($resql))
             			{
             				// Appel des triggers
-            				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             				$interface=new Interfaces($this->db);
             				$result=$interface->run_triggers('MEMBER_DELETE',$this,$user,$langs,$conf);
             				if ($result < 0) {
@@ -792,7 +792,7 @@ class Adherent extends CommonObject
         // If new password not provided, we generate one
         if (! $password)
         {
-            require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
             $password=getRandomPassword('');
         }
 
@@ -825,7 +825,7 @@ class Adherent extends CommonObject
 
                 if ($this->user_id && ! $nosyncuser)
                 {
-                    require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
+                    require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
                     // This member is linked with a user, so we also update users informations
                     // if this is an update.
@@ -852,7 +852,7 @@ class Adherent extends CommonObject
                 if (! $error && ! $notrigger)
                 {
                     // Appel des triggers
-                    include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('MEMBER_NEW_PASSWORD',$this,$user,$langs,$conf);
                     if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1227,7 +1227,7 @@ class Adherent extends CommonObject
                 $this->last_subscription_date_end=$datefin;
 
                 // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('MEMBER_SUBSCRIPTION',$this,$user,$langs,$conf);
                 if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1288,7 +1288,7 @@ class Adherent extends CommonObject
             $this->statut=1;
 
             // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('MEMBER_VALIDATE',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1338,7 +1338,7 @@ class Adherent extends CommonObject
             $this->statut=0;
 
             // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('MEMBER_RESILIATE',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1366,7 +1366,7 @@ class Adherent extends CommonObject
     {
         global $conf;
 
-        include_once(DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php');
+        include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
         $mailmanspip=new MailmanSpip($db);
 
         $err=0;
@@ -1412,7 +1412,7 @@ class Adherent extends CommonObject
     {
         global $conf;
 
-        include_once(DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php');
+        include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
         $mailmanspip=new MailmanSpip($db);
 
         $err=0;
@@ -1510,7 +1510,7 @@ class Adherent extends CommonObject
         $ret='';
         if ($withcountry && $this->country_id && (empty($this->country_code) || empty($this->country)))
         {
-            require_once(DOL_DOCUMENT_ROOT ."/core/lib/company.lib.php");
+            require_once DOL_DOCUMENT_ROOT .'/core/lib/company.lib.php';
             $tmparray=getCountry($this->country_id,'all');
             $this->country_code=$tmparray['code'];
             $this->country     =$tmparray['label'];

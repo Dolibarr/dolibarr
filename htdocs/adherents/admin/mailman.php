@@ -27,9 +27,9 @@
  *		\brief      Page to setup the module MailmanSpip (Mailman)
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/mailmanspip.lib.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/mailmanspip.lib.php';
 
 $langs->load("admin");
 $langs->load("members");
@@ -99,7 +99,7 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && ! empty($con
     }
     else
     {
-        include_once(DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php');
+        include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
         $mailmanspip=new MailmanSpip($db);
 
         $object=new stdClass();

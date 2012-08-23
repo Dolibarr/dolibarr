@@ -29,7 +29,7 @@ if (! defined('NOREQUIRETRAN'))   define('NOREQUIRETRAN',1);
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC',1);
 if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
 
-require_once("../main.inc.php");
+require_once '../main.inc.php';
 
 
 /*

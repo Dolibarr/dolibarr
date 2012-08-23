@@ -23,7 +23,7 @@
  *		\brief      Fichier contenant la classe du modele de numerotation de reference de commande fournisseur Muguet
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/core/modules/supplier_order/modules_commandefournisseur.php");
+require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_order/modules_commandefournisseur.php';
 
 
 /**

@@ -25,12 +25,12 @@
  *	\brief      Page for supplier third party card (view, edit)
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php");
-require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
-if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+if ($conf->adherent->enabled) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 $langs->load('suppliers');
 $langs->load('products');

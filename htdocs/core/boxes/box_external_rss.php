@@ -24,8 +24,8 @@
  *      \brief      Fichier de gestion d'une box pour le module external_rss
  */
 
-include_once(DOL_DOCUMENT_ROOT."/core/class/rssparser.class.php");
-include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
+include_once DOL_DOCUMENT_ROOT.'/core/class/rssparser.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**

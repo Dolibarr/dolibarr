@@ -23,7 +23,7 @@
  *   \brief      Page with system information of database
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 
 $langs->load("admin");
 

@@ -25,7 +25,7 @@
  *	\ingroup    societe
  *	\brief      File of contacts class
  */
-require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 
 /**
@@ -168,7 +168,7 @@ class Contact extends CommonObject
             if (! $error)
             {
     			// Appel des triggers
-    			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+    			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     			$interface=new Interfaces($this->db);
     			$result=$interface->run_triggers('CONTACT_CREATE',$this,$user,$langs,$conf);
     			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -264,7 +264,7 @@ class Contact extends CommonObject
 			if (! $error && ! $notrigger)
 			{
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('CONTACT_MODIFY',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -725,7 +725,7 @@ class Contact extends CommonObject
 		if (! $error && ! $notrigger)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('CONTACT_DELETE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -868,7 +868,7 @@ class Contact extends CommonObject
         $ret='';
         if ($withcountry && $this->country_id && (empty($this->country_code) || empty($this->country)))
         {
-            require_once(DOL_DOCUMENT_ROOT ."/core/lib/company.lib.php");
+            require_once DOL_DOCUMENT_ROOT .'/core/lib/company.lib.php';
             $tmparray=getCountry($this->country_id,'all');
             $this->country_code=$tmparray['code'];
             $this->country     =$tmparray['label'];

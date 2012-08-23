@@ -21,7 +21,7 @@ if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 
-require_once("../main.inc.php");
+require_once '../main.inc.php';
 
 // This destroy tag that say "Point of Sale session is on".
 unset($_SESSION['uid']);

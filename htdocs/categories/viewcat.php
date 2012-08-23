@@ -24,9 +24,9 @@
  *       \brief      Page to show a category card
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/categories.lib.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 
 $langs->load("categories");
 
@@ -315,7 +315,7 @@ if($object->type == 2)
 // List of members
 if ($object->type == 3)
 {
-	require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
+	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 	$prods = $object->get_type("member","Adherent","","adherent");
 	if ($prods < 0)

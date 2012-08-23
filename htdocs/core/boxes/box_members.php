@@ -23,7 +23,7 @@
  *	\brief      Module de generation de l'affichage de la box clients
  */
 
-include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
+include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
@@ -66,7 +66,7 @@ class box_members extends ModeleBoxes
 
 		$this->max=$max;
 
-        include_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
+        include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
         $memberstatic=new Adherent($db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedMembers",$max));

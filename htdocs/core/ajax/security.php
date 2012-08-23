@@ -27,7 +27,7 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 
 /*
  * View
@@ -47,7 +47,7 @@ if (isset($_GET['action']) && ! empty($_GET['action']))
 {
 	if ($_GET['action'] == 'getrandompassword' && $user->admin)
 	{
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 	    $generic = $_GET['generic'];
 		echo getRandomPassword($generic);
 	}

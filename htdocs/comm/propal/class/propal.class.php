@@ -29,10 +29,10 @@
  *	\brief      Fichier de la classe des propales
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/product/class/product.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/contact/class/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/margin/lib/margins.lib.php");
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT .'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT .'/margin/lib/margins.lib.php';
 
 /**
  *	\class      Propal
@@ -214,8 +214,8 @@ class Propal extends CommonObject
     {
         global $langs;
 
-        include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
-        include_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+        include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
         $this->db->begin();
 
@@ -314,7 +314,7 @@ class Propal extends CommonObject
         global $conf;
 
         dol_syslog("Propal::Addline propalid=$propalid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type");
-        include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
         // Clean parameters
         if (empty($remise_percent)) $remise_percent=0;
@@ -467,7 +467,7 @@ class Propal extends CommonObject
         global $conf,$user,$langs;
 
         dol_syslog(get_class($this)."::updateLine $rowid, $pu, $qty, $remise_percent, $txtva, $desc, $price_base_type, $info_bits");
-        include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
         // Clean parameters
         $remise_percent=price2num($remise_percent);
@@ -799,7 +799,7 @@ class Propal extends CommonObject
                         if (! $notrigger)
                         {
                             // Appel des triggers
-                            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                             $interface=new Interfaces($this->db);
                             $result=$interface->run_triggers('PROPAL_CREATE',$this,$user,$langs,$conf);
                             if ($result < 0) {
@@ -915,7 +915,7 @@ class Propal extends CommonObject
         $this->ref_client	= '';
 
         // Set ref
-        require_once(DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php");
+        require_once DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.'.php';
         $obj = $conf->global->PROPALE_ADDON;
         $modPropale = new $obj;
         $this->ref = $modPropale->getNextValue($objsoc,$this);
@@ -936,7 +936,7 @@ class Propal extends CommonObject
             }
 
             // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('PROPAL_CLONE',$this,$user,$langs,$conf);
             if ($result < 0) {
@@ -1187,7 +1187,7 @@ class Propal extends CommonObject
                 if (! $notrigger)
                 {
                     // Appel des triggers
-                    include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('PROPAL_VALIDATE',$this,$user,$langs,$conf);
                     if ($result < 0) {
@@ -1544,7 +1544,7 @@ class Propal extends CommonObject
                 }
 
                 // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('PROPAL_CLOSE_SIGNED',$this,$user,$langs,$conf);
                 if ($result < 0) {
@@ -1555,7 +1555,7 @@ class Propal extends CommonObject
             else
             {
                 // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('PROPAL_CLOSE_REFUSED',$this,$user,$langs,$conf);
                 if ($result < 0) {
@@ -1797,7 +1797,7 @@ class Propal extends CommonObject
     function delete($user, $notrigger=0)
     {
         global $conf,$langs;
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         $error=0;
 
@@ -1806,7 +1806,7 @@ class Propal extends CommonObject
         if (! $error && ! $notrigger)
         {
             // Call triggers
-            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('PROPAL_DELETE',$this,$user,$langs,$conf);
             if ($result < 0) {
@@ -2305,7 +2305,7 @@ class Propal extends CommonObject
 
             // Chargement de la classe de numerotation
             $classname = $conf->global->PROPALE_ADDON;
-            require_once($dir.$file);
+            require_once $dir.$file;
 
             $obj = new $classname();
 
@@ -2659,7 +2659,7 @@ class PropaleLigne
             if (! $notrigger)
             {
                 // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result = $interface->run_triggers('LINEPROPAL_INSERT',$this,$user,$langs,$conf);
                 if ($result < 0) {
@@ -2697,7 +2697,7 @@ class PropaleLigne
         if ($this->db->query($sql) )
         {
             // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
             $result = $interface->run_triggers('LINEPROPAL_DELETE',$this,$user,$langs,$conf);
             if ($result < 0) {
@@ -2787,7 +2787,7 @@ class PropaleLigne
             if (! $notrigger)
             {
                 // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result = $interface->run_triggers('LINEPROPAL_UPDATE',$this,$user,$langs,$conf);
                 if ($result < 0) {

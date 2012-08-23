@@ -23,7 +23,7 @@
  *		\brief      Module de generation de l'affichage de la box commandes
  */
 
-include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
+include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
@@ -65,7 +65,7 @@ class box_commandes extends ModeleBoxes
 
 		$this->max=$max;
 
-		include_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
+		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
         $commandestatic=new Commande($db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomerOrders",$max));

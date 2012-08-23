@@ -567,7 +567,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 	// If we need to make a virus scan
 	if (empty($disablevirusscan) && file_exists($src_file) && ! empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
 	{
-		require_once(DOL_DOCUMENT_ROOT.'/core/class/antivir.class.php');
+		require_once DOL_DOCUMENT_ROOT.'/core/class/antivir.class.php';
 		$antivir=new AntiVir($db);
 		$result = $antivir->dol_avscan_file($src_file);
 		if ($result < 0)	// If virus or error, we stop here
@@ -634,7 +634,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 				$object->src_file=$dest_file;
 
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($db);
 				$result=$interface->run_triggers('FILE_UPLOAD',$object,$user,$langs,$conf);
 				if ($result < 0) {
@@ -695,7 +695,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$objec
 
             		// TODO Replace trigger by a hook. Triggers must be used for business events only.
             		// Appel des triggers
-            		include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            		include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             		$interface=new Interfaces($db);
             		$result=$interface->run_triggers('FILE_DELETE',$object,$user,$langs,$conf);
             		if ($result < 0) { $error++; $errors=$interface->errors; }
@@ -945,7 +945,7 @@ function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=
 			{
 				if (empty($donotupdatesession))
 				{
-					include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
+					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($db);
 					$formmail->add_attached_files($upload_dir . "/" . $_FILES[$varfiles]['name'],$_FILES[$varfiles]['name'],$_FILES[$varfiles]['type']);
 				}
@@ -1025,7 +1025,7 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
 			}
 			if (empty($donotupdatesession))
 			{
-				include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 				$formmail = new FormMail($db);
 				$formmail->remove_attached_files($keytodelete);
 			}
@@ -1092,7 +1092,7 @@ function dol_compress_file($inputfile, $outputfile, $mode="gz")
             {
                 $foundhandler=1;
 
-                include_once(ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php');
+                include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
                 $archive = new PclZip($outputfile);
                 $archive->add($inputfile, PCLZIP_OPT_REMOVE_PATH, dirname($inputfile));
                 //$archive->add($inputfile);
@@ -1136,7 +1136,7 @@ function dol_uncompress($inputfile,$outputdir)
 
     if (defined('ODTPHP_PATHTOPCLZIP'))
     {
-        include_once(ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php');
+        include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
         $archive = new PclZip($inputfile);
         if ($archive->extract(PCLZIP_OPT_PATH, $outputdir) == 0) return array('error'=>$archive->errorInfo(true));
         else return array();

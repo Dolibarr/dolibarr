@@ -25,8 +25,8 @@
  *  \brief      Page to activate/disable all modules
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $langs->load("errors");
 $langs->load("admin");
@@ -133,7 +133,7 @@ foreach ($modulesdir as $dir)
 
 		            try
 		            {
-		                $res=include_once($dir.$file);
+		                $res=include_once $dir.$file;
 		                $objMod = new $modName($db);
 						$modNameLoaded[$modName]=$dir;
 

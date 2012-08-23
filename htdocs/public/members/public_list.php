@@ -34,7 +34,7 @@ if (is_int($entity))
 	define("DOLENTITY", $entity);
 }
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 
 // Security check
 if (empty($conf->adherent->enabled)) accessforbidden('',1,1,1);

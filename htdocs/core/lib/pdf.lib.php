@@ -42,7 +42,7 @@ function pdf_getFormat()
 
 	if (empty($conf->global->MAIN_PDF_FORMAT))
 	{
-		include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$pdfformat=dol_getDefaultFormat();
 	}
 	else $pdfformat=$conf->global->MAIN_PDF_FORMAT;
@@ -81,9 +81,9 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
     	return "Error MAIN_USE_FPDF and MAIN_DISABLE_FPDI can't be set together";
 
 	// We use by default TCPDF
-	if (empty($conf->global->MAIN_USE_FPDF)) require_once(TCPDF_PATH.'tcpdf.php');
+	if (empty($conf->global->MAIN_USE_FPDF)) require_once TCPDF_PATH.'tcpdf.php';
 	// We need to instantiate fpdi object (instead of tcpdf) to use merging features. But we can disable it.
-	if (empty($conf->global->MAIN_DISABLE_FPDI)) require_once(FPDI_PATH.'fpdi.php');
+	if (empty($conf->global->MAIN_DISABLE_FPDI)) require_once FPDI_PATH.'fpdi.php';
 
 	//$arrayformat=pdf_getFormat();
 	//$format=array($arrayformat['width'],$arrayformat['height']);
@@ -105,7 +105,7 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 		 */
 		if (! empty($conf->global->MAIN_USE_FPDF))
 		{
-			require_once(FPDI_PATH.'fpdi_protection.php');
+			require_once FPDI_PATH.'fpdi_protection.php';
 			$pdf = new FPDI_Protection($pagetype,$metric,$format);
 			// For FPDF, we specify permission we want to open
 			$pdfrights = array('print');
@@ -177,7 +177,7 @@ function pdf_getPDFFontSize($outputlangs)
 function pdf_getHeightForLogo($logo)
 {
     $height=22; $maxwidth=130;
-    include_once(DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php');
+    include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
     $tmp=dol_getImageSize($logo);
     if ($tmp['height'])
     {
@@ -1216,7 +1216,7 @@ function pdf_getlineqty_keeptoship($object,$i,$outputlangs,$hidedetails=0,$hookm
  */
 function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0,$hookmanager=false)
 {
-	include_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 	if ($object->lines[$i]->special_code != 3)
 	{

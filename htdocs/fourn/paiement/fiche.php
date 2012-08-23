@@ -24,10 +24,10 @@
  *	\remarks	Fichier presque identique a compta/paiement/fiche.php
  */
 
-require("../../main.inc.php");
-require(DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php');
-require(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php');
-require(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php');
+require '../../main.inc.php';
+require DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+require DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+require DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
 $langs->load('bills');
 $langs->load('banks');

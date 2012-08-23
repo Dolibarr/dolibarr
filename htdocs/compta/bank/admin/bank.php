@@ -23,9 +23,9 @@
  *		\brief      Page to setup the bank module
  */
 
-require("../../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
+require '../../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->load("admin");
 $langs->load("companies");

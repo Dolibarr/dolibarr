@@ -373,7 +373,7 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
             {
                 if (! empty($conf->projet->enabled) && ! $user->rights->projet->all->lire)
                 {
-                    include_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
+                    include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
                     $projectstatic=new Project($db);
                     $tmps=$projectstatic->getProjectsAuthorizedForUser($user,0,1,0);
                     $tmparray=explode(',',$tmps);
@@ -456,7 +456,7 @@ function accessforbidden($message='',$printheader=1,$printfooter=1,$showonlymess
     global $conf, $db, $user, $langs;
     if (! is_object($langs))
     {
-        include_once(DOL_DOCUMENT_ROOT.'/core/class/translate.class.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
         $langs=new Translate('',$conf);
     }
 

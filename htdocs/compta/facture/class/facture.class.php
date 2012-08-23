@@ -31,10 +31,10 @@
  *	\brief      File of class to manage invoices
  */
 
-include_once(DOL_DOCUMENT_ROOT."/core/class/commoninvoice.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/product/class/product.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/societe/class/client.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/margin/lib/margins.lib.php");
+include_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
+require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT .'/societe/class/client.class.php';
+require_once DOL_DOCUMENT_ROOT .'/margin/lib/margins.lib.php';
 
 
 /**
@@ -170,7 +170,7 @@ class Facture extends CommonInvoice
         // Create invoice from a predefined invoice
         if ($this->fac_rec > 0)
         {
-            require_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php');
+            require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
             $_facrec = new FactureRec($this->db);
             $result=$_facrec->fetch($this->fac_rec);
 
@@ -428,7 +428,7 @@ class Facture extends CommonInvoice
                 if ($result > 0)
                 {
                     // Appel des triggers
-                    include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('BILL_CREATE',$this,$user,$langs,$conf);
                     if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -601,7 +601,7 @@ class Facture extends CommonInvoice
 			}
 
             // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('BILL_CLONE',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -693,7 +693,7 @@ class Facture extends CommonInvoice
         if ($ret > 0)
         {
             // Actions hooked (by external module)
-            include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+            include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
             $hookmanager=new HookManager($this->db);
             $hookmanager->initHooks(array('invoicedao'));
 
@@ -1036,7 +1036,7 @@ class Facture extends CommonInvoice
             if (! $notrigger)
             {
                 // Call triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('BILL_MODIFY',$this,$user,$langs,$conf);
                 if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1073,8 +1073,8 @@ class Facture extends CommonInvoice
     {
         global $langs;
 
-        include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
-        include_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+        include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
         $this->db->begin();
 
@@ -1181,7 +1181,7 @@ class Facture extends CommonInvoice
     function delete($rowid=0, $notrigger=0)
     {
         global $user,$langs,$conf;
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         if (! $rowid) $rowid=$this->id;
 
@@ -1195,7 +1195,7 @@ class Facture extends CommonInvoice
         if (! $error && ! $notrigger)
         {
         	// Appel des triggers
-        	include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+        	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
         	$interface=new Interfaces($this->db);
         	$result=$interface->run_triggers('BILL_DELETE',$this,$user,$langs,$conf);
         	if ($result < 0) {
@@ -1404,7 +1404,7 @@ class Facture extends CommonInvoice
             if ($resql)
             {
                 // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('BILL_PAYED',$this,$user,$langs,$conf);
                 if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1459,7 +1459,7 @@ class Facture extends CommonInvoice
         if ($resql)
         {
             // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('BILL_UNPAYED',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1524,7 +1524,7 @@ class Facture extends CommonInvoice
             if ($resql)
             {
                 // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('BILL_CANCEL',$this,$user,$langs,$conf);
                 if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1560,7 +1560,7 @@ class Facture extends CommonInvoice
     function validate($user, $force_number='', $idwarehouse=0)
     {
         global $conf,$langs;
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         $now=dol_now();
 
@@ -1683,7 +1683,7 @@ class Facture extends CommonInvoice
                 // Si active on decremente le produit principal et ses composants a la validation de facture
                 if ($this->type != 3 && $result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
                 {
-                    require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+                    require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
                     $langs->load("agenda");
 
                     // Loop on each line
@@ -1745,7 +1745,7 @@ class Facture extends CommonInvoice
             if (! $error)
             {
                 // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('BILL_VALIDATE',$this,$user,$langs,$conf);
                 if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -1802,7 +1802,7 @@ class Facture extends CommonInvoice
             // Si on decremente le produit principal et ses composants a la validation de facture, on réincrement
             if ($this->type != 3 && $result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
             {
-                require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+                require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
                 $langs->load("agenda");
 
                 $num=count($this->lines);
@@ -1874,7 +1874,7 @@ class Facture extends CommonInvoice
     function addline($facid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0)
     {
         dol_syslog(get_class($this)."::Addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type", LOG_DEBUG);
-        include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
         // Clean parameters
         if (empty($remise_percent)) $remise_percent=0;
@@ -2027,7 +2027,7 @@ class Facture extends CommonInvoice
      */
     function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0)
     {
-        include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
         dol_syslog(get_class($this)."::updateline $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1, $txlocaltax2, $price_base_type, $info_bits, $type, $fk_parent_line", LOG_DEBUG);
 
@@ -2336,7 +2336,7 @@ class Facture extends CommonInvoice
      */
     function getSumCreditNotesUsed()
     {
-        require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
+        require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
         $discountstatic=new DiscountAbsolute($this->db);
         $result=$discountstatic->getSumCreditNotesUsed($this);
@@ -2358,7 +2358,7 @@ class Facture extends CommonInvoice
      */
     function getSumDepositsUsed()
     {
-        require_once(DOL_DOCUMENT_ROOT.'/core/class/discount.class.php');
+        require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
         $discountstatic=new DiscountAbsolute($this->db);
         $result=$discountstatic->getSumDepositsUsed($this);
@@ -2400,7 +2400,7 @@ class Facture extends CommonInvoice
         {
             $dir = $dirroot."/core/modules/facture/";
             // Load file with numbering class (if found)
-            $mybool|=@include_once($dir.$file);
+            $mybool|=@include_once $dir.$file;
         }
 
         // For compatibility
@@ -2413,7 +2413,7 @@ class Facture extends CommonInvoice
             {
                 $dir = $dirroot."/core/modules/facture/";
                 // Load file with numbering class (if found)
-                $mybool|=@include_once($dir.$file);
+                $mybool|=@include_once $dir.$file;
             }
         }
         //print "xx".$mybool.$dir.$file."-".$classname;
@@ -3358,7 +3358,7 @@ class FactureLigne
             if (! $notrigger)
             {
                 // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result = $interface->run_triggers('LINEBILL_INSERT',$this,$user,$langs,$conf);
                 if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -3455,7 +3455,7 @@ class FactureLigne
             if (! $notrigger)
             {
                 // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result = $interface->run_triggers('LINEBILL_UPDATE',$this,$user,$langs,$conf);
                 if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -3491,7 +3491,7 @@ class FactureLigne
 		if ($this->db->query($sql) )
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
 			$result = $interface->run_triggers('LINEBILL_DELETE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }

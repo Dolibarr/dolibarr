@@ -34,7 +34,7 @@
  */
 function print_smartphone_menu($db,$atarget,$type_user,$limitmenuto)
 {
-	require_once(DOL_DOCUMENT_ROOT."/core/class/menubase.class.php");
+	require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 
 	global $user,$conf,$langs,$dolibarr_main_db_name;
 

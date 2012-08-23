@@ -23,11 +23,11 @@
  *	\brief      Class file to generate the supplier invoices with the canelle model
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/modules/supplier_invoice/modules_facturefournisseur.php");
-require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_invoice/modules_facturefournisseur.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
 /**
@@ -386,7 +386,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				// Actions on extra fields (by external module or standard code)
 				if (!is_object($hookmanager))
 				{
-					include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 					$hookmanager=new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));

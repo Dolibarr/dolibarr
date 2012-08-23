@@ -23,10 +23,10 @@
  *	\author		Laurent Destailleur
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/ecm/class/htmlecm.form.class.php");
-require_once(DOL_DOCUMENT_ROOT."/ecm/class/ecmdirectory.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ecm/class/htmlecm.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 // Load traductions files
 $langs->load("ecm");

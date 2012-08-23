@@ -105,13 +105,13 @@ class InterfacePaypalWorkflow
         	
         	if ($object->source == 'membersubscription')
         	{
-        		//require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherents.class.php");
+        		//require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherents.class.php';
         		
         		// TODO add subscription treatment
         	}
         	else
         	{
-        		require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+        		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
         		
         		$soc = new Societe($this->db);
         		

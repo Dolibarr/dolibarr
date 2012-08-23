@@ -36,7 +36,7 @@ if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 
 session_cache_limiter(FALSE);
 
-require_once("../../main.inc.php");
+require_once '../../main.inc.php';
 
 // Load user to have $user->conf loaded (not done into main because of NOLOGIN constant defined)
 if (empty($user->id) && ! empty($_SESSION['dol_login'])) $user->fetch('',$_SESSION['dol_login']);

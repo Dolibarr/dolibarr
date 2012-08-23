@@ -22,7 +22,7 @@
  *	\ingroup    factures
  *	\brief      Module de generation de l'affichage de la box factures
  */
-include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
+include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
@@ -64,7 +64,7 @@ class box_factures extends ModeleBoxes
 
 		$this->max=$max;
 
-		include_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
+		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$facturestatic=new Facture($db);
 
 		$text = $langs->trans("BoxTitleLastCustomerBills",$max);

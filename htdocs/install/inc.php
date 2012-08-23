@@ -26,7 +26,7 @@
 
 // Just to define version DOL_VERSION
 if (! defined('DOL_INC_FOR_VERSION_ERROR')) define('DOL_INC_FOR_VERSION_ERROR','1');
-require_once('../filefunc.inc.php');
+require_once '../filefunc.inc.php';
 
 // Define DOL_DOCUMENT_ROOT and ADODB_PATH used for install/upgrade process
 if (! defined('DOL_DOCUMENT_ROOT'))	    define('DOL_DOCUMENT_ROOT', '..');
@@ -37,11 +37,11 @@ if (! defined('ADODB_PATH'))
     define('ADODB_PATH', $foundpath);
 }
 
-require_once(DOL_DOCUMENT_ROOT.'/core/class/translate.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
-require_once(ADODB_PATH.'adodb-time.inc.php');
+require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once ADODB_PATH.'adodb-time.inc.php';
 
 // Avoid warnings with strict mode E_STRICT
 $conf = new stdClass(); // instantiate $conf explicitely
@@ -76,7 +76,7 @@ $conffiletoshow = "htdocs/conf/conf.php";
 
 if (! defined('DONOTLOADCONF') && file_exists($conffile))
 {
-    $result=include_once($conffile);	// Load conf file
+    $result=include_once $conffile;	// Load conf file
     if ($result)
     {
 		if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
@@ -105,7 +105,7 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
         {
             if (! empty($dolibarr_main_document_root) && ! empty($dolibarr_main_db_type))
             {
-                $result=include_once($dolibarr_main_document_root . "/core/db/".$dolibarr_main_db_type.".class.php");
+                $result=include_once $dolibarr_main_document_root . "/core/db/".$dolibarr_main_db_type.'.class.php';
                 if (! $result)
                 {
                     $includeconferror='ErrorBadValueForDolibarrMainDBType';
@@ -256,7 +256,7 @@ function conf($dolibarr_main_document_root)
     global $dolibarr_main_db_pass;
     global $character_set_client;
 
-    $return=include_once($dolibarr_main_document_root."/core/class/conf.class.php");
+    $return=include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
     if (! $return) return -1;
 
     $conf=new Conf();

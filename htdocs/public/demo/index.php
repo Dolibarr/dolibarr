@@ -27,7 +27,7 @@
 define("NOLOGIN",1);	// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 
 $langs->load("main");
 $langs->load("install");
@@ -38,7 +38,7 @@ global $dolibarr_main_demo;
 if (empty($dolibarr_main_demo)) accessforbidden('Parameter dolibarr_main_demo must be defined in conf file with value "default login,default pass" to enable the demo entry page',1,1,1);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('demo'));
 
@@ -140,7 +140,7 @@ foreach ($modulesdir as $dir)
                 {
 		            try
 		            {
-                        include_once($dir.$file);
+                        include_once $dir.$file;
                         $objMod = new $modName($db);
 
                         if ($objMod->numero > 0)

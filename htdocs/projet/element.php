@@ -24,19 +24,19 @@
  *		\brief      Page of project referrers
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
-if ($conf->propal->enabled)      require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
-if ($conf->facture->enabled)     require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
-if ($conf->facture->enabled)     require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture-rec.class.php");
-if ($conf->commande->enabled)    require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
-if ($conf->fournisseur->enabled) require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php");
-if ($conf->fournisseur->enabled) require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php");
-if ($conf->contrat->enabled)     require_once(DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
-if ($conf->ficheinter->enabled)  require_once(DOL_DOCUMENT_ROOT."/fichinter/class/fichinter.class.php");
-if ($conf->deplacement->enabled) require_once(DOL_DOCUMENT_ROOT."/compta/deplacement/class/deplacement.class.php");
-if ($conf->agenda->enabled)      require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+if ($conf->propal->enabled)      require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if ($conf->facture->enabled)     require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+if ($conf->facture->enabled)     require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
+if ($conf->commande->enabled)    require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if ($conf->fournisseur->enabled) require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+if ($conf->fournisseur->enabled) require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+if ($conf->contrat->enabled)     require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+if ($conf->ficheinter->enabled)  require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+if ($conf->deplacement->enabled) require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
+if ($conf->agenda->enabled)      require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 $langs->load("projects");
 $langs->load("companies");

@@ -23,12 +23,12 @@
  *  \brief      Page to list products and services
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
-require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (! empty($conf->categorie->enabled))
-	require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 $langs->load("products");
 $langs->load("stocks");
@@ -65,7 +65,7 @@ $canvas=GETPOST("canvas");
 $objcanvas='';
 if (! empty($canvas))
 {
-    require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
     $objcanvas = new Canvas($db,$action);
     $objcanvas->getCanvas('product','list',$canvas);
 }
@@ -218,7 +218,7 @@ else
     			$template_dir = DOL_DOCUMENT_ROOT . '/theme/'.$conf->theme.'/tpl/product/'.$canvas.'/';
     		}
 
-    		include($template_dir.'list.tpl.php');	// Include native PHP templates
+    		include $template_dir.'list.tpl.php';	// Include native PHP templates
     	}
     	else
     	{

@@ -24,11 +24,11 @@
  *		\brief      Page des societes
  */
 
-require('../../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/core/lib/report.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/tax.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/tva/class/tva.class.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 
 $langs->load("bills");
 $langs->load("compta");

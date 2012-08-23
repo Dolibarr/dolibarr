@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-include_once(DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
+include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->load("main");
 $langs->load('cashdesk');

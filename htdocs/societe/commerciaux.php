@@ -23,8 +23,8 @@
  *  \brief      Page of links to sales representatives
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 $langs->load("companies");
 $langs->load("commercial");

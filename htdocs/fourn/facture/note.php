@@ -23,10 +23,10 @@
  *      \brief      Fiche de notes sur une facture fournisseur
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php');
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
 $langs->load('bills');
 $langs->load("companies");
@@ -151,7 +151,7 @@ if ($id)
     print '<br>';
 
     $colwidth=20;
-    include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
+    include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
     dol_fiche_end();
 }

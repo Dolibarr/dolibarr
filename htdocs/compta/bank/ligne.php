@@ -25,8 +25,8 @@
  *	\brief      Page to edit a bank transaction record
  */
 
-require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
+require 'pre.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("banks");
 $langs->load("compta");
@@ -378,7 +378,7 @@ if ($result)
             print '<input type="text" class="flat" name="num_chq" value="'.(empty($objp->num_chq) ? '' : $objp->num_chq).'">';
             if ($objp->receiptid)
             {
-                include_once(DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php');
+                include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
                 $receipt=new RemiseCheque($db);
                 $receipt->fetch($objp->receiptid);
                 print ' &nbsp; &nbsp; '.$langs->trans("CheckReceipt").': '.$receipt->getNomUrl(2);

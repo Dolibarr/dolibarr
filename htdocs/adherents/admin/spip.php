@@ -27,9 +27,9 @@
  *		\brief      Page to setup the module MailmanSpip (SPIP)
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/mailmanspip.lib.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/mailmanspip.lib.php';
 
 $langs->load("admin");
 $langs->load("members");

@@ -57,7 +57,7 @@ class MenuTop
 	 */
 	function showmenu()
 	{
-		require_once(DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy.lib.php');
+		require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy.lib.php';
 
 		print_eldy_menu($this->db,$this->atarget,$this->hideifnotallowed);
 	}
@@ -98,7 +98,7 @@ class MenuLeft
      */
     function showmenu()
     {
-        require_once(DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy.lib.php');
+        require_once DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy.lib.php';
 
         $res=print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after);
 

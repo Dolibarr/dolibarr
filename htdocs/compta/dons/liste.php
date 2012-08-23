@@ -23,9 +23,9 @@
  *	\brief      Page de liste des dons
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/dons/class/don.class.php");
-if (! empty($conf->projet->enabled)) require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
+if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load("companies");
 $langs->load("donations");

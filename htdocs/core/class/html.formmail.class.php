@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin		<regis@dolibarr.fr>
  * Copyright (C) 2010-2011 Juanjo Menent		<jmenent@2byte.es>
@@ -22,7 +22,7 @@
  *       \ingroup    core
  *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
  */
-require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");
+require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
 
 
 /**
@@ -112,7 +112,7 @@ class FormMail
     function clear_attached_files()
     {
         global $conf,$user;
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         // Set tmp user directory
         $vardir=$conf->user->dir_output."/".$user->id;
@@ -569,7 +569,7 @@ class FormMail
             // Complete substitution array
             if ($conf->paypal->enabled && $conf->global->PAYPAL_ADD_PAYMENT_URL)
             {
-                require_once(DOL_DOCUMENT_ROOT."/paypal/lib/paypal.lib.php");
+                require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 
                 $langs->load('paypal');
 
@@ -613,7 +613,7 @@ class FormMail
                 }
 
                 // Editor wysiwyg
-                require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+                require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
                 $doleditor=new DolEditor('message',$defaultmessage,'',280,$this->ckeditortoolbar,'In',true,true,$this->withfckeditor,8,72);
                 $out.= $doleditor->Create(1);
             }

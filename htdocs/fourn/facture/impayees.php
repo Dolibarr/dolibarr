@@ -26,10 +26,10 @@
  *		\brief      Page to list all unpaid invoices
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php');
-require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 if (! $user->rights->facture->lire) accessforbidden();
 

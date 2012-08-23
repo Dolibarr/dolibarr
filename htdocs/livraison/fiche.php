@@ -25,14 +25,14 @@
  *	\brief      Fiche descriptive d'un bon de livraison=reception
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/livraison/class/livraison.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/modules/livraison/modules_livraison.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/sendings.lib.php");
-if ($conf->product->enabled || $conf->service->enabled) require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-if ($conf->expedition_bon->enabled) require_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
-if ($conf->stock->enabled) require_once(DOL_DOCUMENT_ROOT."/product/stock/class/entrepot.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/livraison/modules_livraison.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
+if ($conf->product->enabled || $conf->service->enabled) require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+if ($conf->expedition_bon->enabled) require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+if ($conf->stock->enabled) require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 if (!$user->rights->expedition->livraison->lire) accessforbidden();
 
@@ -191,7 +191,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 // Delete file in doc form
 elseif ($action == 'remove_file')
 {
-	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$object = new Livraison($db);
 	if ($object->fetch($id))

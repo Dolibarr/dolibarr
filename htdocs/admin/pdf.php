@@ -23,12 +23,12 @@
  *       \brief      Page to setup PDF options
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/usergroups.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formadmin.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
 $langs->load("admin");
 $langs->load("languages");
@@ -256,7 +256,7 @@ else	// Show
     $pdfformatlabel='';
     if (empty($conf->global->MAIN_PDF_FORMAT))
     {
-        include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
         $pdfformatlabel=dol_getDefaultFormat();
     }
     else $pdfformatlabel=$conf->global->MAIN_PDF_FORMAT;

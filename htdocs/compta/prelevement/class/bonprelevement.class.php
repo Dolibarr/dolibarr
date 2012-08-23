@@ -24,10 +24,10 @@
  *      \brief      Fichier de la classe des bons de prelevements
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
-require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
-require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 // FIXME don't include external module class
 if (! empty($conf->esaeb->enabled))
 	dol_include_once('/esaeb/class/esaeb19.class.php');

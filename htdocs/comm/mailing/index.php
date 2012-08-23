@@ -23,9 +23,9 @@
  *       \brief      Page accueil de la zone mailing
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT ."/comm/mailing/class/mailing.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT .'/comm/mailing/class/mailing.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->load("commercial");
 $langs->load("orders");
@@ -84,7 +84,7 @@ if (is_resource($handle))
                 // Chargement de la classe
                 $file = $dir."/".$modulename.".modules.php";
                 $classname = "mailing_".$modulename;
-                require_once($file);
+                require_once $file;
                 $mailmodule = new $classname($db);
 
                 $qualified=1;

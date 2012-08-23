@@ -23,9 +23,9 @@
  *		\brief       Page reporting mensuel Entrees/Sorties d'un compte bancaire
  */
 
-require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/bank.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
+require 'pre.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Security check
 if (isset($_GET["account"]) || isset($_GET["ref"]))

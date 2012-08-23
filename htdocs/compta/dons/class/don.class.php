@@ -23,7 +23,7 @@
  *		\brief      Fichier de la classe des dons
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 
 /**
@@ -355,7 +355,7 @@ class Don extends CommonObject
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."don");
 
             // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('DON_CREATE',$this,$user,$langs,$conf);
             if ($result < 0) {

@@ -22,7 +22,7 @@
  *  \brief      File of class to manage contract numbering rules Magre
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/core/modules/contract/modules_contract.php");
+require_once DOL_DOCUMENT_ROOT .'/core/modules/contract/modules_contract.php';
 
 /**
  *	Class to manage contract numbering rules Magre
@@ -101,7 +101,7 @@ class mod_contract_magre extends ModelNumRefContracts
     {
 		global $db,$conf;
 
-		require_once(DOL_DOCUMENT_ROOT ."/core/lib/functions2.lib.php");
+		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
 		$mask=$conf->global->CONTRACT_MAGRE_MASK;
 

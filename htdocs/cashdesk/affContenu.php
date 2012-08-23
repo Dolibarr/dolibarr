@@ -22,7 +22,7 @@
  *	\ingroup    cashdesk
  *	\brief      Include to show main page for cashdesk module
  */
-require_once('class/Facturation.class.php');
+require_once 'class/Facturation.class.php';
 
 // Si nouvelle vente, reinitialisation des donnees (destruction de l'objet et vidage de la table contenant la liste des articles)
 if ( $_GET['id'] == 'NOUV' )
@@ -56,11 +56,11 @@ print '<div class="principal">';
 
 if ( $_GET['menu'] )
 {
-	include($_GET['menu'].'.php');
+	include $_GET['menu'].'.php';
 }
 else
 {
-	include('facturation.php');
+	include 'facturation.php';
 }
 
 print '</div>';

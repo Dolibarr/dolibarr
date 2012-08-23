@@ -24,10 +24,10 @@
  *		\brief      Page with customers or suppliers orders statistics
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
-require_once(DOL_DOCUMENT_ROOT."/commande/class/commandestats.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/dolgraph.class.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 $WIDTH=500;
 $HEIGHT=200;

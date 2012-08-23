@@ -23,7 +23,7 @@
  *		\brief      File of class to manage commercial proposal numbering rules Marbre
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/core/modules/propale/modules_propale.php");
+require_once DOL_DOCUMENT_ROOT .'/core/modules/propale/modules_propale.php';
 
 
 /**	    \class      mod_propale_marbre

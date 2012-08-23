@@ -20,7 +20,7 @@
  *     \brief      Page administration de eaccelerator
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 
 $langs->load("admin");
 
