@@ -634,7 +634,7 @@ else if ($action == "setabsolutediscount" && $user->rights->propale->creer)
 else if ($action == "addline" && $user->rights->propale->creer)
 {
 	$idprod=GETPOST('idprod', 'int');
-	//var_dump($_POST);
+
 	if (empty($idprod) && GETPOST('type') < 0)
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
@@ -667,8 +667,6 @@ else if ($action == "addline" && $user->rights->propale->creer)
 			$prod->fetch($idprod);
 
 			$tva_tx = get_default_tva($mysoc,$object->client,$prod->id);
-			$localtax1_tx= get_localtax($tva_tx, 1, $object->client);  //get_default_localtax($mysoc,$object->client,1,$prod->id);
-			$localtax2_tx= get_localtax($tva_tx, 2, $object->client); //get_default_localtax($mysoc,$object->client,2,$prod->id);
 			$tva_npr = get_default_npr($mysoc,$object->client,$prod->id);
 
 			// On defini prix unitaire
@@ -752,8 +750,6 @@ else if ($action == "addline" && $user->rights->propale->creer)
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label'):'');
 
 			$type = $prod->type;
-			$fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):'');
-			$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
 		}
 		else
 		{
@@ -763,11 +759,15 @@ else if ($action == "addline" && $user->rights->propale->creer)
 			$label=(GETPOST('product_label')?GETPOST('product_label'):'');
 			$desc=GETPOST('product_desc');
 			$type=GETPOST('type');
-			$localtax1_tx=get_localtax($tva_tx,1,$object->client);
-			$localtax2_tx=get_localtax($tva_tx,2,$object->client);
-			$fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):'');
-			$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
 		}
+
+		// Margin
+		$fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):'');
+		$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
+
+		// Local Taxes
+		$localtax1_tx= get_localtax($tva_tx, 1, $object->client);
+		$localtax2_tx= get_localtax($tva_tx, 2, $object->client);
 
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
@@ -822,6 +822,8 @@ else if ($action == "addline" && $user->rights->propale->creer)
 
 				unset($_POST['qty']);
 				unset($_POST['type']);
+				unset($_POST['idprod']);
+				unset($_POST['remise_percent']);
 				unset($_POST['price_ht']);
 				unset($_POST['price_ttc']);
 				unset($_POST['tva_tx']);

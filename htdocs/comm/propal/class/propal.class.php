@@ -741,7 +741,6 @@ class Propal extends CommonObject
 
 						$result = $this->addline(
 								$this->id,
-                        		$this->lines[$i]->label,
 								$this->lines[$i]->desc,
 								$this->lines[$i]->subprice,
 								$this->lines[$i]->qty,
@@ -758,7 +757,8 @@ class Propal extends CommonObject
 								$this->lines[$i]->special_code,
 								$fk_parent_line,
 								$this->lines[$i]->fk_fournprice,
-								$this->lines[$i]->pa_ht
+								$this->lines[$i]->pa_ht,
+								$this->lines[$i]->label
 						);
 
                         if ($result < 0)

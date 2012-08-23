@@ -214,6 +214,9 @@ $(document).ready(function() {
 			} else {
 				$('#product_desc').focus();
 			}
+
+	    } else {
+	    	$('#update_desc_checkbox').removeAttr('checked').trigger('change');
 	    }
 	});
 
