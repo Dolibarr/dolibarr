@@ -41,6 +41,7 @@ create table llx_socpeople
   fax				varchar(30),
   email				varchar(255),
   jabberid			varchar(255),
+  no_email			smallint NOT NULL DEFAULT 0,
   priv				smallint NOT NULL DEFAULT 0,
   fk_user_creat		integer DEFAULT 0,							-- user qui a creel'enregistrement
   fk_user_modif		integer,
