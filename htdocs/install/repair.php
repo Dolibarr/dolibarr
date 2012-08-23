@@ -22,7 +22,7 @@
  *      \brief      Run repair script
  */
 
-include_once './inc.php';
+include_once 'inc.php';
 if (file_exists($conffile)) include_once $conffile;
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/class/extrafields.class.php';

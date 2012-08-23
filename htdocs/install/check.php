@@ -23,7 +23,7 @@
  *	\ingroup    install
  *	\brief      Test if file conf can be modified and if does not exists, test if install process can create it
  */
-include_once './inc.php';
+include_once 'inc.php';
 
 $err = 0;
 $allowinstall = 0;

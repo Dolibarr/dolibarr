@@ -22,7 +22,7 @@
  *      \brief      Create tables, primary keys, foreign keys, indexes and functions into database and then load reference data
  */
 
-include './inc.php';
+include 'inc.php';
 require_once $dolibarr_main_document_root.'/core/class/conf.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 

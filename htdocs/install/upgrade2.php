@@ -23,7 +23,7 @@
  *	\brief      Upgrade some data
  */
 
-include_once './inc.php';
+include_once 'inc.php';
 if (! file_exists($conffile))
 {
     print 'Error: Dolibarr config file was not found. This may means that Dolibarr is not installed yet. Please call the page "/install/index.php" instead of "/install/upgrade.php").';

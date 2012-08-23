@@ -25,7 +25,7 @@
  *       \ingroup    install
  *       \brief      Ask all informations required to build Dolibarr htdocs/conf/conf.php file (will be wrote on disk on next page)
  */
-include_once './inc.php';
+include_once 'inc.php';
 
 
 $err=0;
