@@ -339,7 +339,7 @@ class FormAdmin
             while ($i < $num)
             {
                 $obj=$this->db->fetch_object($resql);
-                $paperformat[$obj->code]=$obj->label.' - '.round($obj->width).'x'.round($obj->height).' '.$obj->unit;
+                $paperformat[$obj->code]= $langs->trans('PaperFormat'.strtoupper($obj->code)).' - '.round($obj->width).'x'.round($obj->height).' '.$obj->unit;
 
                 $i++;
             }

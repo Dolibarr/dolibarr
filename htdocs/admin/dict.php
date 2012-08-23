@@ -385,12 +385,17 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             $ok=0;
             $fieldnamekey=$listfield[$f];
             // We take translate key of field
-            if ($fieldnamekey == 'libelle')  $fieldnamekey='Label';
+            if ($fieldnamekey == 'libelle' || ($fieldnamekey == 'label'))  $fieldnamekey='Label';
             if ($fieldnamekey == 'libelle_facture') $fieldnamekey = 'LabelOnDocuments';
             if ($fieldnamekey == 'nbjour')   $fieldnamekey='NbOfDays';
             if ($fieldnamekey == 'decalage') $fieldnamekey='Offset';
             if ($fieldnamekey == 'module')   $fieldnamekey='Module';
             if ($fieldnamekey == 'code') $fieldnamekey = 'Code';
+            if ($fieldnamekey == 'note') $fieldnamekey = 'Note';
+            if ($fieldnamekey == 'taux') $fieldnamekey = 'Rate';
+            if ($fieldnamekey == 'type') $fieldnamekey = 'Type';
+            if ($fieldnamekey == 'position') $fieldnamekey = 'Position';
+            if ($fieldnamekey == 'unicode') $fieldnamekey = 'Unicode';
 
             $msg.=$langs->trans("ErrorFieldRequired",$langs->transnoentities($fieldnamekey)).'<br>';
         }

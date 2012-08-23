@@ -309,7 +309,7 @@ DemandReasonTypeSRC_SHOP=Contact en magazin
 DemandReasonTypeSRC_WOM=Bouche à oreille
 DemandReasonTypeSRC_PARTNER=Partenaire
 DemandReasonTypeSRC_EMPLOYEE=Employé
-DemandReasonTypeSRC_SPONSORSHIP=Parrainage/Sponsoring
+DemandReasonTypeSRC_SPONSORING=Parrainage/Sponsoring
 
 #### Paper formats ####
 PaperFormatEU4A0=Format 4A0
