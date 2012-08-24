@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2008      Chiptronik
+ * Copyright (C) 2011-2012 Philippe Grand        <philippe.grand@atoo-net.com>
 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,8 +143,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			if (file_exists($dir))
 			{
                 $pdf=pdf_getInstance($this->format);
-                $heightforinfotot = 80;	// Height reserved to output the info and total part (value include bottom margin)
-                $heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
+                $heightforinfotot = 50;	// Height reserved to output the info and total part (value include bottom margin)
+                $heightforfooter = 50;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
 
                 if (class_exists('TCPDF'))
@@ -205,8 +206,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 90;
-				$tab_top_newpage = 50;
-				$tab_height = 110;
+				$tab_top_newpage = 5;
+				$tab_height = 150;
 				$tab_height_newpage = 150;
 
 				// Affiche notes
@@ -242,7 +243,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
                     $pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
 
-					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot-50);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
 
 					// Description de la ligne produit
@@ -253,7 +254,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
-					$nexY = $pdf->GetY();
+					$nexY = $pdf->GetY()+4;
 
 					/*
 					 // TVA
