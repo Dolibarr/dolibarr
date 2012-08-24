@@ -109,25 +109,7 @@ if ($id > 0 || ! empty($ref))
 
 			if ($commande->methode_commande)
 			{
-				$sql = "SELECT rowid, code, libelle";
-                $sql.= " FROM ".MAIN_DB_PREFIX.'c_input_method';
-                $sql.= " WHERE active=1 AND rowid = ".$db->escape($commande->methode_commande_id);
-
-                $resql = $db->query($sql);
-
-                if ($resql && $db->num_rows($resql))
-                {
-                    $obj = $db->fetch_object($resql);
-
-                    // Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-                    $methode_commande = ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->libelle!='-'?$obj->libelle:''));
-                }
-                else
-                {
-                    dol_print_error($db);
-                }
-
-                print '<tr><td>'.$langs->trans("Method").'</td><td colspan="2">'.$methode_commande.'</td></tr>';
+                print '<tr><td>'.$langs->trans("Method").'</td><td colspan="2">'.$commande->getInputMethod().'</td></tr>';
 			}
 		}
 

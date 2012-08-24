@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,25 +131,7 @@ if ($id > 0 || ! empty($ref))
 
             if ($object->methode_commande)
             {
-                $sql = "SELECT rowid, code, libelle";
-                $sql.= " FROM ".MAIN_DB_PREFIX.'c_input_method';
-                $sql.= " WHERE active=1 AND rowid = ".$db->escape($object->methode_commande_id);
-
-                $resql = $db->query($sql);
-
-                if ($resql && $db->num_rows($resql))
-                {
-                    $obj = $db->fetch_object($resql);
-
-                    // Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-                    $methode_commande = ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->libelle!='-'?$obj->libelle:''));
-                }
-                else
-                {
-                    dol_print_error($db);
-                }
-
-                print '<tr><td>'.$langs->trans("Method").'</td><td colspan="2">'.$methode_commande.'</td></tr>';
+                print '<tr><td>'.$langs->trans("Method").'</td><td colspan="2">'.$object->getInputMethod().'</td></tr>';
             }
         }
 
