@@ -5,6 +5,7 @@
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2012	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1839,6 +1840,43 @@ class CommandeFournisseur extends CommonOrder
             $this->error=$this->db->error();
             return -1;
         }
+    }
+
+    /**
+     * Returns the translated input method
+     * 
+     * @return string
+     */
+    function getInputMethod()
+    {
+        global $db, $langs;
+
+        if ($this->methode_commande_id > 0)
+        {
+            $sql = "SELECT rowid, code, libelle";
+            $sql.= " FROM ".MAIN_DB_PREFIX.'c_input_method';
+            $sql.= " WHERE active=1 AND rowid = ".$db->escape($this->methode_commande_id);
+
+            $query = $db->query($sql);
+
+            if ($query && $db->num_rows($query))
+            {
+                $result = $db->fetch_object($query);
+
+                $string = $langs->trans($result->code);
+
+                if ($string == $result->code)
+                {
+                    $string = $obj->libelle != '-' ? $obj->libelle : '';
+                }
+
+                return $string;
+            }
+            
+            dol_print_error($db);
+        }
+
+        return '';
     }
 }
 
