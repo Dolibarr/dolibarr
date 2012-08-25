@@ -84,10 +84,10 @@ class modExpedition extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
-		$this->const[$r][0] = "EXPEDITION_ADDON";
+		$this->const[$r][0] = "EXPEDITION_ADDON_NUMBER";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "elevement";
-		$this->const[$r][3] = 'Nom du gestionnaire du type d\'expedition';
+		$this->const[$r][2] = "mod_expedition_safor";
+		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des expeditions';
 		$this->const[$r][4] = 0;
 		$r++;
 
@@ -102,13 +102,6 @@ class modExpedition extends DolibarrModules
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "mod_livraison_jade";
 		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des bons de reception';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "EXPEDITION_ADDON_NUMBER";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_expedition_safor";
-		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des expeditions';
 		$this->const[$r][4] = 0;
 		$r++;
 
@@ -211,8 +204,8 @@ class modExpedition extends DolibarrModules
 		$sql = array(
 			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
 			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','shipping',".$conf->entity.")",
-			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[1][2]."' AND entity = ".$conf->entity,
-			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[1][2]."','delivery',".$conf->entity.")",
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[2][2]."' AND entity = ".$conf->entity,
+			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[2][2]."','delivery',".$conf->entity.")",
 		);
 
 		return $this->_init($sql,$options);
