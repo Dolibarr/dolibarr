@@ -139,7 +139,9 @@ dol_htmloutput_mesg($mesg);
 
 if ($id > 0 || ! empty($ref))
 {
-	if ($object->fetch($id,$ref) > 0)
+	$object->fetch($id,$ref);
+
+	if ($object->id > 0)
 	{
 		$soc = new Societe($db);
 		$soc->fetch($object->socid);
@@ -215,7 +217,8 @@ if ($id > 0 || ! empty($ref))
 	}
 	else
 	{
-		print "ErrorRecordNotFound";
+		$langs->load("errors");
+		print $langs->trans('ErrorRecordNotFound');
 	}
 }
 
