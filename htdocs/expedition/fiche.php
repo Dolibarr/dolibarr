@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2003-2008 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2011-2012 Juanjo Menent	    <jmenent@2byte.es>
+/* Copyright (C) 2003-2008	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005		Simon TOSSER			<simon@kornog-computing.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -543,6 +543,7 @@ llxHeader('',$langs->trans('Sending'),'Expedition');
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
+$product_static = new Product($db);
 
 if ($action == 'create2')
 {
@@ -700,8 +701,6 @@ if ($action == 'create')
                 print "</tr>\n";
             }
 
-            $product_static = new Product($db);
-
             $var=true;
             $indiceAsked = 0;
             while ($indiceAsked < $numAsked)
@@ -733,9 +732,8 @@ if ($action == 'create')
                     $product_static->type=$line->fk_product_type;
                     $product_static->id=$line->fk_product;
                     $product_static->ref=$line->ref;
-                    $product_static->libelle=$line->product_label;
                     $text=$product_static->getNomUrl(1);
-                    $text.= ' - '.$line->product_label;
+                    $text.= ' - '.(! empty($line->label)?$line->label:$line->product_label);
                     $description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->desc));
                     print $form->textwithtooltip($text,$description,3,'','',$i);
 
@@ -755,7 +753,13 @@ if ($action == 'create')
                     print "<td>";
                     if ($type==1) $text = img_object($langs->trans('Service'),'service');
                     else $text = img_object($langs->trans('Product'),'product');
-                    print $text.' '.nl2br($line->desc);
+
+                    if (! empty($line->label)) {
+                    	$text.= ' <strong>'.$line->label.'</strong>';
+                    	print $form->textwithtooltip($text,$line->desc,3,'','',$i);
+                    } else {
+                    	print $text.' '.nl2br($line->desc);
+                    }
 
                     // Show range
                     print_date_range($db->jdate($line->date_start),$db->jdate($line->date_end));
@@ -1205,23 +1209,22 @@ else
                         $label = ( ! empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $lines[$i]->product_label;
                     }
                     else
-                    $label = $lines[$i]->product_label;
+                    $label = (! empty($lines[$i]->label)?$lines[$i]->label:$lines[$i]->product_label);
 
                     print '<td>';
 
-                    // Affiche ligne produit
-                    $text = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$lines[$i]->fk_product.'">';
-                    if ($lines[$i]->fk_product_type==1) $text.= img_object($langs->trans('ShowService'),'service');
-                    else $text.= img_object($langs->trans('ShowProduct'),'product');
-                    $text.= ' '.$lines[$i]->ref.'</a>';
+                    // Show product and description
+                    $product_static->type=$lines[$i]->fk_product_type;
+                    $product_static->id=$lines[$i]->fk_product;
+                    $product_static->ref=$lines[$i]->ref;
+                    $text=$product_static->getNomUrl(1);
                     $text.= ' - '.$label;
-                    $description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($lines[$i]->description));
-                    //print $description;
+                    $description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($lines[$i]->description));
                     print $form->textwithtooltip($text,$description,3,'','',$i);
                     print_date_range($lines[$i]->date_start,$lines[$i]->date_end);
-                    if ($conf->global->PRODUIT_DESC_IN_FORM)
+                    if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
                     {
-                        print ($lines[$i]->description && $lines[$i]->description!=$lines[$i]->product)?'<br>'.dol_htmlentitiesbr($lines[$i]->description):'';
+                        print (! empty($lines[$i]->description) && $lines[$i]->description!=$lines[$i]->product)?'<br>'.dol_htmlentitiesbr($lines[$i]->description):'';
                     }
                 }
                 else
@@ -1229,7 +1232,14 @@ else
                     print "<td>";
                     if ($lines[$i]->fk_product_type==1) $text = img_object($langs->trans('Service'),'service');
                     else $text = img_object($langs->trans('Product'),'product');
-                    print $text.' '.nl2br($lines[$i]->description);
+
+                    if (! empty($lines[$i]->label)) {
+                    	$text.= ' <strong>'.$lines[$i]->label.'</strong>';
+                    	print $form->textwithtooltip($text,$lines[$i]->description,3,'','',$i);
+                    } else {
+                    	print $text.' '.nl2br($lines[$i]->description);
+                    }
+
                     print_date_range($lines[$i]->date_start,$lines[$i]->date_end);
                     print "</td>\n";
                 }
@@ -1473,7 +1483,7 @@ else
     }
 }
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>

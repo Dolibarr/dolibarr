@@ -665,8 +665,8 @@ class Livraison extends CommonObject
 		$this->lines = array();
 
 		$sql = "SELECT ld.rowid, ld.fk_product, ld.description, ld.subprice, ld.total_ht, ld.qty as qty_shipped,";
-		$sql.= " cd.qty as qty_asked,";
-		$sql.= " p.ref, p.fk_product_type as fk_product_type, p.label as label, p.description as product_desc";
+		$sql.= " cd.qty as qty_asked, cd.label as custom_label,";
+		$sql.= " p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."livraisondet as ld";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on p.rowid = ld.fk_product";
 		$sql.= " WHERE ld.fk_origin_line = cd.rowid";
@@ -684,19 +684,21 @@ class Livraison extends CommonObject
 
 				$obj = $this->db->fetch_object($resql);
 
-				$line->description    = $obj->description;
-				$line->fk_product     = $obj->fk_product;
-				$line->qty_asked      = $obj->qty_asked;
-				$line->qty_shipped    = $obj->qty_shipped;
+				$line->label			= $obj->custom_label;
+				$line->description		= $obj->description;
+				$line->fk_product		= $obj->fk_product;
+				$line->qty_asked		= $obj->qty_asked;
+				$line->qty_shipped		= $obj->qty_shipped;
 
-				$line->ref            = $obj->ref;
-				$line->libelle        = $obj->label;           // Label produit
-				$line->label          = $obj->label;
-				$line->product_desc   = $obj->product_desc;    // Description produit
-				$line->product_type   = $obj->fk_product_type;
+				$line->ref				= $obj->product_ref;		// deprecated
+				$line->libelle			= $obj->product_label;		// deprecated
+				$line->product_label	= $obj->product_label;		// Product label
+				$line->product_ref		= $obj->product_ref;		// Product ref
+				$line->product_desc		= $obj->product_desc;		// Product description
+				$line->product_type		= $obj->fk_product_type;
 
-				$line->price          = $obj->price;
-				$line->total_ht       = $obj->total_ht;
+				$line->price			= $obj->price;
+				$line->total_ht			= $obj->total_ht;
 
 				$this->lines[$i] = $line;
 

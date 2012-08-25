@@ -854,7 +854,7 @@ class Expedition extends CommonObject
 	{
 		// TODO: recuperer les champs du document associe a part
 
-		$sql = "SELECT cd.rowid, cd.fk_product, cd.description, cd.qty as qty_asked";
+		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked";
 		$sql.= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
 		$sql.= ", cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.price, cd.subprice";
 		$sql.= ", ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
@@ -893,8 +893,8 @@ class Expedition extends CommonObject
 				$line->ref				= $obj->product_ref;		// TODO deprecated
                 $line->product_ref		= $obj->product_ref;
                 $line->product_label	= $obj->product_label;
-                //$line->label          	= $obj->product_label;
 				$line->libelle        	= $obj->product_label;		// TODO deprecated
+				$line->label			= $obj->custom_label;
 				$line->description    	= $obj->description;
 				$line->qty_asked      	= $obj->qty_asked;
 				$line->qty_shipped    	= $obj->qty_shipped;
