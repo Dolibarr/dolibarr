@@ -71,7 +71,7 @@ if ($action == 'updateMask')
 	}
 }
 
-if ($action == 'set_SHIPPING_FREE_TEXT')
+else if ($action == 'set_SHIPPING_FREE_TEXT')
 {
 	$freetext=GETPOST('SHIPPING_FREE_TEXT','alpha');
 	$res = dolibarr_set_const($db, "SHIPPING_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
@@ -82,7 +82,7 @@ if ($action == 'set_SHIPPING_FREE_TEXT')
 		setEventMessage($langs->trans("Error"), 'errors');
 }
 
-if ($action == 'set_SHIPPING_DRAFT_WATERMARK')
+else if ($action == 'set_SHIPPING_DRAFT_WATERMARK')
 {
 	$draft=GETPOST('SHIPPING_DRAFT_WATERMARK','alpha');
 	$res = dolibarr_set_const($db, "SHIPPING_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
@@ -93,7 +93,7 @@ if ($action == 'set_SHIPPING_DRAFT_WATERMARK')
 		setEventMessage($langs->trans("Error"), 'errors');
 }
 
-if ($action == 'specimen')
+else if ($action == 'specimen')
 {
 	$modele=GETPOST('module','alpha');
 
@@ -139,12 +139,12 @@ if ($action == 'specimen')
 }
 
 // Activate a model
-if ($action == 'set')
+else if ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
-if ($action == 'del')
+else if ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -153,7 +153,25 @@ if ($action == 'del')
 	}
 }
 
-if ($action == 'setmodel')
+// Set default model
+else if ($action == 'setdoc')
+{
+	if (dolibarr_set_const($db, "EXPEDITION_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
+	{
+		// La constante qui a ete lue en avant du nouveau set
+		// on passe donc par une variable pour avoir un affichage coherent
+		$conf->global->EXPEDITION_ADDON_PDF = $value;
+	}
+
+	// On active le modele
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
+	{
+		$ret = addDocumentModel($value, $type, $label, $scandir);
+	}
+}
+
+else if ($action == 'setmodel')
 {
 	dolibarr_set_const($db, "EXPEDITION_ADDON_NUMBER",$value,'chaine',0,'',$conf->entity);
 }
