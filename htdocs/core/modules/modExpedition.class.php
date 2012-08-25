@@ -84,10 +84,10 @@ class modExpedition extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
-		$this->const[$r][0] = "EXPEDITION_ADDON_NUMBER";
+		$this->const[$r][0] = "EXPEDITION_ADDON";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_expedition_safor";
-		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des expeditions';
+		$this->const[$r][2] = "elevement";
+		$this->const[$r][3] = 'Nom du gestionnaire du type d\'expedition';
 		$this->const[$r][4] = 0;
 		$r++;
 
@@ -102,6 +102,13 @@ class modExpedition extends DolibarrModules
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "mod_livraison_jade";
 		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des bons de reception';
+		$this->const[$r][4] = 0;
+		$r++;
+
+		$this->const[$r][0] = "EXPEDITION_ADDON_NUMBER";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mod_expedition_safor";
+		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des expeditions';
 		$this->const[$r][4] = 0;
 		$r++;
 
