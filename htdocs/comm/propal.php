@@ -56,15 +56,6 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $lineid=GETPOST('lineid','int');
 
-$search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','alpha');
-$search_refcustomer=GETPOST('search_refcustomer','alpha');
-$search_societe=GETPOST('search_societe','alpha');
-$search_montant_ht=GETPOST('search_montant_ht','alpha');
-
-$sall=GETPOST("sall");
-$year=GETPOST("year");
-$month=GETPOST("month");
-
 //PDF
 $hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
 $hidedesc 	 = (GETPOST('hidedesc','int') ? GETPOST('hidedesc','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ?  1 : 0));
@@ -74,20 +65,8 @@ $hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($co
 $NBLINES=4;
 
 // Security check
-$module='propal';
-$dbtable='';
-if (isset($socid))
-{
-	$objectid=$socid;
-	$module='societe';
-	$dbtable='&societe';
-}
-else if (isset($id) &&  $id > 0)
-{
-	$objectid=$id;
-}
-if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, $module, $objectid, $dbtable);
+if (! empty($user->societe_id))	$socid=$user->societe_id;
+$result = restrictedArea($user, 'propal', $id);
 
 $object = new Propal($db);
 
