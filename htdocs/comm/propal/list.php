@@ -44,12 +44,7 @@ $langs->load('bills');
 $langs->load('orders');
 $langs->load('products');
 
-$id=GETPOST('id','int');
-$ref=GETPOST('ref','alpha');
 $socid=GETPOST('socid','int');
-$action=GETPOST('action','alpha');
-$confirm=GETPOST('confirm','alpha');
-$lineid=GETPOST('lineid','int');
 
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
@@ -69,17 +64,14 @@ $NBLINES=4;
 // Security check
 $module='propal';
 $dbtable='';
-if (isset($socid))
+$objectid='';
+if (! empty($user->societe_id))	$socid=$user->societe_id;
+if (! empty($socid))
 {
 	$objectid=$socid;
 	$module='societe';
 	$dbtable='&societe';
 }
-else if (isset($id) &&  $id > 0)
-{
-	$objectid=$id;
-}
-if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, $module, $objectid, $dbtable);
 
 $object = new Propal($db);
