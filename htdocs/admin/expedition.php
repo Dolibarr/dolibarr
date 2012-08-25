@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2003-2008 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2011-2012 Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2011-2012 Philippe Grand	    <philippe.grand@atoo-net.com>
+/* Copyright (C) 2003-2008	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
+ * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011-2012	Philippe Grand			<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,18 +28,23 @@
  *	\brief      Page d'administration/configuration du module Expedition
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php');
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
 $langs->load("admin");
 $langs->load("sendings");
 $langs->load("deliveries");
+$langs->load('other');
 
-if (!$user->admin) accessforbidden();
+if (! $user->admin)
+	accessforbidden();
 
 $action=GETPOST('action','alpha');
 $value=GETPOST('value','alpha');
+$label = GETPOST('label','alpha');
+$scandir = GETPOST('scandir','alpha');
+$type='shipping';
 
 if (empty($conf->global->EXPEDITION_ADDON_NUMBER))
 {
@@ -50,6 +55,59 @@ if (empty($conf->global->EXPEDITION_ADDON_NUMBER))
 /*
  * Actions
  */
+ if ($action == 'updateMask')
+{
+	$maskconst=GETPOST('maskconstexpedition','alpha');
+	$maskvalue=GETPOST('maskexpedition','alpha');
+	if ($maskconst) $res = dolibarr_set_const($db,$maskconst,$maskvalue,'chaine',0,'',$conf->entity);
+
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
+}
+
+if ($action == 'set_SHIPPING_FREE_TEXT')
+{
+	$freetext=GETPOST('SHIPPING_FREE_TEXT','alpha');
+	$res = dolibarr_set_const($db, "SHIPPING_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
+
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
+}
+
+if ($action == 'set_SHIPPING_DRAFT_WATERMARK')
+{
+	$draft=GETPOST('SHIPPING_DRAFT_WATERMARK','alpha');
+
+	$res = dolibarr_set_const($db, "SHIPPING_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
+
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    }
+    else
+    {
+        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    }
+}
+
 if ($action == 'specimen')
 {
 	$modele=GETPOST('module','alpha');
@@ -73,7 +131,7 @@ if ($action == 'specimen')
 
 	if ($filefound)
 	{
-		require_once($file);
+		require_once $file;
 
 		$module = new $classname($db);
 
@@ -98,208 +156,21 @@ if ($action == 'specimen')
 // Activate a model
 if ($action == 'set')
 {
-	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
-
-	$type='shipping';
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($value)."','".$type."',".$conf->entity.", ";
-    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
-    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
-    $sql.= ")";
-	if ($db->query($sql))
-	{
-
-	}
+	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
 if ($action == 'del')
 {
-	$type='shipping';
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql.= " WHERE nom = '".$db->escape($value)."'";
-	$sql.= " AND type = '".$type."'";
-	$sql.= " AND entity = ".$conf->entity;
-
-	if ($db->query($sql))
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
 	{
         if ($conf->global->EXPEDITION_ADDON_PDF == "$value") dolibarr_del_const($db, 'EXPEDITION_ADDON_PDF',$conf->entity);
 	}
 }
 
-// Set default model
-if ($action == 'setdoc')
-{
-	$label = GETPOST('label','alpha');
-	$scandir = GETPOST('scandir','alpha');
-
-	$db->begin();
-
-	if (dolibarr_set_const($db, "EXPEDITION_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
-	{
-		$conf->global->EXPEDITION_ADDON_PDF = $value;
-	}
-
-	// On active le modele
-	$type='shipping';
-	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-	$sql_del.= " WHERE nom = '".$db->escape($value)."'";
-	$sql_del.= " AND type = '".$type."'";
-	$sql_del.= " AND entity = ".$conf->entity;
-	$result1=$db->query($sql_del);
-
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity, libelle, description)";
-    $sql.= " VALUES ('".$db->escape($value)."', '".$type."', ".$conf->entity.", ";
-    $sql.= ($label?"'".$db->escape($label)."'":'null').", ";
-    $sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
-    $sql.= ")";
-	$result2=$db->query($sql);
-	if ($result1 && $result2)
-	{
-		$db->commit();
-	}
-	else
-	{
-		$db->rollback();
-	}
-}
-
-// TODO A quoi servent les methode d'expedition ?
-if ($action == 'setmethod' || $action== 'setmod')
-{
-	$module=GETPOST('module','alpha');
-	$moduleid=GETPOST('moduleid','alpha');
-	$statut=GETPOST('statut','alpha');
-
-	require_once(DOL_DOCUMENT_ROOT."/core/modules/expedition/methode_expedition_$module.modules.php");
-
-	$classname = "methode_expedition_$module";
-	$expem = new $classname($db);
-
-	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."c_shipment_mode";
-	$sql.= " WHERE rowid = ".$moduleid;
-
-	$resql = $db->query($sql);
-	if ($resql && ($statut == 1 || $action == 'setmod'))
-	{
-		$db->begin();
-
-		$sqlu = "UPDATE ".MAIN_DB_PREFIX."c_shipment_mode";
-		$sqlu.= " SET statut=1";
-		$sqlu.= " WHERE rowid=".$moduleid;
-
-		$result=$db->query($sqlu);
-		if ($result)
-		{
-			$db->commit();
-		}
-		else
-		{
-			$db->rollback();
-		}
-	}
-
-	if ($statut == 1 || $action == 'setmod')
-	{
-		$db->begin();
-
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_shipment_mode (rowid,code,libelle,description,statut)";
-		$sql.= " VALUES (".$moduleid.",'".$expem->code."','".$expem->name."','".$expem->description."',1)";
-		$result=$db->query($sql);
-		if ($result)
-		{
-			$db->commit();
-		}
-		else
-		{
-			//dol_print_error($db);
-			$db->rollback();
-		}
-	}
-	else if ($statut == 0)
-	{
-		$db->begin();
-
-		$sql = "UPDATE ".MAIN_DB_PREFIX."c_shipment_mode";
-		$sql.= " SET statut=0";
-		$sql.= " WHERE rowid=".$moduleid;
-		$result=$db->query($sql);
-		if ($result)
-		{
-			$db->commit();
-		}
-		else
-		{
-			$db->rollback();
-		}
-	}
-}
-
-if ($action == 'setmod')
-{
-	// TODO Verifier si module numerotation choisi peut etre active
-	// par appel methode canBeActivated
-
-	$module=GETPOST('module','alpha');
-
-    dolibarr_set_const($db, "EXPEDITION_ADDON",$module,'chaine',0,'',$conf->entity);
-
-}
-
-if ($action == 'updateMask')
-{
-	$maskconst=GETPOST('maskconstexpedition','alpha');
-	$maskvalue=GETPOST('maskexpedition','alpha');
-	if ($maskconst) $res = dolibarr_set_const($db,$maskconst,$maskvalue,'chaine',0,'',$conf->entity);
-
-	if (! $res > 0) $error++;
-
- 	if (! $error)
-    {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-    }
-}
-
 if ($action == 'setmodel')
 {
 	dolibarr_set_const($db, "EXPEDITION_ADDON_NUMBER",$value,'chaine',0,'',$conf->entity);
-}
-
-if ($action == 'set_SHIPPING_DRAFT_WATERMARK')
-{
-	$draft=GETPOST('SHIPPING_DRAFT_WATERMARK','alpha');
-	$res = dolibarr_set_const($db, "SHIPPING_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
-
-	if (! $res > 0) $error++;
-
- 	if (! $error)
-    {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-    }
-}
-
-if ($action == 'set_SHIPPING_FREE_TEXT')
-{
-	$free=GETPOST('SHIPPING_FREE_TEXT','alpha');
-	$res = dolibarr_set_const($db, "SHIPPING_FREE_TEXT",$free,'chaine',0,'',$conf->entity);
-	if (! $res > 0) $error++;
-
- 	if (! $error)
-    {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-    }
 }
 
 
@@ -372,12 +243,11 @@ foreach ($dirmodels as $reldir)
 
 			while (($file = readdir($handle))!==false)
 			{
-				if (preg_match('/^(mod_.*)\.php$/i',$file,$reg))
+				if (substr($file, 0, 15) == 'mod_expedition_' && substr($file, dol_strlen($file)-3, 3) == 'php')
 				{
-					$file = $reg[1];
-					$classname = substr($file,4);
+					$file = substr($file, 0, dol_strlen($file)-4);
 
-					require_once(DOL_DOCUMENT_ROOT ."/core/modules/expedition/".$file.".php");
+					require_once DOL_DOCUMENT_ROOT ."/core/modules/expedition/".$file.'.php';
 
 					$module = new $file;
 
@@ -420,7 +290,6 @@ foreach ($dirmodels as $reldir)
 						// Info
 						$htmltooltip='';
 						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$facture->type=0;
 						$nextval=$module->getNextValue($mysoc,$expedition);
 						if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
 						{
@@ -511,10 +380,10 @@ foreach ($dirmodels as $reldir)
 	    			$classname = substr($file, 0, dol_strlen($file) - 12);
 
 	    			$var=!$var;
-	    			print "<tr $bc[$var]><td>";
+	    			print '<tr '.$bc[$var].'><td>';
 	    			print $name;
 	    			print "</td><td>\n";
-	    			require_once($dir.$file);
+	    			require_once $dir.$file;
 	    			$module = new $classname();
 
 	    			print $module->description;
@@ -524,16 +393,9 @@ foreach ($dirmodels as $reldir)
 	    			if (in_array($name, $def))
 	    			{
 	    				print "<td align=\"center\">\n";
-	    				//if ($conf->global->EXPEDITION_ADDON_PDF != $name)
-	    				//{
-	    					print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
-	    					print img_picto($langs->trans("Activated"),'switch_on');
-	    					print '</a>';
-	    				//}
-	    				//else
-	    				//{
-	    				//	print img_picto($langs->trans("Activated"),'switch_on');
-	    				//}
+	    				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
+	    				print img_picto($langs->trans("Activated"),'switch_on');
+	    				print '</a>';
 	    				print "</td>";
 	    			}
 	    			else
