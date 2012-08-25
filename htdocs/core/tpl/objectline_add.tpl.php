@@ -74,9 +74,12 @@ if (! empty($conf->margin->enabled)) {
 							'select_type' => 'type',
 							'product_ref' => 'value',
 							'product_label' => 'label2',
+							'origin_label_cache' => 'label2',
 							'origin_desc_cache' => 'desc',
 							'price_ht' => 'price_ht',
-							'price_ttc' => 'price_ttc'
+							'origin_price_ht_cache' => 'price_ht',
+							'price_ttc' => 'price_ttc',
+							'origin_price_ttc_cache' => 'price_ttc'
 					),
 					'show' => array(
 							'update_label_area',
@@ -107,6 +110,7 @@ if (! empty($conf->margin->enabled)) {
 		<span id="update_price_area" class="hideobject"> | <input type="checkbox" id="update_price_checkbox" name="update_price" value="1" />
 			<?php echo $form->textwithtooltip($langs->trans('UpdateOriginalProductPrice'), $langs->trans('HelpUpdateOriginalProductPrice'),1,0,'','',3); ?>
 		</span>
+		<span id="price_base_type" class="hideobject"></span>
 	</td>
 </tr>
 <?php } ?>
@@ -122,6 +126,7 @@ if (! empty($conf->margin->enabled)) {
 
 	echo '&nbsp;<label for="product_label">'.$langs->trans("Label").'</label>';
 	echo '<input id="product_label" name="product_label" size="40" value="'.GETPOST('product_label').'">';
+	echo '<input type="hidden" id="origin_label_cache" name="origin_label_cache" value="" />';
 
 	if (is_object($hookmanager))
 	{
@@ -152,9 +157,15 @@ if (! empty($conf->margin->enabled)) {
 	else echo $form->load_tva('tva_tx', (GETPOST('tva_tx')?GETPOST('tva_tx'):-1), $seller, $buyer);
 	?>
 	</td>
-	<td align="right"><input type="text" size="6" id="price_ht" name="price_ht" value="<?php echo (GETPOST('price_ht')?GETPOST('price_ht'):''); ?>"></td>
-	<td align="right"><input type="text" size="6" id="price_ttc" name="price_ttc" value="<?php echo (GETPOST('price_ttc')?GETPOST('price_ttc'):''); ?>"></td>
-	<td align="right"><input type="text" size="2" id="qty" name="qty" value="<?php echo (GETPOST('qty')?GETPOST('qty'):1); ?>"></td>
+	<td align="right">
+		<input type="text" size="8" id="price_ht" name="price_ht" value="<?php echo (GETPOST('price_ht')?GETPOST('price_ht'):''); ?>">
+		<input type="hidden" id="origin_price_ht_cache" name="origin_price_ht_cache" value="" />
+	</td>
+	<td align="right">
+		<input type="text" size="8" id="price_ttc" name="price_ttc" value="<?php echo (GETPOST('price_ttc')?GETPOST('price_ttc'):''); ?>">
+		<input type="hidden" id="origin_price_ttc_cache" name="origin_price_ttc_cache" value="" />
+	</td>
+	<td align="right"><input type="text" size="3" id="qty" name="qty" value="<?php echo (GETPOST('qty')?GETPOST('qty'):1); ?>"></td>
 	<td align="right" nowrap="nowrap"><input type="text" size="1" value="<?php echo $buyer->remise_client; ?>" name="remise_percent">%</td>
 <?php
 $colspan = 4;
@@ -217,6 +228,7 @@ $(document).ready(function() {
 
 	    } else {
 	    	$('#update_desc_checkbox').removeAttr('checked').trigger('change');
+	    	$('#update_price_checkbox').removeAttr('checked').trigger('change');
 	    }
 	});
 
@@ -243,7 +255,7 @@ $(document).ready(function() {
 			}
 		} else {
 			//$('#add_product_area').hide(); // TODO for add product card
-			$('#add_product_checkbox').removeAttr('checked');
+			$('#add_product_checkbox').removeAttr('checked').trigger('change');
 			$('#addlinebutton').attr('disabled','disabled');
 			$('#service_duration_area').hide();
 			$('#date_start').val('').trigger('change');
@@ -287,8 +299,14 @@ $(document).ready(function() {
 			$('#price_ht').removeAttr('disabled').focus();
 			$('#price_ttc').removeAttr('disabled')
 		} else {
-			$('#price_ht').attr('disabled','disabled');
-			$('#price_ttc').attr('disabled','disabled');
+			$('#price_ht')
+				.attr('disabled','disabled')
+				.val($('#origin_price_ht_cache').val())
+				.trigger('change');
+			$('#price_ttc')
+				.attr('disabled','disabled')
+				.val($('#origin_price_ttc_cache').val())
+				.trigger('change');
 		}
 	});
 
@@ -305,7 +323,9 @@ $(document).ready(function() {
 		if ($(this).attr('checked')) {
 			$('#product_label').removeAttr('disabled').focus();
 		} else {
-			$('#product_label').attr('disabled','disabled');
+			$('#product_label')
+				.attr('disabled','disabled')
+				.val($('#origin_label_cache').val());
 			$('#search_idprod').focus();
 		}
 	});
@@ -343,7 +363,12 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#price_ht').onDelayedKeyup({ handler: function() {
+	$('#price_ht').focusin(function() {
+		$('#price_base_type').html('HT');
+	});
+
+	$('#price_ht').onDelayedKeyup({
+		handler: function() {
 			$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php', {
 				'action': 'get_ttc',
 				'pu_ht': $(this).val(),
@@ -365,7 +390,12 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#price_ttc').onDelayedKeyup({ handler: function() {
+	$('#price_ttc').focusin(function() {
+		$('#price_base_type').html('TTC');
+	});
+
+	$('#price_ttc').onDelayedKeyup({
+		handler: function() {
 			$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php', {
 				'action': 'get_ht',
 				'pu_ttc': $(this).val(),
@@ -388,16 +418,29 @@ $(document).ready(function() {
 	});
 
 	$('#tva_tx').change(function() {
-		$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php', {
-			'action': 'get_ttc',
-			'pu_ht': $('#price_ht').val(),
-			'tva_tx': $(this).val()
-		},
-		function(data) {
-			if (data && data.price.length > 0) {
-				$('#price_ttc').val(data.price);
-			}
-		}, 'json');
+		if ($('#price_base_type').html() == 'HT') {
+			$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php', {
+				'action': 'get_ttc',
+				'pu_ht': $('#price_ht').val(),
+				'tva_tx': $(this).val()
+			},
+			function(data) {
+				if (data && data.price.length > 0) {
+					$('#price_ttc').val(data.price);
+				}
+			}, 'json');
+		} else if ($('#price_base_type').html() == 'TTC') {
+			$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php', {
+				'action': 'get_ht',
+				'pu_ttc': $('#price_ttc').val(),
+				'tva_tx': $(this).val()
+			},
+			function(data) {
+				if (data && data.price.length > 0) {
+					$('#price_ht').val(data.price);
+				}
+			}, 'json');
+		}
 	});
 });
 </script>

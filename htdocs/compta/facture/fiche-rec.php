@@ -31,12 +31,12 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 $langs->load('bills');
 
 // Security check
-$facid=GETPOST('facid','int');
-$action=GETPOST("action");
+$id=(GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int'));
+$action=GETPOST('action', 'alpha');
 if ($user->societe_id) $socid=$user->societe_id;
 $objecttype = 'facture_rec';
 if ($action == "create" || $action == "add") $objecttype = '';
-$result = restrictedArea($user, 'facture', $facid, $objecttype);
+$result = restrictedArea($user, 'facture', $id, $objecttype);
 
 if ($page == -1)
 {
@@ -51,6 +51,8 @@ $sortorder="DESC";
 if ($sortfield == "")
 $sortfield="f.datef";
 
+$object = new FactureRec($db);
+
 
 /*
  * Actions
@@ -60,29 +62,37 @@ $sortfield="f.datef";
 // Create predefined invoice
 if ($action == 'add')
 {
-	$facturerec = new FactureRec($db);
-	$facturerec->titre = $_POST["titre"];
-	$facturerec->note  = $_POST["comment"];
-
-	if ($facturerec->create($user,$facid) > 0)
+	if (! GETPOST('titre'))
 	{
-		$facid = $facturerec->id;
-		$action = '';
-	}
-	else
-	{
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Title")), 'errors');
 		$action = "create";
-		$mesg = '<div class="error">'.$facturerec->error.'</div>';
+		$error++;
+	}
+
+	if (! $error)
+	{
+		$object->titre = GETPOST('titre', 'alpha');
+		$object->note  = GETPOST('comment');
+
+		if ($object->create($user, $id) > 0)
+		{
+			$id = $object->id;
+			$action = '';
+		}
+		else
+		{
+			setEventMessage($object->error, 'errors');
+			$action = "create";
+		}
 	}
 }
 
 // Suppression
 if ($action == 'delete' && $user->rights->facture->supprimer)
 {
-	$facrec = new FactureRec($db);
-	$facrec->fetch($facid);
-	$facrec->delete();
-	$facid = 0 ;
+	$object->fetch($id);
+	$object->delete();
+	$id = 0 ;
 }
 
 
@@ -102,23 +112,21 @@ if ($action == 'create')
 {
 	print_fiche_titre($langs->trans("CreateRepeatableInvoice"));
 
-	if ($mesg) print $mesg.'<br>';
+	$invoice = new Facture($db);   // Source invoice
+	$product_static = new Product($db);
 
-	$facture = new Facture($db);   // Source invoice
-	$product_static=new Product($db);
-
-	if ($facture->fetch($facid) > 0)
+	if ($invoice->fetch($id) > 0)
 	{
 		print '<form action="fiche-rec.php" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
-		print '<input type="hidden" name="facid" value="'.$facture->id.'">';
+		print '<input type="hidden" name="facid" value="'.$invoice->id.'">';
 
 		print '<table class="border" width="100%">';
 
-		$facture->fetch_thirdparty();
+		$invoice->fetch_thirdparty();
 
-		print '<tr><td>'.$langs->trans("Customer").'</td><td>'.$facture->client->getNomUrl(1).'</td>';
+		print '<tr><td>'.$langs->trans("Customer").'</td><td>'.$invoice->client->getNomUrl(1).'</td>';
 		print '<td>';
 		//print $langs->trans("NotePrivate");
 		print '</td></tr>';
@@ -134,20 +142,20 @@ if ($action == 'create')
 		print "<tr><td>".$langs->trans("Author")."</td><td>".$user->getFullName($langs)."</td></tr>";
 
 		print "<tr><td>".$langs->trans("PaymentConditions")."</td><td>";
-		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$facture->id,$facture->cond_reglement_id,'none');
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$invoice->id, $invoice->cond_reglement_id, 'none');
 		print "</td></tr>";
 
 		print "<tr><td>".$langs->trans("PaymentMode")."</td><td>";
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$facture->id,$facture->mode_reglement_id,'none');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$invoice->id, $facture->mode_reglement_id, 'none');
 		print "</td></tr>";
 
-		if ($conf->projet->enabled)
+		if (! empty($conf->projet->enabled))
 		{
 			print "<tr><td>".$langs->trans("Project")."</td><td>";
-			if ($facture->fk_project > 0)
+			if ($invoice->fk_project > 0)
 			{
 				$project = new Project($db);
-				$project->fetch($facture->fk_project);
+				$project->fetch($invoice->fk_project);
 				print $project->title;
 			}
 			print "</td></tr>";
@@ -155,14 +163,15 @@ if ($action == 'create')
 
 		print "</table>";
 
-
-
 		print '<br>';
-		if ($conf->service->enabled) {
-			print_titre($langs->trans("ProductsAndServices"));
-		} else {
-			print_titre($langs->trans("Products"));
-		}
+
+		$title = $langs->trans("ProductsAndServices");
+		if (empty($conf->service->enabled))
+			$title = $langs->trans("Products");
+		else if (empty($conf->product->enabled))
+			$title = $langs->trans("Services");
+
+		print_titre($title);
 
 		/*
 		 * Invoice lines
@@ -170,7 +179,7 @@ if ($action == 'create')
 		print '<table class="notopnoleftnoright" width="100%">';
 		print '<tr><td colspan="3">';
 
-		$sql = 'SELECT l.fk_product, l.product_type, l.description, l.qty, l.rowid, l.tva_tx,';
+		$sql = 'SELECT l.fk_product, l.product_type, l.label as custom_label, l.description, l.qty, l.rowid, l.tva_tx,';
 		$sql.= ' l.fk_remise_except,';
 		$sql.= ' l.remise_percent, l.subprice, l.info_bits,';
 		$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
@@ -181,7 +190,7 @@ if ($action == 'create')
 		$sql.= ' p.description as product_desc';
 		$sql.= " FROM ".MAIN_DB_PREFIX."facturedet as l";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
-		$sql.= " WHERE l.fk_facture = ".$facture->id;
+		$sql.= " WHERE l.fk_facture = ".$invoice->id;
 		$sql.= " ORDER BY l.rowid";
 
 		$result = $db->query($sql);
@@ -193,7 +202,7 @@ if ($action == 'create')
 			echo '<table class="notopnoleftnoright" width="100%">';
 			if ($num)
 			{
-				print "<tr class=\"liste_titre\">";
+				print '<tr class="liste_titre">';
 				print '<td width="54%">'.$langs->trans("Description").'</td>';
 				print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
 				print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
@@ -217,7 +226,7 @@ if ($action == 'create')
 				print "<tr $bc[$var]>";
 
 				// Show product and description
-				$type=$objp->product_type?$objp->product_type:$objp->fk_product_type;
+				$type=(isset($objp->product_type)?$objp->product_type:$objp->fk_product_type);
 
 				if ($objp->fk_product)
 				{
@@ -229,17 +238,17 @@ if ($action == 'create')
 					$product_static->type=$objp->fk_product_type;
 					$product_static->id=$objp->fk_product;
 					$product_static->ref=$objp->ref;
-					$product_static->libelle=$objp->product_label;
 					$text=$product_static->getNomUrl(1);
-					$text.= ' - '.$objp->product_label;
-					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
+					$text.= ' - '.(! empty($objp->custom_label)?$objp->custom_label:$objp->product_label);
+					$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($objp->description));
 					print $form->textwithtooltip($text,$description,3,'','',$i);
 
 					// Show range
-					print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
+					print_date_range($db->jdate($objp->date_start), $db->jdate($objp->date_end));
 
 					// Add description in form
-					if ($conf->global->PRODUIT_DESC_IN_FORM) print ($objp->description && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
+					if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
+						print (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 
 					print '</td>';
 				}
@@ -250,17 +259,26 @@ if ($action == 'create')
 
 					if ($type==1) $text = img_object($langs->trans('Service'),'service');
 					else $text = img_object($langs->trans('Product'),'product');
-					print $text.' '.nl2br($objp->description);
+
+					if (! empty($objp->custom_label)) {
+
+						$text.= ' <strong>'.$objp->custom_label.'</strong>';
+						print $form->textwithtooltip($text,dol_htmlentitiesbr($objp->description),3,'','',$i);
+
+					} else {
+
+						print $text.' '.nl2br($objp->description);
+					}
 
 					// Show range
-					print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
+					print_date_range($db->jdate($objp->date_start), $db->jdate($objp->date_end));
 
 					print "</td>\n";
 				}
 
 
-				print '<TD align="center">'.$objp->tva_tx.' %</TD>';
-				print '<TD align="center">'.$objp->qty.'</TD>';
+				print '<td align="center">'.$objp->tva_tx.' %</td>';
+				print '<td align="center">'.$objp->qty.'</td>';
 				if ($objp->remise_percent > 0)
 				{
 					print '<td align="right">'.$objp->remise_percent." %</td>\n";
@@ -270,7 +288,7 @@ if ($action == 'create')
 					print '<td>&nbsp;</td>';
 				}
 
-				print '<TD align="right">'.price($objp->subprice)."</td>\n";
+				print '<td align="right">'.price($objp->subprice)."</td>\n";
 
 				if ($objp->fk_product > 0 && $objp->subprice <> $product->price)
 				{
@@ -297,6 +315,7 @@ if ($action == 'create')
 		print "</table>";
 
 		print '</td></tr>';
+		// TODO not used
 		if ($flag_different_price)
 		{
 			print '<tr><td colspan="3" align="left">';
@@ -321,7 +340,7 @@ if ($action == 'create')
 	}
 	else
 	{
-		print "Erreur facture $facture->id inexistante";
+		print "Erreur facture $invoice->id inexistante";
 	}
 }
 else
@@ -330,34 +349,31 @@ else
 	 * View mode
 	 */
 
-	if ($facid > 0)
+	if ($id > 0)
 	{
-		$fac = new FactureRec($db);
-
-		if ($fac->fetch($facid, $user->societe_id) > 0)
+		if ($object->fetch($id) > 0)
 		{
-			$soc = new Societe($db);
-			$soc->fetch($fac->socid);
-			$author = new User($db);
-			$author->fetch($fac->user_author);
+			$object->fetch_thirdparty();
 
+			$author = new User($db);
+			$author->fetch($object->user_author);
 
 			dol_fiche_head($head, 'compta', $langs->trans("PredefinedInvoices"),0,'company');	// Add a div
 
 			print '<table class="border" width="100%">';
 
 			print '<tr><td>'.$langs->trans("Ref").'</td>';
-			print '<td colspan="4">'.$fac->titre.'</td>';
+			print '<td colspan="4">'.$object->titre.'</td>';
 
 			print '<tr><td>'.$langs->trans("Customer").'</td>';
-			print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
+			print '<td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td>';
 			print "<td>". $langs->trans("PaymentConditions") ." : ";
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->cond_reglement_id,'none');
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id,'none');
 			print "</td></tr>";
 
 			print "<tr><td>".$langs->trans("Author")."</td><td colspan=\"3\">".$author->getFullName($langs)."</td>";
 
-			if ($fac->remise_percent > 0)
+			if ($object->remise_percent > 0)
 			{
 				print '<td rowspan="5" valign="top">';
 			}
@@ -367,20 +383,20 @@ else
 			}
 
 			print $langs->trans("PaymentMode") ." : ";
-			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->mode_reglement_id,'none');
+			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id,'none');
 			print "</td></tr>";
 
 			print '<tr><td>'.$langs->trans("AmountHT").'</td>';
-			print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
+			print '<td align="right" colspan="2"><b>'.price($object->total_ht).'</b></td>';
 			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
-			print '<tr><td>'.$langs->trans("AmountVAT").'</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
+			print '<tr><td>'.$langs->trans("AmountVAT").'</td><td align="right" colspan="2">'.price($object->total_tva).'</td>';
 			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
+			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td align="right" colspan="2">'.price($object->total_ttc).'</td>';
 			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-			if ($fac->note)
+			if ($object->note)
 			{
-				print '<tr><td colspan="5">'.$langs->trans("Note").' : '.nl2br($fac->note)."</td></tr>";
+				print '<tr><td colspan="5">'.$langs->trans("Note").' : '.nl2br($object->note)."</td></tr>";
 			}
 
 			print "</table>";
@@ -390,11 +406,14 @@ else
 			/*
 			 * Lines
 			 */
-			if ($conf->service->enabled) {
-				print_titre($langs->trans("ProductsAndServices"));
-			} else {
-				print_titre($langs->trans("Products"));
-			}
+
+			$title = $langs->trans("ProductsAndServices");
+			if (empty($conf->service->enabled))
+				$title = $langs->trans("Products");
+			else if (empty($conf->product->enabled))
+				$title = $langs->trans("Services");
+
+			print_titre($title);
 
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
@@ -403,7 +422,7 @@ else
 			print '<td align="center">'.$langs->trans("ReductionShort").'</td>';
 			print '<td align="center">'.$langs->trans("Qty").'</td></tr>';
 
-			$num = count($fac->lines);
+			$num = count($object->lines);
 			$i = 0;
 			$var=True;
 			while ($i < $num)
@@ -413,7 +432,7 @@ else
 				$product_static=new Product($db);
 
 				// Show product and description
-				$type=$fac->lines[$i]->product_type?$fac->lines[$i]->product_type:$fac->lines[$i]->fk_product_type;
+				$type=(isset($object->lines[$i]->product_type)?$object->lines[$i]->product_type:$object->lines[$i]->fk_product_type);
 				// Try to enhance type detection using date_start and date_end for free lines when type
 				// was not saved.
 				if (! empty($objp->date_start)) $type=1;
@@ -421,26 +440,26 @@ else
 
 				// Show line
 				print "<tr $bc[$var]>";
-				if ($fac->lines[$i]->fk_product > 0)
+				if ($object->lines[$i]->fk_product > 0)
 				{
 					print '<td>';
-					print '<a name="'.$fac->lines[$i]->id.'"></a>'; // ancre pour retourner sur la ligne
+					print '<a name="'.$object->lines[$i]->id.'"></a>'; // ancre pour retourner sur la ligne
 
 					// Show product and description
-					$product_static->type=$fac->lines[$i]->fk_product_type;
-					$product_static->id=$fac->lines[$i]->fk_product;
-					$product_static->ref=$fac->lines[$i]->product_ref;
-					$product_static->libelle=$fac->lines[$i]->libelle;
+					$product_static->type=$object->lines[$i]->fk_product_type;
+					$product_static->id=$object->lines[$i]->fk_product;
+					$product_static->ref=$object->lines[$i]->product_ref;
 					$text=$product_static->getNomUrl(1);
-					$text.= ' - '.$fac->lines[$i]->libelle;
-					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($fac->lines[$i]->desc));
+					$text.= ' - '.(! empty($object->lines[$i]->label)?$object->lines[$i]->label:$object->lines[$i]->product_label);
+					$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($object->lines[$i]->desc));
 					print $form->textwithtooltip($text,$description,3,'','',$i);
 
 					// Show range
-					print_date_range($fac->lines[$i]->date_start,$fac->lines[$i]->date_end);
+					print_date_range($object->lines[$i]->date_start, $object->lines[$i]->date_end);
 
 					// Add description in form
-					if ($conf->global->PRODUIT_DESC_IN_FORM) print ($fac->lines[$i]->desc && $fac->lines[$i]->desc!=$fac->lines[$i]->libelle)?'<br>'.dol_htmlentitiesbr($fac->lines[$i]->desc):'';
+					if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
+						print (! empty($object->lines[$i]->desc) && $object->lines[$i]->desc!=$fac->lines[$i]->product_label)?'<br>'.dol_htmlentitiesbr($object->lines[$i]->desc):'';
 
 					print '</td>';
 				}
@@ -450,16 +469,25 @@ else
 
 					if ($type==1) $text = img_object($langs->trans('Service'),'service');
 					else $text = img_object($langs->trans('Product'),'product');
-					print $text.' '.nl2br($fac->lines[$i]->desc);
+
+					if (! empty($object->lines[$i]->label)) {
+
+						$text.= ' <strong>'.$object->lines[$i]->label.'</strong>';
+						print $form->textwithtooltip($text,dol_htmlentitiesbr($object->lines[$i]->desc),3,'','',$i);
+
+					} else {
+
+						print $text.' '.nl2br($object->lines[$i]->desc);
+					}
 
 					// Show range
-					print_date_range($fac->lines[$i]->date_start,$fac->lines[$i]->date_end);
+					print_date_range($object->lines[$i]->date_start, $object->lines[$i]->date_end);
 
 					print '</td>';
 				}
-				print "<td align=\"right\">".price($fac->lines[$i]->price)."</td>";
-				print '<td align="center">'.$fac->lines[$i]->remise_percent.' %</td>';
-				print "<td align=\"center\">".$fac->lines[$i]->qty."</td></tr>\n";
+				print '<td align="right">'.price($object->lines[$i]->price).'</td>';
+				print '<td align="center">'.$object->lines[$i]->remise_percent.' %</td>';
+				print '<td align="center">'.$object->lines[$i]->qty.'</td></tr>'."\n";
 				$i++;
 			}
 			print '</table>';
@@ -471,9 +499,9 @@ else
 			 */
 			print '<div class="tabsAction">';
 
-			if ($fac->statut == 0 && $user->rights->facture->supprimer)
+			if ($object->statut == 0 && $user->rights->facture->supprimer)
 			{
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&facid='.$fac->id.'">'.$langs->trans('Delete').'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
 			}
 
 			print '</div>';
@@ -489,20 +517,17 @@ else
 		 *  List mode
 		 */
 
-		if ($user->rights->facture->lire)
-		{
+		$sql = "SELECT s.nom, s.rowid as socid, f.titre, f.total, f.rowid as facid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
+		$sql.= " WHERE f.fk_soc = s.rowid";
+		$sql.= " AND f.entity = ".$conf->entity;
+		if ($socid)	$sql .= " AND s.rowid = ".$socid;
 
-			$sql = "SELECT s.nom, s.rowid as socid, f.titre, f.total, f.rowid as facid";
-			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
-			$sql.= " WHERE f.fk_soc = s.rowid";
-			$sql.= " AND f.entity = ".$conf->entity;
-			if ($socid)	$sql .= " AND s.rowid = ".$socid;
+		//$sql .= " ORDER BY $sortfield $sortorder, rowid DESC ";
+		//	$sql .= $db->plimit($limit + 1,$offset);
 
-			//$sql .= " ORDER BY $sortfield $sortorder, rowid DESC ";
-			//	$sql .= $db->plimit($limit + 1,$offset);
+		$result = $db->query($sql);
 
-			$result = $db->query($sql);
-		}
 		if ($result)
 		{
 			$num = $db->num_rows($result);
@@ -527,7 +552,7 @@ else
 
 					print "<tr $bc[$var]>";
 
-					print '<td><a href="'.$_SERVER['PHP_SELF'].'?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->titre;
+					print '<td><a href="'.$_SERVER['PHP_SELF'].'?id='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->titre;
 					print "</a></td>\n";
 					print '<td><a href="../fiche.php?socid='.$objp->socid.'">'.$objp->nom.'</a></td>';
 

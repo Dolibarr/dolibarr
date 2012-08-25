@@ -2697,7 +2697,7 @@ abstract class CommonObject
         {
             $var=!$var;
 
-            if (is_object($hookmanager) && ( ($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line) ) )
+            if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
             {
                 if (empty($line->fk_parent_line))
                 {
@@ -2745,14 +2745,14 @@ abstract class CommonObject
             $discount->fk_soc = $this->socid;
             $this->tpl['label'].= $discount->getNomUrl(0,'discount');
         }
-        else if ($line->fk_product)
+        else if (! empty($line->fk_product))
         {
             $productstatic = new Product($this->db);
             $productstatic->id = $line->fk_product;
             $productstatic->ref = $line->ref;
             $productstatic->type = $line->fk_product_type;
             $this->tpl['label'].= $productstatic->getNomUrl(1);
-            $this->tpl['label'].= $line->label?' - '.$line->label:'';
+            $this->tpl['label'].= ' - '.(! empty($line->label)?$line->label:$line->product_label);
             // Dates
             if ($line->product_type == 1 && ($date_start || $date_end))
             {
@@ -2770,7 +2770,7 @@ abstract class CommonObject
             }
         }
 
-        if ($line->desc)
+        if (! empty($line->desc))
         {
             if ($line->desc == '(CREDIT_NOTE)')  // TODO Not sure this is used for source object
             {
@@ -2804,7 +2804,12 @@ abstract class CommonObject
         $dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
         foreach($dirtpls as $reldir)
         {
-            $res=@include dol_buildpath($reldir.'/originproductline.tpl.php');
+            $tpl = dol_buildpath($reldir.'/originproductline.tpl.php');
+            if (empty($conf->file->strict_mode)) {
+            	$res=@include $tpl;
+            } else {
+            	$res=include $tpl; // for debug
+            }
             if ($res) break;
         }
     }

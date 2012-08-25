@@ -37,10 +37,11 @@ require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+if (! empty($conf->propal->enabled))
+	require DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+	require DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 }
 
 $langs->load('orders');
@@ -60,7 +61,7 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $lineid=GETPOST('lineid','int');
 $origin=GETPOST('origin','alpha');
-$originid=GETPOST('origin_id','int');
+$originid=(GETPOST('originid','int')?GETPOST('originid','int'):GETPOST('origin_id','int')); // For backward compatibility
 
 $mesg    = GETPOST('mesg');
 
@@ -218,7 +219,7 @@ else if ($action == 'add' && $user->rights->commande->creer)
 	$object->contactid            = GETPOST('contactidp');
 
 	// If creation from another object of another module (Example: origin=propal, originid=1)
-	if ($origin && $originid)
+	if (! empty($origin) && ! empty($originid))
 	{
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
@@ -271,8 +272,9 @@ else if ($action == 'add' && $user->rights->commande->creer)
 
 				for ($i=0;$i<$num;$i++)
 				{
-					$desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
-					$product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
+					$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
+					$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
+					$product_type=(! empty($lines[$i]->product_type)?$lines[$i]->product_type:0);
 
 					// Dates
 					// TODO mutualiser
@@ -309,7 +311,8 @@ else if ($action == 'add' && $user->rights->commande->creer)
 						$lines[$i]->special_code,
 						$fk_parent_line,
 						$lines[$i]->fk_fournprice,
-						$lines[$i]->pa_ht
+						$lines[$i]->pa_ht,
+						$label
 					);
 
 					if ($result < 0)
@@ -760,7 +763,7 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 
 	// Define info_bits
 	$info_bits=0;
-	if (preg_match('/\*/',GETPOST('tva_tx'))) $info_bits |= 0x01;
+	if (preg_match('/\*/', GETPOST('tva_tx'))) $info_bits |= 0x01;
 
 	// Define vat_rate
 	$vat_rate=GETPOST('tva_tx');
@@ -773,19 +776,21 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 	$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
 
 	// Check minimum price
-	if (GETPOST('productid', 'int'))
+	$productid = GETPOST('productid', 'int');
+	if (! empty($productid))
 	{
-		$productid = GETPOST('productid', 'int');
 		$product = new Product($db);
 		$product->fetch($productid);
+
 		$type=$product->type;
+
 		$price_min = $product->price_min;
-		if ($conf->global->PRODUIT_MULTIPRICES && $object->client->price_level)
+		if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->client->price_level))
 			$price_min = $product->multiprices_min[$object->client->price_level];
 
 		$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label'):'');
 
-		if ($price_min && (price2num($up_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
+		if ($price_min && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
 		{
 			setEventMessage($langs->trans("CantBeLessThanMinPrice", price2num($price_min,'MU')).getCurrencySymbol($conf->currency), 'errors');
 			$error++;
@@ -798,7 +803,7 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 
 		// Check parameters
 		if (GETPOST('type') < 0) {
-			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")));
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
 			$error++;
 		}
 	}
@@ -806,24 +811,24 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 	if (! $error)
 	{
 		$result = $object->updateline(
-			GETPOST('lineid'),
-			$description,
-			$pu_ht,
-			GETPOST('qty'),
-			GETPOST('remise_percent'),
-			$vat_rate,
-			$localtax1_rate,
-			$localtax2_rate,
-			'HT',
-			$info_bits,
-			$date_start,
-			$date_end,
-			$type,
-			GETPOST('fk_parent_line'),
-			0,
-			$fournprice,
-			$buyingprice,
-			$label
+				GETPOST('lineid'),
+				$description,
+				$pu_ht,
+				GETPOST('qty'),
+				GETPOST('remise_percent'),
+				$vat_rate,
+				$localtax1_rate,
+				$localtax2_rate,
+				'HT',
+				$info_bits,
+				$date_start,
+				$date_end,
+				$type,
+				GETPOST('fk_parent_line'),
+				0,
+				$fournprice,
+				$buyingprice,
+				$label
 		);
 
 		if ($result >= 0)
@@ -1344,7 +1349,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 		$soc = new Societe($db);
 		if ($socid) $res=$soc->fetch($socid);
 
-		if ($origin && $originid)
+		if (! empty($origin) && ! empty($originid))
 		{
 			// Parse element/subelement (ex: project_task)
 			$element = $subelement = $origin;
@@ -1419,7 +1424,6 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
 		print '<input type="hidden" name="remise_percent" value="'.$soc->remise_client.'">';
-		print '<input name="facnumber" type="hidden" value="provisoire">';
 		print '<input type="hidden" name="origin" value="'.$origin.'">';
 		print '<input type="hidden" name="originid" value="'.$originid.'">';
 
@@ -1553,7 +1557,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			print '</td></tr>';
 		}
 
-		if (is_object($objectsrc))
+		if (! empty($origin) && ! empty($originid) && is_object($objectsrc))
 		{
 			// TODO for compatibility
 			if ($origin == 'contrat')
@@ -1593,7 +1597,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 		}
 		else
 		{
-			if ($conf->global->PRODUCT_SHOW_WHEN_CREATE)
+			if (! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE))
 			{
 				/*
 				 * Services/produits predefinis
@@ -1611,7 +1615,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				{
 					print '<tr><td>';
 					// multiprix
-					if($conf->global->PRODUIT_MULTIPRICES)
+					if (! empty($conf->global->PRODUIT_MULTIPRICES))
 						print $form->select_produits('','idprod'.$i,'',$conf->product->limit_size,$soc->price_level);
 					else
 						print $form->select_produits('','idprod'.$i,'',$conf->product->limit_size);
@@ -1634,7 +1638,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 
 		// Show origin lines
-		if (is_object($objectsrc))
+		if (! empty($origin) && ! empty($originid) && is_object($objectsrc))
 		{
 			$title=$langs->trans('ProductsAndServices');
 			print_titre($title);

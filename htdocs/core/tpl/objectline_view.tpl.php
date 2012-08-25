@@ -68,7 +68,7 @@
 				print_date_range($line->date_start, $line->date_end);
 
 				// Add description in form
-				if ($conf->global->PRODUIT_DESC_IN_FORM)
+				if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
 				{
 					print (! empty($line->description) && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
 				}

@@ -48,12 +48,12 @@ if (! empty($action) && isset($tva_tx))
 	$return=array();
 	$price='';
 
-	if ($action == 'get_ttc' && isset($pu_ht) && $pu_ht != '') {
+	if ($action == 'get_ttc' && isset($pu_ht) && is_numeric($pu_ht) && $pu_ht != '') {
 
 		$price = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
 
 	}
-	else if ($action == 'get_ht' && isset($pu_ttc) && $pu_ttc != '') {
+	else if ($action == 'get_ht' && isset($pu_ttc) && is_numeric($pu_ttc) && $pu_ttc != '') {
 
 		$price = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
 

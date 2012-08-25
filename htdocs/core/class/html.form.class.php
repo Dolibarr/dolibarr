@@ -543,7 +543,7 @@ class Form
         global $db,$langs,$user,$conf;
 
         // If product & services are enabled or both disabled.
-        if ($forceall || ($conf->product->enabled && $conf->service->enabled)
+        if ($forceall || (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
         || (empty($conf->product->enabled) && empty($conf->service->enabled)))
         {
             if (empty($hidetext)) print $langs->trans("Type").': ';
@@ -566,11 +566,11 @@ class Form
             print '</select>';
             //if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
         }
-        if (! $forceall && empty($conf->product->enabled) && $conf->service->enabled)
+        if (! $forceall && empty($conf->product->enabled) && ! empty($conf->service->enabled))
         {
             print '<input type="hidden" name="'.$htmlname.'" value="1">';
         }
-        if (! $forceall && $conf->product->enabled && empty($conf->service->enabled))
+        if (! $forceall && ! empty($conf->product->enabled) && empty($conf->service->enabled))
         {
             print '<input type="hidden" name="'.$htmlname.'" value="0">';
         }

@@ -68,6 +68,8 @@ $search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','al
 $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_montant_ttc=GETPOST('search_montant_ttc','alpha');
+$origin=GETPOST('origin','alpha');
+$originid=(GETPOST('originid','int')?GETPOST('originid','int'):GETPOST('origin_id','int')); // For backward compatibility
 
 //PDF
 $hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -791,7 +793,8 @@ else if ($action == 'add' && $user->rights->facture->creer)
 
                         for ($i=0;$i<$num;$i++)
                         {
-                            $desc=($lines[$i]->desc?$lines[$i]->desc:$lines[$i]->libelle);
+                        	$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
+                            $desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
 
                             if ($lines[$i]->subprice < 0)
                             {
@@ -862,7 +865,8 @@ else if ($action == 'add' && $user->rights->facture->creer)
                                     $lines[$i]->rowid,
                                     $fk_parent_line,
                                     $lines[$i]->fk_fournprice,
-                                    $lines[$i]->pa_ht
+                                    $lines[$i]->pa_ht,
+                                	$label
                                 );
 
                                 if ($result > 0)
@@ -1198,12 +1202,12 @@ else if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['sa
     $date_end='';
     $date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
     $date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
-    $description=dol_htmlcleanlastbr($_POST['desc']);
-    $up_ht=GETPOST('pu')?GETPOST('pu'):GETPOST('subprice');
+    $description=dol_htmlcleanlastbr(GETPOST('product_desc'));
+    $pu_ht=GETPOST('price_ht');
 
     // Define info_bits
     $info_bits=0;
-    if (preg_match('/\*/',$_POST['tva_tx'])) $info_bits |= 0x01;
+    if (preg_match('/\*/', GETPOST('tva_tx'))) $info_bits |= 0x01;
 
     // Define vat_rate
     $vat_rate=$_POST['tva_tx'];
@@ -1211,85 +1215,103 @@ else if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['sa
     $localtax1_rate=get_localtax($vat_rate,1,$object->client);
     $localtax2_rate=get_localtax($vat_rate,2,$object->client);
 
-  	// ajout prix d'achat
-  	$fk_fournprice = $_POST['fournprice'];
-  	if ( ! empty($_POST['buying_price']) )
-  	  $pa_ht = $_POST['buying_price'];
-  	else
-  	  $pa_ht = null;
+  	// Add buying price
+	$fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):'');
+	$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
 
-    // Check parameters
-    if (! GETPOST('productid') && GETPOST("type") < 0)
-    {
-        $mesgs[] = '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")).'</div>';
-        $result = -1 ;
-    }
     // Check minimum price
-    if (GETPOST('productid'))
+	$productid = GETPOST('productid', 'int');
+    if (! empty($productid))
     {
-        $productid = GETPOST('productid');
         $product = new Product($db);
         $product->fetch($productid);
+
         $type=$product->type;
+
         $price_min = $product->price_min;
-        if ($conf->global->PRODUIT_MULTIPRICES && $object->client->price_level)	$price_min = $product->multiprices_min[$object->client->price_level];
-    }
-    if ($object->type!=2 && $price_min && GETPOST('productid') && (price2num($up_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
-    {
-        //print "CantBeLessThanMinPrice ".$up_ht." - ".GETPOST('remise_percent')." - ".$product->price_min;
-        $mesgs[] = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').' '.$langs->trans("Currency".$conf->currency)).'</div>';
-        $result=-1;
-    }
+        if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->client->price_level))
+        	$price_min = $product->multiprices_min[$object->client->price_level];
 
-    // Define params
-    if (GETPOST('productid')) $type=$product->type;
-    else $type=GETPOST("type");
+        $label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label'):'');
 
-    // Update line
-    if ($result >= 0)
-    {
-        $result = $object->updateline(
-            GETPOST('lineid'),
-            $description,
-            $up_ht,
-            GETPOST('qty'),
-            GETPOST('remise_percent'),
-            $date_start,
-            $date_end,
-            $vat_rate,
-            $localtax1_rate,
-            $localtax2_rate,
-            'HT',
-            $info_bits,
-            $type,
-            GETPOST('fk_parent_line'),
-            0,
-            $fk_fournprice,
-            $pa_ht
-        );
-
-        // Define output language
-        $outputlangs = $langs;
-        $newlang='';
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-        if (! empty($newlang))
+        if ($price_min && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
         {
-            $outputlangs = new Translate("",$conf);
-            $outputlangs->setDefaultLang($newlang);
+        	setEventMessage($langs->trans("CantBeLessThanMinPrice", price2num($price_min,'MU')).getCurrencySymbol($conf->currency), 'errors');
+        	$error++;
         }
-        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-        {
-            $ret=$object->fetch($id);    // Reload to get new records
-            facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+    }
+    else
+    {
+    	$type = GETPOST('type');
+    	$label = (GETPOST('product_label') ? GETPOST('product_label'):'');
 
-						unset($_POST['qty']);
-						unset($_POST['type']);
-						unset($_POST['np_price']);
-						unset($_POST['dp_desc']);
-						unset($_POST['np_tva_tx']);
-						unset($_POST['np_buying_price']);
-        }
+    	// Check parameters
+    	if (GETPOST('type') < 0) {
+    		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
+    		$error++;
+    	}
+    }
+
+	// Update line
+	if (! $error)
+	{
+		$result = $object->updateline(
+				GETPOST('lineid'),
+				$description,
+				$pu_ht,
+				GETPOST('qty'),
+				GETPOST('remise_percent'),
+				$date_start,
+				$date_end,
+				$vat_rate,
+				$localtax1_rate,
+				$localtax2_rate,
+				'HT',
+				$info_bits,
+				$type,
+				GETPOST('fk_parent_line'),
+				0,
+				$fournprice,
+				$buyingprice,
+				$label
+		);
+
+		if ($result >= 0)
+		{
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
+				// Define output language
+				$outputlangs = $langs;
+				$newlang='';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+				if (! empty($newlang))
+				{
+					$outputlangs = new Translate("",$conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+
+				$ret=$object->fetch($id);    // Reload to get new records
+				facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+			}
+
+			unset($_POST['qty']);
+			unset($_POST['type']);
+			unset($_POST['productid']);
+			unset($_POST['remise_percent']);
+			unset($_POST['price_ht']);
+			unset($_POST['price_ttc']);
+			unset($_POST['tva_tx']);
+			unset($_POST['product_ref']);
+			unset($_POST['product_label']);
+			unset($_POST['product_desc']);
+			unset($_POST['fournprice']);
+			unset($_POST['buying_price']);
+		}
+		else
+		{
+			setEventMessage($object->error, 'errors');
+		}
     }
 }
 
@@ -1691,11 +1713,11 @@ if ($action == 'create')
     $soc = new Societe($db);
     if ($socid) $res=$soc->fetch($socid);
 
-    if (GETPOST('origin') && GETPOST('originid'))
+    if (! empty($origin) && ! empty($originid))
     {
         // Parse element/subelement (ex: project_task)
-        $element = $subelement = GETPOST('origin');
-        if (preg_match('/^([^_]+)_([^_]+)/i',GETPOST('origin'),$regs))
+        $element = $subelement = $origin;
+        if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs))
         {
             $element = $regs[1];
             $subelement = $regs[2];
@@ -1703,7 +1725,7 @@ if ($action == 'create')
 
         if ($element == 'project')
         {
-            $projectid=GETPOST('originid');
+            $projectid=$originid;
         }
         else
         {
@@ -1717,19 +1739,19 @@ if ($action == 'create')
 
             $classname = ucfirst($subelement);
             $objectsrc = new $classname($db);
-            $objectsrc->fetch(GETPOST('originid'));
+            $objectsrc->fetch($originid);
             if (empty($objectsrc->lines) && method_exists($objectsrc,'fetch_lines'))  $objectsrc->fetch_lines();
             $objectsrc->fetch_thirdparty();
 
-            $projectid			= (!empty($objectsrc->fk_project)?$objectsrc->fk_project:'');
-            $ref_client			= (!empty($objectsrc->ref_client)?$objectsrc->ref_client:'');
-            $ref_int			= (!empty($objectsrc->ref_int)?$objectsrc->ref_int:'');
+            $projectid			= (! empty($objectsrc->fk_project)?$objectsrc->fk_project:'');
+            $ref_client			= (! empty($objectsrc->ref_client)?$objectsrc->ref_client:'');
+            $ref_int			= (! empty($objectsrc->ref_int)?$objectsrc->ref_int:'');
 
             $soc = $objectsrc->client;
-            $cond_reglement_id 	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
-            $mode_reglement_id 	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
-            $remise_percent 	= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
-            $remise_absolue 	= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
+            $cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
+            $mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+            $remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
+            $remise_absolue 	= (! empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
             $dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
         }
     }
@@ -1744,7 +1766,7 @@ if ($action == 'create')
     $absolute_discount=$soc->getAvailableDiscounts();
 
 
-    if ($conf->use_javascript_ajax)
+    if (! empty($conf->use_javascript_ajax))
     {
         print ajax_combobox('fac_replacement');
         print ajax_combobox('fac_avoir');
@@ -1757,8 +1779,8 @@ if ($action == 'create')
     print '<input name="facnumber" type="hidden" value="provisoire">';
     print '<input name="ref_client" type="hidden" value="'.$ref_client.'">';
     print '<input name="ref_int" type="hidden" value="'.$ref_int.'">';
-    print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
-    print '<input type="hidden" name="originid" value="'.GETPOST('originid').'">';
+    print '<input type="hidden" name="origin" value="'.$origin.'">';
+    print '<input type="hidden" name="originid" value="'.$originid.'">';
 
     print '<table class="border" width="100%">';
 
@@ -1766,7 +1788,7 @@ if ($action == 'create')
     print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
 
     // Factures predefinies
-    if (empty($_GET['propalid']) && empty($_GET['commandeid']) && empty($_GET['contratid']) && empty($_GET['originid']))
+    if (empty($origin) && empty($originid))
     {
         $sql = 'SELECT r.rowid, r.titre, r.total_ttc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_rec as r';
@@ -1787,7 +1809,7 @@ if ($action == 'create')
                 {
                     $objp = $db->fetch_object($resql);
                     print '<option value="'.$objp->rowid.'"';
-                    if ($_POST["fac_rec"] == $objp->rowid) print ' selected="selected"';
+                    if (GETPOST('fac_rec') == $objp->rowid) print ' selected="selected"';
                     print '>'.$objp->titre.' ('.price($objp->total_ttc).' '.$langs->trans("TTC").')</option>';
                     $i++;
                 }
@@ -1997,23 +2019,23 @@ if ($action == 'create')
     print '</textarea></td></tr>';
 
     // Private note
-    if (! $user->societe_id)
+    if (empty($user->societe_id))
     {
         print '<tr>';
         print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
         print '<td valign="top" colspan="2">';
         print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">';
-        if (is_object($objectsrc))    // Take value from source object
+        if (! empty($origin) && ! empty($originid) && is_object($objectsrc))    // Take value from source object
         {
             print $objectsrc->note;
         }
         print '</textarea></td></tr>';
     }
 
-    if (is_object($objectsrc))
+    if (! empty($origin) && ! empty($originid) && is_object($objectsrc))
     {
         // TODO for compatibility
-        if ($_GET['origin'] == 'contrat')
+        if ($origin == 'contrat')
         {
             // Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
             $objectsrc->remise_absolue=$remise_absolue;
@@ -2051,7 +2073,7 @@ if ($action == 'create')
     else
     {
         // Show deprecated optional form to add product line here
-        if ($conf->global->PRODUCT_SHOW_WHEN_CREATE)
+        if (! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE))
         {
             print '<tr><td colspan="3">';
 
@@ -2113,7 +2135,7 @@ if ($action == 'create')
     print "</form>\n";
 
     // Show origin lines
-    if (is_object($objectsrc))
+    if (! empty($origin) && ! empty($originid) && is_object($objectsrc))
     {
         print '<br>';
 

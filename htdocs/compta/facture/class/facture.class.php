@@ -411,7 +411,13 @@ class Facture extends CommonInvoice
                         '','',0,0,'','HT',0,
                         $_facrec->lines[$i]->product_type,
                         $_facrec->lines[$i]->rang,
-                        $_facrec->lines[$i]->special_code
+                        $_facrec->lines[$i]->special_code,
+                    	'',
+                    	0,
+                    	0,
+                    	null,
+                    	0,
+                    	$_facrec->lines[$i]->label
                     );
 
                     if ( $result_insert < 0)

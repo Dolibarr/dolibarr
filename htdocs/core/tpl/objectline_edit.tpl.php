@@ -46,9 +46,11 @@
 	<?php } ?>
 
 	<input id="product_label" name="product_label" size="40" value="<?php echo $label; ?>"<?php echo $placeholder . ((! empty($line->fk_product) && empty($line->label)) ? ' disabled="disabled"' : ''); ?>>
+	<input type="hidden" id="origin_label_cache" name="origin_label_cache" value="<?php echo $line->product_label; ?>" />
 	<span id="update_label_area" class="hideobject"><input type="checkbox" id="update_label_checkbox" name="update_label" value="1" />
 		<?php echo $form->textwithtooltip($langs->trans('UpdateOriginalProductLabel'), $langs->trans('HelpUpdateOriginalProductLabel'),1,0,'','',3); ?>
 	</span>
+	<span id="price_base_type" class="hideobject"></span>
 
 	<br>
 
@@ -71,12 +73,12 @@
 
 	<td align="right"><?php echo $form->load_tva('tva_tx',$line->tva_tx,$seller,$buyer,0,$line->info_bits,$line->product_type); ?></td>
 
-	<td align="right"><input type="text" class="flat" size="6" id="price_ht" name="price_ht" value="<?php echo price($line->subprice,0,'',0); ?>"></td>
-	<td align="right"><input type="text" class="flat" size="6" id="price_ttc" name="price_ttc" value="<?php echo price($pu_ttc,0,'',0); ?>"></td>
+	<td align="right"><input type="text" class="flat" size="8" id="price_ht" name="price_ht" value="<?php echo price($line->subprice,0,'',0); ?>"></td>
+	<td align="right"><input type="text" class="flat" size="8" id="price_ttc" name="price_ttc" value="<?php echo price($pu_ttc,0,'',0); ?>"></td>
 
 	<td align="right">
 	<?php if (($line->info_bits & 2) != 2) { ?>
-		<input size="2" type="text" class="flat" name="qty" value="<?php echo $line->qty; ?>">
+		<input size="3" type="text" class="flat" name="qty" value="<?php echo $line->qty; ?>">
 	<?php } else { ?>
 		&nbsp;
 	<?php } ?>
@@ -134,7 +136,9 @@ $(document).ready(function() {
 		if ($(this).attr('checked')) {
 			$('#product_label').removeAttr('disabled').focus();
 		} else {
-			$('#product_label').attr('disabled','disabled');
+			$('#product_label')
+				.attr('disabled','disabled')
+				.val($('#origin_label_cache').val());
 		}
 	});
 
@@ -161,7 +165,13 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#price_ht').onDelayedKeyup({ handler: function() {
+	$('#price_ht').focusin(function() {
+		$('#price_base_type').html('HT');
+	});
+
+	$('#price_ht').onDelayedKeyup({
+		handler: function() {
+			$('#price_base_type').html('HT');
 			$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php', {
 				'action': 'get_ttc',
 				'pu_ht': $(this).val(),
@@ -183,7 +193,12 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#price_ttc').onDelayedKeyup({ handler: function() {
+	$('#price_ttc').focusin(function() {
+		$('#price_base_type').html('TTC');
+	});
+
+	$('#price_ttc').onDelayedKeyup({
+		handler: function() {
 			$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php', {
 				'action': 'get_ht',
 				'pu_ttc': $(this).val(),
@@ -206,16 +221,29 @@ $(document).ready(function() {
 	});
 
 	$('#tva_tx').change(function() {
-		$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php', {
-			'action': 'get_ttc',
-			'pu_ht': $('#price_ht').val(),
-			'tva_tx': $(this).val()
-		},
-		function(data) {
-			if (data && data.price.length > 0) {
-				$('#price_ttc').val(data.price);
-			}
-		}, 'json');
+		if ($('#price_base_type').html() == 'HT') {
+			$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php', {
+				'action': 'get_ttc',
+				'pu_ht': $('#price_ht').val(),
+				'tva_tx': $(this).val()
+			},
+			function(data) {
+				if (data && data.price.length > 0) {
+					$('#price_ttc').val(data.price);
+				}
+			}, 'json');
+		} else {
+			$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php', {
+				'action': 'get_ht',
+				'pu_ttc': $('#price_ttc').val(),
+				'tva_tx': $(this).val()
+			},
+			function(data) {
+				if (data && data.price.length > 0) {
+					$('#price_ht').val(data.price);
+				}
+			}, 'json');
+		}
 	});
 
 	<?php if (! empty($conf->margin->enabled)) { ?>
