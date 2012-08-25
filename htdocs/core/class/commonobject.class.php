@@ -2613,7 +2613,7 @@ abstract class CommonObject
 						$outputlangs->setDefaultLang($newlang);
 					}
 
-					$label = (! empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $line->product_label;
+					$label = (! empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $line->product_label;
 				}
 				else
 				{

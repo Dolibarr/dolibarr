@@ -1202,7 +1202,7 @@ else
                     {
                         $prod = new Product($db);
                         $prod->fetch($lines[$i]->fk_product);
-                        $label = ( ! empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $lines[$i]->product_label;
+                        $label = ( ! empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $lines[$i]->product_label;
                     }
                     else
                     $label = $lines[$i]->product_label;

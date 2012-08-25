@@ -420,7 +420,7 @@ if ($id > 0 || ! empty($ref))
 							$outputlangs->setDefaultLang($newlang);
 						}
 
-						$label = (! empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $objp->product_label;
+						$label = (! empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $objp->product_label;
 					}
 					else
 						$label = $objp->product_label;

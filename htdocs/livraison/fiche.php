@@ -343,7 +343,7 @@ if ($_GET["action"] == 'create')
               $outputlangs->setDefaultLang($newlang);
           }
 
-          $label = (! empty($product->multilangs[$outputlangs->defaultlang]["libelle"])) ? $product->multilangs[$outputlangs->defaultlang]["libelle"] : $product->libelle;
+          $label = (! empty($product->multilangs[$outputlangs->defaultlang]["label"])) ? $product->multilangs[$outputlangs->defaultlang]["label"] : $product->libelle;
         }
         else
           $label = $product->libelle;
@@ -584,7 +584,7 @@ else
                 $outputlangs->setDefaultLang($newlang);
             }
 
-            $label = (! empty($product->multilangs[$outputlangs->defaultlang]["libelle"])) ? $product->multilangs[$outputlangs->defaultlang]["libelle"] : $delivery->lines[$i]->product_label;
+            $label = (! empty($product->multilangs[$outputlangs->defaultlang]["label"])) ? $product->multilangs[$outputlangs->defaultlang]["label"] : $delivery->lines[$i]->product_label;
           }
           else
             $label = $delivery->lines[$i]->product_label;

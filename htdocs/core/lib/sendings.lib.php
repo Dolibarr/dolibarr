@@ -204,7 +204,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 							$outputlangs->setDefaultLang($newlang);
 						}
 
-						$label = (! empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $objp->product;
+						$label = (! empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $objp->product;
 					}
 					else
 					{
