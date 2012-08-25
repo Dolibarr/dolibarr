@@ -74,7 +74,8 @@ $hideref 	 = (GETPOST('hideref','int') ? GETPOST('hideref','int') : (! empty($co
 $NBLINES=4;
 
 // Security check
-$module='propale';
+$module='propal';
+$dbtable='';
 if (isset($socid))
 {
 	$objectid=$socid;
@@ -84,8 +85,6 @@ if (isset($socid))
 else if (isset($id) &&  $id > 0)
 {
 	$objectid=$id;
-	$module='propale';
-	$dbtable='propal';
 }
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, $module, $objectid, $dbtable);
