@@ -51,12 +51,24 @@ $object = new Propal($db);
 if ($id > 0 || ! empty($ref))
 {
 	$ret=$object->fetch($id, $ref);
+	if ($ret == 0)
+	{
+		$langs->load("errors");
+		setEventMessage($langs->trans('ErrorRecordNotFound'), 'errors');
+		$error++;
+	}
+	else if ($ret < 0)
+	{
+		setEventMessage($object->error, 'errors');
+		$error++;
+	}
+}
+if (! $error)
+{
 	$object->fetch_thirdparty();
 }
 else
 {
-	$langs->load("errors");
-	setEventMessage($langs->trans('ErrorRecordNotFound'), 'errors');
 	Header('Location: '.DOL_URL_ROOT.'/comm/propal/list.php');
 	exit;
 }
