@@ -47,6 +47,20 @@ $result = restrictedArea($user, 'propal', $id);
 
 $object = new Propal($db);
 
+// Load object
+if ($id > 0 || ! empty($ref))
+{
+	$ret=$object->fetch($id, $ref);
+	$object->fetch_thirdparty();
+}
+else
+{
+	$langs->load("errors");
+	setEventMessage($langs->trans('ErrorRecordNotFound'), 'errors');
+	Header('Location: '.DOL_URL_ROOT.'/comm/propal/list.php');
+	exit;
+}
+
 
 /*
  * Ajout d'un nouveau contact
@@ -54,9 +68,7 @@ $object = new Propal($db);
 
 if ($action == 'addcontact' && $user->rights->propale->creer)
 {
-	$result = $object->fetch($id);
-
-    if ($result > 0 && $id > 0)
+    if ($object->id > 0)
     {
     	$contactid = (GETPOST('userid','int') ? GETPOST('userid','int') : GETPOST('contactid','int'));
   		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
@@ -72,11 +84,11 @@ if ($action == 'addcontact' && $user->rights->propale->creer)
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
-			$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+			setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
 		}
 		else
 		{
-			$mesg = '<div class="error">'.$object->error.'</div>';
+			setEventMessage($object->error, 'errors');
 		}
 	}
 }
@@ -84,20 +96,15 @@ if ($action == 'addcontact' && $user->rights->propale->creer)
 // Bascule du statut d'un contact
 else if ($action == 'swapstatut' && $user->rights->propale->creer)
 {
-	if ($object->fetch($id) > 0)
+	if ($object->id > 0)
 	{
 	    $result=$object->swapContactStatus(GETPOST('ligne'));
-	}
-	else
-	{
-		dol_print_error($db);
 	}
 }
 
 // Efface un contact
 else if ($action == 'deletecontact' && $user->rights->propale->creer)
 {
-	$object->fetch($id);
 	$result = $object->delete_contact($lineid);
 
 	if ($result >= 0)
@@ -113,7 +120,6 @@ else if ($action == 'deletecontact' && $user->rights->propale->creer)
 
 else if ($action == 'setaddress' && $user->rights->propale->creer)
 {
-	$object->fetch($id);
 	$result=$object->setDeliveryAddress($_POST['fk_address']);
 	if ($result < 0) dol_print_error($db,$object->error);
 }
@@ -129,93 +135,74 @@ $form = new Form($db);
 $formcompany= new FormCompany($db);
 $formother = new FormOther($db);
 
-
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode vue et edition                                                         */
-/*                                                                             */
-/* *************************************************************************** */
-dol_htmloutput_mesg($mesg);
-
-if ($id > 0 || ! empty($ref))
+if ($object->id > 0)
 {
-	if ($object->fetch($id,$ref) > 0)
+	$head = propal_prepare_head($object);
+	dol_fiche_head($head, 'contact', $langs->trans("Proposal"), 0, 'propal');
+
+	/*
+	 * Propal synthese pour rappel
+	 */
+	print '<table class="border" width="100%">';
+
+	$linkback='<a href="'.DOL_URL_ROOT.'/comm/propal/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+
+	// Ref
+	print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
+	print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','');
+	print '</td></tr>';
+
+	// Ref client
+	print '<tr><td>';
+	print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+	print $langs->trans('RefCustomer').'</td><td align="left">';
+	print '</td>';
+	print '</tr></table>';
+	print '</td><td colspan="3">';
+	print $object->ref_client;
+	print '</td>';
+	print '</tr>';
+
+	// Customer
+	print "<tr><td>".$langs->trans("Company")."</td>";
+	print '<td colspan="3">'.$object->client->getNomUrl(1).'</td></tr>';
+
+	// Delivery address
+	if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
 	{
-		$soc = new Societe($db);
-		$soc->fetch($object->socid);
-
-		$head = propal_prepare_head($object);
-		dol_fiche_head($head, 'contact', $langs->trans("Proposal"), 0, 'propal');
-
-		/*
-		 * Propal synthese pour rappel
-		 */
-		print '<table class="border" width="100%">';
-
-		$linkback='<a href="'.DOL_URL_ROOT.'/comm/propal/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-
-		// Ref
-		print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
-		print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','');
-		print '</td></tr>';
-
-		// Ref client
 		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
-		print $langs->trans('RefCustomer').'</td><td align="left">';
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print $langs->trans('DeliveryAddress');
 		print '</td>';
+
+		if ($action != 'editdelivery_address' && ! empty($object->brouillon))
+			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_address&amp;socid='.$object->socid.'&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDeliveryAddress'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
-		print $object->ref_client;
-		print '</td>';
-		print '</tr>';
 
-		// Customer
-		if (is_null($object->client)) $object->fetch_thirdparty();
-		print "<tr><td>".$langs->trans("Company")."</td>";
-		print '<td colspan="3">'.$object->client->getNomUrl(1).'</td></tr>';
-
-		// Delivery address
-		if ($conf->global->SOCIETE_ADDRESSES_MANAGEMENT)
+		if ($action == 'editdelivery_address')
 		{
-			print '<tr><td>';
-			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $langs->trans('DeliveryAddress');
-			print '</td>';
-
-			if ($action != 'editdelivery_address' && $object->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_address&amp;socid='.$object->socid.'&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDeliveryAddress'),1).'</a></td>';
-			print '</tr></table>';
-			print '</td><td colspan="3">';
-
-			if ($action == 'editdelivery_address')
-			{
-				$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$object->socid,'fk_address','propal',$object->id);
-			}
-			else
-			{
-				$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$object->socid,'none','propal',$object->id);
-			}
-			print '</td></tr>';
+			$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$object->socid,'fk_address','propal',$object->id);
 		}
-
-		print "</table>";
-
-		print '</div>';
-
-		print '<br>';
-
-		// Contacts lines (modules that overwrite templates must declare this into descriptor)
-		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
-		foreach($dirtpls as $reldir)
+		else
 		{
-		    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
-		    if ($res) break;
+			$formother->form_address($_SERVER['PHP_SELF'].'?id='.$object->id,$object->fk_delivery_address,$object->socid,'none','propal',$object->id);
 		}
-
+		print '</td></tr>';
 	}
-	else
+
+	print "</table>";
+
+	print '</div>';
+
+	print '<br>';
+
+	// Contacts lines (modules that overwrite templates must declare this into descriptor)
+	$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+	foreach($dirtpls as $reldir)
 	{
-		print "ErrorRecordNotFound";
+		$res=@include dol_buildpath($reldir.'/contacts.tpl.php');
+		if ($res) break;
 	}
 }
 

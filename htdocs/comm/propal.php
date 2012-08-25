@@ -98,6 +98,13 @@ if ($id > 0 || ! empty($ref))
 	$ret=$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
 }
+else
+{
+	$langs->load("errors");
+	setEventMessage($langs->trans('ErrorRecordNotFound'), 'errors');
+	Header('Location: '.DOL_URL_ROOT.'/comm/propal/list.php');
+	exit;
+}
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
