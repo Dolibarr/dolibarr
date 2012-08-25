@@ -158,7 +158,7 @@ if ($what == 'mysql')
     if (! empty($dolibarr_main_db_pass))
     {
         $paramcrypted.=' -p"'.preg_replace('/./i','*',$dolibarr_main_db_pass).'"';
-        $paramclear.=' -p"'.str_replace('"','\"',$dolibarr_main_db_pass).'"';
+        $paramclear.=' -p"'.str_replace(array('"','`'),array('\"','\`'),$dolibarr_main_db_pass).'"';
     }
 
     print '<b>'.$langs->trans("RunCommandSummary").':</b><br>'."\n";
