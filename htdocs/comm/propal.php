@@ -49,6 +49,8 @@ $langs->load('products');
 if (! empty($conf->margin->enabled))
   $langs->load('margins');
 
+$error=0;
+
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
 $socid=GETPOST('socid','int');
@@ -73,22 +75,22 @@ $object = new Propal($db);
 // Load object
 if ($id > 0 || ! empty($ref))
 {
-	$ret=$object->fetch($id, $ref);
-	if ($ret == 0)
+	if ($action != 'add')
 	{
-		$langs->load("errors");
-		setEventMessage($langs->trans('ErrorRecordNotFound'), 'errors');
-		$error++;
+		$ret=$object->fetch($id, $ref);
+		if ($ret == 0)
+		{
+			$langs->load("errors");
+			setEventMessage($langs->trans('ErrorRecordNotFound'), 'errors');
+			$error++;
+		}
+		else if ($ret < 0)
+		{
+			setEventMessage($object->error, 'errors');
+			$error++;
+		}
+		else $object->fetch_thirdparty();
 	}
-	else if ($ret < 0)
-	{
-		setEventMessage($object->error, 'errors');
-		$error++;
-	}
-}
-if (! $error)
-{
-	$object->fetch_thirdparty();
 }
 else
 {
