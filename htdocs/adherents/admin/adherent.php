@@ -6,6 +6,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2011-2012 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2012      J. Fernando Lagrange <fernando@demo-tic.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -248,6 +249,8 @@ print '<br>';
  * Edition des variables globales non rattache a un theme specifique
  */
 $constantes=array(
+		'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT',
+		'ADHERENT_AUTOREGISTER_NOTIF_MAIL',
 		'ADHERENT_AUTOREGISTER_MAIL_SUBJECT',
 		'ADHERENT_AUTOREGISTER_MAIL',
 		'ADHERENT_MAIL_VALID_SUBJECT',

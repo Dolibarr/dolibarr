@@ -35,13 +35,13 @@ For users:
 - New: More surface control on stock correction page.
 - New: Add great britain provinces.
 - New: Update libs/tools/logo for DoliWamp.
+- New: [ task #494 ] Send an email to foundation when a new member has auto-subscribed
+- New: [ task #326 ]: Add a numbering module to suggest automatically a product ref
+- New: Add conditional substitution IF/ELSEIF/ENDIF for ODT templates
+- Fix: [ bug #499 ]: Supplier order input method not translated
 - Fix: No images into product description lines as PDF generation does
   not work with this.
-- New: [ task #326 ]: Add a numbering module to suggest automatically a product ref
 - Fix: Errors weren't being shown in customer's & supplier's orders
-- New: Add conditional substitution IF/ELSEIF/ENDIF for ODT templates
-- New: Basic implementation of hooks and triggers for a lot (most) of core modules: action/calendar, trips and expenses, dons, vat payment, contact/society, contract, product lines, expedition, order supplier and order invoice (lines included), intervention card, project, tasks
-- Fix: [ bug #499 ]: Supplier order input method not translated
 
 For developers:
 - New: Add webservice for thirdparty creation and list.
@@ -55,6 +55,9 @@ For developers:
        ldap::connect, formadmin::select_lang,
        html::select_tva
 - New: Add custom substitution function for ODT product lines: mymodule_completesubstitutionarray_lines()
+- New: Basic implementation of hooks and triggers for a lot (most) of core modules: 
+  action/calendar, trips and expenses, dons, vat payment, contact/society, contract, product lines, 
+  expedition, order supplier and order invoice (lines included), intervention card, project, tasks.
 
 For translators:
 - New: Update language files (de, tr, pt, ca, es, en, fr).

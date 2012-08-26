@@ -260,6 +260,32 @@ if ($action == 'add')
                 $result=$adh->send_an_email($conf->global->ADHERENT_AUTOREGISTER_MAIL,$conf->global->ADHERENT_AUTOREGISTER_MAIL_SUBJECT,array(),array(),array(),"","",0,-1);
             }
 
+            // Send email to the foundation to say a new member subscribed with autosubscribe form
+            if (! empty($conf->global->MAIN_INFO_SOCIETE_MAIL) && ! empty($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT) &&
+                  ! empty($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL) )
+            {
+            	$to=$adh->makeSubstitution($conf->global->MAIN_INFO_SOCIETE_MAIL);
+            	$from=$conf->global->ADHERENT_MAIL_FROM;
+            	$mailfile = new CMailFile(
+            		$conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT,
+            		$to,
+            		$from,
+            		$adh->makeSubstitution($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL),
+            		array(),
+            		array(),
+            		array(),
+            		"",
+            		"",
+            		0,
+            		-1
+            		);
+
+            	if (! $mailfile->sendfile())
+            	{
+            		dol_syslog($langs->trans("ErrorFailedToSendMail",$from,$to), LOG_ERR);
+            	}
+            }
+
             if (! empty($backtopage)) $urlback=$backtopage;
             else if ($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION)
             {
