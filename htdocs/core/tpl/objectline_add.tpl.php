@@ -220,7 +220,7 @@ $(document).ready(function() {
 	$('#idprod').change(function() {
 		if ($(this).val().length > 0)
 	    {
-			if (CKEDITOR) {
+			if (typeof CKEDITOR == 'object') {
 				CKEDITOR.instances['product_desc'].focus();
 			} else {
 				$('#product_desc').focus();
@@ -336,7 +336,7 @@ $(document).ready(function() {
 
 			var origin_desc = $('#origin_desc_cache').val();
 
-			if (CKEDITOR) {
+			if (typeof CKEDITOR == 'object') {
 				var freecontent = CKEDITOR.instances['product_desc'].getData();
 				if (origin_desc.length > 0)
 					var content = origin_desc + '<br />' + freecontent;
@@ -356,7 +356,7 @@ $(document).ready(function() {
 			var content = $('#free_desc_cache').val();
 		}
 
-		if (CKEDITOR) {
+		if (typeof CKEDITOR == 'object') {
 			CKEDITOR.instances['product_desc'].setData(content);
 		} else {
 			$('#product_desc').html(content);
