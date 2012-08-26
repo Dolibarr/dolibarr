@@ -16,7 +16,7 @@
  *
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 
 // Security check
 if (!$user->admin && $user->societe_id > 0)

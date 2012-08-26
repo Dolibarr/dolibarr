@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +24,9 @@
  *       \brief      Fiche note commande
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/fourn.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 $langs->load("orders");
 $langs->load("suppliers");
@@ -130,7 +131,7 @@ if ($id > 0 || ! empty($ref))
 
             if ($object->methode_commande)
             {
-                print '<tr><td>'.$langs->trans("Method").'</td><td colspan="2">'.$object->methode_commande.'</td></tr>';
+                print '<tr><td>'.$langs->trans("Method").'</td><td colspan="2">'.$object->getInputMethod().'</td></tr>';
             }
         }
 
@@ -144,7 +145,7 @@ if ($id > 0 || ! empty($ref))
         print '<br>';
 
         $colwidth=20;
-        include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
+        include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
         dol_fiche_end();
     }

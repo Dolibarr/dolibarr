@@ -61,7 +61,7 @@ class Skeleton_Class // extends CommonObject
     /**
      *  Create object into database
      *
-     *  @param	User	$user        User that create
+     *  @param	User	$user        User that creates
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
@@ -102,10 +102,10 @@ class Skeleton_Class // extends CommonObject
 			if (! $notrigger)
 			{
 	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
+	            // want this action calls a trigger.
 
 	            //// Call triggers
-	            //include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 	            //$interface=new Interfaces($this->db);
 	            //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
 	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -133,7 +133,7 @@ class Skeleton_Class // extends CommonObject
 
 
     /**
-     *  Load object in memory from database
+     *  Load object in memory from the database
      *
      *  @param	int		$id    Id object
      *  @return int          	<0 if KO, >0 if OK
@@ -178,7 +178,7 @@ class Skeleton_Class // extends CommonObject
     /**
      *  Update object into database
      *
-     *  @param	User	$user        User that modify
+     *  @param	User	$user        User that modifies
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
@@ -193,7 +193,7 @@ class Skeleton_Class // extends CommonObject
 		//...
 
 		// Check parameters
-		// Put here code to add control on parameters values
+		// Put here code to add a control on parameters values
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."mytable SET";
@@ -213,10 +213,10 @@ class Skeleton_Class // extends CommonObject
 			if (! $notrigger)
 			{
 	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
+	            // want this action calls a trigger.
 
 	            //// Call triggers
-	            //include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 	            //$interface=new Interfaces($this->db);
 	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
 	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -246,7 +246,7 @@ class Skeleton_Class // extends CommonObject
  	/**
 	 *  Delete object in database
 	 *
-     *	@param  User	$user        User that delete
+     *	@param  User	$user        User that deletes
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
@@ -262,10 +262,10 @@ class Skeleton_Class // extends CommonObject
 			if (! $notrigger)
 			{
 				// Uncomment this and change MYOBJECT to your own tag if you
-		        // want this action call a trigger.
+		        // want this action calls a trigger.
 
 		        //// Call triggers
-		        //include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+		        //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 		        //$interface=new Interfaces($this->db);
 		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
 		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }

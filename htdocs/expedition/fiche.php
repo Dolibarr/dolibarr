@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2003-2008 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2011-2012 Juanjo Menent	    <jmenent@2byte.es>
+/* Copyright (C) 2003-2008	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005		Simon TOSSER			<simon@kornog-computing.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,17 +25,17 @@
  *	\brief      Fiche descriptive d'une expedition
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/product.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/sendings.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/modules/expedition/modules_expedition.php");
-if ($conf->product->enabled || $conf->service->enabled)  require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
-if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
-if ($conf->stock->enabled)    require_once(DOL_DOCUMENT_ROOT."/product/stock/class/entrepot.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
+if ($conf->product->enabled || $conf->service->enabled)  require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+if ($conf->propal->enabled)   require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if ($conf->commande->enabled) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if ($conf->stock->enabled)    require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 $langs->load("sendings");
 $langs->load("companies");
@@ -58,7 +58,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,$origin,$origin_id);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('expeditioncard'));
 
@@ -325,7 +325,7 @@ else if ($action == 'builddoc')	// En get ou en post
 // Delete file in doc form
 elseif ($action == 'remove_file')
 {
-	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$object = new Expedition($db);
 	if ($object->fetch($id))
@@ -344,7 +344,7 @@ elseif ($action == 'remove_file')
 */
 if (GETPOST('addfile','alpha'))
 {
-    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     // Set tmp user directory TODO Use a dedicated directory for temp mails files
     $vardir=$conf->user->dir_output."/".$user->id;
@@ -359,7 +359,7 @@ if (GETPOST('addfile','alpha'))
 */
 if (GETPOST('removedfile','alpha'))
 {
-    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     // Set tmp user directory
     $vardir=$conf->user->dir_output."/".$user->id;
@@ -434,7 +434,7 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
                 }
 
                 // Create form object
-                include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
+                include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
                 $formmail = new FormMail($db);
 
                 $attachedfiles=$formmail->get_attached_files();
@@ -443,7 +443,7 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
                 $mimetype = $attachedfiles['mimes'];
 
                 // Send mail
-                require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
+                require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
                 if ($mailfile->error)
                 {
@@ -465,7 +465,7 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
                         $object->elementtype	= $object->element;
 
                         // Appel des triggers
-                        include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                         $interface=new Interfaces($db);
                         $result=$interface->run_triggers('SHIPPING_SENTBYMAIL',$object,$user,$langs,$conf);
                         if ($result < 0) {
@@ -543,6 +543,7 @@ llxHeader('',$langs->trans('Sending'),'Expedition');
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
+$product_static = new Product($db);
 
 if ($action == 'create2')
 {
@@ -700,8 +701,6 @@ if ($action == 'create')
                 print "</tr>\n";
             }
 
-            $product_static = new Product($db);
-
             $var=true;
             $indiceAsked = 0;
             while ($indiceAsked < $numAsked)
@@ -733,9 +732,8 @@ if ($action == 'create')
                     $product_static->type=$line->fk_product_type;
                     $product_static->id=$line->fk_product;
                     $product_static->ref=$line->ref;
-                    $product_static->libelle=$line->product_label;
                     $text=$product_static->getNomUrl(1);
-                    $text.= ' - '.$line->product_label;
+                    $text.= ' - '.(! empty($line->label)?$line->label:$line->product_label);
                     $description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->desc));
                     print $form->textwithtooltip($text,$description,3,'','',$i);
 
@@ -755,7 +753,13 @@ if ($action == 'create')
                     print "<td>";
                     if ($type==1) $text = img_object($langs->trans('Service'),'service');
                     else $text = img_object($langs->trans('Product'),'product');
-                    print $text.' '.nl2br($line->desc);
+
+                    if (! empty($line->label)) {
+                    	$text.= ' <strong>'.$line->label.'</strong>';
+                    	print $form->textwithtooltip($text,$line->desc,3,'','',$i);
+                    } else {
+                    	print $text.' '.nl2br($line->desc);
+                    }
 
                     // Show range
                     print_date_range($db->jdate($line->date_start),$db->jdate($line->date_end));
@@ -1202,26 +1206,25 @@ else
                     {
                         $prod = new Product($db);
                         $prod->fetch($lines[$i]->fk_product);
-                        $label = ( ! empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $lines[$i]->product_label;
+                        $label = ( ! empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $lines[$i]->product_label;
                     }
                     else
-                    $label = $lines[$i]->product_label;
+                    $label = (! empty($lines[$i]->label)?$lines[$i]->label:$lines[$i]->product_label);
 
                     print '<td>';
 
-                    // Affiche ligne produit
-                    $text = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$lines[$i]->fk_product.'">';
-                    if ($lines[$i]->fk_product_type==1) $text.= img_object($langs->trans('ShowService'),'service');
-                    else $text.= img_object($langs->trans('ShowProduct'),'product');
-                    $text.= ' '.$lines[$i]->ref.'</a>';
+                    // Show product and description
+                    $product_static->type=$lines[$i]->fk_product_type;
+                    $product_static->id=$lines[$i]->fk_product;
+                    $product_static->ref=$lines[$i]->ref;
+                    $text=$product_static->getNomUrl(1);
                     $text.= ' - '.$label;
-                    $description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($lines[$i]->description));
-                    //print $description;
+                    $description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($lines[$i]->description));
                     print $form->textwithtooltip($text,$description,3,'','',$i);
                     print_date_range($lines[$i]->date_start,$lines[$i]->date_end);
-                    if ($conf->global->PRODUIT_DESC_IN_FORM)
+                    if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
                     {
-                        print ($lines[$i]->description && $lines[$i]->description!=$lines[$i]->product)?'<br>'.dol_htmlentitiesbr($lines[$i]->description):'';
+                        print (! empty($lines[$i]->description) && $lines[$i]->description!=$lines[$i]->product)?'<br>'.dol_htmlentitiesbr($lines[$i]->description):'';
                     }
                 }
                 else
@@ -1229,7 +1232,14 @@ else
                     print "<td>";
                     if ($lines[$i]->fk_product_type==1) $text = img_object($langs->trans('Service'),'service');
                     else $text = img_object($langs->trans('Product'),'product');
-                    print $text.' '.nl2br($lines[$i]->description);
+
+                    if (! empty($lines[$i]->label)) {
+                    	$text.= ' <strong>'.$lines[$i]->label.'</strong>';
+                    	print $form->textwithtooltip($text,$lines[$i]->description,3,'','',$i);
+                    } else {
+                    	print $text.' '.nl2br($lines[$i]->description);
+                    }
+
                     print_date_range($lines[$i]->date_start,$lines[$i]->date_end);
                     print "</td>\n";
                 }
@@ -1378,7 +1388,7 @@ else
             print '</td><td valign="top" width="50%">';
 
             // List of actions on element
-            include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
+            include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
             $formactions=new FormActions($db);
             $somethingshown=$formactions->showactions($object,'shipping',$socid);
 
@@ -1391,7 +1401,7 @@ else
         if ($action == 'presend')
         {
             $ref = dol_sanitizeFileName($object->ref);
-            include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+            include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
             $fileparams = dol_most_recent_file($conf->expedition->dir_output . '/sending/' . $ref);
             $file=$fileparams['fullname'];
 
@@ -1423,7 +1433,7 @@ else
             print_titre($langs->trans('SendShippingByEMail'));
 
             // Cree l'objet formulaire mail
-            include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php');
+            include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
             $formmail = new FormMail($db);
             $formmail->fromtype = 'user';
             $formmail->fromid   = $user->id;
@@ -1473,7 +1483,7 @@ else
     }
 }
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>

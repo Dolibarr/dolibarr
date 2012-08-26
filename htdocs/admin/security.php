@@ -22,9 +22,9 @@
  *      \brief      Page de configuration du module securite
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
 $action=GETPOST('action');
 
@@ -226,7 +226,7 @@ if (is_resource($handle))
         {
             // Chargement de la classe de numerotation
             $classname = $reg[1];
-            require_once($dir.'/'.$file);
+            require_once $dir.'/'.$file;
 
             $obj = new $classname($db,$conf,$langs,$user);
             $arrayhandler[$obj->id]=$obj;

@@ -24,7 +24,7 @@
  *       \brief      About Dolibarr File page
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 
 $langs->load("admin");
 $langs->load("help");

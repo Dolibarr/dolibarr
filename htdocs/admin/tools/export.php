@@ -21,10 +21,10 @@
  *		\brief      Page to export a database into a dump file
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("admin");
 
@@ -161,7 +161,7 @@ if ($what == 'mysql')
     if (! empty($dolibarr_main_db_pass))
     {
         $paramcrypted.=' -p"'.preg_replace('/./i','*',$dolibarr_main_db_pass).'"';
-        $paramclear.=' -p"'.str_replace('"','\"',$dolibarr_main_db_pass).'"';
+        $paramclear.=' -p"'.str_replace(array('"','`'),array('\"','\`'),$dolibarr_main_db_pass).'"';
     }
 
     print '<b>'.$langs->trans("RunCommandSummary").':</b><br>'."\n";

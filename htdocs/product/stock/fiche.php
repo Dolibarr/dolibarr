@@ -24,12 +24,12 @@
  *	\brief      Page fiche entrepot
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/product/stock/class/entrepot.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/stock.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/product.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $langs->load("products");
 $langs->load("stocks");
@@ -182,7 +182,7 @@ if ($action == 'create')
 	// Description
 	print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
 	// Editeur wysiwyg
-	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor=new DolEditor('desc',$object->description,'',180,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,5,70);
 	$doleditor->Create();
 	print '</td></tr>';
@@ -503,7 +503,7 @@ else
 			// Description
 			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
 			// Editeur wysiwyg
-			require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$doleditor=new DolEditor('desc',$object->description,'',180,'dolibarr_notes','In',false,true,$conf->fckeditor->enabled,5,70);
 			$doleditor->Create();
 			print '</td></tr>';

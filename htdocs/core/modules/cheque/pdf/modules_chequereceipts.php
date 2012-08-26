@@ -25,9 +25,9 @@
  *	\brief      File with parent class of check receipt document generators
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");   // Requis car utilise dans les classes qui heritent
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Requis car utilise dans les classes qui heritent
 
 
 /**
@@ -52,7 +52,7 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 		$type='chequereceipt';
 		$liste=array();
 
-		include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$liste=getListOfModels($db,$type,$maxfilenamelength);
 		// TODO Remove this to use getListOfModels only
 		$liste = array('blochet'=>'blochet');
@@ -100,7 +100,7 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 	if (file_exists($dir.$file))
 	{
 		$classname = "pdf_".$modele;
-		require_once($dir.$file);
+		require_once $dir.$file;
 
 		$obj = new $classname($db);
 		$obj->message = $message;

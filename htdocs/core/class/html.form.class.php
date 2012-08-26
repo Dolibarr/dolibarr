@@ -177,7 +177,7 @@ class Form
                 else if (preg_match('/^ckeditor/',$typeofdata))
                 {
                     $tmp=explode(':',$typeofdata);
-                    require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+                    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
                     $doleditor=new DolEditor($htmlname, ($editvalue?$editvalue:$value), ($tmp[2]?$tmp[2]:''), ($tmp[3]?$tmp[3]:'100'), ($tmp[1]?$tmp[1]:'dolibarr_notes'), 'In', ($tmp[5]?$tmp[5]:0), true, true, ($tmp[6]?$tmp[6]:'20'), ($tmp[7]?$tmp[7]:'100'));
                     $ret.=$doleditor->Create(1);
                 }
@@ -340,7 +340,7 @@ class Form
      *	@param	int			$direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est apres
      *	@param	string		$img				Code img du picto (use img_xxx() function to get it)
      *	@param	string		$extracss			Add a CSS style to td tags
-     *	@param	int			$notabs				Do not include table and tr tags
+     *	@param	int			$notabs				1=Do not include table and tr tags, 2=use div, 3=use span
      *	@param	string		$incbefore			Include code before the text
      *	@param	int			$noencodehtmltext	Do not encode into html entity the htmltext
      *	@return	string							Code html du tooltip (texte+picto)
@@ -352,6 +352,10 @@ class Form
 
         if ($incbefore) $text = $incbefore.$text;
         if (! $htmltext) return $text;
+
+        $tag='td';
+        if ($notabs == 2) $tag='div';
+        if ($notabs == 3) $tag='span';
 
         // Sanitize tooltip
         $htmltext=str_replace("\\","\\\\",$htmltext);
@@ -365,7 +369,7 @@ class Form
         else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
 
         $s="";
-        if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr>';
+        if ($notabs < 2) $s.='<table class="nobordernopadding" summary=""><tr>';
         if ($direction > 0)
         {
             if ($text != '')
@@ -381,12 +385,12 @@ class Form
             if ($direction) $s.='<td'.$paramfortooltipimg.' valign="top" width="14">'.$img.'</td>';
             if ($text != '')
             {
-                $s.='<td'.$paramfortooltiptd.'>';
+                $s.='<'.$tag.$paramfortooltiptd.'>';
                 if ($direction) $s.='&nbsp;';
-                $s.=$text.'</td>';
+                $s.=$text.'</'.$tag.'>';
             }
         }
-        if (empty($notabs)) $s.='</tr></table>';
+        if ($notabs < 2) $s.='</tr></table>';
 
         return $s;
     }
@@ -539,11 +543,11 @@ class Form
         global $db,$langs,$user,$conf;
 
         // If product & services are enabled or both disabled.
-        if ($forceall || ($conf->product->enabled && $conf->service->enabled)
+        if ($forceall || (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
         || (empty($conf->product->enabled) && empty($conf->service->enabled)))
         {
             if (empty($hidetext)) print $langs->trans("Type").': ';
-            print '<select class="flat" name="'.$htmlname.'">';
+            print '<select class="flat" id="select_'.$htmlname.'" name="'.$htmlname.'">';
             if ($showempty)
             {
                 print '<option value="-1"';
@@ -562,11 +566,11 @@ class Form
             print '</select>';
             //if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
         }
-        if (! $forceall && empty($conf->product->enabled) && $conf->service->enabled)
+        if (! $forceall && empty($conf->product->enabled) && ! empty($conf->service->enabled))
         {
             print '<input type="hidden" name="'.$htmlname.'" value="1">';
         }
-        if (! $forceall && $conf->product->enabled && empty($conf->service->enabled))
+        if (! $forceall && ! empty($conf->product->enabled) && empty($conf->service->enabled))
         {
             print '<input type="hidden" name="'.$htmlname.'" value="0">';
         }
@@ -866,7 +870,7 @@ class Form
             $i = 0;
             if ($num)
             {
-                include_once(DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php');
+                include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
                 $contactstatic=new Contact($this->db);
 
                 while ($i < $num)
@@ -1079,35 +1083,47 @@ class Form
      *  @param		int			$status					-1=Return all products, 0=Products not on sell, 1=Products on sell
      *  @param		int			$finished				2=all, 1=finished, 0=raw material
      *  @param		string		$selected_input_value	Value of preselected input text (with ajax)
-     *  @param		int			$hidelabel				Hide label
+     *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
+     *  @param		array		$ajaxoptions			Options for ajax_autocompleter
      *  @return		void
      */
-    function select_produits($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$status=1,$finished=2,$selected_input_value='',$hidelabel=0)
+    function select_produits($selected='', $htmlname='productid', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=0, $ajaxoptions=array())
     {
         global $langs,$conf;
 
         $price_level = (! empty($price_level) ? $price_level : 0);
 
-        if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
+        if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
         {
+        	$placeholder='';
+
             if ($selected && empty($selected_input_value))
             {
-                require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+                require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
                 $product = new Product($this->db);
                 $product->fetch($selected);
                 $selected_input_value=$product->ref;
             }
             // mode=1 means customers products
-            print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', 'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
-            if (! $hidelabel) print $langs->trans("RefOrLabel").' : ';
-            print '<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'" />';
+            $urloption='htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished;
+            print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
+            if (empty($hidelabel)) print $langs->trans("RefOrLabel").' : ';
+            else if ($hidelabel > 1) {
+            	if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $placeholder=' placeholder="'.$langs->trans("RefOrLabel").'"';
+            	else $placeholder=' title="'.$langs->trans("RefOrLabel").'"';
+            	if ($hidelabel == 2) {
+            		print img_picto($langs->trans("Search"), 'search');
+            	}
+            }
+            print '<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
+            if ($hidelabel == 3) {
+            	print img_picto($langs->trans("Search"), 'search');
+            }
         }
         else
         {
             $this->select_produits_do($selected,$htmlname,$filtertype,$limit,$price_level,'',$status,$finished,0);
         }
-
-        print '<br>';
     }
 
     /**
@@ -1129,15 +1145,15 @@ class Form
         global $langs,$conf,$user,$db;
 
         $sql = "SELECT ";
-        $sql.= " p.rowid, p.label, p.ref, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.duration, p.stock";
+        $sql.= " p.rowid, p.label, p.ref, p.description, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.duration, p.stock";
         // Multilang : we add translation
-        if ($conf->global->MAIN_MULTILANGS)
+        if (! empty($conf->global->MAIN_MULTILANGS))
         {
             $sql.= ", pl.label as label_translated";
         }
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
         // Multilang : we add translation
-        if ($conf->global->MAIN_MULTILANGS)
+        if (! empty($conf->global->MAIN_MULTILANGS))
         {
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang='". $langs->getDefaultLang() ."'";
         }
@@ -1162,13 +1178,13 @@ class Form
             if (! empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))   // Can use index
             {
                 $sql.=" AND (p.ref LIKE '".$filterkey."%' OR p.label LIKE '".$filterkey."%'";
-                if ($conf->global->MAIN_MULTILANGS) $sql.=" OR pl.label LIKE '".$filterkey."%'";
+                if (! empty($conf->global->MAIN_MULTILANGS)) $sql.=" OR pl.label LIKE '".$filterkey."%'";
                 $sql.=")";
             }
             else
             {
                 $sql.=" AND (p.ref LIKE '%".$filterkey."%' OR p.label LIKE '%".$filterkey."%'";
-                if ($conf->global->MAIN_MULTILANGS) $sql.=" OR pl.label LIKE '%".$filterkey."%'";
+                if (! empty($conf->global->MAIN_MULTILANGS)) $sql.=" OR pl.label LIKE '%".$filterkey."%'";
                 $sql.=")";
             }
         }
@@ -1194,6 +1210,12 @@ class Form
                 $outkey='';
                 $outval='';
                 $outref='';
+                $outlabel='';
+                $outdesc='';
+                $outtype='';
+                $outprice_ht='';
+                $outprice_ttc='';
+                $outpricebasetype='';
 
                 $objp = $this->db->fetch_object($result);
 
@@ -1203,10 +1225,13 @@ class Form
 
                 $outkey=$objp->rowid;
                 $outref=$objp->ref;
+                $outlabel=$objp->label;
+                $outdesc=$objp->description;
+                $outtype=$objp->fk_product_type;
 
                 $opt = '<option value="'.$objp->rowid.'"';
                 $opt.= ($objp->rowid == $selected)?' selected="selected"':'';
-                if ($conf->stock->enabled && $objp->fk_product_type == 0 && isset($objp->stock))
+                if (! empty($conf->stock->enabled) && $objp->fk_product_type == 0 && isset($objp->stock))
                 {
                     if ($objp->stock > 0)
                     {
@@ -1258,6 +1283,9 @@ class Form
                                 $opt.= price($objp2->price_ttc,1).' '.$currencytext.' '.$langs->trans("TTC");
                                 $outval.= price($objp2->price_ttc,1).' '.$currencytextnoent.' '.$langs->transnoentities("TTC");
                             }
+                            $outprice_ht=price($objp2->price);
+                            $outprice_ttc=price($objp2->price_ttc);
+                            $outpricebasetype=$objp2->price_base_type;
                         }
                     }
                     else
@@ -1279,9 +1307,12 @@ class Form
                         $opt.= price($objp->price_ttc,1).' '.$currencytext.' '.$langs->trans("TTC");
                         $outval.= price($objp->price_ttc,1).' '.$currencytextnoent.' '.$langs->transnoentities("TTC");
                     }
+                    $outprice_ht=price($objp->price);
+                    $outprice_ttc=price($objp->price_ttc);
+                    $outpricebasetype=$objp->price_base_type;
                 }
 
-                if ($conf->stock->enabled && isset($objp->stock) && $objp->fk_product_type == 0)
+                if (! empty($conf->stock->enabled) && isset($objp->stock) && $objp->fk_product_type == 0)
                 {
                     $opt.= ' - '.$langs->trans("Stock").':'.$objp->stock;
                     $outval.=' - '.$langs->transnoentities("Stock").':'.$objp->stock;
@@ -1309,7 +1340,7 @@ class Form
                 // "key" value of json key array is used by jQuery automatically as selected value
                 // "label" value of json key array is used by jQuery automatically as text for combo box
                 $outselect.=$opt;
-                array_push($outjson,array('key'=>$outkey,'value'=>$outref,'label'=>$outval));
+                array_push($outjson, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'label2'=>$outlabel, 'desc'=>$outdesc, 'type'=>$outtype, 'price_ht'=>$outprice_ht, 'price_ttc'=>$outprice_ttc, 'pricebasetype'=>$outpricebasetype));
 
                 $i++;
             }
@@ -1343,7 +1374,7 @@ class Form
         global $langs,$conf;
         global $price_level, $status, $finished;
 
-        if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
+        if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
         {
             // mode=2 means suppliers products
             $urloption=($socid > 0?'socid='.$socid.'&':'').'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished;
@@ -2055,7 +2086,7 @@ class Form
                 print '<select id="select'.$htmlname.'" class="flat selectbankaccount" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
                 if ($useempty == 1 || ($useempty == 2 && $num > 1))
                 {
-                    print '<option value="'.$obj->rowid.'">&nbsp;</option>';
+                    print '<option value="-1">&nbsp;</option>';
                 }
 
                 while ($i < $num)
@@ -2391,7 +2422,7 @@ class Form
     {
         global $langs;
 
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 
         $langs->load("project");
         if ($htmlname != "none")
@@ -2605,7 +2636,7 @@ class Form
         {
             if ($selected)
             {
-                require_once(DOL_DOCUMENT_ROOT ."/user/class/user.class.php");
+                require_once DOL_DOCUMENT_ROOT .'/user/class/user.class.php';
                 //$this->load_cache_contacts();
                 //print $this->cache_contacts[$selected];
                 $theuser=new User($this->db);
@@ -2751,7 +2782,7 @@ class Form
         {
             if ($selected)
             {
-                require_once(DOL_DOCUMENT_ROOT ."/contact/class/contact.class.php");
+                require_once DOL_DOCUMENT_ROOT .'/contact/class/contact.class.php';
                 //$this->load_cache_contacts();
                 //print $this->cache_contacts[$selected];
                 $contact=new Contact($this->db);
@@ -2796,7 +2827,7 @@ class Form
         {
             if ($selected)
             {
-                require_once(DOL_DOCUMENT_ROOT ."/societe/class/societe.class.php");
+                require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
                 $soc = new Societe($this->db);
                 $soc->fetch($selected);
                 print $soc->getNomUrl($langs);
@@ -3373,7 +3404,7 @@ class Form
     {
         if ($iSecond)
         {
-            require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
             $hourSelected = convertSecondToTime($iSecond,'hour');
             $minSelected = convertSecondToTime($iSecond,'min');

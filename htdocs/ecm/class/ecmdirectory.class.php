@@ -147,7 +147,7 @@ class EcmDirectory // extends CommonObject
 				$result=dol_mkdir($dir);
 
 				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('MYECMDIR_CREATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -216,7 +216,7 @@ class EcmDirectory // extends CommonObject
 		if (! $error && ! $notrigger)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('MYECMDIR_MODIFY',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -327,7 +327,7 @@ class EcmDirectory // extends CommonObject
 	function delete($user)
 	{
 		global $conf, $langs;
-        require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error=0;
 
@@ -368,7 +368,7 @@ class EcmDirectory // extends CommonObject
 		if (! $error)
 		{
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('MYECMDIR_DELETE',$this,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -658,7 +658,7 @@ class EcmDirectory // extends CommonObject
 	function refreshcachenboffile($all=0)
 	{
 		global $conf;
-		include_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$dir=$conf->ecm->dir_output.'/'.$this->getRelativePath();
 		$filelist=dol_dir_list($dir,'files',0,'','\.meta$');

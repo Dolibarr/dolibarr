@@ -27,8 +27,8 @@
  *      \brief      File that contain parent class for supplier orders models
  *                  and parent class for supplier orders numbering models
  */
-require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");	// requis car utilise par les classes qui heritent
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// requis car utilise par les classes qui heritent
 
 
 /**
@@ -53,7 +53,7 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 		$type='order_supplier';
 		$liste=array();
 
-		include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$liste=getListOfModels($db,$type,$maxfilenamelength);
 
 		return $liste;
@@ -210,7 +210,7 @@ function supplier_order_pdf_create($db, $object, $modele, $outputlangs, $hidedet
 	// Charge le modele
 	if ($filefound)
 	{
-		require_once($file);
+		require_once $file;
 
 		$obj = new $classname($db,$object);
 
@@ -222,11 +222,11 @@ function supplier_order_pdf_create($db, $object, $modele, $outputlangs, $hidedet
 			$outputlangs->charset_output=$sav_charset_output;
 
 			// we delete preview files
-        	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_delete_preview($object);
 			
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('SUPPLIER_ORDER_BUILDDOC',$object,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }

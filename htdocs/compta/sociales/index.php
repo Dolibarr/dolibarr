@@ -23,9 +23,9 @@
  *		\brief      Page to list all social contributions
  */
 
-require('../../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/compta/sociales/class/chargesociales.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formsocialcontrib.class.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';

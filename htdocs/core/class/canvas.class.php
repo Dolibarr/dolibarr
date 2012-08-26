@@ -104,7 +104,7 @@ class Canvas
 		{
             // Include actions class (controller)
             $this->control_file=$controlclassfile;
-            require_once($controlclassfile);
+            require_once $controlclassfile;
 
             // Instantiate actions class (controller)
             $controlclassname = 'Actions'.ucfirst($this->card).ucfirst($this->canvas);
@@ -161,7 +161,7 @@ class Canvas
 		global $db, $conf, $langs, $user, $canvas;
 		global $form, $formfile;
 
-		include($this->template_dir.($this->card?$this->card.'_':'').$this->_cleanaction($action).'.tpl.php');        // Include native PHP template
+		include $this->template_dir.($this->card?$this->card.'_':'').$this->_cleanaction($action).'.tpl.php';        // Include native PHP template
 	}
 
 

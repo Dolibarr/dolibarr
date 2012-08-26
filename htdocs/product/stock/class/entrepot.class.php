@@ -24,7 +24,7 @@
  *  \brief      Fichier de la classe de gestion des entrepots
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
 /**
@@ -261,7 +261,7 @@ class Entrepot extends CommonObject
 			$this->town           = $obj->town;
 			$this->country_id     = $obj->country_id;
 
-			include_once(DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php');
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
             $tmp=getCountry($this->country_id,'all');
 			$this->pays=$tmp['label'];                // deprecated
 			$this->pays_code=$tmp['code'];            // deprecated

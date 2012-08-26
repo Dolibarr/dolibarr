@@ -139,7 +139,7 @@ class FormActions
         global $langs,$conf,$user;
         global $bc;
 
-        require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
+        require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
         $actioncomm = new ActionComm($this->db);
         $actioncomm->getActions($socid, $object->id, $typeelement);
@@ -196,8 +196,8 @@ class FormActions
     {
         global $langs,$user;
 
-        require_once(DOL_DOCUMENT_ROOT."/comm/action/class/cactioncomm.class.php");
-        require_once(DOL_DOCUMENT_ROOT."/core/class/html.form.class.php");
+        require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
+        require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
         $caction=new CActionComm($this->db);
         $form=new Form($this->db);
 

@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
@@ -24,11 +24,11 @@
  *     \brief      Page liste des factures prelevees
  */
 
-require("../bank/pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/prelevement.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/bonprelevement.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/class/rejetprelevement.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/paiement/class/paiement.class.php");
+require '../bank/pre.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 $langs->load("companies");
 $langs->load("categories");

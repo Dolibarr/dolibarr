@@ -23,9 +23,9 @@
  *       \brief      Fiche commande
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/fourn.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 $langs->load("orders");
 $langs->load("suppliers");
@@ -109,7 +109,7 @@ if ($id > 0 || ! empty($ref))
 
 			if ($commande->methode_commande)
 			{
-				print '<tr><td>'.$langs->trans("Method").'</td><td colspan="2">'.$commande->methode_commande.'</td></tr>';
+                print '<tr><td>'.$langs->trans("Method").'</td><td colspan="2">'.$commande->getInputMethod().'</td></tr>';
 			}
 		}
 

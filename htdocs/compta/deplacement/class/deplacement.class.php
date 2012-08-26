@@ -23,7 +23,7 @@
  *      \brief      File of class to manage trips
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 /**
  *      \class      Deplacement
@@ -124,7 +124,7 @@ class Deplacement extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."deplacement");
 
                         // Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('DEPLACEMENT_CREATE',$this,$user,$langs,$conf);
 			if ($result < 0) {

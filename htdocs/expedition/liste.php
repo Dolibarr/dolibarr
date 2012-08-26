@@ -23,8 +23,8 @@
  *      \brief      Page to list all shipments
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
 $langs->load("sendings");
 $langs->load('companies');

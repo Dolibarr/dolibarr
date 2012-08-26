@@ -25,12 +25,12 @@
  *       \brief      Card of a contact
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/action/class/actioncomm.class.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/contact.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $langs->load("companies");
 $langs->load("users");
@@ -54,7 +54,7 @@ $objcanvas=null;
 $canvas = (! empty($object->canvas)?$object->canvas:GETPOST("canvas"));
 if (! empty($canvas))
 {
-    require_once(DOL_DOCUMENT_ROOT."/core/class/canvas.class.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
     $objcanvas = new Canvas($db, $action);
     $objcanvas->getCanvas('contact', 'contactcard', $canvas);
 }
@@ -63,7 +63,7 @@ if (! empty($canvas))
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', '', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('contactcard'));
 
@@ -146,6 +146,7 @@ if (empty($reshook))
         $object->phone_mobile	= $_POST["phone_mobile"];
         $object->fax			= $_POST["fax"];
         $object->jabberid		= $_POST["jabberid"];
+		$object->no_email		= $_POST["no_email"];
         $object->priv			= $_POST["priv"];
         $object->note			= $_POST["note"];
 
@@ -237,6 +238,7 @@ if (empty($reshook))
             $object->phone_mobile	= $_POST["phone_mobile"];
             $object->fax			= $_POST["fax"];
             $object->jabberid		= $_POST["jabberid"];
+			$object->no_email		= $_POST["no_email"];
             $object->priv			= $_POST["priv"];
             $object->note			= $_POST["note"];
 
@@ -448,8 +450,9 @@ else
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->email)) == 0) $object->email = $objsoc->email;	// Predefined with third party
             print '<tr><td>'.$langs->trans("Email").'</td><td colspan="3"><input name="email" type="text" size="50" maxlength="80" value="'.(isset($_POST["email"])?$_POST["email"]:$object->email).'"></td></tr>';
 
-            // Instant message
-            print '<tr><td>'.$langs->trans("IM").'</td><td colspan="3"><input name="jabberid" type="text" size="50" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td></tr>';
+            // Instant message and no email
+            print '<tr><td>'.$langs->trans("IM").'</td><td><input name="jabberid" type="text" size="50" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td>';
+			print '<td>'.$langs->trans("No_Email").'</td><td>'.$form->selectyesno('no_email',(isset($_POST["no_email"])?$_POST["no_email"]:$object->no_email), 1).'</td></tr>';
 
             // Visibility
             print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
@@ -623,7 +626,8 @@ else
             print '</tr>';
 
             // Jabberid
-            print '<tr><td>Jabberid</td><td colspan="3"><input name="jabberid" type="text" size="40" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td></tr>';
+            print '<tr><td>Jabberid</td><td><input name="jabberid" type="text" size="40" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td>';
+			print '<td>'.$langs->trans("No_Email").'</td><td>'.$form->selectyesno('no_email',(isset($_POST["no_email"])?$_POST["no_email"]:$object->no_email), 1).'</td></tr>';
 
             // Visibility
             print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
@@ -706,13 +710,13 @@ else
         if ($action == 'create_user')
         {
             // Full firstname and name separated with a dot : firstname.name
-            include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
+            include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
             $login=dol_buildlogin($object->nom,$object->prenom);
 
             $generated_password='';
             if (! $ldap_sid) // TODO ldap_sid ?
             {
-                require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
+                require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
                 $generated_password=getRandomPassword('');
             }
             $password=$generated_password;
@@ -815,8 +819,9 @@ else
         }
         print '</tr>';
 
-        // Instant message
-        print '<tr><td>'.$langs->trans("IM").'</td><td colspan="3">'.$object->jabberid.'</td></tr>';
+        // Instant message and no email
+        print '<tr><td>'.$langs->trans("IM").'</td><td>'.$object->jabberid.'</td>';
+        print '<td>'.$langs->trans("No_Email").'</td><td>'.yn($object->no_email).'</td></tr>';
 
         print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
         print $object->LibPubPriv($object->priv);

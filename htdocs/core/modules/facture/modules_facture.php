@@ -26,9 +26,9 @@
  * 				et la classe mere de numerotation des factures
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");   // Requis car utilise dans les classes qui heritent
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Requis car utilise dans les classes qui heritent
 
 
 /**
@@ -52,7 +52,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 		$type='invoice';
 		$liste=array();
 
-		include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$liste=getListOfModels($db,$type,$maxfilenamelength);
 
 		return $liste;
@@ -217,7 +217,7 @@ function facture_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 	// Charge le modele
 	if ($filefound)
 	{
-		require_once($file);
+		require_once $file;
 
 		$obj = new $classname($db);
 
@@ -229,14 +229,14 @@ function facture_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 			$outputlangs->charset_output=$sav_charset_output;
 
 			// We delete old preview
-			require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_delete_preview($object);
 
 			// Success in building document. We build meta file.
 			dol_meta_create($object);
 
 			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('BILL_BUILDDOC',$object,$user,$langs,$conf);
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }

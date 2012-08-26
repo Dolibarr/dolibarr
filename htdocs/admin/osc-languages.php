@@ -21,7 +21,7 @@
  * \brief      	Page d'administration/configuration du module Boutique
  */
 
-require("../main.inc.php");
+require '../main.inc.php';
 
 $langs->load("admin");
 

@@ -23,8 +23,8 @@
  *  \brief      Home page for third parties area
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php');
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 $langs->load("companies");
 

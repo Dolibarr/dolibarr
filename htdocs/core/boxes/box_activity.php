@@ -20,7 +20,7 @@
  *	\brief      Module to show box of bills, orders & propal of the current year
  */
 
-include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
+include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 /**
  * Class to manage the box of customer activity (invoice, order, proposal)
@@ -66,9 +66,9 @@ class box_activity extends ModeleBoxes
 		$totalMnt = 0;
 		$totalnb = 0;
 
-		include_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
-		include_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php");
-		include_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
+		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 		$facturestatic=new Facture($db);
 		$propalstatic=new Propal($db);
 		$commandestatic=new Commande($db);

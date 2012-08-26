@@ -22,7 +22,7 @@
  * 		\brief      Page d'accueil de l'espace outils admin
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 
 $langs->load("admin");
 $langs->load("companies");

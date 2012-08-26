@@ -27,7 +27,7 @@
  *      \ingroup    agenda
  *      \brief      Fichier de description et activation du module agenda
  */
-include_once(DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php");
+include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 /**
  *      \class      modAgenda

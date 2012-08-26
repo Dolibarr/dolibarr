@@ -23,7 +23,7 @@
  *	\ingroup    compta
  *	\brief      Fichier de la classe des bordereau de remise de cheque
  */
-require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 
 /**
@@ -490,8 +490,8 @@ class RemiseCheque extends CommonObject
 		$file = "pdf_".$model.".class.php";
 		if (file_exists($dir.$file))
 		{
-			require_once(DOL_DOCUMENT_ROOT ."/compta/bank/class/account.class.php");
-			require_once($dir.$file);
+			require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
+			require_once $dir.$file;
 
 			$classname='BordereauCheque'.ucfirst($model);
 			$docmodel = new $classname($this->db);

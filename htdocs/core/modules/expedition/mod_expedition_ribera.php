@@ -22,7 +22,7 @@
  *  \brief      File of class to manage expedition numbering rules Ribera
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/core/modules/expedition/modules_expedition.php");
+require_once DOL_DOCUMENT_ROOT .'/core/modules/expedition/modules_expedition.php';
 
 /**
  *	Class to manage expedition numbering rules Ribera
@@ -101,7 +101,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
     {
 		global $db,$conf;
 
-		require_once(DOL_DOCUMENT_ROOT ."/core/lib/functions2.lib.php");
+		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
 		$mask=$conf->global->EXPEDITION_RIBERA_MASK;
 

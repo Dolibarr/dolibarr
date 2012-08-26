@@ -24,8 +24,8 @@
  * 		\brief      Page fiche notification produits OS Commerce
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php');
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php';
 
 
 /*

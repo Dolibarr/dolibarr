@@ -21,9 +21,9 @@
  *	\brief      Setup page of module Contracts
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php');
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
 $langs->load("admin");
 $langs->load("errors");
@@ -113,7 +113,7 @@ if (is_resource($handle))
         {
             $file = substr($file, 0, dol_strlen($file)-4);
 
-            require_once(DOL_DOCUMENT_ROOT ."/core/modules/contract/".$file.".php");
+            require_once DOL_DOCUMENT_ROOT ."/core/modules/contract/".$file.'.php';
 
             $module = new $file;
 

@@ -24,8 +24,8 @@
  *		\ingroup    don
  *		\brief      File of class to manage donation document generation
  */
-require_once(DOL_DOCUMENT_ROOT."/core/class/commondocgenerator.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/dons/class/don.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
 
 
 
@@ -50,7 +50,7 @@ abstract class ModeleDon extends CommonDocGenerator
         $type='donation';
         $liste=array();
 
-        include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
         $liste=getListOfModels($db,$type,$maxfilenamelength);
 
         return $liste;
@@ -178,7 +178,7 @@ function don_create($db, $id, $message, $modele, $outputlangs)
         $object->fetch($id);
 
 
-        require_once($dir.$file);
+        require_once $dir.$file;
         $classname = $modele;
         $module = new $classname($db);
 
@@ -190,7 +190,7 @@ function don_create($db, $id, $message, $modele, $outputlangs)
             $outputlangs->charset_output=$sav_charset_output;
 
 			// we delete preview files
-        	require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+        	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
             dol_delete_preview($object);
             return 1;
         }

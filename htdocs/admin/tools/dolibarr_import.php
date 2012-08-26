@@ -22,7 +22,7 @@
  * 		\brief      Page to import database
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 
 $langs->load("admin");
 $langs->load("other");
@@ -116,7 +116,7 @@ if ($label == 'MySQL')
 {
 ?>
 	<fieldset id="mysql_options">
-    <legend>Import MySql</legend>
+    <legend><?php echo $langs->trans('RestoreMySQL') ?></legend>
 	<div class="formelementrow">
 	<?php
 	// Parameteres execution

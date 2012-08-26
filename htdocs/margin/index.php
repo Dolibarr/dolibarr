@@ -21,6 +21,6 @@
  *	\brief      Page d'index du module margin
  */
 
-require("./productMargins.php");
+require 'productMargins.php';
 
 ?>

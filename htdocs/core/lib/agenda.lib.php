@@ -87,7 +87,7 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 				print $form->select_dolusers($filterd,'userdone',1,'',!$canedit);
 				print '</td></tr>';
 
-				include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php');
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 				$formactions=new FormActions($db);
 				print '<tr>';
 				print '<td nowrap="nowrap">';
@@ -175,8 +175,8 @@ function show_array_actions_to_do($max=5)
 
 	$now=dol_now();
 
-	include_once(DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php');
-	include_once(DOL_DOCUMENT_ROOT.'/societe/class/client.class.php');
+	include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
 	$sql = "SELECT a.id, a.label, a.datep as dp, a.datep2 as dp2, a.fk_user_author, a.percent,";
 	$sql.= " c.code, c.libelle,";

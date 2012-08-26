@@ -24,7 +24,7 @@
  *  \brief          Page d'info des contraintes d'une table
  */
 
-require("../../main.inc.php");
+require '../../main.inc.php';
 
 $langs->load("admin");
 

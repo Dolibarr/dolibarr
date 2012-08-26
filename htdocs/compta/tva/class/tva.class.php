@@ -23,7 +23,7 @@
  */
 
 // Put here all includes required by your class file
-require_once(DOL_DOCUMENT_ROOT ."/core/class/commonobject.class.php");
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 
 /**
@@ -122,7 +122,7 @@ class Tva extends CommonObject
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."tva");
 
             // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('TVA_CREATE',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -189,7 +189,7 @@ class Tva extends CommonObject
 		if (! $notrigger)
 		{
             // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('TVA_MODIFY',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -289,7 +289,7 @@ class Tva extends CommonObject
 		}
 
         // Appel des triggers
-        include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
         $interface=new Interfaces($this->db);
         $result=$interface->run_triggers('TVA_DELETE',$this,$user,$langs,$conf);
         if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -516,7 +516,7 @@ class Tva extends CommonObject
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."tva");    // TODO devrait s'appeler paiementtva
 
             // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('TVA_ADDPAYMENT',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
@@ -528,7 +528,7 @@ class Tva extends CommonObject
 				if ($conf->banque->enabled)
                 {
                     // Insertion dans llx_bank
-                    require_once(DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php');
+                    require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
                     $acc = new Account($this->db);
 					$result=$acc->fetch($this->accountid);

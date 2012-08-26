@@ -56,7 +56,7 @@ abstract class ActionsContactCardCommon
 	        if (file_exists($modelclassfile))
 	        {
 	            // Include dataservice class (model)
-	            $ret = require_once($modelclassfile);
+	            $ret = require_once $modelclassfile;
 	            if ($ret)
 	            {
 	            	// Instantiate dataservice class (model)
@@ -396,8 +396,8 @@ abstract class ActionsContactCardCommon
         if ($action == 'create_user')
         {
         	// Full firstname and name separated with a dot : firstname.name
-        	include_once(DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php');
-            require_once(DOL_DOCUMENT_ROOT."/core/lib/security2.lib.php");
+        	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
         	$login=dol_buildlogin($this->object->nom, $this->object->prenom);
 
        		$generated_password=getRandomPassword('');

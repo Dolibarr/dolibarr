@@ -23,14 +23,14 @@
  *  \brief      	Page to show a trip card
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/trip.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/deplacement/class/deplacement.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/trip.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if ($conf->projet->enabled)
 {
-    require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
-    require_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 $langs->load("trips");
@@ -49,7 +49,7 @@ $mesg = '';
 $object = new Deplacement($db);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('tripsandexpensescard'));
 
@@ -261,7 +261,7 @@ $form = new Form($db);
 if ($action == 'create')
 {
     //WYSIWYG Editor
-    require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
     print_fiche_titre($langs->trans("NewTrip"));
 
@@ -347,7 +347,7 @@ else if ($id)
         if ($action == 'edit' && $user->rights->deplacement->creer)
         {
             //WYSIWYG Editor
-            require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+            require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
             $soc = new Societe($db);
             if ($object->socid)
@@ -530,7 +530,7 @@ else if ($id)
             // Notes
             $blocname = 'notes';
             $title = $langs->trans('Notes');
-            include(DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php');
+            include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
 
             print '</div>';
 

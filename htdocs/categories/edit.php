@@ -24,8 +24,8 @@
  *      \brief      Page d'edition de categorie produit
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/categories/class/categorie.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 
 $id=GETPOST('id','int');
@@ -142,7 +142,7 @@ print '</tr>';
 print '<tr>';
 print '<td width="25%">'.$langs->trans("Description").'</td>';
 print '<td>';
-require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $doleditor=new DolEditor('description',$object->description,'',200,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,ROWS_6,50);
 $doleditor->Create();
 print '</td></tr>';

@@ -23,10 +23,10 @@
  *       \brief      Onglet groupes utilisateurs
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/usergroups.lib.php");
-if(! empty($conf->multicompany->enabled)) dol_include_once("/multicompany/class/actions_multicompany.class.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+if(! empty($conf->multicompany->enabled)) dol_include_once('/multicompany/class/actions_multicompany.class.php');
 
 // Defini si peux lire/modifier utilisateurs et permisssions
 $canreadperms=($user->admin || $user->rights->user->user->lire);
@@ -240,7 +240,7 @@ if ($action == 'create')
 	}
 
     print "<tr>".'<td valign="top">'.$langs->trans("Note").'</td><td>';
-    require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor=new DolEditor('note','','',240,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_8,90);
     $doleditor->Create();
     print "</td></tr>\n";
@@ -498,7 +498,7 @@ else
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
             print '<td class="valeur">';
-            require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+            require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
             $doleditor=new DolEditor('note',$object->note,'',240,'dolibarr_notes','',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_8,90);
             $doleditor->Create();
             print '</td>';

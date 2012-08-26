@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@uers.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
@@ -23,12 +23,12 @@
  *       \brief      Page to define emailing targets
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/modules/mailings/modules_mailings.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/emailing.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->load("mails");
 
@@ -85,7 +85,7 @@ if ($action == 'add')
 
 		if (file_exists($file))
 		{
-			require_once($file);
+			require_once $file;
 
 			// We fill $filtersarray. Using this variable is now deprecated.
 			// Kept for backward compatibility.
@@ -270,7 +270,7 @@ if ($object->fetch($id) >= 0)
 				// Chargement de la classe
 				$file = $dir.$modulename.".modules.php";
 				$classname = "mailing_".$modulename;
-				require_once($file);
+				require_once $file;
 
 				$obj = new $classname($db);
 
@@ -347,7 +347,7 @@ if ($object->fetch($id) >= 0)
 		print '</table>';
 		print '<br>';
 
-		print '<form action="'.$_SERVER['PHP_SELF'].'?action=clear&rowid='.$object->id.'" method="POST">';
+		print '<form action="'.$_SERVER['PHP_SELF'].'?action=clear&id='.$object->id.'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print_titre($langs->trans("ToClearAllRecipientsClickHere"));
 		print '<table class="noborder" width="100%">';
@@ -464,21 +464,21 @@ if ($object->fetch($id) >= 0)
                 {
                     if ($obj->source_type == 'member')
                     {
-                        include_once(DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php');
+                        include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
                         $m=new Adherent($db);
                         $m->id=$obj->source_id;
                         print $m->getNomUrl(2);
                     }
                     else if ($obj->source_type == 'user')
                     {
-                        include_once(DOL_DOCUMENT_ROOT.'/user/class/user.class.php');
+                        include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
                         $m=new User($db);
                         $m->id=$obj->source_id;
                         print $m->getNomUrl(2);
                     }
                     else if ($obj->source_type == 'thirdparty')
                     {
-                        include_once(DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php');
+                        include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
                         $m=new Societe($db);
                         $m->id=$obj->source_id;
                         print $m->getNomUrl(2);

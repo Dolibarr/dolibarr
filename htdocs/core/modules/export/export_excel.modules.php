@@ -23,8 +23,8 @@
  *	\author	    Laurent Destailleur
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/modules/export/modules_export.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 /**
@@ -167,9 +167,9 @@ class ExportExcel extends ModeleExports
     	$outputlangs->load("exports");
 		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
 		{
-            require_once(PHP_WRITEEXCEL_PATH."class.writeexcel_workbookbig.inc.php");
-            require_once(PHP_WRITEEXCEL_PATH."class.writeexcel_worksheet.inc.php");
-            require_once(PHP_WRITEEXCEL_PATH."functions.writeexcel_utility.inc.php");
+            require_once PHP_WRITEEXCEL_PATH.'class.writeexcel_workbookbig.inc.php';
+            require_once PHP_WRITEEXCEL_PATH.'class.writeexcel_worksheet.inc.php';
+            require_once PHP_WRITEEXCEL_PATH.'functions.writeexcel_utility.inc.php';
 		    $this->workbook = new writeexcel_workbookbig($file);
     		$this->workbook->set_tempdir($conf->export->dir_temp);			// Set temporary directory
     		$this->workbook->set_sheetname($outputlangs->trans("Sheet"));
@@ -177,8 +177,8 @@ class ExportExcel extends ModeleExports
 		}
 		else
 		{
-            require_once(PHPEXCEL_PATH."PHPExcel.php");
-            require_once(PHPEXCEL_PATH."PHPExcel/Style/Alignment.php");
+            require_once PHPEXCEL_PATH.'PHPExcel.php';
+            require_once PHPEXCEL_PATH.'PHPExcel/Style/Alignment.php';
             $this->workbook = new PHPExcel();
             $this->workbook->getProperties()->setCreator($user->getFullName($outputlangs).' - Dolibarr '.DOL_VERSION);
             //$this->workbook->getProperties()->setLastModifiedBy('Dolibarr '.DOL_VERSION);
@@ -375,7 +375,7 @@ class ExportExcel extends ModeleExports
     	}
     	else
     	{
-            require_once(PHPEXCEL_PATH."PHPExcel/Writer/Excel5.php");
+            require_once PHPEXCEL_PATH.'PHPExcel/Writer/Excel5.php';
     	    $objWriter = new PHPExcel_Writer_Excel5($this->workbook);
             $objWriter->save($this->file);
             $this->workbook->disconnectWorksheets();

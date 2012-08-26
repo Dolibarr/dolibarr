@@ -23,9 +23,9 @@
  *  \brief      Fiche de notes sur une commande
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php');
-require_once(DOL_DOCUMENT_ROOT ."/commande/class/commande.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
+require_once DOL_DOCUMENT_ROOT .'/commande/class/commande.class.php';
 
 
 $langs->load("companies");
@@ -113,7 +113,7 @@ if ($id > 0 || ! empty($ref))
 
 	print '<br>';
 
-	include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
+	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	print '</div>';
 }

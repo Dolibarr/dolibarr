@@ -46,21 +46,42 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 	$script.= '$(document).ready(function() {
 					var autoselect = '.$autoselect.';
 					var options = '.json_encode($ajaxoptions).';
-					$("input#search_'.$htmlname.'").blur(function() {
-    					//console.log(this.value.length);
-					    if (this.value.length == 0)
-					    {
-                            $("#search_'.$htmlname.'").val("");
-                            $("#'.$htmlname.'").val("").trigger("change");
-                            if (options.disabled) {
-    							$("#" + options.disabled).removeAttr("disabled");
-    						}
-					    }
+
+					// Remove product id before select another product
+					$("input#search_'.$htmlname.'").change(function() {
+						$("#'.$htmlname.'").val("").trigger("change");
+					});
+					// Check when keyup
+					$("input#search_'.$htmlname.'").onDelayedKeyup({ handler: function() {
+						    if ($(this).val().length == 0)
+						    {
+	                            $("#search_'.$htmlname.'").val("");
+	                            $("#'.$htmlname.'").val("").trigger("change");
+	                            if (options.option_disabled) {
+	    							$("#" + options.option_disabled).removeAttr("disabled");
+	    						}
+	    						if (options.disabled) {
+	    							$.each(options.disabled, function(key, value) {
+	    								$("#" + value).removeAttr("disabled");
+									});
+	    						}
+	    						if (options.update) {
+	    							$.each(options.update, function(key, value) {
+	    								$("#" + key).val("").trigger("change");
+									});
+								}
+								if (options.show) {
+	    							$.each(options.show, function(key, value) {
+	    								$("#" + value).hide().trigger("hide");
+									});
+								}
+						    }
+						}
                     });
     				$("input#search_'.$htmlname.'").autocomplete({
     					source: function( request, response ) {
     						$.get("'.$url.($urloption?'?'.$urloption:'').'", { '.$htmlname.': request.term }, function(data){
-								response( jQuery.map( data, function( item ) {
+								response($.map( data, function( item ) {
 									if (autoselect == 1 && data.length == 1) {
 										$("#search_'.$htmlname.'").val(item.value);
 										$("#'.$htmlname.'").val(item.key).trigger("change");
@@ -72,7 +93,13 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 											update[key] = item[value];
 										});
 									}
-									return { label: label, value: item.value, id: item.key, update: update, disabled: item.disabled }
+									var textarea = {};
+									if (options.update_textarea) {
+										$.each(options.update_textarea, function(key, value) {
+											textarea[key] = item[value];
+										});
+									}
+									return { label: label, value: item.value, id: item.key, update: update, textarea: textarea, disabled: item.disabled }
 								}));
 							}, "json");
 						},
@@ -81,20 +108,41 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     					select: function( event, ui ) {
     						$("#'.$htmlname.'").val(ui.item.id).trigger("change");
     						// Disable an element
-    						if (options.disabled) {
+    						if (options.option_disabled) {
     							if (ui.item.disabled) {
-    								$("#" + options.disabled).attr("disabled", "disabled");
+    								$("#" + options.option_disabled).attr("disabled", "disabled");
     								if (options.error) {
     									$.jnotify(options.error, "error", true);
     								}
     							} else {
-    								$("#" + options.disabled).removeAttr("disabled");
+    								$("#" + options.option_disabled).removeAttr("disabled");
     							}
     						}
-    						// Update an element
+    						if (options.disabled) {
+    							$.each(options.disabled, function(key, value) {
+    								$("#" + value).attr("disabled", "disabled");
+    							});
+    						}
+    						if (options.show) {
+    							$.each(options.show, function(key, value) {
+    								$("#" + value).show().trigger("show");
+    							});
+    						}
+    						// Update an input
     						if (ui.item.update) {
     							$.each(ui.item.update, function(key, value) {
-    								$("#" + key).val(value);
+    								$("#" + key).val(value).trigger("change");
+    							});
+    						}
+    						if (ui.item.textarea) {
+    							$.each(ui.item.textarea, function(key, value) {
+    								if (CKEDITOR) {
+    									CKEDITOR.instances[key].setData(value);
+    									CKEDITOR.instances[key].focus();
+    								} else {
+    									$("#" + key).html(value);
+    									$("#" + key).focus();
+									}
     							});
     						}
     					}

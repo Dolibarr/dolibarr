@@ -187,7 +187,7 @@ abstract class CommonObject
             if (! $notrigger)
             {
                 // Call triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers(strtoupper($this->element).'_ADD_CONTACT',$this,$user,$langs,$conf);
                 if ($result < 0) {
@@ -263,7 +263,7 @@ abstract class CommonObject
             if (! $notrigger)
             {
                 // Call triggers
-                include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers(strtoupper($this->element).'_DELETE_CONTACT',$this,$user,$langs,$conf);
                 if ($result < 0) {
@@ -528,7 +528,7 @@ abstract class CommonObject
      */
     function fetch_contact($contactid)
     {
-        require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
+        require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
         $contact = new Contact($this->db);
         $result=$contact->fetch($contactid);
         $this->contact = $contact;
@@ -1454,7 +1454,7 @@ abstract class CommonObject
      */
     function update_price($exclspec=0,$roundingadjust=-1,$nodatabaseupdate=0)
     {
-        include_once(DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php');
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
         if ($roundingadjust < 0 && isset($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)) $roundingadjust=$conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND;
         if ($roundingadjust < 0) $roundingadjust=0;
@@ -2002,7 +2002,7 @@ abstract class CommonObject
         if (! is_array($optionsArray))
         {
             // optionsArray not already loaded, so we load it
-            require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
+            require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
             $extrafields = new ExtraFields($this->db);
             $optionsArray = $extrafields->fetch_name_optionals_label();
         }
@@ -2061,7 +2061,7 @@ abstract class CommonObject
         {
             // Check parameters
             $langs->load('admin');
-            require_once(DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php");
+            require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
             $extrafields = new ExtraFields($this->db);
             $optionsArray = $extrafields->fetch_name_optionals_label($this->elementType);
 
@@ -2380,7 +2380,7 @@ abstract class CommonObject
         // Bypass the default method
         if (! is_object($hookmanager))
         {
-        	include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+        	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
         	$hookmanager=new HookManager($this->db);
         }
         $hookmanager->initHooks(array('commonobject'));
@@ -2432,7 +2432,7 @@ abstract class CommonObject
         		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/'.$tplpath.'/tpl'));
         		foreach($dirtpls as $reldir)
         		{
-        			$res=@include(dol_buildpath($reldir.'/linkedobjectblock.tpl.php'));
+        			$res=@include dol_buildpath($reldir.'/linkedobjectblock.tpl.php');
         			if ($res) break;
         		}
         	}
@@ -2446,35 +2446,9 @@ abstract class CommonObject
 
 
     /**
-     *	Show add predefined products/services form
+     *	Show add free and predefined products/services form
      *  TODO Edit templates to use global variables and include them directly in controller call
      *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
-     *
-     *  @param  int	    		$dateSelector       1=Show also date range input fields
-     *  @param	Societe			$seller				Object thirdparty who sell
-     *  @param	Societe			$buyer				Object thirdparty who buy
-	 *	@param	HookManager		$hookmanager		Hook manager instance
-	 *	@return	void
-	 */
-	function formAddPredefinedProduct($dateSelector,$seller,$buyer,$hookmanager=false)
-	{
-		global $conf,$langs,$object;
-		global $form,$bcnd,$var;
-
-		// Output template part (modules that overwrite templates must declare this into descriptor)
-        // Use global variables + $dateSelector + $seller and $buyer
-		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
-		foreach($dirtpls as $reldir)
-		{
-		    $res=@include(dol_buildpath($reldir.'/predefinedproductline_create.tpl.php'));
-		    if ($res) break;
-		}
-    }
-
-    /**
-     *	Show add free products/services form
-     *  TODO Edit templates to use global variables and include them directly in controller call
-     *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
      *
      *  @param	int		        $dateSelector       1=Show also date range input fields
      *  @param	Societe			$seller				Object thirdparty who sell
@@ -2482,9 +2456,9 @@ abstract class CommonObject
      *	@param	HookManager		$hookmanager		Hook manager instance
      *	@return	void
      */
-	function formAddFreeProduct($dateSelector,$seller,$buyer,$hookmanager=false)
+	function formAddObjectLine($dateSelector,$seller,$buyer,$hookmanager=false)
 	{
-		global $conf,$langs,$object;
+		global $conf,$user,$langs,$object;
 		global $form,$bcnd,$var;
 
 		// Output template part (modules that overwrite templates must declare this into descriptor)
@@ -2492,7 +2466,12 @@ abstract class CommonObject
 		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
 		foreach($dirtpls as $reldir)
 		{
-		    $res=@include(dol_buildpath($reldir.'/freeproductline_create.tpl.php'));
+			$tpl = dol_buildpath($reldir.'/objectline_add.tpl.php');
+			if (empty($conf->file->strict_mode)) {
+				$res=@include $tpl;
+			} else {
+				$res=include $tpl; // for debug
+			}
 		    if ($res) break;
 		}
     }
@@ -2528,6 +2507,7 @@ abstract class CommonObject
 		print '<td>'.$langs->trans('Description').'</td>';
 		print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
 		print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
+		print '<td align="right" width="80">&nbsp;</td>';
 		print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
 		print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
 		if (! empty($conf->margin->enabled)) {
@@ -2574,8 +2554,6 @@ abstract class CommonObject
 	/**
 	 *	Return HTML content of a detail line
 	 *	TODO Move this into an output class file (htmlline.class.php)
-	 *	If lines are into a template, title must also be into a template
-	 *	But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 *
 	 *	@param	string		$action				GET/POST action
 	 *	@param	array	    $line		       	Selected object line to output
@@ -2595,13 +2573,23 @@ abstract class CommonObject
 		global $form,$bc,$bcdd;
 
 		$element=$this->element;
+		$text='';
 
 		// Show product and description
-		$type=$line->product_type?$line->product_type:$line->fk_product_type;
-		// Try to enhance type detection using date_start and date_end for free lines where type
-		// was not saved.
-		if (! empty($line->date_start)) $type=1;
-		if (! empty($line->date_end)) $type=1;
+		$type=(! empty($line->product_type)?$line->product_type:$line->fk_product_type);
+		// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
+		if (! empty($line->date_start)) $type=1; // deprecated
+		if (! empty($line->date_end)) $type=1; // deprecated
+
+		if ($line->fk_product > 0)
+		{
+			$product_static = new Product($this->db);
+
+			$product_static->type=$line->fk_product_type;
+			$product_static->id=$line->fk_product;
+			$product_static->ref=$line->ref;
+			$text=$product_static->getNomUrl(1);
+		}
 
 		// Ligne en mode visu
 		if ($action != 'editline' || $selected != $line->id)
@@ -2609,13 +2597,11 @@ abstract class CommonObject
 			// Produit
 			if ($line->fk_product > 0)
 			{
-				$product_static = new Product($this->db);
-
 				// Define output language
 				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
 				{
 					$this->fetch_thirdparty();
-					$prod = new Product($this->db, $line->fk_product);
+					$prod = new Product($this->db);
 
 					$outputlangs = $langs;
 					$newlang='';
@@ -2627,67 +2613,53 @@ abstract class CommonObject
 						$outputlangs->setDefaultLang($newlang);
 					}
 
-					$label = (! empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $line->product_label;
+					$label = (! empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $line->product_label;
 				}
 				else
 				{
 					$label = $line->product_label;
 				}
 
-				$product_static->type=$line->fk_product_type;
-				$product_static->id=$line->fk_product;
-				$product_static->ref=$line->ref;
-				$product_static->libelle=$label;
-				$text=$product_static->getNomUrl(1);
-				$text.= ' - '.$label;
+				$text.= ' - '.(! empty($line->label)?$line->label:$label);
 				$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
-
-				// Output template part (modules that overwrite templates must declare this into descriptor)
-                // Use global variables + $dateSelector + $seller and $buyer
-        		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
-        		foreach($dirtpls as $reldir)
-        		{
-        		    $res=@include(dol_buildpath($reldir.'/predefinedproductline_view.tpl.php'));
-        		    if ($res) break;
-        		}
 			}
-			else
+
+			// Output template part (modules that overwrite templates must declare this into descriptor)
+			// Use global variables + $dateSelector + $seller and $buyer
+			$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+			foreach($dirtpls as $reldir)
 			{
-				// Output template part (modules that overwrite templates must declare this into descriptor)
-                // Use global variables + $dateSelector + $seller and $buyer
-        		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
-        		foreach($dirtpls as $reldir)
-        		{
-        		    $res=@include(dol_buildpath($reldir.'/freeproductline_view.tpl.php'));
-        		    if ($res) break;
-        		}
+				$tpl = dol_buildpath($reldir.'/objectline_view.tpl.php');
+				if (empty($conf->file->strict_mode)) {
+					$res=@include $tpl;
+				} else {
+					$res=include $tpl; // for debug
+				}
+				if ($res) break;
 			}
 		}
 
 		// Ligne en mode update
 		if ($this->statut == 0 && $action == 'editline' && $selected == $line->id)
 		{
-			if ($line->fk_product > 0)
+			$label = (! empty($line->label) ? $line->label : (($line->fk_product > 0) ? $line->product_label : ''));
+			if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $placeholder=' placeholder="'.$langs->trans("Label").'"';
+			else $placeholder=' title="'.$langs->trans("Label").'"';
+
+			$pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx/100)), 'MU');
+
+			// Output template part (modules that overwrite templates must declare this into descriptor)
+			// Use global variables + $dateSelector + $seller and $buyer
+			$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+			foreach($dirtpls as $reldir)
 			{
-				// Output template part (modules that overwrite templates must declare this into descriptor)
-                // Use global variables + $dateSelector + $seller and $buyer
-        		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
-        		foreach($dirtpls as $reldir)
-        		{
-        		    $res=@include(dol_buildpath($reldir.'/predefinedproductline_edit.tpl.php'));
-        		    if ($res) break;
-        		}
-			}
-			else
-			{
-				// Output template part (modules that overwrite templates must declare this into descriptor)
-                // Use global variables + $dateSelector + $seller and $buyer
-        		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
-        		foreach($dirtpls as $reldir)
-        		{
-        		    $res=@include(dol_buildpath($reldir.'/freeproductline_edit.tpl.php'));
-        		    if ($res) break;
-        		}
+				$tpl = dol_buildpath($reldir.'/objectline_edit.tpl.php');
+				if (empty($conf->file->strict_mode)) {
+					$res=@include $tpl;
+				} else {
+					$res=include $tpl; // for debug
+				}
+				if ($res) break;
 			}
 		}
 	}
@@ -2725,7 +2697,7 @@ abstract class CommonObject
         {
             $var=!$var;
 
-            if (is_object($hookmanager) && ( ($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line) ) )
+            if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
             {
                 if (empty($line->fk_parent_line))
                 {
@@ -2773,14 +2745,14 @@ abstract class CommonObject
             $discount->fk_soc = $this->socid;
             $this->tpl['label'].= $discount->getNomUrl(0,'discount');
         }
-        else if ($line->fk_product)
+        else if (! empty($line->fk_product))
         {
             $productstatic = new Product($this->db);
             $productstatic->id = $line->fk_product;
             $productstatic->ref = $line->ref;
             $productstatic->type = $line->fk_product_type;
             $this->tpl['label'].= $productstatic->getNomUrl(1);
-            $this->tpl['label'].= $line->label?' - '.$line->label:'';
+            $this->tpl['label'].= ' - '.(! empty($line->label)?$line->label:$line->product_label);
             // Dates
             if ($line->product_type == 1 && ($date_start || $date_end))
             {
@@ -2798,7 +2770,7 @@ abstract class CommonObject
             }
         }
 
-        if ($line->desc)
+        if (! empty($line->desc))
         {
             if ($line->desc == '(CREDIT_NOTE)')  // TODO Not sure this is used for source object
             {
@@ -2832,7 +2804,12 @@ abstract class CommonObject
         $dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
         foreach($dirtpls as $reldir)
         {
-            $res=@include(dol_buildpath($reldir.'/originproductline.tpl.php'));
+            $tpl = dol_buildpath($reldir.'/originproductline.tpl.php');
+            if (empty($conf->file->strict_mode)) {
+            	$res=@include $tpl;
+            } else {
+            	$res=include $tpl; // for debug
+            }
             if ($res) break;
         }
     }
@@ -2841,7 +2818,7 @@ abstract class CommonObject
 
   function getMarginInfos($force_price=false) {
   	global $conf;
-    require_once(DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php');
+    require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
     $marginInfos = array(
       'pa_products' => 0,
       'pv_products' => 0,

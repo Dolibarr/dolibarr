@@ -23,8 +23,8 @@
  *		\brief      List of VAT payments
  */
 
-require('../../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/compta/tva/class/tva.class.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 
 $langs->load("compta");
 $langs->load("compta");

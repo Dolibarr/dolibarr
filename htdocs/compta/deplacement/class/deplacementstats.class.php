@@ -22,8 +22,8 @@
  *       \ingroup    factures
  *       \brief      Fichier de la classe de gestion des stats des deplacement et notes de frais
  */
-include_once DOL_DOCUMENT_ROOT . "/core/class/stats.class.php";
-include_once DOL_DOCUMENT_ROOT . "/compta/deplacement/class/deplacement.class.php";
+include_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
+include_once DOL_DOCUMENT_ROOT . '/compta/deplacement/class/deplacement.class.php';
 
 /**
  *       \class      DeplacementStats

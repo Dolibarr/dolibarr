@@ -25,14 +25,14 @@
  *	\brief      Setup page to configure company/foundation
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/images.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formcompany.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $action=GETPOST('action');
 
@@ -51,7 +51,7 @@ $message='';
 if ( ($action == 'update' && empty($_POST["cancel"]))
 || ($action == 'updateedit') )
 {
-    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     $tmparray=getCountry(GETPOST('country_id','int'),'all',$db,$langs,0);
     if (! empty($tmparray['id']))
@@ -211,7 +211,7 @@ if ($action == 'addthumb')
 
 if ($action == 'removelogo')
 {
-    require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     $logofile=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
     dol_delete_file($logofile);
@@ -305,7 +305,7 @@ if ($action == 'edit' || $action == 'updateedit')
     print '</td></tr>'."\n";
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("Tel").'</td><td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("Phone").'</td><td>';
     print '<input name="tel" value="'. $conf->global->MAIN_INFO_SOCIETE_TEL . '"></td></tr>';
     print '</td></tr>'."\n";
 
@@ -315,7 +315,7 @@ if ($action == 'edit' || $action == 'updateedit')
     print '</td></tr>'."\n";
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("Mail").'</td><td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("EMail").'</td><td>';
     print '<input name="mail" size="60" value="'. $conf->global->MAIN_INFO_SOCIETE_MAIL . '"></td></tr>';
     print '</td></tr>'."\n";
 

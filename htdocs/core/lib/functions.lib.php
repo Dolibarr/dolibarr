@@ -33,7 +33,7 @@
 
 if (! function_exists('json_encode'))
 {
-	include_once(DOL_DOCUMENT_ROOT ."/core/lib/json.lib.php");
+	include_once DOL_DOCUMENT_ROOT .'/core/lib/json.lib.php';
 }
 
 /**
@@ -77,7 +77,7 @@ function getStaticMember($class, $member)
  */
 function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
 {
-	require_once(DOL_DOCUMENT_ROOT ."/core/db/".$type.".class.php");
+	require_once DOL_DOCUMENT_ROOT ."/core/db/".$type.'.class.php';
 
 	$class='DoliDB'.ucfirst($type);
 	$dolidb=new $class($type, $host, $user, $pass, $name, $port);
@@ -222,7 +222,7 @@ function dol_getprefix()
  *	Make an include_once using default root and alternate root if it fails.
  *	WARNING: In most cases, you should not use this function:
  *  To link to a core file, use include(DOL_DOCUMENT_ROOT.'/pathtofile')
- *  To link to a module file from a module file, use include('./mymodulefile');
+ *  To link to a module file from a module file, use include './mymodulefile';
  *  To link to a module file from a core file, then this function can be used
  *
  * 	@param	string	$relpath	Relative path to file (Ie: mydir/myfile, ../myfile, ...)
@@ -568,7 +568,7 @@ function dol_syslog($message, $level=LOG_INFO)
 				// database or config file because we must be able to log data before database or config file read.
 				$oldinclude=get_include_path();
 				set_include_path('/usr/share/php/');
-				include_once('FirePHPCore/FirePHP.class.php');
+				include_once 'FirePHPCore/FirePHP.class.php';
 				set_include_path($oldinclude);
 				ob_start();
 				$firephp = FirePHP::getInstance(true);
@@ -1009,13 +1009,13 @@ function dol_now($mode='gmt')
 	if ($mode == 'gmt') $ret=time();	// Time for now at greenwich.
 	else if ($mode == 'tzserver')		// Time for now with PHP server timezone added
 	{
-		require_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$tzsecond=getServerTimeZoneInt('now');    // Contains tz+dayling saving time
 		$ret=dol_now('gmt')+($tzsecond*3600);
 	}
 	/*else if ($mode == 'tzref')				// Time for now with parent company timezone is added
 	{
-		require_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
 		$ret=dol_now('gmt')+($tzsecond*3600);
 	}*/
@@ -1239,7 +1239,7 @@ function dol_print_ip($ip,$mode=0)
 		//$ip='24.24.24.24';
 		//$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
 
-		include_once(DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php');
+		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
 		$geoip=new DolGeoIP('country',$datafile);
 		//print 'ip='.$ip.' databaseType='.$geoip->gi->databaseType." GEOIP_CITY_EDITION_REV1=".GEOIP_CITY_EDITION_REV1."\n";
 		//print "geoip_country_id_by_addr=".geoip_country_id_by_addr($geoip->gi,$ip)."\n";
@@ -1275,7 +1275,7 @@ function dol_user_country()
 		$datafile=$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE;
 		//$ip='24.24.24.24';
 		//$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';
-		include_once(DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php');
+		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
 		$geoip=new DolGeoIP('country',$datafile);
 		$countrycode=$geoip->getCountryCodeFromIP($ip);
 		$ret=$countrycode;
@@ -1425,7 +1425,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
 	$color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/graph-color.php";
 	if (is_readable($color_file))
 	{
-		include_once($color_file);
+		include_once $color_file;
 		if (isset($theme_datacolor))
 		{
 			$datacolor=array();
@@ -3389,7 +3389,7 @@ function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='
 {
 	global $conf,$user;
 
-	require_once(DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php');
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	// Check if there is external substitution to do asked by plugins
 	$dirsubstitutions=array_merge(array(),(array) $conf->modules_parts['substitutions']);
@@ -3409,7 +3409,7 @@ function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='
 				$module=$reg[1];
 
 				dol_syslog("Library functions_".$substitfile['name']." found into ".$dir);
-				require_once($dir.$substitfile['name']);
+				require_once $dir.$substitfile['name'];
 				$function_name=$module."_".$callfunc;
 				$function_name($substitutionarray,$outputlangs,$object,$parameters);
 			}

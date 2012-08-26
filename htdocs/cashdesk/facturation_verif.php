@@ -16,11 +16,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-require('../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php');
-require_once(DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
+require_once DOL_DOCUMENT_ROOT.'/cashdesk/class/Facturation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 $obj_facturation = unserialize($_SESSION['serObjFacturation']);
 unset ($_SESSION['serObjFacturation']);

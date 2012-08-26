@@ -24,9 +24,9 @@
  *       \brief      Onglet user et permissions de la fiche utilisateur
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/usergroups.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->load("users");
 $langs->load("admin");
@@ -134,7 +134,7 @@ foreach($modulesdir as $dir)
 
     	        if ($modName)
     	        {
-    	            include_once($dir.$file);
+    	            include_once $dir.$file;
     	            $objMod = new $modName($db);
 
     	            // Load all lang files of module

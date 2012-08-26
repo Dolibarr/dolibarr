@@ -239,7 +239,7 @@ class CMailFile
 			// Use SMTPS library
 			// ------------------------------------------
 
-			require_once(DOL_DOCUMENT_ROOT."/core/class/smtps.class.php");
+			require_once DOL_DOCUMENT_ROOT.'/core/class/smtps.class.php';
 			$smtps = new SMTPs();
 			$smtps->setCharSet($conf->file->character_set_client);
 
@@ -291,7 +291,7 @@ class CMailFile
 			// Use PHPMailer library
 			// ------------------------------------------
 
-			require_once(DOL_DOCUMENT_ROOT."/includes/phpmailer/class.phpmailer.php");
+			require_once DOL_DOCUMENT_ROOT.'/includes/phpmailer/class.phpmailer.php';
 			$this->phpmailer = new PHPMailer();
 			$this->phpmailer->CharSet = $conf->file->character_set_client;
 

@@ -23,9 +23,9 @@
  *  \brief      Index page for menu editor
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formadmin.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/treeview.lib.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 
 $langs->load("other");
 $langs->load("admin");

@@ -23,7 +23,7 @@
  *	\ingroup    install
  *	\brief      Test if file conf can be modified and if does not exists, test if install process can create it
  */
-include_once("./inc.php");
+include_once 'inc.php';
 
 $err = 0;
 $allowinstall = 0;
@@ -39,7 +39,7 @@ $langs->load("install");
 $useforcedwizard=false;
 $forcedfile="./install.forced.php";
 if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
-if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once($forcedfile); }
+if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once $forcedfile; }
 
 dolibarr_install_syslog("Dolibarr install/upgrade process started");
 
@@ -187,7 +187,7 @@ if (is_readable($conffile) && filesize($conffile) > 8)
 {
 	dolibarr_install_syslog("conf file '$conffile' already defined");
 	$confexists=1;
-	include_once($conffile);
+	include_once $conffile;
 
 	$databaseok=1;
 	if ($databaseok)
@@ -291,7 +291,7 @@ else
 		// Try to create db connexion
 		if (file_exists($conffile))
 		{
-			include_once($conffile);
+			include_once $conffile;
 			if (! empty($dolibarr_main_db_type) && ! empty($dolibarr_main_document_root))
 			{
 				if (! file_exists($dolibarr_main_document_root."/core/lib/admin.lib.php"))
@@ -301,7 +301,7 @@ else
 				}
 				else
 				{
-                    require_once($dolibarr_main_document_root."/core/lib/admin.lib.php");
+                    require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
     				// $conf is already instancied inside inc.php
     				$conf->db->type = $dolibarr_main_db_type;

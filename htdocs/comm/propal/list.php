@@ -29,13 +29,13 @@
  *	\brief      	Page of commercial proposals card and list
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formpropal.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php');
-if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/projet/class/project.class.php');
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formpropal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if ($conf->projet->enabled)   require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load('companies');
 $langs->load('propal');
@@ -44,12 +44,7 @@ $langs->load('bills');
 $langs->load('orders');
 $langs->load('products');
 
-$id=GETPOST('id','int');
-$ref=GETPOST('ref','alpha');
 $socid=GETPOST('socid','int');
-$action=GETPOST('action','alpha');
-$confirm=GETPOST('confirm','alpha');
-$lineid=GETPOST('lineid','int');
 
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
@@ -69,17 +64,14 @@ $NBLINES=4;
 // Security check
 $module='propal';
 $dbtable='';
-if (isset($socid))
+$objectid='';
+if (! empty($user->societe_id))	$socid=$user->societe_id;
+if (! empty($socid))
 {
 	$objectid=$socid;
 	$module='societe';
 	$dbtable='&societe';
 }
-else if (isset($id) &&  $id > 0)
-{
-	$objectid=$id;
-}
-if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, $module, $objectid, $dbtable);
 
 $object = new Propal($db);
@@ -91,7 +83,7 @@ if ($id > 0 || ! empty($ref))
 }
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
+include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('propalcard'));
 

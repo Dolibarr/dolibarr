@@ -21,8 +21,8 @@
  *		\brief      Page with geographical statistics on members
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/member.lib.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 
 $graphwidth = 700;
 $mapratio = 0.5;
@@ -198,7 +198,7 @@ else
 if ($mode == 'memberbycountry')
 {
     $color_file = DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/graph-color.php';
-    if (is_readable($color_file)) include_once($color_file);
+    if (is_readable($color_file)) include_once $color_file;
 
     // Assume we've already included the proper headers so just call our script inline
     // More doc: https://developers.google.com/chart/interactive/docs/gallery/geomap?hl=fr-FR

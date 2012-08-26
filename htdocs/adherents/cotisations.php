@@ -23,10 +23,10 @@
  *		\brief      Page de consultation et insertion d'une cotisation
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/class/cotisation.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/bank/class/account.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("members");
 

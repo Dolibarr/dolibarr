@@ -24,9 +24,9 @@
  *		\brief      Page des stats propositions commerciales
  */
 
-require("../../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/propal/class/propalestats.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/dolgraph.class.php");
+require '../../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 $WIDTH=500;
 $HEIGHT=200;

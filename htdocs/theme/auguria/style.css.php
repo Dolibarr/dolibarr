@@ -35,7 +35,7 @@ if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 
 session_cache_limiter(FALSE);
 
-require_once("../../main.inc.php");
+require_once '../../main.inc.php';
 
 // Define css type
 header('Content-type: text/css');
@@ -517,7 +517,7 @@ div.login a:hover {
 	text-decoration:underline;
 }
 
-img.login, img.printer, img.entity {
+img.login, img.printer, img.entity, img.model {
 	padding: <?php echo ($conf->browser->phone?'0':'8')?>px 0px 0px 0px;
 	margin: 0px 0px 0px 8px;
 	text-decoration: none;

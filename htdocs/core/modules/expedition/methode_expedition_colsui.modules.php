@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2008 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2008 Bearstech - http://bearstech.com/
  *
@@ -20,7 +20,7 @@
  *	\file       htdocs/core/modules/expedition/methode_expedition_colsui.modules.php
  *	\ingroup    expedition
  */
-include_once "methode_expedition.modules.php";
+include_once 'methode_expedition.modules.php';
 
 /**
  * Class to manage shipment Colsui

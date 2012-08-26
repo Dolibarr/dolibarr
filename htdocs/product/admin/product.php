@@ -27,10 +27,10 @@
  *  \brief      Setup page of product module
  */
 
-require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/product.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formbarcode.class.php");
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 
 $langs->load("admin");
 $langs->load("products");
@@ -210,7 +210,7 @@ foreach ($dirproduct as $dirroot)
     			$file = substr($file, 0, dol_strlen($file)-4);
 
     			try {
-        			dol_include_once($dirroot.$file.".php");
+        			dol_include_once($dirroot.$file.'.php');
     			}
     			catch(Exception $e)
     			{
@@ -414,7 +414,7 @@ if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 
 	if (is_dir($dir))
 	{
-		require_once(DOL_DOCUMENT_ROOT . "/product/class/product.class.php");
+		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 		$handle=opendir($dir);
         if (is_resource($handle))
@@ -426,7 +426,7 @@ if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
     				$classfile = $dir.$file.'/product.'.$file.'.class.php';
     				$classname = 'Product'.ucfirst($file);
 
-    				require_once($classfile);
+    				require_once $classfile;
     				$object = new $classname();
 
     				$module = $object->module;

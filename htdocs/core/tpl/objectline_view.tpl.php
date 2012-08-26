@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2010-2011 Regis Houssin       <regis@dolibarr.fr>
- * Copyright (C) 2010-2011 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+/* Copyright (C) 2010-2012	Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2010-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,29 +19,85 @@
  */
 ?>
 
-<!-- BEGIN PHP TEMPLATE predefinedproductline_view.tpl.php -->
+<!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
 <tr <?php echo 'id="row-'.$line->id.'" '.$bcdd[$var]; ?>>
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 	<td align="center"><?php echo ($i+1); ?></td>
 	<?php } ?>
-	<td><div id="<?php echo $line->id; ?>"></div>
-	<?php
-	echo $form->textwithtooltip($text,$description,3,'','',$i,0,($line->fk_parent_line?img_picto('', 'rightarrow'):''));
+	<td><div id="<?php echo $line->rowid; ?>"></div>
+	<?php if (($line->info_bits & 2) == 2) { ?>
+		<a href="<?php echo DOL_URL_ROOT.'/comm/remx.php?id='.$this->socid; ?>">
+		<?php
+		$txt='';
+		print img_object($langs->trans("ShowReduc"),'reduc').' ';
+		if ($line->description == '(DEPOSIT)') $txt=$langs->trans("Deposit");
+		//else $txt=$langs->trans("Discount");
+		print $txt;
+		?>
+		</a>
+		<?php
+		if ($line->description)
+		{
+				if ($line->description == '(CREDIT_NOTE)')
+				{
+					$discount=new DiscountAbsolute($this->db);
+					$discount->fetch($line->fk_remise_except);
+					echo ($txt?' - ':'').$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
+				}
+				elseif ($line->description == '(DEPOSIT)')
+				{
+					$discount=new DiscountAbsolute($this->db);
+					$discount->fetch($line->fk_remise_except);
+					echo ($txt?' - ':'').$langs->transnoentities("DiscountFromDeposit",$discount->getNomUrl(0));
+					// Add date of deposit
+					if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec).')';
+				}
+				else
+				{
+					echo ($txt?' - ':'').dol_htmlentitiesbr($line->description);
+				}
+			}
+		}
+		else
+		{
+			if ($line->fk_product > 0) {
 
-	// Show range
-	print_date_range($line->date_start, $line->date_end);
+				echo $form->textwithtooltip($text,$description,3,'','',$i,0,($line->fk_parent_line?img_picto('', 'rightarrow'):''));
 
-	// Add description in form
-	if ($conf->global->PRODUIT_DESC_IN_FORM)
-	{
-		print ($line->description && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
-	}
-	?>
+				// Show range
+				print_date_range($line->date_start, $line->date_end);
+
+				// Add description in form
+				if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
+				{
+					print (! empty($line->description) && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
+				}
+
+			} else {
+
+				if (! empty($line->fk_parent_line)) echo img_picto('', 'rightarrow');
+				if ($type==1) $text = img_object($langs->trans('Service'),'service');
+				else $text = img_object($langs->trans('Product'),'product');
+
+				if (! empty($line->label)) {
+					$text.= ' <strong>'.$line->label.'</strong>';
+					echo $form->textwithtooltip($text,dol_htmlentitiesbr($line->description),3,'','',$i,0,($line->fk_parent_line?img_picto('', 'rightarrow'):''));
+				} else {
+					echo $text.' '.dol_htmlentitiesbr($line->description);
+				}
+
+				// Show range
+				print_date_range($line->date_start,$line->date_end);
+			}
+		}
+		?>
 	</td>
 
 	<td align="right" nowrap="nowrap"><?php echo vatrate($line->tva_tx,'%',$line->info_bits); ?></td>
 
 	<td align="right" nowrap="nowrap"><?php echo price($line->subprice); ?></td>
+
+	<td align="right" nowrap="nowrap">&nbsp;</td>
 
 	<td align="right" nowrap="nowrap">
 	<?php if ((($line->info_bits & 2) != 2) && $line->special_code != 3) echo $line->qty;
@@ -52,14 +108,14 @@
 	<td align="right"><?php echo dol_print_reduction($line->remise_percent,$langs); ?></td>
 	<?php } else { ?>
 	<td>&nbsp;</td>
-	<?php } 
+	<?php }
 
-  if (! empty($conf->margin->enabled)) { 
+  if (! empty($conf->margin->enabled)) {
   ?>
   	<td align="right" nowrap="nowrap"><?php echo price($line->pa_ht); ?></td>
   	<?php if($conf->global->DISPLAY_MARGIN_RATES) {?>
   	  <td align="right" nowrap="nowrap"><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx).'%'); ?></td>
-  	<?php 
+  	<?php
     }
     if($conf->global->DISPLAY_MARK_RATES) {?>
   	  <td align="right" nowrap="nowrap"><?php echo price($line->marque_tx).'%'; ?></td>
@@ -100,12 +156,12 @@
 		</a>
 		<?php } ?>
 	</td>
-	<?php } else { ?>
-	<td align="center" class="tdlineupdown">&nbsp;</td>
+    <?php } else { ?>
+    <td align="center" class="tdlineupdown">&nbsp;</td>
 	<?php } ?>
 <?php } else { ?>
 	<td colspan="3">&nbsp;</td>
 <?php } ?>
 
 </tr>
-<!-- END PHP TEMPLATE predefinedproductline_view.tpl.php -->
+<!-- END PHP TEMPLATE objectline_view.tpl.php -->

@@ -22,9 +22,9 @@
  *	\brief      Fiche d'information sur une fiche d'intervention
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/fichinter/class/fichinter.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/fichinter.lib.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 
 $langs->load('companies');
 $langs->load("interventions");
@@ -91,7 +91,7 @@ if ($id > 0 || ! empty($ref))
 
 		print '<br>';
 
-		include(DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php');
+		include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 		dol_fiche_end();
 	}

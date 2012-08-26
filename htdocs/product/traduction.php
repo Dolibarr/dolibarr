@@ -24,11 +24,11 @@
  *	\brief      Page de traduction des produits
  */
 
-require("../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/product.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/html.formadmin.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
 $langs->load("products");
 $langs->load("languages");
@@ -67,15 +67,15 @@ $cancel != $langs->trans("Cancel") &&
 	// update de l'objet
 	if ( $_POST["forcelangprod"] == $current_lang )
 	{
-		$product->libelle		= $_POST["libelle"];
+		$product->label			= $_POST["libelle"];
 		$product->description	= dol_htmlcleanlastbr($_POST["desc"]);
 		$product->note			= dol_htmlcleanlastbr($_POST["note"]);
 	}
 	else
 	{
-		$product->multilangs[$_POST["forcelangprod"]]["libelle"]		= $_POST["libelle"];
+		$product->multilangs[$_POST["forcelangprod"]]["label"]			= $_POST["libelle"];
 		$product->multilangs[$_POST["forcelangprod"]]["description"]	= dol_htmlcleanlastbr($_POST["desc"]);
-		$product->multilangs[$_POST["forcelangprod"]]["note"]		= dol_htmlcleanlastbr($_POST["note"]);
+		$product->multilangs[$_POST["forcelangprod"]]["note"]			= dol_htmlcleanlastbr($_POST["note"]);
 	}
 
 	// sauvegarde en base
@@ -103,13 +103,13 @@ $cancel != $langs->trans("Cancel") &&
 	{
 		if ( $key == $current_lang )
 		{
-			$product->libelle		= $_POST["libelle-".$key];
+			$product->lable			= $_POST["libelle-".$key];
 			$product->description	= dol_htmlcleanlastbr($_POST["desc-".$key]);
 			$product->note			= dol_htmlcleanlastbr($_POST["note-".$key]);
 		}
 		else
 		{
-			$product->multilangs[$key]["libelle"]		= $_POST["libelle-".$key];
+			$product->multilangs[$key]["label"]			= $_POST["libelle-".$key];
 			$product->multilangs[$key]["description"]	= dol_htmlcleanlastbr($_POST["desc-".$key]);
 			$product->multilangs[$key]["note"]			= dol_htmlcleanlastbr($_POST["note-".$key]);
 		}
@@ -161,7 +161,7 @@ print '</table>';
 if ($action == 'edit')
 {
 	//WYSIWYG Editor
-	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 	print '<form action="" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -174,15 +174,15 @@ if ($action == 'edit')
 		{
 			print "<br><b><u>".$langs->trans('Language_'.$key)." :</u></b><br>";
 			print '<table class="border" width="100%">';
-			print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$product->multilangs[$key]["libelle"].'"></td></tr>';
+			print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$product->multilangs[$key]["label"].'"></td></tr>';
 			print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td>';
-			
+
 			$doleditor = new DolEditor("desc-$key", $product->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
 			$doleditor->Create();
 
 			print '</td></tr>';
 			print '<tr><td valign="top" width="15%">'.$langs->trans('Note').'</td><td>';
-			
+
 			$doleditor = new DolEditor("note-$key", $product->multilangs[$key]["note"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
 			$doleditor->Create();
 
@@ -210,7 +210,7 @@ else
 			$s=picto_from_langcode($key);
 			print "<br>".($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b><br>";
 			print '<table class="border" width="100%">';
-			print '<tr><td width="15%">'.$langs->trans('Label').'</td><td>'.$product->multilangs[$key]["libelle"].'</td></tr>';
+			print '<tr><td width="15%">'.$langs->trans('Label').'</td><td>'.$product->multilangs[$key]["label"].'</td></tr>';
 			print '<tr><td width="15%">'.$langs->trans('Description').'</td><td>'.$product->multilangs[$key]["description"].'</td></tr>';
 			print '<tr><td width="15%">'.$langs->trans('Note').'</td><td>'.$product->multilangs[$key]["note"].'</td></tr>';
 			print '</table>';
@@ -247,7 +247,7 @@ print "\n</div>\n";
 if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
 	//WYSIWYG Editor
-	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 	print '<br>';
 	print '<form action="" method="post">';
@@ -261,16 +261,16 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '</td></tr>';
 	print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
 	print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td>';
-	
+
 	$doleditor = new DolEditor('desc', '', '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
 	$doleditor->Create();
 
 	print '</td></tr>';
 	print '<tr><td valign="top" width="15%">'.$langs->trans('Note').'</td><td>';
-	
+
 	$doleditor = new DolEditor('note', '', '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
 	$doleditor->Create();
-	
+
 	print '</td></tr>';
 	print '</tr>';
 	print '</table>';
