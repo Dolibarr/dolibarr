@@ -340,7 +340,7 @@ class Form
      *	@param	int			$direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est apres
      *	@param	string		$img				Code img du picto (use img_xxx() function to get it)
      *	@param	string		$extracss			Add a CSS style to td tags
-     *	@param	int			$notabs				1=Do not include table and tr tags, 2=use div, 3=use span
+     *	@param	int			$notabs				0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
      *	@param	string		$incbefore			Include code before the text
      *	@param	int			$noencodehtmltext	Do not encode into html entity the htmltext
      *	@return	string							Code html du tooltip (texte+picto)
@@ -369,7 +369,7 @@ class Form
         else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
 
         $s="";
-        if ($notabs < 2) $s.='<table class="nobordernopadding" summary=""><tr>';
+        if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr>';
         if ($direction > 0)
         {
             if ($text != '')
@@ -390,7 +390,7 @@ class Form
                 $s.=$text.'</'.$tag.'>';
             }
         }
-        if ($notabs < 2) $s.='</tr></table>';
+        if (empty($notabs)) $s.='</tr></table>';
 
         return $s;
     }
