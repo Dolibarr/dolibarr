@@ -153,17 +153,17 @@ class ProductFournisseur extends Product
         if (empty($buyprice)) $buyprice=0;
         if (empty($charges)) $charges=0;
         if (empty($availability)) $availability=0;
-        $buyprice=price2num($buyprice);
-		$charges=price2num($charges);
-        $qty=price2num($qty);
-
- 		$error=0;
-
-		if ($price_base_type == 'TTC')
+   		if ($price_base_type == 'TTC')
 		{
 			$ttx = get_default_tva($fourn,$mysoc,$this->id);
 			$buyprice = $buyprice/(1+($ttx/100));
 		}
+        $buyprice=price2num($buyprice,'MU');
+		$charges=price2num($charges,'MU');
+        $qty=price2num($qty);
+
+ 		$error=0;
+
 		$unitBuyPrice = price2num($buyprice/$qty,'MU');
 		$unitCharges = price2num($charges/$qty,'MU');
 
@@ -185,6 +185,7 @@ class ProductFournisseur extends Product
 			$sql.= " charges = ".($charges != ''?price2num($charges):"null");
 			$sql.= " WHERE rowid = ".$this->product_fourn_price_id;
 
+			dol_syslog(get_class($this).'::update_buyprice sql='.$sql);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -204,6 +205,7 @@ class ProductFournisseur extends Product
 	        	// Delete price for this quantity
 	        	$sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price";
 	        	$sql.= " WHERE rowid = ".$this->product_fourn_price_id;
+				dol_syslog(get_class($this).'::update_buyprice sql='.$sql);
 	        	$resql=$this->db->query($sql);
 				if ($resql)
 		  		{
