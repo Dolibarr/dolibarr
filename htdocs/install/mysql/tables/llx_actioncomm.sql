@@ -55,7 +55,7 @@ create table llx_actioncomm
   note				text,
   
   fk_element		integer DEFAULT NULL,
-  elementtype		varchar(16) DEFAULT NULL
+  elementtype		varchar(32) DEFAULT NULL
 
 )ENGINE=innodb;
 

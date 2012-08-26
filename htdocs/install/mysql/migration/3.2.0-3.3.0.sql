@@ -83,4 +83,4 @@ ALTER TABLE llx_facturedet_rec ADD COLUMN label varchar(255) DEFAULT NULL AFTER 
 
 ALTER TABLE llx_accountingaccount  ADD COLUMN active tinyint DEFAULT 1 NOT NULL AFTER label;
 
-ALTER TABLE llx_actioncomm MODIFY elementtype VARCHAR(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;
+ALTER TABLE llx_actioncomm MODIFY elementtype VARCHAR(32);
