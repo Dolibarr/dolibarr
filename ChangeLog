@@ -31,7 +31,6 @@ For users:
 - New: Can correct stock of a warehouse from warehouse card.
 - New: [ task #185 ]: Can input amount when correcting stock to recalculate PMP.
 - New: [ task #454 ]: Add "No category" into filters on category.
-- New: Update language files (de, tr, pt, ca_ES, es_ES).
 - New: Auto check box on page to edit interface options of user.
 - New: More surface control on stock correction page.
 - New: Add great britain provinces.
@@ -56,6 +55,10 @@ For developers:
        ldap::connect, formadmin::select_lang,
        html::select_tva
 - New: Add custom substitution function for ODT product lines: mymodule_completesubstitutionarray_lines()
+
+For translators:
+- New: Update language files (de, tr, pt, ca, es, en, fr).
+- New: Translate the donation receipt.
 
 
 
