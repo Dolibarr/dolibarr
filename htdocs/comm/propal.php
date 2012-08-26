@@ -780,25 +780,25 @@ else if ($action == "addline" && $user->rights->propal->creer)
 		{
 			// Insert line
 			$result=$object->addline(
-					$id,
-					$desc,
-					$pu_ht,
-					GETPOST('qty'),
-					$tva_tx,
-					$localtax1_tx,
-					$localtax2_tx,
-					$idprod,
-					GETPOST('remise_percent'),
-					$price_base_type,
-					$pu_ttc,
-					$info_bits,
-					$type,
-					-1,
-					0,
-					GETPOST('fk_parent_line'),
-					$fournprice,
-					$buyingprice,
-					$label
+				$id,
+				$desc,
+				$pu_ht,
+				GETPOST('qty'),
+				$tva_tx,
+				$localtax1_tx,
+				$localtax2_tx,
+				$idprod,
+				GETPOST('remise_percent'),
+				$price_base_type,
+				$pu_ttc,
+				$info_bits,
+				$type,
+				-1,
+				0,
+				GETPOST('fk_parent_line'),
+				$fournprice,
+				$buyingprice,
+				$label
 			);
 
 			if ($result > 0)
@@ -866,7 +866,7 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 	if (! GETPOST('qty')) $special_code=3;
 
 	// Check minimum price
-	$productid = GETPOST('productid', 'int') ;
+	$productid = GETPOST('productid', 'int');
 	if (! empty($productid))
 	{
 		$product = new Product($db);
@@ -901,22 +901,22 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 	if (! $error)
 	{
 		$result = $object->updateline(
-				GETPOST('lineid'),
-				$pu_ht,
-				GETPOST('qty'),
-				GETPOST('remise_percent'),
-				$vat_rate,
-				$localtax1_rate,
-				$localtax2_rate,
-				$description,
-				'HT',
-				$info_bits,
-				$special_code,
-				GETPOST('fk_parent_line'),
-				0,
-				$fournprice,
-				$buying_price,
-				$label
+			GETPOST('lineid'),
+			$pu_ht,
+			GETPOST('qty'),
+			GETPOST('remise_percent'),
+			$vat_rate,
+			$localtax1_rate,
+			$localtax2_rate,
+			$description,
+			'HT',
+			$info_bits,
+			$special_code,
+			GETPOST('fk_parent_line'),
+			0,
+			$fournprice,
+			$buying_price,
+			$label
 		);
 
 		if ($result >= 0)
