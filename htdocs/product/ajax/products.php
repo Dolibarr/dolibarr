@@ -31,10 +31,6 @@ if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
 if (empty($_GET['keysearch']) && ! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-
-$langs->load("products");
-$langs->load("main");
 
 $htmlname=GETPOST('htmlname','alpha');
 $socid=GETPOST('socid','int');
@@ -43,50 +39,105 @@ $mode=GETPOST('mode','int');
 $status=((GETPOST('status','int') >= 0) ? GETPOST('status','int') : -1);
 $outjson=(GETPOST('outjson','int') ? GETPOST('outjson','int') : 0);
 $pricelevel=GETPOST('price_level','int');
+$action=GETPOST('action', 'alpha');
+$id=GETPOST('id', 'int');
 
 /*
  * View
  */
 
-// Ajout directives pour resoudre bug IE
-//header('Cache-Control: Public, must-revalidate');
-//header('Pragma: public');
-
-//top_htmlhead("", "", 1);  // Replaced with top_httphead. An ajax page does not need html header.
-top_httphead();
-
 //print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
-
-//print '<body class="nocellnopadd">'."\n";
 
 dol_syslog(join(',',$_GET));
 //print_r($_GET);
 
-if (empty($htmlname)) return;
-
-$match = preg_grep('/('.$htmlname.'[0-9]+)/',array_keys($_GET));
-sort($match);
-$idprod = (! empty($match[0]) ? $match[0] : '');
-
-if (! GETPOST($htmlname) && ! GETPOST($idprod)) return;
-
-// When used from jQuery, the search term is added as GET param "term".
-$searchkey=(GETPOST($idprod)?GETPOST($idprod):(GETPOST($htmlname)?GETPOST($htmlname):''));
-
-$form = new Form($db);
-if (empty($mode) || $mode == 1)
+if (! empty($action) && $action == 'fetch' && ! empty($id))
 {
-	$arrayresult=$form->select_produits_do("",$htmlname,$type,"",$pricelevel,$searchkey,$status,2,$outjson);
+	require DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+
+	$outjson=array();
+
+	$object = new Product($db);
+	$ret=$object->fetch($id);
+	if ($ret > 0)
+	{
+		$outref=$object->ref;
+		$outlabel=$object->label;
+		$outdesc=$object->description;
+		$outtype=$object->type;
+
+		$found=false;
+
+		// Multiprice
+		if ($price_level >= 1)		// If we need a particular price level (from 1 to 6)
+		{
+			$sql= "SELECT price, price_ttc, price_base_type ";
+			$sql.= "FROM ".MAIN_DB_PREFIX."product_price ";
+			$sql.= "WHERE fk_product='".$id."'";
+			$sql.= " AND price_level=".$price_level;
+			$sql.= " ORDER BY date_price";
+			$sql.= " DESC LIMIT 1";
+
+			$result = $this->db->query($sql);
+			if ($result)
+			{
+				$objp = $this->db->fetch_object($result);
+				if ($objp)
+				{
+					$found=true;
+					$outprice_ht=price($objp->price);
+					$outprice_ttc=price($objp->price_ttc);
+					$outpricebasetype=$objp->price_base_type;
+				}
+			}
+		}
+
+		if (! $found)
+		{
+			$outprice_ht=price($object->price);
+			$outprice_ttc=price($object->price_ttc);
+			$outpricebasetype=$object->price_base_type;
+		}
+
+		$outjson = array('ref'=>$outref, 'label'=>$outlabel, 'desc'=>$outdesc, 'type'=>$outtype, 'price_ht'=>$outprice_ht, 'price_ttc'=>$outprice_ttc, 'pricebasetype'=>$outpricebasetype);
+	}
+
+	echo json_encode($outjson);
+
 }
-elseif ($mode == 2)
+else
 {
-	$arrayresult=$form->select_produits_fournisseurs_do($socid,"",$htmlname,$type,"",$searchkey,$status,$outjson);
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+
+	$langs->load("products");
+	$langs->load("main");
+
+	top_httphead();
+
+	if (empty($htmlname)) return;
+
+	$match = preg_grep('/('.$htmlname.'[0-9]+)/',array_keys($_GET));
+	sort($match);
+	$idprod = (! empty($match[0]) ? $match[0] : '');
+
+	if (! GETPOST($htmlname) && ! GETPOST($idprod)) return;
+
+	// When used from jQuery, the search term is added as GET param "term".
+	$searchkey=(GETPOST($idprod)?GETPOST($idprod):(GETPOST($htmlname)?GETPOST($htmlname):''));
+
+	$form = new Form($db);
+	if (empty($mode) || $mode == 1)
+	{
+		$arrayresult=$form->select_produits_do("",$htmlname,$type,"",$pricelevel,$searchkey,$status,2,$outjson);
+	}
+	elseif ($mode == 2)
+	{
+		$arrayresult=$form->select_produits_fournisseurs_do($socid,"",$htmlname,$type,"",$searchkey,$status,$outjson);
+	}
+
+	$db->close();
+
+	if ($outjson) print json_encode($arrayresult);
 }
 
-$db->close();
-
-if ($outjson) print json_encode($arrayresult);
-
-//print "</body>";
-//print "</html>";
 ?>

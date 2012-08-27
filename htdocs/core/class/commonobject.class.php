@@ -2444,6 +2444,48 @@ abstract class CommonObject
 
     /* This is to show add lines */
 
+    /**
+     *	Show add predefined products/services form
+     *  TODO Edit templates to use global variables and include them directly in controller call
+     *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
+     *
+     *  @param  int	    		$dateSelector       1=Show also date range input fields
+     *  @param	Societe			$seller				Object thirdparty who sell
+     *  @param	Societe			$buyer				Object thirdparty who buy
+     *	@param	HookManager		$hookmanager		Hook manager instance
+     *	@return	void
+     *	@deprecated
+     */
+    function formAddPredefinedProduct($dateSelector,$seller,$buyer,$hookmanager=false)
+    {
+    	global $conf,$langs,$object;
+    	global $form,$bcnd,$var;
+
+    	// Use global variables + $dateSelector + $seller and $buyer
+    	include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_create.tpl.php');
+    }
+
+    /**
+     *	Show add free products/services form
+     *  TODO Edit templates to use global variables and include them directly in controller call
+     *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
+     *
+     *  @param	int		        $dateSelector       1=Show also date range input fields
+     *  @param	Societe			$seller				Object thirdparty who sell
+     *  @param	Societe			$buyer				Object thirdparty who buy
+     *	@param	HookManager		$hookmanager		Hook manager instance
+     *	@return	void
+     *	@deprecated
+     */
+    function formAddFreeProduct($dateSelector,$seller,$buyer,$hookmanager=false)
+    {
+    	global $conf,$langs,$object;
+    	global $form,$bcnd,$var;
+
+    	// Use global variables + $dateSelector + $seller and $buyer
+    	include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_create.tpl.php');
+    }
+
 
     /**
      *	Show add free and predefined products/services form
