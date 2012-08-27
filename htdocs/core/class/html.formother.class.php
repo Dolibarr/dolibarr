@@ -839,12 +839,11 @@ class FormOther
 	            		var left_list = cleanSerialize(jQuery("#left").sortable("serialize"));
 	            		var right_list = cleanSerialize(jQuery("#right").sortable("serialize"));
 	            		var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
-	    				jQuery.ajax({ url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\',
-	    			        async:   false
+	    				jQuery.ajax({
+	    					url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\',
+	    			        async: false
 	    		        });
-	        			//jQuery.get(\''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&boxid=\'+boxid+\'&zone='.$areacode.'&userid='.$user->id.'\');
 	        			window.location.search=\'mainmenu='.GETPOST("mainmenu").'&leftmenu='.GETPOST('leftmenu').'&action=addbox&boxid=\'+boxid;
-	    				//window.location.href=\''.$_SERVER["PHP_SELF"].'\';
 	                }
 	        	});';
 	        if (! count($arrayboxtoactivatelabel)) print 'jQuery("#boxcombo").hide();';
@@ -940,16 +939,32 @@ class FormOther
                                 containment: \'.fiche\',
                                 connectWith: \'.connectedSortable\',
                                 stop: function(event, ui) {
-                                    updateOrder(0);
+                                    updateBoxOrder(0);
                                 }
                             });
                         });
                 '."\n";
-                print 'function updateOrder() {
-                		var left_list = cleanSerialize(jQuery("#left").sortable("serialize"));
-                		var right_list = cleanSerialize(jQuery("#right").sortable("serialize"));
-                		var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
-    					jQuery.get(\''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.');
+                // To update list of activated boxes
+                print 'function updateBoxOrder(closing) {
+	                		var left_list = cleanSerialize(jQuery("#left").sortable("serialize"));
+	                		var right_list = cleanSerialize(jQuery("#right").sortable("serialize"));
+	                		var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
+	    					if (boxorder==\'A:A-B:B\' && closing == 1)	// There is no more boxes on screen, and we are after a delete of a box so we must hide title
+	    					{
+		    					jQuery.ajax({
+		    						url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
+		    						async: false
+		    					});
+	    						// We force reload to be sure to get all boxes into list
+			        			window.location.search=\'mainmenu='.GETPOST("mainmenu").'&leftmenu='.GETPOST('leftmenu').'&action=delbox\';
+	    					}
+	    					else
+	    					{
+	    						jQuery.ajax({
+		    						url: \''.DOL_URL_ROOT.'/core/ajax/box.php?boxorder=\'+boxorder+\'&zone='.$areacode.'&userid=\'+'.$user->id.',
+		    						async: true
+		    					});
+	    					}
                 		}'."\n";
                 // For closing
                 print 'jQuery(document).ready(function() {
@@ -957,7 +972,7 @@ class FormOther
                           		var self = this;	// because JQuery can modify this
                               	var boxid=self.id.substring(8);
                                 jQuery(\'#boxto_\'+boxid).remove();
-                                updateOrder();
+                                updateBoxOrder(1);
                            	});
                        });'."\n";
                 print '</script>'."\n";

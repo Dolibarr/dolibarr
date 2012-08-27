@@ -38,6 +38,8 @@ For users:
 - New: [ task #494 ] Send an email to foundation when a new member has auto-subscribed
 - New: [ task #326 ]: Add a numbering module to suggest automatically a product ref
 - New: Add conditional substitution IF/ELSEIF/ENDIF for ODT templates
+- New: Add unit foot2, inch2, foot3 and inch3 for surface and volumes.
+- New: Can select thirdparties into emailing targets, even if module category is not enabled.
 - Fix: [ bug #499 ]: Supplier order input method not translated
 - Fix: No images into product description lines as PDF generation does
   not work with this.
