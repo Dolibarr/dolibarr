@@ -218,7 +218,7 @@ $(document).ready(function() {
 	$('#service_duration_area').hide();
 
 	$('#idprod').change(function() {
-		if ($(this).val().length > 0) {
+		if ($(this).val() > 0) {
 			if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined' && CKEDITOR.instances['product_desc'] != 'undefined') {
 				// We use CKEditor
 				CKEDITOR.instances['product_desc'].focus();
@@ -226,9 +226,46 @@ $(document).ready(function() {
 				// We use a simple textarea
 				$('#product_desc').focus();
 			}
+			// For compatibility with combobox
+			<?php if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) { ?>
+			$.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php', {
+				'action': 'fetch',
+				'id': $(this).val(),
+				'price_level': <?php echo $buyer->price_level; ?>
+			},
+			function(data) {
+				if (typeof data != 'undefined') {
+					$('#select_type').val(data.type).attr('disabled','disabled');
+					$('#product_ref').val(data.ref);
+					$('#product_label').val(data.label).attr('disabled','disabled');
+					$('#origin_label_cache').val(data.label);
+					$('#origin_desc_cache').val(data.desc);
+					$('#price_base_type').val(data.pricebasetype);
+					$('#price_ht').val(data.price_ht).attr('disabled','disabled');
+					$('#origin_price_ht_cache').val(data.price_ht);
+					$('#update_label_area').show().trigger('show');
+					$('#update_desc_area').show().trigger('show');
+					$('#update_price_area').show().trigger('show');
+				}
+			}, 'json');
+			<?php } ?>
 	    } else {
 	    	$('#update_desc_checkbox').removeAttr('checked').trigger('change');
 	    	$('#update_price_checkbox').removeAttr('checked').trigger('change');
+	    	// For compatibility with combobox
+			<?php if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) { ?>
+			$('#select_type').val('').removeAttr('disabled');
+			$('#product_ref').val('');
+			$('#product_label').val('').removeAttr('disabled');
+			$('#origin_label_cache').val('');
+			$('#origin_desc_cache').val('');
+			$('#price_base_type').val('');
+			$('#price_ht').val('').removeAttr('disabled');
+			$('#origin_price_ht_cache').val('');
+			$('#update_label_area').hide().trigger('hide');
+			$('#update_desc_area').hide().trigger('hide');
+			$('#update_price_area').hide().trigger('hide');
+			<?php } ?>
 	    }
 	});
 
