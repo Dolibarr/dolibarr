@@ -948,10 +948,18 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
     $error = false;
 
     $idprod=GETPOST('idprod', 'int');
+	$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
+	$price_ht = GETPOST('price_ht');
+	$np_price = GETPOST('np_price');
 
-    if ((empty($idprod) || GETPOST('update_price')) && (GETPOST('price_ht') < 0) && (GETPOST('qty') < 0))
+	if ($conf->global->MAIN_FEATURES_LEVEL > 1 && (empty($idprod) || GETPOST('update_price')) && ($price_ht < 0) && (GETPOST('qty') < 0))
     {
-    	setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), 'errors');
+        setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), 'errors');
+        $error = true;
+    }
+	else if (empty($idprod) && ($np_price < 0) && (GETPOST('qty') < 0))
+    {
+        setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), 'errors');
         $error = true;
     }
     if (empty($idprod) && GETPOST('type') < 0)
@@ -959,23 +967,28 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
         setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), 'errors');
         $error = true;
     }
-    if (empty($idprod) && (!(GETPOST('price_ht') >= 0) || GETPOST('price_ht') == ''))	// Unit price can be 0 but not ''
-    {
-        setEventMessage($langs->trans($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPriceHT'))), 'errors');
-        $error = true;
-    }
+	if ($conf->global->MAIN_FEATURES_LEVEL > 1 && empty($idprod) && (!($price_ht >= 0) || $price_ht == ''))	// Unit price can be 0 but not ''
+	{
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
+		$error++;
+	}
+	else if (empty($idprod) && (!($np_price >= 0) || $np_price == ''))	// Unit price can be 0 but not ''
+	{
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
+		$error++;
+	}
     if (! GETPOST('qty') && GETPOST('qty') == '')
     {
         setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), 'errors');
         $error = true;
     }
-    if (empty($idprod) && ! GETPOST('product_desc'))
+    if (empty($idprod) && empty($product_desc))
     {
         setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), 'errors');
         $error = true;
     }
 
-    if (! $error && (GETPOST('qty') >= 0) && (GETPOST('product_desc') || ! empty($idprod)))
+    if (! $error && (GETPOST('qty') >= 0) && (! empty($product_desc) || ! empty($idprod)))
     {
         $ret=$object->fetch($id);
         if ($ret < 0)
@@ -986,8 +999,9 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
         $ret=$object->fetch_thirdparty();
 
         // Clean parameters
-        $date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
-        $date_end=dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
+        $predef=((! empty($idprod) && $conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
+        $date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start'.$predef.'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
+        $date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end'.$predef.'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
         $price_base_type = 'HT';
 
         // Ecrase $pu par celui du produit
@@ -1052,7 +1066,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 
             if (GETPOST('update_desc')) {
 
-            	$desc = (GETPOST('product_desc')?GETPOST('product_desc'):'');
+            	$desc = $product_desc;
 
             } else {
 
@@ -1076,8 +1090,8 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
             		$desc = $prod->description;
             	}
 
-            	$desc.= ($desc && GETPOST('product_desc')) ? ((dol_textishtml($desc) || dol_textishtml(GETPOST('product_desc')))?"<br />\n":"\n") : "";
-            	$desc.= GETPOST('product_desc');
+            	$desc.= ($desc && ! empty($product_desc)) ? ((dol_textishtml($desc) || dol_textishtml($product_desc))?"<br />\n":"\n") : "";
+            	$desc.= $product_desc;
             }
 
             if (! empty($prod->customcode) || ! empty($prod->country_code))
@@ -1096,17 +1110,18 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
         }
         else
         {
-            $pu_ht=GETPOST('price_ht');
-			$tva_tx=str_replace('*','',GETPOST('tva_tx'));
-			$tva_npr=preg_match('/\*/',GETPOST('tva_tx'))?1:0;
+            $pu_ht=($price_ht?$price_ht:$np_price);
+			$rate=GETPOST('tva_tx')?GETPOST('tva_tx'):GETPOST('np_tva_tx');
+			$tva_tx=str_replace('*','',$rate);
+			$tva_npr=preg_match('/\*/',$rate)?1:0;
 			$label=(GETPOST('product_label')?GETPOST('product_label'):'');
-			$desc=GETPOST('product_desc');
+			$desc=$product_desc;
 			$type=GETPOST('type');
         }
 
         // Margin
-        $fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):'');
-        $buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
+        $fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):(GETPOST('np_fournprice')?GETPOST('np_fournprice'):''));
+		$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):(GETPOST('np_buying_price')?GETPOST('np_buying_price'):''));
 
         // Local Taxes
         $localtax1_tx= get_localtax($tva_tx, 1, $object->client);
@@ -1181,6 +1196,13 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 				unset($_POST['product_desc']);
 				unset($_POST['fournprice']);
 				unset($_POST['buying_price']);
+
+				// old method
+				unset($_POST['np_price']);
+				unset($_POST['np_desc']);
+				unset($_POST['dp_desc']);
+				unset($_POST['np_fournprice']);
+				unset($_POST['np_buying_price']);
         	}
         	else
         	{
@@ -3009,7 +3031,23 @@ else if ($id > 0 || ! empty($ref))
         {
             $var=true;
 
-            $object->formAddObjectLine(1,$mysoc,$soc,$hookmanager);
+            if ($conf->global->MAIN_FEATURES_LEVEL > 1)
+            {
+            	// Add free or predefined products/services
+            	$object->formAddObjectLine(1,$mysoc,$soc,$hookmanager);
+            }
+            else
+            {
+            	// Add free products/services
+            	$object->formAddFreeProduct(1,$mysoc,$soc,$hookmanager);
+
+            	// Add predefined products/services
+            	if ($conf->product->enabled || $conf->service->enabled)
+            	{
+            		$var=!$var;
+            		$object->formAddPredefinedProduct(1,$mysoc,$soc,$hookmanager);
+            	}
+            }
 
             $parameters=array();
             $reshook=$hookmanager->executeHooks('formAddObjectLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook

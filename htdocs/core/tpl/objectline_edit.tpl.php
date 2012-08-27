@@ -39,6 +39,8 @@
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
 	<div id="<?php echo $line->id; ?>"></div>
 
+	<?php if ($conf->global->MAIN_FEATURES_LEVEL > 1) { ?>
+
 	<?php if ($line->fk_product > 0) { ?>
 	<?php echo $text . ' - '; ?>
 	<?php } else { ?>
@@ -51,6 +53,19 @@
 		<?php echo $form->textwithtooltip($langs->trans('UpdateOriginalProductLabel'), $langs->trans('HelpUpdateOriginalProductLabel'),1,0,'','',3); ?>
 	</span>
 	<span id="price_base_type" class="hideobject"></span>
+
+	<?php } else if ($line->fk_product > 0) { ?>
+
+	<a href="<?php echo DOL_URL_ROOT.'/product/fiche.php?id='.$line->fk_product; ?>">
+	<?php
+	if ($line->product_type==1) echo img_object($langs->trans('ShowService'),'service');
+	else print img_object($langs->trans('ShowProduct'),'product');
+	echo ' '.$line->ref;
+	?>
+	</a>
+	<?php echo ' - '.nl2br($line->product_label); ?>
+
+	<?php } ?>
 
 	<br>
 
@@ -74,7 +89,9 @@
 	<td align="right"><?php echo $form->load_tva('tva_tx',$line->tva_tx,$seller,$buyer,0,$line->info_bits,$line->product_type); ?></td>
 
 	<td align="right"><input type="text" class="flat" size="8" id="price_ht" name="price_ht" value="<?php echo price($line->subprice,0,'',0); ?>"></td>
+	<?php if ($conf->global->MAIN_FEATURES_LEVEL > 1) { ?>
 	<td align="right"><input type="text" class="flat" size="8" id="price_ttc" name="price_ttc" value="<?php echo price($pu_ttc,0,'',0); ?>"></td>
+	<?php } ?>
 
 	<td align="right">
 	<?php if (($line->info_bits & 2) != 2) { ?>
@@ -121,6 +138,8 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
+
+	<?php if ($conf->global->MAIN_FEATURES_LEVEL > 1) { ?>
 
 	if ($('#product_type').val() == 0) {
 		$('#service_duration_area').hide();
@@ -245,6 +264,7 @@ $(document).ready(function() {
 			}, 'json');
 		}
 	});
+	<?php } ?>
 
 	<?php if (! empty($conf->margin->enabled)) { ?>
 	$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product; ?>}, function(data) {

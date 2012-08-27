@@ -2549,7 +2549,8 @@ abstract class CommonObject
 		print '<td>'.$langs->trans('Description').'</td>';
 		print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
 		print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
-		print '<td align="right" width="80">&nbsp;</td>';
+		if ($conf->global->MAIN_FEATURES_LEVEL > 1)
+			print '<td align="right" width="80">&nbsp;</td>';
 		print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
 		print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
 		if (! empty($conf->margin->enabled)) {
