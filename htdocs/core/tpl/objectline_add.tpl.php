@@ -217,7 +217,7 @@ $(document).ready(function() {
 	$('#service_duration_area').hide();
 
 	$('#idprod').change(function() {
-		if ($(this).val().length > 0)
+		if ($(this).val() > 0)
 	    {
 			<?php if (! empty($conf->fckeditor->enabled) && ! empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
 				// We use CKEditor
@@ -226,8 +226,9 @@ $(document).ready(function() {
 				// We use a simple textarea
 				$('#product_desc').focus();
 			<?php } ?>
-
-	    } else {
+		    $('#addlinebutton').removeAttr('disabled');
+		} else {
+			$('#addlinebutton').attr('disabled','disabled');
 	    	$('#update_desc_checkbox').removeAttr('checked').trigger('change');
 	    	$('#update_price_checkbox').removeAttr('checked').trigger('change');
 	    }
