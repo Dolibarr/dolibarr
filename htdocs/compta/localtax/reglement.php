@@ -38,7 +38,7 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 llxHeader();
 
-$localtax_static = new localtax($db);
+$localtax_static = new Localtax($db);
 
 print_fiche_titre($langs->transcountry("LT2Payments",$mysoc->country_code));
 
