@@ -212,21 +212,20 @@ if (! empty($conf->margin->enabled)) {
 <?php } ?>
 
 </form>
-
 <script type="text/javascript">
 $(document).ready(function() {
 
 	$('#service_duration_area').hide();
 
 	$('#idprod').change(function() {
-		if ($(this).val().length > 0)
-	    {
+		if ($(this).val().length > 0) {
 			if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined') {
+				// We use CKEditor
 				CKEDITOR.instances['product_desc'].focus();
 			} else {
+				// We use a simple textarea
 				$('#product_desc').focus();
 			}
-
 	    } else {
 	    	$('#update_desc_checkbox').removeAttr('checked').trigger('change');
 	    	$('#update_price_checkbox').removeAttr('checked').trigger('change');
@@ -340,12 +339,14 @@ $(document).ready(function() {
 			var origin_desc = $('#origin_desc_cache').val();
 
 			if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined') {
+				// We use CKEditor
 				var freecontent = CKEDITOR.instances['product_desc'].getData();
 				if (origin_desc.length > 0)
 					var content = origin_desc + '<br />' + freecontent;
 				else
 					var content = freecontent;
 			} else {
+				// We use a simple textarea
 				var freecontent = $('#product_desc').html();
 				if (origin_desc.length > 0)
 					var content = origin_desc + '\r\n' + freecontent;
@@ -360,8 +361,10 @@ $(document).ready(function() {
 		}
 
 		if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined') {
+			// We use CKEditor
 			CKEDITOR.instances['product_desc'].setData(content);
 		} else {
+			// We use a simple textarea
 			$('#product_desc').html(content);
 		}
 	});

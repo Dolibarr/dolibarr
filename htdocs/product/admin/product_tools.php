@@ -21,6 +21,9 @@
  *  \brief      Setup page of product module
  */
 
+// TODO We must add a sentence to explain goal of page
+// TODO We must add a confirmation on button because this will make a mass change
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
@@ -165,7 +168,7 @@ print '</div>';
 
 // Boutons actions
 print '<div class="tabsAction">';
-print '<input type="submit" id="convert_vatrate" name="convert_vatrate" value="'.$langs->trans("Convert").'" />';
+print '<input type="submit" id="convert_vatrate" name="convert_vatrate" value="'.$langs->trans("Convert").'" class="button" />';
 print '</div>';
 
 print '</form>';
