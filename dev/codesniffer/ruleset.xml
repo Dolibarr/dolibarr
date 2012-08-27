@@ -200,6 +200,10 @@
 
 	<rule ref="PEAR.Functions.FunctionCallSignature" />
 
+	<rule ref="PEAR.Functions.FunctionCallSignature.Indent">
+	    <severity>0</severity>
+	</rule>
+	
 	<rule ref="PEAR.Functions.ValidDefaultValue" />
 
 	<rule ref="PEAR.NamingConventions.ValidClassName" />
