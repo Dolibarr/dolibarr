@@ -135,17 +135,14 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     							});
     						}
     						if (ui.item.textarea) {
-    							$.each(ui.item.textarea, function(key, value) {';
-								if (! empty($conf->fckeditor->enabled) && ! empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) {
-								$script.= '					// We use CKEditor
-															CKEDITOR.instances[key].setData(value);
-    														CKEDITOR.instances[key].focus();';
-								} else {
-    							$script.= '					// We use a simple textarea
-    														$("#" + key).html(value);
-    														$("#" + key).focus();';
-								}
-								$script.='
+    							$.each(ui.item.textarea, function(key, value) {
+    								if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined") {
+    									CKEDITOR.instances[key].setData(value);
+    									CKEDITOR.instances[key].focus();
+    								} else {
+    									$("#" + key).html(value);
+    									$("#" + key).focus();
+									}
     							});
     						}
     					}
