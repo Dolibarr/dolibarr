@@ -153,7 +153,7 @@ function product_admin_prepare_head($object=null)
 	$head[$h][2] = 'general';
 	$h++;
 
-	if ($conf->global->MAIN_FEATURES_LEVEL > 1)
+	if ($conf->global->MAIN_FEATURES_LEVEL > 1)	// Link to page to make mass editing of products vat
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_tools.php';
 		$head[$h][1] = $langs->trans("Tools");
