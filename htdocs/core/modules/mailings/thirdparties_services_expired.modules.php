@@ -18,8 +18,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 
 /**
- *	\class      mailing_thirdparties_services_expired
- *	\brief      Class to offer a selector of emailing targets with Rule 'services expired'.
+ *	Class to offer a selector of emailing targets with Rule 'services expired'.
  */
 class mailing_thirdparties_services_expired extends MailingTargets
 {
