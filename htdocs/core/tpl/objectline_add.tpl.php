@@ -211,7 +211,6 @@ if (! empty($conf->margin->enabled)) {
 <?php } ?>
 
 </form>
-
 <script type="text/javascript">
 $(document).ready(function() {
 
@@ -220,11 +219,13 @@ $(document).ready(function() {
 	$('#idprod').change(function() {
 		if ($(this).val().length > 0)
 	    {
-			if (typeof CKEDITOR == 'object') {
+			<?php if (! empty($conf->fckeditor->enabled) && ! empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
+				// We use CKEditor
 				CKEDITOR.instances['product_desc'].focus();
-			} else {
+			<?php } else { ?>
+				// We use a simple textarea
 				$('#product_desc').focus();
-			}
+			<?php } ?>
 
 	    } else {
 	    	$('#update_desc_checkbox').removeAttr('checked').trigger('change');
@@ -336,19 +337,21 @@ $(document).ready(function() {
 
 			var origin_desc = $('#origin_desc_cache').val();
 
-			if (typeof CKEDITOR == 'object') {
+			<?php if (! empty($conf->fckeditor->enabled) && ! empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
+				// We use CKEditor
 				var freecontent = CKEDITOR.instances['product_desc'].getData();
 				if (origin_desc.length > 0)
 					var content = origin_desc + '<br />' + freecontent;
 				else
 					var content = freecontent;
-			} else {
+			<?php } else { ?>
+				// We use a simple textarea
 				var freecontent = $('#product_desc').html();
 				if (origin_desc.length > 0)
 					var content = origin_desc + '\r\n' + freecontent;
 				else
 					var content = freecontent;
-			}
+			<?php } ?>
 
 			$('#free_desc_cache').val(freecontent);
 
@@ -356,11 +359,13 @@ $(document).ready(function() {
 			var content = $('#free_desc_cache').val();
 		}
 
-		if (typeof CKEDITOR == 'object') {
+		<?php if (! empty($conf->fckeditor->enabled) && ! empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
+			// We use CKEditor
 			CKEDITOR.instances['product_desc'].setData(content);
-		} else {
+		<?php } else { ?>
+			// We use a simple textarea
 			$('#product_desc').html(content);
-		}
+		<?php } ?>
 	});
 
 	$('#price_ht').focusin(function() {
