@@ -218,7 +218,9 @@ $(document).ready(function() {
 	$('#service_duration_area').hide();
 
 	$('#idprod').change(function() {
+
 		if ($(this).val() > 0) {
+
 			if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined' && CKEDITOR.instances['product_desc'] != 'undefined') {
 				// We use CKEditor
 				CKEDITOR.instances['product_desc'].focus();
@@ -226,6 +228,7 @@ $(document).ready(function() {
 				// We use a simple textarea
 				$('#product_desc').focus();
 			}
+
 			// For compatibility with combobox
 			<?php if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) { ?>
 			$.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php', {
@@ -235,13 +238,13 @@ $(document).ready(function() {
 			},
 			function(data) {
 				if (typeof data != 'undefined') {
-					$('#select_type').val(data.type).attr('disabled','disabled');
+					$('#select_type').val(data.type).attr('disabled','disabled').trigger('change');
 					$('#product_ref').val(data.ref);
 					$('#product_label').val(data.label).attr('disabled','disabled');
 					$('#origin_label_cache').val(data.label);
 					$('#origin_desc_cache').val(data.desc);
 					$('#price_base_type').val(data.pricebasetype);
-					$('#price_ht').val(data.price_ht).attr('disabled','disabled');
+					$('#price_ht').val(data.price_ht);
 					$('#origin_price_ht_cache').val(data.price_ht);
 					$('#update_label_area').show().trigger('show');
 					$('#update_desc_area').show().trigger('show');
@@ -249,23 +252,28 @@ $(document).ready(function() {
 				}
 			}, 'json');
 			<?php } ?>
+
 	    } else {
+
 	    	$('#update_desc_checkbox').removeAttr('checked').trigger('change');
-	    	$('#update_price_checkbox').removeAttr('checked').trigger('change');
+	    	$('#update_price_checkbox').removeAttr('checked');
+	    	$('#price_ttc').val('');
+
 	    	// For compatibility with combobox
 			<?php if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) { ?>
-			$('#select_type').val('').removeAttr('disabled');
+			$('#select_type').val('').removeAttr('disabled').trigger('change');
 			$('#product_ref').val('');
 			$('#product_label').val('').removeAttr('disabled');
 			$('#origin_label_cache').val('');
 			$('#origin_desc_cache').val('');
-			$('#price_base_type').val('');
-			$('#price_ht').val('').removeAttr('disabled');
+			$('#price_ht').val('').trigger('change');
 			$('#origin_price_ht_cache').val('');
+			$('#price_base_type').val('');
 			$('#update_label_area').hide().trigger('hide');
 			$('#update_desc_area').hide().trigger('hide');
 			$('#update_price_area').hide().trigger('hide');
 			<?php } ?>
+
 	    }
 	});
 
@@ -285,7 +293,7 @@ $(document).ready(function() {
 				$('#service_duration_area').show();
 			}
 			//$('#add_product_area').show(); // TODO for add product card
-			if (($('#price_ht').val().length > 0) || ($('#price_ttc').val().length > 0)) {
+			if ($('#price_ht').val().length > 0 || $('#price_ttc').val().length > 0) {
 				$('#addlinebutton').removeAttr('disabled');
 			} else {
 				$('#addlinebutton').attr('disabled','disabled');
@@ -411,7 +419,7 @@ $(document).ready(function() {
 	});
 
 	$('#price_ht').bind('change keyup input', function() {
-		if ($('#tva_tx').val() > 0 && ($('#idprod').val().length == 0 && $('#price_base_type').val() == 'HT') || $('#idprod').val().length > 0) {
+		if ($('#tva_tx').val() > 0 && (($('#idprod').val() == 0 && $('#price_base_type').val() == 'HT') || $('#idprod').val() > 0)) {
 			update_price('price_ht', 'price_ttc');
 		}
 	});
@@ -435,7 +443,7 @@ $(document).ready(function() {
 			$('#price_ttc').attr('disabled','disabled');
 			$('#price_ttc').val('');
 		} else {
-			if ($('#idprod').val().length == 0 || ($('#idprod').val().length > 0 && $('#update_price_checkbox').attr('checked') == 'checked')) {
+			if ($('#idprod').val() == 0 || ($('#idprod').val() > 0 && $('#update_price_checkbox').attr('checked') == 'checked')) {
 				$('#price_ttc').removeAttr('disabled');
 			}
 			if ($('#price_base_type').val() == 'HT') {
