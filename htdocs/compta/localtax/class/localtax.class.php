@@ -25,10 +25,9 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 
 /**
- *	\class      Localtax
- *	\brief      Put here description of your class
+ *	Class to manage local tax
  */
-class localtax extends CommonObject
+class Localtax extends CommonObject
 {
     var $id;
     var $ref;
