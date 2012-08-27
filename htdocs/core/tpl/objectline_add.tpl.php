@@ -219,7 +219,7 @@ $(document).ready(function() {
 
 	$('#idprod').change(function() {
 		if ($(this).val().length > 0) {
-			if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined') {
+			if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined' && CKEDITOR.instances['product_desc'] != 'undefined') {
 				// We use CKEditor
 				CKEDITOR.instances['product_desc'].focus();
 			} else {
@@ -338,7 +338,7 @@ $(document).ready(function() {
 
 			var origin_desc = $('#origin_desc_cache').val();
 
-			if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined') {
+			if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined' && CKEDITOR.instances['product_desc'] != 'undefined') {
 				// We use CKEditor
 				var freecontent = CKEDITOR.instances['product_desc'].getData();
 				if (origin_desc.length > 0)
@@ -360,7 +360,7 @@ $(document).ready(function() {
 			var content = $('#free_desc_cache').val();
 		}
 
-		if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined') {
+		if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined' && CKEDITOR.instances['product_desc'] != 'undefined') {
 			// We use CKEditor
 			CKEDITOR.instances['product_desc'].setData(content);
 		} else {
