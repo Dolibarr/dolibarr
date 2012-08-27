@@ -26,5 +26,5 @@ create table llx_accountingaccount
   account_number  varchar(20)  NOT NULL,
   account_parent  varchar(20),
   label           varchar(128) NOT NULL,
-  active     	    tinyint DEFAULT 1  NOT NULL,
+  active     	  tinyint DEFAULT 1  NOT NULL
 )ENGINE=innodb;
