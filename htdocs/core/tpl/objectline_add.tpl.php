@@ -76,10 +76,11 @@ if (! empty($conf->margin->enabled)) {
 							'product_label' => 'label2',
 							'origin_label_cache' => 'label2',
 							'origin_desc_cache' => 'desc',
+							'price_base_type' => 'pricebasetype',
 							'price_ht' => 'price_ht',
 							'origin_price_ht_cache' => 'price_ht',
-							'price_ttc' => 'price_ttc',
-							'origin_price_ttc_cache' => 'price_ttc'
+							//'price_ttc' => 'price_ttc',
+							//'origin_price_ttc_cache' => 'price_ttc'
 					),
 					'show' => array(
 							'update_label_area',
@@ -110,7 +111,6 @@ if (! empty($conf->margin->enabled)) {
 		<span id="update_price_area" class="hideobject"> | <input type="checkbox" id="update_price_checkbox" name="update_price" value="1" />
 			<?php echo $form->textwithtooltip($langs->trans('UpdateOriginalProductPrice'), $langs->trans('HelpUpdateOriginalProductPrice'),1,0,'','',3); ?>
 		</span>
-		<span id="price_base_type" class="hideobject"></span>
 	</td>
 </tr>
 <?php } ?>
@@ -156,6 +156,7 @@ if (! empty($conf->margin->enabled)) {
 	if ($buyer->tva_assuj == "0") echo '<input type="hidden" name="np_tva_tx" value="0">0';
 	else echo $form->load_tva('tva_tx', (GETPOST('tva_tx')?GETPOST('tva_tx'):-1), $seller, $buyer);
 	?>
+	<input type="hidden" id="price_base_type" name="price_base_type" value="" />
 	</td>
 	<td align="right">
 		<input type="text" size="8" id="price_ht" name="price_ht" value="<?php echo (GETPOST('price_ht')?GETPOST('price_ht'):''); ?>">
@@ -220,7 +221,7 @@ $(document).ready(function() {
 	$('#idprod').change(function() {
 		if ($(this).val().length > 0)
 	    {
-			if (typeof CKEDITOR == 'object') {
+			if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined') {
 				CKEDITOR.instances['product_desc'].focus();
 			} else {
 				$('#product_desc').focus();
@@ -297,16 +298,18 @@ $(document).ready(function() {
 	$('#update_price_checkbox').change(function() {
 		if ($(this).attr('checked')) {
 			$('#price_ht').removeAttr('disabled').focus();
-			$('#price_ttc').removeAttr('disabled')
+			if ($('#tva_tx').val() > 0) {
+				$('#price_ttc').removeAttr('disabled')
+			}
 		} else {
 			$('#price_ht')
 				.attr('disabled','disabled')
 				.val($('#origin_price_ht_cache').val())
 				.trigger('change');
 			$('#price_ttc')
-				.attr('disabled','disabled')
-				.val($('#origin_price_ttc_cache').val())
-				.trigger('change');
+				.attr('disabled','disabled');
+				//.val($('#origin_price_ttc_cache').val())
+				//.trigger('change');
 		}
 	});
 
@@ -336,7 +339,7 @@ $(document).ready(function() {
 
 			var origin_desc = $('#origin_desc_cache').val();
 
-			if (typeof CKEDITOR == 'object') {
+			if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined') {
 				var freecontent = CKEDITOR.instances['product_desc'].getData();
 				if (origin_desc.length > 0)
 					var content = origin_desc + '<br />' + freecontent;
@@ -356,7 +359,7 @@ $(document).ready(function() {
 			var content = $('#free_desc_cache').val();
 		}
 
-		if (typeof CKEDITOR == 'object') {
+		if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined') {
 			CKEDITOR.instances['product_desc'].setData(content);
 		} else {
 			$('#product_desc').html(content);
@@ -364,84 +367,67 @@ $(document).ready(function() {
 	});
 
 	$('#price_ht').focusin(function() {
-		$('#price_base_type').html('HT');
+		$('#price_base_type').val('HT');
 	});
 
-	$('#price_ht').onDelayedKeyup({
-		handler: function() {
-			$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php', {
-				'action': 'get_ttc',
-				'pu_ht': $(this).val(),
-				'tva_tx': $('#tva_tx').val()
-			},
-			function(data) {
-				if (data && data.price.length > 0) {
-					$('#price_ttc').val(data.price);
-					if ($('#select_type').val() >= 0) {
-						$('#addlinebutton').removeAttr('disabled');
-					} else {
-						$('#addlinebutton').attr('disabled','disabled');
-					}
-				} else {
-					$('#price_ttc').val('');
-					$('#addlinebutton').attr('disabled','disabled');
-				}
-			}, 'json');
+	$('#price_ht').bind('change keyup input', function() {
+		if ($('#tva_tx').val() > 0 && ($('#idprod').val().length == 0 && $('#price_base_type').val() == 'HT') || $('#idprod').val().length > 0) {
+			update_price('price_ht', 'price_ttc');
 		}
 	});
 
 	$('#price_ttc').focusin(function() {
-		$('#price_base_type').html('TTC');
+		$('#price_base_type').val('TTC');
 	});
 
-	$('#price_ttc').onDelayedKeyup({
-		handler: function() {
-			$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php', {
-				'action': 'get_ht',
-				'pu_ttc': $(this).val(),
-				'tva_tx': $('#tva_tx').val()
-			},
-			function(data) {
-				if (data && data.price.length > 0) {
-					$('#price_ht').val(data.price);
-					if ($('#select_type').val() >= 0) {
-						$('#addlinebutton').removeAttr('disabled');
-					} else {
-						$('#addlinebutton').attr('disabled','disabled');
-					}
-				} else {
-					$('#price_ht').val('');
-					$('#addlinebutton').attr('disabled','disabled');
-				}
-			}, 'json');
+	$('#price_ttc').bind('change keyup input', function() {
+		if ($('#price_base_type').val() == 'TTC') {
+			update_price('price_ttc', 'price_ht');
 		}
 	});
+
+	if ($('#tva_tx').val() == 0) {
+		$('#price_ttc').attr('disabled','disabled');
+	}
 
 	$('#tva_tx').change(function() {
-		if ($('#price_base_type').html() == 'HT') {
-			$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php', {
-				'action': 'get_ttc',
-				'pu_ht': $('#price_ht').val(),
-				'tva_tx': $(this).val()
-			},
-			function(data) {
-				if (data && data.price.length > 0) {
-					$('#price_ttc').val(data.price);
-				}
-			}, 'json');
-		} else if ($('#price_base_type').html() == 'TTC') {
-			$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php', {
-				'action': 'get_ht',
-				'pu_ttc': $('#price_ttc').val(),
-				'tva_tx': $(this).val()
-			},
-			function(data) {
-				if (data && data.price.length > 0) {
-					$('#price_ht').val(data.price);
-				}
-			}, 'json');
+		if ($(this).val() == 0) {
+			$('#price_ttc').attr('disabled','disabled');
+			$('#price_ttc').val('');
+		} else {
+			if ($('#idprod').val().length == 0 || ($('#idprod').val().length > 0 && $('#update_price_checkbox').attr('checked') == 'checked')) {
+				$('#price_ttc').removeAttr('disabled');
+			}
+			if ($('#price_base_type').val() == 'HT') {
+				update_price('price_ht', 'price_ttc');
+			} else if ($('#price_base_type').val() == 'TTC') {
+				update_price('price_ttc', 'price_ht');
+			}
 		}
 	});
+
+	function update_price(input, output) {
+		$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php', {
+			'amount': $('#' + input).val(),
+			'output': output,
+			'tva_tx': $('#tva_tx').val()
+		},
+		function(data) {
+			if (typeof data[output] != 'undefined') {
+				$('#' + output).val(data[output]);
+				if ($('#select_type').val() >= 0) {
+					$('#addlinebutton').removeAttr('disabled');
+				} else {
+					$('#addlinebutton').attr('disabled','disabled');
+				}
+			} else {
+				$('#' + input).val('');
+				$('#' + output).val('');
+				$('#addlinebutton').attr('disabled','disabled');
+			}
+		}, 'json');
+	}
+
 });
 </script>
 
