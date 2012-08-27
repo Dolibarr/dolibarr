@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2011-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,11 @@
 /**
  *      \file       htdocs/core/class/rssparser.class.php
  *      \ingroup    core
- *      \brief      File of class to parse rss feeds
+ *      \brief      File of class to parse RSS feeds
+ */
+
+/**
+ * 	Class to parse RSS files
  */
 class RssParser
 {
@@ -38,104 +42,6 @@ class RssParser
     private $_lastfetchdate;    // Last successful fetch
     private $_rssarray=array();
 
-    /**
-     * getFormat
-     *
-     * @return string
-     */
-    public function getFormat()        {
-        return $this->_format;
-    }
-    /**
-     * getUrlRss
-     *
-     * @return string
-     */
-    public function getUrlRss()        {
-        return $this->_urlRSS;
-    }
-    /**
-     * getLanguage
-     *
-     * @return string
-     */
-    public function getLanguage()      {
-        return $this->_language;
-    }
-    /**
-     * getGenerator
-     *
-     * @return string
-     */
-    public function getGenerator()     {
-        return $this->_generator;
-    }
-    /**
-     * getCopyright
-     *
-     * @return string
-     */
-    public function getCopyright()     {
-        return $this->_copyright;
-    }
-    /**
-     * getLastBuildDate
-     *
-     * @return string
-     */
-    public function getLastBuildDate() {
-        return $this->_lastbuilddate;
-    }
-    /**
-     * getImageUrl
-     *
-     * @return string
-     */
-    public function getImageUrl()      {
-        return $this->_imageurl;
-    }
-    /**
-     * getLink
-     *
-     * @return string
-     */
-    public function getLink()          {
-        return $this->_link;
-    }
-    /**
-     * getTitle
-     *
-     * @return string
-     */
-    public function getTitle()         {
-        return $this->_title;
-    }
-    /**
-     * getDescription
-     *
-     * @return string
-     */
-    public function getDescription()   {
-        return $this->_description;
-    }
-    /**
-     * getLastFetchDate
-     *
-     * @return string
-     */
-    public function getLastFetchDate() {
-        return $this->_lastfetchdate;
-    }
-    /**
-     * getItems
-     *
-     * @return string
-     */
-    public function getItems()         {
-        return $this->_rssarray;
-    }
-
-
     // For parsing with xmlparser
     var $stack               = array(); // parser stack
     var $_CONTENT_CONSTRUCTS = array('content', 'summary', 'info', 'title', 'tagline', 'copyright');
@@ -148,7 +54,117 @@ class RssParser
      */
     public function __construct($db)
     {
-        $this->db=$db;
+    	$this->db=$db;
+    }
+
+    /**
+     * getFormat
+     *
+     * @return string
+     */
+    public function getFormat()
+    {
+        return $this->_format;
+    }
+
+    /**
+     * getUrlRss
+     *
+     * @return string
+     */
+    public function getUrlRss()
+    {
+        return $this->_urlRSS;
+    }
+    /**
+     * getLanguage
+     *
+     * @return string
+     */
+    public function getLanguage()
+    {
+        return $this->_language;
+    }
+    /**
+     * getGenerator
+     *
+     * @return string
+     */
+    public function getGenerator()
+    {
+        return $this->_generator;
+    }
+    /**
+     * getCopyright
+     *
+     * @return string
+     */
+    public function getCopyright()
+    {
+        return $this->_copyright;
+    }
+    /**
+     * getLastBuildDate
+     *
+     * @return string
+     */
+    public function getLastBuildDate()
+    {
+        return $this->_lastbuilddate;
+    }
+    /**
+     * getImageUrl
+     *
+     * @return string
+     */
+    public function getImageUrl()
+    {
+        return $this->_imageurl;
+    }
+    /**
+     * getLink
+     *
+     * @return string
+     */
+    public function getLink()
+    {
+        return $this->_link;
+    }
+    /**
+     * getTitle
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->_title;
+    }
+    /**
+     * getDescription
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->_description;
+    }
+    /**
+     * getLastFetchDate
+     *
+     * @return string
+     */
+    public function getLastFetchDate()
+    {
+        return $this->_lastfetchdate;
+    }
+    /**
+     * getItems
+     *
+     * @return string
+     */
+    public function getItems()
+    {
+        return $this->_rssarray;
     }
 
 
