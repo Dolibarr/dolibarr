@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,12 +170,7 @@ if (! $mesg)
 }
 
 
-$res = $stats->getAverageByMonth($year);
-$data = array();
-for ($i = 1 ; $i < 13 ; $i++)
-{
-    $data[$i-1] = array(ucfirst(dol_substr(dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b"),0,3)), $res[$i]);
-}
+$data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
@@ -193,8 +190,7 @@ $mesg = $px3->isGraphKo();
 if (! $mesg)
 {
     $px3->SetData($data);
-    //$i=$startyear;$legend=array();
-    $i=$endyear;$legend=array();
+    $i=$startyear;$legend=array();
     while ($i <= $endyear)
     {
         $legend[]=$i;

@@ -69,7 +69,7 @@ class FormActions
             print '<script type="text/javascript">'."\n";
             print 'jQuery(document).ready(function () {'."\n";
             print 'jQuery("#select'.$htmlname.'").change(function() { select_status(document.'.$formname.'.status.value); });'."\n";
-            print 'jQuery("#val'.$htmlname.'").change(function()    { select_status(document.'.$formname.'.status.value); });'."\n";
+            print 'jQuery("#val'.$htmlname.'").change(function()    { select_status(jQuery("#val'.$htmlname.'").val()); });'."\n";
             print 'select_status(document.'.$formname.'.status.value);'."\n";
             print '});'."\n";
             print 'function select_status(mypercentage) {'."\n";
@@ -78,7 +78,7 @@ class FormActions
             print 'if (mypercentage == -1) { document.'.$formname.'.percentageshown.disabled=true; jQuery(".hideifna").hide(); }'."\n";
             print 'else if (mypercentage == 0) { document.'.$formname.'.percentageshown.disabled=true; jQuery(".hideifna").show();}'."\n";
             print 'else if (mypercentage == 100) { document.'.$formname.'.percentageshown.disabled=true; jQuery(".hideifna").show();}'."\n";
-            print 'else { document.'.$formname.'.percentageshown.disabled=false; }'."\n";
+            print 'else { document.'.$formname.'.percentageshown.disabled=false; jQuery(".hideifna").show();}'."\n";
             print '}'."\n";
             print '</script>'."\n";
             print '<select '.($canedit?'':'disabled="disabled" ').'name="status" id="select'.$htmlname.'" class="flat">';

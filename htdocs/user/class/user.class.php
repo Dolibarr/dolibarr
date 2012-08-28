@@ -1984,10 +1984,10 @@ class User extends CommonObject
 	 *  Return number of existing users
 	 *
 	 *  @param	string	$limitTo	Limit to 'active' or 'superadmin' users
-	 *  @param	int		$all		Return for all entities
+	 *  @param	bool	$all		Return for all entities
 	 *  @return int  				Number of users
 	 */
-	function getNbOfUsers($limitTo='',$all=0)
+	function getNbOfUsers($limitTo='active', $all=false)
 	{
 		global $conf;
 
@@ -1999,7 +1999,7 @@ class User extends CommonObject
 		}
 		else
 		{
-			if ($all) $sql.= " WHERE entity IS NOT NULL"; // all users except superadmin
+			if ($all) $sql.= " WHERE entity > 0"; // all users except superadmins
 			else $sql.= " WHERE entity = ".$conf->entity;
 			if ($limitTo == 'active') $sql.= " AND statut = 1";
 		}

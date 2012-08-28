@@ -216,6 +216,21 @@ if ($action == 'builddoc' && $user->rights->banque->cheque)
 	}
 }
 
+// Remove file in doc form
+else if ($action == 'remove_file' && $user->rights->banque->cheque)
+{
+	$remisecheque = new RemiseCheque($db);
+	if ($remisecheque->fetch($_GET["id"]) > 0)
+	{
+		require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+
+		$langs->load("other");
+
+		$file=$dir.get_exdir($remisecheque->number,2,1) . GETPOST('file');
+		$ret=dol_delete_file($file);
+	}
+}
+
 
 /*
  * View

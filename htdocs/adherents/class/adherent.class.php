@@ -708,36 +708,43 @@ class Adherent extends CommonObject
             $resql=$this->db->query($sql);
             if ($resql)
             {
-                $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".$rowid;
-                dol_syslog(get_class($this)."::delete sql=".$sql);
-                $resql=$this->db->query($sql);
-                if ($resql)
-                {
-                    if ($this->db->affected_rows($resql))
-                    {
-                        // Appel des triggers
-                        include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-                        $interface=new Interfaces($this->db);
-                        $result=$interface->run_triggers('MEMBER_DELETE',$this,$user,$langs,$conf);
-                        if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                        // Fin appel triggers
+            	// Remove linked user
+            	$ret=$this->setUserId(0);
+            	if ($ret > 0)
+            	{
+            		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".$rowid;
+            		dol_syslog(get_class($this)."::delete sql=".$sql);
+            		$resql=$this->db->query($sql);
+            		if ($resql)
+            		{
+            			if ($this->db->affected_rows($resql))
+            			{
+            				// Appel des triggers
+            				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+            				$interface=new Interfaces($this->db);
+            				$result=$interface->run_triggers('MEMBER_DELETE',$this,$user,$langs,$conf);
+            				if ($result < 0) {
+            					$error++; $this->errors=$interface->errors;
+            				}
+            				// Fin appel triggers
 
-                        $this->db->commit();
-                        return 1;
-                    }
-                    else
-                    {
-                        // Rien a effacer
-                        $this->db->rollback();
-                        return 0;
-                    }
-                }
-                else
-                {
-                    $this->error=$this->db->error();
-                    $this->db->rollback();
-                    return -3;
-                }
+            				$this->db->commit();
+            				return 1;
+            			}
+            			else
+            			{
+            				// Rien a effacer
+            				$this->db->rollback();
+            				return 0;
+            			}
+            		}
+            		else
+            		{
+            			$this->error=$this->db->error();
+            			$this->db->rollback();
+            			return -3;
+            		}
+            	}
             }
             else
             {

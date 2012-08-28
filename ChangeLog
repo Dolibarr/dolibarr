@@ -18,8 +18,17 @@ English Dolibarr ChangeLog
 - Fix: Allows to use a comma decimal separator in supplier invoices payments.
 - Fix: Translation for tr_TR, es_ES, pt_BR.
 - Fix: Products with no prices not visible.
-
-
+- Fix: Access to product card created with very old version of Dolibarr.
+- Fix: Delete temporary files after validating an invoice.
+- Fix: preview of supplier order and invoice template.
+- Fix: [ bug #485 ] Configurated amount for public auto-subscription form is not taken into account
+- Fix: Average amount graphs weren't comparing the previous year stats
+- Fix: Closed project didn't show the new status unless the page was refreshed
+- Fix: Files were not being uploaded to a project's task
+- Fix: [ bug #503 ] Unable to delete linked file to a deposit
+- Fix: [ bug #501 ] Error while trying to modify an user
+- Fix: [ bug #506 ] Can't set percentage of a started event
+- Fix: Bad assignation of const for pdf delivery module name
 
 ***** ChangeLog for 3.2.0 compared to 3.1.3 *****
 WARNING: PHP lower than 5.x are no more supported.

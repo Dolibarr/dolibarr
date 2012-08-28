@@ -604,6 +604,7 @@ class Project extends CommonObject
 
                 if (!$error)
                 {
+                    $this->statut = 2;
                     $this->db->commit();
                     return 1;
                 }
