@@ -238,14 +238,14 @@ $(document).ready(function() {
 			},
 			function(data) {
 				if (typeof data != 'undefined') {
-					$('#select_type').val(data.type).attr('disabled','disabled').trigger('change');
 					$('#product_ref').val(data.ref);
 					$('#product_label').val(data.label).attr('disabled','disabled');
 					$('#origin_label_cache').val(data.label);
 					$('#origin_desc_cache').val(data.desc);
 					$('#price_base_type').val(data.pricebasetype);
-					$('#price_ht').val(data.price_ht);
+					$('#price_ht').val(data.price_ht).trigger('change');
 					$('#origin_price_ht_cache').val(data.price_ht);
+					$('#select_type').val(data.type).attr('disabled','disabled').trigger('change');
 					$('#update_label_area').show().trigger('show');
 					$('#update_desc_area').show().trigger('show');
 					$('#update_price_area').show().trigger('show');
@@ -293,7 +293,22 @@ $(document).ready(function() {
 				$('#service_duration_area').show();
 			}
 			//$('#add_product_area').show(); // TODO for add product card
+			var addline=false;
 			if ($('#price_ht').val().length > 0 || $('#price_ttc').val().length > 0) {
+				if ($('#idprod').val() == 0) {
+					if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined' && CKEDITOR.instances['product_desc'] != 'undefined') {
+						var content = CKEDITOR.instances['product_desc'].getData();
+					} else {
+						var content = $('#product_desc').val();
+					}
+					if (content.length > 0) {
+						addline=true;
+					}
+				} else {
+					addline=true;
+				}
+			}
+			if (addline) {
 				$('#addlinebutton').removeAttr('disabled');
 			} else {
 				$('#addlinebutton').attr('disabled','disabled');
@@ -461,20 +476,73 @@ $(document).ready(function() {
 			'tva_tx': $('#tva_tx').val()
 		},
 		function(data) {
+			var addline=false;
 			if (typeof data[output] != 'undefined') {
 				$('#' + output).val(data[output]);
-				if ($('#select_type').val() >= 0) {
-					$('#addlinebutton').removeAttr('disabled');
+				if ($('#idprod').val() == 0 && $('#select_type').val() >= 0) {
+					if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined' && CKEDITOR.instances['product_desc'] != 'undefined') {
+						var content = CKEDITOR.instances['product_desc'].getData();
+					} else {
+						var content = $('#product_desc').val();
+					}
+					if (content.length > 0) {
+						addline=true;
+					}
 				} else {
-					$('#addlinebutton').attr('disabled','disabled');
+					addline=true;
 				}
 			} else {
 				$('#' + input).val('');
 				$('#' + output).val('');
+			}
+			if (addline) {
+				$('#addlinebutton').removeAttr('disabled');
+			} else {
 				$('#addlinebutton').attr('disabled','disabled');
 			}
 		}, 'json');
 	}
+
+	// Check if decription is not empty for free line
+	<?php if (! empty($conf->fckeditor->enabled) && ! empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
+	CKEDITOR.on('instanceReady', function() {
+		CKEDITOR.instances['product_desc'].on('key', function() {
+			var addline=false;
+			if ($('#idprod').val() == 0 && $('#select_type').val() >= 0 && ($('#price_ht').val().length > 0 || $('#price_ttc').val().length > 0)) {
+				var content = CKEDITOR.instances['product_desc'].getData();
+				if (content.length > 0) {
+					addline=true;
+				}
+			} else if ($('#idprod').val() > 0 && ($('#price_ht').val().length > 0 || $('#price_ttc').val().length > 0)) {
+				addline=true;
+			}
+			if (addline) {
+				$('#addlinebutton').removeAttr('disabled');
+			} else {
+				$('#addlinebutton').attr('disabled','disabled');
+			}
+		});
+	});
+	<?php } else { ?>
+	$('#product_desc').onDelayedKeyup({
+		'handler': function() {
+			var addline=false;
+			if ($('#idprod').val() == 0 && $('#select_type').val() >= 0 && ($('#price_ht').val().length > 0 || $('#price_ttc').val().length > 0)) {
+				var content = $('#product_desc').val();
+				if (content.length > 0) {
+					addline=true;
+				}
+			} else if ($('#idprod').val() > 0 && ($('#price_ht').val().length > 0 || $('#price_ttc').val().length > 0)) {
+				addline=true;
+			}
+			if (addline) {
+				$('#addlinebutton').removeAttr('disabled');
+			} else {
+				$('#addlinebutton').attr('disabled','disabled');
+			}
+		}
+	});
+	<?php } ?>
 
 });
 </script>

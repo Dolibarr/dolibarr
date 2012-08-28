@@ -136,7 +136,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     						}
     						if (ui.item.textarea) {
     							$.each(ui.item.textarea, function(key, value) {
-    								if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined" && CKEDITOR.instances["product_desc"] != "undefined") {
+    								if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined" && CKEDITOR.instances[key] != "undefined") {
     									CKEDITOR.instances[key].setData(value);
     									CKEDITOR.instances[key].focus();
     								} else {
