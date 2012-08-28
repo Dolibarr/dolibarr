@@ -121,7 +121,7 @@ class html_cerfafr extends ModeleDon
 		        // Defini contenu
 		        $donmodel=DOL_DOCUMENT_ROOT ."/core/modules/dons/html_cerfafr.html";
 		        $form = implode('', file($donmodel));
-		        $form = str_replace('__REF__',$id,$form);
+		        $form = str_replace('__REF__',$don->id,$form);
 		        $form = str_replace('__DATE__',dol_print_date($don->date,'day',false,$outputlangs),$form);
 		        //$form = str_replace('__IP__',$user->ip,$form); // TODO $user->ip not exist
 		        $form = str_replace('__AMOUNT__',$don->amount,$form);
