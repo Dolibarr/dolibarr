@@ -53,6 +53,15 @@ $socid=GETPOST('socid','int');
 // Security check
 $result=restrictedArea($user,'adherent',$rowid);
 
+if ($conf->mailmanspip->enabled)
+{
+	include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
+
+	$langs->load('mailmanspip');
+
+	$mailmanspip = new MailmanSpip($db);
+}
+
 $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
 
@@ -632,9 +641,9 @@ if ($user->rights->adherent->supprimer && $action == 'confirm_del_spip' && $conf
 {
 	if (! count($object->errors))
 	{
-	    if(!$object->del_to_spip())
+	    if (!$mailmanspip->del_to_spip($object))
 	    {
-	        $errmsg.="Echec de la suppression de l'utilisateur dans spip: ".$object->error."<BR>\n";
+	        $errmsg.="Echec de la suppression de l'utilisateur dans spip: ".$mailmanspip->error."<BR>\n";
 	    }
 	}
 }
@@ -643,9 +652,9 @@ if ($user->rights->adherent->creer && $action == 'confirm_add_spip' && $confirm 
 {
 	if (! count($object->errors))
 	{
-	    if (!$object->add_to_spip())
+	    if (!$mailmanspip->add_to_spip($object))
 	    {
-	        $errmsg.="Echec du rajout de l'utilisateur dans spip: ".$object->error."<BR>\n";
+	        $errmsg.="Echec du rajout de l'utilisateur dans spip: ".$mailmanspip->error."<BR>\n";
 	    }
 	}
 }
@@ -1194,8 +1203,8 @@ if ($rowid && $action != 'edit')
         // Cree un tableau formulaire
         $formquestion=array();
 		if ($object->email) $formquestion[]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label,  'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?true:false));
-		if ($conf->global->ADHERENT_USE_MAILMAN) { $langs->load("mailmanspip"); $formquestion[]=array('type'=>'other','label'=>$langs->transnoentitiesnoconv("SynchroMailManEnabled"),'value'=>''); }
-		if ($conf->global->ADHERENT_USE_SPIP)    { $langs->load("mailmanspip"); $formquestion[]=array('type'=>'other','label'=>$langs->transnoentitiesnoconv("SynchroSpipEnabled"),'value'=>''); }
+		if ($conf->global->ADHERENT_USE_MAILMAN) { $formquestion[]=array('type'=>'other','label'=>$langs->transnoentitiesnoconv("SynchroMailManEnabled"),'value'=>''); }
+		if ($conf->global->ADHERENT_USE_SPIP)    { $formquestion[]=array('type'=>'other','label'=>$langs->transnoentitiesnoconv("SynchroSpipEnabled"),'value'=>''); }
 		print $form->formconfirm("fiche.php?rowid=".$rowid,$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion,1);
     }
 
@@ -1251,7 +1260,6 @@ if ($rowid && $action != 'edit')
     */
     if ($action == 'add_spip')
     {
-        $langs->load("mailmanspip");
         $ret=$form->form_confirm("fiche.php?rowid=".$rowid,"Add to spip","Etes-vous sur de vouloir ajouter cet adherent dans spip ? (serveur : ".ADHERENT_SPIP_SERVEUR.")","confirm_add_spip");
         if ($ret == 'html') print '<br>';
     }
@@ -1261,7 +1269,6 @@ if ($rowid && $action != 'edit')
     */
     if ($action == 'del_spip')
     {
-        $langs->load("mailmanspip");
         $ret=$form->form_confirm("fiche.php?rowid=$rowid","Supprimer dans spip","Etes-vous sur de vouloir effacer cet adherent dans spip ? (serveur : ".ADHERENT_SPIP_SERVEUR.")","confirm_del_spip");
         if ($ret == 'html') print '<br>';
     }
@@ -1564,10 +1571,8 @@ if ($rowid && $action != 'edit')
 	    // Action SPIP
 	    if ($conf->mailmanspip->enabled && $conf->global->ADHERENT_USE_SPIP)
 	    {
-            include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
-            $mailmanspip=new MailmanSpip($db);
+            $isinspip = $mailmanspip->is_in_spip($object);
 
-            $isinspip=$mailmanspip->is_in_spip($object);
 	        if ($isinspip == 1)
 	        {
 	            print "<a class=\"butAction\" href=\"fiche.php?rowid=$object->id&action=del_spip\">".$langs->trans("DeleteIntoSpip")."</a>\n";
