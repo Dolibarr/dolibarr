@@ -647,7 +647,7 @@ else if ($action == "addline" && $user->rights->propal->creer)
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
 		$error++;
 	}
-	else if (empty($idprod) && (!($np_price >= 0) || $np_price == ''))	// Unit price can be 0 but not ''
+	else if ($conf->global->MAIN_FEATURES_LEVEL < 2 && empty($idprod) && (!($np_price >= 0) || $np_price == ''))	// Unit price can be 0 but not ''
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
 		$error++;
@@ -754,6 +754,7 @@ else if ($action == "addline" && $user->rights->propal->creer)
 		else
 		{
 			$pu_ht=(isset($price_ht)?$price_ht:$np_price);
+			$pu_ttc=price2num(GETPOST('price_ttc'), 'MU');
 			$rate=GETPOST('tva_tx')?GETPOST('tva_tx'):GETPOST('np_tva_tx');
 			$tva_tx=str_replace('*','',$rate);
 			$tva_npr=preg_match('/\*/',$rate)?1:0;
