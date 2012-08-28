@@ -40,6 +40,8 @@ For users:
 - New: Add conditional substitution IF/ELSEIF/ENDIF for ODT templates
 - New: Add unit foot2, inch2, foot3 and inch3 for surface and volumes.
 - New: Can select thirdparties into emailing targets, even if module category is not enabled.
+- New: [ task #498 ] Improvement of the block to add products/services lines.
+- New: Add margin and commissions management module.
 - Fix: [ bug #499 ]: Supplier order input method not translated
 - Fix: No images into product description lines as PDF generation does
   not work with this.
