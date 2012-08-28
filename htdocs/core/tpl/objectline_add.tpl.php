@@ -234,8 +234,7 @@ $(document).ready(function() {
 			$.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php', {
 				'action': 'fetch',
 				'id': $(this).val(),
-				'price_level': <?php echo $buyer->price_level; ?>
-			},
+				'price_level': <?php echo empty($buyer->price_level)?1:$buyer->price_level; ?>},
 			function(data) {
 				if (typeof data != 'undefined') {
 					$('#product_ref').val(data.ref);
