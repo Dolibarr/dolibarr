@@ -254,6 +254,8 @@ if ($action == 'add')
         $result=$adh->create($user->id);
         if ($result > 0)
         {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+
             // Send email to say it has been created and will be validated soon...
             if (! empty($conf->global->ADHERENT_AUTOREGISTER_MAIL) && ! empty($conf->global->ADHERENT_AUTOREGISTER_MAIL_SUBJECT))
             {
