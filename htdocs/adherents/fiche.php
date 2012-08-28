@@ -40,7 +40,7 @@ $langs->load("companies");
 $langs->load("bills");
 $langs->load("members");
 $langs->load("users");
-
+$langs->load('other');
 
 $action=GETPOST('action','alpha');
 $backtopage=GETPOST('backtopage','alpha');
@@ -643,7 +643,7 @@ if ($user->rights->adherent->supprimer && $action == 'confirm_del_spip' && $conf
 	{
 	    if (!$mailmanspip->del_to_spip($object))
 	    {
-	        $errmsg.="Echec de la suppression de l'utilisateur dans spip: ".$mailmanspip->error."<BR>\n";
+	        $errmsg.= $langs->trans('DeleteIntoSpipError').': '.$mailmanspip->error."<BR>\n";
 	    }
 	}
 }
@@ -654,7 +654,7 @@ if ($user->rights->adherent->creer && $action == 'confirm_add_spip' && $confirm 
 	{
 	    if (!$mailmanspip->add_to_spip($object))
 	    {
-	        $errmsg.="Echec du rajout de l'utilisateur dans spip: ".$mailmanspip->error."<BR>\n";
+	        $errmsg.= $langs->trans('AddIntoSpipError').': '.$mailmanspip->error."<BR>\n";
 	    }
 	}
 }
@@ -1260,7 +1260,7 @@ if ($rowid && $action != 'edit')
     */
     if ($action == 'add_spip')
     {
-        $ret=$form->form_confirm("fiche.php?rowid=".$rowid,"Add to spip","Etes-vous sur de vouloir ajouter cet adherent dans spip ? (serveur : ".ADHERENT_SPIP_SERVEUR.")","confirm_add_spip");
+        $ret=$form->form_confirm("fiche.php?rowid=".$rowid, $langs->trans('AddIntoSpip'), $langs->trans('AddIntoSpipConfirmation'), 'confirm_add_spip');
         if ($ret == 'html') print '<br>';
     }
 
@@ -1269,7 +1269,7 @@ if ($rowid && $action != 'edit')
     */
     if ($action == 'del_spip')
     {
-        $ret=$form->form_confirm("fiche.php?rowid=$rowid","Supprimer dans spip","Etes-vous sur de vouloir effacer cet adherent dans spip ? (serveur : ".ADHERENT_SPIP_SERVEUR.")","confirm_del_spip");
+        $ret=$form->form_confirm("fiche.php?rowid=$rowid", $langs->trans('DeleteIntoSpip'), $langs->trans('DeleteIntoSpipConfirmation'), 'confirm_del_spip');
         if ($ret == 'html') print '<br>';
     }
 
@@ -1583,7 +1583,7 @@ if ($rowid && $action != 'edit')
 	        }
 	        if ($isinspip == -1)
 	        {
-	            print '<br><br><font class="error">Failed to connect to SPIP: '.$object->error.'</font>';
+	            print '<br><br><font class="error">'.$langs->trans('SPIPConnectionFailed').': '.$mailmanspip->error.'</font>';
 	        }
 	    }
 
