@@ -14,6 +14,7 @@ FormatDateHourShort=%d/%m/%Y %H:%M
 FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
 DatabaseConnection=Connexion à la base
+NoTranslation=Pas de traduction
 NoError=Aucune erreur
 Error=Erreur
 ErrorFieldRequired=Le champ '%s' est obligatoire
