@@ -663,7 +663,7 @@ else if ($action == "addline" && $user->rights->propal->creer)
 		$pu_ht=0;
 		$pu_ttc=0;
 		$price_min=0;
-		$price_base_type = 'HT';
+		$price_base_type = (GETPOST('price_base_type', 'alpha')?GETPOST('price_base_type', 'alpha'):'HT');
 
 		// Ecrase $pu par celui du produit
 		// Ecrase $desc par celui du produit
@@ -673,54 +673,47 @@ else if ($action == "addline" && $user->rights->propal->creer)
 			$prod = new Product($db);
 			$prod->fetch($idprod);
 
-			$tva_tx = get_default_tva($mysoc,$object->client,$prod->id);
-			$tva_npr = get_default_npr($mysoc,$object->client,$prod->id);
-
-			// On defini prix unitaire
-			if (! empty($conf->global->PRODUIT_MULTIPRICES) && $object->client->price_level)
+			// If prices fields are update
+			if (GETPOST('update_price') && (GETPOST('price_ht') || GETPOST('price_ttc')))
 			{
-				$pu_ht  = $prod->multiprices[$object->client->price_level];
-				$pu_ttc = $prod->multiprices_ttc[$object->client->price_level];
-				$price_min = $prod->multiprices_min[$object->client->price_level];
-				$price_base_type = $prod->multiprices_base_type[$object->client->price_level];
+				$pu_ht=price2num(GETPOST('price_ht'), 'MU');
+				$pu_ttc=price2num(GETPOST('price_ttc'), 'MU');
+				$tva_tx=str_replace('*','', GETPOST('tva_tx'));
+				$tva_npr=preg_match('/\*/', GETPOST('tva_tx'))?1:0;
 			}
 			else
 			{
-				$pu_ht = $prod->price;
-				$pu_ttc = $prod->price_ttc;
-				$price_min = $prod->price_min;
-				$price_base_type = $prod->price_base_type;
-			}
+				$tva_tx = get_default_tva($mysoc,$object->client,$prod->id);
+				$tva_npr = get_default_npr($mysoc,$object->client,$prod->id);
 
-			// Update if prices fields are defined
-			if (GETPOST('update_price') && (GETPOST('price_ht') || GETPOST('price_ttc')))
-			{
-				$price_ht=price2num(GETPOST('price_ht'), 'MU');
-				$price_ttc=price2num(GETPOST('price_ttc'), 'MU');
-
-				if ($price_base_type == 'TTC' && $price_ttc != $pu_ttc)
+				// On defini prix unitaire
+				if (! empty($conf->global->PRODUIT_MULTIPRICES) && $object->client->price_level)
 				{
-					$pu_ttc = $price_ttc;
-					$pu_ht = price2num($price_ttc / (1 + ($prod->tva_tx / 100)),'MU');
-				}
-				else if ($price_base_type != 'TTC' && $price_ht != $pu_ht)
-				{
-					$pu_ht = $price_ht;
-					$pu_ttc = price2num($price_ht * (1 + ($prod->tva_tx / 100)),'MU');
-				}
-			}
-
-			// On reevalue prix selon taux tva car taux tva transaction peut etre different
-			// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-			if ($tva_tx != $prod->tva_tx)
-			{
-				if ($price_base_type != 'HT')
-				{
-					$pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
+					$pu_ht  = $prod->multiprices[$object->client->price_level];
+					$pu_ttc = $prod->multiprices_ttc[$object->client->price_level];
+					$price_min = $prod->multiprices_min[$object->client->price_level];
+					$price_base_type = $prod->multiprices_base_type[$object->client->price_level];
 				}
 				else
 				{
-					$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
+					$pu_ht = $prod->price;
+					$pu_ttc = $prod->price_ttc;
+					$price_min = $prod->price_min;
+					$price_base_type = $prod->price_base_type;
+				}
+
+				// On reevalue prix selon taux tva car taux tva transaction peut etre different
+				// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
+				if ($tva_tx != $prod->tva_tx)
+				{
+					if ($price_base_type != 'HT')
+					{
+						$pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
+					}
+					else
+					{
+						$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
+					}
 				}
 			}
 
