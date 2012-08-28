@@ -37,7 +37,7 @@ GlobalSetup=General
 GUISetup=Entorno
 SetupArea=Área configuración
 FormToTestFileUploadForm=Formulario de prueba de subida de archivo (según opciones elegidas)
-IfModuleEnabled=Nota: sí sólo es eficaz si el módulo <b>%s</b> está activado
+IfModuleEnabled=Nota: sólo es eficaz si el módulo <b>%s</b> está activado
 RemoveLock=Elimine el archivo <b>%s</b>, si existe, para permitir la utilidad de actualización.
 RestoreLock=Sustituir un archivo <b>%s</b>, dándole sólo derechos de lectura a este archivo con el fin de prohibir nuevas actualizaciones.
 SecuritySetup=Configuración de la seguridad
@@ -1336,3 +1336,5 @@ ProjectsNumberingModules=Módulo de numeración para las referencias de los proy
 ProjectsSetup=Configuración del módulo Proyectos
 ProjectsModelModule=Modelo de documento para informes de proyectos
 Server=Servidor
+
+Logo=Logotipo
