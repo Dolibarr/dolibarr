@@ -73,6 +73,7 @@ jQuery(document).ready(function() {
 	<?php
 
 	$form->select_produits('','idprod','',$conf->product->limit_size,$buyer->price_level);
+	print '<br>';
 
 	if (is_object($hookmanager))
 	{
