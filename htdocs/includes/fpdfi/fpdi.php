@@ -1,6 +1,6 @@
 <?php
 //
-//  FPDI - Version 1.4.1
+//  FPDI - Version 1.4.2
 //
 //    Copyright 2004-2011 Setasign - Jan Slabon
 //
@@ -17,7 +17,7 @@
 //  limitations under the License.
 //
 
-define('FPDI_VERSION', '1.4.1');
+define('FPDI_VERSION', '1.4.2');
 
 // Check for TCPDF and remap TCPDF to FPDF
 if (class_exists('TCPDF', false)) {
@@ -144,6 +144,7 @@ class FPDI extends FPDF_TPL {
 
         if (!in_array($boxName, $parser->availableBoxes))
             return $this->Error(sprintf('Unknown box: %s', $boxName));
+            
         $pageboxes = $parser->getPageBoxes($pageno, $this->k);
         
         /**
@@ -160,6 +161,7 @@ class FPDI extends FPDF_TPL {
         
         if (!isset($pageboxes[$boxName]))
             return false;
+            
         $this->lastUsedPageBox = $boxName;
         
         $box = $pageboxes[$boxName];
@@ -201,26 +203,47 @@ class FPDI extends FPDF_TPL {
         return $this->tpl;
     }
     
+    /**
+     * Returns the last used page box
+     *
+     * @return string
+     */
     function getLastUsedPageBox() {
         return $this->lastUsedPageBox;
     }
     
+    
     function useTemplate($tplidx, $_x = null, $_y = null, $_w = 0, $_h = 0, $adjustPageSize = false) {
         if ($adjustPageSize == true && is_null($_x) && is_null($_y)) {
             $size = $this->getTemplateSize($tplidx, $_w, $_h);
-            $format = array($size['w'], $size['h']);
+            $orientation = $size['w'] > $size['h'] ? 'L' : 'P';
+            $size = array($size['w'], $size['h']);
+            
             if (is_subclass_of($this, 'TCPDF')) {
-            	$this->setPageFormat($format, $format[0] > $format[1] ? 'L' : 'P');
+            	$this->setPageFormat($size, $orientation);
             } else {
-            	if ($format[0] != $this->CurPageFormat[0] || $format[1] != $this->CurPageFormat[1]) {
-	                $this->w = $format[0];
-	                $this->h = $format[1];
-	                $this->wPt = $this->w * $this->k;
-	        		$this->hPt = $this->h * $this->k;
-	        		$this->PageBreakTrigger = $this->h - $this->bMargin;
-	        		$this->CurPageFormat = $format;
-	        		$this->PageSizes[$this->page] = array($this->wPt, $this->hPt);
-	            }
+            	$size = $this->_getpagesize($size);
+            	
+            	if($orientation!=$this->CurOrientation || $size[0]!=$this->CurPageSize[0] || $size[1]!=$this->CurPageSize[1])
+				{
+					// New size or orientation
+					if($orientation=='P')
+					{
+						$this->w = $size[0];
+						$this->h = $size[1];
+					}
+					else
+					{
+						$this->w = $size[1];
+						$this->h = $size[0];
+					}
+					$this->wPt = $this->w*$this->k;
+					$this->hPt = $this->h*$this->k;
+					$this->PageBreakTrigger = $this->h-$this->bMargin;
+					$this->CurOrientation = $orientation;
+					$this->CurPageSize = $size;
+					$this->PageSizes[$this->page] = array($this->wPt, $this->hPt);
+				}
             } 
         }
         
@@ -314,8 +337,8 @@ class FPDI extends FPDF_TPL {
                     }
                 }
             } else if ($tpl['x'] != 0 || $tpl['y'] != 0) {
-                $tx = -$tpl['x']*2;
-                $ty = $tpl['y']*2;
+                $tx = -$tpl['x'] * 2;
+                $ty = $tpl['y'] * 2;
             }
             
             $tx *= $this->k;
@@ -359,8 +382,14 @@ class FPDI extends FPDF_TPL {
 
             $nN = $this->n; // TCPDF: rem new "n"
             $this->n = $cN; // TCPDF: reset to current "n"
-            $this->_out('/Length ' . strlen($p) . ' >>');
-    		$this->_putstream($p);
+            if (is_subclass_of($this, 'TCPDF')) {
+            	$p = $this->_getrawstream($p);
+            	$this->_out('/Length ' . strlen($p) . ' >>');
+            	$this->_out("stream\n" . $p . "\nendstream");
+            } else {
+	            $this->_out('/Length ' . strlen($p) . ' >>');
+	    		$this->_putstream($p);
+            }
     		$this->_out('endobj');
     		$this->n = $nN; // TCPDF: reset to new "n"
         }

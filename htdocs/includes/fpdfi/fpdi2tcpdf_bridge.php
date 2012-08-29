@@ -1,6 +1,6 @@
 <?php
 //
-//  FPDI - Version 1.4.1
+//  FPDI - Version 1.4.2
 //
 //    Copyright 2004-2011 Setasign - Jan Slabon
 //
@@ -53,21 +53,25 @@ class FPDF extends TCPDF {
     		case PDF_TYPE_STRING:
 				if ($this->encrypted) {
 				    $value[1] = $this->_unescape($value[1]);
-                    $value[1] = $this->_RC4($this->_objectkey($this->_current_obj_id), $value[1]);
+                    $value[1] = $this->_encrypt_data($this->_current_obj_id, $value[1]);
                  	$value[1] = $this->_escape($value[1]);
                 } 
     			break;
     			
 			case PDF_TYPE_STREAM:
 			    if ($this->encrypted) {
-			        $value[2][1] = $this->_RC4($this->_objectkey($this->_current_obj_id), $value[2][1]);
+			        $value[2][1] = $this->_encrypt_data($this->_current_obj_id, $value[2][1]);
+			        $value[1][1]['/Length'] = array(
+                        PDF_TYPE_NUMERIC,
+                        strlen($value[2][1])
+                    );
                 }
                 break;
                 
             case PDF_TYPE_HEX:
             	if ($this->encrypted) {
                 	$value[1] = $this->hex2str($value[1]);
-                	$value[1] = $this->_RC4($this->_objectkey($this->_current_obj_id), $value[1]);
+                	$value[1] = $this->_encrypt_data($this->_current_obj_id, $value[1]);
                     
                 	// remake hexstring of encrypted string
     				$value[1] = $this->str2hex($value[1]);

@@ -1,6 +1,6 @@
 <?php
 //
-//  FPDI - Version 1.4.1
+//  FPDI - Version 1.4.2
 //
 //    Copyright 2004-2011 Setasign - Jan Slabon
 //
@@ -86,7 +86,7 @@ if (!class_exists('FilterLZW', false)) {
                         $oldCode = $code;
                     } else {
                         $string = $this->sTable[$oldCode];
-                        $string = $string.$string[0];
+                        $string = $string . $string[0];
                         $uncompData .= $string;
     
                         $this->addStringToTable($string);

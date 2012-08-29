@@ -311,6 +311,10 @@ class pdf_azur extends ModelePDFPropales
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
 
+					if (! isset($this->tva[$vatrate]))				$this->tva[$vatrate]=0;
+					if (! isset($this->localtax1[$localtax1rate]))	$this->localtax1[$localtax1rate]=0;
+					if (! isset($this->localtax2[$localtax2rate]))	$this->localtax2[$localtax2rate]=0;
+
 					$this->tva[$vatrate] += $tvaligne;
 					$this->localtax1[$localtax1rate]+=$localtax1ligne;
 					$this->localtax2[$localtax2rate]+=$localtax2ligne;
@@ -455,7 +459,7 @@ class pdf_azur extends ModelePDFPropales
 		}
 
         // Show shipping date
-        if ($object->type != 2 && $object->date_livraison)
+        if (isset($object->type) && $object->type != 2 && $object->date_livraison)
 		{
             $outputlangs->load("sendings");
 			$pdf->SetFont('','B', $default_font_size - 2);
@@ -469,7 +473,7 @@ class pdf_azur extends ModelePDFPropales
 
             $posy=$pdf->GetY()+1;
 		}
-        elseif ($object->type != 2 && ($object->availability_code || $object->availability))    // Show availability conditions
+        elseif (isset($object->type) && $object->type != 2 && ($object->availability_code || $object->availability))    // Show availability conditions
 		{
 			$pdf->SetFont('','B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
@@ -486,7 +490,7 @@ class pdf_azur extends ModelePDFPropales
 		}
 
 		// Show payments conditions
-		if ($object->type != 2 && ($object->cond_reglement_code || $object->cond_reglement))
+		if (isset($object->type) && $object->type != 2 && ($object->cond_reglement_code || $object->cond_reglement))
 		{
 			$pdf->SetFont('','B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
@@ -503,7 +507,7 @@ class pdf_azur extends ModelePDFPropales
 		}
 
 
-		if ($object->type != 2)
+		if (isset($object->type) && $object->type != 2)
 		{
 			// Check a payment mode is defined
 			if (empty($object->mode_reglement_code)
@@ -632,7 +636,7 @@ class pdf_azur extends ModelePDFPropales
 		$this->atleastoneratenotnull=0;
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
-			$tvaisnull=((! empty($this->tva) && count($this->tva) == 1 && is_float($this->tva['0.000'])) ? true : false);
+			$tvaisnull=((! empty($this->tva) && count($this->tva) == 1 && isset($this->tva['0.000']) && is_float($this->tva['0.000'])) ? true : false);
 			if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_ISNULL) && $tvaisnull)
 			{
 				// Nothing to do
@@ -1049,7 +1053,7 @@ class pdf_azur extends ModelePDFPropales
 				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
 			}
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,(! empty($object->contact)?$object->contact:''),$usecontact,'target');
 
 			// Show recipient
 			$posy=42;

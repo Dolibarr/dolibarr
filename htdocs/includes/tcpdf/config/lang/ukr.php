@@ -1,12 +1,12 @@
 <?php
 //============================================================+
-// File name   : rus.php
+// File name   : ukr.php
 // Begin       : 2004-03-03
 // Last Update : 2012-07-25
 //
 // Description : Language module for TCPDF
 //               (contains translated texts)
-//               Russian
+//               Ukrainian
 //
 // Author: Nicola Asuni
 //
@@ -23,7 +23,7 @@
 /**
  * TCPDF language file (contains translated texts).
  * @package com.tecnick.tcpdf
- * @brief TCPDF language file: Russian
+ * @brief TCPDF language file: Ukrainian
  * @author Nicola Asuni
  * @since 2004-03-03
  */
@@ -37,10 +37,10 @@ $l = Array();
 
 $l['a_meta_charset'] = 'UTF-8';
 $l['a_meta_dir'] = 'ltr';
-$l['a_meta_language'] = 'ru';
+$l['a_meta_language'] = 'ua';
 
 // TRANSLATIONS --------------------------------------
-$l['w_page'] = 'страница';
+$l['w_page'] = 'сторінка';
 
 //============================================================+
 // END OF FILE

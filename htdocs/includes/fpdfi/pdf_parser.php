@@ -1,6 +1,6 @@
 <?php
 //
-//  FPDI - Version 1.4.1
+//  FPDI - Version 1.4.2
 //
 //    Copyright 2004-2011 Setasign - Jan Slabon
 //
@@ -137,7 +137,7 @@ if (!class_exists('pdf_parser', false)) {
          * @param string $msg  Error-Message
          */
         function error($msg) {
-        	die('<b>PDF-Parser Error:</b> '.$msg);	
+        	die('<b>PDF-Parser Error:</b> ' . $msg);	
         }
         
         /**
@@ -177,7 +177,7 @@ if (!class_exists('pdf_parser', false)) {
          */
         function getPDFVersion() {
             fseek($this->f, 0);
-            preg_match('/\d\.\d/',fread($this->f,16),$m);
+            preg_match('/\d\.\d/',fread($this->f, 16), $m);
             if (isset($m[0]))
                 $this->pdfVersion = $m[0];
             return $this->pdfVersion;
@@ -232,17 +232,17 @@ if (!class_exists('pdf_parser', false)) {
             }
             
             if (!isset($result['xref_location'])) {
-                $result['xref_location'] = $o_pos+$xrefPos;
+                $result['xref_location'] = $o_pos + $xrefPos;
                 $result['max_object'] = 0;
         	}
     
         	$cylces = -1;
             $bytesPerCycle = 100;
             
-        	fseek($this->f, $o_pos = $o_pos+$xrefPos+4); // set the handle directly after the "xref"-keyword
+        	fseek($this->f, $o_pos = $o_pos + $xrefPos + 4); // set the handle directly after the "xref"-keyword
             $data = fread($this->f, $bytesPerCycle);
             
-            while (($trailerPos = strpos($data, 'trailer', max($bytesPerCycle*$cylces++, 0))) === false && !feof($this->f)) {
+            while (($trailerPos = strpos($data, 'trailer', max($bytesPerCycle * $cylces++, 0))) === false && !feof($this->f)) {
                 $data .= fread($this->f, $bytesPerCycle);
             }
             
@@ -277,7 +277,7 @@ if (!class_exists('pdf_parser', false)) {
                     switch($c) {
                         case 2:
                             $start = (int)$pieces[0];
-                            $end   = $start+(int)$pieces[1];
+                            $end   = $start + (int)$pieces[1];
                             if ($end > $result['max_object'])
                                 $result['max_object'] = $end;
                             break;
@@ -299,7 +299,7 @@ if (!class_exists('pdf_parser', false)) {
             $lines = $pieces = $line = $start = $end = $gen = null;
             unset($lines, $pieces, $line, $start, $end, $gen);
             
-            fseek($this->f, $o_pos+$trailerPos+7);
+            fseek($this->f, $o_pos + $trailerPos + 7);
             
             $c = new pdf_context($this->f);
     	    $trailer = $this->pdf_read_value($c);
@@ -460,12 +460,12 @@ if (!class_exists('pdf_parser', false)) {
     		        }
     		        	
     		        if ($length > 0) {
-        		        $c->reset($startpos+$e,$length);
+        		        $c->reset($startpos + $e,$length);
         		        $v = $c->buffer;
     		        } else {
     		            $v = '';   
     		        }
-    		        $c->reset($startpos+$e+$length+9); // 9 = strlen("endstream")
+    		        $c->reset($startpos + $e + $length + 9); // 9 = strlen("endstream")
     		        
     		        return array(PDF_TYPE_STREAM, $v);
     		        
@@ -483,9 +483,9 @@ if (!class_exists('pdf_parser', false)) {
         						// Determine the case and return the data
         						if (($tok3 = $this->pdf_read_token ($c)) !== false) {
                                     switch ($tok3) {
-        								case	'obj'	:
+        								case 'obj':
                                             return array (PDF_TYPE_OBJDEC, (int) $token, (int) $tok2);
-        								case	'R'		:
+        								case 'R':
         									return array (PDF_TYPE_OBJREF, (int) $token, (int) $tok2);
         							}
         							// If we get to this point, that numeric value up
@@ -548,8 +548,8 @@ if (!class_exists('pdf_parser', false)) {
         			$header = $this->pdf_read_value($c);
     
         			if ($header[0] != PDF_TYPE_OBJDEC || $header[1] != $obj_spec[1] || $header[2] != $obj_spec[2]) {
-        				$toSearchFor = $obj_spec[1].' '.$obj_spec[2].' obj';
-        				if (preg_match('/'.$toSearchFor.'/', $c->buffer)) {
+        				$toSearchFor = $obj_spec[1] . ' ' . $obj_spec[2] . ' obj';
+        				if (preg_match('/' . $toSearchFor . '/', $c->buffer)) {
         					$c->offset = strpos($c->buffer, $toSearchFor) + strlen($toSearchFor);
         					// reset stack
         					$c->stack = array();
