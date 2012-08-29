@@ -702,7 +702,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                     $newmenu->add('/admin/system/database-tables.php?mainmenu=home', $langs->trans('Tables'), 2);
                     $newmenu->add('/admin/system/database-tables-contraintes.php?mainmenu=home', $langs->trans('Constraints'), 2);
                 }
-                // System info
+                // Admin tools
                 $newmenu->add("/admin/tools/index.php?mainmenu=home&leftmenu=admintools", $langs->trans("SystemTools"), 0, 1, '', $mainmenu, 'admintools');
                 if ($leftmenu=="admintools")
                 {
@@ -715,6 +715,16 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                     $newmenu->add("/admin/tools/purge.php?mainmenu=home", $langs->trans("Purge"),1);
                     $newmenu->add("/support/index.php?mainmenu=home", $langs->trans("HelpCenter"),1,1,'targethelp');
                 }
+				// Modules system tools
+                if (($conf->global->MAIN_FEATURES_LEVEL >= 1) && ! empty($conf->product->enabled) || ! empty($conf->service->enabled))
+	            {
+	            	$langs->load("products");
+	            	$newmenu->add("/admin/tools/index.php?mainmenu=home&leftmenu=modulesadmintools", $langs->trans("ModulesSystemTools"), 0, 1, '', $mainmenu, 'modulesadmintools');
+	            	if ($leftmenu=="modulesadmintools")
+	            	{
+	                	$newmenu->add("/product/admin/product_tools.php?mainmenu=home&leftmenu=modulesadmintools",$langs->trans("ProductVatMassChange"),1);
+	            	}
+	            }
             }
 
             $newmenu->add("/user/home.php?leftmenu=users", $langs->trans("MenuUsersAndGroups"), 0, 1, '', $mainmenu, 'users');
