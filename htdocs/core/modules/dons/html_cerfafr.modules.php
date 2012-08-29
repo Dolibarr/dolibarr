@@ -140,8 +140,8 @@ class html_cerfafr extends ModeleDon
 		        $form = str_replace('__DonationRef__',$outputlangs->trans("DonationRef"),$form);
 		        $form = str_replace('__DonationReceipt__',$outputlangs->trans("DonationReceipt"),$form);
 		        $form = str_replace('__DonationRecipient__',$outputlangs->trans("DonationRecipient"),$form);
-		        $form = str_replace('__DonationPaymentDate__',$outputlangs->trans("DonationPaymentDate"),$form);
-		        $form = str_replace('__DonationPaymentMode__',$outputlangs->trans("DonationPaymentMode"),$form);
+		        $form = str_replace('__DatePayment__',$outputlangs->trans("DatePayment"),$form);
+		        $form = str_replace('__PaymentMode__',$outputlangs->trans("PaymentMode"),$form);
 		        $form = str_replace('__Name__',$outputlangs->trans("Name"),$form);
 		        $form = str_replace('__Address__',$outputlangs->trans("Address"),$form);
 		        $form = str_replace('__Zip__',$outputlangs->trans("Zip"),$form);

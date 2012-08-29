@@ -32,6 +32,7 @@ require '../../main.inc.php';
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
 $htmlname	= GETPOST('htmlname','alpha');
+$productid	= (GETPOST('productid','int')?GETPOST('productid','int'):0);
 
 /*
  * View
@@ -46,15 +47,15 @@ if (! empty($id) && ! empty($action) && ! empty($htmlname))
 {
 	$form = new Form($db);
 	$soc = new Societe($db);
-	
+
 	$soc->fetch($id);
-	
+
 	$return=array();
-	
-	$return['value']	= $form->load_tva('tva_tx','',$soc,$mysoc,0,0,'',true);
+
+	$return['value']	= $form->load_tva('tva_tx','',$soc,$mysoc,$productid,0,'',true);
 	$return['num']		= $form->num;
 	$return['error']	= $form->error;
-	
+
 	echo json_encode($return);
 }
 

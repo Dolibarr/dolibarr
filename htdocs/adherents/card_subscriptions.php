@@ -978,10 +978,10 @@ if ($rowid)
             $helpcontent='';
             $helpcontent.='<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
             $helpcontent.='<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
-            $helpcontent.='<b>'.$langs->trans("Subject").'</b>:<br>'."\n";
+            $helpcontent.='<b>'.$langs->trans("MailTopic").'</b>:<br>'."\n";
             $helpcontent.=$subjecttosend."\n";
             $helpcontent.="<br>";
-            $helpcontent.='<b>'.$langs->trans("Content").'</b>:<br>';
+            $helpcontent.='<b>'.$langs->trans("MailText").'</b>:<br>';
             $helpcontent.=dol_htmlentitiesbr($texttosend)."\n";
 
             print $form->textwithpicto($tmp,$helpcontent,1,'help');
