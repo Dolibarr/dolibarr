@@ -153,14 +153,6 @@ function product_admin_prepare_head($object=null)
 	$head[$h][2] = 'general';
 	$h++;
 
-	if ($conf->global->MAIN_FEATURES_LEVEL > 1)	// Link to page to make mass editing of products vat
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_tools.php';
-		$head[$h][1] = $langs->trans("Tools");
-		$head[$h][2] = 'tools';
-		$h++;
-	}
-
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
