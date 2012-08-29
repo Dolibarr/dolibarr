@@ -129,7 +129,9 @@ class box_supplier_orders extends ModeleBoxes
             }
             else
             {
-                dol_print_error($db);
+                $this->info_box_contents[0][0] = array( 'td' => 'align="left"',
+                                                        'maxlength'=>500,
+                                                        'text' => ($db->error().' sql='.$sql));
             }
         }
         else
