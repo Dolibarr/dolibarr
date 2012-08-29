@@ -1277,9 +1277,10 @@ else
             print '<td colspan="3">';
             // multiprix
             if($conf->global->PRODUIT_MULTIPRICES)
-            $form->select_produits('','idprod',1,$conf->product->limit_size,$object->thirdparty->price_level);
+            	$form->select_produits('','idprod',1,$conf->product->limit_size,$object->thirdparty->price_level);
             else
-            $form->select_produits('','idprod',1,$conf->product->limit_size);
+				$form->select_produits('','idprod',1,$conf->product->limit_size);
+            print '<br>';
             print '<textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea>';
             print '</td>';
 
