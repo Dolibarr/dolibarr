@@ -91,12 +91,16 @@ if (!defined('K_TCPDF_EXTERNAL_CONFIG')) {
 	/**
 	 * cache directory for temporary files (full path)
 	 */
-	define ('K_PATH_CACHE', K_PATH_MAIN.'cache/');
+//	define ('K_PATH_CACHE', K_PATH_MAIN.'cache/');
+	define ('K_PATH_CACHE', DOL_DATA_ROOT.'/admin/temp/');
+	dol_mkdir(K_PATH_CACHE);
 
 	/**
 	 * cache directory for temporary files (url path)
 	 */
-	define ('K_PATH_URL_CACHE', K_PATH_URL.'cache/');
+//	define ('K_PATH_URL_CACHE', K_PATH_URL.'cache/');
+    define ('K_PATH_URL_CACHE', DOL_DATA_ROOT.'/admin/temp/');
+    dol_mkdir(K_PATH_URL_CACHE);
 
 	/**
 	 *images directory
