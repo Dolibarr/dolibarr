@@ -71,9 +71,9 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 		// Multiprice
 		if ($price_level >= 1)		// If we need a particular price level (from 1 to 6)
 		{
-			$sql= "SELECT price, price_ttc, price_base_type ";
-			$sql.= "FROM ".MAIN_DB_PREFIX."product_price ";
-			$sql.= "WHERE fk_product='".$id."'";
+			$sql = "SELECT price, price_ttc, price_base_type, tva_tx";
+			$sql.= " FROM ".MAIN_DB_PREFIX."product_price ";
+			$sql.= " WHERE fk_product='".$id."'";
 			$sql.= " AND price_level=".$price_level;
 			$sql.= " ORDER BY date_price";
 			$sql.= " DESC LIMIT 1";
@@ -88,6 +88,7 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 					$outprice_ht=price($objp->price);
 					$outprice_ttc=price($objp->price_ttc);
 					$outpricebasetype=$objp->price_base_type;
+					$outtva_tx=$objp->tva_tx;
 				}
 			}
 		}
@@ -97,9 +98,10 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 			$outprice_ht=price($object->price);
 			$outprice_ttc=price($object->price_ttc);
 			$outpricebasetype=$object->price_base_type;
+			$outtva_tx=$object->tva_tx;
 		}
 
-		$outjson = array('ref'=>$outref, 'label'=>$outlabel, 'desc'=>$outdesc, 'type'=>$outtype, 'price_ht'=>$outprice_ht, 'price_ttc'=>$outprice_ttc, 'pricebasetype'=>$outpricebasetype);
+		$outjson = array('ref'=>$outref, 'label'=>$outlabel, 'desc'=>$outdesc, 'type'=>$outtype, 'price_ht'=>$outprice_ht, 'price_ttc'=>$outprice_ttc, 'pricebasetype'=>$outpricebasetype, 'tva_tx'=>$outtva_tx);
 	}
 
 	echo json_encode($outjson);
