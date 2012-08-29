@@ -385,9 +385,9 @@ $(document).ready(function() {
 			$('#price_ttc').attr('disabled','disabled');
 			$('#price_ttc').val('');
 		} else {
-			if ($('#idprod').val() == 0) {
-				$('#price_ttc').removeAttr('disabled');
-			}
+			// Enable excl.VAT field
+			$('#price_ttc').removeAttr('disabled');
+			// Update prices fields
 			if ($('#price_base_type').val() == 'HT') {
 				update_price('price_ht', 'price_ttc');
 			} else if ($('#price_base_type').val() == 'TTC') {
