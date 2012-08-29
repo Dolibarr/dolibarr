@@ -153,7 +153,7 @@ if (! empty($conf->margin->enabled)) {
 
 	<td align="right">
 	<?php
-	if ($buyer->tva_assuj == "0") echo '<input type="hidden" name="np_tva_tx" value="0">0';
+	if ($buyer->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" value="0">0';
 	else echo $form->load_tva('tva_tx', (GETPOST('tva_tx')?GETPOST('tva_tx'):-1), $seller, $buyer);
 	?>
 	<input type="hidden" id="price_base_type" name="price_base_type" value="" />
@@ -229,6 +229,18 @@ $(document).ready(function() {
 				$('#product_desc').focus();
 			}
 
+			// Update vat rate combobox
+			$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/vatrates.php', {
+				'action': 'getVATRate',
+				'id': <?php echo $buyer->id; ?>,
+				'productid': $(this).val(),
+				'htmlname': 'tva_tx' },
+			function(data) {
+				if (typeof data != 'undefined' && data.error == null) {
+					$("#tva_tx").html(data.value);
+				}
+			}, 'json');
+
 			// For compatibility with combobox
 			<?php if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) { ?>
 			$.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php', {
@@ -258,6 +270,17 @@ $(document).ready(function() {
 	    	$('#update_price_checkbox').removeAttr('checked');
 	    	$('#price_ttc').val('');
 
+	    	// Update vat rate combobox
+			$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/vatrates.php', {
+				'action': 'getVATRate',
+				'id': <?php echo $buyer->id; ?>,
+				'htmlname': 'tva_tx' },
+			function(data) {
+				if (typeof data != 'undefined' && data.error == null) {
+					$("#tva_tx").html(data.value);
+				}
+			}, 'json');
+
 	    	// For compatibility with combobox
 			<?php if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) { ?>
 			$('#select_type').val('').removeAttr('disabled').trigger('change');
@@ -272,7 +295,6 @@ $(document).ready(function() {
 			$('#update_desc_area').hide().trigger('hide');
 			$('#update_price_area').hide().trigger('hide');
 			<?php } ?>
-
 	    }
 	});
 
@@ -346,11 +368,13 @@ $(document).ready(function() {
 	$('#update_price_area').bind('hide', function() {
 		$('#price_ht').removeAttr('disabled');
 		$('#price_ttc').removeAttr('disabled');
+		$('#tva_tx').removeAttr('disabled');
 	});
 
 	$('#update_price_area').bind('show', function() {
 		$('#price_ht').attr('disabled', 'disabled');
 		$('#price_ttc').attr('disabled', 'disabled');
+		$('#tva_tx').attr('disabled', 'disabled');
 	});
 
 	$('#update_price_checkbox').change(function() {
@@ -359,15 +383,14 @@ $(document).ready(function() {
 			if ($('#tva_tx').val() > 0) {
 				$('#price_ttc').removeAttr('disabled')
 			}
+			$('#tva_tx').removeAttr('disabled');
 		} else {
 			$('#price_ht')
 				.attr('disabled','disabled')
 				.val($('#origin_price_ht_cache').val())
 				.trigger('change');
-			$('#price_ttc')
-				.attr('disabled','disabled');
-				//.val($('#origin_price_ttc_cache').val())
-				//.trigger('change');
+			$('#price_ttc').attr('disabled','disabled');
+			$('#tva_tx').attr('disabled', 'disabled');
 		}
 	});
 

@@ -2741,6 +2741,10 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 {
 	global $db,$mysoc;
 
+	if (! class_exists('Product')) {
+		require DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+	}
+
 	$ret=0;
 	$found=0;
 
