@@ -114,7 +114,9 @@ class box_fournisseurs extends ModeleBoxes
                 if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedSuppliers"));
             }
             else {
-                dol_print_error($db);
+                $this->info_box_contents[0][0] = array( 'td' => 'align="left"',
+                                                        'maxlength'=>500,
+                                                        'text' => ($db->error().' sql='.$sql));
             }
         }
         else {
