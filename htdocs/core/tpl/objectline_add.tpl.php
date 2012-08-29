@@ -101,17 +101,6 @@ if (! empty($conf->margin->enabled)) {
 				<?php echo $form->textwithtooltip($langs->trans('AddThisServiceCard'), $langs->trans('HelpAddThisServiceCard'),1,0,'','',3); ?>
 			</span>
 		</span>
-		<!--
-		<span id="update_label_area" class="hideobject"> | <input type="checkbox" id="update_label_checkbox" name="update_label" value="1" />
-			<?php echo $form->textwithtooltip($langs->trans('UpdateOriginalProductLabel'), $langs->trans('HelpUpdateOriginalProductLabel'),1,0,'','',3); ?>
-		</span>
-		<span id="update_desc_area" class="hideobject"> | <input type="checkbox" id="update_desc_checkbox" name="update_desc" value="1" />
-			<?php echo $form->textwithtooltip($langs->trans('UpdateOriginalProductDescription'), $langs->trans('HelpUpdateOriginalProductDescription'),1,0,'','',3); ?>
-		</span>
-		<span id="update_price_area" class="hideobject"> | <input type="checkbox" id="update_price_checkbox" name="update_price" value="1" />
-			<?php echo $form->textwithtooltip($langs->trans('UpdateOriginalProductPrice'), $langs->trans('HelpUpdateOriginalProductPrice'),1,0,'','',3); ?>
-		</span>
-		-->
 	</td>
 </tr>
 <?php } ?>
@@ -152,8 +141,6 @@ if (! empty($conf->margin->enabled)) {
 	$doleditor=new DolEditor('product_desc', GETPOST('product_desc'), '', 150, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, $nbrows, 70);
 	$doleditor->Create();
 	?>
-	<input type="hidden" id="origin_desc_cache" name="origin_desc_cache" value="" />
-	<input type="hidden" id="free_desc_cache" name="free_desc_cache" value="" />
 	</td>
 
 	<td align="right">
