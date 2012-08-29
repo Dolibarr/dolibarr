@@ -60,6 +60,7 @@ if (! empty($conf->margin->enabled)) {
 <form name="addproduct" id="addproduct" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id; ?>#add" method="POST">
 <input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 <input type="hidden" name="action" value="addline" />
+<input type="hidden" name="usenewaddlineform" value="1" />
 <input type="hidden" name="id" value="<?php echo $this->id; ?>" />
 
 <?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>

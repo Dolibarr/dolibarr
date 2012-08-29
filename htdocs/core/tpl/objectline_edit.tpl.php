@@ -30,6 +30,7 @@
 <form action="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'#'.$line->id; ?>" method="POST">
 <input type="hidden" name="token" value="<?php  echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="updateligne">
+<input type="hidden" name="usenewupdatelineform" value="1" />
 <input type="hidden" name="id" value="<?php echo $this->id; ?>">
 <input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
 <input type="hidden" id="product_type" name="type" value="<?php echo $line->product_type; ?>">
