@@ -74,18 +74,17 @@ if (! empty($conf->margin->enabled)) {
 							'select_type' => 'type',
 							'product_ref' => 'value',
 							'product_label' => 'label2',
-							'origin_label_cache' => 'label2',
-							'origin_desc_cache' => 'desc',
 							'price_base_type' => 'pricebasetype',
 							'price_ht' => 'price_ht',
-							'origin_price_ht_cache' => 'price_ht'
-							//'price_ttc' => 'price_ttc',
-							//'origin_price_ttc_cache' => 'price_ttc'
+							'origin_price_ht_cache' => 'price_ht',
+							'origin_tva_tx_cache' => 'tva_tx',
+							'origin_price_ttc_cache' => 'price_ttc'
+					),
+					'update_textarea' => array(
+							'product_desc' => 'desc'
 					),
 					'show' => array(
-							'update_label_area',
-							'update_desc_area',
-							'update_price_area'
+							'price_base_type_area'
 					),
 					'disabled' => array(
 							'select_type'
@@ -102,6 +101,7 @@ if (! empty($conf->margin->enabled)) {
 				<?php echo $form->textwithtooltip($langs->trans('AddThisServiceCard'), $langs->trans('HelpAddThisServiceCard'),1,0,'','',3); ?>
 			</span>
 		</span>
+		<!--
 		<span id="update_label_area" class="hideobject"> | <input type="checkbox" id="update_label_checkbox" name="update_label" value="1" />
 			<?php echo $form->textwithtooltip($langs->trans('UpdateOriginalProductLabel'), $langs->trans('HelpUpdateOriginalProductLabel'),1,0,'','',3); ?>
 		</span>
@@ -111,23 +111,28 @@ if (! empty($conf->margin->enabled)) {
 		<span id="update_price_area" class="hideobject"> | <input type="checkbox" id="update_price_checkbox" name="update_price" value="1" />
 			<?php echo $form->textwithtooltip($langs->trans('UpdateOriginalProductPrice'), $langs->trans('HelpUpdateOriginalProductPrice'),1,0,'','',3); ?>
 		</span>
+		-->
 	</td>
 </tr>
 <?php } ?>
 
 <tr <?php echo $bcnd[$var]; ?>>
 	<td colspan="<?php echo $colspan2; ?>">
-	<?php
+	<?php echo $form->select_type_of_lines((GETPOST('type')?GETPOST('type'):-1), 'type', 1); ?>
 
-	echo $form->select_type_of_lines((GETPOST('type')?GETPOST('type'):-1), 'type', 1);
-
-	echo '<span id="product_ref_area" class="hideobject">&nbsp;<label for="product_ref">'.$langs->trans("Ref").'</label>';
-	echo '<input id="product_ref" name="product_ref" size="20" value="'.GETPOST('product_ref').'"></span>';
-
-	echo '&nbsp;<label for="product_label">'.$langs->trans("Label").'</label>';
-	echo '<input id="product_label" name="product_label" size="40" value="'.GETPOST('product_label').'">';
-	echo '<input type="hidden" id="origin_label_cache" name="origin_label_cache" value="" />';
-
+	<span id="product_ref_area" class="hideobject">
+		&nbsp;<label for="product_ref"><?php echo $langs->trans("Ref"); ?></label>
+		<input id="product_ref" name="product_ref" size="20" value="<?php echo GETPOST('product_ref'); ?>">
+	</span>
+	<span id="product_label_area">
+		&nbsp;<label for="product_label"><?php echo $langs->trans("Label"); ?></label>
+		<input id="product_label" name="product_label" size="40" value="<?php echo GETPOST('product_label'); ?>">
+	</span>
+	<span id="price_base_type_area" class="hideobject">
+		<input type="hidden" id="price_base_type" name="price_base_type" value="" /> | <?php echo $langs->trans('PriceBase'); ?>:
+		<span id="view_price_base_type"></span>
+	</span>
+<?php
 	if (is_object($hookmanager))
 	{
 		$parameters=array('fk_parent_line'=>GETPOST('fk_parent_line'));
@@ -156,7 +161,7 @@ if (! empty($conf->margin->enabled)) {
 	if ($buyer->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" value="0">0';
 	else echo $form->load_tva('tva_tx', (GETPOST('tva_tx')?GETPOST('tva_tx'):-1), $seller, $buyer);
 	?>
-	<input type="hidden" id="price_base_type" name="price_base_type" value="" />
+	<input type="hidden" id="origin_tva_tx_cache" name="origin_tva_tx_cache" value="" />
 	</td>
 	<td align="right">
 		<input type="text" size="8" id="price_ht" name="price_ht" value="<?php echo (GETPOST('price_ht')?GETPOST('price_ht'):''); ?>">
@@ -215,19 +220,15 @@ if (! empty($conf->margin->enabled)) {
 <script type="text/javascript">
 $(document).ready(function() {
 
+	// Add line button disabled by default
+	$('#addlinebutton').attr('disabled','disabled');
+
+	// Service duration hide by default
 	$('#service_duration_area').hide();
 
 	$('#idprod').change(function() {
 
 		if ($(this).val() > 0) {
-
-			if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined' && CKEDITOR.instances['product_desc'] != 'undefined') {
-				// We use CKEditor
-				CKEDITOR.instances['product_desc'].focus();
-			} else {
-				// We use a simple textarea
-				$('#product_desc').focus();
-			}
 
 			// Update vat rate combobox
 			getVATRates('getSellerVATRates', 'tva_tx', $(this).val());
@@ -241,25 +242,26 @@ $(document).ready(function() {
 			function(data) {
 				if (typeof data != 'undefined') {
 					$('#product_ref').val(data.ref);
-					$('#product_label').val(data.label).attr('disabled','disabled');
-					$('#origin_label_cache').val(data.label);
-					$('#origin_desc_cache').val(data.desc);
-					$('#price_base_type').val(data.pricebasetype);
+					$('#product_label').val(data.label);
+					$('#price_base_type').val(data.pricebasetype).trigger('change');
 					$('#price_ht').val(data.price_ht).trigger('change');
 					$('#origin_price_ht_cache').val(data.price_ht);
 					//$('#origin_price_ttc_cache').val(data.price_ttc);
+					$('#origin_tva_tx_cache').val(data.tva_tx);
 					$('#select_type').val(data.type).attr('disabled','disabled').trigger('change');
-					$('#update_label_area').show().trigger('show');
-					$('#update_desc_area').show().trigger('show');
-					$('#update_price_area').show().trigger('show');
+					$('#price_base_type_area').show();
+
+					if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined" && CKEDITOR.instances['product_desc'] != "undefined") {
+						CKEDITOR.instances['product_desc'].setData(data.desc).focus();
+					} else {
+						$("#product_desc").html(data.desc).focus();
+					}
 				}
 			}, 'json');
 			<?php } ?>
 
 	    } else {
 
-	    	$('#update_desc_checkbox').removeAttr('checked').trigger('change');
-	    	$('#update_price_checkbox').removeAttr('checked');
 	    	$('#price_ttc').val('');
 
 	    	// Restore vat rate combobox
@@ -269,21 +271,23 @@ $(document).ready(function() {
 			<?php if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) { ?>
 			$('#select_type').val('').removeAttr('disabled').trigger('change');
 			$('#product_ref').val('');
-			$('#product_label').val('').removeAttr('disabled');
-			$('#origin_label_cache').val('');
-			$('#origin_desc_cache').val('');
+			$('#product_label').val('');
 			$('#price_ht').val('').trigger('change');
 			$('#origin_price_ht_cache').val('');
 			//$('#origin_price_ttc_cache').val('');
+			$('#origin_tva_tx_cache').val('');
 			$('#price_base_type').val('');
-			$('#update_label_area').hide().trigger('hide');
-			$('#update_desc_area').hide().trigger('hide');
-			$('#update_price_area').hide().trigger('hide');
+			$('#price_base_type_area').hide();
+
+			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined" && CKEDITOR.instances['product_desc'] != "undefined") {
+				CKEDITOR.instances['product_desc'].setData('');
+			} else {
+				$("#product_desc").html('');
+			}
 			<?php } ?>
 	    }
 	});
 
-	$('#addlinebutton').attr('disabled','disabled');
 	$('#select_type').change(function() {
 		var type = $(this).val();
 		if (type >= 0) {
@@ -329,6 +333,7 @@ $(document).ready(function() {
 		}
 	});
 
+	// TODO for add product card
 	$('#add_product_checkbox').change(function() {
 		if ($(this).attr('checked')) {
 			$('#product_ref_area').show();
@@ -337,112 +342,26 @@ $(document).ready(function() {
 			$('#search_idprod').attr('disabled','disabled');
 			$('#update_label_area').hide();
 			$('#update_label_checkbox').removeAttr('checked');
-			$('#update_price_area').hide().trigger('hide');
-			$('#update_price_checkbox').removeAttr('checked')
 		} else {
 			if ($("#idprod").val() > 0) {
 				$('#update_label_area').show();
 				$('#product_label').attr('disabled', 'disabled');
-				$('#update_price_area').show().trigger('show');
 			}
 			$('#product_ref_area').hide();
 			$('#search_idprod').removeAttr('disabled');
 		}
 	});
 
-	$('#update_price_area').bind('hide', function() {
-		$('#price_ht').removeAttr('disabled');
-		$('#price_ttc').removeAttr('disabled');
-		$('#tva_tx').removeAttr('disabled');
-	});
-
-	$('#update_price_area').bind('show', function() {
-		$('#price_ht').attr('disabled', 'disabled');
-		$('#price_ttc').attr('disabled', 'disabled');
-		$('#tva_tx').attr('disabled', 'disabled');
-	});
-
-	$('#update_price_checkbox').change(function() {
-		if ($(this).attr('checked')) {
-			$('#price_ht').removeAttr('disabled').focus();
-			if ($('#tva_tx').val() > 0) {
-				$('#price_ttc').removeAttr('disabled')
-			}
-			$('#tva_tx').removeAttr('disabled');
-		} else {
-			// Restore vat rate combobox
-	    	getVATRates('getSellerVATRates', 'tva_tx');
-			$('#tva_tx').attr('disabled', 'disabled');
-			// Restore price_ht origin
-			$('#price_ht')
-				.attr('disabled','disabled')
-				.val($('#origin_price_ht_cache').val());
-			// Restore price_ttc origin
-			$('#price_ttc')
-				.attr('disabled','disabled')
-				.val($('#origin_price_ttc_cache').val());
-		}
-	});
-
-	$('#update_label_area').bind('hide', function() {
-		$('#update_label_checkbox').removeAttr('checked');
-		$('#product_label').removeAttr('disabled');
-	});
-
-	$('#update_label_area').bind('show', function() {
-		$('#product_label').attr('disabled', 'disabled');
-	});
-
-	$('#update_label_checkbox').change(function() {
-		if ($(this).attr('checked')) {
-			$('#product_label').removeAttr('disabled').focus();
-		} else {
-			$('#product_label')
-				.attr('disabled','disabled')
-				.val($('#origin_label_cache').val());
-			$('#search_idprod').focus();
-		}
-	});
-
-	$('#update_desc_checkbox').change(function() {
-
-		if ($(this).attr('checked')) {
-
-			var origin_desc = $('#origin_desc_cache').val();
-
-			if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined' && CKEDITOR.instances['product_desc'] != 'undefined') {
-				// We use CKEditor
-				var freecontent = CKEDITOR.instances['product_desc'].getData();
-				if (origin_desc.length > 0)
-					var content = origin_desc + '<br />' + freecontent;
-				else
-					var content = freecontent;
-			} else {
-				// We use a simple textarea
-				var freecontent = $('#product_desc').html();
-				if (origin_desc.length > 0)
-					var content = origin_desc + '\r\n' + freecontent;
-				else
-					var content = freecontent;
-			}
-
-			$('#free_desc_cache').val(freecontent);
-
-		} else {
-			var content = $('#free_desc_cache').val();
-		}
-
-		if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined' && CKEDITOR.instances['product_desc'] != 'undefined') {
-			// We use CKEditor
-			CKEDITOR.instances['product_desc'].setData(content);
-		} else {
-			// We use a simple textarea
-			$('#product_desc').html(content);
-		}
-	});
-
 	$('#price_ht').focusin(function() {
-		$('#price_base_type').val('HT');
+		$('#price_base_type').val('HT').trigger('change');
+	});
+
+	$('#price_ttc').focusin(function() {
+		$('#price_base_type').val('TTC').trigger('change');
+	});
+
+	$('#price_base_type').change(function() {
+		$('#view_price_base_type').html($(this).val());
 	});
 
 	$('#price_ht').bind('change keyup input', function() {
@@ -451,17 +370,13 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#price_ttc').focusin(function() {
-		$('#price_base_type').val('TTC');
-	});
-
 	$('#price_ttc').bind('change keyup input', function() {
 		if ($('#price_base_type').val() == 'TTC') {
 			update_price('price_ttc', 'price_ht');
 		}
 	});
 
-	if ($('#tva_tx').val() == 0) {
+	if ($('#idprod').val() == 0 && $('#tva_tx').val() == 0) {
 		$('#price_ttc').attr('disabled','disabled');
 	}
 
@@ -470,7 +385,7 @@ $(document).ready(function() {
 			$('#price_ttc').attr('disabled','disabled');
 			$('#price_ttc').val('');
 		} else {
-			if ($('#idprod').val() == 0 || ($('#idprod').val() > 0 && $('#update_price_checkbox').attr('checked') == 'checked')) {
+			if ($('#idprod').val() == 0) {
 				$('#price_ttc').removeAttr('disabled');
 			}
 			if ($('#price_base_type').val() == 'HT') {
@@ -491,9 +406,9 @@ $(document).ready(function() {
 			var addline=false;
 			if (typeof data[output] != 'undefined') {
 				// Hide price_ttc if no vat
-				if ($('#tva_tx').val() > 0 || ($('#tva_tx').val() == 0 && output == 'price_ht')) {
+				//if ($('#tva_tx').val() > 0 || ($('#tva_tx').val() == 0 && output == 'price_ht')) {
 					$('#' + output).val(data[output]);
-				}
+				//}
 				if ($('#idprod').val() == 0 && $('#select_type').val() >= 0) {
 					if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined' && CKEDITOR.instances['product_desc'] != 'undefined') {
 						var content = CKEDITOR.instances['product_desc'].getData();
@@ -527,7 +442,7 @@ $(document).ready(function() {
 			'htmlname': htmlname },
 		function(data) {
 			if (typeof data != 'undefined' && data.error == null) {
-				$("#" + htmlname).html(data.value);
+				$("#" + htmlname).html(data.value).trigger('change');
 			}
 		}, 'json');
 	}

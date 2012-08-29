@@ -582,10 +582,12 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 			$prod = new Product($db);
 			$prod->fetch($idprod);
 
+			$label = ((GETPOST('product_label') && GETPOST('product_label')!=$prod->label)?GETPOST('product_label'):'');
+
 			// Update if prices fields are defined
-			if (GETPOST('update_price') && (GETPOST('price_ht') || GETPOST('price_ttc')))
+			if ($conf->global->MAIN_FEATURES_LEVEL > 1 && isset($price_ht))
 			{
-				$pu_ht=price2num(GETPOST('price_ht'), 'MU');
+				$pu_ht=price2num($price_ht, 'MU');
 				$pu_ttc=price2num(GETPOST('price_ttc'), 'MU');
 				$tva_tx=str_replace('*','', GETPOST('tva_tx'));
 				$tva_npr=preg_match('/\*/', GETPOST('tva_tx'))?1:0;
@@ -626,7 +628,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 				}
 			}
 
-			if (GETPOST('update_desc')) {
+			if ($conf->global->MAIN_FEATURES_LEVEL > 1) {
 
 				$desc = $product_desc;
 
@@ -655,8 +657,6 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 				$desc.= ($desc && ! empty($product_desc)) ? ((dol_textishtml($desc) || dol_textishtml($product_desc))?"<br />\n":"\n") : "";
 				$desc.= $product_desc;
 			}
-
-			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label'):'');
 
 			$type = $prod->type;
 		}
