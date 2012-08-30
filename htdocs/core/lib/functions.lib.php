@@ -570,7 +570,7 @@ function dol_syslog($message, $level=LOG_INFO)
 				set_include_path('/usr/share/php/');
 				include_once 'FirePHPCore/FirePHP.class.php';
 				set_include_path($oldinclude);
-				ob_start();
+				ob_start();	// To be sure headers are not flushed until all page is completely processed
 				$firephp = FirePHP::getInstance(true);
 				if ($level == LOG_ERR) $firephp->error($message);
 				elseif ($level == LOG_WARNING) $firephp->warn($message);
@@ -579,7 +579,29 @@ function dol_syslog($message, $level=LOG_INFO)
 			}
 			catch(Exception $e)
 			{
-				// Do not use dol_syslog to avoid infinite loop
+				// Do not use dol_syslog here to avoid infinite loop
+			}
+		}
+			// Check if log is to syslog (SYSLOG_FIREPHP_ON defined)
+		if (defined("SYSLOG_CHROMEPHP_ON") && constant("SYSLOG_CHROMEPHP_ON") && ! empty($_SERVER["SERVER_NAME"]))     //! empty($_SERVER["SERVER_NAME"]) to be sure to enable this in Web mode only
+		{
+			try
+			{
+				// Warning ChromePHP must be into PHP include path. It is not possible to use into require_once() a constant from
+				// database or config file because we must be able to log data before database or config file read.
+				$oldinclude=get_include_path();
+				set_include_path('/usr/share/php/');
+				include_once 'ChromePhp.php';
+				set_include_path($oldinclude);
+				ob_start();	// To be sure headers are not flushed until all page is completely processed
+				if ($level == LOG_ERR) ChromePhp::error($message);
+				elseif ($level == LOG_WARNING) ChromePhp::warn($message);
+				elseif ($level == LOG_INFO) ChromePhp::log($message);
+				else ChromePhp::log($message);
+			}
+			catch(Exception $e)
+			{
+				// Do not use dol_syslog here to avoid infinite loop
 			}
 		}
 	}

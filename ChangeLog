@@ -62,6 +62,7 @@ For developers:
 - New: Basic implementation of hooks and triggers for a lot (most) of core modules: 
   action/calendar, trips and expenses, dons, vat payment, contact/society, contract, product lines, 
   expedition, order supplier and order invoice (lines included), intervention card, project, tasks.
+- New: Add ChromePHP output into syslog module.
 
 For translators:
 - New: Update language files (de, tr, pt, ca, es, en, fr).
