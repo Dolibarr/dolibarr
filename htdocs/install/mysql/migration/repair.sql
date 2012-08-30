@@ -34,7 +34,11 @@ update llx_facture_rec set fk_projet = null where fk_projet not in (select rowid
 update llx_fichinter set fk_projet = null where fk_projet not in (select rowid from llx_projet);
 update llx_projet_task set fk_projet = null where fk_projet not in (select rowid from llx_projet);
 
+update llx_propal set fk_user_author = null where fk_user_author not in (select rowid from llx_user);
+update llx_propal set fk_user_valid = null where fk_user_valid not in (select rowid from llx_user);
+update llx_propal set fk_user_cloture = null where fk_user_cloture not in (select rowid from llx_user);
 update llx_commande set fk_user_author = null where fk_user_author not in (select rowid from llx_user);
+update llx_commande set fk_user_valid = null where fk_user_valid not in (select rowid from llx_user);
 
 delete from llx_societe_extrafields where fk_object not in (select rowid from llx_societe);
 delete from llx_adherent_extrafields where fk_object not in (select rowid from llx_adherent);
