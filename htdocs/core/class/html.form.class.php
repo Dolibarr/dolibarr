@@ -3096,10 +3096,20 @@ class Form
         		$defaulttx = $this->cache_vatrates[$num-1]['txtva'];
         	}
 
-        	if (! $options_only) $return.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
+        	// Disabled if customer is not subject to VAT
+        	$disabled=false;
+        	if (is_object($societe_acheteuse) && ! empty($societe_acheteuse->id)
+        		&& $societe_acheteuse->tva_assuj == "0") {
+        		$disabled=true;
+        	}
+
+        	if (! $options_only) $return.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').'>';
 
         	foreach ($this->cache_vatrates as $rate)
         	{
+        		// Force 0 if customer is not subject to VAT
+        		if ($disabled && $rate['txtva'] != 0) continue;
+
         		$return.= '<option value="'.$rate['txtva'];
         		$return.= $rate['nprtva'] ? '*': '';
         		$return.= '"';
