@@ -520,7 +520,7 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
  */
 function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$mode='next')
 {
-    global $conf;
+    global $conf,$lang;
 
     if (! is_object($objsoc)) $valueforccc=$objsoc;
     else $valueforccc=$objsoc->code_client;
@@ -530,12 +530,12 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     // but we should use local year and month of user
 
     // Extract value for mask counter, mask raz and mask offset
-    if (! preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i',$mask,$reg)) return 'ErrorBadMask';
+    if (! preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i',$mask,$reg)) return $langs->trans('ErrorBadMask');
     $masktri=$reg[1].(! empty($reg[2])?$reg[2]:'').(! empty($reg[3])?$reg[3]:'');
     $maskcounter=$reg[1];
     $maskraz=-1;
     $maskoffset=0;
-    if (dol_strlen($maskcounter) < 3) return 'CounterMustHaveMoreThan3Digits';
+    if (dol_strlen($maskcounter) < 3) return $langs->trans('CounterMustHaveMoreThan3Digits');
 
     // Extract value for third party mask counter
     if (preg_match('/\{(c+)(0*)\}/i',$mask,$regClientRef))
@@ -547,7 +547,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         $maskrefclient_clientcode=substr($valueforccc,0,dol_strlen($maskrefclient_maskclientcode));//get n first characters of client code where n is length in mask
         $maskrefclient_clientcode=str_pad($maskrefclient_clientcode,dol_strlen($maskrefclient_maskclientcode),"#",STR_PAD_RIGHT);//padding maskrefclient_clientcode for having exactly n characters in maskrefclient_clientcode
         $maskrefclient_clientcode=dol_string_nospecial($maskrefclient_clientcode);//sanitize maskrefclient_clientcode for sql insert and sql select like
-        if (dol_strlen($maskrefclient_maskcounter) > 0 && dol_strlen($maskrefclient_maskcounter) < 3) return 'CounterMustHaveMoreThan3Digits';
+        if (dol_strlen($maskrefclient_maskcounter) > 0 && dol_strlen($maskrefclient_maskcounter) < 3) return $langs->trans('CounterMustHaveMoreThan3Digits');
     }
     else $maskrefclient='';
 
@@ -592,20 +592,20 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     //print "maskraz=".$maskraz;
     if ($maskraz > 0)    // A reset is required
     {
-        if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
+        if ($maskraz > 12) return $langs->trans('ErrorBadMaskBadRazMonth');
 
         // Define posy, posm and reg
         if ($maskraz > 1)
         {
             if (! preg_match('/^(.*)\{(y+)\}\{(m+)\}/i',$maskwithonlyymcode)
-            && ! preg_match('/^(.*)\{(m+)\}\{(y+)\}/i',$maskwithonlyymcode)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
+            && ! preg_match('/^(.*)\{(m+)\}\{(y+)\}/i',$maskwithonlyymcode)) return $langs->trans('ErrorCantUseRazInStartedYearIfNoYearMonthInMask');
             if (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i',$maskwithonlyymcode,$reg)) { $posy=2; $posm=3; }
             elseif (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i',$maskwithonlyymcode,$reg)) { $posy=3; $posm=2; }
-            if (dol_strlen($reg[$posy]) < 2) return 'ErrorCantUseRazWithYearOnOneDigit';
+            if (dol_strlen($reg[$posy]) < 2) return $langs->trans('ErrorCantUseRazWithYearOnOneDigit');
         }
         else
         {
-            if (! preg_match('/^(.*)\{(y+)\}/i',$maskwithonlyymcode)) return 'ErrorCantUseRazIfNoYearInMask';
+            if (! preg_match('/^(.*)\{(y+)\}/i',$maskwithonlyymcode)) return $langs->trans('ErrorCantUseRazIfNoYearInMask');
             if (preg_match('/^(.*)\{(y+)\}/i',$maskwithonlyymcode,$reg)) { $posy=2; $posm=0; }
         }
         //print "x".$maskwithonlyymcode." ".$maskraz." ".$posy." ".$posm;
@@ -642,7 +642,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 
     // Define $sqlstring
     $posnumstart=strpos($maskwithnocode,$maskcounter);	// Pos of counter in final string (from 0 to ...)
-    if ($posnumstart < 0) return 'ErrorBadMaskFailedToLocatePosOfSequence';
+    if ($posnumstart < 0) return $langs->trans('ErrorBadMaskFailedToLocatePosOfSequence');
     $sqlstring='SUBSTRING('.$field.', '.($posnumstart+1).', '.dol_strlen($maskcounter).')';
     //print "x".$sqlstring;
 
@@ -726,7 +726,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 
             // Define $sqlstring
             $maskrefclient_posnumstart=strpos($maskwithnocode,$maskrefclient_maskcounter,strpos($maskwithnocode,$maskrefclient));	// Pos of counter in final string (from 0 to ...)
-            if ($maskrefclient_posnumstart <= 0) return 'ErrorBadMask';
+            if ($maskrefclient_posnumstart <= 0) return $langs->trans('ErrorBadMask');
             $maskrefclient_sqlstring='SUBSTRING('.$field.', '.($maskrefclient_posnumstart+1).', '.dol_strlen($maskrefclient_maskcounter).')';
             //print "x".$sqlstring;
 
