@@ -3096,7 +3096,7 @@ class Form
         		$defaulttx = $this->cache_vatrates[$num-1]['txtva'];
         	}
 
-        	// Disabled if $mysoc is not subject to VAT
+        	// Disabled if seller is not subject to VAT
         	$disabled=false; $title='';
         	if (is_object($societe_vendeuse) && $societe_vendeuse->id == $mysoc->id && $societe_vendeuse->tva_assuj == "0") {
         		$title=' title="'.$langs->trans('VATIsNotUsed').'"';
@@ -3107,7 +3107,7 @@ class Form
 
         	foreach ($this->cache_vatrates as $rate)
         	{
-        		// Force 0 if $mysoc is not subject to VAT
+        		// Keep only 0 if seller is not subject to VAT
         		if ($disabled && $rate['txtva'] != 0) continue;
 
         		$return.= '<option value="'.$rate['txtva'];
