@@ -369,7 +369,9 @@ $(document).ready(function() {
 
 	$('#tva_tx').change(function() {
 		if ($(this).val() == 0) {
-			$('#price_ttc').attr('disabled','disabled');
+			if ($('#idprod').val() == 0) {
+				$('#price_ttc').attr('disabled','disabled');
+			}
 			$('#price_ttc').val('');
 		} else {
 			// Enable excl.VAT field
