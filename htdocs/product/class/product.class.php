@@ -698,7 +698,13 @@ class Product extends CommonObject
 					$sql2.= "','".$this->db->escape($this->description);
 					$sql2.= "','".$this->db->escape($this->note)."')";
 				}
-				if (!$this->db->query($sql2)) return -1;
+				dol_syslog(get_class($this).'::setMultiLangs sql='.$sql2);
+				if (! $this->db->query($sql2))
+				{
+					$this->error=$this->db->lasterror();
+					dol_syslog(get_class($this).'::setMultiLangs error='.$this->error, LOG_ERR);
+					return -1;
+				}
 			}
 			else if (isset($this->multilangs["$key"]))
 			{
@@ -720,7 +726,13 @@ class Product extends CommonObject
 
 				// on ne sauvegarde pas des champs vides
 				if ( $this->multilangs["$key"]["label"] || $this->multilangs["$key"]["description"] || $this->multilangs["$key"]["note"] )
-				if (!$this->db->query($sql2)) return -1;
+				dol_syslog(get_class($this).'::setMultiLangs sql='.$sql2);
+				if (! $this->db->query($sql2))
+				{
+					$this->error=$this->db->lasterror();
+					dol_syslog(get_class($this).'::setMultiLangs error='.$this->error, LOG_ERR);
+					return -1;
+				}
 			}
 		}
 		return 1;

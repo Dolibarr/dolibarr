@@ -41,6 +41,8 @@ class User extends CommonObject
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $id=0;
+	var $ref;
+	var $ref_ext;
 	var $ldap_sid;
 	var $search_sid;
 	var $nom;		// TODO deprecated

@@ -75,6 +75,15 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 	    								$("#" + value).hide().trigger("hide");
 									});
 								}
+								if (options.update_textarea) {
+	    							$.each(options.update_textarea, function(key, value) {
+	    								if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined" && CKEDITOR.instances[key] != "undefined") {
+	    									CKEDITOR.instances[key].setData("");
+	    								} else {
+	    									$("#" + key).html("");
+										}
+	    							});
+	    						}
 						    }
 						}
                     });
@@ -130,6 +139,11 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     						}
     						// Update an input
     						if (ui.item.update) {
+    							// clear old data before update
+    							$.each(ui.item.update, function(key, value) {
+    								$("#" + key).val("");
+    							});
+    							// update fields
     							$.each(ui.item.update, function(key, value) {
     								$("#" + key).val(value).trigger("change");
     							});

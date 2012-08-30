@@ -32,6 +32,8 @@ require '../../main.inc.php';
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
 $htmlname	= GETPOST('htmlname','alpha');
+$selected	= (GETPOST('selected')?GETPOST('selected'):'-1');
+$productid	= (GETPOST('productid','int')?GETPOST('productid','int'):0);
 
 /*
  * View
@@ -46,15 +48,26 @@ if (! empty($id) && ! empty($action) && ! empty($htmlname))
 {
 	$form = new Form($db);
 	$soc = new Societe($db);
-	
+
 	$soc->fetch($id);
-	
+
+	if ($action == 'getSellerVATRates')
+	{
+		$seller = $mysoc;
+		$buyer = $soc;
+	}
+	else
+	{
+		$buyer = $mysoc;
+		$seller = $soc;
+	}
+
 	$return=array();
-	
-	$return['value']	= $form->load_tva('tva_tx','',$soc,$mysoc,0,0,'',true);
+
+	$return['value']	= $form->load_tva('tva_tx',$selected,$seller,$buyer,$productid,0,'',true);
 	$return['num']		= $form->num;
 	$return['error']	= $form->error;
-	
+
 	echo json_encode($return);
 }
 

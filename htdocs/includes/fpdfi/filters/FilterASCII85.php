@@ -1,6 +1,6 @@
 <?php
 //
-//  FPDI - Version 1.4.1
+//  FPDI - Version 1.4.2
 //
 //    Copyright 2004-2011 Setasign - Jan Slabon
 //
@@ -51,7 +51,7 @@ if (!class_exists('FilterASCII85', false)) {
                     continue;
                 }
                 if ($ch == ORD_z && $state == 0) {
-                    $out .= chr(0).chr(0).chr(0).chr(0);
+                    $out .= chr(0) . chr(0) . chr(0) . chr(0);
                     continue;
                 }
                 if ($ch < ORD_exclmark || $ch > ORD_u) {

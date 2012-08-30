@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <!--
-Copyright (c) 2003-2011, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -34,6 +34,121 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 	<h1>
 		CKEditor Changelog
 	</h1>
+	<h3>
+			CKEditor 3.6.4</h3>
+	<p>
+			Fixed issues:</p>
+	<ul>
+		<li><a href="http://dev.ckeditor.com/ticket/8887">#8887</a> : Ugly hover effect for buttons in dialog windows due to slightly wrong background position.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8783">#8783</a> : <code>getAttribute( 'contenteditable' )</code> returns 'inherited' on IE7 and IE6 for elements created from code.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8463">#8463</a> : WebKit: <em>Cut/Copy</em> buttons didn't go on "enabled" state after selecting text in the editor.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/9043">#9043</a> : Command newpage didn't return its name when <code>afterCommandExec</code> event was fired.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/9015">#9015</a> : Applied ARIA label on dialog file input element.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/9016">#9016</a> : Applied the "presentation" role on the iframe element in dialog file field markup.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8949">#8949</a> : Image Properties does not show in context menu when the image is wrapped in a div with the width set.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/9008">#9008</a> : Fixed list items order reversed when merging two lists.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/9042">#9042</a> : [Safari] Fixed pasting left garbage html at the end of document.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7745">#7745</a> : The list of frames on JAWS will not any more show the <em>"ALT+0 for help"</em> text for the editor entry.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8979">#8979</a> : Overriding matches will not any more interfere on the Font size combo.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/5447">#5447</a> : Anchor names created by the Link dialog are now trimmed to protect against unwanted spaces.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8997">#8997</a> : Styles are lost on sub-lists when converting list type.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8971">#8971</a> : [IE7] Dialog size are stretched when long text field value is received.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8945">#8945</a> : Fake elements now show alternative text on High Contrast mode.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8985">#8985</a> : Better handling of <em>Enter</em> key events on dialogs.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8925">#8925</a> : [Firefox] Unexpected page scroll on large floating block when editor is re-focused.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8978">#8978</a> : [IE] Saved editor text selection is lost after close menu.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/9022">#9022</a> : [IE7] Fixed wrong selection introduced in empty editor document when click to the bottom-right of the document.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/9034">#9034</a> : [IE7] Fixed JavaScript error caused by drag-to-select at the bottom of the document.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/9057">#9057</a> : Unexpected block established when decreasing indent of a styled list item.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/9063">#9063</a> : Styles on sub-list are lost when decreasing indent of the parent list.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/9047">#9047</a> : [Firefox] Anchors in the preview window will now work properly.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8941">#8941</a> : [Webkit] Content region disappeared when resizing the browser.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8968">#8968</a> : [Firefox] The <code><a href="http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.config.html#.forcePasteAsPlainText">forcePasteAsPlainText</a></code> configuration is not working when using <em>Ctrl/Cmd-V</em>.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6217">#6217</a> : Handled <em>Del/Backspace</em> key at the boundary of table to unify the cursor position.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8950">#8950</a> : Changed the cursor position after calling <code>editor::insertElement</code> on block element.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/9080">#9080</a> : Fixed <em>Backspace</em> key in front of the list item to join with previous line.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/3592">#3592</a> : Removed the "title" field from flash dialog advanced tab.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/9084">#9084</a> : [IE] Dragging absolute positioned elements is now enabled by default.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8879">#8879</a> : Corrected styling of labels used in dialog windows.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8921">#8921</a> : [Chrome] Paste on a newly created CKEditor instance does not work on Chrome.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/9036">#9036</a> : Find feature cannot locate certain words while <em>Match Whole Word</em> is enabled.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/9069">#9069</a> : [Chrome] Issue with popups not opening properly on Chrome 20 makes it impossible to view the file browser window.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/5811">#5811</a> : Code for Image dialog is missing dialog dependency.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/5810">#5810</a> : Code for Div Container is missing dialog dependency.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/5809">#5809</a> : Dialog a11yhelp is missing dialog dependency.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/4045">#4045</a> : "Field Name" Column in <code>sample_posteddata.php</code> is to narrow.</li>
+		<li>Updated the following language files as submitted to the <a href="https://www.transifex.net/projects/p/ckeditor/">CKEditor UI Translation Center</a>: Bulgarian, Chinese, Czech, Danish, Esperanto, Estonian, Greek, Italian, Norwegian, Portuguese, Romanian, Vietnamese.</li>
+	</ul>
+	<h3>
+			CKEditor 3.6.3</h3>
+	<p>
+			New features:</p>
+	<ul>
+		<li><a href="http://dev.ckeditor.com/ticket/7430">#7430</a> : Justify commands now perform alignment on the element when an image is selected.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8706">#8706</a> : Better ARIA accessibility for the color picker dialog window.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7366">#7366</a> : Editor paste function is now available on browser toolbar and context menu.</li>
+	</ul>
+	<p>
+			Fixed issues:</p>
+	<ul>
+		<li><a href="http://dev.ckeditor.com/ticket/8634">#8634</a> : [IE] Command execution always returns <code>true</code> in IE browsers.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8333">#8333</a> : Dialog windows can now be closed with the <em>Esc</em> key even if there is no Cancel button available.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8644">#8644</a> : Missing variable declaration in the dialog plugin.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8699">#8699</a> : Focus is now moved to the clicked button and back to color picker dialog window opener (button) in all browsers after the dialog window is closed.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8132">#8132</a> : [IE9] Link line gets broken when it contains a <code>br</code> tag.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8629">#8629</a> : Optimize float panel layout when there is not enough space in the viewport.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7955">#7955</a> : [FF] <em>Page Up</em> and <em>Page Down</em> in the WYSIWYG mode cause the selection to become lost.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8698">#8698</a> : <em>Esc</em> key does not close the color picker dialog window.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8413">#8413</a> : HTML comment nodes break content styling in tables.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7932">#7932</a>, <a href="http://dev.ckeditor.com/ticket/8643">#8643</a> : [IE] Clicking below the content region scrolls the page to the top.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/5538">#5538</a>, <a href="http://dev.ckeditor.com/ticket/8729">#8729</a> : [IE] Focus jump results in incorrect context menu display.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6359">#6359</a> : [IE] Selectable area in blank WYSIWYG editor is too small.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7326">#7326</a>, <a href="http://dev.ckeditor.com/ticket/8074">#8074</a> : [FF] Scrolling does not work correctly in editor with large amount of text.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8630">#8630</a> : HTML events are now disabled when loading data.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8433">#8433</a> : [IE9] Use W3C event model.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8691">#8691</a> : [IE] Pasting invalid HTML crashes the browser.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8345">#8345</a> : [IE] Selection is not properly restored after closing the Link dialog window.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6308">#6308</a> : Vertical-only resize imposes fixed width on editor chrome.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7360">#7360</a> : [WebKit] WYSIWYG area sometimes does not resize with the chrome.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/5527">#5527</a> : Do not encode the <code>#</code> character sent from the file browser.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8014">#8014</a> : Autogrow now stretches to fit the content when switching editor modes.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8249">#8249</a> : Inconsistent behavior with the <em>Backspace</em> key used at the start of a list item.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8617">#8617</a> : [WebKit] Selection becomes broken after an inline style is opened.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8527">#8527</a> : Insertion with cursor before an empty anchor is error-prone.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8632">#8632</a> : Cursor panic when the <em>Backspace</em> key is used in a list item.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8455">#8455</a> : Mousedown focus is too agressive.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8475">#8475</a> : Issue with deleting elements with inline styling in tables.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8324">#8324</a> : [IE8] Undo generates an error when a control type element is selected.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7946">#7946</a> : Find and Replace dialog window result does not scroll into view when the editor is off the viewport.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8157">#8157</a> : Flash/IFrame dialog window cannot be closed when displayed over Flash/IFrame with <code>dialog_startupFocusTab</code> set to <code>true</code>.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8305">#8305</a> : Text direction lost when converting a paragraph to a list.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8379">#8379</a> : The cursor moves to the start of the document when inserting a row or column is undone.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6666">#6666</a> : Removed references to <code>element.all</code>.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8732">#8732</a> : Issue when <code>CKEDITOR.range::enlarge</code> passes through comment nodes.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7492">#7492</a> : The Style system can now use overrides with the same element (change classes instead of nesting).</li>
+		<li><a href="http://dev.ckeditor.com/ticket/6111">#6111</a> : Splitting table cells results in incorrect column spans.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8247">#8247</a> : [IE] Error when aligning a document with page breaks inside of contents.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8540">#8540</a> : Orphan texts inside a list or table are now properly fixed.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8774">#8774</a> : The Entities plugin can now be configured to only output XML entities.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8602">#8602</a> : Image source is now properly hidden when running data through the data processor.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8812">#8812</a> : [IE] Issues with the native range translation with comments in the DOM.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/7907">#7907</a> : Decreasing indentation of a RTL block in a list item loses text direction.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8835">#8835</a> : Right margin on IE&lt;8 removed to avoid mouse click confusion.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8400">#8400</a> : [IE] Script error when closing the Cell Properties dialog window if the table cell text is selected.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8248">#8248</a> : [IE8] Issues with <em>Backspace</em> and <em>Del</em> keys when used at the start or end of list items.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8855">#8855</a> : [Chrome] Issue with the popup window size in Chrome 18 makes it impossible to view the file browser window.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8407">#8407</a> : Unneeded <code>aria-posinset</code> and <code>aria-setsize</code> for a list block are now removed.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8701">#8701</a> : Highlight field in the color picker does not show the correct color when keyboard navigation is used.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8509">#8509</a> : Table height gets copied from the width value when the Advanced tab is hidden.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8432">#8432</a> : [IE8] <code>openDialog('image')</code> error.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8493">#8493</a> : [IE] It is impossible to add a link to the selected text.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8528">#8528</a> : Redundant <code>imagePreviewBoxId</code> in the Image Properties dialog window is now removed.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8864">#8864</a> : [IE] Fix ARIA presentation of toolbar rich combo in JAWS.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8459">#8459</a> : Fix wrong undo step on enter key.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8895">#8895</a> : Editing anchors using the Link dialog window could not work in release version.</li>
+		<li><a href="http://dev.ckeditor.com/ticket/8876">#8876</a> : &lt;link&gt; element in the floating panels have been moved to &lt;head&gt;.</li>
+		<li>Updated the following language files as submitted to the <a href="https://www.transifex.net/projects/p/ckeditor/">CKEditor UI Translation Center</a>: Arabic, Bulgarian, Chinese, Croatian, Czech, Danish, Dutch, Esperanto, Estonian, Faroese, French, German, Greek, Gujarati, Hindi, Italian, Macedonian, Norwegian (Bokmål and Nynorsk), Polish, Portuguese, Turkish, Uighur, Ukrainian, Vietnamese, Welsh.</li>
+	</ul>
 	<h3>
 			CKEditor 3.6.2</h3>
 	<p>
@@ -1425,7 +1540,7 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
 			CKEditor - The text editor for Internet - <a href="http://ckeditor.com/">http://ckeditor.com</a>
 		</p>
 		<p id="copy">
-			Copyright &copy; 2003-2011, <a href="http://cksource.com/">CKSource</a> - Frederico
+			Copyright &copy; 2003-2012, <a href="http://cksource.com/">CKSource</a> - Frederico
 			Knabben. All rights reserved.
 		</p>
 	</div>
