@@ -3098,12 +3098,14 @@ class Form
 
         	// Disabled if customer is not subject to VAT
         	$disabled=false;
+        	$title='';
         	if (is_object($societe_acheteuse) && ! empty($societe_acheteuse->id)
         		&& $societe_acheteuse->tva_assuj == "0") {
+        		$title=' title="'.$langs->trans('VATIsNotUsed').'"';
         		$disabled=true;
         	}
 
-        	if (! $options_only) $return.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').'>';
+        	if (! $options_only) $return.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').$title.'>';
 
         	foreach ($this->cache_vatrates as $rate)
         	{
