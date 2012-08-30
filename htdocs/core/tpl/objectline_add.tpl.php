@@ -146,7 +146,8 @@ if (! empty($conf->margin->enabled)) {
 
 	<td align="right">
 	<?php
-	echo $form->load_tva('tva_tx', (GETPOST('tva_tx')?GETPOST('tva_tx'):-1), $seller, $buyer);
+	if ($buyer->tva_assuj == "0") echo '<input type="hidden" name="tva_tx" value="0">0';
+	else echo $form->load_tva('tva_tx', (GETPOST('tva_tx')?GETPOST('tva_tx'):-1), $seller, $buyer);
 	?>
 	<input type="hidden" id="origin_tva_tx_cache" name="origin_tva_tx_cache" value="" />
 	</td>
