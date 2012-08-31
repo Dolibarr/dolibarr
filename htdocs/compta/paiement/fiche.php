@@ -79,7 +79,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->
 	if ($result > 0)
 	{
         $db->commit();
-        Header("Location: liste.php");
+        header("Location: liste.php");
         exit;
 	}
 	else
@@ -115,7 +115,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->facture->
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) facture_pdf_create($db, $fac, $fac->modelpdf, $outputlangs, $hookmanager);
 		}
 
-		Header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
+		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
 		exit;
 	}
 	else

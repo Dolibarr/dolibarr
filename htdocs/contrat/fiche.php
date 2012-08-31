@@ -77,7 +77,7 @@ if ($action == 'confirm_active' && $confirm == 'yes' && $user->rights->contrat->
 
     if ($result > 0)
     {
-        Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+        header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
         exit;
     }
     else {
@@ -92,7 +92,7 @@ else if ($action == 'confirm_closeline' && $confirm == 'yes' && $user->rights->c
 
     if ($result > 0)
     {
-        Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+        header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
         exit;
     }
     else {
@@ -183,7 +183,7 @@ if ($action == 'add' && $user->rights->contrat->creer)
         $result = $object->create($user,$langs,$conf);
         if ($result > 0)
         {
-            Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+            header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
             exit;
         }
         else {
@@ -412,7 +412,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 
     if ($result >= 0)
     {
-        Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+        header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
         exit;
     }
     else
@@ -441,7 +441,7 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->cont
 	$result=$object->delete($user);
 	if ($result >= 0)
 	{
-		Header("Location: index.php");
+		header("Location: index.php");
 		return;
 	}
 	else
@@ -460,7 +460,7 @@ else if ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contra
 		$result=$contractline->update($user,1);
 		if ($result >= 0)
 		{
-			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 			return;
 		}
 		else
@@ -500,7 +500,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 
 		if ($result >= 0)
 		{
-			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		}
 		else
@@ -538,7 +538,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 
 		if ($result >= 0)
 		{
-			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		}
 		else {

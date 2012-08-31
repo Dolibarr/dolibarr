@@ -165,7 +165,7 @@ else
     	if ($num == 1 && ($sall || $snom || $sref || $sbarcode) && $action != 'list')
     	{
     		$objp = $db->fetch_object($resql);
-    		Header("Location: fiche.php?id=".$objp->rowid);
+    		header("Location: fiche.php?id=".$objp->rowid);
     		exit;
     	}
 

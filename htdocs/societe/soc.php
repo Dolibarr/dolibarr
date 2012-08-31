@@ -304,7 +304,7 @@ if (empty($reshook))
                     $url=$_SERVER["PHP_SELF"]."?socid=".$object->id;
                     if (($object->client == 1 || $object->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $url=DOL_URL_ROOT."/comm/fiche.php?socid=".$object->id;
                     else if ($object->fournisseur == 1) $url=DOL_URL_ROOT."/fourn/fiche.php?socid=".$object->id;
-                    Header("Location: ".$url);
+                    header("Location: ".$url);
                     exit;
                 }
                 else
@@ -318,7 +318,7 @@ if (empty($reshook))
             {
                 if ($_POST["cancel"])
                 {
-                    Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
+                    header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
                     exit;
                 }
 
@@ -381,7 +381,7 @@ if (empty($reshook))
                 if (! $error && ! count($errors))
                 {
 
-                    Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
+                    header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
                     exit;
                 }
                 else
@@ -401,7 +401,7 @@ if (empty($reshook))
 
         if ($result > 0)
         {
-            Header("Location: ".DOL_URL_ROOT."/societe/societe.php?delsoc=".urlencode($object->name));
+            header("Location: ".DOL_URL_ROOT."/societe/societe.php?delsoc=".urlencode($object->name));
             exit;
         }
         else
@@ -446,7 +446,7 @@ if (empty($reshook))
             }
             else
             {
-                Header('Location: '.$_SERVER["PHP_SELF"].'?socid='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+                header('Location: '.$_SERVER["PHP_SELF"].'?socid='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
                 exit;
             }
         }

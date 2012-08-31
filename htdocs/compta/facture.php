@@ -144,7 +144,7 @@ else if ($action == 'reopen' && $user->rights->facture->creer)
         $result = $object->set_unpaid($user);
         if ($result > 0)
         {
-            Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
+            header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
             exit;
         }
         else
@@ -162,7 +162,7 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fact
 	$result = $object->delete();
 	if ($result > 0)
 	{
-		Header('Location: '.DOL_URL_ROOT.'/compta/facture/list.php');
+		header('Location: '.DOL_URL_ROOT.'/compta/facture/list.php');
 		exit;
 	}
 	else
@@ -197,7 +197,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 		}
 		if ($result >= 0)
 		{
-			Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
+			header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
 			exit;
 		}
 	}
@@ -247,7 +247,7 @@ else if ($action == 'set_thirdparty' && $user->rights->facture->creer)
     $object->fetch($id);
     $object->setValueFrom('fk_soc',$socid);
 
-    Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
+    header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
     exit;
 }
 
@@ -928,7 +928,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
     if ($id > 0 && ! $error)
     {
         $db->commit();
-        Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
+        header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
         exit;
     }
     else
@@ -1333,7 +1333,7 @@ else if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['sa
 
 else if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['cancel'] == $langs->trans('Cancel'))
 {
-    Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);   // Pour reaffichage de la fiche en cours d'edition
+    header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);   // Pour reaffichage de la fiche en cours d'edition
     exit;
 }
 
@@ -1356,7 +1356,7 @@ else if ($action == 'up' && $user->rights->facture->creer)
     }
     if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 
-    Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id.'#'.$_GET['rowid']);
+    header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id.'#'.$_GET['rowid']);
     exit;
 }
 // Modify line position (down)
@@ -1378,7 +1378,7 @@ else if ($action == 'down' && $user->rights->facture->creer)
     }
     if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 
-    Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id.'#'.$_GET['rowid']);
+    header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id.'#'.$_GET['rowid']);
     exit;
 }
 
@@ -1539,7 +1539,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
                             // This avoid sending mail twice if going out and then back to page
                         	$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
                         	setEventMessage($mesg);
-                            Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id);
+                            header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id);
                             exit;
                         }
                     }
@@ -1616,7 +1616,7 @@ else if ($action == 'builddoc')	// En get ou en post
     }
     else
     {
-        Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+        header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
         exit;
     }
 }
@@ -1654,7 +1654,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 
 		if ($result >= 0)
 		{
-			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		}
 		else
@@ -1692,7 +1692,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 
 		if ($result >= 0)
 		{
-			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		}
 		else {

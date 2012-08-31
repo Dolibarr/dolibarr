@@ -83,7 +83,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 	$ret=dol_delete_file($file);
 	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
 	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-    Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+    header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
     exit;
 }
 

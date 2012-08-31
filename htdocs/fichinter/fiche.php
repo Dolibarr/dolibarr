@@ -90,7 +90,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->fichein
             $outputlangs->setDefaultLang($newlang);
         }
         $result=fichinter_create($db, $object, GETPOST('model','alpha'), $outputlangs);
-        Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
         exit;
     }
     else
@@ -118,7 +118,7 @@ else if ($action == 'confirm_modify' && $confirm == 'yes' && $user->rights->fich
             $outputlangs->setDefaultLang($newlang);
         }
         $result=fichinter_create($db, $object, (!GETPOST('model','alpha'))?$object->model:GETPOST('model','apha'), $outputlangs);
-        Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
         exit;
     }
     else
@@ -237,7 +237,7 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fich
 	$object->fetch_thirdparty();
 	$object->delete($user);
 
-    Header('Location: '.DOL_URL_ROOT.'/fichinter/list.php?leftmenu=ficheinter');
+    header('Location: '.DOL_URL_ROOT.'/fichinter/list.php?leftmenu=ficheinter');
     exit;
 }
 
@@ -307,7 +307,7 @@ else if ($action == "addline" && $user->rights->ficheinter->creer)
 			$db->commit();
 
         	fichinter_create($db, $object, $object->modelpdf, $outputlangs);
-        	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+        	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
         	exit;
 		}
 		else
@@ -325,7 +325,7 @@ else if ($action == 'classifybilled' && $user->rights->ficheinter->creer)
 	$result=$object->setBilled();
 	if ($result > 0)
 	{
-        Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
         exit;
 	}
 	else
@@ -379,7 +379,7 @@ else if ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST(
     }
     fichinter_create($db, $object, $object->modelpdf, $outputlangs);
 
-    Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+    header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
     exit;
 }
 
@@ -436,7 +436,7 @@ else if ($action == 'up' && $user->rights->ficheinter->creer)
         $outputlangs->setDefaultLang($newlang);
     }
     fichinter_create($db, $object, $object->modelpdf, $outputlangs);
-    Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOST('line_id','int'));
+    header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOST('line_id','int'));
     exit;
 }
 
@@ -457,7 +457,7 @@ else if ($action == 'down' && $user->rights->ficheinter->creer)
         $outputlangs->setDefaultLang($newlang);
     }
     fichinter_create($db, $object, $object->modelpdf, $outputlangs);
-    Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOST('line_id','int'));
+    header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOST('line_id','int'));
     exit;
 }
 
@@ -603,7 +603,7 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
                         {
                             // Redirect here
                             // This avoid sending mail twice if going out and then back to page
-                            Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&msg='.urlencode($mesg));
+                            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&msg='.urlencode($mesg));
                             exit;
                         }
                     }
@@ -662,7 +662,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 
 		if ($result >= 0)
 		{
-			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		}
 		else
@@ -700,7 +700,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 
 		if ($result >= 0)
 		{
-			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		}
 		else {

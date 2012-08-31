@@ -130,7 +130,7 @@ else if ($action == 'reopen' && $user->rights->commande->creer)
 		$result = $object->set_reopen($user);
 		if ($result > 0)
 		{
-			Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		}
 		else
@@ -146,7 +146,7 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->comm
 	$result=$object->delete($user);
 	if ($result > 0)
 	{
-		Header('Location: index.php');
+		header('Location: index.php');
 		exit;
 	}
 	else
@@ -177,7 +177,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 			commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 		}
 
-		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
 	}
 	else
@@ -383,7 +383,7 @@ else if ($action == 'add' && $user->rights->commande->creer)
 	if ($object_id > 0 && ! $error)
 	{
 		$db->commit();
-		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object_id);
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object_id);
 		exit;
 	}
 	else
@@ -888,7 +888,7 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 
 else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('cancel') == $langs->trans('Cancel'))
 {
-	Header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);   // Pour reaffichage de la fiche en cours d'edition
+	header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);   // Pour reaffichage de la fiche en cours d'edition
 	exit;
 }
 
@@ -1016,7 +1016,7 @@ else if ($action == 'up' && $user->rights->commande->creer)
 
 	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 
-	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOST('rowid'));
+	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOST('rowid'));
 	exit;
 }
 
@@ -1036,7 +1036,7 @@ else if ($action == 'down' && $user->rights->commande->creer)
 	}
 	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 
-	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOST('rowid'));
+	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOST('rowid'));
 	exit;
 }
 
@@ -1071,7 +1071,7 @@ else if ($action == 'builddoc')	// In get or post
 	}
 	else
 	{
-		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
 		exit;
 	}
 }
@@ -1234,7 +1234,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 					{
 						// Redirect here
 						// This avoid sending mail twice if going out and then back to page
-						Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mesg='.urlencode($mesg));
+						header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mesg='.urlencode($mesg));
 						exit;
 					}
 				}
@@ -1290,7 +1290,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 			if ($result >= 0)
 			{
-				Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
 			}
 			else
@@ -1327,7 +1327,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 			if ($result >= 0)
 			{
-				Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
 			}
 			else {

@@ -136,7 +136,7 @@ if ($_POST["action"] == 'add' && $user->rights->ftp->setup)
 	$id = $ecmdir->create($user);
 	if ($id > 0)
 	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
+		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
 	else

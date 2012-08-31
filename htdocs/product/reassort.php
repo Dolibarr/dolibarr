@@ -171,7 +171,7 @@ if ($resql)
 	if ($num == 1 && ($sall or $snom or $sref))
 	{
 		$objp = $db->fetch_object($resql);
-		Header("Location: fiche.php?id=$objp->rowid");
+		header("Location: fiche.php?id=$objp->rowid");
 		exit;
 	}
 

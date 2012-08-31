@@ -69,7 +69,7 @@ if ($action == "new")
         $result = $object->demande_prelevement($user);
         if ($result > 0)
         {
-            Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+            header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
             exit;
         }
         else
@@ -86,7 +86,7 @@ if ($action == "delete")
         $result = $object->demande_prelevement_delete($user, GETPOST('did'));
         if ($result == 0)
         {
-            Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+            header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
             exit;
         }
     }

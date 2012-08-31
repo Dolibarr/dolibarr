@@ -94,7 +94,7 @@ if ($id > 0 || ! empty($ref))
 }
 else
 {
-	Header('Location: '.DOL_URL_ROOT.'/comm/propal/list.php');
+	header('Location: '.DOL_URL_ROOT.'/comm/propal/list.php');
 	exit;
 }
 
@@ -144,7 +144,7 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->prop
 	$result=$object->delete($user);
 	if ($result > 0)
 	{
-		Header('Location: '.DOL_URL_ROOT.'/comm/propal/list.php');
+		header('Location: '.DOL_URL_ROOT.'/comm/propal/list.php');
 		exit;
 	}
 	else
@@ -177,7 +177,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 	}
 
-	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 	exit;
 }
 
@@ -378,7 +378,7 @@ else if ($action == 'add' && $user->rights->propal->creer)
     			}
     			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 
-    			Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+    			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
     			exit;
     		}
     		else
@@ -556,7 +556,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 						// This avoid sending mail twice if going out and then back to page
 						$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
 						setEventMessage($mesg);
-						Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+						header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 						exit;
 					}
 					else
@@ -970,7 +970,7 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 
 else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('cancel') == $langs->trans('Cancel'))
 {
-	Header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);   // Pour reaffichage de la fiche en cours d'edition
+	header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);   // Pour reaffichage de la fiche en cours d'edition
 	exit;
 }
 
@@ -1000,7 +1000,7 @@ else if ($action == 'builddoc' && $user->rights->propal->creer)
 	}
 	else
 	{
-		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
 		exit;
 	}
 }
@@ -1081,7 +1081,7 @@ else if ($action == 'up' && $user->rights->propal->creer)
 	}
 	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 
-	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.GETPOST('rowid'));
+	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.GETPOST('rowid'));
 	exit;
 }
 
@@ -1101,7 +1101,7 @@ else if ($action == 'down' && $user->rights->propal->creer)
 	}
 	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 
-	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.GETPOST('rowid'));
+	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.GETPOST('rowid'));
 	exit;
 }
 
@@ -1117,7 +1117,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->propal->
 
 		if ($result >= 0)
 		{
-			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		}
 		else
@@ -1155,7 +1155,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->propal->
 
 		if ($result >= 0)
 		{
-			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		}
 		else

@@ -48,7 +48,7 @@ if ($_POST["action"] == 'setpricelevel')
 	$soc->fetch($_GET["id"]);
 	$soc->set_price_level($_POST["price_level"],$user);
 
-	Header("Location: multiprix.php?id=".$_GET["id"]);
+	header("Location: multiprix.php?id=".$_GET["id"]);
 	exit;
 }
 

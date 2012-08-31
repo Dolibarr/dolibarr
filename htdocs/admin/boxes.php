@@ -125,7 +125,7 @@ if ($action == 'add')
 
 	if (! $error)
 	{
-		Header("Location: boxes.php");
+		header("Location: boxes.php");
 	    $db->commit();
 		exit;
 	}

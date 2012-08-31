@@ -130,7 +130,7 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && 
     $result=$subscription->delete($user);
     if ($result > 0)
     {
-    	Header("Location: card_subscriptions.php?rowid=".$subscription->fk_adherent);
+    	header("Location: card_subscriptions.php?rowid=".$subscription->fk_adherent);
     	exit;
     }
     else
