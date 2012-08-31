@@ -61,6 +61,9 @@ if ($object->id > 0)
 	$object->fetch_thirdparty();
 }
 
+$date_start=dol_mktime(0,0,0,GETPOST('projectmonth','int'),GETPOST('projectday','int'),GETPOST('projectyear','int'));
+$date_end=dol_mktime(0,0,0,GETPOST('projectendmonth','int'),GETPOST('projectendday','int'),GETPOST('projectendyear','int'));;
+
 
 /*
  * Actions
@@ -129,8 +132,8 @@ if ($action == 'add' && $user->rights->projet->creer)
         $object->description     = GETPOST('description','alpha');
         $object->public          = GETPOST('public','alpha');
         $object->datec=dol_now();
-        $object->date_start=dol_mktime(0,0,0,GETPOST('projectmonth','int'),GETPOST('projectday','int'),GETPOST('projectyear','int'));
-        $object->date_end=dol_mktime(0,0,0,GETPOST('projectendmonth','int'),GETPOST('projectendday','int'),GETPOST('projectendyear','int'));
+        $object->date_start=$date_start;
+        $object->date_end=$date_end;
 
         $result = $object->create($user);
         if ($result > 0)
@@ -193,13 +196,13 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 
 		$old_start_date = $object->date_start;
 
-        $object->ref             = GETPOST('ref','alpha');
-        $object->title           = GETPOST('title','alpha');
-        $object->socid           = GETPOST('socid','int');
-        $object->description     = GETPOST('description','alpha');
-        $object->public          = GETPOST('public','alpha');
-        $object->date_start   = empty($_POST["project"])?'':dol_mktime(0,0,0,GETPOST('projectmonth'),GETPOST('projectday'),GETPOST('projectyear'));
-        $object->date_end     = empty($_POST["projectend"])?'':dol_mktime(0,0,0,GETPOST('projectendmonth'),GETPOST('projectendday'),GETPOST('projectendyear'));
+        $object->ref          = GETPOST('ref','alpha');
+        $object->title        = GETPOST('title','alpha');
+        $object->socid        = GETPOST('socid','int');
+        $object->description  = GETPOST('description','alpha');
+        $object->public       = GETPOST('public','alpha');
+        $object->date_start   = empty($_POST["project"])?'':$date_start;
+        $object->date_end     = empty($_POST["projectend"])?'':$date_end;
 
         $result=$object->update($user);
 
@@ -387,12 +390,12 @@ if ($action == 'create' && $user->rights->projet->creer)
 
     // Date start
     print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-    print $form->select_date('','project');
+    print $form->select_date(($date_start?$date_start:''),'project');
     print '</td></tr>';
 
     // Date end
     print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-    print $form->select_date(-1,'projectend');
+    print $form->select_date(($date_end?$date_end:-1),'projectend');
     print '</td></tr>';
 
     // Description
@@ -519,10 +522,10 @@ else
 
         // Date start
         print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-        print $form->select_date($object->date_start,'project');
-        print '<input type="checkbox" name="reportdate" value="yes" ';
+        print $form->select_date($object->date_start?$object->date_start:-1,'project');
+        print ' &nbsp; &nbsp; <input type="checkbox" name="reportdate" value="yes" ';
         if ($comefromclone){print ' checked="checked" ';}
-		print '/>'. $langs->trans("ProjectReportDate");
+		print '/> '. $langs->trans("ProjectReportDate");
         print '</td></tr>';
 
         // Date end
