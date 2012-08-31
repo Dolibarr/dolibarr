@@ -1204,17 +1204,18 @@ class Project extends CommonObject
 		    		$this->error.=$task->error;
 		    	}
 	    	}
-
+			//print "$this->date_start + $tasktoshiftdate->date_start - $old_project_dt_start";exit;
+			
 	    	//Calcultate new task start date with difference between old proj start date and origin task start date
 	    	if (!empty($tasktoshiftdate->date_start))
 	    	{
-				$task->date_start			= $this->date_start + ($tasktoshiftdate->date_start - $old_project_dt_st);
+				$task->date_start			= $this->date_start + ($tasktoshiftdate->date_start - $old_project_dt_start);
 	    	}
 
 	    	//Calcultate new task end date with difference between origin proj end date and origin task end date
 	    	if (!empty($tasktoshiftdate->date_end))
 	    	{
-				$task->date_end		    	= $this->date_start + ($tasktoshiftdate->date_end - $old_project_dt_st);
+				$task->date_end		    	= $this->date_start + ($tasktoshiftdate->date_end - $old_project_dt_start);
 	    	}
 
 			if ($to_update)
