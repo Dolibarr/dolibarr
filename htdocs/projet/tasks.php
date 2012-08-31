@@ -124,12 +124,12 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 		{
 		    if (! empty($backtopage))
 			{
-				Header("Location: ".$backtopage);
+				header("Location: ".$backtopage);
 				exit;
 			}
 			else if (empty($projectid))
 			{
-				Header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
+				header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
 				exit;
 			}
 		}
@@ -138,13 +138,13 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 	{
 		if (! empty($backtopage))
 		{
-			Header("Location: ".$backtopage);
+			header("Location: ".$backtopage);
 			exit;
 		}
 	    else if (empty($id))
         {
             // We go back on task list
-            Header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
+            header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
             exit;
         }
 	}

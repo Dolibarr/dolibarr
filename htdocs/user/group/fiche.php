@@ -69,7 +69,7 @@ if ($action == 'confirm_delete' && $confirm == "yes")
     {
         $object->fetch($id);
         $object->delete();
-        Header("Location: index.php");
+        header("Location: index.php");
         exit;
     }
     else
@@ -108,7 +108,7 @@ if ($action == 'add')
             {
                 $db->commit();
 
-                Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+                header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
                 exit;
             }
             else

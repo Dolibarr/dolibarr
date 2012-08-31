@@ -40,26 +40,26 @@ $action=GETPOST('action','alpha');
 if ($action == 'activate_hidemenu')
 {
 	dolibarr_set_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED", '1','chaine',0,'',$conf->entity);
-	Header("Location: ".$_SERVER["PHP_SELF"]);
+	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
 }
 else if ($action == 'disable_hidemenu')
 {
 	dolibarr_del_const($db, "MAIN_MENU_HIDE_UNAUTHORIZED",$conf->entity);
-	Header("Location: ".$_SERVER["PHP_SELF"]);
+	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
 }
 
 if ($action == 'activate_layoutmenu')
 {
 	dolibarr_set_const($db, "MAIN_MENU_USE_JQUERY_LAYOUT", '1','chaine',0,'',$conf->entity);
-	Header("Location: ".$_SERVER["PHP_SELF"]);
+	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
 }
 else if ($action == 'disable_layoutmenu')
 {
 	dolibarr_del_const($db, "MAIN_MENU_USE_JQUERY_LAYOUT",$conf->entity);
-	Header("Location: ".$_SERVER["PHP_SELF"]);
+	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
 }
 

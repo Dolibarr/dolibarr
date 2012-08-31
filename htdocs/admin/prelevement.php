@@ -92,7 +92,7 @@ if ($action == "addnotif")
     $bon = new BonPrelevement($db);
     $bon->AddNotification($db,GETPOST('user','int'),$action);
 
-    Header("Location: prelevement.php");
+    header("Location: prelevement.php");
     exit;
 }
 
@@ -101,7 +101,7 @@ if ($action == "deletenotif")
     $bon = new BonPrelevement($db);
     $bon->DeleteNotificationById(GETPOST('notif','int'));
 
-    Header("Location: prelevement.php");
+    header("Location: prelevement.php");
     exit;
 }
 

@@ -50,7 +50,7 @@ if ($action == 'setcodeproduct')
 {
 	if (dolibarr_set_const($db, "PRODUCT_CODEPRODUCT_ADDON",$value,'chaine',0,'',$conf->entity) > 0)
 	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
+		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
 	else

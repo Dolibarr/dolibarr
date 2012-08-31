@@ -78,7 +78,7 @@ if ($action == 'update')
 
 	$_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
 
-	Header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
+	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
 }
 

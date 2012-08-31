@@ -111,7 +111,7 @@ $cancel <> $langs->trans("Cancel") &&
 if ($cancel == $langs->trans("Cancel"))
 {
 	$action = '';
-	Header("Location: fiche.php?id=".$_POST["id"]);
+	header("Location: fiche.php?id=".$_POST["id"]);
 	exit;
 }
 

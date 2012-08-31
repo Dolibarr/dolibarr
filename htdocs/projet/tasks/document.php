@@ -81,7 +81,7 @@ if (! empty($project_ref) && ! empty($withproject))
 		}
 		else
 		{
-			Header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject?'&withproject=1':'').(empty($mode)?'':'&mode='.$mode));
+			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject?'&withproject=1':'').(empty($mode)?'':'&mode='.$mode));
 			exit;
 		}
 	}
@@ -117,7 +117,7 @@ if ($action=='delete')
 	$ret=dol_delete_file($file);
 	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
 	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-    Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+    header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
     exit;
 }
 
@@ -252,7 +252,7 @@ if ($object->id > 0)
 }
 else
 {
-	Header('Location: index.php');
+	header('Location: index.php');
 	exit;
 }
 

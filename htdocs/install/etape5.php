@@ -79,19 +79,19 @@ if ($action == "set")
 {
     if ($_POST["pass"] <> $_POST["pass_verif"])
     {
-        Header("Location: etape4.php?error=1&selectlang=$setuplang".(isset($_POST["login"])?'&login='.$_POST["login"]:''));
+        header("Location: etape4.php?error=1&selectlang=$setuplang".(isset($_POST["login"])?'&login='.$_POST["login"]:''));
         exit;
     }
 
     if (dol_strlen(trim($_POST["pass"])) == 0)
     {
-        Header("Location: etape4.php?error=2&selectlang=$setuplang".(isset($_POST["login"])?'&login='.$_POST["login"]:''));
+        header("Location: etape4.php?error=2&selectlang=$setuplang".(isset($_POST["login"])?'&login='.$_POST["login"]:''));
         exit;
     }
 
     if (dol_strlen(trim($_POST["login"])) == 0)
     {
-        Header("Location: etape4.php?error=3&selectlang=$setuplang".(isset($_POST["login"])?'&login='.$_POST["login"]:''));
+        header("Location: etape4.php?error=3&selectlang=$setuplang".(isset($_POST["login"])?'&login='.$_POST["login"]:''));
         exit;
     }
 }

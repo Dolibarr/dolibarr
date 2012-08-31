@@ -159,7 +159,7 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
 
     if ($action != 'updateedit' && ! $message)
     {
-        Header("Location: ".$_SERVER["PHP_SELF"]);
+        header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
     }
 }
@@ -193,7 +193,7 @@ if ($action == 'addthumb')
             }
             else dol_syslog($imgThumbMini);
 
-            Header("Location: ".$_SERVER["PHP_SELF"]);
+            header("Location: ".$_SERVER["PHP_SELF"]);
             exit;
         }
         else

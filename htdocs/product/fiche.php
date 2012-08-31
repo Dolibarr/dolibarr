@@ -94,7 +94,7 @@ if (empty($reshook))
     {
         $object->fetch($id);
     	$result = $object->setValueFrom('fk_product_type', GETPOST('fk_product_type'));
-    	Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+    	header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
     	exit;
     }
 
@@ -103,7 +103,7 @@ if (empty($reshook))
     {
     	$object->fetch($id);
     	$result = $object->setValueFrom('fk_barcode_type', GETPOST('fk_barcode_type'));
-    	Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+    	header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
     	exit;
     }
 
@@ -113,7 +113,7 @@ if (empty($reshook))
     	$object->fetch($id);
     	//Todo: ajout verification de la validite du code barre en fonction du type
     	$result = $object->setValueFrom('barcode', GETPOST('barcode'));
-    	Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+    	header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
     	exit;
     }
 
@@ -225,7 +225,7 @@ if (empty($reshook))
 
             if ($id > 0)
             {
-                Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+                header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
                 exit;
             }
             else
@@ -334,7 +334,7 @@ if (empty($reshook))
                         $db->commit();
                         $db->close();
 
-                        Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+                        header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
                         exit;
                     }
                     else
@@ -384,7 +384,7 @@ if (empty($reshook))
 
         if ($result > 0)
         {
-            Header('Location: '.DOL_URL_ROOT.'/product/liste.php?delprod='.urlencode($object->ref));
+            header('Location: '.DOL_URL_ROOT.'/product/liste.php?delprod='.urlencode($object->ref));
             exit;
         }
         else
@@ -470,7 +470,7 @@ if (empty($reshook))
         );
         if ($result > 0)
         {
-            Header("Location: ".DOL_URL_ROOT."/comm/propal.php?id=".$propal->id);
+            header("Location: ".DOL_URL_ROOT."/comm/propal.php?id=".$propal->id);
             return;
         }
 
@@ -555,7 +555,7 @@ if (empty($reshook))
 
         if ($result > 0)
         {
-            Header("Location: ".DOL_URL_ROOT."/commande/fiche.php?id=".$commande->id);
+            header("Location: ".DOL_URL_ROOT."/commande/fiche.php?id=".$commande->id);
             exit;
         }
     }
@@ -640,7 +640,7 @@ if (empty($reshook))
 
         if ($result > 0)
         {
-            Header("Location: ".DOL_URL_ROOT."/compta/facture.php?facid=".$facture->id);
+            header("Location: ".DOL_URL_ROOT."/compta/facture.php?facid=".$facture->id);
             exit;
         }
     }
@@ -649,7 +649,7 @@ if (empty($reshook))
 if (GETPOST("cancel") == $langs->trans("Cancel"))
 {
     $action = '';
-    Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+    header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
     exit;
 }
 
@@ -1280,7 +1280,7 @@ else
     }
     else if ($action != 'create')
     {
-        Header("Location: index.php");
+        header("Location: index.php");
         exit;
     }
 }

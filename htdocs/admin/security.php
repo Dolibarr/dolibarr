@@ -51,7 +51,7 @@ if ($action == 'setgeneraterule')
 	}
 	else
 	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
+		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
 }
@@ -102,7 +102,7 @@ if ($action == 'activate_encrypt')
     if (! $error)
 	{
 		$db->commit();
-		Header("Location: security.php");
+		header("Location: security.php");
 	    exit;
 	}
 	else
@@ -119,7 +119,7 @@ else if ($action == 'disable_encrypt')
 	{
 		dolibarr_del_const($db, "DATABASE_PWD_ENCRYPTED",$conf->entity);
     }
-	Header("Location: security.php");
+	header("Location: security.php");
     exit;
 }
 
@@ -130,7 +130,7 @@ if ($action == 'activate_encryptdbpassconf')
 	{
 		// database value not required
 		//dolibarr_set_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED", "1");
-		Header("Location: security.php");
+		header("Location: security.php");
 		exit;
 	}
 	else
@@ -145,7 +145,7 @@ else if ($action == 'disable_encryptdbpassconf')
 	{
 		// database value not required
 		//dolibarr_del_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED",$conf->entity);
-		Header("Location: security.php");
+		header("Location: security.php");
 		exit;
 	}
 	else
@@ -157,26 +157,26 @@ else if ($action == 'disable_encryptdbpassconf')
 if ($action == 'activate_pdfsecurity')
 {
 	dolibarr_set_const($db, "PDF_SECURITY_ENCRYPTION", "1",'chaine',0,'',$conf->entity);
-	Header("Location: security.php");
+	header("Location: security.php");
 	exit;
 }
 else if ($action == 'disable_pdfsecurity')
 {
 	dolibarr_del_const($db, "PDF_SECURITY_ENCRYPTION",$conf->entity);
-	Header("Location: security.php");
+	header("Location: security.php");
 	exit;
 }
 
 if ($action == 'activate_MAIN_SECURITY_DISABLEFORGETPASSLINK')
 {
 	dolibarr_set_const($db, "MAIN_SECURITY_DISABLEFORGETPASSLINK", '1','chaine',0,'',$conf->entity);
-	Header("Location: security.php");
+	header("Location: security.php");
 	exit;
 }
 else if ($action == 'disable_MAIN_SECURITY_DISABLEFORGETPASSLINK')
 {
 	dolibarr_del_const($db, "MAIN_SECURITY_DISABLEFORGETPASSLINK",$conf->entity);
-	Header("Location: security.php");
+	header("Location: security.php");
 	exit;
 }
 

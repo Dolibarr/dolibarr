@@ -67,7 +67,7 @@ if ($_POST["action"] == 'addcontact' && $user->rights->projet->creer)
 
 	if ($result >= 0)
 	{
-		Header("Location: contact.php?id=".$project->id);
+		header("Location: contact.php?id=".$project->id);
 		exit;
 	}
 	else
@@ -105,7 +105,7 @@ if ($_GET["action"] == 'deleteline' && $user->rights->projet->creer)
 
 	if ($result >= 0)
 	{
-		Header("Location: contact.php?id=".$project->id);
+		header("Location: contact.php?id=".$project->id);
 		exit;
 	}
 	else
