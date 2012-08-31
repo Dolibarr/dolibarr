@@ -143,7 +143,7 @@ if ($resql)
 	if ($num == 1 && ( isset($_POST["sall"]) || $snom || $sref ) )
 	{
 		$objp = $db->fetch_object($resql);
-		Header("Location: fiche.php?id=".$objp->rowid);
+		header("Location: fiche.php?id=".$objp->rowid);
 		exit;
 	}
 

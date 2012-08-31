@@ -45,7 +45,7 @@ if ($action == 'setcodeclient')
 {
 	if (dolibarr_set_const($db, "SOCIETE_CODECLIENT_ADDON",$value,'chaine',0,'',$conf->entity) > 0)
 	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
+		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
 	else
@@ -58,7 +58,7 @@ if ($action == 'setcodecompta')
 {
 	if (dolibarr_set_const($db, "SOCIETE_CODECOMPTA_ADDON",$value,'chaine',0,'',$conf->entity) > 0)
 	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
+		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
 	else
@@ -186,7 +186,7 @@ if ($action == 'setprofid')
 	$idprof="SOCIETE_IDPROF".$value."_UNIQUE";
 	if (dolibarr_set_const($db, $idprof,$status,'chaine',0,'',$conf->entity) > 0)
 	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
+		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
 	else

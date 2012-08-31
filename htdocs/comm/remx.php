@@ -49,7 +49,7 @@ if ($user->societe_id > 0)
 
 if (GETPOST('cancel') && ! empty($backtopage))
 {
-     Header("Location: ".$backtopage);
+     header("Location: ".$backtopage);
      exit;
 }
 
@@ -154,12 +154,12 @@ if ($action == 'setremise')
 			{
 			    if (! empty($backtopage))
 			    {
-			        Header("Location: ".$backtopage.'&discountid='.$discountid);
+			        header("Location: ".$backtopage.'&discountid='.$discountid);
 			        exit;
 			    }
 				else
 				{
-				    Header("Location: remx.php?id=".$_GET["id"]);
+				    header("Location: remx.php?id=".$_GET["id"]);
 				    exit;
 				}
 			}

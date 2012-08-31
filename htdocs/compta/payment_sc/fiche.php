@@ -61,7 +61,7 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && 
 	if ($result > 0)
 	{
         $db->commit();
-        Header("Location: ".DOL_URL_ROOT."/compta/charges/index.php?mode=sconly");
+        header("Location: ".DOL_URL_ROOT."/compta/charges/index.php?mode=sconly");
         exit;
 	}
 	else
@@ -97,7 +97,7 @@ if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && 
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) facture_pdf_create($db, $fac, $fac->modelpdf, $outputlangs, $hookmanager);
 		}
 
-		Header('Location: fiche.php?id='.$paiement->id);
+		header('Location: fiche.php?id='.$paiement->id);
 		exit;
 	}
 	else

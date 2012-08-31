@@ -89,10 +89,10 @@ $filenameurlencoded = dol_sanitizeFileName(urlencode($filename));
 //$filename = dol_sanitizeFileName($filename);
 
 
-Header("Content-Disposition: attachment; filename=\"".$filename."\"");
-Header("Content-Length: ".dol_strlen($output));
-Header("Connection: close");
-Header("Content-Type: text/x-vcard; name=\"".$filename."\"");
+header("Content-Disposition: attachment; filename=\"".$filename."\"");
+header("Content-Length: ".dol_strlen($output));
+header("Connection: close");
+header("Content-Type: text/x-vcard; name=\"".$filename."\"");
 
 print $output;
 

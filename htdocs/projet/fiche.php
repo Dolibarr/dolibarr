@@ -74,7 +74,7 @@ if (GETPOST("cancel") && ! empty($backtopage))
 	    $result=$object->delete($user);
 	    if ($result > 0)
 	    {
-	        Header("Location: index.php");
+	        header("Location: index.php");
 	        exit;
 	    }
 	    else
@@ -93,7 +93,7 @@ if (GETPOST("cancel") && (GETPOST("comefromclone")==1))
     $result=$object->delete($user);
     if ($result > 0)
     {
-        Header("Location: index.php");
+        header("Location: index.php");
         exit;
     }
     else
@@ -155,7 +155,7 @@ if ($action == 'add' && $user->rights->projet->creer)
         {
             $db->commit();
 
-            Header("Location:fiche.php?id=".$object->id);
+            header("Location:fiche.php?id=".$object->id);
             exit;
         }
         else
@@ -241,7 +241,7 @@ if ($action == 'builddoc' && $user->rights->projet->creer)
     }
     else
     {
-        Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
         exit;
     }
 }
@@ -296,7 +296,7 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights-
     $result=$object->delete($user);
     if ($result > 0)
     {
-        Header("Location: index.php");
+        header("Location: index.php");
         exit;
     }
     else

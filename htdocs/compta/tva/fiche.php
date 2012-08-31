@@ -69,7 +69,7 @@ if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
     if ($ret > 0)
     {
         $db->commit();
-        Header("Location: reglement.php");
+        header("Location: reglement.php");
         exit;
     }
     else

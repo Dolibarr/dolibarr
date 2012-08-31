@@ -68,7 +68,7 @@ if ($action == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 	$result=$chargesociales->delete($user);
 	if ($result > 0)
 	{
-		Header("Location: index.php");
+		header("Location: index.php");
 		exit;
 	}
 	else

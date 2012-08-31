@@ -185,7 +185,7 @@ elseif ($action == 'confirm_delete' && $confirm == 'yes')
 	{
 		$db->commit();
 
-		Header("Location: ".DOL_URL_ROOT.'/admin/menus/index.php?menu_handler='.$menu_handler.'&mesg='.urlencode($langs->trans("MenuDeleted")));
+		header("Location: ".DOL_URL_ROOT.'/admin/menus/index.php?menu_handler='.$menu_handler.'&mesg='.urlencode($langs->trans("MenuDeleted")));
 		exit ;
 	}
 	else

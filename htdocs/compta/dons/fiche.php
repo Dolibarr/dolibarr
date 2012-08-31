@@ -63,7 +63,7 @@ if ($action == 'update')
 {
 	if (! empty($cancel))
 	{
-		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
 	}
 
@@ -107,7 +107,7 @@ if ($action == 'update')
 
 		if ($don->update($user) > 0)
 		{
-			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$don->id);
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$don->id);
 			exit;
 		}
 	}
@@ -117,7 +117,7 @@ if ($action == 'add')
 {
 	if (! empty($cancel))
 	{
-		Header("Location: index.php");
+		header("Location: index.php");
 		exit;
 	}
 
@@ -159,7 +159,7 @@ if ($action == 'add')
 
 		if ($don->create($user) > 0)
 		{
-			Header("Location: index.php");
+			header("Location: index.php");
 			exit;
 		}
 	}
@@ -168,7 +168,7 @@ if ($action == 'add')
 if ($action == 'delete')
 {
 	$don->delete($id);
-	Header("Location: liste.php");
+	header("Location: liste.php");
 	exit;
 }
 if ($action == 'commentaire')
@@ -180,7 +180,7 @@ if ($action == 'valid_promesse')
 {
 	if ($don->valid_promesse($id, $user->id) >= 0)
 	{
-		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
 	}
     else $mesg=$don->error;
@@ -189,7 +189,7 @@ if ($action == 'set_cancel')
 {
     if ($don->set_cancel($id) >= 0)
     {
-        Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+        header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
         exit;
     }
     else $mesg=$don->error;
@@ -198,7 +198,7 @@ if ($action == 'set_paid')
 {
 	if ($don->set_paye($id, $modepaiement) >= 0)
 	{
-		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
 	}
     else $mesg=$don->error;
@@ -207,7 +207,7 @@ if ($action == 'set_encaisse')
 {
 	if ($don->set_encaisse($id) >= 0)
 	{
-        Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+        header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
 	}
     else $mesg=$don->error;
@@ -244,7 +244,7 @@ if ($action == 'builddoc')
 	}
 	else
 	{
-		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$donation->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$donation->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
 		exit;
 	}
 }

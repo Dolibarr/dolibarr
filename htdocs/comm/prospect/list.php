@@ -222,7 +222,7 @@ if ($resql)
 	if ($num == 1 && $socname)
 	{
 		$obj = $db->fetch_object($resql);
-		Header("Location: fiche.php?socid=".$obj->rowid);
+		header("Location: fiche.php?socid=".$obj->rowid);
 		exit;
 	}
 	else

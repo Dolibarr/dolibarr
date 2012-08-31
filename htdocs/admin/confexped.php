@@ -40,13 +40,13 @@ $action=GETPOST('action','alpha');
 if ($action == 'activate_sending')
 {
     dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1",'chaine',0,'',$conf->entity);
-    Header("Location: confexped.php");
+    header("Location: confexped.php");
     exit;
 }
 else if ($action == 'disable_sending')
 {
 	dolibarr_del_const($db, "MAIN_SUBMODULE_EXPEDITION",$conf->entity);
-    Header("Location: confexped.php");
+    header("Location: confexped.php");
     exit;
 }
 // Delivery note
@@ -54,13 +54,13 @@ else if ($action == 'activate_delivery')
 {
     dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1",'chaine',0,'',$conf->entity);    // We must also enable this
     dolibarr_set_const($db, "MAIN_SUBMODULE_LIVRAISON", "1",'chaine',0,'',$conf->entity);
-	Header("Location: confexped.php");
+	header("Location: confexped.php");
 	exit;
 }
 else if ($action == 'disable_delivery')
 {
 	dolibarr_del_const($db, "MAIN_SUBMODULE_LIVRAISON",$conf->entity);
-    Header("Location: confexped.php");
+    header("Location: confexped.php");
     exit;
 }
 

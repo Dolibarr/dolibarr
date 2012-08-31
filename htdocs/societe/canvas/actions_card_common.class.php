@@ -242,19 +242,19 @@ abstract class ActionsCardCommon
 
                         if ( $this->object->client == 1 )
                         {
-                            Header("Location: ".DOL_URL_ROOT."/comm/fiche.php?socid=".$this->object->id);
+                            header("Location: ".DOL_URL_ROOT."/comm/fiche.php?socid=".$this->object->id);
                             return;
                         }
                         else
                         {
                             if (  $this->object->fournisseur == 1 )
                             {
-                                Header("Location: ".DOL_URL_ROOT."/fourn/fiche.php?socid=".$this->object->id);
+                                header("Location: ".DOL_URL_ROOT."/fourn/fiche.php?socid=".$this->object->id);
                                 return;
                             }
                             else
                             {
-                                Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$this->object->id);
+                                header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$this->object->id);
                                 return;
                             }
                         }
@@ -273,7 +273,7 @@ abstract class ActionsCardCommon
                 {
                     if ($_POST["cancel"])
                     {
-                        Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$this->object->id);
+                        header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$this->object->id);
                         exit;
                     }
 
@@ -286,7 +286,7 @@ abstract class ActionsCardCommon
                     $result = $this->object->update($this->object->id, $user, 1, $oldsoccanvas->codeclient_modifiable(), $oldsoccanvas->codefournisseur_modifiable());
                     if ($result >= 0)
                     {
-                        Header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$this->object->id);
+                        header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$this->object->id);
                         exit;
                     }
                     else
@@ -306,7 +306,7 @@ abstract class ActionsCardCommon
 
             if ($result >= 0)
             {
-                Header("Location: ".DOL_URL_ROOT."/societe/societe.php?delsoc=".$this->object->nom."");
+                header("Location: ".DOL_URL_ROOT."/societe/societe.php?delsoc=".$this->object->nom."");
                 exit;
             }
             else
@@ -350,7 +350,7 @@ abstract class ActionsCardCommon
                 }
                 else
                 {
-                    Header('Location: '.$_SERVER["PHP_SELF"].'?socid='.$this->object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+                    header('Location: '.$_SERVER["PHP_SELF"].'?socid='.$this->object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
                     exit;
                 }
             }
