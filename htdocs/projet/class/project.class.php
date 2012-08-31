@@ -82,7 +82,7 @@ class Project extends CommonObject
         if (!trim($this->ref))
         {
             $this->error = 'ErrorFieldsRequired';
-            dol_syslog(get_class($this)."::Create error -1 ref null", LOG_ERR);
+            dol_syslog(get_class($this)."::create error -1 ref null", LOG_ERR);
             return -1;
         }
 
@@ -139,7 +139,7 @@ class Project extends CommonObject
         {
             $this->error = $this->db->lasterror();
             $this->errno = $this->db->lasterrno();
-            dol_syslog(get_class($this)."::Create error -2 " . $this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::create error -2 " . $this->error, LOG_ERR);
             $error++;
         }
 

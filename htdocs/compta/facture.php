@@ -1010,7 +1010,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
             {
             	$pu_ht=price2num($price_ht, 'MU');
 				$pu_ttc=price2num(GETPOST('price_ttc'), 'MU');
-				$tva_npr=(preg_match('/\*/', $tva_tx))?1:0);
+				$tva_npr=(preg_match('/\*/', $tva_tx)?1:0);
 				$tva_tx=str_replace('*','', $tva_tx);
 				$desc = $product_desc;
             }
