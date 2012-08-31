@@ -30,7 +30,7 @@ return "Regis Houssin";
 # script_dolibarr_versions()
 sub script_dolibarr_versions
 {
-return ( "3.2.0", "3.1.1", "3.0.1", "2.9.0" );
+return ( "3.2.1", "3.1.1", "3.0.1", "2.9.0" );
 }
 
 sub script_dolibarr_category
@@ -362,7 +362,9 @@ sub script_dolibarr_check_latest
 {
 local ($ver) = @_;
 local @vers = &osdn_package_versions("dolibarr",
-                $ver >= 3 ? "dolibarr\\-(3\\.[0-9\\.]+)\\.tgz" :
+                $ver >= 3.2 ? "dolibarr\\-(3\\.[0-9\\.]+)\\.tgz" :
+                $ver >= 3.1 ? "dolibarr\\-(3\\.1\\.[0-9\\.]+)\\.tgz" :
+                $ver >= 3 ? "dolibarr\\-(3\\.0\\.[0-9\\.]+)\\.tgz" :
                 $ver >= 2.9 ? "dolibarr\\-(2\\.9\\.[0-9\\.]+)\\.tgz" :
                               "dolibarr\\-(2\\.8\\.[0-9\\.]+)\\.tgz");
 return "Failed to find versions" if (!@vers);

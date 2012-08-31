@@ -63,7 +63,7 @@
 
 	<td align="right">
 	<?php
-	if ($buyer->tva_assuj == "0") echo '<input type="hidden" name="np_tva_tx" value="0">0';
+	if ($seller->tva_assuj == "0") echo '<input type="hidden" name="np_tva_tx" value="0">0';
 	else echo $form->load_tva('np_tva_tx', (isset($_POST["np_tva_tx"])?$_POST["np_tva_tx"]:-1), $seller, $buyer);
 	?>
 	</td>
