@@ -552,7 +552,7 @@ if ($user->rights->adherent->supprimer && $action == 'confirm_delete' && $confir
         }
         else
         {
-    	    Header("Location: liste.php");
+    	    header("Location: liste.php");
     	    exit;
         }
     }

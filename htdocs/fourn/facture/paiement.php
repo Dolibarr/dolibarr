@@ -161,7 +161,7 @@ if ($action == 'add_paiement')
             }
             if ($invoiceid > 0) $loc = DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$invoiceid;
             else $loc = DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement_id;
-            Header('Location: '.$loc);
+            header('Location: '.$loc);
             exit;
         }
         else

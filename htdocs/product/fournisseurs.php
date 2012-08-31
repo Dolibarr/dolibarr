@@ -179,7 +179,7 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
 if (GETPOST('cancel') == $langs->trans("Cancel"))
 {
 	$action = '';
-	Header("Location: fournisseurs.php?id=".$_GET["id"]);
+	header("Location: fournisseurs.php?id=".$_GET["id"]);
 	exit;
 }
 

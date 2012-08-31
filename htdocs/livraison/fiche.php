@@ -92,7 +92,7 @@ if ($action == 'add')
 	if ($ret > 0)
 	{
 		$db->commit();
-		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$delivery->id);
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$delivery->id);
 		exit;
 	}
 	else
@@ -147,7 +147,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expeditio
 	if ($result > 0)
 	{
 		$db->commit();
-		Header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
+		header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
 		exit;
 	}
 	else

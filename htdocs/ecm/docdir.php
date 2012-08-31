@@ -88,7 +88,7 @@ if ($action == 'add' && $user->rights->ecm->setup)
 {
 	if (! empty($_POST["cancel"]))
 	{
-		Header("Location: ".DOL_URL_ROOT.'/ecm/index.php?action=file_manager');
+		header("Location: ".DOL_URL_ROOT.'/ecm/index.php?action=file_manager');
 		exit;
 	}
 	$ecmdir->ref                = trim($_POST["ref"]);
@@ -111,7 +111,7 @@ if ($action == 'add' && $user->rights->ecm->setup)
 
 		if ($id > 0)
 		{
-			Header("Location: ".DOL_URL_ROOT.'/ecm/index.php?action=file_manager');
+			header("Location: ".DOL_URL_ROOT.'/ecm/index.php?action=file_manager');
 			exit;
 		}
 		else

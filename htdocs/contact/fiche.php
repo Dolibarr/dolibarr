@@ -175,7 +175,7 @@ if (empty($reshook))
             $db->commit();
             if (! empty($backtopage)) $url=$backtopage;
             else $url='fiche.php?id='.$id;
-            Header("Location: ".$url);
+            header("Location: ".$url);
             exit;
         }
         else
@@ -194,7 +194,7 @@ if (empty($reshook))
         $result = $object->delete();
         if ($result > 0)
         {
-            Header("Location: ".DOL_URL_ROOT.'/contact/list.php');
+            header("Location: ".DOL_URL_ROOT.'/contact/list.php');
             exit;
         }
         else

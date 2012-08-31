@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -124,12 +124,12 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 		{
 		    if (! empty($backtopage))
 			{
-				Header("Location: ".$backtopage);
+				header("Location: ".$backtopage);
 				exit;
 			}
 			else if (empty($projectid))
 			{
-				Header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
+				header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
 				exit;
 			}
 		}
@@ -138,13 +138,13 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 	{
 		if (! empty($backtopage))
 		{
-			Header("Location: ".$backtopage);
+			header("Location: ".$backtopage);
 			exit;
 		}
 	    else if (empty($id))
         {
             // We go back on task list
-            Header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
+            header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php'.(empty($mode)?'':'?mode='.$mode));
             exit;
         }
 	}
@@ -212,7 +212,10 @@ if ($id > 0 || ! empty($ref))
     else print $langs->trans('PrivateProject');
     print '</td></tr>';
 
- 	// Date start
+    // Statut
+    print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
+
+    // Date start
     print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
     print dol_print_date($object->date_start,'day');
     print '</td></tr>';
@@ -221,9 +224,6 @@ if ($id > 0 || ! empty($ref))
     print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
     print dol_print_date($object->date_end,'day');
     print '</td></tr>';
-
-    // Statut
-    print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
     print '</table>';
 

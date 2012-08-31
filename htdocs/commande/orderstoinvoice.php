@@ -331,7 +331,7 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 		if ($id > 0 && ! $error)
 		{
 			$db->commit();
-			Header('Location: '.DOL_URL_ROOT.'/compta/facture.php?facid='.$id);
+			header('Location: '.DOL_URL_ROOT.'/compta/facture.php?facid='.$id);
 			exit;
 		}
 		else

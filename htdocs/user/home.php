@@ -26,7 +26,7 @@ require '../main.inc.php';
 if (! $user->rights->user->user->lire && ! $user->admin)
 {
 	// Redirection vers la page de l'utilisateur
-	Header("Location: fiche.php?id=".$user->id);
+	header("Location: fiche.php?id=".$user->id);
 	exit;
 }
 

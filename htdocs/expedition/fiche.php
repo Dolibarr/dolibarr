@@ -158,7 +158,7 @@ if ($action == 'add')
     if (! $error)
     {
         $db->commit();
-        Header("Location: fiche.php?id=".$object->id);
+        header("Location: fiche.php?id=".$object->id);
         exit;
     }
     else
@@ -178,7 +178,7 @@ else if ($action == 'create_delivery' && $conf->livraison_bon->enabled && $user-
     $result = $object->create_delivery($user);
     if ($result > 0)
     {
-        Header("Location: ".DOL_URL_ROOT.'/livraison/fiche.php?id='.$result);
+        header("Location: ".DOL_URL_ROOT.'/livraison/fiche.php?id='.$result);
         exit;
     }
     else
@@ -223,7 +223,7 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expe
     $result = $object->delete();
     if ($result > 0)
     {
-        Header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
+        header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
         exit;
     }
     else
@@ -281,7 +281,7 @@ else if ($action == 'settrackingnumber' || $action == 'settrackingurl'
     {
         if ($shipping->update($user) >= 0)
         {
-            Header("Location: fiche.php?id=".$shipping->id);
+            header("Location: fiche.php?id=".$shipping->id);
             exit;
         }
         $mesg=$shipping->error;
@@ -483,7 +483,7 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
                             // This avoid sending mail twice if going out and then back to page
                         	$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
                             setEventMessage($mesg);
-                            Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+                            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
                             exit;
                         }
                     }

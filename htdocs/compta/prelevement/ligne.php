@@ -63,21 +63,21 @@ if ($action == 'confirm_rejet')
 
 				$rej->create($user, $id, GETPOST('motif','alpha'), $daterej, $lipre->bon_rowid, GETPOST('facturer','int'));
 
-				Header("Location: ligne.php?id=".$id);
+				header("Location: ligne.php?id=".$id);
 				exit;
 			}
 			else
 			{
 				dol_syslog("Motif : ".GETPOST('motif','alpha'));
 				dol_syslog("$daterej $time ");
-				Header("Location: ligne.php?id=".$id."&action=rejet");
+				header("Location: ligne.php?id=".$id."&action=rejet");
 				exit;
 			}
 		}
 	}
 	else
 	{
-		Header("Location: ligne.php?id=".$id);
+		header("Location: ligne.php?id=".$id);
 		exit;
 	}
 }

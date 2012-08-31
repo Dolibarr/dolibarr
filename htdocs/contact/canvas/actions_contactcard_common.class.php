@@ -155,7 +155,7 @@ abstract class ActionsContactCardCommon
                 $id =  $this->object->create($user);
                 if ($id > 0)
                 {
-                    Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+                    header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
                     exit;
                 }
                 else
@@ -176,7 +176,7 @@ abstract class ActionsContactCardCommon
             $result = $this->object->delete();
             if ($result > 0)
             {
-                Header("Location: list.php");
+                header("Location: list.php");
                 exit;
             }
             else
@@ -189,7 +189,7 @@ abstract class ActionsContactCardCommon
         {
         	if ($_POST["cancel"])
         	{
-        		Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$this->object->id);
+        		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$this->object->id);
         		exit;
         	}
 
@@ -211,7 +211,7 @@ abstract class ActionsContactCardCommon
 
                 if ($result > 0)
                 {
-                    Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$this->object->id);
+                    header("Location: ".$_SERVER["PHP_SELF"]."?id=".$this->object->id);
                     exit;
                 }
                 else

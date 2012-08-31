@@ -130,7 +130,7 @@ else if ($action == 'reopen' && $user->rights->commande->creer)
 		$result = $object->set_reopen($user);
 		if ($result > 0)
 		{
-			Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		}
 		else
@@ -146,7 +146,7 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->comm
 	$result=$object->delete($user);
 	if ($result > 0)
 	{
-		Header('Location: index.php');
+		header('Location: index.php');
 		exit;
 	}
 	else
@@ -177,7 +177,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 			commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 		}
 
-		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
 	}
 	else
@@ -383,7 +383,7 @@ else if ($action == 'add' && $user->rights->commande->creer)
 	if ($object_id > 0 && ! $error)
 	{
 		$db->commit();
-		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object_id);
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object_id);
 		exit;
 	}
 	else
@@ -527,14 +527,9 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 	$idprod=GETPOST('idprod', 'int');
 	$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
 	$price_ht = GETPOST('price_ht');
-	$np_price = GETPOST('np_price');
+	$tva_tx = GETPOST('tva_tx');
 
-	if ($conf->global->MAIN_FEATURES_LEVEL > 1 && (empty($idprod) || GETPOST('update_price')) && ($price_ht < 0) && (GETPOST('qty') < 0))
-    {
-        setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), 'errors');
-        $error = true;
-    }
-	else if ($conf->global->MAIN_FEATURES_LEVEL < 2 && empty($idprod) && ($np_price < 0) && (GETPOST('qty') < 0))
+	if ((empty($idprod) || GETPOST('usenewaddlineform')) && ($price_ht < 0) && (GETPOST('qty') < 0))
     {
         setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), 'errors');
         $error = true;
@@ -544,12 +539,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), 'errors');
         $error = true;
 	}
-	if ($conf->global->MAIN_FEATURES_LEVEL > 1 && empty($idprod) && (!($price_ht >= 0) || $price_ht == ''))	// Unit price can be 0 but not ''
-	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
-		$error++;
-	}
-	else if ($conf->global->MAIN_FEATURES_LEVEL < 2 && empty($idprod) && (!($np_price >= 0) || $np_price == ''))	// Unit price can be 0 but not ''
+	if ((empty($idprod) || GETPOST('usenewaddlineform')) && (!($price_ht >= 0) || $price_ht == ''))	// Unit price can be 0 but not ''
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
 		$error++;
@@ -585,12 +575,13 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 			$label = ((GETPOST('product_label') && GETPOST('product_label')!=$prod->label)?GETPOST('product_label'):'');
 
 			// Update if prices fields are defined
-			if ($conf->global->MAIN_FEATURES_LEVEL > 1 && isset($price_ht))
+			if (GETPOST('usenewaddlineform'))
 			{
 				$pu_ht=price2num($price_ht, 'MU');
 				$pu_ttc=price2num(GETPOST('price_ttc'), 'MU');
-				$tva_tx=str_replace('*','', GETPOST('tva_tx'));
-				$tva_npr=preg_match('/\*/', GETPOST('tva_tx'))?1:0;
+				$tva_npr=(preg_match('/\*/', $tva_tx)?1:0);
+				$tva_tx=str_replace('*','', $tva_tx);
+				$desc = $product_desc;
 			}
 			else
 			{
@@ -626,13 +617,6 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 						$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
 					}
 				}
-			}
-
-			if ($conf->global->MAIN_FEATURES_LEVEL > 1) {
-
-				$desc = $product_desc;
-
-			} else {
 
 				// Define output language
 				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
@@ -662,19 +646,18 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 		}
 		else
 		{
-			$pu_ht=($price_ht?$price_ht:$np_price);
-			$pu_ttc=price2num(GETPOST('price_ttc'), 'MU');
-			$rate=GETPOST('tva_tx')?GETPOST('tva_tx'):GETPOST('np_tva_tx');
-			$tva_tx=str_replace('*','',$rate);
-			$tva_npr=preg_match('/\*/',$rate)?1:0;
-			$label=(GETPOST('product_label')?GETPOST('product_label'):'');
-			$desc=$product_desc;
-			$type=GETPOST('type');
+			$pu_ht		= price2num($price_ht, 'MU');
+			$pu_ttc		= price2num(GETPOST('price_ttc'), 'MU');
+			$tva_npr	= (preg_match('/\*/', $tva_tx)?1:0);
+			$tva_tx		= str_replace('*', '', $tva_tx);
+			$label		= (GETPOST('product_label')?GETPOST('product_label'):'');
+			$desc		= $product_desc;
+			$type		= GETPOST('type');
 		}
 
 		// Margin
-		$fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):(GETPOST('np_fournprice')?GETPOST('np_fournprice'):''));
-		$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):(GETPOST('np_buying_price')?GETPOST('np_buying_price'):''));
+		$fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):'');
+		$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
 
 		// Local Taxes
 		$localtax1_tx= get_localtax($tva_tx, 1, $object->client);
@@ -750,11 +733,8 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 				unset($_POST['buying_price']);
 
 				// old method
-				unset($_POST['np_price']);
 				unset($_POST['np_desc']);
 				unset($_POST['dp_desc']);
-				unset($_POST['np_fournprice']);
-				unset($_POST['np_buying_price']);
 			}
 			else
 			{
@@ -888,7 +868,7 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 
 else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('cancel') == $langs->trans('Cancel'))
 {
-	Header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);   // Pour reaffichage de la fiche en cours d'edition
+	header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);   // Pour reaffichage de la fiche en cours d'edition
 	exit;
 }
 
@@ -1016,7 +996,7 @@ else if ($action == 'up' && $user->rights->commande->creer)
 
 	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 
-	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOST('rowid'));
+	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOST('rowid'));
 	exit;
 }
 
@@ -1036,7 +1016,7 @@ else if ($action == 'down' && $user->rights->commande->creer)
 	}
 	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 
-	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOST('rowid'));
+	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOST('rowid'));
 	exit;
 }
 
@@ -1071,7 +1051,7 @@ else if ($action == 'builddoc')	// In get or post
 	}
 	else
 	{
-		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
 		exit;
 	}
 }
@@ -1234,7 +1214,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 					{
 						// Redirect here
 						// This avoid sending mail twice if going out and then back to page
-						Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mesg='.urlencode($mesg));
+						header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mesg='.urlencode($mesg));
 						exit;
 					}
 				}
@@ -1290,7 +1270,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 			if ($result >= 0)
 			{
-				Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
 			}
 			else
@@ -1327,7 +1307,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 			if ($result >= 0)
 			{
-				Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
 			}
 			else {

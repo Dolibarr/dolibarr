@@ -47,7 +47,7 @@ if ($action == 'set' && $user->admin)
     $result=activateModule($_GET["value"]);
     $mesg='';
     if ($result) $mesg=$result;
-    Header("Location: modules.php?mode=".$mode."&mesg=".urlencode($mesg));
+    header("Location: modules.php?mode=".$mode."&mesg=".urlencode($mesg));
 	exit;
 }
 
@@ -56,7 +56,7 @@ if ($action == 'reset' && $user->admin)
     $result=unActivateModule($_GET["value"]);
     $mesg='';
     if ($result) $mesg=$result;
-    Header("Location: modules.php?mode=".$mode."&mesg=".urlencode($mesg));
+    header("Location: modules.php?mode=".$mode."&mesg=".urlencode($mesg));
 	exit;
 }
 

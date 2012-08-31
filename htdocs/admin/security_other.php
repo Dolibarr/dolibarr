@@ -49,26 +49,26 @@ if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 if ($_GET["action"] == 'activate_captcha')
 {
     dolibarr_set_const($db, "MAIN_SECURITY_ENABLECAPTCHA", '1','chaine',0,'',$conf->entity);
-    Header("Location: security_other.php");
+    header("Location: security_other.php");
     exit;
 }
 else if ($_GET["action"] == 'disable_captcha')
 {
     dolibarr_del_const($db, "MAIN_SECURITY_ENABLECAPTCHA",$conf->entity);
-    Header("Location: security_other.php");
+    header("Location: security_other.php");
     exit;
 }
 
 if ($_GET["action"] == 'activate_advancedperms')
 {
     dolibarr_set_const($db, "MAIN_USE_ADVANCED_PERMS", '1','chaine',0,'',$conf->entity);
-    Header("Location: security_other.php");
+    header("Location: security_other.php");
     exit;
 }
 else if ($_GET["action"] == 'disable_advancedperms')
 {
     dolibarr_del_const($db, "MAIN_USE_ADVANCED_PERMS",$conf->entity);
-    Header("Location: security_other.php");
+    header("Location: security_other.php");
     exit;
 }
 

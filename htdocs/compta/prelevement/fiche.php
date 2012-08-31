@@ -52,7 +52,7 @@ if ( $action == 'confirm_credite' && GETPOST('confirm','alpha') == 'yes')
 	$bon->id = $id;
 	$bon->set_credite();
 
-	Header("Location: fiche.php?id=".$id);
+	header("Location: fiche.php?id=".$id);
 	exit;
 }
 
@@ -74,7 +74,7 @@ if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
 			$bon->set_infotrans($user, $dt, GETPOST('methode','alpha'));
 		}
 
-		Header("Location: fiche.php?id=".$id);
+		header("Location: fiche.php?id=".$id);
         exit;
 	}
 	else
@@ -94,11 +94,11 @@ if ($action == 'infocredit' && $user->rights->prelevement->bons->credit)
 
 	if ($error == 0)
 	{
-		Header("Location: fiche.php?id=".$id);
+		header("Location: fiche.php?id=".$id);
 	}
 	else
 	{
-		Header("Location: fiche.php?id=".$id."&error=$error");
+		header("Location: fiche.php?id=".$id."&error=$error");
 	}
 	exit;
 }

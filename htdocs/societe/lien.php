@@ -52,12 +52,12 @@ if ($socid && $_GET["select"])
 		$soc->fetch($_GET["socid"]);
 		$soc->set_parent($_GET["select"]);
 
-		Header("Location: lien.php?socid=".$soc->id);
+		header("Location: lien.php?socid=".$soc->id);
 		exit;
 	}
 	else
 	{
-		Header("Location: lien.php?socid=".$_GET["socid"]);
+		header("Location: lien.php?socid=".$_GET["socid"]);
 		exit;
 	}
 }
@@ -72,12 +72,12 @@ if ($socid && $_GET["delsocid"])
 		$soc->fetch($_GET["socid"]);
 		$soc->remove_parent($_GET["delsocid"]);
 
-		Header("Location: lien.php?socid=".$soc->id);
+		header("Location: lien.php?socid=".$soc->id);
 		exit;
 	}
 	else
 	{
-		Header("Location: lien.php?socid=".$_GET["socid"]);
+		header("Location: lien.php?socid=".$_GET["socid"]);
 		exit;
 	}
 }

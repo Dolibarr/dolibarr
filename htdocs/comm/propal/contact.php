@@ -69,7 +69,7 @@ if (! $error)
 }
 else
 {
-	Header('Location: '.DOL_URL_ROOT.'/comm/propal/list.php');
+	header('Location: '.DOL_URL_ROOT.'/comm/propal/list.php');
 	exit;
 }
 
@@ -88,7 +88,7 @@ if ($action == 'addcontact' && $user->rights->propale->creer)
 
 	if ($result >= 0)
 	{
-		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	}
 	else
@@ -121,7 +121,7 @@ else if ($action == 'deletecontact' && $user->rights->propale->creer)
 
 	if ($result >= 0)
 	{
-		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	}
 	else
