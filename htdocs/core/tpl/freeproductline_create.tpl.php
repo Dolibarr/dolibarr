@@ -77,7 +77,7 @@ if (! empty($conf->margin->enabled)) {
 	<td align="right">
 	<?php
 	if ($seller->tva_assuj == "0") echo '<input type="hidden" name="np_tva_tx" value="0">0';
-	else echo $form->load_tva('np_tva_tx', (isset($_POST["np_tva_tx"])?$_POST["np_tva_tx"]:-1), $seller, $buyer);
+	else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?$_POST["tva_tx"]:-1), $seller, $buyer);
 	?>
 	</td>
 	<td align="right"><input type="text" size="5" name="price_ht" value="<?php echo (isset($_POST["price_ht"])?$_POST["price_ht"]:''); ?>"></td>
@@ -87,7 +87,7 @@ if (! empty($conf->margin->enabled)) {
 $colspan = 4;
 if (! empty($conf->margin->enabled)) {
 ?>
-	<td align="right"><input type="text" size="5" name="np_buying_price" value="<?php echo (isset($_POST["np_buying_price"])?$_POST["np_buying_price"]:''); ?>"></td>
+	<td align="right"><input type="text" size="5" name="buying_price" value="<?php echo (isset($_POST["buying_price"])?$_POST["buying_price"]:''); ?>"></td>
 <?php
   if($conf->global->DISPLAY_MARGIN_RATES)
     $colspan++;

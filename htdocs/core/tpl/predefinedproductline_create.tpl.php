@@ -96,8 +96,8 @@ $colspan = 4;
 if (! empty($conf->margin->enabled)) {
 ?>
 	<td align="right">
-  <select id="np_fournprice" name="np_fournprice" style="display: none;"></select>
-  <input type="text" size="5" id="np_buying_price" name="np_buying_price" value="<?php echo (isset($_POST["np_buying_price"])?$_POST["np_buying_price"]:''); ?>">
+  <select id="fournprice" name="fournprice" style="display: none;"></select>
+  <input type="text" size="5" id="buying_price" name="buying_price" value="<?php echo (isset($_POST["buying_price"])?$_POST["buying_price"]:''); ?>">
   </td>
 <?php
   if($conf->global->DISPLAY_MARGIN_RATES)

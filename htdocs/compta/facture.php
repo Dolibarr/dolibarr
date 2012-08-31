@@ -950,6 +950,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
     $idprod=GETPOST('idprod', 'int');
 	$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
 	$price_ht = GETPOST('price_ht');
+	$tva_tx = GETPOST('tva_tx');
 
 	if ((empty($idprod) || GETPOST('usenewaddlineform')) && ($price_ht < 0) && (GETPOST('qty') < 0))
     {
@@ -1009,8 +1010,9 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
             {
             	$pu_ht=price2num($price_ht, 'MU');
 				$pu_ttc=price2num(GETPOST('price_ttc'), 'MU');
-				$tva_tx=str_replace('*','', GETPOST('tva_tx'));
-				$tva_npr=preg_match('/\*/', GETPOST('tva_tx'))?1:0;
+				$tva_npr=(preg_match('/\*/', $tva_tx))?1:0);
+				$tva_tx=str_replace('*','', $tva_tx);
+				$desc = $product_desc;
             }
             else
             {
@@ -1046,13 +1048,6 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
             			$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
             		}
             	}
-            }
-
-            if (GETPOST('usenewaddlineform')) {
-
-            	$desc = $product_desc;
-
-            } else {
 
             	// Define output language
             	if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
@@ -1092,19 +1087,18 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
         }
         else
         {
-            $pu_ht=($price_ht?$price_ht:$np_price);
-            $pu_ttc=price2num(GETPOST('price_ttc'), 'MU');
-			$rate=GETPOST('tva_tx')?GETPOST('tva_tx'):GETPOST('np_tva_tx');
-			$tva_tx=str_replace('*','',$rate);
-			$tva_npr=preg_match('/\*/',$rate)?1:0;
-			$label=(GETPOST('product_label')?GETPOST('product_label'):'');
-			$desc=$product_desc;
-			$type=GETPOST('type');
+            $pu_ht		= price2num($price_ht, 'MU');
+			$pu_ttc		= price2num(GETPOST('price_ttc'), 'MU');
+			$tva_npr	= (preg_match('/\*/', $tva_tx)?1:0);
+			$tva_tx		= str_replace('*', '', $tva_tx);
+			$label		= (GETPOST('product_label')?GETPOST('product_label'):'');
+			$desc		= $product_desc;
+			$type		= GETPOST('type');
         }
 
         // Margin
-        $fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):(GETPOST('np_fournprice')?GETPOST('np_fournprice'):''));
-		$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):(GETPOST('np_buying_price')?GETPOST('np_buying_price'):''));
+        $fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):'');
+		$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
 
         // Local Taxes
         $localtax1_tx= get_localtax($tva_tx, 1, $object->client);
@@ -1183,8 +1177,6 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 				// old method
 				unset($_POST['np_desc']);
 				unset($_POST['dp_desc']);
-				unset($_POST['np_fournprice']);
-				unset($_POST['np_buying_price']);
         	}
         	else
         	{
