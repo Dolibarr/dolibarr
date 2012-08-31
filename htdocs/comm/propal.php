@@ -635,19 +635,13 @@ else if ($action == "addline" && $user->rights->propal->creer)
 	$idprod=GETPOST('idprod', 'int');
 	$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
 	$price_ht = GETPOST('price_ht');
-	$np_price = GETPOST('np_price');
 
 	if (empty($idprod) && GETPOST('type') < 0)
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
 		$error++;
 	}
-	if ($conf->global->MAIN_FEATURES_LEVEL > 1 && empty($idprod) && (!($price_ht >= 0) || $price_ht == ''))	// Unit price can be 0 but not ''
-	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
-		$error++;
-	}
-	else if ($conf->global->MAIN_FEATURES_LEVEL < 2 && empty($idprod) && (!($np_price >= 0) || $np_price == ''))	// Unit price can be 0 but not ''
+	if (empty($idprod) && (!($price_ht >= 0) || $price_ht == ''))	// Unit price can be 0 but not ''
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
 		$error++;
@@ -676,7 +670,7 @@ else if ($action == "addline" && $user->rights->propal->creer)
 			$label = ((GETPOST('product_label') && GETPOST('product_label')!=$prod->label)?GETPOST('product_label'):'');
 
 			// If prices fields are update
-			if ($conf->global->MAIN_FEATURES_LEVEL > 1 && isset($price_ht))
+			if ($conf->global->MAIN_FEATURES_LEVEL > 1)
 			{
 				$pu_ht=price2num($price_ht, 'MU');
 				$pu_ttc=price2num(GETPOST('price_ttc'), 'MU');
@@ -753,7 +747,7 @@ else if ($action == "addline" && $user->rights->propal->creer)
 		}
 		else
 		{
-			$pu_ht=(isset($price_ht)?$price_ht:$np_price);
+			$pu_ht= $price_ht;
 			$pu_ttc=price2num(GETPOST('price_ttc'), 'MU');
 			$rate=GETPOST('tva_tx')?GETPOST('tva_tx'):GETPOST('np_tva_tx');
 			$tva_tx=str_replace('*','',$rate);
@@ -836,7 +830,6 @@ else if ($action == "addline" && $user->rights->propal->creer)
 				unset($_POST['buying_price']);
 
 				// old method
-				unset($_POST['np_price']);
 				unset($_POST['np_desc']);
 				unset($_POST['dp_desc']);
 				unset($_POST['np_fournprice']);
