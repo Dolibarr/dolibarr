@@ -84,7 +84,7 @@ class Project extends CommonObject
         if (!trim($this->ref))
         {
             $this->error = 'ErrorFieldsRequired';
-            dol_syslog("Project::Create error -1 ref null", LOG_ERR);
+            dol_syslog(get_class($this)."::create error -1 ref null", LOG_ERR);
             return -1;
         }
 
@@ -111,12 +111,12 @@ class Project extends CommonObject
         $sql.= ", 0";
         $sql.= ", " . ($this->public ? 1 : 0);
         $sql.= ", " . ($this->datec != '' ? $this->db->idate($this->datec) : 'null');
-        $sql.= ", " . ($this->dateo != '' ? $this->db->idate($this->dateo) : 'null');
-        $sql.= ", " . ($this->datee != '' ? $this->db->idate($this->datee) : 'null');
+        $sql.= ", " . ($this->date_start != '' ? $this->db->idate($this->date_start) : 'null');
+        $sql.= ", " . ($this->date_end != '' ? $this->db->idate($this->date_end) : 'null');
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
-        dol_syslog("Project::create sql=" . $sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::create sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -141,7 +141,7 @@ class Project extends CommonObject
         {
             $this->error = $this->db->lasterror();
             $this->errno = $this->db->lasterrno();
-            dol_syslog("Project::Create error -2 " . $this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::create error -2 " . $this->error, LOG_ERR);
             $error++;
         }
 
