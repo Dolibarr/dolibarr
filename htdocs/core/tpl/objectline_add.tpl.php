@@ -26,14 +26,14 @@
  */
 ?>
 
-<!-- BEGIN PHP TEMPLATE freeproductline_create.tpl.php -->
+<!-- BEGIN PHP TEMPLATE objectline_add.tpl.php -->
 <tr class="liste_titre nodrag nodrop">
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>><div id="add"></div><?php echo $langs->trans('AddNewLine'); ?></td>
-	<td align="right"><?php echo $langs->trans('VAT'); ?></td>
-	<td align="right"><?php echo $langs->trans('PriceUHT'); ?></td>
-	<td align="right"><?php echo $langs->trans('PriceUTTC'); ?></td>
-	<td align="right"><?php echo $langs->trans('Qty'); ?></td>
-	<td align="right"><?php echo $langs->trans('ReductionShort'); ?></td>
+	<td align="right" width="50"><?php echo $langs->trans('VAT'); ?></td>
+	<td align="right" width="80"><?php echo $langs->trans('PriceUHT'); ?></td>
+	<td align="right" width="80"><?php echo $langs->trans('PriceUTTC'); ?></td>
+	<td align="right" width="50"><?php echo $langs->trans('Qty'); ?></td>
+	<td align="right" width="50"><?php echo $langs->trans('ReductionShort'); ?></td>
 <?php
 $colspan = 4;
 $colspan2 = 12;
@@ -522,4 +522,4 @@ $("#idprod").change(function() {
 });
 </script>
 <?php } ?>
-<!-- END PHP TEMPLATE freeproductline_create.tpl.php -->
+<!-- END PHP TEMPLATE objectline_add.tpl.php -->
