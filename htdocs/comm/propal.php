@@ -641,7 +641,7 @@ else if ($action == "addline" && $user->rights->propal->creer)
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
 		$error++;
 	}
-	if (empty($idprod) && (!($price_ht >= 0) || $price_ht == ''))	// Unit price can be 0 but not ''
+	if ((empty($idprod) || GETPOST('usenewaddlineform')) && (!($price_ht >= 0) || $price_ht == ''))	// Unit price can be 0 but not ''
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
 		$error++;
@@ -670,7 +670,7 @@ else if ($action == "addline" && $user->rights->propal->creer)
 			$label = ((GETPOST('product_label') && GETPOST('product_label')!=$prod->label)?GETPOST('product_label'):'');
 
 			// If prices fields are update
-			if ($conf->global->MAIN_FEATURES_LEVEL > 1)
+			if (GETPOST('usenewaddlineform'))
 			{
 				$pu_ht=price2num($price_ht, 'MU');
 				$pu_ttc=price2num(GETPOST('price_ttc'), 'MU');
@@ -713,7 +713,7 @@ else if ($action == "addline" && $user->rights->propal->creer)
 				}
 			}
 
-			if ($conf->global->MAIN_FEATURES_LEVEL > 1) {
+			if (GETPOST('usenewaddlineform')) {
 
 				$desc = $product_desc;
 

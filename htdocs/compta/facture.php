@@ -950,14 +950,8 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
     $idprod=GETPOST('idprod', 'int');
 	$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
 	$price_ht = GETPOST('price_ht');
-	$np_price = GETPOST('np_price');
 
-	if ($conf->global->MAIN_FEATURES_LEVEL > 1 && (empty($idprod) || GETPOST('update_price')) && ($price_ht < 0) && (GETPOST('qty') < 0))
-    {
-        setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), 'errors');
-        $error = true;
-    }
-	else if ($conf->global->MAIN_FEATURES_LEVEL < 2 && empty($idprod) && ($np_price < 0) && (GETPOST('qty') < 0))
+	if ((empty($idprod) || GETPOST('usenewaddlineform')) && ($price_ht < 0) && (GETPOST('qty') < 0))
     {
         setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), 'errors');
         $error = true;
@@ -967,12 +961,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
         setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), 'errors');
         $error = true;
     }
-	if ($conf->global->MAIN_FEATURES_LEVEL > 1 && empty($idprod) && (!($price_ht >= 0) || $price_ht == ''))	// Unit price can be 0 but not ''
-	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
-		$error++;
-	}
-	else if ($conf->global->MAIN_FEATURES_LEVEL < 2 && empty($idprod) && (!($np_price >= 0) || $np_price == ''))	// Unit price can be 0 but not ''
+	if ((empty($idprod) || GETPOST('usenewaddlineform')) && (!($price_ht >= 0) || $price_ht == ''))	// Unit price can be 0 but not ''
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
 		$error++;
@@ -1016,7 +1005,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
             $label = ((GETPOST('product_label') && GETPOST('product_label')!=$prod->label)?GETPOST('product_label'):'');
 
             // Update if prices fields are defined
-            if ($conf->global->MAIN_FEATURES_LEVEL > 1 && isset($price_ht))
+            if (GETPOST('usenewaddlineform'))
             {
             	$pu_ht=price2num($price_ht, 'MU');
 				$pu_ttc=price2num(GETPOST('price_ttc'), 'MU');
@@ -1059,7 +1048,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
             	}
             }
 
-            if ($conf->global->MAIN_FEATURES_LEVEL > 1) {
+            if (GETPOST('usenewaddlineform')) {
 
             	$desc = $product_desc;
 
@@ -1192,7 +1181,6 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 				unset($_POST['buying_price']);
 
 				// old method
-				unset($_POST['np_price']);
 				unset($_POST['np_desc']);
 				unset($_POST['dp_desc']);
 				unset($_POST['np_fournprice']);
