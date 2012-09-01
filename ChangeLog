@@ -3,7 +3,7 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
-***** ChangeLog for 3.3 compared to 3.2.1 *****
+***** ChangeLog for 3.3 compared to 3.2.2 *****
 For users:
 - New: If field "signature" is filled into user table, text is added 
   at end of predefined email texts. If option MAIL_DO_NOT_USE_SIGN is on, this
@@ -67,6 +67,11 @@ For developers:
 For translators:
 - New: Update language files (de, tr, pt, ca, es, en, fr).
 - New: Translate the donation receipt.
+
+
+
+***** ChangeLog for 3.2.2 compared to 3.2.1 *****
+Fix: Modify spanish VAT to new rates
 
 
 
