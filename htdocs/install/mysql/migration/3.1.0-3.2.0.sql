@@ -464,3 +464,9 @@ UPDATE llx_product SET canvas = NULL where canvas = 'service@product';
 DELETE FROM llx_const WHERE __DECRYPT('name')__ = 'SOCIETE_CODECOMPTA_ADDON' AND __DECRYPT('value')__ = 'mod_codecompta_digitaria';
 
 ALTER TABLE llx_c_barcode_type ADD UNIQUE INDEX uk_c_barcode_type(code, entity);
+
+-- Remove old Spanish TVA
+UPDATE llx_c_tva SET taux = '21', localtax1='5.2' WHERE rowid = 41;
+UPDATE llx_c_tva SET taux = '10', localtax1='1.4' WHERE rowid = 42;
+DELETE FROM llx_c_tva WHERE rowid = 45;
+DELETE FROM llx_c_tva WHERE rowid = 46;
