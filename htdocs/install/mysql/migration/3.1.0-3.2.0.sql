@@ -455,6 +455,8 @@ ALTER TABLE llx_facture_fourn ADD COLUMN extraparams varchar(255) AFTER import_k
 
 ALTER TABLE llx_boxes ADD COLUMN maxline integer NULL;
 
+ALTER TABLE llx_commande_fournisseur ADD COLUMN date_livraison date NULL;
+
 ALTER TABLE llx_product_fournisseur_price MODIFY fk_product_fournisseur integer DEFAULT 0;
 
 UPDATE llx_product SET canvas = NULL where canvas = 'default@product';
