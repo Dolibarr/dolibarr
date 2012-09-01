@@ -3,6 +3,8 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 3.2.2 compared to 3.2.1 *****
+Fix: Modify spanish VAT to new rates
 
 ***** ChangeLog for 3.2.1 compared to 3.2.0 *****
 - Fix: Edit of projects.
