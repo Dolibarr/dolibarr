@@ -809,7 +809,7 @@ if ($id)
 		// Affichage fiche action en mode visu
 		print '<table class="border" width="100%">';
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/comm/action/index.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/comm/action/listactions.php">'.$langs->trans("BackToList").'</a>';
 
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
