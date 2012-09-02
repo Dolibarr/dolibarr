@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009-2010 Regis Houssin <regis@dolibarr.fr>
+/* Copyright (C) 2009-2012 Regis Houssin <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,23 @@ print '<head>
 print '<!-- Includes for JQuery (Ajax library) -->'."\n";
 if (constant('JS_JQUERY_UI')) print '<link rel="stylesheet" type="text/css" href="'.JS_JQUERY_UI.'css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n";  // JQuery
 else print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" />'."\n";    // JQuery
+// CSS forced by modules (relative url starting with /)
+if (isset($conf->modules_parts['css']))
+{
+	$arraycss=(array) $conf->modules_parts['css'];
+	foreach($arraycss as $modcss => $filescss)
+	{
+		$filescss=(array) $filescss;	// To be sure filecss is an array
+		foreach($filescss as $cssfile)
+		{
+			// cssfile is a relative path
+			print '<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
+			// We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters, so browser cache is not used.
+			if (!preg_match('/\.css$/i',$cssfile)) print $themeparam;
+			print '"><!-- Added by module '.$modcss. '-->'."\n";
+		}
+	}
+}
 // JQuery. Must be before other includes
 $ext='.js';
 if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x01)) $ext='.jgz';
@@ -97,10 +114,12 @@ $(document).ready(function () {
 
 	<?php
 	if (! empty($hookmanager->resArray['options'])) {
-		foreach ($hookmanager->resArray['options'] as $option)
+		foreach ($hookmanager->resArray['options'] as $format => $option)
 		{
-			echo '<!-- Option by hook -->';
-			echo $option;
+			if ($format == 'div') {
+				echo '<!-- Option by hook -->';
+				echo $option;
+			}
 		}
 	}
 	?>
