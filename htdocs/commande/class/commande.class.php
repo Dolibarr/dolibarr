@@ -3013,9 +3013,9 @@ class OrderLine
 
 		if (empty($this->pa_ht)) $this->pa_ht=0;
 
-		// si prix d'achat non renseigne et utilise pour calcul des marges alors prix achat = prix vente (idem pour remises)
+		// si prix d'achat non renseigne et utilise pour calcul des marges alors prix achat = prix vente
 		if ($this->pa_ht == 0) {
-			if ($this->subprice < 0 || ($conf->global->CalculateMarginsOnLinesWithoutBuyingPrice == 1))
+			if ($this->subprice > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
 				$this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);
 		}
 
@@ -3115,9 +3115,9 @@ class OrderLine
 		if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
 		if (empty($this->pa_ht)) $this->pa_ht=0;
 
-		// si prix d'achat non renseigné et utilisé pour calcul des marges alors prix achat = prix vente (idem pour remises)
+		// si prix d'achat non renseigné et utilisé pour calcul des marges alors prix achat = prix vente
 		if ($this->pa_ht == 0) {
-			if ($this->subprice < 0 || ($conf->global->CalculateMarginsOnLinesWithoutBuyingPrice == 1))
+			if ($this->subprice > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
 				$this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);
 		}
 

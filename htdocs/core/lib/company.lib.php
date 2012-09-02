@@ -709,7 +709,7 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
  * 		@param	Object		$object		Object third party or member
  * 		@param	Contact		$objcon		Object contact
  *      @param  int			$noprint	Return string but does not output it
- *      @return	void
+ *      @return	mixed					Return html part or void if noprint is 1
  */
 function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 {
@@ -868,7 +868,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
  * 		@param	Object		$object		Object third party or member
  * 		@param	Contact		$objcon		Object contact
  *      @param  int			$noprint    Return string but does not output it
- *      @return	void
+ *      @return	mixed					Return html part or void if noprint is 1
  * TODO change function to be able to list event linked to an object.
  */
 function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)

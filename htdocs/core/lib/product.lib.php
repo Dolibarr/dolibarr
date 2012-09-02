@@ -153,14 +153,6 @@ function product_admin_prepare_head($object=null)
 	$head[$h][2] = 'general';
 	$h++;
 
-	if ($conf->global->MAIN_FEATURES_LEVEL > 1)
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_tools.php';
-		$head[$h][1] = $langs->trans("Tools");
-		$head[$h][2] = 'tools';
-		$h++;
-	}
-
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -329,8 +321,8 @@ function measuring_units_string($unit,$measuring_style='')
 		$measuring_units[-1] = $langs->trans("SizeUnitdm");
 		$measuring_units[-2] = $langs->trans("SizeUnitcm");
 		$measuring_units[-3] = $langs->trans("SizeUnitmm");
-        $measuring_units[99] = $langs->trans("SizeUnitinch");
         $measuring_units[98] = $langs->trans("SizeUnitfoot");
+		$measuring_units[99] = $langs->trans("SizeUnitinch");
 	}
 	else if ($measuring_style == 'surface')
 	{
@@ -338,6 +330,8 @@ function measuring_units_string($unit,$measuring_style='')
 		$measuring_units[-2] = $langs->trans("SurfaceUnitdm2");
 		$measuring_units[-4] = $langs->trans("SurfaceUnitcm2");
 		$measuring_units[-6] = $langs->trans("SurfaceUnitmm2");
+        $measuring_units[98] = $langs->trans("SurfaceUnitfoot2");
+		$measuring_units[99] = $langs->trans("SurfaceUnitinch2");
 	}
 	else if ($measuring_style == 'volume')
 	{
@@ -345,7 +339,9 @@ function measuring_units_string($unit,$measuring_style='')
 		$measuring_units[-3] = $langs->trans("VolumeUnitdm3");
 		$measuring_units[-6] = $langs->trans("VolumeUnitcm3");
 		$measuring_units[-9] = $langs->trans("VolumeUnitmm3");
-        $measuring_units[97] = $langs->trans("VolumeUnitounce");
+        $measuring_units[88] = $langs->trans("VolumeUnitfoot3");
+        $measuring_units[89] = $langs->trans("VolumeUnitinch3");
+		$measuring_units[97] = $langs->trans("VolumeUnitounce");
 		$measuring_units[98] = $langs->trans("VolumeUnitlitre");
         $measuring_units[99] = $langs->trans("VolumeUnitgallon");
 	}

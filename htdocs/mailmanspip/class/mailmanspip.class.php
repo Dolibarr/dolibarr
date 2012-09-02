@@ -5,6 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +52,104 @@ class MailmanSpip
     }
 
     /**
+     * Function used to check if SPIP is enabled on the system
+     * @return boolean
+     */
+    function isSpipEnabled()
+    {
+        if (defined("ADHERENT_USE_SPIP") && (ADHERENT_USE_SPIP == 1))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Function used to check if the SPIP config is correct
+     * @return boolean
+     */
+    function checkSpipConfig()
+    {
+        if (defined('ADHERENT_SPIP_SERVEUR') && defined('ADHERENT_SPIP_USER') && defined('ADHERENT_SPIP_PASS') && defined('ADHERENT_SPIP_DB'))
+        {
+            if (ADHERENT_SPIP_SERVEUR != '' && ADHERENT_SPIP_USER != '' && ADHERENT_SPIP_PASS != '' && ADHERENT_SPIP_DB != '')
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Function used to connect to SPIP
+     * @return boolean|DoliDB
+     */
+    function connectSpip()
+    {
+        $resource = getDoliDBInstance('mysql', ADHERENT_SPIP_SERVEUR, ADHERENT_SPIP_USER, ADHERENT_SPIP_PASS, ADHERENT_SPIP_DB, ADHERENT_SPIP_PORT);
+
+        if ($resource->ok)
+        {
+            return $resource;
+        }
+        
+        dol_syslog('Error when connecting to SPIP '.ADHERENT_SPIP_SERVEUR.' '.ADHERENT_SPIP_USER.' '.ADHERENT_SPIP_PASS.' '.ADHERENT_SPIP_DB, LOG_ERR);
+
+        return false;
+    }
+
+    /**
+     * Function used to connect to Mailman
+     * @param  object $object Object with the data
+     * @param  string $url    Mailman URL to be called with patterns
+     * @return boolean|string
+     */
+    function callMailman($object, $url)
+    {
+        global $conf;
+
+        //Patterns that are going to be replaced with their original value
+        $patterns = array(
+            '%LISTE%',
+            '%EMAIL%',
+            '%PASSWORD%',
+            '%MAILMAN_ADMINPW%'
+        );
+        $replace = array(
+            $list,
+            $object->email,
+            $object->pass,
+            $conf->global->ADHERENT_MAILMAN_ADMINPW
+        );
+
+        $curl_url = str_replace($patterns, $replace, $url);
+        dol_syslog('Calling Mailman: '.$curl_url);
+
+        $ch = curl_init($curl_url);
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FAILONERROR, true);
+        @curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        
+        $result = curl_exec($ch);
+        dol_syslog('result curl_exec='.$result);
+
+        //An error was found, we store it in $this->error for later 
+        if ($result === false || curl_errno($ch) > 0)
+        {
+            $this->error = curl_errno($ch).' '.curl_error($ch);
+            dol_syslog('Error using curl '.$this->error, LOG_ERR);
+        }
+
+        curl_close($ch);
+
+        return $result;
+    }
+
+    /**
      *  Fonction qui donne les droits redacteurs dans spip
      *
      *	@param	Object	$object		Object with data (->firstname, ->lastname, ->email and ->login)
@@ -60,38 +159,36 @@ class MailmanSpip
     {
         dol_syslog(get_class($this)."::add_to_spip");
 
-        if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
-        defined('ADHERENT_SPIP_SERVEUR') && ADHERENT_SPIP_SERVEUR != '' &&
-        defined('ADHERENT_SPIP_USER') && ADHERENT_SPIP_USER != '' &&
-        defined('ADHERENT_SPIP_PASS') && ADHERENT_SPIP_PASS != '' &&
-        defined('ADHERENT_SPIP_DB') && ADHERENT_SPIP_DB != ''
-        )
+        if ($this->isSpipEnabled())
         {
-            require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-            $mdpass=dol_hash($object->pass);
-            $htpass=crypt($object->pass,makesalt());
-            $query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".$object->firstname." ".$object->lastname."\",\"".$object->email."\",\"".$object->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
-
-            $mydb=getDoliDBInstance('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB,ADHERENT_SPIP_PORT);
-
-            if (! $mydb->ok)
+            if ($this->checkSpipConfig())
             {
-                $this->error=$mydb->lasterror();
-                return 0;
-            }
+                $mydb = $this->connectSpip();
 
-            $result = $mydb->query($query);
-            if ($result)
-            {
-                $mydb->close();
-                return 1;
+                if ($mydb)
+                {
+                    require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+                    $mdpass=dol_hash($object->pass);
+                    $htpass=crypt($object->pass,makesalt());
+                    $query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".$object->firstname." ".$object->lastname."\",\"".$object->email."\",\"".$object->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
+
+                    $result = $mydb->query($query);
+
+                    $mydb->close();
+
+                    if ($result)
+                    {
+                        return 1;
+                    }
+                    else $this->error = $mydb->lasterror();
+                }
+                else $this->error = 'Failed to connect to SPIP';
             }
-            else
-            {
-                $this->error=$mydb->lasterror();
-                return 0;
-            }
+            else $this->error = 'BadSPIPConfiguration';
         }
+        else $this->error = 'SPIPNotEnabled';
+        
+        return 0;
     }
 
     /**
@@ -102,30 +199,35 @@ class MailmanSpip
      */
     function del_to_spip($object)
     {
-        if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
-        defined('ADHERENT_SPIP_SERVEUR') && ADHERENT_SPIP_SERVEUR != '' &&
-        defined('ADHERENT_SPIP_USER') && ADHERENT_SPIP_USER != '' &&
-        defined('ADHERENT_SPIP_PASS') && ADHERENT_SPIP_PASS != '' &&
-        defined('ADHERENT_SPIP_DB') && ADHERENT_SPIP_DB != ''
-        )
+        dol_syslog(get_class($this)."::del_to_spip");
+
+        if ($this->isSpipEnabled())
         {
-            $query = "DELETE FROM spip_auteurs WHERE login='".$object->login."'";
-
-            $mydb=getDoliDBInstance('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB,ADHERENT_SPIP_PORT);
-
-            $result = $mydb->query($query);
-            if ($result)
+            if ($this->checkSpipConfig())
             {
-                $mydb->close();
-                return 1;
+                $mydb = $this->connectSpip();
+
+                if ($mydb)
+                {
+                    $query = "DELETE FROM spip_auteurs WHERE login='".$object->login."'";
+
+                    $result = $mydb->query($query);
+
+                    $mydb->close();
+
+                    if ($result)
+                    {
+                        return 1;
+                    }
+                    else $this->error = $mydb->lasterror();
+                }
+                else $this->error = 'Failed to connect to SPIP';
             }
-            else
-            {
-                $this->error=$mydb->lasterror();
-                $mydb->close();
-                return 0;
-            }
+            else $this->error = 'BadSPIPConfiguration';
         }
+        else $this->error = 'SPIPNotEnabled';
+        
+        return 0;
     }
 
     /**
@@ -136,48 +238,46 @@ class MailmanSpip
      */
     function is_in_spip($object)
     {
-        if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
-        defined('ADHERENT_SPIP_SERVEUR') && ADHERENT_SPIP_SERVEUR != '' &&
-        defined('ADHERENT_SPIP_USER') && ADHERENT_SPIP_USER != '' &&
-        defined('ADHERENT_SPIP_PASS') && ADHERENT_SPIP_PASS != '' &&
-        defined('ADHERENT_SPIP_DB') && ADHERENT_SPIP_DB != '')
+        if ($this->isSpipEnabled())
         {
-            $query = "SELECT login FROM spip_auteurs WHERE login='".$object->login."'";
-
-            $mydb=getDoliDBInstance('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB,ADHERENT_SPIP_PORT);
-
-            if ($mydb->ok)
+            if ($this->checkSpipConfig())
             {
-                $result = $mydb->query($query);
+                $mydb = $this->connectSpip();
 
-                if ($result)
+                if ($mydb)
                 {
-                    if ($mydb->num_rows($result))
+                    $query = "SELECT login FROM spip_auteurs WHERE login='".$object->login."'";
+
+                    $result = $mydb->query($query);
+
+                    if ($result)
                     {
-                        // nous avons au moins une reponse
-                        $mydb->close($result);
-                        return 1;
+                        if ($mydb->num_rows($result))
+                        {
+                            // nous avons au moins une reponse
+                            $mydb->close($result);
+                            return 1;
+                        }
+                        else
+                        {
+                            // nous n'avons pas de reponse => n'existe pas
+                            $mydb->close($result);
+                            return 0;
+                        }
                     }
                     else
                     {
-                        // nous n'avons pas de reponse => n'existe pas
-                        $mydb->close($result);
-                        return 0;
+                        $this->error = $mydb->lasterror();
+                        $mydb->close();
                     }
                 }
-                else
-                {
-                    $this->error=$mydb->lasterror();
-                    $mydb->close();
-                    return -1;
-                }
+                else $this->error = 'Failed to connect to SPIP';
             }
-            else
-            {
-                $this->error="Failed to connect ".ADHERENT_SPIP_SERVEUR." ".ADHERENT_SPIP_USER." ".ADHERENT_SPIP_PASS." ".ADHERENT_SPIP_DB;
-                return -1;
-            }
+            else $this->error = 'BadSPIPConfiguration';
         }
+        else $this->error = 'SPIPNotEnabled';
+
+        return -1;
     }
 
     /**
@@ -224,44 +324,13 @@ class MailmanSpip
                     }
                 }
 
-                // on remplace dans l'url le nom de la liste ainsi
-                // que l'email et le mot de passe
-                $patterns = array (
-    				'/%LISTE%/',
-    				'/%EMAIL%/',
-    				'/%PASSWORD%/',
-    				'/%MAILMAN_ADMINPW%/'
-				);
-				$replace = array (
-    				$list,
-    				$object->email,
-    				$object->pass,
-    				$conf->global->ADHERENT_MAILMAN_ADMINPW
-				);
-				$curl_url = preg_replace($patterns, $replace, $conf->global->ADHERENT_MAILMAN_URL);
+                //We call Mailman to subscribe the user
+                $result = $this->callMailman($object, $conf->global->ADHERENT_MAILMAN_URL);
 
-                dol_syslog("Call URL to subscribe : ".$curl_url);
-				$ch = curl_init();
-				curl_setopt($ch, CURLOPT_URL,"$curl_url");
-				//curl_setopt($ch, CURLOPT_URL,"http://www.j1b.org/");
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-				curl_setopt($ch, CURLOPT_FAILONERROR, true);
-				@curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-				curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-				//curl_setopt($ch, CURLOPT_POST, 0);
-				//curl_setopt($ch, CURLOPT_POSTFIELDS, "a=3&b=5");
-				//--- Start buffering
-				$result=curl_exec($ch);
-				dol_syslog('result curl_exec='.$result);
-				//--- End buffering and clean output
-				if ($result === false || curl_errno($ch) > 0)
+				if ($result === false)
 				{
-				    // error
-				    $this->error=curl_errno($ch).' '.curl_error($ch);
-				    dol_syslog('Error using curl '.$this->error, LOG_ERR);
 				    return -2;
 				}
-				curl_close($ch);
             }
             return count($lists);
         }
@@ -306,44 +375,13 @@ class MailmanSpip
                     }
                 }
 
-                // on remplace dans l'url le nom de la liste ainsi
-                // que l'email et le mot de passe
-                $patterns = array (
-    				'/%LISTE%/',
-    				'/%EMAIL%/',
-    				'/%PASSWORD%/',
-    				'/%MAILMAN_ADMINPW%/'
-				);
-				$replace = array (
-    				trim($list),
-    				$object->email,
-    				$object->pass,
-    				$conf->global->ADHERENT_MAILMAN_ADMINPW
-				);
-				$curl_url = preg_replace($patterns, $replace, $conf->global->ADHERENT_MAILMAN_UNSUB_URL);
+                //We call Mailman to unsubscribe the user
+                $result = $this->callMailman($object, $conf->global->ADHERENT_MAILMAN_UNSUB_URL);
 
-                dol_syslog("Call URL to unsubscribe : ".$curl_url);
-				$ch = curl_init();
-				curl_setopt($ch, CURLOPT_URL,"$curl_url");
-				//curl_setopt($ch, CURLOPT_URL,"http://www.j1b.org/");
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-				curl_setopt($ch, CURLOPT_FAILONERROR, 1);
-				@curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-				curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-				//curl_setopt($ch, CURLOPT_POST, 0);
-				//curl_setopt($ch, CURLOPT_POSTFIELDS, "a=3&b=5");
-				//--- Start buffering
-				$result=curl_exec($ch);
-				dol_syslog($result);
-				//--- End buffering and clean output
-				if ($result === false || curl_errno($ch) > 0)
+				if ($result === false)
 				{
-				    $this->error=curl_errno($ch).' '.curl_error($ch);
-				    dol_syslog('Error using curl '.$this->error, LOG_ERR);
-				    // error
 				    return -2;
 				}
-				curl_close($ch);
             }
             return count($lists);
         }

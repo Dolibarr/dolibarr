@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Reçu de don CERFA FR</title>
+    <title>__DonationReceipt__</title>
   </head>
   <body topmargin="10" marginheight="10" marginwidth="10">
 
@@ -14,13 +14,12 @@
     <td width="15%" nowrap="nowrap" valign="middle">Cerfa No 11580 01</td>
 
     <td nowrap="nowrap" align="center" valign="middle">
-	<font size="+2">Reçu de dons</font><br>
-	<font size="+1"><b>(Article 200-5 du Code Général des Impôts)</b></font><br>
-	+ article 238 bis
+	<font size="+2">__DonationReceipt__</font><br>
+	__FrenchArticle__
     </td>
 
     <td width="15%" nowrap="nowrap" align="center" valign="middle">
-	  Numéro de référence du reçu
+	  __DonationRef__
       <table width="100%" border="0" bgcolor="#000000" cellspacing="0" cellpadding="3">
 	<tr bgcolor="#ffffff" align="center">
 	  <td nowrap>
@@ -48,7 +47,7 @@
 	<tr bgcolor="#e0e0e0" align="center">
 	  <td nowrap>
 	    <font size="+2">
-                    <b>Bénéficiaire des versements</b>
+                    <b>__DonationRecipient__</b>
                   </font>
 	  </td>
 	</tr>
@@ -63,12 +62,12 @@
 	<table width="100%" border="0" bgcolor="#ffffff" cellspacing="0" cellpadding="3">
 	  <tr>
 	    <td>
-	      <b>Nom ou dénomination :</b><br>
+	      <b>__Name__ :</b><br>
 	      __MAIN_INFO_SOCIETE_NOM__<br>
-	      <b>Adresse :</b><br>
+	      <b>__Address__ :</b><br>
 	      __MAIN_INFO_SOCIETE_ADRESSE__<br>
-	      <b>Code postal :</b> __MAIN_INFO_SOCIETE_CP__<br>
-	      <b>Commune :</b> __MAIN_INFO_SOCIETE_VILLE__<br>
+	      <b>__Zip__ :</b> __MAIN_INFO_SOCIETE_CP__<br>
+	      <b>__Town__ :</b> __MAIN_INFO_SOCIETE_VILLE__<br>
 	    </td>
 	  </tr>
 	</table>
@@ -82,7 +81,7 @@
 	<tr bgcolor="#e0e0e0" align="center">
 	  <td nowrap>
 	    <font size="+2">
-                    <b>Donateur</b>
+                    <b>__Donor__</b>
                   </font>
 	  </td>
 	</tr>
@@ -98,12 +97,12 @@
 	<table width="100%" border="0" bgcolor="#ffffff" cellspacing="0" cellpadding="3">
 	  <tr>
 	    <td>
-	      <b>Nom :</b><br>
+	      <b>__Name__ :</b><br>
 	      __DONATOR_NAME__<br>
-	      <b>Adresse :</b><br>
+	      <b>__Address__ :</b><br>
 	      __DONATOR_ADDRESS__<br>
-	      <b>Code postal :</b> __DONATOR_ZIP__<br>
-	      <b>Commune :</b> __DONATOR_TOWN__<br>
+	      <b>__Zip__ :</b> __DONATOR_ZIP__<br>
+	      <b>__Town__ :</b> __DONATOR_TOWN__<br>
 	    </td>
 	  </tr>
 	</table>
@@ -116,9 +115,7 @@
 	<table width="100%" border="0" bgcolor="#ffffff" cellspacing="0" cellpadding="3">
 	  <tr>
 	    <td>
-	      Le bénéficiaire reconnait avoir reçu au titre des 
-	      versements ouvrant droit à réduction d'impôt, la
-	      somme de : <br>
+	      __IConfirmDonationReception__ : <br>
 	      <table width="100%">
 		<tr align="center">
 		  <td>
@@ -126,15 +123,15 @@
 		  </td>
 		</tr>
 	      </table>
-	        <b>Date du versement</b> : __DATE__ <br>
-	        <b>Mode de versement</b> : __PAYMENTMODE_LIB__ <br>
+	        <b>__DatePayment__</b> : __DATE__ <br>
+	        <b>__PaymentMode__</b> : __PAYMENTMODE_LIB__ <br>
 
 	      <table width="100%">
 		<tr align="center">
 
 		  <td valign="top">
 		    <br><br>
-                   Merci pour votre don.
+                   __ThankYou__
 
 		  </td>
 		  
@@ -145,7 +142,7 @@
 			  <table border="0" bgcolor="#ffffff" cellspacing="0" cellpadding="3">
 			    <tr>
 			      <td width="160" height="100" valign="top">
-				<center>Date et signature</center>
+				<center>__Date__ __Signature__</center>
 				__NOW__
 			      </td>
 			    </tr>

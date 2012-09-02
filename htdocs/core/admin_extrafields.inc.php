@@ -53,7 +53,7 @@ if ($action == 'add')
                 $result=$extrafields->addExtraField($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['pos'],$_POST['size'],$elementtype);
     			if ($result > 0)
     			{
-    				Header("Location: ".$_SERVER["PHP_SELF"]);
+    				header("Location: ".$_SERVER["PHP_SELF"]);
     				exit;
     			}
     			else
@@ -105,7 +105,7 @@ if ($action == 'update')
     				{
     					$extrafields->update_label($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['size'],$elementtype);
     				}
-    				Header("Location: ".$_SERVER["PHP_SELF"]);
+    				header("Location: ".$_SERVER["PHP_SELF"]);
     				exit;
     			}
     			else
@@ -132,7 +132,7 @@ if ($action == 'delete')
         $result=$extrafields->delete($_GET["attrname"],$elementtype);
         if ($result >= 0)
         {
-            Header("Location: ".$_SERVER["PHP_SELF"]);
+            header("Location: ".$_SERVER["PHP_SELF"]);
             exit;
         }
         else $mesg=$extrafields->error;

@@ -81,7 +81,7 @@ if ($action == 'addcontact' && $user->rights->expedition->creer)
 
 	if ($result >= 0)
 	{
-		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	}
 	else
@@ -111,7 +111,7 @@ else if ($action == 'deleteline' && $user->rights->expedition->creer)
 
 	if ($result >= 0)
 	{
-		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	}
 	else {

@@ -82,6 +82,7 @@ class html_cerfafr extends ModeleDon
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
+		$outputlangs->load("donations");
 
         if (! empty($conf->don->dir_output))
         {
@@ -120,7 +121,7 @@ class html_cerfafr extends ModeleDon
 		        // Defini contenu
 		        $donmodel=DOL_DOCUMENT_ROOT ."/core/modules/dons/html_cerfafr.html";
 		        $form = implode('', file($donmodel));
-		        $form = str_replace('__REF__',$id,$form);
+		        $form = str_replace('__REF__',$don->id,$form);
 		        $form = str_replace('__DATE__',dol_print_date($don->date,'day',false,$outputlangs),$form);
 		        //$form = str_replace('__IP__',$user->ip,$form); // TODO $user->ip not exist
 		        $form = str_replace('__AMOUNT__',$don->amount,$form);
@@ -136,6 +137,23 @@ class html_cerfafr extends ModeleDon
 		        $form = str_replace('__DONATOR_TOWN__',$don->ville,$form);
 		        $form = str_replace('__PAYMENTMODE_LIB__ ',$don->modepaiement,$form);
 		        $form = str_replace('__NOW__',dol_print_date($now,'',false,$outputlangs),$form);
+		        $form = str_replace('__DonationRef__',$outputlangs->trans("DonationRef"),$form);
+		        $form = str_replace('__DonationReceipt__',$outputlangs->trans("DonationReceipt"),$form);
+		        $form = str_replace('__DonationRecipient__',$outputlangs->trans("DonationRecipient"),$form);
+		        $form = str_replace('__DatePayment__',$outputlangs->trans("DatePayment"),$form);
+		        $form = str_replace('__PaymentMode__',$outputlangs->trans("PaymentMode"),$form);
+		        $form = str_replace('__Name__',$outputlangs->trans("Name"),$form);
+		        $form = str_replace('__Address__',$outputlangs->trans("Address"),$form);
+		        $form = str_replace('__Zip__',$outputlangs->trans("Zip"),$form);
+		        $form = str_replace('__Town__',$outputlangs->trans("Town"),$form);
+		        $form = str_replace('__Donor__',$outputlangs->trans("Donor"),$form);
+		        $form = str_replace('__Date__',$outputlangs->trans("Date"),$form);
+		        $form = str_replace('__Signature__',$outputlangs->trans("Signature"),$form);
+		        $form = str_replace('__ThankYou__',$outputlangs->trans("ThankYou"),$form);
+		        $form = str_replace('__IConfirmDonationReception__',$outputlangs->trans("IConfirmDonationReception"),$form);
+		        $frencharticle='';
+		        if (preg_match('/fr/i',$outputlangs->defaultlang)) $frencharticle='<font size="+1"><b>(Article 200-5 du Code Général des Impôts)</b></font><br>+ article 238 bis';
+				$form = str_replace('__FrenchArticle__',$frencharticle,$form);
 
 		        // Sauve fichier sur disque
 		        dol_syslog("html_cerfafr::write_file $file");

@@ -36,6 +36,7 @@ $action = GETPOST("action");
 $syslog_file_on=(defined('SYSLOG_FILE_ON') && constant('SYSLOG_FILE_ON'))?1:0;
 $syslog_syslog_on=(defined('SYSLOG_SYSLOG_ON') && constant('SYSLOG_SYSLOG_ON'))?1:0;
 $syslog_firephp_on=(defined('SYSLOG_FIREPHP_ON') && constant('SYSLOG_FIREPHP_ON'))?1:0;
+$syslog_chromephp_on=(defined('SYSLOG_CHROMEPHP_ON') && constant('SYSLOG_CHROMEPHP_ON'))?1:0;
 
 
 /*
@@ -54,6 +55,7 @@ if ($action == 'set')
     $syslog_file_on=0;
     $syslog_syslog_on=0;
     $syslog_firephp_on=0;
+    $syslog_chromephp_on=0;
 
 	if (! $error && GETPOST("filename"))
 	{
@@ -99,13 +101,19 @@ if ($action == 'set')
 		}
 	}
 
-	if (! $error && isset($_POST['SYSLOG_FIREPHP_ON']))    // If firephp no available, post is not present
+	if (! $error && isset($_POST['SYSLOG_FIREPHP_ON']))    // If firephp no available, post is not present. We must keep isset here.
 	{
         $syslog_firephp_on=GETPOST('SYSLOG_FIREPHP_ON');
 		if (! $error) $res = dolibarr_set_const($db,"SYSLOG_FIREPHP_ON",$syslog_firephp_on,'chaine',0,'',0);
     }
 
-	if (! $error)
+	if (! $error && isset($_POST['SYSLOG_CHROMEPHP_ON']))  // If chromephp no available, post is not present. We must keep isset here.
+	{
+        $syslog_chromephp_on=GETPOST('SYSLOG_CHROMEPHP_ON');
+		if (! $error) $res = dolibarr_set_const($db,"SYSLOG_CHROMEPHP_ON",$syslog_chromephp_on,'chaine',0,'',0);
+    }
+
+    if (! $error)
 	{
 		$db->commit();
 		$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
@@ -176,6 +184,7 @@ print '<td align="right" colspan="2"><input type="submit" class="button" '.$opti
 print "</tr>\n";
 $var=true;
 
+// Output to file
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="140"><input '.$bc[$var].' type="checkbox" name="SYSLOG_FILE_ON" '.$option.' value="1" '.($syslog_file_on?' checked="checked"':'').'> '.$langs->trans("SyslogSimpleFile").'</td>';
 print '<td nowrap="nowrap">'.$langs->trans("SyslogFilename").': <input type="text" class="flat" name="filename" '.$option.' size="60" value="'.$defaultsyslogfile.'">';
@@ -183,6 +192,7 @@ print '</td>';
 print "<td align=\"left\">".$form->textwithpicto('',$langs->trans("YouCanUseDOL_DATA_ROOT"));
 print '</td></tr>';
 
+// Output to syslog
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="140"><input '.$bc[$var].' type="checkbox" name="SYSLOG_SYSLOG_ON" '.$option.' value="1" '.($syslog_syslog_on?' checked="checked"':'').'> '.$langs->trans("SyslogSyslog").'</td>';
 print '<td nowrap="nowrap">'.$langs->trans("SyslogFacility").': <input type="text" class="flat" name="facility" '.$option.' value="'.$defaultsyslogfacility.'">';
@@ -190,6 +200,7 @@ print '</td>';
 print "<td align=\"left\">".$form->textwithpicto('', $langs->trans('OnlyWindowsLOG_USER'));
 print '</td></tr>';
 
+// Output to Firebug
 try
 {
     set_include_path('/usr/share/php/');
@@ -212,6 +223,31 @@ catch(Exception $e)
 {
     // Do nothing
     print '<!-- FirePHP no available into PHP -->'."\n";
+}
+
+// Output to Chrome
+try
+{
+	set_include_path('/usr/share/php/');
+	$res=@include_once 'ChromePhp.php';
+	restore_include_path();
+	if ($res)
+	{
+		$var=!$var;
+		print '<tr '.$bc[$var].'><td width="140"><input '.$bc[$var].' type="checkbox" name="SYSLOG_CHROMEPHP_ON" '.$option.' value="1" ';
+		if (! class_exists('ChromePHP')) print ' disabled="disabled"';
+		else print ($syslog_chromephp_on?' checked="checked"':"");
+		print '> '.$langs->trans("ChromePHP").'</td>';
+		print '<td nowrap="nowrap">';
+		print '</td>';
+		print "<td align=\"left\">".$form->textwithpicto('','ChromePHP must be installed onto PHP path and ChromePHP plugin for Chrome must also be installed');
+		print '</td></tr>';
+	}
+}
+catch(Exception $e)
+{
+	// Do nothing
+	print '<!-- ChromePHP no available into PHP -->'."\n";
 }
 
 print "</table>\n";

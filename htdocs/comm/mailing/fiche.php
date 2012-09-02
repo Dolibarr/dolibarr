@@ -448,7 +448,7 @@ if ($action == 'add')
 	{
 		if ($object->create($user) >= 0)
 		{
-			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		}
 		$mesg=$object->error;
@@ -475,7 +475,7 @@ if ($action == 'settitre' || $action == 'setemail_from' || $actino == 'setreplyt
 	{
 		if ($object->update($user) >= 0)
 		{
-			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		}
 		$mesg=$object->error;
@@ -533,7 +533,7 @@ if ($action == 'update' && empty($_POST["removedfile"]) && empty($_POST["cancel"
 		{
 			if ($object->update($user) >= 0)
 			{
-				Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
 			}
 			$mesg=$object->error;
@@ -555,7 +555,7 @@ if ($action == 'confirm_valid' && $confirm == 'yes')
 	{
 		$object->valid($user);
 		setEventMessage($langs->trans("MailingSuccessfullyValidated"));
-		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	}
 	else
@@ -580,7 +580,7 @@ if ($action == 'confirm_reset' && $confirm == 'yes')
 		if ($result > 0)
 		{
 			$db->commit();
-			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		}
 		else
@@ -601,7 +601,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 	if ($object->delete($object->id))
 	{
 		$url= (! empty($urlfrom) ? $urlfrom : 'liste.php');
-		Header("Location: ".$url);
+		header("Location: ".$url);
 		exit;
 	}
 }

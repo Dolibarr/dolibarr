@@ -175,7 +175,7 @@ if (empty($reshook))
             $db->commit();
             if (! empty($backtopage)) $url=$backtopage;
             else $url='fiche.php?id='.$id;
-            Header("Location: ".$url);
+            header("Location: ".$url);
             exit;
         }
         else
@@ -194,7 +194,7 @@ if (empty($reshook))
         $result = $object->delete();
         if ($result > 0)
         {
-            Header("Location: ".DOL_URL_ROOT.'/contact/list.php');
+            header("Location: ".DOL_URL_ROOT.'/contact/list.php');
             exit;
         }
         else
@@ -448,11 +448,19 @@ else
 
             // EMail
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->email)) == 0) $object->email = $objsoc->email;	// Predefined with third party
-            print '<tr><td>'.$langs->trans("Email").'</td><td colspan="3"><input name="email" type="text" size="50" maxlength="80" value="'.(isset($_POST["email"])?$_POST["email"]:$object->email).'"></td></tr>';
+            print '<tr><td>'.$langs->trans("Email").'</td><td><input name="email" type="text" size="50" maxlength="80" value="'.(isset($_POST["email"])?$_POST["email"]:$object->email).'"></td>';
+            if (! empty($conf->mailing->enabled))
+            {
+            	print '<td>'.$langs->trans("No_Email").'</td><td>'.$form->selectyesno('no_email',(isset($_POST["no_email"])?$_POST["no_email"]:$object->no_email), 1).'</td>';
+            }
+            else
+			{
+          		print '<td colspan="2">&nbsp;</td>';
+            }
+            print '</tr>';
 
             // Instant message and no email
-            print '<tr><td>'.$langs->trans("IM").'</td><td><input name="jabberid" type="text" size="50" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td>';
-			print '<td>'.$langs->trans("No_Email").'</td><td>'.$form->selectyesno('no_email',(isset($_POST["no_email"])?$_POST["no_email"]:$object->no_email), 1).'</td></tr>';
+            print '<tr><td>'.$langs->trans("IM").'</td><td colspan="3"><input name="jabberid" type="text" size="50" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td></tr>';
 
             // Visibility
             print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
@@ -613,21 +621,29 @@ else
 
             // EMail
             print '<tr><td>'.$langs->trans("EMail").'</td><td><input name="email" type="text" size="40" maxlength="80" value="'.(isset($_POST["email"])?$_POST["email"]:$object->email).'"></td>';
-            if ($conf->mailing->enabled)
+            if (! empty($conf->mailing->enabled))
             {
                 $langs->load("mails");
                 print '<td nowrap>'.$langs->trans("NbOfEMailingsReceived").'</td>';
                 print '<td>'.$object->getNbOfEMailings().'</td>';
             }
             else
-            {
-                print '<td colspan="2">&nbsp;</td>';
+			{
+				print '<td colspan="2">&nbsp;</td>';
             }
             print '</tr>';
 
             // Jabberid
             print '<tr><td>Jabberid</td><td><input name="jabberid" type="text" size="40" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td>';
-			print '<td>'.$langs->trans("No_Email").'</td><td>'.$form->selectyesno('no_email',(isset($_POST["no_email"])?$_POST["no_email"]:$object->no_email), 1).'</td></tr>';
+            if (! empty($conf->mailing->enabled))
+            {
+            	print '<td>'.$langs->trans("No_Email").'</td><td>'.$form->selectyesno('no_email',(isset($_POST["no_email"])?$_POST["no_email"]:$object->no_email), 1).'</td>';
+            }
+            else
+			{
+				print '<td colspan="2">&nbsp;</td>';
+			}
+            print '</tr>';
 
             // Visibility
             print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
@@ -821,7 +837,15 @@ else
 
         // Instant message and no email
         print '<tr><td>'.$langs->trans("IM").'</td><td>'.$object->jabberid.'</td>';
-        print '<td>'.$langs->trans("No_Email").'</td><td>'.yn($object->no_email).'</td></tr>';
+        if (!empty($conf->mailing->enabled))
+        {
+        	print '<td>'.$langs->trans("No_Email").'</td><td>'.yn($object->no_email).'</td>';
+        }
+        else
+       {
+	       	print '<td colspan="2">&nbsp;</td>';
+        }
+        print '</tr>';
 
         print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
         print $object->LibPubPriv($object->priv);

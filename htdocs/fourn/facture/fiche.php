@@ -130,7 +130,7 @@ elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fourn
     $result=$object->delete($id);
     if ($result > 0)
     {
-        Header('Location: index.php');
+        header('Location: index.php');
         exit;
     }
     else
@@ -145,7 +145,7 @@ elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->f
 	$ret = $object->deleteline(GETPOST('lineid'));
 	if ($ret > 0)
 	{
-		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
 		exit;
 	}
 	else
@@ -601,7 +601,7 @@ elseif ($action == 'reopen' && $user->rights->fournisseur->facture->creer)
         $result = $object->set_unpaid($user);
         if ($result > 0)
         {
-            Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
             exit;
         }
         else
@@ -748,7 +748,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                         {
                             // Redirect here
                             // This avoid sending mail twice if going out and then back to page
-                            Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mesg='.urlencode($mesg));
+                            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mesg='.urlencode($mesg));
                             exit;
                         }
                     }
@@ -819,7 +819,7 @@ elseif ($action	== 'builddoc')
     }
     else
     {
-        Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
         exit;
     }
 }
@@ -854,7 +854,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 
 		if ($result >= 0)
 		{
-			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		}
 		else
@@ -892,7 +892,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 
 		if ($result >= 0)
 		{
-			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		}
 		else {

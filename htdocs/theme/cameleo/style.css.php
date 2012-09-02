@@ -590,7 +590,7 @@ div.login a:hover {
 	text-decoration:underline;
 }
 
-img.login, img.printer, img.entity, img.model {
+img.login, img.printer, img.entity {
 	padding: <?php echo ($conf->browser->phone?'0':'8')?>px 0px 0px 0px;
 	margin: 0px 0px 0px 8px;
 	text-decoration: none;

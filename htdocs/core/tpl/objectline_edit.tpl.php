@@ -30,14 +30,17 @@
 <form action="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'#'.$line->id; ?>" method="POST">
 <input type="hidden" name="token" value="<?php  echo $_SESSION['newtoken']; ?>">
 <input type="hidden" name="action" value="updateligne">
+<input type="hidden" name="usenewupdatelineform" value="1" />
 <input type="hidden" name="id" value="<?php echo $this->id; ?>">
 <input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
 <input type="hidden" id="product_type" name="type" value="<?php echo $line->product_type; ?>">
-<input type="hidden" id="product_id" name="productid" value="<?php echo (! empty($line->fk_product)?$line->fk_product:''); ?>" />
+<input type="hidden" id="product_id" name="productid" value="<?php echo (! empty($line->fk_product)?$line->fk_product:0); ?>" />
 
 <tr <?php echo $bc[$var]; ?>>
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
 	<div id="<?php echo $line->id; ?>"></div>
+
+	<?php if ($conf->global->MAIN_FEATURES_LEVEL > 1) { ?>
 
 	<?php if ($line->fk_product > 0) { ?>
 	<?php echo $text . ' - '; ?>
@@ -51,6 +54,19 @@
 		<?php echo $form->textwithtooltip($langs->trans('UpdateOriginalProductLabel'), $langs->trans('HelpUpdateOriginalProductLabel'),1,0,'','',3); ?>
 	</span>
 	<span id="price_base_type" class="hideobject"></span>
+
+	<?php } else if ($line->fk_product > 0) { ?>
+
+	<a href="<?php echo DOL_URL_ROOT.'/product/fiche.php?id='.$line->fk_product; ?>">
+	<?php
+	if ($line->product_type==1) echo img_object($langs->trans('ShowService'),'service');
+	else print img_object($langs->trans('ShowProduct'),'product');
+	echo ' '.$line->ref;
+	?>
+	</a>
+	<?php echo ' - '.nl2br($line->product_label); ?>
+
+	<?php } ?>
 
 	<br>
 
@@ -74,7 +90,9 @@
 	<td align="right"><?php echo $form->load_tva('tva_tx',$line->tva_tx,$seller,$buyer,0,$line->info_bits,$line->product_type); ?></td>
 
 	<td align="right"><input type="text" class="flat" size="8" id="price_ht" name="price_ht" value="<?php echo price($line->subprice,0,'',0); ?>"></td>
+	<?php if ($conf->global->MAIN_FEATURES_LEVEL > 1) { ?>
 	<td align="right"><input type="text" class="flat" size="8" id="price_ttc" name="price_ttc" value="<?php echo price($pu_ttc,0,'',0); ?>"></td>
+	<?php } ?>
 
 	<td align="right">
 	<?php if (($line->info_bits & 2) != 2) { ?>
@@ -122,6 +140,8 @@
 <script type="text/javascript">
 $(document).ready(function() {
 
+<?php if ($conf->global->MAIN_FEATURES_LEVEL > 1) { ?>
+
 	if ($('#product_type').val() == 0) {
 		$('#service_duration_area').hide();
 	} else if ($('#product_type').val() == 1) {
@@ -152,7 +172,22 @@ $(document).ready(function() {
 			} else if (type == 1) {
 				$('#service_duration_area').show();
 			}
-			if (($('#price_ht').val().length > 0) || ($('#price_ttc').val().length > 0)) {
+			var addline=false;
+			if ($('#price_ht').val().length > 0) {
+				if ($('#product_id').val() == 0) {
+					if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined' && CKEDITOR.instances['product_desc'] != 'undefined') {
+						var content = CKEDITOR.instances['product_desc'].getData();
+					} else {
+						var content = $('#product_desc').val();
+					}
+					if (content.length > 0) {
+						addline=true;
+					}
+				} else {
+					addline=true;
+				}
+			}
+			if (addline) {
 				$('#savelinebutton').removeAttr('disabled');
 			} else {
 				$('#savelinebutton').attr('disabled','disabled');
@@ -166,85 +201,122 @@ $(document).ready(function() {
 	});
 
 	$('#price_ht').focusin(function() {
-		$('#price_base_type').html('HT');
+		$('#price_base_type').val('HT');
 	});
 
-	$('#price_ht').onDelayedKeyup({
-		handler: function() {
-			$('#price_base_type').html('HT');
-			$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php', {
-				'action': 'get_ttc',
-				'pu_ht': $(this).val(),
-				'tva_tx': $('#tva_tx').val()
-			},
-			function(data) {
-				if (data && data.price.length > 0) {
-					$('#price_ttc').val(data.price);
-					if (($('#product_id').val().length > 0) || ($('#select_type').val() >= 0)) {
-						$('#savelinebutton').removeAttr('disabled');
-					} else {
-						$('#savelinebutton').attr('disabled','disabled');
-					}
-				} else {
-					$('#price_ttc').val('');
-					$('#savelinebutton').attr('disabled','disabled');
-				}
-			}, 'json');
+	$('#price_ht').bind('change keyup input', function() {
+		if ($('#price_base_type').val() == 'HT') {
+			update_price('price_ht', 'price_ttc');
 		}
 	});
 
 	$('#price_ttc').focusin(function() {
-		$('#price_base_type').html('TTC');
+		$('#price_base_type').val('TTC');
 	});
 
-	$('#price_ttc').onDelayedKeyup({
-		handler: function() {
-			$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php', {
-				'action': 'get_ht',
-				'pu_ttc': $(this).val(),
-				'tva_tx': $('#tva_tx').val()
-			},
-			function(data) {
-				if (data && data.price.length > 0) {
-					$('#price_ht').val(data.price);
-					if (($('#product_id').val().length > 0) || ($('#select_type').val() >= 0)) {
-						$('#savelinebutton').removeAttr('disabled');
-					} else {
-						$('#savelinebutton').attr('disabled','disabled');
-					}
-				} else {
-					$('#price_ht').val('');
-					$('#savelinebutton').attr('disabled','disabled');
-				}
-			}, 'json');
+	$('#price_ttc').bind('change keyup input', function() {
+		if ($('#price_base_type').val() == 'TTC') {
+			update_price('price_ttc', 'price_ht');
 		}
 	});
+
+	if ($('#tva_tx').val() == 0) {
+		$('#price_ttc').attr('disabled','disabled');
+	}
 
 	$('#tva_tx').change(function() {
-		if ($('#price_base_type').html() == 'HT') {
-			$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php', {
-				'action': 'get_ttc',
-				'pu_ht': $('#price_ht').val(),
-				'tva_tx': $(this).val()
-			},
-			function(data) {
-				if (data && data.price.length > 0) {
-					$('#price_ttc').val(data.price);
-				}
-			}, 'json');
+		if ($(this).val() == 0) {
+			$('#price_ttc').attr('disabled','disabled');
+			$('#price_ttc').val('');
 		} else {
-			$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php', {
-				'action': 'get_ht',
-				'pu_ttc': $('#price_ttc').val(),
-				'tva_tx': $(this).val()
-			},
-			function(data) {
-				if (data && data.price.length > 0) {
-					$('#price_ht').val(data.price);
-				}
-			}, 'json');
+			$('#price_ttc').removeAttr('disabled');
+			if ($('#price_base_type').val() == 'HT') {
+				update_price('price_ht', 'price_ttc');
+			} else if ($('#price_base_type').val() == 'TTC') {
+				update_price('price_ttc', 'price_ht');
+			}
 		}
 	});
+
+	function update_price(input, output) {
+		$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php', {
+			'amount': $('#' + input).val(),
+			'output': output,
+			'tva_tx': $('#tva_tx').val()
+		},
+		function(data) {
+			var addline=false;
+			if (typeof data[output] != 'undefined') {
+				// Hide price_ttc if no vat
+				if ($('#tva_tx').val() > 0 || ($('#tva_tx').val() == 0 && output == 'price_ht')) {
+					$('#' + output).val(data[output]);
+				}
+				if ($('#product_id').val() == 0 && $('#select_type').val() >= 0) {
+					if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined' && CKEDITOR.instances['product_desc'] != 'undefined') {
+						var content = CKEDITOR.instances['product_desc'].getData();
+					} else {
+						var content = $('#product_desc').val();
+					}
+					if (content.length > 0) {
+						addline=true;
+					}
+				} else {
+					addline=true;
+				}
+			} else {
+				$('#' + input).val('');
+				$('#' + output).val('');
+			}
+			if (addline) {
+				$('#savelinebutton').removeAttr('disabled');
+			} else {
+				$('#savelinebutton').attr('disabled','disabled');
+			}
+		}, 'json');
+	}
+
+	// Check if decription is not empty for free line
+	<?php if (! empty($conf->fckeditor->enabled) && ! empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
+	CKEDITOR.on('instanceReady', function() {
+		CKEDITOR.instances['product_desc'].on('key', function() {
+			var addline=false;
+			if ($('#product_id').val() == 0 && $('#select_type').val() >= 0 && $('#price_ht').val().length > 0) {
+				var content = CKEDITOR.instances['product_desc'].getData();
+				if (content.length > 0) {
+					addline=true;
+				}
+			} else if ($('#product_id').val() > 0 && $('#price_ht').val().length > 0) {
+				addline=true;
+			}
+			if (addline) {
+				$('#savelinebutton').removeAttr('disabled');
+			} else {
+				$('#savelinebutton').attr('disabled','disabled');
+			}
+		});
+	});
+	<?php } else { ?>
+	$('#product_desc').onDelayedKeyup({
+		'handler': function() {
+			var addline=false;
+			if ($('#product_id').val() == 0 && $('#select_type').val() >= 0 && $('#price_ht').val().length > 0) {
+				var content = $('#product_desc').val();
+				if (content.length > 0) {
+					addline=true;
+				}
+			} else if ($('#product_id').val() > 0 && $('#price_ht').val().length > 0) {
+				addline=true;
+			}
+			if (addline) {
+				$('#savelinebutton').removeAttr('disabled');
+			} else {
+				$('#savelinebutton').attr('disabled','disabled');
+			}
+		}
+	});
+	<?php } ?>
+
+<?php } ?>
 
 	<?php if (! empty($conf->margin->enabled)) { ?>
 	$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product; ?>}, function(data) {

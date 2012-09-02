@@ -50,7 +50,7 @@ if ($_POST["action"] == 'add_payment')
 	if ($_POST["cancel"])
 	{
 		$loc = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid;
-		Header("Location: ".$loc);
+		header("Location: ".$loc);
 		exit;
 	}
 
@@ -129,7 +129,7 @@ if ($_POST["action"] == 'add_payment')
             {
                 $db->commit();
                 $loc = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid;
-                Header('Location: '.$loc);
+                header('Location: '.$loc);
                 exit;
             }
             else

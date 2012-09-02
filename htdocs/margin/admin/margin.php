@@ -42,7 +42,7 @@ if (preg_match('/set_(.*)/',$action,$reg))
     $code=$reg[1];
     if (dolibarr_set_const($db, $code, 1, 'yesno', 0, '', $conf->entity) > 0)
     {
-        Header("Location: ".$_SERVER["PHP_SELF"]);
+        header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
     }
     else
@@ -56,7 +56,7 @@ if (preg_match('/del_(.*)/',$action,$reg))
     $code=$reg[1];
     if (dolibarr_del_const($db, $code, $conf->entity) > 0)
     {
-        Header("Location: ".$_SERVER["PHP_SELF"]);
+        header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
     }
     else

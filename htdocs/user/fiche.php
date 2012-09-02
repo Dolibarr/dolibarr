@@ -110,7 +110,7 @@ if ($action == 'confirm_disable' && $confirm == "yes" && $candisableuser)
         $edituser = new User($db);
         $edituser->fetch($id);
         $edituser->setstatus(0);
-        Header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+        header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
         exit;
     }
 }
@@ -133,7 +133,7 @@ if ($action == 'confirm_enable' && $confirm == "yes" && $candisableuser)
         if (! $message)
         {
             $edituser->setstatus(1);
-            Header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+            header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
             exit;
         }
     }
@@ -153,7 +153,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $candisableuser)
         }
         else
         {
-            Header("Location: index.php");
+            header("Location: index.php");
             exit;
         }
     }
@@ -238,7 +238,7 @@ if ($action == 'add' && $canadduser)
 
             $db->commit();
 
-            Header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+            header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
             exit;
         }
         else

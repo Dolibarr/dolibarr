@@ -100,7 +100,7 @@ if ($action == 'add')
 
 	if ($result > 0)
 	{
-		Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
 	}
 	if ($result == 0)
@@ -120,7 +120,7 @@ if ($action == 'clear')
 	$obj = new $classname($db);
 	$obj->clear_target($id);
 
-	Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+	header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 	exit;
 }
 
@@ -137,12 +137,12 @@ if ($action == 'delete')
 			$obj = new $classname($db);
 			$obj->update_nb($id);
 			
-			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 			exit;
 		}
 		else
 		{
-			Header("Location: liste.php");
+			header("Location: liste.php");
 			exit;
 		}
 	}

@@ -40,13 +40,13 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 
 /*
- * Actions 
+ * Actions
  */
 
 //add payment of localtax
 if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
-    $localtax = new localtax($db);
+    $localtax = new Localtax($db);
 
     $db->begin();
 
@@ -64,7 +64,7 @@ if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
     if ($ret > 0)
     {
         $db->commit();
-        Header("Location: reglement.php");
+        header("Location: reglement.php");
         exit;
     }
     else
@@ -78,7 +78,7 @@ if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 //delete payment of localtax
 if ($_GET["action"] == 'delete')
 {
-    $localtax = new localtax($db);
+    $localtax = new Localtax($db);
     $result=$localtax->fetch($_GET['id']);
 
 	if ($localtax->rappro == 0)
@@ -131,7 +131,7 @@ $form = new Form($db);
 
 if ($id)
 {
-    $vatpayment = new localtax($db);
+    $vatpayment = new Localtax($db);
 	$result = $vatpayment->fetch($id);
 	if ($result <= 0)
 	{

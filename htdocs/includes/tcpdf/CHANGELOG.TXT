@@ -1,3 +1,94 @@
+5.9.180 (2012-08-22)
+	- Bug item #3560493 "Problems with nested cells in HTML" was fixed.
+
+5.9.179 (2012-08-04)
+	- SVG 'use' tag was fixed for 'circle' and 'ellipse' shift problem.
+	- Alpha status is now correctly stored and restored by getGraphicVars() and SetGraphicVars() methods.
+
+5.9.178 (2012-08-02)
+	- SVG 'use' tag was fixed for 'circle' and 'ellipse'.
+
+5.9.177 (2012-08-02)
+	- An additional control on annotations was fixed.
+
+5.9.176 (2012-07-25)
+	- A bug related to stroke width was fixed.
+	- A problem related to font spacing in HTML was fixed.
+
+5.9.175 (2012-07-25)
+	- The problem of missing letter on hyphen break was fixed.
+
+5.9.174 (2012-07-25)
+	- The problem of wrong filename when downloading PDF from an Android device was fixed.
+	- The method setHeaderData() was extended to set text and line color for header (see example n. 1).
+	- The method setFooterData() was added to set text and line color for footer (see example n. 1).
+	- The methods setTextShadow() and getTextShadow() were added to set text shadows (see example n. 1).
+	- The GetCharWidth() method was fixed for negative character spacing.
+	- A 'none' border mode is now correctly recognized.
+	- Break on hyphen problem was fixed.
+
+5.9.173 (2012-07-23)
+	- Some additional control wher added on barcode methods.
+	- The option CURLOPT_FOLLOWLOCATION on Image method is now disabled if PHP safe_mode is on or open_basedir is set.
+	- Method Bookmark() was extended to include X parameter.
+	- Method setDestination() was extended to include X parameter.
+	- A problem with Thai language was fixed.
+
+5.9.172 (2012-07-02)
+	- A PNG color profile issue was fixed.
+
+5.9.171 (2012-07-01)
+	- Some SVG rendering problems were fixed.
+
+5.9.170 (2012-06-27)
+	- Bug #3538227 "Numerous errors inserting shared images" was fixed.
+
+5.9.169 (2012-06-25)
+	- Some SVG rendering problems were fixed.
+
+5.9.168 (2012-06-22)
+	- Thai language rendering was fixed.
+
+5.9.167 (2012-06-22)
+	- Thai language rendering was fixed and improved.
+	- Method isCharDefined() was improved.
+	- Protected method replaceChar() was added.
+	- Font "kerning" word was corrected to "tracking".
+
+5.9.166 (2012-06-21)
+	- Array to string conversion on file_id creation was fixed.
+	- Thai language rendering was fixed (thanks to Atsawin Chaowanakritsanakul).
+
+5.9.165 (2012-06-07)
+	- Some HTML form related bugs were fixed.
+
+5.9.164 (2012-06-06)
+	- A bug introduced on the latest release was fixed.
+
+5.9.163 (2012-06-05)
+	- Method getGDgamma() was changed.
+	- Rendering performances of PNG images with alpha channel were improved.
+
+5.9.162 (2012-05-11)
+	- A bug related to long text on TD cells was fixed.
+
+5.9.161 (2012-05-09)
+	- A bug on XREF table was fixed (Bug ID: 3525051).
+	- Deprecated Imagick:clone was replaced.
+	- Method objclone() was fixed for PHP4.
+
+5.9.160 (2012-05-03)
+	- A bug on tcpdf_parser.php was fixed.
+
+5.9.159 (2012-04-30)
+	- Barcode classes were updated to fix PNG export Bug (ID: 3522291).
+
+5.9.158 (2012-04-22)
+	- Some SVG-related bugs were fixed.
+
+5.9.157 (2012-04-16)
+	- Some SVG-related bugs were fixed.
+
 5.9.156 (2012-04-10)
 	- Bug item #3515885 "TOC and booklet: left and right page exchanged".
 	- SetAutoPageBreak(false) now works also in multicolumn mode.
@@ -567,7 +658,7 @@
 	- The problem of blank page for nobr table higher than a single page was fixed.
 
 5.9.000 (2010-10-06)
-	- Support for text stretching and spacing (kerning) was added, see example n. 63 and methods setFontStretching(), getFontStretching(), setFontSpacing(), getFontSpacing().
+	- Support for text stretching and spacing (tracking) was added, see example n. 63 and methods setFontStretching(), getFontStretching(), setFontSpacing(), getFontSpacing().
 	- Support for CSS properties 'font-stretch' and 'letter-spacing' was added (see example n. 63).
 	- The cMargin state was replaced by cell_padding array that can be set/get using setCellPadding() and getCellPadding() methods.
 	- Methods getCellPaddings() and setCellPaddings() were added to fine tune cell paddings (see example n. 5).

@@ -65,7 +65,7 @@ if ($action == 'validate' && $user->rights->deplacement->creer)
         $result = $object->setStatut(1);
         if ($result > 0)
         {
-            Header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+            header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
             exit;
         }
         else
@@ -95,7 +95,7 @@ else if ($action == 'unblock' && $user->rights->deplacement->unvalidate)
 
         if ($result > 0)
         {
-            Header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+            header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
             exit;
         }
         else
@@ -110,7 +110,7 @@ else if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->depl
     $result=$object->delete($id);
     if ($result >= 0)
     {
-        Header("Location: index.php");
+        header("Location: index.php");
         exit;
     }
     else
@@ -156,7 +156,7 @@ else if ($action == 'add' && $user->rights->deplacement->creer)
 
             if ($id > 0)
             {
-                Header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+                header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
                 exit;
             }
             else
@@ -172,7 +172,7 @@ else if ($action == 'add' && $user->rights->deplacement->creer)
     }
     else
     {
-        Header("Location: index.php");
+        header("Location: index.php");
         exit;
     }
 }
@@ -196,7 +196,7 @@ else if ($action == 'update' && $user->rights->deplacement->creer)
 
         if ($result > 0)
         {
-            Header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+            header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
             exit;
         }
         else
@@ -206,7 +206,7 @@ else if ($action == 'update' && $user->rights->deplacement->creer)
     }
     else
     {
-        Header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+        header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
         exit;
     }
 }

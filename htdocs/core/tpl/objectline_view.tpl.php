@@ -97,7 +97,9 @@
 
 	<td align="right" nowrap="nowrap"><?php echo price($line->subprice); ?></td>
 
+	<?php if ($conf->global->MAIN_FEATURES_LEVEL > 1) { ?>
 	<td align="right" nowrap="nowrap">&nbsp;</td>
+	<?php } ?>
 
 	<td align="right" nowrap="nowrap">
 	<?php if ((($line->info_bits & 2) != 2) && $line->special_code != 3) echo $line->qty;

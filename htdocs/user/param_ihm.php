@@ -102,7 +102,7 @@ if ($action == 'update' && ($caneditfield  || $user->admin))
 
         $_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
 
-        Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
         exit;
     }
 }

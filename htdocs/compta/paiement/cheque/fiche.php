@@ -111,7 +111,7 @@ if ($action == 'create' && $_POST["accountid"] > 0 && $user->rights->banque->che
 	            $result = $object->generatePdf($_POST["model"], $outputlangs);
 	        }
 
-       		Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
+       		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
         	exit;
 		}
 		else
@@ -132,7 +132,7 @@ if ($action == 'remove' && $id > 0 && $_GET["lineid"] > 0 && $user->rights->banq
 	$result = $object->removeCheck($_GET["lineid"]);
 	if ($result === 0)
 	{
-		Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
+		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
 		exit;
 	}
 	else
@@ -147,7 +147,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->banque->c
 	$result = $object->delete();
 	if ($result == 0)
 	{
-		Header("Location: index.php");
+		header("Location: index.php");
 		exit;
 	}
 	else
@@ -174,7 +174,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->banque->c
         }
         $result = $object->generatePdf(GETPOST('model'), $outputlangs);
 
-        Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
+        header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
 		exit;
 	}
 	else
@@ -209,7 +209,7 @@ if ($action == 'builddoc' && $user->rights->banque->cheque)
 	}
 	else
 	{
-		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
 		exit;
 	}
 }

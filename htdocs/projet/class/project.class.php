@@ -82,7 +82,7 @@ class Project extends CommonObject
         if (!trim($this->ref))
         {
             $this->error = 'ErrorFieldsRequired';
-            dol_syslog(get_class($this)."::Create error -1 ref null", LOG_ERR);
+            dol_syslog(get_class($this)."::create error -1 ref null", LOG_ERR);
             return -1;
         }
 
@@ -139,7 +139,7 @@ class Project extends CommonObject
         {
             $this->error = $this->db->lasterror();
             $this->errno = $this->db->lasterrno();
-            dol_syslog(get_class($this)."::Create error -2 " . $this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::create error -2 " . $this->error, LOG_ERR);
             $error++;
         }
 
@@ -1204,17 +1204,18 @@ class Project extends CommonObject
 		    		$this->error.=$task->error;
 		    	}
 	    	}
-
+			//print "$this->date_start + $tasktoshiftdate->date_start - $old_project_dt_start";exit;
+			
 	    	//Calcultate new task start date with difference between old proj start date and origin task start date
 	    	if (!empty($tasktoshiftdate->date_start))
 	    	{
-				$task->date_start			= $this->date_start + ($tasktoshiftdate->date_start - $old_project_dt_st);
+				$task->date_start			= $this->date_start + ($tasktoshiftdate->date_start - $old_project_dt_start);
 	    	}
 
 	    	//Calcultate new task end date with difference between origin proj end date and origin task end date
 	    	if (!empty($tasktoshiftdate->date_end))
 	    	{
-				$task->date_end		    	= $this->date_start + ($tasktoshiftdate->date_end - $old_project_dt_st);
+				$task->date_end		    	= $this->date_start + ($tasktoshiftdate->date_end - $old_project_dt_start);
 	    	}
 
 			if ($to_update)

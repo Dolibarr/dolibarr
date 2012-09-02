@@ -305,11 +305,12 @@ class Propal extends CommonObject
      *      @param		int			$fk_parent_line		Id of parent line
      *      @param		int			$fk_fournprice		Id supplier price
      *      @param		int			$pa_ht				Buying price without tax
+     *      @param		string		$label				???
      *    	@return    	int         	    			>0 if OK, <0 if KO
      *
      *    	@see       	add_product
      */
-	function addline($propalid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht = 0, $label='')
+	function addline($propalid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='')
     {
         global $conf;
 
@@ -461,6 +462,7 @@ class Propal extends CommonObject
      *  @param		int			$skip_update_total	Skip update total
      *  @param		int			$fk_fournprice		Id supplier price
      *  @param		int			$pa_ht				Buying price without tax
+     *  @param		string		$label				???
      *  @return     int     		        		0 if OK, <0 if KO
      */
 	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='')
@@ -740,25 +742,25 @@ class Propal extends CommonObject
                         }
 
 						$result = $this->addline(
-								$this->id,
-								$this->lines[$i]->desc,
-								$this->lines[$i]->subprice,
-								$this->lines[$i]->qty,
-								$this->lines[$i]->tva_tx,
-								$this->lines[$i]->localtax1_tx,
-								$this->lines[$i]->localtax2_tx,
-								$this->lines[$i]->fk_product,
-								$this->lines[$i]->remise_percent,
-								'HT',
-								0,
-								0,
-								$this->lines[$i]->product_type,
-								$this->lines[$i]->rang,
-								$this->lines[$i]->special_code,
-								$fk_parent_line,
-								$this->lines[$i]->fk_fournprice,
-								$this->lines[$i]->pa_ht,
-								$this->lines[$i]->label
+							$this->id,
+							$this->lines[$i]->desc,
+							$this->lines[$i]->subprice,
+							$this->lines[$i]->qty,
+							$this->lines[$i]->tva_tx,
+							$this->lines[$i]->localtax1_tx,
+							$this->lines[$i]->localtax2_tx,
+							$this->lines[$i]->fk_product,
+							$this->lines[$i]->remise_percent,
+							'HT',
+							0,
+							0,
+							$this->lines[$i]->product_type,
+							$this->lines[$i]->rang,
+							$this->lines[$i]->special_code,
+							$fk_parent_line,
+							$this->lines[$i]->fk_fournprice,
+							$this->lines[$i]->pa_ht,
+							$this->lines[$i]->label
 						);
 
                         if ($result < 0)
@@ -2615,9 +2617,9 @@ class PropaleLigne
 
         if (empty($this->pa_ht)) $this->pa_ht=0;
 
-        // si prix d'achat non renseigne et utilise pour calcul des marges alors prix achat = prix vente (idem pour remises)
+        // si prix d'achat non renseigne et utilise pour calcul des marges alors prix achat = prix vente
         if ($this->pa_ht == 0) {
-        	if ($this->subprice < 0 || (isset($conf->global->CalculateMarginsOnLinesWithoutBuyingPrice) && $conf->global->CalculateMarginsOnLinesWithoutBuyingPrice == 1))
+        	if ($this->subprice > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
         		$this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);
         }
 
@@ -2752,9 +2754,9 @@ class PropaleLigne
 
 		if (empty($this->pa_ht)) $this->pa_ht=0;
 
-		// si prix d'achat non renseigne et utilise pour calcul des marges alors prix achat = prix vente (idem pour remises)
+		// si prix d'achat non renseigne et utilise pour calcul des marges alors prix achat = prix vente
 		if ($this->pa_ht == 0) {
-			if ($this->subprice < 0 || ($conf->global->CalculateMarginsOnLinesWithoutBuyingPrice == 1))
+			if ($this->subprice > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
 				$this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);
 		}
 

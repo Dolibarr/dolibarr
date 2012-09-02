@@ -70,7 +70,7 @@ else if ($action == 'GENBARCODE_BARCODETYPE_THIRDPARTY')
  else if ($_POST["action"] == 'setproductusebarcode')
  {
  dolibarr_set_const($db, "PRODUIT_USE_BARCODE",$_POST["value"],'chaine',0,'',$conf->entity);
- Header("Location: barcode.php");
+ header("Location: barcode.php");
  exit;
  }
  */

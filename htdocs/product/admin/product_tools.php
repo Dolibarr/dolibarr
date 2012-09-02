@@ -21,6 +21,9 @@
  *  \brief      Setup page of product module
  */
 
+// TODO We must add a confirmation on button because this will make a mass change
+// TODO Should also change table product_price for price levels
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
@@ -35,7 +38,10 @@ if (! $user->admin) accessforbidden();
 $action = GETPOST('action','alpha');
 $oldvatrate=GETPOST('oldvatrate');
 $newvatrate=GETPOST('newvatrate');
-$price_base_type=GETPOST('price_base_type');
+//$price_base_type=GETPOST('price_base_type');
+
+$objectstatic = new Product($db);
+
 
 /*
  * Actions
@@ -45,42 +51,59 @@ if ($action == 'convert')
 {
 	$error=0;
 
-	$db->begin();
-
-	$sql = 'SELECT rowid';
-	$sql.= ' FROM '.MAIN_DB_PREFIX.'product';
-	$sql.= ' WHERE entity IN ('.getEntity('product',1).')';
-	$sql.= ' AND tva_tx = "'.$oldvatrate.'"';
-
-	$resql=$db->query($sql);
-	if ($resql)
+	if ($oldvatrate == $newvatrate)
 	{
-		$num = $db->num_rows($resql);
-		if ($num)
+		$langs->load("errors");
+		setEventMessage($langs->trans("ErrorNewVaueCantMatchOldValue"),'errors');
+		$error++;
+	}
+
+	if (! $error)
+	{
+		$db->begin();
+
+		$sql = 'SELECT rowid';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'product';
+		$sql.= ' WHERE entity IN ('.getEntity('product',1).')';
+		$sql.= " AND tva_tx = '".$db->escape($oldvatrate)."'";
+		//$sql.= ' AND price_base_type = "'..'"';
+		//print $sql;
+
+		$resql=$db->query($sql);
+		if ($resql)
 		{
-			$i = 0;
+			$num = $db->num_rows($resql);
+
+			$i = 0; $nbrecordsmodified=0;
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
 
-				$object = new Product($db);
-
-				$ret=$object->fetch($obj->rowid);
-				if ($ret)
+				$ret=$objectstatic->fetch($obj->rowid);
+				if ($ret > 0)
 				{
+					$price_base_type = $objectstatic->price_base_type;	// Get price_base_type of product/service to keep the same for update
 					if ($price_base_type == 'TTC')
 					{
-						$newprice=price2num($object->price_ttc,'MU');    // Second param must be MU (we want a unit price so 'MT'. If unit price was on 4 decimal, we must keep 4 decimals)
+						$newprice=price2num($objectstatic->price_ttc,'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+						$newminprice=$objectstatic->price_min_ttc;
 					}
 					else
 					{
-						$newprice=price2num($object->price,'MU');    // Second param must be MU (we want a unit price so 'MT'. If unit price was on 4 decimal, we must keep 4 decimals)
+						$newprice=price2num($objectstatic->price,'MU');    // Second param must be MU (we want a unit price so 'MU'. If unit price was on 4 decimal, we must keep 4 decimals)
+						$newminprice=$objectstatic->price_min;
 					}
-
+					if ($newminprice > $newprice) $newminprice=$newprice;
 					$newvat=str_replace('*','',$newvatrate);
+					$newnpr=$objectstatic->recuperableonly;
+					$newlevel=0;
 
-					$ret=$object->updatePrice($object->id, $newprice, $price_base_type, $user, $newvat);
+					$ret=$objectstatic->updatePrice($objectstatic->id, $newprice, $price_base_type, $user, $newvat, $newminprice, $newlevel, $newnpr);
 					if ($ret < 0) $error++;
+					else $nbrecordsmodified++;
+
+					// FIXME Now update all price levels. Call $objectstatic->updatePrice( as many times than exisitng price_level
+
 				}
 
 				$i++;
@@ -88,10 +111,13 @@ if ($action == 'convert')
 
 			if (! $error)
 			{
+				if ($nbrecordsmodified > 0) setEventMessage($langs->trans("RecordsModified",$nbrecordsmodified));
+				else setEventMessage($langs->trans("NoRecordFound"),'warnings');
 				$db->commit();
 			}
 			else
 			{
+				setEventMessage($langs->trans("Error"),'errors');
 				$db->rollback();
 			}
 		}
@@ -102,26 +128,13 @@ if ($action == 'convert')
  * View
  */
 
-$title = $langs->trans('ProductServiceSetup');
-$tab = $langs->trans("ProductsAndServices");
-if (empty($conf->produit->enabled))
-{
-	$title = $langs->trans('ServiceSetup');
-	$tab = $langs->trans('Services');
-}
-else if (empty($conf->service->enabled))
-{
-	$title = $langs->trans('ProductSetup');
-	$tab = $langs->trans('Products');
-}
+$title = $langs->trans('ModulesSystemTools');
 
 llxHeader('',$title);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($title,$linkback,'setup');
+print_fiche_titre($title,'','setup');
 
-$head = product_admin_prepare_head();
-dol_fiche_head($head, 'tools', $tab, 0, 'product');
+print $langs->trans("ProductVatMassChangeDesc").'<br><br>';
 
 $form=new Form($db);
 $var=true;
@@ -152,28 +165,29 @@ print $form->load_tva('newvatrate', $newvatrate);
 print '</td>'."\n";
 print '</tr>'."\n";
 
+/*
 $var=!$var;
 print '<tr '.$bc[$var].'>'."\n";
-print '<td>'.$langs->trans("PriceBaseType").'</td>'."\n";
+print '<td>'.$langs->trans("PriceBaseTypeToChange").'</td>'."\n";
 print '<td width="60" align="right">'."\n";
 print $form->load_PriceBaseType($price_base_type);
 print '</td>'."\n";
 print '</tr>'."\n";
+*/
 
 print '</table>';
 print '</div>';
 
 // Boutons actions
 print '<div class="tabsAction">';
-print '<input type="submit" id="convert_vatrate" name="convert_vatrate" value="'.$langs->trans("Convert").'" />';
+print '<input type="submit" id="convert_vatrate" name="convert_vatrate" value="'.$langs->trans("MassConvert").'" class="button" />';
 print '</div>';
 
 print '</form>';
 
-dol_htmloutput_mesg($mesg);
+dol_htmloutput_events();
 
 llxFooter();
 
 $db->close();
-
 ?>

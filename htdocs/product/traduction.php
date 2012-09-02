@@ -55,6 +55,7 @@ if ($cancel == $langs->trans("Cancel"))
 	$action = '';
 }
 
+
 // Validation de l'ajout
 if ($action == 'vadd' &&
 $cancel != $langs->trans("Cancel") &&
@@ -103,7 +104,7 @@ $cancel != $langs->trans("Cancel") &&
 	{
 		if ( $key == $current_lang )
 		{
-			$product->lable			= $_POST["libelle-".$key];
+			$product->label			= $_POST["libelle-".$key];
 			$product->description	= dol_htmlcleanlastbr($_POST["desc-".$key]);
 			$product->note			= dol_htmlcleanlastbr($_POST["note-".$key]);
 		}
@@ -163,7 +164,7 @@ if ($action == 'edit')
 	//WYSIWYG Editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-	print '<form action="" method="POST">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="vedit">';
 	print '<input type="hidden" name="id" value="'.$product->id.'">';
@@ -250,7 +251,7 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 	print '<br>';
-	print '<form action="" method="post">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="vadd">';
 	print '<input type="hidden" name="id" value="'.$_GET["id"].'">';

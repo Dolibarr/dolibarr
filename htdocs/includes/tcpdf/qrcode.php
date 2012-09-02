@@ -1,9 +1,9 @@
 <?php
 //============================================================+
 // File name   : qrcode.php
-// Version     : 1.0.009
+// Version     : 1.0.010
 // Begin       : 2010-03-22
-// Last Update : 2010-12-16
+// Last Update : 2012-07-25
 // Author      : Nicola Asuni - Tecnick.com LTD - Manor Coach House, Church Hill, Aldershot, Hants, GU12 4RQ, UK - www.tecnick.com - info@tecnick.com
 // License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
@@ -76,7 +76,7 @@
  *
  * @package com.tecnick.tcpdf
  * @author Nicola Asuni
- * @version 1.0.009
+ * @version 1.0.010
  */
 
 // definitions
@@ -286,7 +286,7 @@ if (!function_exists('str_split')) {
  *
  * @package com.tecnick.tcpdf
  * @author Nicola Asuni
- * @version 1.0.009
+ * @version 1.0.010
  */
 class QRcode {
 
@@ -1439,12 +1439,10 @@ class QRcode {
 
 	/**
 	 * splitString
+	 * @return (int)
 	 */
 	 protected function splitString() {
 		while (strlen($this->dataStr) > 0) {
-			if ($this->dataStr == '') {
-				return 0;
-			}
 			$mode = $this->identifyMode(0);
 			switch ($mode) {
 				case QR_MODE_NM: {
@@ -1476,6 +1474,7 @@ class QRcode {
 			}
 			$this->dataStr = substr($this->dataStr, $length);
 		}
+		return 0;
 	}
 
 	/**
@@ -2028,7 +2027,7 @@ class QRcode {
 		if ($ver > $this->version) {
 			$this->version = $ver;
 		}
-		for (;;) {
+		while (true) {
 			$cbs = $this->createBitStream($items);
 			$items = $cbs[0];
 			$bits = $cbs[1];
@@ -2315,17 +2314,18 @@ class QRcode {
 
 	/**
 	 * Return a version number that satisfies the input code length.
-	 * @param $size (int) input code length (byte)
+	 * @param $size (int) input code length (bytes)
 	 * @param $level (int) error correction level
 	 * @return int version number
 	 */
 	protected function getMinimumVersion($size, $level) {
-		for ($i=1; $i <= QRSPEC_VERSION_MAX; ++$i) {
-			$words = $this->capacity[$i][QRCAP_WORDS] - $this->capacity[$i][QRCAP_EC][$level];
+		for ($i = 1; $i <= QRSPEC_VERSION_MAX; ++$i) {
+			$words = ($this->capacity[$i][QRCAP_WORDS] - $this->capacity[$i][QRCAP_EC][$level]);
 			if ($words >= $size) {
 				return $i;
 			}
 		}
+		// the size of input data is greater than QR capacity, try to lover the error correction mode
 		return -1;
 	}
 

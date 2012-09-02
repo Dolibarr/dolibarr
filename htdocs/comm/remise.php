@@ -46,7 +46,7 @@ $backtopage = GETPOST('backtopage','alpha');
 
 if (GETPOST('cancel') && ! empty($backtopage))
 {
-     Header("Location: ".$backtopage);
+     header("Location: ".$backtopage);
      exit;
 }
 
@@ -60,12 +60,12 @@ if (GETPOST("action") == 'setremise')
 	{
 	    if (! empty($backtopage))
 	    {
-    		Header("Location: ".$backtopage);
+    		header("Location: ".$backtopage);
     		exit;
 	    }
 	    else
 	    {
-    		Header("Location: remise.php?id=".$_GET["id"]);
+    		header("Location: remise.php?id=".$_GET["id"]);
     		exit;
 	    }
 	}

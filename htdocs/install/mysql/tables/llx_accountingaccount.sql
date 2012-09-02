@@ -25,5 +25,6 @@ create table llx_accountingaccount
   pcg_subtype     varchar(20)  NOT NULL,
   account_number  varchar(20)  NOT NULL,
   account_parent  varchar(20),
-  label           varchar(128) NOT NULL
+  label           varchar(128) NOT NULL,
+  active     	  tinyint DEFAULT 1  NOT NULL
 )ENGINE=innodb;

@@ -340,7 +340,7 @@ class Form
      *	@param	int			$direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est apres
      *	@param	string		$img				Code img du picto (use img_xxx() function to get it)
      *	@param	string		$extracss			Add a CSS style to td tags
-     *	@param	int			$notabs				1=Do not include table and tr tags, 2=use div, 3=use span
+     *	@param	int			$notabs				0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
      *	@param	string		$incbefore			Include code before the text
      *	@param	int			$noencodehtmltext	Do not encode into html entity the htmltext
      *	@return	string							Code html du tooltip (texte+picto)
@@ -369,7 +369,7 @@ class Form
         else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
 
         $s="";
-        if ($notabs < 2) $s.='<table class="nobordernopadding" summary=""><tr>';
+        if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr>';
         if ($direction > 0)
         {
             if ($text != '')
@@ -390,7 +390,7 @@ class Form
                 $s.=$text.'</'.$tag.'>';
             }
         }
-        if ($notabs < 2) $s.='</tr></table>';
+        if (empty($notabs)) $s.='</tr></table>';
 
         return $s;
     }
@@ -1145,7 +1145,7 @@ class Form
         global $langs,$conf,$user,$db;
 
         $sql = "SELECT ";
-        $sql.= " p.rowid, p.label, p.ref, p.description, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.duration, p.stock";
+        $sql.= " p.rowid, p.label, p.ref, p.description, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.stock";
         // Multilang : we add translation
         if (! empty($conf->global->MAIN_MULTILANGS))
         {
@@ -1216,6 +1216,7 @@ class Form
                 $outprice_ht='';
                 $outprice_ttc='';
                 $outpricebasetype='';
+                $outtva_tx='';
 
                 $objp = $this->db->fetch_object($result);
 
@@ -1258,9 +1259,9 @@ class Form
                 // Multiprice
                 if ($price_level >= 1)		// If we need a particular price level (from 1 to 6)
                 {
-                    $sql= "SELECT price, price_ttc, price_base_type ";
-                    $sql.= "FROM ".MAIN_DB_PREFIX."product_price ";
-                    $sql.= "WHERE fk_product='".$objp->rowid."'";
+                    $sql = "SELECT price, price_ttc, price_base_type, tva_tx";
+                    $sql.= " FROM ".MAIN_DB_PREFIX."product_price";
+                    $sql.= " WHERE fk_product='".$objp->rowid."'";
                     $sql.= " AND price_level=".$price_level;
                     $sql.= " ORDER BY date_price";
                     $sql.= " DESC LIMIT 1";
@@ -1286,6 +1287,7 @@ class Form
                             $outprice_ht=price($objp2->price);
                             $outprice_ttc=price($objp2->price_ttc);
                             $outpricebasetype=$objp2->price_base_type;
+                            $outtva_tx=$objp2->tva_tx;
                         }
                     }
                     else
@@ -1310,6 +1312,7 @@ class Form
                     $outprice_ht=price($objp->price);
                     $outprice_ttc=price($objp->price_ttc);
                     $outpricebasetype=$objp->price_base_type;
+                    $outtva_tx=$objp->tva_tx;
                 }
 
                 if (! empty($conf->stock->enabled) && isset($objp->stock) && $objp->fk_product_type == 0)
@@ -1340,7 +1343,7 @@ class Form
                 // "key" value of json key array is used by jQuery automatically as selected value
                 // "label" value of json key array is used by jQuery automatically as text for combo box
                 $outselect.=$opt;
-                array_push($outjson, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'label2'=>$outlabel, 'desc'=>$outdesc, 'type'=>$outtype, 'price_ht'=>$outprice_ht, 'price_ttc'=>$outprice_ttc, 'pricebasetype'=>$outpricebasetype));
+                array_push($outjson, array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'label2'=>$outlabel, 'desc'=>$outdesc, 'type'=>$outtype, 'price_ht'=>$outprice_ht, 'price_ttc'=>$outprice_ttc, 'pricebasetype'=>$outpricebasetype, 'tva_tx'=>$outtva_tx));
 
                 $i++;
             }
@@ -3093,10 +3096,20 @@ class Form
         		$defaulttx = $this->cache_vatrates[$num-1]['txtva'];
         	}
 
-        	if (! $options_only) $return.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
+        	// Disabled if seller is not subject to VAT
+        	$disabled=false; $title='';
+        	if (is_object($societe_vendeuse) && $societe_vendeuse->id == $mysoc->id && $societe_vendeuse->tva_assuj == "0") {
+        		$title=' title="'.$langs->trans('VATIsNotUsed').'"';
+        		$disabled=true;
+        	}
+
+        	if (! $options_only) $return.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').$title.'>';
 
         	foreach ($this->cache_vatrates as $rate)
         	{
+        		// Keep only 0 if seller is not subject to VAT
+        		if ($disabled && $rate['txtva'] != 0) continue;
+
         		$return.= '<option value="'.$rate['txtva'];
         		$return.= $rate['nprtva'] ? '*': '';
         		$return.= '"';

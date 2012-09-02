@@ -49,6 +49,8 @@ $langs->load('products');
 if (! empty($conf->margin->enabled))
   $langs->load('margins');
 
+$error=0;
+
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
 $socid=GETPOST('socid','int');
@@ -73,26 +75,26 @@ $object = new Propal($db);
 // Load object
 if ($id > 0 || ! empty($ref))
 {
-	$ret=$object->fetch($id, $ref);
-	if ($ret == 0)
+	if ($action != 'add')
 	{
-		$langs->load("errors");
-		setEventMessage($langs->trans('ErrorRecordNotFound'), 'errors');
-		$error++;
+		$ret=$object->fetch($id, $ref);
+		if ($ret == 0)
+		{
+			$langs->load("errors");
+			setEventMessage($langs->trans('ErrorRecordNotFound'), 'errors');
+			$error++;
+		}
+		else if ($ret < 0)
+		{
+			setEventMessage($object->error, 'errors');
+			$error++;
+		}
+		else $object->fetch_thirdparty();
 	}
-	else if ($ret < 0)
-	{
-		setEventMessage($object->error, 'errors');
-		$error++;
-	}
-}
-if (! $error)
-{
-	$object->fetch_thirdparty();
 }
 else
 {
-	Header('Location: '.DOL_URL_ROOT.'/comm/propal/list.php');
+	header('Location: '.DOL_URL_ROOT.'/comm/propal/list.php');
 	exit;
 }
 
@@ -142,7 +144,7 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->prop
 	$result=$object->delete($user);
 	if ($result > 0)
 	{
-		Header('Location: '.DOL_URL_ROOT.'/comm/propal/list.php');
+		header('Location: '.DOL_URL_ROOT.'/comm/propal/list.php');
 		exit;
 	}
 	else
@@ -175,7 +177,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 		propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 	}
 
-	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 	exit;
 }
 
@@ -376,7 +378,7 @@ else if ($action == 'add' && $user->rights->propal->creer)
     			}
     			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 
-    			Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+    			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
     			exit;
     		}
     		else
@@ -554,7 +556,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 						// This avoid sending mail twice if going out and then back to page
 						$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
 						setEventMessage($mesg);
-						Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+						header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 						exit;
 					}
 					else
@@ -631,29 +633,32 @@ else if ($action == "setabsolutediscount" && $user->rights->propal->creer)
 else if ($action == "addline" && $user->rights->propal->creer)
 {
 	$idprod=GETPOST('idprod', 'int');
+	$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
+	$price_ht = GETPOST('price_ht');
+	$tva_tx = GETPOST('tva_tx');
 
 	if (empty($idprod) && GETPOST('type') < 0)
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
 		$error++;
 	}
-	if (empty($idprod) && (!(GETPOST('price_ht') >= 0) || GETPOST('price_ht') == ''))	// Unit price can be 0 but not ''
+	if ((empty($idprod) || GETPOST('usenewaddlineform')) && (!($price_ht >= 0) || $price_ht == ''))	// Unit price can be 0 but not ''
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
 		$error++;
 	}
-	if (empty($idprod) && ! GETPOST('product_desc'))
+	if (empty($idprod) && empty($product_desc))
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")), 'errors');
 		$error++;
 	}
 
-	if (! $error && (GETPOST('qty') >= 0) && (GETPOST('product_desc') || ! empty($idprod)))
+	if (! $error && (GETPOST('qty') >= 0) && (! empty($product_desc) || ! empty($idprod)))
 	{
 		$pu_ht=0;
 		$pu_ttc=0;
 		$price_min=0;
-		$price_base_type = 'HT';
+		$price_base_type = (GETPOST('price_base_type', 'alpha')?GETPOST('price_base_type', 'alpha'):'HT');
 
 		// Ecrase $pu par celui du produit
 		// Ecrase $desc par celui du produit
@@ -663,62 +668,51 @@ else if ($action == "addline" && $user->rights->propal->creer)
 			$prod = new Product($db);
 			$prod->fetch($idprod);
 
-			$tva_tx = get_default_tva($mysoc,$object->client,$prod->id);
-			$tva_npr = get_default_npr($mysoc,$object->client,$prod->id);
+			$label = ((GETPOST('product_label') && GETPOST('product_label')!=$prod->label)?GETPOST('product_label'):'');
 
-			// On defini prix unitaire
-			if (! empty($conf->global->PRODUIT_MULTIPRICES) && $object->client->price_level)
+			// If prices fields are update
+			if (GETPOST('usenewaddlineform'))
 			{
-				$pu_ht  = $prod->multiprices[$object->client->price_level];
-				$pu_ttc = $prod->multiprices_ttc[$object->client->price_level];
-				$price_min = $prod->multiprices_min[$object->client->price_level];
-				$price_base_type = $prod->multiprices_base_type[$object->client->price_level];
+				$pu_ht=price2num($price_ht, 'MU');
+				$pu_ttc=price2num(GETPOST('price_ttc'), 'MU');
+				$tva_npr=(preg_match('/\*/', $tva_tx)?1:0);
+				$tva_tx=str_replace('*','', $tva_tx);
+				$desc = $product_desc;
 			}
 			else
 			{
-				$pu_ht = $prod->price;
-				$pu_ttc = $prod->price_ttc;
-				$price_min = $prod->price_min;
-				$price_base_type = $prod->price_base_type;
-			}
+				$tva_tx = get_default_tva($mysoc,$object->client,$prod->id);
+				$tva_npr = get_default_npr($mysoc,$object->client,$prod->id);
 
-			// Update if prices fields are defined
-			if (GETPOST('update_price') && (GETPOST('price_ht') || GETPOST('price_ttc')))
-			{
-				$price_ht=price2num(GETPOST('price_ht'), 'MU');
-				$price_ttc=price2num(GETPOST('price_ttc'), 'MU');
-
-				if ($price_base_type == 'TTC' && $price_ttc != $pu_ttc)
+				// On defini prix unitaire
+				if (! empty($conf->global->PRODUIT_MULTIPRICES) && $object->client->price_level)
 				{
-					$pu_ttc = $price_ttc;
-					$pu_ht = price2num($price_ttc / (1 + ($prod->tva_tx / 100)),'MU');
-				}
-				else if ($price_base_type != 'TTC' && $price_ht != $pu_ht)
-				{
-					$pu_ht = $price_ht;
-					$pu_ttc = price2num($price_ht * (1 + ($prod->tva_tx / 100)),'MU');
-				}
-			}
-
-			// On reevalue prix selon taux tva car taux tva transaction peut etre different
-			// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-			if ($tva_tx != $prod->tva_tx)
-			{
-				if ($price_base_type != 'HT')
-				{
-					$pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
+					$pu_ht  = $prod->multiprices[$object->client->price_level];
+					$pu_ttc = $prod->multiprices_ttc[$object->client->price_level];
+					$price_min = $prod->multiprices_min[$object->client->price_level];
+					$price_base_type = $prod->multiprices_base_type[$object->client->price_level];
 				}
 				else
 				{
-					$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
+					$pu_ht = $prod->price;
+					$pu_ttc = $prod->price_ttc;
+					$price_min = $prod->price_min;
+					$price_base_type = $prod->price_base_type;
 				}
-			}
 
-			if (GETPOST('update_desc')) {
-
-				$desc = (GETPOST('product_desc')?GETPOST('product_desc'):'');
-
-			} else {
+				// On reevalue prix selon taux tva car taux tva transaction peut etre different
+				// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
+				if ($tva_tx != $prod->tva_tx)
+				{
+					if ($price_base_type != 'HT')
+					{
+						$pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
+					}
+					else
+					{
+						$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
+					}
+				}
 
 				// Define output language
 				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
@@ -740,22 +734,21 @@ else if ($action == "addline" && $user->rights->propal->creer)
 					$desc = $prod->description;
 				}
 
-				$desc.= ($desc && GETPOST('product_desc')) ? ((dol_textishtml($desc) || dol_textishtml(GETPOST('product_desc')))?"<br />\n":"\n") : "";
-				$desc.= GETPOST('product_desc');
+				$desc.= ($desc && ! empty($product_desc)) ? ((dol_textishtml($desc) || dol_textishtml($product_desc))?"<br />\n":"\n") : "";
+				$desc.= $product_desc;
 			}
-
-			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label'):'');
 
 			$type = $prod->type;
 		}
 		else
 		{
-			$pu_ht=GETPOST('price_ht');
-			$tva_tx=str_replace('*','',GETPOST('tva_tx'));
-			$tva_npr=preg_match('/\*/',GETPOST('tva_tx'))?1:0;
-			$label=(GETPOST('product_label')?GETPOST('product_label'):'');
-			$desc=GETPOST('product_desc');
-			$type=GETPOST('type');
+			$pu_ht		= price2num($price_ht, 'MU');
+			$pu_ttc		= price2num(GETPOST('price_ttc'), 'MU');
+			$tva_npr	= (preg_match('/\*/', $tva_tx)?1:0);
+			$tva_tx		= str_replace('*', '', $tva_tx);
+			$label		= (GETPOST('product_label')?GETPOST('product_label'):'');
+			$desc		= $product_desc;
+			$type		= GETPOST('type');
 		}
 
 		// Margin
@@ -778,25 +771,25 @@ else if ($action == "addline" && $user->rights->propal->creer)
 		{
 			// Insert line
 			$result=$object->addline(
-					$id,
-					$desc,
-					$pu_ht,
-					GETPOST('qty'),
-					$tva_tx,
-					$localtax1_tx,
-					$localtax2_tx,
-					$idprod,
-					GETPOST('remise_percent'),
-					$price_base_type,
-					$pu_ttc,
-					$info_bits,
-					$type,
-					-1,
-					0,
-					GETPOST('fk_parent_line'),
-					$fournprice,
-					$buyingprice,
-					$label
+				$id,
+				$desc,
+				$pu_ht,
+				GETPOST('qty'),
+				$tva_tx,
+				$localtax1_tx,
+				$localtax2_tx,
+				$idprod,
+				GETPOST('remise_percent'),
+				$price_base_type,
+				$pu_ttc,
+				$info_bits,
+				$type,
+				-1,
+				0,
+				GETPOST('fk_parent_line'),
+				$fournprice,
+				$buyingprice,
+				$label
 			);
 
 			if ($result > 0)
@@ -829,6 +822,10 @@ else if ($action == "addline" && $user->rights->propal->creer)
 				unset($_POST['product_desc']);
 				unset($_POST['fournprice']);
 				unset($_POST['buying_price']);
+
+				// old method
+				unset($_POST['np_desc']);
+				unset($_POST['dp_desc']);
 			}
 			else
 			{
@@ -864,7 +861,7 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 	if (! GETPOST('qty')) $special_code=3;
 
 	// Check minimum price
-	$productid = GETPOST('productid', 'int') ;
+	$productid = GETPOST('productid', 'int');
 	if (! empty($productid))
 	{
 		$product = new Product($db);
@@ -899,22 +896,22 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 	if (! $error)
 	{
 		$result = $object->updateline(
-				GETPOST('lineid'),
-				$pu_ht,
-				GETPOST('qty'),
-				GETPOST('remise_percent'),
-				$vat_rate,
-				$localtax1_rate,
-				$localtax2_rate,
-				$description,
-				'HT',
-				$info_bits,
-				$special_code,
-				GETPOST('fk_parent_line'),
-				0,
-				$fournprice,
-				$buying_price,
-				$label
+			GETPOST('lineid'),
+			$pu_ht,
+			GETPOST('qty'),
+			GETPOST('remise_percent'),
+			$vat_rate,
+			$localtax1_rate,
+			$localtax2_rate,
+			$description,
+			'HT',
+			$info_bits,
+			$special_code,
+			GETPOST('fk_parent_line'),
+			0,
+			$fournprice,
+			$buying_price,
+			$label
 		);
 
 		if ($result >= 0)
@@ -958,7 +955,7 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 
 else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('cancel') == $langs->trans('Cancel'))
 {
-	Header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);   // Pour reaffichage de la fiche en cours d'edition
+	header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);   // Pour reaffichage de la fiche en cours d'edition
 	exit;
 }
 
@@ -988,7 +985,7 @@ else if ($action == 'builddoc' && $user->rights->propal->creer)
 	}
 	else
 	{
-		Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
 		exit;
 	}
 }
@@ -1069,7 +1066,7 @@ else if ($action == 'up' && $user->rights->propal->creer)
 	}
 	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 
-	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.GETPOST('rowid'));
+	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.GETPOST('rowid'));
 	exit;
 }
 
@@ -1089,7 +1086,7 @@ else if ($action == 'down' && $user->rights->propal->creer)
 	}
 	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) propale_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
 
-	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.GETPOST('rowid'));
+	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.GETPOST('rowid'));
 	exit;
 }
 
@@ -1105,7 +1102,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->propal->
 
 		if ($result >= 0)
 		{
-			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		}
 		else
@@ -1143,7 +1140,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->propal->
 
 		if ($result >= 0)
 		{
-			Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		}
 		else
@@ -1632,8 +1629,23 @@ if ($object->statut == 0 && $user->rights->propal->creer)
 	{
 		$var=true;
 
-		// Add free or predefined products/services
-		$object->formAddObjectLine(0,$mysoc,$soc,$hookmanager);
+		if ($conf->global->MAIN_FEATURES_LEVEL > 1)
+		{
+			// Add free or predefined products/services
+			$object->formAddObjectLine(0,$mysoc,$soc,$hookmanager);
+		}
+		else
+		{
+			// Add free products/services
+			$object->formAddFreeProduct(0,$mysoc,$soc,$hookmanager);
+
+			// Add predefined products/services
+			if ($conf->product->enabled || $conf->service->enabled)
+			{
+				$var=!$var;
+				$object->formAddPredefinedProduct(0,$mysoc,$soc,$hookmanager);
+			}
+		}
 
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formAddObjectLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook

@@ -698,7 +698,13 @@ class Product extends CommonObject
 					$sql2.= "','".$this->db->escape($this->description);
 					$sql2.= "','".$this->db->escape($this->note)."')";
 				}
-				if (!$this->db->query($sql2)) return -1;
+				dol_syslog(get_class($this).'::setMultiLangs sql='.$sql2);
+				if (! $this->db->query($sql2))
+				{
+					$this->error=$this->db->lasterror();
+					dol_syslog(get_class($this).'::setMultiLangs error='.$this->error, LOG_ERR);
+					return -1;
+				}
 			}
 			else if (isset($this->multilangs["$key"]))
 			{
@@ -720,7 +726,13 @@ class Product extends CommonObject
 
 				// on ne sauvegarde pas des champs vides
 				if ( $this->multilangs["$key"]["label"] || $this->multilangs["$key"]["description"] || $this->multilangs["$key"]["note"] )
-				if (!$this->db->query($sql2)) return -1;
+				dol_syslog(get_class($this).'::setMultiLangs sql='.$sql2);
+				if (! $this->db->query($sql2))
+				{
+					$this->error=$this->db->lasterror();
+					dol_syslog(get_class($this).'::setMultiLangs error='.$this->error, LOG_ERR);
+					return -1;
+				}
 			}
 		}
 		return 1;
@@ -1765,7 +1777,7 @@ class Product extends CommonObject
 
 	/**
 	 *  Add a supplier price for the product.
-	 *  Note: Duplicate ref is accepted for different quantity only or for different companies.
+	 *  Note: Duplicate ref is accepted for different quantity only, or for different companies.
 	 *
 	 *  @param      User	$user       User that make link
 	 *  @param      int		$id_fourn   Supplier id
@@ -1841,7 +1853,7 @@ class Product extends CommonObject
 				$sql.= ", 0";
 				$sql.= ")";
 
-				dol_syslog(get_class($this)."add_fournisseur sql=".$sql);
+				dol_syslog(get_class($this)."::add_fournisseur sql=".$sql);
 				if ($this->db->query($sql))
 				{
 					$this->product_fourn_price_id = $this->db->last_insert_id(MAIN_DB_PREFIX."product_fournisseur_price");

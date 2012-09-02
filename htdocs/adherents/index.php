@@ -247,7 +247,7 @@ if ($resql)
 			$statictype->libelle=$obj->libelle;
 			print '<td>'.$staticmember->getNomUrl(1,24).'</td>';
 			print '<td>'.$statictype->getNomUrl(1,16).'</td>';
-			print '<td>'.dol_print_date($db->jdate($obj->date_end),'dayhour').'</td>';
+			print '<td>'.dol_print_date($db->jdate($obj->datem),'dayhour').'</td>';
 			print '<td align="right">'.$staticmember->LibStatut($obj->statut,($obj->cotisation=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
 			print '</tr>';
 			$i++;

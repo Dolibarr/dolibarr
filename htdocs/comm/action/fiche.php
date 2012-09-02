@@ -209,15 +209,15 @@ if ($action == 'add_action')
 				if (! empty($backtopage))
 				{
 					dol_syslog("Back to ".$backtopage);
-					Header("Location: ".$backtopage);
+					header("Location: ".$backtopage);
 				}
 				elseif($idaction)
 				{
-					Header("Location: ".DOL_URL_ROOT.'/comm/action/fiche.php?id='.$idaction);
+					header("Location: ".DOL_URL_ROOT.'/comm/action/fiche.php?id='.$idaction);
 				}
 				else
 				{
-					Header("Location: ".DOL_URL_ROOT.'/comm/action/index.php');
+					header("Location: ".DOL_URL_ROOT.'/comm/action/index.php');
 				}
 				exit;
 			}
@@ -255,7 +255,7 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == 'yes')
 
 		if ($result >= 0)
 		{
-			Header("Location: index.php");
+			header("Location: index.php");
 			exit;
 		}
 		else
@@ -809,7 +809,7 @@ if ($id)
 		// Affichage fiche action en mode visu
 		print '<table class="border" width="100%">';
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/comm/action/index.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/comm/action/listactions.php">'.$langs->trans("BackToList").'</a>';
 
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';

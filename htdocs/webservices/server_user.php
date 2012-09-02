@@ -180,7 +180,10 @@ function getUser($authentication,$id,$ref='',$ref_ext='')
     {
         $fuser->getrights();
 
-        if ($fuser->rights->user->user->lire)
+        if ($fuser->rights->user->user->lire
+        	|| ($fuser->rights->user->self->creer && $id && $id==$fuser->id)
+        	|| ($fuser->rights->user->self->creer && $ref && $ref==$fuser->login)
+        	|| ($fuser->rights->user->self->creer && $ref_ext && $ref_ext==$fuser->ref_ext))
         {
             $user=new User($db);
             $result=$user->fetch($id,$ref,$ref_ext);

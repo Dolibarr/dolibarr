@@ -85,7 +85,7 @@ if ($action=='delete')
 	$ret=dol_delete_file($file,0,0,0,$object);
 	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
 	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-	Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
 	exit;
 }
 

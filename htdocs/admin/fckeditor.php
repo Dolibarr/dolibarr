@@ -73,13 +73,13 @@ foreach($modules as $const => $desc)
         {
             dolibarr_set_const($db, "FCKEDITOR_ENABLE_DETAILS", "1",'chaine',0,'',$conf->entity);
         }
-        Header("Location: ".$_SERVER["PHP_SELF"]);
+        header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
     }
     if ($action == 'disable_'.strtolower($const))
     {
         dolibarr_del_const($db, "FCKEDITOR_ENABLE_".$const,$conf->entity);
-        Header("Location: ".$_SERVER["PHP_SELF"]);
+        header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
     }
 }

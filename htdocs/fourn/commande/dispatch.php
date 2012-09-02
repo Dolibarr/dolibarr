@@ -87,7 +87,7 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 
 	if ($result > 0)
 	{
-		Header("Location: dispatch.php?id=".$_GET["id"]);
+		header("Location: dispatch.php?id=".$_GET["id"]);
 		exit;
 	}
 	else

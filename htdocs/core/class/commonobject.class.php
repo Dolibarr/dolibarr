@@ -2444,6 +2444,48 @@ abstract class CommonObject
 
     /* This is to show add lines */
 
+    /**
+     *	Show add predefined products/services form
+     *  TODO Edit templates to use global variables and include them directly in controller call
+     *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
+     *
+     *  @param  int	    		$dateSelector       1=Show also date range input fields
+     *  @param	Societe			$seller				Object thirdparty who sell
+     *  @param	Societe			$buyer				Object thirdparty who buy
+     *	@param	HookManager		$hookmanager		Hook manager instance
+     *	@return	void
+     *	@deprecated
+     */
+    function formAddPredefinedProduct($dateSelector,$seller,$buyer,$hookmanager=false)
+    {
+    	global $conf,$langs,$object;
+    	global $form,$bcnd,$var;
+
+    	// Use global variables + $dateSelector + $seller and $buyer
+    	include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_create.tpl.php');
+    }
+
+    /**
+     *	Show add free products/services form
+     *  TODO Edit templates to use global variables and include them directly in controller call
+     *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
+     *
+     *  @param	int		        $dateSelector       1=Show also date range input fields
+     *  @param	Societe			$seller				Object thirdparty who sell
+     *  @param	Societe			$buyer				Object thirdparty who buy
+     *	@param	HookManager		$hookmanager		Hook manager instance
+     *	@return	void
+     *	@deprecated
+     */
+    function formAddFreeProduct($dateSelector,$seller,$buyer,$hookmanager=false)
+    {
+    	global $conf,$langs,$object;
+    	global $form,$bcnd,$var;
+
+    	// Use global variables + $dateSelector + $seller and $buyer
+    	include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_create.tpl.php');
+    }
+
 
     /**
      *	Show add free and predefined products/services form
@@ -2507,7 +2549,8 @@ abstract class CommonObject
 		print '<td>'.$langs->trans('Description').'</td>';
 		print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
 		print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
-		print '<td align="right" width="80">&nbsp;</td>';
+		if ($conf->global->MAIN_FEATURES_LEVEL > 1)
+			print '<td align="right" width="80">&nbsp;</td>';
 		print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
 		print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
 		if (! empty($conf->margin->enabled)) {
@@ -2845,26 +2888,26 @@ abstract class CommonObject
           	$line->pa_ht += $product->fourn_unitcharges;
       }
       // si prix d'achat non renseigné et devrait l'être, alors prix achat = prix vente
-      if ((!isset($line->pa_ht) || $line->pa_ht == 0) && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)) {
+      if ((!isset($line->pa_ht) || $line->pa_ht == 0) && $line->subprice > 0 && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)) {
       	$line->pa_ht = $line->subprice * (1 - ($line->remise_percent / 100));
       }
 
       // calcul des marges
       if (isset($line->fk_remise_except) && isset($conf->global->MARGIN_METHODE_FOR_DISCOUNT)) {    // remise
         if ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '1') { // remise globale considérée comme produit
-          $marginInfos['pa_products'] += ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);
+          $marginInfos['pa_products'] += $line->pa_ht;// ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);
           $marginInfos['pv_products'] += $line->subprice * (1 - $line->remise_percent / 100);
-			    $marginInfos['pa_total'] +=  ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);
+			    $marginInfos['pa_total'] +=  $line->pa_ht;// ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);
 			    $marginInfos['pv_total'] +=  $line->subprice * (1 - $line->remise_percent / 100);
 				}
         elseif ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '2') { // remise globale considérée comme service
-          $marginInfos['pa_services'] += ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);
+          $marginInfos['pa_services'] += $line->pa_ht;// ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);
           $marginInfos['pv_services'] += $line->subprice * (1 - ($line->remise_percent / 100));
-			    $marginInfos['pa_total'] +=  ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);
+			    $marginInfos['pa_total'] +=  $line->pa_ht;// ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);
 			    $marginInfos['pv_total'] +=  $line->subprice * (1 - $line->remise_percent / 100);
 				}
         elseif ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '3') { // remise globale prise en compte uniqt sur total
-          $marginInfos['pa_total'] += ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);
+          $marginInfos['pa_total'] += $line->pa_ht;// ($line->pa_ht != 0)?$line->pa_ht:$line->subprice * (1 - $line->remise_percent / 100);
           $marginInfos['pv_total'] += $line->subprice * (1 - ($line->remise_percent / 100));
 				}
 			}
@@ -2920,8 +2963,8 @@ abstract class CommonObject
       print '<td align="right">'.$langs->trans('MarginRate').'</td>';
     if($conf->global->DISPLAY_MARK_RATES)
       print '<td align="right">'.$langs->trans('MarkRate').'</td>';
-    print '</tr>';
-    if ($marginInfo['margin_on_products'] != 0 && $marginInfo['margin_on_services'] != 0) {
+      print '</tr>';
+    //if ($marginInfo['margin_on_products'] != 0 && $marginInfo['margin_on_services'] != 0) {
       print '<tr class="impair">';
       print '<td>'.$langs->trans('MarginOnProducts').'</td>';
       print '<td align="right">'.price($marginInfo['pv_products']).'</td>';
@@ -2942,7 +2985,7 @@ abstract class CommonObject
       if($conf->global->DISPLAY_MARK_RATES)
         print '<td align="right">'.(($marginInfo['mark_rate_services'] == '')?'n/a':price($marginInfo['mark_rate_services']).'%').'</td>';
       print '</tr>';
-    }
+    //}
     print '<tr class="impair">';
     print '<td>'.$langs->trans('TotalMargin').'</td>';
     print '<td align="right">'.price($marginInfo['pv_total']).'</td>';
