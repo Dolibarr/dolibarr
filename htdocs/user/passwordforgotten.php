@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2011 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2008-2011 Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2007-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2012	Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2008-2011	Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,13 +42,21 @@ if ($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)
     exit;
 }
 
-$action=GETPOST('action');
+$action=GETPOST('action', 'alpha');
 $mode=$dolibarr_main_authentication;
 if (! $mode) $mode='http';
 
 $username 		= GETPOST('username');
 $passwordmd5	= GETPOST('passwordmd5');
 $conf->entity 	= (GETPOST('entity') ? GETPOST('entity') : 1);
+
+// Instantiate hooks of thirdparty module only if not already define
+if (! is_object($hookmanager))
+{
+	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+	$hookmanager=new HookManager($db);
+}
+$hookmanager->initHooks(array('passwordforgottenpage'));
 
 
 /**
@@ -204,31 +212,6 @@ elseif (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.
     $urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
 }
 
-// Entity combobox
-$select_entity='';
-if (! empty($conf->multicompany->enabled)  && empty($conf->global->MULTICOMPANY_HIDE_LOGIN_COMBOBOX) && ! $disabled)
-{
-    $rowspan++;
-    $lastuser='';
-    $lastentity = GETPOST('entity');
-
-    if (! empty($conf->global->MULTICOMPANY_COOKIE_ENABLED))
-    {
-        $prefix=dol_getprefix();
-        $entityCookieName = 'DOLENTITYID_'.$prefix;
-        if (isset($_COOKIE[$entityCookieName]))
-        {
-            include_once(DOL_DOCUMENT_ROOT . "/core/class/cookie.class.php");
-            $lastuser = '';	$lastentity = '';
-            $entityCookie = new DolCookie($conf->file->cookie_cryptkey);
-            $cookieValue = $entityCookie->_getCookie($entityCookieName);
-            list($lastuser, $lastentity) = explode('|', $cookieValue);
-        }
-    }
-
-    $select_entity = $mc->select_entities($lastentity, 'entity', ' tabindex="2"');
-}
-
 // Security graphical code
 if (function_exists("imagecreatefrompng") && ! $disabled)
 {
@@ -236,6 +219,11 @@ if (function_exists("imagecreatefrompng") && ! $disabled)
     $captcha_refresh = img_picto($langs->trans("Refresh"),'refresh','id="captcha_refresh_img"');
 }
 
-include($template_dir.'passwordforgotten.tpl.php');	// To use native PHP
+// Execute hook getPasswordForgottenPageOptions
+// Should be an array with differents options in $hookmanager->resArray
+$parameters=array('entity' => GETPOST('entity','int'));
+$hookmanager->executeHooks('getPasswordForgottenPageOptions',$parameters);    // Note that $action and $object may have been modified by some hooks
+
+include $template_dir.'passwordforgotten.tpl.php';	// To use native PHP
 
 ?>
