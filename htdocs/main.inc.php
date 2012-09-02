@@ -885,6 +885,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         {
             foreach($conf->css_modules as $key => $cssfile)
             {
+            	// For compatibility and avoid error if external module use $conf->module_parts
+            	// TODO: Removed in 3.3
+            	if (is_array($cssfile)) $cssfile = $cssfile[0];
+
                 // cssfile is an absolute path
                 print '<link rel="stylesheet" type="text/css" title="default" href="'.dol_buildpath($cssfile,1);
                 // We add params only if page is not static, because some web server setup does not return content type text/css if url has parameters, so browser cache is not used.
