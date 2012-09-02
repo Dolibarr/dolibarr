@@ -35,10 +35,12 @@ print '<!-- Includes for JQuery (Ajax library) -->'."\n";
 if (constant('JS_JQUERY_UI')) print '<link rel="stylesheet" type="text/css" href="'.JS_JQUERY_UI.'css/'.$jquerytheme.'/jquery-ui.min.css" />'."\n";  // JQuery
 else print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/css/'.$jquerytheme.'/jquery-ui-latest.custom.css" />'."\n";    // JQuery
 // JQuery. Must be before other includes
+$ext='.js';
+if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x01)) $ext='.jgz';
 print '<!-- Includes JS for JQuery -->'."\n";
 if (constant('JS_JQUERY')) print '<script type="text/javascript" src="'.JS_JQUERY.'jquery.min.js"></script>'."\n";
 else print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-latest.min'.$ext.'"></script>'."\n";
-print '<link rel="stylesheet" type="text/css" href="'.$conf_css.'" />'."\n";
+print '<link rel="stylesheet" type="text/css" href="'.dol_escape_htmltag($conf_css).'" />'."\n";
 if (! empty($conf->global->MAIN_HTML_HEADER)) print $conf->global->MAIN_HTML_HEADER;
 print '<!-- HTTP_USER_AGENT = '.$_SERVER['HTTP_USER_AGENT'].' -->
 </head>';
@@ -59,11 +61,15 @@ print '<!-- HTTP_USER_AGENT = '.$_SERVER['HTTP_USER_AGENT'].' -->
 <div id="parameterBox">
 	<div id="logBox"><strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong><input type="text" <?php echo $disabled; ?> id="username" name="username" class="flat" size="15" maxlength="25" value="<?php echo $login; ?>" tabindex="1" /></div>
 
-	<?php if ($select_entity) { ?>
-        <div><?php echo $langs->trans('Entity'); ?> &nbsp;
-        <?php echo $select_entity; ?>
-        </div>
-    <?php } ?>
+	<?php
+	if (! empty($hookmanager->resArray['options'])) {
+		foreach ($hookmanager->resArray['options'] as $option)
+		{
+			echo '<!-- Option by hook -->';
+			echo $option;
+		}
+	}
+	?>
 
     <?php if ($captcha) { ?>
         <div class="captchaBox">
