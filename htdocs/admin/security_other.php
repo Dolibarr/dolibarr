@@ -24,6 +24,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("users");
@@ -46,7 +47,7 @@ if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-    dol_add_file_process($upload_dir,0,0);
+    dol_add_file_process($upload_dir, 0, 0, 'userfile');
 }
 
 if (preg_match('/set_(.*)/',$action,$reg))
@@ -104,6 +105,17 @@ else if ($action == 'MAIN_ANTIVIRUS_PARAM')
     else $mesg=$langs->trans("RecordModifiedSuccessfully");
 }
 
+// Delete file
+else if ($action == 'delete')
+{
+	$langs->load("other");
+	$file = $conf->admin->dir_temp . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	$ret=dol_delete_file($file);
+	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	Header('Location: '.$_SERVER["PHP_SELF"]);
+	exit;
+}
 
 /*
  * View
@@ -218,9 +230,7 @@ print "</td></tr>";
 
 print '</table>';
 
-
 print '<br>';
-
 
 // Upload options
 $var=false;
@@ -311,12 +321,14 @@ print '</form>';
 
 print '</table>';
 
-print '</div>';
-
 // Form to test upload
 print '<br>';
 $formfile=new FormFile($db);
-$formfile->form_attach_new_file(DOL_URL_ROOT.'/admin/security_other.php',$langs->trans("FormToTestFileUploadForm"),0,0,1);
+$formfile->form_attach_new_file($_SERVER['PHP_SELF'], $langs->trans("FormToTestFileUploadForm"), 0, 0, 1);
+
+// List of document
+$filearray=dol_dir_list($upload_dir, "files", 0, '', '', 'name', SORT_ASC, 1);
+$formfile->list_of_documents($filearray, '', 'admin_temp', '');
 
 
 llxFooter();
