@@ -306,5 +306,5 @@ fi
 
 
 %changelog
-* Mon Jul 23 2012 Laurent Destailleur 3.2.1-0.3
+* Mon Jul 23 2012 Laurent Destailleur 3.2.2-0.3
 - Initial version (#723326)
