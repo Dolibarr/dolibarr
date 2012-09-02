@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010-2012 Laurent Destailleur <ely@users.sourceforge.net>
+/* Copyright (C) 2010-2012	Laurent Destailleur	<ely@users.sourceforge.net>
+ * Copyright (C) 2012		Regis Houssin		<regis@dolibarr.fr>
 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,12 +109,12 @@ class doc_generic_invoice_odt extends ModelePDFFactures
             'object_ref'=>$object->ref,
             'object_ref_ext'=>$object->ref_ext,
         	'object_ref_customer'=>$object->ref_client,
-            'object_ref_supplier'=>$object->ref_fournisseur,
+            'object_ref_supplier'=>(! empty($object->ref_fournisseur)?$object->ref_fournisseur:''),
             'object_source_invoice_ref'=>$invoice_source->ref,
         	'object_date'=>dol_print_date($object->date,'day'),
         	'object_date_limit'=>dol_print_date($object->date_lim_reglement,'day'),
         	'object_date_creation'=>dol_print_date($object->date_creation,'day'),
-            'object_date_modification'=>dol_print_date($object->date_modification,'day'),
+            'object_date_modification'=>(! empty($object->date_modification)?dol_print_date($object->date_modification,'day'):''),
             'object_date_validation'=>dol_print_date($object->date_validation,'dayhour'),
             'object_payment_mode_code'=>$object->mode_reglement_code,
         	'object_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code)!='PaymentType'.$object->mode_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code):$object->mode_reglement),
@@ -122,7 +123,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
         	'object_total_ht'=>price($object->total_ht,0,$outputlangs),
             'object_total_vat'=>price($object->total_tva,0,$outputlangs),
             'object_total_ttc'=>price($object->total_ttc,0,$outputlangs),
-            'object_vatrate'=>vatrate($object->tva),
+            'object_vatrate'=>(isset($object->tva)?vatrate($object->tva):''),
             'object_note_private'=>$object->note,
             'object_note'=>$object->note_public,
         	// Payments
@@ -339,7 +340,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
                     '__FROM_EMAIL__' => $this->emetteur->email,
                     '__TOTAL_TTC__' => $object->total_ttc,
                     '__TOTAL_HT__' => $object->total_ht,
-                    '__TOTAL_VAT__' => $object->total_vat
+                    '__TOTAL_VAT__' => $object->total_tva
                 );
                 complete_substitutions_array($substitutionarray, $langs, $object);
 
