@@ -78,7 +78,7 @@ $userstatic=new User($db);
 $form=new Form($db);
 $ecmdirstatic = new EcmDirectory($db);
 
-// Load full tree. We will use it to define nbofsubdir and nboffilesinsubdir
+// Load full tree from database. We will use it to define nbofsubdir and nboffilesinsubdir
 if (empty($sqltree)) $sqltree=$ecmdirstatic->get_full_arbo(0);
 
 // Try to find key into $sqltree
@@ -93,13 +93,13 @@ foreach($sqltree as $keycursor => $val)
 }
 
 
-if( file_exists($fullpathselecteddir) )
+if (file_exists($fullpathselecteddir))
 {
 	$files = @scandir($fullpathselecteddir);
     if ($files)
     {
     	natcasesort($files);
-    	if( count($files) > 2 )    /* The 2 accounts for . and .. */
+    	if ( count($files) > 2 )    /* The 2 accounts for . and .. */
     	{
     		echo "<ul class=\"ecmjqft\" style=\"display: none;\">\n";
 
@@ -111,16 +111,27 @@ if( file_exists($fullpathselecteddir) )
     	        $nbofsubdir=0;
     	        $nboffilesinsubdir=0;
 
-    		    // Try to find key into $sqltree
     	        $val=array();
 
+    	        // Loop on all database entries (sqltree) to find the one matching the subdir found into dir to scan
 		        foreach($sqltree as $key => $tmpval)
 		        {
-    	            //print "-- ".$val['fullrelativename']." vs ".(($selecteddir != '/'?$selecteddir.'/':'').$file).'<br>';
-		            if ($tmpval['fullrelativename'] == (($selecteddir != '/'?$selecteddir.'/':'').$file))
+    	            //print "-- key=".$key." - ".$val['fullrelativename']." vs ".(($selecteddir != '/'?$selecteddir.'/':'').$file).'<br>';
+		        	if ($tmpval['fullrelativename'] == (($selecteddir != '/'?$selecteddir.'/':'').$file))		// We found equivalent record into database
 		            {
 		                $val=$tmpval;
-                        $resarray=tree_showpad($sqltree,$key,1);
+		                $resarray=tree_showpad($sqltree,$key,1);
+
+		                // Refresh cache for this subdir
+		            	if (isset($val['cachenbofdoc']) && $val['cachenbofdoc'] < 0)	// Cache is not up to date, so we update it for this directory t
+		            	{
+		            		$result=$ecmdirstatic->fetch($val['id']);
+		            		$ecmdirstatic->ref=$ecmdirstatic->label;
+
+		            		$result=$ecmdirstatic->refreshcachenboffile(0);
+		            		$val['cachenbofdoc']=$result;
+		            	}
+
                         $a=$resarray[0];
                         $nbofsubdir=$resarray[1];
                         $nboffilesinsubdir=$resarray[2];
@@ -128,10 +139,18 @@ if( file_exists($fullpathselecteddir) )
 		            }
 		        }
 
-		        //if (file_exists($fullpathselecteddir . $file) && $file != '.' && $file != '..' && is_dir($fullpathselecteddir . $file))
-    		    if ($file != '.' && $file != '..' && ((! empty($val['fullrelativename']) && $val['id'] >= 0) || dol_is_dir($fullpathselecteddir . $file)))
+    		    //print 'modulepart='.$modulepart.' fullpathselecteddir='.$fullpathselecteddir.' - val[fullrelativename] (in database)='.$val['fullrelativename'].' - val[id]='.$val['id'].' - is_dir='.dol_is_dir($fullpathselecteddir . $file).' - file='.$file."\n";
+    		    if ($file != '.' && $file != '..' && ((! empty($val['fullrelativename']) && $val['id'] >= 0) || dol_is_dir($fullpathselecteddir . (preg_match('/\/$/',$fullpathselecteddir)?'':'/') . $file)))
     		    {
-    				print '<li class="directory collapsed">';
+					if (empty($val['fullrelativename']))	// If we did not find entry into database, but found a directory (dol_is_dir was ok at previous test)
+					{
+    		    		$val['fullrelativename']=$file; $val['id']=0;
+    		    		$val['label']=$file;
+    		    		$val['description']='';
+    		    		$nboffilesinsubdir=$langs->trans("Unknown");
+					}
+
+		        	print '<li class="directory collapsed">';
 
     				print "<a class=\"fmdirlia jqft ecmjqft\" href=\"#\" rel=\"" . dol_escape_htmltag($val['fullrelativename'].'/') . "\" id=\"fmdirlia_id_".$val['id']."\"";
     				print " onClick=\"loadandshowpreview('".dol_escape_js($val['fullrelativename'])."',".$val['id'].")\">";
@@ -148,10 +167,10 @@ if( file_exists($fullpathselecteddir) )
 
     				// Nb of docs
     				print '<td align="right">';
-    				print isset($val['cachenbofdoc'])?$val['cachenbofdoc']:'&nbsp;';
+    				print (isset($val['cachenbofdoc']) && $val['cachenbofdoc']  >= 0)?$val['cachenbofdoc']:'&nbsp;';
     				print '</td>';
     				print '<td align="left">';
-    				if ($nbofsubdir && $nboffilesinsubdir) print '<font color="#AAAAAA">+'.$nboffilesinsubdir.'</font> ';
+    				if ($nbofsubdir > 0  && $nboffilesinsubdir > 0) print '<font color="#AAAAAA">+'.$nboffilesinsubdir.'</font> ';
     				print '</td>';
 
     				// Edit link
@@ -163,16 +182,16 @@ if( file_exists($fullpathselecteddir) )
 
     				// Info
     				print '<td align="right" width="18">';
-    				$userstatic->id=$val['fk_user_c'];
-    				$userstatic->lastname=$val['login_c'];
+    				$userstatic->id=isset($val['fk_user_c'])?$val['fk_user_c']:0;
+    				$userstatic->lastname=isset($val['login_c'])?$val['login_c']:0;
     				$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
     				$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionManual").'<br>';
     				$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1).'<br>';
-    				$htmltooltip.='<b>'.$langs->trans("ECMCreationDate").'</b>: '.dol_print_date($val['date_c'],"dayhour").'<br>';
+    				$htmltooltip.='<b>'.$langs->trans("ECMCreationDate").'</b>: '.(isset($val['date_c'])?dol_print_date($val['date_c'],"dayhour"):$langs->trans("NeedRefresh")).'<br>';
     				$htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['description'].'<br>';
-    				$htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.$val['cachenbofdoc'].'<br>';
-    				if ($nbofsubdir) $htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInSubDir").'</b>: '.$nboffilesinsubdir;
-    				else $htmltooltip.='<b>'.$langs->trans("ECMNbOfSubDir").'</b>: '.$nbofsubdir.'<br>';
+    				$htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.((isset($val['cachenbofdoc']) && $val['cachenbofdoc'] >= 0)?$val['cachenbofdoc']:$langs->trans("NeedRefresh")).'<br>';
+    				if ($nboffilesinsubdir > 0) $htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInSubDir").'</b>: '.$nboffilesinsubdir;
+    				else $htmltooltip.='<b>'.$langs->trans("ECMNbOfSubDir").'</b>: '.($nbofsubdir >= 0 ? $nbofsubdir : $langs->trans("NeedRefresh")).'<br>';
     				print $form->textwithpicto('',$htmltooltip,1,"info");
     				print "</td>";
 

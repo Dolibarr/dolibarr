@@ -61,8 +61,8 @@ if (! isset($mode) || $mode != 'noajax')    // For ajax call
     $result=$ecmdir->fetch($section);
     if (! $result > 0)
     {
-        dol_print_error($db,$ecmdir->error);
-        exit;
+        //dol_print_error($db,$ecmdir->error);
+        //exit;
     }
 }
 else    // For no ajax call
