@@ -85,13 +85,14 @@ if ($action == 'add_action')
 	}
 
     $fulldayevent=$_POST["fullday"];
+    $percentage=in_array(GETPOST('status'),array(-1,100))?GETPOST('status'):GETPOST("percentage");	// If status is -1 or 100, percentage is not defined and we must use status
 
     // Clean parameters
 	$datep=dol_mktime($fulldayevent?'00':$_POST["aphour"], $fulldayevent?'00':$_POST["apmin"], 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
 	$datef=dol_mktime($fulldayevent?'23':$_POST["p2hour"], $fulldayevent?'59':$_POST["p2min"], $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
 
 	// Check parameters
-	if (! $datef && $_POST["percentage"] == 100)
+	if (! $datef && $percentage == 100)
 	{
 		$error++;
 		$action = 'create';
@@ -135,7 +136,7 @@ if ($action == 'add_action')
 	$actioncomm->fk_project = isset($_POST["projectid"])?$_POST["projectid"]:0;
 	$actioncomm->datep = $datep;
 	$actioncomm->datef = $datef;
-	$actioncomm->percentage = isset($_POST["percentage"])?$_POST["percentage"]:0;
+	$actioncomm->percentage = $percentage;
 	$actioncomm->duree=(($_POST["dureehour"] * 60) + $_POST["dureemin"]) * 60;
 
 	$usertodo=new User($db);
@@ -257,21 +258,20 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == 'yes')
 }
 
 /*
- * Action mise a jour de l'action
+ * Action update event
  */
 if ($action == 'update')
 {
 	if (! $_POST["cancel"])
 	{
         $fulldayevent=$_POST["fullday"];
+        $percentage=in_array(GETPOST('status'),array(-1,100))?GETPOST('status'):GETPOST("percentage");	// If status is -1 or 100, percentage is not defined and we must use status
 
 	    // Clean parameters
 		if ($_POST["aphour"] == -1) $_POST["aphour"]='0';
 		if ($_POST["apmin"] == -1) $_POST["apmin"]='0';
 		if ($_POST["p2hour"] == -1) $_POST["p2hour"]='0';
 		if ($_POST["p2min"] == -1) $_POST["p2min"]='0';
-		//if ($_POST["adhour"] == -1) $_POST["adhour"]='0';
-		//if ($_POST["admin"] == -1) $_POST["admin"]='0';
 
 		$actioncomm = new Actioncomm($db);
 		$actioncomm->fetch($id);
@@ -282,9 +282,7 @@ if ($action == 'update')
 		$actioncomm->label       = $_POST["label"];
 		$actioncomm->datep       = $datep;
 		$actioncomm->datef       = $datef;
-		//$actioncomm->date        = $datea;
-		//$actioncomm->dateend     = $datea2;
-		$actioncomm->percentage  = $_POST["percentage"];
+		$actioncomm->percentage  = $percentage;
 		$actioncomm->priority    = $_POST["priority"];
         $actioncomm->fulldayevent= $_POST["fullday"]?1:0;
 		$actioncomm->location    = isset($_POST["location"])?$_POST["location"]:'';
@@ -294,7 +292,7 @@ if ($action == 'update')
 		$actioncomm->note        = $_POST["note"];
 		$actioncomm->pnote       = $_POST["note"];
 
-		if (! $datef && $_POST["percentage"] == 100)
+		if (! $datef && $percentage == 100)
 		{
 			$error=$langs->trans("ErrorFieldRequired",$langs->trans("DateEnd"));
 			$action = 'edit';
