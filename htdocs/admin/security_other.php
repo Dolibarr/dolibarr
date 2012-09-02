@@ -49,30 +49,35 @@ if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
     dol_add_file_process($upload_dir,0,0);
 }
 
-if ($action == 'activate_captcha')
+if (preg_match('/set_(.*)/',$action,$reg))
 {
-    dolibarr_set_const($db, "MAIN_SECURITY_ENABLECAPTCHA", '1','chaine',0,'',$conf->entity);
-    header("Location: security_other.php");
-    exit;
+	$code=$reg[1];
+	$value=(GETPOST($code) ? GETPOST($code) : 1);
+	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
+	{
+		Header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
+	else
+	{
+		dol_print_error($db);
+	}
 }
-else if ($action == 'disable_captcha')
+
+else if (preg_match('/del_(.*)/',$action,$reg))
 {
-    dolibarr_del_const($db, "MAIN_SECURITY_ENABLECAPTCHA",$conf->entity);
-    header("Location: security_other.php");
-    exit;
+	$code=$reg[1];
+	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
+	{
+		Header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
+	else
+	{
+		dol_print_error($db);
+	}
 }
-else if ($action == 'activate_advancedperms')
-{
-    dolibarr_set_const($db, "MAIN_USE_ADVANCED_PERMS", '1','chaine',0,'',$conf->entity);
-    header("Location: security_other.php");
-    exit;
-}
-else if ($action == 'disable_advancedperms')
-{
-    dolibarr_del_const($db, "MAIN_USE_ADVANCED_PERMS",$conf->entity);
-    header("Location: security_other.php");
-    exit;
-}
+
 else if ($action == 'MAIN_SESSION_TIMEOUT')
 {
     if (! dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", $_POST["MAIN_SESSION_TIMEOUT"],'chaine',0,'',$conf->entity)) dol_print_error($db);
@@ -165,14 +170,21 @@ print '<td colspan="3">'.$langs->trans("UseCaptchaCode").'</td>';
 print '<td align="right">';
 if (function_exists("imagecreatefrompng"))
 {
-    if (empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
-    {
-        print '<a href="security_other.php?action=activate_captcha">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
-    }
-    else
-    {
-        print '<a href="security_other.php?action=disable_captcha">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
-    }
+	if (! empty($conf->use_javascript_ajax))
+	{
+		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA');
+	}
+	else
+	{
+		if (empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
+		{
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+		}
+		else
+		{
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+		}
+	}
 }
 else
 {
@@ -180,28 +192,29 @@ else
     $desc = $form->textwithpicto('',$langs->transnoentities("EnableGDLibraryDesc"),1,'warning');
     print $desc;
 }
-print "</td>";
-
-print "</td>";
-print '</tr>';
+print '</td></tr>';
 
 // Enable advanced perms
 $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td colspan="3">'.$langs->trans("UseAdvancedPerms").'</td>';
 print '<td align="right">';
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
+if (! empty($conf->use_javascript_ajax))
 {
-    print '<a href="security_other.php?action=activate_advancedperms">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+	print ajax_constantonoff('MAIN_USE_ADVANCED_PERMS');
 }
 else
 {
-    print '<a href="security_other.php?action=disable_advancedperms">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+	if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
+	{
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_USE_ADVANCED_PERMS">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	}
+	else
+	{
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_USE_ADVANCED_PERMS">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+	}
 }
-print "</td>";
-
-print "</td>";
-print '</tr>';
+print "</td></tr>";
 
 print '</table>';
 
