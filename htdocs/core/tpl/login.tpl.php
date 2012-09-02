@@ -108,10 +108,12 @@ $(document).ready(function () {
 
 <?php
 if (! empty($hookmanager->resArray['options'])) {
-	foreach ($hookmanager->resArray['options'] as $option)
+	foreach ($hookmanager->resArray['options'] as $format => $option)
 	{
-		echo '<!-- Option by hook -->';
-		echo $option;
+		if ($format == 'table') {
+			echo '<!-- Option by hook -->';
+			echo $option;
+		}
 	}
 }
 ?>

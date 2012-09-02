@@ -2291,6 +2291,11 @@ div#infoLogin {
     margin-bottom: 20px;
 }
 
+/* can be removed in 3.3 */
+div.entityBox {
+	margin-top: 10px;
+}
+
 div.other {
 	margin: 10px 0px;
     text-align: center;

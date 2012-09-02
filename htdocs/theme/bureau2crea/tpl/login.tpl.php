@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009-2010 Regis Houssin <regis@dolibarr.fr>
+/* Copyright (C) 2009-2012 Regis Houssin <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,10 +94,12 @@ $(document).ready(function () {
 
 	<?php
 	if (! empty($hookmanager->resArray['options'])) {
-		foreach ($hookmanager->resArray['options'] as $option)
+		foreach ($hookmanager->resArray['options'] as $format => $option)
 		{
-			echo '<!-- Option by hook -->';
-			echo $option;
+			if ($format == 'div') {
+				echo '<!-- Option by hook -->';
+				echo $option;
+			}
 		}
 	}
 	?>

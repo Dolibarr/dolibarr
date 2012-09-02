@@ -76,10 +76,12 @@ print '<!-- HTTP_USER_AGENT = '.$_SERVER['HTTP_USER_AGENT'].' -->
 
 	<?php
 	if (! empty($hookmanager->resArray['options'])) {
-		foreach ($hookmanager->resArray['options'] as $option)
+		foreach ($hookmanager->resArray['options'] as $format => $option)
 		{
-			echo '<!-- Option by hook -->';
-			echo $option;
+			if ($format == 'div') {
+				echo '<!-- Option by hook -->';
+				echo $option;
+			}
 		}
 	}
 	?>

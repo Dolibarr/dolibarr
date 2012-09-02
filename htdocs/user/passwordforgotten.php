@@ -175,6 +175,9 @@ else
 $conf->css  = "/theme/".$conf->theme."/style.css.php?lang=".$langs->defaultlang;
 $conf_css = DOL_URL_ROOT.$conf->css;
 
+$jquerytheme = 'smoothness';
+if (! empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
+
 if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_background.png'))
 {
     $login_background = DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png';
