@@ -93,13 +93,14 @@ if ($action == 'add_action')
 	}
 
     $fulldayevent=GETPOST('fullday');
+    $percentage=in_array(GETPOST('status'),array(-1,100))?GETPOST('status'):GETPOST("percentage");	// If status is -1 or 100, percentage is not defined and we must use status
 
     // Clean parameters
 	$datep=dol_mktime($fulldayevent?'00':$_POST["aphour"], $fulldayevent?'00':$_POST["apmin"], 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
 	$datef=dol_mktime($fulldayevent?'23':$_POST["p2hour"], $fulldayevent?'59':$_POST["p2min"], $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
 
 	// Check parameters
-	if (! $datef && GETPOST('percentage') == 100)
+	if (! $datef && $percentage == 100)
 	{
 		$error++;
 		$action = 'create';
@@ -143,7 +144,7 @@ if ($action == 'add_action')
 	$actioncomm->fk_project = isset($_POST["projectid"])?$_POST["projectid"]:0;
 	$actioncomm->datep = $datep;
 	$actioncomm->datef = $datef;
-	$actioncomm->percentage = isset($_POST["percentage"])?$_POST["percentage"]:0;
+	$actioncomm->percentage = $percentage;
 	$actioncomm->duree=((GETPOST('dureehour') * 60) + GETPOST('dureemin')) * 60;
 
 	$usertodo=new User($db);
