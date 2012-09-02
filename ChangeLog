@@ -4,9 +4,18 @@ English Dolibarr ChangeLog
 
 
 ***** ChangeLog for 3.2.2 compared to 3.2.1 *****
-Fix: Modify spanish VAT to new rates
+
+- Fix: Modify spanish VAT to new rates.
+- Fix: Add error message when creating already existing product.
+- Fix: Edition of percentage of an event.
+- Fix: Minor look fix for theme bureau2crea.
+- Fix: Start and end date not saved at project creation
+- Fix: Default vat is zero for customer invoices if company does not use vat 
+
+
 
 ***** ChangeLog for 3.2.1 compared to 3.2.0 *****
+
 - Fix: Edit of projects.
 - Fix: Activation of modules does not fails if directory install was removed.
 - Fix: [ bug #444 ] Regression on auto-closing for proposals and orders.
@@ -32,7 +41,10 @@ Fix: Modify spanish VAT to new rates
 - Fix: [ bug #506 ] Can't set percentage of a started event
 - Fix: Bad assignation of const for pdf delivery module name
 
+
+
 ***** ChangeLog for 3.2.0 compared to 3.1.3 *****
+
 WARNING: PHP lower than 5.x are no more supported.
 WARNING: Because of a major datastructure change onto supplier prices tables, be aware
 to make a backup of your database before making upgrade.
@@ -171,6 +183,7 @@ Fix: bug #405 - Late icon always displayed on comm/propal.php
 
 
 ***** ChangeLog for 3.1 compared to 3.0 *****
+
 WARNING: IE6 browser is no more supported in this version.
 For users:
 - New: War against number of clicks:
