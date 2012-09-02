@@ -350,7 +350,7 @@ function ajax_combobox($htmlname, $event=array())
  * 	@param	int		$entity		Entity to set
  * 	@return	void
  */
-function ajax_constantonoff($code,$input=array(),$entity=false)
+function ajax_constantonoff($code, $input=array(), $entity=false)
 {
 	global $conf, $langs;
 

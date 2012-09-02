@@ -3033,12 +3033,13 @@ function get_exdir($num,$level=3,$alpha=0,$withoutslash=0)
 /**
  *	Creation of a directory (this can create recursive subdir)
  *
- *	@param	string	$dir	Directory to create (Separator must be '/'. Example: '/mydir/mysubdir')
- *	@return int         	< 0 if KO, 0 = already exists, > 0 if OK
+ *	@param	string	$dir		Directory to create (Separator must be '/'. Example: '/mydir/mysubdir')
+ *	@param	string	$dataroot	Data root directory (to avoid having the data root in the loop)
+ *	@return int         		< 0 if KO, 0 = already exists, > 0 if OK
  */
-function dol_mkdir($dir)
+function dol_mkdir($dir, $dataroot='')
 {
-	global $conf;
+	global $db, $conf;
 
 	dol_syslog("functions.lib::dol_mkdir: dir=".$dir,LOG_INFO);
 
@@ -3048,8 +3049,14 @@ function dol_mkdir($dir)
 	$nberr=0;
 	$nbcreated=0;
 
-	$ccdir = '';
-	$cdir = explode("/",$dir);
+	$ccdir='';
+	if (! empty($dataroot)) {
+		// Remove data root from loop
+		$dir = str_replace($dataroot.'/', '', $dir);
+		$ccdir = $dataroot.'/';
+	}
+
+	$cdir = explode("/", $dir);
 	$num=count($cdir);
 	for ($i = 0; $i < $num; $i++)
 	{

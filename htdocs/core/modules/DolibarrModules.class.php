@@ -1170,7 +1170,7 @@ abstract class DolibarrModules
 
         $err=0;
 
-        if (is_array($this->dirs))
+        if (isset($this->dirs) && is_array($this->dirs) && ! empty($this->dirs))
         {
             foreach ($this->dirs as $key => $value)
             {
@@ -1184,19 +1184,19 @@ abstract class DolibarrModules
                     $subname   = empty($this->dirs[$key][3])?'':strtoupper($this->dirs[$key][3]); // Add submodule name (ex: $conf->module->submodule->dir_output)
                     $forcename = empty($this->dirs[$key][4])?'':strtoupper($this->dirs[$key][4]); // Change the module name if different
 
-                    if ($forcename) $constname = 'MAIN_MODULE_'.$forcename."_DIR_";
-                    if ($subname)   $constname = $constname.$subname."_";
+                    if (! empty($forcename)) $constname = 'MAIN_MODULE_'.$forcename."_DIR_";
+                    if (! empty($subname))   $constname = $constname.$subname."_";
 
-                    $name      = $constname.strtoupper($this->dirs[$key][0]);
+                    $name = $constname.strtoupper($this->dirs[$key][0]);
                 }
 
                 // Define directory full path ($dir must start with "/")
                 if (empty($conf->global->MAIN_MODULE_MULTICOMPANY) || $conf->entity == 1) $fulldir = DOL_DATA_ROOT.$dir;
                 else $fulldir = DOL_DATA_ROOT."/".$conf->entity.$dir;
                 // Create dir if it does not exists
-                if ($fulldir && ! file_exists($fulldir))
+                if (! empty($fulldir) && ! file_exists($fulldir))
                 {
-                    if (dol_mkdir($fulldir) < 0)
+                    if (dol_mkdir($fulldir, DOL_DATA_ROOT) < 0)
                     {
                         $this->error = $langs->trans("ErrorCanNotCreateDir",$fulldir);
                         dol_syslog(get_class($this)."::_init ".$this->error, LOG_ERR);
@@ -1205,9 +1205,9 @@ abstract class DolibarrModules
                 }
 
                 // Define the constant in database if requested (not the default mode)
-                if ($addtodatabase)
+                if (! empty($addtodatabase))
                 {
-                    $result = $this->insert_dirs($name,$dir);
+                    $result = $this->insert_dirs($name, $dir);
                     if ($result) $err++;
                 }
             }
