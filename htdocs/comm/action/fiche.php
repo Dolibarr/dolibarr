@@ -266,7 +266,7 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == 'yes')
 }
 
 /*
- * Action mise a jour de l'action
+ * Action update event
  */
 if ($action == 'update')
 {
@@ -277,14 +277,13 @@ if ($action == 'update')
         $apmin=GETPOST('apmin');
         $p2hour=GETPOST('p2hour');
         $p2min=GETPOST('p2min');
+		$percentage=in_array(GETPOST('status'),array(-1,100))?GETPOST('status'):GETPOST("percentage");	// If status is -1 or 100, percentage is not defined and we must use status
 
 	    // Clean parameters
 		if ($aphour == -1) $aphour='0';
 		if ($apmin == -1) $apmin='0';
 		if ($p2hour == -1) $p2hour='0';
 		if ($p2min == -1) $p2min='0';
-		//if ($_POST["adhour"] == -1) $_POST["adhour"]='0';
-		//if ($_POST["admin"] == -1) $_POST["admin"]='0';
 
 		$actioncomm = new Actioncomm($db);
 		$actioncomm->fetch($id);
@@ -295,9 +294,7 @@ if ($action == 'update')
 		$actioncomm->label       = $_POST["label"];
 		$actioncomm->datep       = $datep;
 		$actioncomm->datef       = $datef;
-		//$actioncomm->date        = $datea;
-		//$actioncomm->dateend     = $datea2;
-		$actioncomm->percentage  = $_POST["percentage"];
+		$actioncomm->percentage  = $percentage;
 		$actioncomm->priority    = $_POST["priority"];
         $actioncomm->fulldayevent= $_POST["fullday"]?1:0;
 		$actioncomm->location    = isset($_POST["location"])?$_POST["location"]:'';
@@ -307,7 +304,7 @@ if ($action == 'update')
 		$actioncomm->note        = $_POST["note"];
 		$actioncomm->pnote       = $_POST["note"];
 
-		if (! $datef && $_POST["percentage"] == 100)
+		if (! $datef && $percentage == 100)
 		{
 			$error=$langs->trans("ErrorFieldRequired",$langs->trans("DateEnd"));
 			$action = 'edit';
