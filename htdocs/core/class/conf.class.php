@@ -383,7 +383,7 @@ class Conf
 		if (! isset($this->global->MAIN_MAX_DECIMALS_SHOWN)) $this->global->MAIN_MAX_DECIMALS_SHOWN=8;
 
 		// Default max file size for upload
-		$this->maxfilesize = (! empty($this->global->MAIN_UPLOAD_DOC) ? $this->global->MAIN_UPLOAD_DOC * 1024 : 2097152);
+		$this->maxfilesize = (! empty($this->global->MAIN_UPLOAD_DOC) ? $this->global->MAIN_UPLOAD_DOC * 1024 : 0);
 
 		// Timeouts
         if (empty($this->global->MAIN_USE_CONNECT_TIMEOUT)) $this->global->MAIN_USE_CONNECT_TIMEOUT=10;

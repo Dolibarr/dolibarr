@@ -3034,12 +3034,12 @@ function get_exdir($num,$level=3,$alpha=0,$withoutslash=0)
  *	Creation of a directory (this can create recursive subdir)
  *
  *	@param	string	$dir		Directory to create (Separator must be '/'. Example: '/mydir/mysubdir')
- *	@param	string	$dataroot	Data root directory (to avoid having the data root in the loop)
+ *	@param	string	$dataroot	Data root directory (To avoid having the data root in the loop. Using this will also lost the warning on first dir PHP has no permission when open_basedir is used)
  *	@return int         		< 0 if KO, 0 = already exists, > 0 if OK
  */
 function dol_mkdir($dir, $dataroot='')
 {
-	global $db, $conf;
+	global $conf;
 
 	dol_syslog("functions.lib::dol_mkdir: dir=".$dir,LOG_INFO);
 

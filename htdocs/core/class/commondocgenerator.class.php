@@ -54,7 +54,7 @@ abstract class CommonDocGenerator
             'myuser_fax'=>$user->office_fax,
             'myuser_mobile'=>$user->user_mobile,
             'myuser_email'=>$user->email,
-            //'myuser_web'=>$user->url // FIXME url not exist in $user object
+            'myuser_web'=>''	// url not exist in $user object
         );
     }
 

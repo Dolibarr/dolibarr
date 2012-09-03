@@ -1170,7 +1170,7 @@ abstract class DolibarrModules
 
         $err=0;
 
-        if (isset($this->dirs) && is_array($this->dirs) && ! empty($this->dirs))
+        if (isset($this->dirs) && is_array($this->dirs))
         {
             foreach ($this->dirs as $key => $value)
             {
