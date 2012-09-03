@@ -3061,7 +3061,7 @@ function dol_mkdir($dir, $dataroot='')
 	for ($i = 0; $i < $num; $i++)
 	{
 		if ($i > 0) $ccdir .= '/'.$cdir[$i];
-		else $ccdir = $cdir[$i];
+		else $ccdir .= $cdir[$i];
 		if (preg_match("/^.:$/",$ccdir,$regs)) continue;	// Si chemin Windows incomplet, on poursuit par rep suivant
 
 		// Attention, le is_dir() peut echouer bien que le rep existe.

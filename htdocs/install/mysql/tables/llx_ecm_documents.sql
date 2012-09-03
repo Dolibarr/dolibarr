@@ -1,6 +1,6 @@
 -- ===================================================================
--- Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2009 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) 2009-2012	Regis Houssin		<regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,24 +20,20 @@
 
 create table llx_ecm_documents
 (
-  rowid           	integer AUTO_INCREMENT PRIMARY KEY,
-  ref             	varchar(16)  NOT NULL,
-  entity          	integer DEFAULT 1 NOT NULL,				-- multi company id
-  filename        	varchar(255) NOT NULL,
-  filesize        	integer      NOT NULL,
-  filemime        	varchar(32)  NOT NULL,
-  fullpath_dol    	varchar(255) NOT NULL,
-  fullpath_orig   	varchar(255) NOT NULL,
-  description     	text,
-  manualkeyword   	text,
-  fk_create       	integer  NOT NULL,
-  fk_update       	integer,
-  date_c	      	datetime NOT NULL,
-  date_u		  	timestamp,
-  fk_directory    	integer,
-  fk_status		  	smallint DEFAULT 0,
-  private         	smallint DEFAULT 0,
-  crc 				varchar(32) NOT NULL DEFAULT '',  		-- checksum
-  cryptkey			varchar(50) NOT NULL DEFAULT '',  		-- crypt key
-  cipher 			varchar(50) NOT NULL DEFAULT 'twofish'  -- crypt cipher
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  ref				varchar(16)  NOT NULL,
+  entity			integer DEFAULT 1 NOT NULL,
+  filename			varchar(255) NOT NULL,
+  filesize			integer      NOT NULL,
+  filemime			varchar(128)  NOT NULL,
+  description		text,
+  metadata			text,
+  fullpath    		varchar(255) NOT NULL,
+  fk_directory		integer,
+  fk_create			integer  NOT NULL,
+  fk_update			integer,
+  date_c			datetime NOT NULL,
+  date_u			timestamp,
+  fk_status			smallint DEFAULT 0
+  
 ) ENGINE=innodb;

@@ -1,6 +1,5 @@
--- ===================================================================
--- Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
--- Copyright (C) 2009-2012	Regis Houssin		<regis@dolibarr.fr>
+-- ============================================================================
+-- Copyright (C) 2012	Regis Houssin	<regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,22 +14,16 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- ===================================================================
+-- ===========================================================================
 
--- drop table llx_ecm_directories;
-
-create table llx_ecm_directories
+create table llx_element_tag
 (
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
-  label				varchar(64) NOT NULL,
-  entity			integer DEFAULT 1 NOT NULL,	-- multi company id
-  fk_parent			integer,
-  description		varchar(255) NOT NULL,
-  cachenbofdoc		integer NOT NULL DEFAULT 0,
-  date_c			datetime,
-  date_m			timestamp,
-  fk_user_c			integer,
-  fk_user_m			integer,
-  acl				text
+  entity			integer DEFAULT 1 NOT NULL,			-- multi company id
+  lang				varchar(5) NOT NULL,
+  tag				varchar(255) NOT NULL,
+  fk_element		integer NOT NULL,
+  element			varchar(64) NOT NULL
   
-) ENGINE=innodb;
+)ENGINE=innodb;
+
