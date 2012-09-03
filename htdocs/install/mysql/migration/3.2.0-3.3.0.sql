@@ -7,7 +7,7 @@
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
 -- To rename a column:      ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);
 -- To drop a column:        ALTER TABLE llx_table DROP COLUMN oldname;
--- To change type of field: ALTER TABLE llx_table MODIFY name varchar(60);
+-- To change type of field: ALTER TABLE llx_table MODIFY COLUMN name varchar(60);
 -- To restrict request to Mysql version x.y use -- VMYSQLx.y
 -- To restrict request to Pgsql version x.y use -- VPGSQLx.y
 
@@ -43,8 +43,8 @@ ALTER TABLE llx_mailing MODIFY COLUMN body mediumtext;
 ALTER TABLE llx_mailing ADD COLUMN extraparams varchar(255);
 
 
-ALTER TABLE llx_product MODIFY ref varchar(128)  NOT NULL;
-ALTER TABLE llx_product MODIFY ref_ext varchar(128);
+ALTER TABLE llx_product MODIFY COLUMN ref varchar(128)  NOT NULL;
+ALTER TABLE llx_product MODIFY COLUMN ref_ext varchar(128);
 
 ALTER TABLE llx_product_fournisseur_price DROP COLUMN fk_product_fournisseur;
 ALTER TABLE llx_product_fournisseur_price ADD charges DOUBLE( 24, 8 ) DEFAULT 0 AFTER unitprice;
@@ -64,9 +64,9 @@ alter table llx_propaldet drop column pa_ht;
 alter table llx_propaldet drop column marge_tx;
 alter table llx_propaldet drop column marque_tx;
 
-ALTER TABLE llx_commande CHANGE fk_demand_reason fk_input_reason INT(11) NULL DEFAULT NULL;
-ALTER TABLE llx_propal CHANGE fk_demand_reason fk_input_reason INT(11) NULL DEFAULT NULL;
-ALTER TABLE llx_commande_fournisseur CHANGE fk_methode_commande fk_input_method INT(11) NULL DEFAULT 0;
+ALTER TABLE llx_commande CHANGE COLUMN fk_demand_reason fk_input_reason INT(11) NULL DEFAULT NULL;
+ALTER TABLE llx_propal CHANGE COLUMN fk_demand_reason fk_input_reason INT(11) NULL DEFAULT NULL;
+ALTER TABLE llx_commande_fournisseur CHANGE COLUMN fk_methode_commande fk_input_method INT(11) NULL DEFAULT 0;
 
 INSERT INTO llx_const (name, value, type, note, visible) values ('PRODUCT_CODEPRODUCT_ADDON','mod_codeproduct_leopard','yesno','Module to control product codes',0);
 
@@ -85,3 +85,41 @@ ALTER TABLE llx_accountingaccount  ADD COLUMN active tinyint DEFAULT 1 NOT NULL 
 
 ALTER TABLE llx_actioncomm MODIFY elementtype VARCHAR(32);
 
+-- TASK #107
+ALTER TABLE llx_ecm_directories MODIFY COLUMN label varchar(64) NOT NULL;
+ALTER TABLE llx_ecm_directories ADD COLUMN acl text;
+ALTER TABLE llx_ecm_directories ADD INDEX idx_ecm_directories_fk_user_c (fk_user_c);
+ALTER TABLE llx_ecm_directories ADD INDEX idx_ecm_directories_fk_user_m (fk_user_m);
+ALTER TABLE llx_ecm_directories ADD CONSTRAINT fk_ecm_directories_fk_user_c FOREIGN KEY (fk_user_c) REFERENCES llx_user (rowid);
+ALTER TABLE llx_ecm_directories ADD CONSTRAINT fk_ecm_directories_fk_user_m FOREIGN KEY (fk_user_m) REFERENCES llx_user (rowid);
+
+ALTER TABLE llx_ecm_documents DROP INDEX idx_ecm_documents;
+ALTER TABLE llx_ecm_documents DROP COLUMN manualkeyword;
+ALTER TABLE llx_ecm_documents DROP COLUMN fullpath_orig;
+ALTER TABLE llx_ecm_documents DROP COLUMN private;
+ALTER TABLE llx_ecm_documents DROP COLUMN crc;
+ALTER TABLE llx_ecm_documents DROP COLUMN cryptkey;
+ALTER TABLE llx_ecm_documents DROP COLUMN cipher;
+ALTER TABLE llx_ecm_documents CHANGE COLUMN fullpath_dol fullpath varchar(255) NOT NULL;
+ALTER TABLE llx_ecm_documents MODIFY COLUMN filemime varchar(128) NOT NULL;
+ALTER TABLE llx_ecm_documents ADD COLUMN metadata text after description;
+ALTER TABLE llx_ecm_documents ADD UNIQUE INDEX idx_ecm_documents_ref (ref, fk_directory, entity);
+ALTER TABLE llx_ecm_documents ADD INDEX idx_ecm_documents_fk_create (fk_create);
+ALTER TABLE llx_ecm_documents ADD INDEX idx_ecm_documents_fk_update (fk_update);
+ALTER TABLE llx_ecm_documents ADD CONSTRAINT fk_ecm_documents_fk_directory FOREIGN KEY (fk_directory) REFERENCES llx_ecm_directories (rowid);
+ALTER TABLE llx_ecm_documents ADD CONSTRAINT fk_ecm_documents_fk_create FOREIGN KEY (fk_create) REFERENCES llx_user (rowid);
+ALTER TABLE llx_ecm_documents ADD CONSTRAINT fk_ecm_documents_fk_update FOREIGN KEY (fk_update) REFERENCES llx_user (rowid);
+
+create table llx_element_tag
+(
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  entity			integer DEFAULT 1 NOT NULL,			-- multi company id
+  lang				varchar(5) NOT NULL,
+  tag				varchar(255) NOT NULL,
+  fk_element		integer NOT NULL,
+  element			varchar(64) NOT NULL
+  
+)ENGINE=innodb;
+
+ALTER TABLE llx_element_tag ADD UNIQUE INDEX uk_element_tag (entity, lang, tag, fk_element, element);
+-- END TASK #107

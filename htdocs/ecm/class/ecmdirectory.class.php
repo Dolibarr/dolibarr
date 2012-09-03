@@ -20,13 +20,11 @@
  *  \file       htdocs/ecm/class/ecmdirectory.class.php
  *  \ingroup    ecm
  *  \brief      This file is an example for a class file
- *  \author		Laurent Destailleur
  */
 
 /**
  *  \class      EcmDirectory
  *  \brief      Class to manage ECM directories
- *  \remarks	Initialy built by build_class_from_table on 2008-02-24 19:24
  */
 class EcmDirectory // extends CommonObject
 {
