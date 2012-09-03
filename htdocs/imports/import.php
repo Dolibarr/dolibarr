@@ -206,8 +206,24 @@ if ($step == 3 && $datatoimport)
 		else
 		{
 			$langs->load("errors");
-			$mesg = $langs->trans("ErrorFailedToSaveFile");
+			setEventMessage($langs->trans("ErrorFailedToSaveFile"), 'errors');
 		}
+	}
+
+	// Delete file
+	if ($action == 'confirm_deletefile' && $confirm == 'yes')
+	{
+		$langs->load("other");
+
+		$param='&datatoimport='.$datatoimport.'&format='.$format;
+		if ($excludefirstline) $param.='&excludefirstline=1';
+
+		$file = $conf->import->dir_temp . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+		$ret=dol_delete_file($file);
+		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+		Header('Location: '.$_SERVER["PHP_SELF"].'?step='.$step.$param);
+		exit;
 	}
 }
 
@@ -306,7 +322,7 @@ if ($step == 1 || ! $datatoimport)
 	$array_match_file_to_database=array();
 	$_SESSION["dol_array_match_file_to_database"]='';
 
-	$parm='';
+	$param='';
 	if ($excludefirstline) $param.='&excludefirstline=1';
 
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
@@ -448,7 +464,7 @@ if ($step == 3 && $datatoimport)
 
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
-    $head = import_prepare_head($param,3);
+    $head = import_prepare_head($param, 3);
 
 	dol_fiche_head($head, 'step3', $langs->trans("NewImport"));
 
@@ -543,8 +559,6 @@ if ($step == 3 && $datatoimport)
 			print '<tr '.$bc[$var].'>';
 			print '<td width="16">'.img_mime($file).'</td>';
 			print '<td>';
-			$modulepart='import';
-			//$relativepath=$filetoimport;
     		print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=3'.$param.'" target="_blank">';
     		print $file;
     		print '</a>';
@@ -558,7 +572,7 @@ if ($step == 3 && $datatoimport)
 			print '">'.img_delete().'</a></td>';
 			// Action button
 			print '<td align="right">';
-			print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=4'.$param.'&filetoimport='.urlencode($relativepath).'">'.img_picto($langs->trans("NewImport"),'filenew').'</a>';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?step=4'.$param.'&filetoimport='.urlencode($relativepath).'">'.img_picto($langs->trans("NewImport"),'filenew').'</a>';
 			print '</td>';
 			print '</tr>';
 		}

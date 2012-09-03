@@ -169,6 +169,7 @@ AddFiles=Add Files
 StartUpload=Start upload
 CancelUpload=Cancel upload
 FileIsTooBig=Files is too big
+PleaseBePatient=Please be patient...
 
 ##### Calendar common #####
 AddCalendarEntry=Add entry in calendar %s
