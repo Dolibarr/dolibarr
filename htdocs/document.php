@@ -78,7 +78,6 @@ else $type=dol_mimetype($original_file);
 
 // Define attachment (attachment=true to force choice popup 'open'/'save as')
 $attachment = true;
-if (preg_match('/\.txt$/i',$original_file)) $attachment = false;
 if (preg_match('/\.(html|htm)$/i',$original_file)) $attachment = false;
 if (isset($_GET["attachment"])) $attachment = GETPOST("attachment")?true:false;
 if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
