@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -272,7 +272,7 @@ if ($socid > 0)
 	print '<td><input type="text" size="5" name="amount_ht" value="'.$_POST["amount_ht"].'">&nbsp;'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	print '<tr><td width="38%">'.$langs->trans("VAT").'</td>';
 	print '<td>';
-	print $form->load_tva('tva_tx',GETPOST('tva_tx'),'',$mysoc,'');
+	print $form->load_tva('tva_tx',GETPOST('tva_tx'),$mysoc,$objsoc);
 	print '</td></tr>';
 	print '<tr><td>'.$langs->trans("NoteReason").'</td>';
 	print '<td><input type="text" size="60" name="desc" value="'.$_POST["desc"].'"></td></tr>';
