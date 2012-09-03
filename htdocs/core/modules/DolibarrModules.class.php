@@ -1273,7 +1273,7 @@ abstract class DolibarrModules
         $err=0;
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-        $sql.= " WHERE ".$this->db->decrypt('name')." like '".$this->const_name."_DIR_%'";
+        $sql.= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->const_name."_DIR_%'";
         $sql.= " AND entity = ".$conf->entity;
 
         dol_syslog(get_class($this)."::delete_dirs sql=".$sql);

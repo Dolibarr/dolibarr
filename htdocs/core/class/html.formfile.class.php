@@ -495,17 +495,18 @@ class FormFile
                 $out.= '</a>'."\n";
                 if (! $iconPDF)
                 {
+                	$size=(! empty($file['size'])?$file['size']:dol_filesize($filedir."/".$file["name"]));
+                	$date=(! empty($file['date'])?$file['date']:dol_filemtime($filedir."/".$file["name"]));
                 	$out.= '</td>';
                 	// Show file size
-                	$out.= '<td align="right" nowrap="nowrap">'.dol_print_size(dol_filesize($filedir."/".$file["name"])).'</td>';
+                	$out.= '<td align="right" nowrap="nowrap">'.dol_print_size($size).'</td>';
                 	// Show file date
-                	$out.= '<td align="right" nowrap="nowrap">'.dol_print_date(dol_filemtime($filedir."/".$file["name"]),'dayhour').'</td>';
+                	$out.= '<td align="right" nowrap="nowrap">'.dol_print_date($date, 'dayhour').'</td>';
                 }
 
                 if ($delallowed)
                 {
                     $out.= '<td align="right">';
-                    //$out.= '<a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath);
                     $out.= '<a href="'.$urlsource.(strpos($urlsource,'?')?'&':'?').'action=remove_file&modulepart='.$modulepart.'&file='.urlencode($relativepath);
                     $out.= ($param?'&'.$param:'');
                     $out.= '&urlsource='.urlencode($urlsource);
@@ -577,7 +578,6 @@ class FormFile
         {
             if ($file['name'] != '.'
             && $file['name'] != '..'
-            && $file['name'] != 'CVS'
             && ! preg_match('/\.meta$/i',$file['name']))
             {
                 // Define relative path used to store the file
