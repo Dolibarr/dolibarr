@@ -3589,14 +3589,19 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
 
 	if ($out)
 	{
-		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && empty($keepembedded))
+		if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && empty($keepembedded))
 		{
 			$return = '<script type="text/javascript">
-					jQuery(document).ready(function() {
-						jQuery.jnotify("'.dol_escape_js($out).'",
-						"'.($style=="ok" ? 3000 : $style).'",
-						'.($style=="ok" ? "false" : "true").',
-						{ remove: function (){} } );
+					$(document).ready(function() {
+						var block = '.(! empty($conf->global->MAIN_USE_JQUERY_BLOCKUI)?"true":"false").'
+						if (block) {
+							$.growlUI("'.dol_escape_js($out).'");
+						} else {
+							$.jnotify("'.dol_escape_js($out).'",
+							"'.($style=="ok" ? 3000 : $style).'",
+							'.($style=="ok" ? "false" : "true").',
+							{ remove: function (){} } );
+						}
 					});
 				</script>';
 		}

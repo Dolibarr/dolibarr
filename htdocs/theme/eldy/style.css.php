@@ -1761,13 +1761,6 @@ div.error {
   background: #EFCFCF;
 }
 
-div.jnotify-background {
-	opacity : 0.95 !important;
-    -moz-box-shadow: 4px 4px 4px #888 !important;
-    -webkit-box-shadow: 4px 4px 4px #888 !important;
-    box-shadow: 4px 4px 4px #888 !important;
-}
-
 /* Info admin */
 div.info {
   color: #807050;
@@ -2507,6 +2500,23 @@ div.ecmjqft {
 	width: auto;
 	padding-left: 10px !important;
 	padding-right: 10px !important;
+}
+
+/* use or not ? */
+div.jnotify-background {
+	opacity : 0.95 !important;
+    -moz-box-shadow: 4px 4px 4px #888 !important;
+    -webkit-box-shadow: 4px 4px 4px #888 !important;
+    box-shadow: 4px 4px 4px #888 !important;
+}
+
+/* ============================================================================== */
+/*  blockUI                                                                      */
+/* ============================================================================== */
+
+div.growlUI { background: url(check48.png) no-repeat 10px 10px }
+div.growlUI h1, div.growlUI h2 {
+	color: white; padding: 5px 5px 5px 75px; text-align: left
 }
 
 /* ============================================================================== */
