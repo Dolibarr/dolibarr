@@ -78,38 +78,51 @@ else $type=dol_mimetype($original_file);
 //print 'X'.$type.'-'.$original_file;exit;
 
 // Define attachment (attachment=true to force choice popup 'open'/'save as')
+// TODO $attachment is already true by default
 $attachment = true;
 // Text files
-if (preg_match('/\.txt$/i',$original_file))  	{ $attachment = false; }
-if (preg_match('/\.csv$/i',$original_file))  	{ $attachment = true; }
-if (preg_match('/\.tsv$/i',$original_file))  	{ $attachment = true; }
+if (preg_match('/\.txt$/i',$original_file))  	{
+	$attachment = false;
+}
+//if (preg_match('/\.csv$/i',$original_file))  	{ $attachment = true; }
+//if (preg_match('/\.tsv$/i',$original_file))  	{ $attachment = true; }
 // Documents MS office
-if (preg_match('/\.doc(x)?$/i',$original_file)) { $attachment = true; }
-if (preg_match('/\.dot(x)?$/i',$original_file)) { $attachment = true; }
-if (preg_match('/\.mdb$/i',$original_file))     { $attachment = true; }
-if (preg_match('/\.ppt(x)?$/i',$original_file)) { $attachment = true; }
-if (preg_match('/\.xls(x)?$/i',$original_file)) { $attachment = true; }
+//if (preg_match('/\.doc(x)?$/i',$original_file)) { $attachment = true; }
+//if (preg_match('/\.dot(x)?$/i',$original_file)) { $attachment = true; }
+//if (preg_match('/\.mdb$/i',$original_file))     { $attachment = true; }
+//if (preg_match('/\.ppt(x)?$/i',$original_file)) { $attachment = true; }
+//if (preg_match('/\.xls(x)?$/i',$original_file)) { $attachment = true; }
 // Documents Open office
-if (preg_match('/\.odp$/i',$original_file))     { $attachment = true; }
-if (preg_match('/\.ods$/i',$original_file))     { $attachment = true; }
-if (preg_match('/\.odt$/i',$original_file))     { $attachment = true; }
+//if (preg_match('/\.odp$/i',$original_file))     { $attachment = true; }
+//if (preg_match('/\.ods$/i',$original_file))     { $attachment = true; }
+//if (preg_match('/\.odt$/i',$original_file))     { $attachment = true; }
 // Misc
-if (preg_match('/\.(html|htm)$/i',$original_file)) 	{ $attachment = false; }
-if (preg_match('/\.pdf$/i',$original_file))  	{ $attachment = true; }
-if (preg_match('/\.sql$/i',$original_file))     { $attachment = true; }
+if (preg_match('/\.(html|htm)$/i',$original_file)) {
+	$attachment = false;
+}
+//if (preg_match('/\.pdf$/i',$original_file))  	{ $attachment = true; }
+//if (preg_match('/\.sql$/i',$original_file))     { $attachment = true; }
 // Images
-if (preg_match('/\.jpg$/i',$original_file)) 	{ $attachment = true; }
-if (preg_match('/\.jpeg$/i',$original_file)) 	{ $attachment = true; }
-if (preg_match('/\.png$/i',$original_file)) 	{ $attachment = true; }
-if (preg_match('/\.gif$/i',$original_file)) 	{ $attachment = true; }
-if (preg_match('/\.bmp$/i',$original_file)) 	{ $attachment = true; }
-if (preg_match('/\.tiff$/i',$original_file)) 	{ $attachment = true; }
+//if (preg_match('/\.jpg$/i',$original_file)) 	{ $attachment = true; }
+//if (preg_match('/\.jpeg$/i',$original_file)) 	{ $attachment = true; }
+//if (preg_match('/\.png$/i',$original_file)) 	{ $attachment = true; }
+//if (preg_match('/\.gif$/i',$original_file)) 	{ $attachment = true; }
+//if (preg_match('/\.bmp$/i',$original_file)) 	{ $attachment = true; }
+//if (preg_match('/\.tiff$/i',$original_file)) 	{ $attachment = true; }
 // Calendar
-if (preg_match('/\.vcs$/i',$original_file))  	{ $attachment = true; }
-if (preg_match('/\.ics$/i',$original_file))  	{ $attachment = true; }
-if (GETPOST("attachment"))                      { $attachment = true; }
+//if (preg_match('/\.vcs$/i',$original_file))  	{ $attachment = true; }
+//if (preg_match('/\.ics$/i',$original_file))  	{ $attachment = true; }
+if (GETPOST("attachment")) {
+	$attachment = true;
+}
 if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
 //print "XX".$attachment;exit;
+
+// Suppression de la chaine de caractere ../ dans $original_file
+$original_file = str_replace("../","/", $original_file);
+
+// find the subdirectory name as the reference
+$refname=basename(dirname($original_file)."/");
 
 // Suppression de la chaine de caractere ../ dans $original_file
 $original_file = str_replace("../","/", $original_file);
@@ -382,6 +395,14 @@ if ($modulepart)
 		$original_file=$conf->admin->dir_output.'/'.$original_file;
 	}
 
+	// Wrapping for upload file test
+	else if ($modulepart == 'admin_temp')
+	{
+		if ($user->admin)
+			$accessallowed=1;
+		$original_file=$conf->admin->dir_temp.'/'.$original_file;
+	}
+
 	// Wrapping pour BitTorrent
 	else if ($modulepart == 'bittorrent')
 	{
@@ -483,65 +504,37 @@ if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
 	exit;
 }
 
-// TODO Remove this. Some part of code still use it.
-if ($action == 'remove_file')	// Remove a file
+
+clearstatcache();
+
+$filename = basename($original_file);
+
+// Output file on browser
+dol_syslog("document.php download $original_file $filename content-type=$type");
+$original_file_osencoded=dol_osencode($original_file);	// New file name encoded in OS encoding charset
+
+// This test if file exists should be useless. We keep it to find bug more easily
+if (! file_exists($original_file_osencoded))
 {
-	clearstatcache();
-
-	dol_syslog("document.php remove $original_file $urlsource", LOG_DEBUG);
-
-	// This test should be useless. We keep it to find bug more easily
-	$original_file_osencoded=dol_osencode($original_file);	// New file name encoded in OS encoding charset
-	if (! file_exists($original_file_osencoded))
-	{
-		$file=basename($original_file);		// Do no show plain path of original_file in shown error message
-		dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$file));
-		exit;
-	}
-
-	$ret=dol_delete_file($original_file);
-	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-
-	dol_syslog("document.php back to ".urldecode($urlsource), LOG_DEBUG);
-
-	header("Location: ".urldecode($urlsource));
-
-	return;
+	dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
+	exit;
 }
-else						// Open and return file
-{
-	clearstatcache();
 
-	$filename = basename($original_file);
+// Les drois sont ok et fichier trouve, on l'envoie
 
-	// Output file on browser
-	dol_syslog("document.php download $original_file $filename content-type=$type");
-	$original_file_osencoded=dol_osencode($original_file);	// New file name encoded in OS encoding charset
+header('Content-Description: File Transfer');
+if ($encoding)   header('Content-Encoding: '.$encoding);
+if ($type)       header('Content-Type: '.$type.(preg_match('/text/',$type)?'; charset="'.$conf->file->character_set_client:''));
+if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
+else header('Content-Disposition: inline; filename="'.$filename.'"');
+header('Content-Length: ' . dol_filesize($original_file));
+// Ajout directives pour resoudre bug IE
+header('Cache-Control: Public, must-revalidate');
+header('Pragma: public');
 
-	// This test if file exists should be useless. We keep it to find bug more easily
-	if (! file_exists($original_file_osencoded))
-	{
-		dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
-		exit;
-	}
+//ob_clean();
+//flush();
 
-	// Les drois sont ok et fichier trouve, on l'envoie
-
-    header('Content-Description: File Transfer');
-	if ($encoding)   header('Content-Encoding: '.$encoding);
-	if ($type)       header('Content-Type: '.$type.(preg_match('/text/',$type)?'; charset="'.$conf->file->character_set_client:''));
-	if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
-	else header('Content-Disposition: inline; filename="'.$filename.'"');
-	header('Content-Length: ' . dol_filesize($original_file));
-	// Ajout directives pour resoudre bug IE
-	header('Cache-Control: Public, must-revalidate');
-	header('Pragma: public');
-
-	//ob_clean();
-	//flush();
-
-	readfile($original_file_osencoded);
-}
+readfile($original_file_osencoded);
 
 ?>
