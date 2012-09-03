@@ -75,59 +75,18 @@ if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
 $type = 'application/octet-stream';
 if (GETPOST('type','alpha')) $type=GETPOST('type','alpha');
 else $type=dol_mimetype($original_file);
-//print 'X'.$type.'-'.$original_file;exit;
 
 // Define attachment (attachment=true to force choice popup 'open'/'save as')
-// TODO $attachment is already true by default
 $attachment = true;
-// Text files
-if (preg_match('/\.txt$/i',$original_file))  	{
-	$attachment = false;
-}
-//if (preg_match('/\.csv$/i',$original_file))  	{ $attachment = true; }
-//if (preg_match('/\.tsv$/i',$original_file))  	{ $attachment = true; }
-// Documents MS office
-//if (preg_match('/\.doc(x)?$/i',$original_file)) { $attachment = true; }
-//if (preg_match('/\.dot(x)?$/i',$original_file)) { $attachment = true; }
-//if (preg_match('/\.mdb$/i',$original_file))     { $attachment = true; }
-//if (preg_match('/\.ppt(x)?$/i',$original_file)) { $attachment = true; }
-//if (preg_match('/\.xls(x)?$/i',$original_file)) { $attachment = true; }
-// Documents Open office
-//if (preg_match('/\.odp$/i',$original_file))     { $attachment = true; }
-//if (preg_match('/\.ods$/i',$original_file))     { $attachment = true; }
-//if (preg_match('/\.odt$/i',$original_file))     { $attachment = true; }
-// Misc
-if (preg_match('/\.(html|htm)$/i',$original_file)) {
-	$attachment = false;
-}
-//if (preg_match('/\.pdf$/i',$original_file))  	{ $attachment = true; }
-//if (preg_match('/\.sql$/i',$original_file))     { $attachment = true; }
-// Images
-//if (preg_match('/\.jpg$/i',$original_file)) 	{ $attachment = true; }
-//if (preg_match('/\.jpeg$/i',$original_file)) 	{ $attachment = true; }
-//if (preg_match('/\.png$/i',$original_file)) 	{ $attachment = true; }
-//if (preg_match('/\.gif$/i',$original_file)) 	{ $attachment = true; }
-//if (preg_match('/\.bmp$/i',$original_file)) 	{ $attachment = true; }
-//if (preg_match('/\.tiff$/i',$original_file)) 	{ $attachment = true; }
-// Calendar
-//if (preg_match('/\.vcs$/i',$original_file))  	{ $attachment = true; }
-//if (preg_match('/\.ics$/i',$original_file))  	{ $attachment = true; }
-if (GETPOST("attachment")) {
-	$attachment = true;
-}
+if (preg_match('/\.txt$/i',$original_file)) $attachment = false;
+if (preg_match('/\.(html|htm)$/i',$original_file)) $attachment = false;
+if (isset($_GET["attachment"])) $attachment = GETPOST("attachment")?true:false;
 if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
-//print "XX".$attachment;exit;
 
 // Suppression de la chaine de caractere ../ dans $original_file
 $original_file = str_replace("../","/", $original_file);
 
-// find the subdirectory name as the reference
-$refname=basename(dirname($original_file)."/");
-
-// Suppression de la chaine de caractere ../ dans $original_file
-$original_file = str_replace("../","/", $original_file);
-
-// find the subdirectory name as the reference
+// Find the subdirectory name as the reference
 $refname=basename(dirname($original_file)."/");
 
 // Security check
@@ -525,6 +484,7 @@ if (! file_exists($original_file_osencoded))
 header('Content-Description: File Transfer');
 if ($encoding)   header('Content-Encoding: '.$encoding);
 if ($type)       header('Content-Type: '.$type.(preg_match('/text/',$type)?'; charset="'.$conf->file->character_set_client:''));
+// Add MIME Content-Disposition from RFC 2183 (inline=automatically displayed, atachment=need user action to open)
 if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
 else header('Content-Disposition: inline; filename="'.$filename.'"');
 header('Content-Length: ' . dol_filesize($original_file));
