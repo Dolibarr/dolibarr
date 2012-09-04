@@ -174,13 +174,12 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetFont('','', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 
-				$tab_top = 100;
-				$tab_top_middlepage = 50;
-				$tab_top_newpage = 50;
-				$tab_height = 120;
-				$tab_height_newpage = 150;
+				$tab_top = 90;
+				$tab_top_middlepage = 10;
+				$tab_top_newpage = 10;
+				$tab_height = 130;
 				$tab_height_middlepage = 200;
-				$tab_height_endpage = 170;
+				$tab_height_newpage = 150;
 
 				// Affiche notes
 				if (! empty($object->note_public))

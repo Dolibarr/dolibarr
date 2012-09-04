@@ -94,7 +94,7 @@ $(document).ready(function() {
 			css: {
 				border: 'none',
 				padding: '15px',
-				backgroundColor: '#000',
+				background: '#000 url(/theme/eldy/img/working2.gif) no-repeat 10px center',
 				'-webkit-border-radius': '10px',
 				'-moz-border-radius': '10px',
 				'border-radius': '10px',
