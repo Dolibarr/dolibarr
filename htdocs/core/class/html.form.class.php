@@ -986,7 +986,7 @@ class Form
 
         // On recherche les utilisateurs
         $sql = "SELECT u.rowid, u.name as lastname, u.firstname, u.login, u.admin, u.entity";
-        if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
+        if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
         {
             $sql.= ", e.label";
         }
@@ -999,7 +999,16 @@ class Form
         }
         else
         {
-            $sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+        	if (! empty($conf->multicompany->transverse_mode))
+        	{
+        		$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+        		$sql.= " WHERE ug.fk_user = u.rowid";
+        		$sql.= " AND ug.entity = ".$conf->entity;
+        	}
+        	else
+        	{
+        		$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+        	}
         }
         if (! empty($user->societe_id)) $sql.= " AND u.fk_societe = ".$user->societe_id;
         if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN ('".$excludeUsers."')";
