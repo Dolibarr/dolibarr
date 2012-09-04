@@ -517,49 +517,6 @@ print "<td>&nbsp;</td>\n";
 print "</tr>\n";
 $var=true;
 
-// Valider la commande apres cloture de la propale
-// permet de na pas passer par l'option commande provisoire
-/*
-$var=! $var;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="setvalidorder">';
-print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("ValidOrderAfterPropalClosed").'</td>';
-print '<td width="60" align="center">'.$form->selectyesno("validorder",$conf->global->COMMANDE_VALID_AFTER_CLOSE_PROPAL,1).'</td>';
-print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-print '</tr>';
-print '</form>';
-*/
-
-// Ajouter une ligne de frais port indiquant le poids de la commande
-/*
-$var=! $var;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="deliverycostline">';
-print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("AddDeliveryCostLine").'</td>';
-print '<td width="60" align="center">'.$form->selectyesno("addline",$conf->global->COMMANDE_ADD_DELIVERY_COST_LINE,1).'</td>';
-print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-print '</tr>';
-print '</form>';
-*/
-
-// Utiliser le contact de la commande dans le document
-/*
-$var=! $var;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_use_customer_contact_as_recipient">';
-print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("UseCustomerContactAsOrderRecipientIfExist").'</td>';
-print '<td width="60" align="center">'.$form->selectyesno("use_customer_contact_as_recipient",$conf->global->COMMANDE_USE_CUSTOMER_CONTACT_AS_RECIPIENT,1).'</td>';
-print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-print '</tr>';
-print '</form>';
-*/
-
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

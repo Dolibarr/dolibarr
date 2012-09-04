@@ -103,7 +103,7 @@ print '<input type="hidden" name="action" value="setvalue">';
 
 $var=true;
 
-print '<table class="nobordernopadding" width="100%">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
@@ -123,7 +123,7 @@ print '<input size="32" type="text" name="MAILING_EMAIL_ERRORSTO" value="'.$conf
 if (!empty($conf->global->MAILING_EMAIL_ERRORSTO) && ! isValidEmail($conf->global->MAILING_EMAIL_ERRORSTO)) print ' '.img_warning($langs->trans("BadEMail"));
 print '</td></tr>';
 
-// TODO the precedent values are deleted after turn on this switch 
+// TODO the precedent values are deleted after turn on this switch
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("ActivateCheckRead").'</td><td>';
@@ -149,12 +149,12 @@ print $langs->trans("ActivateCheckReadKey").'</td><td>';
 print '<input size="32" type="text" name="MAILING_EMAIL_UNSUBSCRIBE_KEY" '.$readonly.' value="'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY.'">';
 print '</td></tr>';
 
-
-print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table></form>';
 
-$db->close();
+print '<br>';
+print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
 llxFooter();
 
+$db->close();
 ?>

@@ -49,7 +49,7 @@ class FormActions
      *  Show list of action status
      *
      * 	@param	string	$formname	Name of form where select in included
-     * 	@param	string	$selected	Preselected value
+     * 	@param	string	$selected	Preselected value (-1..100)
      * 	@param	int		$canedit	1=can edit, 0=read only
      *  @param  string	$htmlname   Name of html prefix for html fields (selectX and valX)
      * 	@return	void
@@ -96,15 +96,18 @@ class FormActions
                         $('.hideifna').hide();
                     }
                     else if (defaultvalue == 0) {
-                        percentage.attr('disabled', 'disabled');
+						percentage.val(0);
+                    	percentage.attr('disabled', 'disabled');
                         $('.hideifna').show();
                     }
                     else if (defaultvalue == 100) {
+						percentage.val(100);
                         percentage.attr('disabled', 'disabled');
                         $('.hideifna').show();
                     }
                     else {
-                        percentage.removeAttr('disabled');
+                    	if (defaultvalue == 50 && (percentage.val() == 0 || percentage.val() == 100)) { percentage.val(50) };
+                    	percentage.removeAttr('disabled');
                         $('.hideifna').show();
                     }
                 }

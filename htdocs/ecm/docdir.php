@@ -124,7 +124,7 @@ if ($action == 'add' && $user->rights->ecm->setup)
 }
 
 // Suppression fichier
-if ($action == 'confirm_deletesection' && $confirm == 'yes')
+else if ($action == 'confirm_deletesection' && $confirm == 'yes')
 {
 	$result=$ecmdir->delete($user);
 	setEventMessage($langs->trans("ECMSectionWasRemoved", $ecmdir->label));

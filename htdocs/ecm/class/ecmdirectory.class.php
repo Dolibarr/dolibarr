@@ -20,13 +20,11 @@
  *  \file       htdocs/ecm/class/ecmdirectory.class.php
  *  \ingroup    ecm
  *  \brief      This file is an example for a class file
- *  \author		Laurent Destailleur
  */
 
 /**
  *  \class      EcmDirectory
  *  \brief      Class to manage ECM directories
- *  \remarks	Initialy built by build_class_from_table on 2008-02-24 19:24
  */
 class EcmDirectory // extends CommonObject
 {
@@ -38,7 +36,7 @@ class EcmDirectory // extends CommonObject
 	var $label;
 	var $fk_parent;
 	var $description;
-	var $cachenbofdoc;
+	var $cachenbofdoc=-1;	// By default cache initialized with value 'not calculated'
 	var $date_c;
 	var $date_m;
 
@@ -77,7 +75,6 @@ class EcmDirectory // extends CommonObject
 		$this->label=dol_sanitizeFileName(trim($this->label));
 		$this->fk_parent=trim($this->fk_parent);
 		$this->description=trim($this->description);
-		if (! $this->cachenbofdoc) $this->cachenbofdoc=0;
 		$this->date_c=$now;
 		$this->fk_user_c=$user->id;
 		if ($this->fk_parent <= 0) $this->fk_parent=0;
@@ -132,7 +129,7 @@ class EcmDirectory // extends CommonObject
 			$sql.= " '".$conf->entity."',";
 			$sql.= " '".$this->fk_parent."',";
 			$sql.= " '".$this->db->escape($this->description)."',";
-			$sql.= " ".($this->cachenbofdoc).",";
+			$sql.= " ".$this->cachenbofdoc.",";
 			$sql.= " '".$this->db->idate($this->date_c)."',";
 			$sql.= " '".$this->fk_user_c."'";
 			$sql.= ")";
@@ -544,8 +541,7 @@ class EcmDirectory // extends CommonObject
 		$sql.= " c.date_c,";
 		$sql.= " u.login as login_c,";
 		$sql.= " ca.rowid as rowid_fille";
-		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql.= ", ".MAIN_DB_PREFIX."ecm_directories as c";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."ecm_directories as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."ecm_directories as ca";
 		$sql.= " ON c.rowid = ca.fk_parent";
 		$sql.= " WHERE c.fk_user_c = u.rowid";
@@ -569,9 +565,9 @@ class EcmDirectory // extends CommonObject
 				$this->cats[$obj->rowid]['fk_user_c'] = $obj->fk_user_c;
 				$this->cats[$obj->rowid]['login_c'] = $obj->login_c;
 
-				if ($obj->rowid_fille)
+				if (! empty($obj->rowid_fille))
 				{
-					if (is_array($this->cats[$obj->rowid]['id_children']))
+					if (isset($this->cats[$obj->rowid]['id_children']) && is_array($this->cats[$obj->rowid]['id_children']))
 					{
 						$newelempos=count($this->cats[$obj->rowid]['id_children']);
 						//print "this->cats[$i]['id_children'] est deja un tableau de $newelem elements<br>";
@@ -650,10 +646,10 @@ class EcmDirectory // extends CommonObject
 	}
 
 	/**
-	 *	Refresh value for cachenboffile
+	 *	Refresh value for cachenboffile. This scan and count files into directory.
 	 *
-	 *  @param		int		$all       	0=refresh this id , 1=refresh this entity
-	 * 	@return		int					<0 if KO, Nb of files in directory if OK
+	 *  @param		int		$all       	0=refresh record using this->id , 1=refresh record using this->entity
+	 * 	@return		int					-1 if KO, Nb of files in directory if OK
 	 */
 	function refreshcachenboffile($all=0)
 	{

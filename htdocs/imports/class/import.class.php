@@ -96,7 +96,7 @@ class Import
 				require_once $file;
 				$module = new $classname($this->db);
 
-				if (is_array($module->import_code))
+				if (isset($module->import_code) && is_array($module->import_code))
 				{
 					foreach($module->import_code as $r => $value)
 					{
@@ -138,7 +138,7 @@ class Import
 						// Array of tables to import (key=alias, value=tablename)
 						$this->array_import_tables[$i]=$module->import_tables_array[$r];
 						// Array of tables creator field to import (key=alias, value=creator field)
-						$this->array_import_tables_creator[$i]=$module->import_tables_creator_array[$r];
+						$this->array_import_tables_creator[$i]=(isset($module->import_tables_creator_array[$r])?$module->import_tables_creator_array[$r]:'');
 						// Array of fields to import (key=field, value=label)
 						$this->array_import_fields[$i]=$module->import_fields_array[$r];
 						// Array of hidden fields to import (key=field, value=label)
@@ -150,7 +150,7 @@ class Import
 						// Tableau des alias a exporter (cle=champ, valeur=exemple)
 						$this->array_import_examplevalues[$i]=$module->import_examplevalues_array[$r];
 						// Tableau des regles de conversion d'une valeur depuis une autre source (cle=champ, valeur=tableau des regles)
-						$this->array_import_convertvalue[$i]=$module->import_convertvalue_array[$r];
+						$this->array_import_convertvalue[$i]=(isset($module->import_convertvalue_array[$r])?$module->import_convertvalue_array[$r]:'');
 						// Module
 						$this->array_import_module[$i]=$module;
 

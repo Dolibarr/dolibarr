@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,12 +94,12 @@ class ModeleImports
     				// Picto
     				$this->picto[$module->id]=$module->picto;
     				// Driver properties
-    				$this->_driverlabel[$module->id]=$module->getDriverLabel();
-    				$this->_driverdesc[$module->id]=$module->getDriverDesc();
-    				$this->_driverversion[$module->id]=$module->getDriverVersion();
+    				$this->_driverlabel[$module->id]=$module->getDriverLabel('');
+    				$this->_driverdesc[$module->id]=$module->getDriverDesc('');
+    				$this->_driverversion[$module->id]=$module->getDriverVersion('');
     				// If use an external lib
-    				$this->_liblabel[$module->id]=$module->getLibLabel();
-    				$this->_libversion[$module->id]=$module->getLibVersion();
+    				$this->_liblabel[$module->id]=$module->getLibLabel('');
+    				$this->_libversion[$module->id]=$module->getLibVersion('');
 
     				$i++;
     			}

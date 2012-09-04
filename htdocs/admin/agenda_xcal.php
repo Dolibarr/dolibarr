@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2010 	Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -95,7 +95,7 @@ print "</tr>";
 
 print "<tr class=\"impair\">";
 print '<td class="fieldrequired">'.$langs->trans("PasswordTogetVCalExport")."</td>";
-print "<td><input type=\"text\" class=\"flat\" name=\"MAIN_AGENDA_XCAL_EXPORTKEY\" value=\"". (GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY','alpha')?GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY','alpha'):$conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) . "\" size=\"40\"></td>";
+print "<td><input required=\"required\" type=\"text\" class=\"flat\" name=\"MAIN_AGENDA_XCAL_EXPORTKEY\" value=\"". (GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY','alpha')?GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY','alpha'):$conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) . "\" size=\"40\"></td>";
 print "<td>&nbsp;</td>";
 print "</tr>";
 

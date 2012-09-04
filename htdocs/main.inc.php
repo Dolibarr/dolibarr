@@ -937,7 +937,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">'."\n";
 
         // Output standard javascript links
-        if (! $disablejs && $conf->use_javascript_ajax)
+        if (! $disablejs && ! empty($conf->use_javascript_ajax))
         {
             $ext='.js';
             if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x01)) {
@@ -962,6 +962,12 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             {
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js"></script>'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/jnotify.js"></script>'."\n";
+            }
+            // jQuery blockUI
+            if (! empty($conf->global->MAIN_USE_JQUERY_BLOCKUI))
+            {
+            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/blockUI/jquery.blockUI.js"></script>'."\n";
+            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/blockUI.js"></script>'."\n";
             }
             // Flot
             if (empty($conf->global->MAIN_DISABLE_JQUERY_FLOT))
@@ -1000,7 +1006,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ckeditor.js"></script>'."\n";
             }
             // jQuery File Upload
-            if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD))
+            if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD) || (defined('REQUIRE_JQUERY_FILEUPLOAD') && constant('REQUIRE_JQUERY_FILEUPLOAD')))
             {
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/template/tmpl.min.js"></script>'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/fileupload/js/jquery.iframe-transport.js"></script>'."\n";

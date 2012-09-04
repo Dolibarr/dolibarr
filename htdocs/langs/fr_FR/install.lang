@@ -26,6 +26,7 @@ ErrorGoBackAndCorrectParameters=Revenez en arrière et corrigez les paramètres 
 ErrorWrongValueForParameter=Vous avez peut-être saisi une mauvaise valeur pour le paramètre '%s'.
 ErrorFailedToCreateDatabase=Echec de création de la base '%s'.
 ErrorFailedToConnectToDatabase=Echec de connexion à la base '%s'.
+ErrorDatabaseVersionTooLow=Version de base de donnée (%s) trop ancienne. La version %s ou supérieure est requise.
 ErrorPHPVersionTooLow=Version de PHP trop ancienne. La version %s est requise.
 WarningPHPVersionTooLow=Version de PHP trop ancienne. La version %s ou plus est recommandée. Cette version reste utilisable mais n'est pas supportée.
 ErrorConnectedButDatabaseNotFound=Connexion au serveur réussi mais base '%s' introuvable.

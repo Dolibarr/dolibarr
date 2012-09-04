@@ -4,14 +4,8 @@ Accountancy=Λογιστική
 AccountancyCard=Καρτέλα λογιστικής
 Treasury=Περιουσιακά
 MenuFinancial=Οικονομικά
-TaxModuleSetupToModifyRules=Go to <a href="%s">module setup</a> to modify rules for calculation
 OptionMode=Επιλογές λογιστικής
 OptionModeTrue=Επιλογές εσόδων-εξόδων
-OptionModeVirtual=Option Credits-Debits
-OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). \nThe validity of the figures is assured only if the book-keeping is scrutinized through the input/output on the accounts via invoices.
-OptionModeVirtualDesc=In this context, the turnover is calculated over invoices (date of validation). When these invoices are due, whether they have been paid or not, they are listed in the turnover output. 
-FeatureIsSupportedInInOutModeOnly=Feature only available in CREDITS-DEBTS accountancy mode (See Accountancy module configuration)
-VATReportBuildWithOptionDefinedInModule=Amounts shown here are calculated using rules defined by Tax module setup.
 Param=Παραμετροποίηση
 AccountsGeneral=Λογαριασμοί
 Account=Λογαριασμός

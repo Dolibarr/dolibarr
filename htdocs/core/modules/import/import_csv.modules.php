@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009-2010 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2012	Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,21 +95,23 @@ class ImportCsv extends ModeleImports
 	}
 
 	/**
-	 * getDriverLabel
+	 *	getDriverLabel
 	 *
-	 * @return string	Label
+	 *	@param	string	$key	Key
+	 *	@return string	Label
 	 */
-	function getDriverLabel()
+	function getDriverLabel($key='')
 	{
 		return $this->label;
 	}
 
 	/**
-	 * getDriverDesc
+	 *	getDriverDesc
 	 *
-	 * @return string	Description
+	 *	@param	string	$key	Key
+	 *	@return string	Description
 	 */
-	function getDriverDesc()
+	function getDriverDesc($key='')
 	{
 		return $this->desc;
 	}
@@ -125,21 +127,23 @@ class ImportCsv extends ModeleImports
 	}
 
 	/**
-	 * getDriverVersion
+	 *	getDriverVersion
 	 *
-	 * @return string	Driver version
+	 *	@param	string	$key	Key
+	 *	@return string	Driver version
 	 */
-	function getDriverVersion()
+	function getDriverVersion($key='')
 	{
 		return $this->version;
 	}
 
 	/**
-	 * getDriverLabel
+	 *	getDriverLabel
 	 *
-	 * @return string	Label of external lib
+	 *	@param	string	$key	Key
+	 *	@return string	Label of external lib
 	 */
-	function getLibLabel()
+	function getLibLabel($key='')
 	{
 		return $this->label_lib;
 	}
@@ -147,9 +151,10 @@ class ImportCsv extends ModeleImports
 	/**
 	 * getLibVersion
 	 *
-	 * @return string	Version of external lib
+	 *	@param	string	$key	Key
+	 *	@return string	Version of external lib
 	 */
-	function getLibVersion()
+	function getLibVersion($key='')
 	{
 		return $this->version_lib;
 	}

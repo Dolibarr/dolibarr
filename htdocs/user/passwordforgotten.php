@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2011 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2008-2011 Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2007-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2012	Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2008-2011	Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,8 @@ define("NOLOGIN",1);	// This means this output page does not require to be logge
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-if ($conf->ldap->enabled) require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
+if (! empty($conf->ldap->enabled))
+	require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 
 $langs->load("errors");
 $langs->load("users");
@@ -42,13 +43,21 @@ if ($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)
     exit;
 }
 
-$action=GETPOST('action');
+$action=GETPOST('action', 'alpha');
 $mode=$dolibarr_main_authentication;
 if (! $mode) $mode='http';
 
 $username 		= GETPOST('username');
 $passwordmd5	= GETPOST('passwordmd5');
 $conf->entity 	= (GETPOST('entity') ? GETPOST('entity') : 1);
+
+// Instantiate hooks of thirdparty module only if not already define
+if (! is_object($hookmanager))
+{
+	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+	$hookmanager=new HookManager($db);
+}
+$hookmanager->initHooks(array('passwordforgottenpage'));
 
 
 /**
@@ -167,6 +176,9 @@ else
 $conf->css  = "/theme/".$conf->theme."/style.css.php?lang=".$langs->defaultlang;
 $conf_css = DOL_URL_ROOT.$conf->css;
 
+$jquerytheme = 'smoothness';
+if (! empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
+
 if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_background.png'))
 {
     $login_background = DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png';
@@ -190,51 +202,33 @@ $rowspan=2;
 $urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
 if (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
 {
-    $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_small);
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode('thumbs/'.$mysoc->logo_small);
 }
 elseif (! empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
 {
-    $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode($mysoc->logo);
-    $width=128;
-}elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/dolibarr_logo.png'))
-	{
-		$urllogo=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/dolibarr_logo.png';
-}elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png'))
-	{
-    $urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file='.urlencode($mysoc->logo);
+	$width=128;
 }
-
-// Entity combobox
-$select_entity='';
-if (! empty($conf->multicompany->enabled)  && empty($conf->global->MULTICOMPANY_HIDE_LOGIN_COMBOBOX) && ! $disabled)
+elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/dolibarr_logo.png'))
 {
-    $rowspan++;
-    $lastuser='';
-    $lastentity = GETPOST('entity');
-
-    if (! empty($conf->global->MULTICOMPANY_COOKIE_ENABLED))
-    {
-        $prefix=dol_getprefix();
-        $entityCookieName = 'DOLENTITYID_'.$prefix;
-        if (isset($_COOKIE[$entityCookieName]))
-        {
-            include_once DOL_DOCUMENT_ROOT . '/core/class/cookie.class.php';
-            $lastuser = '';	$lastentity = '';
-            $entityCookie = new DolCookie($conf->file->cookie_cryptkey);
-            $cookieValue = $entityCookie->_getCookie($entityCookieName);
-            list($lastuser, $lastentity) = explode('|', $cookieValue);
-        }
-    }
-
-    $select_entity = $mc->select_entities($lastentity, 'entity', ' tabindex="2"');
+	$urllogo=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/dolibarr_logo.png';
+}
+elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png'))
+{
+	$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
 }
 
 // Security graphical code
 if (function_exists("imagecreatefrompng") && ! $disabled)
 {
-    $captcha = 1;
-    $captcha_refresh = img_picto($langs->trans("Refresh"),'refresh','id="captcha_refresh_img"');
+	$captcha = 1;
+	$captcha_refresh = img_picto($langs->trans("Refresh"),'refresh','id="captcha_refresh_img"');
 }
+
+// Execute hook getPasswordForgottenPageOptions
+// Should be an array with differents options in $hookmanager->resArray
+$parameters=array('entity' => GETPOST('entity','int'));
+$hookmanager->executeHooks('getPasswordForgottenPageOptions',$parameters);    // Note that $action and $object may have been modified by some hooks
 
 include $template_dir.'passwordforgotten.tpl.php';	// To use native PHP
 

@@ -205,7 +205,7 @@ if ($action == 'refreshmanual')
     $diroutputslash.='/';
 
     // Scan directory tree on disk
-    $disktree=dol_dir_list($conf->ecm->dir_output,'directories',1,'','','','',0);
+    $disktree=dol_dir_list($conf->ecm->dir_output,'directories',1,'','^temp$','','',0);
 
     // Scan directory tree in database
     $sqltree=$ecmdirstatic->get_full_arbo(0);
@@ -283,7 +283,7 @@ if ($action == 'refreshmanual')
 
                 $txt="We create directory ".$ecmdirtmp->label." with parent ".$fk_parent;
                 dol_syslog($txt);
-                //print $txt."<br>\n";
+                //print $ecmdirtmp->cachenbofdoc."<br>\n";exit;
                 $id = $ecmdirtmp->create($user);
                 if ($id > 0)
                 {
@@ -309,7 +309,8 @@ if ($action == 'refreshmanual')
         }
     }
 
-    $sql="UPDATE ".MAIN_DB_PREFIX."ecm_directories set cachenbofdoc=0 WHERE cachenbofdoc < 0";
+    $sql="UPDATE ".MAIN_DB_PREFIX."ecm_directories set cachenbofdoc = -1 WHERE cachenbofdoc < 0";	// If pb into cahce counting, we set to value -1 = "unknown"
+    dol_syslog("sql = ".$sql);
     $db->query($sql);
 
     // If a directory was added, the fulltree array is not correctly completed and sorted, so we clean
@@ -378,7 +379,7 @@ llxHeader($moreheadcss.$moreheadjs,$langs->trans("ECMArea"),'','','','',$morejs,
 // Add sections to manage
 $rowspan=0;
 $sectionauto=array();
-if ($conf->product->enabled || $conf->service->enabled)     { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'product', 'test'=>$conf->product->enabled, 'label'=>$langs->trans("ProductsAndServices"),     'desc'=>$langs->trans("ECMDocsByProducts")); }
+if ($conf->product->enabled || $conf->service->enabled)     { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'product', 'test'=>($conf->product->enabled || $conf->service->enabled), 'label'=>$langs->trans("ProductsAndServices"),     'desc'=>$langs->trans("ECMDocsByProducts")); }
 if ($conf->societe->enabled)     { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'company', 'test'=>$conf->societe->enabled, 'label'=>$langs->trans("ThirdParties"), 'desc'=>$langs->trans("ECMDocsByThirdParties")); }
 if ($conf->propal->enabled)      { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'propal',  'test'=>$conf->propal->enabled,  'label'=>$langs->trans("Prop"),    'desc'=>$langs->trans("ECMDocsByProposals")); }
 if ($conf->contrat->enabled)     { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'contract','test'=>$conf->contrat->enabled, 'label'=>$langs->trans("Contracts"),    'desc'=>$langs->trans("ECMDocsByContracts")); }
@@ -693,7 +694,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
     			$result=$ecmdirstatic->fetch($val['id']);
     			$ecmdirstatic->ref=$ecmdirstatic->label;
 
-    			$result=$ecmdirstatic->refreshcachenboffile();
+    			$result=$ecmdirstatic->refreshcachenboffile(0);
     			$val['cachenbofdoc']=$result;
     		}
 

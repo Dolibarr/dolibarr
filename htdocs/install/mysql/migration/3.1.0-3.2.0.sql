@@ -37,7 +37,7 @@ update llx_commande set fk_user_author = null where fk_user_author not in (selec
 update llx_commande set fk_user_valid = null where fk_user_valid not in (select rowid from llx_user);
 
 
-ALTER TABLE llx_extrafields ADD COLUMN TYPE VARCHAR(8);
+ALTER TABLE llx_extrafields ADD COLUMN type VARCHAR(8);
 
 UPDATE llx_c_paper_format SET active=1 WHERE active=0;
 
@@ -454,8 +454,6 @@ ALTER TABLE llx_commande_fournisseur ADD COLUMN extraparams varchar(255) AFTER i
 ALTER TABLE llx_facture_fourn ADD COLUMN extraparams varchar(255) AFTER import_key;
 
 ALTER TABLE llx_boxes ADD COLUMN maxline integer NULL;
-
-ALTER TABLE llx_commande_fournisseur ADD COLUMN date_livraison date NULL;
 
 ALTER TABLE llx_product_fournisseur_price MODIFY fk_product_fournisseur integer DEFAULT 0;
 
