@@ -3595,7 +3595,7 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
 					$(document).ready(function() {
 						var block = '.(! empty($conf->global->MAIN_USE_JQUERY_BLOCKUI)?"true":"false").'
 						if (block) {
-							$.growlUI("'.dol_escape_js($out).'");
+							$.dolEventValid("","'.dol_escape_js($out).'");
 						} else {
 							$.jnotify("'.dol_escape_js($out).'",
 							"'.($style=="ok" ? 3000 : $style).'",

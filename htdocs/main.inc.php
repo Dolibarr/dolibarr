@@ -967,7 +967,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             if (! empty($conf->global->MAIN_USE_JQUERY_BLOCKUI))
             {
             	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/blockUI/jquery.blockUI.js"></script>'."\n";
-            	//print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/blockUI.js"></script>'."\n";
+            	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/blockUI.js"></script>'."\n";
             }
             // Flot
             if (empty($conf->global->MAIN_DISABLE_JQUERY_FLOT))

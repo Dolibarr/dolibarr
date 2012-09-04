@@ -2514,9 +2514,18 @@ div.jnotify-background {
 /*  blockUI                                                                      */
 /* ============================================================================== */
 
-div.growlUI { background: url(check48.png) no-repeat 10px 10px }
-div.growlUI h1, div.growlUI h2 {
-	color: white; padding: 5px 5px 5px 75px; text-align: left
+/*div.growlUI { background: url(check48.png) no-repeat 10px 10px }*/
+div.dolEventValid h1, div.dolEventValid h2 {
+	color: #567b1b;
+	background-color: #e3f0db;
+	padding: 5px 5px 5px 5px;
+	text-align: left;
+}
+div.dolEventError h1, div.dolEventError h2 {
+	color: #a72947;
+	background-color: #d79eac;
+	padding: 5px 5px 5px 5px;
+	text-align: left;
 }
 
 /* ============================================================================== */
