@@ -560,7 +560,7 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
 
-			// If CUSTOMER contact defined, we use it
+			// If SHIPPING contact defined, we use it
 			$usecontact=false;
 			$arrayidcontact=$object->getIdContact('external','SHIPPING');
 			if (count($arrayidcontact) > 0)
