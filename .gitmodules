@@ -115,3 +115,6 @@
 [submodule "htdocs/custom/ndfp"]
 	path = htdocs/custom/ndfp
 	url = gitolite@doliforge.org:ndfp/ndfp.git
+[submodule "htdocs/custom/ecmplus"]
+	path = htdocs/custom/ecmplus
+	url = gitolite@doliforge.org:ecmplus/ecmplus.git
