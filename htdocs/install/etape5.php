@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
+ * Copyright (C) 2004		Sebastien DiCintio		<sdicintio@ressource-toi.org>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,22 +31,23 @@ require_once($dolibarr_main_document_root . "/core/lib/admin.lib.php");
 require_once($dolibarr_main_document_root . "/core/lib/security.lib.php"); // for dol_hash
 
 
-$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
+$setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):'auto';
 $langs->setDefaultLang($setuplang);
+$versionfrom=GETPOST("versionfrom",'',3)?GETPOST("versionfrom",'',3):(empty($argv[1])?'':$argv[1]);
+$versionto=GETPOST("versionto",'',3)?GETPOST("versionto",'',3):(empty($argv[2])?'':$argv[2]);
+$action=GETPOST('action', 'alpha');
 
 // Define targetversion used to update MAIN_VERSION_LAST_INSTALL for first install
 // or MAIN_VERSION_LAST_UPGRADE for upgrade.
 $targetversion=DOL_VERSION;		// It it's last upgrade
-if (isset($_POST["action"]) && preg_match('/upgrade/i',$_POST["action"]))	// If it's an old upgrade
+if (! empty($action) && preg_match('/upgrade/i', $action))	// If it's an old upgrade
 {
-    $tmp=explode('_',$_POST["action"],2);
+    $tmp=explode('_', $action, 2);
     if ($tmp[0]=='upgrade' && ! empty($tmp[1])) $targetversion=$tmp[1];
 }
 
 $langs->load("admin");
 $langs->load("install");
-
-$action=GETPOST('action');
 
 $success=0;
 
@@ -105,14 +106,14 @@ pHeader($langs->trans("SetupEnd"),"etape5");
 print '<br>';
 
 // Test if we can run a first install process
-if (! GETPOST("versionfrom") && ! GETPOST("versionto") && ! is_writable($conffile))
+if (empty($versionfrom) && empty($versionto) && ! is_writable($conffile))
 {
     print $langs->trans("ConfFileIsNotWritable",$conffiletoshow);
     pFooter(1,$setuplang,'jscheckparam');
     exit;
 }
 
-if ($action == "set" || preg_match('/upgrade/i',$action))
+if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
 {
     print '<table cellspacing="0" cellpadding="2" width="100%">';
     $error=0;
@@ -250,7 +251,7 @@ if ($action == "set" || preg_match('/upgrade/i',$action))
         }
     }
     // If upgrade
-    elseif (preg_match('/upgrade/i',$action))
+    elseif (empty($action) || preg_match('/upgrade/i',$action))
     {
         if ($db->connected == 1)
         {
@@ -355,7 +356,7 @@ if ($action == "set")
     }
 }
 // If upgrade
-elseif (preg_match('/upgrade/i',$action))
+elseif (empty($action) || preg_match('/upgrade/i',$action))
 {
     if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION))
     {
