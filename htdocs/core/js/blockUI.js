@@ -23,7 +23,7 @@
 // Examples
 $(document).ready(function() {
 	// override these in your code to change the default behavior and style
-	$.blockUI.defaults = {
+	$.blockUI.events = {
 
 			// styles applied when using $.growlUI
 			dolEventValidCSS: {
@@ -70,7 +70,7 @@ $(document).ready(function() {
 			message: $m, fadeIn: 200, fadeOut: 700, centerY: false,
 			timeout: timeout, showOverlay: false,
 			onUnblock: onClose,
-			css: $.blockUI.defaults.dolEventValidCSS
+			css: $.blockUI.events.dolEventValidCSS
 		});
 	};
 	
@@ -83,8 +83,28 @@ $(document).ready(function() {
 			message: $m, fadeIn: 200, centerY: false,
 			timeout: timeout, showOverlay: false,
 			onUnblock: onClose,
-			css: $.blockUI.defaults.dolEventErrorCSS
+			css: $.blockUI.events.dolEventErrorCSS
 		});
 		$('.dolEventError').click($.unblockUI);
 	};
+	
+	$.pleaseBePatient = function(message, picto) {
+		var img = '';
+		if (picto != undefined) {
+			var img = picto + '&nbsp;&nbsp;&nbsp;&nbsp;'
+		}
+		$.blockUI({
+			message: img + message,
+			css: {
+				border: 'none',
+				padding: '15px',
+				backgroundColor: '#000',
+				'-webkit-border-radius': '10px',
+				'-moz-border-radius': '10px',
+				'border-radius': '10px'
+				opacity: .5,
+				color: '#fff'
+			}
+		});
+	}
 });
