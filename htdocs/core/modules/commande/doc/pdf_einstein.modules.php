@@ -131,7 +131,6 @@ class pdf_einstein extends ModelePDFCommandes
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0,$hookmanager=false)
 	{
 		global $user,$langs,$conf;
-		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -144,13 +143,15 @@ class pdf_einstein extends ModelePDFCommandes
 		$outputlangs->load("products");
 		$outputlangs->load("orders");
 
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+		
 		if ($conf->commande->dir_output)
 		{
             $object->fetch_thirdparty();
 
             $deja_regle = "";
 
-            // Definition de $dir et $file
+            // Definition of $dir and $file
 			if ($object->specimen)
 			{
 				$dir = $conf->commande->dir_output;
@@ -793,55 +794,76 @@ class pdf_einstein extends ModelePDFCommandes
 	{
 		global $conf;
 
-		// Amount in (at tab_top - 1)
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
+		
+		// Amount in (at tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','', $default_font_size - 2);
-		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->currency));
-		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top-4);
-		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 
+		if (empty($hidetop))
+		{
+			$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->currency));
+			$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top-4);
+			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
+		}
+		
 		$pdf->SetDrawColor(128,128,128);
-
-		// Rect prend une longueur en 3eme et 4eme param
-		$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height);
-		// line prend une position y en 3eme et 4eme param
-		$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);
-
 		$pdf->SetFont('','', $default_font_size - 1);
+		
+		// Output Rect
+		$this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
 
-		$pdf->SetXY($this->posxdesc-1, $tab_top+1);
-		$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
+		if (empty($hidetop))
+		{
+			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);
 
+			$pdf->SetXY($this->posxdesc-1, $tab_top+1);
+			$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
+		}
+		
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
 			$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
-			$pdf->SetXY($this->posxtva-3, $tab_top+1);
-			$pdf->MultiCell($this->posxup-$this->posxtva+3,2, $outputlangs->transnoentities("VAT"),'','C');
+			if (empty($hidetop))
+			{
+				$pdf->SetXY($this->posxtva-3, $tab_top+1);
+				$pdf->MultiCell($this->posxup-$this->posxtva+3,2, $outputlangs->transnoentities("VAT"),'','C');
+			}
 		}
 
 		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
-		$pdf->SetXY($this->posxup-1, $tab_top+1);
-		$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("PriceUHT"),'','C');
-
-		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
-		$pdf->SetXY($this->posxqty-1, $tab_top+1);
-		$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
-
-		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
-		if ($this->atleastonediscount)
+		if (empty($hidetop))
 		{
-			$pdf->SetXY($this->posxdiscount-1, $tab_top+1);
-			$pdf->MultiCell($this->postotalht-$this->posxdiscount+1,2, $outputlangs->transnoentities("ReductionShort"),'','C');
+			$pdf->SetXY($this->posxup-1, $tab_top+1);
+			$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("PriceUHT"),'','C');
 		}
-
+		
+		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
+		if (empty($hidetop))
+		{
+			$pdf->SetXY($this->posxqty-1, $tab_top+1);
+			$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
+		}
+		
+		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
+		if (empty($hidetop))
+		{
+			if ($this->atleastonediscount)
+			{
+				$pdf->SetXY($this->posxdiscount-1, $tab_top+1);
+				$pdf->MultiCell($this->postotalht-$this->posxdiscount+1,2, $outputlangs->transnoentities("ReductionShort"),'','C');
+			}
+		}
+		
 		if ($this->atleastonediscount)
 		{
 			$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
 		}
-		$pdf->SetXY($this->postotalht-1, $tab_top+1);
-		$pdf->MultiCell(30,2, $outputlangs->transnoentities("TotalHT"),'','C');
-
+		if (empty($hidetop))
+		{
+			$pdf->SetXY($this->postotalht-1, $tab_top+1);
+			$pdf->MultiCell(30,2, $outputlangs->transnoentities("TotalHT"),'','C');
+		}
 	}
 
 	/**
@@ -976,7 +998,7 @@ class pdf_einstein extends ModelePDFCommandes
 			if (! empty($usecontact))
 			{
 				// On peut utiliser le nom de la societe du contact
-				if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socname = $object->contact->socname;
+				if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socname = $object->contact->socname;
 				else $socname = $object->client->nom;
 				$carac_client_name=$outputlangs->convToOutputCharset($socname);
 			}
@@ -985,7 +1007,7 @@ class pdf_einstein extends ModelePDFCommandes
 				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
 			}
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,($usecontact?$object->contact:''),$usecontact,'target');
 
 			// Show recipient
 			$posy=42;
@@ -1017,7 +1039,7 @@ class pdf_einstein extends ModelePDFCommandes
 	 *   	@param	PDF			&$pdf     			PDF
 	 * 		@param	Object		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
-	 *      @return	void
+	 *      @return	int								Return height of bottom margin including footer text
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs)
 	{

@@ -168,7 +168,7 @@ class pdf_crabe extends ModelePDFFactures
 			{
 				if (dol_mkdir($dir) < 0)
 				{
-					$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 					return 0;
 				}
 			}
@@ -273,6 +273,7 @@ class pdf_crabe extends ModelePDFFactures
 					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc,0,$hookmanager);
 
 					$pageposafter=$pdf->getPage();
+				
 					$pdf->setPage($pageposbefore);
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
@@ -324,9 +325,9 @@ class pdf_crabe extends ModelePDFFactures
 					$localtax2rate=(string) $object->lines[$i]->localtax2_tx;
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
-					if (! isset($this->tva[$vatrate])) $this->tva[$vatrate]='';
-					if (! isset($this->localtax1[$localtax1rate])) $this->localtax1[$localtax1rate]='';
-					if (! isset($this->localtax2[$localtax2rate])) $this->localtax2[$localtax2rate]='';
+					if (! isset($this->tva[$vatrate])) 				$this->tva[$vatrate]='';
+					if (! isset($this->localtax1[$localtax1rate])) 	$this->localtax1[$localtax1rate]='';
+					if (! isset($this->localtax2[$localtax2rate])) 	$this->localtax2[$localtax2rate]='';
 					$this->tva[$vatrate] += $tvaligne;
 					$this->localtax1[$localtax1rate]+=$localtax1ligne;
 					$this->localtax2[$localtax2rate]+=$localtax2ligne;
