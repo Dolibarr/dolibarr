@@ -88,13 +88,9 @@ $(document).ready(function() {
 		$('.dolEventError').click($.unblockUI);
 	};
 	
-	$.pleaseBePatient = function(message, picto) {
-		var img = '';
-		if (picto != undefined) {
-			var img = picto + '&nbsp;&nbsp;&nbsp;&nbsp;'
-		}
+	$.pleaseBePatient = function(message) {
 		$.blockUI({
-			message: img + message,
+			message: message,
 			css: {
 				border: 'none',
 				padding: '15px',
