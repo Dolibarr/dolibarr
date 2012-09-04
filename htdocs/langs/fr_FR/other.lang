@@ -168,6 +168,8 @@ AddFiles=Ajouter des fichiers
 StartUpload=Transférer
 CancelUpload=Annuler le transfert
 FileIsTooBig=Le fichier est trop volumineux
+PleaseBePatient=Merci de patienter quelques instants...
+
 ##### Calendar common #####
 AddCalendarEntry=Ajouter entrée dans le calendrier %s
 NewCompanyToDolibarr=Société %s ajoutée dans Dolibarr

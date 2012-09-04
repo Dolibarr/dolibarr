@@ -1761,13 +1761,6 @@ div.error {
   background: #EFCFCF;
 }
 
-div.jnotify-background {
-	opacity : 0.95 !important;
-    -moz-box-shadow: 4px 4px 4px #888 !important;
-    -webkit-box-shadow: 4px 4px 4px #888 !important;
-    box-shadow: 4px 4px 4px #888 !important;
-}
-
 /* Info admin */
 div.info {
   color: #807050;
@@ -2507,6 +2500,32 @@ div.ecmjqft {
 	width: auto;
 	padding-left: 10px !important;
 	padding-right: 10px !important;
+}
+
+/* use or not ? */
+div.jnotify-background {
+	opacity : 0.95 !important;
+    -moz-box-shadow: 4px 4px 4px #888 !important;
+    -webkit-box-shadow: 4px 4px 4px #888 !important;
+    box-shadow: 4px 4px 4px #888 !important;
+}
+
+/* ============================================================================== */
+/*  blockUI                                                                      */
+/* ============================================================================== */
+
+/*div.growlUI { background: url(check48.png) no-repeat 10px 10px }*/
+div.dolEventValid h1, div.dolEventValid h2 {
+	color: #567b1b;
+	background-color: #e3f0db;
+	padding: 5px 5px 5px 5px;
+	text-align: left;
+}
+div.dolEventError h1, div.dolEventError h2 {
+	color: #a72947;
+	background-color: #d79eac;
+	padding: 5px 5px 5px 5px;
+	text-align: left;
 }
 
 /* ============================================================================== */

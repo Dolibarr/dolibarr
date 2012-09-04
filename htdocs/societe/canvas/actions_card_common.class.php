@@ -436,7 +436,7 @@ abstract class ActionsCardCommon
                 $res=dol_include_once($dirroot.$module.'.php');
                 if ($res) break;
             }
-            $modCodeClient = new $module;
+            $modCodeClient = new $module($db);
             $this->tpl['auto_customercode'] = $modCodeClient->code_auto;
             // We verified if the tag prefix is used
             if ($modCodeClient->code_auto) $this->tpl['prefix_customercode'] = $modCodeClient->verif_prefixIsUsed();

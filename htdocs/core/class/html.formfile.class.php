@@ -495,17 +495,18 @@ class FormFile
                 $out.= '</a>'."\n";
                 if (! $iconPDF)
                 {
+                	$size=(! empty($file['size'])?$file['size']:dol_filesize($filedir."/".$file["name"]));
+                	$date=(! empty($file['date'])?$file['date']:dol_filemtime($filedir."/".$file["name"]));
                 	$out.= '</td>';
                 	// Show file size
-                	$out.= '<td align="right" nowrap="nowrap">'.dol_print_size(dol_filesize($filedir."/".$file["name"])).'</td>';
+                	$out.= '<td align="right" nowrap="nowrap">'.dol_print_size($size).'</td>';
                 	// Show file date
-                	$out.= '<td align="right" nowrap="nowrap">'.dol_print_date(dol_filemtime($filedir."/".$file["name"]),'dayhour').'</td>';
+                	$out.= '<td align="right" nowrap="nowrap">'.dol_print_date($date, 'dayhour').'</td>';
                 }
 
                 if ($delallowed)
                 {
                     $out.= '<td align="right">';
-                    //$out.= '<a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath);
                     $out.= '<a href="'.$urlsource.(strpos($urlsource,'?')?'&':'?').'action=remove_file&modulepart='.$modulepart.'&file='.urlencode($relativepath);
                     $out.= ($param?'&'.$param:'');
                     $out.= '&urlsource='.urlencode($urlsource);
@@ -577,7 +578,6 @@ class FormFile
         {
             if ($file['name'] != '.'
             && $file['name'] != '..'
-            && $file['name'] != 'CVS'
             && ! preg_match('/\.meta$/i',$file['name']))
             {
                 // Define relative path used to store the file
@@ -704,6 +704,11 @@ class FormFile
             include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
             $object_instance=new Contrat($this->db);
         }
+        else if ($modulepart == 'product')
+        {
+            include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+            $object_instance=new Product($this->db);
+        }
         else if ($modulepart == 'tax')
         {
             include_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
@@ -733,6 +738,7 @@ class FormFile
                 if ($modulepart == 'order')            { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'order_supplier')   { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'contract')         { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
+                if ($modulepart == 'product')          { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'tax')              { preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=(isset($reg[1])?$reg[1]:''); }
 
                 if (! $id && ! $ref) continue;

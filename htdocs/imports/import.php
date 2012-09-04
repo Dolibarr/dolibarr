@@ -35,8 +35,8 @@ $langs->load("exports");
 $langs->load("errors");
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'import',$origin_id,'');
+if (! empty($user->societe_id)) $socid=$user->societe_id;
+$result=restrictedArea($user, 'import');
 
 $entitytoicon=array(
 	'invoice'=>'bill','invoice_line'=>'bill',
@@ -68,7 +68,8 @@ $entitytolang=array(		// Translation code
 $datatoimport		= GETPOST('datatoimport');
 $format				= GETPOST('format');
 $filetoimport		= GETPOST('filetoimport');
-$action				= GETPOST('action');
+$action				= GETPOST('action','alpha');
+$confirm			= GETPOST('confirm','alpha');
 $step				= (GETPOST('step') ? GETPOST('step') : 1);
 $import_name		= GETPOST('import_name');
 $hexa				= GETPOST('hexa');
@@ -92,7 +93,7 @@ foreach($fieldsarray as $elem)
 {
 	$tabelem=explode('=',$elem,2);
 	$key=$tabelem[0];
-	$val=$tabelem[1];
+	$val=(isset($tabelem[1])?$tabelem[1]:'');
 	if ($key && $val)
 	{
 		$array_match_file_to_database[$key]=$val;
@@ -192,7 +193,7 @@ if ($action == 'add_import_model')
 
 if ($step == 3 && $datatoimport)
 {
-	if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
+	if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 	{
 		dol_mkdir($conf->import->dir_temp);
 		$nowyearmonth=dol_print_date(dol_now(),'%Y%m%d%H%M%S');
@@ -205,8 +206,24 @@ if ($step == 3 && $datatoimport)
 		else
 		{
 			$langs->load("errors");
-			$mesg = $langs->trans("ErrorFailedToSaveFile");
+			setEventMessage($langs->trans("ErrorFailedToSaveFile"), 'errors');
 		}
+	}
+
+	// Delete file
+	if ($action == 'confirm_deletefile' && $confirm == 'yes')
+	{
+		$langs->load("other");
+
+		$param='&datatoimport='.$datatoimport.'&format='.$format;
+		if ($excludefirstline) $param.='&excludefirstline=1';
+
+		$file = $conf->import->dir_temp . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+		$ret=dol_delete_file($file);
+		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+		Header('Location: '.$_SERVER["PHP_SELF"].'?step='.$step.$param);
+		exit;
 	}
 }
 
@@ -305,7 +322,7 @@ if ($step == 1 || ! $datatoimport)
 	$array_match_file_to_database=array();
 	$_SESSION["dol_array_match_file_to_database"]='';
 
-	$parm='';
+	$param='';
 	if ($excludefirstline) $param.='&excludefirstline=1';
 
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
@@ -447,10 +464,18 @@ if ($step == 3 && $datatoimport)
 
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
-    $head = import_prepare_head($param,3);
+    $head = import_prepare_head($param, 3);
 
 	dol_fiche_head($head, 'step3', $langs->trans("NewImport"));
 
+	/*
+	 * Confirm delete file
+	 */
+	if ($action == 'delete')
+	{
+		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?urlfile='.urlencode(GETPOST('urlfile')).'&step=3'.$param, $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+		if ($ret == 'html') print '<br>';
+	}
 
 	print '<table width="100%" class="border">';
 
@@ -511,7 +536,7 @@ if ($step == 3 && $datatoimport)
 	print "</tr>\n";
 
 	// Search available imports
-	$filearray=dol_dir_list($conf->import->dir_temp,'files',0,'','','name',SORT_DESC);
+	$filearray=dol_dir_list($conf->import->dir_temp, 'files', 0, '', '', 'name', SORT_DESC);
 	if (count($filearray) > 0)
 	{
 		$dir=$conf->import->dir_temp;
@@ -534,8 +559,6 @@ if ($step == 3 && $datatoimport)
 			print '<tr '.$bc[$var].'>';
 			print '<td width="16">'.img_mime($file).'</td>';
 			print '<td>';
-			$modulepart='import';
-			//$relativepath=$filetoimport;
     		print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=3'.$param.'" target="_blank">';
     		print $file;
     		print '</a>';
@@ -545,12 +568,11 @@ if ($step == 3 && $datatoimport)
 			// Affiche date fichier
 			print '<td align="right">'.dol_print_date(dol_filemtime($dir.'/'.$file),'dayhour').'</td>';
 			// Del button
-			print '<td align="right"><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&step=3'.$param.'&modulepart='.$modulepart.'&file='.urlencode($relativepath);
-			print '&urlsource='.urlencode($urlsource);
+			print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=delete&step=3'.$param.'&urlfile='.urlencode($relativepath);
 			print '">'.img_delete().'</a></td>';
 			// Action button
 			print '<td align="right">';
-			print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=4'.$param.'&filetoimport='.urlencode($relativepath).'">'.img_picto($langs->trans("NewImport"),'filenew').'</a>';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?step=4'.$param.'&filetoimport='.urlencode($relativepath).'">'.img_picto($langs->trans("NewImport"),'filenew').'</a>';
 			print '</td>';
 			print '</tr>';
 		}

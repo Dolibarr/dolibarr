@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,11 +50,11 @@ abstract class CommonDocGenerator
             'myuser_lastname'=>$user->lastname,
             'myuser_firstname'=>$user->firstname,
             'myuser_login'=>$user->login,
-            'myuser_phone'=>$user->officephone,
-            'myuser_fax'=>$user->officefax,
+            'myuser_phone'=>$user->office_phone,
+            'myuser_fax'=>$user->office_fax,
             'myuser_mobile'=>$user->user_mobile,
-            'myuser_email'=>$user->user_email,
-            'myuser_web'=>$user->url
+            'myuser_email'=>$user->email,
+            'myuser_web'=>''	// url not exist in $user object
         );
     }
 

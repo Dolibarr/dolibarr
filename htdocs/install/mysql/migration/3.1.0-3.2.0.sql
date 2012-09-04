@@ -37,7 +37,7 @@ update llx_commande set fk_user_author = null where fk_user_author not in (selec
 update llx_commande set fk_user_valid = null where fk_user_valid not in (select rowid from llx_user);
 
 
-ALTER TABLE llx_extrafields ADD COLUMN TYPE VARCHAR(8);
+ALTER TABLE llx_extrafields ADD COLUMN type VARCHAR(8);
 
 UPDATE llx_c_paper_format SET active=1 WHERE active=0;
 

@@ -1,5 +1,5 @@
 // Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
-// Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+// Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -627,8 +627,134 @@ function hideMessage(fieldId,message) {
 	if (textbox.value == message) textbox.value = '';
 }
 
+/*
+ * 
+ */
+function setConstant(url, code, input, entity) {
+	$.get( url, {
+		action: "set",
+		name: code,
+		entity: entity
+	},
+	function() {
+		$("#set_" + code).hide();
+		$("#del_" + code).show();
+		$.each(input, function(type, data) {
+			// Enable another element
+			if (type == "disabled") {
+				$.each(data, function(key, value) {
+					$("#" + value).removeAttr("disabled");
+					if ($("#" + value).hasClass("butActionRefused") == true) {
+						$("#" + value).removeClass("butActionRefused");
+						$("#" + value).addClass("butAction");
+					}
+				});
+			// Show another element
+			} else if (type == "showhide" || type == "show") {
+				$.each(data, function(key, value) {
+					$("#" + value).show();
+				});
+			// Set another constant
+			} else if (type == "set") {
+				$.each(data, function(key, value) {
+					$("#set_" + key).hide();
+					$("#del_" + key).show();
+					$.get( url, {
+						action: "set",
+						name: key,
+						value: value,
+						entity: entity
+					});
+				});
+			}
+		});
+	});
+}
 
+/*
+ * 
+ */
+function delConstant(url, code, input, entity) {
+	$.get( url, {
+		action: "del",
+		name: code,
+		entity: entity
+	},
+	function() {
+		$("#del_" + code).hide();
+		$("#set_" + code).show();
+		$.each(input, function(type, data) {
+			// Disable another element
+			if (type == "disabled") {
+				$.each(data, function(key, value) {
+					$("#" + value).attr("disabled", true);
+					if ($("#" + value).hasClass("butAction") == true) {
+						$("#" + value).removeClass("butAction");
+						$("#" + value).addClass("butActionRefused");
+					}
+				});
+			// Hide another element
+			} else if (type == "showhide" || type == "hide") {
+				$.each(data, function(key, value) {
+					$("#" + value).hide();
+				});
+			// Delete another constant
+			} else if (type == "del") {
+				$.each(data, function(key, value) {
+					$("#del_" + value).hide();
+					$("#set_" + value).show();
+					$.get( url, {
+						action: "del",
+						name: value,
+						entity: entity
+					});
+				});
+			}
+		});
+	});
+}
 
+/*
+ * 
+ */
+function confirmConstantAction(action, url, code, input, box, entity, yesButton, noButton) {
+	$("#confirm_" + code)
+			.attr("title", box.title)
+			.html(box.content)
+			.dialog({
+				resizable: false,
+				height: 170,
+				width: 500,
+				modal: true,
+				buttons: [
+					{
+						text : yesButton,
+						click : function() {
+							if (action == "set") {
+								setConstant(url, code, input, entity);
+							} else if (action == "del") {
+								delConstant(url, code, input, entity);
+							}
+							// Close dialog
+							$(this).dialog("close");
+							// Execute another function
+							if (box.function) {
+								var fnName = box.function;
+								if (window.hasOwnProperty(fnName)) {
+									window[fnName]();
+								}
+							}
+						}
+					},
+					{
+						text : noButton,
+						click : function() {
+							$(this).dialog("close");
+						}
+					}
+				]
+			});
+}
 
 /* This is to allow to transform all select box into ajax autocomplete box
  * with just one line: $(function() { $( "#listmotifcons" ).combobox(); });

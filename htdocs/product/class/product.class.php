@@ -363,6 +363,7 @@ class Product extends CommonObject
 			{
 				// Product already exists with this ref
 				$langs->load("products");
+				$error++;
 				$this->error = "ErrorProductAlreadyExists";
 			}
 		}

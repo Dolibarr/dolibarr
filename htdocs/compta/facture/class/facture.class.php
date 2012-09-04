@@ -1688,7 +1688,7 @@ class Facture extends CommonInvoice
                 $result=$this->client->set_as_client();
 
                 // Si active on decremente le produit principal et ses composants a la validation de facture
-                if ($this->type != 3 && $result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
+                if ($this->type != 3 && $result >= 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_BILL))
                 {
                     require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
                     $langs->load("agenda");

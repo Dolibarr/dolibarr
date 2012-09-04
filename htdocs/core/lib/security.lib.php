@@ -271,7 +271,8 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
             {
                 //print '<br>feature='.$feature.' creer='.$user->rights->$feature->supprimer.' write='.$user->rights->$feature->delete;
                 if (empty($user->rights->$feature->supprimer)
-                && empty($user->rights->$feature->delete)) $deleteok=0;
+                && empty($user->rights->$feature->delete)
+                && empty($user->rights->$feature->run)) $deleteok=0;
             }
         }
 

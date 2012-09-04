@@ -3033,10 +3033,11 @@ function get_exdir($num,$level=3,$alpha=0,$withoutslash=0)
 /**
  *	Creation of a directory (this can create recursive subdir)
  *
- *	@param	string	$dir	Directory to create (Separator must be '/'. Example: '/mydir/mysubdir')
- *	@return int         	< 0 if KO, 0 = already exists, > 0 if OK
+ *	@param	string	$dir		Directory to create (Separator must be '/'. Example: '/mydir/mysubdir')
+ *	@param	string	$dataroot	Data root directory (To avoid having the data root in the loop. Using this will also lost the warning on first dir PHP has no permission when open_basedir is used)
+ *	@return int         		< 0 if KO, 0 = already exists, > 0 if OK
  */
-function dol_mkdir($dir)
+function dol_mkdir($dir, $dataroot='')
 {
 	global $conf;
 
@@ -3048,13 +3049,19 @@ function dol_mkdir($dir)
 	$nberr=0;
 	$nbcreated=0;
 
-	$ccdir = '';
-	$cdir = explode("/",$dir);
+	$ccdir='';
+	if (! empty($dataroot)) {
+		// Remove data root from loop
+		$dir = str_replace($dataroot.'/', '', $dir);
+		$ccdir = $dataroot.'/';
+	}
+
+	$cdir = explode("/", $dir);
 	$num=count($cdir);
 	for ($i = 0; $i < $num; $i++)
 	{
 		if ($i > 0) $ccdir .= '/'.$cdir[$i];
-		else $ccdir = $cdir[$i];
+		else $ccdir .= $cdir[$i];
 		if (preg_match("/^.:$/",$ccdir,$regs)) continue;	// Si chemin Windows incomplet, on poursuit par rep suivant
 
 		// Attention, le is_dir() peut echouer bien que le rep existe.
@@ -3582,14 +3589,19 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
 
 	if ($out)
 	{
-		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && empty($keepembedded))
+		if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && empty($keepembedded))
 		{
 			$return = '<script type="text/javascript">
-					jQuery(document).ready(function() {
-						jQuery.jnotify("'.dol_escape_js($out).'",
-						"'.($style=="ok" ? 3000 : $style).'",
-						'.($style=="ok" ? "false" : "true").',
-						{ remove: function (){} } );
+					$(document).ready(function() {
+						var block = '.(! empty($conf->global->MAIN_USE_JQUERY_BLOCKUI)?"true":"false").'
+						if (block) {
+							$.dolEventValid("","'.dol_escape_js($out).'");
+						} else {
+							$.jnotify("'.dol_escape_js($out).'",
+							"'.($style=="ok" ? 3000 : $style).'",
+							'.($style=="ok" ? "false" : "true").',
+							{ remove: function (){} } );
+						}
 					});
 				</script>';
 		}

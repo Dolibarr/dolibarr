@@ -1013,7 +1013,7 @@ else
                 $res=dol_include_once($dirroot.$module.'.php');
                 if ($res) break;
             }
-            $modCodeClient = new $module;
+            $modCodeClient = new $module($db);
             // We verified if the tag prefix is used
             if ($modCodeClient->code_auto)
             {
@@ -1031,7 +1031,7 @@ else
                 $res=dol_include_once($dirroot.$module.'.php');
                 if ($res) break;
             }
-            $modCodeFournisseur = new $module;
+            $modCodeFournisseur = new $module($db);
             // On verifie si la balise prefix est utilisee
             if ($modCodeFournisseur->code_auto)
             {
