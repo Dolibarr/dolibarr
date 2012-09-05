@@ -85,6 +85,7 @@ MailingModuleDescContactCompanies=Contacts de tiers (prospects, clients, fournis
 MailingModuleDescDolibarrUsers=Utilisateurs de Dolibarr
 MailingModuleDescFundationMembers=Adhérents
 MailingModuleDescEmailsFromFile=EMails issus d'un fichier texte (email;nom;prenom;autre)
+MailingModuleDescEmailsFromUser=EMails saisi manuellement (email;nom;prenom;autre)
 MailingModuleDescContactsCategories=Tiers (par catégorie)
 MailingModuleDescDolibarrContractsLinesExpired=Tiers avec lignes de contrats de services expirées
 MailingModuleDescContactsByCompanyCategory=Contacts de tiers (par catégorie de tiers)

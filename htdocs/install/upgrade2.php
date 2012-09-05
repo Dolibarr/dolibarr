@@ -3407,6 +3407,7 @@ function migrate_delete_old_files($db,$langs,$conf)
     DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone_backoffice.php',
     DOL_DOCUMENT_ROOT.'/core/menus/smartphone/iphone_frontoffice.php',
     DOL_DOCUMENT_ROOT.'/core/modules/mailings/dolibarr_services_expired.modules.php',
+    DOL_DOCUMENT_ROOT.'/core/modules/mailings/peche.modules.php',
     DOL_DOCUMENT_ROOT.'/core/modules/mailings/poire.modules.php',
     DOL_DOCUMENT_ROOT.'/core/modules/mailings/kiwi.modules.php',
     DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_crabe.modules.php',

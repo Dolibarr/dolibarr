@@ -85,6 +85,7 @@ MailingModuleDescContactCompanies=Contacts of all third parties (customer, prosp
 MailingModuleDescDolibarrUsers=Dolibarr users
 MailingModuleDescFundationMembers=Foundation members with emails
 MailingModuleDescEmailsFromFile=EMails from a text file (email;lastname;firstname;other)
+MailingModuleDescEmailsFromUser=EMails from user input (email;lastname;firstname;other)
 MailingModuleDescContactsCategories=Third parties (by category)
 MailingModuleDescDolibarrContractsLinesExpired=Third parties with expired contract's lines
 MailingModuleDescContactsByCompanyCategory=Contacts of third parties (by third parties category)
