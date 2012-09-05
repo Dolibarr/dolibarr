@@ -15,6 +15,7 @@ FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
 DatabaseConnection=Conexión a la base de datos
 NoTranslation=Sin traducción
+NoRecordFound=No se han encontrado registros
 NoError=Ningún error
 Error=Error
 ErrorFieldRequired=El campo '%s' es obligatorio

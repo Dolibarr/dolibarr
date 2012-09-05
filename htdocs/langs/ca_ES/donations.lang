@@ -2,6 +2,7 @@
 CHARSET=UTF-8
 Donation=Subvenció
 Donations=Subvencions
+DonationRef=Ref. subvenció
 Donor=Donant
 Donors=Donants
 AddDonation=Afegir subvenció

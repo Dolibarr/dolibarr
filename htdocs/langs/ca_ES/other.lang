@@ -102,6 +102,8 @@ SurfaceUnitm2=m2
 SurfaceUnitdm2=dm2
 SurfaceUnitcm2=cm2
 SurfaceUnitmm2=mm2
+SurfaceUnitfoot2=peu2
+SurfaceUnitinch2=polze2
 Volume=Volum
 TotalVolume=Volum total
 VolumeUnitm3=m3
@@ -164,6 +166,7 @@ AddFiles=Afegir arxius
 StartUpload=Transferir
 CancelUpload=Cancel·lar transferència
 FileIsTooBig=L'arxiu és massa gran
+PleaseBePatient=Preguem esperi uns instants...
 ##### Webcal #####
 LoginWebcal=Login Webcalendar
 ErrorWebcalLoginNotDefined=El login webcalendar associat al seu usuari Dolibarr <b>%s</b> no està definit
