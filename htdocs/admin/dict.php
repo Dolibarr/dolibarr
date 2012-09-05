@@ -1022,12 +1022,20 @@ else
     print '<td>'.$langs->trans("Table").'</td>';
     print '</tr>';
 
+    $showemptyline='';
     foreach ($taborder as $i)
     {
         if (isset($tabname[$i]) && empty($tabcond[$i])) continue;
 
         if ($i)
         {
+        	if ($showemptyline)
+        	{
+        		$var=!$var;
+        		print '<tr '.$bc[$var].'><td width="30%">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
+        		$showemptyline=0;
+        	}
+
             $var=!$var;
             $value=$tabname[$i];
             print '<tr '.$bc[$var].'><td width="30%">';
@@ -1053,8 +1061,7 @@ else
         {
             if (! $lastlineisempty)
             {
-                $var=!$var;
-                print '<tr '.$bc[$var].'><td width="30%">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
+                $showemptyline=1;
                 $lastlineisempty=true;
             }
         }
