@@ -2712,38 +2712,47 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
  *	Return localtaxe rate for a particular vat
  *
  * 	@param	float		$tva			        Vat taxe
- * 	@param  int			$local		         	Local tax to search and return (1 or 2)
- *  @param  Societe		$societe_acheteuse    	Object of buying third party
+ * 	@param  int			$local		         	Local tax to search and return (1 or 2 return only tax rate 1 or tax rate 2)
+ *  @param  Societe		$thirdparty_buyer    	Object of buying third party
+ *  @param	Societe		$thirdparty_seller		Object of selling third party
  * 	@return	int				   					0 if not found, localtax if found
  */
-function get_localtax($tva, $local, $societe_acheteuse="")
+function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 {
 	global $db, $conf, $mysoc;
 
-	if ($local == 1 && ! $mysoc->localtax1_assuj) return 0;
-	if ($local == 2 && ! $mysoc->localtax2_assuj) return 0;
+	if (empty($thirdparty_seller) || ! is_object($thirdparty_seller)) $thirdparty_seller=$mysoc;
 
-	$code_pays=$mysoc->pays_code;
+	dol_syslog("get_localtax tva=".$tva." local=".$local." thirdparty_buyer=".(is_object($thirdparty_buyer)?$thirdparty_buyer->id:'')." thirdparty_seller=".$thirdparty_seller->id);
 
-	if (is_object($societe_acheteuse))
+	// Some test to guess with no need to make database access
+	if ($local == 1 && ! $thirdparty_seller->localtax1_assuj) return 0;
+	if ($local == 2 && ! $thirdparty_seller->localtax2_assuj) return 0;
+	//if ($local == 0 && ! $thirdparty_seller->localtax1_assuj && ! $thirdparty_seller->localtax2_assuj) return array('localtax1'=>0,'localtax2'=>0);
+
+	$code_country=$thirdparty_seller->country_code;
+
+	if (is_object($thirdparty_buyer))
 	{
-		if ($code_pays!=$societe_acheteuse->pays_code) return 0;
-		if ($local==1 && !$societe_acheteuse->localtax1_assuj) return 0;
-		elseif ($local==2 && !$societe_acheteuse->localtax2_assuj) return 0;
+		if ($code_country!=$thirdparty_buyer->country_code) return 0;
+		if ($local==1 && !$thirdparty_buyer->localtax1_assuj) return 0;		// TODO Not sure this is good
+		elseif ($local==2 && !$thirdparty_buyer->localtax2_assuj) return 0;	// TODO Not sure this is good
 	}
 
 	// Search local taxes
 	$sql  = "SELECT t.localtax1, t.localtax2";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$code_pays."'";
+	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$code_country."'";
 	$sql .= " AND t.taux = ".$tva." AND t.active = 1";
 
+	dol_syslog("get_localtax sql=".$sql);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 		if ($local==1) return $obj->localtax1;
 		elseif ($local==2) return $obj->localtax2;
+		//else return array($obj->localtax1,$obj->localtax2);
 	}
 
 	return 0;
@@ -2776,7 +2785,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 		$product=new Product($db);
 		$result=$product->fetch($idprod);
 
-		if ($mysoc->pays_code == $thirdparty_seller->country_code) // If selling country is ours
+		if ($mysoc->country_code == $thirdparty_seller->country_code) // If selling country is ours
 		{
 			if ($idprodfournprice > 0)     // We want vat for product for a supplier order or invoice
 			{
@@ -2853,42 +2862,42 @@ function get_product_localtax_for_country($idprod, $local, $countrycode)
  *	 Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise avec num TVA) intra alors TVA par defaut=0. Fin de regle
  *	 Sinon TVA proposee par defaut=0. Fin de regle.
  *
- *	@param	Societe		$societe_vendeuse    	Objet societe vendeuse
- *	@param  Societe		$societe_acheteuse   	Objet societe acheteuse
+ *	@param	Societe		$thirdparty_seller    	Objet societe vendeuse
+ *	@param  Societe		$thirdparty_buyer   	Objet societe acheteuse
  *	@param  int			$idprod					Id product
  *	@param	int			$idprodfournprice		Id product_fournisseur_price (for supplier order/invoice)
  *	@return float         				      	Taux de tva a appliquer, -1 si ne peut etre determine
  */
-function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0, $idprodfournprice=0)
+function get_default_tva($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idprodfournprice=0)
 {
 	global $conf;
 
-	if (!is_object($societe_vendeuse)) return -1;
-	if (!is_object($societe_acheteuse)) return -1;
+	if (!is_object($thirdparty_seller)) return -1;
+	if (!is_object($thirdparty_buyer)) return -1;
 
-	dol_syslog("get_default_tva: seller use vat=".$societe_vendeuse->tva_assuj.", seller country=".$societe_vendeuse->pays_code.", seller in cee=".$societe_vendeuse->isInEEC().", buyer country=".$societe_acheteuse->pays_code.", buyer in cee=".$societe_acheteuse->isInEEC().", idprod=".$idprod.", idprodfournprice=".$idprodfournprice.", SERVICE_ARE_ECOMMERCE_200238EC=".(! empty($conf->global->SERVICES_ARE_ECOMMERCE_200238EC)?$conf->global->SERVICES_ARE_ECOMMERCE_200238EC:''));
+	dol_syslog("get_default_tva: seller use vat=".$thirdparty_seller->tva_assuj.", seller country=".$thirdparty_seller->country_code.", seller in cee=".$thirdparty_seller->isInEEC().", buyer country=".$thirdparty_buyer->country_code.", buyer in cee=".$thirdparty_buyer->isInEEC().", idprod=".$idprod.", idprodfournprice=".$idprodfournprice.", SERVICE_ARE_ECOMMERCE_200238EC=".(! empty($conf->global->SERVICES_ARE_ECOMMERCE_200238EC)?$conf->global->SERVICES_ARE_ECOMMERCE_200238EC:''));
 
 	// Si vendeur non assujeti a TVA (tva_assuj vaut 0/1 ou franchise/reel)
-	if (is_numeric($societe_vendeuse->tva_assuj) && ! $societe_vendeuse->tva_assuj)
+	if (is_numeric($thirdparty_seller->tva_assuj) && ! $thirdparty_seller->tva_assuj)
 	{
 		//print 'VATRULE 1';
 		return 0;
 	}
-	if (! is_numeric($societe_vendeuse->tva_assuj) && $societe_vendeuse->tva_assuj=='franchise')
+	if (! is_numeric($thirdparty_seller->tva_assuj) && $thirdparty_seller->tva_assuj=='franchise')
 	{
 		//print 'VATRULE 2';
 		return 0;
 	}
 
-	//if (is_object($societe_acheteuse) && ($societe_vendeuse->country_id == $societe_acheteuse->country_id) && ($societe_acheteuse->tva_assuj == 1 || $societe_acheteuse->tva_assuj == 'reel'))
+	//if (is_object($thirdparty_buyer) && ($thirdparty_seller->country_id == $thirdparty_buyer->country_id) && ($thirdparty_buyer->tva_assuj == 1 || $thirdparty_buyer->tva_assuj == 'reel'))
 	// Le test ci-dessus ne devrait pas etre necessaire. Me signaler l'exemple du cas juridique concerne si le test suivant n'est pas suffisant.
 
 	// Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
-	if (($societe_vendeuse->country_code == $societe_acheteuse->country_code)
-	|| (in_array($societe_vendeuse->country_code,array('FR,MC')) && in_array($societe_acheteuse->country_code,array('FR','MC')))) // Warning ->country_code not always defined
+	if (($thirdparty_seller->country_code == $thirdparty_buyer->country_code)
+	|| (in_array($thirdparty_seller->country_code,array('FR,MC')) && in_array($thirdparty_buyer->country_code,array('FR','MC')))) // Warning ->country_code not always defined
 	{
 		//print 'VATRULE 3';
-		return get_product_vat_for_country($idprod,$societe_vendeuse,$idprodfournprice);
+		return get_product_vat_for_country($idprod,$thirdparty_seller,$idprodfournprice);
 	}
 
 	// Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
@@ -2896,9 +2905,9 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0, $idpr
 
 	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise) alors TVA par defaut=0. Fin de regle
 	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
-	if (($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()))
+	if (($thirdparty_seller->isInEEC() && $thirdparty_buyer->isInEEC()))
 	{
-		$isacompany=$societe_acheteuse->isACompany();
+		$isacompany=$thirdparty_buyer->isACompany();
 		if ($isacompany)
 		{
 			//print 'VATRULE 4';
@@ -2907,7 +2916,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0, $idpr
 		else
 		{
 			//print 'VATRULE 5';
-			return get_product_vat_for_country($idprod,$societe_vendeuse,$idprodfournprice);
+			return get_product_vat_for_country($idprod,$thirdparty_seller,$idprodfournprice);
 		}
 	}
 
@@ -2915,11 +2924,11 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0, $idpr
 	// we use the buyer VAT.
 	if (! empty($conf->global->SERVICE_ARE_ECOMMERCE_200238EC))
 	{
-		//print "eee".$societe_acheteuse->isACompany();exit;
-		if (! $societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC() && ! $societe_acheteuse->isACompany())
+		//print "eee".$thirdparty_buyer->isACompany();exit;
+		if (! $thirdparty_seller->isInEEC() && $thirdparty_buyer->isInEEC() && ! $thirdparty_buyer->isACompany())
 		{
 			//print 'VATRULE 6';
-			return get_product_vat_for_country($idprod,$societe_acheteuse,$idprodfournprice);
+			return get_product_vat_for_country($idprod,$thirdparty_buyer,$idprodfournprice);
 		}
 	}
 
@@ -2933,12 +2942,12 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $idprod=0, $idpr
 /**
  *	Fonction qui renvoie si tva doit etre tva percue recuperable
  *
- *	@param	Societe		$societe_vendeuse    	Objet societe vendeuse
- *	@param  Societe		$societe_acheteuse   	Objet societe acheteuse
+ *	@param	Societe		$thirdparty_seller    	Objet societe vendeuse
+ *	@param  Societe		$thirdparty_buyer   	Objet societe acheteuse
  *  @param  int			$idprod                 Id product
  *	@return float       			        	0 or 1
  */
-function get_default_npr($societe_vendeuse, $societe_acheteuse, $idprod)
+function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod)
 {
 	return 0;
 }
@@ -2946,33 +2955,33 @@ function get_default_npr($societe_vendeuse, $societe_acheteuse, $idprod)
 /**
  *	Function that return localtax of a product line (according to seller, buyer and product vat rate)
  *
- *	@param	Societe		$societe_vendeuse    	Objet societe vendeuse
- *	@param  Societe		$societe_acheteuse   	Objet societe acheteuse
+ *	@param	Societe		$thirdparty_seller    	Objet societe vendeuse
+ *	@param  Societe		$thirdparty_buyer   	Objet societe acheteuse
  *  @param	int			$local					Localtax to process (1 or 2)
  *	@param  int			$idprod					Id product
  *	@return float        				       	Taux de localtax appliquer, -1 si ne peut etre determine
  */
-function get_default_localtax($societe_vendeuse, $societe_acheteuse, $local, $idprod=0)
+function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $idprod=0)
 {
-	if (!is_object($societe_vendeuse)) return -1;
-	if (!is_object($societe_acheteuse)) return -1;
+	if (!is_object($thirdparty_seller)) return -1;
+	if (!is_object($thirdparty_buyer)) return -1;
 
-	if ($societe_vendeuse->country_id=='ES' || $societe_vendeuse->country_code=='ES')
+	if ($thirdparty_seller->country_id=='ES' || $thirdparty_seller->country_code=='ES')
 	{
 		if ($local==1) //RE
 		{
 			// Si achatteur non assujeti a RE, localtax1 par default=0
-			if (is_numeric($societe_acheteuse->localtax1_assuj) && ! $societe_acheteuse->localtax1_assuj) return 0;
-			if (! is_numeric($societe_acheteuse->localtax1_assuj) && $societe_acheteuse->localtax1_assuj=='localtax1off') return 0;
+			if (is_numeric($thirdparty_buyer->localtax1_assuj) && ! $thirdparty_buyer->localtax1_assuj) return 0;
+			if (! is_numeric($thirdparty_buyer->localtax1_assuj) && $thirdparty_buyer->localtax1_assuj=='localtax1off') return 0;
 		}
 		elseif ($local==2) //IRPF
 		{
 			// Si vendeur non assujeti a IRPF, localtax2 par default=0
-			if (is_numeric($societe_vendeuse->localtax2_assuj) && ! $societe_vendeuse->localtax2_assuj) return 0;
-			if (! is_numeric($societe_vendeuse->localtax2_assuj) && $societe_vendeuse->localtax2_assuj=='localtax2off') return 0;
+			if (is_numeric($thirdparty_seller->localtax2_assuj) && ! $thirdparty_seller->localtax2_assuj) return 0;
+			if (! is_numeric($thirdparty_seller->localtax2_assuj) && $thirdparty_seller->localtax2_assuj=='localtax2off') return 0;
 		} else return -1;
 
-		if ($idprod) return get_product_localtax_for_country($idprod, $local, $societe_vendeuse->country_code);
+		if ($idprod) return get_product_localtax_for_country($idprod, $local, $thirdparty_seller->country_code);
 		else return -1;
 	}
 	return 0;
