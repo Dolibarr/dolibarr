@@ -35,11 +35,14 @@ if (! $user->admin)
  * View
  */
 
-llxHeader();
+$title=$langs->trans("SystemToolsArea");
+if (GETPOST('leftmenu') == 'modulesadmintools') $title=$langs->trans("ModulesSystemTools");
+
+llxHeader(array(),$title);
 
 $form = new Form($db);
 
-print_fiche_titre($langs->trans("SystemToolsArea"),'','setup');
+print_fiche_titre($title,'','setup');
 
 print $langs->trans("SystemToolsAreaDesc").'<br>';
 print "<br>";
