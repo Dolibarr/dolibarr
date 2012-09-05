@@ -85,9 +85,12 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 	);
 	$reshook=$hookmanager->executeHooks('getDirList', $parameters);
 
-	if (! empty($reshook))	// If hook return non zero, it is a "replace code" hook. Otherwise, it is "insert code" hook.
+	// $reshook may contain returns stacked by other modules
+	// $reshook is always empty with an array for can not lose returns stacked with other modules
+	// $hookmanager->resArray may contain array stacked by other modules
+	if (! empty($hookmanager->resArray)) // forced to use $hookmanager->resArray even if $hookmanager->resArray['nodes'] is empty
 	{
-		return $hookmanager->resArray;
+		return $hookmanager->resArray['nodes'];
 	}
 	else
 	{
