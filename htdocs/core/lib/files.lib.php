@@ -51,7 +51,19 @@ function dol_basename($pathfile)
  */
 function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0)
 {
+	global $db, $hookmanager;
+
 	dol_syslog("files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter));
+
+	if (! is_object($hookmanager))
+	{
+		if (! class_exists('HookManager')) {
+			// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($db);
+		}
+	}
+	$hookmanager->initHooks(array('fileslib'));
 
 	$loaddate=($mode==1||$mode==2)?true:false;
 	$loadsize=($mode==1||$mode==3)?true:false;
@@ -60,101 +72,123 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 	$path=preg_replace('/([\\/]+)$/i','',$path);
 	$newpath=dol_osencode($path);
 
-	if (! is_dir($newpath)) return array();
+	$parameters=array(
+			'path' => $newpath,
+			'types'=> $types,
+			'recursive' =>$recursive,
+			'filter' => $filter,
+			'excludefilter' => $excludefilter,
+			'sortcriteria' => $sortcriteria,
+			'sortorder' => $sortorder,
+			'loaddate' => $loaddate,
+			'loadsize' => $loadsize
+	);
+	$file_list=$hookmanager->executeHooks('getDirList', $parameters);
 
-	if ($dir = opendir($newpath))
+	if (is_array($file_list))
 	{
-		$filedate='';
-		$filesize='';
-		$file_list = array();
-
-		while (false !== ($file = readdir($dir)))
-		{
-			if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure data is stored in utf8 in memory
-
-			$qualified=1;
-
-			// Define excludefilterarray
-			$excludefilterarray=array('^\.');
-			if (is_array($excludefilter))
-			{
-			     $excludefilterarray=array_merge($excludefilterarray,$excludefilter);
-			}
-			else if ($excludefilter) $excludefilterarray[]=$excludefilter;
-            // Check if file is qualified
-			foreach($excludefilterarray as $filt)
-		    {
-		         if (preg_match('/'.$filt.'/i',$file)) { $qualified=0; break; }
-		    }
-
-			if ($qualified)
-			{
-			    $isdir=is_dir(dol_osencode($path."/".$file));
-			    // Check whether this is a file or directory and whether we're interested in that type
-				if ($isdir && (($types=="directories") || ($types=="all") || $recursive))
-				{
-					// Add entry into file_list array
-                    if (($types=="directories") || ($types=="all"))
-                    {
-    				    if ($loaddate || $sortcriteria == 'date') $filedate=dol_filemtime($path."/".$file);
-    					if ($loadsize || $sortcriteria == 'size') $filesize=dol_filesize($path."/".$file);
-
-    					if (! $filter || preg_match('/'.$filter.'/i',$path.'/'.$file))
-    					{
-    						$file_list[] = array(
-    						"name" => $file,
-    						"fullname" => $path.'/'.$file,
-    						"date" => $filedate,
-    						"size" => $filesize,
-    						"type" => 'dir'
-    						);
-    					}
-                    }
-
-					// if we're in a directory and we want recursive behavior, call this function again
-					if ($recursive)
-					{
-						$file_list = array_merge($file_list,dol_dir_list($path."/".$file, $types, $recursive, $filter, $excludefilter, $sortcriteria, $sortorder, $mode));
-					}
-				}
-				else if (! $isdir && (($types == "files") || ($types == "all")))
-				{
-				    // Add file into file_list array
-					if ($loaddate || $sortcriteria == 'date') $filedate=dol_filemtime($path."/".$file);
-					if ($loadsize || $sortcriteria == 'size') $filesize=dol_filesize($path."/".$file);
-
-					if (! $filter || preg_match('/'.$filter.'/i',$path.'/'.$file))
-					{
-					    $file_list[] = array(
-						"name" => $file,
-						"fullname" => $path.'/'.$file,
-						"date" => $filedate,
-						"size" => $filesize,
-						"type" => 'file'
-						);
-					}
-				}
-			}
-		}
-		closedir($dir);
-
-		// Obtain a list of columns
-		if (! empty($sortcriteria))
-		{
-    		$myarray=array();
-    		foreach ($file_list as $key => $row)
-    		{
-    			$myarray[$key] = (isset($row[$sortcriteria])?$row[$sortcriteria]:'');
-    		}
-    		// Sort the data
-    		if ($sortorder) array_multisort($myarray, $sortorder, $file_list);
-		}
-
 		return $file_list;
 	}
 	else
 	{
-		return array();
+		if (! is_dir($newpath)) return array();
+
+		if ($dir = opendir($newpath))
+		{
+			$filedate='';
+			$filesize='';
+			$file_list = array();
+
+			while (false !== ($file = readdir($dir)))
+			{
+				if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure data is stored in utf8 in memory
+
+				$qualified=1;
+
+				// Define excludefilterarray
+				$excludefilterarray=array('^\.');
+				if (is_array($excludefilter))
+				{
+					$excludefilterarray=array_merge($excludefilterarray,$excludefilter);
+				}
+				else if ($excludefilter) $excludefilterarray[]=$excludefilter;
+				// Check if file is qualified
+				foreach($excludefilterarray as $filt)
+				{
+					if (preg_match('/'.$filt.'/i',$file)) {
+						$qualified=0; break;
+					}
+				}
+
+				if ($qualified)
+				{
+					$isdir=is_dir(dol_osencode($path."/".$file));
+					// Check whether this is a file or directory and whether we're interested in that type
+					if ($isdir && (($types=="directories") || ($types=="all") || $recursive))
+					{
+						// Add entry into file_list array
+						if (($types=="directories") || ($types=="all"))
+						{
+							if ($loaddate || $sortcriteria == 'date') $filedate=dol_filemtime($path."/".$file);
+							if ($loadsize || $sortcriteria == 'size') $filesize=dol_filesize($path."/".$file);
+
+							if (! $filter || preg_match('/'.$filter.'/i',$path.'/'.$file))
+							{
+								$file_list[] = array(
+										"name" => $file,
+										"fullname" => $path.'/'.$file,
+										"date" => $filedate,
+										"size" => $filesize,
+										"type" => 'dir'
+								);
+							}
+						}
+
+						// if we're in a directory and we want recursive behavior, call this function again
+						if ($recursive)
+						{
+							$file_list = array_merge($file_list,dol_dir_list($path."/".$file, $types, $recursive, $filter, $excludefilter, $sortcriteria, $sortorder, $mode));
+						}
+					}
+					else if (! $isdir && (($types == "files") || ($types == "all")))
+					{
+						// Add file into file_list array
+						if ($loaddate || $sortcriteria == 'date') $filedate=dol_filemtime($path."/".$file);
+						if ($loadsize || $sortcriteria == 'size') $filesize=dol_filesize($path."/".$file);
+
+						if (! $filter || preg_match('/'.$filter.'/i',$path.'/'.$file))
+						{
+							$file_list[] = array(
+									"name" => $file,
+									"fullname" => $path.'/'.$file,
+									"date" => $filedate,
+									"size" => $filesize,
+									"type" => 'file'
+							);
+						}
+					}
+				}
+			}
+			closedir($dir);
+
+			// Obtain a list of columns
+			if (! empty($sortcriteria))
+			{
+				$myarray=array();
+				foreach ($file_list as $key => $row)
+				{
+					$myarray[$key] = (isset($row[$sortcriteria])?$row[$sortcriteria]:'');
+				}
+				// Sort the data
+				if ($sortorder) array_multisort($myarray, $sortorder, $file_list);
+			}
+
+			return $file_list;
+		}
+		else
+		{
+			return array();
+		}
 	}
 }
 
