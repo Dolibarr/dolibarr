@@ -7,7 +7,7 @@ English Dolibarr ChangeLog
 For users:
 - New: If field "signature" is filled into user table, text is added 
   at end of predefined email texts. If option MAIL_DO_NOT_USE_SIGN is on, this
-  feautre is disabled.
+  feature is disabled.
 - New: Add link "Back to list" on all cards.
 - New: After first install, warning are visible onto mandatory setup not
   configured. Show also total number of activated modules.
@@ -67,6 +67,7 @@ For developers:
   action/calendar, trips and expenses, dons, vat payment, contact/society, contract, product lines, 
   expedition, order supplier and order invoice (lines included), intervention card, project, tasks.
 - New: Add ChromePHP output into syslog module.
+- New: Add PRODUCT_PRICE_MODIFY trigger.
 
 For translators:
 - New: Update language files (de, tr, pt, ca, es, en, fr).
