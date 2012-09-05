@@ -1027,6 +1027,16 @@ class Product extends CommonObject
 				$this->localtax2_tx = $localtax2;
 
 				$this->_log_price($user,$level);
+				
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('PRODUCT_PRICE_MODIFY',$this,$user,$langs,$conf);
+				if ($result < 0) 
+				{
+					$error++; $this->errors=$interface->errors;
+				}
+				// Fin appel triggers
 			}
 			else
 			{
