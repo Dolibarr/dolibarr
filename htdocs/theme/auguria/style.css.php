@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C)      2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1319,12 +1320,12 @@ background: #F5F6F7;
 font-family: <?php print $fontlist ?>;
 border: 0px;
 }
-/*
+
 .impair:hover {
 background: #c0c4c7;
 border: 0px;
 }
-*/
+
 
 .pair	{
 /* background: #e6ebed; */
@@ -1332,12 +1333,12 @@ background: #FBFCFC;
 font-family: <?php print $fontlist ?>;
 border: 0px;
 }
-/*
+
 .pair:hover {
 background: #c0c4c7;
 border: 0px;
 }
-*/
+
 
 /* Disable shadows */
 .noshadow {
