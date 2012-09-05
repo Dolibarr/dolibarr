@@ -118,14 +118,16 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 			{
 				if (dol_mkdir($dir) < 0)
 				{
-					$this->error=$outputlangs->transnoentities("ErrorCanNotCreateDir",$dir);
+					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 					return 0;
 				}
 			}
 
 			if (file_exists($dir))
 			{
-                $pdf=pdf_getInstance($this->format);
+				$nblignes = count($object->lines);
+
+				$pdf=pdf_getInstance($this->format);
                 $heightforinfotot = 80;	// Height reserved to output the info and total part (value include bottom margin)
                 $heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
@@ -162,13 +164,15 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 				$pdf->AddPage();
 				if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 				$pagenb++;
-				$this->_pagehead($pdf, $object, 1, $outputlangs);
+				$this->_pagehead($pdf, $object, 1, $outputlangs, $hookmanager);
 				$pdf->SetFont('','', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 90;
-				$tab_height = 170;
+				$tab_top_newpage = 50;
+				$tab_height = 110;
+				$tab_height_newpage = 150;
 
 				if (! empty($object->note_public) || ! empty($object->tracking_number))
 				{
@@ -214,8 +218,8 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 					$height_note=0;
 				}
 
-				$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
-
+				$iniY = $tab_top + 7;
+				$curY = $tab_top + 7;
 				$nexY = $tab_top + 7;
 
 				$num=count($object->lines);
@@ -245,8 +249,52 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 					$pdf->MultiCell(30, 3, $object->lines[$i]->qty_shipped,'','C');
 
 					$nexY+=2;    // Passe espace entre les lignes
+
+					// Detect if some page were added automatically and output _tableau for past pages
+					while ($pagenb < $pageposafter)
+					{
+						if ($pagenb == 1)
+						{
+							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
+						}
+						else
+						{
+							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
+						}
+						$this->_pagefoot($pdf,$object,$outputlangs);
+						$pagenb++;
+						$pdf->setPage($pagenb);
+						$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+					}
+					if (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak)
+					{
+						if ($pagenb == 1)
+						{
+							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
+						}
+						else
+						{
+							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
+						}
+						$this->_pagefoot($pdf,$object,$outputlangs);
+						// New page
+						$pdf->AddPage();
+						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+						$pagenb++;
+					}
 				}
 
+				// Show square
+				if ($pagenb == 1)
+				{
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot, 0, $outputlangs, 0, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+				}
+				else
+				{
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot, 0, $outputlangs, 1, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+				}
 
 				// Pied de page
 				$this->_pagefoot($pdf,$object,$outputlangs);
@@ -293,26 +341,37 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
+		// Amount in (at tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
-		$pdf->SetDrawColor(128,128,128);
-
-		// Rect prend une longueur en 3eme param
-		$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height);
-		// line prend une position y en 3eme param
-		$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);
-
 		$pdf->SetFont('','',$default_font_size - 1);
 
-		$pdf->SetXY($this->posxdesc-1, $tab_top+1);
-		$pdf->MultiCell(108, 2, $outputlangs->transnoentities("Description"), '', 'L');
+		// Output Rect
+		$this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
+
+		$pdf->SetDrawColor(128,128,128);
+		$pdf->SetFont('','',$default_font_size - 1);
+
+		if (empty($hidetop))
+		{
+			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);
+
+			$pdf->SetXY($this->posxdesc-1, $tab_top+1);
+			$pdf->MultiCell(108, 2, $outputlangs->transnoentities("Description"), '', 'L');
+		}
 
 		$pdf->line($this->posxqtyordered-1, $tab_top, $this->posxqtyordered-1, $tab_top + $tab_height);
-		$pdf->SetXY($this->posxqtyordered-1, $tab_top+1);
-		$pdf->MultiCell(40,2, $outputlangs->transnoentities("QtyOrdered"),'','C');
+		if (empty($hidetop))
+		{
+			$pdf->SetXY($this->posxqtyordered-1, $tab_top+1);
+			$pdf->MultiCell(40,2, $outputlangs->transnoentities("QtyOrdered"),'','C');
+		}
 
 		$pdf->line($this->posxqtytoship-1, $tab_top, $this->posxqtytoship-1, $tab_top + $tab_height);
-		$pdf->SetXY($this->posxqtytoship-1, $tab_top+1);
-		$pdf->MultiCell(40,2, $outputlangs->transnoentities("QtyToShip"),'','C');
+		if (empty($hidetop))
+		{
+			$pdf->SetXY($this->posxqtytoship-1, $tab_top+1);
+			$pdf->MultiCell(40,2, $outputlangs->transnoentities("QtyToShip"),'','C');
+		}
 	}
 
 	/**
@@ -501,9 +560,9 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
 
-			// If CUSTOMER contact defined, we use it
+			// If SHIPPING contact defined, we use it
 			$usecontact=false;
-			$arrayidcontact=$object->getIdContact('external','CUSTOMER');
+			$arrayidcontact=$object->getIdContact('external','SHIPPING');
 			if (count($arrayidcontact) > 0)
 			{
 				$usecontact=true;

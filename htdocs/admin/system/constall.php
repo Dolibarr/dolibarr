@@ -43,9 +43,8 @@ print_fiche_titre($langs->trans("SummaryConst"),'','setup');
 
 
 print_titre($langs->trans("ConfigurationFile").' ('.$conffiletoshowshort.')');
-// Parameters in conf.php file
+// Parameters in conf.php file (when a parameter start with ?, it is shown only if defined)
 $configfileparameters=array(
-//							'separator',
 							'dolibarr_main_url_root',
 							'dolibarr_main_url_root_alt',
 							'dolibarr_main_document_root',
@@ -60,6 +59,7 @@ $configfileparameters=array(
 							'dolibarr_main_db_pass',
 							'dolibarr_main_db_character_set',
 							'dolibarr_main_db_collation',
+							'?dolibarr_main_db_prefix',
 							'separator',
 							'dolibarr_main_authentication',
 							'separator',
@@ -85,7 +85,10 @@ $configfileparameters=array(
 						    '?dolibarr_js_JQUERY_UI',
 						    '?dolibarr_js_JQUERY_FLOT',
 							'?dolibarr_font_DOL_DEFAULT_TTF',
-                            '?dolibarr_font_DOL_DEFAULT_TTF_BOLD'
+                            '?dolibarr_font_DOL_DEFAULT_TTF_BOLD',
+							'separator',
+							'?dolibarr_mailing_limit_sendbyweb',
+							'?dolibarr_strict_mode'
 						);
 $configfilelib=array(
 //					'separator',
@@ -103,6 +106,7 @@ $configfilelib=array(
 					$langs->trans("DatabasePassword"),
 					$langs->trans("DBStoringCharset"),
 					$langs->trans("DBSortingCharset"),
+					$langs->trans("Prefix"),
 					'separator',
 					$langs->trans("AuthenticationMode"),
 					'separator',
@@ -128,7 +132,10 @@ $configfilelib=array(
                     'dolibarr_js_JQUERY_UI',
                     'dolibarr_js_JQUERY_FLOT',
 					'dolibarr_font_DOL_DEFAULT_TTF',
-                    'dolibarr_font_DOL_DEFAULT_TTF_BOLD'
+                    'dolibarr_font_DOL_DEFAULT_TTF_BOLD',
+					'separator',
+					'Limit nb of email sent by page',
+					'Strict mode is on/off'
 					);
 $var=true;
 print '<table class="noborder" width="100%">';

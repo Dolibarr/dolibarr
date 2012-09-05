@@ -321,6 +321,8 @@ print '</form>';
 
 print '</table>';
 
+dol_fiche_end();
+
 // Form to test upload
 print '<br>';
 $formfile=new FormFile($db);

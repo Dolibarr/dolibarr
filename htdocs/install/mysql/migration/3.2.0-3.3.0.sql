@@ -15,6 +15,8 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+DROP TABLE llx_product_ca;
+
 ALTER TABLE llx_societe ADD COLUMN idprof6 varchar(128) after idprof5;
 ALTER TABLE llx_societe DROP COLUMN fk_secteur;
 ALTER TABLE llx_societe DROP COLUMN description;
@@ -123,3 +125,70 @@ create table llx_element_tag
 
 ALTER TABLE llx_element_tag ADD UNIQUE INDEX uk_element_tag (entity, lang, tag, fk_element, element);
 -- END TASK #107
+
+
+CREATE TABLE llx_holiday_config 
+(
+rowid    INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+name     VARCHAR( 255 ) NOT NULL UNIQUE,
+value    TEXT NULL
+) 
+ENGINE=innodb;
+
+CREATE TABLE llx_holiday_events 
+(
+rowid    INT( 11 ) NOT NULL PRIMARY KEY AUTO_INCREMENT ,
+name     VARCHAR( 255 ) NOT NULL ,
+value    TEXT NOT NULL
+) 
+ENGINE=innodb;
+
+CREATE TABLE llx_holiday_logs 
+(
+rowid             INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+date_action       DATETIME NOT NULL ,
+fk_user_action    INT( 11 ) NOT NULL ,
+fk_user_update    INT( 11 ) NOT NULL ,
+type_action       VARCHAR( 255 ) NOT NULL ,
+prev_solde        VARCHAR( 255 ) NOT NULL ,
+new_solde         VARCHAR( 255 ) NOT NULL
+) 
+ENGINE=innodb;
+
+CREATE TABLE llx_holiday_users 
+(
+fk_user     INT( 11 ) NOT NULL PRIMARY KEY,
+nb_holiday   FLOAT( 5 ) NOT NULL DEFAULT '0'
+) 
+ENGINE=innodb;
+
+CREATE TABLE llx_holiday 
+(
+rowid          INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+fk_user        INT( 11 ) NOT NULL ,
+date_create    DATETIME NOT NULL ,
+description    VARCHAR( 255 ) NOT NULL ,
+date_debut     DATE NOT NULL ,
+date_fin       DATE NOT NULL ,
+statut         INT( 11 ) NOT NULL DEFAULT '1',
+fk_validator   INT( 11 ) NOT NULL ,
+date_valid     DATETIME NULL DEFAULT NULL ,
+fk_user_valid  INT( 11 ) NULL DEFAULT NULL ,
+date_refuse    DATETIME NULL DEFAULT NULL ,
+fk_user_refuse INT( 11 ) NULL DEFAULT NULL ,
+date_cancel    DATETIME NULL DEFAULT NULL ,
+fk_user_cancel INT( 11 ) NULL DEFAULT NULL,
+detail_refuse  varchar( 250 ) NULL DEFAULT NULL
+) 
+ENGINE=innodb;
+
+
+INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'userGroup', NULL);
+INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'lastUpdate', NULL);
+INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'nbUser', NULL);
+INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'delayForRequest', '31');
+INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'AlertValidatorDelay', '0');
+INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'AlertValidatorSolde', '0');
+INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'nbHolidayDeducted', '1');
+INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'nbHolidayEveryMonth', '2.5');
+

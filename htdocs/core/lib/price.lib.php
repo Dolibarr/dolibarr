@@ -86,19 +86,16 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocalta
 		$result[4] = price2num($result[5] - $result3bis, 'MU');
 	}
 
-	//Local taxes
-	if ($txlocaltax1>0)
+	// Local taxes 1. Local tax1 is a second tax that is added after standard one)
+	if ($txlocaltax1 > 0)
 	{
+		$result[14] = price2num(($result[6] * ( 1 + ( $txlocaltax1 / 100))) - $result[6], 'MT');	// amount tax1 for total_ht_without_discount
+		$result[9] = price2num(($result[0] * ( 1 + ( $txlocaltax1 / 100))) - $result[0], 'MT');		// amount tax1 for total_ht
+		$result[11] = price2num(($result[3] * ( 1 + ( $txlocaltax1 / 100))) - $pu, 'MU');			// amount tax1 for pu_ht
 
-		$result[14] = price2num(($result[6] * ( 1 + ( $txlocaltax1 / 100))) - $result[6], 'MT');
-		$result[8]  = price2num($result[8] + $result[14], 'MT');
-
-		$result[9] = price2num(($result[0] * ( 1 + ( $txlocaltax1 / 100))) - $result[0], 'MT');
-		$result[2]  = price2num($result[2] + $result[9], 'MT');
-
-		$result[11] = price2num(($result[3] * ( 1 + ( $txlocaltax1 / 100))) - $pu, 'MT');
-		$result[5]  = price2num($result[5] + $result[11], 'MT');
-
+		$result[8]  = price2num($result[8] + $result[14], 'MT');									// total_ttc_without_discount + tax1
+		$result[2]  = price2num($result[2] + $result[9], 'MT');										// total_ttc + tax1
+		$result[5]  = price2num($result[5] + $result[11], 'MU');									// pu_ht + tax1
 	}
 	else
 	{
@@ -107,26 +104,17 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $txlocalta
 		$result[11] = 0;
 	}
 
-	if ($txlocaltax2>0)
+	// Local taxes 2. Local tax2 is a second tax that is substracted after standard one)
+	// Example: Country = Spain, localtax2 is IRPF
+	if ($txlocaltax2 > 0)
+	{
+		$result[15] = price2num(($result[6] * ( 1 + ( $txlocaltax2 / 100))) - $result[6], 'MT');	// amount tax2 for total_ht_without_discount
+		$result[10] = price2num(($result[0] * ( 1 + ( $txlocaltax2 / 100))) - $result[0], 'MT');	// amount tax2 for total_ht
+		$result[12] = price2num(($result[3] * ( 1 + ( $txlocaltax2 / 100))) - $pu, 'MU');			// amount tax2 for pu_ht
 
-	{		
-		$result[15] = price2num(($result[6] * ( 1 + ( $txlocaltax2 / 100))) - $result[6], 'MT');
-		$result[10] = price2num(($result[0] * ( 1 + ( $txlocaltax2 / 100))) - $result[0], 'MT');
-		$result[12] = price2num(($result[3] * ( 1 + ( $txlocaltax2 / 100))) - $pu, 'MT');
-
-		//If Country is Spain, localtax2 (IRPF) will be subtracted
-		if ($mysoc->country_code=='ES')
-		{
-			$result[8] = price2num($result[8] - $result[15], 'MT');
-			$result[2] = price2num($result[2] - $result[10], 'MT');
-			$result[5] = price2num($result[5] - $result[12], 'MU');
-		}
-		else
-		{
-			$result[8] = price2num($result[8] + $result[15], 'MT');
-			$result[2] = price2num($result[2] + $result[10], 'MT');
-			$result[5] = price2num($result[5] + $result[12], 'MU');
-		}
+		$result[8] = price2num($result[8] - $result[15], 'MT');										// total_ttc_without_discount + tax2
+		$result[2] = price2num($result[2] - $result[10], 'MT');										// total_ttc + tax2
+		$result[5] = price2num($result[5] - $result[12], 'MU');										// pu_ttc + tax2
 	}
 	else
 	{
