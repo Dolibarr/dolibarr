@@ -23,14 +23,38 @@
  *		\brief      List of holiday.
  */
 
-require('pre.inc.php');
+require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT. "/core/class/html.form.class.php");
 require_once(DOL_DOCUMENT_ROOT. "/core/class/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT. "/user/class/user.class.php");
 require_once(DOL_DOCUMENT_ROOT. "/user/class/usergroup.class.php");
+require_once(DOL_DOCUMENT_ROOT. "/holiday/common.inc.php");
 
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();
+
+$sortfield = GETPOST("sortfield");
+$sortorder = GETPOST("sortorder");
+$page = GETPOST("page");
+$page = is_numeric($page) ? $page : 0;
+$page = $page == -1 ? 0 : $page;
+
+if (! $sortfield) $sortfield="cp.rowid";
+if (! $sortorder) $sortorder="DESC";
+$offset = $conf->liste_limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
+$search_ref      = GETPOST('search_ref');
+$month_create    = GETPOST('month_create');
+$year_create     = GETPOST('year_create');
+$month_start     = GETPOST('month_start');
+$year_start      = GETPOST('year_start');
+$month_end       = GETPOST('month_end');
+$year_end        = GETPOST('year_end');
+$search_employe  = GETPOST('search_employe');
+$search_valideur = GETPOST('search_valideur');
+$search_statut   = GETPOST('select_statut');
 
 
 /*
@@ -45,44 +69,12 @@ if ($user->societe_id > 0) accessforbidden();
  * View
  */
 
-llxHeader($langs->trans('CPTitreMenu'));
-
-/*****************************************
- * Tri du tableau
-*****************************************/
-
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page = isset($_GET["page"])? $_GET["page"]:$_POST["page"];
-$page = is_numeric($page) ? $page : 0;
-$page = $page == -1 ? 0 : $page;
-
-if (! $sortfield) $sortfield="cp.rowid";
-if (! $sortorder) $sortorder="DESC";
-$offset = $conf->liste_limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-
-$order = " ORDER BY $sortfield $sortorder " . $db->plimit( $conf->liste_limit + 1 ,$offset);
-
-
-/*************************************
- * Filtres de recherche
-*************************************/
-
 $max_year = 5;
 $min_year = 10;
 
-$search_ref = $_GET['search_ref'];
-$month_create   = $_GET['month_create'];
-$year_create    = $_GET['year_create'];
-$month_start   = $_GET['month_start'];
-$year_start    = $_GET['year_start'];
-$month_end     = $_GET['month_end'];
-$year_end      = $_GET['year_end'];
-$search_employe = $_GET['search_employe'];
-$search_valideur = $_GET['search_valideur'];
-$search_statut = $_GET['select_statut'];
+llxHeader(array(),$langs->trans('CPTitreMenu'));
+
+$order = $db->order($sortfield,$sortorder).$db->plimit($conf->liste_limit + 1, $offset);
 
 // WHERE
 if(!empty($search_ref)){
@@ -219,7 +211,7 @@ print "</tr>\n";
 // FILTRES
 print '<tr class="liste_titre">';
 print '<td class="liste_titre" align="left" width="50">';
-print '<input class="flat" size="4" type="text" name="search_ref" value="'.$_GET['search_ref'].'">';
+print '<input class="flat" size="4" type="text" name="search_ref" value="'.$search_ref.'">';
 
 // DATE CREATE
 print '<td class="liste_titre" colspan="1" align="center">';

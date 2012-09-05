@@ -25,8 +25,9 @@
  *		\author		dmouillard@teclib.com <Dimitri Mouillard>
  */
 
-require('pre.inc.php');
+require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT. "/user/class/user.class.php");
+require_once(DOL_DOCUMENT_ROOT. "/holiday/common.inc.php");
 
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();
@@ -41,7 +42,9 @@ $action=GETPOST('action');
  * View
  */
 
-llxHeader($langs->trans('CPTitreMenu'));
+$form = new Form($db);
+
+llxHeader(array(),$langs->trans('CPTitreMenu'));
 
 print_fiche_titre($langs->trans('MenuConfCP'));
 
@@ -111,7 +114,25 @@ elseif($action == 'add_event')
 $var=true;
 $i = 0;
 
-print '<div class="tabBar">';
+$cp_events = $holiday->fetchEventsCP();
+
+if($cp_events == 1)
+{
+	print '<br><form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+	print '<input type="hidden" name="action" value="add_event" />';
+
+	print_fiche_titre($langs->trans('DefineEventUserCP'),'','');
+
+	print $langs->trans('MotifCP').' : ';
+	print $holiday->selectEventCP();
+	print ' '.$langs->trans('UserCP').' : ';
+	print $form->select_users('',"userCP",1,"",0,'');
+	print ' <input type="submit" value="'.$langs->trans("addEventToUserCP").'" name="bouton" class="button"/>';
+
+	print '</form><br>';
+}
+
+dol_fiche_head();
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 print '<input type="hidden" name="action" value="update" />';
@@ -148,27 +169,9 @@ foreach($listUsers as $users)
 print '</table>';
 print '</form>';
 
-$cp_events = $holiday->fetchEventsCP();
+dol_fiche_end();
 
-if($cp_events == 1) {
-
-    $html = new Form($db);
-
-    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-    print '<input type="hidden" name="action" value="add_event" />';
-
-    print '<h3>'.$langs->trans('DefineEventUserCP').'</h3>';
-    print $langs->trans('MotifCP').' : ';
-    print $holiday->selectEventCP();
-    print ' '.$langs->trans('UserCP').' : ';
-    print $html->select_users('',"userCP",1,"",0,'');
-    print ' <input type="submit" value="'.$langs->trans("addEventToUserCP").'" name="bouton" class="button"/>';
-
-
-    print '</form>';
-}
-print '</div>';
-// Fin de page
-$db->close();
 llxFooter();
+
+$db->close();
 ?>
