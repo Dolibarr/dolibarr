@@ -25,7 +25,7 @@
  */
 
 /**
- *      \file       htdocs/includes/modules/modLeave.class.php
+ *      \file       htdocs/includes/modules/modHoliday.class.php
  *      \ingroup    holiday
  *      \brief      Description and activation file for module holiday
  */
@@ -248,10 +248,11 @@ class modHoliday extends DolibarrModules
 	}
 
 	/**
-	 *		\brief      Function called when module is enabled.
-	 *					The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *					It also creates data directories.
-	 *      \return     int             1 if OK, 0 if KO
+	 *	Function called when module is enabled.
+	 *	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *	It also creates data directories.
+	 *
+	 *	@return     int             1 if OK, 0 if KO
 	 */
 	function init()
 	{
@@ -263,10 +264,11 @@ class modHoliday extends DolibarrModules
 	}
 
 	/**
-	 *		\brief		Function called when module is disabled.
-	 *              	Remove from database constants, boxes and permissions from Dolibarr database.
-	 *					Data directories are not deleted.
-	 *      \return     int             1 if OK, 0 if KO
+	 *	Function called when module is disabled.
+	 *  Remove from database constants, boxes and permissions from Dolibarr database.
+	 *	Data directories are not deleted.
+	 *
+	 *  @return     int             1 if OK, 0 if KO
 	 */
 	function remove()
 	{
@@ -277,11 +279,12 @@ class modHoliday extends DolibarrModules
 
 
 	/**
-	 *		\brief		Create tables, keys and data required by module
-	 * 					Files llx_table1.sql, llx_table1.key.sql llx_data.sql with create table, create keys
-	 * 					and create data commands must be stored in directory /mymodule/sql/
-	 *					This function is called by this->init.
-	 * 		\return		int		<=0 if KO, >0 if OK
+	 *	Create tables, keys and data required by module
+	 * 	Files llx_table1.sql, llx_table1.key.sql llx_data.sql with create table, create keys
+	 * 	and create data commands must be stored in directory /mymodule/sql/
+	 *	This function is called by this->init.
+	 *
+	 * 	@return		int		<=0 if KO, >0 if OK
 	 */
 	function load_tables()
 	{
