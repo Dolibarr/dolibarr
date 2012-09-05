@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011      Dimitri Mouillard  <dmouillard@teclib.com>
+/* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2011      Dimitri Mouillard    <dmouillard@teclib.com>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -12,9 +12,8 @@
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU General Public License for more details.
 *
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 /**
@@ -53,7 +52,7 @@ if ($action == 'add')
 {
 
     // Si pas le droit de créer une demande
-    if(!$user->rights->holiday->create_edit_read)
+    if(!$user->rights->holiday->write)
     {
         header('Location: fiche.php?action=request&error=CantCreate');
         exit;
@@ -142,7 +141,7 @@ if($action == 'update')
 {
 
     // Si pas le droit de modifier une demande
-    if(!$user->rights->holiday->create_edit_read)
+    if(!$user->rights->holiday->write)
     {
         header('Location: fiche.php?action=request&error=CantUpdate');
         exit;
@@ -244,7 +243,7 @@ if ($action == 'confirm_delete'  && $_GET['confirm'] == 'yes')
 }
 
 // Si envoi de la demande
-if ($_GET['action'] == 'confirm_send')
+if ($action == 'confirm_send')
 {
     $cp = new Holiday($db);
     $cp->fetch($_GET['id']);
@@ -333,7 +332,7 @@ if ($_GET['action'] == 'confirm_send')
 }
 
 // Si Validation de la demande
-if($_GET['action'] == 'confirm_valid')
+if($action == 'confirm_valid')
 {
 
     $cp = new Holiday($db);
@@ -415,9 +414,9 @@ if($_GET['action'] == 'confirm_valid')
 
 }
 
-if ($_GET['action'] == 'confirm_refuse')
+if ($action == 'confirm_refuse')
 {
-    if($_POST['action'] == 'confirm_refuse' && !empty($_POST['detail_refuse']))
+    if(!empty($_POST['detail_refuse']))
     {
         $cp = new Holiday($db);
         $cp->fetch($_GET['id']);
@@ -492,7 +491,7 @@ if ($_GET['action'] == 'confirm_refuse')
 }
 
 // Si Validation de la demande
-if ($_GET['action'] == 'confirm_cancel' && $_GET['confirm'] == 'yes')
+if ($action == 'confirm_cancel' && $_GET['confirm'] == 'yes')
 {
     $cp = new Holiday($db);
     $cp->fetch($_GET['id']);
@@ -571,11 +570,11 @@ if ($_GET['action'] == 'confirm_cancel' && $_GET['confirm'] == 'yes')
 
 llxHeader($langs->trans('CPTitreMenu'));
 
-if ($_GET['action'] == 'request')
+if ($action == 'request')
 {
 
     // Si l'utilisateur n'a pas le droit de faire une demande
-    if(!$user->rights->holiday->create_edit_read)
+    if(!$user->rights->holiday->write)
     {
         print '<div class="tabBar">';
         print $langs->trans('CantCreateCP');
@@ -756,7 +755,7 @@ elseif(isset($_GET['id']))
             // Utilisateur connecté
             $userID = $user->id;
 
-            print_fiche_titre($langs->trans('TitreRequestCP'));
+            //print_fiche_titre($langs->trans('TitreRequestCP'));
 
             // Si il y a une erreur
             if(isset($_GET['error'])) {
@@ -798,9 +797,10 @@ elseif(isset($_GET['id']))
             }
 
             // On vérifie si l'utilisateur à le droit de lire cette demande
-            if($user->id == $cp->fk_user || $user->rights->holiday->lire_tous) {
+            if($user->id == $cp->fk_user || $user->rights->holiday->lire_tous)
+            {
 
-                if($_GET['action'] == 'delete' && $cp->statut == 1) {
+                if ($action == 'delete' && $cp->statut == 1) {
                     if($user->rights->holiday->delete) {
                         $html = new Form($db);
 
@@ -843,10 +843,10 @@ elseif(isset($_GET['id']))
                 }
 
 
-                print '<div class="tabBar">';
+                dol_fiche_head(array(),'card',$langs->trans("CPTitreMenu"),0,'holiday');
 
 
-                if($_GET['action'] == 'edit' && $user->id == $cp->fk_user && $cp->statut == 1)
+                if ($action == 'edit' && $user->id == $cp->fk_user && $cp->statut == 1)
                 {
                     $edit = true;
                     print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$_GET['id'].'">'."\n";
@@ -856,14 +856,14 @@ elseif(isset($_GET['id']))
                     $html = new Form($db);
                 }
 
-                print '<table class="border" style="float: left; width:40%;">';
+                print '<table class="border" width="100%">';
                 print '<tbody>';
-                print '<tr class="liste_titre">';
+                /*print '<tr class="liste_titre">';
                 print '<td colspan="2">'.$langs->trans("InfosCP").'</td>';
-                print '</tr>';
+                print '</tr>';*/
 
                 print '<tr>';
-                print '<td width="50%">ID</td>';
+                print '<td width="25%">'.$langs->trans("Ref").'</td>';
                 print '<td>'.$cp->rowid.'</td>';
                 print '</tr>';
 
@@ -898,6 +898,20 @@ elseif(isset($_GET['id']))
                 print '<td>'.$langs->trans('NbUseDaysCP').'</td>';
                 print '<td>'.$cp->getOpenDays(strtotime($cp->date_debut),strtotime($cp->date_fin)).'</td>';
                 print '</tr>';
+
+                // Status
+                print '<tr>';
+                print '<td>'.$langs->trans('StatutCP').'</td>';
+                print '<td><b>'.$cp->getStatutCP($cp->statut).'</b></td>';
+                print '</tr>';
+                if($cp->statut == 5) {
+                	print '<tr>';
+                	print '<td>'.$langs->trans('DetailRefusCP').'</td>';
+                	print '<td>'.$cp->detail_refuse.'</td>';
+                	print '</tr>';
+                }
+
+                // Description
                 if(!$edit) {
                     print '<tr>';
                     print '<td>'.$langs->trans('DescCP').'</td>';
@@ -912,14 +926,18 @@ elseif(isset($_GET['id']))
                 print '</tbody>';
                 print '</table>'."\n";
 
-                print '<div style="width: 4%; float: left;">&nbsp;</div>';
+                print '<br><br>';
 
-                print '<div style="float: left;width: 40%;">'."\n";
 
-                print '<table class="border" style="width: 100%;">'."\n";
+                print '<table class="border" width="50%">'."\n";
                 print '<tbody>';
                 print '<tr class="liste_titre">';
                 print '<td colspan="2">'.$langs->trans("InfosWorkflowCP").'</td>';
+                print '</tr>';
+
+                print '<tr>';
+                print '<td>'.$langs->trans('RequestByCP').'</td>';
+                print '<td>'.$userRequest->getNomUrl(1).'</td>';
                 print '</tr>';
 
                 if(!$edit) {
@@ -943,10 +961,6 @@ elseif(isset($_GET['id']))
                 }
 
                 print '<tr>';
-                print '<td>'.$langs->trans('RequestByCP').'</td>';
-                print '<td>'.$userRequest->getNomUrl(1).'</td>';
-                print '</tr>';
-                print '<tr>';
                 print '<td>'.$langs->trans('DateCreateCP').'</td>';
                 print '<td>'.$cp->date_create.'</td>';
                 print '</tr>';
@@ -968,29 +982,17 @@ elseif(isset($_GET['id']))
                     print '<td>'.$cp->date_refuse.'</td>';
                     print '</tr>';
                 }
-                print '<tr>';
-                print '<td>'.$langs->trans('StatutCP').'</td>';
-                print '<td><b>'.$cp->getStatutCP($cp->statut).'</b></td>';
-                print '</tr>';
-                if($cp->statut == 5) {
-                    print '<tr>';
-                    print '<td>'.$langs->trans('DetailRefusCP').'</td>';
-                    print '<td>'.$cp->detail_refuse.'</td>';
-                    print '</tr>';
-                }
                 print '</tbody>';
                 print '</table>';
 
-                print '<div style="clear: both;"></div>'."\n";
+                dol_fiche_end();
 
-                print '</div>';
                 print '<div style="clear: both;"></div>'."\n";
-                print '</div>';
 
                 if ($edit)
                 {
                     print '<center>';
-                    if($user->rights->holiday->create_edit_read && $_GET['action'] == 'edit' && $cp->statut == 1)
+                    if($user->rights->holiday->write && $_GET['action'] == 'edit' && $cp->statut == 1)
                     {
                         print '<input type="submit" value="'.$langs->trans("UpdateButtonCP").'" class="button">';
                     }
@@ -1006,7 +1008,7 @@ elseif(isset($_GET['id']))
 
                     // Boutons d'actions
 
-                    if($user->rights->holiday->create_edit_read && $_GET['action'] != 'edit' && $cp->statut == 1) {
+                    if($user->rights->holiday->write && $_GET['action'] != 'edit' && $cp->statut == 1) {
                         print '<a href="fiche.php?id='.$_GET['id'].'&action=edit" class="butAction" style="float: left;">'.$langs->trans("EditCP").'</a>';
                     }
                     if($user->rights->holiday->delete && $cp->statut == 1) {

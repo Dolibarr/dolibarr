@@ -14,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
@@ -72,7 +71,7 @@ $order = " ORDER BY $sortfield $sortorder " . $db->plimit( $conf->liste_limit + 
 *************************************/
 
 $max_year = 5;
-$min_year = 5;
+$min_year = 10;
 
 $search_ref = $_GET['search_ref'];
 $month_create   = $_GET['month_create'];
@@ -207,14 +206,14 @@ print '</div>';
 print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 print '<table class="noborder" width="100%;">';
 print "<tr class=\"liste_titre\">";
-print_liste_field_titre($langs->trans("ID"),"index.php","cp.rowid","",'','',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("DateCreateCP"),"index.php","cp.date_create","",'','align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Employe"),"index.php","cp.fk_user","",'','',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("ValidatorCP"),"index.php","cp.fk_validator","",'','',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("DateDebCP"),"index.php","cp.date_debut","",'','align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("DateFinCP"),"index.php","cp.date_fin","",'','align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cp.rowid","",'','',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("DateCreateCP"),$_SERVER["PHP_SELF"],"cp.date_create","",'','align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Employe"),$_SERVER["PHP_SELF"],"cp.fk_user","",'','',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("ValidatorCP"),$_SERVER["PHP_SELF"],"cp.fk_validator","",'','',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("DateDebCP"),$_SERVER["PHP_SELF"],"cp.date_debut","",'','align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("DateFinCP"),$_SERVER["PHP_SELF"],"cp.date_fin","",'','align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Duration"));
-print_liste_field_titre($langs->trans("Statut"),"index.php","cp.statut","",'','align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Statut"),$_SERVER["PHP_SELF"],"cp.statut","",'','align="center"',$sortfield,$sortorder);
 print "</tr>\n";
 
 // FILTRES

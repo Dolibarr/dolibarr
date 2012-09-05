@@ -12,9 +12,8 @@
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU General Public License for more details.
 *
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 /**
@@ -35,10 +34,12 @@ if ($user->societe_id > 0) accessforbidden();
 // Si l'utilisateur n'a pas le droit de lire cette page
 if(!$user->rights->holiday->define_holiday) accessforbidden();
 
+$action=GETPOST('action');
+
 
 /*
  * View
-*/
+ */
 
 llxHeader($langs->trans('CPTitreMenu'));
 
@@ -49,8 +50,8 @@ $listUsers = $holiday->fetchUsers(false,false);
 $userstatic=new User($db);
 
 // Si il y a une action de mise à jour
-if(isset($_POST['action']) && $_POST['action'] == 'update' && isset($_POST['update_cp'])) {
-
+if ($action == 'update' && isset($_POST['update_cp']))
+{
     $userID = array_keys($_POST['update_cp']);
     $userID = $userID[0];
 
@@ -70,13 +71,13 @@ if(isset($_POST['action']) && $_POST['action'] == 'update' && isset($_POST['upda
     $holiday->updateSoldeCP($userID,$userValue);
 
 
-    print '<div class="tabBar">';
-    print $langs->trans('UpdateConfCPOK');
-    print '</div>';
+    $mesg='<div class="ok">'.$langs->trans('UpdateConfCPOK').'</div>';
 
+    dol_htmloutput_mesg($mesg);
 
-} elseif(isset($_POST['action']) && $_POST['action'] == 'add_event') {
-
+}
+elseif($action == 'add_event')
+{
     $error = false;
 
     if(!empty($_POST['list_event']) && $_POST['list_event'] > 0) {
@@ -138,7 +139,7 @@ foreach($listUsers as $users)
     print '<td>';
     print '<input type="text" value="'.$holiday->getCPforUser($users['rowid']).'" name="nb_holiday['.$users['rowid'].']" size="5" style="text-align: center;"/>';
     print ' jours</td>'."\n";
-    print '<td><input type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/edit.png" name="update_cp['.$users['rowid'].']" style="border:0;"/></td>'."\n";
+    print '<td><input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Update")).'" class="button"/></td>'."\n";
     print '</tr>';
 
     $i++;

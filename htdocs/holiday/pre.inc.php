@@ -14,8 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
@@ -77,7 +76,7 @@ function llxHeader($title)
     $menu = new Menu();
 
     $menu->add("/holiday/index.php?mainmenu=holiday",$langs->trans("CPTitreMenu"));
-    if($user->rights->holiday->create_edit_read) {
+    if($user->rights->holiday->write) {
         $menu->add("/holiday/fiche.php?mainmenu=holiday&action=request",$langs->trans("MenuAddCP"),2);
     }
     if($user->rights->holiday->define_holiday) {
