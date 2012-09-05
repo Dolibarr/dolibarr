@@ -10,7 +10,8 @@ English Dolibarr ChangeLog
 - Fix: Edition of percentage of an event.
 - Fix: Minor look fix for theme bureau2crea.
 - Fix: Start and end date not saved at project creation
-- Fix: Default vat is zero for customer invoices if company does not use vat 
+- Fix: Default vat is zero for customer invoices if company does not use vat
+- Fix: Localtaxes unit prices precision
 
 
 
