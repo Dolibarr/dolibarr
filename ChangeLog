@@ -75,7 +75,13 @@ For translators:
 
 
 ***** ChangeLog for 3.2.2 compared to 3.2.1 *****
-Fix: Modify spanish VAT to new rates
+- Fix: Modify spanish VAT to new rates.
+- Fix: Add error message when creating already existing product.
+- Fix: Edition of percentage of an event.
+- Fix: Minor look fix for theme bureau2crea.
+- Fix: Start and end date not saved at project creation
+- Fix: Default vat is zero for customer invoices if company does not use vat
+- Fix: Localtaxes unit prices precision
 
 
 
