@@ -83,9 +83,9 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 			'loaddate' => $loaddate,
 			'loadsize' => $loadsize
 	);
-	$ret=$hookmanager->executeHooks('getDirList', $parameters);
+	$reshook=$hookmanager->executeHooks('getDirList', $parameters);
 
-	if (! empty($hookmanager->resArray))
+	if (! empty($reshook))	// If hook return non zero, it is a "replace code" hook. Otherwise, it is "insert code" hook.
 	{
 		return $hookmanager->resArray;
 	}
