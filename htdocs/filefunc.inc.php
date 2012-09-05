@@ -54,6 +54,7 @@ if (! defined('LOG_DEBUG'))
 }
 
 // Force PHP error_reporting setup (Dolibarr may report warning without this)
+if (! defined('E_DEPRECATED')) define('E_DEPRECATED',0);	// For PHP < 5.3.0 compatibility
 error_reporting(E_ALL & ~(E_STRICT|E_NOTICE|E_DEPRECATED));
 //error_reporting(E_ALL | E_STRICT);
 
@@ -75,6 +76,7 @@ if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not do
 	header("Location: install/index.php");
 	exit;
 }
+
 
 // Disable php display errors
 if (! empty($dolibarr_main_prod))
