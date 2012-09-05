@@ -1,0 +1,6 @@
+# Dolibarr language file - bg_BG - main
+CHARSET=UTF-8
+DIRECTION=ltr
+#FONTFORPDF=Freemono
+FONTFORPDF=DejaVuSans
+FONTSIZEFORPDF=9
