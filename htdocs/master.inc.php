@@ -76,6 +76,8 @@ if (! empty($dolibarr_main_document_root_alt))
 if (defined('TEST_DB_FORCE_TYPE')) $conf->db->type=constant('TEST_DB_FORCE_TYPE');
 // Force Multi-Company transverse mode
 $conf->multicompany->transverse_mode = empty($multicompany_transverse_mode)?'':$multicompany_transverse_mode;
+// Force entity in login page
+$conf->multicompany->force_entity = empty($multicompany_force_entity)?'':(int) $multicompany_force_entity;
 
 // Chargement des includes principaux de librairies communes
 if (! defined('NOREQUIREUSER')) require_once(DOL_DOCUMENT_ROOT ."/user/class/user.class.php");		// Need 500ko memory
@@ -138,6 +140,10 @@ if (! defined('NOREQUIREDB'))
 	else if (defined('DOLENTITY') && is_int(DOLENTITY))				// For public page with MultiCompany module
 	{
 		$conf->entity = DOLENTITY;
+	}
+	else if (! empty($conf->multicompany->force_entity) && is_int($conf->multicompany->force_entity)) // To force entity in login page
+	{
+		$conf->entity = $conf->multicompany->force_entity;
 	}
 
 	//print "Will work with data into entity instance number '".$conf->entity."'";
