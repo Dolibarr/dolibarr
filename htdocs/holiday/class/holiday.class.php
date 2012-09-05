@@ -20,18 +20,14 @@
  *    \file       holiday.class.php
  *    \ingroup    holiday
  *    \brief      Class file of the module paid holiday.
- *		\version    $Id: holiday.class.php,v 1.00 2011/09/15 11:00:00 dmouillard Exp $
- *		\author		dmouillard@teclib.com <Dimitri Mouillard>
- *		\remarks	   Class file of the module paid holiday.
  */
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 
 /**
- *    \class      Holiday
- *    \brief      Class pour les Congés Payés
- *		\remarks	   Développé par Teclib ( http://www.teclib.com/ )
+ *	Class of the module paid holiday. Developed by Teclib ( http://www.teclib.com/ )
  */
-class Holiday // extends CommonObject
+class Holiday extends CommonObject
 {
     var $db;
     var $error;
@@ -65,7 +61,7 @@ class Holiday // extends CommonObject
     /**
      *   Constructor
      *
-     *   @param      DB      Database handler
+     *   @param		DoliDB		$db      Database handler
      */
     function __construct($db)
     {
@@ -81,10 +77,11 @@ class Holiday // extends CommonObject
 
 
     /**
-     *      \brief      Créer un congés payés dans la base de données
-     *      \param      user        	User that create
-     *      \param      notrigger	    0=launch triggers after, 1=disable triggers
-     *      \return     int         	<0 if KO, Id of created object if OK
+     *   Créer un congés payés dans la base de données
+     *
+     *   @param		User	$user        	User that create
+     *   @param     int		$notrigger	    0=launch triggers after, 1=disable triggers
+     *   @return    int			         	<0 if KO, Id of created object if OK
      */
     function create($user, $notrigger=0)
     {
@@ -158,9 +155,10 @@ class Holiday // extends CommonObject
 
 
     /**
-     *    \brief      Load object in memory from database
-     *    \param      id          id object
-     *    \return     int         <0 if KO, >0 if OK
+     *	Load object in memory from database
+     *
+     *  @param	int		$id         Id object
+     *  @return int         		<0 if KO, >0 if OK
      */
     function fetch($id)
     {
@@ -227,11 +225,12 @@ class Holiday // extends CommonObject
     }
 
     /**
-     *    \brief      Liste les congés payés pour un utilisateur
-     *    \param      user id     ID de l'utilisateur à lister
-     *    \param      order       Filtrage par ordre
-     *    \param      filter      Filtre de séléction
-     *    \return     int         -1 si erreur, 1 si OK et 2 si pas de résultat
+     *	Liste les congés payés pour un utilisateur
+     *
+     *  @param		int		$user_id    ID de l'utilisateur à lister
+     *  @param      string	$order      Filtrage par ordre
+     *  @param      string	$filter     Filtre de séléction
+     *  @return     int      			-1 si erreur, 1 si OK et 2 si pas de résultat
      */
     function fetchByUser($user_id,$order='',$filter='')
     {
@@ -321,10 +320,11 @@ class Holiday // extends CommonObject
     }
 
     /**
-     *    \brief      Liste les congés payés de tout les utilisateurs
-     *    \param      order       Filtrage par ordre
-     *    \param      filter      Filtre de séléction
-     *    \return     int         -1 si erreur, 1 si OK et 2 si pas de résultat
+     *	Liste les congés payés de tout les utilisateurs
+     *
+     *  @param	string	$order      Filtrage par ordre
+     *  @param  string	$filter     Filtre de séléction
+     *  @return int         		-1 si erreur, 1 si OK et 2 si pas de résultat
      */
     function fetchAll($order,$filter)
     {
@@ -413,10 +413,11 @@ class Holiday // extends CommonObject
     }
 
     /**
-     *      \brief      Update database
-     *      \param      user        	User that modify
-     *      \param      notrigger	    0=launch triggers after, 1=disable triggers
-     *      \return     int         	<0 if KO, >0 if OK
+     *	Update database
+     *
+     *  @param	User	$user        	User that modify
+     *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
+     *  @return int         			<0 if KO, >0 if OK
      */
     function update($user=0, $notrigger=0)
     {
@@ -521,9 +522,9 @@ class Holiday // extends CommonObject
     /**
      *   Delete object in database
      *
-     *	 @param     user        	User that delete
-     *   @param     notrigger	    0=launch triggers after, 1=disable triggers
-     *	 @return	int				<0 if KO, >0 if OK
+     *	 @param		User	$user        	User that delete
+     *   @param     int		$notrigger	    0=launch triggers after, 1=disable triggers
+     *	 @return	int						<0 if KO, >0 if OK
      */
     function delete($user, $notrigger=0)
     {
@@ -565,11 +566,12 @@ class Holiday // extends CommonObject
     }
 
     /**
+     *	verifDateHolidayCP
      *
-     * @param unknown_type $fk_user
-     * @param unknown_type $dateDebut
-     * @param unknown_type $dateFin
-     * @return boolean
+     * 	@param 	int		$fk_user		Id user
+     * 	@param 	date	$dateDebut		Start date
+     * 	@param 	date	$dateFin		End date
+     * 	@return boolean
      */
     function verifDateHolidayCP($fk_user,$dateDebut,$dateFin)
     {
@@ -588,9 +590,10 @@ class Holiday // extends CommonObject
     }
 
     /**
-     *    \brief      Retourne la traduction du statut d'un congé payé
-     *    \param      statut      int du statut du congé
-     *    \return     string      retourne la traduction du statut
+     *  Retourne la traduction du statut d'un congé payé
+     *
+     *  @param		int		$statut     int du statut du congé
+     *  @return     string      		retourne la traduction du statut
      */
     function getStatutCP($statut) {
 
@@ -620,9 +623,10 @@ class Holiday // extends CommonObject
     }
 
     /**
-     *    \brief      Affiche un select HTML des statuts de congés payés
-     *    \param      selected    int du statut séléctionné par défaut
-     *    \return     select      affiche le select des statuts
+     *   Affiche un select HTML des statuts de congés payés
+     *
+     *   @param 	int		$selected   int du statut séléctionné par défaut
+     *   @return    string				affiche le select des statuts
      */
     function selectStatutCP($selected='') {
 
@@ -652,9 +656,10 @@ class Holiday // extends CommonObject
     }
 
     /**
-     *    \brief      Retourne un select HTML des groupes d'utilisateurs
-     *    \param      prefix      nom du champ dans le formulaire
-     *    \return     select      retourne le select des groupes
+     *	Retourne un select HTML des groupes d'utilisateurs
+     *
+     *  @param	string	$prefix     nom du champ dans le formulaire
+     *  @return string				retourne le select des groupes
      */
     function selectUserGroup($prefix)
     {
@@ -709,8 +714,9 @@ class Holiday // extends CommonObject
     /**
      *  Met à jour une option du module Holiday Payés
      *
-     *  @param      name        nom du paramètre de configuration
-     *  @return     value       vrai si mise à jour OK sinon faux
+     *  @param	string	$name       nom du paramètre de configuration
+     *  @param	string	$value      vrai si mise à jour OK sinon faux
+     *  @return boolean				ok or ko
      */
     function updateConfCP($name,$value) {
 
@@ -730,8 +736,8 @@ class Holiday // extends CommonObject
     /**
      *  Retourne la valeur d'un paramètre de configuration
      *
-     *  @param      name        nom du paramètre de configuration
-     *  @return     string      retourne la valeur du paramètre
+     *  @param	string	$name       nom du paramètre de configuration
+     *  @return string      		retourne la valeur du paramètre
      */
     function getConfCP($name)
     {
@@ -759,9 +765,11 @@ class Holiday // extends CommonObject
     }
 
     /**
-     *    Met à jour le timestamp de la dernière mise à jour du solde des CP
+     *	Met à jour le timestamp de la dernière mise à jour du solde des CP
      *
-     *    @return     nothing      ne retourne rien
+     *	@param		int		$userID		Id of user
+     *	@param		int		$nbHoliday	Nb of days
+     *  @return     void
      */
     function updateSoldeCP($userID='',$nbHoliday='')
     {
@@ -827,9 +835,10 @@ class Holiday // extends CommonObject
     }
 
     /**
-     *    \brief      Retourne un checked si vrai
-     *    \param      name        nom du paramètre de configuration
-     *    \return     string      retourne checked si > 0
+     *	Retourne un checked si vrai
+     *
+     *  @param	string	$name       nom du paramètre de configuration
+     *  @return string      		retourne checked si > 0
      */
     function getCheckOption($name) {
 
@@ -851,9 +860,11 @@ class Holiday // extends CommonObject
 
 
     /**
-     *    Créer les entrées pour chaque utilisateur au moment de la configuration
+     *  Créer les entrées pour chaque utilisateur au moment de la configuration
      *
-     *    @return     nothing      ne retourne rien
+     *  @param	boolean		$single		Single
+     *  @param	int			$userid		Id user
+     *  @return void
      */
     function createCPusers($single=false,$userid='')
     {
@@ -879,9 +890,10 @@ class Holiday // extends CommonObject
     }
 
     /**
-     *    \brief      Supprime un utilisateur du module Congés Payés
-     *    \param      int          ID de l'utilisateur à supprimer
-     *    \return     boolean      Vrai si pas d'erreur, faut si Erreur
+     *  Supprime un utilisateur du module Congés Payés
+     *
+     *  @param	int		$user_id        ID de l'utilisateur à supprimer
+     *  @return boolean      			Vrai si pas d'erreur, faut si Erreur
      */
     function deleteCPuser($user_id) {
 
@@ -894,9 +906,10 @@ class Holiday // extends CommonObject
 
 
     /**
-     *    \brief      Retourne le solde de congés payés pour un utilisateur
-     *    \param      user_id      ID de l'utilisateur
-     *    \return     float        Retourne le solde de congés payés de l'utilisateur
+     *  Retourne le solde de congés payés pour un utilisateur
+     *
+     *  @param	int		$user_id    ID de l'utilisateur
+     *  @return float        		Retourne le solde de congés payés de l'utilisateur
      */
     function getCPforUser($user_id) {
 
@@ -919,9 +932,9 @@ class Holiday // extends CommonObject
      *    Liste la liste des utilisateurs du module congés
      *    uniquement pour vérifier si il existe de nouveau utilisateur
      *
-     *    @param      boolean     si vrai retourne une liste, si faux retourne un array
-     *    @param      boolean     si vrai retourne pour Dolibarr si faux retourne pour CP
-     *    @return     string      retourne un tableau de tout les utilisateurs actifs
+     *    @param      boolean	$liste	    si vrai retourne une liste, si faux retourne un array
+     *    @param      boolean   $type		si vrai retourne pour Dolibarr si faux retourne pour CP
+     *    @return     string      			retourne un tableau de tout les utilisateurs actifs
      */
     function fetchUsers($liste=true,$type=true)
     {
@@ -1093,8 +1106,9 @@ class Holiday // extends CommonObject
     }
 
     /**
-     *    \brief      Compte le nombre d'utilisateur actifs dans Dolibarr
-     *    \return     int      retourne le nombre d'utilisateur
+     *	Compte le nombre d'utilisateur actifs dans Dolibarr
+     *
+     *  @return     int      retourne le nombre d'utilisateur
      */
     function countActiveUsers() {
 
@@ -1109,10 +1123,11 @@ class Holiday // extends CommonObject
     }
 
     /**
-     *    \brief      Compare le nombre d'utilisateur actif de Dolibarr à celui des utilisateurs des congés payés
-     *    \param      nbUsersDolibarr    nombre d'utilisateur actifs dans Dolibarr
-     *    \param      nbUsersHoliday      nombre d'utilisateur actifs dans le module congés payés
-     *    \return     nothing            ne retourne rien
+     *  Compare le nombre d'utilisateur actif de Dolibarr à celui des utilisateurs des congés payés
+     *
+     *  @param    int	$userDolibarr	nombre d'utilisateur actifs dans Dolibarr
+     *  @param    int	$userCP    		nombre d'utilisateur actifs dans le module congés payés
+     *  @return   void
      */
     function verifNbUsers($userDolibarr,$userCP) {
 
@@ -1200,9 +1215,12 @@ class Holiday // extends CommonObject
 
 
     /**
-     *		\brief		Retourne le nombre de jours ouvrés entre deux dates
-     *    \param      Date de début et date de fin au format TimeStamp
-     *    \remarks    Prise en compte des jours fériés en France
+     *	Retourne le nombre de jours ouvrés entre deux dates
+     *  Prise en compte des jours fériés en France
+     *
+     *  @param	date	$date_start     Start date
+     *  @param	date	$date_stop		Stop date
+     *  @return	int						Nb of days
      */
 
     function getOpenDays($date_start, $date_stop) {
@@ -1214,7 +1232,7 @@ class Holiday // extends CommonObject
         $diff_year = date('Y', $date_stop) - date('Y', $date_start);
 
         for ($i = 0; $i <= $diff_year; $i++) {
-            $year = (int)date('Y', $date_start) + $i;
+            $year = (int) date('Y', $date_start) + $i;
             // Liste des jours feriés
             $arr_bank_holidays[] = '1_1_'.$year; // Jour de l'an
             $arr_bank_holidays[] = '1_5_'.$year; // Fete du travail
@@ -1247,8 +1265,9 @@ class Holiday // extends CommonObject
     }
 
     /**
-     *    \brief      Liste les évènements de congés payés enregistré
-     *    \return     int         -1 si erreur, 1 si OK et 2 si pas de résultat
+     *  Liste les évènements de congés payés enregistré
+     *
+     *  @return     int         -1 si erreur, 1 si OK et 2 si pas de résultat
      */
     function fetchEventsCP()
     {
@@ -1301,8 +1320,11 @@ class Holiday // extends CommonObject
     }
 
     /**
-     *    \brief      Créer un évènement de congés payés
-     *    \return     int         -1 si erreur, id si OK
+     *  Créer un évènement de congés payés
+     *
+     *	@param	User	$user			User
+     *	@param	int		$notrigger		No trigger
+     *  @return int         			-1 si erreur, id si OK
      */
     function createEventCP($user, $notrigger=0)
     {
@@ -1354,8 +1376,12 @@ class Holiday // extends CommonObject
     }
 
     /**
-     *    \brief      Met à jour les évènements de congés payés
-     *    \return     int         -1 si erreur, id si OK
+     *  Met à jour les évènements de congés payés
+     *
+     *	@param	int		$rowid		Row id
+     *	@param	string	$name		Name
+     *	@param	value	$value		Value
+     *  @return int         		-1 si erreur, id si OK
      */
     function updateEventCP($rowid, $name, $value) {
 
@@ -1372,7 +1398,13 @@ class Holiday // extends CommonObject
         return false;
     }
 
-    function selectEventCP() {
+    /**
+     * select event
+     *
+     * @return string|boolean
+     */
+    function selectEventCP()
+    {
 
         $sql = "SELECT *";
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday_events";
@@ -1405,6 +1437,12 @@ class Holiday // extends CommonObject
 
     }
 
+    /**
+     * deleteEvent
+     *
+     * @param 	int		$rowid		Row id
+     * @return 	boolean				Success or not
+     */
     function deleteEventCP($rowid) {
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."holiday_events";
@@ -1419,6 +1457,12 @@ class Holiday // extends CommonObject
         }
     }
 
+    /**
+     * getValueEventCp
+     *
+     * @param 	int		$rowid		Row id
+     * @return string|boolean
+     */
     function getValueEventCp($rowid) {
 
         $sql = "SELECT value";
@@ -1435,6 +1479,12 @@ class Holiday // extends CommonObject
         }
     }
 
+    /**
+     * getNameEventCp
+     *
+     * @param 	int		$rowid		Row id
+     * @return unknown|boolean
+     */
     function getNameEventCp($rowid) {
 
         $sql = "SELECT name";
@@ -1451,6 +1501,15 @@ class Holiday // extends CommonObject
         }
     }
 
+    /**
+     * addLogCP
+     *
+     * @param 	int		$fk_user_action		Id user creation
+     * @param 	int		$fk_user_update		Id user update
+     * @param 	int		$type				Type
+     * @param 	int		$new_solde			New value
+     * @return number|string
+     */
     function addLogCP($fk_user_action,$fk_user_update,$type,$new_solde) {
 
         global $conf, $langs, $db;
@@ -1513,10 +1572,11 @@ class Holiday // extends CommonObject
     }
 
     /**
-     *    \brief      Liste le log des congés payés
-     *    \param      order       Filtrage par ordre
-     *    \param      filter      Filtre de séléction
-     *    \return     int         -1 si erreur, 1 si OK et 2 si pas de résultat
+     *  Liste le log des congés payés
+     *
+     *  @param	string	$order      Filtrage par ordre
+     *  @param  string	$filter     Filtre de séléction
+     *  @return int         		-1 si erreur, 1 si OK et 2 si pas de résultat
      */
     function fetchLog($order,$filter)
     {

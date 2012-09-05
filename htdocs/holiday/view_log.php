@@ -23,8 +23,9 @@
  *  \ingroup    holiday
  */
 
-require('pre.inc.php');
+require('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT. "/user/class/user.class.php");
+require_once(DOL_DOCUMENT_ROOT. "/holiday/common.inc.php");
 
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();
@@ -38,7 +39,7 @@ if(!$user->rights->holiday->view_log) accessforbidden();
  * View
 */
 
-llxHeader($langs->trans('CPTitreMenu'));
+llxHeader(array(),$langs->trans('CPTitreMenu'));
 
 
 $cp = new Holiday($db);

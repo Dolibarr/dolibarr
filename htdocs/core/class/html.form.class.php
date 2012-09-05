@@ -1060,7 +1060,7 @@ class Form
                     }
 
                     //if ($obj->admin) $out.= ' *';
-                    if ($conf->global->MAIN_SHOW_LOGIN) $out.= ' ('.$obj->login.')';
+                    if (! empty($conf->global->MAIN_SHOW_LOGIN)) $out.= ' ('.$obj->login.')';
                     $out.= '</option>';
                     $i++;
                 }

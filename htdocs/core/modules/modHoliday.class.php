@@ -25,7 +25,7 @@
  */
 
 /**
- *      \file       htdocs/includes/modules/modLeave.class.php
+ *      \file       htdocs/includes/modules/modHoliday.class.php
  *      \ingroup    holiday
  *      \brief      Description and activation file for module holiday
  */
@@ -184,54 +184,86 @@ class modHoliday extends DolibarrModules
 
 		// Add here entries to declare new menus
 		$this->menu[$r]=array(	'fk_menu'=>0,			// Put 0 if this is a top menu
-									'type'=>'top',			// This is a Top menu entry
-									'titre'=>'CPTitreMenu',
-									'mainmenu'=>'holiday',
-									'url'=>'/holiday/index.php?leftmenu=holiday',
-									'langs'=>'holiday',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-									'position'=>100,
-									'enabled'=>'1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-									'perms'=>'$user->rights->holiday->write',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-									'target'=>'',
-									'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
-		// $r++;
-		//
-		// Example to declare a Left Menu entry:
-		// $this->menu[$r]=array(	'fk_menu'=>'r=0',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
-		//							'type'=>'left',			// This is a Left menu entry
-		//							'titre'=>'MyModule left menu 1',
-		//							'mainmenu'=>'mymodule',
-		//							'url'=>'/mymodule/pagelevel1.php',
-		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-		//							'position'=>100,
-		//							'enabled'=>'1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-		//							'perms'=>'1',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-		//							'target'=>'',
-		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
-		// $r++;
-		//
-		// Example to declare another Left Menu entry:
-		// $this->menu[$r]=array(	'fk_menu'=>'r=1',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
-		//							'type'=>'left',			// This is a Left menu entry
-		//							'titre'=>'MyModule left menu 2',
-		//							'mainmenu'=>'mymodule',
-		//							'url'=>'/mymodule/pagelevel2.php',
-		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-		//							'position'=>100,
-		//							'enabled'=>'1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-		//							'perms'=>'1',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-		//							'target'=>'',
-		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
-		// $r++;
-
+								'type'=>'top',			// This is a Top menu entry
+								'titre'=>'CPTitreMenu',
+								'mainmenu'=>'holiday',
+								'leftmenu'=>'holiday',
+								'url'=>'/holiday/index.php',
+								'langs'=>'holiday',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'position'=>100,
+								'enabled'=>'1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+								'perms'=>'$user->rights->holiday->write',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+								'target'=>'',
+								'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
+		$r++;
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=holiday',			// Put 0 if this is a top menu
+								'type'=>'left',			// This is a Top menu entry
+								'titre'=>'CPTitreMenu',
+								'mainmenu'=>'holiday',
+								'leftmenu'=>'holiday',
+								'url'=>'/holiday/index.php?mainmenu=holiday&leftmenu=holiday',
+								'langs'=>'holiday',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'position'=>100,
+								'enabled'=>'1',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+								'perms'=>'$user->rights->holiday->write',			// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+								'target'=>'',
+								'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
+		$r++;
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=holiday,fk_leftmenu=holiday',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
+								'type'=>'left',			// This is a Left menu entry
+								'titre'=>'MenuAddCP',
+								'mainmenu'=>'holiday',
+								'leftmenu'=>'holiday_add',
+								'url'=>'/holiday/fiche.php?mainmenu=holiday&action=request',
+								'langs'=>'holiday',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'position'=>101,
+								'enabled'=>'$conf->holiday->enabled',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+								'perms'=>'$user->rights->holiday->write',		// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+								'target'=>'',
+								'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
+		$r++;
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=holiday,fk_leftmenu=holiday',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
+								'type'=>'left',			// This is a Left menu entry
+								'titre'=>'MenuConfCP',
+								'mainmenu'=>'holiday',
+								'leftmenu'=>'holiday_conf',
+								'url'=>'/holiday/define_holiday.php?mainmenu=holiday&action=request',
+								'langs'=>'holiday',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'position'=>102,
+								'enabled'=>'$conf->holiday->enabled',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+								'perms'=>'$user->rights->holiday->define_holiday',		// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+								'target'=>'',
+								'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
+		$r++;
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=holiday,fk_leftmenu=holiday',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
+								'type'=>'left',			// This is a Left menu entry
+								'titre'=>'MenuLogCP',
+								'mainmenu'=>'holiday_def',
+								'url'=>'/holiday/view_log.php?mainmenu=holiday&action=request',
+								'leftmenu'=>'holiday',
+								'langs'=>'holiday',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'position'=>103,
+								'enabled'=>'$conf->holiday->enabled',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+								'perms'=>'$user->rights->holiday->view_log',		// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+								'target'=>'',
+								'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
+		$r++;
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=holiday,fk_leftmenu=holiday',		// Use r=value where r is index key used for the parent menu entry (higher parent must be a top menu entry)
+								'type'=>'left',			// This is a Left menu entry
+								'titre'=>'MenuReportMonth',
+								'mainmenu'=>'holiday',
+								'leftmenu'=>'holiday_report',
+								'url'=>'/holiday/month_report.php?mainmenu=holiday&action=request',
+								'langs'=>'holiday',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'position'=>104,
+								'enabled'=>'$conf->holiday->enabled',			// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
+								'perms'=>'$user->rights->holiday->view_log',		// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+								'target'=>'',
+								'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
+		$r++;
 
 		// Exports
 		$r=1;
-
-
-      // Agenda
-		$this->Agenda = 1;
-		$this->agendas = array('holiday:holidayAgenda');
 
 		// Example:
 		// $this->export_code[$r]=$this->rights_class.'_'.$r;
@@ -248,10 +280,11 @@ class modHoliday extends DolibarrModules
 	}
 
 	/**
-	 *		\brief      Function called when module is enabled.
-	 *					The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *					It also creates data directories.
-	 *      \return     int             1 if OK, 0 if KO
+	 *	Function called when module is enabled.
+	 *	The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *	It also creates data directories.
+	 *
+	 *	@return     int             1 if OK, 0 if KO
 	 */
 	function init()
 	{
@@ -263,10 +296,11 @@ class modHoliday extends DolibarrModules
 	}
 
 	/**
-	 *		\brief		Function called when module is disabled.
-	 *              	Remove from database constants, boxes and permissions from Dolibarr database.
-	 *					Data directories are not deleted.
-	 *      \return     int             1 if OK, 0 if KO
+	 *	Function called when module is disabled.
+	 *  Remove from database constants, boxes and permissions from Dolibarr database.
+	 *	Data directories are not deleted.
+	 *
+	 *  @return     int             1 if OK, 0 if KO
 	 */
 	function remove()
 	{
@@ -277,11 +311,12 @@ class modHoliday extends DolibarrModules
 
 
 	/**
-	 *		\brief		Create tables, keys and data required by module
-	 * 					Files llx_table1.sql, llx_table1.key.sql llx_data.sql with create table, create keys
-	 * 					and create data commands must be stored in directory /mymodule/sql/
-	 *					This function is called by this->init.
-	 * 		\return		int		<=0 if KO, >0 if OK
+	 *	Create tables, keys and data required by module
+	 * 	Files llx_table1.sql, llx_table1.key.sql llx_data.sql with create table, create keys
+	 * 	and create data commands must be stored in directory /mymodule/sql/
+	 *	This function is called by this->init.
+	 *
+	 * 	@return		int		<=0 if KO, >0 if OK
 	 */
 	function load_tables()
 	{
