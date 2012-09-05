@@ -1,28 +1,26 @@
 <?php
-/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
-* Copyright (C) 2010 	   Juanjo Menent        <jmenent@2byte.es>
-* Copyright (C) 2011 	   Anthony Hebert       <ahebert@teclib.com>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
+/* Copyright (C) 2011	Anthony Hebert		<ahebert@teclib.com>
+ * Copyright (C) 2012	Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 /**
  *	\file       holidayagenda.class.php
  *	\ingroup    holiday
  *	\brief      Fichier d'agenda pour le module Congés Payés
- *	\version    $Id: holidayagenda.class.php,v 1.00 2011/09/15 11:00:00 ahebert Exp $
  */
 
 
@@ -31,11 +29,12 @@
  *	\brief 		Classe mere pour heritage des classes Agenda
  */
 
-require_once(DOL_DOCUMENT_ROOT."/core/class/commonagenda.class.php");
-require_once(DOL_DOCUMENT_ROOT."/projet/class/task.class.php");
+// FIXME this class not exist
+//require_once DOL_DOCUMENT_ROOT.'/core/class/commonagenda.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
 
-class HolidayAgenda extends CommonAgenda
+class HolidayAgenda// extends CommonAgenda
 {
     var $db;
 
@@ -49,12 +48,13 @@ class HolidayAgenda extends CommonAgenda
 
 
     /**
-     *    Constructeur de la classe
-     *    @param	DB		Handler acces base de donnees
+     *	Constructor
+     *
+     *	@param	DoliDB	$db		Database access handler
      */
-    function construct($DB)
+    function construct($db)
     {
-        $this->db = $DB;
+        $this->db = $db;
     }
 
     /**
