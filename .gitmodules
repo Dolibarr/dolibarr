@@ -64,9 +64,6 @@
 [submodule "htdocs/custom/bigbluebutton"]
 	path = htdocs/custom/bigbluebutton
 	url = gitolite@doliforge.org:bigbluebutton/bigbluebutton.git
-[submodule "htdocs/custom/leave"]
-	path = htdocs/custom/leave
-	url = gitolite@doliforge.org:leave/leave.git
 [submodule "htdocs/custom/employees"]
 	path = htdocs/custom/employees
 	url = gitolite@doliforge.org:employees/employees.git
