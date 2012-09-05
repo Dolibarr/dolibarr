@@ -285,16 +285,6 @@ if ($modulepart)
 		$original_file=$conf->contrat->dir_output.'/'.$original_file;
 	}
 
-	// Wrapping pour les documents generaux
-	else if ($modulepart == 'ged')
-	{
-		if ($user->rights->document->lire)
-		{
-			$accessallowed=1;
-		}
-		$original_file= $conf->ged->dir_output.'/'.$original_file;
-	}
-
 	// Wrapping pour les dons
 	else if ($modulepart == 'donation')
 	{
@@ -390,6 +380,12 @@ if ($modulepart)
 	// Generic wrapping
 	else
 	{
+		// For dir temp
+		$dir_temp=false;
+		if (preg_match('/\_temp$/i', $modulepart)) {
+			$modulepart = str_replace('_temp', '', $modulepart);
+			$dir_temp=true;
+		}
 		// Define $accessallowed
 		if (($user->rights->$modulepart->lire) || ($user->rights->$modulepart->read) || ($user->rights->$modulepart->download)) $accessallowed=1;	// No subpermission, we have checked on main permission
 		elseif (preg_match('/^specimen/i',$original_file))	$accessallowed=1;    // If link to a specimen
@@ -407,7 +403,9 @@ if ($modulepart)
 		}
 
  		// Define $original_file
- 		$original_file=$conf->$modulepart->dir_output.'/'.$original_file;
+ 		$dir = $conf->$modulepart->dir_output;
+ 		if ($dir_temp) $dir = $conf->$modulepart->dir_temp;
+ 		$original_file = $dir.'/'.$original_file;
 
  		// Define $sqlprotectagainstexternals for modules who want to protect access using a SQL query.
  		$sqlProtectConstName = strtoupper($modulepart).'_SQLPROTECTAGAINSTEXTERNALS_FOR_DOCUMENTS';

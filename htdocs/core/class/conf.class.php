@@ -52,7 +52,7 @@ class Conf
 	public $smart_menu;
 
 	public $modules					= array();	// List of activated modules
-	public $modules_parts			= array('css'=>array(), 'js'=>array(),'triggers'=>array(),'login'=>array(),'substitutions'=>array(),'menus'=>array(),'theme'=>array(),'tpl'=>array(),'barcode'=>array(),'models'=>array(),'hooks'=>array());	// List of modules parts
+	public $modules_parts			= array('css'=>array(), 'js'=>array(),'triggers'=>array(),'login'=>array(),'substitutions'=>array(),'menus'=>array(),'theme'=>array(),'tpl'=>array(),'barcode'=>array(),'models'=>array(),'hooks'=>array(),'dir'=>array());	// List of modules parts
 
 	// TODO Remove thoose arrays with generic module_parts
 	public $tabs_modules			= array();
@@ -258,11 +258,30 @@ class Conf
 		// Define default dir_output and dir_temp for directories of modules
 		foreach($this->modules as $module)
 		{
+			// For multicompany sharings
 			$this->$module->multidir_output	= array($this->entity => $rootfordata."/".$module);
 			$this->$module->multidir_temp	= array($this->entity => $rootfordata."/".$module."/temp");
 			// For backward compatibility
 			$this->$module->dir_output	= $rootfordata."/".$module;
 			$this->$module->dir_temp	= $rootfordata."/".$module."/temp";
+		}
+
+		// External modules storage
+		if (! empty($this->modules_parts['dir']))
+		{
+			foreach($this->modules_parts['dir'] as $module => $dirs)
+			{
+				foreach($dirs as $type => $name)
+				{
+					$subdir=($type=='temp'?'/temp':'');
+					// For multicompany sharings
+					$varname = 'multidir_'.$type;
+					$this->$module->$varname = array($this->entity => $rootfordata."/".$name.$subdir);
+					// For backward compatibility
+					$varname = 'dir_'.$type;
+					$this->$module->$varname = $rootfordata."/".$name.$subdir;
+				}
+			}
 		}
 
 		// For mycompany storage
