@@ -83,11 +83,11 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 			'loaddate' => $loaddate,
 			'loadsize' => $loadsize
 	);
-	$file_list=$hookmanager->executeHooks('getDirList', $parameters);
+	$ret=$hookmanager->executeHooks('getDirList', $parameters);
 
-	if (is_array($file_list))
+	if (! empty($hookmanager->resArray))
 	{
-		return $file_list;
+		return $hookmanager->resArray;
 	}
 	else
 	{
