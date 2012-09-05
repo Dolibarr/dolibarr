@@ -15,6 +15,8 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+DROP TABLE llx_product_ca;
+
 ALTER TABLE llx_societe ADD COLUMN idprof6 varchar(128) after idprof5;
 ALTER TABLE llx_societe DROP COLUMN fk_secteur;
 ALTER TABLE llx_societe DROP COLUMN description;
