@@ -159,7 +159,7 @@ class HookManager
                     // Generic hooks that return a string (printSearchForm, printLeftBlock, formBuilddocOptions, ...)
                     else if (method_exists($actionclassinstance,$method))
                     {
-                        if (is_array($parameters) && $parameters['special_code'] > 3 && $parameters['special_code'] != $actionclassinstance->module_number) continue;
+                        if (is_array($parameters) && ! empty($parameters['special_code']) && $parameters['special_code'] > 3 && $parameters['special_code'] != $actionclassinstance->module_number) continue;
                     	$result = $actionclassinstance->$method($parameters, $object, $action, $this);
                     	if (is_array($result)) $this->resArray = array_merge($this->resArray, $result);
                     	else $resprint.=$result;

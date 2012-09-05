@@ -1413,7 +1413,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    $searchform.=$hookmanager->executeHooks('printSearchForm',$parameters);    // Note that $action and $object may have been modified by some hooks
 
 	    // Define $bookmarks
-	    if ($conf->bookmark->enabled && $user->rights->bookmark->lire)
+	    if (! empty($conf->bookmark->enabled) && $user->rights->bookmark->lire)
 	    {
 	        include_once (DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php');
 	        $langs->load("bookmarks");
