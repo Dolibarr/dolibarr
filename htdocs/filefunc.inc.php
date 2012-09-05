@@ -108,6 +108,7 @@ if (empty($dolibarr_mailing_limit_sendbyweb)) $dolibarr_mailing_limit_sendbyweb=
 if (empty($force_charset_do_notuse)) $force_charset_do_notuse='UTF-8';
 if (empty($dolibarr_strict_mode)) $dolibarr_strict_mode=0; // For debug in php strict mode
 if (empty($multicompany_transverse_mode)) $multicompany_transverse_mode=0;
+if (empty($multicompany_force_entity)) $multicompany_force_entity=0; // To force entity in login page
 
 // Security: CSRF protection
 // This test check if referrer ($_SERVER['HTTP_REFERER']) is same web site than Dolibarr ($_SERVER['HTTP_HOST'])
