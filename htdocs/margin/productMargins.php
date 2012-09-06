@@ -162,6 +162,8 @@ if (!empty($startdate))
   $sql.= " AND f.datef >= '".$startdate."'";
 if (!empty($enddate))
   $sql.= " AND f.datef <= '".$enddate."'";
+if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)
+	$sql .= " AND d.buy_price_ht <> 0";
 if ($id > 0)
   $sql.= " GROUP BY f.rowid";
 else
