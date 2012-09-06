@@ -175,24 +175,14 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
     	$localobject->modelpdf='crabe';
     	$result=facture_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
 
-		$localobject=new Facture($this->savdb);
-		$localobject->initAsSpecimen();
-
 		$this->assertLessThan($result, 0);
-    	print __METHOD__." result=".$result."\n";
-
-    	// Oursin
-    	$localobject->modelpdf='oursin';
-    	$result=facture_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
-
-    	$this->assertLessThan($result, 0);
     	print __METHOD__." result=".$result."\n";
 
     	return 0;
     }
 
     /**
-    * testFactureBuild
+    * testFactureFournisseurBuild
     *
     * @return int
     */
@@ -237,13 +227,6 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
 
         // Einstein
         $localobject->modelpdf='einstein';
-        $result=commande_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
-
-        $this->assertLessThan($result, 0);
-        print __METHOD__." result=".$result."\n";
-
-        // Edison
-        $localobject->modelpdf='edison';
         $result=commande_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
 
         $this->assertLessThan($result, 0);
@@ -297,15 +280,8 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         $localobject=new Propal($this->savdb);
         $localobject->initAsSpecimen();
 
-        // Einstein
+        // Azur
         $localobject->modelpdf='azur';
-        $result=propale_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
-
-        $this->assertLessThan($result, 0);
-        print __METHOD__." result=".$result."\n";
-
-        // Edison
-        $localobject->modelpdf='jaune';
         $result=propale_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
 
         $this->assertLessThan($result, 0);
@@ -331,7 +307,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         $localobject=new Project($this->savdb);
         $localobject->initAsSpecimen();
 
-        // Soleil
+        // Baleine
         $localobject->modelpdf='baleine';
         $result=project_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
 
@@ -385,14 +361,14 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         $localobject=new Expedition($this->savdb);
         $localobject->initAsSpecimen();
 
-        // Soleil
+        // Merou
         $localobject->modelpdf='merou';
         $result=expedition_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
 
         $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";
 
-        // Soleil
+        // Rouget
         $localobject->modelpdf='rouget';
         $result=expedition_pdf_create($db, $localobject, $localobject->modelpdf, $langs);
 
