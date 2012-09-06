@@ -22,7 +22,6 @@
  *   	\file       define_holiday.php
  *		\ingroup    holiday
  *		\brief      File that defines the balance of paid holiday of users.
- *		\author		dmouillard@teclib.com <Dimitri Mouillard>
  */
 
 require DOL_DOCUMENT_ROOT. '/holiday/common.inc.php';
