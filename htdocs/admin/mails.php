@@ -41,7 +41,7 @@ $substitutionarrayfortest=array(
 '__LASTNAME__' => 'TESTLastname',
 '__FIRSTNAME__' => 'TESTFirstname',
 '__SIGNATURE__' => 'TESTSignature',
-'__PERSONALIZED__' => 'TESTPersonalized'
+//'__PERSONALIZED__' => 'TESTPersonalized'	// Hiden because not used yet
 );
 complete_substitutions_array($substitutionarrayfortest, $langs);
 

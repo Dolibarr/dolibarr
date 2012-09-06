@@ -57,22 +57,22 @@ $object->substitutionarray=array(
     '__EMAIL__' => 'EMail',
     '__LASTNAME__' => 'Lastname',
     '__FIRSTNAME__' => 'Firstname',
-    '__MAILTOEMAIL__' => 'MailtoEmail',
+    '__MAILTOEMAIL__' => 'TagMailtoEmail',
     '__OTHER1__' => 'Other1',
     '__OTHER2__' => 'Other2',
     '__OTHER3__' => 'Other3',
     '__OTHER4__' => 'Other4',
     '__OTHER5__' => 'Other5',
-    '__SIGNATURE__' => 'Signature',
-    '__PERSONALIZED__' => 'Personalized'
+    '__SIGNATURE__' => 'TagSignature',
+    //'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet
 );
-if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE)
+if (! empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE))
 {
     $object->substitutionarray=array_merge(
         $object->substitutionarray,
         array(
-            '__CHECK_READ__' => 'CheckMail',
-            '__UNSUBSCRIBE__' => 'Unsubscribe'
+            '__CHECK_READ__' => 'TagCheckMail',
+            '__UNSUBSCRIBE__' => 'TagUnsubscribe'
         )
     );
 }
@@ -89,9 +89,9 @@ $object->substitutionarrayfortest=array(
     '__OTHER4__' => 'TESTOther4',
     '__OTHER5__' => 'TESTOther5',
     '__SIGNATURE__' => 'TESTSignature',
-    '__PERSONALIZED__' => 'TESTPersonalized'
+    //'__PERSONALIZED__' => 'TESTPersonalized'	// Not used yet
 );
-if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE)
+if (!empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE))
 {
     $object->substitutionarrayfortest=array_merge(
         $object->substitutionarrayfortest,

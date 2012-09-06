@@ -20,18 +20,14 @@
  *   	\file       fiche.php
  *		\ingroup    holiday
  *		\brief      Form and file creation of paid holiday.
- *		\version    $Id: fiche.php,v 1.16 2011/09/15 11:00:00 dmouillard Exp $
- *		\author		dmouillard@teclib.com <Dimitri Mouillard>
- *		\remarks	   Form and file creation of paid holiday.
  */
 
-require('../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT. "/core/class/html.form.class.php");
-require_once(DOL_DOCUMENT_ROOT. "/user/class/usergroup.class.php");
-require_once(DOL_DOCUMENT_ROOT. "/core/class/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT. "/core/class/CMailFile.class.php");
-require_once(DOL_DOCUMENT_ROOT. "/core/class/html.formmail.class.php");
-require_once(DOL_DOCUMENT_ROOT. "/holiday/common.inc.php");
+include 'common.inc.php';
+require_once DOL_DOCUMENT_ROOT. '/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT. '/user/class/usergroup.class.php';
+require_once DOL_DOCUMENT_ROOT. '/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT. '/core/class/CMailFile.class.php';
+require_once DOL_DOCUMENT_ROOT. '/core/class/html.formmail.class.php';
 
 // Get parameters
 $myparam = GETPOST("myparam");

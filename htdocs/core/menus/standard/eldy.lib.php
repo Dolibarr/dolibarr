@@ -700,7 +700,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                     //if (function_exists('xdebug_is_enabled')) $newmenu->add('/admin/system/xdebug.php', $langs->trans('XDebug'),1);
                     $newmenu->add('/admin/system/database.php?mainmenu=home', $langs->trans('Database'), 1);
                     $newmenu->add('/admin/system/database-tables.php?mainmenu=home', $langs->trans('Tables'), 2);
-                    $newmenu->add('/admin/system/database-tables-contraintes.php?mainmenu=home', $langs->trans('Constraints'), 2);
                 }
                 // Admin tools
                 $newmenu->add("/admin/tools/index.php?mainmenu=home&leftmenu=admintools", $langs->trans("SystemTools"), 0, 1, '', $mainmenu, 'admintools');

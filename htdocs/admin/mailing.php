@@ -127,7 +127,7 @@ print '</td></tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("ActivateCheckRead").'</td><td>';
-if ($conf->global->MAILING_EMAIL_UNSUBSCRIBE==1)
+if (!empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE))
 {
 	print '<a href="'.$_SERVER["PHP_SELF"].'?action=setvalue&value=off">';
 	print img_picto($langs->trans("Enabled"),'switch_on');

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2012 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,24 +17,23 @@
  */
 
 /**
- *	\file       htdocs/core/modules/mailings/peche.modules.php
+ *	\file       htdocs/core/modules/mailings/xinputfile.modules.php
  *	\ingroup    mailing
- *	\brief      File of class to offer a selector of emailing targets with Rule 'Peche'.
+ *	\brief      File of class to offer a selector of emailing targets with Rule 'xinputfile'.
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 
 /**
- *	\class      mailing_peche
- *	\brief      Class to offer a selector of emailing targets with Rule 'Peche'.
+ *	Class to offer a selector of emailing targets with Rule 'xinputfile'.
  */
-class mailing_peche extends MailingTargets
+class mailing_xinputfile extends MailingTargets
 {
 	var $name='EmailsFromFile';              // Identifiant du module mailing
 	var $desc='EMails issus d\'un fichier';  // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
 	var $require_module=array();             // Module mailing actif si modules require_module actifs
-	var $require_admin=1;                    // Module mailing actif pour user admin ou non
+	var $require_admin=0;                    // Module mailing actif pour user admin ou non
 	var $picto='generic';
 
 	var $db;
@@ -69,11 +68,12 @@ class mailing_peche extends MailingTargets
 	}
 
 
-	/*
-	 *		\brief		Return here number of distinct emails returned by your selector.
-	 *					For example if this selector is used to extract 500 different
-	 *					emails from a text file, this function must return 500.
-	 *		\return		int			'' means NA
+	/**
+	 *	Return here number of distinct emails returned by your selector.
+	 *	For example if this selector is used to extract 500 different
+	 *	emails from a text file, this function must return 500.
+	 *
+	 *	@return		int			'' means NA
 	 */
 	function getNbOfRecipients()
 	{
