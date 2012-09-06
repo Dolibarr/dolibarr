@@ -142,6 +142,8 @@ if ($id > 0 || ! empty($ref))
 		$sql.= " AND s.entity = ".$conf->entity;
 		$sql.= " AND d.fk_facture = f.rowid";
 		$sql.= " AND d.fk_product =".$object->id;
+		if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)
+			$sql .= " AND d.buy_price_ht <> 0";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if (! empty($socid)) $sql.= " AND f.fk_soc = $socid";
 		$sql.= " ORDER BY $sortfield $sortorder ";
