@@ -20,15 +20,12 @@
  *   	\file       month_report.php
  *		\ingroup    holiday
  *		\brief      Monthly report of paid holiday.
- *		\version    $Id: month_report.php,v 1.00 2011/09/15 11:00:00 flegastelois Exp $
- *		\author		flegastelois@teclib.com <François Legastelois>
- *		\remarks	   Monthly report of paid holiday.
  */
-require('../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT.'/user/class/user.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php');
-require_once(DOL_DOCUMENT_ROOT. "/holiday/common.inc.php");
+
+include 'common.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();

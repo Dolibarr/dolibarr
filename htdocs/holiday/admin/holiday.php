@@ -25,15 +25,11 @@
  *		\brief      Page module configuration paid holiday.
  */
 
-$res=0;
-if (! $res && file_exists("../main.inc.php")) $res=@include("../main.inc.php");         // For root directory
-if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");   // For "custom" directory
-if (! $res) die("Include of main fails");
-
-dol_include_once("/holiday/class/holiday.class.php");
-require_once(DOL_DOCUMENT_ROOT. "/core/class/html.form.class.php");
-require_once(DOL_DOCUMENT_ROOT. "/user/class/user.class.php");
-require_once(DOL_DOCUMENT_ROOT. "/user/class/usergroup.class.php");
+require '../../main.inc.php';
+require DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+require_once DOL_DOCUMENT_ROOT. '/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT. '/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT. '/user/class/usergroup.class.php';
 
 $action=GETPOST('action');
 

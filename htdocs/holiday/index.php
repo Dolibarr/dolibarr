@@ -23,12 +23,11 @@
  *		\brief      List of holiday.
  */
 
-require('../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT. "/core/class/html.form.class.php");
-require_once(DOL_DOCUMENT_ROOT. "/core/class/html.formother.class.php");
-require_once(DOL_DOCUMENT_ROOT. "/user/class/user.class.php");
-require_once(DOL_DOCUMENT_ROOT. "/user/class/usergroup.class.php");
-require_once(DOL_DOCUMENT_ROOT. "/holiday/common.inc.php");
+include 'common.inc.php';
+require_once DOL_DOCUMENT_ROOT. '/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT. '/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT. '/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT. '/user/class/usergroup.class.php';
 
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();
