@@ -41,9 +41,9 @@ $consts=GETPOST('const');
 $constname=GETPOST('constname','alpha');
 $constvalue=GETPOST('constvalue');
 $constnote=GETPOST('constnote','alpha');
-$consttype=GETPOST('consttype','alpha');
+$consttype=(GETPOST('consttype','alpha')?GETPOST('consttype','alpha'):'chaine');
 
-$typeconst=array('yesno','texte','chaine');
+$typeconst=array('yesno' => 'yesno', 'texte' => 'texte', 'chaine' => 'chaine');
 $mesg='';
 
 
