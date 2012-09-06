@@ -263,7 +263,7 @@ else if ($action == 'setnote_private' && $user->rights->ficheinter->creer)
 // Add line
 else if ($action == "addline" && $user->rights->ficheinter->creer)
 {
-    if (!GETPOST('np_desc','alpha'))
+    if (!GETPOST('np_desc'))
     {
         $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Description")).'</div>';
         $error++;
@@ -280,7 +280,7 @@ else if ($action == "addline" && $user->rights->ficheinter->creer)
         $ret=$object->fetch($id);
         $object->fetch_thirdparty();
 
-        $desc=GETPOST('np_desc','alpha');
+        $desc=GETPOST('np_desc');
         $date_intervention = dol_mktime(GETPOST('dihour','int'), GETPOST('dimin','int'), 0, GETPOST('dimonth','int'), GETPOST('diday','int'), GETPOST('diyear','int'));
         $duration = convertTime2Seconds(GETPOST('durationhour','int'), GETPOST('durationmin','int'));
 
@@ -353,7 +353,7 @@ else if ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST(
     }
     $object->fetch_thirdparty();
 
-    $desc		= GETPOST('np_desc','alpha');
+    $desc		= GETPOST('np_desc');
     $date_inter	= dol_mktime(GETPOST('dihour','int'), GETPOST('dimin','int'), 0, GETPOST('dimonth','int'), GETPOST('diday','int'), GETPOST('diyear','int'));
     $duration	= convertTime2Seconds(GETPOST('durationhour','int'),GETPOST('durationmin','int'));
 
