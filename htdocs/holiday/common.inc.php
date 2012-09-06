@@ -18,12 +18,12 @@
  */
 
 /**
- *   	\file       htdocs/holiday/include.inc.php
+ *   	\file       htdocs/holiday/common.inc.php
  *		\ingroup    holiday
  *		\brief      Common load of data
  */
 
-require '../main.inc.php';
+require dirname(__FILE__).'/../main.inc.php';
 require DOL_DOCUMENT_ROOT. '/holiday/class/holiday.class.php';
 
 $langs->load("user");
