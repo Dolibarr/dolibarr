@@ -22,7 +22,7 @@
  *		\brief      Monthly report of paid holiday.
  */
 
-require 'common.inc.php';
+include 'common.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';

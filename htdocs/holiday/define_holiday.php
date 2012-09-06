@@ -24,7 +24,7 @@
  *		\brief      File that defines the balance of paid holiday of users.
  */
 
-require 'common.inc.php';
+include 'common.inc.php';
 require_once DOL_DOCUMENT_ROOT. '/user/class/user.class.php';
 
 // Protection if external user
