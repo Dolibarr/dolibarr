@@ -363,12 +363,13 @@ else
 	print '<td align="center">'.$langs->trans("DateEnd").'</td>';
 	print '<td align="right">'.$langs->trans("Progress").'</td>';
 	print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
+	print '<td>&nbsp;</td>';
 	print "</tr>\n";
 	if (count($tasksarray) > 0)
 	{
 		// Show all lines in taskarray (recursive function to go down on tree)
 		$j=0;
-		$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole);
+		$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, '', 1);
 	}
 	else
 	{

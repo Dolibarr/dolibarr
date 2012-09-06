@@ -266,9 +266,10 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlen
  * @param 	int			$showproject		Show project columns
  * @param	int			&$taskrole			Array of roles of user for each tasks
  * @param	int			$projectsListId		List of id of project allowed to user (separated with comma)
+ * @param	int			$addordertick		Add a tick to move task
  * @return	void
  */
-function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId='')
+function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId='', $addordertick=0)
 {
     global $user, $bc, $langs;
 	global $projectstatic, $taskstatic;
@@ -393,6 +394,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
                 if ($showlineingray) print '</i>';
                 else print '</a>';
                 print '</td>';
+
+                // Tick to drag and drop
+                if ($addordertick)
+                {
+                	print '<td align="center" class="tdlineupdown">&nbsp;</td>';
+                }
 
                 print "</tr>\n";
 
