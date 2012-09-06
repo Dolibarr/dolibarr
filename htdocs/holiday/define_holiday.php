@@ -25,9 +25,8 @@
  *		\author		dmouillard@teclib.com <Dimitri Mouillard>
  */
 
-require('../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT. "/user/class/user.class.php");
-require_once(DOL_DOCUMENT_ROOT. "/holiday/common.inc.php");
+require DOL_DOCUMENT_ROOT. '/holiday/common.inc.php';
+require_once DOL_DOCUMENT_ROOT. '/user/class/user.class.php';
 
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();

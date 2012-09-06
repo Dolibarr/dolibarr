@@ -23,7 +23,8 @@
  *		\brief      Common load of data
  */
 
-require_once(DOL_DOCUMENT_ROOT. "/holiday/class/holiday.class.php");
+require '../main.inc.php' ;
+require DOL_DOCUMENT_ROOT. '/holiday/class/holiday.class.php';
 
 $langs->load("user");
 $langs->load("other");
