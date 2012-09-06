@@ -37,7 +37,7 @@ class InfoBox
      *  @param	array	$excludelist	Array of box id (box.box_id = boxes_def.rowid) to exclude
      *  @return array               	Array of boxes
      */
-    static function listBoxes($db, $mode,$zone,$user,$excludelist=array())
+    static function listBoxes($db, $mode, $zone, $user, $excludelist=array())
     {
         global $conf;
 
@@ -52,7 +52,7 @@ class InfoBox
             $sql.= " WHERE b.box_id = d.rowid";
             $sql.= " AND d.entity = ".$conf->entity;
             if ($zone >= 0) $sql.= " AND b.position = ".$zone;
-            if ($user->id && $user->conf->$confuserzone) $sql.= " AND b.fk_user = ".$user->id;
+            if ($user->id && ! empty($user->conf->$confuserzone)) $sql.= " AND b.fk_user = ".$user->id;
             else $sql.= " AND b.fk_user = 0";
             $sql.= " ORDER BY b.box_order";
         }
@@ -99,7 +99,7 @@ class InfoBox
                         $box->box_order	= (! empty($obj->box_order) ? $obj->box_order : '');
                         $box->fk_user	= (! empty($obj->fk_user) ? $obj->fk_user : '');
                         $box->sourcefile=$relsourcefile;
-                        if ($mode == 'activated' && (! $user->id || ! $user->conf->$confuserzone))
+                        if ($mode == 'activated' && (! $user->id || empty($user->conf->$confuserzone)))	// List of activated box was not yet personalized into database
                         {
                             if (is_numeric($box->box_order))
                             {

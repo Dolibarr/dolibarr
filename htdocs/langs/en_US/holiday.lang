@@ -3,7 +3,7 @@ CHARSET= UTF-8
 
 CPTitreMenu=Holidays
 MenuReportMonth=Monthly statement
-MenuAddCP=Demand for holidays
+MenuAddCP=Apply for holidays
 NotActiveModCP=You must enable the module holidays to view this page.
 NotConfigModCP=You must configure the module holidays to view this page. To do this, <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;"> click here </ a>.
 NoCPforUser=You don't have a demand for holidays.
@@ -23,7 +23,7 @@ ListeCP=List of holidays
 ValidateByCP=Will be validated by
 DescCP=Description
 SendRequestCP=Creating demand for holidays
-DelayToRequestCP=Applications for holidays must be made at least <b>% s day </ b> before them.
+DelayToRequestCP=Applications for holidays must be made at least <b>%s day(s)</b> before them.
 MenuConfCP=Define the holidays
 UpdateAllCP=Update the holidays
 SoldeCPUser=Your balance of holidays is <b>%s</b> days.

@@ -218,7 +218,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 	{
 		$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($sourcecompany))."\n";
 
-		if (! empty($conf->global->MAIN_PDF_ADDALSOSOURCEDETAILS))
+		if (empty($conf->global->MAIN_PDF_DISABLESOURCEDETAILS))
 		{
     		// Tel
     		if ($sourcecompany->tel) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($sourcecompany->tel);

@@ -74,13 +74,6 @@ if (! empty($socid))
 }
 $result = restrictedArea($user, $module, $objectid, $dbtable);
 
-$object = new Propal($db);
-
-// Load object
-if ($id > 0 || ! empty($ref))
-{
-	$ret=$object->fetch($id, $ref);
-}
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';

@@ -22,12 +22,13 @@
  *		\brief      Form and file creation of paid holiday.
  */
 
-include 'common.inc.php';
-require_once DOL_DOCUMENT_ROOT. '/core/class/html.form.class.php';
-require_once DOL_DOCUMENT_ROOT. '/user/class/usergroup.class.php';
-require_once DOL_DOCUMENT_ROOT. '/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT. '/core/class/CMailFile.class.php';
-require_once DOL_DOCUMENT_ROOT. '/core/class/html.formmail.class.php';
+require('../main.inc.php');
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 
 // Get parameters
 $myparam = GETPOST("myparam");
