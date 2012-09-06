@@ -814,10 +814,10 @@ class FormOther
         foreach($boxactivated as $box) $arrayboxactivatedid[$box->id]=$box->id;
 
         $selectboxlist='';
-        if ($conf->use_javascript_ajax)
+        if (! empty($conf->use_javascript_ajax))
         {
             $emptyuser=new User($db);
-            $boxavailable=InfoBox::listboxes($db,'activated',$areacode,$emptyuser,$arrayboxactivatedid);    // Available here is activated for empty user
+            $boxavailable=InfoBox::listboxes($db,'activated',$areacode,$emptyuser,$arrayboxactivatedid);    // Get list of box available for empty user (minus already activated for user)
 
             $arrayboxtoactivatelabel=array();
             foreach($boxavailable as $box)
@@ -852,9 +852,11 @@ class FormOther
 	        </script>';
         }
 
-        print load_fiche_titre((count($boxactivated)?$langs->trans("OtherInformationsBoxes"):''),$selectboxlist,'','','otherboxes');
+        $nbboxactivated=count($boxactivated);
 
-        if (count($boxactivated))
+        print load_fiche_titre(($nbboxactivated?$langs->trans("OtherInformationsBoxes"):''),$selectboxlist,'','','otherboxes');
+
+        if ($nbboxactivated)
         {
             print '<table width="100%" class="notopnoleftnoright">';
             print '<tr><td class="notopnoleftnoright">'."\n";
@@ -871,7 +873,8 @@ class FormOther
             $ii=0;
             foreach ($boxactivated as $key => $box)
             {
-                if (preg_match('/^A/i',$box->box_order)) // column A
+				if (empty($box->box_order) && $ii < ($nbboxactivated / 2)) $box->box_order='A'.sprintf("%02d",($ii+1));	// When box_order was not yet set to Axx or Bxx and is still 0
+            	if (preg_match('/^A/i',$box->box_order)) // column A
                 {
                     $ii++;
                     //print 'box_id '.$boxactivated[$ii]->box_id.' ';
@@ -899,7 +902,8 @@ class FormOther
             $ii=0;
             foreach ($boxactivated as $key => $box)
             {
-                if (preg_match('/^B/i',$box->box_order)) // colonne B
+				if (empty($box->box_order) && $ii < ($nbboxactivated / 2)) $box->box_order='B'.sprintf("%02d",($ii+1));	// When box_order was not yet set to Axx or Bxx and is still 0
+            	if (preg_match('/^B/i',$box->box_order)) // colonne B
                 {
                     $ii++;
                     //print 'box_id '.$boxactivated[$ii]->box_id.' ';
