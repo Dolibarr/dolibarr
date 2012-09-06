@@ -133,11 +133,11 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
     $object->duree			= GETPOST('duree','int');
     $object->fk_project		= GETPOST('projectid','int');
     $object->author			= $user->id;
-    $object->description	= GETPOST('description','alpha');
+    $object->description	= GETPOST('description');
     $object->ref			= $ref;
     $object->modelpdf		= GETPOST('model','alpha');
-    $object->note_private	= GETPOST('note_private','alpha');
-    $object->note_public	= GETPOST('note_public','alpha');
+    $object->note_private	= GETPOST('note_private');
+    $object->note_public	= GETPOST('note_public');
 
     if ($object->socid > 0)
     {
@@ -244,7 +244,7 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fich
 else if ($action == 'setdescription' && $user->rights->ficheinter->creer)
 {
     $object->fetch($id);
-    $result=$object->set_description($user,GETPOST('description','alpha'));
+    $result=$object->set_description($user,GETPOST('description'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 else if ($action == 'setnote_public' && $user->rights->ficheinter->creer)
