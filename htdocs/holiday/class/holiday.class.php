@@ -1399,42 +1399,39 @@ class Holiday extends CommonObject
     }
 
     /**
-     * select event
+     * Select event
      *
-     * @return string|boolean
+     * @return string|boolean		Select Html to select type of holiday
      */
     function selectEventCP()
     {
 
-        $sql = "SELECT *";
+        $sql = "SELECT rowid, name, value";
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday_events";
 
         $result = $this->db->query($sql);
-
-        if($result) {
-
+        if ($result)
+        {
             $num = $this->db->num_rows($result);
             $i = 0;
+
             $out = '<select name="list_event" class="flat" >';
             $out.= '<option value="-1">&nbsp;</option>';
-
-            while($i < $num) {
+            while ($i < $num)
+            {
                 $obj = $this->db->fetch_object($result);
 
-                $out.= '<option value="'.$obj->rowid.'">'.$obj->name.'</option>';
+                $out.= '<option value="'.$obj->rowid.'">'.$obj->name.' ('.$obj->value.')</option>';
                 $i++;
             }
-
             $out.= '</select>';
 
             return $out;
-
-        } else {
-
-            return false;
-
         }
-
+        else
+       {
+            return false;
+        }
     }
 
     /**
