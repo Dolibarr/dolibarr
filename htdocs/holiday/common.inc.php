@@ -24,7 +24,9 @@
  */
 
 require dirname(__FILE__).'/../main.inc.php';
-require DOL_DOCUMENT_ROOT. '/holiday/class/holiday.class.php';
+if (! class_exists('Holiday')) {
+	require DOL_DOCUMENT_ROOT. '/holiday/class/holiday.class.php';
+}
 
 $langs->load("user");
 $langs->load("other");
