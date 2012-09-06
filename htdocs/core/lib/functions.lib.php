@@ -3406,13 +3406,17 @@ function dol_textishtml($msg,$option=0)
  */
 function make_substitutions($chaine,$substitutionarray)
 {
+	global $conf;
+
 	if (! is_array($substitutionarray)) return 'ErrorBadParameterSubstitutionArrayWhenCalling_make_substitutions';
 
 	// Make substitition
 	foreach ($substitutionarray as $key => $value)
 	{
+		if ($key == '__SIGNATURE__' && (! empty($conf->global->MAIL_DO_NOT_USE_SIGN))) $value='';
 		$chaine=str_replace("$key","$value",$chaine);	// We must keep the " to work when value is 123.5 for example
 	}
+
 	return $chaine;
 }
 

@@ -40,7 +40,7 @@ $substitutionarrayfortest=array(
 '__EMAIL__' => 'TESTEMail',
 '__LASTNAME__' => 'TESTLastname',
 '__FIRSTNAME__' => 'TESTFirstname',
-'__SIGNATURE__' => 'TESTSignature',
+'__SIGNATURE__' => (($user->signature && empty($conf->global->MAIL_DO_NOT_USE_SIGN))?$user->signature:''),
 //'__PERSONALIZED__' => 'TESTPersonalized'	// Hiden because not used yet
 );
 complete_substitutions_array($substitutionarrayfortest, $langs);
