@@ -23,7 +23,7 @@
  *  \ingroup    holiday
  */
 
-require DOL_DOCUMENT_ROOT. '/holiday/common.inc.php';
+require 'common.inc.php';
 require_once DOL_DOCUMENT_ROOT. '/user/class/user.class.php';
 
 // Protection if external user
