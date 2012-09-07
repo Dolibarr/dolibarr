@@ -588,7 +588,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 	}
 	$hookmanager->initHooks(array('fileslib'));
 
-	$parameters=array('upload_dir' => $upload_dir, 'upload_file' => $upload_file, 'allowoverwrite' => $allowoverwrite);
+	$parameters=array('upload_dir' => $upload_dir, 'upload_file' => $upload_file, 'allowoverwrite' => $allowoverwrite, 'notrigger' => $notrigger);
 	$reshook=$hookmanager->executeHooks('dolMoveUploadedFile', $parameters, $object);
 
 	if (empty($reshook)) {
