@@ -139,7 +139,8 @@ if (! empty($conf->margin->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $nbrows=ROWS_2;
     if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-	$doleditor=new DolEditor('product_desc', GETPOST('product_desc'), '', 150, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, $nbrows, 70);
+    $enable=(isset($conf->global->FCKEDITOR_ENABLE_DETAILS)?$conf->global->FCKEDITOR_ENABLE_DETAILS:0);
+	$doleditor=new DolEditor('product_desc', GETPOST('product_desc'), '', 150, 'dolibarr_details', '', false, true, $enable, $nbrows, 70);
 	$doleditor->Create();
 	?>
 	</td>
