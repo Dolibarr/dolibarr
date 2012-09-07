@@ -70,7 +70,8 @@ function loadandshowpreview(filedirname,section)
 ecmBuildDatabase = function() {
 	$.pleaseBePatient("<?php echo $langs->trans('PleaseBePatient'); ?>");
 	$.getJSON( "<?php echo DOL_URL_ROOT . '/ecm/ajax/ecmdatabase.php'; ?>", {
-		action: "build"
+		action: "build",
+		element: "ecm"
 	},
 	function(response) {
 		$.unblockUI();
