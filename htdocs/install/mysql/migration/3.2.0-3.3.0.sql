@@ -195,3 +195,22 @@ INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'AlertValidat
 INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'nbHolidayDeducted', '1');
 INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'nbHolidayEveryMonth', '2.08334');
 
+-- TASK #204
+alter table llx_c_tva add column localtax1_type char(1) default '1' after localtax1;
+alter table llx_c_tva add column localtax2_type char(1) default '1' after localtax2;
+
+alter table llx_commande_fournisseurdet add column localtax1_type char(1) after localtax1_tx;
+alter table llx_commande_fournisseurdet add column localtax2_type char(1) after localtax2_tx;
+
+alter table llx_commandedet add column localtax1_type char(1) after localtax1_tx;
+alter table llx_commandedet add column localtax2_type char(1) after localtax2_tx;
+
+alter table llx_facture_fourn_det add column localtax1_type char(1) after localtax1_tx;
+alter table llx_facture_fourn_det add column localtax2_type char(1) after localtax2_tx;
+
+alter table llx_facturedet add column localtax1_type char(1) after localtax1_tx;
+alter table llx_facturedet add column localtax2_type char(1) after localtax2_tx;
+
+alter table llx_propaldet add column localtax1_type char(1) after localtax1_tx;
+alter table llx_propaldet add column localtax2_type char(1) after localtax2_tx;
+-- END TASK #204
