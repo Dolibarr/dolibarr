@@ -685,26 +685,20 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                     $newmenu->add("/admin/const.php?mainmenu=home", $langs->trans("OtherSetup"),1);
                 }
 
-                // System info
-                $newmenu->add("/admin/system/index.php?mainmenu=home&leftmenu=system", $langs->trans("SystemInfo"), 0, 1, '', $mainmenu, 'system');
-                if ($leftmenu == 'system')
-                {
-                    $newmenu->add('/admin/system/dolibarr.php?mainmenu=home', $langs->trans('Dolibarr'), 1);
-                    $newmenu->add('/admin/system/constall.php?mainmenu=home', $langs->trans('AllParameters'), 2);
-                    $newmenu->add('/admin/system/modules.php?mainmenu=home', $langs->trans('Modules'), 2);
-                    $newmenu->add('/admin/triggers.php?mainmenu=home', $langs->trans('Triggers'), 2);
-                    $newmenu->add('/admin/system/about.php?mainmenu=home', $langs->trans('About'), 2);
-                    $newmenu->add('/admin/system/os.php?mainmenu=home', $langs->trans('OS'), 1);
-                    $newmenu->add('/admin/system/web.php?mainmenu=home', $langs->trans('WebServer'), 1);
-                    $newmenu->add('/admin/system/phpinfo.php?mainmenu=home', $langs->trans('PHP'), 1);
-                    //if (function_exists('xdebug_is_enabled')) $newmenu->add('/admin/system/xdebug.php', $langs->trans('XDebug'),1);
-                    $newmenu->add('/admin/system/database.php?mainmenu=home', $langs->trans('Database'), 1);
-                    $newmenu->add('/admin/system/database-tables.php?mainmenu=home', $langs->trans('Tables'), 2);
-                }
-                // Admin tools
+                // System tools
                 $newmenu->add("/admin/tools/index.php?mainmenu=home&leftmenu=admintools", $langs->trans("SystemTools"), 0, 1, '', $mainmenu, 'admintools');
                 if ($leftmenu=="admintools")
                 {
+                	$newmenu->add('/admin/system/dolibarr.php?mainmenu=home', $langs->trans('InfoDolibarr'), 1);
+                	$newmenu->add('/admin/system/constall.php?mainmenu=home', $langs->trans('AllParameters'), 2);
+                	$newmenu->add('/admin/system/modules.php?mainmenu=home', $langs->trans('Modules'), 2);
+                	$newmenu->add('/admin/triggers.php?mainmenu=home', $langs->trans('Triggers'), 2);
+                	$newmenu->add('/admin/system/os.php?mainmenu=home', $langs->trans('InfoOS'), 1);
+                	$newmenu->add('/admin/system/web.php?mainmenu=home', $langs->trans('InfoWebServer'), 1);
+                	$newmenu->add('/admin/system/phpinfo.php?mainmenu=home', $langs->trans('InfoPHP'), 1);
+                	//if (function_exists('xdebug_is_enabled')) $newmenu->add('/admin/system/xdebug.php', $langs->trans('XDebug'),1);
+                	$newmenu->add('/admin/system/database.php?mainmenu=home', $langs->trans('InfoDatabase'), 1);
+
                     $newmenu->add("/admin/tools/dolibarr_export.php?mainmenu=home", $langs->trans("Backup"),1);
                     $newmenu->add("/admin/tools/dolibarr_import.php?mainmenu=home", $langs->trans("Restore"),1);
                     $newmenu->add("/admin/tools/update.php?mainmenu=home", $langs->trans("MenuUpgrade"),1);
@@ -713,9 +707,10 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                     $newmenu->add("/admin/tools/listsessions.php?mainmenu=home", $langs->trans("Sessions"),1);
                     $newmenu->add("/admin/tools/purge.php?mainmenu=home", $langs->trans("Purge"),1);
                     $newmenu->add("/support/index.php?mainmenu=home", $langs->trans("HelpCenter"),1,1,'targethelp');
+                    $newmenu->add('/admin/system/about.php?mainmenu=home', $langs->trans('About'), 1);
                 }
 				// Modules system tools
-                if (($conf->global->MAIN_FEATURES_LEVEL >= 1) && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
+                if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 	            {
 	            	$langs->load("products");
 	            	$newmenu->add("/admin/tools/index.php?mainmenu=home&leftmenu=modulesadmintools", $langs->trans("ModulesSystemTools"), 0, 1, '', $mainmenu, 'modulesadmintools');
