@@ -71,7 +71,7 @@ ecmBuildDatabase = function() {
 	},
 	function(response) {
 		$.unblockUI();
-		//location.href="<?php echo $_SERVER['PHP_SELF']; ?>";
+		location.href="<?php echo $_SERVER['PHP_SELF']; ?>";
 	});
 };
 </script>
