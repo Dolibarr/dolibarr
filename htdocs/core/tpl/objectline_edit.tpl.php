@@ -60,6 +60,8 @@
 		</span>
 		<span id="price_base_type" class="hideobject"></span>
 
+		<br>
+
 	<?php } else if ($line->fk_product > 0) { ?>
 
 		<a href="<?php echo DOL_URL_ROOT.'/product/fiche.php?id='.$line->fk_product; ?>">
@@ -73,9 +75,9 @@
 		echo ' - '.nl2br($line->product_label);
 		?>
 
-	<?php }	?>
+		<br>
 
-	<br>
+	<?php }	?>
 
 	<?php
 	if (is_object($hookmanager))
