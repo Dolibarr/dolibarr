@@ -18,6 +18,9 @@
 
 $openeddir='/';
 
+// TODO: just use ajaxdirtree.php for load database after ajax refresh and not scan directories
+// too slow every page loaded !
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE FOR JQUERY -->
