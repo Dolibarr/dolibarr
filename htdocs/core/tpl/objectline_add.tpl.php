@@ -192,10 +192,11 @@ if (! empty($conf->margin->enabled)) {
 <tr id="service_duration_area" <?php echo $bcnd[$var]; ?>>
 	<td colspan="<?php echo $colspan; ?>">
 	<?php
+	$hourmin=(isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:'');
 	echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-	echo $form->select_date('','date_start',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addproduct");
+	echo $form->select_date('','date_start',$hourmin,$hourmin,1,"addproduct");
 	echo ' '.$langs->trans('to').' ';
-	echo $form->select_date('','date_end',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addproduct");
+	echo $form->select_date('','date_end',$hourmin,$hourmin,1,"addproduct");
 	?>
 	</td>
 </tr>
