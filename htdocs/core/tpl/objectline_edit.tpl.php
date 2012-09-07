@@ -40,35 +40,43 @@
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
 	<div id="<?php echo $line->id; ?>"></div>
 
-	<?php if ($conf->global->MAIN_FEATURES_LEVEL > 1) { ?>
-
-	<?php if ($line->fk_product > 0) { ?>
-	<?php echo $text . ' - '; ?>
-	<?php } else { ?>
-	<?php echo $form->select_type_of_lines($line->product_type, 'type', 1, 1); ?>
-	<?php } ?>
-
-	<input id="product_label" name="product_label" size="40" value="<?php echo $label; ?>"<?php echo $placeholder . ((! empty($line->fk_product) && empty($line->label)) ? ' disabled="disabled"' : ''); ?>>
-	<input type="hidden" id="origin_label_cache" name="origin_label_cache" value="<?php echo $line->product_label; ?>" />
-	<span id="update_label_area" class="hideobject"><input type="checkbox" id="update_label_checkbox" name="update_label" value="1" />
-		<?php echo $form->textwithtooltip($langs->trans('UpdateOriginalProductLabel'), $langs->trans('HelpUpdateOriginalProductLabel'),1,0,'','',3); ?>
-	</span>
-	<span id="price_base_type" class="hideobject"></span>
-
-	<?php } else if ($line->fk_product > 0) { ?>
-
-	<a href="<?php echo DOL_URL_ROOT.'/product/fiche.php?id='.$line->fk_product; ?>">
 	<?php
-	if ($line->product_type==1) echo img_object($langs->trans('ShowService'),'service');
-	else print img_object($langs->trans('ShowProduct'),'product');
-	echo ' '.$line->ref;
+	if ($conf->global->MAIN_FEATURES_LEVEL > 1)
+	{
+		if ($line->fk_product > 0)
+		{
+			echo $text . ' - ';
+		}
+		else
+		{
+			echo $form->select_type_of_lines($line->product_type, 'type', 1, 1);
+		}
 	?>
-	</a>
-	<?php echo ' - '.nl2br($line->product_label); ?>
 
-	<?php } ?>
+		<input id="product_label" name="product_label" size="40" value="<?php echo $label; ?>"<?php echo $placeholder . ((! empty($line->fk_product) && empty($line->label)) ? ' disabled="disabled"' : ''); ?>>
+		<input type="hidden" id="origin_label_cache" name="origin_label_cache" value="<?php echo $line->product_label; ?>" />
+		<span id="update_label_area" class="hideobject"><input type="checkbox" id="update_label_checkbox" name="update_label" value="1" />
+			<?php echo $form->textwithtooltip($langs->trans('UpdateOriginalProductLabel'), $langs->trans('HelpUpdateOriginalProductLabel'),1,0,'','',3); ?>
+		</span>
+		<span id="price_base_type" class="hideobject"></span>
 
-	<br>
+		<?php } else if ($line->fk_product > 0) { ?>
+
+		<a href="<?php echo DOL_URL_ROOT.'/product/fiche.php?id='.$line->fk_product; ?>">
+		<?php
+		if ($line->product_type==1) echo img_object($langs->trans('ShowService'),'service');
+		else print img_object($langs->trans('ShowProduct'),'product');
+		echo ' '.$line->ref;
+		?>
+		</a>
+		<?php
+		echo ' - '.nl2br($line->product_label);
+		?>
+
+		<br>
+	<?php
+	}
+	?>
 
 	<?php
 	if (is_object($hookmanager))
