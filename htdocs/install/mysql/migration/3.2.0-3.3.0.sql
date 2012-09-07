@@ -195,3 +195,5 @@ INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'AlertValidat
 INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'nbHolidayDeducted', '1');
 INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'nbHolidayEveryMonth', '2.08334');
 
+
+DELETE FROM llx_document_model WHERE (nom = 'oursin' AND type ='invoice') OR (nom = 'edison' AND type ='order') OR (nom = 'jaune' AND type ='propal')
