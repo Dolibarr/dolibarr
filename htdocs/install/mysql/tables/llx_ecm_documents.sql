@@ -30,6 +30,7 @@ create table llx_ecm_documents
   metadata			text,
   fullpath    		varchar(255) NOT NULL,
   fk_directory		integer,
+  extraparams		varchar(255),					-- for stock other parameters with json format
   fk_create			integer  NOT NULL,
   fk_update			integer,
   date_c			datetime NOT NULL,

@@ -1044,6 +1044,7 @@ else if ($action == 'builddoc')	// In get or post
 		$outputlangs->setDefaultLang($newlang);
 	}
 	$result=commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
+
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);

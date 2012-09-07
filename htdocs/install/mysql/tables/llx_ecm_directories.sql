@@ -23,10 +23,12 @@ create table llx_ecm_directories
 (
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
   label				varchar(64) NOT NULL,
-  entity			integer DEFAULT 1 NOT NULL,	-- multi company id
+  entity			integer DEFAULT 1 NOT NULL,		-- multi company id
   fk_parent			integer,
   description		varchar(255) NOT NULL,
   cachenbofdoc		integer NOT NULL DEFAULT 0,
+  fullpath    		varchar(255),					-- can be NULL for virtual directory
+  extraparams		varchar(255),					-- for stock other parameters with json format
   date_c			datetime,
   date_m			timestamp,
   fk_user_c			integer,

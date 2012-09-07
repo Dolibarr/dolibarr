@@ -225,11 +225,11 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testDolCopyMove
+     * testDolCopyMoveDelete
      *
      * @return	int
      */
-    public function testDolCopyMove()
+    public function testDolCopyMoveDelete()
     {
         global $conf,$user,$langs,$db;
         $conf=$this->savconf;

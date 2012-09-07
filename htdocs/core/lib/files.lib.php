@@ -510,13 +510,14 @@ function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 }
 
 /**
- * Move a file into another name
+ * Move a file into another name.
  *
  * @param	string  $srcfile            Source file (can't be a directory)
  * @param   string	$destfile           Destination file (can't be a directory)
  * @param   string	$newmask            Mask for new file (0 by default means $conf->global->MAIN_UMASK)
  * @param   int		$overwriteifexists  Overwrite file if exists (1 by default)
  * @return  boolean 		            True if OK, false if KO
+ * @see		dol_move_uploaded_file
  */
 function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 {
@@ -554,20 +555,21 @@ function dol_unescapefile($filename)
 }
 
 /**
- *	Move an uploaded file after some controls.
+ *	Make control on an uploaded file from an GUI page and move it to final destination.
  * 	If there is errors (virus found, antivir in error, bad filename), file is not moved.
+ *  Note: This function can be used only into a HTML page context. Use dol_move if you are outside.
  *
  *	@param	string	$src_file			Source full path filename ($_FILES['field']['tmp_name'])
  *	@param	string	$dest_file			Target full path filename  ($_FILES['field']['name'])
  * 	@param	int		$allowoverwrite		1=Overwrite target file if it already exists
  * 	@param	int		$disablevirusscan	1=Disable virus scan
- * 	@param	string	$uploaderrorcode	Value of upload error code ($_FILES['field']['error'])
+ * 	@param	string	$uploaderrorcode	Value of PHP upload error code ($_FILES['field']['error'])
  * 	@param	int		$notrigger			Disable all triggers
- * 	@param	string	$upload_dir			Upload directory
- * 	@param	array	$upload_file		Values of file uploaded $_FILES['field']
+ * 	@param	string	$varfiles			_FILES var name
  *	@return int       			  		>0 if OK, <0 or string if KO
+ *  @see    dolCheckUploadedFile, dol_move
  */
-function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan=0, $uploaderrorcode=0, $notrigger=0, $upload_dir='', $upload_file=null)
+function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan=0, $uploaderrorcode=0, $notrigger=0, $varfiles='addedfile')
 {
 	global $db, $hookmanager;
 	global $object;
@@ -588,7 +590,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 	}
 	$hookmanager->initHooks(array('fileslib'));
 
-	$parameters=array('upload_dir' => $upload_dir, 'upload_file' => $upload_file, 'allowoverwrite' => $allowoverwrite, 'notrigger' => $notrigger);
+	$parameters=array('dest_file' => $dest_file, 'varfiles' => $varfiles, 'allowoverwrite' => $allowoverwrite, 'notrigger' => $notrigger);
 	$reshook=$hookmanager->executeHooks('dolMoveUploadedFile', $parameters, $object);
 
 	if (empty($reshook)) {
@@ -603,8 +605,9 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *	@param	string	$src_file			Source full path filename ($_FILES['field']['tmp_name'])
  *	@param	string	$dest_file			Target full path filename  ($_FILES['field']['name'])
  * 	@param	int		$disablevirusscan	1=Disable virus scan
- * 	@param	string	$uploaderrorcode	Value of upload error code ($_FILES['field']['error'])
+ * 	@param	string	$uploaderrorcode	Value of PHP upload error code ($_FILES['field']['error'])
  *	@return int       			  		>0 if OK, <0 or string if KO
+ *	@see    dol_move_uploaded_file
  */
 function dolCheckUploadedFile($src_file, $dest_file, $disablevirusscan=0, $uploaderrorcode=0)
 {
@@ -936,21 +939,28 @@ function dol_delete_preview($object)
 
 /**
  *	Create a meta file with document file into same directory.
- *	This should allow rgrep search
+ *	This should allow "grep" search.
+ *  This feature is enabled only if option MAIN_DOC_CREATE_METAFILE is set.
  *
  *	@param	Object	$object		Object
- *	@return	void
+ *	@return	int					0 if we did nothing, >0 success, <0 error
  */
 function dol_meta_create($object)
 {
-	global $langs,$conf;
+	global $conf;
 
-	$object->fetch_thirdparty();
+	if (empty($conf->global->MAIN_DOC_CREATE_METAFILE)) return 0;
 
-	if ($conf->facture->dir_output)
+	// Define parent dir of elements
+	$element=$object->element;
+	$dir=empty($conf->$element->dir_output)?'':$conf->$element->dir_output;
+
+	if ($dir)
 	{
+		$object->fetch_thirdparty();
+
 		$facref = dol_sanitizeFileName($object->ref);
-		$dir = $conf->facture->dir_output . "/" . $facref;
+		$dir = $dir . "/" . $facref;
 		$file = $dir . "/" . $facref . ".meta";
 
 		if (! is_dir($dir))
@@ -985,7 +995,11 @@ function dol_meta_create($object)
 		fclose($fp);
 		if (! empty($conf->global->MAIN_UMASK))
 		@chmod($file, octdec($conf->global->MAIN_UMASK));
+
+		return 1;
 	}
+
+	return 0;
 }
 
 
@@ -1023,7 +1037,7 @@ function dol_init_file_process($pathtoscan='')
  * All information used are in db, conf, langs, user and _FILES.
  * Note: This function can be used only into a HTML page context.
  *
- * @param	string	$upload_dir				Directory to store upload files
+ * @param	string	$upload_dir				Directory where to store uploaded file (note: also find in first part of dest_file)
  * @param	int		$allowoverwrite			1=Allow overwrite existing file
  * @param	int		$donotupdatesession		1=Do no edit _SESSION variable
  * @param	string	$varfiles				_FILES var name
@@ -1037,7 +1051,7 @@ function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=
 	{
 		if (dol_mkdir($upload_dir) >= 0)
 		{
-			$resupload = dol_move_uploaded_file($_FILES[$varfiles]['tmp_name'], $upload_dir . "/" . $_FILES[$varfiles]['name'], $allowoverwrite, 0, $_FILES[$varfiles]['error'], 0, $upload_dir, $_FILES[$varfiles]);
+			$resupload = dol_move_uploaded_file($_FILES[$varfiles]['tmp_name'], $upload_dir . "/" . $_FILES[$varfiles]['name'], $allowoverwrite, 0, $_FILES[$varfiles]['error'], 0, $varfiles);
 			if (is_numeric($resupload) && $resupload > 0)
 			{
 				if (empty($donotupdatesession))
