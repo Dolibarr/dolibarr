@@ -201,3 +201,4 @@ DELETE FROM llx_document_model WHERE (nom = 'oursin' AND type ='invoice') OR (no
 ALTER TABLE llx_boxes DROP INDEX uk_boxes;
 ALTER TABLE llx_boxes ADD COLUMN entity integer NOT NULL DEFAULT 1 AFTER rowid;
 ALTER TABLE llx_boxes ADD UNIQUE INDEX uk_boxes (entity, box_id, position, fk_user);
+UPDATE llx_boxes as b SET b.entity = (SELECT bd.entity FROM llx_boxes_def as bd WHERE bd.rowid = b.box_id);
