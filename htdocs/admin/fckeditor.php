@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin         <regis@dolibarr.fr>
- * Copyright (C) 2012	   Juanjo Menent         <jmenent@2byte.es>
+/* Copyright (C) 2004-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,9 +45,9 @@ $modules = array(
 // Conditions pour que l'option soit proposee
 $conditions = array(
 'SOCIETE' => 1,
-'PRODUCTDESC' => ($conf->product->enabled||$conf->service->enabled),
-'MAILING' => $conf->mailing->enabled,
-'DETAILS' => ($conf->facture->enabled||$conf->propal->enabled||$conf->commande->enabled),
+'PRODUCTDESC' => (! empty($conf->product->enabled) || ! empty($conf->service->enabled)),
+'MAILING' => ! empty($conf->mailing->enabled),
+'DETAILS' => (! empty($conf->facture->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->commande->enabled)),
 );
 // Picto
 $picto = array(
@@ -129,14 +129,14 @@ else
         print '<td>'.$langs->trans($desc).'</td>';
         print '<td align="center" width="100">';
         $constante = 'FCKEDITOR_ENABLE_'.$const;
-        $value = $conf->global->$constante;
-        if($value == 0)
+        $value = (isset($conf->global->$constante)?$conf->global->$constante:0);
+        if ($value == 0)
         {
-            print '<a href="fckeditor.php?action=activate_'.strtolower($const).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=activate_'.strtolower($const).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
         }
-        else if($value == 1)
+        else if ($value == 1)
         {
-            print '<a href="fckeditor.php?action=disable_'.strtolower($const).'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=disable_'.strtolower($const).'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
         }
 
         print "</td>";
@@ -164,7 +164,7 @@ else
      */
 }
 
-$db->close();
 
 llxFooter();
+$db->close();
 ?>
