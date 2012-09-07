@@ -31,6 +31,7 @@ require '../../main.inc.php';
 require DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 $action	= GETPOST('action','alpha');
+$element = GETPOST('element', 'alpha');
 
 /*
  * View
@@ -45,7 +46,7 @@ if (isset($action) && ! empty($action))
 {
 	$error=0;
 
-	if ($action == 'build')
+	if ($action == 'build' && ! empty($element))
 	{
 		require DOL_DOCUMENT_ROOT . '/ecm/class/ecmdirectory.class.php';
 
@@ -53,11 +54,11 @@ if (isset($action) && ! empty($action))
 
 		clearstatcache();
 
-		$diroutputslash=str_replace('\\', '/', $conf->ecm->dir_output);
+		$diroutputslash=str_replace('\\', '/', $conf->$element->dir_output);
 		$diroutputslash.='/';
 
 		// Scan directory tree on disk
-		$disktree=dol_dir_list($conf->ecm->dir_output,'directories',1,'',array('^temp$'),'','',0);
+		$disktree=dol_dir_list($conf->$element->dir_output,'directories',1,'',array('^temp$'),'','',0);
 
 		// Scan directory tree in database
 		$sqltree=$ecmdirstatic->get_full_arbo(0);
@@ -74,7 +75,7 @@ if (isset($action) && ! empty($action))
 			$dirisindatabase=0;
 			foreach($sqltree as $dirsqldesc)
 			{
-				if ($conf->ecm->dir_output.'/'.$dirsqldesc['fullrelativename'] == $dirdesc['fullname'])
+				if ($conf->$element->dir_output.'/'.$dirsqldesc['fullrelativename'] == $dirdesc['fullname'])
 				{
 					$dirisindatabase=1;
 					break;
