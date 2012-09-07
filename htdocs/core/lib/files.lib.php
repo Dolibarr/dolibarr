@@ -83,7 +83,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 			'loaddate' => $loaddate,
 			'loadsize' => $loadsize
 	);
-	$reshook=$hookmanager->executeHooks('getDirList', $parameters);
+	$reshook=$hookmanager->executeHooks('getNodesList', $parameters);
 
 	// $reshook may contain returns stacked by other modules
 	// $reshook is always empty with an array for can not lose returns stacked with other modules
