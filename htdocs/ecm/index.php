@@ -24,6 +24,7 @@
  */
 
 if (! defined('REQUIRE_JQUERY_LAYOUT'))  define('REQUIRE_JQUERY_LAYOUT','1');
+if (! defined('REQUIRE_JQUERY_BLOCKUI')) define('REQUIRE_JQUERY_BLOCKUI', 1);
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -430,8 +431,9 @@ else
     print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/folder-new.png">';
     print '</a>';
 }
-print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;module='.$module:'').($section?'&amp;section='.$section:'').'" class="toolbarbutton" title="'.dol_escape_htmltag($langs->trans('Refresh')).'">';
-print '<img class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
+$url=((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module?'&amp;module='.$module:'').($section?'&amp;section='.$section:'')));
+print '<a href="'.$url.'" class="toolbarbutton" title="'.dol_escape_htmltag($langs->trans('Refresh')).'">';
+print '<img id="refreshbutton" class="toolbarbutton" border="0" src="'.DOL_URL_ROOT.'/theme/common/view-refresh.png">';
 print '</a>';
 
 print '</div>';
@@ -565,57 +567,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
         print '<tr><td colspan="6" style="padding-left: 20px">';
 
     	// Show filemanager tree
-	    print '<div id="filetree" class="ecmfiletree">';
-
-	    print '</div>';
-
-	    $openeddir='/';
-        ?>
-
-	   	<script type="text/javascript">
-
-	    function loadandshowpreview(filedirname,section)
-	    {
-	        //alert('filedirname='+filedirname);
-	        jQuery('#ecmfileview').empty();
-
-	        url='<?php echo dol_buildpath('/core/ajax/ajaxdirpreview.php',1); ?>?action=preview&module=ecm&section='+section+'&file='+urlencode(filedirname);
-
-	        jQuery.get(url, function(data) {
-	            //alert('Load of url '+url+' was performed : '+data);
-	            pos=data.indexOf("TYPE=directory",0);
-	            //alert(pos);
-	            if ((pos > 0) && (pos < 20))
-	            {
-	                filediractive=filedirname;    // Save current dirname
-	                filetypeactive='directory';
-	            }
-	            else
-	            {
-	                filediractive=filedirname;    // Save current dirname
-	                filetypeactive='file';
-	            }
-	            jQuery('#ecmfileview').append(data);
-	        });
-	    }
-
-		jQuery(document).ready( function() {
-    	    jQuery('#filetree').fileTree({ root: '<?php print dol_escape_js($openeddir); ?>',
-    	    	// Called if we click on a file (not a dir)
-            	script: '<?php echo DOL_URL_ROOT.'/core/ajax/ajaxdirtree.php?modulepart=ecm&openeddir='.urlencode($openeddir); ?>',
-                folderEvent: 'click',
-                multiFolder: false  },
-	            // Called if we click on a file (not a dir)
-            	function(file) {
-                	jQuery("#mesg").hide();
-                    loadandshowpreview(file,0);
-             	}
-            );
-
-		});
-
-	    </script>
-	    <?php
+	    print '<div id="filetree" class="ecmfiletree"></div>';
 
 	    if ($action == 'deletefile') print $form->formconfirm('eeeee', $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 'deletefile');
 
@@ -815,7 +767,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 
 
 // To attach new file
-if (empty($conf->global->MAIN_ECM_DISABLE_JS) || ! empty($section))
+if ((! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) || ! empty($section))
 {
     $formfile=new FormFile($db);
 	$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/index.php', 'none', 0, ($section?$section:-1), $user->rights->ecm->upload, 48);
@@ -832,6 +784,9 @@ else print '&nbsp;';
 <?php
 // End of page
 
+if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+	include 'tpl/builddatabase.tpl.php';
+}
 
 llxFooter();
 
