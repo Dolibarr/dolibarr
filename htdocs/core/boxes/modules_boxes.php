@@ -72,10 +72,13 @@ class ModeleBoxes    // Can't be abtract as it is instanciated to build "empty" 
 	 */
 	function fetch($rowid)
 	{
+		global $conf;
+
 		// Recupere liste des boites d'un user si ce dernier a sa propre liste
 		$sql = "SELECT b.rowid, b.box_id, b.position, b.box_order, b.fk_user";
 		$sql.= " FROM ".MAIN_DB_PREFIX."boxes as b";
-		$sql.= " WHERE b.rowid = ".$rowid;
+		$sql.= " WHERE b.entity = ".$conf->entity;
+		$sql.= " AND b.rowid = ".$rowid;
 		dol_syslog(get_class($this)."::fetch rowid=".$rowid);
 
 		$resql = $this->db->query($sql);

@@ -565,12 +565,11 @@ function dol_unescapefile($filename)
  * 	@param	int		$disablevirusscan	1=Disable virus scan
  * 	@param	string	$uploaderrorcode	Value of PHP upload error code ($_FILES['field']['error'])
  * 	@param	int		$notrigger			Disable all triggers
- * 	@param	string	$upload_dir			Directory where to store uploaded file (note: also find in first part of dest_file)
- * 	@param	array	$upload_file		Values of uploaded file ($_FILES['field'])
+ * 	@param	string	$varfiles			_FILES var name
  *	@return int       			  		>0 if OK, <0 or string if KO
  *  @see    dolCheckUploadedFile, dol_move
  */
-function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan=0, $uploaderrorcode=0, $notrigger=0, $upload_dir='', $upload_file=null)
+function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan=0, $uploaderrorcode=0, $notrigger=0, $varfiles='addedfile')
 {
 	global $db, $hookmanager;
 	global $object;
@@ -591,7 +590,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 	}
 	$hookmanager->initHooks(array('fileslib'));
 
-	$parameters=array('upload_dir' => $upload_dir, 'upload_file' => $upload_file, 'allowoverwrite' => $allowoverwrite, 'notrigger' => $notrigger);
+	$parameters=array('dest_file' => $dest_file, 'varfiles' => $varfiles, 'allowoverwrite' => $allowoverwrite, 'notrigger' => $notrigger);
 	$reshook=$hookmanager->executeHooks('dolMoveUploadedFile', $parameters, $object);
 
 	if (empty($reshook)) {
@@ -1052,7 +1051,7 @@ function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=
 	{
 		if (dol_mkdir($upload_dir) >= 0)
 		{
-			$resupload = dol_move_uploaded_file($_FILES[$varfiles]['tmp_name'], $upload_dir . "/" . $_FILES[$varfiles]['name'], $allowoverwrite, 0, $_FILES[$varfiles]['error'], 0, $upload_dir, $_FILES[$varfiles]);
+			$resupload = dol_move_uploaded_file($_FILES[$varfiles]['tmp_name'], $upload_dir . "/" . $_FILES[$varfiles]['name'], $allowoverwrite, 0, $_FILES[$varfiles]['error'], 0, $varfiles);
 			if (is_numeric($resupload) && $resupload > 0)
 			{
 				if (empty($donotupdatesession))

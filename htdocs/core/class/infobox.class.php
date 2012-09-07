@@ -50,7 +50,7 @@ class InfoBox
             $sql.= " d.rowid as box_id, d.file, d.note, d.tms";
             $sql.= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
             $sql.= " WHERE b.box_id = d.rowid";
-            $sql.= " AND d.entity = ".$conf->entity;
+            $sql.= " AND b.entity = ".$conf->entity;
             if ($zone >= 0) $sql.= " AND b.position = ".$zone;
             if ($user->id && ! empty($user->conf->$confuserzone)) $sql.= " AND b.fk_user = ".$user->id;
             else $sql.= " AND b.fk_user = 0";
@@ -60,7 +60,15 @@ class InfoBox
         {
             $sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
             $sql.= " FROM ".MAIN_DB_PREFIX."boxes_def as d";
-            $sql.= " WHERE entity = ".$conf->entity;
+            if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)) {
+
+            	$sql.= " WHERE entity IN (1,".$conf->entity.")"; // TODO add method for define another master entity
+
+            } else {
+
+            	$sql.= " WHERE entity = ".$conf->entity;
+
+            }
         }
 
         dol_syslog(get_class()."::listBoxes get default box list sql=".$sql, LOG_DEBUG);
@@ -176,11 +184,9 @@ class InfoBox
 
         // Delete all lines
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
-        $sql.= " USING ".MAIN_DB_PREFIX."boxes, ".MAIN_DB_PREFIX."boxes_def";
-        $sql.= " WHERE ".MAIN_DB_PREFIX."boxes.box_id = ".MAIN_DB_PREFIX."boxes_def.rowid";
-        $sql.= " AND ".MAIN_DB_PREFIX."boxes_def.entity = ".$conf->entity;
-        $sql.= " AND ".MAIN_DB_PREFIX."boxes.fk_user = ".$userid;
-        $sql.= " AND ".MAIN_DB_PREFIX."boxes.position = ".$zone;
+        $sql.= " WHERE entity = ".$conf->entity;
+        $sql.= " AND fk_user = ".$userid;
+        $sql.= " AND position = ".$zone;
 
         dol_syslog(get_class()."::saveboxorder sql=".$sql);
         $result = $db->query($sql);
@@ -204,12 +210,13 @@ class InfoBox
                         $i++;
                         $ii=sprintf('%02d',$i);
                         $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes";
-                        $sql.= "(box_id, position, box_order, fk_user)";
+                        $sql.= "(box_id, position, box_order, fk_user, entity)";
                         $sql.= " values (";
                         $sql.= " ".$id.",";
                         $sql.= " ".$zone.",";
                         $sql.= " '".$colonne.$ii."',";
-                        $sql.= " ".$userid;
+                        $sql.= " ".$userid.",";
+                        $sql.= " ".$conf->entity;
                         $sql.= ")";
 
                         dol_syslog(get_class()."::saveboxorder sql=".$sql);

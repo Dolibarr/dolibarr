@@ -60,7 +60,7 @@
 		</span>
 		<span id="price_base_type" class="hideobject"></span>
 
-		<?php } else if ($line->fk_product > 0) { ?>
+	<?php } else if ($line->fk_product > 0) { ?>
 
 		<a href="<?php echo DOL_URL_ROOT.'/product/fiche.php?id='.$line->fk_product; ?>">
 		<?php
@@ -73,10 +73,9 @@
 		echo ' - '.nl2br($line->product_label);
 		?>
 
-		<br>
-	<?php
-	}
-	?>
+	<?php }	?>
+
+	<br>
 
 	<?php
 	if (is_object($hookmanager))
@@ -87,10 +86,11 @@
 	}
 
 	// editeur wysiwyg
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $nbrows=ROWS_2;
     if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor('product_desc',$line->description,'',164,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
+    $enable=(isset($conf->global->FCKEDITOR_ENABLE_DETAILS)?$conf->global->FCKEDITOR_ENABLE_DETAILS:0);
+	$doleditor=new DolEditor('product_desc',$line->description,'',164,'dolibarr_details','',false,true,$enable,$nbrows,70);
 	$doleditor->Create();
 	?>
 	</td>
@@ -135,9 +135,10 @@
 <tr id="service_duration_area" <?php echo $bc[$var]; ?>>
 	<td colspan="11"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
 	<?php
-	echo $form->select_date($line->date_start,'date_start',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$line->date_start?0:1,"updateligne");
+	$hourmin=(isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:'');
+	echo $form->select_date($line->date_start,'date_start',$hourmin,$hourmin,$line->date_start?0:1,"updateligne");
 	echo ' '.$langs->trans('to').' ';
-	echo $form->select_date($line->date_end,'date_end',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$line->date_end?0:1,"updateligne");
+	echo $form->select_date($line->date_end,'date_end',$hourmin,$hourmin,$line->date_end?0:1,"updateligne");
 	?>
 	</td>
 </tr>

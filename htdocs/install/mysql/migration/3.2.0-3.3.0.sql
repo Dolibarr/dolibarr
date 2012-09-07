@@ -89,6 +89,8 @@ ALTER TABLE llx_actioncomm MODIFY elementtype VARCHAR(32);
 
 -- TASK #107
 ALTER TABLE llx_ecm_directories MODIFY COLUMN label varchar(64) NOT NULL;
+ALTER TABLE llx_ecm_directories ADD COLUMN fullpath varchar(255) AFTER cachenbofdoc;
+ALTER TABLE llx_ecm_directories ADD COLUMN extraparams varchar(255) AFTER fullpath;
 ALTER TABLE llx_ecm_directories ADD COLUMN acl text;
 ALTER TABLE llx_ecm_directories ADD INDEX idx_ecm_directories_fk_user_c (fk_user_c);
 ALTER TABLE llx_ecm_directories ADD INDEX idx_ecm_directories_fk_user_m (fk_user_m);
@@ -105,6 +107,7 @@ ALTER TABLE llx_ecm_documents DROP COLUMN cipher;
 ALTER TABLE llx_ecm_documents CHANGE COLUMN fullpath_dol fullpath varchar(255) NOT NULL;
 ALTER TABLE llx_ecm_documents MODIFY COLUMN filemime varchar(128) NOT NULL;
 ALTER TABLE llx_ecm_documents ADD COLUMN metadata text after description;
+ALTER TABLE llx_ecm_documents ADD COLUMN extraparams varchar(255) AFTER fk_directory;
 ALTER TABLE llx_ecm_documents ADD UNIQUE INDEX idx_ecm_documents_ref (ref, fk_directory, entity);
 ALTER TABLE llx_ecm_documents ADD INDEX idx_ecm_documents_fk_create (fk_create);
 ALTER TABLE llx_ecm_documents ADD INDEX idx_ecm_documents_fk_update (fk_update);
@@ -192,3 +195,10 @@ INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'AlertValidat
 INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'nbHolidayDeducted', '1');
 INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'nbHolidayEveryMonth', '2.08334');
 
+
+DELETE FROM llx_document_model WHERE (nom = 'oursin' AND type ='invoice') OR (nom = 'edison' AND type ='order') OR (nom = 'jaune' AND type ='propal');
+
+ALTER TABLE llx_boxes DROP INDEX uk_boxes;
+ALTER TABLE llx_boxes ADD COLUMN entity integer NOT NULL DEFAULT 1 AFTER rowid;
+ALTER TABLE llx_boxes ADD UNIQUE INDEX uk_boxes (entity, box_id, position, fk_user);
+UPDATE llx_boxes as b SET b.entity = (SELECT bd.entity FROM llx_boxes_def as bd WHERE bd.rowid = b.box_id);

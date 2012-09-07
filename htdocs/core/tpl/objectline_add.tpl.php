@@ -139,7 +139,8 @@ if (! empty($conf->margin->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $nbrows=ROWS_2;
     if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-	$doleditor=new DolEditor('product_desc', GETPOST('product_desc'), '', 150, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, $nbrows, 70);
+    $enable=(isset($conf->global->FCKEDITOR_ENABLE_DETAILS)?$conf->global->FCKEDITOR_ENABLE_DETAILS:0);
+	$doleditor=new DolEditor('product_desc', GETPOST('product_desc'), '', 150, 'dolibarr_details', '', false, true, $enable, $nbrows, 70);
 	$doleditor->Create();
 	?>
 	</td>
@@ -192,10 +193,11 @@ if (! empty($conf->margin->enabled)) {
 <tr id="service_duration_area" <?php echo $bcnd[$var]; ?>>
 	<td colspan="<?php echo $colspan; ?>">
 	<?php
+	$hourmin=(isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:'');
 	echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-	echo $form->select_date('','date_start',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addproduct");
+	echo $form->select_date('','date_start',$hourmin,$hourmin,1,"addproduct");
 	echo ' '.$langs->trans('to').' ';
-	echo $form->select_date('','date_end',$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,"addproduct");
+	echo $form->select_date('','date_end',$hourmin,$hourmin,1,"addproduct");
 	?>
 	</td>
 </tr>

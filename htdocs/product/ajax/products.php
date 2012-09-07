@@ -69,7 +69,7 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 		$found=false;
 
 		// Multiprice
-		if ($price_level >= 1)		// If we need a particular price level (from 1 to 6)
+		if (isset($price_level) && $price_level >= 1)		// If we need a particular price level (from 1 to 6)
 		{
 			$sql = "SELECT price, price_ttc, price_base_type, tva_tx";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product_price ";

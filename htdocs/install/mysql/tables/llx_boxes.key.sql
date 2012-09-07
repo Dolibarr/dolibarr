@@ -1,5 +1,6 @@
 -- ===================================================================
--- Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2006-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) 2006-2012	Regis Houssin		<regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
 -- ===================================================================
 
 
-ALTER TABLE llx_boxes ADD UNIQUE INDEX uk_boxes (box_id, position, fk_user);
+ALTER TABLE llx_boxes ADD UNIQUE INDEX uk_boxes (entity, box_id, position, fk_user);
 
 -- Supprime orphelins pour permettre montee de la cle
 -- V4 DELETE llx_boxes FROM llx_boxes LEFT JOIN llx_boxes_def ON llx_boxes.box_id = llx_boxes_def.rowid WHERE llx_boxes_def.rowid IS NULL;
