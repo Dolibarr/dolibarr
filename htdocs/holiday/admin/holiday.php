@@ -72,7 +72,7 @@ if ($action == "add")
     }
 
     // Option du nombre de jours à ajouter chaque mois
-    $nbHolidayEveryMonth = price2num($_POST['nbHolidayEveryMonth'],2);
+    $nbHolidayEveryMonth = price2num($_POST['nbHolidayEveryMonth'],5);
 
     if(!$cp->updateConfCP('nbHolidayEveryMonth',$nbHolidayEveryMonth))
     {
@@ -80,28 +80,28 @@ if ($action == "add")
     }
 
     // Option du nombre de jours pour un mariage
-    $OptMariageCP = price2num($_POST['OptMariage'],2);
+    $OptMariageCP = price2num($_POST['OptMariage'],5);
 
     if(!$cp->updateConfCP('OptMariage',$OptMariageCP)) {
         $error = true;
     }
 
     // Option du nombre de jours pour un décés d'un proche
-    $OptDecesProcheCP = price2num($_POST['OptDecesProche'],2);
+    $OptDecesProcheCP = price2num($_POST['OptDecesProche'],5);
 
     if(!$cp->updateConfCP('OptDecesProche',$OptDecesProcheCP)) {
         $error = true;
     }
 
     // Option du nombre de jours pour un mariage d'un enfant
-    $OptMariageProcheCP = price2num($_POST['OptMariageProche'],2);
+    $OptMariageProcheCP = price2num($_POST['OptMariageProche'],5);
 
     if(!$cp->updateConfCP('OptMariageProche',$OptMariageProcheCP)) {
         $error = true;
     }
 
     // Option du nombre de jours pour un décés d'un parent
-    $OptDecesParentsCP = price2num($_POST['OptDecesParents'],2);
+    $OptDecesParentsCP = price2num($_POST['OptDecesParents'],5);
 
     if(!$cp->updateConfCP('OptDecesParents',$OptDecesParentsCP)) {
         $error = true;
@@ -307,7 +307,7 @@ print '</tr>'."\n";
 $var=!$var;
 print '<tr '.$bc[$var].'>'."\n";
 print '<td style="padding:5px;">'.$langs->trans('nbHolidayEveryMonthCP').'</td>'."\n";
-print '<td style="padding:5px;"><input type="text" name="nbHolidayEveryMonth" value="'.$cp->getConfCP('nbHolidayEveryMonth').'" size="2"/> '.$langs->trans('Jours').'</td>'."\n";
+print '<td style="padding:5px;"><input type="text" name="nbHolidayEveryMonth" value="'.$cp->getConfCP('nbHolidayEveryMonth').'" size="5"/> '.$langs->trans('Jours').'</td>'."\n";
 print '</tr>'."\n";
 
 $var=!$var;

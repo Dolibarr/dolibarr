@@ -133,11 +133,11 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
     $object->duree			= GETPOST('duree','int');
     $object->fk_project		= GETPOST('projectid','int');
     $object->author			= $user->id;
-    $object->description	= GETPOST('description','alpha');
+    $object->description	= GETPOST('description');
     $object->ref			= $ref;
     $object->modelpdf		= GETPOST('model','alpha');
-    $object->note_private	= GETPOST('note_private','alpha');
-    $object->note_public	= GETPOST('note_public','alpha');
+    $object->note_private	= GETPOST('note_private');
+    $object->note_public	= GETPOST('note_public');
 
     if ($object->socid > 0)
     {
@@ -244,7 +244,7 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fich
 else if ($action == 'setdescription' && $user->rights->ficheinter->creer)
 {
     $object->fetch($id);
-    $result=$object->set_description($user,GETPOST('description','alpha'));
+    $result=$object->set_description($user,GETPOST('description'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
 else if ($action == 'setnote_public' && $user->rights->ficheinter->creer)
@@ -263,7 +263,7 @@ else if ($action == 'setnote_private' && $user->rights->ficheinter->creer)
 // Add line
 else if ($action == "addline" && $user->rights->ficheinter->creer)
 {
-    if (!GETPOST('np_desc','alpha'))
+    if (!GETPOST('np_desc'))
     {
         $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Description")).'</div>';
         $error++;
@@ -280,7 +280,7 @@ else if ($action == "addline" && $user->rights->ficheinter->creer)
         $ret=$object->fetch($id);
         $object->fetch_thirdparty();
 
-        $desc=GETPOST('np_desc','alpha');
+        $desc=GETPOST('np_desc');
         $date_intervention = dol_mktime(GETPOST('dihour','int'), GETPOST('dimin','int'), 0, GETPOST('dimonth','int'), GETPOST('diday','int'), GETPOST('diyear','int'));
         $duration = convertTime2Seconds(GETPOST('durationhour','int'), GETPOST('durationmin','int'));
 
@@ -353,7 +353,7 @@ else if ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST(
     }
     $object->fetch_thirdparty();
 
-    $desc		= GETPOST('np_desc','alpha');
+    $desc		= GETPOST('np_desc');
     $date_inter	= dol_mktime(GETPOST('dihour','int'), GETPOST('dimin','int'), 0, GETPOST('dimonth','int'), GETPOST('diday','int'), GETPOST('diyear','int'));
     $duration	= convertTime2Seconds(GETPOST('durationhour','int'),GETPOST('durationmin','int'));
 

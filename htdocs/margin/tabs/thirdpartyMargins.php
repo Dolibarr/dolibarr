@@ -138,6 +138,8 @@ if ($socid > 0)
 		$sql.= " AND s.entity = ".$conf->entity;
 		$sql.= " AND d.fk_facture = f.rowid";
 		$sql.= " AND f.fk_soc = $socid";
+		if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)
+			$sql .= " AND d.buy_price_ht <> 0";
 		$sql.= " GROUP BY f.rowid";
 		$sql.= " ORDER BY $sortfield $sortorder ";
 		$sql.= $db->plimit($conf->liste_limit +1, $offset);
