@@ -615,8 +615,8 @@ abstract class DolibarrModules
                         {
                             $lastid=$this->db->last_insert_id(MAIN_DB_PREFIX."boxes_def","rowid");
 
-                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id,position,box_order,fk_user)";
-                            $sql.= " VALUES (".$lastid.", 0, '0', 0)";
+                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id,position,box_order,fk_user,entity)";
+                            $sql.= " VALUES (".$lastid.", 0, '0', 0, ".$conf->entity.")";
 
                             dol_syslog(get_class($this)."::insert_boxes sql=".$sql);
                             $resql=$this->db->query($sql);
@@ -671,7 +671,7 @@ abstract class DolibarrModules
                 $sql.= " USING ".MAIN_DB_PREFIX."boxes, ".MAIN_DB_PREFIX."boxes_def";
                 $sql.= " WHERE ".MAIN_DB_PREFIX."boxes.box_id = ".MAIN_DB_PREFIX."boxes_def.rowid";
                 $sql.= " AND ".MAIN_DB_PREFIX."boxes_def.file = '".$this->db->escape($file)."'";
-                $sql.= " AND ".MAIN_DB_PREFIX."boxes_def.entity = ".$conf->entity;
+                $sql.= " AND ".MAIN_DB_PREFIX."boxes.entity = ".$conf->entity;
 
                 dol_syslog(get_class($this)."::delete_boxes sql=".$sql);
                 $resql=$this->db->query($sql);

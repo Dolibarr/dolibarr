@@ -137,7 +137,8 @@ if ($_POST["delete"])
 				$obj=$db->fetch_object($resql);
 
 		        $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes";
-		        $sql.= " WHERE box_id = ".$obj->rowid;
+		        $sql.= " WHERE entity = ".$conf->entity;
+		        $sql.= " AND box_id = ".$obj->rowid;
 				$resql=$db->query($sql);
 
 		        $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def";
