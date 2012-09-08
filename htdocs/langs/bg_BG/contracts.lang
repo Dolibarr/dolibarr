@@ -1,0 +1,103 @@
+/*
+ * Language code: bg_BG
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-09-08 17:14:31
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
+// Reference language: en_US -> bg_BG
+CHARSET=UTF-8
+ContractsArea=Договори област
+ListOfContracts=Списък на договорите
+LastContracts=Последно %s промяна на договорите
+AllContracts=Всички договори
+ContractCard=Договор карта
+ContractStatus=Договор статус
+ContractStatusNotRunning=Не работи
+ContractStatusRunning=Бягане
+ContractStatusDraft=Проект
+ContractStatusValidated=Утвърден
+ContractStatusClosed=Затворен
+ServiceStatusInitial=Не работи
+ServiceStatusRunning=Бягане
+ServiceStatusNotLate=Работещи, изтекъл
+ServiceStatusNotLateShort=Не е изтекъл
+ServiceStatusLate=Спринт, изтекъл
+ServiceStatusLateShort=Изтекла
+ServiceStatusClosed=Затворен
+ServicesLegend=Услуги легенда
+Contracts=Договори
+Contract=Договор
+NoContracts=Не договори
+MenuServices=Услуги
+MenuInactiveServices=Услуги, които не са активни
+MenuRunningServices=Текущи услуги
+MenuExpiredServices=Изтекли услуги
+MenuClosedServices=Затворени услуги
+NewContract=Нов договор
+AddContract=Добави договор
+SearchAContract=Търсене на договора
+DeleteAContract=Изтриване на договора
+CloseAContract=Затваряне на договора
+ConfirmDeleteAContract=Сигурен ли сте, че искате да изтриете този договор и всички свои услуги?
+ConfirmValidateContract=Сигурен ли сте, че искате да проверите този договор?
+ConfirmCloseContract=Това ще затвори всички услуги (активна или не). Сигурен ли сте, че искате да затворите този договор?
+ConfirmCloseService=Сигурен ли сте, че искате да затворите тази услуга с дати <b>%s?</b>
+ValidateAContract=Одобряване на договор
+ActivateService=Активиране на услугата
+ConfirmActivateService=Сигурен ли сте, че искате да активирате тази услуга с дати <b>%s?</b>
+RefContract=Договор препратка
+DateContract=Дата на договора
+DateServiceActivate=Датата на активиране на услугата
+DateServiceUnactivate=Датата на служба деактивиране
+DateServiceStart=Дата за начало на услугата
+DateServiceEnd=Дата за край на услугата
+ShowContract=Покажи договор
+ListOfServices=Списък на услугите
+ListOfInactiveServices=Списък на не е активен услуги
+ListOfExpiredServices=Списък на изтекъл активни услуги
+ListOfClosedServices=Списък на затворените услуги
+ListOfRunningContractsLines=Списък на линиите на движение договор
+ListOfRunningServices=Списък на стартираните услуги
+NotActivatedServices=Неактивни услуги (сред валидирани договори)
+BoardNotActivatedServices=Услуги за да активирате сред утвърдени договори
+LastContracts=Последните договори%
+LastActivatedServices=Последно %s активира услуги
+LastModifiedServices=Последно %s промяна услуги
+EditServiceLine=Редактиране на сервизна линия
+ContractStartDate=Начална дата
+ContractEndDate=Крайна дата
+DateStartPlanned=Планирана начална дата
+DateStartPlannedShort=Планирана начална дата
+DateEndPlanned=Планиран крайната дата
+DateEndPlannedShort=Планиран крайната дата
+DateStartReal=Недвижими началната дата
+DateStartRealShort=Недвижими началната дата
+DateEndReal=Недвижими крайната дата
+DateEndRealShort=Недвижими крайната дата
+NbOfServices=Nb на услуги
+CloseService=Затворете услуга
+ServicesNomberShort=%s услуга (и)
+RunningServices=Текущи услуги
+BoardRunningServices=Изтекъл стартирани услуги
+ServiceStatus=Състояние на услугата
+DraftContracts=Чернови договори
+CloseRefusedBecauseOneServiceActive=Договорът не може да бъде затворен, тъй като има най-малко една отворена услуга върху него
+CloseAllContracts=Затворете всички договорни линии
+DeleteContractLine=Изтриване на линия договор
+ConfirmDeleteContractLine=Сигурен ли сте, че искате да изтриете тази линия договор?
+MoveToAnotherContract=Преместване на службата в друг договор.
+ConfirmMoveToAnotherContract=Избра новата цел на договора и потвърдете, искам да се движат тази услуга в този договор.
+ConfirmMoveToAnotherContractQuestion=Изберете в съществуващия договор (от една и съща трета страна), която искате да преместите тази услуга?
+PaymentRenewContractId=Поднови договора линия (брой %s)
+ExpiredSince=Срок на годност
+RelatedContracts=Подобни договори
+NoExpiredServices=Не изтекъл активни услуги
+TypeContact_contrat_internal_SALESREPSIGN=Търговски представител подписване на договора
+TypeContact_contrat_internal_SALESREPFOLL=Търговски представител проследяване договор
+TypeContact_contrat_external_BILLING=Контакт с клиента за фактуриране
+TypeContact_contrat_external_CUSTOMER=Следвайте контакт с клиентите
+TypeContact_contrat_external_SALESREPSIGN=Подписване на договор клиента контакт
+Error_CONTRACT_ADDON_NotDefined=Постоянно CONTRACT_ADDON не е определен
+// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:42:26).

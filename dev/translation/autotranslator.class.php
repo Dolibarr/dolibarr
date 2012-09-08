@@ -151,7 +151,7 @@ class autoTranslator
 	{
 		$this->_time_end = date('Y-m-d H:i:s');
 
-		if (count($this->_translatedFiles[$file])>0)
+		if (isset($this->_translatedFiles[$file]) && count($this->_translatedFiles[$file])>0)
 		{
 			$fp = fopen($destPath, 'a');
 			fwrite($fp, "\r\n");
@@ -250,7 +250,7 @@ class autoTranslator
 	private function getLineValue($line)
 	{
 		$arraykey = explode('=',$line,2);
-		return trim($arraykey[1]);
+		return trim(isset($arraykey[1])?$arraykey[1]:'');
 	}
 
 	/**
@@ -275,17 +275,17 @@ class autoTranslator
 	 * Return translation of a value
 	 *
 	 * @param 	array	$src_texts		Array with one value
-	 * @param 	string	$src_lang		Language code source
-	 * @param 	string	$dest_lang		Language code target
+	 * @param 	string	$src_lang		Language code source (us, fr, it, ...)
+	 * @param 	string	$dest_lang		Language code target (es, de, ...)
 	 * @return 	string					Value translated
 	 */
 	private function translateTexts($src_texts, $src_lang, $dest_lang)
 	{
+		// We want to be sure that src_lang and dest_lang are using 2 chars only
 		$tmp=explode('_',$src_lang);
-		if ($tmp[0] == $tmp[1]) $src_lang=$tmp[0];
-
+		if (! empty($tmp[1]) && $tmp[0] == $tmp[1]) $src_lang=$tmp[0];
 		$tmp=explode('_',$dest_lang);
-		if ($tmp[0] == $tmp[1]) $dest_lang=$tmp[0];
+		if (! empty($tmp[1]) && $tmp[0] == $tmp[1]) $dest_lang=$tmp[0];
 
 		//setting language pair
 		$lang_pair = $src_lang.'|'.$dest_lang;

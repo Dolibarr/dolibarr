@@ -29,11 +29,11 @@ LDAPFieldFirstSubscriptionDate=Πρώτη ημερομηνία εγγραφής
 LDAPFieldFirstSubscriptionAmount=Γροθιά ποσό συνδρομής
 LDAPFieldLastSubscriptionDate=Τελευταία ημερομηνία εγγραφής
 LDAPFieldLastSubscriptionAmount=Τελευταία ποσό συνδρομής
-SynchronizeDolibarr2Ldap=Συγχρονισμός χρήστη (Dolibarr -&gt; LDAP)
+SynchronizeDolibarr2Ldap=Συγχρονισμός χρήστη (Dolibarr -> LDAP)
 UserSynchronized=Συγχρονισμένη χρήστη
 GroupSynchronized=Συγχρονισμένη ομάδα
 MemberSynchronized=Συγχρονισμένη μέλος
 ContactSynchronized=Επικοινωνία συγχρονισμένη
-ForceSynchronize=Δύναμη συγχρονισμό Dolibarr -&gt; LDAP
+ForceSynchronize=Δύναμη συγχρονισμό Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Αποτυχία ανάγνωσης LDAP βάση δεδομένων. Ελέγξτε LDAP εγκατάσταση μονάδας και την προσβασιμότητα της βάσης δεδομένων.
 // STOP - Lines generated via autotranslator.php tool (2011-06-26 15:41:07).

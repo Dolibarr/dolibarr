@@ -29,11 +29,11 @@ LDAPFieldFirstSubscriptionDate=המנוי הראשון תאריך
 LDAPFieldFirstSubscriptionAmount=המנוי הראשון כמות
 LDAPFieldLastSubscriptionDate=מנוי אחרונה תאריך
 LDAPFieldLastSubscriptionAmount=המינוי האחרון כמות
-SynchronizeDolibarr2Ldap=לסנכרן את המשתמש (Dolibarr -&gt; LDAP)
+SynchronizeDolibarr2Ldap=לסנכרן את המשתמש (Dolibarr -> LDAP)
 UserSynchronized=משתמש מסונכרן
 GroupSynchronized=קבוצת מסונכרן
 MemberSynchronized=חבר מסונכרן
 ContactSynchronized=צור מסונכרן
-ForceSynchronize=Dolibarr חיל סנכרון -&gt; LDAP
+ForceSynchronize=Dolibarr חיל סנכרון -> LDAP
 ErrorFailedToReadLDAP=נכשל בקריאת הנתונים LDAP. בדוק את הגדרות מודול LDAP ונגישות הנתונים.
 // STOP - Lines generated via autotranslator.php tool (2012-03-10 15:29:15).

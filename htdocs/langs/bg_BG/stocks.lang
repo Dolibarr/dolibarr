@@ -1,0 +1,94 @@
+/*
+ * Language code: bg_BG
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-09-08 17:16:45
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
+// Reference language: en_US -> bg_BG
+CHARSET=UTF-8
+WarehouseCard=Склад карта
+Warehouse=Склад
+NewWarehouse=Нов склад / склад
+WarehouseEdit=Промяна на склад
+MenuNewWarehouse=Нов склад
+WarehouseOpened=Склад отвори
+WarehouseClosed=Склад затворени
+WarehouseSource=Източник склад
+WarehouseTarget=Целева склад
+ValidateSending=Изтриване на изпращане
+CancelSending=Отмени изпращане
+DeleteSending=Изтриване на изпращане
+Stock=Наличност
+Stocks=Запаси
+Movement=Движение
+Movements=Движенията
+ErrorWarehouseRefRequired=Склад референтен име се изисква
+ErrorWarehouseLabelRequired=Склад Изисква се етикетът
+CorrectStock=Точен състав
+ListOfWarehouses=Списък на складовете
+ListOfStockMovements=Списък на движението на стоковите наличности
+StocksArea=Запаси област
+Location=Място
+LocationSummary=Кратко наименование място
+NumberOfProducts=Общ брой продукти
+LastMovement=Последно движение
+LastMovements=Последно движения
+Units=Единици
+Unit=Единица
+StockCorrection=Точен състав
+StockMovement=Прехвърляне
+StockMovements=Борсова трансфери
+NumberOfUnit=Брой единици
+UnitPurchaseValue=Единичната покупна цена
+TotalStock=Общо в склад
+StockTooLow=Наличност твърде ниска
+EnhancedValue=Стойност
+PMPValue=Среднопретеглена цена
+PMPValueShort=WAP
+EnhancedValueOfWarehouses=Складове стойност
+UserWarehouseAutoCreate=Създаване на склада автоматично при създаването на потребителя
+QtyDispatched=Брой изпратени
+OrderDispatch=Наличност експедиция
+RuleForStockManagementDecrease=Правило за намаляване на управление на запасите
+RuleForStockManagementIncrease=Правило за увеличаване на управление на запасите
+DeStockOnBill=Намаляване реалните запаси на клиентите фактури / кредитни известия за валидиране
+DeStockOnValidateOrder=Намаляване реалните запаси на клиентите за валидиране на поръчката
+DeStockOnShipment=Намаляване реалните запаси за проверка на пратката
+ReStockOnBill=Увеличаване на реалните запаси на доставчици фактури / кредитни известия за валидиране
+ReStockOnValidateOrder=Увеличаване на реалните запаси на доставчиците поръчки апробиране
+ReStockOnDispatchOrder=Увеличаване на реалните запаси на ръководство за експедиция в складове, след доставчика за получаване на
+OrderStatusNotReadyToDispatch=Поръчка все още не е или не повече статут, който позволява изпращането на продукти на склад складове.
+StockDiffPhysicTeoric=Причина за разликата наличност физически и теоретични
+NoPredefinedProductToDispatch=Няма предварително определени продукти за този обект. Така че не се изисква експедиция в състав.
+DispatchVerb=Изпращане
+StockLimitShort=Граница
+StockLimit=Наличност лимит за сигнали
+PhysicalStock=Материален запас
+RealStock=Реал наличност
+TheoreticalStock=Therocial наличност
+VirtualStock=Virtual наличност
+MininumStock=Минимални запаси
+StockUp=Запасявам
+MininumStockShort=Наличност мин.
+StockUpShort=Запасявам
+IdWarehouse=Id склад
+DescWareHouse=Описание склад
+LieuWareHouse=Локализация склад
+WarehousesAndProducts=Складове и продукти
+AverageUnitPricePMPShort=Среднопретеглена цена вход
+AverageUnitPricePMP=Среднопретеглена цена вход
+SellPriceMin=Продажба Единична цена
+EstimatedStockValueSellShort=Стойност да продават
+EstimatedStockValueSell=На стойност към Продава
+EstimatedStockValueShort=Входна стойност наличност
+EstimatedStockValue=Входна стойност наличност
+DeleteAWarehouse=Изтриване на склад
+ConfirmDeleteWarehouse=Сигурен ли сте, че искате да изтриете складови <b>%s?</b>
+PersonalStock=Лични %s борси
+ThisWarehouseIsPersonalStock=Този склад представлява личен състав на %s %s
+SelectWarehouseForStockDecrease=Изберете склад, да се използва за намаляване на склад
+SelectWarehouseForStockIncrease=Изберете склад, да се използва за увеличение на склад
+LastWaitingSupplierOrders=Поръчки чакат за приеми
+// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:35:30).

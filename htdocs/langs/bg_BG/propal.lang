@@ -1,0 +1,104 @@
+/*
+ * Language code: bg_BG
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-09-08 17:16:45
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
+// Reference language: en_US -> bg_BG
+CHARSET=UTF-8
+Proposals=Търговски предложения
+Proposal=Търговско предложение
+ProposalShort=Предложение
+ProposalsDraft=Проектът на търговски предложения
+ProposalDraft=Проект на търговско предложение
+ProposalsOpened=Отворените търговски предложения
+Prop=Търговски предложения
+CommercialProposal=Търговско предложение
+CommercialProposals=Търговски предложения
+ProposalCard=Предложение карта
+NewProp=Нов търговски предложение
+NewProposal=Нов търговски предложение
+NewPropal=Ново предложение
+Prospect=Перспектива
+ProspectList=Prospect списък
+DeleteProp=Изтриване на търговско предложение
+ValidateProp=Одобряване на търговско предложение
+AddProp=Добави предложението
+ConfirmDeleteProp=Сигурен ли сте, че искате да изтриете тази търговска предложение?
+ConfirmValidateProp=Сигурен ли сте, че искате да проверите това търговско предложение?
+LastPropals=Последните предложения %s
+LastClosedProposals=Последно %s затворени предложения
+LastModifiedProposals=Последно %s промяна предложения
+AllPropals=Всички предложения
+LastProposals=Последни предложения
+SearchAProposal=Търсене предложение
+ProposalsStatistics=Търговския предложението статистика
+NumberOfProposalsByMonth=Брой от месеца
+AmountOfProposalsByMonthHT=Сума от месец (нетно от данъци)
+NbOfProposals=Брой на търговски предложения
+ShowPropal=Покажи предложение
+PropalsDraft=Чернови
+PropalsOpened=Отворен
+PropalsNotBilled=Затворен не таксувани
+PropalStatusDraft=Проект (нужди валидиране)
+PropalStatusValidated=Утвърден (предложението е отворен)
+PropalStatusOpened=Утвърден (предложението е отворен)
+PropalStatusClosed=Затворен
+PropalStatusSigned=Подписано (нужди фактуриране)
+PropalStatusNotSigned=Не сте (затворен)
+PropalStatusBilled=Таксува
+PropalStatusDraftShort=Проект
+PropalStatusValidatedShort=Утвърден
+PropalStatusOpenedShort=Отворен
+PropalStatusClosedShort=Затворен
+PropalStatusSignedShort=Подписан
+PropalStatusNotSignedShort=Не сте
+PropalStatusBilledShort=Таксува
+PropalsToClose=Търговски предложения, за да го затворите
+PropalsToBill=Подписани търговски предложения законопроект
+ListOfProposals=Списък на търговски предложения
+ActionsOnPropal=Събития по предложение
+NoOpenedPropals=Не са открити търговски предложения
+NoOtherOpenedPropals=Никой друг отвори търговски предложения
+RefProposal=Търговско предложение код
+SendPropalByMail=Изпратете търговско предложение по пощата
+FileNotUploaded=Файлът не е качен
+FileUploaded=Файлът е качен успешно
+AssociatedDocuments=Документи, свързани с предложението:
+ErrorCantOpenDir=Не мога да отворя директорията
+DatePropal=Дата на предложението
+DateEndPropal=Крайната дата на валидност
+DateEndPropalShort=Крайна дата
+ValidityDuration=Валидност продължителността
+CloseAs=Затворете със статут
+ClassifyBilled=Класифицирайте таксувани
+BuildBill=Изграждане фактура
+ErrorPropalNotFound=Propal %s не е намерена
+Estimate=Оцени:
+EstimateShort=Преценка
+OtherPropals=Други предложения
+CopyPropalFrom=Създаване на търговско предложение копиране съществуващото предложение
+CreateEmptyPropal=Създаване на празен търговски vierge предложения или от списъка на продуктите / услугите
+DefaultProposalDurationValidity=Default търговски продължителност предложение на валидност (в дни)
+UseCustomerContactAsPropalRecipientIfExist=Използвайте адрес за контакт на клиента, ако вместо на трета страна адрес като адрес предложение получателя
+ClonePropal=Clone търговско предложение
+ConfirmClonePropal=Сигурен ли сте, че искате да клонира търговските <b>%s</b> предложение?
+ConfirmReOpenProp=Сигурен ли сте, че искате да отворите търговските <b>%s</b> предложение?
+ProposalsAndProposalsLines=Търговско предложение и линии
+ProposalLine=Предложение линия
+AvailabilityPeriod=Наличност закъснение
+SetAvailability=Незабавно наличността
+AfterOrder=по поръчка
+AvailabilityTypeAV_NOW=Непосредствен
+AvailabilityTypeAV_1W=1 седмица
+AvailabilityTypeAV_2W=2 седмици
+AvailabilityTypeAV_3W=3 седмици
+AvailabilityTypeAV_1M=1 месец
+TypeContact_propal_internal_SALESREPFOLL=Представител следното предложение
+TypeContact_propal_external_BILLING=Контакта с клиентите фактура
+TypeContact_propal_external_CUSTOMER=Контакт с клиентите следното предложение
+DocModelAzurDescription=Цялостен модел за предложение (logo. ..)
+DocModelJauneDescription=Jaune предложение модел
+// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:43:54).

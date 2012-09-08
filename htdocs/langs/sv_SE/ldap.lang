@@ -34,11 +34,11 @@ LDAPFieldFirstSubscriptionDate=Första teckningsdag
 LDAPFieldFirstSubscriptionAmount=Fist teckningsbelopp
 LDAPFieldLastSubscriptionDate=Sista teckningsdag
 LDAPFieldLastSubscriptionAmount=Senaste teckningsbelopp
-SynchronizeDolibarr2Ldap=Synkronisera användare (Dolibarr -&gt; LDAP)
+SynchronizeDolibarr2Ldap=Synkronisera användare (Dolibarr -> LDAP)
 UserSynchronized=Användare synkroniseras
 GroupSynchronized=Grupp synkroniseras
 MemberSynchronized=Medlem synkroniseras
 ContactSynchronized=Kontakta synkroniseras
-ForceSynchronize=Force synkronisera Dolibarr -&gt; LDAP
+ForceSynchronize=Force synkronisera Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Misslyckades med att läsa LDAP-databas. Kontrollera LDAP-modul setup och databas tillgänglighet.
 // STOP - Lines generated via autotranslator.php tool (2010-08-28 13:10:43).

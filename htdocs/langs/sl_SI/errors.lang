@@ -98,7 +98,7 @@ ErrorFailedToSendPassword=Ni bilo mogoče poslati gesla
 ErrorFailedToLoadRSSFile=Ne Knjiga. Poskusite dodati stalno MAIN_SIMPLEXMLLOAD_DEBUG sporočila o napakah, če ne zagotavlja dovolj informacij.
 ErrorPasswordDiffers=Gesla razlikujejo, jih vnesite znova.
 ErrorForbidden=Dostop zavrnjen. <br> Poskusite dostopati do strani, območje ali funkcije, ne da bi v potrjeni seji ali da ni dovoljeno na vaš uporabnika.
-ErrorForbidden2=Dovoljenje za to prijavo se lahko opredeli skrbnik Dolibarr iz menija %s-&gt; %s.
+ErrorForbidden2=Dovoljenje za to prijavo se lahko opredeli skrbnik Dolibarr iz menija %s-> %s.
 ErrorForbidden3=Zdi se, da je Dolibarr ne uporablja prek overjeno sejo. Oglejte si namestitveno dokumentacijo Dolibarr vedeti, kako upravljati authentications (htaccess, mod_auth ali drugo ...).
 ErrorNoImagickReadimage=Razred Imagick ni mogoče najti v tem PHP. Št Predogled je lahko na voljo. Skrbniki lahko onemogočite to kartico od Setup meniju - Display.
 ErrorRecordAlreadyExists=Zapis že obstaja
@@ -115,5 +115,5 @@ ErrorBadValueForCode=Slaba vrednost za varnostno kodo. Poskusite znova z novo vr
 ErrorBothFieldCantBeNegative=Polja %s in %s ne more biti tako negativna
 ErrorWebServerUserHasNotPermission=Uporabniški račun <b>%s</b> uporablja za izvedbo spletni strežnik nima dovoljenja za to
 WarningInstallDirExists=Opozorilo, namestitev imenik <b>(htdocs / install)</b> še vedno obstaja. To je resna varnostna luknja. Moral bi ga odstrani v najkrajšem možnem času.
-WarningUntilDirRemoved=Vsi varnostni opozorila (vidna le uporabniki admin) ostane aktiven, dokler je prisotna ranljivost (ali stalno MAIN_REMOVE_INSTALL_WARNING se doda v Setup-&gt; druge nastavitve).
+WarningUntilDirRemoved=Vsi varnostni opozorila (vidna le uporabniki admin) ostane aktiven, dokler je prisotna ranljivost (ali stalno MAIN_REMOVE_INSTALL_WARNING se doda v Setup-> druge nastavitve).
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 17:30:37).

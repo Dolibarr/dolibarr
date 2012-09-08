@@ -1,7 +1,7 @@
 # Dolibarr language file - hu_HU - errors
 CHARSET=UTF-8
 ErrorForbidden=A hozzáférés megtagadva. <br> Ha megpróbál hozzáférni egy oldalra, terület vagy szolgáltatás, anélkül, hogy hiteles ülésen, vagy, hogy nem szabad a felhasználó számára.
-ErrorForbidden2=Engedély e be lehet meghatározni a Dolibarr rendszergazda menüből %s-&gt; %s.
+ErrorForbidden2=Engedély e be lehet meghatározni a Dolibarr rendszergazda menüből %s-> %s.
 ErrorForbidden3=Úgy tűnik, hogy Dolibarr nem használt keresztül hitelesített ülésén. Vessen egy pillantást Dolibarr üzembe helyezési dokumentációban tudni, hogyan kell kezelni hitelesítések (htaccess, mod_auth vagy más ...).
 ErrorNoImagickReadimage=Osztály imagick nem található ebben a PHP. Nem előnézet elérhető. A rendszergazdák letilthatják ezt a lapot menüből Setup - Display.
 ErrorRecordAlreadyExists=Felvétel már létezik
@@ -74,7 +74,7 @@ ErrorCantSaveADoneUserWithZeroPercentage=Nem lehet menteni akciót &quot;az alap
 ErrorRefAlreadyExists=Ref használt létrehozására már létezik.
 ErrorPleaseTypeBankTransactionReportName=Kérjük, írja banki átvételi ügylet neve, ahol a jelentések (Format ÉÉÉÉHH vagy ÉÉÉÉHHNN)
 ErrorRecordHasChildren=Nem sikerült törölni rekordokat, mert van néhány gyermek.
-ErrorModuleRequireJavascript=Javascript nem szabad tiltani, hogy ez a funkció működik. Annak engedélyezése / tiltása Javascript, menj a menü Home-&gt; Beállítások-&gt; Kijelző.
+ErrorModuleRequireJavascript=Javascript nem szabad tiltani, hogy ez a funkció működik. Annak engedélyezése / tiltása Javascript, menj a menü Home-> Beállítások-> Kijelző.
 ErrorPasswordsMustMatch=Mindkét típusú jelszavakat kell egyeznie egymással
 ErrorContactEMail=Egy technikai hiba történt. Kérjük, lépjen kapcsolatba a következő e-mail rendszergazda <b>%s</b> en biztosítja a hibakódot <b>%s</b> be az üzenetet, vagy még jobb hozzáadásával képernyő ezen oldal másolatát.
 ErrorWrongValueForField=Rossz érték mezőszám <b>%s</b> (érték <b>&quot;%s&quot;</b> nem egyezik regex szabály <b>%s)</b>
@@ -114,5 +114,5 @@ WarningConfFileMustBeReadOnly=Figyelem, a config file <b>(htdocs / conf / conf.p
 WarningsOnXLines=Figyelmeztetések <b>%s</b> forrás vonalak
 WarningNoDocumentModelActivated=Nem modell, a dokumentum generáció, be van kapcsolva. A modell kerül választottunk alapértelmezés szerint amíg ellenőrizze a modul beállításait.
 WarningInstallDirExists=Figyelem, könyvtára <b>(htdocs / install)</b> továbbra is fennáll. Ez egy komoly biztonsági rést. Meg kell szüntetni azt a lehető leghamarabb.
-WarningUntilDirRemoved=Minden biztonsági figyelmeztetések (látható: admin felhasználó esetén) továbbra is aktív marad, amíg a biztonsági rés van jelen (vagy állandó MAIN_REMOVE_INSTALL_WARNING egészül ki a Setup-&gt; Egyéb beállítás).
+WarningUntilDirRemoved=Minden biztonsági figyelmeztetések (látható: admin felhasználó esetén) továbbra is aktív marad, amíg a biztonsági rés van jelen (vagy állandó MAIN_REMOVE_INSTALL_WARNING egészül ki a Setup-> Egyéb beállítás).
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 16:16:06).
