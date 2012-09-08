@@ -372,7 +372,6 @@ $db->close();
 /**	Backup the db OR just a table without mysqldump binary (does not require any exec permission)
  *	Author: David Walsh (http://davidwalsh.name/backup-mysql-database-php)
  *	Updated and enhanced by Stephen Larroque (lrq3000) and by the many commentators from the blog
- *
  *	Note about foreign keys constraints: for Dolibarr, since there are a lot of constraints and when imported the tables will be inserted in the dumped order, not in constraints order, then we ABSOLUTELY need to use SET FOREIGN_KEY_CHECKS=0; when importing the sql dump.
  *	Note2: db2SQL by Howard Yeend can be an alternative, by using SHOW FIELDS FROM and SHOW KEYS FROM we could generate a more precise dump (eg: by getting the type of the field and then precisely outputting the right formatting - in quotes, numeric or null - instead of trying to guess like we are doing now).
  *

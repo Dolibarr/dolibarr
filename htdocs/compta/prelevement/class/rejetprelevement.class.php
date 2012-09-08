@@ -87,7 +87,7 @@ class RejetPrelevement
 
 		dol_syslog("RejetPrelevement::Create id $id");
 		$bankaccount = $conf->global->PRELEVEMENT_ID_BANKACCOUNT;
-		$facs = $this->_get_list_factures();
+		$facs = $this->getListInvoices();
 
 		$this->db->begin();
 
@@ -272,7 +272,7 @@ class RejetPrelevement
 	 *
 	 *    @return	void
 	 */
-	private function _get_list_factures()
+	private function getListInvoices()
 	{
 		global $conf;
 

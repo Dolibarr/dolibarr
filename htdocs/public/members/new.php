@@ -268,19 +268,19 @@ if ($action == 'add')
             {
             	$to=$adh->makeSubstitution($conf->global->MAIN_INFO_SOCIETE_MAIL);
             	$from=$conf->global->ADHERENT_MAIL_FROM;
-            	$mailfile = new CMailFile(
-            		$conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT,
-            		$to,
-            		$from,
-            		$adh->makeSubstitution($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL),
-            		array(),
-            		array(),
-            		array(),
-            		"",
-            		"",
-            		0,
-            		-1
-            		);
+				$mailfile = new CMailFile(
+					$conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT,
+					$to,
+					$from,
+					$adh->makeSubstitution($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL),
+					array(),
+					array(),
+					array(),
+					"",
+					"",
+					0,
+					-1
+				);
 
             	if (! $mailfile->sendfile())
             	{

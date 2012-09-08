@@ -1010,6 +1010,7 @@ class CommandeFournisseur extends CommonOrder
      *	@param		double	$pu_ttc					Unit price TTC
      *	@param		int		$type					Type of line (0=product, 1=service)
      *	@param		int		$info_bits				More information
+     *  @param		int		$notrigger				Disable triggers
      *	@return     int             				<=0 if KO, >0 if OK
      */
     function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $type=0, $info_bits=0, $notrigger=false)
@@ -1596,6 +1597,7 @@ class CommandeFournisseur extends CommonOrder
      *  @param     	double	$price_base_type 	Type of price base
      *	@param		int		$info_bits			Miscellanous informations
      *	@param		int		$type				Type of line (0=product, 1=service)
+     *  @param		int		$notrigger				Disable triggers
      *	@return    	int             			< 0 if error, > 0 if ok
      */
     function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $notrigger=false)
@@ -1844,7 +1846,7 @@ class CommandeFournisseur extends CommonOrder
 
     /**
      * Returns the translated input method
-     * 
+     *
      * @return string
      */
     function getInputMethod()
@@ -1872,7 +1874,7 @@ class CommandeFournisseur extends CommonOrder
 
                 return $string;
             }
-            
+
             dol_print_error($db);
         }
 
