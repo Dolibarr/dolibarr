@@ -103,7 +103,7 @@ $(document).ready(function () {
 <tr>
 <td valign="bottom"> &nbsp; <strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong> &nbsp; </td>
 <td valign="bottom" nowrap="nowrap">
-<input type="text" id="username" name="username" class="flat" size="15" maxlength="40" value="<?php echo dol_escape_htmltag(GETPOST('username')?GETPOST('username'):$login); ?>" tabindex="1" />
+<input type="text" id="username" name="username" class="flat" size="15" maxlength="40" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" />
 </td>
 </tr>
 
