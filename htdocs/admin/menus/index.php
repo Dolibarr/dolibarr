@@ -54,8 +54,8 @@ $menu_handler_smartphone=preg_replace('/_frontoffice.php/i','',$menu_handler_sma
 
 $menu_handler=$menu_handler_top;
 
-if (isset($_REQUEST["handler_origine"])) $menu_handler=$_REQUEST["handler_origine"];
-if (isset($_REQUEST["menu_handler"]))    $menu_handler=$_REQUEST["menu_handler"];
+if (GETPOST("handler_origine")) $menu_handler=GETPOST("handler_origine");
+if (GETPOST("menu_handler"))    $menu_handler=GETPOST("menu_handler");
 
 
 /*
@@ -292,15 +292,15 @@ if ($conf->use_javascript_ajax)
 
 	//puis tous les elements enfants
 
-
 	$sql = "SELECT m.rowid, m.fk_menu, m.titre, m.langs";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql.= " WHERE menu_handler = '".$menu_handler."'";
 	$sql.= " AND entity = ".$conf->entity;
 	$sql.= " AND fk_menu >= 0";
 	$sql.= " ORDER BY m.position, m.rowid";		// Order is position then rowid (because we need a sort criteria when position is same)
-	$res  = $db->query($sql);
 
+	dol_syslog("sql=".$sql);
+	$res  = $db->query($sql);
 	if ($res)
 	{
 		$num = $db->num_rows($res);
@@ -346,5 +346,6 @@ else
 print '<br>';
 
 llxFooter();
+
 $db->close();
 ?>
