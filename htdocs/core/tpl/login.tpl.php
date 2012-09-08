@@ -82,7 +82,7 @@ $(document).ready(function () {
 <input type="hidden" name="screenwidth" id="screenwidth" value="" />
 <input type="hidden" name="screenheight" id="screenheight" value="" />
 
-<table class="login_table" summary="<?php echo $title; ?>" cellpadding="0" cellspacing="0" border="0" align="center">
+<table class="login_table" summary="<?php echo dol_escape_htmltag($title); ?>" cellpadding="0" cellspacing="0" border="0" align="center">
 <tr class="vmenu"><td align="center"><?php echo $title; ?></td></tr>
 </table>
 <br>
@@ -96,14 +96,14 @@ $(document).ready(function () {
 <tr>
 <td valign="bottom"> &nbsp; <strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong> &nbsp; </td>
 <td valign="bottom" nowrap="nowrap">
-<input type="text" id="username" name="username" class="flat" size="15" maxlength="40" value="<?php echo GETPOST('username')?GETPOST('username'):$login; ?>" tabindex="1" />
+<input type="text" id="username" name="username" class="flat" size="15" maxlength="40" value="<?php echo dol_escape_htmltag(GETPOST('username')?GETPOST('username'):$login); ?>" tabindex="1" />
 </td>
 </tr>
 
 <!-- Password -->
 <tr><td valign="top" nowrap="nowrap"> &nbsp; <strong><label for="password"><?php echo $langs->trans('Password'); ?></label></strong> &nbsp; </td>
 <td valign="top" nowrap="nowrap">
-<input id="password" name="password" class="flat" type="password" size="15" maxlength="30" value="<?php echo $password; ?>" tabindex="2" />
+<input id="password" name="password" class="flat" type="password" size="15" maxlength="30" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" />
 </td></tr>
 
 <?php
