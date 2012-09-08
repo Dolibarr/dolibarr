@@ -1,4 +1,4 @@
-# Dolibarr language file - pt_PT - commercial
+﻿# Dolibarr language file - pt_PT - commercial
 CHARSET=UTF-8
 Commercial=Comercial
 CommercialArea=Área comercial
@@ -14,7 +14,7 @@ AddAction=Criar Acção
 AddAnAction=Criar uma Acção
 AddActionRendezVous=Criar uma Reunião
 Rendez-Vous=Reunião
-ConfirmDeleteAction=¿Está seguro de querer eliminar esta acção?
+ConfirmDeleteAction=Está seguro de querer eliminar esta acção?
 CardAction=Ficha da Acção
 PercentDone=Percentagem Realizada
 ActionOnCompany=Acção Relativa à Empresa

@@ -1,12 +1,12 @@
-# Dolibarr language file - pt_PT - boxes 
+﻿# Dolibarr language file - pt_PT - boxes 
 CHARSET=UTF-8
 BoxLastRssInfos=Links de informação RSS
 BoxLastProducts=Últimos produtos/serviços
 BoxLastProductsInContract=Últimos produtos/serviços contratados
 BoxLastSupplierBills=Últimas facturas de Fornecedores
 BoxLastCustomerBills=Últimas facturas a clientes
-BoxOldestUnpaidCustomerBills=Facturas a clientes mais antiguas Pendentes de pagamento
-BoxOldestUnpaidSupplierBills=Facturas de Fornecedores mais antiguas Pendentes de pagamento
+BoxOldestUnpaidCustomerBills=Facturas a clientes mais antiguas pendentes de pagamento
+BoxOldestUnpaidSupplierBills=Facturas de Fornecedores mais antiguas pendentes de pagamento
 BoxLastProposals=Últimos Orçamentos
 BoxLastProspects=Últimos clientes potenciais
 BoxLastCustomers=Últimos clientes
@@ -16,8 +16,8 @@ BoxLastBooks=Últimos books
 BoxLastActions=Últimas acções
 BoxCurrentAccounts=Saldos contas correntes
 BoxSalesTurnover=Volume de negocio
-BoxTotalUnpaidCustomerBills=Total facturas a clientes Pendentes de pagamento
-BoxTotalUnpaidSuppliersBills=Total facturas de Fornecedores Pendentes de Pagamento
+BoxTotalUnpaidCustomerBills=Total facturas a clientes pendentes de pagamento
+BoxTotalUnpaidSuppliersBills=Total facturas de Fornecedores pendentes de pagamento
 BoxTitleLastBooks=Os %s últimos Favoritos registados
 BoxTitleNbOfCustomers=Número de clientes
 BoxTitleLastRssInfos=As %s Ultimas Infos de %s
@@ -35,10 +35,10 @@ BoxTitleOldestUnpaidCustomerBills=As %s facturas mais antiguas a clientes Penden
 BoxTitleOldestUnpaidSupplierBills=As %s facturas mais antiguas de Fornecedores Pendentes de pagamento
 BoxTitleCurrentAccounts=Saldos das contas correntes
 BoxTitleSalesTurnover=Volume de negocio realizado
-BoxTitleTotalUnpaidCustomerBills=Pendente de clientes
-BoxTitleTotalUnpaidSuppliersBills=Pendente a Fornecedores
+BoxTitleTotalUnpaidCustomerBills=Facturas pendentes de clientes
+BoxTitleTotalUnpaidSuppliersBills=Facturas pendentes de Fornecedores
 BoxMyLastBookmarks=Os meus ultimos Favoritos
-FailedToRefreshDataInfoNotUpToDate=Erro ao  refresco do flujo RSS. data do último refresco: %s
+FailedToRefreshDataInfoNotUpToDate=Erro ao  refresh fluxo RSS. data do último refresh: %s
 LastRefreshDate=Data última actualização
 NoRecordedBookmarks=Não existem favoritos pessoais. Click aqui para adicionar.
 NoRecordedCustomers=Nenhum cliente registado
@@ -54,46 +54,46 @@ NoUnpaidSupplierBills=Sem facturas de Fornecedores Pendentes de Pagamento
 
 // START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
 // Reference language: en_US
-NoRecordedProducts=Não gravado produtos / serviços
-NoRecordedProspects=Não gravado perspectivas
-NoContractedProducts=Não produtos / serviços contratados
+NoRecordedProducts=Não gravados produtos / serviços
+NoRecordedProspects=Não gravadas perspectivas
+NoContractedProducts=Não contractados produtos / serviços 
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
 
 
 // START - Lines generated via autotranslator.php tool (2010-07-17 12:08:18).
 // Reference language: en_US
-BoxLastContracts=Siste kontrakter
-LastRefreshDate=Siste oppdatering dato
-BoxTitleLastContracts=Siste %s kontrakter
-NoModifiedSupplierBills=Ingen registrert leverandørens faktura
-NoRecordedProducts=Ingen registrert produkter / tjenester
-NoRecordedProspects=Ingen registrert utsikter
-NoContractedProducts=Ingen produkter / tjenester innleide
-NoRecordedContracts=Ingen registrert kontrakter
-BoxLastContracts=Laatste contracten
-BoxTitleLastContracts=Laatste %s contracten
-NoModifiedSupplierBills=Geen geregistreerd leverancier facturen
-NoRecordedContracts=Geen geregistreerde overeenkomsten
-BoxOldestUnpaidCustomerBills=Oudste onbetaalde facturen klant
-BoxOldestUnpaidSupplierBills=Oudste onbetaalde facturen van de leverancier
-BoxLastContracts=Laatste contracten
-BoxTotalUnpaidCustomerBills=Totaal aantal onbetaalde facturen klant
-BoxTotalUnpaidSuppliersBills=Totaal aantal onbetaalde facturen van de leverancier
-BoxTitleOldestUnpaidCustomerBills=Oudste %s onbetaalde facturen klant
-BoxTitleOldestUnpaidSupplierBills=Oudste %s onbetaalde facturen van de leverancier
-BoxTitleTotalUnpaidCustomerBills=Onbetaalde facturen klant
-BoxTitleTotalUnpaidSuppliersBills=Onbetaalde facturen van de leverancier
-BoxTitleLastContracts=Laatste %s contracten
-NoModifiedSupplierBills=Geen geregistreerd leverancier facturen
-NoRecordedContracts=Geen geregistreerde overeenkomsten
-BoxLastContracts=Ostatnie zamówienia
-BoxTitleLastProductsInContract=Ostatnie %s produktów / usług w umowie
-BoxTitleLastContracts=Ostatnie %s umów
-NoModifiedSupplierBills=Nie zarejestrowane faktury dostawcy
-NoRecordedContracts=Umów nie zarejestrowanych
+BoxLastContracts=Ultimos Contractos
+LastRefreshDate=Data última actualização
+BoxTitleLastContracts=Últimos contratos
+NoModifiedSupplierBills=Nenhuma factura de fornecedor registada
+NoRecordedProducts=Não gravados produtos / serviços
+NoRecordedProspects=Não gravadas perspectivas
+NoContractedProducts=Não contractados produtos / serviços
+NoRecordedContracts=Sem contratos registrados
+BoxLastContracts=Ultimos Contractos
+BoxTitleLastContracts=Última contratos
+NoModifiedSupplierBills=Nenhuma factura de fornecedor registada
+NoRecordedContracts=Sem contratos registrados
+BoxOldestUnpaidCustomerBills=Facturas a clientes mais antiguas pendentes de pagamento
+BoxOldestUnpaidSupplierBills=Facturas de Fornecedores mais antiguas pendentes de pagamento
+BoxLastContracts=Ultimos Contractos
+BoxTotalUnpaidCustomerBills=Total facturas a clientes pendentes de pagamento
+BoxTotalUnpaidSuppliersBills=Total facturas de Fornecedores pendentes de pagamento
+BoxTitleOldestUnpaidCustomerBills=As %s facturas mais antiguas a clientes Pendentes de cobrança
+BoxTitleOldestUnpaidSupplierBills=As %s facturas mais antiguas de Fornecedores Pendentes de pagamento
+BoxTitleTotalUnpaidCustomerBills=Facturas pendentes de clientes
+BoxTitleTotalUnpaidSuppliersBills=Facturas pendentes de Fornecedores
+BoxTitleLastContracts=Últimos contratos
+NoModifiedSupplierBills=Nenhuma factura de fornecedor registada
+NoRecordedContracts=Sem contratos registrados
+BoxLastContracts=Ultimos Contractos
+BoxTitleLastProductsInContract=Os %s últimos produtos/serviços contratados
+BoxTitleLastContracts=Últimos contratos
+NoModifiedSupplierBills=Nenhuma factura de fornecedor registada
+NoRecordedContracts=Sem contratos registrados
 BoxLastContracts=Última contratos
-BoxTitleLastContracts=Última contratos %s
-NoModifiedSupplierBills=Nenhum fornecedor facturas registadas na
+BoxTitleLastContracts=Últimos contratos %s
+NoModifiedSupplierBills=Nenhuma factura de fornecedor registada 
 NoRecordedContracts=Sem contratos registrados
 // STOP - Lines generated via autotranslator.php tool (2010-07-17 12:08:24).
 

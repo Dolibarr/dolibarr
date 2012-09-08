@@ -1,4 +1,4 @@
-# Dolibarr language file - pt_PT - withdrawals
+﻿# Dolibarr language file - pt_PT - withdrawals
 CHARSET=UTF-8
 StandingOrdersArea=Área de Débitos Directos
 CustomersStandingOrdersArea=Área de Débitos Directos de Clientes
@@ -31,8 +31,8 @@ MakeWithdrawRequest=Realizar um Pedido de Débito Directo
 ThirdPartyBankCode=Código Banco do Terceiro
 ThirdPartyDeskCode=Código da Escritório do Terceiro
 NoInvoiceCouldBeWithdrawed=Não há factura de débito directo com sucesso. Verifique se a factura da empresa tem um válido IBAN.
-ClassCredited=Classificar Acreditados
-ClassCreditedConfirm=¿Está seguro de querer classificar este débito directo como realizado sobre a sua conta bancaria?
+ClassCredited=Classificar creditados
+ClassCreditedConfirm=Está seguro de querer classificar este débito directo como realizado sobre a sua conta bancaria?
 
 
 // START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
@@ -44,22 +44,22 @@ TransMetod=Método de transmissão
 Send=Enviar
 Lines=Linhas
 StandingOrderReject=Emitir uma rejeição
-WithdrawalRefused=Retiradas Refuseds
-WithdrawalRefusedConfirm=Tem certeza que quer entrar com uma rejeição de retirada para a sociedade
+WithdrawalRefused=Levantamento rejeitado
+WithdrawalRefusedConfirm=Tem certeza que quer entrar com uma rejeição de levantamento para a sociedade
 RefusedData=Data de rejeição
 RefusedReason=Motivo da rejeição
 RefusedInvoicing=Faturamento da rejeição
-NoInvoiceRefused=Não carregue a rejeição
-InvoiceRefused=Charge da rejeição ao cliente
+NoInvoiceRefused=Sem factura Cliente, rejeitada
+InvoiceRefused=Factura Cliente, rejeitada
 Status=Estado
 StatusUnknown=Desconhecido
 StatusWaiting=Espera
 StatusCredited=Creditado
-StatusRefused=Refused
+StatusRefused=Rejeitado
 StatusMotif0=Indefinido
 StatusMotif1=Provisão insuffisante
 StatusMotif2=conteste Tirage
-StatusMotif3=Nenhuma ordem de retirada
+StatusMotif3=Nenhuma pedido de levantamento
 StatusMotif4=Encomendas
 StatusMotif5=RIB inexploitable
 StatusMotif6=Conta sem saldo
@@ -69,26 +69,26 @@ CreateAll=Retirar todas as
 CreateGuichet=Apenas escritório
 CreateBanque=Apenas banco
 OrderWaiting=À espera de tratamento
-NotifyTransmision=Retirada Envio
-NotifyEmision=Retirada de emissão
-NotifyCredit=Retirada de crédito
+NotifyTransmision=levantamento Envio
+NotifyEmision=levantamento de emissão
+NotifyCredit=levantamento de crédito
 NumeroNationalEmetter=Número Nacional de Transmissor
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 02:23:13).
 
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
 // Reference language: en_US -> pt_PT
-NbOfInvoiceToWithdrawWithInfo=N º de factura com retirar pedido de clientes com informações sobre a conta bancária definida
+NbOfInvoiceToWithdrawWithInfo=N º de factura para levantamento, de clientes com informações sobre a conta bancária definida
 StatusTrans=Transmitido
 PleaseSelectCustomerBankBANToWithdraw=Selecione informações sobre conta bancária do cliente para retirar
 WithBankUsingRIB=Para contas bancárias usando RIB
 WithBankUsingBANBIC=Para contas bancárias usando IBAN / BIC / SWIFT
-BankToReceiveWithdraw=Conta bancária para receber retira
+BankToReceiveWithdraw=Conta bancária para receber levantamento
 CreditDate=Crédito em
-WithdrawalFileNotCapable=Não foi possível gerar arquivo retirada recibo para seu país
-ShowWithdraw=Mostrar Retirar
-IfInvoiceNeedOnWithdrawPaymentWontBeClosed=No entanto, se não tiver factura, pelo menos, um pagamento retirada ainda processado, que não irá ser definido como payed para permitir a retirada antes de administrar.
-DoStandingOrdersBeforePayments=Este abas permite que você pedir para uma ordem permanente. Uma vez que ele será terminado, você pode digitar o pagamento para fechar a fatura.
+WithdrawalFileNotCapable=Não foi possível gerar ficheiro de recibo do levantamento 
+ShowWithdraw=Mostrar levantamento
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=No entanto, se não tiver factura, pelo menos, um pagamento levantamento ainda processado, que não irá ser definido como pago para permitir o levantamento antes de administrar.
+DoStandingOrdersBeforePayments=Estas abas permitem a você pedir uma ordem permanente. Uma vez que ele será terminado, você pode digitar o pagamento para fechar a fatura.
 InfoCreditSubject=Pagamento de %s ordem permanente pelo banco
 InfoCreditMessage=O %s ordem permanente foi pago pelo banco <br> Dados de pagamento: %s
 InfoTransSubject=Transmissão de %s ordem permanente para o banco

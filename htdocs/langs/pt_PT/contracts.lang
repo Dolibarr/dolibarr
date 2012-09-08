@@ -1,9 +1,9 @@
-# Dolibarr language file - pt_PT - contracts
+﻿# Dolibarr language file - pt_PT - contracts
 CHARSET=UTF-8
-ContractsArea=Área contratos
-ListOfContracts=Lista de contratos
+ContractsArea=Área contractos
+ListOfContracts=Lista de contractos
 LastContracts=Os Ultimos %s Contractos Modificados
-AllContracts=Todos os contratos
+AllContracts=Todos os contractos
 ContractCard=Ficha contrato
 ContractStatus=Estado do contrato
 ContractStatusNotRunning=Fora de serviço
@@ -17,9 +17,9 @@ ServiceStatusLate=Em serviço, expirado
 ServiceStatusLateShort=Expirado
 ServiceStatusClosed=Fechado
 ServicesLegend=Legenda para os serviços
-Contracts=Contratos
+Contracts=contractos
 Contract=Contrato
-NoContracts=Sem Contratos
+NoContracts=Sem contractos
 MenuServices=Serviços
 MenuInactiveServices=Serviços Inactivos
 MenuRunningServices=Serviços Activos
@@ -30,13 +30,13 @@ AddContract=Criar Contrato
 SearchAContract=Procurar um Contrato
 DeleteAContract=Eliminar um Contrato
 CloseAContract=Fechar um Contrato
-ConfirmDeleteAContract=¿Está seguro de querer eliminar este contrato?
-ConfirmValidateContract=¿Está seguro de querer Confirmar este contrato?
-ConfirmCloseContract=¿Está seguro de querer Fechar este contrato?
-ConfirmCloseService=¿Está seguro de querer Fechar este serviço?
+ConfirmDeleteAContract=Está seguro de querer eliminar este contrato?
+ConfirmValidateContract=Está seguro de querer Confirmar este contrato?
+ConfirmCloseContract=Está seguro de querer Fechar este contrato?
+ConfirmCloseService=Está seguro de querer Fechar este serviço?
 ValidateAContract=Confirmar um contrato
 ActivateService=Activar o serviço
-ConfirmActivateService=¿Está seguro de querer activar este serviço em data %s?
+ConfirmActivateService=Está seguro de querer activar este serviço em data %s?
 DateContract=Data contrato
 DateServiceActivate=Data Activação do serviço
 DateServiceUnactivate=Data desactivação do serviço
@@ -44,11 +44,11 @@ DateServiceStart=Data inicio do serviço
 DateServiceEnd=Data finalização do serviço
 ShowContract=Mostrar contrato
 ListOfServices=Lista de serviços
-ListOfRunningContractsLines=Lista de linhas de contratos em serviço
+ListOfRunningContractsLines=Lista de linhas de contractos em serviço
 ListOfRunningServices=Lista de serviços activos
-NotActivatedServices=Serviços não activados (com os contratos validados)
-BoardNotActivatedServices=Serviços a activar com os contratos validados
-LastContracts=Os % últimos contratos
+NotActivatedServices=Serviços não activados (com os contractos validados)
+BoardNotActivatedServices=Serviços a activar com os contractos validados
+LastContracts=Os % últimos contractos
 LastActivatedServices=Os %s últimos serviços activados
 LastModifiedServices=Os %s últimos sevicios modificados
 EditServiceLine=Edição linha do serviço
@@ -61,19 +61,19 @@ DateEndPlannedShort=Data fim prevista
 DateStartReal=Data real colocação em serviço
 DateStartRealShort=Data inicio
 DateEndReal=Data real fim do serviço
-DateEndRealShort=data real finalização
+DateEndRealShort=Data real finalização
 NbOfServices=Nº de serviços
 CloseService=Finalizar serviço
 ServicesNomberShort=%s serviço(s)
 RunningServices=Serviços activos
 BoardRunningServices=Serviços activos expirados
 ServiceStatus=Estado do serviço
-DraftContracts=Contratos rascunho
+DraftContracts=Contractos rascunho
 CloseRefusedBecauseOneServiceActive=O contrato não pode ser fechado já que contem ao menos um serviço aberto.
-CloseAllContracts=Fechar todos os contratos
+CloseAllContracts=Fechar todos os contractos
 MoveToAnotherContract=Mover o serviço a outro contrato deste Terceiro.
 ConfirmMoveToAnotherContract=Escolhi o contrato e confirmo o alterar de serviço ao presente contrato.
-ConfirmMoveToAnotherContractQuestion=Escolha qualquer outro contrato do mesmo Terceiro, ¿deseja mover este serviço?
+ConfirmMoveToAnotherContractQuestion=Escolha qualquer outro contrato do mesmo Terceiro, deseja mover este serviço?
 PaymentRenewContractId=Renovação do Serviço (Numero %s)
 ExpiredSince=Expirado desde
 ##### Types de contacts #####=undefined
@@ -89,7 +89,7 @@ TypeContact_contrat_external_SALESREPSIGN=Contacto cliente assinante do contrato
 ServiceStatusNotLate=Correndo, não terminou
 ServiceStatusNotLateShort=Não terminou
 ListOfInactiveServices=Lista de serviços não activa
-ListOfExpiredServices=Lista de serviços ativos expired
+ListOfExpiredServices=Lista de serviços activos expirados
 ListOfClosedServices=Lista de serviços fechados
 DeleteContractLine=Apagar uma linha contrato
 ConfirmDeleteContractLine=Tem certeza de que deseja excluir este contrato linha?
@@ -98,12 +98,12 @@ ConfirmDeleteContractLine=Tem certeza de que deseja excluir este contrato linha?
 
 // START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
 // Reference language: en_US -> pt_PT
-RelatedContracts=contratos relacionados
+RelatedContracts=Contractos relacionados
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:50).
 
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
 // Reference language: en_US -> pt_PT
-NoExpiredServices=Nenhum serviço expirou ativos
+NoExpiredServices=Nenhum serviço activo expirou 
 Error_CONTRACT_ADDON_NotDefined=CONTRACT_ADDON constante não definida
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:04).

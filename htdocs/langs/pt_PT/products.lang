@@ -1,4 +1,4 @@
-# Dolibarr language file - pt_PT - products
+﻿# Dolibarr language file - pt_PT - products
 CHARSET=UTF-8
 ProductServiceCard=Ficha Produto/Serviço
 Products=Produtos
@@ -51,7 +51,7 @@ UpdatePrice=Alterar preço
 AppliedPricesFrom=Preço de venda válido a partir de
 SellingPrice=Preço de venda
 PublicPrice=Preço público
-CurrentPrice=preço actual
+CurrentPrice=Preço actual
 NewPrice=Novo preço
 ContractStatus=Estado de contrato
 ContractStatusClosed=Fechado
@@ -73,7 +73,7 @@ AddToMyProposals=Adicionar aos meus Orçamentos
 AddToOtherProposals=Adicionar a Outros Orçamentos
 AddToMyBills=Adicionar às minhas facturas
 AddToOtherBills=Adicionar a Outras facturas
-CorrectStock=Corregir stock
+CorrectStock=Corrigir stock
 AddPhoto=Adicionar uma foto
 ListOfStockMovements=Lista de movimentos de stock
 NoPhotoYet=Não existe fotografía disponivel neste momento
@@ -107,16 +107,16 @@ ProductToAddSearch=Procurar produtos a Adicionar
 AddDel=Adicionar/Retirar
 Quantity=Quantidade
 NoMatchFound=Não foram encontrados resultados
-ProductAssociationList=Lista de produtos/serviços associados : Nome do produto/servisio (quantidade afectada)
+ProductAssociationList=Lista de produtos/serviços associados : Nome do produto/serviço (quantidade afectada)
 ErrorAssociationIsFatherOfThis=Um dos produtos seleccionados é pai do produto em curso
 DeleteProduct=Eliminar um produto/serviço
-ConfirmDeleteProduct=¿Está seguro de querer eliminar este produto/serviço?
+ConfirmDeleteProduct=Está seguro de querer eliminar este produto/serviço?
 ProductDeleted=O produto/serviço "%s" foi eliminado da base de dados.
 DeletePicture=Eliminar uma foto
-ConfirmDeletePicture=¿Está seguro de querer eliminar esta foto?
+ConfirmDeletePicture=Está seguro de querer eliminar esta foto?
 ExportDataset_produit_1=Produtos e Serviços
 DeleteProductLine=Eliminar linha de produto
-ConfirmDeleteProductLine=¿Está seguro de querer eliminar esta linha de produto?
+ConfirmDeleteProductLine=Está seguro de querer eliminar esta linha de produto?
 NoProductMatching=Nenhum produto/serviço responde à criterio
 MatchingProducts=Produtos/Serviços encontrados
 NoStockForThisProduct=Não existe stock deste produto
@@ -145,10 +145,10 @@ ProductLabel=Produto rótulo
 MinPrice=Mínima. preço de venda
 CantBeLessThanMinPrice=O preço de venda não pode ser inferior ao mínimo permitido para este produto ( %s sem impostos)
 ExportDataset_service_1=Serviços
-CloneProduct=Clone produto ou serviço
-ConfirmCloneProduct=Tem certeza de que pretende clonar produto ou <b>serviço %s?</b>
-CloneContentProduct=Clone todas as principais informações do produto / serviço
-ClonePricesProduct=Clone principais informações e preços
+CloneProduct=Copie produto ou serviço
+ConfirmCloneProduct=Tem certeza de que pretende copiar produto ou <b>serviço %s?</b>
+CloneContentProduct=Copie todas as principais informações do produto / serviço
+ClonePricesProduct=Copie principais informações e preços
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
 
 
@@ -180,7 +180,7 @@ ParentProductsNumber=Número de produto pai
 ProductParentList=Lista de produtos e serviços com este produto como um componente
 ImportDataset_produit_1=Produtos
 ImportDataset_service_1=Serviços
-CustomCode=Código Aduaneiro
+CustomCode=Código alfandega
 CountryOrigin=País de origem
 HiddenIntoCombo=Escondido em listas de seleção
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:17).

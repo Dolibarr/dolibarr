@@ -1,4 +1,4 @@
-# Dolibarr language file - pt_PT - propal
+﻿# Dolibarr language file - pt_PT - propal
 CHARSET=UTF-8
 Proposals=Orçamentos
 Proposal=Orçamento
@@ -16,8 +16,8 @@ ProspectList=Lista de Clientes Potenciais
 DeleteProp=Eliminar Orçamento
 ValidateProp=Confirmar Orçamento
 AddProp=Criar Orçamento
-ConfirmDeleteProp=¿Está seguro de querer eliminar este orçamento?
-ConfirmValidateProp=¿Está seguro de querer Confirmar este orçamento?
+ConfirmDeleteProp=Está seguro de querer eliminar este orçamento?
+ConfirmValidateProp=Está seguro de querer Confirmar este orçamento?
 LastPropals=Os %s Ultimos Orçamentos
 LastClosedProposals=Os Ultimos Orçamentos Encerrados
 AllPropals=Todos Os Orçamentos
@@ -71,10 +71,10 @@ EstimateShort=Orç.
 OtherPropals=Outros Orçamentos
 CopyPropalFrom=Criar orçamento por Cópia de um existente
 CreateEmptyPropal=Criar orçamento desde a Lista de produtos predefinidos
-DefaultProposalDurationValidity=Prazo de validez por defeito (em días)
-UseCustomerContactAsPropalRecipientIfExist=Utilizar direcção contacto de seguimiento de cliente definido em vez da direcção do Terceiro como destinatario dos Orçamentos
-ClonePropal=Colonar Proposta Comercial
-ConfirmClonePropal=Tem a certeza que deseja colonar a proposta comercial <b>%s</b>?
+DefaultProposalDurationValidity=Prazo de validade por defeito (em días)
+UseCustomerContactAsPropalRecipientIfExist=Utilizar morada contacto de seguimiento de cliente definido em vez da morada do Terceiro como destinatario dos Orçamentos
+ClonePropal=Copiar Proposta Comercial
+ConfirmClonePropal=Tem a certeza que deseja copiar a proposta comercial <b>%s</b>?
 DocModelAzurDescription=Modelo de orçamento completo (logo...)
 DocModelJauneDescription=Modelo de Orçamento Jaune
 
