@@ -432,7 +432,7 @@ if (! defined('NOLOGIN'))
                 include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
                 $langs=new Translate("",$conf);
             }
-            dol_loginfunction($langs,$conf,$mysoc);
+            dol_loginfunction($langs,$conf,(! empty($mysoc)?$mysoc:''));
             exit;
         }
 
