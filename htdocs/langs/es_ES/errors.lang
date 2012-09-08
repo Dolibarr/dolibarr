@@ -111,6 +111,7 @@ ErrorFileMustBeADolibarrPackage=El archivo %s debe ser un paquete Dolibarr en fo
 ErrorFileRequired=Se requiere un archivo de paquete Dolibarr en formato zip
 ErrorPhpCurlNotInstalled=La extensión PHP CURL no se encuentra instalada, es indispensable para dialogar con Paypal.
 ErrorFailedToAddToMailmanList=Ha ocurrido un error al intentar añadir un registro a la lista Mailman o base de datos SPIP
+ErrorNewVaueCantMatchOldValue=El nuevo valor no puede ser igual al antiguo
 
 # Warnings
 WarningMandatorySetupNotComplete=Los parámetros obligatorios de configuración no están todavía definidos

@@ -375,6 +375,7 @@ if (! defined('NOLOGIN'))
         // If error, we will put error message in session under the name dol_loginmesg
         $goontestloop=false;
         if (isset($_SERVER["REMOTE_USER"]) && in_array('http',$authmode)) $goontestloop=true;
+        if ($dolibarr_main_authentication == 'forceuser' && ! empty($dolibarr_auto_user)) $goontestloop=true;
         if (GETPOST("username","alpha",2) || ! empty($_COOKIE['login_dolibarr']) || GETPOST('openid_mode','alpha',1)) $goontestloop=true;
 
         if ($test && $goontestloop)
@@ -432,7 +433,7 @@ if (! defined('NOLOGIN'))
                 include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
                 $langs=new Translate("",$conf);
             }
-            dol_loginfunction($langs,$conf,$mysoc);
+            dol_loginfunction($langs,$conf,(! empty($mysoc)?$mysoc:''));
             exit;
         }
 
@@ -1677,7 +1678,7 @@ if (! function_exists("llxFooter"))
      */
     function llxFooter($foot='')
     {
-        global $conf, $langs, $dolibarr_auto_user, $micro_start_time;
+        global $conf, $langs;
 
         // Global html output events ($mesgs, $errors, $warnings)
         dol_htmloutput_events();
