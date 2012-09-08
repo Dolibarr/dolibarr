@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - products 
+# Dolibarr language file - ca_ES - products
 CHARSET=UTF-8
 ProductRef=Ref. producte
 ProductLabel=Etiqueta producte
@@ -169,5 +169,10 @@ SuppliersPrices=Preus proveïdors
 CustomCode=Codi duaner
 CountryOrigin=País d'origen
 HiddenIntoCombo=Ocult en les llistes
+Nature=Naturalesa
 ProductCodeModel=Model de codi de producte
 ServiceCodeModel=Model de codi de servei
+AddThisProductCard=Crear fitxa producte
+HelpAddThisProductCard=Aquesta opció permet crear o clonar una fitxa de producte en cas que no hi hagi
+AddThisServiceCard=Crear fitxa servei
+HelpAddThisServiceCard=Aquesta opció permet crear o clonar una fitxa de servei en cas que no hi hagi

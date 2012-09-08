@@ -3,6 +3,7 @@
  * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012	Regis Houssin			<regis@dolibarr.fr>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1611,12 +1612,12 @@ tr.liste_total td {
 	margin-bottom: 1px;
 	color: #202020;
 }
-/*
+
 .impair:hover {
 	background: #c0c4c7;
 	border: 0px;
 }
-*/
+
 
 .pair	{
 <?php if ($usecss3) { ?>
@@ -1633,12 +1634,12 @@ tr.liste_total td {
 	margin-bottom: 1px;
 	color: #202020;
 }
-/*
+
 .pair:hover {
 	background: #c0c4c7;
 	border: 0px;
 }
-*/
+
 
 /* Disable shadows */
 .noshadow {

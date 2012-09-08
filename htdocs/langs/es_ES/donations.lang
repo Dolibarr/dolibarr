@@ -2,6 +2,7 @@
 CHARSET= UTF-8
 Donation=Donación
 Donations=Donaciones
+DonationRef=Ref. donación
 Donor=Donante
 Donors=Donantes
 AddDonation=Añadir donación
