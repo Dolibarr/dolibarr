@@ -129,7 +129,15 @@ else
     if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
     $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
-    if ($sall) $sql.= " AND (p.ref LIKE '%".$db->escape($sall)."%' OR p.label LIKE '%".$db->escape($sall)."%' OR p.description LIKE '%".$db->escape($sall)."%' OR p.note LIKE '%".$db->escape($sall)."%')";
+    if ($sall)
+    {
+        $sql.= " AND (p.ref LIKE '%".$db->escape($sall)."%' OR p.label LIKE '%".$db->escape($sall)."%' OR p.description LIKE '%".$db->escape($sall)."%' OR p.note LIKE '%".$db->escape($sall)."%'";
+        if (! empty($conf->global->MAIN_MODULE_BARCODE))
+        {
+            $sql .= " OR p.barcode LIKE '%".$db->escape($sall)."%'";
+        }
+        $sql .= ')';
+    }
     // if the type is not 1, we show all products (type = 0,2,3)
     if (dol_strlen($type))
     {
