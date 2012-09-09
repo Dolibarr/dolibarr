@@ -1114,7 +1114,7 @@ else
                 {
                     require_once(DOL_DOCUMENT_ROOT."/core/class/html.formbarcode.class.php");
                     $formbarcode = new FormBarCode($db);
-                    $formbarcode->form_barcode_type($_SERVER['PHP_SELF'].'?id='.$object->id,$object->barcode_type,'barcodetype_id');
+                    $formbarcode->form_barcode_type($_SERVER['PHP_SELF'].'?id='.$object->id,$object->barcode_type,'fk_barcode_type');
                 }
                 else
                 {
