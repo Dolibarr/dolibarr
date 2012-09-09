@@ -132,12 +132,12 @@ else
     $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
     if ($sall)
     {
-        $sql .= " AND (p.ref LIKE '%".$db->escape($sall)."%' OR p.label LIKE '%".$db->escape($sall)."%' OR p.description LIKE '%".$db->escape($sall)."%' OR p.note LIKE '%".$db->escape($sall)."%'";
-        if (! empty($conf->global->MAIN_MODULE_BARCODE))
+        $sql.= " AND (p.ref LIKE '%".$db->escape($sall)."%' OR p.label LIKE '%".$db->escape($sall)."%' OR p.description LIKE '%".$db->escape($sall)."%' OR p.note LIKE '%".$db->escape($sall)."%'";
+        if (! empty($conf->barcode->enabled))
         {
-            $sql .= " OR p.barcode LIKE '%".$db->escape($sall)."%'";
+            $sql.= " OR p.barcode LIKE '%".$db->escape($sall)."%'";
         }
-        $sql .= ')';
+        $sql.= ')';
     }
     // if the type is not 1, we show all products (type = 0,2,3)
     if (dol_strlen($type))
