@@ -77,20 +77,20 @@ $rowspan=2;
 if (! empty($conf->barcode->enabled)) $rowspan++;
 print '<form method="post" action="'.DOL_URL_ROOT.'/product/liste.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder nohover" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';
-print "<tr $bc[0]><td>";
+print "<tr ".$bc[false]."><td>";
 print $langs->trans("Ref").':</td><td><input class="flat" type="text" size="14" name="sref"></td>';
 print '<td rowspan="'.$rowspan.'"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 if (! empty($conf->barcode->enabled))
 {
-	print "<tr $bc[0]><td>";
+	print "<tr ".$bc[false]."><td>";
 	print $langs->trans("BarCode").':</td><td><input class="flat" type="text" size="14" name="sbarcode"></td>';
 	//print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
 	print '</tr>';
 }
-print "<tr $bc[0]><td>";
+print "<tr ".$bc[false]."><td>";
 print $langs->trans("Other").':</td><td><input class="flat" type="text" size="14" name="sall"></td>';
 //print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
 print '</tr>';

@@ -1314,30 +1314,32 @@ font-weight: normal;
 white-space: nowrap;
 }
 
-.impair {
-/* background: #d0d4d7; */
-background: #F5F6F7;
-font-family: <?php print $fontlist ?>;
-border: 0px;
-}
 
 .impair:hover {
 background: #c0c4c7;
 border: 0px;
 }
 
+.impair, table.nohover .impair:hover {
+/* background: #d0d4d7; */
+background: #F5F6F7;
+font-family: <?php print $fontlist ?>;
+border: 0px;
+}
 
-.pair	{
+
+.pair:hover {
+background: #c0c4c7;
+border: 0px;
+}
+
+.pair, table.nohover .pair:hover {
 /* background: #e6ebed; */
 background: #FBFCFC;
 font-family: <?php print $fontlist ?>;
 border: 0px;
 }
 
-.pair:hover {
-background: #c0c4c7;
-border: 0px;
-}
 
 
 /* Disable shadows */

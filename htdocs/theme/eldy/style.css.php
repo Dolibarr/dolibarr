@@ -1597,7 +1597,12 @@ tr.liste_total td {
     white-space: nowrap;
 }
 
-.impair {
+.impair:hover {
+	background: #c0c4c7;
+	border: 0px;
+}
+
+.impair, table.nohover .impair:hover {
 <?php if ($usecss3) { ?>
 	background: linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
@@ -1613,13 +1618,12 @@ tr.liste_total td {
 	color: #202020;
 }
 
-.impair:hover {
+.pair:hover {
 	background: #c0c4c7;
 	border: 0px;
 }
 
-
-.pair	{
+.pair, table.nohover .pair:hover {
 <?php if ($usecss3) { ?>
 	background: linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
@@ -1633,11 +1637,6 @@ tr.liste_total td {
 	border: 0px;
 	margin-bottom: 1px;
 	color: #202020;
-}
-
-.pair:hover {
-	background: #c0c4c7;
-	border: 0px;
 }
 
 

@@ -50,12 +50,12 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
  */
 print '<form method="post" action="'.DOL_URL_ROOT.'/product/stock/liste.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder nohover" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';
-print "<tr $bc[0]><td>";
+print "<tr ".$bc[false]."><td>";
 print $langs->trans("Ref").':</td><td><input class="flat" type="text" size="18" name="sref"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print "<tr $bc[0]><td>".$langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="18"></td>';
+print "<tr ".$bc[false]."><td>".$langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="18"></td>';
 print "</table></form><br>";
 
 $sql = "SELECT e.label, e.rowid, e.statut";

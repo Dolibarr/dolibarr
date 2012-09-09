@@ -112,7 +112,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 {
 	print '<form method="post" action="'.DOL_URL_ROOT.'/compta/facture/list.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder nohover" width="100%">';
 	print "<tr class=\"liste_titre\">";
 	print '<td colspan="3">'.$langs->trans("SearchACustomerInvoice").'</td></tr>';
 	print "<tr $bc[0]><td>".$langs->trans("Ref").':</td><td><input type="text" name="sf_ref" class="flat" size="18"></td>';
@@ -129,7 +129,7 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire)
 {
 	print '<form method="post" action="'.DOL_URL_ROOT.'/fourn/facture/index.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder nohover" width="100%">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchASupplierInvoice").'</td></tr>';
 	print "<tr ".$bc[0].">";
 	print "<td>".$langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="18"></td>';
@@ -146,7 +146,7 @@ if ($conf->don->enabled && $user->rights->don->lire)
 {
     print '<form method="post" action="'.DOL_URL_ROOT.'/compta/dons/liste.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchADonation").'</td></tr>';
     print "<tr ".$bc[0].">";
     print "<td>".$langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="18"></td>';
@@ -163,7 +163,7 @@ if ($conf->deplacement->enabled && $user->rights->deplacement->lire)
 {
     print '<form method="post" action="'.DOL_URL_ROOT.'/compta/deplacement/list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchATripAndExpense").'</td></tr>';
     print "<tr ".$bc[0].">";
     print "<td>".$langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="18"></td>';
