@@ -28,7 +28,7 @@ create table llx_ecm_documents
   filemime			varchar(128)  NOT NULL,
   description		text,
   metadata			text,
-  fullpath    		varchar(255) NOT NULL,
+  fullpath    		text,
   fk_directory		integer,
   extraparams		varchar(255),					-- for stock other parameters with json format
   fk_create			integer  NOT NULL,

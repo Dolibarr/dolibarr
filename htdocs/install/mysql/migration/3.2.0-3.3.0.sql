@@ -92,7 +92,8 @@ ALTER TABLE llx_actioncomm MODIFY elementtype VARCHAR(32);
 
 -- TASK #107
 ALTER TABLE llx_ecm_directories MODIFY COLUMN label varchar(64) NOT NULL;
-ALTER TABLE llx_ecm_directories ADD COLUMN fullpath varchar(255) AFTER cachenbofdoc;
+ALTER TABLE llx_ecm_directories ADD COLUMN fullpath text AFTER cachenbofdoc;
+ALTER TABLE llx_ecm_directories MODIFY COLUMN fullpath text;
 ALTER TABLE llx_ecm_directories ADD COLUMN extraparams varchar(255) AFTER fullpath;
 ALTER TABLE llx_ecm_directories ADD COLUMN acl text;
 ALTER TABLE llx_ecm_directories ADD INDEX idx_ecm_directories_fk_user_c (fk_user_c);
@@ -107,7 +108,8 @@ ALTER TABLE llx_ecm_documents DROP COLUMN private;
 ALTER TABLE llx_ecm_documents DROP COLUMN crc;
 ALTER TABLE llx_ecm_documents DROP COLUMN cryptkey;
 ALTER TABLE llx_ecm_documents DROP COLUMN cipher;
-ALTER TABLE llx_ecm_documents CHANGE COLUMN fullpath_dol fullpath varchar(255) NOT NULL;
+ALTER TABLE llx_ecm_documents CHANGE COLUMN fullpath_dol fullpath text;
+ALTER TABLE llx_ecm_documents MODIFY COLUMN fullpath text;
 ALTER TABLE llx_ecm_documents MODIFY COLUMN filemime varchar(128) NOT NULL;
 ALTER TABLE llx_ecm_documents ADD COLUMN metadata text after description;
 ALTER TABLE llx_ecm_documents ADD COLUMN extraparams varchar(255) AFTER fk_directory;
