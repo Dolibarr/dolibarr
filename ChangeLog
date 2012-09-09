@@ -46,6 +46,7 @@ For users:
 New experimental modules:
 - New: Add margin and commissions management module.
 - New: Add holiday module.
+- New: Allow to search product from barcodes directly from the permanent mini search left box
 
 - Fix: [ bug #499 ]: Supplier order input method not translated
 - Fix: No images into product description lines as PDF generation does
