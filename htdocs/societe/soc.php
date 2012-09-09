@@ -784,7 +784,7 @@ else
         print '</td></tr>';
 
         // Barcode
-        if (! empty($conf->global->MAIN_MODULE_BARCODE))
+        if (! empty($conf->barcode->enabled))
         {
             print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="3"><input type="text" name="barcode" value="'.$object->barcode.'">';
             print '</td></tr>';
@@ -1218,7 +1218,7 @@ else
             }
 
             // Barcode
-            if ($conf->global->MAIN_MODULE_BARCODE)
+            if (! empty($conf->barcode->enabled))
             {
                 print '<tr><td valign="top">'.$langs->trans('Gencod').'</td><td colspan="3"><input type="text" name="barcode" value="'.$object->barcode.'">';
                 print '</td></tr>';
@@ -1469,7 +1469,7 @@ else
         if (! empty($conf->global->SOCIETE_USEPREFIX)) $rowspan++;
         if (! empty($object->client)) $rowspan++;
         if (! empty($conf->fournisseur->enabled) && $object->fournisseur && ! empty($user->rights->fournisseur->lire)) $rowspan++;
-        if (! empty($conf->global->MAIN_MODULE_BARCODE)) $rowspan++;
+        if (! empty($conf->barcode->enabled)) $rowspan++;
         if (empty($conf->global->SOCIETE_DISABLE_STATE)) $rowspan++;
         $htmllogobar='';
         if ($showlogo || $showbarcode)
@@ -1514,7 +1514,7 @@ else
         }
 
         // Barcode
-        if (! empty($conf->global->MAIN_MODULE_BARCODE))
+        if (! empty($conf->barcode->enabled))
         {
             print '<tr><td>';
             print $langs->trans('Gencod').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">'.$object->barcode;
