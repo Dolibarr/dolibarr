@@ -21,16 +21,16 @@
 create table llx_ecm_documents
 (
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
-  ref				varchar(16)  NOT NULL,
   entity			integer DEFAULT 1 NOT NULL,
+  ref				varchar(32)  NOT NULL,			-- hash(fullpath + filename + version)
   filename			varchar(255) NOT NULL,
   filesize			integer      NOT NULL,
-  filemime			varchar(128)  NOT NULL,
+  filemime			varchar(128) NOT NULL,
   description		text,
-  metadata			text,
+  metadata			text,							-- Secure file information (json format / encrypted)
   fullpath    		text,
   fk_directory		integer,
-  extraparams		varchar(255),					-- for stock other parameters with json format
+  extraparams		varchar(255),					-- Other parameters (json format)
   fk_create			integer  NOT NULL,
   fk_update			integer,
   date_c			datetime NOT NULL,

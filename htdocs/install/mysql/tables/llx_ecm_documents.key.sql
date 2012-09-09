@@ -18,11 +18,10 @@
 -- ============================================================================
 
 
-ALTER TABLE llx_ecm_documents ADD UNIQUE INDEX idx_ecm_documents_ref (ref, fk_directory, entity);
+ALTER TABLE llx_ecm_documents ADD UNIQUE INDEX idx_ecm_documents_ref (ref, entity);
 ALTER TABLE llx_ecm_documents ADD INDEX idx_ecm_documents_fk_create (fk_create);
 ALTER TABLE llx_ecm_documents ADD INDEX idx_ecm_documents_fk_update (fk_update);
 
-ALTER TABLE llx_ecm_documents ADD CONSTRAINT fk_ecm_documents_fk_directory   FOREIGN KEY (fk_directory)      REFERENCES llx_ecm_directories (rowid);
 ALTER TABLE llx_ecm_documents ADD CONSTRAINT fk_ecm_documents_fk_create      FOREIGN KEY (fk_create)         REFERENCES llx_user (rowid);
 ALTER TABLE llx_ecm_documents ADD CONSTRAINT fk_ecm_documents_fk_update      FOREIGN KEY (fk_update)         REFERENCES llx_user (rowid);
 	
