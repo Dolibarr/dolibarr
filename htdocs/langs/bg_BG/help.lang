@@ -1,0 +1,37 @@
+/*
+ * Language code: bg_BG
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-09-08 17:16:45
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
+// Reference language: en_US -> bg_BG
+CHARSET=UTF-8
+CommunitySupport=Форум / Wiki подкрепа
+EMailSupport=Имейли подкрепа
+RemoteControlSupport=Онлайн в реално време / дистанционна поддръжка
+OtherSupport=Друга поддръжка
+ToSeeListOfAvailableRessources=За да се свържете / виж наличните ресурси:
+ClickHere=Кликнете тук,
+HelpCenter=Помощен център
+DolibarrHelpCenter=Dolibarr помощ и център за поддръжка
+ToGoBackToDolibarr=В противен случай, щракнете <a href="%s">тук, за да използвате Dolibarr</a>
+TypeOfSupport=Източник на подкрепа
+TypeSupportCommunauty=Общността (безплатно)
+TypeSupportCommercial=Търговски
+TypeOfHelp=Тип
+NeedHelpCenter=Нуждаете се от помощ или подкрепа?
+Efficiency=Ефективност
+TypeHelpOnly=Помощ само
+TypeHelpDev=Помощ + развитие
+TypeHelpDevForm=Помощ + развитие + Формиране
+ToGetHelpGoOnSparkAngels1=Някои компании могат да осигурят бързо (по някое време незабавно) и по-ефективни онлайн поддръжка чрез поемането на контрола на вашия компютър. Такива помощници може да се намери на уеб сайта на <b>%s:</b>
+ToGetHelpGoOnSparkAngels3=Можете също да отидете към списъка на всички налични треньори за Dolibarr за тази цел кликнете върху бутона
+ToGetHelpGoOnSparkAngels2=Понякога, няма фирма, на разположение в момента, в който търсенето си, така че мислете за промяна на филтъра, за да търсят &quot;всичко наличност&quot;. Вие ще бъдете в състояние да изпрати повече заявки.
+BackToHelpCenter=В противен случай, натиснете тук, за да отиде <a href="%s">да помогне на центъра начална страница</a> .
+LinkToGoldMember=Можете да се обадите на треньора, предварително подбрани от Dolibarr за вашия език (%s), като щракнете върху му Widget (статус и максимална цена се актуализира автоматично):
+PossibleLanguages=Поддържани езици
+MakeADonation=Помощ Dolibarr проекта, направете дарение
+SubscribeToFoundation=Да Помощ Dolibarr проект, за да се абонирате към фундамента
+// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:37:07).

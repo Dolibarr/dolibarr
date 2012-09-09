@@ -1,0 +1,41 @@
+/*
+ * Language code: bg_BG
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-09-08 17:14:31
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-09-08 17:14:31).
+// Reference language: fr_FR -> bg_BG
+CHARSET=UTF-8
+Donation=Дон
+Donations=Дарения
+DonationRef=Не. дарение
+Donor=Дарител
+Donors=Дарители
+AddDonation=Добави подарък
+NewDonation=Ново дарение
+DonationPromise=Залог
+PromisesNotValid=Неангажираните обещания
+PromisesValid=Обещания валидирани
+DonationsPaid=Платени Дарения
+DonationsReceived=Получените дарения
+PublicDonation=Дон обществеността
+DonationsNumber=Брой на даренията
+DonationsArea=Дарения пространство
+DonationStatusPromiseNotValidated=Обещай необвързан
+DonationStatusPromiseValidated=Утвърден обещание
+DonationStatusPaid=Дон плаща
+DonationStatusPromiseNotValidatedShort=Необвързан
+DonationStatusPromiseValidatedShort=Утвърден
+DonationStatusPaidShort=Платен
+ValidPromess=Проверка на обещание
+DonationReceipt=Дарение получаването
+BuildDonationReceipt=Създаване получи
+DonationsModels=Образеца на документа за добри получаване на подаръци
+LastModifiedDonations=%s последна промяна дарения
+SearchADonation=Намерете подарък
+DonationRecipient=Бенефициенти плащания
+ThankYou=Благодаря
+IConfirmDonationReception=Получателят признава, че е получавал плащания съгласно правото на намаляване на данъка, сумата от
+// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:16:04).

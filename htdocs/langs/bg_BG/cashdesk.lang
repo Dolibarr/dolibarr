@@ -1,0 +1,48 @@
+/*
+ * Language code: bg_BG
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-09-08 17:16:45
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
+// Reference language: en_US -> bg_BG
+CHARSET=UTF-8
+CashDeskMenu=Точка на продажба
+CashDesk=Точка на продажба
+CashDesks=Точка на продажбите
+CashDeskBank=Банкова сметка
+CashDeskBankCash=Банкова сметка (в брой)
+CashDeskBankCB=Банкова сметка (карта)
+CashDeskBankCheque=Банкова сметка (проверка)
+CashDeskWarehouse=Склад
+CashdeskShowServices=Продажба на услуги
+CashDeskProducts=Продукти
+CashDeskStock=Наличност
+CashDeskOn=на
+CashDeskThirdParty=Трета страна
+ShoppingCart=Количка за пазаруване
+NewSell=Нов продажба
+BackOffice=Обратно офис
+AddThisArticle=Добави тази статия
+RestartSelling=Върнете се продават
+SellFinished=Продава приключи
+PrintTicket=Печат билет
+NoResults=Няма резултати
+NoProductFound=Не е статия намерени
+ProductFound=продукти, открити
+ProductsFound=намерени продукти
+NoArticle=Не статия
+Identification=Идентификация
+Article=Статия
+Difference=Разлика
+TotalTicket=Общо билет
+NoVAT=Без ДДС за тази продажба
+Change=Превишение получи
+CalTip=Кликнете, за да видите календара
+CashDeskSetupStock=Вие питате за намаляване на запасите на фактура създаването, но склада за това е не е определена <br> Промяна на настройка модул състав, или изберете склад
+BankToPay=Банкова сметка
+ShowCompany=Покажи компания
+ShowStock=Покажи склад
+DeleteArticle=Кликнете, за да се премахне тази статия
+// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:17:18).

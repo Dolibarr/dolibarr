@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2007-2011 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2012	Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -100,11 +100,11 @@ class FormBarCode
      *	Return form to select type of barcode
      *
      *	@param	int		$selected          Id code pre-selected
-     *  @param	string	$htmlname          Nom de la zone select
+     *  @param	string	$htmlname          Name of HTML select field
      *  @param  int		$useempty          Affiche valeur vide dans liste
      *  @return	void
      */
-    function select_barcode_type($selected='',$htmlname='coder_id',$useempty=0)
+    function select_barcode_type($selected='',$htmlname='barcodetype_id',$useempty=0)
     {
         global $langs,$conf;
 
@@ -169,7 +169,7 @@ class FormBarCode
         {
             print '<form method="post" action="'.$page.'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<input type="hidden" name="action" value="setbarcodetype">';
+            print '<input type="hidden" name="action" value="set'.$htmlname.'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
             $this->select_barcode_type($selected, $htmlname, 1);

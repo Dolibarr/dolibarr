@@ -1,4 +1,4 @@
-# Dolibarr language file - pt_PT - mails
+﻿# Dolibarr language file - pt_PT - mails
 CHARSET=UTF-8
 Mailing=Mailing
 EMailing=Mailing
@@ -45,8 +45,8 @@ MailingStatusNotSent=Não Enviado
 MailSuccessfulySent=E-mail enviado correctamente (de %s a %s)
 ErrorMailRecipientIsEmpty=A direcção do destinatario está vazia
 WarningNoEMailsAdded=nenhum Novo e-mail a Adicionar à lista destinatarios.
-ConfirmValidMailing=¿Confirma a validação do mailing?
-ConfirmDeleteMailing=¿Confirma a eliminação do mailing?
+ConfirmValidMailing=Confirma a validação do mailing?
+ConfirmDeleteMailing=Confirma a eliminação do mailing?
 NbOfRecipients=Número de destinatarios
 NbOfUniqueEMails=Nº de e-mails únicos
 NbOfEMails=Nº de E-mails
@@ -77,9 +77,9 @@ SearchAMailing=Procurar um mailing
 SendMailing=Enviar mailing
 SendMail=Enviar e-mail
 SentBy=Enviado por
-MailingNeedCommand=Por razões de segurança, o envío de um mailing em massa podem realizar-se em linha de comandos. Pessa ao seu administrador que lance o comando seguinte para para enviar a correspondencia e a todos os destinatarios:
+MailingNeedCommand=Por razões de segurança, o envío de um mailing em massa podem realizar-se em linha de comandos. Peça ao seu administrador que lance o comando seguinte para para enviar a correspondencia e a todos os destinatarios:
 MailingNeedCommand2=Pode enviar em linha adicionando o parâmetro MAILING_LIMIT_SENDBYWEB com um valor número que indica o máximo nº de e-mails enviados por Sessão.
-ConfirmSendingEmailing=¿Confirma o envío do e-mailing?<br>o envío em linha de e-mails estão limitados por segurança a <b>%s</b> destinatarios por Sessão.
+ConfirmSendingEmailing=Confirma o envío do e-mailing?<br>o envío em linha de e-mails estão limitados por segurança a <b>%s</b> destinatarios por Sessão.
 TargetsReset=Limpar lista
 ToClearAllRecipientsClickHere=Para limpar a lista dos destinatarios deste mailing, faça click ao botão
 ToAddRecipientsChooseHere=Para Adicionar destinatarios, escoja os que figuran em listas a continuação
@@ -92,8 +92,8 @@ Notifications=Notificações
 NoNotificationsWillBeSent=Nenhuma notificação por e-mail está prevista para este evento e empresa
 ANotificationsWillBeSent=1 notificação vai a ser enviada por e-mail
 SomeNotificationsWillBeSent=%s Notificações vão ser enviadas por e-mail
-AddNewNotification=Activar uma Nova pedido de notificação
-ListOfActiveNotifications=Lista das pedidos de Notificações activas
+AddNewNotification=Activar um novo pedido de notificação
+ListOfActiveNotifications=Lista das pedidos de notificações activas
 
 
 // START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
@@ -104,7 +104,7 @@ BadEMail=Valor inválido para o email
 CloneEMailing=Clone Emailing
 ConfirmCloneEMailing=Tem certeza de que deseja clonar este email?
 CloneContent=Clone mensagem
-CloneReceivers=Cloner destinatários
+CloneReceivers=Clonar destinatários
 DateLastSend=Data do último envio
 MailingModuleDescDolibarrContractsLinesExpired=Terceiros com contrato expirou as linhas
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
@@ -122,7 +122,7 @@ ListOfNotificationsDone=Lista de todas as notificações de e-mail enviado
 // START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
 // Reference language: en_US -> pt_PT
 MailingStatusRead=Ler
-MailingModuleDescContactsByCompanyCategory=Contatos de terceiros (por terceiros categoria)
+MailingModuleDescContactsByCompanyCategory=Contactos de terceiros (por terceiros categoria)
 MailingModuleDescMembersCategories=Membros da Fundação (por categorias)
-MailingModuleDescContactsByFunction=Contatos de terceiros (por cargo / função)
+MailingModuleDescContactsByFunction=Contactos de terceiros (por cargo / função)
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:05).

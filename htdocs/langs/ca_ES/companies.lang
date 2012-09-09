@@ -1,4 +1,4 @@
-# Dolibarr language file - ca_ES - companies 
+# Dolibarr language file - ca_ES - companies
 CHARSET=UTF-8
 ErrorCompanyNameAlreadyExists=El nom de l'empresa %s ja existeix. Indiqui altre.
 ErrorPrefixAlreadyExists=El prefix %s ja existeix. Indiqui altre.
@@ -70,6 +70,7 @@ Phone=Telèfon
 PhonePro=Teléf. treball
 PhonePerso=Telèf. particular
 PhoneMobile=Mòbil
+No_Email=No enviar e-mails massius
 Fax=Fax
 Zip=Codi postal
 Town=Població
@@ -373,7 +374,7 @@ UniqueThirdParties=Total de tercers únics
 InActivity=Actiu
 ActivityCeased=Tancat
 ActivityStateFilter=Estat d'activitat
-# Monkey
+# Monkey=undefined
 MonkeyNumRefModelDesc=Retorna un número sota el format %syymm-nnnn per als codis de clients  i %syymm-nnnn per als codis dels proveïdors, on yy és l'any, mm el mes i nnnn un comptador seqüencial sense ruptura i sense tornar a 0.
-# Leopard
+# Leopard=undefined
 LeopardNumRefModelDesc=Codi de client/proveïdor lliure sense verificació. Pot ser modificat en qualsevol moment.

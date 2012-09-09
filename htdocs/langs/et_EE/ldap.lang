@@ -29,11 +29,11 @@ LDAPFieldFirstSubscriptionDate=Esiteks tellimuse kuupäev
 LDAPFieldFirstSubscriptionAmount=Esimene liitumisleping summa
 LDAPFieldLastSubscriptionDate=Last tellimise kuupäev
 LDAPFieldLastSubscriptionAmount=Last märkimissummast
-SynchronizeDolibarr2Ldap=Sünkroonida kasutaja (Dolibarr -&gt; LDAP)
+SynchronizeDolibarr2Ldap=Sünkroonida kasutaja (Dolibarr -> LDAP)
 UserSynchronized=Kasutaja sünkroniseeritud
 GroupSynchronized=Group sünkroniseeritud
 MemberSynchronized=Liikmesriigid sünkroniseeritud
 ContactSynchronized=Võta sünkroniseeritud
-ForceSynchronize=Force sünkroonimine Dolibarr -&gt; LDAP
+ForceSynchronize=Force sünkroonimine Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Lugemine ebaõnnestus LDAP andmebaasi. Vaata LDAP moodul setup ja andmebaasi kättesaadavust.
 // STOP - Lines generated via autotranslator.php tool (2012-02-29 22:37:34).

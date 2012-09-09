@@ -1,17 +1,17 @@
-# Dolibarr language file - pt_PT - exports
+﻿# Dolibarr language file - pt_PT - exports
 CHARSET=UTF-8
 ExportsArea=Área de Exportação
 ImportArea=Área de Importação
 NewExport=Nova Exportação
 NewImport=Nova Importação
-ExportableDatas=Conjunto de dados exportaveis
-ImportableDatas=Conjunto de dados importaveis
+ExportableDatas=Conjunto de dados exportáveis
+ImportableDatas=Conjunto de dados importáveis
 SelectExportDataSet=Escolha um conjunto predefinido de dados que deseje exportar...
 SelectExportFields=Escolha os campos que devem exportar-se, ou escolha um perfil de exportação predefinido
 SaveExportModel=Guardar este perfil de exportação assim pode reutiliza-lo posteriormente...
 ExportModelName=Nome do perfil de exportação
 ExportModelSaved=Perfil de exportação guardado com o nome de <b>%s</b>.
-ExportableFields=Campos Exportaveis
+ExportableFields=Campos Exportáveis
 ExportedFields=Campos a Exportar
 DatasetToExport=Conjunto de dados a exportar
 Dataset=Conjunto de Dados
@@ -19,9 +19,9 @@ ChooseFieldsOrdersAndTitle=Escolha a ordem dos campos...
 FieldsOrder=Ordem dos Campos
 FieldsTitle=Título Campos
 ChooseExportFormat=Escolha o formato de exportação
-NowClickToGenerateToBuildExportFile=Agora, faça click em "Gerar" para gerar o fichero exportação...
-AvailableFormats=Formatos Disponiveis
-LibraryUsed=Libraria Utilizada
+NowClickToGenerateToBuildExportFile=Agora, faça click em "Gerar" para gerar o ficheiro exportação...
+AvailableFormats=Formatos Disponíveis
+LibraryUsed=Livraria Utilizada
 LibraryVersion=Versão
 Step=Passo
 FormatedImport=Assistente de Importação
@@ -30,22 +30,22 @@ FormatedImportDesc2=O primeiro passo consiste em escolher o tipo de dado que dev
 FormatedExport=Assistente de Exportação
 FormatedExportDesc1=Esta área permite realizar exportações personalizadas dos dados mediante um ajudante que evita ter conhecimentos técnicos de Dolibarr.
 FormatedExportDesc2=O primeiro passo consiste em escolher um dos conjuntos de dados predefinidos, a continuação escolher os campos que quer exportar para o ficheiro e em que ordem.
-FormatedExportDesc3=Uma vez seleccionados os dados, é possivel escolher o formato do ficheiro de exportação gerado.
+FormatedExportDesc3=Uma vez seleccionados os dados, é possível escolher o formato do ficheiro de exportação gerado.
 Sheet=Folha
-NoImportableData=Não existe tipo de dados importavel (não existe nenhum módulo com definições de dados importavel activado)
+NoImportableData=Não existe tipo de dados importável (não existe nenhum módulo com definições de dados importável activado)
 FileSuccessfullyBuilt=Ficheiro de exportação gerado
 
 
 // START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
 // Reference language: en_US
 SelectImportDataSet=Escolha de dados que pretende importar ...
-SelectImportFields=Escolha campos que deseja importar, ou escolha um perfil predefinido importação
+SelectImportFields=Escolha os campos que deseja importar, ou escolha um perfil predefinido importação
 SaveImportModel=Guarde este perfil de importação, se pretender reutilizá-la mais tarde ...
 ImportModelName=Importar nome do perfil
 ImportModelSaved=Importar perfil guardado em <b>nome %s.</b>
 ImportableFields=Importável campos
 ImportedFields=Campos importados
-DatasetToImport=Dataset para importar
+DatasetToImport=Selecção de dados para importar
 LibraryShort=Biblioteca
 SQLUsedForExport=Pedido de SQL usada para construir exportação arquivo
 LineId=Id da linha
@@ -68,30 +68,30 @@ FieldsInTargetDatabase=Alvo Dolibarr em campos de dados
 
 // START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
 // Reference language: en_US -> pt_PT
-NotImportedFields=Os campos de origem não arquivo importado
-NoDiscardedFields=Nenhum campo no arquivo de origem são descartados
+NotImportedFields=Os campos não importados
+NoDiscardedFields=Nenhum campo no arquivo de origem foi descartado
 FieldOrder=Ordem do Campo
 FieldTitle=Campo título
 DownloadEmptyExample=Download exemplo de fonte de arquivo vazio
-ChooseFormatOfFileToImport=Escolha o formato de arquivo para usar como formato de arquivo de importação clicando no %s picto para selecioná-lo ...
-SourceFileFormat=formato de arquivo de origem
+ChooseFormatOfFileToImport=Escolha o formato de arquivo para usar como formato de arquivo de importação clicando no %s picto para seleccioná-lo ...
+SourceFileFormat=Formato de arquivo de origem
 Field=Campo
 NoFields=Nenhum campo
-MoveField=Move %s campo número da coluna
-ExampleOfImportFile=Example_of_import_file
+MoveField=Mover %s campo número da coluna
+ExampleOfImportFile=Examplo_de_importação_ficheiro
 SaveImportProfile=Salvar este perfil de importação
-ErrorImportDuplicateProfil=Falha ao salvar este perfil de importação com este nome. Um perfil existente já existe com este nome.
+ErrorImportDuplicateProfil=Falha ao salvar este perfil de importação com este nome. Um perfil já existe com este nome.
 ImportSummary=Importação de resumo da configuração
-TablesTarget=tabelas Targeted
-FieldsTarget=domínios orientados
-TableTarget=tabela Targeted
-FieldTarget=campo alvejado
-FieldSource=campo da Fonte
+TablesTarget=Tabelas alvo
+FieldsTarget=Domínios orientados
+TableTarget=Tabela alvo
+FieldTarget=Campo alvo
+FieldSource=Campo da Fonte
 DoNotImportFirstLine=Não importar primeira linha do arquivo de origem
 NbOfSourceLines=Número de linhas no arquivo de origem
-NowClickToTestTheImport=Verifique os parâmetros de importação que você definiu. Se eles estiverem corretos, clique no botão <b>&quot;%s&quot;</b> para iniciar uma simulação do processo de importação (dados não serão alterados em seu banco de dados, é apenas uma simulação para o momento) ...
+NowClickToTestTheImport=Verifique os parâmetros de importação que você definiu. Se eles estiverem correctos, clique no botão <b>&quot;%s&quot;</b> para iniciar uma simulação do processo de importação (dados não serão alterados em seu banco de dados, é apenas uma simulação para o momento) ...
 RunSimulateImportFile=Inicie a simulação de importação
-FieldNeedSource=Este se sente no banco de dados requerem uma fonte de dados de arquivo
+FieldNeedSource=Este campo da base de dados requere uma fonte de dados de arquivo
 SomeMandatoryFieldHaveNoSource=Alguns campos obrigatórios não têm nenhuma fonte de dados de arquivo
 InformationOnSourceFile=Informações sobre a fonte de arquivo
 InformationOnTargetTables=Informações sobre os campos de destino
@@ -100,29 +100,29 @@ SelectFormat=Escolha esse formato de arquivo de importação
 RunImportFile=Lançamento arquivo de importação
 NowClickToRunTheImport=Verifique o resultado da simulação de importação. Se tudo estiver ok, o lançamento de importação definitiva.
 DataLoadedWithId=Todos os dados serão carregados com o id de importação seguinte: <b>%s</b>
-ErrorMissingMandatoryValue=dados obrigatórios está vazio no arquivo de origem para <b>%s</b> campo.
+ErrorMissingMandatoryValue=Dados obrigatórios estão vazios no arquivo de origem para <b>%s</b> campo.
 TooMuchErrors=Há ainda outra fonte <b>%s</b> linhas com erros, mas a produção tem sido limitada.
 TooMuchWarnings=Há ainda outra fonte <b>%s</b> linhas com os avisos, mas a produção tem sido limitada.
-EmptyLine=linha em branco (serão descartados)
+EmptyLine=linha em branco (serão descartadas)
 CorrectErrorBeforeRunningImport=Primeiro, você deve corrigir todos os erros antes de executar a importação definitiva.
 YouCanUseImportIdToFindRecord=Você pode encontrar todos os registros importados em seu banco de dados de filtragem de <b>import_key</b> campo <b>= &quot;%s&quot;.</b>
 NbOfLinesOK=Número de linhas sem erros e sem avisos: <b>%s.</b>
 NbOfLinesImported=Número de linhas de importados com sucesso: <b>%s.</b>
 DataComeFromNoWhere=Valor para inserir vem do nada no arquivo fonte.
 DataComeFromFileFieldNb=Valor para inserir o número vem <b>%s</b> campo no arquivo fonte.
-DataComeFromIdFoundFromRef=Valor que vem de série <b>%s</b> campo de arquivo de origem será usado para encontrar id do objeto pai para usar <b>(%s</b> objet Assim, o que tem a ref. Partir do arquivo fonte deve existir em Dolibarr).
-DataIsInsertedInto=Dados provenientes de arquivo de origem será inserido no campo seguinte:
-DataIDSourceIsInsertedInto=A identificação do objeto pai encontrado usando os dados no arquivo de origem, será inserido no campo seguinte:
+DataComeFromIdFoundFromRef=Valor que vem de série <b>%s</b> campo de arquivo de origem será usado para encontrar id do objecto pai para usar <b>(%s</b> objecto Assim, o que tem a ref. Partir do arquivo fonte deve existir em Dolibarr).
+DataIsInsertedInto=Dados provenientes de arquivo de origem será inserido no seguinte campo:
+DataIDSourceIsInsertedInto=A identificação do objecto pai encontrado usando os dados no arquivo de origem, será inserido no campo seguinte:
 SourceRequired=Valor dos dados é obrigatória
 SourceExample=Exemplo de valores de dados possíveis
-CSVFormatDesc=<b>Comma Separated Value</b> formato de arquivo (. Csv). <br> Este é um formato de arquivo texto onde os campos são separados por separador [%s]. Se o separador é encontrado dentro de um conteúdo do campo, o campo é arredondado por volta de caráter [%s]. caractere de escape para fugir personagem redonda é [%s].
+CSVFormatDesc=<b>Comma Separated Value</b> formato de arquivo (. Csv). <br> Este é um formato de arquivo texto onde os campos são separados por separador [%s]. Se o separador é encontrado dentro de um conteúdo do campo, o campo é arredondado por volta de carácter [%s]. Caractere de escape para fugir personagem redonda é [%s].
 // STOP - Lines generated via autotranslator.php tool (2010-09-04 01:53:34).
 
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
 // Reference language: en_US -> pt_PT
 FileWasImported=O arquivo foi importado com <b>%s</b> número.
-DataComeFromIdFoundFromCodeId=O código que vem <b>%s</b> campo de número de arquivo de origem será usado para encontrar ID do objeto pai para usar (Assim, o código de arquivo de origem deve existir em <b>%s</b> dictionnary). Note que se você souber id, você também pode usá-lo em arquivo de origem em vez de código. Importação deve funcionar em ambos os casos.
+DataComeFromIdFoundFromCodeId=O código que vem <b>%s</b> campo de número de arquivo de origem será usado para encontrar ID do objecto pai para usar (Assim, o código de arquivo de origem deve existir em <b>%s</b> dictionnary). Note que se você souber id, você também pode usá-lo em arquivo de origem em vez de código. Importação deve funcionar em ambos os casos.
 DataCodeIDSourceIsInsertedInto=O ID da linha foi encontrado o pai a partir do código, será inserido no campo seguinte:
 ExampleAnyRefFoundIntoElement=Qualquer ref encontrado para <b>%s</b> elemento
 ExampleAnyCodeOrIdFoundIntoDictionnary=Qualquer código (ou id) encontrado em <b>%s</b> dictionnary

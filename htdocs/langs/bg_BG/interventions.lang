@@ -1,0 +1,47 @@
+/*
+ * Language code: bg_BG
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-09-08 17:16:45
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
+// Reference language: en_US -> bg_BG
+CHARSET=UTF-8
+Intervention=Намеса
+Interventions=Интервенциите
+InterventionCard=Интервенция карта
+NewIntervention=Нов намеса
+AddIntervention=Добави намеса
+ListOfInterventions=Списък на интервенциите
+EditIntervention=Редактиране намеса
+ActionsOnFicheInter=Действия на интервенцията
+LastInterventions=Последно интервенции %s
+AllInterventions=Всички интервенции
+CreateDraftIntervention=Създаване на проект
+CustomerDoesNotHavePrefix=Клиентът няма префикс
+InterventionContact=Интервенция контакт
+DeleteIntervention=Изтриване на интервенция
+ValidateIntervention=Проверка на интервенция
+ModifyIntervention=Промяна на интервенция
+DeleteInterventionLine=Изтрий ред намеса
+ConfirmDeleteIntervention=Сигурен ли сте, че искате да изтриете тази интервенция?
+ConfirmValidateIntervention=Сигурен ли сте, че искате да проверите тази интервенция?
+ConfirmModifyIntervention=Сигурен ли сте, че искате да промените тази интервенция?
+ConfirmDeleteInterventionLine=Сигурен ли сте, че искате да изтриете тази линия намеса?
+NameAndSignatureOfInternalContact=Име и подпис на намеса:
+NameAndSignatureOfExternalContact=Име и подпис на клиента:
+DocumentModelStandard=Стандартен документ модел за интервенции
+ClassifyBilled=Класифицирайте &quot;Таксуваната&quot;
+StatusInterInvoiced=Таксува
+RelatedInterventions=Подобни интервенции
+ShowIntervention=Покажи намеса
+TypeContact_fichinter_internal_INTERREPFOLL=Представител проследяване намеса
+TypeContact_fichinter_internal_INTERVENING=Намеса
+TypeContact_fichinter_external_BILLING=Контакт с клиента за фактуриране
+TypeContact_fichinter_external_CUSTOMER=Проследяване на контакт с клиентите
+ArcticNumRefModelDesc1=Generic номер на модела
+ArcticNumRefModelError=Неуспешно да активирате
+PacificNumRefModelDesc1=Връщане Numero с формат %syymm-NNNN, където YY е годината, mm е месец и NNNN е последователност, без почивка и няма връщане назад 0
+PacificNumRefModelError=Интервенционната карта започва с $ syymm вече съществува и не е съвместим с този модел на последователност. Извадете го или го преименувайте да се активира този модул.
+// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:40:55).

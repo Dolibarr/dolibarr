@@ -127,7 +127,7 @@ print '<tr><td width="30%" class="notopnoleft" valign="top">';
 print '<form action="liste.php" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="search">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("SearchAMember").'</td>';
 print "</tr>\n";
@@ -178,16 +178,6 @@ if ($conf->use_javascript_ajax)
         $SommeD+=isset($MembersResiliated[$key])?$MembersResiliated[$key]:0;
         $i++;
     }
-
-    /*
-    $dataseries=array();
-    $dataseries[]=array('label'=>$langs->trans("MembersStatusToValid"),'data'=>(int) $dataval['draft']);
-    $dataseries[]=array('label'=>$langs->trans("MenuMembersNotUpToDate"),'data'=>(int) $dataval['notuptodate']);
-    $dataseries[]=array('label'=>$langs->trans("MenuMembersUpToDate"),'data'=>(int) $dataval['uptodate']);
-    $dataseries[]=array('label'=>$langs->trans("MembersStatusResiliated"),'data'=>(int) $dataval['resiliated']);
-    $data=array('series'=>$dataseries,'seriestype'=>array('bar','bar','bar','bar'),'xlabel'=>$datalabels);
-    dol_print_graph('stats2',300,180,$data,1,'barline');
-    */
 
     $dataseries=array();
     $dataseries[]=array('label'=>$langs->trans("MenuMembersNotUpToDate"),'data'=>round($SommeB));

@@ -1,0 +1,34 @@
+/*
+ * Language code: bg_BG
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-09-08 17:16:45
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
+// Reference language: en_US -> bg_BG
+CHARSET=UTF-8
+Delivery=Доставка
+Deliveries=Доставките
+DeliveryCard=Доставка карта
+DeliveryOrder=Доставка за
+DeliveryOrders=Поръчките за доставка
+DeliveryDate=Дата на доставка
+DeliveryDateShort=Доставки. дата
+CreateDeliveryOrder=Генериране на ордер за доставка
+QtyDelivered=Количество доставени
+SetDeliveryDate=Дата на изпращане
+ValidateDeliveryReceipt=Одобряване на разписка
+ValidateDeliveryReceiptConfirm=Сигурен ли сте, че искате да проверите тази разписка?
+DeleteDeliveryReceipt=Изтриване на разписка
+DeleteDeliveryReceiptConfirm=Сигурен ли сте, че искате да изтриете <b>%s</b> разписка?
+DeliveryMethod=Начин
+TrackingNumber=Проследяващ номер
+DeliveryNotValidated=Доставката не валидирани
+NameAndSignature=Име и подпис:
+ToAndDate=To___________________________________ на ____ / _____ / __________
+GoodStatusDeclaration=Стоките са получили по-горе в добро състояние,
+Deliverer=Избавител:
+Sender=Подател
+Recipient=Получател
+// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:42:31).

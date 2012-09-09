@@ -1,4 +1,4 @@
-# Dolibarr language file - pt_PT - suppliers
+﻿# Dolibarr language file - pt_PT - suppliers
 CHARSET=UTF-8
 Suppliers=Fornecedores
 Supplier=Fornecedor
@@ -24,10 +24,10 @@ RefSupplierShort=Ref. Fornecedor
 ExportDataset_fournisseur_1=Facturas de Fornecedores e Linhas de Factura
 ExportDataset_fournisseur_2=Facturas Fornecedores e Pagamentos
 ApproveThisOrder=Aprovar este Pedido
-ConfirmApproveThisOrder=¿Está seguro de querer aprovar este pedido?
+ConfirmApproveThisOrder=Está seguro de querer aprovar este pedido?
 DenyingThisOrder=Negar este Pedido
-ConfirmDenyingThisOrder=¿Está seguro de querer negar este pedido?
-ConfirmCancelThisOrder=¿Está seguro de querer cancelar este pedido?
+ConfirmDenyingThisOrder=Está seguro de querer negar este pedido?
+ConfirmCancelThisOrder=Está seguro de querer cancelar este pedido?
 AddCustomerOrder=Criar Pedido do Cliente
 AddCustomerInvoice=Criar Factura para o Cliente
 AddSupplierOrder=Criar Pedido a Fornecedor

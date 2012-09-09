@@ -1,4 +1,4 @@
-# Dolibarr language file - pt_PT - deliveries
+﻿# Dolibarr language file - pt_PT - deliveries
 CHARSET=UTF-8
 Delivery=Envio
 Deliveries=Envios
@@ -11,7 +11,7 @@ CreateDeliveryOrder=Gerar Ordem de Entrega
 QtyDelivered=Quant. Enviada
 SetDeliveryDate=Indicar a Data de Envío
 ValidateDeliveryReceipt=Confirmar a Nota de Entrega
-ValidateDeliveryReceiptConfirm=¿Está seguro de que deseja confirmar esta entrega?
+ValidateDeliveryReceiptConfirm=Está seguro de que deseja confirmar esta entrega?
 DeliveryMethod=Método de Envio
 TrackingNumber=Nº de tracking
 # merou PDF model

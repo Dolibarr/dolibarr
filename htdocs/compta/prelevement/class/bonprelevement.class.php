@@ -340,7 +340,7 @@ class BonPrelevement extends CommonObject
             if ($error == 0)
             {
                 $facs = array();
-                $facs = $this->_get_list_factures();
+                $facs = $this->getListInvoices();
 
                 $num=count($facs);
                 for ($i = 0; $i < $num; $i++)
@@ -429,7 +429,7 @@ class BonPrelevement extends CommonObject
                         $facs = array();
                         $amounts = array();
 
-                        $facs = $this->_get_list_factures();
+                        $facs = $this->getListInvoices();
 
                         $num=count($facs);
                         for ($i = 0; $i < $num; $i++)
@@ -587,7 +587,7 @@ class BonPrelevement extends CommonObject
      *
      *	@return	array id of invoices
      */
-    private function _get_list_factures()
+    private function getListInvoices()
     {
         global $conf;
 
@@ -625,7 +625,7 @@ class BonPrelevement extends CommonObject
         }
         else
         {
-            dol_syslog(get_class($this)."::_get_list_factures Erreur");
+            dol_syslog(get_class($this)."::getListInvoices Erreur");
         }
 
         return $arr;

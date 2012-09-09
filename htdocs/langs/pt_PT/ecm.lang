@@ -1,4 +1,4 @@
-# Dolibarr language file - pt_PT - ecm
+﻿# Dolibarr language file - pt_PT - ecm
 CHARSET=UTF-8
 MenuECM=Documentos
 DocsMine=Os Meus Documentos
@@ -34,19 +34,19 @@ ECMSectionWasRemoved=A pasta <b>%s</b> foi eliminada
 ECMDocumentsSection=Documento da Secção
 ECMSearchByKeywords=Procurar por Palavras Chave
 ECMSearchByEntity=Procurar por Objecto
-ECMSectionOfDocuments=Pastas de Documetos
+ECMSectionOfDocuments=Pastas de Documentos
 ECMTypeManual=Manual
 ECMTypeAuto=Automático
 ECMDocsByThirdParties=Documentos Associados a Terceiros
-ECMDocsByProposals=Documentos Assoicados a Orçamentos
+ECMDocsByProposals=Documentos Associcados a Orçamentos
 ECMDocsByOrders=Documentos Associados a Pedidos
 ECMDocsByContracts=Documentos Associados a Contratos
 ECMDocsByInvoices=Documentos Associados a Facturas
 ECMDocsByProducts=Documentos ligados a produtos
-ECMNoDirectoryYet=Não foi Criada a Pasta
+ECMNoDirecotyYet=Não foi Criada a Pasta
 ShowECMSection=Mostrar Pasta
 DeleteSection=Apagar Pasta
-ConfirmDeleteSection=¿Confirma o eliminar da pasta <b>%s</b>?
+ConfirmDeleteSection=Confirma o eliminar da pasta <b>%s</b>?
 ECMDirectoryForFiles=Pasta relativa para ficheiros
 CannotRemoveDirectoryContainsFiles=Não se pode eliminar porque contem ficheiros
 ECMFileManager=Explorador de Ficheiros

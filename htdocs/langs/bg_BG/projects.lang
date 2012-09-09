@@ -1,0 +1,113 @@
+/*
+ * Language code: bg_BG
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-09-08 17:16:45
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
+// Reference language: en_US -> bg_BG
+CHARSET=UTF-8
+Project=Проект
+Projects=Проекти
+SharedProject=Всички
+PrivateProject=Контакти на проекта
+MyProjectsDesc=Тази гледна точка е ограничена до проекти, които са за контакт (какъвто и да е тип).
+ProjectsPublicDesc=Този възглед представя всички проекти, по които могат да се четат.
+ProjectsDesc=Този възглед представя всички проекти (потребителски разрешения ви даде разрешение да видите всичко).
+MyTasksDesc=Тази гледна точка е ограничена до проекти или задачи, които са контакт (какъвто и да е тип).
+TasksPublicDesc=Този възглед представя всички проекти и задачи, които може да чете.
+TasksDesc=Този възглед представя всички проекти и задачи (потребителски разрешения ви даде разрешение да видите всичко).
+Myprojects=Моите проекти
+ProjectsArea=Проекти област
+NewProject=Нов проект
+AddProject=Добави проект
+DeleteAProject=Изтриване на проект
+DeleteATask=Изтриване на задача
+ConfirmDeleteAProject=Сигурен ли сте, че искате да изтриете този проект?
+ConfirmDeleteATask=Сигурен ли сте, че искате да изтриете тази задача?
+OfficerProject=Директор проект
+LastProjects=Последни проекти %s
+AllProjects=Всички проекти
+ProjectsList=Списък на проектите
+ShowProject=Покажи проект
+SetProject=Задайте проект
+NoProject=Нито един проект няма определени или собственост
+NbOpenTasks=Nb отворени задачи
+NbOfProjects=Nb на проекти
+TimeSpent=Времето, прекарано
+TimesSpent=Времето, прекарано
+RefTask=Реф. задача
+LabelTask=Label задача
+NewTimeSpent=Времето, прекарано на
+MyTimeSpent=Времето, прекарано
+MyTasks=Моите задачи
+Tasks=Задачи
+Task=Задача
+NewTask=Нова задача
+AddTask=Добавяне на задача
+AddDuration=Добави продължителността
+Activity=Дейност
+Activities=Задачите / дейностите
+MyActivity=Моята дейност
+MyActivities=Моите задачи / дейности
+MyProjects=Моите проекти
+DurationEffective=Ефективната продължителност
+Progress=Напредък
+Time=Време
+ListProposalsAssociatedProject=Списък на търговските предложения, свързани с проекта
+ListOrdersAssociatedProject=Списък на клиентски поръчки, свързани с проекта
+ListInvoicesAssociatedProject=Списък на фактури на клиентите, свързани с проекта
+ListPredefinedInvoicesAssociatedProject=Списък на предварително фактури на клиентите, свързани с проект
+ListSupplierOrdersAssociatedProject=Списък на поръчките на доставчика, свързана с проекта
+ListSupplierInvoicesAssociatedProject=Списък на фактурите на доставчика, свързана с проекта
+ListContractAssociatedProject=Списък на договори, свързани с проекта
+ListFichinterAssociatedProject=Списък на интервенциите, свързани с проекта
+ListTripAssociatedProject=Списък на пътувания и разходи, свързани с проекта
+ListActionsAssociatedProject=Списък на събития, свързани с проекта
+ActivityOnProjectThisWeek=Дейности в проекта тази седмица
+ActivityOnProjectThisMonth=Дейност по проект, този месец
+ActivityOnProjectThisYear=Дейности в проекта тази година
+ChildOfTask=Дете на проекта / задачата
+NotOwnerOfProject=Не собственик на този частен проект
+AffectedTo=Присъжда се
+CantRemoveProject=Този проект не може да бъде премахнато, тъй като е посочен от някои други предмети (фактура, заповеди или други). Виж препоръка раздела.
+ValidateProject=Одобряване на проект в
+ConfirmValidateProject=Сигурен ли сте, че искате да проверите този проект?
+CloseAProject=Затвори проект
+ConfirmCloseAProject=Сигурен ли сте, че искате да затворите този проект?
+ReOpenAProject=Проект с отворен
+ConfirmReOpenAProject=Сигурен ли сте, че искате да отвори отново този проект?
+ProjectContact=ПРОЕКТА Контакти
+ActionsOnProject=Събития по проекта
+YouAreNotContactOfProject=Вие не сте контакт на този частен проект
+DeleteATimeSpent=Изтриване на времето, прекарано
+ConfirmDeleteATimeSpent=Сигурен ли сте, че искате да изтриете това време, прекарано?
+DoNotShowMyTasksOnly=Вижте също задачи, които не са разпределени за мен
+ShowMyTasksOnly=Виж само задачи, възложени за мен
+TaskRessourceLinks=Ressources
+ProjectsDedicatedToThisThirdParty=Проекти, насочени към тази трета страна
+NoTasks=Няма задачи за този проект
+LinkedToAnotherCompany=Свързано с друга трета страна
+TaskIsNotAffectedToYou=Задачи, които не са разпределени за вас
+ErrorTimeSpentIsEmpty=Изразходваното време е празна
+ThisWillAlsoRemoveTasks=Това действие ще изтрие всички задачи на проекта <b>(%s</b> задачи в момента) и всички входове на времето, прекарано.
+IfNeedToUseOhterObjectKeepEmpty=Ако някои обекти (фактура, поръчка, ...), принадлежащи към друга трета страна, трябва да бъдат свързани с проекта за създаване, запазете тази празна да има проект е мулти трети страни.
+CloneProject=Clone проект
+CloneTasks=Клонингите задачи
+CloneContacts=Клонингите контакти
+CloneNotes=Клонингите бележки
+CloneFiles=Clone присъедини файлове
+ConfirmCloneProject=Сигурен ли сте, че за клониране на този проект?
+ProjectReportDate=Промяна задача дата според началната дата на проекта
+ErrorShiftTaskDate=Невъзможно е да се смени датата на задача в съответствие с нова дата за началото на проекта
+TypeContact_project_internal_PROJECTLEADER=Ръководител на проекта
+TypeContact_project_external_PROJECTLEADER=Ръководител на проекта
+TypeContact_project_internal_CONTRIBUTOR=Сътрудник
+TypeContact_project_external_CONTRIBUTOR=Сътрудник
+TypeContact_project_task_internal_TASKEXECUTIVE=Задача изпълнителен
+TypeContact_project_task_external_TASKEXECUTIVE=Задача изпълнителен
+TypeContact_project_task_internal_CONTRIBUTOR=Сътрудник
+TypeContact_project_task_external_CONTRIBUTOR=Сътрудник
+DocumentModelBaleine=Доклад за цялостния проект модел (logo. ..)
+// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:17:10).

@@ -63,7 +63,7 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
  * Search form
  */
 $var=false;
-print '<table class="noborder" width="100%">';
+print '<table class="noborder nohover" width="100%">';
 print '<form method="post" action="liste.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchOrder").'</td></tr>';

@@ -1,4 +1,4 @@
-# Dolibarr language file - pt_PT - interventions
+﻿# Dolibarr language file - pt_PT - interventions
 CHARSET=UTF-8
 Intervention=Intervenção
 Interventions=Intervenções
@@ -15,10 +15,10 @@ InterventionContact=Contacto Intervenção
 DeleteIntervention=Eliminar Intervenção
 ValidateIntervention=Confirmar Intervenção
 DeleteInterventionLine=Eliminar Linha de Intervenção
-ConfirmDeleteIntervention=¿Está seguro de querer eliminar esta intervenção?
-ConfirmValidateIntervention=¿Está seguro de querer Confirmar esta intervenção?
-ConfirmModifyIntervention=¿Está seguro de querer modificar esta intervenção?
-ConfirmDeleteInterventionLine=¿Está seguro de querer eliminar esta linha?
+ConfirmDeleteIntervention=Está seguro de querer eliminar esta intervenção?
+ConfirmValidateIntervention=Está seguro de querer Confirmar esta intervenção?
+ConfirmModifyIntervention=Está seguro de querer modificar esta intervenção?
+ConfirmDeleteInterventionLine=Está seguro de querer eliminar esta linha?
 NameAndSignatureOfInternalContact=Nome e Assinatura do Participante:
 NameAndSignatureOfExternalContact=Nome e Assinatura do Cliente:
 InterventionCardsAndInterventionLines=Fichas e Linhas de Intervenção

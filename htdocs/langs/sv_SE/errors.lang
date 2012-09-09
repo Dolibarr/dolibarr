@@ -68,7 +68,7 @@ ErrorRefAlreadyExists=Ref används för att skapa finns redan.
 ErrorPleaseTypeBankTransactionReportName=Skriv namn bank kvitto där transaktionen rapporteras (Format ÅÅÅÅMM eller ÅÅÅÅMMDD)
 ErrorRecordHasChildren=Misslyckades med att radera poster eftersom det har några barns.
 WarningConfFileMustBeReadOnly=Varning, konfigurationsfilen <b>(htdocs / conf / conf.php)</b> kan din skrivas över av den webbserver. Detta är ett allvarligt säkerhetshål. Ändra behörigheter på fil för att vara i skrivskyddat läge för operativsystem som användare som används av webbservern. Om du använder Windows och FAT format för din disk, måste du veta att det här filsystemet inte är möjligt att lägga till behörigheter för filen, så kan inte vara helt säker.
-ErrorModuleRequireJavascript=Javascript måste inte avaktiveras att ha denna funktion fungerar. Aktivera / inaktivera Javascript, gå till menyn Hem-&gt; Inställningar-&gt; Display.
+ErrorModuleRequireJavascript=Javascript måste inte avaktiveras att ha denna funktion fungerar. Aktivera / inaktivera Javascript, gå till menyn Hem-> Inställningar-> Display.
 ErrorPasswordsMustMatch=Båda skrivit lösenord måste matcha varandra
 ErrorWrongValueForField=Felaktigt värde för antalet <b>%s</b> området (värde <b>&quot;%s&quot;</b> inte matchar regex regel <b>%s)</b>
 ErrorsOnXLines=Fel på <b>%s</b> källrader
@@ -82,7 +82,7 @@ ErrorQtyTooLowForThisSupplier=Kvantitet för låg för denna leverantör eller n
 ErrorFailedToSendPassword=Misslyckades med att skicka lösenord
 ErrorPasswordDiffers=Lösenord skiljer skriver du in dem igen.
 ErrorForbidden=Åtkomst nekad. <br> Du försöker få tillgång till en sida, område eller funktion utan att en bestyrkt session eller som inte får ditt användarnamn.
-ErrorForbidden2=Tillstånd för den här inloggningen kan definieras av din Dolibarr administratör från menyn %s-&gt; %s.
+ErrorForbidden2=Tillstånd för den här inloggningen kan definieras av din Dolibarr administratör från menyn %s-> %s.
 ErrorForbidden3=Det verkar som Dolibarr inte används genom en bestyrkt session. Ta en titt på Dolibarr setup dokumentation för att veta hur man ska hantera verifieringar (htaccess, mod_auth eller andra ...).
 ErrorNoImagickReadimage=Funktion imagick_readimage finns inte i denna PHP. Ingen förhandsgranskning kan vara tillgängliga. Administratörer kan inaktivera den här fliken från menyn Setup - Display.
 ErrorRecordAlreadyExists=Record finns redan
@@ -97,7 +97,7 @@ ErrorLoginDoesNotExists=Användaren med inloggning <b>%s</b> kunde inte hittas.
 ErrorLoginHasNoEmail=Denna användare har inga e-postadress. Process avbruten.
 ErrorBadValueForCode=Dåligt värde typer för kod. Försök igen med ett nytt värde ...
 WarningInstallDirExists=Varning, installera katalog <b>(htdocs / install)</b> fortfarande existerar. Detta är ett allvarligt säkerhetshål. Du bör avlägsnas så fort som möjligt.
-WarningUntilDirRemoved=Alla säkerhetsvarningar (synlig av admin-användare) förblir aktiv så länge sårbarheten är närvarande (eller att konstant MAIN_REMOVE_INSTALL_WARNING läggs i Start-&gt; Other Setup).
+WarningUntilDirRemoved=Alla säkerhetsvarningar (synlig av admin-användare) förblir aktiv så länge sårbarheten är närvarande (eller att konstant MAIN_REMOVE_INSTALL_WARNING läggs i Start-> Other Setup).
 
 // START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
 // Reference language: en_US -> sv_SE

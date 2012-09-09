@@ -1,0 +1,101 @@
+/*
+ * Language code: bg_BG
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-09-08 17:16:45
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
+// Reference language: en_US -> bg_BG
+CHARSET=UTF-8
+Commercial=Търговски
+CommercialArea=Търговска площ
+CommercialCard=Търговския карта
+CustomerArea=Клиентите област
+Customer=Клиент
+Customers=Клиентите
+Prospect=Перспектива
+Prospects=Перспективи
+DeleteAction=Изтриване на събитие / задача
+NewAction=Ново събитие / задача
+AddAction=Добавяне на събитие / задача
+AddAnAction=Добавяне на събитие / задача
+AddActionRendezVous=Добави Rendez-Vous събитие
+Rendez-Vous=Среща
+ConfirmDeleteAction=Сигурен ли сте, че искате да изтриете това събитие / задача?
+CardAction=Събитие карта
+PercentDone=Процент пълна
+ActionOnCompany=Задача за компанията
+ActionOnContact=Задача за контакт
+TaskRDV=Срещи
+TaskRDVWith=Среща с %s
+ShowTask=Покажи задача
+ShowAction=Покажи събитие
+ActionsReport=Събития докладва
+ThirdPartiesOfSaleRepresentative=Thirdparties с търговски представител
+SalesRepresentative=Търговски представител
+SalesRepresentatives=Търговски представители
+SalesRepresentativeFollowUp=Търговски представител (продължение)
+SalesRepresentativeSignature=Търговски представител (подпис)
+CommercialInterlocutor=Търговския събеседник
+ErrorWrongCode=Грешен код
+NoSalesRepresentativeAffected=Няма особен продажби засегнати представител
+ShowCustomer=Покажи клиента
+ShowProspect=Покажи перспектива
+ListOfProspects=Списък на перспективите
+ListOfCustomers=Списък на клиенти
+LastDoneTasks=Последно %s приключи задачи
+LastRecordedTasks=Последния регистриран задачи
+LastActionsToDo=Последни %s най-старите дейности, които не са завършени
+DoneAndToDoActionsFor=Завършен и да направите събития за %s
+DoneAndToDoActions=Завършен и да направите събития
+DoneActions=Завършени събития
+DoneActionsFor=Завършени събития за %s
+ToDoActions=Непълни събития
+ToDoActionsFor=Непълни събития за %s
+SendPropalRef=Изпратете търговски %s предложение
+SendOrderRef=Изпрати ред %s
+StatusNotApplicable=Не е приложимо
+StatusActionToDo=За да направите
+StatusActionDone=Пълен
+MyActionsAsked=Събития, на които са записани
+MyActionsToDo=Събития трябва да направя
+MyActionsDone=Събития засегнати да ме
+StatusActionInProcess=В процес
+TasksHistoryForThisContact=Събития за този контакт
+LastProspectDoNotContact=Не се свържете
+LastProspectNeverContacted=Никога контакт
+LastProspectToContact=За да се свържете
+LastProspectContactInProcess=Контакт в процес
+LastProspectContactDone=Свържи се направи
+DateActionPlanned=Дата на събитието, планирано за
+DateActionDone=Дата на събитието направи
+ActionAskedBy=Събитие докладвани от
+ActionAffectedTo=Събитие засегнати в
+ActionDoneBy=Събитие, извършена от
+ActionUserAsk=Съобщените от
+ErrorStatusCantBeZeroIfStarted=Ако се попълва поле <b>&quot;Дата&quot;,</b> действието се стартира (или завършен), така че <b>&quot;Статус&quot;</b> Полето не може да бъде 0%.
+ActionAC_TEL=Телефонно обаждане
+ActionAC_FAX=Изпращане на факс
+ActionAC_PROP=Изпрати предложение по пощата
+ActionAC_EMAIL=Изпрати E-mail
+ActionAC_RDV=Срещи
+ActionAC_FAC=Изпращане на клиента фактура по пощата
+ActionAC_REL=Изпращане на клиента фактура по пощата (напомняне)
+ActionAC_CLO=Близо
+ActionAC_EMAILING=Изпратете съобщение маса
+ActionAC_COM=Изпратете заявка на клиента по пощата
+ActionAC_SHIP=Изпрати доставка по пощата
+ActionAC_SUP_ORD=Изпращане на доставчика за по пощата
+ActionAC_SUP_INV=Изпращане на доставчика фактура по пощата
+ActionAC_OTH=Друг
+Stats=Статистика на продажбите
+CAOrder=Обемът на продажбите (валидирани поръчки)
+FromTo=от %s да %s
+MargeOrder=Полета (валидирани поръчки)
+RecapAnnee=Резюме на годината
+NoData=Няма данни
+StatusProsp=Prospect статус
+DraftPropals=Проектът на търговски предложения
+SearchPropal=Търсене на търговско предложение
+// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:49:24).

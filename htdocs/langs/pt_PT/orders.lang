@@ -1,4 +1,4 @@
-# Dolibarr language file - pt_PT - orders
+﻿# Dolibarr language file - pt_PT - orders
 CHARSET=UTF-8
 OrdersArea=Area de Pedidos de clientes
 SuppliersOrdersArea=Área de Pedidos a Fornecedores
@@ -42,7 +42,7 @@ StatusOrderApproved=Aprovado
 StatusOrderRefused=Reprovado
 StatusOrderReceivedPartially=Recebido Parcialmente
 StatusOrderReceivedAll=Recebido
-DraftOrWaitingApproved=Rascunho aprovado mas ainda não controlado
+DraftOrWaitingApproved=Rascunho aprovado mas ainda não aprovado
 DraftOrWaitingShipped=Rascunho o validado mas ainda não expedido
 MenuOrdersToBill=Pedidos por Facturar
 SearchOrder=Procurar um Pedido
@@ -52,7 +52,7 @@ ShipProduct=Enviar Produto
 Discount=Desconto
 CreateOrder=Criar Pedido
 RefuseOrder=Rejeitar o Pedido
-ApproveOrder=Aceptar o Pedido
+ApproveOrder=Aceitar o Pedido
 ValidateOrder=Confirmar o Pedido
 DeleteOrder=Eliminar o pedido
 CancelOrder=Anular o Pedido
@@ -74,12 +74,12 @@ NumberOfOrdersByMonth=Número de Pedidos por Mês
 AmountOfOrdersByMonthHT=Valor total de pedidos por mês (sem IVA)
 ListOfOrders=Lista de Pedidos
 CloseOrder=Fechar Pedido
-ConfirmCloseOrder=Tem certeza de que deseja fechar este pedido? Quando uma pedido é fechada, ela só pode ser cobrada.
-ConfirmCloseOrderIfSending=Tem certeza de que deseja fechar este pedido? Veve fechar no somente quando todos os transportes marítimos são feitos.
-ConfirmDeleteOrder=¿Está seguro de querer eliminar este pedido?
-ConfirmValidateOrder=¿Está seguro de querer Confirmar este pedido sobre a referencia <b>%s</b> ?
-ConfirmCancelOrder=¿Está seguro de querer anular este pedido?
-ConfirmMakeOrder=¿Está seguro de querer confirmar este pedido em data de<b>%s</b> ?
+ConfirmCloseOrder=Tem certeza de que deseja fechar este pedido? Quando um pedido é fechado, ela só pode ser cobrado.
+ConfirmCloseOrderIfSending=Tem certeza de que deseja fechar este pedido? 
+ConfirmDeleteOrder=Está seguro de querer eliminar este pedido?
+ConfirmValidateOrder=Está seguro de querer Confirmar este pedido sobre a referencia <b>%s</b> ?
+ConfirmCancelOrder=Está seguro de querer anular este pedido?
+ConfirmMakeOrder=Está seguro de querer confirmar este pedido em data de<b>%s</b> ?
 GenerateBill=Facturar
 ClassifyBilled=Classificar "Facturado"
 ComptaCard=Ficha Contabilidade
@@ -95,7 +95,7 @@ ActionsOnOrder=Acções sobre o pedido
 NoArticleOfTypeProduct=Não existe artigos de tipo 'produto' e por tanto expedidos em este pedido
 OrderMode=Método de pedido
 AuthorRequest=Autor/Solicitante
-UseCustomerContactAsOrderRecipientIfExist=Utilizar direcção do contacto do cliente de seguimento cliente se está definido em vez do Terceiro como destinatario dos pedidos
+UseCustomerContactAsOrderRecipientIfExist=Utilizar morada do contacto do cliente de seguimento se o cliente está definido, em vez do Terceiro como destinatario dos pedidos
 RunningOrders=Pedidos em Curso
 UserWithApproveOrderGrant=Utilizadores autorizados a aprovar os pedidos.
 PaymentOrderRef=Pagamento de Pedido %s
@@ -120,8 +120,8 @@ PDFEinsteinDescription=Modelo de orçamento completo (logo...)
 // START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
 // Reference language: en_US
 OrderLine=Ordem linha
-CloneOrder=Clone fim
-ConfirmCloneOrder=Tem certeza de que deseja clonar este <b>fim %s?</b>
+CloneOrder=Copiar pedido
+ConfirmCloneOrder=Tem certeza de que deseja copiar este <b>fim %s?</b>
 // STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
 
 
@@ -132,8 +132,8 @@ OrderToProcess=Para iniciar o processo
 DispatchSupplierOrder=Para receber %s fornecedor
 TypeContact_commande_internal_SALESREPFOLL=Representante ordem do cliente seguimento
 TypeContact_commande_internal_SHIPPING=Representante transporte seguimento
-TypeContact_commande_external_BILLING=contacto na factura do Cliente
-TypeContact_commande_external_SHIPPING=contato com o transporte do cliente
+TypeContact_commande_external_BILLING=Contacto na factura do Cliente
+TypeContact_commande_external_SHIPPING=Contato com o transporte do cliente
 TypeContact_commande_external_CUSTOMER=Atendimento ao cliente seguinte ordem-up
 TypeContact_order_supplier_internal_SALESREPFOLL=Representante para fornecedor seguimento
 TypeContact_order_supplier_internal_SHIPPING=Representante transporte seguimento
@@ -148,9 +148,9 @@ PDFEdisonDescription=Um modelo simples ordem
 // Reference language: en_US -> pt_PT
 SuppliersOrdersToProcess=Ordens do Fornecedor para processar
 StatusOrderSentShort=No processo
-ShippingExist=Um carregamento existe
-UnvalidateOrder=Unvalidate fim
-ConfirmUnvalidateOrder=Tem certeza de que deseja restaurar <b>%s</b> ordem ao estado projecto?
+ShippingExist=Um existe um envio
+UnvalidateOrder=Pedido inválido
+ConfirmUnvalidateOrder=Tem certeza de que deseja restaurar <b>%s</b> pedido ao estado projecto?
 OrderByMail=Correio
 OrderByFax=Fax
 OrderByEMail=EMail

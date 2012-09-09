@@ -974,6 +974,7 @@ class FactureFournisseur extends CommonInvoice
      *	@param    	string	$price_base_type 	HT ou TTC
      *	@param		int		$type				Type of line (0=product, 1=service)
      *  @param      int		$rang            	Position of line
+     *  @param		int		$notrigger			Disable triggers
      *	@return    	int             			>0 if OK, <0 if KO
      */
     function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0, $rang=-1, $notrigger=false)
@@ -1062,6 +1063,7 @@ class FactureFournisseur extends CommonInvoice
      * @param	  	int		$info_bits			Miscellanous informations of line
      * @param		int		$type				Type of line (0=product, 1=service)
      * @param     	double	$remise_percent  	Pourcentage de remise de la ligne
+     *  @param		int		$notrigger			Disable triggers
      * @return    	int           				<0 if KO, >0 if OK
      */
     function updateline($id, $label, $pu, $vatrate, $txlocaltax1=0, $txlocaltax2=0, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0, $remise_percent=0, $notrigger=false)

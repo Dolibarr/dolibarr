@@ -1,0 +1,20 @@
+/*
+ * Language code: bg_BG
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-09-08 17:16:45
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
+// Reference language: en_US -> bg_BG
+CHARSET=UTF-8
+Shop=Магазин
+ShopWeb=Web Shop
+LastOrders=Последни поръчки
+OnStandBy=В режим на готовност
+TreatmentInProgress=Лечението е в ход
+LastCustomers=Последно клиенти
+OSCommerceShop=OSCommerce магазин
+OSCommerce=OSCommerce
+AddProd=Продавайте онлайн
+// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:43:33).

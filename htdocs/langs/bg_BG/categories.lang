@@ -1,0 +1,103 @@
+/*
+ * Language code: bg_BG
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-09-08 17:16:45
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
+// Reference language: en_US -> bg_BG
+CHARSET=UTF-8
+Category=Категория
+Categories=Категории
+Rubrique=Категория
+Rubriques=Категории
+categories=категории
+TheCategorie=Категорията
+NoCategoryYet=Не категория на това създаде тип
+In=В
+AddIn=Добави в
+modify=промяна
+Classify=Класифицирам
+CategoriesArea=Категории област
+ProductsCategoriesArea=Продукти / услуги категории площ
+SuppliersCategoriesArea=Доставчици категории област
+CustomersCategoriesArea=Клиентите категории област
+ThirdPartyCategoriesArea=Трети страни категории
+MembersCategoriesArea=Потребители категории област
+MainCats=Основни категории
+SubCats=Подкатегории
+CatStatistics=Статистика
+CatList=Списък на категории
+AllCats=Всички категории
+ViewCat=Преглед на категория
+NewCat=Добавяне на категория
+NewCategory=Нова категория
+ModifCat=Промяна на категория
+CatCreated=Категория създаден
+CreateCat=Създаване на категория
+CreateThisCat=Създаване тази категория
+ValidateFields=Проверка на полетата
+NoSubCat=Подкатегория.
+SubCatOf=Подкатегория
+FoundCats=Намерени категории
+FoundCatsForName=Категории намерени за името:
+FoundSubCatsIn=Подкатегории намерени в категорията
+ErrSameCatSelected=Сте избрали същата категория няколко пъти
+ErrForgotCat=Забравили сте да изберете категорията
+ErrForgotField=Забравили сте да информира полета
+ErrCatAlreadyExists=Това име вече се използва
+AddProductToCat=Добавете този продукт към дадена категория?
+ImpossibleAddCat=Невъзможно е да добавите категория
+ImpossibleAssociateCategory=Невъзможно е да се сдружават категория
+WasAddedSuccessfully=<b>%s</b> е добавен успешно.
+ObjectAlreadyLinkedToCategory=Element е вече свързана към тази категория.
+CategorySuccessfullyCreated=Тази категория %s е добавен с успех.
+ProductIsInCategories=Продукт / услуга притежава следните категории
+SupplierIsInCategories=Трето лице притежава следните доставчици категории
+CompanyIsInCustomersCategories=Това трето лице притежава следните клиенти / перспективи категории
+CompanyIsInSuppliersCategories=Това трето лице притежава следните доставчици категории
+MemberIsInCategories=Този член притежава следните членове категории
+ProductHasNoCategory=Този продукт / услуга не е в всички категории
+SupplierHasNoCategory=Този доставчик не е в никакви категории
+CompanyHasNoCategory=Тази фирма не е в никакви категории
+MemberHasNoCategory=Този участник не е в никакви категории
+ClassifyInCategory=Се класифицира в категорията
+NoneCategory=Никой
+NotCategorized=Без категория
+CategoryExistsAtSameLevel=Тази категория вече съществува с този код
+ReturnInProduct=Обратно към продукта / услугата карта
+ReturnInSupplier=Обратно към доставчика карта
+ReturnInCompany=Обратно към клиент / перспективата карта
+ContentsVisibleByAll=Съдържанието ще се вижда от всички
+ContentsVisibleByAllShort=Съдържание, видими от всички
+ContentsNotVisibleByAllShort=Съдържанието не са видими от всички
+CategoriesTree=Категории дърво
+DeleteCategory=Изтриване на категория
+ConfirmDeleteCategory=Сигурен ли сте, че искате да изтриете тази категория?
+RemoveFromCategory=Премахване на връзката с Категория
+RemoveFromCategoryConfirm=Сигурен ли сте, че искате да премахнете връзката между сделката и категория?
+NoCategoriesDefined=Не е определена категория
+SuppliersCategoryShort=Доставчици категория
+CustomersCategoryShort=Клиентите категория
+ProductsCategoryShort=Продукти категория
+MembersCategoryShort=Потребители категория
+SuppliersCategoriesShort=Доставчици категории
+CustomersCategoriesShort=Клиенти категории
+CustomersProspectsCategoriesShort=Custo / Prosp. категории
+ProductsCategoriesShort=Продукти категории
+MembersCategoriesShort=Потребители категории
+ThisCategoryHasNoProduct=Тази категория не съдържа всеки продукт.
+ThisCategoryHasNoSupplier=Тази категория не съдържа никакви доставчика.
+ThisCategoryHasNoCustomer=Тази категория не съдържа всеки клиент.
+ThisCategoryHasNoMember=Тази категория не съдържа всеки член.
+AssignedToCustomer=Целеви клиент
+AssignedToTheCustomer=Целеви на клиента
+InternalCategory=Вътрешен категория
+CategoryContents=Категория съдържание
+CategId=Категория ID
+CatSupList=Списък на доставчика категории
+CatCusList=Списък на потребителите / перспективата категории
+CatProdList=Списък на продуктите категории
+CatMemberList=Списък на членовете категории
+// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:37:58).

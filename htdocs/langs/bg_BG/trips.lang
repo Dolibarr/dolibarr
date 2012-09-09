@@ -1,0 +1,31 @@
+/*
+ * Language code: bg_BG
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-09-08 17:16:45
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
+// Reference language: en_US -> bg_BG
+CHARSET=UTF-8
+Trip=Екскурзия
+Trips=Екскурзии
+TripsAndExpenses=Екскурзии и разноски
+TripsAndExpensesStatistics=Екскурзии и разходи статистика
+TripCard=Екскурзия карта
+AddTrip=Добави пътуване
+ListOfTrips=Списък на пътуванията
+ListOfFees=Списък на такси
+NewTrip=Нов пътуване
+CompanyVisited=Фирма / фондация посети
+Kilometers=Км
+FeesKilometersOrAmout=Сума или км
+DeleteTrip=Изтриване на пътуване
+ConfirmDeleteTrip=Сигурен ли сте, че искате да изтриете това пътуване?
+TF_OTHER=Друг
+TF_LUNCH=Обяд
+TF_TRIP=Екскурзия
+ListTripsAndExpenses=Списък на пътувания и разходи
+ExpensesArea=Екскурзии и разходи площ
+SearchATripAndExpense=Търсене на пътуване и разходи
+// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:49:29).

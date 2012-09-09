@@ -1,0 +1,18 @@
+/*
+ * Language code: bg_BG
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-09-08 17:16:45
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
+// Reference language: en_US -> bg_BG
+CHARSET=UTF-8
+OSCommerce=OS Commerce
+OSCommerceSetup=OS Commerce модул за настройка
+OSCommerceSetupSaved=OS Commerce настройка спаси
+OSCommerceServer=OS Commerce хост сървъра / IP
+OSCommerceDatabaseName=OS Commerce името на базата данни
+OSCommercePrefix=OS Commerce таблици префикс
+OSCommerceUser=OS Commerce база данни за вход
+// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:49:05).

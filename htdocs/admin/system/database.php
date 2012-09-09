@@ -55,6 +55,13 @@ print '<tr '.$bc[1].'><td width="300">'.$langs->trans("DBStoringCharset").'</td>
 print '<tr '.$bc[0].'><td width="300">'.$langs->trans("DBSortingCharset").'</td><td>'.$db->getDefaultCollationDatabase().'</td></tr>'."\n";
 print '</table>';
 
+// Tables
+print '<br>';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Tables").'</td></tr>'."\n";
+print '<tr '.$bc[0].'><td width="300"><a href="'.DOL_URL_ROOT.'/admin/system/database-tables.php?mainmenu=home">'.$langs->trans("List").'</a></td></tr>'."\n";
+print '</table>';
+
 
 $base=0;
 $sqls = array();
@@ -86,7 +93,7 @@ else
 		print '<br>';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td width="300">'.$langs->trans("Parameter").'</td>';
+		print '<td width="300">'.$langs->trans("Parameters").'</td>';
 		print '<td>'.$langs->trans("Value").'</td>';
 		print '</tr>'."\n";
 

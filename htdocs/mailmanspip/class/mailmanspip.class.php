@@ -53,6 +53,7 @@ class MailmanSpip
 
     /**
      * Function used to check if SPIP is enabled on the system
+     *
      * @return boolean
      */
     function isSpipEnabled()
@@ -67,6 +68,7 @@ class MailmanSpip
 
     /**
      * Function used to check if the SPIP config is correct
+     *
      * @return boolean
      */
     function checkSpipConfig()
@@ -84,7 +86,8 @@ class MailmanSpip
 
     /**
      * Function used to connect to SPIP
-     * @return boolean|DoliDB
+     *
+     * @return boolean|DoliDB		Boolean of DoliDB
      */
     function connectSpip()
     {
@@ -94,7 +97,7 @@ class MailmanSpip
         {
             return $resource;
         }
-        
+
         dol_syslog('Error when connecting to SPIP '.ADHERENT_SPIP_SERVEUR.' '.ADHERENT_SPIP_USER.' '.ADHERENT_SPIP_PASS.' '.ADHERENT_SPIP_DB, LOG_ERR);
 
         return false;
@@ -102,9 +105,10 @@ class MailmanSpip
 
     /**
      * Function used to connect to Mailman
-     * @param  object $object Object with the data
-     * @param  string $url    Mailman URL to be called with patterns
-     * @return boolean|string
+     *
+     * @param  object 	$object 	Object with the data
+     * @param  string 	$url    	Mailman URL to be called with patterns
+     * @return mixed				Boolean or string
      */
     function callMailman($object, $url)
     {
@@ -133,11 +137,11 @@ class MailmanSpip
         curl_setopt($ch, CURLOPT_FAILONERROR, true);
         @curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
         curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-        
+
         $result = curl_exec($ch);
         dol_syslog('result curl_exec='.$result);
 
-        //An error was found, we store it in $this->error for later 
+        //An error was found, we store it in $this->error for later
         if ($result === false || curl_errno($ch) > 0)
         {
             $this->error = curl_errno($ch).' '.curl_error($ch);
@@ -187,7 +191,7 @@ class MailmanSpip
             else $this->error = 'BadSPIPConfiguration';
         }
         else $this->error = 'SPIPNotEnabled';
-        
+
         return 0;
     }
 
@@ -226,7 +230,7 @@ class MailmanSpip
             else $this->error = 'BadSPIPConfiguration';
         }
         else $this->error = 'SPIPNotEnabled';
-        
+
         return 0;
     }
 

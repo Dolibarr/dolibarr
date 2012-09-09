@@ -1,25 +1,25 @@
 # Dolibarr language file - pt_PT - paybox 
 CHARSET=UTF-8
 PayBoxSetup=Configuração do módulo PayBox
-PayBoxDesc=Este módulo oferece uma página de pagagamento através do fornecedor <a href="http://www.paybox.com" target="_blank">Paybox</a> para realizar qualquer pagamento ou um pagamento em relação com um objeto Dolibarr (facturas, pedidos ...)
+PayBoxDesc=Este módulo oferece uma página de pagamento através do fornecedor <a href="http://www.paybox.com" target="_blank">Paybox</a> para realizar qualquer pagamento ou um pagamento em relação a um objecto Dolibarr (facturas, pedidos ...)
 FollowingUrlAreAvailableToMakePayments=As seguintes URL estão disponiveis para permitir a um cliente efectuar um pagamento
-WelcomeOnPaymentPage=Bienvenido a nuestros servicios de pago en línea
-ThisScreenAllowsYouToPay=Esta pantalla le permite hacer su pago en línea destinado a %s.
-ThisIsInformationOnPayment=Aquí está la información sobre el pago a realizar
+WelcomeOnPaymentPage=Bem-vindo aos nossos serviços de pagamento online
+ThisScreenAllowsYouToPay=Esta tela permite que você faça o seu pagamento online destinado a %s.
+ThisIsInformationOnPayment=Aqui estão as informações de pagamento para fazer
 ToComplete=A completar
-YourEMail=E-Mail de confirmación de pago
+YourEMail=E-Mail de confirmação de pagamento
 Creditor=Beneficiario
-PaymentCode=Código de pago
-PayBoxDoPayment=Continuar el pago con tarjeta
-YouWillBeRedirectedOnPayBox=Va a ser redirigido a la página segura de  Paybox para indicar su tarjeta de crédito
-PleaseBePatient=Espere unos segundos
+PaymentCode=Código de pagamento
+PayBoxDoPayment=Continuar pagamento com cartão
+YouWillBeRedirectedOnPayBox=Você será redirecionado para a página Paybox não se esqueça de indicar o seu cartão de crédito
+PleaseBePatient=Espere uns segundos
 Continue=Continuar
-ToOfferALinkForOnlinePaymentOnOrder=URL que ofrece una interfaz de pago en línea %s basada en el importe de un pedido de cliente
-ToOfferALinkForOnlinePaymentOnInvoice=URL que ofrece una interfaz de pago en línea %s basada en el importe de una factura
-ToOfferALinkForOnlinePaymentOnContractLine=URL que ofrece una interfaz de pago en línea %s basada en el importe de una línea de contrato
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL que ofrece una interfaz de pago en línea %s basada en un importe libre
-YouCanAddTagOnUrl=También puede añadir el parámetro url <b>&tag=<i>value</i></b>  para cualquiera de estas direcciones (obligatorio sólamente para el pago libre) para ver su propio código de comentario de pago.
-SetupPayBoxToHavePaymentCreatedAutomatically=Configure su url PayBox <b>%s</b> para que el pago se cree automáticamente al Confirmar.
+ToOfferALinkForOnlinePaymentOnOrder=URL que fornece pagamento on-line interface% s com base no valor de um pedido de venda
+ToOfferALinkForOnlinePaymentOnInvoice=URL que fornece pagamento on-line interface% s com base no valor de um projeto de lei
+ToOfferALinkForOnlinePaymentOnContractLine=URL que fornece linha de pagamento  interface% com base na quantidade de uma linha de contrato
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL que fornece pagamento on-line %s interface baseada numa quantidade livre
+YouCanAddTagOnUrl=Você também pode adicionar o parâmetro url <b>&tag=<i>value</i></b>  para o endereço (exigida apenas para o pagamento livre) para ver o seu código próprio, observação do pagamento.
+SetupPayBoxToHavePaymentCreatedAutomatically=Configure o seu url PayBox <b>%s</b> para que o pagamento seja criado automaticamente ao confirmar.
 
 
 // START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).

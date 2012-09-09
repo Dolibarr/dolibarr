@@ -17,6 +17,9 @@
 
 DROP TABLE llx_product_ca;
 
+ALTER TABLE llx_menu MODIFY COLUMN fk_mainmenu   varchar(24);
+ALTER TABLE llx_menu MODIFY COLUMN fk_leftmenu   varchar(24);
+
 ALTER TABLE llx_societe ADD COLUMN idprof6 varchar(128) after idprof5;
 ALTER TABLE llx_societe DROP COLUMN fk_secteur;
 ALTER TABLE llx_societe DROP COLUMN description;

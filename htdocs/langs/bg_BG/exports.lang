@@ -1,0 +1,127 @@
+/*
+ * Language code: bg_BG
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-09-08 17:16:45
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
+// Reference language: en_US -> bg_BG
+CHARSET=UTF-8
+ExportsArea=Износът площ
+ImportArea=Внос област
+NewExport=Нов износ
+NewImport=Нов внос
+ExportableDatas=Изнасяни набор от данни
+ImportableDatas=Се внасят набор от данни
+SelectExportDataSet=Изберете набор от данни, които искате да експортирате ...
+SelectImportDataSet=Изберете набор от данни, който искате да импортирате ...
+SelectExportFields=Изберете полетата, които искате да експортирате, или да изберете предварително дефинирана Profil износ
+SelectImportFields=Изберете файла източник полета, които искате да импортирате и тяхното поле в базата данни от тях се движат нагоре и надолу с анкерни %s или изберете предварително дефинирана Profil внос:
+NotImportedFields=Области на файла източник не са внесени
+SaveExportModel=Запази този профил за износ, ако смятате да го използвате отново по-късно ...
+SaveImportModel=Запази този профил за внос, ако смятате да го използвате отново по-късно ...
+ExportModelName=Износ името на профила
+ExportModelSaved=Export профила записват под името <b>%s.</b>
+ExportableFields=Изнасяни полета
+ExportedFields=Износът на полета
+ImportModelName=Име Внос профил
+ImportModelSaved=Внос профила спаси под името <b>%s.</b>
+ImportableFields=Се внасят полета
+ImportedFields=Внесените полета
+DatasetToExport=Dataset за износ
+DatasetToImport=Импортиране на файл в масив от данни
+NoDiscardedFields=Не се изхвърлят полета във файла източник
+Dataset=Dataset
+ChooseFieldsOrdersAndTitle=Изберете полета за ...
+FieldsOrder=Полетата за
+FieldsTitle=Полетата заглавие
+FieldOrder=Поле за
+FieldTitle=Заглавие
+ChooseExportFormat=Изберете формат за експортиране
+NowClickToGenerateToBuildExportFile=Сега, изберете файловия формат, в комбо кутия и кликнете върху &quot;Генериране&quot; за изграждане на файл за износ ...
+AvailableFormats=Налични формати
+LibraryShort=Библиотека
+LibraryUsed=Библиотека използва
+LibraryVersion=Версия
+Step=Стъпка
+FormatedImport=Import assistant
+FormatedImportDesc1=This area allows to import personalized data, using an assistant to help you in process without technical knowledge.
+FormatedImportDesc2=First step is to choose a king of data you want to load, then file to load, then to choose which fields you want to load.
+FormatedExport=Export assistant
+FormatedExportDesc1=This area allows to export personalized data, using an assistant to help you in process without technical knowledge.
+FormatedExportDesc2=First step is to choose a predefined dataset, then to choose which fields you want in your result files, and which order.
+FormatedExportDesc3=When data to export are selected, you can define output file format you want to export your data to.
+Sheet=Лист
+NoImportableData=Не се внасят данни (без модул с определенията, за да се позволи на импортирането на данни)
+FileSuccessfullyBuilt=Износ генерирания файл
+SQLUsedForExport=SQL Заявка използвани за изграждане на износно досие
+LineId=Id на линия
+LineDescription=Описание на линия
+LineUnitPrice=Единичната цена на линия
+LineVATRate=ДДС Цена на линия
+LineQty=Количество за линия
+LineTotalHT=Сума нетно от данък за съответствие
+LineTotalTTC=Сума с данък линия
+LineTotalVAT=Размер на ДДС за линия
+TypeOfLineServiceOrProduct=Вид на линията (0 = продукт, 1 = услуга)
+FileWithDataToImport=Файл с данни за внос
+FileToImport=Източник файл, за да импортирате
+FileMustHaveOneOfFollowingFormat=Файл за импортиране трябва да има следния формат
+DownloadEmptyExample=Изтеглете пример за празна файла източник
+ChooseFormatOfFileToImport=Изберете формат на файла, за да се използва като формат на файла за импортиране, като кликнете върху %s икони за да го изберете ...
+ChooseFileToImport=Качване на файл и след това кликнете върху %s икони, за да изберете файл като източник на внос файл ...
+SourceFileFormat=Изходния формат на файла
+FieldsInSourceFile=Полетата в файла източник
+FieldsInTargetDatabase=Целеви области в Dolibarr база данни (* = задължително)
+Field=Област
+NoFields=Не полета
+MoveField=Преместете поле %s броя на колоните
+ExampleOfImportFile=Example_of_import_file
+SaveImportProfile=Запиши този профил за внос
+ErrorImportDuplicateProfil=Грешка при запазване на този профил за внос с това име. Съществуващ профил с това име вече съществува.
+ImportSummary=Обобщение Внос настройка
+TablesTarget=Целеви маси
+FieldsTarget=Целеви области
+TableTarget=Насочени маса
+FieldTarget=Целева областта
+FieldSource=Източник областта
+DoNotImportFirstLine=Да не се внасят първия ред на изходния файл
+NbOfSourceLines=Брой на линиите във файла източник
+NowClickToTestTheImport=Проверете внос параметрите, които сте задали. Ако те са правилни, кликнете върху бутона <b>&quot;%s&quot;,</b> за да започне симулация на процеса на импортиране (няма данни ще се промени във вашата база данни, това е само симулация за момента) ...
+RunSimulateImportFile=Стартиране на симулация внос
+FieldNeedSource=Това Полета в базата данни изискват данни от файла източник
+SomeMandatoryFieldHaveNoSource=Някои от задължителните полета не са източник от файл с данни
+InformationOnSourceFile=Информация за файла източник
+InformationOnTargetTables=Информация за целевите области
+SelectAtLeastOneField=Включете поне едно поле източник в колоната на полета за износ
+SelectFormat=Изберете този файлов формат за внос
+RunImportFile=Стартиране на файл от вноса
+NowClickToRunTheImport=Проверете резултат на внос симулация. Ако всичко е наред, стартиране на окончателен внос.
+DataLoadedWithId=Всички данни ще бъдат натоварени със следния идентификационен номер внос: <b>%s</b>
+ErrorMissingMandatoryValue=Задължителни данни в файла източник за полеви <b>%s</b> е празна.
+TooMuchErrors=Все още <b>%s</b> други линии код с грешки, но продукцията е ограничена.
+TooMuchWarnings=Все още <b>%s</b> други линии източник с предупреждения, но продукцията е ограничена.
+EmptyLine=Празен ред (ще бъдат отхвърлени)
+CorrectErrorBeforeRunningImport=Трябва първо да поправи всички грешки, преди да пуснете окончателен внос.
+FileWasImported=Файла е внесен с цифровите <b>%s.</b>
+YouCanUseImportIdToFindRecord=Можете да намерите всички внесени записи във вашата база данни чрез филтриране на областта <b>import_key = '%s &quot;.</b>
+NbOfLinesOK=Брой на линии с грешки и без предупреждения: <b>%s.</b>
+NbOfLinesImported=Брой на линиите успешно внесени: <b>%s.</b>
+DataComeFromNoWhere=Стойност да вмъкнете идва от нищото в изходния файл.
+DataComeFromFileFieldNb=Стойност да вмъкнете идва от <b>%s</b> номер в полето файла източник.
+DataComeFromIdFoundFromRef=Стойност, която идва от <b>%s</b> номер на полето на изходния файл ще бъдат използвани за намиране ID на родител обект да използвате (Така Objet <b>%s,</b> че има код от файла източник трябва да съществува в Dolibarr).
+DataComeFromIdFoundFromCodeId=Код, който идва от <b>%s</b> номер на полето на изходния файл ще бъдат използвани за намиране ID на родител обект да използвате (Така кода от файла източник трябва да съществува в dictionnary <b>%s).</b> Имайте предвид, че ако знаете номер, също може да го използвате в изходния файл, вместо на код. Внос трябва да работи и в двата случая.
+DataIsInsertedInto=Данни, идващи от файла източник, ще се добавя в следните области:
+DataIDSourceIsInsertedInto=Идентификацията на родителския обект, намерен с помощта на данни във файла източник, ще се добавя в следните области:
+DataCodeIDSourceIsInsertedInto=ID на родител ред от кода, ще се включат в следните области:
+SourceRequired=Стойността на данните е задължително
+SourceExample=Пример за възможно стойността на данните
+ExampleAnyRefFoundIntoElement=Всеки код за елемент <b>%s</b>
+ExampleAnyCodeOrIdFoundIntoDictionnary=Всеки код (ID) в dictionnary <b>%s</b>
+CSVFormatDesc=<b>Разделени със запетаи</b> формат <b>стойност</b> файл (CSV). <br> Това е формат текстов файл, където полетата са разделени със сепаратор [%s]. Ако сепаратор се намира във вътрешността съдържанието поле, поле се закръглява кръг характер [%s]. Бягство характер, за да избягат кръг характер е %s].
+Excel95FormatDesc=Файлов формат на <b>Excel</b> (XLS) <br> Това е роден Excel 95 формат (BIFF5).
+Excel2007FormatDesc=<b>Excel</b> файлов формат (XLSX) <br> Това е роден формат Excel 2007 (SpreadsheetML).
+TsvFormatDesc=<b>Tab раздяла</b> формат <b>стойност</b> файл (TSV) <br> Това е формат текстов файл, където полетата са разделени с табулатор [Tab].
+ExportFieldAutomaticallyAdded=Полеви <b>%s</b> добавят автоматично. Тя ще ви избягват да има подобни линии, които да бъдат третирани като дублирани записи (с тази област, добави всички Ligne ще притежава своя номер и ще се различават).
+// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:40:42).

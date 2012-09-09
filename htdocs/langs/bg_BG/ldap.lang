@@ -1,0 +1,39 @@
+/*
+ * Language code: bg_BG
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2012-09-08 17:16:45
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
+// Reference language: en_US -> bg_BG
+CHARSET=UTF-8
+DomainPassword=Парола за домейн
+YouMustChangePassNextLogon=Парола за потребителски <b>%s</b> за домейна <b>%s</b> трябва да бъдат променени.
+UserMustChangePassNextLogon=Потребителят трябва да смени паролата на домейна %s
+LdapUacf_NORMAL_ACCOUNT=Потребителски акаунт
+LdapUacf_DONT_EXPIRE_PASSWORD=Парола не изтича
+LdapUacf_ACCOUNTDISABLE=Акаунтът е забранен в областта %s
+LDAPInformationsForThisContact=Информация в LDAP база данни за този контакт
+LDAPInformationsForThisUser=Информация в LDAP база данни за този потребител
+LDAPInformationsForThisGroup=Информация в LDAP база данни за тази група
+LDAPInformationsForThisMember=Информация в LDAP база данни за този потребител
+LDAPAttribute=LDAP атрибут
+LDAPAttributes=LDAP атрибути
+LDAPCard=LDAP карта
+LDAPRecordNotFound=Запишете не се срещат в LDAP база данни
+LDAPUsers=Потребителите в LDAP база данни
+LDAPGroups=Групи в LDAP база данни
+LDAPFieldStatus=Статус
+LDAPFieldFirstSubscriptionDate=Първа абонамент дата
+LDAPFieldFirstSubscriptionAmount=Първа размера
+LDAPFieldLastSubscriptionDate=Последно абонамент дата
+LDAPFieldLastSubscriptionAmount=Последно размера
+SynchronizeDolibarr2Ldap=Синхронизирайте потребител (Dolibarr -> LDAP)
+UserSynchronized=Потребителят синхронизирани
+GroupSynchronized=Група синхронизирани
+MemberSynchronized=Държавите-синхронизирани
+ContactSynchronized=Свържи се синхронизират
+ForceSynchronize=Force синхронизиране Dolibarr -> LDAP
+ErrorFailedToReadLDAP=Неуспех при четенето на LDAP база данни. Проверете LDAP модул за настройка и достъпността на базата данни.
+// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:38:21).

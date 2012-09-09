@@ -102,6 +102,8 @@ SurfaceUnitm2=m2
 SurfaceUnitdm2=dm2
 SurfaceUnitcm2=cm2
 SurfaceUnitmm2=mm2
+SurfaceUnitfoot2=pie2
+SurfaceUnitinch2=pulgada2
 Volume=Volumen
 TotalVolume=Volumen total
 VolumeUnitm3=m3
@@ -164,6 +166,7 @@ AddFiles=Añadir archivos
 StartUpload=Transferir
 CancelUpload=Cancelar la transferencia
 FileIsTooBig=El archivo es demasiado grande
+PleaseBePatient=Rogamos espere unos instantes...
 ##### Calendar common #####
 AddCalendarEntry=Añadir entrada en el calendario
 NewCompanyToDolibarr=Empresa %s insertada en Dolibarr
