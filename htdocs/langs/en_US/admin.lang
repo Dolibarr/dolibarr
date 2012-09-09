@@ -1262,6 +1262,7 @@ DetailEnabled=Condition to show or not entry
 DetailRight=Condition to display unauthorized grey menus
 DetailLangs=Lang file name for label code translation
 DetailUser=Intern / Extern / All
+Target=Target
 DetailTarget=Target for links (_blank top open a new window)
 DetailLevel=Level (-1:top menu, 0:header menu, >0 menu and sub menu)
 ModifMenu=Menu change
