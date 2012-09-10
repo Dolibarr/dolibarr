@@ -1198,7 +1198,7 @@ class Form
                 $sql.=")";
             }
 
-            if (! empty($conf->global->MAIN_MODULE_BARCODE))
+            if (! empty($conf->barcode->enabled))
             {
                 $sql .= " OR p.barcode LIKE '".$filterkey."'";
             }
@@ -1448,7 +1448,7 @@ class Form
                 $sql.=" AND (pfp.ref_fourn LIKE '%".$filterkey."%' OR p.ref LIKE '%".$filterkey."%' OR p.label LIKE '%".$filterkey."%')";
             }
 
-            if (! empty($conf->global->MAIN_MODULE_BARCODE))
+            if (! empty($conf->barcode->enabled))
             {
                 $sql .= " OR p.barcode LIKE '".$filterkey."'";
             }
