@@ -2,6 +2,7 @@
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2011 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -164,7 +165,7 @@ if ($action == 'add')
         $menu->url=$_POST['url'];
         $menu->langs=$_POST['langs'];
         $menu->position=$_POST['position'];
-        $menu->enabled=$_POST['enabled'];
+        $menu->enabled=(int)$_POST['enabled'];
         $menu->perms=$_POST['perms'];
         $menu->target=$_POST['target'];
         $menu->user=$_POST['user'];
@@ -334,7 +335,10 @@ if ($action == 'create')
     print '</select></td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
 
     // Enabled
-    print '<tr><td>'.$langs->trans('Enabled').'</td><td><input type="text" size="60" name="enabled" value="'.$_POST["enabled"].'"></td><td>'.$langs->trans('DetailEnabled').'</td></tr>';
+    print '<tr><td>'.$langs->trans('Enabled').'</td><td><select class="flat" name="enabled">
+    <option value="0"'.(isset($_POST['enabled']) ? ($_POST['enabled'] == 0 ? 'selected="true"' : '') : 'selected="true"').'>'.$langs->trans('No').'</option>
+    <option value="1"'.(isset($_POST['enabled']) && ($_POST['enabled'] == 1) ? 'selected="true"' : '').'>'.$langs->trans('Yes').'</option>
+    </select></td><td>'.$langs->trans('DetailEnabled').'</td></tr>';
 
     // Perms
     print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" size="60" name="perms" value="'.$_POST["perms"].'"></td><td>'.$langs->trans('DetailRight').'</td></tr>';
@@ -414,7 +418,10 @@ elseif ($action == 'edit')
     print '</select></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
 
     // Enabled
-    print '<tr><td>'.$langs->trans('Enabled').'</td><td><input type="text" size="60" name="enabled" value="'.$menu->enabled.'"></td><td>'.$langs->trans('DetailEnabled').'</td></tr>';
+    print '<tr><td>'.$langs->trans('Enabled').'</td><td><select class="flat" name="enabled">
+    <option value="0"'.($menu->enabled == 0 ? 'selected="true"' : '').'>'.$langs->trans('No').'</option>
+    <option value="1"'.($menu->enabled == 1 ? 'selected="true"' : '').'>'.$langs->trans('Yes').'</option>
+    </select></td><td>'.$langs->trans('DetailEnabled').'</td></tr>';
 
     // Perms
     print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" size="60" name="perms" value="'.$menu->perms.'"></td><td>'.$langs->trans('DetailRight').'</td></tr>';

@@ -2,6 +2,7 @@
 -- Copyright (C) 2007      Patrick Raguin      <patrick.raguin@gmail.com>
 -- Copyright (C) 2007-2008 Laurent Destailleur <eldy@users.sourceforge.net>
 -- Copyright (C) 2009      Regis Houssin       <regis@dolibarr.fr>
+-- Copyright (C) 2012      Marcos García       <marcosgdf@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -38,7 +39,7 @@ CREATE TABLE llx_menu
 	langs         varchar(100),                     -- Lang file to load for translation
 	level         smallint,                         -- Deprecated. Not used.
 	perms         varchar(255),                     -- Condition to show enabled or disabled
-	enabled       varchar(255) NULL default '1',    -- Condition to show or hide
+	enabled       tinyint(1) UNSIGNED NULL default '1',    -- Condition to show or hide
 	usertype      integer NOT NULL default '0',     -- 0 if menu for all users, 1 for external only, 2 for internal only
 	tms           timestamp
 ) ENGINE=innodb;
