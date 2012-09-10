@@ -269,7 +269,9 @@ else	// Show
         if ($resql)
         {
             $obj=$db->fetch_object($resql);
-            $pdfformatlabel=$obj->label.' - '.round($obj->width).'x'.round($obj->height).' '.$obj->unit;
+            $paperKey = $langs->trans('PaperFormat'.$obj->code);
+            $unitKey = $langs->trans('SizeUnit'.$obj->unit);
+            $pdfformatlabel = ($paperKey == 'PaperFormat'.$obj->code ? $obj->label : $paperKey).' - '.round($obj->width).'x'.round($obj->height).' '.($unitKey == 'SizeUnit'.$obj->unit ? $obj->unit : $unitKey);
         }
     }
     print $pdfformatlabel;
