@@ -119,6 +119,7 @@ SizeUnitcm=cm
 SizeUnitmm=mm
 SizeUnitinch=pulgada
 SizeUnitfoot=pie
+SizeUnitpoint=punto
 BugTracker=Incidencias
 SendNewPasswordDesc=Este formulario permite enviar una nueva contraseña. Se enviará al e-mail del usuario<br>La modificación de la contraseña no será efectiva hasta que el usuario haga clic en el link de confirmación incluido en este e-mail.<br>Supervise su correo.
 BackToLoginPage=Volver a la página de conexión

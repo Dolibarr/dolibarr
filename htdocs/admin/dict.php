@@ -883,7 +883,7 @@ if ($id)
                                     $valuetoshow=($key != "Country".strtoupper($obj->pays_code))?$obj->pays_code." - ".$key:$obj->pays;
                                 }
                             }
-                            else if ($fieldlist[$field]=='recuperableonly' || $fieldlist[$field]=='fdm') {
+                            else if ($fieldlist[$field]=='recuperableonly' || $fieldlist[$field]=='fdm' || $fieldlist[$field] == 'deductible') {
                                 $valuetoshow=yn($valuetoshow);
                             }
                             else if ($fieldlist[$field]=='price' || preg_match('/^amount/i',$fieldlist[$field])) {
@@ -969,6 +969,13 @@ if ($id)
                             else if ($fieldlist[$field]=='unicode') {
                             	$valuetoshow = getCurrencySymbol($obj->code);
                             }
+
+                            else if (($fieldlist[$field] == 'unit') && ($tabname[$_GET['id']] == MAIN_DB_PREFIX.'c_paper_format'))
+                            {
+                            	$key = $langs->trans('SizeUnit'.strtolower($obj->unit));
+                                $valuetoshow = ($obj->code && ($key != 'SizeUnit'.strtolower($obj->unit))) ? $key : $obj->$fieldlist[$field];
+                            }
+
                             if ($showfield) print '<td>'.$valuetoshow.'</td>';
                         }
                     }
@@ -1140,7 +1147,7 @@ function fieldList($fieldlist,$obj='',$tabname='')
             print 'user<input type="hidden" name="type" value="user">';
             print '</td>';
         }
-        elseif ($fieldlist[$field] == 'recuperableonly' || $fieldlist[$field] == 'fdm') {
+        elseif ($fieldlist[$field] == 'recuperableonly' || $fieldlist[$field] == 'fdm' || $fieldlist[$field] == 'deductible') {
             print '<td>';
             print $form->selectyesno($fieldlist[$field],(! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:''),1);
             print '</td>';
@@ -1159,7 +1166,12 @@ function fieldList($fieldlist,$obj='',$tabname='')
         }
         elseif ($fieldlist[$field]=='unit') {
             print '<td>';
-            print $form->selectarray('unit',array('mm','cm','point','inch'),(! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:''),0,0,1);
+            print $form->selectarray('unit', array(
+            	'mm' => $langs->trans('SizeUnitmm'),
+            	'cm' => $langs->trans('SizeUnitcm'),
+            	'point' => $langs->trans('SizeUnitpoint'),
+            	'inch' => $langs->trans('SizeUnitinch')
+            ), (! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:''), 0, 0, 0);
             print '</td>';
         }
         else
