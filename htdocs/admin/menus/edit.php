@@ -280,8 +280,8 @@ if ($action == 'create')
     print '<tr><td nowrap="nowrap" class="fieldrequired">'.$langs->trans('MenuForUsers').'</td>';
     print '<td><select class="flat" name="user">';
     print '<option value="2" selected>'.$langs->trans("AllMenus").'</option>';
-    print '<option value="0">'.$langs->trans('Interne').'</option>';
-    print '<option value="1">'.$langs->trans('Externe').'</option>';
+    print '<option value="0">'.$langs->trans('Internal').'</option>';
+    print '<option value="1">'.$langs->trans('External').'</option>';
     print '</select></td>';
     print '<td>'.$langs->trans('DetailUser').'</td></tr>';
 
@@ -296,8 +296,8 @@ if ($action == 'create')
     {
         print '<select name="type" class="flat" id="topleft">';
         print '<option value="">&nbsp;</option>';
-        print '<option value="top"'.($_POST["type"] && $_POST["type"]=='top'?' selected="true"':'').'>Top</option>';
-        print '<option value="left"'.($_POST["type"] && $_POST["type"]=='left'?' selected="true"':'').'>Left</option>';
+        print '<option value="top"'.($_POST["type"] && $_POST["type"]=='top'?' selected="true"':'').'>'.$langs->trans('Top').'</option>';
+        print '<option value="left"'.($_POST["type"] && $_POST["type"]=='left'?' selected="true"':'').'>'.$langs->trans('Left').'</option>';
         print '</select>';
     }
     //	print '<input type="text" size="50" name="type" value="'.$type.'">';
