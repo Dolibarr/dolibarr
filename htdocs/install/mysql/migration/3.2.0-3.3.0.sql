@@ -91,8 +91,8 @@ ALTER TABLE llx_accountingaccount  ADD COLUMN active tinyint DEFAULT 1 NOT NULL 
 ALTER TABLE llx_actioncomm MODIFY elementtype VARCHAR(32);
 
 ALTER TABLE llx_ecm_directories MODIFY COLUMN label varchar(64) NOT NULL;
-ALTER TABLE llx_ecm_directories ADD COLUMN fullpath text AFTER cachenbofdoc;
-ALTER TABLE llx_ecm_directories MODIFY COLUMN fullpath text;
+ALTER TABLE llx_ecm_directories ADD COLUMN fullpath varchar(255) AFTER cachenbofdoc;
+ALTER TABLE llx_ecm_directories MODIFY COLUMN fullpath varchar(255);
 ALTER TABLE llx_ecm_directories ADD COLUMN extraparams varchar(255) AFTER fullpath;
 ALTER TABLE llx_ecm_directories ADD COLUMN acl text;
 ALTER TABLE llx_ecm_directories ADD INDEX idx_ecm_directories_fk_user_c (fk_user_c);

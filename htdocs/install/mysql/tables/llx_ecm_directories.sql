@@ -27,7 +27,7 @@ create table llx_ecm_directories
   fk_parent			integer,
   description		varchar(255) NOT NULL,
   cachenbofdoc		integer NOT NULL DEFAULT 0,
-  fullpath    		text,
+  fullpath    		varchar(255),
   extraparams		varchar(255),					-- for stock other parameters with json format
   date_c			datetime,
   date_m			timestamp,
