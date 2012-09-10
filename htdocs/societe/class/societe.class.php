@@ -130,7 +130,7 @@ class Societe extends CommonObject
     var $datec;
     var $date_update;
 
-    var $commercial_id; //Id du commercial affecte
+    var $commercial_id;  // Id of sales representative to link (used for thirdparty creation). Not filled by a fetch, because we can have several sales representatives.
     var $default_lang;
 
     var $ref_int;
