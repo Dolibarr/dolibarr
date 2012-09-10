@@ -150,6 +150,15 @@ class PricesTest extends PHPUnit_Framework_TestCase
         print __METHOD__." value8=1.36 result8=".$result1[8]."\n";
         $this->assertEquals(1.36,$result1[8]);
 
+        $result2=calcul_price_total(10, 10, 0, 10, 1.4, 0, 0, 'HT', 0);	// 10 * 10 HT - 0% discount with 10% vat and 1.4% localtax1, 0% localtax2
+
+        print __METHOD__." value0=100 result0=".$result2[0]."\n";
+        $this->assertEquals(100,$result2[0]);
+        print __METHOD__." value1=10 result1=".$result2[1]."\n";
+        $this->assertEquals(10,$result2[1]);
+        print __METHOD__." value2=111.4 result2=".$result2[2]."\n";
+        $this->assertEquals(111.4,$result2[2]);
+
         return true;
     }
 
