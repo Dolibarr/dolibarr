@@ -26,14 +26,14 @@
 
 /**
  *		Calculate totals (net, vat, ...) of a line.
- *		Value for localtaxtype are	'0' : local tax not applied
- *									'1' : local tax apply on products and services without vat (vat is not applied on local tax)
- *									'2' : local tax apply on products and services before vat (vat is calculated on amount + localtax)
- *									'3' : local tax apply on products without vat (vat is not applied on local tax)
- *									'4' : local tax apply on products before vat (vat is calculated on amount + localtax)
- *									'5' : local tax apply on services without vat (vat is not applied on local tax)
- *									'6' : local tax apply on services before vat (vat is calculated on amount + localtax)
- *									'7' : local tax is a fix amount applied on global invoice
+ *		Value for localtaxX_type are	'0' : local tax not applied
+ *										'1' : local tax apply on products and services without vat (vat is not applied on local tax)
+ *										'2' : local tax apply on products and services before vat (vat is calculated on amount + localtax)
+ *										'3' : local tax apply on products without vat (vat is not applied on local tax)
+ *										'4' : local tax apply on products before vat (vat is calculated on amount + localtax)
+ *										'5' : local tax apply on services without vat (vat is not applied on local tax)
+ *										'6' : local tax apply on services before vat (vat is calculated on amount + localtax)
+ *										'7' : local tax is a fix amount applied on global invoice
  *
  *		@param	int		$qty						Quantity
  * 		@param 	float	$pu                         Unit price (HT or TTC selon price_base_type)
@@ -47,13 +47,25 @@
  *		@param	int		$type						0/1=Product/service
  *		@param  string	$localtax1_type				Localtax1 type (used for some countries only, like spain)
  *		@param  string	$localtax2_type				Localtax2 type (used for some countries only, like spain)
- *		@return result[0,1,2,3,4,5,6,7,8]	(total_ht, total_vat, total_ttc, pu_ht, pu_tva, pu_ttc, total_ht_without_discount, total_vat_without_discount, total_ttc_without_discount)
+ *		@return result[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]	(total_ht, total_vat, total_ttc, pu_ht, pu_tva, pu_ttc, total_ht_without_discount, total_vat_without_discount, total_ttc_without_discount, ...)
  */
-function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $localtax1_rate=0, $localtax2_rate=0, $remise_percent_global=0, $price_base_type='HT', $info_bits=0, $type=0, $localtax1_type = '0', $localtax2_type = '0')
+function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $localtax1_rate=0, $localtax2_rate=0, $remise_percent_global=0, $price_base_type='HT', $info_bits=0, $type=0, $localtax1_type = '?', $localtax2_type = '?')
 {
 	global $conf,$mysoc;
 
 	$result=array();
+
+	// TODO Remove this code. Added for backward compatibility. To remove once localtaxX_type is provided by caller.
+	if ($localtax1_type == '?')
+	{
+		if ($mysoc->country_code=='ES') $localtax1_type='1';
+		else $localtax1_type='0';
+	}
+	if ($localtax2_type == '?')
+	{
+		if ($mysoc->country_code=='ES') $localtax2_type='1';
+		else $localtax2_type='0';
+	}
 
 	// initialize total (may be HT or TTC depending on price_base_type)
 	$tot_sans_remise = $pu * $qty;
@@ -144,7 +156,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $localtax1
 		$result0bis= price2num(($tot_avec_remise + $localtaxes[1]) / (1 + ($txtva / 100)), 'MT');	// Si TVA consideree normale (non NPR)
 		$result[1] = price2num($result[2] - ($result0bis + $localtaxes[1]), 'MT');	// Total VAT = TTC - HT
 
-		$result[5] = price2num(($pu + $localtaxes[2]) , 'MU');
+		$result[5] = price2num(($pu + $localtaxes[2]), 'MU');
 		$result[3] = price2num(($pu + $localtaxes[2]) / (1 + ((($info_bits & 1)?0:$txtva) / 100)), 'MU');	// Selon TVA NPR ou non
 		$result3bis= price2num(($pu + $localtaxes[2]) / (1 + ($txtva / 100)), 'MU');	// Si TVA consideree normale (non NPR)
 		$result[4] = price2num($result[5] - ($result3bis + $localtaxes[2]), 'MU');
