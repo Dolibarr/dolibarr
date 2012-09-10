@@ -39,8 +39,8 @@
  * 		@param 	float	$pu                         Unit price (HT or TTC selon price_base_type)
  *		@param 	float	$remise_percent_ligne       Discount for line
  *		@param 	float	$txtva                      Vat rate
- *		@param  float	$localtax1_rate             Localtax1 rate (used for some countries only, like spain)
- *		@param  float	$localtax2_rate             Localtax2 rate (used for some countries only, like spain)
+ *		@param  float	$localtax1_rate             Localtax1 rate (used for some countries only, like spain). Can also be negative
+ *		@param  float	$localtax2_rate             Localtax2 rate (used for some countries only, like spain). Can also be negative
  *		@param 	float	$remise_percent_global		0
  *		@param	string	$price_base_type 			HT=on calcule sur le HT, TTC=on calcule sur le TTC
  *		@param	int		$info_bits					Miscellanous informations on line
