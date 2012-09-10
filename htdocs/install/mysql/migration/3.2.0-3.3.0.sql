@@ -90,9 +90,9 @@ ALTER TABLE llx_accountingaccount  ADD COLUMN active tinyint DEFAULT 1 NOT NULL 
 
 ALTER TABLE llx_actioncomm MODIFY elementtype VARCHAR(32);
 
--- TASK #107
 ALTER TABLE llx_ecm_directories MODIFY COLUMN label varchar(64) NOT NULL;
 ALTER TABLE llx_ecm_directories ADD COLUMN fullpath varchar(255) AFTER cachenbofdoc;
+ALTER TABLE llx_ecm_directories MODIFY COLUMN fullpath varchar(255);
 ALTER TABLE llx_ecm_directories ADD COLUMN extraparams varchar(255) AFTER fullpath;
 ALTER TABLE llx_ecm_directories ADD COLUMN acl text;
 ALTER TABLE llx_ecm_directories ADD INDEX idx_ecm_directories_fk_user_c (fk_user_c);
@@ -100,28 +100,10 @@ ALTER TABLE llx_ecm_directories ADD INDEX idx_ecm_directories_fk_user_m (fk_user
 ALTER TABLE llx_ecm_directories ADD CONSTRAINT fk_ecm_directories_fk_user_c FOREIGN KEY (fk_user_c) REFERENCES llx_user (rowid);
 ALTER TABLE llx_ecm_directories ADD CONSTRAINT fk_ecm_directories_fk_user_m FOREIGN KEY (fk_user_m) REFERENCES llx_user (rowid);
 
-ALTER TABLE llx_ecm_documents DROP INDEX idx_ecm_documents;
-ALTER TABLE llx_ecm_documents DROP COLUMN manualkeyword;
-ALTER TABLE llx_ecm_documents DROP COLUMN fullpath_orig;
-ALTER TABLE llx_ecm_documents DROP COLUMN private;
-ALTER TABLE llx_ecm_documents DROP COLUMN crc;
-ALTER TABLE llx_ecm_documents DROP COLUMN cryptkey;
-ALTER TABLE llx_ecm_documents DROP COLUMN cipher;
-ALTER TABLE llx_ecm_documents CHANGE COLUMN fullpath_dol fullpath varchar(255) NOT NULL;
-ALTER TABLE llx_ecm_documents MODIFY COLUMN filemime varchar(128) NOT NULL;
-ALTER TABLE llx_ecm_documents ADD COLUMN metadata text after description;
-ALTER TABLE llx_ecm_documents ADD COLUMN extraparams varchar(255) AFTER fk_directory;
-ALTER TABLE llx_ecm_documents ADD UNIQUE INDEX idx_ecm_documents_ref (ref, fk_directory, entity);
-ALTER TABLE llx_ecm_documents ADD INDEX idx_ecm_documents_fk_create (fk_create);
-ALTER TABLE llx_ecm_documents ADD INDEX idx_ecm_documents_fk_update (fk_update);
-ALTER TABLE llx_ecm_documents ADD CONSTRAINT fk_ecm_documents_fk_directory FOREIGN KEY (fk_directory) REFERENCES llx_ecm_directories (rowid);
-ALTER TABLE llx_ecm_documents ADD CONSTRAINT fk_ecm_documents_fk_create FOREIGN KEY (fk_create) REFERENCES llx_user (rowid);
-ALTER TABLE llx_ecm_documents ADD CONSTRAINT fk_ecm_documents_fk_update FOREIGN KEY (fk_update) REFERENCES llx_user (rowid);
-
 create table llx_element_tag
 (
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
-  entity			integer DEFAULT 1 NOT NULL,			-- multi company id
+  entity			integer DEFAULT 1 NOT NULL,
   lang				varchar(5) NOT NULL,
   tag				varchar(255) NOT NULL,
   fk_element		integer NOT NULL,
@@ -130,7 +112,6 @@ create table llx_element_tag
 )ENGINE=innodb;
 
 ALTER TABLE llx_element_tag ADD UNIQUE INDEX uk_element_tag (entity, lang, tag, fk_element, element);
--- END TASK #107
 
 
 CREATE TABLE llx_holiday_config 
@@ -205,5 +186,25 @@ ALTER TABLE llx_boxes DROP INDEX uk_boxes;
 ALTER TABLE llx_boxes ADD COLUMN entity integer NOT NULL DEFAULT 1 AFTER rowid;
 ALTER TABLE llx_boxes ADD UNIQUE INDEX uk_boxes (entity, box_id, position, fk_user);
 UPDATE llx_boxes as b SET b.entity = (SELECT bd.entity FROM llx_boxes_def as bd WHERE bd.rowid = b.box_id);
+
+-- TASK #204
+alter table llx_c_tva add column localtax1_type char(1) default '0' after localtax1;
+alter table llx_c_tva add column localtax2_type char(1) default '0' after localtax2;
+
+alter table llx_commande_fournisseurdet add column localtax1_type char(1) after localtax1_tx;
+alter table llx_commande_fournisseurdet add column localtax2_type char(1) after localtax2_tx;
+
+alter table llx_commandedet add column localtax1_type char(1) after localtax1_tx;
+alter table llx_commandedet add column localtax2_type char(1) after localtax2_tx;
+
+alter table llx_facture_fourn_det add column localtax1_type char(1) after localtax1_tx;
+alter table llx_facture_fourn_det add column localtax2_type char(1) after localtax2_tx;
+
+alter table llx_facturedet add column localtax1_type char(1) after localtax1_tx;
+alter table llx_facturedet add column localtax2_type char(1) after localtax2_tx;
+
+alter table llx_propaldet add column localtax1_type char(1) after localtax1_tx;
+alter table llx_propaldet add column localtax2_type char(1) after localtax2_tx;
+-- END TASK #204
 
 ALTER TABLE llx_menu CHANGE enabled enabled TINYINT(1) UNSIGNED NULL DEFAULT '1';

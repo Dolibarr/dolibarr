@@ -65,6 +65,22 @@ $img_liste_titre=dol_buildpath($path.'/theme/auguria/img/menus/trtitle.png',1);
 $img_head=dol_buildpath($path.'/theme/auguria/img/headbg2.jpg',1);
 $img_button=dol_buildpath($path.'/theme/auguria/img/button_bg.png',1);
 
+$colorbacklineimpairhover='210,214,217';
+$colorbacklinepairhover='210,214,217';
+
+// No hover by default, we keep only if we set var THEME_ELDY_USE_HOVER
+if ((! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) && empty($user->conf->THEME_ELDY_USE_HOVER))
+	|| (empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) && empty($conf->global->THEME_ELDY_USE_HOVER)))
+{
+	$colorbacklineimpairhover='';
+	$colorbacklinepairhover='';
+}
+
+print '/*'."\n";
+print 'colorbacklineimpairhover='.$colorbacklineimpairhover."\n";
+print 'colorbacklinepairhover='.$colorbacklinepairhover."\n";
+print '*/'."\n";
+
 ?>
 
 /* ============================================================================== */
@@ -1316,28 +1332,30 @@ white-space: nowrap;
 
 
 .impair:hover {
-background: #c0c4c7;
-border: 0px;
+<?php if ($colorbacklineimpairhover) { ?>
+	background: rgb(<?php print $colorbacklineimpairhover; ?>);
+<?php } ?>
+	border: 0px;
 }
 
-.impair, table.nohover .impair:hover {
-/* background: #d0d4d7; */
-background: #F5F6F7;
-font-family: <?php print $fontlist ?>;
-border: 0px;
+.impair, .nohover .impair:hover, tr.impair td.nohover {
+	background: #F5F6F7;
+	font-family: <?php print $fontlist ?>;
+	border: 0px;
 }
 
 
 .pair:hover {
-background: #c0c4c7;
-border: 0px;
+<?php if ($colorbacklinepairhover) { ?>
+	background: rgb(<?php print $colorbacklinepairhover; ?>);
+<?php } ?>
+	border: 0px;
 }
 
-.pair, table.nohover .pair:hover {
-/* background: #e6ebed; */
-background: #FBFCFC;
-font-family: <?php print $fontlist ?>;
-border: 0px;
+.pair, .nohover .pair:hover, tr.pair td.nohover {
+	background: #FBFCFC;
+	font-family: <?php print $fontlist ?>;
+	border: 0px;
 }
 
 

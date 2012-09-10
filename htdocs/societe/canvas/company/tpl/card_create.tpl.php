@@ -96,7 +96,7 @@
 </tr>
 <?php } }?>
 
-<?php if ($conf->global->MAIN_MODULE_BARCODE) { ?>
+<?php if (! empty($conf->barcode->enabled)) { ?>
 <tr>
 	<td><?php echo $langs->trans('Gencod'); ?></td>
 	<td colspan="3"><input type="text" name="barcode" value="<?php echo $this->control->tpl['barcode']; ?>"></td>

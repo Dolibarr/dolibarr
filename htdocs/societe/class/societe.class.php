@@ -130,7 +130,7 @@ class Societe extends CommonObject
     var $datec;
     var $date_update;
 
-    var $commercial_id; //Id du commercial affecte
+    var $commercial_id;  // Id of sales representative to link (used for thirdparty creation). Not filled by a fetch, because we can have several sales representatives.
     var $default_lang;
 
     var $ref_int;
@@ -227,15 +227,15 @@ class Societe extends CommonObject
 
                 $ret = $this->update($this->id,$user,0,1,1,'add');
 
-                // si un commercial cree un client il lui est affecte automatiquement
-                if (!$user->rights->societe->client->voir)
-                {
-                    $this->add_commercial($user, $user->id);
-                }
                 // Ajout du commercial affecte
-                else if ($this->commercial_id != '' && $this->commercial_id != -1)
+                if ($this->commercial_id != '' && $this->commercial_id != -1)
                 {
                     $this->add_commercial($user, $this->commercial_id);
+                }
+                // si un commercial cree un client il lui est affecte automatiquement
+                else if (!$user->rights->societe->client->voir)
+                {
+                    $this->add_commercial($user, $user->id);
                 }
 
                 // si le fournisseur est classe on l'ajoute

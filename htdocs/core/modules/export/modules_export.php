@@ -26,8 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 
 /**
- *	\class      ModeleExports
- *	\brief      Parent class for export modules
+ *	Parent class for export modules
  */
 class ModeleExports extends CommonDocGenerator    // This class can't be abstract as there is instance propreties loaded by liste_modeles
 {
@@ -41,7 +40,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 
 
 	/**
-	 *  Charge en memoire et renvoie la liste des modeles actifs
+	 *  Load into memory list of available export format
 	 *
      *  @param	DoliDB	$db     			Database handler
      *  @param  string	$maxfilenamelength  Max length of value to show
@@ -87,6 +86,9 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
     		}
     		closedir($handle);
         }
+
+        asort($this->driverlabel);
+
 		return $this->driverlabel;
 	}
 

@@ -223,7 +223,7 @@ if ($socid)
 		print '</td></tr>';
 	}
 
-	if (! empty($conf->global->MAIN_MODULE_BARCODE))
+	if (! empty($conf->barcode->enabled))
 	{
 		print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="3">'.$soc->barcode.'</td></tr>';
 	}
