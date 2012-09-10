@@ -1268,6 +1268,7 @@ DetailEnabled= Condition d'affichage ou non
 DetailRight= Condition d'affichage plein ou grisé
 DetailLangs= Fichier .lang pour la traduction du code libellé
 DetailUser= Interne / Externe / Tous
+Target=Cible
 DetailTarget= Cible liens menu (_blank pour ouvrir une nouvelle fenêtre)
 DetailLevel= Niveau (-1:menu top, 0:entete menu, >0 menu et sous menu)
 ModifMenu= Modification du menu

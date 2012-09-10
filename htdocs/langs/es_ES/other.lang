@@ -43,7 +43,6 @@ TotalSizeOfAttachedFiles=Tamaño total de los archivos/documentos adjuntos
 MaxSize=Tamaño máximo
 AttachANewFile=Adjuntar nuevo archivo/documento
 LinkedObject=Objeto adjuntado
-Miscellanous=Diversos
 NbOfActiveNotifications=Número notificaciones
 PredefinedMailTest=Esto es un correo de prueba.\nLas 2 líneas están separadas por un retorno de carro a la línea.
 PredefinedMailTestHtml=Esto es un e-mail de <b>prueba</b>(la palabra prueba debe de estar en negrita).<br>Las 2 líneas están separadas por un retorno de carro en la línea
