@@ -809,7 +809,7 @@ class FormOther
         include_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 
         //$infobox=new InfoBox($db);
-        $boxactivated=InfoBox::listboxes($db,'activated',$areacode,$user);
+        $boxactivated=InfoBox::listBoxes($db,'activated',$areacode,$user);
         $arrayboxactivatedid=array();
         foreach($boxactivated as $box) $arrayboxactivatedid[$box->id]=$box->id;
 
@@ -817,7 +817,7 @@ class FormOther
         if (! empty($conf->use_javascript_ajax))
         {
             $emptyuser=new User($db);
-            $boxavailable=InfoBox::listboxes($db,'activated',$areacode,$emptyuser,$arrayboxactivatedid);    // Get list of box available for empty user (minus already activated for user)
+            $boxavailable=InfoBox::listBoxes($db,'activated',$areacode,$emptyuser,$arrayboxactivatedid);    // Get list of box available for empty user (minus already activated for user)
 
             $arrayboxtoactivatelabel=array();
             foreach($boxavailable as $box)
