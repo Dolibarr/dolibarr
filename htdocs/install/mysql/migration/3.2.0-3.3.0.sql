@@ -188,23 +188,21 @@ ALTER TABLE llx_boxes ADD UNIQUE INDEX uk_boxes (entity, box_id, position, fk_us
 UPDATE llx_boxes as b SET b.entity = (SELECT bd.entity FROM llx_boxes_def as bd WHERE bd.rowid = b.box_id);
 
 -- TASK #204
-alter table llx_c_tva add column localtax1_type char(1) default '0' after localtax1;
-alter table llx_c_tva add column localtax2_type char(1) default '0' after localtax2;
+alter table llx_c_tva add column localtax1_type varchar(1) default '0' after localtax1;
+alter table llx_c_tva add column localtax2_type varchar(1) default '0' after localtax2;
 
-alter table llx_commande_fournisseurdet add column localtax1_type char(1) after localtax1_tx;
-alter table llx_commande_fournisseurdet add column localtax2_type char(1) after localtax2_tx;
+alter table llx_commande_fournisseurdet add column localtax1_type varchar(1) after localtax1_tx;
+alter table llx_commande_fournisseurdet add column localtax2_type varchar(1) after localtax2_tx;
 
-alter table llx_commandedet add column localtax1_type char(1) after localtax1_tx;
-alter table llx_commandedet add column localtax2_type char(1) after localtax2_tx;
+alter table llx_commandedet add column localtax1_type varchar(1) after localtax1_tx;
+alter table llx_commandedet add column localtax2_type varchar(1) after localtax2_tx;
 
-alter table llx_facture_fourn_det add column localtax1_type char(1) after localtax1_tx;
-alter table llx_facture_fourn_det add column localtax2_type char(1) after localtax2_tx;
+alter table llx_facture_fourn_det add column localtax1_type varchar(1) after localtax1_tx;
+alter table llx_facture_fourn_det add column localtax2_type varchar(1) after localtax2_tx;
 
-alter table llx_facturedet add column localtax1_type char(1) after localtax1_tx;
-alter table llx_facturedet add column localtax2_type char(1) after localtax2_tx;
+alter table llx_facturedet add column localtax1_type varchar(1) after localtax1_tx;
+alter table llx_facturedet add column localtax2_type varchar(1) after localtax2_tx;
 
-alter table llx_propaldet add column localtax1_type char(1) after localtax1_tx;
-alter table llx_propaldet add column localtax2_type char(1) after localtax2_tx;
+alter table llx_propaldet add column localtax1_type varchar(1) after localtax1_tx;
+alter table llx_propaldet add column localtax2_type varchar(1) after localtax2_tx;
 -- END TASK #204
-
-ALTER TABLE llx_menu MODIFY COLUMN enabled TINYINT(1) UNSIGNED NULL DEFAULT '1';
