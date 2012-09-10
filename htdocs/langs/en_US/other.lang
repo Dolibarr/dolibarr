@@ -123,6 +123,7 @@ SizeUnitcm=cm
 SizeUnitmm=mm
 SizeUnitinch=inch
 SizeUnitfoot=foot
+SizeUnitpoint=point
 BugTracker=Bug tracker
 SendNewPasswordDesc=This form allows you to request a new password. It will be send to your email address.<br>Change will be effective only after clicking on confirmation link inside this email.<br>Check your email reader software.
 BackToLoginPage=Back to login page
