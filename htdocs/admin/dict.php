@@ -883,7 +883,7 @@ if ($id)
                                     $valuetoshow=($key != "Country".strtoupper($obj->pays_code))?$obj->pays_code." - ".$key:$obj->pays;
                                 }
                             }
-                            else if ($fieldlist[$field]=='recuperableonly' || $fieldlist[$field]=='fdm') {
+                            else if ($fieldlist[$field]=='recuperableonly' || $fieldlist[$field]=='fdm' || $fieldlist[$field] == 'deductible') {
                                 $valuetoshow=yn($valuetoshow);
                             }
                             else if ($fieldlist[$field]=='price' || preg_match('/^amount/i',$fieldlist[$field])) {
@@ -1140,7 +1140,7 @@ function fieldList($fieldlist,$obj='',$tabname='')
             print 'user<input type="hidden" name="type" value="user">';
             print '</td>';
         }
-        elseif ($fieldlist[$field] == 'recuperableonly' || $fieldlist[$field] == 'fdm') {
+        elseif ($fieldlist[$field] == 'recuperableonly' || $fieldlist[$field] == 'fdm' || $fieldlist[$field] == 'deductible') {
             print '<td>';
             print $form->selectyesno($fieldlist[$field],(! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:''),1);
             print '</td>';
