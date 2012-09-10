@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2007-2011 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2012	Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -169,7 +169,7 @@ class FormBarCode
         {
             print '<form method="post" action="'.$page.'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<input type="hidden" name="action" value="setfk_barcode_type">';
+            print '<input type="hidden" name="action" value="set'.$htmlname.'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
             $this->select_barcode_type($selected, $htmlname, 1);

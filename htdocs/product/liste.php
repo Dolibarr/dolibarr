@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,11 +133,11 @@ else
     if ($sall)
     {
         $sql.= " AND (p.ref LIKE '%".$db->escape($sall)."%' OR p.label LIKE '%".$db->escape($sall)."%' OR p.description LIKE '%".$db->escape($sall)."%' OR p.note LIKE '%".$db->escape($sall)."%'";
-        if (! empty($conf->global->MAIN_MODULE_BARCODE))
+        if (! empty($conf->barcode->enabled))
         {
-            $sql .= " OR p.barcode LIKE '%".$db->escape($sall)."%'";
+            $sql.= " OR p.barcode LIKE '%".$db->escape($sall)."%'";
         }
-        $sql .= ')';
+        $sql.= ')';
     }
     // if the type is not 1, we show all products (type = 0,2,3)
     if (dol_strlen($type))

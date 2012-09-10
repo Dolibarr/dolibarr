@@ -92,7 +92,8 @@ ALTER TABLE llx_actioncomm MODIFY elementtype VARCHAR(32);
 
 -- TASK #107
 ALTER TABLE llx_ecm_directories MODIFY COLUMN label varchar(64) NOT NULL;
-ALTER TABLE llx_ecm_directories ADD COLUMN fullpath varchar(255) AFTER cachenbofdoc;
+ALTER TABLE llx_ecm_directories ADD COLUMN fullpath text AFTER cachenbofdoc;
+ALTER TABLE llx_ecm_directories MODIFY COLUMN fullpath text;
 ALTER TABLE llx_ecm_directories ADD COLUMN extraparams varchar(255) AFTER fullpath;
 ALTER TABLE llx_ecm_directories ADD COLUMN acl text;
 ALTER TABLE llx_ecm_directories ADD INDEX idx_ecm_directories_fk_user_c (fk_user_c);
@@ -100,6 +101,8 @@ ALTER TABLE llx_ecm_directories ADD INDEX idx_ecm_directories_fk_user_m (fk_user
 ALTER TABLE llx_ecm_directories ADD CONSTRAINT fk_ecm_directories_fk_user_c FOREIGN KEY (fk_user_c) REFERENCES llx_user (rowid);
 ALTER TABLE llx_ecm_directories ADD CONSTRAINT fk_ecm_directories_fk_user_m FOREIGN KEY (fk_user_m) REFERENCES llx_user (rowid);
 
+ALTER TABLE llx_ecm_documents DROP FOREIGN KEY fk_ecm_documents_fk_directory;
+ALTER TABLE llx_ecm_documents DROP INDEX idx_ecm_documents_ref;
 ALTER TABLE llx_ecm_documents DROP INDEX idx_ecm_documents;
 ALTER TABLE llx_ecm_documents DROP COLUMN manualkeyword;
 ALTER TABLE llx_ecm_documents DROP COLUMN fullpath_orig;
@@ -107,14 +110,15 @@ ALTER TABLE llx_ecm_documents DROP COLUMN private;
 ALTER TABLE llx_ecm_documents DROP COLUMN crc;
 ALTER TABLE llx_ecm_documents DROP COLUMN cryptkey;
 ALTER TABLE llx_ecm_documents DROP COLUMN cipher;
-ALTER TABLE llx_ecm_documents CHANGE COLUMN fullpath_dol fullpath varchar(255) NOT NULL;
+ALTER TABLE llx_ecm_documents CHANGE COLUMN fullpath_dol fullpath text;
+ALTER TABLE llx_ecm_documents MODIFY COLUMN ref varchar(32) NOT NULL;
+ALTER TABLE llx_ecm_documents MODIFY COLUMN fullpath text;
 ALTER TABLE llx_ecm_documents MODIFY COLUMN filemime varchar(128) NOT NULL;
 ALTER TABLE llx_ecm_documents ADD COLUMN metadata text after description;
 ALTER TABLE llx_ecm_documents ADD COLUMN extraparams varchar(255) AFTER fk_directory;
-ALTER TABLE llx_ecm_documents ADD UNIQUE INDEX idx_ecm_documents_ref (ref, fk_directory, entity);
+ALTER TABLE llx_ecm_documents ADD UNIQUE INDEX idx_ecm_documents_ref (ref, entity);
 ALTER TABLE llx_ecm_documents ADD INDEX idx_ecm_documents_fk_create (fk_create);
 ALTER TABLE llx_ecm_documents ADD INDEX idx_ecm_documents_fk_update (fk_update);
-ALTER TABLE llx_ecm_documents ADD CONSTRAINT fk_ecm_documents_fk_directory FOREIGN KEY (fk_directory) REFERENCES llx_ecm_directories (rowid);
 ALTER TABLE llx_ecm_documents ADD CONSTRAINT fk_ecm_documents_fk_create FOREIGN KEY (fk_create) REFERENCES llx_user (rowid);
 ALTER TABLE llx_ecm_documents ADD CONSTRAINT fk_ecm_documents_fk_update FOREIGN KEY (fk_update) REFERENCES llx_user (rowid);
 
