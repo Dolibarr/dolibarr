@@ -206,3 +206,5 @@ alter table llx_facturedet add column localtax2_type char(1) after localtax2_tx;
 alter table llx_propaldet add column localtax1_type char(1) after localtax1_tx;
 alter table llx_propaldet add column localtax2_type char(1) after localtax2_tx;
 -- END TASK #204
+
+ALTER TABLE llx_menu CHANGE enabled enabled TINYINT(1) UNSIGNED NULL DEFAULT '1';
