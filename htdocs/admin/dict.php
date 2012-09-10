@@ -969,6 +969,13 @@ if ($id)
                             else if ($fieldlist[$field]=='unicode') {
                             	$valuetoshow = getCurrencySymbol($obj->code);
                             }
+
+                            else if (($fieldlist[$field] == 'unit') && ($tabname[$_GET['id']] == MAIN_DB_PREFIX.'c_paper_format'))
+                            {
+                            	$key = $langs->trans('SizeUnit'.strtolower($obj->unit));
+                                $valuetoshow = ($obj->code && ($key != 'SizeUnit'.strtolower($obj->unit))) ? $key : $obj->$fieldlist[$field];
+                            }
+
                             if ($showfield) print '<td>'.$valuetoshow.'</td>';
                         }
                     }
@@ -1159,7 +1166,12 @@ function fieldList($fieldlist,$obj='',$tabname='')
         }
         elseif ($fieldlist[$field]=='unit') {
             print '<td>';
-            print $form->selectarray('unit',array('mm','cm','point','inch'),(! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:''),0,0,1);
+            print $form->selectarray('unit', array(
+            	'mm' => $langs->trans('SizeUnitmm'),
+            	'cm' => $langs->trans('SizeUnitcm'),
+            	'point' => $langs->trans('SizeUnitpoint'),
+            	'inch' => $langs->trans('SizeUnitinch')
+            ), (! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:''), 0, 0, 0);
             print '</td>';
         }
         else
