@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis@dolibarr.fr>
  * Copyright (C) 2008		Raphael Bertrand	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2011	Juanjo Menent		<jmenent@2byte.es>
@@ -23,7 +23,6 @@
  *	\file       htdocs/core/modules/commande/doc/pdf_einstein.modules.php
  *	\ingroup    commande
  *	\brief      Fichier de la classe permettant de generer les commandes au modele Einstein
- *	\author	    Laurent Destailleur
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/modules/commande/modules_commande.php';
@@ -117,7 +116,7 @@ class pdf_einstein extends ModelePDFCommandes
 	}
 
 	/**
-     *  Build document onto disk
+     *  Function to build pdf onto disk
      *
      *  @param		int		$object				Id of object to generate
      *  @param		object	$outputlangs		Lang output object
@@ -228,8 +227,8 @@ class pdf_einstein extends ModelePDFCommandes
 
 
 				$tab_top = 90;
-				$tab_top_newpage = 50;
-				$tab_height = 110;
+				$tab_top_newpage = 10;
+				$tab_height = 130;
 				$tab_height_newpage = 150;
 
 				// Affiche notes
@@ -237,7 +236,7 @@ class pdf_einstein extends ModelePDFCommandes
 				{
 					$tab_top = 88;
 
-					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to manage multipages
+					$pdf->SetFont('','', $default_font_size - 1);
 					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
@@ -263,21 +262,25 @@ class pdf_einstein extends ModelePDFCommandes
 				{
 					$curY = $nexY;
 
-                    $pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
-
 					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
 
 					// Description of product line
+                    $pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 					$curX = $this->posxdesc-1;
 					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc,0,$hookmanager);
 
+					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
 					$pdf->setPage($pageposbefore);
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
+// We suppose that a too long description is moved completely on next page
+if ($pageposafter > $pageposbefore) {
+	$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
+}
+					
 					$pdf->SetFont('','',  $default_font_size - 1);   // On repositionne la police par defaut
-					$nexY = $pdf->GetY();
 
 					// VAT Rate
 					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
@@ -295,14 +298,14 @@ class pdf_einstein extends ModelePDFCommandes
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails, $hookmanager);
 					$pdf->SetXY($this->posxqty, $curY);
-					$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 3, $qty, 0, 'R');
+					$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 3, $qty, 0, 'R');	// Enough for 6 chars
 
 					// Discount on line
-					$pdf->SetXY($this->posxdiscount, $curY);
 					if ($object->lines[$i]->remise_percent)
 					{
+						$pdf->SetXY($this->posxdiscount-2, $curY);
 						$remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails, $hookmanager);
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, $remise_percent, 0, 'R');
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount+2, 3, $remise_percent, 0, 'R');
 					}
 
 					// Total HT line
@@ -325,6 +328,9 @@ class pdf_einstein extends ModelePDFCommandes
 					$localtax2rate=(string) $object->lines[$i]->localtax2_tx;
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
+					if (! isset($this->tva[$vatrate])) 				$this->tva[$vatrate]='';
+					if (! isset($this->localtax1[$localtax1rate])) 	$this->localtax1[$localtax1rate]='';
+					if (! isset($this->localtax2[$localtax2rate])) 	$this->localtax2[$localtax2rate]='';
 					$this->tva[$vatrate] += $tvaligne;
 					$this->localtax1[$localtax1rate]+=$localtax1ligne;
 					$this->localtax2[$localtax2rate]+=$localtax2ligne;
@@ -334,6 +340,7 @@ class pdf_einstein extends ModelePDFCommandes
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
 					{
+						$pdf->setPage($pagenb);
 						if ($pagenb == 1)
 						{
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
@@ -431,7 +438,7 @@ class pdf_einstein extends ModelePDFCommandes
 	}
 
 	/**
-	 *  Affiche tableau des versement
+	 *  Show payments table
      *
 	 *  @param	PDF			&$pdf     		Object PDF
 	 *  @param  Object		$object			Object order
@@ -534,25 +541,25 @@ class pdf_einstein extends ModelePDFCommandes
 	                $account->fetch($conf->global->FACTURE_CHQ_NUMBER);
 
 	                $pdf->SetXY($this->marge_gauche, $posy);
-	                $pdf->SetFont('','B', $default_font_size - 2);
-	                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio).':',0,'L',0);
+	                $pdf->SetFont('','B', $default_font_size - 3);
+	                $pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio).':',0,'L',0);
 		            $posy=$pdf->GetY()+1;
 
 	                $pdf->SetXY($this->marge_gauche, $posy);
-	                $pdf->SetFont('','', $default_font_size - 2);
-	                $pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($account->adresse_proprio), 0, 'L', 0);
+	                $pdf->SetFont('','', $default_font_size - 3);
+	                $pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($account->adresse_proprio), 0, 'L', 0);
 		            $posy=$pdf->GetY()+2;
 	            }
 	            if ($conf->global->FACTURE_CHQ_NUMBER == -1)
 	            {
 	                $pdf->SetXY($this->marge_gauche, $posy);
-	                $pdf->SetFont('','B', $default_font_size - 2);
-	                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$outputlangs->convToOutputCharset($this->emetteur->name).' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
+	                $pdf->SetFont('','B', $default_font_size - 3);
+	                $pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$outputlangs->convToOutputCharset($this->emetteur->name).' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
 		            $posy=$pdf->GetY()+1;
 
 		            $pdf->SetXY($this->marge_gauche, $posy);
-	                $pdf->SetFont('','', $default_font_size - 2);
-	                $pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', 0);
+	                $pdf->SetFont('','', $default_font_size - 3);
+	                $pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', 0);
 		            $posy=$pdf->GetY()+2;
 	            }
 	        }
@@ -569,7 +576,7 @@ class pdf_einstein extends ModelePDFCommandes
                 $curx=$this->marge_gauche;
                 $cury=$posy;
 
-                $posy=pdf_bank($pdf,$outputlangs,$curx,$cury,$account);
+                $posy=pdf_bank($pdf,$outputlangs,$curx,$cury,$account,0,$default_font_size);
 
                 $posy+=2;
 	        }
@@ -591,7 +598,8 @@ class pdf_einstein extends ModelePDFCommandes
 	 */
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
-	   global $conf,$mysoc;
+	    global $conf,$mysoc;
+	    
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$tab2_top = $posy;
@@ -679,9 +687,9 @@ class pdf_einstein extends ModelePDFCommandes
 				}
 				else
 				{
-					//Local tax 1
 					if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 					{
+						//Local tax 1
 						foreach($this->localtax1 as $tvakey => $tvaval)
 						{
 							if ($tvakey>0)    // On affiche pas taux 0
@@ -707,9 +715,9 @@ class pdf_einstein extends ModelePDFCommandes
 						}
 					}
 
-					//Local tax 2
 					if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 					{
+						//Local tax 2
 						foreach($this->localtax2 as $tvakey => $tvaval)
 						{
 							if ($tvakey>0)    // On affiche pas taux 0
@@ -748,8 +756,9 @@ class pdf_einstein extends ModelePDFCommandes
 			}
 		}
 
-		$pdf->SetFont('','', $default_font_size - 1);
 		$pdf->SetTextColor(0,0,0);
+
+		$resteapayer = price2num($object->total_ttc - $deja_regle);
 
 		if ($deja_regle > 0)
 		{
@@ -760,8 +769,6 @@ class pdf_einstein extends ModelePDFCommandes
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("AlreadyPaid"), 0, 'L', 0);
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle), 0, 'R', 0);
-
-			$resteapayer = $object->total_ttc - $deja_regle;
 
 			$index++;
 			$pdf->SetTextColor(0,0,60);
@@ -786,7 +793,7 @@ class pdf_einstein extends ModelePDFCommandes
 	 *   @param		PDF			&$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
-	 *   @param		int			$nexY			Y
+	 *   @param		int			$nexY			Y (not used)
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array
 	 *   @param		int			$hidebottom		Hide bottom bar of array
@@ -817,7 +824,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 		if (empty($hidetop))
 		{
-			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);
+			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line prend une position y en 2eme param et 4eme param
 
 			$pdf->SetXY($this->posxdesc-1, $tab_top+1);
 			$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
@@ -890,18 +897,17 @@ class pdf_einstein extends ModelePDFCommandes
 
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
-		//Affiche le filigrane brouillon - Print Draft Watermark
+		// Show Draft Watermark
 		if($object->statut==0 && (! empty($conf->global->COMMANDE_DRAFT_WATERMARK)) )
 		{
             pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->COMMANDE_DRAFT_WATERMARK);
 		}
-		//Print content
 
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFont('','B', $default_font_size + 3);
 
-        $posx=$this->page_largeur-$this->marge_droite-100;
 		$posy=$this->marge_haute;
+		$posx=$this->page_largeur-$this->marge_droite-100;
 
 		$pdf->SetXY($this->marge_gauche,$posy);
 
@@ -932,22 +938,22 @@ class pdf_einstein extends ModelePDFCommandes
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$title=$outputlangs->transnoentities("Order");
-		$pdf->MultiCell(100, 4, $title, '', 'R');
+		$pdf->MultiCell(100, 3, $title, '', 'R');
 
-		$pdf->SetFont('','B', $default_font_size + 2);
+		$pdf->SetFont('','B',$default_font_size);
 
-		$posy+=6;
+		$posy+=5;
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->ref), '', 'R');
 
-		$posy+=2;
+		$posy+=1;
 		$pdf->SetFont('','', $default_font_size - 1);
 
 		$posy+=5;
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("OrderDate")." : " . dol_print_date($object->date,"%d %b %Y",false,$outputlangs,true), '', 'R');
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : " . dol_print_date($object->date,"%d %b %Y",false,$outputlangs,true), '', 'R');
 
 		$posy+=2;
 
@@ -969,7 +975,7 @@ class pdf_einstein extends ModelePDFCommandes
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posx,$posy-5);
-			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":");
+			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":", 0, 'L');
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetFillColor(230,230,230);
 			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);

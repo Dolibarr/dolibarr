@@ -25,6 +25,5 @@ create table llx_document
   date_generation datetime     NULL,
   fk_owner        integer      NULL,
   fk_group        integer      NULL,
-  permissions     char(9)      DEFAULT 'rw-rw-rw'
-
+  permissions     varchar(9)   DEFAULT 'rw-rw-rw'
 )ENGINE=innodb;

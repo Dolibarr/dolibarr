@@ -280,8 +280,8 @@ if ($action == 'create')
     print '<tr><td nowrap="nowrap" class="fieldrequired">'.$langs->trans('MenuForUsers').'</td>';
     print '<td><select class="flat" name="user">';
     print '<option value="2" selected>'.$langs->trans("AllMenus").'</option>';
-    print '<option value="0">'.$langs->trans('Interne').'</option>';
-    print '<option value="1">'.$langs->trans('Externe').'</option>';
+    print '<option value="0">'.$langs->trans('Internal').'</option>';
+    print '<option value="1">'.$langs->trans('External').'</option>';
     print '</select></td>';
     print '<td>'.$langs->trans('DetailUser').'</td></tr>';
 
@@ -296,8 +296,8 @@ if ($action == 'create')
     {
         print '<select name="type" class="flat" id="topleft">';
         print '<option value="">&nbsp;</option>';
-        print '<option value="top"'.($_POST["type"] && $_POST["type"]=='top'?' selected="true"':'').'>Top</option>';
-        print '<option value="left"'.($_POST["type"] && $_POST["type"]=='left'?' selected="true"':'').'>Left</option>';
+        print '<option value="top"'.($_POST["type"] && $_POST["type"]=='top'?' selected="true"':'').'>'.$langs->trans('Top').'</option>';
+        print '<option value="left"'.($_POST["type"] && $_POST["type"]=='left'?' selected="true"':'').'>'.$langs->trans('Left').'</option>';
         print '</select>';
     }
     //	print '<input type="text" size="50" name="type" value="'.$type.'">';
@@ -373,17 +373,19 @@ elseif ($action == 'edit')
     print '<tr><td>'.$langs->trans('MenuModule').'</td><td>'.$menu->module.'</td><td>'.$langs->trans('DetailMenuModule').'</td></tr>';
 
     // Handler
-    print '<tr><td class="fieldrequired">'.$langs->trans('MenuHandler').'</td><td>'.$menu->menu_handler.'</td><td>'.$langs->trans('DetailMenuHandler').'</td></tr>';
+    if ($menu->menu_handler == 'all') $handler = $langs->trans('AllMenus');
+    else $handler = $menu->menu_handler;
+    print '<tr><td class="fieldrequired">'.$langs->trans('MenuHandler').'</td><td>'.$handler.'</td><td>'.$langs->trans('DetailMenuHandler').'</td></tr>';
 
     // User
     print '<tr><td nowrap="nowrap" class="fieldrequired">'.$langs->trans('MenuForUsers').'</td><td><select class="flat" name="user">';
-    print '<option value="2"'.($menu->user==2?' selected="true"':'').'>'.$langs->trans("All").'</option>';
-    print '<option value="0"'.($menu->user==0?' selected="true"':'').'>'.$langs->trans('Interne').'</option>';
-    print '<option value="1"'.($menu->user==1?' selected="true"':'').'>'.$langs->trans('Externe').'</option>';
+    print '<option value="2"'.($menu->user==2?' selected="true"':'').'>'.$langs->trans("AllMenus").'</option>';
+    print '<option value="0"'.($menu->user==0?' selected="true"':'').'>'.$langs->trans('Internal').'</option>';
+    print '<option value="1"'.($menu->user==1?' selected="true"':'').'>'.$langs->trans('External').'</option>';
     print '</select></td><td>'.$langs->trans('DetailUser').'</td></tr>';
 
     // Type
-    print '<tr><td class="fieldrequired">'.$langs->trans('Type').'</td><td>'.$menu->type.'</td><td>'.$langs->trans('DetailType').'</td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans('Type').'</td><td>'.$langs->trans(ucfirst($menu->type)).'</td><td>'.$langs->trans('DetailType').'</td></tr>';
 
     // MenuId Parent
     print '<tr><td class="fieldrequired">'.$langs->trans('MenuIdParent').'</td>';

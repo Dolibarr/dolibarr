@@ -316,7 +316,7 @@ if ($resql)
 
 
 // Available boxes
-$boxtoadd=InfoBox::listboxes($db,'available',-1,$emptyuser,$actives);
+$boxtoadd=InfoBox::listBoxes($db,'available',-1,$emptyuser,$actives);
 
 print "<br>\n";
 print_titre($langs->trans("BoxesAvailable"));
@@ -366,7 +366,7 @@ print '</table>';
 
 
 // Activated boxes
-$boxactivated=InfoBox::listboxes($db,'activated',-1,$emptyuser);
+$boxactivated=InfoBox::listBoxes($db,'activated',-1,$emptyuser);
 
 print "<br>\n\n";
 print_titre($langs->trans("BoxesActivated"));

@@ -137,8 +137,8 @@ class InfoBox
         else
         {
             //dol_print_error($db);
-            $this->error=$db->error();
-            dol_syslog(get_class()."::listBoxes Error ".$this->error, LOG_ERR);
+            $error=$db->error();
+            dol_syslog(get_class()."::listBoxes Error ".$error, LOG_ERR);
             return array();
         }
 
@@ -231,7 +231,7 @@ class InfoBox
             }
             if ($error)
             {
-                $this->error=$db->error();
+                $error=$db->error();
                 $db->rollback();
                 return -2;
             }
@@ -243,9 +243,9 @@ class InfoBox
         }
         else
         {
-            $this->error=$db->lasterror();
+            $error=$db->lasterror();
             $db->rollback();
-            dol_syslog(get_class()."::saveboxorder ".$this->error);
+            dol_syslog(get_class()."::saveboxorder ".$error);
             return -1;
         }
     }

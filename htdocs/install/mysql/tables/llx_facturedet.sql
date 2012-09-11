@@ -29,8 +29,10 @@ create table llx_facturedet
   label							varchar(255) DEFAULT NULL,
   description					text,
   tva_tx						double(6,3),						-- Taux tva produit/service (exemple 19.6)
-  localtax1_tx					double(6,3) 		 DEFAULT 0,		-- tax local tax 1
-  localtax2_tx					double(6,3) 		 DEFAULT 0,		-- tax local tax 2
+  localtax1_tx               	double(6,3)  DEFAULT 0,    		 	-- localtax1 rate
+  localtax1_type			 	varchar(1)	  	 NULL, 				 	-- localtax1 type
+  localtax2_tx               	double(6,3)  DEFAULT 0,    		 	-- localtax2 rate
+  localtax2_type			 	varchar(1)	  	 NULL, 				 	-- localtax2 type
   qty							real,								-- Quantity (exemple 2)
   remise_percent				real       DEFAULT 0,				-- % de la remise ligne (exemple 20%)
   remise						real       DEFAULT 0,				-- Montant calcule de la remise % sur PU HT (exemple 20)

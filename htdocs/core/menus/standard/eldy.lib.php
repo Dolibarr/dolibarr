@@ -66,7 +66,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 
 
 	// Third parties
-	if ($conf->societe->enabled || $conf->fournisseur->enabled)
+	if (! empty($conf->societe->enabled) || ! empty($conf->fournisseur->enabled))
 	{
 		$langs->load("companies");
 		$langs->load("suppliers");
@@ -82,8 +82,8 @@ function print_eldy_menu($db,$atarget,$type_user)
 		}
 
 		$idsel='companies';
-		if (($conf->societe->enabled && $user->rights->societe->lire)
-		|| ($conf->fournisseur->enabled && $user->rights->fournisseur->lire))
+		if ((! empty($conf->societe->enabled) && $user->rights->societe->lire)
+		|| (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire))
 		{
 			print_start_menu_entry($idsel,$classname);
 			print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/societe/index.php?mainmenu=companies&amp;leftmenu="'.($atarget?' target="'.$atarget.'"':'').'>';
@@ -110,7 +110,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 
 
 	// Products-Services
-	if ($conf->product->enabled || $conf->service->enabled)
+	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 	{
 		$langs->load("products");
 
@@ -176,7 +176,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		}
 
 		$idsel='commercial';
-		if($user->rights->societe->lire || $user->rights->societe->contact->lire)
+		if ($user->rights->societe->lire || $user->rights->societe->contact->lire)
 		{
 			print_start_menu_entry($idsel,$classname);
 			print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&amp;leftmenu="'.($atarget?' target="'.$atarget.'"':'').'>';
@@ -202,8 +202,8 @@ function print_eldy_menu($db,$atarget,$type_user)
 	}
 
 	// Financial
-	if ($conf->comptabilite->enabled || $conf->accounting->enabled
-	|| $conf->facture->enabled || $conf->deplacement->enabled || $conf->don->enabled || $conf->tax->enabled)
+	if (! empty($conf->comptabilite->enabled) || ! empty($conf->accounting->enabled)
+	|| ! empty($conf->facture->enabled) || ! empty($conf->deplacement->enabled) || ! empty($conf->don->enabled) || ! empty($conf->tax->enabled))
 	{
 		$langs->load("compta");
 
@@ -245,7 +245,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 	}
 
     // Bank
-    if ($conf->banque->enabled || $conf->prelevement->enabled)
+    if (! empty($conf->banque->enabled) || ! empty($conf->prelevement->enabled))
     {
         $langs->load("compta");
         $langs->load("banks");
@@ -261,7 +261,7 @@ function print_eldy_menu($db,$atarget,$type_user)
         }
 
         $idsel='bank';
-        if ($user->rights->banque->lire)
+        if (! empty($user->rights->banque->lire))
         {
             print_start_menu_entry($idsel,$classname);
             print '<a class="tmenuimage" href="'.DOL_URL_ROOT.'/compta/bank/index.php?mainmenu=bank&amp;leftmenu="'.($atarget?' target="'.$atarget.'"':'').'>';
@@ -287,7 +287,7 @@ function print_eldy_menu($db,$atarget,$type_user)
     }
 
 	// Projects
-	if ($conf->projet->enabled)
+	if (! empty($conf->projet->enabled))
 	{
 		$langs->load("projects");
 
@@ -328,7 +328,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 	}
 
 	// Tools
-	if ($conf->mailing->enabled || $conf->export->enabled || $conf->import->enabled)
+	if (! empty($conf->mailing->enabled) || ! empty($conf->export->enabled) || ! empty($conf->import->enabled))
 	{
 		$langs->load("other");
 
@@ -395,7 +395,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 	}
 
 	// Members
-	if ($conf->adherent->enabled)
+	if (! empty($conf->adherent->enabled))
 	{
 		// $langs->load("members"); Added in main file
 

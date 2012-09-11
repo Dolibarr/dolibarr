@@ -36,6 +36,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_azur extends ModelePDFPropales
 {
+	var $db;
+	var $name;
+	var $description;
+	var $type;
+	
+	var $phpmin = array(4,3,0); // Minimum version of PHP required by module
+	var $version = 'dolibarr';
+	
+	var $page_largeur;
+	var $page_hauteur;
+	var $format;
+	var $marge_gauche;
+	var	$marge_droite;
+	var	$marge_haute;
+	var	$marge_basse;
+	
 	var $emetteur;	// Objet societe qui emet
 
 
@@ -206,7 +222,7 @@ class pdf_azur extends ModelePDFPropales
 				$pagenb++;
 				$this->_pagehead($pdf, $object, 1, $outputlangs, $hookmanager);
 				$pdf->SetFont('','', $default_font_size - 1);
-				$pdf->MultiCell(0, 4, '');		// Set interline to 4
+				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 90;
@@ -221,8 +237,8 @@ class pdf_azur extends ModelePDFPropales
 				{
 					$tab_top = 88;
 
-					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
-					$pdf->writeHTMLCell(190, 4, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($object->note_public), 0, 1);
+					$pdf->SetFont('','', $default_font_size - 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
@@ -255,14 +271,19 @@ class pdf_azur extends ModelePDFPropales
 					$curX = $this->posxdesc-1;
 					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY,$hideref,$hidedesc,0,$hookmanager);
 
+					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
 					$pdf->setPage($pageposbefore);
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
+// We suppose that a too long description is moved completely on next page
+if ($pageposafter > $pageposbefore) {
+	$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
+}
+						
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
-					$nexY = $pdf->GetY();
 
-					// TVA
+					// VAT Rate
 					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 					{
 						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails, $hookmanager);
@@ -270,7 +291,7 @@ class pdf_azur extends ModelePDFPropales
 						$pdf->MultiCell($this->posxup-$this->posxtva-1, 4, $vat_rate, 0, 'R');
 					}
 
-					// Prix unitaire HT avant remise
+					// Unit price before discount
 					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails, $hookmanager);
 					$pdf->SetXY($this->posxup, $curY);
 					$pdf->MultiCell($this->posxqty-$this->posxup-1, 4, $up_excl_tax, 0, 'R', 0);
@@ -280,7 +301,7 @@ class pdf_azur extends ModelePDFPropales
 					$pdf->SetXY($this->posxqty, $curY);
 					$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 4, $qty, 0, 'R');
 
-					// Remise sur ligne
+					// Discount on line
 					$pdf->SetXY($this->posxdiscount, $curY);
 					if ($object->lines[$i]->remise_percent)
 					{
@@ -288,7 +309,7 @@ class pdf_azur extends ModelePDFPropales
 						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 4, $remise_percent, 0, 'R');
 					}
 
-					// Total HT ligne
+					// Total HT line
 					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails, $hookmanager);
 					$pdf->SetXY($this->postotalht, $curY);
 					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 4, $total_excl_tax, 0, 'R', 0);
@@ -319,6 +340,7 @@ class pdf_azur extends ModelePDFPropales
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
 					{
+						$pdf->setPage($pagenb);
 						if ($pagenb == 1)
 						{
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
@@ -382,7 +404,7 @@ class pdf_azur extends ModelePDFPropales
 
 				$pdf->Output($file,'F');
 
-				// Actions on extra fields (by external module or standard code)
+				//Add pdfgeneration hook
 				if (! is_object($hookmanager))
 				{
 					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
@@ -549,25 +571,25 @@ class pdf_azur extends ModelePDFPropales
 						$account->fetch($conf->global->FACTURE_CHQ_NUMBER);
 
 						$pdf->SetXY($this->marge_gauche, $posy);
-						$pdf->SetFont('','B', $default_font_size - 2);
-						$pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio).':',0,'L',0);
+						$pdf->SetFont('','B', $default_font_size - 3);
+						$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio).':',0,'L',0);
 						$posy=$pdf->GetY()+1;
 
 						$pdf->SetXY($this->marge_gauche, $posy);
-						$pdf->SetFont('','', $default_font_size - 2);
-						$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($account->adresse_proprio), 0, 'L', 0);
+						$pdf->SetFont('','', $default_font_size - 3);
+						$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($account->adresse_proprio), 0, 'L', 0);
 						$posy=$pdf->GetY()+2;
 					}
 					if ($conf->global->FACTURE_CHQ_NUMBER == -1)
 					{
 						$pdf->SetXY($this->marge_gauche, $posy);
-						$pdf->SetFont('','B', $default_font_size - 2);
-						$pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$outputlangs->convToOutputCharset($this->emetteur->name).' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
+						$pdf->SetFont('','B', $default_font_size - 3);
+						$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$outputlangs->convToOutputCharset($this->emetteur->name).' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
 						$posy=$pdf->GetY()+1;
 
 						$pdf->SetXY($this->marge_gauche, $posy);
-						$pdf->SetFont('','', $default_font_size - 2);
-						$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', 0);
+						$pdf->SetFont('','', $default_font_size - 3);
+						$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', 0);
 						$posy=$pdf->GetY()+2;
 					}
 				}
@@ -584,7 +606,7 @@ class pdf_azur extends ModelePDFPropales
 					$curx=$this->marge_gauche;
 					$cury=$posy;
 
-					$posy=pdf_bank($pdf,$outputlangs,$curx,$cury,$account);
+					$posy=pdf_bank($pdf,$outputlangs,$curx,$cury,$account,0,$default_font_size);
 
 					$posy+=2;
 				}
@@ -617,6 +639,8 @@ class pdf_azur extends ModelePDFPropales
 		// Tableau total
 		$col1x = 120; $col2x = 170; $largcol2 = ($this->page_largeur - $this->marge_droite - $col2x);
 
+		$index = 0;
+		
 		// Total HT
 		$pdf->SetFillColor(255,255,255);
 		$pdf->SetXY($col1x, $tab2_top + 0);
@@ -624,8 +648,6 @@ class pdf_azur extends ModelePDFPropales
 
 		$pdf->SetXY($col2x, $tab2_top + 0);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + $object->remise), 0, 'R', 1);
-
-		$index = 0;
 
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248,248,248);
@@ -664,7 +686,7 @@ class pdf_azur extends ModelePDFPropales
 					}
 				}
 
-				if (! $this->atleastoneratenotnull) // If not vat at all
+				if (! $this->atleastoneratenotnull) // If no vat at all
 				{
 					$index++;
 					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
@@ -695,9 +717,9 @@ class pdf_azur extends ModelePDFPropales
 				}
 				else
 				{
-					//Local tax 1
 					if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 					{
+						//Local tax 1
 						foreach($this->localtax1 as $tvakey => $tvaval)
 						{
 							if ($tvakey>0)    // On affiche pas taux 0
@@ -723,9 +745,9 @@ class pdf_azur extends ModelePDFPropales
 						}
 					}
 
-					//Local tax 2
 					if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 					{
+						//Local tax 2
 						foreach($this->localtax2 as $tvakey => $tvaval)
 						{
 							if ($tvakey>0)    // On affiche pas taux 0
@@ -741,7 +763,7 @@ class pdf_azur extends ModelePDFPropales
 									$tvakey=str_replace('*','',$tvakey);
 									$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 								}
-								$totalvat = $outputlangs->transnoentities("TotalLT2".$mysoc->pays_code).' ';
+								$totalvat =$outputlangs->transnoentities("TotalLT2".$mysoc->pays_code).' ';
 								$totalvat.=vatrate($tvakey,1).$tvacompl;
 								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
@@ -764,9 +786,13 @@ class pdf_azur extends ModelePDFPropales
 
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc), $useborder, 'R', 1);
-				$pdf->SetTextColor(0,0,0);
 			}
 		}
+
+		$pdf->SetTextColor(0,0,0);
+		
+		$resteapayer = $object->total_ttc - $deja_regle;
+		if ($object->paye) $resteapayer=0;
 
 		if ($deja_regle > 0)
 		{
@@ -777,9 +803,6 @@ class pdf_azur extends ModelePDFPropales
 
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle), 0, 'R', 0);
-
-			$resteapayer = $object->total_ttc - $deja_regle;
-			if ($object->paye) $resteapayer=0;
 
 			if ($object->close_code == 'discount_vat')
 			{
@@ -830,7 +853,7 @@ class pdf_azur extends ModelePDFPropales
 		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		// Montants exprimes en     (en tab_top - 1)
+		// Amount in (at tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('','',$default_font_size - 2);
 
@@ -849,7 +872,7 @@ class pdf_azur extends ModelePDFPropales
 
 		if (empty($hidetop))
 		{
-			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);
+			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line prend une position y en 2eme param et 4eme param
 
 			$pdf->SetXY($this->posxdesc-1, $tab_top+1);
 			$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
@@ -926,13 +949,12 @@ class pdf_azur extends ModelePDFPropales
 		
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
-		//Affiche le filigrane brouillon - Print Draft Watermark
+		//  Show Draft Watermark
 		if($object->statut==0 && (! empty($conf->global->PROPALE_DRAFT_WATERMARK)) )
 		{
             pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',$conf->global->PROPALE_DRAFT_WATERMARK);
 		}
 
-		//Prepare la suite
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFont('','B', $default_font_size + 3);
 
@@ -1039,16 +1061,16 @@ class pdf_azur extends ModelePDFPropales
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetFillColor(230,230,230);
 			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
-
+			$pdf->SetTextColor(0,0,60);
+				
 			// Show sender name
 			$pdf->SetXY($posx+2,$posy+3);
-			$pdf->SetTextColor(0,0,60);
-			$pdf->SetFont('','B',$default_font_size);
-			$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+			$pdf->SetFont('','B', $default_font_size);
+			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
 
 			// Show sender information
-			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->SetXY($posx+2,$posy+8);
+			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
 
@@ -1084,8 +1106,8 @@ class pdf_azur extends ModelePDFPropales
 			// Show recipient frame
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
-			$pdf->SetXY($posx,$posy-5);
-			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("BillTo").":", 0, 'L');
+			$pdf->SetXY($posx+2,$posy-5);
+			$pdf->MultiCell(80,5, $outputlangs->transnoentities("BillTo").":", 0, 'L');
 			$pdf->Rect($posx, $posy, 100, $hautcadre);
 
 			// Show recipient name

@@ -122,6 +122,7 @@ SizeUnitcm=cm
 SizeUnitmm=mm
 SizeUnitinch=pouce
 SizeUnitfoot=pied
+SizeUnitpoint=point
 BugTracker=Bug tracker
 SendNewPasswordDesc=Ce formulaire permet d'envoyer un nouveau mot de passe. Il sera envoyé à l'adresse email de votre user.<br>La modification du mot de passe ne sera effective qu'après clic par le destinataire du lien de confirmation inclut dans ce mail.<br>Surveillez votre messagerie.
 BackToLoginPage=Retour page de connexion

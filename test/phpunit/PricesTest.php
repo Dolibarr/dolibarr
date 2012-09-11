@@ -124,31 +124,30 @@ class PricesTest extends PHPUnit_Framework_TestCase
      */
     public function testCalculPriceTotal()
     {
-        // Line 1
-        // qty=1, unit_price=1.24, discount_line=0, vat_rate=10, price_base_type='HT'
+		global $conf,$user,$langs,$db;
+		$this->savconf=$conf;
+		$this->savuser=$user;
+		$this->savlangs=$langs;
+		$this->savdb=$db;
+
+		// qty=1, unit_price=1.24, discount_line=0, vat_rate=10, price_base_type='HT'
         $result1=calcul_price_total(1, 1.24, 0, 10, 0, 0, 0, 'HT', 0);
+        print __METHOD__." result1=".join(', ',$result1)."\n";
         // result[0,1,2,3,4,5,6,7,8]	(total_ht, total_vat, total_ttc, pu_ht, pu_tva, pu_ttc, total_ht_without_discount, total_vat_without_discount, total_ttc_without_discount)
+        $this->assertEquals(array(1.24, 0.12, 1.36, 1.24, 0.124, 1.364, 1.24, 0.12, 1.36, 0, 0, 0, 0, 0, 0, 0),$result1);
 
-        print __METHOD__." value0=1.24 result0=".$result1[0]."\n";
-        $this->assertEquals(1.24,$result1[0]);
-        print __METHOD__." value1=0.12 result1=".$result1[1]."\n";
-        $this->assertEquals(0.12,$result1[1]);
-        print __METHOD__." value2=1.36 result2=".$result1[2]."\n";
-        $this->assertEquals(1.36,$result1[2]);
+        // 10 * 10 HT - 0% discount with 10% vat and 1.4% localtax1 type 1, 0% localtax2 type 0
+        $result2=calcul_price_total(10, 10, 0, 10, 1.4, 0, 0, 'HT', 0, 0, 1, 0);
+		print __METHOD__." result2=".join(', ',$result2)."\n";
+        $this->assertEquals(array(100, 10, 111.4, 10, 1, 11.14, 100, 10, 111.4, 1.4, 0, 0.14, 0, 0, 1.4, 0),$result2);
 
-        print __METHOD__." value3=1.24 result3=".$result1[3]."\n";
-        $this->assertEquals(1.24, $result1[3]);
-        print __METHOD__." value4=0.124 result4=".$result1[4]."\n";
-        $this->assertEquals(0.124,$result1[4]);
-        print __METHOD__." value5=1.364 result5=".$result1[5]."\n";
-        $this->assertEquals(1.364,$result1[5]);
-
-        print __METHOD__." value6=1.24 result6=".$result1[6]."\n";
-        $this->assertEquals(1.24,$result1[6]);
-        print __METHOD__." value7=0.12 result7=".$result1[7]."\n";
-        $this->assertEquals(0.12,$result1[7]);
-        print __METHOD__." value8=1.36 result8=".$result1[8]."\n";
-        $this->assertEquals(1.36,$result1[8]);
+        // Old function for spain countries. To check backward compatibility.
+        global $mysoc;
+        $mysoc=new Societe($db);
+        $mysoc->country_code='ES';
+        $result3=calcul_price_total(10, 10, 0, 10, 1.4, 0, 0, 'HT', 0);	// 10 * 10 HT - 0% discount with 10% vat and 1.4% localtax1, 0% localtax2
+        print __METHOD__." result3=".join(', ',$result3)."\n";
+        $this->assertEquals(array(100, 10, 111.4, 10, 1, 11.14, 100, 10, 111.4, 1.4, 0, 0.14, 0, 0, 1.4, 0),$result3);
 
         return true;
     }

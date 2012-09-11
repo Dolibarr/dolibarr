@@ -12,6 +12,7 @@
  * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2010      Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2011      Herve Prot            <herve.prot@symeos.com>
+ * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1196,6 +1197,11 @@ class Form
                 if (! empty($conf->global->MAIN_MULTILANGS)) $sql.=" OR pl.label LIKE '%".$filterkey."%'";
                 $sql.=")";
             }
+
+            if (! empty($conf->barcode->enabled))
+            {
+                $sql .= " OR p.barcode LIKE '".$filterkey."'";
+            }
         }
         $sql.= $db->order("p.ref");
         $sql.= $db->plimit($limit);
@@ -1440,6 +1446,11 @@ class Form
             else
             {
                 $sql.=" AND (pfp.ref_fourn LIKE '%".$filterkey."%' OR p.ref LIKE '%".$filterkey."%' OR p.label LIKE '%".$filterkey."%')";
+            }
+
+            if (! empty($conf->barcode->enabled))
+            {
+                $sql .= " OR p.barcode LIKE '".$filterkey."'";
             }
         }
         $sql.= " ORDER BY pfp.ref_fourn DESC";
@@ -3747,12 +3758,15 @@ class Form
     {
         global $conf;
 
+        //Check if barcode is filled in the card
         if (empty($object->barcode)) return '';
 
         // Complete object if not complete
         if (empty($object->barcode_type_code) || empty($object->barcode_type_coder))
         {
-            $object->fetch_barcode();
+            $result = $object->fetch_barcode();
+	        //Check if fetch_barcode() failed
+        	if ($result < 1) return '<!-- ErrorFetchBarcode -->';
         }
 
         // Barcode image

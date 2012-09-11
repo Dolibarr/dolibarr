@@ -1355,6 +1355,7 @@ class FactureFournisseur extends CommonInvoice
             $line->desc=$langs->trans("Description")." ".$xnbp;
             $line->qty=1;
             $line->subprice=100;
+            $line->pu_ht=100;		// the canelle template use pu_ht and not subprice
             $line->price=100;
             $line->tva_tx=19.6;
             $line->localtax1_tx=0;
@@ -1371,7 +1372,7 @@ class FactureFournisseur extends CommonInvoice
 			    $line->total_ht=100;
 			    $line->total_ttc=119.6;
 			    $line->total_tva=19.6;
-    			$line->remise_percent=00;
+    			$line->remise_percent=0;
 			}
 
 			$prodid = rand(1, $num_prods);
