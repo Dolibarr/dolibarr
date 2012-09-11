@@ -241,19 +241,26 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				{
 					$curY = $nexY;
 
-                    $pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
-
 					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot-50);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
 
-					// Description de la ligne produit
-					pdf_writelinedesc($pdf,$object,$i,$outputlangs,108,3,$this->posxdesc-1,$curY);
+					// Description of product line
+                    $pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
+					$curX = $this->posxdesc-1;
+                    pdf_writelinedesc($pdf,$object,$i,$outputlangs,108,3,$curX,$curY);
 
-					$pageposafter=$pdf->getPage();
+					$nexY = $pdf->GetY();
+                    $pageposafter=$pdf->getPage();
 					$pdf->setPage($pageposbefore);
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
+					// We suppose that a too long description is moved completely on next page
+					if ($pageposafter > $pageposbefore) {
+						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
+					}
+
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
+
 					$nexY = $pdf->GetY()+4;
 
 					/*
@@ -292,6 +299,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
 					{
+						$pdf->setPage($pagenb);
 						if ($pagenb == 1)
 						{
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
