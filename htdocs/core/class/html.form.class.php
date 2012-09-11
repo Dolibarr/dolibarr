@@ -3758,13 +3758,17 @@ class Form
     {
         global $conf;
 
+        //Check if barcode is filled in the card
         if (empty($object->barcode)) return '';
 
         // Complete object if not complete
         if (empty($object->barcode_type_code) || empty($object->barcode_type_coder))
         {
-            $object->fetch_barcode();
+            $result = $object->fetch_barcode();
         }
+
+        //Check if fetch_barcode() failed
+        if ($result < 1) return '';
 
         // Barcode image
         $url=DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&generator='.urlencode($object->barcode_type_coder).'&code='.urlencode($object->barcode).'&encoding='.urlencode($object->barcode_type_code);
