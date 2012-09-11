@@ -770,11 +770,7 @@ function dolMoveUploadedFile($src_file, $dest_file, $allowoverwrite, $notrigger=
  */
 function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$object=null)
 {
-	global $db, $conf, $user, $langs;
-	global $hookmanager;
-
-	$langs->load("other");
-	$langs->load("errors");
+	global $db, $hookmanager;
 
 	if (! is_object($hookmanager))
 	{
@@ -800,56 +796,77 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$objec
 	}
 	else
 	{
-		$error=0;
+		return dolDeleteFile($file, $disableglob, $nophperrors, $notrigger, $object);
+	}
+}
 
-		//print "x".$file." ".$disableglob;
-		$ok=true;
-		$file_osencoded=dol_osencode($file);    // New filename encoded in OS filesystem encoding charset
-		if (empty($disableglob) && ! empty($file_osencoded))
+/**
+ *  Remove a file or several files with a mask
+ *
+ *  @param	string	$file           File to delete or mask of file to delete
+ *  @param  int		$disableglob    Disable usage of glob like *
+ *  @param  int		$nophperrors    Disable all PHP output errors
+ *  @param	int		$notrigger		Disable all triggers
+ *  @param	object	$object			Current object in use
+ *  @return boolean         		True if file is deleted, False if error
+ *  @see	dol_delete_file
+ */
+function dolDeleteFile($file,$disableglob=0,$nophperrors=0,$notrigger=0,$object=null)
+{
+	global $db, $conf, $user, $langs;
+
+	$langs->load("other");
+	$langs->load("errors");
+
+	$error=0;
+
+	//print "x".$file." ".$disableglob;
+	$ok=true;
+	$file_osencoded=dol_osencode($file);    // New filename encoded in OS filesystem encoding charset
+	if (empty($disableglob) && ! empty($file_osencoded))
+	{
+		foreach (glob($file_osencoded) as $filename)
 		{
-			foreach (glob($file_osencoded) as $filename)
+			if ($nophperrors) $ok=@unlink($filename);  // The unlink encapsulated by dolibarr
+			else $ok=unlink($filename);  // The unlink encapsulated by dolibarr
+			if ($ok)
 			{
-				if ($nophperrors) $ok=@unlink($filename);  // The unlink encapsulated by dolibarr
-				else $ok=unlink($filename);  // The unlink encapsulated by dolibarr
-				if ($ok)
+				dol_syslog("Removed file ".$filename, LOG_DEBUG);
+				if (! $notrigger)
 				{
-					dol_syslog("Removed file ".$filename, LOG_DEBUG);
-					if (! $notrigger)
-					{
-						if (! is_object($object)) $object=(object) 'dummy';
-						$object->src_file=$file;
+					if (! is_object($object)) $object=(object) 'dummy';
+					$object->src_file=$file;
 
-						// TODO Replace trigger by a hook. Triggers must be used for business events only.
-						// REGIS just after of hook testing
-						// Appel des triggers
-						include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-						$interface=new Interfaces($db);
-						$result=$interface->run_triggers('FILE_DELETE',$object,$user,$langs,$conf);
-						if ($result < 0) {
-							$error++; $errors=$interface->errors;
-						}
-						// Fin appel triggers
+					// TODO Replace trigger by a hook. Triggers must be used for business events only.
+					// REGIS just after of hook testing
+					// Appel des triggers
+					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+					$interface=new Interfaces($db);
+					$result=$interface->run_triggers('FILE_DELETE',$object,$user,$langs,$conf);
+					if ($result < 0) {
+						$error++; $errors=$interface->errors;
 					}
+					// Fin appel triggers
 				}
-				else {
-					dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
-				}
-			}
-		}
-		else
-		{
-			if ($nophperrors) $ok=@unlink($file_osencoded);        // The unlink encapsulated by dolibarr
-			else $ok=unlink($file_osencoded);        // The unlink encapsulated by dolibarr
-			if ($ok) {
-				dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
 			}
 			else {
-				dol_syslog("Failed to remove file ".$file_osencoded, LOG_WARNING);
+				dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
 			}
 		}
-
-		return $ok;
 	}
+	else
+	{
+		if ($nophperrors) $ok=@unlink($file_osencoded);        // The unlink encapsulated by dolibarr
+		else $ok=unlink($file_osencoded);        // The unlink encapsulated by dolibarr
+		if ($ok) {
+			dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
+		}
+		else {
+			dol_syslog("Failed to remove file ".$file_osencoded, LOG_WARNING);
+		}
+	}
+
+	return $ok;
 }
 
 /**
