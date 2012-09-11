@@ -3457,7 +3457,7 @@ function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='
 				dol_syslog("Library functions_".$substitfile['name']." found into ".$dir);
 				require_once $dir.$substitfile['name'];
 				$function_name=$module."_".$callfunc;
-				$function_name($substitutionarray,$outputlangs,$object,$parameters);
+				if (function_exists($function_name)) $function_name($substitutionarray,$outputlangs,$object,$parameters);
 			}
 		}
 	}
