@@ -52,6 +52,7 @@ function dol_basename($pathfile)
 function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0)
 {
 	global $db, $hookmanager;
+	global $object;
 
 	dol_syslog("files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter));
 
@@ -83,7 +84,7 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 			'loaddate' => $loaddate,
 			'loadsize' => $loadsize
 	);
-	$reshook=$hookmanager->executeHooks('getNodesList', $parameters);
+	$reshook=$hookmanager->executeHooks('getNodesList', $parameters, $object);
 
 	// $reshook may contain returns stacked by other modules
 	// $reshook is always empty with an array for can not lose returns stacked with other modules
@@ -764,61 +765,91 @@ function dolMoveUploadedFile($src_file, $dest_file, $allowoverwrite, $notrigger=
  *  @param  int		$disableglob    Disable usage of glob like *
  *  @param  int		$nophperrors    Disable all PHP output errors
  *  @param	int		$notrigger		Disable all triggers
- *  @param	Object	$object         Object
+ *  @param	object	$object			Current object in use
  *  @return boolean         		True if file is deleted, False if error
  */
 function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$object=null)
 {
 	global $db, $conf, $user, $langs;
+	global $hookmanager;
 
 	$langs->load("other");
 	$langs->load("errors");
 
-	$error=0;
+	if (! is_object($hookmanager))
+	{
+		if (! class_exists('HookManager')) {
+			// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+			require DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($db);
+		}
+	}
+	$hookmanager->initHooks(array('fileslib'));
 
-    //print "x".$file." ".$disableglob;
-    $ok=true;
-    $file_osencoded=dol_osencode($file);    // New filename encoded in OS filesystem encoding charset
-    if (empty($disableglob) && ! empty($file_osencoded))
-    {
-        foreach (glob($file_osencoded) as $filename)
-        {
-            if ($nophperrors) $ok=@unlink($filename);  // The unlink encapsulated by dolibarr
-            else $ok=unlink($filename);  // The unlink encapsulated by dolibarr
-            if ($ok)
-            {
-            	dol_syslog("Removed file ".$filename, LOG_DEBUG);
-            	if (! $notrigger)
-            	{
-                    if (! is_object($object)) $object=(object) 'dummy';
-            		$object->src_file=$file;
+	$parameters=array(
+			'file' => $file,
+			'disableglob'=> $disableglob,
+			'nophperrors' => $nophperrors,
+			'notrigger' => $notrigger
+	);
+	$reshook=$hookmanager->executeHooks('deleteFile', $parameters, $object);
 
-            		// TODO Replace trigger by a hook. Triggers must be used for business events only.
-            		// Appel des triggers
-            		include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            		$interface=new Interfaces($db);
-            		$result=$interface->run_triggers('FILE_DELETE',$object,$user,$langs,$conf);
-            		if ($result < 0) { $error++; $errors=$interface->errors; }
-            		// Fin appel triggers
-            	}
-            }
-            else {
-            	dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
-            }
-        }
-    }
-    else
-    {
-        if ($nophperrors) $ok=@unlink($file_osencoded);        // The unlink encapsulated by dolibarr
-        else $ok=unlink($file_osencoded);        // The unlink encapsulated by dolibarr
-        if ($ok) {
-        	dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
-        }
-        else {
-        	dol_syslog("Failed to remove file ".$file_osencoded, LOG_WARNING);
-        }
-    }
-    return $ok;
+	if (isset($reshook) && $reshook != '') // 0:not deleted, 1:deleted, null or '' for bypass
+	{
+		return $reshook;
+	}
+	else
+	{
+		$error=0;
+
+		//print "x".$file." ".$disableglob;
+		$ok=true;
+		$file_osencoded=dol_osencode($file);    // New filename encoded in OS filesystem encoding charset
+		if (empty($disableglob) && ! empty($file_osencoded))
+		{
+			foreach (glob($file_osencoded) as $filename)
+			{
+				if ($nophperrors) $ok=@unlink($filename);  // The unlink encapsulated by dolibarr
+				else $ok=unlink($filename);  // The unlink encapsulated by dolibarr
+				if ($ok)
+				{
+					dol_syslog("Removed file ".$filename, LOG_DEBUG);
+					if (! $notrigger)
+					{
+						if (! is_object($object)) $object=(object) 'dummy';
+						$object->src_file=$file;
+
+						// TODO Replace trigger by a hook. Triggers must be used for business events only.
+						// REGIS just after of hook testing
+						// Appel des triggers
+						include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+						$interface=new Interfaces($db);
+						$result=$interface->run_triggers('FILE_DELETE',$object,$user,$langs,$conf);
+						if ($result < 0) {
+							$error++; $errors=$interface->errors;
+						}
+						// Fin appel triggers
+					}
+				}
+				else {
+					dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
+				}
+			}
+		}
+		else
+		{
+			if ($nophperrors) $ok=@unlink($file_osencoded);        // The unlink encapsulated by dolibarr
+			else $ok=unlink($file_osencoded);        // The unlink encapsulated by dolibarr
+			if ($ok) {
+				dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
+			}
+			else {
+				dol_syslog("Failed to remove file ".$file_osencoded, LOG_WARNING);
+			}
+		}
+
+		return $ok;
+	}
 }
 
 /**

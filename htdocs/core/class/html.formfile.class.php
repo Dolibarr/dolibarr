@@ -551,83 +551,115 @@ class FormFile
      *  @param	 string $url				Full url to use for click links ('' = autodetect)
      * 	@return	 int						<0 if KO, nb of files shown if OK
      */
-    function list_of_documents($filearray,$object,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='')
-    {
-        global $user, $conf, $langs;
-        global $bc;
-        global $sortfield, $sortorder, $maxheightmini;
+	function list_of_documents($filearray,$object,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='')
+	{
+		global $user, $conf, $langs;
+		global $bc, $hookmanager;
+		global $sortfield, $sortorder, $maxheightmini;
 
-        // Show list of existing files
-        if (empty($useinecm)) print_titre($title?$title:$langs->trans("AttachedFiles"));
-        if (empty($url)) $url=$_SERVER["PHP_SELF"];
-        print '<table width="100%" class="'.($useinecm?'nobordernopadding':'liste').'">';
-        print '<tr class="liste_titre">';
-        print_liste_field_titre($langs->trans("Documents2"),$url,"name","",$param,'align="left"',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Size"),$url,"size","",$param,'align="right"',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Date"),$url,"date","",$param,'align="center"',$sortfield,$sortorder);
-        if (empty($useinecm)) print_liste_field_titre('',$url,"","",$param,'align="center"');
-        print_liste_field_titre('','','');
-        print '</tr>';
+		if (! is_object($hookmanager))
+		{
+			if (! class_exists('HookManager')) {
+				// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+				require DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+				$hookmanager=new HookManager($db);
+			}
+		}
+		$hookmanager->initHooks(array('formfile'));
 
-        $nboffiles=count($filearray);
+		$parameters=array(
+				'filearray' => $filearray,
+				'modulepart'=> $modulepart,
+				'param' => $param,
+				'forcedownload' => $forcedownload,
+				'relativepath' => $relativepath,
+				'permtodelete' => $permtodelete,
+				'useinecm' => $useinecm,
+				'textifempty' => $textifempty,
+				'maxlength' => $maxlength,
+				'title' => $title,
+				'url' => $url
+		);
+		$reshook=$hookmanager->executeHooks('showNodesList', $parameters, $object);
 
-        if ($nboffiles > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+		if (isset($reshook) && $reshook != '') // 0:not deleted, 1:deleted, null or '' for bypass
+		{
+			return $reshook;
+		}
+		else
+		{
+			// Show list of existing files
+			if (empty($useinecm)) print_titre($title?$title:$langs->trans("AttachedFiles"));
+			if (empty($url)) $url=$_SERVER["PHP_SELF"];
+			print '<table width="100%" class="'.($useinecm?'nobordernopadding':'liste').'">';
+			print '<tr class="liste_titre">';
+			print_liste_field_titre($langs->trans("Documents2"),$url,"name","",$param,'align="left"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Size"),$url,"size","",$param,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Date"),$url,"date","",$param,'align="center"',$sortfield,$sortorder);
+			if (empty($useinecm)) print_liste_field_titre('',$url,"","",$param,'align="center"');
+			print_liste_field_titre('','','');
+			print '</tr>';
 
-        $var=true;
-        foreach($filearray as $key => $file)      // filearray must be only files here
-        {
-            if ($file['name'] != '.'
-            && $file['name'] != '..'
-            && ! preg_match('/\.meta$/i',$file['name']))
-            {
-                // Define relative path used to store the file
-                if (empty($relativepath))
-                	$relativepath=(! empty($object->ref)?dol_sanitizeFileName($object->ref):'').'/';
+			$nboffiles=count($filearray);
 
-                $var=!$var;
-                print '<tr '.$bc[$var].'>';
-                print '<td>';
-                //print "XX".$file['name'];	//$file['name'] must be utf8
-                print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
-                if ($forcedownload) print '&attachment=1';
-                if (! empty($object->entity)) print '&entity='.$object->entity;
-                print '&file='.urlencode($relativepath.$file['name']).'">';
-                print img_mime($file['name'],$file['name'].' ('.dol_print_size($file['size'],0,0).')').' ';
-                print dol_trunc($file['name'],$maxlength,'middle');
-                print '</a>';
-                print "</td>\n";
-                print '<td align="right">'.dol_print_size($file['size'],1,1).'</td>';
-                print '<td align="center">'.dol_print_date($file['date'],"dayhour").'</td>';
-                // Preview
-                if (empty($useinecm))
-                {
-                    print '<td align="center">';
-                    $tmp=explode('.',$file['name']);
-                    $minifile=$tmp[0].'_mini.'.$tmp[1];
-                    if (image_format_supported($file['name']) > 0) print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.'thumbs/'.$minifile).'" title="">';
-                    else print '&nbsp;';
-                    print '</td>';
-                }
-                // Delete or view link
-                print '<td align="right">';
-                if ($useinecm)     print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view().'</a> &nbsp; ';
-                if ($permtodelete) print '<a href="'.(($useinecm && ! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?action=delete'.(isset($object->id)?'&id='.$object->id:'').'&urlfile='.urlencode($file['name']).$param).'" class="deletefilelink" rel="'.urlencode($file['name']).'">'.img_delete().'</a>';
-                else print '&nbsp;';
-                print "</td>";
-                print "</tr>\n";
-            }
-        }
-        if ($nboffiles == 0)
-        {
-            print '<tr '.$bc[$var].'><td colspan="'.(empty($useinecm)?'5':'4').'">';
-            if (empty($textifempty)) print $langs->trans("NoFileFound");
-            else print $textifempty;
-            print '</td></tr>';
-        }
-        print "</table>";
+			if ($nboffiles > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
-        return $nboffiles;
-    }
+			$var=true;
+			foreach($filearray as $key => $file)      // filearray must be only files here
+			{
+				if ($file['name'] != '.'
+						&& $file['name'] != '..'
+						&& ! preg_match('/\.meta$/i',$file['name']))
+				{
+					// Define relative path used to store the file
+					if (empty($relativepath))
+						$relativepath=(! empty($object->ref)?dol_sanitizeFileName($object->ref):'').'/';
+
+					$var=!$var;
+					print '<tr '.$bc[$var].'>';
+					print '<td>';
+					//print "XX".$file['name'];	//$file['name'] must be utf8
+					print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
+					if ($forcedownload) print '&attachment=1';
+					if (! empty($object->entity)) print '&entity='.$object->entity;
+					print '&file='.urlencode($relativepath.$file['name']).'">';
+					print img_mime($file['name'],$file['name'].' ('.dol_print_size($file['size'],0,0).')').' ';
+					print dol_trunc($file['name'],$maxlength,'middle');
+					print '</a>';
+					print "</td>\n";
+					print '<td align="right">'.dol_print_size($file['size'],1,1).'</td>';
+					print '<td align="center">'.dol_print_date($file['date'],"dayhour").'</td>';
+					// Preview
+					if (empty($useinecm))
+					{
+						print '<td align="center">';
+						$tmp=explode('.',$file['name']);
+						$minifile=$tmp[0].'_mini.'.$tmp[1];
+						if (image_format_supported($file['name']) > 0) print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.'thumbs/'.$minifile).'" title="">';
+						else print '&nbsp;';
+						print '</td>';
+					}
+					// Delete or view link
+					print '<td align="right">';
+					if ($useinecm)     print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view().'</a> &nbsp; ';
+					if ($permtodelete) print '<a href="'.(($useinecm && ! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?action=delete'.(isset($object->id)?'&id='.$object->id:'').'&urlfile='.urlencode($file['name']).$param).'" class="deletefilelink" rel="'.urlencode($file['name']).'">'.img_delete().'</a>';
+					else print '&nbsp;';
+					print "</td>";
+					print "</tr>\n";
+				}
+			}
+			if ($nboffiles == 0)
+			{
+				print '<tr '.$bc[$var].'><td colspan="'.(empty($useinecm)?'5':'4').'">';
+				if (empty($textifempty)) print $langs->trans("NoFileFound");
+				else print $textifempty;
+				print '</td></tr>';
+			}
+			print "</table>";
+
+			return $nboffiles;
+		}
+	}
 
 
     /**
