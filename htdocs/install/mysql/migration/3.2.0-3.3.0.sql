@@ -190,19 +190,34 @@ UPDATE llx_boxes as b SET b.entity = (SELECT bd.entity FROM llx_boxes_def as bd 
 -- TASK #204
 alter table llx_c_tva add column localtax1_type varchar(1) default '0' after localtax1;
 alter table llx_c_tva add column localtax2_type varchar(1) default '0' after localtax2;
+ALTER TABLE llx_c_tva MODIFY COLUMN localtax1_type varchar(1);
+ALTER TABLE llx_c_tva MODIFY COLUMN localtax2_type varchar(1);
 
 alter table llx_commande_fournisseurdet add column localtax1_type varchar(1) after localtax1_tx;
 alter table llx_commande_fournisseurdet add column localtax2_type varchar(1) after localtax2_tx;
+ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN localtax1_type varchar(1);
+ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN localtax2_type varchar(1);
 
 alter table llx_commandedet add column localtax1_type varchar(1) after localtax1_tx;
 alter table llx_commandedet add column localtax2_type varchar(1) after localtax2_tx;
+ALTER TABLE llx_commandedet MODIFY COLUMN localtax1_type varchar(1);
+ALTER TABLE llx_commandedet MODIFY COLUMN localtax2_type varchar(1);
 
 alter table llx_facture_fourn_det add column localtax1_type varchar(1) after localtax1_tx;
 alter table llx_facture_fourn_det add column localtax2_type varchar(1) after localtax2_tx;
+ALTER TABLE llx_facture_fourn_det MODIFY COLUMN localtax1_type varchar(1);
+ALTER TABLE llx_facture_fourn_det MODIFY COLUMN localtax2_type varchar(1);
 
 alter table llx_facturedet add column localtax1_type varchar(1) after localtax1_tx;
 alter table llx_facturedet add column localtax2_type varchar(1) after localtax2_tx;
+ALTER TABLE llx_facturedet MODIFY COLUMN localtax1_type varchar(1);
+ALTER TABLE llx_facturedet MODIFY COLUMN localtax2_type varchar(1);
 
 alter table llx_propaldet add column localtax1_type varchar(1) after localtax1_tx;
 alter table llx_propaldet add column localtax2_type varchar(1) after localtax2_tx;
+ALTER TABLE llx_propaldet MODIFY COLUMN localtax1_type varchar(1);
+ALTER TABLE llx_propaldet MODIFY COLUMN localtax2_type varchar(1);
 -- END TASK #204
+
+ALTER TABLE llx_menu MODIFY COLUMN enabled varchar(255) NULL default '1';
+ALTER TABLE llx_document MODIFY COLUMN permissions varchar(9) DEFAULT 'rw-rw-rw';
