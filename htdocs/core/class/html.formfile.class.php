@@ -580,7 +580,7 @@ class FormFile
 				'title' => $title,
 				'url' => $url
 		);
-		$reshook=$hookmanager->executeHooks('showNodesList', $parameters, $object);
+		$reshook=$hookmanager->executeHooks('showFilesList', $parameters, $object);
 
 		if (isset($reshook) && $reshook != '') // 0:not deleted, 1:deleted, null or '' for bypass
 		{
