@@ -110,6 +110,8 @@ class Facture extends CommonInvoice
     var $nbtodolate;
     var $specimen;
 
+    var $fac_rec;
+
 
     /**
      * 	Constructor
