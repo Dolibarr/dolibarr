@@ -796,12 +796,13 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$objec
 	}
 	else
 	{
-		return dolDeleteFile($file, $disableglob, $nophperrors, $notrigger, $object);
+		return _dolDeleteFile($file, $disableglob, $nophperrors, $notrigger, $object);
 	}
 }
 
 /**
- *  Remove a file or several files with a mask
+ *  Remove a file or several files with a mask.
+ *  Never call this function ! Call dol_delete_file file instead.
  *
  *  @param	string	$file           File to delete or mask of file to delete
  *  @param  int		$disableglob    Disable usage of glob like *
@@ -811,7 +812,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$objec
  *  @return boolean         		True if file is deleted, False if error
  *  @see	dol_delete_file
  */
-function dolDeleteFile($file,$disableglob=0,$nophperrors=0,$notrigger=0,$object=null)
+function _dolDeleteFile($file,$disableglob=0,$nophperrors=0,$notrigger=0,$object=null)
 {
 	global $db, $conf, $user, $langs;
 
