@@ -568,7 +568,7 @@ function dol_unescapefile($filename)
  * 	@param	int		$nohook				Disable all hooks
  * 	@param	string	$varfiles			_FILES var name
  *	@return int       			  		>0 if OK, <0 or string if KO
- *  @see    dolCheckUploadedFile, dol_move
+ *  @see    dol_move
  */
 function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan=0, $uploaderrorcode=0, $nohook=0, $varfiles='addedfile')
 {
@@ -761,12 +761,8 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 		{
 			if ($nophperrors) $ok=@unlink($file_osencoded);        // The unlink encapsulated by dolibarr
 			else $ok=unlink($file_osencoded);        // The unlink encapsulated by dolibarr
-			if ($ok) {
-				dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
-			}
-			else {
-				dol_syslog("Failed to remove file ".$file_osencoded, LOG_WARNING);
-			}
+			if ($ok) dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
+			else dol_syslog("Failed to remove file ".$file_osencoded, LOG_WARNING);
 		}
 
 		return $ok;
