@@ -53,6 +53,7 @@ New experimental modules:
 - Fix: No images into product description lines as PDF generation does
   not work with this.
 - Fix: Errors weren't being shown in customer's & supplier's orders
+- Fix: Lastname wasn't being recorded in xinputuser emailing module
 
 For developers:
 - New: Add webservice for thirdparty creation and list.
