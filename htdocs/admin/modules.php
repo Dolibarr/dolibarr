@@ -195,13 +195,13 @@ asort($orders);
 //var_dump($modules);
 
 // Start to show page
-$tagmode=$mode;
-if ($mode=='common')      print $langs->trans("ModulesDesc")."<br>\n";
-if ($mode=='other')       print $langs->trans("ModulesSpecialDesc")."<br>\n";
-if ($mode=='interfaces')  print $langs->trans("ModulesInterfaceDesc")."<br>\n";
-if ($mode=='functional')  print $langs->trans("ModulesJobDesc")."<br>\n";
-if ($mode=='marketplace') print $langs->trans("ModulesMarketPlaceDesc")."<br>\n";
-if ($mode=='expdev')      print $langs->trans("ModuleFamilyExperimental")."<br>\n";
+if (empty($mode)) $mode='common';
+if ($mode==='common')      print $langs->trans("ModulesDesc")."<br>\n";
+if ($mode==='other')       print $langs->trans("ModulesSpecialDesc")."<br>\n";
+if ($mode==='interfaces')  print $langs->trans("ModulesInterfaceDesc")."<br>\n";
+if ($mode==='functional')  print $langs->trans("ModulesJobDesc")."<br>\n";
+if ($mode==='marketplace') print $langs->trans("ModulesMarketPlaceDesc")."<br>\n";
+if ($mode==='expdev')      print $langs->trans("ModuleFamilyExperimental")."<br>\n";
 
 $nbofactivatedmodules=count($conf->modules);
 print $langs->trans("TotalNumberOfActivatedModules",($nbofactivatedmodules-1));
@@ -264,7 +264,7 @@ $head[$h][2] = 'marketplace';
 $h++;
 
 
-dol_fiche_head($head, $tagmode, $langs->trans("Modules"));
+dol_fiche_head($head, $mode, $langs->trans("Modules"));
 
 
 dol_htmloutput_errors($mesg);
