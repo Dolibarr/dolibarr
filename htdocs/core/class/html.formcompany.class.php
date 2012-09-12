@@ -627,10 +627,13 @@ class FormCompany
 	{
 		$lesTypes = $object->liste_type_contact($source, $order);
 		print '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
-		if ($showempty) print print '<option value="0"></option>';
+		if ($showempty) print '<option value="0"></option>';
 		foreach($lesTypes as $key=>$value)
 		{
-			print '<option value="'.$key.'">'.$value.'</option>';
+			print '<option value="'.$key.'"';
+			if ($key == $selected)
+			    print ' selected';
+			print '>'.$value.'</option>';
 		}
 		print "</select>\n";
 	}

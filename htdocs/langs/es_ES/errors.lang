@@ -1,7 +1,7 @@
 # Dolibarr language file - es_ES - errors
 CHARSET=UTF-8
 MenuManager=Gestor de menú
-# Errors=undefined
+# Errors
 Error=Error
 Errors=Errores
 ErrorBadEMail=e-mail %s no correcto
