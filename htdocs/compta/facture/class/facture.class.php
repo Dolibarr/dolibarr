@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2012 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2012 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
  *
@@ -3446,11 +3446,11 @@ class FactureLigne
         	$sql.= ",total_ht=".price2num($this->total_ht)."";
         	$sql.= ",total_tva=".price2num($this->total_tva)."";
         	$sql.= ",total_ttc=".price2num($this->total_ttc)."";
+        	$sql.= ",total_localtax1=".price2num($this->total_localtax1)."";
+        	$sql.= ",total_localtax2=".price2num($this->total_localtax2)."";
         }
 		$sql.= " , fk_product_fournisseur_price='".$this->fk_fournprice."'";
 		$sql.= " , buy_price_ht='".price2num($this->pa_ht)."'";
-        $sql.= ",total_localtax1=".price2num($this->total_localtax1)."";
-        $sql.= ",total_localtax2=".price2num($this->total_localtax2)."";
         $sql.= ",fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
         if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
         $sql.= " WHERE rowid = ".$this->rowid;

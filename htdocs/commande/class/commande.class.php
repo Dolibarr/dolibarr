@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
@@ -3140,11 +3140,11 @@ class OrderLine
 			$sql.= " , total_ht=".price2num($this->total_ht)."";
 			$sql.= " , total_tva=".price2num($this->total_tva)."";
 			$sql.= " , total_ttc=".price2num($this->total_ttc)."";
+			$sql.= " , total_localtax1=".price2num($this->total_localtax1);
+			$sql.= " , total_localtax2=".price2num($this->total_localtax2);
 		}
 		$sql.= " , fk_product_fournisseur_price=".(! empty($this->fk_fournprice)?$this->fk_fournprice:"null");
 		$sql.= " , buy_price_ht='".price2num($this->pa_ht)."'";
-		$sql.= " , total_localtax1=".price2num($this->total_localtax1);
-		$sql.= " , total_localtax2=".price2num($this->total_localtax2);
 		$sql.= " , info_bits=".$this->info_bits;
 		$sql.= " , date_start=".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null");
 		$sql.= " , date_end=".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
