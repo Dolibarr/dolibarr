@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT. '/user/class/usergroup.class.php';
 
 $action=GETPOST('action');
 
+$langs->load("admin");
 $langs->load("holiday");
 
 // Si pas administrateur
