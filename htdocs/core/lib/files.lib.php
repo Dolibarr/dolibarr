@@ -994,7 +994,7 @@ function dol_init_file_process($pathtoscan='')
  */
 function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=0,$varfiles='addedfile')
 {
-	global $db,$user,$conf,$langs,$_FILES;
+	global $db,$user,$conf,$langs;
 
 	if (! empty($_FILES[$varfiles])) // For view $_FILES[$varfiles]['error']
 	{
