@@ -151,6 +151,3 @@ OrderByFax=Fax
 OrderByEMail=E-Mail
 OrderByWWW=En línea
 OrderByPhone=Teléfono
-
-#Export
-#ExportDataset_fournisseur_3=Pedidos de proveedores y líneas de pedido
