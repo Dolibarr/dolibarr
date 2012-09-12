@@ -37,6 +37,8 @@ $action=GETPOST('action');
 
 if (!$user->admin) accessforbidden();
 
+$specialtostring=array(0=>'common', 1=>'interfaces', 2=>'other', 3=>'functional', 4=>'marketplace');
+
 
 /*
  * Actions
@@ -150,17 +152,22 @@ foreach ($modulesdir as $dir)
 
     					// We discard modules according to features level (PS: if module is activated we always show it)
     					$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
-    					if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && empty($conf->global->$const_name)) $modulequalified=0;
-    					if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && empty($conf->global->$const_name)) $modulequalified=0;
+    					if ($objMod->version == 'development'  && ($mode != 'expdev' || ($conf->global->MAIN_FEATURES_LEVEL < 2 && empty($conf->global->$const_name)))) $modulequalified=0;
+    					if ($objMod->version == 'experimental' && ($mode != 'expdev' || ($conf->global->MAIN_FEATURES_LEVEL < 1 && empty($conf->global->$const_name)))) $modulequalified=0;
+						//if ($mode == 'expdev' && ($objMod->version != 'experimental' && $objMod->version != 'development')) $modulequalified=0;
 
+    					// Define array $categ with categ with at least one qualified module
     					if ($modulequalified)
     					{
     						$modules[$i] = $objMod;
     			            $filename[$i]= $modName;
-    			            $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
-    						//print "x".$modName." ".$orders[$i]."\n<br>";
-    						if (isset($categ[$objMod->special])) $categ[$objMod->special]++;					// Array of all different modules categories
-    			            else $categ[$objMod->special]=1;
+    			            $orders[$i]  = $objMod->family."_".$j;   // Sort by family, then by module number
+    			            $special     = isset($specialtostring[$objMod->special])?$specialtostring[$objMod->special]:'unknown';
+    			            if ($mode == 'expdev' && ($objMod->version == 'development' || $objMod->version == 'experimental')) $special='expdev';
+
+    						//print "x".$modName." ".$orders[$i]." ".$special."\n<br>";
+    						if (isset($categ[$special])) $categ[$special]++;					// Array of all different modules categories
+    			            else $categ[$special]=1;
     						$dirmod[$i] = $dir;
     						$j++;
     			            $i++;
@@ -188,12 +195,13 @@ asort($orders);
 //var_dump($modules);
 
 // Start to show page
-
-if ($mode==0) { $tagmode = 'common';      print $langs->trans("ModulesDesc")."<br>\n"; }
-if ($mode==2) { $tagmode = 'other';       print $langs->trans("ModulesSpecialDesc")."<br>\n"; }
-if ($mode==1) { $tagmode = 'interfaces';  print $langs->trans("ModulesInterfaceDesc")."<br>\n"; }
-if ($mode==3) { $tagmode = 'functional';  print $langs->trans("ModulesJobDesc")."<br>\n"; }
-if ($mode==4) { $tagmode = 'marketplace'; print $langs->trans("ModulesMarketPlaceDesc")."<br>\n"; }
+$tagmode=$mode;
+if ($mode=='common')      print $langs->trans("ModulesDesc")."<br>\n";
+if ($mode=='other')       print $langs->trans("ModulesSpecialDesc")."<br>\n";
+if ($mode=='interfaces')  print $langs->trans("ModulesInterfaceDesc")."<br>\n";
+if ($mode=='functional')  print $langs->trans("ModulesJobDesc")."<br>\n";
+if ($mode=='marketplace') print $langs->trans("ModulesMarketPlaceDesc")."<br>\n";
+if ($mode=='expdev')      print $langs->trans("ModuleFamilyExperimental")."<br>\n";
 
 $nbofactivatedmodules=count($conf->modules);
 print $langs->trans("TotalNumberOfActivatedModules",($nbofactivatedmodules-1));
@@ -204,7 +212,7 @@ print "<br>\n";
 
 $h = 0;
 
-$categidx=0;    // Main
+$categidx='common';    // Main
 if (! empty($categ[$categidx]))
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
@@ -213,7 +221,7 @@ if (! empty($categ[$categidx]))
 	$h++;
 }
 
-$categidx=2;    // Other
+$categidx='other';    // Other
 if (! empty($categ[$categidx]))
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
@@ -222,7 +230,7 @@ if (! empty($categ[$categidx]))
 	$h++;
 }
 
-$categidx=1;    // Interfaces
+$categidx='interfaces';    // Interfaces
 if (! empty($categ[$categidx]))
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
@@ -231,7 +239,7 @@ if (! empty($categ[$categidx]))
 	$h++;
 }
 
-$categidx=3;    // Not used
+$categidx='functional';    // Not used
 if (! empty($categ[$categidx]))
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
@@ -240,14 +248,20 @@ if (! empty($categ[$categidx]))
 	$h++;
 }
 
-$categidx=4;
-//if (! empty($categ[$categidx]))
-//{
+if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
+{
+	$categidx='expdev';
     $head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
-    $head[$h][1] = $langs->trans("ModulesMarketPlaces");
-    $head[$h][2] = 'marketplace';
+    $head[$h][1] = $langs->trans("ModuleFamilyExperimental");
+    $head[$h][2] = 'expdev';
     $h++;
-//}
+}
+
+$categidx='marketplace';
+$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
+$head[$h][1] = $langs->trans("ModulesMarketPlaces");
+$head[$h][2] = 'marketplace';
+$h++;
 
 
 dol_fiche_head($head, $tagmode, $langs->trans("Modules"));
@@ -256,7 +270,7 @@ dol_fiche_head($head, $tagmode, $langs->trans("Modules"));
 dol_htmloutput_errors($mesg);
 
 
-if ($mode != 4)
+if ($mode != 'marketplace')
 {
     print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
     //print "<tr class=\"liste_titre\">\n";
@@ -271,7 +285,7 @@ if ($mode != 4)
     print "</tr>\n";
 
 
-    // Affichage liste modules
+    // Show list of modules
 
     $var=true;
     $oldfamily='';
@@ -295,9 +309,11 @@ if ($mode != 4)
 
         $modName = $filename[$key];
     	$objMod  = $modules[$key];
-    	//var_dump($objMod);
 
-    	if ($objMod->special != $mode) continue;    // Discard if not for tab
+    	//print $objMod->name." - ".$key." - ".$objMod->special.' - '.$objMod->version."<br>";
+    	if (($mode != (isset($specialtostring[$objMod->special])?$specialtostring[$objMod->special]:'unknown')	&& $mode != 'expdev')
+    		|| ($mode == 'expdev' && $objMod->version != 'development' && $objMod->version != 'experimental')) continue;    // Discard if not for current tab
+
         if (! $objMod->getName())
         {
         	dol_syslog("Error for module ".$key." - Property name of module looks empty", LOG_WARNING);
@@ -327,8 +343,6 @@ if ($mode != 4)
             //print "<tr><td>yy".$oldfamily."-".$family."-".$atleastoneforfamily."<br></td><tr>";
         }
 
-        if ($objMod->special == $mode)
-        {
             $atleastoneforfamily++;
 
             if ($family!=$oldfamily)
@@ -453,7 +467,6 @@ if ($mode != 4)
             }
 
             print "</tr>\n";
-        }
 
     }
     print "</table>\n";
