@@ -687,27 +687,27 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 
                 // System tools
                 $newmenu->add("/admin/tools/index.php?mainmenu=home&leftmenu=admintools", $langs->trans("SystemTools"), 0, 1, '', $mainmenu, 'admintools');
-                if ($leftmenu=="admintools")
+                if (preg_match('/^admintools/',$leftmenu))
                 {
-                	$newmenu->add('/admin/system/dolibarr.php?mainmenu=home', $langs->trans('InfoDolibarr'), 1);
-                	$newmenu->add('/admin/system/constall.php?mainmenu=home', $langs->trans('AllParameters'), 2);
-                	$newmenu->add('/admin/system/modules.php?mainmenu=home', $langs->trans('Modules'), 2);
-                	$newmenu->add('/admin/triggers.php?mainmenu=home', $langs->trans('Triggers'), 2);
-                	$newmenu->add('/admin/system/os.php?mainmenu=home', $langs->trans('InfoOS'), 1);
-                	$newmenu->add('/admin/system/web.php?mainmenu=home', $langs->trans('InfoWebServer'), 1);
-                	$newmenu->add('/admin/system/phpinfo.php?mainmenu=home', $langs->trans('InfoPHP'), 1);
+                	$newmenu->add('/admin/system/dolibarr.php?mainmenu=home&leftmenu=admintools_info', $langs->trans('InfoDolibarr'), 1);
+                	if ($leftmenu=='admintools_info') $newmenu->add('/admin/system/constall.php?mainmenu=home&leftmenu=admintools_info', $langs->trans('AllParameters'), 2);
+                	if ($leftmenu=='admintools_info') $newmenu->add('/admin/system/modules.php?mainmenu=home&leftmenu=admintools_info', $langs->trans('Modules'), 2);
+                	if ($leftmenu=='admintools_info') $newmenu->add('/admin/triggers.php?mainmenu=home&leftmenu=admintools_info', $langs->trans('Triggers'), 2);
+                	$newmenu->add('/admin/system/os.php?mainmenu=home&leftmenu=admintools', $langs->trans('InfoOS'), 1);
+                	$newmenu->add('/admin/system/web.php?mainmenu=home&leftmenu=admintools', $langs->trans('InfoWebServer'), 1);
+                	$newmenu->add('/admin/system/phpinfo.php?mainmenu=home&leftmenu=admintools', $langs->trans('InfoPHP'), 1);
                 	//if (function_exists('xdebug_is_enabled')) $newmenu->add('/admin/system/xdebug.php', $langs->trans('XDebug'),1);
-                	$newmenu->add('/admin/system/database.php?mainmenu=home', $langs->trans('InfoDatabase'), 1);
+                	$newmenu->add('/admin/system/database.php?mainmenu=home&leftmenu=admintools', $langs->trans('InfoDatabase'), 1);
 
-                    $newmenu->add("/admin/tools/dolibarr_export.php?mainmenu=home", $langs->trans("Backup"),1);
-                    $newmenu->add("/admin/tools/dolibarr_import.php?mainmenu=home", $langs->trans("Restore"),1);
-                    $newmenu->add("/admin/tools/update.php?mainmenu=home", $langs->trans("MenuUpgrade"),1);
-                    if (function_exists('eaccelerator_info')) $newmenu->add("/admin/tools/eaccelerator.php?mainmenu=home", $langs->trans("EAccelerator"),1);
-                    $newmenu->add("/admin/tools/listevents.php?mainmenu=home", $langs->trans("Audit"),1);
-                    $newmenu->add("/admin/tools/listsessions.php?mainmenu=home", $langs->trans("Sessions"),1);
-                    $newmenu->add("/admin/tools/purge.php?mainmenu=home", $langs->trans("Purge"),1);
-                    $newmenu->add("/support/index.php?mainmenu=home", $langs->trans("HelpCenter"),1,1,'targethelp');
-                    $newmenu->add('/admin/system/about.php?mainmenu=home', $langs->trans('About'), 1);
+                    $newmenu->add("/admin/tools/dolibarr_export.php?mainmenu=home&leftmenu=admintools", $langs->trans("Backup"),1);
+                    $newmenu->add("/admin/tools/dolibarr_import.php?mainmenu=home&leftmenu=admintools", $langs->trans("Restore"),1);
+                    $newmenu->add("/admin/tools/update.php?mainmenu=home&leftmenu=admintools", $langs->trans("MenuUpgrade"),1);
+                    if (function_exists('eaccelerator_info')) $newmenu->add("/admin/tools/eaccelerator.php?mainmenu=home&leftmenu=admintools", $langs->trans("EAccelerator"),1);
+                    $newmenu->add("/admin/tools/listevents.php?mainmenu=home&leftmenu=admintools", $langs->trans("Audit"),1);
+                    $newmenu->add("/admin/tools/listsessions.php?mainmenu=home&leftmenu=admintools", $langs->trans("Sessions"),1);
+                    $newmenu->add("/admin/tools/purge.php?mainmenu=home&leftmenu=admintools", $langs->trans("Purge"),1);
+                    $newmenu->add("/support/index.php?mainmenu=home&leftmenu=admintools", $langs->trans("HelpCenter"),1,1,'targethelp');
+                    $newmenu->add('/admin/system/about.php?mainmenu=home&leftmenu=admintools', $langs->trans('About'), 1);
                 }
 				// Modules system tools
                 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
