@@ -863,11 +863,11 @@ if ($id)
                             $valuetoshow=$obj->$fieldlist[$field];
                             if ($value == 'element')
                             {
-                                $valuetoshow = $elementList[$valuetoshow];
+                                $valuetoshow = isset($elementList[$valuetoshow])?$elementList[$valuetoshow]:$valuetoshow;
                             }
                             else if ($value == 'source')
                             {
-                                $valuetoshow = $sourceList[$valuetoshow];
+                                $valuetoshow = isset($sourceList[$valuetoshow])?$sourceList[$valuetoshow]:$valuetoshow;
                             }
                             else if ($valuetoshow=='all') {
                                 $valuetoshow=$langs->trans('All');

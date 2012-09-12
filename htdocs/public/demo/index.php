@@ -43,12 +43,6 @@ $hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('demo'));
 
 $demoprofiles=array(
-	array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
-	'disablemodules'=>'banque,barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,mailmanspip,prelevement,product,projet,propal,propale,service,societe,stock,tax',
-	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png'),
-	array('default'=>'0', 'key'=>'profdemofun2','label'=>'DemoFundation2',
-	'disablemodules'=>'barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,mailmanspip,prelevement,product,projet,propal,propale,service,societe,stock,tax',
-	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png'),
 	array('default'=>'1', 'key'=>'profdemoservonly','label'=>'DemoCompanyServiceOnly',
 	'disablemodules'=>'adherent,barcode,boutique,cashdesk,categorie,don,expedition,externalsite,mailmanspip,prelevement,product,stock',
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot8.png'),
@@ -60,8 +54,14 @@ $demoprofiles=array(
 	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png'),
 	array('default'=>'0', 'key'=>'profdemoall','label'=>'DemoCompanyAll',
 	'disablemodules'=>'adherent,boutique,don,externalsite,mailmanspip',
-	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png')
-	);
+	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png'),
+	array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
+	'disablemodules'=>'banque,barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,mailmanspip,prelevement,product,projet,propal,propale,service,societe,stock,tax',
+	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png'),
+	array('default'=>'0', 'key'=>'profdemofun2','label'=>'DemoFundation2',
+	'disablemodules'=>'barcode,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,mailmanspip,prelevement,product,projet,propal,propale,service,societe,stock,tax',
+	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png')
+);
 
 
 $tmpaction = 'view';

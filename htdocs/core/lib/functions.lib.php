@@ -723,12 +723,12 @@ function dol_get_fiche_end($notab=0)
 function dol_format_address($object)
 {
 	$ret='';
-	$countriesusingstate=array('US','IN');
+	$countriesusingstate=array('US','IN','GB');
 
 	// Address
 	$ret .= $object->address;
 	// Zip/Town/State
-	if (in_array($object->country_code,array('US')))   // US: town, state, zip
+	if (in_array($object->country_code,array('US')))   	// US: title firstname name \n address lines \n town, state, zip \n country
 	{
 		$ret .= ($ret ? "\n" : '' ).$object->town;
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
@@ -737,7 +737,16 @@ function dol_format_address($object)
 		}
 		if ($object->zip) $ret .= ', '.$object->zip;
 	}
-	else                                        // Other: zip town, state
+	else if (in_array($object->country_code,array('GB'))) // UK: title firstname name \n address lines \n town state \n zip \n country
+	{
+		$ret .= ($ret ? "\n" : '' ).$object->town;
+		if ($object->state && in_array($object->country_code,$countriesusingstate))
+		{
+			$ret.=", ".$object->departement;
+		}
+		if ($object->zip) $ret .= ($ret ? "\n" : '' ).$object->zip;
+	}
+	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
 		$ret .= ($ret ? "\n" : '' ).$object->zip;
 		$ret .= ' '.$object->town;
