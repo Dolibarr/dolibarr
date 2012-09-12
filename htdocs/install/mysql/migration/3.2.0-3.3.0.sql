@@ -16,6 +16,8 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 DROP TABLE llx_product_ca;
+DROP TABLE llx_document;
+DROP TABLE llx_dolibarr_modules;
 
 ALTER TABLE llx_menu MODIFY COLUMN fk_mainmenu   varchar(24);
 ALTER TABLE llx_menu MODIFY COLUMN fk_leftmenu   varchar(24);
@@ -220,4 +222,3 @@ ALTER TABLE llx_propaldet MODIFY COLUMN localtax2_type varchar(1);
 -- END TASK #204
 
 ALTER TABLE llx_menu MODIFY COLUMN enabled varchar(255) NULL default '1';
-ALTER TABLE llx_document MODIFY COLUMN permissions varchar(9) DEFAULT 'rw-rw-rw';
