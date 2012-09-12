@@ -716,7 +716,7 @@ function dolMoveUploadedFile($src_file, $dest_file, $allowoverwrite, $notrigger=
 	{
 		if (file_exists($file_name_osencoded))
 		{
-			dol_syslog("Files.lib::dol_move_uploaded_file File ".$file_name." already exists. Return 'ErrorFileAlreadyExists'", LOG_WARNING);
+			dol_syslog("Files.lib::dol_move_uploaded_file File ".$dest_file." already exists. Return 'ErrorFileAlreadyExists'", LOG_WARNING);
 			return 'ErrorFileAlreadyExists';
 		}
 	}
@@ -726,7 +726,7 @@ function dolMoveUploadedFile($src_file, $dest_file, $allowoverwrite, $notrigger=
 	if ($return)
 	{
 		if (! empty($conf->global->MAIN_UMASK)) @chmod($file_name_osencoded, octdec($conf->global->MAIN_UMASK));
-		dol_syslog("Files.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$file_name." - Umask=".$conf->global->MAIN_UMASK, LOG_DEBUG);
+		dol_syslog("Files.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$dest_file." - Umask=".$conf->global->MAIN_UMASK, LOG_DEBUG);
 
 		if (! $notrigger)
 		{

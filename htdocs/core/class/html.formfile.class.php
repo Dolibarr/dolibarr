@@ -551,7 +551,7 @@ class FormFile
      *  @param	 string $url				Full url to use for click links ('' = autodetect)
      * 	@return	 int						<0 if KO, nb of files shown if OK
      */
-	function list_of_documents($filearray,$object,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='')
+	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='')
 	{
 		global $user, $conf, $langs;
 		global $bc, $hookmanager;
@@ -588,6 +588,8 @@ class FormFile
 		}
 		else
 		{
+			$param = (isset($object->id)?'&id='.$object->id:'').$param;
+
 			// Show list of existing files
 			if (empty($useinecm)) print_titre($title?$title:$langs->trans("AttachedFiles"));
 			if (empty($url)) $url=$_SERVER["PHP_SELF"];
@@ -642,7 +644,7 @@ class FormFile
 					// Delete or view link
 					print '<td align="right">';
 					if ($useinecm)     print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view().'</a> &nbsp; ';
-					if ($permtodelete) print '<a href="'.(($useinecm && ! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?action=delete'.(isset($object->id)?'&id='.$object->id:'').'&urlfile='.urlencode($file['name']).$param).'" class="deletefilelink" rel="'.urlencode($file['name']).'">'.img_delete().'</a>';
+					if ($permtodelete) print '<a href="'.(($useinecm && ! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?action=delete&urlfile='.urlencode($file['name']).$param).'" class="deletefilelink" rel="'.urlencode($file['name']).'">'.img_delete().'</a>';
 					else print '&nbsp;';
 					print "</td>";
 					print "</tr>\n";
