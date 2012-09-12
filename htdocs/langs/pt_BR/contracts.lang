@@ -76,7 +76,7 @@ ConfirmMoveToAnotherContract=Escolhi o contrato e confirmo o alterar de serviço
 ConfirmMoveToAnotherContractQuestion=Escolha qualquer outro contrato do mesmo Fornecedor, deseja mover este serviço?
 PaymentRenewContractId=Renovação do Serviço (Numero %s)
 ExpiredSince=Expirado desde
-##### Types de contacts #####=undefined
+##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Comercial assinante do contrato
 TypeContact_contrat_internal_SALESREPFOLL=Comercial seguimento do contrato
 TypeContact_contrat_external_BILLING=Contato cliente de faturação do contrato

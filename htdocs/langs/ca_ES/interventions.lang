@@ -40,12 +40,12 @@ ClassifyBilled=Classificar "Facturado"
 StatusInterInvoiced=Facturado
 RelatedInterventions=Intervencions adjuntes
 ShowIntervention=Mostrar intervenció
-##### Types de contacts #####=undefined
+##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Responsable seguiment de la intervenció
 TypeContact_fichinter_internal_INTERVENING=Interventor
 TypeContact_fichinter_external_BILLING=Contacte client facturació intevenció
 TypeContact_fichinter_external_CUSTOMER=Contacte client seguiment intervenció
-# Modele numérotation=undefined
+# Modele numérotation
 ArcticNumRefModelDesc1=Model de numeració genèric
 ArcticNumRefModelError=Activació impossible
 PacificNumRefModelDesc1=Retorna el número amb el format %syymm-nnnn on yy és l'any, mm. el mes i nnnn un comptador seqüencial sense ruptura i sense quedar a 0
