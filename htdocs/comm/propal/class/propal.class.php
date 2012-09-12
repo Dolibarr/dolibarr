@@ -2780,6 +2780,8 @@ class PropaleLigne
             $sql.= " , total_ht=".price2num($this->total_ht)."";
             $sql.= " , total_tva=".price2num($this->total_tva)."";
             $sql.= " , total_ttc=".price2num($this->total_ttc)."";
+            $sql.= " , total_localtax1=".price2num($this->total_localtax1)."";
+            $sql.= " , total_localtax2=".price2num($this->total_localtax2)."";
         }
 		$sql.= " , fk_product_fournisseur_price='".$this->fk_fournprice."'";
 		$sql.= " , buy_price_ht='".price2num($this->pa_ht)."'";
