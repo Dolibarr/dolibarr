@@ -532,16 +532,6 @@ class InterfaceDemo
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
-        
-        // File
-        elseif ($action == 'FILE_UPLOAD')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-        }
-        elseif ($action == 'FILE_DELETE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-        }
 
 		return 0;
     }
