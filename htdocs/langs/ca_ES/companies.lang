@@ -374,7 +374,7 @@ UniqueThirdParties=Total de tercers únics
 InActivity=Actiu
 ActivityCeased=Tancat
 ActivityStateFilter=Estat d'activitat
-# Monkey=undefined
+# Monkey
 MonkeyNumRefModelDesc=Retorna un número sota el format %syymm-nnnn per als codis de clients  i %syymm-nnnn per als codis dels proveïdors, on yy és l'any, mm el mes i nnnn un comptador seqüencial sense ruptura i sense tornar a 0.
-# Leopard=undefined
+# Leopard
 LeopardNumRefModelDesc=Codi de client/proveïdor lliure sense verificació. Pot ser modificat en qualsevol moment.
