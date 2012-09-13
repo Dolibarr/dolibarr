@@ -371,7 +371,7 @@ class Form
 
         $s="";
         if (empty($notabs))	$s.='<table class="nobordernopadding" summary=""><tr>';
-        if ($direction < 0)	$s.='<'.$tag.$paramfortooltipimg.' valign="top" width="14">&nbsp;'.$img.'</'.$tag.'>';
+        if ($direction < 0)	$s.='<'.$tag.$paramfortooltipimg.' valign="top" width="14">'.$img.'&nbsp;</'.$tag.'>';
         if ($text != '')	$s.='<'.$tag.$paramfortooltiptd.'>'.$text.'</'.$tag.'>';
         if ($direction > 0)	$s.='<'.$tag.$paramfortooltipimg.' valign="top" width="14">&nbsp;'.$img.'</'.$tag.'>';
         if (empty($notabs))	$s.='</tr></table>';
