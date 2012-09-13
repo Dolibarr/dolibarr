@@ -250,8 +250,6 @@ print '</table>';
 
 dol_fiche_end();
 
-dol_htmloutput_events();
-
 print '<br>';
 
 llxFooter();

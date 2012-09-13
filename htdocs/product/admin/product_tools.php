@@ -185,7 +185,6 @@ print '</div>';
 
 print '</form>';
 
-dol_htmloutput_events();
 
 llxFooter();
 
