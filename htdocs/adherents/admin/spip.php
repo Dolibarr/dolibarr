@@ -112,7 +112,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("MailmanSpipSetup"),$linkback,'setup');
 
 
-$head = mailmanspip_admin_prepare_head($adh);
+$head = mailmanspip_admin_prepare_head();
 
 dol_fiche_head($head, 'spip', $langs->trans("Setup"), 0, 'user');
 

@@ -106,7 +106,7 @@ function member_prepare_head($object)
  *  @param	Object	$object         Member
  *  @return array           		head
  */
-function member_admin_prepare_head($object)
+function member_admin_prepare_head()
 {
     global $langs, $conf, $user;
 
@@ -122,7 +122,7 @@ function member_admin_prepare_head($object)
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'member_admin');
+    complete_head_from_modules($conf,$langs,'',$head,$h,'member_admin');
 
     $head[$h][0] = DOL_URL_ROOT.'/adherents/admin/adherent_extrafields.php';
     $head[$h][1] = $langs->trans("ExtraFields");
@@ -134,7 +134,7 @@ function member_admin_prepare_head($object)
     $head[$h][2] = 'public';
     $h++;
 
-    complete_head_from_modules($conf,$langs,$object,$head,$h,'member_admin','remove');
+    complete_head_from_modules($conf,$langs,'',$head,$h,'member_admin','remove');
 
     return $head;
 }
