@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier	    <benoit.mortier@opensides.be>
- * Copyright (C) 2009-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,6 +42,14 @@ class ExtraFields
 	var $error;
 	var $errno;
 
+	static $type2label=array(
+		'varchar'=>'String',
+		'text'=>'TextLong',
+		'int'=>'Int',
+		'double'=>'Float',
+		'date'=>'Date',
+		'datetime'=>'DateAndTime'
+	);
 
 	/**
 	 *	Constructor
@@ -74,10 +82,12 @@ class ExtraFields
         if (empty($attrname)) return -1;
         if (empty($label)) return -1;
 
+        // Create field into database
         $result=$this->create($attrname,$type,$size,$elementtype);
         $err1=$this->errno;
         if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS')
         {
+        	// Add declaration of field into table
             $result2=$this->create_label($attrname,$label,$type,$pos,$size,$elementtype);
             $err2=$this->errno;
             if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS'))
@@ -142,7 +152,7 @@ class ExtraFields
 	 *
 	 *	@param	string	$attrname			code of attribute
 	 *	@param	string	$label				label of attribute
-	 *  @param	int		$type				Type of attribute ('int', 'text', 'varchar', 'date', 'datehour')
+	 *  @param	int		$type				Type of attribute ('int', 'text', 'varchar', 'date', 'datehour', 'float')
 	 *  @param	int		$pos				Position of attribute
 	 *  @param	int		$size				Size/length of attribute
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'company', ...)
@@ -433,8 +443,8 @@ class ExtraFields
 		global $conf;
 
         $label=$this->attribute_label[$key];
-	    $type=$this->attribute_type[$key];
-        $size=$this->attribute_size[$key];
+	    $type =$this->attribute_type[$key];
+        $size =$this->attribute_size[$key];
         $elementtype=$this->attribute_elementtype[$key];
         if ($type == 'date')
         {
@@ -444,7 +454,7 @@ class ExtraFields
         {
             $showsize=19;
         }
-        elseif ($type == 'int')
+        elseif (in_array($type,array('int','double')))
         {
             $showsize=10;
         }
@@ -454,9 +464,17 @@ class ExtraFields
             if ($showsize > 48) $showsize=48;
         }
 
-		if ($type == 'int')
+		if (in_array($type,array('date','datetime')))
         {
-        	$out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+        	$tmp=explode(',',$size);
+        	$newsize=$tmp[0];
+        	$out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+        }
+        else if (in_array($type,array('int','double')))
+        {
+        	$tmp=explode(',',$size);
+        	$newsize=$tmp[0];
+        	$out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
         }
         else if ($type == 'varchar')
         {
@@ -468,8 +486,9 @@ class ExtraFields
         	$doleditor=new DolEditor('options_'.$key,$value,'',200,'dolibarr_notes','In',false,false,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE,5,100);
         	$out=$doleditor->Create(1);
         }
-	    else if ($type == 'date') $out.=' (YYYY-MM-DD)';
-        else if ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
+        // Add comments
+	    if ($type == 'date') $out.=' (YYYY-MM-DD)';
+        elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
 	    return $out;
 	}
 

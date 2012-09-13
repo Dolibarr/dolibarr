@@ -341,6 +341,11 @@ OldVATRates=Ancien taux de TVA
 NewVATRates=Nouveau taux de TVA
 PriceBaseTypeToChange=Modifier sur les prix dont la référence de base est le
 MassConvert=Convertir en masse
+String=Chaine
+TextLong=Texte long
+Int=Numérique entier
+Float=Décimal
+DateAndTime=Date et heure
 
 # Modules= undefined
 Module0Name= Utilisateurs & groupes

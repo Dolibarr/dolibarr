@@ -339,6 +339,11 @@ OldVATRates=Old VAT rate
 NewVATRates=New VAT rate
 PriceBaseTypeToChange=Modify on prices with base reference value defined on
 MassConvert=Launch mass convert
+String=String
+TextLong=Long text
+Int=Integer
+Float=Float
+DateAndTime=Date and hour
 
 # Modules
 Module0Name=Users & groups

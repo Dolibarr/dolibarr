@@ -24,20 +24,34 @@
 $maxsizestring=255;
 $maxsizeint=10;
 
+$extrasize=GETPOST('size');
+if (GETPOST('type')=='double' && strpos($extrasize,',')===false) $extrasize='24,8';
+if (GETPOST('type')=='date')     $extrasize='';
+if (GETPOST('type')=='datetime') $extrasize='';
+
+
 // Add attribute
 if ($action == 'add')
 {
 	if ($_POST["button"] != $langs->trans("Cancel"))
 	{
 	    // Check values
-        if (GETPOST('type')=='varchar' && GETPOST('size') > $maxsizestring)
+		if (! GETPOST('type'))
+		{
+			$error++;
+			$langs->load("errors");
+			$mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Type"));
+			$action = 'create';
+		}
+
+        if (GETPOST('type')=='varchar' && $extrasize > $maxsizestring)
         {
             $error++;
             $langs->load("errors");
             $mesg=$langs->trans("ErrorSizeTooLongForVarcharType",$maxsizestring);
             $action = 'create';
         }
-        if (GETPOST('type')=='int' && GETPOST('size') > $maxsizeint)
+        if (GETPOST('type')=='int' && $extrasize > $maxsizeint)
         {
             $error++;
             $langs->load("errors");
@@ -50,7 +64,7 @@ if ($action == 'add')
     		// Type et taille non encore pris en compte => varchar(255)
     		if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_POST['attrname']))
     		{
-                $result=$extrafields->addExtraField($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['pos'],$_POST['size'],$elementtype);
+                $result=$extrafields->addExtraField($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['pos'],$extrasize,$elementtype);
     			if ($result > 0)
     			{
     				header("Location: ".$_SERVER["PHP_SELF"]);
@@ -79,14 +93,21 @@ if ($action == 'update')
 	if ($_POST["button"] != $langs->trans("Cancel"))
 	{
         // Check values
-        if (GETPOST('type')=='varchar' && GETPOST('size') > $maxsizestring)
+		if (! GETPOST('type'))
+		{
+			$error++;
+			$langs->load("errors");
+			$mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Type"));
+			$action = 'create';
+		}
+		if (GETPOST('type')=='varchar' && $extrasize > $maxsizestring)
         {
             $error++;
             $langs->load("errors");
             $mesg=$langs->trans("ErrorSizeTooLongForVarcharType",$maxsizestring);
             $action = 'edit';
         }
-        if (GETPOST('type')=='int' && GETPOST('size') > $maxsizeint)
+        if (GETPOST('type')=='int' && $extrasize > $maxsizeint)
         {
             $error++;
             $langs->load("errors");
@@ -98,12 +119,12 @@ if ($action == 'update')
 	    {
             if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_POST['attrname']))
     		{
-    			$result=$extrafields->update($_POST['attrname'],$_POST['type'],$_POST['size'],$elementtype);
+    			$result=$extrafields->update($_POST['attrname'],$_POST['type'],$extrasize,$elementtype);
     			if ($result > 0)
     			{
     				if (isset($_POST['label']))
     				{
-    					$extrafields->update_label($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['size'],$elementtype);
+    					$extrafields->update_label($_POST['attrname'],$_POST['label'],$_POST['type'],$extrasize,$elementtype);
     				}
     				header("Location: ".$_SERVER["PHP_SELF"]);
     				exit;

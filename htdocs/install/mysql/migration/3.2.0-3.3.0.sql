@@ -19,6 +19,8 @@ DROP TABLE llx_product_ca;
 DROP TABLE llx_document;
 DROP TABLE llx_dolibarr_modules;
 
+ALTER TABLE llx_extrafields MODIFY COLUMN size varchar(8) DEFAULT NULL;
+
 ALTER TABLE llx_menu MODIFY COLUMN fk_mainmenu   varchar(24);
 ALTER TABLE llx_menu MODIFY COLUMN fk_leftmenu   varchar(24);
 

@@ -28,6 +28,6 @@ create table llx_extrafields
 	tms             timestamp,
 	label           varchar(255) NOT NULL,      -- label correspondant a l'attribut
 	type            varchar(8),
-	size            integer DEFAULT 0,
+	size            varchar(8) DEFAULT NULL,
 	pos             integer DEFAULT 0
 )ENGINE=innodb;
