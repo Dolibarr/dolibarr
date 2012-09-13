@@ -370,28 +370,11 @@ class Form
         else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
 
         $s="";
-        if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr>';
-        if ($direction > 0)
-        {
-            if ($text != '')
-            {
-                $s.='<td'.$paramfortooltiptd.'>'.$text;
-                if ($direction) $s.='&nbsp;';
-                $s.='</td>';
-            }
-            if ($direction) $s.='<td'.$paramfortooltipimg.' valign="top" width="14">'.$img.'</td>';
-        }
-        else
-        {
-            if ($direction) $s.='<td'.$paramfortooltipimg.' valign="top" width="14">'.$img.'</td>';
-            if ($text != '')
-            {
-                $s.='<'.$tag.$paramfortooltiptd.'>';
-                if ($direction) $s.='&nbsp;';
-                $s.=$text.'</'.$tag.'>';
-            }
-        }
-        if (empty($notabs)) $s.='</tr></table>';
+        if (empty($notabs))	$s.='<table class="nobordernopadding" summary=""><tr>';
+        if ($direction < 0)	$s.='<'.$tag.$paramfortooltipimg.' valign="top" width="14">'.$img.'&nbsp;</'.$tag.'>';
+        if ($text != '')	$s.='<'.$tag.$paramfortooltiptd.'>'.$text.'</'.$tag.'>';
+        if ($direction > 0)	$s.='<'.$tag.$paramfortooltipimg.' valign="top" width="14">&nbsp;'.$img.'</'.$tag.'>';
+        if (empty($notabs))	$s.='</tr></table>';
 
         return $s;
     }
@@ -405,9 +388,10 @@ class Form
      * 	@param	string	$type				Type of picto (info, help, warning, superadmin...)
      *  @param  string	$extracss           Add a CSS style to td tags
      *  @param  int		$noencodehtmltext   Do not encode into html entity the htmltext
+     *  @param	int		$notabs				0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
      * 	@return	string						HTML code of text, picto, tooltip
      */
-    function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0)
+    function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0, $notabs = 0)
     {
         global $conf;
 
@@ -439,7 +423,7 @@ class Form
         elseif ($type == 'admin') $img = img_picto($alt, 'star');
         elseif ($type == 'warning') $img = img_warning($alt);
 
-        return $this->textwithtooltip($text, $htmltext, 2, $direction, $img, $extracss, 0, '', $noencodehtmltext);
+        return $this->textwithtooltip($text, $htmltext, 2, $direction, $img, $extracss, $notabs, '', $noencodehtmltext);
     }
 
     /**

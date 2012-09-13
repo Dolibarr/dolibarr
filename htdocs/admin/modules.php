@@ -250,9 +250,10 @@ if (! empty($categ[$categidx]))
 
 if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 {
+	$form = new Form($db);
 	$categidx='expdev';
     $head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
-    $head[$h][1] = $langs->trans("ModuleFamilyExperimental");
+    $head[$h][1] = $form->textwithpicto($langs->trans("ModuleFamilyExperimental"), $langs->trans('DoNotUseInProduction'), 1, 'warning', '', 0, 3);
     $head[$h][2] = 'expdev';
     $h++;
 }

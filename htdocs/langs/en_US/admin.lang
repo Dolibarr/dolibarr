@@ -262,6 +262,7 @@ ModuleFamilyFinancial=Financial Modules (Accounting/Treasury)
 ModuleFamilyECM=Electronic Content Management (ECM)
 MenuHandlers=Menu handlers
 MenuAdmin=Menu editor
+DoNotUseInProduction=Do not use in production
 ThisIsProcessToFollow=This is setup to process:
 StepNb=Step %s
 FindPackageFromWebSite=Find a package that provides feature you want (for example on official web site %s).
