@@ -164,12 +164,11 @@ if ($object->id > 0)
 
 	// Affiche formulaire upload
 	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file($_SERVER['PHP_SELF'].'?id='.$object->id,'',0,0,$user->rights->propale->creer,50,$object);
+	$formfile->form_attach_new_file($_SERVER['PHP_SELF'].'?id='.$object->id,'',0,0,$user->rights->propal->creer,50,$object);
 
 
 	// List of document
-	$param='&id='.$object->id;
-	$formfile->list_of_documents($filearray,$object,'propal',$param);
+	$formfile->list_of_documents($filearray,$object,'propal');
 }
 else
 {
