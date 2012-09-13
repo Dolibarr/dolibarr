@@ -374,8 +374,10 @@ class Form
         if ($direction < 0) $s.='<'.$tag.$paramfortooltipimg.' valign="top" width="14">'.$img.'</'.$tag.'>';
         if ($text != '')
         {
-        	$s.='<'.$tag.$paramfortooltiptd.'>'.$text;
-        	if ($direction) $s.='&nbsp;';
+        	$s.='<'.$tag.$paramfortooltiptd.'>';
+        	if ($direction < 0) $s.='&nbsp;';
+        	$s.=$text;
+        	if ($direction > 0) $s.='&nbsp;';
         	$s.='</'.$tag.'>';
         }
         if ($direction > 0) $s.='<'.$tag.$paramfortooltipimg.' valign="top" width="14">'.$img.'</'.$tag.'>';
