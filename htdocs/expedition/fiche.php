@@ -780,7 +780,7 @@ if ($action == 'create')
                 $quantityToBeDelivered = $quantityAsked - $quantityDelivered;
 
                 $defaultqty=0;
-                if (GETPOST('entrepot_id','int'))
+                if (GETPOST('entrepot_id','int') > 0)
                 {
                     //var_dump($product);
                     $stock = $product->stock_warehouse[GETPOST('entrepot_id','int')]->real;
@@ -810,7 +810,7 @@ if ($action == 'create')
                     	$idl = "idl".$indiceAsked;
                     	$tmpentrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
                         print $formproduct->selectWarehouses($tmpentrepot_id,'entl'.$indiceAsked,'',1,0,$line->fk_product);
-                    	if ($tmpentrepot_id && $tmpentrepot_id == GETPOST('entrepot_id','int'))
+                    	if ($tmpentrepot_id > 0 && $tmpentrepot_id == GETPOST('entrepot_id','int'))
                         {
                             //print $stock.' '.$quantityToBeDelivered;
                             if ($stock < $quantityToBeDelivered)

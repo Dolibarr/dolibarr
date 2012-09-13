@@ -128,7 +128,7 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 				$nblignes = count($object->lines);
 
 				$pdf=pdf_getInstance($this->format);
-                $heightforinfotot = 80;	// Height reserved to output the info and total part (value include bottom margin)
+                $heightforinfotot = 0;	// Height reserved to output the info and total part (value include bottom margin)
                 $heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
 
@@ -155,7 +155,7 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 				$pdf->SetSubject($outputlangs->transnoentities("Sending"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($fac->ref)." ".$outputlangs->transnoentities("Sending"));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Sending"));
 				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
@@ -170,8 +170,8 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 90;
-				$tab_top_newpage = 50;
-				$tab_height = 110;
+				$tab_top_newpage = 10;
+				$tab_height = 130;
 				$tab_height_newpage = 150;
 
 				if (! empty($object->note_public) || ! empty($object->tracking_number))
@@ -293,13 +293,13 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 				// Show square
 				if ($pagenb == 1)
 				{
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot, 0, $outputlangs, 0, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter - $heightforinfotot, 0, $outputlangs, 0, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforfooter - $heightforinfotot + 1;
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot, 0, $outputlangs, 1, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter - $heightforinfotot, 0, $outputlangs, 1, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforfooter - $heightforinfotot + 1;
 				}
 
 				// Pied de page
