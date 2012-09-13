@@ -370,18 +370,11 @@ class Form
         else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
 
         $s="";
-        if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr>';
-        if ($direction < 0) $s.='<'.$tag.$paramfortooltipimg.' valign="top" width="14">'.$img.'</'.$tag.'>';
-        if ($text != '')
-        {
-        	$s.='<'.$tag.$paramfortooltiptd.'>';
-        	if ($direction < 0) $s.='&nbsp;';
-        	$s.=$text;
-        	if ($direction > 0) $s.='&nbsp;';
-        	$s.='</'.$tag.'>';
-        }
-        if ($direction > 0) $s.='<'.$tag.$paramfortooltipimg.' valign="top" width="14">'.$img.'</'.$tag.'>';
-        if (empty($notabs)) $s.='</tr></table>';
+        if (empty($notabs))	$s.='<table class="nobordernopadding" summary=""><tr>';
+        if ($direction < 0)	$s.='<'.$tag.$paramfortooltipimg.' valign="top" width="14">&nbsp;'.$img.'</'.$tag.'>';
+        if ($text != '')	$s.='<'.$tag.$paramfortooltiptd.'>'.$text.'</'.$tag.'>';
+        if ($direction > 0)	$s.='<'.$tag.$paramfortooltipimg.' valign="top" width="14">&nbsp;'.$img.'</'.$tag.'>';
+        if (empty($notabs))	$s.='</tr></table>';
 
         return $s;
     }
