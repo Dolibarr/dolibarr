@@ -357,7 +357,6 @@ class Form
         $tag='td';
         if ($notabs == 2) $tag='div';
         if ($notabs == 3) $tag='span';
-
         // Sanitize tooltip
         $htmltext=str_replace("\\","\\\\",$htmltext);
         $htmltext=str_replace("\r","",$htmltext);
@@ -368,12 +367,11 @@ class Form
         else $paramfortooltipimg =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
         if ($tooltipon == 1 || $tooltipon == 3) $paramfortooltiptd=' class="classfortooltip'.($extracss?' '.$extracss:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td tag to store tooltip
         else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
-
         $s="";
         if (empty($notabs))	$s.='<table class="nobordernopadding" summary=""><tr>';
-        if ($direction < 0)	$s.='<'.$tag.$paramfortooltipimg.' valign="top" width="14">'.$img.'&nbsp;</'.$tag.'>';
-        if ($text != '')	$s.='<'.$tag.$paramfortooltiptd.'>'.$text.'</'.$tag.'>';
-        if ($direction > 0)	$s.='<'.$tag.$paramfortooltipimg.' valign="top" width="14">&nbsp;'.$img.'</'.$tag.'>';
+        if ($direction < 0)	$s.='<'.$tag.$paramfortooltipimg.' valign="top" width="14">'.$img.'</'.$tag.'>';
+        if ($text != '')	$s.='<'.$tag.$paramfortooltiptd.'>'.(($direction < 0)?'&nbsp;':'').$text.(($direction > 0)?'&nbsp;':'').'</'.$tag.'>';
+        if ($direction > 0)	$s.='<'.$tag.$paramfortooltipimg.' valign="top" width="14">'.$img.'</'.$tag.'>';
         if (empty($notabs))	$s.='</tr></table>';
 
         return $s;
