@@ -90,7 +90,7 @@ ALTER TABLE llx_commandedet ADD COLUMN label varchar(255) DEFAULT NULL AFTER fk_
 ALTER TABLE llx_facturedet ADD COLUMN label varchar(255) DEFAULT NULL AFTER fk_product;
 ALTER TABLE llx_facturedet_rec ADD COLUMN label varchar(255) DEFAULT NULL AFTER product_type;
 
-ALTER TABLE llx_accountingaccount  ADD COLUMN active tinyint DEFAULT 1 NOT NULL AFTER label;
+ALTER TABLE llx_accountingaccount ADD COLUMN active tinyint DEFAULT 1 NOT NULL AFTER label;
 
 ALTER TABLE llx_actioncomm MODIFY elementtype VARCHAR(32);
 
@@ -224,3 +224,6 @@ ALTER TABLE llx_propaldet MODIFY COLUMN localtax2_type varchar(1);
 -- END TASK #204
 
 ALTER TABLE llx_menu MODIFY COLUMN enabled varchar(255) NULL default '1';
+
+ALTER TABLE llx_socpeople ADD column skype varchar(64) NULL AFTER fax;
+ALTER TABLE llx_societe ADD column skype varchar(64) NULL AFTER fax;

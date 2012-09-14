@@ -7,6 +7,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011-2012 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,6 +73,7 @@ class Societe extends CommonObject
     var $tel;        // deprecated
     var $phone;
     var $fax;
+    var $skype;
     var $email;
     var $url;
 
@@ -407,6 +409,7 @@ class Societe extends CommonObject
         $this->fax			= trim($this->fax);
         $this->fax			= preg_replace("/\s/","",$this->fax);
         $this->fax			= preg_replace("/\./","",$this->fax);
+        $this->skype		= trim($this->skype);
         $this->email		= trim($this->email);
         $this->url			= $this->url?clean_url($this->url,0):'';
         $this->idprof1		= trim($this->idprof1);
@@ -505,6 +508,7 @@ class Societe extends CommonObject
 
             $sql .= ",tel = ".(! empty($this->phone)?"'".$this->db->escape($this->phone)."'":"null");
             $sql .= ",fax = ".(! empty($this->fax)?"'".$this->db->escape($this->fax)."'":"null");
+            $sql .= ",skype = ".(! empty($this->skype)?"'".$this->db->escape($this->skype)."'":"null");
             $sql .= ",email = ".(! empty($this->email)?"'".$this->db->escape($this->email)."'":"null");
             $sql .= ",url = ".(! empty($this->url)?"'".$this->db->escape($this->url)."'":"null");
 
@@ -659,7 +663,7 @@ class Societe extends CommonObject
         $sql .= ', s.status';
         $sql .= ', s.price_level';
         $sql .= ', s.tms as date_update';
-        $sql .= ', s.tel as phone, s.fax, s.email, s.url, s.cp as zip, s.ville as town, s.note, s.client, s.fournisseur';
+        $sql .= ', s.tel as phone, s.fax, s.skype, s.email, s.url, s.cp as zip, s.ville as town, s.note, s.client, s.fournisseur';
         $sql .= ', s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6';
         $sql .= ', s.capital, s.tva_intra';
         $sql .= ', s.fk_typent as typent_id';
@@ -747,6 +751,7 @@ class Societe extends CommonObject
                 $this->tel = $obj->phone; // TODO obsolete
                 $this->phone = $obj->phone;
                 $this->fax = $obj->fax;
+                $this->skype = $obj->skype;
 
                 $this->parent    = $obj->parent;
 
