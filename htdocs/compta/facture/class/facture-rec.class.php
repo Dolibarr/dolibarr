@@ -62,6 +62,8 @@ class FactureRec extends Facture
 	var $rang;
 	var $special_code;
 
+	var $usenewprice=0;
+
 	var $lines=array();
 
 
@@ -114,6 +116,7 @@ class FactureRec extends Facture
 			$sql.= ", fk_projet";
 			$sql.= ", fk_cond_reglement";
 			$sql.= ", fk_mode_reglement";
+			$sql.= ", usenewprice";
 			$sql.= ") VALUES (";
 			$sql.= "'".$this->titre."'";
 			$sql.= ", '".$facsrc->socid."'";
@@ -126,6 +129,7 @@ class FactureRec extends Facture
 			$sql.= ", ".(! empty($facsrc->fk_project)?"'".$facsrc->fk_project."'":"null");
 			$sql.= ", '".$facsrc->cond_reglement_id."'";
 			$sql.= ", '".$facsrc->mode_reglement_id."'";
+			$sql.= ", '".$this->usenewprice."'";
 			$sql.= ")";
 
 			if ($this->db->query($sql))

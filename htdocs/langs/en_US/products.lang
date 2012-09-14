@@ -176,3 +176,6 @@ AddThisProductCard=Create product card
 HelpAddThisProductCard=This option allows you to create or clone a product if it does not exist.
 AddThisServiceCard=Create service card
 HelpAddThisServiceCard=This option allows you to create or clone a service if it does not exist.
+CurrentProductPrice=Current price
+AlwaysUseNewPrice=Always use current price of product/service
+AlwaysUseFixedPrice=Use the fixed price
