@@ -226,3 +226,15 @@ ALTER TABLE llx_propaldet MODIFY COLUMN localtax2_type varchar(1);
 -- END TASK #204
 
 ALTER TABLE llx_menu MODIFY COLUMN enabled varchar(255) NULL default '1';
+
+
+create table llx_socpeople_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                                 -- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_socpeople_extrafields ADD INDEX idx_socpeople_extrafields (fk_object);
+
