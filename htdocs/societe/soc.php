@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008	   Patrick Raguin       <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011-2012 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,6 +132,7 @@ if (empty($reshook))
         $object->state_id              = GETPOST('departement_id');
         $object->tel                   = GETPOST('tel');
         $object->fax                   = GETPOST('fax');
+        $object->skype                 = GETPOST('skype');
         $object->email                 = GETPOST('email');
         $object->url                   = GETPOST('url');
         $object->idprof1               = GETPOST('idprof1');
@@ -250,6 +252,7 @@ if (empty($reshook))
                         $contact->email				= $object->email;
 						$contact->phone_pro			= $object->tel;
 						$contact->fax				= $object->fax;
+						$contact->skype				= $object->skype;
                         $contact->priv				= 0;
 
                         $result=$contact->create($user);
@@ -561,6 +564,7 @@ else
         $object->state_id			= GETPOST('departement_id');
         $object->tel				= GETPOST('tel');
         $object->fax				= GETPOST('fax');
+        $object->skype				= GETPOST('skype');
         $object->email				= GETPOST('email');
         $object->url				= GETPOST('url');
         $object->capital			= GETPOST('capital');
@@ -820,7 +824,11 @@ else
         // Phone / Fax
         print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$object->tel.'"></td>';
         print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$object->fax.'"></td></tr>';
-
+        
+        // Skype
+        print '<tr><td>'.$langs->trans('Skype').'</td><td colspan="3"><input type="text" name="skype" value="'.$object->skype.'"></td></tr>';
+        
+        // Email / Web
         print '<tr><td>'.$langs->trans('EMail').(! empty($conf->global->SOCIETE_MAIL_REQUIRED)?'*':'').'</td><td><input type="text" name="email" size="32" value="'.$object->email.'"></td>';
         print '<td>'.$langs->trans('Web').'</td><td><input type="text" name="url" size="32" value="'.$object->url.'"></td></tr>';
 
@@ -1054,6 +1062,7 @@ else
                 $object->state_id				= GETPOST('departement_id');
                 $object->tel					= GETPOST('tel');
                 $object->fax					= GETPOST('fax');
+                $object->skype					= GETPOST('skype');
                 $object->email					= GETPOST('email');
                 $object->url					= GETPOST('url');
                 $object->capital				= GETPOST('capital');
@@ -1258,6 +1267,9 @@ else
             // Phone / Fax
             print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$object->tel.'"></td>';
             print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$object->fax.'"></td></tr>';
+            
+            // Skype
+            print '<tr><td>'.$langs->trans('Skype').'</td><td colspan="3"><input type="text" name="skype" value="'.$object->skype.'"></td></tr>';
 
             // EMail / Web
             print '<tr><td>'.$langs->trans('EMail').($conf->global->SOCIETE_MAIL_REQUIRED?'*':'').'</td><td><input type="text" name="email" size="32" value="'.$object->email.'"></td>';
@@ -1554,6 +1566,9 @@ else
 
         print '<tr><td>'.$langs->trans('Phone').'</td><td style="min-width: 25%;">'.dol_print_phone($object->tel,$object->country_code,0,$object->id,'AC_TEL').'</td>';
         print '<td>'.$langs->trans('Fax').'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->country_code,0,$object->id,'AC_FAX').'</td></tr>';
+
+        // Skype
+        print '<tr><td width="20%">'.$langs->trans('Skype').'</td><td colspan="3">'.dol_print_skype($object->skype,0,$object->id,'AC_SKYPE').'</td></tr>';
 
         // EMail
         print '<tr><td>'.$langs->trans('EMail').'</td><td width="25%">';

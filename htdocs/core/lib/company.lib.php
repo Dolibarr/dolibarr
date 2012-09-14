@@ -3,6 +3,7 @@
  * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007		Patrick Raguin			<patrick.raguin@gmail.com>
  * Copyright (C) 2010-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2011-2012 	Alexandre Spangaro   	<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -523,7 +524,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     print '<tr class="liste_titre"><td>'.$langs->trans("Name").'</td>';
     print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
-    print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
+    print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("Skype").'</td>';
+    print '<td>'.$langs->trans("EMail").'</td>';
     print "<td>&nbsp;</td>";
     if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
     {
@@ -531,7 +533,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     }
     print "</tr>";
 
-    $sql = "SELECT p.rowid, p.name, p.firstname, p.fk_pays, p.poste, p.phone, p.fax, p.email, p.note ";
+    $sql = "SELECT p.rowid, p.name, p.firstname, p.fk_pays, p.poste, p.phone, p.fax, p.skype, p.email, p.note ";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
     $sql .= " WHERE p.fk_soc = ".$object->id;
     $sql .= " ORDER by p.datec";
@@ -568,6 +570,9 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             print '</td>';
             print '<td>';
             print dol_print_phone($obj->fax,$country_code,$obj->rowid,$object->id,'AC_FAX');
+            print '</td>';
+            print '<td>';
+            print dol_print_skype($obj->skype,$obj->rowid,$object->id,'AC_SKYPE');
             print '</td>';
             print '<td>';
             print dol_print_email($obj->email,$obj->rowid,$object->id,'AC_EMAIL');
@@ -642,6 +647,7 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 	print '<td>'.$langs->trans("Country").'</td>';
 	print '<td>'.$langs->trans("Tel").'</td>';
 	print '<td>'.$langs->trans("Fax").'</td>';
+	print '<td>'.$langs->trans("Skype").'</td>';
 	print "<td>&nbsp;</td>";
 	print "</tr>";
 
@@ -674,6 +680,9 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 			print '</td>';
 			print '<td>';
 			print dol_print_phone($address->fax,$address->country_code,$address->id,$object->id,'AC_FAX');
+			print '</td>';
+			print '<td>';
+			print dol_print_skype($address->skype,$address->country_code,$address->id,$object->id,'AC_SKYPE');
 			print '</td>';
 
 			if ($user->rights->societe->creer)

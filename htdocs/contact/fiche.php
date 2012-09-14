@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2011-2012 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,6 +146,7 @@ if (empty($reshook))
         $object->phone_perso	= $_POST["phone_perso"];
         $object->phone_mobile	= $_POST["phone_mobile"];
         $object->fax			= $_POST["fax"];
+		$object->skype			= $_POST["skype"];
         $object->jabberid		= $_POST["jabberid"];
 		$object->no_email		= $_POST["no_email"];
         $object->priv			= $_POST["priv"];
@@ -237,6 +239,7 @@ if (empty($reshook))
             $object->phone_perso	= $_POST["phone_perso"];
             $object->phone_mobile	= $_POST["phone_mobile"];
             $object->fax			= $_POST["fax"];
+			$object->skype			= $_POST["skype"];
             $object->jabberid		= $_POST["jabberid"];
 			$object->no_email		= $_POST["no_email"];
             $object->priv			= $_POST["priv"];
@@ -446,6 +449,9 @@ else
             print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.(isset($_POST["phone_mobile"])?$_POST["phone_mobile"]:$object->phone_mobile).'"></td>';
             print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80" value="'.(isset($_POST["fax"])?$_POST["fax"]:$object->fax).'"></td></tr>';
 
+			// Skype
+            print '<tr><td>'.$langs->trans("Skype").'</td><td colspan="3"><input name="skype" type="text" size="50" maxlength="64" value="'.(isset($_POST["skype"])?$_POST["skype"]:$object->skype).'"></td></tr>';
+
             // EMail
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->email)) == 0) $object->email = $objsoc->email;	// Predefined with third party
             print '<tr><td>'.$langs->trans("Email").'</td><td><input name="email" type="text" size="50" maxlength="80" value="'.(isset($_POST["email"])?$_POST["email"]:$object->email).'"></td>';
@@ -619,6 +625,9 @@ else
             print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.(isset($_POST["phone_mobile"])?$_POST["phone_mobile"]:$object->phone_mobile).'"></td>';
             print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80" value="'.(isset($_POST["fax"])?$_POST["fax"]:$object->fax).'"></td></tr>';
 
+			// Skype
+            print '<tr><td>'.$langs->trans("Skype").'</td><td colspan="3"><input name="skype" type="text" size="50" maxlength="64" value="'.(isset($_POST["skype"])?$_POST["skype"]:$object->skype).'"></td>';
+            
             // EMail
             print '<tr><td>'.$langs->trans("EMail").'</td><td><input name="email" type="text" size="40" maxlength="80" value="'.(isset($_POST["email"])?$_POST["email"]:$object->email).'"></td>';
             if (! empty($conf->mailing->enabled))
@@ -821,6 +830,8 @@ else
         print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td>'.dol_print_phone($object->phone_mobile,$object->country_code,$object->id,$object->socid,'AC_TEL').'</td>';
         print '<td>'.$langs->trans("Fax").'</td><td>'.dol_print_phone($object->fax,$object->country_code,$object->id,$object->socid,'AC_FAX').'</td></tr>';
 
+		print '<tr><td>'.$langs->trans("Skype").'</td><td colspan="3">'.$object->skype.'</td>';
+        
         // Email
         print '<tr><td>'.$langs->trans("EMail").'</td><td>'.dol_print_email($object->email,$object->id,$object->socid,'AC_EMAIL').'</td>';
         if ($conf->mailing->enabled)

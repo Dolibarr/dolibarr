@@ -8,6 +8,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011-2012 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1165,6 +1166,40 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=
 		}
 	}
 	return $newemail;
+}
+
+/**
+ * Show Skype link
+ *
+ * @param	string		$skype			Login to show (only skype, without 'Name of recipient' before)
+ * @param int			  $cid 			  Id of contact if known
+ * @param int			  $socid 			Id of third party if known
+ * @param int			  $addlink		0=no link to create action
+ * @param	int			  $max			  Max number of characters to show
+ * @return	string						HTML Link
+ */
+function dol_print_skype($skype,$cid=0,$socid=0,$addlink=0,$max=64)
+{
+	global $conf,$user,$langs;
+
+	$newskype=$skype;
+
+	if (empty($skype)) return '&nbsp;';
+
+	if (! empty($addlink))
+	{
+		$newskype='<a href="';
+		if (! preg_match('/^callto:/i',$skype)) $newskype.='callto://';
+		$newskype.=$skype;
+		$newskype.='">';
+		$newskype.=dol_trunc($skype,$max);
+		$newskype.='</a>';
+	}
+	else
+	{
+		$newskype='&nbsp';
+	}
+	return $newskype;
 }
 
 /**

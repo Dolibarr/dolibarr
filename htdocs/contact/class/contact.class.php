@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin               <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke       <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2011-2012 Alexandre Spangaro          <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -222,6 +223,7 @@ class Contact extends CommonObject
 		$this->phone_perso=trim($this->phone_perso);
 		$this->phone_mobile=trim($this->phone_mobile);
 		$this->fax=trim($this->fax);
+		$this->skype=trim($this->skype);
 		$this->zip=($this->zip?$this->zip:$this->cp);
 		$this->town=($this->town?$this->town:$this->ville);
 		$this->country_id=($this->country_id > 0?$this->country_id:$this->fk_pays);
@@ -242,6 +244,7 @@ class Contact extends CommonObject
 		$sql .= ", fk_departement=".($this->state_id>0?$this->state_id:'NULL');
 		$sql .= ", poste='".$this->db->escape($this->poste)."'";
 		$sql .= ", fax='".$this->db->escape($this->fax)."'";
+		$sql .= ", skype='".$this->db->escape($this->skype)."'";
 		$sql .= ", email='".$this->db->escape($this->email)."'";
 		$sql .= ", note='".$this->db->escape($this->note)."'";
 		$sql .= ", phone = '".$this->db->escape($this->phone_pro)."'";
@@ -354,6 +357,7 @@ class Contact extends CommonObject
 		if ($this->phone_perso && $conf->global->LDAP_CONTACT_FIELD_HOMEPHONE) $info[$conf->global->LDAP_CONTACT_FIELD_HOMEPHONE] = $this->phone_perso;
 		if ($this->phone_mobile && $conf->global->LDAP_CONTACT_FIELD_MOBILE) $info[$conf->global->LDAP_CONTACT_FIELD_MOBILE] = $this->phone_mobile;
 		if ($this->fax && $conf->global->LDAP_CONTACT_FIELD_FAX)	    $info[$conf->global->LDAP_CONTACT_FIELD_FAX] = $this->fax;
+		if ($this->skype && $conf->global->LDAP_CONTACT_FIELD_SKYPE)	    $info[$conf->global->LDAP_CONTACT_FIELD_SKYPE] = $this->skype;
 		if ($this->note && $conf->global->LDAP_CONTACT_FIELD_DESCRIPTION) $info[$conf->global->LDAP_CONTACT_FIELD_DESCRIPTION] = $this->note;
 		if ($this->email && $conf->global->LDAP_CONTACT_FIELD_MAIL)     $info[$conf->global->LDAP_CONTACT_FIELD_MAIL] = $this->email;
 
@@ -469,7 +473,7 @@ class Contact extends CommonObject
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement,";
 		$sql.= " c.birthday,";
-		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid,";
+		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.skype, c.email, c.jabberid,";
 		$sql.= " c.priv, c.note, c.default_lang, c.no_email, c.canvas,";
 		$sql.= " c.import_key,";
 		$sql.= " p.libelle as country, p.code as country_code,";
@@ -529,7 +533,8 @@ class Contact extends CommonObject
 				$this->fax				= trim($obj->fax);
 				$this->phone_perso		= trim($obj->phone_perso);
 				$this->phone_mobile		= trim($obj->phone_mobile);
-
+        		$this->skype			= trim($obj->skype);
+        
 				$this->email			= $obj->email;
 				$this->jabberid			= $obj->jabberid;
 				$this->priv				= $obj->priv;
