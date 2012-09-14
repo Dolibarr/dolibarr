@@ -182,7 +182,7 @@ class FormFile
      *      @param      string				$modelselected      Model to preselect by default
      *      @param      string				$allowgenifempty	Allow generation even if list of template ($genallowed) is empty (show however a warning)
      *      @param      string				$forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
-     *      @param      int					$iconPDF            Show only PDF icon with link (1/0)
+     *      @param      int					$iconPDF            Obsolete, see getDocumentsLink
      * 		@param		int					$maxfilenamelength	Max length for filename shown
      * 		@param		string				$noform				Do not output html form tags
      * 		@param		string				$param				More param on http links
@@ -199,18 +199,15 @@ class FormFile
 
         global $langs,$bc,$conf;
 
+        // For backward compatibility
+        if (! empty($iconPDF)) {
+        	return $this->getDocumentsLink($modulepart, $filename, $filedir);
+        }
+
         $forname='builddoc';
         $out='';
         $var=true;
 
-        // Clean paramaters
-        if ($iconPDF == 1)
-        {
-            $genallowed = '';
-            $delallowed = 0;
-            $modelselected = '';
-            $forcenomultilang=0;
-        }
         //$filename = dol_sanitizeFileName($filename);    //Must be sanitized before calling show_documents
         $headershown=0;
         $showempty=0;
@@ -440,28 +437,16 @@ class FormFile
         }
 
         // Get list of files
-        if ($filedir)
+        if (! empty($filedir))
         {
-            $png = '';
-            $filter = '';
-            if ($iconPDF==1)
-            {
-                $png = '\.png$';
-                $filter = $filename.'.pdf';
-            }
-            $file_list=dol_dir_list($filedir,'files',0,$filter,'\.meta$'.($png?'|'.$png:''),'date',SORT_DESC);
+            $file_list=dol_dir_list($filedir,'files',0,'','\.meta$','date',SORT_DESC);
 
             // Affiche en-tete tableau si non deja affiche
-            if (! empty($file_list) && ! $headershown && ! $iconPDF)
+            if (! empty($file_list) && ! $headershown)
             {
                 $headershown=1;
                 $out.= '<div class="titre">'.$titletoshow.'</div>';
                 $out.= '<table class="border" summary="listofdocumentstable" width="100%">';
-            }
-            else if (empty($file_list) && ! empty($iconPDF))
-            {
-            	// For ajax treatment
-            	$out.= '<div id="gen_pdf_'.$filename.'" class="linkobject hideobject">'.img_picto('', 'refresh').'</div>'."\n";
             }
 
             // Loop on each file found
@@ -476,44 +461,37 @@ class FormFile
                 if ($modulepart == 'donation')            { $relativepath = get_exdir($filename,2).$file["name"]; }
                 if ($modulepart == 'export')              { $relativepath = $file["name"]; }
 
-                if (! $iconPDF) $out.= "<tr ".$bc[$var].">";
+                $out.= "<tr ".$bc[$var].">";
 
                 // Show file name with link to download
-                if (! $iconPDF) $out.= '<td nowrap="nowrap">';
+                $out.= '<td nowrap="nowrap">';
                 $out.= '<a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
                 $mime=dol_mimetype($relativepath,'',0);
                 if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
                 $out.= '>';
-                if (! $iconPDF)
-                {
-                    $out.= img_mime($file["name"],$langs->trans("File").': '.$file["name"]).' '.dol_trunc($file["name"],$maxfilenamelength);
-                }
-                else
-                {
-                    $out.= img_pdf($file["name"],2);
-                }
+                $out.= img_mime($file["name"],$langs->trans("File").': '.$file["name"]).' '.dol_trunc($file["name"],$maxfilenamelength);
                 $out.= '</a>'."\n";
-                if (! $iconPDF)
-                {
-                	$size=(! empty($file['size'])?$file['size']:dol_filesize($filedir."/".$file["name"]));
-                	$date=(! empty($file['date'])?$file['date']:dol_filemtime($filedir."/".$file["name"]));
-                	$out.= '</td>';
-                	// Show file size
-                	$out.= '<td align="right" nowrap="nowrap">'.dol_print_size($size).'</td>';
-                	// Show file date
-                	$out.= '<td align="right" nowrap="nowrap">'.dol_print_date($date, 'dayhour').'</td>';
-                }
+                $out.= '</td>';
+
+                // Show file size
+                $size=(! empty($file['size'])?$file['size']:dol_filesize($filedir."/".$file["name"]));
+                $out.= '<td align="right" nowrap="nowrap">'.dol_print_size($size).'</td>';
+
+                // Show file date
+                $date=(! empty($file['date'])?$file['date']:dol_filemtime($filedir."/".$file["name"]));
+                $out.= '<td align="right" nowrap="nowrap">'.dol_print_date($date, 'dayhour').'</td>';
 
                 if ($delallowed)
                 {
                     $out.= '<td align="right">';
-                    $out.= '<a href="'.$urlsource.(strpos($urlsource,'?')?'&':'?').'action=remove_file&modulepart='.$modulepart.'&file='.urlencode($relativepath);
+                    $out.= '<a href="'.$urlsource.(strpos($urlsource,'?')?'&':'?').'action=remove_file&file='.urlencode($relativepath);
                     $out.= ($param?'&'.$param:'');
-                    $out.= '&urlsource='.urlencode($urlsource);
+                    //$out.= '&modulepart='.$modulepart; // TODO obsolete ?
+                    //$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
                     $out.= '">'.img_delete().'</a></td>';
                 }
 
-                if (! $iconPDF) $out.= '</tr>';
+                $out.= '</tr>';
 
                 $this->numoffiles++;
             }
@@ -531,6 +509,56 @@ class FormFile
         $out.= '<!-- End show_document -->'."\n";
         //return ($i?$i:$headershown);
         return $out;
+    }
+
+    /**
+     *	Show only Document icon with link
+     *
+     *	@param	string	$modulepart		propal, facture, facture_fourn, ...
+     *	@param	string	$filename		Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if $filedir is already complete)
+     *	@param	string	$filedir		Directory to scan
+     *	@return	string              	Output string with HTML link of documents (might be empty string)
+     */
+    function getDocumentsLink($modulepart, $filename, $filedir)
+    {
+    	if (! function_exists('dol_dir_list')) {
+    		include DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    	}
+
+    	$out='';
+
+    	$file_list=dol_dir_list($filedir, 'files', 0, $filename.'.pdf', '\.meta$|\.png$');
+
+    	// For ajax treatment
+    	$out.= '<div id="gen_pdf_'.$filename.'" class="linkobject hideobject">'.img_picto('', 'refresh').'</div>'."\n";
+
+    	if (! empty($file_list))
+    	{
+    		// Loop on each file found
+    		foreach($file_list as $file)
+    		{
+    			// Define relative path for download link (depends on module)
+    			$relativepath=$file["name"];								// Cas general
+    			if ($filename) $relativepath=$filename."/".$file["name"];	// Cas propal, facture...
+    			// Autre cas
+    			if ($modulepart == 'donation')            {
+    				$relativepath = get_exdir($filename,2).$file["name"];
+    			}
+    			if ($modulepart == 'export')              {
+    				$relativepath = $file["name"];
+    			}
+
+    			// Show file name with link to download
+    			$out.= '<a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
+    			$mime=dol_mimetype($relativepath,'',0);
+    			if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
+    			$out.= '>';
+    			$out.= img_pdf($file["name"],2);
+    			$out.= '</a>'."\n";
+    		}
+    	}
+
+    	return $out;
     }
 
 
@@ -562,7 +590,7 @@ class FormFile
 			if (! class_exists('HookManager')) {
 				// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 				require DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-				$hookmanager=new HookManager($db);
+				$hookmanager=new HookManager($this->db);
 			}
 		}
 		$hookmanager->initHooks(array('formfile'));

@@ -49,7 +49,6 @@ class pdf_expedition_merou extends ModelePdfExpedition
 
 		$this->db = $db;
 		$this->name = "merou";
-		//$this->description = "Modele Merou A5";
 		$this->description = $langs->trans("DocumentModelMerou");
 
 		$this->type = 'pdf';
@@ -62,7 +61,7 @@ class pdf_expedition_merou extends ModelePdfExpedition
 		$this->marge_haute=10;
 		$this->marge_basse=10;
 
-		$this->option_logo = 1;                    // Affiche logo
+		$this->option_logo = 1;
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
@@ -94,13 +93,9 @@ class pdf_expedition_merou extends ModelePdfExpedition
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
 		$outputlangs->load("propal");
-		$outputlangs->load("sendings");
 		$outputlangs->load("deliveries");
+		$outputlangs->load("sendings");
 
-		//Generation de la fiche
-		$this->expe = $object;
-
-		//Verification de la configuration
 		if ($conf->expedition->dir_output)
 		{
 			$object->fetch_thirdparty();
@@ -120,7 +115,6 @@ class pdf_expedition_merou extends ModelePdfExpedition
 			$this->livreur = new User($this->db);
 			if ($idcontact[0]) $this->livreur->fetch($idcontact[0]);
 
-
 			// Definition de $dir et $file
 			if ($object->specimen)
 			{
@@ -138,17 +132,17 @@ class pdf_expedition_merou extends ModelePdfExpedition
 			{
 				if (dol_mkdir($dir) < 0)
 				{
-					$this->error=$outputlangs->transnoentities("ErrorCanNotCreateDir",$dir);
+					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 					return 0;
 				}
 			}
 
-			//Si le dossier existe
 			if (file_exists($dir))
 			{
-                $pdf=pdf_getInstance($this->format,'mm','l');
-                $heightforinfotot = 80;	// Height reserved to output the info and total part (value include bottom margin)
-                $heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
+				$nblignes = count($object->lines);
+
+				$pdf=pdf_getInstance($this->format,'mm','l');
+                $heightforfooter = 28;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
 
 			    if (class_exists('TCPDF'))
@@ -168,7 +162,8 @@ class pdf_expedition_merou extends ModelePdfExpedition
 				$pagenb=0;
 				$pdf->SetDrawColor(128,128,128);
 
-				//Generation de l entete du fichier
+				$pdf->AliasNbPages();
+				
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Sending"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
@@ -178,80 +173,116 @@ class pdf_expedition_merou extends ModelePdfExpedition
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 
-				$pdf->SetFont('','', $default_font_size - 3);
-
 				// New page
 				$pdf->AddPage();
 				$pagenb++;
-				$this->_pagehead($pdf, $this->expe, 1, $outputlangs);
+				$this->_pagehead($pdf, $object, 1, $outputlangs, $hookmanager);
 				$pdf->SetFont('','', $default_font_size - 3);
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
 
-				//Initialisation des coordonnees
-				$tab_top = 53;
-				$tab_height = $this->page_hauteur - 78;
+				$tab_top = 52;
+				$tab_top_newpage = 10;
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter;
+				$tab_height_newpage = $this->page_hauteur - $tab_top_newpage - $heightforfooter;
+
 				$pdf->SetFillColor(240,240,240);
 				$pdf->SetTextColor(0,0,0);
-				$pdf->SetFont('','',  $default_font_size - 3);
 				$pdf->SetXY(10, $tab_top + 5);
-				$iniY = $pdf->GetY();
-				$curY = $pdf->GetY();
-				$nexY = $pdf->GetY();
-				//Generation du tableau
-				$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
+				
+				$iniY = $tab_top + 7;
+				$curY = $tab_top + 7;
+				$nexY = $tab_top + 7;
 
-				$nblignes = count($object->lines);
-
-				for ($i = 0 ; $i < $nblignes ; $i++)
+				$num=count($object->lines);
+				for ($i = 0; $i < $num; $i++)
 				{
+					$curY = $nexY;
+
+					$pdf->SetFont('','', $default_font_size - 3);
+						
+					$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+					$pageposbefore=$pdf->getPage();
+					
 					// Description de la ligne produit
+					$libelleproduitservice = pdf_writelinedesc($pdf,$object,$i,$outputlangs,90,3,50,$curY,0,1);
+
+					$nexY = $pdf->GetY();
+					$pageposafter=$pdf->getPage();
+					$pdf->setPage($pageposbefore);
+					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+
+					// We suppose that a too long description is moved completely on next page
+					if ($pageposafter > $pageposbefore) {
+						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
+					}
+
+					$pdf->SetFont('','', $default_font_size - 3);
 
 					//Creation des cases a cocher
-					$pdf->Rect(10+3, $curY+1, 3, 3);
-					$pdf->Rect(20+3, $curY+1, 3, 3);
+					$pdf->Rect(10+3, $curY, 3, 3);
+					$pdf->Rect(20+3, $curY, 3, 3);
 					//Insertion de la reference du produit
-					$pdf->SetXY(30, $curY+1);
+					$pdf->SetXY(30, $curY);
 					$pdf->SetFont('','B', $default_font_size - 3);
 					$pdf->MultiCell(24, 3, $outputlangs->convToOutputCharset($object->lines[$i]->ref), 0, 'L', 0);
-					//Insertion du libelle
-					$pdf->SetFont('','', $default_font_size - 3);
-					$pdf->SetXY(50, $curY+1);
-                    //$libelleproduitservice=pdf_getlinedesc($object->$origin,$i,$outputlangs);
-					$libelleproduitservice = pdf_writelinedesc($pdf,$object->$origin,$i,$outputlangs,90,3,50,$curY+1,1);
-					//$pdf->writeHTMLCell(90, 3, 50, $curY+1, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 'L', 0);
-					//Insertion de la quantite commandee
-					$pdf->SetFont('','', $default_font_size - 3);
-					$pdf->SetXY(140, $curY+1);
+						
+					$pdf->SetXY(140, $curY);
 					$pdf->MultiCell(30, 3, $object->lines[$i]->qty_asked, 0, 'C', 0);
-					//Insertion de la quantite a envoyer
-					$pdf->SetFont('','', $default_font_size - 3);
-					$pdf->SetXY(170, $curY+1);
+
+					$pdf->SetXY(170, $curY);
 					$pdf->MultiCell(30, 3, $object->lines[$i]->qty_shipped, 0, 'C', 0);
 
-					//Generation de la page 2
-					$curY += (dol_nboflines_bis($libelleproduitservice,0,$outputlangs->charset_output)*3+1);
-					$nexY = $curY;
-					if ($nexY > ($tab_top+$tab_height-10) && $i < $nblignes - 1)
+					$nexY+=2;    // Passe espace entre les lignes
+					
+					// Detect if some page were added automatically and output _tableau for past pages
+					while ($pagenb < $pageposafter)
 					{
-						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
-						$this->_pagefoot($pdf, $object, $outputlangs);
-						$pdf->AliasNbPages();
-
-						$curY = $iniY;
-
+						$pdf->setPage($pagenb);
+						if ($pagenb == 1)
+						{
+							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
+						}
+						else
+						{
+							$this->_tableau($pdf, $tab_top_newpage - 1, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
+						}
+						$this->_pagefoot($pdf,$object,$outputlangs);
+						$pagenb++;
+						$pdf->setPage($pagenb);
+						$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+					}
+					if (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak)
+					{
+						if ($pagenb == 1)
+						{
+							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
+						}
+						else
+						{
+							$this->_tableau($pdf, $tab_top_newpage - 1, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
+						}
+						$this->_pagefoot($pdf,$object,$outputlangs);
 						// New page
 						$pdf->AddPage();
 						$pagenb++;
-						$this->_pagehead($pdf, $this->expe, 0, $outputlangs);
-						$pdf->MultiCell(0, 3, '');		// Set interline to 3
-						$pdf->SetTextColor(0,0,0);
-						$pdf->SetFont('','', $default_font_size - 3);
 					}
 				}
-				//Insertion du pied de page
-				$this->_pagefoot($pdf, $object, $outputlangs);
 
+				// Show square
+				if ($pagenb == 1)
+				{
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+				}
+				else
+				{
+					$this->_tableau($pdf, $tab_top_newpage - 1, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+				}
+
+				// Pied de page
+				$this->_pagefoot($pdf, $object, $outputlangs);
 				$pdf->AliasNbPages();
 
 				$pdf->Close();
@@ -298,21 +329,24 @@ class pdf_expedition_merou extends ModelePdfExpedition
 		$langs->load("main");
 		$langs->load("bills");
 
-		$pdf->SetFont('','B', $default_font_size - 2);
-		$pdf->SetXY(10,$tab_top);
-		$pdf->MultiCell(10,5,"LS",0,'C',1);
-		$pdf->line(20, $tab_top, 20, $tab_top + $tab_height);
-		$pdf->SetXY(20,$tab_top);
-		$pdf->MultiCell(10,5,"LR",0,'C',1);
-		$pdf->line(30, $tab_top, 30, $tab_top + $tab_height);
-		$pdf->SetXY(30,$tab_top);
-		$pdf->MultiCell(20,5,$outputlangs->transnoentities("Ref"),0,'C',1);
-		$pdf->SetXY(50,$tab_top);
-		$pdf->MultiCell(90,5,$outputlangs->transnoentities("Description"),0,'L',1);
-		$pdf->SetXY(140,$tab_top);
-		$pdf->MultiCell(30,5,$outputlangs->transnoentities("QtyOrdered"),0,'C',1);
-		$pdf->SetXY(170,$tab_top);
-		$pdf->MultiCell(30,5,$outputlangs->transnoentities("QtyToShip"),0,'C',1);
+		if (empty($hidetop))
+		{
+			$pdf->SetFont('','B', $default_font_size - 2);
+			$pdf->SetXY(10,$tab_top);
+			$pdf->MultiCell(10,5,"LS",0,'C',1);
+			$pdf->line(20, $tab_top, 20, $tab_top + $tab_height);
+			$pdf->SetXY(20,$tab_top);
+			$pdf->MultiCell(10,5,"LR",0,'C',1);
+			$pdf->line(30, $tab_top, 30, $tab_top + $tab_height);
+			$pdf->SetXY(30,$tab_top);
+			$pdf->MultiCell(20,5,$outputlangs->transnoentities("Ref"),0,'C',1);
+			$pdf->SetXY(50,$tab_top);
+			$pdf->MultiCell(90,5,$outputlangs->transnoentities("Description"),0,'L',1);
+			$pdf->SetXY(140,$tab_top);
+			$pdf->MultiCell(30,5,$outputlangs->transnoentities("QtyOrdered"),0,'C',1);
+			$pdf->SetXY(170,$tab_top);
+			$pdf->MultiCell(30,5,$outputlangs->transnoentities("QtyToShip"),0,'C',1);
+		}
 		$pdf->Rect(10, $tab_top, 190, $tab_height);
 	}
 

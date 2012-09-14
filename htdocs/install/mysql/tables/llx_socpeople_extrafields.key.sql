@@ -1,8 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
--- Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
--- Copyright (C) 2011      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2011 Laurent Destailleur	<eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,15 +16,5 @@
 --
 -- ===================================================================
 
-create table llx_extrafields
-(
-	rowid           integer AUTO_INCREMENT PRIMARY KEY,
-	name            varchar(64) NOT NULL,       -- nom de l'attribut
-	entity          integer DEFAULT 1 NOT NULL,	-- multi company id
-    elementtype     varchar(64) NOT NULL DEFAULT 'member',
-	tms             timestamp,
-	label           varchar(255) NOT NULL,      -- label correspondant a l'attribut
-	type            varchar(8),
-	size            varchar(8) DEFAULT NULL,
-	pos             integer DEFAULT 0
-)ENGINE=innodb;
+
+ALTER TABLE llx_socpeople_extrafields ADD INDEX idx_socpeople_extrafields (fk_object);

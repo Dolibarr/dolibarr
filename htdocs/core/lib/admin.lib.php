@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2012      J. Fernando Lagrange <fernando@demo-tic.org>
+/* Copyright (C) 2008-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2012		J. Fernando Lagrange	<fernando@demo-tic.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1024,7 +1024,7 @@ function form_constantes($tableau)
         $sql.= ", note";
         $sql.= " FROM ".MAIN_DB_PREFIX."const";
         $sql.= " WHERE ".$db->decrypt('name')." = '".$const."'";
-        $sql.= " AND entity in (0, ".$conf->entity.")";
+        $sql.= " AND entity IN (0, ".$conf->entity.")";
         $sql.= " ORDER BY name ASC, entity DESC";
         $result = $db->query($sql);
 
@@ -1033,6 +1033,11 @@ function form_constantes($tableau)
         {
             $obj = $db->fetch_object($result);	// Take first result of select
             $var=!$var;
+
+            // For avoid warning in strict mode
+            if (empty($obj)) {
+            	$obj = (object) array('rowid'=>'','name'=>'','value'=>'','type'=>'','note'=>'');
+            }
 
             print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 

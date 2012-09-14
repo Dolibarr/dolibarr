@@ -79,6 +79,7 @@ $entitytolang = array(
 	'account'      => 'BankTransactions',
 	'payment'      => 'Payment',
 	'product'      => 'Product',
+    'service'      => 'Service',
     'stock'        => 'Stock',
     'warehouse'    => 'Warehouse',
 	'category'     => 'Category',

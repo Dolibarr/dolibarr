@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -83,7 +83,7 @@ $alwayshiddencheckedmodules=array('accounting','barcode','bookmark','clicktodial
                                 'memcached','numberwords','zipautofillfr');
 $alwayshiddenuncheckedmodules=array('boutique','ftp',
                                 // Extended modules
-                                'awstats','bittorrent','cabinetmed','cmcic','concatpdf','dolicloud','filemanager','mantis','monitoring','moretemplates','nltechno','numberingpack','openstreetmap',
+                                'awstats','bittorrent','cabinetmed','cmcic','concatpdf','dolicloud','filemanager','lightbox','mantis','monitoring','moretemplates','nltechno','numberingpack','openstreetmap',
                                 'ovh','phenix','phpsysinfo','pibarcode','postnuke','skincoloreditor','submiteverywhere','survey','thomsonphonebook','topten','tvacerfa','voyage','webcalendar','webmail');
 
 // Search modules

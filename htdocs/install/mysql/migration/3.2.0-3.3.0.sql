@@ -19,6 +19,10 @@ DROP TABLE llx_product_ca;
 DROP TABLE llx_document;
 DROP TABLE llx_dolibarr_modules;
 
+ALTER TABLE llx_facture_rec ADD COLUMN usenewprice        integer;
+
+ALTER TABLE llx_extrafields MODIFY COLUMN size varchar(8) DEFAULT NULL;
+
 ALTER TABLE llx_menu MODIFY COLUMN fk_mainmenu   varchar(24);
 ALTER TABLE llx_menu MODIFY COLUMN fk_leftmenu   varchar(24);
 
@@ -222,3 +226,15 @@ ALTER TABLE llx_propaldet MODIFY COLUMN localtax2_type varchar(1);
 -- END TASK #204
 
 ALTER TABLE llx_menu MODIFY COLUMN enabled varchar(255) NULL default '1';
+
+
+create table llx_socpeople_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                                 -- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_socpeople_extrafields ADD INDEX idx_socpeople_extrafields (fk_object);
+

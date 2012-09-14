@@ -440,9 +440,9 @@ if ($action == 'add')
 	$object->bgcolor        = trim($_POST["bgcolor"]);
 	$object->bgimage        = trim($_POST["bgimage"]);
 
-	if (! $object->titre) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailTitle"));
-	if (! $object->sujet) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailTopic"));
-	if (! $object->body)  $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailBody"));
+	if (! $object->titre) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTitle"));
+	if (! $object->sujet) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTopic"));
+	if (! $object->body)  $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailMessage"));
 
 	if (! $mesg)
 	{
@@ -526,8 +526,8 @@ if ($action == 'update' && empty($_POST["removedfile"]) && empty($_POST["cancel"
 		$object->bgcolor        = trim($_POST["bgcolor"]);
 		$object->bgimage        = trim($_POST["bgimage"]);
 
-		if (! $object->sujet) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailTopic"));
-		if (! $object->body)  $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("MailBody"));
+		if (! $object->sujet) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTopic"));
+		if (! $object->body)  $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailMessage"));
 
 		if (! $mesg)
 		{

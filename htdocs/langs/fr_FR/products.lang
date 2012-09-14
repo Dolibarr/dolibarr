@@ -176,3 +176,6 @@ AddThisProductCard=Créer fiche produit
 HelpAddThisProductCard=Cette option permet de créer ou de cloner une fiche produit si elle n'existe pas.
 AddThisServiceCard=Créer fiche service
 HelpAddThisServiceCard=Cette option permet de créer ou de cloner une fiche service si elle n'existe pas.
+CurrentProductPrice=Prix actuel
+AlwaysUseNewPrice=Toujours utiliser le prix du jour
+AlwaysUseFixedPrice=Utiliser le prix fixé

@@ -1,8 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,18 +19,17 @@
  */
 
 /**
- *      \file       htdocs/societe/admin/societe_extrafields.php
+ *      \file       htdocs/societe/admin/contact_extrafields.php
  *		\ingroup    societe
- *		\brief      Page to setup extra fields of third party
+ *		\brief      Page to setup extra fields of contact
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("companies");
 $langs->load("admin");
-$langs->load("products");
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -43,7 +41,7 @@ foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->trans($val);
 
 $action=GETPOST('action', 'alpha');
 $attrname=GETPOST('attrname', 'alpha');
-$elementtype='product';
+$elementtype='contact';
 
 if (!$user->admin) accessforbidden();
 
@@ -60,33 +58,22 @@ require DOL_DOCUMENT_ROOT.'/core/admin_extrafields.inc.php';
  * View
  */
 
-$title = $langs->trans('ProductServiceSetup');
-$tab = $langs->trans("ProductsAndServices");
-if (empty($conf->produit->enabled))
-{
-	$title = $langs->trans('ServiceSetup');
-	$tab = $langs->trans('Services');
-}
-else if (empty($conf->service->enabled))
-{
-	$title = $langs->trans('ProductSetup');
-	$tab = $langs->trans('Products');
-}
+$textobject=$langs->transnoentitiesnoconv("ContactsAddresses");
 
 $help_url='EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers';
-llxHeader('',$title);
+llxHeader('',$langs->trans("CompanySetup"),$help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($title,$linkback,'setup');
+print_fiche_titre($langs->trans("CompanySetup"),$linkback,'setup');
 
 
-$head = product_admin_prepare_head();
+$head = societe_admin_prepare_head(null);
 
-dol_fiche_head($head, 'attributes', $tab, 0, 'product');
+dol_fiche_head($head, 'attributes_contacts', $langs->trans("ThirdParties"), 0, 'company');
 
 
-print $langs->trans('DefineHereComplementaryAttributes', $tab).'<br>'."\n";
+print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
 print '<br>';
 
 dol_htmloutput_errors($mesg);
