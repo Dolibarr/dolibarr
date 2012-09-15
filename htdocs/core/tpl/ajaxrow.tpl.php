@@ -26,6 +26,7 @@ $fk_element=$object->fk_element;
 $table_element_line=$object->table_element_line;
 $nboflines=(isset($object->lines)?count($object->lines):(isset($tasksarray)?count($tasksarray):0));
 $forcereloadpage=$conf->global->MAIN_FORCE_RELOAD_PAGE;
+
 if (GETPOST('action') != 'editline' && $nboflines > 1) { ?>
 <script type="text/javascript">
 $(document).ready(function(){

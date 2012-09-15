@@ -1019,7 +1019,9 @@ abstract class CommonObject
 
 
     /**
-     *  Stocke un numero de rang pour toutes les lignes de detail d'un element qui n'en ont pas.
+     *  Save a new position (field rang) for details lines.
+     *  You can choose to ser position for lines with already a position or lines wihtout any position defined.
+     *  Call this function only for table that contains a field fk_parent_line.
      *
      * 	@param		boolean		$renum			true to renum all already ordered lines, false to renum only not already ordered lines.
      * 	@param		string		$rowidorder		ASC or DESC
@@ -1038,7 +1040,9 @@ abstract class CommonObject
             return -1;
         }
 
-		$sql = 'SELECT count(rowid) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+        // Count number of lines to reorder (according to choice $renum)
+    	$nl=0;
+        $sql = 'SELECT count(rowid) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 		$sql.= ' WHERE '.$this->fk_element.'='.$this->id;
 		if (! $renum) $sql.= ' AND rang = 0';
 		if ($renum) $sql.= ' AND rang <> 0';
@@ -1050,16 +1054,20 @@ abstract class CommonObject
 			$row = $this->db->fetch_row($resql);
 			$nl = $row[0];
 		}
+		else dol_print_error($this->db);
 		if ($nl > 0)
 		{
+			// The goal of this part is to reorder all lines, with all children lines sharing the same
+			// counter that parents.
 			$rows=array();
 
+			// We frist search all lines that are parent lines (for multilevel details lines)
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
 			$sql.= ' AND fk_parent_line IS NULL';
 			$sql.= ' ORDER BY rang ASC, rowid '.$rowidorder;
 
-			dol_syslog(get_class($this)."::line_order sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::line_order search all parent lines sql=".$sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -1068,7 +1076,7 @@ abstract class CommonObject
 				while ($i < $num)
 				{
 					$row = $this->db->fetch_row($resql);
-					$rows[] = $row[0];
+					$rows[] = $row[0];	// Add parent line into array rows
 					$childrens = $this->getChildrensOfLine($row[0]);
 					if (! empty($childrens))
 					{
@@ -1080,6 +1088,7 @@ abstract class CommonObject
 					$i++;
 				}
 
+				// Now we set a new number for each lines (parent and children with children included into parent tree)
 				if (! empty($rows))
 				{
 					foreach($rows as $key => $row)
@@ -1087,6 +1096,10 @@ abstract class CommonObject
 						$this->updateRangOfLine($row, ($key+1));
 					}
 				}
+			}
+			else
+			{
+				dol_print_error($this->db);
 			}
 		}
 	}
@@ -1106,7 +1119,7 @@ abstract class CommonObject
 		$sql.= ' AND fk_parent_line = '.$id;
 		$sql.= ' ORDER BY rang ASC';
 
-		dol_syslog(get_class($this)."::getChildrenOfLines sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::getChildrenOfLines search children lines for line ".$id." sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

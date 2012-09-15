@@ -326,7 +326,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
                     $lastprojectid=$lines[$i]->fk_project;
                 }
 
-                print "<tr ".$bc[$var].">\n";
+                print '<tr '.$bc[$var].' id="row-'.$lines[$i]->id.'">'."\n";
 
                 // Project
                 if ($showproject)
