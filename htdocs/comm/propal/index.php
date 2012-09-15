@@ -193,7 +193,7 @@ if ($conf->propal->enabled)
 				$companystatic->client=$obj->client;
 				$companystatic->canvas=$obj->canvas;
 				print '<td>'.$companystatic->getNomUrl(1,'customer',24).'</td>';
-				
+
 				print '</tr>';
 				$i++;
 			}
@@ -260,7 +260,7 @@ if ($resql)
 			$filename=dol_sanitizeFileName($obj->ref);
 			$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-			$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','',1,'',1);
+			$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','',1,'',1);
 			print '</td></tr></table>';
 
 			print '</td>';
@@ -270,7 +270,7 @@ if ($resql)
 			$companystatic->client=$obj->client;
 			$companystatic->canvas=$obj->canvas;
 			print '<td>'.$companystatic->getNomUrl(1,'customer').'</td>';
-			
+
 			print '<td>'.dol_print_date($db->jdate($obj->datec),'day').'</td>';
 			print '<td align="right">'.$propalstatic->LibStatut($obj->fk_statut,5).'</td>';
 			print '</tr>';
@@ -339,7 +339,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 				print '</td></tr></table>';
 
 				print "</td>";
-				
+
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->socname;
 				$companystatic->client=$obj->client;
@@ -419,7 +419,7 @@ if ($conf->propal->enabled)
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','',1,'',1);
+				$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','',1,'',1);
 				print '</td></tr></table>';
 
 				print '</td>';
@@ -491,7 +491,7 @@ if ($conf->propal->enabled)
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','',1,'',1);
+				$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','',1,'',1);
 				print '</td></tr></table>';
 
 				print '</td>';
