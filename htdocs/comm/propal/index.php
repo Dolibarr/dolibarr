@@ -257,7 +257,7 @@ if ($resql)
 			$filename=dol_sanitizeFileName($obj->ref);
 			$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-			$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','',1,'',1);
+			print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
 			print '</td></tr></table>';
 
 			print '</td>';
@@ -334,7 +334,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->propalid;
-				$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','',1,'',1);
+				print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
 				print '</td></tr></table>';
 
 				print "</td>";
@@ -418,7 +418,7 @@ if ($conf->propal->enabled)
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','',1,'',1);
+				print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
 				print '</td></tr></table>';
 
 				print '</td>';
@@ -490,7 +490,7 @@ if ($conf->propal->enabled)
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','',1,'',1);
+				print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
 				print '</td></tr></table>';
 
 				print '</td>';

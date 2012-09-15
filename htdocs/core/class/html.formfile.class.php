@@ -527,6 +527,8 @@ class FormFile
 
     	$out='';
 
+    	$this->numoffiles=0;
+
     	$file_list=dol_dir_list($filedir, 'files', 0, $filename.'.pdf', '\.meta$|\.png$');
 
     	// For ajax treatment
@@ -555,6 +557,8 @@ class FormFile
     			$out.= '>';
     			$out.= img_pdf($file["name"],2);
     			$out.= '</a>'."\n";
+
+    			$this->numoffiles++;
     		}
     	}
 
