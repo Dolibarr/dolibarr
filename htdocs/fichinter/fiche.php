@@ -1200,7 +1200,7 @@ else if ($id > 0 || ! empty($ref))
             }
 
         	// Invoicing
-			if ($conf->facture->enabled && $object->statut > 0)
+			if (! empty($conf->facture->enabled) && $object->statut > 0)
             {
 				$langs->load("bills");
                 if ($object->statut < 2)

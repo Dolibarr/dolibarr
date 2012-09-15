@@ -1532,7 +1532,7 @@ if ($rowid && $action != 'edit')
 		}
 
 		// Create third party
-		if ($conf->societe->enabled && ! $object->fk_soc)
+		if (! empty($conf->societe->enabled) && ! $object->fk_soc)
 		{
 			if ($user->rights->societe->creer)
 			{
@@ -1570,7 +1570,7 @@ if ($rowid && $action != 'edit')
 		}
 
 	    // Action SPIP
-	    if ($conf->mailmanspip->enabled && $conf->global->ADHERENT_USE_SPIP)
+	    if (! empty($conf->mailmanspip->enabled) && ! empty($conf->global->ADHERENT_USE_SPIP))
 	    {
             $isinspip = $mailmanspip->is_in_spip($object);
 

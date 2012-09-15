@@ -3016,7 +3016,7 @@ else if ($id > 0 || ! empty($ref))
             	$object->formAddFreeProduct(1,$mysoc,$soc,$hookmanager);
 
             	// Add predefined products/services
-            	if ($conf->product->enabled || $conf->service->enabled)
+            	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
             	{
             		$var=!$var;
             		$object->formAddPredefinedProduct(1,$mysoc,$soc,$hookmanager);
@@ -3268,7 +3268,7 @@ else if ($id > 0 || ! empty($ref))
             $somethingshown=$object->showLinkedObjectBlock();
 
             // Link for paypal payment
-            if ($conf->paypal->enabled && $object->statut != 0)
+            if (! empty($conf->paypal->enabled) && $object->statut != 0)
             {
                 include_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
                 print showPaypalPaymentUrl('invoice',$object->ref);

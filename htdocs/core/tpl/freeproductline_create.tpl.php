@@ -57,7 +57,7 @@ if (! empty($conf->margin->enabled)) {
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
 	<?php
 	echo $form->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
-	if (($conf->product->enabled && $conf->service->enabled) || (empty($conf->product->enabled) && empty($conf->service->enabled))) echo '<br>';
+	if ((! empty($conf->product->enabled) && ! empty($conf->service->enabled)) || (empty($conf->product->enabled) && empty($conf->service->enabled))) echo '<br>';
 
 	if (is_object($hookmanager))
 	{
@@ -99,7 +99,7 @@ if (! empty($conf->margin->enabled)) {
 </tr>
 
 
-<?php if ($conf->service->enabled && $dateSelector) {
+<?php if (! empty($conf->service->enabled) && $dateSelector) {
 if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 	$colspan = 10;
 else

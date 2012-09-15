@@ -70,7 +70,7 @@ $userstatic=new User($db);
 
 	<tr <?php echo $bc[$var]; ?>>
 		<td nowrap="nowrap"><?php echo img_object('','contact').' '.$langs->trans("ThirdPartyContacts"); ?></td>
-		<?php if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT) { ?>
+		<?php if ($conf->use_javascript_ajax && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) { ?>
 		<td>
 			<?php
 			$events=array();

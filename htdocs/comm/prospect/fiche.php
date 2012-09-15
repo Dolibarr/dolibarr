@@ -225,7 +225,7 @@ if ($socid > 0)
 	/*
 	 * Last proposals
 	 */
-	if ($conf->propal->enabled && $user->rights->propale->lire)
+	if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 	{
 		$propal_static=new Propal($db);
 
@@ -297,13 +297,13 @@ if ($socid > 0)
 
 	print '<div class="tabsAction">';
 
-    if ($conf->propal->enabled && $user->rights->propale->creer)
+    if (! empty($conf->propal->enabled) && $user->rights->propale->creer)
     {
         print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
     }
 
     // Add action
-    if ($conf->agenda->enabled && ! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
+    if (! empty($conf->agenda->enabled) && ! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
     {
         if ($user->rights->agenda->myactions->create)
         {

@@ -57,7 +57,7 @@ function ldap_prepare_head()
 		$h++;
 	}
 
-	if ($conf->societe->enabled && $conf->global->LDAP_CONTACT_ACTIVE)
+	if (! empty($conf->societe->enabled) && ! empty($conf->global->LDAP_CONTACT_ACTIVE))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_contacts.php";
 		$head[$h][1] = $langs->trans("LDAPContactsSynchro");
@@ -65,7 +65,7 @@ function ldap_prepare_head()
 		$h++;
 	}
 
-	if ($conf->adherent->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
+	if (! empty($conf->adherent->enabled) && ! empty($conf->global->LDAP_MEMBER_ACTIVE))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_members.php";
 		$head[$h][1] = $langs->trans("LDAPMembersSynchro");

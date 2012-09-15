@@ -410,7 +410,7 @@ if ($id > 0)
 	/*
 	 * Last proposals
 	 */
-	if ($conf->propal->enabled && $user->rights->propal->lire)
+	if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 	{
 		$propal_static = new Propal($db);
 
@@ -472,7 +472,7 @@ if ($id > 0)
 	/*
 	 * Last orders
 	 */
-	if ($conf->commande->enabled && $user->rights->commande->lire)
+	if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	{
 		$commande_static=new Commande($db);
 
@@ -527,7 +527,7 @@ if ($id > 0)
 	/*
 	 * Last linked contracts
 	 */
-	if ($conf->contrat->enabled && $user->rights->contrat->lire)
+	if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 	{
 		$contratstatic=new Contrat($db);
 
@@ -587,7 +587,7 @@ if ($id > 0)
 	/*
 	 * Last interventions
 	 */
-	if ($conf->ficheinter->enabled && $user->rights->ficheinter->lire)
+	if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire)
 	{
 		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.fk_statut, f.duree as duration, f.datei as startdate";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
@@ -642,7 +642,7 @@ if ($id > 0)
 	/*
 	 *   Last invoices
 	 */
-	if ($conf->facture->enabled && $user->rights->facture->lire)
+	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
 		$facturestatic = new Facture($db);
 
@@ -723,13 +723,13 @@ if ($id > 0)
 	 */
 	print '<div class="tabsAction">';
 
-	if ($conf->propal->enabled && $user->rights->propal->creer)
+	if (! empty($conf->propal->enabled) && $user->rights->propal->creer)
 	{
 		$langs->load("propal");
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
 	}
 
-	if ($conf->commande->enabled && $user->rights->commande->creer)
+	if (! empty($conf->commande->enabled) && $user->rights->commande->creer)
 	{
 		$langs->load("orders");
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddOrder").'</a>';
@@ -741,7 +741,7 @@ if ($id > 0)
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddContract").'</a>';
 	}
 
-	if ($conf->ficheinter->enabled && $user->rights->ficheinter->creer)
+	if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer)
 	{
 		$langs->load("fichinter");
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/fiche.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a>';
@@ -772,7 +772,7 @@ if ($id > 0)
 	}
 
 	// Add action
-	if ($conf->agenda->enabled && ! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
+	if (! empty($conf->agenda->enabled) && ! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
 	{
 		if ($user->rights->agenda->myactions->create)
 		{

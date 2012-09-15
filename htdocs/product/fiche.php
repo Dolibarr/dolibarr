@@ -744,7 +744,7 @@ else
         print '</td></tr>';
 
         // Stock min level
-        if ($type != 1 && $conf->stock->enabled)
+        if ($type != 1 && ! empty($conf->stock->enabled))
         {
             print '<tr><td>'.$langs->trans("StockLimit").'</td><td>';
             print '<input name="seuil_stock_alerte" size="4" value="'.GETPOST('seuil_stock_alerte').'">';
@@ -963,7 +963,7 @@ else
                 print '</td></tr>';
             }
 
-            if ($object->isproduct() && $conf->stock->enabled)
+            if ($object->isproduct() && ! empty($conf->stock->enabled))
             {
                 print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td colspan="2">';
                 print '<input name="seuil_stock_alerte" size="4" value="'.$object->seuil_stock_alerte.'">';
@@ -1099,7 +1099,7 @@ else
             print '</tr>';
 
             // Type
-            if ($conf->produit->enabled && $conf->service->enabled)
+            if (! empty($conf->produit->enabled) && ! empty($conf->service->enabled))
             {
             	// TODO change for compatibility with edit in place
             	$typeformat='select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");

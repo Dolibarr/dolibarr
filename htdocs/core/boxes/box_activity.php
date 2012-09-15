@@ -77,7 +77,7 @@ class box_activity extends ModeleBoxes
 		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
 
 		// list the summary of the bills
-		if ($conf->facture->enabled && $user->rights->facture->lire)
+		if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 		{
 			$sql = "SELECT f.paye, f.fk_statut, sum(f.total_ttc) as Mnttot, count(*) as nb";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
@@ -133,7 +133,7 @@ class box_activity extends ModeleBoxes
 		}
 
 		// list the summary of the orders
-		if ($conf->commande->enabled && $user->rights->commande->lire)
+		if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 		{
 			$sql = "SELECT c.fk_statut,c.facture, sum(c.total_ttc) as Mnttot, count(*) as nb";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
@@ -175,7 +175,7 @@ class box_activity extends ModeleBoxes
 		}
 
 		// list the summary of the propals
-		if ($conf->propal->enabled && $user->rights->propal->lire)
+		if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 		{
 			$sql = "SELECT p.fk_statut, sum(p.total) as Mnttot, count(*) as nb";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";

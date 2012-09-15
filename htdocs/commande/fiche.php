@@ -2153,7 +2153,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 						$object->formAddFreeProduct(1,$mysoc,$soc,$hookmanager);
 
 						// Add predefined products/services
-						if ($conf->product->enabled || $conf->service->enabled)
+						if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 						{
 							$var=!$var;
 							$object->formAddPredefinedProduct(1,$mysoc,$soc,$hookmanager);
@@ -2235,7 +2235,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 
 					// Create bill and Classify billed
-					if ($conf->facture->enabled && $object->statut > 0  && ! $object->billed)
+					if (! empty($conf->facture->enabled) && $object->statut > 0  && ! $object->billed)
 					{
 						if ($user->rights->facture->creer && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER))
 						{

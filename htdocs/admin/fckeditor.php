@@ -69,7 +69,7 @@ foreach($modules as $const => $desc)
     {
         dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1",'chaine',0,'',$conf->entity);
         // Si fckeditor est active dans la description produit/service, on l'active dans les formulaires
-        if ($const == 'PRODUCTDESC' && $conf->global->PRODUIT_DESC_IN_FORM)
+        if ($const == 'PRODUCTDESC' && ! empty($conf->global->PRODUIT_DESC_IN_FORM))
         {
             dolibarr_set_const($db, "FCKEDITOR_ENABLE_DETAILS", "1",'chaine',0,'',$conf->entity);
         }

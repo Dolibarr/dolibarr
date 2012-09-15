@@ -89,15 +89,15 @@ print_fiche_titre($langs->trans("CustomerArea"));
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 
 print '<tr>';
-if (($conf->propal->enabled && $user->rights->propale->lire) ||
-    ($conf->contrat->enabled && $user->rights->contrat->lire) ||
-    ($conf->commande->enabled && $user->rights->commande->lire))
+if ((! empty($conf->propal->enabled) && $user->rights->propale->lire) ||
+    (! empty($conf->contrat->enabled) && $user->rights->contrat->lire) ||
+    (! empty($conf->commande->enabled) && $user->rights->commande->lire))
 {
 	print '<td valign="top" width="30%" class="notopnoleft">';
 }
 
 // Recherche Propal
-if ($conf->propal->enabled && $user->rights->propal->lire)
+if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 {
 	$var=false;
 	print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal/list.php">';
@@ -116,7 +116,7 @@ if ($conf->propal->enabled && $user->rights->propal->lire)
 /*
  * Recherche Contrat
  */
-if ($conf->contrat->enabled && $user->rights->contrat->lire)
+if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 {
 	$var=false;
 	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/liste.php">';
@@ -135,7 +135,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 /*
  * Draft proposals
  */
-if ($conf->propal->enabled && $user->rights->propal->lire)
+if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 {
 	$sql = "SELECT p.rowid, p.ref, p.total_ht, s.rowid as socid, s.nom as name, s.client, s.canvas";
 	$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
@@ -200,7 +200,7 @@ if ($conf->propal->enabled && $user->rights->propal->lire)
 /*
  * Draft orders
  */
-if ($conf->commande->enabled && $user->rights->commande->lire)
+if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 {
 	$langs->load("orders");
 
@@ -255,9 +255,9 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 	}
 }
 
-if (($conf->propal->enabled && $user->rights->propale->lire) ||
-    ($conf->contrat->enabled && $user->rights->contrat->lire) ||
-    ($conf->commande->enabled && $user->rights->commande->lire))
+if ((! empty($conf->propal->enabled) && $user->rights->propale->lire) ||
+    (! empty($conf->contrat->enabled) && $user->rights->contrat->lire) ||
+    (! empty($conf->commande->enabled) && $user->rights->commande->lire))
 {
 	print '</td>';
 	print '<td valign="top" width="70%" class="notopnoleftnoright">';
@@ -276,7 +276,7 @@ $max=3;
 /*
  * Last modified customers or prospects
  */
-if ($conf->societe->enabled && $user->rights->societe->lire)
+if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 {
 	$langs->load("boxes");
 
@@ -336,7 +336,7 @@ if ($conf->societe->enabled && $user->rights->societe->lire)
 }
 
 // Last suppliers
-if ($conf->fournisseur->enabled && $user->rights->societe->lire)
+if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 {
 	$langs->load("boxes");
 
@@ -408,7 +408,7 @@ if ($user->rights->agenda->myactions->read)
 /*
  * Last contracts
  */
-if ($conf->contrat->enabled && $user->rights->contrat->lire && 0) // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
+if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
 {
 	$langs->load("contracts");
 
@@ -466,7 +466,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire && 0) // TODO A REFA
 /*
  * Opened proposals
  */
-if ($conf->propal->enabled && $user->rights->propal->lire)
+if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 {
 	$langs->load("propal");
 

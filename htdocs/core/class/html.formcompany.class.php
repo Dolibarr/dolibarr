@@ -521,7 +521,7 @@ class FormCompany
 		$sql = "SELECT s.rowid, s.nom FROM";
 		$sql.= " ".MAIN_DB_PREFIX."societe as s";
 		$sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
-		if ($selected && $conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT) $sql.= " AND rowid = ".$selected;
+		if ($selected && $conf->use_javascript_ajax && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) $sql.= " AND rowid = ".$selected;
 		else
 		{
 			// For ajax search we limit here. For combo list, we limit later
@@ -536,7 +536,7 @@ class FormCompany
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
+			if ($conf->use_javascript_ajax && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT))
 			{
 				$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
 

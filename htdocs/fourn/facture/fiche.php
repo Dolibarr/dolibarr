@@ -1144,7 +1144,7 @@ if ($action == 'create')
     else
     {
     	// TODO more bugs
-        if (1==2 && $conf->global->PRODUCT_SHOW_WHEN_CREATE)
+        if (1==2 && ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE))
         {
             print '<tr class="liste_titre">';
             print '<td>&nbsp;</td><td>'.$langs->trans('Label').'</td>';
@@ -1593,7 +1593,7 @@ else
 
                 // Show product and description
                 print '<td>';
-                if (($conf->product->enabled || $conf->service->enabled) && $object->lines[$i]->fk_product)
+                if ((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && $object->lines[$i]->fk_product)
                 {
                     print '<input type="hidden" name="idprod" value="'.$object->lines[$i]->fk_product.'">';
                     $product_static=new ProductFournisseur($db);
@@ -1607,7 +1607,7 @@ else
                 {
                     $forceall=1;	// For suppliers, we always show all types
                     print $form->select_type_of_lines($object->lines[$i]->product_type,'type',1);
-                    if ($forceall || ($conf->product->enabled && $conf->service->enabled)
+                    if ($forceall || (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
                     || (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
                 }
 
@@ -1744,7 +1744,7 @@ else
 
             $forceall=1;	// For suppliers, we always show all types
             print $form->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1,0,$forceall);
-            if ($forceall || ($conf->product->enabled && $conf->service->enabled)
+            if ($forceall || (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
             || (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
 
             if (is_object($hookmanager))

@@ -125,7 +125,7 @@ function print_eldy_menu($db,$atarget,$type_user)
 		}
 		$chaine="";
 		if (! empty($conf->product->enabled)) { $chaine.=$langs->trans("Products"); }
-		if ($conf->product->enabled && $conf->service->enabled) { $chaine.="/"; }
+		if (! empty($conf->product->enabled) && ! empty($conf->service->enabled)) { $chaine.="/"; }
 		if (! empty($conf->service->enabled)) { $chaine.=$langs->trans("Services"); }
 
 		$idsel='products';
@@ -751,7 +751,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
             }
 
             // Prospects
-            if ($conf->societe->enabled && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
+            if (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
             {
                 $langs->load("commercial");
                 $newmenu->add("/comm/prospect/list.php?leftmenu=prospects", $langs->trans("ListProspectsShort"), 1, $user->rights->societe->lire, '', $mainmenu, 'prospects');
@@ -777,7 +777,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
             }
 
             // Fournisseurs
-            if ($conf->societe->enabled && $conf->fournisseur->enabled)
+            if (! empty($conf->societe->enabled) && ! empty($conf->fournisseur->enabled))
             {
                 $langs->load("suppliers");
                 $newmenu->add("/fourn/liste.php?leftmenu=suppliers", $langs->trans("ListSuppliersShort"), 1, $user->rights->fournisseur->lire, '', $mainmenu, 'suppliers');
@@ -856,7 +856,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 $newmenu->add("/commande/liste.php?leftmenu=orders", $langs->trans("List"), 1, $user->rights->commande->lire);
                 if ($leftmenu=="orders") $newmenu->add("/commande/liste.php?leftmenu=orders&viewstatut=0", $langs->trans("StatusOrderDraftShort"), 2, $user->rights->commande->lire);
                 if ($leftmenu=="orders") $newmenu->add("/commande/liste.php?leftmenu=orders&viewstatut=1", $langs->trans("StatusOrderValidated"), 2, $user->rights->commande->lire);
-                if ($leftmenu=="orders" && $conf->expedition->enabled) $newmenu->add("/commande/liste.php?leftmenu=orders&viewstatut=2", $langs->trans("StatusOrderOnProcessShort"), 2, $user->rights->commande->lire);
+                if ($leftmenu=="orders" && ! empty($conf->expedition->enabled)) $newmenu->add("/commande/liste.php?leftmenu=orders&viewstatut=2", $langs->trans("StatusOrderOnProcessShort"), 2, $user->rights->commande->lire);
                 if ($leftmenu=="orders") $newmenu->add("/commande/liste.php?leftmenu=orders&viewstatut=".($conf->expedition->enabled?"3":"-2"), $langs->trans("StatusOrderToBill"), 2, $user->rights->commande->lire);
                 if ($leftmenu=="orders") $newmenu->add("/commande/liste.php?leftmenu=orders&viewstatut=4", $langs->trans("StatusOrderProcessed"), 2, $user->rights->commande->lire);
                 if ($leftmenu=="orders") $newmenu->add("/commande/liste.php?leftmenu=orders&viewstatut=-1", $langs->trans("StatusOrderCanceledShort"), 2, $user->rights->commande->lire);
@@ -1348,7 +1348,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 }
 
                 $newmenu->add("/adherents/index.php?leftmenu=export&amp;mainmenu=members",$langs->trans("Exports"),0,$user->rights->adherent->export, '', $mainmenu, 'export');
-                if ($conf->export->enabled && $leftmenu=="export") $newmenu->add("/exports/index.php?leftmenu=export",$langs->trans("Datas"),1,$user->rights->adherent->export);
+                if (! empty($conf->export->enabled) && $leftmenu=="export") $newmenu->add("/exports/index.php?leftmenu=export",$langs->trans("Datas"),1,$user->rights->adherent->export);
                 if ($leftmenu=="export") $newmenu->add("/adherents/htpasswd.php?leftmenu=export",$langs->trans("Filehtpasswd"),1,$user->rights->adherent->export);
                 if ($leftmenu=="export") $newmenu->add("/adherents/cartes/carte.php?leftmenu=export",$langs->trans("MembersCards"),1,$user->rights->adherent->export);
 

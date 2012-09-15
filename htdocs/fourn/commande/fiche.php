@@ -1399,7 +1399,7 @@ if ($id > 0 || ! empty($ref))
                 print '<tr '.$bc[$var].'>';
                 print '<td>';
                 print '<a name="'.$line->id.'"></a>'; // ancre pour retourner sur la ligne
-                if (($conf->product->enabled || $conf->service->enabled) && $line->fk_product > 0)
+                if ((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && $line->fk_product > 0)
                 {
                     $product_static=new ProductFournisseur($db);
                     $product_static->fetch($line->fk_product);
@@ -1415,7 +1415,7 @@ if ($id > 0 || ! empty($ref))
                 else
                 {
                     print $form->select_type_of_lines($line->product_type,'type',1);
-                    if ($conf->product->enabled && $conf->service->enabled) print '<br>';
+                    if (! empty($conf->product->enabled) && ! empty($conf->service->enabled)) print '<br>';
                 }
 
                 if (is_object($hookmanager))
@@ -1619,7 +1619,7 @@ if ($id > 0 || ! empty($ref))
                 }
 
                 // Create bill
-                if ($conf->fournisseur->enabled && $object->statut >= 2)  // 2 means accepted
+                if (! empty($conf->fournisseur->enabled) && $object->statut >= 2)  // 2 means accepted
                 {
                     if ($user->rights->fournisseur->facture->creer)
                     {

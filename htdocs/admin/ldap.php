@@ -269,7 +269,7 @@ if (function_exists("ldap_connect"))
 			print '<font class="ok">'.$langs->trans("LDAPTCPConnectOK",$conf->global->LDAP_SERVER_HOST,$conf->global->LDAP_SERVER_PORT).'</font>';
 			print '<br>';
 
-			if ($conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
+			if ($conf->global->LDAP_ADMIN_DN && ! empty($conf->global->LDAP_ADMIN_PASS))
 			{
 				if ($result == 2)
 				{

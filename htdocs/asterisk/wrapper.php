@@ -66,7 +66,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 
 // Security check
-if (! $conf->clicktodial->enabled)
+if (empty($conf->clicktodial->enabled))
 {
     accessforbidden();
     exit;
