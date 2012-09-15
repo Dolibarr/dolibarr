@@ -320,7 +320,7 @@ print '</td>';
 print '<td valign="top" width="70%" class="notopnoleftnoright">';
 
 // Last modified customer invoices
-if ($conf->facture->enabled && $user->rights->facture->lire)
+if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
 	$langs->load("boxes");
 	$facstatic=new Facture($db);
@@ -378,7 +378,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 				$filename=dol_sanitizeFileName($obj->facnumber);
 				$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($obj->facnumber);
 				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$obj->rowid;
-				$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','',1,'',1);
+				print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
 				print '</td></tr></table>';
 
 				print '</td>';
@@ -709,7 +709,7 @@ if ($conf->tax->enabled && $user->rights->tax->charges->lire)
 /*
  * Customers orders to be billed
  */
-if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->commande->lire)
+if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $user->rights->commande->lire)
 {
 	$commandestatic=new Commande($db);
 	$langs->load("orders");
@@ -770,7 +770,7 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','',1,'',1);
+				print $formfile->getDocumentsLink($commandestatic->element, $filename, $filedir);
 				print '</td></tr></table>';
 
 				print '</td>';
@@ -813,7 +813,7 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 /*
  * Unpaid customers invoices
  */
-if ($conf->facture->enabled && $user->rights->facture->lire)
+if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
 	$facstatic=new Facture($db);
 
@@ -853,7 +853,6 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 			{
 				$obj = $db->fetch_object($resql);
 
-
 				print '<tr '.$bc[$var].'>';
 				print '<td nowrap="nowrap">';
 
@@ -871,7 +870,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 				$filename=dol_sanitizeFileName($obj->facnumber);
 				$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($obj->facnumber);
 				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$obj->rowid;
-				$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','',1,'',1);
+				print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
 				print '</td></tr></table>';
 
 				print '</td>';
