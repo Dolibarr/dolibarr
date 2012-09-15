@@ -133,7 +133,7 @@ print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
 print '</tr>'."\n";
 $var=true;
 
-if ($conf->facture->enabled)
+if (! empty($conf->facture->enabled))
 {
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
@@ -147,7 +147,7 @@ if ($conf->facture->enabled)
 	print "</form>\n</td>\n</tr>\n";
 }
 
-if ($conf->commande->enabled)
+if (! empty($conf->commande->enabled))
 {
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
@@ -161,7 +161,7 @@ if ($conf->commande->enabled)
 	print "</form>\n</td>\n</tr>\n";
 }
 
-if ($conf->expedition->enabled)
+if (! empty($conf->expedition->enabled))
 {
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
@@ -183,7 +183,7 @@ print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
 print '</tr>'."\n";
 $var=true;
 
-if ($conf->fournisseur->enabled)
+if (! empty($conf->fournisseur->enabled))
 {
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
@@ -197,7 +197,7 @@ if ($conf->fournisseur->enabled)
 	print "</form>\n</td>\n</tr>\n";
 }
 
-if ($conf->fournisseur->enabled)
+if (! empty($conf->fournisseur->enabled))
 {
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
@@ -210,7 +210,7 @@ if ($conf->fournisseur->enabled)
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</form>\n</td>\n</tr>\n";
 }
-if ($conf->fournisseur->enabled)
+if (! empty($conf->fournisseur->enabled))
 {
 	$var=!$var;
 	print "<tr ".$bc[$var].">";

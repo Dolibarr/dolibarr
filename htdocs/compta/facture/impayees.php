@@ -88,7 +88,7 @@ if ($action == "builddoc" && $user->rights->facture->lire)
         }
         $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
-        if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
+        if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
 		// Add all others
 		foreach($files as $file)

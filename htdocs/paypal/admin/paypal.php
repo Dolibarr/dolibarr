@@ -283,7 +283,7 @@ $token='';
 print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br>';
 print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount",$servicename).':<br>';
 print '<strong>'.getPaypalPaymentUrl(1,'free')."</strong><br><br>\n";
-if ($conf->commande->enabled)
+if (! empty($conf->commande->enabled))
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder",$servicename).':<br>';
 	print '<strong>'.getPaypalPaymentUrl(1,'order')."</strong><br>\n";
@@ -305,7 +305,7 @@ if ($conf->commande->enabled)
 	}
 	print '<br>';
 }
-if ($conf->facture->enabled)
+if (! empty($conf->facture->enabled))
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice",$servicename).':<br>';
 	print '<strong>'.getPaypalPaymentUrl(1,'invoice')."</strong><br>\n";
@@ -327,7 +327,7 @@ if ($conf->facture->enabled)
 	}
 	print '<br>';
 }
-if ($conf->contrat->enabled)
+if (! empty($conf->contrat->enabled))
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine",$servicename).':<br>';
 	print '<strong>'.getPaypalPaymentUrl(1,'contractline')."</strong><br>\n";
@@ -349,7 +349,7 @@ if ($conf->contrat->enabled)
 	}
 	print '<br>';
 }
-if ($conf->adherent->enabled)
+if (! empty($conf->adherent->enabled))
 {
 	print img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription",$servicename).':<br>';
 	print '<strong>'.getPaypalPaymentUrl(1,'membersubscription')."</strong><br>\n";

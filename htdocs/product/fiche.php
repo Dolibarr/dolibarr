@@ -842,7 +842,7 @@ else
 
         print '<br>';
 
-        if ($conf->global->PRODUIT_MULTIPRICES)
+        if (! empty($conf->global->PRODUIT_MULTIPRICES))
         {
             // We do no show price array on create when multiprices enabled.
             // We must set them on prices tab.

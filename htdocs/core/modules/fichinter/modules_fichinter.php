@@ -166,7 +166,7 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails=0, $
 	// Positionne modele sur le nom du modele de fichinter a utiliser
 	if (! dol_strlen($modele))
 	{
-		if ($conf->global->FICHEINTER_ADDON_PDF)
+		if (! empty($conf->global->FICHEINTER_ADDON_PDF))
 		{
 			$modele = $conf->global->FICHEINTER_ADDON_PDF;
 		}

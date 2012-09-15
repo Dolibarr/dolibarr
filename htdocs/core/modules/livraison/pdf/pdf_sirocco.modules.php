@@ -158,7 +158,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("DeliveryOrder"));
-				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
+				if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 
@@ -351,7 +351,7 @@ if ($pageposafter > $pageposbefore) {
 
 		$pdf->SetXY($this->marge_gauche,$posy);
 
-		if ($conf->global->MAIN_INFO_SOCIETE_NOM)
+		if (! empty($conf->global->MAIN_INFO_SOCIETE_NOM))
 		{
 			$pdf->SetTextColor(0,0,200);
 			$pdf->SetFont('','B', $default_font_size + 2);
@@ -383,7 +383,7 @@ if ($pageposafter > $pageposbefore) {
 		if (! empty($usecontact))
 		{
 			// On peut utiliser le nom de la societe du contact
-			if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socname = $object->contact->socname;
+			if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socname = $object->contact->socname;
 			else $socname = $object->client->nom;
 			$carac_client_name=$outputlangs->convToOutputCharset($socname);
 		}

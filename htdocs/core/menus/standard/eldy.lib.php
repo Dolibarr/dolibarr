@@ -124,9 +124,9 @@ function print_eldy_menu($db,$atarget,$type_user)
 			$classname = 'class="tmenu"';
 		}
 		$chaine="";
-		if ($conf->product->enabled) { $chaine.=$langs->trans("Products"); }
+		if (! empty($conf->product->enabled)) { $chaine.=$langs->trans("Products"); }
 		if ($conf->product->enabled && $conf->service->enabled) { $chaine.="/"; }
-		if ($conf->service->enabled) { $chaine.=$langs->trans("Services"); }
+		if (! empty($conf->service->enabled)) { $chaine.=$langs->trans("Services"); }
 
 		$idsel='products';
 		if ($user->rights->produit->lire || $user->rights->service->lire)
@@ -738,7 +738,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
         if ($mainmenu == 'companies')
         {
             // Societes
-            if ($conf->societe->enabled)
+            if (! empty($conf->societe->enabled))
             {
                 $langs->load("companies");
                 $newmenu->add("/societe/index.php?leftmenu=thirdparties", $langs->trans("ThirdParty"), 0, $user->rights->societe->lire, '', $mainmenu, 'thirdparties');
@@ -767,7 +767,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
             }
 
             // Clients
-            if ($conf->societe->enabled)
+            if (! empty($conf->societe->enabled))
             {
                 $langs->load("commercial");
                 $newmenu->add("/comm/list.php?leftmenu=customers", $langs->trans("ListCustomersShort"), 1, $user->rights->societe->lire, '', $mainmenu, 'customers');
@@ -796,12 +796,12 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
             $newmenu->add("/contact/list.php?leftmenu=contacts", $langs->trans("List"), 1, $user->rights->societe->contact->lire);
             if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) $newmenu->add("/contact/list.php?leftmenu=contacts&type=p", $langs->trans("Prospects"), 2, $user->rights->societe->contact->lire);
             $newmenu->add("/contact/list.php?leftmenu=contacts&type=c", $langs->trans("Customers"), 2, $user->rights->societe->contact->lire);
-            if ($conf->fournisseur->enabled) $newmenu->add("/contact/list.php?leftmenu=contacts&type=f", $langs->trans("Suppliers"), 2, $user->rights->societe->contact->lire);
+            if (! empty($conf->fournisseur->enabled)) $newmenu->add("/contact/list.php?leftmenu=contacts&type=f", $langs->trans("Suppliers"), 2, $user->rights->societe->contact->lire);
             $newmenu->add("/contact/list.php?leftmenu=contacts&type=o", $langs->trans("Others"), 2, $user->rights->societe->contact->lire);
             //$newmenu->add("/contact/list.php?userid=$user->id", $langs->trans("MyContacts"), 1, $user->rights->societe->contact->lire);
 
             // Categories
-            if ($conf->categorie->enabled)
+            if (! empty($conf->categorie->enabled))
             {
                 $langs->load("categories");
                 // Categories prospects/customers
@@ -811,7 +811,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                     $newmenu->add("/categories/fiche.php?action=create&amp;type=2", $langs->trans("NewCategory"), 1, $user->rights->categorie->creer);
                 }
                 // Categories suppliers
-                if ($conf->fournisseur->enabled)
+                if (! empty($conf->fournisseur->enabled))
                 {
                     $newmenu->add("/categories/index.php?leftmenu=cat&amp;type=1", $langs->trans("SuppliersCategoriesShort"), 0, $user->rights->categorie->lire);
                     if (empty($user->societe_id))
@@ -1047,7 +1047,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
 
                 /*
                  if ($leftmenu=="ca") $newmenu->add("/compta/stats/cumul.php?leftmenu=ca","Cumule",2,$user->rights->compta->resultat->lire);
-                 if ($conf->propal->enabled) {
+                 if (! empty($conf->propal->enabled)) {
                  if ($leftmenu=="ca") $newmenu->add("/compta/stats/prev.php?leftmenu=ca","Previsionnel",2,$user->rights->compta->resultat->lire);
                  if ($leftmenu=="ca") $newmenu->add("/compta/stats/comp.php?leftmenu=ca","Transforme",2,$user->rights->compta->resultat->lire);
                  }
@@ -1129,11 +1129,11 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                     $newmenu->add("/product/fiche.php?leftmenu=product&amp;action=create&amp;type=0", $langs->trans("NewProduct"), 1, $user->rights->produit->creer);
                     $newmenu->add("/product/liste.php?leftmenu=product&amp;type=0", $langs->trans("List"), 1, $user->rights->produit->lire);
                 }
-                if ($conf->propal->enabled)
+                if (! empty($conf->propal->enabled))
                 {
                     $newmenu->add("/product/popuprop.php?leftmenu=stats&amp;type=0", $langs->trans("Statistics"), 1, $user->rights->produit->lire && $user->rights->propale->lire);
                 }
-                if ($conf->stock->enabled)
+                if (! empty($conf->stock->enabled))
                 {
                     $newmenu->add("/product/reassort.php?type=0", $langs->trans("Stocks"), 1, $user->rights->produit->lire && $user->rights->stock->lire);
                 }
@@ -1148,7 +1148,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                     $newmenu->add("/product/fiche.php?leftmenu=service&amp;action=create&amp;type=1", $langs->trans("NewService"), 1, $user->rights->service->creer);
                 }
                 $newmenu->add("/product/liste.php?leftmenu=service&amp;type=1", $langs->trans("List"), 1, $user->rights->service->lire);
-                if ($conf->propal->enabled)
+                if (! empty($conf->propal->enabled))
                 {
                     $newmenu->add("/product/popuprop.php?leftmenu=stats&amp;type=1", $langs->trans("Statistics"), 1, $user->rights->service->lire && $user->rights->propale->lire);
                 }

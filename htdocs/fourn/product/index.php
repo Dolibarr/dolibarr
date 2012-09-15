@@ -78,13 +78,13 @@ if ($resql)
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
-if ($conf->product->enabled)
+if (! empty($conf->product->enabled))
 {
     print "<tr $bc[0]>";
     print '<td><a href="liste.php?type=0">'.$langs->trans("Products").'</a></td><td>'.round($prodser[0]).'</td>';
     print "</tr>";
 }
-if ($conf->service->enabled)
+if (! empty($conf->service->enabled))
 {
     print "<tr $bc[1]>";
     print '<td><a href="liste.php?type=1">'.$langs->trans("Services").'</a></td><td>'.round($prodser[1]).'</td>';

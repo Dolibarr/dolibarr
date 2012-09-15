@@ -252,17 +252,17 @@ if ($id > 0 || $ref)
 		print '</tr>';
 
 		// Calculating a theorical value of stock if stock increment is done on real sending
-		if ($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
+		if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
 		{
 			$stock_commande_client=$stock_commande_fournisseur=0;
 
-			if ($conf->commande->enabled)
+			if (! empty($conf->commande->enabled))
 			{
 				$result=$product->load_stats_commande(0,'1,2');
 				if ($result < 0) dol_print_error($db,$product->error);
 				$stock_commande_client=$product->stats_commande['qty'];
 			}
-			if ($conf->fournisseur->enabled)
+			if (! empty($conf->fournisseur->enabled))
 			{
 				$result=$product->load_stats_commande_fournisseur(0,'3');
 				if ($result < 0) dol_print_error($db,$product->error);
@@ -290,7 +290,7 @@ if ($id > 0 || $ref)
 			$found=0;
 
 			// Nbre de commande clients en cours
-			if ($conf->commande->enabled)
+			if (! empty($conf->commande->enabled))
 			{
 				if ($found) print '<br>'; else $found=1;
 				print $langs->trans("CustomersOrdersRunning").': '.($stock_commande_client+$stock_sending_client);
@@ -302,7 +302,7 @@ if ($id > 0 || $ref)
 			}
 
 			// Nbre de commande fournisseurs en cours
-			if ($conf->fournisseur->enabled)
+			if (! empty($conf->fournisseur->enabled))
 			{
 				if ($found) print '<br>'; else $found=1;
 				print $langs->trans("SuppliersOrdersRunning").': '.$stock_commande_fournisseur;

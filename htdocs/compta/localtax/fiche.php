@@ -168,7 +168,7 @@ if ($_GET["action"] == 'create')
 	// Amount
 	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.$_POST["amount"].'"></td></tr>';
 
-    if ($conf->banque->enabled)
+    if (! empty($conf->banque->enabled))
     {
 		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
         $form->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
@@ -227,7 +227,7 @@ if ($id)
 
 	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="3">'.price($vatpayment->amount).'</td></tr>';
 
-	if ($conf->banque->enabled)
+	if (! empty($conf->banque->enabled))
 	{
 		if ($vatpayment->fk_account > 0)
 		{

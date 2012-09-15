@@ -37,7 +37,7 @@ if ( $_GET['filtre'] ) {
 	$sql.= " AND p.tosell = 1";
 	if(!$conf->global->CASHDESK_SERVICES) $sql.= " AND p.fk_product_type = 0";
 	$sql.= " AND (p.ref LIKE '%".$_GET['filtre']."%' OR p.label LIKE '%".$_GET['filtre']."%' ";
-	if ($conf->barcode->enabled) $sql.= " OR p.barcode LIKE '%".$_GET['filtre']."%')";
+	if (! empty($conf->barcode->enabled)) $sql.= " OR p.barcode LIKE '%".$_GET['filtre']."%')";
 	else $sql.= ")";
 
 	$sql.= " ORDER BY label";

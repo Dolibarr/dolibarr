@@ -1462,7 +1462,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 		// Date de livraison
 		print "<tr><td>".$langs->trans("DeliveryDate").'</td><td colspan="2">';
-		if ($conf->global->DATE_LIVRAISON_WEEK_DELAY)
+		if (! empty($conf->global->DATE_LIVRAISON_WEEK_DELAY))
 		{
 			$datedelivery = time() + ((7*$conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
 		}
@@ -1699,7 +1699,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				}
 
 				$text=$langs->trans('ConfirmValidateOrder',$numref);
-				if ($conf->notification->enabled)
+				if (! empty($conf->notification->enabled))
 				{
 					require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
 					$notify=new Notify($db);
@@ -1808,7 +1808,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			 *   Commande
 			*/
 			$nbrow=9;
-			if ($conf->projet->enabled) $nbrow++;
+			if (! empty($conf->projet->enabled)) $nbrow++;
 
 			//Local taxes
 			if ($mysoc->country_code=='ES')
@@ -2201,7 +2201,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 					// Ship
 					$numshipping=0;
-					if ($conf->expedition->enabled)
+					if (! empty($conf->expedition->enabled))
 					{
 						$numshipping = $object->nb_expedition();
 

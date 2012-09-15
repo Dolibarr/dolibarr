@@ -432,7 +432,7 @@ function getRandomPassword($generic=false)
 
 	$generated_password='';
 	if ($generic) $generated_password=dol_hash(mt_rand());
-	else if ($conf->global->USER_PASSWORD_GENERATED)
+	else if (! empty($conf->global->USER_PASSWORD_GENERATED))
 	{
 		$nomclass="modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
 		$nomfichier=$nomclass.".class.php";

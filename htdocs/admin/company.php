@@ -661,7 +661,7 @@ else
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("State").'</td><td>';
-    if ($conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT) print getState($conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT);
+    if (! empty($conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT)) print getState($conf->global->MAIN_INFO_SOCIETE_DEPARTEMENT);
     else print '&nbsp;';
     print '</td></tr>';
 

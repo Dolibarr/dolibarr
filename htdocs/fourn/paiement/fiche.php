@@ -197,7 +197,7 @@ if ($result > 0)
 	// Amount
 	print '<tr><td valign="top" colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->montant).'&nbsp;'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
-	if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
+	if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 	{
 		print '<tr><td valign="top" colspan="2">'.$langs->trans('Status').'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 	}
@@ -208,7 +208,7 @@ if ($result > 0)
     print '</td></tr>';
 
     // Bank account
-	if ($conf->banque->enabled)
+	if (! empty($conf->banque->enabled))
 	{
 		if ($object->bank_account)
 		{
@@ -308,7 +308,7 @@ if ($result > 0)
 	 */
 
 	print '<div class="tabsAction">';
-	if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
+	if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 	{
 		if ($user->societe_id == 0 && $object->statut == 0 && $action == '')
 		{

@@ -192,7 +192,7 @@ class Paiement extends CommonObject
                                 // This payment might be this one or a previous one
                                 if ($paym['type']=='PRE')
                                 {
-                                    if ($conf->prelevement->enabled)
+                                    if (! empty($conf->prelevement->enabled))
                                     {
                                         // TODO Check if this payment has a withdraw request
                                         // if not, $mustwait++;      // This will disable automatic close on invoice to allow to process
@@ -377,7 +377,7 @@ class Paiement extends CommonObject
         $bank_line_id=0;
         $this->fk_account=$accountid;
 
-        if ($conf->banque->enabled)
+        if (! empty($conf->banque->enabled))
         {
             require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 

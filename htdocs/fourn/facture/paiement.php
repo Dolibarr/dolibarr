@@ -90,7 +90,7 @@ if ($action == 'add_paiement')
         $error++;
     }
 
-    if ($conf->banque->enabled)
+    if (! empty($conf->banque->enabled))
     {
         // Si module bank actif, un compte est obligatoire lors de la saisie
         // d'un paiement
@@ -239,7 +239,7 @@ if ($action == 'create' || $action == 'add_paiement')
             print '<td rowspan="3" valign="top">';
             print '<textarea name="comment" wrap="soft" cols="60" rows="'._ROWS_3.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
             print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement'])?'':$_POST['num_paiement']).'"></td></tr>';
-            if ($conf->banque->enabled)
+            if (! empty($conf->banque->enabled))
             {
                 print '<tr><td class="fieldrequired">'.$langs->trans('Account').'</td><td>';
                 $form->select_comptes(empty($_POST['accountid'])?'':$_POST['accountid'],'accountid',0,'',2);

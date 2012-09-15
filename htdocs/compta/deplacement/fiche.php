@@ -27,7 +27,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/trip.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if ($conf->projet->enabled)
+if (! empty($conf->projet->enabled))
 {
     require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -489,7 +489,7 @@ else if ($id)
             print '</td></tr>';
 
             // Project
-            if ($conf->projet->enabled)
+            if (! empty($conf->projet->enabled))
             {
                 $langs->load('projects');
                 print '<tr>';

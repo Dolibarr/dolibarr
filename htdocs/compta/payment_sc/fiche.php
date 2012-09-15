@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-if ($conf->banque->enabled) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load('bills');
 $langs->load('banks');
@@ -189,7 +189,7 @@ print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.pr
 print '<tr><td valign="top">'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($paiement->note).'</td></tr>';
 
 // Bank account
-if ($conf->banque->enabled)
+if (! empty($conf->banque->enabled))
 {
     if ($paiement->bank_account)
     {
@@ -293,7 +293,7 @@ print '</div>';
 print '<div class="tabsAction">';
 
 /*
-if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
+if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 {
 	if ($user->societe_id == 0 && $paiement->statut == 0 && $_GET['action'] == '')
 	{

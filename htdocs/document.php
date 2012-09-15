@@ -271,8 +271,8 @@ if ($modulepart)
 		{
 			$accessallowed=1;
 		}
-		if ($conf->product->enabled) $original_file=$conf->product->multidir_output[$entity].'/'.$original_file;
-		elseif ($conf->service->enabled) $original_file=$conf->service->multidir_output[$entity].'/'.$original_file;
+		if (! empty($conf->product->enabled)) $original_file=$conf->product->multidir_output[$entity].'/'.$original_file;
+		elseif (! empty($conf->service->enabled)) $original_file=$conf->service->multidir_output[$entity].'/'.$original_file;
 	}
 
 	// Wrapping pour les contrats

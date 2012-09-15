@@ -151,7 +151,7 @@ else
 /*
  * Draft proposals
  */
-if ($conf->propal->enabled)
+if (! empty($conf->propal->enabled))
 {
 	$sql = "SELECT c.rowid, c.ref, s.nom as socname, s.rowid as socid, s.canvas, s.client";
 	$sql.= " FROM ".MAIN_DB_PREFIX."propal as c";
@@ -369,7 +369,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
  * Proposals to process
  */
 /*
-if ($conf->propal->enabled)
+if (! empty($conf->propal->enabled))
 {
 	$sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom, s.rowid as socid";
 	$sql.=" FROM ".MAIN_DB_PREFIX."propal as c";
@@ -441,7 +441,7 @@ if ($conf->propal->enabled)
 /*
  * Proposal that are in a shipping process
  */
-/*if ($conf->propal->enabled)
+/*if (! empty($conf->propal->enabled))
 {
 	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom, s.rowid as socid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";

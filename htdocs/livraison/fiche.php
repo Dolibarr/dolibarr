@@ -314,7 +314,7 @@ if ($action == 'create')
 			print '<td align="center">Quan. commandee</td>';
 			print '<td align="center">Quan. livree</td>';
 			print '<td align="center">Quan. a livrer</td>';
-			if ($conf->stock->enabled)
+			if (! empty($conf->stock->enabled))
 			{
 				print '<td width="12%" align="center">'.$langs->trans("Stock").'</td>';
 			}
@@ -386,7 +386,7 @@ if ($action == 'create')
 			$quantite_commandee = $line->qty;
 			$quantite_a_livrer = $quantite_commandee - $quantite_livree;
 
-			if ($conf->stock->enabled)
+			if (! empty($conf->stock->enabled))
 			{
 				$stock = $product->stock_warehouse[$_GET["entrepot_id"]]->real;
 				$stock+=0;  // Convertit en numerique

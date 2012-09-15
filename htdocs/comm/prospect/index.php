@@ -50,7 +50,7 @@ print '<table border="0" width="100%" class="notopnoleftnoright">';
 
 print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
-if ($conf->propal->enabled)
+if (! empty($conf->propal->enabled))
 {
 	$var=false;
 	print '<table class="noborder nohover" width="100%">';
@@ -164,7 +164,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
  */
 print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
-if ($conf->agenda->enabled) show_array_actions_to_do(10);
+if (! empty($conf->agenda->enabled)) show_array_actions_to_do(10);
 
 /*
  * Dernieres propales ouvertes

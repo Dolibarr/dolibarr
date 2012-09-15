@@ -97,7 +97,7 @@ if ($action == 'add_paiement' || ($action == 'confirm_paiement' && $confirm=='ye
         $error++;
     }
 
-    if ($conf->banque->enabled)
+    if (! empty($conf->banque->enabled))
     {
         // Si module bank actif, un compte est obligatoire lors de la saisie
         // d'un paiement
@@ -385,7 +385,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
         // Bank account
         print '<tr>';
-        if ($conf->banque->enabled)
+        if (! empty($conf->banque->enabled))
         {
             if ($facture->type != 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToCredit').'</span></td>';
             if ($facture->type == 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToDebit').'</span></td>';
@@ -589,10 +589,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         {
             //			print '<tr><td colspan="3" align="center">';
             print '<center><br><input type="checkbox" checked="checked" name="closepaidinvoices"> '.$langs->trans("ClosePaidInvoicesAutomatically");
-            /*if ($conf->prelevement->enabled)
+            /*if (! empty($conf->prelevement->enabled))
             {
                 $langs->load("withdrawals");
-                if ($conf->global->WITHDRAW_DISABLE_AUTOCREATE_ONPAYMENTS) print '<br>'.$langs->trans("IfInvoiceNeedOnWithdrawPaymentWontBeClosed");
+                if (! empty($conf->global->WITHDRAW_DISABLE_AUTOCREATE_ONPAYMENTS)) print '<br>'.$langs->trans("IfInvoiceNeedOnWithdrawPaymentWontBeClosed");
             }*/
             print '<br><input type="submit" class="button" value="'.$langs->trans('Save').'"><br><br></center>';
             //			print '</td></tr>';

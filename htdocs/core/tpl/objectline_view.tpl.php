@@ -115,11 +115,11 @@
   if (! empty($conf->margin->enabled)) {
   ?>
   	<td align="right" nowrap="nowrap"><?php echo price($line->pa_ht); ?></td>
-  	<?php if($conf->global->DISPLAY_MARGIN_RATES) {?>
+  	<?php if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {?>
   	  <td align="right" nowrap="nowrap"><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx).'%'); ?></td>
   	<?php
     }
-    if($conf->global->DISPLAY_MARK_RATES) {?>
+    if (! empty($conf->global->DISPLAY_MARK_RATES)) {?>
   	  <td align="right" nowrap="nowrap"><?php echo price($line->marque_tx).'%'; ?></td>
   <?php } } ?>
 

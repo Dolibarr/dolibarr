@@ -178,7 +178,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="constname" value="ADHERENT_BANK_USE">';
 print '<tr '.$bc[$var].'><td>'.$langs->trans("AddSubscriptionIntoAccount").'</td>';
-if ($conf->banque->enabled)
+if (! empty($conf->banque->enabled))
 {
     print '<td>';
     print $form->selectyesno('constvalue',$conf->global->ADHERENT_BANK_USE,1);

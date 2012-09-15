@@ -147,7 +147,7 @@ class Categorie
 
 		dol_syslog(get_class($this).'::create sql='.$sql);
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label, description,";
-		if ($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
+		if (! empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER))
 		{
 			$sql.= "fk_soc,";
 		}
@@ -157,7 +157,7 @@ class Categorie
 		//$sql.= ", fk_parent_id";
 		$sql.= ")";
 		$sql.= " VALUES ('".$this->db->escape($this->label)."', '".$this->db->escape($this->description)."',";
-		if ($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
+		if (! empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER))
 		{
 			$sql.= ($this->socid != -1 ? $this->socid : 'null').",";
 		}
@@ -269,7 +269,7 @@ class Categorie
 		{
 			$sql .= ", description = '".$this->db->escape($this->description)."'";
 		}
-		if ($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
+		if (! empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER))
 		{
 			$sql .= ", fk_soc = ".($this->socid != -1 ? $this->socid : 'null');
 		}

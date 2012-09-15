@@ -70,7 +70,7 @@ if ($id)
 		$h++;
 
 
-		if ($conf->stock->enabled)
+		if (! empty($conf->stock->enabled))
 		{
 	  $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$object->id;
 	  $head[$h][1] = $langs->trans("Stock");
@@ -83,7 +83,7 @@ if ($id)
 		$h++;
 
 		//Affichage onglet Categories
-		if ($conf->categorie->enabled){
+		if (! empty($conf->categorie->enabled)){
 			$head[$h][0] = DOL_URL_ROOT."/fourn/product/categorie.php?id=".$object->id;
 			$head[$h][1] = $langs->trans('Categories');
 			$h++;

@@ -198,7 +198,7 @@ if ($resql)
 
 	// Filter on categories
 	$moreforfilter='';
-	if ($conf->categorie->enabled)
+	if (! empty($conf->categorie->enabled))
 	{
 		$moreforfilter.=$langs->trans('Categories'). ': ';
 		$moreforfilter.=$formother->select_categories(3,$search_categ,'search_categ',1);

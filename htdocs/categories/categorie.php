@@ -182,7 +182,7 @@ if ($socid)
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 	$langs->load("companies");
-	if ($conf->notification->enabled) $langs->load("mails");
+	if (! empty($conf->notification->enabled)) $langs->load("mails");
 
 	$soc = new Societe($db);
 	$result = $soc->fetch($socid);
@@ -363,7 +363,7 @@ else if ($id || $ref)
 
         $rowspan=5;
         if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan+=1;
-        if ($conf->societe->enabled) $rowspan++;
+        if (! empty($conf->societe->enabled)) $rowspan++;
 
 		print '<table class="border" width="100%">';
 

@@ -220,7 +220,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	print '<input type="text" class="flat" size="60" name="note" value="'.$subscription->note.'"></td></tr>';
 
 	// Bank line
-	if ($conf->banque->enabled)
+	if (! empty($conf->banque->enabled))
 	{
 		if ($conf->global->ADHERENT_BANK_USE || $subscription->fk_bank)
 	    {
@@ -335,7 +335,7 @@ if ($rowid && $action != 'edit')
     print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur" colspan="3">'.$subscription->note.'</td></tr>';
 
     // Bank line
-	if ($conf->banque->enabled)
+	if (! empty($conf->banque->enabled))
 	{
 		if ($conf->global->ADHERENT_BANK_USE || $subscription->fk_bank)
 	    {

@@ -79,7 +79,7 @@ if ($id)
 
 	llxHeader("",$langs->trans("Agenda"),'');
 
-	if ($conf->notification->enabled) $langs->load("mails");
+	if (! empty($conf->notification->enabled)) $langs->load("mails");
 	$head = member_prepare_head($object);
 
 	dol_fiche_head($head, 'agenda', $langs->trans("Member"),0,'user');
@@ -142,7 +142,7 @@ if ($id)
 
     print '<div class="tabsAction">';
 
-    if ($conf->agenda->enabled)
+    if (! empty($conf->agenda->enabled))
     {
         print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$socid.'">'.$langs->trans("AddAction").'</a>';
     }

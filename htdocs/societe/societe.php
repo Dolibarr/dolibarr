@@ -302,7 +302,7 @@ if ($resql)
     // Filter on categories
     /* Not possible in this page because list is for ALL third parties type
 	$moreforfilter='';
-    if ($conf->categorie->enabled)
+    if (! empty($conf->categorie->enabled))
     {
         $moreforfilter.=$langs->trans('Categories'). ': ';
         $moreforfilter.=$htmlother->select_categories(2,$search_categ,'search_categ');
