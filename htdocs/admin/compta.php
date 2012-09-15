@@ -113,7 +113,7 @@ print "</tr>\n";
 print '<tr '.$bc[false].'><td width="200"><input type="radio" name="compta_mode" value="RECETTES-DEPENSES"'.($compta_mode != 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeTrue').'</td>';
 print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'));
 // Write info on way to count VAT
-if ($conf->global->MAIN_MODULE_COMPTABILITE)
+if (! empty($conf->global->MAIN_MODULE_COMPTABILITE))
 {
 	//	print "<br>\n";
 	//	print nl2br($langs->trans('OptionModeTrueInfoModuleComptabilite'));

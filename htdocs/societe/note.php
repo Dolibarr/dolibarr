@@ -69,7 +69,7 @@ if ($socid > 0)
     /*
      * Affichage onglets
      */
-    if ($conf->notification->enabled) $langs->load("mails");
+    if (! empty($conf->notification->enabled)) $langs->load("mails");
 
     $head = societe_prepare_head($object);
 

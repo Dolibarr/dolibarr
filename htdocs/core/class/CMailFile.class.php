@@ -1050,7 +1050,7 @@ class CMailFile
 				}
 				if ($format == 0 || $format == 3)
 				{
-					if ($conf->global->MAIN_MAIL_NO_FULL_EMAIL) $newemail='<'.$email.'>';
+					if (! empty($conf->global->MAIN_MAIL_NO_FULL_EMAIL)) $newemail='<'.$email.'>';
 					elseif (! $name) $newemail='<'.$email.'>';
 					else $newemail=($format==3?'"':'').($encode?$this->encodetorfc2822($name):$name).($format==3?'"':'').' <'.$email.'>';
 				}

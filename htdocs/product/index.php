@@ -117,7 +117,7 @@ while ($objp = $db->fetch_object($result))
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
-if ($conf->product->enabled)
+if (! empty($conf->product->enabled))
 {
 	$statProducts = "<tr $bc[0]>";
 	$statProducts.= '<td><a href="liste.php?type=0&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td align="right">'.round($prodser[0][0]).'</td>';
@@ -126,7 +126,7 @@ if ($conf->product->enabled)
 	$statProducts.= '<td><a href="liste.php?type=0&amp;tosell=1">'.$langs->trans("ProductsOnSell").'</a></td><td align="right">'.round($prodser[0][1]).'</td>';
 	$statProducts.= "</tr>";
 }
-if ($conf->service->enabled)
+if (! empty($conf->service->enabled))
 {
 	$statServices = "<tr $bc[0]>";
 	$statServices.= '<td><a href="liste.php?type=1&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ServicesNotOnSell").'</a></td><td align="right">'.round($prodser[1][0]).'</td>';
@@ -198,7 +198,7 @@ if ($result)
 			$objp = $db->fetch_object($result);
 
 			//Multilangs
-			if ($conf->global->MAIN_MULTILANGS)
+			if (! empty($conf->global->MAIN_MULTILANGS))
 			{
 				$sql = "SELECT label";
 				$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";

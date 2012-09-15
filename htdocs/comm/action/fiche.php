@@ -760,7 +760,7 @@ if ($id)
 		print '</td></tr>';
 
 		// Project
-		if ($conf->projet->enabled)
+		if (! empty($conf->projet->enabled))
 		{
 			// Projet associe
 			$langs->load("project");
@@ -927,7 +927,7 @@ if ($id)
 		print '</td></tr>';
 
 		// Project
-		if ($conf->projet->enabled)
+		if (! empty($conf->projet->enabled))
 		{
 			print '<tr><td valign="top">'.$langs->trans("Project").'</td><td colspan="3">';
 			if ($act->fk_project)

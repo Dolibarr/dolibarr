@@ -165,7 +165,7 @@ else
 /*
  * Draft orders
  */
-if ($conf->commande->enabled)
+if (! empty($conf->commande->enabled))
 {
 	$sql = "SELECT c.rowid, c.ref, s.nom, s.rowid as socid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
@@ -282,7 +282,7 @@ else dol_print_error($db);
 /*
  * Orders to process
  */
-if ($conf->commande->enabled)
+if (! empty($conf->commande->enabled))
 {
 	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom, s.rowid as socid";
 	$sql.=" FROM ".MAIN_DB_PREFIX."commande as c";
@@ -353,7 +353,7 @@ if ($conf->commande->enabled)
 /*
  * Orders thar are in a shipping process
  */
-if ($conf->commande->enabled)
+if (! empty($conf->commande->enabled))
 {
 	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom, s.rowid as socid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";

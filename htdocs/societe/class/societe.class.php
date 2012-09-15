@@ -1624,7 +1624,7 @@ class Societe extends CommonObject
     function get_codeclient($objsoc=0,$type=0)
     {
         global $conf;
-        if ($conf->global->SOCIETE_CODECLIENT_ADDON)
+        if (! empty($conf->global->SOCIETE_CODECLIENT_ADDON))
         {
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
             foreach ($dirsociete as $dirroot)
@@ -1653,7 +1653,7 @@ class Societe extends CommonObject
     function get_codefournisseur($objsoc=0,$type=1)
     {
         global $conf;
-        if ($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON)
+        if (! empty($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON))
         {
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
             foreach ($dirsociete as $dirroot)
@@ -1679,7 +1679,7 @@ class Societe extends CommonObject
     function codeclient_modifiable()
     {
         global $conf;
-        if ($conf->global->SOCIETE_CODECLIENT_ADDON)
+        if (! empty($conf->global->SOCIETE_CODECLIENT_ADDON))
         {
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
             foreach ($dirsociete as $dirroot)
@@ -1713,7 +1713,7 @@ class Societe extends CommonObject
     function codefournisseur_modifiable()
     {
         global $conf;
-        if ($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON)
+        if (! empty($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON))
         {
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
             foreach ($dirsociete as $dirroot)
@@ -1751,7 +1751,7 @@ class Societe extends CommonObject
     function check_codeclient()
     {
         global $conf;
-        if ($conf->global->SOCIETE_CODECLIENT_ADDON)
+        if (! empty($conf->global->SOCIETE_CODECLIENT_ADDON))
         {
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
             foreach ($dirsociete as $dirroot)
@@ -1786,7 +1786,7 @@ class Societe extends CommonObject
     function check_codefournisseur()
     {
         global $conf;
-        if ($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON)
+        if (! empty($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON))
         {
             $dirsociete=array_merge(array('/core/modules/societe/'),$conf->societe_modules);
             foreach ($dirsociete as $dirroot)

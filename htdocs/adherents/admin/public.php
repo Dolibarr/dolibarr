@@ -167,8 +167,8 @@ if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled))
     print $langs->trans("MEMBER_NEWFORM_PAYONLINE");
     print '</td><td width="60" align="right">';
     $listofval=array();
-    if ($conf->paybox->enabled) $listofval['paybox']='Paybox';
-    if ($conf->paypal->enabled) $listofval['paypal']='PayPal';
+    if (! empty($conf->paybox->enabled)) $listofval['paybox']='Paybox';
+    if (! empty($conf->paypal->enabled)) $listofval['paypal']='PayPal';
     print $form->selectarray("MEMBER_NEWFORM_PAYONLINE",$listofval,(! empty($conf->global->MEMBER_NEWFORM_PAYONLINE)?$conf->global->MEMBER_NEWFORM_PAYONLINE:''),1);
     print "</td></tr>\n";
 }

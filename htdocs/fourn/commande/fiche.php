@@ -997,7 +997,7 @@ if ($id > 0 || ! empty($ref))
             else $newref = $object->ref;
 
             $text=$langs->trans('ConfirmValidateOrder',$newref);
-            if ($conf->notification->enabled)
+            if (! empty($conf->notification->enabled))
             {
                 require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
                 $notify=new	Notify($db);
@@ -1069,7 +1069,7 @@ if ($id > 0 || ! empty($ref))
          *	Commande
          */
         $nbrow=8;
-        if ($conf->projet->enabled)	$nbrow++;
+        if (! empty($conf->projet->enabled))	$nbrow++;
 
         //Local taxes
         if ($mysoc->country_code=='ES')
@@ -1337,7 +1337,7 @@ if ($id > 0 || ! empty($ref))
                     print_date_range($date_start,$date_end);
 
                     // Add description in form
-                    if ($conf->global->PRODUIT_DESC_IN_FORM) print ($line->description && $line->description!=$product_static->libelle)?'<br>'.dol_htmlentitiesbr($line->description):'';
+                    if (! empty($conf->global->PRODUIT_DESC_IN_FORM)) print ($line->description && $line->description!=$product_static->libelle)?'<br>'.dol_htmlentitiesbr($line->description):'';
                 }
 
                 // Description - Editor wysiwyg
@@ -1509,7 +1509,7 @@ if ($id > 0 || ! empty($ref))
                 print '<tr class="liste_titre">';
                 print '<td colspan="3">';
                 print $langs->trans("AddNewLine").' - ';
-                if ($conf->service->enabled)
+                if (! empty($conf->service->enabled))
                 {
                     print $langs->trans('RecordedProductsAndServices');
                 }

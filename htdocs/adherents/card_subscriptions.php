@@ -479,7 +479,7 @@ if ($rowid)
 
     $rowspan=9;
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan+=1;
-    if ($conf->societe->enabled) $rowspan++;
+    if (! empty($conf->societe->enabled)) $rowspan++;
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -545,7 +545,7 @@ if ($rowid)
     print '</td></tr>';
 
     // Third party Dolibarr
-    if ($conf->societe->enabled)
+    if (! empty($conf->societe->enabled))
     {
         print '<tr><td>';
         print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -675,7 +675,7 @@ if ($rowid)
             print '<td align="center">'.$langs->trans("DateSubscription").'</td>';
             print '<td align="center">'.$langs->trans("DateEnd").'</td>';
             print '<td align="right">'.$langs->trans("Amount").'</td>';
-            if ($conf->banque->enabled)
+            if (! empty($conf->banque->enabled))
             {
                 print '<td align="right">'.$langs->trans("Account").'</td>';
             }
@@ -693,7 +693,7 @@ if ($rowid)
                 print '<td align="center">'.dol_print_date($db->jdate($objp->dateadh),'day')."</td>\n";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
                 print '<td align="right">'.price($objp->cotisation).'</td>';
-                if ($conf->banque->enabled)
+                if (! empty($conf->banque->enabled))
                 {
                     print '<td align="right">';
                     if ($objp->bid)
@@ -720,7 +720,7 @@ if ($rowid)
 
 
         // Link for paypal payment
-        if ($conf->paypal->enabled)
+        if (! empty($conf->paypal->enabled))
         {
             include_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
             print showPaypalPaymentUrl('membersubscription',$object->ref);
@@ -889,7 +889,7 @@ if ($rowid)
                 print '</td>';
                 print '<td>';
                 print '<input type="radio" class="moreaction" id="none" name="paymentsave" value="none"'.(!$bankdirect&&!$bankviainvoice?' checked="checked"':'').'> '.$langs->trans("None").'<br>';
-                if ($conf->banque->enabled)
+                if (! empty($conf->banque->enabled))
                 {
                     print '<input type="radio" class="moreaction" id="bankdirect" name="paymentsave" value="bankdirect"'.($bankdirect?' checked="checked"':'');
                     print '> '.$langs->trans("MoreActionBankDirect").'<br>';

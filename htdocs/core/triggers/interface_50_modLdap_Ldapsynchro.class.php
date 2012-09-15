@@ -457,7 +457,7 @@ class InterfaceLdapsynchro
         	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
         	{
 				// If status field is setup to be synchronized
-				if ($conf->global->LDAP_FIELD_MEMBER_STATUS)
+				if (! empty($conf->global->LDAP_FIELD_MEMBER_STATUS))
 				{
 					$ldap=new Ldap();
 	        		$ldap->connect_bind();
@@ -564,7 +564,7 @@ class InterfaceLdapsynchro
         	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
         	{
 				// If status field is setup to be synchronized
-				if ($conf->global->LDAP_FIELD_MEMBER_STATUS)
+				if (! empty($conf->global->LDAP_FIELD_MEMBER_STATUS))
 				{
 					$ldap=new Ldap();
 	        		$ldap->connect_bind();

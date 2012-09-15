@@ -163,7 +163,7 @@ dol_htmloutput_mesg($mesg);
  * Mailman
  */
 $var=!$var;
-if ($conf->global->ADHERENT_USE_MAILMAN)
+if (! empty($conf->global->ADHERENT_USE_MAILMAN))
 {
     //$lien=img_picto($langs->trans("Active"),'tick').' ';
     $lien='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_MAILMAN">';
@@ -214,7 +214,7 @@ else
 
 dol_fiche_end();
 
-if ($conf->global->ADHERENT_USE_MAILMAN)
+if (! empty($conf->global->ADHERENT_USE_MAILMAN))
 {
     print '<form action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="action" value="testsubscribe">';

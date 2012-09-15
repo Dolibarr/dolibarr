@@ -62,7 +62,7 @@ switch ( $_GET['action'] )
 					}
 
 					/** add Ditto for MultiPrix*/
-					if ($conf->global->PRODUIT_MULTIPRICES)
+					if (! empty($conf->global->PRODUIT_MULTIPRICES))
 					{
 						$thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
 						$productid = $ret['rowid'];

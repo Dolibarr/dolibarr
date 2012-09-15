@@ -53,17 +53,17 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 print '<u>'.$langs->trans("WSDLCanBeDownloadedHere").':</u><br>';
 $url=DOL_MAIN_URL_ROOT.'/webservices/server_other.php?wsdl';
 print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
-if ($conf->societe->enabled)
+if (! empty($conf->societe->enabled))
 {
 	$url=DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php?wsdl';
 	print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
 }
-if ($conf->facture->enabled)
+if (! empty($conf->facture->enabled))
 {
 	$url=DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php?wsdl';
 	print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
 }
-if ($conf->fournisseur->enabled)
+if (! empty($conf->fournisseur->enabled))
 {
     $url=DOL_MAIN_URL_ROOT.'/webservices/server_supplier_invoice.php?wsdl';
     print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
@@ -77,17 +77,17 @@ print '<br>';
 print '<u>'.$langs->trans("EndPointIs").':</u><br>';
 $url=DOL_MAIN_URL_ROOT.'/webservices/server_other.php';
 print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
-if ($conf->societe->enabled)
+if (! empty($conf->societe->enabled))
 {
 	$url=DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php';
 	print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
 }
-if ($conf->facture->enabled)
+if (! empty($conf->facture->enabled))
 {
 	$url=DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php';
 	print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
 }
-if ($conf->fournisseur->enabled)
+if (! empty($conf->fournisseur->enabled))
 {
     $url=DOL_MAIN_URL_ROOT.'/webservices/server_supplier_invoice.php';
     print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";

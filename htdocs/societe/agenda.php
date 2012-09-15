@@ -71,7 +71,7 @@ if ($socid)
 	$result = $soc->fetch($socid);
 	llxHeader("",$langs->trans("Agenda"),'');
 
-	if ($conf->notification->enabled) $langs->load("mails");
+	if (! empty($conf->notification->enabled)) $langs->load("mails");
 	$head = societe_prepare_head($soc);
 
 	dol_fiche_head($head, 'agenda', $langs->trans("ThirdParty"),0,'company');
@@ -154,7 +154,7 @@ if ($socid)
 
     print '<div class="tabsAction">';
 
-    if ($conf->agenda->enabled)
+    if (! empty($conf->agenda->enabled))
     {
         print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$socid.'">'.$langs->trans("AddAction").'</a>';
     }

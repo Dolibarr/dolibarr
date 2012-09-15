@@ -213,7 +213,7 @@ if ($id > 0 || ! empty($ref))
 	print '</tr>';
 	
 	// Delivery address
-	if ($conf->global->SOCIETE_ADDRESSES_MANAGEMENT)
+	if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
 	{
 		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';

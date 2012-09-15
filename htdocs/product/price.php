@@ -53,7 +53,7 @@ if ($action == 'update_price' && ! $_POST["cancel"] && ($user->rights->produit->
 	$result = $object->fetch($id);
 
 	// MultiPrix
-	if($conf->global->PRODUIT_MULTIPRICES)
+	if (! empty($conf->global->PRODUIT_MULTIPRICES))
 	{
 		$newprice='';
 		$newprice_min='';
@@ -462,7 +462,7 @@ if ($result)
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
 
-		if($conf->global->PRODUIT_MULTIPRICES)
+		if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		{
 			print '<td>'.$langs->trans("MultiPriceLevelsName").'</td>';
 		}
@@ -488,7 +488,7 @@ if ($result)
 			print "<td>".dol_print_date($db->jdate($objp->dp),"dayhour")."</td>";
 
 			// Price level
-			if ($conf->global->PRODUIT_MULTIPRICES)
+			if (! empty($conf->global->PRODUIT_MULTIPRICES))
 			{
 				print '<td align="center">'.$objp->price_level."</td>";
 			}

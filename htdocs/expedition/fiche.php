@@ -33,9 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 if ($conf->product->enabled || $conf->service->enabled)  require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-if ($conf->propal->enabled)   require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-if ($conf->commande->enabled) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if ($conf->stock->enabled)    require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+if (! empty($conf->propal->enabled))   require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if (! empty($conf->stock->enabled))    require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 $langs->load("sendings");
 $langs->load("companies");
@@ -581,7 +581,7 @@ if ($action == 'create')
             $author = new User($db);
             $author->fetch($object->user_author_id);
 
-            if ($conf->stock->enabled) $entrepot = new Entrepot($db);
+            if (! empty($conf->stock->enabled)) $entrepot = new Entrepot($db);
 
             /*
              *   Document source
@@ -694,7 +694,7 @@ if ($action == 'create')
                 print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
                 print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
                 print '<td align="left">'.$langs->trans("QtyToShip").'</td>';
-                if ($conf->stock->enabled)
+                if (! empty($conf->stock->enabled))
                 {
                     print '<td align="left">'.$langs->trans("Warehouse").' / '.$langs->trans("Stock").'</td>';
                 }
@@ -741,7 +741,7 @@ if ($action == 'create')
                     print_date_range($db->jdate($line->date_start),$db->jdate($line->date_end));
 
                     // Add description in form
-                    if ($conf->global->PRODUIT_DESC_IN_FORM)
+                    if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
                     {
                         print ($line->desc && $line->desc!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->desc):'';
                     }
@@ -800,7 +800,7 @@ if ($action == 'create')
                 print '</td>';
 
                 // Stock
-                if ($conf->stock->enabled)
+                if (! empty($conf->stock->enabled))
                 {
                     print '<td align="left">';
                     if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
@@ -1166,7 +1166,7 @@ else
             print '<td align="center">'.$langs->trans("CalculatedVolume").'</td>';
             //print '<td align="center">'.$langs->trans("Size").'</td>';
 
-            if ($conf->stock->enabled)
+            if (! empty($conf->stock->enabled))
             {
                 print '<td align="left">'.$langs->trans("WarehouseSource").'</td>';
             }
@@ -1266,7 +1266,7 @@ else
                 //print '<td align="center">'.$lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->volume_units,"volume").'</td>';
 
                 // Entrepot source
-                if ($conf->stock->enabled)
+                if (! empty($conf->stock->enabled))
                 {
                     print '<td align="left">';
                     if ($lines[$i]->entrepot_id > 0)

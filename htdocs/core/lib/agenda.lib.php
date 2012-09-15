@@ -97,7 +97,7 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 				print '</td></tr>';
 			}
 
-			if ($conf->projet->enabled)
+			if (! empty($conf->projet->enabled))
 			{
 				print '<tr>';
 				print '<td nowrap="nowrap">';

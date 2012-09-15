@@ -99,7 +99,7 @@ else
 
 
 // Draft orders
-if ($conf->fournisseur->enabled)
+if (! empty($conf->fournisseur->enabled))
 {
 	$langs->load("orders");
 

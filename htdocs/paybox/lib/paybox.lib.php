@@ -47,7 +47,7 @@ function llxHeaderPaybox($title, $head = "")
 	print '<meta name="description" content="Welcome on Dolibarr online payment form">'."\n";
 	print "<title>".$title."</title>\n";
 	if ($head) print $head."\n";
-	if ($conf->global->PAYBOX_CSS_URL) print '<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYBOX_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+	if (! empty($conf->global->PAYBOX_CSS_URL)) print '<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYBOX_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
 	else
 	{
 		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.$conf->css.'?lang='.$langs->defaultlang.'">'."\n";
@@ -91,11 +91,11 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
 
 	// Clean parameters
 	$PBX_IDENTIFIANT="2";	// Identifiant pour v2 test
-	if ($conf->global->PAYBOX_PBX_IDENTIFIANT) $PBX_IDENTIFIANT=$conf->global->PAYBOX_PBX_IDENTIFIANT;
+	if (! empty($conf->global->PAYBOX_PBX_IDENTIFIANT)) $PBX_IDENTIFIANT=$conf->global->PAYBOX_PBX_IDENTIFIANT;
 	$IBS_SITE="1999888";    // Site test
-	if ($conf->global->PAYBOX_IBS_SITE) $IBS_SITE=$conf->global->PAYBOX_IBS_SITE;
+	if (! empty($conf->global->PAYBOX_IBS_SITE)) $IBS_SITE=$conf->global->PAYBOX_IBS_SITE;
 	$IBS_RANG="99";         // Rang test
-	if ($conf->global->PAYBOX_IBS_RANG) $IBS_RANG=$conf->global->PAYBOX_IBS_RANG;
+	if (! empty($conf->global->PAYBOX_IBS_RANG)) $IBS_RANG=$conf->global->PAYBOX_IBS_RANG;
 	$IBS_DEVISE="840";		// Currency (Dollar US by default)
 	if ($CURRENCY == 'EUR') $IBS_DEVISE="978";
 	if ($CURRENCY == 'USD') $IBS_DEVISE="840";

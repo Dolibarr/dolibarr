@@ -1231,7 +1231,7 @@ else if ($action == 'validate')
 	}
 
 	$text=$langs->trans('ConfirmValidateProp',$numref);
-	if ($conf->notification->enabled)
+	if (! empty($conf->notification->enabled))
 	{
 		require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
 		$notify=new Notify($db);

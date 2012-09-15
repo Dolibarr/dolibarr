@@ -57,7 +57,7 @@ $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSe
 <td><?php echo $form->selectarray('statut_buy',$statutarray,$object->status_tobuy); ?></td>
 </tr>
 
-<?php if ($conf->stock->enabled) { ?>
+<?php if (! empty($conf->stock->enabled)) { ?>
 <tr><td><?php echo $langs->trans("StockLimit"); ?></td><td>
 <input name="seuil_stock_alerte" size="4" value="<?php echo $object->seuil_stock_alerte; ?>">
 </td></tr>

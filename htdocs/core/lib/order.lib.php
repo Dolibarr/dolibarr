@@ -34,7 +34,7 @@
 function commande_prepare_head($object)
 {
 	global $langs, $conf, $user;
-	if ($conf->expedition->enabled) $langs->load("sendings");
+	if (! empty($conf->expedition->enabled)) $langs->load("sendings");
 	$langs->load("orders");
 
 	$h = 0;

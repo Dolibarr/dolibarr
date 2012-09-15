@@ -289,7 +289,7 @@ if ($action == 'add')
             }
 
             if (! empty($backtopage)) $urlback=$backtopage;
-            else if ($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION)
+            else if (! empty($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION))
             {
                 $urlback=$conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
                 // TODO Make replacement of __AMOUNT__, etc...

@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-if ($conf->projet->enabled) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 
 $langs->load('bills');
@@ -1033,7 +1033,7 @@ if ($action == 'create')
     print '</td></tr>'."\n";
 
     // Proforma
-    if ($conf->global->FACTURE_USE_PROFORMAT)
+    if (! empty($conf->global->FACTURE_USE_PROFORMAT))
     {
     print '<tr height="18"><td width="16px" valign="middle">';
     print '<input type="radio" name="type" value="4"'.($_POST['type']==4?' checked="checked"':'').'>';
@@ -1351,8 +1351,8 @@ else
          * List of payments
          */
         $nbrows=7; $nbcols=2;
-        if ($conf->projet->enabled) $nbrows++;
-        if ($conf->banque->enabled) $nbcols++;
+        if (! empty($conf->projet->enabled)) $nbrows++;
+        if (! empty($conf->banque->enabled)) $nbcols++;
 
         // Local taxes
         if ($mysoc->country_code=='ES')
@@ -1384,7 +1384,7 @@ else
             print '<tr class="liste_titre">';
             print '<td>'.$langs->trans('Payments').'</td>';
             print '<td>'.$langs->trans('Type').'</td>';
-            if ($conf->banque->enabled) print '<td align="right">'.$langs->trans('BankAccount').'</td>';
+            if (! empty($conf->banque->enabled)) print '<td align="right">'.$langs->trans('BankAccount').'</td>';
             print '<td align="right">'.$langs->trans('Amount').'</td>';
             print '<td width="18">&nbsp;</td>';
             print '</tr>';
@@ -1399,7 +1399,7 @@ else
                     print '<tr '.$bc[$var].'>';
                     print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.dol_print_date($db->jdate($objp->dp),'day')."</a></td>\n";
                     print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
-                    if ($conf->banque->enabled)
+                    if (! empty($conf->banque->enabled))
                     {
                         $bankaccountstatic->id=$objp->baid;
                         $bankaccountstatic->ref=$objp->ref;
@@ -1485,7 +1485,7 @@ else
         print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right">'.price($object->total_ttc).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
         // Project
-        if ($conf->projet->enabled)
+        if (! empty($conf->projet->enabled))
         {
             $langs->load('projects');
             print '<tr>';
@@ -1668,7 +1668,7 @@ else
                     print_date_range($date_start,$date_end);
 
                     // Add description in form
-                    if ($conf->global->PRODUIT_DESC_IN_FORM) print ($object->lines[$i]->description && $object->lines[$i]->description!=$product_static->libelle)?'<br>'.dol_htmlentitiesbr($object->lines[$i]->description):'';
+                    if (! empty($conf->global->PRODUIT_DESC_IN_FORM)) print ($object->lines[$i]->description && $object->lines[$i]->description!=$product_static->libelle)?'<br>'.dol_htmlentitiesbr($object->lines[$i]->description):'';
                 }
 
                 // Description - Editor wysiwyg
@@ -1784,7 +1784,7 @@ else
                 print '<tr class="liste_titre">';
                 print '<td colspan="4">';
                 print $langs->trans("AddNewLine").' - ';
-                if ($conf->service->enabled)
+                if (! empty($conf->service->enabled))
                 {
                     print $langs->trans('RecordedProductsAndServices');
                 }

@@ -77,14 +77,14 @@ if ($_GET["id"])
       $h++;
 
 
-      if ($conf->stock->enabled)
+      if (! empty($conf->stock->enabled))
 	{
 	  $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
 	  $head[$h][1] = $langs->trans("Stock");
 	  $h++;
 	}
 
-      if ($conf->fournisseur->enabled)
+      if (! empty($conf->fournisseur->enabled))
 	{
 	  $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
 	  $head[$h][1] = $langs->trans("Suppliers");
@@ -100,7 +100,7 @@ if ($_GET["id"])
       $h++;
 
       //affichage onglet cat�gorie
-      if ($conf->categorie->enabled){
+      if (! empty($conf->categorie->enabled)){
 	$head[$h][0] = DOL_URL_ROOT."/fourn/product/categorie.php?id=".$product->id;
 	$head[$h][1] = $langs->trans('Categories');
 	$hselected = $h;

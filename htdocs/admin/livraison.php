@@ -189,7 +189,7 @@ $head[$h][0] = DOL_URL_ROOT."/admin/confexped.php";
 $head[$h][1] = $langs->trans("Setup");
 $h++;
 
-if ($conf->global->MAIN_SUBMODULE_EXPEDITION)
+if (! empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/expedition.php";
 	$head[$h][1] = $langs->trans("Sending");

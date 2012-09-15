@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
-if ($conf->projet->enabled) require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 
 $langs->load("companies");
 $langs->load("donations");
@@ -280,7 +280,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="action" value="add">';
 
     $nbrows=11;
-    if ($conf->projet->enabled) $nbrows++;
+    if (! empty($conf->projet->enabled)) $nbrows++;
 
     // Date
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
@@ -318,7 +318,7 @@ if ($action == 'create')
     $form->select_types_paiements('', 'modepaiement', 'CRDT', 0, 1);
     print "</td></tr>\n";
 
-	if ($conf->projet->enabled)
+	if (! empty($conf->projet->enabled))
     {
         // Si module projet actif
         print "<tr><td>".$langs->trans("Project")."</td><td>";
@@ -368,7 +368,7 @@ if (! empty($id) && $action == 'edit')
 	print '</tr>';
 
     $nbrows=12;
-    if ($conf->projet->enabled) $nbrows++;
+    if (! empty($conf->projet->enabled)) $nbrows++;
 
     // Date
 	print "<tr>".'<td width="25%" class="fieldrequired">'.$langs->trans("Date").'</td><td>';
@@ -458,7 +458,7 @@ if (! empty($id) && $action != 'edit')
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/dons/liste.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
     $nbrows=12;
-    if ($conf->projet->enabled) $nbrows++;
+    if (! empty($conf->projet->enabled)) $nbrows++;
 
 	// Ref
 	print "<tr>".'<td>'.$langs->trans("Ref").'</td><td colspan="2">';
@@ -502,7 +502,7 @@ if (! empty($id) && $action != 'edit')
 	print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$don->getLibStatut(4).'</td></tr>';
 
     // Project
-    if ($conf->projet->enabled)
+    if (! empty($conf->projet->enabled))
     {
         print "<tr>".'<td>'.$langs->trans("Project").'</td><td>'.$don->projet.'</td></tr>';
     }

@@ -456,7 +456,7 @@ abstract class ActionsCardCommon
             $s=$modCodeClient->getToolTip($langs,$this->object,0);
             $this->tpl['help_customercode'] = $form->textwithpicto('',$s,1);
 
-            if ($conf->fournisseur->enabled)
+            if (! empty($conf->fournisseur->enabled))
             {
             	$this->tpl['supplier_enabled'] = 1;
 
@@ -510,7 +510,7 @@ abstract class ActionsCardCommon
             else $this->tpl['select_state'] = $countrynotdefined;
 
             // Language
-            if ($conf->global->MAIN_MULTILANGS) $this->tpl['select_lang'] = $formadmin->select_language(($this->object->default_lang?$this->object->default_lang:$conf->global->MAIN_LANG_DEFAULT),'default_lang',0,0,1);
+            if (! empty($conf->global->MAIN_MULTILANGS)) $this->tpl['select_lang'] = $formadmin->select_language(($this->object->default_lang?$this->object->default_lang:$conf->global->MAIN_LANG_DEFAULT),'default_lang',0,0,1);
 
             // VAT
             $this->tpl['yn_assujtva'] = $form->selectyesno('assujtva_value',$this->tpl['tva_assuj'],1);	// Assujeti par defaut en creation
@@ -575,7 +575,7 @@ abstract class ActionsCardCommon
             $arr = $formcompany->typent_array(1);
             $this->tpl['typent'] = $arr[$this->object->typent_code];
 
-            if ($conf->global->MAIN_MULTILANGS)
+            if (! empty($conf->global->MAIN_MULTILANGS))
             {
                 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
                 //$s=picto_from_langcode($this->default_lang);
@@ -615,7 +615,7 @@ abstract class ActionsCardCommon
             else $this->tpl['sales_representatives'].= $langs->trans("NoSalesRepresentativeAffected");
 
             // Linked member
-            if ($conf->adherent->enabled)
+            if (! empty($conf->adherent->enabled))
             {
                 $langs->load("members");
                 $adh=new Adherent($this->db);

@@ -41,7 +41,7 @@ function ldap_prepare_head()
 	$head[$h][2] = 'ldap';
 	$h++;
 
-	if ($conf->global->LDAP_SYNCHRO_ACTIVE)
+	if (! empty($conf->global->LDAP_SYNCHRO_ACTIVE))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_users.php";
 		$head[$h][1] = $langs->trans("LDAPUsersSynchro");
@@ -49,7 +49,7 @@ function ldap_prepare_head()
 		$h++;
 	}
 
-	if ($conf->global->LDAP_SYNCHRO_ACTIVE)
+	if (! empty($conf->global->LDAP_SYNCHRO_ACTIVE))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_groups.php";
 		$head[$h][1] = $langs->trans("LDAPGroupsSynchro");

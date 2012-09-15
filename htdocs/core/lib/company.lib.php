@@ -510,7 +510,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     $contactstatic = new Contact($db);
 
-    if ($conf->clicktodial->enabled)
+    if (! empty($conf->clicktodial->enabled))
     {
         $user->fetch_clicktodial(); // lecture des infos de clicktodial
     }
@@ -729,7 +729,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
     $now=dol_now();
     $out='';
 
-    if ($conf->agenda->enabled)
+    if (! empty($conf->agenda->enabled))
     {
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
         $actionstatic=new ActionComm($db);
@@ -891,7 +891,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
     $numaction = 0 ;
     $now=dol_now();
 
-    if ($conf->agenda->enabled)
+    if (! empty($conf->agenda->enabled))
     {
         // Recherche histo sur actioncomm
         $sql = "SELECT a.id, a.label,";

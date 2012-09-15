@@ -639,7 +639,7 @@ if (GETPOST("source") == 'contractline' && $valid)
 		$result=$product->fetch($contractline->fk_product);
 
 		// We define price for product (TODO Put this in a method in product class)
-		if ($conf->global->PRODUIT_MULTIPRICES)
+		if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		{
 			$pu_ht = $product->multiprices[$contract->thirdparty->price_level];
 			$pu_ttc = $product->multiprices_ttc[$contract->thirdparty->price_level];

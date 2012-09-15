@@ -72,7 +72,7 @@ function product_prepare_head($object, $user)
 	}
 
 	// Multilangs
-	if($conf->global->MAIN_MULTILANGS)
+	if (! empty($conf->global->MAIN_MULTILANGS))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/product/traduction.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("Translation");
@@ -81,7 +81,7 @@ function product_prepare_head($object, $user)
 	}
 
 	// Sub products
-	if($conf->global->PRODUIT_SOUSPRODUITS)
+	if (! empty($conf->global->PRODUIT_SOUSPRODUITS))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/product/composition/fiche.php?id=".$object->id;
 		$head[$h][1] = $langs->trans('AssociatedProducts');

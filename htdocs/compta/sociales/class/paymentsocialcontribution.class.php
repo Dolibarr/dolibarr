@@ -472,7 +472,7 @@ class PaymentSocialContribution extends CommonObject
 
         $error=0;
 
-        if ($conf->banque->enabled)
+        if (! empty($conf->banque->enabled))
         {
             require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 

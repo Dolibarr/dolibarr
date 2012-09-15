@@ -525,7 +525,7 @@ class Tva extends CommonObject
             if ($this->id > 0)
             {
                 $ok=1;
-				if ($conf->banque->enabled)
+				if (! empty($conf->banque->enabled))
                 {
                     // Insertion dans llx_bank
                     require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
