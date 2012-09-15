@@ -50,11 +50,11 @@ if ((isset($_POST['roworder']) && ! empty($_POST['roworder'])) && (isset($_POST[
 		if (! empty($value)) $newroworder[] = $value;
 	}
 
-	dol_syslog("AjaxRow roworder=".GETPOST('roworder','alpha',2)." fk_element=".GETPOST('fk_element','int',2), LOG_DEBUG);
+	dol_syslog("AjaxRow roworder=".GETPOST('roworder','alpha',2)." fk_element=".GETPOST('fk_element','alpha',2), LOG_DEBUG);
 
 	$row=new GenericObject($db);
 	$row->table_element_line = GETPOST('table_element_line','alpha',2);
-	$row->fk_element = GETPOST('fk_element','int',2);
+	$row->fk_element = GETPOST('fk_element','alpha',2);
 	$row->id = GETPOST('element_id','int',2);
 	$result=$row->line_ajaxorder($newroworder);
 	$result=$row->line_order(true);
