@@ -57,7 +57,7 @@ function facture_prepare_head($object)
 	}
 
 	//if ($fac->mode_reglement_code == 'PRE')
-	if ($conf->prelevement->enabled)
+	if (! empty($conf->prelevement->enabled))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$object->id;
 		$head[$h][1] = $langs->trans('StandingOrders');

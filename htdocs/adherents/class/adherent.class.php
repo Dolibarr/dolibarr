@@ -160,7 +160,7 @@ class Adherent extends CommonObject
 
         // Envoi mail confirmation
         $from=$conf->email_from;
-        if ($conf->global->ADHERENT_MAIL_FROM) $from=$conf->global->ADHERENT_MAIL_FROM;
+        if (! empty($conf->global->ADHERENT_MAIL_FROM)) $from=$conf->global->ADHERENT_MAIL_FROM;
 
         include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
         $mailfile = new CMailFile($subjecttosend, $this->email, $from, $texttosend, $filename_list, $mimetype_list, $mimefilename_list, $addr_cc, $addr_bcc, $deliveryreceipt, $msgishtml);
@@ -1382,7 +1382,7 @@ class Adherent extends CommonObject
         }
 
         // spip
-        if ($conf->global->ADHERENT_USE_SPIP && $conf->mailmanspip->enabled)
+        if ($conf->global->ADHERENT_USE_SPIP && ! empty($conf->mailmanspip->enabled))
         {
             $result=$mailmanspip->add_to_spip($this);
             if ($result < 0)
@@ -1427,7 +1427,7 @@ class Adherent extends CommonObject
             }
         }
 
-        if ($conf->global->ADHERENT_USE_SPIP && $conf->mailmanspip->enabled)
+        if ($conf->global->ADHERENT_USE_SPIP && ! empty($conf->mailmanspip->enabled))
         {
             $result=$mailmanspip->del_to_spip($this);
             if ($result < 0)
@@ -1787,31 +1787,31 @@ class Adherent extends CommonObject
         $this->fullname=$this->getFullName($langs);
 
         // Member
-        if ($this->fullname && $conf->global->LDAP_MEMBER_FIELD_FULLNAME) $info[$conf->global->LDAP_MEMBER_FIELD_FULLNAME] = $this->fullname;
-        if ($this->nom && $conf->global->LDAP_MEMBER_FIELD_NAME)         $info[$conf->global->LDAP_MEMBER_FIELD_NAME] = $this->nom;
-        if ($this->prenom && $conf->global->LDAP_MEMBER_FIELD_FIRSTNAME) $info[$conf->global->LDAP_MEMBER_FIELD_FIRSTNAME] = $this->prenom;
-        if ($this->login && $conf->global->LDAP_MEMBER_FIELD_LOGIN)      $info[$conf->global->LDAP_MEMBER_FIELD_LOGIN] = $this->login;
-        if ($this->pass && $conf->global->LDAP_MEMBER_FIELD_PASSWORD)    $info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD] = $this->pass;	// this->pass = mot de passe non crypte
-        if ($this->poste && $conf->global->LDAP_MEMBER_FIELD_TITLE)      $info[$conf->global->LDAP_MEMBER_FIELD_TITLE] = $this->poste;
-        if ($this->adresse && $conf->global->LDAP_MEMBER_FIELD_ADDRESS)  $info[$conf->global->LDAP_MEMBER_FIELD_ADDRESS] = $this->adresse;
-        if ($this->cp && $conf->global->LDAP_MEMBER_FIELD_ZIP)           $info[$conf->global->LDAP_MEMBER_FIELD_ZIP] = $this->cp;
-        if ($this->ville && $conf->global->LDAP_MEMBER_FIELD_TOWN)       $info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->ville;
-        if ($this->country_code && $conf->global->LDAP_MEMBER_FIELD_COUNTRY)     $info[$conf->global->LDAP_MEMBER_FIELD_COUNTRY] = $this->country_code;
-        if ($this->email && $conf->global->LDAP_MEMBER_FIELD_MAIL)       $info[$conf->global->LDAP_MEMBER_FIELD_MAIL] = $this->email;
-        if ($this->phone && $conf->global->LDAP_MEMBER_FIELD_PHONE)      $info[$conf->global->LDAP_MEMBER_FIELD_PHONE] = $this->phone;
-        if ($this->phone_perso && $conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO) $info[$conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO] = $this->phone_perso;
-        if ($this->phone_mobile && $conf->global->LDAP_MEMBER_FIELD_MOBILE) $info[$conf->global->LDAP_MEMBER_FIELD_MOBILE] = $this->phone_mobile;
-        if ($this->fax && $conf->global->LDAP_MEMBER_FIELD_FAX)	      $info[$conf->global->LDAP_MEMBER_FIELD_FAX] = $this->fax;
-        if ($this->note && $conf->global->LDAP_MEMBER_FIELD_DESCRIPTION) $info[$conf->global->LDAP_MEMBER_FIELD_DESCRIPTION] = $this->note;
-        if ($this->naiss && $conf->global->LDAP_MEMBER_FIELD_BIRTHDATE)  $info[$conf->global->LDAP_MEMBER_FIELD_BIRTHDATE] = dol_print_date($this->naiss,'dayhourldap');
-        if (isset($this->statut) && $conf->global->LDAP_FIELD_MEMBER_STATUS)  $info[$conf->global->LDAP_FIELD_MEMBER_STATUS] = $this->statut;
-        if ($this->datefin && $conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION)  $info[$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION] = dol_print_date($this->datefin,'dayhourldap');
+        if ($this->fullname && ! empty($conf->global->LDAP_MEMBER_FIELD_FULLNAME)) $info[$conf->global->LDAP_MEMBER_FIELD_FULLNAME] = $this->fullname;
+        if ($this->nom && ! empty($conf->global->LDAP_MEMBER_FIELD_NAME))         $info[$conf->global->LDAP_MEMBER_FIELD_NAME] = $this->nom;
+        if ($this->prenom && ! empty($conf->global->LDAP_MEMBER_FIELD_FIRSTNAME)) $info[$conf->global->LDAP_MEMBER_FIELD_FIRSTNAME] = $this->prenom;
+        if ($this->login && ! empty($conf->global->LDAP_MEMBER_FIELD_LOGIN))      $info[$conf->global->LDAP_MEMBER_FIELD_LOGIN] = $this->login;
+        if ($this->pass && ! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD))    $info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD] = $this->pass;	// this->pass = mot de passe non crypte
+        if ($this->poste && ! empty($conf->global->LDAP_MEMBER_FIELD_TITLE))      $info[$conf->global->LDAP_MEMBER_FIELD_TITLE] = $this->poste;
+        if ($this->adresse && ! empty($conf->global->LDAP_MEMBER_FIELD_ADDRESS))  $info[$conf->global->LDAP_MEMBER_FIELD_ADDRESS] = $this->adresse;
+        if ($this->cp && ! empty($conf->global->LDAP_MEMBER_FIELD_ZIP))           $info[$conf->global->LDAP_MEMBER_FIELD_ZIP] = $this->cp;
+        if ($this->ville && ! empty($conf->global->LDAP_MEMBER_FIELD_TOWN))       $info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->ville;
+        if ($this->country_code && ! empty($conf->global->LDAP_MEMBER_FIELD_COUNTRY))     $info[$conf->global->LDAP_MEMBER_FIELD_COUNTRY] = $this->country_code;
+        if ($this->email && ! empty($conf->global->LDAP_MEMBER_FIELD_MAIL))       $info[$conf->global->LDAP_MEMBER_FIELD_MAIL] = $this->email;
+        if ($this->phone && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE))      $info[$conf->global->LDAP_MEMBER_FIELD_PHONE] = $this->phone;
+        if ($this->phone_perso && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO)) $info[$conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO] = $this->phone_perso;
+        if ($this->phone_mobile && ! empty($conf->global->LDAP_MEMBER_FIELD_MOBILE)) $info[$conf->global->LDAP_MEMBER_FIELD_MOBILE] = $this->phone_mobile;
+        if ($this->fax && ! empty($conf->global->LDAP_MEMBER_FIELD_FAX))	      $info[$conf->global->LDAP_MEMBER_FIELD_FAX] = $this->fax;
+        if ($this->note && ! empty($conf->global->LDAP_MEMBER_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_MEMBER_FIELD_DESCRIPTION] = $this->note;
+        if ($this->naiss && ! empty($conf->global->LDAP_MEMBER_FIELD_BIRTHDATE))  $info[$conf->global->LDAP_MEMBER_FIELD_BIRTHDATE] = dol_print_date($this->naiss,'dayhourldap');
+        if (isset($this->statut) && ! empty($conf->global->LDAP_FIELD_MEMBER_STATUS))  $info[$conf->global->LDAP_FIELD_MEMBER_STATUS] = $this->statut;
+        if ($this->datefin && ! empty($conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION))  $info[$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION] = dol_print_date($this->datefin,'dayhourldap');
 
         // Subscriptions
-        if ($this->first_subscription_date && $conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE)     $info[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]  = dol_print_date($this->first_subscription_date,'dayhourldap');
-        if (isset($this->first_subscription_amount) && $conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT) $info[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT] = $this->first_subscription_amount;
-        if ($this->last_subscription_date && $conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE)       $info[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE]   = dol_print_date($this->last_subscription_date,'dayhourldap');
-        if (isset($this->last_subscription_amount) && $conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT)   $info[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT] = $this->last_subscription_amount;
+        if ($this->first_subscription_date && ! empty($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE))     $info[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]  = dol_print_date($this->first_subscription_date,'dayhourldap');
+        if (isset($this->first_subscription_amount) && ! empty($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT)) $info[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT] = $this->first_subscription_amount;
+        if ($this->last_subscription_date && ! empty($conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE))       $info[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE]   = dol_print_date($this->last_subscription_date,'dayhourldap');
+        if (isset($this->last_subscription_amount) && ! empty($conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT))   $info[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT] = $this->last_subscription_amount;
 
         return $info;
     }

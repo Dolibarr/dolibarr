@@ -165,7 +165,7 @@ else
 /*
  * Draft orders
  */
-if ($conf->commande->enabled)
+if (! empty($conf->commande->enabled))
 {
 	$sql = "SELECT c.rowid, c.ref, s.nom, s.rowid as socid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
@@ -262,7 +262,7 @@ if ($resql)
 			$filename=dol_sanitizeFileName($obj->ref);
 			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-			$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','',1,'',1);
+			print $formfile->getDocumentsLink($commandestatic->element, $filename, $filedir);
 			print '</td></tr></table>';
 
 			print '</td>';
@@ -282,7 +282,7 @@ else dol_print_error($db);
 /*
  * Orders to process
  */
-if ($conf->commande->enabled)
+if (! empty($conf->commande->enabled))
 {
 	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom, s.rowid as socid";
 	$sql.=" FROM ".MAIN_DB_PREFIX."commande as c";
@@ -331,7 +331,7 @@ if ($conf->commande->enabled)
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','',1,'',1);
+				print $formfile->getDocumentsLink($commandestatic->element, $filename, $filedir);
 				print '</td></tr></table>';
 
 				print '</td>';
@@ -353,7 +353,7 @@ if ($conf->commande->enabled)
 /*
  * Orders thar are in a shipping process
  */
-if ($conf->commande->enabled)
+if (! empty($conf->commande->enabled))
 {
 	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom, s.rowid as socid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
@@ -402,7 +402,7 @@ if ($conf->commande->enabled)
 				$filename=dol_sanitizeFileName($obj->ref);
 				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','',1,'',1);
+				print $formfile->getDocumentsLink($commandestatic->element, $filename, $filedir);
 				print '</td></tr></table>';
 
 				print '</td>';

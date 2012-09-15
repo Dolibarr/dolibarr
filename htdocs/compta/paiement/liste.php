@@ -143,7 +143,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$paramlist,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"p.amount","",$paramlist,'align="right"',$sortfield,$sortorder);
     //print_liste_field_titre($langs->trans("Invoices"),"","","",$paramlist,'align="left"',$sortfield,$sortorder);
-    if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
+    if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
     {
         print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.statut","",$paramlist,'align="right"',$sortfield,$sortorder);
     }
@@ -168,7 +168,7 @@ if ($resql)
     print '<input class="fat" type="text" size="4" name="search_amount" value="'.$_REQUEST["search_amount"].'">';
     print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print '</td>';
-    if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
+    if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
     {
         print '<td align="right">';
         print '</td>';
@@ -213,7 +213,7 @@ if ($resql)
         print '</td>';
         print '<td align="right">'.price($objp->amount).'</td>';
 
-        if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
+        if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
         {
             print '<td align="right">';
             if ($objp->statut == 0) print '<a href="fiche.php?id='.$objp->rowid.'&amp;action=valide">';

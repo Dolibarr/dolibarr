@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
 if (! empty($conf->produit->enabled) || ! empty($conf->service->enabled))  require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (! empty($conf->propal->enabled))  require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-if ($conf->projet->enabled) {
+if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 }
@@ -618,7 +618,7 @@ if ($action == 'create')
     $form->select_date($datecontrat,'',0,0,'',"contrat");
     print "</td></tr>";
 
-    if ($conf->projet->enabled)
+    if (! empty($conf->projet->enabled))
     {
         print '<tr><td>'.$langs->trans("Project").'</td><td>';
         select_projects($soc->id,GETPOST("projectid"),"projectid");
@@ -767,7 +767,7 @@ else
         print '<td colspan="3">'.dol_print_date($object->date_contrat,"dayhour")."</td></tr>\n";
 
         // Projet
-        if ($conf->projet->enabled)
+        if (! empty($conf->projet->enabled))
         {
             $langs->load("projects");
             print '<tr><td>';
@@ -1276,7 +1276,7 @@ else
             print "<tr ".$bc[$var].">";
             print '<td colspan="3">';
             // multiprix
-            if($conf->global->PRODUIT_MULTIPRICES)
+            if (! empty($conf->global->PRODUIT_MULTIPRICES))
             	$form->select_produits('','idprod',1,$conf->product->limit_size,$object->thirdparty->price_level);
             else
 				$form->select_produits('','idprod',1,$conf->product->limit_size);
@@ -1359,7 +1359,7 @@ else
                 else print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Validate").'</a>';
             }
 
-            if ($conf->facture->enabled && $object->statut > 0 && $object->nbofservicesclosed < $nbofservices)
+            if (! empty($conf->facture->enabled) && $object->statut > 0 && $object->nbofservicesclosed < $nbofservices)
             {
                 $langs->load("bills");
                 if ($user->rights->facture->creer) print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->thirdparty->id.'">'.$langs->trans("CreateBill").'</a>';

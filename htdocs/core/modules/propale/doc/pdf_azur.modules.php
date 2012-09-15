@@ -40,10 +40,10 @@ class pdf_azur extends ModelePDFPropales
 	var $name;
 	var $description;
 	var $type;
-	
+
 	var $phpmin = array(4,3,0); // Minimum version of PHP required by module
 	var $version = 'dolibarr';
-	
+
 	var $page_largeur;
 	var $page_hauteur;
 	var $format;
@@ -51,7 +51,7 @@ class pdf_azur extends ModelePDFPropales
 	var	$marge_droite;
 	var	$marge_haute;
 	var	$marge_basse;
-	
+
 	var $emetteur;	// Objet societe qui emet
 
 
@@ -142,7 +142,7 @@ class pdf_azur extends ModelePDFPropales
 		$outputlangs->load("products");
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-		
+
 		if ($conf->propal->dir_output)
 		{
 			$object->fetch_thirdparty();
@@ -203,7 +203,7 @@ class pdf_azur extends ModelePDFPropales
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("CommercialProposal"));
-				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
+				if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 
@@ -276,11 +276,11 @@ class pdf_azur extends ModelePDFPropales
 					$pdf->setPage($pageposbefore);
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
-// We suppose that a too long description is moved completely on next page
-if ($pageposafter > $pageposbefore) {
-	$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
-}
-						
+					// We suppose that a too long description is moved completely on next page
+					if ($pageposafter > $pageposbefore) {
+						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
+					}
+
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 
 					// VAT Rate
@@ -563,7 +563,7 @@ if ($pageposafter > $pageposbefore) {
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ')
 			{
 				// Si mode reglement non force ou si force a CHQ
-				if ($conf->global->FACTURE_CHQ_NUMBER)
+				if (! empty($conf->global->FACTURE_CHQ_NUMBER))
 				{
 					if ($conf->global->FACTURE_CHQ_NUMBER > 0)
 					{
@@ -640,7 +640,7 @@ if ($pageposafter > $pageposbefore) {
 		$col1x = 120; $col2x = 170; $largcol2 = ($this->page_largeur - $this->marge_droite - $col2x);
 
 		$index = 0;
-		
+
 		// Total HT
 		$pdf->SetFillColor(255,255,255);
 		$pdf->SetXY($col1x, $tab2_top + 0);
@@ -790,7 +790,7 @@ if ($pageposafter > $pageposbefore) {
 		}
 
 		$pdf->SetTextColor(0,0,0);
-		
+
 		$resteapayer = $object->total_ttc - $deja_regle;
 		if ($object->paye) $resteapayer=0;
 
@@ -863,10 +863,10 @@ if ($pageposafter > $pageposbefore) {
 			$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top-4);
 			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 		}
-		
+
 		$pdf->SetDrawColor(128,128,128);
 		$pdf->SetFont('','',$default_font_size - 1);
-		
+
 		// Output Rect
 		$this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
 
@@ -877,7 +877,7 @@ if ($pageposafter > $pageposbefore) {
 			$pdf->SetXY($this->posxdesc-1, $tab_top+1);
 			$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
 		}
-		
+
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
 			$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
@@ -894,14 +894,14 @@ if ($pageposafter > $pageposbefore) {
 			$pdf->SetXY($this->posxup-1, $tab_top+1);
 			$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("PriceUHT"),'','C');
 		}
-		
+
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxqty-1, $tab_top+1);
 			$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
 		}
-		
+
 		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
 		if (empty($hidetop))
 		{
@@ -942,7 +942,7 @@ if ($pageposafter > $pageposbefore) {
 		$outputlangs->load("companies");
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-		
+
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		//  Show Draft Watermark
@@ -1058,7 +1058,7 @@ if ($pageposafter > $pageposbefore) {
 			$pdf->SetFillColor(230,230,230);
 			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
 			$pdf->SetTextColor(0,0,60);
-				
+
 			// Show sender name
 			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('','B', $default_font_size);

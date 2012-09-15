@@ -301,7 +301,7 @@ $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td colspan="3">'.$langs->trans("DoNotStoreClearPassword").'</td>';
 print '<td align="center" width="60">';
-if ($conf->global->DATABASE_PWD_ENCRYPTED)
+if (! empty($conf->global->DATABASE_PWD_ENCRYPTED))
 {
 	print img_picto($langs->trans("Active"),'tick');
 }
@@ -312,7 +312,7 @@ if (! $conf->global->DATABASE_PWD_ENCRYPTED)
 	print '<a href="security.php?action=activate_encrypt">'.$langs->trans("Activate").'</a>';
 	print "</td>";
 }
-if($conf->global->DATABASE_PWD_ENCRYPTED)
+if (! empty($conf->global->DATABASE_PWD_ENCRYPTED))
 {
 	print '<td align="center" width="100">';
 	if ($allow_disable_encryption)

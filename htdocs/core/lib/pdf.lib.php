@@ -668,7 +668,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	{
 		$pdf->SetXY($dims['lm'],-$posy);
 		$width=20000; $align='L';	// By default, ask a manual break: We use a large value 20000, to not have automatic wrap. This make user understand, he need to add CR on its text.
-		if ($conf->global->MAIN_USE_AUTOWRAP_ON_FREETEXT) { $width=200; $align='C'; }
+		if (! empty($conf->global->MAIN_USE_AUTOWRAP_ON_FREETEXT)) { $width=200; $align='C'; }
 		$pdf->MultiCell($width, 3, $line, 0, $align, 0);
 		$posy-=($nbofline*3);	// 6 of ligne + 3 of MultiCell
 	}

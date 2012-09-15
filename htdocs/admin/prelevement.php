@@ -160,7 +160,7 @@ print '<br>';
  * Notifications
  */
 
-if ($conf->global->MAIN_MODULE_NOTIFICATION)
+if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 {
     $langs->load("mails");
     print_titre($langs->trans("Notifications"));

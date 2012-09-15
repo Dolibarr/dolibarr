@@ -45,7 +45,7 @@ if (! $user->admin) accessforbidden();
  */
 
 // Vérification si module activé
-if (! $conf->holiday->enabled) print $langs->trans('NotActiveModCP');
+if (empty($conf->holiday->enabled)) print $langs->trans('NotActiveModCP');
 
 llxheader('',$langs->trans('TitleAdminCP'));
 

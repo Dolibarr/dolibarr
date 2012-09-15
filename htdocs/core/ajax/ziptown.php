@@ -60,7 +60,7 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 	$zipcode = $_GET['zipcode']?$_GET['zipcode']:'';
 	$town = $_GET['town']?$_GET['town']:'';
 
-	if ($conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY)   // Use zip-town table
+	if (! empty($conf->global->MAIN_USE_ZIPTOWN_DICTIONNARY))   // Use zip-town table
 	{
     	$sql = "SELECT z.rowid, z.zip, z.town, z.fk_county, z.fk_pays as fk_country";
     	$sql.= ", p.rowid as fk_country, p.code as country_code, p.libelle as country";

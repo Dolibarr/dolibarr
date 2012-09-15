@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->load("companies");
-if ($conf->facture->enabled) $langs->load("bills");
+if (! empty($conf->facture->enabled)) $langs->load("bills");
 
 // Security check
 $socid = $_GET["socid"];
@@ -79,7 +79,7 @@ if ($socid > 0)
 
 	print '</div>';
 
-	if ($conf->facture->enabled && $user->rights->facture->lire)
+	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
 		// Factures
 		print_fiche_titre($langs->trans("CustomerPreview"));

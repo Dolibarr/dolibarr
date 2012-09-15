@@ -687,10 +687,10 @@ class UserGroup extends CommonObject
 		$info["objectclass"]=explode(',',$conf->global->LDAP_GROUP_OBJECT_CLASS);
 
 		// Champs
-		if ($this->nom && $conf->global->LDAP_GROUP_FIELD_FULLNAME) $info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->nom;
-		//if ($this->nom && $conf->global->LDAP_GROUP_FIELD_NAME) $info[$conf->global->LDAP_GROUP_FIELD_NAME] = $this->nom;
-		if ($this->note && $conf->global->LDAP_GROUP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_GROUP_FIELD_DESCRIPTION] = $this->note;
-		if ($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS)
+		if ($this->nom && ! empty($conf->global->LDAP_GROUP_FIELD_FULLNAME)) $info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->nom;
+		//if ($this->nom && ! empty($conf->global->LDAP_GROUP_FIELD_NAME)) $info[$conf->global->LDAP_GROUP_FIELD_NAME] = $this->nom;
+		if ($this->note && ! empty($conf->global->LDAP_GROUP_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_GROUP_FIELD_DESCRIPTION] = $this->note;
+		if (! empty($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS))
 		{
 			$valueofldapfield=array();
 			foreach($this->members as $key=>$val)    // This is array of users for group into dolibarr database.

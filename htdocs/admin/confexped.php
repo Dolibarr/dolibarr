@@ -84,14 +84,14 @@ $head[$h][1] = $langs->trans("Setup");
 $hselected=$h;
 $h++;
 
-if ($conf->global->MAIN_SUBMODULE_EXPEDITION)
+if (! empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/expedition.php";
 	$head[$h][1] = $langs->trans("Sending");
 	$h++;
 }
 
-if ($conf->global->MAIN_SUBMODULE_LIVRAISON)
+if (! empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/livraison.php";
 	$head[$h][1] = $langs->trans("Receivings");

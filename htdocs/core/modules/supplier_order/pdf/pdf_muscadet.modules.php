@@ -214,7 +214,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Order"));
-				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
+				if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 
@@ -540,7 +540,7 @@ if ($pageposafter > $pageposbefore) {
         if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ')
         {
             // Si mode reglement non force ou si force a CHQ
-            if ($conf->global->FACTURE_CHQ_NUMBER)
+            if (! empty($conf->global->FACTURE_CHQ_NUMBER))
             {
                 if ($conf->global->FACTURE_CHQ_NUMBER > 0)
                 {
@@ -1016,7 +1016,7 @@ if ($pageposafter > $pageposbefore) {
 			if (! empty($usecontact))
 			{
 				// On peut utiliser le nom de la societe du contact
-				if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socname = $object->contact->socname;
+				if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socname = $object->contact->socname;
 				else $socname = $object->client->name;
 				$carac_client_name=$outputlangs->convToOutputCharset($socname);
 			}

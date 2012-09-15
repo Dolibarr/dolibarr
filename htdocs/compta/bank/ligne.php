@@ -32,7 +32,7 @@ $langs->load("banks");
 $langs->load("compta");
 $langs->load("bills");
 $langs->load("categories");
-if ($conf->adherent->enabled) $langs->load("members");
+if (! empty($conf->adherent->enabled)) $langs->load("members");
 
 
 $id = (GETPOST('id','int') ? GETPOST('id','int') : GETPOST('account','int'));

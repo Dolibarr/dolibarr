@@ -49,14 +49,14 @@ if (! ($thirdpartyid > 0))
 }
 
 // If we setup stock module to ask movement on invoices, we must not allow access if required setup not finished.
-if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL &&  ! ($warehouseid > 0))
+if (! empty($conf->stock->enabled) && $conf->global->STOCK_CALCULATE_ON_BILL &&  ! ($warehouseid > 0))
 {
 	$retour=$langs->trans("CashDeskSetupStock");
 	header('Location: '.DOL_URL_ROOT.'/cashdesk/index.php?err='.urlencode($retour).'&user='.$username.'&socid='.$thirdpartyid.'&warehouseid='.$warehouseid);
 	exit;
 }
 
-if (! empty($_POST['txtUsername']) && $conf->banque->enabled && (empty($conf_fkaccount_cash) || empty($conf_fkaccount_cheque) || empty($conf_fkaccount_cb)))
+if (! empty($_POST['txtUsername']) && ! empty($conf->banque->enabled) && (empty($conf_fkaccount_cash) || empty($conf_fkaccount_cheque) || empty($conf_fkaccount_cb)))
 {
 	$langs->load("errors");
 	$retour=$langs->trans("ErrorModuleSetupNotComplete");

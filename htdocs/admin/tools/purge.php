@@ -36,7 +36,7 @@ $choice=GETPOST('choice');
 
 // Define filelog to discard it from purge
 $filelog='';
-if ($conf->syslog->enabled)
+if (! empty($conf->syslog->enabled))
 {
 	$filelog=SYSLOG_FILE;
 	$filelog=preg_replace('/DOL_DATA_ROOT/i',DOL_DATA_ROOT,$filelog);
@@ -131,7 +131,7 @@ print '<table class="border" width="100%">';
 
 print '<tr class="border"><td style="padding: 4px">';
 
-if ($conf->syslog->enabled)
+if (! empty($conf->syslog->enabled))
 {
 	print '<input type="radio" name="choice" value="logfile"';
 	print ($choice && $choice=='logfile') ? ' checked="checked"' : '';

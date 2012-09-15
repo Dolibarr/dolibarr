@@ -29,7 +29,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT .'/core/modules/facture/modules_facture.php';
-if ($conf->banque->enabled) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load('bills');
 $langs->load('banks');
@@ -238,7 +238,7 @@ print $form->editfieldval("Note",'note',$object->note,$object,$user->rights->fac
 print '</td></tr>';
 
 // Bank account
-if ($conf->banque->enabled)
+if (! empty($conf->banque->enabled))
 {
     if ($object->bank_account)
     {
@@ -355,7 +355,7 @@ print '</div>';
 
 print '<div class="tabsAction">';
 
-if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
+if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 {
 	if ($user->societe_id == 0 && $object->statut == 0 && $_GET['action'] == '')
 	{

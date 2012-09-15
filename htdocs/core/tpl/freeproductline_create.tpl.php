@@ -40,13 +40,13 @@
 	if (! empty($conf->margin->enabled)) {
 		?>
 	<td align="right"><?php echo $langs->trans('BuyingPrice'); ?></td>
-	<?php
-	if($conf->global->DISPLAY_MARGIN_RATES)
-		$colspan++;
-	if($conf->global->DISPLAY_MARK_RATES)
-		$colspan++;
+<?php
+	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+    	$colspan++;
+	if (! empty($conf->global->DISPLAY_MARK_RATES))
+    	$colspan++;
 	}
-	?>
+?>
 	<td colspan="<?php echo $colspan; ?>">&nbsp;</td>
 </tr>
 
@@ -59,11 +59,10 @@
 		value="<?php echo $this->id; ?>" />
 
 	<tr <?php echo $bcnd[$var]; ?>>
-		<td
-		<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
+		<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
 			<?php
 			echo $form->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1);
-			if (($conf->product->enabled && $conf->service->enabled) || (empty($conf->product->enabled) && empty($conf->service->enabled))) echo '<br>';
+			if ((! empty($conf->product->enabled) && ! empty($conf->service->enabled)) || (empty($conf->product->enabled) && empty($conf->service->enabled))) echo '<br>';
 
 			if (is_object($hookmanager))
 			{
@@ -85,34 +84,28 @@
 		else echo $form->load_tva('tva_tx', (isset($_POST["tva_tx"])?$_POST["tva_tx"]:-1), $seller, $buyer);
 		?>
 		</td>
-		<td align="right"><input type="text" size="5" name="price_ht"
-			value="<?php echo (isset($_POST["price_ht"])?$_POST["price_ht"]:''); ?>">
+		<td align="right"><input type="text" size="5" name="price_ht" value="<?php echo (isset($_POST["price_ht"])?$_POST["price_ht"]:''); ?>">
 		</td>
-		<td align="right"><input type="text" size="2" name="qty"
-			value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>"></td>
-		<td align="right" nowrap><input type="text" size="1"
-			value="<?php echo $buyer->remise_client; ?>" name="remise_percent">%</td>
+		<td align="right"><input type="text" size="2" name="qty" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>"></td>
+		<td align="right" nowrap><input type="text" size="1" value="<?php echo $buyer->remise_client; ?>" name="remise_percent">%</td>
 		<?php
 		$colspan = 4;
 		if (! empty($conf->margin->enabled)) {
-			?>
-		<td align="right"><input type="text" size="5" name="buying_price"
-			value="<?php echo (isset($_POST["buying_price"])?$_POST["buying_price"]:''); ?>">
-		</td>
+		?>
+			<td align="right"><input type="text" size="5" name="buying_price"
+				value="<?php echo (isset($_POST["buying_price"])?$_POST["buying_price"]:''); ?>">
+			</td>
 		<?php
-		if($conf->global->DISPLAY_MARGIN_RATES)
+		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 			$colspan++;
-		if($conf->global->DISPLAY_MARK_RATES)
+		if (! empty($conf->global->DISPLAY_MARK_RATES))
 			$colspan++;
 		}
 		?>
-		<td align="center" valign="middle" colspan="<?php echo $colspan; ?>"><input
-			type="submit" class="button"
-			value="<?php echo $langs->trans('Add'); ?>" name="addline"></td>
+		<td align="center" valign="middle" colspan="<?php echo $colspan; ?>"><input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline"></td>
 	</tr>
 
-
-	<?php if ($conf->service->enabled && $dateSelector) {
+	<?php if (! empty($conf->service->enabled) && $dateSelector) {
 		if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 			$colspan = 10;
 		else

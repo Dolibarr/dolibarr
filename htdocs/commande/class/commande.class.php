@@ -237,7 +237,7 @@ class Commande extends CommonOrder
         if (! $error)
         {
             // If stock is incremented on validate order, we must increment it
-            if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
+            if ($result >= 0 && ! empty($conf->stock->enabled) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
             {
                 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
                 $langs->load("agenda");
@@ -351,7 +351,7 @@ class Commande extends CommonOrder
         if ($this->db->query($sql))
         {
             // If stock is decremented on validate order, we must reincrement it
-            if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
+            if (! empty($conf->stock->enabled) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
             {
                 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
                 $langs->load("agenda");
@@ -534,7 +534,7 @@ class Commande extends CommonOrder
 		if ($this->db->query($sql))
 		{
 			// If stock is decremented on validate order, we must reincrement it
-			if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
+			if (! empty($conf->stock->enabled) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
 			{
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$langs->load("agenda");
@@ -2538,7 +2538,7 @@ class Commande extends CommonOrder
 
         $result='';
 
-        if ($conf->expedition->enabled && ($option == 1 || $option == 2)) $url = DOL_URL_ROOT.'/expedition/shipment.php?id='.$this->id;
+        if (! empty($conf->expedition->enabled) && ($option == 1 || $option == 2)) $url = DOL_URL_ROOT.'/expedition/shipment.php?id='.$this->id;
         else $url = DOL_URL_ROOT.'/commande/fiche.php?id='.$this->id;
 
         if ($short) return $url;

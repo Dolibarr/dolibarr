@@ -354,7 +354,12 @@ else
 	//var_dump($tasksarray);
 	//var_dump($tasksrole);
 
-	print '<table class="noborder" width="100%">';
+	if (! empty($conf->use_javascript_ajax))
+	{
+		include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
+	}
+
+	print '<table id="tablelines" class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	// print '<td>'.$langs->trans("Project").'</td>';
 	print '<td width="80">'.$langs->trans("RefTask").'</td>';

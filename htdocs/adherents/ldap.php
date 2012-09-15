@@ -120,7 +120,7 @@ print '</tr>';
 print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
 
 // Password not crypted
-if ($conf->global->LDAP_MEMBER_FIELD_PASSWORD)
+if (! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD))
 {
 	print '<tr><td>'.$langs->trans("LDAPFieldPasswordNotCrypted").'</td>';
 	print '<td class="valeur">'.$adh->pass.'</td>';
@@ -128,7 +128,7 @@ if ($conf->global->LDAP_MEMBER_FIELD_PASSWORD)
 }
 
 // Password crypted
-if ($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED)
+if (! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED))
 {
 	print '<tr><td>'.$langs->trans("LDAPFieldPasswordCrypted").'</td>';
 	print '<td class="valeur">'.$adh->pass_crypted.'</td>';

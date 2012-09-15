@@ -105,7 +105,7 @@ print '<tr '.$bc[$var].'><td width=\"50%\">'.$langs->trans("CashDeskThirdPartyFo
 print '<td colspan="2">';
 print $form->select_company($conf->global->CASHDESK_ID_THIRDPARTY,'socid','s.client in (1,3)',1,1);
 print '</td></tr>';
-if ($conf->banque->enabled)
+if (! empty($conf->banque->enabled))
 {
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
@@ -126,7 +126,7 @@ if ($conf->banque->enabled)
 	print '</td></tr>';
 }
 
-if ($conf->stock->enabled)
+if (! empty($conf->stock->enabled))
 {
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskIdWareHouse").'</td>';
@@ -135,7 +135,7 @@ if ($conf->stock->enabled)
 	print '</td></tr>';
 }
 
-if ($conf->service->enabled)
+if (! empty($conf->service->enabled))
 {
     $var=! $var;
     print '<tr '.$bc[$var].'><td>';

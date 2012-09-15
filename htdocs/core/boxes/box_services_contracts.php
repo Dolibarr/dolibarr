@@ -105,7 +105,7 @@ class box_services_contracts extends ModeleBoxes
 					$datem=$db->jdate($objp->datem);
 
 					// Multilangs
-					if ($conf->global->MAIN_MULTILANGS) // si l'option est active
+					if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
 					{
 						$sqld = "SELECT label";
 						$sqld.= " FROM ".MAIN_DB_PREFIX."product_lang";

@@ -126,14 +126,14 @@ if ($action == 'search')
 	$current_lang = $langs->getDefaultLang();
 
 	$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.price, p.fk_product_type as type';
-	if ($conf->global->MAIN_MULTILANGS) $sql.= ', pl.label as labelm, pl.description as descriptionm';
+	if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= ', pl.label as labelm, pl.description as descriptionm';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON p.rowid = cp.fk_product';
-	if ($conf->global->MAIN_MULTILANGS) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND lang='".($current_lang)."'";
+	if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND lang='".($current_lang)."'";
 	$sql.= ' WHERE p.entity IN ('.getEntity("product", 1).')';
 	if ($key != "")
 	{
-		if ($conf->global->MAIN_MULTILANGS)
+		if (! empty($conf->global->MAIN_MULTILANGS))
 		{
 			$sql.= " AND (p.ref LIKE '%".$key."%'";
 			$sql.= " OR pl.label LIKE '%".$key."%')";
@@ -144,7 +144,7 @@ if ($action == 'search')
 			$sql.= " OR p.label LIKE '%".$key."%')";
 		}
 	}
-	if ($conf->categorie->enabled && $catMere != -1 and $catMere)
+	if (! empty($conf->categorie->enabled) && $catMere != -1 and $catMere)
 	{
 		$sql.= " AND cp.fk_categorie ='".$db->escape($catMere)."'";
 	}
@@ -185,7 +185,7 @@ if ($id || $ref)
 			print "<tr>";
 
 			$nblignes=6;
-			if ($product->isproduct() && $conf->stock->enabled) $nblignes++;
+			if ($product->isproduct() && ! empty($conf->stock->enabled)) $nblignes++;
 			if ($product->isservice()) $nblignes++;
 
 			// Reference
@@ -217,14 +217,14 @@ if ($id || $ref)
 					$productstatic->id=$value['id'];
 					$productstatic->type=$value['type'];
 					$productstatic->ref=$value['fullpath'];
-					if ($conf->stock->enabled) $productstatic->load_stock();
+					if (! empty($conf->stock->enabled)) $productstatic->load_stock();
 					//var_dump($value);
 					//print '<pre>'.$productstatic->ref.'</pre>';
 					//print $productstatic->getNomUrl(1).'<br>';
 					//print $value[0];	// This contains a tr line.
 					print '<tr>';
 					print '<td>'.$productstatic->getNomUrl(1,'composition').' ('.$value['nb'].') &nbsp &nbsp</td>';
-					if ($conf->stock->enabled) print '<td>'.$langs->trans("Stock").' : <b>'.$productstatic->stock_reel.'</b></td>';
+					if (! empty($conf->stock->enabled)) print '<td>'.$langs->trans("Stock").' : <b>'.$productstatic->stock_reel.'</b></td>';
 					print '</tr>';
 				}
 				print '</table>';
@@ -269,7 +269,7 @@ if ($id || $ref)
 		print "<tr>";
 
 		$nblignes=6;
-		if ($product->isproduct() && $conf->stock->enabled) $nblignes++;
+		if ($product->isproduct() && ! empty($conf->stock->enabled)) $nblignes++;
 		if ($product->isservice()) $nblignes++;
 
 			// Reference
@@ -302,14 +302,14 @@ if ($id || $ref)
 				$productstatic->id=$value['id'];
 				$productstatic->type=$value['type'];
 				$productstatic->ref=$value['fullpath'];
-				if ($conf->stock->enabled) $productstatic->load_stock();
+				if (! empty($conf->stock->enabled)) $productstatic->load_stock();
 				//var_dump($value);
 				//print '<pre>'.$productstatic->ref.'</pre>';
 				//print $productstatic->getNomUrl(1).'<br>';
 				//print $value[0];	// This contains a tr line.
 				print '<tr>';
 				print '<td>'.$productstatic->getNomUrl(1,'composition').' ('.$value['nb'].') &nbsp &nbsp</td>';
-				if ($conf->stock->enabled) print '<td>'.$langs->trans("Stock").' : <b>'.$productstatic->stock_reel.'</b></td>';
+				if (! empty($conf->stock->enabled)) print '<td>'.$langs->trans("Stock").' : <b>'.$productstatic->stock_reel.'</b></td>';
 				print '</tr>';
 			}
 			print '</table>';
@@ -345,7 +345,7 @@ if ($id || $ref)
 		print '<br>';
 
 		$rowspan=1;
-		if ($conf->categorie->enabled) $rowspan++;
+		if (! empty($conf->categorie->enabled)) $rowspan++;
 
         print_fiche_titre($langs->trans("ProductToAddSearch"),'','');
 		print '<form action="'.DOL_URL_ROOT.'/product/composition/fiche.php?id='.$id.'" method="post">';
@@ -363,7 +363,7 @@ if ($id || $ref)
 		print '<td rowspan="'.$rowspan.'" valign="middle">';
 		print '<input type="submit" class="button" value="'.$langs->trans("Search").'">';
 		print '</td></tr>';
-		if ($conf->categorie->enabled)
+		if (! empty($conf->categorie->enabled))
 		{
 			print '<tr><td>'.$langs->trans("CategoryFilter").' &nbsp; </td>';
 			print '<td>'.$form->select_all_categories(0,$catMere).'</td></tr>';

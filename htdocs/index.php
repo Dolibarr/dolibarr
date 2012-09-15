@@ -287,7 +287,7 @@ print '</tr>';
 //
 
 // Number of actions to do (late)
-if ($conf->agenda->enabled && $user->rights->agenda->myactions->read)
+if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read)
 {
     include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
     $board=new ActionComm($db);
@@ -301,7 +301,7 @@ if ($conf->agenda->enabled && $user->rights->agenda->myactions->read)
 }
 
 // Number of customer orders a deal
-if ($conf->commande->enabled && $user->rights->commande->lire)
+if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 {
     include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
     $board=new Commande($db);
@@ -315,7 +315,7 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 }
 
 // Number of suppliers orders a deal
-if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire)
+if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
 {
     include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
     $board=new CommandeFournisseur($db);
@@ -329,7 +329,7 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire)
 }
 
 // Number of commercial proposals opened (expired)
-if ($conf->propal->enabled && $user->rights->propale->lire)
+if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 {
     $langs->load("propal");
 
@@ -345,7 +345,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 }
 
 // Number of commercial proposals CLOSED signed (billed)
-if ($conf->propal->enabled && $user->rights->propale->lire)
+if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 {
     $langs->load("propal");
 
@@ -361,7 +361,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 }
 
 // Number of services enabled (delayed)
-if ($conf->contrat->enabled && $user->rights->contrat->lire)
+if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 {
     $langs->load("contracts");
 
@@ -377,7 +377,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 }
 
 // Number of active services (expired)
-if ($conf->contrat->enabled && $user->rights->contrat->lire)
+if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 {
     $langs->load("contracts");
 
@@ -392,7 +392,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
     $dashboardlines[]=$board;
 }
 // Number of invoices customers (has paid)
-if ($conf->facture->enabled && $user->rights->facture->lire)
+if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
     $langs->load("bills");
 
@@ -408,7 +408,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 }
 
 // Number of supplier invoices (has paid)
-if ($conf->fournisseur->enabled && $conf->facture->enabled && $user->rights->facture->lire)
+if (! empty($conf->fournisseur->enabled) && ! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
     $langs->load("bills");
 
@@ -424,7 +424,7 @@ if ($conf->fournisseur->enabled && $conf->facture->enabled && $user->rights->fac
 }
 
 // Number of transactions to conciliate
-if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id)
+if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->societe_id)
 {
     $langs->load("banks");
 
@@ -443,7 +443,7 @@ if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id
 }
 
 // Number of cheque to send
-if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id)
+if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->societe_id)
 {
     $langs->load("banks");
 
@@ -459,7 +459,7 @@ if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id
 }
 
 // Number of foundation members
-if ($conf->adherent->enabled && $user->rights->adherent->lire && ! $user->societe_id)
+if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire && ! $user->societe_id)
 {
     $langs->load("members");
 

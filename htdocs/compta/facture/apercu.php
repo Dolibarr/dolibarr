@@ -30,7 +30,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-if ($conf->projet->enabled) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load("bills");
 
@@ -288,7 +288,7 @@ if ($id > 0 || ! empty($ref))
         print '</td>';
 
         $nbrows=5;
-        if ($conf->projet->enabled) $nbrows++;
+        if (! empty($conf->projet->enabled)) $nbrows++;
         print '<td rowspan="'.$nbrows.'" colspan="2" valign="top">';
 
         /*
@@ -366,7 +366,7 @@ if ($id > 0 || ! empty($ref))
         print '<tr><td>'.$langs->trans('Status').'</td><td align="left" colspan="3">'.($object->getLibStatut(4,$totalpaye)).'</td></tr>';
 
         // Projet
-        if ($conf->projet->enabled)
+        if (! empty($conf->projet->enabled))
         {
             $langs->load("projects");
             print '<tr>';

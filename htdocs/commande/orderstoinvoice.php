@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
-if ($conf->projet->enabled) require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 
 $langs->load('orders');
 $langs->load('deliveries');
@@ -416,7 +416,7 @@ if ($action == 'create')
 	$html->select_types_paiements(isset($_POST['mode_reglement_id'])?$_POST['mode_reglement_id']:$mode_reglement_id,'mode_reglement_id');
 	print '</td></tr>';
 	// Project
-	if ($conf->projet->enabled)
+	if (! empty($conf->projet->enabled))
 	{
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
@@ -469,10 +469,10 @@ if ($action == 'create')
 	while ($i < $n)
 	{
 		print '<input type="hidden" name="orders_to_invoice[]" value="'.$orders_id[$i].'">';
-	
+
 		$i++;
 	}
-	
+
 	print "</table>\n";
 	// Button "Create Draft"
 	print '<br><center><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></center>';
@@ -496,7 +496,7 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 	});
 	</script>
 	<?php
-	
+
 	$sql = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
 	$sql.= ' c.date_valid, c.date_commande, c.date_livraison, c.fk_statut, c.facture as facturee';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
@@ -535,18 +535,18 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 	{
 		$sql.= " AND (c.ref LIKE '%".$db->escape($sall)."%' OR c.note LIKE '%".$db->escape($sall)."%')";
 	}
-	
+
 	//Date filter
 	if ($date_start && $date_end) $sql.= " AND c.date_commande >= '".$db->idate($date_start)."' AND c.date_commande <= '".$db->idate($date_end)."'";
 	if ($date_starty && $date_endy) $sql.= " AND c.date_livraison >= '".$db->idate($date_starty)."' AND c.date_livraison <= '".$db->idate($date_endy)."'";
-	
+
 	if (!empty($sref_client))
 	{
 		$sql.= ' AND c.ref_client LIKE \'%'.$db->escape($sref_client).'%\'';
 	}
 	$sql.= ' ORDER BY '.$sortfield.' '.$sortorder;
 	$resql = $db->query($sql);
-	
+
 	if ($resql)
 	{
 		if ($socid)
@@ -569,7 +569,7 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 		print '<h3>';
 		$companystatic->id=$socid;
 		$companystatic->nom=$soc->nom;
-	
+
 		print $companystatic->getNomUrl(1,'customer');
 		print '</h3>';
 		print '<table class="noborder" width="100%">';
@@ -581,7 +581,7 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 		print_liste_field_titre($langs->trans('Status'),'','','','','align="right"');
 		print_liste_field_titre($langs->trans('GenerateBill'),'','','','','align="center"');
 		print '</tr>';
-	
+
 		// Lignes des champs de filtre
 		print '<form method="get" action="orderstoinvoice.php">';
 		print '<input type="hidden" name="socid" value="'.$socid.'">';
@@ -593,88 +593,88 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 		//print '<td class="liste_titre">';
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat" type="text" size="10" name="sref_client" value="'.$sref_client.'">';
-	
+
 		//DATE ORDER
 		print '<td class="liste_titre" align="center">';
 		print $period;
 		print '</td>';
-	
+
 		//DATE DELIVERY
 		print '<td class="liste_titre" align="center">';
 		print $periodely;
 		print '</td>';
-	
+
 		//SEARCH BUTTON
 		print '</td><td align="right" class="liste_titre">';
 		print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	
+
 		//ALL/NONE
 		print '<td class="liste_titre" align="center">';
 		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a>';
 		print '</td>';
-	
+
 		print '</td></tr>';
 		print '</form>';
-	
+
 		print '<form name="orders2invoice" action="orderstoinvoice.php" method="GET">';
 		$var=True;
 		$generic_commande = new Commande($db);
-	
+
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
 			print '<td nowrap="nowrap">';
-	
+
 			$generic_commande->id=$objp->rowid;
 			$generic_commande->ref=$objp->ref;
-	
+
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			print '<td class="nobordernopadding" nowrap="nowrap">';
 			print $generic_commande->getNomUrl(1,$objp->fk_statut);
 			print '</td>';
-	
+
 			print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
 			if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && $db->jdate($objp->date_valid) < ($now - $conf->commande->client->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 			print '</td>';
-	
+
 			print '<td width="16" align="right" class="nobordernopadding">';
 			$filename=dol_sanitizeFileName($objp->ref);
 			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($objp->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->rowid;
-			$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','',1,'',1);
+			print $formfile->getDocumentsLink($generic_commande->element, $filename, $filedir);
 			print '</td></tr></table>';
 			print '</td>';
-	
+
 			print '<td>'.$objp->ref_client.'</td>';
-	
+
 			// Order date
 			print '<td align="center" nowrap>';
 			print dol_print_date($db->jdate($objp->date_commande),'day');
 			print '</td>';
-	
+
 			//Delivery date
 			print '<td align="center" nowrap>';
 			print dol_print_date($db->jdate($objp->date_livraison),'day');
 			print '</td>';
-	
+
 			// Statut
 			print '<td align="right" nowrap="nowrap">'.$generic_commande->LibStatut($objp->fk_statut,$objp->facturee,5).'</td>';
-	
+
 			// Checkbox
 			print '<td align="center">';
 			print '<input class="flat checkformerge" type="checkbox" name="orders_to_invoice[]" value="'.$objp->rowid.'">';
 			print '</td>' ;
-	
+
 			print '</tr>';
-	
+
 			$total = $total + $objp->price;
 			$subtotal = $subtotal + $objp->price;
 			$i++;
 		}
 		print '</table>';
-	
+
 		/*
 		 * Boutons actions
 		*/

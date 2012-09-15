@@ -485,12 +485,12 @@ class Tva extends CommonObject
             $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"));
             return -4;
         }
-        if ($conf->banque->enabled && (empty($this->accountid) || $this->accountid <= 0))
+        if (! empty($conf->banque->enabled) && (empty($this->accountid) || $this->accountid <= 0))
         {
             $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Account"));
             return -5;
         }
-        if ($conf->banque->enabled && (empty($this->paymenttype) || $this->paymenttype <= 0))
+        if (! empty($conf->banque->enabled) && (empty($this->paymenttype) || $this->paymenttype <= 0))
         {
             $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
             return -5;
@@ -525,7 +525,7 @@ class Tva extends CommonObject
             if ($this->id > 0)
             {
                 $ok=1;
-				if ($conf->banque->enabled)
+				if (! empty($conf->banque->enabled))
                 {
                     // Insertion dans llx_bank
                     require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';

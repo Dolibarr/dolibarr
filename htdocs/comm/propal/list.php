@@ -320,8 +320,7 @@ if ($result)
 		$filename=dol_sanitizeFileName($objp->ref);
 		$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($objp->ref);
 		$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->propalid;
-		//$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','',1,'',1);
-		print $formfile->getDocumentsLink('propal', $filename, $filedir);
+		print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 		print '</td></tr></table>';
 
 		if ($objp->client == 1)

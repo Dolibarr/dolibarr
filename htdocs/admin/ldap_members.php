@@ -373,7 +373,7 @@ print info_admin($langs->trans("LDAPDescValues"));
 /*
  * Test de la connexion
  */
-if ($conf->global->LDAP_MEMBER_ACTIVE)
+if (! empty($conf->global->LDAP_MEMBER_ACTIVE))
 {
 	$butlabel=$langs->trans("LDAPTestSynchroMember");
 	$testlabel='testmember';

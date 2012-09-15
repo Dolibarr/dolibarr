@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 $langs->load("companies");
 $langs->load("other");
-if ($conf->notification->enabled) $langs->load("mails");
+if (! empty($conf->notification->enabled)) $langs->load("mails");
 
 // Security check
 $socid = GETPOST('socid','int');

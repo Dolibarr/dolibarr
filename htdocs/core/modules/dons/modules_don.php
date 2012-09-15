@@ -167,7 +167,7 @@ function don_create($db, $id, $message, $modele, $outputlangs)
     // Set template to use
     if (! dol_strlen($modele))
     {
-        if ($conf->global->DON_ADDON_MODEL)
+        if (! empty($conf->global->DON_ADDON_MODEL))
         {
             $modele = $conf->global->DON_ADDON_MODEL;
         }

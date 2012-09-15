@@ -658,28 +658,28 @@ else
 
             $object->load_ref_elements();
 
-            if ($conf->commande->enabled)
+            if (! empty($conf->commande->enabled))
             {
                 print '<tr><td>'.$langs->trans("ContactForOrders").'</td><td colspan="3">';
                 print $object->ref_commande?$object->ref_commande:$langs->trans("NoContactForAnyOrder");
                 print '</td></tr>';
             }
 
-            if ($conf->propal->enabled)
+            if (! empty($conf->propal->enabled))
             {
                 print '<tr><td>'.$langs->trans("ContactForProposals").'</td><td colspan="3">';
                 print $object->ref_propal?$object->ref_propal:$langs->trans("NoContactForAnyProposal");
                 print '</td></tr>';
             }
 
-            if ($conf->contrat->enabled)
+            if (! empty($conf->contrat->enabled))
             {
                 print '<tr><td>'.$langs->trans("ContactForContracts").'</td><td colspan="3">';
                 print $object->ref_contrat?$object->ref_contrat:$langs->trans("NoContactForAnyContract");
                 print '</td></tr>';
             }
 
-            if ($conf->facture->enabled)
+            if (! empty($conf->facture->enabled))
             {
                 print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
                 print $object->ref_facturation?$object->ref_facturation:$langs->trans("NoContactForAnyInvoice");
@@ -744,7 +744,7 @@ else
             //array('label' => $form->textwithpicto($langs->trans("Type"),$langs->trans("InternalExternalDesc")), 'type' => 'select', 'name' => 'intern', 'default' => 1, 'values' => array(0=>$langs->trans('Internal'),1=>$langs->trans('External')))
             );
             $text=$langs->trans("ConfirmCreateContact").'<br>';
-            if ($conf->societe->enabled)
+            if (! empty($conf->societe->enabled))
             {
                 if ($object->socid > 0) $text.=$langs->trans("UserWillBeExternalUser");
                 else $text.=$langs->trans("UserWillBeInternalUser");
@@ -823,7 +823,7 @@ else
 
         // Email
         print '<tr><td>'.$langs->trans("EMail").'</td><td>'.dol_print_email($object->email,$object->id,$object->socid,'AC_EMAIL').'</td>';
-        if ($conf->mailing->enabled)
+        if (! empty($conf->mailing->enabled))
         {
             $langs->load("mails");
             print '<td nowrap>'.$langs->trans("NbOfEMailingsReceived").'</td>';
@@ -857,28 +857,28 @@ else
 
         $object->load_ref_elements();
 
-        if ($conf->commande->enabled)
+        if (! empty($conf->commande->enabled))
         {
             print '<tr><td>'.$langs->trans("ContactForOrders").'</td><td colspan="3">';
             print $object->ref_commande?$object->ref_commande:$langs->trans("NoContactForAnyOrder");
             print '</td></tr>';
         }
 
-        if ($conf->propal->enabled)
+        if (! empty($conf->propal->enabled))
         {
             print '<tr><td>'.$langs->trans("ContactForProposals").'</td><td colspan="3">';
             print $object->ref_propal?$object->ref_propal:$langs->trans("NoContactForAnyProposal");
             print '</td></tr>';
         }
 
-        if ($conf->contrat->enabled)
+        if (! empty($conf->contrat->enabled))
         {
             print '<tr><td>'.$langs->trans("ContactForContracts").'</td><td colspan="3">';
             print $object->ref_contrat?$object->ref_contrat:$langs->trans("NoContactForAnyContract");
             print '</td></tr>';
         }
 
-        if ($conf->facture->enabled)
+        if (! empty($conf->facture->enabled))
         {
             print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
             print $object->ref_facturation?$object->ref_facturation:$langs->trans("NoContactForAnyInvoice");

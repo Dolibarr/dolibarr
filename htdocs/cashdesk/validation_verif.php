@@ -161,7 +161,7 @@ switch ($action)
 			$product->fetch($tab_liste[$i]['fk_article']);
 			$ret=array('label'=>$product->label,'tva_tx'=>$product->tva_tx,'price'=>$product->price);
 
-	        if ($conf->global->PRODUIT_MULTIPRICES)
+	        if (! empty($conf->global->PRODUIT_MULTIPRICES))
 	        {
 	            if (isset($product->multiprices[$societe->price_level]))
 	            {

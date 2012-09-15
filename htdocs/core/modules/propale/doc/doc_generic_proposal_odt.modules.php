@@ -314,7 +314,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
                 if (! empty($usecontact))
                 {
                     // On peut utiliser le nom de la societe du contact
-                    if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socobject = $object->contact;
+                    if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
                     else $socobject = $object->client;
                 }
                 else

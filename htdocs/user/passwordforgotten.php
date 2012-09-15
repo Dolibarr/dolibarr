@@ -37,7 +37,7 @@ $langs->load("ldap");
 $langs->load("other");
 
 // Security check
-if ($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)
+if (! empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
 {
     header("Location: ".DOL_URL_ROOT.'/');
     exit;
@@ -194,7 +194,7 @@ else $focus_element = 'password';
 // Send password button enabled ?
 $disabled='disabled';
 if (preg_match('/dolibarr/i',$mode)) $disabled='';
-if ($conf->global->MAIN_SECURITY_ENABLE_SENDPASSWORD) $disabled='';	 // To force button enabled
+if (! empty($conf->global->MAIN_SECURITY_ENABLE_SENDPASSWORD)) $disabled='';	 // To force button enabled
 
 // Show logo (search in order: small company logo, large company logo, theme logo, common logo)
 $width=0;

@@ -1185,7 +1185,7 @@ class BonPrelevement extends CommonObject
         if ($mysoc->country_code=='ES')
         {
             // TODO replace by a hook (external modules)
-        	if ($conf->esaeb->enabled)
+        	if (! empty($conf->esaeb->enabled))
             {
                 //Head
                 $esaeb19 = new AEB19DocWritter;

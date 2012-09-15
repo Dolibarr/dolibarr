@@ -117,7 +117,7 @@ if ($modetax==1)	// Calculate on invoice for goods and services
     $description.='<br>';
     $description.=$langs->trans("RulesVATDueProducts");
     //if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
-    //if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
+    //if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.='<br>'.$langs->trans("DepositsAreNotIncluded");
 	else  $description.='<br>'.$langs->trans("DepositsAreIncluded");
 	$description.=$fsearch;
@@ -147,7 +147,7 @@ if ($modetax==0) 	// Invoice for goods, payment for services
     if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.=' '.$langs->trans("DepositsAreNotIncluded");
 	else  $description.=' '.$langs->trans("DepositsAreIncluded");
     //if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
-    //if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
+    //if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     $description.=$fsearch;
     $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
     $builddate=time();

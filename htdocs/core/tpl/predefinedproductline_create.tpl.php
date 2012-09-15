@@ -32,7 +32,7 @@
 	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="4"' : ' colspan="3"'); ?>>
 	<?php
 	echo $langs->trans("AddNewLine").' - ';
-	if ($conf->service->enabled)
+	if (! empty($conf->service->enabled))
 	echo $langs->trans('RecordedProductsAndServices');
 	else
 	echo $langs->trans('RecordedProducts');
@@ -46,9 +46,9 @@ if (! empty($conf->margin->enabled)) {
 ?>
 	<td align="right"><?php echo $langs->trans('BuyingPrice'); ?></td>
 <?php
-  if($conf->global->DISPLAY_MARGIN_RATES)
+  if (! empty($conf->global->DISPLAY_MARGIN_RATES))
     $colspan++;
-  if($conf->global->DISPLAY_MARK_RATES)
+  if (! empty($conf->global->DISPLAY_MARK_RATES))
     $colspan++;
 }
 ?>
@@ -100,9 +100,9 @@ if (! empty($conf->margin->enabled)) {
   <input type="text" size="5" id="buying_price" name="buying_price" value="<?php echo (isset($_POST["buying_price"])?$_POST["buying_price"]:''); ?>">
   </td>
 <?php
-  if($conf->global->DISPLAY_MARGIN_RATES)
+  if (! empty($conf->global->DISPLAY_MARGIN_RATES))
     $colspan++;
-  if($conf->global->DISPLAY_MARK_RATES)
+  if (! empty($conf->global->DISPLAY_MARK_RATES))
     $colspan++;
 }
 ?>
@@ -116,9 +116,9 @@ else
 	$colspan = 9;
 if (! empty($conf->margin->enabled)) {
 	$colspan++; // For the buying price
-	if($conf->global->DISPLAY_MARGIN_RATES)
+	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 		$colspan++;
-	if($conf->global->DISPLAY_MARK_RATES)
+	if (! empty($conf->global->DISPLAY_MARK_RATES))
 		$colspan++;
 }
 ?>

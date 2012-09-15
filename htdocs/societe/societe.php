@@ -302,7 +302,7 @@ if ($resql)
     // Filter on categories
     /* Not possible in this page because list is for ALL third parties type
 	$moreforfilter='';
-    if ($conf->categorie->enabled)
+    if (! empty($conf->categorie->enabled))
     {
         $moreforfilter.=$langs->trans('Categories'). ': ';
         $moreforfilter.=$htmlother->select_categories(2,$search_categ,'search_categ');
@@ -401,7 +401,7 @@ if ($resql)
 		    $companystatic->name=$langs->trans("Prospect");
             $s.=$companystatic->getNomUrl(0,'prospect');
 		}
-		if ($conf->fournisseur->enabled && $obj->fournisseur)
+		if (! empty($conf->fournisseur->enabled) && $obj->fournisseur)
 		{
 			if ($s) $s.=" / ";
             $companystatic->name=$langs->trans("Supplier");

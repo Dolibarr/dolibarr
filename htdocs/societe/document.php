@@ -113,7 +113,7 @@ if ($object->id)
 	/*
 	 * Affichage onglets
 	 */
-	if ($conf->notification->enabled) $langs->load("mails");
+	if (! empty($conf->notification->enabled)) $langs->load("mails");
 	$head = societe_prepare_head($object);
 
 	$form=new Form($db);

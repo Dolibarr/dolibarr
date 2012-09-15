@@ -628,7 +628,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'>';
 print "<td>".$langs->trans("SuggestPaymentByRIBOnAccount")."</td>";
 print "<td>";
-if ($conf->banque->enabled)
+if (! empty($conf->banque->enabled))
 {
     $sql = "SELECT rowid, label";
     $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";

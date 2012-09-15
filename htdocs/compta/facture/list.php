@@ -341,7 +341,7 @@ if ($resql)
             $filename=dol_sanitizeFileName($objp->facnumber);
             $filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
             $urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->facid;
-            $formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','',1,'',1);
+            print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
             print '</td>';
             print '</tr>';
             print '</table>';

@@ -123,7 +123,7 @@ dol_htmloutput_mesg($mesg);
  * Spip
  */
 $var=!$var;
-if ($conf->global->ADHERENT_USE_SPIP)
+if (! empty($conf->global->ADHERENT_USE_SPIP))
 {
     //$lien=img_picto($langs->trans("Active"),'tick').' ';
     $lien='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_SPIP">';

@@ -627,7 +627,7 @@ else
 
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
 
-	if ($conf->fckeditor->enabled)
+	if (! empty($conf->fckeditor->enabled))
 	{
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testhtml&amp;mode=init">'.$langs->trans("DoTestSendHTML").'</a>';
 	}

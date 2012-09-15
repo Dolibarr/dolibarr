@@ -246,7 +246,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
         }
         else
         {
-            if ($conf->banque->enabled && $_POST["paymentsave"] != 'none')
+            if (! empty($conf->banque->enabled) && $_POST["paymentsave"] != 'none')
             {
                 if ($_POST["cotisation"])
                 {
@@ -479,7 +479,7 @@ if ($rowid)
 
     $rowspan=9;
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan+=1;
-    if ($conf->societe->enabled) $rowspan++;
+    if (! empty($conf->societe->enabled)) $rowspan++;
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -545,7 +545,7 @@ if ($rowid)
     print '</td></tr>';
 
     // Third party Dolibarr
-    if ($conf->societe->enabled)
+    if (! empty($conf->societe->enabled))
     {
         print '<tr><td>';
         print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -675,7 +675,7 @@ if ($rowid)
             print '<td align="center">'.$langs->trans("DateSubscription").'</td>';
             print '<td align="center">'.$langs->trans("DateEnd").'</td>';
             print '<td align="right">'.$langs->trans("Amount").'</td>';
-            if ($conf->banque->enabled)
+            if (! empty($conf->banque->enabled))
             {
                 print '<td align="right">'.$langs->trans("Account").'</td>';
             }
@@ -693,7 +693,7 @@ if ($rowid)
                 print '<td align="center">'.dol_print_date($db->jdate($objp->dateadh),'day')."</td>\n";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
                 print '<td align="right">'.price($objp->cotisation).'</td>';
-                if ($conf->banque->enabled)
+                if (! empty($conf->banque->enabled))
                 {
                     print '<td align="right">';
                     if ($objp->bid)
@@ -720,7 +720,7 @@ if ($rowid)
 
 
         // Link for paypal payment
-        if ($conf->paypal->enabled)
+        if (! empty($conf->paypal->enabled))
         {
             include_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
             print showPaypalPaymentUrl('membersubscription',$object->ref);
@@ -740,8 +740,8 @@ if ($rowid)
         $bankdirect=0;        // Option to write to bank is on by default
         $bankviainvoice=0;    // Option to write via invoice is on by default
         $invoiceonly=0;
-        if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE && (empty($_POST['paymentsave']) || $_POST["paymentsave"] == 'bankdirect')) $bankdirect=1;
-        if ($conf->banque->enabled && $conf->societe->enabled && $conf->facture->enabled && $object->fk_soc) $bankviainvoice=1;
+        if (! empty($conf->banque->enabled) && $conf->global->ADHERENT_BANK_USE && (empty($_POST['paymentsave']) || $_POST["paymentsave"] == 'bankdirect')) $bankdirect=1;
+        if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled) && $object->fk_soc) $bankviainvoice=1;
 
         print "\n\n<!-- Form add subscription -->\n";
 
@@ -873,7 +873,7 @@ if ($rowid)
             print dol_print_date(($datefrom?$datefrom:time()),"%Y").'" ></td></tr>';
 
             // Complementary action
-            if ($conf->banque->enabled || $conf->facture->enabled)
+            if (! empty($conf->banque->enabled) || ! empty($conf->facture->enabled))
             {
                 $company=new Societe($db);
                 if ($object->fk_soc)
@@ -889,12 +889,12 @@ if ($rowid)
                 print '</td>';
                 print '<td>';
                 print '<input type="radio" class="moreaction" id="none" name="paymentsave" value="none"'.(!$bankdirect&&!$bankviainvoice?' checked="checked"':'').'> '.$langs->trans("None").'<br>';
-                if ($conf->banque->enabled)
+                if (! empty($conf->banque->enabled))
                 {
                     print '<input type="radio" class="moreaction" id="bankdirect" name="paymentsave" value="bankdirect"'.($bankdirect?' checked="checked"':'');
                     print '> '.$langs->trans("MoreActionBankDirect").'<br>';
                 }
-                if ($conf->societe->enabled && $conf->facture->enabled)
+                if (! empty($conf->societe->enabled) && ! empty($conf->facture->enabled))
                 {
                     print '<input type="radio" class="moreaction" id="invoiceonly" name="paymentsave" value="invoiceonly"'.($invoiceonly?' checked="checked"':'');
                     if (empty($object->fk_soc) || empty($bankviainvoice)) print ' disabled="disabled"';
@@ -909,7 +909,7 @@ if ($rowid)
                     }
                     print '<br>';
                 }
-                if ($conf->banque->enabled && $conf->societe->enabled && $conf->facture->enabled)
+                if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled))
                 {
                     print '<input type="radio" class="moreaction" id="bankviainvoice" name="paymentsave" value="bankviainvoice"'.($bankviainvoice?' checked="checked"':'');
                     if (empty($object->fk_soc) || empty($bankviainvoice)) print ' disabled="disabled"';

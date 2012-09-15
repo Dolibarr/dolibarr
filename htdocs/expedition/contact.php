@@ -55,12 +55,12 @@ if ($id > 0 || ! empty($ref))
     }
 
     // Linked documents
-    if ($typeobject == 'commande' && $object->$typeobject->id && $conf->commande->enabled)
+    if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))
     {
         $objectsrc=new Commande($db);
         $objectsrc->fetch($object->$typeobject->id);
     }
-    if ($typeobject == 'propal' && $object->$typeobject->id && $conf->propal->enabled)
+    if ($typeobject == 'propal' && $object->$typeobject->id && ! empty($conf->propal->enabled))
     {
         $objectsrc=new Propal($db);
         $objectsrc->fetch($object->$typeobject->id);
@@ -178,7 +178,7 @@ if ($id > 0 || ! empty($ref))
 	print "</tr>";
 
 	// Linked documents
-	if ($typeobject == 'commande' && $object->$typeobject->id && $conf->commande->enabled)
+	if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))
 	{
 		print '<tr><td>';
 		$objectsrc=new Commande($db);
@@ -189,7 +189,7 @@ if ($id > 0 || ! empty($ref))
 		print "</td>\n";
 		print '</tr>';
 	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && $conf->propal->enabled)
+	if ($typeobject == 'propal' && $object->$typeobject->id && ! empty($conf->propal->enabled))
 	{
 		print '<tr><td>';
 		$objectsrc=new Propal($db);
@@ -213,7 +213,7 @@ if ($id > 0 || ! empty($ref))
 	print '</tr>';
 	
 	// Delivery address
-	if ($conf->global->SOCIETE_ADDRESSES_MANAGEMENT)
+	if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
 	{
 		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';

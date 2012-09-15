@@ -146,7 +146,7 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 				$login=$usertotest;
 
 				// ldap2dolibarr synchronisation
-				if ($login && $conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
+				if ($login && ! empty($conf->ldap->enabled) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
 				{
 					// On charge les attributs du user ldap
 					if ($ldapdebug) print "DEBUG: login ldap = ".$login."<br>\n";

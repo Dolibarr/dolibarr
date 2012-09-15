@@ -477,7 +477,7 @@ class Product extends CommonObject
 			$this->id = $id;
 
 			// Multilangs
-			if($conf->global->MAIN_MULTILANGS)
+			if (! empty($conf->global->MAIN_MULTILANGS))
 			{
 				if ( $this->setMultiLangs() < 0)
 				{

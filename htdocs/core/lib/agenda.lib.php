@@ -47,7 +47,7 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 	global $conf,$langs,$db;
 
 	// Filters
-	if ($canedit || $conf->projet->enabled)
+	if ($canedit || ! empty($conf->projet->enabled))
 	{
 		print '<form name="listactionsfilter" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -57,7 +57,7 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 		print '<input type="hidden" name="day" value="'.$day.'">';
 		print '<input type="hidden" name="showbirthday" value="'.$showbirthday.'">';
 		print '<table class="nobordernopadding" width="100%">';
-		if ($canedit || $conf->projet->enabled)
+		if ($canedit || ! empty($conf->projet->enabled))
 		{
 			print '<tr><td nowrap="nowrap">';
 
@@ -97,7 +97,7 @@ function print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirt
 				print '</td></tr>';
 			}
 
-			if ($conf->projet->enabled)
+			if (! empty($conf->projet->enabled))
 			{
 				print '<tr>';
 				print '<td nowrap="nowrap">';

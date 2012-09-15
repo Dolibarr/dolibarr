@@ -99,7 +99,7 @@ else
 
 
 // Draft orders
-if ($conf->fournisseur->enabled)
+if (! empty($conf->fournisseur->enabled))
 {
 	$langs->load("orders");
 
@@ -158,7 +158,7 @@ if ($conf->fournisseur->enabled)
 }
 
 // Draft invoices
-if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
+if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
 {
 	$sql = "SELECT ff.facnumber, ff.rowid, ff.total_ttc, ff.type";
 	$sql.= ", s.nom, s.rowid as socid";
