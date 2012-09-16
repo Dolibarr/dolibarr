@@ -694,6 +694,7 @@ DictionnaryAvailability=Delivery delay
 DictionnaryOrderMethods=Ordering methods
 DictionnarySource=Origin of proposals/orders
 DictionnaryAccountancyplan=Chart of accounts
+DictionnaryAccountancysystem=Models for chart of accounts
 SetupSaved=Setup saved
 BackToModuleList=Back to modules list
 BackToDictionnaryList=Back to dictionaries list
