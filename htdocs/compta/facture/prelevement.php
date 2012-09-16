@@ -457,11 +457,15 @@ if ($object->id > 0)
 			print '<a class="butActionRefused" href="#">'.$langs->trans("MakeWithdrawRequest").'</a>';
 		}
 	}
+	else
+	{
+		print '<a class="butActionRefused" href="#">'.$langs->trans("MakeWithdrawRequest").'</a>';
+	}
 
 	print "</div><br>\n";
 
 
-	print $langs->trans("DoStandingOrdersBeforePayments").'<br>';
+	print $langs->trans("DoStandingOrdersBeforePayments").'<br><br>';
 
 
 	/*
