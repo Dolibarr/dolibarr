@@ -226,8 +226,8 @@ class pdf_azur extends ModelePDFPropales
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 90;
-				$tab_top_middlepage = 10;
-				$tab_top_newpage = 10;
+				$tab_top_middlepage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
+				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
 				$tab_height = 130;
 				$tab_height_middlepage = 200;
 				$tab_height_newpage = 150;
@@ -262,18 +262,20 @@ class pdf_azur extends ModelePDFPropales
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
+					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 
+					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
 
 					// Description of product line
-					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 					$curX = $this->posxdesc-1;
 					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY,$hideref,$hidedesc,0,$hookmanager);
 
 					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
 					$pdf->setPage($pageposbefore);
+					$pdf->setTopMargin($this->marge_haute);
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description is moved completely on next page

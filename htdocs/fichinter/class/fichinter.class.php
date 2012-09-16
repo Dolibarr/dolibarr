@@ -27,8 +27,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 
 /**
- * 	\class      Fichinter
- *	\brief      Classe des gestion des fiches interventions
+ *	Classe des gestion des fiches interventions
  */
 class Fichinter extends CommonObject
 {
@@ -818,10 +817,11 @@ class Fichinter extends CommonObject
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
 		$this->socid = 1;
-		$this->date = $now;
+		$this->datec = $now;
+		$this->note_private='Private note';
 		$this->note_public='SPECIMEN';
 		$this->duree = 0;
-		$nbp = 5;
+		$nbp = 20;
 		$xnbp = 0;
 		while ($xnbp < $nbp)
 		{
@@ -884,8 +884,7 @@ class Fichinter extends CommonObject
 }
 
 /**
- *	\class      FichinterLigne
- *	\brief      Classe permettant la gestion des lignes d'intervention
+ *	Classe permettant la gestion des lignes d'intervention
  */
 class FichinterLigne
 {

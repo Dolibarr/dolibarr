@@ -163,7 +163,7 @@ class pdf_expedition_merou extends ModelePdfExpedition
 				$pdf->SetDrawColor(128,128,128);
 
 				$pdf->AliasNbPages();
-				
+
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Sending"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
@@ -182,14 +182,14 @@ class pdf_expedition_merou extends ModelePdfExpedition
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 52;
-				$tab_top_newpage = 10;
+				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter;
 				$tab_height_newpage = $this->page_hauteur - $tab_top_newpage - $heightforfooter;
 
 				$pdf->SetFillColor(240,240,240);
 				$pdf->SetTextColor(0,0,0);
 				$pdf->SetXY(10, $tab_top + 5);
-				
+
 				$iniY = $tab_top + 7;
 				$curY = $tab_top + 7;
 				$nexY = $tab_top + 7;
@@ -198,18 +198,19 @@ class pdf_expedition_merou extends ModelePdfExpedition
 				for ($i = 0; $i < $num; $i++)
 				{
 					$curY = $nexY;
-
 					$pdf->SetFont('','', $default_font_size - 3);
-						
+
+					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
-					
+
 					// Description de la ligne produit
 					$libelleproduitservice = pdf_writelinedesc($pdf,$object,$i,$outputlangs,90,3,50,$curY,0,1);
 
 					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
 					$pdf->setPage($pageposbefore);
+					$pdf->setTopMargin($this->marge_haute);
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description is moved completely on next page
@@ -226,7 +227,7 @@ class pdf_expedition_merou extends ModelePdfExpedition
 					$pdf->SetXY(30, $curY);
 					$pdf->SetFont('','B', $default_font_size - 3);
 					$pdf->MultiCell(24, 3, $outputlangs->convToOutputCharset($object->lines[$i]->ref), 0, 'L', 0);
-						
+
 					$pdf->SetXY(140, $curY);
 					$pdf->MultiCell(30, 3, $object->lines[$i]->qty_asked, 0, 'C', 0);
 
@@ -234,7 +235,7 @@ class pdf_expedition_merou extends ModelePdfExpedition
 					$pdf->MultiCell(30, 3, $object->lines[$i]->qty_shipped, 0, 'C', 0);
 
 					$nexY+=2;    // Passe espace entre les lignes
-					
+
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
 					{

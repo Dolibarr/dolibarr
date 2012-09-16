@@ -225,7 +225,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 90;
-				$tab_top_newpage = 10;
+				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
@@ -259,25 +259,27 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
+					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 
+					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
 
 					// Description of product line
-                    $pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 					$curX = $this->posxdesc-1;
                     pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc,1,$hookmanager);
 
 					$nexY = $pdf->GetY();
                     $pageposafter=$pdf->getPage();
 					$pdf->setPage($pageposbefore);
+					$pdf->setTopMargin($this->marge_haute);
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
 // We suppose that a too long description is moved completely on next page
 if ($pageposafter > $pageposbefore) {
 	$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 }
-					
+
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 
 					// VAT Rate
@@ -437,7 +439,7 @@ if ($pageposafter > $pageposbefore) {
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 		global $conf,$mysoc;
-		
+
         $default_font_size = pdf_getPDFFontSize($outputlangs);
 
         $tab2_top = $posy;
@@ -455,7 +457,7 @@ if ($pageposafter > $pageposbefore) {
 		$col1x = 120; $col2x = 170; $largcol2 = ($this->page_largeur - $this->marge_droite - $col2x);
 
 		$index=0;
-		
+
 		// Total HT
 		$pdf->SetFillColor(255,255,255);
 		$pdf->SetXY($col1x, $tab2_top + 0);
@@ -642,10 +644,10 @@ if ($pageposafter > $pageposbefore) {
 			$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top-4);
 			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 		}
-		
+
 		$pdf->SetDrawColor(128,128,128);
 		$pdf->SetFont('','', $default_font_size - 1);
-		
+
 		// Output Rect
 		$this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
 
@@ -656,7 +658,7 @@ if ($pageposafter > $pageposbefore) {
 			$pdf->SetXY($this->posxdesc-1, $tab_top+1);
 			$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
 		}
-		
+
         if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
         {
     		$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
@@ -673,14 +675,14 @@ if ($pageposafter > $pageposbefore) {
 			$pdf->SetXY($this->posxup-1, $tab_top+1);
 			$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("PriceUHT"),'','C');
 		}
-		
+
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxqty-1, $tab_top+1);
 			$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
 		}
-		
+
 		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
 		if (empty($hidetop))
 		{
@@ -690,7 +692,7 @@ if ($pageposafter > $pageposbefore) {
 				$pdf->MultiCell($this->postotalht-$this->posxdiscount+1,2, $outputlangs->transnoentities("ReductionShort"),'','C');
 			}
 		}
-		
+
 		if ($this->atleastonediscount)
 		{
 			$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
@@ -853,7 +855,7 @@ if ($pageposafter > $pageposbefore) {
 
 		$posy+=1;
 		$pdf->SetFont('','', $default_font_size - 1);
-		
+
 		$posy+=5;
 		$pdf->SetXY($posx,$posy);
 		if ($object->date)
