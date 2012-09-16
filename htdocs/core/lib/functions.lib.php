@@ -1880,8 +1880,8 @@ function img_help($usehelpcursor = 1, $usealttitle = 1)
 
 	if ($usealttitle)
 	{
-		if (is_string($usealttitle)) $alt = dol_escape_htmltag($usealttitle);
-		else $alt = $langs->trans('Info');
+		if (is_string($usealttitle)) $usealttitle = dol_escape_htmltag($usealttitle);
+		else $usealttitle = $langs->trans('Info');
 	}
 
 	return img_picto($usealttitle, 'info.png', ($usehelpcursor ? 'style="cursor: help"' : ''));
@@ -2264,7 +2264,7 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  *	@param	string	$name        Label of field
  *	@param	int		$thead		 For thead format
  *	@param	string	$file        Url used when we click on sort picto
- *	@param	string	$field       Field to use for new sorting
+ *	@param	string	$field       Field to use for new sorting. Empty if this field is not sortable.
  *	@param	string	$begin       ("" by defaut)
  *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
  *	@param  string	$moreattrib  Add more attributes on th ("" by defaut)
