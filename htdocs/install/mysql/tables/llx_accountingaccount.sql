@@ -1,5 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2004-2006 Laurent Destailleur <eldy@users.sourceforge.net>
+-- Copyright (C) 2011-2012 Alexandre Spangaro  <alexandre.spangaro@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,11 +21,11 @@
 create table llx_accountingaccount
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  fk_pcg_version  varchar(12)  NOT NULL,
+  fk_pcg_version  integer  NOT NULL,
   pcg_type        varchar(20)  NOT NULL,
   pcg_subtype     varchar(20)  NOT NULL,
   account_number  varchar(20)  NOT NULL,
   account_parent  varchar(20),
   label           varchar(128) NOT NULL,
-  active     	  tinyint DEFAULT 1  NOT NULL
+  active     	    tinyint DEFAULT 1  NOT NULL,
 )ENGINE=innodb;
