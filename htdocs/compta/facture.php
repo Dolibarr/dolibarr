@@ -1049,6 +1049,8 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
             		}
             	}
 
+            	$desc='';
+
             	// Define output language
             	if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
             	{
@@ -1069,8 +1071,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
             		$desc = $prod->description;
             	}
 
-            	$desc.= ($desc && ! empty($product_desc)) ? ((dol_textishtml($desc) || dol_textishtml($product_desc))?"<br />\n":"\n") : "";
-            	$desc.= $product_desc;
+            	$desc=dol_concatdesc($desc,$product_desc);
             }
 
             if (! empty($prod->customcode) || ! empty($prod->country_code))
