@@ -197,13 +197,10 @@ function societe_admin_prepare_head($object)
     $head[$h][2] = 'attributes';
     $h++;
 
-    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-    {
-	    $head[$h][0] = DOL_URL_ROOT.'/societe/admin/contact_extrafields.php';
-	    $head[$h][1] = $langs->trans("ExtraFieldsContacts");
-	    $head[$h][2] = 'attributes_contacts';
-	    $h++;
-    }
+    $head[$h][0] = DOL_URL_ROOT.'/societe/admin/contact_extrafields.php';
+    $head[$h][1] = $langs->trans("ExtraFieldsContacts");
+    $head[$h][2] = 'attributes_contacts';
+    $h++;
 
     complete_head_from_modules($conf,$langs,$object,$head,$h,'company_admin','remove');
 

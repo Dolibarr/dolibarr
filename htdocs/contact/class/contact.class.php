@@ -263,6 +263,22 @@ class Contact extends CommonObject
 		    unset($this->state_code);
 		    unset($this->state);
 
+		    // Actions on extra fields (by external module or standard code)
+		    include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+		    $hookmanager=new HookManager($this->db);
+		    $hookmanager->initHooks(array('contactdao'));
+		    $parameters=array('socid'=>$this->id);
+		    $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		    if (empty($reshook))
+		    {
+		    	$result=$this->insertExtraFields();
+		    	if ($result < 0)
+		    	{
+		    		$error++;
+		    	}
+		    }
+		    else if ($reshook < 0) $error++;
+
 			if (! $error && ! $notrigger)
 			{
 				// Appel des triggers
@@ -809,11 +825,11 @@ class Contact extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 		$sql.= " WHERE mc.email = '".$this->db->escape($this->email)."'";
 		$sql.= " AND mc.statut NOT IN (-1,0)";      // -1 erreur, 0 non envoye, 1 envoye avec succes
-		
+
 		dol_syslog(get_class($this)."::getNbOfEMailings sql=".$sql, LOG_DEBUG);
-		
+
 		$resql=$this->db->query($sql);
-		
+
 		if ($resql)
 		{
 			$obj = $this->db->fetch_object($resql);

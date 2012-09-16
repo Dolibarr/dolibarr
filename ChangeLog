@@ -29,6 +29,7 @@ For users:
 - New: Add link to third party into sells and purchase journal.
 - New: Suggest a method to generate a backup file for user with no access
   to mysqldump binary.
+- New: Can use extrafields on contacts/addresses.
 - New: Extra fields supports more types (now int, string, double, date, datetime).
 - New: Can correct stock of a warehouse from warehouse card.
 - New: [ task #185 ]: Can input amount when correcting stock to recalculate PMP.
