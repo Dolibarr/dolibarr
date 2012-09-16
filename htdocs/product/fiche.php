@@ -200,7 +200,7 @@ if (empty($reshook))
             {
                 for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
                 {
-                    if($_POST["price_".$i])
+                    if (isset($_POST["price_".$i]))
                     {
                         $object->multiprices["$i"] = price2num($_POST["price_".$i],'MU');
                         $object->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
@@ -710,7 +710,8 @@ else
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="add">';
         print '<input type="hidden" name="type" value="'.$type.'">'."\n";
-		if (! empty($modCodeProduct->code_auto)) print '<input type="hidden" name="code_auto" value="1">';
+		if (! empty($modCodeProduct->code_auto))
+			print '<input type="hidden" name="code_auto" value="1">';
 
         if ($type==1) $title=$langs->trans("NewService");
         else $title=$langs->trans("NewProduct");
@@ -720,7 +721,9 @@ else
 
         print '<table class="border" width="100%">';
         print '<tr>';
-		if (! empty($modCodeProduct->code_auto)) $tmpcode=$modCodeProduct->getNextValue($object,$type);
+        $tmpcode='';
+		if (! empty($modCodeProduct->code_auto))
+			$tmpcode=$modCodeProduct->getNextValue($object,$type);
         print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="40" maxlength="32" value="'.$tmpcode.'">';
         if ($_error)
         {
@@ -1340,7 +1343,7 @@ if ($action == '' || $action == 'view')
     if (($object->type == 0 && $user->rights->produit->supprimer)
     || ($object->type == 1 && $user->rights->service->supprimer))
     {
-        if (! $object_is_used && isset($object->no_button_delete) && $object->no_button_delete <> 1)
+        if (empty($object_is_used) && (! isset($object->no_button_delete) || $object->no_button_delete <> 1))
         {
             if (! empty($conf->use_javascript_ajax))
             {
