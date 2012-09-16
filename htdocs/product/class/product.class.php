@@ -255,7 +255,7 @@ class Product extends CommonObject
 		    return -2;
 		}
 
-		dol_syslog(get_class($this)."::create ref=".$this->ref." price=".$this->price." price_ttc=".$this->price_ttc." tva_tx=".$this->tva_tx." price_base_type=".$this->price_base_type." Category : ".$this->catid, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create ref=".$this->ref." price=".$this->price." price_ttc=".$this->price_ttc." tva_tx=".$this->tva_tx." price_base_type=".$this->price_base_type, LOG_DEBUG);
 
         $now=dol_now();
 
@@ -294,10 +294,10 @@ class Product extends CommonObject
 				$sql.= $this->db->idate($now);
 				$sql.= ", ".$conf->entity;
 				$sql.= ", '".$this->db->escape($this->ref)."'";
-				$sql.= ", ".($this->ref_ext?"'".$this->db->escape($this->ref_ext)."'":"null");
+				$sql.= ", ".(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext)."'":"null");
 				$sql.= ", ".price2num($price_min_ht);
 				$sql.= ", ".price2num($price_min_ttc);
-				$sql.= ", ".($this->libelle?"'".$this->db->escape($this->libelle)."'":"null");
+				$sql.= ", ".(! empty($this->libelle)?"'".$this->db->escape($this->libelle)."'":"null");
 				$sql.= ", ".$user->id;
 				$sql.= ", ".$this->type;
 				$sql.= ", ".price2num($price_ht);
@@ -328,12 +328,15 @@ class Product extends CommonObject
 						{
 							if ($this->update($id, $user, true) > 0)
 							{
+								// FIXME: not use here
+								/*
 								if ($this->catid > 0)
 								{
 									require_once DOL_DOCUMENT_ROOT .'/categories/class/categorie.class.php';
 									$cat = new Categorie($this->db, $this->catid);
 									$cat->add_type($this,"product");
 								}
+								*/
 							}
 							else
 							{
@@ -1027,12 +1030,12 @@ class Product extends CommonObject
 				$this->localtax2_tx = $localtax2;
 
 				$this->_log_price($user,$level);
-				
+
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('PRODUCT_PRICE_MODIFY',$this,$user,$langs,$conf);
-				if ($result < 0) 
+				if ($result < 0)
 				{
 					$error++; $this->errors=$interface->errors;
 				}
