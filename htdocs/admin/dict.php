@@ -722,7 +722,7 @@ if ($id)
                 if (in_array('region_id',$fieldlist)) { print '<td>&nbsp;</td>'; continue; }		// For region page, we do not show the country input
                 $valuetoshow=$langs->trans("Country");
             }
-            if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=MAIN_LABEL_MENTION_NPR; }
+            if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=MAIN_LABEL_MENTION_NPR; $align="center"; }
             if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
             if ($fieldlist[$field]=='fdm')             { $valuetoshow=$langs->trans("AtEndOfMonth"); }
             if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
@@ -834,7 +834,7 @@ if ($id)
                 if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Label")."*"; }
                 if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
                 if ($fieldlist[$field]=='pays')            { $valuetoshow=$langs->trans("Country"); }
-                if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=MAIN_LABEL_MENTION_NPR; }
+                if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=MAIN_LABEL_MENTION_NPR; $align="center"; }
                 if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
                 if ($fieldlist[$field]=='fdm')             { $valuetoshow=$langs->trans("AtEndOfMonth"); }
                 if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
@@ -861,11 +861,11 @@ if ($id)
             // Lines with values
             while ($i < $num)
             {
-                $obj = $db->fetch_object($resql);
-                $var=!$var;
-                //print_r($obj);
-                print "<tr ".$bc[$var].">";
+                $var = ! $var;
 
+                $obj = $db->fetch_object($resql);
+                //print_r($obj);
+                print '<tr '.$bc[$var].' id="rowid-'.$obj->rowid.'">';
                 if ($action == 'edit' && ($rowid == (! empty($obj->rowid)?$obj->rowid:$obj->code)))
                 {
                     print '<form action="dict.php" method="post">';
@@ -885,9 +885,9 @@ if ($id)
                     print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
                 }
                 else
-                {
-                    $tmpaction = 'view';
-                    $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+              {
+	              	$tmpaction = 'view';
+                    $parameters=array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
                     $reshook=$hookmanager->executeHooks('viewDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
 
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
@@ -923,6 +923,7 @@ if ($id)
                             }
                             else if ($fieldlist[$field]=='recuperableonly' || $fieldlist[$field]=='fdm' || $fieldlist[$field] == 'deductible') {
                                 $valuetoshow=yn($valuetoshow);
+                                $align="center";
                             }
                             else if ($fieldlist[$field]=='price' || preg_match('/^amount/i',$fieldlist[$field])) {
                                 $valuetoshow=price($valuetoshow);
@@ -1038,7 +1039,16 @@ if ($id)
 							    $valuetoshow = '';
 							  $align="right";
 							}
+							else if (in_array($fieldlist[$field],array('taux','localtax1','localtax2')))
+							{
+								$align="right";
+							}
+							else if (in_array($fieldlist[$field],array('recuperableonly')))
+							{
+								$align="center";
+							}
 
+							// Show value for field
 							if ($showfield) print '<td align="'.$align.'">'.$valuetoshow.'</td>';
                         }
                     }
@@ -1217,11 +1227,10 @@ function fieldList($fieldlist,$obj='',$tabname='')
         }
         elseif (in_array($fieldlist[$field],array('nbjour','decalage','taux','localtax1','localtax2'))) {
             $align="left";
-            // Les taxes locales sont cadrées à droite
-            if ($fieldlist[$field] == 'localtax1' || $fieldlist[$field] == 'localtax2')
-              $align="right";
+            if (in_array($fieldlist[$field],array('taux','localtax1','localtax2'))) $align="right";	// Fields aligned on right
             print '<td align="'.$align.'">';
-            print '<input type="text" class="flat" value="'.(! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'').'" size="3" name="'.$fieldlist[$field].'"></td>';
+            print '<input type="text" class="flat" value="'.(! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'').'" size="3" name="'.$fieldlist[$field].'">';
+            print '</td>';
         }
         elseif ($fieldlist[$field] == 'libelle_facture') {
             print '<td><textarea cols="30" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'').'</textarea></td>';
