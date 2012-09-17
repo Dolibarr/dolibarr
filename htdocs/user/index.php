@@ -138,8 +138,9 @@ if ($result)
         	}
         	else
         	{
-        		$mc->getInfo($obj->entity);
-        		print $mc->label;
+        		// FIXME Should add here a hook. Disabled for the moment because $mc is not defined.
+        		//$mc->getInfo($obj->entity);
+        		//print $mc->label;
         	}
         }
         else if ($obj->ldap_sid)
@@ -172,7 +173,7 @@ else
     dol_print_error($db);
 }
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>
