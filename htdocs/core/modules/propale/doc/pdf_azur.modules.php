@@ -147,7 +147,7 @@ class pdf_azur extends ModelePDFPropales
 		{
 			$object->fetch_thirdparty();
 
-			$deja_regle = "";
+			$deja_regle = ""; // FIXME not use in proposal?
 
 			// Definition of $dir and $file
 			if ($object->specimen)
@@ -395,7 +395,7 @@ class pdf_azur extends ModelePDFPropales
 				// Affiche zone versements
 				if ($deja_regle)
 				{
-					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
+					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs); // FIXME not use in proposal?
 				}
 
 				// Pied de page
@@ -793,8 +793,8 @@ class pdf_azur extends ModelePDFPropales
 
 		$pdf->SetTextColor(0,0,0);
 
-		$resteapayer = $object->total_ttc - $deja_regle;
-		if ($object->paye) $resteapayer=0;
+		$resteapayer = $object->total_ttc - $deja_regle; // FIXME not use in proposal?
+		if (! empty($object->paye)) $resteapayer=0; // FIXME not use in proposal?
 
 		if ($deja_regle > 0)
 		{
@@ -806,6 +806,7 @@ class pdf_azur extends ModelePDFPropales
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle), 0, 'R', 0);
 
+			// FIXME not use in proposal?
 			if ($object->close_code == 'discount_vat')
 			{
 				$index++;
