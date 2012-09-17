@@ -479,7 +479,7 @@ class FormFile
 
                 // Show file date
                 $date=(! empty($file['date'])?$file['date']:dol_filemtime($filedir."/".$file["name"]));
-                $out.= '<td align="right" nowrap="nowrap">'.dol_print_date($date, 'dayhour').'</td>';
+                $out.= '<td align="right" nowrap="nowrap">'.dol_print_date($date, 'dayhour','tzuser').'</td>';
 
                 if ($delallowed)
                 {
@@ -662,7 +662,7 @@ class FormFile
 					print '</a>';
 					print "</td>\n";
 					print '<td align="right">'.dol_print_size($file['size'],1,1).'</td>';
-					print '<td align="center">'.dol_print_date($file['date'],"dayhour").'</td>';
+					print '<td align="center">'.dol_print_date($file['date'],"dayhour","tzuser").'</td>';
 					// Preview
 					if (empty($useinecm))
 					{
