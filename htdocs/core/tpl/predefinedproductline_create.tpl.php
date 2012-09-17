@@ -115,6 +115,7 @@ if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 else
 	$colspan = 9;
 if (! empty($conf->margin->enabled)) {
+	$colspan++; // For the buying price
 	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 		$colspan++;
 	if (! empty($conf->global->DISPLAY_MARK_RATES))

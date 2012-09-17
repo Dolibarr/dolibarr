@@ -197,13 +197,10 @@ function societe_admin_prepare_head($object)
     $head[$h][2] = 'attributes';
     $h++;
 
-    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-    {
-	    $head[$h][0] = DOL_URL_ROOT.'/societe/admin/contact_extrafields.php';
-	    $head[$h][1] = $langs->trans("ExtraFieldsContacts");
-	    $head[$h][2] = 'attributes_contacts';
-	    $h++;
-    }
+    $head[$h][0] = DOL_URL_ROOT.'/societe/admin/contact_extrafields.php';
+    $head[$h][1] = $langs->trans("ExtraFieldsContacts");
+    $head[$h][2] = 'attributes_contacts';
+    $h++;
 
     complete_head_from_modules($conf,$langs,$object,$head,$h,'company_admin','remove');
 
@@ -408,12 +405,12 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
 
     $i = -1 ;
 
-    if ($conf->projet->enabled && $user->rights->projet->lire)
+    if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
     {
         $langs->load("projects");
 
         $buttoncreate='';
-        if ($conf->projet->enabled && $user->rights->projet->creer)
+        if (! empty($conf->projet->enabled) && $user->rights->projet->creer)
         {
             //$buttoncreate='<a class="butAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$object->id.'&action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
 			$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").' '.img_picto($langs->trans("AddProject"),'filenew').'</a>'."\n";
@@ -581,7 +578,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             print dol_print_email($obj->email,$obj->rowid,$object->id,'AC_EMAIL');
             print '</td>';
 
-            if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+            if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
             {
                 print '<td align="center"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
                 print img_object($langs->trans("Rendez-Vous"),"action");
@@ -1001,7 +998,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
     }
 
 
-    if ($conf->agenda->enabled || ($conf->mailing->enabled && ! empty($objcon->email)))
+    if (! empty($conf->agenda->enabled) || (! empty($conf->mailing->enabled) && ! empty($objcon->email)))
     {
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
         require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';

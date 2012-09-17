@@ -67,7 +67,7 @@ if ($action == 'add')
 	$delivery->note             = $_POST["note"];
 	$delivery->commande_id      = $_POST["commande_id"];
 
-	if (!$conf->expedition_bon->enabled && $conf->stock->enabled)
+	if (!$conf->expedition_bon->enabled && ! empty($conf->stock->enabled))
 	{
 		$expedition->entrepot_id     = $_POST["entrepot_id"];
 	}
@@ -244,7 +244,7 @@ if ($action == 'create')
 		$author = new User($db);
 		$author->fetch($commande->user_author_id);
 
-		if (!$conf->expedition_bon->enabled && $conf->stock->enabled)
+		if (!$conf->expedition_bon->enabled && ! empty($conf->stock->enabled))
 		{
 			$entrepot = new Entrepot($db);
 		}
@@ -256,7 +256,7 @@ if ($action == 'create')
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="commande_id" value="'.$commande->id.'">';
-		if (!$conf->expedition_bon->enabled && $conf->stock->enabled)
+		if (!$conf->expedition_bon->enabled && ! empty($conf->stock->enabled))
 		{
 			print '<input type="hidden" name="entrepot_id" value="'.$_GET["entrepot_id"].'">';
 		}
@@ -276,7 +276,7 @@ if ($action == 'create')
 
 		print '<tr>';
 
-		if (!$conf->expedition_bon->enabled && $conf->stock->enabled)
+		if (!$conf->expedition_bon->enabled && ! empty($conf->stock->enabled))
 		{
 			print '<td>'.$langs->trans("Warehouse").'</td>';
 			print '<td>';
@@ -502,7 +502,7 @@ else
 			print "</tr>";
 
 			// Document origine
-			if ($typeobject == 'commande' && $expedition->origin_id && $conf->commande->enabled)
+			if ($typeobject == 'commande' && $expedition->origin_id && ! empty($conf->commande->enabled))
 			{
 				print '<tr><td>'.$langs->trans("RefOrder").'</td>';
 				$order=new Commande($db);
@@ -512,7 +512,7 @@ else
 				print "</td>\n";
 				print '</tr>';
 			}
-			if ($typeobject == 'propal' && $expedition->origin_id && $conf->propal->enabled)
+			if ($typeobject == 'propal' && $expedition->origin_id && ! empty($conf->propal->enabled))
 			{
 				$propal=new Propal($db);
 				$propal->fetch($expedition->origin_id);
@@ -544,7 +544,7 @@ else
 			print '<td colspan="3">'.$delivery->getLibStatut(4)."</td>\n";
 			print '</tr>';
 
-			if (!$conf->expedition_bon->enabled && $conf->stock->enabled)
+			if (!$conf->expedition_bon->enabled && ! empty($conf->stock->enabled))
 			{
 				// Entrepot
 				$entrepot = new Entrepot($db);

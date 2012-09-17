@@ -429,11 +429,11 @@ if ($id > 0 || ! empty($ref))
 		$sql.= ", s.rowid as socid, s.nom as thirdparty";
 	}
 	/*
-	if ($mode_search && $conf->adherent->enabled)
+	if ($mode_search && ! empty($conf->adherent->enabled))
 	{
 
 	}
-	if ($mode_search && $conf->tax->enabled)
+	if ($mode_search && ! empty($conf->tax->enabled))
 	{
 
 	}
@@ -445,12 +445,12 @@ if ($id > 0 || ! empty($ref))
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu1 ON bu1.fk_bank = b.rowid AND bu1.type='company'";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu1.url_id = s.rowid";
 	}
-	if ($mode_search && $conf->tax->enabled)
+	if ($mode_search && ! empty($conf->tax->enabled))
 	{
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu2 ON bu2.fk_bank = b.rowid AND bu2.type='payment_vat'";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."tva as t ON bu2.url_id = t.rowid";
 	}
-	if ($mode_search && $conf->adherent->enabled)
+	if ($mode_search && ! empty($conf->adherent->enabled))
 	{
 		// TODO Mettre jointure sur adherent pour recherche sur un adherent
 		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu3 ON bu3.fk_bank = b.rowid AND bu3.type='company'";

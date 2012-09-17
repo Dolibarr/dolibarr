@@ -147,7 +147,7 @@ class pdf_azur extends ModelePDFPropales
 		{
 			$object->fetch_thirdparty();
 
-			$deja_regle = "";
+			$deja_regle = ""; // FIXME not use in proposal?
 
 			// Definition of $dir and $file
 			if ($object->specimen)
@@ -226,8 +226,8 @@ class pdf_azur extends ModelePDFPropales
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 90;
-				$tab_top_middlepage = 10;
-				$tab_top_newpage = 10;
+				$tab_top_middlepage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
+				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
 				$tab_height = 130;
 				$tab_height_middlepage = 200;
 				$tab_height_newpage = 150;
@@ -262,18 +262,20 @@ class pdf_azur extends ModelePDFPropales
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
+					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 
+					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
 
 					// Description of product line
-					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 					$curX = $this->posxdesc-1;
 					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY,$hideref,$hidedesc,0,$hookmanager);
 
 					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
 					$pdf->setPage($pageposbefore);
+					$pdf->setTopMargin($this->marge_haute);
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description is moved completely on next page
@@ -353,6 +355,7 @@ class pdf_azur extends ModelePDFPropales
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs, $hookmanager);
 					}
 					if (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak)
 					{
@@ -369,6 +372,7 @@ class pdf_azur extends ModelePDFPropales
 						$pdf->AddPage();
 						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 						$pagenb++;
+						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs, $hookmanager);
 					}
 				}
 
@@ -393,7 +397,7 @@ class pdf_azur extends ModelePDFPropales
 				// Affiche zone versements
 				if ($deja_regle)
 				{
-					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
+					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs); // FIXME not use in proposal?
 				}
 
 				// Pied de page
@@ -791,8 +795,8 @@ class pdf_azur extends ModelePDFPropales
 
 		$pdf->SetTextColor(0,0,0);
 
-		$resteapayer = $object->total_ttc - $deja_regle;
-		if ($object->paye) $resteapayer=0;
+		$resteapayer = $object->total_ttc - $deja_regle; // FIXME not use in proposal?
+		if (! empty($object->paye)) $resteapayer=0; // FIXME not use in proposal?
 
 		if ($deja_regle > 0)
 		{
@@ -804,6 +808,7 @@ class pdf_azur extends ModelePDFPropales
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle), 0, 'R', 0);
 
+			// FIXME not use in proposal?
 			if ($object->close_code == 'discount_vat')
 			{
 				$index++;

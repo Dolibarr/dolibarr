@@ -1,7 +1,7 @@
 <?php
 
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,19 +21,21 @@
 /**
  * 		\file       htdocs/projet/class/project.class.php
  * 		\ingroup    projet
- * 		\brief      Fichier de la classe de gestion des projets
+ * 		\brief      File of class to manage projects
  */
 require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 
 /**
- * 		\class      Project
- * 		\brief      Class to manage projects
+ *	Class to manage projects
  */
 class Project extends CommonObject
 {
 
     public $element = 'project';    //!< Id that identify managed objects
     public $table_element = 'projet';  //!< Name of table without prefix where object is stored
+    public $table_element_line = 'projet_task';
+    public $fk_element = 'fk_projet';
+
     var $id;
     var $ref;
     var $description;
@@ -208,7 +210,7 @@ class Project extends CommonObject
                     }
                     // End call triggers
                 }
-                
+
                 if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref != $this->ref))
                 {
                 	// We remove directory
@@ -1205,7 +1207,7 @@ class Project extends CommonObject
 		    	}
 	    	}
 			//print "$this->date_start + $tasktoshiftdate->date_start - $old_project_dt_start";exit;
-			
+
 	    	//Calcultate new task start date with difference between old proj start date and origin task start date
 	    	if (!empty($tasktoshiftdate->date_start))
 	    	{

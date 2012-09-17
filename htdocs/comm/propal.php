@@ -714,6 +714,8 @@ else if ($action == "addline" && $user->rights->propal->creer)
 					}
 				}
 
+				$desc='';
+
 				// Define output language
 				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
 				{
@@ -734,8 +736,7 @@ else if ($action == "addline" && $user->rights->propal->creer)
 					$desc = $prod->description;
 				}
 
-				$desc.= ($desc && ! empty($product_desc)) ? ((dol_textishtml($desc) || dol_textishtml($product_desc))?"<br />\n":"\n") : "";
-				$desc.= $product_desc;
+            	$desc=dol_concatdesc($desc,$product_desc);
 			}
 
 			$type = $prod->type;
@@ -1640,7 +1641,7 @@ if ($object->statut == 0 && $user->rights->propal->creer)
 			$object->formAddFreeProduct(0,$mysoc,$soc,$hookmanager);
 
 			// Add predefined products/services
-			if ($conf->product->enabled || $conf->service->enabled)
+			if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 			{
 				$var=!$var;
 				$object->formAddPredefinedProduct(0,$mysoc,$soc,$hookmanager);
@@ -1738,7 +1739,7 @@ if ($action != 'presend')
         // Create an invoice and classify billed
 		if ($object->statut == 2 && $user->societe_id == 0)
 		{
-			if ($conf->facture->enabled && $user->rights->facture->creer)
+			if (! empty($conf->facture->enabled) && $user->rights->facture->creer)
 			{
 				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddBill").'</a>';
 			}

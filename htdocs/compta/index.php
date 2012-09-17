@@ -108,7 +108,7 @@ $max=3;
 /*
  * Search invoices
  */
-if ($conf->facture->enabled && $user->rights->facture->lire)
+if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
 	print '<form method="post" action="'.DOL_URL_ROOT.'/compta/facture/list.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -125,7 +125,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 /*
  * Search supplier invoices
  */
-if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire)
+if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
 {
 	print '<form method="post" action="'.DOL_URL_ROOT.'/fourn/facture/index.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -142,7 +142,7 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire)
 /*
  * Search donations
  */
-if ($conf->don->enabled && $user->rights->don->lire)
+if (! empty($conf->don->enabled) && $user->rights->don->lire)
 {
     print '<form method="post" action="'.DOL_URL_ROOT.'/compta/dons/liste.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -159,7 +159,7 @@ if ($conf->don->enabled && $user->rights->don->lire)
 /*
  * Search expenses
  */
-if ($conf->deplacement->enabled && $user->rights->deplacement->lire)
+if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 {
     print '<form method="post" action="'.DOL_URL_ROOT.'/compta/deplacement/list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -176,7 +176,7 @@ if ($conf->deplacement->enabled && $user->rights->deplacement->lire)
 /**
  * Draft customers invoices
  */
-if ($conf->facture->enabled && $user->rights->facture->lire)
+if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
 	$sql  = "SELECT f.facnumber, f.rowid, f.total_ttc, f.type,";
 	$sql.= " s.nom, s.rowid as socid";
@@ -250,7 +250,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 /**
  * Draft suppliers invoices
  */
-if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
+if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
 {
 	$sql  = "SELECT f.facnumber, f.rowid, f.total_ttc, f.type,";
 	$sql.= " s.nom, s.rowid as socid";
@@ -419,7 +419,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 
 // Last modified supplier invoices
-if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
+if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
 {
 	$langs->load("boxes");
 	$facstatic=new FactureFournisseur($db);
@@ -498,7 +498,7 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 
 
 // Last donations
-if ($conf->don->enabled && $user->rights->societe->lire)
+if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 {
 	include_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
 
@@ -633,7 +633,7 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 /**
  * Social contributions to pay
  */
-if ($conf->tax->enabled && $user->rights->tax->charges->lire)
+if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 {
 	if (!$socid)
 	{
@@ -918,7 +918,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 /*
  * Unpayed supplier invoices
  */
-if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
+if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
 {
 	$facstatic=new FactureFournisseur($db);
 

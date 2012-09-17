@@ -171,10 +171,10 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
 				$pdf->SetTextColor(0,0,0);
 
-				$tab_top = 100;
-				$tab_top_newpage = 50;
-				$tab_height = 140;
-				$tab_height_newpage = 190;
+				$tab_top = 90;
+				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
+				$tab_height = 130;
+				$tab_height_newpage = 150;
 
 				$iniY = $tab_top + 7;
 				$curY = $tab_top + 7;
@@ -183,25 +183,26 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				for ($i = 0 ; $i < $nblines ; $i++)
 				{
 					$curY = $nexY;
+					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 
+					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
-					
+
 					// Description of product line
-					$pdf->SetFont('','', $default_font_size - 1);
-					//$curX = $this->posxdesc-1;
 					pdf_writelinedesc($pdf,$object,$i,$outputlangs,100,3,30,$curY,1);
 
 					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
 					$pdf->setPage($pageposbefore);
+					$pdf->setTopMargin($this->marge_haute);
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
 // We suppose that a too long description is moved completely on next page
 if ($pageposafter > $pageposbefore) {
 	$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 }
-					
+
 					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
 
 					$pdf->SetXY(10, $curY);

@@ -111,7 +111,7 @@ if ($resql)
 /*
  * Liste des propal brouillons
  */
-if ($conf->propal->enabled && $user->rights->propale->lire)
+if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 {
 	$sql = "SELECT p.rowid, p.ref, p.price, s.nom as sname";
 	$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
@@ -170,7 +170,7 @@ if (! empty($conf->agenda->enabled)) show_array_actions_to_do(10);
  * Dernieres propales ouvertes
  *
  */
-if ($conf->propal->enabled && $user->rights->propale->lire)
+if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 {
 	$sql = "SELECT s.nom as name, s.rowid as socid, s.client, s.canvas,";
 	$sql.= " p.rowid as propalid, p.total as total_ttc, p.ref, p.datep as dp, c.label as statut, c.id as statutid";

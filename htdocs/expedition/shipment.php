@@ -511,7 +511,7 @@ if ($id > 0 || ! empty($ref))
 					$product->fetch($objp->fk_product);
 				}
 
-				if ($objp->fk_product > 0 && $type == 0 && $conf->stock->enabled)
+				if ($objp->fk_product > 0 && $type == 0 && ! empty($conf->stock->enabled))
 				{
 					print '<td align="center">';
 					print $product->stock_reel;
@@ -582,12 +582,12 @@ if ($id > 0 || ! empty($ref))
 		 * Boutons Actions
 		 */
 
-		if ($user->societe_id == 0)
+		if (empty($user->societe_id))
 		{
 			print '<div class="tabsAction">';
 
             // Bouton expedier sans gestion des stocks
-            if (! $conf->stock->enabled && ($commande->statut > 0 && $commande->statut < 3))
+            if (empty($conf->stock->enabled) && ($commande->statut > 0 && $commande->statut < 3))
 			{
 				if ($user->rights->expedition->creer)
 				{

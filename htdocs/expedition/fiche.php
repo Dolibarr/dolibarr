@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
-if ($conf->product->enabled || $conf->service->enabled)  require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))  require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 if (! empty($conf->propal->enabled))   require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 if (! empty($conf->stock->enabled))    require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -601,11 +601,11 @@ if ($action == 'create')
 
             // Ref
             print '<tr><td width="30%" class="fieldrequired">';
-            if ($origin == 'commande' && $conf->commande->enabled)
+            if ($origin == 'commande' && ! empty($conf->commande->enabled))
             {
                 print $langs->trans("RefOrder").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$object->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$object->ref;
             }
-            if ($origin == 'propal' && $conf->propal->enabled)
+            if ($origin == 'propal' && ! empty($conf->propal->enabled))
             {
                 print $langs->trans("RefProposal").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/comm/fiche.php?id='.$object->id.'">'.img_object($langs->trans("ShowProposal"),'propal').' '.$object->ref;
             }
@@ -991,7 +991,7 @@ else
             print "</tr>";
 
             // Linked documents
-            if ($typeobject == 'commande' && $object->$typeobject->id && $conf->commande->enabled)
+            if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))
             {
                 print '<tr><td>';
                 $objectsrc=new Commande($db);
@@ -1002,7 +1002,7 @@ else
                 print "</td>\n";
                 print '</tr>';
             }
-            if ($typeobject == 'propal' && $object->$typeobject->id && $conf->propal->enabled)
+            if ($typeobject == 'propal' && $object->$typeobject->id && ! empty($conf->propal->enabled))
             {
                 print '<tr><td>';
                 $objectsrc=new Propal($db);
@@ -1326,7 +1326,7 @@ else
             }
 
             // Create bill and Close shipment
-            if ($conf->facture->enabled && $object->statut > 0)
+            if (! empty($conf->facture->enabled) && $object->statut > 0)
             {
                 if ($user->rights->facture->creer)
                 {

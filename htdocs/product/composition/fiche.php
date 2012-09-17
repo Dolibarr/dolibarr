@@ -144,7 +144,7 @@ if ($action == 'search')
 			$sql.= " OR p.label LIKE '%".$key."%')";
 		}
 	}
-	if ($conf->categorie->enabled && $catMere != -1 and $catMere)
+	if (! empty($conf->categorie->enabled) && $catMere != -1 and $catMere)
 	{
 		$sql.= " AND cp.fk_categorie ='".$db->escape($catMere)."'";
 	}
@@ -185,7 +185,7 @@ if ($id || $ref)
 			print "<tr>";
 
 			$nblignes=6;
-			if ($product->isproduct() && $conf->stock->enabled) $nblignes++;
+			if ($product->isproduct() && ! empty($conf->stock->enabled)) $nblignes++;
 			if ($product->isservice()) $nblignes++;
 
 			// Reference
@@ -269,7 +269,7 @@ if ($id || $ref)
 		print "<tr>";
 
 		$nblignes=6;
-		if ($product->isproduct() && $conf->stock->enabled) $nblignes++;
+		if ($product->isproduct() && ! empty($conf->stock->enabled)) $nblignes++;
 		if ($product->isservice()) $nblignes++;
 
 			// Reference

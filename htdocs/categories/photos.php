@@ -129,7 +129,7 @@ if ($object->id)
 	print '</td></tr>';
 
 	// Visibility
-	/*		if ($type == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
+	/*		if ($type == 0 && ! empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER))
 	 {
 	if ($object->socid)
 	{

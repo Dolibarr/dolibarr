@@ -401,7 +401,7 @@ if ($resql)
 		    $companystatic->name=$langs->trans("Prospect");
             $s.=$companystatic->getNomUrl(0,'prospect');
 		}
-		if ($conf->fournisseur->enabled && $obj->fournisseur)
+		if (! empty($conf->fournisseur->enabled) && $obj->fournisseur)
 		{
 			if ($s) $s.=" / ";
             $companystatic->name=$langs->trans("Supplier");

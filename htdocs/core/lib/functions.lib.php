@@ -1149,7 +1149,7 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=
 			$newemail.=img_warning($langs->trans("ErrorBadEMail",$email));
 		}
 
-		if (($cid || $socid) && $conf->agenda->enabled && $user->rights->agenda->myactions->create)
+		if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
 		{
 			$type='AC_EMAIL'; $link='';
 			if (! empty($conf->global->AGENDA_ADDACTIONFOREMAIL)) $link='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;actioncode='.$type.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
@@ -1236,7 +1236,7 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 			$newphone.='>'.$newphonesav.'</a>';
 		}
 
-		//if (($cid || $socid) && $conf->agenda->enabled && $user->rights->agenda->myactions->create)
+		//if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
 		if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
 		{
 			$type='AC_TEL'; $link='';
@@ -1880,8 +1880,8 @@ function img_help($usehelpcursor = 1, $usealttitle = 1)
 
 	if ($usealttitle)
 	{
-		if (is_string($usealttitle)) $alt = dol_escape_htmltag($usealttitle);
-		else $alt = $langs->trans('Info');
+		if (is_string($usealttitle)) $usealttitle = dol_escape_htmltag($usealttitle);
+		else $usealttitle = $langs->trans('Info');
 	}
 
 	return img_picto($usealttitle, 'info.png', ($usehelpcursor ? 'style="cursor: help"' : ''));
@@ -2264,7 +2264,7 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  *	@param	string	$name        Label of field
  *	@param	int		$thead		 For thead format
  *	@param	string	$file        Url used when we click on sort picto
- *	@param	string	$field       Field to use for new sorting
+ *	@param	string	$field       Field to use for new sorting. Empty if this field is not sortable.
  *	@param	string	$begin       ("" by defaut)
  *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
  *	@param  string	$moreattrib  Add more attributes on th ("" by defaut)
@@ -3367,11 +3367,12 @@ function dol_microtime_float()
 }
 
 /**
- *		Return if a text is a html content
+ *	Return if a text is a html content
  *
- *		@param	string	$msg		Content to check
- *		@param	int		$option		0=Full detection, 1=Fast check
- *		@return	boolean				true/false
+ *	@param	string	$msg		Content to check
+ *	@param	int		$option		0=Full detection, 1=Fast check
+ *	@return	boolean				true/false
+ *	@see	dol_concatdesc
  */
 function dol_textishtml($msg,$option=0)
 {
@@ -3400,6 +3401,28 @@ function dol_textishtml($msg,$option=0)
 		elseif (preg_match('/&#[0-9]{2,3};/i',$msg))	return true;    // Html entities numbers (http://www.w3schools.com/tags/ref_entities.asp)
 		return false;
 	}
+}
+
+/**
+ *  Concat 2 descriptions (second one after first one)
+ *  text1 html + text2 html => text1 + '<br>' + text2
+ *  text1 html + text2 txt  => text1 + '<br>' + dol_nl2br(text2)
+ *  text1 txt  + text2 html => dol_nl2br(text1) + '<br>' + text2
+ *  text1 txt  + text2 txt  => text1 + '\n' + text2
+ *
+ *  @param	string	$text1		Text 1
+ *  @param	string	$text2		Text 2
+ *  @param  string	$forxml     false=Use <br>, true=Use <br />
+ *  @return	string				Text 1 + new line + Text2
+ *  @see    dol_textishtml
+ */
+function dol_concatdesc($text1,$text2,$forxml=false)
+{
+	$ret='';
+	$ret.= (! dol_textishtml($text1) && dol_textishtml($text2))?dol_nl2br($text1, 0, $forxml):$text1;
+	$ret.= (! empty($text1) && ! empty($text2)) ? ((dol_textishtml($text1) || dol_textishtml($text2))?($forxml?"<br \>\n":"<br>\n") : "\n") : "";
+	$ret.= (dol_textishtml($text1) && ! dol_textishtml($text2))?dol_nl2br($text2, 0, $forxml):$text2;
+	return $ret;
 }
 
 /**

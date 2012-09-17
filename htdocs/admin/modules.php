@@ -152,8 +152,8 @@ foreach ($modulesdir as $dir)
 
     					// We discard modules according to features level (PS: if module is activated we always show it)
     					$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
-    					if ($objMod->version == 'development'  && ($mode != 'expdev' || ($conf->global->MAIN_FEATURES_LEVEL < 2 && empty($conf->global->$const_name)))) $modulequalified=0;
-    					if ($objMod->version == 'experimental' && ($mode != 'expdev' || ($conf->global->MAIN_FEATURES_LEVEL < 1 && empty($conf->global->$const_name)))) $modulequalified=0;
+    					if ($objMod->version == 'development'  && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 2))) $modulequalified=0;
+    					if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 1))) $modulequalified=0;
 						//if ($mode == 'expdev' && ($objMod->version != 'experimental' && $objMod->version != 'development')) $modulequalified=0;
 
     					// Define array $categ with categ with at least one qualified module
@@ -163,7 +163,7 @@ foreach ($modulesdir as $dir)
     			            $filename[$i]= $modName;
     			            $orders[$i]  = $objMod->family."_".$j;   // Sort by family, then by module number
     			            $special     = isset($specialtostring[$objMod->special])?$specialtostring[$objMod->special]:'unknown';
-    			            if ($mode == 'expdev' && ($objMod->version == 'development' || $objMod->version == 'experimental')) $special='expdev';
+    			            if ($objMod->version == 'development' || $objMod->version == 'experimental') $special='expdev';
 
     						//print "x".$modName." ".$orders[$i]." ".$special."\n<br>";
     						if (isset($categ[$special])) $categ[$special]++;					// Array of all different modules categories
@@ -248,7 +248,8 @@ if (! empty($categ[$categidx]))
 	$h++;
 }
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
+$categidx='expdev';
+if (! empty($categ[$categidx]))
 {
 	$form = new Form($db);
 	$categidx='expdev';

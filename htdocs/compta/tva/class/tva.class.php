@@ -485,12 +485,12 @@ class Tva extends CommonObject
             $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"));
             return -4;
         }
-        if ($conf->banque->enabled && (empty($this->accountid) || $this->accountid <= 0))
+        if (! empty($conf->banque->enabled) && (empty($this->accountid) || $this->accountid <= 0))
         {
             $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Account"));
             return -5;
         }
-        if ($conf->banque->enabled && (empty($this->paymenttype) || $this->paymenttype <= 0))
+        if (! empty($conf->banque->enabled) && (empty($this->paymenttype) || $this->paymenttype <= 0))
         {
             $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
             return -5;

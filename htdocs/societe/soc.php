@@ -544,7 +544,7 @@ else
         if (GETPOST("type")!='f')  { $object->client=3; }
         if (GETPOST("type")=='c')  { $object->client=1; }
         if (GETPOST("type")=='p')  { $object->client=2; }
-        if ($conf->fournisseur->enabled && (GETPOST("type")=='f' || GETPOST("type")==''))  { $object->fournisseur=1; }
+        if (! empty($conf->fournisseur->enabled) && (GETPOST("type")=='f' || GETPOST("type")==''))  { $object->fournisseur=1; }
         if (GETPOST("private")==1) { $object->particulier=1; }
 
         $object->name				= GETPOST('nom');
@@ -1169,7 +1169,7 @@ else
             print '</td></tr>';
 
             // Supplier
-            if ($conf->fournisseur->enabled && ! empty($user->rights->fournisseur->lire))
+            if (! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
             {
                 print '<tr>';
                 print '<td><span class="fieldrequired">'.$langs->trans('Supplier').'</span></td><td>';
@@ -1201,7 +1201,7 @@ else
                 print '</td></tr>';
 
                 // Category
-                if ($conf->categorie->enabled && $object->fournisseur)
+                if (! empty($conf->categorie->enabled) && $object->fournisseur)
                 {
                     $load = $object->LoadSupplierCateg();
                     if ( $load == 0)

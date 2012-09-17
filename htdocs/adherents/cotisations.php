@@ -131,7 +131,7 @@ if ($result)
 
         $var=!$var;
 
-        if ($allowinsertbankafter && ! $objp->fk_account && $conf->banque->enabled && $objp->cotisation)
+        if ($allowinsertbankafter && ! $objp->fk_account && ! empty($conf->banque->enabled) && $objp->cotisation)
         {
             print "<form method=\"post\" action=\"cotisations.php\">";
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -193,7 +193,7 @@ if ($result)
         print '<td align="right">'.price($objp->cotisation).'</td>';
 
         print "</tr>";
-        if ($allowinsertbankafter && ! $objp->fk_account && $conf->banque->enabled && $objp->cotisation)
+        if ($allowinsertbankafter && ! $objp->fk_account && ! empty($conf->banque->enabled) && $objp->cotisation)
         {
             print "</form>\n";
         }

@@ -246,7 +246,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
         }
         else
         {
-            if ($conf->banque->enabled && $_POST["paymentsave"] != 'none')
+            if (! empty($conf->banque->enabled) && $_POST["paymentsave"] != 'none')
             {
                 if ($_POST["cotisation"])
                 {
@@ -740,8 +740,8 @@ if ($rowid)
         $bankdirect=0;        // Option to write to bank is on by default
         $bankviainvoice=0;    // Option to write via invoice is on by default
         $invoiceonly=0;
-        if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE && (empty($_POST['paymentsave']) || $_POST["paymentsave"] == 'bankdirect')) $bankdirect=1;
-        if ($conf->banque->enabled && $conf->societe->enabled && $conf->facture->enabled && $object->fk_soc) $bankviainvoice=1;
+        if (! empty($conf->banque->enabled) && $conf->global->ADHERENT_BANK_USE && (empty($_POST['paymentsave']) || $_POST["paymentsave"] == 'bankdirect')) $bankdirect=1;
+        if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled) && $object->fk_soc) $bankviainvoice=1;
 
         print "\n\n<!-- Form add subscription -->\n";
 
@@ -873,7 +873,7 @@ if ($rowid)
             print dol_print_date(($datefrom?$datefrom:time()),"%Y").'" ></td></tr>';
 
             // Complementary action
-            if ($conf->banque->enabled || $conf->facture->enabled)
+            if (! empty($conf->banque->enabled) || ! empty($conf->facture->enabled))
             {
                 $company=new Societe($db);
                 if ($object->fk_soc)
@@ -894,7 +894,7 @@ if ($rowid)
                     print '<input type="radio" class="moreaction" id="bankdirect" name="paymentsave" value="bankdirect"'.($bankdirect?' checked="checked"':'');
                     print '> '.$langs->trans("MoreActionBankDirect").'<br>';
                 }
-                if ($conf->societe->enabled && $conf->facture->enabled)
+                if (! empty($conf->societe->enabled) && ! empty($conf->facture->enabled))
                 {
                     print '<input type="radio" class="moreaction" id="invoiceonly" name="paymentsave" value="invoiceonly"'.($invoiceonly?' checked="checked"':'');
                     if (empty($object->fk_soc) || empty($bankviainvoice)) print ' disabled="disabled"';
@@ -909,7 +909,7 @@ if ($rowid)
                     }
                     print '<br>';
                 }
-                if ($conf->banque->enabled && $conf->societe->enabled && $conf->facture->enabled)
+                if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled))
                 {
                     print '<input type="radio" class="moreaction" id="bankviainvoice" name="paymentsave" value="bankviainvoice"'.($bankviainvoice?' checked="checked"':'');
                     if (empty($object->fk_soc) || empty($bankviainvoice)) print ' disabled="disabled"';

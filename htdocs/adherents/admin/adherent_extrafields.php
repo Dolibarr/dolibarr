@@ -148,7 +148,7 @@ if ($action == 'create')
     print $form->selectarray('type',$type2label,GETPOST('type'));
 	print '</td></tr>';
 	// Size
-	print '<tr><td class="fieldrequired" required>'.$langs->trans("Size").'</td><td><input type="text" name="size" size="5" value="'.(GETPOST('size')?GETPOST('size'):'255').'"></td></tr>';
+	print '<tr><td class="fieldrequired" required>'.$langs->trans("Size").'</td><td><input id="size" type="text" name="size" size="5" value="'.(GETPOST('size')?GETPOST('size'):'').'"></td></tr>';
 
     print '</table>';
 

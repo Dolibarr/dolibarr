@@ -48,8 +48,9 @@ function project_prepare_head($object)
     $head[$h][2] = 'contact';
     $h++;
 
-    if ($conf->fournisseur->enabled || $conf->propal->enabled || $conf->commande->enabled || $conf->facture->enabled || $conf->contrat->enabled
-    || $conf->ficheinter->enabled || $conf->agenda->enabled || $conf->deplacement->enabled)
+    if (! empty($conf->fournisseur->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->commande->enabled)
+    || ! empty($conf->facture->enabled) || ! empty($conf->contrat->enabled)
+    || ! empty($conf->ficheinter->enabled) || ! empty($conf->agenda->enabled) || ! empty($conf->deplacement->enabled))
     {
         $head[$h][0] = DOL_URL_ROOT.'/projet/element.php?id='.$object->id;
         $head[$h][1] = $langs->trans("Referers");
@@ -325,7 +326,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
                     $lastprojectid=$lines[$i]->fk_project;
                 }
 
-                print "<tr ".$bc[$var].">\n";
+                print '<tr '.$bc[$var].' id="row-'.$lines[$i]->id.'">'."\n";
 
                 // Project
                 if ($showproject)

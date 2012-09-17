@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012 Regis Houssin       <regis@dolibarr.fr>
- * Copyright (C) 2010-2011 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2012 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,12 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
+ * Javascript code to activate drag and drop on lines
  */
 ?>
 
 <!-- BEGIN PHP TEMPLATE FOR JQUERY -->
-<?php if (count($object->lines) > 1 && GETPOST('action') != 'editline') { ?>
-<script>
+<?php
+$id=$object->id;
+$fk_element=$object->fk_element;
+$table_element_line=$object->table_element_line;
+$nboflines=(isset($object->lines)?count($object->lines):(isset($tasksarray)?count($tasksarray):0));
+$forcereloadpage=$conf->global->MAIN_FORCE_RELOAD_PAGE;
+
+if (GETPOST('action') != 'editline' && $nboflines > 1) { ?>
+<script type="text/javascript">
 $(document).ready(function(){
 	$(".imgup").hide();
 	$(".imgdown").hide();
@@ -31,11 +39,11 @@ $(document).ready(function(){
 
     $("#tablelines").tableDnD({
 		onDrop: function(table, row) {
-			var reloadpage = "<?php echo $conf->global->MAIN_FORCE_RELOAD_PAGE; ?>";
+			var reloadpage = "<?php echo $forcereloadpage; ?>";
 			var roworder = cleanSerialize($("#tablelines").tableDnDSerialize());
-			var table_element_line = "<?php echo $object->table_element_line; ?>";
-			var fk_element = "<?php echo $object->fk_element; ?>";
-			var element_id = "<?php echo $object->id; ?>";
+			var table_element_line = "<?php echo $table_element_line; ?>";
+			var fk_element = "<?php echo $fk_element; ?>";
+			var element_id = "<?php echo $id; ?>";
 			$.post("<?php echo DOL_URL_ROOT; ?>/core/ajax/row.php",
 					{
 						roworder: roworder,

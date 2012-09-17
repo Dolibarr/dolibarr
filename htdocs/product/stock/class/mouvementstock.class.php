@@ -208,14 +208,14 @@ class MouvementStock
 		}
 
 		// Add movement for sub products (recursive call)
-		if (! $error && $conf->global->PRODUIT_SOUSPRODUITS)
+		if (! $error && ! empty($conf->global->PRODUIT_SOUSPRODUITS))
 		{
 			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0, $label);	// pmp is not change for subproduct
 		}
 
 		// Composition module (this is an external module)
 		/* Removed. This code must be provided by module on trigger STOCK_MOVEMENT
-		if (! $error && $qty < 0 && $conf->global->MAIN_MODULE_COMPOSITION)
+		if (! $error && $qty < 0 && ! empty($conf->global->MAIN_MODULE_COMPOSITION))
 		{
 			$error = $this->_createProductComposition($user, $fk_product, $entrepot_id, $qty, $type, 0, $label);	// pmp is not change for subproduct
 		}*/
