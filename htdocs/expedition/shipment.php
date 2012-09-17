@@ -631,7 +631,7 @@ if ($id > 0 || ! empty($ref))
 					print $formproduct->selectWarehouses(-1,'entrepot_id','',1);
 					if (count($formproduct->cache_warehouses) <= 0)
 					{
-						print ' &nbsp; No warehouse defined, <a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?action=create">add one</a>';
+						print ' &nbsp; '.$langs->trans("WarehouseSourceNotDefined").' <a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?action=create">'.$langs->trans("AddOne").'</a>';
 					}
 					print '</td>';
 				}
