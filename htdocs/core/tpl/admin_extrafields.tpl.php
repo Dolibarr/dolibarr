@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,20 +20,20 @@
 <!-- BEGIN PHP TEMPLATE admin_extrafields.tpl.php -->
 <script type="text/javascript">
     jQuery(document).ready(function() {
-    	function init_typeoffields()
+    	function init_typeoffields(type)
     	{
-    		if (jQuery("#type").val() == 'date') { jQuery("#size").val(''); jQuery("#size").attr('disabled','disabled'); }
-    		else if (jQuery("#type").val() == 'datetime') { jQuery("#size").val(''); jQuery("#size").attr('disabled','disabled'); }
-    		else if (jQuery("#type").val() == 'double') { jQuery("#size").val('24,8'); jQuery("#size").removeAttr('disabled'); }
-    		else if (jQuery("#type").val() == 'int') { jQuery("#size").val('10'); jQuery("#size").removeAttr('disabled'); }
-    		else if (jQuery("#type").val() == 'text') { jQuery("#size").val('2000'); jQuery("#size").removeAttr('disabled'); }
-    		else if (jQuery("#type").val() == 'varchar') { jQuery("#size").val('255'); jQuery("#size").removeAttr('disabled'); }
-    		else if (jQuery("#type").val() == '') { jQuery("#size").val(''); jQuery("#size").attr('disabled','disabled'); }
-    		else jQuery("#size").attr('disabled','disabled');
+    		var size = jQuery("#size");
+    		if (type == 'date') { size.val('').attr('disabled','disabled'); }
+    		else if (type == 'datetime') { size.val('').attr('disabled','disabled'); }
+    		else if (type == 'double') { size.val('24,8').removeAttr('disabled'); }
+    		else if (type == 'int') { size.val('10').removeAttr('disabled'); }
+    		else if (type == 'text') { size.val('2000').removeAttr('disabled'); }
+    		else if (type == 'varchar') { size.val('255').removeAttr('disabled'); }
+    		else size.val('').attr('disabled','disabled');
     	}
     	init_typeoffields();
     	jQuery("#type").change(function() {
-    		init_typeoffields();
+    		init_typeoffields($(this).val());
     	});
     });
 </script>

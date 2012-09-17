@@ -147,7 +147,7 @@ class pdf_azur extends ModelePDFPropales
 		{
 			$object->fetch_thirdparty();
 
-			$deja_regle = "";
+			// $deja_regle = 0;
 
 			// Definition of $dir and $file
 			if ($object->specimen)
@@ -355,6 +355,7 @@ class pdf_azur extends ModelePDFPropales
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs, $hookmanager);
 					}
 					if (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak)
 					{
@@ -371,6 +372,7 @@ class pdf_azur extends ModelePDFPropales
 						$pdf->AddPage();
 						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 						$pagenb++;
+						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs, $hookmanager);
 					}
 				}
 
@@ -393,10 +395,12 @@ class pdf_azur extends ModelePDFPropales
 				$posy=$this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 
 				// Affiche zone versements
+				/*
 				if ($deja_regle)
 				{
 					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
 				}
+				*/
 
 				// Pied de page
 				$this->_pagefoot($pdf,$object,$outputlangs);
@@ -793,9 +797,11 @@ class pdf_azur extends ModelePDFPropales
 
 		$pdf->SetTextColor(0,0,0);
 
+		/*
 		$resteapayer = $object->total_ttc - $deja_regle;
-		if ($object->paye) $resteapayer=0;
-
+		if (! empty($object->paye)) $resteapayer=0;
+		*/
+		
 		if ($deja_regle > 0)
 		{
 			$index++;
@@ -806,6 +812,7 @@ class pdf_azur extends ModelePDFPropales
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle), 0, 'R', 0);
 
+			/*
 			if ($object->close_code == 'discount_vat')
 			{
 				$index++;
@@ -819,6 +826,7 @@ class pdf_azur extends ModelePDFPropales
 
 				$resteapayer=0;
 			}
+			*/
 
 			$index++;
 			$pdf->SetTextColor(0,0,60);
