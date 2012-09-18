@@ -1,6 +1,8 @@
 # Dolibarr language file - fr_FR - margins
 CHARSET=UTF-8
 
+Module59000Name=Marges
+Module59000Desc=Gestion des marges commerciales
 Margin=Marge
 Margins=Marges
 TotalMargin=Marge totale
@@ -45,3 +47,6 @@ MARGIN_TYPE_DETAILS=Marge brute : Prix de vente HT - Prix d'achat HT<br/>Marge n
 
 BuyingCost=Coût de revient
 UnitCharges=Charge unitaire
+
+AgentContactType=Type de contact commissionné
+AgentContactTypeDetails=Permet de définir le type de contact associé aux factures qui sera associé aux agents commerciaux

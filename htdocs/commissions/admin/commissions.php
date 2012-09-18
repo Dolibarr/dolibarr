@@ -24,8 +24,11 @@
 include '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/commissions/lib/commissions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 
 $langs->load("admin");
+$langs->load("bills");
 $langs->load("commissions");
 
 if (! $user->admin) accessforbidden();
@@ -68,6 +71,17 @@ if (GETPOST('serviceCommissionRate'))
     }
 }
 
+if (GETPOST('AGENT_CONTACT_TYPE'))
+{
+    if (dolibarr_set_const($db, 'AGENT_CONTACT_TYPE', GETPOST('AGENT_CONTACT_TYPE'), 'chaine', 0, '', $conf->entity) > 0)
+    {
+          $conf->global->AGENT_CONTACT_TYPE = GETPOST('AGENT_CONTACT_TYPE');
+    }
+    else
+    {
+        dol_print_error($db);
+    }
+}
 
 /*
  * View
@@ -145,13 +159,24 @@ print '</td>';
 print '<td>'.$langs->trans('ServiceCommissionRateDetails').'</td>';
 print '</tr>';
 
+// INTERNAL CONTACT TYPE USED AS COMMERCIAL AGENT
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("AgentContactType").'</td>';
+print '<td align="left">';
+$formcompany = new FormCompany($db);
+$facture = new Facture($db);
+print $formcompany->selectTypeContact($facture, $conf->global->AGENT_CONTACT_TYPE, "AGENT_CONTACT_TYPE","internal","code",1);
+print '</td>';
+print '<td>'.$langs->trans('AgentContactTypeDetails').'</td>';
+print '</tr>';
+
 $var=!$var;
 print '<tr '.$bc[$var].'>';
 print '<td align="center" colspan="3">';
 print '<input type="submit" class="button" />';
 print '</td>';
 print '</tr>';
-
 
 print '</table>';
 print '<br>';
