@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis@dolibarr.fr>
  * Copyright (C) 2008		Raphael Bertrand	<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2011	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2010-2012	Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -810,7 +810,7 @@ class pdf_crabe extends ModelePDFFactures
 						//Local tax 1
 						foreach($this->localtax1 as $tvakey => $tvaval)
 						{
-							if ($tvakey>0)    // On affiche pas taux 0
+							if ($tvakey!=0)    // On affiche pas taux 0
 							{
 								//$this->atleastoneratenotnull++;
 
@@ -838,7 +838,7 @@ class pdf_crabe extends ModelePDFFactures
 						//Local tax 2
 						foreach($this->localtax2 as $tvakey => $tvaval)
 						{
-							if ($tvakey>0)    // On affiche pas taux 0
+							if ($tvakey!=0)    // On affiche pas taux 0
 							{
 								//$this->atleastoneratenotnull++;
 

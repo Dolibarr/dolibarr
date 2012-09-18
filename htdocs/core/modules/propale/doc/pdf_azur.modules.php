@@ -729,7 +729,7 @@ class pdf_azur extends ModelePDFPropales
 						//Local tax 1
 						foreach($this->localtax1 as $tvakey => $tvaval)
 						{
-							if ($tvakey>0)    // On affiche pas taux 0
+							if ($tvakey!=0)    // On affiche pas taux 0
 							{
 								//$this->atleastoneratenotnull++;
 
@@ -757,7 +757,7 @@ class pdf_azur extends ModelePDFPropales
 						//Local tax 2
 						foreach($this->localtax2 as $tvakey => $tvaval)
 						{
-							if ($tvakey>0)    // On affiche pas taux 0
+							if ($tvakey!=0)    // On affiche pas taux 0
 							{
 								//$this->atleastoneratenotnull++;
 
