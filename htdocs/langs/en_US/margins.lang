@@ -47,3 +47,6 @@ MARGIN_TYPE_DETAILS=Raw margin : Selling price - Buying price<br/>Net margin : S
 
 BuyingCost=Cost price
 UnitCharges=Unit charges
+
+AgentContactType=Contact type used for commissioning
+AgentContactTypeDetails=Défine what contact type (linked on invoices) will be associated with commercial agents
