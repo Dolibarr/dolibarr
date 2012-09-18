@@ -1416,8 +1416,9 @@ class User extends CommonObject
 		{
 			$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',$dolibarr_main_url_root);
 		}
-		if (! empty($dolibarr_main_force_https)) $urlwithouturlroot=preg_replace('/http:/i','https:',$urlwithouturlroot);
-
+		if (! empty($dolibarr_main_force_https)
+			|| (! empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on')) $urlwithouturlroot=preg_replace('/http:/i','https:',$urlwithouturlroot);
+		
 		// TODO Use outputlangs to translate messages
 		if (! $changelater)
 		{
