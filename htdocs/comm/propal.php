@@ -790,8 +790,7 @@ else if ($action == "addline" && $user->rights->propal->creer)
 				GETPOST('fk_parent_line'),
 				$fournprice,
 				$buyingprice,
-				$label,
-				$type
+				$label
 			);
 
 			if ($result > 0)

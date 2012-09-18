@@ -699,8 +699,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 					GETPOST('fk_parent_line'),
 					$fournprice,
 					$buyingprice,
-					$label,
-					$type
+					$label
 			);
 
 			if ($result > 0)
@@ -826,8 +825,7 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 				0,
 				$fournprice,
 				$buyingprice,
-				$label,
-				$type
+				$label
 		);
 
 		if ($result >= 0)
