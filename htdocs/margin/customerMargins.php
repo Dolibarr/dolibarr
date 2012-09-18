@@ -158,6 +158,7 @@ if (!empty($startdate))
   $sql.= " AND f.datef >= '".$startdate."'";
 if (!empty($enddate))
   $sql.= " AND f.datef <= '".$enddate."'";
+$sql .= " AND d.buy_price_ht IS NOT NULL";
 if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)
 	$sql .= " AND d.buy_price_ht <> 0";
 if ($client)
@@ -186,17 +187,19 @@ if ($result)
   else
   	print_liste_field_titre($langs->trans("Customer"),$_SERVER["PHP_SELF"],"s.nom","","&amp;socid=".$socid,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("SellingPrice"),$_SERVER["PHP_SELF"],"selling_price","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("BuyingPrice"),$_SERVER["PHP_SELF"],"buyng_price","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("BuyingPrice"),$_SERVER["PHP_SELF"],"buying_price","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Margin"),$_SERVER["PHP_SELF"],"marge","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
 	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-		print_liste_field_titre($langs->trans("MarginRate"),$_SERVER["PHP_SELF"],"d.marge_tx","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("MarginRate"),$_SERVER["PHP_SELF"],"","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
 	if (! empty($conf->global->DISPLAY_MARK_RATES))
-		print_liste_field_titre($langs->trans("MarkRate"),$_SERVER["PHP_SELF"],"d.marque_tx","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("MarkRate"),$_SERVER["PHP_SELF"],"","","&amp;socid=".$socid,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	$cumul_achat = 0;
 	$cumul_vente = 0;
 	$cumul_qty = 0;
+	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
+
 	if ($num > 0)
 	{
 		$var=True;
@@ -234,8 +237,8 @@ if ($result)
 				print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate)."%")."</td>\n";
 			print "</tr>\n";
 			$i++;
-			$cumul_achat += $objp->buying_price;
-			$cumul_vente += $objp->selling_price;
+			$cumul_achat += round($objp->buying_price, $rounding);
+			$cumul_vente += round($objp->selling_price, $rounding);
 		}
 	}
 

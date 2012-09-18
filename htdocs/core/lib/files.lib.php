@@ -47,24 +47,15 @@ function dol_basename($pathfile)
  *  @param	string	$sortcriteria	Sort criteria ("","fullname","name","date","size")
  *  @param	string	$sortorder		Sort order (SORT_ASC, SORT_DESC)
  *	@param	int		$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
+ *  @param	int		$nohook			Disable all hooks
  *  @return	array					Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file')
  */
-function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0)
+function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0, $nohook=false)
 {
 	global $db, $hookmanager;
 	global $object;
 
 	dol_syslog("files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter));
-
-	if (! is_object($hookmanager))
-	{
-		if (! class_exists('HookManager')) {
-			// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-			require DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($db);
-		}
-	}
-	$hookmanager->initHooks(array('fileslib'));
 
 	$loaddate=($mode==1||$mode==2)?true:false;
 	$loadsize=($mode==1||$mode==3)?true:false;
@@ -73,23 +64,35 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 	$path=preg_replace('/([\\/]+)$/i','',$path);
 	$newpath=dol_osencode($path);
 
-	$parameters=array(
-			'path' => $newpath,
-			'types'=> $types,
-			'recursive' => $recursive,
-			'filter' => $filter,
-			'excludefilter' => $excludefilter,
-			'sortcriteria' => $sortcriteria,
-			'sortorder' => $sortorder,
-			'loaddate' => $loaddate,
-			'loadsize' => $loadsize
-	);
-	$reshook=$hookmanager->executeHooks('getNodesList', $parameters, $object);
+	if (! $nohook) {
+		if (! is_object($hookmanager))
+		{
+			if (! class_exists('HookManager')) {
+				// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+				require DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+				$hookmanager=new HookManager($db);
+			}
+		}
+		$hookmanager->initHooks(array('fileslib'));
+
+		$parameters=array(
+				'path' => $newpath,
+				'types'=> $types,
+				'recursive' => $recursive,
+				'filter' => $filter,
+				'excludefilter' => $excludefilter,
+				'sortcriteria' => $sortcriteria,
+				'sortorder' => $sortorder,
+				'loaddate' => $loaddate,
+				'loadsize' => $loadsize
+		);
+		$reshook=$hookmanager->executeHooks('getNodesList', $parameters, $object);
+	}
 
 	// $reshook may contain returns stacked by other modules
 	// $reshook is always empty with an array for can not lose returns stacked with other modules
 	// $hookmanager->resArray may contain array stacked by other modules
-	if (! empty($hookmanager->resArray)) // forced to use $hookmanager->resArray even if $hookmanager->resArray['nodes'] is empty
+	if (! $nohook && ! empty($hookmanager->resArray)) // forced to use $hookmanager->resArray even if $hookmanager->resArray['nodes'] is empty
 	{
 		return $hookmanager->resArray['nodes'];
 	}
