@@ -265,6 +265,15 @@ else if ($action == 'setinvoicedate' && $user->rights->facture->creer)
     if ($result < 0) dol_print_error($db,$object->error);
 }
 
+else if ($action == 'setpaymentterm' && $user->rights->facture->creer)
+{
+	$object->fetch($id);
+	$object->date_lim_reglement=dol_mktime(12,0,0,$_POST['paymenttermmonth'],$_POST['paymenttermday'],$_POST['paymenttermyear']);
+	if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement=$object->date;
+	$result=$object->update($user);
+	if ($result < 0) dol_print_error($db,$object->error);
+}
+
 else if ($action == 'setconditions' && $user->rights->facture->creer)
 {
     $object->fetch($id);
