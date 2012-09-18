@@ -238,7 +238,12 @@ create table llx_socpeople_extrafields
 
 ALTER TABLE llx_socpeople_extrafields ADD INDEX idx_socpeople_extrafields (fk_object);
 
--- update type of localtax for spain
-UPDATE llx_c_tva SET localtax1_type = '1' WHERE rowid = 41 AND fk_pays = 4 AND localtax1_type = '0';
-UPDATE llx_c_tva SET localtax1_type = '1' WHERE rowid = 42 AND fk_pays = 4 AND localtax1_type = '0';
-UPDATE llx_c_tva SET localtax1_type = '1' WHERE rowid = 43 AND fk_pays = 4 AND localtax1_type = '0';
+-- update type of localtax1 for spain
+UPDATE llx_c_tva SET localtax1_type = '3' WHERE rowid = 41 AND fk_pays = 4 AND (localtax1_type = '0' OR localtax1_type='1');
+UPDATE llx_c_tva SET localtax1_type = '3' WHERE rowid = 42 AND fk_pays = 4 AND (localtax1_type = '0' OR localtax1_type='1');
+UPDATE llx_c_tva SET localtax1_type = '3' WHERE rowid = 43 AND fk_pays = 4 AND (localtax1_type = '0' OR localtax1_type='1');
+
+-- update type of localtax2 for spain
+UPDATE llx_c_tva SET localtax2_type = '1' WHERE rowid = 41 AND fk_pays = 4 AND localtax2_type = '0';
+UPDATE llx_c_tva SET localtax2_type = '1' WHERE rowid = 42 AND fk_pays = 4 AND localtax2_type = '0';
+UPDATE llx_c_tva SET localtax2_type = '1' WHERE rowid = 43 AND fk_pays = 4 AND localtax2_type = '0';
