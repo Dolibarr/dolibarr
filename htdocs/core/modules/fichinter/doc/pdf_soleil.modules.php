@@ -246,7 +246,8 @@ class pdf_soleil extends ModelePDFFicheinter
 					{
 						$curY = $nexY;
 						$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
-
+						$pdf->SetTextColor(0,0,0);
+						
 						$pdf->setTopMargin($tab_top_newpage);
 						$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 						$pageposbefore=$pdf->getPage();

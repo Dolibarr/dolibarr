@@ -34,10 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
 /**
- *	\class      pdf_typhon
- *	\brief      Classe permettant de generer les bons de livraison au modele Typho
+ *	Classe permettant de generer les bons de livraison au modele Typho
  */
-
 class pdf_typhon extends ModelePDFDeliveryOrder
 {
 	var $emetteur;	// Objet societe qui emet
@@ -236,11 +234,12 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				$curY = $tab_top + 7;
 				$nexY = $tab_top + 7;
 
-				// Boucle sur les lignes
+				// Loop on each lines
 				for ($i = 0 ; $i < $nblines ; $i++)
 				{
 					$curY = $nexY;
 					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
+					$pdf->SetTextColor(0,0,0);
 
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot-50);	// The only function to edit the bottom margin of current page to set it.

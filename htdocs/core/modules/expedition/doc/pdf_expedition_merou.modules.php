@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -195,11 +195,13 @@ class pdf_expedition_merou extends ModelePdfExpedition
 				$nexY = $tab_top + 7;
 
 				$num=count($object->lines);
+				// Loop on each lines
 				for ($i = 0; $i < $num; $i++)
 				{
 					$curY = $nexY;
 					$pdf->SetFont('','', $default_font_size - 3);
-
+					$pdf->SetTextColor(0,0,0);
+						
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
