@@ -178,7 +178,7 @@ class pdf_crabe extends ModelePDFFactures
 				$nblignes = count($object->lines);
 
                 $pdf=pdf_getInstance($this->format);
-				$heightforinfotot = 80;	// Height reserved to output the info and total part
+				$heightforinfotot = 50;	// Height reserved to output the info and total part
 				$heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
 
@@ -383,12 +383,12 @@ class pdf_crabe extends ModelePDFFactures
 				if ($pagenb == 1)
 				{
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfooter, 0, $outputlangs, 0, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
 				}
 				else
 				{
 					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfooter, 0, $outputlangs, 1, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
 				}
 
 				// Affiche zone infos

@@ -147,7 +147,8 @@ class pdf_expedition_merou extends ModelePdfExpedition
 				$nblignes = count($object->lines);
 
 				$pdf=pdf_getInstance($this->format,'mm','l');
-                $heightforfooter = 28;	// Height reserved to output the footer (value include bottom margin)
+				$heightforinfotot = 0;	// Height reserved to output the info and total part
+				$heightforfooter = 28;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
 
 			    if (class_exists('TCPDF'))
@@ -280,13 +281,13 @@ class pdf_expedition_merou extends ModelePdfExpedition
 				// Show square
 				if ($pagenb == 1)
 				{
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfooter, 0, $outputlangs, 0, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage - 1, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+					$this->_tableau($pdf, $tab_top_newpage - 1, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfooter, 0, $outputlangs, 1, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
 				}
 
 				// Pied de page
