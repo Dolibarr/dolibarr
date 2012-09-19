@@ -843,7 +843,8 @@ function dol_delete_preview($object)
 {
 	global $langs,$conf;
 
-    $element = $object->element;
+	// Define parent dir of elements
+	$element = $object->element;
 
     if ($object->element == 'order_supplier')		$dir = $conf->fournisseur->dir_output.'/commande';
     elseif ($object->element == 'invoice_supplier')	$dir = $conf->fournisseur->dir_output.'/facture';
@@ -851,8 +852,7 @@ function dol_delete_preview($object)
     elseif ($object->element == 'shipping')			$dir = $conf->expedition->dir_output.'/sending';
     elseif ($object->element == 'delivery')			$dir = $conf->expedition->dir_output.'/receipt';
     elseif ($object->element == 'fichinter')		$dir = $conf->ficheinter->dir_output;
-    else
-    	$dir = $conf->$element->dir_output;
+    else $dir=empty($conf->$element->dir_output)?'':$conf->$element->dir_output;
 
     if (empty($dir)) return 'ErrorObjectNoSupportedByFunction';
 
@@ -901,11 +901,18 @@ function dol_meta_create($object)
 {
 	global $conf;
 
-	if (empty($conf->global->MAIN_DOC_CREATE_METAFILE)) return 0;
+	if (empty($conf->global->MAIN_DOC_CREATE_METAFILE)) return 0;	// By default, no metafile.
 
 	// Define parent dir of elements
 	$element=$object->element;
-	$dir=empty($conf->$element->dir_output)?'':$conf->$element->dir_output;
+
+	if ($object->element == 'order_supplier')		$dir = $conf->fournisseur->dir_output.'/commande';
+	elseif ($object->element == 'invoice_supplier')	$dir = $conf->fournisseur->dir_output.'/facture';
+	elseif ($object->element == 'project')			$dir = $conf->projet->dir_output;
+	elseif ($object->element == 'shipping')			$dir = $conf->expedition->dir_output.'/sending';
+	elseif ($object->element == 'delivery')			$dir = $conf->expedition->dir_output.'/receipt';
+	elseif ($object->element == 'fichinter')		$dir = $conf->ficheinter->dir_output;
+	else $dir=empty($conf->$element->dir_output)?'':$conf->$element->dir_output;
 
 	if ($dir)
 	{
