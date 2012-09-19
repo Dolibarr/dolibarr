@@ -191,11 +191,12 @@ class FormActions
     /**
      *  Output list of type of event
      *
-     *  @param	string		$selected        Type pre-selectionne
-     *  @param  string		$htmlname        Nom champ formulaire
+     *  @param	string		$selected       Type pre-selectionne
+     *  @param  string		$htmlname       Nom champ formulaire
+     *  @param	string		$excludetype	Type to exclude
      * 	@return	void
      */
-    function select_type_actions($selected='',$htmlname='actioncode')
+    function select_type_actions($selected='',$htmlname='actioncode',$excludetype='')
     {
         global $langs,$user;
 
@@ -204,7 +205,7 @@ class FormActions
         $caction=new CActionComm($this->db);
         $form=new Form($this->db);
 
-        $arraylist=$caction->liste_array(1,'code');
+        $arraylist=$caction->liste_array(1, 'code', $excludetype);
         array_unshift($arraylist,'&nbsp;');     // Add empty line at start
         //asort($arraylist);
 

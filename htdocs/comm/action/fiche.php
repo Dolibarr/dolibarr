@@ -450,7 +450,7 @@ if ($action == 'create')
 	}
 	else
 	{
-		$htmlactions->select_type_actions($actioncomm->type_code, "actioncode");
+		$htmlactions->select_type_actions($actioncomm->type_code, "actioncode","systemauto");
 	}
 	print '</td></tr>';
 
