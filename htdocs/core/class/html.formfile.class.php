@@ -450,46 +450,49 @@ class FormFile
             }
 
             // Loop on each file found
-            foreach($file_list as $file)
-            {
-                $var=!$var;
+			if (is_array($file_list))
+			{
+				foreach($file_list as $file)
+				{
+					$var=!$var;
 
-                // Define relative path for download link (depends on module)
-                $relativepath=$file["name"];								// Cas general
-                if ($filename) $relativepath=$filename."/".$file["name"];	// Cas propal, facture...
-                // Autre cas
-                if ($modulepart == 'donation')            { $relativepath = get_exdir($filename,2).$file["name"]; }
-                if ($modulepart == 'export')              { $relativepath = $file["name"]; }
+					// Define relative path for download link (depends on module)
+					$relativepath=$file["name"];								// Cas general
+					if ($filename) $relativepath=$filename."/".$file["name"];	// Cas propal, facture...
+					// Autre cas
+					if ($modulepart == 'donation')            { $relativepath = get_exdir($filename,2).$file["name"]; }
+					if ($modulepart == 'export')              { $relativepath = $file["name"]; }
 
-                $out.= "<tr ".$bc[$var].">";
+					$out.= "<tr ".$bc[$var].">";
 
-                // Show file name with link to download
-                $out.= '<td nowrap="nowrap">';
-                $out.= '<a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
-                $mime=dol_mimetype($relativepath,'',0);
-                if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
-                $out.= '>';
-                $out.= img_mime($file["name"],$langs->trans("File").': '.$file["name"]).' '.dol_trunc($file["name"],$maxfilenamelength);
-                $out.= '</a>'."\n";
-                $out.= '</td>';
+					// Show file name with link to download
+					$out.= '<td nowrap="nowrap">';
+					$out.= '<a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
+					$mime=dol_mimetype($relativepath,'',0);
+					if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
+					$out.= '>';
+					$out.= img_mime($file["name"],$langs->trans("File").': '.$file["name"]).' '.dol_trunc($file["name"],$maxfilenamelength);
+					$out.= '</a>'."\n";
+					$out.= '</td>';
 
-                // Show file size
-                $size=(! empty($file['size'])?$file['size']:dol_filesize($filedir."/".$file["name"]));
-                $out.= '<td align="right" nowrap="nowrap">'.dol_print_size($size).'</td>';
+					// Show file size
+					$size=(! empty($file['size'])?$file['size']:dol_filesize($filedir."/".$file["name"]));
+					$out.= '<td align="right" nowrap="nowrap">'.dol_print_size($size).'</td>';
 
-                // Show file date
-                $date=(! empty($file['date'])?$file['date']:dol_filemtime($filedir."/".$file["name"]));
-                $out.= '<td align="right" nowrap="nowrap">'.dol_print_date($date, 'dayhour','tzuser').'</td>';
+					// Show file date
+					$date=(! empty($file['date'])?$file['date']:dol_filemtime($filedir."/".$file["name"]));
+					$out.= '<td align="right" nowrap="nowrap">'.dol_print_date($date, 'dayhour').'</td>';
 
-                if ($delallowed)
-                {
-                    $out.= '<td align="right">';
-                    $out.= '<a href="'.$urlsource.(strpos($urlsource,'?')?'&':'?').'action=remove_file&file='.urlencode($relativepath);
-                    $out.= ($param?'&'.$param:'');
-                    //$out.= '&modulepart='.$modulepart; // TODO obsolete ?
-                    //$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
-                    $out.= '">'.img_delete().'</a></td>';
-                }
+					if ($delallowed)
+					{
+						$out.= '<td align="right">';
+						$out.= '<a href="'.$urlsource.(strpos($urlsource,'?')?'&':'?').'action=remove_file&file='.urlencode($relativepath);
+						$out.= ($param?'&'.$param:'');
+						//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
+						//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
+						$out.= '">'.img_delete().'</a></td>';
+					}
+				}
 
                 $out.= '</tr>';
 
