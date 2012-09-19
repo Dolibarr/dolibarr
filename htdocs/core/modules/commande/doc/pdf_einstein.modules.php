@@ -263,7 +263,7 @@ class pdf_einstein extends ModelePDFCommandes
 					$curY = $nexY;
 					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 					$pdf->SetTextColor(0,0,0);
-						
+
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
@@ -621,7 +621,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
 		$pdf->SetXY($col2x, $tab2_top + 0);
-		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + $object->remise), 0, 'R', 1);
+		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + (! empty($object->remise)?$object->remise:0)), 0, 'R', 1);
 
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248,248,248);
@@ -629,7 +629,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$this->atleastoneratenotnull=0;
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
-			$tvaisnull=((! empty($this->tva) && count($this->tva) == 1 && is_float($this->tva['0.000'])) ? true : false);
+			$tvaisnull=((! empty($this->tva) && count($this->tva) == 1 && isset($this->tva['0.000']) && is_float($this->tva['0.000'])) ? true : false);
 			if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_ISNULL) && $tvaisnull)
 			{
 				// Nothing to do
@@ -761,7 +761,13 @@ class pdf_einstein extends ModelePDFCommandes
 
 		$pdf->SetTextColor(0,0,0);
 
-		$resteapayer = price2num($object->total_ttc - $deja_regle);
+        $creditnoteamount=0;
+        $depositsamount=0;
+		//$creditnoteamount=$object->getSumCreditNotesUsed();
+		//$depositsamount=$object->getSumDepositsUsed();
+		//print "x".$creditnoteamount."-".$depositsamount;exit;
+		$resteapayer = price2num($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT');
+		if (! empty($object->paye)) $resteapayer=0;
 
 		if ($deja_regle > 0)
 		{

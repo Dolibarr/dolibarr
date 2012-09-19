@@ -73,13 +73,18 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 	}
 
 	/**
-	 *	Fonction generant le document sur le disque
+	 *	Function to build pdf onto disk
 	 *
-	 *	@param	Object		&$object			Objet expedition a generer (ou id si ancienne methode)
-	 *	@param	Translate	$outputlangs	Lang output object
-	 * 	@return	int     					1=ok, 0=ko
+	 *	@param		Object		&$object			Object expedition to generate (or id if old method)
+	 *	@param		Translate	$outputlangs		Lang output object
+     *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
+     *  @param		int			$hidedetails		Do not show line details
+     *  @param		int			$hidedesc			Do not show desc
+     *  @param		int			$hideref			Do not show ref
+     *  @param		object		$hookmanager		Hookmanager object
+     *  @return     int         	    			1=OK, 0=KO
 	 */
-	function write_file(&$object, $outputlangs)
+	function write_file(&$object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0,$hookmanager=false)
 	{
 		global $user,$conf,$langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);

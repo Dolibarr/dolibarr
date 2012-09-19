@@ -273,7 +273,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$curY = $nexY;
 					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 					$pdf->SetTextColor(0,0,0);
-						
+
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
@@ -329,15 +329,18 @@ if ($pageposafter > $pageposbefore) {
 					$localtax1ligne=$object->lines[$i]->total_localtax1;
 					$localtax2ligne=$object->lines[$i]->total_localtax2;
 
-					if ($object->remise_percent) $tvaligne-=($tvaligne*$object->remise_percent)/100;
-					if ($object->remise_percent) $localtax1ligne-=($localtax1ligne*$object->remise_percent)/100;
-					if ($object->remise_percent) $localtax2ligne-=($localtax2ligne*$object->remise_percent)/100;
+					if (! empty($object->remise_percent)) $tvaligne-=($tvaligne*$object->remise_percent)/100;
+					if (! empty($object->remise_percent)) $localtax1ligne-=($localtax1ligne*$object->remise_percent)/100;
+					if (! empty($object->remise_percent)) $localtax2ligne-=($localtax2ligne*$object->remise_percent)/100;
 
 					$vatrate=(string) $object->lines[$i]->tva_tx;
 					$localtax1rate=(string) $object->lines[$i]->localtax1_tx;
 					$localtax2rate=(string) $object->lines[$i]->localtax2_tx;
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
+					if (! isset($this->tva[$vatrate]))				$this->tva[$vatrate]='';
+					if (! isset($this->localtax1[$localtax1rate]))	$this->localtax1[$localtax1rate]='';
+					if (! isset($this->localtax2[$localtax2rate]))	$this->localtax2[$localtax2rate]='';
 					$this->tva[$vatrate] += $tvaligne;
 					$this->localtax1[$localtax1rate]+=$localtax1ligne;
 					$this->localtax2[$localtax2rate]+=$localtax2ligne;
@@ -627,7 +630,7 @@ if ($pageposafter > $pageposbefore) {
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
 		$pdf->SetXY($col2x, $tab2_top + 0);
-		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + $object->remise), 0, 'R', 1);
+		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + (! empty($object->remise)?$object->remise:0)), 0, 'R', 1);
 
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248,248,248);
@@ -764,7 +767,7 @@ if ($pageposafter > $pageposbefore) {
 		//$depositsamount=$object->getSumDepositsUsed();
 		//print "x".$creditnoteamount."-".$depositsamount;exit;
 		$resteapayer = price2num($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT');
-		if ($object->paye) $resteapayer=0;
+		if (! empty($object->paye)) $resteapayer=0;
 
 		if ($deja_regle > 0)
 		{

@@ -691,7 +691,7 @@ class Facture extends CommonInvoice
 
         // Possibility to add external linked objects with hooks
         $this->linked_objects[$this->origin] = $this->origin_id;
-        if (is_array($object->other_linked_objects) && ! empty($object->other_linked_objects))
+        if (! empty($object->other_linked_objects) && is_array($object->other_linked_objects))
         {
         	$this->linked_objects = array_merge($this->linked_objects, $object->other_linked_objects);
         }
@@ -1329,6 +1329,8 @@ class Facture extends CommonInvoice
     {
         if (! $cond_reglement) $cond_reglement=$this->cond_reglement_code;
         if (! $cond_reglement) $cond_reglement=$this->cond_reglement_id;
+
+        $cdr_nbjour=0; $cdr_fdm=0; $cdr_decalage=0;
 
         $sqltemp = 'SELECT c.fdm,c.nbjour,c.decalage';
         $sqltemp.= ' FROM '.MAIN_DB_PREFIX.'c_payment_term as c';

@@ -548,7 +548,7 @@ if (empty($reshook))
             $prod->id,
             GETPOST('remise_percent'),
             '',
-            '', // TODO voir si fk_remise_except est encore valable car n'apparait plus dans les propales
+            '',
             $price_base_type,
             $pu_ttc
         );

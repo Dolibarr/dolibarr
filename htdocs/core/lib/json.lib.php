@@ -267,7 +267,7 @@ function _unval($val)
 	{
 	    // single, escaped unicode character
 	    $utf16 = chr(hexdec($reg[1])) . chr(hexdec($reg[2]));
-	    $utf8 .= utf162utf8($utf16);
+	    $utf8  = utf162utf8($utf16);
 	    $val=preg_replace('/\\\u'.$reg[1].$reg[2].'/i',$utf8,$val);
 	}
 	return $val;
