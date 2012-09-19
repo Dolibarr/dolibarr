@@ -524,7 +524,8 @@ class Product extends CommonObject
 					$newdir = $conf->product->dir_output . "/" . dol_sanitizeFileName($this->ref);
 					if (file_exists($olddir))
 					{
-						$res=@dol_move($olddir, $newdir);
+						include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+						$res=dol_move($olddir, $newdir);
 						if (! $res)
 						{
 							$this->error='ErrorFailToMoveDir';
@@ -550,11 +551,13 @@ class Product extends CommonObject
 			if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
 				$this->error=$langs->trans("Error")." : ".$langs->trans("ErrorProductAlreadyExists",$this->ref);
+				$this->db->rollback();
 				return -1;
 			}
 			else
 			{
 				$this->error=$langs->trans("Error")." : ".$this->db->error()." - ".$sql;
+				$this->db->rollback();
 				return -2;
 			}
 		}

@@ -515,13 +515,13 @@ function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 
 /**
  * Move a file into another name.
+ * This function differs from dol_move_uploaded_file, because it can be called in any context.
  *
  * @param	string  $srcfile            Source file (can't be a directory)
  * @param   string	$destfile           Destination file (can't be a directory)
  * @param   string	$newmask            Mask for new file (0 by default means $conf->global->MAIN_UMASK)
  * @param   int		$overwriteifexists  Overwrite file if exists (1 by default)
  * @return  boolean 		            True if OK, false if KO
- * @see		dol_move_uploaded_file
  */
 function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 {

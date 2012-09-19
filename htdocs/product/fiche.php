@@ -239,7 +239,7 @@ if (empty($reshook))
     // Update a product or service
     if ($action == 'update' && ($user->rights->produit->creer || $user->rights->service->creer))
     {
-        if (GETPOST('cancel'))
+    	if (GETPOST('cancel'))
         {
             $action = '';
         }
