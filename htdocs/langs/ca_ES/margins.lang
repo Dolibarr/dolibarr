@@ -1,6 +1,8 @@
 # Dolibarr language file - ca_ES - margins
 CHARSET=UTF-8
 
+Module59000Name=Marges
+Module59000Desc=Gestió de marges comercials
 Margin=Marge
 Margins=Marges
 TotalMargin=Marge total
