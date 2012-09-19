@@ -912,7 +912,8 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 			0,
 			$fournprice,
 			$buying_price,
-			$label
+			$label,
+			$type
 		);
 
 		if ($result >= 0)

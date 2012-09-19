@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -58,7 +58,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $localtax1
 	// TODO Remove this code. Added for backward compatibility. To remove once localtaxX_type is provided by caller.
 	if ($localtax1_type == '?')
 	{
-		if ($mysoc->country_code=='ES') $localtax1_type='1';
+		if ($mysoc->country_code=='ES') $localtax1_type='3';
 		else $localtax1_type='0';
 	}
 	if ($localtax2_type == '?')
