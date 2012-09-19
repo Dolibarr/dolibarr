@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,6 +76,7 @@ if ($action == 'update')
 
 	// This one is not always defined
 	if (isset($_POST["MAIN_USE_PREVIEW_TABS"])) dolibarr_set_const($db, "MAIN_USE_PREVIEW_TABS", $_POST["MAIN_USE_PREVIEW_TABS"],'chaine',0,'',$conf->entity);
+	if (isset($_POST["MAIN_BUGTRACK_ENABLELINK"])) dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK", $_POST["MAIN_BUGTRACK_ENABLELINK"],'chaine',0,'',$conf->entity);
 
 	$_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
 
@@ -235,6 +236,17 @@ if ($action == 'edit')	// Edit
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
+	if ($conf->global->MAIN_FEATURES_LEVEL > 1)
+	{
+		 // Show bugtrack link
+		$var=!$var;
+		print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
+		print $form->selectyesno('MAIN_BUGTRACK_ENABLELINK',$conf->global->MAIN_BUGTRACK_ENABLELINK,1);
+		print '</td>';
+		print '<td width="20">&nbsp;</td>';
+		print '</tr>';
+	}
+
     // Message on login page
 	$var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageLogin").'</td><td colspan="2">';
@@ -377,6 +389,16 @@ else	// Show
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableLinkToHelp",img_picto('',DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/helpdoc.png','',1)).'</td><td colspan="2">';
     print yn((isset($conf->global->MAIN_HELP_DISABLELINK)?$conf->global->MAIN_HELP_DISABLELINK:0),1);
     print '</td></tr>';
+
+    if ($conf->global->MAIN_FEATURES_LEVEL > 1)
+    {
+    	// Show bugtrack link
+    	$var=!$var;
+    	print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
+    	print yn($conf->global->MAIN_BUGTRACK_ENABLELINK)."</td>";
+    	print '<td width="20">&nbsp;</td>';
+    	print "</tr>";
+    }
 
     // Message login
     $var=!$var;
