@@ -117,14 +117,14 @@ class pdf_azur extends ModelePDFPropales
 	/**
      *  Function to build pdf onto disk
      *
-     *  @param		int		$object				Id of object to generate
-     *  @param		object	$outputlangs		Lang output object
-     *  @param		string	$srctemplatepath	Full path of source filename for generator using a template file
-     *  @param		int		$hidedetails		Do not show line details
-     *  @param		int		$hidedesc			Do not show desc
-     *  @param		int		$hideref			Do not show ref
-     *  @param		object	$hookmanager		Hookmanager object
-     *  @return     int             			1=OK, 0=KO
+     *  @param		Object		$object				Object to generate
+     *  @param		Translate	$outputlangs		Lang output object
+     *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
+     *  @param		int			$hidedetails		Do not show line details
+     *  @param		int			$hidedesc			Do not show desc
+     *  @param		int			$hideref			Do not show ref
+     *  @param		object		$hookmanager		Hookmanager object
+     *  @return     int             				1=OK, 0=KO
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0,$hookmanager=false)
 	{
@@ -147,7 +147,7 @@ class pdf_azur extends ModelePDFPropales
 		{
 			$object->fetch_thirdparty();
 
-			$deja_regle = ""; // FIXME not use in proposal?
+			// $deja_regle = 0;
 
 			// Definition of $dir and $file
 			if ($object->specimen)
@@ -177,7 +177,7 @@ class pdf_azur extends ModelePDFPropales
 
 				// Create pdf instance
                 $pdf=pdf_getInstance($this->format);
-                $heightforinfotot = 80;	// Height reserved to output the info and total part (value include bottom margin)
+                $heightforinfotot = 50;	// Height reserved to output the info and total part
                 $heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
 
@@ -263,6 +263,7 @@ class pdf_azur extends ModelePDFPropales
 				{
 					$curY = $nexY;
 					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
+					$pdf->SetTextColor(0,0,0);
 
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
@@ -379,26 +380,29 @@ class pdf_azur extends ModelePDFPropales
 				// Show square
 				if ($pagenb == 1)
 				{
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot, 0, $outputlangs, 0, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfooter, 0, $outputlangs, 0, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot, 0, $outputlangs, 1, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfooter, 0, $outputlangs, 1, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
 				}
 
 				// Affiche zone infos
 				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
 
 				// Affiche zone totaux
-				$posy=$this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
+				//$posy=$this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
+				$posy=$this->_tableau_tot($pdf, $object, 0, $bottomlasttab, $outputlangs);
 
 				// Affiche zone versements
+				/*
 				if ($deja_regle)
 				{
-					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs); // FIXME not use in proposal?
+					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
 				}
+				*/
 
 				// Pied de page
 				$this->_pagefoot($pdf,$object,$outputlangs);
@@ -726,7 +730,7 @@ class pdf_azur extends ModelePDFPropales
 						//Local tax 1
 						foreach($this->localtax1 as $tvakey => $tvaval)
 						{
-							if ($tvakey>0)    // On affiche pas taux 0
+							if ($tvakey!=0)    // On affiche pas taux 0
 							{
 								//$this->atleastoneratenotnull++;
 
@@ -754,7 +758,7 @@ class pdf_azur extends ModelePDFPropales
 						//Local tax 2
 						foreach($this->localtax2 as $tvakey => $tvaval)
 						{
-							if ($tvakey>0)    // On affiche pas taux 0
+							if ($tvakey!=0)    // On affiche pas taux 0
 							{
 								//$this->atleastoneratenotnull++;
 
@@ -795,8 +799,10 @@ class pdf_azur extends ModelePDFPropales
 
 		$pdf->SetTextColor(0,0,0);
 
-		$resteapayer = $object->total_ttc - $deja_regle; // FIXME not use in proposal?
-		if (! empty($object->paye)) $resteapayer=0; // FIXME not use in proposal?
+		/*
+		$resteapayer = $object->total_ttc - $deja_regle;
+		if (! empty($object->paye)) $resteapayer=0;
+		*/
 
 		if ($deja_regle > 0)
 		{
@@ -808,7 +814,7 @@ class pdf_azur extends ModelePDFPropales
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle), 0, 'R', 0);
 
-			// FIXME not use in proposal?
+			/*
 			if ($object->close_code == 'discount_vat')
 			{
 				$index++;
@@ -822,6 +828,7 @@ class pdf_azur extends ModelePDFPropales
 
 				$resteapayer=0;
 			}
+			*/
 
 			$index++;
 			$pdf->SetTextColor(0,0,60);

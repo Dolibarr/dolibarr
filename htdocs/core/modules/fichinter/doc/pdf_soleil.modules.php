@@ -246,6 +246,7 @@ class pdf_soleil extends ModelePDFFicheinter
 					{
 						$curY = $nexY;
 						$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
+						$pdf->SetTextColor(0,0,0);
 
 						$pdf->setTopMargin($tab_top_newpage);
 						$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
@@ -310,12 +311,12 @@ class pdf_soleil extends ModelePDFFicheinter
 				if ($pagenb == 1)
 				{
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfooter, 0, $outputlangs, 0, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforfooter + 1;
+					$bottomlasttab=$this->page_hauteur - $heightforfooter - $heightforfooter + 1;
 				}
 				else
 				{
 					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfooter, 0, $outputlangs, 1, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforfooter + 1;
+					$bottomlasttab=$this->page_hauteur - $heightforfooter - $heightforfooter + 1;
 				}
 
 				$this->_pagefoot($pdf,$object,$outputlangs);

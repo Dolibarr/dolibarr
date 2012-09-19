@@ -329,9 +329,9 @@ $(document).ready(function() {
 
 <?php } ?>
 
-	<?php if (! empty($conf->margin->enabled)) { ?>
-	$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product; ?>}, function(data) {
-		if (data.length > 0) {
+	<?php if (! empty($conf->margin->enabled)) { ?>         
+	$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product?$line->fk_product:0; ?>}, function(data) {
+		if (data && data.length > 0) {
 			var options = '';
 			var trouve=false;
 			$(data).each(function() {

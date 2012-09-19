@@ -665,7 +665,7 @@ class FormFile
 					print '</a>';
 					print "</td>\n";
 					print '<td align="right">'.dol_print_size($file['size'],1,1).'</td>';
-					print '<td align="center">'.dol_print_date($file['date'],"dayhour").'</td>';
+					print '<td align="center">'.dol_print_date($file['date'],"dayhour","tzuser").'</td>';
 					// Preview
 					if (empty($useinecm))
 					{

@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis@dolibarr.fr>
  * Copyright (C) 2008		Raphael Bertrand	<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2011	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2010-2012	Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,14 +119,14 @@ class pdf_crabe extends ModelePDFFactures
 	/**
      *  Function to build pdf onto disk
      *
-     *  @param		int		$object				Id of object to generate
-     *  @param		object	$outputlangs		Lang output object
-     *  @param		string	$srctemplatepath	Full path of source filename for generator using a template file
-     *  @param		int		$hidedetails		Do not show line details
-     *  @param		int		$hidedesc			Do not show desc
-     *  @param		int		$hideref			Do not show ref
-     *  @param		object	$hookmanager		Hookmanager object
-     *  @return     int             			1=OK, 0=KO
+     *  @param		Object		$object				Object to generate
+     *  @param		Translate	$outputlangs		Lang output object
+     *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
+     *  @param		int			$hidedetails		Do not show line details
+     *  @param		int			$hidedesc			Do not show desc
+     *  @param		int			$hideref			Do not show ref
+     *  @param		object		$hookmanager		Hookmanager object
+     *  @return     int         	    			1=OK, 0=KO
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0,$hookmanager=false)
 	{
@@ -178,7 +178,7 @@ class pdf_crabe extends ModelePDFFactures
 				$nblignes = count($object->lines);
 
                 $pdf=pdf_getInstance($this->format);
-				$heightforinfotot = 80;	// Height reserved to output the info and total part
+				$heightforinfotot = 50;	// Height reserved to output the info and total part
 				$heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
 
@@ -265,6 +265,7 @@ class pdf_crabe extends ModelePDFFactures
 				{
 					$curY = $nexY;
 					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
+					$pdf->SetTextColor(0,0,0);
 
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
@@ -382,12 +383,12 @@ class pdf_crabe extends ModelePDFFactures
 				if ($pagenb == 1)
 				{
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfooter, 0, $outputlangs, 0, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
 				}
 				else
 				{
 					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfooter, 0, $outputlangs, 1, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
 				}
 
 				// Affiche zone infos
@@ -744,7 +745,6 @@ class pdf_crabe extends ModelePDFFactures
 		$this->atleastoneratenotnull=0;
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
-
 			$tvaisnull=((! empty($this->tva) && count($this->tva) == 1 && isset($this->tva['0.000']) && is_float($this->tva['0.000'])) ? true : false);
 			if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_ISNULL) && $tvaisnull)
 			{
@@ -809,7 +809,7 @@ class pdf_crabe extends ModelePDFFactures
 						//Local tax 1
 						foreach($this->localtax1 as $tvakey => $tvaval)
 						{
-							if ($tvakey>0)    // On affiche pas taux 0
+							if ($tvakey!=0)    // On affiche pas taux 0
 							{
 								//$this->atleastoneratenotnull++;
 
@@ -837,7 +837,7 @@ class pdf_crabe extends ModelePDFFactures
 						//Local tax 2
 						foreach($this->localtax2 as $tvakey => $tvaval)
 						{
-							if ($tvakey>0)    // On affiche pas taux 0
+							if ($tvakey!=0)    // On affiche pas taux 0
 							{
 								//$this->atleastoneratenotnull++;
 

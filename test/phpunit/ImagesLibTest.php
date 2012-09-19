@@ -139,7 +139,7 @@ class ImagesLibTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($tmp['width'],250);
 		$this->assertEquals($tmp['height'],20);*/
 
-		return $result;
+		return 1;
     }
 
 }

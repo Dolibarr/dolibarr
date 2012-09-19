@@ -77,7 +77,8 @@ class FactureFournisseur extends CommonInvoice
     var $propalid;
 
     var $lines;
-    var $fournisseur;
+    var $fournisseur;	// deprecated
+	var $thirdparty;	// To store thirdparty
 
     var $extraparams=array();
 

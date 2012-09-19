@@ -39,3 +39,6 @@ CommercialAgent=Commercial agent
 StartDate=Start date
 EndDate=End date
 Launch=Start
+
+AgentContactType=Contact type used for commissioning
+AgentContactTypeDetails=Défine what contact type (linked on invoices) will be associated with commercial agents

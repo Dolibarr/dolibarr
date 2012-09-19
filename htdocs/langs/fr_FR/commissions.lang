@@ -1,6 +1,7 @@
 # Dolibarr language file - fr_FR - commissions
 CHARSET=UTF-8
 
+Module60000Desc=Gestion des commissions
 commissionsSetup=Paramétrage de la gestion des commissions
 
 ProductCommissionRate=Taux de commissionnement sur les produits
@@ -38,3 +39,6 @@ CommercialAgent=Agent commercial
 StartDate=Date de début
 EndDate=Date de fin
 Launch=Démarrer
+
+AgentContactType=Type de contact commissionné
+AgentContactTypeDetails=Permet de définir le type de contact associé aux factures qui sera associé aux agents commerciaux
