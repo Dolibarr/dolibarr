@@ -1262,7 +1262,10 @@ function fieldList($fieldlist,$obj='',$tabname='')
         else
         {
             print '<td>';
-            print '<input type="text" '.($fieldlist[$field]=='libelle'?'size="32" ':'').' class="flat" value="'.(isset($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'').'" name="'.$fieldlist[$field].'">';
+            $size='';
+            if ($fieldlist[$field]=='libelle') $size='size="32" ';
+            if ($fieldlist[$field]=='accountancy_code') $size='size="9" ';
+            print '<input type="text" '.$size.' class="flat" value="'.(isset($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'').'" name="'.$fieldlist[$field].'">';
             print '</td>';
         }
     }
