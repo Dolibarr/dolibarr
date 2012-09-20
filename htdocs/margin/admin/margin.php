@@ -25,8 +25,11 @@ include '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+require_once(DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
 
 $langs->load("admin");
+$langs->load("bills");
 $langs->load("margins");
 
 if (! $user->admin) accessforbidden();
@@ -84,6 +87,18 @@ if ($action == 'typemarges')
     {
           $conf->global->MARGIN_METHODE_FOR_DISCOUNT = $_POST['MARGIN_TYPE'];
           setEventMessage($langs->trans("RecordModifiedSuccessfully"));
+    }
+    else
+    {
+        dol_print_error($db);
+    }
+}
+
+if ($action == 'contact')
+{
+    if (dolibarr_set_const($db, 'AGENT_CONTACT_TYPE', $_POST['AGENT_CONTACT_TYPE'], 'chaine', 0, '', $conf->entity) > 0)
+    {
+          $conf->global->AGENT_CONTACT_TYPE = $_POST['AGENT_CONTACT_TYPE'];
     }
     else
     {
@@ -243,6 +258,25 @@ print '<td>';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</td>';
 print '<td>'.$langs->trans('MARGIN_METHODE_FOR_DISCOUNT_DETAILS').'</td>';
+print '</tr>';
+print '</form>';
+
+// INTERNAL CONTACT TYPE USED AS COMMERCIAL AGENT
+$var=!$var;
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print "<input type=\"hidden\" name=\"action\" value=\"contact\">";
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("AgentContactType").'</td>';
+print '<td align="left">';
+$formcompany = new FormCompany($db);
+$facture = new Facture($db);
+print $formcompany->selectTypeContact($facture, $conf->global->AGENT_CONTACT_TYPE, "AGENT_CONTACT_TYPE","internal","code",1);
+print '</td>';
+print '<td>';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print '<td>'.$langs->trans('AgentContactTypeDetails').'</td>';
 print '</tr>';
 print '</form>';
 

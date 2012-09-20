@@ -346,7 +346,13 @@ OldVATRates=Tasa de IVA antigua
 NewVATRates=Tasa de IVA nueva
 PriceBaseTypeToChange=Cambiar el precio cuya referencia de base es
 MassConvert=Convertir masivamente
-# Modules= undefined=
+String=Cadena
+TextLong=Texto largo
+Int=Numérico entero
+Float=Decimal
+DateAndTime=Fecha y hora
+
+# Modules
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos
 Module1Name=Terceros
@@ -455,7 +461,9 @@ Module2800Desc=Cliente FTP
 Module2900Name=GeoIPMaxmind
 Module2900Desc=Capacidades de conversión GeoIP Maxmind
 Module5000Name=Multi-empresa
-Module5000Desc=Permite gestionar varias empresas 
+Module5000Desc=Permite gestionar varias empresas
+Module20000Name=Días libres
+Module20000Desc=Gestión de los días libres de los empleados
 Module50000Name=PayBox
 Module50000Desc=Módulo para proporcionar un pago en línea con tarjeta de crédito mediante Paybox
 Module50100Name=TPV
@@ -901,6 +909,8 @@ MAIN_PROXY_USER=Login del servidor proxy
 MAIN_PROXY_PASS=Contraseña del servidor proxy
 DefineHereComplementaryAttributes=Defina aquí la lista de atributos adicionales, no disponibles por defecto, y que desea gestionar para %s.
 ExtraFields=Atributos adicionales
+ExtraFieldsThirdParties=Atributos adicionales (terceros)
+ExtraFieldsContacts=Atributos adicionales (contactos/direcciones)
 ExtraFieldHasWrongValue=El atributo %s tiene un valor incorrecto.
 AlphaNumOnlyCharsAndNoSpace=solamente caracteres alfanuméricos sin espacios
 SendingMailSetup=Configuración del envío por mail

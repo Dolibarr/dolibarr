@@ -1,6 +1,7 @@
 # Dolibarr language file - ca_ES - commissions
 CHARSET=UTF-8
 
+Module60000Desc=Gestió de comissions
 commissionsSetup=Configuració de la gestió de comissions
 
 ProductCommissionRate=Taxa de comissió sobre els productes

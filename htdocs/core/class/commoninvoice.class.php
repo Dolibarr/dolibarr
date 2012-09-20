@@ -24,8 +24,7 @@
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 /**
- *		\class 		CommonInvoice
- *       \brief 		Superclass for invoices classes
+ * 	Superclass for invoices classes
  */
 abstract class CommonInvoice extends CommonObject
 {

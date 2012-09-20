@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -73,13 +73,18 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 	}
 
 	/**
-	 *	Fonction generant le document sur le disque
+	 *	Function to build pdf onto disk
 	 *
-	 *	@param	Object		&$object			Objet expedition a generer (ou id si ancienne methode)
-	 *	@param	Translate	$outputlangs	Lang output object
-	 * 	@return	int     					1=ok, 0=ko
+	 *	@param		Object		&$object			Object expedition to generate (or id if old method)
+	 *	@param		Translate	$outputlangs		Lang output object
+     *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
+     *  @param		int			$hidedetails		Do not show line details
+     *  @param		int			$hidedesc			Do not show desc
+     *  @param		int			$hideref			Do not show ref
+     *  @param		object		$hookmanager		Hookmanager object
+     *  @return     int         	    			1=OK, 0=KO
 	 */
-	function write_file(&$object, $outputlangs)
+	function write_file(&$object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0,$hookmanager=false)
 	{
 		global $user,$conf,$langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -128,7 +133,7 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 				$nblignes = count($object->lines);
 
 				$pdf=pdf_getInstance($this->format);
-                $heightforinfotot = 0;	// Height reserved to output the info and total part (value include bottom margin)
+                $heightforinfotot = 0;	// Height reserved to output the info and total part
                 $heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
 
@@ -223,10 +228,12 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 				$nexY = $tab_top + 7;
 
 				$num=count($object->lines);
+				// Loop on each lines
 				for ($i = 0; $i < $num; $i++)
 				{
 					$curY = $nexY;
 					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
+					$pdf->SetTextColor(0,0,0);
 
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.

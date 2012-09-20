@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis@dolibarr.fr>
  * Copyright (C) 2008		Raphael Bertrand	<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2011	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2010-2012	Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -177,7 +177,7 @@ class pdf_einstein extends ModelePDFCommandes
 				$nblignes = count($object->lines);
 
                 $pdf=pdf_getInstance($this->format);
-                $heightforinfotot = 80;	// Height reserved to output the info and total part (value include bottom margin)
+                $heightforinfotot = 50;	// Height reserved to output the info and total part (value include bottom margin)
                 $heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
 
@@ -262,6 +262,7 @@ class pdf_einstein extends ModelePDFCommandes
 				{
 					$curY = $nexY;
 					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
+					$pdf->SetTextColor(0,0,0);
 
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
@@ -379,13 +380,13 @@ class pdf_einstein extends ModelePDFCommandes
 				// Show square
 				if ($pagenb == 1)
 				{
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot, 0, $outputlangs, 0, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfooter, 0, $outputlangs, 0, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot, 0, $outputlangs, 1, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfooter, 0, $outputlangs, 1, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
 				}
 
 				// Affiche zone infos
@@ -622,7 +623,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
 		$pdf->SetXY($col2x, $tab2_top + 0);
-		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + $object->remise), 0, 'R', 1);
+		$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + (! empty($object->remise)?$object->remise:0)), 0, 'R', 1);
 
 		// Show VAT by rates and total
 		$pdf->SetFillColor(248,248,248);
@@ -630,7 +631,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$this->atleastoneratenotnull=0;
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
-			$tvaisnull=((! empty($this->tva) && count($this->tva) == 1 && is_float($this->tva['0.000'])) ? true : false);
+			$tvaisnull=((! empty($this->tva) && count($this->tva) == 1 && isset($this->tva['0.000']) && is_float($this->tva['0.000'])) ? true : false);
 			if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_ISNULL) && $tvaisnull)
 			{
 				// Nothing to do
@@ -696,7 +697,7 @@ class pdf_einstein extends ModelePDFCommandes
 						//Local tax 1
 						foreach($this->localtax1 as $tvakey => $tvaval)
 						{
-							if ($tvakey>0)    // On affiche pas taux 0
+							if ($tvakey!=0)    // On affiche pas taux 0
 							{
 								//$this->atleastoneratenotnull++;
 
@@ -724,7 +725,7 @@ class pdf_einstein extends ModelePDFCommandes
 						//Local tax 2
 						foreach($this->localtax2 as $tvakey => $tvaval)
 						{
-							if ($tvakey>0)    // On affiche pas taux 0
+							if ($tvakey!=0)    // On affiche pas taux 0
 							{
 								//$this->atleastoneratenotnull++;
 
@@ -762,7 +763,13 @@ class pdf_einstein extends ModelePDFCommandes
 
 		$pdf->SetTextColor(0,0,0);
 
-		$resteapayer = price2num($object->total_ttc - $deja_regle);
+        $creditnoteamount=0;
+        $depositsamount=0;
+		//$creditnoteamount=$object->getSumCreditNotesUsed();
+		//$depositsamount=$object->getSumDepositsUsed();
+		//print "x".$creditnoteamount."-".$depositsamount;exit;
+		$resteapayer = price2num($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT');
+		if (! empty($object->paye)) $resteapayer=0;
 
 		if ($deja_regle > 0)
 		{

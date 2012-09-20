@@ -134,44 +134,52 @@ print '</td></tr>';
 print "</table>";
 print '</form>';
 
-$sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client, s.client, sc.fk_user as agent,";
+$sql = "SELECT s.nom, s.rowid as socid, s.code_client, s.client, sc.fk_user as agent,";
 $sql.= " u.login,";
-$sql.= " f.facnumber, f.total as total_ht,";
 if ($conf->global->COMMISSION_BASE == "MARGIN") {
 	$sql.= " sum(case d.product_type when 1 then 0 else (((d.subprice * (1 - d.remise_percent / 100)) - d.buy_price_ht) * d.qty) end)  as productBase," ;
-	$sql.= " sum(case d.product_type when 1 then (((d.subprice * (1 - d.remise_percent / 100)) - d.buy_price_ht) * d.qty) else 0 end) as serviceBase," ;
+	$sql.= " sum(case d.product_type when 1 then (((d.subprice * (1 - d.remise_percent / 100)) - d.buy_price_ht) * d.qty) else 0 end) as serviceBase" ;
 }
 elseif ($conf->global->COMMISSION_BASE == "TURNOVER") {
 	$sql.= " sum(case d.product_type when 1 then 0 else (((d.subprice * (1 - d.remise_percent / 100))) * d.qty) end)  as productBase," ;
-	$sql.= " sum(case d.product_type when 1 then (((d.subprice * (1 - d.remise_percent / 100))) * d.qty) else 0 end) as serviceBase," ;
+	$sql.= " sum(case d.product_type when 1 then (((d.subprice * (1 - d.remise_percent / 100))) * d.qty) else 0 end) as serviceBase" ;
 }
-$sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."facture as f";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact e ON e.element_id = f.rowid and e.statut = 4 and e.fk_c_type_contact = ".(empty($conf->global->AGENT_CONTACT_TYPE)?-1:$conf->global->AGENT_CONTACT_TYPE);
 $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
 $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= ", ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE f.fk_soc = s.rowid";
 $sql.= " AND sc.fk_soc = f.fk_soc";
-$sql.= " AND sc.fk_user = u.rowid";
+if (! empty($conf->global->AGENT_CONTACT_TYPE))
+	$sql.= " AND ((e.fk_socpeople IS NULL AND sc.fk_user = u.rowid) OR (e.fk_socpeople IS NOT NULL AND e.fk_socpeople = u.rowid))";
+else
+	$sql .= " AND sc.fk_user = u.rowid";
 if (GETPOST('unpayed') == 'on')
   $sql.= " AND f.fk_statut > 0";
 else
   $sql.= " AND f.fk_statut > 1";
 $sql.= " AND s.entity = ".$conf->entity;
 $sql.= " AND d.fk_facture = f.rowid";
-if ($agentid > 0)
-  $sql.= " AND sc.fk_user = $agentid";
+if ($agentid > 0) {
+	if (! empty($conf->global->AGENT_CONTACT_TYPE))
+  		$sql.= " AND ((e.fk_socpeople IS NULL AND sc.fk_user = ".$agentid.") OR (e.fk_socpeople IS NOT NULL AND e.fk_socpeople = ".$agentid."))";
+	else
+	    $sql .= " AND sc.fk_user = ".$agentid;
+}
 if (!empty($startdate))
   $sql.= " AND f.datef >= '".$startdate."'";
 if (!empty($enddate))
   $sql.= " AND f.datef <= '".$enddate."'";
+if ($conf->global->COMMISSION_BASE == "MARGIN")
+	$sql .= " AND d.buy_price_ht IS NOT NULL";
 if (($conf->global->COMMISSION_BASE == "MARGIN") && isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)
 	$sql .= " AND d.buy_price_ht <> 0";
 if ($agentid > 0)
   $sql.= " GROUP BY s.rowid";
 else
-  $sql.= " GROUP BY sc.fk_user";
+  $sql.= " GROUP BY u.rowid";
 $sql.= " ORDER BY $sortfield $sortorder ";
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
@@ -219,6 +227,7 @@ if ($result)
 	$cumul_base_service = 0;
 	$cumul_commission_produit = 0;
 	$cumul_commission_service = 0;
+	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
 	if ($num > 0)
 	{
 		$var=True;
@@ -260,22 +269,22 @@ if ($result)
 			// total commission
 			print "<td align=\"right\">".price($productCommission + $serviceCommission)."</td>\n";
 			print "</tr>\n";
+
 			$i++;
-			$cumul_base_produit += $productBase;
-			$cumul_base_service += $serviceBase;
-			$cumul_commission_produit += $productCommission;
-			$cumul_commission_service += $serviceCommission;
+
+			$cumul_base_produit += round($productBase, $rounding);
+			$cumul_base_service += round($serviceBase, $rounding);
+			$cumul_commission_produit += round($productCommission, $rounding);
+			$cumul_commission_service += round($serviceCommission, $rounding);
 		}
 	}
 
 	// affichage totaux commission
 	$var=!$var;
 	print '<tr '.$bc[$var].' style="border-top: 1px solid #ccc; font-weight: bold">';
-	if (! empty($client))
-		print '<td colspan=2>';
-	else
-		print '<td>';
-	print $langs->trans('TotalCommission')."</td>";
+	print '<td>';
+	print $langs->trans('Total');
+	print "</td>";
 	// product commission
 	print "<td align=\"right\">".price($cumul_base_produit)."</td>\n";
 	print "<td align=\"right\">".price((! empty($conf->global->PRODUCT_COMMISSION_RATE)?$conf->global->PRODUCT_COMMISSION_RATE:0))."</td>\n";
@@ -289,6 +298,7 @@ if ($result)
 
 	print "</tr>\n";
 
+	print "</td>";
 	print "</table>";
 }
 else

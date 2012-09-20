@@ -140,9 +140,11 @@ if ($result)
         	else
         	{
         		// $mc is defined in conf.class.php if multicompany enabled.
-        		// remove constante MAIN_MODULE_MULTICOMPANY if you have an error.
-        		$mc->getInfo($obj->entity);
-        		print $mc->label;
+        		if (is_object($mc))
+        		{
+        			$mc->getInfo($obj->entity);
+        			print $mc->label;
+        		}
         	}
         }
         else if ($obj->ldap_sid)

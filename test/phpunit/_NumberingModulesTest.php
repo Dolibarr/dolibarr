@@ -120,7 +120,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
      */
     public function testFactureMercure()
     {
-    	global $conf,$user,$langs,$db;
+    	global $conf,$user,$langs,$db,$mysoc;
 		$conf=$this->savconf;
 		$user=$this->savuser;
 		$langs=$this->savlangs;

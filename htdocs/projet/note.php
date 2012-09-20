@@ -35,11 +35,11 @@ $ref= GETPOST('ref');
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
-$project = new Project($db);
+$object = new Project($db);
 if ($ref)
 {
-    $project->fetch(0,$ref);
-    $id=$project->id;
+    $object->fetch(0,$ref);
+    $id=$object->id;
 }
 
 // Security check
@@ -53,40 +53,18 @@ $result = restrictedArea($user, 'projet', $id);
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($action == 'update_public' && $user->rights->projet->creer)
+if ($action == 'setnote_public' && $user->rights->projet->creer)
 {
-	$project->fetch($_GET['id']);
-
-	$db->begin();
-
-	$res=$project->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
-	if ($res < 0)
-	{
-		$mesg='<div class="error">'.$project->error.'</div>';
-		$db->rollback();
-	}
-	else
-	{
-		$db->commit();
-	}
+	$object->fetch($id);
+	$result=$object->update_note_public(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES));
+	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-if ($action == 'update_private' && $user->rights->projet->creer)
+if ($action == 'setnote_private' && $user->rights->projet->creer)
 {
-	$project->fetch($_GET['id']);
-
-	$db->begin();
-
-	$res=$project->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
-	if ($res < 0)
-	{
-		$mesg='<div class="error">'.$project->error.'</div>';
-		$db->rollback();
-	}
-	else
-	{
-		$db->commit();
-	}
+	$object->fetch($id);
+	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
+	if ($result < 0) dol_print_error($db,$object->error);
 }
 
 
@@ -99,26 +77,24 @@ llxHeader("",$langs->trans("Project"),$help_url);
 
 $form = new Form($db);
 $userstatic=new User($db);
-$project = new Project($db);
+$object = new Project($db);
 
 $now=dol_now();
 
 if ($id > 0 || ! empty($ref))
 {
-	dol_htmloutput_mesg($mesg);
-
-	if ($project->fetch($id, $ref))
+	if ($object->fetch($id, $ref))
 	{
-		if ($project->societe->id > 0)  $result=$project->societe->fetch($project->societe->id);
+		if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
 
         // To verify role of users
-        //$userAccess = $project->restrictedProjectArea($user,'read');
-        $userWrite  = $project->restrictedProjectArea($user,'write');
-        //$userDelete = $project->restrictedProjectArea($user,'delete');
+        //$userAccess = $object->restrictedProjectArea($user,'read');
+        $userWrite  = $object->restrictedProjectArea($user,'write');
+        //$userDelete = $object->restrictedProjectArea($user,'delete');
         //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
-		$head = project_prepare_head($project);
-		dol_fiche_head($head, 'notes', $langs->trans('Project'), 0, ($project->public?'projectpub':'project'));
+		$head = project_prepare_head($object);
+		dol_fiche_head($head, 'notes', $langs->trans('Project'), 0, ($object->public?'projectpub':'project'));
 
 		print '<table class="border" width="100%">';
 
@@ -129,90 +105,38 @@ if ($id > 0 || ! empty($ref))
 		// Define a complementary filter for search of next/prev ref.
 	    if (! $user->rights->projet->all->lire)
         {
-            $projectsListId = $project->getProjectsAuthorizedForUser($user,$mine,0);
-            $project->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+            $projectsListId = $object->getProjectsAuthorizedForUser($user,$mine,0);
+            $object->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
         }
-		print $form->showrefnav($project, 'ref', $linkback, 1, 'ref', 'ref');
+		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 		print '</td></tr>';
 
 		// Label
-		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$project->title.'</td></tr>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
 		// Third party
 		print '<tr><td>'.$langs->trans("Company").'</td><td>';
-		if ($project->societe->id > 0) print $project->societe->getNomUrl(1);
+		if ($object->societe->id > 0) print $object->societe->getNomUrl(1);
 		else print'&nbsp;';
 		print '</td></tr>';
 
 		// Visibility
 		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-		if ($project->public) print $langs->trans('SharedProject');
+		if ($object->public) print $langs->trans('SharedProject');
 		else print $langs->trans('PrivateProject');
 		print '</td></tr>';
 
 		// Statut
-		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$project->getLibStatut(4).'</td></tr>';
-
-		// Note publique
-		print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';
-		print '<td valign="top" colspan="3">';
-		if ($_GET["action"] == 'edit')
-		{
-			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="update_public">';
-			print '<textarea name="note_public" cols="80" rows="8">'.$project->note_public."</textarea><br>";
-			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-			print '</form>';
-		}
-		else
-		{
-			print ($project->note_public?nl2br($project->note_public):"&nbsp;");
-		}
-		print "</td></tr>";
-
-		// Note privee
-		if (! $user->societe_id)
-		{
-			print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
-			print '<td valign="top" colspan="3">';
-			if ($_GET["action"] == 'edit')
-			{
-				print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-				print '<input type="hidden" name="action" value="update_private">';
-				print '<textarea name="note_private" cols="80" rows="8">'.$project->note_private."</textarea><br>";
-				print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-				print '</form>';
-			}
-			else
-			{
-				print ($project->note_private?nl2br($project->note_private):"&nbsp;");
-			}
-			print "</td></tr>";
-		}
+		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
 		print "</table>";
 
-		print '</div>';
+		print '<br>';
 
-		/*
-		 * Actions
-		 */
+		$colwidth=30;
+		include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
-		print '<div class="tabsAction">';
-		if ($user->rights->projet->creer && $_GET['action'] <> 'edit')
-		{
-			if ($userWrite > 0)
-			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$project->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
-			}
-			else
-			{
-				print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Modify').'</a>';
-			}
-		}
-		print '</div>';
+		dol_fiche_end();;
 	}
 }
 

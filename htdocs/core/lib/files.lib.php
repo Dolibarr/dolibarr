@@ -515,13 +515,13 @@ function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 
 /**
  * Move a file into another name.
+ * This function differs from dol_move_uploaded_file, because it can be called in any context.
  *
  * @param	string  $srcfile            Source file (can't be a directory)
  * @param   string	$destfile           Destination file (can't be a directory)
  * @param   string	$newmask            Mask for new file (0 by default means $conf->global->MAIN_UMASK)
  * @param   int		$overwriteifexists  Overwrite file if exists (1 by default)
  * @return  boolean 		            True if OK, false if KO
- * @see		dol_move_uploaded_file
  */
 function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 {
@@ -843,7 +843,8 @@ function dol_delete_preview($object)
 {
 	global $langs,$conf;
 
-    $element = $object->element;
+	// Define parent dir of elements
+	$element = $object->element;
 
     if ($object->element == 'order_supplier')		$dir = $conf->fournisseur->dir_output.'/commande';
     elseif ($object->element == 'invoice_supplier')	$dir = $conf->fournisseur->dir_output.'/facture';
@@ -851,8 +852,7 @@ function dol_delete_preview($object)
     elseif ($object->element == 'shipping')			$dir = $conf->expedition->dir_output.'/sending';
     elseif ($object->element == 'delivery')			$dir = $conf->expedition->dir_output.'/receipt';
     elseif ($object->element == 'fichinter')		$dir = $conf->ficheinter->dir_output;
-    else
-    	$dir = $conf->$element->dir_output;
+    else $dir=empty($conf->$element->dir_output)?'':$conf->$element->dir_output;
 
     if (empty($dir)) return 'ErrorObjectNoSupportedByFunction';
 
@@ -901,11 +901,18 @@ function dol_meta_create($object)
 {
 	global $conf;
 
-	if (empty($conf->global->MAIN_DOC_CREATE_METAFILE)) return 0;
+	if (empty($conf->global->MAIN_DOC_CREATE_METAFILE)) return 0;	// By default, no metafile.
 
 	// Define parent dir of elements
 	$element=$object->element;
-	$dir=empty($conf->$element->dir_output)?'':$conf->$element->dir_output;
+
+	if ($object->element == 'order_supplier')		$dir = $conf->fournisseur->dir_output.'/commande';
+	elseif ($object->element == 'invoice_supplier')	$dir = $conf->fournisseur->dir_output.'/facture';
+	elseif ($object->element == 'project')			$dir = $conf->projet->dir_output;
+	elseif ($object->element == 'shipping')			$dir = $conf->expedition->dir_output.'/sending';
+	elseif ($object->element == 'delivery')			$dir = $conf->expedition->dir_output.'/receipt';
+	elseif ($object->element == 'fichinter')		$dir = $conf->ficheinter->dir_output;
+	else $dir=empty($conf->$element->dir_output)?'':$conf->$element->dir_output;
 
 	if ($dir)
 	{

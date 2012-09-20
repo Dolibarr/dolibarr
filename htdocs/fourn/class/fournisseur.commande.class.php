@@ -1904,6 +1904,8 @@ class CommandeFournisseurLigne
     var $total_localtax1;
     var $total_localtax2;
     var $total_ttc;
+    var $info_bits;
+    var $special_code;
 
     // From llx_product
     var $libelle;       // Label produit

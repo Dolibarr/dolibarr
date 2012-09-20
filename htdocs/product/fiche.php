@@ -239,7 +239,7 @@ if (empty($reshook))
     // Update a product or service
     if ($action == 'update' && ($user->rights->produit->creer || $user->rights->service->creer))
     {
-        if (GETPOST('cancel'))
+    	if (GETPOST('cancel'))
         {
             $action = '';
         }
@@ -548,7 +548,7 @@ if (empty($reshook))
             $prod->id,
             GETPOST('remise_percent'),
             '',
-            '', // TODO voir si fk_remise_except est encore valable car n'apparait plus dans les propales
+            '',
             $price_base_type,
             $pu_ttc
         );

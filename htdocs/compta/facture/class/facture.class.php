@@ -691,7 +691,7 @@ class Facture extends CommonInvoice
 
         // Possibility to add external linked objects with hooks
         $this->linked_objects[$this->origin] = $this->origin_id;
-        if (is_array($object->other_linked_objects) && ! empty($object->other_linked_objects))
+        if (! empty($object->other_linked_objects) && is_array($object->other_linked_objects))
         {
         	$this->linked_objects = array_merge($this->linked_objects, $object->other_linked_objects);
         }
@@ -1330,6 +1330,8 @@ class Facture extends CommonInvoice
         if (! $cond_reglement) $cond_reglement=$this->cond_reglement_code;
         if (! $cond_reglement) $cond_reglement=$this->cond_reglement_id;
 
+        $cdr_nbjour=0; $cdr_fdm=0; $cdr_decalage=0;
+
         $sqltemp = 'SELECT c.fdm,c.nbjour,c.decalage';
         $sqltemp.= ' FROM '.MAIN_DB_PREFIX.'c_payment_term as c';
         if (is_numeric($cond_reglement)) $sqltemp.= " WHERE c.rowid=".$cond_reglement;
@@ -1925,7 +1927,7 @@ class Facture extends CommonInvoice
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits);
+            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
@@ -2063,7 +2065,7 @@ class Facture extends CommonInvoice
             // Calculate total with, without tax and tax from qty, pu, remise_percent and txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits);
+            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];

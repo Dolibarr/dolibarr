@@ -140,10 +140,11 @@ if (! empty($conf->margin->enabled)) {
 ?>
 <script type="text/javascript">
 $("#idprod").change(function() {
-  $("#np_fournprice options").remove();
-  $("#np_buying_price").show();
+  $("#fournprice options").remove();
+  $("#fournprice").hide();
+  $("#buying_price").val("").show();
   $.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': $(this).val()}, function(data) {
-    if (data.length > 0) {
+    if (data && data.length > 0) {
       var options = '';
       var i = 0;
       $(data).each(function() {
@@ -151,20 +152,19 @@ $("#idprod").change(function() {
         options += '<option value="'+this.id+'" price="'+this.price+'"';
         if (i == 1) {
           options += ' selected';
-          $("#np_buying_price").val(this.price);
+          $("#buying_price").val(this.price);
         }
         options += '>'+this.label+'</option>';
       });
       options += '<option value=null><?php echo $langs->trans("InputPrice"); ?></option>';
-      $("#np_fournprice").html(options);
-      $("#np_buying_price").hide();
-      $("#np_fournprice").show();
-      $("#np_fournprice").change(function() {
+      $("#buying_price").hide();
+      $("#fournprice").html(options).show();
+      $("#fournprice").change(function() {
         var selval = $(this).find('option:selected').attr("price");
         if (selval)
-          $("#np_buying_price").val(selval).hide();
+          $("#buying_price").val(selval).hide();
         else
-          $('#np_buying_price').show();
+          $('#buying_price').show();
       });
     }
   },

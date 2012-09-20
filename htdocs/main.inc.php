@@ -1512,7 +1512,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    }
 
 	    // Link to bugtrack
-	    if (! empty($conf->global->MAIN_SHOW_BUGTRACK_LINK))
+	    if (! empty($conf->global->MAIN_BUGTRACK_ENABLELINK))
 	    {
 	    	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
