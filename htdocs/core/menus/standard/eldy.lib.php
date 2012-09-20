@@ -706,8 +706,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                     $newmenu->add("/admin/tools/listevents.php?mainmenu=home&leftmenu=admintools", $langs->trans("Audit"),1);
                     $newmenu->add("/admin/tools/listsessions.php?mainmenu=home&leftmenu=admintools", $langs->trans("Sessions"),1);
                     $newmenu->add("/admin/tools/purge.php?mainmenu=home&leftmenu=admintools", $langs->trans("Purge"),1);
-                    $newmenu->add("/support/index.php?mainmenu=home&leftmenu=admintools", $langs->trans("HelpCenter"),1,1,'targethelp');
                     $newmenu->add('/admin/system/about.php?mainmenu=home&leftmenu=admintools', $langs->trans('About'), 1);
+                    $newmenu->add("/support/index.php?mainmenu=home&leftmenu=admintools", $langs->trans("HelpCenter"),1,1,'targethelp');
                 }
 				// Modules system tools
                 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
