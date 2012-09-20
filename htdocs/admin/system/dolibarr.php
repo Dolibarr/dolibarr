@@ -178,10 +178,12 @@ print '<tr '.$bc[$var].'><td width="300">&nbsp; => dol_get_first_day(1970,1,fals
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">&nbsp; => dol_get_first_day(1970,1,true)</td><td>'.dol_get_first_day(1970,1,true).' &nbsp; &nbsp; (=> dol_print_date() or idate() of this value = '.dol_print_date(dol_get_first_day(1970,1,true),'dayhour').')</td>';
 // Parent company
+/*
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CompanyTZ").'</td><td>'.$langs->trans("FeatureNotYetAvailable").'</td></tr>'."\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">&nbsp; => '.$langs->trans("CompanyHour").'</td><td>'.$langs->trans("FeatureNotYetAvailable").'</td></tr>'."\n";
+*/
 // Client
 $var=!$var;
 $tz=(int) $_SESSION['dol_tz'] + (int) $_SESSION['dol_dst'];
