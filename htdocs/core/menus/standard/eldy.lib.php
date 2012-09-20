@@ -690,7 +690,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after)
                 if (preg_match('/^admintools/',$leftmenu))
                 {
                 	$newmenu->add('/admin/system/dolibarr.php?mainmenu=home&leftmenu=admintools_info', $langs->trans('InfoDolibarr'), 1);
-                	if ($leftmenu=='admintools_info') $newmenu->add('/admin/system/constall.php?mainmenu=home&leftmenu=admintools_info', $langs->trans('AllParameters'), 2);
                 	if ($leftmenu=='admintools_info') $newmenu->add('/admin/system/modules.php?mainmenu=home&leftmenu=admintools_info', $langs->trans('Modules'), 2);
                 	if ($leftmenu=='admintools_info') $newmenu->add('/admin/triggers.php?mainmenu=home&leftmenu=admintools_info', $langs->trans('Triggers'), 2);
                 	$newmenu->add('/admin/system/os.php?mainmenu=home&leftmenu=admintools', $langs->trans('InfoOS'), 1);

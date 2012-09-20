@@ -42,7 +42,7 @@ $form=new Form($db);
 
 llxHeader();
 
-print_fiche_titre("Dolibarr",'','setup');
+print_fiche_titre($langs->trans("InfoDolibarr"),'','setup');
 
 // Version
 $var=true;
@@ -211,6 +211,228 @@ print '<tr '.$bc[$var].'><td width="300">&nbsp; => '.$langs->trans("File encodin
 
 print '</table>';
 print '<br>';
+
+
+
+// Parameters in conf.php file (when a parameter start with ?, it is shown only if defined)
+$configfileparameters=array(
+'dolibarr_main_url_root',
+'dolibarr_main_url_root_alt',
+'dolibarr_main_document_root',
+'dolibarr_main_document_root_alt',
+'dolibarr_main_data_root',
+'separator',
+'dolibarr_main_db_host',
+'dolibarr_main_db_port',
+'dolibarr_main_db_name',
+'dolibarr_main_db_type',
+'dolibarr_main_db_user',
+'dolibarr_main_db_pass',
+'dolibarr_main_db_character_set',
+'dolibarr_main_db_collation',
+'?dolibarr_main_db_prefix',
+'separator',
+'dolibarr_main_authentication',
+'separator',
+'?dolibarr_main_auth_ldap_login_attribute',
+'?dolibarr_main_auth_ldap_host',
+'?dolibarr_main_auth_ldap_port',
+'?dolibarr_main_auth_ldap_version',
+'?dolibarr_main_auth_ldap_dn',
+'?dolibarr_main_auth_ldap_admin_login',
+'?dolibarr_main_auth_ldap_admin_pass',
+'?dolibarr_main_auth_ldap_debug',
+'separator',
+'?dolibarr_lib_ADODB_PATH',
+'?dolibarr_lib_TCPDF_PATH',
+'?dolibarr_lib_FPDI_PATH',
+'?dolibarr_lib_NUSOAP_PATH',
+'?dolibarr_lib_PHPEXCEL_PATH',
+'?dolibarr_lib_GEOIP_PATH',
+'?dolibarr_lib_ODTPHP_PATH',
+'?dolibarr_lib_ODTPHP_PATHTOPCLZIP',
+'?dolibarr_js_CKEDITOR',
+'?dolibarr_js_JQUERY',
+'?dolibarr_js_JQUERY_UI',
+'?dolibarr_js_JQUERY_FLOT',
+'?dolibarr_font_DOL_DEFAULT_TTF',
+'?dolibarr_font_DOL_DEFAULT_TTF_BOLD',
+'separator',
+'?dolibarr_mailing_limit_sendbyweb',
+'?dolibarr_strict_mode'
+);
+$configfilelib=array(
+//					'separator',
+$langs->trans("URLRoot"),
+$langs->trans("URLRoot").' (alt)',
+$langs->trans("DocumentRootServer"),
+$langs->trans("DocumentRootServer").' (alt)',
+$langs->trans("DataRootServer"),
+'separator',
+$langs->trans("DatabaseServer"),
+$langs->trans("DatabasePort"),
+$langs->trans("DatabaseName"),
+$langs->trans("DriverType"),
+$langs->trans("DatabaseUser"),
+$langs->trans("DatabasePassword"),
+$langs->trans("DBStoringCharset"),
+$langs->trans("DBSortingCharset"),
+$langs->trans("Prefix"),
+'separator',
+$langs->trans("AuthenticationMode"),
+'separator',
+'dolibarr_main_auth_ldap_login_attribute',
+'dolibarr_main_auth_ldap_host',
+'dolibarr_main_auth_ldap_port',
+'dolibarr_main_auth_ldap_version',
+'dolibarr_main_auth_ldap_dn',
+'dolibarr_main_auth_ldap_admin_login',
+'dolibarr_main_auth_ldap_admin_pass',
+'dolibarr_main_auth_ldap_debug',
+'separator',
+'dolibarr_lib_ADODB_PATH',
+'dolibarr_lib_TCPDF_PATH',
+'dolibarr_lib_FPDI_PATH',
+'dolibarr_lib_NUSOAP_PATH',
+'dolibarr_lib_PHPEXCEL_PATH',
+'dolibarr_lib_GEOIP_PATH',
+'dolibarr_lib_ODTPHP_PATH',
+'dolibarr_lib_ODTPHP_PATHTOPCLZIP',
+'dolibarr_js_CKEDITOR',
+'dolibarr_js_JQUERY',
+'dolibarr_js_JQUERY_UI',
+'dolibarr_js_JQUERY_FLOT',
+'dolibarr_font_DOL_DEFAULT_TTF',
+'dolibarr_font_DOL_DEFAULT_TTF_BOLD',
+'separator',
+'Limit nb of email sent by page',
+'Strict mode is on/off'
+);
+$var=true;
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td width="300">'.$langs->trans("Parameters").' ';
+print $langs->trans("ConfigurationFile").' ('.$conffiletoshowshort.')';
+print '</td>';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td>'.$langs->trans("Value").'</td>';
+print '</tr>'."\n";
+$i=0;
+foreach($configfileparameters as $key)
+{
+	$ignore=0;
+
+	if ($key == 'dolibarr_main_url_root_alt' && empty(${
+		$key})) $ignore=1;
+		if ($key == 'dolibarr_main_document_root_alt' && empty(${
+			$key})) $ignore=1;
+
+			if (empty($ignore))
+			{
+				$newkey = preg_replace('/^\?/','',$key);
+
+				if (preg_match('/^\?/',$key) && empty(${
+					$newkey}))
+				{
+					$i++;
+					continue;    // We discard parametes starting with ?
+				}
+
+				if ($newkey == 'separator' && $lastkeyshown == 'separator')
+				{
+					$i++;
+					continue;
+				}
+
+				$var=!$var;
+				print "<tr ".$bc[$var].">";
+				if ($newkey == 'separator')
+				{
+					print '<td colspan="3">&nbsp;</td>';
+				}
+				else
+				{
+					// Label
+					print "<td>".$configfilelib[$i].'</td>';
+					// Key
+					print '<td>'.$newkey.'</td>';
+					// Value
+					print "<td>";
+					if ($newkey == 'dolibarr_main_db_pass') print preg_replace('/./i','*',${
+						$newkey});
+						else if ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/',${
+							$newkey})) print ${
+								$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
+								else if ($newkey == 'dolibarr_main_url_root_alt' && preg_match('/__auto__/',${
+									$newkey})) print ${
+										$newkey}.' => '.constant('DOL_MAIN_URL_ROOT_ALT');
+										else print ${
+											$newkey};
+											if ($newkey == 'dolibarr_main_url_root' && $newkey != DOL_MAIN_URL_ROOT) print ' (currently used by autodetect: '.DOL_MAIN_URL_ROOT.')';
+											print "</td>";
+				}
+				print "</tr>\n";
+				$lastkeyshown=$newkey;
+			}
+			$i++;
+}
+print '</table>';
+print '<br>';
+
+
+
+// Parameters in database
+print '<table class="noborder">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameters").' '.$langs->trans("Database").'</td>';
+print '<td>'.$langs->trans("Value").'</td>';
+if (empty($conf->multicompany->enabled) || !$user->entity) print '<td align="center">'.$langs->trans("Entity").'</td>';	// If superadmin or multicompany disabled
+print "</tr>\n";
+
+$sql = "SELECT";
+$sql.= " rowid";
+$sql.= ", ".$db->decrypt('name')." as name";
+$sql.= ", ".$db->decrypt('value')." as value";
+$sql.= ", type";
+$sql.= ", note";
+$sql.= ", entity";
+$sql.= " FROM ".MAIN_DB_PREFIX."const";
+if (empty($conf->multicompany->enabled))
+{
+	// If no multicompany mode, admins can see global and their constantes
+	$sql.= " WHERE entity IN (0,".$conf->entity.")";
+}
+else
+{
+	// If multicompany mode, superadmin (user->entity=0) can see everything, admin are limited to their entities.
+	if ($user->entity) $sql.= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
+}
+$sql.= " ORDER BY entity, name ASC";
+$resql = $db->query($sql);
+if ($resql)
+{
+	$num = $db->num_rows($resql);
+	$i = 0;
+	$var=True;
+
+	while ($i < $num)
+	{
+		$obj = $db->fetch_object($resql);
+		$var=!$var;
+
+		print '<tr '.$bc[$var].'>';
+		print '<td>'.$obj->name.'</td>'."\n";
+		print '<td>'.$obj->value.'</td>'."\n";
+		if (empty($conf->multicompany->enabled) || !$user->entity) print '<td align="center">'.$obj->entity.'</td>'."\n";	// If superadmin or multicompany disabled
+		print "</tr>\n";
+
+		$i++;
+	}
+}
+
+print '</table>';
+
+
 
 llxFooter();
 
