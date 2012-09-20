@@ -504,7 +504,6 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= ' WHERE c.fk_soc = s.rowid';
 	
-	// Which invoice to show
 	/*
 	if ($viewstatut <> '')
 	{
@@ -527,6 +526,8 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 		}
 	}
 	*/
+	
+	// Which invoice to show
 	$sql.= " AND c.fk_statut in (1, 2) AND c.facture = 0";
 	
 	$sql.= ' AND s.entity = '.$conf->entity;
