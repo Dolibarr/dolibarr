@@ -238,6 +238,9 @@ create table llx_socpeople_extrafields
 
 ALTER TABLE llx_socpeople_extrafields ADD INDEX idx_socpeople_extrafields (fk_object);
 
+UPDATE llx_c_actioncomm set type = 'systemauto' where code IN ('AC_PROP','AC_COM','AC_FAC','AC_SHIP','AC_SUP_ORD','AC_SUP_INV');
+
+
 -- update type of localtax1 for spain
 UPDATE llx_c_tva SET localtax1_type = '3' WHERE rowid = 41 AND fk_pays = 4 AND (localtax1_type = '0' OR localtax1_type='1');
 UPDATE llx_c_tva SET localtax1_type = '3' WHERE rowid = 42 AND fk_pays = 4 AND (localtax1_type = '0' OR localtax1_type='1');

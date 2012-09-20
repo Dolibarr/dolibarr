@@ -158,7 +158,7 @@ $tabsqlsort[2] ="pays ASC, code ASC";
 $tabsqlsort[3] ="pays ASC, code ASC";
 $tabsqlsort[4] ="code ASC";
 $tabsqlsort[5] ="libelle ASC";
-$tabsqlsort[6] ="a.type ASC, a.module, a.position, a.code ASC";
+$tabsqlsort[6] ="a.type ASC, a.module ASC, a.position ASC, a.code ASC";
 $tabsqlsort[7] ="pays ASC, code ASC, a.libelle ASC";
 $tabsqlsort[8] ="libelle ASC";
 $tabsqlsort[9] ="libelle ASC";
@@ -426,9 +426,9 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         }
     }
     // Other checks
-    if ($tabname[$id] == MAIN_DB_PREFIX."c_actioncomm" && isset($_POST["type"]) && $_POST["type"]=='system') {
+    if ($tabname[$id] == MAIN_DB_PREFIX."c_actioncomm" && isset($_POST["type"]) && in_array($_POST["type"],array('system','systemauto'))) {
         $ok=0;
-        $msg.="Value 'system' for type is reserved. You can use 'user' as value to add your own record.<br>";
+        $msg.="Value 'system' and 'systemauto' for type is reserved. You can use 'user' as value to add your own record.<br>";
     }
     if (isset($_POST["code"]) && $_POST["code"]=='0') {
         $ok=0;
@@ -661,19 +661,20 @@ if ($id)
 
     // Complete requete recherche valeurs avec critere de tri
     $sql=$tabsql[$id];
-    if (GETPOST('sortfield'))
+
+    if ($sortfield)
     {
         // If sort order is "pays", we use pays_code instead
-        if ($_GET["sortfield"] == 'pays') $_GET["sortfield"]='pays_code';
-        $sql.= " ORDER BY ".$_GET["sortfield"];
-        if ($_GET["sortorder"])
+    	if ($sortfield == 'pays') $sortfield='pays_code';
+        $sql.= " ORDER BY ".$sortfield;
+        if ($sortorder)
         {
-            $sql.=" ".strtoupper($_GET["sortorder"]);
+            $sql.=" ".strtoupper($sortorder);
         }
         $sql.=", ";
-        // Remove from default sort order the choosed order
-        $tabsqlsort[$id]=preg_replace('/'.$_GET["sortfield"].' '.$_GET["sortorder"].',/i','',$tabsqlsort[$id]);
-        $tabsqlsort[$id]=preg_replace('/'.$_GET["sortfield"].',/i','',$tabsqlsort[$id]);
+        // Clear the required sort criteria for the tabsqlsort to be able to force it with selected value
+        $tabsqlsort[$id]=preg_replace('/([a-z]+\.)?'.$sortfield.' '.$sortorder.',/i','',$tabsqlsort[$id]);
+        $tabsqlsort[$id]=preg_replace('/([a-z]+\.)?'.$sortfield.',/i','',$tabsqlsort[$id]);
     }
     else {
         $sql.=" ORDER BY ";
@@ -1059,7 +1060,7 @@ if ($id)
                     if (isset($obj->code) && ($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i',$obj->code))) $iserasable=0;
                     if (isset($obj->code) && $obj->code == 'RECEP') $iserasable=0;
                     if (isset($obj->code) && $obj->code == 'EF0') $iserasable=0;
-                    if (isset($obj->type) && $obj->type == 'system') $iserasable=0;
+                    if (isset($obj->type) && in_array($obj->type, array('system', 'systemauto'))) $iserasable=0;
 
                     if ($iserasable) print '<a href="'.$_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(! empty($obj->rowid)?$obj->rowid:(! empty($obj->code)?$obj->code:'')).'&amp;code='.(! empty($obj->code)?$obj->code:'').'&amp;id='.$id.'&amp;action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
                     else print $langs->trans("AlwaysActive");
