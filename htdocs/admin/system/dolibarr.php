@@ -216,98 +216,52 @@ print '<br>';
 
 // Parameters in conf.php file (when a parameter start with ?, it is shown only if defined)
 $configfileparameters=array(
-'dolibarr_main_url_root',
-'dolibarr_main_url_root_alt',
-'dolibarr_main_document_root',
-'dolibarr_main_document_root_alt',
-'dolibarr_main_data_root',
-'separator',
-'dolibarr_main_db_host',
-'dolibarr_main_db_port',
-'dolibarr_main_db_name',
-'dolibarr_main_db_type',
-'dolibarr_main_db_user',
-'dolibarr_main_db_pass',
-'dolibarr_main_db_character_set',
-'dolibarr_main_db_collation',
-'?dolibarr_main_db_prefix',
-'separator',
-'dolibarr_main_authentication',
-'separator',
-'?dolibarr_main_auth_ldap_login_attribute',
-'?dolibarr_main_auth_ldap_host',
-'?dolibarr_main_auth_ldap_port',
-'?dolibarr_main_auth_ldap_version',
-'?dolibarr_main_auth_ldap_dn',
-'?dolibarr_main_auth_ldap_admin_login',
-'?dolibarr_main_auth_ldap_admin_pass',
-'?dolibarr_main_auth_ldap_debug',
-'separator',
-'?dolibarr_lib_ADODB_PATH',
-'?dolibarr_lib_TCPDF_PATH',
-'?dolibarr_lib_FPDI_PATH',
-'?dolibarr_lib_NUSOAP_PATH',
-'?dolibarr_lib_PHPEXCEL_PATH',
-'?dolibarr_lib_GEOIP_PATH',
-'?dolibarr_lib_ODTPHP_PATH',
-'?dolibarr_lib_ODTPHP_PATHTOPCLZIP',
-'?dolibarr_js_CKEDITOR',
-'?dolibarr_js_JQUERY',
-'?dolibarr_js_JQUERY_UI',
-'?dolibarr_js_JQUERY_FLOT',
-'?dolibarr_font_DOL_DEFAULT_TTF',
-'?dolibarr_font_DOL_DEFAULT_TTF_BOLD',
-'separator',
-'?dolibarr_mailing_limit_sendbyweb',
-'?dolibarr_strict_mode'
+		'dolibarr_main_url_root' => $langs->trans("URLRoot"),
+		'dolibarr_main_url_root_alt' => $langs->trans("URLRoot").' (alt)',
+		'dolibarr_main_document_root'=> $langs->trans("DocumentRootServer"),
+		'dolibarr_main_document_root_alt' => $langs->trans("DocumentRootServer").' (alt)',
+		'dolibarr_main_data_root' => $langs->trans("DataRootServer"),
+		'separator' => '',
+		'dolibarr_main_db_host' => $langs->trans("DatabaseServer"),
+		'dolibarr_main_db_port' => $langs->trans("DatabasePort"),
+		'dolibarr_main_db_name' => $langs->trans("DatabaseName"),
+		'dolibarr_main_db_type' => $langs->trans("DriverType"),
+		'dolibarr_main_db_user' => $langs->trans("DatabaseUser"),
+		'dolibarr_main_db_pass' => $langs->trans("DatabasePassword"),
+		'dolibarr_main_db_character_set' => $langs->trans("DBStoringCharset"),
+		'dolibarr_main_db_collation' => $langs->trans("DBSortingCollation"),
+		'?dolibarr_main_db_prefix' => $langs->trans("Prefix"),
+		'separator' => '',
+		'dolibarr_main_authentication' => $langs->trans("AuthenticationMode"),
+		'separator'=> '',
+		'?dolibarr_main_auth_ldap_login_attribute' => 'dolibarr_main_auth_ldap_login_attribute',
+		'?dolibarr_main_auth_ldap_host' => 'dolibarr_main_auth_ldap_host',
+		'?dolibarr_main_auth_ldap_port' => 'dolibarr_main_auth_ldap_port',
+		'?dolibarr_main_auth_ldap_version' => 'dolibarr_main_auth_ldap_version',
+		'?dolibarr_main_auth_ldap_dn' => 'dolibarr_main_auth_ldap_dn',
+		'?dolibarr_main_auth_ldap_admin_login' => 'dolibarr_main_auth_ldap_admin_login',
+		'?dolibarr_main_auth_ldap_admin_pass' => 'dolibarr_main_auth_ldap_admin_pass',
+		'?dolibarr_main_auth_ldap_debug' => 'dolibarr_main_auth_ldap_debug',
+		'separator' => '',
+		'?dolibarr_lib_ADODB_PATH' => 'dolibarr_lib_ADODB_PATH',
+		'?dolibarr_lib_TCPDF_PATH' => 'dolibarr_lib_TCPDF_PATH',
+		'?dolibarr_lib_FPDI_PATH' => 'dolibarr_lib_FPDI_PATH',
+		'?dolibarr_lib_NUSOAP_PATH' => 'dolibarr_lib_NUSOAP_PATH',
+		'?dolibarr_lib_PHPEXCEL_PATH' => 'dolibarr_lib_PHPEXCEL_PATH',
+		'?dolibarr_lib_GEOIP_PATH' => 'dolibarr_lib_GEOIP_PATH',
+		'?dolibarr_lib_ODTPHP_PATH' => 'dolibarr_lib_ODTPHP_PATH',
+		'?dolibarr_lib_ODTPHP_PATHTOPCLZIP' => 'dolibarr_lib_ODTPHP_PATHTOPCLZIP',
+		'?dolibarr_js_CKEDITOR' => 'dolibarr_js_CKEDITOR',
+		'?dolibarr_js_JQUERY' => 'dolibarr_js_JQUERY',
+		'?dolibarr_js_JQUERY_UI' => 'dolibarr_js_JQUERY_UI',
+		'?dolibarr_js_JQUERY_FLOT' => 'dolibarr_js_JQUERY_FLOT',
+		'?dolibarr_font_DOL_DEFAULT_TTF' => 'dolibarr_font_DOL_DEFAULT_TTF',
+		'?dolibarr_font_DOL_DEFAULT_TTF_BOLD' => 'dolibarr_font_DOL_DEFAULT_TTF_BOLD',
+		'separator' => '',
+		'?dolibarr_mailing_limit_sendbyweb' => 'Limit nb of email sent by page',
+		'?dolibarr_strict_mode' => 'Strict mode is on/off'
 );
-$configfilelib=array(
-//					'separator',
-$langs->trans("URLRoot"),
-$langs->trans("URLRoot").' (alt)',
-$langs->trans("DocumentRootServer"),
-$langs->trans("DocumentRootServer").' (alt)',
-$langs->trans("DataRootServer"),
-'separator',
-$langs->trans("DatabaseServer"),
-$langs->trans("DatabasePort"),
-$langs->trans("DatabaseName"),
-$langs->trans("DriverType"),
-$langs->trans("DatabaseUser"),
-$langs->trans("DatabasePassword"),
-$langs->trans("DBStoringCharset"),
-$langs->trans("DBSortingCharset"),
-$langs->trans("Prefix"),
-'separator',
-$langs->trans("AuthenticationMode"),
-'separator',
-'dolibarr_main_auth_ldap_login_attribute',
-'dolibarr_main_auth_ldap_host',
-'dolibarr_main_auth_ldap_port',
-'dolibarr_main_auth_ldap_version',
-'dolibarr_main_auth_ldap_dn',
-'dolibarr_main_auth_ldap_admin_login',
-'dolibarr_main_auth_ldap_admin_pass',
-'dolibarr_main_auth_ldap_debug',
-'separator',
-'dolibarr_lib_ADODB_PATH',
-'dolibarr_lib_TCPDF_PATH',
-'dolibarr_lib_FPDI_PATH',
-'dolibarr_lib_NUSOAP_PATH',
-'dolibarr_lib_PHPEXCEL_PATH',
-'dolibarr_lib_GEOIP_PATH',
-'dolibarr_lib_ODTPHP_PATH',
-'dolibarr_lib_ODTPHP_PATHTOPCLZIP',
-'dolibarr_js_CKEDITOR',
-'dolibarr_js_JQUERY',
-'dolibarr_js_JQUERY_UI',
-'dolibarr_js_JQUERY_FLOT',
-'dolibarr_font_DOL_DEFAULT_TTF',
-'dolibarr_font_DOL_DEFAULT_TTF_BOLD',
-'separator',
-'Limit nb of email sent by page',
-'Strict mode is on/off'
-);
+
 $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -317,64 +271,45 @@ print '</td>';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>'."\n";
-$i=0;
-foreach($configfileparameters as $key)
+
+foreach($configfileparameters as $key => $value)
 {
 	$ignore=0;
 
-	if ($key == 'dolibarr_main_url_root_alt' && empty(${
-		$key})) $ignore=1;
-		if ($key == 'dolibarr_main_document_root_alt' && empty(${
-			$key})) $ignore=1;
+	if ($key == 'dolibarr_main_url_root_alt' && empty(${$key})) $ignore=1;
+	if ($key == 'dolibarr_main_document_root_alt' && empty(${$key})) $ignore=1;
 
-			if (empty($ignore))
-			{
-				$newkey = preg_replace('/^\?/','',$key);
+	if (empty($ignore))
+	{
+		$newkey = preg_replace('/^\?/','',$key);
 
-				if (preg_match('/^\?/',$key) && empty(${
-					$newkey}))
-				{
-					$i++;
-					continue;    // We discard parametes starting with ?
-				}
+		if (preg_match('/^\?/',$key) && empty(${$newkey})) continue;    // We discard parametes starting with ?
+		if ($newkey == 'separator' && $lastkeyshown == 'separator') continue;
 
-				if ($newkey == 'separator' && $lastkeyshown == 'separator')
-				{
-					$i++;
-					continue;
-				}
-
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
-				if ($newkey == 'separator')
-				{
-					print '<td colspan="3">&nbsp;</td>';
-				}
-				else
-				{
-					// Label
-					print "<td>".$configfilelib[$i].'</td>';
-					// Key
-					print '<td>'.$newkey.'</td>';
-					// Value
-					print "<td>";
-					if ($newkey == 'dolibarr_main_db_pass') print preg_replace('/./i','*',${
-						$newkey});
-						else if ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/',${
-							$newkey})) print ${
-								$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
-								else if ($newkey == 'dolibarr_main_url_root_alt' && preg_match('/__auto__/',${
-									$newkey})) print ${
-										$newkey}.' => '.constant('DOL_MAIN_URL_ROOT_ALT');
-										else print ${
-											$newkey};
-											if ($newkey == 'dolibarr_main_url_root' && $newkey != DOL_MAIN_URL_ROOT) print ' (currently used by autodetect: '.DOL_MAIN_URL_ROOT.')';
-											print "</td>";
-				}
-				print "</tr>\n";
-				$lastkeyshown=$newkey;
-			}
-			$i++;
+		$var=!$var;
+		print "<tr ".$bc[$var].">";
+		if ($newkey == 'separator')
+		{
+			print '<td colspan="3">&nbsp;</td>';
+		}
+		else
+		{
+			// Label
+			print "<td>".$value.'</td>';
+			// Key
+			print '<td>'.$newkey.'</td>';
+			// Value
+			print "<td>";
+			if ($newkey == 'dolibarr_main_db_pass') print preg_replace('/./i','*',${$newkey});
+			else if ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/',${$newkey})) print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
+			else if ($newkey == 'dolibarr_main_url_root_alt' && preg_match('/__auto__/',${$newkey})) print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT_ALT');
+			else print ${$newkey};
+			if ($newkey == 'dolibarr_main_url_root' && $newkey != DOL_MAIN_URL_ROOT) print ' (currently used by autodetect: '.DOL_MAIN_URL_ROOT.')';
+			print "</td>";
+		}
+		print "</tr>\n";
+		$lastkeyshown=$newkey;
+	}
 }
 print '</table>';
 print '<br>';
