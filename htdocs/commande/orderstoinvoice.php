@@ -504,31 +504,8 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 	$sql.= ' WHERE c.entity = '.$conf->entity;
 	$sql.= ' AND c.fk_soc = s.rowid';
 
-	/*
-	if ($viewstatut <> '')
-	{
-		if ($viewstatut < 4 && $viewstatut > -2)
-		{
-			$sql.= ' AND c.fk_statut ='.$viewstatut; // brouillon, validee, en cours, annulee
-			if ($viewstatut == 3)
-			{
-				$sql.= ' AND c.facture = 0'; // need to create invoice
-			}
-		}
-		if ($viewstatut == 4)
-		{
-			$sql.= ' AND c.facture = 1'; // invoice created
-		}
-		if ($viewstatut == -2)	// To process
-		{
-			//$sql.= ' AND c.fk_statut IN (1,2,3) AND c.facture = 0';
-			$sql.= " AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))";    // If status is 2 and facture=1, it must be selected
-		}
-	}
-	*/
-
-	// Which invoice to show
-	$sql.= " AND c.fk_statut in (1, 2) AND c.facture = 0";
+	// Show orders with status validated, shipping started and delivered (well any order we can bill)
+	$sql.= " AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))";
 
 	if ($socid)	$sql.= ' AND s.rowid = '.$socid;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -564,7 +541,7 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 		{
 			$title = $langs->trans('ListOfOrders');
 		}
-		$title.=' - '.$langs->trans('StatusOrderToBillShort');
+		$title.=' - '.$langs->trans('StatusOrderValidated').', '.$langs->trans("StatusOrderSent").', '.$langs->trans('StatusOrderToBill');
 		$num = $db->num_rows($resql);
 		print_fiche_titre($title);
 		$i = 0;
