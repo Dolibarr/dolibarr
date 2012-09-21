@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville   	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur   	<eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo  	<marc@ocebo.com>
- * Copyright (C) 2005-2011 Regis Houssin          	<regis@dolibarr.fr>
+ * Copyright (C) 2005-2012 Regis Houssin          	<regis@dolibarr.fr>
  * Copyright (C) 2012	   Andreu Bisquerra Gaya  	<jove@bisquerra.com>
  * Copyright (C) 2012	   David Rodriguez Martinez <davidrm146@gmail.com>
  * Copyright (C) 2012	   Juanjo Menent			<jmenent@2byte.es>
@@ -39,15 +39,19 @@ if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/lib/p
 $langs->load('orders');
 $langs->load('deliveries');
 $langs->load('companies');
-$langs->load('orderstoinvoice@orderstoinvoice');
-
-$sref=GETPOST('sref');
-$sref_client=GETPOST('sref_client');
-$sall=GETPOST('sall');
-$socid=GETPOST('socid','int');
 
 if (! $user->rights->facture->creer)
 	accessforbidden();
+
+$id				= (GETPOST('id')?GETPOST("id"):GETPOST("facid"));  // For backward compatibility
+$ref			= GETPOST('ref','alpha');
+$action			= GETPOST('action','alpha');
+$confirm		= GETPOST('confirm','alpha');
+$sref			= GETPOST('sref');
+$sref_client	= GETPOST('sref_client');
+$sall			= GETPOST('sall');
+$socid			= GETPOST('socid','int');
+
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -120,19 +124,14 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 		$_POST['originid']=$orders_id[0];
 
 	}
-	$sall=isset($_GET['sall'])?trim($_GET['sall']):trim($_POST['sall']);
-	$projectid=isset($_GET['projectid'])?$_GET['projectid']:0;
-	$id				=(GETPOST('id')?GETPOST("id"):GETPOST("facid"));  // For backward compatibility
-	$ref			=GETPOST('ref');
-	$socid			=GETPOST('socid');
-	$action			=GETPOST('action');
-	$confirm		=GETPOST('confirm');
-	$lineid			=GETPOST('lineid');
-	$userid			=GETPOST('userid');
-	$search_ref		=GETPOST('sf_ref')?GETPOST('sf_ref'):GETPOST('search_ref');
+
+	$projectid		= GETPOST('projectid','int')?GETPOST('projectid','int'):0;
+	$lineid			= GETPOST('lineid','int');
+	$userid			= GETPOST('userid','int');
+	$search_ref		= GETPOST('sf_ref')?GETPOST('sf_ref'):GETPOST('search_ref');
 
 	// Security check
-	$fieldid = isset($_GET["ref"])?'facnumber':'rowid';
+	$fieldid = GETPOST('ref','alpha')?'facnumber':'rowid';
 	if ($user->societe_id) $socid=$user->societe_id;
 	$result = restrictedArea($user, 'facture', $id,'','','fk_soc',$fieldid);
 
@@ -502,8 +501,9 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 	$sql.= ', '.MAIN_DB_PREFIX.'commande as c';
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= ' WHERE c.fk_soc = s.rowid';
-	
+	$sql.= ' WHERE c.entity = '.$conf->entity;
+	$sql.= ' AND c.fk_soc = s.rowid';
+
 	/*
 	if ($viewstatut <> '')
 	{
@@ -526,11 +526,10 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 		}
 	}
 	*/
-	
+
 	// Which invoice to show
 	$sql.= " AND c.fk_statut in (1, 2) AND c.facture = 0";
-	
-	$sql.= ' AND s.entity = '.$conf->entity;
+
 	if ($socid)	$sql.= ' AND s.rowid = '.$socid;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($sref)
@@ -571,13 +570,15 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 		$i = 0;
 		$period=$html->select_date($date_start,'date_start',0,0,1,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,1,'',1,0,1);
 		$periodely=$html->select_date($date_starty,'date_start_dely',0,0,1,'',1,0,1).' - '.$html->select_date($date_endy,'date_end_dely',0,0,1,'',1,0,1);
-		// Company
-		print '<h3>';
-		$companystatic->id=$socid;
-		$companystatic->nom=$soc->nom;
 
-		print $companystatic->getNomUrl(1,'customer');
-		print '</h3>';
+		if (! empty($socid))
+		{
+			// Company
+			$companystatic->id=$socid;
+			$companystatic->nom=$soc->nom;
+			print '<h3>'.$companystatic->getNomUrl(1,'customer').'</h3>';
+		}
+
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre($langs->trans('Ref'),'orderstoinvoice.php','c.ref','','&amp;socid='.$socid,'',$sortfield,$sortorder);
