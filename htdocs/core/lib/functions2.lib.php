@@ -785,12 +785,6 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 
         // Build numFinal
         $numFinal = $mask;
-        /*
-        if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1 && $current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START && $create_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
-        {
-        	$this->yy = substr(strftime("%Y",mktime(0,0,0,date("m"),date("d"),date("Y")+1)),$numbityear);
-        }
-        */
 
         // We replace special codes except refclient
         $numFinal = preg_replace('/\{yyyy\}/i',date("Y",$date)+$yearoffset, $numFinal);
