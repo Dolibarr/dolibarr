@@ -655,13 +655,22 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
             if (dol_strlen($reg[$posy]) == 4) $yearcomp1=sprintf("%04d",date("Y",$date)+$yearoffset+1);
             if (dol_strlen($reg[$posy]) == 2) $yearcomp1=sprintf("%02d",date("y",$date)+$yearoffset+1);
 
-            // FIXME If mask is {mm}{yy}, sqlwhere is wrong here
-            $sqlwhere.='(';
-            $sqlwhere.=' (SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).") = '".$yearcomp."'";
-            $sqlwhere.=' AND SUBSTRING('.$field.', '.(dol_strlen($reg[1])+dol_strlen($reg[2])+1).', '.dol_strlen($reg[3]).") >= '".str_pad($monthcomp, dol_strlen($reg[3]), '0', STR_PAD_LEFT)."')";
-            $sqlwhere.=' OR';
-            $sqlwhere.=' (SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).") = '".$yearcomp1."'";
-            $sqlwhere.=' AND SUBSTRING('.$field.', '.(dol_strlen($reg[1])+dol_strlen($reg[2])+1).', '.dol_strlen($reg[3]).") < '".str_pad($monthcomp, dol_strlen($reg[3]), '0', STR_PAD_LEFT)."') ";
+            $yearlen = dol_strlen($reg[$posy]);
+            $monthlen = dol_strlen($reg[$posm]);
+            if ($posy == 2) {
+            	$yearpos = (dol_strlen($reg[1])+1);
+            	$monthpos = ($yearpos+$yearlen);
+            } else {
+            	$monthpos = (dol_strlen($reg[1])+1);
+            	$yearpos = ($monthpos+$monthlen);
+            }
+
+            $sqlwhere.="(";
+            $sqlwhere.=" (SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$yearcomp."'";
+            $sqlwhere.=" AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") >= '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."')";
+            $sqlwhere.=" OR";
+            $sqlwhere.=" (SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$yearcomp1."'";
+            $sqlwhere.=" AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") < '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."') ";
             $sqlwhere.=')';
         }
         else   // reset is done on january
