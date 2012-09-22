@@ -647,20 +647,19 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         // For backward compatibility
         else if (date("m",$date) < $maskraz) { $yearoffset=-1; }	// If current month lower that month of return to zero, year is previous year
 
-        if (dol_strlen($reg[$posy]) == 4) $yearcomp=sprintf("%04d",date("Y",$date)+$yearoffset);
-        if (dol_strlen($reg[$posy]) == 2) $yearcomp=sprintf("%02d",date("y",$date)+$yearoffset);
-        if (dol_strlen($reg[$posy]) == 1) $yearcomp=substr(date("y",$date),2,1)+$yearoffset;
+        $yearlen = dol_strlen($reg[$posy]);
+        if ($yearlen == 4) $yearcomp=sprintf("%04d",date("Y",$date)+$yearoffset);
+        elseif ($yearlen == 2) $yearcomp=sprintf("%02d",date("y",$date)+$yearoffset);
+        elseif ($yearlen == 1) $yearcomp=substr(date("y",$date),2,1)+$yearoffset;
         if ($monthcomp > 1)	// Test with month is useless if monthcomp = 0 or 1 (0 is same as 1) (regis: $monthcomp can't equal 0)
         {
-            if (dol_strlen($reg[$posy]) == 4) $yearcomp1=sprintf("%04d",date("Y",$date)+$yearoffset+1);
-            if (dol_strlen($reg[$posy]) == 2) $yearcomp1=sprintf("%02d",date("y",$date)+$yearoffset+1);
+            if ($yearlen == 4) $yearcomp1=sprintf("%04d",date("Y",$date)+$yearoffset+1);
+            elseif ($yearlen == 2) $yearcomp1=sprintf("%02d",date("y",$date)+$yearoffset+1);
 
-            $yearlen = dol_strlen($reg[$posy]);
             $monthlen = dol_strlen($reg[$posm]);
-            if ($posy == 2) {
-            	$yearpos = (dol_strlen($reg[1])+1);
-            	$monthpos = ($yearpos+$yearlen);
-            } else {
+            $yearpos = (dol_strlen($reg[1])+1);
+            $monthpos = ($yearpos+$yearlen);
+            if ($posy == 3) {
             	$monthpos = (dol_strlen($reg[1])+1);
             	$yearpos = ($monthpos+$monthlen);
             }
