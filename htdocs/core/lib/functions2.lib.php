@@ -531,7 +531,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 
     // For debugging
     //include_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
-    //$date=dol_stringtotime('20130101');
+    //$date=dol_stringtotime('20121001');
 
     // Extract value for mask counter, mask raz and mask offset
     if (! preg_match('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i',$mask,$reg)) return 'ErrorBadMask';
@@ -589,7 +589,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 
     // Define $sqlwhere
     $sqlwhere='';
-    $yearoffset=0;
+    $yearoffset=0; // Use year of date by default
     $yearoffsettype=false;
 
     // If a restore to zero after a month is asked we check if there is already a value for this year.
@@ -629,10 +629,29 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 
         if (! empty($yearoffsettype) && ! is_numeric($yearoffsettype)) {
 
-        	if ($yearoffsettype == '-') $yearoffset=-1;
-        	if ($yearoffsettype == '+' && date("m",$date) >= $maskraz) $yearoffset=1;
+        	$currentyear=date("Y", $date);
+        	$fiscaldate=dol_mktime('0','0','0',$maskraz,'1',$currentyear);
+        	$newyeardate=dol_mktime('0','0','0','1','1',$currentyear);
+        	$nextnewyeardate=dol_mktime('0','0','0','1','1',$currentyear+1);
+
+        	//echo 'currentyear='.$currentyear.' date='.dol_print_date($date, 'day').' fiscaldate='.dol_print_date($fiscaldate, 'day').'<br>';
+
+        	if ($date >= $fiscaldate) // If after or equal current fiscal date
+        	{
+        		if ($date < $nextnewyeardate) // If after or equal of next new year date
+        		{
+        			if ($yearoffsettype == '-') $yearoffset=0;
+        			else if ($yearoffsettype == '+') $yearoffset=1;
+        		}
+        	}
+        	else if ($date >= $newyeardate) // If after or equal of current new year date
+        	{
+        		if ($yearoffsettype == '-') $yearoffset=-1;
+        		else if ($yearoffsettype == '+') $yearoffset=0;
+        	}
         }
         else if (date("m",$date) < $maskraz) { $yearoffset=-1; }	// If current month lower that month of return to zero, year is previous year
+
         if (dol_strlen($reg[$posy]) == 4) $yearcomp=sprintf("%04d",date("Y",$date)+$yearoffset);
         if (dol_strlen($reg[$posy]) == 2) $yearcomp=sprintf("%02d",date("y",$date)+$yearoffset);
         if (dol_strlen($reg[$posy]) == 1) $yearcomp=substr(date("y",$date),2,1)+$yearoffset;
