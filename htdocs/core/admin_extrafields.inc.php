@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2011-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ if ($action == 'add')
     		// Type et taille non encore pris en compte => varchar(255)
     		if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_POST['attrname']))
     		{
-                $result=$extrafields->addExtraField($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['pos'],$extrasize,$elementtype);
+                $result=$extrafields->addExtraField($_POST['attrname'],$_POST['label'],$_POST['type'],$_POST['pos'],$extrasize,$elementtype,(GETPOST('unique')?1:0));
     			if ($result > 0)
     			{
     				header("Location: ".$_SERVER["PHP_SELF"]);
@@ -119,13 +119,9 @@ if ($action == 'update')
 	    {
             if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_POST['attrname']))
     		{
-    			$result=$extrafields->update($_POST['attrname'],$_POST['type'],$extrasize,$elementtype);
+    			$result=$extrafields->update($_POST['attrname'],$_POST['label'],$_POST['type'],$extrasize,$elementtype,(GETPOST('unique')?1:0));
     			if ($result > 0)
     			{
-    				if (isset($_POST['label']))
-    				{
-    					$extrafields->update_label($_POST['attrname'],$_POST['label'],$_POST['type'],$extrasize,$elementtype);
-    				}
     				header("Location: ".$_SERVER["PHP_SELF"]);
     				exit;
     			}

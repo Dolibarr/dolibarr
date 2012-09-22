@@ -303,6 +303,10 @@ th .button {
 .valignmiddle {
 	vertical-align: middle;
 }
+.centpercent {
+	width: 100%;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
