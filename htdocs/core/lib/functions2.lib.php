@@ -589,14 +589,15 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 
     // Define $sqlwhere
     $sqlwhere='';
-    $yearoffset=0; // Use year of current $date by default
-    $yearoffsettype=false;
+    $yearoffset=0;	// Use year of current $date by default
+    $yearoffsettype=false;		// false: no reset, 0,-,=,+: reset at offset SOCIETE_FISCAL_MONTH_START, x=reset at offset x
 
     // If a restore to zero after a month is asked we check if there is already a value for this year.
     if (! empty($reg[2]) && preg_match('/^@/',$reg[2]))	$yearoffsettype = preg_replace('/^@/','',$reg[2]);
     if (! empty($reg[3]) && preg_match('/^@/',$reg[3]))	$yearoffsettype = preg_replace('/^@/','',$reg[3]);
 
-    if (is_numeric($yearoffsettype) && $yearoffsettype > 1)
+    //print "yearoffset=".$yearoffset." yearoffsettype=".$yearoffsettype;
+    if (is_numeric($yearoffsettype) && $yearoffsettype >= 1)
     	$maskraz=$yearoffsettype; // For backward compatibility
     else if ($yearoffsettype === '0' || (! empty($yearoffsettype) && ! is_numeric($yearoffsettype) && $conf->global->SOCIETE_FISCAL_MONTH_START > 1))
     	$maskraz = $conf->global->SOCIETE_FISCAL_MONTH_START;
@@ -627,7 +628,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         $monthcomp=$maskraz;
         $yearcomp=0;
 
-        if (! empty($yearoffsettype) && ! is_numeric($yearoffsettype))
+        if (! empty($yearoffsettype) && ! is_numeric($yearoffsettype) && $yearoffsettype != '=')	// $yearoffsettype is - or +
         {
         	$currentyear=date("Y", $date);
         	$fiscaldate=dol_mktime('0','0','0',$maskraz,'1',$currentyear);
@@ -809,9 +810,20 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         $numFinal = $mask;
 
         // We replace special codes except refclient
-        $numFinal = preg_replace('/\{yyyy\}/i',date("Y",$date)+$yearoffset, $numFinal);
-        $numFinal = preg_replace('/\{yy\}/i',  date("y",$date)+$yearoffset, $numFinal);
-        $numFinal = preg_replace('/\{y\}/i',   substr(date("y",$date),2,1)+$yearoffset, $numFinal);
+        // FIXME: $yearoffset is 0 by default, this code is useless
+		//if (! empty($yearoffsettype) && ! is_numeric($yearoffsettype) && $yearoffsettype != '=')	// yearoffsettype is - or +, so we don't want current year
+		//{
+	        $numFinal = preg_replace('/\{yyyy\}/i',date("Y",$date)+$yearoffset, $numFinal);
+        	$numFinal = preg_replace('/\{yy\}/i',  date("y",$date)+$yearoffset, $numFinal);
+        	$numFinal = preg_replace('/\{y\}/i',   substr(date("y",$date),2,1)+$yearoffset, $numFinal);
+		//}
+		/*
+		else	// we want yyyy to be current year
+		{
+        	$numFinal = preg_replace('/\{yyyy\}/i',date("Y",$date), $numFinal);
+        	$numFinal = preg_replace('/\{yy\}/i',  date("y",$date), $numFinal);
+        	$numFinal = preg_replace('/\{y\}/i',   substr(date("y",$date),2,1), $numFinal);
+		}*/
         $numFinal = preg_replace('/\{mm\}/i',  date("m",$date), $numFinal);
         $numFinal = preg_replace('/\{dd\}/i',  date("d",$date), $numFinal);
 
