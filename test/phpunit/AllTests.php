@@ -78,7 +78,7 @@ class AllTests
         require_once dirname(__FILE__).'/SecurityTest.php';
         $suite->addTestSuite('SecurityTest');
 
-        require_once dirname(__FILE__).'/_NumberingModulesTest.php';
+        require_once dirname(__FILE__).'/NumberingModulesTest.php';
         $suite->addTestSuite('NumberingModulesTest');
         require_once dirname(__FILE__).'/PgsqlTest.php';
         $suite->addTestSuite('PgsqlTest');
