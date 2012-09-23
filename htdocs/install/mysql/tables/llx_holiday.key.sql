@@ -16,14 +16,6 @@
 --
 -- ===================================================================
 
-CREATE TABLE llx_holiday_logs 
-(
-rowid             integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
-date_action       DATETIME NOT NULL,
-fk_user_action    integer NOT NULL,
-fk_user_update    integer NOT NULL,
-type_action       VARCHAR( 255 ) NOT NULL,
-prev_solde        VARCHAR( 255 ) NOT NULL,
-new_solde         VARCHAR( 255 ) NOT NULL
-) 
-ENGINE=innodb;
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_fk_user (fk_user);
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_date_debut (date_debut);
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_date_fin (date_fin);
