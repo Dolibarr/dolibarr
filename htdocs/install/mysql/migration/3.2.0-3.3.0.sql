@@ -263,4 +263,4 @@ UPDATE llx_c_tva set localtax1 = 1, localtax1_type = '4', localtax2 = 0.4, local
 -- update tva for accountancy
 ALTER TABLE llx_c_tva DROP COLUMN accountancy_code;
 ALTER TABLE llx_c_tva ADD COLUMN accountancy_code_sell varchar(15) DEFAULT NULL AFTER active;
-ALTER TABLE llx_c_tva ADD COLUMN accountancy_code_buy varchar(15) DEFAULT NULL AFTER active;
+ALTER TABLE llx_c_tva ADD COLUMN accountancy_code_buy varchar(15) DEFAULT NULL AFTER accountancy_code_sell;
