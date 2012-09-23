@@ -92,7 +92,7 @@ ALTER TABLE llx_commandedet ADD COLUMN label varchar(255) DEFAULT NULL AFTER fk_
 ALTER TABLE llx_facturedet ADD COLUMN label varchar(255) DEFAULT NULL AFTER fk_product;
 ALTER TABLE llx_facturedet_rec ADD COLUMN label varchar(255) DEFAULT NULL AFTER product_type;
 
-ALTER TABLE llx_accountingaccount  ADD COLUMN active tinyint DEFAULT 1 NOT NULL AFTER label;
+ALTER TABLE llx_accountingaccount ADD COLUMN active tinyint DEFAULT 1 NOT NULL AFTER label;
 
 ALTER TABLE llx_actioncomm MODIFY elementtype VARCHAR(32);
 
@@ -259,3 +259,8 @@ UPDATE llx_c_tva set localtax1 = 1, localtax1_type = '4', localtax2 = 0.4, local
 UPDATE llx_c_tva set localtax1 = 1, localtax1_type = '4', localtax2 = 0.4, localtax2_type = '7' where rowid= 105 and fk_pays= 10 AND localtax1_type='0';
 UPDATE llx_c_tva set localtax1 = 1, localtax1_type = '4', localtax2 = 0.4, localtax2_type = '7' where rowid= 106 and fk_pays= 10 AND localtax1_type='0';
 UPDATE llx_c_tva set localtax1 = 1, localtax1_type = '4', localtax2 = 0.4, localtax2_type = '7' where rowid= 107 and fk_pays= 10 AND localtax1_type='0';
+
+-- update tva for accountancy
+ALTER TABLE llx_c_tva DROP COLUMN accountancy_code;
+ALTER TABLE llx_c_tva ADD COLUMN accountancy_code_sell varchar(15) DEFAULT NULL AFTER active;
+ALTER TABLE llx_c_tva ADD COLUMN accountancy_code_buy varchar(15) DEFAULT NULL AFTER active;
