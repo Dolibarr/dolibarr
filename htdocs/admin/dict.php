@@ -686,7 +686,7 @@ if ($id)
 
     $fieldlist=explode(',',$tabfield[$id]);
 
-    print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+    print '<form action="dict.php?id='.$id.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="noborder" width="100%">';
 
@@ -785,6 +785,7 @@ if ($id)
         print '<tr><td colspan="'.(count($fieldlist)+2).'">&nbsp;</td></tr>';
     }
 
+    print '</form>';
 
     // List of available values in database
     dol_syslog("htdocs/admin/dict sql=".$sql, LOG_DEBUG);
@@ -872,9 +873,8 @@ if ($id)
                 print '<tr '.$bc[$var].' id="rowid-'.$obj->rowid.'">';
                 if ($action == 'edit' && ($rowid == (! empty($obj->rowid)?$obj->rowid:$obj->code)))
                 {
-                    print '<form action="dict.php" method="post">';
+                    print '<form action="dict.php?id='.$id.'" method="post">';
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-                    print '<input type="hidden" name="id" value="'.$id.'">';
                     print '<input type="hidden" name="page" value="'.$page.'">';
                     print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 
