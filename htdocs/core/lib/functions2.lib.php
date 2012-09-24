@@ -531,6 +531,8 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 
     // For debugging
     //include_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
+    //$mask='{yyyy}-{0000}';
+    //$date=dol_mktime(12, 0, 0, 1, 1, 1900);
     //$date=dol_stringtotime('20121001');
 
     // Extract value for mask counter, mask raz and mask offset

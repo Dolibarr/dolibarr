@@ -73,7 +73,8 @@ class box_members extends ModeleBoxes
 
 		if ($user->rights->societe->lire)
 		{
-			$sql = "SELECT a.rowid, a.nom as lastname, a.prenom as firstname, a.datec, a.tms, a.statut as status, a.datefin as date_end_subscription,";
+			$sql = "SELECT a.rowid, a.nom as lastname, a.prenom as firstname, a.societe, a.fk_soc,";
+			$sql.= " a.datec, a.tms, a.statut as status, a.datefin as date_end_subscription,";
 			$sql.= " t.cotisation";
 			$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as t";
 			$sql.= " WHERE a.entity = ".$conf->entity;
@@ -96,6 +97,14 @@ class box_members extends ModeleBoxes
 
 					$memberstatic->lastname=$objp->lastname;
 					$memberstatic->firstname=$objp->firstname;
+
+					if (! empty($objp->fk_soc)) {
+						$memberstatic->socid = $objp->fk_soc;
+						$memberstatic->fetch_thirdparty();
+						$memberstatic->name=$memberstatic->thirdparty->name;
+					} else {
+						$memberstatic->name=$objp->company;
+					}
 
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
