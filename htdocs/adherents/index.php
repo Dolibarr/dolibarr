@@ -232,11 +232,17 @@ if ($resql)
 			$staticmember->id=$obj->rowid;
 			$staticmember->lastname=$obj->lastname;
 			$staticmember->firstname=$obj->firstname;
+			if (! empty($obj->fk_soc)) {
+				$staticmember->socid = $obj->fk_soc;
+				$staticmember->fetch_thirdparty();
+			} else {
+				$staticmember->name=$obj->company;
+			}
 			$staticmember->ref=$staticmember->getFullName($langs);
 			$statictype->id=$obj->typeid;
 			$statictype->libelle=$obj->libelle;
-			print '<td>'.$staticmember->getNomUrl(1,24).'</td>';
-			print '<td>'.$statictype->getNomUrl(1,16).'</td>';
+			print '<td>'.$staticmember->getNomUrl(1,32).'</td>';
+			print '<td>'.$statictype->getNomUrl(1,32).'</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem),'dayhour').'</td>';
 			print '<td align="right">'.$staticmember->LibStatut($obj->statut,($obj->cotisation=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
 			print '</tr>';
@@ -320,7 +326,7 @@ foreach ($AdherentType as $key => $adhtype)
 {
 	$var=!$var;
 	print "<tr $bc[$var]>";
-	print '<td><a href="type.php?rowid='.$adhtype->id.'">'.img_object($langs->trans("ShowType"),"group").' '.$adhtype->getNomUrl(0,dol_size(16)).'</a></td>';
+	print '<td><a href="type.php?rowid='.$adhtype->id.'">'.img_object($langs->trans("ShowType"),"group").' '.$adhtype->getNomUrl(0,dol_size(32)).'</a></td>';
 	print '<td align="right">'.(isset($MemberToValidate[$key]) && $MemberToValidate[$key] > 0?$MemberToValidate[$key]:'').' '.$staticmember->LibStatut(-1,$adhtype->cotisation,0,3).'</td>';
 	print '<td align="right">'.(isset($MembersValidated[$key]) && ($MembersValidated[$key]-$MemberUpToDate[$key] > 0) ? $MembersValidated[$key]-$MemberUpToDate[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</td>';
 	print '<td align="right">'.(isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,$now,3).'</td>';
