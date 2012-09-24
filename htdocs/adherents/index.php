@@ -203,7 +203,7 @@ $var=true;
  */
 $max=5;
 
-$sql = "SELECT a.rowid, a.statut, a.nom as lastname, a.prenom as firstname,";
+$sql = "SELECT a.rowid, a.statut, a.nom as lastname, a.prenom as firstname, a.societe as company, a.fk_soc,";
 $sql.= " a.tms as datem, datefin as date_end_subscription,";
 $sql.= " ta.rowid as typeid, ta.libelle, ta.cotisation";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as ta";
@@ -235,6 +235,7 @@ if ($resql)
 			if (! empty($obj->fk_soc)) {
 				$staticmember->socid = $obj->fk_soc;
 				$staticmember->fetch_thirdparty();
+				$staticmember->name=$staticmember->thirdparty->name;
 			} else {
 				$staticmember->name=$obj->company;
 			}
@@ -262,7 +263,7 @@ else
  */
 $max=5;
 
-$sql = "SELECT a.rowid, a.statut, a.nom as lastname, a.prenom as firstname,";
+$sql = "SELECT a.rowid, a.statut, a.nom as lastname, a.prenom as firstname, a.societe as company, a.fk_soc,";
 $sql.= " datefin as date_end_subscription,";
 $sql.= " c.rowid as cid, c.tms as datem, c.datec as datec, c.dateadh as date_start, c.datef as date_end, c.cotisation";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."cotisation as c";
@@ -293,9 +294,16 @@ if ($resql)
 			$staticmember->id=$obj->rowid;
 			$staticmember->lastname=$obj->lastname;
 			$staticmember->firstname=$obj->firstname;
+			if (! empty($obj->fk_soc)) {
+				$staticmember->socid = $obj->fk_soc;
+				$staticmember->fetch_thirdparty();
+				$staticmember->name=$staticmember->thirdparty->name;
+			} else {
+				$staticmember->name=$obj->company;
+			}
 			$staticmember->ref=$staticmember->getFullName($langs);
 			print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
-			print '<td>'.$staticmember->getNomUrl(1,24,'subscription').'</td>';
+			print '<td>'.$staticmember->getNomUrl(1,32,'subscription').'</td>';
 			print '<td>'.get_date_range($db->jdate($obj->date_start),$db->jdate($obj->date_end)).'</td>';
 			print '<td align="right">'.price($obj->cotisation).'</td>';
 			//print '<td align="right">'.$staticmember->LibStatut($obj->statut,($obj->cotisation=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
@@ -326,7 +334,7 @@ foreach ($AdherentType as $key => $adhtype)
 {
 	$var=!$var;
 	print "<tr $bc[$var]>";
-	print '<td><a href="type.php?rowid='.$adhtype->id.'">'.img_object($langs->trans("ShowType"),"group").' '.$adhtype->getNomUrl(0,dol_size(32)).'</a></td>';
+	print '<td>'.$adhtype->getNomUrl(1, dol_size(32)).'</td>';
 	print '<td align="right">'.(isset($MemberToValidate[$key]) && $MemberToValidate[$key] > 0?$MemberToValidate[$key]:'').' '.$staticmember->LibStatut(-1,$adhtype->cotisation,0,3).'</td>';
 	print '<td align="right">'.(isset($MembersValidated[$key]) && ($MembersValidated[$key]-$MemberUpToDate[$key] > 0) ? $MembersValidated[$key]-$MemberUpToDate[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</td>';
 	print '<td align="right">'.(isset($MemberUpToDate[$key]) && $MemberUpToDate[$key] > 0 ? $MemberUpToDate[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,$now,3).'</td>';
