@@ -129,6 +129,7 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 	$lineid			= GETPOST('lineid','int');
 	$userid			= GETPOST('userid','int');
 	$search_ref		= GETPOST('sf_ref')?GETPOST('sf_ref'):GETPOST('search_ref');
+	$closeOrders	= GETPOST('autocloseorders') != '' ? true : false;
 
 	// Security check
 	$fieldid = GETPOST('ref','alpha')?'facnumber':'rowid';
@@ -215,8 +216,10 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 							$result=$srcobject->fetch($orders_id[$ii]);
 							if ($result > 0)
 							{
-								$srcobject->classer_facturee();
-								$srcobject->setStatut(3);
+								if($closeOrders) {
+									$srcobject->classer_facturee();
+									$srcobject->setStatut(3);
+								}
 								$lines = $srcobject->lines;
 								if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
 								$fk_parent_line=0;
@@ -383,6 +386,7 @@ if ($action == 'create')
 	print '<input name="ref_int" type="hidden" value="'.$ref_int.'">';
 	print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
 	print '<input type="hidden" name="originid" value="'.GETPOST('originid').'">';
+	print '<input type="hidden" name="autocloseorders" value="'.GETPOST('autocloseorders').'">';
 	print '<table class="border" width="100%">';
 	// Ref
 	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
@@ -402,6 +406,7 @@ if ($action == 'create')
 	print $desc;
 	print '</td></tr>'."\n";
 	print '</table>';
+	
 	// Date invoice
 	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td colspan="2">';
 	$html->select_date(0,'','','','',"add",1,1);
@@ -444,7 +449,7 @@ if ($action == 'create')
 		$result=$srcobject->fetch($sel);
 		if ($result > 0)
 		{
-			$commandes.= $srcobject->ref." ";
+			$commandes.= $srcobject->ref.", ";
 		}
 	}
 	print $commandes;
@@ -462,8 +467,6 @@ if ($action == 'create')
 	}
 
 	print '</table>';
-	print '</td></tr>';
-
 
 	while ($i < $n)
 	{
@@ -472,10 +475,12 @@ if ($action == 'create')
 		$i++;
 	}
 
-	print "</table>\n";
 	// Button "Create Draft"
-	print '<br><center><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></center>';
+	print '<br><center><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'" /></center>';
 	print "</form>\n";
+	
+	print '</td></tr>';
+	print "</table>\n";
 }
 
 
@@ -667,7 +672,9 @@ if (($action != 'create' && $action != 'add') || ! empty($mesgs))
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="hidden" name="origin" value="commande"><br>';
 		print '<a class="butAction" href="index.php">'.$langs->trans("GoBack").'</a>';
-		print '<input type="submit" class="butAction" value='.$langs->trans("GenerateBill").'>';
+		print '<input type="submit" class="button" value='.$langs->trans("GenerateBill").'>';
+		print '<center><br><input type="checkbox" checked="checked" name="autocloseorders"> '.$langs->trans("CloseProcessedOrdersAutomatically");
+		print '</div>';
 		print '</form>';
 		$db->free($resql);
 	}
