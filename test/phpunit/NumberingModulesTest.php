@@ -129,7 +129,6 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class.php';
 		require_once dirname(__FILE__).'/../../htdocs/core/modules/facture/mod_facture_mercure.php';
 
-/*
 		// First we try with a simple mask, with no reset
 		// and we test counter is still increase second year.
 		$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}-{0000}';
@@ -137,22 +136,22 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
-		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1900);	// we use year 1900 to be sure to not have existing invoice for this year
+		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1915);	// we use year 1915 to be sure to not have existing invoice for this year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
 		$result2=$localobject->create($user,1);
 		$result3=$localobject->validate($user, $result);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('1900-0001', $result);	// counter must start to 1
+		$this->assertEquals('1915-0001', $result);	// counter must start to 1
 
 		$localobject=new Facture($this->savdb);
 		$localobject->initAsSpecimen();
-		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1901);	// we use following year for second invoice
+		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1916);	// we use following year for second invoice
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('1901-0002', $result);	// counter must not be reset
-*/
+		$this->assertEquals('1916-0002', $result);	// counter must not be reset
+
 		// Now we try with a reset
 		$conf->global->FACTURE_MERCURE_MASK_CREDIT='{yyyy}-{0000@1}';
 		$conf->global->FACTURE_MERCURE_MASK_INVOICE='{yyyy}-{0000@1}';
