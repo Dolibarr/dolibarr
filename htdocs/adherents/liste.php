@@ -237,7 +237,7 @@ if ($resql)
 
 	print '<td class="liste_titre">';
 	$listetype=$membertypestatic->liste_array();
-	print $form->selectarray("type", $listetype, $type, 1, 0, 0, '', 0, 12);
+	print $form->selectarray("type", $listetype, $type, 1, 0, 0, '', 0, 32);
 	print '</td>';
 
 	print '<td class="liste_titre">&nbsp;</td>';
@@ -278,7 +278,7 @@ if ($resql)
 		// Lastname
 		if ($objp->societe != '')
 		{
-			print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".dol_trunc($memberstatic->getFullName($langs))." / ".dol_trunc($objp->societe,12)."</a></td>\n";
+			print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".((! empty($obj->lastname) && ! empty($obj->firstname))?dol_trunc($memberstatic->getFullName($langs))." / ":'').dol_trunc($objp->societe,32)."</a></td>\n";
 		}
 		else
 		{
@@ -292,7 +292,7 @@ if ($resql)
 		$membertypestatic->id=$objp->type_id;
 		$membertypestatic->libelle=$objp->type;
 		print '<td nowrap="nowrap">';
-		print $membertypestatic->getNomUrl(1,12);
+		print $membertypestatic->getNomUrl(1,32);
 		print '</td>';
 
 		// Moral/Physique
