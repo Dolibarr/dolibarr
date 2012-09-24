@@ -660,14 +660,3 @@ ShortSaturday=S
 ShortSunday=D
 
 View=Voir
-##### Local Taxes #####
-localtax1=Taxe locale 1
-localtax2=Taxe locale 2
-localtax_type=Type de taxe locale
-%ageOnAllWithoutVAT=%% hors TVA
-%ageOnAllBeforeVAT=%% avant TVA
-%ageOnProductsWithoutVAT=%% / produits hors TVA
-%ageOnProductsBeforeVAT=%% / produits avant TVA
-%ageOnServiceWithoutVAT=%% / services hors TVA
-%ageOnServiceBeforeVAT=%% / services avant TVA
-AmountOnOrder=Taxe fixe sur facture
