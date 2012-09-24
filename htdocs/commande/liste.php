@@ -319,6 +319,8 @@ if ($resql)
 		$companystatic->client=$objp->client;
 		print '<td>';
 		print $companystatic->getNomUrl(1,'customer');
+		print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$companystatic->id.'">';
+		print img_picto($langs->trans("CreateInvoiceForThisCustomer").' : '.$companystatic->nom,'object_bill').'</a>';
 		print '</td>';
 
 		print '<td>'.$objp->ref_client.'</td>';
