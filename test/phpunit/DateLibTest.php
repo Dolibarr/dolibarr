@@ -114,6 +114,47 @@ class DateLibTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testNumBetweenDay
+     *
+     * @return	void
+     */
+    public function testNumBetweenDay()
+    {
+    	global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		// With same hours
+		$date1=dol_mktime(0, 0, 0, 1, 1, 2012);
+		$date2=dol_mktime(0, 0, 0, 1, 2, 2012);
+
+		$result=num_between_day($date1,$date2,1);
+    	print __METHOD__." result=".$result."\n";
+		$this->assertEquals(2,$result);
+
+		$result=num_between_day($date1,$date2,0);
+    	print __METHOD__." result=".$result."\n";
+		$this->assertEquals(1,$result);
+
+		// With different hours
+		$date1=dol_mktime(0, 0, 0, 1, 1, 2012);
+		$date2=dol_mktime(12, 0, 0, 1, 2, 2012);
+
+		$result=num_between_day($date1,$date2,1);
+    	print __METHOD__." result=".$result."\n";
+		$this->assertEquals(2,$result);
+
+		$result=num_between_day($date1,$date2,0);
+    	print __METHOD__." result=".$result."\n";
+		$this->assertEquals(1,$result);
+
+		return $result;
+    }
+
+
+    /**
      * testConvertTime2Seconds
      *
      * @return	void
