@@ -82,7 +82,7 @@ llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute
 
 $now=dol_now();
 
-$sql = "SELECT d.rowid, d.login, d.nom as lastname, d.prenom as firstname, d.societe, ";
+$sql = "SELECT d.rowid, d.login, d.nom as lastname, d.prenom as firstname, d.societe as company, d.fk_soc,";
 $sql.= " d.datefin,";
 $sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
 $sql.= " t.libelle as type, t.cotisation";
@@ -267,6 +267,14 @@ if ($resql)
 		$memberstatic->lastname=$objp->lastname;
 		$memberstatic->firstname=$objp->firstname;
 
+		if (! empty($objp->fk_soc)) {
+			$memberstatic->socid = $objp->fk_soc;
+			$memberstatic->fetch_thirdparty();
+			$companyname=$memberstatic->thirdparty->name;
+		} else {
+			$companyname=$objp->company;
+		}
+
 		$var=!$var;
 		print "<tr ".$bc[$var].">";
 
@@ -276,14 +284,11 @@ if ($resql)
 		print "</td>\n";
 
 		// Lastname
-		if ($objp->societe != '')
-		{
-			print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".((! empty($obj->lastname) && ! empty($obj->firstname))?dol_trunc($memberstatic->getFullName($langs))." / ":'').dol_trunc($objp->societe,32)."</a></td>\n";
-		}
-		else
-		{
-			print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".dol_trunc($memberstatic->getFullName($langs))."</a></td>\n";
-		}
+		print "<td><a href=\"fiche.php?rowid=$objp->rowid\">";
+		print ((! empty($objp->lastname) || ! empty($objp->firstname)) ? dol_trunc($memberstatic->getFullName($langs)) : '');
+		print (((! empty($objp->lastname) || ! empty($objp->firstname)) && ! empty($companyname)) ? ' / ' : '');
+		print (! empty($companyname) ? dol_trunc($companyname, 32) : '');
+		print "</a></td>\n";
 
 		// Login
 		print "<td>".$objp->login."</td>\n";

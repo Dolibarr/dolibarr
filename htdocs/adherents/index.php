@@ -245,6 +245,7 @@ if ($resql)
 			if (! empty($obj->fk_soc)) {
 				$staticmember->socid = $obj->fk_soc;
 				$staticmember->fetch_thirdparty();
+				$staticmember->name=$staticmember->thirdparty->name;
 			} else {
 				$staticmember->name=$obj->company;
 			}
@@ -306,6 +307,7 @@ if ($resql)
 			if (! empty($obj->fk_soc)) {
 				$staticmember->socid = $obj->fk_soc;
 				$staticmember->fetch_thirdparty();
+				$staticmember->name=$staticmember->thirdparty->name;
 			} else {
 				$staticmember->name=$obj->company;
 			}
