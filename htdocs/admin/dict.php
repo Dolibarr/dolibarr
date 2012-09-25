@@ -8,7 +8,7 @@
  * Copyright (C) 2011      Remy Younes          <ryounes@gmail.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@ltairis.fr>
- * Copyright (C) 2011-2012 Alexandre Spangaro	  <alexandre.spangaro@gmail.com> 
+ * Copyright (C) 2011-2012 Alexandre Spangaro	  <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -634,7 +634,7 @@ $linkback='';
 if ($id)
 {
     $titre.=' - '.$langs->trans($tablib[$id]);
-    $linkback='<a href="'.DOL_URL_ROOT.'/admin/dict.php">'.$langs->trans("BackToDictionnaryList").'</a>';
+    $linkback='<a href="'.$_SERVER['PHP_SELF'].'">'.$langs->trans("BackToDictionnaryList").'</a>';
 }
 print_fiche_titre($titre,$linkback,'setup');
 
@@ -686,7 +686,7 @@ if ($id)
 
     $fieldlist=explode(',',$tabfield[$id]);
 
-    print '<form action="dict.php?id='.$id.'" method="post">';
+    print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="noborder" width="100%">';
 
@@ -848,7 +848,7 @@ if ($id)
                 if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='pays_id') { $showfield=0; }
                 if ($fieldlist[$field]=='accountancy_code_sell'){ $valuetoshow=$langs->trans("AccountancyCodeSell"); $sortable=0; }
                 if ($fieldlist[$field]=='accountancy_code_buy'){ $valuetoshow=$langs->trans("AccountancyCodeBuy"); $sortable=0; }
-				        if ($fieldlist[$field]=='fk_pcg_version')  { $valuetoshow=$langs->trans("Pcg_version"); }
+				if ($fieldlist[$field]=='fk_pcg_version')  { $valuetoshow=$langs->trans("Pcg_version"); }
                 if ($fieldlist[$field]=='account_number')  { $valuetoshow=$langs->trans("Accounts"); }
                 if ($fieldlist[$field]=='account_parent')  { $valuetoshow=$langs->trans("Accountsparent"); }
                 if ($fieldlist[$field]=='pcg_type')        { $valuetoshow=$langs->trans("Pcg_type"); }
@@ -873,7 +873,7 @@ if ($id)
                 print '<tr '.$bc[$var].' id="rowid-'.$obj->rowid.'">';
                 if ($action == 'edit' && ($rowid == (! empty($obj->rowid)?$obj->rowid:$obj->code)))
                 {
-                    print '<form action="dict.php?id='.$id.'" method="post">';
+                    print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                     print '<input type="hidden" name="page" value="'.$page.'">';
                     print '<input type="hidden" name="rowid" value="'.$rowid.'">';
@@ -889,7 +889,7 @@ if ($id)
                     print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
                 }
                 else
-              {
+                {
 	              	$tmpaction = 'view';
                     $parameters=array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
                     $reshook=$hookmanager->executeHooks('viewDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
