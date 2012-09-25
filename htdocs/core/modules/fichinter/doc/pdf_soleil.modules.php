@@ -84,10 +84,9 @@ class pdf_soleil extends ModelePDFFicheinter
 		$this->option_multilang = 0;               // Dispo en plusieurs langues
 		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
-		// Recupere emmetteur
+		// Get source company
 		$this->emetteur=$mysoc;
-		if (empty($this->emetteur->country_code))
-			$this->emetteur->country_code = substr($langs->defaultlang,-2);    // By default, if not defined
+		if (empty($this->emetteur->country_code)) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if not defined
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
@@ -96,14 +95,18 @@ class pdf_soleil extends ModelePDFFicheinter
 	/**
      *  Function to build pdf onto disk
      *
-     *  @param		object	$object				Object to generate
+     *  @param		int		$object				Id of object to generate
      *  @param		object	$outputlangs		Lang output object
-     *  @return	    int							1=ok, 0=ko
+     *  @param		string	$srctemplatepath	Full path of source filename for generator using a template file
+     *  @param		int		$hidedetails		Do not show line details
+     *  @param		int		$hidedesc			Do not show desc
+     *  @param		int		$hideref			Do not show ref
+     *  @param		object	$hookmanager		Hookmanager object
+     *  @return     int             			1=OK, 0=KO
 	 */
-	function write_file($object,$outputlangs)
+	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0,$hookmanager=false)
 	{
 		global $user,$langs,$conf,$mysoc;
-		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -113,6 +116,8 @@ class pdf_soleil extends ModelePDFFicheinter
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
 		$outputlangs->load("interventions");
+
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		if ($conf->ficheinter->dir_output)
 		{
@@ -135,7 +140,7 @@ class pdf_soleil extends ModelePDFFicheinter
 			if (file_exists($dir))
 			{
                 $pdf=pdf_getInstance($this->format);
-                $heightforinfotot = 80;	// Height reserved to output the info and total part (value include bottom margin)
+                $heightforinfotot = 50;	// Height reserved to output the info and total part
                 $heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
 
@@ -161,7 +166,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("InterventionCard"));
-				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
+				if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 
@@ -169,16 +174,14 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->AddPage();
 				if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 				$pagenb++;
-				$this->_pagehead($pdf, $object, 1, $outputlangs);
-				$pdf->SetTextColor(0,0,0);
+				$this->_pagehead($pdf, $object, 1, $outputlangs, $hookmanager);
 				$pdf->SetFont('','', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, '');		// Set interline to 3
+				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 90;
-				$tab_top_middlepage = 10;
-				$tab_top_newpage = 10;
+				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
 				$tab_height = 130;
-				$tab_height_middlepage = 200;
 				$tab_height_newpage = 150;
 
 				// Affiche notes
@@ -186,7 +189,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				{
 					$tab_top = 88;
 
-					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
+					$pdf->SetFont('','', $default_font_size - 1);
 					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
@@ -242,48 +245,32 @@ class pdf_soleil extends ModelePDFFicheinter
 					if ($valide > 0 || $object->specimen)
 					{
 						$curY = $nexY;
+						$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
+						$pdf->SetTextColor(0,0,0);
 
+						$pdf->setTopMargin($tab_top_newpage);
 						$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 						$pageposbefore=$pdf->getPage();
-						
-						$pdf->SetFont('','B', $default_font_size - 1);
-						$pdf->SetXY($this->marge_gauche, $curY);
-						$txt=dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true)." - ".$outputlangs->transnoentities("Duration")." : ".convertSecondToTime($objectligne->duration),1,$outputlangs->charset_output);
 
-						$curYold=$nexYold=$nexY;
-						$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $curY, $txt, 0, 1, 0);
-						$curY = $pdf->GetY();
-						$nexY+=3;
+						// Description of product line
+						$txt='<strong>'.dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dol_print_date($objectligne->datei,'dayhour',false,$outputlangs,true)." - ".$outputlangs->transnoentities("Duration")." : ".convertSecondToTime($objectligne->duration),1,$outputlangs->charset_output).'</strong>';
+						$desc=dol_htmlentitiesbr($objectligne->desc,1);
 
-                        $pdf->SetFont('','', $default_font_size - 1);
+						$pdf->writeHTMLCell(0, 0, $curX, $curY, dol_concatdesc($txt,$desc), 0, 1, 0);
 
-						$pdf->SetXY($this->marge_gauche, $nexY);
-						$desc = dol_htmlentitiesbr($objectligne->desc,1);
-
-						$curYold = $pdf->GetY();
-						$nexYold = $curYold;
-
-						$pdf->writeHTMLCell(0, 3, $this->marge_gauche, $curY, $desc, 0, 1, 0);
-
-						$stringheight=$pdf->getStringHeight('A', $txt);
-						$curY = $pdf->GetY();
-
-						$nexY+=(dol_nboflines_bis($objectligne->desc,0,$outputlangs->charset_output)*$stringheight);
-                        //print $curYold."-".$nexYold." +".dol_nboflines_bis($objectligne->desc,52,$outputlangs->charset_output)."*".$stringheight."= ".$curY."-".$nexY."<br>";
-
-						$nexY+=2;    // Passe espace entre les lignes
-
+						$nexY = $pdf->GetY();
 						$pageposafter=$pdf->getPage();
 						$pdf->setPage($pageposbefore);
+						$pdf->setTopMargin($this->marge_haute);
 						$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
-						
+
 						// We suppose that a too long description is moved completely on next page
 						if ($pageposafter > $pageposbefore) {
 							$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 						}
 
 						$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
-						
+
 						// Detect if some page were added automatically and output _tableau for past pages
 						while ($pagenb < $pageposafter)
 						{
@@ -323,16 +310,14 @@ class pdf_soleil extends ModelePDFFicheinter
 				// Show square
 				if ($pagenb == 1)
 				{
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot, 0, $outputlangs, 0, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfooter, 0, $outputlangs, 0, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforfooter - $heightforfooter + 1;
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot, 0, $outputlangs, 1, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfooter, 0, $outputlangs, 1, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforfooter - $heightforfooter + 1;
 				}
-
-				$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 
 				$this->_pagefoot($pdf,$object,$outputlangs);
 				$pdf->AliasNbPages();
@@ -401,21 +386,24 @@ class pdf_soleil extends ModelePDFFicheinter
 
 		$pdf->MultiCell(0, 3, '');		// Set interline to 3. Then writeMultiCell must use 3 also.
 */
-		$pdf->Rect($this->marge_gauche, $tab_top, ($this->page_largeur-$this->marge_gauche-$this->marge_droite), $tab_height+3);
-		$pdf->SetXY($this->marge_gauche, $pdf->GetY() + 20);
-		$pdf->MultiCell(60, 5, '', 0, 'J', 0);
 
-		$pdf->SetXY(20,230);
-		$pdf->MultiCell(66,5, $outputlangs->transnoentities("NameAndSignatureOfInternalContact"),0,'L',0);
+		// Output Rect
+		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height+3, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
 
-		$pdf->SetXY(20,235);
-		$pdf->MultiCell(80,25, '', 1);
+		if (empty($hidebottom))
+		{
+			$pdf->SetXY(20,230);
+			$pdf->MultiCell(66,5, $outputlangs->transnoentities("NameAndSignatureOfInternalContact"),0,'L',0);
 
-		$pdf->SetXY(110,230);
-		$pdf->MultiCell(80,5, $outputlangs->transnoentities("NameAndSignatureOfExternalContact"),0,'L',0);
+			$pdf->SetXY(20,235);
+			$pdf->MultiCell(80,25, '', 1);
 
-		$pdf->SetXY(110,235);
-		$pdf->MultiCell(80,25, '', 1);
+			$pdf->SetXY(110,230);
+			$pdf->MultiCell(80,5, $outputlangs->transnoentities("NameAndSignatureOfExternalContact"),0,'L',0);
+
+			$pdf->SetXY(110,235);
+			$pdf->MultiCell(80,25, '', 1);
+		}
 	}
 
 	/**
@@ -559,7 +547,7 @@ class pdf_soleil extends ModelePDFFicheinter
 			if (! empty($usecontact))
 			{
 				// On peut utiliser le nom de la societe du contact
-				if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socname = $object->contact->socname;
+				if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socname = $object->contact->socname;
 				else $socname = $object->client->nom;
 				$carac_client_name=$outputlangs->convToOutputCharset($socname);
 			}

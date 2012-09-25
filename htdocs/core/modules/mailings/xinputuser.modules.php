@@ -133,7 +133,7 @@ class mailing_xinputuser extends MailingTargets
 			{
 				$cibles[] = array(
            			'email' => $email,
-           			'name' => $name,
+           			'name' => $lastname,
            			'firstname' => $firstname,
 					'other' => $other,
                     'source_url' => '',

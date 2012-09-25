@@ -111,7 +111,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("MembersSetup"),$linkback,'setup');
 
 
-$head = member_admin_prepare_head($adh);
+$head = member_admin_prepare_head();
 
 dol_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
 
@@ -136,10 +136,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0)
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
-    print '<input type="hidden" name="rowid" value="'.$rowid.'">';
     print '<input type="hidden" name="constname" value="ADHERENT_LOGIN_NOT_REQUIRED">';
     print '<tr '.$bc[$var].'><td>'.$langs->trans("AdherentLoginRequired").'</td><td>';
-    print $form->selectyesno('constvalue',!$conf->global->ADHERENT_LOGIN_NOT_REQUIRED,1);
+    print $form->selectyesno('constvalue',(! empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)?$conf->global->ADHERENT_LOGIN_NOT_REQUIRED:1),1);
     print '</td><td align="center" width="80">';
     print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
     print "</td></tr>\n";
@@ -151,10 +150,9 @@ $var=!$var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
-print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 print '<input type="hidden" name="constname" value="ADHERENT_MAIL_REQUIRED">';
 print '<tr '.$bc[$var].'><td>'.$langs->trans("AdherentMailRequired").'</td><td>';
-print $form->selectyesno('constvalue',$conf->global->ADHERENT_MAIL_REQUIRED,1);
+print $form->selectyesno('constvalue',(! empty($conf->global->ADHERENT_MAIL_REQUIRED)?$conf->global->ADHERENT_MAIL_REQUIRED:0),1);
 print '</td><td align="center" width="80">';
 print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
 print "</td></tr>\n";
@@ -165,10 +163,9 @@ $var=!$var;
 print '<form action="adherent.php" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
-print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 print '<input type="hidden" name="constname" value="ADHERENT_DEFAULT_SENDINFOBYMAIL">';
 print '<tr '.$bc[$var].'><td>'.$langs->trans("MemberSendInformationByMailByDefault").'</td><td>';
-print $form->selectyesno('constvalue',$conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL,1);
+print $form->selectyesno('constvalue',(! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?$conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL:0),1);
 print '</td><td align="center" width="80">';
 print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
 print "</td></tr>\n";
@@ -179,10 +176,9 @@ $var=!$var;
 print '<form action="adherent.php" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
-print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 print '<input type="hidden" name="constname" value="ADHERENT_BANK_USE">';
 print '<tr '.$bc[$var].'><td>'.$langs->trans("AddSubscriptionIntoAccount").'</td>';
-if ($conf->banque->enabled)
+if (! empty($conf->banque->enabled))
 {
     print '<td>';
     print $form->selectyesno('constvalue',$conf->global->ADHERENT_BANK_USE,1);

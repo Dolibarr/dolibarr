@@ -88,7 +88,7 @@ if ($action == "builddoc" && $user->rights->facture->lire)
         }
         $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
-        if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
+        if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
 		// Add all others
 		foreach($files as $file)
@@ -340,7 +340,7 @@ if ($resql)
 			print '<td width="16" align="right" class="nobordernopadding">';
             $filename=dol_sanitizeFileName($objp->facnumber);
 			$filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
-			$foundpdf=$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','',1,'',1,$param);
+			print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
             print '</td>';
 
 			print '</tr></table>';
@@ -365,8 +365,10 @@ if ($resql)
 
 			// Checkbox
 			print '<td align="center">';
-			if ($foundpdf) print '<input id="cb'.$objp->facid.'" class="flat checkformerge" type="checkbox" name="toGenerate[]" value="'.$objp->facnumber.'">';
-			else print '&nbsp;';
+			if (! empty($formfile->numoffiles))
+				print '<input id="cb'.$objp->facid.'" class="flat checkformerge" type="checkbox" name="toGenerate[]" value="'.$objp->facnumber.'">';
+			else
+				print '&nbsp;';
 			print '</td>' ;
 
 			print "</tr>\n";

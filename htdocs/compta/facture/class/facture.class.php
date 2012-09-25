@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2012 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2012 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
  *
@@ -691,7 +691,7 @@ class Facture extends CommonInvoice
 
         // Possibility to add external linked objects with hooks
         $this->linked_objects[$this->origin] = $this->origin_id;
-        if (is_array($object->other_linked_objects) && ! empty($object->other_linked_objects))
+        if (! empty($object->other_linked_objects) && is_array($object->other_linked_objects))
         {
         	$this->linked_objects = array_merge($this->linked_objects, $object->other_linked_objects);
         }
@@ -1330,6 +1330,8 @@ class Facture extends CommonInvoice
         if (! $cond_reglement) $cond_reglement=$this->cond_reglement_code;
         if (! $cond_reglement) $cond_reglement=$this->cond_reglement_id;
 
+        $cdr_nbjour=0; $cdr_fdm=0; $cdr_decalage=0;
+
         $sqltemp = 'SELECT c.fdm,c.nbjour,c.decalage';
         $sqltemp.= ' FROM '.MAIN_DB_PREFIX.'c_payment_term as c';
         if (is_numeric($cond_reglement)) $sqltemp.= " WHERE c.rowid=".$cond_reglement;
@@ -1809,7 +1811,7 @@ class Facture extends CommonInvoice
         if ($result)
         {
             // Si on decremente le produit principal et ses composants a la validation de facture, on réincrement
-            if ($this->type != 3 && $result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
+            if ($this->type != 3 && $result >= 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_BILL))
             {
                 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
                 $langs->load("agenda");
@@ -1925,7 +1927,7 @@ class Facture extends CommonInvoice
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits);
+            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
@@ -2063,7 +2065,7 @@ class Facture extends CommonInvoice
             // Calculate total with, without tax and tax from qty, pu, remise_percent and txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits);
+            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
@@ -3446,11 +3448,11 @@ class FactureLigne
         	$sql.= ",total_ht=".price2num($this->total_ht)."";
         	$sql.= ",total_tva=".price2num($this->total_tva)."";
         	$sql.= ",total_ttc=".price2num($this->total_ttc)."";
+        	$sql.= ",total_localtax1=".price2num($this->total_localtax1)."";
+        	$sql.= ",total_localtax2=".price2num($this->total_localtax2)."";
         }
 		$sql.= " , fk_product_fournisseur_price='".$this->fk_fournprice."'";
 		$sql.= " , buy_price_ht='".price2num($this->pa_ht)."'";
-        $sql.= ",total_localtax1=".price2num($this->total_localtax1)."";
-        $sql.= ",total_localtax2=".price2num($this->total_localtax2)."";
         $sql.= ",fk_parent_line=".($this->fk_parent_line>0?$this->fk_parent_line:"null");
         if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
         $sql.= " WHERE rowid = ".$this->rowid;

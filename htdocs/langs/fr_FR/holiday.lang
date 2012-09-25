@@ -84,7 +84,8 @@ NewSoldeCP=Nouveau Solde
 alreadyCPexist=Une demande de congés à déjà été effectuée sur cette période.
 UserName=Nom Prénom
 Employee=Salarié
-
+FirstDayOfHoliday=Premier jour de congès
+LastDayOfHoliday=Dernier jour de congès
 
 ## Configuration du Module ##
 ConfCP=Configuration du module Congés

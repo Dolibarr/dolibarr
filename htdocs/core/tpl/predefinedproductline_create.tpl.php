@@ -142,8 +142,7 @@ if (! empty($conf->margin->enabled)) {
 $("#idprod").change(function() {
   $("#fournprice options").remove();
   $("#fournprice").hide();
-  $("#buying_price").val("");
-  $("#buying_price").show();
+  $("#buying_price").val("").show();
   $.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': $(this).val()}, function(data) {
     if (data && data.length > 0) {
       var options = '';
@@ -158,9 +157,8 @@ $("#idprod").change(function() {
         options += '>'+this.label+'</option>';
       });
       options += '<option value=null><?php echo $langs->trans("InputPrice"); ?></option>';
-      $("#fournprice").html(options);
       $("#buying_price").hide();
-      $("#fournprice").show();
+      $("#fournprice").html(options).show();
       $("#fournprice").change(function() {
         var selval = $(this).find('option:selected').attr("price");
         if (selval)

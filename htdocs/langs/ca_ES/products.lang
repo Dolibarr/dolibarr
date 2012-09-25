@@ -176,3 +176,6 @@ AddThisProductCard=Crear fitxa producte
 HelpAddThisProductCard=Aquesta opció permet crear o clonar una fitxa de producte en cas que no hi hagi
 AddThisServiceCard=Crear fitxa servei
 HelpAddThisServiceCard=Aquesta opció permet crear o clonar una fitxa de servei en cas que no hi hagi
+CurrentProductPrice=Preu actual
+AlwaysUseNewPrice=Utilitzar sempre el preu actual
+AlwaysUseFixedPrice=Utilitzar el preu fixat

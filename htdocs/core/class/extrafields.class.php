@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier	    <benoit.mortier@opensides.be>
- * Copyright (C) 2009-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2011 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,10 +38,20 @@ class ExtraFields
 	var $attribute_label;
 	// Tableau contenant le nom des champs en clef et la taille de ces champs en value
 	var $attribute_size;
+	// Tableau contenant le statut unique ou non
+	var $attribute_unique;
 
 	var $error;
 	var $errno;
 
+	static $type2label=array(
+		'varchar'=>'String',
+		'text'=>'TextLong',
+		'int'=>'Int',
+		'double'=>'Float',
+		'date'=>'Date',
+		'datetime'=>'DateAndTime'
+	);
 
 	/**
 	 *	Constructor
@@ -56,6 +66,7 @@ class ExtraFields
 		$this->attribute_label = array();
 		$this->attribute_size = array();
 		$this->attribute_elementtype = array();
+		$this->attribute_unique = array();
 	}
 
     /**
@@ -67,18 +78,21 @@ class ExtraFields
      *  @param  int		$pos                Position of attribute
      *  @param  int		$size               Size/length of attribute
      *  @param  string	$elementtype        Element type ('member', 'product', 'company', ...)
+     *  @param	int		$unique				Is field unique or not
      *  @return int      					<=0 if KO, >0 if OK
      */
-    function addExtraField($attrname,$label,$type='',$pos=0,$size=0, $elementtype='member')
+    function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0)
 	{
         if (empty($attrname)) return -1;
         if (empty($label)) return -1;
 
+        // Create field into database
         $result=$this->create($attrname,$type,$size,$elementtype);
         $err1=$this->errno;
         if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS')
         {
-            $result2=$this->create_label($attrname,$label,$type,$pos,$size,$elementtype);
+        	// Add declaration of field into table
+            $result2=$this->create_label($attrname,$label,$type,$pos,$size,$elementtype, $unique);
             $err2=$this->errno;
             if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS'))
             {
@@ -101,9 +115,10 @@ class ExtraFields
 	 *  @param	int		$type				Type of attribute ('int', 'text', 'varchar', 'date', 'datehour')
 	 *  @param	int		$length				Size/length of attribute
      *  @param  string	$elementtype        Element type ('member', 'product', 'company', ...)
+     *  @param	int		$unique				Is field unique or not
      *  @return int      	           		<=0 if KO, >0 if OK
 	 */
-	function create($attrname,$type='varchar',$length=255,$elementtype='member')
+	private function create($attrname, $type='varchar', $length=255, $elementtype='member', $unique=0)
 	{
         $table='';
         if ($elementtype == 'member')  $table='adherent_extrafields';
@@ -122,6 +137,11 @@ class ExtraFields
 			$result=$this->db->DDLAddField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
 			if ($result > 0)
 			{
+				if ($unique)
+				{
+					$sql="ALTER TABLE ".MAIN_DB_PREFIX.$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
+					$resql=$this->db->query($sql,1,'dml');
+				}
 				return 1;
 			}
 			else
@@ -142,13 +162,14 @@ class ExtraFields
 	 *
 	 *	@param	string	$attrname			code of attribute
 	 *	@param	string	$label				label of attribute
-	 *  @param	int		$type				Type of attribute ('int', 'text', 'varchar', 'date', 'datehour')
+	 *  @param	int		$type				Type of attribute ('int', 'text', 'varchar', 'date', 'datehour', 'float')
 	 *  @param	int		$pos				Position of attribute
 	 *  @param	int		$size				Size/length of attribute
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'company', ...)
+     *  @param	int		$unique				Is field unique or not
 	 *  @return	int							<=0 if KO, >0 if OK
 	 */
-	function create_label($attrname,$label='',$type='',$pos=0,$size=0, $elementtype='member')
+	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0)
 	{
 		global $conf;
 
@@ -158,15 +179,16 @@ class ExtraFields
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(name, label, type, pos, size, entity, elementtype)";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."extrafields(name, label, type, pos, size, entity, elementtype, fieldunique)";
 			$sql.= " VALUES('".$attrname."',";
 			$sql.= " '".$this->db->escape($label)."',";
 			$sql.= " '".$type."',";
 			$sql.= " '".$pos."',";
 			$sql.= " '".$size."',";
 			$sql.= " ".$conf->entity.",";
-            $sql.= " '".$elementtype."'";
-			$sql.=')';
+            $sql.= " '".$elementtype."',";
+            $sql.= " '".$unique."'";
+            $sql.=')';
 
 			dol_syslog(get_class($this)."::create_label sql=".$sql);
 			if ($this->db->query($sql))
@@ -189,7 +211,7 @@ class ExtraFields
 	 *  @param  string	$elementtype    Element type ('member', 'product', 'company', ...)
 	 *  @return int              		< 0 if KO, 0 if nothing is done, 1 if OK
 	 */
-	function delete($attrname,$elementtype='member')
+	function delete($attrname, $elementtype='member')
 	{
 	    $table='';
 	    if ($elementtype == 'member')  $table='adherent_extrafields';
@@ -204,7 +226,7 @@ class ExtraFields
 
 		if (! empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
 		{
-		    $result=$this->db->DDLDropField(MAIN_DB_PREFIX.$table,$attrname);
+		    $result=$this->db->DDLDropField(MAIN_DB_PREFIX.$table,$attrname);	// This also drop the unique key
 			if ($result < 0)
 			{
 				$this->error=$this->db->lasterror();
@@ -229,7 +251,7 @@ class ExtraFields
      *  @param  string	$elementtype        Element type ('member', 'product', 'company', ...)
      *  @return int              			< 0 if KO, 0 if nothing is done, 1 if OK
 	 */
-	function delete_label($attrname,$elementtype='member')
+	private function delete_label($attrname, $elementtype='member')
 	{
 		global $conf;
 
@@ -263,12 +285,14 @@ class ExtraFields
 	 * 	Modify type of a personalized attribute
 	 *
 	 *  @param	string	$attrname			Name of attribute
+	 *  @param	string	$label				Label of attribute
 	 *  @param	string	$type				Type of attribute
 	 *  @param	int		$length				Length of attribute
      *  @param  string	$elementtype        Element type ('member', 'product', 'company', ...)
+     *  @param	int		$unique				Is field unique or not
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 */
-	function update($attrname,$type='varchar',$length=255,$elementtype='member')
+	function update($attrname,$label,$type,$length,$elementtype,$unique=0)
 	{
         $table='';
         if ($elementtype == 'member')  $table='adherent_extrafields';
@@ -287,7 +311,30 @@ class ExtraFields
 			$result=$this->db->DDLUpdateField(MAIN_DB_PREFIX.$table, $attrname, $field_desc);
 			if ($result > 0)
 			{
-				return 1;
+				if ($label)
+				{
+					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique);
+				}
+				if ($result > 0)
+				{
+					$sql='';
+					if ($unique)
+					{
+						$sql="ALTER TABLE ".MAIN_DB_PREFIX.$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
+					}
+					else
+					{
+						$sql="ALTER TABLE ".MAIN_DB_PREFIX.$table." DROP INDEX uk_".$table."_".$attrname;
+					}
+					dol_syslog(get_class($this).'::update sql='.$sql);
+					$resql=$this->db->query($sql,1,'dml');
+					return 1;
+				}
+				else
+				{
+					$this->error=$this->db->lasterror();
+					return -1;
+				}
 			}
 			else
 			{
@@ -310,9 +357,10 @@ class ExtraFields
      *  @param  string	$type               Type of attribute
      *  @param  int		$size		        Length of attribute
      *  @param  string	$elementtype		Element type ('member', 'product', 'company', ...)
-     *  @return	int							<0 if KO, >0 if OK
+     *  @param	int		$unique				Is field unique or not
+     *  @return	int							<=0 if KO, >0 if OK
      */
-	function update_label($attrname,$label,$type,$size,$elementtype='member')
+	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0)
 	{
 		global $conf;
 		dol_syslog(get_class($this)."::update_label $attrname,$label,$type,$size");
@@ -334,15 +382,17 @@ class ExtraFields
 			$sql.= " label,";
 			$sql.= " type,";
 			$sql.= " size,";
-			$sql.= " elementtype";
+			$sql.= " elementtype,";
+			$sql.= " fieldunique";
 			$sql.= ") VALUES (";
 			$sql.= "'".$attrname."',";
 			$sql.= " ".$conf->entity.",";
 			$sql.= " '".$this->db->escape($label)."',";
 			$sql.= " '".$type."',";
 			$sql.= " '".$size."',";
-            $sql.= " '".$elementtype."'";
-			$sql.= ")";
+            $sql.= " '".$elementtype."',";
+            $sql.= " '".$unique."'";
+            $sql.= ")";
 			dol_syslog(get_class($this)."::update_label sql=".$sql);
 			$resql2=$this->db->query($sql);
 
@@ -355,7 +405,7 @@ class ExtraFields
 			{
 				$this->db->rollback();
 				print dol_print_error($this->db);
-				return 0;
+				return -1;
 			}
 		}
 		else
@@ -389,7 +439,7 @@ class ExtraFields
 
 		$array_name_label=array();
 
-		$sql = "SELECT rowid,name,label,type,size,elementtype";
+		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
 		$sql.= " WHERE entity = ".$conf->entity;
 		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";
@@ -409,6 +459,7 @@ class ExtraFields
 					$this->attribute_label[$tab->name]=$tab->label;
 					$this->attribute_size[$tab->name]=$tab->size;
                     $this->attribute_elementtype[$tab->name]=$tab->elementtype;
+                    $this->attribute_unique[$tab->name]=$tab->fieldunique;
 				}
 			}
 			return $array_name_label;
@@ -433,9 +484,10 @@ class ExtraFields
 		global $conf;
 
         $label=$this->attribute_label[$key];
-	    $type=$this->attribute_type[$key];
-        $size=$this->attribute_size[$key];
+	    $type =$this->attribute_type[$key];
+        $size =$this->attribute_size[$key];
         $elementtype=$this->attribute_elementtype[$key];
+        $unique=$this->attribute_unique[$key];
         if ($type == 'date')
         {
             $showsize=10;
@@ -444,7 +496,7 @@ class ExtraFields
         {
             $showsize=19;
         }
-        elseif ($type == 'int')
+        elseif (in_array($type,array('int','double')))
         {
             $showsize=10;
         }
@@ -454,9 +506,17 @@ class ExtraFields
             if ($showsize > 48) $showsize=48;
         }
 
-		if ($type == 'int')
+		if (in_array($type,array('date','datetime')))
         {
-        	$out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+        	$tmp=explode(',',$size);
+        	$newsize=$tmp[0];
+        	$out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+        }
+        else if (in_array($type,array('int','double')))
+        {
+        	$tmp=explode(',',$size);
+        	$newsize=$tmp[0];
+        	$out='<input type="text" name="options_'.$key.'" size="'.$showsize.'" maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
         }
         else if ($type == 'varchar')
         {
@@ -465,11 +525,12 @@ class ExtraFields
         else if ($type == 'text')
         {
         	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-        	$doleditor=new DolEditor('options_'.$key,$value,'',200,'dolibarr_notes','In',false,false,$conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE,5,100);
+        	$doleditor=new DolEditor('options_'.$key,$value,'',200,'dolibarr_notes','In',false,false,! empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE,5,100);
         	$out=$doleditor->Create(1);
         }
-	    else if ($type == 'date') $out.=' (YYYY-MM-DD)';
-        else if ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
+        // Add comments
+	    if ($type == 'date') $out.=' (YYYY-MM-DD)';
+        elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
 	    return $out;
 	}
 
@@ -487,6 +548,7 @@ class ExtraFields
         $type=$this->attribute_type[$key];
         $size=$this->attribute_size[$key];
         $elementtype=$this->attribute_elementtype[$key];
+        $unique=$this->attribute_unique[$key];
         if ($type == 'date')
         {
             $showsize=10;

@@ -31,20 +31,20 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-if ($conf->facture->enabled) require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-if ($conf->propal->enabled) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-if ($conf->commande->enabled) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if ($conf->contrat->enabled) require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-if ($conf->adherent->enabled) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-if ($conf->ficheinter->enabled) require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+if (! empty($conf->facture->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+if (! empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if (! empty($conf->contrat->enabled)) require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+if (! empty($conf->ficheinter->enabled)) require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 
 $langs->load("companies");
-if ($conf->contrat->enabled)  $langs->load("contracts");
-if ($conf->commande->enabled) $langs->load("orders");
-if ($conf->facture->enabled) $langs->load("bills");
-if ($conf->projet->enabled)  $langs->load("projects");
-if ($conf->ficheinter->enabled) $langs->load("interventions");
-if ($conf->notification->enabled) $langs->load("mails");
+if (! empty($conf->contrat->enabled))  $langs->load("contracts");
+if (! empty($conf->commande->enabled)) $langs->load("orders");
+if (! empty($conf->facture->enabled)) $langs->load("bills");
+if (! empty($conf->projet->enabled))  $langs->load("projects");
+if (! empty($conf->ficheinter->enabled)) $langs->load("interventions");
+if (! empty($conf->notification->enabled)) $langs->load("mails");
 
 // Security check
 $id = (GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id','int'));
@@ -345,7 +345,7 @@ if ($id > 0)
 	print '</tr>';
 
 	// Multiprice level
-	if ($conf->global->PRODUIT_MULTIPRICES)
+	if (! empty($conf->global->PRODUIT_MULTIPRICES))
 	{
 		print '<tr><td nowrap>';
 		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
@@ -364,7 +364,7 @@ if ($id > 0)
 	include DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php';
 
     // Module Adherent
-    if ($conf->adherent->enabled)
+    if (! empty($conf->adherent->enabled))
     {
         $langs->load("members");
         $langs->load("users");
@@ -410,7 +410,7 @@ if ($id > 0)
 	/*
 	 * Last proposals
 	 */
-	if ($conf->propal->enabled && $user->rights->propal->lire)
+	if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 	{
 		$propal_static = new Propal($db);
 
@@ -472,7 +472,7 @@ if ($id > 0)
 	/*
 	 * Last orders
 	 */
-	if ($conf->commande->enabled && $user->rights->commande->lire)
+	if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	{
 		$commande_static=new Commande($db);
 
@@ -527,7 +527,7 @@ if ($id > 0)
 	/*
 	 * Last linked contracts
 	 */
-	if ($conf->contrat->enabled && $user->rights->contrat->lire)
+	if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 	{
 		$contratstatic=new Contrat($db);
 
@@ -587,7 +587,7 @@ if ($id > 0)
 	/*
 	 * Last interventions
 	 */
-	if ($conf->ficheinter->enabled && $user->rights->ficheinter->lire)
+	if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire)
 	{
 		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.fk_statut, f.duree as duration, f.datei as startdate";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
@@ -642,7 +642,7 @@ if ($id > 0)
 	/*
 	 *   Last invoices
 	 */
-	if ($conf->facture->enabled && $user->rights->facture->lire)
+	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
 		$facturestatic = new Facture($db);
 
@@ -723,13 +723,13 @@ if ($id > 0)
 	 */
 	print '<div class="tabsAction">';
 
-	if ($conf->propal->enabled && $user->rights->propal->creer)
+	if (! empty($conf->propal->enabled) && $user->rights->propal->creer)
 	{
 		$langs->load("propal");
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
 	}
 
-	if ($conf->commande->enabled && $user->rights->commande->creer)
+	if (! empty($conf->commande->enabled) && $user->rights->commande->creer)
 	{
 		$langs->load("orders");
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddOrder").'</a>';
@@ -741,7 +741,7 @@ if ($id > 0)
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddContract").'</a>';
 	}
 
-	if ($conf->ficheinter->enabled && $user->rights->ficheinter->creer)
+	if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer)
 	{
 		$langs->load("fichinter");
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/fiche.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a>';
@@ -750,13 +750,13 @@ if ($id > 0)
 	// Add invoice
 	if ($user->societe_id == 0)
 	{
-		if ($conf->deplacement->enabled)
+		if (! empty($conf->deplacement->enabled))
 		{
 			$langs->load("trips");
 			print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/fiche.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddTrip").'</a>';
 		}
 
-		if ($conf->facture->enabled)
+		if (! empty($conf->facture->enabled))
 		{
 			if ($user->rights->facture->creer)
 			{
@@ -772,7 +772,7 @@ if ($id > 0)
 	}
 
 	// Add action
-	if ($conf->agenda->enabled && ! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
+	if (! empty($conf->agenda->enabled) && ! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
 	{
 		if ($user->rights->agenda->myactions->create)
 		{

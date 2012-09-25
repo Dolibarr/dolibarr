@@ -34,10 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
 /**
- *	\class      pdf_typhon
- *	\brief      Classe permettant de generer les bons de livraison au modele Typho
+ *	Classe permettant de generer les bons de livraison au modele Typho
  */
-
 class pdf_typhon extends ModelePDFDeliveryOrder
 {
 	var $emetteur;	// Objet societe qui emet
@@ -143,7 +141,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			if (file_exists($dir))
 			{
                 $pdf=pdf_getInstance($this->format);
-                $heightforinfotot = 50;	// Height reserved to output the info and total part (value include bottom margin)
+                $heightforinfotot = 50;	// Height reserved to output the info and total part
                 $heightforfooter = 50;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
 
@@ -181,7 +179,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("DeliveryOrder"));
-				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
+				if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 
@@ -206,8 +204,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 90;
-				$tab_top_newpage = 5;
-				$tab_height = 150;
+				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
+				$tab_height = 130;
 				$tab_height_newpage = 150;
 
 				// Affiche notes
@@ -236,22 +234,25 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				$curY = $tab_top + 7;
 				$nexY = $tab_top + 7;
 
-				// Boucle sur les lignes
+				// Loop on each lines
 				for ($i = 0 ; $i < $nblines ; $i++)
 				{
 					$curY = $nexY;
+					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
+					$pdf->SetTextColor(0,0,0);
 
+					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot-50);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
 
 					// Description of product line
-                    $pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
 					$curX = $this->posxdesc-1;
                     pdf_writelinedesc($pdf,$object,$i,$outputlangs,108,3,$curX,$curY);
 
 					$nexY = $pdf->GetY();
                     $pageposafter=$pdf->getPage();
 					$pdf->setPage($pageposbefore);
+					$pdf->setTopMargin($this->marge_haute);
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description is moved completely on next page
@@ -334,13 +335,13 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				// Show square
 				if ($pagenb == 1)
 				{
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot, 0, $outputlangs, 0, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfooter, 0, $outputlangs, 0, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot, 0, $outputlangs, 1, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfooter, 0, $outputlangs, 1, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
 				}
 
 				/*
@@ -642,7 +643,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			if (! empty($usecontact))
 			{
 				// On peut utiliser le nom de la societe du contact
-				if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socname = $object->contact->socname;
+				if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socname = $object->contact->socname;
 				else $socname = $object->client->nom;
 				$carac_client_name=$outputlangs->convToOutputCharset($socname);
 			}

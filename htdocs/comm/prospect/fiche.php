@@ -29,8 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/comm/prospect/class/prospect.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-if ($conf->adherent->enabled) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-if ($conf->propal->enabled) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+if (! empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
 $langs->load('companies');
 $langs->load('projects');
@@ -152,7 +152,7 @@ if ($socid > 0)
 	print '</tr>';
 
 	// Multiprice level
-	if ($conf->global->PRODUIT_MULTIPRICES)
+	if (! empty($conf->global->PRODUIT_MULTIPRICES))
 	{
 		print '<tr><td nowrap>';
 		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
@@ -181,7 +181,7 @@ if ($socid > 0)
 	include DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php';
 
     // Module Adherent
-    if ($conf->adherent->enabled)
+    if (! empty($conf->adherent->enabled))
     {
         $langs->load("members");
         $langs->load("users");
@@ -225,7 +225,7 @@ if ($socid > 0)
 	/*
 	 * Last proposals
 	 */
-	if ($conf->propal->enabled && $user->rights->propale->lire)
+	if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 	{
 		$propal_static=new Propal($db);
 
@@ -297,13 +297,13 @@ if ($socid > 0)
 
 	print '<div class="tabsAction">';
 
-    if ($conf->propal->enabled && $user->rights->propale->creer)
+    if (! empty($conf->propal->enabled) && $user->rights->propale->creer)
     {
         print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
     }
 
     // Add action
-    if ($conf->agenda->enabled && ! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
+    if (! empty($conf->agenda->enabled) && ! empty($conf->global->MAIN_REPEATTASKONEACHTAB))
     {
         if ($user->rights->agenda->myactions->create)
         {

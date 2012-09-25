@@ -57,7 +57,7 @@ dol_htmloutput_errors($object->error,$object->errors);
 <td><?php echo $form->selectarray('statut_buy',$statutarray,$object->status_tobuy); ?></td>
 </tr>
 
-<?php if ($conf->stock->enabled) { ?>
+<?php if (! empty($conf->stock->enabled)) { ?>
 <tr><td><?php echo $langs->trans("StockLimit"); ?></td><td>
 <input name="seuil_stock_alerte" size="4" value="<?php echo $object->seuil_stock_alerte; ?>">
 </td></tr>

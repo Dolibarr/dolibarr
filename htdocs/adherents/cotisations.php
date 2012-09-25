@@ -99,7 +99,7 @@ if ($result)
     print_liste_field_titre($langs->trans("Name"),"cotisations.php","d.nom",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Login"),"cotisations.php","d.login",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Label"),"cotisations.php","c.note",$param,"",'align="left"',$sortfield,$sortorder);
-    if ($conf->banque->enabled)
+    if (! empty($conf->banque->enabled))
     {
         print_liste_field_titre($langs->trans("Account"),"cotisations.php","b.fk_account",$pram,"","",$sortfield,$sortorder);
     }
@@ -131,7 +131,7 @@ if ($result)
 
         $var=!$var;
 
-        if ($allowinsertbankafter && ! $objp->fk_account && $conf->banque->enabled && $objp->cotisation)
+        if ($allowinsertbankafter && ! $objp->fk_account && ! empty($conf->banque->enabled) && $objp->cotisation)
         {
             print "<form method=\"post\" action=\"cotisations.php\">";
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -153,7 +153,7 @@ if ($result)
         print '</td>';
 
         // Banque
-        if ($conf->banque->enabled)
+        if (! empty($conf->banque->enabled))
         {
             if ($objp->fk_account)
             {
@@ -193,7 +193,7 @@ if ($result)
         print '<td align="right">'.price($objp->cotisation).'</td>';
 
         print "</tr>";
-        if ($allowinsertbankafter && ! $objp->fk_account && $conf->banque->enabled && $objp->cotisation)
+        if ($allowinsertbankafter && ! $objp->fk_account && ! empty($conf->banque->enabled) && $objp->cotisation)
         {
             print "</form>\n";
         }
@@ -207,7 +207,7 @@ if ($result)
     print "<td align=\"right\">&nbsp;</td>\n";
     print "<td align=\"right\">&nbsp;</td>\n";
     print "<td align=\"right\">&nbsp;</td>\n";
-    if ($conf->banque->enabled)
+    if (! empty($conf->banque->enabled))
     {
         print '<td>&nbsp;</td>';
     }

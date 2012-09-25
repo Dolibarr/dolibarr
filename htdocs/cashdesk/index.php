@@ -98,7 +98,7 @@ print $form->select_company(GETPOST('socid','int')?GETPOST('socid','int'):$conf-
 print '</td>';
 print "</tr>\n";
 
-if ($conf->stock->enabled)
+if (! empty($conf->stock->enabled))
 {
 	$langs->load("stocks");
 	print "<tr>";

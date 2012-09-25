@@ -303,6 +303,10 @@ th .button {
 .valignmiddle {
 	vertical-align: middle;
 }
+.centpercent {
+	width: 100%;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -601,6 +605,10 @@ div.mainmenu.gravatar {
 div.mainmenu.geopipmaxmind {
 }
 
+div.mainmenu.holiday {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/holiday.png',1) ?>);
+}
+
 div.mainmenu.members {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/eldy/img/menus/members.png',1) ?>);
 }
@@ -652,7 +660,7 @@ foreach($conf->modules as $val)
 $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
 
 $generic=1;
-$divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','shop','agenda','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','webservices');
+$divalreadydefined=array('home','companies','products','commercial','accountancy','project','tools','members','shop','agenda','holiday','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','webservices');
 foreach($mainmenuusedarray as $val)
 {
 	if (empty($val) || in_array($val,$divalreadydefined)) continue;

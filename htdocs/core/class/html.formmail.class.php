@@ -567,7 +567,7 @@ class FormMail
             elseif (! is_numeric($this->withbody))                      { $defaultmessage=$this->withbody; }
 
             // Complete substitution array
-            if ($conf->paypal->enabled && $conf->global->PAYPAL_ADD_PAYMENT_URL)
+            if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_ADD_PAYMENT_URL))
             {
                 require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 

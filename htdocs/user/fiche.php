@@ -203,7 +203,7 @@ if ($action == 'add' && $canadduser)
         $edituser->note			= $_POST["note"];
         $edituser->ldap_sid		= $_POST["ldap_sid"];
         // If multicompany is off, admin users must all be on entity 0.
-        if ($conf->multicompany->enabled)
+        if (! empty($conf->multicompany->enabled))
         {
         	if (! empty($_POST["superadmin"]))
         	{
@@ -319,7 +319,7 @@ if ($action == 'update' && ! $_POST["cancel"])
             $edituser->webcal_login	= $_POST["webcal_login"];
             $edituser->phenix_login	= $_POST["phenix_login"];
             $edituser->phenix_pass	= $_POST["phenix_pass"];
-            if ($conf->multicompany->enabled)
+            if (! empty($conf->multicompany->enabled))
             {
             	if (! empty($_POST["superadmin"]))
             	{

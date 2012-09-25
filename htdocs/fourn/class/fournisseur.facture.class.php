@@ -77,7 +77,8 @@ class FactureFournisseur extends CommonInvoice
     var $propalid;
 
     var $lines;
-    var $fournisseur;
+    var $fournisseur;	// deprecated
+	var $thirdparty;	// To store thirdparty
 
     var $extraparams=array();
 
@@ -148,7 +149,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ", ".$conf->entity;
         $sql.= ", '".$this->db->escape($this->libelle)."'";
         $sql.= ", ".$this->socid;
-        $sql.= ", ".$this->db->idate($now);
+        $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", '".$this->db->idate($this->date)."'";
         $sql.= ", '".$this->db->escape($this->note)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
@@ -837,7 +838,7 @@ class FactureFournisseur extends CommonInvoice
         if ($resql)
         {
             // Si on incrémente le produit principal et ses composants à la validation de facture fournisseur
-            if (! $error && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)
+            if (! $error && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL))
             {
                 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
                 $langs->load("agenda");
@@ -915,7 +916,7 @@ class FactureFournisseur extends CommonInvoice
         if ($result)
         {
             // Si on incremente le produit principal et ses composants a la validation de facture fournisseur, on decremente
-            if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)
+            if ($result >= 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL))
             {
                 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
                 $langs->load("agenda");
@@ -1355,6 +1356,7 @@ class FactureFournisseur extends CommonInvoice
             $line->desc=$langs->trans("Description")." ".$xnbp;
             $line->qty=1;
             $line->subprice=100;
+            $line->pu_ht=100;		// the canelle template use pu_ht and not subprice
             $line->price=100;
             $line->tva_tx=19.6;
             $line->localtax1_tx=0;
@@ -1371,7 +1373,7 @@ class FactureFournisseur extends CommonInvoice
 			    $line->total_ht=100;
 			    $line->total_ttc=119.6;
 			    $line->total_tva=19.6;
-    			$line->remise_percent=00;
+    			$line->remise_percent=0;
 			}
 
 			$prodid = rand(1, $num_prods);

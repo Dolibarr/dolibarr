@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if ($conf->projet->enabled)
+if (! empty($conf->projet->enabled))
 {
     require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -771,7 +771,7 @@ if ($action == 'create')
         print '</td></tr>';
 
         // Project
-        if ($conf->projet->enabled)
+        if (! empty($conf->projet->enabled))
         {
             $langs->load("project");
 
@@ -917,7 +917,7 @@ else if ($id > 0 || ! empty($ref))
     print '</tr>';
 
     // Project
-    if ($conf->projet->enabled)
+    if (! empty($conf->projet->enabled))
     {
         $langs->load('projects');
         print '<tr>';
@@ -1200,7 +1200,7 @@ else if ($id > 0 || ! empty($ref))
             }
 
         	// Invoicing
-			if ($conf->facture->enabled && $object->statut > 0)
+			if (! empty($conf->facture->enabled) && $object->statut > 0)
             {
 				$langs->load("bills");
                 if ($object->statut < 2)

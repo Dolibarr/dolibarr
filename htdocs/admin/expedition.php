@@ -206,7 +206,7 @@ $head[$h][1] = $langs->trans("Sending");
 $hselected=$h;
 $h++;
 
-if ($conf->global->MAIN_SUBMODULE_LIVRAISON)
+if (! empty($conf->global->MAIN_SUBMODULE_LIVRAISON))
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/livraison.php";
 	$head[$h][1] = $langs->trans("Receivings");

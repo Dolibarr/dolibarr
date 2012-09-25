@@ -16,6 +16,12 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 DROP TABLE llx_product_ca;
+DROP TABLE llx_document;
+DROP TABLE llx_dolibarr_modules;
+
+ALTER TABLE llx_facture_rec ADD COLUMN usenewprice        integer;
+
+ALTER TABLE llx_extrafields MODIFY COLUMN size varchar(8) DEFAULT NULL;
 
 ALTER TABLE llx_menu MODIFY COLUMN fk_mainmenu   varchar(24);
 ALTER TABLE llx_menu MODIFY COLUMN fk_leftmenu   varchar(24);
@@ -86,7 +92,7 @@ ALTER TABLE llx_commandedet ADD COLUMN label varchar(255) DEFAULT NULL AFTER fk_
 ALTER TABLE llx_facturedet ADD COLUMN label varchar(255) DEFAULT NULL AFTER fk_product;
 ALTER TABLE llx_facturedet_rec ADD COLUMN label varchar(255) DEFAULT NULL AFTER product_type;
 
-ALTER TABLE llx_accountingaccount  ADD COLUMN active tinyint DEFAULT 1 NOT NULL AFTER label;
+ALTER TABLE llx_accountingaccount ADD COLUMN active tinyint DEFAULT 1 NOT NULL AFTER label;
 
 ALTER TABLE llx_actioncomm MODIFY elementtype VARCHAR(32);
 
@@ -190,19 +196,72 @@ UPDATE llx_boxes as b SET b.entity = (SELECT bd.entity FROM llx_boxes_def as bd 
 -- TASK #204
 alter table llx_c_tva add column localtax1_type varchar(1) default '0' after localtax1;
 alter table llx_c_tva add column localtax2_type varchar(1) default '0' after localtax2;
+ALTER TABLE llx_c_tva MODIFY COLUMN localtax1_type varchar(1);
+ALTER TABLE llx_c_tva MODIFY COLUMN localtax2_type varchar(1);
 
 alter table llx_commande_fournisseurdet add column localtax1_type varchar(1) after localtax1_tx;
 alter table llx_commande_fournisseurdet add column localtax2_type varchar(1) after localtax2_tx;
+ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN localtax1_type varchar(1);
+ALTER TABLE llx_commande_fournisseurdet MODIFY COLUMN localtax2_type varchar(1);
 
 alter table llx_commandedet add column localtax1_type varchar(1) after localtax1_tx;
 alter table llx_commandedet add column localtax2_type varchar(1) after localtax2_tx;
+ALTER TABLE llx_commandedet MODIFY COLUMN localtax1_type varchar(1);
+ALTER TABLE llx_commandedet MODIFY COLUMN localtax2_type varchar(1);
 
 alter table llx_facture_fourn_det add column localtax1_type varchar(1) after localtax1_tx;
 alter table llx_facture_fourn_det add column localtax2_type varchar(1) after localtax2_tx;
+ALTER TABLE llx_facture_fourn_det MODIFY COLUMN localtax1_type varchar(1);
+ALTER TABLE llx_facture_fourn_det MODIFY COLUMN localtax2_type varchar(1);
 
 alter table llx_facturedet add column localtax1_type varchar(1) after localtax1_tx;
 alter table llx_facturedet add column localtax2_type varchar(1) after localtax2_tx;
+ALTER TABLE llx_facturedet MODIFY COLUMN localtax1_type varchar(1);
+ALTER TABLE llx_facturedet MODIFY COLUMN localtax2_type varchar(1);
 
 alter table llx_propaldet add column localtax1_type varchar(1) after localtax1_tx;
 alter table llx_propaldet add column localtax2_type varchar(1) after localtax2_tx;
+ALTER TABLE llx_propaldet MODIFY COLUMN localtax1_type varchar(1);
+ALTER TABLE llx_propaldet MODIFY COLUMN localtax2_type varchar(1);
 -- END TASK #204
+
+ALTER TABLE llx_menu MODIFY COLUMN enabled varchar(255) NULL DEFAULT '1';
+
+ALTER TABLE llx_extrafields ADD COLUMN fieldunique INTEGER DEFAULT 0;
+
+create table llx_socpeople_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                                 -- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_socpeople_extrafields ADD INDEX idx_socpeople_extrafields (fk_object);
+
+UPDATE llx_c_actioncomm set type = 'systemauto' where code IN ('AC_PROP','AC_COM','AC_FAC','AC_SHIP','AC_SUP_ORD','AC_SUP_INV');
+
+
+-- update type of localtax1 for spain
+UPDATE llx_c_tva SET localtax1_type = '3' WHERE rowid = 41 AND fk_pays = 4 AND (localtax1_type = '0' OR localtax1_type='1');
+UPDATE llx_c_tva SET localtax1_type = '3' WHERE rowid = 42 AND fk_pays = 4 AND (localtax1_type = '0' OR localtax1_type='1');
+UPDATE llx_c_tva SET localtax1_type = '3' WHERE rowid = 43 AND fk_pays = 4 AND (localtax1_type = '0' OR localtax1_type='1');
+
+-- update type of localtax2 for spain
+UPDATE llx_c_tva SET localtax2_type = '1' WHERE rowid = 41 AND fk_pays = 4 AND localtax2_type = '0';
+UPDATE llx_c_tva SET localtax2_type = '1' WHERE rowid = 42 AND fk_pays = 4 AND localtax2_type = '0';
+UPDATE llx_c_tva SET localtax2_type = '1' WHERE rowid = 43 AND fk_pays = 4 AND localtax2_type = '0';
+
+UPDATE llx_c_tva set localtax1 = 1, localtax1_type = '4', localtax2 = 0.4, localtax2_type = '7' where rowid= 101 and fk_pays= 10 AND localtax1_type='0';
+UPDATE llx_c_tva set localtax1 = 1, localtax1_type = '4', localtax2 = 0.4, localtax2_type = '7' where rowid= 102 and fk_pays= 10 AND localtax1_type='0';
+UPDATE llx_c_tva set localtax1 = 1, localtax1_type = '4', localtax2 = 0.4, localtax2_type = '7' where rowid= 103 and fk_pays= 10 AND localtax1_type='0';
+UPDATE llx_c_tva set localtax1 = 1, localtax1_type = '4', localtax2 = 0.4, localtax2_type = '7' where rowid= 104 and fk_pays= 10 AND localtax1_type='0';
+UPDATE llx_c_tva set localtax1 = 1, localtax1_type = '4', localtax2 = 0.4, localtax2_type = '7' where rowid= 105 and fk_pays= 10 AND localtax1_type='0';
+UPDATE llx_c_tva set localtax1 = 1, localtax1_type = '4', localtax2 = 0.4, localtax2_type = '7' where rowid= 106 and fk_pays= 10 AND localtax1_type='0';
+UPDATE llx_c_tva set localtax1 = 1, localtax1_type = '4', localtax2 = 0.4, localtax2_type = '7' where rowid= 107 and fk_pays= 10 AND localtax1_type='0';
+
+-- Modify table for accountancy
+ALTER TABLE llx_c_tva DROP COLUMN accountancy_code;
+ALTER TABLE llx_c_tva ADD COLUMN accountancy_code_sell varchar(15) DEFAULT NULL AFTER active;
+ALTER TABLE llx_c_tva ADD COLUMN accountancy_code_buy varchar(15) DEFAULT NULL AFTER accountancy_code_sell;
+ALTER TABLE llx_c_chargessociales ADD COLUMN accountancy_code varchar(15) DEFAULT NULL AFTER code;

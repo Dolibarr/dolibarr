@@ -449,7 +449,7 @@ class CommandeFournisseur extends CommonOrder
         if ($this->db->query($sql))
         {
             // If stock is incremented on validate order, we must redecrement it
-            if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)
+            if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER))
             {
                 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
@@ -700,7 +700,7 @@ class CommandeFournisseur extends CommonOrder
                 $this->log($user, 2, time());	// Statut 2
 
                 // If stock is incremented on validate order, we must increment it
-                if (! $error && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)
+                if (! $error && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER))
                 {
                     require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
                     $langs->load("agenda");
@@ -1213,7 +1213,7 @@ class CommandeFournisseur extends CommonOrder
             }
 
             // Si module stock gere et que incrementation faite depuis un dispatching en stock
-            if (!$error && $entrepot > 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
+            if (!$error && $entrepot > 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
             {
                 $mouv = new MouvementStock($this->db);
                 if ($product > 0)
@@ -1904,6 +1904,8 @@ class CommandeFournisseurLigne
     var $total_localtax1;
     var $total_localtax2;
     var $total_ttc;
+    var $info_bits;
+    var $special_code;
 
     // From llx_product
     var $libelle;       // Label produit

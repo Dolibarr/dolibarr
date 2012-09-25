@@ -63,8 +63,8 @@ if ($id > 0 || ! empty($ref))
 {
     $result = $object->fetch($id, $ref);
 
-    if ($conf->product->enabled) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
-    elseif ($conf->service->enabled) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+    if (! empty($conf->product->enabled)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+    elseif (! empty($conf->service->enabled)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 }
 $modulepart='produit';
 
@@ -151,8 +151,7 @@ if ($object->id)
 
 
 	// List of document
-	$param='&id='.$object->id;
-	$formfile->list_of_documents($filearray,$object,'produit',$param);
+	$formfile->list_of_documents($filearray,$object,'produit');
 
 }
 else

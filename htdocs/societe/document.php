@@ -42,8 +42,7 @@ $ref = GETPOST('ref', 'alpha');
 // Security check
 if ($user->societe_id > 0)
 {
-	unset($_GET["action"]);
-	$action='';
+	unset($action);
 	$socid = $user->societe_id;
 }
 $result = restrictedArea($user, 'societe', $id, '&societe');
@@ -114,7 +113,7 @@ if ($object->id)
 	/*
 	 * Affichage onglets
 	 */
-	if ($conf->notification->enabled) $langs->load("mails");
+	if (! empty($conf->notification->enabled)) $langs->load("mails");
 	$head = societe_prepare_head($object);
 
 	$form=new Form($db);
@@ -188,8 +187,7 @@ if ($object->id)
 	$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?id='.$object->id,'',0,0,$user->rights->societe->creer,50,$object);
 
 	// List of document
-	$param='&socid='.$object->id;
-	$formfile->list_of_documents($filearray,$object,'societe',$param);
+	$formfile->list_of_documents($filearray,$object,'societe');
 
 	print "<br><br>";
 }

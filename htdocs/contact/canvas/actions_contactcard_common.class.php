@@ -310,7 +310,7 @@ abstract class ActionsContactCardCommon
         if ($action == 'view' || $action == 'edit' || $action == 'delete')
         {
         	// Emailing
-        	if ($conf->mailing->enabled)
+        	if (! empty($conf->mailing->enabled))
 			{
 				$langs->load("mails");
 				$this->tpl['nb_emailing'] = $this->object->getNbOfEMailings();
@@ -322,25 +322,25 @@ abstract class ActionsContactCardCommon
 
         	$this->object->load_ref_elements();
 
-        	if ($conf->commande->enabled)
+        	if (! empty($conf->commande->enabled))
         	{
         		$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForOrders");
         		$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_commande?$this->object->ref_commande:$langs->trans("NoContactForAnyOrder");
         		$i++;
         	}
-        	if ($conf->propal->enabled)
+        	if (! empty($conf->propal->enabled))
         	{
         		$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForProposals");
         		$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_propal?$this->object->ref_propal:$langs->trans("NoContactForAnyProposal");
         		$i++;
         	}
-        	if ($conf->contrat->enabled)
+        	if (! empty($conf->contrat->enabled))
         	{
         		$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForContracts");
         		$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_contrat?$this->object->ref_contrat:$langs->trans("NoContactForAnyContract");
         		$i++;
         	}
-        	if ($conf->facture->enabled)
+        	if (! empty($conf->facture->enabled))
         	{
         		$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForInvoices");
         		$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_facturation?$this->object->ref_facturation:$langs->trans("NoContactForAnyInvoice");

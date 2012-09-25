@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("companies");
 $langs->load("users");
@@ -47,6 +48,7 @@ $socid		= GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 
 $object = new Contact($db);
+$extrafields = new ExtraFields($db);
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($id);
@@ -74,6 +76,7 @@ $hookmanager->initHooks(array('contactcard'));
 
 $parameters=array('id'=>$id, 'objcanvas'=>$objcanvas);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$error=$hookmanager->error; $errors=array_merge($errors, (array) $hookmanager->errors);
 
 if (empty($reshook))
 {
@@ -153,6 +156,15 @@ if (empty($reshook))
         // Note: Correct date should be completed with location to have exact GM time of birth.
         $object->birthday = dol_mktime(0,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
         $object->birthday_alert = $_POST["birthday_alert"];
+
+        // Get extra fields
+        foreach($_POST as $key => $value)
+        {
+        	if (preg_match("/^options_/",$key))
+        	{
+        		$object->array_options[$key]=GETPOST($key);
+        	}
+        }
 
         if (! $_POST["lastname"])
         {
@@ -242,6 +254,15 @@ if (empty($reshook))
             $object->priv			= $_POST["priv"];
             $object->note			= $_POST["note"];
 
+            // Get extra fields
+            foreach($_POST as $key => $value)
+            {
+            	if (preg_match("/^options_/",$key))
+            	{
+            		$object->array_options[$key]=GETPOST($key);
+            	}
+            }
+
             $result = $object->update($_POST["contactid"], $user);
 
             if ($result > 0)
@@ -263,6 +284,9 @@ if (empty($reshook))
 /*
  *	View
  */
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('contact');
 
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ContactsAddresses"),$help_url);
@@ -314,12 +338,9 @@ else
     {
         // Si edition contact deja existant
         $object = new Contact($db);
-        $return=$object->fetch($id, $user);
-        if ($return <= 0)
-        {
-            dol_print_error('',$object->error);
-            $id=0;
-        }
+        $res=$object->fetch($id, $user);
+        if ($res < 0) { dol_print_error($db,$object->error); exit; }
+        $res=$object->fetch_optionals($object->id,$extralabels);
 
         // Show tabs
         $head = contact_prepare_head($object);
@@ -471,6 +492,20 @@ else
             // Note
             print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3" valign="top"><textarea name="note" cols="70" rows="'.ROWS_3.'">'.(isset($_POST["note"])?$_POST["note"]:$object->note).'</textarea></td></tr>';
 
+            // Other attributes
+            $parameters=array('colspan' => ' colspan="3"');
+            $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+            if (empty($reshook) && ! empty($extrafields->attribute_label))
+            {
+            	foreach($extrafields->attribute_label as $key=>$label)
+            	{
+            		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options["options_".$key])?$object->array_options["options_".$key]:''));
+            		print '<tr><td>'.$label.'</td><td colspan="3">';
+            		print $extrafields->showInputField($key,$value);
+            		print '</td></tr>'."\n";
+            	}
+            }
+
             print "</table><br>";
 
 
@@ -502,10 +537,6 @@ else
                 print '<input type="checkbox" name="birthday_alert"></td>';
             }
             print '</tr>';
-
-            // Other attributes
-            $parameters=array('colspan' => ' colspan="3"');
-            $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
             print "</table><br><br>";
 
@@ -651,35 +682,50 @@ else
             print $form->selectarray('priv',$selectarray,$object->priv,0);
             print '</td></tr>';
 
+            // Note
             print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
             print '<textarea name="note" cols="70" rows="'.ROWS_3.'">';
             print isset($_POST["note"])?$_POST["note"]:$object->note;
             print '</textarea></td></tr>';
 
+            // Other attributes
+            $parameters=array('colspan' => ' colspan="3"');
+            $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+            if (empty($reshook) && ! empty($extrafields->attribute_label))
+            {
+            	foreach($extrafields->attribute_label as $key=>$label)
+            	{
+            		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+            		print '<tr><td>'.$label.'</td><td colspan="3">';
+            		print $extrafields->showInputField($key,$value);
+            		print "</td></tr>\n";
+            	}
+            }
+
             $object->load_ref_elements();
 
-            if ($conf->commande->enabled)
+            if (! empty($conf->commande->enabled))
             {
                 print '<tr><td>'.$langs->trans("ContactForOrders").'</td><td colspan="3">';
                 print $object->ref_commande?$object->ref_commande:$langs->trans("NoContactForAnyOrder");
                 print '</td></tr>';
             }
 
-            if ($conf->propal->enabled)
+            if (! empty($conf->propal->enabled))
             {
                 print '<tr><td>'.$langs->trans("ContactForProposals").'</td><td colspan="3">';
                 print $object->ref_propal?$object->ref_propal:$langs->trans("NoContactForAnyProposal");
                 print '</td></tr>';
             }
 
-            if ($conf->contrat->enabled)
+            if (! empty($conf->contrat->enabled))
             {
                 print '<tr><td>'.$langs->trans("ContactForContracts").'</td><td colspan="3">';
                 print $object->ref_contrat?$object->ref_contrat:$langs->trans("NoContactForAnyContract");
                 print '</td></tr>';
             }
 
-            if ($conf->facture->enabled)
+            if (! empty($conf->facture->enabled))
             {
                 print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
                 print $object->ref_facturation?$object->ref_facturation:$langs->trans("NoContactForAnyInvoice");
@@ -696,10 +742,6 @@ else
             }
             else print $langs->trans("NoDolibarrAccess");
             print '</td></tr>';
-
-            // Other attributes
-            $parameters=array('colspan' => ' colspan="3"');
-            $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
             print '</table><br>';
 
@@ -744,7 +786,7 @@ else
             //array('label' => $form->textwithpicto($langs->trans("Type"),$langs->trans("InternalExternalDesc")), 'type' => 'select', 'name' => 'intern', 'default' => 1, 'values' => array(0=>$langs->trans('Internal'),1=>$langs->trans('External')))
             );
             $text=$langs->trans("ConfirmCreateContact").'<br>';
-            if ($conf->societe->enabled)
+            if (! empty($conf->societe->enabled))
             {
                 if ($object->socid > 0) $text.=$langs->trans("UserWillBeExternalUser");
                 else $text.=$langs->trans("UserWillBeInternalUser");
@@ -823,7 +865,7 @@ else
 
         // Email
         print '<tr><td>'.$langs->trans("EMail").'</td><td>'.dol_print_email($object->email,$object->id,$object->socid,'AC_EMAIL').'</td>';
-        if ($conf->mailing->enabled)
+        if (! empty($conf->mailing->enabled))
         {
             $langs->load("mails");
             print '<td nowrap>'.$langs->trans("NbOfEMailingsReceived").'</td>';
@@ -851,34 +893,49 @@ else
         print $object->LibPubPriv($object->priv);
         print '</td></tr>';
 
+        // Note
         print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
         print nl2br($object->note);
         print '</td></tr>';
 
+        // Other attributes
+        $parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"');
+        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+        if (empty($reshook) && ! empty($extrafields->attribute_label))
+        {
+        	foreach($extrafields->attribute_label as $key=>$label)
+        	{
+        		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:(isset($object->array_options['options_'.$key])?$object->array_options['options_'.$key]:''));
+        		print '<tr><td>'.$label.'</td><td colspan="3">';
+        		print $extrafields->showOutputField($key,$value);
+        		print "</td></tr>\n";
+        	}
+        }
+
         $object->load_ref_elements();
 
-        if ($conf->commande->enabled)
+        if (! empty($conf->commande->enabled))
         {
             print '<tr><td>'.$langs->trans("ContactForOrders").'</td><td colspan="3">';
             print $object->ref_commande?$object->ref_commande:$langs->trans("NoContactForAnyOrder");
             print '</td></tr>';
         }
 
-        if ($conf->propal->enabled)
+        if (! empty($conf->propal->enabled))
         {
             print '<tr><td>'.$langs->trans("ContactForProposals").'</td><td colspan="3">';
             print $object->ref_propal?$object->ref_propal:$langs->trans("NoContactForAnyProposal");
             print '</td></tr>';
         }
 
-        if ($conf->contrat->enabled)
+        if (! empty($conf->contrat->enabled))
         {
             print '<tr><td>'.$langs->trans("ContactForContracts").'</td><td colspan="3">';
             print $object->ref_contrat?$object->ref_contrat:$langs->trans("NoContactForAnyContract");
             print '</td></tr>';
         }
 
-        if ($conf->facture->enabled)
+        if (! empty($conf->facture->enabled))
         {
             print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
             print $object->ref_facturation?$object->ref_facturation:$langs->trans("NoContactForAnyInvoice");
@@ -894,10 +951,6 @@ else
         }
         else print $langs->trans("NoDolibarrAccess");
         print '</td></tr>';
-
-        // Other attributes
-        $parameters=array('colspan' => ' colspan="3"');
-        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
         print "</table>";
 

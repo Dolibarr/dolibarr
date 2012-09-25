@@ -508,7 +508,7 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
 /**
  * Return next value for a mask
  *
- * @param	DoliSB		$db				Database handler
+ * @param	DoliDB		$db				Database handler
  * @param   string		$mask			Mask to use
  * @param   string		$table			Table containing field with counter
  * @param   string		$field			Field containing already used values of counter
@@ -529,8 +529,14 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     if ($date == '') $date=dol_now();	// We use local year and month of PHP server to search numbers
     // but we should use local year and month of user
 
+    // For debugging
+    //include_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
+    //$mask='{yyyy}-{0000}';
+    //$date=dol_mktime(12, 0, 0, 1, 1, 1900);
+    //$date=dol_stringtotime('20121001');
+
     // Extract value for mask counter, mask raz and mask offset
-    if (! preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i',$mask,$reg)) return 'ErrorBadMask';
+    if (! preg_match('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i',$mask,$reg)) return 'ErrorBadMask';
     $masktri=$reg[1].(! empty($reg[2])?$reg[2]:'').(! empty($reg[3])?$reg[3]:'');
     $maskcounter=$reg[1];
     $maskraz=-1;
@@ -565,7 +571,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     }
 
     $maskwithonlyymcode=$mask;
-    $maskwithonlyymcode=preg_replace('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i',$maskcounter,$maskwithonlyymcode);
+    $maskwithonlyymcode=preg_replace('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i',$maskcounter,$maskwithonlyymcode);
     $maskwithonlyymcode=preg_replace('/\{dd\}/i','dd',$maskwithonlyymcode);
     $maskwithonlyymcode=preg_replace('/\{(c+)(0*)\}/i',$maskrefclient,$maskwithonlyymcode);
     $maskwithonlyymcode=preg_replace('/\{(t+)\}/i',$masktype_value,$maskwithonlyymcode);
@@ -577,6 +583,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     // Now maskwithnocode = 0000ddmmyyyyccc for example
     // and maskcounter    = 0000 for example
     //print "maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode."\n<br>";
+	//var_dump($reg);
 
     // If an offset is asked
     if (! empty($reg[2]) && preg_match('/^\+/',$reg[2])) $maskoffset=preg_replace('/^\+/','',$reg[2]);
@@ -584,12 +591,20 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 
     // Define $sqlwhere
     $sqlwhere='';
+    $yearoffset=0;	// Use year of current $date by default
+    $yearoffsettype=false;		// false: no reset, 0,-,=,+: reset at offset SOCIETE_FISCAL_MONTH_START, x=reset at offset x
 
     // If a restore to zero after a month is asked we check if there is already a value for this year.
-    if (! empty($reg[2]) && preg_match('/^@/',$reg[2]))	$maskraz=preg_replace('/^@/','',$reg[2]);
-    if (! empty($reg[3]) && preg_match('/^@/',$reg[3]))	$maskraz=preg_replace('/^@/','',$reg[3]);
-    if ($maskraz == 0) $maskraz = $conf->global->SOCIETE_FISCAL_MONTH_START;
+    if (! empty($reg[2]) && preg_match('/^@/',$reg[2]))	$yearoffsettype = preg_replace('/^@/','',$reg[2]);
+    if (! empty($reg[3]) && preg_match('/^@/',$reg[3]))	$yearoffsettype = preg_replace('/^@/','',$reg[3]);
+
+    //print "yearoffset=".$yearoffset." yearoffsettype=".$yearoffsettype;
+    if (is_numeric($yearoffsettype) && $yearoffsettype >= 1)
+    	$maskraz=$yearoffsettype; // For backward compatibility
+    else if ($yearoffsettype === '0' || (! empty($yearoffsettype) && ! is_numeric($yearoffsettype) && $conf->global->SOCIETE_FISCAL_MONTH_START > 1))
+    	$maskraz = $conf->global->SOCIETE_FISCAL_MONTH_START;
     //print "maskraz=".$maskraz;
+
     if ($maskraz > 0)    // A reset is required
     {
         if ($maskraz > 12) return 'ErrorBadMaskBadRazMonth';
@@ -609,32 +624,60 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
             if (preg_match('/^(.*)\{(y+)\}/i',$maskwithonlyymcode,$reg)) { $posy=2; $posm=0; }
         }
         //print "x".$maskwithonlyymcode." ".$maskraz." ".$posy." ".$posm;
+		//var_dump($reg);
 
         // Define $yearcomp and $monthcomp (that will be use in the select where to search max number)
         $monthcomp=$maskraz;
-        $yearoffset=0;
         $yearcomp=0;
-        if (date("m",$date) < $maskraz) { $yearoffset=-1; }	// If current month lower that month of return to zero, year is previous year
-        if (dol_strlen($reg[$posy]) == 4) $yearcomp=sprintf("%04d",date("Y",$date)+$yearoffset);
-        if (dol_strlen($reg[$posy]) == 2) $yearcomp=sprintf("%02d",date("y",$date)+$yearoffset);
-        if (dol_strlen($reg[$posy]) == 1) $yearcomp=substr(date("y",$date),2,1)+$yearoffset;
-        if ($monthcomp > 1)	// Test with month is useless if monthcomp = 0 or 1 (0 is same as 1)
-        {
-            if (dol_strlen($reg[$posy]) == 4) $yearcomp1=sprintf("%04d",date("Y",$date)+$yearoffset+1);
-            if (dol_strlen($reg[$posy]) == 2) $yearcomp1=sprintf("%02d",date("y",$date)+$yearoffset+1);
 
-            // FIXME If mask is {mm}{yy}, sqlwhere is wrong here
-            $sqlwhere.='(';
-            $sqlwhere.=' (SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).") = '".$yearcomp."'";
-            $sqlwhere.=' AND SUBSTRING('.$field.', '.(dol_strlen($reg[1])+dol_strlen($reg[2])+1).', '.dol_strlen($reg[3]).") >= '".str_pad($monthcomp, dol_strlen($reg[3]), '0', STR_PAD_LEFT)."')";
-            $sqlwhere.=' OR';
-            $sqlwhere.=' (SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).") = '".$yearcomp1."'";
-            $sqlwhere.=' AND SUBSTRING('.$field.', '.(dol_strlen($reg[1])+dol_strlen($reg[2])+1).', '.dol_strlen($reg[3]).") < '".str_pad($monthcomp, dol_strlen($reg[3]), '0', STR_PAD_LEFT)."') ";
+        if (! empty($yearoffsettype) && ! is_numeric($yearoffsettype) && $yearoffsettype != '=')	// $yearoffsettype is - or +
+        {
+        	$currentyear=date("Y", $date);
+        	$fiscaldate=dol_mktime('0','0','0',$maskraz,'1',$currentyear);
+        	$newyeardate=dol_mktime('0','0','0','1','1',$currentyear);
+        	$nextnewyeardate=dol_mktime('0','0','0','1','1',$currentyear+1);
+        	//echo 'currentyear='.$currentyear.' date='.dol_print_date($date, 'day').' fiscaldate='.dol_print_date($fiscaldate, 'day').'<br>';
+
+        	// If after or equal of current fiscal date
+        	if ($date >= $fiscaldate)
+        	{
+        		// If before of next new year date
+        		if ($date < $nextnewyeardate && $yearoffsettype == '+') $yearoffset=1;
+        	}
+        	// If after or equal of current new year date
+        	else if ($date >= $newyeardate && $yearoffsettype == '-') $yearoffset=-1;
+        }
+        // For backward compatibility
+        else if (date("m",$date) < $maskraz) { $yearoffset=-1; }	// If current month lower that month of return to zero, year is previous year
+
+        $yearlen = dol_strlen($reg[$posy]);
+        if ($yearlen == 4) $yearcomp=sprintf("%04d",date("Y",$date)+$yearoffset);
+        elseif ($yearlen == 2) $yearcomp=sprintf("%02d",date("y",$date)+$yearoffset);
+        elseif ($yearlen == 1) $yearcomp=substr(date("y",$date),2,1)+$yearoffset;
+        if ($monthcomp > 1)	// Test with month is useless if monthcomp = 0 or 1 (0 is same as 1) (regis: $monthcomp can't equal 0)
+        {
+            if ($yearlen == 4) $yearcomp1=sprintf("%04d",date("Y",$date)+$yearoffset+1);
+            elseif ($yearlen == 2) $yearcomp1=sprintf("%02d",date("y",$date)+$yearoffset+1);
+
+            $monthlen = dol_strlen($reg[$posm]);
+            $yearpos = (dol_strlen($reg[1])+1);
+            $monthpos = ($yearpos+$yearlen);
+            if ($posy == 3) {
+            	$monthpos = (dol_strlen($reg[1])+1);
+            	$yearpos = ($monthpos+$monthlen);
+            }
+
+            $sqlwhere.="(";
+            $sqlwhere.=" (SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$yearcomp."'";
+            $sqlwhere.=" AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") >= '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."')";
+            $sqlwhere.=" OR";
+            $sqlwhere.=" (SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$yearcomp1."'";
+            $sqlwhere.=" AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") < '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."') ";
             $sqlwhere.=')';
         }
         else   // reset is done on january
         {
-            $sqlwhere.='( SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).") = '".$yearcomp."' )";
+            $sqlwhere.='(SUBSTRING('.$field.', '.(dol_strlen($reg[1])+1).', '.dol_strlen($reg[2]).") = '".$yearcomp."')";
         }
     }
     //print "sqlwhere=".$sqlwhere."<br>\n";
@@ -769,9 +812,18 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         $numFinal = $mask;
 
         // We replace special codes except refclient
-        $numFinal = preg_replace('/\{yyyy\}/i',date("Y",$date), $numFinal);
-        $numFinal = preg_replace('/\{yy\}/i',  date("y",$date), $numFinal);
-        $numFinal = preg_replace('/\{y\}/i',   substr(date("y",$date),2,1), $numFinal);
+		if (! empty($yearoffsettype) && ! is_numeric($yearoffsettype) && $yearoffsettype != '=')	// yearoffsettype is - or +, so we don't want current year
+		{
+	        $numFinal = preg_replace('/\{yyyy\}/i',date("Y",$date)+$yearoffset, $numFinal);
+        	$numFinal = preg_replace('/\{yy\}/i',  date("y",$date)+$yearoffset, $numFinal);
+        	$numFinal = preg_replace('/\{y\}/i',   substr(date("y",$date),2,1)+$yearoffset, $numFinal);
+		}
+		else	// we want yyyy to be current year
+		{
+        	$numFinal = preg_replace('/\{yyyy\}/i',date("Y",$date), $numFinal);
+        	$numFinal = preg_replace('/\{yy\}/i',  date("y",$date), $numFinal);
+        	$numFinal = preg_replace('/\{y\}/i',   substr(date("y",$date),2,1), $numFinal);
+		}
         $numFinal = preg_replace('/\{mm\}/i',  date("m",$date), $numFinal);
         $numFinal = preg_replace('/\{dd\}/i',  date("d",$date), $numFinal);
 
@@ -1230,7 +1282,7 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
                     if (! $tmpdir) { unset($listofdir[$key]); continue; }
                     if (is_dir($tmpdir))
                     {
-                        $tmpfiles=dol_dir_list($tmpdir,'files',0,'\.odt');
+                        $tmpfiles=dol_dir_list($tmpdir,'files',0,'\.odt','','name',SORT_ASC,0,true); // Disable hook for the moment
                         if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
                     }
                 }

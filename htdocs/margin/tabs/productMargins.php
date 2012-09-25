@@ -106,20 +106,20 @@ if ($id > 0 || ! empty($ref))
 		print '</td></tr>';
 
 		// Total Margin
-		print '<tr style="font-weight: bold"><td>'.$langs->trans("TotalMargin").'</td><td colspan="3">';
+		print '<tr><td>'.$langs->trans("TotalMargin").'</td><td colspan="3">';
 		print '<span id="totalMargin"></span>'; // set by jquery (see below)
 		print '</td></tr>';
 
 		// Margin Rate
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
-			print '<tr style="font-weight: bold"><td>'.$langs->trans("MarginRate").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("MarginRate").'</td><td colspan="3">';
 			print '<span id="marginRate"></span>'; // set by jquery (see below)
 			print '</td></tr>';
 		}
 
 		// Mark Rate
 		if (! empty($conf->global->DISPLAY_MARK_RATES)) {
-			print '<tr style="font-weight: bold"><td>'.$langs->trans("MarkRate").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("MarkRate").'</td><td colspan="3">';
 			print '<span id="markRate"></span>'; // set by jquery (see below)
 			print '</td></tr>';
 		}

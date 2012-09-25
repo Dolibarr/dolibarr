@@ -618,6 +618,8 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 					}
 				}
 
+				$desc='';
+
 				// Define output language
 				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
 				{
@@ -638,8 +640,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 					$desc = $prod->description;
 				}
 
-				$desc.= ($desc && ! empty($product_desc)) ? ((dol_textishtml($desc) || dol_textishtml($product_desc))?"<br />\n":"\n") : "";
-				$desc.= $product_desc;
+            	$desc=dol_concatdesc($desc,$product_desc);
 			}
 
 			$type = $prod->type;
@@ -1462,7 +1463,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 		// Date de livraison
 		print "<tr><td>".$langs->trans("DeliveryDate").'</td><td colspan="2">';
-		if ($conf->global->DATE_LIVRAISON_WEEK_DELAY)
+		if (! empty($conf->global->DATE_LIVRAISON_WEEK_DELAY))
 		{
 			$datedelivery = time() + ((7*$conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
 		}
@@ -1699,7 +1700,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 				}
 
 				$text=$langs->trans('ConfirmValidateOrder',$numref);
-				if ($conf->notification->enabled)
+				if (! empty($conf->notification->enabled))
 				{
 					require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
 					$notify=new Notify($db);
@@ -1808,7 +1809,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			 *   Commande
 			*/
 			$nbrow=9;
-			if ($conf->projet->enabled) $nbrow++;
+			if (! empty($conf->projet->enabled)) $nbrow++;
 
 			//Local taxes
 			if ($mysoc->country_code=='ES')
@@ -2153,7 +2154,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 						$object->formAddFreeProduct(1,$mysoc,$soc,$hookmanager);
 
 						// Add predefined products/services
-						if ($conf->product->enabled || $conf->service->enabled)
+						if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 						{
 							$var=!$var;
 							$object->formAddPredefinedProduct(1,$mysoc,$soc,$hookmanager);
@@ -2201,7 +2202,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 					// Ship
 					$numshipping=0;
-					if ($conf->expedition->enabled)
+					if (! empty($conf->expedition->enabled))
 					{
 						$numshipping = $object->nb_expedition();
 
@@ -2235,7 +2236,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 
 					// Create bill and Classify billed
-					if ($conf->facture->enabled && $object->statut > 0  && ! $object->billed)
+					if (! empty($conf->facture->enabled) && $object->statut > 0  && ! $object->billed)
 					{
 						if ($user->rights->facture->creer && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER))
 						{

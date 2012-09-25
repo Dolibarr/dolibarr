@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -73,6 +73,7 @@ if ($action == 'add')
 	{
 		$object->titre = GETPOST('titre', 'alpha');
 		$object->note  = GETPOST('comment');
+		$object->usenewprice = GETPOST('usenewprice');
 
 		if ($object->create($user, $id) > 0)
 		{
@@ -122,11 +123,14 @@ if ($action == 'create')
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="facid" value="'.$invoice->id.'">';
 
+		$rowspan=4;
+		if (! empty($conf->projet->enabled) && $invoice->fk_project > 0) $rowspan++;
+
 		print '<table class="border" width="100%">';
 
 		$invoice->fetch_thirdparty();
 
-		print '<tr><td>'.$langs->trans("Customer").'</td><td>'.$invoice->client->getNomUrl(1).'</td>';
+		print '<tr><td>'.$langs->trans("Customer").'</td><td>'.$invoice->client->getNomUrl(1,'customer').'</td>';
 		print '<td>';
 		//print $langs->trans("NotePrivate");
 		print '</td></tr>';
@@ -135,7 +139,7 @@ if ($action == 'create')
 		print '<input class="flat" type="text" name="titre" size="16" value="'.$_POST["titre"].'">';
 		print '</td>';
 
-		print '<td rowspan="4" valign="top">';
+		print '<td rowspan="'.$rowspan.'" valign="top">';
 		print '<textarea class="flat" name="note" wrap="soft" cols="60" rows="'.ROWS_4.'"></textarea>';
 		print '</td></tr>';
 
@@ -149,7 +153,7 @@ if ($action == 'create')
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$invoice->id, $facture->mode_reglement_id, 'none');
 		print "</td></tr>";
 
-		if (! empty($conf->projet->enabled))
+		if (! empty($conf->projet->enabled) && $invoice->fk_project > 0)
 		{
 			print "<tr><td>".$langs->trans("Project")."</td><td>";
 			if ($invoice->fk_project > 0)
@@ -208,7 +212,7 @@ if ($action == 'create')
 				print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
 				print '<td width="8%" align="right">'.$langs->trans("ReductionShort").'</td>';
 				print '<td width="12%" align="right">'.$langs->trans("PriceU").'</td>';
-				print '<td width="12%" align="right">N.P.</td>';
+				if (empty($conf->global->PRODUIT_MULTIPRICES)) print '<td width="12%" align="right">'.$langs->trans("CurrentProductPrice").'</td>';
 				print "</tr>\n";
 			}
 			$var=True;
@@ -223,21 +227,19 @@ if ($action == 'create')
 				}
 
 				$var=!$var;
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 
 				// Show product and description
 				$type=(isset($objp->product_type)?$objp->product_type:$objp->fk_product_type);
 
-				if ($objp->fk_product)
+				if ($objp->fk_product > 0)
 				{
 					print '<td>';
 
 					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 
 					// Show product and description
-					$product_static->type=$objp->fk_product_type;
-					$product_static->id=$objp->fk_product;
-					$product_static->ref=$objp->ref;
+					$product_static->fetch($objp->fk_product);	// We need all information later
 					$text=$product_static->getNomUrl(1);
 					$text.= ' - '.(! empty($objp->custom_label)?$objp->custom_label:$objp->product_label);
 					$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($objp->description));
@@ -277,7 +279,7 @@ if ($action == 'create')
 				}
 
 
-				print '<td align="center">'.$objp->tva_tx.' %</td>';
+				print '<td align="center">'.vatrate($objp->tva_tx).'%</td>';
 				print '<td align="center">'.$objp->qty.'</td>';
 				if ($objp->remise_percent > 0)
 				{
@@ -290,14 +292,19 @@ if ($action == 'create')
 
 				print '<td align="right">'.price($objp->subprice)."</td>\n";
 
-				if ($objp->fk_product > 0 && $objp->subprice <> $product->price)
+				// Price of product
+				if (empty($conf->global->PRODUIT_MULTIPRICES))
 				{
-					print '<td align="right">'.price($product->price)."</td>\n";
-					$flag_different_price++;
-				}
-				else
-				{
-					print '<td>&nbsp;</td>';
+					if ($objp->fk_product > 0)
+					{
+						$flag_price_may_change++;
+						$prodprice=$product_static->price;	// price HT
+						print '<td align="right">'.price($prodprice)."</td>\n";
+					}
+					else
+					{
+						print '<td>&nbsp;</td>';
+					}
 				}
 
 				print "</tr>";
@@ -315,21 +322,13 @@ if ($action == 'create')
 		print "</table>";
 
 		print '</td></tr>';
-		// TODO not used
-		if ($flag_different_price)
+
+		if ($flag_price_may_change)
 		{
 			print '<tr><td colspan="3" align="left">';
-			print '<select name="deal_price">';
-			if ($flag_different_price>1)
-			{
-				print '<option value="new">Prendre en compte les nouveaux prix</option>';
-				print '<option value="old">Utiliser les anciens prix</option>';
-			}
-			else
-			{
-				print '<option value="new">Prendre en compte le nouveau prix</option>';
-				print '<option value="old">Utiliser l\'ancien prix</option>';
-			}
+			print '<select name="usenewprice" class="flat">';
+			print '<option value="0">'.$langs->trans("AlwaysUseFixedPrice").'</option>';
+			print '<option value="1" disabled="disabled">'.$langs->trans("AlwaysUseNewPrice").'</option>';
 			print '</select>';
 			print '</td></tr>';
 		}
@@ -340,7 +339,7 @@ if ($action == 'create')
 	}
 	else
 	{
-		print "Erreur facture $invoice->id inexistante";
+		dol_print_error('',"Error, no invoice ".$invoice->id);
 	}
 }
 else
@@ -348,7 +347,6 @@ else
 	/*
 	 * View mode
 	 */
-
 	if ($id > 0)
 	{
 		if ($object->fetch($id) > 0)
@@ -366,7 +364,7 @@ else
 			print '<td colspan="4">'.$object->titre.'</td>';
 
 			print '<tr><td>'.$langs->trans("Customer").'</td>';
-			print '<td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td>';
+			print '<td colspan="3">'.$object->thirdparty->getNomUrl(1,'customer').'</td>';
 			print "<td>". $langs->trans("PaymentConditions") ." : ";
 			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id,'none');
 			print "</td></tr>";

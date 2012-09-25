@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2010_2012	Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2010-2012	Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
 /**
- *      \class      Task
- *      \brief      Class to manage tasks
- *		\remarks	Initialy built by build_class_from_table on 2008-09-10 12:41
+ * 	Class to manage tasks
+ *	Initialy built by build_class_from_table on 2008-09-10 12:41
  */
 class Task extends CommonObject
 {
@@ -479,7 +478,7 @@ class Task extends CommonObject
 
     /**
      * Return list of tasks for all projects or for one particular project
-     * Sort order is on project, TODO then of position of task, and last on title of first level task
+     * Sort order is on project, then on position of task, and last on title of first level task
      *
      * @param	User	$usert				Object user to limit tasks affected to a particular user
      * @param	User	$userp				Object user to limit projects of a particular user and public projects
@@ -519,10 +518,10 @@ class Task extends CommonObject
             if ($projectid) $sql.= " AND p.rowid in (".$projectid.")";
         }
         if ($filteronprojref) $sql.= " AND p.ref LIKE '%".$filteronprojref."%'";
-        $sql.= " ORDER BY p.ref, t.label";
+        $sql.= " ORDER BY p.ref, t.rang, t.label";
 
         //print $sql;
-        dol_syslog("Task::getTasksArray sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::getTasksArray sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -593,7 +592,7 @@ class Task extends CommonObject
     {
         $arrayroles = array();
 
-        dol_syslog("Task::getUserRolesForProjectsOrTasks userp=".is_object($userp)." usert=".is_object($usert)." projectid=".$projectid." taskid=".$taskid);
+        dol_syslog(get_class($this)."::getUserRolesForProjectsOrTasks userp=".is_object($userp)." usert=".is_object($usert)." projectid=".$projectid." taskid=".$taskid);
 
         // We want role of user for a projet or role of user for a task. Both are not possible.
         if (empty($userp) && empty($usert))
@@ -633,7 +632,7 @@ class Task extends CommonObject
         }
         //print $sql;
 
-        dol_syslog("Task::getUserRolesForProjectsOrTasks sql=".$sql);
+        dol_syslog(get_class($this)."::getUserRolesForProjectsOrTasks sql=".$sql);
         $resql = $this->db->query($sql);
         if ($resql)
         {

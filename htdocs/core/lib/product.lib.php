@@ -49,7 +49,7 @@ function product_prepare_head($object, $user)
 	$head[$h][2] = 'price';
 	$h++;
 
-	if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire)
+	if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
 	{
 		$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("SuppliersPrices");
@@ -63,7 +63,7 @@ function product_prepare_head($object, $user)
 	$h++;
 
 	// Show category tab
-	if ($conf->categorie->enabled && $user->rights->categorie->lire)
+	if (! empty($conf->categorie->enabled) && $user->rights->categorie->lire)
 	{
 		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$object->id.'&type=0';
 		$head[$h][1] = $langs->trans('Categories');
@@ -72,7 +72,7 @@ function product_prepare_head($object, $user)
 	}
 
 	// Multilangs
-	if($conf->global->MAIN_MULTILANGS)
+	if (! empty($conf->global->MAIN_MULTILANGS))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/product/traduction.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("Translation");
@@ -81,7 +81,7 @@ function product_prepare_head($object, $user)
 	}
 
 	// Sub products
-	if($conf->global->PRODUIT_SOUSPRODUITS)
+	if (! empty($conf->global->PRODUIT_SOUSPRODUITS))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/product/composition/fiche.php?id=".$object->id;
 		$head[$h][1] = $langs->trans('AssociatedProducts');
@@ -101,7 +101,7 @@ function product_prepare_head($object, $user)
 
     if($object->isproduct())    // Si produit stockable
     {
-        if ($conf->stock->enabled && $user->rights->stock->lire)
+        if (! empty($conf->stock->enabled) && $user->rights->stock->lire)
         {
             $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$object->id;
             $head[$h][1] = $langs->trans("Stock");
@@ -189,7 +189,7 @@ function show_stats_for_company($product,$socid)
 	print '</tr>';
 
 	// Propals
-	if ($conf->propal->enabled && $user->rights->propale->lire)
+	if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 	{
 		$ret=$product->load_stats_propale($socid);
 		if ($ret < 0) dol_print_error($db);
@@ -206,7 +206,7 @@ function show_stats_for_company($product,$socid)
 		print '</tr>';
 	}
 	// Commandes clients
-	if ($conf->commande->enabled && $user->rights->commande->lire)
+	if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	{
 		$ret=$product->load_stats_commande($socid);
 		if ($ret < 0) dol_print_error($db);
@@ -223,7 +223,7 @@ function show_stats_for_company($product,$socid)
 		print '</tr>';
 	}
 	// Commandes fournisseurs
-	if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire)
+	if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
 	{
 		$ret=$product->load_stats_commande_fournisseur($socid);
 		if ($ret < 0) dol_print_error($db);
@@ -240,7 +240,7 @@ function show_stats_for_company($product,$socid)
 		print '</tr>';
 	}
 	// Contrats
-	if ($conf->contrat->enabled && $user->rights->contrat->lire)
+	if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 	{
 		$ret=$product->load_stats_contrat($socid);
 		if ($ret < 0) dol_print_error($db);
@@ -257,7 +257,7 @@ function show_stats_for_company($product,$socid)
 		print '</tr>';
 	}
 	// Factures clients
-	if ($conf->facture->enabled && $user->rights->facture->lire)
+	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
 		$ret=$product->load_stats_facture($socid);
 		if ($ret < 0) dol_print_error($db);
@@ -274,7 +274,7 @@ function show_stats_for_company($product,$socid)
 		print '</tr>';
 	}
 	// Factures fournisseurs
-	if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
+	if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
 	{
 		$ret=$product->load_stats_facture_fournisseur($socid);
 		if ($ret < 0) dol_print_error($db);

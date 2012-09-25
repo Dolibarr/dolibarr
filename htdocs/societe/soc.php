@@ -36,14 +36,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-if ($conf->adherent->enabled) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 $langs->load("companies");
 $langs->load("commercial");
 $langs->load("bills");
 $langs->load("banks");
 $langs->load("users");
-if ($conf->notification->enabled) $langs->load("mails");
+if (! empty($conf->notification->enabled)) $langs->load("mails");
 
 $mesg=''; $error=0; $errors=array();
 
@@ -129,7 +129,7 @@ if (empty($reshook))
         $object->town                  = GETPOST('town');
         $object->country_id            = GETPOST('country_id');
         $object->state_id              = GETPOST('departement_id');
-        $object->tel                   = GETPOST('tel');
+        $object->phone                 = GETPOST('phone');
         $object->fax                   = GETPOST('fax');
         $object->email                 = GETPOST('email');
         $object->url                   = GETPOST('url');
@@ -248,7 +248,7 @@ if (empty($reshook))
                         $contact->socid				= $object->id;	// fk_soc
                         $contact->status			= 1;
                         $contact->email				= $object->email;
-						$contact->phone_pro			= $object->tel;
+						$contact->phone_pro			= $object->phone;
 						$contact->fax				= $object->fax;
                         $contact->priv				= 0;
 
@@ -544,7 +544,7 @@ else
         if (GETPOST("type")!='f')  { $object->client=3; }
         if (GETPOST("type")=='c')  { $object->client=1; }
         if (GETPOST("type")=='p')  { $object->client=2; }
-        if ($conf->fournisseur->enabled && (GETPOST("type")=='f' || GETPOST("type")==''))  { $object->fournisseur=1; }
+        if (! empty($conf->fournisseur->enabled) && (GETPOST("type")=='f' || GETPOST("type")==''))  { $object->fournisseur=1; }
         if (GETPOST("private")==1) { $object->particulier=1; }
 
         $object->name				= GETPOST('nom');
@@ -559,7 +559,7 @@ else
         $object->zip				= GETPOST('zipcode');
         $object->town				= GETPOST('town');
         $object->state_id			= GETPOST('departement_id');
-        $object->tel				= GETPOST('tel');
+        $object->phone				= GETPOST('phone');
         $object->fax				= GETPOST('fax');
         $object->email				= GETPOST('email');
         $object->url				= GETPOST('url');
@@ -818,7 +818,7 @@ else
         }
 
         // Phone / Fax
-        print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$object->tel.'"></td>';
+        print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="phone" value="'.$object->phone.'"></td>';
         print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$object->fax.'"></td></tr>';
 
         print '<tr><td>'.$langs->trans('EMail').(! empty($conf->global->SOCIETE_MAIL_REQUIRED)?'*':'').'</td><td><input type="text" name="email" size="32" value="'.$object->email.'"></td>';
@@ -945,7 +945,7 @@ else
             print '<tr>';
             print '<td>'.$langs->trans("AllocateCommercial").'</td>';
             print '<td colspan="3">';
-            $form->select_users($object->commercial_id,'commercial_id',1);
+            $form->select_users((! empty($object->commercial_id)?$object->commercial_id:$user->id),'commercial_id',1); // Add current user by default
             print '</td></tr>';
         }
 
@@ -1052,7 +1052,7 @@ else
                 $object->town					= GETPOST('town');
                 $object->country_id				= GETPOST('country_id')?GETPOST('country_id'):$mysoc->country_id;
                 $object->state_id				= GETPOST('departement_id');
-                $object->tel					= GETPOST('tel');
+                $object->phone					= GETPOST('phone');
                 $object->fax					= GETPOST('fax');
                 $object->email					= GETPOST('email');
                 $object->url					= GETPOST('url');
@@ -1169,7 +1169,7 @@ else
             print '</td></tr>';
 
             // Supplier
-            if ($conf->fournisseur->enabled && ! empty($user->rights->fournisseur->lire))
+            if (! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
             {
                 print '<tr>';
                 print '<td><span class="fieldrequired">'.$langs->trans('Supplier').'</span></td><td>';
@@ -1201,7 +1201,7 @@ else
                 print '</td></tr>';
 
                 // Category
-                if ($conf->categorie->enabled && $object->fournisseur)
+                if (! empty($conf->categorie->enabled) && $object->fournisseur)
                 {
                     $load = $object->LoadSupplierCateg();
                     if ( $load == 0)
@@ -1256,7 +1256,7 @@ else
             }
 
             // Phone / Fax
-            print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$object->tel.'"></td>';
+            print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="phone" value="'.$object->phone.'"></td>';
             print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$object->fax.'"></td></tr>';
 
             // EMail / Web
@@ -1363,7 +1363,7 @@ else
             print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$object->capital.'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
             // Default language
-            if ($conf->global->MAIN_MULTILANGS)
+            if (! empty($conf->global->MAIN_MULTILANGS))
             {
                 print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">'."\n";
                 print $formadmin->select_language($object->default_lang,'default_lang',0,0,1);
@@ -1552,7 +1552,7 @@ else
         // State
         if (empty($conf->global->SOCIETE_DISABLE_STATE)) print '<tr><td>'.$langs->trans('State').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">'.$object->state.'</td>';
 
-        print '<tr><td>'.$langs->trans('Phone').'</td><td style="min-width: 25%;">'.dol_print_phone($object->tel,$object->country_code,0,$object->id,'AC_TEL').'</td>';
+        print '<tr><td>'.$langs->trans('Phone').'</td><td style="min-width: 25%;">'.dol_print_phone($object->phone,$object->country_code,0,$object->id,'AC_TEL').'</td>';
         print '<td>'.$langs->trans('Fax').'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->country_code,0,$object->id,'AC_FAX').'</td></tr>';
 
         // EMail
@@ -1677,7 +1677,7 @@ else
         print '</td></tr>';
 
         // Default language
-        if ($conf->global->MAIN_MULTILANGS)
+        if (! empty($conf->global->MAIN_MULTILANGS))
         {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
             print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">';
@@ -1752,7 +1752,7 @@ else
         include DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php';
 
         // Module Adherent
-        if ($conf->adherent->enabled)
+        if (! empty($conf->adherent->enabled))
         {
             $langs->load("members");
             print '<tr><td width="25%" valign="top">'.$langs->trans("LinkedToDolibarrMember").'</td>';
@@ -1817,7 +1817,7 @@ else
 
             $var=true;
 
-            $somethingshown=$formfile->show_documents('company',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang);
+            $somethingshown=$formfile->show_documents('company',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang,$hookmanager);
 
             print '</td>';
             print '<td></td>';

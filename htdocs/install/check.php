@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2010 Regis Houssin         <regis@dolibarr.fr>
+/* Copyright (C) 2004-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,8 +158,8 @@ else
 
 
 // Check memory
-$memrequiredorig='32M';
-$memrequired=32*1024*1024;
+$memrequiredorig='64M';
+$memrequired=64*1024*1024;
 $memmaxorig=@ini_get("memory_limit");
 $memmax=@ini_get("memory_limit");
 if ($memmaxorig != '')

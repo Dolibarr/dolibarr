@@ -40,10 +40,10 @@ class pdf_azur extends ModelePDFPropales
 	var $name;
 	var $description;
 	var $type;
-	
+
 	var $phpmin = array(4,3,0); // Minimum version of PHP required by module
 	var $version = 'dolibarr';
-	
+
 	var $page_largeur;
 	var $page_hauteur;
 	var $format;
@@ -51,7 +51,7 @@ class pdf_azur extends ModelePDFPropales
 	var	$marge_droite;
 	var	$marge_haute;
 	var	$marge_basse;
-	
+
 	var $emetteur;	// Objet societe qui emet
 
 
@@ -117,14 +117,14 @@ class pdf_azur extends ModelePDFPropales
 	/**
      *  Function to build pdf onto disk
      *
-     *  @param		int		$object				Id of object to generate
-     *  @param		object	$outputlangs		Lang output object
-     *  @param		string	$srctemplatepath	Full path of source filename for generator using a template file
-     *  @param		int		$hidedetails		Do not show line details
-     *  @param		int		$hidedesc			Do not show desc
-     *  @param		int		$hideref			Do not show ref
-     *  @param		object	$hookmanager		Hookmanager object
-     *  @return     int             			1=OK, 0=KO
+     *  @param		Object		$object				Object to generate
+     *  @param		Translate	$outputlangs		Lang output object
+     *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
+     *  @param		int			$hidedetails		Do not show line details
+     *  @param		int			$hidedesc			Do not show desc
+     *  @param		int			$hideref			Do not show ref
+     *  @param		object		$hookmanager		Hookmanager object
+     *  @return     int             				1=OK, 0=KO
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0,$hookmanager=false)
 	{
@@ -142,12 +142,12 @@ class pdf_azur extends ModelePDFPropales
 		$outputlangs->load("products");
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-		
+
 		if ($conf->propal->dir_output)
 		{
 			$object->fetch_thirdparty();
 
-			$deja_regle = "";
+			// $deja_regle = 0;
 
 			// Definition of $dir and $file
 			if ($object->specimen)
@@ -177,7 +177,7 @@ class pdf_azur extends ModelePDFPropales
 
 				// Create pdf instance
                 $pdf=pdf_getInstance($this->format);
-                $heightforinfotot = 80;	// Height reserved to output the info and total part (value include bottom margin)
+                $heightforinfotot = 50;	// Height reserved to output the info and total part
                 $heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
 
@@ -203,7 +203,7 @@ class pdf_azur extends ModelePDFPropales
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("CommercialProposal"));
-				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
+				if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 
@@ -226,8 +226,8 @@ class pdf_azur extends ModelePDFPropales
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 90;
-				$tab_top_middlepage = 10;
-				$tab_top_newpage = 10;
+				$tab_top_middlepage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
+				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
 				$tab_height = 130;
 				$tab_height_middlepage = 200;
 				$tab_height_newpage = 150;
@@ -262,25 +262,28 @@ class pdf_azur extends ModelePDFPropales
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
+					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
+					$pdf->SetTextColor(0,0,0);
 
+					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
 
 					// Description of product line
-					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 					$curX = $this->posxdesc-1;
 					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,4,$curX,$curY,$hideref,$hidedesc,0,$hookmanager);
 
 					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
 					$pdf->setPage($pageposbefore);
+					$pdf->setTopMargin($this->marge_haute);
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
-// We suppose that a too long description is moved completely on next page
-if ($pageposafter > $pageposbefore) {
-	$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
-}
-						
+					// We suppose that a too long description is moved completely on next page
+					if ($pageposafter > $pageposbefore) {
+						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
+					}
+
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 
 					// VAT Rate
@@ -353,6 +356,7 @@ if ($pageposafter > $pageposbefore) {
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs, $hookmanager);
 					}
 					if (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak)
 					{
@@ -369,32 +373,36 @@ if ($pageposafter > $pageposbefore) {
 						$pdf->AddPage();
 						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 						$pagenb++;
+						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs, $hookmanager);
 					}
 				}
 
 				// Show square
 				if ($pagenb == 1)
 				{
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot, 0, $outputlangs, 0, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfooter, 0, $outputlangs, 0, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot, 0, $outputlangs, 1, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfooter, 0, $outputlangs, 1, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfooter + 1;
 				}
 
 				// Affiche zone infos
 				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
 
 				// Affiche zone totaux
-				$posy=$this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
+				//$posy=$this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
+				$posy=$this->_tableau_tot($pdf, $object, 0, $bottomlasttab, $outputlangs);
 
 				// Affiche zone versements
+				/*
 				if ($deja_regle)
 				{
 					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs);
 				}
+				*/
 
 				// Pied de page
 				$this->_pagefoot($pdf,$object,$outputlangs);
@@ -563,7 +571,7 @@ if ($pageposafter > $pageposbefore) {
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ')
 			{
 				// Si mode reglement non force ou si force a CHQ
-				if ($conf->global->FACTURE_CHQ_NUMBER)
+				if (! empty($conf->global->FACTURE_CHQ_NUMBER))
 				{
 					if ($conf->global->FACTURE_CHQ_NUMBER > 0)
 					{
@@ -640,7 +648,7 @@ if ($pageposafter > $pageposbefore) {
 		$col1x = 120; $col2x = 170; $largcol2 = ($this->page_largeur - $this->marge_droite - $col2x);
 
 		$index = 0;
-		
+
 		// Total HT
 		$pdf->SetFillColor(255,255,255);
 		$pdf->SetXY($col1x, $tab2_top + 0);
@@ -722,7 +730,7 @@ if ($pageposafter > $pageposbefore) {
 						//Local tax 1
 						foreach($this->localtax1 as $tvakey => $tvaval)
 						{
-							if ($tvakey>0)    // On affiche pas taux 0
+							if ($tvakey!=0)    // On affiche pas taux 0
 							{
 								//$this->atleastoneratenotnull++;
 
@@ -750,7 +758,7 @@ if ($pageposafter > $pageposbefore) {
 						//Local tax 2
 						foreach($this->localtax2 as $tvakey => $tvaval)
 						{
-							if ($tvakey>0)    // On affiche pas taux 0
+							if ($tvakey!=0)    // On affiche pas taux 0
 							{
 								//$this->atleastoneratenotnull++;
 
@@ -790,9 +798,11 @@ if ($pageposafter > $pageposbefore) {
 		}
 
 		$pdf->SetTextColor(0,0,0);
-		
+
+		/*
 		$resteapayer = $object->total_ttc - $deja_regle;
-		if ($object->paye) $resteapayer=0;
+		if (! empty($object->paye)) $resteapayer=0;
+		*/
 
 		if ($deja_regle > 0)
 		{
@@ -804,6 +814,7 @@ if ($pageposafter > $pageposbefore) {
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle), 0, 'R', 0);
 
+			/*
 			if ($object->close_code == 'discount_vat')
 			{
 				$index++;
@@ -817,6 +828,7 @@ if ($pageposafter > $pageposbefore) {
 
 				$resteapayer=0;
 			}
+			*/
 
 			$index++;
 			$pdf->SetTextColor(0,0,60);
@@ -863,10 +875,10 @@ if ($pageposafter > $pageposbefore) {
 			$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top-4);
 			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 		}
-		
+
 		$pdf->SetDrawColor(128,128,128);
 		$pdf->SetFont('','',$default_font_size - 1);
-		
+
 		// Output Rect
 		$this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
 
@@ -877,7 +889,7 @@ if ($pageposafter > $pageposbefore) {
 			$pdf->SetXY($this->posxdesc-1, $tab_top+1);
 			$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
 		}
-		
+
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
 			$pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
@@ -894,14 +906,14 @@ if ($pageposafter > $pageposbefore) {
 			$pdf->SetXY($this->posxup-1, $tab_top+1);
 			$pdf->MultiCell($this->posxqty-$this->posxup-1,2, $outputlangs->transnoentities("PriceUHT"),'','C');
 		}
-		
+
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxqty-1, $tab_top+1);
 			$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
 		}
-		
+
 		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
 		if (empty($hidetop))
 		{
@@ -942,7 +954,7 @@ if ($pageposafter > $pageposbefore) {
 		$outputlangs->load("companies");
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-		
+
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		//  Show Draft Watermark
@@ -1058,7 +1070,7 @@ if ($pageposafter > $pageposbefore) {
 			$pdf->SetFillColor(230,230,230);
 			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
 			$pdf->SetTextColor(0,0,60);
-				
+
 			// Show sender name
 			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('','B', $default_font_size);

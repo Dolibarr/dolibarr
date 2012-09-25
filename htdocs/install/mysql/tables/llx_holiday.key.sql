@@ -1,5 +1,5 @@
--- ============================================================================
--- Copyright (C) 2009      Regis Houssin        <regis@dolibarr.fr>
+-- ===================================================================
+-- Copyright (C) 2012      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,6 +14,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- ===========================================================================
+-- ===================================================================
 
-ALTER TABLE llx_dolibarr_modules ADD PRIMARY KEY pk_dolibarr_modules (numero, entity);
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_fk_user (fk_user);
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_date_debut (date_debut);
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_date_fin (date_fin);

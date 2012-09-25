@@ -97,7 +97,7 @@ if ($action == 'add')
 			$object->nom	= trim($_POST["nom"]);
 			$object->note	= trim($_POST["note"]);
 
-			if ($conf->multicompany->enabled && ! empty($conf->multicompany->transverse_mode)) $object->entity = 0;
+			if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)) $object->entity = 0;
 			else $object->entity = $_POST["entity"];
 
             $db->begin();

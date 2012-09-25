@@ -212,7 +212,7 @@ if ($action == 'create')
 	print "</td></tr>";
 
 	// Project
-	if ($conf->projet->enabled)
+	if (! empty($conf->projet->enabled))
 	{
 		$projectid = 0;
 		if ($origin == 'project') $projectid = ($originid?$originid:0);
@@ -294,7 +294,7 @@ if ($action == 'create')
 		}
 		print '</td></tr>';
 
-		if ($conf->global->PRODUCT_SHOW_WHEN_CREATE) print '<tr><td colspan="3">&nbsp;</td></tr>';
+		if (! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) print '<tr><td colspan="3">&nbsp;</td></tr>';
 
 		print '<tr><td valign="top"><input type="radio" name="createmode" value="empty" checked="checked"></td>';
 		print '<td valign="top" colspan="2">'.$langs->trans("CreateEmptyPropal").'</td></tr>';
@@ -303,7 +303,7 @@ if ($action == 'create')
 	if (! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE))
 	{
 		print '<tr><td colspan="3">';
-		if ($conf->product->enabled || $conf->service->enabled)
+		if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 		{
 			$lib=$langs->trans("ProductsAndServices");
 

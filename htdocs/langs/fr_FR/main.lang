@@ -250,7 +250,7 @@ MonthOfDay=Mois du jour
 HourShort=H
 Rate=Taux
 UseLocalTax=Inclure taxe
-LocalTaxDesc=Certains pays appliquent 2 voir 3 taux sur chaque ligne de facture. Si c'est le cas, choisissez le type du deuxième et troisième taux et sa valeur. Les types possibles sont:<br>1 : taxe locale sur les produits et services hors tva (la tva n'est pas appliquée sur la taxe locale)<br>2 : taxe locale sur les produits et services avant tva (la tva est appliquée sur le montant + la taxe locale)<br>3 : taxe locale uniquement sur les produits hors tva (la tva n'est pas appliquée sur la taxe locale)<br>4 : taxe locale uniquement sur les produits avant tva (la tva est appliquée sur le montant + la taxe locale)<br>5 : taxe locale uniquement sur les services hors tva (la tva n'est pas appliquée sur la taxe locale)<br>6 : taxe locale uniquement sur les service avant tva (la tva est appliquée sur le montant + la taxe locale)<br>7 : la taxe locale est un montant fixe ajouté au total de la facture
+LocalTaxDesc=Certains pays appliquent 2 voir 3 taux sur chaque ligne de facture. Si c'est le cas, choisissez le type du deuxième et troisième taux et sa valeur. Les types possibles sont:<br>1 : local tax apply on products and services without vat (vat is not applied on local tax)<br>2 : local tax apply on products and services before vat (vat is calculated on amount + localtax)<br>3 : local tax apply on products without vat (vat is not applied on local tax)<br>4 : local tax apply on products before vat (vat is calculated on amount + localtax)<br>5 : local tax apply on services without vat (vat is not applied on local tax)<br>6 : local tax apply on services before vat (vat is calculated on amount + localtax)<br>7 : local tax is a fix amount applied on global invoice
 Bytes=Octets
 KiloBytes=Kilooctets
 MegaBytes=Mégaoctets
@@ -660,14 +660,3 @@ ShortSaturday=S
 ShortSunday=D
 
 View=Voir
-##### Local Taxes #####
-localtax1=Taxe locale 1
-localtax2=Taxe locale 2
-localtax_type=Type de taxe locale
-%ageOnAllWithoutVAT=%% hors TVA
-%ageOnAllBeforeVAT=%% avant TVA
-%ageOnProductsWithoutVAT=%% / produits hors TVA
-%ageOnProductsBeforeVAT=%% / produits avant TVA
-%ageOnServiceWithoutVAT=%% / services hors TVA
-%ageOnServiceBeforeVAT=%% / services avant TVA
-AmountOnOrder=Taxe fixe sur facture

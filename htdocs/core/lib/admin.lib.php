@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2012      J. Fernando Lagrange <fernando@demo-tic.org>
+/* Copyright (C) 2008-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2012		J. Fernando Lagrange	<fernando@demo-tic.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1024,7 +1024,7 @@ function form_constantes($tableau)
         $sql.= ", note";
         $sql.= " FROM ".MAIN_DB_PREFIX."const";
         $sql.= " WHERE ".$db->decrypt('name')." = '".$const."'";
-        $sql.= " AND entity in (0, ".$conf->entity.")";
+        $sql.= " AND entity IN (0, ".$conf->entity.")";
         $sql.= " ORDER BY name ASC, entity DESC";
         $result = $db->query($sql);
 
@@ -1033,6 +1033,11 @@ function form_constantes($tableau)
         {
             $obj = $db->fetch_object($result);	// Take first result of select
             $var=!$var;
+
+            // For avoid warning in strict mode
+            if (empty($obj)) {
+            	$obj = (object) array('rowid'=>'','name'=>'','value'=>'','type'=>'','note'=>'');
+            }
 
             print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 
@@ -1195,6 +1200,35 @@ function delDocumentModel($name, $type)
 		$db->rollback();
 		return -1;
 	}
+}
+
+
+/**
+ *	Return the php_info into an array
+ *
+ *	@return		array		Array with PHP infos
+ */
+function phpinfo_array()
+{
+	ob_start();
+	phpinfo();
+	$info_arr = array();
+	$info_lines = explode("\n", strip_tags(ob_get_clean(), "<tr><td><h2>"));	// end of ob_start()
+	$cat = "General";
+	foreach($info_lines as $line)
+	{
+		// new cat?
+		preg_match("~<h2>(.*)</h2>~", $line, $title) ? $cat = $title[1] : null;
+		if(preg_match("~<tr><td[^>]+>([^<]*)</td><td[^>]+>([^<]*)</td></tr>~", $line, $val))
+		{
+			$info_arr[trim($cat)][trim($val[1])] = $val[2];
+		}
+		elseif(preg_match("~<tr><td[^>]+>([^<]*)</td><td[^>]+>([^<]*)</td><td[^>]+>([^<]*)</td></tr>~", $line, $val))
+		{
+			$info_arr[trim($cat)][trim($val[1])] = array("local" => $val[2], "master" => $val[3]);
+		}
+	}
+	return $info_arr;
 }
 
 ?>

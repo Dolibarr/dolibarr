@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_order/modules_commandefou
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-if ($conf->projet->enabled)	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+if (! empty($conf->projet->enabled))	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load('orders');
 $langs->load('sendings');
@@ -182,7 +182,7 @@ if ($id > 0 || ! empty($ref))
 
 
 		$disabled=1;
-		if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) $disabled=0;
+		if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) $disabled=0;
 
 		/*
 		 * Lignes de commandes

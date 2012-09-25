@@ -1049,6 +1049,8 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
             		}
             	}
 
+            	$desc='';
+
             	// Define output language
             	if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
             	{
@@ -1069,8 +1071,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
             		$desc = $prod->description;
             	}
 
-            	$desc.= ($desc && ! empty($product_desc)) ? ((dol_textishtml($desc) || dol_textishtml($product_desc))?"<br />\n":"\n") : "";
-            	$desc.= $product_desc;
+            	$desc=dol_concatdesc($desc,$product_desc);
             }
 
             if (! empty($prod->customcode) || ! empty($prod->country_code))
@@ -1882,7 +1883,7 @@ if ($action == 'create')
     print '</td></tr>'."\n";
 
     // Proforma
-    if ($conf->global->FACTURE_USE_PROFORMAT)
+    if (! empty($conf->global->FACTURE_USE_PROFORMAT))
     {
         print '<tr height="18"><td width="16px" valign="middle">';
         print '<input type="radio" name="type" value="4"'.(GETPOST('type')==4?' checked="checked"':'').'>';
@@ -1973,7 +1974,7 @@ if ($action == 'create')
     print '</td></tr>';
 
     // Project
-    if ($conf->projet->enabled)
+    if (! empty($conf->projet->enabled))
     {
         $langs->load('projects');
         print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
@@ -2080,7 +2081,7 @@ if ($action == 'create')
             print '<td>'.$langs->trans('Qty').'</td>';
             print '<td>'.$langs->trans('ReductionShort').'</td>';
             print '<td> &nbsp; &nbsp; </td>';
-            if ($conf->service->enabled)
+            if (! empty($conf->service->enabled))
             {
                 print '<td>'.$langs->trans('ServiceLimitedDuration').'</td>';
             }
@@ -2090,7 +2091,7 @@ if ($action == 'create')
                 print '<tr>';
                 print '<td>';
                 // multiprix
-                if($conf->global->PRODUIT_MULTIPRICES)
+                if (! empty($conf->global->PRODUIT_MULTIPRICES))
                 $form->select_produits('','idprod'.$i,'',$conf->product->limit_size,$soc->price_level);
                 else
                 $form->select_produits('','idprod'.$i,'',$conf->product->limit_size);
@@ -2099,7 +2100,7 @@ if ($action == 'create')
                 print '<td nowrap="nowrap"><input type="text" size="1" name="remise_percent'.$i.'" value="'.$soc->remise_client.'">%</td>';
                 print '<td>&nbsp;</td>';
                 // Si le module service est actif, on propose des dates de debut et fin a la ligne
-                if ($conf->service->enabled)
+                if (! empty($conf->service->enabled))
                 {
                     print '<td nowrap="nowrap">';
                     print '<table class="nobordernopadding"><tr class="nocellnopadd">';
@@ -2243,7 +2244,7 @@ else if ($id > 0 || ! empty($ref))
             }
 
             $text=$langs->trans('ConfirmValidateBill',$numref);
-            if ($conf->notification->enabled)
+            if (! empty($conf->notification->enabled))
             {
                 require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
                 $notify=new Notify($db);
@@ -2624,8 +2625,8 @@ else if ($id > 0 || ! empty($ref))
          */
 
         $nbrows=8; $nbcols=2;
-        if ($conf->projet->enabled) $nbrows++;
-        if ($conf->banque->enabled) $nbcols++;
+        if (! empty($conf->projet->enabled)) $nbrows++;
+        if (! empty($conf->banque->enabled)) $nbcols++;
 
         //Local taxes
         if ($mysoc->pays_code=='ES')
@@ -2642,7 +2643,7 @@ else if ($id > 0 || ! empty($ref))
         print '<tr class="liste_titre">';
         print '<td>'.($object->type == 2 ? $langs->trans("PaymentsBack") : $langs->trans('Payments')).'</td>';
         print '<td>'.$langs->trans('Type').'</td>';
-        if ($conf->banque->enabled) print '<td align="right">'.$langs->trans('BankAccount').'</td>';
+        if (! empty($conf->banque->enabled)) print '<td align="right">'.$langs->trans('BankAccount').'</td>';
         print '<td align="right">'.$langs->trans('Amount').'</td>';
         print '<td width="18">&nbsp;</td>';
         print '</tr>';
@@ -2679,7 +2680,7 @@ else if ($id > 0 || ! empty($ref))
                         print dol_print_date($db->jdate($objp->dp),'day').'</a></td>';
                         $label=($langs->trans("PaymentType".$objp->payment_code)!=("PaymentType".$objp->payment_code))?$langs->trans("PaymentType".$objp->payment_code):$objp->payment_label;
                         print '<td>'.$label.' '.$objp->num_paiement.'</td>';
-                        if ($conf->banque->enabled)
+                        if (! empty($conf->banque->enabled))
                         {
                             $bankaccountstatic->id=$objp->baid;
                             $bankaccountstatic->ref=$objp->ref;
@@ -3016,7 +3017,7 @@ else if ($id > 0 || ! empty($ref))
             	$object->formAddFreeProduct(1,$mysoc,$soc,$hookmanager);
 
             	// Add predefined products/services
-            	if ($conf->product->enabled || $conf->service->enabled)
+            	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
             	{
             		$var=!$var;
             		$object->formAddPredefinedProduct(1,$mysoc,$soc,$hookmanager);
@@ -3268,7 +3269,7 @@ else if ($id > 0 || ! empty($ref))
             $somethingshown=$object->showLinkedObjectBlock();
 
             // Link for paypal payment
-            if ($conf->paypal->enabled && $object->statut != 0)
+            if (! empty($conf->paypal->enabled) && $object->statut != 0)
             {
                 include_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
                 print showPaypalPaymentUrl('invoice',$object->ref);

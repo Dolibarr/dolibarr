@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
@@ -237,7 +237,7 @@ class Commande extends CommonOrder
         if (! $error)
         {
             // If stock is incremented on validate order, we must increment it
-            if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
+            if ($result >= 0 && ! empty($conf->stock->enabled) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
             {
                 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
                 $langs->load("agenda");
@@ -351,7 +351,7 @@ class Commande extends CommonOrder
         if ($this->db->query($sql))
         {
             // If stock is decremented on validate order, we must reincrement it
-            if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
+            if (! empty($conf->stock->enabled) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
             {
                 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
                 $langs->load("agenda");
@@ -534,7 +534,7 @@ class Commande extends CommonOrder
 		if ($this->db->query($sql))
 		{
 			// If stock is decremented on validate order, we must reincrement it
-			if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
+			if (! empty($conf->stock->enabled) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
 			{
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$langs->load("agenda");
@@ -999,6 +999,7 @@ class Commande extends CommonOrder
      *	@param		int				$fk_parent_line		Parent line
      *  @param		int				$fk_fournprice		Id supplier price
      *  @param		int				$pa_ht				Buying price (without tax)
+     *  @param		string			$label				Label
      *	@return     int             					>0 if OK, <0 if KO
      *
      *	@see        add_product
@@ -1054,7 +1055,7 @@ class Commande extends CommonOrder
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits);
+            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits,$type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
@@ -2159,6 +2160,7 @@ class Commande extends CommonOrder
      *  @param		int				$skip_update_total	Skip update of total
      *  @param		int				$fk_fournprice		Id supplier price
      *  @param		int				$pa_ht				Buying price (without tax)
+     *  @param		string			$label				Label
      *  @return   	int              					< 0 if KO, > 0 if OK
      */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='')
@@ -2192,7 +2194,7 @@ class Commande extends CommonOrder
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits);
+            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
@@ -2538,7 +2540,7 @@ class Commande extends CommonOrder
 
         $result='';
 
-        if ($conf->expedition->enabled && ($option == 1 || $option == 2)) $url = DOL_URL_ROOT.'/expedition/shipment.php?id='.$this->id;
+        if (! empty($conf->expedition->enabled) && ($option == 1 || $option == 2)) $url = DOL_URL_ROOT.'/expedition/shipment.php?id='.$this->id;
         else $url = DOL_URL_ROOT.'/commande/fiche.php?id='.$this->id;
 
         if ($short) return $url;
@@ -2682,7 +2684,7 @@ class Commande extends CommonOrder
                 $line->total_ht=100;
                 $line->total_ttc=119.6;
                 $line->total_tva=19.6;
-                $line->remise_percent=00;
+                $line->remise_percent=0;
             }
             $prodid = rand(1, $num_prods);
             $line->fk_product=$prodids[$prodid];
@@ -2841,13 +2843,15 @@ class OrderLine
     var $localtax2_tx; 		// Local tax 2
     var $subprice;      	// U.P. HT (example 100)
     var $remise_percent;	// % for line discount (example 20%)
+    var $fk_remise_except;
     var $rang = 0;
 	var $fk_fournprice;
 	var $pa_ht;
     var $marge_tx;
     var $marque_tx;
     var $info_bits = 0;		// Bit 0: 	0 si TVA normal - 1 si TVA NPR
-    // Bit 1:	0 ligne normale - 1 si ligne de remise fixe
+						    // Bit 1:	0 ligne normale - 1 si ligne de remise fixe
+    var $special_code = 0;
     var $total_ht;			// Total HT  de la ligne toute quantite et incluant la remise ligne
     var $total_tva;			// Total TVA  de la ligne toute quantite et incluant la remise ligne
     var $total_localtax1;   // Total local tax 1 for the line
@@ -3140,11 +3144,11 @@ class OrderLine
 			$sql.= " , total_ht=".price2num($this->total_ht)."";
 			$sql.= " , total_tva=".price2num($this->total_tva)."";
 			$sql.= " , total_ttc=".price2num($this->total_ttc)."";
+			$sql.= " , total_localtax1=".price2num($this->total_localtax1);
+			$sql.= " , total_localtax2=".price2num($this->total_localtax2);
 		}
 		$sql.= " , fk_product_fournisseur_price=".(! empty($this->fk_fournprice)?$this->fk_fournprice:"null");
 		$sql.= " , buy_price_ht='".price2num($this->pa_ht)."'";
-		$sql.= " , total_localtax1=".price2num($this->total_localtax1);
-		$sql.= " , total_localtax2=".price2num($this->total_localtax2);
 		$sql.= " , info_bits=".$this->info_bits;
 		$sql.= " , date_start=".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null");
 		$sql.= " , date_end=".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");

@@ -723,12 +723,12 @@ function dol_get_fiche_end($notab=0)
 function dol_format_address($object)
 {
 	$ret='';
-	$countriesusingstate=array('US','IN');
+	$countriesusingstate=array('US','IN','GB');
 
 	// Address
 	$ret .= $object->address;
 	// Zip/Town/State
-	if (in_array($object->country_code,array('US')))   // US: town, state, zip
+	if (in_array($object->country_code,array('US')))   	// US: title firstname name \n address lines \n town, state, zip \n country
 	{
 		$ret .= ($ret ? "\n" : '' ).$object->town;
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
@@ -737,7 +737,16 @@ function dol_format_address($object)
 		}
 		if ($object->zip) $ret .= ', '.$object->zip;
 	}
-	else                                        // Other: zip town, state
+	else if (in_array($object->country_code,array('GB'))) // UK: title firstname name \n address lines \n town state \n zip \n country
+	{
+		$ret .= ($ret ? "\n" : '' ).$object->town;
+		if ($object->state && in_array($object->country_code,$countriesusingstate))
+		{
+			$ret.=", ".$object->departement;
+		}
+		if ($object->zip) $ret .= ($ret ? "\n" : '' ).$object->zip;
+	}
+	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
 		$ret .= ($ret ? "\n" : '' ).$object->zip;
 		$ret .= ' '.$object->town;
@@ -1140,7 +1149,7 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=
 			$newemail.=img_warning($langs->trans("ErrorBadEMail",$email));
 		}
 
-		if (($cid || $socid) && $conf->agenda->enabled && $user->rights->agenda->myactions->create)
+		if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
 		{
 			$type='AC_EMAIL'; $link='';
 			if (! empty($conf->global->AGENDA_ADDACTIONFOREMAIL)) $link='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;actioncode='.$type.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"),"calendar").'</a>';
@@ -1227,7 +1236,7 @@ function dol_print_phone($phone,$country="FR",$cid=0,$socid=0,$addlink=0,$separ=
 			$newphone.='>'.$newphonesav.'</a>';
 		}
 
-		//if (($cid || $socid) && $conf->agenda->enabled && $user->rights->agenda->myactions->create)
+		//if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
 		if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
 		{
 			$type='AC_TEL'; $link='';
@@ -1871,8 +1880,8 @@ function img_help($usehelpcursor = 1, $usealttitle = 1)
 
 	if ($usealttitle)
 	{
-		if (is_string($usealttitle)) $alt = dol_escape_htmltag($usealttitle);
-		else $alt = $langs->trans('Info');
+		if (is_string($usealttitle)) $usealttitle = dol_escape_htmltag($usealttitle);
+		else $usealttitle = $langs->trans('Info');
 	}
 
 	return img_picto($usealttitle, 'info.png', ($usehelpcursor ? 'style="cursor: help"' : ''));
@@ -2255,7 +2264,7 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  *	@param	string	$name        Label of field
  *	@param	int		$thead		 For thead format
  *	@param	string	$file        Url used when we click on sort picto
- *	@param	string	$field       Field to use for new sorting
+ *	@param	string	$field       Field to use for new sorting. Empty if this field is not sortable.
  *	@param	string	$begin       ("" by defaut)
  *	@param	string	$moreparam   Add more parameters on sort url links ("" by default)
  *	@param  string	$moreattrib  Add more attributes on th ("" by defaut)
@@ -3358,11 +3367,12 @@ function dol_microtime_float()
 }
 
 /**
- *		Return if a text is a html content
+ *	Return if a text is a html content
  *
- *		@param	string	$msg		Content to check
- *		@param	int		$option		0=Full detection, 1=Fast check
- *		@return	boolean				true/false
+ *	@param	string	$msg		Content to check
+ *	@param	int		$option		0=Full detection, 1=Fast check
+ *	@return	boolean				true/false
+ *	@see	dol_concatdesc
  */
 function dol_textishtml($msg,$option=0)
 {
@@ -3391,6 +3401,28 @@ function dol_textishtml($msg,$option=0)
 		elseif (preg_match('/&#[0-9]{2,3};/i',$msg))	return true;    // Html entities numbers (http://www.w3schools.com/tags/ref_entities.asp)
 		return false;
 	}
+}
+
+/**
+ *  Concat 2 descriptions (second one after first one)
+ *  text1 html + text2 html => text1 + '<br>' + text2
+ *  text1 html + text2 txt  => text1 + '<br>' + dol_nl2br(text2)
+ *  text1 txt  + text2 html => dol_nl2br(text1) + '<br>' + text2
+ *  text1 txt  + text2 txt  => text1 + '\n' + text2
+ *
+ *  @param	string	$text1		Text 1
+ *  @param	string	$text2		Text 2
+ *  @param  string	$forxml     false=Use <br>, true=Use <br />
+ *  @return	string				Text 1 + new line + Text2
+ *  @see    dol_textishtml
+ */
+function dol_concatdesc($text1,$text2,$forxml=false)
+{
+	$ret='';
+	$ret.= (! dol_textishtml($text1) && dol_textishtml($text2))?dol_nl2br($text1, 0, $forxml):$text1;
+	$ret.= (! empty($text1) && ! empty($text2)) ? ((dol_textishtml($text1) || dol_textishtml($text2))?($forxml?"<br \>\n":"<br>\n") : "\n") : "";
+	$ret.= (dol_textishtml($text1) && ! dol_textishtml($text2))?dol_nl2br($text2, 0, $forxml):$text2;
+	return $ret;
 }
 
 /**
@@ -3457,7 +3489,7 @@ function complete_substitutions_array(&$substitutionarray,$outputlangs,$object='
 				dol_syslog("Library functions_".$substitfile['name']." found into ".$dir);
 				require_once $dir.$substitfile['name'];
 				$function_name=$module."_".$callfunc;
-				$function_name($substitutionarray,$outputlangs,$object,$parameters);
+				if (function_exists($function_name)) $function_name($substitutionarray,$outputlangs,$object,$parameters);
 			}
 		}
 	}
@@ -3971,7 +4003,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 					if (verifCond($values[4]))
 					{
 						if ($values[3]) $langs->load($values[3]);
-						$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[5]),1);
+						$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', (! empty($object->id)?$object->id:''), $values[5]), 1);
 						$head[$h][1] = $langs->trans($values[2]);
 						$head[$h][2] = str_replace('+','',$values[1]);
 						$h++;
@@ -3981,7 +4013,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 				{
 					if ($values[0] != $type) continue;
 					if ($values[3]) $langs->load($values[3]);
-					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[4]),1);
+					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', (! empty($object->id)?$object->id:''), $values[4]), 1);
 					$head[$h][1] = $langs->trans($values[2]);
 					$head[$h][2] = str_replace('+','',$values[1]);
 					$h++;
@@ -3990,7 +4022,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 				{
 					if ($values[0] != $type) continue;
 					if ($values[2]) $langs->load($values[2]);
-					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i',$object->id,$values[3]),1);
+					$head[$h][0] = dol_buildpath(preg_replace('/__ID__/i', (! empty($object->id)?$object->id:''), $values[3]), 1);
 					$head[$h][1] = $langs->trans($values[1]);
 					$head[$h][2] = 'tab'.$values[1];
 					$h++;

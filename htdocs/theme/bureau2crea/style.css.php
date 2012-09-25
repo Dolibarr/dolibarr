@@ -183,6 +183,13 @@ form {
     padding: 0em 0em 0em 0em;
     margin: 0em 0em 0em 0em;
 }
+.valignmiddle {
+	vertical-align: middle;
+}
+.centpercent {
+	width: 100%;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -2448,7 +2455,7 @@ div.ecmjqft {
 
 .jnotify-container {
 	position: fixed !important;
-<?php if ($conf->global->MAIN_JQUERY_JNOTIFY_BOTTOM) { ?>
+<?php if (! empty($conf->global->MAIN_JQUERY_JNOTIFY_BOTTOM)) { ?>
 	top: auto !important;
 	bottom: 4px !important;
 <?php } ?>

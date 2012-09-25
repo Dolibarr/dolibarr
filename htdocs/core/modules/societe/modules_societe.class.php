@@ -381,7 +381,7 @@ function thirdparty_doc_create($db, $object, $message, $modele, $outputlangs)
     // Positionne modele sur le nom du modele a utiliser
     if (! dol_strlen($modele))
     {
-        if ($conf->global->COMPANY_ADDON_PDF)
+        if (! empty($conf->global->COMPANY_ADDON_PDF))
         {
             $modele = $conf->global->COMPANY_ADDON_PDF;
         }

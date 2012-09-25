@@ -302,8 +302,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         $user=$this->savuser;
         $langs=$this->savlangs;
         $db=$this->savdb;
-
-        $conf->project->dir_output.='/temp';
+        $conf->projet->dir_output.='/temp';
         $localobject=new Project($this->savdb);
         $localobject->initAsSpecimen();
 

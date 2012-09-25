@@ -92,6 +92,14 @@ input, textarea {
 	margin-bottom:6px;
 	}
 
+.valignmiddle {
+	vertical-align: middle;
+}
+.centpercent {
+	width: 100%;
+}
+
+
 /* boutons : */
 .button, .butAction {background: #999;border: solid 1px #666;}
 .butActionRefused {background: #ccc;}
@@ -144,7 +152,7 @@ td.formdocbutton {padding-top:6px;}
 		color-stop(0, rgba(0,0,0,.3))
 	);
 	}
-	
+
 <?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) { ?>
 .butActionRefused {
 	display: none;

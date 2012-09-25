@@ -47,23 +47,15 @@ function dol_basename($pathfile)
  *  @param	string	$sortcriteria	Sort criteria ("","fullname","name","date","size")
  *  @param	string	$sortorder		Sort order (SORT_ASC, SORT_DESC)
  *	@param	int		$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
+ *  @param	int		$nohook			Disable all hooks
  *  @return	array					Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file')
  */
-function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0)
+function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0, $nohook=false)
 {
 	global $db, $hookmanager;
+	global $object;
 
 	dol_syslog("files.lib.php::dol_dir_list path=".$path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter));
-
-	if (! is_object($hookmanager))
-	{
-		if (! class_exists('HookManager')) {
-			// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-			require DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($db);
-		}
-	}
-	$hookmanager->initHooks(array('fileslib'));
 
 	$loaddate=($mode==1||$mode==2)?true:false;
 	$loadsize=($mode==1||$mode==3)?true:false;
@@ -72,23 +64,35 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 	$path=preg_replace('/([\\/]+)$/i','',$path);
 	$newpath=dol_osencode($path);
 
-	$parameters=array(
-			'path' => $newpath,
-			'types'=> $types,
-			'recursive' => $recursive,
-			'filter' => $filter,
-			'excludefilter' => $excludefilter,
-			'sortcriteria' => $sortcriteria,
-			'sortorder' => $sortorder,
-			'loaddate' => $loaddate,
-			'loadsize' => $loadsize
-	);
-	$reshook=$hookmanager->executeHooks('getNodesList', $parameters);
+	if (! $nohook) {
+		if (! is_object($hookmanager))
+		{
+			if (! class_exists('HookManager')) {
+				// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+				require DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+				$hookmanager=new HookManager($db);
+			}
+		}
+		$hookmanager->initHooks(array('fileslib'));
+
+		$parameters=array(
+				'path' => $newpath,
+				'types'=> $types,
+				'recursive' => $recursive,
+				'filter' => $filter,
+				'excludefilter' => $excludefilter,
+				'sortcriteria' => $sortcriteria,
+				'sortorder' => $sortorder,
+				'loaddate' => $loaddate,
+				'loadsize' => $loadsize
+		);
+		$reshook=$hookmanager->executeHooks('getNodesList', $parameters, $object);
+	}
 
 	// $reshook may contain returns stacked by other modules
 	// $reshook is always empty with an array for can not lose returns stacked with other modules
 	// $hookmanager->resArray may contain array stacked by other modules
-	if (! empty($hookmanager->resArray)) // forced to use $hookmanager->resArray even if $hookmanager->resArray['nodes'] is empty
+	if (! $nohook && ! empty($hookmanager->resArray)) // forced to use $hookmanager->resArray even if $hookmanager->resArray['nodes'] is empty
 	{
 		return $hookmanager->resArray['nodes'];
 	}
@@ -511,13 +515,13 @@ function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 
 /**
  * Move a file into another name.
+ * This function differs from dol_move_uploaded_file, because it can be called in any context.
  *
  * @param	string  $srcfile            Source file (can't be a directory)
  * @param   string	$destfile           Destination file (can't be a directory)
  * @param   string	$newmask            Mask for new file (0 by default means $conf->global->MAIN_UMASK)
  * @param   int		$overwriteifexists  Overwrite file if exists (1 by default)
  * @return  boolean 		            True if OK, false if KO
- * @see		dol_move_uploaded_file
  */
 function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 {
@@ -564,196 +568,136 @@ function dol_unescapefile($filename)
  * 	@param	int		$allowoverwrite		1=Overwrite target file if it already exists
  * 	@param	int		$disablevirusscan	1=Disable virus scan
  * 	@param	string	$uploaderrorcode	Value of PHP upload error code ($_FILES['field']['error'])
- * 	@param	int		$notrigger			Disable all triggers
+ * 	@param	int		$nohook				Disable all hooks
  * 	@param	string	$varfiles			_FILES var name
  *	@return int       			  		>0 if OK, <0 or string if KO
- *  @see    dolCheckUploadedFile, dol_move
+ *  @see    dol_move
  */
-function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan=0, $uploaderrorcode=0, $notrigger=0, $varfiles='addedfile')
+function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan=0, $uploaderrorcode=0, $nohook=0, $varfiles='addedfile')
 {
-	global $db, $hookmanager;
-	global $object;
+	global $conf, $db, $user, $langs;
+	global $object, $hookmanager;
 
 	$error=0;
-
-	// Check uploaded file
-	$dest_file=dolCheckUploadedFile($src_file, $dest_file, $disablevirusscan, $uploaderrorcode);
-	if (is_array($dest_file) && isset($dest_file['error'])) return $dest_file['error'];
-
-	if (! is_object($hookmanager))
-	{
-		if (! class_exists('HookManager')) {
-			// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-			require DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($db);
-		}
-	}
-	$hookmanager->initHooks(array('fileslib'));
-
-	$parameters=array('dest_file' => $dest_file, 'varfiles' => $varfiles, 'allowoverwrite' => $allowoverwrite, 'notrigger' => $notrigger);
-	$reshook=$hookmanager->executeHooks('dolMoveUploadedFile', $parameters, $object);
-
-	if (empty($reshook)) {
-		return dolMoveUploadedFile($src_file, $dest_file, $allowoverwrite, $notrigger);
-	}
-}
-
-/**
- *	Check an uploaded file.
- * 	If there is errors (virus found, antivir in error, bad filename), file is not moved.
- *
- *	@param	string	$src_file			Source full path filename ($_FILES['field']['tmp_name'])
- *	@param	string	$dest_file			Target full path filename  ($_FILES['field']['name'])
- * 	@param	int		$disablevirusscan	1=Disable virus scan
- * 	@param	string	$uploaderrorcode	Value of PHP upload error code ($_FILES['field']['error'])
- *	@return int       			  		>0 if OK, <0 or string if KO
- *	@see    dol_move_uploaded_file
- */
-function dolCheckUploadedFile($src_file, $dest_file, $disablevirusscan=0, $uploaderrorcode=0)
-{
-	global $conf;
-
 	$file_name = $dest_file;
-	// If an upload error has been reported
-	if ($uploaderrorcode)
+
+	if (empty($nohook))
 	{
-		switch($uploaderrorcode)
+		// If an upload error has been reported
+		if ($uploaderrorcode)
 		{
-			case UPLOAD_ERR_INI_SIZE:	// 1
-				return array('error' => 'ErrorFileSizeTooLarge');
-				break;
-			case UPLOAD_ERR_FORM_SIZE:	// 2
-				return array('error' => 'ErrorFileSizeTooLarge');
-				break;
-			case UPLOAD_ERR_PARTIAL:	// 3
-				return array('error' => 'ErrorPartialFile');
-				break;
-			case UPLOAD_ERR_NO_TMP_DIR:	//
-				return array('error' => 'ErrorNoTmpDir');
-				break;
-			case UPLOAD_ERR_CANT_WRITE:
-				return array('error' => 'ErrorFailedToWriteInDir');
-				break;
-			case UPLOAD_ERR_EXTENSION:
-				return array('error' => 'ErrorUploadBlockedByAddon');
-				break;
-			default:
-				break;
-		}
-	}
-
-	// If we need to make a virus scan
-	if (empty($disablevirusscan) && file_exists($src_file) && ! empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
-	{
-		if (! class_exists('AntiVir')) {
-			require DOL_DOCUMENT_ROOT.'/core/class/antivir.class.php';
-		}
-		$antivir=new AntiVir($db);
-		$result = $antivir->dol_avscan_file($src_file);
-		if ($result < 0)	// If virus or error, we stop here
-		{
-			$reterrors=$antivir->errors;
-			dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$file_name.'") KO with antivirus: result='.$result.' errors='.join(',',$antivir->errors), LOG_WARNING);
-			return array('error' => 'ErrorFileIsInfectedWithAVirus: '.join(',',$reterrors));
-		}
-	}
-
-	// Security:
-	// Disallow file with some extensions. We renamed them.
-	// Car si on a mis le rep documents dans un rep de la racine web (pas bien), cela permet d'executer du code a la demande.
-	if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$file_name))
-	{
-		$file_name.= '.noexe';
-	}
-
-	// Security:
-	// On interdit fichiers caches, remontees de repertoire ainsi que les pipes dans les noms de fichiers.
-	if (preg_match('/^\./',$src_file) || preg_match('/\.\./',$src_file) || preg_match('/[<>|]/',$src_file))
-	{
-		dol_syslog("Refused to deliver file ".$src_file, LOG_WARNING);
-		return array('error' => -1);
-	}
-
-	// Security:
-	// On interdit fichiers caches, remontees de repertoire ainsi que les pipe dans
-	// les noms de fichiers.
-	if (preg_match('/^\./',$dest_file) || preg_match('/\.\./',$dest_file) || preg_match('/[<>|]/',$dest_file))
-	{
-		dol_syslog("Refused to deliver file ".$dest_file, LOG_WARNING);
-		return array('error' => -2);
-	}
-
-	return $file_name;
-}
-
-/**
- *	Move an uploaded file after some controls.
- * 	If there is errors (virus found, antivir in error, bad filename), file is not moved.
- *
- *	@param	string	$src_file			Source full path filename ($_FILES['field']['tmp_name'])
- *	@param	string	$dest_file			Target full path filename  ($_FILES['field']['name'])
- * 	@param	int		$allowoverwrite		1=Overwrite target file if it already exists
- * 	@param	int		$notrigger			Disable all triggers
- *	@return int       			  		>0 if OK, <0 or string if KO
- */
-function dolMoveUploadedFile($src_file, $dest_file, $allowoverwrite, $notrigger=0)
-{
-	global $conf, $user, $langs, $db;
-	global $object;
-
-	$error=0;
-
-	// The file functions must be in OS filesystem encoding.
-	$src_file_osencoded=dol_osencode($src_file);
-	$file_name_osencoded=dol_osencode($dest_file);
-
-	// Check if destination dir is writable
-	// TODO
-
-	// Check if destination file already exists
-	if (! $allowoverwrite)
-	{
-		if (file_exists($file_name_osencoded))
-		{
-			dol_syslog("Files.lib::dol_move_uploaded_file File ".$file_name." already exists. Return 'ErrorFileAlreadyExists'", LOG_WARNING);
-			return 'ErrorFileAlreadyExists';
-		}
-	}
-
-	// Move file
-	$return=move_uploaded_file($src_file_osencoded, $file_name_osencoded);
-	if ($return)
-	{
-		if (! empty($conf->global->MAIN_UMASK)) @chmod($file_name_osencoded, octdec($conf->global->MAIN_UMASK));
-		dol_syslog("Files.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$file_name." - Umask=".$conf->global->MAIN_UMASK, LOG_DEBUG);
-
-		if (! $notrigger)
-		{
-			if (is_object($object))
+			switch($uploaderrorcode)
 			{
-				$object->src_file=$dest_file;
-
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($db);
-				$result=$interface->run_triggers('FILE_UPLOAD',$object,$user,$langs,$conf);
-				if ($result < 0) {
-					$error++; $errors=$interface->errors;
-				}
-				// Fin appel triggers
-			}
-			else
-			{
-				dol_syslog("Files.lib::dol_move_uploaded_file Object not find", LOG_WARNING);
+				case UPLOAD_ERR_INI_SIZE:	// 1
+					return 'ErrorFileSizeTooLarge';
+					break;
+				case UPLOAD_ERR_FORM_SIZE:	// 2
+					return 'ErrorFileSizeTooLarge';
+					break;
+				case UPLOAD_ERR_PARTIAL:	// 3
+					return 'ErrorPartialFile';
+					break;
+				case UPLOAD_ERR_NO_TMP_DIR:	//
+					return 'ErrorNoTmpDir';
+					break;
+				case UPLOAD_ERR_CANT_WRITE:
+					return 'ErrorFailedToWriteInDir';
+					break;
+				case UPLOAD_ERR_EXTENSION:
+					return 'ErrorUploadBlockedByAddon';
+					break;
+				default:
+					break;
 			}
 		}
 
-		return 1;	// Success
+		// If we need to make a virus scan
+		if (empty($disablevirusscan) && file_exists($src_file) && ! empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
+		{
+			if (! class_exists('AntiVir')) {
+				require DOL_DOCUMENT_ROOT.'/core/class/antivir.class.php';
+			}
+			$antivir=new AntiVir($db);
+			$result = $antivir->dol_avscan_file($src_file);
+			if ($result < 0)	// If virus or error, we stop here
+			{
+				$reterrors=$antivir->errors;
+				dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: result='.$result.' errors='.join(',',$antivir->errors), LOG_WARNING);
+				return 'ErrorFileIsInfectedWithAVirus: '.join(',',$reterrors);
+			}
+		}
+
+		// Security:
+		// Disallow file with some extensions. We renamed them.
+		// Car si on a mis le rep documents dans un rep de la racine web (pas bien), cela permet d'executer du code a la demande.
+		if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$dest_file))
+		{
+			$file_name.= '.noexe';
+		}
+
+		// Security:
+		// On interdit fichiers caches, remontees de repertoire ainsi que les pipes dans les noms de fichiers.
+		if (preg_match('/^\./',$src_file) || preg_match('/\.\./',$src_file) || preg_match('/[<>|]/',$src_file))
+		{
+			dol_syslog("Refused to deliver file ".$src_file, LOG_WARNING);
+			return -1;
+		}
+
+		// Security:
+		// On interdit fichiers caches, remontees de repertoire ainsi que les pipe dans
+		// les noms de fichiers.
+		if (preg_match('/^\./',$dest_file) || preg_match('/\.\./',$dest_file) || preg_match('/[<>|]/',$dest_file))
+		{
+			dol_syslog("Refused to deliver file ".$dest_file, LOG_WARNING);
+			return -2;
+		}
+
+		if (! is_object($hookmanager))
+		{
+			if (! class_exists('HookManager')) {
+				// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+				require DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+				$hookmanager=new HookManager($db);
+			}
+		}
+		$hookmanager->initHooks(array('fileslib'));
+
+		$parameters=array('filename' => $file_name, 'varfiles' => $varfiles, 'allowoverwrite' => $allowoverwrite);
+		$reshook=$hookmanager->executeHooks('moveUploadedFile', $parameters, $object);
 	}
-	else
+
+	if (empty($reshook))
 	{
-		dol_syslog("Files.lib::dol_move_uploaded_file Failed to move ".$src_file." to ".$file_name, LOG_ERR);
-		return -3;	// Unknown error
+		// The file functions must be in OS filesystem encoding.
+		$src_file_osencoded=dol_osencode($src_file);
+		$file_name_osencoded=dol_osencode($file_name);
+
+		// Check if destination dir is writable
+		// TODO
+
+		// Check if destination file already exists
+		if (! $allowoverwrite)
+		{
+			if (file_exists($file_name_osencoded))
+			{
+				dol_syslog("Files.lib::dol_move_uploaded_file File ".$file_name." already exists. Return 'ErrorFileAlreadyExists'", LOG_WARNING);
+				return 'ErrorFileAlreadyExists';
+			}
+		}
+
+		// Move file
+		$return=move_uploaded_file($src_file_osencoded, $file_name_osencoded);
+		if ($return)
+		{
+			if (! empty($conf->global->MAIN_UMASK)) @chmod($file_name_osencoded, octdec($conf->global->MAIN_UMASK));
+			dol_syslog("Files.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$file_name." - Umask=".$conf->global->MAIN_UMASK, LOG_DEBUG);
+			return 1;	// Success
+		}
+		else
+		{
+			dol_syslog("Files.lib::dol_move_uploaded_file Failed to move ".$src_file." to ".$file_name, LOG_ERR);
+			return -3;	// Unknown error
+		}
 	}
 }
 
@@ -763,62 +707,70 @@ function dolMoveUploadedFile($src_file, $dest_file, $allowoverwrite, $notrigger=
  *  @param	string	$file           File to delete or mask of file to delete
  *  @param  int		$disableglob    Disable usage of glob like *
  *  @param  int		$nophperrors    Disable all PHP output errors
- *  @param	int		$notrigger		Disable all triggers
- *  @param	Object	$object         Object
+ *  @param	int		$nohook			Disable all hooks
+ *  @param	object	$object			Current object in use
  *  @return boolean         		True if file is deleted, False if error
  */
-function dol_delete_file($file,$disableglob=0,$nophperrors=0,$notrigger=0,$object=null)
+function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=null)
 {
 	global $db, $conf, $user, $langs;
+	global $hookmanager;
 
 	$langs->load("other");
 	$langs->load("errors");
 
-	$error=0;
+	if (empty($nohook))
+	{
+		if (! is_object($hookmanager))
+		{
+			if (! class_exists('HookManager')) {
+				// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+				require DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+				$hookmanager=new HookManager($db);
+			}
+		}
+		$hookmanager->initHooks(array('fileslib'));
 
-    //print "x".$file." ".$disableglob;
-    $ok=true;
-    $file_osencoded=dol_osencode($file);    // New filename encoded in OS filesystem encoding charset
-    if (empty($disableglob) && ! empty($file_osencoded))
-    {
-        foreach (glob($file_osencoded) as $filename)
-        {
-            if ($nophperrors) $ok=@unlink($filename);  // The unlink encapsulated by dolibarr
-            else $ok=unlink($filename);  // The unlink encapsulated by dolibarr
-            if ($ok)
-            {
-            	dol_syslog("Removed file ".$filename, LOG_DEBUG);
-            	if (! $notrigger)
-            	{
-                    if (! is_object($object)) $object=(object) 'dummy';
-            		$object->src_file=$file;
+		$parameters=array(
+				'GET' => $_GET,
+				'file' => $file,
+				'disableglob'=> $disableglob,
+				'nophperrors' => $nophperrors
+		);
+		$reshook=$hookmanager->executeHooks('deleteFile', $parameters, $object);
+	}
 
-            		// TODO Replace trigger by a hook. Triggers must be used for business events only.
-            		// Appel des triggers
-            		include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            		$interface=new Interfaces($db);
-            		$result=$interface->run_triggers('FILE_DELETE',$object,$user,$langs,$conf);
-            		if ($result < 0) { $error++; $errors=$interface->errors; }
-            		// Fin appel triggers
-            	}
-            }
-            else {
-            	dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
-            }
-        }
-    }
-    else
-    {
-        if ($nophperrors) $ok=@unlink($file_osencoded);        // The unlink encapsulated by dolibarr
-        else $ok=unlink($file_osencoded);        // The unlink encapsulated by dolibarr
-        if ($ok) {
-        	dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
-        }
-        else {
-        	dol_syslog("Failed to remove file ".$file_osencoded, LOG_WARNING);
-        }
-    }
-    return $ok;
+	if (empty($nohook) && isset($reshook) && $reshook != '') // 0:not deleted, 1:deleted, null or '' for bypass
+	{
+		return $reshook;
+	}
+	else
+	{
+		$error=0;
+
+		//print "x".$file." ".$disableglob;
+		$ok=true;
+		$file_osencoded=dol_osencode($file);    // New filename encoded in OS filesystem encoding charset
+		if (empty($disableglob) && ! empty($file_osencoded))
+		{
+			foreach (glob($file_osencoded) as $filename)
+			{
+				if ($nophperrors) $ok=@unlink($filename);  // The unlink encapsulated by dolibarr
+				else $ok=unlink($filename);  // The unlink encapsulated by dolibarr
+				if ($ok) dol_syslog("Removed file ".$filename, LOG_DEBUG);
+				else dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
+			}
+		}
+		else
+		{
+			if ($nophperrors) $ok=@unlink($file_osencoded);        // The unlink encapsulated by dolibarr
+			else $ok=unlink($file_osencoded);        // The unlink encapsulated by dolibarr
+			if ($ok) dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
+			else dol_syslog("Failed to remove file ".$file_osencoded, LOG_WARNING);
+		}
+
+		return $ok;
+	}
 }
 
 /**
@@ -891,7 +843,8 @@ function dol_delete_preview($object)
 {
 	global $langs,$conf;
 
-    $element = $object->element;
+	// Define parent dir of elements
+	$element = $object->element;
 
     if ($object->element == 'order_supplier')		$dir = $conf->fournisseur->dir_output.'/commande';
     elseif ($object->element == 'invoice_supplier')	$dir = $conf->fournisseur->dir_output.'/facture';
@@ -899,8 +852,7 @@ function dol_delete_preview($object)
     elseif ($object->element == 'shipping')			$dir = $conf->expedition->dir_output.'/sending';
     elseif ($object->element == 'delivery')			$dir = $conf->expedition->dir_output.'/receipt';
     elseif ($object->element == 'fichinter')		$dir = $conf->ficheinter->dir_output;
-    else
-    	$dir = $conf->$element->dir_output;
+    else $dir=empty($conf->$element->dir_output)?'':$conf->$element->dir_output;
 
     if (empty($dir)) return 'ErrorObjectNoSupportedByFunction';
 
@@ -949,11 +901,18 @@ function dol_meta_create($object)
 {
 	global $conf;
 
-	if (empty($conf->global->MAIN_DOC_CREATE_METAFILE)) return 0;
+	if (empty($conf->global->MAIN_DOC_CREATE_METAFILE)) return 0;	// By default, no metafile.
 
 	// Define parent dir of elements
 	$element=$object->element;
-	$dir=empty($conf->$element->dir_output)?'':$conf->$element->dir_output;
+
+	if ($object->element == 'order_supplier')		$dir = $conf->fournisseur->dir_output.'/commande';
+	elseif ($object->element == 'invoice_supplier')	$dir = $conf->fournisseur->dir_output.'/facture';
+	elseif ($object->element == 'project')			$dir = $conf->projet->dir_output;
+	elseif ($object->element == 'shipping')			$dir = $conf->expedition->dir_output.'/sending';
+	elseif ($object->element == 'delivery')			$dir = $conf->expedition->dir_output.'/receipt';
+	elseif ($object->element == 'fichinter')		$dir = $conf->ficheinter->dir_output;
+	else $dir=empty($conf->$element->dir_output)?'':$conf->$element->dir_output;
 
 	if ($dir)
 	{
@@ -1045,7 +1004,7 @@ function dol_init_file_process($pathtoscan='')
  */
 function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=0,$varfiles='addedfile')
 {
-	global $db,$user,$conf,$langs,$_FILES;
+	global $db,$user,$conf,$langs;
 
 	if (! empty($_FILES[$varfiles])) // For view $_FILES[$varfiles]['error']
 	{

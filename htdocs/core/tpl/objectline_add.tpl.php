@@ -168,9 +168,9 @@ if (! empty($conf->margin->enabled)) {
 		<input type="text" size="5" id="buying_price" name="buying_price" value="<?php echo (GETPOST('buying_price')?GETPOST('buying_price'):''); ?>">
 	</td>
 <?php
-  if($conf->global->DISPLAY_MARGIN_RATES)
+  if (! empty($conf->global->DISPLAY_MARGIN_RATES))
   	$colspan++;
-  if($conf->global->DISPLAY_MARK_RATES)
+  if (! empty($conf->global->DISPLAY_MARK_RATES))
   	$colspan++;
 }
 ?>
@@ -184,9 +184,9 @@ if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 else
 	$colspan = 11;
 if (! empty($conf->margin->enabled)) {
-	if ($conf->global->DISPLAY_MARGIN_RATES)
+	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 		$colspan++;
-	if($conf->global->DISPLAY_MARK_RATES)
+	if (! empty($conf->global->DISPLAY_MARK_RATES))
 		$colspan++;
 }
 ?>

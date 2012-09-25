@@ -200,7 +200,7 @@ if (empty($reshook))
             {
                 for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
                 {
-                    if($_POST["price_".$i])
+                    if (isset($_POST["price_".$i]))
                     {
                         $object->multiprices["$i"] = price2num($_POST["price_".$i],'MU');
                         $object->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
@@ -239,7 +239,7 @@ if (empty($reshook))
     // Update a product or service
     if ($action == 'update' && ($user->rights->produit->creer || $user->rights->service->creer))
     {
-        if (GETPOST('cancel'))
+    	if (GETPOST('cancel'))
         {
             $action = '';
         }
@@ -548,7 +548,7 @@ if (empty($reshook))
             $prod->id,
             GETPOST('remise_percent'),
             '',
-            '', // TODO voir si fk_remise_except est encore valable car n'apparait plus dans les propales
+            '',
             $price_base_type,
             $pu_ttc
         );
@@ -710,7 +710,8 @@ else
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="add">';
         print '<input type="hidden" name="type" value="'.$type.'">'."\n";
-		if (! empty($modCodeProduct->code_auto)) print '<input type="hidden" name="code_auto" value="1">';
+		if (! empty($modCodeProduct->code_auto))
+			print '<input type="hidden" name="code_auto" value="1">';
 
         if ($type==1) $title=$langs->trans("NewService");
         else $title=$langs->trans("NewProduct");
@@ -720,7 +721,9 @@ else
 
         print '<table class="border" width="100%">';
         print '<tr>';
-		if (! empty($modCodeProduct->code_auto)) $tmpcode=$modCodeProduct->getNextValue($object,$type);
+        $tmpcode='';
+		if (! empty($modCodeProduct->code_auto))
+			$tmpcode=$modCodeProduct->getNextValue($object,$type);
         print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="40" maxlength="32" value="'.$tmpcode.'">';
         if ($_error)
         {
@@ -744,7 +747,7 @@ else
         print '</td></tr>';
 
         // Stock min level
-        if ($type != 1 && $conf->stock->enabled)
+        if ($type != 1 && ! empty($conf->stock->enabled))
         {
             print '<tr><td>'.$langs->trans("StockLimit").'</td><td>';
             print '<input name="seuil_stock_alerte" size="4" value="'.GETPOST('seuil_stock_alerte').'">';
@@ -842,7 +845,7 @@ else
 
         print '<br>';
 
-        if ($conf->global->PRODUIT_MULTIPRICES)
+        if (! empty($conf->global->PRODUIT_MULTIPRICES))
         {
             // We do no show price array on create when multiprices enabled.
             // We must set them on prices tab.
@@ -963,7 +966,7 @@ else
                 print '</td></tr>';
             }
 
-            if ($object->isproduct() && $conf->stock->enabled)
+            if ($object->isproduct() && ! empty($conf->stock->enabled))
             {
                 print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td colspan="2">';
                 print '<input name="seuil_stock_alerte" size="4" value="'.$object->seuil_stock_alerte.'">';
@@ -1099,7 +1102,7 @@ else
             print '</tr>';
 
             // Type
-            if ($conf->produit->enabled && $conf->service->enabled)
+            if (! empty($conf->produit->enabled) && ! empty($conf->service->enabled))
             {
             	// TODO change for compatibility with edit in place
             	$typeformat='select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
@@ -1340,7 +1343,7 @@ if ($action == '' || $action == 'view')
     if (($object->type == 0 && $user->rights->produit->supprimer)
     || ($object->type == 1 && $user->rights->service->supprimer))
     {
-        if (! $object_is_used && isset($object->no_button_delete) && $object->no_button_delete <> 1)
+        if (empty($object_is_used) && (! isset($object->no_button_delete) || $object->no_button_delete <> 1))
         {
             if (! empty($conf->use_javascript_ajax))
             {

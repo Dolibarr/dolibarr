@@ -54,7 +54,7 @@ $socid=GETPOST('socid','int');
 // Security check
 $result=restrictedArea($user,'adherent',$rowid);
 
-if ($conf->mailmanspip->enabled)
+if (! empty($conf->mailmanspip->enabled))
 {
 	include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
 
@@ -212,7 +212,7 @@ if ($action == 'confirm_sendinfo' && $confirm == 'yes')
 	if ($object->email)
 	{
         $from=$conf->email_from;
-        if ($conf->global->ADHERENT_MAIL_FROM) $from=$conf->global->ADHERENT_MAIL_FROM;
+        if (! empty($conf->global->ADHERENT_MAIL_FROM)) $from=$conf->global->ADHERENT_MAIL_FROM;
 
         $result=$object->send_an_email($langs->transnoentitiesnoconv("ThisIsContentOfYourCard")."\n\n%INFOS%\n\n",$langs->transnoentitiesnoconv("CardContent"));
 
@@ -844,7 +844,7 @@ if ($action == 'create')
 
 	/*
     // Third party Dolibarr
-    if ($conf->societe->enabled)
+    if (! empty($conf->societe->enabled))
     {
         print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td class="valeur">';
         print $form->select_company($object->fk_soc,'socid','',1);
@@ -924,7 +924,7 @@ if ($action == 'edit')
 
 	$rowspan=15;
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan++;
-	if ($conf->societe->enabled) $rowspan++;
+	if (! empty($conf->societe->enabled)) $rowspan++;
 
 	print '<form name="formsoc" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
@@ -1064,7 +1064,7 @@ if ($action == 'edit')
     }
 
 	// Third party Dolibarr
-    if ($conf->societe->enabled)
+    if (! empty($conf->societe->enabled))
     {
     	print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td colspan="2" class="valeur">';
     	if ($object->fk_soc)
@@ -1148,7 +1148,7 @@ if ($rowid && $action != 'edit')
 		array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login)
 		);
         $text=$langs->trans("ConfirmCreateLogin").'<br>';
-        if ($conf->societe->enabled)
+        if (! empty($conf->societe->enabled))
         {
             if ($object->fk_soc > 0) $text.=$langs->trans("UserWillBeExternalUser");
             else $text.=$langs->trans("UserWillBeInternalUser");
@@ -1204,8 +1204,8 @@ if ($rowid && $action != 'edit')
         // Cree un tableau formulaire
         $formquestion=array();
 		if ($object->email) $formquestion[]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label,  'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?true:false));
-		if ($conf->global->ADHERENT_USE_MAILMAN) { $formquestion[]=array('type'=>'other','label'=>$langs->transnoentitiesnoconv("SynchroMailManEnabled"),'value'=>''); }
-		if ($conf->global->ADHERENT_USE_SPIP)    { $formquestion[]=array('type'=>'other','label'=>$langs->transnoentitiesnoconv("SynchroSpipEnabled"),'value'=>''); }
+		if (! empty($conf->global->ADHERENT_USE_MAILMAN)) { $formquestion[]=array('type'=>'other','label'=>$langs->transnoentitiesnoconv("SynchroMailManEnabled"),'value'=>''); }
+		if (! empty($conf->global->ADHERENT_USE_SPIP))    { $formquestion[]=array('type'=>'other','label'=>$langs->transnoentitiesnoconv("SynchroSpipEnabled"),'value'=>''); }
 		print $form->formconfirm("fiche.php?rowid=".$rowid,$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion,1);
     }
 
@@ -1276,7 +1276,7 @@ if ($rowid && $action != 'edit')
 
     $rowspan=17;
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan++;
-    if ($conf->societe->enabled) $rowspan++;
+    if (! empty($conf->societe->enabled)) $rowspan++;
 
     print '<table class="border" width="100%">';
 
@@ -1382,7 +1382,7 @@ if ($rowid && $action != 'edit')
     }
 
 	// Third party Dolibarr
-    if ($conf->societe->enabled)
+    if (! empty($conf->societe->enabled))
     {
 	    print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -1532,7 +1532,7 @@ if ($rowid && $action != 'edit')
 		}
 
 		// Create third party
-		if ($conf->societe->enabled && ! $object->fk_soc)
+		if (! empty($conf->societe->enabled) && ! $object->fk_soc)
 		{
 			if ($user->rights->societe->creer)
 			{
@@ -1570,7 +1570,7 @@ if ($rowid && $action != 'edit')
 		}
 
 	    // Action SPIP
-	    if ($conf->mailmanspip->enabled && $conf->global->ADHERENT_USE_SPIP)
+	    if (! empty($conf->mailmanspip->enabled) && ! empty($conf->global->ADHERENT_USE_SPIP))
 	    {
             $isinspip = $mailmanspip->is_in_spip($object);
 

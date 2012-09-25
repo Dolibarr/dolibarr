@@ -263,6 +263,22 @@ class Contact extends CommonObject
 		    unset($this->state_code);
 		    unset($this->state);
 
+		    // Actions on extra fields (by external module or standard code)
+		    include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+		    $hookmanager=new HookManager($this->db);
+		    $hookmanager->initHooks(array('contactdao'));
+		    $parameters=array('socid'=>$this->id);
+		    $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		    if (empty($reshook))
+		    {
+		    	$result=$this->insertExtraFields();
+		    	if ($result < 0)
+		    	{
+		    		$error++;
+		    	}
+		    }
+		    else if ($reshook < 0) $error++;
+
 			if (! $error && ! $notrigger)
 			{
 				// Appel des triggers
@@ -331,9 +347,9 @@ class Contact extends CommonObject
 		$this->fullname=$this->getFullName($langs);
 
 		// Fields
-		if ($this->fullname && $conf->global->LDAP_CONTACT_FIELD_FULLNAME) $info[$conf->global->LDAP_CONTACT_FIELD_FULLNAME] = $this->fullname;
-		if ($this->lastname && $conf->global->LDAP_CONTACT_FIELD_NAME) $info[$conf->global->LDAP_CONTACT_FIELD_NAME] = $this->lastname;
-		if ($this->firstname && $conf->global->LDAP_CONTACT_FIELD_FIRSTNAME) $info[$conf->global->LDAP_CONTACT_FIELD_FIRSTNAME] = $this->firstname;
+		if ($this->fullname && ! empty($conf->global->LDAP_CONTACT_FIELD_FULLNAME)) $info[$conf->global->LDAP_CONTACT_FIELD_FULLNAME] = $this->fullname;
+		if ($this->lastname && ! empty($conf->global->LDAP_CONTACT_FIELD_NAME)) $info[$conf->global->LDAP_CONTACT_FIELD_NAME] = $this->lastname;
+		if ($this->firstname && ! empty($conf->global->LDAP_CONTACT_FIELD_FIRSTNAME)) $info[$conf->global->LDAP_CONTACT_FIELD_FIRSTNAME] = $this->firstname;
 
 		if ($this->poste) $info["title"] = $this->poste;
 		if ($this->socid > 0)
@@ -346,16 +362,16 @@ class Contact extends CommonObject
 			if ($soc->client == 2)      $info["businessCategory"] = "Prospects";
 			if ($soc->fournisseur == 1) $info["businessCategory"] = "Suppliers";
 		}
-		if ($this->address && $conf->global->LDAP_CONTACT_FIELD_ADDRESS) $info[$conf->global->LDAP_CONTACT_FIELD_ADDRESS] = $this->address;
-		if ($this->cp && $conf->global->LDAP_CONTACT_FIELD_ZIP)          $info[$conf->global->LDAP_CONTACT_FIELD_ZIP] = $this->cp;
-		if ($this->ville && $conf->global->LDAP_CONTACT_FIELD_TOWN)      $info[$conf->global->LDAP_CONTACT_FIELD_TOWN] = $this->ville;
-		if ($this->country_code && $conf->global->LDAP_CONTACT_FIELD_COUNTRY)      $info[$conf->global->LDAP_CONTACT_FIELD_COUNTRY] = $this->country_code;
-		if ($this->phone_pro && $conf->global->LDAP_CONTACT_FIELD_PHONE) $info[$conf->global->LDAP_CONTACT_FIELD_PHONE] = $this->phone_pro;
-		if ($this->phone_perso && $conf->global->LDAP_CONTACT_FIELD_HOMEPHONE) $info[$conf->global->LDAP_CONTACT_FIELD_HOMEPHONE] = $this->phone_perso;
-		if ($this->phone_mobile && $conf->global->LDAP_CONTACT_FIELD_MOBILE) $info[$conf->global->LDAP_CONTACT_FIELD_MOBILE] = $this->phone_mobile;
-		if ($this->fax && $conf->global->LDAP_CONTACT_FIELD_FAX)	    $info[$conf->global->LDAP_CONTACT_FIELD_FAX] = $this->fax;
-		if ($this->note && $conf->global->LDAP_CONTACT_FIELD_DESCRIPTION) $info[$conf->global->LDAP_CONTACT_FIELD_DESCRIPTION] = $this->note;
-		if ($this->email && $conf->global->LDAP_CONTACT_FIELD_MAIL)     $info[$conf->global->LDAP_CONTACT_FIELD_MAIL] = $this->email;
+		if ($this->address && ! empty($conf->global->LDAP_CONTACT_FIELD_ADDRESS)) $info[$conf->global->LDAP_CONTACT_FIELD_ADDRESS] = $this->address;
+		if ($this->cp && ! empty($conf->global->LDAP_CONTACT_FIELD_ZIP))          $info[$conf->global->LDAP_CONTACT_FIELD_ZIP] = $this->cp;
+		if ($this->ville && ! empty($conf->global->LDAP_CONTACT_FIELD_TOWN))      $info[$conf->global->LDAP_CONTACT_FIELD_TOWN] = $this->ville;
+		if ($this->country_code && ! empty($conf->global->LDAP_CONTACT_FIELD_COUNTRY))      $info[$conf->global->LDAP_CONTACT_FIELD_COUNTRY] = $this->country_code;
+		if ($this->phone_pro && ! empty($conf->global->LDAP_CONTACT_FIELD_PHONE)) $info[$conf->global->LDAP_CONTACT_FIELD_PHONE] = $this->phone_pro;
+		if ($this->phone_perso && ! empty($conf->global->LDAP_CONTACT_FIELD_HOMEPHONE)) $info[$conf->global->LDAP_CONTACT_FIELD_HOMEPHONE] = $this->phone_perso;
+		if ($this->phone_mobile && ! empty($conf->global->LDAP_CONTACT_FIELD_MOBILE)) $info[$conf->global->LDAP_CONTACT_FIELD_MOBILE] = $this->phone_mobile;
+		if ($this->fax && ! empty($conf->global->LDAP_CONTACT_FIELD_FAX))	    $info[$conf->global->LDAP_CONTACT_FIELD_FAX] = $this->fax;
+		if ($this->note && ! empty($conf->global->LDAP_CONTACT_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_CONTACT_FIELD_DESCRIPTION] = $this->note;
+		if ($this->email && ! empty($conf->global->LDAP_CONTACT_FIELD_MAIL))     $info[$conf->global->LDAP_CONTACT_FIELD_MAIL] = $this->email;
 
 		if ($conf->global->LDAP_SERVER_TYPE == 'egroupware')
 		{
@@ -809,11 +825,11 @@ class Contact extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 		$sql.= " WHERE mc.email = '".$this->db->escape($this->email)."'";
 		$sql.= " AND mc.statut NOT IN (-1,0)";      // -1 erreur, 0 non envoye, 1 envoye avec succes
-		
+
 		dol_syslog(get_class($this)."::getNbOfEMailings sql=".$sql, LOG_DEBUG);
-		
+
 		$resql=$this->db->query($sql);
-		
+
 		if ($resql)
 		{
 			$obj = $this->db->fetch_object($resql);

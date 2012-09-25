@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -58,7 +58,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $localtax1
 	// TODO Remove this code. Added for backward compatibility. To remove once localtaxX_type is provided by caller.
 	if ($localtax1_type == '?')
 	{
-		if ($mysoc->country_code=='ES') $localtax1_type='1';
+		if ($mysoc->country_code=='ES') $localtax1_type='3';
 		else $localtax1_type='0';
 	}
 	if ($localtax2_type == '?')
@@ -164,6 +164,14 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $localtax1
 
 	// if there's some localtax without vat, we calculate localtaxes (we will add them at end)
     $apply_tax = false;
+    
+    //If price is 'TTC' we need to have the totals without VAT for a correct calculation
+    if ($price_base_type=='TTC')
+    {
+    	$tot_sans_remise= price2num($tot_sans_remise / (1 + ($txtva / 100)),'MU');
+    	$tot_avec_remise= price2num($tot_avec_remise / (1 + ($txtva / 100)),'MU');
+    }
+    
   	switch($localtax1_type) {
       case '1':     // localtax on product or service
         $apply_tax = true;
@@ -176,6 +184,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $localtax1
         break;
     }
     if ($apply_tax) {
+    	
   		$result[14] = price2num(($tot_sans_remise * (1 + ( $localtax1_rate / 100))) - $tot_sans_remise, 'MT');	// amount tax1 for total_ht_without_discount
   		$result[8] += $result[14];																				// total_ttc_without_discount + tax1
 

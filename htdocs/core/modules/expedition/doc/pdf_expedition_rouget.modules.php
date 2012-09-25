@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin		<regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -73,13 +73,18 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 	}
 
 	/**
-	 *	Fonction generant le document sur le disque
+	 *	Function to build pdf onto disk
 	 *
-	 *	@param	Object		&$object			Objet expedition a generer (ou id si ancienne methode)
-	 *	@param	Translate	$outputlangs	Lang output object
-	 * 	@return	int     					1=ok, 0=ko
+	 *	@param		Object		&$object			Object expedition to generate (or id if old method)
+	 *	@param		Translate	$outputlangs		Lang output object
+     *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
+     *  @param		int			$hidedetails		Do not show line details
+     *  @param		int			$hidedesc			Do not show desc
+     *  @param		int			$hideref			Do not show ref
+     *  @param		object		$hookmanager		Hookmanager object
+     *  @return     int         	    			1=OK, 0=KO
 	 */
-	function write_file(&$object, $outputlangs)
+	function write_file(&$object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0,$hookmanager=false)
 	{
 		global $user,$conf,$langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -128,7 +133,7 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 				$nblignes = count($object->lines);
 
 				$pdf=pdf_getInstance($this->format);
-                $heightforinfotot = 80;	// Height reserved to output the info and total part (value include bottom margin)
+                $heightforinfotot = 0;	// Height reserved to output the info and total part
                 $heightforfooter = 25;	// Height reserved to output the footer (value include bottom margin)
                 $pdf->SetAutoPageBreak(1,0);
 
@@ -155,8 +160,8 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 				$pdf->SetSubject($outputlangs->transnoentities("Sending"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($fac->ref)." ".$outputlangs->transnoentities("Sending"));
-				if ($conf->global->MAIN_DISABLE_PDF_COMPRESSION) $pdf->SetCompression(false);
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Sending"));
+				if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 
@@ -170,8 +175,8 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 				$pdf->SetTextColor(0,0,0);
 
 				$tab_top = 90;
-				$tab_top_newpage = 50;
-				$tab_height = 110;
+				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)?42:10);
+				$tab_height = 130;
 				$tab_height_newpage = 150;
 
 				if (! empty($object->note_public) || ! empty($object->tracking_number))
@@ -223,12 +228,14 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 				$nexY = $tab_top + 7;
 
 				$num=count($object->lines);
+				// Loop on each lines
 				for ($i = 0; $i < $num; $i++)
 				{
 					$curY = $nexY;
+					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
+					$pdf->SetTextColor(0,0,0);
 
-					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
-
+					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $this->marge_basse+$heightforfooter+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
 
@@ -238,13 +245,14 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
 					$pdf->setPage($pageposbefore);
+					$pdf->setTopMargin($this->marge_haute);
 					$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description is moved completely on next page
 					if ($pageposafter > $pageposbefore) {
 						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 					}
-						
+
 					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 
 					$pdf->SetXY($this->posxqtyordered+5, $curY);
@@ -293,13 +301,13 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 				// Show square
 				if ($pagenb == 1)
 				{
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot, 0, $outputlangs, 0, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter - $heightforinfotot, 0, $outputlangs, 0, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforfooter - $heightforinfotot + 1;
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot, 0, $outputlangs, 1, 0);
-					$bottomlasttab=$this->page_hauteur - $heightforinfotot + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter - $heightforinfotot, 0, $outputlangs, 1, 0);
+					$bottomlasttab=$this->page_hauteur - $heightforfooter - $heightforinfotot + 1;
 				}
 
 				// Pied de page
@@ -436,7 +444,7 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 		}
 
 		// Show barcode
-		if ($conf->barcode->enabled)
+		if (! empty($conf->barcode->enabled))
 		{
 			$posx=105;
 		}
@@ -445,7 +453,7 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 			$posx=$this->marge_gauche+3;
 		}
 		//$pdf->Rect($this->marge_gauche, $this->marge_haute, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 30);
-		if ($conf->barcode->enabled)
+		if (! empty($conf->barcode->enabled))
 		{
 			// TODO Build code bar with function writeBarCode of barcode module for sending ref $object->ref
 			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
@@ -453,7 +461,7 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 		}
 
 		$pdf->SetDrawColor(128,128,128);
-		if ($conf->barcode->enabled)
+		if (! empty($conf->barcode->enabled))
 		{
 			// TODO Build code bar with function writeBarCode of barcode module for sending ref $object->ref
 			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
@@ -579,7 +587,7 @@ class pdf_expedition_rouget extends ModelePdfExpedition
 			if (! empty($usecontact))
 			{
 				// On peut utiliser le nom de la societe du contact
-				if ($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) $socname = $object->contact->socname;
+				if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socname = $object->contact->socname;
 				else $socname = $object->client->nom;
 				$carac_client_name=$outputlangs->convToOutputCharset($socname);
 			}

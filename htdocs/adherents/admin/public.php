@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2012	Regis Houssin			<regis@dolibarr.fr>
+ * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 $langs->load("members");
 $langs->load("admin");
 
-$action=GETPOST('action');
+$action=GETPOST('action', 'alpha');
 
 if (! $user->admin) accessforbidden();
 
@@ -43,10 +44,15 @@ if (! $user->admin) accessforbidden();
 
 if ($action == 'update')
 {
-    $res=dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC",$_POST["MEMBER_ENABLE_PUBLIC"],'chaine',0,'',$conf->entity);
-    $res=dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT",$_POST["MEMBER_NEWFORM_AMOUNT"],'chaine',0,'',$conf->entity);
-    $res=dolibarr_set_const($db, "MEMBER_NEWFORM_EDITAMOUNT",$_POST["MEMBER_NEWFORM_EDITAMOUNT"],'chaine',0,'',$conf->entity);
-    $res=dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE",$_POST["MEMBER_NEWFORM_PAYONLINE"],'chaine',0,'',$conf->entity);
+	$public=GETPOST('MEMBER_ENABLE_PUBLIC');
+	$amount=GETPOST('MEMBER_NEWFORM_AMOUNT');
+	$editamount=GETPOST('MEMBER_NEWFORM_EDITAMOUNT');
+	$payonline=GETPOST('MEMBER_NEWFORM_PAYONLINE');
+
+    $res=dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC",$public,'chaine',0,'',$conf->entity);
+    $res=dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT",$amount,'chaine',0,'',$conf->entity);
+    $res=dolibarr_set_const($db, "MEMBER_NEWFORM_EDITAMOUNT",$editamount,'chaine',0,'',$conf->entity);
+    $res=dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE",$payonline,'chaine',0,'',$conf->entity);
 
     if (! $res > 0) $error++;
 
@@ -74,7 +80,7 @@ llxHeader('',$langs->trans("MembersSetup"),$help_url);
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("MembersSetup"),$linkback,'setup');
 
-$head = member_admin_prepare_head($adh);
+$head = member_admin_prepare_head();
 
 dol_fiche_head($head, 'public', $langs->trans("Member"), 0, 'user');
 
@@ -123,7 +129,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("EnablePublicSubscriptionForm");
 print '</td><td width="60" align="right">';
-print $form->selectyesno("MEMBER_ENABLE_PUBLIC",$conf->global->MEMBER_ENABLE_PUBLIC,1);
+print $form->selectyesno("MEMBER_ENABLE_PUBLIC",(! empty($conf->global->MEMBER_ENABLE_PUBLIC)?$conf->global->MEMBER_ENABLE_PUBLIC:0),1);
 print "</td></tr>\n";
 
 // Type
@@ -141,7 +147,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr '.$bcdd[$var].'><td>';
 print $langs->trans("DefaultAmount");
 print '</td><td width="60" align="right">';
-print '<input type="text" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" size="5" value="'.$conf->global->MEMBER_NEWFORM_AMOUNT.'">';;
+print '<input type="text" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" size="5" value="'.(! empty($conf->global->MEMBER_NEWFORM_AMOUNT)?$conf->global->MEMBER_NEWFORM_AMOUNT:'').'">';;
 print "</td></tr>\n";
 
 // Can edit
@@ -150,10 +156,10 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr '.$bcdd[$var].'><td>';
 print $langs->trans("CanEditAmount");
 print '</td><td width="60" align="right">';
-print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT",$conf->global->MEMBER_NEWFORM_EDITAMOUNT,1);
+print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT",(! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)?$conf->global->MEMBER_NEWFORM_EDITAMOUNT:0),1);
 print "</td></tr>\n";
 
-if ($conf->paybox->enabled || $conf->paypal->enabled)
+if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled))
 {
     // Jump to an online payment page
     $var=! $var;
@@ -161,9 +167,9 @@ if ($conf->paybox->enabled || $conf->paypal->enabled)
     print $langs->trans("MEMBER_NEWFORM_PAYONLINE");
     print '</td><td width="60" align="right">';
     $listofval=array();
-    if ($conf->paybox->enabled) $listofval['paybox']='Paybox';
-    if ($conf->paypal->enabled) $listofval['paypal']='PayPal';
-    print $form->selectarray("MEMBER_NEWFORM_PAYONLINE",$listofval,$conf->global->MEMBER_NEWFORM_PAYONLINE,1);
+    if (! empty($conf->paybox->enabled)) $listofval['paybox']='Paybox';
+    if (! empty($conf->paypal->enabled)) $listofval['paypal']='PayPal';
+    print $form->selectarray("MEMBER_NEWFORM_PAYONLINE",$listofval,(! empty($conf->global->MEMBER_NEWFORM_PAYONLINE)?$conf->global->MEMBER_NEWFORM_PAYONLINE:''),1);
     print "</td></tr>\n";
 }
 

@@ -42,6 +42,7 @@ if (GETPOST('commissionBase'))
     if (dolibarr_set_const($db, 'COMMISSION_BASE', GETPOST('commissionBase'), 'string', 0, '', $conf->entity) > 0)
     {
           $conf->global->COMMISSION_BASE = GETPOST('commissionBase');
+          setEventMessage($langs->trans("RecordModifiedSuccessfully"));
     }
     else
     {
@@ -179,10 +180,12 @@ print '</td>';
 print '</tr>';
 
 print '</table>';
-print '<br>';
 
 print '</form>';
 
+dol_fiche_end();
+
+print '<br>';
 
 llxFooter();
 $db->close();

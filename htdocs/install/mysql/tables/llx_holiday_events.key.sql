@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2012      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,14 +16,4 @@
 --
 -- ===================================================================
 
-create table llx_document
-(
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  name            varchar(255) NOT NULL,
-  file_name       varchar(255) NOT NULL,
-  file_extension  varchar(5)   NOT NULL,
-  date_generation datetime     NULL,
-  fk_owner        integer      NULL,
-  fk_group        integer      NULL,
-  permissions     varchar(9)   DEFAULT 'rw-rw-rw'
-)ENGINE=innodb;
+ALTER TABLE llx_holiday_events ADD UNIQUE INDEX uk_holiday_name (name, entity);

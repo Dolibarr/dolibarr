@@ -48,7 +48,7 @@ if (!empty($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE))
 	$bankcheque->fetch($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE);
 	$bankchequeLink = $bankcheque->getNomUrl(1);
 }
-if (!empty($_SESSION["CASHDESK_ID_WAREHOUSE"]) && $conf->stock->enabled)
+if (!empty($_SESSION["CASHDESK_ID_WAREHOUSE"]) && ! empty($conf->stock->enabled))
 {
 	$warehouse=new Entrepot($db);
 	$warehouse->fetch($_SESSION["CASHDESK_ID_WAREHOUSE"]);
@@ -72,7 +72,7 @@ print $langs->trans("CashDeskThirdParty").': '.$companyLink.'<br>';
 /*print $langs->trans("CashDeskBankCash").': '.$bankcashLink.'<br>';
 print $langs->trans("CashDeskBankCB").': '.$bankcbLink.'<br>';
 print $langs->trans("CashDeskBankCheque").': '.$bankchequeLink.'<br>';*/
-if (!empty($_SESSION["CASHDESK_ID_WAREHOUSE"]) && $conf->stock->enabled)
+if (!empty($_SESSION["CASHDESK_ID_WAREHOUSE"]) && ! empty($conf->stock->enabled))
 {
 	print $langs->trans("CashDeskWarehouse").': '.$warehouseLink;
 }

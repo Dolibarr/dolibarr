@@ -1019,7 +1019,9 @@ abstract class CommonObject
 
 
     /**
-     *  Stocke un numero de rang pour toutes les lignes de detail d'un element qui n'en ont pas.
+     *  Save a new position (field rang) for details lines.
+     *  You can choose to ser position for lines with already a position or lines wihtout any position defined.
+     *  Call this function only for table that contains a field fk_parent_line.
      *
      * 	@param		boolean		$renum			true to renum all already ordered lines, false to renum only not already ordered lines.
      * 	@param		string		$rowidorder		ASC or DESC
@@ -1038,7 +1040,9 @@ abstract class CommonObject
             return -1;
         }
 
-		$sql = 'SELECT count(rowid) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+        // Count number of lines to reorder (according to choice $renum)
+    	$nl=0;
+        $sql = 'SELECT count(rowid) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 		$sql.= ' WHERE '.$this->fk_element.'='.$this->id;
 		if (! $renum) $sql.= ' AND rang = 0';
 		if ($renum) $sql.= ' AND rang <> 0';
@@ -1050,16 +1054,20 @@ abstract class CommonObject
 			$row = $this->db->fetch_row($resql);
 			$nl = $row[0];
 		}
+		else dol_print_error($this->db);
 		if ($nl > 0)
 		{
+			// The goal of this part is to reorder all lines, with all children lines sharing the same
+			// counter that parents.
 			$rows=array();
 
+			// We frist search all lines that are parent lines (for multilevel details lines)
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line;
 			$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
 			$sql.= ' AND fk_parent_line IS NULL';
 			$sql.= ' ORDER BY rang ASC, rowid '.$rowidorder;
 
-			dol_syslog(get_class($this)."::line_order sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::line_order search all parent lines sql=".$sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -1068,7 +1076,7 @@ abstract class CommonObject
 				while ($i < $num)
 				{
 					$row = $this->db->fetch_row($resql);
-					$rows[] = $row[0];
+					$rows[] = $row[0];	// Add parent line into array rows
 					$childrens = $this->getChildrensOfLine($row[0]);
 					if (! empty($childrens))
 					{
@@ -1080,6 +1088,7 @@ abstract class CommonObject
 					$i++;
 				}
 
+				// Now we set a new number for each lines (parent and children with children included into parent tree)
 				if (! empty($rows))
 				{
 					foreach($rows as $key => $row)
@@ -1087,6 +1096,10 @@ abstract class CommonObject
 						$this->updateRangOfLine($row, ($key+1));
 					}
 				}
+			}
+			else
+			{
+				dol_print_error($this->db);
 			}
 		}
 	}
@@ -1106,7 +1119,7 @@ abstract class CommonObject
 		$sql.= ' AND fk_parent_line = '.$id;
 		$sql.= ' ORDER BY rang ASC';
 
-		dol_syslog(get_class($this)."::getChildrenOfLines sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::getChildrenOfLines search children lines for line ".$id." sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -2664,7 +2677,7 @@ abstract class CommonObject
 				}
 
 				$text.= ' - '.(! empty($line->label)?$line->label:$label);
-				$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
+				$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($line->description));
 			}
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
@@ -2959,9 +2972,9 @@ abstract class CommonObject
     print '<td width="20%" align="right">'.$langs->trans('SellingPrice').'</td>';
     print '<td width="20%" align="right">'.$langs->trans('BuyingPrice').'</td>';
     print '<td width="20%" align="right">'.$langs->trans('Margin').'</td>';
-    if($conf->global->DISPLAY_MARGIN_RATES)
+    if (! empty($conf->global->DISPLAY_MARGIN_RATES))
       print '<td align="right">'.$langs->trans('MarginRate').'</td>';
-    if($conf->global->DISPLAY_MARK_RATES)
+    if (! empty($conf->global->DISPLAY_MARK_RATES))
       print '<td align="right">'.$langs->trans('MarkRate').'</td>';
       print '</tr>';
     //if ($marginInfo['margin_on_products'] != 0 && $marginInfo['margin_on_services'] != 0) {
@@ -2970,9 +2983,9 @@ abstract class CommonObject
       print '<td align="right">'.price($marginInfo['pv_products']).'</td>';
       print '<td align="right">'.price($marginInfo['pa_products']).'</td>';
       print '<td align="right">'.price($marginInfo['margin_on_products']).'</td>';
-      if($conf->global->DISPLAY_MARGIN_RATES)
+      if (! empty($conf->global->DISPLAY_MARGIN_RATES))
         print '<td align="right">'.(($marginInfo['margin_rate_products'] == '')?'n/a':price($marginInfo['margin_rate_products']).'%').'</td>';
-      if($conf->global->DISPLAY_MARK_RATES)
+      if (! empty($conf->global->DISPLAY_MARK_RATES))
         print '<td align="right">'.(($marginInfo['mark_rate_products'] == '')?'n/a':price($marginInfo['mark_rate_products']).'%').'</td>';
       print '</tr>';
       print '<tr class="pair">';
@@ -2980,9 +2993,9 @@ abstract class CommonObject
       print '<td align="right">'.price($marginInfo['pv_services']).'</td>';
       print '<td align="right">'.price($marginInfo['pa_services']).'</td>';
       print '<td align="right">'.price($marginInfo['margin_on_services']).'</td>';
-      if($conf->global->DISPLAY_MARGIN_RATES)
+      if (! empty($conf->global->DISPLAY_MARGIN_RATES))
         print '<td align="right">'.(($marginInfo['margin_rate_services'] == '')?'n/a':price($marginInfo['margin_rate_services']).'%').'</td>';
-      if($conf->global->DISPLAY_MARK_RATES)
+      if (! empty($conf->global->DISPLAY_MARK_RATES))
         print '<td align="right">'.(($marginInfo['mark_rate_services'] == '')?'n/a':price($marginInfo['mark_rate_services']).'%').'</td>';
       print '</tr>';
     //}
@@ -2991,9 +3004,9 @@ abstract class CommonObject
     print '<td align="right">'.price($marginInfo['pv_total']).'</td>';
     print '<td align="right">'.price($marginInfo['pa_total']).'</td>';
     print '<td align="right">'.price($marginInfo['total_margin']).'</td>';
-    if($conf->global->DISPLAY_MARGIN_RATES)
+    if (! empty($conf->global->DISPLAY_MARGIN_RATES))
       print '<td align="right">'.(($marginInfo['total_margin_rate'] == '')?'n/a':price($marginInfo['total_margin_rate']).'%').'</td>';
-    if($conf->global->DISPLAY_MARK_RATES)
+    if (! empty($conf->global->DISPLAY_MARK_RATES))
       print '<td align="right">'.(($marginInfo['total_mark_rate'] == '')?'n/a':price($marginInfo['total_mark_rate']).'%').'</td>';
     print '</tr>';
     print '</table>';

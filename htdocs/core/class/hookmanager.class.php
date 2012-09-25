@@ -120,8 +120,6 @@ class HookManager
      */
 	function executeHooks($method, $parameters=false, &$object='', &$action='')
 	{
-		global $var;
-
         if (! is_array($this->hooks) || empty($this->hooks)) return '';
 
         $parameters['context']=join(':',$this->contextarray);
@@ -139,8 +137,6 @@ class HookManager
                     // test to avoid to run twice a hook, when a module implements several active contexts
                     if (in_array($module,$modulealreadyexecuted)) continue;
                     $modulealreadyexecuted[$module]=$module;
-
-                	$var=!$var;
 
                     // Hooks that return int
                     if (($method == 'doActions' || $method == 'formObjectOptions') && method_exists($actionclassinstance,$method))

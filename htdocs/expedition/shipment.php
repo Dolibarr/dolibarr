@@ -172,7 +172,7 @@ if ($id > 0 || ! empty($ref))
 
 		// Onglet commande
 		$nbrow=7;
-		if ($conf->projet->enabled) $nbrow++;
+		if (! empty($conf->projet->enabled)) $nbrow++;
 
 		print '<table class="border" width="100%">';
 
@@ -314,7 +314,7 @@ if ($id > 0 || ! empty($ref))
 		print '</td></tr>';
 
 		// Project
-		if ($conf->projet->enabled)
+		if (! empty($conf->projet->enabled))
 		{
 			$langs->load('projects');
 			print '<tr><td height="10">';
@@ -389,7 +389,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
 			print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
 			print '<td align="center">'.$langs->trans("KeepToShip").'</td>';
-			if ($conf->stock->enabled)
+			if (! empty($conf->stock->enabled))
 			{
 				print '<td align="center">'.$langs->trans("Stock").'</td>';
 			}
@@ -455,7 +455,7 @@ if ($id > 0 || ! empty($ref))
 					print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
 
 					// Add description in form
-					if ($conf->global->PRODUIT_DESC_IN_FORM)
+					if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
 					{
 						print ($objp->description && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 					}
@@ -511,7 +511,7 @@ if ($id > 0 || ! empty($ref))
 					$product->fetch($objp->fk_product);
 				}
 
-				if ($objp->fk_product > 0 && $type == 0 && $conf->stock->enabled)
+				if ($objp->fk_product > 0 && $type == 0 && ! empty($conf->stock->enabled))
 				{
 					print '<td align="center">';
 					print $product->stock_reel;
@@ -582,12 +582,12 @@ if ($id > 0 || ! empty($ref))
 		 * Boutons Actions
 		 */
 
-		if ($user->societe_id == 0)
+		if (empty($user->societe_id))
 		{
 			print '<div class="tabsAction">';
 
             // Bouton expedier sans gestion des stocks
-            if (! $conf->stock->enabled && ($commande->statut > 0 && $commande->statut < 3))
+            if (empty($conf->stock->enabled) && ($commande->statut > 0 && $commande->statut < 3))
 			{
 				if ($user->rights->expedition->creer)
 				{
@@ -624,14 +624,14 @@ if ($id > 0 || ! empty($ref))
 
 				print '<tr>';
 
-				if ($conf->stock->enabled)
+				if (! empty($conf->stock->enabled))
 				{
 					print '<td>'.$langs->trans("WarehouseSource").'</td>';
 					print '<td>';
 					print $formproduct->selectWarehouses(-1,'entrepot_id','',1);
 					if (count($formproduct->cache_warehouses) <= 0)
 					{
-						print ' &nbsp; No warehouse defined, <a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?action=create">add one</a>';
+						print ' &nbsp; '.$langs->trans("WarehouseSourceNotDefined").' <a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?action=create">'.$langs->trans("AddOne").'</a>';
 					}
 					print '</td>';
 				}

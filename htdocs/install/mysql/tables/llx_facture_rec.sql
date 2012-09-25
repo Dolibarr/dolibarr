@@ -1,6 +1,6 @@
 -- ===========================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2012 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2009 Regis Houssin        <regis@dolibarr.fr>
 -- Copyright (C) 2010 Juanjo Menent        <jmenent@2byte.es>
 -- 
@@ -46,6 +46,7 @@ create table llx_facture_rec
   note               text,
   note_public        text,
 
+  usenewprice        integer,
   frequency          integer,
   unit_frequency     varchar(2) DEFAULT 'd',
   date_when          datetime DEFAULT NULL,

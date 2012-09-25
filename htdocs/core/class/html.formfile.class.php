@@ -65,7 +65,7 @@ class FormFile
     {
         global $conf,$langs;
 
-        if ($conf->global->MAIN_USE_JQUERY_FILEUPLOAD)
+        if (! empty($conf->global->MAIN_USE_JQUERY_FILEUPLOAD))
         {
             return $this->_formAjaxFileUpload($object);
         }
@@ -182,7 +182,7 @@ class FormFile
      *      @param      string				$modelselected      Model to preselect by default
      *      @param      string				$allowgenifempty	Allow generation even if list of template ($genallowed) is empty (show however a warning)
      *      @param      string				$forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
-     *      @param      int					$iconPDF            Show only PDF icon with link (1/0)
+     *      @param      int					$iconPDF            Obsolete, see getDocumentsLink
      * 		@param		int					$maxfilenamelength	Max length for filename shown
      * 		@param		string				$noform				Do not output html form tags
      * 		@param		string				$param				More param on http links
@@ -199,18 +199,15 @@ class FormFile
 
         global $langs,$bc,$conf;
 
+        // For backward compatibility
+        if (! empty($iconPDF)) {
+        	return $this->getDocumentsLink($modulepart, $filename, $filedir);
+        }
+
         $forname='builddoc';
         $out='';
         $var=true;
 
-        // Clean paramaters
-        if ($iconPDF == 1)
-        {
-            $genallowed = '';
-            $delallowed = 0;
-            $modelselected = '';
-            $forcenomultilang=0;
-        }
         //$filename = dol_sanitizeFileName($filename);    //Must be sanitized before calling show_documents
         $headershown=0;
         $showempty=0;
@@ -440,80 +437,64 @@ class FormFile
         }
 
         // Get list of files
-        if ($filedir)
+        if (! empty($filedir))
         {
-            $png = '';
-            $filter = '';
-            if ($iconPDF==1)
-            {
-                $png = '\.png$';
-                $filter = $filename.'.pdf';
-            }
-            $file_list=dol_dir_list($filedir,'files',0,$filter,'\.meta$'.($png?'|'.$png:''),'date',SORT_DESC);
+            $file_list=dol_dir_list($filedir,'files',0,'','\.meta$','date',SORT_DESC);
 
             // Affiche en-tete tableau si non deja affiche
-            if (! empty($file_list) && ! $headershown && ! $iconPDF)
+            if (! empty($file_list) && ! $headershown)
             {
                 $headershown=1;
                 $out.= '<div class="titre">'.$titletoshow.'</div>';
                 $out.= '<table class="border" summary="listofdocumentstable" width="100%">';
             }
-            else if (empty($file_list) && ! empty($iconPDF))
-            {
-            	// For ajax treatment
-            	$out.= '<div id="gen_pdf_'.$filename.'" class="linkobject hideobject">'.img_picto('', 'refresh').'</div>'."\n";
-            }
 
             // Loop on each file found
-            foreach($file_list as $file)
-            {
-                $var=!$var;
+			if (is_array($file_list))
+			{
+				foreach($file_list as $file)
+				{
+					$var=!$var;
 
-                // Define relative path for download link (depends on module)
-                $relativepath=$file["name"];								// Cas general
-                if ($filename) $relativepath=$filename."/".$file["name"];	// Cas propal, facture...
-                // Autre cas
-                if ($modulepart == 'donation')            { $relativepath = get_exdir($filename,2).$file["name"]; }
-                if ($modulepart == 'export')              { $relativepath = $file["name"]; }
+					// Define relative path for download link (depends on module)
+					$relativepath=$file["name"];								// Cas general
+					if ($filename) $relativepath=$filename."/".$file["name"];	// Cas propal, facture...
+					// Autre cas
+					if ($modulepart == 'donation')            { $relativepath = get_exdir($filename,2).$file["name"]; }
+					if ($modulepart == 'export')              { $relativepath = $file["name"]; }
 
-                if (! $iconPDF) $out.= "<tr ".$bc[$var].">";
+					$out.= "<tr ".$bc[$var].">";
 
-                // Show file name with link to download
-                if (! $iconPDF) $out.= '<td nowrap="nowrap">';
-                $out.= '<a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
-                $mime=dol_mimetype($relativepath,'',0);
-                if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
-                $out.= '>';
-                if (! $iconPDF)
-                {
-                    $out.= img_mime($file["name"],$langs->trans("File").': '.$file["name"]).' '.dol_trunc($file["name"],$maxfilenamelength);
-                }
-                else
-                {
-                    $out.= img_pdf($file["name"],2);
-                }
-                $out.= '</a>'."\n";
-                if (! $iconPDF)
-                {
-                	$size=(! empty($file['size'])?$file['size']:dol_filesize($filedir."/".$file["name"]));
-                	$date=(! empty($file['date'])?$file['date']:dol_filemtime($filedir."/".$file["name"]));
-                	$out.= '</td>';
-                	// Show file size
-                	$out.= '<td align="right" nowrap="nowrap">'.dol_print_size($size).'</td>';
-                	// Show file date
-                	$out.= '<td align="right" nowrap="nowrap">'.dol_print_date($date, 'dayhour').'</td>';
-                }
+					// Show file name with link to download
+					$out.= '<td nowrap="nowrap">';
+					$out.= '<a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
+					$mime=dol_mimetype($relativepath,'',0);
+					if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
+					$out.= '>';
+					$out.= img_mime($file["name"],$langs->trans("File").': '.$file["name"]).' '.dol_trunc($file["name"],$maxfilenamelength);
+					$out.= '</a>'."\n";
+					$out.= '</td>';
 
-                if ($delallowed)
-                {
-                    $out.= '<td align="right">';
-                    $out.= '<a href="'.$urlsource.(strpos($urlsource,'?')?'&':'?').'action=remove_file&modulepart='.$modulepart.'&file='.urlencode($relativepath);
-                    $out.= ($param?'&'.$param:'');
-                    $out.= '&urlsource='.urlencode($urlsource);
-                    $out.= '">'.img_delete().'</a></td>';
-                }
+					// Show file size
+					$size=(! empty($file['size'])?$file['size']:dol_filesize($filedir."/".$file["name"]));
+					$out.= '<td align="right" nowrap="nowrap">'.dol_print_size($size).'</td>';
 
-                if (! $iconPDF) $out.= '</tr>';
+					// Show file date
+					$date=(! empty($file['date'])?$file['date']:dol_filemtime($filedir."/".$file["name"]));
+					$out.= '<td align="right" nowrap="nowrap">'.dol_print_date($date, 'dayhour').'</td>';
+
+					if ($delallowed)
+					{
+						$out.= '<td align="right">';
+						$out.= '<a href="'.$urlsource.(strpos($urlsource,'?')?'&':'?').'action=remove_file&file='.urlencode($relativepath);
+						$out.= ($param?'&'.$param:'');
+						//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
+						//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
+						$out.= '">'.img_delete().'</a></td>';
+					}
+				}
+
+                $out.= '</tr>';
 
                 $this->numoffiles++;
             }
@@ -531,6 +512,60 @@ class FormFile
         $out.= '<!-- End show_document -->'."\n";
         //return ($i?$i:$headershown);
         return $out;
+    }
+
+    /**
+     *	Show only Document icon with link
+     *
+     *	@param	string	$modulepart		propal, facture, facture_fourn, ...
+     *	@param	string	$filename		Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if $filedir is already complete)
+     *	@param	string	$filedir		Directory to scan
+     *	@return	string              	Output string with HTML link of documents (might be empty string)
+     */
+    function getDocumentsLink($modulepart, $filename, $filedir)
+    {
+    	if (! function_exists('dol_dir_list')) {
+    		include DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    	}
+
+    	$out='';
+
+    	$this->numoffiles=0;
+
+    	$file_list=dol_dir_list($filedir, 'files', 0, $filename.'.pdf', '\.meta$|\.png$');
+
+    	// For ajax treatment
+    	$out.= '<div id="gen_pdf_'.$filename.'" class="linkobject hideobject">'.img_picto('', 'refresh').'</div>'."\n";
+
+    	if (! empty($file_list))
+    	{
+    		// Loop on each file found
+    		foreach($file_list as $file)
+    		{
+    			// Define relative path for download link (depends on module)
+    			$relativepath=$file["name"];								// Cas general
+    			if ($filename) $relativepath=$filename."/".$file["name"];	// Cas propal, facture...
+    			// Autre cas
+    			if ($modulepart == 'donation')            {
+    				$relativepath = get_exdir($filename,2).$file["name"];
+    			}
+    			if ($modulepart == 'export')              {
+    				$relativepath = $file["name"];
+    			}
+
+    			// Show file name with link to download
+    			$out.= '<a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
+    			$mime=dol_mimetype($relativepath,'',0);
+    			if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
+    			$out.= '>';
+    			$out.= img_pdf($file["name"],2);
+    			$out.= '</a>'."\n";
+
+    			$this->numoffiles++;
+    		}
+    	}
+
+    	return $out;
     }
 
 
@@ -551,83 +586,117 @@ class FormFile
      *  @param	 string $url				Full url to use for click links ('' = autodetect)
      * 	@return	 int						<0 if KO, nb of files shown if OK
      */
-    function list_of_documents($filearray,$object,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='')
-    {
-        global $user, $conf, $langs;
-        global $bc;
-        global $sortfield, $sortorder, $maxheightmini;
+	function list_of_documents($filearray,$object,$modulepart,$param='',$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='',$maxlength=0,$title='',$url='')
+	{
+		global $user, $conf, $langs;
+		global $bc, $hookmanager;
+		global $sortfield, $sortorder, $maxheightmini;
 
-        // Show list of existing files
-        if (empty($useinecm)) print_titre($title?$title:$langs->trans("AttachedFiles"));
-        if (empty($url)) $url=$_SERVER["PHP_SELF"];
-        print '<table width="100%" class="'.($useinecm?'nobordernopadding':'liste').'">';
-        print '<tr class="liste_titre">';
-        print_liste_field_titre($langs->trans("Documents2"),$url,"name","",$param,'align="left"',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Size"),$url,"size","",$param,'align="right"',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans("Date"),$url,"date","",$param,'align="center"',$sortfield,$sortorder);
-        if (empty($useinecm)) print_liste_field_titre('',$url,"","",$param,'align="center"');
-        print_liste_field_titre('','','');
-        print '</tr>';
+		if (! is_object($hookmanager))
+		{
+			if (! class_exists('HookManager')) {
+				// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+				require DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+				$hookmanager=new HookManager($this->db);
+			}
+		}
+		$hookmanager->initHooks(array('formfile'));
 
-        $nboffiles=count($filearray);
+		$parameters=array(
+				'filearray' => $filearray,
+				'modulepart'=> $modulepart,
+				'param' => $param,
+				'forcedownload' => $forcedownload,
+				'relativepath' => $relativepath,
+				'permtodelete' => $permtodelete,
+				'useinecm' => $useinecm,
+				'textifempty' => $textifempty,
+				'maxlength' => $maxlength,
+				'title' => $title,
+				'url' => $url
+		);
+		$reshook=$hookmanager->executeHooks('showFilesList', $parameters, $object);
 
-        if ($nboffiles > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+		if (isset($reshook) && $reshook != '') // null or '' for bypass
+		{
+			return $reshook;
+		}
+		else
+		{
+			$param = (isset($object->id)?'&id='.$object->id:'').$param;
 
-        $var=true;
-        foreach($filearray as $key => $file)      // filearray must be only files here
-        {
-            if ($file['name'] != '.'
-            && $file['name'] != '..'
-            && ! preg_match('/\.meta$/i',$file['name']))
-            {
-                // Define relative path used to store the file
-                if (empty($relativepath))
-                	$relativepath=(! empty($object->ref)?dol_sanitizeFileName($object->ref):'').'/';
+			// Show list of existing files
+			if (empty($useinecm)) print_titre($title?$title:$langs->trans("AttachedFiles"));
+			if (empty($url)) $url=$_SERVER["PHP_SELF"];
+			print '<table width="100%" class="'.($useinecm?'nobordernopadding':'liste').'">';
+			print '<tr class="liste_titre">';
+			print_liste_field_titre($langs->trans("Documents2"),$url,"name","",$param,'align="left"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Size"),$url,"size","",$param,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Date"),$url,"date","",$param,'align="center"',$sortfield,$sortorder);
+			if (empty($useinecm)) print_liste_field_titre('',$url,"","",$param,'align="center"');
+			print_liste_field_titre('','','');
+			print '</tr>';
 
-                $var=!$var;
-                print '<tr '.$bc[$var].'>';
-                print '<td>';
-                //print "XX".$file['name'];	//$file['name'] must be utf8
-                print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
-                if ($forcedownload) print '&attachment=1';
-                if (! empty($object->entity)) print '&entity='.$object->entity;
-                print '&file='.urlencode($relativepath.$file['name']).'">';
-                print img_mime($file['name'],$file['name'].' ('.dol_print_size($file['size'],0,0).')').' ';
-                print dol_trunc($file['name'],$maxlength,'middle');
-                print '</a>';
-                print "</td>\n";
-                print '<td align="right">'.dol_print_size($file['size'],1,1).'</td>';
-                print '<td align="center">'.dol_print_date($file['date'],"dayhour").'</td>';
-                // Preview
-                if (empty($useinecm))
-                {
-                    print '<td align="center">';
-                    $tmp=explode('.',$file['name']);
-                    $minifile=$tmp[0].'_mini.'.$tmp[1];
-                    if (image_format_supported($file['name']) > 0) print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.'thumbs/'.$minifile).'" title="">';
-                    else print '&nbsp;';
-                    print '</td>';
-                }
-                // Delete or view link
-                print '<td align="right">';
-                if ($useinecm)     print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view().'</a> &nbsp; ';
-                if ($permtodelete) print '<a href="'.(($useinecm && ! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?action=delete'.(isset($object->id)?'&id='.$object->id:'').'&urlfile='.urlencode($file['name']).$param).'" class="deletefilelink" rel="'.urlencode($file['name']).'">'.img_delete().'</a>';
-                else print '&nbsp;';
-                print "</td>";
-                print "</tr>\n";
-            }
-        }
-        if ($nboffiles == 0)
-        {
-            print '<tr '.$bc[$var].'><td colspan="'.(empty($useinecm)?'5':'4').'">';
-            if (empty($textifempty)) print $langs->trans("NoFileFound");
-            else print $textifempty;
-            print '</td></tr>';
-        }
-        print "</table>";
+			$nboffiles=count($filearray);
 
-        return $nboffiles;
-    }
+			if ($nboffiles > 0) include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+
+			$var=true;
+			foreach($filearray as $key => $file)      // filearray must be only files here
+			{
+				if ($file['name'] != '.'
+						&& $file['name'] != '..'
+						&& ! preg_match('/\.meta$/i',$file['name']))
+				{
+					// Define relative path used to store the file
+					if (empty($relativepath))
+						$relativepath=(! empty($object->ref)?dol_sanitizeFileName($object->ref):'').'/';
+
+					$var=!$var;
+					print '<tr '.$bc[$var].'>';
+					print '<td>';
+					//print "XX".$file['name'];	//$file['name'] must be utf8
+					print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
+					if ($forcedownload) print '&attachment=1';
+					if (! empty($object->entity)) print '&entity='.$object->entity;
+					print '&file='.urlencode($relativepath.$file['name']).'">';
+					print img_mime($file['name'],$file['name'].' ('.dol_print_size($file['size'],0,0).')').' ';
+					print dol_trunc($file['name'],$maxlength,'middle');
+					print '</a>';
+					print "</td>\n";
+					print '<td align="right">'.dol_print_size($file['size'],1,1).'</td>';
+					print '<td align="center">'.dol_print_date($file['date'],"dayhour","tzuser").'</td>';
+					// Preview
+					if (empty($useinecm))
+					{
+						print '<td align="center">';
+						$tmp=explode('.',$file['name']);
+						$minifile=$tmp[0].'_mini.'.$tmp[1];
+						if (image_format_supported($file['name']) > 0) print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.'thumbs/'.$minifile).'" title="">';
+						else print '&nbsp;';
+						print '</td>';
+					}
+					// Delete or view link
+					print '<td align="right">';
+					if ($useinecm)     print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view().'</a> &nbsp; ';
+					if ($permtodelete) print '<a href="'.(($useinecm && ! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS))?'#':$url.'?action=delete&urlfile='.urlencode($file['name']).$param).'" class="deletefilelink" rel="'.urlencode($file['name']).'">'.img_delete().'</a>';
+					else print '&nbsp;';
+					print "</td>";
+					print "</tr>\n";
+				}
+			}
+			if ($nboffiles == 0)
+			{
+				print '<tr '.$bc[$var].'><td colspan="'.(empty($useinecm)?'5':'4').'">';
+				if (empty($textifempty)) print $langs->trans("NoFileFound");
+				else print $textifempty;
+				print '</td></tr>';
+			}
+			print "</table>";
+
+			return $nboffiles;
+		}
+	}
 
 
     /**

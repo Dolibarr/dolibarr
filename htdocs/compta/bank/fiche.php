@@ -281,7 +281,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Accountancy code
-    if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED)
+    if (! empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED))
     {
         print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("AccountancyCode").'</td>';
         print '<td colspan="3"><input type="text" name="account_number" value="'.$account->account_number.'"></td></tr>';
@@ -563,7 +563,7 @@ else
         print '</td></tr>';
 
         // Accountancy code
-        if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED)
+        if (! empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED))
         {
             print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("AccountancyCode").'</td>';
             print '<td colspan="3"><input type="text" name="account_number" value="'.(isset($_POST["account_number"])?$_POST["account_number"]:$account->account_number).'"></td></tr>';

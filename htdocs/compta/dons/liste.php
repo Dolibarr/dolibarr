@@ -53,7 +53,7 @@ if (!$user->rights->don->lire) accessforbidden();
  * View
  */
 
-if ($conf->projet->enabled) $projectstatic=new Project($db);
+if (! empty($conf->projet->enabled)) $projectstatic=new Project($db);
 
 llxHeader('',$langs->trans("Donations"),'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones');
 
@@ -160,7 +160,7 @@ if ($resql)
         print "<td>".$objp->societe."</td>\n";
 		print "<td>".$donationstatic->getFullName($langs)."</td>\n";
 		print '<td align="center">'.dol_print_date($db->jdate($objp->datedon),'day').'</td>';
-		if ($conf->projet->enabled)
+		if (! empty($conf->projet->enabled))
 		{
 			print "<td>";
 			if ($objp->pid)

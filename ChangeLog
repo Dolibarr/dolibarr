@@ -5,6 +5,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.3 compared to 3.2.2 *****
 For users:
+- New: [ task #289 ] Can reorder tasks.
 - New: Add field "signature" into thirdparty card. If filled, text is added 
   at end of predefined email texts. If option MAIL_DO_NOT_USE_SIGN is on, this
   feature is disabled.
@@ -28,6 +29,9 @@ For users:
 - New: Add link to third party into sells and purchase journal.
 - New: Suggest a method to generate a backup file for user with no access
   to mysqldump binary.
+- New: Can use extrafields on contacts/addresses.
+- New: Support unique field for extrafields.
+- New: Extra fields supports more types (now int, string, double, date, datetime).
 - New: Can correct stock of a warehouse from warehouse card.
 - New: [ task #185 ]: Can input amount when correcting stock to recalculate PMP.
 - New: [ task #454 ]: Add "No category" into filters on category.
@@ -35,16 +39,16 @@ For users:
 - New: More surface control on stock correction page.
 - New: Add great britain provinces.
 - New: Update libs/tools/logo for DoliWamp.
-- New: [ task #494 ] Send an email to foundation when a new member has auto-subscribed
-- New: [ task #326 ]: Add a numbering module to suggest automatically a product ref
-- New: Add conditional substitution IF/ELSEIF/ENDIF for ODT templates
+- New: [ task #494 ] Send an email to foundation when a new member has auto-subscribed.
+- New: [ task #326 ]: Add a numbering module to suggest automatically a product ref.
+- New: Add conditional substitution IF/ELSEIF/ENDIF for ODT templates.
 - New: Add unit foot2, inch2, foot3 and inch3 for surface and volumes.
 - New: Can select thirdparties into emailing targets, even if module category is not enabled.
 - New: [ task #498 ] Improvement of the block to add products/services lines.
 - New: ECM autodir works also for files joined to products and services.
 - New: Add a selection module for emailing to enter a recipient from gui.
-- New: Allow to search product from barcodes directly from the permanent mini search left box
-- New: Allow to search product from barcodes directly from invoices, proposals... through AJAX
+- New: Allow to search thirds and products from barcodes directly from the permanent mini search left box.
+- New: Allow to search product from barcodes directly from invoices, proposals... through AJAX.
 New experimental modules:
 - New: Add margin and commissions management module.
 - New: Add holiday module.
@@ -53,6 +57,7 @@ New experimental modules:
 - Fix: No images into product description lines as PDF generation does
   not work with this.
 - Fix: Errors weren't being shown in customer's & supplier's orders
+- Fix: Lastname wasn't being recorded in xinputuser emailing module
 
 For developers:
 - New: Add webservice for thirdparty creation and list.

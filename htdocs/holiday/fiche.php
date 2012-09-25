@@ -28,11 +28,13 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 
 // Get parameters
 $myparam = GETPOST("myparam");
 $action=GETPOST('action');
+$id=GETPOST('id');
 
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();
@@ -46,7 +48,7 @@ $user_id = $user->id;
 ********************************************************************/
 
 // Si création de la demande
-if ($action == 'add')
+if ($action == 'create')
 {
 
     // Si pas le droit de créer une demande
@@ -92,14 +94,15 @@ if ($action == 'add')
     $verifCP = $cp->verifDateHolidayCP($userID,$date_debut,$date_fin);
 
     // On vérifie si il n'y a pas déjà des congés payés sur cette période
-    if(!$verifCP)
+    if (! $verifCP)
     {
         header('Location: fiche.php?action=request&error=alreadyCP');
         exit;
     }
 
     // Si aucun jours ouvrés dans la demande
-    if($cp->getOpenDays($testDateDebut,$testDateFin) < 1)
+    $nbopenedday=num_open_day($testDateDebut,$testDateFin,0,1);
+    if($nbopenedday < 1)
     {
         header('Location: fiche.php?action=request&error=DureeHoliday');
         exit;
@@ -137,6 +140,8 @@ if ($action == 'add')
 
 if ($action == 'update')
 {
+	$date_debut = dol_mktime(0, 0, 0, $_POST['date_debut_month'], $_POST['date_debut_day'], $_POST['date_debut_year']);
+	$date_fin = dol_mktime(0, 0, 0, $_POST['date_fin_month'], $_POST['date_fin_day'], $_POST['date_fin_year']);
 
     // Si pas le droit de modifier une demande
     if(!$user->rights->holiday->write)
@@ -151,12 +156,9 @@ if ($action == 'update')
     // Si en attente de validation
     if ($cp->statut == 1)
     {
-
         // Si c'est le créateur ou qu'il a le droit de tout lire / modifier
         if ($user->id == $cp->fk_user || $user->rights->holiday->lire_tous)
         {
-            $date_debut = $_POST['date_debut_year'].'-'.str_pad($_POST['date_debut_month'],2,"0",STR_PAD_LEFT).'-'.str_pad($_POST['date_debut_day'],2,"0",STR_PAD_LEFT);
-            $date_fin = $_POST['date_fin_year'].'-'.str_pad($_POST['date_fin_month'],2,"0",STR_PAD_LEFT).'-'.str_pad($_POST['date_fin_day'],2,"0",STR_PAD_LEFT);
             $valideur = $_POST['valideur'];
             $description = trim($_POST['description']);
 
@@ -172,8 +174,8 @@ if ($action == 'update')
                 exit;
             }
 
-            $testDateDebut = strtotime($date_debut);
-            $testDateFin = strtotime($date_fin);
+            $testDateDebut = $date_debut;
+            $testDateFin = $date_fin;
 
             // Si date de début après la date de fin
             if ($testDateDebut > $testDateFin) {
@@ -188,7 +190,9 @@ if ($action == 'update')
             }
 
             // Si pas de jours ouvrés dans la demande
-            if ($cp->getOpenDays($testDateDebut,$testDateFin) < 1) {
+            $nbopenedday=num_open_day($testDateDebut,$testDateFin,0,1);
+            if ($nbopenedday < 1)
+            {
                 header('Location: fiche.php?id='.$_POST['holiday_id'].'&action=edit&error=DureeHoliday');
                 exit;
             }
@@ -284,9 +288,10 @@ if ($action == 'confirm_send')
             $message.= "Veuillez trouver ci-dessous une demande de congés payés à valider.\n";
 
             $delayForRequest = $cp->getConfCP('delayForRequest');
-            $delayForRequest = $delayForRequest * (60*60*24);
+            //$delayForRequest = $delayForRequest * (60*60*24);
 
-            $nextMonth = date('Y-m-d', time()+$delayForRequest);
+            $now=dol_now();
+            $nextMonth = dol_time_plus_duree($now, $delayForRequest, 'd');
 
             // Si l'option pour avertir le valideur en cas de délai trop court
             if($cp->getConfCP('AlertValidatorDelay')) {
@@ -299,7 +304,9 @@ if ($action == 'confirm_send')
 
             // Si l'option pour avertir le valideur en cas de solde inférieur à la demande
             if($cp->getConfCP('AlertValidatorSolde')) {
-                if($cp->getOpenDays(strtotime($cp->date_debut),strtotime($cp->date_fin)) > $cp->getCPforUser($cp->fk_user)) {
+            	$nbopenedday=num_open_day($cp->date_debut,$cp->date_fin,0,1);
+                if ($nbopenedday > $cp->getCPforUser($cp->fk_user))
+                {
                     $message.= "\n";
                     $message.= "L'utilisateur ayant fait cette demande de congés payés n'a pas le solde requis.\n";
                 }
@@ -331,10 +338,10 @@ if ($action == 'confirm_send')
     }
 }
 
+
 // Si Validation de la demande
 if($action == 'confirm_valid')
 {
-
     $cp = new Holiday($db);
     $cp->fetch($_GET['id']);
 
@@ -344,7 +351,7 @@ if($action == 'confirm_valid')
     if($cp->statut == 2 && $userID == $cp->fk_validator)
     {
 
-        $cp->date_valid = date('Y-m-d H:i:s', time());
+        $cp->date_valid = dol_now();
         $cp->fk_user_valid = $user->id;
         $cp->statut = 3;
 
@@ -354,7 +361,7 @@ if($action == 'confirm_valid')
         if($verif > 0) {
 
             // Retrait du nombre de jours prit
-            $nbJour = $cp->getOpenDays(strtotime($cp->date_debut),strtotime($cp->date_fin));
+            $nbJour = $nbopenedday=num_open_day($cp->date_debut,$cp->date_fin,0,1);
 
             $soldeActuel = $cp->getCpforUser($cp->fk_user);
             $newSolde = $soldeActuel - ($nbJour*$cp->getConfCP('nbHolidayDeducted'));
@@ -570,7 +577,7 @@ if ($action == 'confirm_cancel' && $_GET['confirm'] == 'yes')
 
 llxHeader(array(),$langs->trans('CPTitreMenu'));
 
-if ($action == 'request')
+if (empty($id) || $action == 'add' || $action == 'request')
 {
     // Si l'utilisateur n'a pas le droit de faire une demande
     if(!$user->rights->holiday->write)
@@ -619,9 +626,9 @@ if ($action == 'request')
         $cp = new Holiday($db);
 
         $delayForRequest = $cp->getConfCP('delayForRequest');
-        $delayForRequest = $delayForRequest * (60*60*24);
+        //$delayForRequest = $delayForRequest * (60*60*24);
 
-        $nextMonth = date('Y-m-d', time()+$delayForRequest);
+        $nextMonth = dol_time_plus_duree($now, $delayForRequest, 'd');
 
         print '<script type="text/javascript">
        //<![CDATA[
@@ -635,19 +642,19 @@ if ($action == 'request')
                  return true;
                }
                else {
-                 alert("'.$langs->transnoentities('InvalidValidatorCP').'");
+                 alert("'.dol_escape_js($langs->transnoentities('InvalidValidatorCP')).'");
                  return false;
                }
 
             }
             else {
-              alert("'.$langs->trans('NoDateFin').'");
+              alert("'.dol_escape_js($langs->transnoentities('NoDateFin')).'");
               return false;
             }
          }
 
          else {
-           alert("'.$langs->trans('NoDateDebut').'");
+           alert("'.dol_escape_js($langs->transnoentities('NoDateDebut')).'");
            return false;
          }
        }
@@ -657,7 +664,7 @@ if ($action == 'request')
 
         // Formulaire de demande
         print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" onsubmit="return valider()" name="demandeCP">'."\n";
-        print '<input type="hidden" name="action" value="add" />'."\n";
+        print '<input type="hidden" name="action" value="create" />'."\n";
         print '<input type="hidden" name="userID" value="'.$user_id.'" />'."\n";
         print '<div class="tabBar">';
         print '<span>'.$langs->trans('DelayToRequestCP',$cp->getConfCP('delayForRequest')).'</span><br /><br />';
@@ -668,11 +675,11 @@ if ($action == 'request')
         print '<table class="border" width="100%">';
         print '<tbody>';
         print '<tr>';
-        print '<td class="fieldrequired">'.$langs->trans("DateDebCP").'</td>';
+        print '<td class="fieldrequired">'.$langs->trans("DateDebCP").' ('.$langs->trans("FirstDayOfHoliday").')</td>';
         print '<td>';
         // Si la demande ne vient pas de l'agenda
         if(!isset($_GET['datep'])) {
-            $html->select_date($nextMonth,'date_debut_');
+            $html->select_date(-1,'date_debut_');
         } else {
             $tmpdate = dol_mktime(0, 0, 0, GETPOST('datepmonth'), GETPOST('datepday'), GETPOST('datepyear'));
             $html->select_date($tmpdate,'date_debut_');
@@ -680,11 +687,11 @@ if ($action == 'request')
         print '</td>';
         print '</tr>';
         print '<tr>';
-        print '<td class="fieldrequired">'.$langs->trans("DateFinCP").'</td>';
+        print '<td class="fieldrequired">'.$langs->trans("DateFinCP").' ('.$langs->trans("LastDayOfHoliday").')</td>';
         print '<td>';
         // Si la demande ne vient pas de l'agenda
         if(!isset($_GET['datep'])) {
-            $html->select_date($nextMonth,'date_fin_');
+            $html->select_date(-1,'date_fin_');
         } else {
             $tmpdate = dol_mktime(0, 0, 0, GETPOST('datefmonth'), GETPOST('datefday'), GETPOST('datefyear'));
             $html->select_date($tmpdate,'date_fin_');
@@ -706,7 +713,7 @@ if ($action == 'request')
         print '<tr>';
         print '<td>'.$langs->trans("DescCP").'</td>';
         print '<td>';
-        print '<textarea name="description" class="flat" rows="2" cols="70"></textarea>';
+        print '<textarea name="description" class="flat" rows="'.ROWS_3.'" cols="70"></textarea>';
         print '</td>';
         print '</tr>';
         print '</tbody>';
@@ -723,7 +730,7 @@ if ($action == 'request')
     }
 
 }
-elseif(isset($_GET['id']))
+else
 {
     if ($error)
     {
@@ -735,10 +742,10 @@ elseif(isset($_GET['id']))
     else
     {
         // Affichage de la fiche d'une demande de congés payés
-        if ($_GET['id'] > 0)
+        if ($id > 0)
         {
             $cp = new Holiday($db);
-            $cp->fetch($_GET['id']);
+            $cp->fetch($id);
 
             $valideur = new User($db);
             $valideur->fetch($cp->fk_validator);
@@ -887,7 +894,7 @@ elseif(isset($_GET['id']))
                 }
                 print '<tr>';
                 print '<td>'.$langs->trans('NbUseDaysCP').'</td>';
-                print '<td>'.$cp->getOpenDays(strtotime($cp->date_debut),strtotime($cp->date_fin)).'</td>';
+                print '<td>'.num_open_day($cp->date_debut,$cp->date_fin,0,1).'</td>';
                 print '</tr>';
 
                 // Status
@@ -911,7 +918,7 @@ elseif(isset($_GET['id']))
                 } else {
                     print '<tr>';
                     print '<td>'.$langs->trans('DescCP').'</td>';
-                    print '<td><textarea name="description" class="flat" rows="2" cols="70">'.$cp->description.'</textarea></td>';
+                    print '<td><textarea name="description" class="flat" rows="'.ROWS_3.'" cols="70">'.$cp->description.'</textarea></td>';
                     print '</tr>';
                 }
                 print '</tbody>';
@@ -953,24 +960,24 @@ elseif(isset($_GET['id']))
 
                 print '<tr>';
                 print '<td>'.$langs->trans('DateCreateCP').'</td>';
-                print '<td>'.$cp->date_create.'</td>';
+                print '<td>'.dol_print_date($cp->date_create,'dayhour').'</td>';
                 print '</tr>';
                 if($cp->statut == 3) {
                     print '<tr>';
                     print '<td>'.$langs->trans('DateValidCP').'</td>';
-                    print '<td>'.$cp->date_valid.'</td>';
+                    print '<td>'.dol_print_date($cp->date_valid,'dayhour').'</td>';
                     print '</tr>';
                 }
                 if($cp->statut == 4) {
                     print '<tr>';
                     print '<td>'.$langs->trans('DateCancelCP').'</td>';
-                    print '<td>'.$cp->date_cancel.'</td>';
+                    print '<td>'.dol_print_date($cp->date_cancel,'dayhour').'</td>';
                     print '</tr>';
                 }
                 if($cp->statut == 5) {
                     print '<tr>';
                     print '<td>'.$langs->trans('DateRefusCP').'</td>';
-                    print '<td>'.$cp->date_refuse.'</td>';
+                    print '<td>'.dol_print_date($cp->date_refuse,'dayhour').'</td>';
                     print '</tr>';
                 }
                 print '</tbody>';

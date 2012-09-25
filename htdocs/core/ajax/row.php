@@ -43,21 +43,31 @@ print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY
 if ((isset($_POST['roworder']) && ! empty($_POST['roworder'])) && (isset($_POST['table_element_line']) && ! empty($_POST['table_element_line']))
 	&& (isset($_POST['fk_element']) && ! empty($_POST['fk_element'])) && (isset($_POST['element_id']) && ! empty($_POST['element_id'])) )
 {
-	$roworder = explode(',',GETPOST('roworder','alpha',2));
+	$roworder=GETPOST('roworder','alpha',2);
+	$table_element_line=GETPOST('table_element_line','alpha',2);
+	$fk_element=GETPOST('fk_element','alpha',2);
+	$element_id=GETPOST('element_id','int',2);
 
-	foreach($roworder as $value)
+	dol_syslog("AjaxRow roworder=".$roworder." table_element_line=".$table_element_line." fk_element=".$fk_element." element_id=".$element_id, LOG_DEBUG);
+
+	$rowordertab = explode(',',$roworder);
+	foreach($rowordertab as $value)
 	{
-		if (! empty($value)) $newroworder[] = $value;
+		if (! empty($value)) $newrowordertab[] = $value;
 	}
 
-	dol_syslog("AjaxRow roworder=".GETPOST('roworder','alpha',2)." fk_element=".GETPOST('fk_element','int',2), LOG_DEBUG);
-
 	$row=new GenericObject($db);
-	$row->table_element_line = GETPOST('table_element_line','alpha',2);
-	$row->fk_element = GETPOST('fk_element','int',2);
-	$row->id = GETPOST('element_id','int',2);
-	$result=$row->line_ajaxorder($newroworder);
-	$result=$row->line_order(true);
+	$row->table_element_line = $table_element_line;
+	$row->fk_element = $fk_element;
+	$row->id = $element_id;
+	$result=$row->line_ajaxorder($newrowordertab);
+
+	// Reorder line to have position of chilren lines sharing same counter than parent lines
+	// This should be useless because there is no need to have children sharing same counter that parent.
+	if (in_array($fk_element,array('fk_facture','fk_propal','fk_commande')))
+	{
+		$result=$row->line_order(true);
+	}
 }
 
 ?>

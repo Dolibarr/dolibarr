@@ -46,7 +46,7 @@ function llxHeaderPaypal($title, $head = "")
 	print '<meta name="description" content="Welcome on Dolibarr online payment form">'."\n";
 	print "<title>".$title."</title>\n";
 	if ($head) print $head."\n";
-	if ($conf->global->PAYPAL_CSS_URL) print '<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYPAL_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+	if (! empty($conf->global->PAYPAL_CSS_URL)) print '<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYPAL_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
 	else
 	{
 		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.$conf->css.'?lang='.$langs->defaultlang.'">'."\n";
@@ -643,7 +643,7 @@ function hash_call($methodName,$nvpStr)
 
     // TODO problem with triggers
     $API_version="56";
-	if ($conf->global->PAYPAL_API_SANDBOX)
+	if (! empty($conf->global->PAYPAL_API_SANDBOX))
 	{
 	    $API_Endpoint = "https://api-3t.sandbox.paypal.com/nvp";
 	    $API_Url = "https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&token=";
@@ -656,13 +656,13 @@ function hash_call($methodName,$nvpStr)
 
 	// Clean parameters
 	$PAYPAL_API_USER="";
-	if ($conf->global->PAYPAL_API_USER) $PAYPAL_API_USER=$conf->global->PAYPAL_API_USER;
+	if (! empty($conf->global->PAYPAL_API_USER)) $PAYPAL_API_USER=$conf->global->PAYPAL_API_USER;
 	$PAYPAL_API_PASSWORD="";
-	if ($conf->global->PAYPAL_API_PASSWORD) $PAYPAL_API_PASSWORD=$conf->global->PAYPAL_API_PASSWORD;
+	if (! empty($conf->global->PAYPAL_API_PASSWORD)) $PAYPAL_API_PASSWORD=$conf->global->PAYPAL_API_PASSWORD;
 	$PAYPAL_API_SIGNATURE="";
-	if ($conf->global->PAYPAL_API_SIGNATURE) $PAYPAL_API_SIGNATURE=$conf->global->PAYPAL_API_SIGNATURE;
+	if (! empty($conf->global->PAYPAL_API_SIGNATURE)) $PAYPAL_API_SIGNATURE=$conf->global->PAYPAL_API_SIGNATURE;
 	$PAYPAL_API_SANDBOX="";
-	if ($conf->global->PAYPAL_API_SANDBOX) $PAYPAL_API_SANDBOX=$conf->global->PAYPAL_API_SANDBOX;
+	if (! empty($conf->global->PAYPAL_API_SANDBOX)) $PAYPAL_API_SANDBOX=$conf->global->PAYPAL_API_SANDBOX;
 	// TODO END problem with triggers
 
     dol_syslog("Paypal API endpoint ".$API_Endpoint);

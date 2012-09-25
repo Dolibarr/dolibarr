@@ -73,6 +73,7 @@ if ($action == 'remises')
     if (dolibarr_set_const($db, 'MARGIN_METHODE_FOR_DISCOUNT', $_POST['MARGIN_METHODE_FOR_DISCOUNT'], 'chaine', 0, '', $conf->entity) > 0)
     {
           $conf->global->MARGIN_METHODE_FOR_DISCOUNT = $_POST['MARGIN_METHODE_FOR_DISCOUNT'];
+          setEventMessage($langs->trans("RecordModifiedSuccessfully"));
     }
     else
     {
@@ -85,6 +86,7 @@ if ($action == 'typemarges')
     if (dolibarr_set_const($db, 'MARGIN_TYPE', $_POST['MARGIN_TYPE'], 'chaine', 0, '', $conf->entity) > 0)
     {
           $conf->global->MARGIN_METHODE_FOR_DISCOUNT = $_POST['MARGIN_TYPE'];
+          setEventMessage($langs->trans("RecordModifiedSuccessfully"));
     }
     else
     {
@@ -149,7 +151,7 @@ if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '2')
 print '/>';
 print '</td>';
 print '<td>';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" class="button">';
 print '</td>';
 print '<td>'.$langs->trans('MARGIN_TYPE_DETAILS').'</td>';
 print '</tr>';
@@ -237,7 +239,7 @@ print "<input type=\"hidden\" name=\"action\" value=\"remises\">";
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("MARGIN_METHODE_FOR_DISCOUNT").'</td>';
 print '<td align="left">';
-print '<select name="MARGIN_METHODE_FOR_DISCOUNT" >';
+print '<select name="MARGIN_METHODE_FOR_DISCOUNT" class="flat">';
 print '<option value="1" ';
 if (isset($conf->global->MARGIN_METHODE_FOR_DISCOUNT) && $conf->global->MARGIN_METHODE_FOR_DISCOUNT == '1')
 	print 'selected ';
@@ -279,8 +281,10 @@ print '</tr>';
 print '</form>';
 
 print '</table>';
-print '<br>';
 
+dol_fiche_end();
+
+print '<br>';
 
 llxFooter();
 $db->close();

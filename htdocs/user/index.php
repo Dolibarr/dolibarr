@@ -81,9 +81,9 @@ else
 if (!empty($socid)) $sql.= " AND u.fk_societe = ".$socid;
 if ($search_user)
 {
-    $sql.= " AND (u.login like '%".$search_user."%' OR u.name like '%".$search_user."%' OR u.firstname like '%".$search_user."%')";
+    $sql.= " AND (u.login LIKE '%".$search_user."%' OR u.name LIKE '%".$search_user."%' OR u.firstname LIKE '%".$search_user."%')";
 }
-if ($sall) $sql.= " AND (u.login like '%".$db->escape($sall)."%' OR u.name like '%".$db->escape($sall)."%' OR u.firstname like '%".$db->escape($sall)."%' OR u.email like '%".$db->escape($sall)."%' OR u.note like '%".$db->escape($sall)."%')";
+if ($sall) $sql.= " AND (u.login LIKE '%".$db->escape($sall)."%' OR u.name LIKE '%".$db->escape($sall)."%' OR u.firstname LIKE '%".$db->escape($sall)."%' OR u.email LIKE '%".$db->escape($sall)."%' OR u.note LIKE '%".$db->escape($sall)."%')";
 $sql.=$db->order($sortfield,$sortorder);
 
 $result = $db->query($sql);
@@ -130,6 +130,7 @@ if ($result)
             $companystatic->canvas=$obj->canvas;
             print $companystatic->getNomUrl(1);
         }
+        // Multicompany enabled
         else if (! empty($conf->multicompany->enabled))
         {
         	if (! $obj->entity)
@@ -138,8 +139,12 @@ if ($result)
         	}
         	else
         	{
-        		$mc->getInfo($obj->entity);
-        		print $mc->label;
+        		// $mc is defined in conf.class.php if multicompany enabled.
+        		if (is_object($mc))
+        		{
+        			$mc->getInfo($obj->entity);
+        			print $mc->label;
+        		}
         	}
         }
         else if ($obj->ldap_sid)
@@ -172,7 +177,7 @@ else
     dol_print_error($db);
 }
 
-$db->close();
-
 llxFooter();
+
+$db->close();
 ?>

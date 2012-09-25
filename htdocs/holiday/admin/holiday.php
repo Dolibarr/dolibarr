@@ -32,7 +32,10 @@ require_once DOL_DOCUMENT_ROOT. '/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT. '/user/class/usergroup.class.php';
 
 $action=GETPOST('action');
+$optName=GETPOST('optName');
+$optValue=GETPOST('optValue');
 
+$langs->load("admin");
 $langs->load("holiday");
 
 // Si pas administrateur
@@ -44,7 +47,7 @@ if (! $user->admin) accessforbidden();
  */
 
 // Vérification si module activé
-if (! $conf->holiday->enabled) print $langs->trans('NotActiveModCP');
+if (empty($conf->holiday->enabled)) print $langs->trans('NotActiveModCP');
 
 llxheader('',$langs->trans('TitleAdminCP'));
 
@@ -154,7 +157,6 @@ if ($action == "add")
         $message.= '<br /><div class="warning">'.$langs->trans('AddCPforUsers').'</div>';
     }
 
-
     dol_htmloutput_mesg($message);
 
 
@@ -162,45 +164,41 @@ if ($action == "add")
 }
 elseif ($action == 'create_event')
 {
-    $error = false;
+    $error = 0;
 
-    if (!empty($_POST['optName']))
+    $optName = trim($optName);
+    $optValue = price2num($optValue,2);
+
+    if (! $optName)
     {
-        $optName = trim($_POST['optName']);
-    } else {
-        $error = true;
+    	$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")).'</div>';
+        $error++;
     }
-
-    if (!empty($_POST['optValue']))
+    if (! $optValue > 0)
     {
-        $optValue = price2num($_POST['optValue'],2);
-    } else {
-        $error = true;
+    	$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Value")).'</div>';
+    	$error++;
     }
 
     $cp->optName = $optName;
     $cp->optValue = $optValue;
 
-    if($error)
-    {
-        $message = 'ErrorCreateEventCP';
-    }
-    else
+    if (! $error)
     {
         $result = $cp->createEventCP($user);
-
         if($result > 0)
         {
             $message = 'OkCreateEventCP';
+            $optName='';
+            $optValue='';
         }
         else
         {
-            $message = 'ErrorCreateEventCP';
+            $message = '<div class="error">'.$cp->error.'</div>';
         }
     }
 
     dol_htmloutput_mesg($message);
-
 }
 elseif($action == 'event' && isset($_POST['update_event']))
 {
@@ -209,10 +207,10 @@ elseif($action == 'event' && isset($_POST['update_event']))
     $eventId = array_keys($_POST['update_event']);
     $eventId = $eventId[0];
 
-    $eventName = $_POST['optName'];
+    $eventName = $optName;
     $eventName = $eventName[$eventId];
 
-    $eventValue = $_POST['optValue'];
+    $eventValue = $optValue;
     $eventValue = $eventValue[$eventId];
 
     if(!empty($eventName)) {
@@ -241,7 +239,6 @@ elseif($action == 'event' && isset($_POST['update_event']))
     }
 
     dol_htmloutput_mesg($message);
-
 }
 elseif($action && isset($_POST['delete_event']))
 {
@@ -259,14 +256,13 @@ elseif($action && isset($_POST['delete_event']))
         print $langs->trans('ErrorDeleteEventCP');
         print '</div>';
     }
-
 }
 
+print '<br>';
 
-// Affichage de la page de configuation
-print '<div class="tabBar">';
+print_fiche_titre($langs->trans('TitleOptionMainCP'),'','');
 
-print '<h3>'.$langs->trans('TitleOptionMainCP').'</h3>';
+dol_fiche_head(array(),'','');
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?leftmenu=setup" name="config">'."\n";
 print '<input type="hidden" name="action" value="add" />'."\n";
@@ -289,52 +285,59 @@ print '</tr>'."\n";
 $var=!$var;
 print '<tr '.$bc[$var].'>'."\n";
 print '<td style="padding:5px;">'.$langs->trans('DelayForSubmitCP').'</td>'."\n";
-print '<td style="padding:5px;"><input type="text" name="delayForRequest" value="'.$cp->getConfCP('delayForRequest').'" size="2" /> '.$langs->trans('Jours').'</td>'."\n";
+print '<td style="padding:5px;"><input class="flat" type="text" name="delayForRequest" value="'.$cp->getConfCP('delayForRequest').'" size="2" /> '.$langs->trans('Jours').'</td>'."\n";
 print '</tr>'."\n";
 
 $var=!$var;
 print '<tr '.$bc[$var].'>'."\n";
 print '<td style="padding:5px;">'.$langs->trans('AlertValidatorDelayCP').'</td>'."\n";
-print '<td style="padding:5px;"><input type="checkbox" name="AlertValidatorDelay" '.$cp->getCheckOption('AlertValidatorDelay').'/></td>'."\n";
+print '<td style="padding:5px;"><input class="flat" type="checkbox" name="AlertValidatorDelay" '.$cp->getCheckOption('AlertValidatorDelay').'/></td>'."\n";
 print '</tr>'."\n";
 
 $var=!$var;
 print '<tr '.$bc[$var].'>'."\n";
 print '<td style="padding:5px;">'.$langs->trans('AlertValidorSoldeCP').'</td>'."\n";
-print '<td style="padding:5px;"><input type="checkbox" name="AlertValidatorSolde" '.$cp->getCheckOption('AlertValidatorSolde').'/></td>'."\n";
+print '<td style="padding:5px;"><input class="flat" type="checkbox" name="AlertValidatorSolde" '.$cp->getCheckOption('AlertValidatorSolde').'/></td>'."\n";
 print '</tr>'."\n";
 
 $var=!$var;
 print '<tr '.$bc[$var].'>'."\n";
 print '<td style="padding:5px;">'.$langs->trans('nbHolidayEveryMonthCP').'</td>'."\n";
-print '<td style="padding:5px;"><input type="text" name="nbHolidayEveryMonth" value="'.$cp->getConfCP('nbHolidayEveryMonth').'" size="5"/> '.$langs->trans('Jours').'</td>'."\n";
+print '<td style="padding:5px;"><input class="flat" type="text" name="nbHolidayEveryMonth" value="'.$cp->getConfCP('nbHolidayEveryMonth').'" size="5"/> '.$langs->trans('Jours').'</td>'."\n";
 print '</tr>'."\n";
 
 $var=!$var;
 print '<tr '.$bc[$var].'>'."\n";
 print '<td style="padding:5px;">'.$langs->trans('nbHolidayDeductedCP').'</td>'."\n";
-print '<td style="padding:5px;"><input type="text" name="nbHolidayDeducted" value="'.$cp->getConfCP('nbHolidayDeducted').'" size="2"/> '.$langs->trans('Jours').'</td>'."\n";
+print '<td style="padding:5px;"><input class="flat" type="text" name="nbHolidayDeducted" value="'.$cp->getConfCP('nbHolidayDeducted').'" size="2"/> '.$langs->trans('Jours').'</td>'."\n";
 print '</tr>'."\n";
 
 $var=!$var;
 print '<tr '.$bc[$var].'>'."\n";
 print '<td style="padding:5px;">'.$langs->trans('nbUserCP').'</td>'."\n";
-print '<td style="padding:5px;"><input type="text" name="nbUser" value="'.$cp->getConfCP('nbUser').'" disabled="disabled" size="4"/></td>'."\n";
+print '<td style="padding:5px;"><input class="flat" type="text" name="nbUser" value="'.$cp->getConfCP('nbUser').'" disabled="disabled" size="4"/></td>'."\n";
 print '</tr>'."\n";
 
 $var=!$var;
 print '<tr '.$bc[$var].'>'."\n";
 print '<td style="padding:5px;">'.$langs->trans('LastUpdateCP').'</td>'."\n";
-print '<td style="padding:5px;"><input type="text" name="lastUpdate" value="'.date('d-m-Y à H:i:s',$cp->getConfCP('lastUpdate')).'" disabled="disabled"/></td>'."\n";
+print '<td style="padding:5px;"><input class="flat" type="text" name="lastUpdate" value="'.date('d-m-Y à H:i:s',$cp->getConfCP('lastUpdate')).'" disabled="disabled"/></td>'."\n";
 print '</tr>'."\n";
 
 print '</tbody>'."\n";
 print '</table>'."\n";
 
-print '<br /><input type="submit" value="'.$langs->trans("ConfirmConfigCP").'" name="bouton" class="button"/>'."\n";
+print '<div align="center"><input type="submit" value="'.$langs->trans("ConfirmConfigCP").'" name="bouton" class="button"/></div>'."\n";
 print '</form>'."\n\n";
 
-print '<br /><h3>'.$langs->trans('TitleOptionEventCP').'</h3>'."\n\n";
+dol_fiche_end();
+
+print '<br>';
+
+print_fiche_titre($langs->trans('TitleOptionEventCP'),'','');
+
+dol_fiche_head(array(),'','');
+
 
 $cp_events = $cp->fetchEventsCP();
 
@@ -346,16 +349,14 @@ if($cp_events == 1) {
     print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?leftmenu=setup" name="event_update">'."\n";
     print '<input type="hidden" name="action" value="event" />'."\n";
 
-    print '<h5>'.$langs->trans('TitleUpdateEventCP').'</h5>'."\n";
-
     print '<table class="noborder" width="100%">'."\n";
     print '<tbody>'."\n";
     print '<tr class="liste_titre">'."\n";
 
     print '<td class="liste_titre" width="40%">'.$langs->trans('NameEventCP').'</td>'."\n";
-    print '<td class="liste_titre">'.$langs->trans('ValueOptionCP').'</td>'."\n";
-    print '<td class="liste_titre">'.$langs->trans('UpdateEventOptionCP').'</td>'."\n";
-    print '<td class="liste_titre">'.$langs->trans('DeleteEventOptionCP').'</td>'."\n";
+    print '<td class="liste_titre" width="20%">'.$langs->trans('ValueOptionCP').'</td>'."\n";
+    print '<td class="liste_titre">&nbsp;</td>'."\n";
+    print '<td class="liste_titre">&nbsp;</td>'."\n";
 
     print '</tr>'."\n";
 
@@ -364,10 +365,10 @@ if($cp_events == 1) {
         $var=!$var;
 
         print '<tr '.$bc[$var].'>'."\n";
-        print '<td style="padding: 5px;"><input type="text" size="40" name="optName['.$infos_event['rowid'].']" value="'.$infos_event['name'].'" /></td>'."\n";
-        print '<td width="10%"><input type="text" size="2" name="optValue['.$infos_event['rowid'].']" value="'.$infos_event['value'].'" /> '.$langs->trans('Jours').'</td>'."\n";
-        print '<td width="10%"><input type="submit" class="button" name="update_event['.$infos_event['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Update")).'"/></td>'."\n";
-        print '<td width="10%"><input type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" name="delete_event['.$infos_event['rowid'].']" style="border:0;"/></td>'."\n";
+        print '<td><input class="flat" type="text" size="40" name="optName['.$infos_event['rowid'].']" value="'.$infos_event['name'].'" /></td>'."\n";
+        print '<td><input class="flat" type="text" size="2" name="optValue['.$infos_event['rowid'].']" value="'.$infos_event['value'].'" /> '.$langs->trans('Jours').'</td>'."\n";
+        print '<td><input type="submit" class="button" name="update_event['.$infos_event['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Save")).'"/></td>'."\n";
+        print '<td width="20px" align="right"><input type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" name="delete_event['.$infos_event['rowid'].']" style="border:0;"/></td>'."\n";
         print '</tr>';
 
         $i++;
@@ -381,8 +382,9 @@ if($cp_events == 1) {
 }
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?leftmenu=setup" name="event_create">'."\n";
+print '<input type="hidden" name="action" value="create_event" />'."\n";
 
-print '<h5>'.$langs->trans('TitleCreateEventCP').'</h5>';
+print $langs->trans('TitleCreateEventCP');
 
 print '<table class="noborder" width="100%">';
 print '<tbody>';
@@ -391,16 +393,14 @@ print '<tr class="liste_titre">';
 
 print '<td class="liste_titre" width="40%">'.$langs->trans('NameEventCP').'</td>';
 print '<td class="liste_titre" width="20%">'.$langs->trans('ValueOptionCP').'</td>';
-print '<td class="liste_titre">'.$langs->trans('CreateEventCP').'</td>';
+print '<td class="liste_titre">&nbsp;</td>';
 
 print '</tr>';
 
-print '<input type="hidden" name="action" value="create_event" />'."\n";
-
 print '<tr class="pair">';
-print '<td style="padding: 5px;"><input type="text" size="40" name="optName" value="" /></td>'."\n";
-print '<td><input type="text" size="2" name="optValue" value="" /> '.$langs->trans('Jours').'</td>'."\n";
-print '<td><input type="submit" class="button" name="button" value="'.$langs->trans('ValidEventCP').'" /></td>'."\n";
+print '<td><input class="flat" type="text" size="40" name="optName" value="'.(is_array($optName)?'':$optName).'" /></td>'."\n";
+print '<td><input class="flat" type="text" size="2" name="optValue" value="'.(is_array($optValue)?'':$optValue).'" /> '.$langs->trans('Jours').'</td>'."\n";
+print '<td><input type="submit" class="button" name="button" value="'.$langs->trans('CreateEventCP').'" /></td>'."\n";
 print '</tr>'."\n";
 
 print '</tbody>';
@@ -408,7 +408,7 @@ print '</table>';
 
 print '</form>';
 
-print '</div>';
+dol_fiche_end();
 
 
 // Fin de page

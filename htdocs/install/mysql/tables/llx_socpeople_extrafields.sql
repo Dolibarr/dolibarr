@@ -1,6 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,14 +16,11 @@
 --
 -- ========================================================================
 
-create table llx_dolibarr_modules
+create table llx_socpeople_extrafields
 (
-  numero         integer,
-  entity         integer     DEFAULT 1 NOT NULL,	-- multi company id
-  active         tinyint     DEFAULT 0 NOT NULL,
-  active_date    datetime    NOT NULL,
-  active_version varchar(25) NOT NULL
-
-)ENGINE=innodb;
-
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
 

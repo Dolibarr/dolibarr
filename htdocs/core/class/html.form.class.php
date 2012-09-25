@@ -357,7 +357,6 @@ class Form
         $tag='td';
         if ($notabs == 2) $tag='div';
         if ($notabs == 3) $tag='span';
-
         // Sanitize tooltip
         $htmltext=str_replace("\\","\\\\",$htmltext);
         $htmltext=str_replace("\r","",$htmltext);
@@ -368,30 +367,12 @@ class Form
         else $paramfortooltipimg =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
         if ($tooltipon == 1 || $tooltipon == 3) $paramfortooltiptd=' class="classfortooltip'.($extracss?' '.$extracss:'').'" title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext,1)).'"'; // Attribut to put on td tag to store tooltip
         else $paramfortooltiptd =($extracss?' class="'.$extracss.'"':''); // Attribut to put on td text tag
-
         $s="";
-        if (empty($notabs)) $s.='<table class="nobordernopadding" summary=""><tr>';
-        if ($direction > 0)
-        {
-            if ($text != '')
-            {
-                $s.='<td'.$paramfortooltiptd.'>'.$text;
-                if ($direction) $s.='&nbsp;';
-                $s.='</td>';
-            }
-            if ($direction) $s.='<td'.$paramfortooltipimg.' valign="top" width="14">'.$img.'</td>';
-        }
-        else
-        {
-            if ($direction) $s.='<td'.$paramfortooltipimg.' valign="top" width="14">'.$img.'</td>';
-            if ($text != '')
-            {
-                $s.='<'.$tag.$paramfortooltiptd.'>';
-                if ($direction) $s.='&nbsp;';
-                $s.=$text.'</'.$tag.'>';
-            }
-        }
-        if (empty($notabs)) $s.='</tr></table>';
+        if (empty($notabs))	$s.='<table class="nobordernopadding" summary=""><tr>';
+        if ($direction < 0)	$s.='<'.$tag.$paramfortooltipimg.' valign="top" width="14">'.$img.'</'.$tag.'>';
+        if ($text != '')	$s.='<'.$tag.$paramfortooltiptd.'>'.(($direction < 0)?'&nbsp;':'').$text.(($direction > 0)?'&nbsp;':'').'</'.$tag.'>';
+        if ($direction > 0)	$s.='<'.$tag.$paramfortooltipimg.' valign="top" width="14">'.$img.'</'.$tag.'>';
+        if (empty($notabs))	$s.='</tr></table>';
 
         return $s;
     }
@@ -405,9 +386,10 @@ class Form
      * 	@param	string	$type				Type of picto (info, help, warning, superadmin...)
      *  @param  string	$extracss           Add a CSS style to td tags
      *  @param  int		$noencodehtmltext   Do not encode into html entity the htmltext
+     *  @param	int		$notabs				0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
      * 	@return	string						HTML code of text, picto, tooltip
      */
-    function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0)
+    function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0, $notabs = 0)
     {
         global $conf;
 
@@ -439,7 +421,7 @@ class Form
         elseif ($type == 'admin') $img = img_picto($alt, 'star');
         elseif ($type == 'warning') $img = img_warning($alt);
 
-        return $this->textwithtooltip($text, $htmltext, 2, $direction, $img, $extracss, 0, '', $noencodehtmltext);
+        return $this->textwithtooltip($text, $htmltext, 2, $direction, $img, $extracss, $notabs, '', $noencodehtmltext);
     }
 
     /**
@@ -3170,7 +3152,7 @@ class Form
      *	@param	int			$h				1=Show also hours
      *	@param	int			$m				1=Show also minutes
      *	@param	int			$empty			0=Fields required, 1=Empty input is allowed
-     *	@param	string		$form_name 		Form name. Used by popup dates.
+     *	@param	string		$form_name 		Not used
      *	@param	int			$d				1=Show days, month, years
      * 	@param	int			$addnowbutton	Add a button "Now"
      * 	@param	int			$nooutput		Do not output html string but return it
@@ -3758,12 +3740,15 @@ class Form
     {
         global $conf;
 
+        //Check if barcode is filled in the card
         if (empty($object->barcode)) return '';
 
         // Complete object if not complete
         if (empty($object->barcode_type_code) || empty($object->barcode_type_coder))
         {
-            $object->fetch_barcode();
+            $result = $object->fetch_barcode();
+	        //Check if fetch_barcode() failed
+        	if ($result < 1) return '<!-- ErrorFetchBarcode -->';
         }
 
         // Barcode image

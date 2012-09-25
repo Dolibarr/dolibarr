@@ -390,7 +390,7 @@ else
 					$objp = $db->fetch_object($resql);
 
 					// Multilangs
-					if ($conf->global->MAIN_MULTILANGS) // si l'option est active
+					if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
 					{
 						$sql = "SELECT label";
 						$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
