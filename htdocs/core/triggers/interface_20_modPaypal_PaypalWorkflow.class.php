@@ -102,47 +102,54 @@ class InterfacePaypalWorkflow
         if ($action == 'PAYPAL_PAYMENT_OK')
         {
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". source=".$object->source." ref=".$object->ref);
-        	
-        	if ($object->source == 'membersubscription')
+
+        	if (! empty($object->source))
         	{
-        		//require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherents.class.php");
-        		
-        		// TODO add subscription treatment
+        		if ($object->source == 'membersubscription')
+        		{
+        			//require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherents.class.php';
+
+        			// TODO add subscription treatment
+        		}
+        		else
+        		{
+        			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
+        			$soc = new Societe($this->db);
+
+        			// Parse element/subelement (ex: project_task)
+        			$element = $path = $filename = $object->source;
+        			if (preg_match('/^([^_]+)_([^_]+)/i',$object->source,$regs))
+        			{
+        				$element = $path = $regs[1];
+        				$filename = $regs[2];
+        			}
+        			// For compatibility
+        			if ($element == 'order') {
+        				$path = $filename = 'commande';
+        			}
+        			if ($element == 'invoice') {
+        				$path = 'compta/facture'; $filename = 'facture';
+        			}
+
+        			dol_include_once('/'.$path.'/class/'.$filename.'.class.php');
+
+        			$classname = ucfirst($filename);
+        			$obj = new $classname($this->db);
+
+        			$ret = $obj->fetch('',$object->ref);
+        			if ($ret < 0) return -1;
+
+        			// Add payer id
+        			$soc->setValueFrom('ref_int', $object->payerID, 'societe', $obj->socid);
+
+        			// Add transaction id
+        			$obj->setValueFrom('ref_int',$object->resArray["TRANSACTIONID"]);
+        		}
         	}
         	else
         	{
-        		require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
-        		
-        		$soc = new Societe($this->db);
-        		
-        		// Parse element/subelement (ex: project_task)
-        		$element = $path = $filename = $object->source;
-        		if (preg_match('/^([^_]+)_([^_]+)/i',$object->source,$regs))
-        		{
-        			$element = $path = $regs[1];
-        			$filename = $regs[2];
-        		}
-        		// For compatibility
-        		if ($element == 'order') {
-        			$path = $filename = 'commande';
-        		}
-        		if ($element == 'invoice') {
-        			$path = 'compta/facture'; $filename = 'facture';
-        		}
-        		
-        		dol_include_once('/'.$path.'/class/'.$filename.'.class.php');
-        		
-        		$classname = ucfirst($filename);
-        		$obj = new $classname($this->db);
-        		
-        		$ret = $obj->fetch('',$object->ref);
-        		if ($ret < 0) return -1;
-        		
-        		// Add payer id
-        		$soc->setValueFrom('ref_int', $object->payerID, 'societe', $obj->socid);
-        		
-        		// Add transaction id
-        		$obj->setValueFrom('ref_int',$object->resArray["TRANSACTIONID"]);
+        		// TODO add free tag treatment
         	}
 
         }
