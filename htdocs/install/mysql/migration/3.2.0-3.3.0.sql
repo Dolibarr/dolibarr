@@ -92,7 +92,7 @@ ALTER TABLE llx_commandedet ADD COLUMN label varchar(255) DEFAULT NULL AFTER fk_
 ALTER TABLE llx_facturedet ADD COLUMN label varchar(255) DEFAULT NULL AFTER fk_product;
 ALTER TABLE llx_facturedet_rec ADD COLUMN label varchar(255) DEFAULT NULL AFTER product_type;
 
-ALTER TABLE llx_accountingaccount  ADD COLUMN active tinyint DEFAULT 1 NOT NULL AFTER label;
+ALTER TABLE llx_accountingaccount ADD COLUMN active tinyint DEFAULT 1 NOT NULL AFTER label;
 
 ALTER TABLE llx_actioncomm MODIFY elementtype VARCHAR(32);
 
@@ -122,59 +122,66 @@ ALTER TABLE llx_element_tag ADD UNIQUE INDEX uk_element_tag (entity, lang, tag, 
 
 CREATE TABLE llx_holiday_config 
 (
-rowid    INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-name     VARCHAR( 255 ) NOT NULL UNIQUE,
-value    TEXT NULL
+rowid    integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+name     varchar(255) NOT NULL UNIQUE,
+value    text NULL
 ) 
 ENGINE=innodb;
 
 CREATE TABLE llx_holiday_events 
 (
-rowid    INT( 11 ) NOT NULL PRIMARY KEY AUTO_INCREMENT ,
-name     VARCHAR( 255 ) NOT NULL ,
-value    TEXT NOT NULL
+rowid    integer NOT NULL PRIMARY KEY AUTO_INCREMENT,
+entity   integer DEFAULT 1 NOT NULL,
+name     varchar(255) NOT NULL,
+value    text NOT NULL
 ) 
 ENGINE=innodb;
+ALTER TABLE llx_holiday_events ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_holiday_events ADD UNIQUE INDEX uk_holiday_name (name, entity);
 
 CREATE TABLE llx_holiday_logs 
 (
-rowid             INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-date_action       DATETIME NOT NULL ,
-fk_user_action    INT( 11 ) NOT NULL ,
-fk_user_update    INT( 11 ) NOT NULL ,
-type_action       VARCHAR( 255 ) NOT NULL ,
-prev_solde        VARCHAR( 255 ) NOT NULL ,
-new_solde         VARCHAR( 255 ) NOT NULL
+rowid             integer NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+date_action       datetime NOT NULL ,
+fk_user_action    integer NOT NULL ,
+fk_user_update    integer NOT NULL ,
+type_action       varchar(255) NOT NULL ,
+prev_solde        varchar(255) NOT NULL ,
+new_solde         varchar(255) NOT NULL
 ) 
 ENGINE=innodb;
 
 CREATE TABLE llx_holiday_users 
 (
-fk_user     INT( 11 ) NOT NULL PRIMARY KEY,
-nb_holiday   FLOAT( 5 ) NOT NULL DEFAULT '0'
+fk_user     integer NOT NULL PRIMARY KEY,
+nb_holiday  real NOT NULL DEFAULT '0'
 ) 
 ENGINE=innodb;
+ALTER TABLE llx_holiday_users MODIFY COLUMN nb_holiday real NOT NULL DEFAULT '0';
 
 CREATE TABLE llx_holiday 
 (
-rowid          INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-fk_user        INT( 11 ) NOT NULL ,
-date_create    DATETIME NOT NULL ,
-description    VARCHAR( 255 ) NOT NULL ,
-date_debut     DATE NOT NULL ,
-date_fin       DATE NOT NULL ,
-statut         INT( 11 ) NOT NULL DEFAULT '1',
-fk_validator   INT( 11 ) NOT NULL ,
-date_valid     DATETIME NULL DEFAULT NULL ,
-fk_user_valid  INT( 11 ) NULL DEFAULT NULL ,
-date_refuse    DATETIME NULL DEFAULT NULL ,
-fk_user_refuse INT( 11 ) NULL DEFAULT NULL ,
-date_cancel    DATETIME NULL DEFAULT NULL ,
-fk_user_cancel INT( 11 ) NULL DEFAULT NULL,
-detail_refuse  varchar( 250 ) NULL DEFAULT NULL
+rowid          integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+fk_user        integer NOT NULL ,
+date_create    datetime NOT NULL ,
+description    varchar(255) NOT NULL ,
+date_debut     date NOT NULL ,
+date_fin       date NOT NULL ,
+statut         integer NOT NULL DEFAULT '1',
+fk_validator   integer NOT NULL ,
+date_valid     datetime DEFAULT NULL ,
+fk_user_valid  integer DEFAULT NULL ,
+date_refuse    datetime DEFAULT NULL ,
+fk_user_refuse integer DEFAULT NULL ,
+date_cancel    datetime DEFAULT NULL ,
+fk_user_cancel integer DEFAULT NULL,
+detail_refuse  varchar(250) DEFAULT NULL
 ) 
 ENGINE=innodb;
 
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_fk_user (fk_user);
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_date_debut (date_debut);
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_date_fin (date_fin);
 
 INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'userGroup', NULL);
 INSERT INTO llx_holiday_config (rowid ,name ,value) VALUES (NULL , 'lastUpdate', NULL);
@@ -259,3 +266,9 @@ UPDATE llx_c_tva set localtax1 = 1, localtax1_type = '4', localtax2 = 0.4, local
 UPDATE llx_c_tva set localtax1 = 1, localtax1_type = '4', localtax2 = 0.4, localtax2_type = '7' where rowid= 105 and fk_pays= 10 AND localtax1_type='0';
 UPDATE llx_c_tva set localtax1 = 1, localtax1_type = '4', localtax2 = 0.4, localtax2_type = '7' where rowid= 106 and fk_pays= 10 AND localtax1_type='0';
 UPDATE llx_c_tva set localtax1 = 1, localtax1_type = '4', localtax2 = 0.4, localtax2_type = '7' where rowid= 107 and fk_pays= 10 AND localtax1_type='0';
+
+-- Modify table for accountancy
+ALTER TABLE llx_c_tva DROP COLUMN accountancy_code;
+ALTER TABLE llx_c_tva ADD COLUMN accountancy_code_sell varchar(15) DEFAULT NULL AFTER active;
+ALTER TABLE llx_c_tva ADD COLUMN accountancy_code_buy varchar(15) DEFAULT NULL AFTER accountancy_code_sell;
+ALTER TABLE llx_c_chargessociales ADD COLUMN accountancy_code varchar(15) DEFAULT NULL AFTER code;

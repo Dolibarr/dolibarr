@@ -32,6 +32,8 @@ require_once DOL_DOCUMENT_ROOT. '/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT. '/user/class/usergroup.class.php';
 
 $action=GETPOST('action');
+$optName=GETPOST('optName');
+$optValue=GETPOST('optValue');
 
 $langs->load("admin");
 $langs->load("holiday");
@@ -155,7 +157,6 @@ if ($action == "add")
         $message.= '<br /><div class="warning">'.$langs->trans('AddCPforUsers').'</div>';
     }
 
-
     dol_htmloutput_mesg($message);
 
 
@@ -163,45 +164,41 @@ if ($action == "add")
 }
 elseif ($action == 'create_event')
 {
-    $error = false;
+    $error = 0;
 
-    if (!empty($_POST['optName']))
+    $optName = trim($optName);
+    $optValue = price2num($optValue,2);
+
+    if (! $optName)
     {
-        $optName = trim($_POST['optName']);
-    } else {
-        $error = true;
+    	$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")).'</div>';
+        $error++;
     }
-
-    if (!empty($_POST['optValue']))
+    if (! $optValue > 0)
     {
-        $optValue = price2num($_POST['optValue'],2);
-    } else {
-        $error = true;
+    	$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Value")).'</div>';
+    	$error++;
     }
 
     $cp->optName = $optName;
     $cp->optValue = $optValue;
 
-    if($error)
-    {
-        $message = 'ErrorCreateEventCP';
-    }
-    else
+    if (! $error)
     {
         $result = $cp->createEventCP($user);
-
         if($result > 0)
         {
             $message = 'OkCreateEventCP';
+            $optName='';
+            $optValue='';
         }
         else
         {
-            $message = 'ErrorCreateEventCP';
+            $message = '<div class="error">'.$cp->error.'</div>';
         }
     }
 
     dol_htmloutput_mesg($message);
-
 }
 elseif($action == 'event' && isset($_POST['update_event']))
 {
@@ -210,10 +207,10 @@ elseif($action == 'event' && isset($_POST['update_event']))
     $eventId = array_keys($_POST['update_event']);
     $eventId = $eventId[0];
 
-    $eventName = $_POST['optName'];
+    $eventName = $optName;
     $eventName = $eventName[$eventId];
 
-    $eventValue = $_POST['optValue'];
+    $eventValue = $optValue;
     $eventValue = $eventValue[$eventId];
 
     if(!empty($eventName)) {
@@ -242,7 +239,6 @@ elseif($action == 'event' && isset($_POST['update_event']))
     }
 
     dol_htmloutput_mesg($message);
-
 }
 elseif($action && isset($_POST['delete_event']))
 {
@@ -353,16 +349,14 @@ if($cp_events == 1) {
     print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?leftmenu=setup" name="event_update">'."\n";
     print '<input type="hidden" name="action" value="event" />'."\n";
 
-    print '<h5>'.$langs->trans('TitleUpdateEventCP').'</h5>'."\n";
-
     print '<table class="noborder" width="100%">'."\n";
     print '<tbody>'."\n";
     print '<tr class="liste_titre">'."\n";
 
     print '<td class="liste_titre" width="40%">'.$langs->trans('NameEventCP').'</td>'."\n";
-    print '<td class="liste_titre">'.$langs->trans('ValueOptionCP').'</td>'."\n";
-    print '<td class="liste_titre">'.$langs->trans('UpdateEventOptionCP').'</td>'."\n";
-    print '<td class="liste_titre" align="right">'.$langs->trans('DeleteEventOptionCP').'</td>'."\n";
+    print '<td class="liste_titre" width="20%">'.$langs->trans('ValueOptionCP').'</td>'."\n";
+    print '<td class="liste_titre">&nbsp;</td>'."\n";
+    print '<td class="liste_titre">&nbsp;</td>'."\n";
 
     print '</tr>'."\n";
 
@@ -373,7 +367,7 @@ if($cp_events == 1) {
         print '<tr '.$bc[$var].'>'."\n";
         print '<td><input class="flat" type="text" size="40" name="optName['.$infos_event['rowid'].']" value="'.$infos_event['name'].'" /></td>'."\n";
         print '<td><input class="flat" type="text" size="2" name="optValue['.$infos_event['rowid'].']" value="'.$infos_event['value'].'" /> '.$langs->trans('Jours').'</td>'."\n";
-        print '<td><input type="submit" class="button" name="update_event['.$infos_event['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Update")).'"/></td>'."\n";
+        print '<td><input type="submit" class="button" name="update_event['.$infos_event['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Save")).'"/></td>'."\n";
         print '<td width="20px" align="right"><input type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" name="delete_event['.$infos_event['rowid'].']" style="border:0;"/></td>'."\n";
         print '</tr>';
 
@@ -388,6 +382,7 @@ if($cp_events == 1) {
 }
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?leftmenu=setup" name="event_create">'."\n";
+print '<input type="hidden" name="action" value="create_event" />'."\n";
 
 print $langs->trans('TitleCreateEventCP');
 
@@ -398,16 +393,14 @@ print '<tr class="liste_titre">';
 
 print '<td class="liste_titre" width="40%">'.$langs->trans('NameEventCP').'</td>';
 print '<td class="liste_titre" width="20%">'.$langs->trans('ValueOptionCP').'</td>';
-print '<td class="liste_titre">'.$langs->trans('CreateEventCP').'</td>';
+print '<td class="liste_titre">&nbsp;</td>';
 
 print '</tr>';
 
-print '<input type="hidden" name="action" value="create_event" />'."\n";
-
 print '<tr class="pair">';
-print '<td><input class="flat" type="text" size="40" name="optName" value="" /></td>'."\n";
-print '<td><input class="flat" type="text" size="2" name="optValue" value="" /> '.$langs->trans('Jours').'</td>'."\n";
-print '<td><input type="submit" class="button" name="button" value="'.$langs->trans('ValidEventCP').'" /></td>'."\n";
+print '<td><input class="flat" type="text" size="40" name="optName" value="'.(is_array($optName)?'':$optName).'" /></td>'."\n";
+print '<td><input class="flat" type="text" size="2" name="optValue" value="'.(is_array($optValue)?'':$optValue).'" /> '.$langs->trans('Jours').'</td>'."\n";
+print '<td><input type="submit" class="button" name="button" value="'.$langs->trans('CreateEventCP').'" /></td>'."\n";
 print '</tr>'."\n";
 
 print '</tbody>';

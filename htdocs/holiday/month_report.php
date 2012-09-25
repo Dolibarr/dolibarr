@@ -44,7 +44,6 @@ if(!$user->rights->holiday->month_report) accessforbidden();
 $html = new Form($db);
 $htmlother = new FormOther($db);
 
-
 llxHeader(array(),$langs->trans('CPTitreMenu'));
 
 $cp = new Holiday($db);
@@ -53,10 +52,10 @@ $month = GETPOST('month_start');
 $year = GETPOST('year_start');
 
 if(empty($month)) {
-      $month = date('m');
+	$month = date('m');
 }
 if(empty($year)) {
-      $year = date('Y');
+	$year = date('Y');
 }
 
 $sql = "SELECT cp.fk_user, cp.date_debut, cp.date_fin";
@@ -65,7 +64,7 @@ $sql.= " LEFT JOIN llx_user u ON cp.fk_user = u.rowid";
 $sql.= " WHERE cp.rowid > '0'";
 $sql.= " AND cp.statut = 3";
 $sql.= " AND (date_format(cp.date_debut, '%Y-%m') = '$year-$month'
-               OR date_format(cp.date_fin, '%Y-%m') = '$year-$month')";
+OR date_format(cp.date_fin, '%Y-%m') = '$year-$month')";
 $sql.= " ORDER BY u.name,cp.date_debut";
 
 $result  = $db->query($sql);
@@ -78,7 +77,7 @@ print '<div class="tabBar">';
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 
 print 'Choix mois : <input class="flat" type="text" size="1" maxlength="2"
-                              name="month_start" value="'.$month.'">&nbsp;';
+name="month_start" value="'.$month.'">&nbsp;';
 $htmlother->select_year($year,'year_start',1,10,3);
 
 print '<input type="submit" value="'.$langs->trans("Refresh").'" class="button" />';
@@ -90,47 +89,50 @@ print '<br />';
 $var=true;
 print '<table class="noborder" width="40%;">';
 
-   print '<tr class="liste_titre">';
-      print '<td>'.$langs->trans('Employee').'</td>';
-      print '<td>'.$langs->trans('DateDebCP').'</td>';
-      print '<td>'.$langs->trans('DateFinCP').'</td>';
-      print '<td>'.$langs->trans('nbJours').'</td>';
-   print '</tr>';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans('Employee').'</td>';
+print '<td>'.$langs->trans('DateDebCP').'</td>';
+print '<td>'.$langs->trans('DateFinCP').'</td>';
+print '<td>'.$langs->trans('nbJours').'</td>';
+print '</tr>';
 
-   if($num == '0') {
+if($num == '0') {
 
-      print '<tr class="pair">';
-         print '<td colspan="4" style="text-align: center; padding: 3px;">'.$langs->trans('NoCPforMonth').'</td>';
-      print '</tr>';
+	print '<tr class="pair">';
+	print '<td colspan="4" style="text-align: center; padding: 3px;">'.$langs->trans('NoCPforMonth').'</td>';
+	print '</tr>';
 
-   } else {
+} else {
 
-      while($holiday = $db->fetch_array($result)){
-         $user = new User($db);
-         $user->fetch($holiday['fk_user']);
-         $var=!$var;
+	while($holiday = $db->fetch_array($result)){
+		$user = new User($db);
+		$user->fetch($holiday['fk_user']);
+		$var=!$var;
 
-         if(substr($holiday['date_debut'],5,2)==$month-1){
-            $holiday['date_debut'] = date('Y-'.$month.'-01');
-         }
+		if(substr($holiday['date_debut'],5,2)==$month-1){
+			$holiday['date_debut'] = date('Y-'.$month.'-01');
+		}
 
-         if(substr($holiday['date_fin'],5,2)==$month+1){
-            $holiday['date_fin'] = date('Y-'.$month.'-t');
-         }
+		if(substr($holiday['date_fin'],5,2)==$month+1){
+			$holiday['date_fin'] = date('Y-'.$month.'-t');
+		}
 
-         print '<tr '.$bc[$var].'>';
-            print '<td>'.$user->nom.' '.$user->prenom.'</td>';
-            print '<td>'.$holiday['date_debut'].'</td>';
-            print '<td>'.$holiday['date_fin'].'</td>';
-            print '<td>'.$cp->getOpenDays(strtotime($holiday['date_debut']),strtotime($holiday['date_fin'])).'</td>';
-         print '</tr>';
-      }
-
-   }
+		print '<tr '.$bc[$var].'>';
+		print '<td>'.$user->nom.' '.$user->prenom.'</td>';
+		print '<td>'.$holiday['date_debut'].'</td>';
+		print '<td>'.$holiday['date_fin'].'</td>';
+		print '<td>';
+		$nbopenedday=num_open_day($holiday['date_debut'],$holiday['date_fin'],0,1);
+		print $nbopenedday;
+		print '</td>';
+		print '</tr>';
+	}
+}
 print '</table>';
 print '</div>';
 
 // Fin de page
-$db->close();
 llxFooter();
+
+$db->close();
 ?>
